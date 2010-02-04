@@ -69,6 +69,7 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 		return ready_for_searching;
 	}
 
+	@Override
 	public void addChild(SeqSymmetry child) {
 		super.addChild(child);
 		ready_for_searching = false;

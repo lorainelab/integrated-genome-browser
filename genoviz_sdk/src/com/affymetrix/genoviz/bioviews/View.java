@@ -13,6 +13,7 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Rectangle2D.Double;
 import java.util.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -340,18 +341,7 @@ public class View implements ViewI, NeoPaintListener,
 			//   serious performance hit?
 			bufferGraphics.dispose();
 		}
-
-		/*
-		 *  Drawing "transients" directly to screen
-		 *  WARNING -- this hasn't been tested on un-buffered views, not sure
-		 *      if it will work in such situations
-		 */
-		if (scene.hasTransients()) {
-			List<TransientGlyph> transients = scene.getTransients();
-			for (TransientGlyph transglyph : transients) {
-				transglyph.drawTraversal(this);
-			}
-		}
+		drawTransients();
 
 		lastTransform = (LinearTransform) transform.clone();
 
@@ -384,6 +374,20 @@ public class View implements ViewI, NeoPaintListener,
 		prevCoordBox.setRect(coordbox.x, coordbox.y,
 				coordbox.width, coordbox.height);
 
+	}
+
+	private void drawTransients() {
+		/*
+		 *  Drawing "transients" directly to screen
+		 *  WARNING -- this hasn't been tested on un-buffered views, not sure
+		 *      if it will work in such situations
+		 */
+		if (scene.hasTransients()) {
+			List<TransientGlyph> transients = scene.getTransients();
+			for (TransientGlyph transglyph : transients) {
+				transglyph.drawTraversal(this);
+			}
+		}
 	}
 
 	public boolean optimizedBufferDraw() {
@@ -543,20 +547,7 @@ public class View implements ViewI, NeoPaintListener,
 
 			return true;
 		}
-
-
-
-		// 2. calculate current coordbox, retrieve coordbox from previous paint
-		//  could probably avoid this by cloning prevcoordbox from last coordbox,
-		//   just like prevtransform... need to make sure cloning works though...
-		// also make sure that current coord box and previous coord box
-		//   overlap
-		transformToCoords(pixelbox, coordbox);
-		Rectangle2D.Double currCoordBox = coordbox;
-		setTransform(lastTransform);
-		transformToCoords(pixelbox, prevCalcCoordBox);
-		prevCoordBox = prevCalcCoordBox;
-		setTransform(transform);
+		Double currCoordBox = calculateCurrentCoordbox();
 
 		if (!(currCoordBox.intersects(prevCoordBox))) {
 			return false;
@@ -657,7 +648,20 @@ public class View implements ViewI, NeoPaintListener,
 
 		return true;
 	}
-
+	private Double calculateCurrentCoordbox() {
+	// 2.calculate current coordbox, retrieve coordbox from previous paint
+	//  could probably avoid this by cloning prevcoordbox from last coordbox,
+	//   just like prevtransform... need to make sure cloning works though...
+	// also make sure that current coord box and previous coord box
+	//   overlap
+	transformToCoords(pixelbox, coordbox);
+	Rectangle2D.Double currCoordBox = coordbox;
+	setTransform(lastTransform);
+	transformToCoords(pixelbox, prevCalcCoordBox);
+	prevCoordBox = prevCalcCoordBox;
+	setTransform(transform);
+	return currCoordBox;
+	}
 	public void setPixelBox(Rectangle pixelbox) {
 		this.pixelbox = pixelbox;
 	}
@@ -917,4 +921,6 @@ public class View implements ViewI, NeoPaintListener,
 	public Rectangle getScratchPixBox() {
 		return scratch_pixelbox;
 	}
+
+
 }

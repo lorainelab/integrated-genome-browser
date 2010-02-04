@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -23,24 +22,49 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 
 	// the table showing name-value pairs
 	private static final JTable table = new JTable();
-	private JScrollPane scroll_pane;
-	private JTableCutPasteAdapter cutPaster;
+	private final JScrollPane scroll_pane = new JScrollPane();
 	private TableRowSorter<TableModel> sorter;
-	private static final boolean by_rows = false;
-	private static final boolean sortable = true;
 	public static final String PROPERTY = "property";
 	public static final String DEFAULT_TITLE = "Property Sheet";
+	private static final List<String> prop_order = determineOrder();
 
 	public PropertyView() {
 		super();
-		scroll_pane = new JScrollPane();
+		determineOrder();
 		JViewport jvp = new JViewport();
 		scroll_pane.setColumnHeaderView(jvp);
-		//table = new JTable();
-		cutPaster = new JTableCutPasteAdapter(table, true);
+		new JTableCutPasteAdapter(table, true);
 		setPreferredSize(new java.awt.Dimension(100, 250));
 		setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
+	}
+
+
+	// The general order these fields should show up in.
+	private static List<String> determineOrder() {
+		List<String> orderList = new ArrayList<String>(20);
+		orderList.add("gene name");
+		orderList.add("name");
+		orderList.add("id");
+		orderList.add("chromosome");
+		orderList.add("start");
+		orderList.add("end");
+		orderList.add("length");
+		orderList.add("min score");
+		orderList.add("max score");
+		orderList.add("type");
+		orderList.add("same orientation");
+		orderList.add("query length");
+		orderList.add("# matches");
+		orderList.add("# target inserts");
+		orderList.add("# target bases inserted");
+		orderList.add("# query bases inserted");
+		orderList.add("# query inserts");
+		orderList.add("seq id");
+		orderList.add("cds min");
+		orderList.add("cds max");
+
+		return orderList;
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
@@ -56,15 +80,17 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		showSyms(evt.getSelectedSyms(), mapView);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void showSyms(List<SeqSymmetry> selected_syms, SeqMapView seqMap) {
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		for (SeqSymmetry sym : selected_syms) {
 			Map<String, Object> props = determineProps(sym, seqMap);
-			propList.add(props);
+			if (props != null) {
+				propList.add(props);
+			}
 		}
-		Map[] prop_array = propList.toArray(new Map[propList.size()]);
+		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
 
-		List<String> prop_order = determineOrder();
 		this.showProperties(prop_array, prop_order, "");
 	}
 
@@ -116,35 +142,6 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		return props;
 	}
 
-	// The general order these fields should show up in.
-	private static List<String> determineOrder() {
-		List<String> prop_order;
-
-		prop_order = new ArrayList<String>(20);
-		prop_order.add("gene name");
-		prop_order.add("name");
-		prop_order.add("id");
-		prop_order.add("chromosome");
-		prop_order.add("start");
-		prop_order.add("end");
-		prop_order.add("length");
-		prop_order.add("min score");
-		prop_order.add("max score");
-		prop_order.add("type");
-		prop_order.add("same orientation");
-		prop_order.add("query length");
-		prop_order.add("# matches");
-		prop_order.add("# target inserts");
-		prop_order.add("# target bases inserted");
-		prop_order.add("# query bases inserted");
-		prop_order.add("# query inserts");
-		prop_order.add("seq id");
-		prop_order.add("cds min");
-		prop_order.add("cds max");
-
-		return prop_order;
-	}
-
 	/**
 	 * Return headings for columns.  If we're laying out
 	 * values in a row, then column headings will be the
@@ -156,34 +153,27 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	 *   one or more Properties
 	 * @param props - the list of Properties
 	 */
-	private static String[] getColumnHeadings(List<String[]> name_values,
-			Map[] props) {
+	private static String[] getColumnHeadings(Map[] props) {
 		// will contain number of Properties + 1 if by_rows is false
 		// will contain number of values if by_rows is true
 		String[] col_headings = null;
-		// the number of different name-value groups
-		int num_values = name_values.size();
+
 		// the number of items being described
 		int num_items = props.length;
-		if (by_rows) {  // columns represent individual property names
-			col_headings = new String[num_values];
-			for (int i = 0; i < num_values; i++) {
-				col_headings[i] = PropertyKeys.getName(name_values, i);
-			}
-		} else {  // columns represent set of properties for a particular entity
-			col_headings = new String[num_items + 1];
-			col_headings[0] = PROPERTY;
-			for (int i = 0; i < num_items; i++) {
-				Object id_obj = props[i].get("id");
-				String id;
-				if (id_obj == null) {
-					id = "no ID";
-				} else {
-					id = id_obj.toString();
-				} // in most cases the id already is a String
-				col_headings[i + 1] = id;
-			}
+		// columns represent set of properties for a particular entity
+		col_headings = new String[num_items + 1];
+		col_headings[0] = PROPERTY;
+		for (int i = 0; i < num_items; i++) {
+			Object id_obj = props[i].get("id");
+			String id;
+			if (id_obj == null) {
+				id = "no ID";
+			} else {
+				id = id_obj.toString();
+			} // in most cases the id already is a String
+			col_headings[i + 1] = id;
 		}
+
 		return col_headings;
 	}
 
@@ -196,34 +186,64 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	 *   one or more Properties
 	 * @param props  the list of Properties
 	 */
-	private static String[][] buildRows(List<String[]> name_values, Map[] props) {
-		int num_props = props.length;
+	private static String[][] buildRows(List<String[]> name_values, Map<String, Object>[] props) {
 		int num_vals = name_values.size();
-		String[][] rows = null;
-		if (by_rows) {
-			rows = new String[num_props][num_vals];
-			for (int j = 0; j < num_props; j++) {
-				for (int i = 0; i < num_vals; i++) {
-					String[] vals = name_values.get(i);
-					try {
-						rows[j][i] = vals[j + 1];
-					} catch (ArrayIndexOutOfBoundsException array_ex) {
-						System.out.println("error allocating rows for property sheet.");
-					}
-				}
-			}
-		} else {
-			rows = new String[num_vals][num_props + 1];
-			for (int i = 0; i < num_vals; i++) {
-				String[] vals = name_values.get(i);
-				rows[i][0] = vals[0];
-				for (int j = 1; j < vals.length; j++) {
-					rows[i][j] = vals[j];
-				}
+		String[][] rows = new String[num_vals][props.length + 1];
+		for (int i = 0; i < num_vals; i++) {
+			String[] vals = name_values.get(i);
+			rows[i][0] = vals[0];
+			for (int j = 1; j < vals.length; j++) {
+				rows[i][j] = vals[j];
 			}
 		}
 		return rows;
 	}
+
+	/**
+	 * Show data associated with the given properties.
+	 * Uses buildRows() to retrieve ordered
+	 * name-value pairs.
+	 * @param props  the given Properties
+	 * @param preferred_prop_order the preferred order of columns
+	 * @param noData the value to use when a property value is null
+	 */
+	private void showProperties(Map<String, Object>[] props, List<String> preferred_prop_order, String noData) {
+		List<String[]> name_values = getNameValues(props, noData);
+		if (preferred_prop_order != null) {
+			name_values = reorderNames(name_values, preferred_prop_order);
+		}
+		String[][] rows = buildRows(name_values, props);
+		String[] col_headings = getColumnHeadings(props);
+
+		TableModel model = new DefaultTableModel(rows, col_headings) {
+
+			public static final long serialVersionUID = 1l;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		table.setModel(model);
+
+		sorter = new TableRowSorter<TableModel>(model);
+		table.setRowSorter(sorter);
+
+		table.setEnabled(true);  // to allow selection, etc.
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		this.removeAll();
+		this.setLayout(new BorderLayout());
+		scroll_pane.setViewportView(table);
+		this.add(scroll_pane, BorderLayout.CENTER);
+		table.setCellSelectionEnabled(true);
+
+		validate();
+		for (int i = 0; i < table.getColumnCount(); i++) {
+			table.getColumnModel().getColumn(i).setMinWidth(100);
+			table.getColumnModel().getColumn(i).setPreferredWidth(150);
+		}
+	}
+
 
 	/**
 	 * take name_values and return a new ArrayList that
@@ -261,53 +281,43 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		return reordered;
 	}
 
+
 	/**
-	 * Show data associated with the given properties.
-	 * Uses buildRows() to retrieve ordered
-	 * name-value pairs.
-	 * @param props  the given Properties
-	 * @param preferred_prop_order the preferred order of columns
-	 * @param noData the value to use when a property value is null
-	 * @see #buildRows(List, Map[])
-	 */
-	private void showProperties(Map[] props, List<String> preferred_prop_order, String noData) {
-		PropertyKeys propkeys = new PropertyKeys();
+   * Fills up a Vector with arrays containing names and values
+   * for each of the given Properties.
+   * e.g., {name,value0,value1,value2,...,valueN} for
+   * N different Properties Objects.
+   * @param props  the list of Properties derived from SeqFeatures.
+   * @param noData  the String value to use to represent cases where
+   *   there is no value of the property for a given key
+   */
+  private static List<String[]> getNameValues(Map<String, Object>[] props, String noData) {
+		List<String[]> result = new ArrayList<String[]>();
+		// collect all possible names from the given Properties
+		int num_props = props.length;
+		Map<String, String[]> rows_thus_far = new HashMap<String, String[]>();
+		for (int i = 0; i < num_props; i++) {
+			for (String name : props[i].keySet()) {
+				if (name != null && rows_thus_far.containsKey(name)) {
+						continue;
+				}		
 
-		List<String[]> name_values = propkeys.getNameValues(props, noData);
-		if (preferred_prop_order != null) {
-			name_values = reorderNames(name_values, preferred_prop_order);
-		}
-		String[][] rows = buildRows(name_values, props);
-		String[] col_headings = getColumnHeadings(name_values, props);
-
-		TableModel model = new DefaultTableModel(rows, col_headings) {
-
-			public static final long serialVersionUID = 1l;
-
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
+				String name_value[] = new String[num_props + 1];
+				name_value[0] = name;
+				for (int j = 0; j < props.length; j++) {
+					Object val = props[j].get(name);
+					val = (val == null ? noData : val);
+					// if val is a List for multivalued property, rely on toString() to convert to [item1, item2, etc.]
+					//   string representation
+					name_value[j + 1] = val.toString();
+				}
+				rows_thus_far.put(name, name_value);
 			}
-		};
-		table.setModel(model);
-		if (sortable) {
-			sorter = new TableRowSorter<TableModel>(model);
-			table.setRowSorter(sorter);
 		}
 
-		table.setEnabled(true);  // to allow selection, etc.
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		this.removeAll();
-		this.setLayout(new BorderLayout());
-		scroll_pane = new JScrollPane(table);
-		this.add(scroll_pane, BorderLayout.CENTER);
-		table.setCellSelectionEnabled(true);
-
-		validate();
-		for (int i = 0; i < table.getColumnCount(); i++) {
-			table.getColumnModel().getColumn(i).setMinWidth(100);
-			table.getColumnModel().getColumn(i).setPreferredWidth(150);
-		}
+		result.addAll(rows_thus_far.values());
+		
+		return result;
 	}
 }
 

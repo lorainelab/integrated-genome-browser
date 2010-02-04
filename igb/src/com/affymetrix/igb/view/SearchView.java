@@ -31,12 +31,10 @@ import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.das2.Das2VersionedSource;
-import com.affymetrix.genoviz.swing.IntegerTableCellRenderer;
 import java.awt.Dimension;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SymMapChangeListener {
@@ -250,8 +248,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		table.setRowSelectionAllowed(true);
 		table.setRowSorter(sorter);
 		table.setEnabled(true);
-		table.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer());
-		//table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
 	}
 
 	/** This is called when the user selects a row of the table. */
@@ -641,28 +637,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		});
 	}
 
-	/** A renderer that displays the value of SeqMapView */
-	private static class SeqSymmetryTableCellRenderer extends DefaultTableCellRenderer {
-		private static final long serialVersionUID = 0;
-		public SeqSymmetryTableCellRenderer() {
-			super();
-		}
-
-		@Override
-		protected void setValue(Object value) {
-			SeqSymmetry sym = (SeqSymmetry) value;
-			super.setValue(BioSeq.determineMethod(sym));
-		}
-	}
-
-	/** A Comparator that compares based on {@link BioSeq#determineMethod(SeqSymmetry)}. */
-	private static class SeqSymmetryMethodComparator implements Comparator<SeqSymmetry> {
-
-		public int compare(SeqSymmetry s1, SeqSymmetry s2) {
-			return BioSeq.determineMethod(s1).compareTo(BioSeq.determineMethod(s2));
-		}
-	}
-
 	private class SearchResultsTableModel extends AbstractTableModel {
 
 		private final String[] column_names = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
@@ -735,6 +709,12 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			return tableRows.size();
 		}
 
-
+		@Override
+		public Class<?> getColumnClass(int column) {
+			if(column == START_COLUMN || column == END_COLUMN) {
+				return Number.class;
+			}
+			return String.class;
+		}
 	}
 }

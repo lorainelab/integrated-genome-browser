@@ -54,11 +54,6 @@ public class GraphSym extends SimpleSymWithProps {
 	private int wBuf[];
 	private File bufFile;
 
-	// index for faster searching
-	//private int xIndex[];
-	//private float yIndex[];
-	//private int wIndex[];
-
 	private int xCoords[];	// too slow to do indexing of x right now
 
 	private  double xDelta = 0.0f;	// used by GraphGlyph
@@ -233,6 +228,25 @@ public class GraphSym extends SimpleSymWithProps {
 			tempCoords[i] = getGraphYCoord(i);
 		}
 		return tempCoords;
+	}
+
+	public float[] getVisibleYRange() {
+		float[] result = new float[2];
+		float min_ycoord = Float.POSITIVE_INFINITY;
+		float max_ycoord = Float.NEGATIVE_INFINITY;
+
+		for (int i = 0; i < pointCount; i++) {
+			float f = this.getGraphYCoord(i);
+			if (f < min_ycoord) {
+				min_ycoord = f;
+			}
+			if (f > max_ycoord) {
+				max_ycoord = f;
+			}
+		}
+		result[0] = min_ycoord;
+		result[1] = max_ycoord;
+		return result;
 	}
 
 	/**

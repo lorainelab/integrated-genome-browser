@@ -1,53 +1,23 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import java.util.*;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import java.util.*;
 import java.text.NumberFormat;
 
 public final class SymTableView extends PropertySheet implements SymSelectionListener {
-
-    static int testcount = 0;
-    List<SeqSymmetry> currentSyms = Collections.<SeqSymmetry>emptyList();
-
     public SymTableView() {
-        this(true, true);
-    }
-
-    public SymTableView(boolean useDefaultKeystrokes) {
-        this(useDefaultKeystrokes, true);
-    }
-
-    public SymTableView(boolean useDefaultKeystrokes, boolean isSymSelectionListener) {
-        super(useDefaultKeystrokes);
+        super(true);
         setPreferredSize(new java.awt.Dimension(100, 250));
         setMinimumSize(new java.awt.Dimension(100, 250));
-        if (isSymSelectionListener) {
-            GenometryModel.getGenometryModel().addSymSelectionListener(this);
-        }
+        GenometryModel.getGenometryModel().addSymSelectionListener(this);
     }
-
-    /*
-    public void setDefaultColumnOrder(List<String> columns) {
-        default_order = new ArrayList<String>(columns);
-    }*/
 
     public void symSelectionChanged(SymSelectionEvent evt) {
         Object src = evt.getSource();
@@ -55,26 +25,20 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
         if (src == this) {
             return;
         }
-        List<SeqSymmetry> selected_syms = evt.getSelectedSyms();
         SeqMapView mapView = null;
         if (src instanceof SeqMapView) {
             mapView = (SeqMapView) src;
         }
-        showSyms(selected_syms, mapView);
+        showSyms(evt.getSelectedSyms(), mapView);
     }
 
     private void showSyms(List<SeqSymmetry> selected_syms, SeqMapView seqMap) {
-        currentSyms = selected_syms;
-
-        int symCount = selected_syms.size();
-        List<Map<String, Object>> propvec = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < symCount; i++) {
-            SeqSymmetry sym = selected_syms.get(i);
+        List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+		for (SeqSymmetry sym : selected_syms) {
             Map<String, Object> props = determineProps(sym, seqMap);
-            testcount++;
-            propvec.add(props);
+            propList.add(props);
         }
-        Map[] prop_array = propvec.toArray(new Map[propvec.size()]);
+        Map[] prop_array = propList.toArray(new Map[propList.size()]);
 
         List<String> prop_order = determineOrder();
         this.showProperties(prop_array, prop_order, "");
@@ -120,6 +84,11 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
                 }
             }
         }
+		if (sym instanceof GraphSym) {
+			float[] range = ((GraphSym)sym).getVisibleYRange();
+			props.put("min score", range[0]);
+			props.put("max score", range[1]);
+		}
         return props;
     }
 
@@ -127,7 +96,7 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
     private static List<String> determineOrder() {
         List<String> prop_order;
 
-        prop_order = new ArrayList<String>(18);
+        prop_order = new ArrayList<String>(20);
         prop_order.add("gene name");
         prop_order.add("name");
         prop_order.add("id");
@@ -135,6 +104,8 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
         prop_order.add("start");
         prop_order.add("end");
         prop_order.add("length");
+		prop_order.add("min score");
+		prop_order.add("max score");
         prop_order.add("type");
         prop_order.add("same orientation");
         prop_order.add("query length");

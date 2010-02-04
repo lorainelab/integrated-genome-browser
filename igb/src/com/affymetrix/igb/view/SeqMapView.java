@@ -117,7 +117,7 @@ public class SeqMapView extends JPanel
 	protected boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
-	private final boolean show_slicendice = false;
+	private static final boolean show_slicendice = false;
 	private boolean slicing_in_effect = false;
 	private boolean hairline_is_labeled = true;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();

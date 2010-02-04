@@ -269,8 +269,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			String candidateName = candidateFeature.featureName;
 			// See if this can go under a previous node.  Be sure we're working with the same version/server.
 			if (candidateName.equals(featureLeft) && candidateFeature.gVersion.equals(feature.gVersion)) {
-				addOrFindNode(candidate, feature, featureRight);
-				return;
+				// Make sure we are really dealing with a non-leaf node.  This will
+				// fix bug caused by name collision when a folder and feature are
+				// named the same thing.
+				if (candidate.getAllowsChildren()) {
+					addOrFindNode(candidate, feature, featureRight);
+					return;
+					
+				}
 			}
 		}
 
@@ -637,6 +643,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		public boolean isChecked() {
 			return checked;
 		}
+
+
 	}
 }
 

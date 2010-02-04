@@ -128,7 +128,7 @@ public class IndexingUtils {
 			String shortenedPath = fullPath.replace(fullDirName, "");
 			return retVal + shortenedPath;			
 		} else {
-			return retVal + annot_name;
+			return retVal + annot_name + "_indexed";
 		}
 	}
 	static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {

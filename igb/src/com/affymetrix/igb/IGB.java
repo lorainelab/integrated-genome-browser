@@ -531,8 +531,7 @@ public final class IGB extends Application
 		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true));
 		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true));
 		plugins_info.add(new PluginInfo(RestrictionControlView.class.getName(), "Restriction Sites", true));
-
-//		plugins_info.add(new PluginInfo(UCSCView.class.getName(), "UCSC View", true));
+		plugins_info.add(new PluginInfo(UCSCView.class.getName(), "UCSC View", true));
 
 		plugins_info.addAll(getPluginsFromXmlPrefs(PrefsLoader.getIGBPrefs(main_args)));
 

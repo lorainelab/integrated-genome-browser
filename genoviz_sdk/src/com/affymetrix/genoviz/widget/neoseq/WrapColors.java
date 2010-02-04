@@ -18,7 +18,6 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import java.awt.geom.Point2D;
-import com.affymetrix.genoviz.datamodel.SequenceI;
 import java.awt.geom.Rectangle2D;
 
 public class WrapColors extends AnnotationGlyph {

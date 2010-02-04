@@ -731,10 +731,8 @@ public class DNAUtils implements Translatable  {
 	public static String reverseComplement(String s) {
 		if (s == null) { return null; }
 		StringBuffer buf = new StringBuffer(s.length());
-		int j=0;
 		for (int i=s.length()-1; i>=0; i--) {
 			buf.append(s.charAt(i));
-			j++;
 		}
 		complementBuffer(buf);
 		return buf.toString();

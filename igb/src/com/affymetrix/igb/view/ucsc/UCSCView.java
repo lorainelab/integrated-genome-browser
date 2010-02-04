@@ -206,22 +206,21 @@ public final class UCSCView extends JComponent {
 	    }
 
         
-        public Image getImage(int pixWidth){
-            String url = getUrlForView(pixWidth);
-			Image image = null;
+	public Image getImage(int pixWidth){
+		String url = getUrlForView(pixWidth);
+		if(url.startsWith("http")){
+			final UCSCLoader loader = new UCSCLoader();
+			url = loader.getImageUrl(url, userId);
 			if(url.startsWith("http")){
 				try {
-					final UCSCLoader loader = new UCSCLoader();
-					url = loader.getImageUrl(url, userId);
-					image = ImageIO.read(new URL(url));
-				} catch (IOException e) {
-					Logger.getLogger(UCSCView.class.getName()).log(Level.FINE, "url was : " + url, e); //many genomes do not exist on UCSC
+					return ImageIO.read(new URL(url));
 				}
+				catch (IOException e) {
+					Logger.getLogger(UCSCView.class.getName()).log(Level.FINE, "url was : " + url, e);
+				}	
 			}
-			else{
-				image = createErrorImage(url, pixWidth);
-			}
-			return image;
+		}
+		return createErrorImage(url, pixWidth);
         }
 
 		

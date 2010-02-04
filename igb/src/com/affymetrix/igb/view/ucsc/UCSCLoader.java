@@ -51,11 +51,11 @@ public class UCSCLoader {
                  return "http://genome.ucsc.edu/trash/hgt/" + fileName;
              }
         }
-	}catch(SocketException e){
-		Logger.getLogger(UCSCLoader.class.getName()).log(Level.SEVERE, null, e);
+    }catch(SocketException e){
+		Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);
 		return("Error: the UCSC Browser was not able to return the answer in the appropriate time");
     }catch (IOException e) {
-        Logger.getLogger(UCSCLoader.class.getName()).log(Level.SEVERE, null, e);    
+        Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);    
     }
     finally {
 		GeneralUtils.safeClose(input_stream);

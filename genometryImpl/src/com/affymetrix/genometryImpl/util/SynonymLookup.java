@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -43,6 +44,8 @@ public final class SynonymLookup {
 	/** Hash to map every synonym to all equivalent synonyms. */
 	private final LinkedHashMap<String, Set<String>> lookupHash = new LinkedHashMap<String, Set<String>>();
 
+	private final Set<String> preferredNames = new HashSet<String>();
+
 	/**
 	 * Returns the default instance of SynonymLookup.  This is used to share
 	 * a common SynonymLookup across the entire code.
@@ -60,6 +63,10 @@ public final class SynonymLookup {
 	 * @throws java.io.IOException if the input stream is null or an error occurs reading it.
 	 */
 	public void loadSynonyms(InputStream istream) throws IOException {
+		this.loadSynonyms(istream, false);
+	}
+
+	public void loadSynonyms(InputStream istream, boolean setPreferredNames) throws IOException {
 		InputStreamReader ireader = null;
 		BufferedReader br = null;
 		String line;
@@ -70,6 +77,9 @@ public final class SynonymLookup {
 			while ((line = br.readLine()) != null) {
 				String[] fields = LINE_REGEX.split(line);
 				if (fields.length >= 2) {
+					if (setPreferredNames) {
+						preferredNames.add(fields[0]);
+					}
 					addSynonyms(fields);
 				}
 			}
@@ -257,12 +267,7 @@ public final class SynonymLookup {
 	 * @return the preferred name of the synonym.
 	 */
 	public String getPreferredName(String synonym, boolean cs) {
-		Set<String> c = getSynonyms(synonym, cs);
-		if (!c.isEmpty()) {
-			/* Set does not allow us to retrieve an entry at an arbitray location */
-			return c.iterator().next();
-		}
-		return synonym;
+		return this.findMatchingSynonym(preferredNames, synonym, cs, false);
 	}
 
 	/**

@@ -43,7 +43,7 @@ public final class SpeciesLookup {
 	 * @throws IOException if one of the files can not be read in.
 	 */
 	public void load(InputStream genericSpecies) throws IOException {
-		this.speciesLookup.loadSynonyms(genericSpecies);
+		this.speciesLookup.loadSynonyms(genericSpecies, true);
 	}
 
 	/**

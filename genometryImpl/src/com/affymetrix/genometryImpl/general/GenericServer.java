@@ -4,6 +4,9 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.ImageIcon;
 
 /**
@@ -23,6 +26,7 @@ public final class GenericServer implements Comparable<GenericServer> {
 	private boolean friendlyIconAttempted = false;	// Don't keep on searching for friendlyIcon
 	public int loginAttempts = 0;
 	private ServerStatus serverStatus = ServerStatus.NotInitialized;	// Is this server initialized?
+	private final Set<GenericVersion>versions = new CopyOnWriteArraySet<GenericVersion>();	// list of versions associated with this server
 
 	/**
 	 * @param serverName
@@ -82,6 +86,26 @@ public final class GenericServer implements Comparable<GenericServer> {
 		return tempFriendlyURL;
 	}
 
+	public void addVersion(GenericVersion v) {
+		versions.add(v);
+	}
+
+	/**
+	 * Return versions, but don't allow them to be modified.
+	 * @return
+	 */
+	public Set<GenericVersion> getVersions() {
+		return Collections.<GenericVersion>unmodifiableSet(versions);
+	}
+
+	public void setServerStatus(ServerStatus serverStatus) {
+		this.serverStatus = serverStatus;
+	}
+
+	public ServerStatus getServerStatus() {
+		return this.serverStatus;
+	}
+
 	@Override
 	public String toString() {
 		return serverName;
@@ -105,11 +129,4 @@ public final class GenericServer implements Comparable<GenericServer> {
 		return this.serverType.compareTo(gServer.serverType);		
 	}
 
-	public void setServerStatus(ServerStatus serverStatus) {
-		this.serverStatus = serverStatus;
-	}
-
-	public ServerStatus getServerStatus() {
-		return this.serverStatus;
-	}
 }

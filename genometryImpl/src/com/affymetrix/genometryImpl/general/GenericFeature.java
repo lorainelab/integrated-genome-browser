@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 /**
  * A class that's useful for visualizing a generic feature.
  * A feature is unique to a genome version/species/server.
+ * Thus, there is a many-to-one map to GenericVersion.
  * (Even if the feature names and version names match, but the servers don't,
  * we can't guarantee that they would contain the same information.)
  */

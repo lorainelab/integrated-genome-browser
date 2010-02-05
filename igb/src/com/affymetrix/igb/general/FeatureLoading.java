@@ -62,7 +62,7 @@ public final class FeatureLoading {
 	 * @param gVersion
 	 */
 	private static synchronized void loadFeatureNames(final GenericVersion gVersion) {
-		if (!gVersion.features.isEmpty()) {
+		if (!gVersion.getFeatures().isEmpty()) {
 			if (DEBUG) {
 				System.out.println("Feature names are already loaded.");
 			}
@@ -82,7 +82,7 @@ public final class FeatureLoading {
 					continue;
 				}
 				Map<String, String> type_props = type.getProps();
-				gVersion.features.add(new GenericFeature(type_name, type_props, gVersion));
+				gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion));
 			}
 			return;
 		}
@@ -98,7 +98,7 @@ public final class FeatureLoading {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				gVersion.features.add(new GenericFeature(type_name, null, gVersion));
+				gVersion.addFeature(new GenericFeature(type_name, null, gVersion));
 			}
 			return;
 		}
@@ -122,7 +122,7 @@ public final class FeatureLoading {
 						System.out.println("Adding feature " + type_name);
 					}
 					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
-					gVersion.features.add(new GenericFeature(type_name, type_props, gVersion));
+					gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

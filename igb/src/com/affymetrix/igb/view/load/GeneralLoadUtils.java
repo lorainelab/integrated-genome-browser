@@ -279,10 +279,10 @@ public final class GeneralLoadUtils {
 			String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
 			String versionName,speciesName;
 			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
-			List<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getVersions();
+			Set<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getVersions();
 			if (!gVersions.isEmpty()) {
 				// We've found a corresponding version object that was initialized earlier.
-				versionName = gVersions.get(0).versionName;
+				versionName = gVersions.iterator().next().versionName;
 				speciesName = versionName2species.get(versionName);
 			} else {
 				// Unknown genome.  We'll add the name as if it's a species and a version.
@@ -373,7 +373,7 @@ public final class GeneralLoadUtils {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
 		for (GenericVersion gVersion : versionName2versionSet.get(versionName)) {
-			featureList.addAll(gVersion.features);
+			featureList.addAll(gVersion.getFeatures());
 		}
 		return featureList;
 	}
@@ -440,7 +440,7 @@ public final class GeneralLoadUtils {
 
 		for (GenericVersion gVersion : gVersions) {
 			// Initialize all the servers with unloaded status of the feature/chromosome combinations.
-			for (GenericFeature gFeature : gVersion.features) {
+			for (GenericFeature gFeature : gVersion.getFeatures()) {
 				for (BioSeq sabq : group.getSeqList()) {
 					// Add chromosome sequences to feature
 					if (!gFeature.LoadStatusMap.containsKey(sabq)) {

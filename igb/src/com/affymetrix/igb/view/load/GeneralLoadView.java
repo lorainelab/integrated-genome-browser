@@ -51,6 +51,7 @@ import com.affymetrix.igb.view.SeqMapView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JSplitPane;
@@ -356,11 +357,11 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		List<GenericVersion> gVersions = group.getVersions();
+		Set<GenericVersion> gVersions = group.getVersions();
 		if (gVersions.isEmpty()) {
 			return;
 		}
-		String versionName = gVersions.get(0).versionName;
+		String versionName = gVersions.iterator().next().versionName;
 		if (versionName == null || GeneralLoadUtils.versionName2species.get(versionName) == null) {
 			return;
 		}
@@ -614,12 +615,12 @@ public final class GeneralLoadView extends JComponent
 		}
 		curGroup = group;
 
-		List<GenericVersion> gVersions = group.getVersions();
+		Set<GenericVersion> gVersions = group.getVersions();
 		if (gVersions.isEmpty()) {
 			createUnknownVersion(group);
 			return;
 		}
-		String versionName = gVersions.get(0).versionName;
+		String versionName = gVersions.iterator().next().versionName;
 		if (versionName == null) {
 			System.out.println("ERROR -- couldn't find version");
 			return;
@@ -674,7 +675,7 @@ public final class GeneralLoadView extends JComponent
 			}
 			return;
 		}
-		List<GenericVersion> gVersions = group.getVersions();
+		Set<GenericVersion> gVersions = group.getVersions();
 		if (gVersions.isEmpty()) {
 			createUnknownVersion(group);
 			return;
@@ -686,7 +687,7 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		if (!(gVersions.get(0).versionName.equals(versionName))) {
+		if (!(gVersions.iterator().next().versionName.equals(versionName))) {
 			System.out.println("ERROR - version doesn't match");
 			return;
 		}
@@ -869,8 +870,8 @@ public final class GeneralLoadView extends JComponent
 			BioSeq curSeq = gmodel.getSelectedSeq();
 			enabled = curSeq.getSeqGroup() != null;	// Don't allow a null sequence group either.
 			if (enabled) {		// Don't allow buttons for an "unknown" versionName
-				List<GenericVersion> gVersions = curSeq.getSeqGroup().getVersions();
-				enabled = (!gVersions.isEmpty() && gVersions.get(0).gServer.serverType != ServerType.Unknown);
+				Set<GenericVersion> gVersions = curSeq.getSeqGroup().getVersions();
+				enabled = (!gVersions.isEmpty() && gVersions.iterator().next().gServer.serverType != ServerType.Unknown);
 			}
 		}
 

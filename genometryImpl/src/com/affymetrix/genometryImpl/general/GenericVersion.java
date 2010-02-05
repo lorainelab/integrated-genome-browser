@@ -1,13 +1,14 @@
 package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * A class that's useful for visualizing a generic version.
  * A generic version is a genome version found on a specific server.
- * Thus, GenericVersion has a many-to-one map to AnnotatedSeqGroup.
+ * Thus, GenericVersion has a many-to-one map to AnnotatedSeqGroup, and a many-to-one map to GenericServer.
  *
  * @author GenericVersion.java 4632 2009-11-04 15:19:16Z jnicol $
  */
@@ -19,20 +20,32 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 	public final String versionID;
 	public final GenericServer gServer; // generic Server object.
 	public final Object versionSourceObj;     // Das2VersionedSource, DasVersionedSource, ..., QuickLoad?
-	public final List<GenericFeature> features;
+	private final Set<GenericFeature> features = new CopyOnWriteArraySet<GenericFeature>();	// features associated with this version
 
 	/**
 	 * @param versionID 
 	 * @param versionName
-	 * @param gServer
+	 * @param gServer -- not null
 	 * @param versionSourceObj
 	 */
 	public GenericVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj) {
 		this.versionID = versionID;
 		this.versionName = versionName;
 		this.gServer = gServer;
+		gServer.addVersion(this);
 		this.versionSourceObj = versionSourceObj;
-		this.features = new ArrayList<GenericFeature>();
+	}
+
+	public void addFeature(GenericFeature f) {
+		features.add(f);
+	}
+
+	/**
+	 * Return versions, but don't allow them to be modified.
+	 * @return
+	 */
+	public Set<GenericFeature> getFeatures() {
+		return Collections.<GenericFeature>unmodifiableSet(features);
 	}
 
 	@Override

@@ -1,15 +1,3 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
 package com.affymetrix.genometryImpl;
 
 import java.util.*;
@@ -33,7 +21,7 @@ public class AnnotatedSeqGroup {
 	private String organism;
 	private String description;
 	private String source; //as in Das2 server name
-	final private List<GenericVersion> gVersions = new ArrayList<GenericVersion>();
+	final private Set<GenericVersion> gVersions = new CopyOnWriteArraySet<GenericVersion>();
 	private boolean use_synonyms;
 	final private Map<String, BioSeq> id2seq;
 	private ArrayList<BioSeq> seqlist; //lazy copy of id2seq.values()
@@ -86,13 +74,11 @@ public class AnnotatedSeqGroup {
 	}
 
 	final public void addVersion(GenericVersion gVersion) {
-		if (!this.gVersions.contains(gVersion)) {
-			this.gVersions.add(gVersion);
-		}
+		this.gVersions.add(gVersion);
 	}
 
-	final public List<GenericVersion> getVersions() {
-		return this.gVersions;
+	final public Set<GenericVersion> getVersions() {
+		return Collections.<GenericVersion>unmodifiableSet(gVersions);
 	}
 	
 

@@ -198,13 +198,7 @@ public final class GeneralLoadUtils {
 			if (DEBUG) {
 				System.out.println("source, version:" + source.getName() + "..." + source.getVersion() + "..." + source.getDescription() + "..." + source.getInfoUrl() + "..." + source.getID());
 			}
-			/* TODO: speciesName needs its own SynonymLookup or equivalent
-			 * using normalizeVersion allows us to use previously known names
-			 */
-			/* String speciesName = source.getDescription(); */
 			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getID());
-			/* TODO: GenericVersion should be able to store source's name and ID */
-			/* String versionName = source.getName(); */
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
 			String versionID = source.getID();
 			GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, source);

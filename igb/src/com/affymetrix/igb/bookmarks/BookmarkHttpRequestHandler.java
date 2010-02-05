@@ -20,16 +20,15 @@ import java.util.*;
 
 class BookmarkHttpRequestHandler implements Runnable {
 
-  final static String CRLF = "\r\n";
-  Socket socket;
-  Application app;
+  private final Socket socket;
+  private final Application app;
+  private static final String NO_CONTENT = "HTTP/1.x 204 No Content\r\n\r\n";
 
   public BookmarkHttpRequestHandler(Application app, Socket socket) {
     this.socket = socket;
     this.app = app;
   }
 
-  public static final String NO_CONTENT = "HTTP/1.x 204 No Content\r\n\r\n";
 
   public void run() {
     try {
@@ -59,24 +58,7 @@ class BookmarkHttpRequestHandler implements Runnable {
 
 
       if (command != null) {
-
-        Application.logDebug("Command = " + command);
-
-        // at this point, the command will look something like this:
-        // '/IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310'
-
-        //TODO: We could check to see that the command is "IGBControl" or "UnibrowControl",
-        // but since that is the only command we ever expect, we can just assume for now.
-        String params = null;
-        int index = command.indexOf('?');
-        if (index >= 0 && index < command.length()) {
-          params = command.substring(index+1);
-          Map paramMap = new HashMap();
-
-          Bookmark.parseParametersFromQuery(paramMap, params, true);
-          UnibrowControlServlet.goToBookmark(app, paramMap);
-        }
-        
+		parseAndGoToBookmark(command);
         output.write(NO_CONTENT.getBytes());
       }
     }
@@ -89,4 +71,21 @@ class BookmarkHttpRequestHandler implements Runnable {
       // do nothing
     }
   }
+
+  @SuppressWarnings("unchecked")
+	private void parseAndGoToBookmark(String command) throws NumberFormatException {
+		Application.logDebug("Command = " + command);
+		// at this point, the command will look something like this:
+		// '/IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310'
+		//TODO: We could check to see that the command is "IGBControl" or "UnibrowControl",
+		// but since that is the only command we ever expect, we can just assume for now.
+		String params = null;
+		int index = command.indexOf('?');
+		if (index >= 0 && index < command.length()) {
+			params = command.substring(index + 1);
+			Map paramMap = new HashMap();
+			Bookmark.parseParametersFromQuery(paramMap, params, true);
+			UnibrowControlServlet.goToBookmark(app, paramMap);
+		}
+	}
 }

@@ -127,7 +127,9 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 		final JButton editAuthButton = createButton("Authentication\u2026", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Object url = sourcesTable.getModel().getValueAt(sourcesTable.getSelectedRow(), SourceColumn.URL.ordinal());
+				Object url = sourcesTable.getModel().getValueAt(
+						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+						SourceColumn.URL.ordinal());
 				try {
 					URL u = new URL((String) url);
 					IGBAuthenticator.resetAuth((String) url);

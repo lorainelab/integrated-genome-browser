@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -31,37 +29,19 @@ public final class BooleanTableCellRenderer extends DefaultTableCellRenderer {
 		this.checkbox.setHorizontalAlignment(CENTER);
 		this.checkbox.setVerticalAlignment(CENTER);
 		this.checkbox.setOpaque(true);
-		this.checkbox.setBorder(getCellBorder(false, false));
 		this.checkbox.setBorderPainted(true);
-	}
-
-	private static Border getCellBorder(boolean isSelected, boolean hasFocus) {
-		Border border = null;
-
-		if (hasFocus) {
-			if (isSelected) {
-				border = UIManager.getBorder("Table.focusSelectedCellHighlightBorder");
-			}
-			if (border == null) {
-				border = UIManager.getBorder("Table.focusCellHighlightBorder");
-			}
-		} else {
-			border = UIManager.getBorder("Table.cellNoFocusBorder");
-		}
-
-		return border == null ? noFocusBorder : border;
 	}
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
-		Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
 		this.checkbox.setEnabled(table.isCellEditable(row, column));
 		this.checkbox.setSelected((value != null && (Boolean) value));
-		this.checkbox.setForeground(c.getForeground());
-		this.checkbox.setBackground(new Color(c.getBackground().getRGB()));
-		this.checkbox.setBorder(getCellBorder(isSelected, hasFocus));
+		this.checkbox.setForeground(this.getForeground());
+		this.checkbox.setBackground(new Color(this.getBackground().getRGB()));
+		this.checkbox.setBorder(this.getBorder());
 
 		return checkbox;
 	}

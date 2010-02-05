@@ -38,6 +38,7 @@ import java.net.Authenticator.RequestorType;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -57,6 +58,7 @@ import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
 import static javax.swing.JOptionPane.OK_OPTION;
 import static javax.swing.JOptionPane.PLAIN_MESSAGE;
+import static javax.swing.RowSorter.SortKey;
 
 /**
  *
@@ -273,9 +275,11 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 	}
 
 	private static JTable createSourcesTable(SourceTableModel sourceTableModel) {
-		//sourceTableModel = new SourceTableModel();
 		final JTable table = new JTable(sourceTableModel);
 
+		table.setFillsViewportHeight(true);
+		table.setAutoCreateRowSorter(true);
+		table.getRowSorter().setSortKeys(SourceTableModel.SORT_KEYS);
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 		table.setDefaultRenderer(String.class,  new DefaultTableCellRenderer() {
 			private static final long serialVersionUID = -5433598077871623855l;

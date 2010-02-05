@@ -1,12 +1,16 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.igb.general.ServerList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -21,6 +25,16 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	private final List<GenericServer> servers = new ArrayList<GenericServer>();
 
 	public static enum SourceColumn { Name, Type, URL, Enabled };
+
+	public static final List<SortKey> SORT_KEYS;
+
+	static {
+		List<SortKey> sortKeys = new ArrayList<SortKey>(2);
+		sortKeys.add(new SortKey(SourceColumn.Name.ordinal(), SortOrder.ASCENDING));
+		sortKeys.add(new SortKey(SourceColumn.Type.ordinal(), SortOrder.ASCENDING));
+
+		SORT_KEYS = Collections.<SortKey>unmodifiableList(sortKeys);
+	}
 
 	public SourceTableModel() {
 		init();
@@ -41,6 +55,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		switch (SourceColumn.valueOf(this.getColumnName(c))) {
 			case Enabled:
 				return Boolean.class;
+			case Type:
+				return LoadUtils.ServerType.class;
 			default:
 				return String.class;
 		}

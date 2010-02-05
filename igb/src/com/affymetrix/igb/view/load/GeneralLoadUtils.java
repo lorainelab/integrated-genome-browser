@@ -80,9 +80,6 @@ public final class GeneralLoadUtils {
 	
 	private final static SeqMapView gviewer = Application.getSingleton().getMapView();
 
-	private static final Map<String, Boolean> version2init =
-			new HashMap<String, Boolean>();
-
 	// versions associated with a given genome.
 	static final Map<String, List<GenericVersion>> species2genericVersionList =
 			new LinkedHashMap<String, List<GenericVersion>>();	// the list of versions associated with the species
@@ -121,10 +118,6 @@ public final class GeneralLoadUtils {
 		if (gServer == null || !discoverServer(gServer)) {
 			return null;
 		}
-
-		// We just added a server, so reset the init flag on the versions
-		// so that the types requests are reissued.
-		version2init.clear();
 
 		return gServer;
 	}
@@ -392,84 +385,37 @@ public final class GeneralLoadUtils {
 		if (versionName == null) {
 			return;
 		}
-		Boolean init = version2init.get(versionName);
-		if (init == null || !init.booleanValue()) {
-			if (DEBUG) {
-				System.out.println("initializing feature names for version: " + versionName);
-			}
-			FeatureLoading.loadFeatureNames(gmodel.getSeqGroup(versionName).getVersions());
-			loadSeqInfo(versionName);
-			version2init.put(versionName, Boolean.TRUE);
-		}
-	}
+		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
+		for (GenericVersion gVersion : group.getVersions()) {
+			if (!gVersion.isInitialized()) {
+				FeatureLoading.loadFeatureNames(gVersion);
+				if (group.getSeqCount() == 0) {
+					loadChromInfo(gVersion);
+					addGenomeVirtualSeq(group, default_genome_min, DEBUG_VIRTUAL_GENOME);
 
-	
-
-	/**
-	 * Load the sequence info for the given genome version.
-	 * If there's more than one server with this genome version, just pick the first one.
-	 * @param versionName
-	 */
-	private static void loadSeqInfo(final String versionName) {
-		if (DEBUG) {
-			System.out.println("loading seqinfo : Version " + versionName);
-		}
-		Set<GenericVersion> gVersionSet = gmodel.getSeqGroup(versionName).getVersions();
-		List<GenericVersion> gVersions = new ArrayList<GenericVersion>(gVersionSet);
-		
-		AnnotatedSeqGroup group = loadChromInfo(gVersions);
-		if (group == null) {
-			return;
-		}
-		if (DEBUG) {
-			System.out.println("Group has :" + group.getSeqCount() + " chromosomes");
-		}
-
-		addGenomeVirtualSeq(group, default_genome_min, DEBUG_VIRTUAL_GENOME);
-
-		for (GenericVersion gVersion : gVersions) {
-			// Initialize all the servers with unloaded status of the feature/chromosome combinations.
-			for (GenericFeature gFeature : gVersion.getFeatures()) {
-				for (BioSeq sabq : group.getSeqList()) {
-					// Add chromosome sequences to feature
-					if (!gFeature.LoadStatusMap.containsKey(sabq)) {
-						gFeature.LoadStatusMap.put(sabq, LoadStatus.UNLOADED);
+					// Initialize all the servers with unloaded status of the feature/chromosome combinations.
+					for (GenericFeature gFeature : gVersion.getFeatures()) {
+						for (BioSeq sabq : group.getSeqList()) {
+							// Add chromosome sequences to feature
+							if (!gFeature.LoadStatusMap.containsKey(sabq)) {
+								gFeature.LoadStatusMap.put(sabq, LoadStatus.UNLOADED);
+							}
+						}
 					}
 				}
+				gVersion.setInitialized();
 			}
 		}
 	}
 
 
-	/**
-	 * Load the sequence info for the given genome version.
-	 * Try all versions listed until one succeeds.
-	 * @param gVersions
-	 * @return sequence info for the given genome version
-	 */
-	private static AnnotatedSeqGroup loadChromInfo(List<GenericVersion> gVersions) {
-		for (GenericVersion gVersion : gVersions) {
-			if (DEBUG) {
-				System.out.println("loading list of chromosomes for genome version: " + gVersion.versionName + " from server " + gVersion.gServer);
-			}
-			AnnotatedSeqGroup group = loadChromInfo(gVersion);
-			if (group != null) {
-				return group;
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * Load the sequence info for the given genome version.
 	 */
 	private static AnnotatedSeqGroup loadChromInfo(GenericVersion gVersion) {
-		AnnotatedSeqGroup group = null;
+		AnnotatedSeqGroup group = gmodel.addSeqGroup(gVersion.versionName);
 
-		// discover genomes from server
-		if (gVersion.gServer == null) {
-			return null;
-		}
 		if (DEBUG) {
 			System.out.println("Discovering " + gVersion.gServer.serverType + " chromosomes");
 		}
@@ -478,33 +424,20 @@ public final class GeneralLoadUtils {
 			// Discover chromosomes from DAS/2
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 
-			group = version.getGenome();  // adds genome to singleton genometry model if not already present
+			version.getGenome();  // adds genome to singleton genometry model if not already present
 			// Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
 			//    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
 			version.getSegments();
-			return group;
 		}
 		if (gVersion.gServer.serverType == ServerType.DAS) {
 			// Discover chromosomes from DAS
 			DasSource version = (DasSource) gVersion.versionSourceObj;
 
-			group = version.getGenome();
+			version.getGenome();
 			version.getEntryPoints();
-
-			return group;
-		}
-		if (gVersion.gServer.serverType == ServerType.QuickLoad) {
-			// Discover chromosomes from QuickLoad
-			group = gmodel.addSeqGroup(gVersion.versionName);
-			return group;
-		}
-		if (gVersion.gServer.serverType == ServerType.Unknown) {
-			group = gmodel.addSeqGroup(gVersion.versionName);
-			return group;
 		}
 
-		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
-		return null;
+		return group;
 	}
 
 	private static void addGenomeVirtualSeq(AnnotatedSeqGroup group, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {

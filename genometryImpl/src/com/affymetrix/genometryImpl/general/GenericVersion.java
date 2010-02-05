@@ -21,6 +21,7 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 	public final GenericServer gServer; // generic Server object.
 	public final Object versionSourceObj;     // Das2VersionedSource, DasVersionedSource, ..., QuickLoad?
 	private final Set<GenericFeature> features = new CopyOnWriteArraySet<GenericFeature>();	// features associated with this version
+	private boolean isInitialized = false;	// is this version initialized?
 
 	/**
 	 * @param versionID 
@@ -38,6 +39,13 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 
 	public void addFeature(GenericFeature f) {
 		features.add(f);
+	}
+
+	public void setInitialized() {
+		this.isInitialized = true;
+	}
+	public boolean isInitialized() {
+		return this.isInitialized;
 	}
 
 	/**

@@ -43,25 +43,12 @@ public final class FeatureLoading {
 	private static final boolean DEBUG = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-	/**
-	 * Load annotation names for the given version name (across multiple servers).
-	 * The internal call is threaded to keep from locking up the GUI.
-	 * @param versionSet
-	 * @return true or false
-	 */
-	public static boolean loadFeatureNames(Set<GenericVersion> versionSet) {
-		for (final GenericVersion gVersion : versionSet) {
-			loadFeatureNames(gVersion);
-		}
-		return true;
-	}
-
 
 	/**
 	 * Load the annotations for the given version.  This is specific to one server.
 	 * @param gVersion
 	 */
-	private static synchronized void loadFeatureNames(final GenericVersion gVersion) {
+	public static synchronized void loadFeatureNames(final GenericVersion gVersion) {
 		if (!gVersion.getFeatures().isEmpty()) {
 			if (DEBUG) {
 				System.out.println("Feature names are already loaded.");

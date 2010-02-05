@@ -37,6 +37,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
  *  A panel for choosing tier properties for the {@link SeqMapView}.
  */
 public final class TierPrefsView extends IPrefEditorComponent implements ListSelectionListener, WindowListener  {
+	public static final long serialVersionUID = 1l;
 
   private final JTable table = new JTable();
 
@@ -192,12 +193,13 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     refreshSeqMapView();
   }
 
-  public void setStyleList(List styles) {
+  public void setStyleList(List<AnnotStyle> styles) {
     model.setStyles(styles);
     model.fireTableDataChanged();
   }
 
   /** Called when the user selects a row of the table.
+   * @param evt
    */
   public void valueChanged(ListSelectionEvent evt) {
     if (evt.getSource()==lsm && ! evt.getValueIsAdjusting()) {
@@ -226,9 +228,9 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
       if (smv != null) {  
 	List<TierGlyph> tiers = smv.getSeqMap().getTiers();
 	LinkedHashMap<AnnotStyle,AnnotStyle> stylemap = new LinkedHashMap<AnnotStyle,AnnotStyle>();
-	Iterator titer = tiers.iterator();
+	Iterator<TierGlyph> titer = tiers.iterator();
 	while (titer.hasNext()) {
-	  TierGlyph tier = (TierGlyph)titer.next();
+	  TierGlyph tier = titer.next();
 	  IAnnotStyle style = tier.getAnnotStyle();
 	  if ((style instanceof AnnotStyle) &&
 	      (style.getShow()) && 
@@ -255,9 +257,9 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 
   // Copy the background color from the default style to all loaded styles.
   void copyDefaultBG() {
-    Iterator iter = AnnotStyle.getAllLoadedInstances().iterator();
+    Iterator<AnnotStyle> iter = AnnotStyle.getAllLoadedInstances().iterator();
     while (iter.hasNext()) {
-      AnnotStyle as = (AnnotStyle) iter.next();
+      AnnotStyle as = iter.next();
       as.setBackground(default_annot_style.getBackground());
     }
     table.repaint(); // table needs to redraw itself due to changed values
@@ -300,23 +302,25 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
   }
 
   class TierPrefsTableModel extends AbstractTableModel {
+	  public static final long serialVersionUID = 1l;
 
-    List tier_styles;
+    List<AnnotStyle> tier_styles;
 
     TierPrefsTableModel() {
-      this.tier_styles = Collections.EMPTY_LIST;
+      this.tier_styles = Collections.<AnnotStyle>emptyList();
     }
 
-    public void setStyles(List tier_styles) {
+    public void setStyles(List<AnnotStyle> tier_styles) {
       this.tier_styles = tier_styles;
     }
 
-    public List getStyles() {
+    public List<AnnotStyle> getStyles() {
       return this.tier_styles;
     }
 
     // Allow editing most fields in normal rows, but don't allow editing some
     // fields in the "default" style row.
+		@Override
     public boolean isCellEditable(int row, int column) {
       if (tier_styles.get(row) == default_annot_style) {
         if (column == COL_COLOR || column == COL_BACKGROUND || column == COL_SEPARATE
@@ -331,7 +335,8 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
       }
     }
 
-    public Class getColumnClass(int c) {
+		@Override
+    public Class<?> getColumnClass(int c) {
       Object val = getValueAt(0, c);
       if (val == null) {
         return Object.class;
@@ -344,6 +349,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
       return col_headings.length;
     }
 
+		@Override
     public String getColumnName(int columnIndex) {
       return col_headings[columnIndex];
     }
@@ -353,7 +359,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     }
 
     public Object getValueAt(int row, int column) {
-      AnnotStyle style = (AnnotStyle) tier_styles.get(row);
+      AnnotStyle style = tier_styles.get(row);
       switch (column) {
         case COL_COLOR:
           return style.getColor();
@@ -386,9 +392,10 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
       }
     }
 
+		@Override
     public void setValueAt(Object value, int row, int col) {
       try {
-      AnnotStyle style = (AnnotStyle) tier_styles.get(row);
+      AnnotStyle style = tier_styles.get(row);
       switch (col) {
         case COL_COLOR:
           style.setColor((Color) value);

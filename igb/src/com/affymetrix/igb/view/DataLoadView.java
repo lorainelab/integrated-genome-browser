@@ -77,6 +77,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 		seqtable = new JTable();
 		seqtable.setToolTipText(CHOOSESEQ);
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		seqtable.setFillsViewportHeight(true);
 
 		SeqGroupTableModel mod = new SeqGroupTableModel(null);
 		seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).

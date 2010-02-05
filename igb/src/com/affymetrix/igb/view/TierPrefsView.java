@@ -184,7 +184,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     table.setRowSelectionAllowed(true);
     table.setEnabled( true ); // doesn't do anything ?
 
-    table.setDefaultRenderer(Color.class, new ColorTableCellRenderer(true));
+    table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
     table.setDefaultEditor(Color.class, new ColorTableCellEditor());
     table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 

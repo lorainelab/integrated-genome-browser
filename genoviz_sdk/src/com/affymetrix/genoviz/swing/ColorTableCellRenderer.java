@@ -1,76 +1,54 @@
-/* 
- * Derived from ColorRenderer in Sun's Tutorial "How to Use Tables".
- *
- * http://java.sun.com/docs/books/tutorial/uiswing/components/table.html#data
- */
 package com.affymetrix.genoviz.swing;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.border.*;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Insets;
+import javax.swing.JTable;
+import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 
-public final class ColorTableCellRenderer extends JLabel implements TableCellRenderer {
-    private Border unselectedBorder = null;
-    private Border selectedBorder = null;
+/**
+ *
+ * @author sgblanch
+ * @version $Id$
+ */
+public class ColorTableCellRenderer extends DefaultTableCellRenderer {
+	public static final long serialVersionUID = 1l;
 
-    private boolean isBordered = true;
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object value,
+			boolean isSelected, boolean hasFocus, int row, int column) {
+		this.setBackground(null);
+		super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-    private static final Border emptyBorder = new EmptyBorder(1, 1, 1, 1);
+		this.setBorder(new StackedBorder(this.getInsets(), this.getBorder(), this.getBackground()));
+		this.setBackground((Color) value);
 
-    public ColorTableCellRenderer(boolean isBordered) {
-        this.isBordered = isBordered;
-        setOpaque(true); //MUST do this for background to show up.
-    }
+		return this;
+	}
 
-    public Component getTableCellRendererComponent(
-                            JTable table, Object color,
-                            boolean isSelected, boolean hasFocus,
-                            int row, int column) {
-        Color newColor = (Color)color;
-        setBackground(newColor);
-                
-        if (hasFocus) {
+	@Override
+	public void setValue(Object value) { }
 
-          Border focusBorder = UIManager.getBorder("Table.focusCellHighlightBorder");
-          if (isBordered) {
-            // Make a compound border from the focus border and our own border
-            
-            Color c;
-            if (table.isCellEditable(row, column)) {
-              c = UIManager.getColor("Table.focusCellBackground");
-            } else {
-              c = table.getSelectionBackground();
-            }
-            Border insideBorder = BorderFactory.createMatteBorder(1,4,1,4, c);
+	/**
+	 * Class to stack borders.  Adds an opaque MatteBorder behind another
+	 * (tranparent) border.
+	 */
+	private static class StackedBorder extends MatteBorder {
+		public static final long serialVersionUID = 1l;
+		private Border border;
 
-            focusBorder = BorderFactory.createCompoundBorder(focusBorder, insideBorder);
-          }
+		StackedBorder(Insets borderInsets, Border b, Color color) {
+			super(borderInsets, color);
+			this.border = b;
+		}
 
-          setBorder(focusBorder);
-        }
-        else if (isBordered) {
-            if (isSelected) {
-                if (selectedBorder == null) {
-                    selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
-                                              table.getSelectionBackground());
-                }
-                setBorder(selectedBorder);
-            } else {
-                if (unselectedBorder == null) {
-                    unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
-                                              table.getBackground());
-                }
-                setBorder(unselectedBorder);
-            }
-        } else {
-          setBorder(emptyBorder);
-        }
-        
-        return this;
-    }
+		@Override
+		public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+			super.paintBorder(c, g, x, y, width, height);
+			border.paintBorder(c, g, x, y, width, height);
+		}
+	}
 }

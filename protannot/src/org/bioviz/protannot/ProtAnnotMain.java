@@ -639,7 +639,7 @@ final class ProtAnnotMain implements WindowListener {
         JTable table = new JTable(model);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setLayout(new BorderLayout());
-        table.setDefaultRenderer(Color.class, new ColorTableCellRenderer(true));
+        table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
         table.setDefaultEditor(Color.class, new ColorTableCellEditor());
         table.setFillsViewportHeight(true);
 

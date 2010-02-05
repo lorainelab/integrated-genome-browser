@@ -6,13 +6,14 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.BioSeq;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 
 public class SeqUtilsTest {
@@ -44,10 +45,11 @@ public class SeqUtilsTest {
 
 		int depth = SeqUtils.getDepth(symA);
 		assertEquals(1, depth);
-
+     
 		result = SeqUtils.union(symA, symB, seq);
 		depth = SeqUtils.getDepth(result);
 		assertEquals(2, depth);
+		
 	}
 
 	@Test
@@ -358,4 +360,65 @@ public class SeqUtilsTest {
 			assertEquals(575, initialSym.getChild(9).getSpan(view_seq).getEnd());
 
 		}
+	@Test
+	public void testExclusive(){
+		SeqSymmetry symA,symB,result;
+		SeqSpan result_span;
+		BioSeq seq = new BioSeq("seq", "version", 1000);
+		symA = new SingletonSeqSymmetry(300, 800, seq);
+		symB = new SingletonSeqSymmetry(700, 900, seq);
+		result = SeqUtils.exclusive(symA, symB, seq);
+		result_span = result.getSpan(seq);
+		assertEquals(300, result_span.getStart());
+		assertEquals(700, result_span.getEnd());
+		assertEquals(400,result_span.getLength());
+		
+		
+	}
+
+
+	@Test
+	public void testTransformSpan(){
+		
+		BioSeq annot_seq = new BioSeq("annot", "version",1000000);
+		SimpleSeqSpan srcSpan = new SimpleSeqSpan(500,800,annot_seq);
+		MutableSeqSpan dstSpan = new SimpleMutableSeqSpan(300,900,annot_seq);
+        SeqSymmetry sym = new SingletonSeqSymmetry(300, 800, annot_seq);
+		boolean result = SeqUtils.transformSpan(srcSpan, dstSpan,annot_seq, sym);
+		assertEquals(true, result);
+        SeqSymmetry sym2 = new SingletonSeqSymmetry(1000, 2000, annot_seq);
+		boolean result2 = SeqUtils.transformSpan(srcSpan, dstSpan,annot_seq, sym2);
+		assertEquals(false, result2);
+		//Test for same direction spans
+		double scale = dstSpan.getLengthDouble() / srcSpan.getLengthDouble();
+		assertEquals(1.0d,scale,0.000000);
+		SeqSpan span1= sym.getSpan(srcSpan.getBioSeq());
+		assertEquals(300,span1.getStart());
+        assertEquals(800,span1.getEnd());
+		SeqSpan span2 =sym.getSpan(annot_seq);
+		assertEquals(300,span2.getStart());
+		assertEquals(800,span2.getEnd());
+		//Test the vstart and vend for forward strand spans
+        double vstart = (scale * (srcSpan.getStartDouble() - span1.getStartDouble())) + span2.getStartDouble();
+		double vend = (scale * (srcSpan.getEndDouble() - span1.getEndDouble())) + span2.getEndDouble();
+		assertEquals(500.0d,vstart, 0.000001d);
+        assertEquals(800.0,vend,0.000000d);
+}
+	@Test
+	public void testGetResidues(){
+		BioSeq seq = new BioSeq("seq", "version",30);
+		seq.setResidues("atgctgaacaatgactagtaactcgaatga");
+		MutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
+		sym.addChild(new SingletonSeqSymmetry(2, 6,seq));
+		sym.addChild(new SingletonSeqSymmetry(10,15, seq));
+		sym.addChild(new SingletonSeqSymmetry(22, 25, seq));
+		String sequence = SeqUtils.getResidues(sym, seq);
+		assertNotNull(sequence);
+		assertEquals("gctgatgactcg",sequence);
+
+		assertEquals(12,sequence.length());
+
+	}
+
+	
 }

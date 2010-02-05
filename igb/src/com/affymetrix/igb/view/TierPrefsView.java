@@ -70,7 +70,6 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 
   private final TierPrefsTableModel model;
   private final ListSelectionModel lsm;
-  private final TableRowSorter<TierPrefsTableModel> sorter;
 
   private static final String PREF_AUTO_REFRESH = "Auto-Apply Tier Customizer Changes";
   private static final boolean default_auto_refresh = true;
@@ -101,7 +100,6 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     this.setLayout(new BorderLayout());
 
     JScrollPane table_scroll_pane = new JScrollPane(table);
-    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
     this.add(table_scroll_pane, BorderLayout.CENTER);
     JPanel button_panel = new JPanel();
@@ -173,10 +171,9 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     lsm.addListSelectionListener(this);
     lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-	sorter = new TableRowSorter<TierPrefsTableModel>(model);
-
     table.setModel(model);
-	table.setRowSorter(sorter);
+	table.setAutoCreateRowSorter(true);
+	table.setFillsViewportHeight(true);
 
     table.getColumnModel().getColumn(COL_TIER_NAME).setPreferredWidth(150);
     table.getColumnModel().getColumn(COL_HUMAN_NAME).setPreferredWidth(150);

@@ -481,7 +481,6 @@ public final class GeneralLoadUtils {
 			group = version.getGenome();  // adds genome to singleton genometry model if not already present
 			// Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
 			//    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
-			group.setSource(gVersion.gServer.serverName);
 			version.getSegments();
 			return group;
 		}
@@ -490,7 +489,6 @@ public final class GeneralLoadUtils {
 			DasSource version = (DasSource) gVersion.versionSourceObj;
 
 			group = version.getGenome();
-			group.setSource(gVersion.gServer.serverName);
 			version.getEntryPoints();
 
 			return group;
@@ -498,7 +496,6 @@ public final class GeneralLoadUtils {
 		if (gVersion.gServer.serverType == ServerType.QuickLoad) {
 			// Discover chromosomes from QuickLoad
 			group = gmodel.addSeqGroup(gVersion.versionName);
-			group.setSource(gVersion.gServer.serverName);
 			return group;
 		}
 		if (gVersion.gServer.serverType == ServerType.Unknown) {

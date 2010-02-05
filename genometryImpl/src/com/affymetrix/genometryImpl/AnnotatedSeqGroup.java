@@ -20,7 +20,6 @@ public class AnnotatedSeqGroup {
 	final private String id;
 	private String organism;
 	private String description;
-	private String source; //as in Das2 server name
 	final private Set<GenericVersion> gVersions = new CopyOnWriteArraySet<GenericVersion>();
 	private boolean use_synonyms;
 	final private Map<String, BioSeq> id2seq;
@@ -50,10 +49,6 @@ public class AnnotatedSeqGroup {
 
 	final public String getID() {
 		return id;
-	}
-
-	final public void setSource(String source) {
-		this.source = source;
 	}
 
 	final public void setDescription(String str) {

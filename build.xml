@@ -239,6 +239,7 @@
 			<metainf file="NOTICES.txt"/>
 			<zipgroupfileset dir="${dist.dir}">
 				<exclude name="das2server.jar" />
+				<exclude name="protannot.jar" />
 				<include name="*.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">

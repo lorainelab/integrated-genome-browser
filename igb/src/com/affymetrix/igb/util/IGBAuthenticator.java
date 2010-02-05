@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -48,19 +50,14 @@ import static javax.swing.JOptionPane.PLAIN_MESSAGE;
  */
 public class IGBAuthenticator extends Authenticator {
 	private static enum AuthType { ASK, ANONYMOUS, AUTHENTICATE };
+
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
 	
-	private static final String[] OPTIONS = { "Login", "Cancel" };
-	private static final String SAVE_PASSWORD = "Save Password";
-	private static final String ALWAYS_ANON = "Always use anonymous access";
+	private static final String[] OPTIONS = { BUNDLE.getString("login"), BUNDLE.getString("cancel") };
 	private static final String EMPTY_STRING = "";
 	private static final String GUEST = "guest";
 	private static final String PREF_AUTH_TYPE = "authentication type";
 	private static final String PREF_REMEMBER = "remember authentication";
-
-	private static final String MESSAGE_OPTIONAL = "The server '%s' requested "
-			+ "authentication.  Authentication to this server is optional "
-			+ "however accessing this server anonymously will limit what data "
-			+ "sets you can access.";
 
 	private final JFrame parent;
 	private JPanel dialog;
@@ -83,8 +80,8 @@ public class IGBAuthenticator extends Authenticator {
 				server = new JLabel();
 				username = new JTextField();
 				password = new JPasswordField();
-				anon = new JRadioButton("Use anonymous login");
-				auth = new JRadioButton("Authenticate to Server");
+				anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
+				auth = new JRadioButton(BUNDLE.getString("authToServer"));
 				remember = new JCheckBox();
 
 				buildDialog();
@@ -97,9 +94,9 @@ public class IGBAuthenticator extends Authenticator {
 	 * authentication request from a server.
 	 */
 	private void buildDialog() {
-		JLabel s = new JLabel("Server ");
-		final JLabel u = new JLabel("Username ");
-		final JLabel p = new JLabel("Password ");
+		JLabel s = new JLabel(BUNDLE.getString("server"));
+		final JLabel u = new JLabel(BUNDLE.getString("username"));
+		final JLabel p = new JLabel(BUNDLE.getString("password"));
 		ButtonGroup group = new ButtonGroup();
 		GroupLayout layout = new GroupLayout(dialog);
 
@@ -146,9 +143,9 @@ public class IGBAuthenticator extends Authenticator {
 				password.setEnabled(auth.isSelected());
 
 				if (anon.isSelected()) {
-					remember.setText(ALWAYS_ANON);
+					remember.setText(BUNDLE.getString("alwaysAnonymous"));
 				} else {
-					remember.setText(SAVE_PASSWORD);
+					remember.setText(BUNDLE.getString("savePassword"));
 				}
 			}
 		};
@@ -250,7 +247,7 @@ public class IGBAuthenticator extends Authenticator {
 		/* instantiante current simply to steal FontMetrics from it */
 		JLabel current = new JLabel();
 		String[] message = StringUtils.wrap(
-				String.format(MESSAGE_OPTIONAL, serverName),
+				MessageFormat.format(BUNDLE.getString("authOptional"), serverName),
 				current.getFontMetrics(current.getFont()),
 				500);
 

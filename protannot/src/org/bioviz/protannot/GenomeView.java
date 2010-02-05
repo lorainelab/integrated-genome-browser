@@ -393,7 +393,12 @@ final class GenomeView extends JPanel implements MouseListener{
             axismap.stretchToFit(false, false);
             seqmap.stretchToFit(false, false);
         }
-        
+
+		seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
+                ((gseq.getMin()+gseq.getMax())/2));
+        axismap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
+                ((gseq.getMin()+gseq.getMax())/2));
+		
         seqmap.updateWidget();
         axismap.updateWidget();
         

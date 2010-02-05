@@ -314,7 +314,7 @@ public class SeqMapView extends JPanel
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
-
+		
 
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
 		tier_manager.setDoGraphSelections(true);

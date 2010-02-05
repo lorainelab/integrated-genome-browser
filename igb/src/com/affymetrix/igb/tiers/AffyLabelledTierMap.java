@@ -22,6 +22,7 @@ import javax.swing.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.Adjustable;
 import java.awt.Component;
 import java.awt.geom.Rectangle2D;
 
@@ -46,7 +47,8 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
    */
 	@Override
   public void initComponentLayout() {
-    labelmap = new AffyTieredMap(false, false, scroller[Y]);
+    //labelmap = new AffyTieredMap(false, false, scroller[Y]);
+	labelmap = new AffyTieredMap(false, false);
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
     labelmap.setBackground(Color.lightGray);
@@ -168,9 +170,18 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   public void zoom(int axisid, double zoom_scale) { 
     super.zoom(axisid, zoom_scale);
     if (axisid == Y && labelmap != null) {
-      labelmap.zoom(axisid, zoom_scale);
+		labelmap.zoom(axisid, zoom_scale);
     }
   }
+
+	@Override
+  public void scroll(int id, double coord_value) {
+	super.scroll(id, coord_value);
+		if (id == Y && labelmap != null) {
+			labelmap.getScroller(Y).setValue(scroller[Y].getValue());
+			labelmap.scroll(id, coord_value);
+		}
+	}
 
 	@Override
   public void setZoomBehavior(int axisid, int constraint, double coord) {
@@ -238,4 +249,27 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 		}
 	}
 
+	@Override
+	public void setZoomer(int id, Adjustable adj) {
+		super.setZoomer(id, adj);
+		if (id == Y && labelmap != null) {
+			labelmap.setZoomer(Y, adj);
+			labelmap.getZoomer(Y).addAdjustmentListener(new AdjustmentListener() {
+
+				public void adjustmentValueChanged(AdjustmentEvent e) {
+					labelmap.getScroller(Y).setValue(scroller[Y].getValue());
+				}
+			});
+		}
+	}
+
+	private void AddAdjustmentListener(Adjustable adj)
+	{
+			adj.addAdjustmentListener(new AdjustmentListener() {
+
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				labelmap.getScroller(Y).setValue(scroller[Y].getValue());
+			}
+		});
+	}
 }

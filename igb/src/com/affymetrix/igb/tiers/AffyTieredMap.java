@@ -92,6 +92,9 @@ public class AffyTieredMap extends NeoMap {
 		this.scroller[Y] = vscroller;
 	}
 
+	AffyTieredMap(boolean hscroll, boolean vscroll) {
+		super(hscroll, vscroll);
+	}
 	/**
 	 * Add the given tier to the map.
 	 * @param mtg the TierGlyph being added.
@@ -450,9 +453,9 @@ public class AffyTieredMap extends NeoMap {
 		LinearTransform.setTranslateY(trans, pixel_offset[id]);
 		LinearTransform.setScaleY(trans, pixels_per_coord[id]);
 
-//		System.out.println("Zoom scale : "+ zoom_scale);
-//		System.out.println("pixels_per_base = " + zoomer_scale[id] +
-//						",  coords_per_pixel[id] = " + 1/zoomer_scale[Y]);
+//		System.out.println("     Zoom scale : "+ zoom_scale +
+//						   "\t\t pixels_per_base = " + zoomer_scale[id] +
+//						   "\t\t coords_per_pixel[id] = " + 1/zoomer_scale[Y]);
 		if (zoom_scale != zoomer_scale[id]) {
 			adjustZoomer(id);
 		}

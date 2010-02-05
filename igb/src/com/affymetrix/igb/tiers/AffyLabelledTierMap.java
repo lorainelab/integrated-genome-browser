@@ -48,6 +48,9 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 	@Override
   public void initComponentLayout() {
     //labelmap = new AffyTieredMap(false, false, scroller[Y]);
+
+	// Setting scroller in labelmap cause improper vertical zooming.
+	// So creating a new constructor that would not set the scroller.
 	labelmap = new AffyTieredMap(false, false);
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
@@ -174,10 +177,14 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+	//Need to override this method to solve improper vertical zooming.
 	@Override
   public void scroll(int id, double coord_value) {
 	super.scroll(id, coord_value);
 		if (id == Y && labelmap != null) {
+			// This is hack to solve improper vertical zoom. Now labelmap's scroller
+			// is not set to be equal to AffylabelledTierMap, labelmap's scroller's
+			// value needs to changed when AffylabelledTierMap's zoomer value changes.
 			labelmap.getScroller(Y).setValue(scroller[Y].getValue());
 			labelmap.scroll(id, coord_value);
 		}
@@ -254,6 +261,9 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 		super.setZoomer(id, adj);
 		if (id == Y && labelmap != null) {
 			labelmap.setZoomer(Y, adj);
+			// This is hack to solve improper vertical zoom. Now labelmap's scroller
+			// is not set to be equal to AffylabelledTierMap, labelmap's scroller's
+			// value needs to changed when AffylabelledTierMap's zoomer value changes.
 			labelmap.getZoomer(Y).addAdjustmentListener(new AdjustmentListener() {
 
 				public void adjustmentValueChanged(AdjustmentEvent e) {
@@ -263,13 +273,4 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 		}
 	}
 
-	private void AddAdjustmentListener(Adjustable adj)
-	{
-			adj.addAdjustmentListener(new AdjustmentListener() {
-
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				labelmap.getScroller(Y).setValue(scroller[Y].getValue());
-			}
-		});
-	}
 }

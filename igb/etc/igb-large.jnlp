@@ -26,7 +26,6 @@
 		<jar href="genometry.jar" />
 		<jar href="genoviz.jar" />
 		<jar href="jlfgr-1_0.jar" />
-		<jar href="myswing.jar" />
 		<jar href="image4j.jar" />
 		<jar href="commons-codec-1.4.jar" />
 	</resources>

@@ -78,9 +78,6 @@ freehep-*.jar
   which allow the printing of files.  (We may combine
   these into a single freehep.jar file.)
 
-myswing.jar
-  https://myswing.dev.java.net/
-
 ----------------- OPTIONAL RESOURCES -----------------------
 
 This distribution contains a build.xml file which can be used along with 

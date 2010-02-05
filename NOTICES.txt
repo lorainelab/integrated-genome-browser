@@ -43,8 +43,3 @@ D)   This product includes portions of the Vector Graphics software library
      The files from this project are bundled together in freehep.jar
      A copy of the license is included in the file FREEHEP_LICENSE_LGPL.txt.
 
-E)   This product may include myswing.jar from
-     https://myswing.dev.java.net/
-     Which is covered by this license
-     http://www.gnu.org/copyleft/lesser.html
-

@@ -28,7 +28,6 @@ import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;

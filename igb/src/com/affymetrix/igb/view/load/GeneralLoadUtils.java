@@ -88,9 +88,6 @@ public final class GeneralLoadUtils {
 			new LinkedHashMap<String, List<GenericVersion>>();	// the list of versions associated with the species
 	static final Map<String, String> versionName2species =
 			new HashMap<String, String>();	// the species associated with the given version.
-	static final Map<String, Set<GenericVersion>> versionName2versionSet =
-			new HashMap<String, Set<GenericVersion>>();
-	// the list of GenericVersion objects associated with the version name.  This is to avoid synonym stuff.
 
 	/**
 	 * Private copy of the default Synonym lookup
@@ -164,22 +161,22 @@ public final class GeneralLoadUtils {
 
 	static boolean discoverServer(GenericServer gServer) {
 		try {
-			if (gServer.serverType == ServerType.Unknown) {
+			if (gServer == null || gServer.serverType == ServerType.Unknown) {
 				// should never happen
 				return false;
 			}
 			if (gServer.serverType == ServerType.QuickLoad) {
-				if (gServer == null || !getQuickLoadSpeciesAndVersions(gServer)) {
+				if (!getQuickLoadSpeciesAndVersions(gServer)) {
 					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
 					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS) {
-				if (gServer == null || !getDAS1SpeciesAndVersions(gServer)) {
+				if (!getDAS1SpeciesAndVersions(gServer)) {
 					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
 					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS2) {
-				if (gServer == null || !getDAS2SpeciesAndVersions(gServer)) {
+				if (!getDAS2SpeciesAndVersions(gServer)) {
 					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
 					return false;
 				}
@@ -217,9 +214,8 @@ public final class GeneralLoadUtils {
 			/* String versionName = source.getName(); */
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
 			String versionID = source.getID();
-			List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 			GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, source);
-			discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
+			discoverVersion(versionName, gVersion, speciesName);
 		}
 		return true;
 	}
@@ -238,14 +234,13 @@ public final class GeneralLoadUtils {
 		}
 		for (Das2Source source : server.getSources().values()) {
 			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getName());
-			List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 			
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
 				String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), versionSource.getName());
 				String versionID = versionSource.getName();
 				GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, versionSource);
-				discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
+				discoverVersion(versionName, gVersion, speciesName);
 			}
 		}
 		return true;
@@ -292,9 +287,8 @@ public final class GeneralLoadUtils {
 				versionName = genomeName;
 				speciesName = SPECIES_LOOKUP.getSpeciesName(genomeName);
 			}
-			GenericVersion quickLoadVersion = new GenericVersion(genomeID, versionName, gServer, quickloadServer);
-			List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
-			discoverVersion(versionName, gServer, quickLoadVersion, gVersionList, speciesName);
+			GenericVersion gVersion = new GenericVersion(genomeID, versionName, gServer, quickloadServer);
+			discoverVersion(versionName, gVersion, speciesName);
 		}
 		return true;
 	}
@@ -309,12 +303,10 @@ public final class GeneralLoadUtils {
 		String versionName = aseq.getID();
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 
-		List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
-
 		GenericServer gServer = new  GenericServer(null, null, ServerType.Unknown, null);
 		GenericVersion gVersion = new GenericVersion(versionName, versionName, gServer, null);
 
-		discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
+		discoverVersion(versionName, gVersion, speciesName);
 
 		return gVersion;
 	}
@@ -327,23 +319,16 @@ public final class GeneralLoadUtils {
 	 * @param gVersionList not null.
 	 * @param speciesName not null or empty.
 	 */
-	private static void discoverVersion(String versionName, GenericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String speciesName) {
+	private static void discoverVersion(String versionName, GenericVersion gVersion, String speciesName) {
+		List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
 		}
 		versionName2species.put(versionName, speciesName);
-		Set<GenericVersion> versionSet;
-		if (versionName2versionSet.containsKey(versionName)) {
-			versionSet = versionName2versionSet.get(versionName);
-		} else {
-			versionSet = new HashSet<GenericVersion>();
-			versionName2versionSet.put(versionName, versionSet);
-		}
-		versionSet.add(gVersion);
 		AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName); // returns existing group if found, otherwise creates a new group
 		group.addVersion(gVersion);
 		if (DEBUG) {
-			System.out.println("Added " + gServer.serverType + "genome: " + speciesName + " version: " + versionName);
+			System.out.println("Added " + gVersion.gServer.serverType + "genome: " + speciesName + " version: " + versionName);
 		}
 	}
 
@@ -372,8 +357,11 @@ public final class GeneralLoadUtils {
 	static List<GenericFeature> getFeatures(final String versionName) {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
-		for (GenericVersion gVersion : versionName2versionSet.get(versionName)) {
-			featureList.addAll(gVersion.getFeatures());
+		Set<GenericVersion> versions = gmodel.getSeqGroup(versionName).getVersions();
+		if (versions != null) {
+			for (GenericVersion gVersion : versions) {
+				featureList.addAll(gVersion.getFeatures());
+			}
 		}
 		return featureList;
 	}
@@ -409,11 +397,12 @@ public final class GeneralLoadUtils {
 			if (DEBUG) {
 				System.out.println("initializing feature names for version: " + versionName);
 			}
-			FeatureLoading.loadFeatureNames(versionName2versionSet.get(versionName));
+			FeatureLoading.loadFeatureNames(gmodel.getSeqGroup(versionName).getVersions());
 			loadSeqInfo(versionName);
 			version2init.put(versionName, Boolean.TRUE);
 		}
 	}
+
 	
 
 	/**
@@ -425,7 +414,7 @@ public final class GeneralLoadUtils {
 		if (DEBUG) {
 			System.out.println("loading seqinfo : Version " + versionName);
 		}
-		Set<GenericVersion> gVersionSet = versionName2versionSet.get(versionName);
+		Set<GenericVersion> gVersionSet = gmodel.getSeqGroup(versionName).getVersions();
 		List<GenericVersion> gVersions = new ArrayList<GenericVersion>(gVersionSet);
 		
 		AnnotatedSeqGroup group = loadChromInfo(gVersions);

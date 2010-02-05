@@ -208,7 +208,7 @@ public final class GeneralLoadView extends JComponent
 					/*
 					Application.getSingleton().setNotLockedUpStatus("Loading previous genome...");
 					RestorePersistentGenome();
-					Application.getSingleton().setStatus("", false);
+					Application.getSingleton().removeNotLockedUpStatus("Loading previous genome...");
 					 */
 				}
 			};

@@ -191,7 +191,7 @@ public final class GeneralLoadUtils {
 	private synchronized static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		if (server.getDataSources() == null || server.getDataSources().values() == null || server.getDataSources().values().isEmpty()) {
-			System.out.println("WARNING: Couldn't find species for server: " + gServer.serverName);
+			System.out.println("WARNING: Couldn't find species for server: " + gServer);
 			return false;
 		}
 		for (DasSource source : server.getDataSources().values()) {
@@ -216,7 +216,7 @@ public final class GeneralLoadUtils {
 	private synchronized static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		if (server.getSources() == null || server.getSources().values() == null || server.getSources().values().isEmpty()) {
-			System.out.println("WARNING: Couldn't find species for server: " + gServer.serverName);
+			System.out.println("WARNING: Couldn't find species for server: " + gServer);
 			return false;
 		}
 		for (Das2Source source : server.getSources().values()) {
@@ -248,12 +248,12 @@ public final class GeneralLoadUtils {
 		}
 		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
 		if (quickloadServer == null) {
-			System.out.println("ERROR: No quickload server model found for server: " + gServer.serverName);
+			System.out.println("ERROR: No quickload server model found for server: " + gServer);
 			return false;
 		}
 		List<String> genomeList = quickloadServer.getGenomeNames();
 		if (genomeList == null || genomeList.isEmpty()) {
-			System.out.println("WARNING: No species found in server: " + gServer.serverName);
+			System.out.println("WARNING: No species found in server: " + gServer);
 			return false;
 		}
 
@@ -264,7 +264,7 @@ public final class GeneralLoadUtils {
 			Set<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getVersions();
 			if (!gVersions.isEmpty()) {
 				// We've found a corresponding version object that was initialized earlier.
-				versionName = gVersions.iterator().next().versionName;
+				versionName = getPreferredVersionName(gVersions);
 				speciesName = versionName2species.get(versionName);
 			} else {
 				// Unknown genome.  We'll add the name as if it's a species and a version.
@@ -686,6 +686,11 @@ public final class GeneralLoadUtils {
 		}
 
 		return ResidueLoading.getResidues(serversWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
+	}
+
+
+	static String getPreferredVersionName(Set<GenericVersion> gVersions) {
+		return LOOKUP.getPreferredName(gVersions.iterator().next().versionName);
 	}
 
 

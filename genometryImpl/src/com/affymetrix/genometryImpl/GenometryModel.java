@@ -74,8 +74,7 @@ public final class GenometryModel {
 			// try and find a synonym
 			for (AnnotatedSeqGroup curgroup : seq_groups.values()) {
 				if (curgroup.isSynonymous(group_syn)) {
-					group = curgroup;
-					break;
+					return curgroup;
 				}
 			}
 		}

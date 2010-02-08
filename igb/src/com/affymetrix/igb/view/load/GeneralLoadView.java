@@ -198,7 +198,7 @@ public final class GeneralLoadView extends JComponent
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 				protected Void doInBackground() throws Exception {
-					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer.serverName);
+					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer);
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
 				}
@@ -218,7 +218,7 @@ public final class GeneralLoadView extends JComponent
 	public void GenericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer)evt.getSource();
 
-		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer.serverName);
+		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer);
 
 		// Need to refresh species names
 		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;
@@ -359,7 +359,7 @@ public final class GeneralLoadView extends JComponent
 		if (gVersions.isEmpty()) {
 			return;
 		}
-		String versionName = gVersions.iterator().next().versionName;
+		String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
 		if (versionName == null || GeneralLoadUtils.versionName2species.get(versionName) == null) {
 			return;
 		}
@@ -618,7 +618,7 @@ public final class GeneralLoadView extends JComponent
 			createUnknownVersion(group);
 			return;
 		}
-		String versionName = gVersions.iterator().next().versionName;
+		String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
 		if (versionName == null) {
 			System.out.println("ERROR -- couldn't find version");
 			return;
@@ -685,7 +685,7 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		if (!(gVersions.iterator().next().versionName.equals(versionName))) {
+		if (!(GeneralLoadUtils.getPreferredVersionName(gVersions).equals(versionName))) {
 			System.out.println("ERROR - version doesn't match");
 			return;
 		}

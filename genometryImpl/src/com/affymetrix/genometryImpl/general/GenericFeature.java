@@ -25,7 +25,6 @@ public final class GenericFeature {
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.
 	private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
-	public Map<BioSeq, LoadStatus> LoadStatusMap; // each chromosome maps to a feature loading status.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
 	
 	/**
@@ -46,7 +45,6 @@ public final class GenericFeature {
 			
 		}
 		this.setFriendlyURL();
-		this.LoadStatusMap = new HashMap<BioSeq, LoadStatus>();
 	}
 
 	public void setVisible() {

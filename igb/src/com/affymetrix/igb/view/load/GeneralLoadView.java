@@ -466,12 +466,6 @@ public final class GeneralLoadView extends JComponent
 			if (gFeature.loadStrategy != LoadStrategy.VISIBLE && gFeature.loadStrategy != LoadStrategy.CHROMOSOME) {
 				continue;
 			}
-			// Even if it's already loaded, we may want to reload... for example, if the viewsize changes.
-
-			if (!gFeature.LoadStatusMap.containsKey(curSeq)) {
-				// Should never get here.
-				System.out.println("ERROR!  " + curSeq.getID() + " does not contain feature status");
-			}
 
 			if (DEBUG_EVENTS) {
 				System.out.println("Selected : " + gFeature.featureName);
@@ -836,18 +830,8 @@ public final class GeneralLoadView extends JComponent
 				continue;
 			}
 
-			if (!gFeature.LoadStatusMap.containsKey(curSeq)) {
-				System.out.println("ERROR!  " + curSeq.getID() + " does not contain feature status");
-			}
-			LoadStatus ls = gFeature.LoadStatusMap.get(curSeq);
-			if (ls != LoadStatus.UNLOADED) {
-				continue;
-			}
 			if (gFeature.gVersion.gServer.serverType == ServerType.QuickLoad) {
 				// These have already been loaded(QuickLoad is loaded for the entire genome at once)
-				if (ls == LoadStatus.UNLOADED) {
-					gFeature.LoadStatusMap.put(curSeq, LoadStatus.LOADED);
-				}
 				continue;
 			}
 

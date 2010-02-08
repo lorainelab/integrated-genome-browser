@@ -389,16 +389,6 @@ public final class GeneralLoadUtils {
 				if (group.getSeqCount() == 0) {
 					loadChromInfo(gVersion);
 					addGenomeVirtualSeq(group, default_genome_min, DEBUG_VIRTUAL_GENOME);
-
-					// Initialize all the servers with unloaded status of the feature/chromosome combinations.
-					for (GenericFeature gFeature : gVersion.getFeatures()) {
-						for (BioSeq sabq : group.getSeqList()) {
-							// Add chromosome sequences to feature
-							if (!gFeature.LoadStatusMap.containsKey(sabq)) {
-								gFeature.LoadStatusMap.put(sabq, LoadStatus.UNLOADED);
-							}
-						}
-					}
 				}
 				gVersion.setInitialized();
 			}
@@ -528,11 +518,6 @@ public final class GeneralLoadUtils {
 	 * @return true or false
 	 */
 	static boolean loadAndDisplayAnnotations(GenericFeature gFeature, BioSeq cur_seq, FeaturesTableModel model) {
-
-		// We don't validate previous load status.  It's assumed that we want to reload the feature.
-
-		SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
-
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		BioSeq visible_seq = gviewer.getViewSeq();
 		if (selected_seq == null || visible_seq == null) {
@@ -587,14 +572,6 @@ public final class GeneralLoadUtils {
 
 		return result;
 	}
-
-	private static void SetLoadStatus(GenericFeature gFeature, BioSeq aseq, FeaturesTableModel model, LoadStatus ls) {
-		gFeature.LoadStatusMap.put(aseq, ls);
-		model.fireTableDataChanged();
-
-	}
-
-
 
 	
 

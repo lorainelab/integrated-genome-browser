@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -612,6 +613,37 @@ public class IndexingUtils {
 			}
 		}
 		return minVal;
+	}
+
+	/**
+	 * Index a graph.
+	 * @param graphName
+	 * @param pointCount
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @return File
+	 */
+	public static File createIndexedFile(
+			String graphName, int pointCount, int[] x, float[] y, int[] w) {
+		File bufVal = null;
+		DataOutputStream dos = null;
+		try {
+			// create indexed file.
+			bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
+			bufVal.deleteOnExit(); // Delete this file when shutting down.
+			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
+			for (int i = 0; i < pointCount; i++) {
+				dos.writeInt(x[i]);
+				dos.writeFloat(y[i]);
+				dos.writeInt(w == null ? 1 : w[i]); // width of 1 is a single point.
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(dos);
+		}
+		return bufVal;
 	}
 
 }

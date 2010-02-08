@@ -1,30 +1,14 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.net.URLEncoder;
 import java.util.Arrays;
 
 /**
@@ -56,7 +40,7 @@ public class GraphSym extends SimpleSymWithProps {
 
 	private int xCoords[];	// too slow to do indexing of x right now
 
-	private  double xDelta = 0.0f;	// used by GraphGlyph
+	private double xDelta = 0.0f;	// used by GraphGlyph
 
 	/**
 	 *  id_locked is a temporary fix to allow graph id to be changed after construction, 
@@ -131,7 +115,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 *  @param y must be an array of float of same length as x.
 	 *  @param w must be an array of float of same length as x and y, or null
 	 */
-	protected void setCoords(int[] x, float[] y, int[] w) {
+	protected final void setCoords(int[] x, float[] y, int[] w) {
 		if (x.length != y.length) {
 			throw new IllegalArgumentException("X-coords and y-coords must have the same length.");
 		}
@@ -148,7 +132,7 @@ public class GraphSym extends SimpleSymWithProps {
 		bufFile = index(this.getGraphName() + this.getGraphSeq().getID(), x,y,w);
 	}
 
-	protected void nullCoords() {
+	protected final void nullCoords() {
 		// null out for garbage collection and cleanup
 		yBuf = null;
 		wBuf = null;
@@ -200,11 +184,11 @@ public class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Returns the y coordinate as a String.
 	 */
-	public String getGraphYCoordString(int i) {
+	public final String getGraphYCoordString(int i) {
 		return Float.toString(getGraphYCoord(i));
 	}
 
-	public float getGraphYCoord(int i) {
+	public final float getGraphYCoord(int i) {
 		if (i >= this.pointCount) {
 			return 0;	// out of range
 		}
@@ -215,14 +199,14 @@ public class GraphSym extends SimpleSymWithProps {
 		return yBuf[i - bufStart];
 	}
 
-	public float[] getGraphYCoords() {
+	public final float[] getGraphYCoords() {
 		return this.copyGraphYCoords();
 	}
 
 	/** Returns a copy of the graph Y coordinates as a float[], even if the Y coordinates
 	 *  were originally specified as non-floats.
 	 */
-	public float[] copyGraphYCoords() {
+	public final float[] copyGraphYCoords() {
 		float[] tempCoords = new float[this.pointCount];
 		for (int i=0;i<this.pointCount;i++) {
 			tempCoords[i] = getGraphYCoord(i);
@@ -230,7 +214,7 @@ public class GraphSym extends SimpleSymWithProps {
 		return tempCoords;
 	}
 
-	public float[] getVisibleYRange() {
+	public final float[] getVisibleYRange() {
 		float[] result = new float[2];
 		float min_ycoord = Float.POSITIVE_INFINITY;
 		float max_ycoord = Float.NEGATIVE_INFINITY;
@@ -253,7 +237,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 * This is expensive, and should only happen when we're copying the coords.
 	 * @return tempCoords
 	 */
-	public int[] getGraphWidthCoords() {
+	public final int[] getGraphWidthCoords() {
 		int[] tempCoords = new int[this.pointCount];
 		for (int i=0;i<this.pointCount;i++) {
 			tempCoords[i] = getGraphWidthCoord(i);
@@ -261,7 +245,7 @@ public class GraphSym extends SimpleSymWithProps {
 		return tempCoords;
 	}
 	
-	public int getGraphWidthCoord(int i) {
+	public final int getGraphWidthCoord(int i) {
 		if (!this.hasWidth) {
 			return 0;	// no width coords
 		}
@@ -287,14 +271,6 @@ public class GraphSym extends SimpleSymWithProps {
 	 */
 	public final int determineBegIndex(double xmin) {
 		int begIndex = 0;
-		// Do quick search through indexed arrays.
-		/*for (int i=0;i<xIndex.length;i++) {
-			if (xIndex[i] > xmin) {
-				break;
-			}
-			begIndex += BUFSIZE;
-		}*/
-
 		for (int i=begIndex;i<this.pointCount;i++) {
 			if (this.getGraphXCoord(i) > (int)xmin) {
 				return Math.max(0, i-1);
@@ -312,15 +288,6 @@ public class GraphSym extends SimpleSymWithProps {
 	 */
 	public final int determineEndIndex(double xmax, int prevIndex) {
 		int begIndex = 0;
-		// Do quick search through indexed arrays.
-		/*for (int i=0;i<xIndex.length;i++) {
-			if (xIndex[i] >= xmax) {
-				break;
-			}
-			begIndex += BUFSIZE;
-		}*/
-		//begIndex = Math.max(begIndex, prevIndex);
-		
 		for (int i=begIndex;i<this.pointCount;i++) {
 			if (this.getGraphXCoord(i) >= (int)xmax) {
 				return i;
@@ -352,44 +319,10 @@ public class GraphSym extends SimpleSymWithProps {
 			// no need to index.  Array is too small.
 			return null;
 		}
-
-		File bufVal = null;
-		DataOutputStream dos = null;
-		try {
-			//xIndex = new int[this.pointCount / BUFSIZE];
-			/*yIndex = new float[this.pointCount / BUFSIZE];
-			if (this.hasWidth) {
-				wIndex = new int[this.pointCount / BUFSIZE ];
-			}*/
-			
-			// create index arrays for quick searching.
-			/*for (int i=0;i<xIndex.length;i++) {
-				xIndex[i] = x[i * BUFSIZE];
-				yIndex[i] = y[i * BUFSIZE];
-				if (this.hasWidth) {
-					wIndex[i] = w[i * BUFSIZE];
-				}
-			}*/
-
-			// create indexed file.
-			bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
-			bufVal.deleteOnExit();	// Delete this file when IGB shuts down.
-			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
-
-			for (int i=0;i<pointCount;i++) {
-				dos.writeInt(x[i]);
-				dos.writeFloat(y[i]);
-				dos.writeInt(this.hasWidth ? w[i] : 1);	// width of 1 is a single point.
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			GeneralUtils.safeClose(dos);
-		}
-		return bufVal;
+		return IndexingUtils.createIndexedFile(graphName, this.pointCount, x, y, w);
 	}
 
+	
 	/**
 	 * Read into buffers
 	 * @param start
@@ -448,14 +381,14 @@ public class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Get the seq that the graph's xcoords are specified in
 	 */
-	public BioSeq getGraphSeq() {
+	public final BioSeq getGraphSeq() {
 		return graph_original_seq;
 	}
 
 	/**
 	 *  Returns the graph state.  Will never be null.
 	 */
-	public GraphState getGraphState() {
+	public final GraphState getGraphState() {
 		return DefaultStateProvider.getGlobalStateProvider().getGraphState(this.gid);
 	}
 

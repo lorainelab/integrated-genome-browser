@@ -101,7 +101,7 @@
 		<exec executable="svn" outputproperty="svn.version">
 			<arg line="--version --quiet" />
 		</exec>
-		<!-- Not currently shipping with multiple svnant versions --!>
+		<!-- Not currently shipping with multiple svnant versions -->
 		<!--
 		<condition property="svnant.version" value="1.1.0-RC2">
 			<contains string="${svn.version}" substring="1.4." />

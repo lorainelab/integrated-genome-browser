@@ -502,14 +502,14 @@ import javax.swing.*;
    *  @param title  The title of the JButton and of the JColorChooser that will
    *    be opened when the button is pressed.  This is optional, null is ok.
    */
-  public static JButton createColorButton(String title, final Preferences node,
+  public static JButton createColorButton(final Preferences node,
     final String pref_name, final Color default_val) {
 
     Color initial_color = getColor(node, pref_name, default_val);
     final ColorIcon icon = new ColorIcon(11, initial_color);
-    final String panel_title = (title == null ? "Choose a color" : title);
+    final String panel_title = "Choose a color";
 
-    final JButton button = new JButton(title, icon);
+    final JButton button = new JButton(icon);
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
         Color c = JColorChooser.showDialog(button, panel_title, getColor(node, pref_name, default_val));

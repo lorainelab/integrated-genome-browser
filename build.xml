@@ -57,7 +57,7 @@
 
 	<target name="demos" depends="jar" description="Compile genoviz demos">
 		<ant antfile="${basedir}/generic.xml" dir="${basedir}/genoviz_sdk" target="docs">
-			<property name="docs.dir"   value="${basedir}/genoviz_sdk/doc/api" />
+			<property name="docs.dir"   value="${basedir}/genoviz_sdk/docs" />
 		</ant>
 		<my.javac srcdir="${demos.dir}/src" destdir="${demos.dir}" classpath="${genoviz}/build" />
 
@@ -91,9 +91,7 @@
 		<my.signjar jar="${lib.dir}/image4j.jar"           signedjar="${webstart.dir}/image4j.jar" />
 		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
 
-		<!-- <my.signjar jar="${dist.dir}/igb.jar" signedjar="${webstart.dir}/igb.jar" /> -->
-
-		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true"> -->
+		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
 		<jar destfile="${webstart.dir}/igb.jar">
 			<zipfileset src="${dist.dir}/igb.jar">
 				<exclude name="igb_default_prefs.xml" />
@@ -186,9 +184,9 @@
 		<iterate target="all" />
 	</target>
 
-	<target name="report" depends="test,docs,pmd,cpd" description="Generate reports about the project" />
+	<target name="report" depends="test,docs,pmd,cpd,findbugs" description="Generate reports about the project" />
 
-	<target name="pmd" depends="common-init" if="have.pmd" description="run pmd static analysis program">
+	<target name="pmd" depends="common-init,pmd-init" if="have.pmd" description="run pmd static analysis program">
 		<iterate target="pmd" />
 	</target>
 
@@ -203,6 +201,10 @@
 			</fileset>
 		</my.cpd>
 		<xslt in="${report.dir}/${report.prefix}cpd.xml" style="${etc.dir}/cpdhtml.xslt" out="${report.dir}/${report.prefix}cpd.html" />
+	</target>
+
+	<target name="findbugs" depends="compile,common-init,findbugs-init" if="have.findbugs" description="run findbugs static analysis program">
+		<iterate target="findbugs" />
 	</target>
 
 	<target name="clean" depends="common-init">

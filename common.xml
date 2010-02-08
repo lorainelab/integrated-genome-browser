@@ -4,7 +4,7 @@
 	<property name="das2_genopub_mode"    value="false"/>
 	
 
-	<target name="common-init" depends="init,extras-init,svn-init">
+	<target name="common-init" depends="init,svn-init">
     <tstamp/>
 
 		<!-- directory paths -->
@@ -97,16 +97,50 @@
 		</condition>
 	</target>
 
-	<target name="extras-init" unless="run.extras-init">
-		<!-- Configuration for extra ant libraries -->
-		<available classname="net.sourceforge.pmd.ant.PMDTask" property="have.pmd" />
-		<available classname="net.sourceforge.pmd.cpd.CPDTask" property="have.cpd" />
-		<available classname="org.tigris.subversion.svnant.SvnTask" property="have.svnant" />
-		<property name="run.extras-init" value="true" />
+	<target name="extras-init">
+		<exec executable="svn" outputproperty="svn.version">
+			<arg line="--version --quiet" />
+		</exec>
+		<!-- Not currently shipping with multiple svnant versions --!>
+		<!--
+		<condition property="svnant.version" value="1.1.0-RC2">
+			<contains string="${svn.version}" substring="1.4." />
+		</condition>
+		<condition property="svnant.version" value="1.2.1">
+			<contains string="${svn.version}" substring="1.5." />
+		</condition>
+		-->
+		<condition property="svnant.version" value="1.3.0">
+			<contains string="${svn.version}" substring="1.6." />
+		</condition>
+
+		<path id="svn.path">
+			<fileset dir="${lib.dir}/svnant-${svnant.version}" erroronmissingdir="false">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<available classname="org.tigris.subversion.svnant.SvnTask" classpathref="svn.path" property="have.svnant" />
+
+		<path id="pmd.path">
+			<fileset dir="${lib.dir}/pmd-4.2.5">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<available classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.path" property="have.pmd" />
+		<available classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="pmd.path" property="have.cpd" />
+
+		<property name="findbugs.dir" value="${lib.dir}/findbugs-1.3.9" />
+		<path id="findbugs.path">
+			<fileset file="${findbugs.dir}/lib/findbugs-ant.jar" />
+		</path>
+
+		<available classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path" property="have.findbugs" />
 	</target>
 
 	<target name="svn-init" depends="extras-init" if="have.svnant" unless="run.svn-init">
-		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" />
+		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svn.path" />
 		<svn>
 			<info target="${basedir}" />
 		</svn>
@@ -161,8 +195,8 @@
 		<signjar alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
 	</presetdef>
 
-	<target name="pmd-init" depends="common-init" if="have.pmd">
-		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" />
+	<target name="pmd-init" depends="common-init,extras-init" if="have.pmd">
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.path" />
 
 		<presetdef name="my.pmd">
 			<pmd shortFilenames="true" classpath="${etc.dir}/pmd-cfg.xml" rulesetfiles="${etc.dir}/pmd-cfg.xml">
@@ -173,11 +207,22 @@
 		</presetdef>
 	</target>
 
-	<target name="cpd-init" depends="common-init" if="have.cpd">
-		<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" />
+	<target name="cpd-init" depends="common-init,extras-init" if="have.cpd">
+		<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="pmd.path" />
 
 		<presetdef name="my.cpd">
 			<cpd encoding="UTF-8" minimumTokenCount="50" format="xml" outputFile="${report.dir}/${report.prefix}cpd.xml" />
+		</presetdef>
+	</target>
+
+	<target name="findbugs-init" depends="common-init,extras-init" if="have.findbugs">
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path" />
+
+		<presetdef name="my.findbugs">
+			<findbugs home="${findbugs.dir}" output="xml:withMessages" jvmargs="-Xmx512m">
+				<auxClasspath path="${classpath}" />
+				<sourcePath path="${src.dir}" />
+			</findbugs>
 		</presetdef>
 	</target>
 </project>

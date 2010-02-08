@@ -85,7 +85,7 @@ public final class GraphGlyph extends Glyph {
 	 *       (as doubles in graph coords, or maybe in pixel positions)
 	 *
 	 */
-	private int[] pixel_cache;
+	private int[] pixel_avg_cache;
 	private Color thresh_color;
 	private static final int thresh_contig_height = 10;
 	// in pixels, for calculating where to draw thresholded regions
@@ -303,12 +303,7 @@ public final class GraphGlyph extends Glyph {
 		double xmin = view_coordbox.x;
 		double xmax = view_coordbox.x + view_coordbox.width;
 
-		float yzero = 0;
-		if (getVisibleMinY() > yzero) {
-			yzero = getVisibleMinY();
-		} else if (getVisibleMaxY() < yzero) {
-			yzero = getVisibleMaxY();
-		}
+		float yzero = determineYZero();
 		coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, zero_point);
 
@@ -866,11 +861,11 @@ public final class GraphGlyph extends Glyph {
 		//    may be good for multiple maps that share the same scene, so that new int array
 		//    isn't created every time paint switches from mapA to mapB -- the array will
 		//    be reused and be the length of the component with greatest width...
-		if ((pixel_cache == null) || (pixel_cache.length < comp_ysize)) {
+		if ((pixel_avg_cache == null) || (pixel_avg_cache.length < comp_ysize)) {
 			//      System.out.println("in SmartGraphGlyph, creating new pixel cache");
-			pixel_cache = new int[comp_ysize];
+			pixel_avg_cache = new int[comp_ysize];
 		}
-		Arrays.fill(pixel_cache, 0, comp_ysize-1, Integer.MIN_VALUE);
+		Arrays.fill(pixel_avg_cache, 0, comp_ysize-1, Integer.MIN_VALUE);
 
 		if (TIME_DRAWING) {
 			tim.start();
@@ -934,12 +929,7 @@ public final class GraphGlyph extends Glyph {
 		int plot_bottom_ypixel = scratch_point.y;
 		// replaces pbox_yheight
 		
-		float yzero = 0;
-		if (getVisibleMinY() > yzero) {
-			yzero = getVisibleMinY();
-		} else if (getVisibleMaxY() < yzero) {
-			yzero = getVisibleMaxY();
-		}
+		float yzero = determineYZero();
 		coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, zero_point);
 		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
@@ -963,10 +953,11 @@ public final class GraphGlyph extends Glyph {
 		Rectangle2D.Double view_coordbox = view.getCoordBox();
 		double xmin = view_coordbox.x;
 		double xmax = view_coordbox.x + view_coordbox.width;
+
 		int draw_beg_index = graf.determineBegIndex(xmin);
-		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		coord.x = graf.getGraphXCoord(draw_beg_index);
 		coord.y = offset - ((graf.getGraphYCoord(draw_beg_index) - getVisibleMinY()) * yscale);
+
 		view.transformToPixels(coord, prev_point);
 		int ymin_pixel = prev_point.y;
 		int ymax_pixel = prev_point.y;
@@ -978,17 +969,17 @@ public final class GraphGlyph extends Glyph {
 		if (graph_style == GraphType.LINE_GRAPH) {
 			g.setColor(getBackgroundColor());
 		}
+
+		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			int xtemp = graf.getGraphXCoord(i);
-			coord.x = xtemp;
+			
 			float ytemp = graf.getGraphYCoord(i);
-			if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
-				continue;
-			}
 			// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 			ytemp = Math.min(ytemp, getVisibleMaxY());
 			ytemp = Math.max(ytemp, getVisibleMinY());
 
+			coord.x = xtemp;
 			coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
 			view.transformToPixels(coord, curr_point);
 
@@ -1019,9 +1010,9 @@ public final class GraphGlyph extends Glyph {
 		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
 			int yheight = yend - ystart;
 			// cache for drawing later
-				if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
+				if (prev_point.x > 0 && prev_point.x < pixel_avg_cache.length) {
 					int yavg_pixel = ysum / points_in_pixel;
-					pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
+					pixel_avg_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 				}
 			drawRectOrLine(g, prev_point.x, ystart, 1, yheight);
 			if (graph_style == GraphType.LINE_GRAPH) {
@@ -1048,24 +1039,22 @@ public final class GraphGlyph extends Glyph {
 		g.setColor(lighter);
 		int prev_index = 0;
 		// find the first pixel position that has a real value in pixel_cache
-		while ((prev_index < pixel_cache.length) && (pixel_cache[prev_index] == Integer.MIN_VALUE)) {
+		while ((prev_index < pixel_avg_cache.length) && (pixel_avg_cache[prev_index] == Integer.MIN_VALUE)) {
 			prev_index++;
-		}
-		if (prev_index != pixel_cache.length) {
+		}	
+		for (int i = prev_index + 1; i < pixel_avg_cache.length; i++) {
 			// successfully found a real value in pixel cache
-			for (int i = prev_index + 1; i < pixel_cache.length; i++) {
-				int yval = pixel_cache[i];
-				if (yval == Integer.MIN_VALUE) {
-					continue;
-				}
-				if (pixel_cache[i - 1] == Integer.MIN_VALUE && coords_per_pixel > 30) {
-					g.drawLine(i, yval, i, yval);
-				} else {
-					// last pixel had at least one datapoint, so connect with line
-					g.drawLine(prev_index, pixel_cache[prev_index], i, yval);
-				}
-				prev_index = i;
+			int yval = pixel_avg_cache[i];
+			if (yval == Integer.MIN_VALUE) {
+				continue;
 			}
+			if (pixel_avg_cache[i - 1] == Integer.MIN_VALUE && coords_per_pixel > 30) {
+				g.drawLine(i, yval, i, yval);
+			} else {
+				// last pixel had at least one datapoint, so connect with line
+				g.drawLine(prev_index, pixel_avg_cache[prev_index], i, yval);
+			}
+			prev_index = i;
 		}
 	}
 
@@ -1205,8 +1194,7 @@ public final class GraphGlyph extends Glyph {
 		double draw_max = pass_thresh_end + span_end_shift;
 		// make sure that length of region is > min_run_threshold
 		// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
-		boolean passes_min_run = (draw_max - draw_min) > min_run_threshold;
-		if (passes_min_run) {
+		if (draw_max - draw_min > min_run_threshold) {
 			// make sure aren't drawing single points
 			coord.x = draw_min;
 			view.transformToPixels(coord, prev_point);
@@ -1228,8 +1216,7 @@ public final class GraphGlyph extends Glyph {
 		double draw_max = pass_thresh_end + span_end_shift;
 		// make sure that length of region is > min_run_threshold
 		// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
-		boolean passes_min_run = (draw_max - draw_min) > min_run_threshold;
-		if (passes_min_run) {
+		if (draw_max - draw_min > min_run_threshold) {
 			// make sure aren't drawing single points
 			coord.x = draw_min;
 			view.transformToPixels(coord, prev_point);
@@ -1409,6 +1396,13 @@ public final class GraphGlyph extends Glyph {
 		} else {
 			thresh_glyph.setVisibility(false);
 		}
+	}
+
+	private float determineYZero() {
+		if (getVisibleMinY() > 0) {
+			return getVisibleMinY();
+		}
+		return Math.min(0, getVisibleMaxY());
 	}
 }
 

@@ -344,10 +344,13 @@ public final class GeneralLoadUtils {
 	static List<GenericFeature> getFeatures(final String versionName) {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
-		Set<GenericVersion> versions = gmodel.getSeqGroup(versionName).getVersions();
-		if (versions != null) {
-			for (GenericVersion gVersion : versions) {
-				featureList.addAll(gVersion.getFeatures());
+		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
+		if (group != null) {
+			Set<GenericVersion> versions = group.getVersions();
+			if (versions != null) {
+				for (GenericVersion gVersion : versions) {
+					featureList.addAll(gVersion.getFeatures());
+				}
 			}
 		}
 		return featureList;

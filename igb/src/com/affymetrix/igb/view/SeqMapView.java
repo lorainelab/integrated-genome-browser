@@ -109,7 +109,7 @@ public class SeqMapView extends JPanel
 
 	private static final boolean DIAGNOSTICS = false;
 	private static final boolean DEBUG_TIERS = false;
-	public static boolean DEBUG_COMP = false;
+	public static final boolean DEBUG_COMP = false;
 	private static final boolean DEBUG_STYLESHEETS = false;
 	
 	private static final boolean view_cytobands_in_axis = true;
@@ -225,7 +225,7 @@ public class SeqMapView extends JPanel
 	protected MapRangeBox map_range_box;
 	GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
-	public static Font axisFont = new Font("Courier", Font.BOLD, 12);
+	public static final Font axisFont = new Font("Courier", Font.BOLD, 12);
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
 	protected SeqSymmetry sym_used_for_title = null;

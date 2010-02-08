@@ -48,10 +48,10 @@ import java.awt.geom.Rectangle2D;
  *    fraction coverage count.
  */
 public final class CoverageSummarizerGlyph extends SolidGlyph {
-  public static int COVERAGE = 2;
-  public static int SIMPLE = 3;
-  public static int SMOOTHED_COVERAGE = 4;
-  public static int DEFAULT_STYLE = COVERAGE;
+  public static final int COVERAGE = 2;
+  public static final int SIMPLE = 3;
+  public static final int SMOOTHED_COVERAGE = 4;
+  public static final int DEFAULT_STYLE = COVERAGE;
 
   private static final Font default_font = new Font("Courier", Font.PLAIN, 12);
   private static final  NumberFormat nformat = new DecimalFormat();

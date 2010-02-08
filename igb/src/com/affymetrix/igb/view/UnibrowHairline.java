@@ -23,8 +23,8 @@ import java.util.prefs.*;
 
 public final class UnibrowHairline {
 
-  public static String PREF_KEEP_HAIRLINE_IN_VIEW = "Keep hairline in view";
-  public static boolean default_keep_hairline_in_view = true;
+  public static final String PREF_KEEP_HAIRLINE_IN_VIEW = "Keep hairline in view";
+  public static final boolean default_keep_hairline_in_view = true;
     
   static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 12);
 

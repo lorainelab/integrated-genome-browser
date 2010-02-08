@@ -31,9 +31,9 @@ import static com.affymetrix.igb.IGBConstants.UTF8;
 
 public final class Das2VersionedSource {
     private static final boolean URL_ENCODE_QUERY = true;
-    public static String SEGMENTS_CAP_QUERY = "segments";
-    public static String TYPES_CAP_QUERY = "types";
-    public static String FEATURES_CAP_QUERY = "features";
+    public static final String SEGMENTS_CAP_QUERY = "segments";
+    public static final String TYPES_CAP_QUERY = "types";
+    public static final String FEATURES_CAP_QUERY = "features";
     private static final boolean DEBUG = false;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;

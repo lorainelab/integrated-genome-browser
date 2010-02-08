@@ -45,7 +45,7 @@ import javax.swing.*;
   public static final String COMPONENT_STATE_TAB = "TAB";
   public static final String COMPONENT_STATE_WINDOW = "WINDOW";
 
-	public static String SLASH_STANDIN = "%";
+	public static final String SLASH_STANDIN = "%";
 
   /** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
   public static final String ASK_BEFORE_EXITING = "Ask before exiting";

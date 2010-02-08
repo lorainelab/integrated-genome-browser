@@ -76,8 +76,8 @@ public class AnnotStyle implements IAnnotStyleExtended {
   private static final double default_y = 0.0;
   public static final int MAX_MAX_DEPTH = Integer.MAX_VALUE;
 
-  public static boolean DEBUG = false;
-  public static boolean DEBUG_NODE_PUTS = false;
+  public static final boolean DEBUG = false;
+  public static final boolean DEBUG_NODE_PUTS = false;
   // whether to create and use a java Preferences node object for this instance
   private boolean is_persistent = true;
 

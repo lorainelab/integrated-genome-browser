@@ -49,8 +49,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	private final JPanel perP = new JPanel();  // for adjust-by-percent controls
 	private final static int max_chars = 8;
 	private final static int max_pix_per_char = 6;
-	private final int tf_min_xpix = max_chars * max_pix_per_char;
-	private final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
+	private static final int tf_min_xpix = max_chars * max_pix_per_char;
+	private static final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
 	private final static int tf_min_ypix = 10;
 	private final static int tf_max_ypix = 25;
 

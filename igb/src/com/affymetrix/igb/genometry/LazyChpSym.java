@@ -55,7 +55,7 @@ import com.affymetrix.genometryImpl.TypeContainerAnnot;
  */
 public final class LazyChpSym extends ScoredContainerSym {
 
-  public static String PROBESET_SERVER_NAME = "NetAffx";
+  public static final String PROBESET_SERVER_NAME = "NetAffx";
   BioSeq aseq;
 
   /**

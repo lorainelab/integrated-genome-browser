@@ -39,7 +39,7 @@ import java.text.ParseException;
 
 public final class GraphAdjusterView {
 
-	public static NumberFormat numberParser = NumberFormat.getNumberInstance();
+	public static final NumberFormat numberParser = NumberFormat.getNumberInstance();
 
 	private static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 

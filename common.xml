@@ -220,7 +220,7 @@
 
 		<presetdef name="my.findbugs">
 			<findbugs home="${findbugs.dir}" output="xml:withMessages" jvmargs="-Xmx512m">
-				<auxClasspath path="${classpath}" />
+				<auxClasspath path="${report.classpath}" />
 				<sourcePath path="${src.dir}" />
 			</findbugs>
 		</presetdef>

@@ -115,8 +115,8 @@
 		</condition>
 
 		<path id="svn.path">
-			<fileset dir="${lib.dir}/svnant-${svnant.version}" erroronmissingdir="false">
-				<include name="*.jar" />
+			<fileset dir="${lib.dir}">
+				<include name="svnant-${svnant.version}/*.jar" />
 			</fileset>
 		</path>
 

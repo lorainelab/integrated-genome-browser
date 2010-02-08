@@ -66,7 +66,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 	static boolean DEBUG_EVENTS = false;
 	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	static final String NO_GENOME = "No Genome Selected";
-	JTable seqtable;
+	final JTable seqtable;
 	BioSeq selected_seq = null;
 	AnnotatedSeqGroup previousGroup = null;
 	int previousSeqCount = 0;

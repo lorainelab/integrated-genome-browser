@@ -38,7 +38,6 @@ import java.net.Authenticator.RequestorType;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -58,7 +57,6 @@ import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
 import static javax.swing.JOptionPane.OK_OPTION;
 import static javax.swing.JOptionPane.PLAIN_MESSAGE;
-import static javax.swing.RowSorter.SortKey;
 
 /**
  *

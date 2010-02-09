@@ -30,8 +30,8 @@ public enum AffyDataType {
 		DOUBLE("text/x-calvin-double"), //TODO: Undocumented mime type // documentation says order is DOUBLE then String then WSTRING
 		;
 
-	static public Charset UTF16 = Charset.forName("utf-16be");
-	static public Charset UTF8 = Charset.forName("utf-8");
+	static final Charset UTF16 = Charset.forName("utf-16be");
+	static final Charset UTF8 = Charset.forName("utf-8");
 
 	String affyMimeType;
 

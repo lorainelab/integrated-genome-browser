@@ -81,7 +81,7 @@ public final class GraphState {
 	private final IAnnotStyle tier_style;
 	private IAnnotStyle combo_tier_style = null;
 
-	public static float default_graph_height = 100.0f;
+	public static final float default_graph_height = 100.0f;
 
 
 	/** Convert a graph type name such as "line", "bar", "dot", etc., to an Integer,

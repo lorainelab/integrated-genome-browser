@@ -59,22 +59,22 @@ import com.affymetrix.genometryImpl.util.Timer;
  *</pre>
  */
 public final class BarParser implements AnnotationWriter  {
-	static boolean DEBUG_READ = false;
-	static boolean DEBUG_SLICE = false;
-	static boolean DEBUG_DATA = false;
-	static boolean DEBUG_INDEXER = false;
+	private static final boolean DEBUG_READ = false;
+	private static final boolean DEBUG_SLICE = false;
+	private static final boolean DEBUG_DATA = false;
+	private static final boolean DEBUG_INDEXER = false;
 
 	/** 8-byte floating-point.  Names of the other data-type constants can be interpreted similarly. */
-	public static int BYTE8_FLOAT = 0;
-	public static int BYTE4_FLOAT = 1;
-	public static int BYTE4_SIGNED_INT = 2;
-	public static int BYTE2_SIGNED_INT = 3;
-	public static int BYTE1_SIGNED_INT = 4;
-	public static int BYTE4_UNSIGNED_INT = 5;
-	public static int BYTE2_UNSIGNED_INT = 6;
-	public static int BYTE1_UNSIGNED_INT = 7;
+	private static final int BYTE8_FLOAT = 0;
+	private static final int BYTE4_FLOAT = 1;
+	private static final int BYTE4_SIGNED_INT = 2;
+	private static final int BYTE2_SIGNED_INT = 3;
+	private static final int BYTE1_SIGNED_INT = 4;
+	private static final int BYTE4_UNSIGNED_INT = 5;
+	private static final int BYTE2_UNSIGNED_INT = 6;
+	private static final int BYTE1_UNSIGNED_INT = 7;
 
-	protected static int[] bytes_per_val = {
+	static final int[] bytes_per_val = {
 		8,    // BYTE8_FLOAT
 		4,    // BYTE4_FLOAT
 		4,    // BYTE4_SIGNED_INT
@@ -85,7 +85,7 @@ public final class BarParser implements AnnotationWriter  {
 		1     // BYTE1_UNSIGNED_INT
 	};
 
-	public static String[] valstrings =
+	private static final String[] valstrings =
 	{ "BYTE8_FLOAT", "BYTE4_FLOAT",
 		"BYTE4_SIGNED_INT", "BYTE2_SIGNED_INT", "BYTE1_SIGNED_INT",
 		"BYTE4_UNSIGNED_INT", "BYTE2_UNSIGNED_INT", "BYTE1_UNSIGNED_INT" };
@@ -93,7 +93,7 @@ public final class BarParser implements AnnotationWriter  {
 	/**
 	 *  For indexing of base coord sets, how many point to compress into single index entry
 	 */
-	static int points_per_chunk = 1024;
+	private static final int points_per_chunk = 1024;
 
 	private static Map<String,Object> coordset2seqs = new HashMap<String,Object>();
 

@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
  */
 public class LeafSingletonSymmetry extends SimpleMutableSeqSpan implements SeqSymmetry {
 
-	protected static int count = 1;
+	private static final int count = 1;
 
 	public LeafSingletonSymmetry(SeqSpan span) {
 		start = span.getStart();

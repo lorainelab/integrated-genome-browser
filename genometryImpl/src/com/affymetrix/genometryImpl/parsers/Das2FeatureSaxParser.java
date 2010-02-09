@@ -44,54 +44,54 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 	// DO_SEQID_HACK is a very temporary fix!!!
 // Need to move to using full URI references to identify sequences,
-	public static boolean DO_SEQID_HACK = true;
-	static boolean DEBUG = false;
-	static boolean REPORT_RESULTS = false;
-	static boolean REPORT_MULTI_LOC = true;
-	static boolean REQUIRE_DAS2_NAMESPACE = false;    // ADD_NEW_SEQS_TO_GROUP should be true to allow opening a file in a "new" genome via File->Open
-	static boolean ADD_NEW_SEQS_TO_GROUP = false;
+	public static final boolean DO_SEQID_HACK = true;
+	private static final boolean DEBUG = false;
+	private static final boolean REPORT_RESULTS = false;
+	private static final boolean REPORT_MULTI_LOC = true;
+	private static final boolean REQUIRE_DAS2_NAMESPACE = false;    // ADD_NEW_SEQS_TO_GROUP should be true to allow opening a file in a "new" genome via File->Open
+	private static final boolean ADD_NEW_SEQS_TO_GROUP = false;
 	//   "text/plain";
 	//   "text/x-das-feature+xml";
-	public static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
-	public static String FEATURES_CONTENT_SUBTYPE = "x-das-features+xml";
-	public static String FILENAME_EXTENSION = "das2xml";
-	public static String FILENAME_EXTENSION_WITH_DOT = "." + FILENAME_EXTENSION;    //  static String DAS2_NAMESPACE = "http://www.biodas.org/ns/das/2.00";
-	public static String DAS2_NAMESPACE = "http://biodas.org/documents/das2";
+	public static final String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
+	public static final String FEATURES_CONTENT_SUBTYPE = "x-das-features+xml";
+	//private static final String FILENAME_EXTENSION = "das2xml";
+	//private static final String FILENAME_EXTENSION_WITH_DOT = "." + FILENAME_EXTENSION;    //  static String DAS2_NAMESPACE = "http://www.biodas.org/ns/das/2.00";
+	public static final String DAS2_NAMESPACE = "http://biodas.org/documents/das2";
 	/**
 	 *  elements possible in DAS2 feature response
 	 */
 	//  static final String FEATURES = "FEATURES";
-	public static String FEATURELIST = "FEATURELIST";
-	public static String FEATURES = "FEATURES";
-	public static String FEATURE = "FEATURE";
-	public static String LOC = "LOC";
-	public static String XID = "XID";
-	public static String PART = "PART";
-	public static String PARENT = "PARENT";
+	private static final String FEATURELIST = "FEATURELIST";
+	private static final String FEATURES = "FEATURES";
+	private static final String FEATURE = "FEATURE";
+	private static final String LOC = "LOC";
+	private static final String XID = "XID";
+	private static final String PART = "PART";
+	private static final String PARENT = "PARENT";
 	//  public static String ALIGN = "ALIGN";  // no longer have ALIGN elements, these are now also LOC elements
-	public static String PROP = "PROP";
-	public static String WRITEBACK = "WRITEBACK";
+	private static final String PROP = "PROP";
+	//private static final String WRITEBACK = "WRITEBACK";
 	/**
 	 *  attributes possible in DAS2 feature response
 	 */
-	static public String XMLBASE = "xml:base";   // common to all elements?
-	static public String XMLLANG = "xml:lang";   // common to all elements?
-	static public String ID = "id";     // replaced by "uri"?
-	static public String URID = "uri";  // FEATURE, PARENT, PART, LOC
-	static public String TYPE = "type";      // replaced by "type_id"?
-	static public String TYPEID = "type_id";     // FEATURE
-	static public String TYPEURI = "type_uri";     // FEATURE
-	static public String NAME = "name";          // replaced by "title"?
-	static public String TITLE = "title";          // FEATURE
-	static public String CREATED = "created";    // FEATURE
-	static public String MODIFIED = "modified";  // FEATURE
-	static public String DOC_HREF = "doc_href";  // FEATURE
-	static public String MIME_TYPE = "mimetype";  // PROP
-	static public String RANGE = "range";         // LOC
-	static public String CIGAR = "gap";             // LOC
-	static public String KEY = "key";             // PROP
-	static public String VALUE = "value";         // PROP
-	static public String SEGMENT = "segment";     // LOC
+	private static final String XMLBASE = "xml:base";   // common to all elements?
+	//private static final String XMLLANG = "xml:lang";   // common to all elements?
+	public static final String ID = "id";     // replaced by "uri"?
+	public static final String URID = "uri";  // FEATURE, PARENT, PART, LOC
+	private static final String TYPE = "type";      // replaced by "type_id"?
+	private static final String TYPEID = "type_id";     // FEATURE
+	public static final String TYPEURI = "type_uri";     // FEATURE
+	public static final String NAME = "name";          // replaced by "title"?
+	public static final String TITLE = "title";          // FEATURE
+	private static final String CREATED = "created";    // FEATURE
+	private static final String MODIFIED = "modified";  // FEATURE
+	private static final String DOC_HREF = "doc_href";  // FEATURE
+	//private static final String MIME_TYPE = "mimetype";  // PROP
+	private static final String RANGE = "range";         // LOC
+	private static final String CIGAR = "gap";             // LOC
+	private static final String KEY = "key";             // PROP
+	private static final String VALUE = "value";         // PROP
+	public static final String SEGMENT = "segment";     // LOC
 
 	// PROP attributes -- leaving out for now, not sure if common.rnc is current for t
 	//  static final String PTYPE = "ptype";  // in <PROP>

@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public final class GenometryModel {
 
 	private static GenometryModel smodel = new GenometryModel();
-	private static Logger default_logger = Logger.getLogger(GenometryModel.class.getName());
+	private static final Logger default_logger = Logger.getLogger(GenometryModel.class.getName());
 	private static Logger logger = default_logger;
 
 
@@ -29,7 +29,7 @@ public final class GenometryModel {
 	 * selection mean in this context?
 	 */
 
-	static public boolean DEBUG = false;
+	private static final boolean DEBUG = false;
 
 	Map<String,AnnotatedSeqGroup> seq_groups = new LinkedHashMap<String,AnnotatedSeqGroup>();
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad

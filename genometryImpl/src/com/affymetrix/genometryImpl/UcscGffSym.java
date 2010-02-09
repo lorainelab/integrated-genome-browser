@@ -133,7 +133,7 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
 			return super.getProperty(name);
 		} else {
 			// for GFF2, parse the attributes field and return the property found in that
-			Map m = cloneProperties();
+			Map<String,Object> m = cloneProperties();
 			return m.get(name);
 		}
 	}

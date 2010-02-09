@@ -34,32 +34,12 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
 	 *  Uses the same type of Map class (HashMap, TreeMap, etc.)
 	 *  as the original.
 	 */
+	@SuppressWarnings("unchecked")
 	public Map<String,Object> cloneProperties() {
-		if (props == null) { return null; }
-		// quick check for efficient Hashtable cloning
-		else if (props instanceof Hashtable) {
-			return (Map<String,Object>)((Hashtable)props).clone();
+		if (props == null) {
+			return null;
 		}
-		// quick check for efficient HashMap cloning
-		else if (props instanceof HashMap) {
-			return (Map<String,Object>)((HashMap)props).clone();
-		}
-		// quick check for efficient TreeMap cloning
-		else if (props instanceof TreeMap) {
-			return (Map<String,Object>)((TreeMap)props).clone();
-		}
-		else {
-			try {
-				Map<String,Object> newprops = (Map<String,Object>) props.getClass().newInstance();
-				newprops.putAll(props);
-				return newprops;
-			}
-			catch (Exception ex) {
-				System.out.println("problem trying to clone SymWithProps properties, " +
-						"returning null instead");
-				return null;
-			}
-		}
+		return (Map<String,Object>)((HashMap)props).clone();
 	}
 
 	public boolean setProperty(String name, Object val) {

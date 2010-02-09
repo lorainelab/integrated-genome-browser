@@ -200,7 +200,7 @@
 
 		<presetdef name="my.pmd">
 			<pmd shortFilenames="true" classpath="${etc.dir}/pmd-cfg.xml" rulesetfiles="${etc.dir}/pmd-cfg.xml">
-				<formatter type="xml" toFile="${report.dir}/${report.prefix}pmd.xml" />
+				<formatter type="xml" toFile="${report.dir}/xml/${report.prefix}pmd.xml" />
 				<!-- for some reason, ${src.dir} will not work here -->
 				<fileset dir="src" includes="**/*.java" />
 			</pmd>
@@ -211,7 +211,7 @@
 		<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="pmd.path" />
 
 		<presetdef name="my.cpd">
-			<cpd encoding="UTF-8" minimumTokenCount="50" format="xml" outputFile="${report.dir}/${report.prefix}cpd.xml" />
+			<cpd encoding="UTF-8" minimumTokenCount="50" format="xml" outputFile="${report.dir}/xml/${report.prefix}cpd.xml" />
 		</presetdef>
 	</target>
 
@@ -219,7 +219,7 @@
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.path" />
 
 		<presetdef name="my.findbugs">
-			<findbugs home="${findbugs.dir}" output="xml:withMessages" jvmargs="-Xmx512m">
+			<findbugs home="${findbugs.dir}" output="xml:withMessages" outputFile="${report.dir}/xml/${report.prefix}findbugs.xml" jvmargs="-Xmx512m">
 				<auxClasspath path="${report.classpath}" />
 				<sourcePath path="${src.dir}" />
 			</findbugs>

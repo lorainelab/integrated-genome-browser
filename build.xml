@@ -191,15 +191,15 @@
 	</target>
 
 	<target name="cpd" depends="common-init,cpd-init" if="have.cpd" description="run pmd's cut and paste detection">
-		<mkdir dir="${report.dir}" />
-		<my.cpd outputFile="${report.dir}/cpd.xml">
+		<mkdir dir="${report.dir}/xml" />
+		<my.cpd outputFile="${report.dir}/xml/cpd.xml">
 			<fileset dir=".">
 				<exclude name="*/test/**/*.java" />
 				<exclude name="*/demo/**/*.java" />
 				<include name="**/*.java" />
 			</fileset>
 		</my.cpd>
-		<xslt in="${report.dir}/cpd.xml" style="${etc.dir}/cpdhtml.xslt" out="${report.dir}/cpd.html" />
+		<xslt in="${report.dir}/xml/cpd.xml" style="${etc.dir}/cpdhtml.xslt" out="${report.dir}/cpd.html" />
 	</target>
 
 	<target name="findbugs" depends="compile,common-init,findbugs-init" if="have.findbugs" description="run findbugs static analysis program">

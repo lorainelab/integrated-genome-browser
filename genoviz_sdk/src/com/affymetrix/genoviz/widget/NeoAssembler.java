@@ -282,9 +282,9 @@ public class NeoAssembler extends NeoContainerWidget
 	protected GlyphI sel_glyph;
 
 
-	protected static Color default_map_background = new Color(180, 250, 250);
-	protected static Color default_panel_background = Color.lightGray;
-	protected static Color default_label_background = Color.lightGray;
+	private static final Color default_map_background = new Color(180, 250, 250);
+	private static final Color default_panel_background = Color.lightGray;
+	private static final Color default_label_background = Color.lightGray;
 
 	protected Color label_color = Color.black;
 	protected Color residue_color = Color.white;

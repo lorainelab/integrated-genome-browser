@@ -112,10 +112,10 @@ public class NeoMap extends NeoWidget implements
 
 		   private static final boolean NM_DEBUG_PAINT = false;
 
-		   protected static Color default_map_background = new Color(180, 250, 250);
-		   protected static Color default_panel_background = Color.lightGray;
+		   private static final Color default_map_background = new Color(180, 250, 250);
+		   private static final Color default_panel_background = Color.lightGray;
 		   // not sure if foreground is used at all at the moment...
-		   protected static Color default_panel_foreground = Color.darkGray;
+		   private static final Color default_panel_foreground = Color.darkGray;
 
 		   // a list of axes added to the map
 		   // this is maintained in order to stretch them

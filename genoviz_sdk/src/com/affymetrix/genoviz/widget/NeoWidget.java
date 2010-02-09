@@ -124,8 +124,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	protected boolean hscroll_show, vscroll_show;
 
-	protected static String hscroll_default_loc = "South";
-	protected static String vscroll_default_loc = "East";
+	protected static final String hscroll_default_loc = "South";
+	protected static final String vscroll_default_loc = "East";
 	protected String hscroll_loc = hscroll_default_loc;
 	protected String vscroll_loc = vscroll_default_loc;
 

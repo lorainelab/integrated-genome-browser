@@ -22,7 +22,7 @@ import java.awt.Color;
  */
 public class DNAUtils implements Translatable  {
 
-	static char[] dna_chars = {
+	private static final char[] dna_chars = {
 		'A', 'C', 'G', 'T', 'N', 'M', 'R', 'W',
 		'S', 'Y', 'K', 'V', 'H', 'D', 'B', 'X',
 		' ',

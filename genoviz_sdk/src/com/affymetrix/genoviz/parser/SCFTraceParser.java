@@ -51,7 +51,7 @@ public class SCFTraceParser implements ContentParser {
 	 * Magic tag that SCF files use at the beginning of the file to
 	 * indicate that this really is an SCF File ('.scf').
 	 */
-	protected static int scfMagic =
+	private static final int scfMagic =
 		((int)'.' << 24) + ((int)'s' << 16) + ((int)'c' << 8) + ((int)'f') ;
 
 	/**

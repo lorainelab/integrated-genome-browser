@@ -41,28 +41,28 @@ public class TraceBaseGlyph extends Glyph  {
 
 	protected int dataCount, baseCount;
 
-	protected static String baseString[] = { "A", "C", "G", "T", "-" };
-	protected static Color baseColor[] = {
+	private static final String baseString[] = { "A", "C", "G", "T", "-" };
+	private static Color baseColor[] = {
 		Color.green, Color.cyan, Color.yellow, Color.red,
 		Color.white,    // unknown base color
 		Color.lightGray // selection color
 	};
-	protected static Color selColor = baseColor[baseColor.length-1];
-	protected static Font fnt = new Font("Helvetica", Font.PLAIN, 12);
-	protected static FontMetrics fntmet = GeneralUtils.getFontMetrics(fnt);
-	protected static int fntWidth = fntmet.charWidth('C');
-	protected static int fntXOffset = fntWidth/2;
-	protected static int fntHeight = fntmet.getHeight();
-	protected static int letterBaseline = fntmet.getLeading() + fntmet.getAscent();
+	private static Color selColor = baseColor[baseColor.length-1];
+	private static final Font fnt = new Font("Helvetica", Font.PLAIN, 12);
+	private static final FontMetrics fntmet = GeneralUtils.getFontMetrics(fnt);
+	private static final int fntWidth = fntmet.charWidth('C');
+	//private static final int fntXOffset = fntWidth/2;
+	private static final int fntHeight = fntmet.getHeight();
+	private static final int letterBaseline = fntmet.getLeading() + fntmet.getAscent();
 
-	protected static int letterHeight = fntHeight;
-	protected static int letterSpacer = 3;
-	protected static int tickHeight = 7;
-	protected static int tickSpacer = 2;
+	private static final int letterHeight = fntHeight;
+	//private static final int letterSpacer = 3;
+	//private static final int tickHeight = 7;
+	//private static final int tickSpacer = 2;
 
-	protected static int tickOffset = letterBaseline + letterSpacer;
+	//private static final int tickOffset = letterBaseline + letterSpacer;
 
-	private static int baseGlyphHeight = letterHeight;
+	private static final int baseGlyphHeight = letterHeight;
 
 	protected Point prevPixelPoint = new Point(0,0);
 	protected Point currPixelPoint = new Point(0,0);

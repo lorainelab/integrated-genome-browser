@@ -28,31 +28,31 @@ import java.awt.geom.Rectangle2D;
 public class QualityBases extends Glyph  {
 	protected ReadConfidence read_conf;
 
-	protected static String baseString[] = { "A", "C", "G", "T", "-" };
-	protected static Color baseColor[] = { Color.green, Color.cyan,
+	private static final String baseString[] = { "A", "C", "G", "T", "-" };
+	private static final Color baseColor[] = { Color.green, Color.cyan,
 		Color.yellow, Color.red, Color.white };
-	protected static Color numColor = Color.lightGray;
-	protected static Font fnt = new Font("Helvetica", Font.BOLD, 12);
-	protected static FontMetrics fntmet = GeneralUtils.getFontMetrics(fnt);
-	protected static int fntWidth = fntmet.charWidth('C');
-	protected static int fntXOffset = fntWidth/2;
-	protected static int fntHeight = fntmet.getHeight();
+	private static final Color numColor = Color.lightGray;
+	private static final Font fnt = new Font("Helvetica", Font.BOLD, 12);
+	private static final FontMetrics fntmet = GeneralUtils.getFontMetrics(fnt);
+	//private static final int fntWidth = fntmet.charWidth('C');
+	//private static final int fntXOffset = fntWidth/2;
+	private static final int fntHeight = fntmet.getHeight();
 
-	protected static int topSpacer = 1;
-	protected static int letterHeight = fntHeight;
-	protected static int letterSpacer = 3;
-	protected static int tickHeight = 7;
-	protected static int tickSpacer = 2;
-	protected static int numHeight = fntHeight;
-	protected static int numSpacer = 4;
+	private static final int topSpacer = 1;
+	private static final int letterHeight = fntHeight;
+	private static final int letterSpacer = 3;
+	private static final int tickHeight = 7;
+	private static final int tickSpacer = 2;
+	private static final int numHeight = fntHeight;
+	private static final int numSpacer = 4;
 
-	protected static int letterOffset = topSpacer;
-	protected static int letterBaseline = topSpacer + letterHeight;
-	protected static int tickOffset = letterBaseline + letterSpacer;
-	protected static int numOffset = tickOffset + tickHeight + tickSpacer;
-	protected static int numBaseline = numOffset + numHeight;
+	//private static final int letterOffset = topSpacer;
+	private static final int letterBaseline = topSpacer + letterHeight;
+	private static final int tickOffset = letterBaseline + letterSpacer;
+	private static final int numOffset = tickOffset + tickHeight + tickSpacer;
+	private static final int numBaseline = numOffset + numHeight;
 
-	public static int baseGlyphHeight = (
+	public static final int baseGlyphHeight = (
 			topSpacer +
 			letterHeight +
 			letterSpacer +
@@ -81,7 +81,7 @@ public class QualityBases extends Glyph  {
 	protected BaseConfidence nextBase;
 
 	protected GlyphI sel_glyph;
-	protected static Color sel_color = Color.white;
+	private static final Color sel_color = Color.white;
 
 	public QualityBases(ReadConfidence read_conf) {
 		this.setDrawOrder(DRAW_CHILDREN_FIRST);

@@ -164,10 +164,10 @@ public class NeoSeq extends NeoContainerWidget
 	private static final boolean fit_check = true;
 	private static final boolean DEBUG_STRETCH = false;
 
-	protected static Color default_map_background = Color.lightGray;
-	protected static Color default_panel_background = Color.lightGray;
-	protected static Color default_number_background = Color.lightGray;
-	protected static Color default_foreground = Color.black;
+	private static final Color default_map_background = Color.lightGray;
+	private static final Color default_panel_background = Color.lightGray;
+	private static final Color default_number_background = Color.lightGray;
+	private static final Color default_foreground = Color.black;
 
 	protected boolean showAs[] = new boolean[8];
 

@@ -103,9 +103,9 @@ public class NeoQualler extends NeoContainerWidget
 	@Deprecated
 	public static final int UNKNOWN = BARS + 4;
 
-	protected static Color default_bar_background = Color.black;
-	protected static Color default_base_background = Color.black;
-	protected static Color default_panel_background = Color.lightGray;
+	private static final Color default_bar_background = Color.black;
+	private static final Color default_base_background = Color.black;
+	private static final Color default_panel_background = Color.lightGray;
 
 
 	protected static final int base_map_pixel_height = QualityBases.baseGlyphHeight;

@@ -26,7 +26,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 public class MapGlyphFactory implements NeoConstants  {
 
 	protected int orient;  // orientation, default to HORIZONTAL
-	protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
+	private static final Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
 	protected String name;
 	protected Scene scene;
 	protected Color background_color, default_background, foreground_color,  default_foreground;

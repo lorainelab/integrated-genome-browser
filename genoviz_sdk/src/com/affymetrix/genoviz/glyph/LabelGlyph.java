@@ -37,7 +37,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	private static final boolean DEBUG_PIXELBOX = false;
 	private static final boolean DEBUG_HIT = true;
 
-	protected static Font DEFAULT_FONT = new Font("Courier", Font.PLAIN, 12);
+	private static final Font DEFAULT_FONT = new Font("Courier", Font.PLAIN, 12);
 
 	protected int placement = ABOVE;
 	protected String text;

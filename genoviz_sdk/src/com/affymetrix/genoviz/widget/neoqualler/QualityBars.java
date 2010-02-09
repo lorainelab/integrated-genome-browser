@@ -34,7 +34,7 @@ public class QualityBars extends Glyph  {
 	protected ColorSepGlyph qual_glyph;
 
 	protected GlyphI sel_glyph;
-	protected static Color sel_color = Color.gray;
+	private static final Color sel_color = Color.gray;
 
 	protected static Color qualColor[] = {
 		Color.green,
@@ -43,7 +43,7 @@ public class QualityBars extends Glyph  {
 		Color.red,
 		Color.white };
 
-	protected static char baseString[] = { 'A', 'C', 'G', 'T', '-' };
+	private static final char baseString[] = { 'A', 'C', 'G', 'T', '-' };
 
 	public QualityBars(ReadConfidence read_conf) {
 

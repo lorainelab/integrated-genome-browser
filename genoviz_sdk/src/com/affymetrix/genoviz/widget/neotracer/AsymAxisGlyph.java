@@ -39,24 +39,24 @@ public class AsymAxisGlyph extends Glyph  {
 	protected int dataCount, baseCount;
 	private int start_num = 0;
 
-	protected static Color numColor = Color.lightGray;
+	private static Color numColor = Color.lightGray;
 
-	protected static Font fnt = new Font("Helvetica", Font.PLAIN, 12);
-	protected static FontMetrics fntmet = GeneralUtils.getFontMetrics(fnt);
-	protected static int fntWidth = fntmet.charWidth('C');
-	protected static int fntXOffset = fntWidth/2;
-	protected static int fntHeight = fntmet.getHeight();
+	private static final Font fnt = new Font("Helvetica", Font.PLAIN, 12);
+	private static final FontMetrics fntmet = GeneralUtils.getFontMetrics(fnt);
+	private static final int fntWidth = fntmet.charWidth('C');
+	//private static final int fntXOffset = fntWidth/2;
+	private static final int fntHeight = fntmet.getHeight();
 
-	protected static int tickHeight = 7;
-	protected static int tickSpacer = 2;
-	protected static int numHeight = fntHeight;
-	protected static int numSpacer = 3;
+	private static final int tickHeight = 7;
+	private static final int tickSpacer = 2;
+	private static final int numHeight = fntHeight;
+	private static final int numSpacer = 3;
 
-	protected static int tickOffset = 4;
-	protected static int numOffset = tickOffset + tickHeight + tickSpacer;
-	protected static int numBaseline = numOffset + numHeight;
+	private static final int tickOffset = 4;
+	private static final int numOffset = tickOffset + tickHeight + tickSpacer;
+	private static final int numBaseline = numOffset + numHeight;
 
-	private static int baseGlyphHeight = ( tickOffset +
+	private static final int baseGlyphHeight = ( tickOffset +
 			tickHeight +
 			tickSpacer +
 			numHeight +

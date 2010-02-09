@@ -187,9 +187,9 @@ public class NeoTracer extends NeoContainerWidget
 	protected Glyph line_glyph;
 	protected FillRectGlyph left_trim_glyph, right_trim_glyph;
 
-	protected static Color default_trace_background = Color.black;
-	protected static Color default_base_background = Color.black;
-	protected static Color default_panel_background = Color.lightGray;
+	private static final Color default_trace_background = Color.black;
+	private static final Color default_base_background = Color.black;
+	private static final Color default_panel_background = Color.lightGray;
 
 	protected Color trim_color = Color.lightGray;
 

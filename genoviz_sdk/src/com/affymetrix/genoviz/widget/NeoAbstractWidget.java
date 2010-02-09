@@ -264,7 +264,7 @@ public abstract class NeoAbstractWidget extends Container
 
 	protected boolean models_have_multiple_glyphs = false;
 
-	protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
+	private static final Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
 
 	protected int scroll_behavior[] = new int[2];
 

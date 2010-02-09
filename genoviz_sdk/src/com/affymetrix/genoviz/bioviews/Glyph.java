@@ -39,7 +39,7 @@ public abstract class Glyph implements GlyphI  {
 	private static final boolean DEBUG = false;
 	protected static final Color default_bg_color = Color.black;
 	protected static final Color default_fg_color = Color.black;
-	protected static GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
+	protected static final GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
 
 	protected Rectangle2D.Double coordbox;
 	protected Scene scene;

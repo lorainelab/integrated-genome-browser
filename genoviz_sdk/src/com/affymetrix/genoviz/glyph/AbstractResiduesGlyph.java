@@ -26,8 +26,8 @@ import java.awt.geom.Rectangle2D;
 public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGlyphI {
 	// made abstract 6-24-98 to make explicit that should not be used directly --
 	//   use a subclass instead
-	protected static Font default_font = new Font("Courier", Font.BOLD, 12);
-	protected static Color default_residue_color = Color.black;
+	protected static final Font default_font = new Font("Courier", Font.BOLD, 12);
+	private static final Color default_residue_color = Color.black;
 
 	//  protected Font residue_font;
 	//  protected Color residue_color;

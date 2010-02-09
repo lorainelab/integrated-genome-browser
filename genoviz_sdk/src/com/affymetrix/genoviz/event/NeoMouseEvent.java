@@ -31,7 +31,7 @@ import java.awt.geom.Point2D;
  */
 public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
 
-	protected static int UNKNOWN = com.affymetrix.genoviz.util.NeoConstants.UNKNOWN;
+	protected static final int UNKNOWN = com.affymetrix.genoviz.util.NeoConstants.UNKNOWN;
 	protected EventObject original_event;
 	protected double xcoord;
 	protected double ycoord;

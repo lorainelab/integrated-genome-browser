@@ -107,7 +107,7 @@ public class AltSpliceView extends JComponent
 		spliced_view.SUBSELECT_SEQUENCE = false;
 		orf_analyzer = new OrfAnalyzer(spliced_view, CONTROLS_ON_SIDE);
 		buffer_sizeTF = new JTextField(4);
-		buffer_sizeTF.setText("" + getSliceBuffer());
+		buffer_sizeTF.setText("" + spliced_view.getSliceBuffer());
 		slice_by_selectionCB = new JCheckBox("Slice By Selection", true);
 
 		JPanel buf_adjustP = new JPanel(new FlowLayout());
@@ -221,18 +221,12 @@ public class AltSpliceView extends JComponent
 		slice_by_selection_on = b;
 	}
 
-	//public boolean getSliceBySelection() { return slice_by_selection_on; }
-	private int getSliceBuffer() {
-		return spliced_view.getSliceBuffer();
-	}
-
 	private void setSliceBuffer(int buf_size, boolean refresh) {
 		spliced_view.setSliceBuffer(buf_size, refresh);
 		orf_analyzer.redoOrfs();
 	}
 
 	private void sliceAndDice(List<SeqSymmetry> syms) {
-		//    System.out.println("called AltSpliceView.sliceAndDice() " + syms.size());
 		if (syms.size() > 0) {
 			spliced_view.sliceAndDice(syms);
 			orf_analyzer.redoOrfs();

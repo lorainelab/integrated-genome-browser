@@ -117,7 +117,6 @@ public class SeqMapView extends JPanel
 	protected boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
-	private static final boolean show_slicendice = false;
 	private boolean slicing_in_effect = false;
 	private boolean hairline_is_labeled = true;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
@@ -334,7 +333,6 @@ public class SeqMapView extends JPanel
 
 			public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler) {
 				// TODO:  Find properties of selected track and show in 'Selection Info' tab.
-				//System.out.println("SELECTED TRACK " + topLevelGlyph.toString());
 			}
 		};
 		tier_manager.addTrackSelectionListener(track_selection_listener);
@@ -493,11 +491,6 @@ public class SeqMapView extends JPanel
 		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
-		//printSymmetryMI = setUpMenuItem(sym_popup, "Print symmetry");
-		
-		if (show_slicendice) {
-			slicendiceMI = setUpMenuItem(sym_popup, "Slice and dice");
-		}
 	}
 
 	public JPopupMenu getSelectionPopup() {
@@ -706,7 +699,6 @@ public class SeqMapView extends JPanel
 				}
 			}
 		}
-		//System.out.println("   band count: " + bands.size());
 
 		int centromerePoint = -1;
 		for (int i = 0; i < bands.size() - 1; i++) {
@@ -717,7 +709,6 @@ public class SeqMapView extends JPanel
 		}
 
 		for (int q = 0; q < bands.size(); q++) {
-			//          SeqSymmetry sym  = cyto_container.getChild(q);
 			SeqSymmetry sym = (SeqSymmetry) bands.get(q);
 			SeqSymmetry sym2 = transformForViewSeq(sym, getAnnotatedSeq());
 
@@ -726,21 +717,13 @@ public class SeqMapView extends JPanel
 			if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
 				CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
 
-				//float score = ((Scored) cyto_sym).getScore();
 				GlyphI efg;
 				if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
-					//efg = new PointedGlyph();
-					//efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
-					//((PointedGlyph) efg).setForward(! cyto_sym.getID().startsWith("q"));
-
 					efg = new EfficientPaintRectGlyph();
 					efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
 					((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
 
 				} else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
-					//efg = new DoublePointedGlyph();
-					//efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
-
 					efg = new EfficientPaintRectGlyph();
 					efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
 					((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
@@ -960,15 +943,11 @@ public class SeqMapView extends JPanel
 		//   but reset coord_shift to false...
 		if (coord_shift) {
 			// map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
-			//      map.setMapRange(viewseq.getMin(), viewseq.getMax());
-			//      resultSeqMap.setMapRange(0, viewseq.getLength());
 			coord_shift = false;
 		} else {
-
 			viewseq = aseq;
 			seq2viewSym = null;
 			transform_path = null;
-			//}
 		}
 
 		BioSeq compnegseq = viewseq;
@@ -1754,15 +1733,11 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public int getSliceBuffer() {
+	public final int getSliceBuffer() {
 		return slice_buffer;
 	}
 
-	public void sliceBySelection() {
-		sliceAndDice(getSelectedSyms());
-	}
-
-	public void sliceAndDice(final List<SeqSymmetry> syms) {
+	public final void sliceAndDice(final List<SeqSymmetry> syms) {
 		stopSlicingThread();
 
 		slice_thread = new Thread() {
@@ -1778,7 +1753,7 @@ public class SeqMapView extends JPanel
 		slice_thread.start();
 	}
 
-	void sliceAndDiceNow(List<SeqSymmetry> syms) {
+	private void sliceAndDiceNow(List<SeqSymmetry> syms) {
 		SimpleSymWithProps unionSym = new SimpleSymWithProps();
 		SeqUtils.union(syms, unionSym, aseq);
 		sliceAndDiceNow(unionSym);
@@ -1933,11 +1908,9 @@ public class SeqMapView extends JPanel
 
 	public void toggleAutoScroll() {
 		if (map_auto_scroller == null) {
-			//      toggleAutoScroll(
 			JPanel pan = new JPanel();
 
 			Rectangle2D.Double cbox = seqmap.getViewBounds();
-			//      int bases_in_view = (int) resultSeqMap.getView().getCoordBox().width;
 			int bases_in_view = (int) cbox.width;
 			as_start_pos = (int) cbox.x;
 			as_end_pos = this.getViewSeq().getLength();
@@ -1992,7 +1965,6 @@ public class SeqMapView extends JPanel
 					float bases_per_minute = (float) // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
 									(1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
 					bases_per_minute = Math.abs(bases_per_minute);
-					//          float minutes_per_seq = viewseq.getLength() / bases_per_minute;
 					float minutes_per_seq = (as_end_pos - as_start_pos) / bases_per_minute;
 					bases_per_minuteL.setText("" + (bases_per_minute / 1000000));
 					minutes_per_seqL.setText("" + (minutes_per_seq));
@@ -2054,9 +2026,7 @@ public class SeqMapView extends JPanel
 
 				public void actionPerformed(ActionEvent evt) {
 					Rectangle2D.Double vbox = seqmap.getViewBounds();
-					//	    Rectangle2D.Double mbox = resultSeqMap.getCoordBounds();
 					int scrollpos = (int) (vbox.x + coords_to_scroll);
-					//	    if ((scrollpos + vbox.width) > (mbox.x + mbox.width))  {
 					if ((scrollpos + vbox.width) > end_coord) {
 						if (cycle) {
 							seqmap.scroll(NeoAbstractWidget.X, start_coord);
@@ -2561,7 +2531,6 @@ public class SeqMapView extends JPanel
 	private String getSelectionTitle(List<GlyphI> selected_glyphs) {
 		String id = null;
 		if (selected_glyphs.isEmpty()) {
-			//id = "No selection";
 			id = "";
 			sym_used_for_title = null;
 		} else {
@@ -2633,7 +2602,6 @@ public class SeqMapView extends JPanel
 		setPopupMenuTitle(sym_info, selected_glyphs);
 
 		popup.add(sym_info);
-		//popup.add(printMI);
 		if (!selected_glyphs.isEmpty()) {
 			popup.add(zoomtoMI);
 		}
@@ -2642,9 +2610,6 @@ public class SeqMapView extends JPanel
 		if (!selected_syms.isEmpty()) {
 			popup.add(selectParentMI);
 		}
-		/*if (selected_syms.size() == 1) {
-		popup.add(printSymmetryMI);
-		}*/
 		if (DEBUG_STYLESHEETS) {
 			Action reload_stylesheet = new AbstractAction("Re-load user stylesheet") {
 
@@ -2678,20 +2643,16 @@ public class SeqMapView extends JPanel
 				return;
 			}
 
-			//      sym_popup.show(resultSeqMap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
 			// if resultSeqMap is a MultiWindowTierMap, then using resultSeqMap as Component target arg to popup.show()
 			//  won't work, since its component is never actually rendered -- so checking here
 			/// to use appropriate target Component and pixel position
 			EventObject oevt = nevt.getOriginalEvent();
-			//      System.out.println("original event: " + oevt);
 			if ((oevt != null) && (oevt.getSource() instanceof Component)) {
 				Component target = (Component) oevt.getSource();
 				if (oevt instanceof MouseEvent) {
-					//	  System.out.println("using original event target and coords");
 					MouseEvent mevt = (MouseEvent) oevt;
 					sym_popup.show(target, mevt.getX() + xoffset_pop, mevt.getY() + yoffset_pop);
 				} else {
-					//	  System.out.println("using original event target");
 					sym_popup.show(target, nevt.getX() + xoffset_pop, nevt.getY() + yoffset_pop);
 				}
 			} else {
@@ -2892,8 +2853,6 @@ public class SeqMapView extends JPanel
 		}
 
 		if ((new_group != current_group) && (current_group != null)) {
-			//      ViewPersistenceUtils.saveGroupView(this);
-			//      ViewPersistenceUtils.saveSeqView(this);
 			clear();
 		}
 	}
@@ -2908,9 +2867,6 @@ public class SeqMapView extends JPanel
 
 		// trying out not calling setAnnotatedSeq() unless seq that is selected is actually different than previous seq being viewed
 		// Maybe should change GenometryModel.setSelectedSeq() to only fire if seq changes...
-		//    if (aseq != newseq) {
-		//      setAnnotatedSeq(newseq);
-		//    }
 
 		// reverted to calling setAnnotatedSeq regardless of whether newly selected seq is same as previously selected seq,
 		//    because often need to trigger repacking / rendering anyway

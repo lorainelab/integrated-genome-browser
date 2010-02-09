@@ -66,7 +66,7 @@ public final class Persistence {
 		if (DEBUG) {
 			System.out.println("Attempting to restore group:" + group_id);
 		}
-		return gmodel.addSeqGroup(group_id);
+		return gmodel.getSeqGroup(group_id);
 	}
 
 	/**

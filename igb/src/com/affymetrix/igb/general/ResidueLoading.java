@@ -371,6 +371,7 @@ public final class ResidueLoading {
 
 	private static String LoadResiduesFromDAS2(String uri) {
 		InputStream istr = null;
+		BufferedReader buff = null;
 		Map<String, String> headers = new HashMap<String, String>();
 		try {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
@@ -390,7 +391,7 @@ public final class ResidueLoading {
 				if (DEBUG) {
 					System.out.println("   response is in raw format, parsing...");
 				}
-				BufferedReader buff = new BufferedReader(new InputStreamReader(istr));
+				buff = new BufferedReader(new InputStreamReader(istr));
 				return buff.readLine();
 			}
 
@@ -401,6 +402,7 @@ public final class ResidueLoading {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
+			GeneralUtils.safeClose(buff);
 			GeneralUtils.safeClose(istr);
 		}
 
@@ -410,6 +412,7 @@ public final class ResidueLoading {
 	// try loading via DAS/2 server
 	private static String GetPartialFASTADas2Residues(String uri) {
 		InputStream istr = null;
+		BufferedReader buff = null;
 		Map<String, String> headers = new HashMap<String, String>();
 		try {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
@@ -430,7 +433,7 @@ public final class ResidueLoading {
 				if (DEBUG) {
 					System.out.println("   response is in raw format, parsing...");
 				}
-				BufferedReader buff = new BufferedReader(new InputStreamReader(istr));
+				buff = new BufferedReader(new InputStreamReader(istr));
 				return buff.readLine();
 			}
 			
@@ -459,6 +462,7 @@ public final class ResidueLoading {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
+			GeneralUtils.safeClose(buff);
 			GeneralUtils.safeClose(istr);
 		}
 

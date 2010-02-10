@@ -178,8 +178,8 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymWithProps
 		tprops.put("gene name", geneName);
 		tprops.put("seq id", seq.getID());
 		tprops.put("forward", forward);
-		tprops.put("cds min", new Integer(cdsMin));
-		tprops.put("cds max", new Integer(cdsMax));
+		tprops.put("cds min", Integer.valueOf(cdsMin));
+		tprops.put("cds max", Integer.valueOf(cdsMax));
 		if (props != null) {
 			tprops.putAll(props);
 		}
@@ -193,8 +193,8 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymWithProps
 		else if (key.equals("gene name") || key.equals("gene_name")) { return geneName; }
 		else if (key.equals("seq id")) { return seq.getID(); }
 		else if (key.equals("forward")) { return forward; }
-		else if (key.equals("cds min")) { return new Integer(cdsMin); }
-		else if (key.equals("cds max")) { return new Integer(cdsMax); }
+		else if (key.equals("cds min")) { return Integer.valueOf(cdsMin); }
+		else if (key.equals("cds max")) { return Integer.valueOf(cdsMax); }
 		else if (props != null)  {
 			return props.get(key);
 		}

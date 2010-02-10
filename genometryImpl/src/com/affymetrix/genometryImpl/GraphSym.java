@@ -18,9 +18,9 @@ public class GraphSym extends SimpleSymWithProps {
 
 	/** A property that can optionally be set to give a hint about the graph strand for display. */
 	public static final String PROP_GRAPH_STRAND = "Graph Strand";
-	public static final Integer GRAPH_STRAND_PLUS = new Integer(1);
-	public static final Integer GRAPH_STRAND_MINUS = new Integer(-1);
-	public static final Integer GRAPH_STRAND_BOTH = new Integer(2);
+	public static final Integer GRAPH_STRAND_PLUS = Integer.valueOf(1);
+	public static final Integer GRAPH_STRAND_MINUS = Integer.valueOf(-1);
+	public static final Integer GRAPH_STRAND_BOTH = Integer.valueOf(2);
 	
 	private int pointCount = 0;	// count of points
 	private int xMin = 0;		// min X coord

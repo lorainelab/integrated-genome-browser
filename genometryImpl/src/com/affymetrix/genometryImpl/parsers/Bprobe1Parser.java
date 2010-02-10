@@ -164,7 +164,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 				int probeset_count = dis.readInt();
 				SeqSymmetry[] syms = new SeqSymmetry[probeset_count];
 				seq2syms.put(seqid, syms);
-				seq2lengths.put(seqid, new Integer(seq_length));
+				seq2lengths.put(seqid, Integer.valueOf(seq_length));
 			}
 			int tagval_count = dis.readInt();
 			for (int i = 0; i < tagval_count; i++) {

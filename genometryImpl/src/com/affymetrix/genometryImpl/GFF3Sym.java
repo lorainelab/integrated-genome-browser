@@ -136,7 +136,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 		else if (name.equals("method")) { return method; }
 		else if (name.equals("feature_type") || name.equals("type")) { return feature_type; }
 		else if (name.equals("score") && score != UNKNOWN_SCORE) { return new Float(score); }
-		else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return new Character(frame); }
+		else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return Character.valueOf(frame); }
 		else if (name.equals("id")) {
 			return getID();
 		}
@@ -224,7 +224,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 			tprops.put("score", new Float(getScore()));
 		}
 		if (frame != UNKNOWN_FRAME) {
-			tprops.put("frame", new Character(frame));
+			tprops.put("frame", Character.valueOf(frame));
 		}
 		addAllAttributesFromGFF3(tprops, attributes);
 

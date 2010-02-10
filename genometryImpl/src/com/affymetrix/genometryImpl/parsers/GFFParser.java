@@ -690,7 +690,7 @@ public final class GFFParser implements AnnotationWriter  {
 				while (mm.find()) {
 					String level_string = mm.group(1);
 					String feature_type = mm.group(2);
-					Integer level = new Integer(level_string);
+					Integer level = Integer.valueOf(level_string);
 					hierarchy_levels.put(feature_type, level);
 					addFeatureFilter(feature_type, true); // include only the items mentioned in the hierarchy
 
@@ -804,7 +804,7 @@ public final class GFFParser implements AnnotationWriter  {
 			}
 		}
 
-		static final Integer TWO = new Integer(2);
+		static final Integer TWO = Integer.valueOf(2);
 
 		int number_of_duplicate_warnings = 0;
 
@@ -835,7 +835,7 @@ public final class GFFParser implements AnnotationWriter  {
 						else if (obj instanceof Integer) {
 							Integer iobj = (Integer)obj;
 							int fcount = iobj.intValue();
-							gff3_id_hash.put(featid, new Integer(fcount+1));
+							gff3_id_hash.put(featid, Integer.valueOf(fcount+1));
 							featid = featid + "_" + iobj.toString();
 						}
 						if (number_of_duplicate_warnings++ <= 10) {

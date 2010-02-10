@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -69,9 +70,10 @@ public final class PointIntFloat {
 			return getClass().getName() + "[x=" + x + ",y=" + y + "]";
 		}
 
-	static final class PointIntFloatComparator implements Comparator<PointIntFloat>  {
-		boolean compare_by_x;
-		boolean ascending_order;
+	static final class PointIntFloatComparator implements Comparator<PointIntFloat>, Serializable  {
+		public static final long serialVersionUID = 1l;
+		private final boolean compare_by_x;
+		private final boolean ascending_order;
 
 		public PointIntFloatComparator(boolean xcomp, boolean ascending) {
 			compare_by_x = xcomp;

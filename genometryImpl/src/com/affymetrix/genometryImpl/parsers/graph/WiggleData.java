@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,7 +67,9 @@ final class WiggleData {
 		}
 	}
 
-	private static final class PointComp implements Comparator<Point3D> {
+	private static final class PointComp implements Comparator<Point3D>, Serializable {
+		public static final long serialVersionUID = 1l;
+
 		public int compare(Point3D p1, Point3D p2) {
 			return ((Integer)p1.x).compareTo(p2.x);
 		}

@@ -1,12 +1,14 @@
 package com.affymetrix.genometryImpl.comparator;
 
 import com.affymetrix.genometryImpl.UcscPslSym;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  *  Sorts based on UcscPslSym.getTargetMin().
  */
-public final class UcscPslComparator implements Comparator<UcscPslSym> {
+public final class UcscPslComparator implements Comparator<UcscPslSym>, Serializable {
+	public static final long serialVersionUID = 1l;
 
 	/** Sorts two instances of UcscPslSym based on UcscPslSym.getTargetMin(),
 	 * and in second case, by UscsPslSym.getTargetMax().

@@ -1,12 +1,14 @@
 package com.affymetrix.genometryImpl.comparator;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class StringVersionDateComparator implements Comparator<String> {
+public class StringVersionDateComparator implements Comparator<String>, Serializable {
+	public static final long serialVersionUID = 1l;
 
-	private static String[] month_array = {"Jan",
+	private static final String[] month_array = {"Jan",
 		"Feb",
 		"Mar",
 		"Apr",
@@ -18,7 +20,7 @@ public class StringVersionDateComparator implements Comparator<String> {
 		"Oct",
 		"Nov",
 		"Dec"};
-	private static List<String> months = Arrays.asList(month_array);
+	private static final List<String> months = Arrays.asList(month_array);
 
 	public int compare(String name1, String name2) {
 		String[] parts1 = name1.split("_");

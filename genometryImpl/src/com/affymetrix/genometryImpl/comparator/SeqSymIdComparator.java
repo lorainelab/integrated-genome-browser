@@ -1,12 +1,15 @@
 package com.affymetrix.genometryImpl.comparator;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  *  Sorts SeqSymmetries based on lexicographic ordering of IDs 
  */
-public final class SeqSymIdComparator implements Comparator<SeqSymmetry> {
+public final class SeqSymIdComparator implements Comparator<SeqSymmetry>, Serializable {
+	public static final long serialVersionUID = 1l;
+
 	public int compare(SeqSymmetry sym1, SeqSymmetry sym2) {
 		return compareStrings(sym1.getID(), sym2.getID());
 	}

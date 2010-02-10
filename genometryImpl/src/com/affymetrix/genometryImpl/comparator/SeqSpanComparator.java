@@ -1,13 +1,16 @@
 package com.affymetrix.genometryImpl.comparator;
 
 import com.affymetrix.genometryImpl.SeqSpan;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  *  Orders SeqSpan objects first by {@link SeqSpan#getMin()},
  *  then by {@link SeqSpan#getMax()}, regardless of the span orientations.
  */
-public final class SeqSpanComparator implements Comparator<SeqSpan> {
+public final class SeqSpanComparator implements Comparator<SeqSpan>, Serializable {
+	public static final long serialVersionUID = 1l;
+
 	public int compare(SeqSpan span1, SeqSpan span2) {
 		return compareSpans(span1, span2);
 	}

@@ -487,7 +487,7 @@ final class GenomeView extends JPanel implements MouseListener{
         if (DEBUG_TRANSCRIPT_ANNOTS) {
             System.out.println(mrna.getID() + ",  " + mrna);
         }
-        if (mrna instanceof BioSeq) {
+        if (mrna != null) {
             SeqSymmetry[] new_path2view = new SeqSymmetry[path2view.length + 1];
             System.arraycopy(path2view, 0, new_path2view, 1, path2view.length);
             new_path2view[0] = mrna2genome;
@@ -565,7 +565,7 @@ final class GenomeView extends JPanel implements MouseListener{
         if (DEBUG_PROTEIN_ANNOTS) {
             System.out.println(protein.getID() + ",  " + protein);
         }
-        if (protein instanceof BioSeq) {
+        if (protein != null) {
             SeqSymmetry prot2mrna = annot2mrna;
 
             // construct a new path which includes entire previous path plus prot2mrna

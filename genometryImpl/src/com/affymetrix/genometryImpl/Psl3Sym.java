@@ -155,7 +155,7 @@ public final class Psl3Sym extends UcscPslSym {
 	public Map<String,Object> cloneProperties() {
 		Map<String,Object> tprops = super.cloneProperties();
 		tprops.put("other seq", getOtherSeq().getID());
-		tprops.put("same other orientation", new Boolean(getSameOtherOrientation()));
+		tprops.put("same other orientation", getSameOtherOrientation());
 		return tprops;
 	}
 

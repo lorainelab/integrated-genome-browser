@@ -292,7 +292,7 @@ public class UcscPslSym
 
 		tprops.put("id", getQuerySeq().getID());
 		tprops.put("type", "Pairwise Alignment");
-		tprops.put("same orientation", new Boolean(getSameOrientation()));
+		tprops.put("same orientation", getSameOrientation());
 		tprops.put("# matches", new Integer(getMatches()));
 		tprops.put("query length", new Integer(queryseq.getLength()));
 		tprops.put("# query inserts", new Integer(getQueryNumInserts()));

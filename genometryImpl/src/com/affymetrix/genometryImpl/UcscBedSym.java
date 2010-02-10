@@ -229,7 +229,7 @@ public final class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, Sym
 		tprops.put("type", type);
 		tprops.put("name", name);
 		tprops.put("seq id", seq.getID());
-		tprops.put("forward", new Boolean(forward));
+		tprops.put("forward", forward);
 		if (hasCdsSpan) {
 			tprops.put("cds min", new Integer(cdsMin));
 			tprops.put("cds max", new Integer(cdsMax));
@@ -249,7 +249,7 @@ public final class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, Sym
 		else if (key.equals("method"))  { return getType(); }
 		else if (key.equals("name")) { return name; }
 		else if (key.equals("seq id")) { return seq.getID(); }
-		else if (key.equals("forward")) { return new Boolean(forward); }
+		else if (key.equals("forward")) { return forward; }
 		else if (hasCdsSpan && key.equals("cds min")) { return new Integer(cdsMin); }
 		else if (hasCdsSpan && key.equals("cds max")) { return new Integer(cdsMax); }
 		else if (key.equals("score") && (score != Float.NEGATIVE_INFINITY)) { return new Float(score); }

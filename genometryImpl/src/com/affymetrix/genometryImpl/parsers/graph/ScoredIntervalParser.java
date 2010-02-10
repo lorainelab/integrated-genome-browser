@@ -459,7 +459,7 @@ public final class ScoredIntervalParser {
 	}
 
 	/** For sorting of sin lines. */
-	private final class SinEntry {
+	private static final class SinEntry {
 		SeqSymmetry sym;
 		float[] scores;
 		public SinEntry(SeqSymmetry sym, float[] scores) {
@@ -469,7 +469,7 @@ public final class ScoredIntervalParser {
 	}
 
 	/** For sorting of sin lines. */
-	private final class SinEntryComparator implements Comparator<SinEntry>  {
+	private static final class SinEntryComparator implements Comparator<SinEntry>  {
 		public int compare(SinEntry objA, SinEntry objB) {
 			SeqSpan symA = objA.sym.getSpan(0);
 			SeqSpan symB = objB.sym.getSpan(0);

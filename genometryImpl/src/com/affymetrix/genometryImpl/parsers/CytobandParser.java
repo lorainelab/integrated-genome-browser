@@ -223,7 +223,7 @@ public final class CytobandParser implements AnnotationWriter  {
 
 	public static enum Arm {SHORT, LONG, UNKNOWN};
 
-	public final class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
+	public static final class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
 		String band;
 
 		public CytobandSym(int start, int end, BioSeq seq, String name, String band) {

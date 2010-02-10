@@ -1,94 +1,44 @@
-==Installing the GenoPub DAS2 Server==
+=== REQUIREMENTS ===
 
-=== Modes ===
-There are two ways to configure the GenoViz Genometry DAS2 server:
-* Classic mode: The annotations are organized into a directory structure on the file system.  
-* GenoPub mode: The annotations are managed by the GenoPub (Genomic Annotation Publisher), which stores information about each annotation in a database.  A web-based tool allows annotations to be easily added, described, and organized.  Through the tool, users and groups are managed and annotation security is specified. Access to annotations is brokered by the DAS2 server so that  only authorized users can gain access to these resources.    
-
-Here are instructions for installing the DAS2 server in Classic mode. Any java servlet container will work.  Here we show how to do this with Tomcat.  Likewise most relational databases can be appropriately configured.  In this demonstration we are using MySQL. Lastly, these web apps were developed and run on Windows but since the majority of bioinformatics web servers use Linux, we use Red Hat Enterprise 5 in this tutorial.
+	- Java 6+, 64-bit recommended (http://java.sun.com/)
+	- Apache Tomcat 5.5+ (http://apache.tomcat.org/)
+	- Subversion client (Optional, for accessing example data set)
 
 
-=== System Requirements ===
-* Java 6+, 64-bit recommended (http://java.sun.com/)
-* Apache Tomcat 5.5+ (http://apache.tomcat.org/)
-* Web accessible Linux, MacOSX, or Windows server with > 4G of RAM. This demo uses Red Hat Enterprize 5.
+=== CONFIGURATION ===
 
+== The web.xml file ==
+The web.xml file in the das2/WEB-INF directory must be properly configured before the das2 servlet will run. A list of the context parameters from the web.xml is below:
 
-== Step 1: Check your java version ==
-* Check that your java version is 6+ or 1.6+ by typing 'java -version' on the command line
-* Download and install a new java if needed, http://java.sun.com/
-* In MacOSX modify which java to use with the /Applications/Utilities/Java\ Preferences app
+	* genometry_server_dir - Path to the data files
+	* maintainer_email - Email address of the server's maintainer
+	* xml_base - URL that the server will answer to
 
+A sample data directory can be checked out using subversion from https://svn.transvar.org/repos/genomes/trunk/pub/das.  Many data files in the data directory are compressed with gzip and must be decompressed before they can be read by the server.  The total size of the data directory after decompression is approximately 1GB.
 
-== Step 2: Install and Configure Tomcat 5.5+ ==
-* Make a new user called tomcat
-* Login as tomcat
-* Download and unzip Tomcat 5.5+ in the tomcat user's home directory, see http://tomcat.apache.org/download-55.cgi
-* Add environmental variables to the tomcat user's ~/.bashrc file using a text editor
+The xml_base context parameter is used by the servlet to build links back to itself.  For most configurations, changing the domain name of the server from the default (www.example.com) will be the only change necessary.
 
-<pre>
-#example for tomcat 5.5.25
-export CATALINA_HOME=/home/tomcat/apache-tomcat-5.5.25
-export JAVA_HOME=/usr
-export JRE_HOME=/usr
-#increase the memory available to tomcat, set to 4G or more if you have it, note 32bit machines can only use 2G
-export CATALINA_OPTS=-Xmx4096m
-</pre>
+== Configuring tomcat ==
 
-* Load the variables into your current shell (e.g. ' source ~/.bashrc ')
-* Punch holes for port 8080 through any firewalls surrounding your computer
-* Enable the tomcat shell scripts to be executed (e.g. ' chmod -R 755 ~/apache-tomcat-5.xxx/bin/ ')
-* Launch tomcat using the ~/apache-tomcat-5.xxx/bin/startup.sh script
-* Verify that tomcat is visible by calling tomcat from a web browser http://yourComputersIP:8080/ (e.g. http://localhost:8080/). Ask someone off site to check it too.
-* Check the server log ~/apache-tomcat-5.xxx/logs/catalina.out for errors
-* Shut down tomcat using the ~/apache-tomcat-5.xxx/bin/shutdown.sh script
+The das2 servlet with the sample data set will use up to 2 GB of RAM during startup (average usage will be under 500MB of RAM). Some useful options are listed below:
 
+	* -Xmx4096m: Use maximum 4GB of RAM for the heap
+	* -Xincgc: Use incremental garbage collection
+	
+The above options can be placed in the JAVA_OPTS environmental variable when using the self-contained tomcat from tomcat.apache.org.  On many Linux platforms, there is a configuration file available to place the above arguments in:
 
-== Step 3: Install the the GenoViz Classic DAS/2 Web app ==
-* Download the latest beta das2server.zip archive from http://sourceforge.net/projects/genoviz/files/
-** To build from the GenoViz project, change the '<property name="das2_genopub_mode" value="true"/>' to false in the genoviz/common.xml file and use ant to run the clean, all, release-das2server targets in the genoviz/build.xml file.  The das2server.zip will be placed in the genoviz/dist/release directory.
-* Unzip the archive 
-* Move the entire das2 directory into ~apache-tomcat-5.xxx/webapps directory
+	* RedHat: /etc/sysconfig/tomcat5
+	* Debian: /etc/default/tomcat5.5
 
+Note that 2GB of RAM is the maximum available when using a 32-bit Java Virtual Machine.
 
-== Step 4: Configure the GenoViz Classic DAS/2 Web app ==
-* Modify the '~/das2/WEB-INF/web.xml' doc in a text editor
-** Change the '/path/to/das2/data/' to the full path directory name where you want to store your data. 
-** NOTE: The das2 servlet will need write access to the sub-directory /.indexed. This is used to store indexing files.  It is rebuilt upon a restart of the servlet.
+=== INSTALLATION ===
 
-** Create that data directory. 
-** Change the 'admin@example.com' to point to a trusted admin
-** Change the 'http://www.example.com:8080/das2/genome' replacing 'www.example.com:8080' with the URL for your machine. This is the same one you used to verify your tomcat installation.
+The das2 servlet can be installed by copying the entire das2 directory to tomcat's webapps directory.  Most tomcat servers are configured to detect new or updated web applications and will deploy them automatically.  Common locations for the webapps directory are:
 
-* Modify the ~/das2/META-INF/context.xml doc in a text editor 
-** Set the docBase and workdir in <Context> to the relative path of the webapp application. Example: <Context pathdocBase="webapps/das2" workDir="webapps/das2"debug="0" reloadable="true"> 
+	* RedHat: /var/lib/tomcat5/webapps/
+	* Debian: /var/lib/tomcat5.5/webapps/
 
-* (Optional) Create a 'index.html' doc describing your server and place it in the '~/apache-tomcat-5.xxx/webapps/das2/' directory. This will be hot linked in some applications.
-* (Optional) Likewise, add a favicon.ico to the '~/apache-tomcat-5.xxx/webapps/das2/' directory representing your organization.  This will be displayed in apps alongside your genopub server name.
+The das2 servlet does not detect changes in the data directory.  The servlet must be reloaded before it will register any changes.
 
-
-== Step 5: Launch it! ==
-* Start up tomcat...
-* From a browser, try a DAS/2 sources request: http://yourhost:8080/das2/genome . 
-* The das2 servlet does not detect changes in the data directory.  The servlet must be reloaded before it will register any changes.
-
-
-== Step 6: Register Your Das/2 Server ==
-* Register your http://yourhost:8080/das2/genome URL, otherwise no one will know about your most excellent data.  Note only datasets you designate as public will be visable to non authenticated users.
-* Currently, the [http://www.dasregistry.org DasRegistry] does not support DAS/2 services.  As a temporary work around, download the 'genopubRegistry.xml' file from the [http://genoviz.svn.sourceforge.net/viewvc/genoviz/trunk/genopub_server/resources/ GenoViz Project], add an entry, and email it back to the [mailto:genoviz-devel@lists.sourceforge.net  GenoViz developers] . If you have access to the GenoViz SVN, modify it directly. 
-
-
-== Step 7: Visualize your data in IGB ==
-* The [[Software:IGB | Integrated Genome Browser]] is fully DAS/2 and DAS/1 compliant and a good application for visualizing your genomic data.  
-* Launch IGB using the web start links : [http://bioserver.hci.utah.edu/IGB/igb_beta_1G.jnlp IGB (1GB)] or [http://bioserver.hci.utah.edu/IGB/igb_beta_3G.jnlp IGB (3GB)]
-* Under the 'Data Access' tab, click the 'Configure...' button and add your server:
-** Server URL 'http://yourhost:8080/das2/genome' 
-** Server name 'YourOrg'
-** Server type 'DAS2'
-** Login 'your genopub login name'
-** Password 'your genopub password'
-* Click the 'Add' button, a confirmatory message should appear
-* Under the 'Data Access' tab, select a Species and a Genome Version where your data resides
-
-
-Please send comments to the [http://sourceforge.net/tracker/?group_id=129420&atid=714744 GenoViz Bug Tracker (Category GenoPub)] if you encounter install issues or needed corrections.
+The das2 servlet will need write access to the sub-directory <DATADIR>/.indexed. This is used to store indexing files.  It is rebuilt upon a restart of the servlet.

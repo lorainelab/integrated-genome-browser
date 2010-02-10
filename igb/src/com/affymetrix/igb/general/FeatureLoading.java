@@ -228,6 +228,7 @@ public final class FeatureLoading {
 	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature) throws OutOfMemoryError {
 		final String fileName = determineQuickLoadFileName(gFeature);
 		if (fileName.length() == 0) {
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
 			return false;
 		}
 

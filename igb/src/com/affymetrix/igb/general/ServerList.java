@@ -144,7 +144,7 @@ public final class ServerList {
 			}
 			if (serverType == ServerType.DAS) {
 				DasServerInfo info = new DasServerInfo(url);
-				server = new GenericServer(name, info.getRootUrl(), serverType, info);
+				server = new GenericServer(name, info.getURI().toASCIIString(), serverType, info);
 			}
 			if (serverType == ServerType.DAS2) {
 				Das2ServerInfo info = new Das2ServerInfo(url, name, false);
@@ -164,7 +164,7 @@ public final class ServerList {
 	/**
 	 * Load server preferences from the Java preferences subsystem.
 	 */
-	public static void LoadServerPrefs() {
+	public static void loadServerPrefs() {
 		String server_name, login, password;
 		ServerType serverType;
 		Boolean enabled;

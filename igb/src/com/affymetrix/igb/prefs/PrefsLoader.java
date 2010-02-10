@@ -71,7 +71,7 @@ public abstract class PrefsLoader {
 
       LoadFileOrURLPrefs(prefs_list);
 
-		ServerList.LoadServerPrefs();
+		ServerList.loadServerPrefs();
 
       return prefs_hash;
   }

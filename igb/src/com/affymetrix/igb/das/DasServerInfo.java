@@ -16,13 +16,15 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.XMLUtils;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.*;
 
 public final class DasServerInfo {
 
 	private static final boolean REPORT_SOURCES = false;
 	private static final boolean REPORT_CAPS = true;
-	private String root_url;
+	private URI serverURI;
 	private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 
@@ -32,16 +34,17 @@ public final class DasServerInfo {
 	 * @param url
 	 */
 	public DasServerInfo(String url) {
-		root_url = url;
-		// all trailing "/" chars are stripped off the end if present
-		while (root_url.endsWith("/")) {
-			root_url = root_url.substring(0, root_url.length() - 1);
+		try {
+			serverURI = new URI(url).normalize();
+		} catch (URISyntaxException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to convert URL '" + url + "' to URI", e);
 		}
+
 	}
 
 	/** Returns the root URL String.  Will not have any trailing "/" at the end. */
-	public String getRootUrl() {
-		return root_url;
+	public URI getURI() {
+		return serverURI;
 	}
 
 
@@ -63,13 +66,8 @@ public final class DasServerInfo {
 	 */
 	private void initialize() {
 		try {
-			String request_str = root_url;
-			if (!request_str.contains("/dsn")) {
-				request_str += "/dsn";
-			}
-			System.out.println("Das Request: " + request_str);
-			URL das_request = new URL(request_str);
-			URLConnection request_con = das_request.openConnection();
+			System.out.println("Das Request: " + serverURI);
+			URLConnection request_con = serverURI.toURL().openConnection();
 			request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 			request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 			String das_version = request_con.getHeaderField("X-DAS-Version");
@@ -91,12 +89,12 @@ public final class DasServerInfo {
 				parseDSNElement(dsn);
 				} catch (Exception ex) {
 					// log and continue with remainder of parsing.
-					System.out.println("Error initializing DAS server info for\n" + root_url);
+					System.out.println("Error initializing DAS server info for\n" + serverURI);
 					ex.printStackTrace();
 				}
 			}
 		} catch (Exception ex) {
-			System.out.println("Error initializing DAS server info for\n" + root_url);
+			System.out.println("Error initializing DAS server info for\n" + serverURI);
 			ex.printStackTrace();
 			return;
 		}

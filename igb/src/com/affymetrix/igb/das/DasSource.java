@@ -20,6 +20,11 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.XMLUtils;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 public final class DasSource {
 
@@ -97,16 +102,16 @@ public final class DasSource {
 
   /** Get entry points from das server. */
   protected synchronized void initEntryPoints() {
-    String entry_request;
-	if (mapmaster != null && !mapmaster.isEmpty()) {
-		entry_request = mapmaster + "/entry_points";
-	} else {
-		entry_request = getDasServerInfo().getRootUrl() + "/" + getID() + "/entry_points";
-	}
-	
-    try {
-      System.out.println("Das Entry Request: " + entry_request);
-      Document doc = XMLUtils.getDocument(entry_request);
+    URL entryURL;
+	try {
+		if (mapmaster != null && !mapmaster.isEmpty()) {
+			entryURL = new URL(mapmaster + "/entry_points");
+		} else {
+			entryURL = new URL(getDasServerInfo().getURI().toURL(), getID() + "/entry_points");
+		}
+
+      System.out.println("Das Entry Request: " + entryURL);
+      Document doc = XMLUtils.getDocument(entryURL.openConnection());
       NodeList segments = doc.getElementsByTagName("SEGMENT");
 	  int length = segments.getLength();
       System.out.println("segments: " + length);
@@ -142,20 +147,25 @@ public final class DasSource {
 	entry_point.setDescription(description);
 	entry_point.setInterval(start, stop, forward);
       }
-    }
-    catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS entry points for\n"+entry_request, ex);
-    }
+	} catch (MalformedURLException ex) {
+      ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + getDasServerInfo().getURI(), ex);
+    } catch (ParserConfigurationException ex) {
+		ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + getDasServerInfo().getURI(), ex);
+	} catch (SAXException ex) {
+		ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + getDasServerInfo().getURI(), ex);
+	} catch (IOException ex) {
+		ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + getDasServerInfo().getURI(), ex);
+	}
     //TODO should entries_initialized be true if an exception occurred?
     entries_initialized = true;
   }
 
   // get annotation types from das server
   protected synchronized void initTypes() {
-    String types_request = getDasServerInfo().getRootUrl() + "/" + getID() + "/types";
     try {
-      System.out.println("Das Types Request: " + types_request);
-      Document doc = XMLUtils.getDocument(types_request);
+		URL typesURL = new URL(getDasServerInfo().getURI().toURL(), getID() + "/types");
+      System.out.println("Das Types Request: " + typesURL);
+      Document doc = XMLUtils.getDocument(typesURL.openConnection());
       NodeList typelist = doc.getElementsByTagName("TYPE");
       System.out.println("types: " + typelist.getLength());
       for (int i=0; i< typelist.getLength(); i++)  {
@@ -174,7 +184,7 @@ public final class DasSource {
       }
     }
     catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS types for\n"+types_request, ex);
+      ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + getDasServerInfo().getURI(), ex);
     }
     //TODO should types_initialized be true after an exception?
     types_initialized = true;

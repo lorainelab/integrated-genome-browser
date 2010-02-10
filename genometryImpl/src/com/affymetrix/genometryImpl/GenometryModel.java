@@ -50,11 +50,23 @@ public final class GenometryModel {
 	public static GenometryModel getGenometryModel() {
 		return smodel;
 	}
+	
+	/***
+	 * Clear out all instance variables from genometry model
+	 * so that it can be reloaded.
+	 */
+	public void resetGenometryModel() {
+		this.seq_groups.clear();
+		this.seq2selectedSymsHash.clear();
+		
+		this.seq_selection_listeners.clear();
+		group_selection_listeners.clear();
+		sym_selection_listeners.clear();
 
-	public static GenometryModel refreshGenometryModel() {
-		smodel = new GenometryModel();
-		return smodel;
+		selected_group = null;
+		selected_seq = null;
 	}
+
 
 	/** Returns a Map of String names to AnnotatedSeqGroup objects. */
 	public Map<String,AnnotatedSeqGroup> getSeqGroups() {

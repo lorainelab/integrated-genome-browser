@@ -1248,8 +1248,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			// Clear out organisms
 			organisms.clear();
 
-			// Clear out the annotations for the GenometryModel
-			gmodel = GenometryModel.refreshGenometryModel();
+			// Clear out the the GenometryModel
+			gmodel.resetGenometryModel();
 
 			// Reload the annotation files
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");

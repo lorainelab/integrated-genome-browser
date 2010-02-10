@@ -59,7 +59,7 @@ public class ServerUtilsTest {
 			parser.parse(istr, "mRNA1.sm", null, genome, null, false, true, false);  // annotate target
 
 			// optimize genome by replacing second-level syms with IntervalSearchSyms
-			Optimize.Genome(genome);
+			Optimize.genome(genome);
 
 		} catch (Exception ex) {
 			Logger.getLogger(ServerUtilsTest.class.getName()).log(Level.SEVERE, null, ex);

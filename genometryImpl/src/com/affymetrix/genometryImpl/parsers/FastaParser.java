@@ -372,7 +372,7 @@ public final class FastaParser {
 	 * @throws java.io.IOException
 	 * @throws java.lang.IllegalArgumentException
 	 */
-	public static byte[] ReadFASTA(File seqfile, int begin_sequence, int end_sequence)
+	public static byte[] readFASTA(File seqfile, int begin_sequence, int end_sequence)
 			throws FileNotFoundException, IOException, IllegalArgumentException {
 
 			if (begin_sequence < 0)
@@ -496,7 +496,7 @@ public final class FastaParser {
 		// >[seqname] range:[start]-[end] interbase genome:[genome]
 		// e.g.,
 		// >ChrC range:0-1000 interbase genome:A_thaliana_TAIR8
-		public static byte[] GenerateNewHeader(String chrom_name, String genome_name, int start, int end) {        
+		public static byte[] generateNewHeader(String chrom_name, String genome_name, int start, int end) {
 			String header = 
 				">" +
 				chrom_name + 

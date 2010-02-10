@@ -322,7 +322,7 @@ public abstract class ServerUtils {
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 
 		String extension = ParserController.getExtension(stream_name);
-		String typeName = annot_name != null ? annot_name : ParserController.GetAnnotType(annotList, stream_name, extension);
+		String typeName = annot_name != null ? annot_name : ParserController.getAnnotType(annotList, stream_name, extension);
 		genome.addType(typeName, annot_id);
 
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
@@ -438,7 +438,7 @@ public abstract class ServerUtils {
 	}
 
 
-	public static final List<SeqSymmetry> FindNameInGenome(String name, AnnotatedSeqGroup genome) {
+	public static final List<SeqSymmetry> findNameInGenome(String name, AnnotatedSeqGroup genome) {
 		//int resultLimit = 1000000;
 
 		boolean glob_start = name.startsWith("*");

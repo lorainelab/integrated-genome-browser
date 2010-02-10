@@ -159,7 +159,7 @@ public class LinkPSLParserTest {
 			List result = parser.parse(gzstr, type, null, group, null, false, true, false);
 
 			// optimize genome by replacing second-level syms with IntervalSearchSyms
-			Optimize.Genome(group);
+			Optimize.genome(group);
 
 			assertNotNull(result);
 			assertEquals(2103, result.size());	// all types of symmetries

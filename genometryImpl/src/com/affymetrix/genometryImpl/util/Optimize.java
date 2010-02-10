@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.TypeContainerAnnot;
 public abstract class Optimize {
 	private static final boolean DEBUG = false;
 	
-	public static final void Genome(AnnotatedSeqGroup genome) {
+	public static final void genome(AnnotatedSeqGroup genome) {
 		/** third, replace top-level annotation SeqSymmetries with IntervalSearchSyms */
 		for (BioSeq aseq : genome.getSeqList()) {
 			Optimize.Seq(aseq);
@@ -52,7 +52,7 @@ public abstract class Optimize {
 			SeqSymmetry annot = aseq.getAnnotation(i);
 			if (annot instanceof TypeContainerAnnot) {
 				TypeContainerAnnot container = (TypeContainerAnnot) annot;
-				Optimize.TypeContainer(container, aseq);
+				Optimize.typeContainer(container, aseq);
 			} else {
 				System.out.println("problem in optimizeSeq(), found top-level sym that is not a TypeContainerAnnot: " +
 						annot);
@@ -60,7 +60,7 @@ public abstract class Optimize {
 		}
 	}
 
-	private static final void TypeContainer(TypeContainerAnnot container, BioSeq aseq) {
+	private static final void typeContainer(TypeContainerAnnot container, BioSeq aseq) {
 		if (DEBUG) {
 			System.out.println("optimizing type container: " + container.getProperty("method") +
 					", depth = " + SeqUtils.getDepth(container));

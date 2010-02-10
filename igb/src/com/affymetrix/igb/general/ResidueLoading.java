@@ -59,7 +59,7 @@ public final class ResidueLoading {
 					String residues = GetPartialFASTADas2Residues(uri);
 					if (residues != null) {
 						// span is non-null, here
-						BioSeq.AddResiduesToComposition(aseq, residues, span);
+						BioSeq.addResiduesToComposition(aseq, residues, span);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -74,7 +74,7 @@ public final class ResidueLoading {
 					String residues = GetPartialFASTADas2Residues(uri);
 					if (residues != null) {
 						// span is non-null, here
-						BioSeq.AddResiduesToComposition(aseq, residues, span);
+						BioSeq.addResiduesToComposition(aseq, residues, span);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -86,7 +86,7 @@ public final class ResidueLoading {
 				if (server.serverType == ServerType.QuickLoad) {
 					String residues = GetQuickLoadResidues(seq_group, seq_name, server.URL, min, max);
 					if (residues != null) {
-						BioSeq.AddResiduesToComposition(aseq, residues, span);
+						BioSeq.addResiduesToComposition(aseq, residues, span);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -100,7 +100,7 @@ public final class ResidueLoading {
 					if (residues != null) {
 						// Add to composition if we're doing a partial sequence
 						// span is non-null, here
-						BioSeq.AddResiduesToComposition(aseq, residues, span);
+						BioSeq.addResiduesToComposition(aseq, residues, span);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -120,7 +120,7 @@ public final class ResidueLoading {
 					String residues = LoadResiduesFromDAS2(uri);
 					if (residues != null) {
 						aseq.setResidues(residues);
-						BioSeq.AddResiduesToComposition(aseq);
+						BioSeq.addResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -134,7 +134,7 @@ public final class ResidueLoading {
 					uri = generateDas2URI(
 							server.URL, genomeVersionName, seq_name, min, max, FORMAT.BNIB);
 					if (LoadResiduesFromDAS2(seq_group, uri)) {
-						BioSeq.AddResiduesToComposition(aseq);
+						BioSeq.addResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -147,7 +147,7 @@ public final class ResidueLoading {
 					String uri;
 					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
 					if (LoadResiduesFromDAS2(seq_group, uri)) {
-						BioSeq.AddResiduesToComposition(aseq);
+						BioSeq.addResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -158,7 +158,7 @@ public final class ResidueLoading {
 			for (GenericServer server : serversWithChrom) {
 				if (server.serverType == ServerType.QuickLoad) {
 					if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
-						BioSeq.AddResiduesToComposition(aseq);
+						BioSeq.addResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -171,7 +171,7 @@ public final class ResidueLoading {
 					String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
 					if (residues != null) {
 						aseq.setResidues(residues);
-						BioSeq.AddResiduesToComposition(aseq);
+						BioSeq.addResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}

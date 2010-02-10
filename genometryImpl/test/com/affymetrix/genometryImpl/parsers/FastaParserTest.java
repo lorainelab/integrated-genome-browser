@@ -19,7 +19,7 @@ public class FastaParserTest {
 			String chrom_name = "chrC";
 			String genome_name = "A_thaliana_TAIR8";
 
-			byte[] result = FastaParser.GenerateNewHeader(chrom_name, genome_name, 0, 1000);
+			byte[] result = FastaParser.generateNewHeader(chrom_name, genome_name, 0, 1000);
 
 			assertNotNull(result);
 
@@ -127,7 +127,7 @@ public class FastaParserTest {
 
 			testFASTASegment(filename, fasta, expected_fasta, 280, 290);
 
-			fasta = FastaParser.ReadFASTA(new File(filename), 290, 291);
+			fasta = FastaParser.readFASTA(new File(filename), 290, 291);
 			assertNull(fasta);
 		}
 
@@ -193,7 +193,7 @@ public class FastaParserTest {
 			//System.out.println("ChrCfailure: Testing " + filename + " from [" + start + ":" + end + "]");
 			assertTrue(new File(filename).exists());
 
-			byte[] fasta = FastaParser.ReadFASTA(new File(filename), start, end);
+			byte[] fasta = FastaParser.readFASTA(new File(filename), start, end);
 			/*for (int i=0;i<fasta.length;i++)
 				System.out.print((char)fasta[i]);
 			System.out.println();*/
@@ -210,7 +210,7 @@ public class FastaParserTest {
 			assertTrue(new File(filename).exists());
 
 			try {
-				FastaParser.ReadFASTA(new File(filename), start, end);
+				FastaParser.readFASTA(new File(filename), start, end);
 			}
 			catch(java.lang.IllegalArgumentException ex) {
 				return;
@@ -261,7 +261,7 @@ public class FastaParserTest {
 		//assertNotNull(header);
 		int header_len = (header == null ? 0 : header.length);
 
-		fasta = FastaParser.ReadFASTA(new File(filename), start, end);
+		fasta = FastaParser.readFASTA(new File(filename), start, end);
 
 		if (expected_fasta == null) {
 			assertNull(fasta);

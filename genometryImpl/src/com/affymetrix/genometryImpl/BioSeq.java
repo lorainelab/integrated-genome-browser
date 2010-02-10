@@ -605,7 +605,7 @@ public final class BioSeq implements SearchableCharIterator {
 	 * Add residues to composition (full sequence loaded).
 	 * @param aseq
 	 */
-	public static void AddResiduesToComposition(BioSeq aseq) {
+	public static void addResiduesToComposition(BioSeq aseq) {
 		if (aseq.getResiduesProvider() != null) {
 			SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
 			BioSeq subseq = new BioSeq(
@@ -616,7 +616,7 @@ public final class BioSeq implements SearchableCharIterator {
 		}
 		String residues = aseq.getResidues();
 		SeqSpan span = new SimpleSeqSpan(0, residues.length(), aseq);
-		AddResiduesToComposition(aseq, residues, span);
+		addResiduesToComposition(aseq, residues, span);
 	}
 
 
@@ -626,7 +626,7 @@ public final class BioSeq implements SearchableCharIterator {
 	 * @param residues
 	 * @param span
 	 */
-	public static void AddResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
+	public static void addResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
 		BioSeq subseq = new BioSeq(
 				aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), residues.length());
 		subseq.setResidues(residues);

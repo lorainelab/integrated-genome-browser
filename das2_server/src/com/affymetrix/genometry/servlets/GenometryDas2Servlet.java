@@ -556,7 +556,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						}
 
 					}
-					Optimize.Genome(genomeVersion);
+					Optimize.genome(genomeVersion);
 				}
 
 			}
@@ -648,7 +648,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		ServerUtils.loadAnnots(genome_directory, genome, annots_map, graph_name2dir, graph_name2file, dataRoot);
 
 		// optimize genome by replacing second-level syms with IntervalSearchSyms
-		Optimize.Genome(genome);
+		Optimize.genome(genome);
 
 		// Garbage collection after initialization
 		// only needed for debugging purposes (to see how much memory is actually used in initialization)
@@ -892,7 +892,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 //		}
 
 		if (seqfile.exists()) {
-			byte[] buf = NibbleResiduesParser.ReadBNIB(seqfile);
+			byte[] buf = NibbleResiduesParser.readBNIB(seqfile);
 			response.setContentType(NibbleResiduesParser.getMimeType()); // set bnib format mime type
 			try {
 				dos.write(buf, 0, buf.length);
@@ -952,8 +952,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//System.out.println("seq request mapping to file: " + file_name + " spanning " + spanStart + " to " + spanEnd);
 
 		response.setContentType(FastaParser.getMimeType());
-		byte[] buf = FastaParser.ReadFASTA(seqfile, spanStart, spanEnd);
-		byte[] header = FastaParser.GenerateNewHeader(seqname, organism_name, spanStart, spanEnd);
+		byte[] buf = FastaParser.readFASTA(seqfile, spanStart, spanEnd);
+		byte[] header = FastaParser.generateNewHeader(seqname, organism_name, spanStart, spanEnd);
 		OutputFormattedFasta(buf, header, response.getOutputStream());
 	}
 
@@ -1617,7 +1617,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	private void handleNameQuery(ArrayList<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class writerclass, String output_format, HttpServletResponse response, String xbase) {
 		String name = names.get(0);
-		List<SeqSymmetry> result = ServerUtils.FindNameInGenome(name, genome);
+		List<SeqSymmetry> result = ServerUtils.findNameInGenome(name, genome);
 		OutputStream outstream = null;
 		try {
 			AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();

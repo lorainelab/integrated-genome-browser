@@ -136,7 +136,7 @@ public final class NibbleResiduesParser {
 		return parse(istr,new AnnotatedSeqGroup("No_Data"), start, end, output);
 	}
 
-	public static byte[] ReadBNIB(File seqfile) throws FileNotFoundException, IOException {
+	public static byte[] readBNIB(File seqfile) throws FileNotFoundException, IOException {
 		DataInputStream dis = null;
 		try {
 			dis = new DataInputStream(new FileInputStream(seqfile));

@@ -60,14 +60,14 @@ public final class ParserController {
 				if (type_prefix != null) {
 					bp1_reader.setTypePrefix(type_prefix);
 				}
-				String annot_type = GetAnnotType(annotList, stream_name, ".bp", type_prefix);
+				String annot_type = getAnnotType(annotList, stream_name, ".bp", type_prefix);
 				// parsing probesets in bp1/bp2 format, but not add ids to group's id2sym hash
 				//   (to save memory)
 				results = bp1_reader.parse(str, seq_group, true, annot_type, false);
 				System.out.println("done loading via Bprobe1Parser: " + stream_name);
 			} else if (stream_name.endsWith(".ead")) {
 				System.out.println("loading via ExonArrayDesignParser");
-				String annot_type = GetAnnotType(annotList, stream_name, ".ead", type_prefix);
+				String annot_type = getAnnotType(annotList, stream_name, ".ead", type_prefix);
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
 				parser.parse(str, seq_group, true, annot_type);
 				System.out.println("done loading via ExonArrayDesignParser: " + stream_name);
@@ -129,7 +129,7 @@ public final class ParserController {
 		DataInputStream dis = new DataInputStream(str);
 
 		String extension = getExtension(stream_name);
-		String annot_type = GetAnnotType(annotList, stream_name, extension, type_prefix);
+		String annot_type = getAnnotType(annotList, stream_name, extension, type_prefix);
 
 		System.out.println("Indexing " + stream_name);
 
@@ -210,11 +210,11 @@ public final class ParserController {
 	// This is either:
 	// 1. A type name contained in the annots_map hash table.
 	// 2. (Default) The stream name with the extension stripped off.
-	public static String GetAnnotType(List<AnnotMapElt> annotsList,
+	public static String getAnnotType(List<AnnotMapElt> annotsList,
 	        String stream_name, String extension, String type_prefix) {
 		
 		if (type_prefix != null) {
-			return GetAnnotType(annotsList, stream_name, extension);
+			return getAnnotType(annotsList, stream_name, extension);
 		} else {
 			return type_prefix;
 		}
@@ -225,7 +225,7 @@ public final class ParserController {
 	// This is either:
 	// 1.  A type name contained in the annotList hash table.
 	// 2.  (Default) The stream name with the extension stripped off.
-	public static String GetAnnotType(
+	public static String getAnnotType(
 			List<AnnotMapElt> annotsList, String stream_name, String extension) {
 		// Check if this was in the annots mapping.
 		if (annotsList != null) {

@@ -294,7 +294,7 @@ final class Xml2GenometryParser {
             }
         }
         String prop =  (Integer.valueOf(num_spans)).toString();
-        hitSym.setProperty("num_spans", new String(prop));
+        hitSym.setProperty("num_spans", prop);
         hitSym.setProperty("type", "hit");
         hitSym.addSpan(hitSpan);
         hitSym.setID("");

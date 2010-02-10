@@ -201,8 +201,7 @@ public final class GeneralLoadUtils {
 			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getID());
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
 			String versionID = source.getID();
-			GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, source);
-			discoverVersion(versionName, gVersion, speciesName);
+			discoverVersion(versionID, versionName, gServer, source, speciesName);
 		}
 		return true;
 	}
@@ -226,8 +225,7 @@ public final class GeneralLoadUtils {
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
 				String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), versionSource.getName());
 				String versionID = versionSource.getName();
-				GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, versionSource);
-				discoverVersion(versionName, gVersion, speciesName);
+				discoverVersion(versionID, versionName, gServer, versionSource, speciesName);
 			}
 		}
 		return true;
@@ -274,8 +272,7 @@ public final class GeneralLoadUtils {
 				versionName = genomeName;
 				speciesName = SPECIES_LOOKUP.getSpeciesName(genomeName);
 			}
-			GenericVersion gVersion = new GenericVersion(genomeID, versionName, gServer, quickloadServer);
-			discoverVersion(versionName, gVersion, speciesName);
+			discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
 		}
 		return true;
 	}
@@ -291,32 +288,25 @@ public final class GeneralLoadUtils {
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 
 		GenericServer gServer = new  GenericServer(null, null, ServerType.Unknown, null);
-		GenericVersion gVersion = new GenericVersion(versionName, versionName, gServer, null);
-
-		discoverVersion(versionName, gVersion, speciesName);
-
-		return gVersion;
+		
+		return discoverVersion(versionName, versionName, gServer, null, speciesName);
 	}
 
-	/**
-	 *
-	 * @param versionName not null or empty.
-	 * @param gServer only used by debug statement.
-	 * @param gVersion not null.
-	 * @param gVersionList not null.
-	 * @param speciesName not null or empty.
-	 */
-	private static void discoverVersion(String versionName, GenericVersion gVersion, String speciesName) {
+	private static GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {
+		// Make sure we use the preferred synonym for the genome version.
+		String preferredVersionName = LOOKUP.getPreferredName(versionName);
+		GenericVersion gVersion = new GenericVersion(versionID, preferredVersionName, gServer, versionSourceObj);
 		List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
 		}
-		versionName2species.put(versionName, speciesName);
-		AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName); // returns existing group if found, otherwise creates a new group
+		versionName2species.put(preferredVersionName, speciesName);
+		AnnotatedSeqGroup group = gmodel.addSeqGroup(preferredVersionName); // returns existing group if found, otherwise creates a new group
 		group.addVersion(gVersion);
 		if (DEBUG) {
-			System.out.println("Added " + gVersion.gServer.serverType + "genome: " + speciesName + " version: " + versionName);
+			System.out.println("Added " + gVersion.gServer.serverType + "genome: " + speciesName + " version: " + preferredVersionName);
 		}
+		return gVersion;
 	}
 
 
@@ -437,15 +427,24 @@ public final class GeneralLoadUtils {
 		if (DEBUG) {
 			System.out.println("$$$$$ adding virtual genome seq to seq group");
 		}
+		if (!isVirtualGenomeSmallEnough(group, chrom_count)) {
+			return;
+		}
 		if (group.getSeq(IGBConstants.GENOME_SEQ_ID) != null) {
 			return; // return if we've already created the virtual genome
 		}
 
-		if (!isVirtualGenomeSmallEnough(group, chrom_count)) {
+		BioSeq genome_seq = null;
+		try {
+			genome_seq = group.addSeq(IGBConstants.GENOME_SEQ_ID, 0);
+		} catch (IllegalStateException ex) {
+			// due to multithreading, it's possible that this sequence has been created by another thread while doing this test.
+			// we can safely return in this case.
+			if (DEBUG) {
+				System.out.println("Ignoring illegal state exception.");
+			}
 			return;
 		}
-
-		BioSeq genome_seq = group.addSeq(IGBConstants.GENOME_SEQ_ID, 0);
 		for (int i = 0; i < chrom_count; i++) {
 			BioSeq chrom_seq = group.getSeq(i);
 			if (chrom_seq == genome_seq) {

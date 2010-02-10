@@ -246,13 +246,16 @@ public class AnnotatedSeqGroup {
 	 * Adds the BioSeq to the group.
 	 */
 	final public void addSeq(BioSeq seq) {
-		final BioSeq oldseq = id2seq.get(seq.getID());
+		String seqID = seq.getID();
+		final BioSeq oldseq = id2seq.get(seqID);
 		if (oldseq == null) {
-			id2seq_dirty_bit = true;
-			id2seq.put(seq.getID(), seq);
-			seq.setSeqGroup(this);
+			synchronized (this) {
+				id2seq_dirty_bit = true;
+				id2seq.put(seqID, seq);
+				seq.setSeqGroup(this);
+			}
 		} else {
-			throw new RuntimeException("ERROR! tried to add seq: " + seq.getID() + " to AnnotatedSeqGroup: " +
+			throw new IllegalStateException("ERROR! tried to add seq: " + seqID + " to AnnotatedSeqGroup: " +
 					this.getID() + ", but seq with same id is already in group");
 		}
 	}

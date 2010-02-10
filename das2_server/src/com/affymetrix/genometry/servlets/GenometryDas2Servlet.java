@@ -1226,40 +1226,45 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	/**Refresh the annotations from the db */
 	private final void handleRefreshRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing DAS2 server");
+	
+		// Refresh is not supported in classic mode
+		if (!is_genometry_genopub_mode) {
+			PrintWriter pw = response.getWriter();
+			pw.println("DAS/2 refresh is not supported in classic mode");
+			return;
+		}
+		
+		// Refresh is not allowed in genopub mode unless the
+		// user has admin privileges.
+		if (!this.getGenoPubSecurity(request).isAdminRole()) {
+			PrintWriter pw = response.getWriter();
+			pw.println("DAS/2 refresh can only be performed by genopub admins.");
+			return;
+		}
+		
+		Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing DAS2 server.  User: " + request.getUserPrincipal().getName());
 		try {
 
-		  // Clear out organisms
-		  organisms.clear();
-		  
+			// Clear out organisms
+			organisms.clear();
+
 			// Clear out the annotations for the GenometryModel
 			gmodel = GenometryModel.refreshGenometryModel();
 
 			// Reload the annotation files
-			if (is_genometry_genopub_mode) {
-				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
-				this.loadGenomesFromDB();
+			Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
+			this.loadGenomesFromDB();
 
-				// Refresh the authorized resources for this user
-				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing authorized resources....");
-				Session sess  = HibernateUtil.getSessionFactory().openSession();
-				this.getGenoPubSecurity(request).loadAuthorizedResources(sess);
-
-
-			} else {
-				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from file system....");
-				loadGenomes(data_root, organisms, org_order_filename);
-			}
-
-
+			// Refresh the authorized resources for this user
+			Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing authorized resources....");
+			Session sess  = HibernateUtil.getSessionFactory().openSession();
+			this.getGenoPubSecurity(request).loadAuthorizedResources(sess);
 
 		} catch (Exception e) {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).severe("ERROR - problems refreshing annotations " + e.toString());
 			e.printStackTrace();
 		} finally {
-			if (is_genometry_genopub_mode) {
-				HibernateUtil.getSessionFactory().close();
-			}
+			HibernateUtil.getSessionFactory().close();
 		}
 
 
@@ -1285,7 +1290,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println("</REFRESH>");
 		
 		date_initialized = System.currentTimeMillis();
-    date_init_string = date_formatter.format(new Date(date_initialized));
+		date_init_string = date_formatter.format(new Date(date_initialized));
 	}
 
 	/**

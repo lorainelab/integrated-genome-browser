@@ -58,6 +58,11 @@ public class DataLoadView extends JComponent  {
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		TAB_DATALOAD_PREFS = pp.addPrefEditorComponent(new DataLoadPrefsView());
 	}	
+        
+        public void tableChanged(){
+            general_load_view.createFeaturesTable();
+        }
+        
 }
 
 

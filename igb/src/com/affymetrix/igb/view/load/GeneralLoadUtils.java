@@ -331,7 +331,7 @@ public final class GeneralLoadUtils {
 	 *  Returns the list of features for the genome with the given version name.
 	 *  The list may (rarely) be empty, but never null.
 	 */
-	static List<GenericFeature> getFeatures(final String versionName) {
+	public static List<GenericFeature> getFeatures(final String versionName) {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);

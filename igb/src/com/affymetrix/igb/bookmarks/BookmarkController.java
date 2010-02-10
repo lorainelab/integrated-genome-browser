@@ -13,12 +13,14 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import java.awt.Color;
 import java.util.List;
 import java.io.*;
@@ -318,6 +320,7 @@ public abstract class BookmarkController {
     // "j" loops throug all graphs, while "i" counts only the ones
     // that are actually book-markable (thus i <= j)
     int i = -1;
+    Das2Bookmark bookmark = new Das2Bookmark();
     for (int j=0; j<max; j++) {
       Object graph_object = graphs.get(j);
       if (!(graph_object instanceof GraphGlyph)) {
@@ -325,11 +328,14 @@ public abstract class BookmarkController {
         continue;
       }
       GraphGlyph gr = (GraphGlyph) graph_object;
-      GraphSym graf = (GraphSym)gr.getInfo();
+      GraphSym graph = (GraphSym)gr.getInfo();
+      
       if (DEBUG) {
-        System.out.println("graph sym, points = " + graf.getPointCount() + ": " + graf);
+        System.out.println("graph sym, points = " + graph.getPointCount() + ": " + graph);
       }
-      String source_url = (String)graf.getProperty("source_url");
+      String source_url = (String)graph.getProperty("source_url");
+      bookmark.add(graph);
+      source_url = bookmark.getSource();
       if (source_url == null)  {
         String label = gr.getLabel();
         if (label != null && label.length() > 0) {
@@ -340,7 +346,9 @@ public abstract class BookmarkController {
         Rectangle2D.Double gbox = gr.getCoordBox();
 
         boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gr);
-        mark_sym.setProperty("graph_source_url_" + i, source_url);
+        if(!bookmark.isValid()){
+            mark_sym.setProperty("graph_source_url_" + i, source_url);
+        }
         mark_sym.setProperty("graph_ypos_" + i, Integer.toString((int)gbox.y));
         mark_sym.setProperty("graph_yheight_" + i, Integer.toString((int)gbox.height));
         mark_sym.setProperty("graph_col_" + i, sixDigitHex(gr.getGraphState().getTierStyle().getColor()));
@@ -348,9 +356,9 @@ public abstract class BookmarkController {
         if (is_floating) { mark_sym.setProperty("graph_float_" + i, "true"); } else  {mark_sym.setProperty("graph_float_" + i, "false"); }
 
         if (DEBUG) {
-          System.out.println("setting bookmark prop graph_name_" + i + ": " + graf.getGraphName());
+          System.out.println("setting bookmark prop graph_name_" + i + ": " + graph.getGraphName());
         }
-        mark_sym.setProperty("graph_name_" + i, graf.getGraphName());
+        mark_sym.setProperty("graph_name_" + i, graph.getGraphName());
         mark_sym.setProperty("graph_show_label_" + i, (gr.getShowLabel()?"true":"false"));
         mark_sym.setProperty("graph_show_axis_" + i, (gr.getShowAxis()?"true":"false"));
         mark_sym.setProperty("graph_minvis_" + i, Double.toString(gr.getVisibleMinY()));
@@ -374,12 +382,13 @@ public abstract class BookmarkController {
           }
           mark_sym.setProperty("graph_combo_"+i, combo_style_num.toString());
         }
-
+        
+       
         // if graphs are in tiers, need to deal with tier ordering in here somewhere!
         // (the graph_ypos variable can be used for this)
       }
     }
-
+    bookmark.set(mark_sym);
     // TODO: Now save the colors and such of the combo graphs!
 
     if (! unfound_labels.isEmpty()) {

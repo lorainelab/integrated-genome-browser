@@ -27,7 +27,6 @@ import javax.swing.JTable;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.SeqSpan;
 
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -61,7 +60,7 @@ import javax.swing.table.TableColumn;
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
 
-	static GeneralLoadUtils glu = new GeneralLoadUtils();
+	public static GeneralLoadUtils glu = new GeneralLoadUtils();
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = "Species";
@@ -755,7 +754,7 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * Create the table with the list of features and their status.
 	 */
-	void createFeaturesTable() {
+	public void createFeaturesTable() {
 		String versionName = (String) this.versionCB.getSelectedItem();
 		BioSeq curSeq = gmodel.getSelectedSeq();
 		if (DEBUG_EVENTS) {

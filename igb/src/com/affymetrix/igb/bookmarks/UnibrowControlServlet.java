@@ -15,8 +15,11 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import java.util.regex.*;
 
@@ -24,10 +27,14 @@ import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.DataLoadView;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.das2.Das2Capability;
@@ -222,6 +229,7 @@ public final class UnibrowControlServlet {
 					if (DEBUG_DAS2_LOAD) {
 						System.out.println("     version: " + version.getID());
 					}
+                                        
 					Das2Type dtype = version.getTypes().get(type_uri);
 					Das2Region segment = version.getSegments().get(seg_uri);
 					String[] minmax = overstr.split(":");
@@ -245,6 +253,7 @@ public final class UnibrowControlServlet {
 		}
 
 		if (das2_requests.size() > 0) {
+			addFeaturesToDataLoadView(das2_requests);
 			SeqMapView gviewer = Application.getSingleton().getMapView();
 			String featureName = "bookmarked data";
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + featureName);
@@ -258,7 +267,35 @@ public final class UnibrowControlServlet {
 			loadDataFromURLs(uni, data_urls, null, null);
 		}
 	}
-
+        
+        public static void addFeaturesToDataLoadView(List<Das2FeatureRequestSym> requests){
+            for(Das2FeatureRequestSym request : requests){
+               String version = request.getDas2Type().getVersionedSource().getName();
+               String name = request.getDas2Type().getName();
+			   String host = "";
+			   try{
+				   URI uri = new URI(request.getRegion().getID());
+				   host = uri.getHost();
+			   }
+			   catch(URISyntaxException e){
+				   continue; //uri not parsable
+			   }
+               List<GenericFeature> features = GeneralLoadUtils.getFeatures(version);
+               for(GenericFeature feature : features){
+                  try {
+                     URL url = new URL(feature.gVersion.gServer.URL);
+                     if(url.getHost().equals(host) && name.equals(feature.featureName)){
+                        feature.setVisible();
+                     }
+                  } catch (MalformedURLException ex) {
+                      Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.WARNING, "could not convert :" + feature.gVersion.gServer.URL, ex);
+                  }
+               } 
+            }
+            DataLoadView view = ((IGB)Application.getSingleton()).data_load_view;
+            view.tableChanged();
+        }
+        
 	private static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
 		try {
 			if (data_urls != null && data_urls.length != 0) {

@@ -87,7 +87,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
   //  May need to returns a sym instead of span to better match up with SeqSymmetrySummarizer methods??
   SeqSpan getInsideSpan() { return inside_span; }
 
-  Das2Region getRegion() { return das2_region; }
+  public Das2Region getRegion() { return das2_region; }
   public Das2Type getDas2Type() { return das2_type; }
   String getFormat() { return format; }
   public void setFormat(String format) { this.format = format; }

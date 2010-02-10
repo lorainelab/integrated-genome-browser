@@ -158,7 +158,15 @@ public final class NibbleResiduesParser {
 		int first = start%2;
 		int last = first + num_residues;
 
-		dis.skipBytes(start/2);
+		int bytes_to_skip = start/2;
+		while (bytes_to_skip > 0)  {
+			int skipped = (int)dis.skip(bytes_to_skip);
+			if (skipped < 0) {
+				break;
+			} // EOF reached
+			bytes_to_skip -= skipped;
+		}
+		//dis.skipBytes(start/2);
 		dis.readFully(nibble_array);
 		String temp = NibbleIterator.nibblesToString(nibble_array, first, last);
 		nibble_array = NibbleIterator.stringToNibbles(temp, 0, temp.length());

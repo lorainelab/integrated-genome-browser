@@ -419,6 +419,54 @@ public class SeqUtilsTest {
 		assertEquals(12,sequence.length());
 
 	}
+	@Test
+	public void testEncompass(){
+		BioSeq annot_seq = new BioSeq("annot", "version",1000000);
+		SeqSpan spanA = new SimpleSeqSpan(500,300,annot_seq);
+		SeqSpan spanB = new SimpleSeqSpan(800,900,annot_seq);
+		MutableSeqSpan dstSpan = new SimpleMutableSeqSpan(300,900,annot_seq);
+		boolean result=SeqUtils.encompass(spanA, spanB, dstSpan);
+		assertNotNull(result);
+		assertEquals(true,result);
+        double resultStart =dstSpan.getStartDouble();
+		double resultEnd =dstSpan.getEndDouble();
+		//Check for spanA reverse and spanB forward
+		assertEquals(900.0d,resultStart,0.000001d);
+		assertEquals(300.0d,resultEnd,0.000001d);
+		//Check for spanC forward and spanD reverse
+		SeqSpan spanC = new SimpleSeqSpan(300,500,annot_seq);
+		SeqSpan spanD = new SimpleSeqSpan(900,800,annot_seq);
+		MutableSeqSpan dstSpan2 = new SimpleMutableSeqSpan(300,900,annot_seq);
+		boolean result2 =SeqUtils.encompass(spanC, spanD, dstSpan2);
+		assertEquals(true,result2);
+		double resultStart2 =dstSpan2.getStartDouble();
+		double resultEnd2 =dstSpan2.getEndDouble();
+		assertEquals(300.0d,resultStart2,0.000001d);
+		assertEquals(900.0d,resultEnd2,0.000001d);
+		//Check if spanE and spanF are both forward
+		SeqSpan spanE = new SimpleSeqSpan(500,1000,annot_seq);
+		SeqSpan spanF = new SimpleSeqSpan(800,900,annot_seq);
+		MutableSeqSpan dstSpan3 = new SimpleMutableSeqSpan(500,1500,annot_seq);
+		boolean result3 =SeqUtils.encompass(spanE, spanF, dstSpan3);
+		assertEquals(true,result3);
+		double resultStart3 =dstSpan3.getStartDouble();
+		double resultEnd3 =dstSpan3.getEndDouble();
+		assertEquals(500.0d,resultStart3,0.000001d);
+		assertEquals(1000.0d,resultEnd3,0.000001d);
+		//Check if spanG and spanH are both reverse
+		SeqSpan spanG = new SimpleSeqSpan(1000,500,annot_seq);
+		SeqSpan spanH = new SimpleSeqSpan(900,800,annot_seq);
+		MutableSeqSpan dstSpan4 = new SimpleMutableSeqSpan(1500,500,annot_seq);
+		boolean result4 =SeqUtils.encompass(spanG, spanH, dstSpan4);
+		assertEquals(true,result4);
+		double resultStart4 =dstSpan4.getStartDouble();
+		double resultEnd4 =dstSpan4.getEndDouble();
+		assertEquals(1000.0d,resultStart4,0.000001d);
+		assertEquals(500.0d,resultEnd4,0.000001d);
+
+
+
+	}
 
 	
 }

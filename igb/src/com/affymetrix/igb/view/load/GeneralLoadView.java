@@ -637,6 +637,7 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		clearFeaturesTable();
+		refreshTreeView();
 
 		disableAllButtons();
 	}
@@ -654,6 +655,7 @@ public final class GeneralLoadView extends JComponent
 
 		if (aseq == null) {
 			clearFeaturesTable();
+			refreshTreeView();
 			disableAllButtons();
 			return;
 		}
@@ -685,7 +687,6 @@ public final class GeneralLoadView extends JComponent
 
 		Application.getSingleton().addNotLockedUpMsg("Loading features");
 
-		refreshTreeView();
 		createFeaturesTable();
 		loadWholeRangeFeatures(versionName);
 		Application.getSingleton().removeNotLockedUpMsg("Loading features");
@@ -737,7 +738,6 @@ public final class GeneralLoadView extends JComponent
 		this.feature_model = new FeaturesTableModel(this, null, null);
 		this.feature_table.setModel(this.feature_model);
 		featuresTableScrollPane.setViewportView(this.feature_table);
-		feature_tree_view.clearTreeView();
 	}
 
 	private void refreshTreeView() {
@@ -745,8 +745,6 @@ public final class GeneralLoadView extends JComponent
 		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 		if (features == null || features.isEmpty()) {
 			clearFeaturesTable();
-			feature_tree_view.clearTreeView();
-			return;
 		}
 		feature_tree_view.initOrRefreshTree(features);
 	}

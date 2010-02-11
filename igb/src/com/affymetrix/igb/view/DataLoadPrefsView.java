@@ -115,8 +115,9 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 		final JButton removeServerButton = createButton("Remove", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Object url = sourcesTable.getModel().getValueAt(sourcesTable.getSelectedRow(), SourceColumn.URL.ordinal());
-
+				Object url = sourcesTable.getModel().getValueAt(
+						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+						SourceColumn.URL.ordinal());
 				removeDataSource(url.toString());
 				sourceTableModel.init();
 			}

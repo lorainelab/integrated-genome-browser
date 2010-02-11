@@ -22,15 +22,9 @@ import java.util.List;
 public final class SimplePairSeqSymmetry implements SeqSymmetry {
 
 	private List<SeqSymmetry> children = null;
-	private SeqSymmetry parent = null;
 	private static int count = 2;
 	private SeqSpan spanA;
 	private SeqSpan spanB;
-
-	/*public SimplePairSeqSymmetry(List<SeqSpan> spans) {
-		spanA = spans.get(0);
-		spanB = spans.get(1);
-	}*/
 
 	public SimplePairSeqSymmetry(SeqSpan spanA, SeqSpan spanB) {
 		this.spanA = spanA;

@@ -305,7 +305,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 		tagvals.put("tagval_test_1", "testing1");
 		tagvals.put("tagval_test_2", "testing2");
 
-		List annots = null;
+		List<? extends SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
 		BufferedInputStream bis = null;
 		try {
 			if (DEBUG) {

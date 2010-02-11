@@ -736,10 +736,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		String seq_id = aseq.getID();
 		int start = qspan.getMin();
 		int stop = qspan.getMax();
-		String version = "unknown";
-		if (aseq != null) {
-			version = aseq.getVersion();
-		}
+		String version = aseq.getVersion();
 		pw.println("<?xml version=\"1.0\" standalone=\"no\"?>");
 		pw.println("<DASGFF>");
 		pw.println("<GFF version=\"1.0\" href=\"dummy href\">");
@@ -858,7 +855,6 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				SeqSymmetry annot = iterator.next();
 				Das1FeatureSaxParser.writeDasFeature(annot, seq, type, pw);
 			}
-			//      System.out.println("annot returned: " + annot_count);
 			Das1FeatureSaxParser.writeDasFeatFooter(pw);
 			pw.flush();
 		} catch (Exception ex) {

@@ -341,9 +341,11 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			oneseq.add(aseq);
 			SeqSymmetry tcluster_exemplar = null;
 
-			if (syms.size() > 0)  { tcluster_exemplar = syms.iterator().next(); }
-			writeEadHeader(tcluster_exemplar, type, oneseq, dos);
-			writeSeqWithAnnots(syms, aseq, dos);
+			if (syms.size() > 0) {
+				tcluster_exemplar = syms.iterator().next();
+				writeEadHeader(tcluster_exemplar, type, oneseq, dos);
+				writeSeqWithAnnots(syms, aseq, dos);
+			}
 			dos.flush();
 			success = true;
 		}
@@ -375,11 +377,10 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			DataOutputStream dos;
 			if (outstream instanceof DataOutputStream) { dos = (DataOutputStream)outstream; }
 			else if (outstream instanceof BufferedOutputStream) { dos = new DataOutputStream(outstream); }
-			//    else { dos = new DataOutputStream(outstream); }
 			else { dos = new DataOutputStream(new BufferedOutputStream(outstream)); }
 
 			int scount = group.getSeqCount();
-			List seqs = group.getSeqList();
+			List<BioSeq> seqs = group.getSeqList();
 
 			SeqSymmetry tcluster_exemplar = null;
 			if (seqs.size() > 0) {
@@ -426,24 +427,11 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	/**
 	 *  assumes seqs are SmartAnnotBioSeqs, and belong to same AnnotatedSeqGroup
 	 */
-	protected void writeEadHeader(SeqSymmetry tcluster_exemplar, String annot_type, List seqs, DataOutputStream dos) throws IOException {
+	private static void writeEadHeader(SeqSymmetry tcluster_exemplar, String annot_type, List<BioSeq> seqs, DataOutputStream dos) throws IOException {
 		// extract example EfficientProbesetSymA from an annotated seq in group
-		BioSeq seq0 = (BioSeq)seqs.get(0);
+		BioSeq seq0 = seqs.get(0);
 		AnnotatedSeqGroup group = seq0.getSeqGroup();
-		/*
-		   String transcript_cluster_prefix = (String)typesym.getProperty("transcript_cluster_prefix");
-		   String transcript_cluster_suffix = (String)typesym.getProperty("transcript_cluster_suffix");
-		   String exon_cluster_prefix = (String)typesym.getProperty("exon_cluster_prefix");
-		   String exon_cluster_suffix = (String)typesym.getProperty("exon_cluster_suffix");
-		   String psr_prefix = (String)typesym.getProperty("psr_prefix");
-		   String psr_suffix = (String)typesym.getProperty("psr_suffix");
-		   String probeset_prefix = (String)typesym.getProperty("probeset_prefix");
-		   String probeset_suffix = (String)typesym.getProperty("probeset_suffix");
-		   String probe_prefix = (String)typesym.getProperty("probe_prefix");
-		   String probe_suffix = (String)typesym.getProperty("probe_suffix");
-		   */
-
-		//    SeqSymmetry transcript_cluster = typesym.getChild(0);
+		
 		EfficientProbesetSymA probeset_exemplar;
 		if (USE_FULL_HIERARCHY) {
 			SeqSymmetry exon_cluster = tcluster_exemplar.getChild(0);
@@ -473,7 +461,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *  write out a seq data section
 	 *  assumes syms in collection contain span on aseq
 	 */
-	protected static void writeSeqWithAnnots(java.util.Collection syms, BioSeq aseq, DataOutputStream dos) throws IOException {
+	private static void writeSeqWithAnnots(java.util.Collection syms, BioSeq aseq, DataOutputStream dos) throws IOException {
 		String seqid = aseq.getID();
 		System.out.println("seqid: " + seqid + ", annot count: " + syms.size() );
 		dos.writeUTF(seqid);
@@ -491,7 +479,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	/**
 	 *  scratch_span is a MutableSeqSpan used for transient span instantiation
 	 */
-	protected static void writeTranscriptCluster(SingletonSymWithIntId tsym, MutableSeqSpan scratch_span, DataOutputStream dos)
+	private static void writeTranscriptCluster(SingletonSymWithIntId tsym, MutableSeqSpan scratch_span, DataOutputStream dos)
 		throws IOException {
 		SeqSpan tspan = tsym.getSpan(0);
 		MutableSeqSpan mutspan = scratch_span;
@@ -546,7 +534,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	}
 
 
-	protected static void writeProbeset(EfficientProbesetSymA psym, MutableSeqSpan mutspan, DataOutputStream dos) throws IOException {
+	private static void writeProbeset(EfficientProbesetSymA psym, MutableSeqSpan mutspan, DataOutputStream dos) throws IOException {
 		SeqSpan pspan = psym.getSpan(0);
 		int child_count = psym.getChildCount();
 		int intid = psym.getIntID();

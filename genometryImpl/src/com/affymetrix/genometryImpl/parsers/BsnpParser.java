@@ -326,7 +326,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 					}
 					//BsnpParser tester = new BsnpParser();
 					File ifil = new File(text_infile);
-					List<SeqSymmetry> parent_syms = null;
+					List<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
 					if (text_infile.endsWith(".txt")) {
 						BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
 						System.out.println("reading in text data from: " + text_infile);

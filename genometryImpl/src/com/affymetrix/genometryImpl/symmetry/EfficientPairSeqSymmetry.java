@@ -18,14 +18,12 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import java.util.List;
 
 public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 
 	private static final int count = 2;
 	private final int startA, startB, endA, endB;
 	private final BioSeq seqA, seqB;
-	private List<SeqSymmetry> children;
 	private String id;
 
 	public EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB) {
@@ -93,17 +91,11 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 
 
 	public int getChildCount() {
-		if (null != children)
-			return children.size();
-		else
-			return 0;
+		return 0;
 	}
 
 	public SeqSymmetry getChild(int index) {
-		if (null != children && index < children.size())
-			return children.get(index);
-		else
-			return null;
+		return null;
 	}
 
 	public String getID() { return id; }

@@ -28,7 +28,6 @@ public final class DasServerInfo {
 	private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 
-
 	/**
 	 * Creates an instance of DasServerInfo for the given DAS server url.
 	 * @param url
@@ -46,7 +45,6 @@ public final class DasServerInfo {
 	public URI getURI() {
 		return serverURI;
 	}
-
 
 	public Map<String, DasSource> getDataSources() {
 		if (!initialized) {
@@ -78,7 +76,7 @@ public final class DasServerInfo {
 			if (REPORT_CAPS) {
 				System.out.println("DAS capabilities: " + das_capabilities);
 			}
-		
+
 			Document doc = XMLUtils.getDocument(request_con);
 
 			NodeList dsns = doc.getElementsByTagName("DSN");
@@ -86,7 +84,7 @@ public final class DasServerInfo {
 			for (int i = 0; i < dsns.getLength(); i++) {
 				Element dsn = (Element) dsns.item(i);
 				try {
-				parseDSNElement(dsn);
+					parseDSNElement(dsn);
 				} catch (Exception ex) {
 					// log and continue with remainder of parsing.
 					System.out.println("Error initializing DAS server info for\n" + serverURI);

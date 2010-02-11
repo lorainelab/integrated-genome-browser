@@ -111,13 +111,16 @@ final class Xml2GenometryParser {
 			System.err.println("processing dna seq");
 		}
 		String version = "";
-		String seq = "genome";
-
 		try {
 			version = top_element.getAttribute("version");
+		} catch (Exception e) {
+			// ignore exception
+		}
+		String seq = "genome";
+		try {
 			seq = top_element.getAttribute("seq");
 		} catch (Exception e) {
-			e.printStackTrace();
+			// ignore exception
 		}
 		
 		BioSeq chrom = buildChromosome(top_element, seq, version);

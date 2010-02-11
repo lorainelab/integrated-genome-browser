@@ -93,7 +93,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	public SearchView() {
 		super();
 		gviewer = Application.getSingleton().getMapView();
-		gmodel.addGroupSelectionListener(this);
 		group = gmodel.getSelectedSeqGroup();
 
 		this.setLayout(new BorderLayout());

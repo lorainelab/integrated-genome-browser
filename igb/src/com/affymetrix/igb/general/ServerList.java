@@ -144,7 +144,7 @@ public final class ServerList {
 			}
 			if (serverType == ServerType.DAS) {
 				DasServerInfo info = new DasServerInfo(url);
-				server = new GenericServer(name, info.getURI().toASCIIString(), serverType, info);
+				server = new GenericServer(name, info.getURL().toString(), serverType, info);
 			}
 			if (serverType == ServerType.DAS2) {
 				Das2ServerInfo info = new Das2ServerInfo(url, name, false);

@@ -80,7 +80,7 @@ public final class FeatureLoading {
 			}
 			DasSource version = (DasSource) gVersion.versionSourceObj;
 			for (DasType type : version.getTypes().values()) {
-				String type_name = type.getID();
+				String type_name = type.getName();
 				if (type_name == null || type_name.length() == 0) {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;

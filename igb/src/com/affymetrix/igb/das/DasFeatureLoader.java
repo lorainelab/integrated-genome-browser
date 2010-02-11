@@ -3,10 +3,8 @@ package com.affymetrix.igb.das;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,11 +17,12 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.view.SeqMapView;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static com.affymetrix.igb.IGBConstants.UTF8;
 
 /**
  * Class to aid in loading features from DAS servers.
@@ -44,7 +43,7 @@ public final class DasFeatureLoader {
 	 * <p />
 	 * We should not have to track this: there must be a way to get this information from elsewhere in the code.
 	 */
-	private static final Map<String,MutableSeqSymmetry> loadMap = new HashMap<String,MutableSeqSymmetry>();
+	private static final Map<String,MutableSeqSymmetry> loadMap = new ConcurrentHashMap<String,MutableSeqSymmetry>();
 
 	/** Private constructor to prevent instantiation. */
 	private DasFeatureLoader() { }
@@ -57,16 +56,18 @@ public final class DasFeatureLoader {
 	 * @return true if data was loaded
 	 */
 	public static boolean loadFeatures(GenericFeature gFeature, SeqSpan query_span) {
-		String das_root = gFeature.gVersion.gServer.URL;
+		DasType feature = ((DasSource)gFeature.gVersion.versionSourceObj).getTypes().get(gFeature.featureName);
+		URL serverURL = feature.getServerURL();
 		BioSeq current_seq = gviewer.getViewSeq();
 		List<URL> urls = new ArrayList<URL>();
+		QueryBuilder builder;
+		String id;
 
 		try {
-			String query_root = das_root.endsWith("/") ? das_root : das_root.concat("/")
-						+ URLEncoder.encode(gFeature.gVersion.versionID, UTF8) + "/features?"
-						+ "segment=" + URLEncoder.encode(current_seq.getID(), UTF8);
-			String encoded_type = ";type=" + URLEncoder.encode(gFeature.featureName, UTF8);
-			String id = query_root + encoded_type;
+			builder = new QueryBuilder(new URL(serverURL, feature.getSource() + "/features"));
+			builder.add("segment", current_seq.getID());
+			builder.add("type", feature.getID());
+			id = builder.build().toString();
 
 			SimpleSymWithProps query_sym = new SimpleSymWithProps();
 			query_sym.setProperty("method", id);
@@ -76,7 +77,7 @@ public final class DasFeatureLoader {
 			loadMap.put(id, seen);
 
 			SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, seen, current_seq);
-			walksym(optimized_sym, query_root, encoded_type, urls);
+			walksym(optimized_sym, builder, current_seq.getID(), urls);
 
 			if (!urls.isEmpty()) {
 				seen.addChild(optimized_sym);
@@ -106,17 +107,16 @@ public final class DasFeatureLoader {
 	 * @throws java.io.UnsupportedEncodingException
 	 * @throws java.net.MalformedURLException
 	 */
-	private static void walksym(SeqSymmetry sym, String query_root, String encoded_type, List<URL> urls) throws UnsupportedEncodingException, MalformedURLException {
+	private static void walksym(SeqSymmetry sym, QueryBuilder builder, String segment, List<URL> urls) throws UnsupportedEncodingException, MalformedURLException {
 		for (int i=0; i< sym.getChildCount(); i++) {
-			walksym(sym.getChild(i), query_root, encoded_type, urls);
+			walksym(sym.getChild(i), builder, segment, urls);
 		}
 		if (sym.getChildCount() == 0) {
 			SeqSpan span;
-			String query;
 			for (int i = 0; i < sym.getSpanCount(); i++) {
 				span = sym.getSpan(i);
-				query = query_root + URLEncoder.encode(":" + (span.getMin() + 1) + "," + span.getMax(), UTF8) + encoded_type;
-				urls.add(new URL(query));
+				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
+				urls.add(builder.build());
 			}
 		}
 	}

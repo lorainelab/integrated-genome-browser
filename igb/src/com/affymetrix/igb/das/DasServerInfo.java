@@ -24,7 +24,7 @@ public final class DasServerInfo {
 
 	private static final boolean REPORT_SOURCES = false;
 	private static final boolean REPORT_CAPS = true;
-	private URI serverURI;
+	private URL serverURL;
 	private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 
@@ -34,16 +34,16 @@ public final class DasServerInfo {
 	 */
 	public DasServerInfo(String url) {
 		try {
-			serverURI = new URI(url).normalize();
-		} catch (URISyntaxException e) {
+			serverURL = new URL(url);
+		} catch (MalformedURLException e) {
 			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to convert URL '" + url + "' to URI", e);
 		}
 
 	}
 
 	/** Returns the root URL String.  Will not have any trailing "/" at the end. */
-	public URI getURI() {
-		return serverURI;
+	public URL getURL() {
+		return serverURL;
 	}
 
 	public Map<String, DasSource> getDataSources() {
@@ -53,10 +53,6 @@ public final class DasServerInfo {
 		return sources;
 	}
 
-	private void addDataSource(DasSource ds) {
-		sources.put(ds.getID(), ds);
-	}
-
 	/**
 	 * Return true if successfully initialized.
 	 * see DAS specification for returned XML format in response to "dsn" command:
@@ -64,8 +60,8 @@ public final class DasServerInfo {
 	 */
 	private void initialize() {
 		try {
-			System.out.println("Das Request: " + serverURI);
-			URLConnection request_con = serverURI.toURL().openConnection();
+			System.out.println("Das Request: " + serverURL);
+			URLConnection request_con = serverURL.openConnection();
 			request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 			request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 			String das_version = request_con.getHeaderField("X-DAS-Version");
@@ -87,12 +83,12 @@ public final class DasServerInfo {
 					parseDSNElement(dsn);
 				} catch (Exception ex) {
 					// log and continue with remainder of parsing.
-					System.out.println("Error initializing DAS server info for\n" + serverURI);
+					System.out.println("Error initializing DAS server info for\n" + serverURL);
 					ex.printStackTrace();
 				}
 			}
 		} catch (Exception ex) {
-			System.out.println("Error initializing DAS server info for\n" + serverURI);
+			System.out.println("Error initializing DAS server info for\n" + serverURL);
 			ex.printStackTrace();
 			return;
 		}
@@ -108,12 +104,6 @@ public final class DasServerInfo {
 			return;
 		}
 		String sourceid = source.getAttribute("id");
-		String source_version = source.getAttribute("version");
-		String sourcename = null;
-		Text nametext = (Text) source.getFirstChild();
-		if (nametext != null) {
-			sourcename = nametext.getData();
-		}
 
 		NodeList masterlist = dsn.getElementsByTagName("MAPMASTER");
 		Element master = (Element) masterlist.item(0);
@@ -127,27 +117,19 @@ public final class DasServerInfo {
 		if (mastertext != null) {
 			master_url = mastertext.getData();
 		}
-		NodeList desclist = dsn.getElementsByTagName("DESCRIPTION");
-		String info_url = null;
-		String description = null;
-		if (desclist.getLength() > 0) {
-			Element desc = (Element) desclist.item(0);
-			info_url = desc.getAttribute("href");
-			Text desctext = (Text) desc.getFirstChild();
-			if (desctext != null) {
-				description = desctext.getData();
+		try {
+			URL masterURL = new URL(master_url);
+			DasSource das_source = sources.get(DasSource.getID(masterURL));
+			if (das_source == null) {
+				das_source = new DasSource(serverURL, masterURL);
+				sources.put(DasSource.getID(masterURL), das_source);
 			}
+			das_source.add(sourceid);
+		} catch (MalformedURLException ex) {
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "", ex);
 		}
-		DasSource das_source = new DasSource(this, sourceid, false);
-		das_source.setVersion(source_version);
-		das_source.setName(sourcename);
-		das_source.setDescription(description);
-		das_source.setInfoUrl(info_url);
-		das_source.setMapMaster(master_url);
-		this.addDataSource(das_source);
 		if (REPORT_SOURCES) {
-			System.out.println("sourceid = " + sourceid + ", version = " + source_version + ", name = " + sourcename);
-			System.out.println("   mapmaster = " + master_url + ", info_url = " + info_url + ", description = " + description);
+			System.out.println("sourceid = " + sourceid + ", mapmaster = " + master_url);
 		}
 	}
 }

@@ -69,7 +69,7 @@ public final class FeatureLoading {
 					continue;
 				}
 				Map<String, String> type_props = type.getProps();
-				gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion));
+				gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion, type));
 			}
 			return;
 		}
@@ -85,7 +85,7 @@ public final class FeatureLoading {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				gVersion.addFeature(new GenericFeature(type_name, null, gVersion));
+				gVersion.addFeature(new GenericFeature(type_name, null, gVersion, type));
 			}
 			return;
 		}
@@ -109,7 +109,7 @@ public final class FeatureLoading {
 						System.out.println("Adding feature " + type_name);
 					}
 					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
-					gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion));
+					gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion, null));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

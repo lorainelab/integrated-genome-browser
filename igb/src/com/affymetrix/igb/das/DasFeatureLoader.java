@@ -56,7 +56,7 @@ public final class DasFeatureLoader {
 	 * @return true if data was loaded
 	 */
 	public static boolean loadFeatures(GenericFeature gFeature, SeqSpan query_span) {
-		DasType feature = ((DasSource)gFeature.gVersion.versionSourceObj).getTypes().get(gFeature.featureName);
+		DasType feature = (DasType)gFeature.typeObj;
 		URL serverURL = feature.getServerURL();
 		BioSeq current_seq = gviewer.getViewSeq();
 		List<URL> urls = new ArrayList<URL>();

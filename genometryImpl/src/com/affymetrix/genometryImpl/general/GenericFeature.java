@@ -1,12 +1,9 @@
 package com.affymetrix.genometryImpl.general;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,13 +23,14 @@ public final class GenericFeature {
 	private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
+	public final Object typeObj;    // Das2Type, DasType, ...?
 	
 	/**
 	 * @param featureName
 	 * @param featureProps
 	 * @param gVersion
 	 */
-	public GenericFeature(String featureName, Map<String, String> featureProps, GenericVersion gVersion) {
+	public GenericFeature(String featureName, Map<String, String> featureProps, GenericVersion gVersion, Object typeObj) {
 		this.featureName = featureName;
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
@@ -42,8 +40,8 @@ public final class GenericFeature {
 		} else {
 			this.loadStrategy = LoadStrategy.NO_LOAD;
 			this.visible = false;
-			
 		}
+		this.typeObj = typeObj;
 		this.setFriendlyURL();
 	}
 
@@ -86,24 +84,20 @@ public final class GenericFeature {
 
 	public String description() {
 		if (this.featureProps != null) {
-			
 			String summary = featureProps.get("summary");
 			String descrip = featureProps.get("description");
 			
-			if (summary != null && !summary.equals("")) {
+			if (summary != null && summary.length() > 0) {
 				return summary;
-			} else if (descrip != null && !descrip.equals("")) {
+			}
+			if (descrip != null && descrip.length() > 0) {
 				if (descrip.length() > 100) {
 					return descrip.substring(0, 100) + "...";
-				} else {
-					return descrip;
 				}
-			} else {
-				return featureName;
+				return descrip;
 			}
-		} else {
-			return featureName;
 		}
+		return featureName;
 	}
 
 	@Override

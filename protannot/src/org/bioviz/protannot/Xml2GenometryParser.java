@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import org.w3c.dom.DOMException;
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -101,64 +102,69 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
     private BioSeq processDocument(Document seqdoc) {
-        BioSeq genomic = null;
-        Element top_element = seqdoc.getDocumentElement();
-        int glength = 0;
-        String name = top_element.getTagName();
-        if (name.equalsIgnoreCase("dnaseq")) {
+		Element top_element = seqdoc.getDocumentElement();
+		String name = top_element.getTagName();
+		if (!name.equalsIgnoreCase("dnaseq")) {
+			return null;
+		}
+		if (DEBUG) {
+			System.err.println("processing dna seq");
+		}
+		String version = "";
+		String seq = "genome";
 
-            String version = "";
-            String seq = "genome";
+		try {
+			version = top_element.getAttribute("version");
+			seq = top_element.getAttribute("seq");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		BioSeq chrom = buildChromosome(top_element, seq, version);
 
-            try {
-                version = top_element.getAttribute("version");
-                seq = top_element.getAttribute("seq");
-            } catch (Exception e) {
-            }
-            if (DEBUG) {
-                System.err.println("processing dna seq");
-            }
+		processDNASeq(chrom, top_element);
 
-            /** if have residues, then ignore the dnaseq's length attribute */
-            NodeList children = top_element.getChildNodes();
-            for (int i = 0; i < children.getLength(); i++) {
-                Node child = children.item(i);
-                String cname = child.getNodeName();
-                if (cname != null && cname.equalsIgnoreCase("residues")) {
-                    Text resnode = (Text) child.getFirstChild();
-                    String residues = resnode.getData();
-                    genomic = new BioSeq(seq, version, residues.length());
-                    genomic.setResidues(residues);
-                    try {
-                        int start = Integer.parseInt(((Element) child).getAttribute("start")) - 1;
-                        int end = Integer.parseInt(((Element) child).getAttribute("end")) - 1;
-                        if (start < end) {
-                            end++;
-                        } else {
-                            start++;
-                        }
-                        genomic.setBounds(start, start+residues.length());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+		return chrom;
+	}
 
-
-                }
-            }
-            if (genomic == null) {
-                try {
-                    glength = Integer.parseInt(top_element.getAttribute("length"));
-                } catch (Exception ex) {
-                    System.err.println("problem with dnaseq length attribute, arbitrarily assigning 200000");
-                    glength = 200000;
-                }
-                genomic = new BioSeq(seq, version, glength);
-            }
-
-            processDNASeq(genomic, top_element);
-        }
-        return genomic;
-    }
+	private static BioSeq buildChromosome(Element top_element, String seq, String version)
+			throws DOMException {
+		BioSeq chrom = null;
+		NodeList children = top_element.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			String cname = child.getNodeName();
+			if (cname != null && cname.equalsIgnoreCase("residues")) {
+				Text resnode = (Text) child.getFirstChild();
+				String residues = resnode.getData();
+				chrom = new BioSeq(seq, version, residues.length());
+				chrom.setResidues(residues);
+				try {
+					int start = Integer.parseInt(((Element) child).getAttribute("start")) - 1;
+					int end = Integer.parseInt(((Element) child).getAttribute("end")) - 1;
+					if (start < end) {
+						end++;
+					} else {
+						start++;
+					}
+					chrom.setBounds(start, start + residues.length());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if (chrom == null) {
+			int glength = 0;
+			try {
+				glength = Integer.parseInt(top_element.getAttribute("length"));
+			} catch (Exception ex) {
+				System.err.println("problem with dnaseq length attribute, arbitrarily assigning 200000");
+				glength = 200000;
+			}
+			chrom = new BioSeq(seq, version, glength);
+		}
+		return chrom;
+	}
 
     /**
      * Process dna in BioSeq for each child node of element provided.
@@ -177,10 +183,6 @@ final class Xml2GenometryParser {
                 } else {
                     if (name.equalsIgnoreCase("mRNA")) {
                         processMRNA(genomic, (Element) child);
-                        // residues are now dealt with directly in processDocument() method
-                        //	else if (name.equalsIgnoreCase("residues")) {
-                        //	  processResidues(genomic, (Element)child);
-                        //	}
                     }
                 }
             }
@@ -307,7 +309,7 @@ final class Xml2GenometryParser {
      * @param   sym     Target to which description is added.
      * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
      */
-    private void addDescriptors(Element elem, SimpleSymWithProps sym) {
+    private static void addDescriptors(Element elem, SimpleSymWithProps sym) {
 
         NodeList children = elem.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -342,7 +344,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
      */
-    private SeqSymmetry processSimSpan(BioSeq query_seq, Element elem) {
+    private static SeqSymmetry processSimSpan(BioSeq query_seq, Element elem) {
         int start = Integer.parseInt(elem.getAttribute("query_start")) - 1;
         int end;
         //  need to standardize on which tag to use!
@@ -546,7 +548,8 @@ final class Xml2GenometryParser {
     }
 
 
-	private BioSeq addSpans(TypeContainerAnnot m2gSym, BioSeq genomic, List exon_insert_list, int start) throws NumberFormatException {
+	private BioSeq addSpans(TypeContainerAnnot m2gSym, BioSeq genomic, List exon_insert_list, int start)
+			throws NumberFormatException {
 		int exoncount = m2gSym.getChildCount();
         int mrnalength = 0;
         for (int i = 0; i < exoncount; i++) {
@@ -613,7 +616,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.SeqSpan
      */
-    private void processExonInsert(MutableSeqSymmetry exonSym, Vector<Element> hit_inserts,
+    private static void processExonInsert(MutableSeqSymmetry exonSym, Vector<Element> hit_inserts,
             BioSeq genomic, BioSeq mrna) {
         // assumes that hit_inserts are in order 5' to 3' along transcript
         // assumes that each exon_insert in hit_inserts actually is contained in the exon
@@ -686,7 +689,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
      * @see     com.affymetrix.genometryImpl.SymWithProps
      */
-    private SymWithProps processExon(BioSeq genomic, Element elem) {
+    private static SymWithProps processExon(BioSeq genomic, Element elem) {
         // should not be any nodes underneath exon tags (at least in current pseudo-DTD
         //  GAH 10-6-2001
         int start = Integer.parseInt(elem.getAttribute("start")) - 1;
@@ -706,7 +709,6 @@ final class Xml2GenometryParser {
         exonsym.setProperty("length", String.valueOf(end - start + 1));
         exonsym.addSpan(span);
         return exonsym;
-        //    m2gSym.addChild(exonsym);
     }
 
     /**

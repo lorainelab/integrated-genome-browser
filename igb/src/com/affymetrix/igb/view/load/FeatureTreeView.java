@@ -108,6 +108,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		/*tree_scroller.setPreferredSize(new Dimension(
 				tree_scroller.getMinimumSize().width,
 				tree_scroller.getPreferredSize().height));*/
+		clearTreeView();
 		initOrRefreshTree(null);
 
 		tree_panel.add(tree_scroller);
@@ -145,6 +146,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		this.add(tree_panel);
 	}
 
+	/**
+	 * Clear the tree view.
+	 */
+	synchronized void clearTreeView() {
+		treetop = new DefaultMutableTreeNode("");
+		TreeModel tmodel = new DefaultTreeModel(treetop, true);
+		tree.setModel(tmodel);
+		tree_scroller.invalidate();
+	}
 
 	/**
 	 * Handles clicking of server preferences button.

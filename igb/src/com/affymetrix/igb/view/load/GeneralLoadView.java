@@ -191,13 +191,12 @@ public final class GeneralLoadView extends JComponent
 	 * Discover servers, species, etc., asynchronously.
 	 */
 	private void populateSpeciesData() {
-		Executor vexec = Executors.newSingleThreadExecutor();
-
 		for (final GenericServer gServer : ServerList.getEnabledServers()) {
+			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 				protected Void doInBackground() throws Exception {
-					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer);
+					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
 				}
@@ -217,7 +216,7 @@ public final class GeneralLoadView extends JComponent
 	public void GenericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer)evt.getSource();
 
-		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer);
+		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 
 		// Need to refresh species names
 		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;
@@ -343,7 +342,7 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		Set<GenericVersion> gVersions = group.getVersions();
-		if (gVersions.isEmpty()) {
+		if (gVersions == null || gVersions.isEmpty()) {
 			return;
 		}
 		String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
@@ -377,9 +376,9 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	private static void initVersion(String versionName) {
-		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes...");
+		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + versionName);
 		GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
-		Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes...");
+		Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 	}
 	
 	/**
@@ -549,14 +548,14 @@ public final class GeneralLoadView extends JComponent
 
 		@Override
 		public Void doInBackground() {
-			Application.getSingleton().addNotLockedUpMsg("Loading chromosomes...");
+			Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + versionName);
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 			return null;
 		}
 
 		@Override
 		protected void done() {
-			Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes...");
+			Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 			speciesCB.setEnabled(true);
 			versionCB.setEnabled(true);
 			gmodel.setSelectedSeqGroup(group);

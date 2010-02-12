@@ -120,17 +120,6 @@ public final class GeneralLoadUtils {
 
 		return gServer;
 	}
-	
-	
-	/**
-	 * Discover all of the servers and genomes and versions.
-	 */
-	static void discoverServersAndSpeciesAndVersions() {
-		for (GenericServer gServer : ServerList.getEnabledServers()) {
-			discoverServer(gServer);
-		}
-	}
-
 
 	static boolean discoverServer(GenericServer gServer) {
 		try {

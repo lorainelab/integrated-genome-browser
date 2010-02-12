@@ -6,6 +6,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import javax.swing.*;
 
@@ -14,7 +15,7 @@ public abstract class Application {
 	public static final boolean CACHE_GRAPHS = true;
 	public final static boolean DEBUG_EVENTS = false;
 	protected final StatusBar status_bar;
-	private final List<String> progressStringList = new ArrayList<String>(); // list of progress bar messages.
+	private final List<String> progressStringList = new CopyOnWriteArrayList<String>(); // list of progress bar messages.
 	static Application singleton = null;
 	private final Map<Class, IPlugin> plugin_hash = new HashMap<Class, IPlugin>();
 	private static final String leftPaddingString = "  ";	//padding for status bar
@@ -55,18 +56,18 @@ public abstract class Application {
 		return true;
 	}
 
-	public final void addNotLockedUpMsg(String s) {
+	public final synchronized void addNotLockedUpMsg(String s) {
 		progressStringList.add(s);
 		if (status_bar.getStatus().trim().length() == 0) {
 			setNotLockedUpStatus(s);
 		}
 	}
 
-	public final void removeNotLockedUpMsg(String s) {
+	public final synchronized void removeNotLockedUpMsg(String s) {
 		if (!progressStringList.remove(s)) {
 			Application.getApplicationLogger().fine("Didn't find progress message: " + s);
 		}
-		if (status_bar.getStatus().equals(leftPaddingString + s)) {
+		if (status_bar.getStatus().equals(leftPaddingString + s) || status_bar.getStatus().trim().length() == 0) {
 			// Time to change status message.
 			if (progressStringList.isEmpty()) {
 				setStatus("");
@@ -78,20 +79,12 @@ public abstract class Application {
 	}
 
 	/**
-	 * Set the status, and make a little progress bar so that the app doesn't look locked up.
+	 * Set the status, and show a little progress bar so that the app doesn't look locked up.
 	 * @param s
 	 */
 	private final synchronized void setNotLockedUpStatus(String s) {
 		status_bar.setStatus(leftPaddingString + s);
-		this.setNotLockedUpStatus();
-	}
-
-	/**
-	 * Make a little progress bar so that the app doesn't look locked up.
-	 */
-	public final synchronized void setNotLockedUpStatus() {
 		status_bar.progressBar.setVisible(true);
-		status_bar.progressBar.setIndeterminate(true);
 	}
 
 	/** Sets the text in the status bar.

@@ -57,7 +57,7 @@ public final class StatusBar extends JPanel {
 				BorderFactory.createEmptyBorder(0, 12, 0, 15)));
 
 		status_ta.setToolTipText(tt_status);
-		progressBar.setIndeterminate(false);
+		progressBar.setIndeterminate(true);
 		progressBar.setVisible(false);
 		memory_ta.setToolTipText(tt_status_memory);
 

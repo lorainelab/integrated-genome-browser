@@ -120,25 +120,6 @@ public final class GeneralLoadUtils {
 
 		return gServer;
 	}
-
-	/**
-	 * Remove specified server.
-	 * @param serverName
-	 * @param serverURL
-	 * @param serverType
-	 * @return success if server removed
-	 */
-	public static boolean removeServer(String serverName, String serverURL, ServerType serverType) {
-		GenericServer gServer = ServerList.getServer(serverURL);
-		if (gServer == null) {
-			System.out.println("Server " + serverName +" does not exist");
-		} else {
-			ServerList.removeServer(serverURL);
-		}
-		
-		return true;
-	}
-
 	
 	
 	/**

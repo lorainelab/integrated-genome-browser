@@ -68,65 +68,72 @@ public final class UrlLoaderThread extends Thread {
 
     @Override
   public void run() {
-    //ThreadProgressMonitor monitor = null;
     BioSeq aseq = gmodel.getSelectedSeq();
-    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
-    try {
-      // should really move to using gmodel's currently selected  _group_ of sequences rather than
-      //    a single sequence...
-      if (aseq == null) {
-        throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq");
-      }
-      if (seq_group == null) {
-        throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq group");
-      }
+		AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
+		try {
+			// should really move to using gmodel's currently selected  _group_ of sequences rather than
+			//    a single sequence...
+			if (aseq == null) {
+				throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq");
+			}
+			if (seq_group == null) {
+				throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq group");
+			}
 
-			Application.getSingleton().setNotLockedUpStatus();
-      
-      for (int i=0; i<urls.length; i++) {
-        if (isInterrupted()) {break;}
+			for (int i = 0; i < urls.length; i++) {
+				if (isInterrupted()) {
+					break;
+				}
 
-        URL url = urls[i];
-        
-        
-        String tier_name = null;
-        if (tier_names != null) {
-          tier_name = tier_names[i];
-        } else {
-          tier_name = parseTermName(url, "DAS_Data");
-        }
-        String file_extension = null;
-        if (file_extensions != null) {
-          file_extension = file_extensions[i];
-        }
+				URL url = urls[i];
 
-        System.out.println("Attempting to load data from URL: "+url.toExternalForm());
-        try {
-          parseUrl(url, file_extension, tier_name);
-        } catch (IOException ioe) {
-          handleException(ioe);
-          if (isInterrupted()) {return;}
-          continue; // try the next url
-        }
-        if (isInterrupted()) {return;}
 
-		Application.getSingleton().addNotLockedUpMsg("Updating view");
-        if (isInterrupted()) {break;}
+				String tier_name = null;
+				if (tier_names != null) {
+					tier_name = tier_names[i];
+				} else {
+					tier_name = parseTermName(url, "DAS_Data");
+				}
+				String file_extension = null;
+				if (file_extensions != null) {
+					file_extension = file_extensions[i];
+				}
 
-        // update the view, except for the last time where we let the "finally" block do it
-        if (i<urls.length) {updateViewer(gviewer, aseq);}
-      }
+				System.out.println("Attempting to load data from URL: " + url.toExternalForm());
+				try {
+					parseUrl(url, file_extension, tier_name);
+				} catch (IOException ioe) {
+					handleException(ioe);
+					if (isInterrupted()) {
+						return;
+					}
+					continue; // try the next url
+				}
+				if (isInterrupted()) {
+					return;
+				}
 
-    } catch (Exception e) {
-      if (! (e instanceof InterruptedException)) { handleException(e); }
-    } finally {
-      //if (monitor != null) {monitor.closeDialogEventually();}
-      // update the view again, mainly in case the thread was interrupted
-      updateViewer(gviewer, aseq);
-    }
-		Application.getSingleton().removeNotLockedUpMsg("Updating view");
-  }
-  
+				if (isInterrupted()) {
+					break;
+				}
+
+				// update the view, except for the last time where we let the "finally" block do it
+				if (i < urls.length) {
+					updateViewer(gviewer, aseq);
+				}
+			}
+
+		} catch (Exception e) {
+			if (!(e instanceof InterruptedException)) {
+				handleException(e);
+			}
+		} finally {
+			//if (monitor != null) {monitor.closeDialogEventually();}
+			// update the view again, mainly in case the thread was interrupted
+			updateViewer(gviewer, aseq);
+		}
+	}
+
   private void parseUrl(URL url, String file_extension, String tier_name)
   throws IOException {
     String where_from = url.getHost();

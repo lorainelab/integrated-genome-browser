@@ -99,9 +99,8 @@ public final class ResidueLoading {
 
 			// Try to load via DAS/1 server.
 			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.DAS) {
-					String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
+				if (version.gServer.serverType == ServerType.DAS) {
+					String residues = DasLoader.getDasResidues(version, seq_name, min, max);
 					if (residues != null) {
 						// Add to composition if we're doing a partial sequence
 						// span is non-null, here
@@ -176,9 +175,8 @@ public final class ResidueLoading {
 
 			// Try to load via DAS/1 server.
 			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.DAS) {
-					String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
+				if (version.gServer.serverType == ServerType.DAS) {
+					String residues = DasLoader.getDasResidues(version, seq_name, min, max);
 					if (residues != null) {
 						aseq.setResidues(residues);
 						BioSeq.addResiduesToComposition(aseq);
@@ -190,48 +188,6 @@ public final class ResidueLoading {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Get the residues from the specified DAS/1 server.
-	 * @param das_dna_server
-	 * @param current_genome_name
-	 * @param seqid
-	 * @param min
-	 * @param max
-	 * @return a string of residues from the DAS/1 server
-	 */
-	private static String GetDAS1Residues(String das_dna_server, String current_genome_name, String seqid, int min, int max) {
-		String residues = null;
-
-		if (seqid == null) {
-			System.out.println("Couldn't determine das sequence residues -- seqid was null");
-			return null;
-		}
-		try {
-			String das_dna_source = DasLoader.findDasSource(das_dna_server, current_genome_name);
-			if (das_dna_source == null) {
-				if (DEBUG) {
-					System.out.println("Couldn't find das source genome " + current_genome_name + " on DAS server:" + das_dna_server);
-				}
-				return null;    // if das_dna_source is null, there's no way to determine the residues
-			}
-			String das_seqid = DasLoader.findDasSeqID(das_dna_server, das_dna_source, seqid);
-			if (das_seqid == null) {
-				if (DEBUG) {
-					System.out.println("Couldn't access sequence residues on DAS server  seqid: " + seqid + " genome: " + current_genome_name + " DAS server: " + das_dna_server);
-				}
-				return null;    // if seqid is null, there's no way to determine the residues
-			}
-			residues = DasLoader.getDasResidues(das_dna_server, das_dna_source, das_seqid, min, max);
-			if (DEBUG) {
-				System.out.println("DAS DNA response length: " + residues == null ? 0 : residues.length());
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		return residues;
 	}
 
 	/**

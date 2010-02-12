@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.das;
 
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -30,131 +31,60 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.XMLUtils;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A class to help load and parse documents from a DAS server.
  */
 public abstract class DasLoader {
 
-	private final static boolean DEBUG = false;
 	private static final Pattern white_space = Pattern.compile("\\s+");
-
-	/**
-	 *  Returns a List of String's which are the id's of the segments.
-	 *  From <entry_points><segment id="...">.
-	 */
-	public static List<String> parseSegmentsFromEntryPoints(Document doc) {
-		List<String> seqs = new ArrayList<String>();
-		if (DEBUG) {
-			System.out.println("========= Parsing Segments from Entry Points");
-		}
-		Element top_element = doc.getDocumentElement();
-		NodeList children = top_element.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			Node child = children.item(i);
-			String cname = child.getNodeName();
-			if (cname != null && cname.equalsIgnoreCase("entry_points")) {
-				NodeList entry_children = child.getChildNodes();
-				for (int k = 0; k < entry_children.getLength(); k++) {
-					Node entry_child = entry_children.item(k);
-					String gcname = entry_child.getNodeName();
-					if (gcname != null && gcname.equalsIgnoreCase("segment")) {
-						Element segment_elem = (Element) entry_child;
-						String id = segment_elem.getAttribute("id");
-						seqs.add(id);
-					}
-				}
-			}
-		}
-		return seqs;
-	}
-
-	/** Returns a list of source id Strings.
-	 *  From  <dsn><source id="...">.
-	 */
-	public static List<String> parseSourceList(Document doc) {
-		List<String> ids = new ArrayList<String>();
-		if (DEBUG) {
-			System.out.println("========= Parsing Source List");
-		}
-		Element top_element = doc.getDocumentElement();
-		NodeList children = top_element.getChildNodes();
-
-		for (int i = 0; i < children.getLength(); i++) {
-			Node child = children.item(i);
-			String cname = child.getNodeName();
-			if (cname != null && cname.equalsIgnoreCase("dsn")) {
-				NodeList dsn_children = child.getChildNodes();
-				for (int k = 0; k < dsn_children.getLength(); k++) {
-					Node dsn_child = dsn_children.item(k);
-					String gcname = dsn_child.getNodeName();
-					if (gcname != null && gcname.equalsIgnoreCase("source")) {
-						Element source_elem = (Element) dsn_child;
-						String id = source_elem.getAttribute("id");
-						ids.add(id);
-					}
-				}
-			}
-		}
-		return ids;
-	}
-
-	/**
-	 *  Finds a DAS source on the given server that is a synonym of the
-	 *  String you request.
-	 *  @return a matching source on the server, or null.
-	 */
-	public static String findDasSource(String das_server, String source_synonym)
-			throws IOException, SAXException, ParserConfigurationException {
-		String request_str = das_server + "/dsn";
-		if (DEBUG) {
-			System.out.println("Das Request: " + request_str);
-		}
-		Document doc = XMLUtils.getDocument(request_str);
-		List<String> sources = DasLoader.parseSourceList(doc);
-		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-
-		String result = lookup.findMatchingSynonym(sources, source_synonym);
-		return result;
-	}
-
-	/**
-	 *  Finds a DAS sequence id on the given server that is a synonym of the
-	 *  String you request.
-	 *  @return a matching sequence id on the server, or null.
-	 */
-	public static String findDasSeqID(String das_server, String das_source, String seqid_synonym)
-			throws IOException, SAXException, ParserConfigurationException {
-		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-		String request_str = das_server + "/" + das_source + "/entry_points";
-		if (DEBUG) {
-			System.out.println("Das Request: " + request_str);
-		}
-		Document doc = XMLUtils.getDocument(request_str);
-		List<String> segments = DasLoader.parseSegmentsFromEntryPoints(doc);
-
-		String result = lookup.findMatchingSynonym(segments, seqid_synonym);
-		return result;
-	}
 
 	/**
 	 *  Get residues for a given region.
 	 *  min and max are specified in genometry coords (interbase-0),
 	 *  and since DAS is base-1, inside this method min/max get modified to
 	 *  (min+1)/max before passing to DAS server
+	 *
+	 * @param version
+	 * @param seqid
+	 * @param min 
+	 * @param max
+	 * @return a string of residues from the DAS server or null
 	 */
-	public static String getDasResidues(String das_server, String das_source, String das_seqid,
-			int min, int max)
-			throws IOException, SAXException, ParserConfigurationException {
-		String request = das_server + "/"
-				+ das_source + "/dna?segment="
-				+ das_seqid + ":" + (min + 1) + "," + max;
-		InputStream result_stream = LocalUrlCacher.getInputStream(request);
-		String residues = parseDasResidues(new BufferedInputStream(result_stream));
-		GeneralUtils.safeClose(result_stream);
+	public static String getDasResidues(GenericVersion version, String seqid, int min, int max) {
+		Set<String> segments = ((DasSource)version.versionSourceObj).getEntryPoints();
+		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, seqid);
+		URL request;
+		InputStream result_stream = null;
+		String residues = null;
+
+		try {
+			request = new URL(version.gServer.URL);
+			QueryBuilder builder = new QueryBuilder(new URL(request, version.versionID  + "/dna"));
+
+			builder.add("segment", segment + ":" + (min + 1) + "," + max);
+			request = builder.build();
+			result_stream = LocalUrlCacher.getInputStream(request.toString());
+			residues = parseDasResidues(new BufferedInputStream(result_stream));
+		} catch (MalformedURLException ex) {
+			Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IOException ex) {
+			Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ParserConfigurationException ex) {
+			Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SAXException ex) {
+			Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(result_stream);
+		}
 		return residues;
 	}
 

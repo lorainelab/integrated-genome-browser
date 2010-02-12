@@ -499,6 +499,8 @@ public final class GeneralLoadView extends JComponent
 
 		if (gmodel.getSelectedSeqGroup() != null) {
 			gmodel.setSelectedSeqGroup(null);
+			gmodel.setSelectedSeq(null); // This method is being called on purpose to fire group selection event.
+										 // which in turns calls refreshTreeView method.
 		}
 	}
 
@@ -624,8 +626,10 @@ public final class GeneralLoadView extends JComponent
 			versionCB.addItemListener(this);
 		}
 
-		clearFeaturesTable();
-		refreshTreeView();
+		//clearFeaturesTable();
+		refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
+							// refreshTreeView should only decided if freature table
+							// needs to be cleared.
 
 		disableAllButtons();
 	}
@@ -642,8 +646,11 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		if (aseq == null) {
-			clearFeaturesTable();
-			refreshTreeView();
+			//clearFeaturesTable();
+			refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
+								// refreshTreeView should only decided if freature table
+								// needs to be cleared.
+
 			disableAllButtons();
 			return;
 		}
@@ -675,6 +682,7 @@ public final class GeneralLoadView extends JComponent
 
 		Application.getSingleton().addNotLockedUpMsg("Loading features");
 
+//		refreshTreeView();	// Removing this method from here to avoid recreating tree without reason.
 		createFeaturesTable();
 		loadWholeRangeFeatures(versionName);
 		Application.getSingleton().removeNotLockedUpMsg("Loading features");
@@ -726,6 +734,7 @@ public final class GeneralLoadView extends JComponent
 		this.feature_model = new FeaturesTableModel(this, null, null);
 		this.feature_table.setModel(this.feature_model);
 		featuresTableScrollPane.setViewportView(this.feature_table);
+		feature_tree_view.clearTreeView();
 	}
 
 	private void refreshTreeView() {
@@ -733,6 +742,7 @@ public final class GeneralLoadView extends JComponent
 		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 		if (features == null || features.isEmpty()) {
 			clearFeaturesTable();
+			return;
 		}
 		feature_tree_view.initOrRefreshTree(features);
 	}

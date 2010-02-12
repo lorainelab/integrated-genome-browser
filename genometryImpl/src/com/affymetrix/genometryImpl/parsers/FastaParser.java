@@ -544,7 +544,19 @@ public final class FastaParser {
 			byte[] header = new byte[500];
 
 			bis.mark(500);
-			bis.read(header, 0, 500);
+//			bis.read(header, 0, 500);
+			
+			int bytes_to_read = header.length;
+			int begin = 0;
+			while(bytes_to_read > 0){
+				int bytesRead = bis.read(header,begin,bytes_to_read);
+
+				if(bytesRead < 0)
+					break;
+
+				begin = bytesRead;
+				bytes_to_read -= bytesRead;
+			}
 			//System.out.println("Header : " + header.toString());
 			if (header[0] == '>') {
 				// We found a header

@@ -147,6 +147,7 @@ public final class DasSource {
 	protected void initType(String source) {
 		try {
 			URL typesURL = new URL(server, source + "/types");
+			URL testMasterURL = new URL(master, source + "/types");
 			System.out.println("Das Types Request: " + typesURL);
 			URLConnection connection = typesURL.openConnection();
 			connection.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
@@ -158,7 +159,8 @@ public final class DasSource {
 				Element typenode = (Element) typelist.item(i);
 				String typeid = typenode.getAttribute("id");
 
-				DasType type = new DasType(server, typeid, source);
+				String name = typesURL.equals(testMasterURL) ? null : source + "/" + typeid;
+				DasType type = new DasType(server, typeid, source, name);
 				types.put(type.getName(), type);
 			}
 		} catch (MalformedURLException ex) {

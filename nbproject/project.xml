@@ -214,6 +214,10 @@
                         <label>Protannot</label>
                         <target>run_Protannot</target>
                     </action>
+                    <action>
+                        <label>Debug Protannot</label>
+                        <target>debug-nb-protannot</target>
+                    </action>
                 </context-menu>
             </view>
             <subprojects/>

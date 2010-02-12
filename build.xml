@@ -292,6 +292,31 @@
 		</java>
 	</target>
 
+	<target depends="compile" description="debug protannot" name="debug-nb-protannot">
+        <nbjpdastart addressproperty="jpda.address" name="protannot" transport="dt_socket">
+            <classpath>
+				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
+				<dirset dir="${basedir}">
+					<include name="genometryImpl/build" />
+					<include name="genoviz_sdk/build" />
+					<include name="protannot/build" />
+				</dirset>
+			</classpath>
+        </nbjpdastart>
+        <java fork="true" classname="org.bioviz.protannot.ProtAnnotMain">
+			<classpath>
+				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
+				<dirset dir="${basedir}">
+					<include name="genometryImpl/build" />
+					<include name="genoviz_sdk/build" />
+					<include name="protannot/build" />
+				</dirset>
+			</classpath>
+			<jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+		</java>
+    </target>
+	
 	<target name="release" depends="release-igb, release-das2server, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
 
 	<target name="release-igb" depends="exe">

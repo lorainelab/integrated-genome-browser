@@ -215,7 +215,7 @@ public final class ResidueLoading {
 			}
 			residues = DasLoader.getDasResidues(das_dna_server, das_dna_source, das_seqid, min, max);
 			if (DEBUG) {
-				System.out.println("DAS DNA response length: " + residues.length());
+				System.out.println("DAS DNA response length: " + residues == null ? 0 : residues.length());
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

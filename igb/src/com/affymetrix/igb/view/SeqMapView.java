@@ -148,7 +148,7 @@ public class SeqMapView extends JPanel
 	private JFrame frm;
 	protected AffyTieredMap seqmap;
 	private UnibrowHairline hairline = null;
-	BioSeq aseq;
+	protected BioSeq aseq;
 	/**
 	 *  a virtual sequence that maps the BioSeq aseq to the map coordinates.
 	 *  if the mapping is identity, then:
@@ -158,7 +158,7 @@ public class SeqMapView extends JPanel
 	 *     vseq.getComposition().getSpan(aseq) = SeqSpan(aseq.getLength(), 0, aseq);
 	 *
 	 */
-	BioSeq viewseq;
+	protected BioSeq viewseq;
 	// mapping of annotated seq to virtual "view" seq
 	private MutableSeqSymmetry seq2viewSym;
 	private SeqSymmetry[] transform_path;
@@ -247,6 +247,10 @@ public class SeqMapView extends JPanel
 	/** Whether the Application name goes first in the title bar.
 	 */
 	protected boolean appNameFirstInTitle = false;
+
+	// We only need a single GraphGlyphFactory because all graph properties
+	// are in the GraphState object.
+	private GenericGraphGlyphFactory graph_factory = null;
 
 	/** Constructor provided for subclasses.
 	 *  In other cases, use {@link #makeSeqMapView}.
@@ -598,8 +602,7 @@ public class SeqMapView extends JPanel
 		seq_glyph.setShowBackground(false);
 		seq_glyph.setHitable(false);
 		seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
-		BioSeq compseq = viewSeq;
-		seq_glyph.setCoords(compseq.getMin(), 0, compseq.getLengthDouble(), 10);
+		seq_glyph.setCoords(viewSeq.getMin(), 0, viewSeq.getLengthDouble(), 10);
 		seq_glyph.setResiduesProvider(viewSeq, viewSeq.getLength());
 		SeqSymmetry compsym = viewSeq.getComposition();
 		if (compsym != null) {
@@ -950,8 +953,7 @@ public class SeqMapView extends JPanel
 			transform_path = null;
 		}
 
-		BioSeq compnegseq = viewseq;
-		seqmap.setMapRange(compnegseq.getMin(), compnegseq.getMax());
+		seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
 
 
 		// The hairline needs to be among the first glyphs added,
@@ -1076,7 +1078,6 @@ public class SeqMapView extends JPanel
 				MutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
 				sym.addSpan(annot_bounds);
 				if (aseq != viewseq) {
-					//	  SeqUtils.transformSymmetry(sym, seq2viewSym);
 					SeqUtils.transformSymmetry(sym, transform_path);
 				}
 				SeqSpan view_bounds = sym.getSpan(viewseq);
@@ -1330,9 +1331,7 @@ public class SeqMapView extends JPanel
 			transform_path = cached_path;
 		}
 	}
-	// We only need a single GraphGlyphFactory because all graph properties
-	// are in the GraphState object.
-	GenericGraphGlyphFactory graph_factory = null;
+
 
 	public GenericGraphGlyphFactory getGenericGraphGlyphFactory() {
 		if (graph_factory == null) {
@@ -1362,7 +1361,6 @@ public class SeqMapView extends JPanel
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = null;
 		String meth = BioSeq.determineMethod(annotSym);
-		//    System.out.println("adding annotation glyphs for method: " + meth);
 
 		if (annotSym instanceof ScoredContainerSym) {
 			factory = getScoredContainerGlyphFactory();
@@ -1414,7 +1412,7 @@ public class SeqMapView extends JPanel
 
 	}
 
-	public BioSeq getAnnotatedSeq() {
+	public final BioSeq getAnnotatedSeq() {
 		return aseq;
 	}
 
@@ -1427,7 +1425,7 @@ public class SeqMapView extends JPanel
 	 *     BioSeq returned by getAnnotatedSeq()
 	 *  @see #getTransformPath()
 	 */
-	public BioSeq getViewSeq() {
+	public final BioSeq getViewSeq() {
 		return viewseq;
 	}
 
@@ -1436,7 +1434,7 @@ public class SeqMapView extends JPanel
 	 *  a SeqSymmetry from {@link #getAnnotatedSeq()} to
 	 *  {@link #getViewSeq()}.
 	 */
-	public SeqSymmetry[] getTransformPath() {
+	public final SeqSymmetry[] getTransformPath() {
 		return transform_path;
 	}
 
@@ -1444,27 +1442,25 @@ public class SeqMapView extends JPanel
 	 *  {@link #getTransformPath()}.  If no transform is necessary, simply
 	 *  returns the original symmetry.
 	 */
-	public SeqSymmetry transformForViewSeq(SeqSymmetry insym) {
+	public final SeqSymmetry transformForViewSeq(SeqSymmetry insym) {
 		return transformForViewSeq(insym, getAnnotatedSeq());
 	}
 
-	public SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
+	public final SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
 		SeqSymmetry result_sym = insym;
-		//    if (getAnnotatedSeq() != getViewSeq()) {
 		if (seq_to_compare != getViewSeq()) {
 			MutableSeqSymmetry tempsym = SeqUtils.copyToDerived(insym);
-			//      System.out.println("^^^^^^^ calling SeqUtils.transformSymmetry()");
 			SeqUtils.transformSymmetry(tempsym, getTransformPath());
 			result_sym = tempsym;
 		}
 		return result_sym;
 	}
 
-	public AffyTieredMap getSeqMap() {
+	public final AffyTieredMap getSeqMap() {
 		return seqmap;
 	}
 
-	public void selectAllGraphs() {
+	public final void selectAllGraphs() {
 		List<GlyphI> glyphlist = new ArrayList<GlyphI>();
 		GlyphI rootglyph = seqmap.getScene().getGlyph();
 		collectGraphs(rootglyph, glyphlist);
@@ -1813,10 +1809,9 @@ public class SeqMapView extends JPanel
 			return;
 		}
 		
-		coord_shift = true;
-
-		slice_symmetry = sym;
 		viewseq = new BioSeq("view_seq", "", aseq.getLength());
+		slice_symmetry = sym;
+		coord_shift = true;
 		
 		if (seq2viewSym == null) {
 			seq2viewSym = new SimpleMutableSeqSymmetry();
@@ -2374,7 +2369,7 @@ public class SeqMapView extends JPanel
 	/** Toggles the hairline between labeled/unlabeled and returns true
 	 *  if it ends sup labeled.
 	 */
-	public boolean toggleHairlineLabel() {
+	public final boolean toggleHairlineLabel() {
 		hairline_is_labeled = !hairline_is_labeled;
 		if (hairline != null) {
 			Shadow s = hairline.getShadow();
@@ -2384,7 +2379,7 @@ public class SeqMapView extends JPanel
 		return hairline_is_labeled;
 	}
 
-	public boolean isHairlineLabeled() {
+	public final boolean isHairlineLabeled() {
 		return hairline_is_labeled;
 	}
 
@@ -2420,7 +2415,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Select the parents of the current selections */
-	public void selectParents() {
+	final void selectParents() {
 		if (seqmap.getSelected().isEmpty()) {
 			Application.errorPanel("Nothing selected");
 		} else if (seqmap.getSelected().size() == 1) {
@@ -2435,7 +2430,7 @@ public class SeqMapView extends JPanel
 	/** For each current selection, deselect it and select its parent instead.
 	 *  @param top_level if true, will select only top-level parents
 	 */
-	void selectParents(boolean top_level) {
+	private void selectParents(boolean top_level) {
 		// copy selections to a new list before starting, because list of selections will be modified
 		List<GlyphI> all_selections = new ArrayList<GlyphI>(seqmap.getSelected());
 		Iterator<GlyphI> iter = all_selections.iterator();
@@ -2511,13 +2506,13 @@ public class SeqMapView extends JPanel
 		label.setText(title);
 	}
 
-	void showHairlinePositionInStatusBar() {
+	private void showHairlinePositionInStatusBar() {
 		if (!report_hairline_position_in_status_bar) {
 			return;
 		}
 	}
 
-	void setStatus(String title) {
+	private void setStatus(String title) {
 		if (!report_status_in_status_bar) {
 			return;
 		}
@@ -2629,7 +2624,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	void showPopup(NeoMouseEvent nevt) {
+	final void showPopup(NeoMouseEvent nevt) {
 		sym_popup.setVisible(false); // in case already showing
 		sym_popup.removeAll();
 
@@ -2673,12 +2668,12 @@ public class SeqMapView extends JPanel
 		sym_popup.repaint();
 	}
 
-	public void addPopupListener(ContextualPopupListener listener) {
+	private void addPopupListener(ContextualPopupListener listener) {
 		popup_listeners.add(listener);
 	}
 
 	/** Recurse through glyphs and collect those that are instanceof GraphGlyph. */
-	public List<GlyphI> collectGraphs() {
+	public final List<GlyphI> collectGraphs() {
 		ArrayList<GlyphI> graphs = new ArrayList<GlyphI>();
 		GlyphI root = seqmap.getScene().getGlyph();
 		collectGraphs(root, graphs);
@@ -2686,7 +2681,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Recurse through glyph hierarchy and collect graphs. */
-	public static void collectGraphs(GlyphI gl, List<GlyphI> graphs) {
+	private static void collectGraphs(GlyphI gl, List<GlyphI> graphs) {
 		int max = gl.getChildCount();
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
@@ -2699,7 +2694,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public GlyphI getPixelFloaterGlyph() {
+	public final GlyphI getPixelFloaterGlyph() {
 		PixelFloaterGlyph floater = pixel_floater_glyph;
 		Rectangle2D.Double cbox = getSeqMap().getCoordBounds();
 		floater.setCoords(cbox.x, 0, cbox.width, 0);
@@ -2829,7 +2824,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	static void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {
+	private static void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {
 		FasterExpandPacker ep = new FasterExpandPacker();
 		ep.setConstantHeights(constantHeights);
 		if (above_axis) {

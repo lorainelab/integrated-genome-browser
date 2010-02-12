@@ -332,9 +332,9 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
         if (pbox.width >= 2 && pbox.height >=2) {
           int seq_select_start = (int)cbox.x;
 		  // add 1 for interbase.  But don't go past end of sequence.
-          int seq_select_end = Math.min(smv.aseq.getLength(),(int)(cbox.x + cbox.width + 1));
+          int seq_select_end = Math.min(smv.getAnnotatedSeq().getLength(),(int)(cbox.x + cbox.width + 1));
 
-          SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.aseq);
+          SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.getAnnotatedSeq());
           smv.setSelectedRegion(new_region, true);
         }
         else {

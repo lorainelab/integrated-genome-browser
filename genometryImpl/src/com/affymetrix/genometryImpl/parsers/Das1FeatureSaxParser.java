@@ -100,12 +100,14 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	int featend = Integer.MIN_VALUE;
 	int featstrand = UNKNOWN;
 	String featgroup = null;
+	String featgroup_type = null;
 	String featgroup_label = null;
 	List<String> featlink_urls = new ArrayList<String>();
 	List<String> featlink_names = new ArrayList<String>();
 	Map<String, String> feat_notes = null;
 	Map<String, String> group_notes = null;
-	Map<String, Map<String, Object>> grouphash = new HashMap<String, Map<String, Object>>();  // maps group id/strings to parent SeqSymmetries
+	//Map<String, Map<String, SingletonSymWithProps>> grouphash = new HashMap<String, Map<String, SingletonSymWithProps>>();  // maps group id/strings to parent SeqSymmetries
+	Map<String, SingletonSymWithProps> groupHash = new HashMap<String, SingletonSymWithProps>();
 	Map<String, SeqSymmetry> typehash = new HashMap<String, SeqSymmetry>();  // maps type id/strings to type symmetries
 	MutableSeqSpan unionSpan = new SimpleMutableSeqSpan();
 	String current_elem = null;  // current element
@@ -232,6 +234,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			feat_label = atts.getValue("label");
 		} else if (iname == GROUP) {
 			featgroup = atts.getValue("id");
+			featgroup_type = atts.getValue("type");
 			featgroup_label = atts.getValue("label");
 			within_group_element = true;
 		} else if (iname == LINK) {
@@ -341,6 +344,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		featend = Integer.MIN_VALUE;
 		featstrand = UNKNOWN;
 		featgroup = null;
+		featgroup_type = null;
 		featgroup_label = null;
 		//    featlink = null;
 		featlink_urls.clear();
@@ -359,12 +363,13 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *
 	 *  @return a SeqSymmetry or null.
 	 */
-	private Object getGroupSymmetryForType(String feattype, String featgroup) {
-		Map<String,Object> map = grouphash.get(feattype);
-		if (map == null) {
-			return null;
-		}
-		return map.get(featgroup);
+	private SingletonSymWithProps getGroupSymmetryForType(String feattype, String featgroup) {
+		//Map<String,SingletonSymWithProps> map = grouphash.get(feattype);
+		//if (map == null) {
+		//	return null;
+		//}
+		//return map.get(featgroup);
+		return groupHash.get(featgroup);
 	}
 
 	/**
@@ -374,13 +379,14 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *
 	 *  @return the Object previously stored for that type and group, or null.
 	 */
-	private Object putGroupSymmetryForType(String feattype, String featgroup, Object o) {
-		Map<String, Object> map = grouphash.get(feattype);
-		if (map == null) {
-			map = new HashMap<String, Object>();
-			grouphash.put(feattype, map);
-		}
-		return map.put(featgroup, o);
+	private SingletonSymWithProps putGroupSymmetryForType(String feattype, String featgroup, SingletonSymWithProps sym) {
+		//Map<String, SingletonSymWithProps> map = grouphash.get(feattype);
+		//if (map == null) {
+		//	map = new HashMap<String, SingletonSymWithProps>();
+		//	grouphash.put(feattype, map);
+		//}
+		//return map.put(featgroup, sym);
+		return groupHash.put(featgroup, sym);
 	}
 
 	private void addFeature() {
@@ -444,7 +450,12 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 					grandparent_sym = new SimpleSymWithProps();
 					MutableSeqSpan gpspan = new SimpleMutableSeqSpan(current_sym.getStart(),
 									current_sym.getEnd(), aseq);
-					grandparent_sym.setProperty("method", feattype);
+					if (featgroup_type != null) {
+						grandparent_sym.setProperty("method", featgroup_type);
+						grandparent_sym.setProperty("feature", feattype);
+					} else {
+						grandparent_sym.setProperty("method", feattype);
+					}
 					grandparent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					grandparent_sym.addSpan(gpspan);
 					typehash.put(feattype, grandparent_sym);
@@ -470,7 +481,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private void addAnnotToParent(SimpleSymWithProps grandparent_sym) {
 		// if there is a group id, add annotation to parent annotation
 		//    MutableSingletonSeqSymmetry parent_sym = null;
-		SingletonSymWithProps parent_sym = (SingletonSymWithProps) getGroupSymmetryForType(feattype, featgroup);
+		SingletonSymWithProps parent_sym = getGroupSymmetryForType(feattype, featgroup);
 		if (parent_sym == null) {
 			groupcount++;
 			//        parent_sym = new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
@@ -482,7 +493,12 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				//parent_sym.setProperty("das_group_id", featgroup);
 				parent_sym.setProperty("id", featgroup);
 			}
-			if (feattype != null) {
+			if (featgroup_type != null) {
+				parent_sym.setProperty("method", featgroup_type);
+				if (feattype != null) {
+					parent_sym.setProperty("feature", feattype);
+				}
+			} else if (feattype != null) {
 				parent_sym.setProperty("method", feattype);
 			}
 			putGroupSymmetryForType(feattype, featgroup, parent_sym);
@@ -571,7 +587,12 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			//parent_sym.setProperty("das_group_id", featgroup);
 			current_sym.setProperty("id", featid);
 		}
-		if (feattype != null) {
+		if (featgroup_type != null) {
+			current_sym.setProperty("method", featgroup_type);
+			if (feattype != null) {
+				current_sym.setProperty("feature", feattype);
+			}
+		} else if (feattype != null) {
 			current_sym.setProperty("method", feattype);
 		}
 		if (grandparent_sym != null) {

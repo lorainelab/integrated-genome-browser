@@ -292,36 +292,24 @@ public final class GeneralLoadView extends JComponent
 
 	/**
 	 * Refresh the genome versions, now that the species has changed.
-	 * If there's precisely one versionName, just select it.
 	 * @param speciesName
 	 */
 	private void refreshVersionCB(String speciesName) {
-		List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
-		int versionListLength = versionList == null ? 0 : versionList.size();
-		if (versionListLength == versionCB.getItemCount() -1) {
-			// No new versions.  Don't bother refreshing.
-			if (versionListLength == 0 && versionCB.isEnabled()) {
-				versionCB.setEnabled(false);
-				// disable if there are no versions yet.
-			}
-			return;
-		}
-
 		String oldVersion = (String)versionCB.getSelectedItem();
 		versionCB.removeItemListener(this);
 		versionCB.removeAllItems();
 		versionCB.addItem(SELECT_GENOME);
 		versionCB.setSelectedIndex(0);
 
-		if (speciesName.equals(SELECT_SPECIES) && versionCB.isEnabled()) {
-			// Disable the versionName.
+		List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
+		if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
 			versionCB.setEnabled(false);
 			return;
 		}
 
 		// Add names to combo boxes.
 		List<String> versionNames = new ArrayList<String>();
-		for(GenericVersion gVersion : GeneralLoadUtils.species2genericVersionList.get(speciesName)) {
+		for(GenericVersion gVersion : versionList) {
 			// the same versionName name may occur on multiple servers
 			if (!versionNames.contains(gVersion.versionName)) {
 				versionNames.add(gVersion.versionName);

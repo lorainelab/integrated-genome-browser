@@ -147,7 +147,7 @@ public final class DasSource {
 	protected void initType(String source) {
 		try {
 			URL typesURL = new URL(server, source + "/types");
-			URL testMasterURL = new URL(master, source + "/types");
+			URL testMasterURL = new URL(master, master.getPath() + "/types");
 			System.out.println("Das Types Request: " + typesURL);
 			URLConnection connection = typesURL.openConnection();
 			connection.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);

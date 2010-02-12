@@ -64,7 +64,6 @@ public class TierGlyph extends SolidGlyph {
    * if no "middle" glyphs, then background is drawn with fill_color
    */
   private Color other_fill_color = null;
-  private static final Color outline_color = null;
   private String label = null;
 
 
@@ -319,18 +318,11 @@ public class TierGlyph extends SolidGlyph {
     // cycle through "middleground" glyphs,
     //   make sure their coord box y and height are set to same as TierGlyph,
     //   then call mglyph.draw(view)
-    int mcount = middle_glyphs.size();
-    for (int i=0; i<mcount; i++) {
-      GlyphI mglyph = middle_glyphs.get(i);
+    for (GlyphI mglyph : middle_glyphs) {
       Rectangle2D.Double mbox = mglyph.getCoordBox();
       mbox.setRect(mbox.x, coordbox.y, mbox.width, coordbox.height);
       mglyph.setColor(style.getBackground());
       mglyph.drawTraversal(view);
-    }
-    if (outline_color != null) {
-      g.setColor(outline_color);
-      g.drawRect(pixelbox.x, pixelbox.y,
-		 pixelbox.width-1, pixelbox.height);
     }
 
     if (! style.isGraphTier()) {
@@ -443,12 +435,8 @@ public class TierGlyph extends SolidGlyph {
 
   private void setSpacer(double spacer) {
     this.spacer = spacer;
-    if (collapse_packer instanceof PaddedPackerI) {
-      ((PaddedPackerI)collapse_packer).setParentSpacer(spacer);
-    }
-    if (expand_packer instanceof PaddedPackerI) {
-      ((PaddedPackerI)expand_packer).setParentSpacer(spacer);
-    }
+    ((PaddedPackerI)collapse_packer).setParentSpacer(spacer);
+    ((PaddedPackerI)expand_packer).setParentSpacer(spacer);
   }
 
   private double getSpacer() {

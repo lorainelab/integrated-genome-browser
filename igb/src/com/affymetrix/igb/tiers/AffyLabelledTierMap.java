@@ -71,10 +71,10 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     this.setLayout(new BorderLayout());
     add("Center", mapsplitter);
 
-    if (hscroll_show && scroller[X] instanceof Component) {
+    if (hscroll_show) {
       add(hscroll_loc, (Component) scroller[X]);
     }
-    if (vscroll_show && scroller[Y] instanceof Component)  {
+    if (vscroll_show)  {
       add(vscroll_loc, (Component)scroller[Y]);
     }
   }

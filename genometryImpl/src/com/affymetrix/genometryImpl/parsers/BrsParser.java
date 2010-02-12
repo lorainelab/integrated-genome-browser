@@ -81,7 +81,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	private static final Pattern emin_regex = Pattern.compile(",");
 	private static final Pattern emax_regex = Pattern.compile(",");
 
-	public List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+	public static List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		System.out.println("loading file: " + file_name);
 		List<SeqSymmetry> result = null;
@@ -97,12 +97,12 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		return result;
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
+	public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		return parse(istr, annot_type, seq_group, true);
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+	public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
 		throws IOException {
 		return parse(istr, annot_type, seq_group, annotate_seq, -1);
 	}
@@ -110,7 +110,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	/**
 	 *  @param blength  buffer length, if unknown use -1;
 	 */
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
+	public static List<SeqSymmetry> parse(InputStream istr, String annot_type,
 			AnnotatedSeqGroup seq_group, boolean annotate_seq, long blength)
 		throws IOException {
 		Timer tim = new Timer();
@@ -435,7 +435,7 @@ public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq s
 
 	public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return this.parse((InputStream) dis, annot_type, group, false);
+			return BrsParser.parse((InputStream) dis, annot_type, group, false);
 		} catch (IOException ex) {
 			Logger.getLogger(BrsParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

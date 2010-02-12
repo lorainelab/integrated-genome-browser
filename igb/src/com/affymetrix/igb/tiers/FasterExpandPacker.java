@@ -137,9 +137,7 @@ public final class FasterExpandPacker extends ExpandPacker {
 	@Override
 	public Rectangle pack(GlyphI parent, ViewI view) {
 		boolean REPORT_SLOT_CHECKS = false;
-		List sibs = parent.getChildren();
 		Rectangle2D.Double cbox;
-		GlyphI child;
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		// resetting height of parent to just spacers
 		//    parent.setCoords(pbox.x, pbox.y, pbox.width, 2 * parent_spacer);
@@ -171,7 +169,7 @@ public final class FasterExpandPacker extends ExpandPacker {
 		int optimize2_count = 0;
 
 		for (int i = 0; i < child_count; i++) {
-			child = parent.getChild(i);
+			GlyphI child = parent.getChild(i);
 			child.setVisibility(true);
 			cbox = child.getCoordBox();
 			double child_min = cbox.x;
@@ -267,13 +265,7 @@ public final class FasterExpandPacker extends ExpandPacker {
 		// move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
 		//    (y+height) of bottom-most (ymax) child is at
 
-		sibs = parent.getChildren();
-		pbox = parent.getCoordBox();
-
-		double coord_height = ymax - ymin;
-		coord_height = coord_height + (2 * parent_spacer);
-		for (int i = 0; i < sibs.size(); i++) {
-			child = (GlyphI) sibs.get(i);
+		for (GlyphI child : parent.getChildren()) {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
 

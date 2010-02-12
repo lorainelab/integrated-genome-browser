@@ -21,7 +21,6 @@ public class ExpandPacker extends ExpandedTierPacker {
 	@Override
 	public Rectangle pack(GlyphI parent, ViewI view) {
 		List<GlyphI> sibs;
-		GlyphI child;
 		
 		sibs = parent.getChildren();
 		
@@ -45,7 +44,7 @@ public class ExpandPacker extends ExpandedTierPacker {
 			sibs.clear(); // sets parent.getChildren() to empty Vector
 			int sibs_size = sibarray.length;
 			for (int i = 0; i < sibs_size; i++) {
-				child = sibarray[i];
+				GlyphI child = sibarray[i];
 				if (!(child instanceof LabelGlyph)) {
 					pack(parent, child, view, true);
 				}
@@ -78,13 +77,7 @@ public class ExpandPacker extends ExpandedTierPacker {
 		// move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
 		//    (y+height) of bottom-most (ymax) child is at
 
-		sibs = parent.getChildren();
-		pbox = parent.getCoordBox();
-
-		double coord_height = ymax - ymin;
-		coord_height = coord_height + (2 * parent_spacer);
-		for (int i = 0; i < sibs.size(); i++) {
-			child = sibs.get(i);
+		for (GlyphI child : parent.getChildren()) {
 			child.moveRelative(0, parent_spacer - ymin);
 		}
 

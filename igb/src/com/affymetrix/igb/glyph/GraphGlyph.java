@@ -1116,8 +1116,8 @@ public final class GraphGlyph extends Glyph {
 		Graphics g = view.getGraphics();
 		g.setColor(lighter);
 
-		double pass_thresh_start = 0;
-		double pass_thresh_end = 0;
+		int pass_thresh_start = 0;
+		int pass_thresh_end = 0;
 		boolean pass_threshold_mode = false;
 		int min_index = 0;
 		int max_index = this.getPointCount() - 1;
@@ -1150,8 +1150,8 @@ public final class GraphGlyph extends Glyph {
 		//      true, false, false
 		//      true, true, false
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
-			double x = graf.getGraphXCoord(i);
-			double w = graf.hasWidth() ? graf.getGraphWidthCoord(i) : 0;
+			int x = graf.getGraphXCoord(i);
+			int w = graf.hasWidth() ? graf.getGraphWidthCoord(i) : 0;
 			double y = graf.getGraphYCoord(i);
 			// GAH 2006-02-16 changed to > min_score instead of >= min_score, to better mirror Affy tiling array pipeline
 			boolean pass_score_thresh = ((y > min_score_threshold) && (y <= max_score_threshold));
@@ -1189,7 +1189,7 @@ public final class GraphGlyph extends Glyph {
 	}
 
 
-	private void drawPrevious(double pass_thresh_start, double span_start_shift, double pass_thresh_end, double span_end_shift, double min_run_threshold, ViewI view, boolean make_syms, BioSeq aseq, MutableSeqSymmetry region_holder, Graphics g) {
+	private void drawPrevious(int pass_thresh_start, double span_start_shift, int pass_thresh_end, double span_end_shift, double min_run_threshold, ViewI view, boolean make_syms, BioSeq aseq, MutableSeqSymmetry region_holder, Graphics g) {
 		double draw_min = pass_thresh_start + span_start_shift;
 		double draw_max = pass_thresh_end + span_end_shift;
 		// make sure that length of region is > min_run_threshold
@@ -1211,7 +1211,7 @@ public final class GraphGlyph extends Glyph {
 
 
 
-	private void drawPrevious2(double pass_thresh_start, double span_start_shift, double pass_thresh_end, double span_end_shift, double min_run_threshold, ViewI view, boolean make_syms, BioSeq aseq, MutableSeqSymmetry region_holder, Graphics g) {
+	private void drawPrevious2(int pass_thresh_start, double span_start_shift, int pass_thresh_end, double span_end_shift, double min_run_threshold, ViewI view, boolean make_syms, BioSeq aseq, MutableSeqSymmetry region_holder, Graphics g) {
 		double draw_min = pass_thresh_start + span_start_shift;
 		double draw_max = pass_thresh_end + span_end_shift;
 		// make sure that length of region is > min_run_threshold
@@ -1223,7 +1223,7 @@ public final class GraphGlyph extends Glyph {
 			coord.x = draw_max;
 			view.transformToPixels(coord, curr_point);
 			if (make_syms) {
-				SeqSymmetry sym = new SingletonSeqSymmetry((int) pass_thresh_start, (int) pass_thresh_end, aseq);
+				SeqSymmetry sym = new SingletonSeqSymmetry(pass_thresh_start, pass_thresh_end, aseq);
 				region_holder.addChild(sym);
 			} else {
 				drawRectOrLine(g, prev_point.x, pixelbox.y + pixelbox.height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);

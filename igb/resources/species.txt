@@ -1,4 +1,4 @@
-Anolis carolinensis	Lizard	A_carolinensis	anoCar	Anolis_carolinensis
+Anolis carolinensis	Anole Lizard	A_carolinensis	anoCar	Anolis_carolinensis
 Anopheles gambiae	A. gambiae	A_gambiae	anoGam
 Apis mellifera	A. mellifera	A_mellifera	apiMel
 Arabidopsis thaliana	Thale Cress	A_thaliana	

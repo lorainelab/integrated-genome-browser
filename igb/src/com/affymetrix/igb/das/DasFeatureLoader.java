@@ -18,9 +18,11 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.view.SeqMapView;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -60,12 +62,14 @@ public final class DasFeatureLoader {
 		URL serverURL = feature.getServerURL();
 		BioSeq current_seq = gviewer.getViewSeq();
 		List<URL> urls = new ArrayList<URL>();
+		Set<String> segments = ((DasSource)gFeature.gVersion.versionSourceObj).getEntryPoints();
+		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
 		QueryBuilder builder;
 		String id;
 
 		try {
 			builder = new QueryBuilder(new URL(serverURL, feature.getSource() + "/features"));
-			builder.add("segment", current_seq.getID());
+			builder.add("segment", segment);
 			builder.add("type", feature.getID());
 			id = builder.build().toString();
 
@@ -77,7 +81,7 @@ public final class DasFeatureLoader {
 			loadMap.put(id, seen);
 
 			SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, seen, current_seq);
-			walksym(optimized_sym, builder, current_seq.getID(), urls);
+			walksym(optimized_sym, builder, segment, urls);
 
 			if (!urls.isEmpty()) {
 				seen.addChild(optimized_sym);

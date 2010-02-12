@@ -47,16 +47,15 @@ import java.util.regex.Pattern;
  */
 public final class BrsParser implements AnnotationWriter, IndexWriter  {
 
-	static List<String> pref_list = new ArrayList<String>();
+	private static final List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("brs");
 	}
 
 	final private static boolean DEBUG = false;
 
-	boolean use_byte_buffer = true;
-	boolean write_from_text = true;
-	boolean write_objects = false;
+	private static final boolean use_byte_buffer = true;
+	private static final boolean write_from_text = true;
 
 	// .bin1:
 	//     geneName UTF8
@@ -78,9 +77,9 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	//     rather than using UTF-8
 
 
-	static final Pattern line_regex = Pattern.compile("\t");
-	static final Pattern emin_regex = Pattern.compile(",");
-	static final Pattern emax_regex = Pattern.compile(",");
+	private static final Pattern line_regex = Pattern.compile("\t");
+	private static final Pattern emin_regex = Pattern.compile(",");
+	private static final Pattern emax_regex = Pattern.compile(",");
 
 	public List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
@@ -138,7 +137,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 			if (use_byte_buffer && blength > 0) {
 				byte[] bytebuf = new byte[(int)blength];
 				bis.read(bytebuf);
-				//        fis.read(bytebuf);
 				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
 				dis = new DataInputStream(bytestream);
 			}
@@ -155,16 +153,11 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 
 					String strand = dis.readUTF();
 					boolean forward = (strand.equals("+") || (strand.equals("++")));
-					//          System.out.println("forward: " + forward);
-					//          dis.skip(16);  // skip tmin, tmax, cmin, cmax (4 ints * 4bytes/int = 16 bytes);
 					int tmin = dis.readInt();
 					int tmax = dis.readInt();
-					//          tstarts[count] = tmin;
 					int cmin = dis.readInt();
 					int cmax = dis.readInt();
 					int ecount = dis.readInt();
-					//          pos += (20 + (ecount * 8));
-					//          dis.skip(ecount * 8);
 					int[] emins = new int[ecount];
 					int[] emaxs = new int[ecount];
 					for (int i=0; i<ecount; i++) {
@@ -272,7 +265,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		tim.start();
 
 		DataOutputStream dos = null;
-		DataInputStream dis = null;
+		BufferedReader br = null;
 		try {
 			File fil = new File(file_name);
 			flength = fil.length();
@@ -282,10 +275,10 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 				byte[] bytebuf = new byte[(int)flength];
 				bis.read(bytebuf);
 				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-				dis = new DataInputStream(bytestream);
+				br = new BufferedReader(new InputStreamReader(bytestream));
 			}
 			else {
-				dis = new DataInputStream(bis);
+				br = new BufferedReader(new InputStreamReader(bis));
 			}
 			String line;
 
@@ -300,7 +293,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 			//   if refGene, then file doesn't include geneName field (and can be detected because
 			//   it has one fewer tab-delimited field)
 			boolean text_includes_genename;
-			while ((line = dis.readLine()) != null) {
+			while ((line = br.readLine()) != null) {
 				count++;
 				int field_index = 0;
 				String[] fields = line_regex.split(line);
@@ -308,10 +301,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 				String geneName = null;
 				if (text_includes_genename) { geneName = fields[field_index++]; }
 				String name = fields[field_index++];
-				//        gene_names[count] = geneName;
-				//        names[count] = name;
-				//        name_hash.put(geneName, null);
-				//        name_hash.put(name, null);
 				String chrom = fields[field_index++];
 				String strand = fields[field_index++];
 				String txStart = fields[field_index++];  // min base of transcript on genome
@@ -334,12 +323,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 				if (write_from_text) {
 					dos.writeUTF(geneName);
 					dos.writeUTF(name);
-					/*
-					   dos.write((byte)geneName.length());
-					   dos.writeBytes(geneName);
-					   dos.write((byte)name.length());
-					   dos.writeBytes(name);
-					   */
 					dos.writeUTF(chrom);
 					dos.writeUTF(strand);
 					dos.writeInt(tmin);
@@ -368,42 +351,27 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 				total_exon_count += ecount;
 				max_exons = Math.max(max_exons, ecount);
 				max_tlength = Math.max(max_tlength, tlength);
-				//        name_hash.put(fields[0], fields[0]);
 			}
 
 			if (write_from_text) {
 				dos.flush();
 				dos.close();
 			}
-			// simplest load, straight into a byte array
-			//      byte[] bytebuf = new byte[(int)flength];
-			//      bread = bis.read(bytebuf);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(dos);
 		}
 
 		System.out.println("load time: " + tim.read()/1000f);
 		System.out.println("line count = " + count);
 		System.out.println("file length = " + flength);
-		//    System.out.println("bytes read = " + bread);
 		System.out.println("max genomic transcript length: " + max_tlength);
-		//    System.out.println("biguns: " + biguns);
 		System.out.println("max exons in single transcript: " + max_exons);
 		System.out.println("total exons: " + total_exon_count);
 		System.out.println("spliced transcripts > 65000: " + big_spliced);
-		//    Enumeration enum = name_hash.keys();
-		//    int namecount = 0;
-		/*
-		   while (enum.hasMoreElements() && namecount < 10) {
-		   String name = (String)enum.nextElement();
-		   System.out.println(name);
-		   namecount++;
-		   }
-		   */
 	}
 
 /**
@@ -439,9 +407,7 @@ public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq s
 	boolean success = true;
 	try {
 		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream));
-		Iterator iterator = syms.iterator();
-		while (iterator.hasNext()) {
-			SeqSymmetry sym = (SeqSymmetry)iterator.next();
+		for (SeqSymmetry sym : syms) {
 			if (! (sym instanceof UcscGeneSym)) {
 				System.err.println("trying to output non-UcscGeneSym as UcscGeneSym!");
 			}

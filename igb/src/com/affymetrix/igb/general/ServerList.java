@@ -423,7 +423,7 @@ public final class ServerList {
 			server.setServerStatus(status);
 			GenericServerInitEvent evt = new GenericServerInitEvent(server);
 			for (GenericServerInitListener listener : server_init_listeners) {
-				listener.GenericServerInit(evt);
+				listener.genericServerInit(evt);
 			}
 		}
 	}

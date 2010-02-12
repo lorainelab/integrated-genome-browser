@@ -287,7 +287,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		addOrFindNode(newNode, feature, featureRight);
 	}
 
-	private final class TreeMouseListener implements MouseListener, MouseMotionListener {
+	private final static class TreeMouseListener implements MouseListener, MouseMotionListener {
 
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private final Cursor defaultCursor = null;
@@ -430,7 +430,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 * http://www.experts-exchange.com/Programming/Languages/Java/Q_23851420.html
 	 *
 	 */
-	private final class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
+	private final static class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		private final JCheckBox leafCheckBox = new JCheckBox();
 		private final Color selectionBorderColor, selectionForeground;

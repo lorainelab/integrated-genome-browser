@@ -60,7 +60,7 @@ import javax.swing.table.TableColumn;
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
 
-	public static GeneralLoadUtils glu = new GeneralLoadUtils();
+	public static final GeneralLoadUtils glu = new GeneralLoadUtils();
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = "Species";
@@ -213,7 +213,7 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
-	public void GenericServerInit(GenericServerInitEvent evt) {
+	public void genericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer)evt.getSource();
 
 		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
@@ -438,9 +438,8 @@ public final class GeneralLoadView extends JComponent
 	 * Load any data that's marked for visible range.
 	 */
 	public void loadVisibleData() {
-		SeqSpan request_span = gviewer.getVisibleSpan();
-
 		if (DEBUG_EVENTS) {
+			SeqSpan request_span = gviewer.getVisibleSpan();
 			System.out.println("Visible load request span: " + request_span.getStart() + " " + request_span.getEnd());
 		}
 

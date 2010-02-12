@@ -73,18 +73,19 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		return visibleFeatures;
 	}
 
-	private final class featureTableComparator implements Comparator<GenericFeature> {
-	public int compare(GenericFeature feature1, GenericFeature feature2) {
-		if (feature1.loadStrategy != feature2.loadStrategy) {
-			return (feature1.loadStrategy.compareTo(feature2.loadStrategy));
-		}
-		if (feature1.featureName.compareTo(feature2.featureName) != 0) {
-			return feature1.featureName.compareTo(feature2.featureName);
-		}
-		return feature1.gVersion.gServer.serverType.compareTo(
+	private final static class featureTableComparator implements Comparator<GenericFeature> {
+
+		public int compare(GenericFeature feature1, GenericFeature feature2) {
+			if (feature1.loadStrategy != feature2.loadStrategy) {
+				return (feature1.loadStrategy.compareTo(feature2.loadStrategy));
+			}
+			if (feature1.featureName.compareTo(feature2.featureName) != 0) {
+				return feature1.featureName.compareTo(feature2.featureName);
+			}
+			return feature1.gVersion.gServer.serverType.compareTo(
 					feature2.gVersion.gServer.serverType);
+		}
 	}
-}
 
 
 

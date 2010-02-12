@@ -33,8 +33,8 @@ public final class DasSource {
 	private final URL master;
 	private final String id;
 	private final Set<String> sources = new HashSet<String>();
-	private final Map<String, DasEntryPoint> entry_points = new LinkedHashMap<String, DasEntryPoint>();
-	private final Map<String, DasType> types = new LinkedHashMap<String, DasType>();
+	private final Set<String> entry_points = new LinkedHashSet<String>();
+	private final Set<DasType> types = new LinkedHashSet<DasType>();
 	private boolean entries_initialized = false;
 	private boolean types_initialized = false;
 
@@ -65,14 +65,14 @@ public final class DasSource {
 		return GenometryModel.getGenometryModel().addSeqGroup(this.getID());
 	}
 
-	public synchronized Map<String, DasEntryPoint> getEntryPoints() {
+	public synchronized Set<String> getEntryPoints() {
 		if (!entries_initialized) {
 			initEntryPoints();
 		}
 		return entry_points;
 	}
 
-	public synchronized Map<String, DasType> getTypes() {
+	public synchronized Set<DasType> getTypes() {
 		if (!types_initialized) {
 			initTypes();
 		}
@@ -95,35 +95,17 @@ public final class DasSource {
 			for (int i = 0; i < length; i++) {
 				Element seg = (Element) segments.item(i);
 				String segid = seg.getAttribute("id");
-				String startstr = seg.getAttribute("start");
 				String stopstr = seg.getAttribute("stop");
 				String sizestr = seg.getAttribute("size");  // can optionally use "size" instead of "start" and "stop"
-				String seqtype = seg.getAttribute("type");  // optional
-				String orient = seg.getAttribute("orientation");  // optional if using "size" attribute
 
-				String description = null;
-				Text desctext = (Text) seg.getFirstChild();
-				if (desctext != null) {
-					description = desctext.getData();
-				}
-				//	System.out.println("segment id: " + segid);
-				int start = 1;
 				int stop = 1;
-				boolean forward = true;
-				if (orient != null) {
-					forward = (!orient.equals("-"));  // anything other than "-" is considered forward
-				}
-				if (startstr != null && startstr.length() > 0
-						&& stopstr != null && stopstr.length() > 0) {
-					start = Integer.parseInt(startstr);
+				if (stopstr != null && !stopstr.isEmpty()) {
 					stop = Integer.parseInt(stopstr);
 				} else if (sizestr != null) {
 					stop = Integer.parseInt(sizestr);
 				}
-				DasEntryPoint entry_point = new DasEntryPoint(this, segid);
-				entry_point.setSeqType(seqtype);
-				entry_point.setDescription(description);
-				entry_point.setInterval(start, stop, forward);
+				getGenome().addSeq(segid, stop);
+				entry_points.add(segid);
 			}
 		} catch (MalformedURLException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
@@ -160,8 +142,7 @@ public final class DasSource {
 				String typeid = typenode.getAttribute("id");
 
 				String name = typesURL.equals(testMasterURL) ? null : source + "/" + typeid;
-				DasType type = new DasType(server, typeid, source, name);
-				types.put(type.getName(), type);
+				types.add(new DasType(server, typeid, source, name));
 			}
 		} catch (MalformedURLException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);

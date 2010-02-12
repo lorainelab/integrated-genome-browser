@@ -292,7 +292,7 @@
 		</java>
 	</target>
 
-	<target depends="compile" description="debug protannot" name="debug-nb-protannot">
+	<target name="debug-nb-protannot" depends="compile" description="debug protannot" >
         <nbjpdastart addressproperty="jpda.address" name="protannot" transport="dt_socket">
             <classpath>
 				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />

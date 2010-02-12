@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -33,7 +34,7 @@ public final class ResidueLoading {
 	/**
 	 * Get residues from servers: DAS/2, Quickload, or DAS/1.
 	 * Also gets partial residues.
-	 * @param serversWithChrom	-- list of servers that have this chromosome.
+	 * @param versionsWithChrom	-- list of servers that have this chromosome.
 	 * @param genomeVersionName -- name of the genome.
 	 * @param seq_name -- sequence (chromosome) name
 	 * @param span	-- May be null.  If not, then it's used for partial loading.
@@ -42,7 +43,7 @@ public final class ResidueLoading {
 	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
 	// DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
 	public static boolean getResidues(
-			Set<GenericServer> serversWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
+			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
 
 		boolean partial_load = (min > 0 || max < aseq.getLength());	// Are we only asking for part of the sequence?
 
@@ -52,7 +53,8 @@ public final class ResidueLoading {
 		//First try to load from DAS2, then Quickload and at last DAS1
 		if (partial_load) {
 			// Try to load in raw format from DAS2 server.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.DAS2) {
 					String uri;
 					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
@@ -67,7 +69,8 @@ public final class ResidueLoading {
 			}
 
 			// Try to load in fasta format from DAS2 server.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.DAS2) {
 					String uri;
 					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
@@ -82,7 +85,8 @@ public final class ResidueLoading {
 			}
 
 			// Try to load from Quickload server.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.QuickLoad) {
 					String residues = GetQuickLoadResidues(seq_group, seq_name, server.URL, min, max);
 					if (residues != null) {
@@ -94,7 +98,8 @@ public final class ResidueLoading {
 			}
 
 			// Try to load via DAS/1 server.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.DAS) {
 					String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
 					if (residues != null) {
@@ -111,7 +116,8 @@ public final class ResidueLoading {
 		else {
 
 			//Try to load in raw format from DAS2 server, as this format is more compactly represented internally.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.DAS2) {
 					String uri;
 					
@@ -128,7 +134,8 @@ public final class ResidueLoading {
 			}
 
 			// Try to load in bnib format from DAS2 server, as this format is more compactly represented internally.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.DAS2) {
 					String uri;
 					uri = generateDas2URI(
@@ -142,7 +149,8 @@ public final class ResidueLoading {
 			}
 
 			// Try to load in fasta format from DAS2 server.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.DAS2) {
 					String uri;
 					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
@@ -155,7 +163,8 @@ public final class ResidueLoading {
 			}
 
 			//Try to load from Quickload server.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.QuickLoad) {
 					if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
 						BioSeq.addResiduesToComposition(aseq);
@@ -166,7 +175,8 @@ public final class ResidueLoading {
 			}
 
 			// Try to load via DAS/1 server.
-			for (GenericServer server : serversWithChrom) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
 				if (server.serverType == ServerType.DAS) {
 					String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
 					if (residues != null) {

@@ -614,9 +614,9 @@ public final class GeneralLoadUtils {
 
 		// Determine list of servers that might have this chromosome sequence.
 		List<GenericFeature> features = getFeatures(genomeVersionName);
-		Set<GenericServer> serversWithChrom = new HashSet<GenericServer>();
+		Set<GenericVersion> versionsWithChrom = new HashSet<GenericVersion>();
 		for (GenericFeature feature : features) {
-			serversWithChrom.add(feature.gVersion.gServer);
+			versionsWithChrom.add(feature.gVersion);
 		}
 
 		if ((min <= 0) && (max >= aseq.getLength())) {
@@ -627,7 +627,7 @@ public final class GeneralLoadUtils {
 			max = aseq.getLength();
 		}
 
-		return ResidueLoading.getResidues(serversWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
+		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
 	}
 
 

@@ -420,11 +420,11 @@ final class ProtAnnotMain implements WindowListener {
         JLabel test = new JLabel("                || Chose Test file :-");
         JButton low = new JButton("OLD");
         JButton med = new JButton("NEW");
-        //JButton high = new JButton("High");
+        JButton high = new JButton("Negative");
         mbar.add(test);
         mbar.add(low);
         mbar.add(med);
-        //mbar.add(high);
+        mbar.add(high);
 
         low.addActionListener(new ActionListener() {
 
@@ -436,16 +436,16 @@ final class ProtAnnotMain implements WindowListener {
         med.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
-                    load(new File(user_dir + "/pyResample/temp/ADARB1.paxml"));
+                    load(new File(user_dir + "/pyResample/temp/aafile.paxml"));
                 }
             });
 
-//        high.addActionListener(new ActionListener() {
-//
-//                public void actionPerformed(ActionEvent e) {
-//                    load(new File(user_dir +"/samples/ABCB4.paxml"));
-//                }
-//            });
+        high.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    load(new File(user_dir +"/pyResample/temp/aaafile.paxml"));
+                }
+            });
     }
 
     /**

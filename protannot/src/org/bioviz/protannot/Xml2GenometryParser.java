@@ -47,7 +47,7 @@ final class Xml2GenometryParser {
 	private String residues;
     private boolean isNegative;
     private boolean negativeProcess = true;
-    private List<int[]> exon_list;
+    private List<int[]> transCheckExons;	// used to sanity-check exon translation
 
     /**
      *Initialized dbFactory and dBuilder
@@ -74,7 +74,6 @@ final class Xml2GenometryParser {
 
         try {
             isNegative = false;
-            exon_list = new ArrayList<int[]>();
             InputSource insrc = new InputSource(istr);
             Document seqdoc = dBuilder.parse(insrc);
             BioSeq ret_genomic = processDocument(seqdoc);
@@ -86,10 +85,8 @@ final class Xml2GenometryParser {
                 int end  = ret_genomic.getMax();
                 ret_genomic.setResidues(res.toString());
                 ret_genomic.setBounds(start, end);
-                return ret_genomic;
-            }
-            else
-                return ret_genomic;
+			}
+			return ret_genomic;
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -216,18 +213,17 @@ final class Xml2GenometryParser {
             Node child = children.item(i);
             String name = child.getNodeName();
             if (name != null && name.equalsIgnoreCase("aaseq")) {
-                processProtein(genomic, (Element) child);
+                processProtein((Element) child);
             }
         }
     }
 
     /**
-     Process protien in BioSeq for each child node of element provided.
-     * @param   genomic
-     * @param   elem        Node in genomic for which protien is to be processed
+     Process protein in BioSeq for each child node of element provided.
+     * @param   elem        Node for which protein is to be processed
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
-    private void processProtein(BioSeq genomic, Element elem) {
+    private void processProtein(Element elem) {
         String pid = elem.getAttribute("id");
         BioSeq protein = prot_hash.get(pid);
         if (protein == null) {
@@ -520,6 +516,7 @@ final class Xml2GenometryParser {
         boolean forward = (span.isForward());
 
 
+		transCheckExons = new ArrayList<int[]>();
         List<SeqSymmetry> exon_list = new ArrayList<SeqSymmetry>();
         List<Node> exon_insert_list = new ArrayList<Node>();
         for (int i = 0; i < children.getLength(); i++) {
@@ -744,7 +741,7 @@ final class Xml2GenometryParser {
             start = (genomic.getMax() - end) + genomic.getMin();
             end = (genomic.getMax() - temp) + genomic.getMin();
         }
-        exon_list.add(new int[]{start,end});
+        transCheckExons.add(new int[]{start,end});
         //System.out.println("exon:  start = " + start + "  end = " + end);
 
         SeqSpan span = new SimpleSeqSpan(start, end, genomic);
@@ -799,7 +796,7 @@ final class Xml2GenometryParser {
             end = (genomic.getMax() - temp) + genomic.getMin();
         }
 
-        checkTranslationLength(start,end+1);
+        checkTranslationLength(start,end);
         //    if (start < end) { end++; } else { start++; }
 //        if (end < start) {
 //            start++;
@@ -846,24 +843,22 @@ final class Xml2GenometryParser {
 	 private void checkTranslationLength(int start ,int end){
 
         int length = 0;
-        for(int[] exon : exon_list){
+        for(int[] exon : transCheckExons){
             int exon_start = exon[0];
             int exon_end = exon[1];
-
+			
+			//int old_length = length;
             if(exon_start >= start && exon_end <= end){
+				// exon completely in translated region
                 length += exon_end - exon_start;
-                continue;
-            }
-
-            if(exon_start <= start && exon_end >= start){
+            } else if(exon_start <= start && exon_end >= start){
+				// translation start is past beginning of exon
                 length += exon_end - start;
-                continue;
-            }
-
-            if(exon_start <= end && exon_end >= end){
+            } else if(exon_start <= end && exon_end >= end){
+				// translation end is before ending of exon
                 length += end - exon_start;
-                continue;
             }
+			//System.out.println(",added length: " + (length - old_length));
         }
 
         if(length%3 != 0)

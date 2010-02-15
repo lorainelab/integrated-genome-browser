@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view.ucsc;
+package com.affymetrix.igb.view.external;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -6,13 +6,13 @@ import java.awt.Image;
 import javax.swing.JPanel;
 
 /**
- * Simple Image Wrapper for the UCSC View
+ * Simple Image Wrapper for a genome View
  * 
  * 
  * 
  * @author Ido M. Tamir
  */
-public class UCSCImage extends JPanel {
+public class BrowserImage extends JPanel {
     private Image image;
 
     public void setImage(Image image){

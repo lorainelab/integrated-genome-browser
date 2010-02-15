@@ -659,7 +659,7 @@ public class SeqMapView extends JPanel
 	}
 
 
-	public final Glyph makeCytobandGlyph() {
+	private final Glyph makeCytobandGlyph() {
 		BioSeq sma = getAnnotatedSeq();
 		SymWithProps cyto_annots = null;
 		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
@@ -682,7 +682,7 @@ public class SeqMapView extends JPanel
 	 *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
 	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
 	 */
-	public final Glyph makeCytobandGlyph(TypeContainerAnnot cyto_container) {
+	private final Glyph makeCytobandGlyph(TypeContainerAnnot cyto_container) {
 		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
 		RoundRectMaskGlyph cytoband_glyph_A = null;
@@ -795,7 +795,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void clear() {
+	public final void clear() {
 		stopSlicingThread();
 		seqmap.clearWidget();
 		aseq = null;
@@ -822,7 +822,7 @@ public class SeqMapView extends JPanel
 	/**
 	 *  Clears the graphs, and reclaims some memory.
 	 */
-	public void clearGraphs() {
+	public final void clearGraphs() {
 		if (aseq != null) {
 			BioSeq mseq = aseq;
 			int acount = mseq.getAnnotationCount();
@@ -842,7 +842,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Sets the sequence; if null, has the same effect as calling clear(). */
-	public void setAnnotatedSeq(BioSeq seq) {
+	public final void setAnnotatedSeq(BioSeq seq) {
 		if ((seq == this.aseq) && (seq != null)) {
 			// if the seq is not changing, try to preserve current view
 			setAnnotatedSeq(seq, false, true);
@@ -859,11 +859,10 @@ public class SeqMapView extends JPanel
 	 *       [GAH: temporarily changed to preserve scale in only the x direction]
 	 */
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
-		//    setAnnotatedSeq(seq, preserve_selection, preserve_view, preserve_view);
 		setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
 	}
 
-	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
+	public final void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
 		//   want to optimize for several situations:
 		//       a) merging newly loaded data with existing data (adding more annotations to
 		//           existing AnnotatedBioSeq) -- would like to avoid recreation and repacking
@@ -1087,7 +1086,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	protected String getVersionInfo(BioSeq seq) {
+	private static String getVersionInfo(BioSeq seq) {
 		if (seq == null) {
 			return null;
 		}
@@ -1111,7 +1110,7 @@ public class SeqMapView extends JPanel
 		return version_info;
 	}
 
-	protected void setTitleBar(BioSeq seq) {
+	private void setTitleBar(BioSeq seq) {
 		Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
 		if (frm != null) {
 			StringBuffer title = new StringBuffer(128);
@@ -1160,7 +1159,7 @@ public class SeqMapView extends JPanel
 		return layers;
 	}
 
-	void removeEmptyTiers() {
+	final void removeEmptyTiers() {
 		// Hides all empty tiers.  Doesn't really remove them.
 		for (TierGlyph tg : seqmap.getTiers()) {
 			if (tg.getChildCount() <= 0) {
@@ -1901,7 +1900,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void toggleAutoScroll() {
+	public final void toggleAutoScroll() {
 		if (map_auto_scroller == null) {
 			JPanel pan = new JPanel();
 
@@ -2051,7 +2050,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void zoomTo(SeqSpan span) {
+	public final void zoomTo(SeqSpan span) {
 		BioSeq zseq = span.getBioSeq();
 		if ((zseq != null) &&
 						(zseq != this.getAnnotatedSeq())) {
@@ -2060,7 +2059,7 @@ public class SeqMapView extends JPanel
 		zoomTo(span.getMin(), span.getMax());
 	}
 
-	public void zoomTo(double smin, double smax) {
+	public final void zoomTo(double smin, double smax) {
 		double coord_width = smax - smin;
 		double pixel_width = seqmap.getView().getPixelBox().width;
 		double pixels_per_coord = pixel_width / coord_width; // can be Infinity, but the Math.min() takes care of that
@@ -2072,7 +2071,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Zoom to a region including all the currently selected Glyphs. */
-	public void zoomToSelections() {
+	public final void zoomToSelections() {
 		List<GlyphI> selections = seqmap.getSelected();
 		if (selections.size() > 0) {
 			zoomToRectangle(getRegionForGlyphs(selections));
@@ -2085,7 +2084,7 @@ public class SeqMapView extends JPanel
 	/**
 	 * Center at the hairline.
 	 */
-	public void centerAtHairline() {
+	public final void centerAtHairline() {
 		if (this.hairline == null) {
 			return;
 		}
@@ -2133,7 +2132,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void unclamp() {
+	public final void unclamp() {
 		if (viewseq != null) {
 			int min = viewseq.getMin();
 			int max = viewseq.getMax();
@@ -2143,7 +2142,7 @@ public class SeqMapView extends JPanel
 		seqmap.updateWidget();
 	}
 
-	public void clampToView() {
+	public final void clampToView() {
 		Rectangle2D.Double vbox = seqmap.getViewBounds();
 		seqmap.setMapRange((int) (vbox.x), (int) (vbox.x + vbox.width));
 		seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
@@ -2154,7 +2153,7 @@ public class SeqMapView extends JPanel
 	 * generates part of UCSC query url for current genome coordinates.
 	 * @return query URL for current view. "ucsc version not resolvable" on error.
 	 */
-	public String getUCSCQuery(){
+	public final String getUCSCQuery(){
 		if(aseq == null){
 			return "Error: no genome selected. please select a genome first";
 		}
@@ -2207,7 +2206,7 @@ public class SeqMapView extends JPanel
 		return region;
 	}
 
-	public void invokeUcscView() {
+	public final void invokeUcscView() {
 		if (aseq == null || slicing_in_effect) {
 			return;
 		}
@@ -2232,7 +2231,7 @@ public class SeqMapView extends JPanel
 	 * @param query_glyphs
 	 * @param update_map
 	 */
-	public void doEdgeMatching(List<GlyphI> query_glyphs, boolean update_map) {
+	public final void doEdgeMatching(List<GlyphI> query_glyphs, boolean update_map) {
 		// Clear previous edges
 		if (match_glyphs != null && match_glyphs.size() > 0) {
 			seqmap.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
@@ -2266,11 +2265,11 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public boolean getEdgeMatching() {
+	public final boolean getEdgeMatching() {
 		return show_edge_matches;
 	}
 
-	public void setEdgeMatching(boolean b) {
+	public final void setEdgeMatching(boolean b) {
 		show_edge_matches = b;
 		if (show_edge_matches) {
 			doEdgeMatching(seqmap.getSelected(), true);
@@ -2279,7 +2278,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void adjustEdgeMatching(int bases) {
+	public final void adjustEdgeMatching(int bases) {
 		getEdgeMatcher().setFuzziness(bases);
 		if (show_edge_matches) {
 			doEdgeMatching(seqmap.getSelected(), true);
@@ -2289,7 +2288,7 @@ public class SeqMapView extends JPanel
 	/**
 	 *  return a SeqSpan representing the visible bounds of the view seq
 	 */
-	public SeqSpan getVisibleSpan() {
+	public final SeqSpan getVisibleSpan() {
 		Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
 		SeqSpan vspan = new SimpleSeqSpan((int) vbox.x,
 						(int) (vbox.x + vbox.width),
@@ -2297,16 +2296,16 @@ public class SeqMapView extends JPanel
 		return vspan;
 	}
 
-	public GlyphEdgeMatcher getEdgeMatcher() {
+	public final GlyphEdgeMatcher getEdgeMatcher() {
 		return edge_matcher;
 	}
 
-	public void setShrinkWrap(boolean b) {
+	public final void setShrinkWrap(boolean b) {
 		SHRINK_WRAP_MAP_BOUNDS = b;
 		setAnnotatedSeq(aseq);
 	}
 
-	public boolean getShrinkWrap() {
+	public final boolean getShrinkWrap() {
 		return SHRINK_WRAP_MAP_BOUNDS;
 	}
 
@@ -2455,7 +2454,7 @@ public class SeqMapView extends JPanel
 	 *  @return a list where each child is replaced by its top-most parent, if it
 	 *  has a parent, or else the child itself is included in the list
 	 */
-	public static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
+	public static final List<GlyphI> getParents(List<GlyphI> childGlyphs) {
 		boolean top_level = true;
 		// linked hash set keeps parents in same order as child list so that comparison
 		// like childList.equals(parentList) can be used.
@@ -2473,7 +2472,7 @@ public class SeqMapView extends JPanel
 	 *  @param top_level if true, will recurse up to the top-level parent, with
 	 *  certain restrictions: recursion will stop before reaching a TierGlyph
 	 */
-	public static GlyphI getParent(GlyphI g, boolean top_level) {
+	private static GlyphI getParent(GlyphI g, boolean top_level) {
 		GlyphI result = g;
 		GlyphI pglyph = g.getParent();
 		// the test for isHitable will automatically exclude seq_glyph
@@ -2591,7 +2590,7 @@ public class SeqMapView extends JPanel
 	 *  items added to it by this method.  Display of the popup menu will be
 	 *  handled by showPopup(), which calls this method.
 	 */
-	protected void preparePopup(JPopupMenu popup) {
+	private void preparePopup(JPopupMenu popup) {
 		List<GlyphI> selected_glyphs = seqmap.getSelected();
 
 		setPopupMenuTitle(sym_info, selected_glyphs);
@@ -2762,7 +2761,7 @@ public class SeqMapView extends JPanel
 	 *  be used.  Note: if style.isGraphTier() is true, then the given value of
 	 *  constant_height will be ignored and re-set to false.
 	 */
-	public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style, boolean constant_heights) {
+	public final TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style, boolean constant_heights) {
 		if (style == null) {
 			throw new NullPointerException();
 		}

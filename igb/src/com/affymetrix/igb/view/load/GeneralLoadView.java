@@ -62,7 +62,6 @@ import javax.swing.table.TableColumn;
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
 
-	public static final GeneralLoadUtils glu = new GeneralLoadUtils();
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
@@ -698,7 +697,7 @@ public final class GeneralLoadView extends JComponent
 
 		speciesCB.removeItemListener(this);
 		versionCB.removeItemListener(this);
-		GenericVersion gVersion = glu.getUnknownVersion(group);
+		GenericVersion gVersion = GeneralLoadUtils.getUnknownVersion(group);
 		String species = GeneralLoadUtils.versionName2species.get(gVersion.versionName);
 		refreshSpeciesCB();
 		if (DEBUG_EVENTS) {

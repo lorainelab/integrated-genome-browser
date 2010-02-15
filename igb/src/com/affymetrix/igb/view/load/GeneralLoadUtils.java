@@ -252,7 +252,7 @@ public final class GeneralLoadUtils {
 	 * @param aseq
 	 * @return genome version
 	 */
-	GenericVersion getUnknownVersion(AnnotatedSeqGroup aseq) {
+	static GenericVersion getUnknownVersion(AnnotatedSeqGroup aseq) {
 		String versionName = aseq.getID();
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 

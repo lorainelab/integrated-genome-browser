@@ -257,6 +257,7 @@ public final class GeneralLoadView extends JComponent
 	 * If a species was already selected, leave it as the selected species.
 	 */
 	private void refreshSpeciesCB() {
+		speciesCB.removeItemListener(this);
 		int speciesListLength = GeneralLoadUtils.species2genericVersionList.keySet().size();
 		if (speciesListLength == speciesCB.getItemCount() -1) {
 			// No new species.  Don't bother refreshing.
@@ -267,22 +268,21 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 		String oldSpecies = (String)speciesCB.getSelectedItem();
-		speciesCB.removeItemListener(this);
-		speciesCB.removeAllItems();
-		speciesCB.addItem(SELECT_SPECIES);
 
-		// Add names to combo boxes.
 		List<String> speciesList = new ArrayList<String>();
 		speciesList.addAll(GeneralLoadUtils.species2genericVersionList.keySet());
 		Collections.sort(speciesList);
-		// Sort the species
-		for (String speciesName : speciesList) {
-			speciesCB.addItem(speciesName);
-		}
 
-
-		if (oldSpecies != null && speciesList.contains(oldSpecies)) {
-			speciesCB.setSelectedItem(oldSpecies);
+		// Add names to combo boxes.
+		synchronized (this) {
+			speciesCB.removeAllItems();
+			speciesCB.addItem(SELECT_SPECIES);
+			for (String speciesName : speciesList) {
+				speciesCB.addItem(speciesName);
+			}
+			if (oldSpecies != null && speciesList.contains(oldSpecies)) {
+				speciesCB.setSelectedItem(oldSpecies);
+			}
 		}
 	}
 
@@ -292,10 +292,8 @@ public final class GeneralLoadView extends JComponent
 	 * @param speciesName
 	 */
 	private void refreshVersionCB(String speciesName) {
-		String oldVersion = (String)versionCB.getSelectedItem();
 		versionCB.removeItemListener(this);
-		versionCB.removeAllItems();
-		versionCB.addItem(SELECT_GENOME);
+		String oldVersion = (String)versionCB.getSelectedItem();
 		versionCB.setSelectedIndex(0);
 
 		List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
@@ -315,12 +313,16 @@ public final class GeneralLoadView extends JComponent
 		Collections.sort(versionNames, new StringVersionDateComparator());
 		// Sort the versions (by date)
 
-		for (String versionName : versionNames) {
-			versionCB.addItem(versionName);
-		}
-		versionCB.setEnabled(true);
-		if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
-			versionCB.setSelectedItem(oldVersion);
+		synchronized (this) {
+			versionCB.removeAllItems();
+			versionCB.addItem(SELECT_GENOME);
+			for (String versionName : versionNames) {
+				versionCB.addItem(versionName);
+			}
+			versionCB.setEnabled(true);
+			if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
+				versionCB.setSelectedItem(oldVersion);
+			}
 		}
 		if (versionCB.getItemCount() > 1) {
 			versionCB.addItemListener(this);
@@ -340,7 +342,10 @@ public final class GeneralLoadView extends JComponent
 		}
 		BioSeq seq = Persistence.restoreSeqSelection(group);
 		if (seq == null) {
-			return;
+			seq = group.getSeq(0);
+			if (seq == null) {
+				return;
+			}
 		}
 
 		Set<GenericVersion> gVersions = group.getVersions();
@@ -498,7 +503,6 @@ public final class GeneralLoadView extends JComponent
 		refreshVersionCB(speciesName);
 
 		if (gmodel.getSelectedSeqGroup() != null) {
-			gmodel.setSelectedSeqGroup(null);
 			gmodel.setSelectedSeq(null); // This method is being called on purpose to fire group selection event.
 										 // which in turns calls refreshTreeView method.
 		}
@@ -526,6 +530,9 @@ public final class GeneralLoadView extends JComponent
 		if (group == null) {
 			System.out.println("Group was null -- trying species instead");
 			group = gmodel.getSeqGroup(GeneralLoadUtils.versionName2species.get(versionName));
+			if (group == null) {
+				return;
+			}
 		}
 
 		speciesCB.setEnabled(false);
@@ -680,12 +687,12 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		Application.getSingleton().addNotLockedUpMsg("Loading features");
+		Application.getSingleton().addNotLockedUpMsg("Loading features for " + versionName);
 
 //		refreshTreeView();	// Removing this method from here to avoid recreating tree without reason.
 		createFeaturesTable();
 		loadWholeRangeFeatures(versionName);
-		Application.getSingleton().removeNotLockedUpMsg("Loading features");
+		Application.getSingleton().removeNotLockedUpMsg("Loading features for " + versionName);
 	}
 
 

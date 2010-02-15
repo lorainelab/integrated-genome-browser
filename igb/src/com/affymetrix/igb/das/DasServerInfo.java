@@ -12,14 +12,20 @@
  */
 package com.affymetrix.igb.das;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.XMLUtils;
+import java.io.InputStream;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.w3c.dom.*;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class DasServerInfo {
 
 	private static final boolean REPORT_SOURCES = false;
@@ -41,7 +47,11 @@ public final class DasServerInfo {
 
 	}
 
-	/** Returns the root URL String.  Will not have any trailing "/" at the end. */
+	/**
+	 * Returns the URL of the server.
+	 *
+	 * @return the URL of the server
+	 */
 	public URL getURL() {
 		return serverURL;
 	}
@@ -59,21 +69,22 @@ public final class DasServerInfo {
 	 *      http://biodas.org/documents/spec.html
 	 */
 	private void initialize() {
+		InputStream stream = null;
 		try {
 			System.out.println("Das Request: " + serverURL);
-			URLConnection request_con = serverURL.openConnection();
-			request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
-			request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-			String das_version = request_con.getHeaderField("X-DAS-Version");
-			String das_status = request_con.getHeaderField("X-DAS-Status");
-			String das_capabilities = request_con.getHeaderField("X-DAS-Capabilities");
+			Map<String, String> headers = new HashMap<String, String>();
+			stream = LocalUrlCacher.getInputStream(serverURL, headers);
+			
+			String das_version = headers.get("X-DAS-Version");
+			String das_status = headers.get("X-DAS-Status");
+			String das_capabilities = headers.get("X-DAS-Capabilities");
 
 			System.out.println("DAS server version: " + das_version + ", status: " + das_status);
 			if (REPORT_CAPS) {
 				System.out.println("DAS capabilities: " + das_capabilities);
 			}
 
-			Document doc = XMLUtils.getDocument(request_con);
+			Document doc = XMLUtils.getDocument(stream);
 
 			NodeList dsns = doc.getElementsByTagName("DSN");
 			System.out.println("dsn count: " + dsns.getLength());
@@ -91,6 +102,8 @@ public final class DasServerInfo {
 			System.out.println("Error initializing DAS server info for\n" + serverURL);
 			ex.printStackTrace();
 			return;
+		} finally {
+			GeneralUtils.safeClose(stream);
 		}
 		initialized = true;
 	}

@@ -106,6 +106,13 @@ public final class LocalUrlCacher {
 		return cache_file;
 	}
 
+	public static InputStream getInputStream(URL url) throws IOException {
+		return getInputStream(url, null);
+	}
+
+	public static InputStream getInputStream(URL url, Map<String, String> headers) throws IOException {
+		return getInputStream(url.toString(), true, headers);
+	}
 
 	public static InputStream getInputStream(String url) throws IOException {
 		return getInputStream(url, getPreferredCacheUsage(), true);

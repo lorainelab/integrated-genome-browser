@@ -17,16 +17,22 @@ import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.XMLUtils;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
+
+/**
+ *
+ * @version $Id$
+ */
 public final class DasSource {
 
 	private final URL server;
@@ -59,7 +65,9 @@ public final class DasSource {
 
 	/**
 	 *  Equivalent to {@link GenometryModel#addSeqGroup(String)} with the
-	 *  id from {@link #getID()}.  Caches the result.
+	 *  id from {@link #getID()}.
+	 *
+	 * @return a non-null AnnotatedSeqGroup representing this genome
 	 */
 	public AnnotatedSeqGroup getGenome() {
 		return GenometryModel.getGenometryModel().addSeqGroup(this.getID());
@@ -81,14 +89,13 @@ public final class DasSource {
 
 	/** Get entry points from das server. */
 	protected synchronized void initEntryPoints() {
+		InputStream stream = null;
 		try {
 			URL entryURL = new URL(master, master.getPath() + "/entry_points");
 
 			System.out.println("Das Entry Request: " + entryURL);
-			URLConnection connection = entryURL.openConnection();
-			connection.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
-			connection.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-			Document doc = XMLUtils.getDocument(connection);
+			stream = LocalUrlCacher.getInputStream(entryURL);
+			Document doc = XMLUtils.getDocument(stream);
 			NodeList segments = doc.getElementsByTagName("SEGMENT");
 			int length = segments.getLength();
 			System.out.println("segments: " + length);
@@ -115,6 +122,8 @@ public final class DasSource {
 			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
 		} catch (IOException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
+		} finally {
+			GeneralUtils.safeClose(stream);
 		}
 		entries_initialized = true;
 	}
@@ -127,21 +136,21 @@ public final class DasSource {
 	}
 
 	protected void initType(String source) {
+		InputStream stream = null;
 		try {
 			URL typesURL = new URL(server, source + "/types");
 			URL testMasterURL = new URL(master, master.getPath() + "/types");
 			System.out.println("Das Types Request: " + typesURL);
-			URLConnection connection = typesURL.openConnection();
-			connection.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
-			connection.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-			Document doc = XMLUtils.getDocument(connection);
+			stream = LocalUrlCacher.getInputStream(typesURL);
+			Document doc = XMLUtils.getDocument(stream);
 			NodeList typelist = doc.getElementsByTagName("TYPE");
 			System.out.println("types: " + typelist.getLength());
 			for (int i = 0; i < typelist.getLength(); i++) {
 				Element typenode = (Element) typelist.item(i);
 				String typeid = typenode.getAttribute("id");
 
-				String name = typesURL.equals(testMasterURL) ? null : source + "/" + typeid;
+				/* URL.equals() does DNS lookups! */
+				String name = typesURL.toString().equals(testMasterURL.toString()) ? null : source + "/" + typeid;
 				types.add(new DasType(server, typeid, source, name));
 			}
 		} catch (MalformedURLException ex) {
@@ -152,6 +161,8 @@ public final class DasSource {
 			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
 		} catch (IOException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+		} finally {
+			GeneralUtils.safeClose(stream);
 		}
 	}
 }

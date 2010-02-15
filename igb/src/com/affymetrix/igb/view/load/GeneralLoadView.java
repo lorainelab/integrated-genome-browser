@@ -202,10 +202,8 @@ public final class GeneralLoadView extends JComponent
 				}
 
 				@Override
-				public void done() {
-					Application.getSingleton().addNotLockedUpMsg("Loading previous genome...");
+				public void done() {				
 					RestorePersistentGenome();
-					Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
 				}
 			};
 
@@ -340,32 +338,36 @@ public final class GeneralLoadView extends JComponent
 		if (group == null) {
 			return;
 		}
+		BioSeq seq = Persistence.restoreSeqSelection(group);
+		if (seq == null) {
+			return;
+		}
 
 		Set<GenericVersion> gVersions = group.getVersions();
 		if (gVersions == null || gVersions.isEmpty()) {
 			return;
 		}
 		String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
-		if (versionName == null || GeneralLoadUtils.versionName2species.get(versionName) == null) {
+		if (versionName == null || GeneralLoadUtils.versionName2species.get(versionName) == null || gmodel.getSeqGroup(versionName) != group) {
 			return;
 		}
 
-		gmodel.addGroupSelectionListener(this);
-		if (group != gmodel.getSelectedSeqGroup()) {
-			gmodel.setSelectedSeqGroup(group);
+		if (gmodel.getSelectedSeqGroup() != null || gmodel.getSelectedSeq() != null) {
+			return;
 		}
+
+		Application.getSingleton().addNotLockedUpMsg("Loading previous genome...");
+
+		gmodel.addGroupSelectionListener(this);
+		gmodel.setSelectedSeqGroup(group);
 
 		initVersion(versionName);
 
-		// Select the persistent chromosome, and restore the span.
-		BioSeq seq = Persistence.restoreSeqSelection(group);
-		if (seq == null) {
-			seq = group.getSeq(0);
-		}
 		gmodel.addSeqSelectionListener(this);
-		if (gmodel.getSelectedSeq() != seq) {
-			gmodel.setSelectedSeq(seq);
-		}
+		gmodel.setSelectedSeq(seq);
+		
+		Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
+
 
 		// Try/catch may not be needed.
 		try {

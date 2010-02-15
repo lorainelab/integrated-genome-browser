@@ -47,6 +47,8 @@ import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.IGBConstants;
+import java.text.MessageFormat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,11 +65,10 @@ public final class GeneralLoadView extends JComponent
 	public static final GeneralLoadUtils glu = new GeneralLoadUtils();
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static final String SELECT_SPECIES = "Species";
-	private static final String SELECT_GENOME = "Genome Version";
-	private static final String GENOME_SEQ_ID = "genome";
-	private static final String ENCODE_REGIONS_ID = "encode_regions";
+	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
+	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
 	private static final String CHOOSE = "Choose";
+	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
 	private AnnotatedSeqGroup curGroup = null;
 	private final JComboBox versionCB;
 	private final JComboBox speciesCB;
@@ -131,14 +132,14 @@ public final class GeneralLoadView extends JComponent
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 3));
 
-		all_residuesB = new JButton("Load All Sequence");
-		all_residuesB.setToolTipText("Load nucleotide sequence");
+		all_residuesB = new JButton(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("allSequenceCap")));
+		all_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("nucleotideSequence")));
 		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
 		all_residuesB.setEnabled(false);
 		all_residuesB.addActionListener(this);
 		buttonPanel.add(all_residuesB);
-		partial_residuesB = new JButton("Load Sequence in View");
-		partial_residuesB.setToolTipText("Load partial nucleotide sequence");
+		partial_residuesB = new JButton(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("sequenceInViewCap")));
+		partial_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
 		
@@ -885,10 +886,9 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	private static boolean IsGenomeSequence() {
-		// hardwiring names for genome and encode virtual seqs, need to generalize this
 		BioSeq curSeq = gmodel.getSelectedSeq();
 		final String seqID = curSeq == null ? null : curSeq.getID();
-		return (seqID == null || ENCODE_REGIONS_ID.equals(seqID) || GENOME_SEQ_ID.equals(seqID));
+		return (seqID == null || IGBConstants.GENOME_SEQ_ID.equals(seqID));
 	}
 
 }

@@ -53,6 +53,6 @@ public interface IGBConstants {
 
 	public static final String UTF8 = "UTF-8";
 
-	public final static String GENOME_SEQ_ID = "genome";
+	public final static String GENOME_SEQ_ID = IGBConstants.BUNDLE.getString("genomeSeqID");
 	public final static String ENCODE_REGIONS_ID = "encode_regions";
 }

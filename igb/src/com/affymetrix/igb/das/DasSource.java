@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -44,13 +46,13 @@ public final class DasSource {
 	private boolean entries_initialized = false;
 	private boolean types_initialized = false;
 
-	public DasSource(URL server, URL master) {
+	DasSource(URL server, URL master) {
 		this.server = server;
 		this.master = master;
 		this.id = getID(master);
 	}
 
-	public static String getID(URL master) {
+	static String getID(URL master) {
 		String path = master.getPath();
 		return path.substring(1 + path.lastIndexOf('/'), path.length());
 	}
@@ -59,7 +61,7 @@ public final class DasSource {
 		return id;
 	}
 
-	public void add(String source) {
+	void add(String source) {
 		sources.add(source);
 	}
 
@@ -88,7 +90,7 @@ public final class DasSource {
 	}
 
 	/** Get entry points from das server. */
-	protected synchronized void initEntryPoints() {
+	private synchronized void initEntryPoints() {
 		InputStream stream = null;
 		try {
 			URL entryURL = new URL(master, master.getPath() + "/entry_points");
@@ -128,20 +130,32 @@ public final class DasSource {
 		entries_initialized = true;
 	}
 
-	protected synchronized void initTypes() {
+	private synchronized void initTypes() {
+		Set<String> badSources = new HashSet<String>();
+		
 		for (String source : sources) {
-			initType(source);
+			if (!initType(source)) {
+				badSources.add(source);
+			}
+		}
+		/* Remove any failed sources */
+		for (String source : badSources) {
+			sources.remove(source);
 		}
 		types_initialized = true;
 	}
 
-	protected void initType(String source) {
+	private boolean initType(String source) {
 		InputStream stream = null;
 		try {
 			URL typesURL = new URL(server, source + "/types");
 			URL testMasterURL = new URL(master, master.getPath() + "/types");
 			System.out.println("Das Types Request: " + typesURL);
 			stream = LocalUrlCacher.getInputStream(typesURL);
+			if (stream == null) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request failed for " + typesURL + ", skipping");
+				return false;
+			}
 			Document doc = XMLUtils.getDocument(stream);
 			NodeList typelist = doc.getElementsByTagName("TYPE");
 			System.out.println("types: " + typelist.getLength());
@@ -155,14 +169,19 @@ public final class DasSource {
 			}
 		} catch (MalformedURLException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+			return false;
 		} catch (ParserConfigurationException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+			return false;
 		} catch (SAXException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+			return false;
 		} catch (IOException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);
+			return false;
 		} finally {
 			GeneralUtils.safeClose(stream);
 		}
+		return true;
 	}
 }

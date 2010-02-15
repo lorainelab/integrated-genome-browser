@@ -164,7 +164,7 @@ public final class DasSource {
 				String typeid = typenode.getAttribute("id");
 
 				/* URL.equals() does DNS lookups! */
-				String name = typesURL.toString().equals(testMasterURL.toString()) ? null : source + "/" + typeid;
+				String name = URLEquals(typesURL, testMasterURL) ? null : source + "/" + typeid;
 				types.add(new DasType(server, typeid, source, name));
 			}
 		} catch (MalformedURLException ex) {
@@ -183,5 +183,26 @@ public final class DasSource {
 			GeneralUtils.safeClose(stream);
 		}
 		return true;
+	}
+
+	/**
+	 * Custom equals for URLs since the default implementation will do a DNS lookup
+	 * on both URLs.
+	 * 
+	 * @param url1
+	 * @param url2
+	 * @return true if the URLs are equal
+	 */
+	private static boolean URLEquals(URL url1, URL url2) {
+		int port1 = url1.getPort() == -1 ? url1.getDefaultPort() : url1.getPort();
+		int port2 = url2.getPort() == -1 ? url2.getDefaultPort() : url2.getPort();
+		String ref1 = url1.getRef() == null ? "" : url1.getRef();
+		String ref2 = url2.getRef() == null ? "" : url2.getRef();
+
+		return url1.getProtocol().equalsIgnoreCase(url2.getProtocol())
+				&& url1.getHost().equalsIgnoreCase(url2.getHost())
+				&& port1 == port2
+				&& url1.getFile().equals(url2.getFile())
+				&& ref1.equals(ref2);
 	}
 }

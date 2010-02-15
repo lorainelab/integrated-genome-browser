@@ -85,24 +85,9 @@ public final class ServerList {
 	 * @return GenericServer
 	 */
 	public static GenericServer addServer(ServerType serverType, String name, String url) {
-
-		return addServer(serverType, name, url, null, null);
-	}
-	
-	/**
-	 *
-	 * @param serverType
-	 * @param name
-	 * @param url
-	 * @param username
-	 * @param password
-	 * @return GenericServer
-	 */
-	public static GenericServer addServer(ServerType serverType, String name, String url, String username, String password) {
-
 		if (url2Name.get(url) == null) {
 			url2Name.put(url, name);
-			return initServer(serverType, url, name, username, password);
+			return initServer(serverType, url, name, true, false);
 		}
 		return null;
 	}
@@ -127,29 +112,28 @@ public final class ServerList {
 	 * @param name
 	 * @return initialized server
 	 */
-	private static GenericServer initServer(ServerType serverType, String url, String name, String username, String password) {
+	private static GenericServer initServer(ServerType serverType, String url, String name, boolean enabled, boolean hardcodedPrefs) {
 		GenericServer server = null;
 		try {
 			if (serverType == ServerType.Unknown) {
 				return null;
 			}
-
-			
 			if (serverType == ServerType.QuickLoad) {
 				String root_url = url;
 				if (!root_url.endsWith("/")) {
 					root_url = root_url + "/";
 				}
-				server = new GenericServer(name, root_url, serverType, root_url);
+				server = new GenericServer(name, root_url, serverType, hardcodedPrefs, root_url);
 			}
 			if (serverType == ServerType.DAS) {
 				DasServerInfo info = new DasServerInfo(url);
-				server = new GenericServer(name, info.getURL().toString(), serverType, info);
+				server = new GenericServer(name, info.getURL().toString(), serverType, hardcodedPrefs, info);
 			}
 			if (serverType == ServerType.DAS2) {
 				Das2ServerInfo info = new Das2ServerInfo(url, name, false);
-				server = new GenericServer(name, info.getURI().toString(), serverType, true, username, password, info);
+				server = new GenericServer(name, info.getURI().toString(), serverType, hardcodedPrefs, info);
 			}
+			server.enabled = enabled;
 			server2Name.put(server, name);
 			url2server.put(url, server);
 			return server;
@@ -189,7 +173,9 @@ public final class ServerList {
 				}
 
 				// Add the server
-				GenericServer server = addServer(serverType, server_name, serverURL, login, password);
+				GenericServer server = addServer(serverType, server_name, serverURL);
+				server.GenericServer.this.login = login;
+				server.password = password;
 
 				// Now set the enabled flag on the server
 				if (server != null) {

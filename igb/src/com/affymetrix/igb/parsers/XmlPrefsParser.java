@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.IGBConstants;
 import java.io.*;
@@ -238,7 +239,6 @@ public final class XmlPrefsParser {
 						the_name = tag;
 						val = new Boolean(el.getAttribute("val"));
 						prefs_hash.put(tag, val);
-					//            System.out.println("added boolean to prefs hash: tag = " + tag + ", val = " + val);
 					} else if (name.equalsIgnoreCase("keystroke")) {
 						the_name = el.getAttribute("function").toLowerCase();
 						String stroke = el.getAttribute("stroke").trim();
@@ -247,8 +247,6 @@ public final class XmlPrefsParser {
 							if (val != null) {
 								prefs_hash.put(the_name, val);
 							} else {
-//                                System.out.println("ERROR keystroke preference not understood: "+
-//                                  "function='"+the_name+"', stroke='"+stroke+"'" + "val=" + val);
 							}
 						}
 					} else if (el.hasAttribute("red")) {
@@ -268,7 +266,9 @@ public final class XmlPrefsParser {
 						String server_url = el.getAttribute("url");
 						String login = el.getAttribute("login");
 						String password = el.getAttribute("password");
-						ServerList.addServer(ServerType.DAS2, server_name, server_url, login, password);
+						GenericServer gServer = ServerList.addServer(ServerType.DAS2, server_name, server_url);
+						gServer.GenericServer.this.login = login;
+						gServer.password = password;
 					} else if (name.equalsIgnoreCase("server")) {
 						// new generic server format
 						String server_type = el.getAttribute("type").toLowerCase();

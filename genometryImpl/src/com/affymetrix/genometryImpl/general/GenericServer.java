@@ -14,39 +14,34 @@ import javax.swing.ImageIcon;
  */
 public final class GenericServer implements Comparable<GenericServer> {
 
-	public String serverName;   // name of the server.
-	public String URL;          // URL/file that points to the server.
-	public ServerType serverType;
-	public String login;				// Defaults to ""
-	public String password;			// Defaults to ""
-	public boolean enabled;			// Is this server enabled?
-	public final Object serverObj;    // Das2ServerInfo, DasServerInfo, ..., QuickLoad?
-	public final URL friendlyURL;			// friendly URL that users may look at.
-	private ImageIcon friendlyIcon = null;		// friendly icon that users may look at.
-	private boolean friendlyIconAttempted = false;	// Don't keep on searching for friendlyIcon
-	public int loginAttempts = 0;
-	private ServerStatus serverStatus = ServerStatus.NotInitialized;	// Is this server initialized?
-	private final Set<GenericVersion>versions = new CopyOnWriteArraySet<GenericVersion>();	// list of versions associated with this server
+	public String serverName;							// name of the server.
+	public String URL;									// URL/file that points to the server.
+	public ServerType serverType;						// DAS, DAS2, QuickLoad, Unknown (local file)
+	public final boolean hardcodedPreferences;			// Was this server added via the hardcoded preferences file?
+	public String login = "";						// to be used by DAS/2 authentication
+	public String password = "";						// to be used by DAS/2 authentication
+	public int loginAttempts = 0;						// to be used by DAS/2 authentication
+	public boolean enabled = true;								// Is this server enabled?
+	public final Object serverObj;						// Das2ServerInfo, DasServerInfo, ..., QuickLoad?
+	public final URL friendlyURL;						// friendly URL that users may look at.
+	private ImageIcon friendlyIcon = null;				// friendly icon that users may look at.
+	private boolean friendlyIconAttempted = false;		// Don't keep on searching for friendlyIcon
+	private ServerStatus serverStatus = 
+			ServerStatus.NotInitialized;				// Is this server initialized?
+	private final Set<GenericVersion>versions =
+			new CopyOnWriteArraySet<GenericVersion>();	// list of versions associated with this server
 
-	/**
-	 * @param serverName
-	 * @param URL
-	 * @param serverType
-	 * @param serverObj
-	 */
-	public GenericServer(String serverName, String URL, ServerType serverType, Object serverObj) {
-		this(serverName, URL, serverType, true, "", "", serverObj);
-	}
-
-	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, String login, String password, Object serverObj) {
+	public GenericServer(String serverName, String URL, ServerType serverType, boolean hardcodedPrefs, Object serverObj) {
 		this.serverName = serverName;
 		this.URL = URL;
 		this.serverType = serverType;
+		if (serverType == ServerType.Unknown) {
+			this.enabled = false;
+		}
 		this.serverObj = serverObj;
-		this.enabled = enabled;
-		this.login = login;				// to be used by DAS/2 authentication
-		this.password = password;			// to be used by DAS/2 authentication
+		this.hardcodedPreferences = hardcodedPrefs;
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
+
 	}
 	
 	public ImageIcon getFriendlyIcon() {

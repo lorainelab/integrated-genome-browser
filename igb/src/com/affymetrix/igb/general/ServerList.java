@@ -174,7 +174,7 @@ public final class ServerList {
 
 				// Add the server
 				GenericServer server = addServer(serverType, server_name, serverURL);
-				server.GenericServer.this.login = login;
+				server.login = login;
 				server.password = password;
 
 				// Now set the enabled flag on the server

@@ -267,7 +267,7 @@ public final class XmlPrefsParser {
 						String login = el.getAttribute("login");
 						String password = el.getAttribute("password");
 						GenericServer gServer = ServerList.addServer(ServerType.DAS2, server_name, server_url);
-						gServer.GenericServer.this.login = login;
+						gServer.login = login;
 						gServer.password = password;
 					} else if (name.equalsIgnoreCase("server")) {
 						// new generic server format

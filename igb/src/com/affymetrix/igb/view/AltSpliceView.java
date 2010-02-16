@@ -296,8 +296,6 @@ public class AltSpliceView extends JComponent
 			return;
 		}
 
-		List selected_labels = handler.getSelectedTierLabels();
-
 		Action hide_action = new AbstractAction("Hide Tier") {
 
 			public void actionPerformed(ActionEvent e) {
@@ -315,7 +313,7 @@ public class AltSpliceView extends JComponent
 			}
 		};
 
-		hide_action.setEnabled(!selected_labels.isEmpty());
+		hide_action.setEnabled(!handler.getSelectedTierLabels().isEmpty());
 		restore_all_action.setEnabled(true);
 
 		if (popup.getComponentCount() > 0) {

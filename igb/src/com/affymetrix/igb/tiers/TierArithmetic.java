@@ -70,7 +70,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 	}
 
 	private void addUnionTier() {
-		List selected = handler.getSelectedTiers();
+		List<TierGlyph> selected = handler.getSelectedTiers();
 		if (!selected.isEmpty()) {
 			addUnionTier(selected);
 		} else {
@@ -79,10 +79,10 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 	}
 
 	private void addExclusiveTier(boolean exclusiveA) {
-		List selected = handler.getSelectedTiers();
+		List<TierGlyph> selected = handler.getSelectedTiers();
 		if (selected.size() == 2) {
-			TierGlyph tierA = (TierGlyph) selected.get(0);
-			TierGlyph tierB = (TierGlyph) selected.get(1);
+			TierGlyph tierA = selected.get(0);
+			TierGlyph tierB = selected.get(1);
 			addExclusiveTier(tierA, tierB, exclusiveA);
 		} else {
 			ErrorHandler.errorPanel("Must select two and only two tiers for union");
@@ -90,10 +90,10 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 	}
 
 	private void addXorTier() {
-		List selected = handler.getSelectedTiers();
+		List<TierGlyph> selected = handler.getSelectedTiers();
 		if (selected.size() == 2) {
-			TierGlyph tierA = (TierGlyph) selected.get(0);
-			TierGlyph tierB = (TierGlyph) selected.get(1);
+			TierGlyph tierA = selected.get(0);
+			TierGlyph tierB = selected.get(1);
 			addXorTier(tierA, tierB);
 		} else {
 			ErrorHandler.errorPanel("Must select two and only two tiers for XOR(A,B)");
@@ -101,9 +101,9 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 	}
 
 	private void addNotTier() {
-		List selected = handler.getSelectedTiers();
+		List<TierGlyph> selected = handler.getSelectedTiers();
 		if (selected.size() == 1) {
-			TierGlyph tierA = (TierGlyph) selected.get(0);
+			TierGlyph tierA = selected.get(0);
 			addNotTier(tierA);
 		} else {
 			ErrorHandler.errorPanel("Must select one and only one tier for NOT(A)");
@@ -111,10 +111,10 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 	}
 
 	private void addIntersectTier() {
-		List selected = handler.getSelectedTiers();
+		List<TierGlyph> selected = handler.getSelectedTiers();
 		if (selected.size() == 2) {
-			TierGlyph tierA = (TierGlyph) selected.get(0);
-			TierGlyph tierB = (TierGlyph) selected.get(1);
+			TierGlyph tierA = selected.get(0);
+			TierGlyph tierB = selected.get(1);
 			addIntersectTier(tierA, tierB);
 		} else {
 			ErrorHandler.errorPanel("Must select two and only two tiers for intersection");
@@ -225,7 +225,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		if (handler != this.handler) {
 			throw new RuntimeException("");
 		}
-		List labels = handler.getSelectedTierLabels();
+		List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
 		int num_selected = labels.size();
 		boolean all_are_annotations = areAllAnnotations(labels);
 
@@ -240,10 +240,8 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		popup.add(combineMenu);
 	}
 
-	private static boolean areAllAnnotations(List labels) {
-		int num_selected = labels.size();
-		for (int i = 0; i < num_selected; i++) {
-			TierLabelGlyph tlg = (TierLabelGlyph) labels.get(i);
+	private static boolean areAllAnnotations(List<TierLabelGlyph> labels) {
+		for (TierLabelGlyph tlg : labels) {
 			if (tlg.getReferenceTier().getAnnotStyle().isGraphTier()) {
 				return false;
 			}

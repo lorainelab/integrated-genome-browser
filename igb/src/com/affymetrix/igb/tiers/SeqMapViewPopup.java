@@ -197,10 +197,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   
   private final Action delete_action = new AbstractAction("Delete selected tiers (NOT IMPLEMENTED") {
     public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTierLabels();
       if (Application.confirmPanel("Really remove selected tiers?\n"+
           "Data will be removed from all chromosomes on this genome.")) {
-        removeTiers(current_tiers);
+        removeTiers(handler.getSelectedTierLabels());
       }
     }
   };
@@ -357,8 +356,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   /** Hides multiple tiers and then repacks.
    *  @param tiers  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
    */
-  private void hideTiers(List<GlyphI> tiers) {
-    for (GlyphI g : tiers) {
+  private void hideTiers(List<TierLabelGlyph> tiers) {
+    for (TierLabelGlyph g : tiers) {
       if (g.getInfo() instanceof TierGlyph) {
         TierGlyph tier = (TierGlyph) g.getInfo();
         hideOneTier(tier);
@@ -704,8 +703,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
   // purely for debugging
 	private void doDebugAction() {
-		List<TierGlyph> current_tiers = handler.getSelectedTiers();
-		for (TierGlyph tg : current_tiers) {
+		for (TierGlyph tg : handler.getSelectedTiers()) {
 			IAnnotStyle style = tg.getAnnotStyle();
 			System.out.println("Tier: " + tg);
 			System.out.println("Style: " + style);

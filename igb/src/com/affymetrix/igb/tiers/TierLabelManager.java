@@ -54,20 +54,28 @@ public final class TierLabelManager {
   }
   
   /** Returns a list of TierGlyph items representing the selected tiers. */
-  List<TierGlyph> getSelectedTiers() {
-    List<TierGlyph> selected_tiers = new ArrayList<TierGlyph>();
+ List<TierGlyph> getSelectedTiers() {
+		List<TierGlyph> selected_tiers = new ArrayList<TierGlyph>();
 
-		for (GlyphI tlg : (List<GlyphI>)getSelectedTierLabels()) {
-      // TierGlyph should be data model for tier label, access via label.getInfo()
-      TierGlyph tier = (TierGlyph)tlg.getInfo();
-      selected_tiers.add(tier);
-    }
-    return selected_tiers;
-  }
-  
+		for (TierLabelGlyph tlg : getSelectedTierLabels()) {
+			// TierGlyph should be data model for tier label, access via label.getInfo()
+			TierGlyph tier = (TierGlyph) tlg.getInfo();
+			selected_tiers.add(tier);
+		}
+		return selected_tiers;
+	}
+
   /** Returns a list of selected TierLabelGlyph items. */
-  public List getSelectedTierLabels() {
-    return labelmap.getSelected();
+  @SuppressWarnings("unchecked")
+  public List<TierLabelGlyph> getSelectedTierLabels() {
+	  // The below loop is unnecessary, but is done to fix generics compiler warnings.
+	  List<TierLabelGlyph> tlg = new ArrayList<TierLabelGlyph>(labelmap.getSelected().size());
+	  for (GlyphI g : labelmap.getSelected()) {
+		  if (g instanceof TierLabelGlyph) {
+			  tlg.add((TierLabelGlyph)g);
+		  }
+	  }
+    return tlg;
   }
 
   /** Returns a list of all TierLabelGlyph items. */
@@ -185,8 +193,8 @@ public final class TierLabelManager {
    *  @param tier_labels  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
    *  @param fit_y  Whether to change the zoom to fit all the tiers in the view
    */
-  public void hideTiers(List<GlyphI> tier_labels, boolean full_repack, boolean fit_y) {
-		for (GlyphI g : tier_labels) {
+  public void hideTiers(List<TierLabelGlyph> tier_labels, boolean full_repack, boolean fit_y) {
+		for (TierLabelGlyph g : tier_labels) {
       if (g.getInfo() instanceof TierGlyph) {
         TierGlyph tier = (TierGlyph) g.getInfo();
         tier.getAnnotStyle().setShow(false);

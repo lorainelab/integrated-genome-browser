@@ -133,11 +133,6 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     }
     thing.setApplication(app);
   }
-
-  //boolean insert(JTree tree, TreePath tree_path, Bookmark b) {
-  //  DefaultMutableTreeNode node = (DefaultMutableTreeNode) new BookmarkList(b);    
-  //  return insert(tree, tree_path, new DefaultMutableTreeNode[] {node});
-  //}
   
   boolean insert(JTree tree, TreePath tree_path, DefaultMutableTreeNode[] nodes) {
     if (tree_path == null) {
@@ -639,7 +634,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
           bl = new BookmarkList("Folder");
         } else if (type==2) {
           try {
-            Bookmark b = new Bookmark("Bookmark", Bookmark.constructURL(Collections.EMPTY_MAP));
+            Bookmark b = new Bookmark("Bookmark", Bookmark.constructURL(Collections.<String,String[]>emptyMap()));
             bl = new BookmarkList(b);
           } catch (MalformedURLException mue) {
             mue.printStackTrace();

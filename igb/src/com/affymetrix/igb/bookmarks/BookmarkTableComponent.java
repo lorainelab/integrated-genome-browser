@@ -1,16 +1,3 @@
-/**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -19,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.table.TableCellEditor;
 
 /**
  * A JTable-based GUI editor for a Bookmark (or any URL).
@@ -32,13 +20,12 @@ import javax.swing.*;
 public final class BookmarkTableComponent {
   private static final boolean DEBUG = true;
 
-  JPanel main_box = new JPanel();
+  private final JPanel main_box = new JPanel();
   
-  BookmarkTableModel data_model;
-  JTable table;
-  Bookmark the_bm;
-  JTextField url_field = new JTextField(30);
-  JLabel url_label = new JLabel("URL:");
+  private final BookmarkTableModel data_model;
+  private final JTable table;
+  private JTextField url_field = new JTextField(30);
+  private final JLabel url_label = new JLabel("URL:");
   
   public BookmarkTableComponent() {
     main_box.setLayout(new BorderLayout());
@@ -68,14 +55,14 @@ public final class BookmarkTableComponent {
   }
     
   public void stopEditing() {
-    javax.swing.table.TableCellEditor ed = table.getCellEditor();
+    TableCellEditor ed = table.getCellEditor();
     if (ed != null) {
       ed.stopCellEditing();
     }
   }
 
   public void cancelEditing() {
-    javax.swing.table.TableCellEditor ed = table.getCellEditor();
+    TableCellEditor ed = table.getCellEditor();
     if (ed != null) {
       ed.cancelCellEditing();
     }
@@ -86,13 +73,13 @@ public final class BookmarkTableComponent {
    */
   public boolean setBookmarkFromGUI(Bookmark the_bm) {
     boolean ok = true;
-    if (DEBUG) System.out.println("Before: "+the_bm.getURL().toExternalForm());
+    if (DEBUG) {
+		System.out.println("Before: "+the_bm.getURL().toExternalForm());
+	}
     
     stopEditing();
-    
-    Map map = data_model.getValuesAsMap();
 
-    String str = Bookmark.constructURL(url_field.getText().trim(), map);
+    String str = Bookmark.constructURL(url_field.getText().trim(), data_model.getValuesAsMap());
     try {
       URL url = new URL(str);
       the_bm.setURL(url);
@@ -101,7 +88,9 @@ public final class BookmarkTableComponent {
       ErrorHandler.errorPanel(frame, "Error", "Cannot construct bookmark: " + e.getMessage(), null);
       ok = false;
     }
-    if (DEBUG) System.out.println("After: "+the_bm.getURL().toExternalForm());
+    if (DEBUG) {
+		System.out.println("After: "+the_bm.getURL().toExternalForm());
+	}
     
     return ok;
   }

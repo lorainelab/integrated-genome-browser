@@ -28,6 +28,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.*;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import org.xml.sax.InputSource;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -60,6 +63,8 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.threads.InvokeUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.parsers.ChpParser;
+import com.affymetrix.igb.util.ThreadUtils;
+import java.util.concurrent.Executor;
 import org.xml.sax.SAXException;
 
 /**
@@ -152,7 +157,7 @@ public final class LoadFileAction {
 	}
 
 	/** Load a file into the global singleton genometry model. */
-	private static void loadFile(GenometryModel gmodel, FileTracker load_dir_tracker, JFrame gviewerFrame) {
+	private static void loadFile(final GenometryModel gmodel, final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
 
 		MergeOptionFileChooser chooser = getFileChooser();
 		File currDir = load_dir_tracker.getFile();
@@ -181,26 +186,52 @@ public final class LoadFileAction {
 		}
 
 		load_dir_tracker.setFile(chooser.getCurrentDirectory());
-		File[] fils = chooser.getSelectedFiles();
 
-		AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
-		BioSeq previous_seq = gmodel.getSelectedSeq();
-
-		BioSeq new_seq = null;
-
-		if (!chooser.merge_button.isSelected()) {
+		final File[] fils = chooser.getSelectedFiles();
+		final AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
+		final BioSeq previous_seq = gmodel.getSelectedSeq();
+		final boolean mergeSelected = chooser.merge_button.isSelected();
+		if (!mergeSelected) {
 			// Not merging, so create a new Seq Group
 			unknown_group_count++;
-			String new_name = chooser.genome_name_TF.getText();
-			AnnotatedSeqGroup new_group = gmodel.addSeqGroup(new_name);
-			// Due to threading -- needed to pass in new group, rather than setting it and then querying that property.
-			new_seq = loadFilesIntoSeq(fils, gviewerFrame, gmodel, new_group, gmodel.getSelectedSeq());
-			gmodel.setSelectedSeqGroup(new_group);
-		} else {
-			new_seq = loadFilesIntoSeq(fils, gviewerFrame, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 		}
+		
+		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(chooser.genome_name_TF.getText());
 
-		setGroupAndSeq(gmodel, previous_seq_group, previous_seq, new_seq);
+		Executor vexec = ThreadUtils.getPrimaryExecutor(loadGroup);
+
+		Application.getSingleton().addNotLockedUpMsg("Loading file " + fils[0].getName());
+		
+		SwingWorker<BioSeq, Void> worker = new SwingWorker<BioSeq, Void>() {
+			public BioSeq doInBackground() {
+				BioSeq new_seq = null;
+				try {
+					new_seq = loadFilesIntoSeq(fils, gviewerFrame, gmodel, loadGroup, gmodel.getSelectedSeq());
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				return new_seq;
+			}
+
+			@Override
+			public void done() {
+				if (!mergeSelected) {
+					gmodel.setSelectedSeqGroup(loadGroup);
+				}
+				try {
+					setGroupAndSeq(gmodel, previous_seq_group, previous_seq, get());
+				} catch (InterruptedException ex) {
+					Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
+				} catch (ExecutionException ex) {
+					Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
+				}
+				Application.getSingleton().removeNotLockedUpMsg("Loading file " + fils[0].getName());
+			}
+		};
+
+		vexec.execute(worker);
+
+		
 	}
 
 	

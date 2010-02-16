@@ -66,7 +66,7 @@ public abstract class BookmarkController {
     if (bm.isUnibrowControl()) {
       if (DEBUG) System.out.println("****** Viewing internal control bookmark: "+bm.getURL().toExternalForm());
       try {
-        Map props = Bookmark.parseParameters(bm.getURL());
+        Map<String, String[]> props = Bookmark.parseParameters(bm.getURL());
         UnibrowControlServlet.goToBookmark(app, props);
       } catch (Exception e) {
         String message = e.getClass().getName() + ": " + e.getMessage();

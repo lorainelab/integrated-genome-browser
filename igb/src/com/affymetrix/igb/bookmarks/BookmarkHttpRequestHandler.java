@@ -72,7 +72,6 @@ class BookmarkHttpRequestHandler implements Runnable {
     }
   }
 
-  @SuppressWarnings("unchecked")
 	private void parseAndGoToBookmark(String command) throws NumberFormatException {
 		Application.logDebug("Command = " + command);
 		// at this point, the command will look something like this:
@@ -83,7 +82,7 @@ class BookmarkHttpRequestHandler implements Runnable {
 		int index = command.indexOf('?');
 		if (index >= 0 && index < command.length()) {
 			params = command.substring(index + 1);
-			Map paramMap = new HashMap();
+			Map<String, String[]> paramMap = new HashMap<String, String[]>();
 			Bookmark.parseParametersFromQuery(paramMap, params, true);
 			UnibrowControlServlet.goToBookmark(app, paramMap);
 		}

@@ -219,11 +219,11 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
 	static void zoomToSeqAndSpan(String chrom_text, int start, int end) throws NumberFormatException {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		if (gmodel.getSelectedSeqGroup() != null) {
-			Map<String, String> m = new HashMap<String, String>();
-			m.put(Bookmark.SEQID, chrom_text);
-			m.put(Bookmark.START, Integer.toString(start));
-			m.put(Bookmark.END, Integer.toString(end));
-			m.put(Bookmark.VERSION, gmodel.getSelectedSeqGroup().getID());
+			Map<String, String[]> m = new HashMap<String, String[]>();
+			m.put(Bookmark.SEQID, new String[] {chrom_text});
+			m.put(Bookmark.START, new String[] {Integer.toString(start)});
+			m.put(Bookmark.END, new String[] {Integer.toString(end)});
+			m.put(Bookmark.VERSION, new String[] {gmodel.getSelectedSeqGroup().getID()});
 			UnibrowControlServlet.goToBookmark(Application.getSingleton(), m);
 		}
 	}

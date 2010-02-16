@@ -96,7 +96,7 @@ public final class UnibrowControlServlet {
 	 *  objects.  For example, this could be the Map returned by
 	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
-	public static void goToBookmark(Application uni, Map parameters) throws NumberFormatException {
+	public static void goToBookmark(Application uni, Map<String, String[]> parameters) throws NumberFormatException {
 		String seqid = getStringParameter(parameters, Bookmark.SEQID);
 		String version = getStringParameter(parameters, Bookmark.VERSION);
 		String start_param = getStringParameter(parameters, Bookmark.START);
@@ -115,7 +115,7 @@ public final class UnibrowControlServlet {
 		//    Checks to avoid double-loading of files
 		//    Loading can freeze the GUI
 		//    Can be any URL, not just a file
-		String[] graph_files = (String[]) parameters.get("graph_file");
+		String[] graph_files = parameters.get("graph_file");
 		boolean has_graph_source_urls = (parameters.get("graph_source_url_0") != null);
 
 		boolean ok = goToBookmark(uni, seqid, version, start_param, end_param, select_start_param, select_end_param, graph_files);
@@ -127,10 +127,10 @@ public final class UnibrowControlServlet {
 			BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
 		}
 
-		String[] das2_query_urls = (String[]) parameters.get(Bookmark.DAS2_QUERY_URL);
-		String[] das2_server_urls = (String[]) parameters.get(Bookmark.DAS2_SERVER_URL);
-		String[] data_urls = (String[]) parameters.get(Bookmark.DATA_URL);
-		String[] url_file_extensions = (String[]) parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
+		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
+		String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+		String[] data_urls = parameters.get(Bookmark.DATA_URL);
+		String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
 		loadDataFromURLs(uni, data_urls, url_file_extensions, null);
 		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
 

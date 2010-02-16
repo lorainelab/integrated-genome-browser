@@ -162,11 +162,12 @@ public final class GeneralLoadUtils {
 	 */
 	private synchronized static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
-		if (server.getDataSources() == null || server.getDataSources().values() == null || server.getDataSources().values().isEmpty()) {
+		Map<String,DasSource> sources = server.getDataSources();
+		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
 			return false;
 		}
-		for (DasSource source : server.getDataSources().values()) {
+		for (DasSource source : sources.values()) {
 			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getID());
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
 			String versionID = source.getID();
@@ -183,11 +184,12 @@ public final class GeneralLoadUtils {
 	 */
 	private synchronized static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-		if (server.getSources() == null || server.getSources().values() == null || server.getSources().values().isEmpty()) {
+		Map<String,Das2Source> sources = server.getSources();
+		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
 			return false;
 		}
-		for (Das2Source source : server.getSources().values()) {
+		for (Das2Source source : sources.values()) {
 			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getName());
 			
 			// Das/2 has versioned sources.  Get each version.

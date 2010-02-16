@@ -161,12 +161,6 @@ final class Xml2GenometryParser {
                 chrom.setResidues(residues);
                 try {
                         int start = Integer.parseInt(((Element) child).getAttribute("start"));
-//                        int end = Integer.parseInt(((Element) child).getAttribute("end"));
-//                        if (start < end) {
-//                            end++;
-//                        } else {
-//                            start++;
-//                        }
                         chrom.setBounds(start, start+residues.length());
                     } catch (Exception e) {
                         //e.printStackTrace();
@@ -420,14 +414,10 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
     private void processGene(BioSeq genomic, Element elem) {
-        int start = Integer.parseInt(elem.getAttribute("start"));
-        int end = Integer.parseInt(elem.getAttribute("end"));
-//        if (start < end) {
-//            end++;
-//        } else {
-//            start++;
-//        }
+       
         if (DEBUG) {
+			int start = Integer.parseInt(elem.getAttribute("start"));
+			int end = Integer.parseInt(elem.getAttribute("end"));
             System.err.println("gene:  start = " + start + "  end = " + end);
         }
 
@@ -448,14 +438,9 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
     private void processTranscript(BioSeq genomic, Element elem) {
-        int start = Integer.parseInt(elem.getAttribute("start"));
-        int end = Integer.parseInt(elem.getAttribute("end"));
-//        if (start < end) {
-//            end++;
-//        } else {
-//            start++;
-//        }
         if (DEBUG) {
+			int start = Integer.parseInt(elem.getAttribute("start"));
+			int end = Integer.parseInt(elem.getAttribute("end"));
             System.err.println("transcript:  start = " + start + "  end = " + end);
         }
         NodeList children = elem.getChildNodes();
@@ -484,11 +469,6 @@ final class Xml2GenometryParser {
     private void processMRNA(BioSeq genomic, Element elem) {
         int start = Integer.parseInt(elem.getAttribute("start"));
         int end = Integer.parseInt(elem.getAttribute("end"));
-//        if (start < end) {
-//            end++;
-//        } else {
-//            start++;
-//        }
 
         try
         {
@@ -729,11 +709,6 @@ final class Xml2GenometryParser {
         //  GAH 10-6-2001
         int start = Integer.parseInt(elem.getAttribute("start"));
         int end = Integer.parseInt(elem.getAttribute("end"));
-//        if (start < end) {
-//            end++;
-//        } else {
-//            start++;
-//        }
 
          if(isNegative){
 

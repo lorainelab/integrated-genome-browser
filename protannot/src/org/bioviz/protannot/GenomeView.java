@@ -395,9 +395,9 @@ final class GenomeView extends JPanel implements MouseListener{
         }
 
 		seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
-                ((gseq.getMin()+gseq.getMax())/2));
+                ((gseq.getMin()+gseq.getMax())/2.0));
         axismap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
-                ((gseq.getMin()+gseq.getMax())/2));
+                ((gseq.getMin()+gseq.getMax())/2.0));
 		
         seqmap.updateWidget();
         axismap.updateWidget();
@@ -826,8 +826,8 @@ final class GenomeView extends JPanel implements MouseListener{
                 candidate = gl.getParent().getInfo();
                     if (candidate instanceof SymWithProps) {
                         SymWithProps parent = (SymWithProps) candidate;
-                        for(Entry E: parent.getProperties().entrySet())
-                            info.setProperty((String) E.getKey(),E.getValue());
+                        for(Entry<String,Object> E: parent.getProperties().entrySet())
+                            info.setProperty(E.getKey(),E.getValue());
                     }
             } else {
                 if (candidate instanceof SimpleMutableSeqSymmetry && exonList.contains((SeqSymmetry) candidate)) {
@@ -839,7 +839,7 @@ final class GenomeView extends JPanel implements MouseListener{
                     candidate = gl.getParent().getInfo();
                     if (candidate instanceof SymWithProps) {
                         info = (SymWithProps) candidate;
-                        for(Entry E: props.entrySet())
+                        for(Entry<Object,Object> E: props.entrySet())
                             info.setProperty( (String) E.getKey(),E.getValue());
                     }
                 }

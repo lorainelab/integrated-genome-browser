@@ -778,16 +778,13 @@ final class Xml2GenometryParser {
             attr = elem.getAttribute("start");
         }
         int start = Integer.parseInt(attr);
-        /**
-        because transstop currently indicates first base of stop codon (rather than
-        last base of actual translation), forgoing the usual +1 addition...
-         */
-        //    int end = Integer.parseInt(elem.getAttribute("transstop")) + 1;
+
+		// transstop indicates last base of actual translation
         attr = elem.getAttribute("transstop");
         if (attr == null || attr.length() == 0) {
             attr = elem.getAttribute("end");
         }
-        int end = Integer.parseInt(attr) - 1;
+        int end = Integer.parseInt(attr);
 
         if(isNegative){
 
@@ -797,11 +794,7 @@ final class Xml2GenometryParser {
         }
 
         checkTranslationLength(start,end);
-        //    if (start < end) { end++; } else { start++; }
-//        if (end < start) {
-//            start++;
-//            end++;
-//        }
+        
 
         // could just do this as a single seq span (start, end, seq), but then would end up recreating
         //   the cds segments, which will get ignored afterwards...
@@ -861,7 +854,7 @@ final class Xml2GenometryParser {
 			//System.out.println(",added length: " + (length - old_length));
         }
 
-        if(length%3 != 0)
-            System.out.println("WARNING:  Translation length is " + length + " and remainder is " + length%3);
+        if(length % 3 != 0)
+            System.out.println("WARNING:  Translation length is " + length + " and remainder modulo 3 is " + length % 3);
     }
 }

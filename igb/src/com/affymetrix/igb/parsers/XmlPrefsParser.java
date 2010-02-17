@@ -108,7 +108,7 @@ child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
  */
 public final class XmlPrefsParser {
 
-	static Class default_factory_class =
+	static Class<?> default_factory_class =
 					com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
 	private static final String FILENAME_LIST = "FILENAME_LIST";
 	/** The name of a Map used to link exact names to glyph factories.
@@ -168,9 +168,6 @@ public final class XmlPrefsParser {
 
 	@SuppressWarnings("unchecked")
 	private static Map processDocument(Document prefsdoc, Map prefs_hash) {
-		Map type2factory = getNamedMap(prefs_hash, MATCH_FACTORIES);
-		Map regex2factory = getNamedMap(prefs_hash, REGEX_FACTORIES);
-
 		Element top_element = prefsdoc.getDocumentElement();
 		String topname = top_element.getTagName();
 		if (!(topname.equalsIgnoreCase("prefs"))) {
@@ -192,7 +189,7 @@ public final class XmlPrefsParser {
 
 				try {
 					if (name.equalsIgnoreCase("annotation_style")) {
-						processAnnotStyle(el, type2factory, regex2factory);
+						processAnnotStyle(el);
 					} else if (name.equalsIgnoreCase("annotation_url")) {
 						processLinkUrl(el);
 					} else if (name.equalsIgnoreCase("annotation_style_defaults")) {
@@ -340,14 +337,13 @@ public final class XmlPrefsParser {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void processAnnotStyle(Element el, Map type2factory, Map regex2factory) {
+	private static void processAnnotStyle(Element el) {
 		/*  Builds two hash tables:
 		 *  type2factory ==> hash of "annot_type" attribute mapped to MapViewGlyphFactoryI
 		 *  regex2factory ==> hash of RE objects derived from "annot_starts_with",
 		 *      "annot_ends_with", and "annot_regex" fields mapped to MapViewGlyphFactoryI
 		 */
-		Class factory_class = default_factory_class;
+		Class<?> factory_class = default_factory_class;
 		Map<String, String> attmap = XmlPrefsParser.getAttributeMap(el);
 		// add colors
 		XmlPrefsParser.addColors(el, attmap);
@@ -355,7 +351,6 @@ public final class XmlPrefsParser {
 		// annotation_style element _must_ have and annot_type attribute
 		// planning to relax this at some point to allow for element to have one (and only one) of:
 		//     annot_type, annot_type_starts_with, annot_type_ends_with, annot_type_regex...
-		String annot_type = attmap.get("annot_type");
 		if (attmap.get("factory") != null) {
 			String factory_name = null;
 			try {
@@ -364,40 +359,11 @@ public final class XmlPrefsParser {
 			} catch (ClassNotFoundException ex) {
 				System.out.println("ERROR: Class '" + factory_name + "' specified in the preferences file can not be found");
 				factory_class = default_factory_class;
-			} catch (Exception e) {
-				System.out.println("ERROR: Exception while processing preferences mapping annot_type " + annot_type + " to factory " + factory_name + ":\n" + e.toString());
 			}
 		}
 		try {
 			MapViewGlyphFactoryI factory = (MapViewGlyphFactoryI) factory_class.newInstance();
 			factory.init(attmap);
-			if (annot_type != null) {
-				type2factory.put(annot_type, factory);
-			} else {
-				String regex_string = null;
-				try {
-					String annot_starts_with = attmap.get("annot_type_starts_with");
-					String annot_ends_with = attmap.get("annot_type_ends_with");
-					String annot_regex = attmap.get("annot_type_regex");
-					if (annot_starts_with != null) {
-						regex_string = "^" + annot_starts_with;
-					//            System.out.println("regex string: " + regex_string);
-					} else if (annot_ends_with != null) {
-						regex_string = annot_ends_with + "$";
-					} else if (annot_regex != null) {
-						regex_string = annot_regex;
-					}
-					if (regex_string != null) {
-						Pattern regex = Pattern.compile(regex_string);
-						if (regex != null) {
-							//System.out.println("mapping regex to factory: "+regex_string+" --> "+factory.getClass().getName());
-							regex2factory.put(regex, factory);
-						}
-					}
-				} catch (PatternSyntaxException pse) {
-					System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
-				}
-			}
 		} catch (InstantiationException ex) {
 			System.out.println("ERROR: Could not instantiate a glyph factory while processing preferences file: " + factory_class);
 		} catch (IllegalAccessException ex) {

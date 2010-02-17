@@ -126,38 +126,13 @@ public final class XmlPrefsParser {
 
 	private XmlPrefsParser() { }
 
-	/** Allows you to keep track of which files preferences were read from.
-	 *  Add as many names as you want to this list, and retrieve them later
-	 *  with {@link #getFilenames}.
-	 */
-	private static void addFilename(String filename, Map prefs_hash) {
-		if (filename != null && filename.length() > 0) {
-			List<String> filenames = getFilenames(prefs_hash);
-			filenames.add(filename);
-		}
-	}
-
-	/** Returns a List of Strings added with {@link #addFilename}.
-	 *  The list can be empty but is never null.
-	 */
 	@SuppressWarnings("unchecked")
-	private static List<String> getFilenames(Map prefs_hash) {
-		List<String> filenames = (List) prefs_hash.get(FILENAME_LIST);
-		if (filenames == null) {
-			filenames = new ArrayList<String>(4);
-			prefs_hash.put(FILENAME_LIST, filenames);
-		}
-		return filenames;
-	}
-
-
-	@SuppressWarnings("unchecked")
-	public static Map parse(InputStream istr, String file_name, Map<String, Map> prefs_hash) {
+	public static Map parse(InputStream istr, Map<String, Map> prefs_hash) {
 		try {
 			InputSource insrc = new InputSource(istr);
-			prefs_hash = parse(insrc, file_name, prefs_hash);
+			prefs_hash = parse(insrc, prefs_hash);
 		} catch (Exception ex) {
-			System.err.println("ERROR while reading preferences " + file_name);
+			System.err.println("ERROR while reading preferences");
 			System.err.println("  " + ex.toString());
 			ex.printStackTrace();
 		}
@@ -165,13 +140,13 @@ public final class XmlPrefsParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Map parse(InputSource insource, String file_name, Map<String, Map> prefs_hash) {
+	private static Map parse(InputSource insource, Map<String, Map> prefs_hash) {
 		try {
 			//      System.out.println("parsing from source: " + insource);
 			Document prefsdoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(insource);
-			prefs_hash = processDocument(prefsdoc, file_name, prefs_hash);
+			prefs_hash = processDocument(prefsdoc, prefs_hash);
 		} catch (Exception ex) {
-			System.err.println("ERROR while reading preferences " + file_name);
+			System.err.println("ERROR while reading preferences");
 			System.err.println("  " + ex.toString());
 			ex.printStackTrace();
 		}
@@ -192,8 +167,7 @@ public final class XmlPrefsParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Map processDocument(Document prefsdoc, String file_name, Map prefs_hash) {
-		addFilename(file_name, prefs_hash);
+	private static Map processDocument(Document prefsdoc, Map prefs_hash) {
 		Map type2factory = getNamedMap(prefs_hash, MATCH_FACTORIES);
 		Map regex2factory = getNamedMap(prefs_hash, REGEX_FACTORIES);
 

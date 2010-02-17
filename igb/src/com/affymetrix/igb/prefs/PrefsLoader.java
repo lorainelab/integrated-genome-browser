@@ -86,7 +86,7 @@ public abstract class PrefsLoader {
 				return;
 			}
 			System.out.println("loading default prefs from: " + IGBConstants.default_prefs_resource);
-			XmlPrefsParser.parse(default_prefs_stream, "", prefs_hash);
+			XmlPrefsParser.parse(default_prefs_stream, prefs_hash);
 		} catch (Exception ex) {
 			System.out.println("Problem parsing prefs from: " + IGBConstants.default_prefs_resource);
 			ex.printStackTrace();
@@ -138,7 +138,7 @@ public abstract class PrefsLoader {
 		try {
 			prefs_url_stream = LocalUrlCacher.getInputStream(prefs_url);
 			System.out.println("loading prefs from url: " + prefs_url);
-			XmlPrefsParser.parse(prefs_url_stream, prefs_url, prefs_hash);
+			XmlPrefsParser.parse(prefs_url_stream, prefs_hash);
 		} catch (IOException ex) {
 			System.out.println("Problem parsing prefs from url: " + prefs_url);
 			System.out.println("Caused by: " + ex.toString());
@@ -163,7 +163,7 @@ public abstract class PrefsLoader {
 				if (fil.exists()) {
 					System.out.println("loading user prefs from: " + fileOrURL);
 					strm = new FileInputStream(fil);
-					XmlPrefsParser.parse(strm, fil.getCanonicalPath(), prefs_hash);
+					XmlPrefsParser.parse(strm, prefs_hash);
 				} else if (fileOrURL.startsWith("http:")) {
 						System.out.println("loading user prefs from: " + fileOrURL);
 						LoadPreferencesFromURL(fileOrURL);
@@ -171,7 +171,7 @@ public abstract class PrefsLoader {
 					fil = new File(new URI(fileOrURL));
 					System.out.println("loading user prefs from: " + fileOrURL);
 					strm = new FileInputStream(fil);
-					XmlPrefsParser.parse(strm, fil.getCanonicalPath(), prefs_hash);
+					XmlPrefsParser.parse(strm, prefs_hash);
 				} else {
 					/*
 					 * Non-existant files like $HOME/igb_prefs.xml and

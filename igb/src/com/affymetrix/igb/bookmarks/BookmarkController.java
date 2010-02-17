@@ -13,14 +13,12 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import java.awt.Color;
 import java.util.List;
 import java.io.*;
@@ -38,6 +36,7 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +51,8 @@ import javax.swing.SwingUtilities;
 /**
  *  Allows creation of bookmarks based on a SeqSymmetry, and viewing of
  *  a bookmark.
+ *
+ * @version $Id$
  */
 public abstract class BookmarkController {
   static GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -403,32 +404,35 @@ public abstract class BookmarkController {
    *  Creates a Map containing bookmark properties.
    *  All keys and values are Strings.
    *  Assumes correct span is the first span in the sym.
+   *
+   * @param sym The symmetry to generate the bookmark properties from
+   * @return a map of bookmark properties
    */
-  public static Map constructBookmarkProperties(SeqSymmetry sym) {
+  private static Map<String, String[]> constructBookmarkProperties(SeqSymmetry sym) {
     SeqSpan span = sym.getSpan(0);
     BioSeq seq = span.getBioSeq();
-    Map<String,String> props = new LinkedHashMap<String,String>();
-    props.put("seqid", seq.getID());
-	props.put("version", seq.getVersion());
-    props.put("start", Integer.toString(span.getMin()));
-    props.put("end", Integer.toString(span.getMax()));
+    Map<String,String[]> props = new LinkedHashMap<String,String[]>();
+    props.put("seqid", new String[] {seq.getID()});
+	props.put("version", new String[] {seq.getVersion()});
+    props.put("start", new String[] {Integer.toString(span.getMin())});
+    props.put("end", new String[] {Integer.toString(span.getMax())});
     return props;
   }
-
-  static public Bookmark makeBookmark(Map props, String name) throws java.net.MalformedURLException {
-    String url = Bookmark.constructURL(props);
-    return new Bookmark(name, url);
-  }
-
 
   /**
    *  Constructs a bookmark from a SeqSymmetry.
    *  Assumes correct span is the first span in the sym.
    *  Passes through to makeBookmark(Map props, String name).
+   *
+   * @param sym The symmetry to bookmark
+   * @param name name of the bookmark
+   * @return the bookmark for the symmetry
+   * @throws MalformedURLException if the URL specifies an unknown protocol
    */
-  static public Bookmark makeBookmark(SeqSymmetry sym, String name) throws java.net.MalformedURLException {
-    Map props = constructBookmarkProperties(sym);
-    return makeBookmark(props, name);
+  public static Bookmark makeBookmark(SeqSymmetry sym, String name) throws MalformedURLException {
+    Map<String, String[]> props = constructBookmarkProperties(sym);
+    String url = Bookmark.constructURL(props);
+    return new Bookmark(name, url);
   }
 
 

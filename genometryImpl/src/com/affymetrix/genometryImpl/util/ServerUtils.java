@@ -367,15 +367,11 @@ public abstract class ServerUtils {
 
 
 	private static List loadAnnotFile(File current_file, String stream_name, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
-		InputStream istr = null;
-		List results = null;
-		istr = new BufferedInputStream(new FileInputStream(current_file));
+		InputStream istr = new BufferedInputStream(new FileInputStream(current_file));
 		if (!isIndexed) {
-			results = ParserController.parse(istr, annotList, stream_name, gmodel, genome, type_name);
-		} else {
-			results = ParserController.parseIndexed(istr, annotList, stream_name, genome, type_name);
+			return ParserController.parse(istr, annotList, stream_name, gmodel, genome, type_name);
 		}
-		return results;
+		return ParserController.parseIndexed(istr, annotList, stream_name, genome, type_name);
 	}
 
 

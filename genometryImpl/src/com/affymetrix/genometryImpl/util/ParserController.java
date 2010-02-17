@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
@@ -125,28 +127,29 @@ public final class ParserController {
 	 * @return A list of parsed indexes
 	 */
 	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
-		IndexWriter iWriter = getIndexWriter(stream_name);
-		DataInputStream dis = new DataInputStream(str);
+		try {
+			IndexWriter iWriter = getIndexWriter(stream_name);
+			DataInputStream dis = new DataInputStream(str);
 
-		String extension = getExtension(stream_name);
-		String annot_type = getAnnotType(annotList, stream_name, extension, type_prefix);
+			String extension = getExtension(stream_name);
+			String annot_type = getAnnotType(annotList, stream_name, extension, type_prefix);
 
-		System.out.println("Indexing " + stream_name);
+			System.out.println("Indexing " + stream_name);
 
-		if (extension.equals(".link.psl")) {
-			try {
-				// annotate target
-				return ((PSLParser)iWriter).parse(dis, annot_type, null, seq_group, null, false, true, false);
-			} catch (IOException ex) {
-				Logger.getLogger(ParserController.class.getName()).log(Level.SEVERE, null, ex);
+			if (extension.equals(".link.psl")) {
+				try {
+					// annotate target
+					return ((PSLParser) iWriter).parse(dis, annot_type, null, seq_group, null, false, true, false);
+				} catch (IOException ex) {
+					Logger.getLogger(ParserController.class.getName()).log(Level.SEVERE, null, ex);
+				}
 			}
-		}
 
-		// bed, bps, bgn, brs, psl, psl3
-		List results =  iWriter.parse(dis, annot_type, seq_group);
-		GeneralUtils.safeClose(str);
-		
-		return results;
+			// bed, bps, bgn, brs, psl, psl3
+			return iWriter.parse(dis, annot_type, seq_group);
+		} finally {
+			GeneralUtils.safeClose(str);
+		}
 	}
 
 	/**
@@ -166,7 +169,7 @@ public final class ParserController {
 
 
 
-	public static IndexWriter getIndexWriter(String stream_name) {	
+	public static IndexWriter getIndexWriter(String stream_name) {
 		int sindex = stream_name.lastIndexOf("/");
 		String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 
@@ -177,9 +180,9 @@ public final class ParserController {
 			return new BpsParser();
 		}
 		if (stream_name.endsWith(".psl") && !stream_name.endsWith(".link.psl")) {
-			IndexWriter iWriter = new PSLParser();
+			PSLParser iWriter = new PSLParser();
 			if (type_prefix != null) {
-				((PSLParser) iWriter).setTrackNamePrefix(type_prefix);
+				iWriter.setTrackNamePrefix(type_prefix);
 			}
 			return iWriter;
 		}
@@ -190,8 +193,7 @@ public final class ParserController {
 			return new BrsParser();
 		}
 		if (stream_name.endsWith(".link.psl")) {
-			IndexWriter iWriter = new PSLParser();
-			PSLParser parser = ((PSLParser) iWriter);
+			PSLParser parser = new PSLParser();
 			if (type_prefix != null) {
 				parser.setTrackNamePrefix(type_prefix);
 			}

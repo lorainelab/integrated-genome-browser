@@ -781,9 +781,12 @@ public abstract class ServerUtils {
 				SymWithProps tannot = aseq.getAnnotation(type);
 				SymWithProps first_child = (SymWithProps) tannot.getChild(0);
 				if (first_child != null) {
-					List<String> formats = (List<String>) first_child.getProperty("preferred_formats");
+					List formats = (List)first_child.getProperty("preferred_formats");
 					if (formats != null) {
-						flist = formats;
+						flist = new ArrayList<String>();
+						for (Object o : formats) {
+							flist.add((String) o);
+						}
 					}
 				}
 				

@@ -1193,17 +1193,20 @@ public final class IGB extends Application
 	 *  The ordering of those tags is maintained in the order of the tab panes
 	 *  they create.
 	 */
-	private List<PluginInfo> getPluginsFromXmlPrefs(Map prefs_hash) {
+	private List<PluginInfo> getPluginsFromXmlPrefs(Map<String, Map> prefs_hash) {
 		ArrayList<PluginInfo> plugin_list = new ArrayList<PluginInfo>(16);
 
 
 
-		Map<String, PluginInfo> other_plugins = XmlPrefsParser.getNamedMap(prefs_hash, XmlPrefsParser.PLUGINS);
-		for (PluginInfo pi : other_plugins.values()) {
-			if ("com.affymetrix.igb.plugin.menu.EpsOutputAction".equals(pi.getClassName())) {
-				System.out.println("This plugin is obsolete, not using: " + pi.getClassName());
-			} else {
-				plugin_list.add(pi);
+		Map other_plugins = XmlPrefsParser.getNamedMap(prefs_hash, XmlPrefsParser.PLUGINS);
+		for (Object o : other_plugins.values()) {
+			if (o instanceof PluginInfo) {
+				PluginInfo pi = (PluginInfo) o;
+				if ("com.affymetrix.igb.plugin.menu.EpsOutputAction".equals(pi.getClassName())) {
+					System.out.println("This plugin is obsolete, not using: " + pi.getClassName());
+				} else {
+					plugin_list.add(pi);
+				}
 			}
 		}
 

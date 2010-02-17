@@ -515,34 +515,8 @@ final class ProtAnnotMain implements WindowListener {
     private void parseArguments(String[] args) {
 
        if(args.length  == 1)
-       {
+	   {
 		   checkArguments("",args[0]);
-//           if(args[0].startsWith("http:/") || args[0].startsWith("https:/"))
-//           {
-//               if(args[0].endsWith(".paxml"))
-//               {
-//                   String file = args[0].substring(args[0].lastIndexOf("/")+1);
-//                   String server = args[0].replace(file, "");
-//                   System.out.println(file);
-//                   System.out.println(server);
-//                   addToArgumentDictionary(new String[]{"-s",server,"-f",file});
-//               }
-//               else
-//               {
-//                   addToArgumentDictionary(new String[]{"-s",args[0]});
-//               }
-//           }else if(args[0].startsWith("/"))
-//           {
-//               if(args[0].endsWith(".paxml"))
-//               {
-//                    addToArgumentDictionary(new String[]{"-f",args[0]});
-//               }
-//               else
-//                   JOptionPane.showMessageDialog(new JFrame(),"File name should end with .paxml","",JOptionPane.ERROR_MESSAGE);
-//
-//           }else
-//                   JOptionPane.showMessageDialog(new JFrame(),"Not a server or a file argument","",JOptionPane.ERROR_MESSAGE);
-
        }else if(args.length%2 == 0)
        {
 		   for(int i=0; i<args.length; i += 2)

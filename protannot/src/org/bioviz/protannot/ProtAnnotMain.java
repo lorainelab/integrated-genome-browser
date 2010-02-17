@@ -516,51 +516,121 @@ final class ProtAnnotMain implements WindowListener {
 
        if(args.length  == 1)
        {
-           if(args[0].startsWith("http:/") || args[0].startsWith("https:/"))
-           {
-               if(args[0].endsWith(".paxml"))
-               {
-                   String file = args[0].substring(args[0].lastIndexOf("/")+1);
-                   String server = args[0].replace(file, "");
-                   System.out.println(file);
-                   System.out.println(server);
-                   addToArgumentDictionary(new String[]{"-s",server,"-f",file});
-               }
-               else
-               {
-                   addToArgumentDictionary(new String[]{"-s",args[0]});
-               }
-           }else if(args[0].startsWith("/"))
-           {
-               if(args[0].endsWith(".paxml"))
-               {
-                    addToArgumentDictionary(new String[]{"-f",args[0]});
-               }
-               else
-                   JOptionPane.showMessageDialog(new JFrame(),"Invalid Argument","",JOptionPane.ERROR_MESSAGE);
-
-           }else
-                   JOptionPane.showMessageDialog(new JFrame(),"Invalid Argument","",JOptionPane.ERROR_MESSAGE);
+		   checkArguments("",args[0]);
+//           if(args[0].startsWith("http:/") || args[0].startsWith("https:/"))
+//           {
+//               if(args[0].endsWith(".paxml"))
+//               {
+//                   String file = args[0].substring(args[0].lastIndexOf("/")+1);
+//                   String server = args[0].replace(file, "");
+//                   System.out.println(file);
+//                   System.out.println(server);
+//                   addToArgumentDictionary(new String[]{"-s",server,"-f",file});
+//               }
+//               else
+//               {
+//                   addToArgumentDictionary(new String[]{"-s",args[0]});
+//               }
+//           }else if(args[0].startsWith("/"))
+//           {
+//               if(args[0].endsWith(".paxml"))
+//               {
+//                    addToArgumentDictionary(new String[]{"-f",args[0]});
+//               }
+//               else
+//                   JOptionPane.showMessageDialog(new JFrame(),"File name should end with .paxml","",JOptionPane.ERROR_MESSAGE);
+//
+//           }else
+//                   JOptionPane.showMessageDialog(new JFrame(),"Not a server or a file argument","",JOptionPane.ERROR_MESSAGE);
 
        }else if(args.length%2 == 0)
        {
-           addToArgumentDictionary(args);
+		   for(int i=0; i<args.length; i += 2)
+			   checkArguments(args[i],args[i+1]);
        }
        else
-           JOptionPane.showMessageDialog(new JFrame(),"Invalid Arguments","",JOptionPane.ERROR_MESSAGE);
+           outputErrorMessage("Invalid number of arguments");
     }
 
+	/**
+	 * Check arguments and add to Dictionary. If arguments are invalid show error message.
+	 * @param	arg			Argument type.
+	 * @param	argValue	Argument Value.
+	 */
+	private boolean checkArguments(String arg, String argValue)
+	{
+		arg = arg.toLowerCase();
+		argValue = argValue.toLowerCase();
+		
+		//Check if it server's argument.
+		if (arg.equals("-s")) {
+			//Check if server name starts with http:/ or https:/
+			//eg http:// or https://
+			if ((argValue.startsWith("http:/") || argValue.startsWith("https:/"))) {
+				//Check if it is server name.
+				//eg http://protannot.bioviz.org/samples/
+				if(argValue.endsWith("/")) {
+					return addToArgumentDictionary(new String[]{"-s", argValue});
+				} else {
+					//Check if it is file on a server. Then add file name and server name.
+					//eg https://protannot.bioviz.org/samples/ABCB1.paxml
+					String file = argValue.substring(argValue.lastIndexOf("/") + 1);
+					String server = argValue.replace(file, "");
+
+					//Check file name is valid.
+					if(file.contains(".")){
+						checkArguments("-f", file);
+						return addToArgumentDictionary(new String[]{"-s", server});
+					}
+					//If file name is invalid then should be server name without '/' at the end.
+					//eg http://protannot.bioviz.org/samples
+					else
+						return addToArgumentDictionary(new String[]{"-s", argValue+"/"});
+				} 
+			} else
+				return outputErrorMessage("Invalid server name: Server name should start with http or https. " +
+						"\n eg. http://protannot.bioviz.org/samples/");
+			
+		} else if(arg.equals("-f")){
+			if (argValue.endsWith(".paxml")) 
+				return addToArgumentDictionary(new String[]{"-f", argValue});
+			else
+				return outputErrorMessage("Invalid file name: File name should end with .paxml" +
+						"\n eg. /user/home/protannot/samples/ABCD.paxml OR " +
+						"\n eg. https://protannot.bioviz.org/samples/ABCD.paxml");
+			
+		} else if(arg.equals("")){
+			if(argValue.startsWith("http:/") || argValue.startsWith("https:/"))
+				checkArguments("-s",argValue);
+			else
+				checkArguments("-f",argValue);
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Create a dialog box to show error message.
+	 * @param	error	Error message to be displayed.
+	 */
+	private boolean outputErrorMessage(String error){
+		JOptionPane.showMessageDialog(new JFrame(), error, "", JOptionPane.ERROR_MESSAGE);
+		return false;
+	}
+	
     /**
      * Adds argument to dictionary
      * @param   args    Argument pair to be inserted in dictionary.
      */
-    private void addToArgumentDictionary(String[] args) {
+    private boolean addToArgumentDictionary(String[] args) {
 
        for(int i=0; i<args.length; i+=2)
        {
             if(Arguments.getValue(args[i])!=null)
                 ArgumentValues.put(Arguments.getValue(args[i]), args[i+1]);
        }
+
+	   return true;
     }
 
     /**
@@ -578,33 +648,38 @@ final class ProtAnnotMain implements WindowListener {
      * @return  String  Returns directory listing in string format.
      */
     private String loadPage() {
-        StringBuffer output = new StringBuffer(2000);
-        BufferedReader buff = null;
-        try {
-            URL url = new URL(getArgumentValue(Arguments.SERVER));
-            URLConnection conn = url.openConnection();
+		try {
+			StringBuffer output = new StringBuffer(2000);
+			BufferedReader buff = null;
+			try {
+				URL url = new URL(getArgumentValue(Arguments.SERVER));
+				URLConnection conn = url.openConnection();
 
-            // setting these timeouts ensures the client does not deadlock indefinitely
-            // when the server has problems.
-            conn.setConnectTimeout(1000 * 10);
-            conn.setReadTimeout(1000 * 10);
+				// setting these timeouts ensures the client does not deadlock indefinitely
+				// when the server has problems.
+				conn.setConnectTimeout(1000 * 10);
+				conn.setReadTimeout(1000 * 10);
 
-            buff = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            boolean eof = false;
-            while (!eof) {
-                String line = buff.readLine();
-                if (line == null) {
-                    eof = true;
-                } else {
-                    output.append(line + "\n");
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error -- " + e.toString());
-        } finally {
-            GeneralUtils.safeClose(buff);
-        }
-        return output.toString();
+				buff = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				boolean eof = false;
+				while (!eof) {
+					String line = buff.readLine();
+					if (line == null) {
+						eof = true;
+					} else {
+						output.append(line + "\n");
+					}
+				}
+			} catch (IOException e) {
+				System.out.println("Error -- " + e.toString());
+			} finally {
+				GeneralUtils.safeClose(buff);
+			}
+			return output.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
     }
 
     /**

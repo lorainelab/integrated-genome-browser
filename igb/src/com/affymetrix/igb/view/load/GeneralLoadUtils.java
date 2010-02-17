@@ -347,28 +347,34 @@ public final class GeneralLoadUtils {
 		for (GenericVersion gVersion : group.getVersions()) {
 			if (!gVersion.isInitialized()) {
 				FeatureLoading.loadFeatureNames(gVersion);
-				if (group.getSeqCount() == 0) {
-					loadChromInfo(gVersion);
-					addGenomeVirtualSeq(group, default_genome_min, DEBUG_VIRTUAL_GENOME);
-				}
 				gVersion.setInitialized();
 			}
 		}
+		if (DEBUG) {
+			System.out.println("Seq count: " + group.getSeqCount());
+		}
+		if (group.getSeqCount() == 0) {
+			loadChromInfo(group);
+		}
+		addGenomeVirtualSeq(group, default_genome_min, DEBUG_VIRTUAL_GENOME);	// okay to run this multiple times
 	}
 
 
 
 	/**
-	 * Load the sequence info for the given genome version.
+	 * Load the sequence info for the given group.
+	 * Try loading from DAS/2 before loading from DAS; chances are DAS/2 will be faster, and that the chromosome
+	 * names will be closer to what is expected.
 	 */
-	private static AnnotatedSeqGroup loadChromInfo(GenericVersion gVersion) {
-		AnnotatedSeqGroup group = gmodel.addSeqGroup(gVersion.versionName);
+	private static void loadChromInfo(AnnotatedSeqGroup group) {
 
-		if (DEBUG) {
-			System.out.println("Discovering " + gVersion.gServer.serverType + " chromosomes");
-		}
-		if (gVersion.gServer.serverType == ServerType.DAS2) {
-
+		for (GenericVersion gVersion : group.getVersions()) {
+			if (gVersion.gServer.serverType != ServerType.DAS2) {
+				continue;
+			}
+			if (DEBUG) {
+					System.out.println("Discovering " + gVersion.gServer.serverType + " chromosomes");
+				}
 			// Discover chromosomes from DAS/2
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 
@@ -376,16 +382,23 @@ public final class GeneralLoadUtils {
 			// Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
 			//    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
 			version.getSegments();
+			return;
 		}
-		if (gVersion.gServer.serverType == ServerType.DAS) {
+
+		for (GenericVersion gVersion : group.getVersions()) {
+			if (gVersion.gServer.serverType != ServerType.DAS) {
+				continue;
+			}
+			if (DEBUG) {
+				System.out.println("Discovering " + gVersion.gServer.serverType + " chromosomes");
+			}
 			// Discover chromosomes from DAS
 			DasSource version = (DasSource) gVersion.versionSourceObj;
 
 			version.getGenome();
 			version.getEntryPoints();
+			return;
 		}
-
-		return group;
 	}
 
 	private static void addGenomeVirtualSeq(AnnotatedSeqGroup group, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {

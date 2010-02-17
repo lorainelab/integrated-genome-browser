@@ -607,13 +607,13 @@ public abstract class ServerUtils {
 	 * @param group
 	 * @return list of indexed overlapped symmetries
 	 */
-	public static <S extends SeqSymmetry> List<S> getIndexedOverlappedSymmetries(
+	public static List<SeqSymmetry> getIndexedOverlappedSymmetries(
 			SeqSpan overlap_span,
 			IndexedSyms iSyms,
 			String annot_type,
 			AnnotatedSeqGroup group) {
 
-		List<S> symList = getIndexedSymmetries(overlap_span,iSyms,annot_type,group);
+		List<? extends SeqSymmetry> symList = getIndexedSymmetries(overlap_span,iSyms,annot_type,group);
 
 		// We need to filter this list to only return overlaps.
 		// Due to the way indexing is implemented, there may have been additional symmetries outside of the specified interval.
@@ -629,9 +629,9 @@ public abstract class ServerUtils {
 	 * @param symList
 	 * @return list of overlapping seq symmetries
 	 */
-	private static <S extends SeqSymmetry> List<S> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<S> symList) {
-		List<S> newList = new ArrayList<S>(symList.size());
-		for (S sym : symList) {
+	private static List<SeqSymmetry> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<? extends SeqSymmetry> symList) {
+		List<SeqSymmetry> newList = new ArrayList<SeqSymmetry>(symList.size());
+		for (SeqSymmetry sym : symList) {
 			if (sym instanceof UcscPslSym) {
 				UcscPslSym uSym = (UcscPslSym)sym;
 				SeqSpan span = uSym.getSpan(uSym.getTargetSeq());
@@ -671,7 +671,7 @@ public abstract class ServerUtils {
 	 * @param group
 	 * @return list of indexed seq symmetries
 	 */
-	private static <S extends SeqSymmetry> List<S> getIndexedSymmetries(
+	private static List<? extends SeqSymmetry> getIndexedSymmetries(
 			SeqSpan overlap_span,
 			IndexedSyms iSyms,
 			String annot_type,
@@ -692,7 +692,7 @@ public abstract class ServerUtils {
 
 			if (minPos >= maxPos) {
 				// Nothing found, or invalid values passed in.
-				return Collections.<S>emptyList();
+				return Collections.<SeqSymmetry>emptyList();
 			}
 			byte[] bytes = IndexingUtils.readBytesFromFile(
 					iSyms.file, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
@@ -705,7 +705,7 @@ public abstract class ServerUtils {
 			}
 			dis = new DataInputStream(newIstr);
 
-			return (List<S>)iSyms.iWriter.parse(dis, annot_type, group);
+			return iSyms.iWriter.parse(dis, annot_type, group);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

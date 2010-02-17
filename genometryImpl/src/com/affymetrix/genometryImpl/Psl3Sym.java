@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometryImpl.symmetry.LeafTrioSeqSymmetry;
 import java.io.*;
 import java.util.*;
 

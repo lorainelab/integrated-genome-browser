@@ -1,15 +1,3 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -33,6 +21,7 @@ public final class LocalUrlCacher {
 	public static final int IGNORE_CACHE = 100;
 	public static final int ONLY_CACHE = 101;
 	public static final int NORMAL_CACHE = 102;
+
 	public static enum CacheUsage {
 		Normal(NORMAL_CACHE),
 		Disabled(IGNORE_CACHE),
@@ -279,7 +268,7 @@ public final class LocalUrlCacher {
 		return result_stream;
 	}
 
-		private static InputStream getUncachedFileStream(String url, String sessionId, boolean fileMayNotExist) throws MalformedURLException, IOException {
+	private static InputStream getUncachedFileStream(String url, String sessionId, boolean fileMayNotExist) throws MalformedURLException, IOException {
 		URL furl = new URL(url);
 		URLConnection huc = furl.openConnection();
 		huc.setConnectTimeout(CONNECT_TIMEOUT);
@@ -396,7 +385,7 @@ public final class LocalUrlCacher {
 	}
 
 
-	private static InputStream TryToRetrieveFromCache(boolean url_reachable, int http_status, File cache_file, long remote_timestamp, long local_timestamp, String url, int cache_option, InputStream result_stream, Map headers, File header_cache_file) throws IOException, FileNotFoundException {
+	private static InputStream TryToRetrieveFromCache(boolean url_reachable, int http_status, File cache_file, long remote_timestamp, long local_timestamp, String url, int cache_option, InputStream result_stream, Map<String,String> headers, File header_cache_file) throws IOException, FileNotFoundException {
 		if (url_reachable) {
 			//  has a timestamp and response contents not modified since local cached copy last modified, so use local
 			if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
@@ -430,11 +419,17 @@ public final class LocalUrlCacher {
 		// using cached content, so should also use cached headers
 		//   eventuallly want to improve so headers get updated if server is accessed and url is reachable
 		if (result_stream != null && headers != null && header_cache_file.exists()) {
-			BufferedInputStream hbis = new BufferedInputStream(new FileInputStream(header_cache_file));
-			Properties headerprops = new Properties();
-			headerprops.load(hbis);
-			headers.putAll(headerprops);
-			GeneralUtils.safeClose(hbis);
+			BufferedInputStream hbis = null;
+			try {
+				hbis = new BufferedInputStream(new FileInputStream(header_cache_file));
+				Properties headerprops = new Properties();
+				headerprops.load(hbis);
+				for (String propKey : headerprops.stringPropertyNames()) {
+					headers.put(propKey, headerprops.getProperty(propKey));
+				}
+			} finally {
+				GeneralUtils.safeClose(hbis);
+			}
 		}
 		return result_stream;
 	}
@@ -468,8 +463,7 @@ public final class LocalUrlCacher {
 			GeneralUtils.safeClose(bis);
 		}
 		
-		InputStream result_stream = new ByteArrayInputStream(content);
-		return result_stream;
+		return new ByteArrayInputStream(content);
 	}
 
 	// populating header Properties (for persisting) and header input Map
@@ -587,25 +581,40 @@ public final class LocalUrlCacher {
 	}
 
 	private static void WriteToCache(byte[] content, File cache_file, File header_cache_file, Properties headerprops) throws IOException, IOException, FileNotFoundException {
+		writeContentToCache(content, cache_file);
+		writeHeadersToCache(header_cache_file, headerprops);
+	}
+
+	private static void writeContentToCache(byte[] content, File cache_file) throws IOException {
 		if (content != null && content.length > 0) {
 			if (DEBUG_CONNECTION) {
 				Application.getSingleton().logInfo("writing content to cache: " + cache_file.getPath());
 				System.out.println("writing content to cache: " + cache_file.getPath());
 			}
-			// write data from URL into a File
-			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
-			// no API for returning number of bytes successfully written, so write all in one shot...
-			bos.write(content, 0, content.length);
-			GeneralUtils.safeClose(bos);
+			BufferedOutputStream bos = null;
+			try {
+				bos = new BufferedOutputStream(new FileOutputStream(cache_file));
+				// no API for returning number of bytes successfully written, so write all in one shot...
+				bos.write(content, 0, content.length);
+			} finally {
+				GeneralUtils.safeClose(bos);
+			}
 		}
+	}
+
+	private static void writeHeadersToCache(File header_cache_file, Properties headerprops) throws IOException {
 		// cache headers also -- in [cache_dir]/headers ?
 		if (DEBUG_CONNECTION) {
 			Application.getSingleton().logInfo("writing headers to cache: " + header_cache_file.getPath());
 			System.out.println("writing headers to cache: " + header_cache_file.getPath());
 		}
-		BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
-		headerprops.store(hbos, null);
-		GeneralUtils.safeClose(hbos);
+		BufferedOutputStream hbos = null;
+		try {
+			hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
+			headerprops.store(hbos, null);
+		} finally {
+			GeneralUtils.safeClose(hbos);
+		}
 	}
 
 	public static final CacheUsage getCacheUsage(int usage) {

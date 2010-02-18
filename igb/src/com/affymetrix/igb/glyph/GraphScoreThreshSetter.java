@@ -86,7 +86,7 @@ public final class GraphScoreThreshSetter extends JPanel
 	private float prev_thresh_val;
 	private static final float abs_min_per = 0;
 	private static final float abs_max_per = 100;
-	private float prev_thresh_per;
+	private float prev_thresh_per = 0;
 	private static final boolean show_min_and_max = false;
 	private static final int max_chars = 15;
 	private static final int max_pix_per_char = 6;

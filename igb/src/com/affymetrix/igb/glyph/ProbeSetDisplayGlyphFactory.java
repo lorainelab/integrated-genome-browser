@@ -77,14 +77,6 @@ the probeset, probe and pieces of probes
   private static Color poly_a_stack_color = Color.CYAN;
   
   private SeqMapView gviewer;
-
-  /** Whether to draw a glyph for probesets that floats free from the glyph
-   *  for the consensus.  Two glyphs can be drawn for each probeset:
-   *  one that is attached to the consensus sequence glyph, and one that
-   *  is independent and thus gets packed separately in
-   *  an independent tier.
-   */
-  private static final boolean do_independent_probeset_glyphs = false;
   
   /** 
    * Whether to put an outline around the probe glyphs in the same probeset.
@@ -94,6 +86,8 @@ the probeset, probe and pieces of probes
   private static final int glyph_depth = 2;
   
   private String label_field = null;
+  
+  private static final int GLYPH_HEIGHT = 20;
 
   public void init(Map options) {
   }
@@ -108,7 +102,6 @@ the probeset, probe and pieces of probes
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
     String meth = BioSeq.determineMethod(sym);
-	//					SeqMapView.determineMethod(sym);
     if (meth == null) {
       meth = "unknown";
     } else { // strip off the " netaffx consensus" ending
@@ -138,7 +131,7 @@ the probeset, probe and pieces of probes
    * @param depth_of_consensuses  Depth at which consensus sequences symmetries will
    *      be found. Normally should be set to 2.
    */
-  void addLeafsToTier(SeqSymmetry sym,
+  private void addLeafsToTier(SeqSymmetry sym,
                       TierGlyph ftier, TierGlyph rtier,
                       int depth_of_consensuses) {
     int depth = SeqUtils.getDepth(sym);
@@ -161,7 +154,7 @@ the probeset, probe and pieces of probes
    *  the BioSeq of the Span that is NOT the sequence you specify.
    *  TODO: This could return more than one consensus sequence
    */
-  BioSeq getConsensusSeq(SeqSymmetry sym, BioSeq primary_seq) {
+  private BioSeq getConsensusSeq(SeqSymmetry sym, BioSeq primary_seq) {
     assert primary_seq != null;
     assert sym != null;
 
@@ -170,8 +163,6 @@ the probeset, probe and pieces of probes
       // Although this is normally an error, there are conditions where this glyph factory
       // might be used to display things that are not consensus sequences (such as DAS queries)
       // so just return null.
-      //System.out.println("Instead of the expected 2 spans, I see this many: "+span_count);
-      //SeqUtils.printSymmetry(sym);
       return null;
     }
 
@@ -191,14 +182,13 @@ the probeset, probe and pieces of probes
     }
   }
   
-  private static int GLYPH_HEIGHT = 20;
   
   /**
    *   Creation of genoviz Glyphs for rendering 
    *      probe set alignments
    *      includes transformations used by slice view and other alternative coordinate systems
    */
-  public GlyphI addToTier(SeqSymmetry consensus_sym, TierGlyph forward_tier, TierGlyph reverse_tier) {
+  private GlyphI addToTier(SeqSymmetry consensus_sym, TierGlyph forward_tier, TierGlyph reverse_tier) {
 
     if (SeqUtils.getDepth(consensus_sym) != glyph_depth) {
       System.out.println("ProbeSetDisplayGlyphFactory: at wrong depth!");
@@ -312,7 +302,7 @@ the probeset, probe and pieces of probes
    *  @param y coordinate of the "Exon" regions of the consensus glyph
    *  @param height height of the "Exon" regions of the consensus glyph
    */
-  void drawConsensusAnnotations(BioSeq consensus_seq, SeqSymmetry consensus_sym, 
+  private void drawConsensusAnnotations(BioSeq consensus_seq, SeqSymmetry consensus_sym,
     GlyphI parent_glyph, TierGlyph tier, double y, double height) {
     int annot_count = consensus_seq.getAnnotationCount();
     for (int i=0; i<annot_count; i++) {
@@ -324,7 +314,7 @@ the probeset, probe and pieces of probes
     }
   }
 
-  void handleConsensusAnnotations(SeqSymmetry sym_with_probesets, SeqSymmetry consensus_sym, 
+  private void handleConsensusAnnotations(SeqSymmetry sym_with_probesets, SeqSymmetry consensus_sym,
     GlyphI parent_glyph, double y, double height) {
     // Iterate until reaching depth=2 which represents a probeset (depth=2) containing probes (depth=1)
     int depth = SeqUtils.getDepth(sym_with_probesets);
@@ -349,7 +339,7 @@ the probeset, probe and pieces of probes
    *    it is not likely that things would go well, so the method prints an error
    *    and returns.
    */
-  void drawConsensusAnnotation(SeqSymmetry probeset, SeqSymmetry consensus_sym, 
+  private void drawConsensusAnnotation(SeqSymmetry probeset, SeqSymmetry consensus_sym,
     GlyphI parent_glyph, double y, double height) {
     if (DEBUG) {
       int consensus_depth = SeqUtils.getDepth(consensus_sym);
@@ -364,10 +354,6 @@ the probeset, probe and pieces of probes
     // Note that the transformation generates a probeset_sym of depth 3
 
     String probeset_id = null;
-//    boolean use_label = (ps_label_field != null && (probeset instanceof SymWithProps));
-//    if (use_label) {
-//      probeset_id = (String) ((SymWithProps) probeset).getProperty(ps_label_field);
-//    }
     if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
       drawPolyA(probeset_sym, parent_glyph, probeset_id, y, height, poly_a_site_color);
     } else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
@@ -377,7 +363,7 @@ the probeset, probe and pieces of probes
     }
   }
 
-  void drawPolyA(DerivedSeqSymmetry poly_A_sym, GlyphI consensus_glyph, 
+  private void drawPolyA(DerivedSeqSymmetry poly_A_sym, GlyphI consensus_glyph,
     String probeset_id, double consensus_exon_y, double consensus_exon_height, Color color) {
     // The depth coming in should be 3
     SeqSymmetry transformed_sym = gviewer.transformForViewSeq(poly_A_sym);
@@ -414,7 +400,7 @@ the probeset, probe and pieces of probes
    *                   this third level will be ignored.
    *                   This should NOT already have been mapped onto SeqMapView.getAnnotatedSeq().
    */
-  void drawProbeSetGlyph(DerivedSeqSymmetry probeset_sym, GlyphI parent_glyph, 
+  private void drawProbeSetGlyph(DerivedSeqSymmetry probeset_sym, GlyphI parent_glyph,
     String probeset_id, double consensus_exon_y, double consensus_exon_height) {
     // The depth coming in should be 3
     SeqSymmetry transformed_probeset_sym = gviewer.transformForViewSeq(probeset_sym);
@@ -427,7 +413,6 @@ the probeset, probe and pieces of probes
       return;
     }
 
-    //Rectangle2D.Double parent_coords = parent_glyph.getCoordBox();
     double probe_height = consensus_exon_height/3;
     double probe_y = consensus_exon_y;
     if (span.isForward()) {probe_y = consensus_exon_y;}
@@ -456,71 +441,9 @@ the probeset, probe and pieces of probes
       addProbesToProbeset(parent_glyph, transformed_probeset_sym,
         probe_y, probe_height, probeset_color);
     }
-
-    // Optionally add a floating glyph that lines-up horizontally with the probeset
-    if (do_independent_probeset_glyphs) {
-      makeFloatingProbesetGlyph(probeset_color, span, probeset_id,
-       probeset_sym, transformed_probeset_sym);
-    }
   }
-
-  /** @deprecated Not tested with AnnotStyle mechanism */
-	@Deprecated
-  void makeFloatingProbesetGlyph(Color probeset_color, SeqSpan span, String probeset_id,
-    DerivedSeqSymmetry probeset_sym, SeqSymmetry transformed_probeset_sym) {
-      GlyphI another_probeset_glyph = null;
-      double floating_probeset_y = 100; // irrelevant due to packing
-      double floating_probeset_height = GLYPH_HEIGHT;
-      double child_y = floating_probeset_y;
-      double child_height = floating_probeset_height;
-   //   {
-        /*String ps_label_field = null; // the AnnotStyle system doesn't have any way to set this property
-          // the "Extended Properties" has could be used if we want to resurrect this
-        if (ps_label_field != null) {
-          LabelledGlyph lglyph = new EfficientLabelledGlyph();
-          if (probeset_id != null) {
-            lglyph.setLabel(probeset_id);
-          } else {
-            lglyph.setLabel("");
-          }
-          another_probeset_glyph =lglyph;        
-          if (span.isForward()) { 
-            child_y += floating_probeset_height;
-            lglyph.setLabelLocation(LabelledGlyph.NORTH);
-          } else {
-            lglyph.setLabelLocation(LabelledGlyph.SOUTH);            
-          }
-          
-          another_probeset_glyph.setCoords(span.getMin(), floating_probeset_y, span.getLength(), floating_probeset_height*2);
-          another_probeset_glyph.setColor(probeset_color);
-
-          GlyphI outline = new EfficientOutlineContGlyph();
-          outline.setForegroundColor(probeset_color);
-          gviewer.getSeqMap().setDataModelFromOriginalSym(outline, probeset_sym);
-          outline.setCoords(span.getMin(), child_y, span.getLength(), child_height);
-          addProbesToProbeset(outline, transformed_probeset_sym, child_y, child_height, probeset_color);
-
-          another_probeset_glyph.addChild(outline);
-        } else {*/
-          another_probeset_glyph = new EfficientOutlineContGlyph();
-          another_probeset_glyph.setCoords(span.getMin(), floating_probeset_y, span.getLength(), floating_probeset_height);
-          another_probeset_glyph.setColor(probeset_color);
-          addProbesToProbeset(another_probeset_glyph, transformed_probeset_sym, child_y, child_height, probeset_color);
- //       }
- //     }
-
-      String meth = BioSeq.determineMethod(probeset_sym.getOriginalSymmetry());
-      if (meth==null) {meth = "unknown";}
-      TierGlyph[] tiers = gviewer.getTiers(meth, false, null);
-      if (span.isForward()) {
-        tiers[0].addChild(another_probeset_glyph);
-      } else {
-        tiers[1].addChild(another_probeset_glyph);
-      }
-      gviewer.getSeqMap().setDataModelFromOriginalSym(another_probeset_glyph, probeset_sym);
-    }
   
-  void addProbesToProbeset(GlyphI probeset_glyph, SeqSymmetry transformed_probeset_sym, 
+  private void addProbesToProbeset(GlyphI probeset_glyph, SeqSymmetry transformed_probeset_sym,
     double probe_y, double probe_height, Color probeset_color) {
     int num_probes = transformed_probeset_sym.getChildCount();
     for (int i=0; i<num_probes; i++) {
@@ -532,7 +455,7 @@ the probeset, probe and pieces of probes
     }
   }
   
-  GlyphI drawProbeGlyph(SeqSymmetry probe_sym, double probe_y, double probe_height, Color c) {
+  private GlyphI drawProbeGlyph(SeqSymmetry probe_sym, double probe_y, double probe_height, Color c) {
     SeqSpan probe_span = probe_sym.getSpan(gviewer.getViewSeq());
     if (probe_span == null) return null;
 
@@ -564,7 +487,7 @@ the probeset, probe and pieces of probes
    *  but probes that cover a region of a transcript that gets split into
    *  "Exons" can have multiple "parts".
    */
-  GlyphI drawProbeSegmentGlyph(SeqSpan probe_part_span, double probe_y, double probe_height, Color c) {
+  private static GlyphI drawProbeSegmentGlyph(SeqSpan probe_part_span, double probe_y, double probe_height, Color c) {
     EfficientOutlinedRectGlyph probe_part_glyph = new EfficientOutlinedRectGlyph();
     probe_part_glyph.setCoords(probe_part_span.getMin(), probe_y, probe_part_span.getLength(), probe_height);
     probe_part_glyph.setColor(c);

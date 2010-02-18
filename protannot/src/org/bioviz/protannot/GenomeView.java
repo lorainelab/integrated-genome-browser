@@ -144,7 +144,7 @@ final class GenomeView extends JPanel implements MouseListener{
     private static final int divider_size = 8;
     private static final int table_height = 150;
     private static final int seqmap_pixel_height = 500;
-	private static final int zoomRatio = 30;
+	private static final double zoomRatio = 30.0;
     
     /**
      * Removes currently loaded data by clearing maps.

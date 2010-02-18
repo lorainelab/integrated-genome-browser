@@ -233,126 +233,125 @@ public final class GraphSelectionManager
     save_graph.addActionListener(this);
   }
 
-  public void actionPerformed(ActionEvent evt) {
-    Object src = evt.getSource();
-   if (current_graph != null) {
-		  if (src == bar_graph) {
-			  if (DEBUG) {
-				  System.out.println("picked bar graph");
-			  }
-			  current_graph.setGraphStyle(GraphType.BAR_GRAPH);
-		  } else if (src == line_graph) {
-			  if (DEBUG) {
-				  System.out.println("picked line graph");
-			  }
-			  current_graph.setGraphStyle(GraphType.LINE_GRAPH);
-		  } else if (src == dot_graph) {
-			  if (DEBUG) {
-				  System.out.println("picked dot graph");
-			  }
-			  current_graph.setGraphStyle(GraphType.DOT_GRAPH);
-		  } else if (src == stairstep_graph) {
-			  if (DEBUG) {
-				  System.out.println("picked stairstep graph");
-			  }
-			  current_graph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-		  } else if (src == min_max_graph) {
-			  if (current_graph instanceof GraphGlyph) {
-				  current_graph.setGraphStyle(GraphType.MINMAXAVG);
-			  }
-		  } else if (src == adjust_hilo) {
-			  if (DEBUG) {
-				  System.out.println("setting up graph bounds adjuster");
-			  }
-			  GraphVisibleBoundsSetter.showFramedThresholder(current_graph, current_source);
-		  } else if (src == adjust_percent) {
-			  if (DEBUG) {
-				  System.out.println("setting up percent adjuster");
-			  }
-			  PercentThresholder.showFramedThresholder(current_graph, current_source);
-		  } else if (src == thresh_graph) {
-			  if (second_current_graph != null) {
-				  Application.errorPanel("ERROR", "Must select exactly one graph");
-			  } else {
-				  boolean show = !current_graph.getShowThreshold();
-				  current_graph.setShowThreshold(show);
-			  }
-		  } else if (src == tweak_thresh) {
-			  showThresholds(current_graph);
-		  } else if (src == max_gap_thresh) {
-			  current_graph.setShowThreshold(true);
-			  if (DEBUG) {
-				  System.out.println("setting up max_gap thresholder");
-			  }
-			  MaxGapThresholder.showFramedThresholder(current_graph, current_source);
-		  } else if (src == min_score_thresh) {
-			  current_graph.setShowThreshold(true);
-			  if (DEBUG) {
-				  System.out.println("setting up max_gap thresholder");
-			  }
-			  MinScoreThresholder.showFramedThresholder(current_graph, current_source);
-		  } else if (src == min_run_thresh) {
-			  if (current_graph.getShowThreshold()) {
-				  if (DEBUG) {
-					  System.out.println("setting up min_run thresholder");
-				  }
-				  MinRunThresholder.showFramedThresholder(current_graph, current_source);
-			  }
-		  } else if (src == change_color) {
-			  Color col = JColorChooser.showDialog(frm,
-					  "Graph Color Chooser", current_graph.getColor());
-			  if (col != null) {
-				  current_graph.setColor(col);
-				  // if graph is in a tier, change foreground color of tier also
-				  //   (which in turn triggers change in color for TierLabelGlyph...)
-				  if (current_graph.getParent() instanceof TierGlyph) {
-					  current_graph.getParent().setForegroundColor(col);
-				  }
-			  }
-		  } else if (src == show_bounds) {
-			  current_graph.setShowBounds(!current_graph.getShowBounds());
-		  } else if (src == show_graph) {
-			  current_graph.setShowGraph(!current_graph.getShowGraph());
-		  } else if (src == show_label) {
-			  current_graph.setShowLabel(!current_graph.getShowLabel());
-		  } else if (src == show_axis) {
-			  current_graph.setShowAxis(!current_graph.getShowAxis());
-		  } else if (src == delete_graph) {
-			  deleteGraph(current_source, current_graph);
-			  current_graph = null;  // for garbage collection, and other reasons
-		  } // NOT YET WORKING --
-		  // need to put graph's parent PixelFloaterGlyphs in their own parent PixelFloaterGlyph,
-		  //   rather than have them as siblings of tiers -- otherwise, when moved to back, will
-		  //   end up _behind_ all the tiers, and since tiers fill in their backgrounds, the graphs
-		  //   will effectively disapear!
-		  else if (src == to_back) {
-			  current_source.toBackOfSiblings(current_graph);
-			  GlyphI parent = current_graph.getParent();
-			  if ((parent != null) && (!(parent instanceof TierGlyph))) {
-				  current_source.toBackOfSiblings(parent);
-			  }
-		  } else if (src == toggle_floating) {
-			  if (DEBUG) {
-				  System.out.println("selected toggle floating, currently floating: " +
-						  !(current_graph.getParent() instanceof TierGlyph));
-			  }
-			  //        GraphGlyphUtils.toggleFloating(current_graph, gviewer);
-			  // toggle_floating is currently unused, so don't worry that the code is commented out
-		  } else if (src == diff_graphs) {
-			  graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_DIFFERENCE);
-		  } else if (src == sum_graphs) {
-			  graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_SUM);
-		  } else if (src == ratio_graphs) {
-			  graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_RATIO);
-		  } else if (src == product_graphs) {
-			  graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_PRODUCT);
-		  } else if (src == save_graph) {
-			  saveGraph(current_graph);
-		  }
+	public void actionPerformed(ActionEvent evt) {
+		if (current_graph == null) {
+			return;
+		}
+		Object src = evt.getSource();
+		if (src == bar_graph) {
+			if (DEBUG) {
+				System.out.println("picked bar graph");
+			}
+			current_graph.setGraphStyle(GraphType.BAR_GRAPH);
+		} else if (src == line_graph) {
+			if (DEBUG) {
+				System.out.println("picked line graph");
+			}
+			current_graph.setGraphStyle(GraphType.LINE_GRAPH);
+		} else if (src == dot_graph) {
+			if (DEBUG) {
+				System.out.println("picked dot graph");
+			}
+			current_graph.setGraphStyle(GraphType.DOT_GRAPH);
+		} else if (src == stairstep_graph) {
+			if (DEBUG) {
+				System.out.println("picked stairstep graph");
+			}
+			current_graph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
+		} else if (src == min_max_graph) {
+			current_graph.setGraphStyle(GraphType.MINMAXAVG);
+		} else if (src == adjust_hilo) {
+			if (DEBUG) {
+				System.out.println("setting up graph bounds adjuster");
+			}
+			GraphVisibleBoundsSetter.showFramedThresholder(current_graph, current_source);
+		} else if (src == adjust_percent) {
+			if (DEBUG) {
+				System.out.println("setting up percent adjuster");
+			}
+			PercentThresholder.showFramedThresholder(current_graph, current_source);
+		} else if (src == thresh_graph) {
+			if (second_current_graph != null) {
+				Application.errorPanel("ERROR", "Must select exactly one graph");
+			} else {
+				boolean show = !current_graph.getShowThreshold();
+				current_graph.setShowThreshold(show);
+			}
+		} else if (src == tweak_thresh) {
+			showThresholds(current_graph);
+		} else if (src == max_gap_thresh) {
+			current_graph.setShowThreshold(true);
+			if (DEBUG) {
+				System.out.println("setting up max_gap thresholder");
+			}
+			MaxGapThresholder.showFramedThresholder(current_graph, current_source);
+		} else if (src == min_score_thresh) {
+			current_graph.setShowThreshold(true);
+			if (DEBUG) {
+				System.out.println("setting up max_gap thresholder");
+			}
+			MinScoreThresholder.showFramedThresholder(current_graph, current_source);
+		} else if (src == min_run_thresh) {
+			if (current_graph.getShowThreshold()) {
+				if (DEBUG) {
+					System.out.println("setting up min_run thresholder");
+				}
+				MinRunThresholder.showFramedThresholder(current_graph, current_source);
+			}
+		} else if (src == change_color) {
+			Color col = JColorChooser.showDialog(frm,
+					"Graph Color Chooser", current_graph.getColor());
+			if (col != null) {
+				current_graph.setColor(col);
+				// if graph is in a tier, change foreground color of tier also
+				//   (which in turn triggers change in color for TierLabelGlyph...)
+				if (current_graph.getParent() instanceof TierGlyph) {
+					current_graph.getParent().setForegroundColor(col);
+				}
+			}
+		} else if (src == show_bounds) {
+			current_graph.setShowBounds(!current_graph.getShowBounds());
+		} else if (src == show_graph) {
+			current_graph.setShowGraph(!current_graph.getShowGraph());
+		} else if (src == show_label) {
+			current_graph.setShowLabel(!current_graph.getShowLabel());
+		} else if (src == show_axis) {
+			current_graph.setShowAxis(!current_graph.getShowAxis());
+		} else if (src == delete_graph) {
+			deleteGraph(current_source, current_graph);
+			current_graph = null;  // for garbage collection, and other reasons
+		} // NOT YET WORKING --
+		// need to put graph's parent PixelFloaterGlyphs in their own parent PixelFloaterGlyph,
+		//   rather than have them as siblings of tiers -- otherwise, when moved to back, will
+		//   end up _behind_ all the tiers, and since tiers fill in their backgrounds, the graphs
+		//   will effectively disapear!
+		else if (src == to_back) {
+			current_source.toBackOfSiblings(current_graph);
+			GlyphI parent = current_graph.getParent();
+			if ((parent != null) && (!(parent instanceof TierGlyph))) {
+				current_source.toBackOfSiblings(parent);
+			}
+		} else if (src == toggle_floating) {
+			if (DEBUG) {
+				System.out.println("selected toggle floating, currently floating: "
+						+ !(current_graph.getParent() instanceof TierGlyph));
+			}
+			//        GraphGlyphUtils.toggleFloating(current_graph, gviewer);
+			// toggle_floating is currently unused, so don't worry that the code is commented out
+		} else if (src == diff_graphs) {
+			graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_DIFFERENCE);
+		} else if (src == sum_graphs) {
+			graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_SUM);
+		} else if (src == ratio_graphs) {
+			graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_RATIO);
+		} else if (src == product_graphs) {
+			graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_PRODUCT);
+		} else if (src == save_graph) {
+			saveGraph(current_graph);
+		}
 
-		  current_source.updateWidget();
-	  }
- }
+		current_source.updateWidget();
+	}
 
 
   /** Deletes a graph from a widget, and tries to make sure the GraphSym can

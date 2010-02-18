@@ -298,8 +298,6 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 	private void initValues() {
 		float min_of_mins = Float.POSITIVE_INFINITY;
-		float max_of_mins = Float.NEGATIVE_INFINITY;
-		float min_of_maxes = Float.POSITIVE_INFINITY;
 		float max_of_maxes = Float.NEGATIVE_INFINITY;
 		float avg_of_mins = 0;
 		float avg_of_maxes = 0;
@@ -313,8 +311,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		int gcount = graphs.size();
 
 		if (gcount == 0) {
-			min_of_mins = max_of_mins = 0;
-			min_of_maxes = max_of_maxes = 0;
+			min_of_mins = 0;
+			max_of_maxes = 0;
 			avg_of_mins = avg_of_maxes = 0;
 			min_of_vismins = max_of_vismins = 0;
 			min_of_vismaxes = max_of_vismaxes = 0;
@@ -330,9 +328,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 				float vismax = gl.getVisibleMaxY();
 
 				min_of_mins = Math.min(min_of_mins, min);
-				max_of_mins = Math.max(max_of_mins, min);
 				max_of_maxes = Math.max(max_of_maxes, max);
-				min_of_maxes = Math.min(min_of_maxes, max);
 
 				min_of_vismins = Math.min(min_of_vismins, vismin);
 				max_of_vismins = Math.max(max_of_vismins, vismin);
@@ -351,10 +347,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			avg_of_vismaxes = avg_of_vismaxes / gcount;
 		}
 
-
 		sliders_per_val = (total_val_sliders) / (max_of_maxes - min_of_mins);
-		//vals_per_slider = 1.0f / sliders_per_val;
-
 
 		if (min_of_vismins == max_of_vismins) {
 			min_valT.setText(val_format.format(min_of_vismins));
@@ -387,8 +380,6 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 		prev_min_val = avg_of_vismins;
 		prev_max_val = avg_of_vismaxes;
-		//abs_min_val = min_of_mins;
-		//abs_max_val = max_of_maxes;
 	}
 
 	// assumes listening has already been turned off

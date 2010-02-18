@@ -48,6 +48,7 @@ final class Xml2GenometryParser {
     private boolean isNegative;
     private boolean negativeProcess = true;
     private List<int[]> transCheckExons;	// used to sanity-check exon translation
+	private int residuesStart;
 
     /**
      *Initialized dbFactory and dBuilder
@@ -79,12 +80,8 @@ final class Xml2GenometryParser {
             BioSeq ret_genomic = processDocument(seqdoc);
 
             if(isNegative){
-                StringBuffer res = new StringBuffer(DNAUtils.reverseComplement(residues));
-                res.reverse();
-                int start = ret_genomic.getMin();
-                int end  = ret_genomic.getMax();
-                ret_genomic.setResidues(res.toString());
-                ret_genomic.setBounds(start, end);
+                ret_genomic.setResidues(DNAUtils.reverseComplement(residues));
+                //ret_genomic.setBounds(residuesStart, residuesStart+residues.length());
 			}
 			return ret_genomic;
 
@@ -160,8 +157,8 @@ final class Xml2GenometryParser {
                 chrom = new BioSeq(seq, version, residues.length());
                 chrom.setResidues(residues);
                 try {
-                        int start = Integer.parseInt(((Element) child).getAttribute("start"));
-                        chrom.setBounds(start, start+residues.length());
+                        residuesStart = Integer.parseInt(((Element) child).getAttribute("start"));
+                        //chrom.setBounds(residuesStart, residuesStart+residues.length());
                     } catch (Exception e) {
                         //e.printStackTrace();
                         System.out.println("Old file format");
@@ -470,12 +467,17 @@ final class Xml2GenometryParser {
         int start = Integer.parseInt(elem.getAttribute("start"));
         int end = Integer.parseInt(elem.getAttribute("end"));
 
+		start = start - residuesStart;
+		end = end - residuesStart;
+
         try
         {
             String strand = elem.getAttribute("strand");
 
             if(strand.equals("-") && negativeProcess){
                 isNegative = true;
+				start = genomic.getLength() - start;
+				end = genomic.getLength() - end;
             }
         }
         catch(Exception e)
@@ -710,11 +712,12 @@ final class Xml2GenometryParser {
         int start = Integer.parseInt(elem.getAttribute("start"));
         int end = Integer.parseInt(elem.getAttribute("end"));
 
+		start = start - residuesStart;
+		end = end - residuesStart;
+		
          if(isNegative){
-
-            int temp = start;
-            start = (genomic.getMax() - end) + genomic.getMin();
-            end = (genomic.getMax() - temp) + genomic.getMin();
+			start = genomic.getLength() - start;
+			end = genomic.getLength() - end;
         }
         transCheckExons.add(new int[]{start,end});
         //System.out.println("exon:  start = " + start + "  end = " + end);
@@ -761,11 +764,12 @@ final class Xml2GenometryParser {
         }
         int end = Integer.parseInt(attr);
 
-        if(isNegative){
+		start = start - residuesStart;
+		end = end - residuesStart;
 
-            int temp = start;
-            start = (genomic.getMax() - end) + genomic.getMin();
-            end = (genomic.getMax() - temp) + genomic.getMin();
+        if(isNegative){
+			start = genomic.getLength() - start;
+			end = genomic.getLength() - end;
         }
 
         checkTranslationLength(start,end);

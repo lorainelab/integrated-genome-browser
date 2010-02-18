@@ -198,7 +198,7 @@ public final class IGB extends Application
 
 			singleton_igb = new IGB();
 
-			PrefsLoader.getIGBPrefs(main_args); // force loading of prefs
+			PrefsLoader.loadIGBPrefs(main_args); // force loading of prefs
 
 			singleton_igb.init();
 
@@ -324,7 +324,7 @@ public final class IGB extends Application
 		// usually since IGB.main() is called first, prefs will have already been loaded
 		//   via getUnibrowPrefs() call in main().  But if for some reason an IGB instance
 		//   is created without call to main(), will force loading of prefs here...
-		PrefsLoader.getIGBPrefs(main_args);
+		PrefsLoader.loadIGBPrefs(main_args);
 
 		StateProvider stateProvider = new IGBStateProvider();
 		DefaultStateProvider.setGlobalStateProvider(stateProvider);

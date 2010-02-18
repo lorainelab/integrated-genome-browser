@@ -109,57 +109,37 @@ public final class XmlPrefsParser {
 	private static final Class<?> default_factory_class =
 					com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
 
-	public static final String PLUGINS = "plugins";
-
 	private static final Set<PluginInfo> plugins = new LinkedHashSet<PluginInfo>();
 
 	private XmlPrefsParser() { }
 
-	@SuppressWarnings("unchecked")
-	public static Map parse(InputStream istr, Map<String, Map> prefs_hash) {
+	public static void parse(InputStream istr) {
 		try {
 			InputSource insrc = new InputSource(istr);
-			prefs_hash = parse(insrc, prefs_hash);
+			parse(insrc);
 		} catch (Exception ex) {
 			System.err.println("ERROR while reading preferences");
 			System.err.println("  " + ex.toString());
 			ex.printStackTrace();
 		}
-		return prefs_hash;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static Map parse(InputSource insource, Map<String, Map> prefs_hash) {
+	private static void parse(InputSource insource) {
 		try {
 			Document prefsdoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(insource);
-			prefs_hash = processDocument(prefsdoc, prefs_hash);
+			processDocument(prefsdoc);
 		} catch (Exception ex) {
 			System.err.println("ERROR while reading preferences");
 			System.err.println("  " + ex.toString());
 			ex.printStackTrace();
 		}
-		return prefs_hash;
-	}
-
-	/**
-	 * Returns a Map stored in "prefs_hash" under "name", creating a new one if necessary.
-	 * These will be LinkedHashMap's, to guarantee the ordering of keys.
-	 */
-	public static Map getNamedMap(Map<String, Map> prefs_hash, String name) {
-		Map m = prefs_hash.get(name);
-		if (m == null) {
-			m = new LinkedHashMap();
-			prefs_hash.put(name, m);
-		}
-		return m;
 	}
 
 	public static Set<PluginInfo> getPlugins() {
 		return Collections.<PluginInfo>unmodifiableSet(plugins);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static Map<String, Map> processDocument(Document prefsdoc, Map<String, Map> prefs_hash) {
+	private static void processDocument(Document prefsdoc) {
 		Element top_element = prefsdoc.getDocumentElement();
 		String topname = top_element.getTagName();
 		if (!(topname.equalsIgnoreCase("prefs"))) {
@@ -198,11 +178,8 @@ public final class XmlPrefsParser {
 					}
 			}
 		}
-		return prefs_hash;
-
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void processPlugin(Element el) {
 		String loadstr = el.getAttribute("load");
 		String plugin_name = el.getAttribute("name");

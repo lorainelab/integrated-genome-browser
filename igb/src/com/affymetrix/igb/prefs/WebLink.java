@@ -324,8 +324,7 @@ public final class WebLink {
 
 	public static void importWebLinks(InputStream st) throws IOException {
 		// The existing XmlPrefsParser is capable of importing the web links
-		// Create a Map named "foo", which will be discarded after parsing
-		XmlPrefsParser.parse(st, new HashMap<String,Map>());
+		XmlPrefsParser.parse(st);
 	}
 
 	public static void exportWebLinks(File f, boolean include_warning) throws IOException {

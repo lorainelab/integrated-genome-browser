@@ -66,25 +66,6 @@ attributes.
 Example:
 <annotation_style annot_type="abc" factory="com.affymetrix.igb.glyph.GenericGraphGlyphFactory" />
 
-Optionally specifying color:
-(Colors <b>IGNORED</b> by all standard glyph factories starting with IGB version 4.01)
-Method 1: specify single color for this annot type by adding red, green, blue attributes:
-<annotation_style annot_type="test" red="200" green="0" blue="200" />
-Method 2: specify multiple colors to be used for this annot type by adding <color> sub-elements
-to the <annotation_style> element:
-<annotation_style annot_type="test">
-<color name="parent_color" red="255" green="255" blue="255"/>
-<color name="child_color" red="200" green="255" blue="100"/>
-</annotation_style>
-
-The name attribute value for a color element should _not_ match any attribute id
-in the annotation_style. Colors specified this way will be passed to the glyph factory
-used for this annotation style as part of the initialization hash, as entries of form
-{ "name_value" ==> new Color(redval, greenval, blueval) }  It is up to the glyph
-factory to decide how to use these colors, based on their names.  If red/green/blue
-attributes are included in <annotation_style> element (Method 1), the resulting Color
-is also added to the hash with key = "color".
-
 The usual default factory is the GenericAnnotGlyphFactory.
 Attributes that GenericAnnotGlyphFactory recognizes currently include:
 

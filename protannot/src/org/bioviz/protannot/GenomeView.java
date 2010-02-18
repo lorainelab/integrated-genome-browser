@@ -14,6 +14,7 @@ import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
@@ -131,7 +132,7 @@ final class GenomeView extends JPanel implements MouseListener{
     
     private List<GlyphI> selected = new ArrayList<GlyphI>();
     private List<GlyphI> storeSelected;
-    private VisibleRange zoomPoint;
+    private VisibleRange zoomPoint = new VisibleRange();
     
     // size constants - these are needed to control the layout
 	// of different elements within each map.
@@ -386,7 +387,7 @@ final class GenomeView extends JPanel implements MouseListener{
         {
             axismap.stretchToFit(true, false);
             seqmap.stretchToFit(true, true);
-			seqmap.getScroller(NeoMap.X).setValue(gseq.getMin());
+			//seqmap.getScroller(NeoMap.X).setValue(gseq.getMin());
         }
         else
         {

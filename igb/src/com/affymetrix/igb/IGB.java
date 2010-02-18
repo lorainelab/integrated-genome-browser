@@ -534,7 +534,7 @@ public final class IGB extends Application
 		plugins_info.add(new PluginInfo(ExternalViewer.class.getName(), "External View", true));
 
 
-		plugins_info.addAll(getPluginsFromXmlPrefs(PrefsLoader.getIGBPrefs(main_args)));
+		plugins_info.addAll(XmlPrefsParser.getPlugins());
 
 		if (plugins_info == null || plugins_info.isEmpty()) {
 			System.out.println("There are no plugins specified in preferences.");
@@ -1181,36 +1181,6 @@ public final class IGB extends Application
 		});
 		comp2menu_item.put(comp, popupMI);
 		popup_windowsM.add(new JCheckBoxMenuItem("foo"));
-	}
-
-	/**
-	 *  Determines which plugins to use based on the preferences file.
-	 *  Several basic plugins are turned on or off using boolean flags
-	 *  such as "USE_SLICE_VIEW".  The user can turn these on or off, but
-	 *  cannot affect their ordering.  Several of these default to "true"; others
-	 *  default to "false".
-	 *  Any other plugin can be turned on with the "&lt;plugin ... &gt;" tags.
-	 *  The ordering of those tags is maintained in the order of the tab panes
-	 *  they create.
-	 */
-	private List<PluginInfo> getPluginsFromXmlPrefs(Map<String, Map> prefs_hash) {
-		ArrayList<PluginInfo> plugin_list = new ArrayList<PluginInfo>(16);
-
-
-
-		Map other_plugins = XmlPrefsParser.getNamedMap(prefs_hash, XmlPrefsParser.PLUGINS);
-		for (Object o : other_plugins.values()) {
-			if (o instanceof PluginInfo) {
-				PluginInfo pi = (PluginInfo) o;
-				if ("com.affymetrix.igb.plugin.menu.EpsOutputAction".equals(pi.getClassName())) {
-					System.out.println("This plugin is obsolete, not using: " + pi.getClassName());
-				} else {
-					plugin_list.add(pi);
-				}
-			}
-		}
-
-		return plugin_list;
 	}
 
 	public String getApplicationName() {

@@ -111,6 +111,8 @@ public final class XmlPrefsParser {
 
 	public static final String PLUGINS = "plugins";
 
+	private static final Set<PluginInfo> plugins = new LinkedHashSet<PluginInfo>();
+
 	private XmlPrefsParser() { }
 
 	@SuppressWarnings("unchecked")
@@ -152,6 +154,10 @@ public final class XmlPrefsParser {
 		return m;
 	}
 
+	public static Set<PluginInfo> getPlugins() {
+		return Collections.<PluginInfo>unmodifiableSet(plugins);
+	}
+
 	@SuppressWarnings("unchecked")
 	private static Map<String, Map> processDocument(Document prefsdoc, Map<String, Map> prefs_hash) {
 		Element top_element = prefsdoc.getDocumentElement();
@@ -174,7 +180,7 @@ public final class XmlPrefsParser {
 					} else if (name.equalsIgnoreCase("annotation_url")) {
 						processLinkUrl(el);
 					} else if (name.equalsIgnoreCase("plugin")) {
-						processPlugin(el, prefs_hash);
+						processPlugin(el);
 					} else if (name.equalsIgnoreCase("server")) {
 						String server_type = el.getAttribute("type").toLowerCase();
 						String server_name = el.getAttribute("name");
@@ -197,11 +203,8 @@ public final class XmlPrefsParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void processPlugin(Element el, Map<String, Map> prefs_hash) {
+	private static void processPlugin(Element el) {
 		String loadstr = el.getAttribute("load");
-		// ignore if load attribute set to false
-		//     if (loadstr == null || (! loadstr.equalsIgnoreCase("false")) ) {
-		Map<String, PluginInfo> plugins = getNamedMap(prefs_hash, PLUGINS);
 		String plugin_name = el.getAttribute("name");
 		String class_name = el.getAttribute("class");
 		//String description = el.getAttribute("description");
@@ -210,7 +213,7 @@ public final class XmlPrefsParser {
 		if (plugin_name != null && class_name != null) {
 			System.out.println("plugin, name = " + plugin_name + ", class = " + class_name);
 			PluginInfo pinfo = new PluginInfo(class_name, plugin_name, load);
-			plugins.put(plugin_name, pinfo);
+			plugins.add(pinfo);
 		}
 	}
 

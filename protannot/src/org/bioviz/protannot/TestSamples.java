@@ -9,6 +9,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class opens a directory and then attempts to read every file in the
@@ -50,12 +52,17 @@ public class TestSamples {
 	 */
     static private boolean testFile(String filename)
     {
-        BufferedInputStream bistr;
+        BufferedInputStream bistr = null;
         try {
             bistr = new BufferedInputStream(new FileInputStream(filename));
             Xml2GenometryParser parser = new Xml2GenometryParser();
-            if(parser.parse(bistr) != null)
-                return true;
+			try {
+				if (parser.parse(bistr) != null) {
+					return true;
+				}
+			} catch (Exception ex) {
+				Logger.getLogger(TestSamples.class.getName()).log(Level.SEVERE, null, ex);
+			}
         } catch (FileNotFoundException ex) {
             System.err.println(filename + "File not found");
         }

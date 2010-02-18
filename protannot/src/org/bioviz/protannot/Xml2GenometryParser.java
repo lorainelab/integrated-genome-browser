@@ -788,9 +788,9 @@ final class Xml2GenometryParser {
         SeqUtils.transformSymmetry((MutableSeqSymmetry) result, m2gPath);
         SeqSpan mstart_point = result.getSpan(mrna);
 
-		if(mstart_point == null)
-			throw new NullPointerException("Conflict with start and end in processCDS. " +
-					"\n Resulting into null pointer error");
+		if(mstart_point == null) {
+			throw new NullPointerException("Conflict with start and end in processCDS.");
+		}
 
         result = new SimpleSymWithProps();
 
@@ -798,9 +798,9 @@ final class Xml2GenometryParser {
         SeqUtils.transformSymmetry((MutableSeqSymmetry) result, m2gPath);
         SeqSpan mend_point = result.getSpan(mrna);
 
-		if(mend_point == null)
-			throw new NullPointerException("Conflict with start and end in processCDS. " +
-					"\n Resulting into null pointer error");
+		if(mend_point == null) {
+			throw new NullPointerException("Conflict with start and end in processCDS.");
+		}
 		
         TypeContainerAnnot m2pSym = new TypeContainerAnnot(elem.getAttribute("method"));
 

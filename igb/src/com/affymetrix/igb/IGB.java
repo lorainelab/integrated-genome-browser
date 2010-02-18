@@ -169,7 +169,7 @@ public final class IGB extends Application
 			try {
 				UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				// unimportant if the look-and-feel couldn't be set.
 			}
 
 			// Initialize the ConsoleView right off, so that ALL output will
@@ -528,13 +528,13 @@ public final class IGB extends Application
 		});
 		frm.setVisible(true);
 
-		plugins_info.add(new PluginInfo(DataLoadView.class.getName(), "Data Access", true));
-		plugins_info.add(new PluginInfo(PropertyView.class.getName(), "Selection Info", true));
-		plugins_info.add(new PluginInfo(SearchView.class.getName(), "Search", true));
-		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true));
-		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true));
-		plugins_info.add(new PluginInfo(RestrictionControlView.class.getName(), "Restriction Sites", true));
-		plugins_info.add(new PluginInfo(ExternalViewer.class.getName(), "External View", true));
+		plugins_info.add(new PluginInfo(DataLoadView.class.getName(), BUNDLE.getString("dataAccessTab"), true));
+		plugins_info.add(new PluginInfo(PropertyView.class.getName(), BUNDLE.getString("selectionInfoTab"), true));
+		plugins_info.add(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true));
+		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true));
+		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true));
+		plugins_info.add(new PluginInfo(RestrictionControlView.class.getName(), BUNDLE.getString("restrictionSitesTab"), true));
+		plugins_info.add(new PluginInfo(ExternalViewer.class.getName(), BUNDLE.getString("externalViewTab"), true));
 
 
 		plugins_info.addAll(XmlPrefsParser.getPlugins());

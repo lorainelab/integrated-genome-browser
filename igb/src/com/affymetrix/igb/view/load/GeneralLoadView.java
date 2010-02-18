@@ -144,8 +144,8 @@ public final class GeneralLoadView extends JComponent
 		
 		partial_residuesB.addActionListener(this);
 		buttonPanel.add(partial_residuesB);
-		refresh_dataB = new JButton("Refresh Data");
-		refresh_dataB.setToolTipText("Load data sets currently in view");
+		refresh_dataB = new JButton(IGBConstants.BUNDLE.getString("refreshDataButton"));
+		refresh_dataB.setToolTipText(IGBConstants.BUNDLE.getString("refreshDataTip"));
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refresh_dataB.setEnabled(false);
 		refresh_dataB.addActionListener(this);
@@ -160,7 +160,7 @@ public final class GeneralLoadView extends JComponent
 
 		JPanel featuresPanel = new JPanel();
 		featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
-		featuresPanel.add(new JLabel("Choose Load Mode for Data Sets:"));
+		featuresPanel.add(new JLabel(IGBConstants.BUNDLE.getString("chooseLoadMode")));
 		featuresPanel.add(featuresTableScrollPane);
 
 		this.add("North", choicePanel);

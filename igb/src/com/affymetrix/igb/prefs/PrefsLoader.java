@@ -24,51 +24,52 @@ import javax.swing.JOptionPane;
 /**
  *
  * @author jnicol1
+ * @version $Id$
  */
 public abstract class PrefsLoader {
+
 	private static final int CURRENT_PREF_VERSION = 2;
 	private static boolean prefsLoaded = false;
-
 	private static final String user_dir = System.getProperty("user.dir");
-  private static final String user_home = System.getProperty("user.home");
-	 /**
-   *  We no longer distribute a file called "igb_prefs.xml".
-   *  Instead there is a default prefs file hidden inside the igb.jar file, and
-   *  this is augmented by a web-based prefs file.
-   *  But, we still will load a file called "igb_prefs.xml" if it exists in
-   *  the user's home directory, since they may have put some personal modifications
-   *  there.
-   */
-  private static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
-  static String default_user_prefs_files =
-    (new File(user_home, DEFAULT_PREFS_FILENAME)).getAbsolutePath() +
-    ";" +
-    (new File(user_dir, DEFAULT_PREFS_FILENAME)).getAbsolutePath();
+	private static final String user_home = System.getProperty("user.home");
+	/**
+	 *  We no longer distribute a file called "igb_prefs.xml".
+	 *  Instead there is a default prefs file hidden inside the igb.jar file, and
+	 *  this is augmented by a web-based prefs file.
+	 *  But, we still will load a file called "igb_prefs.xml" if it exists in
+	 *  the user's home directory, since they may have put some personal modifications
+	 *  there.
+	 */
+	private static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
+	static String default_user_prefs_files =
+			(new File(user_home, DEFAULT_PREFS_FILENAME)).getAbsolutePath()
+			+ ";"
+			+ (new File(user_dir, DEFAULT_PREFS_FILENAME)).getAbsolutePath();
 
 	/**
-   *  Returns IGB prefs hash
-   *  If prefs haven't been loaded yet, will force loading of prefs
-   */
-  public static void loadIGBPrefs(String [] main_args) {
-	  checkPrefsVersion();
-	  
-      if (prefsLoaded) {
-          return;
-      }
+	 *  Returns IGB prefs hash
+	 *  If prefs haven't been loaded yet, will force loading of prefs
+	 */
+	public static void loadIGBPrefs(String[] main_args) {
+		checkPrefsVersion();
 
-			String def_prefs_url = get_default_prefs_url(main_args);
-			String[] prefs_list = get_prefs_list(main_args);
+		if (prefsLoaded) {
+			return;
+		}
 
-      LoadDefaultPrefsFromJar();
-			LoadDefaultAPIPrefsFromJar();
-      LoadWebPrefs(def_prefs_url);
-      LoadFileOrURLPrefs(prefs_list);
+		String def_prefs_url = get_default_prefs_url(main_args);
+		String[] prefs_list = get_prefs_list(main_args);
+
+		LoadDefaultPrefsFromJar();
+		LoadDefaultAPIPrefsFromJar();
+		LoadWebPrefs(def_prefs_url);
+		LoadFileOrURLPrefs(prefs_list);
 		ServerList.loadServerPrefs();
 
-	prefsLoaded = true;
-  }
+		prefsLoaded = true;
+	}
 
- private static void LoadDefaultPrefsFromJar() {
+	private static void LoadDefaultPrefsFromJar() {
 		/**  first load default prefs from jar (with XmlPrefsParser)*/
 		InputStream default_prefs_stream = null;
 		try {
@@ -86,7 +87,6 @@ public abstract class PrefsLoader {
 			GeneralUtils.safeClose(default_prefs_stream);
 		}
 	}
-
 
 	private static void LoadDefaultAPIPrefsFromJar() {
 		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
@@ -112,15 +112,14 @@ public abstract class PrefsLoader {
 		}
 	}
 
-
 	private static void LoadWebPrefs(String def_prefs_url) {
 		// If a particular web prefs file was specified, then load it.
 		// Otherwise try to load the web-based-default prefs file. (But
 		// only load it if it is cached, then later update the cache on
 		// a background thread.)
 		if (def_prefs_url != null) {
-		//	loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
-		//} else {
+			//	loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
+			//} else {
 			LoadPreferencesFromURL(def_prefs_url);
 		}
 	}
@@ -157,8 +156,8 @@ public abstract class PrefsLoader {
 					strm = new FileInputStream(fil);
 					XmlPrefsParser.parse(strm);
 				} else if (fileOrURL.startsWith("http:")) {
-						System.out.println("loading user prefs from: " + fileOrURL);
-						LoadPreferencesFromURL(fileOrURL);
+					System.out.println("loading user prefs from: " + fileOrURL);
+					LoadPreferencesFromURL(fileOrURL);
 				} else if (fileOrURL.startsWith("file:")) {
 					fil = new File(new URI(fileOrURL));
 					System.out.println("loading user prefs from: " + fileOrURL);
@@ -181,28 +180,29 @@ public abstract class PrefsLoader {
 		}
 	}
 
+	/**
+	 * Parse the command line arguments.  Find out what prefs file to use.
+	 * Return the name of the file as a String, or null if not invoked with
+	 * -prefs option.
+	 */
+	private static String[] get_prefs_list(String[] args) {
+		String files = IGB.get_arg("-prefs", args);
+		if (files == null) {
+			files = default_user_prefs_files;
+		}
+		StringTokenizer st = new StringTokenizer(files, ";");
+		Set<String> result = new HashSet<String>();
+		result.add(st.nextToken());
+		while (st.hasMoreTokens()) {
+			result.add(st.nextToken());
+		}
+		return result.toArray(new String[result.size()]);
+	}
 
-	 /**
-   * Parse the command line arguments.  Find out what prefs file to use.
-   * Return the name of the file as a String, or null if not invoked with
-   * -prefs option.
-   */
-  private static String[] get_prefs_list(String[] args) {
-    String files = IGB.get_arg("-prefs", args);
-    if (files==null) {files = default_user_prefs_files;}
-    StringTokenizer st = new StringTokenizer(files, ";");
-    Set<String> result = new HashSet<String>();
-    result.add(st.nextToken());
-    while (st.hasMoreTokens()) {
-      result.add(st.nextToken());
-    }
-    return result.toArray(new String[result.size()]);
-  }
-
-  private static String get_default_prefs_url(String[] args) {
-    String def_prefs_url = IGB.get_arg("-default_prefs_url", args);
-    return def_prefs_url;
-  }
+	private static String get_default_prefs_url(String[] args) {
+		String def_prefs_url = IGB.get_arg("-default_prefs_url", args);
+		return def_prefs_url;
+	}
 
 	/**
 	 * Checks the version of the preferences file.  This function is also
@@ -212,11 +212,11 @@ public abstract class PrefsLoader {
 	private static void checkPrefsVersion() {
 		int version = UnibrowPrefsUtil.getTopNode().getInt("version", 0);
 
-		switch(version) {
+		switch (version) {
 			case 0:
 				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading unversioned preferences to version 1");
 				ServerList.updateServerPrefs();
-				/* continue */
+			/* continue */
 			case 1:
 				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading preferences version 1 to version 2");
 
@@ -225,13 +225,13 @@ public abstract class PrefsLoader {
 				/* continue */
 
 				/* add future version checks here */
-				
+
 				/* this always should occur in version n-1 */
 				version = 2; /* change this number to current prefs version */
 				UnibrowPrefsUtil.getTopNode().putInt("version", version);
 				break;
 			default:
-				/* do nothing */
+			/* do nothing */
 
 		}
 
@@ -243,7 +243,7 @@ public abstract class PrefsLoader {
 		 * the upgrade code that runs before it.
 		 */
 		if (version != CURRENT_PREF_VERSION) {
-			Object[] options = { "Quit IGB", "Delete and Continue" };
+			Object[] options = {"Quit IGB", "Delete and Continue"};
 			int n = JOptionPane.showOptionDialog(null,
 					"The preferences file is newer than this version of IGB.  Do you\n"
 					+ "wish to delete preferences and continue?",

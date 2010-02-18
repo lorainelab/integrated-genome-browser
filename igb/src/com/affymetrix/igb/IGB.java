@@ -77,6 +77,8 @@ import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
+ *
+ * @version $Id$
  */
 public final class IGB extends Application
 				implements ActionListener, ContextualPopupListener, GroupSelectionListener, SeqSelectionListener {

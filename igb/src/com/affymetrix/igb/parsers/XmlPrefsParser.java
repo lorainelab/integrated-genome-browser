@@ -107,11 +107,11 @@ child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
 public final class XmlPrefsParser {
 
 	private static final Class<?> default_factory_class =
-					com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
-
+			com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
 	private static final Set<PluginInfo> plugins = new LinkedHashSet<PluginInfo>();
 
-	private XmlPrefsParser() { }
+	private XmlPrefsParser() {
+	}
 
 	public static void parse(InputStream istr) {
 		try {
@@ -155,27 +155,27 @@ public final class XmlPrefsParser {
 			name = child.getNodeName();
 			if (child instanceof Element) {
 				el = (Element) child;
-					if (name.equalsIgnoreCase("annotation_style")) {
-						processAnnotStyle(el);
-					} else if (name.equalsIgnoreCase("annotation_url")) {
-						processLinkUrl(el);
-					} else if (name.equalsIgnoreCase("plugin")) {
-						processPlugin(el);
-					} else if (name.equalsIgnoreCase("server")) {
-						String server_type = el.getAttribute("type").toLowerCase();
-						String server_name = el.getAttribute("name");
-						String server_url = el.getAttribute("url");
-						if (IGBConstants.DEBUG) {
-							System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url);
-						}
-						if (server_type.equalsIgnoreCase(ServerType.DAS.toString())) {
-							ServerList.addServer(ServerType.DAS, server_name, server_url);
-						} else if (server_type.equalsIgnoreCase(ServerType.DAS2.toString())) {
-							ServerList.addServer(ServerType.DAS2, server_name, server_url);
-						} else if (server_type.equalsIgnoreCase(ServerType.QuickLoad.toString())) {
-							ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
-						}
+				if (name.equalsIgnoreCase("annotation_style")) {
+					processAnnotStyle(el);
+				} else if (name.equalsIgnoreCase("annotation_url")) {
+					processLinkUrl(el);
+				} else if (name.equalsIgnoreCase("plugin")) {
+					processPlugin(el);
+				} else if (name.equalsIgnoreCase("server")) {
+					String server_type = el.getAttribute("type").toLowerCase();
+					String server_name = el.getAttribute("name");
+					String server_url = el.getAttribute("url");
+					if (IGBConstants.DEBUG) {
+						System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url);
 					}
+					if (server_type.equalsIgnoreCase(ServerType.DAS.toString())) {
+						ServerList.addServer(ServerType.DAS, server_name, server_url);
+					} else if (server_type.equalsIgnoreCase(ServerType.DAS2.toString())) {
+						ServerList.addServer(ServerType.DAS2, server_name, server_url);
+					} else if (server_type.equalsIgnoreCase(ServerType.QuickLoad.toString())) {
+						ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
+					}
+				}
 			}
 		}
 	}
@@ -226,7 +226,7 @@ public final class XmlPrefsParser {
 			System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
 			return;
 		}
-	
+
 		String name = attmap.get("name");
 		try {
 			WebLink link = new WebLink();
@@ -235,10 +235,10 @@ public final class XmlPrefsParser {
 			link.setUrl(url);
 			if ("false".equalsIgnoreCase(attmap.get("match_case"))) {
 				link.setRegex("(?-i)" + annot_regex_string);
-			//regex = Pattern.compile(annot_regex_string);
+				//regex = Pattern.compile(annot_regex_string);
 			} else {
 				link.setRegex(annot_regex_string);
-			//regex = Pattern.compile(annot_regex_string, Pattern.CASE_INSENSITIVE);
+				//regex = Pattern.compile(annot_regex_string, Pattern.CASE_INSENSITIVE);
 			}
 
 			WebLink.addWebLink(link);

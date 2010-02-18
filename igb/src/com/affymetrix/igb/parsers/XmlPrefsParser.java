@@ -26,6 +26,8 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  *Class for parsing preferences for IGB.
@@ -77,11 +79,8 @@ Example:
 <annotation_style annot_type="test2"
 parent_glyph="com.affymetrix.igb.glyph.EfficientOutlineContGlyph"
 child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
-
-"glyph_depth":
-<b>IGNORED</b> starting with IGB 4.01.
-
  *</pre>
+ * 
  * @version $Id$
  */
 public final class XmlPrefsParser {
@@ -93,25 +92,16 @@ public final class XmlPrefsParser {
 	private XmlPrefsParser() {
 	}
 
-	public static void parse(InputStream istr) {
-		try {
-			InputSource insrc = new InputSource(istr);
-			parse(insrc);
-		} catch (Exception ex) {
-			System.err.println("ERROR while reading preferences");
-			System.err.println("  " + ex.toString());
-			ex.printStackTrace();
-		}
-	}
+	public static void parse(InputStream istr) throws IOException {
+		InputSource insource = new InputSource(istr);
 
-	private static void parse(InputSource insource) {
 		try {
 			Document prefsdoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(insource);
 			processDocument(prefsdoc);
-		} catch (Exception ex) {
-			System.err.println("ERROR while reading preferences");
-			System.err.println("  " + ex.toString());
-			ex.printStackTrace();
+		} catch (ParserConfigurationException ex) {
+			throw new IOException(ex);
+		} catch (SAXException ex) {
+			throw new IOException(ex);
 		}
 	}
 
@@ -215,10 +205,8 @@ public final class XmlPrefsParser {
 			link.setUrl(url);
 			if ("false".equalsIgnoreCase(attmap.get("match_case"))) {
 				link.setRegex("(?-i)" + annot_regex_string);
-				//regex = Pattern.compile(annot_regex_string);
 			} else {
 				link.setRegex(annot_regex_string);
-				//regex = Pattern.compile(annot_regex_string, Pattern.CASE_INSENSITIVE);
 			}
 
 			WebLink.addWebLink(link);
@@ -228,11 +216,6 @@ public final class XmlPrefsParser {
 	}
 
 	private static void processAnnotStyle(Element el) {
-		/*  Builds two hash tables:
-		 *  type2factory ==> hash of "annot_type" attribute mapped to MapViewGlyphFactoryI
-		 *  regex2factory ==> hash of RE objects derived from "annot_starts_with",
-		 *      "annot_ends_with", and "annot_regex" fields mapped to MapViewGlyphFactoryI
-		 */
 		Class<?> factory_class = default_factory_class;
 		Map<String, String> attmap = XmlPrefsParser.getAttributeMap(el);
 

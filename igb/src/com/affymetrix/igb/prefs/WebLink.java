@@ -19,6 +19,10 @@ import java.util.regex.PatternSyntaxException;
 
 import static com.affymetrix.igb.IGBConstants.UTF8;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class WebLink {
 
 	public enum RegexType { TYPE, ID };
@@ -319,12 +323,7 @@ public final class WebLink {
 	}
 
 	public static void importWebLinks(File f) throws FileNotFoundException, IOException {
-		importWebLinks(new FileInputStream(f));
-	}
-
-	public static void importWebLinks(InputStream st) throws IOException {
-		// The existing XmlPrefsParser is capable of importing the web links
-		XmlPrefsParser.parse(st);
+		XmlPrefsParser.parse(new FileInputStream(f));
 	}
 
 	public static void exportWebLinks(File f, boolean include_warning) throws IOException {

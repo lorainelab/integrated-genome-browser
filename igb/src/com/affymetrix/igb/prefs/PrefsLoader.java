@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -80,7 +81,7 @@ public abstract class PrefsLoader {
 			}
 			System.out.println("loading default prefs from: " + IGBConstants.default_prefs_resource);
 			XmlPrefsParser.parse(default_prefs_stream);
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			System.out.println("Problem parsing prefs from: " + IGBConstants.default_prefs_resource);
 			ex.printStackTrace();
 		} finally {
@@ -170,7 +171,11 @@ public abstract class PrefsLoader {
 					 */
 					//System.out.println("Unknown prefs source: " + fileOrURL);
 				}
-			} catch (Exception ex) {
+			} catch (URISyntaxException ex) {
+				System.out.flush();
+				System.out.println("Problem parsing prefs from: " + fileOrURL);
+				System.out.println(ex.toString());
+			} catch (IOException ex) {
 				System.out.flush();
 				System.out.println("Problem parsing prefs from: " + fileOrURL);
 				System.out.println(ex.toString());

@@ -20,15 +20,14 @@ public class AnnotationQuery {
 
   
 	// Criteria
-	private String             scopeLevel;
+	private String             scopeLevel = "";
 	private Integer            idUserGroup;
 	private Integer            idOrganism;
 	private Integer            idGenomeVersion;
 	private String             isVisibilityPublic = "Y";
 	private String             isVisibilityMembers = "Y";
 	private String             isVisibilityMembersAndCollabs = "Y";
-	private String             text;
-	
+
     
 	private StringBuffer        queryBuf;
 	private boolean            addWhere = true;
@@ -65,7 +64,6 @@ public class AnnotationQuery {
 		this.isVisibilityMembers = Util.getFlagParameter(req, "isVisibilityMembers");
 		this.isVisibilityMembersAndCollabs = Util.getFlagParameter(req, "isVisibilityMembersAndCollabs");
 		this.isVisibilityPublic = Util.getFlagParameter(req, "isVisibilityPublic");
-		text               = req.getParameter("text");
 		
 		if (scopeLevel == null || scopeLevel.equals("")) {
 			scopeLevel = GenoPubSecurity.ALL_SCOPE_LEVEL;
@@ -437,8 +435,8 @@ public class AnnotationQuery {
 			}
 			if (genomeVersion != null) {
 				versionMap.put(genomeVersion, null);
+				genomeVersionNameMap.put(genomeVersion.getName(), genomeVersion);
 			}
-			genomeVersionNameMap.put(genomeVersion.getName(), genomeVersion);
 
 			
 			// Hash root annotation groupings for a genome version
@@ -590,7 +588,7 @@ public class AnnotationQuery {
 					// For each root annotation grouping, recurse annotation grouping
 					// hierarchy to get leaf annotations.
 					TreeMap<String, ?> rootGroupingNameMap = versionToRootGroupings.get(genomeVersion.getName());
-					String qualifiedName = new String();
+					String qualifiedName = "";
 					getQualifiedAnnotation(rootGroupingNameMap, qualifiedAnnotations, qualifiedName, false);
 					
 				}
@@ -606,8 +604,6 @@ public class AnnotationQuery {
 			for (String groupingKey : theGroupings.keySet()) {
 				String[] tokens     = groupingKey.split(KEY_DELIM);
 				String groupingName          = tokens[0];
-				Integer idAnnotationGrouping = new Integer(tokens[1]);
-				
 				
 				// For each annotation....
 				TreeMap<String, ?> annotNameMap = groupingToAnnotations.get(groupingKey);
@@ -681,7 +677,7 @@ public class AnnotationQuery {
 					// For each annotation...
 					for (String annotNameKey : annotNameMap.keySet()) { 
 						String[] tokens1    = annotNameKey.split(KEY_DELIM);
-						Integer idAnnotation = new Integer(tokens1[1]);
+						Integer idAnnotation = Integer.valueOf(tokens1[1]);
 						
 						Annotation annot = annotationMap.get(idAnnotation);
 						

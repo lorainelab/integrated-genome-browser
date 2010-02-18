@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -20,6 +22,7 @@ import com.affymetrix.genometry.genopub.GenomeVersion;
 import com.affymetrix.genometry.genopub.Owned;
 import com.affymetrix.genometry.genopub.Util;
 import com.affymetrix.genometry.genopub.Visibility;
+import com.affymetrix.genometry.servlets.GenometryDas2Servlet;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 
@@ -164,7 +167,7 @@ public class Annotation implements Owned {
 		
 		GenomeVersion genomeVersion = dh.getGenomeVersion(this.getIdGenomeVersion());
 		if (genomeVersion == null) {
-			System.out.println("Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
+			Logger.getLogger(Annotation.class.getName()).log(Level.SEVERE,"Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
 		}
 				
 		root.addAttribute("idAnnotation", this.getIdAnnotation().toString());
@@ -180,12 +183,12 @@ public class Annotation implements Owned {
 		root.addAttribute("idUser", this.getIdUser() != null ? this.getIdUser().toString() : "");
 		root.addAttribute("idUserGroup", this.getIdUserGroup() != null ? this.getIdUserGroup().toString() : "");
 		root.addAttribute("owner", dh.getUserFullName(this.getIdUser()));
-		root.addAttribute("genomeVersion", genomeVersion.getName());
+		root.addAttribute("genomeVersion", genomeVersion != null ? genomeVersion.getName() : "");
 		root.addAttribute("organism", dh.getOrganismName(genomeVersion.getIdOrganism()));
 		root.addAttribute("securityGroup", dh.getUserGroupName(this.getIdUserGroup()));
 		root.addAttribute("createdBy", this.getCreatedBy() != null ? this.getCreatedBy() : "");
 		root.addAttribute("createDate", this.getCreateDate() != null ? Util.formatDate(this.getCreateDate()) : "");
-		root.addAttribute("annotationGroupingCount", new Integer(this.getAnnotationGroupings().size()).toString());
+		root.addAttribute("annotationGroupingCount", Integer.valueOf(this.getAnnotationGroupings().size()).toString());
 		
 		// Only show annotation groupings and annotation files for detail
 		// (when data_root is provided).
@@ -267,13 +270,19 @@ public class Annotation implements Owned {
 				for (int x = 0; x < childFileNames.length; x++) {
 					String fileName = filePath + "/" + childFileNames[x];
 					File f = new File(fileName);
-					f.delete();
+					boolean success = f.delete();
+					if (!success) {
+						Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete file " + fileName);
+					}
 				}
 		    	
 		    }
 			
 			// Delete the annotation directory
-			dir.delete();	    	
+		    boolean success = dir.delete();	    	
+			if (!success) {
+				Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to delete directory " + filePath);
+			}
 	    }
 	}
 

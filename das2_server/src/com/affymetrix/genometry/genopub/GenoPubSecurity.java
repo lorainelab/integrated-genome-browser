@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.genopub;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +17,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.AnnotSecurity;
 
 
-public class GenoPubSecurity implements AnnotSecurity {
+public class GenoPubSecurity implements AnnotSecurity, Serializable {
 	
 	public static final String    SESSION_KEY = "GenoPubSecurity";
 	public static final String    ADMIN_ROLE  = "admin";
@@ -498,7 +499,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void appendAnnotationGroupingHQLSecurity(StringBuffer queryBuf, 
+	private boolean appendAnnotationGroupingHQLSecurity(StringBuffer queryBuf, 
             								           String annotationGroupingAlias,
             								           boolean addWhere) throws Exception {
 
@@ -510,7 +511,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 			appendMemberInStatement(queryBuf, this.groupsMemCollabVisibility);			
 		}
 		queryBuf.append(")");
-
+		return addWhere;
 	}
 	
 	

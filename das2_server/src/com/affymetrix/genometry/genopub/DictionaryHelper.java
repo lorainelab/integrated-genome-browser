@@ -14,7 +14,9 @@ import org.hibernate.Session;
 
 public class DictionaryHelper {
     
-    private static DictionaryHelper              theDictionaryHelper   = null;
+    private static DictionaryHelper                     theDictionaryHelper   = new DictionaryHelper();
+    
+    private boolean                                     isLoaded = false;
 	
     private final HashMap<Integer, AnalysisType>        analysisTypeMap  = new HashMap<Integer, AnalysisType>();
 	private final List<AnalysisType>                    analysisTypeList = new ArrayList<AnalysisType>();
@@ -26,7 +28,7 @@ public class DictionaryHelper {
 	private final List<ExperimentPlatform>              experimentPlatformList = new ArrayList<ExperimentPlatform>();
 
 	private final HashMap<Integer, Organism>            organismMap  = new HashMap<Integer, Organism>();
-	private final  List<Organism>                        organismList = new ArrayList<Organism>();
+	private final  List<Organism>                       organismList = new ArrayList<Organism>();
 
 	private final HashMap<Integer, GenomeVersion>       genomeVersionMap  = new HashMap<Integer, GenomeVersion>();
 	private final List<GenomeVersion>                   genomeVersionList = new ArrayList<GenomeVersion>();
@@ -41,15 +43,30 @@ public class DictionaryHelper {
 	private final List<Visibility>                      visibilityList = new ArrayList<Visibility>();
 
 	public static DictionaryHelper getInstance(Session sess) {
-		if (theDictionaryHelper == null) {
-			theDictionaryHelper = new DictionaryHelper();
+		if (!theDictionaryHelper.isLoaded) {
 			theDictionaryHelper.load(sess);
 		}
 		return theDictionaryHelper;
 	}
 	
 	public static DictionaryHelper reload(Session sess) {
-		theDictionaryHelper = new DictionaryHelper();
+	    theDictionaryHelper.analysisTypeMap.clear();
+	    theDictionaryHelper.analysisTypeList.clear();
+	    theDictionaryHelper.experimentMethodMap.clear();
+	    theDictionaryHelper.experimentMethodList.clear();
+	    theDictionaryHelper.experimentPlatformMap.clear();
+	    theDictionaryHelper.experimentPlatformList.clear();
+	    theDictionaryHelper.organismMap.clear();
+	    theDictionaryHelper.organismList.clear();
+	    theDictionaryHelper.genomeVersionMap.clear();
+	    theDictionaryHelper.genomeVersionList.clear();
+	    theDictionaryHelper.organismToGenomeVersionMap.clear();
+	    theDictionaryHelper.groupMap.clear();
+	    theDictionaryHelper.groupList.clear();
+	    theDictionaryHelper.userMap.clear();
+	    theDictionaryHelper.userList.clear();
+	    theDictionaryHelper.visibilityList.clear();
+	    
 		theDictionaryHelper.load(sess);
 		return theDictionaryHelper;
 	}
@@ -131,6 +148,7 @@ public class DictionaryHelper {
 			userList.add(d);
 		}		
 		
+		isLoaded = true;
 
 	}
 

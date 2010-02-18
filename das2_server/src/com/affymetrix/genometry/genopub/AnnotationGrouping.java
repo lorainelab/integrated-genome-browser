@@ -108,7 +108,7 @@ public class AnnotationGrouping {
 
       // Stop before the root annotation grouping
       if (parent != null) {
-        if (parent != null && parent.getName() != null) {
+        if (parent.getName() != null) {
           qualifiedName = parent.getName() + "/" + qualifiedName;
 
           qualifiedName = parent.recurseGetParentName(qualifiedName);

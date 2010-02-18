@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -818,7 +819,9 @@ public class GenoPubServlet extends HttpServlet {
 			for(Iterator<?> i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element fileNode = (Element)i.next();
 				File file = new File(fileNode.attributeValue("url"));
-				file.delete();
+				if (!file.delete()) {
+					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete sequence file " + file.getName() + " for genome version " + genomeVersion.getName());
+				}
 			}            
 
 
@@ -977,7 +980,7 @@ public class GenoPubServlet extends HttpServlet {
 
 					s.setName(name);
 					s.setLength(len != null && !len.equals("") ? new Integer(len.replaceAll("[^0-9]", "")) : null);
-					s.setSortOrder(new Integer(count));
+					s.setSortOrder(Integer.valueOf(count));
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
 
 					sess.save(s);
@@ -1034,16 +1037,16 @@ public class GenoPubServlet extends HttpServlet {
 			URL += ";jsessionid=" + req.getRequestedSessionId();
 
 			// Get the valid file extensions
-			String fileExtensions = "";
+			StringBuffer fileExtensions = new StringBuffer();
 			for (int x=0; x < Constants.SEQUENCE_FILE_EXTENSIONS.length; x++) {
 				if (fileExtensions.length() > 0) {
-					fileExtensions += ";";
+					fileExtensions.append(";");
 				}
-				fileExtensions += "*" + Constants.SEQUENCE_FILE_EXTENSIONS[x];
+				fileExtensions.append("*" + Constants.SEQUENCE_FILE_EXTENSIONS[x]);
 			}
 
 			res.setContentType("application/xml");
-			res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions + "'" + "/>");
+			res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions.toString() + "'" + "/>");
 
 		} catch (Exception e) {
 			System.out.println("An error has occured in GenoPubServlet - " + e.toString());
@@ -1098,8 +1101,7 @@ public class GenoPubServlet extends HttpServlet {
 			} 
 			if (genomeVersion != null) {
 				if (this.genoPubSecurity.canWrite(genomeVersion)) {
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
-
+					
 					// Make sure that the data root dir exists
 					if (!new File(genometry_genopub_dir).exists()) {
 						boolean success = (new File(genometry_genopub_dir)).mkdir();
@@ -1743,7 +1745,9 @@ public class GenoPubServlet extends HttpServlet {
 			for(Iterator<?> i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element fileNode = (Element)i.next();
 				File file = new File(fileNode.attributeValue("url"));
-				file.delete();
+				if (!file.delete()) {
+					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable remove annotation file " + file.getName() + " for annotation " + annotation.getName());
+				}
 			}            
 
 			sess.save(annotation);
@@ -2023,7 +2027,7 @@ public class GenoPubServlet extends HttpServlet {
 			Element root = doc.addElement("SUCCESS");
 			root.addAttribute("idAnnotation", annotation.getIdAnnotation().toString());
 			root.addAttribute("name", annotation.getName());
-			root.addAttribute("numberRemainingAnnotationGroupings", new Integer(agCount).toString());
+			root.addAttribute("numberRemainingAnnotationGroupings", Integer.valueOf(agCount).toString());
 			root.addAttribute("remainingAnnotationGroupings", remainingAnnotationGroupings.toString());
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
 					OutputFormat.createCompactFormat());
@@ -2111,7 +2115,7 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("Move/copy operation to same annotation folder is not allowed.");
 				}				
 			} else {
-				if (idAnnotationGrouping == null && idAnnotationGroupingOld == null) {
+				if (idAnnotationGrouping == null) {
 					throw new Exception("Move/copy operation to same folder is not allowed.");
 				}
 			}
@@ -2395,17 +2399,17 @@ public class GenoPubServlet extends HttpServlet {
 			URL += ";jsessionid=" + req.getRequestedSessionId();
 
 			// Get the valid file extensions
-			String fileExtensions = "";
+			StringBuffer fileExtensions = new StringBuffer();
 			for (int x=0; x < Constants.ANNOTATION_FILE_EXTENSIONS.length; x++) {
 				if (fileExtensions.length() > 0) {
-					fileExtensions += ";";
+					fileExtensions.append(";");
 				}
-				fileExtensions += "*" + Constants.ANNOTATION_FILE_EXTENSIONS[x];
+				fileExtensions.append("*" + Constants.ANNOTATION_FILE_EXTENSIONS[x]);
 			}
 
 
 			res.setContentType("application/xml");
-			res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions + "'" + "/>");
+			res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions.toString() + "'" + "/>");
 
 		} catch (Exception e) {
 			System.out.println("An error has occured in GenoPubServlet handleAnnotationFormUploadURLRequest - " + e.toString());
@@ -2531,7 +2535,9 @@ public class GenoPubServlet extends HttpServlet {
 								AnnotationGrouping ag = getDefaultAnnotationGrouping(annotation, sess, idAnnotationGrouping);							
 								uploadBulkAnnotations(sess, tempBulkUploadFile, annotation, ag, res);
 								if (tempBulkUploadFile.exists()) { 
-									tempBulkUploadFile.delete();
+									if (!tempBulkUploadFile.delete()) {
+										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + tempBulkUploadFile.getName() + " during bulk upload.");
+									}
 									break;
 								}
 							}
@@ -2558,7 +2564,6 @@ public class GenoPubServlet extends HttpServlet {
 								//check size of text files
 								if (Util.tooManyLines(file)){
 									file.delete();
-//Tony, how do I pass this error onto the user, I'd like to let them know why the upload failed and what to do about it.  As it is, the message sent is just the error code. See the catch below.									
 									throw new FileTooBigException("Aborting upload, text formatted annotation file '" + annotation.getName() + " exceeds the maximum allowed size ("+
 											Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES+" lines). Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form.");
 								}
@@ -2786,10 +2791,12 @@ public class GenoPubServlet extends HttpServlet {
 		// Create a file directory and move in the data file
 		dup.setFileName("A" + dup.getIdAnnotation());
 		File dir = new File (genometry_genopub_dir, dup.getFileName());
-		dir.mkdir();
+		if (!dir.mkdir()) {
+			throw new IOException("Failed to move the dataFile '" + dataFile + "' to its archive location.  Rename failed . Aborting bulk uploading.");
+		}
 		File moved = new File (dir, dataFile.getName());
 		if (dataFile.renameTo(moved) == false) {
-			throw new IOException("Failed to move the dataFile '"+dataFile+"' to its archive location  '"+moved+"' . Aborting bulk uploading.");
+			throw new IOException("Failed to move the dataFile '" +dataFile + "' to its archive location  '" + moved +"' . Aborting bulk uploading.");
 		}
 			
 		
@@ -2858,7 +2865,7 @@ public class GenoPubServlet extends HttpServlet {
 			// handle long request parameter
 			req.getSession().setAttribute(SESSION_DOWNLOAD_KEYS, keys);
 			
-			this.reportSuccess(res, "size", new Long(estimatedDownloadSize).toString());
+			this.reportSuccess(res, "size", Long.valueOf(estimatedDownloadSize).toString());
 		} catch (Exception e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.toString());
 			e.printStackTrace();
@@ -3783,7 +3790,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 
-	private void handleDictionaryAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	private void handleDictionaryAddRequest(HttpServletRequest request, HttpServletResponse res)  {
 		Session sess = null;
 		Transaction tx = null;
 

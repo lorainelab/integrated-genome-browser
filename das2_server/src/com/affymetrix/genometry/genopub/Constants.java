@@ -13,7 +13,7 @@ public class Constants {
 
 	public static final int MAXIMUM_NUMBER_TEXT_FILE_LINES = 10000;
 
-	public static String[] ANNOTATION_FILE_EXTENSIONS = new String[] 
+	public static final String[] ANNOTATION_FILE_EXTENSIONS = new String[] 
 	                                                               {
 		".bar",
 		".bed",
@@ -32,7 +32,7 @@ public class Constants {
 		".bulkUpload"
 	                                                               };
 
-	public static String[] FILE_EXTENSIONS_TO_CHECK_SIZE_BEFORE_UPLOADING = new String[] {
+	public static final String[] FILE_EXTENSIONS_TO_CHECK_SIZE_BEFORE_UPLOADING = new String[] {
 		".bed", 
 		".bgn", 
 		".gff", 
@@ -40,7 +40,7 @@ public class Constants {
 		".psl", 
 	};
 
-	public static String[] SEQUENCE_FILE_EXTENSIONS = new String[] 
+	public static final String[] SEQUENCE_FILE_EXTENSIONS = new String[] 
 	                                                             {
 		".bnib", 
 		".fasta",

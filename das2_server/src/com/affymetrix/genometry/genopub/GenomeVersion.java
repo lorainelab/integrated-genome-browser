@@ -7,6 +7,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -222,13 +224,19 @@ public class GenomeVersion {
 	      for (int x = 0; x < childFileNames.length; x++) {
 	        String fileName = filePath + "/" + childFileNames[x];
 	        File f = new File(fileName);
-	        f.delete();
+	        boolean success = f.delete();
+	        if (!success) {
+				Logger.getLogger(GenomeVersion.class.getName()).log(Level.WARNING, "Unable to delete file " + fileName);
+	        }
 	      }
 
 	    }
 
 	    // Delete the annotation directory
-	    dir.delete();	    	
+	    boolean success = dir.delete();
+	    if (!success) {
+			Logger.getLogger(GenomeVersion.class.getName()).log(Level.WARNING, "Unable to delete directory " + filePath);	    	
+	    }
 	  }
 	}
 

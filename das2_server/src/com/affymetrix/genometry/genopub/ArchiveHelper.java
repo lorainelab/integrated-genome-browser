@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 
@@ -72,20 +74,34 @@ public class ArchiveHelper {
   }
     
   public InputStream compressFile(String fileName, String zipEntryName) throws IOException {
+	FileOutputStream out = null;
+	GZIPOutputStream gzipOut = null;
+	
+	try {
+	    gzipFileName = getGzipTempFileName(zipEntryName);
+	    out = new FileOutputStream(gzipFileName);
+	    
+	        
+	    gzipOut = new GZIPOutputStream(out);
+	    
+	    transferBytes(new FileInputStream(fileName), gzipOut);
+	    
+	    
+	    archiveFileSize = new File(gzipFileName).length();
+	    archiveEntryName = zipEntryName + ".gz";
+    	
+    } catch(IOException e) {
+		Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to compress file " + fileName + " for zip entry " + zipEntryName, e);
 
-    gzipFileName = getGzipTempFileName(zipEntryName);
-    FileOutputStream out = new FileOutputStream(gzipFileName);
-    
-        
-    GZIPOutputStream gzipOut = new GZIPOutputStream(out);
-    
-    transferBytes(new FileInputStream(fileName), gzipOut);
-    
-    gzipOut.finish();
-    gzipOut.close();
-    
-    archiveFileSize = new File(gzipFileName).length();
-    archiveEntryName = zipEntryName + ".gz";
+    } finally {
+    	if (out != null) {
+    		out.close();
+    	}
+    	if (gzipOut != null) {
+    	    gzipOut.finish();
+    	    gzipOut.close();    		
+    	}
+    }
     
     return new FileInputStream(gzipFileName);    
   }

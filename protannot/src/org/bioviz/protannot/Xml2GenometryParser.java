@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import org.w3c.dom.DOMException;
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
@@ -69,7 +71,7 @@ final class Xml2GenometryParser {
      * @return          Returns BioSeq of parsed file.
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
-    BioSeq parse(InputStream istr) {
+    BioSeq parse(InputStream istr) throws Exception{
        mrna_hash = new HashMap<String,BioSeq>();
         prot_hash = new HashMap<String,BioSeq>();
 
@@ -86,9 +88,10 @@ final class Xml2GenometryParser {
 			return ret_genomic;
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+			ex.printStackTrace();
+			throw ex;
         }
-        return null;
+        //return null;
     }
 
     /**
@@ -785,11 +788,20 @@ final class Xml2GenometryParser {
         SeqUtils.transformSymmetry((MutableSeqSymmetry) result, m2gPath);
         SeqSpan mstart_point = result.getSpan(mrna);
 
+		if(mstart_point == null)
+			throw new NullPointerException("Conflict with start and end in processCDS. " +
+					"\n Resulting into null pointer error");
+
         result = new SimpleSymWithProps();
 
         result.addSpan(gend_point);
         SeqUtils.transformSymmetry((MutableSeqSymmetry) result, m2gPath);
         SeqSpan mend_point = result.getSpan(mrna);
+
+		if(mend_point == null)
+			throw new NullPointerException("Conflict with start and end in processCDS. " +
+					"\n Resulting into null pointer error");
+		
         TypeContainerAnnot m2pSym = new TypeContainerAnnot(elem.getAttribute("method"));
 
         SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrna);

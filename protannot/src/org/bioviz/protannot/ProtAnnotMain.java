@@ -200,7 +200,8 @@ final class ProtAnnotMain implements WindowListener {
             gview.setBioSeq(genome_seq,true);
             frm.setTitle(" ProtAnnot: " + filename + " version :" +genome_seq.getVersion() + " id :" + genome_seq.getID());
         } catch (Exception ex) {
-            Reporter.report("Couldn't read file: " + filename,
+            Reporter.report("Couldn't read file: " + filename + "\n" +
+					"Error : " + ex.getMessage(),
                     ex, false, false, true);
             no_data();
         } finally

@@ -17,7 +17,6 @@ import com.affymetrix.igb.IGBConstants;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
-import java.awt.Color;
 
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -255,8 +254,6 @@ public final class XmlPrefsParser {
 		 */
 		Class<?> factory_class = default_factory_class;
 		Map<String, String> attmap = XmlPrefsParser.getAttributeMap(el);
-		// add colors
-		XmlPrefsParser.addColors(el, attmap);
 
 		// annotation_style element _must_ have and annot_type attribute
 		// planning to relax this at some point to allow for element to have one (and only one) of:
@@ -285,40 +282,6 @@ public final class XmlPrefsParser {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void addColors(Element el, Map hash) {
-		if (el.hasAttribute("red")) {
-			int red = Integer.parseInt(el.getAttribute("red"));
-			int green = Integer.parseInt(el.getAttribute("green"));
-			int blue = Integer.parseInt(el.getAttribute("blue"));
-			Color col = new Color(red, green, blue);
-			hash.put("color", col);
-		}
-		/*
-		else if (el.getAttribute("color")) {
-		// handle color="r,g,b" attribute...
-		}
-		 */
-		// check for color elements in child nodes of annotation_style element
-		NodeList children = el.getChildNodes();
-		int child_count = children.getLength();
-		for (int i = 0; i < child_count; i++) {
-			Node child = children.item(i);
-			String name = child.getNodeName();
-			if (child instanceof Element) {
-				Element cel = (Element) child;
-				if (name.equalsIgnoreCase("color")) {
-					int red = Integer.parseInt(cel.getAttribute("red"));
-					int green = Integer.parseInt(cel.getAttribute("green"));
-					int blue = Integer.parseInt(cel.getAttribute("blue"));
-					String color_name = cel.getAttribute("name");
-					Color col = new Color(red, green, blue);
-					hash.put(color_name, col);
-				}
-			}
-		}
-	}
-
 	private static Map<String, String> getAttributeMap(Element el) {
 		HashMap<String, String> amap = new HashMap<String, String>();
 		NamedNodeMap atts = el.getAttributes();
@@ -332,4 +295,3 @@ public final class XmlPrefsParser {
 		return amap;
 	}
 }
-

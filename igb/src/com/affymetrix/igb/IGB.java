@@ -180,6 +180,7 @@ public final class IGB extends Application
 			System.out.println("UserAgent: " + USER_AGENT);
 			System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
 			Runtime runtime = Runtime.getRuntime();
+			System.out.println("Locale: " + Locale.getDefault());
 			System.out.println("System memory: " + runtime.maxMemory() / 1024);
 			if (args != null) {
 				System.out.print("arguments: ");

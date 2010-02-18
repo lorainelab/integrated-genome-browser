@@ -12,14 +12,12 @@
  */
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.IGBConstants;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 import java.awt.Color;
-import javax.swing.KeyStroke;
 
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -108,20 +106,9 @@ child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
  */
 public final class XmlPrefsParser {
 
-	static Class<?> default_factory_class =
+	private static final Class<?> default_factory_class =
 					com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
-	private static final String FILENAME_LIST = "FILENAME_LIST";
-	/** The name of a Map used to link exact names to glyph factories.
-	 *  Use with {@link #getNamedMap(Map, String)}.
-	 */
-	public static final String MATCH_FACTORIES = "match_factories";
-	/** The name of a Map used to link regular expressions to glyph factories.
-	 *  Use with {@link #getNamedMap(Map, String)}.
-	 */
-	public static final String REGEX_FACTORIES = "regex_factories";
-	/** The name of a Map used to link plugin names to plugins classes
-	 *  Use with {@link #getNamedMap(Map, String)}.
-	 */
+
 	public static final String PLUGINS = "plugins";
 
 	private XmlPrefsParser() { }
@@ -142,7 +129,6 @@ public final class XmlPrefsParser {
 	@SuppressWarnings("unchecked")
 	private static Map parse(InputSource insource, Map<String, Map> prefs_hash) {
 		try {
-			//      System.out.println("parsing from source: " + insource);
 			Document prefsdoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(insource);
 			prefs_hash = processDocument(prefsdoc, prefs_hash);
 		} catch (Exception ex) {
@@ -167,81 +153,29 @@ public final class XmlPrefsParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Map processDocument(Document prefsdoc, Map prefs_hash) {
+	private static Map<String, Map> processDocument(Document prefsdoc, Map<String, Map> prefs_hash) {
 		Element top_element = prefsdoc.getDocumentElement();
 		String topname = top_element.getTagName();
 		if (!(topname.equalsIgnoreCase("prefs"))) {
 			System.err.println("not a prefs file -- can't parse in prefs!");
 		}
 		NodeList children = top_element.getChildNodes();
-
-		// if red, green, blue attributes then val = color(red, green, blue)
-		// else if has nested tags then val = (recursive hashtable into nesting)
-		// else val = String(content)
+		Node child;
+		String name;
+		Element el;
 
 		for (int i = 0; i < children.getLength(); i++) {
-			Node child = children.item(i);
-			String name = child.getNodeName();
-			Object val = null;
+			child = children.item(i);
+			name = child.getNodeName();
 			if (child instanceof Element) {
-				Element el = (Element) child;
-				String the_name = name; // used for error reporting
-
-				try {
+				el = (Element) child;
 					if (name.equalsIgnoreCase("annotation_style")) {
 						processAnnotStyle(el);
 					} else if (name.equalsIgnoreCase("annotation_url")) {
 						processLinkUrl(el);
-					} else if (name.equalsIgnoreCase("annotation_style_defaults")) {
-						// processDefaultAnnotStyle();
 					} else if (name.equalsIgnoreCase("plugin")) {
 						processPlugin(el, prefs_hash);
-					} else if (name.equalsIgnoreCase("tagval")) {
-						String tag = el.getAttribute("tag");
-						the_name = tag;
-						val = el.getAttribute("val");
-						if (tag.equals("QuickLoadUrl")) {
-							System.out.println("WARNING: QuickLoadUrl is no longer supported.  Use <server> specifier instead");
-						} else {
-							prefs_hash.put(tag, val);
-						}
-					} else if (name.equalsIgnoreCase("boolean")) {
-						String tag = el.getAttribute("tag");
-						the_name = tag;
-						val = new Boolean(el.getAttribute("val"));
-						prefs_hash.put(tag, val);
-					} else if (name.equalsIgnoreCase("keystroke")) {
-						the_name = el.getAttribute("function").toLowerCase();
-						String stroke = el.getAttribute("stroke").trim();
-						if (stroke.length() > 0) {
-							val = KeyStroke.getKeyStroke(stroke);
-							if (val != null) {
-								prefs_hash.put(the_name, val);
-							} else {
-							}
-						}
-					} else if (el.hasAttribute("red")) {
-						// if red, green, blue attributes then val = color(red, green, blue)
-						int red = Integer.parseInt(el.getAttribute("red"));
-						int green = Integer.parseInt(el.getAttribute("green"));
-						int blue = Integer.parseInt(el.getAttribute("blue"));
-						val = new Color(red, green, blue);
-						// prefs_hash.put(name.trim().toLowerCase(), val);
-						prefs_hash.put(name.trim(), val);
-					} else if (name.equalsIgnoreCase("dasserver") || name.equalsIgnoreCase("das_server")) {
-						String server_name = el.getAttribute("name");
-						String server_url = el.getAttribute("url");
-						ServerList.addServer(ServerType.DAS, server_name, server_url);
-					} else if (name.equalsIgnoreCase("das2server") || name.equalsIgnoreCase("das2_server")) {
-						String server_name = el.getAttribute("name");
-						String server_url = el.getAttribute("url");
-						String login = el.getAttribute("login");
-						String password = el.getAttribute("password");
-						GenericServer gServer = ServerList.addServer(ServerType.DAS2, server_name, server_url);
-						gServer.login = login;
-						gServer.password = password;
 					} else if (name.equalsIgnoreCase("server")) {
-						// new generic server format
 						String server_type = el.getAttribute("type").toLowerCase();
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
@@ -256,10 +190,6 @@ public final class XmlPrefsParser {
 							ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
 						}
 					}
-				} catch (Exception nfe) {
-					System.err.println("ERROR setting preference '" + the_name + "':");
-					System.err.println("  " + nfe.toString());
-				}
 			}
 		}
 		return prefs_hash;
@@ -267,7 +197,7 @@ public final class XmlPrefsParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void processPlugin(Element el, Map prefs_hash) {
+	private static void processPlugin(Element el, Map<String, Map> prefs_hash) {
 		String loadstr = el.getAttribute("load");
 		// ignore if load attribute set to false
 		//     if (loadstr == null || (! loadstr.equalsIgnoreCase("false")) ) {

@@ -144,6 +144,7 @@ final class GenomeView extends JPanel implements MouseListener{
     private static final int divider_size = 8;
     private static final int table_height = 150;
     private static final int seqmap_pixel_height = 500;
+	private static final int maxYZoom = 12;
 
     
     /**
@@ -170,6 +171,7 @@ final class GenomeView extends JPanel implements MouseListener{
         seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
         seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoAbstractWidget.FITWIDGET);
         seqmap.setMapOffset(0, seqmap_pixel_height);
+		seqmap.setMaxZoom(NeoMap.Y, maxYZoom);
         axismap = new NeoMap(false, false);
         axismap.setMapColor(col_axis_bg);
         axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height

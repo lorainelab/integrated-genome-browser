@@ -92,7 +92,7 @@ public final class IGB extends Application
 	private static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
 	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
 	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
-	private final JMenu popup_windowsM = new JMenu("Open in Window...");
+	private final JMenu popup_windowsM = new JMenu(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Open in Window"));
 	private SimpleBookmarkServer web_control = null;
 	private JFrame frm;
 	private JMenuBar mbar;
@@ -375,22 +375,22 @@ public final class IGB extends Application
 		bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
 		open_file_action = new LoadFileAction(map_view.getFrame(), load_directory);
-		clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
-		clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
-		open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);
+		clear_item = new JMenuItem(BUNDLE.getString("clearAll"), KeyEvent.VK_C);
+		clear_graphs_item = new JMenuItem(BUNDLE.getString("clearGraphs"), KeyEvent.VK_L);
+		open_file_item = new JMenuItem(BUNDLE.getString("openFile"), KeyEvent.VK_O);
 		open_file_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
-		print_item = new JMenuItem("Print", KeyEvent.VK_P);
+		print_item = new JMenuItem(BUNDLE.getString("print"), KeyEvent.VK_P);
 		print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
-		print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
+		print_frame_item = new JMenuItem(BUNDLE.getString("printWhole"), KeyEvent.VK_F);
 		print_frame_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
-		export_to_file_menu = new JMenu("Export");
+		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 		export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
 		export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);
 		export_slice_item = new JMenuItem("Sliced View (With Labels)", KeyEvent.VK_S);
 		export_whole_frame = new JMenuItem("Whole Frame");
 
-		exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
+		exit_item = new JMenuItem(BUNDLE.getString("exit"), KeyEvent.VK_E);
 
 		adjust_edgematch_item = new JMenuItem("Adjust edge match fuzziness", KeyEvent.VK_F);
 		view_ucsc_item = new JMenuItem("View Region in UCSC Browser");
@@ -438,10 +438,10 @@ public final class IGB extends Application
 						APP_NAME)),
 				KeyEvent.VK_A);
 		about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
-		console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
+		console_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Show Console"), KeyEvent.VK_C);
 		console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
-		bug_item = new JMenuItem("Report a bug...", KeyEvent.VK_D);
-		documentation_item = new JMenuItem("Documentation...", KeyEvent.VK_D);
+		bug_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Report a bug"), KeyEvent.VK_D);
+		documentation_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Documentation"), KeyEvent.VK_D);
 		documentation_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
 
 		MenuUtil.addToMenu(help_menu, about_item);

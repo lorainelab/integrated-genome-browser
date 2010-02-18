@@ -61,8 +61,8 @@ package util
     import mx.controls.DataGrid;
     import mx.controls.ProgressBar;
     import mx.controls.dataGridClasses.*;
+    import mx.events.CloseEvent;
     import mx.events.CollectionEvent;
-	import mx.events.CloseEvent;
     
     
     public class MultiFileUpload {
@@ -467,26 +467,32 @@ package util
         //  after a file upload is complete or attemted the server will return an http status code, code 200 means all is good anything else is bad.
         private function httpStatusHandler(event:HTTPStatusEvent):void {
             if (event.status != 200){
+            	var message:String = "";
+            	var title:String = "";
             	if (event.status == 902) {
-            		mx.controls.Alert.show("File '" + event.target.name + "' did not upload.\nUnsupported file extension.  Do you want to proceed with the remaining uploads?",
-            						"Unsupported File Extension",
-            						(Alert.YES | Alert.NO), 
-            						null, 
-            						onPromptToContinueUpload);
-            		
+            		message = "File '" + event.target.name + "' did not upload.\nUnsupported file extension.";
+            		title = "Unsupported file extension";
             	} else if (event.status == 903) {
-            		mx.controls.Alert.show("File '" + event.target.name + "' did not upload.\n The file name does not match any of the segment names for the genome version.  Do you want to proceed with the remaining uploads?",
-            						"Incorrect File Name",
-            						(Alert.YES | Alert.NO), 
-            						null,
-            						onPromptToContinueUpload);
+            		message = "File '" + event.target.name + "' did not upload.\nThe file name does not match any of the segment names for the genome version.";
+            		title =  "Incorrect File Name";
             		
+            	} else if (event.status == 905) {
+            		message = "File '" + event.target.name + "' did not upload.\nThe text formatted file exceeds the maximum allowed size (10,000 lines).\nConvert to xxx.useq\n(see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form.";
+            		title =  "Text File exceeds max allowed size";            		
             	} else {
-            		mx.controls.Alert.show("File '" + event.target.name + "' did not upload.\nStatus code " + event.status + " returned.   Do you want to proceed with the remaining uploads?",
-            						"Upload Error",
+            		message = "File '" + event.target.name + "' did not upload.\nStatus code " + event.status + " returned.";
+            		title = "Upload Error";
+            	}
+            	
+            	if (_files.length > 1) {
+            		mx.controls.Alert.show(message + "\nDo you want to proceed with the remaining uploads?",
+            						title,
             						(Alert.YES | Alert.NO), 
             						null,
             						onPromptToContinueUpload);
+            	} else {
+            		mx.controls.Alert.show(message,
+            						title);
             	}
             	
             }

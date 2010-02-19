@@ -25,6 +25,10 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class ServerList {
 	private final static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final static Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();

@@ -27,7 +27,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 import static javax.swing.JOptionPane.OK_CANCEL_OPTION;
 import static javax.swing.JOptionPane.OK_OPTION;
@@ -54,46 +53,29 @@ public class IGBAuthenticator extends Authenticator {
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
 	
 	private static final String[] OPTIONS = { BUNDLE.getString("login"), BUNDLE.getString("cancel") };
-	private static final String EMPTY_STRING = "";
 	private static final String GUEST = "guest";
 	private static final String PREF_AUTH_TYPE = "authentication type";
 	private static final String PREF_REMEMBER = "remember authentication";
 
 	private final JFrame parent;
-	private JPanel dialog;
-	private JPanel messageContainer;
-	private JLabel server;
-	private JTextField     username;
-	private JPasswordField password;
-	private JRadioButton anon;
-	private JRadioButton auth;
-	private JCheckBox remember;
 
 	public IGBAuthenticator(JFrame parent) {
 		this.parent = parent;
-
-		/* Ensure construction happens on event queue */
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				dialog = new JPanel();
-				messageContainer = new JPanel();
-				server = new JLabel();
-				username = new JTextField();
-				password = new JPasswordField();
-				anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
-				auth = new JRadioButton(BUNDLE.getString("authToServer"));
-				remember = new JCheckBox();
-
-				buildDialog();
-			}
-		});
 	}
 
 	/**
 	 * Constructs the dialog that is presented to the user when IGB recieves an
 	 * authentication request from a server.
 	 */
-	private void buildDialog() {
+	private static JPanel buildDialog(
+			final JPanel messageContainer,
+			final JRadioButton anon,
+			final JRadioButton auth,
+			final JLabel server,
+			final JTextField username,
+			final JPasswordField password,
+			final JCheckBox remember) {
+		JPanel dialog = new JPanel();
 		JLabel s = new JLabel(BUNDLE.getString("server"));
 		final JLabel u = new JLabel(BUNDLE.getString("username"));
 		final JLabel p = new JLabel(BUNDLE.getString("password"));
@@ -157,7 +139,7 @@ public class IGBAuthenticator extends Authenticator {
 		anon.setSelected(true);
 		radioListener.actionPerformed(null);
 
-		messageContainer.setLayout(new BoxLayout(messageContainer, BoxLayout.Y_AXIS));
+		return dialog;
 	}
 
 	/**
@@ -168,26 +150,39 @@ public class IGBAuthenticator extends Authenticator {
 	 */
 	@Override
 	public PasswordAuthentication getPasswordAuthentication() {
+		String url = this.getRequestingURL().toString();
+		Preferences serverNode = null;
+		AuthType authType = AuthType.ASK;
+		String userFromPrefs = "";
+		String passFromPrefs = "";
 		GenericServer serverObject = null;
+
 		try {
 			serverObject = ServerList.getServer(this.getRequestingURL());
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.SEVERE, "Problem translating URL '" + this.getRequestingURL().toString() + "' to server", ex);
 		}
 
-		String url = serverObject != null ? serverObject.URL : this.getRequestingURL().toString();
+		if (serverObject != null) {
+			url = serverObject.URL;
+			serverNode = UnibrowPrefsUtil.getServersNode().node(GeneralUtils.URLEncode(url));
+			authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
+			if (serverObject.login != null) {
+				userFromPrefs = serverObject.login;
+			}
+			if (serverObject.password != null) {
+				passFromPrefs = serverObject.password;
+			}
+		}
 
-		Preferences serverNode = UnibrowPrefsUtil.getServersNode().node(GeneralUtils.URLEncode(url));
-		AuthType authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
-		String userFromPrefs = serverObject.login != null ? serverObject.login : EMPTY_STRING;
-		String passFromPrefs = serverObject.password != null ? serverObject.password : EMPTY_STRING;
+		
 
-		if (authType == AuthType.AUTHENTICATE && !userFromPrefs.equals(EMPTY_STRING) && !passFromPrefs.equals(EMPTY_STRING)) {
+		if (authType == AuthType.AUTHENTICATE && !userFromPrefs.equals("") && !passFromPrefs.equals("")) {
 			return new PasswordAuthentication(userFromPrefs, passFromPrefs.toCharArray());
 		} else if (authType == AuthType.ANONYMOUS) {
 			return doAnonymous();
 		} else {
-			return displayDialog(serverNode, serverObject, url);
+			return displayDialog(parent, serverNode, serverObject, url);
 		}
 	}
 
@@ -197,7 +192,7 @@ public class IGBAuthenticator extends Authenticator {
 	 *
 	 * @return a PasswordAuthentication with the username and password set to 'guest'
 	 */
-	private PasswordAuthentication doAnonymous() {
+	private static PasswordAuthentication doAnonymous() {
 		return new PasswordAuthentication(GUEST, GUEST.toCharArray());
 	}
 
@@ -209,17 +204,32 @@ public class IGBAuthenticator extends Authenticator {
 	 * @param url
 	 * @return Password authentication to the user
 	 */
-	private PasswordAuthentication displayDialog(final Preferences serverNode, final GenericServer serverObject, final String url) {
-		setMessage(serverObject.serverName);
+	private static PasswordAuthentication displayDialog(final JFrame parent, final Preferences serverNode, final GenericServer serverObject, final String url) {
+		JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName);
+		JLabel server = new JLabel();
+		JTextField     username = new JTextField();
+		JPasswordField password = new JPasswordField();
+		JRadioButton anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
+		JRadioButton auth = new JRadioButton(BUNDLE.getString("authToServer"));
+		JCheckBox remember = new JCheckBox();
+		JPanel dialog = buildDialog(messageContainer, anon, auth, server, username, password, remember);
+
 		server.setText(url);
 		anon.setSelected(true);
-		remember.setEnabled(serverNode.parent().getBoolean(PREF_REMEMBER, true));
+		System.out.println("remember.setEnabled(" + (serverObject != null && serverNode != null && serverNode.parent().getBoolean(PREF_REMEMBER, true)) + ")");
+		remember.setEnabled(serverObject != null && serverNode != null && serverNode.parent().getBoolean(PREF_REMEMBER, true));
 
 		int result = JOptionPane.showOptionDialog(parent, dialog, null, OK_CANCEL_OPTION, PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 
 		if (result == OK_OPTION) {
 			if (remember.isSelected()) {
-				savePreferences(serverNode, serverObject);
+				savePreferences(
+						serverNode,
+						serverObject,
+						username.getText(),
+						password.getPassword(),
+						anon.isSelected(),
+						remember.isSelected());
 			}
 
 			if (auth.isSelected()) {
@@ -242,8 +252,10 @@ public class IGBAuthenticator extends Authenticator {
 	 * Formats and word wraps the message of the authentication dialog.
 	 * 
 	 * @param serverName friendly name of the server that requested authentication
+	 * @return a JPanel containing the message
 	 */
-	private void setMessage(String serverName) {
+	private static JPanel setMessage(String serverName) {
+		JPanel messageContainer = new JPanel();
 		/* instantiante current simply to steal FontMetrics from it */
 		JLabel current = new JLabel();
 		String[] message = StringUtils.wrap(
@@ -251,12 +263,14 @@ public class IGBAuthenticator extends Authenticator {
 				current.getFontMetrics(current.getFont()),
 				500);
 
-		messageContainer.removeAll();
+		messageContainer.setLayout(new BoxLayout(messageContainer, BoxLayout.Y_AXIS));
 
 		for (String line : message) {
 			current = new JLabel(line);
 			messageContainer.add(current);
 		}
+
+		return messageContainer;
 	}
 
 	/**
@@ -265,13 +279,24 @@ public class IGBAuthenticator extends Authenticator {
 	 * @param serverNode the preferences node for this server
 	 * @param serverObject the GenericServer object for this server
 	 */
-	private void savePreferences(Preferences serverNode, GenericServer serverObject) {
-		AuthType authType = anon.isSelected() ? AuthType.ANONYMOUS : AuthType.AUTHENTICATE;
+	private static void savePreferences(
+			Preferences serverNode,
+			GenericServer serverObject,
+			String username,
+			char[] password,
+			boolean anon,
+			boolean remember) {
+
+		if (serverNode == null || serverObject == null) {
+			return;
+		}
+		
+		AuthType authType = anon ? AuthType.ANONYMOUS : AuthType.AUTHENTICATE;
 		serverNode.put(PREF_AUTH_TYPE, authType.toString());
-		serverNode.parent().putBoolean(PREF_REMEMBER, remember.isSelected());
+		serverNode.parent().putBoolean(PREF_REMEMBER, remember);
 		if (authType == authType.AUTHENTICATE) {
-			serverObject.login = username.getText();
-			serverObject.password = new String(password.getPassword());
+			serverObject.login = username;
+			serverObject.password = new String(password);
 			ServerList.addServerToPrefs(serverObject);
 		}
 	}

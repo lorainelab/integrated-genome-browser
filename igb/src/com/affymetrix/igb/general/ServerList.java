@@ -14,6 +14,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,8 +26,6 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public final class ServerList {
-	private final static Map<String, String> url2Name = new LinkedHashMap<String, String>();
-	private final static Map<GenericServer, String> server2Name = new LinkedHashMap<GenericServer, String>();
 	private final static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final static Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
 
@@ -50,8 +49,8 @@ public final class ServerList {
 		return serverList;
 	}
 
-	public static Set<GenericServer> getAllServers() {
-		return server2Name.keySet();
+	public static Collection<GenericServer> getAllServers() {
+		return url2server.values();
 	}
 
 	/*public static Map<String, String> getUrls() {
@@ -85,11 +84,10 @@ public final class ServerList {
 	 * @return GenericServer
 	 */
 	public static GenericServer addServer(ServerType serverType, String name, String url) {
-		if (url2Name.get(url) == null) {
-			url2Name.put(url, name);
-			return initServer(serverType, url, name, true, false);
+		if (url2server.containsKey(url)) {
+			return url2server.get(url);
 		}
-		return null;
+		return initServer(serverType, url, name, true, false);
 	}
 	
 	/**
@@ -98,8 +96,6 @@ public final class ServerList {
 	 */
 	public static void removeServer(String url) {
 		GenericServer server = url2server.get(url);
-		url2Name.remove(url);
-		server2Name.remove(server);
 		url2server.remove(url);
 		server.enabled = false;
 		fireServerInitEvent(server, ServerStatus.NotResponding);	// remove it from our lists.
@@ -134,7 +130,6 @@ public final class ServerList {
 				server = new GenericServer(name, info.getURI().toString(), serverType, hardcodedPrefs, info);
 			}
 			server.enabled = enabled;
-			server2Name.put(server, name);
 			url2server.put(url, server);
 			return server;
 
@@ -174,11 +169,10 @@ public final class ServerList {
 
 				// Add the server
 				GenericServer server = addServer(serverType, server_name, serverURL);
-				server.login = login;
-				server.password = password;
 
-				// Now set the enabled flag on the server
 				if (server != null) {
+					server.login = login;
+					server.password = password;
 					server.enabled = enabled;
 				}
 			}

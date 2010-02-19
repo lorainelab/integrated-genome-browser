@@ -36,8 +36,6 @@ public final class ScoredMapParser {
 	//boolean attach_graphs = ScoredIntervalParser.default_attach_graphs;
 
 	public void parse(InputStream istr, String stream_name, BioSeq aseq, AnnotatedSeqGroup seq_group) {
-		//attach_graphs = UnibrowPrefsUtil.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
-		//                                             ScoredIntervalParser.default_attach_graphs);
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 			String line = null;

@@ -363,7 +363,7 @@ public final class WebLinksManagerView extends JPanel {
   }
 
   // initialize the static_panel early, because this will cause the accelerator
-  // key-strokes to be configured early through the UnibrowPrefsUtil and thus
+  // key-strokes to be configured early through the PreferenceUtils and thus
   // for them to be visible in the KeyStrokesView
   static WebLinksManagerView static_panel = new WebLinksManagerView();
 

@@ -160,7 +160,7 @@ public final class Das2ServerInfo  {
 		try {
 			// The DAS2 server uses basic authentication.  When we attempt to connect, the servlet
 			// will send back a response, indicating that authenication is required. This will trigger
-			// the Authenticator (see com.affymetrix.igb.util.UnibrowAuthenticator)
+			// the Authenticator (see com.affymetrix.igb.util.IGBAuthenticator)
 			// to be invoked, presenting a dialog for enter a network login and password.
 			// The Authenticator is responsible for sending the username and password
 			// to the servlet.  If authentication succeeds, a session will

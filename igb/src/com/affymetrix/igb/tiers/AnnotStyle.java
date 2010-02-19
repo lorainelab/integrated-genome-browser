@@ -147,7 +147,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
 			}
 			unique_name = multiple_slashes.matcher(unique_name).replaceAll("/");
 			// transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
-			//   is now handled within UnibrowPrefsUtil.getSubnod() call
+			//   is now handled within PreferenceUtils.getSubnod() call
 		}
 
 		if (template != null) {

@@ -396,7 +396,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		 *  filter out this feature if either:
 		 *     its feature type is entered in the filter_hash OR
 		 *     filtering by id is enabled and the annotation is already present
-		 *        in Unibrow symhash (based on id hashing)
+		 *        in symhash (based on id hashing)
 		 */
 		if (featgroup != null) {
 			filter = getGroupSymmetryForType(feattype, featgroup) == null &&

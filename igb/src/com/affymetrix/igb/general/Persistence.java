@@ -23,7 +23,7 @@ public final class Persistence {
 	/**
 	 *  Saves information on current group
 	 *  Using Preferences node: [igb_root_pref]/genomes/[group_id]
-	 *  Using UnibrowPrefsUtils to convert node names if they are too long
+	 *  Using PreferenceUtils to convert node names if they are too long
 	 *  tagvals:
 	 *      GENOME_ID
 	 *      SEQ_ID
@@ -72,7 +72,7 @@ public final class Persistence {
 	/**
 	 *  Save information on which seq is currently being viewed
 	 *  Using Preferences node: [igb_root_pref]/genomes/[group_id], {SELECTED_SEQ_PREF ==> seq_id }
-	 *  Using UnibrowPrefUtils to convert node names if they are too long
+	 *  Using PreferenceUtils to convert node names if they are too long
 	 */
 	public static void saveSeqSelection(BioSeq seq) {
 		if (seq == null) {
@@ -123,7 +123,7 @@ public final class Persistence {
 	 *                                {SEQ_MIN_PREF ==> viewspan.getMin() }
 	 *                                {SEQ_MAX_PREF ==> viewspan.getMax() }
 	 *                                {ID ==> seq_id }
-	 *  Using UnibrowPrefUtils to convert node names if they are too long
+	 *  Using PreferenceUtils to convert node names if they are too long
 	 */
 	public static void saveSeqVisibleSpan(SeqMapView gviewer) {
 		SeqSpan visible_span = gviewer.getVisibleSpan();

@@ -38,9 +38,9 @@ public abstract class MenuUtil {
    *  is in the window that has keyboard focus.
    *  If there was no user preference given for the action command,
    *  this routine does nothing.
-   *  @return a KeyStroke, from {@link UnibrowPrefsUtil#getAccelerator(String)}
+   *  @return a KeyStroke, from {@link PreferenceUtils#getAccelerator(String)}
    *  is returned as a convenience
-   *  @see UnibrowPrefsUtil#getAccelerator(String)
+   *  @see PreferenceUtils#getAccelerator(String)
    */
   public static final KeyStroke addAccelerator(JComponent comp, ActionListener al,
     String action_command) {

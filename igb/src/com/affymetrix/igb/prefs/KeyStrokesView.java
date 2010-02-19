@@ -136,6 +136,6 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
   /*public void destroy() {
     removeAll();
     if (lsm != null) {lsm.removeListSelectionListener(this);}
-    UnibrowPrefsUtil.getKeystrokesNode().removePreferenceChangeListener(this);
+    PrefenceUtils.getKeystrokesNode().removePreferenceChangeListener(this);
   }*/
 }

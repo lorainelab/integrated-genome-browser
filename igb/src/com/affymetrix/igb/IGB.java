@@ -325,7 +325,7 @@ public final class IGB extends Application
 		
 		// force loading of prefs if hasn't happened yet
 		// usually since IGB.main() is called first, prefs will have already been loaded
-		//   via getUnibrowPrefs() call in main().  But if for some reason an IGB instance
+		//   via loadIGBPrefs() call in main().  But if for some reason an IGB instance
 		//   is created without call to main(), will force loading of prefs here...
 		PrefsLoader.loadIGBPrefs(main_args);
 

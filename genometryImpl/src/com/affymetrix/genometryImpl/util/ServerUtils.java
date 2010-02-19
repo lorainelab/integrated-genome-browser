@@ -322,7 +322,7 @@ public abstract class ServerUtils {
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 
 		String extension = ParserController.getExtension(stream_name);
-		String typeName = annot_name != null ? annot_name : ParserController.getAnnotType(annotList, stream_name, extension);
+		String typeName = ParserController.getAnnotType(annotList, stream_name, extension);
 		genome.addType(typeName, annot_id);
 
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);

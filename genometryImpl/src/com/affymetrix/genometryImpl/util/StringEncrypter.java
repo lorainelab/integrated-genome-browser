@@ -1,4 +1,4 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.genometryImpl.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;

@@ -41,6 +41,7 @@ import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarkList;
 import com.affymetrix.igb.bookmarks.Separator;
 import com.affymetrix.igb.parsers.BookmarksParser;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 public final class BookMarkAction implements ActionListener, MenuListener {
   private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -69,15 +70,15 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     gviewer = smv;
     bookmark_menu = bm_menu;
     bookmark_menu.addMenuListener(this);
-    add_pos_markMI = new JMenuItem("Add Position Bookmark", KeyEvent.VK_P);
+    add_pos_markMI = new JMenuItem(BUNDLE.getString("addPositionBookmark"), KeyEvent.VK_P);
     add_pos_markMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif"));
-    add_graph_markMI = new JMenuItem("Add Position & Graphs Bookmark", KeyEvent.VK_G);
-    exportMI = new JMenuItem("Export Bookmarks", KeyEvent.VK_E);
+    add_graph_markMI = new JMenuItem(BUNDLE.getString("addPosition&GraphsBookmark"), KeyEvent.VK_G);
+    exportMI = new JMenuItem(BUNDLE.getString("exportBookmarks"), KeyEvent.VK_E);
     exportMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
-    importMI = new JMenuItem("Import Bookmarks", KeyEvent.VK_I);
+    importMI = new JMenuItem(BUNDLE.getString("importBookmarks"), KeyEvent.VK_I);
     importMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
-    clearMI = new JMenuItem("Clear Bookmarks", KeyEvent.VK_C);
-    manage_bookmarksMI = new JMenuItem("Manage Bookmarks", KeyEvent.VK_M);
+    clearMI = new JMenuItem(BUNDLE.getString("clearBookmarks"), KeyEvent.VK_C);
+    manage_bookmarksMI = new JMenuItem(BUNDLE.getString("manageBookmarks"), KeyEvent.VK_M);
 
     add_pos_markMI.addActionListener(this);
     add_graph_markMI.addActionListener(this);

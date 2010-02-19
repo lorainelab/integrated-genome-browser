@@ -66,6 +66,7 @@ import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import java.util.concurrent.Executor;
 import org.xml.sax.SAXException;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
@@ -593,9 +594,9 @@ public final class LoadFileAction {
 	private static class MergeOptionFileChooser extends JFileChooser {
 
 		ButtonGroup bgroup = new ButtonGroup();
-		public JRadioButton merge_button = new JRadioButton("Merge with currently-loaded data", true);
-		public JRadioButton no_merge_button = new JRadioButton("Create new genome: ", false);
-		public JTextField genome_name_TF = new JTextField("Unknown Genome");
+		public JRadioButton merge_button = new JRadioButton(BUNDLE.getString("mergeWithCurrentlyLoadedData"), true);
+		public JRadioButton no_merge_button = new JRadioButton(BUNDLE.getString("createNewGenome"), false);
+		public JTextField genome_name_TF = new JTextField(BUNDLE.getString("unknownGenome"));
 		Box box = null;
 
 		public MergeOptionFileChooser() {

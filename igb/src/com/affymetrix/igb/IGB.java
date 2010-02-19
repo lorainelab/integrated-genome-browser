@@ -385,27 +385,27 @@ public final class IGB extends Application
 		print_frame_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
-		export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
-		export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);
-		export_slice_item = new JMenuItem("Sliced View (With Labels)", KeyEvent.VK_S);
-		export_whole_frame = new JMenuItem("Whole Frame");
+		export_map_item = new JMenuItem(BUNDLE.getString("mainView"), KeyEvent.VK_M);
+		export_labelled_map_item = new JMenuItem(BUNDLE.getString("mainViewWithLabels"), KeyEvent.VK_L);
+		export_slice_item = new JMenuItem(BUNDLE.getString("slicedViewWithLabels"), KeyEvent.VK_S);
+		export_whole_frame = new JMenuItem(BUNDLE.getString("wholeFrame"));
 
 		exit_item = new JMenuItem(BUNDLE.getString("exit"), KeyEvent.VK_E);
 
-		adjust_edgematch_item = new JMenuItem("Adjust edge match fuzziness", KeyEvent.VK_F);
-		view_ucsc_item = new JMenuItem("View Region in UCSC Browser");
+		adjust_edgematch_item = new JMenuItem(BUNDLE.getString("adjustEdgeMatchFuzziness"), KeyEvent.VK_F);
+		view_ucsc_item = new JMenuItem(BUNDLE.getString("viewRegionInUCSCBrowser"));
 		view_ucsc_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
 
-		clamp_view_item = new JMenuItem("Clamp To View", KeyEvent.VK_V);
-		res2clip_item = new JMenuItem("Copy Selected Residues to Clipboard", KeyEvent.VK_C);
+		clamp_view_item = new JMenuItem(BUNDLE.getString("clampToView"), KeyEvent.VK_V);
+		res2clip_item = new JMenuItem(BUNDLE.getString("copySelectedResiduesToClipboard"), KeyEvent.VK_C);
 		res2clip_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
-		unclamp_item = new JMenuItem("Unclamp", KeyEvent.VK_U);
-		rev_comp_item = new JMenuItem("Reverse Complement");
-		shrink_wrap_item = new JCheckBoxMenuItem("Toggle Shrink Wrapping");
+		unclamp_item = new JMenuItem(BUNDLE.getString("unclamp"), KeyEvent.VK_U);
+		rev_comp_item = new JMenuItem(BUNDLE.getString("reverseComplement"));
+		shrink_wrap_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleShrinkWrapping"));
 		shrink_wrap_item.setMnemonic(KeyEvent.VK_S);
 		shrink_wrap_item.setState(map_view.getShrinkWrap());
 
-		toggle_hairline_label_item = new JCheckBoxMenuItem("Toggle Hairline Label");
+		toggle_hairline_label_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleHairlineLabel"));
 		toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
 		boolean use_hairline_label = UnibrowPrefsUtil.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, true);
 		if (map_view.isHairlineLabeled() != use_hairline_label) {
@@ -413,13 +413,13 @@ public final class IGB extends Application
 		}
 		toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
 
-		toggle_edge_matching_item = new JCheckBoxMenuItem("Toggle Edge Matching");
+		toggle_edge_matching_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleEdgeMatching"));
 		toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
 		toggle_edge_matching_item.setState(map_view.getEdgeMatching());
-		autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
+		autoscroll_item = new JMenuItem(BUNDLE.getString("autoScroll"), KeyEvent.VK_A);
 		autoscroll_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/media/Movie16.gif"));
-		move_tab_to_window_item = new JMenuItem("Open Current Tab in New Window", KeyEvent.VK_O);
-		move_tabbed_panel_to_window_item = new JMenuItem("Open Tabbed Panes in New Window", KeyEvent.VK_P);
+		move_tab_to_window_item = new JMenuItem(BUNDLE.getString("openCurrentTabInNewWindow"), KeyEvent.VK_O);
+		move_tabbed_panel_to_window_item = new JMenuItem(BUNDLE.getString("openTabbedPanesInNewWindow"), KeyEvent.VK_P);
 
 		fileMenu();
 
@@ -438,10 +438,10 @@ public final class IGB extends Application
 						APP_NAME)),
 				KeyEvent.VK_A);
 		about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
-		console_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Show Console"), KeyEvent.VK_C);
+		console_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG,BUNDLE.getString("showConsole"), KeyEvent.VK_C));
 		console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
-		bug_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Report a bug"), KeyEvent.VK_D);
-		documentation_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Documentation"), KeyEvent.VK_D);
+		bug_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG,BUNDLE.getString("reportABug"), KeyEvent.VK_D));
+		documentation_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG,BUNDLE.getString("documentation"), KeyEvent.VK_D));
 		documentation_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
 
 		MenuUtil.addToMenu(help_menu, about_item);

@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.swing.DisplayUtils;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -72,7 +73,7 @@ public final class WebLinksManagerView extends JPanel {
   }
   
   public static Action getShowFrameAction() {
-    Action a = new AbstractAction("Configure Web Links") {
+    Action a = new AbstractAction(BUNDLE.getString("configureWebLinks")) {
       public void actionPerformed(ActionEvent evt) {
         showManager();
       }

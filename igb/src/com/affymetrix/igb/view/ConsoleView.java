@@ -20,7 +20,7 @@ import javax.swing.*;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 
 public final class ConsoleView {
@@ -77,9 +77,9 @@ public final class ConsoleView {
       frame.pack(); // set to default size based on contents
 
       // then try to get size from preferences
-      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(TITLE, frame.getBounds());
+      Rectangle pos = PreferenceUtils.retrieveWindowLocation(TITLE, frame.getBounds());
       if (pos != null) {
-        UnibrowPrefsUtil.setWindowSize(frame, pos);
+        PreferenceUtils.setWindowSize(frame, pos);
       }
     }
     return frame;
@@ -128,7 +128,7 @@ public final class ConsoleView {
 
     frame.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) {
-        UnibrowPrefsUtil.saveWindowLocation(frame, TITLE);
+        PreferenceUtils.saveWindowLocation(frame, TITLE);
       }
     });
     

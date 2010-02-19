@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.Font;
 import java.util.prefs.*;
 
@@ -83,7 +83,7 @@ public final class UnibrowHairline {
     hairline.setSelectable(false);
     hairline.setLabeled(false);
     // hairline.setFont(DEFAULT_FONT);
-    setKeepHairlineInView(UnibrowPrefsUtil.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
+    setKeepHairlineInView(PreferenceUtils.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
 
     //map.addMouseListener( mouse_listener );
     //visible_range.addListener( hairline );
@@ -91,16 +91,16 @@ public final class UnibrowHairline {
     
     pcl = new PreferenceChangeListener() {
       public void preferenceChange(PreferenceChangeEvent pce) {
-        if (! pce.getNode().equals(UnibrowPrefsUtil.getTopNode())) {
+        if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
           return;
         }
         if (pce.getKey().equals(PREF_KEEP_HAIRLINE_IN_VIEW)) {
-          setKeepHairlineInView(UnibrowPrefsUtil.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
+          setKeepHairlineInView(PreferenceUtils.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
         }
       }
     };
 
-    UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pcl);
+    PreferenceUtils.getTopNode().addPreferenceChangeListener(pcl);
   }
 
   /** Sets the flag determining whether the hairline is constrained
@@ -152,7 +152,7 @@ public final class UnibrowHairline {
     //mouse_listener = null;
     hairline = null;
     map = null;
-    if (pcl != null) {UnibrowPrefsUtil.getTopNode().removePreferenceChangeListener(pcl);}
+    if (pcl != null) {PreferenceUtils.getTopNode().removePreferenceChangeListener(pcl);}
     pcl = null;
   }
 }

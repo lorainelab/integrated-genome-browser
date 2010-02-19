@@ -39,7 +39,7 @@ import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
@@ -52,7 +52,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   }
   
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
-    boolean attach_graphs = UnibrowPrefsUtil.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
+    boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
         ScoredIntervalParser.default_attach_graphs);
     if (sym instanceof ScoredContainerSym) {
       ScoredContainerSym container = (ScoredContainerSym) sym;

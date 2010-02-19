@@ -65,7 +65,7 @@ import com.affymetrix.igb.util.ComponentWriter;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
 import java.text.MessageFormat;
 
@@ -407,7 +407,7 @@ public final class IGB extends Application
 
 		toggle_hairline_label_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleHairlineLabel"));
 		toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
-		boolean use_hairline_label = UnibrowPrefsUtil.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, true);
+		boolean use_hairline_label = PreferenceUtils.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, true);
 		if (map_view.isHairlineLabeled() != use_hairline_label) {
 			map_view.toggleHairlineLabel();
 		}
@@ -484,9 +484,9 @@ public final class IGB extends Application
 		int table_height = 250;
 		int fudge = 55;
 
-		Rectangle frame_bounds = UnibrowPrefsUtil.retrieveWindowLocation("main window",
+		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
 						new Rectangle(0, 0, 950, 600)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
-		UnibrowPrefsUtil.setWindowSize(frm, frame_bounds);
+		PreferenceUtils.setWindowSize(frm, frame_bounds);
 
 		tab_pane = new JTabbedPane();
 
@@ -496,7 +496,7 @@ public final class IGB extends Application
 		splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
 		splitpane.setTopComponent(map_view);
 
-		boolean tab_panel_in_a_window = (UnibrowPrefsUtil.getComponentState(TABBED_PANES_TITLE).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
+		boolean tab_panel_in_a_window = (PreferenceUtils.getComponentState(TABBED_PANES_TITLE).equals(PreferenceUtils.COMPONENT_STATE_WINDOW));
 		if (tab_panel_in_a_window) {
 			openTabbedPanelInNewWindow(tab_pane);
 		} else {
@@ -669,7 +669,7 @@ public final class IGB extends Application
 				tool_tip = title;
 			}
 			JComponent comp = (JComponent) plugin;
-			boolean in_a_window = (UnibrowPrefsUtil.getComponentState(title).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
+			boolean in_a_window = (PreferenceUtils.getComponentState(title).equals(PreferenceUtils.COMPONENT_STATE_WINDOW));
 			addToPopupWindows(comp, title);
 			JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
 			menu_item.setSelected(in_a_window);
@@ -775,7 +775,7 @@ public final class IGB extends Application
 			map_view.toggleHairlineLabel();
 			boolean b = map_view.isHairlineLabeled();
 			toggle_hairline_label_item.setState(b);
-			UnibrowPrefsUtil.getTopNode().putBoolean(SeqMapView.PREF_HAIRLINE_LABELED, b);
+			PreferenceUtils.getTopNode().putBoolean(SeqMapView.PREF_HAIRLINE_LABELED, b);
 		} else if (src == move_tab_to_window_item) {
 			openTabInNewWindow(tab_pane);
 		} else if (src == move_tabbed_panel_to_window_item) {
@@ -829,7 +829,7 @@ public final class IGB extends Application
 			about_text.append("\nCached data stored in: \n");
 			about_text.append("  " + cache_file.getAbsolutePath() + "\n");
 		}
-		String data_dir = UnibrowPrefsUtil.getAppDataDirectory();
+		String data_dir = PreferenceUtils.getAppDataDirectory();
 		if (data_dir != null) {
 			File data_dir_f = new File(data_dir);
 			about_text.append("\nApplication data stored in: \n  " +
@@ -944,8 +944,8 @@ public final class IGB extends Application
 	}
 
 	void exit() {
-		boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING,
-						UnibrowPrefsUtil.default_ask_before_exiting);
+		boolean ask_before_exit = PreferenceUtils.getBooleanParam(PreferenceUtils.ASK_BEFORE_EXITING,
+						PreferenceUtils.default_ask_before_exiting);
 		String message = "Do you really want to exit?";
 		if ((!ask_before_exit) || confirmPanel(message)) {
 			if (bmark_action != null) {
@@ -964,18 +964,18 @@ public final class IGB extends Application
 	 */
 	private void saveWindowLocations() {
 		// Save the main window location
-		UnibrowPrefsUtil.saveWindowLocation(frm, "main window");
+		PreferenceUtils.saveWindowLocation(frm, "main window");
 
 		for (Component comp : comp2plugin.keySet()) {
 			Frame f = comp2window.get(comp);
 			if (f != null) {
 				PluginInfo pi = comp2plugin.get(comp);
-				UnibrowPrefsUtil.saveWindowLocation(f, pi.getPluginName());
+				PreferenceUtils.saveWindowLocation(f, pi.getPluginName());
 			}
 		}
 		Frame f = comp2window.get(tab_pane);
 		if (f != null) {
-			UnibrowPrefsUtil.saveWindowLocation(f, TABBED_PANES_TITLE);
+			PreferenceUtils.saveWindowLocation(f, TABBED_PANES_TITLE);
 		}
 	}
 
@@ -1039,9 +1039,9 @@ public final class IGB extends Application
 			comp2window.put(comp, frame);
 			frame.pack(); // pack() to set frame to its preferred size
 
-			Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(title, frame.getBounds());
+			Rectangle pos = PreferenceUtils.retrieveWindowLocation(title, frame.getBounds());
 			if (pos != null) {
-				UnibrowPrefsUtil.setWindowSize(frame, pos);
+				PreferenceUtils.setWindowSize(frame, pos);
 			}
 			frame.setVisible(true);
 			frame.addWindowListener(new WindowAdapter() {
@@ -1050,13 +1050,13 @@ public final class IGB extends Application
 				public void windowClosing(WindowEvent evt) {
 					// save the current size into the preferences, so the window
 					// will re-open with this size next time
-					UnibrowPrefsUtil.saveWindowLocation(frame, title);
+					PreferenceUtils.saveWindowLocation(frame, title);
 					comp2window.remove(comp);
 					cont.remove(comp);
 					cont.validate();
 					frame.dispose();
 					tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
-					UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
+					PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_TAB);
 					JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
 					if (menu_item != null) {
 						menu_item.setSelected(false);
@@ -1067,7 +1067,7 @@ public final class IGB extends Application
 		else {
 			DisplayUtils.bringFrameToFront(comp2window.get(comp));
 		}
-		UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
+		PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_WINDOW);
 	}
 
 	private void openTabbedPanelInNewWindow(final JComponent comp) {
@@ -1095,7 +1095,7 @@ public final class IGB extends Application
 			comp2window.put(comp, frame);
 			frame.pack(); // pack() to set frame to its preferred size
 
-			Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(title, frame.getBounds());
+			Rectangle pos = PreferenceUtils.retrieveWindowLocation(title, frame.getBounds());
 			if (pos != null) {
 				//check that it's not too small, problems with using two screens
 				int posW = (int) pos.getWidth();
@@ -1107,7 +1107,7 @@ public final class IGB extends Application
 					posH = 300;
 				}
 				pos.setSize(posW, posH);
-				UnibrowPrefsUtil.setWindowSize(frame, pos);
+				PreferenceUtils.setWindowSize(frame, pos);
 			}
 			frame.setVisible(true);
 
@@ -1116,14 +1116,14 @@ public final class IGB extends Application
 				public void run() {
 					// save the current size into the preferences, so the window
 					// will re-open with this size next time
-					UnibrowPrefsUtil.saveWindowLocation(frame, title);
+					PreferenceUtils.saveWindowLocation(frame, title);
 					comp2window.remove(comp);
 					cont.remove(comp);
 					cont.validate();
 					frame.dispose();
 					splitpane.setBottomComponent(comp);
 					splitpane.setDividerLocation(0.70);
-					UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
+					PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_TAB);
 					JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
 					if (menu_item != null) {
 						menu_item.setSelected(false);
@@ -1161,7 +1161,7 @@ public final class IGB extends Application
 		else {
 			DisplayUtils.bringFrameToFront(comp2window.get(comp));
 		}
-		UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
+		PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_WINDOW);
 	}
 
 	public void popupNotify(JPopupMenu popup, List selected_items, SeqSymmetry primary_sym) {

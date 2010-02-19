@@ -20,7 +20,7 @@ import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.BorderLayout;
 
 /**
@@ -70,15 +70,15 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
     edit_panel.setEnabled(false);
     this.add("South", edit_panel);
 
-    try {UnibrowPrefsUtil.getKeystrokesNode().flush();} catch (Exception e) {}
-    UnibrowPrefsUtil.getKeystrokesNode().addPreferenceChangeListener(this);
+    try {PreferenceUtils.getKeystrokesNode().flush();} catch (Exception e) {}
+    PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(this);
 
     showShortcuts();
     validate();
   }
 
   private static Object[][] buildRows(Preferences node) {
-    Collection<String> keys = UnibrowPrefsUtil.getKeystrokesNodeNames();
+    Collection<String> keys = PreferenceUtils.getKeystrokesNodeNames();
 	Object[][] rows;
 
 	synchronized (keys) {
@@ -98,7 +98,7 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
   /** Re-populates the table with the shortcut data. */
   private void showShortcuts() {
     Object[][] rows = null;
-    rows = buildRows(UnibrowPrefsUtil.getKeystrokesNode());
+    rows = buildRows(PreferenceUtils.getKeystrokesNode());
     model.setDataVector(rows, col_headings);
   }
 
@@ -121,11 +121,11 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
   }
   
   private void editKeystroke(String id) {
-    edit_panel.setPreferenceKey(UnibrowPrefsUtil.getKeystrokesNode(), id, "");
+    edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), id, "");
   }
 
   public void preferenceChange(PreferenceChangeEvent evt) {
-    if (evt.getNode() != UnibrowPrefsUtil.getKeystrokesNode()) {
+    if (evt.getNode() != PreferenceUtils.getKeystrokesNode()) {
       return;
     }
     // Each time a keystroke preference is changed, update the

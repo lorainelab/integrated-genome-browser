@@ -31,7 +31,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 /**
  *  OrfAnalyzer2 is used on the virtual sequence being viewed in AltSpliceView.  It does
@@ -180,8 +180,8 @@ public final class OrfAnalyzer extends JComponent
 		revtier.setDirection(TierGlyph.Direction.REVERSE);
 		map.addTier(revtier, false);  // put reverse tier below axis
 
-		Color pointcol = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
-		Color linkcol = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
+		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
+		Color linkcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
 
 		IntList[] frame_lists = new IntList[6];
 		for (int i = 0; i < 6; i++) {

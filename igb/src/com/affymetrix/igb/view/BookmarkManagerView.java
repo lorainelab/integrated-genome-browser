@@ -19,7 +19,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.BookMarkAction;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
@@ -188,7 +188,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
   }
 
   static void setAccelerator(Action a) {
-    KeyStroke ks = UnibrowPrefsUtil.getAccelerator("Bookmark Manager / "+a.getValue(Action.NAME));
+    KeyStroke ks = PreferenceUtils.getAccelerator("Bookmark Manager / "+a.getValue(Action.NAME));
     a.putValue(Action.ACCELERATOR_KEY, ks);
   }
 

@@ -5,7 +5,7 @@ import javax.swing.*;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 /**
  *  A panel that shows the preferences for graph properties.
@@ -29,17 +29,17 @@ public final class GraphsView extends IPrefEditorComponent  {
     graphs_box.setAlignmentX(0.0f);
     main_box.add(graphs_box);
     
-    graphs_box.add(UnibrowPrefsUtil.createCheckBox("Use file URL as graph name", GraphGlyphUtils.getGraphPrefsNode(),
+    graphs_box.add(PreferenceUtils.createCheckBox("Use file URL as graph name", GraphGlyphUtils.getGraphPrefsNode(),
       GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name));
 
     graphs_box.add(Box.createRigidArea(new Dimension(0,5)));
     
-    graphs_box.add(UnibrowPrefsUtil.createCheckBox("Make graphs from scored interval ('egr' and 'sin') files",
-						 UnibrowPrefsUtil.getTopNode(),
+    graphs_box.add(PreferenceUtils.createCheckBox("Make graphs from scored interval ('egr' and 'sin') files",
+						 PreferenceUtils.getTopNode(),
 						 ScoredIntervalParser.PREF_ATTACH_GRAPHS,
 						 ScoredIntervalParser.default_attach_graphs));
     
-    JComboBox heat_cb = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), HeatMap.PREF_HEATMAP_NAME,
+    JComboBox heat_cb = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(), HeatMap.PREF_HEATMAP_NAME,
         HeatMap.getStandardNames(), HeatMap.def_heatmap_name.toString());
     Box heat_row = Box.createHorizontalBox();
     heat_row.add(new JLabel("Preferred Heatmap"));

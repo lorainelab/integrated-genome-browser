@@ -2,7 +2,7 @@ package com.affymetrix.igb.menuitem;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.io.File;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,21 +47,21 @@ public final class FileTracker {
     if (f == null || ! f.exists()) return;
     try {
       String path = f.getCanonicalPath();
-      UnibrowPrefsUtil.getTopNode().put(name, path);
+      PreferenceUtils.getTopNode().put(name, path);
     } catch (IOException ioe) {
       ErrorHandler.errorPanel("Can't resolve file path", ioe);
     } catch (Exception e) {
       e.printStackTrace(System.out);
     }
-    try {UnibrowPrefsUtil.getTopNode().flush();} catch (BackingStoreException bse) {};
+    try {PreferenceUtils.getTopNode().flush();} catch (BackingStoreException bse) {};
   }
 
   public File getFile() {
     if (! FILENAMES.contains(name)) {
       throw new IllegalArgumentException("'"+name+"' is not a known name for a file preference");
     }
-    try {UnibrowPrefsUtil.getTopNode().sync();} catch (BackingStoreException bse) {}
-    String path = UnibrowPrefsUtil.getTopNode().get(name, System.getProperty("user.dir"));
+    try {PreferenceUtils.getTopNode().sync();} catch (BackingStoreException bse) {}
+    String path = PreferenceUtils.getTopNode().get(name, System.getProperty("user.dir"));
     File f = new File(path);
     if (! f.exists()) {
       f = new File(System.getProperty("user.dir"));

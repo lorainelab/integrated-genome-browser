@@ -22,7 +22,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genoviz.swing.DisplayUtils;
@@ -236,9 +236,9 @@ public final class GraphScoreThreshSetter extends JPanel
 				thresh_setter_frame.setIconImage(icon);
 			}
 
-			Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(thresh_setter_frame.getTitle(), thresh_setter_frame.getBounds());
+			Rectangle pos = PreferenceUtils.retrieveWindowLocation(thresh_setter_frame.getTitle(), thresh_setter_frame.getBounds());
 			if (pos != null) {
-				UnibrowPrefsUtil.setWindowSize(thresh_setter_frame, pos);
+				PreferenceUtils.setWindowSize(thresh_setter_frame, pos);
 			}
 			thresh_setter_frame.setVisible(true);
 			thresh_setter_frame.addWindowListener(new WindowAdapter() {
@@ -247,7 +247,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				public void windowClosing(WindowEvent evt) {
 					// save the current size into the preferences, so the window
 					// will re-open with this size next time
-					UnibrowPrefsUtil.saveWindowLocation(thresh_setter_frame, thresh_setter_frame.getTitle());
+					PreferenceUtils.saveWindowLocation(thresh_setter_frame, thresh_setter_frame.getTitle());
 				}
 			});
 		} else {

@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 
 /**
@@ -135,13 +135,13 @@ public final class CharSeqGlyph extends SequenceGlyph
 		for (int j = 0; j < str.length(); j++) {
 			char charAt = str.charAt(j);
 			if (charAt == 'A' || charAt == 'a') {
-				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_A_COLOR, default_A_color));
+				g.setColor(PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_A_COLOR, default_A_color));
 			} else if (charAt == 'T' || charAt == 't') {
-				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_T_COLOR, default_T_color));
+				g.setColor(PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_T_COLOR, default_T_color));
 			} else if (charAt == 'G' || charAt == 'g') {
-				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_G_COLOR, default_G_color));
+				g.setColor(PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_G_COLOR, default_G_color));
 			} else if (charAt == 'C' || charAt == 'c') {
-				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_C_COLOR, default_C_color));
+				g.setColor(PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_C_COLOR, default_C_color));
 			} else {
 				continue;
 			}

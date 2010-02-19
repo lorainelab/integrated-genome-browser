@@ -7,7 +7,7 @@ import java.util.prefs.*;
 import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.Stylesheet;
@@ -29,7 +29,7 @@ import com.affymetrix.igb.stylesheet.PropertyMap;
  */
 public class AnnotStyle implements IAnnotStyleExtended {
 
-	private static Preferences tiers_root_node = UnibrowPrefsUtil.getTopNode().node("tiers");
+	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
 	// A pattern that matches two or more slash "/" characters.
 	// A preference node name can't contain two slashes, nor end with a slash.
 	private static final Pattern multiple_slashes = Pattern.compile("/{2,}");
@@ -172,7 +172,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
 		}
 		if (is_persistent) {
 			try {
-				node = UnibrowPrefsUtil.getSubnode(tiers_root_node, this.unique_name);
+				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
 			} catch (Exception e) {
 				// if there is a problem creating the node, continue with a non-persistent style.
 				e.printStackTrace();
@@ -200,8 +200,8 @@ public class AnnotStyle implements IAnnotStyleExtended {
 		separate = node.getBoolean(PREF_SEPARATE, this.getSeparate());
 		collapsed = node.getBoolean(PREF_COLLAPSED, this.getCollapsed());
 		max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
-		color = UnibrowPrefsUtil.getColor(node, PREF_COLOR, this.getColor());
-		background = UnibrowPrefsUtil.getColor(node, PREF_BACKGROUND, this.getBackground());
+		color = PreferenceUtils.getColor(node, PREF_COLOR, this.getColor());
+		background = PreferenceUtils.getColor(node, PREF_BACKGROUND, this.getBackground());
 
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		glyph_depth = node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth());
@@ -427,7 +427,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setColor(): " + human_name + ", " + c);
 			}
-			UnibrowPrefsUtil.putColor(getNode(), PREF_COLOR, c);
+			PreferenceUtils.putColor(getNode(), PREF_COLOR, c);
 		}
 	}
 
@@ -446,7 +446,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + human_name + ", " + c);
 			}
-			UnibrowPrefsUtil.putColor(getNode(), PREF_BACKGROUND, c);
+			PreferenceUtils.putColor(getNode(), PREF_BACKGROUND, c);
 		}
 	}
 

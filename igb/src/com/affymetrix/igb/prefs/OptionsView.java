@@ -20,7 +20,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
@@ -52,9 +52,9 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     
 
    
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
-      UnibrowPrefsUtil.ASK_BEFORE_EXITING, UnibrowPrefsUtil.default_ask_before_exiting));
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
+    misc_box.add(PreferenceUtils.createCheckBox("Ask before exiting", PreferenceUtils.getTopNode(),
+      PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting));
+    misc_box.add(PreferenceUtils.createCheckBox("Keep hairline in view", PreferenceUtils.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
 
     
@@ -73,10 +73,10 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     orf_box.setLayout(new GridLayout(2,2));
     orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
 
-    JButton stop_codon_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color);
+    JButton stop_codon_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color);
     orf_box.add(new JLabel("Stop Codon: "));
     orf_box.add(stop_codon_color);
-    JButton dynamic_orf_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color);
+    JButton dynamic_orf_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color);
     orf_box.add(new JLabel("Dynamic ORF: "));
     orf_box.add(dynamic_orf_color);
 	
@@ -84,16 +84,16 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     base_box.setLayout(new GridLayout(4,2));
     base_box.setBorder(new javax.swing.border.TitledBorder("Change Residue Colors"));
 
-    JButton A_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_A_COLOR, CharSeqGlyph.default_A_color);
+    JButton A_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), CharSeqGlyph.PREF_A_COLOR, CharSeqGlyph.default_A_color);
 	base_box.add(new JLabel("A: "));
 	base_box.add(A_color);
-	JButton T_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_T_COLOR, CharSeqGlyph.default_T_color);
+	JButton T_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), CharSeqGlyph.PREF_T_COLOR, CharSeqGlyph.default_T_color);
 	base_box.add(new JLabel("T: "));
 	base_box.add(T_color);
-	JButton G_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_G_COLOR, CharSeqGlyph.default_G_color);
+	JButton G_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), CharSeqGlyph.PREF_G_COLOR, CharSeqGlyph.default_G_color);
 	base_box.add(new JLabel("G: "));
 	base_box.add(G_color);
-	JButton C_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_C_COLOR, CharSeqGlyph.default_C_color);
+	JButton C_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), CharSeqGlyph.PREF_C_COLOR, CharSeqGlyph.default_C_color);
     base_box.add(new JLabel("C: "));
     base_box.add(C_color);
     
@@ -103,11 +103,11 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     axis_box.setLayout(new GridLayout(3,2));
     axis_box.setBorder(new javax.swing.border.TitledBorder("Axis"));
 
-    JButton axis_color_button2 = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_AXIS_COLOR, Color.BLACK);
+    JButton axis_color_button2 = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), SeqMapView.PREF_AXIS_COLOR, Color.BLACK);
     axis_box.add(new JLabel("Foreground: "));
     axis_box.add(axis_color_button2);
 
-    JButton axis_back_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_AXIS_BACKGROUND, Color.WHITE);
+    JButton axis_back_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), SeqMapView.PREF_AXIS_BACKGROUND, Color.WHITE);
     axis_box.add(new JLabel("Background: "));
     axis_box.add(axis_back_color);
 
@@ -116,7 +116,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL,
                                                   SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA,
                                                   SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
-    JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
+    JComboBox axis_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
 
     axis_box.setAlignmentX(0.0f);
@@ -148,7 +148,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 						 options, options[1])) {
 
 			 try {
-				 UnibrowPrefsUtil.clearPreferences();
+				 PreferenceUtils.clearPreferences();
 				 System.exit(0);
 			 } catch (Exception e) {
 				 ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);

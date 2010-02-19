@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -70,7 +70,7 @@ public final class GraphGlyphUtils {
 	}
 
 	public static Preferences getGraphPrefsNode() {
-		return UnibrowPrefsUtil.getTopNode().node("graphs");
+		return PreferenceUtils.getTopNode().node("graphs");
 	}
 
 	/**

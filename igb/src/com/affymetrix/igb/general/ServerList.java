@@ -10,7 +10,7 @@ import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.StringEncrypter.EncryptionException;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -152,8 +152,8 @@ public final class ServerList {
 		ServerType serverType;
 		Boolean enabled;
 		try {
-			for (String serverURL : UnibrowPrefsUtil.getServersNode().childrenNames()) {
-				Preferences node = UnibrowPrefsUtil.getServersNode().node(serverURL);
+			for (String serverURL : PreferenceUtils.getServersNode().childrenNames()) {
+				Preferences node = PreferenceUtils.getServersNode().node(serverURL);
 
 				serverURL = GeneralUtils.URLDecode(serverURL);
 				server_name = node.get("name", "Unknown");
@@ -192,8 +192,8 @@ public final class ServerList {
 	public static void updateServerPrefs() {
 		for (ServerType type : ServerType.values()) {
 			try {
-				if (UnibrowPrefsUtil.getServersNode().nodeExists(type.toString())) {
-					Preferences prefServers = UnibrowPrefsUtil.getServersNode().node(type.toString());
+				if (PreferenceUtils.getServersNode().nodeExists(type.toString())) {
+					Preferences prefServers = PreferenceUtils.getServersNode().node(type.toString());
 					String name, login, password;
 					boolean authEnabled, enabled;
 					for (String url : prefServers.keys()) {
@@ -214,7 +214,7 @@ public final class ServerList {
 	}
 
 	public static void updateServerURLsInPrefs() {
-		Preferences servers = UnibrowPrefsUtil.getServersNode();
+		Preferences servers = PreferenceUtils.getServersNode();
 		Preferences currentServer;
 		String normalizedURL;
 		String decodedURL;
@@ -253,7 +253,7 @@ public final class ServerList {
 	 */
 	public static void addServerToPrefs(String url, String name, ServerType type, boolean authEnabled, String login, String password, boolean enabled) {
 		url = formatURL(url, type);
-		Preferences node = UnibrowPrefsUtil.getServersNode().node(GeneralUtils.URLEncode(formatURL(url, type)));
+		Preferences node = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(formatURL(url, type)));
 
 		node.put("name",  name);
 		node.put("type", type.toString());
@@ -288,7 +288,7 @@ public final class ServerList {
 	 */
 	public static void removeServerFromPrefs(String url) {
 		try {
-			UnibrowPrefsUtil.getServersNode().node(GeneralUtils.URLEncode(url)).removeNode();
+			PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(url)).removeNode();
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -304,7 +304,7 @@ public final class ServerList {
 	 */
 	public static boolean inServerPrefs(String url) {
 		try {
-			return UnibrowPrefsUtil.getServersNode().nodeExists(GeneralUtils.URLEncode(url));
+			return PreferenceUtils.getServersNode().nodeExists(GeneralUtils.URLEncode(url));
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 			throw new IllegalArgumentException(ex);

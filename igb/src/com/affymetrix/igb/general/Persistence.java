@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class Persistence {
@@ -41,13 +41,13 @@ public final class Persistence {
 	}
 
 	public static void saveGroupSelection(AnnotatedSeqGroup group) {
-		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
+		Preferences genomes_node = PreferenceUtils.getGenomesNode();
 		if (genomes_node == null || group == null) {
 			return;
 		}
 		genomes_node.put(SELECTED_GENOME_PREF, group.getID());
 
-		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);
+		Preferences group_node = PreferenceUtils.getSubnode(genomes_node, group.getID(), true);
 		//  encodes id via MD5 if too long, also remove forward slashes ("/")
 		group_node.put(GENOME_ID, group.getID());  // preserve actual ID, no MD5 encoding, no slash removal
 
@@ -58,7 +58,7 @@ public final class Persistence {
 	 * @return the restored group which is an AnnotatedSeqGroup.
 	 */
 	public static AnnotatedSeqGroup restoreGroupSelection() {
-		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
+		Preferences genomes_node = PreferenceUtils.getGenomesNode();
 		String group_id = genomes_node.get(SELECTED_GENOME_PREF, "");
 		if (group_id == null || group_id.length() == 0) {
 			return null;
@@ -83,8 +83,8 @@ public final class Persistence {
 		if (current_group == null) {
 			return;
 		}
-		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, current_group.getID(), true);
+		Preferences genomes_node = PreferenceUtils.getGenomesNode();
+		Preferences group_node = PreferenceUtils.getSubnode(genomes_node, current_group.getID(), true);
 		//  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
 		group_node.put(SELECTED_SEQ_PREF, seq.getID());
 	}
@@ -95,8 +95,8 @@ public final class Persistence {
 	 * @return restore the selected chromosome which is a BioSeq
 	 */
 	public static BioSeq restoreSeqSelection(AnnotatedSeqGroup group) {
-		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);
+		Preferences genomes_node = PreferenceUtils.getGenomesNode();
+		Preferences group_node = PreferenceUtils.getSubnode(genomes_node, group.getID(), true);
 		//  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
 		String seq_id = group_node.get(SELECTED_SEQ_PREF, "");
 		if (seq_id == null || seq_id.length() == 0) {
@@ -131,10 +131,10 @@ public final class Persistence {
 			BioSeq seq = visible_span.getBioSeq();
 			if (seq != null) {
 				AnnotatedSeqGroup group = seq.getSeqGroup();
-				Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-				Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
-				Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");
-				Preferences seq_node = UnibrowPrefsUtil.getSubnode(seqs_node, seq.getID(), true);  //  encodes id via MD5 if too long
+				Preferences genomes_node = PreferenceUtils.getGenomesNode();
+				Preferences group_node = PreferenceUtils.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
+				Preferences seqs_node = PreferenceUtils.getSubnode(group_node, "seqs");
+				Preferences seq_node = PreferenceUtils.getSubnode(seqs_node, seq.getID(), true);  //  encodes id via MD5 if too long
 				seq_node.put(SEQ_ID, seq.getID());   // in case node name is MD5 encoded
 				seq_node.putInt(SEQ_MIN_PREF, visible_span.getMin());
 				seq_node.putInt(SEQ_MAX_PREF, visible_span.getMax());
@@ -152,10 +152,10 @@ public final class Persistence {
 		}
 
 		AnnotatedSeqGroup group = seq.getSeqGroup();
-		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
-		Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");
-		Preferences seq_node = UnibrowPrefsUtil.getSubnode(seqs_node, seq.getID(), true);  //  encodes id via MD5 if too long
+		Preferences genomes_node = PreferenceUtils.getGenomesNode();
+		Preferences group_node = PreferenceUtils.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
+		Preferences seqs_node = PreferenceUtils.getSubnode(group_node, "seqs");
+		Preferences seq_node = PreferenceUtils.getSubnode(seqs_node, seq.getID(), true);  //  encodes id via MD5 if too long
 		int seq_min = seq_node.getInt(SEQ_MIN_PREF, 0);
 		int seq_max = seq_node.getInt(SEQ_MAX_PREF, seq.getLength());
 		SeqSpan span = new SimpleSeqSpan(seq_min, seq_max, seq);

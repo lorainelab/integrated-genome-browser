@@ -51,7 +51,7 @@ import javax.swing.KeyStroke;
  *
  * @version $Id$
  */
-public abstract class UnibrowPrefsUtil {
+public abstract class PreferenceUtils {
 
 	public static final String COMPONENT_STATE_TAB = "TAB";
 	public static final String COMPONENT_STATE_WINDOW = "WINDOW";
@@ -78,19 +78,19 @@ public abstract class UnibrowPrefsUtil {
 	}
 
 	public static Preferences getKeystrokesNode() {
-		return UnibrowPrefsUtil.getTopNode().node("keystrokes");
+		return PreferenceUtils.getTopNode().node("keystrokes");
 	}
 
 	public static Preferences getLocationsNode() {
-		return UnibrowPrefsUtil.getTopNode().node("locations");
+		return PreferenceUtils.getTopNode().node("locations");
 	}
 
 	public static Preferences getGenomesNode() {
-		return UnibrowPrefsUtil.getTopNode().node("genomes");
+		return PreferenceUtils.getTopNode().node("genomes");
 	}
 
 	public static Preferences getServersNode() {
-		return UnibrowPrefsUtil.getTopNode().node("servers");
+		return PreferenceUtils.getTopNode().node("servers");
 	}
 
 	public static void saveIntParam(String param_name, int param) {
@@ -518,9 +518,9 @@ public abstract class UnibrowPrefsUtil {
 		panel.setVisible(true);
 		frame.pack(); // pack() to set frame to its preferred size
 
-		Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(frame.getTitle(), frame.getBounds());
+		Rectangle pos = PreferenceUtils.retrieveWindowLocation(frame.getTitle(), frame.getBounds());
 		if (pos != null) {
-			UnibrowPrefsUtil.setWindowSize(frame, pos);
+			PreferenceUtils.setWindowSize(frame, pos);
 		}
 
 		frame.setVisible(true);
@@ -530,7 +530,7 @@ public abstract class UnibrowPrefsUtil {
 			public void windowClosing(WindowEvent evt) {
 				// save the current size into the preferences, so the window
 				// will re-open with this size next time
-				UnibrowPrefsUtil.saveWindowLocation(frame, frame.getTitle());
+				PreferenceUtils.saveWindowLocation(frame, frame.getTitle());
 			}
 		});
 

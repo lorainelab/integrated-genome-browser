@@ -1,6 +1,6 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.StringUtils;
@@ -166,7 +166,7 @@ public class IGBAuthenticator extends Authenticator {
 
 		if (serverObject != null) {
 			url = serverObject.URL;
-			serverNode = UnibrowPrefsUtil.getServersNode().node(GeneralUtils.URLEncode(url));
+			serverNode = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(url));
 			authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
 			if (serverObject.login != null) {
 				userFromPrefs = serverObject.login;
@@ -303,7 +303,7 @@ public class IGBAuthenticator extends Authenticator {
 	}
 
 	public static void resetAuth(String url) {
-		Preferences serverNode = UnibrowPrefsUtil.getServersNode().node(GeneralUtils.URLEncode(url));
+		Preferences serverNode = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(url));
 		serverNode.put(PREF_AUTH_TYPE, AuthType.ASK.toString());
 	}
 }

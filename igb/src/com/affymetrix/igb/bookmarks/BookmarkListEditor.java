@@ -14,7 +14,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genoviz.swing.DisplayUtils;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -106,9 +106,9 @@ public final class BookmarkListEditor {
     setEnabled(false);
     frame.getContentPane().add(main_box);
     
-    Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(TITLE, new Rectangle(400, 400));
+    Rectangle pos = PreferenceUtils.retrieveWindowLocation(TITLE, new Rectangle(400, 400));
     if (pos != null) {
-      UnibrowPrefsUtil.setWindowSize(frame, pos);
+      PreferenceUtils.setWindowSize(frame, pos);
     }
 
    frame.addWindowListener( new WindowAdapter() {
@@ -121,7 +121,7 @@ public final class BookmarkListEditor {
   
   // Writes the window location to the persistent preferences.
   void saveWindowLocation() {
-    UnibrowPrefsUtil.saveWindowLocation(frame, TITLE);
+    PreferenceUtils.saveWindowLocation(frame, TITLE);
   }
   
   

@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
@@ -319,7 +319,7 @@ public final class WebLink {
 	 *  Returns the file that is used to store the user-edited web links.
 	 */
 	private static File getLinksFile() {
-		return new File(UnibrowPrefsUtil.getAppDataDirectory(), FILE_NAME);
+		return new File(PreferenceUtils.getAppDataDirectory(), FILE_NAME);
 	}
 
 	public static void importWebLinks(File f) throws FileNotFoundException, IOException {

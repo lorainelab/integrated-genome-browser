@@ -1,7 +1,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.UrlToFileName;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genoviz.util.GeneralUtils;
@@ -15,7 +15,7 @@ import java.util.zip.GZIPInputStream;
 
 public final class LocalUrlCacher {
 
-	private static final String cache_content_root = UnibrowPrefsUtil.getAppDataDirectory() + "cache/";
+	private static final String cache_content_root = PreferenceUtils.getAppDataDirectory() + "cache/";
 	private static final String cache_header_root = cache_content_root + "headers/";
 	private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
 	private static boolean DEBUG_CONNECTION = false;
@@ -528,13 +528,13 @@ public final class LocalUrlCacher {
 
 	/** Returns the current value of the persistent user preference PREF_CACHE_USAGE. */
 	public static int getPreferredCacheUsage() {
-		int cache_usage = UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
+		int cache_usage = PreferenceUtils.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
 		return cache_usage;
 	}
 
 	public static void setPreferredCacheUsage(int usage) {
 		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Setting Caching mode to " + getCacheUsage(usage));
-		UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
+		PreferenceUtils.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
 	}
 
 	public static void reportHeaders(URLConnection query_con) {

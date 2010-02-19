@@ -26,7 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
@@ -131,8 +131,8 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
       button_panel.add(Box.createHorizontalStrut(10));
       button_panel.add(refresh_map_B);
 
-      auto_refresh_CB = UnibrowPrefsUtil.createCheckBox(AUTO_REFRESH,
-        UnibrowPrefsUtil.getTopNode(), PREF_AUTO_REFRESH, default_auto_refresh);
+      auto_refresh_CB = PreferenceUtils.createCheckBox(AUTO_REFRESH,
+        PreferenceUtils.getTopNode(), PREF_AUTO_REFRESH, default_auto_refresh);
       auto_refresh_CB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           if (refresh_map_B != null) {
@@ -295,7 +295,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     if (auto_refresh_CB == null) {
       auto_apply_changes = true;
     } else {
-      auto_apply_changes = UnibrowPrefsUtil.getBooleanParam(
+      auto_apply_changes = PreferenceUtils.getBooleanParam(
         PREF_AUTO_REFRESH, default_auto_refresh);
     }
     return auto_apply_changes;

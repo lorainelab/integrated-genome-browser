@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.external;
 
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Window;
@@ -47,7 +47,7 @@ public class EnsemblView extends BrowserView {
 
 	@Override
 	public void initializeCookies() {
-		final Preferences ucscSettingsNode = UnibrowPrefsUtil.getTopNode().node(ENSEMBLSETTINGS);
+		final Preferences ucscSettingsNode = PreferenceUtils.getTopNode().node(ENSEMBLSETTINGS);
 		String userId = ucscSettingsNode.get(ENSEMBLSESSION, "");
 		setCookie(ENSEMBLSESSION, userId);
 	}
@@ -103,7 +103,7 @@ public class EnsemblView extends BrowserView {
 				public void actionPerformed(ActionEvent e) {
 					String userId = userIdField.getText();
 					setCookie(ENSEMBLSESSION, userId);
-					Preferences ucscSettingsNode = UnibrowPrefsUtil.getTopNode().node(ENSEMBLSESSION);
+					Preferences ucscSettingsNode = PreferenceUtils.getTopNode().node(ENSEMBLSESSION);
 					ucscSettingsNode.put(ENSEMBLSESSION, userId);
 					dispose();
 				}

@@ -1,6 +1,6 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ColorIcon;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -31,7 +31,7 @@ public class ColorUtils {
 	public static JButton createColorButton(final Preferences node,
 			final String pref_name, final Color default_val) {
 
-		Color initial_color = UnibrowPrefsUtil.getColor(node, pref_name, default_val);
+		Color initial_color = PreferenceUtils.getColor(node, pref_name, default_val);
 		final ColorIcon icon = new ColorIcon(11, initial_color);
 		final String panel_title = "Choose a color";
 
@@ -39,9 +39,9 @@ public class ColorUtils {
 		button.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent ae) {
-				Color c = JColorChooser.showDialog(button, panel_title, UnibrowPrefsUtil.getColor(node, pref_name, default_val));
+				Color c = JColorChooser.showDialog(button, panel_title, PreferenceUtils.getColor(node, pref_name, default_val));
 				if (c != null) {
-					UnibrowPrefsUtil.putColor(node, pref_name, c);
+					PreferenceUtils.putColor(node, pref_name, c);
 				}
 			}
 		});
@@ -49,7 +49,7 @@ public class ColorUtils {
 
 			public void preferenceChange(PreferenceChangeEvent evt) {
 				if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
-					Color c = UnibrowPrefsUtil.getColor(node, pref_name, default_val);
+					Color c = PreferenceUtils.getColor(node, pref_name, default_val);
 					icon.setColor(c);
 					button.repaint();
 				}

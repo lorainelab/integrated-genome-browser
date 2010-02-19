@@ -23,7 +23,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.LocalUrlCacher;
@@ -179,7 +179,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		final JPanel synonymsPanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(synonymsPanel);
 		final JLabel synonymsLabel= new JLabel("Synonyms File");
-		final JTextField synonymFile = new JTextField(UnibrowPrefsUtil.getLocationsNode().get(PREF_SYN_FILE_URL, ""));
+		final JTextField synonymFile = new JTextField(PreferenceUtils.getLocationsNode().get(PREF_SYN_FILE_URL, ""));
 		final JButton openFile = new JButton("\u2026");
 		final ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -195,7 +195,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				}
 
 				if (synonymFile.getText().isEmpty() || loadSynonymFile(synonymFile)) {
-					UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, synonymFile.getText());
+					PreferenceUtils.getLocationsNode().put(PREF_SYN_FILE_URL, synonymFile.getText());
 				} else {
 					ErrorHandler.errorPanel(
 					"Unable to Load Synonyms",

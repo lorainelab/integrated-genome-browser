@@ -17,7 +17,7 @@ import java.awt.MediaTracker;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 public abstract class MenuUtil {
 
@@ -28,7 +28,7 @@ public abstract class MenuUtil {
    *  The action command Strings should be unique across the whole application.
    */
   private static final void addAccelerator(JMenuItem item, String command) {
-    item.setAccelerator(UnibrowPrefsUtil.getAccelerator(command));
+    item.setAccelerator(PreferenceUtils.getAccelerator(command));
   }
   
   /** Sets up an association such that the accelerator given in
@@ -44,7 +44,7 @@ public abstract class MenuUtil {
    */
   public static final KeyStroke addAccelerator(JComponent comp, ActionListener al,
     String action_command) {
-    KeyStroke ks = UnibrowPrefsUtil.getAccelerator(action_command);
+    KeyStroke ks = PreferenceUtils.getAccelerator(action_command);
     if (ks != null) {
       comp.registerKeyboardAction(al, action_command, ks,
        JComponent.WHEN_IN_FOCUSED_WINDOW);

@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.util.prefs.Preferences;
 
 public final class PluginInfo {
@@ -51,7 +51,7 @@ public final class PluginInfo {
 	}
 
 	public static Preferences getNodeForName(String name) {
-		return UnibrowPrefsUtil.getTopNode().node(NODE_PLUGINS).node(name);
+		return PreferenceUtils.getTopNode().node(NODE_PLUGINS).node(name);
 	}
 
 	public static Object instantiatePlugin(String class_name) throws InstantiationException {

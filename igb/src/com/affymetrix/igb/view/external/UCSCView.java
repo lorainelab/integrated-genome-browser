@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view.external;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Window;
@@ -47,7 +47,7 @@ public class UCSCView extends BrowserView {
 
 	@Override
 	public void initializeCookies() {
-		final Preferences ucscSettingsNode = UnibrowPrefsUtil.getTopNode().node(UCSCSETTINGSNODE);
+		final Preferences ucscSettingsNode = PreferenceUtils.getTopNode().node(UCSCSETTINGSNODE);
 		String userId = ucscSettingsNode.get(UCSCUSERID, "");
 		setCookie(UCSCUSERID, userId);
 	}
@@ -108,7 +108,7 @@ public class UCSCView extends BrowserView {
 				public void actionPerformed(ActionEvent e) {
 					String userId = userIdField.getText();
 					setCookie(UCSCUSERID, userId);
-					Preferences ucscSettingsNode = UnibrowPrefsUtil.getTopNode().node(UCSCSETTINGSNODE);
+					Preferences ucscSettingsNode = PreferenceUtils.getTopNode().node(UCSCSETTINGSNODE);
 					ucscSettingsNode.put(UCSCUSERID, userId);
 					dispose();
 				}

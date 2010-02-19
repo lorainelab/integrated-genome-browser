@@ -15,7 +15,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.TierPrefsView;
 
 import java.awt.*;
@@ -136,7 +136,7 @@ public final class PreferencesPanel extends JPanel {
         public void windowClosing(WindowEvent evt) {
           // save the current size into the preferences, so the window
           // will re-open with this size next time
-          UnibrowPrefsUtil.saveWindowLocation(frame, WINDOW_NAME);
+          PreferenceUtils.saveWindowLocation(frame, WINDOW_NAME);
           // if the TierPrefsView is being displayed, the apply any changes from it.
           // if it is not being displayed, then its changes have already been applied in componentHidden()
           if (singleton.tpv != null) {
@@ -153,9 +153,9 @@ public final class PreferencesPanel extends JPanel {
 
       cont.add(this);
       frame.pack(); // pack() to set frame to its preferred size
-      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(WINDOW_NAME, new Rectangle(1000, 400));
+      Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(1000, 400));
       if (pos != null) {
-        UnibrowPrefsUtil.setWindowSize(frame, pos);
+        PreferenceUtils.setWindowSize(frame, pos);
       }
 
 		ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
@@ -214,15 +214,15 @@ public final class PreferencesPanel extends JPanel {
     dialog.pack();
     dialog.setLocationRelativeTo(this);
 
-    Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(HELP_WINDOW_NAME, new Rectangle(400, 400));
+    Rectangle pos = PreferenceUtils.retrieveWindowLocation(HELP_WINDOW_NAME, new Rectangle(400, 400));
     if (pos != null) {
-      UnibrowPrefsUtil.setWindowSize(dialog, pos);
+      PreferenceUtils.setWindowSize(dialog, pos);
     }
     dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     dialog.addWindowListener( new WindowAdapter() {
 			@Override
       public void windowClosing(WindowEvent evt) {
-        UnibrowPrefsUtil.saveWindowLocation(dialog, HELP_WINDOW_NAME);
+        PreferenceUtils.saveWindowLocation(dialog, HELP_WINDOW_NAME);
         dialog.dispose();
       }
     });
@@ -278,13 +278,13 @@ public final class PreferencesPanel extends JPanel {
     if (export_action == null) {
       export_action = new AbstractAction("Export Preferences ...") {
         public void actionPerformed(ActionEvent ae) {
-			  JFileChooser chooser = UnibrowPrefsUtil.getJFileChooser();
+			  JFileChooser chooser = PreferenceUtils.getJFileChooser();
 			  int option = chooser.showSaveDialog(PreferencesPanel.this);
 			  if (option == JFileChooser.APPROVE_OPTION) {
 				  File f = chooser.getSelectedFile();
 				  try {
-					  Preferences prefs = UnibrowPrefsUtil.getTopNode();
-					  UnibrowPrefsUtil.exportPreferences(prefs, f);
+					  Preferences prefs = PreferenceUtils.getTopNode();
+					  PreferenceUtils.exportPreferences(prefs, f);
 				  } catch (Exception e) {
 					  ErrorHandler.errorPanel("ERROR", "Error saving preferences to file", e);
 				  }
@@ -293,7 +293,7 @@ public final class PreferencesPanel extends JPanel {
 	  };
       export_action.putValue(Action.ACTION_COMMAND_KEY, EXPORT_ACTION_COMMAND);
       export_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
-      export_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(EXPORT_ACTION_COMMAND));
+      export_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(EXPORT_ACTION_COMMAND));
       ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif");
       export_action.putValue(Action.SMALL_ICON, icon);
     }
@@ -304,12 +304,12 @@ public final class PreferencesPanel extends JPanel {
     if (import_action == null) {
       import_action = new AbstractAction("Import Preferences ...") {
         public void actionPerformed(ActionEvent ae) {
-			  JFileChooser chooser = UnibrowPrefsUtil.getJFileChooser();
+			  JFileChooser chooser = PreferenceUtils.getJFileChooser();
 			  int option = chooser.showOpenDialog(PreferencesPanel.this);
 			  if (option == JFileChooser.APPROVE_OPTION) {
 				  File f = chooser.getSelectedFile();
 				  try {
-					  UnibrowPrefsUtil.importPreferences(f);
+					  PreferenceUtils.importPreferences(f);
 				  } catch (InvalidPreferencesFormatException ipfe) {
 					  ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
 							  + "\n\nYou can only IMPORT preferences from a file that was created with EXPORT.  "
@@ -327,7 +327,7 @@ public final class PreferencesPanel extends JPanel {
       };
       import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
       import_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_I));
-      import_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(IMPORT_ACTION_COMMAND));
+      import_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(IMPORT_ACTION_COMMAND));
       ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif");
       import_action.putValue(Action.SMALL_ICON, icon);
     }
@@ -343,7 +343,7 @@ public final class PreferencesPanel extends JPanel {
       };
       help_action.putValue(Action.ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
       help_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_G));
-      help_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(HELP_ACTION_COMMAND));
+      help_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_ACTION_COMMAND));
       Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif");
       help_action.putValue(Action.SMALL_ICON, icon);
     }
@@ -359,7 +359,7 @@ public final class PreferencesPanel extends JPanel {
       };
       help_for_tab_action.putValue(Action.ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);
       help_for_tab_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_C));
-      help_for_tab_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(HELP_TAB_ACTION_COMMAND));
+      help_for_tab_action.putValue(Action.ACCELERATOR_KEY, PreferenceUtils.getAccelerator(HELP_TAB_ACTION_COMMAND));
       Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/ContextualHelp16.gif");
       help_for_tab_action.putValue(Action.SMALL_ICON, icon);
     }

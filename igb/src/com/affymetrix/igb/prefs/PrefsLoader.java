@@ -6,7 +6,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -92,7 +92,7 @@ public abstract class PrefsLoader {
 	private static void LoadDefaultAPIPrefsFromJar() {
 		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
 		try {
-			if ((UnibrowPrefsUtil.getTopNode()).nodeExists("keystrokes")) {
+			if ((PreferenceUtils.getTopNode()).nodeExists("keystrokes")) {
 				return;
 			}
 		} catch (BackingStoreException ex) {
@@ -215,7 +215,7 @@ public abstract class PrefsLoader {
 	 */
 	@SuppressWarnings("fallthrough")
 	private static void checkPrefsVersion() {
-		int version = UnibrowPrefsUtil.getTopNode().getInt("version", 0);
+		int version = PreferenceUtils.getTopNode().getInt("version", 0);
 
 		switch (version) {
 			case 0:
@@ -233,7 +233,7 @@ public abstract class PrefsLoader {
 
 				/* this always should occur in version n-1 */
 				version = 2; /* change this number to current prefs version */
-				UnibrowPrefsUtil.getTopNode().putInt("version", version);
+				PreferenceUtils.getTopNode().putInt("version", version);
 				break;
 			default:
 			/* do nothing */
@@ -266,7 +266,7 @@ public abstract class PrefsLoader {
 			} else {
 				try {
 					System.err.println("Deleting");
-					UnibrowPrefsUtil.getTopNode().removeNode();
+					PreferenceUtils.getTopNode().removeNode();
 				} catch (BackingStoreException ex) {
 					Logger.getLogger(PrefsLoader.class.getName()).log(Level.SEVERE, null, ex);
 				}

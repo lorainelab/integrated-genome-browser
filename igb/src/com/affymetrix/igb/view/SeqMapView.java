@@ -80,7 +80,7 @@ import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -378,7 +378,7 @@ public class SeqMapView extends JPanel
 		refreshButton.addActionListener(refreshAL);
 		xzoombox.add(refreshButton);
 
-		boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+		boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
 		JPanel pan = new JPanel(new BorderLayout());
 		pan.add("Center", xzoombox);
 		if (x_above) {
@@ -389,7 +389,7 @@ public class SeqMapView extends JPanel
 
 		yzoombox = Box.createVerticalBox();
 		yzoombox.add((Component) yzoomer);
-		boolean y_left = UnibrowPrefsUtil.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
+		boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
 		if (y_left) {
 			this.add(BorderLayout.WEST, yzoombox);
 		} else {
@@ -404,7 +404,7 @@ public class SeqMapView extends JPanel
 
 		default_glyph_factory.setStylesheet(XmlStylesheetParser.getUserStylesheet());
 
-		UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pref_change_listener);
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 	}
 
 	/** Creates an instance to be used as the SeqMap.  Set-up of listeners and such
@@ -429,7 +429,7 @@ public class SeqMapView extends JPanel
 				return;
 			}
 
-			if (!pce.getNode().equals(UnibrowPrefsUtil.getTopNode())) {
+			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
 				return;
 			}
 
@@ -451,7 +451,7 @@ public class SeqMapView extends JPanel
 					doEdgeMatching(seqmap.getSelected(), true);
 				}
 			} else if (pce.getKey().equals(PREF_X_ZOOMER_ABOVE)) {
-				boolean b = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+				boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
 				SeqMapView.this.remove(xzoombox);
 				if (b) {
 					SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
@@ -460,7 +460,7 @@ public class SeqMapView extends JPanel
 				}
 				SeqMapView.this.invalidate();
 			} else if (pce.getKey().equals(PREF_Y_ZOOMER_LEFT)) {
-				boolean b = UnibrowPrefsUtil.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
+				boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
 				SeqMapView.this.remove(yzoombox);
 				if (b) {
 					SeqMapView.this.add(BorderLayout.WEST, yzoombox);
@@ -529,22 +529,22 @@ public class SeqMapView extends JPanel
 
 		@Override
 		public void setColor(Color c) {
-			UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, c);
+			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_AXIS_COLOR, c);
 		}
 
 		@Override
 		public Color getColor() {
-			return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
+			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
 		}
 
 		@Override
 		public void setBackground(Color c) {
-			UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, c);
+			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_AXIS_BACKGROUND, c);
 		}
 
 		@Override
 		public Color getBackground() {
-			return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
+			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
 		}
 	};
 
@@ -783,7 +783,7 @@ public class SeqMapView extends JPanel
 	/** Sets the axis label format from the value in the persistent preferences. */
 	public static final void setAxisFormatFromPrefs(AxisGlyph axis) {
 		// It might be good to move this to AffyTieredMap
-		String axis_format = UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_LABEL_FORMAT, VALUE_AXIS_LABEL_FORMAT_COMMA);
+		String axis_format = PreferenceUtils.getTopNode().get(PREF_AXIS_LABEL_FORMAT, VALUE_AXIS_LABEL_FORMAT_COMMA);
 		if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
 			axis.setLabelFormat(AxisGlyph.COMMA);
 		} else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
@@ -2249,10 +2249,10 @@ public class SeqMapView extends JPanel
 			target_glyphs.add(seqmap.getScene().getGlyph());
 			double fuzz = getEdgeMatcher().getFuzziness();
 			if (fuzz == 0.0) {
-				Color edge_match_color = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_EDGE_MATCH_COLOR, default_edge_match_color);
+				Color edge_match_color = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_EDGE_MATCH_COLOR, default_edge_match_color);
 				getEdgeMatcher().setColor(edge_match_color);
 			} else {
-				Color edge_match_fuzzy_color = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_EDGE_MATCH_FUZZY_COLOR, default_edge_match_fuzzy_color);
+				Color edge_match_fuzzy_color = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_EDGE_MATCH_FUZZY_COLOR, default_edge_match_fuzzy_color);
 				getEdgeMatcher().setColor(edge_match_fuzzy_color);
 			}
 			getEdgeMatcher().matchEdges(seqmap, query_glyphs, target_glyphs, match_glyphs);

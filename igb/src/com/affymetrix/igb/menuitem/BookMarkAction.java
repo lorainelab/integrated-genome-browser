@@ -32,7 +32,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.BookmarkManagerView;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 import com.affymetrix.igb.bookmarks.Bookmark;
@@ -120,7 +120,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   }
   
   public static File getBookmarksFile() {
-    String app_dir = UnibrowPrefsUtil.getAppDataDirectory();
+    String app_dir = PreferenceUtils.getAppDataDirectory();
     File f = new File(app_dir, "bookmarks.html");
     return f;
   }
@@ -495,9 +495,9 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       bmv.setVisible(true);
       bookmark_manager_frame.pack(); // pack() to set frame to its preferred size
 
-      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(bookmark_manager_frame.getTitle(), bookmark_manager_frame.getBounds());
+      Rectangle pos = PreferenceUtils.retrieveWindowLocation(bookmark_manager_frame.getTitle(), bookmark_manager_frame.getBounds());
       if (pos != null) {
-        UnibrowPrefsUtil.setWindowSize(bookmark_manager_frame, pos);
+        PreferenceUtils.setWindowSize(bookmark_manager_frame, pos);
       }
       bookmark_manager_frame.setVisible(true);
       bookmark_manager_frame.addWindowListener( new WindowAdapter() {
@@ -505,7 +505,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 	  public void windowClosing(WindowEvent evt) {
             // save the current size into the preferences, so the window
             // will re-open with this size next time
-            UnibrowPrefsUtil.saveWindowLocation(bookmark_manager_frame, bookmark_manager_frame.getTitle());
+            PreferenceUtils.saveWindowLocation(bookmark_manager_frame, bookmark_manager_frame.getTitle());
 	  }
 	});
     }

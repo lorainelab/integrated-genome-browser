@@ -18,7 +18,7 @@ import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -136,7 +136,7 @@ public final class WebLinksManagerView extends JPanel {
   }
   
   static void setAccelerator(Action a) {
-    KeyStroke ks = UnibrowPrefsUtil.getAccelerator("Web Links Manager / "+a.getValue(Action.NAME));
+    KeyStroke ks = PreferenceUtils.getAccelerator("Web Links Manager / "+a.getValue(Action.NAME));
     a.putValue(Action.ACCELERATOR_KEY, ks);
   }
 
@@ -378,7 +378,7 @@ public final class WebLinksManagerView extends JPanel {
   static JFrame static_frame = null;
   public static synchronized JFrame showManager() {
     if (static_frame == null) {
-      static_frame = UnibrowPrefsUtil.createFrame("Web Links", getManager());
+      static_frame = PreferenceUtils.createFrame("Web Links", getManager());
       ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif");
       if (icon != null) { static_frame.setIconImage(icon.getImage()); }
     }

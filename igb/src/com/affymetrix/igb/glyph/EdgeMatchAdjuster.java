@@ -20,6 +20,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public final class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
@@ -79,10 +80,10 @@ public final class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
     edge_match_box.setLayout(new GridLayout(2,2));
     edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge match colors"));
 
-    JButton edge_match_colorB = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color);
+    JButton edge_match_colorB = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color);
     edge_match_box.add(new JLabel("Standard: "));
     edge_match_box.add(edge_match_colorB);
-    JButton fuzzy_edge_match_colorB = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color);
+    JButton fuzzy_edge_match_colorB = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color);
     edge_match_box.add(new JLabel("Fuzzy matching: "));
     edge_match_box.add(fuzzy_edge_match_colorB);    
     this.add("South", edge_match_box);

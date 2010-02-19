@@ -13,7 +13,9 @@
 
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
+import com.affymetrix.igb.util.ColorUtils;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -71,10 +73,10 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     orf_box.setLayout(new GridLayout(2,2));
     orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
 
-    JButton stop_codon_color = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color);
+    JButton stop_codon_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color);
     orf_box.add(new JLabel("Stop Codon: "));
     orf_box.add(stop_codon_color);
-    JButton dynamic_orf_color = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color);
+    JButton dynamic_orf_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color);
     orf_box.add(new JLabel("Dynamic ORF: "));
     orf_box.add(dynamic_orf_color);
 	
@@ -82,16 +84,16 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     base_box.setLayout(new GridLayout(4,2));
     base_box.setBorder(new javax.swing.border.TitledBorder("Change Residue Colors"));
 
-    JButton A_color = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_A_COLOR, CharSeqGlyph.default_A_color);
+    JButton A_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_A_COLOR, CharSeqGlyph.default_A_color);
 	base_box.add(new JLabel("A: "));
 	base_box.add(A_color);
-	JButton T_color = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_T_COLOR, CharSeqGlyph.default_T_color);
+	JButton T_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_T_COLOR, CharSeqGlyph.default_T_color);
 	base_box.add(new JLabel("T: "));
 	base_box.add(T_color);
-	JButton G_color = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_G_COLOR, CharSeqGlyph.default_G_color);
+	JButton G_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_G_COLOR, CharSeqGlyph.default_G_color);
 	base_box.add(new JLabel("G: "));
 	base_box.add(G_color);
-	JButton C_color = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_C_COLOR, CharSeqGlyph.default_C_color);
+	JButton C_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), CharSeqGlyph.PREF_C_COLOR, CharSeqGlyph.default_C_color);
     base_box.add(new JLabel("C: "));
     base_box.add(C_color);
     
@@ -101,11 +103,11 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     axis_box.setLayout(new GridLayout(3,2));
     axis_box.setBorder(new javax.swing.border.TitledBorder("Axis"));
 
-    JButton axis_color_button2 = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_AXIS_COLOR, Color.BLACK);
+    JButton axis_color_button2 = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_AXIS_COLOR, Color.BLACK);
     axis_box.add(new JLabel("Foreground: "));
     axis_box.add(axis_color_button2);
 
-    JButton axis_back_color = UnibrowPrefsUtil.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_AXIS_BACKGROUND, Color.WHITE);
+    JButton axis_back_color = ColorUtils.createColorButton(UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_AXIS_BACKGROUND, Color.WHITE);
     axis_box.add(new JLabel("Background: "));
     axis_box.add(axis_back_color);
 
@@ -137,7 +139,21 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == clear_prefsB) {
-      UnibrowPrefsUtil.clearPreferences(this);
+      // The option pane used differs from the confirmDialog only in
+		 // that "No" is the default choice.
+		 String[] options = {"Yes", "No"};
+		 if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+						 this, "Really reset all preferences to defaults?\n(this will also exit the application)", "Clear preferences?",
+						 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						 options, options[1])) {
+
+			 try {
+				 UnibrowPrefsUtil.clearPreferences();
+				 System.exit(0);
+			 } catch (Exception e) {
+				 ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);
+			 }
+		 }
     }
   }
 

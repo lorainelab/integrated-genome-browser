@@ -13,12 +13,16 @@
 
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.TierPrefsView;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.util.prefs.InvalidPreferencesFormatException;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 
 public final class PreferencesPanel extends JPanel {
@@ -274,9 +278,19 @@ public final class PreferencesPanel extends JPanel {
     if (export_action == null) {
       export_action = new AbstractAction("Export Preferences ...") {
         public void actionPerformed(ActionEvent ae) {
-          UnibrowPrefsUtil.exportPreferences(PreferencesPanel.this);
-        }
-      };
+			  JFileChooser chooser = UnibrowPrefsUtil.getJFileChooser();
+			  int option = chooser.showSaveDialog(PreferencesPanel.this);
+			  if (option == JFileChooser.APPROVE_OPTION) {
+				  File f = chooser.getSelectedFile();
+				  try {
+					  Preferences prefs = UnibrowPrefsUtil.getTopNode();
+					  UnibrowPrefsUtil.exportPreferences(prefs, f);
+				  } catch (Exception e) {
+					  ErrorHandler.errorPanel("ERROR", "Error saving preferences to file", e);
+				  }
+			  }
+		  }
+	  };
       export_action.putValue(Action.ACTION_COMMAND_KEY, EXPORT_ACTION_COMMAND);
       export_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
       export_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(EXPORT_ACTION_COMMAND));
@@ -290,11 +304,25 @@ public final class PreferencesPanel extends JPanel {
     if (import_action == null) {
       import_action = new AbstractAction("Import Preferences ...") {
         public void actionPerformed(ActionEvent ae) {
-          UnibrowPrefsUtil.importPreferences(PreferencesPanel.this);
-          IPrefEditorComponent[] components = PreferencesPanel.this.getPrefEditorComponents();
-          for (int i=0; i<components.length; i++) {
-            components[i].refresh();
-          }
+			  JFileChooser chooser = UnibrowPrefsUtil.getJFileChooser();
+			  int option = chooser.showOpenDialog(PreferencesPanel.this);
+			  if (option == JFileChooser.APPROVE_OPTION) {
+				  File f = chooser.getSelectedFile();
+				  try {
+					  UnibrowPrefsUtil.importPreferences(f);
+				  } catch (InvalidPreferencesFormatException ipfe) {
+					  ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
+							  + "\n\nYou can only IMPORT preferences from a file that was created with EXPORT.  "
+							  + "In particular, you cannot import the file 'igb_prefs.xml' that was "
+							  + "used in earlier versions of this program.");
+				  } catch (Exception e) {
+					  ErrorHandler.errorPanel("ERROR", "Error importing preferences from file", e);
+				  }
+			  }
+			  IPrefEditorComponent[] components = PreferencesPanel.this.getPrefEditorComponents();
+			  for (int i = 0; i < components.length; i++) {
+				  components[i].refresh();
+			  }
         }
       };
       import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);

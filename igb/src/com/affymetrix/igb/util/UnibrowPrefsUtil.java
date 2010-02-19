@@ -15,10 +15,7 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.ColorIcon;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Rectangle;
@@ -38,9 +35,7 @@ import javax.swing.*;
  */
  public abstract class UnibrowPrefsUtil {
 
-  public static final String CONTROL_GRAPH_DIRECTORY = "control graph directory";
-  public static final String DATA_DIRECTORY = "data directory";
-  public static final String OUTPUT_DIRECTORY = "output directory";
+  
 
   public static final String COMPONENT_STATE_TAB = "TAB";
   public static final String COMPONENT_STATE_WINDOW = "WINDOW";
@@ -54,13 +49,7 @@ import javax.swing.*;
   static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
   static String app_dir = null;
 	
-  private static List<String> FILENAMES;
-  static {
-    FILENAMES = new ArrayList<String>();
-    FILENAMES.add(CONTROL_GRAPH_DIRECTORY);
-    FILENAMES.add(DATA_DIRECTORY);
-    FILENAMES.add(OUTPUT_DIRECTORY);
-  }
+  
 
   /**
    *  Returns the top preferences node for the "com/affymetrix/igb" package.
@@ -101,47 +90,6 @@ import javax.swing.*;
    public static boolean getBooleanParam(String param_name, boolean def) {
      return getTopNode().getBoolean(param_name, def);
    }
-
-  /** Saves a preferred file, for example the directory the user keeps files in.
-   *  If the given file is null or doesn't exist the routine will do nothing.
-   *  @param name  Only acceptable value is {@link #DATA_DIRECTORY}
-   *    or {@link #CONTROL_GRAPH_DIRECTORY}
-   *  @throws IllegalArgumentException if name is not one of the pre-defined names.
-   */
-  public static void saveFilename(String name, File f) {
-    if (! FILENAMES.contains(name)) {
-      throw new IllegalArgumentException("'"+name+"' is not a known name for a file preference");
-    }
-    if (f == null || ! f.exists()) return;
-    try {
-      String path = f.getCanonicalPath();
-      getTopNode().put(name, path);
-    } catch (IOException ioe) {
-      ErrorHandler.errorPanel("Can't resolve file path", ioe);
-    } catch (Exception e) {
-      e.printStackTrace(System.out);
-    }
-    try {getTopNode().flush();} catch (BackingStoreException bse) {}
-  }
-
-  /** Gets a preferred directory. If no directory can be found
-   *  in the user's preferences for the given name, returns
-   *  the user's home directory as a default.
-   *  @param name  One of {@link #CONTROL_GRAPH_DIRECTORY} or {@link #DATA_DIRECTORY}
-   *  @throws IllegalArgumentException if name is not one of the pre-defined names.
-   */
-  public static File getFilename(String name) {
-    if (! FILENAMES.contains(name)) {
-      throw new IllegalArgumentException("'"+name+"' is not a known name for a file preference");
-    }
-    try {getTopNode().sync();} catch (BackingStoreException bse) {}
-    String path = getTopNode().get(name, System.getProperty("user.dir"));
-    File f = new File(path);
-    if (! f.exists()) {
-      f = new File(System.getProperty("user.dir"));
-    }
-    return f;
-  }
 
   /** Saves the current location of a window to the user's preferences.
    *  @param w     the window, in the desired location
@@ -219,7 +167,7 @@ import javax.swing.*;
 
 
   /** Gets a static re-usable file chooser that prefers "xml" files. */
-  static JFileChooser getJFileChooser() {
+  public static JFileChooser getJFileChooser() {
     if (static_chooser == null) {
       static_chooser = new UniFileChooser("XML File", "xml");
     }
@@ -227,25 +175,6 @@ import javax.swing.*;
     //static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
     static_chooser.rescanCurrentDirectory();
     return static_chooser;
-  }
-
-  /** Brings up a JFileChooser to pick the name of the file to
-   *  export to, and then calls {@link #exportPreferences(Preferences, File)}
-   *  with the Preferences node from {@link #getTopNode()}.
-   *  @param parent_comp  the parent component for the JFileChooser, null is ok
-   */
-  public static void exportPreferences(Component parent_comp) {
-    JFileChooser chooser = getJFileChooser();
-    int option = chooser.showSaveDialog(parent_comp);
-    if (option == JFileChooser.APPROVE_OPTION) {
-      File f = chooser.getSelectedFile();
-      try {
-        Preferences prefs = getTopNode();
-        exportPreferences(prefs, f);
-      } catch (Exception e) {
-        ErrorHandler.errorPanel("ERROR", "Error saving preferences to file", e);
-      }
-    }
   }
 
   /** Exports the preferences subtree to a file.
@@ -259,28 +188,6 @@ import javax.swing.*;
       prefs.exportSubtree(fos);
     } finally {
 			GeneralUtils.safeClose(fos);
-    }
-  }
-
-  /** Brings up a JFileChooser to pick the name of the file to
-   *  import from, and then calls {@link #importPreferences(File)}.
-   *  @param parent_comp  the parent component for the JFileChooser, null is ok
-   */
-  public static void importPreferences(Component parent_comp) {
-    JFileChooser chooser = getJFileChooser();
-    int option = chooser.showOpenDialog(parent_comp);
-    if (option == JFileChooser.APPROVE_OPTION) {
-      File f = chooser.getSelectedFile();
-      try {
-        importPreferences(f);
-      } catch (InvalidPreferencesFormatException ipfe) {
-        ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n"+ipfe.getMessage()
-        +"\n\nYou can only IMPORT preferences from a file that was created with EXPORT.  "+
-        "In particular, you cannot import the file 'igb_prefs.xml' that was "+
-        "used in earlier versions of this program.");
-      } catch (Exception e) {
-        ErrorHandler.errorPanel("ERROR", "Error importing preferences from file", e);
-      }
     }
   }
 
@@ -303,12 +210,6 @@ import javax.swing.*;
     }
   }
 
- 
-   public static void main(String[] args) {
-     clearPreferences(null);
-     System.exit(0);
-   }
-
 
   /**
    *  Clears ALL stored preferences under the top node of {@link #getTopNode()}.
@@ -318,22 +219,8 @@ import javax.swing.*;
    *  on any of the preference nodes will stop getting messages.)
    *  @param parent_comp  the parent component for the JOptionPane, null is ok
    */
-  public static void clearPreferences(Component parent_comp) {
-		 // The option pane used differs from the confirmDialog only in
-		 // that "No" is the default choice.
-		 String[] options = {"Yes", "No"};
-		 if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
-						 parent_comp, "Really reset all preferences to defaults?\n(this will also exit the application)", "Clear preferences?",
-						 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-						 options, options[1])) {
-
-			 try {
-				 getTopNode().removeNode();
-				 System.exit(0);
-			 } catch (Exception e) {
-				 ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);
-			 }
-		 }
+  public static void clearPreferences() throws BackingStoreException {
+		 getTopNode().removeNode();
 	 }
 
 
@@ -492,42 +379,6 @@ import javax.swing.*;
       }
     });
     return combo_box;
-  }
-
-  /**
-   *  Creates a JButton associated with a Color preference.
-   *  Will initialize itself with the value of the given
-   *  preference and will update itself, via a PreferenceChangeListener,
-   *  if the preference value changes.
-   *  @param title  The title of the JButton and of the JColorChooser that will
-   *    be opened when the button is pressed.  This is optional, null is ok.
-   */
-  public static JButton createColorButton(final Preferences node,
-    final String pref_name, final Color default_val) {
-
-    Color initial_color = getColor(node, pref_name, default_val);
-    final ColorIcon icon = new ColorIcon(11, initial_color);
-    final String panel_title = "Choose a color";
-
-    final JButton button = new JButton(icon);
-    button.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ae) {
-        Color c = JColorChooser.showDialog(button, panel_title, getColor(node, pref_name, default_val));
-        if (c != null) {
-          putColor(node, pref_name, c);
-        }
-      }
-    });
-    node.addPreferenceChangeListener(new PreferenceChangeListener() {
-      public void preferenceChange(PreferenceChangeEvent evt) {
-        if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
-          Color c = getColor(node, pref_name, default_val);
-          icon.setColor(c);
-          button.repaint();
-        }
-      }
-    });
-    return button;
   }
 
    private static String shortNodeName(String s, boolean remove_slash)  {

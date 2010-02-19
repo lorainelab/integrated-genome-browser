@@ -353,18 +353,17 @@ the probeset, probe and pieces of probes
     SeqUtils.transformSymmetry(probeset_sym, consensus_sym, true);
     // Note that the transformation generates a probeset_sym of depth 3
 
-    String probeset_id = null;
     if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
-      drawPolyA(probeset_sym, parent_glyph, probeset_id, y, height, poly_a_site_color);
+      drawPolyA(probeset_sym, parent_glyph, y, height, poly_a_site_color);
     } else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
-      drawPolyA(probeset_sym, parent_glyph, probeset_id, y, height, poly_a_stack_color);
+      drawPolyA(probeset_sym, parent_glyph, y, height, poly_a_stack_color);
     } else {
-      drawProbeSetGlyph(probeset_sym, parent_glyph, probeset_id, y, height);
+      drawProbeSetGlyph(probeset_sym, parent_glyph, y, height);
     }
   }
 
   private void drawPolyA(DerivedSeqSymmetry poly_A_sym, GlyphI consensus_glyph,
-    String probeset_id, double consensus_exon_y, double consensus_exon_height, Color color) {
+    double consensus_exon_y, double consensus_exon_height, Color color) {
     // The depth coming in should be 3
     SeqSymmetry transformed_sym = gviewer.transformForViewSeq(poly_A_sym);
     // After transformation, the depth is arbitrary, but we only deal with the top 3 levels
@@ -386,7 +385,6 @@ the probeset, probe and pieces of probes
     FillRectGlyph polyA_glyph_rect = new FillRectGlyph();
     polyA_glyph_rect.setColor(color);
     polyA_glyph_rect.setCoords(span.getMin(), y, span.getLength(), height);
-    //polyA_glyph_rect.setAboveAxis(span.isForward());
     consensus_glyph.addChild(polyA_glyph_rect);
     gviewer.getSeqMap().setDataModelFromOriginalSym(polyA_glyph_rect, poly_A_sym);
   }  
@@ -401,7 +399,7 @@ the probeset, probe and pieces of probes
    *                   This should NOT already have been mapped onto SeqMapView.getAnnotatedSeq().
    */
   private void drawProbeSetGlyph(DerivedSeqSymmetry probeset_sym, GlyphI parent_glyph,
-    String probeset_id, double consensus_exon_y, double consensus_exon_height) {
+    double consensus_exon_y, double consensus_exon_height) {
     // The depth coming in should be 3
     SeqSymmetry transformed_probeset_sym = gviewer.transformForViewSeq(probeset_sym);
     // After transformation, the depth is arbitrary, but we only deal with the top 3 levels
@@ -419,14 +417,6 @@ the probeset, probe and pieces of probes
     else {probe_y = consensus_exon_y + consensus_exon_height - probe_height;}
 
     Color probeset_color = ps_color;
-    if (probeset_id != null) {
-      String lc = probeset_id.toLowerCase();
-      if (lc.indexOf("_s_") > 0) {
-        probeset_color = ps_s_color;
-      } else if (lc.indexOf("_x_") > 0) {
-        probeset_color = ps_x_color;
-      }
-    }
 
     if (outline_probes_in_probeset) {
       GlyphI probeset_glyph = new EfficientOutlineContGlyph();

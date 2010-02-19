@@ -52,14 +52,10 @@ public class ExternalViewer extends JComponent implements ItemListener {
 		if (e.getID() == ItemEvent.ITEM_STATE_CHANGED) {
 			CardLayout cl = (CardLayout) (getLayout());
 			if (e.getSource() == ucscBox) {
-				ensemblBox.removeItemListener(this);
 				ensemblBox.setSelectedItem(EnsemblView.viewName);
-				ensemblBox.addItemListener(this);
 			}
 			if (e.getSource() == ensemblBox) {
-				ucscBox.removeItemListener(this);
 				ucscBox.setSelectedItem(UCSCView.viewName);
-				ucscBox.addItemListener(this);
 			}
 			cl.show(ExternalViewer.this, (String) e.getItem());
 		}

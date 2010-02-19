@@ -6,7 +6,8 @@ import javax.swing.*;
 import javax.swing.table.*;
 
 /**
- * Hold and show property of the selected Glyph
+ * Displays Propertys (name, value pairs) associated with
+ * whatever Glyph objects the user has selected.
  */
 final class ModPropertySheet extends JPanel {
 

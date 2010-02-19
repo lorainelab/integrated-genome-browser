@@ -15,7 +15,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.TierPrefsView;
 
 import java.awt.*;

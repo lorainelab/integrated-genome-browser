@@ -10,7 +10,7 @@ import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.StringEncrypter.EncryptionException;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;

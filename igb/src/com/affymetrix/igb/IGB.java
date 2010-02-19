@@ -65,7 +65,7 @@ import com.affymetrix.igb.util.ComponentWriter;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.external.ExternalViewer;
 import java.text.MessageFormat;
 

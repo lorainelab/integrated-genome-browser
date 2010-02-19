@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.util;
+package com.affymetrix.genometryImpl.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

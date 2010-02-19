@@ -19,7 +19,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.BookMarkAction;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;

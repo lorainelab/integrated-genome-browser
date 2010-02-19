@@ -32,7 +32,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.BookmarkManagerView;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 import com.affymetrix.igb.bookmarks.Bookmark;

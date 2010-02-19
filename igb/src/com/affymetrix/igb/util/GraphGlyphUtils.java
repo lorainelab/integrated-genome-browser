@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;

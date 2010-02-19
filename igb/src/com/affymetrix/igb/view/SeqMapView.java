@@ -80,7 +80,7 @@ import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;

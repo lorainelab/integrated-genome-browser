@@ -26,7 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;

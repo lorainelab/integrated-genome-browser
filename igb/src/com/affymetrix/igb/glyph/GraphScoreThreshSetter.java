@@ -22,7 +22,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genoviz.swing.DisplayUtils;

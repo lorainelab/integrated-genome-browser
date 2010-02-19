@@ -1,5 +1,6 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.StringUtils;

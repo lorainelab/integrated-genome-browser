@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.awt.Font;
 import java.util.prefs.*;
 

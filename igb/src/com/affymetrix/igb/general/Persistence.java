@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class Persistence {

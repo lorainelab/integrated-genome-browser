@@ -20,7 +20,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;

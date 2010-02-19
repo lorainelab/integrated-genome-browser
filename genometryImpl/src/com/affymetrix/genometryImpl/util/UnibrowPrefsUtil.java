@@ -10,10 +10,8 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.util;
+package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.UniFileChooser;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;

@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.external;
 
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Window;

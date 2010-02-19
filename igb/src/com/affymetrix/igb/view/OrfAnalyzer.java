@@ -31,7 +31,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 
 /**
  *  OrfAnalyzer2 is used on the virtual sequence being viewed in AltSpliceView.  It does

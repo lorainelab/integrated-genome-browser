@@ -20,7 +20,7 @@ import javax.swing.*;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 
 public final class ConsoleView {

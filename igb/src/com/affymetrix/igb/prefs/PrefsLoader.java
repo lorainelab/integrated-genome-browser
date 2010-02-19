@@ -6,7 +6,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

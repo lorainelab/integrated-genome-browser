@@ -1,5 +1,7 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.UrlToFileName;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genoviz.util.GeneralUtils;

@@ -18,7 +18,7 @@ import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 

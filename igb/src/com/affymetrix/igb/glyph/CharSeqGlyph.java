@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 
 
 /**

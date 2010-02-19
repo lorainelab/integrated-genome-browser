@@ -17,7 +17,7 @@ import java.awt.MediaTracker;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 
 public abstract class MenuUtil {
 

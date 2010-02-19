@@ -39,7 +39,7 @@ import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {

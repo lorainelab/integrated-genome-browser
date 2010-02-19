@@ -14,7 +14,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genoviz.swing.DisplayUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

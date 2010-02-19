@@ -23,7 +23,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.LocalUrlCacher;

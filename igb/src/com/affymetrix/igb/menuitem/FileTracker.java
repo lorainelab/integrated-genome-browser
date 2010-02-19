@@ -2,7 +2,7 @@ package com.affymetrix.igb.menuitem;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.io.File;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;

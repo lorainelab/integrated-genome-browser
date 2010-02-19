@@ -5,7 +5,7 @@ import javax.swing.*;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 
 /**
  *  A panel that shows the preferences for graph properties.

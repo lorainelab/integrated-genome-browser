@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;

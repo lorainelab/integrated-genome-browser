@@ -1,5 +1,6 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.swing.ColorIcon;
 import java.awt.Color;
 import java.awt.event.ActionEvent;

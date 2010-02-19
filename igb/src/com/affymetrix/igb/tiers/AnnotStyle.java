@@ -7,7 +7,7 @@ import java.util.prefs.*;
 import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.Stylesheet;

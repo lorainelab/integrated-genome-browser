@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genometryImpl.util.UnibrowPrefsUtil;
 import java.util.prefs.Preferences;
 
 public final class PluginInfo {

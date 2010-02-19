@@ -258,7 +258,7 @@ public final class GeneralLoadUtils {
 		String versionName = aseq.getID();
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 
-		GenericServer gServer = new GenericServer(null, null, ServerType.Unknown, false, null);
+		GenericServer gServer = new GenericServer(null, null, ServerType.Unknown, null);
 		
 		return discoverVersion(versionName, versionName, gServer, null, speciesName);
 	}

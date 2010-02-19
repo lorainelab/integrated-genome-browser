@@ -91,7 +91,7 @@ public final class ServerList {
 		if (url2server.containsKey(url)) {
 			return url2server.get(url);
 		}
-		return initServer(serverType, url, name, true, false);
+		return initServer(serverType, url, name, true);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public final class ServerList {
 	 * @param name
 	 * @return initialized server
 	 */
-	private static GenericServer initServer(ServerType serverType, String url, String name, boolean enabled, boolean hardcodedPrefs) {
+	private static GenericServer initServer(ServerType serverType, String url, String name, boolean enabled) {
 		GenericServer server = null;
 		try {
 			if (serverType == ServerType.Unknown) {
@@ -123,15 +123,15 @@ public final class ServerList {
 				if (!root_url.endsWith("/")) {
 					root_url = root_url + "/";
 				}
-				server = new GenericServer(name, root_url, serverType, hardcodedPrefs, root_url);
+				server = new GenericServer(name, root_url, serverType, root_url);
 			}
 			if (serverType == ServerType.DAS) {
 				DasServerInfo info = new DasServerInfo(url);
-				server = new GenericServer(name, info.getURL().toString(), serverType, hardcodedPrefs, info);
+				server = new GenericServer(name, info.getURL().toString(), serverType, info);
 			}
 			if (serverType == ServerType.DAS2) {
 				Das2ServerInfo info = new Das2ServerInfo(url, name, false);
-				server = new GenericServer(name, info.getURI().toString(), serverType, hardcodedPrefs, info);
+				server = new GenericServer(name, info.getURI().toString(), serverType, info);
 			}
 			server.enabled = enabled;
 			url2server.put(url, server);

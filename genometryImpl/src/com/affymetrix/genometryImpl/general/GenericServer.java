@@ -28,9 +28,9 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	public final String serverName;							// name of the server.
 	public final String URL;									// URL/file that points to the server.
 	public final ServerType serverType;						// DAS, DAS2, QuickLoad, Unknown (local file)
-	public String login = "";						// to be used by DAS/2 authentication
-	public String password = "";						// to be used by DAS/2 authentication
-	public boolean enabled = true;								// Is this server enabled?
+	private String login = "";						// to be used by DAS/2 authentication
+	private String password = "";						// to be used by DAS/2 authentication
+	private boolean enabled = true;								// Is this server enabled?
 	public final Object serverObj;						// Das2ServerInfo, DasServerInfo, ..., QuickLoad?
 	public final URL friendlyURL;						// friendly URL that users may look at.
 	private ImageIcon friendlyIcon = null;				// friendly icon that users may look at.
@@ -177,8 +177,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	 * @return comparison integer
 	 */
 	public int compareTo(GenericServer gServer) {
-		if (this.enabled != gServer.enabled) {
-			return ((Boolean)this.enabled).compareTo(gServer.enabled);
+		if (this.isEnabled() != gServer.isEnabled()) {
+			return Boolean.valueOf(this.isEnabled()).compareTo(Boolean.valueOf(gServer.isEnabled()));
 		}
 		if (!(this.serverName.equals(gServer.serverName))) {
 			return this.serverName.compareTo(gServer.serverName);

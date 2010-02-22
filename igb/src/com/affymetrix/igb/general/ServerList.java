@@ -34,7 +34,7 @@ public final class ServerList {
 	public static Set<GenericServer> getEnabledServers() {
 		Set<GenericServer> serverList = new HashSet<GenericServer>();
 		for (GenericServer gServer : getAllServers()) {
-			if (gServer.enabled && gServer.getServerStatus() != ServerStatus.NotResponding) {
+			if (gServer.isEnabled() && gServer.getServerStatus() != ServerStatus.NotResponding) {
 				serverList.add(gServer);
 			}
 		}
@@ -137,7 +137,7 @@ public final class ServerList {
 	public static void removeServer(String url) {
 		GenericServer server = url2server.get(url);
 		url2server.remove(url);
-		server.enabled = false;
+		server.setEnabled(false);
 		fireServerInitEvent(server, ServerStatus.NotResponding);	// remove it from our lists.
 	}
 

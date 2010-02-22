@@ -168,11 +168,11 @@ public class IGBAuthenticator extends Authenticator {
 			url = serverObject.URL;
 			serverNode = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(url));
 			authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
-			if (serverObject.login != null) {
-				userFromPrefs = serverObject.login;
+			if (serverObject.getLogin() != null) {
+				userFromPrefs = serverObject.getLogin();
 			}
-			if (serverObject.password != null) {
-				passFromPrefs = serverObject.password;
+			if (serverObject.getPassword() != null) {
+				passFromPrefs = serverObject.getPassword();
 			}
 		}
 
@@ -296,8 +296,8 @@ public class IGBAuthenticator extends Authenticator {
 		serverNode.put(PREF_AUTH_TYPE, authType.toString());
 		serverNode.parent().putBoolean(PREF_REMEMBER, remember);
 		if (authType == authType.AUTHENTICATE) {
-			serverObject.login = username;
-			serverObject.password = new String(password);
+			serverObject.setLogin(username);
+			serverObject.setPassword(new String(password));
 		}
 	}
 

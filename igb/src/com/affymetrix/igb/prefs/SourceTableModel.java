@@ -71,7 +71,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		switch (SourceColumn.valueOf(this.getColumnName(columnIndex))) {
 			case Enabled:
-				return servers.get(rowIndex).enabled;
+				return servers.get(rowIndex).isEnabled();
 			case Name:
 				return servers.get(rowIndex).serverName;
 			case Type:
@@ -96,7 +96,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
         
         switch (SourceColumn.valueOf(this.getColumnName(col))) {
         case Enabled:
-			server.enabled = Boolean.class.cast(value);
+			server.setEnabled((Boolean)value);
 			break;
 		default:
 			throw new IllegalArgumentException("columnIndex " + col + " not editable");

@@ -293,23 +293,6 @@ public final class ServerList {
 	}
 
 	/**
-	 * Check if a server exists in the preferences subsystem.  This method is
-	 * used to determine if a server was added from the preferences subsystem
-	 * or an external source.
-	 *
-	 * @param url URL of the server to check
-	 * @return true if the url is in the preferences subsystem
-	 */
-	public static boolean inServerPrefs(String url) {
-		try {
-			return PreferenceUtils.getServersNode().nodeExists(GeneralUtils.URLEncode(url));
-		} catch (BackingStoreException ex) {
-			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
-			throw new IllegalArgumentException(ex);
-		}
-	}
-
-	/**
 	 * Format a URL based on the ServerType's requirements.
 	 *
 	 * @param url URL to format

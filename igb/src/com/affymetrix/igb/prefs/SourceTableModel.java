@@ -86,7 +86,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	@Override
     public boolean isCellEditable(int row, int col) {
 		SourceColumn c = SourceColumn.valueOf(this.getColumnName(col));
-		return c == SourceColumn.Enabled && ServerList.inServerPrefs(servers.get(row).URL);
+		return c == SourceColumn.Enabled;
     }
 
 
@@ -101,14 +101,13 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		default:
 			throw new IllegalArgumentException("columnIndex " + col + " not editable");
         }
-        
+
 		this.fireTableDataChanged();
     }
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		/* It is easier to rebuild than try and find out what changed */
 		this.init();
-		this.fireTableDataChanged();
 	}
 
 }

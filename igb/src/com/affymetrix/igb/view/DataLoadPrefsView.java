@@ -151,7 +151,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		sourcesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				int viewRow = sourcesTable.getSelectedRow();
-				boolean enable = viewRow >= 0 && ServerList.inServerPrefs((String)sourcesTable.getValueAt(viewRow, SourceColumn.URL.ordinal()));
+				boolean enable = viewRow >= 0;
 				
 				removeServerButton.setEnabled(enable);
 				editAuthButton.setEnabled(enable);
@@ -289,7 +289,8 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 			public Component getTableCellRendererComponent(JTable table, Object value,
 					boolean isSelected, boolean hasFocus, int row, int col) {
 
-				this.setEnabled((Boolean) table.getModel().getValueAt(row, SourceColumn.Enabled.ordinal()));
+				int modelRow = table.convertRowIndexToModel(row);
+				this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, SourceColumn.Enabled.ordinal()));
 				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 			}
 		});

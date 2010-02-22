@@ -8,8 +8,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.util.StringEncrypter;
-import com.affymetrix.genometryImpl.util.StringEncrypter.EncryptionException;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -88,14 +86,52 @@ public final class ServerList {
 	 * @return GenericServer
 	 */
 	public static GenericServer addServer(ServerType serverType, String name, String url) {
-		if (url2server.containsKey(url)) {
-			return url2server.get(url);
+		GenericServer server = url2server.get(url);
+		Object info;
+
+		if (server == null) {
+			info = getServerInfo(serverType, url, name);
+
+			if (info != null) {
+				server = new GenericServer(name, url, serverType, info);
+
+				if (server != null) {
+					url2server.put(url, server);
+				}
+			}
 		}
-		return initServer(serverType, url, name, true);
+		
+		return server;
 	}
-	
+
+	public static GenericServer addServer(Preferences node) {
+		GenericServer server = url2server.get(GeneralUtils.URLDecode(node.name()));
+		String url;
+		String name;
+		ServerType serverType;
+		Object info;
+
+		if (server == null) {
+			url = GeneralUtils.URLDecode(node.name());
+			name = node.get("name", "Unknown");
+			serverType = ServerType.valueOf(node.get("type", ServerType.Unknown.name()));
+			info = getServerInfo(serverType, url, name);
+
+			if (info != null) {
+				server = new GenericServer(node, info);
+
+				if (server != null) {
+					url2server.put(url, server);
+				}
+			}
+		}
+		
+		return server;
+	}
+
 	/**
 	 * Remove a server.
+	 *
 	 * @param url
 	 */
 	public static void removeServer(String url) {
@@ -107,78 +143,47 @@ public final class ServerList {
 
 	/**
 	 * Initialize the server.
+	 *
 	 * @param serverType
 	 * @param url
 	 * @param name
 	 * @return initialized server
 	 */
-	private static GenericServer initServer(ServerType serverType, String url, String name, boolean enabled) {
-		GenericServer server = null;
-		try {
-			if (serverType == ServerType.Unknown) {
-				return null;
-			}
-			if (serverType == ServerType.QuickLoad) {
-				String root_url = url;
-				if (!root_url.endsWith("/")) {
-					root_url = root_url + "/";
-				}
-				server = new GenericServer(name, root_url, serverType, root_url);
-			}
-			if (serverType == ServerType.DAS) {
-				DasServerInfo info = new DasServerInfo(url);
-				server = new GenericServer(name, info.getURL().toString(), serverType, info);
-			}
-			if (serverType == ServerType.DAS2) {
-				Das2ServerInfo info = new Das2ServerInfo(url, name, false);
-				server = new GenericServer(name, info.getURI().toString(), serverType, info);
-			}
-			server.enabled = enabled;
-			url2server.put(url, server);
-			return server;
+	private static Object getServerInfo(ServerType serverType, String url, String name) {
+		Object info = null;
 
-		} catch (Exception e) {
+		try {
+			if (serverType == ServerType.QuickLoad) {
+				info = url.endsWith("/") ? url : url + "/";
+			} else if (serverType == ServerType.DAS) {
+				info = new DasServerInfo(url);
+			} else if (serverType == ServerType.DAS2) {
+				info = new Das2ServerInfo(url, name, false);
+			}			
+		} catch (URISyntaxException e) {
 			System.out.println("WARNING: Could not initialize " + serverType + " server with address: " + url);
 			e.printStackTrace(System.out);
 		}
-		return server;
+		return info;
 	}
 
 	/**
 	 * Load server preferences from the Java preferences subsystem.
 	 */
 	public static void loadServerPrefs() {
-		String server_name, login, password;
 		ServerType serverType;
-		Boolean enabled;
+		Preferences node;
+
 		try {
 			for (String serverURL : PreferenceUtils.getServersNode().childrenNames()) {
-				Preferences node = PreferenceUtils.getServersNode().node(serverURL);
+				node = PreferenceUtils.getServersNode().node(serverURL);
+				serverType = ServerType.valueOf(node.get("type", ServerType.Unknown.name()));
 
-				serverURL = GeneralUtils.URLDecode(serverURL);
-				server_name = node.get("name", "Unknown");
-				serverType = ServerType.valueOf(node.get("type", "Unknown"));
-
-				login = node.get("login", "");
-				password = decrypt(node.get("password", ""));
-
-				enabled = node.getBoolean("enabled", true);
-
-				System.out.println("Adding " + server_name + ":" + serverURL + " " + serverType);
-				
 				if (serverType == ServerType.Unknown) {
-					System.out.println("WARNING: this server has an unknown type.  Skipping");
 					continue;
 				}
 
-				// Add the server
-				GenericServer server = addServer(serverType, server_name, serverURL);
-
-				if (server != null) {
-					server.login = login;
-					server.password = password;
-					server.enabled = enabled;
-				}
+				addServer(node);
 			}
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
@@ -190,20 +195,25 @@ public final class ServerList {
 	 * called by the PrefsLoader when checking/updating the preferences version.
 	 */
 	public static void updateServerPrefs() {
+		GenericServer server;
+
 		for (ServerType type : ServerType.values()) {
 			try {
 				if (PreferenceUtils.getServersNode().nodeExists(type.toString())) {
 					Preferences prefServers = PreferenceUtils.getServersNode().node(type.toString());
 					String name, login, password;
-					boolean authEnabled, enabled;
+					boolean enabled;
 					for (String url : prefServers.keys()) {
 						name        = prefServers.get(url, "Unknown");
 						login       = prefServers.node("login").get(url, "");
-						password    = decrypt(prefServers.node("password").get(url, ""));
-						authEnabled = !(login.isEmpty() || password.isEmpty());
+						password    = prefServers.node("password").get(url, "");
 						enabled     = Boolean.parseBoolean(prefServers.node("enabled").get(url, "true"));
 
-						addServerToPrefs(GeneralUtils.URLDecode(url), name, type, authEnabled, login, password, enabled);
+
+						server = addServerToPrefs(GeneralUtils.URLDecode(url), name, type);
+						server.setLogin(login);
+						server.setEncryptedPassword(password);
+						server.setEnabled(enabled);
 					}
 					prefServers.removeNode();
 				}
@@ -246,27 +256,16 @@ public final class ServerList {
 	 * @param url URL of this server.
 	 * @param name name of this server.
 	 * @param type type of this server.
-	 * @param authEnabled boolean noting if client should authenticate to this server
-	 * @param login account to use if attemting to authenticate to this server
-	 * @param password password to use if attempting to authenticate to this server
-	 * @param enabled boolean indicating whether this server is enabled.
+	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
 	 */
-	public static void addServerToPrefs(String url, String name, ServerType type, boolean authEnabled, String login, String password, boolean enabled) {
+	private static GenericServer addServerToPrefs(String url, String name, ServerType type) {
 		url = formatURL(url, type);
 		Preferences node = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(formatURL(url, type)));
 
 		node.put("name",  name);
 		node.put("type", type.toString());
 
-		if (authEnabled) {
-			node.put("login", login);
-			node.put("password", encrypt(password));
-		} else {
-			node.remove("login");
-			node.remove("password");
-		}
-
-		node.putBoolean("enabled", enabled);
+		return new GenericServer(node, null);
 	}
 
 	/**
@@ -276,8 +275,7 @@ public final class ServerList {
 	 * @param server GenericServer object of the server to add or update.
 	 */
 	public static void addServerToPrefs(GenericServer server) {
-		boolean authEnabled = (server.login != null && server.password != null) && !(server.login.isEmpty() || server.password.isEmpty());
-		addServerToPrefs(server.URL, server.serverName, server.serverType, authEnabled, server.login, server.password, server.enabled);
+		addServerToPrefs(server.URL, server.serverName, server.serverType);
 	}
 
 	/**
@@ -309,44 +307,6 @@ public final class ServerList {
 			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 			throw new IllegalArgumentException(ex);
 		}
-	}
-
-	/**
-	 * Decrypt the given password.
-	 *
-	 * @param encrypted encrypted representation of the password
-	 * @return string representation of the password
-	 */
-	private static String decrypt(String encrypted) {
-		if (!encrypted.isEmpty()) {
-			try {
-				StringEncrypter encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
-				return encrypter.decrypt(encrypted);
-			} catch (EncryptionException ex) {
-				Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
-				throw new IllegalArgumentException(ex);
-			}
-		}
-		return "";
-	}
-
-	/**
-	 * Encrypt the given password.
-	 * 
-	 * @param password unencrypted password string
-	 * @return the encrypted representation of the password
-	 */
-	private static String encrypt(String password) {
-		if (!password.isEmpty()) {
-			try {
-				StringEncrypter encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
-				return encrypter.encrypt(password);
-			} catch (Exception ex) {
-				Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
-				throw new IllegalArgumentException(ex);
-			}
-		}
-		return "";
 	}
 
 	/**

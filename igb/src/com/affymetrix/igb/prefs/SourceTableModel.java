@@ -102,16 +102,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			throw new IllegalArgumentException("columnIndex " + col + " not editable");
         }
         
-		changePreference(server);
-    }
-    
-
-	private void changePreference(GenericServer server) {
-		ServerList.addServerToPrefs(server);
 		this.fireTableDataChanged();
-		
-		
-	}
+    }
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		/* It is easier to rebuild than try and find out what changed */

@@ -1,12 +1,20 @@
 package com.affymetrix.genometryImpl.general;
 
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.StringEncrypter;
+import com.affymetrix.genometryImpl.util.StringEncrypter.EncryptionException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 
 /**
@@ -14,8 +22,9 @@ import javax.swing.ImageIcon;
  *
  * @version $Id$
  */
-public final class GenericServer implements Comparable<GenericServer> {
+public final class GenericServer implements Comparable<GenericServer>, PreferenceChangeListener {
 
+	private final Preferences node;
 	public final String serverName;							// name of the server.
 	public final String URL;									// URL/file that points to the server.
 	public final ServerType serverType;						// DAS, DAS2, QuickLoad, Unknown (local file)
@@ -32,17 +41,39 @@ public final class GenericServer implements Comparable<GenericServer> {
 			new CopyOnWriteArraySet<GenericVersion>();	// list of versions associated with this server
 
 	public GenericServer(String serverName, String URL, ServerType serverType, Object serverObj) {
+		this(
+				serverName,
+				URL,
+				serverType,
+				PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
+				serverObj);
+	}
+
+	public GenericServer(Preferences node, Object serverObj) {
+		this(
+				node.get("name", "Unknown"),
+				GeneralUtils.URLDecode(node.name()),
+				ServerType.valueOf(node.get("type", ServerType.Unknown.name())),
+				node,
+				serverObj);
+	}
+
+	private GenericServer(String serverName, String URL, ServerType serverType, Preferences node, Object serverObj) {
 		this.serverName = serverName;
 		this.URL = URL;
 		this.serverType = serverType;
-		if (serverType == ServerType.Unknown) {
-			this.enabled = false;
-		}
+		this.enabled = this.serverType != ServerType.Unknown;
+		this.node = node;
 		this.serverObj = serverObj;
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
 
+		this.setEnabled(this.node.getBoolean("enabled", true));
+		this.setLogin(this.node.get("login", ""));
+		this.setPassword(decrypt(this.node.get("password", "")));
+
+		this.node.addPreferenceChangeListener(this);
 	}
-	
+
 	public ImageIcon getFriendlyIcon() {
 		if (friendlyIcon == null && !friendlyIconAttempted) {
 			if (this.friendlyURL != null) {
@@ -100,6 +131,38 @@ public final class GenericServer implements Comparable<GenericServer> {
 		return this.serverStatus;
 	}
 
+	public void setEnabled(boolean enabled) {
+		node.putBoolean("enabled", enabled);
+		this.enabled = enabled;
+	}
+
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+
+	public void setLogin(String login) {
+		node.put("login", login);
+		this.login = login;
+	}
+
+	public String getLogin() {
+		return this.login;
+	}
+
+	public void setEncryptedPassword(String password) {
+		node.put("password", password);
+		this.password = decrypt(password);
+	}
+
+	public void setPassword(String password) {
+		node.put("password", encrypt(password));
+		this.password = password;
+	}
+
+	public String getPassword() {
+		return this.password;
+	}
+
 	@Override
 	public String toString() {
 		return serverName;
@@ -123,4 +186,61 @@ public final class GenericServer implements Comparable<GenericServer> {
 		return this.serverType.compareTo(gServer.serverType);		
 	}
 
+	/**
+	 * React to modifications of the Java preferences.  This should probably
+	 * fire an event notifying listeners that this generic server has changed.
+	 *
+	 * @param evt
+	 */
+	public void preferenceChange(PreferenceChangeEvent evt) {
+		final String key = evt.getKey();
+
+		if (key.equals("name") || key.equals("type")) {
+			throw new IllegalArgumentException("Modification of read-only field in preferences for '" + this.URL + "'");
+		} else if (key.equals("login")) {
+			this.login = evt.getNewValue() == null ? "" : evt.getNewValue();
+		} else if (key.equals("password")) {
+			this.password = evt.getNewValue() == null ? "" : decrypt(evt.getNewValue());
+		} else if (key.equals("enabled")) {
+			this.enabled = evt.getNewValue() == null ? true : Boolean.valueOf(evt.getNewValue());
+		}
+	}
+
+	/**
+	 * Decrypt the given password.
+	 *
+	 * @param encrypted encrypted representation of the password
+	 * @return string representation of the password
+	 */
+	private static String decrypt(String encrypted) {
+		if (!encrypted.isEmpty()) {
+			try {
+				StringEncrypter encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
+				return encrypter.decrypt(encrypted);
+			} catch (EncryptionException ex) {
+				Logger.getLogger(GenericServer.class.getName()).log(Level.SEVERE, null, ex);
+				throw new IllegalArgumentException(ex);
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * Encrypt the given password.
+	 *
+	 * @param password unencrypted password string
+	 * @return the encrypted representation of the password
+	 */
+	private static String encrypt(String password) {
+		if (!password.isEmpty()) {
+			try {
+				StringEncrypter encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
+				return encrypter.encrypt(password);
+			} catch (Exception ex) {
+				Logger.getLogger(GenericServer.class.getName()).log(Level.SEVERE, null, ex);
+				throw new IllegalArgumentException(ex);
+			}
+		}
+		return "";
+	}
 }

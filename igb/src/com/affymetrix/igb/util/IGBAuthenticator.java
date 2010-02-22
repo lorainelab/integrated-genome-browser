@@ -298,7 +298,6 @@ public class IGBAuthenticator extends Authenticator {
 		if (authType == authType.AUTHENTICATE) {
 			serverObject.login = username;
 			serverObject.password = new String(password);
-			ServerList.addServerToPrefs(serverObject);
 		}
 	}
 

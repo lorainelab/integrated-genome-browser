@@ -85,6 +85,7 @@ final class ProtAnnotMain implements WindowListener {
     // width of the user's screen
     private Dimension screen;
     private final static boolean testmode = false;
+	private static final boolean DEBUG = false;
     private enum Arguments {
         SERVER,
         FILENAME;
@@ -144,70 +145,6 @@ final class ProtAnnotMain implements WindowListener {
 
         prefs_hash = phash;
         return prefs_hash;
-    }
-
-    /**
-     * Loads the file selected in the file browser.
-     * @param   seqfile - Name of file to be loaded
-     */
-    private void load(File seqfile) {
-
-        FileInputStream fistr = null;
-        try {
-            fistr = new FileInputStream(seqfile);
-            load(fistr,seqfile.getName());
-        }catch(Exception e)
-        {
-            Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
-        } finally
-        {
-            GeneralUtils.safeClose(fistr);
-        }
-    }
-
-    private void load(String file)
-    {
-        if(file.startsWith("/"))
-                load(new File(file));
-        else
-        {
-            URLConnection conn = null;
-            try
-            {
-                String path = getArgumentValue(Arguments.SERVER) + file;
-                URL url = new URL(path);
-                conn = url.openConnection();
-                conn.setConnectTimeout(1000 * 10);
-                conn.setReadTimeout(1000 * 10);
-                load(conn.getInputStream(),url.toString());
-            }catch(Exception e)
-            {
-                Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
-            }
-        }
-
-    }
-
-    private void load(InputStream fistr, String filename)
-    {
-        BufferedInputStream bistr = null;
-        try
-        {
-            bistr = new BufferedInputStream(fistr);
-            Xml2GenometryParser parser = new Xml2GenometryParser();
-            BioSeq genome_seq = parser.parse(bistr);
-            gview.setTitle("viewing file: " + filename + " version :" +genome_seq.getVersion() + " id :" + genome_seq.getID());
-            gview.setBioSeq(genome_seq,true);
-            frm.setTitle(" ProtAnnot: " + filename + " version :" +genome_seq.getVersion() + " id :" + genome_seq.getID());
-        } catch (Exception ex) {
-            Reporter.report("Couldn't read file: " + filename + "\n" +
-					"Error : " + ex.getMessage(),
-                    ex, false, false, true);
-            no_data();
-        } finally
-        {
-            GeneralUtils.safeClose(bistr);
-        }
     }
 
     /**
@@ -447,6 +384,7 @@ final class ProtAnnotMain implements WindowListener {
             });
     }
 
+
     /**
      * Sets up interface to select file from the server.
      */
@@ -493,6 +431,69 @@ final class ProtAnnotMain implements WindowListener {
         sampleChooser.add(buttonpanel);
 
     }
+
+
+	private void load(String file) {
+		if (file.startsWith("/")) {
+			load(new File(file));
+		} else {
+			URLConnection conn = null;
+			try {
+				String path = getArgumentValue(Arguments.SERVER) + file;
+				URL url = new URL(path);
+				conn = url.openConnection();
+				conn.setConnectTimeout(1000 * 10);
+				conn.setReadTimeout(1000 * 10);
+				load(conn.getInputStream(), url.toString());
+			} catch (Exception e) {
+				Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
+			}
+		}
+
+	}
+
+
+	/**
+	 * Loads the file selected in the file browser.
+	 * @param   seqfile - Name of file to be loaded
+	 */
+	private void load(File seqfile) {
+
+		FileInputStream fistr = null;
+		try {
+			fistr = new FileInputStream(seqfile);
+			load(fistr, seqfile.getName());
+		} catch (Exception e) {
+			Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
+		} finally {
+			GeneralUtils.safeClose(fistr);
+		}
+	}
+
+	private void load(InputStream fistr, String filename) {
+		BufferedInputStream bistr = null;
+		try {
+			bistr = new BufferedInputStream(fistr);
+			NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
+			if (DEBUG) {
+				nxs.outputXMLToScreen(nxs.doc);
+			}
+			Xml2GenometryParser parser = new Xml2GenometryParser();
+			BioSeq genome_seq = parser.parse(nxs.doc);
+			gview.setTitle("viewing file: " + filename + " version :" + genome_seq.getVersion() + " id :" + genome_seq.getID());
+			gview.setBioSeq(genome_seq, true);
+			frm.setTitle(" ProtAnnot: " + filename + " version :" + genome_seq.getVersion() + " id :" + genome_seq.getID());
+		} catch (Exception ex) {
+			Reporter.report("Couldn't read file: " + filename + "\n"
+					+ "Error : " + ex.getMessage(),
+					ex, false, false, true);
+			no_data();
+		} finally {
+			GeneralUtils.safeClose(bistr);
+		}
+	}
+
+
 
     /**
      * Loads all samples if server name is provided.
@@ -664,10 +665,10 @@ final class ProtAnnotMain implements WindowListener {
     private void updatePrefs(Hashtable<String,Color> hash)
     {
         prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotMain.class);
-        Enumeration e = hash.keys();
+        Enumeration<String> e = hash.keys();
 
         while (e.hasMoreElements()) {
-            String key = (String) e.nextElement();
+            String key = e.nextElement();
             prefs.putInt(key, hash.get(key).getRGB());
         }
     }
@@ -753,10 +754,10 @@ final class ProtAnnotMain implements WindowListener {
     {
                 Object[][] colordata = new Object[prefs_col.size()][2];
                 int i=0;
-                Enumeration e = prefs_col.keys();
+                Enumeration<String> e = prefs_col.keys();
 
                 while (e.hasMoreElements()) {
-                    String key = (String) e.nextElement();
+                    String key = e.nextElement();
                     colordata[i++] = new Object[]{key,prefs_col.get(key)};
                 }
                 return colordata;

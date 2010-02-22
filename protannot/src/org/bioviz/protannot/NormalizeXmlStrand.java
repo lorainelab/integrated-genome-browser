@@ -1,0 +1,181 @@
+package org.bioviz.protannot;
+
+import com.affymetrix.genometryImpl.util.DNAUtils;
+
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+
+import java.io.BufferedInputStream;
+import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+/**
+ * Internal to the application, convert to a "positive strand" format.
+ * @author jnicol1
+ */
+final class NormalizeXmlStrand {
+	private boolean isNegativeStrand = false;
+	private boolean isStrandSet = false;
+	Document doc = null;
+
+	 /**
+     *Initialize dbFactory and dBuilder
+     */
+    NormalizeXmlStrand(BufferedInputStream bistr) {
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document seqdoc = dBuilder.parse(bistr);
+			doc = processDocument(seqdoc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+	static void outputXMLToScreen(Document doc) {
+		Transformer transformer;
+		try {
+			transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			//initialize StreamResult with File object to save to file
+			StreamResult result = new StreamResult(new StringWriter());
+			DOMSource source = new DOMSource(doc);
+			transformer.transform(source, result);
+			String xmlString = result.getWriter().toString();
+			System.out.println(xmlString);
+		} catch (Exception ex) {
+			Logger.getLogger(NormalizeXmlStrand.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+	}
+	
+	/**
+     * Transforms sequence coordinates.
+	 * Normalizes all coordinates respective to the sequence's start coordinates.
+	 * If strand is negative, flips all coordinates and reverse-complements the sequence.
+
+     * @param   seqdoc  Document object name
+     * @return          Returns BioSeq of given document object.
+     * @see     com.affymetrix.genometryImpl.BioSeq
+     */
+    private Document processDocument(Document seqdoc) {
+		Element top_element = seqdoc.getDocumentElement();
+		NodeList children = top_element.getChildNodes();
+		if (!top_element.getTagName().equalsIgnoreCase("dnaseq")) {
+			return null;
+		}
+
+		// get residues and normalize their attributes
+		int residuesStart = 0;
+		String residues = "";
+		Node residuesChildNode = null;
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			String name = child.getNodeName();
+			if (name == null || !name.equalsIgnoreCase("residues")) {
+				continue;
+			}
+			Element residuesNode = (Element) child;
+			residuesChildNode = residuesNode.getFirstChild();
+			Text resnode = (Text) residuesChildNode;
+			residues = resnode.getData();
+			try {
+				residuesStart = Integer.parseInt((residuesNode).getAttribute("start"));
+				residuesNode.setAttribute("start", Integer.valueOf(0).toString());	// normalize start of residues to 0
+
+				try {
+					int residuesEnd = Integer.parseInt((residuesNode).getAttribute("end"));
+					residuesNode.setAttribute("end", Integer.valueOf(residuesEnd - residuesStart).toString());
+					// normalize end of residues, if end exists
+
+				} catch (Exception ex) {
+					// Ignore exceptions here, since residue end may not be defined.
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		normalizemRNA(children, residuesStart, residues, residuesChildNode);
+
+		return seqdoc;
+
+    }
+
+
+	private void normalizemRNA(NodeList children, int residuesStart, String residues, Node residuesChildNode)
+			throws DOMException, NumberFormatException {
+		// Get strand of mRNA.  Normalize attributes
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			String name = child.getNodeName();
+			if (name == null || !name.equalsIgnoreCase("mRNA")) {
+				continue;
+			}
+			Element childElem = (Element) child;
+			int start = Integer.parseInt(childElem.getAttribute("start"));
+			int end = Integer.parseInt(childElem.getAttribute("end"));
+			start = start - residuesStart;
+			end = end - residuesStart;
+
+			try {
+				String strand = childElem.getAttribute("strand");
+				isNegativeStrand = strand.equals("-");
+				if (isNegativeStrand) {
+					int newEnd = residues.length() - start;
+					start = residues.length() - end;
+					end = newEnd;
+					if (!isStrandSet) {
+						residues = DNAUtils.reverseComplement(residues);
+						residuesChildNode.setNodeValue(residues);
+						isStrandSet = true;
+					}
+					childElem.setAttribute("strand", "+"); // Normalizing to positive strand
+				}
+			} catch (Exception e) {
+				System.out.println("No strand attribute found");
+			}
+			childElem.setAttribute("start", Integer.valueOf(start).toString());
+			childElem.setAttribute("end", Integer.valueOf(end).toString());
+
+			normalizeNodes("exon",childElem.getChildNodes(), residuesStart, residues);
+			normalizeNodes("cds",childElem.getChildNodes(), residuesStart, residues);
+		}
+	}
+
+	private void normalizeNodes(String nodeName, NodeList children, int residuesStart, String residues)
+			throws DOMException, NumberFormatException {
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			String name = child.getNodeName();
+			if (name == null || !name.equalsIgnoreCase(nodeName)) {
+				continue;
+			}
+			Element childElem = (Element) child;
+			int start = Integer.parseInt(childElem.getAttribute("start"));
+			int end = Integer.parseInt(childElem.getAttribute("end"));
+			start = start - residuesStart;
+			end = end - residuesStart;
+			if (isNegativeStrand) {
+				int newEnd = residues.length() - start;
+				start = residues.length() - end;
+				end = newEnd;
+			}
+			childElem.setAttribute("start", Integer.valueOf(start).toString());
+			childElem.setAttribute("end", Integer.valueOf(end).toString());
+		}
+	}
+
+}

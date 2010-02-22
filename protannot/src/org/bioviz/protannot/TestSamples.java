@@ -55,9 +55,11 @@ public class TestSamples {
         BufferedInputStream bistr = null;
         try {
             bistr = new BufferedInputStream(new FileInputStream(filename));
+			NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
+			nxs.outputXMLToScreen(nxs.doc);
             Xml2GenometryParser parser = new Xml2GenometryParser();
 			try {
-				if (parser.parse(bistr) != null) {
+				if (parser.parse(nxs.doc) != null) {
 					return true;
 				}
 			} catch (Exception ex) {

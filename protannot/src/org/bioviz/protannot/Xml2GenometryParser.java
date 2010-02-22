@@ -12,27 +12,20 @@ import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+
 import org.w3c.dom.DOMException;
-import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Reads xml file to convert it into a Genometry.
@@ -40,30 +33,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 final class Xml2GenometryParser {
 
-    private DocumentBuilder dBuilder;
     private static final boolean DEBUG = false;
     private HashMap<String,BioSeq> mrna_hash;
     private HashMap<String,BioSeq> prot_hash;
     // instance variables needed during the parse
     private String current_simsearch_method = null;
 	private String residues;
-    private boolean isNegative;
-    private boolean negativeProcess = true;
     private List<int[]> transCheckExons;	// used to sanity-check exon translation
-	private int residuesStart;
-
-    /**
-     *Initialized dbFactory and dBuilder
-     */
-
-    Xml2GenometryParser() {
-        try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            dBuilder = dbFactory.newDocumentBuilder();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Create a new BioSeq and add annotations to it.
@@ -71,27 +47,19 @@ final class Xml2GenometryParser {
      * @return          Returns BioSeq of parsed file.
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
-    BioSeq parse(InputStream istr) throws Exception{
+    BioSeq parse(Document doc) throws Exception{
        mrna_hash = new HashMap<String,BioSeq>();
         prot_hash = new HashMap<String,BioSeq>();
 
         try {
-            isNegative = false;
-            InputSource insrc = new InputSource(istr);
-            Document seqdoc = dBuilder.parse(insrc);
-            BioSeq ret_genomic = processDocument(seqdoc);
+            BioSeq ret_genomic = processDocument(doc);
 
-            if(isNegative){
-                ret_genomic.setResidues(DNAUtils.reverseComplement(residues));
-                //ret_genomic.setBounds(residuesStart, residuesStart+residues.length());
-			}
 			return ret_genomic;
 
         } catch (Exception ex) {
 			ex.printStackTrace();
 			throw ex;
         }
-        //return null;
     }
 
     /**
@@ -159,24 +127,7 @@ final class Xml2GenometryParser {
                 residues = resnode.getData();
                 chrom = new BioSeq(seq, version, residues.length());
                 chrom.setResidues(residues);
-                try {
-                        residuesStart = Integer.parseInt(((Element) child).getAttribute("start"));
-                        //chrom.setBounds(residuesStart, residuesStart+residues.length());
-                    } catch (Exception e) {
-                        //e.printStackTrace();
-                        System.out.println("Old file format");
-                    }
             }
-        }
-        if (chrom == null) {
-            int glength = 0;
-            try {
-                glength = Integer.parseInt(top_element.getAttribute("length"));
-            } catch (Exception ex) {
-                System.err.println("problem with dnaseq length attribute, arbitrarily assigning 200000");
-                glength = 200000;
-            }
-            chrom = new BioSeq(seq, version, glength);
         }
         return chrom;
     }
@@ -344,7 +295,6 @@ final class Xml2GenometryParser {
         Object test = sym.getProperty("domain_pos");
         if (test != null) {
             sym.setProperty("name", test);
-//      sym.removeProperty("domain_pos");       // not supported in new library
         }
     }
 
@@ -469,24 +419,6 @@ final class Xml2GenometryParser {
     private void processMRNA(BioSeq genomic, Element elem) {
         int start = Integer.parseInt(elem.getAttribute("start"));
         int end = Integer.parseInt(elem.getAttribute("end"));
-
-		start = start - residuesStart;
-		end = end - residuesStart;
-
-        try
-        {
-            String strand = elem.getAttribute("strand");
-
-            if(strand.equals("-") && negativeProcess){
-                isNegative = true;
-				start = genomic.getLength() - start;
-				end = genomic.getLength() - end;
-            }
-        }
-        catch(Exception e)
-        {
-            System.out.println("No strand attribute found");
-        }
 		
         if (DEBUG) {
             System.err.println("mrna:  start = " + start + "  end = " + end);
@@ -579,7 +511,6 @@ final class Xml2GenometryParser {
         }
         for (int i = 0; i < exon_insert_list.size(); i++) {
             Element iel = (Element) exon_insert_list.get(i);
-            //	int istart = Integer.parseInt(iel.getAttribute("insert_at"));
             int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
             mrnalength += ilength;
         }
@@ -715,22 +646,13 @@ final class Xml2GenometryParser {
         int start = Integer.parseInt(elem.getAttribute("start"));
         int end = Integer.parseInt(elem.getAttribute("end"));
 
-		start = start - residuesStart;
-		end = end - residuesStart;
-		
-         if(isNegative){
-			start = genomic.getLength() - start;
-			end = genomic.getLength() - end;
-        }
         transCheckExons.add(new int[]{start,end});
-        //System.out.println("exon:  start = " + start + "  end = " + end);
 
         SeqSpan span = new SimpleSeqSpan(start, end, genomic);
         SimpleSymWithProps exonsym = new SimpleSymWithProps();
         addDescriptors(elem, exonsym);
         exonsym.setProperty("start", elem.getAttribute("start"));
         exonsym.setProperty("end", elem.getAttribute("end"));
-        //exonsym.setProperty("length", String.valueOf(end - start + 1));
 		exonsym.setProperty("length", String.valueOf(end - start));
         exonsym.addSpan(span);
         return exonsym;
@@ -766,14 +688,6 @@ final class Xml2GenometryParser {
             attr = elem.getAttribute("end");
         }
         int end = Integer.parseInt(attr);
-
-		start = start - residuesStart;
-		end = end - residuesStart;
-
-        if(isNegative){
-			start = genomic.getLength() - start;
-			end = genomic.getLength() - end;
-        }
 
         checkTranslationLength(start,end);
         

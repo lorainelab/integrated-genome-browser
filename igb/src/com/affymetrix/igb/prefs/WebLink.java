@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.DefaultListModel;
 
 import static com.affymetrix.igb.IGBConstants.UTF8;
 
@@ -35,6 +36,7 @@ public final class WebLink {
 	private static final String separator = System.getProperty("line.separator");
 	private Pattern pattern = null;
 	private static final List<WebLink> weblink_list = new ArrayList<WebLink>();
+	static final DefaultListModel webLinkListModel = new DefaultListModel();
 	private static final String FILE_NAME = "weblinks.xml";	// Name of the xml file used to store the web links data.
 	private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
 	private static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");	// A pattern that matches the string "$:genome:$"
@@ -42,7 +44,7 @@ public final class WebLink {
 	public WebLink() {
 	}
 
-	public WebLink(String name, String regex, String url, RegexType regexType) throws PatternSyntaxException {
+	private WebLink(String name, String regex, String url, RegexType regexType) throws PatternSyntaxException {
 		this();
 		setName(name);
 		setRegex(regex);
@@ -80,25 +82,26 @@ public final class WebLink {
 	 *  the one added later does not.
 	 */
 	public static void addWebLink(WebLink wl) {
+		if (wl.getName() == null || wl.getName().trim().length() == 0) {
+			return;
+		}
 		int index = weblink_list.indexOf(wl);
 		if (index >= 0) {
-			if (wl.getName() == null || wl.getName().trim().length() == 0) {
-				//Application.getSingleton().logInfo("Not adding duplicate web link for regex: '" + wl.getRegex() + "'");
-			} else {
-				//Application.getSingleton().logInfo("---------- Renaming Web Link To: " + wl.getName());
-				weblink_list.remove(index);
-				weblink_list.add(wl);
-			}
-		} else {
-			weblink_list.add(wl);
+			weblink_list.remove(index);
 		}
+		weblink_list.add(wl);
 		Collections.sort(weblink_list, webLinkComp);
+		
+		webLinkListModel.clear();
+		for(WebLink w: weblink_list) {
+			webLinkListModel.addElement(w);
+		}
 	}
 
 	private static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
 
-		String sortString(WebLink wl) {
-			return wl.name + ", " + wl.original_regex + ", " + wl.url.toString() + ", " + wl.id_field_name;
+		private String sortString(WebLink wl) {
+			return wl.name + ", " + wl.original_regex + ", " + wl.url.toString() + ", " + WebLink.id_field_name;
 		}
 
 		public int compare(WebLink o1, WebLink o2) {
@@ -111,8 +114,12 @@ public final class WebLink {
 	 */
 	public static void removeWebLink(WebLink wl) {
 		weblink_list.remove(wl);
+		webLinkListModel.removeElement(wl);
 	}
 
+	public static DefaultListModel getWebLinkListModel() {
+		return webLinkListModel;
+	}
 	/** Get all web-link patterns for the given method name.
 	 *  These can come from regular-expression matching from the semi-obsolete
 	 *  XML-based preferences file, or from UCSC-style track lines in the
@@ -135,26 +142,24 @@ public final class WebLink {
 			results.add(link);
 		}
 
-		if (method != null) {
-			if (DEBUG) {
-				System.out.println("method is : " + method);
-				System.out.println("ID is : " + ID);
+		if (DEBUG) {
+			System.out.println("method is : " + method);
+			System.out.println("ID is : " + ID);
+		}
+		for (WebLink link : weblink_list) {
+			if (link.url == null) {
+				continue;
 			}
-			for (WebLink link : weblink_list) {
-				if (link.url == null) {
-					continue;
+			if (link.regexType == RegexType.TYPE && link.matches(method)) {
+				if (DEBUG) {
+					System.out.println("link " + link + " matches method.");
 				}
-				if (link.regexType == RegexType.TYPE && link.matches(method)) {
-					if (DEBUG) {
-						System.out.println("link " + link + " matches method.");
-					}
-					results.add(link);
-				} else if (link.regexType == RegexType.ID && link.matches(ID)) {
-					if (DEBUG) {
-						System.out.println("link " + link + " matches ID.");
-					}
-					results.add(link);
+				results.add(link);
+			} else if (link.regexType == RegexType.ID && link.matches(ID)) {
+				if (DEBUG) {
+					System.out.println("link " + link + " matches ID.");
 				}
+				results.add(link);
 			}
 		}
 
@@ -163,6 +168,10 @@ public final class WebLink {
 
 	/** Returns the list of WebLink items. */
 	public static List<WebLink> getWebList() {
+		for (WebLink wl : weblink_list) {
+			System.err.print(" " + wl.getName());
+		}
+		System.out.println("WebLink size: " + weblink_list.size());
 		return weblink_list;
 	}
 

@@ -1,16 +1,3 @@
-/**
-*   Copyright (c) 2007 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.menuitem.FileTracker;
@@ -32,7 +19,8 @@ import javax.swing.event.*;
  *  A panel for viewing and editing weblinks.
  */
 public final class WebLinksManagerView extends JPanel {
-  private JList the_list;
+  private JList webLinks;
+  private JScrollPane scroll_pane;
 
   private final Action import_action;
   private final Action export_action;
@@ -41,15 +29,22 @@ public final class WebLinksManagerView extends JPanel {
   private final Action add_action;
   
   private final WebLinkEditorPanel edit_panel;
+  private static JFrame static_frame = null;
 
+  private static JFileChooser static_chooser = null;
+
+  // initialize the static_panel early, because this will cause the accelerator
+  // key-strokes to be configured early through the PreferenceUtils and thus
+  // for them to be visible in the KeyStrokesView
+  private static WebLinksManagerView static_panel = new WebLinksManagerView();
 
   /** Creates a new instance of Class */
-  protected WebLinksManagerView() {
+  private WebLinksManagerView() {
     super();
 
-    the_list = createJList();
+    webLinks = createJList();
 
-    JScrollPane scroll_pane = new JScrollPane(the_list);
+    scroll_pane = new JScrollPane(webLinks);
 
     this.setLayout(new BorderLayout());
     scroll_pane.setMinimumSize(new Dimension(50,50));
@@ -71,6 +66,36 @@ public final class WebLinksManagerView extends JPanel {
 
     edit_panel = new WebLinkEditorPanel();
   }
+
+
+  private final ListCellRenderer list_renderer = new DefaultListCellRenderer() {
+    @Override
+    public Component getListCellRendererComponent(JList list,
+        Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      WebLink wl = (WebLink) value;
+      String name = wl.getName();
+      String regex = "All Tiers";
+      if (wl.getRegex() != null) {
+        regex = wl.getRegex();
+        if (regex.startsWith("(?i)")) {
+          regex = regex.substring(4);
+        }
+      }
+      String msg = "<html><b>'" + name
+        + "'</b>:&nbsp;&nbsp;&nbsp;&nbsp;<font color=red>" + regex + "</font>";
+
+      return super.getListCellRendererComponent(list, msg, index,isSelected,cellHasFocus);
+    }
+  };
+
+  private final ListSelectionListener list_listener = new ListSelectionListener() {
+    public void valueChanged(ListSelectionEvent e) {
+      if (! e.getValueIsAdjusting()) {
+        enableActions();
+      }
+    }
+  };
+  
   
   public static Action getShowFrameAction() {
     Action a = new AbstractAction(BUNDLE.getString("configureWebLinks")) {
@@ -85,8 +110,8 @@ public final class WebLinksManagerView extends JPanel {
     return a;
   }
 
-  JList createJList() {
-    JList j_list = new JList(WebLink.getWebList().toArray());
+  private JList createJList() {
+    JList j_list = new JList(WebLink.getWebLinkListModel());
     
     j_list.setCellRenderer(list_renderer);    
     j_list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -95,52 +120,23 @@ public final class WebLinksManagerView extends JPanel {
     return j_list;
   }
 
-  ListCellRenderer list_renderer = new DefaultListCellRenderer() {
-    @Override
-    public Component getListCellRendererComponent(JList list,
-        Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      WebLink wl = (WebLink) value;
-      String name = wl.getName();
-      String regex = "All Tiers";
-      if (wl.getRegex() != null) {
-        regex = wl.getRegex();
-        if (regex.startsWith("(?i)")) {
-          regex = regex.substring(4);
-        }
-      }
-      String msg = "<html><b>'" + name 
-        + "'</b>:&nbsp;&nbsp;&nbsp;&nbsp;<font color=red>" + regex + "</font>";
-      
-      Component c = super.getListCellRendererComponent(list, msg, index,isSelected,cellHasFocus);
-      return c;
-    }
-  };
-
-  ListSelectionListener list_listener = new ListSelectionListener() {
-    public void valueChanged(ListSelectionEvent e) {
-      if (! e.getValueIsAdjusting()) {
-        enableActions();
-      }
-    }
-  };
-  
-  void enableActions() {
-    int num_selections = the_list.getSelectedValues().length;
+  private void enableActions() {
+    int num_selections = webLinks.getSelectedValues().length;
     
     import_action.setEnabled(true);
-    export_action.setEnabled(the_list.getModel().getSize() > 0);
+    export_action.setEnabled(webLinks.getModel().getSize() > 0);
 
     delete_action.setEnabled(num_selections > 0);
     edit_action.setEnabled(num_selections == 1);
     add_action.setEnabled(true);
   }
   
-  static void setAccelerator(Action a) {
+  private static void setAccelerator(Action a) {
     KeyStroke ks = PreferenceUtils.getAccelerator("Web Links Manager / "+a.getValue(Action.NAME));
     a.putValue(Action.ACCELERATOR_KEY, ks);
   }
 
-  void setUpMenuBar() {
+  private void setUpMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu links_menu = new JMenu("Web Links") {      
       @Override
@@ -163,7 +159,7 @@ public final class WebLinksManagerView extends JPanel {
     this.add(menu_bar, BorderLayout.NORTH);
   }
 
-  void setUpPopupMenu() {
+  private void setUpPopupMenu() {
     final JPopupMenu popup = new JPopupMenu() {      
       @Override
       public JMenuItem add(Action a) {
@@ -182,20 +178,20 @@ public final class WebLinksManagerView extends JPanel {
       @Override
       public void mousePressed(MouseEvent e) {
         if (popup.isPopupTrigger(e)) {
-          popup.show(the_list, e.getX(), e.getY());
+          popup.show(webLinks, e.getX(), e.getY());
         }
       }
       @Override
       public void mouseReleased(MouseEvent e) {
         if (popup.isPopupTrigger(e)) {
-          popup.show(the_list, e.getX(), e.getY());
+          popup.show(webLinks, e.getX(), e.getY());
         }
       }
     };
-    the_list.addMouseListener(mouse_adapter);
+    webLinks.addMouseListener(mouse_adapter);
   }
 
-  void setUpButtons() {
+  private void setUpButtons() {
     JToolBar tool_bar = new JToolBar(JToolBar.HORIZONTAL);
     tool_bar.setFloatable(false);
 
@@ -207,7 +203,7 @@ public final class WebLinksManagerView extends JPanel {
     this.add(tool_bar, BorderLayout.SOUTH);
   }
 
-  Action makeImportAction() {
+  private Action makeImportAction() {
     Action a = new AbstractAction("Import ...") {
       public void actionPerformed(ActionEvent ae) {
         importWebLinks();
@@ -220,7 +216,7 @@ public final class WebLinksManagerView extends JPanel {
     return a;
   }
 
-  Action makeExportAction() {
+  private Action makeExportAction() {
     Action a = new AbstractAction("Export ...") {
       public void actionPerformed(ActionEvent ae) {
         exportWebLinks();
@@ -234,23 +230,12 @@ public final class WebLinksManagerView extends JPanel {
   }
   
 
-  Action makeDeleteAction() {
+  private Action makeDeleteAction() {
     Action a = new AbstractAction("Delete ...") {
       public void actionPerformed(ActionEvent ae) {
-        Object[] selections = the_list.getSelectedValues();
-        Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, the_list);
-        if (selections.length == 0) {
-          this.setEnabled(false);
-          return;
-        }
-        int yes = JOptionPane.showConfirmDialog(frame,
-          "Delete these "+selections.length+" selected link(s)?",
-          "Delete?", JOptionPane.YES_NO_OPTION);
-        if (yes == JOptionPane.YES_OPTION) {
-          for (int i=0; i<selections.length; i++) {
-            WebLink.removeWebLink((WebLink) selections[i]);
-          }
-        }
+        if (localDelete()) {
+			return;
+		}
       }
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
@@ -260,16 +245,26 @@ public final class WebLinksManagerView extends JPanel {
     return a;
   }
 
-  Action makeAddAction() {
+ private boolean localDelete() throws HeadlessException {
+		Object[] selections = webLinks.getSelectedValues();
+		Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, webLinks);
+		if (selections.length == 0) {
+			this.setEnabled(false);
+			return true;
+		}
+		int yes = JOptionPane.showConfirmDialog(frame, "Delete these " + selections.length + " selected link(s)?", "Delete?", JOptionPane.YES_NO_OPTION);
+		if (yes == JOptionPane.YES_OPTION) {
+			for (int i = 0; i < selections.length; i++) {
+				WebLink.removeWebLink((WebLink) selections[i]);
+			}
+		}
+		return false;
+	}
+
+  private Action makeAddAction() {
     Action a = new AbstractAction("Add...") {
       public void actionPerformed(ActionEvent ae) {
-        WebLink link = new WebLink();
-        edit_panel.setWebLink(link);
-        boolean ok = edit_panel.showDialog((JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, the_list));
-        if (ok) {
-          edit_panel.setLinkPropertiesFromGUI();
-          WebLink.addWebLink(link);
-        }
+				localAdd();
       }
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponentAdd16.gif"));
@@ -278,17 +273,27 @@ public final class WebLinksManagerView extends JPanel {
     setAccelerator(a);
     return a;
   }
+
+  private void localAdd() {
+		WebLink link = new WebLink();
+		edit_panel.setWebLink(link);
+		boolean ok = edit_panel.showDialog((JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, webLinks));
+		if (ok) {
+			edit_panel.setLinkPropertiesFromGUI();
+			WebLink.addWebLink(link);
+		}
+	}
   
-  Action makeEditAction() {
+  private Action makeEditAction() {
     Action a = new AbstractAction("Edit...") {
       public void actionPerformed(ActionEvent ae) {
-        WebLink link = (WebLink) the_list.getSelectedValue();
+        WebLink link = (WebLink) webLinks.getSelectedValue();
         edit_panel.setWebLink(link);
-        boolean ok = edit_panel.showDialog((JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, the_list));
+        boolean ok = edit_panel.showDialog((JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, webLinks));
         if (ok) {
           edit_panel.setLinkPropertiesFromGUI();
-          the_list.invalidate();
-          the_list.repaint();
+          webLinks.invalidate();
+          webLinks.repaint();
         }        
       }
     };
@@ -299,10 +304,8 @@ public final class WebLinksManagerView extends JPanel {
     return a;
   }
   
-  static JFileChooser static_chooser = null;
-
   /** Gets a static re-usable file chooser that prefers "html" files. */
-  public static JFileChooser getJFileChooser() {
+  private static JFileChooser getJFileChooser() {
     if (static_chooser == null) {
       static_chooser = UniFileChooser.getFileChooser("XML file", "xml");
       static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
@@ -314,10 +317,10 @@ public final class WebLinksManagerView extends JPanel {
   /**
    *  Tries to import weblinks.
    */
-  void importWebLinks() {
+  private void importWebLinks() {
     JFileChooser chooser = getJFileChooser();
     chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-    Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, the_list);
+    Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, webLinks);
     int option = chooser.showOpenDialog(frame);
     if (option == JFileChooser.APPROVE_OPTION) {
       FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
@@ -327,18 +330,18 @@ public final class WebLinksManagerView extends JPanel {
       }
       catch (FileNotFoundException fe) {
         ErrorHandler.errorPanel("Error", "Error importing web links: File Not Found " + 
-           fil.getAbsolutePath(), the_list, fe);
+           fil.getAbsolutePath(), webLinks, fe);
       }
       catch (Exception ex) {
-        ErrorHandler.errorPanel("Error", "Error importing web links", the_list, ex);
+        ErrorHandler.errorPanel("Error", "Error importing web links", webLinks, ex);
       }
     }
     enableActions();
   }
 
-  void exportWebLinks() {
-    Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, the_list);
-    if (the_list.getModel().getSize() == 0) {
+  private void exportWebLinks() {
+    Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, webLinks);
+    if (webLinks.getModel().getSize() == 0) {
       ErrorHandler.errorPanel("Error", "No web links to save", frame);
       return;
     }
@@ -362,12 +365,8 @@ public final class WebLinksManagerView extends JPanel {
     }
   }
 
-  // initialize the static_panel early, because this will cause the accelerator
-  // key-strokes to be configured early through the PreferenceUtils and thus
-  // for them to be visible in the KeyStrokesView
-  static WebLinksManagerView static_panel = new WebLinksManagerView();
-
-  public static synchronized WebLinksManagerView getManager() {
+  
+  private static synchronized WebLinksManagerView getManager() {
     if (static_panel == null) {
       static_panel = new WebLinksManagerView();
     }
@@ -375,8 +374,7 @@ public final class WebLinksManagerView extends JPanel {
   }
 
   
-  static JFrame static_frame = null;
-  public static synchronized JFrame showManager() {
+  private static synchronized JFrame showManager() {
     if (static_frame == null) {
       static_frame = PreferenceUtils.createFrame("Web Links", getManager());
       ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif");
@@ -386,20 +384,4 @@ public final class WebLinksManagerView extends JPanel {
     return static_frame;
   }
 
-  public void destroy() {
-    the_list.removeListSelectionListener(list_listener);
-    the_list = null;
-  }
-  
-  /** Main, for testing. */
-  public static void main(String[] args) throws Exception {
-    WebLink.autoLoad();
-    JFrame frame = showManager();
-    frame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) {
-        WebLink.autoSave();
-        System.exit(0);
-      }
-    });
-  }
 }

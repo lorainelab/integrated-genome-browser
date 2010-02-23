@@ -168,10 +168,6 @@ public final class WebLink {
 
 	/** Returns the list of WebLink items. */
 	public static List<WebLink> getWebList() {
-		for (WebLink wl : weblink_list) {
-			System.err.print(" " + wl.getName());
-		}
-		System.out.println("WebLink size: " + weblink_list.size());
 		return weblink_list;
 	}
 

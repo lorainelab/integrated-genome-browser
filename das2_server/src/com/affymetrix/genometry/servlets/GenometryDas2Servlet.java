@@ -19,6 +19,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -285,8 +286,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			super.init();
 			use_types_xslt = DEFAULT_USE_TYPES_XSLT && (new File(types_xslt_file)).exists();
 			if (use_types_xslt) {
-				Source type_xslt = new javax.xml.transform.stream.StreamSource(types_xslt_file);
-				javax.xml.transform.TransformerFactory transFact = javax.xml.transform.TransformerFactory.newInstance();
+				Source type_xslt = new StreamSource(types_xslt_file);
+				TransformerFactory transFact = TransformerFactory.newInstance();
 				types_transformer = transFact.newTransformer(type_xslt);
 			}
 
@@ -387,10 +388,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			//load file
 			HashMap<String, String> prop = ServerUtils.loadFileIntoHashMap(p);
-			if (prop == null) {
-				System.out.println("\tERROR: loading " + p + " file, aborting.");
-				return false;
-			}
+
 			//load fields
 			if (is_genometry_genopub_mode) {
 				if (genometry_server_dir == null && prop.containsKey(Constants.GENOMETRY_SERVER_DIR_GENOPUB)) {
@@ -571,22 +569,18 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	}
 
-	private boolean isMultiFileAnnotationType(File dir) {
-		boolean isType = false;
+	private static boolean isMultiFileAnnotationType(File dir) {
 		if (dir.exists()) {
-			    
 			String[] childFileNames = dir.list();
 			if (childFileNames != null) {
 				for (int x = 0; x < childFileNames.length; x++) {
 					if (childFileNames[x].endsWith("bar") || USeqUtilities.USEQ_ARCHIVE.matcher(childFileNames[x]).matches()) {
-						isType = true;
-						break;
+						return true;
 					}
 				}
-
 			}
 		}
-		return isType;
+		return false;
 	}
 	 
 	
@@ -947,8 +941,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			spanEnd = span.getEnd();
 		}
 
-		//System.out.println("seq request mapping to file: " + file_name + " spanning " + spanStart + " to " + spanEnd);
-
 		response.setContentType(FastaParser.getMimeType());
 		byte[] buf = FastaParser.readFASTA(seqfile, spanStart, spanEnd);
 		byte[] header = FastaParser.generateNewHeader(seqname, organism_name, spanStart, spanEnd);
@@ -972,13 +964,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			// Write out Fasta sequence, adding a newline after every LINELENGTH characters.
 			int lines = buf.length / FastaParser.LINELENGTH;
 			for (int i = 0; i < lines; i++) {
-				//System.out.println("Writing out line " + i + " with " + i * FastaParser.LINELENGTH);
 				dos.write(buf, i * FastaParser.LINELENGTH, FastaParser.LINELENGTH);
 				dos.write(newlineBuf, 0, 1);
 			}
 			if (buf.length % FastaParser.LINELENGTH > 0) {
 				// Write remainder of last line out to buffer
-				//System.out.println("Writing out remainder of " + buf.length % FastaParser.LINELENGTH + " at:" + lines * FastaParser.LINELENGTH);
 				dos.write(buf, lines * FastaParser.LINELENGTH, buf.length % FastaParser.LINELENGTH);
 				dos.write(newlineBuf, 0, 1);
 			}
@@ -1111,7 +1101,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		String xbase = getXmlBase(request) + genome.getID() + "/";
 		List<AnnotMapElt> annotList = annots_map.get(genome);
-		writeTypesXML(pw, xbase, genome.getID(), types_hash, annotList);
+		writeTypesXML(pw, xbase, types_hash, annotList);
 
 		if (use_types_xslt) {
 			pw.flush();
@@ -1134,7 +1124,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final void writeTypesXML(
 			PrintWriter pw,
 			String xbase,
-			String genome_id,
 			Map<String,SimpleDas2Type> types_hash,
 			List<AnnotMapElt> annotList) {
 		printXmlDeclaration(pw);
@@ -1445,14 +1434,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					if (formats.contains(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)){
 						//does the file exist?
 						if (graph_name2file.containsKey(query_type)){
-							handleUSeqRequest(output_format, response, new File(graph_name2file.get(query_type)), overlap_span);
-							return;
-						}
+							handleUSeqRequest(output_format, response, new File(graph_name2file.get(query_type)), overlap_span);				}
 						else {
 							result = null;
 							System.out.println("  ***** Call for a useq file that doesn't exist? Aborting. *****  ");
-							return;
 						}
+						return;
 					}
 					//default graph formats, eg bar
 					if ((graph_name2dir.get(query_type) != null) ||
@@ -1486,7 +1473,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	/**Handles request for USeq data.*/
-	private final void handleUSeqRequest(String outputFormat, HttpServletResponse response, File useqArchiveFile, SeqSpan overlapSpan) {
+	private void handleUSeqRequest(String outputFormat, HttpServletResponse response, File useqArchiveFile, SeqSpan overlapSpan) {
 		OutputStream outputStream = null;
 		try {
 			//get coordinates 

@@ -94,18 +94,16 @@ public abstract class ServerUtils {
 	 * */
 	public static final HashMap<String, String> loadFileIntoHashMap(File file) {
 		BufferedReader in = null;
-		HashMap<String, String> names = null;
+		HashMap<String, String> names = new HashMap<String, String>();
 		try {
-			names = new HashMap<String, String>();
 			in = new BufferedReader(new FileReader(file));
 			String line;
-			String[] keyValue;
 			while ((line = in.readLine()) != null) {
 				line = line.trim();
 				if (line.length() == 0 || line.startsWith("#")) {
 					continue;
 				}
-				keyValue = line.split("\\s+");
+				String[] keyValue = line.split("\\s+");
 				if (keyValue.length < 2) {
 					continue;
 				}
@@ -275,6 +273,7 @@ public abstract class ServerUtils {
 		if (!annots_map.isEmpty() && annots_map.containsKey(genome)) {
 			if (AnnotMapElt.findFileNameElt(file_name, annots_map.get(genome)) == null) {
 				// we have loaded in an annots.xml originalFile, but yet this originalFile is not in it and should be ignored.
+				System.out.println("Ignoring file " + file_name + " which was not found in annots.xml");
 				return;
 			}
 		}

@@ -126,12 +126,13 @@ public final class ParserController {
 	 * @param type_prefix
 	 * @return A list of parsed indexes
 	 */
-	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
+	public static List parseIndexed(
+			InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		try {
 			IndexWriter iWriter = getIndexWriter(stream_name);
 			DataInputStream dis = new DataInputStream(str);
 
-			String extension = getExtension(stream_name);
+			String extension = getExtension(stream_name);	// .psl, .bed, et cetera
 			String annot_type = getAnnotType(annotList, stream_name, extension, type_prefix);
 
 			System.out.println("Indexing " + stream_name);

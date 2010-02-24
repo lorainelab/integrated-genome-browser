@@ -196,7 +196,7 @@ public abstract class ServerUtils {
 	 * @param graph_name2file
 	 * @param dataRoot
 	 */
-	public static final void loadAnnotsFromDir(
+	private static final void loadAnnotsFromDir(
 			String type_name,
 			AnnotatedSeqGroup genome,
 			File current_file,
@@ -231,7 +231,6 @@ public abstract class ServerUtils {
 			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
 			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + current_file.getPath());
 			graph_name2dir.put(graph_name, current_file.getPath());
-			
 			genome.addType(graph_name, null);
 		} else {
 			File[] child_files = current_file.listFiles(new HiddenFileFilter());
@@ -268,44 +267,109 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		//if a bar or useq archive don't load just add
-		if (type_name.endsWith(".bar") || USeqUtilities.USEQ_ARCHIVE.matcher(type_name).matches()) {
-			// String file_path = current_file.getPath();
-			// special casing so bar files are seen in types request, but not parsed in on startup
-			//    (because using graph slicing so don't have to pull all bar originalFile graphs into memory)
-			String file_path = current_file.getPath();
-			System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
-			graph_name2file.put(type_name, file_path);
-
-			genome.addType(type_name, null);
-
+		if (isSequenceFile(current_file)
+				|| isGraph(current_file, type_name, graph_name2file, genome)) {
 			return;
 		}
 		
 		if (!annots_map.isEmpty() && annots_map.containsKey(genome)) {
-			AnnotMapElt ame = AnnotMapElt.findFileNameElt(file_name, annots_map.get(genome));
-			if (ame == null) {
+			if (AnnotMapElt.findFileNameElt(file_name, annots_map.get(genome)) == null) {
 				// we have loaded in an annots.xml originalFile, but yet this originalFile is not in it and should be ignored.
 				return;
 			}
 		}
 
-		if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft") || file_name.endsWith(".bnib") || file_name.endsWith(".fa")) {
-			// for loading annotations, ignore the genome sequence data files
-			return;
-		}
-
 		// current originalFile is not a directory, so try and recognize as annotation file
-		indexOrLoadFile(dataRoot, current_file, type_name, type_name, annots_map, genome, null);
+		indexOrLoadFile(dataRoot, current_file, file_name, annots_map, genome, null);
+	}
+
+	private static boolean isSequenceFile(File current_file) {
+		return (current_file.getName().equals("mod_chromInfo.txt") || current_file.getName().equals("liftAll.lft") ||
+				current_file.getName().endsWith(".bnib") || current_file.getName().endsWith(".fa"));
+	}
+
+
+	private static boolean isGraph(File current_file, String type_name, Map<String, String> graph_name2file, AnnotatedSeqGroup genome) {
+		String file_name = current_file.getName();
+		if (file_name.endsWith(".bar") || USeqUtilities.USEQ_ARCHIVE.matcher(file_name).matches()) {
+			//if a bar or useq archive don't load just add
+			// special casing so bar files are seen in types request, but not parsed in on startup
+			//    (because using graph slicing so don't have to pull all bar originalFile graphs into memory)
+			String file_path = current_file.getPath();
+			System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
+			graph_name2file.put(type_name, file_path);
+			genome.addType(type_name, null);
+			return true;
+		}
+		return false;
 	}
 
 
 
 	/**
+	 *   If current_file is directory:
+	 *       if ".seqs" suffix, then handle as graphs
+	 *       otherwise recursively call on each child files;
+	 *   if not directory, see if can parse as annotation file.
+	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
+	 */
+	public static final void loadDBAnnotsFromFile(String dataroot,
+			File current_file,
+			AnnotatedSeqGroup genome,
+			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
+			String type_prefix,
+			Integer annot_id,
+			Map<String,String> graph_name2file) throws FileNotFoundException, IOException {
+
+		if (isDBSequenceFile(current_file)
+				|| isDBGraph(current_file, type_prefix, graph_name2file, genome, annot_id)) {
+			return;
+		}
+
+		// current originalFile is not a directory, so try and recognize as annotation file
+		indexOrLoadFile(dataroot, current_file, type_prefix, annots_map, genome, annot_id);
+	}
+
+
+	public static final void loadDBAnnotsFromDir(String type_name,
+			String file_path,
+			AnnotatedSeqGroup genome,
+			File current_file,
+			Integer annot_id,
+			Map<String,String> graph_name2dir) {
+		// each file in directory is same annotation type, but for a single seq?
+		// assuming bar files for now, each with starting with seq id?
+		//  String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
+		System.out.println("@@@ adding graph directory to types: " + type_name + ", path: " + file_path);
+		graph_name2dir.put(type_name, file_path);
+		genome.addType(type_name, annot_id);
+
+	}
+
+
+	private static boolean isDBSequenceFile(File current_file) {
+		return (current_file.getName().equals("mod_chromInfo.txt") || current_file.getName().equals("liftAll.lft"));
+	}
+
+	private static boolean isDBGraph(File current_file, String type_prefix, Map<String, String> graph_name2file, AnnotatedSeqGroup genome, Integer annot_id) {
+		String file_name = current_file.getName();
+		if (file_name.endsWith(".bar") || USeqUtilities.USEQ_ARCHIVE.matcher(file_name).matches()) {
+			String file_path = current_file.getPath();
+			// special casing so bar files are seen in types request, but not parsed in on startup
+			//    (because using graph slicing so don't have to pull all bar file graphs into memory)
+			System.out.println("@@@ adding graph file to types: " + type_prefix + ", path: " + file_path);
+			graph_name2file.put(type_prefix, file_path);
+			genome.addType(type_prefix, annot_id);
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
 	 * Index the file, if possible or load the file.
-	 * @param dataRoot
-	 * @param file
-	 * @param stream_name
+	 * @param dataRoot -- root of data directory
+	 * @param file -- file to load or index
 	 * @param annot_name
 	 * @param annots_map
 	 * @param genome
@@ -313,22 +377,28 @@ public abstract class ServerUtils {
 	 * @throws java.io.FileNotFoundException
 	 * @throws java.io.IOException
 	 */
-	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, String annot_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome, Integer annot_id) throws FileNotFoundException, IOException {
+	private static void indexOrLoadFile(
+			String dataRoot,
+			File file,
+			String annot_name,
+			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
+			AnnotatedSeqGroup genome,
+			Integer annot_id)
+			throws FileNotFoundException, IOException {
 
-		String originalFileName = file.getName();
-
-		IndexWriter iWriter = ParserController.getIndexWriter(originalFileName);
+		String stream_name = GeneralUtils.getUnzippedName(file.getName());
+		IndexWriter iWriter = ParserController.getIndexWriter(stream_name);
 
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 
-		String extension = ParserController.getExtension(stream_name);
-		String typeName = ParserController.getAnnotType(annotList, stream_name, extension);
-		genome.addType(typeName, annot_id);
+		String extension = ParserController.getExtension(stream_name);	// .psl, .bed, et cetera
+		String annotTypeName = ParserController.getAnnotType(annotList, stream_name, extension);
+		genome.addType(annotTypeName, annot_id);
 
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
 
 		if (iWriter == null) {	
-			loadAnnotFile(file, stream_name, typeName, annotList, genome, false);
+			loadAnnotFile(file, annotTypeName, annotList, genome, false);
 			getAddedChroms(genome, tempGenome, false);
 			getAlteredChroms(genome, tempGenome, false);
 			//System.out.println("Type " + typeName + " is not optimizable");
@@ -336,17 +406,17 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		List loadedSyms = loadAnnotFile(file, stream_name, typeName, annotList, tempGenome, true);
+		List loadedSyms = loadAnnotFile(file, annotTypeName, annotList, tempGenome, true);
 		getAddedChroms(tempGenome, genome, true);
 		getAlteredChroms(tempGenome, genome, true);
 
-		String returnTypeName = typeName;
+		String returnTypeName = annotTypeName;
 		if (stream_name.endsWith(".link.psl")) {
 			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
-			returnTypeName = typeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
+			returnTypeName = annotTypeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
 		}
 		IndexingUtils.determineIndexes(genome,
-				tempGenome, dataRoot, file, loadedSyms, iWriter, typeName, returnTypeName);
+				tempGenome, dataRoot, file, loadedSyms, iWriter, annotTypeName, returnTypeName);
 	}	
 
 	public static void createDirIfNecessary(String dirName) {
@@ -365,73 +435,21 @@ public abstract class ServerUtils {
 		}
 	}
 
-
-	private static List loadAnnotFile(File current_file, String stream_name, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
-		InputStream istr = new BufferedInputStream(new FileInputStream(current_file));
-		if (!isIndexed) {
-			return ParserController.parse(istr, annotList, stream_name, gmodel, genome, type_name);
+	private static List loadAnnotFile(File current_file, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
+		String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
+		InputStream istr = null;
+		try {
+			istr = new BufferedInputStream(new FileInputStream(current_file));
+			if (!isIndexed) {
+				return ParserController.parse(istr, annotList, stream_name, gmodel, genome, type_name);
+			}
+			return ParserController.parseIndexed(istr, annotList, stream_name, genome, type_name);
+		} finally {
+			GeneralUtils.safeClose(istr);
 		}
-		return ParserController.parseIndexed(istr, annotList, stream_name, genome, type_name);
 	}
 
 
-
-	/**
-	 *   If current_file is directory:
-	 *       if ".seqs" suffix, then handle as graphs
-	 *       otherwise recursively call on each child files;
-	 *   if not directory, see if can parse as annotation file.
-	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
-	 */
-	public static final void loadDBAnnotsFromFile(String dataroot,
-			File current_file, 
-			AnnotatedSeqGroup genome, 
-			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
-			String type_prefix, 
-			Integer annot_id,
-			Map<String,String> graph_name2file) throws FileNotFoundException, IOException {
-		String file_name = current_file.getName();
-		String file_path = current_file.getPath();
-
-
-
-		if (file_name != null && (file_name.endsWith(".bar") || USeqUtilities.USEQ_ARCHIVE.matcher(file_name).matches())) {
-			// String file_path = current_file.getPath();
-			// special casing so bar files are seen in types request, but not parsed in on startup
-			//    (because using graph slicing so don't have to pull all bar file graphs into memory)
-			System.out.println("@@@ adding graph file to types: " + type_prefix + ", path: " + file_path);
-			graph_name2file.put(type_prefix, file_path);
-			genome.addType(type_prefix, annot_id);
-
-			return;
-		}
-
-
-		if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft")) {
-			// for loading annotations, ignore the genome sequence data files
-			return;
-		}
-
-		
-		// current originalFile is not a directory, so try and recognize as annotation file
-		indexOrLoadFile(dataroot, current_file, current_file.getName(), type_prefix, annots_map, genome, annot_id);
-	}
-
-
-	public static final void loadDBAnnotsFromDir(String type_name, 
-			String file_path, 
-			AnnotatedSeqGroup genome, 
-			File current_file, 
-			Integer annot_id,
-			Map<String,String> graph_name2dir) {
-		// each file in directory is same annotation type, but for a single seq?
-		// assuming bar files for now, each with starting with seq id?
-		//  String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
-		System.out.println("@@@ adding graph directory to types: " + type_name + ", path: " + file_path);
-		graph_name2dir.put(type_name, file_path);
-		genome.addType(type_name, annot_id);
-
-	}
 
 
 	public static final List<SeqSymmetry> findNameInGenome(String name, AnnotatedSeqGroup genome) {

@@ -297,7 +297,7 @@ public final class FeatureLoading {
 			}
 			// Due to file loading code, the style is probably stored with the stripped name of the file.
 			String unzippedName = GeneralUtils.getUnzippedName(fileName);
-			String extension = ParserController.getExtension(unzippedName);
+			String extension = ParserController.getExtension(unzippedName);	// .psl, .bed, et cetera
 			String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(extension));
 			style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(strippedName);
 			if (style != null) {

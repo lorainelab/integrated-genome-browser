@@ -802,8 +802,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 		String path_info = request.getPathInfo();
-		String org_name = genome.getOrganism();
-		String version_name = genome.getID();
 		String seqname = path_info.substring(path_info.lastIndexOf("/") + 1);
 
 		SeqSpan span = null;
@@ -1091,7 +1089,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// Get the  genopub security which will determine which resources (annotations)
 		// are authorized for this user.
-		GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
+		this.getGenoPubSecurity(request);
 
 		response.setContentType(TYPES_CONTENT_TYPE);
 
@@ -1147,8 +1145,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		List<String> sorted_types_list = new ArrayList<String>(types_hash.keySet());
 		Collections.sort(sorted_types_list);
 		for (String feat_type : sorted_types_list) {
-
-
 			SimpleDas2Type das2Type = types_hash.get(feat_type);
 			List<String> formats = das2Type.getFormats();
 			Map<String, Object> props = das2Type.getProps();
@@ -1169,29 +1165,26 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			// For now, if props is empty from Types request, fill in properties
 			// from annots.xml file.
-			if (props == null) {
-				if (annotList != null) {
-					AnnotMapElt ame = AnnotMapElt.findTitleElt(title, annotList);
-					if (ame != null && ame.props != null) {
-						props = new HashMap<String, Object>();
-						for (Map.Entry<String,String> propEntry : ame.props.entrySet()) {
-							if (propEntry.getValue().length() > 0) {
-								props.put(propEntry.getKey(), propEntry.getValue());
-							}
+			if (props == null && annotList != null) {
+				AnnotMapElt ame = AnnotMapElt.findTitleElt(title, annotList);
+				if (ame != null && ame.props != null) {
+					props = new HashMap<String, Object>();
+					for (Map.Entry<String, String> propEntry : ame.props.entrySet()) {
+						if (propEntry.getValue().length() > 0) {
+							props.put(propEntry.getKey(), propEntry.getValue());
 						}
 					}
 				}
 			}
 
-
 			// Print properties of annotation as tag/value pairs
-			if (props != null && !props.isEmpty()) {
-				for (String tag : props.keySet()) {
-					Object value = props.get(tag);
+			if (props != null) {
+				for (Map.Entry<String, Object> entry : props.entrySet()) {
+					Object value = entry.getValue();
 					if (value != null && !value.equals("")) {
-					pw.println("       <PROP key=\"" + tag + "\" value=\"" + value + "\" />");
+						pw.println("       <PROP key=\"" + entry.getKey() + "\" value=\"" + value + "\" />");
+					}
 				}
-			}
 			}
 
 			pw.println("   </TYPE>");
@@ -1360,16 +1353,16 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			//    HTTP error message with status 413 "Request Entity Too Large"
 		} else {  // request contains query string
 
-			ArrayList<String> formats = new ArrayList<String>();
-			ArrayList<String> types = new ArrayList<String>();
-			ArrayList<String> segments = new ArrayList<String>();
-			ArrayList<String> overlaps = new ArrayList<String>();
-			ArrayList<String> insides = new ArrayList<String>();
-			ArrayList<String> excludes = new ArrayList<String>();
-			ArrayList<String> names = new ArrayList<String>();
-			ArrayList<String> coordinates = new ArrayList<String>();
-			ArrayList<String> links = new ArrayList<String>();
-			ArrayList<String> notes = new ArrayList<String>();
+			List<String> formats = new ArrayList<String>();
+			List<String> types = new ArrayList<String>();
+			List<String> segments = new ArrayList<String>();
+			List<String> overlaps = new ArrayList<String>();
+			List<String> insides = new ArrayList<String>();
+			List<String> excludes = new ArrayList<String>();
+			List<String> names = new ArrayList<String>();
+			List<String> coordinates = new ArrayList<String>();
+			List<String> links = new ArrayList<String>();
+			List<String> notes = new ArrayList<String>();
 			Map<String, ArrayList<String>> props = new HashMap<String, ArrayList<String>>();
 
 			boolean known_query =
@@ -1565,7 +1558,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 	private static boolean splitFeaturesQuery(
-			String query, ArrayList<String> formats, ArrayList<String> types, ArrayList<String> segments, ArrayList<String> overlaps, ArrayList<String> insides, ArrayList<String> excludes, ArrayList<String> names, ArrayList<String> coordinates, ArrayList<String> links, ArrayList<String> notes, Map<String, ArrayList<String>> props) {
+			String query, List<String> formats, List<String> types, List<String> segments, List<String> overlaps, List<String> insides, List<String> excludes, List<String> names, List<String> coordinates, List<String> links, List<String> notes, Map<String, ArrayList<String>> props) {
 		// genometry server does not currently serve up features with PROPERTY, LINK, or NOTE element,
 		//   so if any of these are encountered and the response is not an error for some other reason,
 		//   the response should be a FEATURES doc with zero features.
@@ -1615,7 +1608,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	private void handleNameQuery(ArrayList<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class writerclass, String output_format, HttpServletResponse response, String xbase) {
+	private void handleNameQuery(List<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class writerclass, String output_format, HttpServletResponse response, String xbase) {
 		String name = names.get(0);
 		List<SeqSymmetry> result = ServerUtils.findNameInGenome(name, genome);
 		OutputStream outstream = null;

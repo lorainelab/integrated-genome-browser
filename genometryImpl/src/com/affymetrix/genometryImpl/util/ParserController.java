@@ -23,22 +23,8 @@ import java.util.logging.Logger;
  *  Trying to make a central repository for parsers.
  */
 public final class ParserController {
-  
-
-
-  public static List parse(
-      InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {
-    String type_prefix = null;
-    int sindex = stream_name.lastIndexOf("/");
-    if (sindex >= 0) {
-      type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
-    }
-    return parse(instr, annotList, stream_name, gmodel, seq_group, type_prefix);
-  }
-  
-
     
-	public static List parse(
+	static List parse(
 			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String type_prefix) {
 		InputStream str = null;
 		List results = null;
@@ -48,13 +34,7 @@ public final class ParserController {
 			} else {
 				str = new BufferedInputStream(instr);
 			}
-			if (stream_name.endsWith(".das") || stream_name.endsWith(".dasxml")) {
-				System.out.println("loading via Das1FeatureSaxParser: " + stream_name);
-				DASFeatureParser parser = new DASFeatureParser();
-				// need to modify Das1FeatureSaxParser to return a list of "transcript-level" annotation syms
-				parser = null;
-			}
-			else if (stream_name.endsWith(".bp1") || stream_name.endsWith(".bp2")) {
+			if (stream_name.endsWith(".bp1") || stream_name.endsWith(".bp2")) {
 				System.out.println("loading via Bprobe1Parser: " + stream_name);
 				Bprobe1Parser bp1_reader = new Bprobe1Parser();
 				if (type_prefix != null) {
@@ -124,7 +104,7 @@ public final class ParserController {
 	 * @param type_prefix
 	 * @return A list of parsed indexes
 	 */
-	public static List parseIndexed(
+	static List parseIndexed(
 			InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		try {
 			IndexWriter iWriter = getIndexWriter(stream_name);

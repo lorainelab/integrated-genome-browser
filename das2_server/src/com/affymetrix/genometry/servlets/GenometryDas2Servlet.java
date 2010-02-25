@@ -435,8 +435,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		output_registry.put("link.psl", ProbeSetDisplayPlugin.class);
 		output_registry.put("bps", BpsParser.class);
 		output_registry.put("psl", PSLParser.class);
-		output_registry.put("dasgff", Das1FeatureSaxParser.class);
-		output_registry.put("dasxml", Das1FeatureSaxParser.class);
 		output_registry.put("bed", BedParser.class);
 		output_registry.put("simplebed", SimpleBedParser.class);
 		output_registry.put("bgn", BgnParser.class);

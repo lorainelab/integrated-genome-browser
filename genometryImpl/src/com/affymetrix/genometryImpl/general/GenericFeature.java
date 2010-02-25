@@ -14,6 +14,8 @@ import java.util.logging.Logger;
  * Thus, there is a many-to-one map to GenericVersion.
  * (Even if the feature names and version names match, but the servers don't,
  * we can't guarantee that they would contain the same information.)
+ *
+ * @version $Id$
  */
 public final class GenericFeature {
 
@@ -29,6 +31,7 @@ public final class GenericFeature {
 	 * @param featureName
 	 * @param featureProps
 	 * @param gVersion
+	 * @param typeObj
 	 */
 	public GenericFeature(String featureName, Map<String, String> featureProps, GenericVersion gVersion, Object typeObj) {
 		this.featureName = featureName;
@@ -50,9 +53,12 @@ public final class GenericFeature {
 		if (this.loadStrategy != LoadStrategy.NO_LOAD) {
 			return;
 		}
-		if ((gVersion != null && gVersion.gServer != null && gVersion.gServer.serverType == ServerType.DAS2)) {
-			this.loadStrategy = LoadStrategy.VISIBLE;  // DAS/2 server should default to "Region in View"
-			} else {
+		if (gVersion != null
+				&& gVersion.gServer != null
+				&& (gVersion.gServer.serverType == ServerType.DAS2
+				|| gVersion.gServer.serverType == ServerType.DAS)) {
+			this.loadStrategy = LoadStrategy.VISIBLE;
+		} else {
 			this.loadStrategy = LoadStrategy.NO_LOAD;
 		}
 	}
@@ -103,8 +109,9 @@ public final class GenericFeature {
 	@Override
 	public String toString() {
 		// remove all but the last "/", since these will be represented in a friendly tree view.
-		if (!this.featureName.contains("/"))
+		if (!this.featureName.contains("/")) {
 			return this.featureName;
+		}
 
 		int lastSlash = this.featureName.lastIndexOf("/");
 		return this.featureName.substring(lastSlash + 1,featureName.length());

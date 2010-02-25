@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
@@ -13,11 +11,11 @@ import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.BrsParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
-import com.affymetrix.genometryImpl.parsers.Das1FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,7 +50,7 @@ public final class ParserController {
 			}
 			if (stream_name.endsWith(".das") || stream_name.endsWith(".dasxml")) {
 				System.out.println("loading via Das1FeatureSaxParser: " + stream_name);
-				Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
+				DASFeatureParser parser = new DASFeatureParser();
 				// need to modify Das1FeatureSaxParser to return a list of "transcript-level" annotation syms
 				parser = null;
 			}

@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
 import org.xml.sax.InputSource;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.BedParser;
@@ -42,7 +43,6 @@ import com.affymetrix.genometryImpl.parsers.BrptParser;
 import com.affymetrix.genometryImpl.parsers.BrsParser;
 import com.affymetrix.genometryImpl.parsers.BsnpParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
-import com.affymetrix.genometryImpl.parsers.Das1FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
 import com.affymetrix.genometryImpl.parsers.FastaParser;
@@ -53,6 +53,8 @@ import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.SegmenterRptParser;
 import com.affymetrix.genometryImpl.parsers.VarParser;
+import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
+import com.affymetrix.genometryImpl.parsers.das.DASSymmetry;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
 import com.affymetrix.genometryImpl.parsers.graph.CntParser;
@@ -424,13 +426,19 @@ public final class LoadFileAction {
 			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group);
 			return input_seq;
 		} else if (lcname.endsWith(".das") || lcname.endsWith(".dasxml")) {
-			Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
-			List<SeqSymmetry> results = parser.parse(str, selected_group);
-			return getFirstSeq(results);
+			DASFeatureParser parser = new DASFeatureParser();
+			Collection<DASSymmetry> results;
+			try {
+				results = parser.parse(str, selected_group);
+				return LoadFileAction.<DASSymmetry>getFirstSeq(results);
+			} catch (XMLStreamException ex) {
+				Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			return null;
 		} else if (lcname.endsWith(".das2xml")) {
 			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
 			List<SeqSymmetry> results = parser.parse(new InputSource(str), stream_name, selected_group, true);
-			return getFirstSeq(results);
+			return LoadFileAction.<SeqSymmetry>getFirstSeq(results);
 		} else if (lcname.endsWith(".map")) {
 			ScoredMapParser parser = new ScoredMapParser();
 			parser.parse(str, stream_name, input_seq, selected_group);
@@ -575,10 +583,10 @@ public final class LoadFileAction {
 	}
 
 	/** Returns the first BioSeq on the first SeqSymmetry in the given list, or null. */
-	private static BioSeq getFirstSeq(List<SeqSymmetry> syms) {
+	private static <S extends SeqSymmetry> BioSeq getFirstSeq(Collection<S> syms) {
 		BioSeq first_seq = null;
 		if (syms != null && !syms.isEmpty()) {
-			SeqSymmetry fsym = syms.get(0);
+			SeqSymmetry fsym = syms.iterator().next();
 			SeqSpan fspan = fsym.getSpan(0);
 			first_seq = fspan.getBioSeq();
 		}

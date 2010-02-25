@@ -391,7 +391,7 @@ public abstract class ServerUtils {
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 
 		String extension = ParserController.getExtension(stream_name);	// .psl, .bed, et cetera
-		String annotTypeName = ParserController.getAnnotType(annotList, stream_name, extension);
+		String annotTypeName = ParserController.getAnnotType(annotList, file.getName(), extension);
 		genome.addType(annotTypeName, annot_id);
 
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
@@ -434,11 +434,11 @@ public abstract class ServerUtils {
 		}
 	}
 
-	private static List loadAnnotFile(File current_file, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
+	private static List loadAnnotFile(File current_file, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException, IOException {
 		String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
 		InputStream istr = null;
 		try {
-			istr = new BufferedInputStream(new FileInputStream(current_file));
+			istr = GeneralUtils.getInputStream(current_file, new StringBuffer());
 			if (!isIndexed) {
 				return ParserController.parse(istr, annotList, stream_name, gmodel, genome, type_name);
 			}

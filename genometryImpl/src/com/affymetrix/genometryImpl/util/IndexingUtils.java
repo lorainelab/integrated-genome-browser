@@ -177,6 +177,7 @@ public class IndexingUtils {
 			List<SeqSymmetry> sortedSyms =
 					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
 			if (sortedSyms.isEmpty()) {
+				Logger.getLogger(IndexingUtils.class.getName()).warning("No annotations found for file: " + file.getName() + " on chromosome:" + tempSeq.getID());
 				continue;
 			}
 

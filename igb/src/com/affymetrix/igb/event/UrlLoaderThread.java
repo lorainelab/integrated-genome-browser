@@ -137,26 +137,32 @@ public final class UrlLoaderThread extends Thread {
 		}
 	}
 
-  private void parseUrl(URL url, String file_extension, String tier_name)
-  throws IOException {
-    String where_from = url.getHost();
-    if (where_from == null || where_from.length()==0) {
-      where_from = url.getPath();
-    }
+	private void parseUrl(URL url, String file_extension, String tier_name)
+			throws IOException {
+		String where_from = url.getHost();
+		if (where_from == null || where_from.length() == 0) {
+			where_from = url.getPath();
+		}
 		//Application.getSingleton().setNotLockedUpStatus("Connecting to " + where_from);
-    if (isInterrupted()) {return;}
-    
-    URLConnection connection = url.openConnection();
+		if (isInterrupted()) {
+			return;
+		}
+
+		URLConnection connection = url.openConnection();
 		connection.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 		connection.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-    connection.connect(); // throws an exception if no connection available
-    
-    //monitor.setMessageEventually("Loading data from "+where_from);
+		connection.connect(); // throws an exception if no connection available
+
+		//monitor.setMessageEventually("Loading data from "+where_from);
 		//Application.getSingleton().setNotLockedUpStatus("Loading data from " + where_from);
-    if (isInterrupted()) {return;}
-    
-    parseDataFromURL(gviewer, connection, file_extension, tier_name);
-  }
+		if (isInterrupted()) {
+			return;
+		}
+
+		parseDataFromURL(gviewer, connection, file_extension, tier_name);
+
+		Application.getSingleton().removeNotLockedUpMsg("Loading feature " + tier_name);
+	}
 
   private void handleException(final Exception e) {
     SwingUtilities.invokeLater(new Runnable() {

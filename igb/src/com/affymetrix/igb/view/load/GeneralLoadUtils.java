@@ -545,7 +545,6 @@ public final class GeneralLoadUtils {
 							overlap);
 		} else if (serverType == ServerType.DAS) {
 			result = DasFeatureLoader.loadFeatures(gFeature, overlap);
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
 		} else if (serverType == ServerType.QuickLoad) {
 			result = FeatureLoading.loadQuickLoadAnnotations(gFeature);
 		} else {

@@ -3,13 +3,11 @@ package com.affymetrix.genometryImpl.parsers.das;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import java.io.InputStream;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -39,7 +37,7 @@ public final class DASFeatureParser {
 	private BioSeq sequence;
 	private String note;
 
-	public List<SeqSymmetry> parse(InputStream s, AnnotatedSeqGroup seqGroup) throws XMLStreamException {
+	public Collection<DASSymmetry> parse(InputStream s, AnnotatedSeqGroup seqGroup) throws XMLStreamException {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLEventReader reader = factory.createXMLEventReader(s);
 		XMLEvent current;
@@ -48,7 +46,7 @@ public final class DASFeatureParser {
 		LinkBean link = new LinkBean();
 		GroupBean group = new GroupBean();
 		TargetBean target = new TargetBean();
-		Map<String, DASSymmetry> groupMap = new LinkedHashMap<String, DASSymmetry>();
+		Map<String, DASSymmetry> groupMap = new HashMap<String, DASSymmetry>();
 
 		while(reader.hasNext()) {
 			current = reader.nextEvent();
@@ -67,11 +65,7 @@ public final class DASFeatureParser {
 			}
 		}
 
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(groupMap.size());
-		for(Map.Entry<String, DASSymmetry> entry : groupMap.entrySet()) {
-			results.add(entry.getValue());
-		}
-		return results;
+		return groupMap.values();
 	}
 
 	/**
@@ -221,14 +215,14 @@ public final class DASFeatureParser {
 		return attribute == null ? "" : attribute.getValue();
 	}
 
-	private DASSymmetry getGroupSymmetry(Map<String, DASSymmetry> groupMap, FeatureBean feature, GroupBean groupBean, AnnotatedSeqGroup seqGroup) {
+	private DASSymmetry getGroupSymmetry(Map<String, DASSymmetry> groupMap, FeatureBean feature, GroupBean group, AnnotatedSeqGroup seqGroup) {
 		/* Do we have a groupSymmetry for ID stored in parser */
-		if (groupMap.containsKey(groupBean.getID())) {
-			return groupMap.get(groupBean.getID());
+		if (groupMap.containsKey(group.getID())) {
+			return groupMap.get(group.getID());
 		}
 
 		/* Is there a groupSymmetry for ID on this sequence */
-		for (SeqSymmetry sym : seqGroup.findSyms(groupBean.getID())) {
+		for (SeqSymmetry sym : seqGroup.findSyms(group.getID())) {
 			if (sym instanceof DASSymmetry && sym.getSpan(sequence) != null) {
 				groupMap.put(sym.getID(), (DASSymmetry) sym);
 				return (DASSymmetry) sym;
@@ -236,11 +230,7 @@ public final class DASFeatureParser {
 		}
 
 		/* Create a new groupSymmetry for ID */
-		DASSymmetry groupSymmetry = new DASSymmetry(groupBean);
-		groupSymmetry.addSpan(new SimpleMutableSeqSpan(new SimpleMutableSeqSpan(
-				feature.getOrientation() == Orientation.REVERSE ? feature.getEnd() : feature.getStart(),
-				feature.getOrientation() == Orientation.REVERSE ? feature.getStart() : feature.getEnd(),
-				sequence)));
+		DASSymmetry groupSymmetry = new DASSymmetry(group, feature, sequence);
 		sequence.addAnnotation(groupSymmetry);
 		seqGroup.addToIndex(groupSymmetry.getID(), groupSymmetry);
 		groupMap.put(groupSymmetry.getID(), groupSymmetry);

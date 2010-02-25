@@ -24,13 +24,23 @@ public class DASSymmetry extends SimpleSymWithProps implements Scored, SupportsC
 	private final float score;
 	private final String type;
 
-	DASSymmetry(GroupBean group) {
+	DASSymmetry(GroupBean group, FeatureBean feature, BioSeq sequence) {
 		score = Scored.UNKNOWN_SCORE;
-		type  = group.getType().isEmpty() ? group.getID() : group.getType();
+		if (!group.getType().isEmpty()) {
+			type = group.getType();
+		} else if (!feature.getTypeLabel().isEmpty()) {
+			type = feature.getTypeLabel();
+		} else {
+			type = feature.getTypeID();
+		}
+
+		this.addSpan(new SimpleMutableSeqSpan(new SimpleMutableSeqSpan(
+				feature.getOrientation() == Orientation.REVERSE ? feature.getEnd() : feature.getStart(),
+				feature.getOrientation() == Orientation.REVERSE ? feature.getStart() : feature.getEnd(),
+				sequence)));
 		this.setID(group.getID());
 		this.addLinks(group.getLinks());
 		this.setProperty("label", group.getLabel().isEmpty() ? group.getID() : group.getLabel());
-		this.setProperty("method", type);
 	}
 
 	DASSymmetry(FeatureBean feature, BioSeq sequence) {
@@ -43,7 +53,6 @@ public class DASSymmetry extends SimpleSymWithProps implements Scored, SupportsC
 		this.setID(feature.getID());
 		this.addLinks(feature.getLinks());
 		this.setProperty("label", feature.getLabel().isEmpty() ? feature.getID() : feature.getLabel());
-		this.setProperty("method", type);
 	}
 
 	/**

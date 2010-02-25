@@ -141,7 +141,6 @@ public abstract class PrefsLoader {
 
 	private static void LoadFileOrURLPrefs(String[] prefs_list) {
 		if (prefs_list == null || prefs_list.length == 0) {
-			System.out.println("Quack");
 			return;
 		}
 

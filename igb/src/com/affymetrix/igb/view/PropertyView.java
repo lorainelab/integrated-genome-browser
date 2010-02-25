@@ -230,7 +230,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		table.setRowSorter(sorter);
 
 		table.setEnabled(true);  // to allow selection, etc.
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.setFillsViewportHeight(true);
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		scroll_pane.setViewportView(table);
@@ -238,10 +238,9 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		table.setCellSelectionEnabled(true);
 
 		validate();
-		for (int i = 0; i < table.getColumnCount(); i++) {
-			table.getColumnModel().getColumn(i).setMinWidth(100);
-			table.getColumnModel().getColumn(i).setPreferredWidth(150);
-		}
+		table.getColumnModel().getColumn(0).setMinWidth(100);
+		table.getColumnModel().getColumn(0).setPreferredWidth(150);
+		table.getColumnModel().getColumn(0).setMaxWidth(200);
 	}
 
 

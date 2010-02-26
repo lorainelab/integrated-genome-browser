@@ -161,7 +161,11 @@
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-
+  
+  <annotation_url annot_type_regex="^AtGDB.*$" 
+    name="PlantGDB: AtGDB"
+    url="http://www.plantgdb.org/AtGDB/cgi-bin/findRecord.pl?gi=$$"
+  />
 
 </prefs>
 

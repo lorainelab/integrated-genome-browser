@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -841,8 +842,17 @@ public final class BarParser implements AnnotationWriter {
 		int total_points = graf.getPointCount();
 		dos.writeInt(total_points);
 		for (int i = 0; i < total_points; i++) {
-			dos.writeInt(graf.getGraphXCoord(i));
-			dos.writeFloat(graf.getGraphYCoord(i));
+			int w = graf.getGraphWidthCoord(i);
+			if (w == 0) {
+				dos.writeInt(graf.getGraphXCoord(i));
+				dos.writeFloat(graf.getGraphYCoord(i));
+			} else {
+				// Write a point at each interval location.
+				for (int j = 0; j < w; j++) {
+					dos.writeInt(j + graf.getGraphXCoord(i));
+					dos.writeFloat(graf.getGraphYCoord(i));
+				}
+			}
 		}
 	}
 

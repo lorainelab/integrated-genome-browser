@@ -72,12 +72,26 @@ public final class DasServerInfo {
 		InputStream stream = null;
 		try {
 			System.out.println("Das Request: " + serverURL);
-			Map<String, String> headers = new HashMap<String, String>();
-			stream = LocalUrlCacher.getInputStream(serverURL, headers);
-			
-			String das_version = headers.get("X-DAS-Version");
-			String das_status = headers.get("X-DAS-Status");
-			String das_capabilities = headers.get("X-DAS-Capabilities");
+			Map<String, List<String>> headers = new HashMap<String, List<String>>();
+			stream = LocalUrlCacher.getInputStream(serverURL, null, headers);
+
+			List<String> list;
+			String das_version = "";
+			String das_status = "";
+			String das_capabilities = "";
+
+			list = headers.get("X-DAS-Version");
+			if (list != null) {
+				das_version = list.toString();
+			}
+			list = headers.get("X-DAS-Status");
+			if (list != null) {
+				das_status = list.toString();
+			}
+			list = headers.get("X-DAS-Capabilities");
+			if (list != null) {
+				das_capabilities = list.toString();
+			}
 
 			System.out.println("DAS server version: " + das_version + ", status: " + das_status);
 			if (REPORT_CAPS) {

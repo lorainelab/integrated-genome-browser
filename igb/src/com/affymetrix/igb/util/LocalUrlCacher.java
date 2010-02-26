@@ -50,12 +50,17 @@ public final class LocalUrlCacher {
 
 	/** Sets the cacher to off-line mode, in which case only cached data will
 	 *  be used, will never try to get data from the web.
+	 *
+	 * @param b
 	 */
 	public static void setOffLine(boolean b) {
 		offline = b;
 	}
 
-	/** Returns the value of the off-line flag. */
+	/** Returns the value of the off-line flag.
+	 *
+	 * @return true if offline
+	 */
 	public static boolean getOffLine() {
 		return offline;
 	}
@@ -98,24 +103,24 @@ public final class LocalUrlCacher {
 	}
 
 	public static InputStream getInputStream(URL url) throws IOException {
-		return getInputStream(url, null);
+		return getInputStream(url, null, null);
 	}
 
-	public static InputStream getInputStream(URL url, Map<String, String> headers) throws IOException {
-		return getInputStream(url.toString(), true, headers);
+	public static InputStream getInputStream(URL url, Map<String, String> rqstHeaders, Map<String, List<String>> respHeaders) throws IOException {
+		return getInputStream(url.toString(), getPreferredCacheUsage(), true, rqstHeaders, respHeaders, false);
 	}
 
 	public static InputStream getInputStream(String url) throws IOException {
 		return getInputStream(url, getPreferredCacheUsage(), true);
 	}
 
-	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> headers)
+	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> rqstHeaders)
 					throws IOException {
-		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, headers);
+		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, rqstHeaders);
 	}
-	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> headers, boolean fileMayNotExist)
+	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> rqstHeaders, boolean fileMayNotExist)
 					throws IOException {
-		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, headers, fileMayNotExist);
+		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, rqstHeaders, null, fileMayNotExist);
 	}
 
 	public static InputStream getInputStream(String url, boolean write_to_cache)
@@ -128,16 +133,16 @@ public final class LocalUrlCacher {
 		return getInputStream(url, cache_option, write_to_cache, null);
 	}
 
-	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers)
+	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> rqstHeaders)
 					throws IOException {
-		return getInputStream(url, cache_option, write_to_cache, headers, false);
+		return getInputStream(url, cache_option, write_to_cache, rqstHeaders, null, false);
 	}
 
 	/**
 	 * @param url URL to load.
 	 * @param cache_option caching option (should be enum)
 	 * @param write_to_cache Write to cache.
-	 * @param headers a Map which when getInputStream() returns will be populated with any headers returned from the url
+	 * @param rqstHeaders a Map which when getInputStream() returns will be populated with any headers returned from the url
 	 *      Each entry will be either: { header name ==> header value }
 	 *        OR if multiple headers have same name, then value of entry will be a List of the header values:
 	 *                                 { header name ==> [header value 1, header value 2, ...] }
@@ -146,16 +151,16 @@ public final class LocalUrlCacher {
 	 * @return input stream from the loaded url
 	 * @throws java.io.IOException
 	 */
-	private static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers, boolean fileMayNotExist)
+	private static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> rqstHeaders, Map<String, List<String>> respHeaders, boolean fileMayNotExist)
 					throws IOException {
 		//look to see if a sessionId is present in the headers
 		String sessionId = null;
-		if (headers != null) {
-			if (headers.containsKey("sessionId")) {
-				sessionId = headers.get("sessionId");
+		if (rqstHeaders != null) {
+			if (rqstHeaders.containsKey("sessionId")) {
+				sessionId = rqstHeaders.get("sessionId");
 			}
 			//clear headers
-			headers.clear();
+			rqstHeaders.clear();
 		}
 		
 		// if url is a file url, and not caching files, then just directly return stream
@@ -216,6 +221,10 @@ public final class LocalUrlCacher {
 					reportHeaders(conn);
 				}
 
+				if (respHeaders != null) {
+					respHeaders.putAll(conn.getHeaderFields());
+				}
+
 				remote_timestamp = conn.getLastModified();
 
 				if (conn instanceof HttpURLConnection) {
@@ -237,8 +246,8 @@ public final class LocalUrlCacher {
 				if (!fileMayNotExist) {
 					Application.logWarning("URL not reachable, status code = " + http_status + ": " + url);
 				}
-				if (headers != null) {
-					headers.put("LocalUrlCacher", URL_NOT_REACHABLE);
+				if (rqstHeaders != null) {
+					rqstHeaders.put("LocalUrlCacher", URL_NOT_REACHABLE);
 				}
 				// if (! cached) { throw new IOException("URL is not reachable, and is not cached!"); }
 				if (!cache_file.exists()) {
@@ -252,16 +261,16 @@ public final class LocalUrlCacher {
 		
 		// if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache
 		if (cache_file.exists() && (cache_option != IGNORE_CACHE)) {
-			result_stream = TryToRetrieveFromCache(url_reachable, http_status, cache_file, remote_timestamp, local_timestamp, url, cache_option, result_stream, headers, header_cache_file);
+			result_stream = TryToRetrieveFromCache(url_reachable, http_status, cache_file, remote_timestamp, local_timestamp, url, cache_option, result_stream, rqstHeaders, header_cache_file);
 		}
 
 		// Need to get data from URL, because no cache hit, or stale, or cache_option set to IGNORE_CACHE...
 		if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {
-			result_stream = RetrieveFromURL(conn, headers, write_to_cache, cache_file, header_cache_file);
+			result_stream = RetrieveFromURL(conn, rqstHeaders, write_to_cache, cache_file, header_cache_file);
 		}
 
-		if (headers != null && DEBUG_CONNECTION) {
-			reportHeaders(url, headers);
+		if (rqstHeaders != null && DEBUG_CONNECTION) {
+			reportHeaders(url, rqstHeaders);
 		}
 		if (result_stream == null) {
 			Application.logWarning("LocalUrlCacher couldn't get content for: " + url);
@@ -513,12 +522,17 @@ public final class LocalUrlCacher {
 		}
 	}
 
-	/** Returns the location of the root directory of the cache. */
+	/** Returns the location of the root directory of the cache.
+	 * @return 
+	 */
 	public static String getCacheRoot() {
 		return cache_content_root;
 	}
 
-	/** Returns the current value of the persistent user preference PREF_CACHE_USAGE. */
+	/** Returns the current value of the persistent user preference PREF_CACHE_USAGE.
+	 *
+	 * @return the preferred cache usage
+	 */
 	public static int getPreferredCacheUsage() {
 		int cache_usage = PreferenceUtils.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
 		return cache_usage;
@@ -551,8 +565,10 @@ public final class LocalUrlCacher {
 		InputStream syn_stream = null;
 		try {
 			// Don't cache.  Don't warn user if the synonyms file doesn't exist.
-			syn_stream = LocalUrlCacher.getInputStream(synonym_loc, getPreferredCacheUsage(), false, null, true);
+			syn_stream = LocalUrlCacher.getInputStream(synonym_loc, getPreferredCacheUsage(), false, null, null, true);
 		} catch (IOException ioe) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Unable to load synonyms from '" + synonym_loc + "'", ioe);
+		} finally {
 			GeneralUtils.safeClose(syn_stream);
 		}
 

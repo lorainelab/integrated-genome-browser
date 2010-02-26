@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.IGBConstants;
 import java.io.*;
@@ -132,22 +133,27 @@ public final class XmlPrefsParser {
 				} else if (name.equalsIgnoreCase("plugin")) {
 					processPlugin(el);
 				} else if (name.equalsIgnoreCase("server")) {
-					String server_type = el.getAttribute("type").toLowerCase();
+					ServerType server_type = getServerType(el.getAttribute("type"));
 					String server_name = el.getAttribute("name");
 					String server_url = el.getAttribute("url");
+					String en = el.getAttribute("enabled");
+					Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
 					if (IGBConstants.DEBUG) {
-						System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url);
+						System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url + ", enabled: " + enabled);
 					}
-					if (server_type.equalsIgnoreCase(ServerType.DAS.toString())) {
-						ServerList.addServer(ServerType.DAS, server_name, server_url);
-					} else if (server_type.equalsIgnoreCase(ServerType.DAS2.toString())) {
-						ServerList.addServer(ServerType.DAS2, server_name, server_url);
-					} else if (server_type.equalsIgnoreCase(ServerType.QuickLoad.toString())) {
-						ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
-					}
+					ServerList.addServer(server_type, server_name, server_url, enabled);
 				}
 			}
 		}
+	}
+
+	private static ServerType getServerType(String type) {
+		for (ServerType t : ServerType.values()) {
+			if (type.equalsIgnoreCase(t.toString())) {
+				return t;
+			}
+		}
+		return ServerType.Unknown;
 	}
 
 	private static void processPlugin(Element el) {

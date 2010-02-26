@@ -116,7 +116,7 @@ public final class GeneralLoadUtils {
 		/* should never happen */
 		if (serverType == ServerType.Unknown) { return null; }
 		
-		GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL);
+		GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL, true);
 		if (gServer == null || !discoverServer(gServer)) {
 			return null;
 		}

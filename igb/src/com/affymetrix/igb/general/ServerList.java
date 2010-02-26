@@ -83,9 +83,10 @@ public final class ServerList {
 	 * @param serverType
 	 * @param name
 	 * @param url
+	 * @param enabled
 	 * @return GenericServer
 	 */
-	public static GenericServer addServer(ServerType serverType, String name, String url) {
+	public static GenericServer addServer(ServerType serverType, String name, String url, boolean enabled) {
 		GenericServer server = url2server.get(url);
 		Object info;
 
@@ -93,7 +94,7 @@ public final class ServerList {
 			info = getServerInfo(serverType, url, name);
 
 			if (info != null) {
-				server = new GenericServer(name, url, serverType, info);
+				server = new GenericServer(name, url, serverType, enabled, info);
 
 				if (server != null) {
 					url2server.put(url, server);

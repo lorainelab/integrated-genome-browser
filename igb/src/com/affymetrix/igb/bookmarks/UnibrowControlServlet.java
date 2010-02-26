@@ -216,7 +216,7 @@ public final class UnibrowControlServlet {
 				try {
 					GenericServer gServer = ServerList.getServer(das2_server_url);
 					if (gServer == null) {
-						gServer = ServerList.addServer(ServerType.DAS2, das2_server_url, das2_server_url);
+						gServer = ServerList.addServer(ServerType.DAS2, das2_server_url, das2_server_url, true);
 					}
 					Das2ServerInfo server = (Das2ServerInfo)gServer.serverObj;
 

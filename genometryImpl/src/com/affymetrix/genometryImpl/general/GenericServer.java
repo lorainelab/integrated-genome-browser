@@ -40,13 +40,18 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	private final Set<GenericVersion>versions =
 			new CopyOnWriteArraySet<GenericVersion>();	// list of versions associated with this server
 
-	public GenericServer(String serverName, String URL, ServerType serverType, Object serverObj) {
+	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj) {
 		this(
 				serverName,
 				URL,
 				serverType,
+				enabled,
 				PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
 				serverObj);
+	}
+
+	public GenericServer(String serverName, String URL, ServerType serverType, Object serverObj) {
+		this(serverName, URL, serverType, true, serverObj);
 	}
 
 	public GenericServer(Preferences node, Object serverObj) {
@@ -54,11 +59,12 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				node.get("name", "Unknown"),
 				GeneralUtils.URLDecode(node.name()),
 				ServerType.valueOf(node.get("type", ServerType.Unknown.name())),
+				true,
 				node,
 				serverObj);
 	}
 
-	private GenericServer(String serverName, String URL, ServerType serverType, Preferences node, Object serverObj) {
+	private GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Preferences node, Object serverObj) {
 		this.serverName = serverName;
 		this.URL = URL;
 		this.serverType = serverType;
@@ -67,7 +73,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.serverObj = serverObj;
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
 
-		this.setEnabled(this.node.getBoolean("enabled", true));
+		this.setEnabled(this.node.getBoolean("enabled", enabled));
 		this.setLogin(this.node.get("login", ""));
 		this.setPassword(decrypt(this.node.get("password", "")));
 

@@ -8,7 +8,7 @@
 <server type="quickload" name="Bioviz" url="http://bioviz.org/quickload/"/>
 
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" />
-<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" />
+<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" />
 
 <server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" />
 

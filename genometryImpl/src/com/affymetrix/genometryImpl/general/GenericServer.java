@@ -202,7 +202,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		final String key = evt.getKey();
 
 		if (key.equals("name") || key.equals("type")) {
-			throw new IllegalArgumentException("Modification of read-only field in preferences for '" + this.URL + "'");
+			/* Ignore */
 		} else if (key.equals("login")) {
 			this.login = evt.getNewValue() == null ? "" : evt.getNewValue();
 		} else if (key.equals("password")) {

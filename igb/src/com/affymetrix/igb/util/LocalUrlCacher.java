@@ -103,11 +103,11 @@ public final class LocalUrlCacher {
 	}
 
 	public static InputStream getInputStream(URL url) throws IOException {
-		return getInputStream(url, null, null);
+		return getInputStream(url, true, null, null);
 	}
 
-	public static InputStream getInputStream(URL url, Map<String, String> rqstHeaders, Map<String, List<String>> respHeaders) throws IOException {
-		return getInputStream(url.toString(), getPreferredCacheUsage(), true, rqstHeaders, respHeaders, false);
+	public static InputStream getInputStream(URL url, boolean write_to_cache, Map<String, String> rqstHeaders, Map<String, List<String>> respHeaders) throws IOException {
+		return getInputStream(url.toString(), getPreferredCacheUsage(), write_to_cache, rqstHeaders, respHeaders, false);
 	}
 
 	public static InputStream getInputStream(String url) throws IOException {

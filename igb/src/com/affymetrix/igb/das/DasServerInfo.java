@@ -73,7 +73,7 @@ public final class DasServerInfo {
 		try {
 			System.out.println("Das Request: " + serverURL);
 			Map<String, List<String>> headers = new HashMap<String, List<String>>();
-			stream = LocalUrlCacher.getInputStream(serverURL, null, headers);
+			stream = LocalUrlCacher.getInputStream(serverURL, true, null, headers);
 
 			List<String> list;
 			String das_version = "";

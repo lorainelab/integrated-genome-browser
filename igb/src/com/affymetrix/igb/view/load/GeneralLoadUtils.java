@@ -124,7 +124,7 @@ public final class GeneralLoadUtils {
 		return gServer;
 	}
 
-	static boolean discoverServer(GenericServer gServer) {
+	public static boolean discoverServer(GenericServer gServer) {
 		try {
 			if (gServer == null || gServer.serverType == ServerType.Unknown) {
 				// should never happen
@@ -230,7 +230,7 @@ public final class GeneralLoadUtils {
 			String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
 			String versionName,speciesName;
 			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
-			Set<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getVersions();
+			Set<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getEnabledVersions();
 			if (!gVersions.isEmpty()) {
 				// We've found a corresponding version object that was initialized earlier.
 				versionName = getPreferredVersionName(gVersions);
@@ -307,7 +307,7 @@ public final class GeneralLoadUtils {
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		if (group != null) {
-			Set<GenericVersion> versions = group.getVersions();
+			Set<GenericVersion> versions = group.getEnabledVersions();
 			if (versions != null) {
 				for (GenericVersion gVersion : versions) {
 					featureList.addAll(gVersion.getFeatures());
@@ -344,7 +344,7 @@ public final class GeneralLoadUtils {
 			return;
 		}
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
-		for (GenericVersion gVersion : group.getVersions()) {
+		for (GenericVersion gVersion : group.getEnabledVersions()) {
 			if (!gVersion.isInitialized()) {
 				FeatureLoading.loadFeatureNames(gVersion);
 				gVersion.setInitialized();
@@ -368,7 +368,7 @@ public final class GeneralLoadUtils {
 	 */
 	private static void loadChromInfo(AnnotatedSeqGroup group) {
 
-		for (GenericVersion gVersion : group.getVersions()) {
+		for (GenericVersion gVersion : group.getEnabledVersions()) {
 			if (gVersion.gServer.serverType != ServerType.DAS2) {
 				continue;
 			}
@@ -385,7 +385,7 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		for (GenericVersion gVersion : group.getVersions()) {
+		for (GenericVersion gVersion : group.getEnabledVersions()) {
 			if (gVersion.gServer.serverType != ServerType.DAS) {
 				continue;
 			}

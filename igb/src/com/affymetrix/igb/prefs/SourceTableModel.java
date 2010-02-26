@@ -3,6 +3,7 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,6 +98,11 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
         switch (SourceColumn.valueOf(this.getColumnName(col))) {
         case Enabled:
 			server.setEnabled((Boolean)value);
+			if (((Boolean)value).booleanValue()) {
+				GeneralLoadUtils.discoverServer(server);
+			} else {
+				ServerList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding);
+			}
 			break;
 		default:
 			throw new IllegalArgumentException("columnIndex " + col + " not editable");

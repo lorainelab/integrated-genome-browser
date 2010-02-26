@@ -348,7 +348,7 @@ public final class GeneralLoadView extends JComponent
 			}
 		}
 
-		Set<GenericVersion> gVersions = group.getVersions();
+		Set<GenericVersion> gVersions = group.getEnabledVersions();
 		if (gVersions == null || gVersions.isEmpty()) {
 			return;
 		}
@@ -603,7 +603,7 @@ public final class GeneralLoadView extends JComponent
 		}
 		curGroup = group;
 
-		Set<GenericVersion> gVersions = group.getVersions();
+		Set<GenericVersion> gVersions = group.getEnabledVersions();
 		if (gVersions.isEmpty()) {
 			createUnknownVersion(group);
 			return;
@@ -670,7 +670,7 @@ public final class GeneralLoadView extends JComponent
 			}
 			return;
 		}
-		Set<GenericVersion> gVersions = group.getVersions();
+		Set<GenericVersion> gVersions = group.getEnabledVersions();
 		if (gVersions.isEmpty()) {
 			createUnknownVersion(group);
 			return;
@@ -854,7 +854,7 @@ public final class GeneralLoadView extends JComponent
 			BioSeq curSeq = gmodel.getSelectedSeq();
 			enabled = curSeq.getSeqGroup() != null;	// Don't allow a null sequence group either.
 			if (enabled) {		// Don't allow buttons for an "unknown" versionName
-				Set<GenericVersion> gVersions = curSeq.getSeqGroup().getVersions();
+				Set<GenericVersion> gVersions = curSeq.getSeqGroup().getEnabledVersions();
 				enabled = (!gVersions.isEmpty() && gVersions.iterator().next().gServer.serverType != ServerType.Unknown);
 			}
 		}

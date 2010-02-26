@@ -45,6 +45,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import static com.affymetrix.igb.util.LocalUrlCacher.CacheUsage;
@@ -282,7 +283,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		table.setAutoCreateRowSorter(true);
 		table.getRowSorter().setSortKeys(SourceTableModel.SORT_KEYS);
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
-		table.setDefaultRenderer(String.class,  new DefaultTableCellRenderer() {
+		TableCellRenderer renderer = new DefaultTableCellRenderer() {
 			private static final long serialVersionUID = -5433598077871623855l;
 
 			@Override
@@ -293,7 +294,9 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, SourceColumn.Enabled.ordinal()));
 				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 			}
-		});
+		};
+		table.setDefaultRenderer(String.class,  renderer);
+		table.setDefaultRenderer(ServerType.class, renderer);
 
 		for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements(); ) {
 			TableColumn column = e.nextElement();

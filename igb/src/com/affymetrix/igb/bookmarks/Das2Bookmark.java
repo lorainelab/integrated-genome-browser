@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Inserts/modifies data for a DAS2 bookmark
@@ -18,14 +17,9 @@ import java.util.Set;
  * 
  * @author Ido M. Tamir
  */
-public class Das2Bookmark {
+public final class Das2Bookmark {
     
     private final List<GraphBookmark> graphs = new ArrayList<GraphBookmark>();
-
-
-    
-    public Das2Bookmark(){
-    }
     
     /**
      * adds one id
@@ -36,30 +30,28 @@ public class Das2Bookmark {
      * @param id the id of the graph
      */
     public void add(GraphSym graph){
+		if(!checkServerMatch(graph)){
+			graphs.add(new GraphBookmark());
+		}
+    }
+
+	private boolean checkServerMatch(GraphSym graph) {
 		BioSeq seq = graph.getGraphSeq();
-	    SymWithProps sp = seq.getAnnotation(graph.getID());
 	    AnnotatedSeqGroup as = seq.getSeqGroup();
 		String gid = graph.getID();
-	    Set<GenericVersion> versions = as.getVersions();
-
-		boolean valid = false;
-		SERVERMATCH:
-		for(GenericVersion version : versions){
+		for(GenericVersion version : as.getEnabledVersions()){
 			for( GenericFeature feature : version.getFeatures()){
 				if(gid.endsWith(feature.featureName)){
 					GenericServer server = version.gServer;
 					if(server.serverType == ServerType.DAS2){
 						graphs.add(new GraphBookmark(server.URL, version.versionID, feature.featureName, "bar"));
-						valid = true;
-						break SERVERMATCH;
+						return true;
 					}
 				}
 			}
 		}
-		if(!valid){
-			graphs.add(new GraphBookmark());
-		}
-    }
+		return false;
+	}
     
     /**
     * returns the current/last parser
@@ -98,7 +90,7 @@ public class Das2Bookmark {
     * 
     *
     */
-     public String getDas2Query(GraphBookmark bookmark, int start, int end, String chr){
+     public static String getDas2Query(GraphBookmark bookmark, int start, int end, String chr){
          String cap = bookmark.getCapability() + "?";
          String seg = "segment=" + bookmark.getServer() + "/" + bookmark.getMapping() + "/" + chr + ";";
          String over = "overlaps=" + start + ":" + end + ";";

@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 /**
  *
@@ -20,7 +21,7 @@ public class AnnotatedSeqGroup {
 	final private String id;
 	private String organism;
 	private String description;
-	final private Set<GenericVersion> gVersions = new CopyOnWriteArraySet<GenericVersion>();
+	final private Set<GenericVersion> gVersions = new CopyOnWriteArraySet<GenericVersion>();	// list of (visible) GenericVersions associated with this group
 	private boolean use_synonyms;
 	final private Map<String, BioSeq> id2seq;
 	private ArrayList<BioSeq> seqlist; //lazy copy of id2seq.values()
@@ -72,8 +73,18 @@ public class AnnotatedSeqGroup {
 		this.gVersions.add(gVersion);
 	}
 
-	final public Set<GenericVersion> getVersions() {
-		return Collections.<GenericVersion>unmodifiableSet(gVersions);
+	/**
+	 * Only return versions that should be visible.
+	 * @return
+	 */
+	final public Set<GenericVersion> getEnabledVersions() {
+		Set<GenericVersion> versions = new CopyOnWriteArraySet<GenericVersion>();
+		for (GenericVersion v : gVersions) {
+			if (v.gServer.isEnabled() || v.gServer.serverType == ServerType.Unknown) {
+				versions.add(v);
+			}
+		}
+		return versions;
 	}
 	
 

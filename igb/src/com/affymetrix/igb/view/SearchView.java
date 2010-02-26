@@ -554,7 +554,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			return 0;
 		}
 		int count = 0;
-		for (GenericVersion gVersion : group.getVersions()) {
+		for (GenericVersion gVersion : group.getEnabledVersions()) {
 			if (gVersion.gServer.serverType == ServerType.DAS2) {
 				count++;
 			}
@@ -569,7 +569,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			return features;
 		}
 
-		for (GenericVersion gVersion : group.getVersions()) {
+		for (GenericVersion gVersion : group.getEnabledVersions()) {
 			if (gVersion.gServer.serverType == ServerType.DAS2) {
 				Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 				if (version != null) {

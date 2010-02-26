@@ -259,63 +259,63 @@ public final class UrlLoaderThread extends Thread {
 
 		try {
 			stream = LocalUrlCacher.getInputStream(url, false, null, respHeaders);
-		list = respHeaders.get("Content-Type");
-		if (list != null && !list.isEmpty()) {
-			content_type = list.get(0);
-		}
-
-		list = respHeaders.get("Content-Length");
-		if (list != null && !list.isEmpty()) {
-			try {
-				content_length = Integer.parseInt(list.get(0));
-			} catch (NumberFormatException ex) {
-				content_length = -1;
+			list = respHeaders.get("Content-Type");
+			if (list != null && !list.isEmpty()) {
+				content_type = list.get(0);
 			}
-		}
 
-		if (content_length == 0) { // Note: length == -1 means "length unknown"
-			throw new IOException("\n" + url + " returned no data.");
-		}
-
-		if ("file".equalsIgnoreCase(url.getProtocol()) || "ftp".equalsIgnoreCase(url.getProtocol())) {
-			System.out.println("Attempting to load data from file: " + url.toExternalForm());
-
-			// Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"
-			// url.getPath() is OK for this purpose, url.getFile() is not because
-			// url.getFile() = url.getPath() + url.getQuery()
-			String filename = url.getPath();
-			LoadFileAction.load(gviewer.getFrame(), stream, filename, gmodel, seq_group, aseq);
-		} else if (content_type == null
-				|| content_type.startsWith("content/unknown")
-				|| content_type.startsWith("application/zip")
-				|| content_type.startsWith("application/octet-stream")) {
-			System.out.println("Attempting to load data from: " + url.toExternalForm());
-			System.out.println("Using file extension: " + file_extension);
-
-			String filename = url.getPath();
-			if (file_extension != null && !"".equals(file_extension.trim())) {
-				if (!file_extension.startsWith(".")) {
-					filename += ".";
+			list = respHeaders.get("Content-Length");
+			if (list != null && !list.isEmpty()) {
+				try {
+					content_length = Integer.parseInt(list.get(0));
+				} catch (NumberFormatException ex) {
+					content_length = -1;
 				}
-				filename += file_extension;
 			}
-			LoadFileAction.load(gviewer.getFrame(), stream, filename, gmodel, seq_group, aseq);
-		} else if (content_type.startsWith("binary/bps")) {
-			parseBinaryBps(stream, type);
-		} else if (content_type.startsWith(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE)) {
-			parseDas2XML(stream, url);
-		} else if (content_type.startsWith("text/plain")
-				|| content_type.startsWith("text/html")
-				|| content_type.startsWith("text/xml")) {
-			// Note that some http servers will return "text/html" even when that is untrue.
-			// we could try testing whether the filename extension is a recognized extension, like ".psl"
-			// and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
-			parseDas1XML(stream);
-		} else if (content_type.startsWith("text/psl")) {
-			parsePSL(stream, type);
-		} else {
-			throw new IOException("Declared data type " + content_type + " cannot be processed");
-		}
+
+			if (content_length == 0) { // Note: length == -1 means "length unknown"
+				throw new IOException("\n" + url + " returned no data.");
+			}
+
+			if ("file".equalsIgnoreCase(url.getProtocol()) || "ftp".equalsIgnoreCase(url.getProtocol())) {
+				System.out.println("Attempting to load data from file: " + url.toExternalForm());
+
+				// Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"
+				// url.getPath() is OK for this purpose, url.getFile() is not because
+				// url.getFile() = url.getPath() + url.getQuery()
+				String filename = url.getPath();
+				LoadFileAction.load(gviewer.getFrame(), stream, filename, gmodel, seq_group, aseq);
+			} else if (content_type == null
+					|| content_type.startsWith("content/unknown")
+					|| content_type.startsWith("application/zip")
+					|| content_type.startsWith("application/octet-stream")) {
+				System.out.println("Attempting to load data from: " + url.toExternalForm());
+				System.out.println("Using file extension: " + file_extension);
+
+				String filename = url.getPath();
+				if (file_extension != null && !"".equals(file_extension.trim())) {
+					if (!file_extension.startsWith(".")) {
+						filename += ".";
+					}
+					filename += file_extension;
+				}
+				LoadFileAction.load(gviewer.getFrame(), stream, filename, gmodel, seq_group, aseq);
+			} else if (content_type.startsWith("binary/bps")) {
+				parseBinaryBps(stream, type);
+			} else if (content_type.startsWith(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE)) {
+				parseDas2XML(stream, url);
+			} else if (content_type.startsWith("text/plain")
+					|| content_type.startsWith("text/html")
+					|| content_type.startsWith("text/xml")) {
+				// Note that some http servers will return "text/html" even when that is untrue.
+				// we could try testing whether the filename extension is a recognized extension, like ".psl"
+				// and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
+				parseDas1XML(stream);
+			} else if (content_type.startsWith("text/psl")) {
+				parsePSL(stream, type);
+			} else {
+				throw new IOException("Declared data type " + content_type + " cannot be processed");
+			}
 		} finally {
 			GeneralUtils.safeClose(stream);
 		}
@@ -374,9 +374,9 @@ public final class UrlLoaderThread extends Thread {
 			das_parser.parse(input_source, URI.create(url.toString()).toString(), gmodel.getSelectedSeqGroup(), true);
 
 		} catch (SAXException e) {
-				IOException ioe = new IOException("Error parsing DAS2 XML");
-				ioe.initCause(e);
-				throw ioe;
+			IOException ioe = new IOException("Error parsing DAS2 XML");
+			ioe.initCause(e);
+			throw ioe;
 		} finally {
 			GeneralUtils.safeClose(bis);
 		}

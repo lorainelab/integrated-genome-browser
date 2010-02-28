@@ -12,11 +12,11 @@
                 <xs:element maxOccurs="unbounded" minOccurs="1" name="mRNA">
                     <xs:annotation>
                         <xs:documentation>Represents an aligned mRNA encoding a protein. Note that start and end attributes for mRNA, exon, and CDS 
-                        elements are in positive-strand-interbase and reference the genome version and chromosome specified in the &quot;version&quot; attribute of
+                        elements are in positive-strand-interbase and reference the genome version and chromosome specified in the "version" attribute of
                         the dnaseq element. ProtAnnot will transform the coordinates so that they show just the region of the dnaseq sequence specified
                         by the &lt;residues&gt; tag. If the mRNA tag's strand attribute is - (for negative strand), then ProtAnnot will also convert the
                         coordinates to negative-strand interbase, where index 0 refers to the 5-prime most base of the negative strand.
-                        That is, if mRNA &quot;strand&quot; attribute equals &quot;-&quot;, then its start becomes M - end and its end becomes M - start, 
+                        That is, if mRNA "strand" attribute equals "-", then its start becomes M - end and its end becomes M - start, 
                         where M is the value of the end attribute of the residues element. Likewise, the start and end coordinates of the child &lt;exon&gt; 
                         and &lt;cds&gt; elements undergo the same transformation.
                         </xs:documentation>
@@ -25,13 +25,13 @@
                         <xs:annotation>
                             <xs:documentation>In ProtAnnot, the content of the descriptor tags will appear in the Property Sheet table when users click 
                                 Glyphs representing mRNAs, simhits, etc. Also, each mRNA needs a single descriptor element with type equal to 
-                                &quot;protein_product_id&quot;. In addition, there should be one &lt;aaseq&gt; element in the file with &quot;id&quot; attribute equal to
+                                "protein_product_id". In addition, there should be one &lt;aaseq&gt; element in the file with "id" attribute equal to
                                 that protein_product_id descriptor's value. This is how ProtAnnot links protein annotations (conserved motifs) 
                                 to the mRNA transcripts that encode them.                         
                             </xs:documentation>
                         </xs:annotation>
                         <xs:sequence>
-                            <xs:element maxOccurs="unbounded" name="descriptor">                     
+                            <xs:element maxOccurs="unbounded" name="descriptor">
                                 <xs:complexType>
                                     <xs:simpleContent>
                                         <xs:extension base="xs:string">
@@ -43,6 +43,18 @@
                             </xs:element>
                             <xs:element maxOccurs="unbounded" name="exon">
                                 <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element maxOccurs="unbounded" name="descriptor">
+                                            <xs:complexType>
+                                                <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                  <xs:attribute name="name" type="xs:string"
+                                                  use="required"/>
+                                                  </xs:extension>
+                                                </xs:simpleContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
                                     <xs:attribute name="start" type="xs:nonNegativeInteger"
                                         use="required"/>
                                     <xs:attribute name="end" type="xs:nonNegativeInteger"
@@ -67,7 +79,7 @@
                 <xs:element name="aaseq">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="simsearch">
+                            <xs:element name="simsearch" maxOccurs="unbounded" minOccurs="0">
                                 <xs:complexType>
                                     <xs:sequence>
                                         <xs:element maxOccurs="unbounded" minOccurs="0"
@@ -75,7 +87,7 @@
                                             <xs:complexType>
                                                 <xs:sequence>
                                                   <xs:element maxOccurs="unbounded"
-                                                  name="descriptor">
+                                                  name="descriptor" minOccurs="0">
                                                   <xs:complexType>
                                                   <xs:simpleContent>
                                                   <xs:extension base="xs:string">
@@ -88,6 +100,19 @@
                                                   <xs:sequence>
                                                   <xs:element name="simspan">
                                                   <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element maxOccurs="unbounded"
+                                                  name="descriptor" minOccurs="0">
+                                                  <xs:complexType>
+                                                  <xs:simpleContent>
+                                                  <xs:extension base="xs:string">
+                                                  <xs:attribute name="name" type="xs:string"
+                                                  use="required"/>
+                                                  </xs:extension>
+                                                  </xs:simpleContent>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
                                                   <xs:attribute name="query_start"
                                                   type="xs:nonNegativeInteger" use="required"/>
                                                   <xs:attribute name="query_end"

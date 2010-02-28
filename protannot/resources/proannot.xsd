@@ -18,14 +18,16 @@
                         coordinates to negative-strand interbase, where index 0 refers to the 5-prime most base of the negative strand.
                         That is, if mRNA "strand" attribute equals "-", then its start becomes M - end and its end becomes M - start, 
                         where M is the value of the end attribute of the residues element. Likewise, the start and end coordinates of the child &lt;exon&gt; 
-                        and &lt;cds&gt; elements undergo the same transformation.
-                        </xs:documentation>
+                        and &lt;cds&gt; elements undergo the same transformation.  Strand must be one of - (minus) or + (plus) which indicate the reverse
+                        and forward strands of the DNA sequence, respectively. Note also that ProtAnnot will assume that
+                        every exon has the same strand as its parental mRNA.
+                         </xs:documentation>
                     </xs:annotation>
                     <xs:complexType>
                         <xs:annotation>
                             <xs:documentation>In ProtAnnot, the content of the descriptor tags will appear in the Property Sheet table when users click 
                                 Glyphs representing mRNAs, simhits, etc. Also, each mRNA needs a single descriptor element with type equal to 
-                                "protein_product_id". In addition, there should be one &lt;aaseq&gt; element in the file with "id" attribute equal to
+                                &quot;protein_product_id&quot;. In addition, there should be one &lt;aaseq&gt; element in the file with &quot;id&quot; attribute equal to
                                 that protein_product_id descriptor's value. This is how ProtAnnot links protein annotations (conserved motifs) 
                                 to the mRNA transcripts that encode them.                         
                             </xs:documentation>
@@ -63,6 +65,15 @@
                             </xs:element>
                             <xs:element minOccurs="1" name="cds">
                                 <xs:complexType>
+                                    <xs:annotation>
+                                        <xs:documentation>Represents the region bounded by the start codon (typically an ATG) and the termination
+                                            codon (typically TAA, TAG, or TGA) inclusive. Thus, for a plus strand feature, the CDS stop
+                                            indicates the end of the termination codon and the CDS start indicates the position of the first translated
+                                            base, e.g., the A in the ATG initial methionine. The reason we include the stop codon in the bounds of the CDS
+                                            is mainly for convenience. Bed files obtained from UCSC include the stop codon in the region bounded by
+                                            the bed &quot;thickStart&quot; and &quot;thickEnd&quot; fields.
+                                        </xs:documentation>
+                                    </xs:annotation>                                 
                                     <xs:attribute name="start" type="xs:nonNegativeInteger"
                                         use="required"/>
                                     <xs:attribute name="end" type="xs:nonNegativeInteger"

@@ -17,10 +17,16 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Internal to the application, convert to a "positive strand" format.
@@ -30,14 +36,24 @@ final class NormalizeXmlStrand {
 	private boolean isNegativeStrand = false;
 	private boolean isStrandSet = false;
 	Document doc = null;
-
+	private static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+	private static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+	private static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
+	private static final String schemaSource = "protannot/resources/proannot.xsd";
 	 /**
      *Initialize dbFactory and dBuilder
      */
     NormalizeXmlStrand(BufferedInputStream bistr) {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			dbFactory.setNamespaceAware(true);
+			dbFactory.setValidating(true);
+			dbFactory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA); // use LANGUAGE here instead of SOURCE
+			dbFactory.setAttribute( JAXP_SCHEMA_SOURCE, schemaSource);
+
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			dBuilder.setErrorHandler(new SimpleErrorHandler());
+
 			Document seqdoc = dBuilder.parse(bistr);
 			doc = processDocument(seqdoc);
         } catch (Exception e) {
@@ -177,5 +193,20 @@ final class NormalizeXmlStrand {
 			childElem.setAttribute("end", Integer.valueOf(end).toString());
 		}
 	}
+
+	private class SimpleErrorHandler implements ErrorHandler {
+    public void warning(SAXParseException e) throws SAXException {
+        System.out.println(e.getMessage());
+    }
+
+    public void error(SAXParseException e) throws SAXException {
+        System.err.println(e.getMessage());
+    }
+
+    public void fatalError(SAXParseException e) throws SAXException {
+        System.err.println(e.getMessage());
+    }
+}
+
 
 }

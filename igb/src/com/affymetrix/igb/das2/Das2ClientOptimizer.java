@@ -451,7 +451,7 @@ public final class Das2ClientOptimizer {
         	//find out what kind of data it is, graph or region, from the ArchiveInfo object
         	ZipInputStream zis = new ZipInputStream(bis); 
     		zis.getNextEntry(); 
-        	ArchiveInfo archiveInfo = new ArchiveInfo(zis);
+        	ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
             if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)){
             	USeqGraphParser gp = new USeqGraphParser();
                 feats = gp.parseGraphSyms(zis, gmodel, type.getName(), archiveInfo);

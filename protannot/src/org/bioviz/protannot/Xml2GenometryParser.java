@@ -467,37 +467,30 @@ final class Xml2GenometryParser {
 		
 		BioSeq mrna = addSpans(m2gSym, genomic, exon_insert_list, start);
 
-        String protein_id = null;
+		String protein_id = determineProteinID(children);
 
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            String nodename = child.getNodeName();
-            if (nodename != null && nodename.equalsIgnoreCase("descriptor")) {
-                Element el = (Element) child;
-                String type = el.getAttribute("type");
-                if (type != null && type.equalsIgnoreCase("protein_product_id")) {
-                    Text tnode = (Text) el.getFirstChild();
-                    protein_id = tnode.getData();
-                    //          System.err.println("Retrieved:" + protein_id + ".");
-                    break;
-                }
-            }
-        }
-
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            String nodename = child.getNodeName();
-            if (nodename != null) {
-                if (nodename.equalsIgnoreCase("cds")) {
-                    processCDS(genomic, (Element) child, m2gSym, mrna, protein_id);
-                }
-            }
-        }
+		processCDS(children, genomic, m2gSym, mrna, protein_id);
 
         m2gSym.setID("");
         genomic.addAnnotation(m2gSym);
         mrna.addAnnotation(m2gSym);
     }
+
+	private static String determineProteinID(NodeList children) throws DOMException {
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			String nodename = child.getNodeName();
+			if (nodename != null && nodename.equalsIgnoreCase("descriptor")) {
+				Element el = (Element) child;
+				String type = el.getAttribute("type");
+				if (type != null && type.equalsIgnoreCase("protein_product_id")) {
+					Text tnode = (Text) el.getFirstChild();
+					return tnode.getData();
+				}
+			}
+		}
+		return null;
+	}
 
 
 	private BioSeq addSpans(TypeContainerAnnot m2gSym, BioSeq genomic, List exon_insert_list, int start)
@@ -657,6 +650,17 @@ final class Xml2GenometryParser {
         exonsym.addSpan(span);
         return exonsym;
     }
+
+	private void processCDS(NodeList children, BioSeq genomic, TypeContainerAnnot m2gSym, BioSeq mrna, String protein_id) {
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			String nodename = child.getNodeName();
+			if (nodename != null && nodename.equalsIgnoreCase("cds")) {
+					processCDS(genomic, (Element) child, m2gSym, mrna, protein_id);
+			}
+		}
+	}
+
 
     /**
      *

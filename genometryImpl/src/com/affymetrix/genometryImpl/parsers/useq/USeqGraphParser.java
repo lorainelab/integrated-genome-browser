@@ -25,7 +25,7 @@ public class USeqGraphParser {
 	 * Only works with Position or PositionScore data, others should use the USeqRegionParser. 
 	 * @param archiveInfo can be null, include if already read from the stream.*/
 	@SuppressWarnings("unchecked")
-	public List<GraphSym> parseGraphSyms(InputStream istr, GenometryModel gmodel, String stream_name, ArchiveInfo archiveInfo) throws IOException {		
+	public List<GraphSym> parseGraphSyms(InputStream istr, GenometryModel gmodel, String stream_name, ArchiveInfo archiveInfo) {		
 		this.gmodel = gmodel;
 		this.stream_name = stream_name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
 		this.archiveInfo = archiveInfo;
@@ -43,83 +43,86 @@ public class USeqGraphParser {
 		}
 		DataInputStream dis = new DataInputStream(zis); 
 
-		//make ArchiveInfo from first ZipEntry
-		if (archiveInfo == null){
-			zis.getNextEntry();
-			this.archiveInfo = new ArchiveInfo(zis);
-		}
+		try {
+			//make ArchiveInfo from first ZipEntry
+			if (archiveInfo == null){
+				zis.getNextEntry();
+				this.archiveInfo = new ArchiveInfo(zis, false);
+			}
 
-		//for each entry build appropriate arrays, may contain multiple stranded chromosome slices so first build and hash them. 
-		ZipEntry ze;
-		ArrayList al = new ArrayList();
-		HashMap<String, ArrayList> chromData = new HashMap<String, ArrayList>();
-		String chromStrand;
-		SliceInfo si = null;
-		while ((ze = zis.getNextEntry()) != null){
-			//make SliceInfo
-			si = new SliceInfo(ze.getName());			
-			//PositionData, just positions, no values
+			//for each entry build appropriate arrays, may contain multiple stranded chromosome slices so first build and hash them. 
+			ZipEntry ze;
+			ArrayList al = new ArrayList();
+			HashMap<String, ArrayList> chromData = new HashMap<String, ArrayList>();
+			String chromStrand;
+			SliceInfo si = null;
+			while ((ze = zis.getNextEntry()) != null){
+				//make SliceInfo
+				si = new SliceInfo(ze.getName());			
+				//PositionData, just positions, no values
+				if (USeqUtilities.POSITION.matcher(si.getBinaryType()).matches()) {
+					PositionData pd = new PositionData (dis, si);
+					chromStrand = si.getChromosome()+si.getStrand();				
+					al = chromData.get(chromStrand);
+					if (al == null){
+						al = new ArrayList();
+						chromData.put(chromStrand, al);
+					}
+					al.add(pd);
+				}
+				//PositionData, just positions, no values
+				else if (USeqUtilities.POSITION_SCORE.matcher(si.getBinaryType()).matches()) {
+					PositionScoreData pd = new PositionScoreData (dis, si);
+					chromStrand = si.getChromosome()+si.getStrand();			
+					al = chromData.get(chromStrand);
+					if (al == null){
+						al = new ArrayList();
+						chromData.put(chromStrand, al);
+					}
+					al.add(pd);
+				}
+				else throw new IOException ("\nIncorrect file type for graph generation -> "+si.getBinaryType()+" . Aborting USeq graph loading.\n");
+			}
+
+			//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
 			if (USeqUtilities.POSITION.matcher(si.getBinaryType()).matches()) {
-				PositionData pd = new PositionData (dis, si);
-				chromStrand = si.getChromosome()+si.getStrand();				
-				al = chromData.get(chromStrand);
-				if (al == null){
-					al = new ArrayList();
-					chromData.put(chromStrand, al);
+				Iterator<String> it = chromData.keySet().iterator();
+				while (it.hasNext()){
+					chromStrand = it.next();
+					al = chromData.get(chromStrand);
+					//merge data
+					PositionData merged = PositionData.merge(al);
+					//pull values
+					int xcoords[] = merged.getBasePositions();
+					float ycoords[] = new float[xcoords.length];
+					Arrays.fill(ycoords, defaultFloatValue);
+					//make GraphSym and add to List
+					GraphSym graf = makeGraph(merged.getSliceInfo(), xcoords, ycoords);
+					graphs.add(graf);
 				}
-				al.add(pd);
 			}
-			//PositionData, just positions, no values
-			else if (USeqUtilities.POSITION_SCORE.matcher(si.getBinaryType()).matches()) {
-				PositionScoreData pd = new PositionScoreData (dis, si);
-				chromStrand = si.getChromosome()+si.getStrand();			
-				al = chromData.get(chromStrand);
-				if (al == null){
-					al = new ArrayList();
-					chromData.put(chromStrand, al);
+			else {
+				Iterator<String> it = chromData.keySet().iterator();
+				while (it.hasNext()){
+					chromStrand = it.next();
+					al = chromData.get(chromStrand);
+					//merge data
+					PositionScoreData merged = PositionScoreData.merge(al);
+					//pull values
+					int xcoords[] = merged.getBasePositions();
+					float ycoords[] = merged.getBaseScores();
+					//make GraphSym and add to List
+					GraphSym graf = makeGraph(merged.getSliceInfo(), xcoords, ycoords);
+					graphs.add(graf);
 				}
-				al.add(pd);
 			}
-			else throw new IOException ("\nIncorrect file type for graph generation -> "+si.getBinaryType()+" . Aborting USeq graph loading.\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			USeqUtilities.safeClose(bis);
+			USeqUtilities.safeClose(dis);
+			USeqUtilities.safeClose(zis);
 		}
-
-		//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
-		if (USeqUtilities.POSITION.matcher(si.getBinaryType()).matches()) {
-			Iterator<String> it = chromData.keySet().iterator();
-			while (it.hasNext()){
-				chromStrand = it.next();
-				al = chromData.get(chromStrand);
-				//merge data
-				PositionData merged = PositionData.merge(al);
-				//pull values
-				int xcoords[] = merged.getBasePositions();
-				float ycoords[] = new float[xcoords.length];
-				Arrays.fill(ycoords, defaultFloatValue);
-				//make GraphSym and add to List
-				GraphSym graf = makeGraph(merged.getSliceInfo(), xcoords, ycoords);
-				graphs.add(graf);
-			}
-		}
-		else {
-			Iterator<String> it = chromData.keySet().iterator();
-			while (it.hasNext()){
-				chromStrand = it.next();
-				al = chromData.get(chromStrand);
-				//merge data
-				PositionScoreData merged = PositionScoreData.merge(al);
-				//pull values
-				int xcoords[] = merged.getBasePositions();
-				float ycoords[] = merged.getBaseScores();
-				//make GraphSym and add to List
-				GraphSym graf = makeGraph(merged.getSliceInfo(), xcoords, ycoords);
-				graphs.add(graf);
-			}
-		}
-		//close streams
-		if (bis != null) bis.close();
-		if (dis != null) dis.close();
-		if (zis != null) zis.close();
-
 		return graphs;
 	}
 

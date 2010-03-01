@@ -1,30 +1,10 @@
 package com.affymetrix.genometryImpl.parsers.useq.apps;
-import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
-import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.parsers.useq.data.Position;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScore;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreText;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionText;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.Region;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionScore;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreText;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionText;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-//import com.affymetrix.genometryImpl.parsers.useq.data.*;
-
+import com.affymetrix.genometryImpl.parsers.useq.*;
+import com.affymetrix.genometryImpl.parsers.useq.data.*;
 
 /**Splits a tab delimited text file by chromosome (and optionally strand), sort on position, then divides it by the number of rows.
  * Writes to a directory named after the input file, minus the extension, capitalized first letter using a chrStrndStartBP-StopBP.useries extension. (e.g. chr5_Random+294383948-294393948.us1) */
@@ -52,7 +32,7 @@ public class Text2USeq {
 	private File[] outputDirectories;
 	private File workingBinarySaveDirectory;
 	private HashMap<String, File> chromStrandFileHash;
-	private final ArrayList<File> files2Zip = new ArrayList<File>();
+	private ArrayList<File> files2Zip = new ArrayList<File>();
 	public static final Pattern PATTERN_TAB = Pattern.compile("\\t");
 	public static final Pattern PATTERN_STRAND = Pattern.compile(".*[+-\\.]$");
 
@@ -65,19 +45,19 @@ public class Text2USeq {
 		//for each file
 		for (int i=0; i< inputFiles.length; i++){
 			System.out.println("Processing "+inputFiles[i]);
-			
+
 			//split text file by chromStrand and write to tempDirectory
 			System.out.println("\tSplitting by chromosome and possibly strand...");
-			
+
 			tempSplitTextDirectory = new File (inputFiles[i].getParentFile(),"TempDir"+ USeqArchive.createRandowWord(7));
 			tempSplitTextDirectory.mkdir();
-			
+
 			chromStrandFileHash = splitFileByChromosomeAndStrand(inputFiles[i], tempSplitTextDirectory, chromosomeColumnIndex, strandColumnIndex, true);
 			if (chromStrandFileHash == null || chromStrandFileHash.size() ==0){
 				System.err.println("\nFailed to parse genomic data text file, aborting!\n");
 				continue;
 			}
-			
+
 			//check strand
 			if (strandBad()) {
 				USeqUtilities.deleteDirectory(tempSplitTextDirectory);
@@ -112,8 +92,8 @@ public class Text2USeq {
 			USeqUtilities.zip(files, zipFile);
 			USeqUtilities.deleteDirectory(workingBinarySaveDirectory);
 			USeqUtilities.deleteDirectory(tempSplitTextDirectory);
-			
-			
+
+
 		}
 		//finish and calc run time
 		double diffTime = ((double)(System.currentTimeMillis() -startTime))/1000;
@@ -121,7 +101,7 @@ public class Text2USeq {
 	}
 
 	//methods
-	
+
 	/**Checks to see if the last character in the first chromStrand file is +, -, or .*/
 	private boolean strandBad(){
 		if (strandColumnIndex == -1) return false;
@@ -129,7 +109,7 @@ public class Text2USeq {
 		if (PATTERN_STRAND.matcher(name).matches() == true) return false;
 		return true;
 	}
-	
+
 	private void writeReadMeTxt(File sourceFile){
 		try {
 			ArchiveInfo ai = new ArchiveInfo(versionedGenome, null);
@@ -578,7 +558,7 @@ public class Text2USeq {
 		}
 
 	}
-	
+
 	/**Parses a Position[]*/
 	private Position[] makePositions(File file){
 		ArrayList<Position> al = new ArrayList<Position>();
@@ -600,7 +580,7 @@ public class Text2USeq {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
 
 	/**Parses a PositionScore[]*/
@@ -694,7 +674,7 @@ public class Text2USeq {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
 
 	/**Parses a RegionScore[]*/
@@ -777,7 +757,7 @@ public class Text2USeq {
 		}
 		return sb.toString();
 	}
-	
+
 	/**Splits a text file by chromosome and strand writing the lines to the saveDirectory. Will skip chromosomes that look like splice junctions upon request (ie chr5_234423_234899).
 	 * The files will be named chromosomeStrand (ie chr5+ or chr5F) as designated in the data file.
 	 * Set strandColumnIndex to -1 to ignore strand.*/
@@ -835,7 +815,7 @@ public class Text2USeq {
 			//close the print writers
 			Iterator<PrintWriter> it = chromOut.values().iterator();
 			while (it.hasNext()) it.next().close();
-			
+
 			return chromFile;
 		} catch (Exception e){
 			e.printStackTrace();
@@ -956,32 +936,5 @@ public class Text2USeq {
 
 		"**************************************************************************************\n");
 
-	}
-	
-	private class PositionStringArray implements Comparable{
-
-		private final int position;
-		private final String[] line;
-		
-		public PositionStringArray(int position, String[] line){
-			this.position = position;
-			this.line = line;
-		}
-		
-		/**Sorts by position.*/
-		public int compareTo(Object other){
-			PositionStringArray se = (PositionStringArray)other;
-			if (position <se.position) return -1;
-			if (position>se.position) return 1;
-			return 0;
-		}
-
-		public int getPosition() {
-			return position;
-		}
-
-		public String[] getLine() {
-			return line;
-		}
 	}
 }

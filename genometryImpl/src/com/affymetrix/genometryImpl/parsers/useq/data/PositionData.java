@@ -1,12 +1,10 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
 
-import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
+import com.affymetrix.genometryImpl.parsers.useq.*;
 
 /**Container for a sorted Position[] and it's associated meta data.
  * @author david.nix@hci.utah.edu*/
@@ -28,7 +26,7 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		sliceInfo = new SliceInfo(binaryFile.getName());
 		read (binaryFile);
 	}
-	public PositionData(DataInputStream dis, SliceInfo sliceInfo) throws IOException{
+	public PositionData(DataInputStream dis, SliceInfo sliceInfo){
 		this.sliceInfo = sliceInfo;
 		read (dis);
 	}
@@ -94,7 +92,7 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * @return	the binaryFile written to the saveDirectory
 	 * */
-	public File write (File saveDirectory, boolean attemptToSaveAsShort) throws IOException{
+	public File write (File saveDirectory, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShort = false;
 		if (attemptToSaveAsShort){			
@@ -110,57 +108,62 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 				bp = currentStart;
 			}
 		}
-		
+
 		//make and put file type/extension in header
 		String fileType;
 		if (useShort) fileType = USeqUtilities.SHORT;
 		else fileType = USeqUtilities.INT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
-		
-		//make IO
-		FileOutputStream workingFOS = new FileOutputStream(binaryFile);
-		DataOutputStream workingDOS = new DataOutputStream( new BufferedOutputStream (workingFOS));
-		
-		//write String header, currently this isn't used
-		workingDOS.writeUTF(header);
-		
-		//write first position, always an int
-		workingDOS.writeInt(sortedPositions[0].position);
-		//write shorts?
-		if (useShort) {			
-			int bp = sortedPositions[0].position;
-			for (int i=1; i< sortedPositions.length; i++){
-				int currentStart = sortedPositions[i].position;
-				//subtract 32768 to extend range of short (-32768 to 32768)
-				int diff = currentStart - bp - 32768;
-				workingDOS.writeShort((short)(diff));
-				bp = currentStart;
+
+		FileOutputStream workingFOS = null;
+		DataOutputStream workingDOS = null;
+		try {
+			//make IO
+			workingFOS = new FileOutputStream(binaryFile);
+			workingDOS = new DataOutputStream( new BufferedOutputStream (workingFOS));
+
+			//write String header, currently this isn't used
+			workingDOS.writeUTF(header);
+
+			//write first position, always an int
+			workingDOS.writeInt(sortedPositions[0].position);
+			//write shorts?
+			if (useShort) {			
+				int bp = sortedPositions[0].position;
+				for (int i=1; i< sortedPositions.length; i++){
+					int currentStart = sortedPositions[i].position;
+					//subtract 32768 to extend range of short (-32768 to 32768)
+					int diff = currentStart - bp - 32768;
+					workingDOS.writeShort((short)(diff));
+					bp = currentStart;
+				}
 			}
-		}
 
-		//no, write ints
-		else {
-			int bp = sortedPositions[0].position;
-			for (int i=1; i< sortedPositions.length; i++){
-				int currentStart = sortedPositions[i].position;
-				int diff = currentStart - bp;
-				workingDOS.writeInt(diff);
-				bp = currentStart;
+			//no, write ints
+			else {
+				int bp = sortedPositions[0].position;
+				for (int i=1; i< sortedPositions.length; i++){
+					int currentStart = sortedPositions[i].position;
+					int diff = currentStart - bp;
+					workingDOS.writeInt(diff);
+					bp = currentStart;
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			binaryFile = null;
+		} finally {
+			USeqUtilities.safeClose(workingDOS);
+			USeqUtilities.safeClose(workingFOS);
 		}
-
-		//close IO
-		workingDOS.close();
-		workingFOS.close();
-
 		return binaryFile;
 	}
-	
+
 	/**Writes the Position[] to a ZipOutputStream.
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * */
-	public void write (ZipOutputStream out, boolean attemptToSaveAsShort) throws IOException{
+	public void write (ZipOutputStream out, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShort = false;
 		if (attemptToSaveAsShort){			
@@ -182,90 +185,89 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		else fileType = USeqUtilities.INT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
-		
-		//make new ZipEntry
-		out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
-		
-		//make IO
-		DataOutputStream workingDOS = new DataOutputStream(out);
-		
-		//write String header, currently this isn't used
-		workingDOS.writeUTF(header);
-		
-		//write first position, always an int
-		workingDOS.writeInt(sortedPositions[0].position);
-		//write shorts?
-		if (useShort) {			
-			int bp = sortedPositions[0].position;
-			for (int i=1; i< sortedPositions.length; i++){
-				int currentStart = sortedPositions[i].position;
-				//subtract 32768 to extend range of short (-32768 to 32768)
-				int diff = currentStart - bp - 32768;
-				workingDOS.writeShort((short)(diff));
-				bp = currentStart;
+
+		DataOutputStream workingDOS = null;
+		try {
+			//make new ZipEntry
+			out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
+
+			//make IO
+			workingDOS = new DataOutputStream(out);
+
+			//write String header, currently this isn't used
+			workingDOS.writeUTF(header);
+
+			//write first position, always an int
+			workingDOS.writeInt(sortedPositions[0].position);
+			//write shorts?
+			if (useShort) {			
+				int bp = sortedPositions[0].position;
+				for (int i=1; i< sortedPositions.length; i++){
+					int currentStart = sortedPositions[i].position;
+					//subtract 32768 to extend range of short (-32768 to 32768)
+					int diff = currentStart - bp - 32768;
+					workingDOS.writeShort((short)(diff));
+					bp = currentStart;
+				}
 			}
-		}
-		//no, write ints
-		else {
-			int bp = sortedPositions[0].position;
-			for (int i=1; i< sortedPositions.length; i++){
-				int currentStart = sortedPositions[i].position;
-				int diff = currentStart - bp;
-				workingDOS.writeInt(diff);
-				bp = currentStart;
+			//no, write ints
+			else {
+				int bp = sortedPositions[0].position;
+				for (int i=1; i< sortedPositions.length; i++){
+					int currentStart = sortedPositions[i].position;
+					int diff = currentStart - bp;
+					workingDOS.writeInt(diff);
+					bp = currentStart;
+				}
 			}
+
+			//close ZipEntry but not stream!
+			out.closeEntry();
+		} catch (IOException e) {
+			e.printStackTrace();
+			USeqUtilities.safeClose(out);
+		} finally {
+			USeqUtilities.safeClose(workingDOS);
 		}
-		
-		//close ZipEntry
-		out.closeEntry();
-	}
-
-
-
-	/**Reads a useries xxx.i or xxx.s binary file into this PositionData.*/
-	public void read (File binaryFile) throws IOException{
-		//open IO
-		this.binaryFile = binaryFile;
-		FileInputStream workingFIS = new FileInputStream(binaryFile);
-		DataInputStream workingDIS = new DataInputStream( new BufferedInputStream(workingFIS ));
-		read(workingDIS);
-		//close IO
-		workingFIS.close();
-		workingDIS.close();
 	}
 
 	/**Reads a useries xxx.i or xxx.s DataInputStream into this PositionData.*/
-	public void read (DataInputStream dis) throws IOException{
-		//read text header, currently not used
-		header = dis.readUTF();
-		
-		//make array
-		int numberPositions = sliceInfo.getNumberRecords();
-		sortedPositions = new Position[numberPositions];
-		
-		//make first position
-		sortedPositions[0] = new Position(dis.readInt());
-		
-		//what kind of data to follow? 
-		String fileType = sliceInfo.getBinaryType();
-		
-		//ints?
-		if (USeqUtilities.POSITION_INT.matcher(fileType).matches()){	
-			//read and resolve offsets to real bps
-			for (int i=1; i< numberPositions; i++){
-				sortedPositions[i] = new Position(sortedPositions[i-1].getPosition() + dis.readInt());	
+	public void read (DataInputStream dis) {
+		try {
+			//read text header, currently not used
+			header = dis.readUTF();
+
+			//make array
+			int numberPositions = sliceInfo.getNumberRecords();
+			sortedPositions = new Position[numberPositions];
+
+			//make first position
+			sortedPositions[0] = new Position(dis.readInt());
+
+			//what kind of data to follow? 
+			String fileType = sliceInfo.getBinaryType();
+
+			//ints?
+			if (USeqUtilities.POSITION_INT.matcher(fileType).matches()){	
+				//read and resolve offsets to real bps
+				for (int i=1; i< numberPositions; i++){
+					sortedPositions[i] = new Position(sortedPositions[i-1].getPosition() + dis.readInt());	
+				}
 			}
-		}
-		//shorts?
-		else if (USeqUtilities.POSITION_SHORT.matcher(fileType).matches()){
-			//read and resolve offsets to real bps
-			for (int i=1; i< numberPositions; i++){
-				sortedPositions[i] = new Position(sortedPositions[i-1].getPosition() + dis.readShort() + 32768);	
+			//shorts?
+			else if (USeqUtilities.POSITION_SHORT.matcher(fileType).matches()){
+				//read and resolve offsets to real bps
+				for (int i=1; i< numberPositions; i++){
+					sortedPositions[i] = new Position(sortedPositions[i-1].getPosition() + dis.readShort() + 32768);	
+				}
 			}
-		}
-		//unknown!
-		else {
-			throw new IOException ("Incorrect file type for creating a Position[] -> '"+fileType+"' in "+binaryFile +"\n");
+			//unknown!
+			else {
+				throw new IOException ("Incorrect file type for creating a Position[] -> '"+fileType+"' in "+binaryFile +"\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			USeqUtilities.safeClose(dis);
 		}
 	}
 

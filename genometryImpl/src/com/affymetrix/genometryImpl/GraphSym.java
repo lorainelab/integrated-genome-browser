@@ -9,7 +9,6 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +34,7 @@ public class GraphSym extends SimpleSymWithProps {
 	private String gid;
 
 	private static final int BUFSIZE = 100000;	// buffer size
-	private int bufStart = 0;	// current buffer start
+	private int bufStart = -1;	// current buffer start (defaults to -1 to force initialization)
 	//private int xBuf[];
 	private float yBuf[];
 	private int wBuf[];
@@ -69,7 +68,6 @@ public class GraphSym extends SimpleSymWithProps {
 			xMax = seq.getLength();
 		} else {
 			setCoords(x, y, w);
-			this.readIntoBuffers(0);	// initialize buffers
 		}
 		
 		SeqSpan span = new SimpleSeqSpan(this.xMin, this.xMax, seq);
@@ -246,10 +244,7 @@ public class GraphSym extends SimpleSymWithProps {
 		if (i >= this.pointCount) {
 			return 0;	// out of range
 		}
-		if (i < bufStart || i >= bufStart + BUFSIZE) {
-			this.bufStart = i;
-			readIntoBuffers(i);
-		}
+		readFromBufferIfNecessary(i);
 		return yBuf[i - bufStart];
 	}
 
@@ -306,11 +301,15 @@ public class GraphSym extends SimpleSymWithProps {
 		if (i >= this.pointCount) {
 			return 0;	// out of range
 		}
-		if (i < bufStart || i >= bufStart + BUFSIZE) {
+		readFromBufferIfNecessary(i);
+		return wBuf[i - bufStart];
+	}
+
+	private void readFromBufferIfNecessary(int i) {
+		if (bufStart == -1 || i < bufStart || i >= bufStart + BUFSIZE) {
 			this.bufStart = i;
 			readIntoBuffers(i);
 		}
-		return wBuf[i - bufStart];
 	}
 
 	public final boolean hasWidth() {

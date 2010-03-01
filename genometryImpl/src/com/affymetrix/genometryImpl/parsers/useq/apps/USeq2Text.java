@@ -1,19 +1,10 @@
 package com.affymetrix.genometryImpl.parsers.useq.apps;
-import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
-import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
 import java.io.*;
 import java.util.regex.*;
 import java.util.zip.*;
 import java.util.*;
+import com.affymetrix.genometryImpl.parsers.useq.*;
+import com.affymetrix.genometryImpl.parsers.useq.data.*;
 
 
 /**Converts USeq binary archives to text 6 or 12 column bed format.*/
@@ -32,21 +23,22 @@ public class USeq2Text {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void printBed (File useqArchive){
 		try {
 			File bedFile = new File (useqArchive.getParentFile(), USeqUtilities.removeExtension(useqArchive.getName())+".bed");
 			PrintWriter out = new PrintWriter (new FileWriter (bedFile));
 			ZipFile zf = new ZipFile(useqArchive);
-			Enumeration<? extends ZipEntry> e = zf.entries();
-			
+			Enumeration<ZipEntry> e = (Enumeration<ZipEntry>) zf.entries();
+
 			//make an ArchiveInfo object on the first element in the zip archive
 			ZipEntry ze = e.nextElement();
 			if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
-			ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze));
-			
+			ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
+
 			//write out ai info as comments
 			ai.appendCommentedKeyValues(out);
-			
+
 			//load data slices
 			while(e.hasMoreElements()) {
 				ze = e.nextElement();
@@ -112,7 +104,7 @@ public class USeq2Text {
 		}
 		//pull files
 		if (useqArchives == null || useqArchives.length == 0) USeqUtilities.printExit("\nCannot find any xxx."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD+" USeq archives?\n");
-		
+
 	}	
 
 
@@ -123,10 +115,10 @@ public class USeq2Text {
 				"**************************************************************************************\n" +
 				"Converts USeq archives to six column, tab delimited, bed format: chrom, start, stop,\n" +
 				"text, score, strand. Interbase coordinates.\n" +
-				
+
 				"\nOptions:\n"+
 				"-f Full path file/directory containing xxx."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD+" files.\n" +
-				
+
 				"\nExample: java -Xmx4G -jar pathTo/USeq/Apps/USeq2Text -f\n" +
 				"      /AnalysisResults/USeqDataArchives/ \n\n" +
 

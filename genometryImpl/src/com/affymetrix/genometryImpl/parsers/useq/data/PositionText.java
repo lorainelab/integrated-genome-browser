@@ -13,15 +13,15 @@ public class PositionText extends Position {
 		super(position);
 		this.text = text;
 	}
-	
+
 	public String toString(){
 		return position+"\t"+text;
 	}
-	
+
 	public String getText() {
 		return text;
 	}
-	
+
 	public void setText(String text) {
 		this.text = text;
 	}

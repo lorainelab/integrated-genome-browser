@@ -11,17 +11,17 @@ import java.util.zip.*;
  * 
  * @author david.nix@hci.utah.edu*/
 public class ArchiveInfo {
-	
+
 	//required fields
 	/**Version of the USeq Archive, current version is 1.0*/
 	public static final String ARCHIVE_VERSION_KEY = "useqArchiveVersion";
 	public static final String ARCHIVE_VERSION_VALUE_ONE = "1.0";
 	public static final String ARCHIVE_README_NAME = "archiveReadMe.txt";
-	
+
 	/**Preferably of the DAS/2 form (e.g. H_sapiens_Mar_2006, C_elegans_May_2008)*/
 	public static final String VERSIONED_GENOME_KEY = "versionedGenome";
 	public static final Pattern DAS2_VERSIONED_GENOME_FORM = Pattern.compile("^\\w_\\w+_\\w+_\\d+$");
-	
+
 	/**Currently just two types exist graph and region.  This is used as to indicate how the data should be displayed (e.g. as a graph, or as 
 	 * a regions/blocks). Others to add?*/
 	public static final String DATA_TYPE_KEY = "dataType";
@@ -31,7 +31,7 @@ public class ArchiveInfo {
 	//reserved optional fields
 	/**Where is the data from? Parsed from file x?*/
 	public static final String ORIGINATING_DATA_SOURCE_KEY = "originatingDataSource";
-	
+
 	/**hat kind of graph style should be used to display, using IGB formats*/
 	public static final String GRAPH_STYLE_KEY = "initialGraphStyle";
 	public static final String GRAPH_STYLE_VALUE_BAR = "Bar";
@@ -40,25 +40,25 @@ public class ArchiveInfo {
 	public static final String GRAPH_STYLE_VALUE_MINMAXAVE = "Min_Max_Ave";
 	public static final String GRAPH_STYLE_VALUE_STAIRSTEP = "Stairstep";
 	public static final String GRAPH_STYLE_VALUE_HEATMAP = "HeatMap";
-	
+
 	/**What color, hex color values #0000FF*/
 	public static final String COLOR_KEY = "initialColor";
 	public static final String BACKGROUND_COLOR_KEY = "initialBackground";
 	public static final Pattern COLOR_HEX_FORM = Pattern.compile("#\\w{6}");
-	
+
 	/**Initial minimum Y and maximum Y values to set for the data.*/
 	public static final String MIN_Y_KEY = "initialMinY";
 	public static final String MAX_Y_KEY = "initialMaxY";
-	
+
 	/**Free text description*/
 	public static final String DESCRIPTION_KEY = "description";
-	
+
 	/**What units are the float values?*/
 	public static final String UNIT_KEY = "units";
-	
+
 	/**USeq archive creation date. This will be added automatically.*/
 	public static final String ARCHIVE_CREATION_DATE = "archiveCreationDate";
-	
+
 	//standard fields
 	/**Comment lines, each beginning with '#' */
 	private String[] commentLines = null;
@@ -66,8 +66,8 @@ public class ArchiveInfo {
 	private LinkedHashMap<String,String> keyValues = null;
 	public static final Pattern KEY_VALUE_SPLITTER = Pattern.compile("\\s*([^=\\s]+)\\s*=\\s*(.+)\\s*");
 
-	
-	
+
+
 	//constructors
 	public ArchiveInfo(String versionedGenome, String dataType){
 		//instantiate keyValues Hash and add required fields
@@ -94,27 +94,54 @@ public class ArchiveInfo {
 		}
 	}
 	/**One way to get this is by zipFile.getInputStream(zipEntry)*/
-	public ArchiveInfo(InputStream is) throws IOException{
-		loadTextArchiveReadMeFile(new BufferedReader(new InputStreamReader(is)));
+	public ArchiveInfo(InputStream is, boolean closeStreams) {
+		InputStreamReader isr = null;
+		BufferedReader br = null;
+		try {
+			isr = new InputStreamReader(is);
+			br = new BufferedReader(isr);
+			loadTextArchiveReadMeFile(br);
+		} catch (Exception e) {
+			e.printStackTrace();
+			USeqUtilities.safeClose(br);
+			USeqUtilities.safeClose(isr);
+		} finally {
+			if (closeStreams) {
+				USeqUtilities.safeClose(br);
+				USeqUtilities.safeClose(isr);
+			}
+		}
 	}
 
 	//methods
-	public static ArchiveInfo fetchArchiveInfo(File useqArchive) throws IOException {
-		if (USeqUtilities.USEQ_ARCHIVE.matcher(useqArchive.getName()).matches() == false) return null;
-		ZipFile zf = new ZipFile(useqArchive);
-		Enumeration e = zf.entries();
-		ZipEntry ze = (ZipEntry) e.nextElement();
-		return new ArchiveInfo( zf.getInputStream(ze));
+	@SuppressWarnings("unchecked")
+	public static ArchiveInfo fetchArchiveInfo(File useqArchive, boolean closeStream) {
+		InputStream is = null;
+		ArchiveInfo ai = null;
+		try {
+			if (USeqUtilities.USEQ_ARCHIVE.matcher(useqArchive.getName()).matches() == false) return null;
+			ZipFile zf = new ZipFile(useqArchive);
+			Enumeration e = zf.entries();
+			ZipEntry ze = (ZipEntry) e.nextElement();
+			is =  zf.getInputStream(ze);
+			ai = new ArchiveInfo(is, closeStream);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (closeStream) USeqUtilities.safeClose(is);
+		}
+		return ai;
 	}
-	
+
 	/**Writes the comment lines and 'key = value' to file, one per line. Will overwrite.
 	 * Returns the archiveReadMe.txt File object*/
 	public File writeReadMeFile (File saveDirectory){
 		//set date
 		keyValues.put(ARCHIVE_CREATION_DATE, new Date().toString());
+		PrintWriter out = null;
 		try{
 			File readme = new File (saveDirectory, ARCHIVE_README_NAME);
-			PrintWriter out = new PrintWriter (new FileWriter (readme));
+			out = new PrintWriter (new FileWriter (readme));
 			//any comment lines?
 			if (commentLines!= null){
 				for (int i=0; i< commentLines.length; i++) out.println(commentLines[i]);
@@ -127,11 +154,12 @@ public class ArchiveInfo {
 				String value = keyValues.get(key);
 				out.println(key +" = "+value);
 			}
-			out.close();
 			return readme;
 		} catch (IOException e){
 			e.printStackTrace();
 			return null;
+		} finally {
+			USeqUtilities.safeClose(out);
 		}
 	}
 	/**For appending Archive into onto a text file.*/
@@ -149,27 +177,44 @@ public class ArchiveInfo {
 			out.println("# "+key +" = "+value);
 		}
 	}
-	
+
 	/**This does not close the BufferedReader.*/
-	public void loadTextArchiveReadMeFile (BufferedReader in) throws IOException {
-		keyValues = new LinkedHashMap<String,String>();
-		String line;
-		ArrayList<String> comments = new ArrayList<String>();
-		while ((line = in.readLine()) != null){
-			line = line.trim();
-			if (line.length() == 0) continue;
-			if (line.startsWith("#")) comments.add(line);
-			else {
-				//split line
-				Matcher mat = KEY_VALUE_SPLITTER.matcher(line);
-				if (mat.matches() == false) throw new IOException("Error in parsing archiveReadMe.txt file. Found a non comment and non key = value line. Bad line -> '"+line);
-				keyValues.put(mat.group(1), mat.group(2));
+	public void loadTextArchiveReadMeFile (BufferedReader in) {
+		try {
+			keyValues = new LinkedHashMap<String,String>();
+			String line;
+			ArrayList<String> comments = new ArrayList<String>();
+			while ((line = in.readLine()) != null){
+				line = line.trim();
+				if (line.length() == 0) continue;
+				if (line.startsWith("#")) comments.add(line);
+				else {
+					//split line
+					Matcher mat = KEY_VALUE_SPLITTER.matcher(line);
+					if (mat.matches() == false) throw new IOException("Error in parsing archiveReadMe.txt file. Found a non comment and non key = value line. Bad line -> '"+line);
+					keyValues.put(mat.group(1), mat.group(2));
+				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();			
+			USeqUtilities.safeClose(in);
 		}
 	}
-	
-	public void loadTextArchiveReadMeFile (File readMeTxt) throws IOException{
-		loadTextArchiveReadMeFile (new BufferedReader (new FileReader (readMeTxt)));
+
+	/**This does close the streams.*/
+	public void loadTextArchiveReadMeFile (File readMeTxt) {
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {
+			fr = new FileReader (readMeTxt);
+			br = new BufferedReader (fr);
+			loadTextArchiveReadMeFile (br);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			USeqUtilities.safeClose(fr);
+			USeqUtilities.safeClose(br);
+		}
 	}
 
 

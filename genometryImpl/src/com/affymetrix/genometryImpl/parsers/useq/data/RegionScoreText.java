@@ -6,9 +6,11 @@ import java.util.Arrays;
 
 /** @author david.nix@hci.utah.edu*/
 public class RegionScoreText extends RegionScore{
+
 	//fields
 	protected String text;
-	
+	private static final long serialVersionUID = 1L;
+
 	//constructor
 	public RegionScoreText (int start, int stop, float score, String text){
 		super(start, stop, score);
@@ -17,7 +19,7 @@ public class RegionScoreText extends RegionScore{
 
 	//methods
 	/**Loads a binary file containing int,int,float,String (start,stop,score,text)
-	 * @return an UNSORTED array! or null if something bad happened.*/
+	 * @return an array! or null if something bad happened.*/
 	public static RegionScoreText[] oldLoadBinary_DEPRECIATED(File binaryFile, boolean sort){
 		ArrayList<RegionScoreText> sss = new ArrayList<RegionScoreText>(10000);
 		DataInputStream dis = null;
@@ -55,7 +57,7 @@ public class RegionScoreText extends RegionScore{
 			}
 		}
 	}
-	
+
 	public String toString(){
 		return start+"\t"+stop+"\t"+score+"\t"+text;
 	}

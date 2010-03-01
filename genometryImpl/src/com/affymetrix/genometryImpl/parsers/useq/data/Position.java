@@ -1,7 +1,7 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
 
 /** @author david.nix@hci.utah.edu*/
-public class Position implements Comparable {
+public class Position implements Comparable<Position> {
 	//fields
 	protected int position;
 
@@ -16,10 +16,9 @@ public class Position implements Comparable {
 	}
 
 	/**Sorts by position base, smaller to larger.*/
-	public int compareTo(Object other){
-		Position se = (Position)other;
-		if (position<se.position) return -1;
-		if (position>se.position) return 1;
+	public int compareTo(Position other){
+		if (position<other.position) return -1;
+		if (position>other.position) return 1;
 		return 0;
 	}
 

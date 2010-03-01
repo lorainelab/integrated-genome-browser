@@ -40,10 +40,9 @@ public final class USeqRegionParser  {
 	private ArchiveInfo archiveInfo;
 	private SliceInfo sliceInfo;
 	public static final Pattern TAB = Pattern.compile("\\t");
-	private static final Pattern COMMA = Pattern.compile(",");
 
 
-	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group, String stream_name, boolean addAnnotationsToSeq, ArchiveInfo ai) throws IOException {		
+	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group, String stream_name, boolean addAnnotationsToSeq, ArchiveInfo ai) {		
 		this.group = group;
 		symlist = new ArrayList<SeqSymmetry>();
 		nameOfTrack = stream_name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");;
@@ -53,63 +52,67 @@ public final class USeqRegionParser  {
 		//open IO
 		BufferedInputStream bis = null;
 		ZipInputStream zis = null;
+
 		if (istr instanceof ZipInputStream) zis = (ZipInputStream)istr;
 		else {
 			if (istr instanceof BufferedInputStream) bis = (BufferedInputStream)istr;
 			else bis = new BufferedInputStream(istr);
 			zis = new ZipInputStream(bis);
 		}
-		
+
 		//parse it!
 		parse(zis);
 
 		return symlist;
 	}
-	
 
-	private void parse(ZipInputStream zis) throws IOException  {
+
+	private void parse(ZipInputStream zis)  {
 		//open streams
 		DataInputStream dis = new DataInputStream(zis);
-		
-		//make ArchiveInfo from first ZipEntry?
-		if (archiveInfo == null){
-			zis.getNextEntry();
-			this.archiveInfo = new ArchiveInfo(zis);
-		}
-		
-		//for each entry parse, will contain all of the same kind of data so just parse first to find out data type 
-		ZipEntry ze;
-		while ((ze = zis.getNextEntry()) != null){
-			//set SliceInfo
-			sliceInfo = new SliceInfo (ze.getName());
-			String dataType = sliceInfo.getBinaryType();
-			//Region
-			if (USeqUtilities.REGION.matcher(dataType).matches()) parseRegionData(dis);
-			//RegionScore
-			else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) parseRegionScoreData(dis);
-			//RegionText
-			else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) parseRegionTextData(dis);
-			//RegionScoreText
-			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) parseRegionScoreTextData(dis);
-			//Position
-			else if(USeqUtilities.POSITION.matcher(dataType).matches()) parsePositionData(dis);
-			//PositionScore
-			else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) parsePositionScoreData(dis);
-			//PositionText
-			else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) parsePositionTextData(dis);
-			//PositionScoreText
-			else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) parsePositionScoreTextData(dis);
-			//unknown!
-			else {
-				throw new IOException ("Unknown USeq data type, '"+dataType+"', for parsing region data from  -> '"+ze.getName()+"' in "+nameOfTrack +"\n");
+
+		try {
+			//make ArchiveInfo from first ZipEntry?
+			if (archiveInfo == null){
+				zis.getNextEntry();
+				this.archiveInfo = new ArchiveInfo(zis, false);
 			}
+			//for each entry parse, will contain all of the same kind of data so just parse first to find out data type 
+			ZipEntry ze;
+			while ((ze = zis.getNextEntry()) != null){
+				//set SliceInfo
+				sliceInfo = new SliceInfo (ze.getName());
+				String dataType = sliceInfo.getBinaryType();
+				//Region
+				if (USeqUtilities.REGION.matcher(dataType).matches()) parseRegionData(dis);
+				//RegionScore
+				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) parseRegionScoreData(dis);
+				//RegionText
+				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) parseRegionTextData(dis);
+				//RegionScoreText
+				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) parseRegionScoreTextData(dis);
+				//Position
+				else if(USeqUtilities.POSITION.matcher(dataType).matches()) parsePositionData(dis);
+				//PositionScore
+				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) parsePositionScoreData(dis);
+				//PositionText
+				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) parsePositionTextData(dis);
+				//PositionScoreText
+				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) parsePositionScoreTextData(dis);
+				//unknown!
+				else {
+					throw new IOException ("Unknown USeq data type, '"+dataType+"', for parsing region data from  -> '"+ze.getName()+"' in "+nameOfTrack +"\n");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			USeqUtilities.safeClose(dis);
+			USeqUtilities.safeClose(zis);
 		}
-		//close IO
-		if (dis != null) dis.close();
-		if (zis != null) zis.close();
 	}
-	
-	private void parsePositionData(DataInputStream dis) throws IOException{
+
+	private void parsePositionData(DataInputStream dis){
 		boolean forward = forward();
 		BioSeq seq = getBioSeq();
 		//make data
@@ -128,8 +131,8 @@ public final class USeqRegionParser  {
 		//set max
 		if (r[r.length-1].getPosition()+1 > seq.getLength()) seq.setLength(r[r.length-1].getPosition()+1);
 	}
-	
-	private void parsePositionScoreData(DataInputStream dis) throws IOException{
+
+	private void parsePositionScoreData(DataInputStream dis){
 		PositionScoreData pd = new PositionScoreData (dis, sliceInfo);
 		boolean forward = forward();
 		BioSeq seq = getBioSeq();
@@ -146,8 +149,8 @@ public final class USeqRegionParser  {
 		//set max
 		if (r[r.length-1].getPosition()+1 > seq.getLength()) seq.setLength(r[r.length-1].getPosition()+1);
 	}
-	
-	private void parsePositionTextData(DataInputStream dis) throws IOException{
+
+	private void parsePositionTextData(DataInputStream dis) {
 		PositionTextData pd = new PositionTextData (dis, sliceInfo);
 		boolean forward = forward();
 		BioSeq seq = getBioSeq();
@@ -165,8 +168,8 @@ public final class USeqRegionParser  {
 		//set max
 		if (r[r.length-1].getPosition()+1 > seq.getLength()) seq.setLength(r[r.length-1].getPosition()+1);
 	}
-	
-	private void parsePositionScoreTextData(DataInputStream dis) throws IOException{
+
+	private void parsePositionScoreTextData(DataInputStream dis) {
 		PositionScoreTextData pd = new PositionScoreTextData (dis, sliceInfo);
 		boolean forward = forward();
 		BioSeq seq = getBioSeq();
@@ -184,7 +187,7 @@ public final class USeqRegionParser  {
 		if (r[r.length-1].getPosition()+1 > seq.getLength()) seq.setLength(r[r.length-1].getPosition()+1);
 	}
 
-	private void parseRegionData(DataInputStream dis) throws IOException{
+	private void parseRegionData(DataInputStream dis) {
 		boolean forward = forward();
 		BioSeq seq = getBioSeq();
 		//make data
@@ -203,7 +206,7 @@ public final class USeqRegionParser  {
 		if (r[r.length-1].getStop() > seq.getLength()) seq.setLength(r[r.length-1].getStop());
 	}
 
-	private void parseRegionScoreData(DataInputStream dis) throws IOException{
+	private void parseRegionScoreData(DataInputStream dis) {
 		RegionScoreData pd = new RegionScoreData (dis, sliceInfo);
 		boolean forward = forward();
 		BioSeq seq = getBioSeq();
@@ -220,7 +223,7 @@ public final class USeqRegionParser  {
 		if (r[r.length-1].getStop() > seq.getLength()) seq.setLength(r[r.length-1].getStop());
 	}
 
-	private void parseRegionTextData(DataInputStream dis) throws IOException{
+	private void parseRegionTextData(DataInputStream dis) {
 		RegionTextData pd = new RegionTextData (dis, sliceInfo);
 		boolean forward = forward();
 		BioSeq seq = getBioSeq();
@@ -272,7 +275,7 @@ public final class USeqRegionParser  {
 		if (r[r.length-1].getStop() > seq.getLength()) seq.setLength(r[r.length-1].getStop());
 	}
 
-	private void parseRegionScoreTextData(DataInputStream dis) throws IOException{
+	private void parseRegionScoreTextData(DataInputStream dis) {
 		RegionScoreTextData pd = new RegionScoreTextData (dis, sliceInfo);
 		boolean forward = forward();
 		BioSeq seq = getBioSeq();
@@ -281,7 +284,6 @@ public final class USeqRegionParser  {
 		for (int i=0; i< r.length; i++){
 			SymWithProps bedline_sym;
 			//check to see if this is a bed 12
-			//bed12?
 			String[] tokens = TAB.split(r[i].getText());
 			//yes
 			if (tokens.length == 7){
@@ -322,7 +324,7 @@ public final class USeqRegionParser  {
 		//set max
 		if (r[r.length-1].getStop() > seq.getLength()) seq.setLength(r[r.length-1].getStop());
 	}
-	
+
 	/*find BioSeq or make a new one*/
 	private BioSeq getBioSeq(){
 		String chromosome = sliceInfo.getChromosome();
@@ -337,8 +339,8 @@ public final class USeqRegionParser  {
 		String strand = sliceInfo.getStrand();
 		return strand.equals("+") || strand.equals(".");
 	}
-	
-	
+
+
 
 }
 

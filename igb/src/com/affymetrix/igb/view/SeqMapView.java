@@ -1777,6 +1777,7 @@ public class SeqMapView extends JPanel
 
 		slice_thread = new Thread() {
 
+			@Override
 			public void run() {
 				enableSeqMap(false);
 				sliceAndDiceNow(sym);
@@ -1787,6 +1788,7 @@ public class SeqMapView extends JPanel
 		slice_thread.start();
 	}
 
+	@SuppressWarnings("deprecation")
 	void stopSlicingThread() {
 		if (slice_thread == Thread.currentThread()) {
 			//System.out.println("Current thread is the slicer!");

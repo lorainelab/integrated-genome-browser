@@ -13,15 +13,15 @@ public class PositionScoreText extends PositionScore {
 		super(position,score);
 		this.text = text;
 	}
-	
+
 	public String toString(){
 		return position+"\t"+score+"\t"+text;
 	}
-	
+
 	public String getText() {
 		return text;
 	}
-	
+
 	public void setText(String text) {
 		this.text = text;
 	}

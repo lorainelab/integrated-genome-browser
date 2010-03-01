@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.parsers.useq;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,7 +29,7 @@ public class USeqUtilities {
 	public static final String BOOLEAN = "o";
 	public static final String USEQ_EXTENSION_NO_PERIOD = "useq";
 	public static final String USEQ_EXTENSION_WITH_PERIOD = ".useq";
-	
+
 	//possible binary file types
 	//Position
 	public static final Pattern POSITION = Pattern.compile("["+INT+SHORT+"]");
@@ -70,17 +71,17 @@ public class USeqUtilities {
 	public static final Pattern REGION_SCORE_TEXT_INT_SHORT_FLOAT_TEXT = Pattern.compile(INT+SHORT+FLOAT+TEXT);
 	public static final Pattern REGION_SCORE_TEXT_SHORT_INT_FLOAT_TEXT = Pattern.compile(SHORT+INT+FLOAT+TEXT);
 	public static final Pattern REGION_SCORE_TEXT_SHORT_SHORT_FLOAT_TEXT = Pattern.compile(SHORT+SHORT+FLOAT+TEXT);
-	
+
 	//misc
 	public static final Pattern USEQ_ARCHIVE = Pattern.compile("(.+)\\.(useq)$");
-	
+
 	//for GenoViz DAS/2
 	public static final ArrayList<String> USEQ_FORMATS = new ArrayList<String>();
 	static {
 		USEQ_FORMATS.add(USEQ_EXTENSION_NO_PERIOD);
 		USEQ_FORMATS.add("bed"); 
 	}
-	
+
 	//static helper methods from the USeq project util.gen.Misc, util.gen.IO
 	/**Prints message to screen, then exits.*/
 	public static void printErrAndExit (String message){
@@ -109,18 +110,23 @@ public class USeqUtilities {
 		return sb.toString();
 	}
 	/**Returns a gz zip or straight file reader on the file based on it's extension compression.*/
-	public static BufferedReader fetchBufferedReader( File txtFile) throws IOException{
-		BufferedReader in;
-		String name = txtFile.getName().toLowerCase();
-		if (name.endsWith(".zip")) {
-			ZipFile zf = new ZipFile(txtFile);
-			ZipEntry ze = (ZipEntry) zf.entries().nextElement();
-			in = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
-		}
-		else if (name.endsWith(".gz")) {
-			in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(txtFile))));
-		}
-		else in = new BufferedReader (new FileReader (txtFile));
+	public static BufferedReader fetchBufferedReader( File txtFile) {
+		BufferedReader in = null;
+		try {
+			String name = txtFile.getName().toLowerCase();
+			if (name.endsWith(".zip")) {
+				ZipFile zf = new ZipFile(txtFile);
+				ZipEntry ze = (ZipEntry) zf.entries().nextElement();
+				in = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
+			}
+			else if (name.endsWith(".gz")) {
+				in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(txtFile))));
+			}
+			else in = new BufferedReader (new FileReader (txtFile));
+		} catch (Exception e) {
+			e.printStackTrace();
+			safeClose(in);
+		} 
 		return in;
 	}
 	/**Prints message to screen, then exits.*/
@@ -132,10 +138,10 @@ public class USeqUtilities {
 	public static int[] stringArrayToInts(String s, String delimiter) throws NumberFormatException{
 		String[] tokens = s.split(delimiter);
 		int[] num = new int[tokens.length];
-			for (int i=0; i< tokens.length; i++){
-				num[i] = Integer.parseInt(tokens[i]);
-			}
-			return num;
+		for (int i=0; i< tokens.length; i++){
+			num[i] = Integer.parseInt(tokens[i]);
+		}
+		return num;
 	}
 	/**Extracts the full path file names of all the files and directories in a given directory. If a file is given it is
 	 * returned as the File[0].
@@ -239,12 +245,14 @@ public class USeqUtilities {
 	}
 	/**Zip compresses an array of Files, be sure to text your zipFile with a .zip extension!*/
 	public static boolean zip(File[] filesToZip, File zipFile ){
-		byte[] buf = new byte[2048];	
+		byte[] buf = new byte[2048];
+		ZipOutputStream out = null;
+		FileInputStream in = null;
 		try {
-			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile));		
+			out = new ZipOutputStream(new FileOutputStream(zipFile));		
 			// Compress the files
 			for (int i=0; i<filesToZip.length; i++) {
-				FileInputStream in = new FileInputStream(filesToZip[i]);
+				in = new FileInputStream(filesToZip[i]);
 				out.putNextEntry(new ZipEntry(filesToZip[i].getName()));
 				int len;
 				while ((len = in.read(buf)) != -1) {
@@ -257,8 +265,10 @@ public class USeqUtilities {
 		} catch (IOException e) {	
 			System.err.println("Can't zip()");
 			e.printStackTrace();
+			safeClose(out);
+			safeClose(in);
 			return false;
-		}
+		} 
 		return true;
 	}
 	/**Merges all files in File[][] to a File[].*/
@@ -281,5 +291,18 @@ public class USeqUtilities {
 		double length = end - start;
 		double halfLength = length/2.0;
 		return (int)Math.round(halfLength) + start;
+	}
+	/**
+	 * Safely close a Closeable object.  If it doesn't exist, return.
+	 */
+	public static <S extends Closeable> void safeClose(S s) {
+		if (s == null) {
+			return;
+		}
+		try {
+			s.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }

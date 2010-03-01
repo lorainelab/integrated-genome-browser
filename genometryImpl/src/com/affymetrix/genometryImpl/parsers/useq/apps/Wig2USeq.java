@@ -1,31 +1,28 @@
 package com.affymetrix.genometryImpl.parsers.useq.apps;
 
-import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
-import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScore;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.affymetrix.genometryImpl.parsers.useq.*;
+import com.affymetrix.genometryImpl.parsers.useq.data.*;
 
 public class Wig2USeq {
 
 	private File[] files;
 	private float skipValue = Float.MIN_VALUE;
 	private float negativeSkipValue;
-	private final ArrayList<File> files2Zip = new ArrayList<File>();
+	private ArrayList<File> files2Zip = new ArrayList<File>();
 	private int rowChunkSize = 100000;
 	private File saveDirectory;
 	private String versionedGenome = null;
 	private int graphStyle = 1;
 	private String color = null;
 	private String description = null;
-	private  File workingWigFile = null;
-	private final Pattern number = Pattern.compile("^\\d");
-	private final Pattern space = Pattern.compile("\\s");
-	private final Pattern equal = Pattern.compile("=");
+	private File workingWigFile = null;
+	private Pattern number = Pattern.compile("^\\d");
+	private Pattern space = Pattern.compile("\\s");
+	private Pattern equal = Pattern.compile("=");
 
 	public Wig2USeq(String[] args) {
 		//check for args 
@@ -142,7 +139,6 @@ public class Wig2USeq {
 	public void parseBedGraphFile() throws IOException{
 		BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile);
 		String line;
-		String type = null;
 		Pattern space = Pattern.compile("\\s+");
 		ArrayList <PositionScore> al = new ArrayList <PositionScore>();
 		String currentChromosome = "";
@@ -156,7 +152,6 @@ public class Wig2USeq {
 			line = line.trim();
 			if (line.length()==0) continue;
 			if (line.contains("type=bedGraph")){
-				type = line;
 				break;
 			}
 		}
@@ -179,7 +174,7 @@ public class Wig2USeq {
 		chroms.add(currentChromosome);
 		start = Integer.parseInt(tokens[1]);
 		stop = Integer.parseInt(tokens[2]);
-		
+
 		//set zero value?
 		if (score != 0){
 			int pos = start-1;
@@ -407,7 +402,7 @@ public class Wig2USeq {
 			}
 		}
 		if (chromosome == null) throw new Exception ("No 'fixedStep chrom=...' line found in "+workingWigFile);
-		
+
 		//zero last position
 		int sizePS = ps.size();
 		if (sizePS!=0){
@@ -416,7 +411,7 @@ public class Wig2USeq {
 			//set zero
 			ps.add(new PositionScore(lastPosition+1, 0.0f));
 		}
-		
+
 		//save last chromosome
 		System.out.println("\t\t"+chromosome+"\t"+ps.size());
 		PositionScore[] psArray = new PositionScore[ps.size()];
@@ -432,7 +427,7 @@ public class Wig2USeq {
 		psArray = null;
 		in.close();
 	}
-	
+
 	public static PositionScore[] stripDuplicateValues(PositionScore[] ps){
 		ArrayList<PositionScore> al = new ArrayList<PositionScore>();
 		float value = Float.MIN_VALUE;
@@ -467,8 +462,8 @@ public class Wig2USeq {
 		al.toArray(ps);
 		return ps;
 	}
-	
-	
+
+
 	public static void main(String[] args) {
 		if (args.length==0){
 			printDocs();
@@ -518,7 +513,7 @@ public class Wig2USeq {
 		if (files == null || files.length == 0) USeqUtilities.printExit("\nError: cannot find your xxx.wig/bedGraph4 file(s)?");
 		if (versionedGenome == null) USeqUtilities.printExit("\nError: you must supply a genome version. Goto http://genome.ucsc.edu/cgi-" +
 		"bin/hgGateway load your organism to find the associated genome version.\n");
-		
+
 		//set negative skip value?
 		if (skipValue != Float.MIN_VALUE) negativeSkipValue = skipValue * -1;
 	}	
@@ -551,4 +546,3 @@ public class Wig2USeq {
 	}
 
 }
-

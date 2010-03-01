@@ -1,13 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.useq;
-
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.PositionTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
-import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.*;
 import java.io.*;
 import java.util.zip.*;
 import java.util.*;
@@ -18,13 +10,13 @@ import java.util.*;
  * @author david.nix@hci.utah.edu*/
 public class USeqArchive {
 
-	private final File zipFile;
+	private File zipFile;
 	private ZipFile zipArchive;
 	private ArchiveInfo archiveInfo;
 	private ZipEntry archiveReadMeEntry;
-	private final HashMap<String, DataRange[]> chromStrandRegions = new HashMap<String, DataRange[]> ();
+	private HashMap<String, DataRange[]> chromStrandRegions = new HashMap<String, DataRange[]> ();
 	//DAS2 does not support stranded requests at this time so leave false.
-	private static final boolean maintainStrandedness = false;
+	private boolean maintainStrandedness = false;
 
 	public USeqArchive (File zipFile) throws Exception{
 		this.zipFile = zipFile;
@@ -33,98 +25,114 @@ public class USeqArchive {
 
 	/**Fetches from the zip archive the files that intersect the unstranded range request and writes them to the stream.
 	 * @return	false if no files found*/
-	public boolean writeSlicesToStream (OutputStream outputStream, String chromosome, int beginningBP, int endingBP, boolean closeStream) throws IOException{
+	public boolean writeSlicesToStream (OutputStream outputStream, String chromosome, int beginningBP, int endingBP, boolean closeStream) {
 		//fetch any overlapping entries
 		ArrayList<ZipEntry> entries = fetchZipEntries(chromosome, beginningBP, endingBP);
 		if (entries == null) return false;
 		//add readme
 		entries.add(0, archiveReadMeEntry);
 		ZipOutputStream out = new ZipOutputStream(outputStream);
-		int count;
-		byte data[] = new byte[2048];
-		int numEntries = entries.size();
-		SliceInfo sliceInfo = null;
-		//for each entry		
-		for (int i=0; i< numEntries; i++){
-			//get input stream to read entry
-			ZipEntry entry = entries.get(i);			
-			BufferedInputStream bis = new BufferedInputStream (zipArchive.getInputStream(entry));
-			//is this entirely contained or needing to be split?, skip first entry which is the readme file
-			if (i!=0) sliceInfo = new SliceInfo(entry.getName());
-			if (i == 0 || sliceInfo.isContainedBy(beginningBP, endingBP)){
-				out.putNextEntry(entry);			
-				//read in and write out, wish there was a way of just copying it directly
-				while ((count = bis.read(data, 0, 2048))!= -1)  out.write(data, 0, count);
-				//close entry
-				out.closeEntry();
+		BufferedInputStream bis = null;
+		try {
+			int count;
+			byte data[] = new byte[2048];
+			int numEntries = entries.size();
+			SliceInfo sliceInfo = null;
+			//for each entry
+			for (int i=0; i< numEntries; i++){
+				//get input stream to read entry
+				ZipEntry entry = entries.get(i);			
+				bis = new BufferedInputStream (zipArchive.getInputStream(entry));
+				//is this entirely contained or needing to be split?, skip first entry which is the readme file
+				if (i!=0) sliceInfo = new SliceInfo(entry.getName());
+				if (i == 0 || sliceInfo.isContainedBy(beginningBP, endingBP)){
+					out.putNextEntry(entry);
+					//read in and write out, wish there was a way of just copying it directly
+					while ((count = bis.read(data, 0, 2048))!= -1)  out.write(data, 0, count);
+					//close entry
+					out.closeEntry();
+				}
+				//slice the slice
+				else sliceAndWriteEntry(beginningBP, endingBP, sliceInfo, bis, out);
+
+				//close input entry input stream
+				bis.close();
 			}
-			//slice the slice
-			else sliceAndWriteEntry(beginningBP, endingBP, sliceInfo, bis, out);
-			
-			//close input entry input stream
-			bis.close();
-		}
-		//close streams?
-		if (closeStream) {
-			out.close();
-			outputStream.close();
+			//close streams?
+			if (closeStream) {
+				out.close();
+				outputStream.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			USeqUtilities.safeClose(out);
+			USeqUtilities.safeClose(outputStream);
+			USeqUtilities.safeClose(bis);
+			return false;
 		}
 		return true;
 	}
 
-	private void sliceAndWriteEntry(int beginningBP, int endingBP, SliceInfo sliceInfo, BufferedInputStream bis, ZipOutputStream out) throws IOException {
+	private void sliceAndWriteEntry(int beginningBP, int endingBP, SliceInfo sliceInfo, BufferedInputStream bis, ZipOutputStream out) {
 		String dataType = sliceInfo.getBinaryType();
 		DataInputStream dis = new DataInputStream(bis);
-		//Position
-		if (USeqUtilities.POSITION.matcher(dataType).matches()) {
-			PositionData d = new PositionData(dis, sliceInfo);
-			if (d.trim(beginningBP, endingBP)) d.write(out, true);
+		try {
+			//Position
+			if (USeqUtilities.POSITION.matcher(dataType).matches()) {
+				PositionData d = new PositionData(dis, sliceInfo);
+				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+			}
+			//PositionScore
+			else if (USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) {
+				PositionScoreData d = new PositionScoreData(dis, sliceInfo);
+				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+			}
+			//PositionText
+			else if (USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) {
+				PositionTextData d = new PositionTextData(dis, sliceInfo);
+				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+			}
+			//PositionScoreText
+			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) {
+				PositionScoreTextData d = new PositionScoreTextData(dis, sliceInfo);
+				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+			}
+			//Region
+			else if (USeqUtilities.REGION.matcher(dataType).matches()) {
+				RegionData d = new RegionData(dis, sliceInfo);
+				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+			}
+			//RegionScore
+			else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) {
+				RegionScoreData d = new RegionScoreData(dis, sliceInfo);
+				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+			}
+			//RegionText
+			else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) {
+				RegionTextData d = new RegionTextData(dis, sliceInfo);
+				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+			}
+			//RegionScoreText
+			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) {
+				RegionScoreTextData d = new RegionScoreTextData(dis, sliceInfo);
+				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+			}
+			//unknown!
+			else {
+				throw new IOException ("Unknown USeq data type, '"+dataType+"', for slicing data from  -> '"+sliceInfo.getSliceName()+"\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			USeqUtilities.safeClose(out);
+			USeqUtilities.safeClose(bis);
+		} finally {
+			USeqUtilities.safeClose(dis);
 		}
-		//PositionScore
-		else if (USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) {
-			PositionScoreData d = new PositionScoreData(dis, sliceInfo);
-			if (d.trim(beginningBP, endingBP)) d.write(out, true);
-		}
-		//PositionText
-		else if (USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) {
-			PositionTextData d = new PositionTextData(dis, sliceInfo);
-			if (d.trim(beginningBP, endingBP)) d.write(out, true);
-		}
-		//PositionScoreText
-		else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) {
-			PositionScoreTextData d = new PositionScoreTextData(dis, sliceInfo);
-			if (d.trim(beginningBP, endingBP)) d.write(out, true);
-		}
-		//Region
-		else if (USeqUtilities.REGION.matcher(dataType).matches()) {
-			RegionData d = new RegionData(dis, sliceInfo);
-			if (d.trim(beginningBP, endingBP)) d.write(out, true);
-		}
-		//RegionScore
-		else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) {
-			RegionScoreData d = new RegionScoreData(dis, sliceInfo);
-			if (d.trim(beginningBP, endingBP)) d.write(out, true);
-		}
-		//RegionText
-		else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) {
-			RegionTextData d = new RegionTextData(dis, sliceInfo);
-			if (d.trim(beginningBP, endingBP)) d.write(out, true);
-		}
-		//RegionScoreText
-		else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) {
-			RegionScoreTextData d = new RegionScoreTextData(dis, sliceInfo);
-			if (d.trim(beginningBP, endingBP)) d.write(out, true);
-		}
-		//unknown!
-		else {
-			throw new IOException ("Unknown USeq data type, '"+dataType+"', for slicing data from  -> '"+sliceInfo.getSliceName()+"\n");
-		}
-		dis.close();
 	}
 
 	/**Fetches from the zip archive the files that intersect the unstranded range request and saves to a new zip archive.
 	 * @return	Sliced zip archive or null if no files found*/
-	public File writeSlicesToFile (File saveDirectory, String chromosome, int beginningBP, int endingBP) throws Exception{
+	public File writeSlicesToFile (File saveDirectory, String chromosome, int beginningBP, int endingBP) {
 		//fetch any overlapping entries
 		ArrayList<ZipEntry> entries = fetchZipEntries(chromosome, beginningBP, endingBP);
 		if (entries == null) return null;
@@ -132,79 +140,99 @@ public class USeqArchive {
 		entries.add(0, archiveReadMeEntry);
 		//make new zip archive to hold slices
 		File slicedZipArchive = new File (saveDirectory, "USeqDataSlice_"+createRandowWord(7)+"."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD);
-		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(slicedZipArchive));
-		int count;
-		byte data[] = new byte[2048];
-		int numEntries = entries.size();
-		//for each entry
-		for (int i=0; i< numEntries; i++){
-			//get input stream to read entry
-			ZipEntry entry = entries.get(i);
-			out.putNextEntry(entry);
-			BufferedInputStream is = new BufferedInputStream (zipArchive.getInputStream(entry));
-			//read in and write out, wish there was a way of just copying it directly
-			while ((count = is.read(data, 0, 2048))!= -1)  out.write(data, 0, count);
-			//close streams
-			out.closeEntry();
-			is.close();
+		ZipOutputStream out = null;
+		BufferedInputStream is = null;
+		try {
+			out = new ZipOutputStream(new FileOutputStream(slicedZipArchive));
+			int count;
+			byte data[] = new byte[2048];
+			int numEntries = entries.size();
+			//for each entry
+			for (int i=0; i< numEntries; i++){
+				//get input stream to read entry
+				ZipEntry entry = entries.get(i);
+				out.putNextEntry(entry);
+				is = new BufferedInputStream (zipArchive.getInputStream(entry));
+				//read in and write out, wish there was a way of just copying it directly
+				while ((count = is.read(data, 0, 2048))!= -1)  out.write(data, 0, count);
+				//close streams
+				out.closeEntry();
+				is.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			USeqUtilities.safeClose(out);
+			USeqUtilities.safeClose(is);
 		}
-		out.close();
 		return slicedZipArchive;
 	}
 
 	/**Fetches the ZipEntries for a given range.  Returns null if none found or chromStrand not found.*/
 	public ArrayList<ZipEntry> fetchZipEntries (String chromStrand, int beginningBP, int endingBP){
 		ArrayList<ZipEntry> al = new ArrayList<ZipEntry>();
-		//fetch chromStrand
+		//fetch chromStrand, these are sorted so ounce found then lost kill it.
 		DataRange[] dr = chromStrandRegions.get(chromStrand);
 		if (dr == null) return null;
+		boolean foundOne = false;
 		for (int i=0; i< dr.length; i++){
 			if (dr[i].intersects(beginningBP, endingBP)) {
 				al.add(dr[i].zipEntry);
+				foundOne = true;
 			}
+			else if (foundOne) break;
 		}
-		if (al.size() == 0) return null;
+		if (foundOne == false) return null;
 		return al;
 	}
 
 	/**Loads the zip entries into the chromosomeStrand DataRange[] HashMap*/
 	@SuppressWarnings("unchecked")
-	private void parseZipFile() throws IOException{
-		//make ArchiveInfo, it's always the first entry
-		if (USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches() == false) throw new IOException ("This file does not appear to be a USeq archive! "+zipFile);
-		zipArchive = new ZipFile(zipFile);
-		Enumeration e = zipArchive.entries();
-		archiveReadMeEntry = (ZipEntry) e.nextElement();
-		archiveInfo = new ArchiveInfo( zipArchive.getInputStream(archiveReadMeEntry));
+	private void parseZipFile() {
+		InputStream is = null;
+		try {
+			//make ArchiveInfo, it's always the first entry
+			if (USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches() == false) throw new IOException("This file does not appear to be a USeq archive! "+zipFile);
+			zipArchive = new ZipFile(zipFile);
+			Enumeration e = zipArchive.entries();
+			archiveReadMeEntry = (ZipEntry) e.nextElement();
+			is = zipArchive.getInputStream(archiveReadMeEntry);
+			archiveInfo = new ArchiveInfo(is, false);
 
-		//load
-		HashMap<String, ArrayList<DataRange>> map = new HashMap<String,ArrayList<DataRange>> ();
+			//load
+			HashMap<String, ArrayList<DataRange>> map = new HashMap<String,ArrayList<DataRange>> ();
 
-		while(e.hasMoreElements()) {
-			ZipEntry zipEntry = (ZipEntry) e.nextElement();
-			SliceInfo sliceInfo = new SliceInfo(zipEntry.getName());
-			//get chromStrand and ranges
-			String chromName;
-			if (maintainStrandedness) chromName = sliceInfo.getChromosome()+sliceInfo.getStrand();
-			else chromName = sliceInfo.getChromosome();
-			//get/make ArrayList
-			ArrayList<DataRange> al = map.get(chromName);
-			if (al == null){
-				al = new ArrayList<DataRange>();
-				map.put(chromName, al);
+			while(e.hasMoreElements()) {
+				ZipEntry zipEntry = (ZipEntry) e.nextElement();
+				SliceInfo sliceInfo = new SliceInfo(zipEntry.getName());
+				//get chromStrand and ranges
+				String chromName;
+				if (maintainStrandedness) chromName = sliceInfo.getChromosome()+sliceInfo.getStrand();
+				else chromName = sliceInfo.getChromosome();
+				//get/make ArrayList
+				ArrayList<DataRange> al = map.get(chromName);
+				if (al == null){
+					al = new ArrayList<DataRange>();
+					map.put(chromName, al);
+				}
+				al.add(new DataRange(zipEntry,sliceInfo.getFirstStartPosition(), sliceInfo.getLastStartPosition()));
+
 			}
-			al.add(new DataRange(zipEntry,sliceInfo.getFirstStartPosition(), sliceInfo.getLastStartPosition()));
-
+			//convert to arrays and sort
+			Iterator<String> it = map.keySet().iterator();
+			while (it.hasNext()){
+				String chromName = it.next();
+				ArrayList<DataRange> al = map.get(chromName);
+				DataRange[] dr = new DataRange[al.size()];
+				al.toArray(dr);
+				Arrays.sort(dr);
+				chromStrandRegions.put(chromName, dr);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		//convert to arrays and sort
-		Iterator<String> it = map.keySet().iterator();
-		while (it.hasNext()){
-			String chromName = it.next();
-			ArrayList<DataRange> al = map.get(chromName);
-			DataRange[] dr = new DataRange[al.size()];
-			al.toArray(dr);
-			Arrays.sort(dr);
-			chromStrandRegions.put(chromName, dr);
+		finally {
+			USeqUtilities.safeClose(is);
 		}
 	}
 
@@ -212,18 +240,15 @@ public class USeqArchive {
 		ZipEntry zipEntry;
 		int beginningBP;
 		int endingBP;
-
 		public DataRange (ZipEntry zipEntry, int beginningBP, int endingBP){
 			this.zipEntry = zipEntry;
 			this.beginningBP = beginningBP;
 			this.endingBP = endingBP;
 		}
-
 		public boolean intersects (int start, int stop){
 			if (stop <= beginningBP || start >= endingBP) return false;
 			return true;
 		}
-
 		/**Sorts by beginningBP, smaller to larger.*/
 		public int compareTo(DataRange other){
 			if (beginningBP < other.beginningBP) return -1;
@@ -258,5 +283,9 @@ public class USeqArchive {
 	/**Returns a random word using nonambiguous alphabet.  Don't use this method for creating more than one word!*/
 	public static String createRandowWord(int lengthOfWord){
 		return createRandomWords(nonAmbiguousLetters, lengthOfWord,1)[0];
+	}
+
+	public ArchiveInfo getArchiveInfo() {
+		return archiveInfo;
 	}
 }

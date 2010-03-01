@@ -21,6 +21,7 @@
 		<property name="http.agent" value="IGB/@jnlp.version@ (Webstart)" />
 		<property name="com.apple.macos.useScreenMenuBar" value="true" />
 		<jar href="igb.jar" main="true" />
+		<jar href="igb-i18n.jar" />
 		<jar href="affx_fusion.jar" />
 		<jar href="freehep-2.1.1.jar" download="lazy" />
 		<jar href="genometry.jar" />

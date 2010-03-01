@@ -1,17 +1,15 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
 
-import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.parsers.useq.apps.Text2USeq;
 import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
+import com.affymetrix.genometryImpl.parsers.useq.*;
+import com.affymetrix.genometryImpl.parsers.useq.apps.*;
 
 
 /**Container for a sorted RegionScoreText[].
-* @author david.nix@hci.utah.edu*/
+ * @author david.nix@hci.utah.edu*/
 public class RegionScoreTextData extends USeqData{
 
 	//fields
@@ -29,11 +27,11 @@ public class RegionScoreTextData extends USeqData{
 		sliceInfo = new SliceInfo(binaryFile.getName());
 		read (binaryFile);
 	}
-	public RegionScoreTextData(DataInputStream dis, SliceInfo sliceInfo) throws IOException{
+	public RegionScoreTextData(DataInputStream dis, SliceInfo sliceInfo) {
 		this.sliceInfo = sliceInfo;
 		read (dis);
 	}
-	
+
 	//methods
 	/**Updates the SliceInfo setting just the FirstStartPosition, LastStartPosition, and NumberRecords.*/
 	public static void updateSliceInfo (RegionScoreText[] sortedRegionScoreTexts, SliceInfo sliceInfo){
@@ -46,7 +44,6 @@ public class RegionScoreTextData extends USeqData{
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
 		for (int i=0; i< sortedRegionScoreTexts.length; i++){
-			//chrom start stop name score strand
 			//bed12?
 			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionScoreTexts[i].text);
 			if (tokens.length == 7) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
@@ -59,7 +56,7 @@ public class RegionScoreTextData extends USeqData{
 	 * @param attemptToSaveAsShort, scans to see if the offsets and region lengths exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * @return the binaryFile written to the saveDirectory
 	 * */
-	public File write (File saveDirectory, boolean attemptToSaveAsShort) throws IOException{
+	public File write (File saveDirectory, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShortBeginning = false;
 		boolean useShortLength = false;
@@ -96,101 +93,108 @@ public class RegionScoreTextData extends USeqData{
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
-		//open IO
-		FileOutputStream workingFOS = new FileOutputStream(binaryFile);
-		DataOutputStream workingDOS = new DataOutputStream( new BufferedOutputStream (workingFOS));
+		FileOutputStream workingFOS = null;
+		DataOutputStream workingDOS = null;
+		try {
+			//make IO
+			workingFOS = new FileOutputStream(binaryFile);
+			workingDOS = new DataOutputStream( new BufferedOutputStream (workingFOS));
 
-		//write String header, currently this isn't used
-		workingDOS.writeUTF(header);
+			//write String header, currently this isn't used
+			workingDOS.writeUTF(header);
 
-		//write first position, always an int
-		workingDOS.writeInt(sortedRegionScoreTexts[0].start);
+			//write first position, always an int
+			workingDOS.writeInt(sortedRegionScoreTexts[0].start);
 
-		//write short position?
-		int bp = sortedRegionScoreTexts[0].start;
-		if (useShortBeginning) {			
-			//also short length?
-			//no
-			if (useShortLength == false){
-				//write first record's length
-				workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
-				workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
-				workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
-				for (int i=1; i< sortedRegionScoreTexts.length; i++){
-					int currentStart = sortedRegionScoreTexts[i].start;
-					//subtract 32768 to extend range of short (-32768 to 32768)
-					int diff = currentStart - bp - 32768;
-					workingDOS.writeShort((short)(diff));
-					workingDOS.writeInt(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start);
-					workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
-					bp = currentStart;
+			//write short position?
+			int bp = sortedRegionScoreTexts[0].start;
+			if (useShortBeginning) {			
+				//also short length?
+				//no
+				if (useShortLength == false){
+					//write first record's length
+					workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
+					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
+					workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
+					for (int i=1; i< sortedRegionScoreTexts.length; i++){
+						int currentStart = sortedRegionScoreTexts[i].start;
+						//subtract 32768 to extend range of short (-32768 to 32768)
+						int diff = currentStart - bp - 32768;
+						workingDOS.writeShort((short)(diff));
+						workingDOS.writeInt(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start);
+						workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
+						workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
+						bp = currentStart;
+					}
+				}
+				//yes short length
+				else {
+					//write first record's length, subtracting 32768 to extent the range of the signed short
+					workingDOS.writeShort((short)(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start - 32768));
+					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
+					workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
+					for (int i=1; i< sortedRegionScoreTexts.length; i++){
+						int currentStart = sortedRegionScoreTexts[i].start;
+						//subtract 32768 to extend range of short (-32768 to 32768)
+						int diff = currentStart - bp - 32768;
+						workingDOS.writeShort((short)(diff));
+						workingDOS.writeShort((short)(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start - 32768));
+						workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
+						workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
+						bp = currentStart;
+					}
 				}
 			}
-			//yes short length
+
+			//no, write int for position
 			else {
-				//write first record's length, subtracting 32768 to extent the range of the signed short
-				workingDOS.writeShort((short)(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start - 32768));
-				workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
-				workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
-				for (int i=1; i< sortedRegionScoreTexts.length; i++){
-					int currentStart = sortedRegionScoreTexts[i].start;
-					//subtract 32768 to extend range of short (-32768 to 32768)
-					int diff = currentStart - bp - 32768;
-					workingDOS.writeShort((short)(diff));
-					workingDOS.writeShort((short)(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start - 32768));
-					workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
-					bp = currentStart;
+				//short length? no
+				if (useShortLength == false){
+					//write first record's length
+					workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
+					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
+					workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
+					for (int i=1; i< sortedRegionScoreTexts.length; i++){
+						int currentStart = sortedRegionScoreTexts[i].start;
+						int diff = currentStart - bp;
+						workingDOS.writeInt(diff);
+						workingDOS.writeInt(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start);
+						workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
+						workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
+						bp = currentStart;
+					}
+				}
+				//yes
+				else {
+					//write first record's length
+					workingDOS.writeShort((short)(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start - 32768));
+					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
+					workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
+					for (int i=1; i< sortedRegionScoreTexts.length; i++){
+						int currentStart = sortedRegionScoreTexts[i].start;
+						int diff = currentStart - bp;
+						workingDOS.writeInt(diff);
+						workingDOS.writeShort((short)(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start - 32768));
+						workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
+						workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
+						bp = currentStart;
+					}
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			binaryFile = null;
+		} finally {
+			USeqUtilities.safeClose(workingDOS);
+			USeqUtilities.safeClose(workingFOS);
 		}
-
-		//no, write int for position
-		else {
-			//short length? no
-			if (useShortLength == false){
-				//write first record's length
-				workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
-				workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
-				workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
-				for (int i=1; i< sortedRegionScoreTexts.length; i++){
-					int currentStart = sortedRegionScoreTexts[i].start;
-					int diff = currentStart - bp;
-					workingDOS.writeInt(diff);
-					workingDOS.writeInt(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start);
-					workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
-					bp = currentStart;
-				}
-			}
-			//yes
-			else {
-				//write first record's length
-				workingDOS.writeShort((short)(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start - 32768));
-				workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
-				workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
-				for (int i=1; i< sortedRegionScoreTexts.length; i++){
-					int currentStart = sortedRegionScoreTexts[i].start;
-					int diff = currentStart - bp;
-					workingDOS.writeInt(diff);
-					workingDOS.writeShort((short)(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start - 32768));
-					workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
-					bp = currentStart;
-				}
-			}
-		}
-		//close IO
-		workingDOS.close();
-		workingFOS.close();
 		return binaryFile;
 	}
-	
+
 	/**Writes the RegionScoreTextData[] to a ZipOutputStream.
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 */
-	public void write (ZipOutputStream out, boolean attemptToSaveAsShort) throws IOException{
+	public void write (ZipOutputStream out, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShortBeginning = false;
 		boolean useShortLength = false;
@@ -226,170 +230,171 @@ public class RegionScoreTextData extends USeqData{
 		fileType = fileType+ USeqUtilities.FLOAT + USeqUtilities.TEXT;
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
-		
-		//make new ZipEntry
-		out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
-		
-		//open IO
-		DataOutputStream workingDOS = new DataOutputStream(out);
-		
-		//write String header, currently this isn't used
-		workingDOS.writeUTF(header);
 
-		//write first bp position, always an int
-		workingDOS.writeInt(sortedRegionScoreTexts[0].start);
+		DataOutputStream workingDOS = null;
+		try {
+			//make new ZipEntry
+			out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
 
-		//write short position?
-		int bp = sortedRegionScoreTexts[0].start;
-		if (useShortBeginning) {			
-			//also short length?
-			//no
-			if (useShortLength == false){
-				//write first record's length
-				workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
-				workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
-				workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
-				for (int i=1; i< sortedRegionScoreTexts.length; i++){
-					int currentStart = sortedRegionScoreTexts[i].start;
-					//subtract 32768 to extend range of short (-32768 to 32768)
-					int diff = currentStart - bp - 32768;
-					workingDOS.writeShort((short)(diff));
-					workingDOS.writeInt(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start);
-					workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
-					bp = currentStart;
+			//open IO
+			workingDOS = new DataOutputStream(out);
+
+			//write String header, currently this isn't used
+			workingDOS.writeUTF(header);
+
+			//write first bp position, always an int
+			workingDOS.writeInt(sortedRegionScoreTexts[0].start);
+
+			//write short position?
+			int bp = sortedRegionScoreTexts[0].start;
+			if (useShortBeginning) {			
+				//also short length?
+				//no
+				if (useShortLength == false){
+					//write first record's length
+					workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
+					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
+					workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
+					for (int i=1; i< sortedRegionScoreTexts.length; i++){
+						int currentStart = sortedRegionScoreTexts[i].start;
+						//subtract 32768 to extend range of short (-32768 to 32768)
+						int diff = currentStart - bp - 32768;
+						workingDOS.writeShort((short)(diff));
+						workingDOS.writeInt(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start);
+						workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
+						workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
+						bp = currentStart;
+					}
+				}
+				//yes short length
+				else {
+					//write first record's length, subtracting 32768 to extent the range of the signed short
+					workingDOS.writeShort((short)(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start - 32768));
+					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
+					workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
+					for (int i=1; i< sortedRegionScoreTexts.length; i++){
+						int currentStart = sortedRegionScoreTexts[i].start;
+						//subtract 32768 to extend range of short (-32768 to 32768)
+						int diff = currentStart - bp - 32768;
+						workingDOS.writeShort((short)(diff));
+						workingDOS.writeShort((short)(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start - 32768));
+						workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
+						workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
+						bp = currentStart;
+					}
 				}
 			}
-			//yes short length
+
+			//no, write int for position
 			else {
-				//write first record's length, subtracting 32768 to extent the range of the signed short
-				workingDOS.writeShort((short)(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start - 32768));
-				workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
-				workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
-				for (int i=1; i< sortedRegionScoreTexts.length; i++){
-					int currentStart = sortedRegionScoreTexts[i].start;
-					//subtract 32768 to extend range of short (-32768 to 32768)
-					int diff = currentStart - bp - 32768;
-					workingDOS.writeShort((short)(diff));
-					workingDOS.writeShort((short)(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start - 32768));
-					workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
-					bp = currentStart;
+				//short length? no
+				if (useShortLength == false){
+					//write first record's length
+					workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
+					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
+					workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
+					for (int i=1; i< sortedRegionScoreTexts.length; i++){
+						int currentStart = sortedRegionScoreTexts[i].start;
+						int diff = currentStart - bp;
+						workingDOS.writeInt(diff);
+						workingDOS.writeInt(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start);
+						workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
+						workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
+						bp = currentStart;
+					}
+				}
+				//yes
+				else {
+					//write first record's length
+					workingDOS.writeShort((short)(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start - 32768));
+					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
+					workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
+					for (int i=1; i< sortedRegionScoreTexts.length; i++){
+						int currentStart = sortedRegionScoreTexts[i].start;
+						int diff = currentStart - bp;
+						workingDOS.writeInt(diff);
+						workingDOS.writeShort((short)(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start - 32768));
+						workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
+						workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
+						bp = currentStart;
+					}
 				}
 			}
+			//close ZipEntry but not stream!
+			out.closeEntry();
+		} catch (IOException e) {
+			e.printStackTrace();
+			USeqUtilities.safeClose(out);
+		} finally {
+			USeqUtilities.safeClose(workingDOS);
 		}
-
-		//no, write int for position
-		else {
-			//short length? no
-			if (useShortLength == false){
-				//write first record's length
-				workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
-				workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
-				workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
-				for (int i=1; i< sortedRegionScoreTexts.length; i++){
-					int currentStart = sortedRegionScoreTexts[i].start;
-					int diff = currentStart - bp;
-					workingDOS.writeInt(diff);
-					workingDOS.writeInt(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start);
-					workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
-					bp = currentStart;
-				}
-			}
-			//yes
-			else {
-				//write first record's length
-				workingDOS.writeShort((short)(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start - 32768));
-				workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
-				workingDOS.writeUTF(sortedRegionScoreTexts[0].text);
-				for (int i=1; i< sortedRegionScoreTexts.length; i++){
-					int currentStart = sortedRegionScoreTexts[i].start;
-					int diff = currentStart - bp;
-					workingDOS.writeInt(diff);
-					workingDOS.writeShort((short)(sortedRegionScoreTexts[i].stop- sortedRegionScoreTexts[i].start - 32768));
-					workingDOS.writeFloat(sortedRegionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedRegionScoreTexts[i].text);
-					bp = currentStart;
-				}
-			}
-		}
-		//close ZipEntry
-		out.closeEntry();
 	}
 
-	/**Reads a binary file into this RegionScoreTextData.*/
-	public void read (File binaryFile) throws IOException{
-		//open IO
-		this.binaryFile = binaryFile;
-		FileInputStream workingFIS = new FileInputStream(binaryFile);
-		DataInputStream workingDIS = new DataInputStream( new BufferedInputStream(workingFIS ));
-		read(workingDIS);
-		//close IO
-		workingFIS.close();
-		workingDIS.close();
-	}
-	
 	/**Reads a DataInputStream into this RegionScoreTextData.*/
-	public void read (DataInputStream dis) throws IOException{
-		//read text header, currently not used
-		header = dis.readUTF();	
+	public void read (DataInputStream dis) {
+		try {
+			//read text header, currently not used
+			header = dis.readUTF();	
 
-		//make array
-		int numberRegionScoreTexts = sliceInfo.getNumberRecords();
-		sortedRegionScoreTexts = new RegionScoreText[numberRegionScoreTexts];
-		
-		//what kind of data to follow? 
-		String fileType = sliceInfo.getBinaryType();
-		
-		//int Position, int Length
-		if (USeqUtilities.REGION_SCORE_TEXT_INT_INT_FLOAT_TEXT.matcher(fileType).matches()){
-			//make first RegionScoreText, position is always an int
-			int start = dis.readInt();
-			sortedRegionScoreTexts[0] = new RegionScoreText(start, start+dis.readInt(), dis.readFloat(), dis.readUTF());
-			//read and resolve offsets to real bps and length to stop
-			for (int i=1; i< numberRegionScoreTexts; i++){
-				start = sortedRegionScoreTexts[i-1].start + dis.readInt();
-				sortedRegionScoreTexts[i] = new RegionScoreText(start, start + dis.readInt(), dis.readFloat(), dis.readUTF());	
+			//make array
+			int numberRegionScoreTexts = sliceInfo.getNumberRecords();
+			sortedRegionScoreTexts = new RegionScoreText[numberRegionScoreTexts];
+
+			//what kind of data to follow? 
+			String fileType = sliceInfo.getBinaryType();
+
+			//int Position, int Length
+			if (USeqUtilities.REGION_SCORE_TEXT_INT_INT_FLOAT_TEXT.matcher(fileType).matches()){
+				//make first RegionScoreText, position is always an int
+				int start = dis.readInt();
+				sortedRegionScoreTexts[0] = new RegionScoreText(start, start+dis.readInt(), dis.readFloat(), dis.readUTF());
+				//read and resolve offsets to real bps and length to stop
+				for (int i=1; i< numberRegionScoreTexts; i++){
+					start = sortedRegionScoreTexts[i-1].start + dis.readInt();
+					sortedRegionScoreTexts[i] = new RegionScoreText(start, start + dis.readInt(), dis.readFloat(), dis.readUTF());	
+				}
 			}
-		}
-		//int Position, short Length
-		else if (USeqUtilities.REGION_SCORE_TEXT_INT_SHORT_FLOAT_TEXT.matcher(fileType).matches()){
-			//make first RegionScoreText, position is always an int
-			int start = dis.readInt();
-			sortedRegionScoreTexts[0] = new RegionScoreText(start, start+ dis.readShort() + 32768, dis.readFloat(), dis.readUTF());
-			//read and resolve offsets to real bps and length to stop
-			for (int i=1; i< numberRegionScoreTexts; i++){
-				start = sortedRegionScoreTexts[i-1].start + dis.readInt();
-				sortedRegionScoreTexts[i] = new RegionScoreText(start, start + dis.readShort() + 32768, dis.readFloat(), dis.readUTF());	
+			//int Position, short Length
+			else if (USeqUtilities.REGION_SCORE_TEXT_INT_SHORT_FLOAT_TEXT.matcher(fileType).matches()){
+				//make first RegionScoreText, position is always an int
+				int start = dis.readInt();
+				sortedRegionScoreTexts[0] = new RegionScoreText(start, start+ dis.readShort() + 32768, dis.readFloat(), dis.readUTF());
+				//read and resolve offsets to real bps and length to stop
+				for (int i=1; i< numberRegionScoreTexts; i++){
+					start = sortedRegionScoreTexts[i-1].start + dis.readInt();
+					sortedRegionScoreTexts[i] = new RegionScoreText(start, start + dis.readShort() + 32768, dis.readFloat(), dis.readUTF());	
+				}
 			}
-		}
-		//short Postion, short Length
-		else if (USeqUtilities.REGION_SCORE_TEXT_SHORT_SHORT_FLOAT_TEXT.matcher(fileType).matches()){
-			//make first RegionScoreText, position is always an int
-			int start = dis.readInt();
-			sortedRegionScoreTexts[0] = new RegionScoreText(start, start+ dis.readShort() + 32768, dis.readFloat(), dis.readUTF());
-			//read and resolve offsets to real bps and length to stop
-			for (int i=1; i< numberRegionScoreTexts; i++){
-				start = sortedRegionScoreTexts[i-1].start + dis.readShort() + 32768;
-				sortedRegionScoreTexts[i] = new RegionScoreText(start, start + dis.readShort() + 32768, dis.readFloat(), dis.readUTF());
+			//short Postion, short Length
+			else if (USeqUtilities.REGION_SCORE_TEXT_SHORT_SHORT_FLOAT_TEXT.matcher(fileType).matches()){
+				//make first RegionScoreText, position is always an int
+				int start = dis.readInt();
+				sortedRegionScoreTexts[0] = new RegionScoreText(start, start+ dis.readShort() + 32768, dis.readFloat(), dis.readUTF());
+				//read and resolve offsets to real bps and length to stop
+				for (int i=1; i< numberRegionScoreTexts; i++){
+					start = sortedRegionScoreTexts[i-1].start + dis.readShort() + 32768;
+					sortedRegionScoreTexts[i] = new RegionScoreText(start, start + dis.readShort() + 32768, dis.readFloat(), dis.readUTF());
+				}
 			}
-		}
-		//short Position, int Length
-		else if (USeqUtilities.REGION_SCORE_TEXT_SHORT_INT_FLOAT_TEXT.matcher(fileType).matches()){
-			//make first RegionScoreText, position is always an int
-			int start = dis.readInt();
-			sortedRegionScoreTexts[0] = new RegionScoreText(start, start+ dis.readInt(), dis.readFloat(), dis.readUTF());
-			//read and resolve offsets to real bps and length to stop
-			for (int i=1; i< numberRegionScoreTexts; i++){
-				start = sortedRegionScoreTexts[i-1].start + dis.readShort() + 32768;
-				sortedRegionScoreTexts[i] = new RegionScoreText(start, start + dis.readInt(), dis.readFloat(), dis.readUTF());	
+			//short Position, int Length
+			else if (USeqUtilities.REGION_SCORE_TEXT_SHORT_INT_FLOAT_TEXT.matcher(fileType).matches()){
+				//make first RegionScoreText, position is always an int
+				int start = dis.readInt();
+				sortedRegionScoreTexts[0] = new RegionScoreText(start, start+ dis.readInt(), dis.readFloat(), dis.readUTF());
+				//read and resolve offsets to real bps and length to stop
+				for (int i=1; i< numberRegionScoreTexts; i++){
+					start = sortedRegionScoreTexts[i-1].start + dis.readShort() + 32768;
+					sortedRegionScoreTexts[i] = new RegionScoreText(start, start + dis.readInt(), dis.readFloat(), dis.readUTF());	
+				}
 			}
-		}
-		//unknown!
-		else {
-			throw new IOException ("Incorrect file type for creating a RegionScoreText[] -> '"+fileType+"' in "+binaryFile +"\n");
-		}
+			//unknown!
+			else {
+				throw new IOException ("Incorrect file type for creating a RegionScoreText[] -> '"+fileType+"' in "+binaryFile +"\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			USeqUtilities.safeClose(dis);
+		} 
 	}
 
 	public RegionScoreText[] getRegionScoreTexts() {

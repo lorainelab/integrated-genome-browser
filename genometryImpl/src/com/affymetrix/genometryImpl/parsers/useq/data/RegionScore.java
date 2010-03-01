@@ -1,9 +1,7 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
 
-import java.io.Serializable;
-
 /** @author david.nix@hci.utah.edu*/
-public class RegionScore extends Region implements Serializable{
+public class RegionScore extends Region {
 
 	//fields
 	private static final long serialVersionUID = 1L;

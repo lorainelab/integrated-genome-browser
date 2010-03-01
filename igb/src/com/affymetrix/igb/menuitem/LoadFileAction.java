@@ -275,7 +275,7 @@ public final class LoadFileAction {
 				
 				//is it a useq graph archive?
 				boolean useqGraphArchive = false;
-				ArchiveInfo ai = ArchiveInfo.fetchArchiveInfo(annotfile);
+				ArchiveInfo ai = ArchiveInfo.fetchArchiveInfo(annotfile, false);
 				if (ai != null && ai.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) useqGraphArchive = true;
 			
 				//is it a graph file?

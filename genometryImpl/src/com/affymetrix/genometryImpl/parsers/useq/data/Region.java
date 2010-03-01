@@ -1,11 +1,6 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.Serializable;
 import java.util.*;
-
-
+import java.io.*;
 
 /**
  * Simple start stop object. Assumes interbase coordinates. 
@@ -15,13 +10,13 @@ public class Region implements Comparable<Region>, Serializable {
 	private static final long serialVersionUID = 1L;
 	protected int start;
 	protected int stop;
-	
+
 	//constructors
 	public Region (int start, int stop){
 		this.start = start;
 		this.stop = stop;
 	}
-	
+
 	public String toString(){
 		return start+"\t"+stop;
 	}
@@ -30,7 +25,7 @@ public class Region implements Comparable<Region>, Serializable {
 		if (stop <= this.start || start >= this.stop) return false;
 		return true;
 	}
-	
+
 	/**Checks to see if each start is <= the stop*/
 	public static boolean checkStartStops(Region[] ss){
 		for (int i=0; i< ss.length; i++){
@@ -63,7 +58,7 @@ public class Region implements Comparable<Region>, Serializable {
 		ss.toArray(ssA);
 		return ssA;
 	}
-	
+
 	/**Sorts by start base, then by length, smaller to larger for both.*/
 	public int compareTo(Region se){
 		if (start<se.start) return -1;
@@ -75,14 +70,14 @@ public class Region implements Comparable<Region>, Serializable {
 		if (len>otherLen) return 1;
 		return 0;
 	}
-	
+
 	/**Returns the total number of bases, assumes interbase coordinates.*/
 	public static int totalBP (Region[] ss){
 		int total = 0;
 		for (int i=0; i< ss.length; i++) total += ss[i].getLength();
 		return total;
 	}
-	
+
 	/**Returns the starts in number of bases, not coordinates for the array.*/
 	public static int[] startsInBases (Region[] ss){
 		int[] indexes = new int[ss.length];
@@ -93,12 +88,12 @@ public class Region implements Comparable<Region>, Serializable {
 		}
 		return indexes;
 	}
-	
+
 	/**Assumes interbase coordinates.*/
 	public int getLength(){
 		return stop-start;
 	}
-	
+
 	public int getStop() {
 		return stop;
 	}
@@ -113,57 +108,4 @@ public class Region implements Comparable<Region>, Serializable {
 		if (start >= beginningBP && stop < endingBP) return true;
 		return false;
 	}
-	
-	/**Parses a tab delimited file (chr, start, stop, ...), zip/ gz OK. 
-	 * @param bed file, skips empty lines and those starting with '#'
-	 * @param subStart and subEnd are the number to subtract from the ends of each region
-	 * @return a HashMap<Chr,sorted Region[]> or null in none are found
-	 * */
-	public static HashMap<String,Region[]> parseStartStops (File bedFile, int subStart, int subEnd){
-		HashMap<String,ArrayList<Region>> ss = new HashMap<String,ArrayList<Region>>();
-		try{
-			BufferedReader in = USeqUtilities.fetchBufferedReader(bedFile);
-			String line;
-			String[] tokens;
-			ArrayList<Region> al = new ArrayList<Region>();
-			//chrom, start, stop
-			while ((line = in.readLine()) !=null) {
-				line = line.trim();
-				if (line.length() ==0 || line.startsWith("#")) continue;
-				tokens = line.split("\\s+");
-				if (tokens.length < 3) continue;
-				//does chrom already exist?
-				if (ss.containsKey(tokens[0])) al = ss.get(tokens[0]);
-				else {
-					al = new ArrayList<Region>();
-					ss.put(tokens[0], al);
-				}
-				int start = Integer.parseInt(tokens[1]);
-				int stop = Integer.parseInt(tokens[2]);
-				if (start > stop) throw new Exception("\nFound a start that is greater than stop!  Cannot parse file "+bedFile+", bad line-> "+line);
-				al.add(new Region(start-subStart, stop- subEnd));
-			}
-		}catch (Exception e){
-			e.printStackTrace();
-			return null;
-		}
-		if (ss.size() == 0) return null;
-		//make hashmap
-		HashMap<String,Region[]> ssReal = new HashMap<String,Region[]>();
-		Iterator<String> it = ss.keySet().iterator();
-		while (it.hasNext()){
-			String chrom = it.next();
-			ArrayList<Region> al = ss.get(chrom);
-			Region[] array = new Region[al.size()];
-			al.toArray(array);
-			Arrays.sort(array);
-			ssReal.put(chrom, array);
-		}
-		return ssReal;
-	}
-	
-	public int getMiddle(){
-		return USeqUtilities.calculateMiddleIntergenicCoordinates(start, stop);
-	}
-
 }

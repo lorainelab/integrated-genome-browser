@@ -2,9 +2,11 @@ package com.affymetrix.genometryImpl.parsers.useq.data;
 
 /** @author david.nix@hci.utah.edu*/
 public class RegionText extends Region{
+
 	//fields
 	protected String text;  //or rank
-	
+	private static final long serialVersionUID = 1L;
+
 	//constructor
 	public RegionText (int start, int stop, String text){
 		super(start, stop);

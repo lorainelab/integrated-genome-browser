@@ -24,42 +24,42 @@ import java.awt.event.*;
 import javax.swing.*;
 
 final class SeqMapViewActionListener implements ActionListener {
-  final static String ZOOM_OUT_FULLY = "ZOOM_OUT_FULLY";
+  private final static String ZOOM_OUT_FULLY = "ZOOM_OUT_FULLY";
 
-  final static String ZOOM_OUT_X = "ZOOM_OUT_X";
-  final static String ZOOM_IN_X = "ZOOM_IN_X";
+  private final static String ZOOM_OUT_X = "ZOOM_OUT_X";
+  private final static String ZOOM_IN_X = "ZOOM_IN_X";
 
-  final static String ZOOM_OUT_Y = "ZOOM_OUT_Y";
-  final static String ZOOM_IN_Y = "ZOOM_IN_Y";
+  private final static String ZOOM_OUT_Y = "ZOOM_OUT_Y";
+  private final static String ZOOM_IN_Y = "ZOOM_IN_Y";
 
-  final static String SCROLL_UP = "SCROLL_UP";
-  final static String SCROLL_DOWN = "SCROLL_DOWN";
-  final static String SCROLL_LEFT = "SCROLL_LEFT";
-  final static String SCROLL_RIGHT = "SCROLL_RIGHT";
-  final static String ZOOM_TO_SELECTED = "Zoom to selected";
+  private final static String SCROLL_UP = "SCROLL_UP";
+  private final static String SCROLL_DOWN = "SCROLL_DOWN";
+  private final static String SCROLL_LEFT = "SCROLL_LEFT";
+  private final static String SCROLL_RIGHT = "SCROLL_RIGHT";
+  private final static String ZOOM_TO_SELECTED = "Zoom to selected";
 
-  final static String[] commands = { ZOOM_OUT_FULLY,
+  private final static String[] commands = { ZOOM_OUT_FULLY,
   ZOOM_OUT_X, ZOOM_IN_X, ZOOM_OUT_Y, ZOOM_IN_Y,
   SCROLL_UP, SCROLL_DOWN, SCROLL_RIGHT, SCROLL_LEFT};
 
-  Action zoom_out_fully_action;
-  Action zoom_out_x_action;
-  Action zoom_in_x_action;
-  Action zoom_out_y_action;
-  Action zoom_in_y_action;
+  private final Action zoom_out_fully_action;
+  private final Action zoom_out_x_action;
+  private final Action zoom_in_x_action;
+  private final Action zoom_out_y_action;
+  private final Action zoom_in_y_action;
 
-  Action zoom_to_selected_action;
+  private final Action zoom_to_selected_action;
 
-  AffyTieredMap seqmap;
-  SeqMapView gviewer;
+  private final AffyTieredMap seqmap;
+  private final SeqMapView gviewer;
 
-  public SeqMapViewActionListener(SeqMapView gviewer) {
+  SeqMapViewActionListener(SeqMapView gviewer) {
 
     this.gviewer = gviewer;
     seqmap = gviewer.seqmap;
 
-    for (int i=0; i<commands.length; i++) {
-      MenuUtil.addAccelerator((JComponent) gviewer, this, commands[i]);
+	for (String command : commands) {
+		MenuUtil.addAccelerator((JComponent) gviewer, this, command);
     }
     zoom_out_x_action = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
@@ -118,7 +118,7 @@ final class SeqMapViewActionListener implements ActionListener {
     doAction(command);
   }
 
-  public void doAction(String command) {
+  private void doAction(String command) {
     if (command.equals(gviewer.zoomtoMI.getText())) {
       gviewer.zoomToSelections();
     }

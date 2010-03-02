@@ -107,10 +107,8 @@ import javax.swing.*;
 public class SeqMapView extends JPanel
 				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
 
-	private static final boolean DIAGNOSTICS = false;
 	private static final boolean DEBUG_TIERS = false;
-	public static final boolean DEBUG_COMP = false;
-	private static final boolean DEBUG_STYLESHEETS = false;
+	private static final boolean DEBUG_COMP = false;
 	
 	private static final boolean view_cytobands_in_axis = true;
 	private static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
@@ -141,9 +139,6 @@ public class SeqMapView extends JPanel
 	/** boolean for setting map range to min and max bounds of
 	AnnotatedBioSeq's annotations */
 	private boolean SHRINK_WRAP_MAP_BOUNDS = false;
-	
-	protected boolean INTERNAL_XSCROLLER = true;
-	protected boolean INTERNAL_YSCROLLER = true;
 
 	private JFrame frm;
 	protected AffyTieredMap seqmap;
@@ -248,49 +243,117 @@ public class SeqMapView extends JPanel
 	 */
 	protected boolean appNameFirstInTitle = false;
 
+	// We only need a single ScoredContainerGlyphFactory because all graph properties
+	// are in the GraphState object.
+	private ScoredContainerGlyphFactory container_factory = null;
+
 	// We only need a single GraphGlyphFactory because all graph properties
 	// are in the GraphState object.
 	private GenericGraphGlyphFactory graph_factory = null;
 
-	/** Constructor provided for subclasses.
-	 *  In other cases, use {@link #makeSeqMapView}.
-	 */
-	protected SeqMapView() {
-		super();
-	}
+	// This preference change listener can reset some things, like whether
+	// the axis uses comma format or not, in response to changes in the stored
+	// preferences.  Changes to axis, and other tier, colors are not so simple,
+	// in part because of the need to coordinate with the label glyphs.
+	private final PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
 
-	public final class SeqMapViewComponentListener extends ComponentAdapter {
-		// update graphs and annotations when the map is resized.
+		public void preferenceChange(PreferenceChangeEvent pce) {
+			if (getAxisTier() == null) {
+				return;
+			}
 
-		@Override
-		public void componentResized(ComponentEvent e) {
-			SwingUtilities.invokeLater(new Runnable() {
+			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
+				return;
+			}
 
-				public void run() {
-					List graphs = collectGraphs();
-					for (int i = 0; i < graphs.size(); i++) {
-						GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
+			TransformTierGlyph axis_tier = getAxisTier();
+
+			if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
+				AxisGlyph ag = null;
+				for (GlyphI child : axis_tier.getChildren()) {
+					if (child instanceof AxisGlyph) {
+						ag = (AxisGlyph) child;
 					}
-					getSeqMap().stretchToFit(false, true);
-					getSeqMap().updateWidget();
-
 				}
-			});
+				if (ag != null) {
+					setAxisFormatFromPrefs(ag);
+				}
+				seqmap.updateWidget();
+			} else if (pce.getKey().equals(PREF_EDGE_MATCH_COLOR) || pce.getKey().equals(PREF_EDGE_MATCH_FUZZY_COLOR)) {
+				if (show_edge_matches) {
+					doEdgeMatching(seqmap.getSelected(), true);
+				}
+			} else if (pce.getKey().equals(PREF_X_ZOOMER_ABOVE)) {
+				boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+				SeqMapView.this.remove(xzoombox);
+				if (b) {
+					SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
+				} else {
+					SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
+				}
+				SeqMapView.this.invalidate();
+			} else if (pce.getKey().equals(PREF_Y_ZOOMER_LEFT)) {
+				boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
+				SeqMapView.this.remove(yzoombox);
+				if (b) {
+					SeqMapView.this.add(BorderLayout.WEST, yzoombox);
+				} else {
+					SeqMapView.this.add(BorderLayout.EAST, yzoombox);
+				}
+				SeqMapView.this.invalidate();
+			}
 		}
 	};
 
-	/**
-	 * Creates an instance of SeqMapView.
-	 */
-	public static SeqMapView makeSeqMapView() {
-		SeqMapView smv = new SeqMapView();
-		smv.init(true);
-		return smv;
-	}
+	protected TransformTierGlyph axis_tier;
 
-	protected void init(boolean add_popups) {
+		/** An un-collapsible instance.  It is hideable, though. */
+	private static AnnotStyle axis_annot_style = new AnnotStyle() {
 
-		seqmap = createSeqMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
+		{ // a non-static initializer block
+			setHumanName("Coordinates");
+		}
+
+		@Override
+		public boolean getSeparate() {
+			return false;
+		}
+
+		@Override
+		public boolean getCollapsed() {
+			return false;
+		}
+
+		@Override
+		public boolean getExpandable() {
+			return false;
+		}
+
+		@Override
+		public void setColor(Color c) {
+			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_AXIS_COLOR, c);
+		}
+
+		@Override
+		public Color getColor() {
+			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
+		}
+
+		@Override
+		public void setBackground(Color c) {
+			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_AXIS_BACKGROUND, c);
+		}
+
+		@Override
+		public Color getBackground() {
+			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
+		}
+	};
+
+	public SeqMapView(boolean add_popups) {
+		super();
+
+		seqmap = createAffyTieredMap();
 
 		seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
 		seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
@@ -317,7 +380,7 @@ public class SeqMapView extends JPanel
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
-		
+
 
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
 		tier_manager.setDoGraphSelections(true);
@@ -364,7 +427,7 @@ public class SeqMapView extends JPanel
 		map_range_box = new MapRangeBox(this);
 		xzoombox = Box.createHorizontalBox();
 		xzoombox.add(map_range_box.range_box);
-		
+
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		xzoombox.add((Component) xzoomer);
 
@@ -396,9 +459,9 @@ public class SeqMapView extends JPanel
 			this.add(BorderLayout.EAST, yzoombox);
 		}
 
-		
+
 		this.add(BorderLayout.CENTER, seqmap);
-	
+
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 
@@ -407,70 +470,36 @@ public class SeqMapView extends JPanel
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 	}
 
+	public final class SeqMapViewComponentListener extends ComponentAdapter {
+		// update graphs and annotations when the map is resized.
+
+		@Override
+		public void componentResized(ComponentEvent e) {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				public void run() {
+					List graphs = collectGraphs();
+					for (int i = 0; i < graphs.size(); i++) {
+						GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
+					}
+					getSeqMap().stretchToFit(false, true);
+					getSeqMap().updateWidget();
+
+				}
+			});
+		}
+	};
+
 	/** Creates an instance to be used as the SeqMap.  Set-up of listeners and such
 	 *  will be done in init()
 	 */
-	private static AffyTieredMap createSeqMap(boolean internalXScroller, boolean internalYScroller) {
-		AffyTieredMap resultSeqMap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
+	private static AffyTieredMap createAffyTieredMap() {
+		AffyTieredMap resultSeqMap = new AffyLabelledTierMap(true, true);
 		NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
 		label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
 		return resultSeqMap;
 	}
-
-	// This preference change listener can reset some things, like whether
-	// the axis uses comma format or not, in response to changes in the stored
-	// preferences.  Changes to axis, and other tier, colors are not so simple,
-	// in part because of the need to coordinate with the label glyphs.
-	private final PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
-
-		public void preferenceChange(PreferenceChangeEvent pce) {
-			if (getAxisTier() == null) {
-				return;
-			}
-
-			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
-				return;
-			}
-
-			TransformTierGlyph axis_tier = getAxisTier();
-			
-			if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
-				AxisGlyph ag = null;
-				for (GlyphI child : axis_tier.getChildren()) {
-					if (child instanceof AxisGlyph) {
-						ag = (AxisGlyph) child;
-					}
-				}
-				if (ag != null) {
-					setAxisFormatFromPrefs(ag);
-				}
-				seqmap.updateWidget();
-			} else if (pce.getKey().equals(PREF_EDGE_MATCH_COLOR) || pce.getKey().equals(PREF_EDGE_MATCH_FUZZY_COLOR)) {
-				if (show_edge_matches) {
-					doEdgeMatching(seqmap.getSelected(), true);
-				}
-			} else if (pce.getKey().equals(PREF_X_ZOOMER_ABOVE)) {
-				boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
-				SeqMapView.this.remove(xzoombox);
-				if (b) {
-					SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
-				} else {
-					SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
-				}
-				SeqMapView.this.invalidate();
-			} else if (pce.getKey().equals(PREF_Y_ZOOMER_LEFT)) {
-				boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
-				SeqMapView.this.remove(yzoombox);
-				if (b) {
-					SeqMapView.this.add(BorderLayout.WEST, yzoombox);
-				} else {
-					SeqMapView.this.add(BorderLayout.EAST, yzoombox);
-				}
-				SeqMapView.this.invalidate();
-			}
-		}
-	};
 
 	public final void setFrame(JFrame frm) {
 		this.frm = frm;
@@ -500,53 +529,10 @@ public class SeqMapView extends JPanel
 	public JPopupMenu getSelectionPopup() {
 		return sym_popup;
 	}
-	protected TransformTierGlyph axis_tier;
 
 	private IAnnotStyleExtended getAxisAnnotStyle() {
 		return axis_annot_style;
 	}
-	/** An un-collapsible instance.  It is hideable, though. */
-	private static AnnotStyle axis_annot_style = new AnnotStyle() {
-
-		{ // a non-static initializer block
-			setHumanName("Coordinates");
-		}
-
-		@Override
-		public boolean getSeparate() {
-			return false;
-		}
-
-		@Override
-		public boolean getCollapsed() {
-			return false;
-		}
-
-		@Override
-		public boolean getExpandable() {
-			return false;
-		}
-
-		@Override
-		public void setColor(Color c) {
-			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_AXIS_COLOR, c);
-		}
-
-		@Override
-		public Color getColor() {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
-		}
-
-		@Override
-		public void setBackground(Color c) {
-			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_AXIS_BACKGROUND, c);
-		}
-
-		@Override
-		public Color getBackground() {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
-		}
-	};
 
 	public final TransformTierGlyph getAxisTier() {
 		return axis_tier;
@@ -990,9 +976,9 @@ public class SeqMapView extends JPanel
 			// reselect glyph(s) based on selected sym(s);
 			// Unfortunately, some previously selected syms will not be directly
 			// associatable with new glyphs, so not all selections can be preserved
-			Iterator iter = old_selections.iterator();
+			Iterator<SeqSymmetry> iter = old_selections.iterator();
 			while (iter.hasNext()) {
-				SeqSymmetry old_selected_sym = (SeqSymmetry) iter.next();
+				SeqSymmetry old_selected_sym = iter.next();
 
 				GlyphI gl = seqmap.<GlyphI>getItem(old_selected_sym);
 				if (gl != null) {
@@ -1055,9 +1041,6 @@ public class SeqMapView extends JPanel
 			setZoomSpotX(0.5 * (range[0] + range[1]));
 		}
 		seqmap.updateWidget();
-		if (DIAGNOSTICS) {
-			System.out.println("Time to convert models to display: " + tim.read() / 1000f);
-		}
 	}
 
 	private void shrinkWrap() {
@@ -1070,7 +1053,7 @@ public class SeqMapView extends JPanel
 			 *    is to base annotation bounds on map glyphs, but then have to go into tiers to
 			 *    get children bounds, and filter out stuff like axis and DNA glyphs, etc...)
 			 */
-			SeqSpan annot_bounds = getAnnotationBounds(true);
+			SeqSpan annot_bounds = getAnnotationBounds(aseq);
 			if (annot_bounds != null) {
 				System.out.println("annot bounds: " + annot_bounds.getMin() + ", " + annot_bounds.getMax());
 				// transform to view
@@ -1159,7 +1142,7 @@ public class SeqMapView extends JPanel
 		return layers;
 	}
 
-	final void removeEmptyTiers() {
+	private final void removeEmptyTiers() {
 		// Hides all empty tiers.  Doesn't really remove them.
 		for (TierGlyph tg : seqmap.getTiers()) {
 			if (tg.getChildCount() <= 0) {
@@ -1179,7 +1162,7 @@ public class SeqMapView extends JPanel
 	 *    This method is currently somewhat problematic, since it does not descend into BioSeqs
 	 *      that aseq might be composed of to factor in bounds of annotations on those sequences
 	 */
-	private final SeqSpan getAnnotationBounds(boolean exclude_graphs) {
+	private static final SeqSpan getAnnotationBounds(BioSeq aseq) {
 		int annotCount = aseq.getAnnotationCount();
 		int min = Integer.MAX_VALUE;
 		int max = Integer.MIN_VALUE;
@@ -1187,14 +1170,11 @@ public class SeqMapView extends JPanel
 			// all_gene_searches, all_repeat_searches, etc.
 			SeqSymmetry annotSym = aseq.getAnnotation(i);
 			if (annotSym instanceof GraphSym) {
-				if (!exclude_graphs) {
-					GraphSym graf = (GraphSym) annotSym;
-					min = Math.min(graf.getMinXCoord(),min);
-					max = Math.max(graf.getMaxXCoord(), max);
-				}
-			} else if (annotSym instanceof TypeContainerAnnot) {
+				continue;
+			}
+			if (annotSym instanceof TypeContainerAnnot) {
 				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
-				int[] sub_bounds = getAnnotationBounds(aseq, tca, exclude_graphs, min, max);
+				int[] sub_bounds = getAnnotationBounds(aseq, tca, min, max);
 				min = sub_bounds[0];
 				max = sub_bounds[1];
 			} else { // this shouldn't happen: should only be TypeContainerAnnots
@@ -1209,9 +1189,9 @@ public class SeqMapView extends JPanel
 			min = Math.max(0, min - 100);
 			max = Math.min(aseq.getLength(), max + 100);
 			return new SimpleSeqSpan(min, max, aseq);
-		} else {
-			return null;
 		}
+		return null;
+
 	}
 
 	/** Returns the minimum and maximum positions of all included annotations.
@@ -1223,7 +1203,7 @@ public class SeqMapView extends JPanel
 	 *  @param min  an initial minimum value.
 	 *  @param max  an initial maximum value.
 	 */
-	private static final int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, boolean exclude_graphs, int min, int max) {
+	private static final int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, int min, int max) {
 		int[] min_max = new int[2];
 		min_max[0] = min;
 		min_max[1] = max;
@@ -1237,20 +1217,12 @@ public class SeqMapView extends JPanel
 				// all_gene_searches, all_repeat_searches, etc.
 				SeqSymmetry annotSym = next_sym.getChild(i);
 				if (annotSym instanceof GraphSym) {
-					if (!exclude_graphs) {
-						GraphSym graf = (GraphSym) annotSym;
-						min_max[0] = Math.min(graf.getMinXCoord(), min_max[0]);
-						min_max[1] = Math.max(graf.getMaxXCoord(), min_max[1]);   // JN - was using min_max[0]; fixed
-						// TODO: This needs to take into account GraphIntervalSyms width coords also !!
-						// The easiest way would be to re-write the GraphSym and GraphIntervalSym
-						// method getSpan() so that it returned the correct values.
-					}
-				} else {
-					SeqSpan span = annotSym.getSpan(seq);
-					if (span != null) {
-						min_max[0] = Math.min(span.getMin(), min_max[0]);
-						min_max[1] = Math.max(span.getMax(), min_max[1]);
-					}
+					continue;
+				}
+				SeqSpan span = annotSym.getSpan(seq);
+				if (span != null) {
+					min_max[0] = Math.min(span.getMin(), min_max[0]);
+					min_max[1] = Math.max(span.getMax(), min_max[1]);
 				}
 			}
 		}
@@ -1289,7 +1261,7 @@ public class SeqMapView extends JPanel
 		if (aseq != null &&
 						aseq.getComposition() != null) {
 			// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
-			//   addLeafsToTier(), addToTier(), etc. into mapping from compositon sequences
+			//   addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
 			BioSeq cached_aseq = aseq;
 			MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
 			SeqSymmetry[] cached_path = transform_path;
@@ -1304,9 +1276,6 @@ public class SeqMapView extends JPanel
 				SeqSymmetry csym = comp.getChild(i);
 				// return seq in a symmetry span that _doesn't_ match aseq
 				BioSeq cseq = SeqUtils.getOtherSeq(csym, cached_aseq);
-				if (DEBUG_COMP) {
-					System.out.println(" other seq: " + cseq.getID() + ",  " + cseq);
-				}
 				if (cseq != null) {
 					aseq = cseq;
 					if (cached_seq2viewSym == null) {
@@ -1316,9 +1285,6 @@ public class SeqMapView extends JPanel
 						transform_path = new SeqSymmetry[2];
 						transform_path[0] = csym;
 						transform_path[1] = cached_seq2viewSym;
-					}
-					if (DEBUG_COMP) {
-						System.out.println("  calling addAnnotationTiers with transform path length: " + transform_path.length);
 					}
 					addAnnotationTiers();
 				}
@@ -1332,17 +1298,14 @@ public class SeqMapView extends JPanel
 	}
 
 
-	public GenericGraphGlyphFactory getGenericGraphGlyphFactory() {
+	private GenericGraphGlyphFactory getGenericGraphGlyphFactory() {
 		if (graph_factory == null) {
 			graph_factory = new GenericGraphGlyphFactory();
 		}
 		return graph_factory;
 	}
-	// We only need a single ScoredContainerGlyphFactory because all graph properties
-	// are in the GraphState object.
-	ScoredContainerGlyphFactory container_factory = null;
-
-	public ScoredContainerGlyphFactory getScoredContainerGlyphFactory() {
+	
+	private final ScoredContainerGlyphFactory getScoredContainerGlyphFactory() {
 		if (container_factory == null) {
 			container_factory = new ScoredContainerGlyphFactory();
 		}
@@ -1352,7 +1315,7 @@ public class SeqMapView extends JPanel
 	// The parameter "method" is now ignored because the default glyph factory
 	// is an XmlStylesheetGlyphFactory, and it will take the method and type
 	// into account when determining how to draw a sym.
-	public MapViewGlyphFactoryI getAnnotationGlyphFactory(String method) {
+	public final MapViewGlyphFactoryI getAnnotationGlyphFactory(String method) {
 		return default_glyph_factory;
 	}
 
@@ -1506,14 +1469,6 @@ public class SeqMapView extends JPanel
 		seqmap.clearSelected();
 		setSelectedRegion(null, false);
 		//  clear match_glyphs?
-	}
-
-	private SeqSymmetry glyphToSym(GlyphI gl) {
-		if (gl.getInfo() instanceof SeqSymmetry) {
-			return (SeqSymmetry) gl.getInfo();
-		} else {
-			return null;
-		}
 	}
 
 	/**
@@ -1707,21 +1662,15 @@ public class SeqMapView extends JPanel
 		return glyphsToSyms(glyphs);
 	}
 
-	/**
-	 *  Returns a selected symmetry, based on getSelectedGlyph().
-	 *  It is probably better to use getSelectedSyms() in most cases.
-	 *  @return a SeqSymmetry or null
-	 */
-	public SeqSymmetry getSelectedSymmetry() {
-		List<GlyphI> glyphs = seqmap.getSelected();
-		if (glyphs.isEmpty()) {
-			return null;
-		} else {
-			return glyphToSym(glyphs.get(glyphs.size()-1));
+	private static SeqSymmetry glyphToSym(GlyphI gl) {
+		if (gl.getInfo() instanceof SeqSymmetry) {
+			return (SeqSymmetry) gl.getInfo();
 		}
+		return null;
 	}
 
-	public void setSliceBuffer(int bases, boolean refresh) {
+
+	protected final void setSliceBuffer(int bases, boolean refresh) {
 		slice_buffer = bases;
 		if (refresh && slicing_in_effect) {
 			sliceAndDice(slice_symmetry);
@@ -1748,14 +1697,14 @@ public class SeqMapView extends JPanel
 		slice_thread.start();
 	}
 
-	private void sliceAndDiceNow(List<SeqSymmetry> syms) {
+	private final void sliceAndDiceNow(List<SeqSymmetry> syms) {
 		SimpleSymWithProps unionSym = new SimpleSymWithProps();
 		SeqUtils.union(syms, unionSym, aseq);
 		sliceAndDiceNow(unionSym);
 	}
 
 	// disables the sliced view while the slicing thread works
-	void enableSeqMap(boolean b) {
+	private final void enableSeqMap(boolean b) {
 		seqmap.setVisible(b);
 		if (map_range_box != null) {
 			if (!b) {
@@ -1772,7 +1721,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void sliceAndDice(final SeqSymmetry sym) {
+	private final void sliceAndDice(final SeqSymmetry sym) {
 		stopSlicingThread();
 
 		slice_thread = new Thread() {
@@ -1789,11 +1738,10 @@ public class SeqMapView extends JPanel
 	}
 
 	@SuppressWarnings("deprecation")
-	void stopSlicingThread() {
-		if (slice_thread == Thread.currentThread()) {
-			//System.out.println("Current thread is the slicer!");
-		} else if (slice_thread != null && slice_thread.isAlive()) {
-			//System.out.println("Stopping a thread!");
+	private final void stopSlicingThread() {
+		if (slice_thread != null 
+				&& slice_thread != Thread.currentThread()
+				&& slice_thread.isAlive()) {
 			slice_thread.stop(); // TODO: Deprecated, but seems OK here.  Maybe fix later.
 			slice_thread = null;
 			enableSeqMap(true);
@@ -2103,8 +2051,9 @@ public class SeqMapView extends JPanel
 	 *  @return null if the vector of glyphs is empty
 	 */
 	private static Rectangle2D.Double getRegionForGlyphs(List<GlyphI> glyphs) {
-		int size = glyphs.size();
-		if (size > 0) {
+		if (glyphs.isEmpty()) {
+			return null;
+		}
 			Rectangle2D.Double rect = new Rectangle2D.Double();
 			GlyphI g0 = glyphs.get(0);
 			rect.setRect(g0.getCoordBox());
@@ -2112,9 +2061,6 @@ public class SeqMapView extends JPanel
 				rect.add(g.getCoordBox());
 			}
 			return rect;
-		} else {
-			return null;
-		}
 	}
 
 	/**
@@ -2605,19 +2551,6 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty()) {
 			popup.add(selectParentMI);
-		}
-		if (DEBUG_STYLESHEETS) {
-			Action reload_stylesheet = new AbstractAction("Re-load user stylesheet") {
-
-				public void actionPerformed(ActionEvent evt) {
-					XmlStylesheetParser.refreshUserStylesheet();
-					XmlStylesheetParser.refreshSystemStylesheet();
-					default_glyph_factory.setStylesheet(XmlStylesheetParser.getUserStylesheet());
-					setAnnotatedSeq(getAnnotatedSeq());
-				}
-			};
-
-			popup.add(reload_stylesheet);
 		}
 
 		for (ContextualPopupListener listener : popup_listeners) {

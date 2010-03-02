@@ -48,6 +48,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.view.DataLoadView;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -79,9 +80,11 @@ public final class GeneralLoadView extends JComponent
 	private FeaturesTableModel feature_model;
 	JScrollPane featuresTableScrollPane;
 	private final FeatureTreeView feature_tree_view;
-	private TrackInfoView track_info_view;
+	//private TrackInfoView track_info_view;
+	private final DataLoadView data_load_view;
 
-	public GeneralLoadView() {
+	public GeneralLoadView(DataLoadView data_load_view) {
+		this.data_load_view = data_load_view;
 		this.setLayout(new BorderLayout());
 
 		JPanel choicePanel = new JPanel();
@@ -295,6 +298,8 @@ public final class GeneralLoadView extends JComponent
 		versionCB.removeItemListener(this);
 		String oldVersion = (String)versionCB.getSelectedItem();
 		versionCB.setSelectedIndex(0);
+
+		this.data_load_view.clearSeqTable();	// clear the sequence table
 
 		List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
 		if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
@@ -526,6 +531,7 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
+		this.data_load_view.clearSeqTable();	// clear the sequence table
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		if (group == null) {
 			System.out.println("Group was null -- trying species instead");

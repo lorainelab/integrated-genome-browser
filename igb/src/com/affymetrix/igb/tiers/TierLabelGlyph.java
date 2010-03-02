@@ -20,7 +20,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 *  @param reference_tier the tier in the main part of the AffyLabelledTierMap,
 	 *    must not be null
 	 */
-	public TierLabelGlyph(TierGlyph reference_tier) {
+	TierLabelGlyph(TierGlyph reference_tier) {
 		this.setInfo(reference_tier);
 	}
 

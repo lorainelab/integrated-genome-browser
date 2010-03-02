@@ -299,8 +299,6 @@ public final class GeneralLoadView extends JComponent
 		String oldVersion = (String)versionCB.getSelectedItem();
 		versionCB.setSelectedIndex(0);
 
-		this.data_load_view.clearSeqTable();	// clear the sequence table
-
 		List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
 		if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
 			versionCB.setEnabled(false);
@@ -345,14 +343,7 @@ public final class GeneralLoadView extends JComponent
 		if (group == null) {
 			return;
 		}
-		BioSeq seq = Persistence.restoreSeqSelection(group);
-		if (seq == null) {
-			seq = group.getSeq(0);
-			if (seq == null) {
-				return;
-			}
-		}
-
+	
 		Set<GenericVersion> gVersions = group.getEnabledVersions();
 		if (gVersions == null || gVersions.isEmpty()) {
 			return;
@@ -372,6 +363,14 @@ public final class GeneralLoadView extends JComponent
 		gmodel.setSelectedSeqGroup(group);
 
 		initVersion(versionName);
+
+		BioSeq seq = Persistence.restoreSeqSelection(group);
+		if (seq == null) {
+			seq = group.getSeq(0);
+			if (seq == null) {
+				return;
+			}
+		}
 
 		gmodel.addSeqSelectionListener(this);
 		gmodel.setSelectedSeq(seq);
@@ -531,7 +530,6 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		this.data_load_view.clearSeqTable();	// clear the sequence table
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		if (group == null) {
 			System.out.println("Group was null -- trying species instead");

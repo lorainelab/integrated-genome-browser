@@ -59,7 +59,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
       if (DEBUG)  {System.out.println("&&&&& in ScoredContainerGlyphFactory, attach graphs: " + attach_graphs); }
       // first draw the little rectangle that will go in an annotation tier
       // and be used to select regions for the pivot view
-      MapViewGlyphFactoryI annotation_factory = smv.getAnnotationGlyphFactory(BioSeq.determineMethod(sym));
+      MapViewGlyphFactoryI annotation_factory = smv.getAnnotationGlyphFactory();
       if (annotation_factory != null) {
         annotation_factory.createGlyph(sym, smv);
       }

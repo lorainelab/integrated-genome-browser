@@ -47,9 +47,9 @@ final class GlyphElement implements Cloneable, XmlAppender {
   >
 */
     
-  public static final String NAME = "GLYPH";
-  public static final String ATT_TYPE = "type";
-  public static final String ATT_POSITION = "position";
+  static final String NAME = "GLYPH";
+  static final String ATT_TYPE = "type";
+  static final String ATT_POSITION = "position";
   
   static ExpandPacker expand_packer;
   static {
@@ -116,6 +116,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   private final DerivedSeqSymmetry der; // used for transforming spans
   private final MutableSeqSpan derSpan; // used for transforming spans
   
+	@Override
   public Object clone() throws CloneNotSupportedException {
     GlyphElement clone = (GlyphElement) super.clone();
     if (this.enclosedGlyphElements != null) {
@@ -165,18 +166,16 @@ final class GlyphElement implements Cloneable, XmlAppender {
     return this.childrenElement;
   }
   
-  static boolean knownGlyphType(String type) {
-    for (int i=0; i<knownTypes.length; i++) {
-      if (type.equals(knownTypes[i])) { return true; }
-    }
-    return false;
-  }
+	static boolean knownGlyphType(String type) {
+		for (String knownType : knownTypes) {
+			if (type.equals(knownType)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
   private GlyphI makeGlyph(String type) {
-    boolean use_label = false;
-    if ("true".equals(propertyMap.getProperty(PROP_KEY_LABELED))) {
-      use_label = true;
-    }
 
     GlyphI gl = null;
     if (TYPE_NONE.equals(type)) {
@@ -188,7 +187,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     } else if (TYPE_POINTED.equals(type)) {
       gl = new PointedGlyph();
     } else if (TYPE_LINE.equals(type)) {
-      if (use_label) {
+      if ("true".equals(propertyMap.getProperty(PROP_KEY_LABELED))) {
         gl = new EfficientLabelledLineGlyph();
       } else {
         gl = new EfficientLineContGlyph();
@@ -206,90 +205,77 @@ final class GlyphElement implements Cloneable, XmlAppender {
     return gl;
   }
   
-  GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph, 
-      Stylesheet stylesheet, PropertyMap context) {
-    
-    if (insym == null) { 
-      return null; 
-    }
-    
-    // NOTE: some of the glyphs below are very picky about the order various
-    // properties are set in relative to the adding of children and packing.  
-    // So do lots of testing if you re-arrange any of this.
+	GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph,
+			Stylesheet stylesheet, PropertyMap context) {
 
-    PropertyMap oldContext = propertyMap.getContext();
-    propertyMap.setContext(context);
-    
-    GlyphI gl = null;
-    if (knownGlyphType(type)) {
-			TierGlyph tier_glyph = (TierGlyph) context.getProperty(TierGlyph.class.getName());
+		if (insym == null) {
+			return null;
+		}
 
-			SeqSpan span = transformForViewSeq(gviewer, insym);
+		// NOTE: some of the glyphs below are very picky about the order various
+		// properties are set in relative to the adding of children and packing.
+		// So do lots of testing if you re-arrange any of this.
 
-			if (span == null || (span.getLength() == 0 && parent_glyph instanceof TierGlyph)) {
-				// NOTE: important not to simply call "return null" before
-				// taking care of restoring the context.
-				// TODO: In future we must take into account the possibility
-				// that an item may have children which map to the current seq
-				// even though the parent does not.  Thus we need to loop over
-				// the children even when the span for the current item is null.
-				//
-				// Would be nice if a SeqSymmetry could report whether all its children
-				// are or are not enclosed in its bounds, then we would know which
-				// syms we really have to worry about that for.
-				gl = null;
-			} else {
+		PropertyMap oldContext = propertyMap.getContext();
+		propertyMap.setContext(context);
 
-				gl = makeGlyph(type);
-				
-				if (gl != null) {
-					gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
-
-					if (gl instanceof EfficientLabelledGlyph) {
-						configureLabel((EfficientLabelledGlyph) gl, insym, tier_glyph);
-					}
-
-					gl.setColor(findColor(propertyMap));
-
-					addToParent(parent_glyph, gl);
-
-					indexGlyph(propertyMap, gviewer, gl, insym);
-				}
-
-
-				// Normally, the container for sub-glyphs and children is the glyph itself,
-				// but if no glyph was drawn, use the parent glyph
-				GlyphI container = gl;
-				if (gl == null) {
-					container = parent_glyph;
-				}
-
-				// Now do <GLYPH> elements enclosed inside a <GLYPH> element.
-				// These re-draw the same sym, not the children
-				drawEnclosedGlyphs(gviewer, container, insym, stylesheet);
-
-				if (childrenElement != null) {
-					// Always use "insym" rather than "transformed_sym" for children.
-					// The transformed_sym may not have the same number of levels of nesting.
-					childrenElement.childSymsToGlyphs(gviewer, insym, container, stylesheet, propertyMap);
-				}
-
-				packGlyph(gviewer, container);
-
-				// Setting the direction of a directed glyph must come after
-				// adding the children to it.  Not sure why.
-				if (gl instanceof DirectedGlyph) {
-					((DirectedGlyph) gl).setForward(false);
-					if (PROP_VALUE_DIRECTION_3to5.equalsIgnoreCase((String) propertyMap.getProperty(PROP_KEY_DIRECTION))) {
-						((DirectedGlyph) gl).setForward(!span.isForward());
-					} else {
-						((DirectedGlyph) gl).setForward(span.isForward());
-					}
-				}
-			}
+		GlyphI gl = null;
+		if (knownGlyphType(type)) {
+			gl = handleKnownGlyph(context, gviewer, insym, parent_glyph, gl, stylesheet);
 		}
 
 		propertyMap.setContext(oldContext);
+		return gl;
+	}
+
+	private GlyphI handleKnownGlyph(PropertyMap context, SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph, GlyphI gl, Stylesheet stylesheet) {
+		TierGlyph tier_glyph = (TierGlyph) context.getProperty(TierGlyph.class.getName());
+		SeqSpan span = transformForViewSeq(gviewer, insym);
+		if (span == null || (span.getLength() == 0 && parent_glyph instanceof TierGlyph)) {
+			// NOTE: important not to simply call "return null" before
+			// taking care of restoring the context.
+			// TODO: In future we must take into account the possibility
+			// that an item may have children which map to the current seq
+			// even though the parent does not.  Thus we need to loop over
+			// the children even when the span for the current item is null.
+			//
+			// Would be nice if a SeqSymmetry could report whether all its children
+			// are or are not enclosed in its bounds, then we would know which
+			// syms we really have to worry about that for.
+			return null;
+		}
+
+		gl = makeGlyph(type);
+		if (gl != null) {
+			gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
+			if (gl instanceof EfficientLabelledGlyph) {
+				configureLabel((EfficientLabelledGlyph) gl, insym, tier_glyph);
+			}
+			gl.setColor(findColor(propertyMap));
+			addToParent(parent_glyph, gl);
+			indexGlyph(propertyMap, gviewer, gl, insym);
+		} // but if no glyph was drawn, use the parent glyph
+		GlyphI container = gl;
+		if (gl == null) {
+			container = parent_glyph;
+		} // These re-draw the same sym, not the children
+		drawEnclosedGlyphs(gviewer, container, insym, stylesheet);
+		if (childrenElement != null) {
+			// Always use "insym" rather than "transformed_sym" for children.
+			// The transformed_sym may not have the same number of levels of nesting.
+			childrenElement.childSymsToGlyphs(gviewer, insym, container, stylesheet, propertyMap);
+		}
+		packGlyph(gviewer, container);
+		// Setting the direction of a directed glyph must come after
+		// adding the children to it.  Not sure why.
+		if (gl instanceof DirectedGlyph) {
+			((DirectedGlyph) gl).setForward(false);
+			if (PROP_VALUE_DIRECTION_3to5.equalsIgnoreCase((String) propertyMap.getProperty(PROP_KEY_DIRECTION))) {
+				((DirectedGlyph) gl).setForward(!span.isForward());
+			} else {
+				((DirectedGlyph) gl).setForward(span.isForward());
+			}
+		}
 		return gl;
 	}
 

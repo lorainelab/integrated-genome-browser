@@ -923,6 +923,7 @@ public class SeqMapView extends JPanel
 
 		pixel_floater_glyph.removeAllChildren();
 		pixel_floater_glyph.setParent(null);
+
 		seqmap.addItem(pixel_floater_glyph);
 
 		aseq = seq;
@@ -939,36 +940,8 @@ public class SeqMapView extends JPanel
 		}
 
 		seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
-
-
-		// The hairline needs to be among the first glyphs added,
-		// to keep it from interfering with selection of other glyphs.
-		if (hairline != null) {
-			hairline.destroy();
-		}
-		hairline = new UnibrowHairline(seqmap);
-		hairline.getShadow().setLabeled(hairline_is_labeled);
-
-		// add back in previous annotation tiers (with all children removed)
-		if (temp_tiers != null) {
-			for (int i = 0; i < temp_tiers.size(); i++) {
-				TierGlyph tg = temp_tiers.get(i);
-				if (DEBUG_TIERS) {
-					System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
-				}
-				// Reset tier properties: this is mainly needed to reset the background color
-				if (tg.getAnnotStyle() != null) {
-					tg.setStyle(tg.getAnnotStyle());
-				}
-
-				seqmap.addTier(tg, false);
-			}
-			temp_tiers.clear(); // redundant hint to garbage collection
-		}
-
-		addAxisTier(axis_index);
-		addAnnotationTiers();
-		removeEmptyTiers();
+		
+		addGlyphs(temp_tiers, axis_index);
 
 		seqmap.repack();
 
@@ -987,22 +960,16 @@ public class SeqMapView extends JPanel
 			}
 			setZoomSpotX(old_zoom_spot_x);
 			setZoomSpotY(old_zoom_spot_y);
-
-			if (show_edge_matches) {
-				doEdgeMatching(seqmap.getSelected(), false);
-			}
-
 		} else {
 			// do selection based on what the genometry model thinks is selected
 			List<SeqSymmetry> symlist = gmodel.getSelectedSymmetries(seq);
 			select(symlist, false, false, false);
 
-			String title = getSelectionTitle(seqmap.getSelected());
-			setStatus(title);
+			setStatus(getSelectionTitle(seqmap.getSelected()));
+		}
 
-			if (show_edge_matches) {
-				doEdgeMatching(seqmap.getSelected(), false);
-			}
+		if (show_edge_matches) {
+			doEdgeMatching(seqmap.getSelected(), false);
 		}
 
 		shrinkWrap();
@@ -1042,6 +1009,40 @@ public class SeqMapView extends JPanel
 		}
 		seqmap.updateWidget();
 	}
+
+
+	private void addGlyphs(List<TierGlyph> temp_tiers, int axis_index) {
+		// The hairline needs to be among the first glyphs added,
+		// to keep it from interfering with selection of other glyphs.
+		if (hairline != null) {
+			hairline.destroy();
+		}
+		hairline = new UnibrowHairline(seqmap);
+		hairline.getShadow().setLabeled(hairline_is_labeled);
+		addPreviousTierGlyphs(temp_tiers);
+		addAxisTier(axis_index);
+		addAnnotationTiers();
+		removeEmptyTiers();
+	}
+
+
+	private void addPreviousTierGlyphs(List<TierGlyph> temp_tiers) {
+		// add back in previous annotation tiers (with all children removed)
+		if (temp_tiers != null) {
+			for (int i = 0; i < temp_tiers.size(); i++) {
+				TierGlyph tg = temp_tiers.get(i);
+				if (DEBUG_TIERS) {
+					System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
+				}
+				if (tg.getAnnotStyle() != null) {
+					tg.setStyle(tg.getAnnotStyle());
+				}
+				seqmap.addTier(tg, false);
+			}
+			temp_tiers.clear(); // redundant hint to garbage collection
+		}
+	}
+
 
 	private void shrinkWrap() {
 		if (SHRINK_WRAP_MAP_BOUNDS) {
@@ -1272,7 +1273,6 @@ public class SeqMapView extends JPanel
 			//   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
 			int scount = comp.getChildCount();
 			for (int i = 0; i < scount; i++) {
-				//      for (int i=0; i<1; i++) {
 				SeqSymmetry csym = comp.getChild(i);
 				// return seq in a symmetry span that _doesn't_ match aseq
 				BioSeq cseq = SeqUtils.getOtherSeq(csym, cached_aseq);
@@ -1312,10 +1312,9 @@ public class SeqMapView extends JPanel
 		return container_factory;
 	}
 
-	// The parameter "method" is now ignored because the default glyph factory
-	// is an XmlStylesheetGlyphFactory, and it will take the method and type
+	// XmlStylesheetGlyphFactory takes the method and type
 	// into account when determining how to draw a sym.
-	public final MapViewGlyphFactoryI getAnnotationGlyphFactory(String method) {
+	public final MapViewGlyphFactoryI getAnnotationGlyphFactory() {
 		return default_glyph_factory;
 	}
 
@@ -1329,7 +1328,7 @@ public class SeqMapView extends JPanel
 		} else if (annotSym instanceof GraphSym) {
 			factory = getGenericGraphGlyphFactory();
 		} else {
-			factory = getAnnotationGlyphFactory(meth);
+			factory = getAnnotationGlyphFactory();
 		}
 
 		if (DEBUG_COMP && transform_path != null) {

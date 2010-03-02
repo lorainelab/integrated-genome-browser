@@ -107,7 +107,7 @@ class StyleElement implements DrawableElement {
   }
   
   
-  String getName() {
+  final String getName() {
     return this.name;
   }
 

@@ -35,6 +35,7 @@ import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
 import org.xml.sax.InputSource;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.BAMParser;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -102,6 +103,8 @@ public final class LoadFileAction {
 
 		chooser = new MergeOptionFileChooser();
 		chooser.setMultiSelectionEnabled(true);
+		chooser.addChoosableFileFilter(new UniFileFilter(
+						new String[]{"bam"}, "BAM Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"bed"}, "BED Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
@@ -257,46 +260,59 @@ public final class LoadFileAction {
 	}
 
 	private static BioSeq load(JFrame gviewerFrame, File annotfile, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq input_seq) throws IOException {
-		BioSeq aseq = null;
+		String annotFileLC = annotfile.getName().toLowerCase();
+		if (annotFileLC.endsWith(".chp")) {
+			// special-case CHP files. ChpParser only has
+			//    a parse() method that takes the file name
+			// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
+			// Also cannot handle compressed chp files
+			ChpParser.parse(annotfile.getPath());
+			return null;
+		}
+		if (annotFileLC.endsWith(".bam")) {
+			// handle BAM files as a special case, because Picard can only parse from files.
+			if (seq_group == null) {
+				ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  "
+						+ "Graph data must be merged with already loaded genomic data.", null);
+			} else {
+				BAMParser parser = new BAMParser(annotfile, seq_group);
+				parser.parse();
+			}
+			return null;
+		}
+
 		InputStream fistr = null;
 		try {
-			// need to handle CHP files as a special case, because ChpParser currently only has
-			//    a parse() method that takes the file name as an argument, no method to parse from
-			//    an inputstream (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
-			//
-			// Also cannot handle compressed chp files
-			if (annotfile.getName().toLowerCase().endsWith(".chp")) {
-				//Application.getSingleton().logDebug("%%%%% received load request for CHP file: " + annotfile.getPath());
-				ChpParser.parse(annotfile.getPath());
-			} else {
-				StringBuffer sb = new StringBuffer();
-				fistr = GeneralUtils.getInputStream(annotfile, sb);
-				String stripped_name = sb.toString();
-				
-				//is it a useq graph archive?
-				boolean useqGraphArchive = false;
-				ArchiveInfo ai = ArchiveInfo.fetchArchiveInfo(annotfile, false);
-				if (ai != null && ai.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) useqGraphArchive = true;
-			
-				//is it a graph file?
-				if (GraphSymUtils.isAGraphFilename(stripped_name) || useqGraphArchive) {
-					if (seq_group == null) {
-						ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  " +
-										"Graph data must be merged with already loaded genomic data.", null);
-					} else {
-						URL url = annotfile.toURI().toURL();
-						OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
-					}
-				//nope load as non graph data
-				} else {
-					aseq = load(gviewerFrame, fistr, stripped_name, gmodel, seq_group, input_seq);
-				}
+			BioSeq aseq = null;
+			StringBuffer sb = new StringBuffer();
+			fistr = GeneralUtils.getInputStream(annotfile, sb);
+			String stripped_name = sb.toString();
+
+			//is it a useq graph archive?
+			boolean useqGraphArchive = false;
+			ArchiveInfo ai = ArchiveInfo.fetchArchiveInfo(annotfile, false);
+			if (ai != null && ai.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
+				useqGraphArchive = true;
 			}
+
+			//is it a graph file?
+			if (GraphSymUtils.isAGraphFilename(stripped_name) || useqGraphArchive) {
+				if (seq_group == null) {
+					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  "
+							+ "Graph data must be merged with already loaded genomic data.", null);
+				} else {
+					URL url = annotfile.toURI().toURL();
+					OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
+				}
+				return aseq;
+			}
+			//load as non graph data
+			return load(gviewerFrame, fistr, stripped_name, gmodel, seq_group, input_seq);
+			
 		} // Don't catch exception, just throw it
 		finally {
 			GeneralUtils.safeClose(fistr);
 		}
-		return aseq;
 	}
 
 	private static void setGroupAndSeq(GenometryModel gmodel, AnnotatedSeqGroup previous_seq_group, BioSeq previous_seq, BioSeq new_seq) {
@@ -400,19 +416,23 @@ public final class LoadFileAction {
 			CytobandParser parser = new CytobandParser();
 			parser.parse(str, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith(".cnt")) {
+		}
+		if (lcname.endsWith(".cnt")) {
 			CntParser parser = new CntParser();
 			parser.parse(str, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith(".var")) {
+		}
+		if (lcname.endsWith(".var")) {
 			VarParser parser = new VarParser();
 			parser.parse(str, selected_group);
 			return input_seq;
-		} else if ((lcname.endsWith("." + SegmenterRptParser.CN_REGION_FILE_EXT) || lcname.endsWith("." + SegmenterRptParser.LOH_REGION_FILE_EXT))) {
+		}
+		if ((lcname.endsWith("." + SegmenterRptParser.CN_REGION_FILE_EXT) || lcname.endsWith("." + SegmenterRptParser.LOH_REGION_FILE_EXT))) {
 			SegmenterRptParser parser = new SegmenterRptParser();
 			parser.parse(str, stream_name, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith("." + FishClonesParser.FILE_EXT)) {
+		}
+		if (lcname.endsWith("." + FishClonesParser.FILE_EXT)) {
 			FishClonesParser parser = new FishClonesParser(true);
 			String s = stream_name;
 			int index = s.lastIndexOf('.');
@@ -421,11 +441,13 @@ public final class LoadFileAction {
 			}
 			parser.parse(str, s, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
+		}
+		if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
 			AffyCnChpParser parser = new AffyCnChpParser();
 			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith(".das") || lcname.endsWith(".dasxml")) {
+		}
+		if (lcname.endsWith(".das") || lcname.endsWith(".dasxml")) {
 			DASFeatureParser parser = new DASFeatureParser();
 			Collection<DASSymmetry> results;
 			try {
@@ -435,67 +457,81 @@ public final class LoadFileAction {
 				Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			return null;
-		} else if (lcname.endsWith(".das2xml")) {
+		}
+		if (lcname.endsWith(".das2xml")) {
 			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
 			List<SeqSymmetry> results = parser.parse(new InputSource(str), stream_name, selected_group, true);
 			return LoadFileAction.<SeqSymmetry>getFirstSeq(results);
-		} else if (lcname.endsWith(".map")) {
+		}
+		if (lcname.endsWith(".map")) {
 			ScoredMapParser parser = new ScoredMapParser();
 			parser.parse(str, stream_name, input_seq, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith(".sin") || lcname.endsWith(".egr") || lcname.endsWith(".txt")) {
+		}
+		if (lcname.endsWith(".sin") || lcname.endsWith(".egr") || lcname.endsWith(".txt")) {
 			ScoredIntervalParser parser = new ScoredIntervalParser();
 			parser.parse(str, stream_name, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith(".psl") || lcname.endsWith(".psl3")) {
+		}
+		if (lcname.endsWith(".psl") || lcname.endsWith(".psl3")) {
 			ParsePSL(lcname, gviewerFrame, str, stream_name, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith(".bps")) {
+		}
+		if (lcname.endsWith(".bps")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
 			DataInputStream dis = new DataInputStream(str);
 			BpsParser.parse(dis, annot_type, null, selected_group, false, true);
 			return input_seq;
-		} else if (lcname.endsWith(".bed")) {
+		}
+		if (lcname.endsWith(".bed")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
 			BedParser parser = new BedParser();
 			// really need to switch create_container (last argument) to true soon!
 			parser.parse(str, gmodel, selected_group, true, annot_type, false);
 			return input_seq;
-		} 	else if (lcname.endsWith(".useq")) {
+		}
+		if (lcname.endsWith(".useq")) {
 			USeqRegionParser parser = new USeqRegionParser();
 			parser.parse(str, selected_group, stream_name, true, null);
 			return input_seq;
-		} else if (lcname.endsWith(".bgn")) {
+		}
+		if (lcname.endsWith(".bgn")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
 			BgnParser parser = new BgnParser();
 			parser.parse(str, annot_type, selected_group, true);
 			return input_seq;
-		} else if (lcname.endsWith(".brs")) {
+		}
+		if (lcname.endsWith(".brs")) {
 			BrsParser parser = new BrsParser();
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
 			return input_seq;
-		} else if (lcname.endsWith(".bsnp")) {
+		}
+		if (lcname.endsWith(".bsnp")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
 			List<SeqSymmetry> alist = BsnpParser.parse(str, annot_type, selected_group, true);
 			Application.getSingleton().logDebug("total snps loaded: " + alist.size());
 			return input_seq;
-		} else if (lcname.endsWith(".brpt")) {
+		}
+		if (lcname.endsWith(".brpt")) {
 			BrptParser parser = new BrptParser();
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
 			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, true);
 			Application.getSingleton().logDebug("total repeats loaded: " + alist.size());
 			return input_seq;
-		} else if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {
+		}
+		if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {
 			Bprobe1Parser parser = new Bprobe1Parser();
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bp"));
 			parser.parse(str, selected_group, true, annot_type, true);
 			return input_seq;
-		} else if (lcname.endsWith(".ead")) {
+		}
+		if (lcname.endsWith(".ead")) {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
 			String default_type = stream_name.substring(0, stream_name.indexOf(".ead"));
 			parser.parse(str, selected_group, true, default_type);
 			return input_seq;
-		} else if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
+		}
+		if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
 			// assume it's GFF1, GFF2, GTF, or GFF3 format
 			GFFParser parser = new GFFParser();
 			parser.setUseStandardFilters(true);
@@ -509,22 +545,25 @@ public final class LoadFileAction {
 			}
 			parser.parse(str, annot_type, selected_group, false);
 			return null;
-		} else if (lcname.endsWith(".gff3")) {
+		}
+		if (lcname.endsWith(".gff3")) {
 			/* Force parcing as GFF3 */
 			GFF3Parser parser = new GFF3Parser();
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".gff3"));
 			parser.parse(str, annot_type, selected_group);
 			return input_seq;
-		} else if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
+		}
+		if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
 			List<BioSeq> seqs = FastaParser.parseAll(str, selected_group);
 			if (input_seq != null && seqs.contains(input_seq)) {
 				return input_seq;
-			} else if (!seqs.isEmpty()) {
-				return seqs.get(0);
-			} else {
-				return null;
 			}
-		} else if (lcname.endsWith(".bnib")) {
+			if (!seqs.isEmpty()) {
+				return seqs.get(0);
+			}
+			return null;
+		}
+		if (lcname.endsWith(".bnib")) {
 			BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
 			if (aseq != gmodel.getSelectedSeq()) {
 				//TODO: maybe set the current seq to this seq

@@ -291,7 +291,7 @@ public final class GeneralLoadView extends JComponent
 
 
 	/**
-	 * Refresh the genome versions, now that the species has changed.
+	 * Refresh the genome versions.
 	 * @param speciesName
 	 */
 	private void refreshVersionCB(String speciesName) {

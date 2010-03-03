@@ -102,7 +102,7 @@ public abstract class Application {
 	 */
 	public final synchronized void setStatus(String s, boolean echo) {
 		status_bar.setStatus(leftPaddingString + s);
-		if (echo && s != null) {
+		if (echo && s != null && !s.isEmpty()) {
 			System.out.println(s);
 		}
 	}

@@ -217,7 +217,6 @@ public class IGBAuthenticator extends Authenticator {
 
 		server.setText(url);
 		anon.setSelected(true);
-		System.out.println("remember.setEnabled(" + (serverObject != null && serverNode != null && serverNode.parent().getBoolean(PREF_REMEMBER, true)) + ")");
 		remember.setEnabled(serverObject != null && serverNode != null && serverNode.parent().getBoolean(PREF_REMEMBER, true));
 
 		int result = JOptionPane.showOptionDialog(parent, dialog, null, OK_CANCEL_OPTION, PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);

@@ -186,7 +186,7 @@ public final class GeneralLoadView extends JComponent
 		ServerList.addServerInitListener(this);
 
 		populateSpeciesData();
-
+		
 		addListeners();
 	}
 
@@ -522,10 +522,11 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("Selected version: " + versionName);
 		}
 
+		gmodel.setSelectedSeqGroup(null);
+		gmodel.setSelectedSeq(null);
+
 		if (versionName.equals(SELECT_GENOME)) {
-			// Select the null group (and the null seq), if it's not already selected.
-			gmodel.setSelectedSeqGroup(null);
-			gmodel.setSelectedSeq(null);
+			// Select the null group (and the null seq), if it's not already selected.	
 			return;
 		}
 
@@ -537,9 +538,6 @@ public final class GeneralLoadView extends JComponent
 				return;
 			}
 		}
-
-		//gmodel.setSelectedSeq(null);
-		//gmodel.setSelectedSeqGroup(null);
 
 		speciesCB.setEnabled(false);
 		versionCB.setEnabled(false);
@@ -595,7 +593,7 @@ public final class GeneralLoadView extends JComponent
 		if (group == null) {
 			if (versionCB.getSelectedItem() != SELECT_GENOME) {
 				versionCB.removeItemListener(this);
-				versionCB.setSelectedItem(SELECT_GENOME);
+				//versionCB.setSelectedItem(SELECT_GENOME);		//Commented out to prevent switching to 'GENOME VERSION while loading
 				versionCB.setEnabled(false);
 				versionCB.addItemListener(this);
 			}
@@ -642,7 +640,7 @@ public final class GeneralLoadView extends JComponent
 
 		//clearFeaturesTable();
 		refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-							// refreshTreeView should only decided if freature table
+							// refreshTreeView should only decided if feature table
 							// needs to be cleared.
 
 		disableAllButtons();
@@ -662,7 +660,7 @@ public final class GeneralLoadView extends JComponent
 		if (aseq == null) {
 			//clearFeaturesTable();
 			refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-								// refreshTreeView should only decided if freature table
+								// refreshTreeView should only decided if feature table
 								// needs to be cleared.
 
 			disableAllButtons();

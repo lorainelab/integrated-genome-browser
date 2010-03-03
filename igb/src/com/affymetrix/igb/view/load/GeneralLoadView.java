@@ -539,11 +539,11 @@ public final class GeneralLoadView extends JComponent
 			}
 		}
 
-		gmodel.setSelectedSeq(null);
-		gmodel.setSelectedSeqGroup(null);
+		//gmodel.setSelectedSeq(null);
+		//gmodel.setSelectedSeqGroup(null);
 
-		//speciesCB.setEnabled(false);
-		//versionCB.setEnabled(false);
+		speciesCB.setEnabled(false);
+		versionCB.setEnabled(false);
 
 		(new InitVersionWorker(versionName, group)).execute();	
 	}

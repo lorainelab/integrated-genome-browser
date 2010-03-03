@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.prefs.Preferences;
+import javax.swing.ImageIcon;
 
 /**
  * @see     com.affymetrix.genometryImpl.BioSeq
@@ -86,6 +87,8 @@ final class ProtAnnotMain implements WindowListener {
     private Dimension screen;
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
+	private static final String imageIcon = "protannot/resources/spots.png";
+	
     private enum Arguments {
         SERVER,
         FILENAME;
@@ -152,7 +155,8 @@ final class ProtAnnotMain implements WindowListener {
      * @param   args    - optional file name as a parameter.
      */
     private void start(String[] args) {
-        frm = new JFrame(" ProtAnnot");
+        frm = new JFrame("ProtAnnot");
+		frm.setIconImage(new ImageIcon(imageIcon).getImage());
         screen = frm.getToolkit().getScreenSize();
         int frm_width = (int) (screen.width * .8f);
         int frm_height = (int) (screen.height * .8f);
@@ -315,6 +319,7 @@ final class ProtAnnotMain implements WindowListener {
             public void actionPerformed(ActionEvent e) {
                 try {
                     ExportDialog export = new ExportDialog();
+					export.setIcon(new ImageIcon(imageIcon));
                     export.showExportDialog(gview, "Export view as ...", gview, "export");
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -679,6 +684,7 @@ final class ProtAnnotMain implements WindowListener {
     private void setupColorChooser()
     {
         colorChooser = new JFrame("Color Preference");
+		colorChooser.setIconImage(new ImageIcon(imageIcon).getImage());
         colorChooser.setSize(375, 175);
         colorChooser.setLocation((int) (screen.width * .4f), (int) (screen.height * .15f));
         colorChooser.setLayout(new BorderLayout());

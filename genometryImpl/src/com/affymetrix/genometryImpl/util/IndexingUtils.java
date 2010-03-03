@@ -631,6 +631,11 @@ public class IndexingUtils {
 		DataOutputStream dos = null;
 		try {
 			// create indexed file.
+			
+			if (graphName.length() < 3) {
+				graphName += "___";
+				// fix for Java error with short names
+			}
 			bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
 			bufVal.deleteOnExit(); // Delete this file when shutting down.
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));

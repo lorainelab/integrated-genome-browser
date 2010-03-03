@@ -186,21 +186,73 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			TierGlyph forward_tier,
 			TierGlyph reverse_tier,
 			boolean parent_and_child) {
-
-		GlyphI g = null;
-
 		try {
-			if (parent_and_child && insym.getChildCount() > 0) {
-				g = doTwoLevelGlyph(insym, forward_tier, reverse_tier);
-			} else {
-				// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-				g = doSingleLevelGlyph(insym, forward_tier, reverse_tier);
+			AffyTieredMap map = gviewer.getSeqMap();
+			BioSeq annotseq = gviewer.getAnnotatedSeq();
+			BioSeq coordseq = gviewer.getViewSeq();
+			SeqSymmetry sym = insym;
+			boolean same_seq = (annotseq == coordseq);
+
+			if (!same_seq) {
+				sym = gviewer.transformForViewSeq(insym, annotseq);
 			}
+
+			SeqSpan pspan = gviewer.getViewSeqSpan(sym);
+			if (pspan == null || pspan.getLength() == 0) {
+				return null;
+			}  // if no span corresponding to seq, then return;
+
+			TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
+
+			// I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
+			IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
+			
+			GlyphI pglyph = determinePGlyph(parent_and_child, insym, the_style, the_tier, pspan, map, sym, same_seq, annotseq, coordseq);
+
+			the_tier.addChild(pglyph);
+			return pglyph;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return g;
+		return null;
+	}
+
+	private GlyphI determinePGlyph(boolean parent_and_child, SeqSymmetry insym, IAnnotStyleExtended the_style, TierGlyph the_tier, SeqSpan pspan, AffyTieredMap map, SeqSymmetry sym, boolean same_seq, BioSeq annotseq, BioSeq coordseq) throws InstantiationException, IllegalAccessException {
+		GlyphI pglyph = null;
+		if (parent_and_child && insym.getChildCount() > 0) {
+			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
+			// call out to handle rendering to indicate if any of the children of the
+			//    original annotation are completely outside the view
+			addChildren(insym, same_seq, sym, the_style, annotseq, pglyph, map, coordseq);
+		} else {
+			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
+			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
+			handleResidues(insym, coordseq, pglyph);
+		}
+		return pglyph;
+	}
+
+
+	private static void handleResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
+		if (sym instanceof SymWithProps) {
+			Object residues = ((SymWithProps) sym).getProperty("residues");
+			if (residues != null) {
+				SeqSpan span = sym.getSpan(coordseq);
+				if (span != null) {
+					String residueStr = residues.toString();
+					// note: it is possible to get different lengths here, probably due to 0-based, 1-based, interbase disagreement.
+					residueStr = residueStr.substring(0, Math.min(residueStr.length(), span.getLength()));
+					CharSeqGlyph csg = new CharSeqGlyph();
+					csg.setResidues(residueStr);
+					csg.setShowBackground(false);
+					csg.setHitable(false);
+					csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
+					pglyph.addChild(csg);
+				}
+			}
+		}
 	}
 
 
@@ -219,77 +271,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
 		if (sym instanceof DerivedSeqSymmetry) {
 			return getMostOriginalSymmetry(((DerivedSeqSymmetry) sym).getOriginalSymmetry());
-		} else {
-			return sym;
 		}
-	}
-
-	private GlyphI doSingleLevelGlyph(SeqSymmetry insym, TierGlyph forward_tier, TierGlyph reverse_tier)
-			throws InstantiationException, IllegalAccessException {
-
-		AffyTieredMap map = gviewer.getSeqMap();
-		BioSeq annotseq = gviewer.getAnnotatedSeq();
-		BioSeq coordseq = gviewer.getViewSeq();
-		SeqSymmetry sym = insym;
-		boolean same_seq = (annotseq == coordseq);
-
-		if (!same_seq) {
-			sym = gviewer.transformForViewSeq(insym, annotseq);
-		}
-
-		SeqSpan pspan = gviewer.getViewSeqSpan(sym);
-		if (pspan == null || pspan.getLength() == 0) {
-			return null;
-		}  // if no span corresponding to seq, then return;
-
-		TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
-
-		// I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
-		IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
-		GlyphI pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
-
-		the_tier.addChild(pglyph);
-		return pglyph;
-	}
-
-
-	/**
-	 *   Creation of genoviz Glyphs for rendering
-	 *      a two-level symmetry (parent with children) in the SeqMapView
-	 *      includes transformations used by slice view and other alternative coordinate systems
-
-	 */
-	private GlyphI doTwoLevelGlyph(SeqSymmetry insym, TierGlyph forward_tier, TierGlyph reverse_tier)
-			throws InstantiationException, IllegalAccessException {
-
-		AffyTieredMap map = gviewer.getSeqMap();
-		BioSeq annotseq = gviewer.getAnnotatedSeq();
-		BioSeq coordseq = gviewer.getViewSeq();
-		SeqSymmetry sym = insym;
-		boolean same_seq = (annotseq == coordseq);
-
-		if (!same_seq) {
-			sym = gviewer.transformForViewSeq(insym, annotseq);
-		}
-
-		SeqSpan pspan = gviewer.getViewSeqSpan(sym);
-
-		if (pspan == null || pspan.getLength() == 0) {
-			return null;
-		}  // if no span corresponding to seq, then return;
-
-		TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
-
-		// I hate having to do this cast to AnnotStyle.  But how can I avoid it?
-		IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
-		GlyphI pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
-
-		// call out to handle rendering to indicate if any of the children of the
-		//    orginal annotation are completely outside the view
-		addChildren(insym, same_seq, sym, the_style, annotseq, pglyph, map, coordseq);
-
-		the_tier.addChild(pglyph);
-		return pglyph;
+		return sym;
 	}
 
 
@@ -357,33 +340,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				} else {
 					cglyph = (GlyphI) child_glyph_class.newInstance();
 				}
-				double cheight = DEFAULT_THICK_HEIGHT;
+				
 				Color child_color = getSymColor(child, the_style);
-				if (cdsSpan != null) {
-					cheight = DEFAULT_THIN_HEIGHT;
-					if (SeqUtils.contains(cdsSpan, cspan)) {
-						cheight = DEFAULT_THICK_HEIGHT;
-					} else if (SeqUtils.overlap(cdsSpan, cspan)) {
-						SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
-						SeqSymmetry cds_sym_3 = cds_sym_2;
-						if (!same_seq) {
-							cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
-						}
-						SeqSpan cds_span = gviewer.getViewSeqSpan(cds_sym_3);
-						if (cds_span != null) {
-							GlyphI cds_glyph;
-							if (cspan.getLength() == 0) {
-								cds_glyph = new DeletionGlyph();
-							} else {
-								cds_glyph = (GlyphI) child_glyph_class.newInstance();
-							}
-							cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), DEFAULT_THICK_HEIGHT);
-							cds_glyph.setColor(child_color); // CDS same color as exon
-							pglyph.addChild(cds_glyph);
-							map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
-						}
-					}
-				}
+				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, map);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);
@@ -393,6 +352,36 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
+	}
+
+	private double handleCDSSpan(
+			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,
+			SeqSymmetry child, BioSeq annotseq, boolean same_seq,
+			Color child_color, GlyphI pglyph, AffyTieredMap map)
+			throws IllegalAccessException, InstantiationException {
+		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)) {
+			return DEFAULT_THICK_HEIGHT;
+		}
+		if (SeqUtils.overlap(cdsSpan, cspan)) {
+			SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
+			if (!same_seq) {
+				cds_sym_2 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
+			}
+			SeqSpan cds_span = gviewer.getViewSeqSpan(cds_sym_2);
+			if (cds_span != null) {
+				GlyphI cds_glyph;
+				if (cspan.getLength() == 0) {
+					cds_glyph = new DeletionGlyph();
+				} else {
+					cds_glyph = (GlyphI) child_glyph_class.newInstance();
+				}
+				cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), DEFAULT_THICK_HEIGHT);
+				cds_glyph.setColor(child_color); // CDS same color as exon
+				pglyph.addChild(cds_glyph);
+				map.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
+			}
+		}
+		return DEFAULT_THIN_HEIGHT;
 	}
 	
 }

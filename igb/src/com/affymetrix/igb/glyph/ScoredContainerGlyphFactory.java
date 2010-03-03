@@ -13,16 +13,14 @@
 
 package com.affymetrix.igb.glyph;
 
-
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSym;
@@ -35,11 +33,12 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.FloatList;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
@@ -112,7 +111,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   
   private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
     int score_count = container.getScoreCount();
-    ArrayList<GraphIntervalSym> results = null;
+    List<GraphIntervalSym> results = null;
     if (separate_by_strand) {
       results = new ArrayList<GraphIntervalSym>(score_count * 2);
     } else {
@@ -146,7 +145,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
     ScoredContainerSym original_container = (ScoredContainerSym) derived_parent_sym.getOriginalSymmetry();
     
     int score_count = original_container.getScoreCount();
-    ArrayList<GraphIntervalSym> results = null;
+    List<GraphIntervalSym> results = null;
     if (separate_by_strand) {
       results = new ArrayList<GraphIntervalSym>(score_count * 2);
     } else {

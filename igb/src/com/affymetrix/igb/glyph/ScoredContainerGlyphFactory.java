@@ -83,24 +83,11 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 		if (original_container.getSpan(aseq) == null) {
 			return;
 		}
+		GraphIntervalSym[] the_graph_syms = determineGraphSyms(smv, aseq, original_container);
 
-		BioSeq vseq = smv.getViewSeq();
 		AffyTieredMap map = smv.getSeqMap();
-
-		GraphIntervalSym[] the_graph_syms = null;
-		DerivedSeqSymmetry derived_sym = null;
-		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
-		if (aseq != vseq) {
-			derived_sym = SeqUtils.copyToDerived(original_container);
-			SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());
-			the_graph_syms = makeGraphsFromDerived(derived_sym, seq_group, vseq);
-		} else { // aseq == vseq, so no transformation needed
-			the_graph_syms = makeGraphs(original_container, seq_group);
-		}
-		Rectangle2D.Double cbox = map.getCoordBounds();
-
 		for (GraphIntervalSym gis : the_graph_syms) {
-			displayGraphSym(gis, cbox, map, smv);
+			displayGraphSym(gis, map, smv);
 		}
 
 		if (update_map) {
@@ -109,6 +96,19 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 			map.updateWidget();
 		}
 	}
+
+
+ private static GraphIntervalSym[] determineGraphSyms(SeqMapView smv, BioSeq aseq, ScoredContainerSym original_container) {
+	 BioSeq vseq = smv.getViewSeq();
+	 AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+	 if (aseq != vseq) {
+		 DerivedSeqSymmetry derived_sym = SeqUtils.copyToDerived(original_container);
+		 SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());
+		 return makeGraphsFromDerived(derived_sym, seq_group, vseq);
+	 }
+	 // aseq == vseq, so no transformation needed
+	 return makeGraphs(original_container, seq_group);
+ }
   
   private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
     int score_count = container.getScoreCount();
@@ -236,11 +236,12 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   }
 
 
-	private static void displayGraphSym(GraphIntervalSym graf, Double cbox, AffyTieredMap map, SeqMapView smv) {
+	private static void displayGraphSym(GraphIntervalSym graf, AffyTieredMap map, SeqMapView smv) {
 		GraphGlyph graph_glyph = new GraphGlyph(graf, graf.getGraphState());
 		graph_glyph.getGraphState().getTierStyle().setHumanName(graf.getGraphName());
 		GraphState gstate = graph_glyph.getGraphState();
 		IAnnotStyle tier_style = gstate.getTierStyle(); // individual style: combo comes later
+		Rectangle2D.Double cbox = map.getCoordBounds();
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.

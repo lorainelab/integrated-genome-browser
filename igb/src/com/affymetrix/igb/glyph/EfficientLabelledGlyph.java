@@ -24,7 +24,6 @@ public class EfficientLabelledGlyph extends Glyph {
 
 	private static final boolean OUTLINE_PIXELBOX = false;
 	private static final boolean DEBUG_OPTIMIZED_FILL = false;
-	private static final boolean optimize_child_draw = true;
 	static Rectangle2D.Double scratch_cbox = new Rectangle2D.Double();
 	static final int max_char_ypix = 40; // maximum allowed pixel height of chars
 	static final int max_char_xpix = 30; // maximum allowed pixel width of chars
@@ -81,26 +80,22 @@ public class EfficientLabelledGlyph extends Glyph {
 
 	@Override
 	public void drawTraversal(ViewI view) {
-		if (optimize_child_draw) {
-			Rectangle pixelbox = view.getScratchPixBox();
-			view.transformToPixels(this.getCoordBox(), pixelbox);
-			if (withinView(view) && isVisible) {
-				if ((pixelbox.width <= 3) ||
-								(pixelbox.height <= 3)) {
-					// || (getChildCount() <=0)) {
-					// still ends up drawing children for selected, but in general
-					//    only a few glyphs are ever selected at the same time, so should be fine
-					if (selected) {
-						drawSelected(view);
-					} else {
-						fillDraw(view);
-					}
+		Rectangle pixelbox = view.getScratchPixBox();
+		view.transformToPixels(this.getCoordBox(), pixelbox);
+		if (withinView(view) && isVisible) {
+			if ((pixelbox.width <= 3)
+					|| (pixelbox.height <= 3)) {
+				// || (getChildCount() <=0)) {
+				// still ends up drawing children for selected, but in general
+				//    only a few glyphs are ever selected at the same time, so should be fine
+				if (selected) {
+					drawSelected(view);
 				} else {
-					super.drawTraversal(view);  // big enough to draw normal self and children
+					fillDraw(view);
 				}
+			} else {
+				super.drawTraversal(view);  // big enough to draw normal self and children
 			}
-		} else {
-			super.drawTraversal(view);  // no optimization, so draw normal self and children
 		}
 	}
 

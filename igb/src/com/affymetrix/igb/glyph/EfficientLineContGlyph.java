@@ -37,31 +37,27 @@ import java.util.List;
  *
  */
 public final class EfficientLineContGlyph extends Glyph  {
-  private static final boolean optimize_child_draw = true;
   private static final boolean DEBUG_OPTIMIZED_FILL = false;
   private boolean move_children = true;
 
   @Override
-  public void drawTraversal(ViewI view)  {
-    if (optimize_child_draw) {
-      Rectangle pixelbox = view.getScratchPixBox();
-      view.transformToPixels(this.getCoordBox(), pixelbox);
-      if (withinView(view) && isVisible) {
-        if (pixelbox.width <=3 || pixelbox.height <=3) {
-          // still ends up drawing children for selected, but in general
-          //    only a few glyphs are ever selected at the same time, so should be fine
-          if (selected) { drawSelected(view); }
-          else  { fillDraw(view); }
-        }
-        else {
-          super.drawTraversal(view);  // big enough to draw children
-        }
-      }
-    }
-    else {
-      super.drawTraversal(view);  // no optimization, so draw children
-    }
-  }
+  public void drawTraversal(ViewI view) {
+		Rectangle pixelbox = view.getScratchPixBox();
+		view.transformToPixels(this.getCoordBox(), pixelbox);
+		if (withinView(view) && isVisible) {
+			if (pixelbox.width <= 3 || pixelbox.height <= 3) {
+				// still ends up drawing children for selected, but in general
+				//    only a few glyphs are ever selected at the same time, so should be fine
+				if (selected) {
+					drawSelected(view);
+				} else {
+					fillDraw(view);
+				}
+			} else {
+				super.drawTraversal(view);  // big enough to draw children
+			}
+		}
+	}
 
   public void fillDraw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();

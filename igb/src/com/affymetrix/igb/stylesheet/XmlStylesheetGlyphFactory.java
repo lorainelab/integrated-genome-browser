@@ -32,7 +32,7 @@ import java.util.*;
  */
 public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 
-	static boolean DEBUG = false;
+	private static final boolean DEBUG = false;
 	private Stylesheet stylesheet = null;
 	private final PropertyMap context = new PropertyMap();
 	private final Map<String, MapViewGlyphFactoryI> annot_factories = new LinkedHashMap<String, MapViewGlyphFactoryI>();

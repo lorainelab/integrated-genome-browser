@@ -506,10 +506,9 @@ public final class GeneralLoadView extends JComponent
 		// Populate the versionName CB
 		refreshVersionCB(speciesName);
 
-		if (gmodel.getSelectedSeqGroup() != null) {
-			gmodel.setSelectedSeq(null); // This method is being called on purpose to fire group selection event.
-										 // which in turns calls refreshTreeView method.
-		}
+		// Select the null group (and the null seq), if it's not already selected.
+		gmodel.setSelectedSeqGroup(null); // This method is being called on purpose to fire group selection event.
+		gmodel.setSelectedSeq(null);	  // which in turns calls refreshTreeView method.
 	}
 
 	/**

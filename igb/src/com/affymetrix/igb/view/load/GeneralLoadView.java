@@ -294,9 +294,9 @@ public final class GeneralLoadView extends JComponent
 	 * Refresh the genome versions.
 	 * @param speciesName
 	 */
-	private void refreshVersionCB(String speciesName) {
+	private synchronized void refreshVersionCB(String speciesName) {
 		versionCB.removeItemListener(this);
-		String oldVersion = (String)versionCB.getSelectedItem();
+		String oldVersion = (String) versionCB.getSelectedItem();
 		versionCB.setSelectedIndex(0);
 
 		List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
@@ -307,7 +307,7 @@ public final class GeneralLoadView extends JComponent
 
 		// Add names to combo boxes.
 		List<String> versionNames = new ArrayList<String>();
-		for(GenericVersion gVersion : versionList) {
+		for (GenericVersion gVersion : versionList) {
 			// the same versionName name may occur on multiple servers
 			if (!versionNames.contains(gVersion.versionName)) {
 				versionNames.add(gVersion.versionName);
@@ -316,16 +316,14 @@ public final class GeneralLoadView extends JComponent
 		Collections.sort(versionNames, new StringVersionDateComparator());
 		// Sort the versions (by date)
 
-		synchronized (this) {
-			versionCB.removeAllItems();
-			versionCB.addItem(SELECT_GENOME);
-			for (String versionName : versionNames) {
-				versionCB.addItem(versionName);
-			}
-			versionCB.setEnabled(true);
-			if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
-				versionCB.setSelectedItem(oldVersion);
-			}
+		versionCB.removeAllItems();
+		versionCB.addItem(SELECT_GENOME);
+		for (String versionName : versionNames) {
+			versionCB.addItem(versionName);
+		}
+		versionCB.setEnabled(true);
+		if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
+			versionCB.setSelectedItem(oldVersion);
 		}
 		if (versionCB.getItemCount() > 1) {
 			versionCB.addItemListener(this);
@@ -368,20 +366,22 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		gmodel.setSelectedSeqGroup(group);
+		synchronized (this) {
+			gmodel.setSelectedSeqGroup(group);
 
-
-		BioSeq seq = Persistence.restoreSeqSelection(group);
-		if (seq == null) {
-			seq = group.getSeq(0);
+			BioSeq seq = Persistence.restoreSeqSelection(group);
 			if (seq == null) {
-				return;
+				seq = group.getSeq(0);
+				if (seq == null) {
+					Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
+					return;
+				}
 			}
+
+			gmodel.addSeqSelectionListener(this);
+			gmodel.setSelectedSeq(seq);
 		}
 
-		gmodel.addSeqSelectionListener(this);
-		gmodel.setSelectedSeq(seq);
-		
 		Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
 
 

@@ -149,6 +149,7 @@ public final class UrlLoaderThread extends Thread {
 		}
 		//Application.getSingleton().setNotLockedUpStatus("Connecting to " + where_from);
 		if (isInterrupted()) {
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + tier_name);
 			return;
 		}
 

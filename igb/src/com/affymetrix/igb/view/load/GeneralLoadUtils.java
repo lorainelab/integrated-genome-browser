@@ -572,12 +572,13 @@ public final class GeneralLoadUtils {
 					BioSeq selected_seq, final String feature_name, Das2VersionedSource version, SeqMapView gviewer, BioSeq visible_seq, SeqSpan overlap) {
 		if (selected_seq == null) {
 			ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
 			return false;
 		}
 		if (DEBUG) {
 			System.out.println("seq = " + visible_seq.getID() + ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
 		}
-		ArrayList<Das2FeatureRequestSym> requests = new ArrayList<Das2FeatureRequestSym>();
+		List<Das2FeatureRequestSym> requests = new ArrayList<Das2FeatureRequestSym>();
 		/*for (Das2TypeState tstate : types_table_model.getTypeStates()) {
 		Das2Type dtype = tstate.getDas2Type();
 		Das2VersionedSource version = dtype.getVersionedSource();

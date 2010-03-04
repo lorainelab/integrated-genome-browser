@@ -925,22 +925,25 @@ public class SeqMapView extends JPanel
 
 		seqmap.addItem(pixel_floater_glyph);
 
-		aseq = seq;
+		// Synchronized to keep aseq from getting set to null
+		synchronized (this) {
+			aseq = seq;
 
-		// if shifting coords, then seq2viewSym and viewseq are already taken care of,
-		//   but reset coord_shift to false...
-		if (coord_shift) {
-			// map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
-			coord_shift = false;
-		} else {
-			viewseq = aseq;
-			seq2viewSym = null;
-			transform_path = null;
+			// if shifting coords, then seq2viewSym and viewseq are already taken care of,
+			//   but reset coord_shift to false...
+			if (coord_shift) {
+				// map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
+				coord_shift = false;
+			} else {
+				viewseq = aseq;
+				seq2viewSym = null;
+				transform_path = null;
+			}
+
+			seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
+
+			addGlyphs(temp_tiers, axis_index);
 		}
-
-		seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
-		
-		addGlyphs(temp_tiers, axis_index);
 
 		seqmap.repack();
 
@@ -1161,9 +1164,11 @@ public class SeqMapView extends JPanel
 	 *<p>
 	 *    This method is currently somewhat problematic, since it does not descend into BioSeqs
 	 *      that aseq might be composed of to factor in bounds of annotations on those sequences
+	 *
+	 * Synchronized to keep aseq non-null
 	 */
-	private static final SeqSpan getAnnotationBounds(BioSeq aseq) {
-		int annotCount = aseq.getAnnotationCount();
+	private static final synchronized SeqSpan getAnnotationBounds(BioSeq aseq) {
+		int annotCount = aseq == null ? 0 : aseq.getAnnotationCount();
 		int min = Integer.MAX_VALUE;
 		int max = Integer.MIN_VALUE;
 		for (int i = 0; i < annotCount; i++) {
@@ -1230,10 +1235,6 @@ public class SeqMapView extends JPanel
 	}
 
 	private void addAnnotationTiers() {
-		if (aseq == null) {
-			// This shouldn't happen, but I've seen it during startup: eee july 2007
-			return;
-		}
 		if (DEBUG_COMP) {
 			System.out.println("$$$$$$$ called SeqMapView.addAnnotationTiers(), aseq: " + aseq.getID() + " $$$$$$$");
 		}
@@ -1258,8 +1259,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 
-		if (aseq != null &&
-						aseq.getComposition() != null) {
+		if (aseq.getComposition() != null) {
 			// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
 			//   addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
 			BioSeq cached_aseq = aseq;

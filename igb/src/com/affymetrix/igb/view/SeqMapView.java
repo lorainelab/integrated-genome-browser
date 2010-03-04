@@ -81,6 +81,7 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.event.ViewSeqListener;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -2125,7 +2126,7 @@ public class SeqMapView extends JPanel
 		}
         String UcscVersion = getUcscGenomeVersion(aseq.getVersion());
         String region = getRegionString();
-        if(UcscVersion != null && region != null){
+        if(!UcscVersion.isEmpty() && region != null){
             return "db=" + UcscVersion + "&position=" + region;
         }
         return "Error: genome version not resolvable for UCSC " + aseq.getVersion();
@@ -2136,24 +2137,11 @@ public class SeqMapView extends JPanel
 	private static String getUcscGenomeVersion(String version) {
 		String ucsc_version = null;
 		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-
-		Collection<String> syns = lookup.getSynonyms(version);
-
-		if (syns == null) {
-			syns = new ArrayList<String>();
-			syns.add(version);
-		}
-		for (String syn : syns) {
-			// Having to hardwire this check to figure out which synonym to use to match
-			//  with UCSC.  Really need to have some way when loading synonyms to specify
-			//  which ones should be used when communicating with which external resource!
-			//	System.out.println("testing syn: " + syn);
-			if (syn.startsWith("hg") || syn.startsWith("mm") ||
-					syn.startsWith("rn") || syn.startsWith("ce") || syn.startsWith("dm")) {
-				ucsc_version = syn;
-			}
-		}
-		return ucsc_version;
+		DasServerInfo ucsc = new DasServerInfo("http://genome.cse.ucsc.edu/cgi-bin/das/dsn");
+		Set<String> ucscSources = ucsc.getDataSources().keySet();
+		
+		ucsc_version = lookup.findMatchingSynonym(ucscSources, version);
+		return ucscSources.contains(ucsc_version) ? ucsc_version : "";
 	}
 
 	/**
@@ -2182,7 +2170,7 @@ public class SeqMapView extends JPanel
 		String UcscVersion = getUcscGenomeVersion(aseq.getVersion());
 		String region = getRegionString();
 
-		if (UcscVersion != null && region != null) {
+		if (!UcscVersion.isEmpty() && region != null) {
 			String ucsc_url = "http://genome.ucsc.edu/cgi-bin/hgTracks?" + "db=" + UcscVersion + "&position=" + region;
 			GeneralUtils.browse(ucsc_url);
 		} else {

@@ -52,6 +52,7 @@ Macaca mulatta	Rhesus	M_mulatta	rheMac	Macaca_mulatta
 Macropus eugenii	Tammar Wallaby	M_eugenii		Macropus_eugenii
 Manihot esculenta	Cassava	M_esculenta
 Medicago truncatula	Barrel Medic	M_truncatula	
+Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo
 Microcebus murinus	Gray Mouse Lemur	M_murinus	micMur	Microcebus_murinus
 Mimulus guttatus	Monkey Flower	M_guttatus
 Monodelphis domestica	Opossum	M_domestica	monDom	Monodelphis_domestica

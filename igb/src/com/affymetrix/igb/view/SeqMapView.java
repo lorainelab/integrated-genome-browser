@@ -878,8 +878,7 @@ public class SeqMapView extends JPanel
 		Timer tim = new Timer();
 		tim.start();
 
-		boolean same_seq = ((seq == this.aseq) && (seq != null));
-
+		boolean same_seq = (seq == this.aseq);
 
 		match_glyphs.clear();
 		List<SeqSymmetry> old_selections = Collections.<SeqSymmetry>emptyList();

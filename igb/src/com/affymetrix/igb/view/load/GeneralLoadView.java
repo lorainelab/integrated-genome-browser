@@ -360,9 +360,16 @@ public final class GeneralLoadView extends JComponent
 		Application.getSingleton().addNotLockedUpMsg("Loading previous genome...");
 
 		gmodel.addGroupSelectionListener(this);
-		gmodel.setSelectedSeqGroup(group);
 
 		initVersion(versionName);
+
+		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+		if (features == null || features.isEmpty()) {
+			return;
+		}
+
+		gmodel.setSelectedSeqGroup(group);
+
 
 		BioSeq seq = Persistence.restoreSeqSelection(group);
 		if (seq == null) {

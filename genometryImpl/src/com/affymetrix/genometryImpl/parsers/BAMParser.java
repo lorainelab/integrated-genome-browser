@@ -39,7 +39,7 @@ public final class BAMParser {
 
 	public void parse() {
 		for (BioSeq seq : group.getSeqList()) {
-			parse(seq, seq.getMin(), seq.getMax(), true);
+			parse(seq, seq.getMin(), seq.getMax(), true, true);
 		}
 	}
 	
@@ -48,11 +48,11 @@ public final class BAMParser {
 	 * @param seq
 	 * @return
 	 */
-	private List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym) {
+	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
 		CloseableIterator<SAMRecord> iter = null;
 		try {
-			iter = reader.query(seq.getID(), min, max, true);
+			iter = reader.query(seq.getID(), min, max, contained);
 			for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
 				/*if (containerSym) {
 					RandomAccessSym sym = new RandomAccessSym();
@@ -68,10 +68,12 @@ public final class BAMParser {
 				for (SAMTagAndValue tv : sr.getAttributes()) {
 					sym.setProperty(tv.tag, tv.value);
 				}
+				int start = sr.getAlignmentStart() - 1;	// convert to interbase
+				int end = sr.getAlignmentEnd();
 				if (!sr.getReadNegativeStrandFlag()) {
-					sym.addSpan(new SimpleSeqSpan(sr.getAlignmentStart(), sr.getAlignmentEnd(), seq));
+					sym.addSpan(new SimpleSeqSpan(start, end, seq));
 				} else {
-					sym.addSpan(new SimpleSeqSpan(sr.getAlignmentEnd(), sr.getAlignmentStart(), seq));
+					sym.addSpan(new SimpleSeqSpan(end, start, seq));
 				}
 				sym.setProperty("residues", new String(sr.getReadBases()));
 				sym.setProperty("meth", f.getName());

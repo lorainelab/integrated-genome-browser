@@ -67,7 +67,6 @@ public class BedParserTest {
 	 */
 	@Test
 		public void testParseFromString() throws Exception {
-			//System.out.println("parse");
 
 			String string = 
 				"591	chr2L	901490	901662	CR31656-RA	0	-	901490	901662	0	1	172,	0,\n"+
@@ -116,7 +115,6 @@ public class BedParserTest {
 	 */
 	@Test
 		public void testParseIntArray() {
-			//System.out.println("parseIntArray");
 
 			String int_array = "1,7,8,9,10";
 
@@ -129,19 +127,20 @@ public class BedParserTest {
 
 	@Test
 		public void testParseIntArrayWithWhitespace() {
-			//System.out.println("parseIntArray");
 
 			// the parser doesn't accept whitespace in the integer lists
-			// (Maybe it should, but it insn't expected to need to do so.)
+			// (Maybe it should, but it isn't expected to need to do so.)
 			String int_array = "1,7, 8,9,10";
 
 			boolean passed = false;
 			try {
-				int[] result = BedParser.parseIntArray(int_array);
+				BedParser.parseIntArray(int_array);
 			} catch (NumberFormatException nfe) {
 				passed = true;
 			}
-			if (!passed) fail("Expected exception was not thrown");
+			if (!passed) {
+				fail("Expected exception was not thrown");
+			}
 		}
 
 
@@ -150,7 +149,6 @@ public class BedParserTest {
 	 */
 	@Test
 		public void testMakeBlockMins() {
-			//System.out.println("makeBlockMins");
 
 			int min = 100;
 			int[] blockStarts = new int[] {1,3,4,5,9};
@@ -167,7 +165,6 @@ public class BedParserTest {
 	 */
 	@Test
 		public void testMakeBlockMaxs() {
-			//System.out.println("makeBlockMaxs");
 
 			int[] blockMins =  new int[] {1,3,4,5,9};
 			int[] blockSizes =  new int[] {1,3,4,5,9};
@@ -205,7 +202,6 @@ public class BedParserTest {
 	 */
 	@Test
 		public void testWriteAnnotations() {
-			//System.out.println("writeAnnotations");
 
 			String string = 
 				"chr2L	901490	901662	CR31656-RA	0	-	901490	901662	0	1	172,	0,\n"+
@@ -248,7 +244,6 @@ public class BedParserTest {
 	 */
 	@Test
 		public void testWriteAnnotations2() {
-			//System.out.println("writeAnnotations2");
 
 			String string =
 				"chr1	455031	455267	EL049618	0	+	455031	455267	0	3	9,36,26,	0,80,210,\n"+
@@ -286,7 +281,6 @@ public class BedParserTest {
 	 */
 	@Test
 		public void testGetMimeType() {
-			//System.out.println("getMimeType");
 
 			BedParser instance = new BedParser();
 

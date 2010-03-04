@@ -81,6 +81,7 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.event.ViewSeqListener;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -118,6 +119,7 @@ public class SeqMapView extends JPanel
 	private boolean slicing_in_effect = false;
 	private boolean hairline_is_labeled = true;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
+	private final Set<ViewSeqListener> viewSeqListeners = new CopyOnWriteArraySet<ViewSeqListener>();
 	private final XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 	/**
 	 *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing
@@ -785,7 +787,7 @@ public class SeqMapView extends JPanel
 		stopSlicingThread();
 		seqmap.clearWidget();
 		aseq = null;
-		viewseq = null;
+		this.setViewSeq(null);
 		clearSelection();
 		method2rtier.clear();
 		method2ftier.clear();
@@ -935,7 +937,7 @@ public class SeqMapView extends JPanel
 				// map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
 				coord_shift = false;
 			} else {
-				viewseq = aseq;
+				this.setViewSeq(aseq);
 				seq2viewSym = null;
 				transform_path = null;
 			}
@@ -1376,6 +1378,14 @@ public class SeqMapView extends JPanel
 		return aseq;
 	}
 
+	protected final void setViewSeq(BioSeq viewseq) {
+		boolean fireEvent = this.viewseq != viewseq;
+		this.viewseq = viewseq;
+		if (fireEvent) {
+			this.fireViewSeqChanged(viewseq);
+		}
+	}
+
 	/**
 	 *  Gets the view seq.
 	 *  Note: {@link #getViewSeq()} and {@link #getAnnotatedSeq()} may return
@@ -1387,6 +1397,16 @@ public class SeqMapView extends JPanel
 	 */
 	public final BioSeq getViewSeq() {
 		return viewseq;
+	}
+
+	private void fireViewSeqChanged(BioSeq viewseq) {
+		for (ViewSeqListener listener : viewSeqListeners) {
+			listener.viewSeqChanged(aseq);
+		}
+	}
+
+	public void addViewSeqListener(ViewSeqListener listener) {
+		viewSeqListeners.add(listener);
 	}
 
 	/**
@@ -1756,7 +1776,7 @@ public class SeqMapView extends JPanel
 			return;
 		}
 		
-		viewseq = new BioSeq("view_seq", "", aseq.getLength());
+		this.setViewSeq(new BioSeq("view_seq", "", aseq.getLength()));
 		slice_symmetry = sym;
 		coord_shift = true;
 		

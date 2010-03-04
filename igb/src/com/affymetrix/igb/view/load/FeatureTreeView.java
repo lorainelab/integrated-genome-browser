@@ -183,7 +183,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 * If a node is already selected (this could happen if the user used a leaf checkbox), then we don't need to do this.
 	 * @param features
 	 */
-	void initOrRefreshTree(List<GenericFeature> features) {
+	synchronized void initOrRefreshTree(List<GenericFeature> features) {
 		if (selectedPath != null) {
 			selectedPath = null;
 			return;
@@ -206,7 +206,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 * @param features
 	 * @return root which is of the type DefaultMutableTreeNode
 	 */
-	static DefaultMutableTreeNode CreateTree(List<GenericFeature> features) {
+	private static DefaultMutableTreeNode CreateTree(List<GenericFeature> features) {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
 
 		if (features == null) {

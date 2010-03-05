@@ -929,7 +929,7 @@ public class SeqMapView extends JPanel
 		seqmap.addItem(pixel_floater_glyph);
 
 		// Synchronized to keep aseq from getting set to null
-		synchronized (aseq) {
+		synchronized (this) {
 			aseq = seq;
 
 			// if shifting coords, then seq2viewSym and viewseq are already taken care of,

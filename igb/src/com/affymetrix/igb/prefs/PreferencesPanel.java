@@ -106,14 +106,14 @@ public final class PreferencesPanel extends JPanel {
    *  @return the index of the added tab in the tab pane.
    */
   public int addPrefEditorComponent(final IPrefEditorComponent pec) {
-    tab_pane.add((Component) pec);
-    ((Component) pec).addComponentListener(new ComponentAdapter() {
+    tab_pane.add(pec);
+    pec.addComponentListener(new ComponentAdapter() {
 			@Override
       public void componentShown(ComponentEvent e) {
         pec.refresh();
       }
     });
-    return tab_pane.indexOfComponent((Component) pec);
+    return tab_pane.indexOfComponent(pec);
   }
 
   private IPrefEditorComponent[] getPrefEditorComponents() {
@@ -153,7 +153,7 @@ public final class PreferencesPanel extends JPanel {
 
       cont.add(this);
       frame.pack(); // pack() to set frame to its preferred size
-      Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(1000, 400));
+      Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(800, 600));
       if (pos != null) {
         PreferenceUtils.setWindowSize(frame, pos);
       }

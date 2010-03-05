@@ -32,17 +32,19 @@ import java.util.*;
  *
  * @version $Id$
  */
+@SuppressWarnings("deprecation")
 public class MapHandler extends HandlerBase implements ContentParser {
 	protected NeoMap       map = new NeoMap( true, false );
+	@SuppressWarnings("deprecation")
 	protected Parser        xmlParser;
 	private Hashtable<String,Integer>       positions = new Hashtable<String,Integer>();
-	private Hashtable       featureTypes = new Hashtable();
-	private Hashtable       featureLabels = new Hashtable();
-	private Hashtable       links = new Hashtable();
-	private Hashtable       targets = new Hashtable();
+	private Hashtable<String, MapGlyphFactory>       featureTypes = new Hashtable<String, MapGlyphFactory>();
+	private Hashtable<String, Integer>       featureLabels = new Hashtable<String, Integer>();
+	private Hashtable<GlyphI, String>       links = new Hashtable<GlyphI, String>();
+	private Hashtable<GlyphI, String>       targets = new Hashtable<GlyphI, String>();
 	private MapGlyphFactory labelFactory, glyphFactory;
-	private Hashtable       maps = new Hashtable( 7 );
-	private Stack           mapStack = new Stack();
+	private Hashtable<String, NeoMap>       maps = new Hashtable<String, NeoMap>( 7 );
+	private Stack<NeoMap>           mapStack = new Stack<NeoMap>();
 
 	public MapHandler() {
 		super();
@@ -58,6 +60,10 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * importContent parses an xml formated stream and creates
 	 * and returns a NeoMap object that contains the objects
 	 * specified by the stream.
+	 *
+	 * @param theInput 
+	 * @return
+	 * @throws IOException
 	 */
 	public Object importContent( Reader theInput ) throws IOException {
 		if ( null == xmlParser ) {
@@ -84,6 +90,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	/**
 	 * converts an <code>InputStream</code> to a <code>Reader</code>
 	 * and then parses.
+	 *
+	 * @throws IOException
 	 */
 	public Object importContent( InputStream theInput ) throws IOException {
 		return importContent( new InputStreamReader( theInput ) );
@@ -94,12 +102,16 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * Here the signature is empty because we are only interested
 	 * in providing the importContent functionality associated
 	 * with ContentParser.
+	 *
+	 * @throws IOException
 	 */
 	public void exportContent( OutputStream theOutput, 
 			Object o ) throws IOException {}
 
 	/**
 	 * sets the widget (in our case a NeoMap).
+	 *
+	 * @param theWidget 
 	 */
 	public void setWidget( NeoAbstractWidget theWidget ) {
 		System.out.println( "setting widget" );
@@ -120,7 +132,6 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param theName a unique name.
 	 * @param theMap on which glyphs are to be placed.
 	 */
-	@SuppressWarnings("unchecked")
 	public void addMap( String theName, NeoMap theMap ) {
 		System.out.println( "adding map type " + theName );
 		this.maps.put( theName, theMap );
@@ -144,13 +155,14 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		System.out.println( "End document" );
 	}
 
-	private Stack parents = new Stack();
+	private Stack<GlyphI> parents = new Stack<GlyphI>();
 
 	/**
 	 * Handle the start of an element.
+	 * @param name 
+	 * @param attributes
 	 * @see org.xml.sax.DocumentHandler#startElement
 	 */
-	@SuppressWarnings("unchecked")
 	public void startElement( String name, Attributes attributes ) {
 		GlyphI     lastItem = null;
 		LabelGlyph label = null;
@@ -159,7 +171,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		System.out.println( "Start element:  name=" + name );
 
 		// First look to see if this has been defined earlier.
-		MapGlyphFactory fac = ( MapGlyphFactory ) this.featureTypes.get( name );
+		MapGlyphFactory fac = this.featureTypes.get( name );
 
 		if ( null != fac ) { // It has.
 			String v;
@@ -227,7 +239,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 				v = attributes.getValue("config");
 
-				Object p = getLabelPosition( attributes );
+				Integer p = getLabelPosition( attributes );
 
 				defineGlyphStyle( this.map, fName, v, p );
 			}
@@ -243,7 +255,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 			this.map.addAxis( axisOffset );
 		}
-		else if ( null != ( nextMap = ( NeoMap ) this.maps.get( name ) ) ) {
+		else if ( null != ( nextMap = this.maps.get( name ) ) ) {
 			System.out.println( "got map alias" );
 
 			if ( null != this.map ) {
@@ -304,8 +316,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 			this.glyphFactory = this.map.addFactory( v );
 			this.featureTypes.put( "glyph", glyphFactory );
 
-			Object p = getLabelPosition( attributes );
-			if ( null != p && p instanceof Integer ) {
+			Integer p = getLabelPosition( attributes );
+			if ( null != p) {
 				this.featureLabels.put( "glyph", p );
 			}
 		}
@@ -336,6 +348,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	}
 
 	/**
+	 * @param theGlyph
 	 * @return a URL if an href attribute was specified for this glyph.
 	 * null otherwise.
 	 */
@@ -350,6 +363,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	}
 
 	/**
+	 * @param theGlyph 
 	 * @return a target if one was specified for this glyph.
 	 * null otherwise.
 	 */
@@ -366,13 +380,13 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	/**
 	 * defines a glyph style.
 	 * 
+	 * @param theMap 
 	 * @param name of the style
 	 * @param config string to pass to the glyph factory
 	 * @param labelPlacement LEFT, RIGHT, ABOVE, BELOW, or CENTER
 	 */
-	@SuppressWarnings("unchecked")
 	public void defineGlyphStyle( NeoMap theMap, String name, String config, 
-			Object labelPlacement ) {
+			Integer labelPlacement ) {
 		if ( null == name ) {
 			throw new NullPointerException( "Need a name to define a glyph style" );
 		}
@@ -395,6 +409,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 	/**
 	 * Handle the end of an element.
+	 * @param name 
 	 * @see org.xml.sax.DocumentHandler#endElement
 	 */
 	@Override
@@ -402,7 +417,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		System.out.println( "End element:  " + name );
 
 		if ( !parents.empty() ) {
-			GlyphI p = ( GlyphI ) this.parents.pop();
+			GlyphI p = this.parents.pop();
 
 			if ( name.equals( "chromosome" ) ) {  // temporary
 				p.setPacker( new SiblingCoordAvoid() );
@@ -411,7 +426,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		}
 
 		if ( !mapStack.empty() && null != maps.get( name ) ) {
-			this.map = ( NeoMap ) mapStack.pop();
+			this.map = mapStack.pop();
 		}
 	}
 
@@ -429,7 +444,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		GlyphI lastItem = null;
 
 		try {
-			lastItem = ( GlyphI ) this.parents.peek();
+			lastItem = this.parents.peek();
 
 			if ( lastItem instanceof SequenceGlyph ) {
 				( ( SequenceGlyph ) lastItem ).setResidues( new String( ch, start, 
@@ -443,6 +458,9 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 	/**
 	 * Handle ignorable whitespace.
+	 * @param ch
+	 * @param start
+	 * @param length 
 	 * @see org.xml.sax.DocumentHandler#ignorableWhitespace
 	 */
 	@Override
@@ -452,6 +470,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 	/**
 	 * Handle a processing instruction.
+	 * @param target
+	 * @param data 
 	 * @see org.xml.sax.DocumentHandler#processingInstruction
 	 */
 	@Override
@@ -460,8 +480,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 				+ escape( data.toCharArray(), data.length() ) );
 	}
 
-	private Object getLabelPosition( Attributes attributes ) {
-		Object p = null;
+	private Integer getLabelPosition( Attributes attributes ) {
+		Integer p = null;
 		String v = attributes.getValue("labeled");
 
 		if ( null == v ) {  // Allow English as well as American spelling.

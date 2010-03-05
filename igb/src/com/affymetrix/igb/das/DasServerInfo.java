@@ -146,6 +146,10 @@ public final class DasServerInfo {
 		}
 		try {
 			URL masterURL = new URL(master_url);
+			if (DasSource.getID(masterURL).isEmpty()) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Skipping " + sourceid + " as MAPMASTER could not be parsed");
+				return;
+			}
 			DasSource das_source = sources.get(DasSource.getID(masterURL));
 			if (das_source == null) {
 				das_source = new DasSource(serverURL, masterURL);

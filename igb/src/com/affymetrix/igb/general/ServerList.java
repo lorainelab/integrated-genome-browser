@@ -51,6 +51,18 @@ public final class ServerList {
 		return serverList;
 	}
 
+	public static boolean areAllServersInited() {
+		for (GenericServer gServer : ServerList.getAllServers()) {
+			if (!gServer.isEnabled()) {
+				continue;
+			}
+			if (gServer.getServerStatus() == ServerStatus.NotInitialized) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static Collection<GenericServer> getAllServers() {
 		return url2server.values();
 	}

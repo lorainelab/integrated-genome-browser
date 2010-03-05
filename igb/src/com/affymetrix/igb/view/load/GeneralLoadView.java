@@ -82,6 +82,7 @@ public final class GeneralLoadView extends JComponent
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
 	private final DataLoadView data_load_view;
+	private boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 
 	public GeneralLoadView(DataLoadView data_load_view) {
 		this.data_load_view = data_load_view;
@@ -197,16 +198,10 @@ public final class GeneralLoadView extends JComponent
 		for (final GenericServer gServer : ServerList.getEnabledServers()) {
 			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
 				protected Void doInBackground() throws Exception {
 					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
-				}
-
-				@Override
-				public void done() {				
-					RestorePersistentGenome();
 				}
 			};
 
@@ -240,6 +235,12 @@ public final class GeneralLoadView extends JComponent
 
 		if (speciesListener) {
 			this.speciesCB.addItemListener(this);
+		}
+
+		// Only try restoring persistent genome if all the server responses have come back.
+		if (lookForPersistentGenome && ServerList.areAllServersInited()) {
+			lookForPersistentGenome = false;
+			RestorePersistentGenome();
 		}
 	}
 
@@ -277,7 +278,7 @@ public final class GeneralLoadView extends JComponent
 		Collections.sort(speciesList);
 
 		// Add names to combo boxes.
-		synchronized (this) {
+		synchronized (speciesCB) {
 			speciesCB.removeAllItems();
 			speciesCB.addItem(SELECT_SPECIES);
 			for (String speciesName : speciesList) {
@@ -294,39 +295,41 @@ public final class GeneralLoadView extends JComponent
 	 * Refresh the genome versions.
 	 * @param speciesName
 	 */
-	private synchronized void refreshVersionCB(String speciesName) {
-		versionCB.removeItemListener(this);
-		String oldVersion = (String) versionCB.getSelectedItem();
-		versionCB.setSelectedIndex(0);
+	private void refreshVersionCB(String speciesName) {
+		synchronized (versionCB) {
+			versionCB.removeItemListener(this);
+			String oldVersion = (String) versionCB.getSelectedItem();
+			versionCB.setSelectedIndex(0);
 
-		List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
-		if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
-			versionCB.setEnabled(false);
-			return;
-		}
-
-		// Add names to combo boxes.
-		List<String> versionNames = new ArrayList<String>();
-		for (GenericVersion gVersion : versionList) {
-			// the same versionName name may occur on multiple servers
-			if (!versionNames.contains(gVersion.versionName)) {
-				versionNames.add(gVersion.versionName);
+			List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
+			if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
+				versionCB.setEnabled(false);
+				return;
 			}
-		}
-		Collections.sort(versionNames, new StringVersionDateComparator());
-		// Sort the versions (by date)
 
-		versionCB.removeAllItems();
-		versionCB.addItem(SELECT_GENOME);
-		for (String versionName : versionNames) {
-			versionCB.addItem(versionName);
-		}
-		versionCB.setEnabled(true);
-		if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
-			versionCB.setSelectedItem(oldVersion);
-		}
-		if (versionCB.getItemCount() > 1) {
-			versionCB.addItemListener(this);
+			// Add names to combo boxes.
+			List<String> versionNames = new ArrayList<String>();
+			for (GenericVersion gVersion : versionList) {
+				// the same versionName name may occur on multiple servers
+				if (!versionNames.contains(gVersion.versionName)) {
+					versionNames.add(gVersion.versionName);
+				}
+			}
+			Collections.sort(versionNames, new StringVersionDateComparator());
+			// Sort the versions (by date)
+
+			versionCB.removeAllItems();
+			versionCB.addItem(SELECT_GENOME);
+			for (String versionName : versionNames) {
+				versionCB.addItem(versionName);
+			}
+			versionCB.setEnabled(true);
+			if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
+				versionCB.setSelectedItem(oldVersion);
+			}
+			if (versionCB.getItemCount() > 1) {
+				versionCB.addItemListener(this);
+			}
 		}
 	}
 
@@ -366,21 +369,19 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		synchronized (this) {
-			gmodel.setSelectedSeqGroup(group);
+		gmodel.setSelectedSeqGroup(group);
 
-			BioSeq seq = Persistence.restoreSeqSelection(group);
+		BioSeq seq = Persistence.restoreSeqSelection(group);
+		if (seq == null) {
+			seq = group.getSeq(0);
 			if (seq == null) {
-				seq = group.getSeq(0);
-				if (seq == null) {
-					Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
-					return;
-				}
+				Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
+				return;
 			}
-
-			gmodel.addSeqSelectionListener(this);
-			gmodel.setSelectedSeq(seq);
 		}
+
+		gmodel.addSeqSelectionListener(this);
+		gmodel.setSelectedSeq(seq);
 
 		Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
 

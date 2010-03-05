@@ -929,7 +929,7 @@ public class SeqMapView extends JPanel
 		seqmap.addItem(pixel_floater_glyph);
 
 		// Synchronized to keep aseq from getting set to null
-		synchronized (this) {
+		synchronized (aseq) {
 			aseq = seq;
 
 			// if shifting coords, then seq2viewSym and viewseq are already taken care of,
@@ -938,7 +938,7 @@ public class SeqMapView extends JPanel
 				// map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
 				coord_shift = false;
 			} else {
-				this.setViewSeq(aseq);
+				this.setViewSeq(seq);
 				seq2viewSym = null;
 				transform_path = null;
 			}
@@ -1170,36 +1170,37 @@ public class SeqMapView extends JPanel
 	 *
 	 * Synchronized to keep aseq non-null
 	 */
-	private static final synchronized SeqSpan getAnnotationBounds(BioSeq aseq) {
-		int annotCount = aseq == null ? 0 : aseq.getAnnotationCount();
-		int min = Integer.MAX_VALUE;
-		int max = Integer.MIN_VALUE;
-		for (int i = 0; i < annotCount; i++) {
-			// all_gene_searches, all_repeat_searches, etc.
-			SeqSymmetry annotSym = aseq.getAnnotation(i);
-			if (annotSym instanceof GraphSym) {
-				continue;
-			}
-			if (annotSym instanceof TypeContainerAnnot) {
-				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
-				int[] sub_bounds = getAnnotationBounds(aseq, tca, min, max);
-				min = sub_bounds[0];
-				max = sub_bounds[1];
-			} else { // this shouldn't happen: should only be TypeContainerAnnots
-				SeqSpan span = annotSym.getSpan(aseq);
-				if (span != null) {
-					min = Math.min(span.getMin(), min);
-					max = Math.max(span.getMax(), max);
+	private static final SeqSpan getAnnotationBounds(BioSeq aseq) {
+		synchronized (aseq) {
+			int annotCount = aseq == null ? 0 : aseq.getAnnotationCount();
+			int min = Integer.MAX_VALUE;
+			int max = Integer.MIN_VALUE;
+			for (int i = 0; i < annotCount; i++) {
+				// all_gene_searches, all_repeat_searches, etc.
+				SeqSymmetry annotSym = aseq.getAnnotation(i);
+				if (annotSym instanceof GraphSym) {
+					continue;
+				}
+				if (annotSym instanceof TypeContainerAnnot) {
+					TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
+					int[] sub_bounds = getAnnotationBounds(aseq, tca, min, max);
+					min = sub_bounds[0];
+					max = sub_bounds[1];
+				} else { // this shouldn't happen: should only be TypeContainerAnnots
+					SeqSpan span = annotSym.getSpan(aseq);
+					if (span != null) {
+						min = Math.min(span.getMin(), min);
+						max = Math.max(span.getMax(), max);
+					}
 				}
 			}
+			if (min != Integer.MAX_VALUE && max != Integer.MIN_VALUE) {
+				min = Math.max(0, min - 100);
+				max = Math.min(aseq.getLength(), max + 100);
+				return new SimpleSeqSpan(min, max, aseq);
+			}
+			return null;
 		}
-		if (min != Integer.MAX_VALUE && max != Integer.MIN_VALUE) {
-			min = Math.max(0, min - 100);
-			max = Math.min(aseq.getLength(), max + 100);
-			return new SimpleSeqSpan(min, max, aseq);
-		}
-		return null;
-
 	}
 
 	/** Returns the minimum and maximum positions of all included annotations.

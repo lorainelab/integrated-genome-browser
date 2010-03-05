@@ -37,13 +37,12 @@ public class BAMParserTest {
 			BAMParser parser = new BAMParser(new File(filename), group);
 			assertNotNull(parser);
 
-			List<SeqSymmetry> result = parser.parse(seq, seq.getMin(), seq.getMax(), true, true);
+			List<SeqSymmetry> result = parser.parse(seq, seq.getMin(), seq.getMax(), false, true);
 			assertNotNull(result);
 			assertEquals(189, result.size());	// 189 alignments in sample file
 
 			SeqSymmetry sym = result.get(0);	// first (positive) strand
 			assertEquals("0", sym.getID());
-//			assertEquals(51120000, sym.getSpan(seq).getMin());
 			assertEquals(51119999, sym.getSpan(seq).getMin());
 			assertEquals(51120035, sym.getSpan(seq).getMax());
 			assertTrue(sym.getSpan(seq).isForward());
@@ -53,7 +52,6 @@ public class BAMParserTest {
 
 			sym = result.get(58);	// first negative strand
 			assertEquals("0", sym.getID());
-			//assertEquals(51120692, sym.getSpan(seq).getMin());
 			assertEquals(51120691, sym.getSpan(seq).getMin());
 			assertEquals(51120727, sym.getSpan(seq).getMax());
 			assertFalse(sym.getSpan(seq).isForward());
@@ -62,14 +60,13 @@ public class BAMParserTest {
 			assertEquals("ACATTCATCTAATTCATGAATGGCAAAGACACGTCC",residues.toString());
 
 			// Strange, considering the span length is only 36
-			result = parser.parse(seq, 51120000, 51120038, true, true);
+			result = parser.parse(seq, 51120000, 51120038, false, true);
 			assertEquals(0, result.size());
 
-			result = parser.parse(seq, 51120000, 51120039, true, true);
+			result = parser.parse(seq, 51120000, 51120039, false, true);
 			assertEquals(1, result.size());
 			sym = result.get(0);	// first (positive) strand
 			assertEquals("0", sym.getID());
-			//assertEquals(51120000, sym.getSpan(seq).getMin());
 			assertEquals(51119999, sym.getSpan(seq).getMin());
 			assertEquals(51120035, sym.getSpan(seq).getMax());
 

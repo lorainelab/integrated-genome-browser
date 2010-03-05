@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.RandomAccessSym;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,37 +55,87 @@ public final class BAMParser {
 		try {
 			iter = reader.query(seq.getID(), min, max, contained);
 			for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
-				/*if (containerSym) {
-					RandomAccessSym sym = new RandomAccessSym();
-					sym.addParser(this);
-					seq.addAnnotation(sym,f.getName());
+				if (containerSym) {
+					// positive
+					RandomAccessSym sym = new RandomAccessSym(this);
+					sym.setID(sr.getReadName());
+					for (SAMTagAndValue tv : sr.getAttributes()) {
+						sym.setProperty(tv.tag, tv.value);
+					}
+					sym.addSpan(new SimpleSeqSpan(min, max, seq));
+					sym.setProperty("method", f.getName());
+					seq.addAnnotation(sym);
+					symList.add(sym);
+
+					// negative
+					sym = new RandomAccessSym(this);
+					sym.setID(sr.getReadName());
+					for (SAMTagAndValue tv : sr.getAttributes()) {
+						sym.setProperty(tv.tag, tv.value);
+					}
+					sym.addSpan(new SimpleSeqSpan(max, min, seq));
+					sym.setProperty("method", f.getName());
+					seq.addAnnotation(sym);
 					symList.add(sym);
 					return symList;
-				}*/
-
-				// Actually parsing the information
-				SimpleSymWithProps sym = new SimpleSymWithProps();
-				sym.setID(sr.getReadName());
-				for (SAMTagAndValue tv : sr.getAttributes()) {
-					sym.setProperty(tv.tag, tv.value);
 				}
-				int start = sr.getAlignmentStart() - 1;	// convert to interbase
-				int end = sr.getAlignmentEnd();
-				if (!sr.getReadNegativeStrandFlag()) {
-					sym.addSpan(new SimpleSeqSpan(start, end, seq));
-				} else {
-					sym.addSpan(new SimpleSeqSpan(end, start, seq));
-				}
-				sym.setProperty("residues", new String(sr.getReadBases()));
-				sym.setProperty("meth", f.getName());
+				SimpleSymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, f.getName());
 				symList.add(sym);
-				seq.addAnnotation(sym);
+				//seq.addAnnotation(sym);
 			}
 		} finally {
 			iter.close();
 		}
 
 		return symList;
+	}
+
+	/**
+	 * Return intervals for the given chromosome range
+	 */
+	public void parseLoRes(BioSeq seq, int min, int max, float scaleFactor, int[]x, float[]y) {
+		CloseableIterator<SAMRecord> iter = null;
+		try {
+			iter = reader.query(seq.getID(), min, max, true);
+			for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
+				SimpleSymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, f.getName().intern());
+				int start = (int) ((sr.getAlignmentStart() - 1) * scaleFactor); // convert to interbase
+				int end = (int) (sr.getAlignmentEnd() * scaleFactor);
+				if (!sr.getReadNegativeStrandFlag()) {
+					// swap
+					int temp = start;
+					start = end;
+					end = temp;
+				}
+			}
+		} finally {
+			iter.close();
+		}
+	}
+
+	/**
+	 * Convert SAMRecord to SymWithProps.
+	 * @param sr - SAMRecord
+	 * @param seq - chromosome
+	 * @param meth - method name
+	 * @return SimpleSymWithProps
+	 */
+	public static SimpleSymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth) {
+		SimpleSymWithProps sym = new SimpleSymWithProps();
+		sym.setID(sr.getReadName());
+		for (SAMTagAndValue tv : sr.getAttributes()) {
+			sym.setProperty(tv.tag, tv.value);
+		}
+		int start = sr.getAlignmentStart() - 1; // convert to interbase
+		int end = sr.getAlignmentEnd();
+		if (!sr.getReadNegativeStrandFlag()) {
+			sym.addSpan(new SimpleSeqSpan(start, end, seq));
+		} else {
+			sym.addSpan(new SimpleSeqSpan(end, start, seq));
+		}
+		sym.setProperty("residues", sr.getReadString().intern());
+		sym.setProperty("method", meth);
+		return sym;
 	}
 
 	public String getMimeType() {

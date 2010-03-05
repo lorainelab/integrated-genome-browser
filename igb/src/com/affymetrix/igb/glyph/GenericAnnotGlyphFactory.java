@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.symmetry.RandomAccessSym;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -37,6 +38,8 @@ import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.Color;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
@@ -54,10 +57,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
 	private static Class default_echild_class = (new FillRectGlyph()).getClass();
 	private static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
-	private static int DEFAULT_THICK_HEIGHT = 25;
-	private static int DEFAULT_THIN_HEIGHT = 15;
+	private static final int DEFAULT_THICK_HEIGHT = 25;
+	private static final int DEFAULT_THIN_HEIGHT = 15;
 	private SeqMapView gviewer;
-	private int glyph_depth = 2;  // default is depth = 2 (only show leaf nodes and parents of leaf nodes)
 	private Class parent_glyph_class;
 	private Class child_glyph_class;
 	private final Class parent_labelled_glyph_class;
@@ -104,7 +106,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 		if (meth != null) {
 			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			glyph_depth = style.getGlyphDepth();
+			int glyph_depth = style.getGlyphDepth();
 
 			TierGlyph[] tiers = smv.getTiers(meth, false, style);
 			if (style.getSeparate()) {
@@ -182,7 +184,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 *   (using the child glyph style).  If this is set to true, then
 	 *    the symmetry must have a depth of at least 2.
 	 */
-	private GlyphI addToTier(SeqSymmetry insym,
+	private void addToTier(SeqSymmetry insym,
 			TierGlyph forward_tier,
 			TierGlyph reverse_tier,
 			boolean parent_and_child) {
@@ -191,92 +193,95 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			BioSeq annotseq = gviewer.getAnnotatedSeq();
 			BioSeq coordseq = gviewer.getViewSeq();
 			SeqSymmetry sym = insym;
-			boolean same_seq = (annotseq == coordseq);
 
-			if (!same_seq) {
+			if (annotseq != coordseq) {
 				sym = gviewer.transformForViewSeq(insym, annotseq);
 			}
 
 			SeqSpan pspan = gviewer.getViewSeqSpan(sym);
 			if (pspan == null || pspan.getLength() == 0) {
-				return null;
+				return;
 			}  // if no span corresponding to seq, then return;
 
 			TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
 
 			// I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
 			IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
-			
-			GlyphI pglyph = determinePGlyph(parent_and_child, insym, the_style, the_tier, pspan, map, sym, same_seq, annotseq, coordseq);
 
-			the_tier.addChild(pglyph);
-			return pglyph;
-			
+			if (insym instanceof RandomAccessSym) {
+				handleRandomAccessSym(
+						the_tier, the_style, (RandomAccessSym) insym, pspan, map,
+						annotseq,
+						coordseq);
+			} else {
+				the_tier.addChild(determinePGlyph(
+						parent_and_child, insym, the_style, the_tier, pspan, map, sym, annotseq, coordseq));
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		return null;
 	}
 
-	private GlyphI determinePGlyph(boolean parent_and_child, SeqSymmetry insym, IAnnotStyleExtended the_style, TierGlyph the_tier, SeqSpan pspan, AffyTieredMap map, SeqSymmetry sym, boolean same_seq, BioSeq annotseq, BioSeq coordseq) throws InstantiationException, IllegalAccessException {
+	private void handleRandomAccessSym(
+			TierGlyph the_tier, IAnnotStyleExtended the_style,
+			RandomAccessSym sym, SeqSpan span,
+			AffyTieredMap map,
+			BioSeq annotseq,
+			BioSeq coordseq) {
+		// How big is the display?  How many syms do we have?
+
+		List<SeqSymmetry> symList = sym.parser.parse(annotseq, span.getMin(), span.getMax(), false, true);
+		for (SeqSymmetry symElt : symList) {
+			try {
+				SeqSpan symSpan = symElt.getSpan(annotseq);
+				if (
+						
+						(symSpan.isForward() && !span.isForward() ||
+						(!symSpan.isForward() && span.isForward()))) {
+					continue;
+				}
+				GlyphI pglyph = (GlyphI) child_glyph_class.newInstance();
+				pglyph.setCoords(symSpan.getMin(), 0, symSpan.getLength(), DEFAULT_THICK_HEIGHT);
+				pglyph.setColor(getSymColor(symElt, the_style));
+				handleResidues(symElt, annotseq, pglyph);
+				map.setDataModelFromOriginalSym(pglyph, symElt);
+				the_tier.addChild(pglyph);
+			} catch (InstantiationException ex) {
+				Logger.getLogger(GenericAnnotGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalAccessException ex) {
+				Logger.getLogger(GenericAnnotGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
+			}
+
+		}
+
+	}
+
+	private GlyphI determinePGlyph(
+			boolean parent_and_child, SeqSymmetry insym,
+			IAnnotStyleExtended the_style, TierGlyph the_tier, SeqSpan pspan,
+			AffyTieredMap map, SeqSymmetry sym, 
+			BioSeq annotseq, BioSeq coordseq)
+			throws InstantiationException, IllegalAccessException {
 		GlyphI pglyph = null;
 		if (parent_and_child && insym.getChildCount() > 0) {
 			pglyph = determineGlyph(parent_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
-			addChildren(insym, same_seq, sym, the_style, annotseq, pglyph, map, coordseq);
+			addChildren(insym, sym, the_style, annotseq, pglyph, map, coordseq);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
-			handleResidues(insym, coordseq, pglyph);
+			//handleResidues(insym, coordseq, pglyph);
 		}
 		return pglyph;
 	}
 
-
-	private static void handleResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
-		if (sym instanceof SymWithProps) {
-			Object residues = ((SymWithProps) sym).getProperty("residues");
-			if (residues != null) {
-				SeqSpan span = sym.getSpan(coordseq);
-				if (span != null) {
-					String residueStr = residues.toString();
-					// note: it is possible to get different lengths here, probably due to 0-based, 1-based, interbase disagreement.
-					residueStr = residueStr.substring(0, Math.min(residueStr.length(), span.getLength()));
-					CharSeqGlyph csg = new CharSeqGlyph();
-					csg.setResidues(residueStr);
-					csg.setShowBackground(false);
-					csg.setHitable(false);
-					csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
-					pglyph.addChild(csg);
-				}
-			}
-		}
-	}
-
-
-	private static Object getTheProperty(SeqSymmetry sym, String prop) {
-		if (prop == null || (prop.trim().length() == 0)) {
-			return null;
-		}
-		SeqSymmetry original = getMostOriginalSymmetry(sym);
-
-		if (original instanceof SymWithProps) {
-			return ((SymWithProps) original).getProperty(prop);
-		}
-		return null;
-	}
-
-	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
-		if (sym instanceof DerivedSeqSymmetry) {
-			return getMostOriginalSymmetry(((DerivedSeqSymmetry) sym).getOriginalSymmetry());
-		}
-		return sym;
-	}
-
-
-	private static GlyphI determineGlyph(Class glyphClass, Class labelledGlyphClass, IAnnotStyleExtended the_style, SeqSymmetry insym, TierGlyph the_tier, SeqSpan pspan, AffyTieredMap map, SeqSymmetry sym) throws IllegalAccessException, InstantiationException {
+	private static GlyphI determineGlyph(
+			Class glyphClass, Class labelledGlyphClass,
+			IAnnotStyleExtended the_style, SeqSymmetry insym, TierGlyph the_tier,
+			SeqSpan pspan, AffyTieredMap map, SeqSymmetry sym)
+			throws IllegalAccessException, InstantiationException {
 		GlyphI pglyph = null;
 		// Note: Setting parent height (pheight) larger than the child height (cheight)
 		// allows the user to select both the parent and the child as separate entities
@@ -306,10 +311,32 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return pglyph;
 	}
 
+	private static Object getTheProperty(SeqSymmetry sym, String prop) {
+		if (prop == null || (prop.trim().length() == 0)) {
+			return null;
+		}
+		SeqSymmetry original = getMostOriginalSymmetry(sym);
 
-	private void addChildren(SeqSymmetry insym, boolean same_seq, SeqSymmetry sym, IAnnotStyleExtended the_style, BioSeq annotseq, GlyphI pglyph, AffyTieredMap map, BioSeq coordseq) throws InstantiationException, IllegalAccessException {
+		if (original instanceof SymWithProps) {
+			return ((SymWithProps) original).getProperty(prop);
+		}
+		return null;
+	}
+
+	private static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
+		if (sym instanceof DerivedSeqSymmetry) {
+			return getMostOriginalSymmetry(((DerivedSeqSymmetry) sym).getOriginalSymmetry());
+		}
+		return sym;
+	}
+
+	private void addChildren(
+			SeqSymmetry insym, SeqSymmetry sym, IAnnotStyleExtended the_style, BioSeq annotseq,
+			GlyphI pglyph, AffyTieredMap map, BioSeq coordseq)
+			throws InstantiationException, IllegalAccessException {
 		SeqSpan cdsSpan = null;
 		SeqSymmetry cds_sym = null;
+		boolean same_seq = annotseq == coordseq;
 		if ((insym instanceof SupportsCdsSpan) && ((SupportsCdsSpan) insym).hasCdsSpan()) {
 			cdsSpan = ((SupportsCdsSpan) insym).getCdsSpan();
 			MutableSeqSymmetry tempsym = new SimpleMutableSeqSymmetry();
@@ -326,10 +353,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		for (int i = 0; i < childCount; i++) {
-			SeqSymmetry child = null;
-			SeqSpan cspan = null;
-			child = sym.getChild(i);
-			cspan = gviewer.getViewSeqSpan(child);
+			SeqSymmetry child = sym.getChild(i);
+			SeqSpan cspan = gviewer.getViewSeqSpan(child);
 			if (cspan == null) {
 				// if no span for view, then child is either to left or right of view
 				outside_children.add(child); // collecting children outside of view to handle later
@@ -383,5 +408,24 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		return DEFAULT_THIN_HEIGHT;
 	}
-	
+
+	private static void handleResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
+		if (sym instanceof SymWithProps) {
+			Object residues = ((SymWithProps) sym).getProperty("residues");
+			if (residues != null) {
+				SeqSpan span = sym.getSpan(coordseq);
+				if (span != null) {
+					String residueStr = residues.toString();
+					// note: it is possible to get different lengths here, probably due to 0-based, 1-based, interbase disagreement.
+					residueStr = residueStr.substring(0, Math.min(residueStr.length(), span.getLength()));
+					CharSeqGlyph csg = new CharSeqGlyph();
+					csg.setResidues(residueStr);
+					csg.setShowBackground(false);
+					csg.setHitable(false);
+					csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
+					pglyph.addChild(csg);
+				}
+			}
+		}
+	}
 }

@@ -26,17 +26,16 @@ import org.xml.sax.*;
 import javax.xml.parsers.*;
 import java.io.*;
 import java.util.*;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  *
  * @version $Id$
  */
-@SuppressWarnings("deprecation")
-public class MapHandler extends HandlerBase implements ContentParser {
+public class MapHandler extends DefaultHandler implements ContentParser {
 
 	protected NeoMap map = new NeoMap(true, false);
-	@SuppressWarnings("deprecation")
-	protected Parser xmlParser;
+	protected XMLReader xmlParser;
 	private Hashtable<String, Integer> positions = new Hashtable<String, Integer>();
 	private Hashtable<String, MapGlyphFactory> featureTypes = new Hashtable<String, MapGlyphFactory>();
 	private Hashtable<String, Integer> featureLabels = new Hashtable<String, Integer>();
@@ -68,14 +67,14 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	public Object importContent(Reader theInput) throws IOException {
 		if (null == xmlParser) {
 			try {
-				xmlParser = SAXParserFactory.newInstance().newSAXParser().getParser();
+				xmlParser = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
 		try {
-			xmlParser.setDocumentHandler(this);
+			xmlParser.setContentHandler(this);
 			map.clearWidget();
 			xmlParser.parse(new InputSource(theInput));
 		} catch (Exception e) {
@@ -157,17 +156,19 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 	/**
 	 * Handle the start of an element.
-	 * @param name 
+	 * @param uri 
+	 * @param localName
+	 * @param name
 	 * @param attributes
 	 * @see org.xml.sax.DocumentHandler#startElement
 	 */
 	@Override
-	public void startElement(String name, AttributeList attributes) {
+	public void startElement(String uri, String localName, String name, Attributes attributes) {
 		GlyphI lastItem = null;
 		LabelGlyph label = null;
 		NeoMap nextMap = null;
 
-		System.out.println("Start element:  name=" + name);
+		System.out.println("start:  " + name);
 
 		// First look to see if this has been defined earlier.
 		MapGlyphFactory fac = this.featureTypes.get(name);
@@ -316,7 +317,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		} else { // Not a recognized tag.
 
 			// Push a null on the stack so we dont get parental relationships confused.
-			System.out.println("huh? what's a \"" + name + "\"?");
+			System.out.println("unknown element: \"" + name + "\"");
 			this.parents.push(null);
 		}
 
@@ -400,12 +401,14 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 	/**
 	 * Handle the end of an element.
-	 * @param name 
+	 * @param uri 
+	 * @param localName 
+	 * @param name
 	 * @see org.xml.sax.DocumentHandler#endElement
 	 */
 	@Override
-	public void endElement(String name) {
-		System.out.println("End element:  " + name);
+	public void endElement(String uri, String localName, String name) {
+		System.out.println("end:  " + name);
 
 		if (!parents.empty()) {
 			GlyphI p = this.parents.pop();
@@ -429,7 +432,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 */
 	@Override
 	public void characters(char ch[], int start, int length) {
-		System.out.println("Character data:  \"" + escape(ch, length) + '"');
+		System.out.println("characters:  \"" + escape(ch, start, length) + '"');
 
 		GlyphI lastItem = null;
 
@@ -454,7 +457,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 */
 	@Override
 	public void ignorableWhitespace(char ch[], int start, int length) {
-		System.out.println("Ignorable whitespace:  \"" + escape(ch, length) + '"');
+		System.out.println("Ignorable whitespace:  \"" + escape(ch, start, length) + '"');
 	}
 
 	/**
@@ -466,10 +469,10 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	@Override
 	public void processingInstruction(String target, String data) {
 		System.out.println("Processing Instruction:  " + target + ' '
-				+ escape(data.toCharArray(), data.length()));
+				+ escape(data.toCharArray(), 0, data.length()));
 	}
 
-	private Integer getLabelPosition(AttributeList attributes) {
+	private Integer getLabelPosition(Attributes attributes) {
 		Integer p = null;
 		String v = attributes.getValue("labeled");
 
@@ -491,11 +494,11 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	/**
 	 * Escape a string for printing.
 	 */
-	String escape(char ch[], int length) {
+	String escape(char ch[], int offset, int length) {
 		StringBuffer out = new StringBuffer();
 
 		for (int i = 0; i < length; i++) {
-			switch (ch[i]) {
+			switch (ch[offset + i]) {
 
 				case '\\':
 					out.append("\\\\");
@@ -517,8 +520,12 @@ public class MapHandler extends HandlerBase implements ContentParser {
 					out.append("\\f");
 					break;
 
+				case '"':
+					out.append("\\");
+					break;
+
 				default:
-					out.append(ch[i]);
+					out.append(ch[offset + i]);
 					break;
 			}
 		}

@@ -48,7 +48,7 @@ public final class FeatureLoading {
 	 * Load the annotations for the given version.  This is specific to one server.
 	 * @param gVersion
 	 */
-	public static synchronized void loadFeatureNames(final GenericVersion gVersion) {
+	public static void loadFeatureNames(final GenericVersion gVersion) {
 		if (!gVersion.getFeatures().isEmpty()) {
 			if (DEBUG) {
 				System.out.println("Feature names are already loaded.");

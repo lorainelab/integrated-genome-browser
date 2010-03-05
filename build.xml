@@ -440,12 +440,15 @@
 	<macrodef name="iterate">
 		<attribute name="target" default=""/>
 		<sequential>
+			<condition property="findbugs">
+				<equals arg1="@{target}" arg2="findbugs" />
+			</condition>
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}">
 					<include name="genoviz_sdk" />
 					<include name="genometryImpl" />
-					<include name="igb-i18n" />
+					<include name="igb-i18n" unless="findbugs" />
 				</dirset>
 				<dirset dir="${basedir}">
 					<include name="igb" />

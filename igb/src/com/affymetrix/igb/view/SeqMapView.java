@@ -219,7 +219,7 @@ public class SeqMapView extends JPanel
 	GridGlyph grid_glyph = null;
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
-	protected MapRangeBox map_range_box;
+	private MapRangeBox map_range_box;
 	GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static final Font axisFont = new Font("Courier", Font.BOLD, 12);
@@ -2310,7 +2310,6 @@ public class SeqMapView extends JPanel
 		int intx = (int) x;
 		if (hairline != null) {
 			hairline.setSpot(intx);
-			showHairlinePositionInStatusBar();
 		}
 		seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, intx);
 	}
@@ -2460,17 +2459,10 @@ public class SeqMapView extends JPanel
 		label.setText(title);
 	}
 
-	private void showHairlinePositionInStatusBar() {
-		if (!report_hairline_position_in_status_bar) {
-			return;
-		}
-	}
-
 	private void setStatus(String title) {
 		if (!report_status_in_status_bar) {
 			return;
 		}
-		showHairlinePositionInStatusBar();
 		Application.getSingleton().setStatus(title, false);
 	}
 

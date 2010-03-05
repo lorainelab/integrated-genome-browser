@@ -10,7 +10,6 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-
 package genoviz.tutorial;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -34,26 +33,27 @@ import java.util.*;
  */
 @SuppressWarnings("deprecation")
 public class MapHandler extends HandlerBase implements ContentParser {
-	protected NeoMap       map = new NeoMap( true, false );
+
+	protected NeoMap map = new NeoMap(true, false);
 	@SuppressWarnings("deprecation")
-	protected Parser        xmlParser;
-	private Hashtable<String,Integer>       positions = new Hashtable<String,Integer>();
-	private Hashtable<String, MapGlyphFactory>       featureTypes = new Hashtable<String, MapGlyphFactory>();
-	private Hashtable<String, Integer>       featureLabels = new Hashtable<String, Integer>();
-	private Hashtable<GlyphI, String>       links = new Hashtable<GlyphI, String>();
-	private Hashtable<GlyphI, String>       targets = new Hashtable<GlyphI, String>();
+	protected Parser xmlParser;
+	private Hashtable<String, Integer> positions = new Hashtable<String, Integer>();
+	private Hashtable<String, MapGlyphFactory> featureTypes = new Hashtable<String, MapGlyphFactory>();
+	private Hashtable<String, Integer> featureLabels = new Hashtable<String, Integer>();
+	private Hashtable<GlyphI, String> links = new Hashtable<GlyphI, String>();
+	private Hashtable<GlyphI, String> targets = new Hashtable<GlyphI, String>();
 	private MapGlyphFactory labelFactory, glyphFactory;
-	private Hashtable<String, NeoMap>       maps = new Hashtable<String, NeoMap>( 7 );
-	private Stack<NeoMap>           mapStack = new Stack<NeoMap>();
+	private Hashtable<String, NeoMap> maps = new Hashtable<String, NeoMap>(7);
+	private Stack<NeoMap> mapStack = new Stack<NeoMap>();
 
 	public MapHandler() {
 		super();
 
-		this.positions.put( "left", new Integer( LabelGlyph.LEFT ) );
-		this.positions.put( "right", new Integer( LabelGlyph.RIGHT ) );
-		this.positions.put( "above", new Integer( LabelGlyph.ABOVE ) );
-		this.positions.put( "below", new Integer( LabelGlyph.BELOW ) );
-		this.positions.put( "center", new Integer( LabelGlyph.CENTER ) );
+		this.positions.put("left", new Integer(LabelGlyph.LEFT));
+		this.positions.put("right", new Integer(LabelGlyph.RIGHT));
+		this.positions.put("above", new Integer(LabelGlyph.ABOVE));
+		this.positions.put("below", new Integer(LabelGlyph.BELOW));
+		this.positions.put("center", new Integer(LabelGlyph.CENTER));
 	}
 
 	/**
@@ -65,22 +65,20 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @return
 	 * @throws IOException
 	 */
-	public Object importContent( Reader theInput ) throws IOException {
-		if ( null == xmlParser ) {
+	public Object importContent(Reader theInput) throws IOException {
+		if (null == xmlParser) {
 			try {
 				xmlParser = SAXParserFactory.newInstance().newSAXParser().getParser();
-			}
-			catch ( Exception e ) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
 		try {
-			xmlParser.setDocumentHandler( this );
+			xmlParser.setDocumentHandler(this);
 			map.clearWidget();
-			xmlParser.parse( new InputSource( theInput ) );
-		}
-		catch ( Exception e ) {
+			xmlParser.parse(new InputSource(theInput));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -93,8 +91,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 *
 	 * @throws IOException
 	 */
-	public Object importContent( InputStream theInput ) throws IOException {
-		return importContent( new InputStreamReader( theInput ) );
+	public Object importContent(InputStream theInput) throws IOException {
+		return importContent(new InputStreamReader(theInput));
 	}
 
 	/**
@@ -105,22 +103,23 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 *
 	 * @throws IOException
 	 */
-	public void exportContent( OutputStream theOutput, 
-			Object o ) throws IOException {}
+	public void exportContent(OutputStream theOutput,
+			Object o) throws IOException {
+	}
 
 	/**
 	 * sets the widget (in our case a NeoMap).
 	 *
 	 * @param theWidget 
 	 */
-	public void setWidget( NeoAbstractWidget theWidget ) {
-		System.out.println( "setting widget" );
+	public void setWidget(NeoAbstractWidget theWidget) {
+		System.out.println("setting widget");
 
-		if ( theWidget instanceof NeoMap ) {
-			System.out.println( "it's a map" );
+		if (theWidget instanceof NeoMap) {
+			System.out.println("it's a map");
 
-			this.map = ( NeoMap ) theWidget;
-			this.labelFactory = this.map.addFactory( "-glyphtype LabelGlyph" );
+			this.map = (NeoMap) theWidget;
+			this.labelFactory = this.map.addFactory("-glyphtype LabelGlyph");
 		}
 	}
 
@@ -132,9 +131,9 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param theName a unique name.
 	 * @param theMap on which glyphs are to be placed.
 	 */
-	public void addMap( String theName, NeoMap theMap ) {
-		System.out.println( "adding map type " + theName );
-		this.maps.put( theName, theMap );
+	public void addMap(String theName, NeoMap theMap) {
+		System.out.println("adding map type " + theName);
+		this.maps.put(theName, theMap);
 	}
 
 	/**
@@ -143,7 +142,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 */
 	@Override
 	public void startDocument() {
-		System.out.println( "Start document" );
+		System.out.println("Start document");
 	}
 
 	/**
@@ -152,9 +151,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 */
 	@Override
 	public void endDocument() {
-		System.out.println( "End document" );
+		System.out.println("End document");
 	}
-
 	private Stack<GlyphI> parents = new Stack<GlyphI>();
 
 	/**
@@ -163,187 +161,180 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param attributes
 	 * @see org.xml.sax.DocumentHandler#startElement
 	 */
-	public void startElement( String name, Attributes attributes ) {
-		GlyphI     lastItem = null;
+	public void startElement(String name, Attributes attributes) {
+		GlyphI lastItem = null;
 		LabelGlyph label = null;
-		NeoMap    nextMap = null;
+		NeoMap nextMap = null;
 
-		System.out.println( "Start element:  name=" + name );
+		System.out.println("Start element:  name=" + name);
 
 		// First look to see if this has been defined earlier.
-		MapGlyphFactory fac = this.featureTypes.get( name );
+		MapGlyphFactory fac = this.featureTypes.get(name);
 
-		if ( null != fac ) { // It has.
+		if (null != fac) { // It has.
 			String v;
-			int    glyphBegin = 0, glyphEnd = 1;
+			int glyphBegin = 0, glyphEnd = 1;
 
 			v = attributes.getValue("start");
-			if ( null != v ) {
-				glyphBegin = Integer.parseInt( v );
+			if (null != v) {
+				glyphBegin = Integer.parseInt(v);
 			}
 
 			v = attributes.getValue("end");
-			if ( null != v ) {
-				glyphEnd = Integer.parseInt( v );
+			if (null != v) {
+				glyphEnd = Integer.parseInt(v);
 			}
 
 			v = attributes.getValue("config");
-			if ( null != v ) {
-				lastItem = this.map.addItem( fac, glyphBegin, glyphEnd, v );
-			}
-			else {
-				lastItem = this.map.addItem( fac, glyphBegin, glyphEnd );
+			if (null != v) {
+				lastItem = this.map.addItem(fac, glyphBegin, glyphEnd, v);
+			} else {
+				lastItem = this.map.addItem(fac, glyphBegin, glyphEnd);
 			}
 
 			v = attributes.getValue("name");
-			if ( null != v ) {
-				if ( lastItem instanceof LabelledRectGlyph ) {
-					( ( LabelledRectGlyph ) lastItem ).setText( v );
-				}
-				else {
-					label = ( LabelGlyph ) this.map.addItem( this.labelFactory, 0, 1 );
+			if (null != v) {
+				if (lastItem instanceof LabelledRectGlyph) {
+					((LabelledRectGlyph) lastItem).setText(v);
+				} else {
+					label = (LabelGlyph) this.map.addItem(this.labelFactory, 0, 1);
 
-					label.setText( v );
-					label.setLabeledGlyph( lastItem );
+					label.setText(v);
+					label.setLabeledGlyph(lastItem);
 
-					Object p = getLabelPosition( attributes );
+					Object p = getLabelPosition(attributes);
 
-					if ( null == p ) {
-						p = featureLabels.get( name );
+					if (null == p) {
+						p = featureLabels.get(name);
 					}
 
-					if ( null != p && p instanceof Integer ) {
-						int i = ( ( Integer ) p ).intValue();
+					if (null != p && p instanceof Integer) {
+						int i = ((Integer) p).intValue();
 
-						label.setPlacement( i );
+						label.setPlacement(i);
 					}
 				}
 			}
 
 			v = attributes.getValue("href");
-			if ( null != v ) {
-				links.put( lastItem, v );
+			if (null != v) {
+				links.put(lastItem, v);
 			}
 
 			v = attributes.getValue("target");
-			if ( null != v ) {
-				targets.put( lastItem, v );
+			if (null != v) {
+				targets.put(lastItem, v);
 			}
-		}
-		else if ( name.equals( "featureType" ) ) {  // defining a new glyph style
+		} else if (name.equals("featureType")) {  // defining a new glyph style
 			String v;
 
 			v = attributes.getValue("name");
-			if ( null != v ) {
+			if (null != v) {
 				String fName = v;
 
 				v = attributes.getValue("config");
 
-				Integer p = getLabelPosition( attributes );
+				Integer p = getLabelPosition(attributes);
 
-				defineGlyphStyle( this.map, fName, v, p );
+				defineGlyphStyle(this.map, fName, v, p);
 			}
-		}
-		else if ( name.equals( "axis" ) ) {
+		} else if (name.equals("axis")) {
 			String v;
-			int    axisOffset = 0;
+			int axisOffset = 0;
 
 			v = attributes.getValue("offset");
-			if ( null != v ) {
-				axisOffset = Integer.parseInt( v );
+			if (null != v) {
+				axisOffset = Integer.parseInt(v);
 			}
 
-			this.map.addAxis( axisOffset );
-		}
-		else if ( null != ( nextMap = this.maps.get( name ) ) ) {
-			System.out.println( "got map alias" );
+			this.map.addAxis(axisOffset);
+		} else if (null != (nextMap = this.maps.get(name))) {
+			System.out.println("got map alias");
 
-			if ( null != this.map ) {
-				System.out.println( "pushing map" );
-				this.mapStack.push( this.map );
+			if (null != this.map) {
+				System.out.println("pushing map");
+				this.mapStack.push(this.map);
 			}
 
-			setWidget( nextMap );
+			setWidget(nextMap);
 
 			String v;
-			int    mapMin = 0, mapMax = 100;
-			int    mapTop = -100, mapBottom = 100;
+			int mapMin = 0, mapMax = 100;
+			int mapTop = -100, mapBottom = 100;
 
 			v = attributes.getValue("min");
-			if ( null != v ) {
-				System.out.println( "min set to " + v );
+			if (null != v) {
+				System.out.println("min set to " + v);
 
-				mapMin = Integer.parseInt( v );
+				mapMin = Integer.parseInt(v);
 			}
 
 			v = attributes.getValue("max");
-			if ( null != v ) {
-				System.out.println( "max set to " + v );
-				mapMax = Integer.parseInt( v );
+			if (null != v) {
+				System.out.println("max set to " + v);
+				mapMax = Integer.parseInt(v);
 			}
 
-			this.map.setMapRange( mapMin, mapMax );
+			this.map.setMapRange(mapMin, mapMax);
 
 			v = attributes.getValue("top");
-			if ( null != v ) {
-				mapTop = Integer.parseInt( v );
+			if (null != v) {
+				mapTop = Integer.parseInt(v);
 			}
 
 			v = attributes.getValue("bottom");
-			if ( null != v ) {
-				mapBottom = Integer.parseInt( v );
+			if (null != v) {
+				mapBottom = Integer.parseInt(v);
 			}
 
 			v = attributes.getValue("color");
-			if ( null != v ) {
-				com.affymetrix.genoviz.util.NeoColorMap cm = 
-					com.affymetrix.genoviz.util.NeoColorMap.getColorMap();
+			if (null != v) {
+				com.affymetrix.genoviz.util.NeoColorMap cm =
+						com.affymetrix.genoviz.util.NeoColorMap.getColorMap();
 
-				this.map.setBackground( cm.getColor( v ) );
+				this.map.setBackground(cm.getColor(v));
 			}
 
-			this.map.setMapOffset( mapTop, mapBottom );
+			this.map.setMapOffset(mapTop, mapBottom);
 
 			v = attributes.getValue("config");
-			if ( null != v ) {
+			if (null != v) {
 				// This may not be needed because of glyph factory below.
-				this.map.configure( v );
-			}
-			else {
+				this.map.configure(v);
+			} else {
 				v = "";
 			}
 
-			this.glyphFactory = this.map.addFactory( v );
-			this.featureTypes.put( "glyph", glyphFactory );
+			this.glyphFactory = this.map.addFactory(v);
+			this.featureTypes.put("glyph", glyphFactory);
 
-			Integer p = getLabelPosition( attributes );
-			if ( null != p) {
-				this.featureLabels.put( "glyph", p );
+			Integer p = getLabelPosition(attributes);
+			if (null != p) {
+				this.featureLabels.put("glyph", p);
 			}
-		}
-		else { // Not a recognized tag.
+		} else { // Not a recognized tag.
 
 			// Push a null on the stack so we dont get parental relationships confused.
-			System.out.println( "huh? what's a \"" + name + "\"?" );
-			this.parents.push( null );
+			System.out.println("huh? what's a \"" + name + "\"?");
+			this.parents.push(null);
 		}
 
-		if ( !parents.empty() && null != lastItem ) {
+		if (!parents.empty() && null != lastItem) {
 			Object o = this.parents.peek();
 
-			if ( null != o && o instanceof GlyphI ) {
-				GlyphI g = ( GlyphI ) o;
+			if (null != o && o instanceof GlyphI) {
+				GlyphI g = (GlyphI) o;
 
-				this.map.addItem( g, lastItem );
+				this.map.addItem(g, lastItem);
 
-				if ( null != label ) {
-					this.map.addItem( g, label );
+				if (null != label) {
+					this.map.addItem(g, label);
 				}
 			}
 		}
 
-		if ( null != lastItem ) {
-			this.parents.push( lastItem );
+		if (null != lastItem) {
+			this.parents.push(lastItem);
 		}
 	}
 
@@ -352,14 +343,14 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @return a URL if an href attribute was specified for this glyph.
 	 * null otherwise.
 	 */
-	public String getHRef( GlyphI theGlyph ) {
-		Object o = links.get( theGlyph );
+	public String getHRef(GlyphI theGlyph) {
+		Object o = links.get(theGlyph);
 
-		if ( null == o ) {
+		if (null == o) {
 			return null;
 		}
 
-		return ( String ) o;
+		return (String) o;
 	}
 
 	/**
@@ -367,14 +358,14 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @return a target if one was specified for this glyph.
 	 * null otherwise.
 	 */
-	public String getTarget( GlyphI theGlyph ) {
-		Object o = targets.get( theGlyph );
+	public String getTarget(GlyphI theGlyph) {
+		Object o = targets.get(theGlyph);
 
-		if ( null == o ) {
+		if (null == o) {
 			return null;
 		}
 
-		return ( String ) o;
+		return (String) o;
 	}
 
 	/**
@@ -385,25 +376,24 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param config string to pass to the glyph factory
 	 * @param labelPlacement LEFT, RIGHT, ABOVE, BELOW, or CENTER
 	 */
-	public void defineGlyphStyle( NeoMap theMap, String name, String config, 
-			Integer labelPlacement ) {
-		if ( null == name ) {
-			throw new NullPointerException( "Need a name to define a glyph style" );
+	public void defineGlyphStyle(NeoMap theMap, String name, String config,
+			Integer labelPlacement) {
+		if (null == name) {
+			throw new NullPointerException("Need a name to define a glyph style");
 		}
 
 		MapGlyphFactory f;
 
-		if ( null == config ) {
-			f = theMap.addFactory( "" );
-		}
-		else {
-			f = theMap.addFactory( config );
+		if (null == config) {
+			f = theMap.addFactory("");
+		} else {
+			f = theMap.addFactory(config);
 		}
 
-		this.featureTypes.put( name, f );
+		this.featureTypes.put(name, f);
 
-		if ( null != labelPlacement ) {
-			this.featureLabels.put( name, labelPlacement );
+		if (null != labelPlacement) {
+			this.featureLabels.put(name, labelPlacement);
 		}
 	}
 
@@ -413,24 +403,23 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#endElement
 	 */
 	@Override
-	public void endElement( String name ) {
-		System.out.println( "End element:  " + name );
+	public void endElement(String name) {
+		System.out.println("End element:  " + name);
 
-		if ( !parents.empty() ) {
+		if (!parents.empty()) {
 			GlyphI p = this.parents.pop();
 
-			if ( name.equals( "chromosome" ) ) {  // temporary
-				p.setPacker( new SiblingCoordAvoid() );
+			if (name.equals("chromosome")) {  // temporary
+				p.setPacker(new SiblingCoordAvoid());
 				ViewI view = this.map.getView();
 			}
 		}
 
-		if ( !mapStack.empty() && null != maps.get( name ) ) {
+		if (!mapStack.empty() && null != maps.get(name)) {
 			this.map = mapStack.pop();
 		}
 	}
 
-	
 	/**
 	 *
 	 * @param ch
@@ -438,21 +427,20 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param length
 	 */
 	@Override
-	public void characters( char ch[], int start, int length ) {
-		System.out.println( "Character data:  \"" + escape( ch, length ) + '"' );
+	public void characters(char ch[], int start, int length) {
+		System.out.println("Character data:  \"" + escape(ch, length) + '"');
 
 		GlyphI lastItem = null;
 
 		try {
 			lastItem = this.parents.peek();
 
-			if ( lastItem instanceof SequenceGlyph ) {
-				( ( SequenceGlyph ) lastItem ).setResidues( new String( ch, start, 
-							length ) );
+			if (lastItem instanceof SequenceGlyph) {
+				((SequenceGlyph) lastItem).setResidues(new String(ch, start,
+						length));
 			}
-		}
-		catch ( EmptyStackException e ) {
-			System.out.println( "No parents. " + e.getMessage() );
+		} catch (EmptyStackException e) {
+			System.out.println("No parents. " + e.getMessage());
 		}
 	}
 
@@ -464,8 +452,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#ignorableWhitespace
 	 */
 	@Override
-	public void ignorableWhitespace( char ch[], int start, int length ) {
-		System.out.println( "Ignorable whitespace:  \"" + escape( ch, length ) + '"' );
+	public void ignorableWhitespace(char ch[], int start, int length) {
+		System.out.println("Ignorable whitespace:  \"" + escape(ch, length) + '"');
 	}
 
 	/**
@@ -475,24 +463,24 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#processingInstruction
 	 */
 	@Override
-	public void processingInstruction( String target, String data ) {
-		System.out.println( "Processing Instruction:  " + target + ' '
-				+ escape( data.toCharArray(), data.length() ) );
+	public void processingInstruction(String target, String data) {
+		System.out.println("Processing Instruction:  " + target + ' '
+				+ escape(data.toCharArray(), data.length()));
 	}
 
-	private Integer getLabelPosition( Attributes attributes ) {
+	private Integer getLabelPosition(Attributes attributes) {
 		Integer p = null;
 		String v = attributes.getValue("labeled");
 
-		if ( null == v ) {  // Allow English as well as American spelling.
+		if (null == v) {  // Allow English as well as American spelling.
 			v = attributes.getValue("labelled");
 		}
 
-		if ( null != v ) {
-			p = this.positions.get( v.toLowerCase() );
+		if (null != v) {
+			p = this.positions.get(v.toLowerCase());
 
-			if ( null == p ) {
-				System.err.println( "Invalid label positioning " + v );
+			if (null == p) {
+				System.err.println("Invalid label positioning " + v);
 			}
 		}
 
@@ -502,39 +490,38 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	/**
 	 * Escape a string for printing.
 	 */
-	String escape( char ch[], int length ) {
+	String escape(char ch[], int length) {
 		StringBuffer out = new StringBuffer();
 
-		for ( int i = 0; i < length; i++ ) {
-			switch ( ch[i] ) {
+		for (int i = 0; i < length; i++) {
+			switch (ch[i]) {
 
 				case '\\':
-					out.append( "\\\\" );
+					out.append("\\\\");
 					break;
 
 				case '\n':
-					out.append( "\\n" );
+					out.append("\\n");
 					break;
 
 				case '\t':
-					out.append( "\\t" );
+					out.append("\\t");
 					break;
 
 				case '\r':
-					out.append( "\\r" );
+					out.append("\\r");
 					break;
 
 				case '\f':
-					out.append( "\\f" );
+					out.append("\\f");
 					break;
 
 				default:
-					out.append( ch[i] );
+					out.append(ch[i]);
 					break;
 			}
 		}
 
 		return out.toString();
 	}
-
 }

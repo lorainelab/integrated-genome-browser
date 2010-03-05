@@ -103,8 +103,6 @@ public abstract class BrowserView extends JPanel {
 					@Override
 					public void done() {
 						try {
-							Application.getSingleton().removeNotLockedUpMsg(msg);
-							Application.getSingleton().setStatus("", false);
 							Image image = get();
 							browserImage.setImage(image);
 						} catch (InterruptedException ignore) {
@@ -118,6 +116,8 @@ public abstract class BrowserView extends JPanel {
 								why = e.getMessage();
 							}
 							Logger.getLogger(BrowserView.class.getName()).log(Level.FINE, why);
+						} finally {
+							Application.getSingleton().removeNotLockedUpMsg(msg);
 						}
 					}
 				};

@@ -161,7 +161,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param attributes
 	 * @see org.xml.sax.DocumentHandler#startElement
 	 */
-	public void startElement(String name, Attributes attributes) {
+	@Override
+	public void startElement(String name, AttributeList attributes) {
 		GlyphI lastItem = null;
 		LabelGlyph label = null;
 		NeoMap nextMap = null;
@@ -468,7 +469,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 				+ escape(data.toCharArray(), data.length()));
 	}
 
-	private Integer getLabelPosition(Attributes attributes) {
+	private Integer getLabelPosition(AttributeList attributes) {
 		Integer p = null;
 		String v = attributes.getValue("labeled");
 

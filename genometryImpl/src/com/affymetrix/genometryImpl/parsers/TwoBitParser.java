@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.util.TwoBitIterator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public final class TwoBitParser {
 	private static final int INT_SIZE = 4;
 
 	/** Use a 4KB buffer, as that is the block size of most filesystems */
-	private static final int BUFFER_SIZE = 4096;
+	private static  int BUFFER_SIZE = 4096;
 
     /** Byte mask for translating unsigned bytes into Java integers */
     private static final int BYTE_MASK = 0xff;
@@ -44,13 +45,15 @@ public final class TwoBitParser {
 
 	private static final char[] BASES = { 'T', 'C', 'A', 'G', 't', 'c', 'a', 'g'};
 
-    public void open(File file, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
+    public BioSeq parse(File file, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
 		this.file = file;
         FileChannel channel = new RandomAccessFile(file, "r").getChannel();
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		loadBuffer(channel, buffer);
         int seq_count = readFileHeader(buffer);
-        readSequenceIndex(channel, buffer, seq_count, seq_group);
+        BioSeq seq = readSequenceIndex(channel, buffer, seq_count, seq_group);
+		channel.close();
+		return seq;
     }
 
     private static String getString(ByteBuffer buffer, int length) {
@@ -118,32 +121,32 @@ public final class TwoBitParser {
     }
 
 
-    private void readSequenceIndex(FileChannel channel, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
+    private BioSeq readSequenceIndex(FileChannel channel, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
         String name;
         int name_length;
 		long offset, position;
 
 		position = channel.position();
-		for (int i = 0; i < seq_count; i++) {
-			if (buffer.remaining() < INT_SIZE) {
-				position = updateBuffer(channel, buffer, position);
-			}
+		//for (int i = 0; i < seq_count; i++) {
+		if (buffer.remaining() < INT_SIZE) {
+			position = updateBuffer(channel, buffer, position);
+		}
 
-			name_length = buffer.get() & BYTE_MASK;
+		name_length = buffer.get() & BYTE_MASK;
 
-			if (buffer.remaining() < name_length + INT_SIZE) {
-				position = updateBuffer(channel, buffer, position);
-			}
+		if (buffer.remaining() < name_length + INT_SIZE) {
+			position = updateBuffer(channel, buffer, position);
+		}
 
-			name   = getString(buffer, name_length);
-			offset = buffer.getInt() & INT_MASK;
+		name = getString(buffer, name_length);
+		offset = buffer.getInt() & INT_MASK;
 
-			System.out.println("Sequence '" + name + "', offset " + offset);
-			readSequenceHeader(channel, buffer.order(), offset, seq_group, name);
-        }
+		System.out.println("Sequence '" + name + "', offset " + offset);
+		return readSequenceHeader(channel, buffer.order(), offset, seq_group, name);
+		//}
     }
 
-    private void readSequenceHeader(FileChannel channel, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
+    private BioSeq readSequenceHeader(FileChannel channel, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		buffer.order(order);
 		MutableSeqSymmetry nBlocks    = new SimpleMutableSeqSymmetry();
@@ -174,22 +177,32 @@ public final class TwoBitParser {
             throw new IOException("Unknown 2bit format: sequence's reserved field is non zero");
         }
 
+		long residueOffset = offset + 4*4 + nBlocks.getSpanCount()*4*2 + maskBlocks.getSpanCount()*4*2;
+		channel.position(residueOffset);
+		loadBuffer(channel,buffer);
+
 		//packedDNA
+		byte valueBuffer[] = new byte[BUFFER_SIZE];
 		long length = size/4 + size%4;
 		int value, dna;
 		StringBuffer residues = new StringBuffer();
 		StringBuffer temp;
-		for(int i=0; i<length; i++){
-			temp = new StringBuffer();
-			value = buffer.get() & 0xff;
-
-			for(int j=0; j<4; j++){
-				dna = value & 0x03;
-				value = value >> 2;
-				temp.append(BASES[dna]);
+		for (int i = 0; i < length; i+=BUFFER_SIZE) {
+			buffer.get(valueBuffer);
+			for (int k = 0; k < BUFFER_SIZE && k < length; k++) {
+				temp = new StringBuffer();
+				value = valueBuffer[k] & BYTE_MASK;
+				for (int j = 0; j < 4; j++) {
+					dna = value & 0x03;
+					value = value >> 2;
+					temp.append(BASES[dna]);
+				}
+				temp.reverse();
+				residues.append(temp);
 			}
-			temp.reverse();
-			residues.append(temp);
+			channel.position(channel.position() + BUFFER_SIZE);
+			loadBuffer(channel, buffer);
+
 		}
 		residues = residues.delete((int)size, residues.length());
 
@@ -205,11 +218,12 @@ public final class TwoBitParser {
 			Arrays.fill(subString, 'N');
 			residues.replace(block.getStart(), block.getEnd(), new String(subString));
 		}
-		
+
 		System.out.println("residues :"+residues);
-		//seq.setResiduesProvider(new TwoBitIterator(new Byte[4], nBlocks, maskBlocks, offset));
-		//channel.position(oldPosition);
-		
+
+		seq.setResiduesProvider(new TwoBitIterator(file,size,residueOffset,buffer.order(),nBlocks,maskBlocks));
+		channel.position(oldPosition);
+		return seq;
     }
 
 	private long updateBuffer(FileChannel channel, ByteBuffer buffer, long position) throws IOException {
@@ -219,10 +233,12 @@ public final class TwoBitParser {
 	}
 
 	public static void main(String[] args){
-		File f = new File("/Users/aloraine/Downloads/tests/output/genbank.2bit");
+		File f = new File("/Users/aloraine/Downloads/tests/output/testMask.2bit");
+		//File f = new File("genometryImpl/test/data/2bit/at.2bit");
 		TwoBitParser instance = new TwoBitParser();
 		try {
-			instance.open(f, new AnnotatedSeqGroup("foo"));
+			BioSeq seq = instance.parse(f, new AnnotatedSeqGroup("foo"));
+			//seq.getResidues();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

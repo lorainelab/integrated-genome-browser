@@ -435,7 +435,7 @@ public final class LoadFileAction {
 
 		if (lcname.endsWith(".cyt")) {
 			CytobandParser parser = new CytobandParser();
-			parser.parse(str, selected_group);
+			parser.parse(str, selected_group, true);
 			return input_seq;
 		}
 		if (lcname.endsWith(".cnt")) {

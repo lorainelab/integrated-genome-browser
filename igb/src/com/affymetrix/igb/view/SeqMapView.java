@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.CytobandParser.CytobandSym;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -560,12 +561,10 @@ public class SeqMapView extends JPanel
 		axis_tier.setForegroundColor(axis_fg);
 		setAxisFormatFromPrefs(axis);
 
-		if (view_cytobands_in_axis) {
-			GlyphI cytoband_glyph = makeCytobandGlyph();
-			if (cytoband_glyph != null) {
-				axis_tier.addChild(cytoband_glyph);
-				axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
-			}
+		GlyphI cytoband_glyph = makeCytobandGlyph();
+		if (cytoband_glyph != null) {
+			axis_tier.addChild(cytoband_glyph);
+			axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
 		}
 
 		axis_tier.addChild(axis);
@@ -648,22 +647,6 @@ public class SeqMapView extends JPanel
 	}
 
 
-	private final Glyph makeCytobandGlyph() {
-		BioSeq sma = getAnnotatedSeq();
-		SymWithProps cyto_annots = null;
-		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
-		if (cyto_tiers.size() > 0) {
-			cyto_annots = cyto_tiers.get(0);
-		}
-
-		if (cyto_annots instanceof TypeContainerAnnot) {
-			TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
-			return makeCytobandGlyph(cyto_container);
-		}
-
-		return null;
-	}
-
 	/**
 	 *  Creates a cytoband glyph.  Handling two cases:
 	 * 1. cytoband syms are children of TypeContainerAnnot;
@@ -671,89 +654,60 @@ public class SeqMapView extends JPanel
 	 *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
 	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
 	 */
-	private final Glyph makeCytobandGlyph(TypeContainerAnnot cyto_container) {
+	private final Glyph makeCytobandGlyph() {
+		BioSeq sma = getAnnotatedSeq();
+		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
+		if (cyto_tiers.isEmpty()) {
+			return null;
+		}
+		SymWithProps cyto_annots = cyto_tiers.get(0);
+		if (!(cyto_annots instanceof TypeContainerAnnot)) {
+			return null;
+		}
+
 		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
 		RoundRectMaskGlyph cytoband_glyph_A = null;
 		RoundRectMaskGlyph cytoband_glyph_B = null;
-
-		List<CytobandParser.CytobandSym> bands = new ArrayList<CytobandParser.CytobandSym>();
-		for (int q = 0; q < cyto_container.getChildCount(); q++) {
-			SeqSymmetry child = cyto_container.getChild(q);
-			if (child instanceof CytobandParser.CytobandSym) {
-				bands.add((CytobandParser.CytobandSym) child);
-			} else if (child != null) {
-				for (int subindex = 0; subindex < child.getChildCount(); subindex++) {
-					SeqSymmetry grandchild = child.getChild(subindex);
-					if (grandchild instanceof CytobandParser.CytobandSym) {
-						bands.add((CytobandParser.CytobandSym) grandchild);
-					}
-				}
-			}
-		}
-
-		int centromerePoint = -1;
-		for (int i = 0; i < bands.size() - 1; i++) {
-			if (bands.get(i).getArm() != bands.get(i + 1).getArm()) {
-				centromerePoint = i;
-				break;
-			}
-		}
+		List<CytobandSym> bands = CytobandParser.generateBands(cyto_annots);
+		int centromerePoint = CytobandParser.determineCentromerePoint(bands);
 
 		for (int q = 0; q < bands.size(); q++) {
-			SeqSymmetry sym = (SeqSymmetry) bands.get(q);
-			SeqSymmetry sym2 = transformForViewSeq(sym, getAnnotatedSeq());
+			CytobandSym cyto_sym = bands.get(q);
+			SeqSymmetry sym2 = transformForViewSeq(cyto_sym, getAnnotatedSeq());
 
 			SeqSpan cyto_span = getViewSeqSpan(sym2);
+			if (cyto_span == null) {
+				continue;
+			}
+			GlyphI efg;
+			if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
+				efg = new EfficientPaintRectGlyph();
+				efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+				((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
 
-			if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
-				CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
+			} else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
+				efg = new EfficientPaintRectGlyph();
+				efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+				((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
 
-				GlyphI efg;
-				if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
-					efg = new EfficientPaintRectGlyph();
-					efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-					((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
+			} else if ("".equals(cyto_sym.getBand())) {
+				efg = new EfficientOutlinedRectGlyph();
+				efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+			} else {
+				efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
+				efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+				((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
+				((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
+				((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
+			}
+			efg.setColor(cyto_sym.getColor());
+			getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
 
-				} else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
-					efg = new EfficientPaintRectGlyph();
-					efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-					((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
-
-				} else if ("".equals(cyto_sym.getBand())) {
-					efg = new EfficientOutlinedRectGlyph();
-					efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-				} else {
-					efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
-					efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-					((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
-					((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
-					((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
-				}
-				efg.setColor(cyto_sym.getColor());
-				getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
-
-
-				if (q <= centromerePoint) {
-					if (cytoband_glyph_A == null) {
-						cytoband_glyph_A = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
-						cytoband_glyph_A.setColor(Color.GRAY);
-						//cytoband_glyph_A.setHitable(false);
-						cytoband_glyph_A.setCoordBox(efg.getCoordBox());
-					}
-					cytoband_glyph_A.addChild(efg);
-					cytoband_glyph_A.getCoordBox().add(efg.getCoordBox());
-				} else {
-					if (cytoband_glyph_B == null) {
-						cytoband_glyph_B = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
-						cytoband_glyph_B.setColor(Color.GRAY);
-						//cytoband_glyph_B.setHitable(false);
-						cytoband_glyph_B.setCoordBox(efg.getCoordBox());
-					}
-					cytoband_glyph_B.addChild(efg);
-					cytoband_glyph_B.getCoordBox().add(efg.getCoordBox());
-				}
-
+			if (q <= centromerePoint) {
+				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, efg);
+			} else {
+				cytoband_glyph_B = createSingleCytobandGlyph(cytoband_glyph_B, efg);
 			}
 		}
 
@@ -764,9 +718,30 @@ public class SeqMapView extends JPanel
 			cytoband_glyph.getCoordBox().add(cytoband_glyph_B.getCoordBox());
 			cytoband_glyph.addChild(cytoband_glyph_A);
 			cytoband_glyph.addChild(cytoband_glyph_B);
+			return cytoband_glyph;
+		}
+
+		// Handle case where centomere is at beginning or end (telocentric)
+		if (cytoband_glyph_A != null) {
+			cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());
+			cytoband_glyph.addChild(cytoband_glyph_A);
+		} else {
+			cytoband_glyph.setCoordBox(cytoband_glyph_B.getCoordBox());
+			cytoband_glyph.addChild(cytoband_glyph_B);
 		}
 
 		return cytoband_glyph;
+	}
+
+	private RoundRectMaskGlyph createSingleCytobandGlyph(RoundRectMaskGlyph cytobandGlyph, GlyphI efg) {
+		if (cytobandGlyph == null) {
+			cytobandGlyph = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
+			cytobandGlyph.setColor(Color.GRAY);
+			cytobandGlyph.setCoordBox(efg.getCoordBox());
+		}
+		cytobandGlyph.addChild(efg);
+		cytobandGlyph.getCoordBox().add(efg.getCoordBox());
+		return cytobandGlyph;
 	}
 
 	/** Sets the axis label format from the value in the persistent preferences. */

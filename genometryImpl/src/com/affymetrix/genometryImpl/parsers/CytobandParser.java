@@ -57,14 +57,6 @@ public final class CytobandParser implements AnnotationWriter  {
 
 	static List<String> pref_list = Arrays.asList("cyt");
 
-	public CytobandParser() {
-	}
-
-	public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
-		throws IOException  {
-		parse(dis, seq_group, true);
-	}
-
 	/**
 	 *  if annotating seq, makes all parsed syms children of a containing SymWithProps and adds this single sym
 	 *    to the seq (and if seq is a SmartAnnotBioSeq, it will in turn create a TypeContainerSym as parent of the
@@ -79,72 +71,63 @@ public final class CytobandParser implements AnnotationWriter  {
 		Thread thread = Thread.currentThread();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 		Map<BioSeq,SeqSymmetry> seq2csym = new HashMap<BioSeq,SeqSymmetry>();
-		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-			if (line.startsWith("#") || "".equals(line)) {  // skip comment lines
+		while ((line = reader.readLine()) != null && (!thread.isInterrupted())) {
+			if (line.charAt(0)=='#' || line.length() ==0) {  // skip comment lines
 				continue;
+			}
+			String[] fields = line_regex.split(line);
+			int field_count = fields.length;
+			if (field_count < 4) {
+				throw new IOException("Line has wrong number of data columns.");
+			}
+
+			String seq_name = fields[0]; // seq id field
+			BioSeq seq = seq_group.getSeq(seq_name);
+			if (seq == null) {
+				seq = seq_group.addSeq(seq_name, 0);
+			}
+
+			int beg = Integer.parseInt(fields[1]);  // start field
+			int end = Integer.parseInt(fields[2]);  // stop field
+			String annot_name = new String(fields[3]);
+			String band = null;
+			if (field_count >= 5) {
+				band = new String(fields[4]);
 			} else {
-				String[] fields = line_regex.split(line);
-				int field_count = fields.length;
-				String seq_name = null;
-				String annot_name = null;
-				String band = null;
-				//int min, max;
-				//float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
-				//boolean forward;
-
-				if (field_count < 4) {
-					throw new IOException("Line has wrong number of data columns.");
-				}
-
-				seq_name = fields[0]; // seq id field
-				BioSeq seq = seq_group.getSeq(seq_name);
-				if (seq == null) {
-					//System.out.println("seq not recognized, creating new seq: " + seq_name);
-					seq = seq_group.addSeq(seq_name, 0);
-				}
-
-				int beg = Integer.parseInt(fields[1]);  // start field
-				int end = Integer.parseInt(fields[2]);  // stop field
-				annot_name = new String(fields[3]);
-				if (field_count >= 5) {
-					band = new String(fields[4]);
+				if (band_alternator > 0) {
+					band = "gpos25";
 				} else {
-					if (band_alternator > 0) {
-						band = "gpos25";
-					} else {
-						band = "gpos75";
-					}
-					band_alternator = -band_alternator;
+					band = "gpos75";
 				}
+				band_alternator = -band_alternator;
+			}
 
-				if (beg > seq.getLength()) {
-					seq.setLength(beg);
-				}
-				if (end > seq.getLength()) {
-					seq.setLength(end);
-				}
+			if (beg > seq.getLength()) {
+				seq.setLength(beg);
+			}
+			if (end > seq.getLength()) {
+				seq.setLength(end);
+			}
 
-				CytobandSym sym = new CytobandSym(beg, end, seq, annot_name, band);
-				if (annotate_seq) {
-					SimpleSymWithProps parent_sym = (SimpleSymWithProps)seq2csym.get(seq);
-					if (parent_sym == null) {
-						parent_sym = new SimpleSymWithProps();
-						parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-						parent_sym.setProperty("method", CYTOBAND_TIER_NAME);
-						parent_sym.setProperty("preferred_formats", pref_list);
-						parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-						seq2csym.put(seq, parent_sym);
-						seq.addAnnotation(parent_sym);
-					}
-					parent_sym.addChild(sym);
-					//          ((SmartAnnotBioSeq) seq).addAnnotation(sym, CYTOBAND_TIER_NAME);
-					if (annot_name != null) {
-						seq_group.addToIndex(annot_name, sym);
-					}
+			CytobandSym sym = new CytobandSym(beg, end, seq, annot_name, band);
+			if (annotate_seq) {
+				SimpleSymWithProps parent_sym = (SimpleSymWithProps) seq2csym.get(seq);
+				if (parent_sym == null) {
+					parent_sym = new SimpleSymWithProps();
+					parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+					parent_sym.setProperty("method", CYTOBAND_TIER_NAME);
+					parent_sym.setProperty("preferred_formats", pref_list);
+					parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+					seq2csym.put(seq, parent_sym);
+					seq.addAnnotation(parent_sym);
 				}
-				results.add(sym);
-			}  // end of line.startsWith() else
-		}   // end of line-reading loop
+				parent_sym.addChild(sym);
+				if (annot_name != null) {
+					seq_group.addToIndex(annot_name, sym);
+				}
+			}
+			results.add(sym);
+		}
 		return results;
 	}
 
@@ -154,13 +137,17 @@ public final class CytobandParser implements AnnotationWriter  {
 	private static float parseScore(String s) {
 		if ("gneg".equals(s)) {
 			return GNEG_SCORE;
-		} else if ("gvar".equals(s)) {
+		}
+		if ("gvar".equals(s)) {
 			return GVAR_SCORE;
-		} else if (BAND_ACEN.equals(s)) {
+		}
+		if (BAND_ACEN.equals(s)) {
 			return ACEN_SCORE;
-		} else if (BAND_STALK.equals(s)) {
+		}
+		if (BAND_STALK.equals(s)) {
 			return STALK_SCORE;
-		} else if (s.startsWith("gpos")) {
+		}
+		if (s.startsWith("gpos")) {
 			// "gpos50" == 500
 			// "gpos100" == 1000
 			// etc.
@@ -172,9 +159,7 @@ public final class CytobandParser implements AnnotationWriter  {
 			}
 			return pos;
 		}
-		else {
-			return 0.0f;
-		}
+		return 0.0f;
 	}
 
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
@@ -183,7 +168,7 @@ public final class CytobandParser implements AnnotationWriter  {
 		boolean success = true;
 		try {
 			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-			Iterator iterator = syms.iterator();
+			Iterator<? extends SeqSymmetry> iterator = syms.iterator();
 			while (iterator.hasNext()) {
 				SeqSymmetry sym = (SeqSymmetry)iterator.next();
 				writeCytobandFormat(bw, sym, seq);
@@ -243,22 +228,22 @@ public final class CytobandParser implements AnnotationWriter  {
 		public Arm getArm() {
 			if (id.charAt(0) == 'p') {
 				return Arm.SHORT;
-			} else if (id.charAt(0) == 'q') {
-				return Arm.LONG;
-			} else {
-				return Arm.UNKNOWN;
 			}
+			if (id.charAt(0) == 'q') {
+				return Arm.LONG;
+			}
+			return Arm.UNKNOWN;
 		}
 
 		public Color getColor() {
 			if (BAND_ACEN.equals(band)) {
 				return cyto_acen_color;
-			} else if (BAND_STALK.equals(band)) {
-				return cyto_stalk_color;
-			} else {
-				float score = parseScore(band);
-				return cyto_heat_map.getColors()[(int) (255 * 0.001 * score)];
 			}
+			if (BAND_STALK.equals(band)) {
+				return cyto_stalk_color;
+			}
+			float score = parseScore(band);
+			return cyto_heat_map.getColors()[(int) (255 * 0.001 * score)];
 		}
 
 		/** Retrieves a color that will contrast well with {@link #getColor()}. */
@@ -275,10 +260,8 @@ public final class CytobandParser implements AnnotationWriter  {
 			public boolean setProperty(String name, Object val) {
 				if ("band".equals(name)) {
 					band = name;
-				} else {
-					return super.setProperty(name, val);
 				}
-				return true;
+				return super.setProperty(name, val);
 			}
 
 		@Override
@@ -289,12 +272,10 @@ public final class CytobandParser implements AnnotationWriter  {
 				if ("method".equals(name)) {
 					return CYTOBAND_TIER_NAME;
 				}
-				else if ("band".equals(name)) {
+				if ("band".equals(name)) {
 					return band;
 				}
-				else {
-					return super.getProperty(name);
-				}
+				return super.getProperty(name);
 			}
 
 		@Override
@@ -306,7 +287,6 @@ public final class CytobandParser implements AnnotationWriter  {
 				if (id != null) {
 					props.put("id", id);
 				}
-				//props.put("method", CYTOBAND_TIER_NAME);
 				props.put("band", band);
 				return props;
 			}
@@ -314,5 +294,32 @@ public final class CytobandParser implements AnnotationWriter  {
 		public String getType() {
 			return CYTOBAND_TIER_NAME;
 		}
+	}
+
+	public static int determineCentromerePoint(List<CytobandSym> bands) {
+		for (int i = 0; i < bands.size() - 1; i++) {
+			if (bands.get(i).getArm() != bands.get(i + 1).getArm()) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public static List<CytobandSym> generateBands(SeqSymmetry cyto_container) {
+		List<CytobandSym> bands = new ArrayList<CytobandSym>();
+		for (int q = 0; q < cyto_container.getChildCount(); q++) {
+			SeqSymmetry child = cyto_container.getChild(q);
+			if (child instanceof CytobandSym) {
+				bands.add((CytobandSym) child);
+			} else if (child != null) {
+				for (int subindex = 0; subindex < child.getChildCount(); subindex++) {
+					SeqSymmetry grandchild = child.getChild(subindex);
+					if (grandchild instanceof CytobandSym) {
+						bands.add((CytobandSym) grandchild);
+					}
+				}
+			}
+		}
+		return bands;
 	}
 }

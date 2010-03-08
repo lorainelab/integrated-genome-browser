@@ -191,13 +191,7 @@ public final class FasterExpandPacker extends ExpandPacker {
 					prev_min_xmax = slot_max;
 				}
 				if (slot_max < child_min) {
-					// move child to slot;
-					double new_ycoord;
-					if (this.getMoveType() == NeoConstants.UP) {  // stacking up for layout
-						new_ycoord = -((slot_index * slot_height) + spacing);
-					} else { // stacking down for layout
-						new_ycoord = (slot_index * slot_height) + spacing;
-					}
+					double new_ycoord = determineYCoord(this.getMoveType(),slot_index, slot_height, spacing);
 					child.moveAbsolute(child_min, new_ycoord);
 					child_placed = true;
 					slot_maxes.set(slot_index, child_max);
@@ -214,27 +208,16 @@ public final class FasterExpandPacker extends ExpandPacker {
 				}
 			}
 			if (!child_placed) {
-				double new_ycoord;
 				// make new slot for child (unless already have max number of slots allowed,
 				//   in which case layer at top/bottom depending on movetype
+				child.setVisibility(true);
+				double new_ycoord = determineYCoord(this.getMoveType(),slot_maxes.size(), slot_height, spacing);
+				child.moveAbsolute(child_min, new_ycoord);
+
 				if ((max_slots_allowed > 0) && slot_maxes.size() >= max_slots_allowed) {
-					child.setVisibility(true);
-					if (this.getMoveType() == NeoConstants.UP) {
-						new_ycoord = -(((slot_maxes.size()) * slot_height) + spacing);
-					} else {
-						new_ycoord = ((slot_maxes.size()) * slot_height) + spacing;
-					}
-					child.moveAbsolute(child_min, new_ycoord);
 					int slot_index = slot_maxes.size() - 1;
 					prev_slot_index = slot_index;
 				} else {
-					child.setVisibility(true);
-					if (this.getMoveType() == NeoConstants.UP) {
-						new_ycoord = -((slot_maxes.size() * slot_height) + spacing);
-					} else {
-						new_ycoord = (slot_maxes.size() * slot_height) + spacing;
-					}
-					child.moveAbsolute(child_min, new_ycoord);
 					slot_maxes.add(child_max);
 					int slot_index = slot_maxes.size() - 1;
 					if (child_max < prev_min_xmax) {
@@ -273,4 +256,19 @@ public final class FasterExpandPacker extends ExpandPacker {
 
 		return null;
 	}
+
+
+	private static double determineYCoord(int moveType, int slot_index, double slot_height, double spacing) {
+		// move child to slot;
+		double new_ycoord;
+		if (moveType == NeoConstants.UP) {
+			// stacking up for layout
+			new_ycoord = -((slot_index * slot_height) + spacing);
+		} else {
+			// stacking down for layout
+			new_ycoord = (slot_index * slot_height) + spacing;
+		}
+		return new_ycoord;
+	}
+
 }

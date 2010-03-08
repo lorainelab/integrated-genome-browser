@@ -1847,6 +1847,10 @@ public class SeqMapView extends JPanel
 
 	public final void toggleAutoScroll() {
 		if (map_auto_scroller == null) {
+			if (this.getViewSeq() == null) {
+				return;
+			}
+
 			JPanel pan = new JPanel();
 
 			Rectangle2D.Double cbox = seqmap.getViewBounds();

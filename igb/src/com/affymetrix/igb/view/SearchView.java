@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.das2.Das2VersionedSource;
+import com.affymetrix.igb.util.ThreadUtils;
 import java.awt.Dimension;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -193,26 +194,30 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	private void initSequenceCB() {
-		// set up the sequence combo_box
-		sequence_CB.removeAllItems();
-		if (group != null) {
-			if (!((String)this.searchCB.getSelectedItem()).equals(REGEXRESIDUE)) {
-				sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID); // put this at top of list
-			}
-			for (BioSeq seq : group.getSeqList()) {
-				if (seq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
-					continue;
+		ThreadUtils.runOnEventQueue(new Runnable() {
+			public void run() {
+				// set up the sequence combo_box
+				sequence_CB.removeAllItems();
+				if (group != null) {
+					if (!((String) searchCB.getSelectedItem()).equals(REGEXRESIDUE)) {
+						sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID); // put this at top of list
+					}
+					for (BioSeq seq : group.getSeqList()) {
+						if (seq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
+							continue;
+						}
+						sequence_CB.addItem(seq.getID());
+					}
+					sequence_CB.setToolTipText(SEQUENCETOSEARCH);
+					sequence_CB.setEnabled(true);
+				} else {
+					sequence_CB.setToolTipText("Genome has not been selected");
+					sequence_CB.setEnabled(false);
 				}
-				sequence_CB.addItem(seq.getID());
-			}
-			sequence_CB.setToolTipText(SEQUENCETOSEARCH);
-			sequence_CB.setEnabled(true);
-		} else {
-			sequence_CB.setToolTipText("Genome has not been selected");
-			sequence_CB.setEnabled(false);
-		}
 
-		sequence_CB.setSelectedItem(IGBConstants.GENOME_SEQ_ID);
+				sequence_CB.setSelectedItem(IGBConstants.GENOME_SEQ_ID);
+			}
+		});
 	}
 
 	private void initSearchCB() {

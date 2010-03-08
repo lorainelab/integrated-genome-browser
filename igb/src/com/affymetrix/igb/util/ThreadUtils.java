@@ -3,6 +3,7 @@ package com.affymetrix.igb.util;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import javax.swing.SwingUtilities;
 
 public final class ThreadUtils {
   static Map<Object,Executor> obj2exec = new HashMap<Object,Executor>();
@@ -21,5 +22,13 @@ public final class ThreadUtils {
       obj2exec.put(key, exec);
     }
     return exec;
+  }
+
+  public static void runOnEventQueue(Runnable r) {
+	  if (SwingUtilities.isEventDispatchThread()) {
+		  r.run();
+	  } else {
+		  SwingUtilities.invokeLater(r);
+	  }
   }
 }

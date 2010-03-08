@@ -57,6 +57,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;
 
@@ -271,22 +272,31 @@ public final class GeneralLoadView extends JComponent
 			}
 			return;
 		}
-		String oldSpecies = (String)speciesCB.getSelectedItem();
+		final String oldSpecies = (String)speciesCB.getSelectedItem();
 
-		List<String> speciesList = new ArrayList<String>();
+		final List<String> speciesList = new ArrayList<String>();
 		speciesList.addAll(GeneralLoadUtils.species2genericVersionList.keySet());
 		Collections.sort(speciesList);
 
-		// Add names to combo boxes.
-		synchronized (speciesCB) {
-			speciesCB.removeAllItems();
-			speciesCB.addItem(SELECT_SPECIES);
-			for (String speciesName : speciesList) {
-				speciesCB.addItem(speciesName);
+		Runnable r = new Runnable() {
+
+			public void run() {
+				speciesCB.removeAllItems();
+				speciesCB.addItem(SELECT_SPECIES);
+				for (String speciesName : speciesList) {
+					speciesCB.addItem(speciesName);
+				}
+				if (oldSpecies != null && speciesList.contains(oldSpecies)) {
+					speciesCB.setSelectedItem(oldSpecies);
+				}
 			}
-			if (oldSpecies != null && speciesList.contains(oldSpecies)) {
-				speciesCB.setSelectedItem(oldSpecies);
-			}
+
+		};
+
+		if (SwingUtilities.isEventDispatchThread()) {
+			r.run();
+		} else {
+			SwingUtilities.invokeLater(r);
 		}
 	}
 

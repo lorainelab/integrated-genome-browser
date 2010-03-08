@@ -7,9 +7,11 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.TwoBitIterator;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -37,6 +39,9 @@ public final class TwoBitParser {
 
     /** Byte mask for translating unsigned ints into Java longs */
     private static final long INT_MASK = 0xffffffff;
+
+	/** Character mask for translating binary into Java chars */
+	private static final int CHAR_MASK = 0x03;
 
 	/** Character set used to decode strings.  Currently ASCII */
     private static final Charset charset = Charset.forName("ASCII");
@@ -182,49 +187,77 @@ public final class TwoBitParser {
 		loadBuffer(channel,buffer);
 
 		//packedDNA
+		SeqSpan nBlock = null,maskBlock = null;
 		byte valueBuffer[] = new byte[BUFFER_SIZE];
 		long length = size/4 + size%4;
-		int value, dna;
-		StringBuffer residues = new StringBuffer();
-		StringBuffer temp;
+		long residueCounter = 0;
+		char temp[] = new char[4];
 		for (int i = 0; i < length; i+=BUFFER_SIZE) {
 			buffer.get(valueBuffer);
 			for (int k = 0; k < BUFFER_SIZE && k < length; k++) {
-				temp = new StringBuffer();
-				value = valueBuffer[k] & BYTE_MASK;
-				for (int j = 0; j < 4; j++) {
-					dna = value & 0x03;
-					value = value >> 2;
-					temp.append(BASES[dna]);
+
+				temp = parseByte(valueBuffer[k]);
+				
+				for(int j = 0; j < 4; j++){
+
+					if(nBlock == null){
+						nBlock = GetBlock(residueCounter,nBlocks);
+					}
+
+					if(nBlock != null){
+						if(nBlock.getEnd() == residueCounter)
+							nBlock = null;
+						else
+							temp[j] = 'N';
+					}
+
+					if(maskBlock == null){
+						maskBlock = GetBlock(residueCounter,maskBlocks);
+					}
+
+					if(maskBlock != null){
+						if(maskBlock.getEnd() == residueCounter)
+							maskBlock = null;
+						else
+							temp[j] = Character.toLowerCase(temp[j]);
+					}
+
+					residueCounter++;
 				}
-				temp.reverse();
-				residues.append(temp);
+
+				System.out.print(temp);
 			}
 			channel.position(channel.position() + BUFFER_SIZE);
 			loadBuffer(channel, buffer);
-
 		}
-		residues = residues.delete((int)size, residues.length());
+		System.out.println();
+		System.out.println(residueCounter);
 
-		for(int i=0; i<maskBlocks.getSpanCount(); i++){
-			SeqSpan block = maskBlocks.getSpan(i);
-			String subString = residues.substring(block.getStart(), block.getEnd()).toLowerCase();
-			residues.replace(block.getStart(), block.getEnd(), subString);
-		}
-
-		for(int i=0; i<nBlocks.getSpanCount(); i++){
-			SeqSpan block = nBlocks.getSpan(i);
-			char subString[] = new char[block.getEnd() - block.getStart()];
-			Arrays.fill(subString, 'N');
-			residues.replace(block.getStart(), block.getEnd(), new String(subString));
-		}
-
-		System.out.println("residues :"+residues);
-
-		seq.setResiduesProvider(new TwoBitIterator(file,size,residueOffset,buffer.order(),nBlocks,maskBlocks));
+//		seq.setResiduesProvider(new TwoBitIterator(file,size,residueOffset,buffer.order(),nBlocks,maskBlocks));
 		channel.position(oldPosition);
 		return seq;
     }
+
+	private char[] parseByte(byte valueBuffer){
+		char temp[] = new char[4];
+		int dna, value = valueBuffer & BYTE_MASK;
+
+		for (int j = 3; j >= 0; j--) {
+			dna = value & CHAR_MASK;
+			value = value >> 2;
+			temp[j] = BASES[dna];
+		}
+		return temp;
+	}
+
+	private SeqSpan GetBlock(long start, MutableSeqSymmetry blocks){
+		for(int i=0; i<blocks.getSpanCount(); i++){
+			SeqSpan block = blocks.getSpan(i);
+			if(block.getStart() == start)
+				return block;
+		}
+		return null;
+	}
 
 	private long updateBuffer(FileChannel channel, ByteBuffer buffer, long position) throws IOException {
 		channel.position(position - buffer.remaining());
@@ -232,9 +265,28 @@ public final class TwoBitParser {
 		return channel.position();
 	}
 
+	public static String getMimeType() {
+		return "binary/2bit";
+	}
+
+	public static boolean writeAnnotations(BioSeq seq, OutputStream outstream)
+	{
+		DataOutputStream dos = null;
+		try
+		{
+			dos = new DataOutputStream(outstream);
+			dos.writeBytes(seq.getResidues());
+			dos.flush();
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
 	public static void main(String[] args){
-		File f = new File("/Users/aloraine/Downloads/tests/output/testMask.2bit");
-		//File f = new File("genometryImpl/test/data/2bit/at.2bit");
+		//File f = new File("/Users/aloraine/Downloads/tests/output/testMask.2bit");
+		File f = new File("genometryImpl/test/data/2bit/at.2bit");
 		TwoBitParser instance = new TwoBitParser();
 		try {
 			BioSeq seq = instance.parse(f, new AnnotatedSeqGroup("foo"));

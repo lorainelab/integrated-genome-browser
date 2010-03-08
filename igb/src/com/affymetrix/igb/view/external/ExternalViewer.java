@@ -26,10 +26,10 @@ public class ExternalViewer extends JComponent implements ItemListener {
 		ensemblBox = createBox();
 
 		final UCSCView ucsc = new UCSCView(ucscBox);
-		//final EnsemblView ensembl = new EnsemblView(ensemblBox);
+	//	final EnsemblView ensembl = new EnsemblView(ensemblBox);
 
 		add(ucsc, ucsc.getViewName());
-		//add(ensembl, ensembl.getViewName());
+	//	add(ensembl, ensembl.getViewName());
 	}
 
 	private JComboBox createBox() {
@@ -38,6 +38,7 @@ public class ExternalViewer extends JComponent implements ItemListener {
 		box.setMaximumSize(box.getPreferredSize());
 		box.setEditable(false);
 		box.addItemListener(this);
+		box.setEnabled(false);
 		return box;
 	}
 

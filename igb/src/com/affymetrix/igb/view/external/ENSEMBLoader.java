@@ -27,6 +27,7 @@ class ENSEMBLoader extends BrowserLoader {
 		dbmap.put("mm9", new EnsemblURL("http://sep2009.archive.ensembl.org/Mus_musculus","http://sep2009.archive.ensembl.org"));
 		dbmap.put("hg19",new EnsemblURL("http://sep2009.archive.ensembl.org/Homo_sapiens","http://sep2009.archive.ensembl.org"));
 		dbmap.put("hg18",new EnsemblURL("http://may2009.archive.ensembl.org/Homo_sapiens","http://may2009.archive.ensembl.org"));
+		dbmap.put("dm3", new EnsemblURL("http://sep2009.archive.ensembl.org/Drosophila_melanogaster","http://sep2009.archive.ensembl.org"));
 	}
 
 	public static String getUrlForView(Loc loc, int pixWidth) {

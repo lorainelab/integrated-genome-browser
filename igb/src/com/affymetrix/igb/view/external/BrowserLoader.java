@@ -70,6 +70,7 @@ public abstract class BrowserLoader {
 			return ("Error: the UCSC Browser was not able to return the answer in the appropriate time");
 		} catch (IOException e) {
 			Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);
+			return ("Error: " + e.getMessage());
 		} finally {
 			GeneralUtils.safeClose(input_stream);
 			GeneralUtils.safeClose(in);
@@ -80,6 +81,5 @@ public abstract class BrowserLoader {
 				}
 			}
 		}
-		return "Error: Could not find image in " + url;
 	}
 }

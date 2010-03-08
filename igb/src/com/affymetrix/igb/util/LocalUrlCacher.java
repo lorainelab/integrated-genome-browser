@@ -241,6 +241,9 @@ public final class LocalUrlCacher {
 				url_reachable = ((http_status >= 200) && (http_status < 400));
 			} catch (IOException ioe) {
 				url_reachable = false;
+			} catch (Exception e) {
+				e.printStackTrace();
+				url_reachable = false;
 			}
 			if (!url_reachable) {
 				if (!fileMayNotExist) {

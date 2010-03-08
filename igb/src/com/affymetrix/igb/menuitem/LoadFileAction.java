@@ -81,6 +81,9 @@ public final class LoadFileAction {
 	private final FileTracker load_dir_tracker;
 	private static int unknown_group_count = 1;
 	private static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
+	private static final String MERGE_MESSAGE = 
+			"Must select a genome before loading a graph.  "
+			+ "Graph data must be merged with already loaded genomic data.";
 
 	/**
 	 *  Constructor.
@@ -270,10 +273,9 @@ public final class LoadFileAction {
 			return null;
 		}
 		if (annotFileLC.endsWith(".bam")) {
-			// handle BAM files as a special case, because Picard can only parse from files.
+			// special-case BAM files, because Picard can only parse from files.
 			if (seq_group == null) {
-				ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  "
-						+ "Graph data must be merged with already loaded genomic data.", null);
+				ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
 				BAMParser parser = new BAMParser(annotfile, seq_group);
 				parser.parse();
@@ -283,7 +285,6 @@ public final class LoadFileAction {
 
 		InputStream fistr = null;
 		try {
-			BioSeq aseq = null;
 			StringBuffer sb = new StringBuffer();
 			fistr = GeneralUtils.getInputStream(annotfile, sb);
 			String stripped_name = sb.toString();
@@ -298,13 +299,12 @@ public final class LoadFileAction {
 			//is it a graph file?
 			if (GraphSymUtils.isAGraphFilename(stripped_name) || useqGraphArchive) {
 				if (seq_group == null) {
-					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  "
-							+ "Graph data must be merged with already loaded genomic data.", null);
+					ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 				} else {
 					URL url = annotfile.toURI().toURL();
 					OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
 				}
-				return aseq;
+				return null;
 			}
 			//load as non graph data
 			return load(gviewerFrame, fistr, stripped_name, gmodel, seq_group, input_seq);
@@ -502,8 +502,8 @@ public final class LoadFileAction {
 			return input_seq;
 		}
 		if (lcname.endsWith(".brs")) {
-			BrsParser parser = new BrsParser();
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
+			BrsParser.parse(str, annot_type, selected_group);
 			return input_seq;
 		}
 		if (lcname.endsWith(".bsnp")) {
@@ -596,13 +596,9 @@ public final class LoadFileAction {
 		} else {
 			// .psl3 file
 			// the user has to tell us whether to annotate the "query" or "target" or "other"
-			Object[] options;
-			//if (lcname.endsWith(".psl3")) {
-			options = new Object[]{"Query", "Target", "Other"};
-			//} else {
-			//    options = new Object[]{"Query", "Target"};
-			//}
-			if (javax.swing.SwingUtilities.isEventDispatchThread()) {
+			Object[] options = new Object[]{"Query", "Target", "Other"};
+
+			if (SwingUtilities.isEventDispatchThread()) {
 				psl_option = JOptionPane.showOptionDialog(gviewerFrame, "Annotate which sequence?", "PSL annotation options", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, "Target");
 			} else {
 				psl_option = InvokeUtils.invokeOptionDialog(gviewerFrame, "Annotate which sequence?", "PSL annotation options", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, "Target");

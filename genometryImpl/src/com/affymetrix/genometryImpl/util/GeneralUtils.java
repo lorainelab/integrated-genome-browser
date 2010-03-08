@@ -7,8 +7,10 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +19,7 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -117,6 +120,67 @@ public final class GeneralUtils {
 		}
 		return stream_name;
 	}
+
+	/**
+	 * Fix several potential problems in URL names.
+	 * @param streamName
+	 * @return
+	 */
+	public static String convertStreamNameToValidURLName(String streamName) {
+		int httpIndex = streamName.indexOf("http:");
+		if (httpIndex > -1) {
+			streamName = streamName.substring(httpIndex + 5);	// strip off initial characters including http:
+		}
+
+		// strip off initial "/" characters.  There may be one, or multiple.
+		int streamNameLen = streamName.length();
+		for (int i=0;i<streamNameLen;i++) {
+			if (streamName.startsWith("/")) {
+				streamName = streamName.substring(1);
+			}
+		}
+
+		// strip off final "/" character, if it exists.
+		if (streamName.endsWith("/")) {
+			streamName = streamName.substring(0,streamName.length()-1);
+		}
+		return "http://" + streamName;
+
+	}
+
+	/**
+	 * @param istr	- input stream
+	 * @param streamName
+	 * @return File with data from stream.
+	 */
+	public static File convertStreamToFile(InputStream istr, String streamName) {
+		// Output the InputStream to a temporary file, and read that as a FileInputStream.
+		OutputStream out = null;
+		FileInputStream fis = null;
+		try {
+			String unzippedStreamName = stripEndings(streamName);
+			String extension = ParserController.getExtension(unzippedStreamName);
+			File f = File.createTempFile(
+					unzippedStreamName,extension);
+			out = new FileOutputStream(f);
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			while ((read = istr.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+			f.deleteOnExit();	// This is only a temporary file!  Delete when the app exits.
+			return f;
+		}  catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		finally {
+			GeneralUtils.safeClose(out);
+			GeneralUtils.safeClose(fis);
+		}
+	}
+
+
 
 	/**
 	 * Get a favicon from the URL.

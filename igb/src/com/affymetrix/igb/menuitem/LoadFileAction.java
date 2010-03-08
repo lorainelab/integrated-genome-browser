@@ -66,6 +66,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.threads.InvokeUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.parsers.ChpParser;
+import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import java.util.concurrent.Executor;
 import org.xml.sax.SAXException;
@@ -168,44 +169,44 @@ public final class LoadFileAction {
 	/** Load a file into the global singleton genometry model. */
 	private static void loadFile(final GenometryModel gmodel, final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
 
-		MergeOptionFileChooser chooser = getFileChooser();
+		MergeOptionFileChooser fileChooser = getFileChooser();
 		File currDir = load_dir_tracker.getFile();
 		if (currDir == null) {
 			currDir = new File(System.getProperty("user.home"));
 		}
-		chooser.setCurrentDirectory(currDir);
-		chooser.rescanCurrentDirectory();
+		fileChooser.setCurrentDirectory(currDir);
+		fileChooser.rescanCurrentDirectory();
 		if (gmodel.getSelectedSeqGroup() == null) {
-			chooser.no_merge_button.setEnabled(true);
-			chooser.no_merge_button.setSelected(true);
-			chooser.merge_button.setEnabled(false);
+			fileChooser.no_merge_button.setEnabled(true);
+			fileChooser.no_merge_button.setSelected(true);
+			fileChooser.merge_button.setEnabled(false);
 		} else {
 			// default to "merge" if already have a selected seq group to merge with,
 			//    because non-merging is an uncommon choice
-			chooser.merge_button.setSelected(true);
-			chooser.merge_button.setEnabled(true);
+			fileChooser.merge_button.setSelected(true);
+			fileChooser.merge_button.setEnabled(true);
 		}
-		chooser.genome_name_TF.setEnabled(chooser.no_merge_button.isSelected());
-		chooser.genome_name_TF.setText(UNKNOWN_GROUP_PREFIX + " " + unknown_group_count);
+		fileChooser.genome_name_TF.setEnabled(fileChooser.no_merge_button.isSelected());
+		fileChooser.genome_name_TF.setText(UNKNOWN_GROUP_PREFIX + " " + unknown_group_count);
 
-		int option = chooser.showOpenDialog(gviewerFrame);
+		int option = fileChooser.showOpenDialog(gviewerFrame);
 
 		if (option != JFileChooser.APPROVE_OPTION) {
 			return;
 		}
 
-		load_dir_tracker.setFile(chooser.getCurrentDirectory());
+		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
 
-		final File[] fils = chooser.getSelectedFiles();
+		final File[] fils = fileChooser.getSelectedFiles();
 		final AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
 		final BioSeq previous_seq = gmodel.getSelectedSeq();
-		final boolean mergeSelected = chooser.merge_button.isSelected();
+		final boolean mergeSelected = fileChooser.merge_button.isSelected();
 		if (!mergeSelected) {
 			// Not merging, so create a new Seq Group
 			unknown_group_count++;
 		}
 		
-		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(chooser.genome_name_TF.getText());
+		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(loadGroup);
 
@@ -249,12 +250,31 @@ public final class LoadFileAction {
 		BioSeq new_seq = null;
 		for (File cfil : fils) {
 			String file_name = cfil.toString();
-			if (file_name.indexOf("http:") > -1) {
-				Application.logError("Loading from a URL is not currently supported.");
+			int httpIndex = file_name.indexOf("http:");
+			if (httpIndex > -1) {
+				try {
+					// Strip off initial characters up to and including http:
+					// Sometimes this is necessary, as URLs can start with invalid "http:/"
+					String streamName = GeneralUtils.convertStreamNameToValidURLName(file_name);
+					InputStream istr = LocalUrlCacher.getInputStream(streamName);
+					if (istr == null) {
+						ErrorHandler.errorPanel("ERROR", "Error loading URL:\n" + streamName);
+					}
+					// Convert stream to a file.  Only use the name after the last "/", otherwise filename will be URL-encoded
+					// and will not look good to the user.
+					File f = GeneralUtils.convertStreamToFile(istr, streamName.substring(streamName.lastIndexOf("/")));
+					
+					new_seq = load(gviewerFrame, streamName, f, gmodel, seq_group, seq);
+				} catch (IOException ex) {
+					ex.printStackTrace();
+					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading URL", ex);
+				}
 			} else {
 				try {
-					new_seq = load(gviewerFrame, cfil, gmodel, seq_group, seq);
+					String fileName = cfil.getName().toLowerCase();
+					new_seq = load(gviewerFrame, fileName, cfil, gmodel, seq_group, seq);
 				} catch (Exception ex) {
+					ex.printStackTrace();
 					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
 				}
 			}
@@ -262,8 +282,9 @@ public final class LoadFileAction {
 		return new_seq;
 	}
 
-	private static BioSeq load(JFrame gviewerFrame, File annotfile, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq input_seq) throws IOException {
-		String annotFileLC = annotfile.getName().toLowerCase();
+	private static BioSeq load(
+			JFrame gviewerFrame, String annotFileLC, File annotfile, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq input_seq)
+			throws IOException {
 		if (annotFileLC.endsWith(".chp")) {
 			// special-case CHP files. ChpParser only has
 			//    a parse() method that takes the file name

@@ -82,7 +82,7 @@ public final class GeneralLoadView extends JComponent
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
 	private final DataLoadView data_load_view;
-	private boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
+	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 
 	public GeneralLoadView(DataLoadView data_load_view) {
 		this.data_load_view = data_load_view;
@@ -220,6 +220,7 @@ public final class GeneralLoadView extends JComponent
 
 		String speciesName = (String)this.speciesCB.getSelectedItem();
 		if (speciesName != null && !speciesName.equals(SELECT_SPECIES)) {
+			lookForPersistentGenome = false;
 			//refresh version names if a species is selected
 			refreshVersionCB(speciesName);
 
@@ -271,7 +272,6 @@ public final class GeneralLoadView extends JComponent
 			}
 			return;
 		}
-		final String oldSpecies = (String)speciesCB.getSelectedItem();
 
 		final List<String> speciesList = new ArrayList<String>();
 		speciesList.addAll(GeneralLoadUtils.species2genericVersionList.keySet());
@@ -280,6 +280,8 @@ public final class GeneralLoadView extends JComponent
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
+				String oldSpecies = (String)speciesCB.getSelectedItem();
+
 				speciesCB.removeAllItems();
 				speciesCB.addItem(SELECT_SPECIES);
 				for (String speciesName : speciesList) {
@@ -369,6 +371,7 @@ public final class GeneralLoadView extends JComponent
 
 		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 		if (features == null || features.isEmpty()) {
+			Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
 			return;
 		}
 

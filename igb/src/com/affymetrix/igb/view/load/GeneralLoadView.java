@@ -57,7 +57,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;
 
@@ -278,7 +277,7 @@ public final class GeneralLoadView extends JComponent
 		speciesList.addAll(GeneralLoadUtils.species2genericVersionList.keySet());
 		Collections.sort(speciesList);
 
-		Runnable r = new Runnable() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				speciesCB.removeAllItems();
@@ -291,13 +290,7 @@ public final class GeneralLoadView extends JComponent
 				}
 			}
 
-		};
-
-		if (SwingUtilities.isEventDispatchThread()) {
-			r.run();
-		} else {
-			SwingUtilities.invokeLater(r);
-		}
+		});
 	}
 
 

@@ -66,6 +66,7 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
 import java.text.MessageFormat;
 
@@ -558,15 +559,21 @@ public final class IGB extends Application
 		if (plugins_info == null || plugins_info.isEmpty()) {
 			System.out.println("There are no plugins specified in preferences.");
 		} else {
-			for (PluginInfo pi : plugins_info) {
-				Object plugin = setUpPlugIn(pi);
-				plugins.add(plugin);
-			}
+			ThreadUtils.runOnEventQueue(new Runnable() {
+
+				public void run() {
+					for (PluginInfo pi : plugins_info) {
+						Object plugin = setUpPlugIn(pi);
+						plugins.add(plugin);
+					}
+				}
+			});
 		}
 
 		for (Object plugin : plugins) {
 			if (plugin instanceof DataLoadView) {
 				data_load_view = (DataLoadView) plugin;
+				break;
 			}
 		}
 

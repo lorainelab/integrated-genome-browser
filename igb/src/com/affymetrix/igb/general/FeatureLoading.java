@@ -279,7 +279,7 @@ public final class FeatureLoading {
 	private static boolean loadQuickLoadFeature(final String fileName, GenericFeature gFeature) throws OutOfMemoryError {
 		InputStream istr = null;
 		BufferedInputStream bis = null;
-		final String annot_url = gFeature.gVersion.gServer.URL + gFeature.gVersion.versionID + "/" + fileName;
+		final String annot_url = gFeature.gVersion.gServer.URL + "/" + gFeature.gVersion.versionID + "/" + fileName;
 
 		if (DEBUG) {
 			System.out.println("need to load: " + annot_url);

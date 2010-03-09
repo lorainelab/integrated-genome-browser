@@ -96,18 +96,7 @@ public final class ResidueLoading {
 				}
 			}
 
-			// Try to load from Quickload server.  This is done last, because it'll request the full file from the server.
-			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.QuickLoad) {
-					String residues = GetQuickLoadResidues(seq_group, seq_name, server.URL, min, max);
-					if (residues != null) {
-						BioSeq.addResiduesToComposition(aseq, residues, span);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
-				}
-			}
+			// QuickLoad only supports full files.
 
 		}
 		// not a partial load.

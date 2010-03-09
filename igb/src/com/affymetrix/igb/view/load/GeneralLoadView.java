@@ -703,7 +703,8 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		if (!(GeneralLoadUtils.getPreferredVersionName(gVersions).equals(versionName))) {
-			System.out.println("ERROR - version doesn't match");
+			/*System.out.println("ERROR - versions don't match: " + versionName + "," +
+					GeneralLoadUtils.getPreferredVersionName(gVersions));*/
 			return;
 		}
 

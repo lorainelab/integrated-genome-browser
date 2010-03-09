@@ -35,7 +35,7 @@ public class DataLoadView extends JComponent {
 
 		main_panel.setLayout(new BorderLayout());
 
-		general_load_view = new GeneralLoadView(this);
+		general_load_view = new GeneralLoadView();
 		group_view = new SeqGroupView();
 
 		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, general_load_view, group_view);

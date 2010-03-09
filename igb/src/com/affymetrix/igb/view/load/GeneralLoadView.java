@@ -48,7 +48,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.view.DataLoadView;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -81,11 +80,9 @@ public final class GeneralLoadView extends JComponent
 	JScrollPane featuresTableScrollPane;
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
-	private final DataLoadView data_load_view;
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 
-	public GeneralLoadView(DataLoadView data_load_view) {
-		this.data_load_view = data_load_view;
+	public GeneralLoadView() {
 		this.setLayout(new BorderLayout());
 
 		JPanel choicePanel = new JPanel();
@@ -632,7 +629,7 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("ERROR -- couldn't find version");
 			return;
 		}
-		String speciesName = GeneralLoadUtils.versionName2species.get(versionName);
+		final String speciesName = GeneralLoadUtils.versionName2species.get(versionName);
 		if (speciesName == null) {
 			// Couldn't find species matching this versionName -- we have problems.
 			System.out.println("ERROR - Couldn't find species for version " + versionName);
@@ -641,9 +638,13 @@ public final class GeneralLoadView extends JComponent
 
 		if (!speciesName.equals(speciesCB.getSelectedItem())) {
 			// Set the selected species (the combo box is already populated)
-			speciesCB.removeItemListener(this);
-			speciesCB.setSelectedItem(speciesName);
-			speciesCB.addItemListener(this);
+			ThreadUtils.runOnEventQueue(new Runnable() {
+				public void run() {
+					speciesCB.removeItemListener(GeneralLoadView.this);
+					speciesCB.setSelectedItem(speciesName);
+					speciesCB.addItemListener(GeneralLoadView.this);
+				}
+			});
 		}
 		if (!versionName.equals(versionCB.getSelectedItem())) {
 			refreshVersionCB(speciesName);			// Populate the versionName CB

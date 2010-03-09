@@ -17,11 +17,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author sgblanch
+ * @author hiralv
  * @version $Id$
  */
 public final class TwoBitParser {
@@ -30,6 +31,9 @@ public final class TwoBitParser {
 
 	/** Size of integer, in bytes */
 	private static final int INT_SIZE = 4;
+
+	/** Number of residues in each byte */
+	private static final int RESIDUES_PER_BYTE = 4;
 
 	/** Use a 4KB buffer, as that is the block size of most filesystems */
 	private static  int BUFFER_SIZE = 4096;
@@ -156,6 +160,7 @@ public final class TwoBitParser {
 		buffer.order(order);
 		MutableSeqSymmetry nBlocks    = new SimpleMutableSeqSymmetry();
 		MutableSeqSymmetry maskBlocks = new SimpleMutableSeqSymmetry();
+		long residueOffset = offset;
 
 		long oldPosition = channel.position();
         channel.position(offset);
@@ -164,6 +169,7 @@ public final class TwoBitParser {
 		//dnaSize
         long size = buffer.getInt() & INT_MASK;
 		System.out.println("size is " + size + " bases");
+		residueOffset += INT_SIZE;
 
 		if (size > Integer.MAX_VALUE) {
 			throw new IOException("IGB can not handle sequences larger than " + Integer.MAX_VALUE + ".  Offending sequence length: " + size);
@@ -173,96 +179,144 @@ public final class TwoBitParser {
 
 		//nBlockCount, nBlockStart, nBlockSize
         readBlocks(channel, buffer, seq, nBlocks);
+		residueOffset += INT_SIZE + nBlocks.getSpanCount() * INT_SIZE * 2;
 
 		//maskBlockCount, maskBlockStart, maskBlockSize
 		readBlocks(channel, buffer, seq, maskBlocks);
+		residueOffset += INT_SIZE + maskBlocks.getSpanCount() * INT_SIZE * 2;
 
 		//reserved
         if (buffer.getInt() != 0) {
             throw new IOException("Unknown 2bit format: sequence's reserved field is non zero");
         }
+		residueOffset += INT_SIZE;
 
-		long residueOffset = offset + 4*4 + nBlocks.getSpanCount()*4*2 + maskBlocks.getSpanCount()*4*2;
-		channel.position(residueOffset);
+		long start = 0, end = size;
+		long length = end - start;
+		long startOffset = start / RESIDUES_PER_BYTE;
+		int beginResidues = RESIDUES_PER_BYTE - (int)start % 4;
+		channel.position(residueOffset + startOffset);
 		loadBuffer(channel,buffer);
+		updateBlocks(start,nBlocks);
+		updateBlocks(start,maskBlocks);
 
 		//packedDNA
 		SeqSpan nBlock = null,maskBlock = null;
 		byte valueBuffer[] = new byte[BUFFER_SIZE];
-		long length = size/4 + size%4;
-		long residueCounter = 0;
-		char temp[] = new char[4];
-		for (int i = 0; i < length; i+=BUFFER_SIZE) {
+		long bytesLength = length/RESIDUES_PER_BYTE;
+		int endResidues = length % RESIDUES_PER_BYTE == 0 ? 0 : 1;
+		bytesLength = bytesLength + endResidues;
+		long residuePosition = start;
+		char temp[] = null;
+
+		for (int i = 0; i < bytesLength; i+=BUFFER_SIZE) {
 			buffer.get(valueBuffer);
-			for (int k = 0; k < BUFFER_SIZE && k < length; k++) {
+			for (int k = 0; k < BUFFER_SIZE && k < bytesLength; k++) {
 
-				temp = parseByte(valueBuffer[k]);
-				
-				for(int j = 0; j < 4; j++){
-
-					if(nBlock == null){
-						nBlock = GetBlock(residueCounter,nBlocks);
-					}
-
-					if(nBlock != null){
-						if(nBlock.getEnd() == residueCounter)
-							nBlock = null;
-						else
-							temp[j] = 'N';
-					}
-
-					if(maskBlock == null){
-						maskBlock = GetBlock(residueCounter,maskBlocks);
-					}
-
-					if(maskBlock != null){
-						if(maskBlock.getEnd() == residueCounter)
-							maskBlock = null;
-						else
-							temp[j] = Character.toLowerCase(temp[j]);
-					}
-
-					residueCounter++;
+				if(k == 0 && beginResidues != 0){
+					temp = parseByte(valueBuffer[k], beginResidues,true);
+				}else if(k == bytesLength - 1 && endResidues != 0){
+					temp = parseByte(valueBuffer[k],(int)(length%4),false);
+				}else{
+					temp = parseByte(valueBuffer[k]);
 				}
 
+				for (int j = 0; j < temp.length; j++) {
+					nBlock = processResidue(residuePosition, temp, j, nBlock, nBlocks, false);
+					maskBlock = processResidue(residuePosition, temp, j, maskBlock, maskBlocks, true);
+					residuePosition++;
+				}
+				
 				System.out.print(temp);
 			}
 			channel.position(channel.position() + BUFFER_SIZE);
 			loadBuffer(channel, buffer);
 		}
 		System.out.println();
-		System.out.println(residueCounter);
+		System.out.println(residuePosition);
 
 //		seq.setResiduesProvider(new TwoBitIterator(file,size,residueOffset,buffer.order(),nBlocks,maskBlocks));
 		channel.position(oldPosition);
 		return seq;
     }
 
-	private char[] parseByte(byte valueBuffer){
-		char temp[] = new char[4];
-		int dna, value = valueBuffer & BYTE_MASK;
-
-		for (int j = 3; j >= 0; j--) {
-			dna = value & CHAR_MASK;
-			value = value >> 2;
-			temp[j] = BASES[dna];
-		}
-		return temp;
-	}
-
-	private SeqSpan GetBlock(long start, MutableSeqSymmetry blocks){
-		for(int i=0; i<blocks.getSpanCount(); i++){
-			SeqSpan block = blocks.getSpan(i);
-			if(block.getStart() == start)
-				return block;
-		}
-		return null;
-	}
 
 	private long updateBuffer(FileChannel channel, ByteBuffer buffer, long position) throws IOException {
 		channel.position(position - buffer.remaining());
 		loadBuffer(channel, buffer);
 		return channel.position();
+	}
+
+	private void updateBlocks(long start, MutableSeqSymmetry blocks){
+		List<SeqSpan> removeSpans = new ArrayList<SeqSpan>();
+
+		for(int i=0; i<blocks.getSpanCount(); i++){
+			SeqSpan span = blocks.getSpan(i);
+			if(start > span.getStart() && start > span.getEnd()){
+					removeSpans.add(span);
+			}
+				
+		}
+
+		for(SeqSpan span: removeSpans){
+			blocks.removeSpan(span);
+		}
+	}
+	private SeqSpan processResidue(long residuePosition, char temp[], int pos, SeqSpan block, MutableSeqSymmetry blocks, boolean isMask){
+		if (block == null) {
+			block = GetNextBlock(blocks);
+		}
+
+		if (block != null) {
+			if (residuePosition == block.getEnd()) {
+				blocks.removeSpan( block);
+				block = null;
+			} else if (residuePosition >= block.getStart()) {
+				if(isMask)
+					temp[pos] = Character.toLowerCase(temp[pos]);
+				else
+					temp[pos] = 'N';
+			}
+		}
+		return block;
+	}
+
+	private SeqSpan GetNextBlock(MutableSeqSymmetry Blocks){
+		if(Blocks.getSpanCount() > 0)
+			return Blocks.getSpan(0);
+		else
+			return null;
+	}
+
+	private char[] parseByte(byte valueBuffer, int size, boolean isFirst){
+		char temp[] = parseByte(valueBuffer);
+		char newTemp[] = new char[size];
+
+		if(isFirst){
+			int skip = temp.length - size;
+			for(int i=0; i<size; i++){
+				newTemp[i] = temp[skip+i];
+			}
+		}
+
+		for(int i=0; i<size; i++){
+			newTemp[i] = temp[i];
+		}
+
+		return newTemp;
+	}
+	
+	private char[] parseByte(byte valueBuffer){
+		char temp[] = new char[RESIDUES_PER_BYTE];
+		int dna, value = valueBuffer & BYTE_MASK;
+
+		for (int j = RESIDUES_PER_BYTE; j > 0; j--) {
+			dna = value & CHAR_MASK;
+			value = value >> 2;
+			temp[j-1] = BASES[dna];
+		}
+
+		return temp;
 	}
 
 	public static String getMimeType() {
@@ -285,8 +339,8 @@ public final class TwoBitParser {
 	}
 	
 	public static void main(String[] args){
-		//File f = new File("/Users/aloraine/Downloads/tests/output/testMask.2bit");
-		File f = new File("genometryImpl/test/data/2bit/at.2bit");
+		File f = new File("/afs/transvar.org/home/hvora1/Desktop/test1.2bit");
+		//File f = new File("genometryImpl/test/data/2bit/at.2bit");
 		TwoBitParser instance = new TwoBitParser();
 		try {
 			BioSeq seq = instance.parse(f, new AnnotatedSeqGroup("foo"));

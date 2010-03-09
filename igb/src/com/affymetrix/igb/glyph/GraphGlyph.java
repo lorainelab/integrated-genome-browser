@@ -16,15 +16,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.awt.geom.Point2D;
-import java.awt.font.TextAttribute;
-import java.text.AttributedString;
-
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -36,6 +27,21 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.Timer;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.awt.geom.Point2D;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 
 /**
  *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
@@ -498,7 +504,7 @@ public final class GraphGlyph extends Glyph {
 		double interval = Math.pow(10, Math.floor(Math.log10(range)));
 		double start = Math.floor(min / interval) * interval;
 
-		ArrayList<Double> coords = new ArrayList<Double>(10);
+		List<Double> coords = new ArrayList<Double>(10);
 		for (double d = start; d <= max; d += interval) {
 			if (d >= min && d <= max) {
 				coords.add(d);
@@ -625,8 +631,6 @@ public final class GraphGlyph extends Glyph {
 		//    have multiple views on same scene / glyph hierarchy
 		// therefore reconstructing handle pixel bounds here... (although reusing same object to
 		//    cut down on object creation)
-		//    System.out.println("comparing full view cbox.x: " + view.getFullView().getCoordBox().x +
-		//		       ", view cbox.x: " + view.getCoordBox().x);
 
 		// if full view differs from current view, and current view doesn't left align with full view,
 		//   don't draw handle (only want handle at left side of full view)
@@ -1004,7 +1008,8 @@ public final class GraphGlyph extends Glyph {
 	}
 
 
-	private void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, GraphType graph_style, Graphics g, int ysum, int points_in_pixel, int i) {
+	private void drawSingleRect(
+			int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, GraphType graph_style, Graphics g, int ysum, int points_in_pixel, int i) {
 		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {

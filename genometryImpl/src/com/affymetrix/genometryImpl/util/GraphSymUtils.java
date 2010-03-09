@@ -72,19 +72,29 @@ public final class GraphSymUtils {
 			newid = GraphSymUtils.getUniqueGraphID(newid, toseq);
 		}
 
+		// create GraphSym.
+		// keep maximum memory requirement down by nulling out lists after final use
+		int[] new_xcoordArr = new_xcoords.copyToArray();
+		new_xcoords = null;
+		float[] new_ycoordArr = new_ycoords.copyToArray();
+		new_ycoords = null;
 		if (!hasWidth(original_graf)) {
-			new_graf = new GraphSym(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
+			new_graf = new GraphSym(new_xcoordArr, new_ycoordArr,
 					newid, toseq);
 		} else {
-			new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
-					new_ycoords.copyToArray(), newid, toseq);
+			int[] new_wcoordArr = new_wcoords.copyToArray();
+			new_wcoords = null;
+			new_graf = new GraphIntervalSym(new_xcoordArr, new_wcoordArr, new_ycoordArr,
+					newid, toseq);
 		}
 		new_graf.setGraphName(original_graf.getGraphName());
 		return new_graf;
 	}
 
 
-	private static void addCoords(SeqSymmetry mapsym, BioSeq fromseq, BioSeq toseq, GraphSym original_graf, IntList new_xcoords, FloatList new_ycoords, IntList new_wcoords) {
+	private static void addCoords(
+			SeqSymmetry mapsym, BioSeq fromseq, BioSeq toseq, GraphSym original_graf,
+			IntList new_xcoords, FloatList new_ycoords, IntList new_wcoords) {
 		List<SeqSymmetry> leaf_syms = SeqUtils.getLeafSyms(mapsym);
 		for (SeqSymmetry leafsym : leaf_syms) {
 			SeqSpan fspan = leafsym.getSpan(fromseq);

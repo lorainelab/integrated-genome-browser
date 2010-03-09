@@ -39,7 +39,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
 		if (sym instanceof GraphSym) {
-			displayGraph((GraphSym)sym, smv, false);
+			displayGraph((GraphSym)sym, smv);
 		} else {
 			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry " +
 					"passed in is NOT a GraphSym: " + sym);
@@ -56,7 +56,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 *     will go into an attached tier, never a floating glyph.
 	 *  Also adds to the SeqMapView's GraphState-to-TierGlyph hash if needed.
 	 */
-	private GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map) {
+	private GraphGlyph displayGraph(GraphSym graf, SeqMapView smv) {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		BioSeq vseq = smv.getViewSeq();
 		BioSeq graph_seq = graf.getGraphSeq();
@@ -104,13 +104,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			newgraf.setGraphName(graph_name);
 		}
 
-		AffyTieredMap map = smv.getSeqMap();
-		Rectangle2D.Double cbox = map.getCoordBounds();
-
-		GraphGlyph graph_glyph = displayGraphSym(newgraf, graf, cbox, map, smv, update_map);
-		if (update_map) {
-			map.updateWidget();
-		}
+		GraphGlyph graph_glyph = displayGraphSym(newgraf, graf, smv);
 
 		return graph_glyph;
 	}
@@ -125,7 +119,9 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param update_map
 	 * @return graph glyph
 	 */
-	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, Rectangle2D.Double cbox, AffyTieredMap map, SeqMapView smv, boolean update_map) {
+	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapView smv) {
+		AffyTieredMap map = smv.getSeqMap();
+		Rectangle2D.Double cbox = map.getCoordBounds();
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, graf.getGraphState());
 		graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
 		GraphState gstate = graf.getGraphState();
@@ -149,10 +145,6 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			TierGlyph tglyph = smv.getGraphTier(tier_style, direction);
 			tglyph.addChild(graph_glyph);
 			tglyph.pack(map.getView());
-			if (update_map) {
-				map.packTiers(false, true, false);
-				map.stretchToFit(false, false);
-			}
 		}
 		return graph_glyph;
 	}

@@ -47,7 +47,6 @@ import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
@@ -80,6 +79,7 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.action.RefreshDataAction;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -222,8 +222,6 @@ public class SeqMapView extends JPanel
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
 	protected SeqSymmetry sym_used_for_title = null;
-
-	private final JButton refreshButton = new JButton("Refresh data");
 
 	/*
 	 *  units to scroll are either in pixels or bases
@@ -430,15 +428,7 @@ public class SeqMapView extends JPanel
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		xzoombox.add((Component) xzoomer);
 
-		ActionListener refreshAL = new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				((IGB)Application.getSingleton()).
-						data_load_view.general_load_view.loadVisibleData();
-				}
-		};
-		refreshButton.setMnemonic('R');
-		refreshButton.addActionListener(refreshAL);
-		xzoombox.add(refreshButton);
+		xzoombox.add(new JButton(RefreshDataAction.getAction()));
 
 		boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
 		JPanel pan = new JPanel(new BorderLayout());

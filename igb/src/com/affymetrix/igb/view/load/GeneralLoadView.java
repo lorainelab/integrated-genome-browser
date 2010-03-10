@@ -48,6 +48,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.action.RefreshDataAction;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public final class GeneralLoadView extends JComponent
 	private final JComboBox speciesCB;
 	private final JButton all_residuesB;
 	private final JButton partial_residuesB;
-	private final JButton refresh_dataB;
+	private final RefreshDataAction refreshDataAction;
 	private static final SeqMapView gviewer = Application.getSingleton().getMapView();
 	private JTableX feature_table;
 	private FeaturesTableModel feature_model;
@@ -82,7 +83,9 @@ public final class GeneralLoadView extends JComponent
 	//private TrackInfoView track_info_view;
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 
-	public GeneralLoadView() {
+	private static GeneralLoadView singleton;
+
+	private GeneralLoadView() {
 		this.setLayout(new BorderLayout());
 
 		JPanel choicePanel = new JPanel();
@@ -145,11 +148,10 @@ public final class GeneralLoadView extends JComponent
 		
 		partial_residuesB.addActionListener(this);
 		buttonPanel.add(partial_residuesB);
-		refresh_dataB = new JButton(IGBConstants.BUNDLE.getString("refreshDataButton"));
-		refresh_dataB.setToolTipText(IGBConstants.BUNDLE.getString("refreshDataTip"));
+		this.refreshDataAction = RefreshDataAction.getAction();
+		JButton refresh_dataB = new JButton(refreshDataAction);
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
-		refresh_dataB.setEnabled(false);
-		refresh_dataB.addActionListener(this);
+		refreshDataAction.setEnabled(false);
 		buttonPanel.add(refresh_dataB);
 		this.add("South", buttonPanel);
 
@@ -186,6 +188,14 @@ public final class GeneralLoadView extends JComponent
 		populateSpeciesData();
 		
 		addListeners();
+	}
+
+	public static synchronized GeneralLoadView getLoadView() {
+		if (singleton == null) {
+			singleton = new GeneralLoadView();
+		}
+
+		return singleton;
 	}
 
 	/**
@@ -409,10 +419,6 @@ public final class GeneralLoadView extends JComponent
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		final Object src = evt.getSource();
-		if (src == refresh_dataB) {
-			loadVisibleData();
-			return;
-		}
 		if (src != partial_residuesB && src != all_residuesB) {
 			return;
 		}
@@ -753,7 +759,7 @@ public final class GeneralLoadView extends JComponent
 		versionCB.setEnabled(true);
 		all_residuesB.setEnabled(false);
 		partial_residuesB.setEnabled(false);
-		refresh_dataB.setEnabled(false);
+		refreshDataAction.setEnabled(false);
 		addListeners();
 	}
 
@@ -882,13 +888,13 @@ public final class GeneralLoadView extends JComponent
 
 		all_residuesB.setEnabled(enabled);
 		partial_residuesB.setEnabled(enabled);
-		refresh_dataB.setEnabled(enabled);
+		refreshDataAction.setEnabled(enabled);
 	}
 
 	private void disableAllButtons() {
 		all_residuesB.setEnabled(false);
 		partial_residuesB.setEnabled(false);
-		refresh_dataB.setEnabled(false);
+		refreshDataAction.setEnabled(false);
 	}
 
 	/**
@@ -909,8 +915,8 @@ public final class GeneralLoadView extends JComponent
 			}
 		}
 
-		if (refresh_dataB.isEnabled() != enabled) {
-			refresh_dataB.setEnabled(enabled);
+		if (refreshDataAction.isEnabled() != enabled) {
+			refreshDataAction.setEnabled(enabled);
 		}
 	}
 

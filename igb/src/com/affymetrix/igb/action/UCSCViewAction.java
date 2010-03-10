@@ -61,7 +61,8 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		this.setEnabled(evt.getSelectedSeq() != null);
+		this.setEnabled(evt.getSelectedSeq() != null
+				&& !getUcscGenomeVersion(SEQ_MAP.getAnnotatedSeq().getVersion()).isEmpty());
 	}
 
 	/** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */

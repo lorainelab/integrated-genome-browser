@@ -279,7 +279,7 @@ public abstract class ServerUtils {
 		}
 
 		// current originalFile is not a directory, so try and recognize as annotation file
-		indexOrLoadFile(dataRoot, current_file, file_name, annots_map, genome, null);
+		indexOrLoadFile(dataRoot, current_file, type_name, annots_map, genome, null);
 	}
 
 	private static boolean isSequenceFile(File current_file) {
@@ -391,7 +391,13 @@ public abstract class ServerUtils {
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 
 		String extension = ParserController.getExtension(stream_name);	// .psl, .bed, et cetera
-		String annotTypeName = ParserController.getAnnotType(annotList, file.getName(), extension);
+		
+		// If the annotation id was passed in, the server is running in genopub 
+		// mode, so use the annotation name; otherwise, the server is running in 
+		// classic mode,so use the file directory path and the file name to 
+		// formulate the name.
+		String annotTypeName = ParserController.getAnnotType(annotList, file.getName(), extension, annot_name);
+
 		genome.addType(annotTypeName, annot_id);
 
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
@@ -765,7 +771,6 @@ public abstract class ServerUtils {
 
 		// Now add all of the bar and useq graphs that were not picked up from getGenomeTypes()		
 		for (String type : genome.getTypeList()) {
-			System.out.println("\ttype\t"+type);
 			if (!genome_types.containsKey(type)) {
 				if (genome.isAuthorized(annotSecurity, type)) {
 					if (genome.isBarGraphData(data_root, annotSecurity, type)) {

@@ -187,27 +187,12 @@ public final class ParserController {
 		
 	}
 
-	// return an annotation type.
-	// This is either:
-	// 1. A type name contained in the annots_map hash table.
-	// 2. (Default) The stream name with the extension stripped off.
-	public static String getAnnotType(List<AnnotMapElt> annotsList,
-	        String stream_name, String extension, String type_prefix) {
-		
-		if (type_prefix != null) {
-			return getAnnotType(annotsList, stream_name, extension);
-		} else {
-			return type_prefix;
-		}
-	}
-
-
 
 	// This is either:
 	// 1.  A type name contained in the annotList hash table.
 	// 2.  (Default) The stream name with the extension stripped off.
 	public static String getAnnotType(
-			List<AnnotMapElt> annotsList, String stream_name, String extension) {
+			List<AnnotMapElt> annotsList, String stream_name, String extension, String type_name) {
 		// Check if this was in the annots mapping.
 		if (annotsList != null) {
 			AnnotMapElt annotMapElt = AnnotMapElt.findFileNameElt(stream_name, annotsList);
@@ -215,12 +200,20 @@ public final class ParserController {
 				return annotMapElt.title;
 			}
 		}
+		
+		// If we didn't find an entry on annots, and the type_name was provided,
+		// use it.
+		if (type_name != null) {
+			return type_name;
+		}
 
+		// If a type name wasn't provided, and the filename doesn't have an
+		// extension, use it.
 		if (extension == null) {
 			return stream_name;
 		}
 
-		// Strip off the extension.
+		// Otherwise, just use the file name, first stripping off the extension.
 		return stream_name.substring(0, stream_name.lastIndexOf(extension));
 	}
 }

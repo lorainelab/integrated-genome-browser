@@ -249,11 +249,11 @@ public class SeqMapView extends JPanel
 
 	// We only need a single ScoredContainerGlyphFactory because all graph properties
 	// are in the GraphState object.
-	private ScoredContainerGlyphFactory container_factory = null;
+	private final ScoredContainerGlyphFactory container_factory = new ScoredContainerGlyphFactory();
 
 	// We only need a single GraphGlyphFactory because all graph properties
 	// are in the GraphState object.
-	private GenericGraphGlyphFactory graph_factory = null;
+	private final GenericGraphGlyphFactory graph_factory = new GenericGraphGlyphFactory();
 
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -1235,6 +1235,7 @@ public class SeqMapView extends JPanel
 
 			if (annotSym instanceof SymWithProps) {
 				addAnnotationGlyphs(annotSym);
+				doMiddlegroundShading(annotSym);
 			}
 		}
 
@@ -1276,20 +1277,6 @@ public class SeqMapView extends JPanel
 	}
 
 
-	private GenericGraphGlyphFactory getGenericGraphGlyphFactory() {
-		if (graph_factory == null) {
-			graph_factory = new GenericGraphGlyphFactory();
-		}
-		return graph_factory;
-	}
-	
-	private final ScoredContainerGlyphFactory getScoredContainerGlyphFactory() {
-		if (container_factory == null) {
-			container_factory = new ScoredContainerGlyphFactory();
-		}
-		return container_factory;
-	}
-
 	// XmlStylesheetGlyphFactory takes the method and type
 	// into account when determining how to draw a sym.
 	public final MapViewGlyphFactoryI getAnnotationGlyphFactory() {
@@ -1299,29 +1286,19 @@ public class SeqMapView extends JPanel
 	private void addAnnotationGlyphs(SeqSymmetry annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = null;
-		String meth = BioSeq.determineMethod(annotSym);
-
 		if (annotSym instanceof ScoredContainerSym) {
-			factory = getScoredContainerGlyphFactory();
+			factory = container_factory;
 		} else if (annotSym instanceof GraphSym) {
-			factory = getGenericGraphGlyphFactory();
+			factory = graph_factory;
 		} else {
-			factory = getAnnotationGlyphFactory();
-		}
-
-		if (DEBUG_COMP && transform_path != null) {
-			System.out.println("transform path length: " + transform_path.length);
-			for (int i = 0; i < transform_path.length; i++) {
-				SeqUtils.printSymmetry(transform_path[i]);
-			}
+			factory = default_glyph_factory;
 		}
 
 		factory.createGlyph(annotSym, this);
-		doMiddlegroundShading(annotSym, meth);
 	}
 
-	private void doMiddlegroundShading(SeqSymmetry annotSym, String meth) {
-
+	private void doMiddlegroundShading(SeqSymmetry annotSym) {
+		String meth = BioSeq.determineMethod(annotSym);
 		// do "middleground" shading for tracks loaded via DAS/2
 		if ((meth != null) &&
 						(annotSym instanceof TypeContainerAnnot) &&

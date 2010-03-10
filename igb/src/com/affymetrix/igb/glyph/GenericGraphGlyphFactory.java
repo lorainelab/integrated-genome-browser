@@ -21,7 +21,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 *  Determines whether the glyph factory will try to determine whether the GraphSym
 	 *  that it is drawing is defined on the currently-displayed bioseq.
 	 *  In some cases, you may want to intentionally display a graph on a seq that
-	 *  has a different ID without checking to see if the ID's match.
+	 *  has a different ID without checking to see if the IDs match.
 	 */
 	private static final String CHECK_SAME_SEQ_OPTION = "Check Same Seq";
 	/** Name of a parameter for the init() method.  Set to an instance of Double.
@@ -39,7 +39,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
 		if (sym instanceof GraphSym) {
-			displayGraph((GraphSym)sym, smv);
+			displayGraph((GraphSym)sym, smv, check_same_seq);
 		} else {
 			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry " +
 					"passed in is NOT a GraphSym: " + sym);
@@ -56,7 +56,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 *     will go into an attached tier, never a floating glyph.
 	 *  Also adds to the SeqMapView's GraphState-to-TierGlyph hash if needed.
 	 */
-	private GraphGlyph displayGraph(GraphSym graf, SeqMapView smv) {
+	private static GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean check_same_seq) {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		BioSeq vseq = smv.getViewSeq();
 		BioSeq graph_seq = graf.getGraphSeq();
@@ -91,7 +91,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			// The new graph doesn't need a new GraphState or a new ID.
 			// Changing any graph properties will thus apply to the original graph.
 			SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
-			newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym, false);
+			newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym);
 		}
 		if (newgraf == null || newgraf.getPointCount() == 0) {
 			return null;
@@ -104,9 +104,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			newgraf.setGraphName(graph_name);
 		}
 
-		GraphGlyph graph_glyph = displayGraphSym(newgraf, graf, smv);
-
-		return graph_glyph;
+		return displayGraphSym(newgraf, graf, smv);
 	}
 
 	/**
@@ -122,16 +120,15 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapView smv) {
 		AffyTieredMap map = smv.getSeqMap();
 		Rectangle2D.Double cbox = map.getCoordBounds();
-		GraphGlyph graph_glyph = new GraphGlyph(newgraf, graf.getGraphState());
-		graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
 		GraphState gstate = graf.getGraphState();
+		GraphGlyph graph_glyph = new GraphGlyph(newgraf, gstate);
+		gstate.getTierStyle().setHumanName(newgraf.getGraphName());
 		IAnnotStyle tier_style = gstate.getTierStyle();
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
-			graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 			GraphGlyphUtils.checkPixelBounds(graph_glyph, smv.getSeqMap());
 			smv.getPixelFloaterGlyph().addChild(graph_glyph);
 		} else {

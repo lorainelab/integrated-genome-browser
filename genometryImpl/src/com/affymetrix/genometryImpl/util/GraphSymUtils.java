@@ -32,7 +32,7 @@ public final class GraphSymUtils {
 	 *     (including the original_graf, if it's one of seq's annotations)
 	 *     For transformed GraphSyms probably should set ensure_unique_id to false, unless result is actually added onto toseq...
 	 */
-	public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
+	public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym) {
 		if (original_graf.getPointCount() == 0) {
 			return null;
 		}
@@ -67,11 +67,13 @@ public final class GraphSymUtils {
 		
 		addCoords(mapsym, fromseq, toseq, original_graf, new_xcoords, new_ycoords, new_wcoords);
 
-		String newid = original_graf.getID();
-		if (ensure_unique_id) {
-			newid = GraphSymUtils.getUniqueGraphID(newid, toseq);
-		}
+		return createGraphSym(new_xcoords, new_ycoords, original_graf, toseq, new_wcoords, new_graf);
+	}
 
+	private static GraphSym createGraphSym(
+			IntList new_xcoords, FloatList new_ycoords, GraphSym original_graf, BioSeq toseq,
+			IntList new_wcoords, GraphSym new_graf) {
+		String newid = original_graf.getID();
 		// create GraphSym.
 		// keep maximum memory requirement down by nulling out lists after final use
 		int[] new_xcoordArr = new_xcoords.copyToArray();
@@ -79,13 +81,11 @@ public final class GraphSymUtils {
 		float[] new_ycoordArr = new_ycoords.copyToArray();
 		new_ycoords = null;
 		if (!hasWidth(original_graf)) {
-			new_graf = new GraphSym(new_xcoordArr, new_ycoordArr,
-					newid, toseq);
+			new_graf = new GraphSym(new_xcoordArr, new_ycoordArr, newid, toseq);
 		} else {
 			int[] new_wcoordArr = new_wcoords.copyToArray();
 			new_wcoords = null;
-			new_graf = new GraphIntervalSym(new_xcoordArr, new_wcoordArr, new_ycoordArr,
-					newid, toseq);
+			new_graf = new GraphIntervalSym(new_xcoordArr, new_wcoordArr, new_ycoordArr, newid, toseq);
 		}
 		new_graf.setGraphName(original_graf.getGraphName());
 		return new_graf;

@@ -91,6 +91,7 @@
 		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"         signedjar="${webstart.dir}/jlfgr-1_0.jar" />
 		<my.signjar jar="${lib.dir}/image4j.jar"           signedjar="${webstart.dir}/image4j.jar" />
 		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
+		<my.signjar jar="${lib.dir}/sam-1.15.jar" signedjar="${webstart.dir}/sam-1.15.jar" />
 
 		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
 		<jar destfile="${webstart.dir}/igb.jar">

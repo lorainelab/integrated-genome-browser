@@ -191,10 +191,22 @@ public final class TwoBitParser {
         }
 		residueOffset += INT_SIZE;
 
-		long start = 0, end = size;
-		long length = end - start;
+		long start = 3, end = 6;
+		long residuePosition = start;
+		long residueCounter = 0;
 		long startOffset = start / RESIDUES_PER_BYTE;
-		int beginResidues = RESIDUES_PER_BYTE - (int)start % 4;
+
+		long bytesToRead = calculateBytesToRead(start,end);
+		int beginLength = RESIDUES_PER_BYTE - (int)start % 4;
+		int endLength = (int)end % RESIDUES_PER_BYTE;
+
+		if(bytesToRead == 1){
+			if(start % RESIDUES_PER_BYTE == 0)
+				beginLength = 0;
+			else
+				endLength = 0;
+		}
+		
 		channel.position(residueOffset + startOffset);
 		loadBuffer(channel,buffer);
 		updateBlocks(start,nBlocks);
@@ -203,20 +215,16 @@ public final class TwoBitParser {
 		//packedDNA
 		SeqSpan nBlock = null,maskBlock = null;
 		byte valueBuffer[] = new byte[BUFFER_SIZE];
-		long bytesLength = length/RESIDUES_PER_BYTE;
-		int endResidues = length % RESIDUES_PER_BYTE == 0 ? 0 : 1;
-		bytesLength = bytesLength + endResidues;
-		long residuePosition = start;
 		char temp[] = null;
 
-		for (int i = 0; i < bytesLength; i+=BUFFER_SIZE) {
+		for (int i = 0; i < bytesToRead; i+=BUFFER_SIZE) {
 			buffer.get(valueBuffer);
-			for (int k = 0; k < BUFFER_SIZE && k < bytesLength; k++) {
+			for (int k = 0; k < BUFFER_SIZE && k < bytesToRead; k++) {
 
-				if(k == 0 && beginResidues != 0){
-					temp = parseByte(valueBuffer[k], beginResidues,true);
-				}else if(k == bytesLength - 1 && endResidues != 0){
-					temp = parseByte(valueBuffer[k],(int)(length%4),false);
+				if(k == 0 && beginLength != 0){
+					temp = parseByte(valueBuffer[k], beginLength,true);
+				}else if(k == bytesToRead - 1 && endLength != 0){
+					temp = parseByte(valueBuffer[k], endLength,false);
 				}else{
 					temp = parseByte(valueBuffer[k]);
 				}
@@ -226,14 +234,14 @@ public final class TwoBitParser {
 					maskBlock = processResidue(residuePosition, temp, j, maskBlock, maskBlocks, true);
 					residuePosition++;
 				}
-				
+				residueCounter += temp.length;
 				System.out.print(temp);
 			}
 			channel.position(channel.position() + BUFFER_SIZE);
 			loadBuffer(channel, buffer);
 		}
 		System.out.println();
-		System.out.println(residuePosition);
+		System.out.println(residueCounter);
 
 //		seq.setResiduesProvider(new TwoBitIterator(file,size,residueOffset,buffer.order(),nBlocks,maskBlocks));
 		channel.position(oldPosition);
@@ -245,6 +253,26 @@ public final class TwoBitParser {
 		channel.position(position - buffer.remaining());
 		loadBuffer(channel, buffer);
 		return channel.position();
+	}
+
+	private long calculateBytesToRead(long start, long end) {
+
+		if(start/RESIDUES_PER_BYTE == end/RESIDUES_PER_BYTE)
+			return 1;
+
+		long length = end - start;
+		long bytesToRead = length/RESIDUES_PER_BYTE;
+
+		int endLength = (int)end % RESIDUES_PER_BYTE;
+		int lengthExtra = length % RESIDUES_PER_BYTE == 0 ? 0 : 1;
+		int endExtra = endLength == 0 ? 0 : 1;
+
+		if(length <= RESIDUES_PER_BYTE)
+			bytesToRead = bytesToRead + endExtra + lengthExtra;
+		else
+			bytesToRead = bytesToRead + Math.max(endExtra,lengthExtra);
+
+		return bytesToRead;
 	}
 
 	private void updateBlocks(long start, MutableSeqSymmetry blocks){
@@ -297,12 +325,11 @@ public final class TwoBitParser {
 			for(int i=0; i<size; i++){
 				newTemp[i] = temp[skip+i];
 			}
+		}else{
+			for(int i=0; i<size; i++){
+				newTemp[i] = temp[i];
+			}
 		}
-
-		for(int i=0; i<size; i++){
-			newTemp[i] = temp[i];
-		}
-
 		return newTemp;
 	}
 	

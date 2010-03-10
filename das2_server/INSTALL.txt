@@ -85,7 +85,7 @@ mysql -u root -p
 
 == Step 5: Configure the GenoViz GenoPub DAS/2 Web app ==
 * Modify the '~/apache-tomcat-5.xxx/webapps/das2genopub/WEB-INF/web.xml' doc in a text editor
-** Change the '/path/to/das2genopub/genpubdata/' to the full path directory name where you want to store your data (e.g. '/home/tomcat/GenoPubData' )
+** Change the '/path/to/das2genopub/genopubdata/' to the full path directory name where you want to store your data (e.g. '/home/tomcat/GenoPubData' )
 ** Create that data directory. Note it should not be the same directory used to store data from the classic mode DAS/2 server.
 ** Change the 'admin@example.com' to point to a trusted admin
 ** Change the 'http://www.example.com:8080/das2genopub/genome' replacing 'www.example.com:8080' with the URL for your machine. This is the same one you used to verify your tomcat installation.

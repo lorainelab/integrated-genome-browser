@@ -2,15 +2,12 @@ package com.affymetrix.genometry.servlets;
 
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
-
-
 import java.text.SimpleDateFormat;
 
 import javax.xml.transform.Source;
@@ -23,7 +20,6 @@ import javax.xml.transform.TransformerFactory;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -35,13 +31,13 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
 import com.affymetrix.genometryImpl.util.Optimize;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-
-import org.hibernate.Session;
-
-import com.affymetrix.genometry.genopub.*;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometry.genopub.*;
+
+import org.hibernate.Session;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -808,19 +804,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// PhaseI: retrieval of whole chromosome in raw format
 		if (format.equals("raw")) {
-			retrieveRAW(ranges, span, sequence_directory, seqname, format, response, request);
+			retrieveRAW(ranges, span, sequence_directory, seqname, response, request);
 			return;
 		}
 
 		// PhaseII: retrieval of whole chromosome in bnib format
 		if (format.equals("bnib")) {
-			retrieveBNIB(ranges, span, sequence_directory, seqname, format, response, request);
+			retrieveBNIB(sequence_directory, seqname, response, request);
 			return;
 		}
 
 
 		if (format.equals("fasta")) {
-			retrieveFASTA(ranges, span, sequence_directory, genome.getOrganism(), seqname, format, response, request);
+			retrieveFASTA(ranges, span, sequence_directory, genome.getOrganism(), seqname, response, request);
 			return;
 		}
 
@@ -829,7 +825,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println(request.getRequestURL().toString());
 	}
 
-	private static final void retrieveRAW(ArrayList ranges, SeqSpan span, String sequence_directory, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	private static final void retrieveRAW(
+			List<String> ranges, SeqSpan span, String sequence_directory, String seqname, HttpServletResponse response, HttpServletRequest request) throws IOException {
 
 		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
@@ -860,26 +857,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	}
 
-	private static final void retrieveBNIB(ArrayList ranges, SeqSpan span, String sequence_directory, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	private static final void retrieveBNIB(
+			String sequence_directory, String seqname, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		
 		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
 
 		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-
-		/*
-		 * Partial loading of bnib file not supported
-		 */
-//		if (ranges.size() != 0)
-//		{
-//			int spanStart = 0, spanEnd = 0;
-//			spanStart = span.getStart();
-//			spanEnd = span.getEnd();
-//			response.setContentType("text"); // set text type
-//			NibbleResiduesParser.parse(new FileInputStream(seqfile), spanStart, spanEnd, dos);
-//			GeneralUtils.safeClose(dos);
-//			return;
-//		}
 
 		if (seqfile.exists()) {
 			byte[] buf = NibbleResiduesParser.readBNIB(seqfile);
@@ -913,7 +897,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @deprecated
 	 */
 	@Deprecated
-	private static final void retrieveFASTA(ArrayList ranges, SeqSpan span, String sequence_directory, String organism_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request)
+	private static final void retrieveFASTA(
+			List<String> ranges, SeqSpan span, String sequence_directory, String organism_name, String seqname, HttpServletResponse response, HttpServletRequest request)
 	throws IOException {
 		String file_name = sequence_directory + seqname + ".fa";
 		File seqfile = new File(file_name);
@@ -1104,8 +1089,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		if (use_types_xslt) {
 			pw.flush();
 			byte[] buf_array = buf.toByteArray();
-			ByteArrayInputStream bais = new ByteArrayInputStream(buf_array);
+			ByteArrayInputStream bais = null;
 			try {
+				bais = new ByteArrayInputStream(buf_array);
 				Source types_doc = new StreamSource(bais);
 				Result result = new StreamResult(response.getWriter());
 				try {

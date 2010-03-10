@@ -22,8 +22,17 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DisplayUtils;
+import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class ConsoleView {
+	private static final String encoding;
+
+	static {
+		String enc = System.getProperty("file.encoding");
+		encoding = enc == null || enc.isEmpty() ? "UTF-8" : enc;
+	}
   
   private static String TITLE;
   
@@ -99,10 +108,11 @@ public final class ConsoleView {
     try {
       // Send err to same text area as out
       // (But we could send err to a separate text area.)
-      System.setOut(new PrintStream(new JTextAreaOutputStream(outArea, System.out)));
-      System.setErr(new PrintStream(new JTextAreaOutputStream(outArea, System.err)));
-      
-    } catch (SecurityException se) {
+      System.setOut(new PrintStream(new JTextAreaOutputStream(outArea, System.out), false, encoding));
+      System.setErr(new PrintStream(new JTextAreaOutputStream(outArea, System.err), false, encoding));
+	} catch (UnsupportedEncodingException ex) {
+		Logger.getLogger(ConsoleView.class.getName()).log(Level.SEVERE, null, ex);
+	} catch (SecurityException se) {
       // This exception should not occur with WebStart, but I'm handling it anyway.
       
       String str = "The application may not have permission to re-direct output "
@@ -144,9 +154,9 @@ public final class ConsoleView {
    *  See the preface of their book for details.
    */
   private static final class JTextAreaOutputStream extends OutputStream {
+	  private static final Charset charset = Charset.forName(ConsoleView.encoding);
     JTextArea ta;
     PrintStream original;
-    char[] temp_char_array = new char[1];
     
     /**
      *  Creates an OutputStream that writes to the given JTextArea.
@@ -159,12 +169,20 @@ public final class ConsoleView {
       this.original = echo;
     }
     
-    public void write(int i) {
-      temp_char_array[0] = (char) i;
-      String s = new String(temp_char_array);
-      ta.append(s);
-      if (original != null) {original.write(i);}
+    public void write(int b) throws IOException{
+		write(new byte[] {(byte)b}, 0, 1);
     }
+
+	@Override
+	public void write(byte b[]) throws IOException {
+		write(b, 0, b.length);
+	}
+
+	@Override
+	public void write(byte b[], int off, int len) throws IOException {
+		ta.append(new String(b, off, len, charset));
+		if (original != null) { original.write(b, off, len); }
+	}
   }
   
 }

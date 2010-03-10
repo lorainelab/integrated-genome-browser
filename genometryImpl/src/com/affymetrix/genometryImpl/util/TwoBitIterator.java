@@ -2,9 +2,7 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -12,12 +10,10 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author sgblanch
+ * @author hiralv
  * @version $Id$
  */
 public final class TwoBitIterator implements SearchableCharIterator {
@@ -76,46 +72,40 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 	public String substring(int offset, int length) {
 		FileChannel channel = null;
-		try {
-			//		char bases[] = new char[length];
-			//
-			//		for (Segment segment : segments) {
-			//			if (offset < segment.start) {
-			//				continue;
-			//			}
-			//
-			//			if (offset + length < segment.end) {
-			//				break;
-			//			}
-			//		}
-			long start = offset;
-			long end = start + length;
-			long residuePosition = start;
-			int residueCounter = 0;
-			long startOffset = start / RESIDUES_PER_BYTE;
-			long bytesToRead = calculateBytesToRead(start, end);
-			int beginLength = RESIDUES_PER_BYTE - (int) start % 4;
-			int endLength = (int) end % RESIDUES_PER_BYTE;
-			if (bytesToRead == 1) {
-				if (start % RESIDUES_PER_BYTE == 0) {
-					beginLength = 0;
-				} else {
-					endLength = 0;
-				}
+		char[] residues = new char[length];
+		byte[] valueBuffer = new byte[BUFFER_SIZE];
+		long end = offset + length;
+		long residuePosition = offset;
+		int residueCounter = 0;
+		long startOffset = offset / RESIDUES_PER_BYTE;
+		long bytesToRead = calculateBytesToRead(offset, end);
+		int beginLength = RESIDUES_PER_BYTE - offset % 4;
+		int endLength = (int) end % RESIDUES_PER_BYTE;
+		if (bytesToRead == 1) {
+			if (offset % RESIDUES_PER_BYTE == 0) {
+				beginLength = 0;
+			} else {
+				endLength = 0;
 			}
+		}
+
+		MutableSeqSymmetry tempNBlocks = nBlocks;
+		MutableSeqSymmetry tempMaskBlocks = maskBlocks;
+		updateBlocks(offset, tempNBlocks);
+		updateBlocks(offset, tempMaskBlocks);
+		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+		buffer.order(this.byteOrder);
+		try {
+
 			channel = new RandomAccessFile(file, "r").getChannel();
-			ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-			buffer.order(this.byteOrder);
 			channel.position(this.offset + startOffset);
 			loadBuffer(channel, buffer);
-			updateBlocks(start, nBlocks);
-			updateBlocks(start, maskBlocks);
+			
 			//packedDNA
 			SeqSpan nBlock = null;
 			SeqSpan maskBlock = null;
-			char[] residues = new char[length];
-			byte[] valueBuffer = new byte[BUFFER_SIZE];
 			char[] temp = null;
+
 			for (int i = 0; i < bytesToRead; i += BUFFER_SIZE) {
 				buffer.get(valueBuffer);
 				for (int k = 0; k < BUFFER_SIZE && residueCounter < length; k++) {
@@ -127,8 +117,8 @@ public final class TwoBitIterator implements SearchableCharIterator {
 						temp = parseByte(valueBuffer[k]);
 					}
 					for (int j = 0; j < temp.length; j++) {
-						nBlock = processResidue(residuePosition, temp, j, nBlock, nBlocks, false);
-						maskBlock = processResidue(residuePosition, temp, j, maskBlock, maskBlocks, true);
+						nBlock = processResidue(residuePosition, temp, j, nBlock, tempNBlocks, false);
+						maskBlock = processResidue(residuePosition, temp, j, maskBlock, tempMaskBlocks, true);
 						residues[residueCounter++] = temp[j];
 						residuePosition++;
 					}
@@ -138,23 +128,19 @@ public final class TwoBitIterator implements SearchableCharIterator {
 				channel.position(channel.position() + BUFFER_SIZE);
 				loadBuffer(channel, buffer);
 			}
-			System.out.println();
-			System.out.println(residueCounter);
-			
-			//channel.position(oldPosition);
-			//throw new UnsupportedOperationException("Not supported yet.");
-			System.gc();
-			return new String(residues);
+			System.out.println("Total residues :"+residueCounter);
+				
 		} catch (Exception ex) {
-			Logger.getLogger(TwoBitIterator.class.getName()).log(Level.SEVERE, null, ex);
+			ex.printStackTrace();
 		}finally{
-			try {
-				channel.close();
-			} catch (IOException ex) {
-				Logger.getLogger(TwoBitIterator.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			GeneralUtils.safeClose(channel);
+			valueBuffer = null;
+			buffer = null;
+			tempNBlocks = null;
+			tempMaskBlocks = null;
+			System.gc();
 		}
-		return new String("");
+		return new String(residues);
 	}
 
 	private long calculateBytesToRead(long start, long end) {

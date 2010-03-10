@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.TwoBitIterator;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -61,7 +62,7 @@ public final class TwoBitParser {
 		loadBuffer(channel, buffer);
         int seq_count = readFileHeader(buffer);
         BioSeq seq = readSequenceIndex(channel, buffer, seq_count, seq_group);
-		channel.close();
+		GeneralUtils.safeClose(channel);
 		return seq;
     }
 

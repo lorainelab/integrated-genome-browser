@@ -161,13 +161,14 @@ public class Annotation implements Owned {
 
 	
 	@SuppressWarnings("unchecked")
-	public Document getXML(GenoPubSecurity genoPubSecurity, DictionaryHelper dh, String data_root) {
+	public Document getXML(GenoPubSecurity genoPubSecurity, DictionaryHelper dh, String data_root) throws Exception {
 		Document doc = DocumentHelper.createDocument();
 		Element root = doc.addElement("Annotation");
 		
 		GenomeVersion genomeVersion = dh.getGenomeVersion(this.getIdGenomeVersion());
 		if (genomeVersion == null) {
 			Logger.getLogger(Annotation.class.getName()).log(Level.SEVERE,"Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
+			throw new Exception("Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
 		}
 				
 		root.addAttribute("idAnnotation", this.getIdAnnotation().toString());

@@ -476,7 +476,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void appendEmptyAnnotationGroupingHQLSecurity(StringBuffer queryBuf, 
+	private boolean appendEmptyAnnotationGroupingHQLSecurity(StringBuffer queryBuf, 
             								                String annotationAlias,
             								                String annotationGroupingAlias,
             								                boolean addWhere) throws Exception {
@@ -496,6 +496,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 		queryBuf.append(")");
 
 		queryBuf.append(")");
+		return addWhere;
 	}
 	
 	@SuppressWarnings("unchecked")

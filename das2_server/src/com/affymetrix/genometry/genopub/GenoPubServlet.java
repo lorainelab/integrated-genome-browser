@@ -2563,7 +2563,9 @@ public class GenoPubServlet extends HttpServlet {
 								long size = filePart.writeTo(file);
 								//check size of text files
 								if (Util.tooManyLines(file)){
-									file.delete();
+									if (!file.delete()) {
+										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + " during bulk upload.");
+									}
 									throw new FileTooBigException("Aborting upload, text formatted annotation file '" + annotation.getName() + " exceeds the maximum allowed size ("+
 											Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES+" lines). Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form.");
 								}
@@ -3830,7 +3832,7 @@ public class GenoPubServlet extends HttpServlet {
 
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");
-			root.addAttribute("id", id.toString());
+			root.addAttribute("id", id != null ? id.toString() : "");
 			root.addAttribute("dictionaryName", dictionaryName);
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
 					OutputFormat.createCompactFormat());

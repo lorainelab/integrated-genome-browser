@@ -193,7 +193,7 @@ public class AnnotationQuery {
 
 	}
 
-	private Document getAnnotationDocument(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, List<Segment> segmentRows,  DictionaryHelper dictionaryHelper, GenoPubSecurity genoPubSecurity) {
+	private Document getAnnotationDocument(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, List<Segment> segmentRows,  DictionaryHelper dictionaryHelper, GenoPubSecurity genoPubSecurity) throws Exception {
 		
 		// Organize results rows into hash tables
 		hashAnnotations(annotationGroupingRows, annotationRows, segmentRows, dictionaryHelper);		
@@ -214,7 +214,7 @@ public class AnnotationQuery {
 		
 	}
 	
-	private void fillOrganismNodes(Element root, DictionaryHelper dictionaryHelper, GenoPubSecurity genoPubSecurity, boolean fillPopulatedOrganisms) {
+	private void fillOrganismNodes(Element root, DictionaryHelper dictionaryHelper, GenoPubSecurity genoPubSecurity, boolean fillPopulatedOrganisms) throws Exception {
 		Element organismNode = null;
 		Element versionNode  = null;
 		String[] tokens;
@@ -649,7 +649,7 @@ public class AnnotationQuery {
 
 
 	
-	private void fillGroupingNode(GenomeVersion genomeVersion, Element parentNode, TreeMap<String, ?> theGroupings, GenoPubSecurity genoPubSecurity, DictionaryHelper dictionaryHelper, boolean showGroupingLevel) {
+	private void fillGroupingNode(GenomeVersion genomeVersion, Element parentNode, TreeMap<String, ?> theGroupings, GenoPubSecurity genoPubSecurity, DictionaryHelper dictionaryHelper, boolean showGroupingLevel) throws Exception {
 		if (theGroupings != null) {
 			for (String groupingKey : theGroupings.keySet()) {
 				String[] tokens     = groupingKey.split(KEY_DELIM);
@@ -673,7 +673,7 @@ public class AnnotationQuery {
 				// For each annotation
 				TreeMap<String, ?> annotNameMap = groupingToAnnotations.get(groupingKey);
 				if (annotNameMap != null && annotNameMap.size() > 0) {
-					groupingNode.addAttribute("annotationCount", new Integer(annotNameMap.size()).toString());
+					groupingNode.addAttribute("annotationCount", String.valueOf(annotNameMap.size()));
 					// For each annotation...
 					for (String annotNameKey : annotNameMap.keySet()) { 
 						String[] tokens1    = annotNameKey.split(KEY_DELIM);

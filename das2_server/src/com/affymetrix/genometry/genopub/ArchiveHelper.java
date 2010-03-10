@@ -75,6 +75,7 @@ public class ArchiveHelper {
     
   public InputStream compressFile(String fileName, String zipEntryName) throws IOException {
 	FileOutputStream out = null;
+	FileInputStream  in = null;
 	GZIPOutputStream gzipOut = null;
 	
 	try {
@@ -84,7 +85,9 @@ public class ArchiveHelper {
 	        
 	    gzipOut = new GZIPOutputStream(out);
 	    
-	    transferBytes(new FileInputStream(fileName), gzipOut);
+	    in = new FileInputStream(fileName);
+	    
+	    transferBytes(in, gzipOut);
 	    
 	    
 	    archiveFileSize = new File(gzipFileName).length();
@@ -94,6 +97,9 @@ public class ArchiveHelper {
 		Logger.getLogger(Annotation.class.getName()).log(Level.WARNING, "Unable to compress file " + fileName + " for zip entry " + zipEntryName, e);
 
     } finally {
+    	if (in != null) {
+    		in.close();
+    	}
     	if (out != null) {
     		out.close();
     	}

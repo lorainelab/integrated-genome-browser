@@ -71,7 +71,7 @@ public class AltSpliceView extends JComponent
 			} else {
 				this.clear();
 				this.aseq = seq;
-				this.setViewSeq(seq);
+				this.viewseq = seq;
 			}
 		}
 

@@ -75,6 +75,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	}
 
 	public String substring(int offset, int length) {
+		FileChannel channel = null;
 		try {
 			//		char bases[] = new char[length];
 			//
@@ -90,7 +91,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 			long start = offset;
 			long end = start + length;
 			long residuePosition = start;
-			long residueCounter = 0;
+			int residueCounter = 0;
 			long startOffset = start / RESIDUES_PER_BYTE;
 			long bytesToRead = calculateBytesToRead(start, end);
 			int beginLength = RESIDUES_PER_BYTE - (int) start % 4;
@@ -102,7 +103,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 					endLength = 0;
 				}
 			}
-			FileChannel channel = new RandomAccessFile(file, "r").getChannel();
+			channel = new RandomAccessFile(file, "r").getChannel();
 			ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 			buffer.order(this.byteOrder);
 			channel.position(this.offset + startOffset);
@@ -112,12 +113,12 @@ public final class TwoBitIterator implements SearchableCharIterator {
 			//packedDNA
 			SeqSpan nBlock = null;
 			SeqSpan maskBlock = null;
-			
+			char[] residues = new char[length];
 			byte[] valueBuffer = new byte[BUFFER_SIZE];
 			char[] temp = null;
 			for (int i = 0; i < bytesToRead; i += BUFFER_SIZE) {
 				buffer.get(valueBuffer);
-				for (int k = 0; k < BUFFER_SIZE && k < bytesToRead; k++) {
+				for (int k = 0; k < BUFFER_SIZE && residueCounter < length; k++) {
 					if (k == 0 && beginLength != 0) {
 						temp = parseByte(valueBuffer[k], beginLength, true);
 					} else if (k == bytesToRead - 1 && endLength != 0) {
@@ -128,9 +129,9 @@ public final class TwoBitIterator implements SearchableCharIterator {
 					for (int j = 0; j < temp.length; j++) {
 						nBlock = processResidue(residuePosition, temp, j, nBlock, nBlocks, false);
 						maskBlock = processResidue(residuePosition, temp, j, maskBlock, maskBlocks, true);
+						residues[residueCounter++] = temp[j];
 						residuePosition++;
 					}
-					residueCounter += temp.length;
 					//System.out.print(temp);
 				
 				}
@@ -139,13 +140,19 @@ public final class TwoBitIterator implements SearchableCharIterator {
 			}
 			System.out.println();
 			System.out.println(residueCounter);
-			channel.close();
+			
 			//channel.position(oldPosition);
 			//throw new UnsupportedOperationException("Not supported yet.");
 			System.gc();
-			return new String("");
+			return new String(residues);
 		} catch (Exception ex) {
 			Logger.getLogger(TwoBitIterator.class.getName()).log(Level.SEVERE, null, ex);
+		}finally{
+			try {
+				channel.close();
+			} catch (IOException ex) {
+				Logger.getLogger(TwoBitIterator.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 		return new String("");
 	}

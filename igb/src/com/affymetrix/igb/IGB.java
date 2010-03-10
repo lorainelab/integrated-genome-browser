@@ -66,6 +66,8 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.action.AutoScrollAction;
+import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
 import java.text.MessageFormat;
@@ -125,7 +127,6 @@ public final class IGB extends Application
 	private JMenuItem export_whole_frame;
 	private JMenuItem preferences_item;
 	private JMenuItem exit_item;
-	private JMenuItem view_ucsc_item;
 	private JMenuItem res2clip_item;
 	private JMenuItem clamp_view_item;
 	private JMenuItem unclamp_item;
@@ -134,7 +135,6 @@ public final class IGB extends Application
 	private JMenuItem adjust_edgematch_item;
 	private JCheckBoxMenuItem toggle_hairline_label_item;
 	private JCheckBoxMenuItem toggle_edge_matching_item;
-	private JMenuItem autoscroll_item;
 	private JMenuItem web_links_item;
 	private JMenuItem move_tab_to_window_item;
 	private JMenuItem move_tabbed_panel_to_window_item;
@@ -410,8 +410,6 @@ public final class IGB extends Application
 		exit_item = new JMenuItem(BUNDLE.getString("exit"), KeyEvent.VK_E);
 
 		adjust_edgematch_item = new JMenuItem(BUNDLE.getString("adjustEdgeMatchFuzziness"), KeyEvent.VK_F);
-		view_ucsc_item = new JMenuItem(BUNDLE.getString("viewRegionInUCSCBrowser"));
-		view_ucsc_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
 
 		clamp_view_item = new JMenuItem(BUNDLE.getString("clampToView"), KeyEvent.VK_V);
 		res2clip_item = new JMenuItem(BUNDLE.getString("copySelectedResiduesToClipboard"), KeyEvent.VK_C);
@@ -433,8 +431,6 @@ public final class IGB extends Application
 		toggle_edge_matching_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleEdgeMatching"));
 		toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
 		toggle_edge_matching_item.setState(map_view.getEdgeMatching());
-		autoscroll_item = new JMenuItem(BUNDLE.getString("autoScroll"), KeyEvent.VK_A);
-		autoscroll_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/media/Movie16.gif"));
 		move_tab_to_window_item = new JMenuItem(BUNDLE.getString("openCurrentTabInNewWindow"), KeyEvent.VK_O);
 		move_tabbed_panel_to_window_item = new JMenuItem(BUNDLE.getString("openTabbedPanesInNewWindow"), KeyEvent.VK_P);
 
@@ -484,9 +480,7 @@ public final class IGB extends Application
 		exit_item.addActionListener(this);
 
 		toggle_edge_matching_item.addActionListener(this);
-		autoscroll_item.addActionListener(this);
 		adjust_edgematch_item.addActionListener(this);
-		view_ucsc_item.addActionListener(this);
 
 		res2clip_item.addActionListener(this);
 		rev_comp_item.addActionListener(this);
@@ -622,8 +616,8 @@ public final class IGB extends Application
 		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_minus_action));
 		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
 		view_menu.add(strands_menu);
-		MenuUtil.addToMenu(view_menu, autoscroll_item);
-		MenuUtil.addToMenu(view_menu, view_ucsc_item);
+		MenuUtil.addToMenu(view_menu, new JMenuItem(new AutoScrollAction()));
+		MenuUtil.addToMenu(view_menu, new JMenuItem(new UCSCViewAction()));
 		MenuUtil.addToMenu(view_menu, toggle_edge_matching_item);
 		MenuUtil.addToMenu(view_menu, adjust_edgematch_item);
 		MenuUtil.addToMenu(view_menu, clamp_view_item);
@@ -771,13 +765,6 @@ public final class IGB extends Application
 			exit();
 		} else if (src == res2clip_item) {
 			map_view.copySelectedResidues();
-		} else if (src == view_ucsc_item) {
-			if (DEBUG_EVENTS) {
-				System.out.println("trying to invoke UCSC genome browser");
-			}
-			map_view.invokeUcscView();
-		} else if (src == autoscroll_item) {
-			map_view.toggleAutoScroll();
 		} else if (src == toggle_edge_matching_item) {
 			map_view.setEdgeMatching(!map_view.getEdgeMatching());
 			toggle_edge_matching_item.setState(map_view.getEdgeMatching());

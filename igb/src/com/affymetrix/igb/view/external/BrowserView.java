@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view.external;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.action.UCSCViewAction;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Image;
@@ -35,7 +35,6 @@ public abstract class BrowserView extends JPanel {
 
 	private SwingWorker<Image, Void> worker = null;
 	private final Map<String, String> cookieMap = new HashMap<String, String>();
-	private final SeqMapView gviewer = Application.getSingleton().getMapView();
 	private final JButton update_button = new JButton("update");
 	private final JButton settingsButton = new JButton("settings");
 	private final BrowserImage browserImage = new BrowserImage();
@@ -97,7 +96,7 @@ public abstract class BrowserView extends JPanel {
 
 					@Override
 					public Image doInBackground() {
-						return getImage(gviewer.getUCSCQuery(), pixWidth);
+						return getImage(UCSCViewAction.getUCSCQuery(), pixWidth);
 					}
 
 					@Override

@@ -45,8 +45,6 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
@@ -82,7 +80,6 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.event.ViewSeqListener;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -2071,70 +2068,6 @@ public class SeqMapView extends JPanel
 		seqmap.setMapRange((int) (vbox.x), (int) (vbox.x + vbox.width));
 		seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
 		seqmap.updateWidget();
-	}
-
-	/**
-	 * generates part of UCSC query url for current genome coordinates.
-	 * @return query URL for current view. "ucsc version not resolvable" on error.
-	 */
-	public final String getUCSCQuery(){
-		if(aseq == null){
-			return "Error: no genome selected. please select a genome first";
-		}
-        String UcscVersion = getUcscGenomeVersion(aseq.getVersion());
-        String region = getRegionString();
-        if(!UcscVersion.isEmpty() && region != null){
-            return "db=" + UcscVersion + "&position=" + region;
-        }
-        return "Error: genome version not resolvable for UCSC " + aseq.getVersion();
-    }
-
-
-	/** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */
-	private static String getUcscGenomeVersion(String version) {
-		String ucsc_version = null;
-		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-		DasServerInfo ucsc = new DasServerInfo("http://genome.cse.ucsc.edu/cgi-bin/das/dsn");
-		Set<String> ucscSources = ucsc.getDataSources().keySet();
-		
-		ucsc_version = lookup.findMatchingSynonym(ucscSources, version);
-		return ucscSources.contains(ucsc_version) ? ucsc_version : "";
-	}
-
-	/**
-	 *  Returns the current position in the format used by the UCSC browser.
-	 *  This format is also understood by GBrowse and the MapRangeBox of IGB.
-	 *  @return a String such as "chr22:15916196-31832390", or null.
-	 */
-	private String getRegionString() {
-		String region = null;
-		Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
-		int start = (int) vbox.x;
-		int end = (int) (vbox.x + vbox.width);
-		String seqid = aseq.getID();
-
-		region = seqid + ":" + start + "-" + end;
-		return region;
-	}
-
-	public final void invokeUcscView() {
-		if (aseq == null || slicing_in_effect) {
-			return;
-		}
-
-		// links to UCSC look like this:
-		//  http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg11&position=chr22:15916196-31832390
-		String UcscVersion = getUcscGenomeVersion(aseq.getVersion());
-		String region = getRegionString();
-
-		if (!UcscVersion.isEmpty() && region != null) {
-			String ucsc_url = "http://genome.ucsc.edu/cgi-bin/hgTracks?" + "db=" + UcscVersion + "&position=" + region;
-			GeneralUtils.browse(ucsc_url);
-		} else {
-			String genomeVersion = aseq.getID();
-			genomeVersion = aseq.getVersion();
-			Application.errorPanel("Don't have UCSC information for genome " + genomeVersion);
-		}
 	}
 
 	/**

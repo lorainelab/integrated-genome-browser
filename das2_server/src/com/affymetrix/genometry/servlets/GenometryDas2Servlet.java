@@ -2,12 +2,15 @@ package com.affymetrix.genometry.servlets;
 
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
+
+
 import java.text.SimpleDateFormat;
 
 import javax.xml.transform.Source;
@@ -20,6 +23,7 @@ import javax.xml.transform.TransformerFactory;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -31,13 +35,13 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
 import com.affymetrix.genometryImpl.util.Optimize;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
-import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometry.genopub.*;
 
 import org.hibernate.Session;
 
+import com.affymetrix.genometry.genopub.*;
+import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
+import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -75,7 +79,7 @@ import javax.servlet.http.HttpServletResponse;
 //
  */
 public final class GenometryDas2Servlet extends HttpServlet {
-	static final boolean DEBUG = false;
+	static final boolean DEBUG = true;
 	private static final String RELEASE_VERSION = "2.6";
 	private static final boolean USE_CREATED_ATT = true;
 	private static final String SERVER_SYNTAX_EXPLANATION =
@@ -764,19 +768,23 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 */
 	private  final void handleSequenceRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 	throws IOException {
-		// Get the  genopub security which will determine the sequence directory
-		GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
-
+		String queryString = request.getQueryString();
+		if (queryString == null) {
+			System.out.println("No query string, aborting");
+			return;
+		}
 
 		String sequence_directory = null;
 		try {
+			// Get the  genopub security which will determine the sequence directory
+			GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
 			sequence_directory = genoPubSecurity.getSequenceDirectory(data_root, genome);
 		} catch (Exception e) {
 			throw new IOException(e.getMessage());
 		}
 
-		ArrayList<String> formats = new ArrayList<String>();
-		ArrayList<String> ranges = new ArrayList<String>();
+		List<String> formats = new ArrayList<String>();
+		List<String> ranges = new ArrayList<String>();
 
 		splitSequenceQuery(GeneralUtils.URLDecode(request.getQueryString()), formats, ranges);
 
@@ -814,7 +822,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return;
 		}
 
-
 		if (format.equals("fasta")) {
 			retrieveFASTA(ranges, span, sequence_directory, genome.getOrganism(), seqname, response, request);
 			return;
@@ -830,56 +837,63 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
-
-		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+		FileInputStream fis = null;
 
 		if (seqfile.exists()) {
-			if (ranges.size() != 0) {
-				int spanStart = 0, spanEnd = 0;
-				spanStart = span.getStart();
-				spanEnd = span.getEnd();
-				response.setContentType("text/raw"); // set text type
-				NibbleResiduesParser.parse(new FileInputStream(seqfile), spanStart, spanEnd, dos);
-				GeneralUtils.safeClose(dos);
-				return;
-			}
 			response.setContentType("text/raw"); // set text type
-			NibbleResiduesParser.parse(new FileInputStream(seqfile), dos);
-			GeneralUtils.safeClose(dos);
+			try {
+				fis = new FileInputStream(seqfile);
+				if (ranges.size() != 0) {
+					int spanStart = 0, spanEnd = 0;
+					spanStart = span.getStart();
+					spanEnd = span.getEnd();
+					NibbleResiduesParser.parse(fis, spanStart, spanEnd, response.getOutputStream());
+				} else {
+					NibbleResiduesParser.parse(fis, response.getOutputStream());
+				}
+			} finally {
+				GeneralUtils.safeClose(fis);
+			}
 			return;
-
-		} else {
-			PrintWriter pw = response.getWriter();
-			pw.println("File not found: " + file_name);
-			pw.println("This DAS/2 server cannot currently handle request:    ");
-			pw.println(request.getRequestURL().toString());
 		}
+
+		PrintWriter pw = response.getWriter();
+		pw.println("File not found: " + file_name);
+		pw.println("This DAS/2 server cannot currently handle request:    ");
+		pw.println(request.getRequestURL().toString());
 
 	}
 
 	private static final void retrieveBNIB(
 			String sequence_directory, String seqname, HttpServletResponse response, HttpServletRequest request) throws IOException {
-		
+
 		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
 
-		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-
 		if (seqfile.exists()) {
-			byte[] buf = NibbleResiduesParser.readBNIB(seqfile);
 			response.setContentType(NibbleResiduesParser.getMimeType()); // set bnib format mime type
+			BufferedInputStream in = null;
+			BufferedOutputStream out = null;
 			try {
-				dos.write(buf, 0, buf.length);
+				in = new BufferedInputStream(new FileInputStream(seqfile));
+				out = new BufferedOutputStream(response.getOutputStream());
+				int c;
+
+				while ((c = in.read()) != -1) {
+					out.write(c);
+				}
+
 			} finally {
-				// should output stream get closed here?
-				GeneralUtils.safeClose(dos);
+				GeneralUtils.safeClose(in);
+				GeneralUtils.safeClose(out);
 			}
-		} else {
-			PrintWriter pw = response.getWriter();
-			pw.println("File not found: " + file_name);
-			pw.println("This DAS/2 server cannot currently handle request:    ");
-			pw.println(request.getRequestURL().toString());
+			return;
 		}
+
+		PrintWriter pw = response.getWriter();
+		pw.println("File not found: " + file_name);
+		pw.println("This DAS/2 server cannot currently handle request:    ");
+		pw.println(request.getRequestURL().toString());
 	}
 
 
@@ -1074,23 +1088,24 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					this.getGenoPubSecurity(request));
 
 		ByteArrayOutputStream buf = null;
+		ByteArrayInputStream bais = null;
 		PrintWriter pw = null;
-		if (use_types_xslt) {
-			buf = new ByteArrayOutputStream(types_hash.size() * 1000);
-			pw = new PrintWriter(buf);
-		} else {
-			pw = response.getWriter();
-		}
+		try {
+			if (use_types_xslt) {
+				buf = new ByteArrayOutputStream(types_hash.size() * 1000);
+				pw = new PrintWriter(buf);
+			} else {
+				pw = response.getWriter();
+			}
 
-		String xbase = getXmlBase(request) + genome.getID() + "/";
-		List<AnnotMapElt> annotList = annots_map.get(genome);
-		writeTypesXML(pw, xbase, types_hash, annotList);
+			String xbase = getXmlBase(request) + genome.getID() + "/";
+			List<AnnotMapElt> annotList = annots_map.get(genome);
+			writeTypesXML(pw, xbase, types_hash, annotList);
 
-		if (use_types_xslt) {
-			pw.flush();
-			byte[] buf_array = buf.toByteArray();
-			ByteArrayInputStream bais = null;
-			try {
+			if (use_types_xslt) {
+				pw.flush();
+				byte[] buf_array = buf.toByteArray();
+
 				bais = new ByteArrayInputStream(buf_array);
 				Source types_doc = new StreamSource(bais);
 				Result result = new StreamResult(response.getWriter());
@@ -1099,9 +1114,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				} catch (TransformerException ex) {
 					ex.printStackTrace();
 				}
-			} finally {
-				GeneralUtils.safeClose(bais);
 			}
+		} finally {
+			GeneralUtils.safeClose(bais);
+			GeneralUtils.safeClose(buf);
 		}
 	}
 
@@ -1514,7 +1530,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		GeneralUtils.safeClose(outputStream);
 	}
 
-	private static void splitSequenceQuery(String query, ArrayList<String> formats, ArrayList<String> ranges) {
+	private static void splitSequenceQuery(String query, List<String> formats, List<String> ranges) {
 		for (String tagval : query_splitter.split(query)) {
 			String[] tagval_array = tagval_splitter.split(tagval);
 			String tag = tagval_array[0];

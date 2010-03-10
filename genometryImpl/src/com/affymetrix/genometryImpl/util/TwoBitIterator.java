@@ -35,7 +35,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	private final File file;
 	private final long length, offset;
 	private final MutableSeqSymmetry nBlocks, maskBlocks;
-	private final List<Segment> segments = new ArrayList<Segment>();
+	//private final List<Segment> segments = new ArrayList<Segment>();
 	private final ByteOrder byteOrder;
 
 	public TwoBitIterator(File file, long length, long offset, ByteOrder byteOrder, MutableSeqSymmetry nBlocks, MutableSeqSymmetry maskBlocks) {
@@ -242,14 +242,14 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return (int) length;
 	}
 
-	private static final class Segment {
-		protected final int start, end;
-		protected final long offset;
-
-		protected Segment(int start, int end, long offset) {
-			this.start  = start;
-			this.end    = end;
-			this.offset = offset;
-		}
-	}
+//	private static final class Segment {
+//		protected final int start, end;
+//		protected final long offset;
+//
+//		protected Segment(int start, int end, long offset) {
+//			this.start  = start;
+//			this.end    = end;
+//			this.offset = offset;
+//		}
+//	}
 }

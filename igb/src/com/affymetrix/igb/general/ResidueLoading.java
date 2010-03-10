@@ -181,57 +181,29 @@ public final class ResidueLoading {
 	 * @return true or false
 	 */
 	private static boolean GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url) {
-		boolean loaded;
-		InputStream istr = null;
 		String genome_name = seq_group.getID();
+		String url_path = root_url + "/" + genome_name + "/" + seq_name + ".bnib";
+		if (DEBUG) {
+			System.out.println("  Quickload location of bnib file: " + url_path);
+		}
+		InputStream istr = null;
 		try {
-			String url_path = root_url + "/" + genome_name + "/" + seq_name + ".bnib";
-			if (DEBUG) {
-				System.out.println("  Quickload location of bnib file: " + url_path);
-			}
 			istr = LocalUrlCacher.getInputStream(url_path, true);
 			if (istr == null) {
 				return false;
 			}
 			// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
 			NibbleResiduesParser.parse(istr, seq_group);
-			loaded = true;
+			return true;
 		} catch (Exception ex) {
-			loaded = false;
 			System.out.println("Error -- cannot access sequence:\n" + "seq = '" + seq_name + "'\n" + "version = '" + genome_name + "'\n" + "server = " + root_url);
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
-		return loaded;
+		return false;
 	}
 
-	private static String GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url, int min, int max)
-	{
-		InputStream istr = null;
-		String genome_name = seq_group.getID();
-		try {
-			String url_path = root_url + "/" + genome_name + "/" + seq_name + ".bnib";
-			if (DEBUG) {
-				System.out.println("  Quickload location of bnib file: " + url_path);
-			}
-			istr = LocalUrlCacher.getInputStream(url_path, true);
-			if (istr == null) {
-				return null;
-			}
-			
-			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-			NibbleResiduesParser.parse(istr, min, max, outstream);
-			return outstream.toString();
-
-		} catch (Exception ex) {
-			System.out.println("Error -- cannot access sequence:\n" + "seq = '" + seq_name + "'\n" + "version = '" + genome_name + "'\n" + "server = " + root_url);
-			ex.printStackTrace();
-			return null;
-		} finally {
-			GeneralUtils.safeClose(istr);
-		}
-	}
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?range=0:1000")
 	private static String generateDas2URI(String URL, String genomeVersionName,
 			String segmentName, int min, int max, FORMAT Format) {

@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class NibbleResiduesParser {
+	private static int BUFSIZE = 65536;	// buffer for outputting
 
 	/**
 	 *  Parses an input stream.
@@ -34,21 +35,6 @@ public final class NibbleResiduesParser {
 	public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
 		return parse(istr,seq_group,0,Integer.MAX_VALUE);
 	}
-
-	/*public static GeneralBioSeq readBinaryFile(String file_name) throws IOException {
-		FileInputStream fis = null;
-		GeneralBioSeq seq = null;
-		try {
-			File fil = new File(file_name);
-			fis = new FileInputStream(fil);
-			AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
-			seq = parse(fis, seq_group);
-		}
-		finally {
-			GeneralUtils.safeClose(fis);
-		}
-		return seq;
-	}*/
 
 	//Returns bnib format
 	public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end) throws IOException
@@ -67,9 +53,7 @@ public final class NibbleResiduesParser {
 			}
 			dis = new DataInputStream(bis);
 			String name = dis.readUTF();
-			//      System.out.println("name: " + name);
 			dis.readUTF();
-			//      System.out.println("version: " + version);
 			int total_residues = dis.readInt();
 
 			if(start < end)
@@ -111,11 +95,11 @@ public final class NibbleResiduesParser {
 		return result_seq;
 	}
 
+	
 	//Returns raw format
-	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end, OutputStream output) throws IOException
+	public static boolean parse(InputStream istr, OutputStream output) throws FileNotFoundException, IOException
 	{
-		BioSeq seq = parse(istr,seq_group,start,end);
-		return writeAnnotations(seq,output);
+		return parse(istr,new AnnotatedSeqGroup("No_Data"), output);
 	}
 
 	//Returns raw format
@@ -125,15 +109,16 @@ public final class NibbleResiduesParser {
 	}
 
 	//Returns raw format
-	public static boolean parse(InputStream istr, OutputStream output) throws FileNotFoundException, IOException
-	{
-		return parse(istr,new AnnotatedSeqGroup("No_Data"), output);
-	}
-
-	//Returns raw format
 	public static boolean parse(InputStream istr, int start, int end, OutputStream output) throws FileNotFoundException, IOException
 	{
 		return parse(istr,new AnnotatedSeqGroup("No_Data"), start, end, output);
+	}
+	
+	//Returns raw format
+	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end, OutputStream output) throws IOException
+	{
+		BioSeq seq = parse(istr,seq_group,start,end);
+		return writeAnnotations(seq,start,end,output);
 	}
 
 	public static byte[] readBNIB(File seqfile) throws FileNotFoundException, IOException {
@@ -203,7 +188,6 @@ public final class NibbleResiduesParser {
 			dos.writeUTF(seqversion);
 			dos.writeInt(residues.length());
 			System.out.println("creating nibble array");
-			//      byte[] nibble_array = NibbleBioSeq.stringToNibbles(residues, 0, residues.length());
 			byte[] nibble_array = NibbleIterator.stringToNibbles(residues, 0, residues.length());
 
 			System.out.println("done creating nibble array, now writing nibble array out");
@@ -236,13 +220,34 @@ public final class NibbleResiduesParser {
 		}
 	}
 
-	public static boolean writeAnnotations(BioSeq seq, OutputStream outstream)
+	/**
+	 * Write raw characters out to stream.
+	 * @param seq	- chromosome we're currently on
+	 * @param start - start of raw sequence
+	 * @param end - end of raw sequence
+	 * @param outstream - stream we're writing to
+	 * @return - success or failure
+	 */
+	private static boolean writeAnnotations(BioSeq seq, int start, int end, OutputStream outstream)
 	{
+		if (seq.getResiduesProvider() == null) {
+			return false;
+		}
+		// sanity checks
+		start = Math.max(0, start);
+		end = Math.max(end, start);
+		end = Math.min(end, start+seq.getResiduesProvider().getLength());
+
 		DataOutputStream dos = null;
 		try
 		{
-			dos = new DataOutputStream(outstream);
-			dos.writeBytes(seq.getResidues());
+			dos = new DataOutputStream(new BufferedOutputStream(outstream));
+
+			// Only keep BUFSIZE characters in memory at one time
+			for (int i=0;i<(end-start);i+=BUFSIZE) {
+				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, (end-start)));
+				dos.writeBytes(outString);
+			}
 			dos.flush();
 			return true;
 		} catch (Exception ex) {

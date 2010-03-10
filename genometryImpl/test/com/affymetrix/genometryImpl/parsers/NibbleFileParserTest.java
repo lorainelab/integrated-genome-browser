@@ -35,7 +35,6 @@ public class NibbleFileParserTest {
 	{
 		sb = new StringBuffer();
 		isr = GeneralUtils.getInputStream(infile, sb);
-		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 		BioSeq seq= NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test"));
 		assertEquals(seq.getResidues(),input_string);
 	}

@@ -74,6 +74,12 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 	public String substring(int start, int end) {
 		FileChannel channel = null;
+
+		//Sanity Check
+		start = Math.max(0, start);
+		end = Math.max(end, start);
+		end = Math.min(end, getLength());
+
 		int requiredLength = end - start;
 		char[] residues = new char[requiredLength];
 		byte[] valueBuffer = new byte[BUFFER_SIZE];
@@ -164,9 +170,10 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 		for(int i=0; i<blocks.getSpanCount(); i++){
 			SeqSpan span = blocks.getSpan(i);
-			if(span.getStart() >= start){
-				tempBlocks.addSpan(span);
+			if(start > span.getStart() && start >= span.getEnd()){
+				continue;
 			}
+			tempBlocks.addSpan(span);
 
 		}
 

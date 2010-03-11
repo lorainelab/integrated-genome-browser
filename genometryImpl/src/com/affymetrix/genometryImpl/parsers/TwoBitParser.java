@@ -46,6 +46,8 @@ public final class TwoBitParser {
 	/** buffer for outputting */
 	private static int BUFSIZE = 65536;
 
+	private static final boolean DEBUG = false;
+	
     public static BioSeq parse(File file, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
         FileChannel channel = new RandomAccessFile(file, "r").getChannel();
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
@@ -56,28 +58,28 @@ public final class TwoBitParser {
 		return seq;
     }
 
-	public BioSeq parse(File file) throws FileNotFoundException, IOException {
+	public static BioSeq parse(File file) throws FileNotFoundException, IOException {
 		return parse(file,new AnnotatedSeqGroup("No_Data"));
 	}
 
-	public boolean parse(File file, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(File file, OutputStream out) throws FileNotFoundException, IOException {
 		BioSeq seq = parse(file);
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
-	public boolean parse(File file, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(File file, int start, int length, OutputStream out) throws FileNotFoundException, IOException {
 		BioSeq seq = parse(file);
-		return writeAnnotations(seq,start,end,out);
+		return writeAnnotations(seq,start,length,out);
 	}
 
-	public boolean parse(File file, AnnotatedSeqGroup seq_group, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(File file, AnnotatedSeqGroup seq_group, OutputStream out) throws FileNotFoundException, IOException {
 		BioSeq seq = parse(file,seq_group);
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
-	public boolean parse(File file, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(File file, AnnotatedSeqGroup seq_group, int start, int length, OutputStream out) throws FileNotFoundException, IOException {
 		BioSeq seq = parse(file,seq_group);
-		return writeAnnotations(seq,start,end,out);
+		return writeAnnotations(seq,start,length,out);
 	}
 	
     private static String getString(ByteBuffer buffer, int length) {
@@ -129,7 +131,11 @@ public final class TwoBitParser {
     private static void readBlocks(ByteBuffer buffer, BioSeq seq, MutableSeqSymmetry sym) throws IOException {
 		//xBlockCount, where x = n OR mask
 		int block_count = buffer.getInt();
-		System.out.println("I want " + block_count + " blocks");
+
+		if(DEBUG){
+			System.out.println("I want " + block_count + " blocks");
+		}
+
         int[] blockStarts = new int[block_count];
         //ByteBuffer buffer = ByteBuffer.allocate(2 * block_count * INT_SIZE + INT_SIZE);
         for (int i = 0; i < block_count; i++) {
@@ -164,7 +170,10 @@ public final class TwoBitParser {
 		name = getString(buffer, name_length);
 		offset = buffer.getInt() & INT_MASK;
 
-		System.out.println("Sequence '" + name + "', offset " + offset);
+		if(DEBUG){
+			System.out.println("Sequence '" + name + "', offset " + offset);
+		}
+		
 		return readSequenceHeader(file, channel, buffer.order(), offset, seq_group, name);
 		//}
     }
@@ -181,7 +190,10 @@ public final class TwoBitParser {
 
 		//dnaSize
         long size = buffer.getInt() & INT_MASK;
-		System.out.println("size is " + size + " bases");
+
+		if(DEBUG)
+			System.out.println("size is " + size + " bases");
+		
 		residueOffset += INT_SIZE;
 
 		if (size > Integer.MAX_VALUE) {
@@ -219,15 +231,15 @@ public final class TwoBitParser {
 		return "binary/2bit";
 	}
 
-	private static boolean writeAnnotations(BioSeq seq, int start, int end, OutputStream outstream)
+	private static boolean writeAnnotations(BioSeq seq, int start, int length, OutputStream outstream)
 	{
 		if (seq.getResiduesProvider() == null) {
 			return false;
 		}
 		// sanity checks
 		start = Math.max(0, start);
-		end = Math.max(end, start);
-		end = Math.min(end, start+seq.getResiduesProvider().getLength());
+		length = Math.max(length, start);
+		length = Math.min(length, start+seq.getResiduesProvider().getLength());
 
 		DataOutputStream dos = null;
 		try
@@ -235,8 +247,8 @@ public final class TwoBitParser {
 			dos = new DataOutputStream(new BufferedOutputStream(outstream));
 
 			// Only keep BUFSIZE characters in memory at one time
-			for (int i=0;i<(end-start);i+=BUFSIZE) {
-				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, (end-start)));
+			for (int i=0;i<length;i+=BUFSIZE) {
+				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, length));
 				dos.writeBytes(outString);
 			}
 			dos.flush();
@@ -248,12 +260,15 @@ public final class TwoBitParser {
 	}
 	
 	public static void main(String[] args){
-		//File f = new File("/Users/aloraine/Downloads/files/test1.2bit");
-		File f = new File("genometryImpl/test/data/2bit/at.2bit");
-		TwoBitParser instance = new TwoBitParser();
+		String input_string = "ACTGGGTCTCAGTACTAGGAATTCCGTCATAGCTAAA";
+		File f = new File("genometryImpl/test/data/2bit/noblocks.2bit");
+		//File f = new File("genometryImpl/test/data/2bit/at.2bit");
 		try {
-			BioSeq seq = instance.parse(f, new AnnotatedSeqGroup("foo"));
-			System.out.println(seq.getResidues());
+			BioSeq seq = TwoBitParser.parse(f);
+			int start = 6;
+			int length = 7;
+			System.out.println("Expected :"+input_string.substring(start, start + length));
+			System.out.println("Result   :"+seq.getResidues(start,length));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

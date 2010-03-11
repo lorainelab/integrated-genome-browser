@@ -771,31 +771,6 @@ public abstract class ServerUtils {
 					String data_root,
 					AnnotatedSeqGroup genome,
 					AnnotSecurity annotSecurity) {
-		Map<String, SimpleDas2Type> genome_types = getGenomeTypes(genome, annotSecurity);
-
-		// Now add all of the bar and useq graphs that were not picked up from getGenomeTypes()		
-		for (String type : genome.getTypeList()) {
-			if (!genome_types.containsKey(type)) {
-				if (genome.isAuthorized(annotSecurity, type)) {
-					if (genome.isBarGraphData(data_root, annotSecurity, type)) {
-						genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type))); 	
-						
-					} else if (genome.isUseqGraphData(data_root, annotSecurity, type)) {
-						genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type))); 	
-						
-					} else {
-						Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request."); 
-					}
-				}
-				
-			}
-		}
-
-		return genome_types;
-	}
-
-	// iterate over seqs to collect annotation types
-	private static final Map<String, SimpleDas2Type> getGenomeTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity) {		
 		List<BioSeq> seqList = genome.getSeqList();
 		Map<String,SimpleDas2Type> genome_types = new LinkedHashMap<String,SimpleDas2Type>();
 		for (BioSeq aseq : seqList) {
@@ -836,6 +811,25 @@ public abstract class ServerUtils {
 			}
 		}
 		return genome_types;
+	}
+
+	public static void getAdditionalGenoPubTypes(
+		String data_root,AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
+		// Now add all of the bar and useq graphs that were not picked up from getGenomeTypes()
+		// only an issue for GenoPub
+		for (String type : genome.getTypeList()) {
+			if (!genome_types.containsKey(type)) {
+				if (genome.isAuthorized(annotSecurity, type)) {
+					if (genome.isBarGraphData(data_root, annotSecurity, type)) {
+						genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
+					} else if (genome.isUseqGraphData(data_root, annotSecurity, type)) {
+						genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
+					} else {
+						Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request.");
+					}
+				}
+			}
+		}
 	}
 
 

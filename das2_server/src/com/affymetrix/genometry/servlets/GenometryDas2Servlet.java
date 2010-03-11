@@ -947,6 +947,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					genome,
 					this.getGenoPubSecurity(request));
 
+		if (is_genometry_genopub_mode) {
+			ServerUtils.getAdditionalGenoPubTypes(
+					data_root, 
+					genome, 
+					this.getGenoPubSecurity(request), 
+					types_hash);
+		}
+
 		ByteArrayOutputStream buf = null;
 		ByteArrayInputStream bais = null;
 		PrintWriter pw = null;

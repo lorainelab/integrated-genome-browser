@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.TwoBitIterator;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -240,7 +241,7 @@ public final class TwoBitParser {
 		// sanity checks
 		start = Math.max(0, start);
 		end = Math.max(end, start);
-		end = Math.min(end, start+seq.getResiduesProvider().getLength());
+		end = Math.min(end, seq.getLength());
 
 		DataOutputStream dos = null;
 		try
@@ -261,17 +262,37 @@ public final class TwoBitParser {
 	}
 	
 	public static void main(String[] args){
-		String input_string = "ACTGGGTCTCAGTACTAGGAATTCCGTCATAGCTAAA";
-		File f = new File("genometryImpl/test/data/2bit/noblocks.2bit");
+		//String residues = "ACTGGGTCTCAGTACTAGGAATTCCGTCATAGCTAAA";
+		String residues = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
+		File f = new File("genometryImpl/test/data/2bit/nblocks.2bit");
+		ByteArrayOutputStream outStream = null;
 		//File f = new File("genometryImpl/test/data/2bit/at.2bit");
 		try {
-			BioSeq seq = TwoBitParser.parse(f);
-			int start = 7;
-			int end = 8;
-			System.out.println("Expected :"+input_string.substring(start, end));
-			System.out.println("Result   :"+seq.getResidues(start,end));
+			int start = 11;
+			int end = residues.length() + 4;
+			outStream = new ByteArrayOutputStream();
+			boolean result = TwoBitParser.parse(f,start,end,outStream);
+			//BioSeq seq = TwoBitParser.parse(f);
+			
+
+			System.out.println("Result   :" + outStream.toString());
+
+			if (start < end) {
+				start = Math.max(0, start);
+				start = Math.min(residues.length(), start);
+
+				end = Math.max(0, end);
+				end = Math.min(residues.length(), end);
+			} else {
+				start = 0;
+				end = 0;
+			}
+			System.out.println("Expected :" + residues.substring(start, end));
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}finally{
+			GeneralUtils.safeClose(outStream);
 		}
 	}
 }

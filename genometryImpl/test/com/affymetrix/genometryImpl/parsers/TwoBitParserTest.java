@@ -18,7 +18,7 @@ public class TwoBitParserTest {
 	String noblocks_file = "test/data/2bit/noblocks.2bit";
 	String nblocks = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
 	String nblocks_file = "test/data/2bit/nblocks.2bit";
-	String maskblocks = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
+	String maskblocks = "acTGGgtctaAGTACTAGGAattccgtcatagcTAAa";
 	String maskblocks_file = "test/data/2bit/maskblocks.2bit";
 	String residues, file;
 	File infile = null;
@@ -29,7 +29,7 @@ public class TwoBitParserTest {
 	{
 		assertTrue(new File(noblocks_file).exists());
 		assertTrue(new File(nblocks_file).exists());
-//		assertTrue(new File(maskblocks_file).exists());
+		assertTrue(new File(maskblocks_file).exists());
 	}
 
 	@Test
@@ -44,10 +44,10 @@ public class TwoBitParserTest {
 		testOriginal();
 		testCases();
 
-//		residues = maskblocks;
-//		file = maskblocks_file;
-//		testOriginal();
-//		testCases();
+		residues = maskblocks;
+		file = maskblocks_file;
+		testOriginal();
+		testCases();
 	}
 
 	public void testOriginal() throws Exception

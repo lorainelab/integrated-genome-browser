@@ -549,31 +549,32 @@ public class AxisGlyph extends Glyph {
 				}
 
 		int axis_start;   // start to draw axis at (in canvas coordinates)
-		int axis_end;     // end to draw axis to (in canvas coordinates)
+		int axis_width;     // width to draw axis (in canvas coordinates)
 
 		double units_per_pixel = 1/pixels_per_unit;
 
-		int clip_start, clip_end;
+		int clip_start, clip_width;
 		if (orient == VERTICAL) {
 			axis_loc = scratchpixels.x;
 			axis_start = pixelbox.y;
-			axis_end = pixelbox.y + pixelbox.height;
+			axis_width = pixelbox.height;
 			clip_start = clipbox.y;
-			clip_end = clipbox.y + clipbox.height;
+			clip_width = clipbox.height;
 		}
 		else {
 			axis_loc = scratchpixels.y;
 			axis_start = pixelbox.x;
-			axis_end = pixelbox.x + pixelbox.width;
+			axis_width = pixelbox.width;
 			clip_start = clipbox.x;
-			clip_end = clipbox.x + clipbox.width;
+			clip_width = clipbox.width;
 		}
 
-		axis_start = Math.min(axis_start, clip_start);
-		axis_end = Math.max(axis_end, clip_end);
+		// TODO - axis_start was negative due to overflow.
+		axis_start = Math.max(axis_start, clip_start);
+		axis_width = Math.min(axis_width, clip_width);
 
-		axis_length = axis_end - axis_start + 1;
-
+		axis_width++;
+		
 		g.setColor( getForegroundColor() );
 
 		// Draw the base line.
@@ -581,10 +582,10 @@ public class AxisGlyph extends Glyph {
 		int center_line_start = axis_loc - centerLineThickness/2;
 
 		if (orient == VERTICAL)  {
-			g.fillRect(center_line_start, axis_start, centerLineThickness,axis_length);
+			g.fillRect(center_line_start, axis_start, centerLineThickness,axis_width);
 		}
 		else {
-			g.fillRect(axis_start, center_line_start, axis_length, centerLineThickness);
+			g.fillRect(axis_start, center_line_start, axis_width, centerLineThickness);
 			setColorForSelections2(g, view, center_line_start);
 		}
 

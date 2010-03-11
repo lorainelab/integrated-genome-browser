@@ -59,6 +59,30 @@ public final class TwoBitParser {
 		return seq;
     }
 
+	public BioSeq parse(File file) throws FileNotFoundException, IOException {
+		return parse(file,new AnnotatedSeqGroup("No_Data"));
+	}
+
+	public boolean parse(File file, OutputStream out) throws FileNotFoundException, IOException {
+		BioSeq seq = parse(file);
+		return writeAnnotations(seq,0,seq.getLength(),out);
+	}
+
+	public boolean parse(File file, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
+		BioSeq seq = parse(file);
+		return writeAnnotations(seq,start,end,out);
+	}
+
+	public boolean parse(File file, AnnotatedSeqGroup seq_group, OutputStream out) throws FileNotFoundException, IOException {
+		BioSeq seq = parse(file,seq_group);
+		return writeAnnotations(seq,0,seq.getLength(),out);
+	}
+
+	public boolean parse(File file, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
+		BioSeq seq = parse(file,seq_group);
+		return writeAnnotations(seq,start,end,out);
+	}
+	
     private static String getString(ByteBuffer buffer, int length) {
         byte[] string = new byte[length];
         buffer.get(string);
@@ -122,7 +146,6 @@ public final class TwoBitParser {
         }
 
     }
-
 
     private BioSeq readSequenceIndex(FileChannel channel, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
         String name;
@@ -188,7 +211,6 @@ public final class TwoBitParser {
 
 		return seq;
     }
-
 
 	private long updateBuffer(FileChannel channel, ByteBuffer buffer, long position) throws IOException {
 		channel.position(position - buffer.remaining());

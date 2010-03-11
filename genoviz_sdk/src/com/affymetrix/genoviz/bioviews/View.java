@@ -219,13 +219,12 @@ public class View implements ViewI, NeoPaintListener,
 	transformToPixels() and transformToCoords().
 	 */
 	public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst) {
+		// Written to avoid overflows
 		transform.transform(src, scratch_coords);
-
 		dst.x = (int) scratch_coords.x;
 		dst.y = (int) scratch_coords.y;
 		dst.width = (int) (scratch_coords.x - dst.x + scratch_coords.width);
 		dst.height = (int) (scratch_coords.y - dst.y + scratch_coords.height);
-
 		return dst;
 	}
 
@@ -237,15 +236,17 @@ public class View implements ViewI, NeoPaintListener,
 	}
 
 	public boolean clipToPixelBox(Rectangle src, Rectangle dst) {
-		int sx2, sy2, vx2, vy2;
-		sx2 = dst.x + dst.width;
-		sy2 = dst.y + dst.height;
-		vx2 = pixelbox.x + pixelbox.width;
-		vy2 = pixelbox.y + pixelbox.height;
-		dst.x = src.x < pixelbox.x ? pixelbox.x : src.x;
-		dst.y = src.y < pixelbox.y ? pixelbox.y : src.y;
-		dst.width = sx2 > vx2 ? vx2 - dst.x : sx2 - dst.x;
-		dst.height = sy2 > vy2 ? vy2 - dst.y : sy2 - dst.y;
+		// Written to avoid overflows
+		int tempDstX = Math.max(src.x, pixelbox.x);
+		int tempDstY = Math.max(src.y, pixelbox.y);
+		int sx2 = dst.x - tempDstX + dst.width;
+		int sy2 = dst.y - tempDstY + dst.height;
+		int vx2 = pixelbox.x - tempDstX + pixelbox.width;
+		int vy2 = pixelbox.y - tempDstY + pixelbox.height;
+		dst.x = tempDstX;
+		dst.y = tempDstY;
+		dst.width = Math.min(sx2, vx2);
+		dst.height = Math.min(sy2, vy2);
 		return true;
 	}
 

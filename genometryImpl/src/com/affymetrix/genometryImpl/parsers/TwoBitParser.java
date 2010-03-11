@@ -5,9 +5,9 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.TwoBitIterator;
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,8 +18,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author sgblanch
@@ -33,9 +31,6 @@ public final class TwoBitParser {
 	/** Size of integer, in bytes */
 	private static final int INT_SIZE = 4;
 
-	/** Number of residues in each byte */
-	private static final int RESIDUES_PER_BYTE = 4;
-
 	/** Use a 4KB buffer, as that is the block size of most filesystems */
 	private static  int BUFFER_SIZE = 4096;
 
@@ -45,15 +40,13 @@ public final class TwoBitParser {
     /** Byte mask for translating unsigned ints into Java longs */
     private static final long INT_MASK = 0xffffffff;
 
-	/** Character mask for translating binary into Java chars */
-	private static final int CHAR_MASK = 0x03;
-
 	/** Character set used to decode strings.  Currently ASCII */
     private static final Charset charset = Charset.forName("ASCII");
 
-	private File file;
+	/** buffer for outputting */
+	private static int BUFSIZE = 65536;
 
-	private static final char[] BASES = { 'T', 'C', 'A', 'G', 't', 'c', 'a', 'g'};
+	private File file;
 
     public BioSeq parse(File file, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
 		this.file = file;
@@ -112,7 +105,7 @@ public final class TwoBitParser {
         return seq_count;
     }
 
-    private void readBlocks(FileChannel channel, ByteBuffer buffer, BioSeq seq, MutableSeqSymmetry sym) throws IOException {
+    private void readBlocks(ByteBuffer buffer, BioSeq seq, MutableSeqSymmetry sym) throws IOException {
 		//xBlockCount, where x = n OR mask
 		int block_count = buffer.getInt();
 		System.out.println("I want " + block_count + " blocks");
@@ -163,7 +156,6 @@ public final class TwoBitParser {
 		MutableSeqSymmetry maskBlocks = new SimpleMutableSeqSymmetry();
 		long residueOffset = offset;
 
-		long oldPosition = channel.position();
         channel.position(offset);
         loadBuffer(channel, buffer);
 
@@ -179,11 +171,11 @@ public final class TwoBitParser {
 		BioSeq seq = seq_group.addSeq(name, (int) size);
 
 		//nBlockCount, nBlockStart, nBlockSize
-        readBlocks(channel, buffer, seq, nBlocks);
+        readBlocks(buffer, seq, nBlocks);
 		residueOffset += INT_SIZE + nBlocks.getSpanCount() * INT_SIZE * 2;
 
 		//maskBlockCount, maskBlockStart, maskBlockSize
-		readBlocks(channel, buffer, seq, maskBlocks);
+		readBlocks(buffer, seq, maskBlocks);
 		residueOffset += INT_SIZE + maskBlocks.getSpanCount() * INT_SIZE * 2;
 
 		//reserved
@@ -208,13 +200,26 @@ public final class TwoBitParser {
 		return "binary/2bit";
 	}
 
-	public static boolean writeAnnotations(BioSeq seq, OutputStream outstream)
+	private static boolean writeAnnotations(BioSeq seq, int start, int end, OutputStream outstream)
 	{
+		if (seq.getResiduesProvider() == null) {
+			return false;
+		}
+		// sanity checks
+		start = Math.max(0, start);
+		end = Math.max(end, start);
+		end = Math.min(end, start+seq.getResiduesProvider().getLength());
+
 		DataOutputStream dos = null;
 		try
 		{
-			dos = new DataOutputStream(outstream);
-			dos.writeBytes(seq.getResidues());
+			dos = new DataOutputStream(new BufferedOutputStream(outstream));
+
+			// Only keep BUFSIZE characters in memory at one time
+			for (int i=0;i<(end-start);i+=BUFSIZE) {
+				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, (end-start)));
+				dos.writeBytes(outString);
+			}
 			dos.flush();
 			return true;
 		} catch (Exception ex) {

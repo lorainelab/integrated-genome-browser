@@ -1226,9 +1226,14 @@ public class GenoPubServlet extends HttpServlet {
 			} 
 
 
+			
+			// Make sure that name doesn't have forward slashes (/).
+			String name = request.getParameter("name");
+			if (name.contains("/")) {
+				throw new InvalidNameException("The folder name cannnot contain any / characters.");
+			}
 
-
-			annotationGrouping.setName(request.getParameter("name"));
+			annotationGrouping.setName(name);
 			annotationGrouping.setIdGenomeVersion(idGenomeVersion);
 			annotationGrouping.setIdParentAnnotationGrouping(idParentAnnotationGrouping);
 
@@ -1247,6 +1252,11 @@ public class GenoPubServlet extends HttpServlet {
 
 
 		} catch (InsufficientPermissionException e) {			
+			this.reportError(res, e.getMessage());
+			if (tx != null) {
+				tx.rollback();
+			}
+		}  catch (InvalidNameException e) {			
 			this.reportError(res, e.getMessage());
 			if (tx != null) {
 				tx.rollback();
@@ -1301,8 +1311,15 @@ public class GenoPubServlet extends HttpServlet {
 							DictionaryHelper.getInstance(sess).getUserGroupName(annotationGrouping.getParentAnnotationGrouping().getIdUserGroup()) + "'");
 				}
 			} 
+			
+			
+			// Make sure that name doesn't have forward slashes (/).
+			String name = request.getParameter("name");
+			if (name.contains("/")) {
+				throw new InvalidNameException("The folder name cannnot contain any / characters.");
+			}
 
-			annotationGrouping.setName(request.getParameter("name"));
+			annotationGrouping.setName(name);
 			annotationGrouping.setDescription(request.getParameter("description"));
 			annotationGrouping.setIdUserGroup(idUserGroup);
 
@@ -1315,6 +1332,15 @@ public class GenoPubServlet extends HttpServlet {
 
 
 		}  catch (InsufficientPermissionException e) {
+
+			e.printStackTrace();
+			this.reportError(res, e.getMessage());
+
+			if (tx != null) {
+				tx.rollback();				
+			}
+
+		}   catch (InvalidNameException e) {
 
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
@@ -1588,6 +1614,13 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			String name = request.getParameter("name");
+			
+			// Make sure that name doesn't have forward slashes (/).
+			if (name.contains("/")) {
+				throw new InvalidNameException("The annotation name cannnot contain any / characters.");
+			}
+			
+			
 			String codeVisibility = request.getParameter("codeVisibility");
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
@@ -1619,6 +1652,15 @@ public class GenoPubServlet extends HttpServlet {
 
 
 		}  catch (InsufficientPermissionException e) {
+
+			e.printStackTrace();
+			this.reportError(res, e.getMessage());
+
+			if (tx != null) {
+				tx.rollback();				
+			}
+
+		}  catch (InvalidNameException e) {
 
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
@@ -1727,8 +1769,15 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("For private annotations, the group must be specified.");
 				}
 			}
+			
+			
+			// Make sure that name doesn't have forward slashes (/).
+			String name = request.getParameter("name");
+			if (name.contains("/")) {
+				throw new InvalidNameException("The annotation name cannnot contain any / characters.");
+			}
 
-			annotation.setName(request.getParameter("name"));
+			annotation.setName(name);
 			annotation.setDescription(request.getParameter("description"));
 			annotation.setSummary(request.getParameter("summary"));
 			annotation.setIdAnalysisType(Util.getIntegerParameter(request, "idAnalysisType"));
@@ -1759,6 +1808,15 @@ public class GenoPubServlet extends HttpServlet {
 
 
 		} catch (InsufficientPermissionException e) {
+
+			e.printStackTrace();
+			this.reportError(res, e.getMessage());
+
+			if (tx != null) {
+				tx.rollback();				
+			}
+
+		} catch (InvalidNameException e) {
 
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());

@@ -766,6 +766,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @param response
 	 * @throws java.io.IOExceptionhandleSequenceRequest
 	 */
+	@SuppressWarnings("deprecation")
 	private  final void handleSequenceRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 	throws IOException {
 		String queryString = request.getQueryString();
@@ -812,18 +813,18 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// PhaseI: retrieval of whole chromosome in raw format
 		if (format.equals("raw")) {
-			retrieveRAW(ranges, span, sequence_directory, seqname, response, request);
+			ServletUtils.retrieveRAW(ranges, span, sequence_directory, seqname, response, request);
 			return;
 		}
 
 		// PhaseII: retrieval of whole chromosome in bnib format
 		if (format.equals("bnib")) {
-			retrieveBNIB(sequence_directory, seqname, response, request);
+			ServletUtils.retrieveBNIB(sequence_directory, seqname, response, request);
 			return;
 		}
 
 		if (format.equals("fasta")) {
-			retrieveFASTA(ranges, span, sequence_directory, genome.getOrganism(), seqname, response, request);
+			ServletUtils.retrieveFASTA(ranges, span, sequence_directory, genome.getOrganism(), seqname, response, request);
 			return;
 		}
 
@@ -832,147 +833,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println(request.getRequestURL().toString());
 	}
 
-	private static final void retrieveRAW(
-			List<String> ranges, SeqSpan span, String sequence_directory, String seqname, HttpServletResponse response, HttpServletRequest request) throws IOException {
-
-		String file_name = sequence_directory + seqname + ".bnib";
-		File seqfile = new File(file_name);
-		FileInputStream fis = null;
-
-		if (seqfile.exists()) {
-			response.setContentType("text/raw"); // set text type
-			try {
-				fis = new FileInputStream(seqfile);
-				if (ranges.size() != 0) {
-					int spanStart = 0, spanEnd = 0;
-					spanStart = span.getStart();
-					spanEnd = span.getEnd();
-					NibbleResiduesParser.parse(fis, spanStart, spanEnd, response.getOutputStream());
-				} else {
-					NibbleResiduesParser.parse(fis, response.getOutputStream());
-				}
-			} finally {
-				GeneralUtils.safeClose(fis);
-			}
-			return;
-		}
-
-		PrintWriter pw = response.getWriter();
-		pw.println("File not found: " + file_name);
-		pw.println("This DAS/2 server cannot currently handle request:    ");
-		pw.println(request.getRequestURL().toString());
-
-	}
-
-	private static final void retrieveBNIB(
-			String sequence_directory, String seqname, HttpServletResponse response, HttpServletRequest request) throws IOException {
-
-		String file_name = sequence_directory + seqname + ".bnib";
-		File seqfile = new File(file_name);
-
-		if (seqfile.exists()) {
-			response.setContentType(NibbleResiduesParser.getMimeType()); // set bnib format mime type
-			BufferedInputStream in = null;
-			BufferedOutputStream out = null;
-			try {
-				in = new BufferedInputStream(new FileInputStream(seqfile));
-				out = new BufferedOutputStream(response.getOutputStream());
-				int c;
-
-				while ((c = in.read()) != -1) {
-					out.write(c);
-				}
-
-			} finally {
-				GeneralUtils.safeClose(in);
-				GeneralUtils.safeClose(out);
-			}
-			return;
-		}
-
-		PrintWriter pw = response.getWriter();
-		pw.println("File not found: " + file_name);
-		pw.println("This DAS/2 server cannot currently handle request:    ");
-		pw.println(request.getRequestURL().toString());
-	}
-
-
-	/**
-	 *Retrieve sequence from FASTA file.  Please note restrictions in FASTA parser for DAS/2 serving.
-	 * @param ranges
-	 * @param span
-	 * @param sequence_directory
-	 * @param organism_name
-	 * @param seqname
-	 * @param format
-	 * @param response
-	 * @param request
-	 * @throws java.io.IOException
-	 * @deprecated
-	 */
-	@Deprecated
-	private static final void retrieveFASTA(
-			List<String> ranges, SeqSpan span, String sequence_directory, String organism_name, String seqname, HttpServletResponse response, HttpServletRequest request)
-	throws IOException {
-		String file_name = sequence_directory + seqname + ".fa";
-		File seqfile = new File(file_name);
-		if (!seqfile.exists()) {
-			System.out.println("seq request mapping to nonexistent file: " + file_name);
-			PrintWriter pw = response.getWriter();
-			pw.println("File not found: " + file_name);
-			pw.println("This DAS/2 server cannot currently handle request:    ");
-			pw.println(request.getRequestURL().toString());
-			return;
-		}
-
-		// Determine spanStart and spanEnd.  If it's an unranged query, then just make SpanEnd no larger than the filesize.
-		int spanStart = 0, spanEnd = 0;
-		if (ranges.size() == 0) {
-			if (seqfile.length() > (long) Integer.MAX_VALUE) {
-				spanEnd = Integer.MAX_VALUE;
-			} else {
-				spanEnd = (int) seqfile.length();
-			}
-		} else {
-			spanStart = span.getStart();
-			spanEnd = span.getEnd();
-		}
-
-		response.setContentType(FastaParser.getMimeType());
-		byte[] buf = FastaParser.readFASTA(seqfile, spanStart, spanEnd);
-		byte[] header = FastaParser.generateNewHeader(seqname, organism_name, spanStart, spanEnd);
-		OutputFormattedFasta(buf, header, response.getOutputStream());
-	}
-
-	// Write a formatted fasta file out to the ServletOutputStream.
-	private static final void OutputFormattedFasta(byte[] buf, byte[] header, ServletOutputStream sos)
-	throws IOException, IOException, IllegalArgumentException {
-		if (buf == null) {
-			return;
-		}
-
-		DataOutputStream dos = new DataOutputStream(sos);
-		try {
-			dos.write(header, 0, header.length);
-
-			byte[] newlineBuf = new byte[1];
-			newlineBuf[0] = '\n';
-
-			// Write out Fasta sequence, adding a newline after every LINELENGTH characters.
-			int lines = buf.length / FastaParser.LINELENGTH;
-			for (int i = 0; i < lines; i++) {
-				dos.write(buf, i * FastaParser.LINELENGTH, FastaParser.LINELENGTH);
-				dos.write(newlineBuf, 0, 1);
-			}
-			if (buf.length % FastaParser.LINELENGTH > 0) {
-				// Write remainder of last line out to buffer
-				dos.write(buf, lines * FastaParser.LINELENGTH, buf.length % FastaParser.LINELENGTH);
-				dos.write(newlineBuf, 0, 1);
-			}
-		} finally {
-			GeneralUtils.safeClose(dos);
-		}
-	}
 
 	private static final void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response, String date_init_string)
 	throws IOException {
@@ -1387,12 +1247,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						seqid = seqid.substring(sindex + 1);
 					}
 					seq = genome.getSeq(seqid);
-					System.out.println("Seq is " + seq.getID());
+					System.out.println("Seq is " + seq == null ? null : seq.getID());
 				}
 
-
-				handleNameQuery(
-						names, genome, seq, writerclass, output_format, response, xbase);
+				handleNameQuery(names, genome, seq, writerclass, response, xbase);
 				return;
 			}
 
@@ -1595,7 +1453,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	private void handleNameQuery(List<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class writerclass, String output_format, HttpServletResponse response, String xbase) {
+	private void handleNameQuery(
+			List<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class<? extends AnnotationWriter> writerclass,
+			HttpServletResponse response, String xbase) {
 		String name = names.get(0);
 		List<SeqSymmetry> result = ServerUtils.findNameInGenome(name, genome);
 		OutputStream outstream = null;

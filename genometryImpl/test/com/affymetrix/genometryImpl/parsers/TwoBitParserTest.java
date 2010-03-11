@@ -66,36 +66,36 @@ public class TwoBitParserTest {
 		testCase(6,7);						// even, odd
 		testCase(1,4);						// odd , even
 		testCase(1,5);						// odd , odd
-//		testCase(-1,3);						// Start out of range
-//		testCase(11,residues.length()+4);		// End out of range
-//		testCase(-5,residues.length()+5);      // Start and end out of range
+		testCase(-1,3);						// Start out of range
+		testCase(11,residues.length()+4);		// End out of range
+		testCase(-5,residues.length()+5);      // Start and end out of range
 
 		testCase(2,22);
 		testCase(6,7);
 		testCase(1,2);
 		testCase(5,15);
-//		testCase(-9,9);
-//		testCase(1,residues.length()+9);
-//		testCase(-15,residues.length()+15);
+		testCase(-9,9);
+		testCase(1,residues.length()+9);
+		testCase(-15,residues.length()+15);
 
 		testCase(0,2);
 		testCase(0,1);
 		testCase(1,2);
 		testCase(1,3);
-//		testCase(-11,15);
-//		testCase(10,total_residues+9);
-//		testCase(-11,total_residues+15);
-//
-//		testCase(0,0);						// 0 length
-//		testCase(1,0);						// Negative length
-//		testCase(total_residues,0);
-//		testCase(total_residues,-4);
-//		testCase(total_residues,total_residues);
-//		testCase(total_residues,total_residues+1);
-//		testCase(total_residues+1,total_residues);
-//		testCase(total_residues+1,total_residues+1);
-//		testCase(total_residues+1,total_residues+5);
-//		testCase(Integer.MIN_VALUE,Integer.MAX_VALUE);
+		testCase(-11,15);
+		testCase(10,residues.length()+9);
+		testCase(-11,residues.length()+15);
+
+		testCase(0,0);						// 0 length
+		testCase(1,0);						// Negative length
+		testCase(residues.length(),0);
+		testCase(residues.length(),-4);
+		testCase(residues.length(),residues.length());
+		testCase(residues.length(),residues.length()+1);
+		testCase(residues.length()+1,residues.length());
+		testCase(residues.length()+1,residues.length()+1);
+		testCase(residues.length()+1,residues.length()+5);
+		testCase(Integer.MIN_VALUE,Integer.MAX_VALUE);
 	}
 
 	public void testCase(int start, int end) throws Exception

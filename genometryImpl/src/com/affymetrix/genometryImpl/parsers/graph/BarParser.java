@@ -191,9 +191,7 @@ public final class BarParser implements AnnotationWriter {
 			}
 			byte[] buf = new byte[bytes_to_read];
 			dis.readFully(buf);
-			if (dis instanceof InputStream) {
-				((InputStream) dis).close();
-			}
+			((InputStream) dis).close();
 
 			DataInputStream bufstr = new DataInputStream(new ByteArrayInputStream(buf));
 			int[] xcoord = new int[points_to_read];
@@ -255,9 +253,7 @@ public final class BarParser implements AnnotationWriter {
 			// now output bar file slice??
 
 		} finally {
-			if (dis instanceof InputStream) {
-				GeneralUtils.safeClose((InputStream) dis);
-			}
+			GeneralUtils.safeClose((InputStream) dis);
 		}
 		return graf;
 	}
@@ -703,9 +699,9 @@ public final class BarParser implements AnnotationWriter {
 			}
 		}
 		if (seq == null) {
-			if (bar2 && groupname != null) {
+			/*if (bar2 && groupname != null) {
 				seqversion = groupname + ":" + seqversion;
-			}
+			}*/
 			seq = seq_group.addSeq(seqname, 1000);
 		}
 		if (DEBUG_READ) {

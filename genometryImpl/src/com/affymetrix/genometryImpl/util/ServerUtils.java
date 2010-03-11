@@ -120,15 +120,19 @@ public abstract class ServerUtils {
 	public static final void loadSynonyms(String synonym_file) {
 		File synfile = new File(synonym_file);
 		if (synfile.exists()) {
-			System.out.println("Synonym file found, loading synonyms");
+			System.out.println("Synonym file " + synonym_file + " found, loading synonyms");
 			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+			FileInputStream fis = null;
 			try {
-				lookup.loadSynonyms(new FileInputStream(synfile));
+				fis = new FileInputStream(synfile);
+				lookup.loadSynonyms(fis);
 			} catch (Exception ex) {
 				ex.printStackTrace();
+			} finally {
+				GeneralUtils.safeClose(fis);
 			}
 		} else {
-			System.out.println("Synonym file not found, therefore not using synonyms");
+			System.out.println("Synonym file " + synonym_file + " not found, therefore not using synonyms");
 		}
 	}
 

@@ -21,24 +21,10 @@ public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 	int base_coord;
 	int numeric_id;
 
-	/*public EfficientSnpSym(SeqSymmetry sym_parent, int coord, int nid) {
-		this(sym_parent, coord);
-		numeric_id = nid;
-	}*/
-
 	public EfficientSnpSym(SeqSymmetry sym_parent, int coord) {
 		parent = sym_parent;
 		base_coord = coord;
 	}
-
-	/*
-	   public EfficientSnpSym(int base_coord, BioSeq seq, String id_prefix, int numeric_id) {
-	   this.base_coord = base_coord;
-	   this.seq = seq;
-	   this.id_prefix = id_prefix;
-	   this.numeric_id = numeric_id;
-	   }
-	   */
 
 	/* SeqSymmetry implementation */
 
@@ -83,7 +69,6 @@ public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 	public SeqSymmetry getChild(int index) { return null; }
 
 	public String getID() {
-		//    return id_prefix + Integer.toString(numeric_id);
 		return Integer.toString(numeric_id);
 	}
 

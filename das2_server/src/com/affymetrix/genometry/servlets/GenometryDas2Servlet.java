@@ -1709,7 +1709,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String xbase) {
 		try {
 			if (DEBUG) {
-				System.out.println("overlapping annotations found: " + (result==null ? result : result.size()));
+				System.out.println("overlapping annotations found: " + (result==null ? null : result.size()));
 			}
 			if (result == null) {
 				response.sendError(

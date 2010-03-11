@@ -70,17 +70,17 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		buffer.rewind();
 	}
 
-	public String substring(int start, int length) {
+	public String substring(int start, int end) {
 		FileChannel channel = null;
-		char[] residues = new char[length];
+		int requiredLength = end - start;
+		char[] residues = new char[requiredLength];
 		byte[] valueBuffer = new byte[BUFFER_SIZE];
-		long end = start + length;
 		long residuePosition = start;
 		int residueCounter = 0;
 		long startOffset = start / RESIDUES_PER_BYTE;
 		long bytesToRead = calculateBytesToRead(start, end);
-		int beginLength = RESIDUES_PER_BYTE - start % 4;
-		int endLength = (int) end % RESIDUES_PER_BYTE;
+		int beginLength = Math.min(RESIDUES_PER_BYTE - start % 4,requiredLength);
+		int endLength = Math.min(end % RESIDUES_PER_BYTE,requiredLength);
 		if (bytesToRead == 1) {
 			if (start % RESIDUES_PER_BYTE == 0) {
 				beginLength = 0;
@@ -108,8 +108,11 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 			for (int i = 0; i < bytesToRead; i += BUFFER_SIZE) {
 				buffer.get(valueBuffer);
-				for (int k = 0; k < BUFFER_SIZE && residueCounter < length; k++) {
-					if (k == 0 && beginLength != 0) {
+				for (int k = 0; k < BUFFER_SIZE && residueCounter < requiredLength; k++) {
+
+					if(bytesToRead == 1){
+						temp = parseByte(valueBuffer[k],start%RESIDUES_PER_BYTE,requiredLength);
+					}else if (k == 0 && beginLength != 0) {
 						temp = parseByte(valueBuffer[k], beginLength, true);
 					} else if (k == bytesToRead - 1 && endLength != 0) {
 						temp = parseByte(valueBuffer[k], endLength, false);
@@ -128,7 +131,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 				channel.position(channel.position() + BUFFER_SIZE);
 				loadBuffer(channel, buffer);
 			}
-			System.out.println("Total residues :"+residueCounter);
+			//System.out.println("Total residues :"+residueCounter);
 				
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -212,6 +215,17 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return newTemp;
 	}
 
+	private char[] parseByte(byte valueBuffer, int position, int length) {
+		char temp[] = parseByte(valueBuffer);
+		char newTemp[] = new char[length];
+
+		for(int i=0; i<length; i++){
+			newTemp[i] = temp[position+i];
+		}
+
+		return newTemp;
+	}
+	
 	private char[] parseByte(byte valueBuffer){
 		char temp[] = new char[RESIDUES_PER_BYTE];
 		int dna, value = valueBuffer & BYTE_MASK;

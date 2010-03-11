@@ -70,19 +70,19 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		buffer.rewind();
 	}
 
-	public String substring(int offset, int length) {
+	public String substring(int start, int length) {
 		FileChannel channel = null;
 		char[] residues = new char[length];
 		byte[] valueBuffer = new byte[BUFFER_SIZE];
-		long end = offset + length;
-		long residuePosition = offset;
+		long end = start + length;
+		long residuePosition = start;
 		int residueCounter = 0;
-		long startOffset = offset / RESIDUES_PER_BYTE;
-		long bytesToRead = calculateBytesToRead(offset, end);
-		int beginLength = RESIDUES_PER_BYTE - offset % 4;
+		long startOffset = start / RESIDUES_PER_BYTE;
+		long bytesToRead = calculateBytesToRead(start, end);
+		int beginLength = RESIDUES_PER_BYTE - start % 4;
 		int endLength = (int) end % RESIDUES_PER_BYTE;
 		if (bytesToRead == 1) {
-			if (offset % RESIDUES_PER_BYTE == 0) {
+			if (start % RESIDUES_PER_BYTE == 0) {
 				beginLength = 0;
 			} else {
 				endLength = 0;
@@ -91,8 +91,8 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 		MutableSeqSymmetry tempNBlocks = nBlocks;
 		MutableSeqSymmetry tempMaskBlocks = maskBlocks;
-		updateBlocks(offset, tempNBlocks);
-		updateBlocks(offset, tempMaskBlocks);
+		updateBlocks(start, tempNBlocks);
+		updateBlocks(start, tempMaskBlocks);
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		buffer.order(this.byteOrder);
 		try {
@@ -148,17 +148,8 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		if(start/RESIDUES_PER_BYTE == end/RESIDUES_PER_BYTE)
 			return 1;
 
-		long length = end - start;
-		long bytesToRead = length/RESIDUES_PER_BYTE;
-
-		int endLength = (int)end % RESIDUES_PER_BYTE;
-		int lengthExtra = length % RESIDUES_PER_BYTE == 0 ? 0 : 1;
-		int endExtra = endLength == 0 ? 0 : 1;
-
-		if(length <= RESIDUES_PER_BYTE)
-			bytesToRead = bytesToRead + endExtra + lengthExtra;
-		else
-			bytesToRead = bytesToRead + Math.max(endExtra,lengthExtra);
+		int endExtra = end % RESIDUES_PER_BYTE == 0 ? 0 : 1;
+		long bytesToRead = (end/RESIDUES_PER_BYTE) - (start/RESIDUES_PER_BYTE) + endExtra;
 
 		return bytesToRead;
 	}

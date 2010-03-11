@@ -1,15 +1,14 @@
 package com.affymetrix.genometry.servlets;
 
-public final class Das2Coords {
-	String urid;
-	String authority;
-	String taxid;
-	String version;
-	String source;
-	String test_range;
+final class Das2Coords {
+	private final String urid;
+	private final String authority;
+	private final String taxid;
+	private final String version;
+	private final String source;
+	private final String test_range;
 
-
-	public Das2Coords(String urid, String authority, String taxid,
+	Das2Coords(String urid, String authority, String taxid,
 			String version, String source, String test_range) {
 		this.urid = urid;
 		this.authority = authority;
@@ -19,11 +18,11 @@ public final class Das2Coords {
 		this.test_range = test_range;
 	}
 
-	public String getURI() { return urid; }
-	public String getAuthority() { return authority; }
-	public String getTaxid() { return taxid; }
-	public String getVersion() { return version; }
-	public String getSource() { return source; }
-	public String getTestRange() { return test_range; }
+	String getURI() { return urid; }
+	String getAuthority() { return authority; }
+	String getTaxid() { return taxid; }
+	String getVersion() { return version; }
+	String getSource() { return source; }
+	String getTestRange() { return test_range; }
 
 }

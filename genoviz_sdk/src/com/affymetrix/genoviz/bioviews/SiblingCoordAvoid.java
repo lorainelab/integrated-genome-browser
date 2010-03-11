@@ -36,19 +36,16 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 			GlyphI child, ViewI view) {
 		Rectangle2D.Double childbox, siblingbox;
 		childbox = child.getCoordBox();
-		List children = parent.getChildren();
+		List<GlyphI> children = parent.getChildren();
 		if (children == null) { return null; }
 
 		List<GlyphI> sibsinrange = new ArrayList<GlyphI>();
-		GlyphI sibling;
-		int i, j;
-		for (i=0; i<children.size(); i++) {
-			sibling = (GlyphI)children.get(i);
+		for (GlyphI sibling : children) {
 			siblingbox = sibling.getCoordBox();
-			if (!(siblingbox.x > (childbox.x+childbox.width) ||
-						((siblingbox.x+siblingbox.width) < childbox.x)) ) {
+			if (!(siblingbox.x > (childbox.x + childbox.width)
+					|| ((siblingbox.x + siblingbox.width) < childbox.x))) {
 				sibsinrange.add(sibling);
-						}
+			}
 		}
 
 		this.before.x = childbox.x;
@@ -58,8 +55,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 		boolean childMoved = true;
 		while (childMoved) {
 			childMoved = false;
-			for (j=0; j<sibsinrange.size(); j++) {
-				sibling = sibsinrange.get(j);
+			for (GlyphI sibling : children) {
 				if (sibling == child) { continue; }
 				siblingbox = sibling.getCoordBox();
 				if (child.hit(siblingbox, view) ) {

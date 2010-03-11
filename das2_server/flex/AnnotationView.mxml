@@ -23,7 +23,7 @@
     id="verifyDAS2Refresh" 
     url="genopub/verify"
     resultFormat="e4x"
-    showBusyCursor="false"
+    showBusyCursor="true" 
     result="onVerifyDAS2Refresh(event)"
     fault="parentApplication.onFailHttpRequest('Failed to verify genome versions for DAS/2 Server reload', event)"
     method="GET"

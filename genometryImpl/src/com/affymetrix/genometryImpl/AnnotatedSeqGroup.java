@@ -101,22 +101,21 @@ public class AnnotatedSeqGroup {
 	}
 	
 	public final boolean isAuthorized(AnnotSecurity annotSecurity, String type) {
-		 boolean isAuthorized =  annotSecurity.isAuthorized(this.getID(), type, getAnnotationId(type));
-	     Logger.getLogger(AnnotatedSeqGroup.class.getName()).fine((isAuthorized ? "Showing  " : "Blocking ") + " Annotation " + type + " ID=" + getAnnotationId(type));
-		 return isAuthorized;
+		boolean isAuthorized = annotSecurity == null || annotSecurity.isAuthorized(this.getID(), type, getAnnotationId(type));
+		Logger.getLogger(AnnotatedSeqGroup.class.getName()).fine((isAuthorized ? "Showing  " : "Blocking ") + " Annotation " + type + " ID=" + getAnnotationId(type));
+		return isAuthorized;
 	}
 	
 	public final Map<String, Object> getProperties(AnnotSecurity annotSecurity, String type) {
-		Map<String, Object> props = annotSecurity.getProperties(this.getID(), type, getAnnotationId(type));
-		return props;
+		return annotSecurity == null ? null : annotSecurity.getProperties(this.getID(), type, getAnnotationId(type));
 	}
 	
 	public final boolean isBarGraphData(String data_root, AnnotSecurity annotSecurity, String type) {
-		 return annotSecurity.isBarGraphData(data_root, this.getID(), type, getAnnotationId(type));
+		return annotSecurity != null && annotSecurity.isBarGraphData(data_root, this.getID(), type, getAnnotationId(type));
 	}
 	
 	public final boolean isUseqGraphData(String data_root, AnnotSecurity annotSecurity, String type) {
-		 return annotSecurity.isUseqGraphData(data_root, this.getID(), type, getAnnotationId(type));
+		return annotSecurity != null && annotSecurity.isUseqGraphData(data_root, this.getID(), type, getAnnotationId(type));
 	}
 	
 

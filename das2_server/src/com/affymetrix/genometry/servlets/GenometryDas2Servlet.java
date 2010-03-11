@@ -44,7 +44,6 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -689,7 +688,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		} else if (path_info.endsWith(refresh_query)) {
 			handleRefreshRequest(request, response);
 		} else {
-			AnnotatedSeqGroup genome = getGenome(request);
+			AnnotatedSeqGroup genome = getGenome(path_info);
 			if (genome == null) {
 				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
 				return;
@@ -711,8 +710,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private GenoPubSecurity getGenoPubSecurity(HttpServletRequest request) {
+		if (!is_genometry_genopub_mode) {
+			return null;
+		}
 
 		GenoPubSecurity genoPubSecurity = null;
+
 		// Get the GenoPubSecurity    
 		try {
 			genoPubSecurity = GenoPubSecurity.class.cast(request.getSession().getAttribute(this.getClass().getName() + GenoPubSecurity.SESSION_KEY));
@@ -745,17 +748,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * Extracts name of (versioned?) genome from servlet request,
 	 *    and uses to retrieve AnnotatedSeqGroup (genome) from GenometryModel
 	 */
-	private static final AnnotatedSeqGroup getGenome(HttpServletRequest request) {
-		String path_info = request.getPathInfo();
-		if (path_info == null) {
-			return null;
-		}
+	private static final AnnotatedSeqGroup getGenome(String path_info) {
 		int last_slash = path_info.lastIndexOf('/');
 		int prev_slash = path_info.lastIndexOf('/', last_slash - 1);
 		String genome_name = path_info.substring(prev_slash + 1, last_slash);
 		AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_name);
 		if (genome == null) {
-			System.out.println("unknown genome version: '" + genome_name + "' with request: " + request.getPathInfo());
+			System.out.println("unknown genome version: '" + genome_name + "' with request: " + path_info);
 		}
 		return genome;
 	}
@@ -773,15 +772,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		if (queryString == null) {
 			System.out.println("No query string, aborting");
 			return;
-		}
-
-		String sequence_directory = null;
-		try {
-			// Get the  genopub security which will determine the sequence directory
-			GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
-			sequence_directory = genoPubSecurity.getSequenceDirectory(data_root, genome);
-		} catch (Exception e) {
-			throw new IOException(e.getMessage());
 		}
 
 		List<String> formats = new ArrayList<String>();
@@ -811,13 +801,24 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			format = formats.get(0);
 		}
 
-		// PhaseI: retrieval of whole chromosome in raw format
+		String sequence_directory = data_root + genome.getOrganism() + "/" + genome.getID() + "/dna/";
+		if (is_genometry_genopub_mode) {
+			try {
+				// Get the  genopub security which will determine the sequence directory
+				GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
+				sequence_directory = genoPubSecurity.getSequenceDirectory(data_root, genome);
+			} catch (Exception e) {
+				throw new IOException(e.getMessage());
+			}
+		}
+
+		// retrieval of partial chromosome in raw format
 		if (format.equals("raw")) {
 			ServletUtils.retrieveRAW(ranges, span, sequence_directory, seqname, response, request);
 			return;
 		}
 
-		// PhaseII: retrieval of whole chromosome in bnib format
+		// retrieval of whole chromosome in bnib format
 		if (format.equals("bnib")) {
 			ServletUtils.retrieveBNIB(sequence_directory, seqname, response, request);
 			return;
@@ -936,7 +937,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// Get the  genopub security which will determine which resources (annotations)
 		// are authorized for this user.
-		this.getGenoPubSecurity(request);
 
 		response.setContentType(TYPES_CONTENT_TYPE);
 

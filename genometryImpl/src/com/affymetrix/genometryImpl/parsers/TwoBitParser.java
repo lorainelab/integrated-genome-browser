@@ -46,15 +46,12 @@ public final class TwoBitParser {
 	/** buffer for outputting */
 	private static int BUFSIZE = 65536;
 
-	private File file;
-
-    public BioSeq parse(File file, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
-		this.file = file;
+    public static BioSeq parse(File file, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
         FileChannel channel = new RandomAccessFile(file, "r").getChannel();
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		loadBuffer(channel, buffer);
         int seq_count = readFileHeader(buffer);
-        BioSeq seq = readSequenceIndex(channel, buffer, seq_count, seq_group);
+        BioSeq seq = readSequenceIndex(file, channel, buffer, seq_count, seq_group);
 		GeneralUtils.safeClose(channel);
 		return seq;
     }
@@ -93,14 +90,14 @@ public final class TwoBitParser {
 	 * Load data from the channel into the buffer.  This convenience method is
 	 * used to ensure that the buffer has the correct endian and is rewound.
 	 */
-	private void loadBuffer(FileChannel channel, ByteBuffer buffer) throws IOException {
+	private static void loadBuffer(FileChannel channel, ByteBuffer buffer) throws IOException {
 		buffer.rewind();
 		channel.read(buffer);
 		//buffer.order(byteOrder);
 		buffer.rewind();
 	}
 
-    private int readFileHeader(ByteBuffer buffer) throws IOException {
+    private static int readFileHeader(ByteBuffer buffer) throws IOException {
         /* Java is big endian so try that first */
         int magic = buffer.getInt();
 
@@ -129,7 +126,7 @@ public final class TwoBitParser {
         return seq_count;
     }
 
-    private void readBlocks(ByteBuffer buffer, BioSeq seq, MutableSeqSymmetry sym) throws IOException {
+    private static void readBlocks(ByteBuffer buffer, BioSeq seq, MutableSeqSymmetry sym) throws IOException {
 		//xBlockCount, where x = n OR mask
 		int block_count = buffer.getInt();
 		System.out.println("I want " + block_count + " blocks");
@@ -147,7 +144,7 @@ public final class TwoBitParser {
 
     }
 
-    private BioSeq readSequenceIndex(FileChannel channel, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
+    private static BioSeq readSequenceIndex(File file, FileChannel channel, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
         String name;
         int name_length;
 		long offset, position;
@@ -168,11 +165,11 @@ public final class TwoBitParser {
 		offset = buffer.getInt() & INT_MASK;
 
 		System.out.println("Sequence '" + name + "', offset " + offset);
-		return readSequenceHeader(channel, buffer.order(), offset, seq_group, name);
+		return readSequenceHeader(file, channel, buffer.order(), offset, seq_group, name);
 		//}
     }
 
-    private BioSeq readSequenceHeader(FileChannel channel, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
+    private static BioSeq readSequenceHeader(File file, FileChannel channel, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		buffer.order(order);
 		MutableSeqSymmetry nBlocks    = new SimpleMutableSeqSymmetry();
@@ -212,7 +209,7 @@ public final class TwoBitParser {
 		return seq;
     }
 
-	private long updateBuffer(FileChannel channel, ByteBuffer buffer, long position) throws IOException {
+	private static long updateBuffer(FileChannel channel, ByteBuffer buffer, long position) throws IOException {
 		channel.position(position - buffer.remaining());
 		loadBuffer(channel, buffer);
 		return channel.position();

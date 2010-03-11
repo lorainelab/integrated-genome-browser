@@ -67,9 +67,9 @@ public final class TwoBitParser {
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
-	public static boolean parse(File file, int start, int length, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(File file, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
 		BioSeq seq = parse(file);
-		return writeAnnotations(seq,start,length,out);
+		return writeAnnotations(seq,start,end,out);
 	}
 
 	public static boolean parse(File file, AnnotatedSeqGroup seq_group, OutputStream out) throws FileNotFoundException, IOException {
@@ -77,9 +77,9 @@ public final class TwoBitParser {
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
-	public static boolean parse(File file, AnnotatedSeqGroup seq_group, int start, int length, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(File file, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
 		BioSeq seq = parse(file,seq_group);
-		return writeAnnotations(seq,start,length,out);
+		return writeAnnotations(seq,start,end,out);
 	}
 	
     private static String getString(ByteBuffer buffer, int length) {
@@ -232,15 +232,15 @@ public final class TwoBitParser {
 		return "binary/2bit";
 	}
 
-	private static boolean writeAnnotations(BioSeq seq, int start, int length, OutputStream outstream)
+	private static boolean writeAnnotations(BioSeq seq, int start, int end, OutputStream outstream)
 	{
 		if (seq.getResiduesProvider() == null) {
 			return false;
 		}
 		// sanity checks
 		start = Math.max(0, start);
-		length = Math.max(length, start);
-		length = Math.min(length, start+seq.getResiduesProvider().getLength());
+		end = Math.max(end, start);
+		end = Math.min(end, start+seq.getResiduesProvider().getLength());
 
 		DataOutputStream dos = null;
 		try
@@ -248,8 +248,8 @@ public final class TwoBitParser {
 			dos = new DataOutputStream(new BufferedOutputStream(outstream));
 
 			// Only keep BUFSIZE characters in memory at one time
-			for (int i=0;i<length;i+=BUFSIZE) {
-				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, length));
+			for (int i=start;i<end;i+=BUFSIZE) {
+				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, end));
 				dos.writeBytes(outString);
 			}
 			dos.flush();

@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import org.junit.Before;
@@ -77,8 +78,8 @@ public class TwoBitParserTest {
 	public void testCase(int start, int end) throws Exception
 	{
 		sb = new StringBuffer();
-		//ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-		BioSeq seq = TwoBitParser.parse(infile);
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		boolean result = TwoBitParser.parse(infile,start,end,outStream);
 
 		if (start < end) {
 			start = Math.max(0, start);
@@ -93,9 +94,9 @@ public class TwoBitParserTest {
 			end = 0;
 		}
 
-		//assertTrue(result);
-		assertEquals(input_string.substring(start, end),seq.getResidues(start, end));
+		assertTrue(result);
+		assertEquals(input_string.substring(start, end),outStream.toString());
 		//System.out.println(input_string.substring(start, end) + "==" +outstream.toString());
-		//outstream.close();
+		GeneralUtils.safeClose(outStream);
 	}
 }

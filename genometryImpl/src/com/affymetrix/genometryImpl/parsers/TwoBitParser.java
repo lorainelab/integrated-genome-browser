@@ -191,8 +191,9 @@ public final class TwoBitParser {
 		//dnaSize
         long size = buffer.getInt() & INT_MASK;
 
-		if(DEBUG)
+		if(DEBUG){
 			System.out.println("size is " + size + " bases");
+		}
 		
 		residueOffset += INT_SIZE;
 
@@ -265,10 +266,10 @@ public final class TwoBitParser {
 		//File f = new File("genometryImpl/test/data/2bit/at.2bit");
 		try {
 			BioSeq seq = TwoBitParser.parse(f);
-			int start = 6;
-			int length = 7;
-			System.out.println("Expected :"+input_string.substring(start, start + length));
-			System.out.println("Result   :"+seq.getResidues(start,length));
+			int start = 7;
+			int end = 8;
+			System.out.println("Expected :"+input_string.substring(start, end));
+			System.out.println("Result   :"+seq.getResidues(start,end));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

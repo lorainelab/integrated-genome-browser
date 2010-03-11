@@ -74,27 +74,27 @@ public class TwoBitParserTest {
 //		testCase(Integer.MIN_VALUE,Integer.MAX_VALUE);
 	}
 
-	public void testCase(int start, int length) throws Exception
+	public void testCase(int start, int end) throws Exception
 	{
 		sb = new StringBuffer();
 		//ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 		BioSeq seq = TwoBitParser.parse(infile);
 
-		if (start < start + length) {
+		if (start < end) {
 			start = Math.max(0, start);
 			start = Math.min(total_residues, start);
 
-			length = Math.max(0, start + length);
-			length = Math.min(total_residues, start + length);
+			end = Math.max(0, end);
+			end = Math.min(total_residues, end);
 		}
 		else
 		{
 			start = 0;
-			length = 0;
+			end = 0;
 		}
 
 		//assertTrue(result);
-		assertEquals(input_string.substring(start, start + length),seq.getResidues(start, length));
+		assertEquals(input_string.substring(start, end),seq.getResidues(start, end));
 		//System.out.println(input_string.substring(start, end) + "==" +outstream.toString());
 		//outstream.close();
 	}

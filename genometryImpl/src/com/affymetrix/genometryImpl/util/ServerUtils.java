@@ -24,7 +24,6 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -80,8 +79,11 @@ public abstract class ServerUtils {
 			if (lift_file.exists()) {
 				System.out.println("parsing " + liftAll + " for: " + genome_version);
 				InputStream liftstream = new FileInputStream(lift_file);
-				LiftParser.parse(liftstream, gmodel, genome_version);
-				GeneralUtils.safeClose(liftstream);
+				try {
+					LiftParser.parse(liftstream, gmodel, genome_version);
+				} finally {
+					GeneralUtils.safeClose(liftstream);
+				}
 			} else {
 				System.out.println("couldn't find " + modChromInfo + " or " + liftAll + " for genome!!! " + genome_version);
 			}
@@ -428,22 +430,34 @@ public abstract class ServerUtils {
 				tempGenome, dataRoot, file, loadedSyms, iWriter, annotTypeName, returnTypeName);
 	}	
 
-	public static void createDirIfNecessary(String dirName) {
+	public static boolean createDirIfNecessary(String dirName) {
 		// Make sure the appropriate .indexed/species/version/chr directory exists.
 		// If not, create it.
 		File newFile = new File(dirName);
 		if (!newFile.exists()) {
 			if (!new File(dirName).mkdirs()) {
 				System.out.println("ERROR: Couldn't create directory: " + dirName);
-				System.exit(-1);
+				return false;
 			} else {
 				if (DEBUG) {
 					System.out.println("Created new directory: " + dirName);
 				}
 			}
 		}
+		return true;
 	}
 
+	/**
+	 * Load an annotations file (indexed or non-indexed), and return the symmetries.
+	 * @param current_file
+	 * @param type_name
+	 * @param annotList
+	 * @param genome
+	 * @param isIndexed
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	private static List loadAnnotFile(File current_file, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException, IOException {
 		String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
 		InputStream istr = null;
@@ -791,7 +805,7 @@ public abstract class ServerUtils {
 					}
 				}
 				
-		        if (genome.isAuthorized(annotSecurity, type)) {
+		        if (annotSecurity == null || genome.isAuthorized(annotSecurity, type)) {
 					genome_types.put(type, new SimpleDas2Type(type, flist, genome.getProperties(annotSecurity, type)));
 		        }
 			}
@@ -804,7 +818,7 @@ public abstract class ServerUtils {
 				flist.addAll(iSyms.iWriter.getFormatPrefList());
 				
 			    
-		        if (genome.isAuthorized(annotSecurity, type)) {
+		        if (annotSecurity == null || genome.isAuthorized(annotSecurity, type)) {
 					genome_types.put(type, new SimpleDas2Type(type, flist, genome.getProperties(annotSecurity, type)));
 		        }
 

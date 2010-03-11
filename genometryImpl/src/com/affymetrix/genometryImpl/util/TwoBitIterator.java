@@ -2,6 +2,8 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSeqSymmetry;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -89,10 +91,9 @@ public final class TwoBitIterator implements SearchableCharIterator {
 			}
 		}
 
-		MutableSeqSymmetry tempNBlocks = nBlocks;
-		MutableSeqSymmetry tempMaskBlocks = maskBlocks;
-		updateBlocks(start, tempNBlocks);
-		updateBlocks(start, tempMaskBlocks);
+		MutableSeqSymmetry tempNBlocks = GetBlocks(start, nBlocks);
+		MutableSeqSymmetry tempMaskBlocks = GetBlocks(start, maskBlocks);
+		
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		buffer.order(this.byteOrder);
 		try {
@@ -157,20 +158,19 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return bytesToRead;
 	}
 
-	private void updateBlocks(long start, MutableSeqSymmetry blocks){
-		List<SeqSpan> removeSpans = new ArrayList<SeqSpan>();
+	private MutableSeqSymmetry GetBlocks(long start, MutableSeqSymmetry blocks){
+
+		MutableSeqSymmetry tempBlocks =  new SimpleMutableSeqSymmetry();
 
 		for(int i=0; i<blocks.getSpanCount(); i++){
 			SeqSpan span = blocks.getSpan(i);
-			if(start > span.getStart() && start > span.getEnd()){
-					removeSpans.add(span);
+			if(span.getStart() >= start){
+				tempBlocks.addSpan(span);
 			}
 
 		}
 
-		for(SeqSpan span: removeSpans){
-			blocks.removeSpan(span);
-		}
+		return tempBlocks;
 	}
 	private SeqSpan processResidue(long residuePosition, char temp[], int pos, SeqSpan block, MutableSeqSymmetry blocks, boolean isMask){
 		if (block == null) {

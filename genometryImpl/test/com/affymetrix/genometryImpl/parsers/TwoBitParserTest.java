@@ -14,30 +14,55 @@ import static org.junit.Assert.*;
  */
 public class TwoBitParserTest {
 	
-	String input_string = "ACTGGGTCTCAGTACTAGGAATTCCGTCATAGCTAAA";
-	String infile_name = "test/data/2bit/noblocks.2bit";
-	File infile = new File(infile_name);
-	StringBuffer sb;
-	int total_residues = input_string.length();
+	String noblocks = "ACTGGGTCTCAGTACTAGGAATTCCGTCATAGCTAAA";
+	String noblocks_file = "test/data/2bit/noblocks.2bit";
+	String nblocks = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
+	String nblocks_file = "test/data/2bit/nblocks.2bit";
+	String residues, file;
+	File infile = null;
+
 
 	@Before
 	public void setup() throws Exception
 	{
-		assertTrue(infile.exists());
+		assertTrue(new File(noblocks_file).exists());
+		assertTrue(new File(nblocks_file).exists());
 	}
 
 	@Test
+	public void testOriginals() throws Exception{
+		residues = noblocks;
+		file = noblocks_file;
+		testOriginal();
+
+		residues = nblocks;
+		file = nblocks_file;
+		testOriginal();
+
+	}
+
+	@Test
+	public void testCaseFiles() throws Exception{
+		residues = noblocks;
+		file = noblocks_file;
+		testCases();
+
+		residues = nblocks;
+		file = nblocks_file;
+		testCases();
+	}
+
 	public void testOriginal() throws Exception
 	{
-		sb = new StringBuffer();
+		infile = new File(file);
 		BioSeq seq= TwoBitParser.parse(infile);
-		assertEquals(seq.getResidues(),input_string);
+		assertEquals(seq.getResidues(),residues);
+		System.out.println(residues + "==" +seq.getResidues());
 	}
 
-	@Test
 	public void testCases() throws Exception
 	{
-		testCase(0,input_string.length());  //From begining to end
+		testCase(0,residues.length());  //From begining to end
 
 		testCase(4,18);						// even, even
 		testCase(6,7);						// even, odd
@@ -77,16 +102,16 @@ public class TwoBitParserTest {
 
 	public void testCase(int start, int end) throws Exception
 	{
-		sb = new StringBuffer();
+		infile = new File(file);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		boolean result = TwoBitParser.parse(infile,start,end,outStream);
 
 		if (start < end) {
 			start = Math.max(0, start);
-			start = Math.min(total_residues, start);
+			start = Math.min(residues.length(), start);
 
 			end = Math.max(0, end);
-			end = Math.min(total_residues, end);
+			end = Math.min(residues.length(), end);
 		}
 		else
 		{
@@ -95,8 +120,8 @@ public class TwoBitParserTest {
 		}
 
 		assertTrue(result);
-		assertEquals(input_string.substring(start, end),outStream.toString());
-		//System.out.println(input_string.substring(start, end) + "==" +outstream.toString());
+		assertEquals(residues.substring(start, end),outStream.toString());
+		System.out.println(residues.substring(start, end) + "==" +outStream.toString());
 		GeneralUtils.safeClose(outStream);
 	}
 }

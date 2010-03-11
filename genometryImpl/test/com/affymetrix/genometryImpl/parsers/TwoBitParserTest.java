@@ -18,6 +18,8 @@ public class TwoBitParserTest {
 	String noblocks_file = "test/data/2bit/noblocks.2bit";
 	String nblocks = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
 	String nblocks_file = "test/data/2bit/nblocks.2bit";
+	String maskblocks = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
+	String maskblocks_file = "test/data/2bit/maskblocks.2bit";
 	String residues, file;
 	File infile = null;
 
@@ -27,29 +29,25 @@ public class TwoBitParserTest {
 	{
 		assertTrue(new File(noblocks_file).exists());
 		assertTrue(new File(nblocks_file).exists());
-	}
-
-	@Test
-	public void testOriginals() throws Exception{
-		residues = noblocks;
-		file = noblocks_file;
-		testOriginal();
-
-		residues = nblocks;
-		file = nblocks_file;
-		testOriginal();
-
+//		assertTrue(new File(maskblocks_file).exists());
 	}
 
 	@Test
 	public void testCaseFiles() throws Exception{
 		residues = noblocks;
 		file = noblocks_file;
+		testOriginal();
 		testCases();
 
 		residues = nblocks;
 		file = nblocks_file;
+		testOriginal();
 		testCases();
+
+//		residues = maskblocks;
+//		file = maskblocks_file;
+//		testOriginal();
+//		testCases();
 	}
 
 	public void testOriginal() throws Exception
@@ -62,23 +60,23 @@ public class TwoBitParserTest {
 
 	public void testCases() throws Exception
 	{
-		testCase(0,residues.length());  //From begining to end
+		testCase(0,residues.length());		//From begining to end
 
 		testCase(4,18);						// even, even
 		testCase(6,7);						// even, odd
 		testCase(1,4);						// odd , even
 		testCase(1,5);						// odd , odd
 //		testCase(-1,3);						// Start out of range
-//		testCase(11,total_residues+4);		// End out of range
-//		testCase(-5,total_residues+5);      // Start and end out of range
+//		testCase(11,residues.length()+4);		// End out of range
+//		testCase(-5,residues.length()+5);      // Start and end out of range
 
 		testCase(2,22);
 		testCase(6,7);
 		testCase(1,2);
 		testCase(5,15);
 //		testCase(-9,9);
-//		testCase(1,total_residues+9);
-//		testCase(-15,total_residues+15);
+//		testCase(1,residues.length()+9);
+//		testCase(-15,residues.length()+15);
 
 		testCase(0,2);
 		testCase(0,1);

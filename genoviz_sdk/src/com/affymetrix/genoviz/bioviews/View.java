@@ -223,8 +223,8 @@ public class View implements ViewI, NeoPaintListener,
 
 		dst.x = (int) scratch_coords.x;
 		dst.y = (int) scratch_coords.y;
-		dst.width = (int) (scratch_coords.x + scratch_coords.width) - dst.x;
-		dst.height = (int) (scratch_coords.y + scratch_coords.height) - dst.y;
+		dst.width = (int) (scratch_coords.x - dst.x + scratch_coords.width);
+		dst.height = (int) (scratch_coords.y - dst.y + scratch_coords.height);
 
 		return dst;
 	}

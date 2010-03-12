@@ -3,15 +3,12 @@ package com.affymetrix.genometryImpl.util;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleSeqSymmetry;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -37,7 +34,6 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	private final File file;
 	private final long length, offset;
 	private final MutableSeqSymmetry nBlocks, maskBlocks;
-	//private final List<Segment> segments = new ArrayList<Segment>();
 	private final ByteOrder byteOrder;
 
 	public TwoBitIterator(File file, long length, long offset, ByteOrder byteOrder, MutableSeqSymmetry nBlocks, MutableSeqSymmetry maskBlocks) {
@@ -51,18 +47,6 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		if (this.length > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException("IGB can not handle sequences larger than " + Integer.MAX_VALUE + ".  Offending sequence length: " + length);
 		}
-
-//		int  current_start = 0;
-//		long current_offset = offset;
-//		SeqSpan block;
-//		for (int i=0; i < nBlocks.getSpanCount(); i++) {
-//			block = nBlocks.getSpan(i);
-//			if (block.getMin() > current_start) {
-//				segments.add(new Segment(current_start, block.getMin(), current_offset));
-//				current_offset += block.getMin() - current_start;
-//				current_start   = block.getMax();
-//			}
-//		}
 
 	}
 
@@ -131,14 +115,11 @@ public final class TwoBitIterator implements SearchableCharIterator {
 						maskBlock = processResidue(residuePosition, temp, j, maskBlock, tempMaskBlocks, true);
 						residues[residueCounter++] = temp[j];
 						residuePosition++;
-					}
-					//System.out.print(temp);
-				
+					}		
 				}
 				channel.position(channel.position() + BUFFER_SIZE);
 				loadBuffer(channel, buffer);
 			}
-			//System.out.println("Total residues :"+residueCounter);
 				
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -148,12 +129,11 @@ public final class TwoBitIterator implements SearchableCharIterator {
 			buffer = null;
 			tempNBlocks = null;
 			tempMaskBlocks = null;
-			System.gc();
 		}
 		return new String(residues);
 	}
 
-	private long calculateBytesToRead(long start, long end) {
+	private static long calculateBytesToRead(long start, long end) {
 
 		if(start/RESIDUES_PER_BYTE == end/RESIDUES_PER_BYTE)
 			return 1;
@@ -164,7 +144,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return bytesToRead;
 	}
 
-	private MutableSeqSymmetry GetBlocks(long start, MutableSeqSymmetry blocks){
+	private static MutableSeqSymmetry GetBlocks(long start, MutableSeqSymmetry blocks){
 
 		MutableSeqSymmetry tempBlocks =  new SimpleMutableSeqSymmetry();
 
@@ -179,7 +159,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 		return tempBlocks;
 	}
-	private SeqSpan processResidue(long residuePosition, char temp[], int pos, SeqSpan block, MutableSeqSymmetry blocks, boolean isMask){
+	private static SeqSpan processResidue(long residuePosition, char temp[], int pos, SeqSpan block, MutableSeqSymmetry blocks, boolean isMask){
 		if (block == null) {
 			block = GetNextBlock(blocks);
 		}
@@ -198,14 +178,14 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return block;
 	}
 
-	private SeqSpan GetNextBlock(MutableSeqSymmetry Blocks){
-		if(Blocks.getSpanCount() > 0)
+	private static SeqSpan GetNextBlock(MutableSeqSymmetry Blocks){
+		if(Blocks.getSpanCount() > 0) {
 			return Blocks.getSpan(0);
-		else
-			return null;
+		}
+		return null;
 	}
 
-	private char[] parseByte(byte valueBuffer, int size, boolean isFirst){
+	private static char[] parseByte(byte valueBuffer, int size, boolean isFirst){
 		char temp[] = parseByte(valueBuffer);
 		char newTemp[] = new char[size];
 
@@ -222,7 +202,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return newTemp;
 	}
 
-	private char[] parseByte(byte valueBuffer, int position, int length) {
+	private static char[] parseByte(byte valueBuffer, int position, int length) {
 		char temp[] = parseByte(valueBuffer);
 		char newTemp[] = new char[length];
 
@@ -233,7 +213,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return newTemp;
 	}
 	
-	private char[] parseByte(byte valueBuffer){
+	private static char[] parseByte(byte valueBuffer){
 		char temp[] = new char[RESIDUES_PER_BYTE];
 		int dna, value = valueBuffer & BYTE_MASK;
 
@@ -253,15 +233,4 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	public int getLength() {
 		return (int) length;
 	}
-
-//	private static final class Segment {
-//		protected final int start, end;
-//		protected final long offset;
-//
-//		protected Segment(int start, int end, long offset) {
-//			this.start  = start;
-//			this.end    = end;
-//			this.offset = offset;
-//		}
-//	}
 }

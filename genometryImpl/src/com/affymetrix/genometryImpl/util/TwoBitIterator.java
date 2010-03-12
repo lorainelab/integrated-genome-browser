@@ -29,7 +29,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	/** Character mask for translating binary into Java chars */
 	private static final int CHAR_MASK = 0x03;
 
-	private static final char[] BASES = { 'T', 'C', 'A', 'G', 't', 'c', 'a', 'g'};
+	private static final char[] BASES = { 'T', 'C', 'A', 'G'};
 
 	private final File file;
 	private final long length, offset;
@@ -50,12 +50,25 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 	}
 
+	/**
+	 * Load data of size of buffer into buffer from file channel.
+	 *
+	 * @param channel	File channel from which data is to be loaded.
+	 * @param buffer	Buffer in which data from file channel is read.
+	 * @throws IOException
+	 */
 	private void loadBuffer(FileChannel channel, ByteBuffer buffer) throws IOException {
 		buffer.rewind();
 		channel.read(buffer);
 		buffer.rewind();
 	}
 
+	/**
+	 * Reads file and returns residues starting from start and ending at end.
+	 * @param start		Start position.
+	 * @param end		End position.
+	 * @return			Returns string of residues.
+	 */
 	public String substring(int start, int end) {
 		FileChannel channel = null;
 
@@ -126,6 +139,12 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return new String(residues);
 	}
 
+	/**
+	 * Determines number of bytes to read in order to read all residues between start and end.
+	 * @param start		Start position of residue.
+	 * @param end		End position of residue.
+	 * @return			Returns number of bytes to be read.
+	 */
 	private static long calculateBytesToRead(long start, long end) {
 
 		if(start/RESIDUES_PER_BYTE == end/RESIDUES_PER_BYTE)
@@ -137,6 +156,12 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return bytesToRead;
 	}
 
+	/**
+	 * Get required number of block from blocks based upon start position.
+	 * @param start		Start position of residues.
+	 * @param blocks	Blocks. (Either maskBlocks or nBlocks)
+	 * @return			Returns required number of block.
+	 */
 	private static MutableSeqSymmetry GetBlocks(long start, MutableSeqSymmetry blocks){
 
 		MutableSeqSymmetry tempBlocks =  new SimpleMutableSeqSymmetry();
@@ -152,6 +177,17 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 		return tempBlocks;
 	}
+
+	/**
+	 * Process the residue if it falls into maskBlocks or nBlocks.
+	 * @param residuePosition	Actual residue position.
+	 * @param temp				Temporary arry in which residues are stored to processed.
+	 * @param pos				Position of residue in temporary array.
+	 * @param block				Current block.
+	 * @param blocks			maskBlocks or nBlocks.
+	 * @param isMask			Boolean variable to check if it maskBlocks or nBlocks. True for the maskBlocks and false for nBlocks.
+	 * @return					Returns current block.
+	 */
 	private static SeqSpan processResidue(long residuePosition, char temp[], int pos, SeqSpan block, MutableSeqSymmetry blocks, boolean isMask){
 		if (block == null) {
 			block = GetNextBlock(blocks);
@@ -171,6 +207,11 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return block;
 	}
 
+	/**
+	 * Gets next block from blocks.
+	 * @param Blocks	Blocks.
+	 * @return			Returns nextblock if present else returns null.
+	 */
 	private static SeqSpan GetNextBlock(MutableSeqSymmetry Blocks){
 		if(Blocks.getSpanCount() > 0) {
 			return Blocks.getSpan(0);
@@ -178,6 +219,17 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return null;
 	}
 
+	/**
+	 * Determines number of residues to be read from current byte.
+	 * @param valueBuffer		Byte from which residues are to read.
+	 * @param k					Byte position. Required for special cases. i.e. first or last byte.
+	 * @param bytesToRead		Total number of bytes to read.
+	 * @param start				Start position for requested residue.
+	 * @param requiredLength	Required lenght of residue. Need when only one byte is to read.
+	 * @param beginLength		Residue length of the first byte.
+	 * @param endLength			Residue length of the last byte.
+	 * @return					Returns the read residues.
+	 */
 	private char[] parseByte(byte valueBuffer, int k, long bytesToRead, int start, int requiredLength, int beginLength, int endLength) {
 		char temp[] = null;
 
@@ -194,6 +246,13 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return temp;
 	}
 
+	/**
+	 * Speacial case to read residues. i.e when it first or last byte.
+	 * @param valueBuffer	Byte from which residues are to be read.
+	 * @param size			Size of resides to be read.
+	 * @param isFirst		Boolean to determine if residues are to be read from first or last position. True for the first and false for last.
+	 * @return				Returns read residues.
+	 */
 	private static char[] parseByte(byte valueBuffer, int size, boolean isFirst){
 		char temp[] = parseByte(valueBuffer);
 		char newTemp[] = new char[size];
@@ -207,6 +266,13 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return newTemp;
 	}
 
+	/**
+	 * Special case to read residues. i.e. when only one byte is to read.
+	 * @param valueBuffer	Byte from which residues are to be read.
+	 * @param position		Position from residues are to be read.
+	 * @param length		Length of residues to be read.
+	 * @return				Returns read residues.
+	 */
 	private static char[] parseByte(byte valueBuffer, int position, int length) {
 		char temp[] = parseByte(valueBuffer);
 		char newTemp[] = new char[length];
@@ -217,7 +283,12 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 		return newTemp;
 	}
-	
+
+	/**
+	 * General case to read residues.
+	 * @param valueBuffer	Byte from which residues are to be read.
+	 * @return				Returns read residues. Returns character of size four.
+	 */
 	private static char[] parseByte(byte valueBuffer){
 		char temp[] = new char[RESIDUES_PER_BYTE];
 		int dna, value = valueBuffer & BYTE_MASK;
@@ -235,6 +306,10 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+	/**
+	 * Returns length of residues.
+	 * @return	Returns lenght of residues.
+	 */
 	public int getLength() {
 		return (int) length;
 	}

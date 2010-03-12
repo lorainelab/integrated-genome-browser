@@ -6,7 +6,6 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import javax.swing.*;
 
@@ -15,7 +14,7 @@ public abstract class Application {
 	public static final boolean CACHE_GRAPHS = true;
 	public final static boolean DEBUG_EVENTS = false;
 	protected final StatusBar status_bar;
-	private final List<String> progressStringList = new CopyOnWriteArrayList<String>(); // list of progress bar messages.
+	private final Set<String> progressStringList = new LinkedHashSet<String>(); // list of progress bar messages.
 	static Application singleton = null;
 	private final Map<Class, IPlugin> plugin_hash = new HashMap<Class, IPlugin>();
 
@@ -72,7 +71,7 @@ public abstract class Application {
 				setStatus("");
 				status_bar.progressBar.setVisible(false);
 			} else {
-				setNotLockedUpStatus(progressStringList.get(0));
+				setNotLockedUpStatus(progressStringList.iterator().next());
 			}
 		}
 	}

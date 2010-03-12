@@ -2,7 +2,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.Application;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.text.DecimalFormat;
+import javax.swing.GroupLayout.Alignment;
 
 public final class StatusBar extends JPanel {
 
@@ -47,30 +48,39 @@ public final class StatusBar extends JPanel {
 		status_ta = new JLabel("");
 		progressBar = new JProgressBar();
 		memory_ta = new JLabel("");
-		status_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		progressBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		// this border leaves some extra space, especially on the right side,
-		// so the Mac OS can put the "resize window" gui there
-		memory_ta.setBorder(
-				BorderFactory.createCompoundBorder(
-				BorderFactory.createBevelBorder(BevelBorder.LOWERED),
-				BorderFactory.createEmptyBorder(0, 12, 0, 15)));
+		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		memory_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,15));
 
 		status_ta.setToolTipText(tt_status);
+		progressBar.setMaximumSize(new Dimension(150, 5));
 		progressBar.setIndeterminate(true);
 		progressBar.setVisible(false);
 		memory_ta.setToolTipText(tt_status_memory);
+		memory_ta.setHorizontalAlignment(SwingConstants.TRAILING);
 
 		num_format = new DecimalFormat();
 		num_format.setMaximumFractionDigits(1);
 		num_format.setMinimumFractionDigits(1);
 
-		BorderLayout bl = new BorderLayout();
-		setLayout(bl);
+		GroupLayout layout = new GroupLayout(this);
+		setLayout(layout);
 
-		this.add(status_ta, BorderLayout.WEST);
-		this.add(progressBar, BorderLayout.CENTER);
-		this.add(memory_ta, BorderLayout.EAST);
+		layout.setAutoCreateContainerGaps(false);
+		layout.setAutoCreateGaps(true);
+		layout.setHonorsVisibility(false);
+
+		layout.setHorizontalGroup(layout.createSequentialGroup()
+				.addComponent(status_ta)
+				.addGap(1, 1, Short.MAX_VALUE)
+				.addComponent(progressBar)
+				.addComponent(memory_ta, 1, 200, 200));
+
+		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
+				.addComponent(status_ta)
+				.addGap(1, 1, Short.MAX_VALUE)
+				.addComponent(progressBar)
+				.addComponent(memory_ta));
 
 		JMenuItem gc_MI = new JMenuItem(performGcAction);
 		popup_menu.add(gc_MI);

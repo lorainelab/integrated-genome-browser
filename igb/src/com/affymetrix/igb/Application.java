@@ -18,7 +18,6 @@ public abstract class Application {
 	private final List<String> progressStringList = new CopyOnWriteArrayList<String>(); // list of progress bar messages.
 	static Application singleton = null;
 	private final Map<Class, IPlugin> plugin_hash = new HashMap<Class, IPlugin>();
-	private static final String leftPaddingString = "  ";	//padding for status bar
 
 	public Application() {
 		singleton = this;
@@ -67,7 +66,7 @@ public abstract class Application {
 		if (!progressStringList.remove(s)) {
 			Application.getApplicationLogger().fine("Didn't find progress message: " + s);
 		}
-		if (status_bar.getStatus().equals(leftPaddingString + s) || status_bar.getStatus().trim().length() == 0) {
+		if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
 			// Time to change status message.
 			if (progressStringList.isEmpty()) {
 				setStatus("");
@@ -83,7 +82,7 @@ public abstract class Application {
 	 * @param s
 	 */
 	private final synchronized void setNotLockedUpStatus(String s) {
-		status_bar.setStatus(leftPaddingString + s);
+		status_bar.setStatus(s);
 		status_bar.progressBar.setVisible(true);
 	}
 
@@ -101,7 +100,7 @@ public abstract class Application {
 	 *  @param echo  Whether to echo a copy to System.out.
 	 */
 	public final synchronized void setStatus(String s, boolean echo) {
-		status_bar.setStatus(leftPaddingString + s);
+		status_bar.setStatus(s);
 		if (echo && s != null && !s.isEmpty()) {
 			System.out.println(s);
 		}

@@ -3,6 +3,7 @@ package com.affymetrix.genometry.servlets;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.parsers.TwoBitParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -39,6 +40,22 @@ final class ServletUtils {
 				}
 			} finally {
 				GeneralUtils.safeClose(fis);
+			}
+			return;
+		}
+
+		file_name = sequence_directory + seqname + ".2bit";
+		seqfile = new File(file_name);
+		if (seqfile.exists()) {
+			response.setContentType("text/raw"); // set text type
+
+			if (ranges.size() != 0) {
+				int spanStart = 0, spanEnd = 0;
+				spanStart = span.getStart();
+				spanEnd = span.getEnd();
+				TwoBitParser.parse(seqfile, spanStart, spanEnd, response.getOutputStream());
+			} else {
+				TwoBitParser.parse(seqfile, response.getOutputStream());
 			}
 			return;
 		}

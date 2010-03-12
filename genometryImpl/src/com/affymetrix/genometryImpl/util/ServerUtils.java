@@ -290,7 +290,7 @@ public abstract class ServerUtils {
 
 	private static boolean isSequenceFile(File current_file) {
 		return (current_file.getName().equals("mod_chromInfo.txt") || current_file.getName().equals("liftAll.lft") ||
-				current_file.getName().endsWith(".bnib") || current_file.getName().endsWith(".fa"));
+				current_file.getName().endsWith(".bnib") || current_file.getName().endsWith(".fa") || current_file.getName().endsWith(".2bit"));
 	}
 
 

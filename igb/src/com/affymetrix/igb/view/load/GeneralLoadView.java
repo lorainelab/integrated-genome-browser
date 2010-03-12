@@ -294,8 +294,15 @@ public final class GeneralLoadView extends JComponent
 				for (String speciesName : speciesList) {
 					speciesCB.addItem(speciesName);
 				}
-				if (oldSpecies != null && speciesList.contains(oldSpecies)) {
+				if (oldSpecies == null) {
+					return;
+				}
+
+				if (speciesList.contains(oldSpecies)) {
 					speciesCB.setSelectedItem(oldSpecies);
+				} else {
+					// species CB changed
+					speciesCBChanged();
 				}
 			}
 

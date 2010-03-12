@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,6 +127,29 @@ public final class GeneralLoadUtils {
 		}
 
 		return gServer;
+	}
+
+	public static void removeServer(GenericServer server) {
+		Iterator<Map.Entry<String, List<GenericVersion>>> entryIterator = species2genericVersionList.entrySet().iterator();
+		Map.Entry<String, List<GenericVersion>> entry;
+		Iterator<GenericVersion> versionIterator;
+		GenericVersion version;
+
+		while (entryIterator.hasNext()) {
+			entry = entryIterator.next();
+			versionIterator = entry.getValue().iterator();
+
+			while (versionIterator.hasNext()) {
+				version = versionIterator.next();
+
+				if (version.gServer == server) {
+					versionIterator.remove();
+				}
+			}
+			if (entry.getValue().isEmpty()) {
+				entryIterator.remove();
+			}
+		}
 	}
 
 	public static boolean discoverServer(GenericServer gServer) {

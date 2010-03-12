@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -359,6 +360,10 @@ public final class ServerList {
 	}
 
 	public static void fireServerInitEvent(GenericServer server, ServerStatus status) {
+		if (status == ServerStatus.NotResponding) {
+				GeneralLoadUtils.removeServer(server);
+		}
+
 		if (server.getServerStatus() != status) {
 			server.setServerStatus(status);
 			GenericServerInitEvent evt = new GenericServerInitEvent(server);

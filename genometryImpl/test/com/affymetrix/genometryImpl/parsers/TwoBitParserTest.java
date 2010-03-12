@@ -4,6 +4,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Calendar;
+import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -20,6 +22,8 @@ public class TwoBitParserTest {
 	String nblocks_file = "test/data/2bit/nblocks.2bit";
 	String maskblocks = "acTGGgtctaAGTACTAGGAattccgtcatagcTAAa";
 	String maskblocks_file = "test/data/2bit/maskblocks.2bit";
+	String mnblocks = "aNcTNGGNgtcNtaNAGNTACNTAGNGANaNttcNcgNNNNNtcNNNatNNagNNcTANNAaNN";
+	String mnblocks_file = "test/data/2bit/mnblocks.2bit";
 	String residues, file;
 	File infile = null;
 
@@ -30,6 +34,7 @@ public class TwoBitParserTest {
 		assertTrue(new File(noblocks_file).exists());
 		assertTrue(new File(nblocks_file).exists());
 		assertTrue(new File(maskblocks_file).exists());
+		assertTrue(new File(mnblocks_file).exists());
 	}
 
 	@Test
@@ -48,6 +53,11 @@ public class TwoBitParserTest {
 		file = maskblocks_file;
 		testOriginal();
 		testCases();
+
+		residues = mnblocks;
+		file = mnblocks_file;
+		testOriginal();
+		testCases();
 	}
 
 	public void testOriginal() throws Exception
@@ -55,20 +65,20 @@ public class TwoBitParserTest {
 		infile = new File(file);
 		BioSeq seq= TwoBitParser.parse(infile);
 		assertEquals(seq.getResidues(),residues);
-		System.out.println(residues + "==" +seq.getResidues());
+		//System.out.println(residues + "==" +seq.getResidues());
 	}
 
 	public void testCases() throws Exception
 	{
-		testCase(0,residues.length());		//From begining to end
+		testCase(0,residues.length());		
 
-		testCase(4,18);						// even, even
-		testCase(6,7);						// even, odd
-		testCase(1,4);						// odd , even
-		testCase(1,5);						// odd , odd
-		testCase(-1,3);						// Start out of range
-		testCase(11,residues.length()+4);		// End out of range
-		testCase(-5,residues.length()+5);      // Start and end out of range
+		testCase(4,18);						
+		testCase(6,7);						
+		testCase(1,4);						
+		testCase(1,5);						
+		testCase(-1,3);						
+		testCase(11,residues.length()+4);	
+		testCase(-5,residues.length()+5);   
 
 		testCase(2,22);
 		testCase(6,7);
@@ -96,6 +106,11 @@ public class TwoBitParserTest {
 		testCase(residues.length()+1,residues.length()+1);
 		testCase(residues.length()+1,residues.length()+5);
 		testCase(Integer.MIN_VALUE,Integer.MAX_VALUE);
+
+		Random generator = new Random(Calendar.getInstance().getTimeInMillis());
+		for(int i=0; i<100; i++){
+			testCase(generator.nextInt(residues.length()),generator.nextInt(residues.length()));
+		}
 	}
 
 	public void testCase(int start, int end) throws Exception
@@ -119,7 +134,7 @@ public class TwoBitParserTest {
 
 		assertTrue(result);
 		assertEquals(residues.substring(start, end),outStream.toString());
-		System.out.println(residues.substring(start, end) + "==" +outStream.toString());
+		//System.out.println(residues.substring(start, end) + "==" +outStream.toString());
 		GeneralUtils.safeClose(outStream);
 	}
 }

@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.genopub;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +13,7 @@ import org.dom4j.Element;
 import com.affymetrix.genometry.genopub.Annotation;
 import com.affymetrix.genometry.genopub.AnnotationGrouping;
 
-public class AnnotationGrouping {
+public class AnnotationGrouping implements Serializable {
     
     private Integer            idAnnotationGrouping;
     private String             name;

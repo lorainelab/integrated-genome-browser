@@ -1,8 +1,9 @@
 package com.affymetrix.genometry.genopub;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public class UserGroup {
+public class UserGroup implements Serializable {
 	private Integer    idUserGroup;
 	private String     name;
 	private String     contact;

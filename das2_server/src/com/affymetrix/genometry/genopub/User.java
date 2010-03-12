@@ -1,8 +1,9 @@
 package com.affymetrix.genometry.genopub;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public class User {
+public class User implements Serializable {
 	
 	public static final String    MASKED_PASSWORD = "XXXX";
 	

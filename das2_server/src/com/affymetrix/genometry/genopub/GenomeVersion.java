@@ -2,6 +2,7 @@ package com.affymetrix.genometry.genopub;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Date;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 
-public class GenomeVersion {
+public class GenomeVersion implements Serializable {
 
   private Integer  idGenomeVersion;
   private String   name;

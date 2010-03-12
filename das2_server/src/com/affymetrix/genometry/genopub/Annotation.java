@@ -2,6 +2,7 @@ package com.affymetrix.genometry.genopub;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +27,7 @@ import com.affymetrix.genometry.servlets.GenometryDas2Servlet;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 
-public class Annotation implements Owned {
+public class Annotation implements Serializable, Owned {
 
 	public static final String PROP_NAME                = "name";
     public static final String PROP_SUMMARY             = "summary";

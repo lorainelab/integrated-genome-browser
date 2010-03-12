@@ -1,7 +1,9 @@
 package com.affymetrix.genometry.genopub;
 
+import java.io.Serializable;
 
-public class QualifiedAnnotation {
+
+public class QualifiedAnnotation implements Serializable {
 	private Annotation annotation;
 	private String     typePrefix;
 	private String     resourceName;

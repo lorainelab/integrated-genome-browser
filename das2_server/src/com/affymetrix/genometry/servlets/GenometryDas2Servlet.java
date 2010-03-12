@@ -303,7 +303,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				loadGenomesFromDB();				  
 			} else {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from file system....");
-				loadGenomes(data_root, organisms, org_order_filename);
+				loadGenomesFromFileSystem(data_root, organisms, org_order_filename);
 			}
 
 			ServerUtils.printGenomes(organisms);
@@ -450,7 +450,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	private boolean loadGenomesFromDB()  {
 		Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading Genomes from DB");
 		Session sess  = null;
@@ -582,7 +581,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 
 	
 
-	private final void loadGenomes(String dataRoot,
+	private final void loadGenomesFromFileSystem(String dataRoot,
 			Map<String, List<AnnotatedSeqGroup>> organisms,
 			String org_order_filename) throws IOException {
 		// get list of all directories in data root
@@ -940,20 +939,17 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		response.setContentType(TYPES_CONTENT_TYPE);
 
-
 		Map<String, SimpleDas2Type> types_hash =
-			ServerUtils.getTypes(
-					data_root,
-					genome,
-					this.getGenoPubSecurity(request));
+				ServerUtils.getAnnotationTypes(
+				data_root,
+				genome,
+				this.getGenoPubSecurity(request));
 
-		if (is_genometry_genopub_mode) {
-			ServerUtils.getAdditionalGenoPubTypes(
-					data_root, 
-					genome, 
-					this.getGenoPubSecurity(request), 
-					types_hash);
-		}
+		ServerUtils.getGraphTypes(
+				data_root,
+				genome,
+				this.getGenoPubSecurity(request),
+				types_hash);
 
 		ByteArrayOutputStream buf = null;
 		ByteArrayInputStream bais = null;
@@ -1616,24 +1612,22 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				System.out.println("no AnnotationWriter found for format: " + format);
 				response.setStatus(response.SC_BAD_REQUEST);
 				return false;
-			} else {
-				AnnotationWriter writer = writerclass.newInstance();
-				String mime_type = writer.getMimeType();
+			}
+			AnnotationWriter writer = writerclass.newInstance();
+			String mime_type = writer.getMimeType();
 
-				if (writer instanceof Das2FeatureSaxParser) {
-					((Das2FeatureSaxParser) writer).setBaseURI(new URI(xbase));
-				}
-				response.setContentType(mime_type);
+			if (writer instanceof Das2FeatureSaxParser) {
+				((Das2FeatureSaxParser) writer).setBaseURI(new URI(xbase));
+			}
+			response.setContentType(mime_type);
 
-				OutputStream outstream = response.getOutputStream();
-				try {
-					return writer.writeAnnotations(syms, seq, annot_type, outstream);
-				} finally {
-					GeneralUtils.safeClose(outstream);
-				}
+			OutputStream outstream = response.getOutputStream();
+			try {
+				return writer.writeAnnotations(syms, seq, annot_type, outstream);
+			} finally {
+				GeneralUtils.safeClose(outstream);
 			}
 		} catch (Exception ex) {
-			System.err.println("problem in GenometryDas2Servlet.outputAnnotations():");
 			ex.printStackTrace();
 		}
 		return false;

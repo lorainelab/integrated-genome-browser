@@ -781,7 +781,7 @@ public abstract class ServerUtils {
 	 *
 	 *  may want to cache this info (per versioned source) at some point...
 	 */
-	public static final Map<String, SimpleDas2Type> getTypes(
+	public static final Map<String, SimpleDas2Type> getAnnotationTypes(
 					String data_root,
 					AnnotatedSeqGroup genome,
 					AnnotSecurity annotSecurity) {
@@ -817,7 +817,6 @@ public abstract class ServerUtils {
 				List<String> flist = new ArrayList<String>();
 				flist.addAll(iSyms.iWriter.getFormatPrefList());
 				
-			    
 		        if (annotSecurity == null || genome.isAuthorized(annotSecurity, type)) {
 					genome_types.put(type, new SimpleDas2Type(type, flist, genome.getProperties(annotSecurity, type)));
 		        }
@@ -827,21 +826,32 @@ public abstract class ServerUtils {
 		return genome_types;
 	}
 
-	public static void getAdditionalGenoPubTypes(
-		String data_root,AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
-		// Now add all of the bar and useq graphs that were not picked up from getGenomeTypes()
-		// only an issue for GenoPub
+	/**
+	 * Add graph types to the map.
+	 * @param data_root
+	 * @param genome
+	 * @param annotSecurity
+	 * @param genome_types
+	 */
+	public static void getGraphTypes(
+		String data_root, AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
 		for (String type : genome.getTypeList()) {
-			if (!genome_types.containsKey(type)) {
-				if (genome.isAuthorized(annotSecurity, type)) {
-					if (genome.isBarGraphData(data_root, annotSecurity, type)) {
-						genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
-					} else if (genome.isUseqGraphData(data_root, annotSecurity, type)) {
-						genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
-					} else {
-						Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request.");
-					}
-				}
+			if (genome_types.containsKey(type) || !genome.isAuthorized(annotSecurity, type)) {
+				continue;
+			}
+
+			if (annotSecurity == null) {
+				// DAS2 "classic"
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
+				continue;
+			}
+			// GenoPub
+			if (genome.isBarGraphData(data_root, annotSecurity, type)) {
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
+			} else if (genome.isUseqGraphData(data_root, annotSecurity, type)) {
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
+			} else {
+				Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request.");
 			}
 		}
 	}

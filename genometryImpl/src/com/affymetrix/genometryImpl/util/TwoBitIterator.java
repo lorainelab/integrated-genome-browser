@@ -101,15 +101,8 @@ public final class TwoBitIterator implements SearchableCharIterator {
 				buffer.get(valueBuffer);
 				for (int k = 0; k < BUFFER_SIZE && residueCounter < requiredLength; k++) {
 
-					if(bytesToRead == 1){
-						temp = parseByte(valueBuffer[k],start%RESIDUES_PER_BYTE,requiredLength);
-					}else if (k == 0 && beginLength != 0) {
-						temp = parseByte(valueBuffer[k], beginLength, true);
-					} else if (k == bytesToRead - 1 && endLength != 0) {
-						temp = parseByte(valueBuffer[k], endLength, false);
-					} else {
-						temp = parseByte(valueBuffer[k]);
-					}
+					temp = parseByte(valueBuffer[k],k,bytesToRead,start,requiredLength,beginLength,endLength);
+					
 					for (int j = 0; j < temp.length; j++) {
 						nBlock = processResidue(residuePosition, temp, j, nBlock, tempNBlocks, false);
 						maskBlock = processResidue(residuePosition, temp, j, maskBlock, tempMaskBlocks, true);
@@ -185,20 +178,32 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		return null;
 	}
 
+	private char[] parseByte(byte valueBuffer, int k, long bytesToRead, int start, int requiredLength, int beginLength, int endLength) {
+		char temp[] = null;
+
+		if (bytesToRead == 1) {
+			temp = parseByte(valueBuffer, start % RESIDUES_PER_BYTE, requiredLength);
+		} else if (k == 0 && beginLength != 0) {
+			temp = parseByte(valueBuffer, beginLength, true);
+		} else if (k == bytesToRead - 1 && endLength != 0) {
+			temp = parseByte(valueBuffer, endLength, false);
+		} else {
+			temp = parseByte(valueBuffer);
+		}
+
+		return temp;
+	}
+
 	private static char[] parseByte(byte valueBuffer, int size, boolean isFirst){
 		char temp[] = parseByte(valueBuffer);
 		char newTemp[] = new char[size];
 
-		if(isFirst){
-			int skip = temp.length - size;
+		int skip = isFirst ? (temp.length - size) : 0;
+
 			for(int i=0; i<size; i++){
 				newTemp[i] = temp[skip+i];
 			}
-		}else{
-			for(int i=0; i<size; i++){
-				newTemp[i] = temp[i];
-			}
-		}
+
 		return newTemp;
 	}
 
@@ -233,4 +238,6 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	public int getLength() {
 		return (int) length;
 	}
+
+
 }

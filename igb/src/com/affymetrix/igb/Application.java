@@ -2,6 +2,7 @@ package com.affymetrix.igb;
 
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;
@@ -54,42 +55,51 @@ public abstract class Application {
 		return true;
 	}
 
-	public final synchronized void addNotLockedUpMsg(String s) {
-		progressStringList.add(s);
-		if (status_bar.getStatus().trim().length() == 0) {
-			setNotLockedUpStatus(s);
-		}
+	public final void addNotLockedUpMsg(final String s) {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				progressStringList.add(s);
+				if (status_bar.getStatus().trim().length() == 0) {
+					setNotLockedUpStatus(s, true);
+				}
+			}
+		});
 	}
 
-	public final synchronized void removeNotLockedUpMsg(String s) {
-		if (!progressStringList.remove(s)) {
-			Application.getApplicationLogger().fine("Didn't find progress message: " + s);
-		}
-		if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
-			// Time to change status message.
-			if (progressStringList.isEmpty()) {
-				setStatus("");
-				status_bar.progressBar.setVisible(false);
-			} else {
-				setNotLockedUpStatus(progressStringList.iterator().next());
+	public final void removeNotLockedUpMsg(final String s) {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				if (!progressStringList.remove(s)) {
+					Application.getApplicationLogger().fine("Didn't find progress message: " + s);
+				}
+				if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
+					// Time to change status message.
+					if (progressStringList.isEmpty()) {
+						setNotLockedUpStatus(null, false);
+					} else {
+						setNotLockedUpStatus(progressStringList.iterator().next(), true);
+					}
+				}
 			}
-		}
+		});
 	}
 
 	/**
 	 * Set the status, and show a little progress bar so that the app doesn't look locked up.
 	 * @param s
 	 */
-	private final synchronized void setNotLockedUpStatus(String s) {
+	private final void setNotLockedUpStatus(String s, boolean visible) {
 		status_bar.setStatus(s);
-		status_bar.progressBar.setVisible(true);
+		status_bar.progressBar.setVisible(visible);
 	}
 
 	/** Sets the text in the status bar.
 	 *  Will also echo a copy of the string to System.out.
 	 *  It is safe to call this method even if the status bar is not being displayed.
 	 */
-	public final synchronized void setStatus(String s) {
+	public final void setStatus(String s) {
 		setStatus(s, true);
 	}
 
@@ -98,11 +108,16 @@ public abstract class Application {
 	 *  It is safe to call this method even if the status bar is not being displayed.
 	 *  @param echo  Whether to echo a copy to System.out.
 	 */
-	public final synchronized void setStatus(String s, boolean echo) {
-		status_bar.setStatus(s);
-		if (echo && s != null && !s.isEmpty()) {
-			System.out.println(s);
-		}
+	public final void setStatus(final String s, final boolean echo) {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				status_bar.setStatus(s);
+				if (echo && s != null && !s.isEmpty()) {
+					System.out.println(s);
+				}
+			}
+		});
 	}
 
 	/** Opens a JOptionPane.ERROR_MESSAGE panel with the application frame

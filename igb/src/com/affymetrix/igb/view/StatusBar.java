@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.text.DecimalFormat;
 import javax.swing.GroupLayout.Alignment;
 
@@ -20,7 +19,7 @@ public final class StatusBar extends JPanel {
 	private final JPopupMenu popup_menu = new JPopupMenu();
 	private final DecimalFormat num_format;
 	/** Delay in milliseconds between updates of the status (such as memory usage).  */
-	static int timer_delay_ms = 5000;
+	private static final int timer_delay_ms = 5000;
 
 	public StatusBar() {
 		Application app = Application.getSingleton();
@@ -120,7 +119,7 @@ public final class StatusBar extends JPanel {
 			s = "";
 		}
 
-		updateSafely(status_ta, s);
+		status_ta.setText(s);
 		updateMemory();
 	}
 
@@ -140,7 +139,7 @@ public final class StatusBar extends JPanel {
 	 *  need to call this method as the memory value will be updated from
 	 *  time to time automatically.
 	 */
-	public void updateMemory() {
+	private void updateMemory() {
 		Runtime rt = Runtime.getRuntime();
 		long memory = rt.totalMemory() - rt.freeMemory();
 
@@ -152,23 +151,6 @@ public final class StatusBar extends JPanel {
 			double max = 1.0 * rt.maxMemory() / (1024 * 1024);
 			text += " / " + num_format.format(max) + " MB";
 		}
-		updateSafely(memory_ta, text);
-	}
-
-	/**
-	 *  Update a JLabel in a way that is safe from either the GUI thread or
-	 *  any other thread.
-	 */
-	void updateSafely(final JLabel label, final String text) {
-		if (SwingUtilities.isEventDispatchThread()) {
-			label.setText(text);
-		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-
-				public void run() {
-					label.setText(text);
-				}
-			});
-		}
+		memory_ta.setText(text);
 	}
 }

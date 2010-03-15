@@ -541,8 +541,10 @@ public final class GeneralLoadView extends JComponent
 		refreshVersionCB(speciesName);
 
 		// Select the null group (and the null seq), if it's not already selected.
-		gmodel.setSelectedSeqGroup(null); // This method is being called on purpose to fire group selection event.
-		gmodel.setSelectedSeq(null);	  // which in turns calls refreshTreeView method.
+		if (curGroup != null) {
+			gmodel.setSelectedSeqGroup(null); // This method is being called on purpose to fire group selection event.
+			gmodel.setSelectedSeq(null);	  // which in turns calls refreshTreeView method.
+		}
 	}
 
 	/**
@@ -556,8 +558,10 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("Selected version: " + versionName);
 		}
 
-		gmodel.setSelectedSeqGroup(null);
-		gmodel.setSelectedSeq(null);
+		if (curGroup != null) {
+			gmodel.setSelectedSeqGroup(null);
+			gmodel.setSelectedSeq(null);
+		}
 
 		if (versionName.equals(SELECT_GENOME)) {
 			// Select the null group (and the null seq), if it's not already selected.	
@@ -605,9 +609,12 @@ public final class GeneralLoadView extends JComponent
 			Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 			speciesCB.setEnabled(true);
 			versionCB.setEnabled(true);
-			gmodel.setSelectedSeqGroup(group);
-			// TODO: Need to be certain that the group is selected at this point!
-			gmodel.setSelectedSeq(group.getSeq(0));
+			if (curGroup != null || group != null) {
+				// avoid calling these a half-dozen times
+				gmodel.setSelectedSeqGroup(group);
+				// TODO: Need to be certain that the group is selected at this point!
+				gmodel.setSelectedSeq(group.getSeq(0));
+			}
 		}
 	}
 
@@ -699,9 +706,8 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		if (aseq == null) {
-			//clearFeaturesTable();
 			refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-								// refreshTreeView should only decided if feature table
+								// refreshTreeView should only be called if feature table
 								// needs to be cleared.
 
 			disableAllButtons();
@@ -736,7 +742,6 @@ public final class GeneralLoadView extends JComponent
 
 		Application.getSingleton().addNotLockedUpMsg("Loading features for " + versionName);
 
-//		refreshTreeView();	// Removing this method from here to avoid recreating tree without reason.
 		createFeaturesTable();
 		loadWholeRangeFeatures(versionName);
 		Application.getSingleton().removeNotLockedUpMsg("Loading features for " + versionName);
@@ -783,24 +788,24 @@ public final class GeneralLoadView extends JComponent
 		addListeners();
 	}
 
-
-	private void clearFeaturesTable() {
-		this.feature_model = new FeaturesTableModel(this, null, null);
-		this.feature_table.setModel(this.feature_model);
-		featuresTableScrollPane.setViewportView(this.feature_table);
-		feature_tree_view.clearTreeView();
-	}
-
 	private void refreshTreeView() {
+		String versionName = (String) versionCB.getSelectedItem();
+		final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+		if (features == null || features.isEmpty()) {
+			final FeaturesTableModel ftm = new FeaturesTableModel(GeneralLoadView.this, null, null);
+			ThreadUtils.runOnEventQueue(new Runnable() {
+
+				public void run() {
+					GeneralLoadView.this.feature_model = ftm;
+					GeneralLoadView.this.feature_table.setModel(ftm);
+					featuresTableScrollPane.setViewportView(GeneralLoadView.this.feature_table);
+				}
+			});
+		}
+		
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				String versionName = (String) versionCB.getSelectedItem();
-				List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
-				if (features == null || features.isEmpty()) {
-					clearFeaturesTable();
-					return;
-				}
 				feature_tree_view.initOrRefreshTree(features);
 			}
 		});
@@ -811,63 +816,41 @@ public final class GeneralLoadView extends JComponent
 	 */
 	public void createFeaturesTable() {
 		String versionName = (String) this.versionCB.getSelectedItem();
-		BioSeq curSeq = gmodel.getSelectedSeq();
+		final BioSeq curSeq = gmodel.getSelectedSeq();
+		final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 		if (DEBUG_EVENTS) {
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
-		}
-
-		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
-		if (DEBUG_EVENTS) {
 			System.out.println("features for " + versionName + ": " + features.toString());
 		}
-		
-		if (DEBUG_EVENTS) {
-			System.out.println("Creating table with features: " + features.toString());
-		}
 
-		this.feature_model = new FeaturesTableModel(this, features, curSeq);
-		this.feature_model.fireTableDataChanged();
-		this.feature_table = new JTableX(this.feature_model);
-		this.feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
-
-		// Handle sizing of the columns
-		this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
 		int maxFeatureNameLength = 1;
 		for (GenericFeature feature : features) {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
-		// the second column contains the feature names.  Resize it so that feature names are fully displayed.
-		TableColumn col = this.feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
-		col.setPreferredWidth(maxFeatureNameLength);
+		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
 
-		// Don't enable combo box for full genome sequence
-		TableWithVisibleComboBox.setComboBoxEditors(
-				this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !GeneralLoadView.IsGenomeSequence());
+		final FeaturesTableModel ftm = new FeaturesTableModel(this, features, curSeq);
+		ThreadUtils.runOnEventQueue(new Runnable() {
 
-		
-		/* COMMENTED OUT.  The Track Info table makes the data load view
-		 *                 too busy, so for now, the code is commented out
-		 */		
-		//Listen for selection of feature to fill in track info
-//		feature_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//		feature_table.getSelectionModel().addListSelectionListener(
-//				new ListSelectionListener() {
-//
-//					public void valueChanged(ListSelectionEvent event) {
-//						int row = feature_table.getSelectedRow();
-//						if (row >= 0) {
-//							GenericFeature feature = feature_model.getFeature(row);
-//							if (feature != null) {
-//								track_info_view.initializeFeature(feature);
-//							}
-//						}
-//					}
-//				});
-		
-		
-		this.feature_model.fireTableDataChanged();
-		featuresTableScrollPane.setViewportView(this.feature_table);
+			public void run() {
+				GeneralLoadView.this.feature_model = ftm;
+				GeneralLoadView.this.feature_table = new JTableX(GeneralLoadView.this.feature_model);
+				GeneralLoadView.this.feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 
+				// Handle sizing of the columns
+				GeneralLoadView.this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
+
+				// the second column contains the feature names.  Resize it so that feature names are fully displayed.
+				TableColumn col = GeneralLoadView.this.feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
+				col.setPreferredWidth(finalMaxFeatureNameLength);
+
+				// Don't enable combo box for full genome sequence
+				TableWithVisibleComboBox.setComboBoxEditors(
+						GeneralLoadView.this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !GeneralLoadView.IsGenomeSequence());
+				GeneralLoadView.this.feature_model.fireTableDataChanged();
+				featuresTableScrollPane.setViewportView(GeneralLoadView.this.feature_table);
+			}
+		});
 
 		disableButtonsIfNecessary();
 		changeVisibleDataButtonIfNecessary(features);	// might have been disabled when switching to another chromosome or genome.
@@ -911,15 +894,22 @@ public final class GeneralLoadView extends JComponent
 			}
 		}
 
-		all_residuesB.setEnabled(enabled);
-		partial_residuesB.setEnabled(enabled);
-		refreshDataAction.setEnabled(enabled);
+		setAllButtons(enabled);
 	}
 
 	private void disableAllButtons() {
-		all_residuesB.setEnabled(false);
-		partial_residuesB.setEnabled(false);
-		refreshDataAction.setEnabled(false);
+		setAllButtons(false);
+	}
+
+	private void setAllButtons(final boolean enabled) {
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				all_residuesB.setEnabled(enabled);
+				partial_residuesB.setEnabled(enabled);
+				refreshDataAction.setEnabled(enabled);
+			}
+		});
 	}
 
 	/**

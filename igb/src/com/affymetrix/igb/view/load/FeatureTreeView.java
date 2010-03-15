@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.DataLoadView;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
@@ -53,11 +54,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
-	private DefaultMutableTreeNode treetop = null;
 	private static final String path_separator = "/";
 	private final GeneralLoadView glv;
 	private final JButton serverPrefsB;
-	private TreePath selectedPath;
 	private final TreeCellRenderer tcr;
 	private final TreeCellEditor tce;
 
@@ -108,7 +107,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		/*tree_scroller.setPreferredSize(new Dimension(
 				tree_scroller.getMinimumSize().width,
 				tree_scroller.getPreferredSize().height));*/
-		clearTreeView();
 		initOrRefreshTree(null);
 
 		tree_panel.add(tree_scroller);
@@ -147,16 +145,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	}
 
 	/**
-	 * Clear the tree view.
-	 */
-	synchronized void clearTreeView() {
-		treetop = new DefaultMutableTreeNode("");
-		TreeModel tmodel = new DefaultTreeModel(treetop, true);
-		tree.setModel(tmodel);
-		tree_scroller.invalidate();
-	}
-
-	/**
 	 * Handles clicking of server preferences button.
 	 * @param evt
 	 */
@@ -183,19 +171,17 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 * If a node is already selected (this could happen if the user used a leaf checkbox), then we don't need to do this.
 	 * @param features
 	 */
-	synchronized void initOrRefreshTree(List<GenericFeature> features) {
-		if (selectedPath != null) {
-			selectedPath = null;
-			return;
-			// Don't want to re-create tree when we have a selected node.
-		}
-		DefaultMutableTreeNode root = CreateTree(features);
-		//this.setVisible(root != null && (root.getChildCount() > 0));
-		treetop = root;
-		TreeModel tmodel = new DefaultTreeModel(treetop, true);
-		tree.setModel(tmodel);
+	void initOrRefreshTree(final List<GenericFeature> features) {
+		final TreeModel tmodel = new DefaultTreeModel(CreateTree(features), true);
 
-		tree_scroller.invalidate();
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				//this.setVisible(root != null && (root.getChildCount() > 0));
+				tree.setModel(tmodel);
+				tree_scroller.invalidate();
+			}
+		});
 	}
 
 	/**
@@ -209,7 +195,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	private static DefaultMutableTreeNode CreateTree(List<GenericFeature> features) {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
 
-		if (features == null) {
+		if (features == null || features.isEmpty()) {
 			return root;
 		}
 
@@ -335,7 +321,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	}
 
 
-		/**
+	/**
 	 * See if there is a hyperlink at this location.
 	 * @param tree
 	 * @param x

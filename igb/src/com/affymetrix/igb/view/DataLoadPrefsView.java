@@ -346,6 +346,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		layout.linkSize(nameLabel, urlLabel, typeLabel);
 		name.setPreferredSize(new Dimension(300, name.getPreferredSize().height));
 		layout.linkSize(name, type);
+		layout.linkSize(SwingConstants.VERTICAL, name, type, url);
 
 		layout.setHorizontalGroup(layout.createParallelGroup()
 				.addComponent(messageContainer)

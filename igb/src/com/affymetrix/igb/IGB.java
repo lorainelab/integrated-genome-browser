@@ -313,10 +313,14 @@ public final class IGB extends Application
 	}
 
 	private static void loadSynonyms(String file) {
+		InputStream istr = null;
 		try {
+			istr = IGB.class.getResourceAsStream(file);
 			SynonymLookup.getDefaultLookup().loadSynonyms(IGB.class.getResourceAsStream(file), true);
 		} catch (IOException ex) {
 			Logger.getLogger(IGB.class.getName()).log(Level.FINE, "Problem loading default synonyms file " + file, ex);
+		} finally {
+			GeneralUtils.safeClose(istr);
 		}
 	}
 

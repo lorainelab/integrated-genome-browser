@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.stylesheet;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.XMLUtils;
 import java.io.*;
@@ -43,25 +44,27 @@ public final class XmlStylesheetParser {
   }
 
   private static synchronized Stylesheet getSystemStylesheet() {
-    if (system_stylesheet == null) {
-      try {
-	Application.getSingleton().getLogger().info("Loading system stylesheet from resource:" + system_stylesheet_resource_name);
-        XmlStylesheetParser parser = new XmlStylesheetParser();
-        // If using class.getResource... use name beginning with "/"
-        InputStream istr = XmlStylesheetParser.class.getResourceAsStream(system_stylesheet_resource_name);
-        // If using getContextClassLoader... use name NOT beginning with "/"
-        //InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(system_stylesheet_resource_name);
-        system_stylesheet = parser.parse(istr);
-      } catch (Exception e) {
-        System.out.println("ERROR: Couldn't initialize system stylesheet.");
-        e.printStackTrace();
-        system_stylesheet = null;
-      }
-    }
-    if (system_stylesheet == null) {
-      system_stylesheet = new Stylesheet();
-    }
-    return system_stylesheet;
+	  if (system_stylesheet == null) {
+		  InputStream istr = null;
+		  try {
+			  Application.getSingleton().getLogger().info("Loading system stylesheet from resource:" + system_stylesheet_resource_name);
+			  XmlStylesheetParser parser = new XmlStylesheetParser();
+			  // If using class.getResource... use name beginning with "/"
+			  istr = XmlStylesheetParser.class.getResourceAsStream(system_stylesheet_resource_name);
+			  // If using getContextClassLoader... use name NOT beginning with "/"
+			  system_stylesheet = parser.parse(istr);
+		  } catch (Exception e) {
+			  System.out.println("ERROR: Couldn't initialize system stylesheet.");
+			  e.printStackTrace();
+			  system_stylesheet = null;
+		  } finally {
+			  GeneralUtils.safeClose(istr);
+		  }
+		  if (system_stylesheet == null) {
+			  system_stylesheet = new Stylesheet();
+		  }
+	  }
+	  return system_stylesheet;
   }
 
   /** Set the user stylesheet to null, so that the next call to getSystemStylesheet()
@@ -72,32 +75,35 @@ public final class XmlStylesheetParser {
     user_stylesheet = null;
   }
 
-  public static synchronized Stylesheet getUserStylesheet() {
-    if (user_stylesheet == null) {
-      try {
-        XmlStylesheetParser parser = new XmlStylesheetParser();
-        // If using class.getResource... use name beginning with "/"
-        InputStream istr = XmlStylesheetParser.class.getResourceAsStream(default_user_stylesheet_resource_name);
+ public static synchronized Stylesheet getUserStylesheet() {
+	 if (user_stylesheet == null) {
+		 InputStream istr = null;
+		 try {
+			 XmlStylesheetParser parser = new XmlStylesheetParser();
+			 // If using class.getResource... use name beginning with "/"
+			 istr = XmlStylesheetParser.class.getResourceAsStream(default_user_stylesheet_resource_name);
 
-        // Initialize the user stylesheet with the contents of the system stylesheet
-        parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
+			 // Initialize the user stylesheet with the contents of the system stylesheet
+			 parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
 
-        // then load the user stylesheet on top of that
-        Application.getSingleton().getLogger().info("Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
+			 // then load the user stylesheet on top of that
+			 Application.getSingleton().getLogger().info("Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
 
-        user_stylesheet = parser.parse(istr);
+			 user_stylesheet = parser.parse(istr);
 
-      } catch (Exception e) {
-        System.out.println("ERROR: Couldn't initialize user stylesheet.");
-        e.printStackTrace();
-        user_stylesheet = null;
-      }
-    }
-    if (user_stylesheet == null) {
-      user_stylesheet = new Stylesheet();
-    }
-    return user_stylesheet;
-  }
+		 } catch (Exception e) {
+			 System.out.println("ERROR: Couldn't initialize user stylesheet.");
+			 e.printStackTrace();
+			 user_stylesheet = null;
+		 } finally {
+			 GeneralUtils.safeClose(istr);
+		 }
+		 if (user_stylesheet == null) {
+			 user_stylesheet = new Stylesheet();
+		 }
+	 }
+	 return user_stylesheet;
+ }
 
   private Stylesheet parse(InputStream istr) throws IOException {
     InputSource insrc = new InputSource(istr);

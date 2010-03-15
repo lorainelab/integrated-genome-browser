@@ -190,6 +190,17 @@ public final class GeneralLoadView extends JComponent
 		addListeners();
 	}
 
+	private void addListeners() {
+		gmodel.addGroupSelectionListener(this);
+		gmodel.addSeqSelectionListener(this);
+
+		speciesCB.setEnabled(true);
+		versionCB.setEnabled(true);
+		speciesCB.addItemListener(this);
+		versionCB.addItemListener(this);
+
+	}
+
 	public static synchronized GeneralLoadView getLoadView() {
 		if (singleton == null) {
 			singleton = new GeneralLoadView();
@@ -223,15 +234,16 @@ public final class GeneralLoadView extends JComponent
 
 		// Need to refresh species names
 		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;
-		refreshSpeciesCB();
-
 		String speciesName = (String)this.speciesCB.getSelectedItem();
+		refreshSpeciesCB();
+		
 		if (speciesName != null && !speciesName.equals(SELECT_SPECIES)) {
 			lookForPersistentGenome = false;
+			String versionName = (String)this.versionCB.getSelectedItem();
+
 			//refresh version names if a species is selected
 			refreshVersionCB(speciesName);
 
-			String versionName = (String)this.versionCB.getSelectedItem();
 			if (versionName != null && !versionName.equals(SELECT_GENOME)) {
 				// refresh this version
 				initVersion(versionName);
@@ -250,18 +262,6 @@ public final class GeneralLoadView extends JComponent
 			lookForPersistentGenome = false;
 			RestorePersistentGenome();
 		}
-	}
-
-
-	private void addListeners() {
-		gmodel.addGroupSelectionListener(this);
-		gmodel.addSeqSelectionListener(this);
-
-		speciesCB.setEnabled(true);
-		versionCB.setEnabled(true);
-		speciesCB.addItemListener(this);
-		versionCB.addItemListener(this);
-
 	}
 
 	/**
@@ -334,9 +334,9 @@ public final class GeneralLoadView extends JComponent
 			public void run() {
 				versionCB.removeItemListener(GeneralLoadView.this);
 				String oldVersion = (String) versionCB.getSelectedItem();
-				versionCB.setSelectedIndex(0);
 
 				if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
+					versionCB.setSelectedIndex(0);
 					versionCB.setEnabled(false);
 					return;
 				}
@@ -350,6 +350,8 @@ public final class GeneralLoadView extends JComponent
 				versionCB.setEnabled(true);
 				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
 					versionCB.setSelectedItem(oldVersion);
+				} else {
+					versionCB.setSelectedIndex(0);
 				}
 				if (versionCB.getItemCount() > 1) {
 					versionCB.addItemListener(GeneralLoadView.this);
@@ -625,7 +627,6 @@ public final class GeneralLoadView extends JComponent
 		if (group == null) {
 			if (versionCB.getSelectedItem() != SELECT_GENOME) {
 				versionCB.removeItemListener(this);
-				//versionCB.setSelectedItem(SELECT_GENOME);		//Commented out to prevent switching to 'GENOME VERSION while loading
 				versionCB.setEnabled(false);
 				versionCB.addItemListener(this);
 			}
@@ -645,7 +646,7 @@ public final class GeneralLoadView extends JComponent
 			createUnknownVersion(group);
 			return;
 		}
-		String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
+		final String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
 		if (versionName == null) {
 			System.out.println("ERROR -- couldn't find version");
 			return;
@@ -669,12 +670,16 @@ public final class GeneralLoadView extends JComponent
 		}
 		if (!versionName.equals(versionCB.getSelectedItem())) {
 			refreshVersionCB(speciesName);			// Populate the versionName CB
-			versionCB.removeItemListener(this);
-			versionCB.setSelectedItem(versionName);
-			versionCB.addItemListener(this);
+			ThreadUtils.runOnEventQueue(new Runnable() {
+
+				public void run() {
+					versionCB.removeItemListener(GeneralLoadView.this);
+					versionCB.setSelectedItem(versionName);
+					versionCB.addItemListener(GeneralLoadView.this);
+				}
+			});
 		}
 
-		//clearFeaturesTable();
 		refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
 							// refreshTreeView should only decided if feature table
 							// needs to be cleared.

@@ -52,10 +52,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		pref_list.add("brs");
 	}
 
-	final private static boolean DEBUG = false;
-
-	private static final boolean use_byte_buffer = true;
-	private static final boolean write_from_text = true;
+	private static final boolean DEBUG = false;
 
 	// .bin1:
 	//     geneName UTF8
@@ -119,13 +116,13 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		// annots is list of top-level parent syms (max 1 per seq in seq_group) that get
 		//    added as annotations to the annotated BioSeqs -- their children
 		//    are then actual transcript annotations
-		ArrayList<SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
 		// results is list actual transcript annotations
-		ArrayList<SeqSymmetry> results = new ArrayList<SeqSymmetry>(15000);
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(15000);
 		// chrom2sym is temporary hash to put top-level parent syms in to map
 		//     seq id to top-level symmetry, prior to adding these parent syms
 		//     to the actual annotated seqs
-		HashMap<String,SeqSymmetry> chrom2sym = new HashMap<String,SeqSymmetry>(); // maps chrom name to top-level symmetry
+		Map<String,SeqSymmetry> chrom2sym = new HashMap<String,SeqSymmetry>(); // maps chrom name to top-level symmetry
 
 		int total_exon_count = 0;
 		int count = 0;
@@ -134,7 +131,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 
 
 		try {
-			if (use_byte_buffer && blength > 0) {
+			if (blength > 0) {
 				byte[] bytebuf = new byte[(int)blength];
 				bis.read(bytebuf);
 				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
@@ -227,7 +224,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		return results;
 	}
 
-	public void outputBrsFormat(UcscGeneSym gsym, DataOutputStream dos) throws IOException {
+	private void outputBrsFormat(UcscGeneSym gsym, DataOutputStream dos) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
 		SeqSpan cspan = gsym.getCdsSpan();
 		BioSeq seq = tspan.getBioSeq();
@@ -252,7 +249,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		}
 	}
 
-	public void convertTextToBinary(String file_name, String bin_file) {
+	private void convertTextToBinary(String file_name, String bin_file) {
 		GenometryModel.logInfo("loading file: " + file_name);
 		int count = 0;
 		long flength = 0;
@@ -265,30 +262,24 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		tim.start();
 
 		DataOutputStream dos = null;
+		FileInputStream fis = null;
 		BufferedReader br = null;
 		try {
 			File fil = new File(file_name);
 			flength = fil.length();
-			FileInputStream fis = new FileInputStream(fil);
+			fis = new FileInputStream(fil);
 			BufferedInputStream bis = new BufferedInputStream(fis);
-			if (use_byte_buffer) {
-				byte[] bytebuf = new byte[(int)flength];
-				bis.read(bytebuf);
-				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-				br = new BufferedReader(new InputStreamReader(bytestream));
-			}
-			else {
-				br = new BufferedReader(new InputStreamReader(bis));
-			}
+			byte[] bytebuf = new byte[(int) flength];
+			bis.read(bytebuf);
+			ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+			br = new BufferedReader(new InputStreamReader(bytestream));
 			String line;
 
-
-			if (write_from_text) {
-				File outfile = new File(bin_file);
-				FileOutputStream fos = new FileOutputStream(outfile);
-				BufferedOutputStream bos = new BufferedOutputStream(fos);
-				dos = new DataOutputStream(bos);
-			}
+			File outfile = new File(bin_file);
+			FileOutputStream fos = new FileOutputStream(outfile);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			dos = new DataOutputStream(bos);
+	
 			// trying to handle both refFlat and refGene files
 			//   if refGene, then file doesn't include geneName field (and can be detected because
 			//   it has one fewer tab-delimited field)
@@ -320,7 +311,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 				String[] emaxs = emax_regex.split(exonEnds);
 
 				if (! text_includes_genename) { geneName = name; }
-				if (write_from_text) {
 					dos.writeUTF(geneName);
 					dos.writeUTF(name);
 					dos.writeUTF(chrom);
@@ -330,7 +320,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 					dos.writeInt(cmin);
 					dos.writeInt(cmax);
 					dos.writeInt(ecount);
-				}
 
 				if (ecount != emins.length || ecount != emaxs.length) {
 					System.out.println("EXON COUNTS DON'T MATCH UP FOR " + geneName + " !!!");
@@ -338,11 +327,11 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 				else {
 					for (int i=0; i<ecount; i++) {
 						int emin = Integer.parseInt(emins[i]);
-						if (write_from_text) { dos.writeInt(emin); }
+						dos.writeInt(emin);
 					}
 					for (int i=0; i<ecount; i++) {
 						int emax = Integer.parseInt(emaxs[i]);
-						if (write_from_text) { dos.writeInt(emax); }
+						dos.writeInt(emax);
 					}
 				}
 				if (tlength >= 500000) {
@@ -352,16 +341,12 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 				max_exons = Math.max(max_exons, ecount);
 				max_tlength = Math.max(max_tlength, tlength);
 			}
-
-			if (write_from_text) {
-				dos.flush();
-				dos.close();
-			}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(fis);
 			GeneralUtils.safeClose(dos);
 		}
 

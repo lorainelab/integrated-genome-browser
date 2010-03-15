@@ -88,7 +88,7 @@ public class AffyTieredMap extends NeoMap {
 	}
 
 	AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
-		this(hscroll, vscroll, NeoConstants.HORIZONTAL);
+		super(hscroll, vscroll);
 		this.scroller[Y] = vscroller;
 	}
 

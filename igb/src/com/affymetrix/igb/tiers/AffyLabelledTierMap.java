@@ -49,9 +49,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   public void initComponentLayout() {
     //labelmap = new AffyTieredMap(false, false, scroller[Y]);
 
-	// Setting scroller in labelmap cause improper vertical zooming.
-	// So creating a new constructor that would not set the scroller.
-	labelmap = new AffyTieredMap(false, false);
+	labelmap = new AffyTieredMap(false, false, this.scroller[Y]);
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
     labelmap.setBackground(Color.lightGray);

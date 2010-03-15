@@ -314,20 +314,10 @@ public final class GeneralLoadView extends JComponent
 	 * Refresh the genome versions.
 	 * @param speciesName
 	 */
-	private void refreshVersionCB(String speciesName) {
-		synchronized (versionCB) {
-			versionCB.removeItemListener(this);
-			String oldVersion = (String) versionCB.getSelectedItem();
-			versionCB.setSelectedIndex(0);
-
-			List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
-			if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
-				versionCB.setEnabled(false);
-				return;
-			}
-
-			// Add names to combo boxes.
-			List<String> versionNames = new ArrayList<String>();
+	private void refreshVersionCB(final String speciesName) {
+		final List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
+		final List<String> versionNames = new ArrayList<String>();
+		if (versionList != null) {
 			for (GenericVersion gVersion : versionList) {
 				// the same versionName name may occur on multiple servers
 				if (!versionNames.contains(gVersion.versionName)) {
@@ -335,21 +325,37 @@ public final class GeneralLoadView extends JComponent
 				}
 			}
 			Collections.sort(versionNames, new StringVersionDateComparator());
-			// Sort the versions (by date)
-
-			versionCB.removeAllItems();
-			versionCB.addItem(SELECT_GENOME);
-			for (String versionName : versionNames) {
-				versionCB.addItem(versionName);
-			}
-			versionCB.setEnabled(true);
-			if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
-				versionCB.setSelectedItem(oldVersion);
-			}
-			if (versionCB.getItemCount() > 1) {
-				versionCB.addItemListener(this);
-			}
 		}
+		
+		// Sort the versions (by date)
+
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				versionCB.removeItemListener(GeneralLoadView.this);
+				String oldVersion = (String) versionCB.getSelectedItem();
+				versionCB.setSelectedIndex(0);
+
+				if (versionList == null || speciesName.equals(SELECT_SPECIES)) {
+					versionCB.setEnabled(false);
+					return;
+				}
+
+				// Add names to combo boxes.
+				versionCB.removeAllItems();
+				versionCB.addItem(SELECT_GENOME);
+				for (String versionName : versionNames) {
+					versionCB.addItem(versionName);
+				}
+				versionCB.setEnabled(true);
+				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
+					versionCB.setSelectedItem(oldVersion);
+				}
+				if (versionCB.getItemCount() > 1) {
+					versionCB.addItemListener(GeneralLoadView.this);
+				}
+			}
+		});
 	}
 
 
@@ -379,45 +385,47 @@ public final class GeneralLoadView extends JComponent
 
 		Application.getSingleton().addNotLockedUpMsg("Loading previous genome...");
 
-		gmodel.addGroupSelectionListener(this);
+		try {
+			gmodel.addGroupSelectionListener(this);
 
-		initVersion(versionName);
+			initVersion(versionName);
 
-		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
-		if (features == null || features.isEmpty()) {
-			Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
-			return;
-		}
-
-		gmodel.setSelectedSeqGroup(group);
-
-		BioSeq seq = Persistence.restoreSeqSelection(group);
-		if (seq == null) {
-			seq = group.getSeq(0);
-			if (seq == null) {
-				Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
+			List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+			if (features == null || features.isEmpty()) {
 				return;
 			}
-		}
 
-		gmodel.addSeqSelectionListener(this);
-		gmodel.setSelectedSeq(seq);
+			gmodel.setSelectedSeqGroup(group);
 
-		Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
+			BioSeq seq = Persistence.restoreSeqSelection(group);
+			if (seq == null) {
+				seq = group.getSeq(0);
+				if (seq == null) {
+					return;
+				}
+			}
 
+			gmodel.addSeqSelectionListener(this);
+			gmodel.setSelectedSeq(seq);
 
-		// Try/catch may not be needed.
-		try {
-			Persistence.restoreSeqVisibleSpan(gviewer);
-		} catch (Exception e) {
-			e.printStackTrace();
+			// Try/catch may not be needed.
+			try {
+				Persistence.restoreSeqVisibleSpan(gviewer);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} finally {
+			Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
 		}
 	}
 
 	private static void initVersion(String versionName) {
 		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + versionName);
-		GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
-		Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + versionName);
+		try {
+			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
+		} finally {
+			Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + versionName);
+		}
 	}
 	
 	/**

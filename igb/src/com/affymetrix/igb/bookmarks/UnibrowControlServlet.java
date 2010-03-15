@@ -30,7 +30,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.DataLoadView;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -45,6 +44,7 @@ import com.affymetrix.igb.das2.Das2Type;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.menuitem.OpenGraphAction;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -385,7 +385,7 @@ public final class UnibrowControlServlet {
 						for (int i = 0; i < graph_files.length; i++) {
 							graph_urls[i] = new URL(graph_files[i]);
 						}
-						Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
+						Thread t = OpenGraphAction.loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
 						t.start();
 					}
 

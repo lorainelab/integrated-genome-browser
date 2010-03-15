@@ -789,23 +789,16 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	private void refreshTreeView() {
-		String versionName = (String) versionCB.getSelectedItem();
-		final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
-		if (features == null || features.isEmpty()) {
-			final FeaturesTableModel ftm = new FeaturesTableModel(GeneralLoadView.this, null, null);
-			ThreadUtils.runOnEventQueue(new Runnable() {
-
-				public void run() {
-					GeneralLoadView.this.feature_model = ftm;
-					GeneralLoadView.this.feature_table.setModel(ftm);
-					featuresTableScrollPane.setViewportView(GeneralLoadView.this.feature_table);
-				}
-			});
-		}
-		
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
+				String versionName = (String) versionCB.getSelectedItem();
+				final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+				if (features == null || features.isEmpty()) {
+					GeneralLoadView.this.feature_model = new FeaturesTableModel(GeneralLoadView.this, null, null);
+					GeneralLoadView.this.feature_table.setModel(GeneralLoadView.this.feature_model);
+					featuresTableScrollPane.setViewportView(GeneralLoadView.this.feature_table);
+				}
 				feature_tree_view.initOrRefreshTree(features);
 			}
 		});

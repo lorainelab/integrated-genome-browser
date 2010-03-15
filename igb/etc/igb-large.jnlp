@@ -18,8 +18,6 @@
 	</security>
 	<resources>
 		<java version="1.6+" initial-heap-size="32m" max-heap-size="2048m"/>
-		<property name="http.agent" value="IGB/@jnlp.version@ +LargeMem (Webstart)" />
-		<property name="com.apple.macos.useScreenMenuBar" value="true" />
 		<jar href="igb.jar" main="true" />
 		<jar href="igb-i18n.jar" />
 		<jar href="affx_fusion.jar" />
@@ -29,6 +27,8 @@
 		<jar href="jlfgr-1_0.jar" />
 		<jar href="image4j.jar" />
 		<jar href="commons-codec-1.4.jar" />
+		<property name="http.agent" value="IGB/@jnlp.version@ +LargeMem (Webstart)" />
+		<property name="com.apple.macos.useScreenMenuBar" value="true" />
 	</resources>
 	<application-desc main-class="com.affymetrix.igb.IGB">
 		<argument>-prefs</argument>

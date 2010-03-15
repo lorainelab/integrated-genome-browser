@@ -792,13 +792,18 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	private void refreshTreeView() {
-		String versionName = (String) versionCB.getSelectedItem();
-		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
-		if (features == null || features.isEmpty()) {
-			clearFeaturesTable();
-			return;
-		}
-		feature_tree_view.initOrRefreshTree(features);
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				String versionName = (String) versionCB.getSelectedItem();
+				List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+				if (features == null || features.isEmpty()) {
+					clearFeaturesTable();
+					return;
+				}
+				feature_tree_view.initOrRefreshTree(features);
+			}
+		});
 	}
 
 	/**

@@ -27,6 +27,8 @@
 		<jar href="jlfgr-1_0.jar" />
 		<jar href="image4j.jar" />
 		<jar href="commons-codec-1.4.jar" />
+		<jar href="sam-1.16.jar" download="lazy" />
+
 		<property name="http.agent" value="IGB/@jnlp.version@ +LargeMem (Webstart)" />
 		<property name="com.apple.macos.useScreenMenuBar" value="true" />
 	</resources>

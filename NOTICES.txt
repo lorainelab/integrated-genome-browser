@@ -43,3 +43,11 @@ D)   This product includes portions of the Vector Graphics software library
      The files from this project are bundled together in freehep.jar
      A copy of the license is included in the file FREEHEP_LICENSE_LGPL.txt.
 
+E)   This product includes portions of the Picard software library
+     developed by the Picard SourceForge project, which is covered by the
+     Apache License, version 2.0.
+
+     http://sourceforge.net/projects/picard/
+
+     The files from this project are bundled together in sam*.jar.
+ 

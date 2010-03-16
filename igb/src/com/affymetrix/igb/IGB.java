@@ -832,10 +832,12 @@ public final class IGB extends Application
 						"http://genoviz.sourceforge.net\n\n" +
 						"Source code for IGB is released under the Common Public License, v1.0.\n" +
 						"IGB is Copyright (c) 2000-2005 Affymetrix, Inc.\n" +
-						"IGB uses " +
-						"the Fusion SDK from Affymetrix \n" +
-						"and the Vector Graphics package from java.FreeHEP.org \n" +
-						"(released under the LGPL license).\n\n";
+						"IGB uses:\n" +
+						"the Fusion SDK from Affymetrix,\n" +
+						"the Vector Graphics package from http://java.freehep.org\n" +
+						"(released under the LGPL license),\n" +
+						"the Picard package from http://picard.sourceforge.net\n" +
+						"(released under the Apache version 2.0 license)\n\n";
 		about_text.append(text);
 		String cache_root = com.affymetrix.igb.util.LocalUrlCacher.getCacheRoot();
 		File cache_file = new File(cache_root);

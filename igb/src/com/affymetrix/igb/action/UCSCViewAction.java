@@ -56,7 +56,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 		if (!query.isEmpty()) {
 			GeneralUtils.browse(UCSC_URL + query);
 		} else {
-			Application.errorPanel("Don't have UCSC information for genome " + SEQ_MAP.getAnnotatedSeq().getVersion());
+			Application.errorPanel("Unable to map genome '" + SEQ_MAP.getAnnotatedSeq().getVersion() + "' to a UCSC genome.");
 		}
 	}
 

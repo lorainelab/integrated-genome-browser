@@ -199,9 +199,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		fireTableCellUpdated(row, col);
 
 			if (gFeature.loadStrategy == LoadStrategy.GENOME) {
-				Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
 				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, this.cur_seq, this);
-				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
 			}
 
 			//  Whatever feature strategy changed, it may have affected

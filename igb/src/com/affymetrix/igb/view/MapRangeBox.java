@@ -23,117 +23,82 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
-import java.util.*;
-import java.util.regex.*;
-import javax.swing.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JTextField;
 
 
-/** A Text Box for displaying and setting the range of a SeqMapView. */
-final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
+/**
+ * A Text Box for displaying and setting the range of a SeqMapView.
+ * 
+ * @version $Id$
+ */
+final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener {
+	private static final long serialVersionUID = 1l;
   
-  NeoMap map;
-  SeqMapView gview;
+  private final NeoMap map;
+  private final SeqMapView gview;
   
-  public JTextField range_box = new JTextField("") {
-      @Override
-    public Dimension getPreferredSize() {
-      Dimension d = super.getPreferredSize();
-      return new Dimension(200, d.height);
-    }
-        @Override
-    public Dimension getMaximumSize() {
-      return new Dimension(200, getPreferredSize().height);
-    }
-  };
+  public final JTextField range_box;
 
   // Use the ENGLISH locale here because we want the user to be able to
   // cut and paste this text into the UCSC browser.
   // (Also, the Pattern's below were written to work for the English locale.)
-  static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
+  private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
   
   // accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
   // (The chromosome name cannot contain any spaces.)
-  static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
+  private static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
   
   // accepts a pattern like: "chr2 : 3,040,000 + 20000"
   // (The chromosome name cannot contain any spaces.)
-  static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
+  private static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
 
   // accepts a pattern like: "3,040,000 : 4,502,000"  or "10000-20000"
-  static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
-  static final Pattern start_width_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[+]\\s*([0-9,]+)\\s*$");
-  static final Pattern center_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\s*$");
-  
-  public static final int FORMAT_START_END = 0;
-  public static final int FORMAT_START_WIDTH = 1;
-  public static final int FORMAT_CENTER = 2;
-  public static final int FORMAT_CHROM_START_END = 3;
+  private static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
+  private static final Pattern start_width_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[+]\\s*([0-9,]+)\\s*$");
+  private static final Pattern center_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\s*$");
   
   public MapRangeBox(SeqMapView gview) {
     this.gview = gview;
     this.map = gview.getSeqMap();
-    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+	range_box = new JTextField("");
+    Dimension d = new Dimension(200, range_box.getPreferredSize().height);
+    range_box.setPreferredSize(d);
+    range_box.setMaximumSize(d);
     
     range_box.setToolTipText("<html>Enter a coordinate range here.<br>" +
       "Use the format 'start : end' or 'start + width' or 'center',<br>" +
       "or use the UCSC browser format 'chrom:start-end'.<html>");
-    ToolTipManager.sharedInstance().registerComponent(range_box);
-    
-    this.add(range_box);
 
     range_box.setEditable(true);
     range_box.addActionListener(action_listener);
     map.addViewBoxListener(this);
+	GenometryModel.getGenometryModel().addGroupSelectionListener(this);
   }
 
-  public void destroy() {
-    map.removeViewBoxListener(this);
-    range_box.removeActionListener(action_listener);
-    map = null;
-    gview = null;
-  }
-  
   public void viewBoxChanged(NeoViewBoxChangeEvent e) {
     Rectangle2D.Double vbox = e.getCoordBox();
     setRangeText(vbox.x, vbox.width + vbox.x);
   }
-  
+
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     range_box.setText("");
   }
-    
+
   void setRangeText(double start, double end) {
-    /*if (format == FORMAT_CHROM_START_END) {
-      GenometryModel gmodel = GenometryModel.getGenometryModel();
-      if (gmodel.getSelectedSeq() != null) {
-        range_box.setText(gmodel.getSelectedSeq().getID() + ": " +  nformat.format(start) + " - " + nformat.format(end));
-      } else {
-        range_box.setText(nformat.format(start) + " - " + nformat.format(end));
-      }
-    } else if (format == FORMAT_START_END) {*/
       range_box.setText(nformat.format(start) + " : " + nformat.format(end));
-    /*} else if (format == FORMAT_START_WIDTH) {
-      range_box.setText(nformat.format(start) + " + " + nformat.format(end-start));      
-    } else if (format == FORMAT_CENTER) {
-      range_box.setText(nformat.format((start + end)/2));      
-    }*/
   }
- 
-//  Set<String> allowedChromosomes = null;
-//  
-//  /** Set the list of chromosomes that the user is allowed to go
-//   *  to by typing the name in the box. 
-//   *  Set to null to allow all chromosomes.
-//   */
-//  public void setAllowedChromosomes(Collection<String> chromNames) {
-//    allowedChromosomes = new TreeSet<String>();
-//    allowedChromosomes.addAll(chromNames);
-//  }
-  
+
   ActionListener action_listener = new ActionListener() {
     public void actionPerformed(ActionEvent evt) {
       int[] current = map.getVisibleRange();
@@ -142,7 +107,7 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
       gview.zoomTo(start, end);
 
       double width = end - start;
-      //int display_format = FORMAT_START_END;
+
       try {
         Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range_box.getText());
         Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range_box.getText());

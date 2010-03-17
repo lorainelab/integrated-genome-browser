@@ -1,3 +1,10 @@
+=== Installing the Classic DAS2 Server ===
+
+=== Modes ===
+There are two ways to configure the GenoViz Genometry DAS2 server:
+* Classic mode: The annotations are organized into a directory structure on the file system.
+* GenoPub mode: The annotations are managed by the GenoPub (Genomic Annotation Publisher), which stores information about each annotation in a database.  A web-based tool allows annotations to be easily added, described, and organized.  Through the tool, users and groups are managed and annotation security is specified. Access to annotations is brokered by the DAS2 server so that  only authorized users can gain access to these resources.
+
 === REQUIREMENTS ===
 
 	- Java 6+, 64-bit recommended (http://java.sun.com/)

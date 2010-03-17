@@ -260,7 +260,13 @@ public final class GeneralLoadView extends JComponent
 		// Only try restoring persistent genome if all the server responses have come back.
 		if (lookForPersistentGenome && ServerList.areAllServersInited()) {
 			lookForPersistentGenome = false;
-			RestorePersistentGenome();
+			try {
+				// hack so event queue finishes
+				Thread.sleep(1000);
+				RestorePersistentGenome();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 	}
 
@@ -385,9 +391,9 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		Application.getSingleton().addNotLockedUpMsg("Loading previous genome...");
-
 		try {
+			Application.getSingleton().addNotLockedUpMsg("Loading previous genome " + versionName +" ...");
+
 			gmodel.addGroupSelectionListener(this);
 
 			initVersion(versionName);
@@ -417,7 +423,7 @@ public final class GeneralLoadView extends JComponent
 				e.printStackTrace();
 			}
 		} finally {
-			Application.getSingleton().removeNotLockedUpMsg("Loading previous genome...");
+			Application.getSingleton().removeNotLockedUpMsg("Loading previous genome " + versionName +" ...");
 		}
 	}
 

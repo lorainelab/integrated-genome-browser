@@ -175,18 +175,22 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+/**
+ * Removing this hack to resolve stack overflow error.
+ */
+	
 	//Need to override this method to solve improper vertical zooming.
-	@Override
-  public void scroll(int id, double coord_value) {
-	super.scroll(id, coord_value);
-		if (id == Y && labelmap != null) {
-			// This is hack to solve improper vertical zoom. Now labelmap's scroller
-			// is not set to be equal to AffylabelledTierMap, labelmap's scroller's
-			// value needs to changed when AffylabelledTierMap's zoomer value changes.
-			labelmap.getScroller(Y).setValue(scroller[Y].getValue());
-			labelmap.scroll(id, coord_value);
-		}
-	}
+//	@Override
+//  public void scroll(int id, double coord_value) {
+//	super.scroll(id, coord_value);
+//		if (id == Y && labelmap != null) {
+//			// This is hack to solve improper vertical zoom. Now labelmap's scroller
+//			// is not set to be equal to AffylabelledTierMap, labelmap's scroller's
+//			// value needs to changed when AffylabelledTierMap's zoomer value changes.
+//			labelmap.getScroller(Y).setValue(scroller[Y].getValue());
+//			labelmap.scroll(id, coord_value);
+//		}
+//	}
 
 	@Override
   public void setZoomBehavior(int axisid, int constraint, double coord) {

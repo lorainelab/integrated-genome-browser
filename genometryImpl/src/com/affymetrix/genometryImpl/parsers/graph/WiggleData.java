@@ -1,23 +1,30 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import cern.colt.GenericSorting;
+import cern.colt.Swapper;
+import cern.colt.function.IntComparator;
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
 
 /**
  *  A class used to temporarily hold data during processing of Wiggle-format files.
  */
 final class WiggleData {
-	private final ArrayList<Point3D> data;
+	private final IntArrayList xData;
+	private final FloatArrayList yData;
+	private final IntArrayList wData;
+
 	private final String seq_id;
 
 	WiggleData(String seq_id) {
-		this.data = new ArrayList<Point3D>();
+		this.xData = new IntArrayList();
+		this.yData = new FloatArrayList();
+		this.wData = new IntArrayList();
 		this.seq_id = seq_id;
 	}
 
@@ -26,52 +33,56 @@ final class WiggleData {
 	 *  has been stored yet.
 	 */
 	GraphSym createGraph(AnnotatedSeqGroup seq_group, String graph_id) {
-		if (data.isEmpty()) {
+		if (xData.isEmpty()) {
 			return null;
 		}
 
-		PointComp pointcomp = new PointComp();
-		Collections.sort(data, pointcomp);
+		int dataSize = xData.size();
 
-		int dataSize = data.size();
+		// Make an array copy of the data elements (not a clone, because that might be larger).
+		int[] xList = Arrays.copyOf(xData.elements(), dataSize);
+		xData.clear();
+		float[] yList = Arrays.copyOf(yData.elements(), dataSize);
+		yData.clear();
+		int[] wList =  Arrays.copyOf(wData.elements(), dataSize);
+		wData.clear();
+		
+		sortTheData(xList, yList, wList);
 
-		int[]   xlist = new int[dataSize];
-		float[] ylist = new float[dataSize];
-		int[]   wlist = new int[dataSize];
-
-		Point3D largest = data.get(dataSize - 1);
-		int largest_x = largest.x + largest.w;
-
+		int largest_x = xList[dataSize-1] + wList[dataSize-1];
 		BioSeq seq = seq_group.addSeq(seq_id, largest_x);
 
-		for (int i=0; i<dataSize; i++) {
-			Point3D p = data.get(i);
-			xlist[i] = p.x;
-			ylist[i] = p.y;
-			wlist[i] = p.w;
-		}
+		return new GraphIntervalSym(xList, wList, yList, graph_id, seq);
+	}
 
-		return new GraphIntervalSym(xlist, wlist, ylist, graph_id, seq);
+	private static void sortTheData(final int[] xList, final float[] yList, final int[] wList) {
+		Swapper swapper = new Swapper() {
+
+			public void swap(int a, int b) {
+				int swapInt = xList[a];
+				xList[a] = xList[b];
+				xList[b] = swapInt;
+
+				swapInt = wList[a];
+				wList[a] = wList[b];
+				wList[b] = swapInt;
+
+				float swapFloat = yList[a];
+				yList[a] = yList[b];
+				yList[b] = swapFloat;
+			}
+		};
+		IntComparator comp = new IntComparator() {
+			public int compare(int a, int b) {
+				return ((Integer) xList[a]).compareTo(xList[b]);
+			}
+		};
+		GenericSorting.quickSort(0, xList.length, comp, swapper);
 	}
 
 	public void add(int x, float y, int w) {
-		data.add(new Point3D(x, y, w));
-	}
-
-	private static final class Point3D {
-		private final float y;
-		private final int x;
-		private final int w;
-		public Point3D(int x, float y,int w) {
-			this.x = x; this.y =y; this.w = w;
-		}
-	}
-
-	private static final class PointComp implements Comparator<Point3D>, Serializable {
-		public static final long serialVersionUID = 1l;
-
-		public int compare(Point3D p1, Point3D p2) {
-			return ((Integer)p1.x).compareTo(p2.x);
-		}
+		xData.add(x);
+		yData.add(y);
+		wData.add(w);
 	}
 }

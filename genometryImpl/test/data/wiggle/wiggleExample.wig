@@ -23,15 +23,15 @@ chr19 59304400 59304700 1.00
 #	Note, one-relative coordinate system in use for this format
 track type=wiggle_0 name="variableStep" description="variableStep format" visibility=full autoScale=off viewLimits=0.0:25.0 color=255,200,0 yLineMark=11.76 yLineOnOff=on priority=10
 variableStep chrom=chr19 span=150
-59304701 10.0
 59304901 12.5
+59304701 10.0
 59305401 15.0
 59305601 17.5
 59305901 20.0
 59306081 17.5
 59306301 15.0
-59306691 12.5
 59307871 10.0
+59306691 12.5
 #	200 base wide points graph at every 300 bases, 50 pixel high graph
 #	autoScale off and viewing range set to [0:1000]
 #	priority = 30 positions this as the third graph

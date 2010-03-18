@@ -345,7 +345,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
           style.setShow(true);
           showMenu.remove(show_tier);
 		  handler.sortTiers();
-          refreshMap(false,true);
+		  handler.repackTheTiers(false, true);
         }
       });
       showMenu.add(show_tier);
@@ -364,7 +364,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
 
-    refreshMap(false,true);
+	handler.repackTheTiers(false, true);
   }
 
   private void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {

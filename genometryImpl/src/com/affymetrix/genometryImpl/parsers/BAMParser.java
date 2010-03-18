@@ -28,7 +28,7 @@ import net.sf.samtools.util.CloseableIterator;
  */
 public final class BAMParser {
 	private SAMFileReader reader;
-    private SAMFileHeader header;
+    //private SAMFileHeader header;
 	private File f;
 	private AnnotatedSeqGroup group;
 
@@ -37,8 +37,7 @@ public final class BAMParser {
 		this.f = f;
 		try {
 			reader = new SAMFileReader(f);
-			header = reader.getFileHeader();
-
+			//header = reader.getFileHeader();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -59,18 +58,22 @@ public final class BAMParser {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
 		CloseableIterator<SAMRecord> iter = null;
 		try {
-			iter = reader.query(seq.getID(), min, max, contained);
-			for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
-				if (containerSym) {
-					// positive track
-					symList.add(createRandomAccessSym(sr, min, max, seq));
+			if (reader != null) {
+				iter = reader.query(seq.getID(), min, max, contained);
+				if (iter != null) {
+					for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
+						if (containerSym) {
+							// positive track
+							symList.add(createRandomAccessSym(sr, min, max, seq));
 
-					// negative track
-					symList.add(createRandomAccessSym(sr, max, min, seq));
+							// negative track
+							symList.add(createRandomAccessSym(sr, max, min, seq));
 
-					return symList;
+							return symList;
+						}
+						symList.add(convertSAMRecordToSymWithProps(sr, seq, f.getName()));
+					}
 				}
-				symList.add(convertSAMRecordToSymWithProps(sr, seq, f.getName()));
 			}
 		} finally {
 			iter.close();
@@ -97,16 +100,20 @@ public final class BAMParser {
 	public void parseLoRes(BioSeq seq, int min, int max, float scaleFactor, int[]x, float[]y) {
 		CloseableIterator<SAMRecord> iter = null;
 		try {
-			iter = reader.query(seq.getID(), min, max, true);
-			for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
-				SimpleSymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, f.getName().intern());
-				int start = (int) ((sr.getAlignmentStart() - 1) * scaleFactor); // convert to interbase
-				int end = (int) (sr.getAlignmentEnd() * scaleFactor);
-				if (!sr.getReadNegativeStrandFlag()) {
-					// swap
-					int temp = start;
-					start = end;
-					end = temp;
+			if (reader != null) {
+				iter = reader.query(seq.getID(), min, max, true);
+				if (iter != null) {
+					for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
+						SimpleSymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, f.getName().intern());
+						int start = (int) ((sr.getAlignmentStart() - 1) * scaleFactor); // convert to interbase
+						int end = (int) (sr.getAlignmentEnd() * scaleFactor);
+						if (!sr.getReadNegativeStrandFlag()) {
+							// swap
+							int temp = start;
+							start = end;
+							end = temp;
+						}
+					}
 				}
 			}
 		} finally {

@@ -14,7 +14,6 @@ import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -50,126 +49,152 @@ public final class ResidueLoading {
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
-		//First try to load from DAS2, then Quickload and at last DAS1
 		if (partial_load) {
-			// Try to load in raw format from DAS2 server.
-			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.DAS2) {
-					String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
-					String residues = GetPartialFASTADas2Residues(uri);
-					if (residues != null) {
-						// span is non-null, here
-						BioSeq.addResiduesToComposition(aseq, residues, span);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
-				}
-			}
-
-			// Try to load in fasta format from DAS2 server.
-			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.DAS2) {
-					String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
-					String residues = GetPartialFASTADas2Residues(uri);
-					if (residues != null) {
-						// span is non-null, here
-						BioSeq.addResiduesToComposition(aseq, residues, span);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
-				}
-			}
-
-			// Try to load via DAS/1 server.
-			for (GenericVersion version : versionsWithChrom) {
-				if (version.gServer.serverType == ServerType.DAS) {
-					String residues = DasLoader.getDasResidues(version, seq_name, min, max);
-					if (residues != null) {
-						// Add to composition if we're doing a partial sequence
-						// span is non-null, here
-						BioSeq.addResiduesToComposition(aseq, residues, span);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
-				}
-			}
-
-			// QuickLoad only supports full files.
-
+			return loadPartial(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span, gviewer);
 		}
-		// not a partial load.
-		else {
 
-			//Try to load in raw format from DAS2 server, as this format is more compactly represented internally.
-			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.DAS2) {
-					String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
-					String residues = LoadResiduesFromDAS2(uri);
-					if (residues != null) {
-						aseq.setResidues(residues);
-						BioSeq.addResiduesToComposition(aseq);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
+		return loadFull(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, gviewer, seq_group);
+	}
+
+
+	/**
+	 * Partial load, supported by DAS2 and DAS1.
+	 * @param versionsWithChrom
+	 * @param genomeVersionName
+	 * @param seq_name
+	 * @param min
+	 * @param max
+	 * @param aseq
+	 * @param span
+	 * @param gviewer
+	 * @return
+	 */
+	private static boolean loadPartial(Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span, final SeqMapView gviewer) {
+		// Try to load in raw format from DAS2 server.
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.DAS2) {
+				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
+				String residues = GetPartialFASTADas2Residues(uri);
+				if (residues != null) {
+					// span is non-null, here
+					BioSeq.addResiduesToComposition(aseq, residues, span);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
 				}
 			}
-
-			// Try to load in bnib format from DAS2 server, as this format is more compactly represented internally.
-			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.DAS2) {
-					String uri = generateDas2URI(
-							server.URL, genomeVersionName, seq_name, min, max, FORMAT.BNIB);
-					if (LoadResiduesFromDAS2(seq_group, uri)) {
-						BioSeq.addResiduesToComposition(aseq);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
+		}
+		// Try to load in fasta format from DAS2 server.
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.DAS2) {
+				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
+				String residues = GetPartialFASTADas2Residues(uri);
+				if (residues != null) {
+					// span is non-null, here
+					BioSeq.addResiduesToComposition(aseq, residues, span);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
 				}
 			}
-
-			// Try to load in fasta format from DAS2 server.
-			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.DAS2) {
-					String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
-					if (LoadResiduesFromDAS2(seq_group, uri)) {
-						BioSeq.addResiduesToComposition(aseq);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
+		}
+		// Try to load via DAS/1 server.
+		for (GenericVersion version : versionsWithChrom) {
+			if (version.gServer.serverType == ServerType.DAS) {
+				String residues = DasLoader.getDasResidues(version, seq_name, min, max);
+				if (residues != null) {
+					// Add to composition if we're doing a partial sequence
+					// span is non-null, here
+					BioSeq.addResiduesToComposition(aseq, residues, span);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
 				}
 			}
+		}
+		// QuickLoad only supports full files.
+		return false;
+	}
 
-			//Try to load from Quickload server.
-			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.QuickLoad) {
-					if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
-						BioSeq.addResiduesToComposition(aseq);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
+
+	/**
+	 * Full load, supported by DAS2, QuickLoad, and DAS1.
+	 * Try to load in BNIB format before anything else.
+	 * @param versionsWithChrom
+	 * @param genomeVersionName
+	 * @param seq_name
+	 * @param min
+	 * @param max
+	 * @param aseq
+	 * @param gviewer
+	 * @param seq_group
+	 * @return
+	 */
+	private static boolean loadFull(
+			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, final SeqMapView gviewer, AnnotatedSeqGroup seq_group) {
+		// Try to load in bnib format, as this format is more compactly represented internally.
+		// Try loading from DAS/2.
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.DAS2) {
+				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.BNIB);
+				if (LoadResiduesFromDAS2(seq_group, uri)) {
+					BioSeq.addResiduesToComposition(aseq);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
 				}
 			}
-
-			// Try to load via DAS/1 server.
-			for (GenericVersion version : versionsWithChrom) {
-				if (version.gServer.serverType == ServerType.DAS) {
-					String residues = DasLoader.getDasResidues(version, seq_name, min, max);
-					if (residues != null) {
-						aseq.setResidues(residues);
-						BioSeq.addResiduesToComposition(aseq);
-						gviewer.setAnnotatedSeq(aseq, true, true, true);
-						return true;
-					}
+		}
+		//Try to load from Quickload server.
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.QuickLoad) {
+				if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
+					BioSeq.addResiduesToComposition(aseq);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
 				}
 			}
 		}
 
+		// Try to load in RAW format from DAS2 server.
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.DAS2) {
+				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
+				String residues = LoadResiduesFromDAS2(uri);
+				if (residues != null) {
+					aseq.setResidues(residues);
+					BioSeq.addResiduesToComposition(aseq);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
+				}
+			}
+		}
+		// Try to load in fasta format from DAS2 server.
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.DAS2) {
+				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
+				if (LoadResiduesFromDAS2(seq_group, uri)) {
+					BioSeq.addResiduesToComposition(aseq);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
+				}
+			}
+		}
+		
+		// Try to load via DAS/1 server.
+		for (GenericVersion version : versionsWithChrom) {
+			if (version.gServer.serverType == ServerType.DAS) {
+				String residues = DasLoader.getDasResidues(version, seq_name, min, max);
+				if (residues != null) {
+					aseq.setResidues(residues);
+					BioSeq.addResiduesToComposition(aseq);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 

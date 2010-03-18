@@ -44,16 +44,15 @@ public final class ResidueLoading {
 	public static boolean getResidues(
 			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
 
-		boolean partial_load = (min > 0 || max < aseq.getLength());	// Are we only asking for part of the sequence?
+		boolean partial_load = (min > 0 || max < (aseq.getLength()-1));	// Are we only asking for part of the sequence?
 
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
-		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
 		if (partial_load) {
 			return loadPartial(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span, gviewer);
 		}
 
-		return loadFull(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, gviewer, seq_group);
+		return loadFull(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, gviewer);
 	}
 
 
@@ -130,7 +129,8 @@ public final class ResidueLoading {
 	 * @return
 	 */
 	private static boolean loadFull(
-			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, final SeqMapView gviewer, AnnotatedSeqGroup seq_group) {
+			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, final SeqMapView gviewer) {
+		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 		// Try to load in bnib format, as this format is more compactly represented internally.
 		// Try loading from DAS/2.
 		for (GenericVersion version : versionsWithChrom) {

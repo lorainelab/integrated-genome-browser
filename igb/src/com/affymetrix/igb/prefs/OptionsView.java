@@ -81,7 +81,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     orf_box.add(dynamic_orf_color);
 	
 	JPanel base_box = new JPanel();
-    base_box.setLayout(new GridLayout(4,2));
+    base_box.setLayout(new GridLayout(5,2));
     base_box.setBorder(new javax.swing.border.TitledBorder("Change Residue Colors"));
 
     JButton A_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), CharSeqGlyph.PREF_A_COLOR, CharSeqGlyph.default_A_color);
@@ -96,6 +96,9 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 	JButton C_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), CharSeqGlyph.PREF_C_COLOR, CharSeqGlyph.default_C_color);
     base_box.add(new JLabel("C: "));
     base_box.add(C_color);
+	JButton OTHER_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), CharSeqGlyph.PREF_OTHER_COLOR, CharSeqGlyph.default_other_color);
+    base_box.add(new JLabel("Other: "));
+    base_box.add(OTHER_color);
     
 
 

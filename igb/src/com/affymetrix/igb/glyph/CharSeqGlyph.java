@@ -34,10 +34,12 @@ public final class CharSeqGlyph extends SequenceGlyph
 	public static final String PREF_T_COLOR = "Thymine color";
 	public static final String PREF_G_COLOR = "Guanine color";
 	public static final String PREF_C_COLOR = "Cytosine color";
+	public static final String PREF_OTHER_COLOR = "Other color";
 	public static final Color default_A_color = Color.GREEN;
 	public static final Color default_T_color = Color.PINK;
 	public static final Color default_G_color = Color.YELLOW;
 	public static final Color default_C_color = Color.CYAN;
+	public static final Color default_other_color = Color.GRAY;
 
 	public CharSeqGlyph() {
 		super();
@@ -132,19 +134,11 @@ public final class CharSeqGlyph extends SequenceGlyph
 	}
 
 	private void drawResidueRectangles(Graphics g, double pixelsPerBase, String str) {
-		for (int j = 0; j < str.length(); j++) {
+		int strLength = str.length();
+		for (int j = 0; j < strLength; j++) {
 			char charAt = str.charAt(j);
-			if (charAt == 'A' || charAt == 'a') {
-				g.setColor(PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_A_COLOR, default_A_color));
-			} else if (charAt == 'T' || charAt == 't') {
-				g.setColor(PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_T_COLOR, default_T_color));
-			} else if (charAt == 'G' || charAt == 'g') {
-				g.setColor(PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_G_COLOR, default_G_color));
-			} else if (charAt == 'C' || charAt == 'c') {
-				g.setColor(PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_C_COLOR, default_C_color));
-			} else {
-				continue;
-			}
+
+			g.setColor(determineResidueColor(charAt));
 
 			//Create a colored rectangle.
 			//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
@@ -154,12 +148,29 @@ public final class CharSeqGlyph extends SequenceGlyph
 		}
 	}
 
+	private static Color determineResidueColor(char charAt) {
+		if (charAt == 'A' || charAt == 'a') {
+			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_A_COLOR, default_A_color);
+		}
+		if (charAt == 'T' || charAt == 't') {
+			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_T_COLOR, default_T_color);
+		}
+		if (charAt == 'G' || charAt == 'g') {
+			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_G_COLOR, default_G_color);
+		}
+		if (charAt == 'C' || charAt == 'c') {
+			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_C_COLOR, default_C_color);
+		}
+		return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_OTHER_COLOR, default_other_color);
+	}
+
 	private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {
 		g.setFont(getResidueFont());
 		g.setColor(getForegroundColor());
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
-			for (int i = 0; i < str.length(); i++) {
+			int strLength = str.length();
+			for (int i = 0; i < strLength; i++) {
 				String c = String.valueOf(str.charAt(i));
 				if (c != null) {
 					g.drawString(c, pixelStart + (int) (i * pixelsPerBase), baseline);

@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.parsers.BAMParser;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
@@ -416,8 +417,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				SeqSpan span = sym.getSpan(coordseq);
 				if (span != null) {
 					String residueStr = residues.toString();
-					// note: it is possible to get different lengths here, probably due to 0-based, 1-based, interbase disagreement.
-					residueStr = residueStr.substring(0, Math.min(residueStr.length(), span.getLength()));
+					Object cigarObj = ((SymWithProps) sym).getProperty("cigar");
+					residueStr = BAMParser.interpretCigar(cigarObj, residueStr, span.getLength());
 					CharSeqGlyph csg = new CharSeqGlyph();
 					csg.setResidues(residueStr);
 					csg.setShowBackground(false);

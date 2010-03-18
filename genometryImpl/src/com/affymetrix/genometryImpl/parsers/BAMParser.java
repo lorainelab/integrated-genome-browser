@@ -9,7 +9,13 @@ import com.affymetrix.genometryImpl.symmetry.RandomAccessSym;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.sf.samtools.Cigar;
+import net.sf.samtools.CigarElement;
+import net.sf.samtools.CigarOperator;
 
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileHeader;
@@ -56,38 +62,33 @@ public final class BAMParser {
 			iter = reader.query(seq.getID(), min, max, contained);
 			for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
 				if (containerSym) {
-					// positive
-					RandomAccessSym sym = new RandomAccessSym(this);
-					sym.setID(sr.getReadName());
-					for (SAMTagAndValue tv : sr.getAttributes()) {
-						sym.setProperty(tv.tag, tv.value);
-					}
-					sym.addSpan(new SimpleSeqSpan(min, max, seq));
-					sym.setProperty("method", f.getName());
-					seq.addAnnotation(sym);
-					symList.add(sym);
+					// positive track
+					symList.add(createRandomAccessSym(sr, min, max, seq));
 
-					// negative
-					sym = new RandomAccessSym(this);
-					sym.setID(sr.getReadName());
-					for (SAMTagAndValue tv : sr.getAttributes()) {
-						sym.setProperty(tv.tag, tv.value);
-					}
-					sym.addSpan(new SimpleSeqSpan(max, min, seq));
-					sym.setProperty("method", f.getName());
-					seq.addAnnotation(sym);
-					symList.add(sym);
+					// negative track
+					symList.add(createRandomAccessSym(sr, max, min, seq));
+
 					return symList;
 				}
-				SimpleSymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, f.getName());
-				symList.add(sym);
-				//seq.addAnnotation(sym);
+				symList.add(convertSAMRecordToSymWithProps(sr, seq, f.getName()));
 			}
 		} finally {
 			iter.close();
 		}
 
 		return symList;
+	}
+
+	private RandomAccessSym createRandomAccessSym(SAMRecord sr, int min, int max, BioSeq seq) {
+		RandomAccessSym sym = new RandomAccessSym(this);
+		sym.setID(sr.getReadName());
+		for (SAMTagAndValue tv : sr.getAttributes()) {
+			sym.setProperty(tv.tag, tv.value);
+		}
+		sym.addSpan(new SimpleSeqSpan(min, max, seq));
+		sym.setProperty("method", f.getName());
+		seq.addAnnotation(sym);
+		return sym;
 	}
 
 	/**
@@ -133,9 +134,63 @@ public final class BAMParser {
 		} else {
 			sym.addSpan(new SimpleSeqSpan(end, start, seq));
 		}
+		sym.setProperty("cigar", sr.getCigar());	// interpreted later
 		sym.setProperty("residues", sr.getReadString().intern());
 		sym.setProperty("method", meth);
 		return sym;
+	}
+
+	/**
+	 * Rewrite the residue string, based upon cigar information
+	 * @param cigarObj
+	 * @param residues
+	 * @param spanLength
+	 * @return
+	 */
+	public static String interpretCigar(Object cigarObj, String residues, int spanLength) {
+		Cigar cigar = (Cigar)cigarObj;
+		if (cigar == null || cigar.numCigarElements() == 0) {
+			return residues;
+		}
+		StringBuilder sb = new StringBuilder(spanLength);
+		int currentPosition = 0;
+		for (CigarElement cel : cigar.getCigarElements()) {
+			try {
+				int celLength = cel.getLength();
+				if (cel.getOperator() == CigarOperator.DELETION) {
+					currentPosition += celLength;	// skip over deletion
+				} else if (cel.getOperator() == CigarOperator.INSERTION) {
+					sb.append(residues.substring(currentPosition, currentPosition + celLength));
+					currentPosition += celLength;	// print insertion
+				} else if (cel.getOperator() == CigarOperator.M) {
+					sb.append(residues.substring(currentPosition, currentPosition + celLength));
+					currentPosition += celLength;	// print matches
+				} else if (cel.getOperator() == CigarOperator.N) {
+					char[] tempArr = new char[celLength];
+					Arrays.fill(tempArr, '.');
+					sb.append(tempArr);				// print N as '.'
+				} else if (cel.getOperator() == CigarOperator.PADDING) {
+					char[] tempArr = new char[celLength];
+					Arrays.fill(tempArr, '*');		// print padding as '*'
+				} else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
+					currentPosition += celLength;	// skip over soft clip
+				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
+					continue;						// hard clip can be ignored
+				}
+				if (currentPosition > spanLength) {
+					Logger.getLogger(BAMParser.class.getName()).log(Level.FINE, "currentPosition > spanLength: " + currentPosition + " > " + spanLength);
+					break;
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				char[] tempArr = new char[spanLength-currentPosition];
+				Arrays.fill(tempArr, '-');
+				sb.append(tempArr);
+				return sb.toString().intern();
+			}
+		}
+
+		return sb.toString().intern();
 	}
 
 	public String getMimeType() {

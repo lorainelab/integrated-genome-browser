@@ -365,6 +365,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
 
 	handler.repackTheTiers(false, true);
+
+	/** Possible bug : When all strands are hidden.
+	 * tier label and tiers do appear at same position.
+	 **/
+
+	// NOTE: Below call to stretchToFit is not redundancy. It is there
+	//       to solve above mentioned bug.
+	handler.repackTheTiers(false, true);
   }
 
   private void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {

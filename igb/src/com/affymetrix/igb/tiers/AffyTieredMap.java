@@ -366,8 +366,13 @@ public class AffyTieredMap extends NeoMap {
 
 	@Override
 	public void zoom(int id, double zoom_scale) {
-		if (id == X) {
+		if (id == X || id == Y) {
 			super.zoom(id, zoom_scale);
+			if(id == Y){
+				// Call packTiers while zooming vertically to preserve width of coordinate axis.
+				// Also no need to stretch it vertically. It is essenstially what zooming is doing.
+				packTiers(false, false, false); 
+			}
 			return;
 		}
 		if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY ||
@@ -427,7 +432,7 @@ public class AffyTieredMap extends NeoMap {
 		LinearTransform.setScaleY(trans, pixels_per_coord[id]);
 		// pack tiers (which may modify scene bounds) based on view with transform
 		//    modified to take into account zoom_scale and "proposed" offset
-		packTiers(false, true, false);
+		packTiers(false, true, false); 
 
 		// BEGIN only section that relies on scene coords
 		Rectangle2D.Double scenebox = scene.getCoordBox();

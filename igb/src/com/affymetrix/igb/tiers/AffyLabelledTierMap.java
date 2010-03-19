@@ -49,7 +49,8 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   public void initComponentLayout() {
     //labelmap = new AffyTieredMap(false, false, scroller[Y]);
 
-	labelmap = new AffyTieredMap(false, false, this.scroller[Y]);
+	//Removing the Y scroller from the parameter to resolve vertical zooming bug.
+	labelmap = new AffyTieredMap(false, false);
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
     labelmap.setBackground(Color.lightGray);
@@ -167,30 +168,36 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
-	@Override
-  public void zoom(int axisid, double zoom_scale) { 
-    super.zoom(axisid, zoom_scale);
-    if (axisid == Y && labelmap != null) {
-		labelmap.zoom(axisid, zoom_scale);
-    }
-  }
-
-/**
- * Removing this hack to resolve stack overflow error.
- */
+	/**
+	 * Removing this method to resolve vertical zooming bug.
+	 */
 	
-	//Need to override this method to solve improper vertical zooming.
 //	@Override
-//  public void scroll(int id, double coord_value) {
-//	super.scroll(id, coord_value);
-//		if (id == Y && labelmap != null) {
-//			// This is hack to solve improper vertical zoom. Now labelmap's scroller
-//			// is not set to be equal to AffylabelledTierMap, labelmap's scroller's
-//			// value needs to changed when AffylabelledTierMap's zoomer value changes.
-//			labelmap.getScroller(Y).setValue(scroller[Y].getValue());
-//			labelmap.scroll(id, coord_value);
-//		}
-//	}
+//  public void zoom(int axisid, double zoom_scale) {
+//    super.zoom(axisid, zoom_scale);
+//    if (axisid == Y && labelmap != null) {
+//		labelmap.zoom(axisid, zoom_scale);
+//    }
+//  }
+
+
+	
+	//Again adding back this method to resolve vertical zooming bug.
+	//Need to override this method to solve improper vertical zooming.
+	@Override
+  public void scroll(int id, double coord_value) {
+	super.scroll(id, coord_value);
+		if (id == Y && labelmap != null) {
+			// This is hack to solve improper vertical zoom. Now labelmap's scroller
+			// is not set to be equal to AffylabelledTierMap, labelmap's scroller's
+			// value needs to changed when AffylabelledTierMap's zoomer value changes.
+
+			//labelmap.getScroller(Y).setValue(scroller[Y].getValue()); // Removing this hack to prevent stack overflow.
+																		// Originally it was to solve vertcial zooming
+																		// but now it's fixed without this hack.
+			labelmap.scroll(id, coord_value);
+		}
+	}
 
 	@Override
   public void setZoomBehavior(int axisid, int constraint, double coord) {

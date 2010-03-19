@@ -110,7 +110,8 @@ public final class TierLabelManager {
 		//    in tiermap based on new positions of labels in labelmap
 		public void mouseReleased(MouseEvent evt) {
 			if (evt.getSource() == labelmap && dragging_label != null) {
-				sortTiers();
+				//sortTiers();
+				rearrangeTiers();
 				dragging_label = null;
 			}
 		}
@@ -314,6 +315,25 @@ public final class TierLabelManager {
 		}
 
 		repackTheTiers(true, true);
+	}
+
+	/**
+	 * Rearrange tiers in case mouse is dragged.
+	 */
+	void rearrangeTiers(){
+		List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
+		Collections.sort(label_glyphs, tier_sorter);
+
+		List<TierGlyph> tiers = tiermap.getTiers();
+		tiers.clear();
+		for (TierLabelGlyph label : label_glyphs) {
+			TierGlyph tier = (TierGlyph) label.getInfo();
+			tiers.add(tier);
+		}
+
+		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
+		tiermap.packTiers(false, true, false);
+		tiermap.updateWidget();
 	}
 
 	/**

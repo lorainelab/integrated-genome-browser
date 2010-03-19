@@ -322,13 +322,17 @@ public final class TierLabelManager {
 	void sortTiers() {
 		List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
 		Collections.sort(label_glyphs, tier_sorter);
-		List<TierGlyph> tiers = tiermap.getTiers();
-		tiers.clear();
-		for (TierLabelGlyph label : label_glyphs) {
-			TierGlyph tier = (TierGlyph) label.getInfo();
-			tiers.add(tier);
-		}
 
+		// Commenting out below code to resolve for bug 2926882 (formerly hidden minus strand
+		// tracks re-appear above the axis)
+		
+//		List<TierGlyph> tiers = tiermap.getTiers();
+//		tiers.clear();
+//		for (TierLabelGlyph label : label_glyphs) {
+//			TierGlyph tier = (TierGlyph) label.getInfo();
+//			tiers.add(tier);
+//		}
+		
 		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
 		tiermap.packTiers(false, true, false);
 		tiermap.updateWidget();

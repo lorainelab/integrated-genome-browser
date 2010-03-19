@@ -163,7 +163,7 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 	/**Writes the Position[] to a ZipOutputStream.
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * */
-	public void write (ZipOutputStream out, boolean attemptToSaveAsShort) {
+	public void write (ZipOutputStream out, DataOutputStream dos, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShort = false;
 		if (attemptToSaveAsShort){			
@@ -186,19 +186,15 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
-		DataOutputStream workingDOS = null;
 		try {
 			//make new ZipEntry
 			out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
 
-			//make IO
-			workingDOS = new DataOutputStream(out);
-
 			//write String header, currently this isn't used
-			workingDOS.writeUTF(header);
+			dos.writeUTF(header);
 
 			//write first position, always an int
-			workingDOS.writeInt(sortedPositions[0].position);
+			dos.writeInt(sortedPositions[0].position);
 			//write shorts?
 			if (useShort) {			
 				int bp = sortedPositions[0].position;
@@ -206,7 +202,7 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 					int currentStart = sortedPositions[i].position;
 					//subtract 32768 to extend range of short (-32768 to 32768)
 					int diff = currentStart - bp - 32768;
-					workingDOS.writeShort((short)(diff));
+					dos.writeShort((short)(diff));
 					bp = currentStart;
 				}
 			}
@@ -216,19 +212,18 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 				for (int i=1; i< sortedPositions.length; i++){
 					int currentStart = sortedPositions[i].position;
 					int diff = currentStart - bp;
-					workingDOS.writeInt(diff);
+					dos.writeInt(diff);
 					bp = currentStart;
 				}
 			}
 
-			//close ZipEntry but not stream!
+			//close ZipEntry but not streams!
 			out.closeEntry();
 		} catch (IOException e) {
 			e.printStackTrace();
 			USeqUtilities.safeClose(out);
-		} finally {
-			USeqUtilities.safeClose(workingDOS);
-		}
+			USeqUtilities.safeClose(dos);
+		} 
 	}
 
 	/**Reads a useries xxx.i or xxx.s DataInputStream into this PositionData.*/

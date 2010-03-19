@@ -173,7 +173,7 @@ public class RegionData extends USeqData{
 	/**Writes the Region[] to a ZipOutputStream.
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * */
-	public void write (ZipOutputStream out, boolean attemptToSaveAsShort) {
+	public void write (ZipOutputStream out, DataOutputStream dos, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShortBeginning = false;
 		boolean useShortLength = false;
@@ -208,19 +208,15 @@ public class RegionData extends USeqData{
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
-		DataOutputStream workingDOS = null;
 		try {
 			//make new ZipEntry
 			out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
 
-			//make IO
-			workingDOS = new DataOutputStream(out);
-
 			//write String header, currently this isn't used
-			workingDOS.writeUTF(header);
+			dos.writeUTF(header);
 
 			//write first position, always an int
-			workingDOS.writeInt(sortedRegions[0].start);
+			dos.writeInt(sortedRegions[0].start);
 
 			//write short position?
 			int bp = sortedRegions[0].start;
@@ -229,26 +225,26 @@ public class RegionData extends USeqData{
 				//no
 				if (useShortLength == false){
 					//write first record's length
-					workingDOS.writeInt(sortedRegions[0].stop- sortedRegions[0].start);
+					dos.writeInt(sortedRegions[0].stop- sortedRegions[0].start);
 					for (int i=1; i< sortedRegions.length; i++){
 						int currentStart = sortedRegions[i].start;
 						//subtract 32768 to extend range of short (-32768 to 32768)
 						int diff = currentStart - bp - 32768;
-						workingDOS.writeShort((short)(diff));
-						workingDOS.writeInt(sortedRegions[i].stop- sortedRegions[i].start);
+						dos.writeShort((short)(diff));
+						dos.writeInt(sortedRegions[i].stop- sortedRegions[i].start);
 						bp = currentStart;
 					}
 				}
 				//yes short length
 				else {
 					//write first record's length, subtracting 32768 to extent the range of the signed short
-					workingDOS.writeShort((short)(sortedRegions[0].stop- sortedRegions[0].start - 32768));
+					dos.writeShort((short)(sortedRegions[0].stop- sortedRegions[0].start - 32768));
 					for (int i=1; i< sortedRegions.length; i++){
 						int currentStart = sortedRegions[i].start;
 						//subtract 32768 to extend range of short (-32768 to 32768)
 						int diff = currentStart - bp - 32768;
-						workingDOS.writeShort((short)(diff));
-						workingDOS.writeShort((short)(sortedRegions[i].stop- sortedRegions[i].start - 32768));
+						dos.writeShort((short)(diff));
+						dos.writeShort((short)(sortedRegions[i].stop- sortedRegions[i].start - 32768));
 						bp = currentStart;
 					}
 				}
@@ -258,36 +254,35 @@ public class RegionData extends USeqData{
 				//short length? no
 				if (useShortLength == false){
 					//write first record's length
-					workingDOS.writeInt(sortedRegions[0].stop- sortedRegions[0].start);
+					dos.writeInt(sortedRegions[0].stop- sortedRegions[0].start);
 					for (int i=1; i< sortedRegions.length; i++){
 						int currentStart = sortedRegions[i].start;
 						int diff = currentStart - bp;
-						workingDOS.writeInt(diff);
-						workingDOS.writeInt(sortedRegions[i].stop- sortedRegions[i].start);
+						dos.writeInt(diff);
+						dos.writeInt(sortedRegions[i].stop- sortedRegions[i].start);
 						bp = currentStart;
 					}
 				}
 				//yes
 				else {
 					//write first record's length
-					workingDOS.writeShort((short)(sortedRegions[0].stop- sortedRegions[0].start - 32768));
+					dos.writeShort((short)(sortedRegions[0].stop- sortedRegions[0].start - 32768));
 					for (int i=1; i< sortedRegions.length; i++){
 						int currentStart = sortedRegions[i].start;
 						int diff = currentStart - bp;
-						workingDOS.writeInt(diff);
-						workingDOS.writeShort((short)(sortedRegions[i].stop- sortedRegions[i].start - 32768));
+						dos.writeInt(diff);
+						dos.writeShort((short)(sortedRegions[i].stop- sortedRegions[i].start - 32768));
 						bp = currentStart;
 					}
 				}
 			}		
-			//close ZipEntry but not stream!
+			//close ZipEntry but not streams!
 			out.closeEntry();
 		} catch (IOException e) {
 			e.printStackTrace();
 			USeqUtilities.safeClose(out);
-		} finally {
-			USeqUtilities.safeClose(workingDOS);
-		}
+			USeqUtilities.safeClose(dos);
+		} 
 	}
 
 

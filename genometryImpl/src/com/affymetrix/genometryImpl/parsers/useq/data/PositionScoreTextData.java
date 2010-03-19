@@ -136,7 +136,7 @@ public class PositionScoreTextData extends USeqData{
 	/**Writes the PositionScoreText[] to a ZipOutputStream.
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * */
-	public void write (ZipOutputStream out, boolean attemptToSaveAsShort) {
+	public void write (ZipOutputStream out, DataOutputStream dos, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShort = false;
 		if (attemptToSaveAsShort){			
@@ -161,21 +161,17 @@ public class PositionScoreTextData extends USeqData{
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
-		DataOutputStream workingDOS = null;
 		try {
 			//make new ZipEntry
 			out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
 
-			//make IO
-			workingDOS = new DataOutputStream(out);
-
 			//write String header, currently this isn't used
-			workingDOS.writeUTF(header);
+			dos.writeUTF(header);
 
 			//write first position score, always an int
-			workingDOS.writeInt(sortedPositionScoreTexts[0].position);
-			workingDOS.writeFloat(sortedPositionScoreTexts[0].score);
-			workingDOS.writeUTF(sortedPositionScoreTexts[0].text);
+			dos.writeInt(sortedPositionScoreTexts[0].position);
+			dos.writeFloat(sortedPositionScoreTexts[0].score);
+			dos.writeUTF(sortedPositionScoreTexts[0].text);
 
 			//write shorts?
 			if (useShort) {			
@@ -184,9 +180,9 @@ public class PositionScoreTextData extends USeqData{
 					int currentStart = sortedPositionScoreTexts[i].position;
 					//subtract 32768 to extend range of short (-32768 to 32768)
 					int diff = currentStart - bp - 32768;
-					workingDOS.writeShort((short)(diff));
-					workingDOS.writeFloat(sortedPositionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedPositionScoreTexts[i].text);
+					dos.writeShort((short)(diff));
+					dos.writeFloat(sortedPositionScoreTexts[i].score);
+					dos.writeUTF(sortedPositionScoreTexts[i].text);
 					bp = currentStart;
 				}
 			}
@@ -197,21 +193,20 @@ public class PositionScoreTextData extends USeqData{
 				for (int i=1; i< sortedPositionScoreTexts.length; i++){
 					int currentStart = sortedPositionScoreTexts[i].position;
 					int diff = currentStart - bp;
-					workingDOS.writeInt(diff);
-					workingDOS.writeFloat(sortedPositionScoreTexts[i].score);
-					workingDOS.writeUTF(sortedPositionScoreTexts[i].text);
+					dos.writeInt(diff);
+					dos.writeFloat(sortedPositionScoreTexts[i].score);
+					dos.writeUTF(sortedPositionScoreTexts[i].text);
 					bp = currentStart;
 				}
 			}
 
-			//close ZipEntry but not zip stream!
+			//close ZipEntry but not streams!
 			out.closeEntry();
 		} catch (IOException e) {
 			e.printStackTrace();
 			USeqUtilities.safeClose(out);
-		} finally {
-			USeqUtilities.safeClose(workingDOS);
-		}
+			USeqUtilities.safeClose(dos);
+		} 
 	}
 
 	/**Reads a DataInputStream into this PositionScoreData.*/

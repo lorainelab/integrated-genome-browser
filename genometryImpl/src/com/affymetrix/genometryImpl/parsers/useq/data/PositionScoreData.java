@@ -225,7 +225,7 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	/**Writes the PositionScore[] to a ZipOutputStream.
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
 	 * */
-	public void write (ZipOutputStream out, boolean attemptToSaveAsShort) {
+	public void write (ZipOutputStream out, DataOutputStream dos, boolean attemptToSaveAsShort) {
 		//check to see if this can be saved using shorts instead of ints?
 		boolean useShort = false;
 		if (attemptToSaveAsShort){			
@@ -249,17 +249,14 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		sliceInfo.setBinaryType(fileType);
 		binaryFile = null;
 
-		DataOutputStream workingDOS = null;
 		try {
 			//make new ZipEntry
 			out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
-			//make IO
-			workingDOS = new DataOutputStream(out);
 			//write String header, currently this isn't used
-			workingDOS.writeUTF(header);
+			dos.writeUTF(header);
 			//write first position score, always an int
-			workingDOS.writeInt(sortedPositionScores[0].position);
-			workingDOS.writeFloat(sortedPositionScores[0].score);
+			dos.writeInt(sortedPositionScores[0].position);
+			dos.writeFloat(sortedPositionScores[0].score);
 			//write shorts?
 			if (useShort) {
 				int bp = sortedPositionScores[0].position;
@@ -267,8 +264,8 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 					int currentStart = sortedPositionScores[i].position;
 					//subtract 32768 to extend range of short (-32768 to 32768)
 					int diff = currentStart - bp - 32768;
-					workingDOS.writeShort((short) (diff));
-					workingDOS.writeFloat(sortedPositionScores[i].score);
+					dos.writeShort((short) (diff));
+					dos.writeFloat(sortedPositionScores[i].score);
 					bp = currentStart;
 				}
 			}
@@ -279,19 +276,18 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 				for (int i = 1; i < sortedPositionScores.length; i++) {
 					int currentStart = sortedPositionScores[i].position;
 					int diff = currentStart - bp;
-					workingDOS.writeInt(diff);
-					workingDOS.writeFloat(sortedPositionScores[i].score);
+					dos.writeInt(diff);
+					dos.writeFloat(sortedPositionScores[i].score);
 					bp = currentStart;
 				}
 			}
-			//close ZipEntry but not stream!
+			//close ZipEntry but not streams!
 			out.closeEntry();
 		} catch (IOException e) {
 			e.printStackTrace();
 			USeqUtilities.safeClose(out);
-		} finally {
-			USeqUtilities.safeClose(workingDOS);
-		}
+			USeqUtilities.safeClose(dos);
+		} 
 	}
 
 

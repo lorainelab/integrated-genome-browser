@@ -32,6 +32,7 @@ public class USeqArchive {
 		//add readme
 		entries.add(0, archiveReadMeEntry);
 		ZipOutputStream out = new ZipOutputStream(outputStream);
+		DataOutputStream dos = new DataOutputStream(out);
 		BufferedInputStream bis = null;
 		try {
 			int count;
@@ -53,69 +54,72 @@ public class USeqArchive {
 					out.closeEntry();
 				}
 				//slice the slice
-				else sliceAndWriteEntry(beginningBP, endingBP, sliceInfo, bis, out);
+				else sliceAndWriteEntry(beginningBP, endingBP, sliceInfo, bis, out, dos);
 
 				//close input entry input stream
 				bis.close();
 			}
 			//close streams?
-			if (closeStream) {
+			if (closeStream) {				
 				out.close();
 				outputStream.close();
+				dos.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			USeqUtilities.safeClose(out);
 			USeqUtilities.safeClose(outputStream);
 			USeqUtilities.safeClose(bis);
+			USeqUtilities.safeClose(dos);
 			return false;
 		}
 		return true;
 	}
 
-	private void sliceAndWriteEntry(int beginningBP, int endingBP, SliceInfo sliceInfo, BufferedInputStream bis, ZipOutputStream out) {
+
+	private void sliceAndWriteEntry(int beginningBP, int endingBP, SliceInfo sliceInfo, BufferedInputStream bis, ZipOutputStream out, DataOutputStream dos) {
 		String dataType = sliceInfo.getBinaryType();
 		DataInputStream dis = new DataInputStream(bis);
 		try {
 			//Position
 			if (USeqUtilities.POSITION.matcher(dataType).matches()) {
 				PositionData d = new PositionData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
 			}
 			//PositionScore
 			else if (USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) {
 				PositionScoreData d = new PositionScoreData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
 			}
 			//PositionText
 			else if (USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) {
 				PositionTextData d = new PositionTextData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
 			}
 			//PositionScoreText
 			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) {
 				PositionScoreTextData d = new PositionScoreTextData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
 			}
 			//Region
 			else if (USeqUtilities.REGION.matcher(dataType).matches()) {
 				RegionData d = new RegionData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
 			}
 			//RegionScore
 			else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) {
 				RegionScoreData d = new RegionScoreData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
 			}
 			//RegionText
 			else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) {
 				RegionTextData d = new RegionTextData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
 			}
 			//RegionScoreText
 			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) {
 				RegionScoreTextData d = new RegionScoreTextData(dis, sliceInfo);
-				if (d.trim(beginningBP, endingBP)) d.write(out, true);
+				if (d.trim(beginningBP, endingBP)) d.write(out, dos, true);
 			}
 			//unknown!
 			else {

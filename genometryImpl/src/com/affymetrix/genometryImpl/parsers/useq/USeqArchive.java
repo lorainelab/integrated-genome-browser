@@ -167,22 +167,21 @@ public class USeqArchive {
 		}
 		return slicedZipArchive;
 	}
-
-	/**Fetches the ZipEntries for a given range.  Returns null if none found or chromStrand not found.*/
+	
+	
+	/**Fetches the ZipEntries for a given range.  Returns null if none found or chromStrand not found. 
+	 * Remember this list isn't stranded so must search entire set.*/
 	public ArrayList<ZipEntry> fetchZipEntries (String chromStrand, int beginningBP, int endingBP){
 		ArrayList<ZipEntry> al = new ArrayList<ZipEntry>();
-		//fetch chromStrand, these are sorted so ounce found then lost kill it.
+		//fetch chromStrand
 		DataRange[] dr = chromStrandRegions.get(chromStrand);
 		if (dr == null) return null;
-		boolean foundOne = false;
 		for (int i=0; i< dr.length; i++){
 			if (dr[i].intersects(beginningBP, endingBP)) {
 				al.add(dr[i].zipEntry);
-				foundOne = true;
 			}
-			else if (foundOne) break;
 		}
-		if (foundOne == false) return null;
+		if (al.size() == 0) return null;
 		return al;
 	}
 

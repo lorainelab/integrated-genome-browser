@@ -7,6 +7,11 @@ import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 
 /**
@@ -40,6 +45,45 @@ public final class CharSeqGlyph extends SequenceGlyph
 	public static final Color default_G_color = Color.YELLOW;
 	public static final Color default_C_color = Color.CYAN;
 	public static final Color default_other_color = Color.GRAY;
+
+	private static final ColorHelper helper = new ColorHelper();
+	private static final class ColorHelper implements PreferenceChangeListener {
+		private static final Map<String, Color> DEFAULT_COLORS;
+		private final Color[] colors;
+
+		static {
+			Map<String, Color> defaultColors = new LinkedHashMap<String, Color>();
+
+			defaultColors.put(PREF_A_COLOR, default_A_color);
+			defaultColors.put(PREF_T_COLOR, default_T_color);
+			defaultColors.put(PREF_G_COLOR, default_G_color);
+			defaultColors.put(PREF_C_COLOR, default_C_color);
+			defaultColors.put(PREF_OTHER_COLOR, default_other_color);
+
+			DEFAULT_COLORS = Collections.<String, Color>unmodifiableMap(defaultColors);
+		}
+
+		ColorHelper() {
+			int i = 0;
+			colors = new Color[5];
+			PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
+			for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
+				colors[i] = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), entry.getKey(), entry.getValue());
+				i++;
+			}
+		}
+
+		public void preferenceChange(PreferenceChangeEvent evt) {
+			int i = 0;
+			for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
+				if (entry.getKey().equals(evt.getKey())) {
+					colors[i] = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), entry.getKey(), entry.getValue());
+					break;
+				}
+				i++;
+			}
+		}
+	}
 
 	public CharSeqGlyph() {
 		super();
@@ -149,19 +193,22 @@ public final class CharSeqGlyph extends SequenceGlyph
 	}
 
 	private static Color determineResidueColor(char charAt) {
-		if (charAt == 'A' || charAt == 'a') {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_A_COLOR, default_A_color);
+		switch (charAt) {
+			case 'A':
+			case 'a':
+				return helper.colors[0];
+			case 'T':
+			case 't':
+				return helper.colors[1];
+			case 'G':
+			case 'g':
+				return helper.colors[2];
+			case 'C':
+			case 'c':
+				return helper.colors[3];
+			default:
+				return helper.colors[4];
 		}
-		if (charAt == 'T' || charAt == 't') {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_T_COLOR, default_T_color);
-		}
-		if (charAt == 'G' || charAt == 'g') {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_G_COLOR, default_G_color);
-		}
-		if (charAt == 'C' || charAt == 'c') {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_C_COLOR, default_C_color);
-		}
-		return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_OTHER_COLOR, default_other_color);
 	}
 
 	private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {

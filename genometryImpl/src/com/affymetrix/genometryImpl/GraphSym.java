@@ -10,8 +10,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *  A SeqSymmetry for holding graph data.
@@ -34,7 +32,7 @@ public class GraphSym extends SimpleSymWithProps {
 	private String gid;
 
 	private static final int BUFSIZE = 100000;	// buffer size
-	private int bufStart = -1;	// current buffer start (defaults to -1 to force initialization)
+	private int bufStart = 0;	// current buffer start
 	//private int xBuf[];
 	private float yBuf[];
 	private int wBuf[];
@@ -72,56 +70,6 @@ public class GraphSym extends SimpleSymWithProps {
 		
 		SeqSpan span = new SimpleSeqSpan(this.xMin, this.xMax, seq);
 		this.addSpan(span);
-
-	}
-
-	/**
-	 * This initializer is used to save space.  All arrays are already saved in the file.
-	 * @param f
-	 * @param x
-	 * @param len
-	 * @param id
-	 * @param seq
-	 */
-	public GraphSym(File f, int len, String id, BioSeq seq) {
-		super();
-
-		this.gid = id;
-		this.graph_original_seq = seq;
-
-		this.bufFile = f;
-
-		this.hasWidth = true;
-
-		this.pointCount = len;
-
-		// Use given x array to save space.
-		this.xCoords = new int[pointCount];
-		DataInputStream dis = null;
-		try {
-			// open stream
-			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(bufFile)));
-
-			for (int i=0;i<pointCount;i++) {
-				this.xCoords[i] = dis.readInt();
-				dis.readFloat();	// y
-				dis.readInt();		// w
-			}
-			xMin = xCoords[0];
-			xMax = xCoords[pointCount - 1];
-
-			this.bufStart = 0;
-			this.readIntoBuffers(0);	// initialize buffers
-
-			SeqSpan span = new SimpleSeqSpan(this.xMin, this.xMax, seq);
-			this.addSpan(span);
-		} catch (Exception ex) {
-			Logger.getLogger(GraphSym.class.getName()).log(Level.SEVERE, null, ex);
-			return;
-		} finally {
-			GeneralUtils.safeClose(dis);
-		}
-
 
 	}
 
@@ -244,7 +192,10 @@ public class GraphSym extends SimpleSymWithProps {
 		if (i >= this.pointCount) {
 			return 0;	// out of range
 		}
-		readFromBufferIfNecessary(i);
+		if (i < bufStart || i >= bufStart + BUFSIZE) {
+			this.bufStart = i;
+			readIntoBuffers(i);
+		}
 		return yBuf[i - bufStart];
 	}
 
@@ -301,15 +252,11 @@ public class GraphSym extends SimpleSymWithProps {
 		if (i >= this.pointCount) {
 			return 0;	// out of range
 		}
-		readFromBufferIfNecessary(i);
-		return wBuf[i - bufStart];
-	}
-
-	private void readFromBufferIfNecessary(int i) {
-		if (bufStart == -1 || i < bufStart || i >= bufStart + BUFSIZE) {
+		if (i < bufStart || i >= bufStart + BUFSIZE) {
 			this.bufStart = i;
 			readIntoBuffers(i);
 		}
+		return wBuf[i - bufStart];
 	}
 
 	public final boolean hasWidth() {
@@ -361,8 +308,17 @@ public class GraphSym extends SimpleSymWithProps {
 
 		// initialize buffers.
 		//xBuf = new int[BUFSIZE];
+		yBuf = new float[BUFSIZE];
 		//System.arraycopy(x, 0, xBuf, 0, Math.min(BUFSIZE, pointCount));
-
+		System.arraycopy(y, 0, yBuf, 0, Math.min(BUFSIZE, pointCount));
+		if (this.hasWidth) {
+			wBuf = new int[BUFSIZE];
+			System.arraycopy(w, 0, wBuf, 0, Math.min(BUFSIZE, pointCount));
+		}
+		if (pointCount <= BUFSIZE) {
+			// no need to index.  Array is too small.
+			return null;
+		}
 		return IndexingUtils.createIndexedFile(graphName, this.pointCount, x, y, w);
 	}
 
@@ -372,12 +328,6 @@ public class GraphSym extends SimpleSymWithProps {
 	 * @param start
 	 */
 	private void readIntoBuffers(int start) {
-		if (yBuf == null) {
-			yBuf = new float[BUFSIZE];
-			if (this.hasWidth) {
-				wBuf = new int[BUFSIZE];
-			}
-		}
 		DataInputStream dis = null;
 		try {
 			// open stream

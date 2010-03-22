@@ -1,8 +1,5 @@
 package com.affymetrix.genometryImpl;
 
-import java.io.File;
-
-
 /**
  *  A SeqSymmetry for holding graph for graphs that have y values that apply to
  *  intervals.  So instead of (x,y) there is (x_start, x_width, y).
@@ -10,9 +7,6 @@ import java.io.File;
 public final class GraphIntervalSym extends GraphSym {
 	public GraphIntervalSym(int[] x, int[] width, float[] y, String id, BioSeq seq) {
 		super(x,width,y,id,seq);
-	}
-	public GraphIntervalSym(File f, int len, String id, BioSeq seq) {
-		super(f,len,id,seq);
 	}
 
 	@Override

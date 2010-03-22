@@ -1,3 +1,16 @@
+/**
+ *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
+
 package com.affymetrix.genometryImpl;
 
 import java.util.*;
@@ -7,9 +20,14 @@ import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	implements SymWithProps {
 
+	/** Set this property to Boolean.TRUE to indicate that the Symmetry is being
+	 *  used simply to group other Symmetry's together, and that this Symmetry
+	 *  does not represent any biological feature and should typically not be drawn
+	 *  as a glyph.
+	 */
 	public static final String CONTAINER_PROP = "container sym";
 
-	private Map<String,Object> props;
+	protected Map<String,Object> props;
 
 	public SimpleSymWithProps() {
 		super();
@@ -64,7 +82,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	 *  @param propmap  a Map of Strings to Strings.  This class will not throw exceptions
 	 *  if the map is null.
 	 */
-	public final boolean setProperties(Map<String,Object> propmap) {
+	public boolean setProperties(Map<String,Object> propmap) {
 		this.props = propmap;
 		return true;
 	}
@@ -76,6 +94,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	public void setID(String id) { setProperty("id", id); }
 
 	public boolean setProperty(String name, Object val) {
+		if (name == null)  { return false; }
 		if (props == null) {
 			props = new HashMap<String,Object>();
 		}

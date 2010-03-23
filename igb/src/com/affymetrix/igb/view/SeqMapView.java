@@ -484,6 +484,7 @@ public class SeqMapView extends JPanel
 	 */
 	private static AffyTieredMap createAffyTieredMap() {
 		AffyTieredMap resultSeqMap = new AffyLabelledTierMap(true, true);
+		resultSeqMap.enableDragScrolling(true);
 		NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
 		label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);

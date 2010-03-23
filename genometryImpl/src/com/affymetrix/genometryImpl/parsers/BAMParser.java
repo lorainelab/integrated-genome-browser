@@ -21,6 +21,7 @@ import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord.SAMTagAndValue;
+import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.util.CloseableIterator;
 
 /**
@@ -28,7 +29,7 @@ import net.sf.samtools.util.CloseableIterator;
  */
 public final class BAMParser {
 	private SAMFileReader reader;
-    //private SAMFileHeader header;
+    private SAMFileHeader header;
 	private File f;
 	private AnnotatedSeqGroup group;
 
@@ -44,6 +45,25 @@ public final class BAMParser {
 	}
 
 	public void parse() {
+		header = reader.getFileHeader();
+		if (header == null || header.getSequenceDictionary() == null) {
+			Logger.getLogger(BAMParser.class.getName()).log(
+					Level.WARNING, "Couldn't find sequence dictionary -- no sequences loaded");
+			return;
+		}
+		// add sequences that aren't in the original group.  Especially useful for "unknown groups"
+		for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
+			try {
+				String seqID = ssr.getSequenceName();
+				if (group.getSeq(seqID) == null) {
+					int seqLength = ssr.getSequenceLength();
+					group.addSeq(new BioSeq(seqID, group.getID(), seqLength));
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
 		for (BioSeq seq : group.getSeqList()) {
 			parse(seq, seq.getMin(), seq.getMax(), true, true);
 		}

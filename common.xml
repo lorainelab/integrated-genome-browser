@@ -67,7 +67,8 @@
 		<property name="junit.jar"       value="/usr/share/junit/junit.jar:/usr/share/java/junit4.jar" />
 
 		<!-- Java VM configuration -->
-		<property name="igb.jvmargs" value="-Xms32m -Xmx1024m" />
+		<property name="igb.jvmargs" value="" />
+		<property name="igb.maxmem" value="1024m" />
 
 
 		<filter token="build.version"  value="${build.version}" />

@@ -270,9 +270,16 @@
 	</target>
 
 	<target name="run" depends="compile" description="run IGB">
-		<java fork="true" classname="com.affymetrix.igb.IGB">
+		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
+			<os family="mac" />
+		</condition>
+		<java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.igb.IGB">
 			<jvmarg line="${igb.jvmargs}" />
+			<jvmarg value="-Xms32m" />
+			<jvmarg value="-splash:${jnlp.splashicon.path}" />
+			<jvmarg line="${apple.jvmargs}" />
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
+			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
 			<classpath>
 				<fileset dir="${lib.dir}" includes="*.jar" />
 				<dirset dir="${basedir}">

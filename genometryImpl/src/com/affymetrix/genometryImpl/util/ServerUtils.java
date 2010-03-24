@@ -804,7 +804,7 @@ public abstract class ServerUtils {
 				if (first_child != null) {
 					List formats = (List)first_child.getProperty("preferred_formats");
 					if (formats != null) {
-						flist = new ArrayList<String>();
+						flist = new ArrayList<String>(formats.size());
 						for (Object o : formats) {
 							flist.add((String) o);
 						}
@@ -848,7 +848,13 @@ public abstract class ServerUtils {
 
 			if (annotSecurity == null) {
 				// DAS2 "classic"
-				genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
+				if (type.endsWith(".bar")) {
+					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
+				} else if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()) {
+					genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
+				} else {
+					Logger.getLogger(ServerUtils.class.getName()).warning("Non-graph annotation " + type + " encountered, but does not match known entry.  This annotation will not show in the types request.");
+				}
 				continue;
 			}
 			// GenoPub
@@ -857,7 +863,7 @@ public abstract class ServerUtils {
 			} else if (genome.isUseqGraphData(data_root, annotSecurity, type)) {
 				genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
 			} else {
-				Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request.");
+				Logger.getLogger(ServerUtils.class.getName()).warning("Non-graph annotation " + type + " encountered, but does not match known entry.  This annotation will not show in the types request.");
 			}
 		}
 	}

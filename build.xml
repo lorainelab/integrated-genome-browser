@@ -252,6 +252,8 @@
 				<include name="jlfgr-1_0.jar"/>
 				<include name="image4j.jar" />
 				<include name="commons-codec-1.4.jar"/>
+				<include name="sam-1.16.jar" />
+				<include name="colt.jar" />
 			</zipgroupfileset>
 		</jar>
 		<jar jarfile="protannot_exe.jar" update="false">

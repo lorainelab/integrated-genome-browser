@@ -848,12 +848,10 @@ public abstract class ServerUtils {
 
 			if (annotSecurity == null) {
 				// DAS2 "classic"
-				if (type.endsWith(".bar")) {
-					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
-				} else if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()) {
+				if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()) {
 					genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
 				} else {
-					Logger.getLogger(ServerUtils.class.getName()).warning("Non-graph annotation " + type + " encountered, but does not match known entry.  This annotation will not show in the types request.");
+					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
 				}
 				continue;
 			}

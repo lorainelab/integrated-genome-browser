@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="6.0+" codebase="file:///Users/sgblanch/src/genoviz/igb/etc/" href="igb-custom.jnlp">
+<jnlp spec="6.0+" codebase="CODE_BASE_HERE" href="igb-custom.jnlp">
 	<information>
 		<!-- These can be customized for a particular site -->
 		<title>IGB (Vendor)</title>

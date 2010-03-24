@@ -117,7 +117,7 @@ public final class GraphGlyph extends Glyph {
 		return graf.hasWidth();
 	}
 
-	private float getWCoord(int i) {
+	private int getWCoord(int i) {
 		return ((GraphIntervalSym) graf).getGraphWidthCoord(i);
 	}
 

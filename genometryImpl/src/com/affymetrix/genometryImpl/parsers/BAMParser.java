@@ -48,19 +48,19 @@ public final class BAMParser {
 		header = reader.getFileHeader();
 		if (header == null || header.getSequenceDictionary() == null) {
 			Logger.getLogger(BAMParser.class.getName()).log(
-					Level.WARNING, "Couldn't find sequence dictionary -- no sequences loaded");
-			return;
-		}
-		// add sequences that aren't in the original group.  Especially useful for "unknown groups"
-		for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
-			try {
-				String seqID = ssr.getSequenceName();
-				if (group.getSeq(seqID) == null) {
-					int seqLength = ssr.getSequenceLength();
-					group.addSeq(new BioSeq(seqID, group.getID(), seqLength));
+					Level.WARNING, "Couldn't find sequence dictionary -- no sequences loaded from BAM");
+		} else {
+			// add sequences that aren't in the original group.  Especially useful for "unknown groups"
+			for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
+				try {
+					String seqID = ssr.getSequenceName();
+					if (group.getSeq(seqID) == null) {
+						int seqLength = ssr.getSequenceLength();
+						group.addSeq(new BioSeq(seqID, group.getID(), seqLength));
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
 			}
 		}
 		

@@ -18,20 +18,9 @@
 	</security>
 	<resources>
 		<java version="1.6+" initial-heap-size="32m" max-heap-size="1024m"/>
-		<jar href="igb.jar" main="true" />
-		<jar href="igb-i18n.jar" />
-		<jar href="affx_fusion.jar" />
-		<jar href="freehep-2.1.1.jar" download="lazy" />
-		<jar href="genometry.jar" />
-		<jar href="genoviz.jar" />
-		<jar href="jlfgr-1_0.jar" />
-		<jar href="image4j.jar" />
-		<jar href="commons-codec-1.4.jar" />
-		<jar href="sam-1.16.jar" download="lazy" />
-		<jar href="colt.jar" download="lazy" />
+		<extension name="IGB" href="igb-base.jnlp" />
 
 		<property name="http.agent" value="IGB/@jnlp.version@ (Webstart)" />
-		<property name="com.apple.macos.useScreenMenuBar" value="true" />
 	</resources>
 	<application-desc main-class="com.affymetrix.igb.IGB">
 		<argument>-prefs</argument>

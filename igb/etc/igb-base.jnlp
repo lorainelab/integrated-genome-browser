@@ -21,7 +21,7 @@
 		<jar href="freehep-2.1.1.jar" download="lazy" part="freehep" />
 		<jar href="sam-1.16.jar"      download="lazy" part="sam"/>
 
-		<property name="com.apple.macos.useScreenMenuBar" value="true" />
+		<property name="apple.laf.useScreenMenuBar" value="true" />
 
 		<package part="colt"    name="cern.colt.*"       recursive="true" />
 		<package part="freehep" name="org.jdom.*"        recursive="true" />

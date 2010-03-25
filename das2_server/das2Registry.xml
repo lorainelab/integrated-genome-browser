@@ -25,14 +25,14 @@
 		<!-- The name of the server as it should be displayed in applications -->
 		<serverName>NetAffx</serverName>
 		
-		<!-- The url of the server for programatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
+		<!-- The url of the server for programmatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
 		<serverURL>http://netaffxdas.affymetrix.com/das2/genome</serverURL>
 		
 		<!-- The DAS/2 server implementation -->
 		<serverImplementation>GenoViz Genometry Classic</serverImplementation>
 		
 		<!-- Free text description of the server and its contents -->
-		<serverDescription>Serves a variety of reference annotations for many species as well as Annotations for most of Affymetrix' genomics products</serverDescription>
+		<serverDescription>Serves a variety of reference annotations for many species as well as annotations for most of Affymetrix's genomics products</serverDescription>
 		
 		<!-- What organization is administering this server -->
 		<contactOrganization>Affymetrix</contactOrganization>
@@ -42,7 +42,7 @@
 		<contactEmail>support@affymetrix.com</contactEmail>
 		
 		
-		<!-- Optional, one or more human readible urls for the organization or other related information -->
+		<!-- Optional, one or more human readable urls for the organization or other related information -->
 		<contactURL>http://netaffxdas.affymetrix.com/das2/</contactURL>
 		<contactURL>http://www.affymetrix.com</contactURL>
 	</das2Server>
@@ -55,7 +55,7 @@
 		<!-- The name of the server as it should be displayed in applications -->
 		<serverName>UofUtahBioinfoCore</serverName>
 		
-		<!-- The url of the server for programatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
+		<!-- The url of the server for programmatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
 		<serverURL>http://bioserver.hci.utah.edu:8080/DAS2DB/genome</serverURL>
 		
 		<!-- The DAS/2 server implementation -->
@@ -71,7 +71,7 @@
 		<contactEmail>bioinformaticscore@utah.edu</contactEmail>
 		<contactEmail>david.nix@hci.utah.edu</contactEmail>
 		
-		<!-- Optional, one or more human readible urls for the organization or other related information -->
+		<!-- Optional, one or more human readable urls for the organization or other related information -->
 		<contactURL>http://bioserver.hci.utah.edu:8080/DAS2DB/</contactURL>
 		<contactURL>http://bioserver.hci.utah.edu</contactURL>
 		<contactURL>http://bioserver.hci.utah.edu:8080/DAS2DB/genopub</contactURL>
@@ -85,7 +85,7 @@
 		<!-- The name of the server as it should be displayed in applications -->
 		<serverName>Bioviz</serverName>
 		
-		<!-- The url of the server for programatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
+		<!-- The url of the server for programmatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
 		<serverURL>http://www.bioviz.org/das2/genome</serverURL>
 		
 		<!-- The DAS/2 server implementation -->
@@ -101,7 +101,7 @@
 		<contactEmail>sgblanch@uncc.edu</contactEmail>
 		<contactEmail>aloraine@uncc.edu</contactEmail>
 		
-		<!-- Optional, one or more human readible urls for the organization or other related information -->
+		<!-- Optional, one or more human readable urls for the organization or other related information -->
 		<contactURL>http://www.bioviz.org/das2/</contactURL>
 		<contactURL>http://www.transvar.org/</contactURL>
 	</das2Server>
@@ -114,7 +114,7 @@
 		<!-- The name of the server as it should be displayed in applications -->
 		<serverName>epigenome.at</serverName>
 		
-		<!-- The url of the server for programatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
+		<!-- The url of the server for programmatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
 		<serverURL>http://india907.server4you.de:8080/das2/genome</serverURL>
 		
 		<!-- The DAS/2 server implementation -->
@@ -129,7 +129,7 @@
 		<!-- One or more contact email address -->
 		<contactEmail>tamir@imp.univie.ac.at</contactEmail>
 		
-		<!-- Optional, one or more human readible urls for the organization or other related information -->
+		<!-- Optional, one or more human readable urls for the organization or other related information -->
 		<contactURL>http://epigenome.at</contactURL>
 		<contactURL>http://www.gen-au.at</contactURL>
 	</das2Server>

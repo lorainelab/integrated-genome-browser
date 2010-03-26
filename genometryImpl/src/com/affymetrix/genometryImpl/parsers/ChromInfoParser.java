@@ -33,7 +33,7 @@ public final class ChromInfoParser {
 		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
 		BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
 		String line;
-		while ((line = dis.readLine()) != null) {
+		while ((line = dis.readLine()) != null && (!Thread.currentThread().isInterrupted())) {
 			if ( (line.length() == 0) || line.startsWith("#"))  { continue; }
 			String[] fields = tab_regex.split(line);
 			if (fields.length == 0) { continue; }

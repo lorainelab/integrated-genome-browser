@@ -169,7 +169,7 @@ public final class CytobandParser implements AnnotationWriter  {
 		try {
 			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
 			Iterator<? extends SeqSymmetry> iterator = syms.iterator();
-			while (iterator.hasNext()) {
+			while (iterator.hasNext() && (!Thread.currentThread().isInterrupted())) {
 				SeqSymmetry sym = (SeqSymmetry)iterator.next();
 				writeCytobandFormat(bw, sym, seq);
 			}
@@ -297,7 +297,7 @@ public final class CytobandParser implements AnnotationWriter  {
 	}
 
 	public static int determineCentromerePoint(List<CytobandSym> bands) {
-		for (int i = 0; i < bands.size() - 1; i++) {
+		for (int i = 0; i < bands.size() - 1 && (!Thread.currentThread().isInterrupted()); i++) {
 			if (bands.get(i).getArm() != bands.get(i + 1).getArm()) {
 				return i;
 			}
@@ -307,12 +307,12 @@ public final class CytobandParser implements AnnotationWriter  {
 
 	public static List<CytobandSym> generateBands(SeqSymmetry cyto_container) {
 		List<CytobandSym> bands = new ArrayList<CytobandSym>();
-		for (int q = 0; q < cyto_container.getChildCount(); q++) {
+		for (int q = 0; q < cyto_container.getChildCount() && (!Thread.currentThread().isInterrupted()); q++) {
 			SeqSymmetry child = cyto_container.getChild(q);
 			if (child instanceof CytobandSym) {
 				bands.add((CytobandSym) child);
 			} else if (child != null) {
-				for (int subindex = 0; subindex < child.getChildCount(); subindex++) {
+				for (int subindex = 0; subindex < child.getChildCount() && (!Thread.currentThread().isInterrupted()); subindex++) {
 					SeqSymmetry grandchild = child.getChild(subindex);
 					if (grandchild instanceof CytobandSym) {
 						bands.add((CytobandSym) grandchild);

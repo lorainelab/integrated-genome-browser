@@ -158,7 +158,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			int probe_length = dis.readInt();
 			String id_prefix = dis.readUTF();
 			int tagval_count = dis.readInt();
-			for (int i = 0; i < tagval_count; i++) {
+			for (int i = 0; i < tagval_count && (!Thread.currentThread().isInterrupted()); i++) {
 				String tag = dis.readUTF();
 				String val = dis.readUTF();
 				tagvals.put(tag, val);
@@ -182,7 +182,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			int total_probe_count = 0;
 
 
-			for (int seqindex = 0; seqindex < seq_count; seqindex++) {
+			for (int seqindex = 0; seqindex < seq_count && (!Thread.currentThread().isInterrupted()); seqindex++) {
 				String seqid = dis.readUTF();
 				int seq_length = dis.readInt();
 				int transcript_cluster_count = dis.readInt();
@@ -205,7 +205,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 
 
 				if (USE_FULL_HIERARCHY) {
-					for (int tindex=0; tindex < transcript_cluster_count; tindex++) {
+					for (int tindex=0; tindex < transcript_cluster_count && (!Thread.currentThread().isInterrupted()); tindex++) {
 						int tcluster_id = dis.readInt();
 						int tstart = dis.readInt();
 						int tend = dis.readInt();
@@ -215,7 +215,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 						results.add(tcluster);
 						container_sym.addChild(tcluster);
 						//          if (DEBUG) {SeqUtils.printSymmetry(tcluster); }
-						for (int eindex=0; eindex < exon_cluster_count; eindex++) {
+						for (int eindex=0; eindex < exon_cluster_count && (!Thread.currentThread().isInterrupted()); eindex++) {
 							int ecluster_id = dis.readInt();
 							int estart = dis.readInt();
 							int eend = dis.readInt();
@@ -224,7 +224,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 							SingletonSymWithIntId ecluster = new SingletonSymWithIntId(estart, eend, aseq, id_prefix, ecluster_id);
 							tcluster.addChild(ecluster);
 							//            if (DEBUG) { SeqUtils.printSymmetry(ecluster); }
-							for (int psr_index=0; psr_index < psr_count; psr_index++) {
+							for (int psr_index=0; psr_index < psr_count && (!Thread.currentThread().isInterrupted()); psr_index++) {
 								int psr_id = dis.readInt();
 								int psr_start = dis.readInt();
 								int psr_end = dis.readInt();
@@ -233,7 +233,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 								SingletonSymWithIntId psr = new SingletonSymWithIntId(psr_start, psr_end, aseq, id_prefix, psr_id);
 								ecluster.addChild(psr);
 								//              if (DEBUG) { SeqUtils.printSymmetry(psr); }
-								for (int probeset_index=0; probeset_index < probeset_count; probeset_index++) {
+								for (int probeset_index=0; probeset_index < probeset_count && (!Thread.currentThread().isInterrupted()); probeset_index++) {
 									int nid = dis.readInt();
 									int b = (int) dis.readByte();
 									int probe_count = Math.abs(b);
@@ -244,7 +244,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 										throw new IOException("Probe_count is zero for '"+ nid+ "'");
 									}
 									int[] cmins = new int[probe_count];
-									for (int pindex = 0; pindex < probe_count; pindex++) {
+									for (int pindex = 0; pindex < probe_count && (!Thread.currentThread().isInterrupted()); pindex++) {
 										int min = dis.readInt();
 										cmins[pindex] = min;
 									}
@@ -259,7 +259,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 					}  // end transcript cluster loop
 				}
 				else {
-					for (int tindex=0; tindex < transcript_cluster_count; tindex++) {
+					for (int tindex=0; tindex < transcript_cluster_count && (!Thread.currentThread().isInterrupted()); tindex++) {
 						int tcluster_id = dis.readInt();
 						int tstart = dis.readInt();
 						int tend = dis.readInt();
@@ -268,7 +268,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 						SingletonSymWithIntId tcluster = new SingletonSymWithIntId(tstart, tend, aseq, id_prefix, tcluster_id);
 						results.add(tcluster);
 						container_sym.addChild(tcluster);
-						for (int probeset_index=0; probeset_index < probeset_count; probeset_index++) {
+						for (int probeset_index=0; probeset_index < probeset_count && (!Thread.currentThread().isInterrupted()); probeset_index++) {
 							int nid = dis.readInt();
 							int b = (int) dis.readByte();
 							int probe_count = Math.abs(b);
@@ -279,7 +279,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 								throw new IOException("Probe_count is zero for '"+ nid+ "'");
 							}
 							int[] cmins = new int[probe_count];
-							for (int pindex = 0; pindex < probe_count; pindex++) {
+							for (int pindex = 0; pindex < probe_count && (!Thread.currentThread().isInterrupted()); pindex++) {
 								int min = dis.readInt();
 								cmins[pindex] = min;
 							}
@@ -392,7 +392,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 
 			writeEadHeader(tcluster_exemplar, annot_type, seqs, dos);
 
-			for (int i=0; i<scount; i++) {
+			for (int i=0; i<scount && (!Thread.currentThread().isInterrupted()); i++) {
 				BioSeq aseq = group.getSeq(i);
 				SymWithProps typesym = aseq.getAnnotation(annot_type);
 				// transcript clusters should be third level down in hierarchy:
@@ -401,10 +401,10 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				//    3) transcript cluster
 				List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 				int container_count = typesym.getChildCount();
-				for (int k=0; k<container_count; k++) {
+				for (int k=0; k<container_count && Thread.currentThread().isInterrupted(); k++) {
 					SeqSymmetry csym = typesym.getChild(k);
 					int tcount = csym.getChildCount();
-					for (int m=0; m<tcount; m++) {
+					for (int m=0; m<tcount && Thread.currentThread().isInterrupted(); m++) {
 						SeqSymmetry tcluster = csym.getChild(m);
 						syms.add(tcluster);
 					}
@@ -470,7 +470,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 
 		Iterator siter = syms.iterator();
 		MutableSeqSpan mutspan = new SimpleMutableSeqSpan(0, 0, aseq);
-		while (siter.hasNext())  {
+		while (siter.hasNext() && (!Thread.currentThread().isInterrupted()))  {
 			SingletonSymWithIntId psym = (SingletonSymWithIntId)siter.next();
 			writeTranscriptCluster(psym, mutspan, dos);
 		}
@@ -493,7 +493,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			dos.writeInt(tspan.getEnd());
 			dos.writeInt(exon_cluster_count);
 			// write each exon cluster
-			for (int i=0; i<exon_cluster_count; i++) {
+			for (int i=0; i<exon_cluster_count && (!Thread.currentThread().isInterrupted()); i++) {
 				SingletonSymWithIntId esym = (SingletonSymWithIntId)tsym.getChild(i);
 				SeqSpan espan = esym.getSpan(0);
 				int psr_count = esym.getChildCount();
@@ -502,7 +502,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				dos.writeInt(espan.getEnd());
 				dos.writeInt(psr_count);
 				// write each PSR
-				for (int k=0; k<psr_count; k++) {
+				for (int k=0; k<psr_count && (!Thread.currentThread().isInterrupted()); k++) {
 					SingletonSymWithIntId psym = (SingletonSymWithIntId)esym.getChild(k);
 					SeqSpan pspan= psym.getSpan(0);
 					int probeset_count = psym.getChildCount();
@@ -510,7 +510,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 					dos.writeInt(pspan.getStart());
 					dos.writeInt(pspan.getEnd());
 					dos.writeInt(probeset_count);
-					for (int m=0; m<probeset_count; m++) {
+					for (int m=0; m<probeset_count && (!Thread.currentThread().isInterrupted()); m++) {
 						// write each probeset
 						EfficientProbesetSymA probeset_sym = (EfficientProbesetSymA)psym.getChild(m);
 						writeProbeset(probeset_sym, mutspan, dos);
@@ -524,7 +524,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			dos.writeInt(tspan.getStart());
 			dos.writeInt(tspan.getEnd());
 			dos.writeInt(probeset_count);
-			for (int m=0; m<probeset_count; m++) {
+			for (int m=0; m<probeset_count && (!Thread.currentThread().isInterrupted()); m++) {
 				// write each probeset
 				EfficientProbesetSymA probeset_sym = (EfficientProbesetSymA)tsym.getChild(m);
 				writeProbeset(probeset_sym, mutspan, dos);
@@ -544,7 +544,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 		byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);
 		dos.writeByte(strand_and_count);
 
-		for (int i=0; i<child_count; i++) {
+		for (int i=0; i<child_count && (!Thread.currentThread().isInterrupted()); i++) {
 			SeqSpan cspan = psym.getChildSpan(i, pspan.getBioSeq(), mutspan);
 			dos.writeInt(cspan.getMin());
 		}
@@ -649,7 +649,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				System.out.println("processing all gff files in directory: " + in_file);
 				// process all gff files in directory
 				File[] fils = gff_file.listFiles();
-				for (int i=0; i<fils.length; i++)  {
+				for (int i=0; i<fils.length && (!Thread.currentThread().isInterrupted()); i++)  {
 					File fil = fils[i];
 					String fname = fil.getName();
 					if (fname.endsWith(".gff") || fname.endsWith(".gtf")) {
@@ -665,6 +665,10 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			HashMap<BioSeq,SharedProbesetInfo> seq2info = new HashMap<BioSeq,SharedProbesetInfo>();
 
 			for (File gfile : gfiles) {
+
+				if(Thread.currentThread().isInterrupted())
+					break;
+
 				System.out.println("parsing gff file: " + gfile.getPath());
 
 				GFFParser gff_parser = new GFFParser();
@@ -683,7 +687,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				//    be set correctly (for example in some the tag for probeset ID is "probeset_name" instead of "probeset_id")
 				int tcount = annots.size();
 
-				for (int tindex=0; tindex < tcount; tindex++) {
+				for (int tindex=0; tindex < tcount && (!Thread.currentThread().isInterrupted()); tindex++) {
 					SymWithProps tcluster = (SymWithProps)annots.get(tindex);
 					SeqSpan tspan = tcluster.getSpan(0);
 					BioSeq aseq = tspan.getBioSeq();
@@ -710,7 +714,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 					container.addChild(new_tcluster);
 
 					int ecount = tcluster.getChildCount();
-					for (int eindex=0; eindex < ecount; eindex++) {
+					for (int eindex=0; eindex < ecount && (!Thread.currentThread().isInterrupted()); eindex++) {
 						SymWithProps ecluster = (SymWithProps)tcluster.getChild(eindex);
 						SeqSpan espan = ecluster.getSpan(0);
 						String eid = ecluster.getID();
@@ -723,7 +727,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 						}
 
 						int psrcount = ecluster.getChildCount();
-						for (int psrindex=0; psrindex < psrcount; psrindex++) {
+						for (int psrindex=0; psrindex < psrcount && (!Thread.currentThread().isInterrupted()); psrindex++) {
 							SymWithProps psr = (SymWithProps)ecluster.getChild(psrindex);
 							SeqSpan psrspan = psr.getSpan(0);
 							String psrid = psr.getID();
@@ -736,7 +740,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 							}
 
 							int probeset_count = psr.getChildCount();
-							for (int probeset_index=0; probeset_index < probeset_count; probeset_index++) {
+							for (int probeset_index=0; probeset_index < probeset_count && (!Thread.currentThread().isInterrupted()); probeset_index++) {
 								SymWithProps probeset = (SymWithProps)psr.getChild(probeset_index);
 								SeqSpan probeset_span = probeset.getSpan(0);
 								String probeset_id = probeset.getID();
@@ -751,7 +755,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 									System.out.println("probeset_id: " + probeset_id);
 									System.out.println("probeset_nid: " + probeset_nid);
 								}
-								for (int probeindex=0; probeindex < probecount; probeindex++) {
+								for (int probeindex=0; probeindex < probecount && (!Thread.currentThread().isInterrupted()); probeindex++) {
 									SeqSymmetry probe = probeset.getChild(probeindex);
 									probemins[probeindex] = probe.getSpan(0).getMin();
 								}
@@ -779,6 +783,10 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			System.gc();
 
 			for (Map.Entry<BioSeq,SimpleSymWithProps> ent : seq2container.entrySet()) {
+
+				if(Thread.currentThread().isInterrupted())
+					break;
+				
 				BioSeq aseq = ent.getKey();
 				SeqSymmetry container = ent.getValue();
 				aseq.addAnnotation(container, annot_type);

@@ -601,7 +601,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		Map<String, Object> parts = parent2parts.get(parent_sym);
 		Iterator<Object> citer = parts.values().iterator();
 		boolean all_child_syms = true;
-		while (citer.hasNext()) {
+		while (citer.hasNext() && (!Thread.currentThread().isInterrupted())) {
 			Object val = citer.next();
 			if (!(val instanceof SeqSymmetry)) {
 				all_child_syms = false;
@@ -615,7 +615,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		// get parts
 		Map<String, Object> parts = parent2parts.get(parent_sym);
 		Iterator<Map.Entry<String, Object>> citer = parts.entrySet().iterator();
-		while (citer.hasNext()) {
+		while (citer.hasNext() && (Thread.currentThread().isInterrupted())) {
 			Map.Entry<String, Object> keyval = citer.next();
 			keyval.getKey();
 			SeqSymmetry child_sym = (SeqSymmetry) keyval.getValue();
@@ -688,7 +688,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 			MutableSeqSpan mspan = new SimpleMutableSeqSpan();
 			Iterator<? extends SeqSymmetry> iterator = syms.iterator();
-			while (iterator.hasNext()) {
+			while (iterator.hasNext() && (!Thread.currentThread().isInterrupted())) {
 				SeqSymmetry annot = iterator.next();
 				// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans/LOCs
 				//	  writeDasFeature(annot, null, 0, seq, type, pw, mspan);
@@ -765,7 +765,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		// print  all spans as <LOC .../> elements
 		int scount = annot.getSpanCount();
-		for (int i = 0; i < scount; i++) {
+		for (int i = 0; i < scount && (!Thread.currentThread().isInterrupted()); i++) {
 			SeqSpan span = null;
 			if (mspan == null) {
 				span = annot.getSpan(i);
@@ -806,7 +806,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		// print  <PART .../> line for each child
 		int child_count = annot.getChildCount();
 		if (child_count > 0) {
-			for (int i = 0; i < child_count; i++) {
+			for (int i = 0; i < child_count && (Thread.currentThread().isInterrupted()); i++) {
 				SeqSymmetry child = annot.getChild(i);
 				String child_id = getChildID(child, feat_id, i);
 				pw.print("     <PART ");
@@ -826,7 +826,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		// recursively call writeDasFeature() on each child
 		if (child_count > 0) {
-			for (int i = 0; i < child_count; i++) {
+			for (int i = 0; i < child_count && (!Thread.currentThread().isInterrupted()); i++) {
 				SeqSymmetry child = annot.getChild(i);
 				// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
 				//	  writeDasFeature(child, feat_id, i, aseq, feat_type, pw, mspan);

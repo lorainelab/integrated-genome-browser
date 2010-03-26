@@ -250,7 +250,7 @@ public final class LoadFileAction {
 		BioSeq new_seq = null;
 		for (File cfil : fils) {
 			String file_name = cfil.toString();
-			int httpIndex = file_name.indexOf("http:");
+			int httpIndex = file_name.toLowerCase().indexOf("http:");
 			if (httpIndex > -1) {
 				try {
 					// Strip off initial characters up to and including http:
@@ -430,8 +430,10 @@ public final class LoadFileAction {
 					InputStream str, AnnotatedSeqGroup selected_group, BioSeq input_seq,
 					String stream_name, JFrame gviewerFrame, GenometryModel gmodel)
 					throws IOException, InterruptedException, HeadlessException, SAXException {
-
 		String lcname = stream_name.toLowerCase();
+
+		int dotIndex = stream_name.lastIndexOf('.');
+		String annot_type = dotIndex <= 0 ? stream_name : stream_name.substring(0, dotIndex);
 
 		if (lcname.endsWith(".cyt")) {
 			CytobandParser parser = new CytobandParser();
@@ -455,12 +457,7 @@ public final class LoadFileAction {
 		}
 		if (lcname.endsWith("." + FishClonesParser.FILE_EXT)) {
 			FishClonesParser parser = new FishClonesParser(true);
-			String s = stream_name;
-			int index = s.lastIndexOf('.');
-			if (index > 0) {
-				s = s.substring(0, index);
-			}
-			parser.parse(str, s, selected_group);
+			parser.parse(str, annot_type, selected_group);
 			return input_seq;
 		}
 		if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
@@ -499,13 +496,11 @@ public final class LoadFileAction {
 			return input_seq;
 		}
 		if (lcname.endsWith(".bps")) {
-			String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
 			DataInputStream dis = new DataInputStream(str);
 			BpsParser.parse(dis, annot_type, null, selected_group, false, true);
 			return input_seq;
 		}
 		if (lcname.endsWith(".bed")) {
-			String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
 			BedParser parser = new BedParser();
 			// really need to switch create_container (last argument) to true soon!
 			parser.parse(str, gmodel, selected_group, true, annot_type, false);
@@ -517,60 +512,45 @@ public final class LoadFileAction {
 			return input_seq;
 		}
 		if (lcname.endsWith(".bgn")) {
-			String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
 			BgnParser parser = new BgnParser();
 			parser.parse(str, annot_type, selected_group, true);
 			return input_seq;
 		}
 		if (lcname.endsWith(".brs")) {
-			String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
 			BrsParser.parse(str, annot_type, selected_group);
 			return input_seq;
 		}
 		if (lcname.endsWith(".bsnp")) {
-			String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
 			List<SeqSymmetry> alist = BsnpParser.parse(str, annot_type, selected_group, true);
 			Application.getSingleton().logDebug("total snps loaded: " + alist.size());
 			return input_seq;
 		}
 		if (lcname.endsWith(".brpt")) {
 			BrptParser parser = new BrptParser();
-			String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
 			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, true);
 			Application.getSingleton().logDebug("total repeats loaded: " + alist.size());
 			return input_seq;
 		}
 		if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {
 			Bprobe1Parser parser = new Bprobe1Parser();
-			String annot_type = stream_name.substring(0, stream_name.indexOf(".bp"));
 			parser.parse(str, selected_group, true, annot_type, true);
 			return input_seq;
 		}
 		if (lcname.endsWith(".ead")) {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
-			String default_type = stream_name.substring(0, stream_name.indexOf(".ead"));
-			parser.parse(str, selected_group, true, default_type);
+			parser.parse(str, selected_group, true, annot_type);
 			return input_seq;
 		}
 		if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
 			// assume it's GFF1, GFF2, GTF, or GFF3 format
 			GFFParser parser = new GFFParser();
 			parser.setUseStandardFilters(true);
-			int index = stream_name.indexOf(".gff");
-			if (index < 0) {
-				index = stream_name.indexOf(".gtf");
-			}
-			String annot_type = stream_name;
-			if (index > 0) {
-				annot_type = stream_name.substring(0, index);
-			}
 			parser.parse(str, annot_type, selected_group, false);
 			return null;
 		}
 		if (lcname.endsWith(".gff3")) {
 			/* Force parcing as GFF3 */
 			GFF3Parser parser = new GFF3Parser();
-			String annot_type = stream_name.substring(0, stream_name.indexOf(".gff3"));
 			parser.parse(str, annot_type, selected_group);
 			return input_seq;
 		}

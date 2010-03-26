@@ -88,13 +88,10 @@ public class AffyTieredMap extends NeoMap {
 	}
 
 	AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
-		super(hscroll, vscroll);
+		this(hscroll, vscroll, NeoConstants.HORIZONTAL);
 		this.scroller[Y] = vscroller;
 	}
 
-	AffyTieredMap(boolean hscroll, boolean vscroll) {
-		super(hscroll, vscroll);
-	}
 	/**
 	 * Add the given tier to the map.
 	 * @param mtg the TierGlyph being added.
@@ -366,13 +363,8 @@ public class AffyTieredMap extends NeoMap {
 
 	@Override
 	public void zoom(int id, double zoom_scale) {
-		if (id == X || id == Y) {
+		if (id == X) {
 			super.zoom(id, zoom_scale);
-			if(id == Y){
-				// Call packTiers while zooming vertically to preserve width of coordinate axis.
-				// Also no need to stretch it vertically. It is essenstially what zooming is doing.
-				packTiers(false, false, false); 
-			}
 			return;
 		}
 		if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY ||

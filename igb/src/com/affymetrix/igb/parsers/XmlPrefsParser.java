@@ -153,7 +153,7 @@ public final class XmlPrefsParser {
 				return t;
 			}
 		}
-		return ServerType.Unknown;
+		return ServerType.LocalFiles;
 	}
 
 	private static void processPlugin(Element el) {

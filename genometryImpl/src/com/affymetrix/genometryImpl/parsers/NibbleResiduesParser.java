@@ -144,7 +144,7 @@ public final class NibbleResiduesParser {
 		int last = first + num_residues;
 
 		int bytes_to_skip = start/2;
-		while (bytes_to_skip > 0 && (!Thread.currentThread().isInterrupted()))  {
+		while (bytes_to_skip > 0) {
 			int skipped = (int)dis.skip(bytes_to_skip);
 			if (skipped < 0) {
 				break;

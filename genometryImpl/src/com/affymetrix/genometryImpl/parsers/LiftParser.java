@@ -145,10 +145,7 @@ public final class LiftParser {
 		}
 
 		for (BioSeq chrom : seq_group.getSeqList()) {
-
-			if(Thread.currentThread().isInterrupted())
-				break;
-			
+		
 			MutableSeqSymmetry comp = (MutableSeqSymmetry) chrom.getComposition();
 			if (comp != null && SET_COMPOSITION) {
 				SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);

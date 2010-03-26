@@ -221,9 +221,6 @@ public final class GFF3Parser {
 
 			for (GFF3Sym sym : all_syms) {
 
-				if(Thread.currentThread().isInterrupted())
-					break;
-				
 				String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
 
 				String id = sym.getID();
@@ -235,14 +232,14 @@ public final class GFF3Parser {
 					// If no parents, then it is top-level
 					results.add(sym);
 					/* Do we really need to do for every span? */
-					for(int i=0; i<sym.getSpanCount() && (!Thread.currentThread().isInterrupted()); i++) {
+					for(int i=0; i<sym.getSpanCount(); i++) {
 						BioSeq seq = sym.getSpanSeq(i);
 						seq.addAnnotation(sym);
 					}
 				} else {
 					// Else, add this as a child to *each* parent in its parent list.
 					// It is an error if the parent doesn't exist.
-					for (int i=0; i<parent_ids.length && (!Thread.currentThread().isInterrupted()); i++) {
+					for (int i=0; i<parent_ids.length; i++) {
 						String parent_id = parent_ids[i];
 						if ("-".equals(parent_id)) {
 							throw new IOException("Parent ID cannot be '-'");

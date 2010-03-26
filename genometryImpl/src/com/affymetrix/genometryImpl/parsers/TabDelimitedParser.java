@@ -196,7 +196,7 @@ public class TabDelimitedParser {
 				}
 				child.setProperty("id", id);
 				if (make_props) {
-					for (int i=0; i<cols.length && i<col_names.size() && (!Thread.currentThread().isInterrupted()); i++) {
+					for (int i=0; i<cols.length && i<col_names.size(); i++) {
 						String name = col_names.get(i);
 						String val = cols[i];
 						child.setProperty(name, val);

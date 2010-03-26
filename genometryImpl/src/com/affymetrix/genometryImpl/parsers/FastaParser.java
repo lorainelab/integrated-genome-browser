@@ -131,7 +131,7 @@ public final class FastaParser {
 		try {
 			br = new BufferedReader(new InputStreamReader(istr));
 			String header = br.readLine();
-			while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
+			while (br.ready()) {  // loop through lines till find a header line
 				if (header == null) {
 					continue;
 				}  // skip null lines
@@ -142,7 +142,7 @@ public final class FastaParser {
 					continue;
 				}
 				StringBuffer buf = new StringBuffer();
-				while (br.ready() && (Thread.currentThread().isInterrupted())) {
+				while (br.ready()) {
 					String line = br.readLine();
 					if (line == null || line.length() == 0) {
 						continue;
@@ -446,7 +446,7 @@ public final class FastaParser {
 				//for (int i=0;i<header_len;i++)
 				//    buf[i] = header[i];
 
-				for (int i=0;i<nucleotides_len && (!Thread.currentThread().isInterrupted());) {
+				for (int i=0;i<nucleotides_len;) {
 					if (line_location == LINELENGTH) {
 						// skipping the newline
 						byte[] x = new byte[1];
@@ -510,7 +510,7 @@ public final class FastaParser {
 
 			byte[] result = new byte[header.length()];
 
-			for (int i=0;i<header.length() && (!Thread.currentThread().isInterrupted());i++)
+			for (int i=0;i<header.length();i++)
 				result[i] = (byte)header.charAt(i);
 
 			return result;
@@ -521,7 +521,7 @@ public final class FastaParser {
 			int i=buf.length;
 
 			// Find last valid residue
-			while (i>=0 && (buf[i-1] == '\n' || buf[i-1] == 0) && (!Thread.currentThread().isInterrupted())) {
+			while (i>=0 && (buf[i-1] == '\n' || buf[i-1] == 0)) {
 				i--;
 			}
 			if (i == 0)
@@ -548,7 +548,7 @@ public final class FastaParser {
 			
 			int bytes_to_read = header.length;
 			int begin = 0;
-			while(bytes_to_read > 0 && (!Thread.currentThread().isInterrupted())){
+			while(bytes_to_read > 0){
 				int bytesRead = bis.read(header,begin,bytes_to_read);
 
 				if(bytesRead < 0)

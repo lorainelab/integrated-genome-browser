@@ -81,10 +81,10 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 
 	private static void findProbeSets(Collection<? extends SeqSymmetry> consensus_syms, BioSeq genome_seq, String probeset_type, Set<SeqSymmetry> probesets, Set<SeqSymmetry> crossHybProbes, String poly_a_sites_type, Set<SeqSymmetry> polyASites, String poly_a_stacks_type, Set<SeqSymmetry> polyAStacks) {
 		for (SeqSymmetry current_c2g : consensus_syms) {
-
+			
 			if(Thread.currentThread().isInterrupted())
 				break;
-			
+
 			// 2. For each consensus sequence symmetry, get the
 			//    corresponding consensus BioSeq
 			BioSeq aseq = SeqUtils.getOtherSeq(current_c2g, genome_seq);
@@ -92,9 +92,9 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 				continue;
 			}
 			int maxm = aseq.getAnnotationCount();
-			for (int m = 0; m < maxm && (!Thread.currentThread().isInterrupted()); m++) {
+			for (int m = 0; m < maxm; m++) {
 				SeqSymmetry container = aseq.getAnnotation(m);
-				for (int cindex = 0; cindex < container.getChildCount() && (!Thread.currentThread().isInterrupted()); cindex++) {
+				for (int cindex = 0; cindex < container.getChildCount(); cindex++) {
 					// 3. For each consensus seq, get all of its annotations and collate
 					// them by type
 					SeqSymmetry cons_annot = container.getChild(cindex);
@@ -125,7 +125,7 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 			return;
 		}
 		int childCount = cons_sym.getChildCount();
-		for (int n = 0; n < childCount && (!Thread.currentThread().isInterrupted()); n++) {
+		for (int n = 0; n < childCount; n++) {
 			SeqSymmetry cons_child = cons_annot.getChild(n);
 			// assume for now all annotations of consensus seqs are wanted
 			//   (they're either probeset2consensus or xhyb2consensus)

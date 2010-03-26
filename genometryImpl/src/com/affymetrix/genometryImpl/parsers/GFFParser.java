@@ -516,7 +516,7 @@ public final class GFFParser implements AnnotationWriter  {
 	private void addSymstoSeq(List<SeqSymmetry> results, boolean create_container_annot, Map<BioSeq, Map<String, SimpleSymWithProps>> seq2meths, boolean annotate_seq) {
 		// Loop through the results List and add all Sym's to the BioSeq
 		Iterator iter = results.iterator();
-		while (iter.hasNext() && (!Thread.currentThread().isInterrupted())) {
+		while (iter.hasNext()) {
 			SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
 			BioSeq seq = sym.getBioSeq();
 			if (USE_GROUPING && sym.getChildCount() > 0) {
@@ -586,7 +586,7 @@ public final class GFFParser implements AnnotationWriter  {
 			int child_count = psym.getChildCount();
 			if (child_count > 0) {
 				List<SeqSymmetry> child_list = new ArrayList<SeqSymmetry>(child_count);
-				for (int i=0; i<child_count && (!Thread.currentThread().isInterrupted()); i++) {
+				for (int i=0; i<child_count; i++) {
 					SeqSymmetry csym = psym.getChild(i);
 					if (csym.getSpan(sortseq) != null) {
 						child_list.add(psym.getChild(i));
@@ -595,11 +595,7 @@ public final class GFFParser implements AnnotationWriter  {
 				psym.removeChildren();
 				Comparator<SeqSymmetry> comp = new SeqSymStartComparator(sortseq, ascending);
 				Collections.sort(child_list, comp);
-				for (SeqSymmetry child : child_list) {
-
-					if(Thread.currentThread().isInterrupted())
-						break;
-					
+				for (SeqSymmetry child : child_list) {		
 					psym.addChild(child);
 				}
 			}
@@ -644,7 +640,7 @@ public final class GFFParser implements AnnotationWriter  {
 			if (m.matches()) {
 				resetFilters();
 				String[] feature_types = m.group(2).split(" ");
-				for (int i=0;i<feature_types.length && (!Thread.currentThread().isInterrupted()); i++) {
+				for (int i=0;i<feature_types.length; i++) {
 					String feature_type = feature_types[i].trim();
 					if (feature_type.length() > 0) {
 						addFeatureFilter(feature_type, "include ".equals(m.group(1)));
@@ -691,7 +687,7 @@ public final class GFFParser implements AnnotationWriter  {
 				Pattern p = Pattern.compile("\\s*([0-9]+)\\s*(\\S*)(\\s*<(\\S*)>)?");
 
 				Matcher mm = p.matcher(hierarchy_string);
-				while (mm.find() && (!Thread.currentThread().isInterrupted())) {
+				while (mm.find()) {
 					String level_string = mm.group(1);
 					String feature_type = mm.group(2);
 					Integer level = Integer.valueOf(level_string);
@@ -731,7 +727,7 @@ public final class GFFParser implements AnnotationWriter  {
 		public static void processAttributes(Map<String,Object> m, String attributes) {
 			List<String> vals = new ArrayList<String>();
 			String[] attarray = att_regex.split(attributes);
-			for (int i=0; i<attarray.length && (!Thread.currentThread().isInterrupted()); i++) {
+			for (int i=0; i<attarray.length; i++) {
 				String att = attarray[i];
 				Matcher tag_matcher = tag_regex.matcher(att);
 				if (tag_matcher.find()) {
@@ -740,7 +736,7 @@ public final class GFFParser implements AnnotationWriter  {
 					int index = tag_matcher.end(1);
 					Matcher value_matcher = value_regex.matcher(att);
 					boolean matches = value_matcher.find(index);
-					while (matches && (!Thread.currentThread().isInterrupted())) {
+					while (matches) {
 
 						String group1 = value_matcher.group(1);
 						String group2 = value_matcher.group(2);
@@ -816,7 +812,7 @@ public final class GFFParser implements AnnotationWriter  {
 			String groupid = null;
 			String featid = null;
 			String[] tagvals = att_regex.split(atts);
-			for (int i=0; i<tagvals.length && (!Thread.currentThread().isInterrupted()); i++) {
+			for (int i=0; i<tagvals.length; i++) {
 				String tagval = tagvals[i];
 				String[] tv = gff3_tagval_splitter.split(tagval);
 				String tag = tv[0];
@@ -906,7 +902,7 @@ public final class GFFParser implements AnnotationWriter  {
 			if (group == null) { group = psym.getID(); }
 			if (group == null) { group = (String)psym.getProperty("id"); }
 
-			for (int i=0; i<childcount && (!Thread.currentThread().isInterrupted()); i++) {
+			for (int i=0; i<childcount; i++) {
 				SeqSymmetry csym = psym.getChild(i);
 				SeqSpan span = csym.getSpan(seq);
 
@@ -969,7 +965,7 @@ public final class GFFParser implements AnnotationWriter  {
 		try {
 			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
 			Iterator iterator = syms.iterator();
-			while (iterator.hasNext() && (!Thread.currentThread().isInterrupted())) {
+			while (iterator.hasNext()) {
 				count++;
 				if (DEBUG) {
 					if (count % 1000 == 0) {
@@ -1008,7 +1004,7 @@ public final class GFFParser implements AnnotationWriter  {
 		try {
 			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
 			Iterator iterator = syms.iterator();
-			while (iterator.hasNext() && (!Thread.currentThread().isInterrupted())) {
+			while (iterator.hasNext()) {
 				SeqSymmetry sym = (SeqSymmetry) iterator.next();
 				if (sym instanceof SymWithProps) {
 					outputGffFormat((SymWithProps) sym, seq, bw);

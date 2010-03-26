@@ -353,7 +353,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 			int omax = Integer.parseInt(fields[findex++]);
 			String[] o_min_array = comma_regex.split(fields[findex++]);
 			int[] omins = new int[childcount];
-			for (int i = 0; i < childcount && (!Thread.currentThread().isInterrupted()); i++) {
+			for (int i = 0; i < childcount; i++) {
 				omins[i] = Integer.parseInt(o_min_array[i]);
 			}
 			BioSeq oseq = determineSeq(other_group,oname,osize);
@@ -375,7 +375,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	// looking for extra tag-value fields at end of line
 	private static void findExtraTagValues(String[] fields, int findex, UcscPslSym sym) {
 		if (fields.length > findex) {
-			for (int i = findex; i < fields.length && (!Thread.currentThread().isInterrupted()); i++) {
+			for (int i = findex; i < fields.length; i++) {
 				String field = fields[i];
 				String[] tagval = tagval_regex.split(field);
 				if (tagval.length >= 2) {

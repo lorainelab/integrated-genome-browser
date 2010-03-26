@@ -142,7 +142,7 @@ public class TabDelimitedParser {
 					col_names.add(cols[i]);
 				}
 			}
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine()) != null && (!Thread.currentThread().isInterrupted())) {
 				String[] cols = line_splitter.split(line);
 				if (cols.length <= 0) { continue; }
 
@@ -196,7 +196,7 @@ public class TabDelimitedParser {
 				}
 				child.setProperty("id", id);
 				if (make_props) {
-					for (int i=0; i<cols.length && i<col_names.size(); i++) {
+					for (int i=0; i<cols.length && i<col_names.size() && (!Thread.currentThread().isInterrupted()); i++) {
 						String name = col_names.get(i);
 						String val = cols[i];
 						child.setProperty(name, val);

@@ -15,7 +15,7 @@
 
 <!-- servers disabled by default -->
 <server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" />
-<server type="das2" name="UofUtah" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" />
+<server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" />
 
   <!-- <annotation_url> associates a "method" or "id" regular expression with a URL.
        parameters:

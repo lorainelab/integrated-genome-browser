@@ -80,7 +80,7 @@ public class AnnotatedSeqGroup {
 	final public Set<GenericVersion> getEnabledVersions() {
 		Set<GenericVersion> versions = new CopyOnWriteArraySet<GenericVersion>();
 		for (GenericVersion v : gVersions) {
-			if (v.gServer.isEnabled() || v.gServer.serverType == ServerType.LocalFiles) {
+			if (v.gServer.isEnabled() || v.gServer.serverType == ServerType.Unknown) {
 				versions.add(v);
 			}
 		}

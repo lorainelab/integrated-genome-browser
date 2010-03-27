@@ -889,7 +889,7 @@ public final class GeneralLoadView extends JComponent
 			enabled = curSeq.getSeqGroup() != null;	// Don't allow a null sequence group either.
 			if (enabled) {		// Don't allow buttons for an "unknown" versionName
 				Set<GenericVersion> gVersions = curSeq.getSeqGroup().getEnabledVersions();
-				enabled = (!gVersions.isEmpty());
+				enabled = (!gVersions.isEmpty() && gVersions.iterator().next().gServer.serverType != ServerType.Unknown);
 			}
 		}
 

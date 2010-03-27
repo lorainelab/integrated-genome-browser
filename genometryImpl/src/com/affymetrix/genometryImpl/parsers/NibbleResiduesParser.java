@@ -144,7 +144,7 @@ public final class NibbleResiduesParser {
 		int last = first + num_residues;
 
 		int bytes_to_skip = start/2;
-		while (bytes_to_skip > 0) {
+		while (bytes_to_skip > 0)  {
 			int skipped = (int)dis.skip(bytes_to_skip);
 			if (skipped < 0) {
 				break;
@@ -244,7 +244,7 @@ public final class NibbleResiduesParser {
 			dos = new DataOutputStream(new BufferedOutputStream(outstream));
 
 			// Only keep BUFSIZE characters in memory at one time
-			for (int i=0;i<(end-start) && (!Thread.currentThread().isInterrupted());i+=BUFSIZE) {
+			for (int i=0;i<(end-start);i+=BUFSIZE) {
 				String outString = seq.getResidues(i, Math.min(i+BUFSIZE, (end-start)));
 				dos.writeBytes(outString);
 			}

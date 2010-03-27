@@ -595,7 +595,7 @@ public final class GFFParser implements AnnotationWriter  {
 				psym.removeChildren();
 				Comparator<SeqSymmetry> comp = new SeqSymStartComparator(sortseq, ascending);
 				Collections.sort(child_list, comp);
-				for (SeqSymmetry child : child_list) {		
+				for (SeqSymmetry child : child_list) {
 					psym.addChild(child);
 				}
 			}

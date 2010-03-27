@@ -167,7 +167,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		// This cell is only editable if the feature isn't already fully loaded.
 		GenericFeature gFeature = features.get(row);
 		ServerType serverType = gFeature.gVersion.gServer.serverType;
-		return (gFeature.loadStrategy != LoadStrategy.GENOME && serverType != ServerType.LocalFiles);
+		return (gFeature.loadStrategy != LoadStrategy.GENOME && serverType != ServerType.Unknown);
 	}
 
 	@Override

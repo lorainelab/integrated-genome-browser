@@ -116,7 +116,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverType == ServerType.LocalFiles) {
+		if (gVersion.gServer.serverType == ServerType.Unknown) {
 			// no features.  This was an unknown type.
 			return;
 		}

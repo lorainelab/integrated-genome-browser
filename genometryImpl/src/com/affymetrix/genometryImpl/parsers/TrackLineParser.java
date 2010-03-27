@@ -109,7 +109,7 @@ public final class TrackLineParser {
 		Matcher matcher = track_line_parser.matcher(track_line);
 		// If performance becomes important, it is possible to save and re-use a Matcher,
 		// but it isn't thread-safe
-		while (matcher.find() && (!Thread.currentThread().isInterrupted())) {
+		while (matcher.find()) {
 			if (matcher.groupCount() == 2) {
 				String tag = unquote(matcher.group(1).toLowerCase().trim());
 				String val = unquote(matcher.group(2));

@@ -182,7 +182,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			int total_probe_count = 0;
 
 
-			for (int seqindex = 0; seqindex < seq_count && (!Thread.currentThread().isInterrupted()); seqindex++) {
+			for (int seqindex = 0; seqindex < seq_count; seqindex++) {
 				String seqid = dis.readUTF();
 				int seq_length = dis.readInt();
 				int transcript_cluster_count = dis.readInt();
@@ -470,7 +470,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 
 		Iterator siter = syms.iterator();
 		MutableSeqSpan mutspan = new SimpleMutableSeqSpan(0, 0, aseq);
-		while (siter.hasNext() && (!Thread.currentThread().isInterrupted()))  {
+		while (siter.hasNext())  {
 			SingletonSymWithIntId psym = (SingletonSymWithIntId)siter.next();
 			writeTranscriptCluster(psym, mutspan, dos);
 		}
@@ -665,10 +665,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			HashMap<BioSeq,SharedProbesetInfo> seq2info = new HashMap<BioSeq,SharedProbesetInfo>();
 
 			for (File gfile : gfiles) {
-
-				if(Thread.currentThread().isInterrupted())
-					break;
-
 				System.out.println("parsing gff file: " + gfile.getPath());
 
 				GFFParser gff_parser = new GFFParser();
@@ -687,7 +683,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				//    be set correctly (for example in some the tag for probeset ID is "probeset_name" instead of "probeset_id")
 				int tcount = annots.size();
 
-				for (int tindex=0; tindex < tcount && (!Thread.currentThread().isInterrupted()); tindex++) {
+				for (int tindex=0; tindex < tcount; tindex++) {
 					SymWithProps tcluster = (SymWithProps)annots.get(tindex);
 					SeqSpan tspan = tcluster.getSpan(0);
 					BioSeq aseq = tspan.getBioSeq();
@@ -783,7 +779,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			System.gc();
 
 			for (Map.Entry<BioSeq,SimpleSymWithProps> ent : seq2container.entrySet()) {
-
 				BioSeq aseq = ent.getKey();
 				SeqSymmetry container = ent.getValue();
 				aseq.addAnnotation(container, annot_type);

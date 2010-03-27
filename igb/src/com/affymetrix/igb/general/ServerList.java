@@ -128,7 +128,7 @@ public final class ServerList {
 		if (server == null) {
 			url = GeneralUtils.URLDecode(node.name());
 			name = node.get("name", "Unknown");
-			serverType = ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
+			serverType = ServerType.valueOf(node.get("type", ServerType.Unknown.name()));
 			info = getServerInfo(serverType, url, name);
 
 			if (info != null) {
@@ -191,9 +191,9 @@ public final class ServerList {
 		try {
 			for (String serverURL : PreferenceUtils.getServersNode().childrenNames()) {
 				node = PreferenceUtils.getServersNode().node(serverURL);
-				serverType = ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
+				serverType = ServerType.valueOf(node.get("type", ServerType.Unknown.name()));
 
-				if (serverType == ServerType.LocalFiles) {
+				if (serverType == ServerType.Unknown) {
 					continue;
 				}
 

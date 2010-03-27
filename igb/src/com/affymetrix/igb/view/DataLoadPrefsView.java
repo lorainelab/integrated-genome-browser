@@ -397,7 +397,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		JTextField url = new JTextField();
 		JComboBox  type = new JComboBox(LoadUtils.ServerType.values());
 
-		type.removeItem(LoadUtils.ServerType.LocalFiles);
+		type.removeItem(LoadUtils.ServerType.Unknown);
 		int result = JOptionPane.showOptionDialog(
 				null,
 				createAddSourceDialog(name, url, type),

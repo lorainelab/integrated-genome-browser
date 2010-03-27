@@ -53,9 +53,6 @@ public final class BAMParser {
 			// add sequences that aren't in the original group.  Especially useful for "unknown groups"
 			for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
 				try {
-					if(Thread.currentThread().isInterrupted())
-						break;
-
 					String seqID = ssr.getSequenceName();
 					if (group.getSeq(seqID) == null) {
 						int seqLength = ssr.getSequenceLength();
@@ -84,7 +81,7 @@ public final class BAMParser {
 			if (reader != null) {
 				iter = reader.query(seq.getID(), min, max, contained);
 				if (iter != null) {
-					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
+					for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
 						if (containerSym) {
 							// positive track
 							symList.add(createRandomAccessSym(sr, min, max, seq));
@@ -126,7 +123,7 @@ public final class BAMParser {
 			if (reader != null) {
 				iter = reader.query(seq.getID(), min, max, true);
 				if (iter != null) {
-					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
+					for (SAMRecord sr = iter.next(); iter.hasNext(); sr = iter.next()) {
 						SimpleSymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, f.getName().intern());
 						int start = (int) ((sr.getAlignmentStart() - 1) * scaleFactor); // convert to interbase
 						int end = (int) (sr.getAlignmentEnd() * scaleFactor);

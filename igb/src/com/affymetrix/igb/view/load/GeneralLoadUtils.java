@@ -115,7 +115,7 @@ public final class GeneralLoadUtils {
 	 */
 	public static GenericServer addServer(ServerType serverType, String serverName, String serverURL) {
 		/* should never happen */
-		if (serverType == ServerType.LocalFiles) { return null; }
+		if (serverType == ServerType.Unknown) { return null; }
 		
 		GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL, true);
 		if (gServer == null) {
@@ -154,7 +154,7 @@ public final class GeneralLoadUtils {
 
 	public static boolean discoverServer(GenericServer gServer) {
 		try {
-			if (gServer == null || gServer.serverType == ServerType.LocalFiles) {
+			if (gServer == null || gServer.serverType == ServerType.Unknown) {
 				// should never happen
 				return false;
 			}
@@ -286,7 +286,7 @@ public final class GeneralLoadUtils {
 		String versionName = aseq.getID();
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 
-		GenericServer gServer = new GenericServer("", "", ServerType.LocalFiles, null);
+		GenericServer gServer = new GenericServer("", "", ServerType.Unknown, null);
 		
 		return discoverVersion(versionName, versionName, gServer, null, speciesName);
 	}

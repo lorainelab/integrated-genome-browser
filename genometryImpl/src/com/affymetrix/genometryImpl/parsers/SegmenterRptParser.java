@@ -132,7 +132,7 @@ public final class SegmenterRptParser {
 
 			// skip any comment lines
 			String line = br.readLine();
-			while (line != null && (line.startsWith("#") || line.startsWith("[")) && (!Thread.currentThread().isInterrupted())) {
+			while (line != null && (line.startsWith("#") || line.startsWith("["))) {
 				parseHeaderLine(line);
 				line = br.readLine();
 			}
@@ -145,19 +145,19 @@ public final class SegmenterRptParser {
 			if (has_column_names_header_line) {
 				String[] cols = line_splitter.split(line);
 				col_names = new ArrayList<String>(cols.length);
-				for (int i=0; i<cols.length && (!Thread.currentThread().isInterrupted()); i++) {
+				for (int i=0; i<cols.length; i++) {
 					col_names.add(cols[i]);
 				}
 			}
 
 			// skip any other comment lines
 			line = br.readLine();
-			while (line != null && (line.startsWith("#") || line.startsWith("[")) && Thread.currentThread().isInterrupted()) {
+			while (line != null && (line.startsWith("#") || line.startsWith("["))) {
 				line = br.readLine();
 			}
 
 			// read data
-			while (line != null && (!Thread.currentThread().isInterrupted())) {
+			while (line != null) {
 
 				String[] cols = line_splitter.split(line);
 				if (cols.length <= 0) { continue; }
@@ -214,7 +214,7 @@ public final class SegmenterRptParser {
 				sym.setProperty("id", id);
 
 				if (make_props) {
-					for (int i=0; i<cols.length && i<col_names.size() && (!Thread.currentThread().isInterrupted()); i++) {
+					for (int i=0; i<cols.length && i<col_names.size(); i++) {
 						String name = col_names.get(i);
 						String stringVal = cols[i];
 						if (integerColumnNames.contains(name)) {

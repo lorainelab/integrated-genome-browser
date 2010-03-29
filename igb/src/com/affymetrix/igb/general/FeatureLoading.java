@@ -26,6 +26,10 @@ import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 public final class FeatureLoading {
@@ -184,7 +190,6 @@ public final class FeatureLoading {
 		}
 	}
 
-
 	/**
 	 * split into entries by DAS/2 versioned source
 	 * @param requests
@@ -225,6 +230,49 @@ public final class FeatureLoading {
 		}
 	}
 
+	public static boolean loadLocalFileAnnotations(final GenericFeature gFeature) throws OutOfMemoryError {
+		final File[] f = (File[]) gFeature.typeObj;
+		final FileInputStream fis;
+		try {
+			fis = new FileInputStream(f[0]);
+		} catch (FileNotFoundException ex) {
+			Logger.getLogger(FeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+			return false;
+		}
+
+		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);
+
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			public Void doInBackground() {
+				try {
+					try {
+						final String fileName = f[0].getAbsolutePath();
+						final String annot_url = "file://" + fileName;
+						BufferedInputStream bis = null;
+						loadStreamFeature(fileName, gFeature, annot_url, fis, bis);
+					} catch (Exception ex) {
+						Logger.getLogger(FeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+					} finally {
+						GeneralUtils.safeClose(fis);
+					}
+					return null;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			public void done() {
+				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
+			}
+		};
+
+		vexec.execute(worker);
+		return true;
+	}
+
 	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature) throws OutOfMemoryError {
 		final String fileName = determineQuickLoadFileName(gFeature);
 		if (fileName.length() == 0) {
@@ -238,7 +286,7 @@ public final class FeatureLoading {
 
 			public Void doInBackground() {
 				try {
-				loadQuickLoadFeature(fileName, gFeature);
+					loadQuickLoadFeature(fileName, gFeature);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -289,33 +337,7 @@ public final class FeatureLoading {
 			if (istr == null) {
 				return false;
 			}
-			
-			// Put the friendly name of the feature in the tier.
-			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
-			if (style != null) {
-				style.setHumanName(gFeature.featureName);
-			}
-			// Due to file loading code, the style is probably stored with the stripped name of the file.
-			String unzippedName = GeneralUtils.getUnzippedName(fileName);
-			String extension = ParserController.getExtension(unzippedName);	// .psl, .bed, et cetera
-			String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(extension));
-			style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(strippedName);
-			if (style != null) {
-				style.setHumanName(gFeature.featureName);
-			}
-
-			if (GraphSymUtils.isAGraphFilename(fileName)) {
-				URL url = new URL(annot_url);
-				List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-				if (graphs != null) {
-					// Reset the selected Seq Group to make sure that the DataLoadView knows
-					// about any new chromosomes that were added.
-					gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
-				}
-			} else {
-				bis = new BufferedInputStream(istr);
-				LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-			}
+			bis = loadStreamFeature(fileName, gFeature, annot_url, istr, bis);
 			return true;
 		} catch (Exception ex) {
 			System.out.println("Problem loading requested url:" + annot_url);
@@ -325,6 +347,35 @@ public final class FeatureLoading {
 			GeneralUtils.safeClose(istr);
 		}
 		return false;
+	}
+
+
+	private static BufferedInputStream loadStreamFeature(
+			final String fileName, GenericFeature gFeature, final String annot_url, InputStream istr, BufferedInputStream bis) throws IOException, OutOfMemoryError {
+		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
+		if (style != null) {
+			style.setHumanName(gFeature.featureName);
+		}
+		String unzippedName = GeneralUtils.getUnzippedName(fileName);
+		String extension = ParserController.getExtension(unzippedName); // .psl, .bed, et cetera
+		String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(extension));
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(strippedName);
+		if (style != null) {
+			style.setHumanName(gFeature.featureName);
+		}
+		if (GraphSymUtils.isAGraphFilename(fileName)) {
+			URL url = new URL(annot_url);
+			List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+			if (graphs != null) {
+				// Reset the selected Seq Group to make sure that the DataLoadView knows
+				// about any new chromosomes that were added.
+				gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+			}
+		} else {
+			bis = new BufferedInputStream(istr);
+			LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+		}
+		return bis;
 	}
 
 

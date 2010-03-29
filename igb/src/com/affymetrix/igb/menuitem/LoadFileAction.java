@@ -215,44 +215,9 @@ public final class LoadFileAction {
 		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
-		version.addFeature(new GenericFeature(fils[0].getName(), null, version, null));
+		version.addFeature(new GenericFeature(fils[0].getName(), null, version, fils));
 
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized);
-
-		Executor vexec = ThreadUtils.getPrimaryExecutor(loadGroup);
-
-		Application.getSingleton().addNotLockedUpMsg("Loading file " + fils[0].getName());
-		
-		SwingWorker<BioSeq, Void> worker = new SwingWorker<BioSeq, Void>() {
-			public BioSeq doInBackground() {
-				BioSeq new_seq = null;
-				try {
-					new_seq = loadFilesIntoSeq(fils, gviewerFrame, gmodel, loadGroup, gmodel.getSelectedSeq());
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return new_seq;
-			}
-
-			@Override
-			public void done() {
-				if (!mergeSelected) {
-					gmodel.setSelectedSeqGroup(loadGroup);
-				}
-				try {
-					setGroupAndSeq(gmodel, previous_seq_group, previous_seq, get());
-				} catch (InterruptedException ex) {
-					Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
-				} catch (ExecutionException ex) {
-					Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
-				}
-				Application.getSingleton().removeNotLockedUpMsg("Loading file " + fils[0].getName());
-			}
-		};
-
-		vexec.execute(worker);
-
-		
 	}
 
 	

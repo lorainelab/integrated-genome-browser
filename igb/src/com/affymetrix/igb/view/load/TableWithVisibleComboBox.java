@@ -31,13 +31,15 @@ public final class TableWithVisibleComboBox {
 	 * @param enabled
 	 */
   public static void setComboBoxEditors(JTableX table, int column, boolean enabled) {
-    RowEditorModel rm = new RowEditorModel();
-    // tell the JTableX which RowEditorModel we are using
-    table.setRowEditorModel(rm);
-
+   
     FeaturesTableModel ftm = (FeaturesTableModel) table.getModel();
 	sorter = new TableRowSorter<FeaturesTableModel>(ftm);
 	//table.setRowSorter(sorter);
+
+	int featureSize = ftm.features.size();
+	RowEditorModel rm = new RowEditorModel(featureSize);
+    // tell the JTableX which RowEditorModel we are using
+    table.setRowEditorModel(rm);
 
     JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
     DAScb.setEnabled(enabled);
@@ -47,7 +49,7 @@ public final class TableWithVisibleComboBox {
     QuickLoadcb.setEnabled(enabled);
     DefaultCellEditor QuickLoadeditor = new DefaultCellEditor(QuickLoadcb);
 
-    for (int row = 0; row < ftm.features.size(); row++) {
+    for (int row = 0; row < featureSize; row++) {
       GenericFeature gFeature = ftm.features.get(row);
       ServerType serverType = gFeature.gVersion.gServer.serverType;
 
@@ -56,7 +58,7 @@ public final class TableWithVisibleComboBox {
       } else if (serverType == ServerType.QuickLoad) {
         rm.addEditorForRow(row, QuickLoadeditor);
       } else if (serverType == ServerType.LocalFiles) {
-		// TODO
+		rm.addEditorForRow(row, QuickLoadeditor);
 	  } else {
         System.out.println("ERROR: Undefined class " + serverType);
       }
@@ -101,8 +103,8 @@ class RowEditorModel {
 
   private final Hashtable<Integer, TableCellEditor> row2Editor;
 
-  public RowEditorModel() {
-    row2Editor = new Hashtable<Integer, TableCellEditor>();
+  public RowEditorModel(int size) {
+    row2Editor = new Hashtable<Integer, TableCellEditor>(size);
   }
 
   public void addEditorForRow(int row, TableCellEditor e) {

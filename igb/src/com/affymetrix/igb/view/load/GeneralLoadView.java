@@ -866,8 +866,9 @@ public final class GeneralLoadView extends JComponent
 				continue;
 			}
 
-			if (gFeature.gVersion.gServer.serverType == ServerType.QuickLoad) {
-				// These have already been loaded(QuickLoad is loaded for the entire genome at once)
+			if (gFeature.gVersion.gServer.serverType == ServerType.QuickLoad ||
+					gFeature.gVersion.gServer.serverType == ServerType.LocalFiles) {
+				// These have already been loaded(currently loaded for the entire genome at once)
 				continue;
 			}
 

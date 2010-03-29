@@ -299,8 +299,10 @@ public final class GeneralLoadUtils {
 	 */
 	public static GenericVersion getLocalFilesVersion(AnnotatedSeqGroup aseq) {
 		String versionName = aseq.getID();
-		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
-
+		String speciesName = GeneralLoadUtils.versionName2species.get(versionName);
+		if (speciesName == null) {
+			 speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list
+		}
 		GenericServer server = ServerList.getLocalFilesServer();
 
 		return discoverVersion(versionName, versionName, server, null, speciesName);
@@ -590,6 +592,8 @@ public final class GeneralLoadUtils {
 			result = DasFeatureLoader.loadFeatures(gFeature, overlap);
 		} else if (serverType == ServerType.QuickLoad) {
 			result = FeatureLoading.loadQuickLoadAnnotations(gFeature);
+		} else if (serverType == ServerType.LocalFiles) {
+			result = FeatureLoading.loadLocalFileAnnotations(gFeature);
 		} else {
 			System.out.println("class " + serverType + " is not implemented.");
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);

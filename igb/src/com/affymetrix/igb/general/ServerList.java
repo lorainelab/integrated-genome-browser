@@ -31,6 +31,7 @@ import java.util.prefs.Preferences;
 public final class ServerList {
 	private final static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 	private final static Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
+	private final static GenericServer localFilesServer = new GenericServer("Local Files","",ServerType.LocalFiles,null);
 
 	public static Set<GenericServer> getEnabledServers() {
 		Set<GenericServer> serverList = new HashSet<GenericServer>();
@@ -50,6 +51,10 @@ public final class ServerList {
 			}
 		}
 		return serverList;
+	}
+
+	public static GenericServer getLocalFilesServer() {
+		return localFilesServer;
 	}
 
 	public static boolean areAllServersInited() {

@@ -286,9 +286,24 @@ public final class GeneralLoadUtils {
 		String versionName = aseq.getID();
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 
-		GenericServer gServer = new GenericServer("", "", ServerType.LocalFiles, null);
+		GenericServer server = ServerList.getLocalFilesServer();
 		
-		return discoverVersion(versionName, versionName, gServer, null, speciesName);
+		return discoverVersion(versionName, versionName, server, null, speciesName);
+	}
+
+	/**
+	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
+	 * Update GeneralLoadUtils state.
+	 * @param aseq
+	 * @return genome version
+	 */
+	public static GenericVersion getLocalFilesVersion(AnnotatedSeqGroup aseq) {
+		String versionName = aseq.getID();
+		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
+
+		GenericServer server = ServerList.getLocalFilesServer();
+
+		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
 
 	private static GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {

@@ -35,6 +35,9 @@ import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
 import org.xml.sax.InputSource;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.BAMParser;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
@@ -63,11 +66,14 @@ import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genoviz.swing.threads.InvokeUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.util.concurrent.Executor;
 import org.xml.sax.SAXException;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -207,6 +213,11 @@ public final class LoadFileAction {
 		}
 		
 		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
+
+		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
+		version.addFeature(new GenericFeature(fils[0].getName(), null, version, null));
+
+		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized);
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(loadGroup);
 

@@ -55,7 +55,9 @@ public final class TableWithVisibleComboBox {
         rm.addEditorForRow(row, DASeditor);
       } else if (serverType == ServerType.QuickLoad) {
         rm.addEditorForRow(row, QuickLoadeditor);
-      } else {
+      } else if (serverType == ServerType.LocalFiles) {
+		// TODO
+	  } else {
         System.out.println("ERROR: Undefined class " + serverType);
       }
     }

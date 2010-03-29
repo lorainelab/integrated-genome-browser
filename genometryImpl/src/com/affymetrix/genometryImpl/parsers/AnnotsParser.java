@@ -29,7 +29,7 @@ public abstract class AnnotsParser {
 			NodeList listOfFiles = doc.getElementsByTagName("file");
 
 			int length = listOfFiles.getLength();
-			for (int s = 0; s < length; s++) {
+			for (int s = 0; s < length && (!Thread.currentThread().isInterrupted()); s++) {
 				Node fileNode = listOfFiles.item(s);
 				if (fileNode.getNodeType() != Node.ELEMENT_NODE) {
 					continue;

@@ -40,7 +40,7 @@ public final class LoadUtils {
 		DAS2 ("DAS2"),
 		DAS ("DAS"),
 		QuickLoad ("QuickLoad"),
-		Unknown ("Unknown");
+		LocalFiles ("Local Files");
 
 		private String name;
 

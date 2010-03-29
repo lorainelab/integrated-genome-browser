@@ -142,7 +142,7 @@ public class TabDelimitedParser {
 					col_names.add(cols[i]);
 				}
 			}
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine()) != null && (!Thread.currentThread().isInterrupted())) {
 				String[] cols = line_splitter.split(line);
 				if (cols.length <= 0) { continue; }
 

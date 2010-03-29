@@ -58,7 +58,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this(
 				node.get("name", "Unknown"),
 				GeneralUtils.URLDecode(node.name()),
-				ServerType.valueOf(node.get("type", ServerType.Unknown.name())),
+				ServerType.valueOf(node.get("type", ServerType.LocalFiles.name())),
 				true,
 				node,
 				serverObj);
@@ -68,7 +68,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.serverName = serverName;
 		this.URL = URL;
 		this.serverType = serverType;
-		this.enabled = this.serverType != ServerType.Unknown;
+		this.enabled = enabled;
 		this.node = node;
 		this.serverObj = serverObj;
 		this.friendlyURL = determineFriendlyURL(URL, serverType);

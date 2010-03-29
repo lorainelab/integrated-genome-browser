@@ -50,7 +50,7 @@ public final class FastaParser {
 		try {
 			br = new BufferedReader(new InputStreamReader(istr));
 			String header = br.readLine();
-			while (br.ready()) {  // loop through lines till find a header line
+			while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
 				if (header == null) {
 					continue;
 				}  // skip null lines
@@ -63,7 +63,7 @@ public final class FastaParser {
 				String seqid = matcher.group(1);
 
 				StringBuffer buf = new StringBuffer();
-				while (br.ready()) {
+				while (br.ready() && (!Thread.currentThread().isInterrupted())) {
 					String line = br.readLine();
 					if (line == null || line.length() == 0) {
 						continue;
@@ -253,7 +253,7 @@ public final class FastaParser {
 		try {
 			//      System.out.println("trying to read");
 			br = new BufferedReader(new InputStreamReader(istr));
-			while (br.ready()) {  // loop through lines till find a header line
+			while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
 				String header = br.readLine();
 				if (header == null) { continue; }  // skip null lines
 				matcher.reset(header);
@@ -264,7 +264,7 @@ public final class FastaParser {
 					break;
 				}
 			}
-			while (br.ready()) {
+			while (br.ready() && (!Thread.currentThread().isInterrupted())) {
 				String line = br.readLine();
 				if (line == null || line.length()==0) { continue; }  // skip null and empty lines
 

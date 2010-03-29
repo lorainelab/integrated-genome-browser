@@ -220,6 +220,7 @@ public final class GFF3Parser {
 			}
 
 			for (GFF3Sym sym : all_syms) {
+
 				String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
 
 				String id = sym.getID();

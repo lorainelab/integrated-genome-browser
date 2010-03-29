@@ -81,6 +81,10 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 
 	private static void findProbeSets(Collection<? extends SeqSymmetry> consensus_syms, BioSeq genome_seq, String probeset_type, Set<SeqSymmetry> probesets, Set<SeqSymmetry> crossHybProbes, String poly_a_sites_type, Set<SeqSymmetry> polyASites, String poly_a_stacks_type, Set<SeqSymmetry> polyAStacks) {
 		for (SeqSymmetry current_c2g : consensus_syms) {
+			
+			if(Thread.currentThread().isInterrupted())
+				break;
+
 			// 2. For each consensus sequence symmetry, get the
 			//    corresponding consensus BioSeq
 			BioSeq aseq = SeqUtils.getOtherSeq(current_c2g, genome_seq);

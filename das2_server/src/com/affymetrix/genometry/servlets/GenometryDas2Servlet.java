@@ -39,7 +39,7 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import org.hibernate.Session;
 
 import com.affymetrix.genometry.genopub.*;
-import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
+import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import javax.servlet.ServletContext;

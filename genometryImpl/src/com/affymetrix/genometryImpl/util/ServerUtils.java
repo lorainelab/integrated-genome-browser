@@ -15,8 +15,8 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
-import com.affymetrix.genometryImpl.parsers.AnnotsParser;
-import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
+import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
+import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
@@ -220,7 +220,7 @@ public abstract class ServerUtils {
 					annotList = new ArrayList<AnnotMapElt>();
 					annots_map.put(genome, annotList);
 				}
-				AnnotsParser.parseAnnotsXml(istr, annotList);
+				AnnotsXmlParser.parseAnnotsXml(istr, annotList);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {

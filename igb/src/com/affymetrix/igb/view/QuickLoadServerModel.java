@@ -15,8 +15,8 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.parsers.AnnotsParser;
-import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
+import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
+import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -169,7 +169,7 @@ public final class QuickLoadServerModel {
 				return false;
 			}
 
-			AnnotsParser.parseAnnotsXml(istr, annotList);
+			AnnotsXmlParser.parseAnnotsXml(istr, annotList);
 			return true;
 		} catch (Exception ex) {
 			System.out.println("Couldn't process file " + filename);

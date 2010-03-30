@@ -574,8 +574,6 @@ public final class GeneralLoadUtils {
 
 		ServerType serverType = gFeature.gVersion.gServer.serverType;
 
-		
-
 		boolean result = false;
 
 		Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
@@ -591,9 +589,9 @@ public final class GeneralLoadUtils {
 		} else if (serverType == ServerType.DAS) {
 			result = DasFeatureLoader.loadFeatures(gFeature, overlap);
 		} else if (serverType == ServerType.QuickLoad) {
-			result = FeatureLoading.loadQuickLoadAnnotations(gFeature);
+			result = FeatureLoading.loadQuickLoadAnnotations(gFeature, overlap);
 		} else if (serverType == ServerType.LocalFiles) {
-			result = FeatureLoading.loadLocalFileAnnotations(gFeature);
+			result = FeatureLoading.loadLocalFileAnnotations(gFeature, overlap);
 		} else {
 			System.out.println("class " + serverType + " is not implemented.");
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
@@ -626,19 +624,12 @@ public final class GeneralLoadUtils {
 			System.out.println("seq = " + visible_seq.getID() + ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
 		}
 		List<Das2FeatureRequestSym> requests = new ArrayList<Das2FeatureRequestSym>();
-		/*for (Das2TypeState tstate : types_table_model.getTypeStates()) {
-		Das2Type dtype = tstate.getDas2Type();
-		Das2VersionedSource version = dtype.getVersionedSource();
-		// if restricting to types from "current" version, then skip if verion != current_version
-		//      if (restrict_to_current_version && (version != current_version)) { continue; }
-		 */
 
 		List<Das2Type> type_list = version.getTypesByName(feature_name);
 
 		Das2Region region = version.getSegment(selected_seq);
 		for (Das2Type dtype : type_list) {
 			if (dtype != null && region != null) {
-				//&& (tstate.getLoad())) {
 				// maybe add a fully_loaded flag so know which ones to skip because they're done?
 				Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(dtype, region, overlap, null);
 				requests.add(request_sym);

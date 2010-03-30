@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
@@ -230,7 +231,7 @@ public final class FeatureLoading {
 		}
 	}
 
-	public static boolean loadLocalFileAnnotations(final GenericFeature gFeature) throws OutOfMemoryError {
+	public static boolean loadLocalFileAnnotations(final GenericFeature gFeature, SeqSpan overlapSpan) throws OutOfMemoryError {
 		final File[] f = (File[]) gFeature.typeObj;
 		final FileInputStream fis;
 		try {
@@ -250,7 +251,7 @@ public final class FeatureLoading {
 						final String fileName = f[0].getAbsolutePath();
 						final String annot_url = "file://" + fileName;
 						BufferedInputStream bis = null;
-						loadStreamFeature(fileName, gFeature, annot_url, fis, bis);
+						loadStreamFeature(fileName, gFeature.featureName, annot_url, fis, bis);
 					} catch (Exception ex) {
 						Logger.getLogger(FeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
 					} finally {
@@ -273,7 +274,7 @@ public final class FeatureLoading {
 		return true;
 	}
 
-	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature) throws OutOfMemoryError {
+	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature, SeqSpan overlapSpan) throws OutOfMemoryError {
 		final String fileName = determineQuickLoadFileName(gFeature);
 		if (fileName.length() == 0) {
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
@@ -337,7 +338,7 @@ public final class FeatureLoading {
 			if (istr == null) {
 				return false;
 			}
-			bis = loadStreamFeature(fileName, gFeature, annot_url, istr, bis);
+			bis = loadStreamFeature(fileName, gFeature.featureName, annot_url, istr, bis);
 			return true;
 		} catch (Exception ex) {
 			System.out.println("Problem loading requested url:" + annot_url);
@@ -351,17 +352,17 @@ public final class FeatureLoading {
 
 
 	private static BufferedInputStream loadStreamFeature(
-			final String fileName, GenericFeature gFeature, final String annot_url, InputStream istr, BufferedInputStream bis) throws IOException, OutOfMemoryError {
+			final String fileName, String featureName, final String annot_url, InputStream istr, BufferedInputStream bis) throws IOException, OutOfMemoryError {
 		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
 		if (style != null) {
-			style.setHumanName(gFeature.featureName);
+			style.setHumanName(featureName);
 		}
 		String unzippedName = GeneralUtils.getUnzippedName(fileName);
 		String extension = ParserController.getExtension(unzippedName); // .psl, .bed, et cetera
 		String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(extension));
 		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(strippedName);
 		if (style != null) {
-			style.setHumanName(gFeature.featureName);
+			style.setHumanName(featureName);
 		}
 		if (GraphSymUtils.isAGraphFilename(fileName)) {
 			URL url = new URL(annot_url);

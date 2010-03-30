@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -18,6 +18,7 @@ import java.util.List;
 public abstract class GenericSymRequest {
 	private final URI uri;
 	private final String extension;	// used for ServerUtils call
+	private volatile boolean isInitialized = false;
 
 	public GenericSymRequest(URI uri) {
         this.uri = uri;
@@ -27,12 +28,24 @@ public abstract class GenericSymRequest {
 		extension = ParserController.getExtension(unzippedStreamName);
     }
 
+	protected void init() {
+		this.isInitialized = true;
+	}
+
     /**
      * @return List of symmetries in genome
      */
     public List<SeqSymmetry> getGenome() {
         return null;
     }
+
+	/**
+	 * Does this support genome requests?
+	 * @return
+	 */
+	public boolean supportsGenome() {
+		return true;
+	}
 
     /**
      * @param seq - chromosome
@@ -53,18 +66,33 @@ public abstract class GenericSymRequest {
 		return results;
     }
 
+	/**
+	 * Does this support chromosome requests?
+	 * @return
+	 */
+	public boolean supportsChromosome() {
+		return true;
+	}
+
     /**
      * Get a region of the chromosome.
      * @param seq - chromosome
      * @param overlapSpan - span of overlap
-	 * @param insideSpan - 
      * @return List of symmetries satisfying requirements
      */
-    public List<SeqSymmetry> getRegion(BioSeq seq, SeqSpan overlapSpan, SeqSpan insideSpan) {
+    public List<SeqSymmetry> getRegion(BioSeq seq, SeqSpan overlapSpan) {
 		List<SeqSymmetry> chrResults = this.getChromosome(seq);
 		if (chrResults == null || this.extension == null) {
 			return chrResults;
 		}
-		return ServerUtils.getIntersectedSymmetries(overlapSpan, this.extension, insideSpan);
+		return ServerUtils.getIntersectedSymmetries(overlapSpan, this.extension, null);
     }
+
+	/**
+	 * Does this support region requests?
+	 * @return
+	 */
+	public boolean supportsRegion() {
+		return true;
+	}
 }

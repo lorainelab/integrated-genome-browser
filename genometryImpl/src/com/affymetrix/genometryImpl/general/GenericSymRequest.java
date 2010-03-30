@@ -16,9 +16,9 @@ import java.util.List;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class GenericSymRequest {
-	private final URI uri;
-	private final String extension;	// used for ServerUtils call
-	private volatile boolean isInitialized = false;
+	protected final URI uri;
+	protected final String extension;	// used for ServerUtils call
+	protected volatile boolean isInitialized = false;
 
 	public GenericSymRequest(URI uri) {
         this.uri = uri;

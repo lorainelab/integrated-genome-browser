@@ -312,13 +312,14 @@ public final class GeneralLoadUtils {
 	private static GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {
 		// Make sure we use the preferred synonym for the genome version.
 		String preferredVersionName = LOOKUP.getPreferredName(versionName);
-		GenericVersion gVersion = new GenericVersion(versionID, preferredVersionName, gServer, versionSourceObj);
+		versionName2species.put(preferredVersionName, speciesName);
+		AnnotatedSeqGroup group = gmodel.addSeqGroup(preferredVersionName); // returns existing group if found, otherwise creates a new group
+
+		GenericVersion gVersion = new GenericVersion(group, versionID, preferredVersionName, gServer, versionSourceObj);
 		List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
 		}
-		versionName2species.put(preferredVersionName, speciesName);
-		AnnotatedSeqGroup group = gmodel.addSeqGroup(preferredVersionName); // returns existing group if found, otherwise creates a new group
 		group.addVersion(gVersion);
 		if (DEBUG) {
 			System.out.println("Added " + gVersion.gServer.serverType + "genome: " + speciesName + " version: " + preferredVersionName);

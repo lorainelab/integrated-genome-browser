@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import java.util.Collections;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public final class GenericVersion implements Comparable<GenericVersion> {
 
+	public final AnnotatedSeqGroup group;
 	/** Display name of this version */
 	public final String versionName;          // name of the other.
 	/** ID of this version on this server */
@@ -29,7 +31,8 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 	 * @param gServer -- not null
 	 * @param versionSourceObj
 	 */
-	public GenericVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj) {
+	public GenericVersion(AnnotatedSeqGroup group, String versionID, String versionName, GenericServer gServer, Object versionSourceObj) {
+		this.group = group;
 		this.versionID = versionID;
 		this.versionName = versionName;
 		this.gServer = gServer;

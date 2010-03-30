@@ -14,7 +14,7 @@ import org.w3c.dom.NodeList;
 /**
  * This class is specifically for parsing the annots.xml file used by IGB and the DAS/2 server.
  */
-public abstract class AnnotsParser {
+public abstract class AnnotsXmlParser {
 
 	/**
 	 * @param istr - stream of annots file

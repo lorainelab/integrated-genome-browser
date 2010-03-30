@@ -22,6 +22,7 @@ import com.affymetrix.igb.das2.Das2Type;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
+import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
@@ -76,7 +77,7 @@ public final class FeatureLoading {
 					continue;
 				}
 				Map<String, String> type_props = type.getProps();
-				gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion, type));
+				gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion, null, type));
 			}
 			return;
 		}
@@ -92,7 +93,7 @@ public final class FeatureLoading {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				gVersion.addFeature(new GenericFeature(type_name, null, gVersion, type));
+				gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type));
 			}
 			return;
 		}
@@ -116,7 +117,9 @@ public final class FeatureLoading {
 						System.out.println("Adding feature " + type_name);
 					}
 					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
-					gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion, null));
+					gVersion.addFeature(
+							new GenericFeature(
+							type_name, type_props, gVersion, new QuickLoadFeatureLoading(gVersion, type_name), null));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -274,84 +277,7 @@ public final class FeatureLoading {
 		return true;
 	}
 
-	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature, SeqSpan overlapSpan) throws OutOfMemoryError {
-		final String fileName = determineQuickLoadFileName(gFeature);
-		if (fileName.length() == 0) {
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			return false;
-		}
-
-		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);
-
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-			public Void doInBackground() {
-				try {
-					loadQuickLoadFeature(fileName, gFeature);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return null;
-			}
-			@Override
-			public void done() {
-				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			}
-		};
-
-		vexec.execute(worker);
-		return true;
-
-	}
-
-	private static String determineQuickLoadFileName(final GenericFeature gFeature) {
-		URL quickloadURL = null;
-		try {
-			quickloadURL = new URL((String) gFeature.gVersion.gServer.serverObj);
-		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
-			return "";
-		}
-
-		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
-		List<AnnotMapElt> annotsList = quickloadServer.getAnnotsMap(gFeature.gVersion.versionID);
-		
-		// Linear search, but over a very small list.
-		for (AnnotMapElt annotMapElt : annotsList) {
-			if (annotMapElt.title.equals(gFeature.featureName)) {
-				return annotMapElt.fileName;
-			}
-		}
-		return "";
-	}
-
-	private static boolean loadQuickLoadFeature(final String fileName, GenericFeature gFeature) throws OutOfMemoryError {
-		InputStream istr = null;
-		BufferedInputStream bis = null;
-		final String annot_url = gFeature.gVersion.gServer.URL + "/" + gFeature.gVersion.versionID + "/" + fileName;
-
-		if (DEBUG) {
-			System.out.println("need to load: " + annot_url);
-		}
-		try {
-			istr = LocalUrlCacher.getInputStream(annot_url, true);
-			if (istr == null) {
-				return false;
-			}
-			bis = loadStreamFeature(fileName, gFeature.featureName, annot_url, istr, bis);
-			return true;
-		} catch (Exception ex) {
-			System.out.println("Problem loading requested url:" + annot_url);
-			ex.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(bis);
-			GeneralUtils.safeClose(istr);
-		}
-		return false;
-	}
-
-
-	private static BufferedInputStream loadStreamFeature(
+	public static BufferedInputStream loadStreamFeature(
 			final String fileName, String featureName, final String annot_url, InputStream istr, BufferedInputStream bis) throws IOException, OutOfMemoryError {
 		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
 		if (style != null) {

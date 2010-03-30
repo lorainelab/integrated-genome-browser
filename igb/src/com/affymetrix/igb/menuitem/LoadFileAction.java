@@ -71,6 +71,7 @@ import com.affymetrix.genoviz.swing.threads.InvokeUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.ChpParser;
+import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -215,7 +216,8 @@ public final class LoadFileAction {
 		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
-		version.addFeature(new GenericFeature(fils[0].getName(), null, version, fils));
+		version.addFeature(new GenericFeature(
+				fils[0].getName(), null, version, new QuickLoadFeatureLoading(version, fils[0].getAbsolutePath()), fils));
 
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized);
 	}

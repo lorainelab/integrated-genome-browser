@@ -26,6 +26,7 @@ public final class GenericFeature {
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
 	public final Object typeObj;    // Das2Type, DasType, ...?
+	public final GenericSymRequest gsr;
 	
 	/**
 	 * @param featureName
@@ -33,7 +34,8 @@ public final class GenericFeature {
 	 * @param gVersion
 	 * @param typeObj
 	 */
-	public GenericFeature(String featureName, Map<String, String> featureProps, GenericVersion gVersion, Object typeObj) {
+	public GenericFeature(
+			String featureName, Map<String, String> featureProps, GenericVersion gVersion, GenericSymRequest gsr, Object typeObj) {
 		this.featureName = featureName;
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
@@ -44,6 +46,7 @@ public final class GenericFeature {
 			this.loadStrategy = LoadStrategy.NO_LOAD;
 			this.visible = false;
 		}
+		this.gsr = gsr;
 		this.typeObj = typeObj;
 		this.setFriendlyURL();
 	}

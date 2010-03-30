@@ -33,6 +33,7 @@ import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.IOException;
@@ -589,7 +590,7 @@ public final class GeneralLoadUtils {
 		} else if (serverType == ServerType.DAS) {
 			result = DasFeatureLoader.loadFeatures(gFeature, overlap);
 		} else if (serverType == ServerType.QuickLoad) {
-			result = FeatureLoading.loadQuickLoadAnnotations(gFeature, overlap);
+			result = QuickLoadFeatureLoading.loadQuickLoadAnnotations(gFeature, overlap);
 		} else if (serverType == ServerType.LocalFiles) {
 			result = FeatureLoading.loadLocalFileAnnotations(gFeature, overlap);
 		} else {

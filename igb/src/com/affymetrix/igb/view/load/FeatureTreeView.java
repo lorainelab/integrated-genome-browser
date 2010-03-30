@@ -266,7 +266,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 		// Couldn't find matching node.  Add new one.
 		// John -- not really sure what the following code is for. ?
-		GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion, null);
+		GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion, null, null);
 		TreeNodeUserInfo dummyFeatureUInfo = new TreeNodeUserInfo(dummyFeature);
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeatureUInfo);
 		root.add(newNode);

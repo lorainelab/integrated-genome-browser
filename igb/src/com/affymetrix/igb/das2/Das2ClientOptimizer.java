@@ -122,13 +122,11 @@ public final class Das2ClientOptimizer {
         // little hack for GraphSyms, need to resolve when to use id vs. name vs. type
 
 		if (cont_sym == null && typeid.endsWith(".bar")) {
+			cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(type.getName());
             if (DEBUG) {
                 System.out.println("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
-            }
-            cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(type.getName());
-            if (DEBUG) {
-                System.out.println("cont_sym: " + cont_sym);
-            }
+				System.out.println("cont_sym: " + cont_sym);
+			}
         }
         if ((cont_sym == null) || (cont_sym.getChildCount() == 0)) {
             if (DEBUG) {
@@ -141,7 +139,7 @@ public final class Das2ClientOptimizer {
                 System.out.println("  child count: " + prevcount);
             }
 
-            ArrayList<SeqSymmetry> prev_overlaps = new ArrayList<SeqSymmetry>(prevcount);
+            List<SeqSymmetry> prev_overlaps = new ArrayList<SeqSymmetry>(prevcount);
             for (int i = 0; i < prevcount; i++) {
                 SeqSymmetry prev_request = cont_sym.getChild(i);
                 if (prev_request instanceof Das2FeatureRequestSym) {
@@ -151,16 +149,16 @@ public final class Das2ClientOptimizer {
                 }
             }
             SeqSymmetry prev_union = SeqSymSummarizer.getUnion(prev_overlaps, aseq);
-            ArrayList<SeqSymmetry> qnewlist = new ArrayList<SeqSymmetry>();
+            List<SeqSymmetry> qnewlist = new ArrayList<SeqSymmetry>();
             qnewlist.add(overlap_sym);
-            ArrayList<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
+            List<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
             qoldlist.add(prev_union);
             SplitQuery(qnewlist, qoldlist, aseq, request_log, typeid, prev_union, type, region, output_requests);
         }
     }
 
 
-    private static void SplitQuery(ArrayList<SeqSymmetry> qnewlist, ArrayList<SeqSymmetry> qoldlist, BioSeq aseq, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
+    private static void SplitQuery(List<SeqSymmetry> qnewlist, List<SeqSymmetry> qoldlist, BioSeq aseq, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
         SeqSymmetry split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
         if (split_query == null || split_query.getChildCount() == 0) {
             // all of current query overlap range covered by previous queries, so return empty list
@@ -276,7 +274,6 @@ public final class Das2ClientOptimizer {
             if (format == null) {
                 format = default_format;
             }
-
 
             String feature_query = request_root + "?" + query_part;
             if (DEBUG) {

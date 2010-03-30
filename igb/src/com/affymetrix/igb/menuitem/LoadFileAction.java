@@ -103,7 +103,7 @@ public final class LoadFileAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		loadFile(GenometryModel.getGenometryModel(), load_dir_tracker, gviewerFrame);
+		loadFile(load_dir_tracker, gviewerFrame);
 	}
 	private static MergeOptionFileChooser chooser = null;
 
@@ -174,8 +174,9 @@ public final class LoadFileAction {
 	}
 
 	/** Load a file into the global singleton genometry model. */
-	private static void loadFile(final GenometryModel gmodel, final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
+	private static void loadFile(final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
 
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		MergeOptionFileChooser fileChooser = getFileChooser();
 		File currDir = load_dir_tracker.getFile();
 		if (currDir == null) {
@@ -205,8 +206,6 @@ public final class LoadFileAction {
 		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
 
 		final File[] fils = fileChooser.getSelectedFiles();
-		final AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
-		final BioSeq previous_seq = gmodel.getSelectedSeq();
 		final boolean mergeSelected = fileChooser.merge_button.isSelected();
 		if (!mergeSelected) {
 			// Not merging, so create a new Seq Group
@@ -242,7 +241,7 @@ public final class LoadFileAction {
 					// and will not look good to the user.
 					File f = GeneralUtils.convertStreamToFile(istr, streamName.substring(streamName.lastIndexOf("/")));
 					
-					new_seq = load(gviewerFrame, streamName, f, gmodel, seq_group, seq);
+					new_seq = load(gviewerFrame, streamName, f, seq_group, seq);
 				} catch (IOException ex) {
 					ex.printStackTrace();
 					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading URL", ex);
@@ -250,7 +249,7 @@ public final class LoadFileAction {
 			} else {
 				try {
 					String fileName = cfil.getName().toLowerCase();
-					new_seq = load(gviewerFrame, fileName, cfil, gmodel, seq_group, seq);
+					new_seq = load(gviewerFrame, fileName, cfil, seq_group, seq);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
@@ -261,8 +260,9 @@ public final class LoadFileAction {
 	}
 
 	private static BioSeq load(
-			JFrame gviewerFrame, String annotFileLC, File annotfile, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq input_seq)
+			JFrame gviewerFrame, String annotFileLC, File annotfile, AnnotatedSeqGroup seq_group, BioSeq input_seq)
 			throws IOException {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		if (annotFileLC.endsWith(".chp")) {
 			// special-case CHP files. ChpParser only has
 			//    a parse() method that takes the file name
@@ -306,43 +306,11 @@ public final class LoadFileAction {
 				return null;
 			}
 			//load as non graph data
-			return load(gviewerFrame, fistr, stripped_name, gmodel, seq_group, input_seq);
+			return load(gviewerFrame, fistr, stripped_name, seq_group, input_seq);
 			
 		} // Don't catch exception, just throw it
 		finally {
 			GeneralUtils.safeClose(fistr);
-		}
-	}
-
-	private static void setGroupAndSeq(GenometryModel gmodel, AnnotatedSeqGroup previous_seq_group, BioSeq previous_seq, BioSeq new_seq) {
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		if (group == null) {
-			// This primarily can happen if the merge button is not selected
-			// and the loading of the file fails or fails to create a seq group.
-			gmodel.setSelectedSeqGroup(previous_seq_group);
-			gmodel.setSelectedSeq(previous_seq);
-		} else {
-			// The purpose of calling setSelectedSeqGroup, even if identity of
-			// the seq group has not changed, is to make sure that
-			// the DataLoadView and the AnnotBrowserView update their displays.
-			// (Because the contents of the seq group may have changed.)
-			gmodel.setSelectedSeqGroup(group);
-			if (new_seq != null && group.getSeqList().contains(new_seq)) {
-				gmodel.setSelectedSeq(new_seq);
-			} else {
-				if (group != previous_seq_group) {
-					if (group.getSeqCount() > 0) {
-						gmodel.setSelectedSeq(group.getSeq(0));
-					}
-				} else {
-					// the seq_group has not changed, but the seq might have
-					if (previous_seq != null) {
-						// Setting the selected Seq, even if it hasn't changed identity, is to
-						// make the SeqMapView update itself.  (Its contents may have changed.)
-						gmodel.setSelectedSeq(previous_seq);
-					}
-				}
-			}
 		}
 	}
 
@@ -352,7 +320,7 @@ public final class LoadFileAction {
 	 *  The stream will be passed through uncompression routines
 	 *  if necessary.
 	 */
-	public static BioSeq load(JFrame gviewerFrame, InputStream instr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup selected_group, BioSeq input_seq) throws IOException {
+	public static BioSeq load(JFrame gviewerFrame, InputStream instr, String stream_name, AnnotatedSeqGroup selected_group, BioSeq input_seq) throws IOException {
 		if (selected_group == null) {
 			// this should never happen
 			throw new IOException("Must select a genome before loading a file");
@@ -374,7 +342,7 @@ public final class LoadFileAction {
 			} else {
 				str = new BufferedInputStream(str);
 			}
-			aseq = DoParse(str, selected_group, input_seq, stream_name, gviewerFrame, gmodel);
+			aseq = DoParse(str, selected_group, input_seq, stream_name, gviewerFrame);
 		} catch (Exception ex) {
 			the_exception = ex;
 			//ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
@@ -390,6 +358,7 @@ public final class LoadFileAction {
 		// Note that this must be done regardless of whether this load() method was
 		// called from inside this class or in loading a bookmark, etc.
 
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
 
 		if (the_exception != null) {
@@ -406,7 +375,7 @@ public final class LoadFileAction {
 
 	private static BioSeq DoParse(
 					InputStream str, AnnotatedSeqGroup selected_group, BioSeq input_seq,
-					String stream_name, JFrame gviewerFrame, GenometryModel gmodel)
+					String stream_name, JFrame gviewerFrame)
 					throws IOException, InterruptedException, HeadlessException, SAXException {
 		String lcname = stream_name.toLowerCase();
 
@@ -481,6 +450,7 @@ public final class LoadFileAction {
 		if (lcname.endsWith(".bed")) {
 			BedParser parser = new BedParser();
 			// really need to switch create_container (last argument) to true soon!
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
 			parser.parse(str, gmodel, selected_group, true, annot_type, false);
 			return input_seq;
 		}
@@ -544,6 +514,7 @@ public final class LoadFileAction {
 		}
 		if (lcname.endsWith(".bnib")) {
 			BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
 			if (aseq != gmodel.getSelectedSeq()) {
 				//TODO: maybe set the current seq to this seq
 				Application.getSingleton().logWarning("This is not the currently-selected sequence.");

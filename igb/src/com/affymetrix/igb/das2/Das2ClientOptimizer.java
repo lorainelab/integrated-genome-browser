@@ -233,8 +233,6 @@ public final class Das2ClientOptimizer {
     }
 
     private static Das2RequestLog optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
-
         Das2RequestLog request_log = request_sym.getLog();
         request_log.setSuccess(true);
 
@@ -282,7 +280,7 @@ public final class Das2ClientOptimizer {
                 System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, IGBConstants.UTF8));
 
             }
-			boolean success = LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, gmodel, request_sym);
+			boolean success = LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, request_sym);
 			request_log.setSuccess(success);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -319,7 +317,7 @@ public final class Das2ClientOptimizer {
 
     private static boolean LoadFeaturesFromQuery(
             SeqSpan overlap_span, BioSeq aseq, String feature_query, String format, Das2RequestLog request_log,
-            AnnotatedSeqGroup seq_group, Das2Type type, GenometryModel gmodel, Das2FeatureRequestSym request_sym)
+            AnnotatedSeqGroup seq_group, Das2Type type, Das2FeatureRequestSym request_sym)
             throws SAXException, IOException, IOException {
 
         /**
@@ -400,7 +398,8 @@ public final class Das2ClientOptimizer {
             }
 
             if (request_log.getSuccess()) {
-                List feats = DetermineFormatAndParse(content_subtype, request_log, bis, feature_query, seq_group, type, gmodel);
+				AddParsingLogMessage(content_subtype);
+                List feats = DetermineFormatAndParse(content_subtype, request_log, bis, feature_query, seq_group, type);
                 addSymmetriesAndAnnotations(feats, request_sym, request_log, aseq);
             }
             return request_log.getSuccess();
@@ -412,39 +411,32 @@ public final class Das2ClientOptimizer {
 
     private static List DetermineFormatAndParse(
             String content_subtype, Das2RequestLog request_log, BufferedInputStream bis, String feature_query, AnnotatedSeqGroup seq_group,
-            Das2Type type, GenometryModel gmodel)
+            Das2Type type)
             throws IOException, SAXException {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
         List feats = null;
         if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE)
                 || content_subtype.equals("das2feature")
                 || content_subtype.equals("das2xml")
                 || content_subtype.startsWith("x-das-feature")) {
-            AddParsingLogMessage(content_subtype);
             Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
             InputSource isrc = new InputSource(bis);
             feats = parser.parse(isrc, feature_query, seq_group, false);
         } else if (content_subtype.equals("bed")) {
-			AddParsingLogMessage(content_subtype);
             BedParser parser = new BedParser();
 			feats = parser.parse(bis, gmodel, seq_group, false, type.getID(), false);
         } else if (content_subtype.equals("bgn")) {
-            AddParsingLogMessage(content_subtype);
             BgnParser parser = new BgnParser();
             feats = parser.parse(bis, type.getID(), seq_group, false);
         } else if (content_subtype.equals("bps")) {
-            AddParsingLogMessage(content_subtype);
             DataInputStream dis = new DataInputStream(bis);
             feats = BpsParser.parse(dis, type.getID(), null, seq_group, false, false);
         } else if (content_subtype.equals("brs")) {
-            AddParsingLogMessage(content_subtype);
-            BrsParser parser = new BrsParser();
             DataInputStream dis = new DataInputStream(bis);
-            feats = parser.parse(dis, type.getID(), seq_group, false);
+            feats = BrsParser.parse(dis, type.getID(), seq_group, false);
         } else if (content_subtype.equals("bar")) {
-            AddParsingLogMessage(content_subtype);
             feats = BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
         } else if (content_subtype.equals("useq")) {  
-        	AddParsingLogMessage(content_subtype);
         	//find out what kind of data it is, graph or region, from the ArchiveInfo object
         	ZipInputStream zis = new ZipInputStream(bis); 
     		zis.getNextEntry(); 
@@ -458,20 +450,16 @@ public final class Das2ClientOptimizer {
                  feats = rp.parse(zis, seq_group, type.getName(), false, archiveInfo);
             }  
         }else if (content_subtype.equals("bp2")) {
-            AddParsingLogMessage(content_subtype);
             Bprobe1Parser bp1_reader = new Bprobe1Parser();
             // parsing probesets in bp2 format, also adding probeset ids
             feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
         } else if (content_subtype.equals("ead")) {
-            AddParsingLogMessage(content_subtype);
             ExonArrayDesignParser parser = new ExonArrayDesignParser();
             feats = parser.parse(bis, seq_group, false, type.getName());
         } else if (content_subtype.equals("gff")) {
-            AddParsingLogMessage(content_subtype);
             GFFParser parser = new GFFParser();
             feats = parser.parse(bis, ".", seq_group, false, false);
         } else if (content_subtype.equals("link.psl")) {
-            AddParsingLogMessage(content_subtype);
             PSLParser parser = new PSLParser();
             parser.setIsLinkPsl(true);
             parser.enableSharedQueryTarget(true);
@@ -479,11 +467,9 @@ public final class Das2ClientOptimizer {
             // why is annotate_target parameter below set to false?
             feats = parser.parse(bis, type.getName(), null, seq_group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
         } else if (content_subtype.equals("cyt")) {
-            AddParsingLogMessage(content_subtype);
             CytobandParser parser = new CytobandParser();
             feats = parser.parse(bis, seq_group, false);
         } else if (content_subtype.equals("psl")) {
-            AddParsingLogMessage(content_subtype);
             // reference to LoadFileAction.ParsePSL
             PSLParser parser = new PSLParser();
             parser.enableSharedQueryTarget(true);
@@ -521,7 +507,7 @@ public final class Das2ClientOptimizer {
             for (int k = 0; k < feat_count; k++) {
                 SeqSymmetry feat = (SeqSymmetry) feats.get(k);
                 if (feat instanceof GraphSym) {
-                    addChildGraph((GraphSym) feat, request_sym);
+                    addChildGraph((GraphSym) feat, request_sym.getDas2Type(), request_sym.getOverlapSpan());
                     no_graphs = false; // should either be all graphs or no graphs
                 } else {
                     request_sym.addChild(feat);
@@ -544,19 +530,19 @@ public final class Das2ClientOptimizer {
      *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
      *  Uses type URI as graph ID, type name as graph name
      */
-   private static void addChildGraph(GraphSym cgraf, Das2FeatureRequestSym request_sym) {
+   private static void addChildGraph(GraphSym cgraf, Das2Type type, SeqSpan overlapSpan) {
 		if (DEBUG) {
 			System.out.println("adding a child GraphSym to parent graph");
 		}
 		BioSeq aseq = cgraf.getGraphSeq();
-		GraphSym pgraf = getParentGraph(request_sym, aseq, cgraf);
+		GraphSym pgraf = getParentGraph(type, aseq, cgraf);
 
 		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
 		//    remove that span, then add overlap span from Das2FeatureRequestSym
 		//    could instead create new span based on start and end xcoord, but for better integration with
 		//    rest of Das2ClientOptimizer span of request is preferred
 		cgraf.removeSpan(cgraf.getSpan(aseq));
-		cgraf.addSpan(request_sym.getOverlapSpan());
+		cgraf.addSpan(overlapSpan);
 		if (DEBUG) {
 			System.out.println("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
 		}
@@ -566,9 +552,8 @@ public final class Das2ClientOptimizer {
 	}
 
 
-	private static GraphSym getParentGraph(Das2FeatureRequestSym request_sym, BioSeq aseq, GraphSym cgraf) {
+	private static GraphSym getParentGraph(Das2Type type, BioSeq aseq, GraphSym cgraf) {
 		// check and see if parent graph already exists
-		Das2Type type = request_sym.getDas2Type();
 		String id = type.getID();
 		String name = type.getName();
 		

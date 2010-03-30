@@ -300,7 +300,7 @@ public final class FeatureLoading {
 			}
 		} else {
 			bis = new BufferedInputStream(istr);
-			LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+			LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 		}
 		return bis;
 	}

@@ -285,7 +285,7 @@ public final class UrlLoaderThread extends Thread {
 				// url.getPath() is OK for this purpose, url.getFile() is not because
 				// url.getFile() = url.getPath() + url.getQuery()
 				String filename = url.getPath();
-				LoadFileAction.load(gviewer.getFrame(), stream, filename, gmodel, seq_group, aseq);
+				LoadFileAction.load(gviewer.getFrame(), stream, filename, seq_group, aseq);
 			} else if (content_type == null
 					|| content_type.startsWith("content/unknown")
 					|| content_type.startsWith("application/zip")
@@ -300,7 +300,7 @@ public final class UrlLoaderThread extends Thread {
 					}
 					filename += file_extension;
 				}
-				LoadFileAction.load(gviewer.getFrame(), stream, filename, gmodel, seq_group, aseq);
+				LoadFileAction.load(gviewer.getFrame(), stream, filename, seq_group, aseq);
 			} else if (content_type.startsWith("binary/bps")) {
 				parseBinaryBps(stream, type);
 			} else if (content_type.startsWith(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE)) {

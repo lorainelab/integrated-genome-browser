@@ -60,6 +60,7 @@ public abstract class Application {
 
 			public void run() {
 				progressStringList.add(s);
+				status_bar.setCancelPopup(progressStringList);
 				if (status_bar.getStatus().trim().length() == 0) {
 					setNotLockedUpStatus(s, true);
 				}
@@ -74,6 +75,7 @@ public abstract class Application {
 				if (!progressStringList.remove(s)) {
 					Application.getApplicationLogger().fine("Didn't find progress message: " + s);
 				}
+				status_bar.setCancelPopup(progressStringList);
 				if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
 					// Time to change status message.
 					if (progressStringList.isEmpty()) {
@@ -94,7 +96,7 @@ public abstract class Application {
 		status_bar.setStatus(s);
 		status_bar.progressBar.setVisible(visible);
 	}
-
+	
 	/** Sets the text in the status bar.
 	 *  Will also echo a copy of the string to System.out.
 	 *  It is safe to call this method even if the status bar is not being displayed.

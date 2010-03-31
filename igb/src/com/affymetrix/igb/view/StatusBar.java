@@ -1,6 +1,8 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.Application;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -9,12 +11,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 import java.text.DecimalFormat;
+import java.util.Set;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.border.EmptyBorder;
 
 public final class StatusBar extends JPanel {
 
 	private final JLabel status_ta;
 	public final JProgressBar progressBar;
+	private final JButton mainCancel;
+	private final JPopupMenu runningTasks;
+	private final ImageIcon closeIcon;
 	private final JLabel memory_ta;
 	private final JPopupMenu popup_menu = new JPopupMenu();
 	private final DecimalFormat num_format;
@@ -44,9 +51,15 @@ public final class StatusBar extends JPanel {
 			tt_status_memory = "Memory Used / Available";
 		}
 
+		java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("x_icon.gif");
+		closeIcon = new ImageIcon(imgURL);
+		
 		status_ta = new JLabel("");
 		progressBar = new JProgressBar();
 		memory_ta = new JLabel("");
+		runningTasks = new JPopupMenu();
+		mainCancel = new JButton(closeIcon);
+		mainCancel.setBorder(new EmptyBorder(mainCancel.getInsets()));
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		memory_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,15));
@@ -55,6 +68,7 @@ public final class StatusBar extends JPanel {
 		progressBar.setMaximumSize(new Dimension(150, 5));
 		progressBar.setIndeterminate(true);
 		progressBar.setVisible(false);
+		mainCancel.setVisible(false);
 		memory_ta.setToolTipText(tt_status_memory);
 		memory_ta.setHorizontalAlignment(SwingConstants.TRAILING);
 
@@ -73,14 +87,18 @@ public final class StatusBar extends JPanel {
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
+				.addComponent(mainCancel)
 				.addComponent(memory_ta, 1, 200, 200));
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
+				.addComponent(mainCancel)
 				.addComponent(memory_ta));
 
+		mainCancel.addActionListener(showTasks);
+		progressBar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		JMenuItem gc_MI = new JMenuItem(performGcAction);
 		popup_menu.add(gc_MI);
 
@@ -96,6 +114,19 @@ public final class StatusBar extends JPanel {
 				if (evt.isPopupTrigger()) {
 					popup_menu.show(memory_ta, evt.getX(), evt.getY());
 				}
+			}
+		});
+
+		progressBar.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent evt) {
+				showRunningTasks();
+			}
+			
+			@Override
+			public void mouseReleased(MouseEvent evt) {
+				showRunningTasks();
 			}
 		});
 
@@ -133,7 +164,7 @@ public final class StatusBar extends JPanel {
 			System.gc();
 		}
 	};
-
+	
 	/**
 	 *  Causes the memory indicator to update its value.  Normally you do not
 	 *  need to call this method as the memory value will be updated from
@@ -152,5 +183,74 @@ public final class StatusBar extends JPanel {
 			text += " / " + num_format.format(max) + " MB";
 		}
 		memory_ta.setText(text);
+	}
+
+	Action cancel = new AbstractAction() {
+
+		public void actionPerformed(ActionEvent ae) {
+			hideRunningTasks();
+		}
+	};
+
+	Action showTasks = new AbstractAction() {
+
+		public void actionPerformed(ActionEvent ae) {
+			showRunningTasks();
+		}
+	};
+
+	/**
+	 * Populate popup menu with running process. Updated every time string is added or removed from process String in application.
+	 * @param processString		Set of currently running process.
+	 */
+	public final void setCancelPopup(Set<String> processString) {
+		runningTasks.removeAll();
+
+		boolean isShowing = runningTasks.isShowing();
+
+		if (isShowing) {
+			hideRunningTasks();
+		}
+
+		if (processString.isEmpty()) {
+			mainCancel.setVisible(false);
+			return;
+		}
+
+
+		for (String s : processString) {
+			JPanel comp = new JPanel(new BorderLayout());
+			JLabel taskName = new JLabel(s.substring(0, Math.min(25, s.length())));
+			JButton cancelTask = new JButton(closeIcon);
+			cancelTask.setBorder(new EmptyBorder(cancelTask.getInsets()));
+			cancelTask.addActionListener(cancel);
+			comp.add(taskName, BorderLayout.WEST);
+			comp.add(cancelTask, BorderLayout.EAST);
+			runningTasks.add(comp);
+		}
+		
+		
+		if (isShowing) {
+			showRunningTasks();
+		}
+
+		mainCancel.setVisible(true);
+	}
+
+	/**
+	 * Shows Running Threads in popup menu.
+	 */
+	private final void showRunningTasks() {
+		int x = (int) mainCancel.getAlignmentX() - mainCancel.getWidth() - progressBar.getWidth();
+		int y = (int) mainCancel.getAlignmentY() + mainCancel.getHeight();
+		//int y = (int) getAlignmentY() - runningTasks.getHeight();
+		runningTasks.show(mainCancel, x, y);
+	}
+
+	/**
+	 * Hide running tasks.
+	 */
+	private final void hideRunningTasks() {
+		runningTasks.setVisible(false);
 	}
 }

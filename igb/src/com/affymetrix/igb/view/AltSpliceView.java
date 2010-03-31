@@ -28,10 +28,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 
 public class AltSpliceView extends JComponent
@@ -42,7 +39,7 @@ public class AltSpliceView extends JComponent
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final boolean CONTROLS_ON_SIDE = false;
 	private final SeqMapView original_view;
-	private final SeqMapView spliced_view;
+	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
 	private final JTextField buffer_sizeTF;
 	private final JCheckBox slice_by_selectionCB;
@@ -51,52 +48,6 @@ public class AltSpliceView extends JComponent
 	private boolean pending_sequence_change = false;
 	private boolean pending_selection_change = false;
 	private boolean slice_by_selection_on = true;
-
-	private class AltSpliceSeqMapView extends SeqMapView {
-
-		private AltSpliceSeqMapView(boolean b) {
-			super(b);
-			if (tier_manager != null) {
-				tier_manager.setDoGraphSelections(false);
-			}
-			report_hairline_position_in_status_bar = false;
-			report_status_in_status_bar = false;
-		}
-
-		@Override
-		public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
-			if (coord_shift) {
-				// ignore the preserve_view parameter, always pretend it is false in the splice view
-				super.setAnnotatedSeq(seq, preserve_selection, false);
-			} else {
-				this.clear();
-				this.aseq = seq;
-				this.viewseq = seq;
-			}
-		}
-
-		// override so that the tier glyph in the splice view has a different
-		// AnnotStyle from the TierGlyph in the main view.  (So that if we hide it,
-		// it won't become hidden in the main view.)
-		@Override
-		public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style) {
-			// Create a temporary style with all the properties of the given style.
-			// Thus any changes to this copy in the slice view
-			// will not affect the original in the main view
-			AnnotStyle style_copy = new AnnotStyle() {
-			};
-			style_copy.copyPropertiesFrom(style);
-			TierGlyph[] glyphs = super.getTiers(meth, next_to_axis, style_copy);
-
-			// super.getTiers() may have created a brand new tier, in which case
-			// the style is already set to "style_copy", or it may have re-used
-			// a tier, in which case it may still have an old copy of the style
-			// associated with it.  Reset the style to be certain.
-			glyphs[0].setStyle(style_copy);
-			glyphs[1].setStyle(style_copy);
-			return glyphs;
-		}
-	};
 
 	public AltSpliceView() {
 		original_view = Application.getSingleton().getMapView();

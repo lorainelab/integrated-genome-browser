@@ -35,7 +35,7 @@ public abstract class GenericSymRequest {
     /**
      * @return List of symmetries in genome
      */
-    public List<SeqSymmetry> getGenome() {
+    public List<? extends SeqSymmetry> getGenome() {
         return null;
     }
 
@@ -51,8 +51,8 @@ public abstract class GenericSymRequest {
      * @param seq - chromosome
      * @return List of symmetries in chromosome
      */
-    public List<SeqSymmetry> getChromosome(BioSeq seq) {
-		List<SeqSymmetry> genomeResults = this.getGenome();
+    public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
+		List<? extends SeqSymmetry> genomeResults = this.getGenome();
 		if (seq == null || genomeResults == null) {
 			return genomeResults;
 		}
@@ -80,8 +80,8 @@ public abstract class GenericSymRequest {
      * @param overlapSpan - span of overlap
      * @return List of symmetries satisfying requirements
      */
-    public List<SeqSymmetry> getRegion(BioSeq seq, SeqSpan overlapSpan) {
-		List<SeqSymmetry> chrResults = this.getChromosome(seq);
+    public List<? extends SeqSymmetry> getRegion(BioSeq seq, SeqSpan overlapSpan) {
+		List<? extends SeqSymmetry> chrResults = this.getChromosome(seq);
 		if (chrResults == null || this.extension == null) {
 			return chrResults;
 		}

@@ -336,7 +336,6 @@ public final class Das2ClientOptimizer {
                     request_log.setSuccess(false);
                     return false;
                 }
-                bis = new BufferedInputStream(istr);
                 // for now, assume that when caching, content type returned is same as content type requested
                 content_subtype = format;
             } else {
@@ -379,7 +378,6 @@ public final class Das2ClientOptimizer {
                 }
                 String content_type = query_con.getContentType();
 				istr = query_con.getInputStream();
-				bis = new BufferedInputStream(istr);
 
 				content_subtype = content_type.substring(content_type.indexOf("/") + 1);
 				int sindex = content_subtype.indexOf(';');
@@ -399,7 +397,7 @@ public final class Das2ClientOptimizer {
 
             if (request_log.getSuccess()) {
 				AddParsingLogMessage(content_subtype);
-                List feats = DetermineFormatAndParse(content_subtype, request_log, bis, feature_query, seq_group, type);
+                List feats = DetermineFormatAndParse(content_subtype, request_log, istr, feature_query, seq_group, type);
                 addSymmetriesAndAnnotations(feats, request_sym, request_log, aseq);
             }
             return request_log.getSuccess();
@@ -410,33 +408,34 @@ public final class Das2ClientOptimizer {
     }
 
     private static List DetermineFormatAndParse(
-            String content_subtype, Das2RequestLog request_log, BufferedInputStream bis, String feature_query, AnnotatedSeqGroup seq_group,
+            String extension, Das2RequestLog request_log, InputStream istr, String feature_query, AnnotatedSeqGroup seq_group,
             Das2Type type)
             throws IOException, SAXException {
+		BufferedInputStream bis = new BufferedInputStream(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
         List feats = null;
-        if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE)
-                || content_subtype.equals("das2feature")
-                || content_subtype.equals("das2xml")
-                || content_subtype.startsWith("x-das-feature")) {
+        if (extension.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE)
+                || extension.equals("das2feature")
+                || extension.equals("das2xml")
+                || extension.startsWith("x-das-feature")) {
             Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
             InputSource isrc = new InputSource(bis);
             feats = parser.parse(isrc, feature_query, seq_group, false);
-        } else if (content_subtype.equals("bed")) {
+        } else if (extension.equals("bed")) {
             BedParser parser = new BedParser();
 			feats = parser.parse(bis, gmodel, seq_group, false, type.getID(), false);
-        } else if (content_subtype.equals("bgn")) {
+        } else if (extension.equals("bgn")) {
             BgnParser parser = new BgnParser();
             feats = parser.parse(bis, type.getID(), seq_group, false);
-        } else if (content_subtype.equals("bps")) {
+        } else if (extension.equals("bps")) {
             DataInputStream dis = new DataInputStream(bis);
             feats = BpsParser.parse(dis, type.getID(), null, seq_group, false, false);
-        } else if (content_subtype.equals("brs")) {
+        } else if (extension.equals("brs")) {
             DataInputStream dis = new DataInputStream(bis);
             feats = BrsParser.parse(dis, type.getID(), seq_group, false);
-        } else if (content_subtype.equals("bar")) {
+        } else if (extension.equals("bar")) {
             feats = BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
-        } else if (content_subtype.equals("useq")) {  
+        } else if (extension.equals("useq")) {
         	//find out what kind of data it is, graph or region, from the ArchiveInfo object
         	ZipInputStream zis = new ZipInputStream(bis); 
     		zis.getNextEntry(); 
@@ -449,37 +448,34 @@ public final class Das2ClientOptimizer {
             	 USeqRegionParser rp = new USeqRegionParser();
                  feats = rp.parse(zis, seq_group, type.getName(), false, archiveInfo);
             }  
-        }else if (content_subtype.equals("bp2")) {
+        }else if (extension.equals("bp2")) {
             Bprobe1Parser bp1_reader = new Bprobe1Parser();
             // parsing probesets in bp2 format, also adding probeset ids
             feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
-        } else if (content_subtype.equals("ead")) {
+        } else if (extension.equals("ead")) {
             ExonArrayDesignParser parser = new ExonArrayDesignParser();
             feats = parser.parse(bis, seq_group, false, type.getName());
-        } else if (content_subtype.equals("gff")) {
+        } else if (extension.equals("gff")) {
             GFFParser parser = new GFFParser();
             feats = parser.parse(bis, ".", seq_group, false, false);
-        } else if (content_subtype.equals("link.psl")) {
+        } else if (extension.equals("link.psl")) {
             PSLParser parser = new PSLParser();
             parser.setIsLinkPsl(true);
             parser.enableSharedQueryTarget(true);
             // annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
             // why is annotate_target parameter below set to false?
             feats = parser.parse(bis, type.getName(), null, seq_group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
-        } else if (content_subtype.equals("cyt")) {
+        } else if (extension.equals("cyt")) {
             CytobandParser parser = new CytobandParser();
             feats = parser.parse(bis, seq_group, false);
-        } else if (content_subtype.equals("psl")) {
+        } else if (extension.equals("psl")) {
             // reference to LoadFileAction.ParsePSL
             PSLParser parser = new PSLParser();
             parser.enableSharedQueryTarget(true);
-            // annotate target sequence
             DataInputStream dis = new DataInputStream(bis);
-            parser.parse(dis, type.getName(), null, seq_group, null, false, true, false);
-            // Note that here we specifically ignore the output of parser.parse, because it's already been added to the seq_group.
-            // Otherwise we double-count and add multiple tiers.
+            feats = parser.parse(dis, type.getName(), null, seq_group, null, false, false, false);
         } else {
-            System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
+            System.out.println("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
             request_log.setSuccess(false);
         }
         return feats;

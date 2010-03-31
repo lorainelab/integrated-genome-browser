@@ -28,7 +28,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.*;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -36,7 +35,6 @@ import javax.xml.stream.XMLStreamException;
 import org.xml.sax.InputSource;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.BAMParser;
 import com.affymetrix.genometryImpl.parsers.BedParser;
@@ -73,9 +71,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import java.util.concurrent.Executor;
 import org.xml.sax.SAXException;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -262,7 +258,6 @@ public final class LoadFileAction {
 	private static BioSeq load(
 			JFrame gviewerFrame, String annotFileLC, File annotfile, AnnotatedSeqGroup seq_group, BioSeq input_seq)
 			throws IOException {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		if (annotFileLC.endsWith(".chp")) {
 			// special-case CHP files. ChpParser only has
 			//    a parse() method that takes the file name

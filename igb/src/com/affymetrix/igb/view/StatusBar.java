@@ -1,7 +1,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.Application;
-import java.awt.BorderLayout;
 import java.awt.Cursor;
 
 import java.awt.Dimension;
@@ -13,7 +12,6 @@ import javax.swing.*;
 import java.text.DecimalFormat;
 import java.util.Set;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.EmptyBorder;
 
 public final class StatusBar extends JPanel {
 
@@ -59,7 +57,7 @@ public final class StatusBar extends JPanel {
 		memory_ta = new JLabel("");
 		runningTasks = new JPopupMenu();
 		mainCancel = new JButton(closeIcon);
-		mainCancel.setBorder(new EmptyBorder(mainCancel.getInsets()));
+		mainCancel.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		memory_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,15));
@@ -200,8 +198,9 @@ public final class StatusBar extends JPanel {
 	};
 
 	/**
-	 * Populate popup menu with running process. Updated every time string is added or removed from process String in application.
-	 * @param processString		Set of currently running process.
+	 * Populate popup menu with running processPanel.
+	 * Updated every time string is added or removed from processString in Application class.
+	 * @param processString		Set of currently running processPanel.
 	 */
 	public final void setCancelPopup(Set<String> processString) {
 		runningTasks.removeAll();
@@ -219,14 +218,19 @@ public final class StatusBar extends JPanel {
 
 
 		for (String s : processString) {
-			JPanel comp = new JPanel(new BorderLayout());
-			JLabel taskName = new JLabel(s.substring(0, Math.min(25, s.length())));
+			String string = s.substring(0, Math.min(25, s.length()));
+			JLabel taskName = new JLabel(string);
+
 			JButton cancelTask = new JButton(closeIcon);
-			cancelTask.setBorder(new EmptyBorder(cancelTask.getInsets()));
+			cancelTask.setBorder(BorderFactory.createEmptyBorder(2,5,2,0));
 			cancelTask.addActionListener(cancel);
-			comp.add(taskName, BorderLayout.WEST);
-			comp.add(cancelTask, BorderLayout.EAST);
-			runningTasks.add(comp);
+
+			Box box = new Box(BoxLayout.X_AXIS);
+			box.add(taskName);
+			box.add(Box.createHorizontalGlue());
+			box.add(cancelTask);
+
+			runningTasks.add(box);
 		}
 		
 		

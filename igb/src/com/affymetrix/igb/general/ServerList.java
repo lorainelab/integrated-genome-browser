@@ -365,11 +365,14 @@ public final class ServerList {
 	}
 
 	public static void fireServerInitEvent(GenericServer server, ServerStatus status) {
+		fireServerInitEvent(server, status, false);
+	}
+	public static void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate) {
 		if (status == ServerStatus.NotResponding) {
 				GeneralLoadUtils.removeServer(server);
 		}
 
-		if (server.getServerStatus() != status) {
+		if (forceUpdate || server.getServerStatus() != status) {
 			server.setServerStatus(status);
 			GenericServerInitEvent evt = new GenericServerInitEvent(server);
 			for (GenericServerInitListener listener : server_init_listeners) {
@@ -377,5 +380,4 @@ public final class ServerList {
 			}
 		}
 	}
-
 }

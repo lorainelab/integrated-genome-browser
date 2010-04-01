@@ -214,7 +214,8 @@ public final class LoadFileAction {
 		version.addFeature(new GenericFeature(
 				fils[0].getName(), null, version, new QuickLoadFeatureLoading(version, fils[0].getAbsolutePath()), fils));
 
-		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized);
+		// force a refresh of this server
+		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true);
 	}
 
 	

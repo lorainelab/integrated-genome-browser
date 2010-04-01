@@ -322,7 +322,7 @@ public final class GeneralLoadUtils {
 		}
 		group.addVersion(gVersion);
 		if (DEBUG) {
-			System.out.println("Added " + gVersion.gServer.serverType + "genome: " + speciesName + " version: " + preferredVersionName);
+			System.out.println("Added " + gVersion.gServer.serverType + " genome: " + speciesName + " version: " + preferredVersionName);
 		}
 		return gVersion;
 	}

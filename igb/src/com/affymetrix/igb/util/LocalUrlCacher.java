@@ -569,25 +569,13 @@ public final class LocalUrlCacher {
 		try {
 			// Don't cache.  Don't warn user if the synonyms file doesn't exist.
 			syn_stream = LocalUrlCacher.getInputStream(synonym_loc, getPreferredCacheUsage(), false, null, null, true);
+			if (syn_stream == null) {
+				return;
+			}
+			Application.logInfo("Synonyms found at: " + synonym_loc);
+			lookup.loadSynonyms(syn_stream);
 		} catch (IOException ioe) {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Unable to load synonyms from '" + synonym_loc + "'", ioe);
-		} finally {
-			GeneralUtils.safeClose(syn_stream);
-		}
-
-		if (syn_stream == null) {
-			//Application.getSingleton().logWarning("Unable to load synonym data from: " + synonym_loc);
-			return;
-		}
-
-		Application.logInfo("Synonyms found at: " + synonym_loc);
-
-		try {
-			lookup.loadSynonyms(syn_stream);
-		} catch (final Throwable t) {
-			// use Throwable so out-of-memory exceptions can be caught
-			Application.logWarning("Error while loading synonym data from: " + synonym_loc);
-			t.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(syn_stream);
 		}

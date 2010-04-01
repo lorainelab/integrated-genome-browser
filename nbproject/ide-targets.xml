@@ -10,8 +10,11 @@
                 </dirset>
             </classpath>
         </nbjpdastart>
-        <java classname="com.affymetrix.igb.IGB" fork="true">
-            <jvmarg line="${igb.jvmargs}"/>
+        <java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.igb.IGB" >
+            <jvmarg line="${igb.jvmargs}" />
+			<jvmarg value="-Xms32m" />
+			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
+			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
             <arg value="-prefs"/>
             <arg value="${igb}/etc/igb_prefs.xml"/>
             <classpath>

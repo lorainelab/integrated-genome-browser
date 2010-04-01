@@ -987,7 +987,7 @@ public final class GraphGlyph extends Glyph {
 			coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
 			view.transformToPixels(coord, curr_point);
 
-			if (prev_point.x == curr_point.x) {
+			if (draw_beg_index != i && prev_point.x == curr_point.x) {
 				ymin_pixel = Math.min(ymin_pixel, curr_point.y);
 				ymax_pixel = Math.max(ymax_pixel, curr_point.y);
 				ysum += curr_point.y;

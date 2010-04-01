@@ -506,7 +506,7 @@ public final class GeneralLoadView extends JComponent
 			if (DEBUG_EVENTS) {
 				System.out.println("Selected : " + gFeature.featureName);
 			}
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, curSeq, feature_model);
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, feature_model);
 		}
 
 	}
@@ -844,8 +844,10 @@ public final class GeneralLoadView extends JComponent
 				col.setPreferredWidth(finalMaxFeatureNameLength);
 
 				// Don't enable combo box for full genome sequence
+				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
 				TableWithVisibleComboBox.setComboBoxEditors(
-						GeneralLoadView.this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !GeneralLoadView.IsGenomeSequence());
+						GeneralLoadView.this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN,
+						!GeneralLoadView.IsGenomeSequence());
 				GeneralLoadView.this.feature_model.fireTableDataChanged();
 				featuresTableScrollPane.setViewportView(GeneralLoadView.this.feature_table);
 			}
@@ -875,7 +877,7 @@ public final class GeneralLoadView extends JComponent
 			if (DEBUG_EVENTS) {
 				System.out.println("Selected : " + gFeature.featureName);
 			}
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, curSeq, feature_model);
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, feature_model);
 		}
 	}
 

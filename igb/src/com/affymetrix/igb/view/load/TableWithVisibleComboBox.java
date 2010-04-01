@@ -49,6 +49,10 @@ public final class TableWithVisibleComboBox {
     QuickLoadcb.setEnabled(enabled);
     DefaultCellEditor QuickLoadeditor = new DefaultCellEditor(QuickLoadcb);
 
+	JComboBox LocalFilecb = new JComboBox(FeaturesTableModel.quickloadLoadChoices);
+    LocalFilecb.setEnabled(true);
+    DefaultCellEditor LocalFileeditor = new DefaultCellEditor(LocalFilecb);
+
     for (int row = 0; row < featureSize; row++) {
       GenericFeature gFeature = ftm.features.get(row);
       ServerType serverType = gFeature.gVersion.gServer.serverType;
@@ -58,7 +62,7 @@ public final class TableWithVisibleComboBox {
       } else if (serverType == ServerType.QuickLoad) {
         rm.addEditorForRow(row, QuickLoadeditor);
       } else if (serverType == ServerType.LocalFiles) {
-		rm.addEditorForRow(row, QuickLoadeditor);
+		rm.addEditorForRow(row, LocalFileeditor);
 	  } else {
         System.out.println("ERROR: Undefined class " + serverType);
       }

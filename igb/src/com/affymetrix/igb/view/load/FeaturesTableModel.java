@@ -198,7 +198,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		fireTableCellUpdated(row, col);
 
 			if (gFeature.loadStrategy == LoadStrategy.GENOME) {
-				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, this.cur_seq, this);
+				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, this);
 			}
 
 			//  Whatever feature strategy changed, it may have affected

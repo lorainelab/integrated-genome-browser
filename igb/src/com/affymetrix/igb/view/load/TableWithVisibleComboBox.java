@@ -34,7 +34,7 @@ public final class TableWithVisibleComboBox {
    
     FeaturesTableModel ftm = (FeaturesTableModel) table.getModel();
 	sorter = new TableRowSorter<FeaturesTableModel>(ftm);
-	//table.setRowSorter(sorter);
+	table.setRowSorter(sorter);
 
 	int featureSize = ftm.features.size();
 	RowEditorModel rm = new RowEditorModel(featureSize);

@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.igb.Application;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -151,7 +150,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	}
 
 	@Override
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		if ((getValueAt(0, c)) == null) {
 			System.out.println("Null Reference ERROR: column " + c);
 		}

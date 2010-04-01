@@ -550,7 +550,7 @@ public final class GeneralLoadUtils {
 	static boolean loadAndDisplayAnnotations(GenericFeature gFeature, FeaturesTableModel model) {
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		BioSeq visible_seq = gviewer.getViewSeq();
-		if (selected_seq == null || visible_seq == null) {
+		if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerType.LocalFiles)) {
 			//      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
 			//System.out.println("@@@@@ selected chrom: " + selected_seq);
 			//System.out.println("@@@@@ visible chrom: " + visible_seq);
@@ -563,11 +563,13 @@ public final class GeneralLoadUtils {
 			return false;
 		}
 
-		SeqSpan overlap;
+		SeqSpan overlap = null;
 		if (gFeature.loadStrategy == LoadStrategy.VISIBLE) {
 			overlap = gviewer.getVisibleSpan();
 		} else if (gFeature.loadStrategy == LoadStrategy.GENOME || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
-			overlap = new SimpleSeqSpan(0, selected_seq.getLength(), selected_seq);
+			if (selected_seq != null) {
+				overlap = new SimpleSeqSpan(0, selected_seq.getLength(), selected_seq);
+			}
 		} else {
 			ErrorHandler.errorPanel("ERROR", "Requested load strategy not recognized: " + gFeature.loadStrategy);
 			return false;

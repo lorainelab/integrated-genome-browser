@@ -1,9 +1,10 @@
 package com.affymetrix.igb.quickload;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.general.GenericSymRequest;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
@@ -21,13 +22,16 @@ import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.general.FeatureLoading;
+import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
+import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -59,6 +63,12 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 		super(determineQuickLoadURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
+	}
+
+	@Override
+	protected void init() {
+
+
 		String scheme = this.uri.getScheme().toLowerCase();
 		if (scheme.length() == 0 || scheme.equals("file")) {
 			f = new File(this.uri.getRawPath());
@@ -67,7 +77,17 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			try {
 				String uriStr = this.uri.toString();
 				istr = LocalUrlCacher.getInputStream(uriStr);
-				f = GeneralUtils.convertStreamToFile(istr, uriStr.substring(uriStr.lastIndexOf("/")));
+				StringBuffer stripped_name = new StringBuffer();
+				InputStream str = GeneralUtils.unzipStream(istr, uriStr, stripped_name);
+				String stream_name = stripped_name.toString();
+
+				if (str instanceof BufferedInputStream) {
+					str = (BufferedInputStream) str;
+				} else {
+					str = new BufferedInputStream(str);
+				}
+
+				f = GeneralUtils.convertStreamToFile(str, stream_name.substring(stream_name.lastIndexOf("/")));
 			} catch (IOException ex) {
 				Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
@@ -76,10 +96,10 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 		} else {
 			System.out.println("URL scheme: " + scheme + " not recognized");
 		}
-
+		this.isInitialized = true;
 	}
 
-	public static String determineQuickLoadFileName(GenericVersion version, String featureName) {
+	private static String determineQuickLoadFileName(GenericVersion version, String featureName) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) version.gServer.serverObj);
@@ -101,21 +121,16 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	}
 
 
-	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature, SeqSpan overlapSpan)
+	public boolean loadQuickLoadAnnotations(final SeqMapView gviewer, final SeqSpan overlapSpan)
 			throws OutOfMemoryError {
-		final String fileName = determineQuickLoadFileName(gFeature.gVersion, gFeature.featureName);
-		if (fileName.length() == 0) {
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			return false;
-		}
 
-		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);
+		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
 
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
 
-			public Void doInBackground() {
+			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					loadQuickLoadFeature(fileName, gFeature);
+					return loadQuickLoadFeature();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -123,7 +138,25 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			}
 			@Override
 			public void done() {
-				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
+				try {
+					final List<? extends SeqSymmetry> results = get();
+					if (results != null && !results.isEmpty()) {
+						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+						SimpleSymWithProps requestSym = new SimpleSymWithProps();
+						requestSym.setProperty("meth", QuickLoadFeatureLoading.this.f.getName());
+						Das2ClientOptimizer.addSymmetriesAndAnnotations(
+								results,
+								requestSym,
+								QuickLoadFeatureLoading.this.f.getName(),
+								QuickLoadFeatureLoading.this.featureName,
+								overlapSpan,
+								aseq);
+						gviewer.setAnnotatedSeq(aseq, true, true);
+					}
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoadFeatureLoading.this.featureName);
+				} catch (Exception ex) {
+					Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+				}
 			}
 		};
 
@@ -133,29 +166,37 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	}
 
 
-	private static boolean loadQuickLoadFeature(final String fileName, GenericFeature gFeature) throws OutOfMemoryError {
-		InputStream istr = null;
-		BufferedInputStream bis = null;
-		final String annot_url = gFeature.gVersion.gServer.URL + "/" + gFeature.gVersion.versionID + "/" + fileName;
-
-		try {
-			istr = LocalUrlCacher.getInputStream(annot_url, true);
-			if (istr == null) {
-				return false;
-			}
-			bis = FeatureLoading.loadStreamFeature(fileName, gFeature.featureName, annot_url, istr, bis);
-			return true;
-		} catch (Exception ex) {
-			System.out.println("Problem loading requested url:" + annot_url);
-			ex.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(bis);
-			GeneralUtils.safeClose(istr);
+	private List<? extends SeqSymmetry> loadQuickLoadFeature() throws IOException, OutOfMemoryError {
+		if (!this.isInitialized) {
+			this.init();
 		}
-		return false;
+		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString());
+		if (style != null) {
+			style.setHumanName(featureName);
+		}
+		String unzippedName = GeneralUtils.getUnzippedName(this.f.getName());
+		String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(this.extension));
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(strippedName);
+		if (style != null) {
+			style.setHumanName(featureName);
+		}
+		/*if (GraphSymUtils.isAGraphFilename(fileName)) {
+			URL url = new URL(annot_url);
+			List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+			if (graphs != null) {
+				// Reset the selected Seq Group to make sure that the DataLoadView knows
+				// about any new chromosomes that were added.
+				gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+			}
+		} else {*/
+			//LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+			List<? extends SeqSymmetry> results = this.getGenome();
+			return results;
+		//}
 	}
 
-	public static URI determineQuickLoadURI(GenericVersion version, String featureName) {
+
+	private static URI determineQuickLoadURI(GenericVersion version, String featureName) {
 		URI uri = null;
 
 		try {
@@ -229,6 +270,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
         List<? extends SeqSymmetry> feats = null;
+		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
         if (extension.equals("bed")) {
             BedParser parser = new BedParser();
 			feats = parser.parse(bis, gmodel, version.group, false, featureName, false);

@@ -593,7 +593,8 @@ public final class GeneralLoadUtils {
 		} else if (serverType == ServerType.DAS) {
 			result = DasFeatureLoader.loadFeatures(gFeature, overlap);
 		} else if (serverType == ServerType.QuickLoad) {
-			result = QuickLoadFeatureLoading.loadQuickLoadAnnotations(gFeature, overlap);
+			result = ((QuickLoadFeatureLoading)gFeature.gsr).loadQuickLoadAnnotations(gviewer, overlap);
+			//result = QuickLoadFeatureLoading.loadQuickLoadAnnotations(gFeature, overlap);
 		} else if (serverType == ServerType.LocalFiles) {
 			result = FeatureLoading.loadLocalFileAnnotations(gFeature, overlap);
 		} else {

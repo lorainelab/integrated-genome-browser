@@ -45,6 +45,7 @@ import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 /*
@@ -398,7 +399,7 @@ public final class Das2ClientOptimizer {
             if (request_log.getSuccess()) {
 				AddParsingLogMessage(content_subtype);
                 List feats = DetermineFormatAndParse(content_subtype, request_log, istr, feature_query, seq_group, type);
-                addSymmetriesAndAnnotations(feats, request_sym, request_log, aseq);
+                addSymmetriesAndAnnotations(feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan(), aseq);
             }
             return request_log.getSuccess();
         } finally {
@@ -485,7 +486,8 @@ public final class Das2ClientOptimizer {
         System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
     }
 
-     private static void addSymmetriesAndAnnotations(List feats, Das2FeatureRequestSym request_sym, Das2RequestLog request_log, BioSeq aseq) {
+     public static void addSymmetriesAndAnnotations(
+			 List feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan, BioSeq aseq) {
         boolean no_graphs = true;
         if (feats == null || feats.isEmpty()) {
             // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
@@ -493,17 +495,15 @@ public final class Das2ClientOptimizer {
             //    [ though a better way might be to have request sym's span on aseq be dependent on children, so
             //       if no children then no span on aseq (though still an overlap_span and inside_span) ]
             SimpleSymWithProps child = new SimpleSymWithProps();
-            SimpleSymWithProps grandchild = new SimpleSymWithProps();
-            child.addChild(grandchild);
+            child.addChild(new SimpleSymWithProps());
             request_sym.addChild(child);
-        } else if (request_log.getSuccess()) {
-            // checking success again, could have changed before getting to this point...
+        } else {
             int feat_count = feats.size();
             System.out.println("parsed query results, annot count = " + feat_count);
             for (int k = 0; k < feat_count; k++) {
                 SeqSymmetry feat = (SeqSymmetry) feats.get(k);
                 if (feat instanceof GraphSym) {
-                    addChildGraph((GraphSym) feat, request_sym.getDas2Type(), request_sym.getOverlapSpan());
+                    addChildGraph((GraphSym) feat, id, name, overlapSpan);
                     no_graphs = false; // should either be all graphs or no graphs
                 } else {
                     request_sym.addChild(feat);
@@ -526,12 +526,12 @@ public final class Das2ClientOptimizer {
      *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
      *  Uses type URI as graph ID, type name as graph name
      */
-   private static void addChildGraph(GraphSym cgraf, Das2Type type, SeqSpan overlapSpan) {
+   private static void addChildGraph(GraphSym cgraf, String id, String name, SeqSpan overlapSpan) {
 		if (DEBUG) {
 			System.out.println("adding a child GraphSym to parent graph");
 		}
 		BioSeq aseq = cgraf.getGraphSeq();
-		GraphSym pgraf = getParentGraph(type, aseq, cgraf);
+		GraphSym pgraf = getParentGraph(id, name, aseq, cgraf);
 
 		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
 		//    remove that span, then add overlap span from Das2FeatureRequestSym
@@ -548,10 +548,8 @@ public final class Das2ClientOptimizer {
 	}
 
 
-	private static GraphSym getParentGraph(Das2Type type, BioSeq aseq, GraphSym cgraf) {
+	private static GraphSym getParentGraph(String id, String name, BioSeq aseq, GraphSym cgraf) {
 		// check and see if parent graph already exists
-		String id = type.getID();
-		String name = type.getName();
 		
 		//is it a useq graph? modify name and id for strandedness?
 		if (name.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)){

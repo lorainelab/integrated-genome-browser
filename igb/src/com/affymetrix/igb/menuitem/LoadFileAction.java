@@ -70,7 +70,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
-import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import org.xml.sax.SAXException;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -218,95 +217,54 @@ public final class LoadFileAction {
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true);
 	}
 
-	
 
-	private static BioSeq loadFilesIntoSeq( File[] fils, JFrame gviewerFrame, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) {
-		BioSeq new_seq = null;
-		for (File cfil : fils) {
-			String file_name = cfil.toString();
-			int httpIndex = file_name.toLowerCase().indexOf("http:");
-			if (httpIndex > -1) {
-				try {
-					// Strip off initial characters up to and including http:
-					// Sometimes this is necessary, as URLs can start with invalid "http:/"
-					String streamName = GeneralUtils.convertStreamNameToValidURLName(file_name);
-					InputStream istr = LocalUrlCacher.getInputStream(streamName);
-					if (istr == null) {
-						ErrorHandler.errorPanel("ERROR", "Error loading URL:\n" + streamName);
-					}
-					// Convert stream to a file.  Only use the name after the last "/", otherwise filename will be URL-encoded
-					// and will not look good to the user.
-					File f = GeneralUtils.convertStreamToFile(istr, streamName.substring(streamName.lastIndexOf("/")));
-					
-					new_seq = load(gviewerFrame, streamName, f, seq_group, seq);
-				} catch (IOException ex) {
-					ex.printStackTrace();
-					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading URL", ex);
-				}
-			} else {
-				try {
-					String fileName = cfil.getName().toLowerCase();
-					new_seq = load(gviewerFrame, fileName, cfil, seq_group, seq);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
-				}
-			}
-		}
-		return new_seq;
-	}
+	/** A JFileChooser that has a checkbox for whether you want to merge annotations.
+	 *  Note that an alternative way of adding a checkbox to a JFileChooser
+	 *  is to use JFileChooser.setAccessory().  The only advantage to this
+	 *  subclass is more control of where the JCheckBox is placed inside the
+	 *  dialog.
+	 */
+	private static class MergeOptionFileChooser extends JFileChooser {
 
-	private static BioSeq load(
-			JFrame gviewerFrame, String annotFileLC, File annotfile, AnnotatedSeqGroup seq_group, BioSeq input_seq)
-			throws IOException {
-		if (annotFileLC.endsWith(".chp")) {
-			// special-case CHP files. ChpParser only has
-			//    a parse() method that takes the file name
-			// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
-			// Also cannot handle compressed chp files
-			ChpParser.parse(annotfile.getPath());
-			return null;
-		}
-		if (annotFileLC.endsWith(".bam")) {
-			// special-case BAM files, because Picard can only parse from files.
-			if (seq_group == null) {
-				ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
-			} else {
-				BAMParser parser = new BAMParser(annotfile, seq_group);
-				parser.parse();
-			}
-			return null;
+		ButtonGroup bgroup = new ButtonGroup();
+		public JRadioButton merge_button = new JRadioButton(BUNDLE.getString("mergeWithCurrentlyLoadedData"), true);
+		public JRadioButton no_merge_button = new JRadioButton(BUNDLE.getString("createNewGenome"), false);
+		public JTextField genome_name_TF = new JTextField(BUNDLE.getString("unknownGenome"));
+		Box box = null;
+
+		public MergeOptionFileChooser() {
+			super();
+			bgroup.add(no_merge_button);
+			bgroup.add(merge_button);
+			merge_button.setSelected(true);
+
+			genome_name_TF.setEnabled(no_merge_button.isSelected());
+
+			no_merge_button.addActionListener(new ActionListener() {
+
+				public void actionPerformed(ActionEvent e) {
+					genome_name_TF.setEnabled(no_merge_button.isSelected());
+				}
+			});
+
+			box = new Box(BoxLayout.X_AXIS);
+			box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
+			box.add(Box.createHorizontalStrut(5));
+			box.add(merge_button);
+			box.add(no_merge_button);
+			box.add(Box.createRigidArea(new Dimension(5, 0)));
+			box.add(genome_name_TF);
+
+			merge_button.setMnemonic('M');
+			no_merge_button.setMnemonic('C');
 		}
 
-		InputStream fistr = null;
-		try {
-			StringBuffer sb = new StringBuffer();
-			fistr = GeneralUtils.getInputStream(annotfile, sb);
-			String stripped_name = sb.toString();
+		@Override
+		protected JDialog createDialog(Component parent) throws HeadlessException {
+			JDialog dialog = super.createDialog(parent);
 
-			//is it a useq graph archive?
-			boolean useqGraphArchive = false;
-			ArchiveInfo ai = ArchiveInfo.fetchArchiveInfo(annotfile, false);
-			if (ai != null && ai.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
-				useqGraphArchive = true;
-			}
-
-			//is it a graph file?
-			if (GraphSymUtils.isAGraphFilename(stripped_name) || useqGraphArchive) {
-				if (seq_group == null) {
-					ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
-				} else {
-					URL url = annotfile.toURI().toURL();
-					OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
-				}
-				return null;
-			}
-			//load as non graph data
-			return load(gviewerFrame, fistr, stripped_name, seq_group, input_seq);
-			
-		} // Don't catch exception, just throw it
-		finally {
-			GeneralUtils.safeClose(fistr);
+			dialog.getContentPane().add(box, BorderLayout.SOUTH);
+			return dialog;
 		}
 	}
 
@@ -574,53 +532,4 @@ public final class LoadFileAction {
 		return first_seq;
 	}
 
-	/** A JFileChooser that has a checkbox for whether you want to merge annotations.
-	 *  Note that an alternative way of adding a checkbox to a JFileChooser
-	 *  is to use JFileChooser.setAccessory().  The only advantage to this
-	 *  subclass is more control of where the JCheckBox is placed inside the
-	 *  dialog.
-	 */
-	private static class MergeOptionFileChooser extends JFileChooser {
-
-		ButtonGroup bgroup = new ButtonGroup();
-		public JRadioButton merge_button = new JRadioButton(BUNDLE.getString("mergeWithCurrentlyLoadedData"), true);
-		public JRadioButton no_merge_button = new JRadioButton(BUNDLE.getString("createNewGenome"), false);
-		public JTextField genome_name_TF = new JTextField(BUNDLE.getString("unknownGenome"));
-		Box box = null;
-
-		public MergeOptionFileChooser() {
-			super();
-			bgroup.add(no_merge_button);
-			bgroup.add(merge_button);
-			merge_button.setSelected(true);
-
-			genome_name_TF.setEnabled(no_merge_button.isSelected());
-
-			no_merge_button.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					genome_name_TF.setEnabled(no_merge_button.isSelected());
-				}
-			});
-
-			box = new Box(BoxLayout.X_AXIS);
-			box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
-			box.add(Box.createHorizontalStrut(5));
-			box.add(merge_button);
-			box.add(no_merge_button);
-			box.add(Box.createRigidArea(new Dimension(5, 0)));
-			box.add(genome_name_TF);
-
-			merge_button.setMnemonic('M');
-			no_merge_button.setMnemonic('C');
-		}
-
-		@Override
-		protected JDialog createDialog(Component parent) throws HeadlessException {
-			JDialog dialog = super.createDialog(parent);
-
-			dialog.getContentPane().add(box, BorderLayout.SOUTH);
-			return dialog;
-		}
-	}
 }

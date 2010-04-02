@@ -399,7 +399,8 @@ public final class Das2ClientOptimizer {
             if (request_log.getSuccess()) {
 				AddParsingLogMessage(content_subtype);
                 List feats = DetermineFormatAndParse(content_subtype, request_log, istr, feature_query, seq_group, type);
-                addSymmetriesAndAnnotations(feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan(), aseq);
+                addToRequestSym(feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
+				addAnnotations(feats, request_sym, aseq);
             }
             return request_log.getSuccess();
         } finally {
@@ -486,9 +487,8 @@ public final class Das2ClientOptimizer {
         System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
     }
 
-     public static void addSymmetriesAndAnnotations(
-			 List feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan, BioSeq aseq) {
-        boolean no_graphs = true;
+     public static void addToRequestSym(
+			 List feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan) {
         if (feats == null || feats.isEmpty()) {
             // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
             //    populate with empty sym child/grandchild
@@ -504,19 +504,30 @@ public final class Das2ClientOptimizer {
                 SeqSymmetry feat = (SeqSymmetry) feats.get(k);
                 if (feat instanceof GraphSym) {
                     addChildGraph((GraphSym) feat, id, name, overlapSpan);
-                    no_graphs = false; // should either be all graphs or no graphs
                 } else {
                     request_sym.addChild(feat);
                 }
             }
         }
-        if (no_graphs) {
-            // if graphs, then adding to annotation BioSeq is already handled by addChildGraph() method
-            synchronized (aseq) {
-                aseq.addAnnotation(request_sym);
-            }
-        }
     }
+
+	public static void addAnnotations(
+			List feats, SimpleSymWithProps request_sym, BioSeq aseq) {
+		if (feats != null && !feats.isEmpty()) {
+			int feat_count = feats.size();
+			for (int k = 0; k < feat_count; k++) {
+				SeqSymmetry feat = (SeqSymmetry) feats.get(k);
+				if (feat instanceof GraphSym) {
+					return;
+				}
+			}
+		}
+
+		// if graphs, then adding to annotation BioSeq is already handled by addChildGraph() method
+		synchronized (aseq) {
+			aseq.addAnnotation(request_sym);
+		}
+	}
 
 
     /**

@@ -63,15 +63,13 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	private final String featureName;
 
 	public QuickLoadFeatureLoading(GenericVersion version, String featureName) {
-		super(determineQuickLoadURI(version, featureName));
+		super(determineURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
 	}
 
 	@Override
 	protected void init() {
-
-
 		String scheme = this.uri.getScheme().toLowerCase();
 		if (scheme.length() == 0 || scheme.equals("file")) {
 			f = new File(this.uri.getRawPath());
@@ -102,7 +100,33 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 		this.isInitialized = true;
 	}
 
-	private static String determineQuickLoadFileName(GenericVersion version, String featureName) {
+	private static URI determineURI(GenericVersion version, String featureName) {
+		URI uri = null;
+
+		try {
+			if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
+				int httpIndex = featureName.toLowerCase().indexOf("http:");
+				if (httpIndex > -1) {
+					// Strip off initial characters up to and including http:
+					// Sometimes this is necessary, as URLs can start with invalid "http:/"
+					featureName = GeneralUtils.convertStreamNameToValidURLName(featureName);
+					uri = new URI(featureName);
+				} else {
+					uri = new URI("file://" + featureName);
+				}
+			} else {
+				uri = new URI(
+						version.gServer.URL + "/"
+						+ version.versionID + "/"
+						+ determineFileName(version, featureName));
+			}
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return uri;
+	}
+
+	private static String determineFileName(GenericVersion version, String featureName) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) version.gServer.serverObj);
@@ -123,8 +147,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 		return "";
 	}
 
-
-	public boolean loadQuickLoadAnnotations(final SeqMapView gviewer, final SeqSpan overlapSpan)
+	public boolean loadFeatures(final SeqMapView gviewer, final SeqSpan overlapSpan)
 			throws OutOfMemoryError {
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
@@ -133,7 +156,21 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					return loadQuickLoadFeature();
+					List<? extends SeqSymmetry> results = loadFeature();
+					if (results != null && !results.isEmpty()) {
+						SimpleSymWithProps requestSym = new SimpleSymWithProps();
+						requestSym.setProperty("meth", QuickLoadFeatureLoading.this.f.getName());
+						Das2ClientOptimizer.addToRequestSym(
+								results,
+								requestSym,
+								QuickLoadFeatureLoading.this.f.getName(),
+								QuickLoadFeatureLoading.this.featureName,
+								overlapSpan);
+						for (BioSeq aseq : GenometryModel.getGenometryModel().getSelectedSeqGroup().getSeqList()) {
+							Das2ClientOptimizer.addAnnotations(results, requestSym, aseq);
+						}
+					}
+					return results;
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -145,15 +182,6 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
 						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-						SimpleSymWithProps requestSym = new SimpleSymWithProps();
-						requestSym.setProperty("meth", QuickLoadFeatureLoading.this.f.getName());
-						Das2ClientOptimizer.addSymmetriesAndAnnotations(
-								results,
-								requestSym,
-								QuickLoadFeatureLoading.this.f.getName(),
-								QuickLoadFeatureLoading.this.featureName,
-								overlapSpan,
-								aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
 					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoadFeatureLoading.this.featureName);
@@ -169,7 +197,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	}
 
 
-	private List<? extends SeqSymmetry> loadQuickLoadFeature() throws IOException, OutOfMemoryError {
+	private List<? extends SeqSymmetry> loadFeature() throws IOException, OutOfMemoryError {
 		if (!this.isInitialized) {
 			this.init();
 		}
@@ -191,33 +219,6 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			return graphs;
 		}
 		return this.getGenome();
-	}
-
-
-	private static URI determineQuickLoadURI(GenericVersion version, String featureName) {
-		URI uri = null;
-
-		try {
-			if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
-				int httpIndex = featureName.toLowerCase().indexOf("http:");
-				if (httpIndex > -1) {
-					// Strip off initial characters up to and including http:
-					// Sometimes this is necessary, as URLs can start with invalid "http:/"
-					featureName = GeneralUtils.convertStreamNameToValidURLName(featureName);
-					uri = new URI(featureName);
-				} else {
-					uri = new URI("file://" + featureName);
-				}
-			} else {
-				uri = new URI(
-						version.gServer.URL + "/"
-						+ version.versionID + "/"
-						+ determineQuickLoadFileName(version, featureName));
-			}
-		} catch (URISyntaxException ex) {
-			Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return uri;
 	}
 
 	@Override

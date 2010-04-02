@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
@@ -15,7 +17,6 @@ import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public final class ParserController {
 	static List parse(
 			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String type_prefix) {
 		InputStream str = null;
-		List results = null;
+		List<? extends SeqSymmetry> results = null;
 		try {
 			if (instr instanceof BufferedInputStream) {
 				str = (BufferedInputStream) instr;
@@ -68,18 +69,20 @@ public final class ParserController {
 				// specifying via boolean arg that GFFParser should build container syms, one for each
 				//    particular "source" on each particular seq, can override the source for setting the name
 				String annot_type = type_prefix == null ? stream_name.substring(0, stream_name.length() - 4) : type_prefix;
-				results = parser.parse(str, annot_type, seq_group, true);
+				return parser.parse(str, annot_type, seq_group, true);
 			} else if (stream_name.endsWith(".cyt")) {
 				System.out.println("loading via CytobandParser: " + stream_name);
 				CytobandParser parser = new CytobandParser();
-				results = parser.parse(str, seq_group, true);
+				return parser.parse(str, seq_group, true);
 			} else if (stream_name.endsWith(".bgr") ||
 					stream_name.endsWith(".bar")) {
 				// stream_name.endsWith(".gr") ||   can't use .gr yet, because doesn't
 				//    specify _which_ seq to annotate (format to be upgraded soon to allow this)
 
 				// parsing a graph
-				results = GraphSymUtils.readGraphs(str, stream_name, gmodel, seq_group);
+				List<GraphSym> graphs = GraphSymUtils.readGraphs(str, stream_name, gmodel, seq_group, null);
+				GraphSymUtils.processGraphSyms(graphs, stream_name);
+				return graphs;
 			}
 			else {
 				System.out.println("Can't parse, format not recognized: " + stream_name);

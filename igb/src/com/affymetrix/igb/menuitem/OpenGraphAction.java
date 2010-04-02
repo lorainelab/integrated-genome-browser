@@ -13,19 +13,14 @@
 package com.affymetrix.igb.menuitem;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import javax.swing.AbstractAction;
-import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -39,7 +34,6 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 public final class OpenGraphAction {
 
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static JFileChooser chooser = null;
 
 	public static Thread loadAndShowGraphs(final URL[] files, final BioSeq aseq, final SeqMapView gviewer) {
 		Thread t = new Thread() {
@@ -87,60 +81,26 @@ public final class OpenGraphAction {
 		});
 	}
 
-	//TODO: Make a version that works with an InputStream instead of a url
 	public static List<GraphSym> loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
-		List<GraphSym> graphs = Collections.<GraphSym>emptyList();
 		InputStream fis = null;
 		try {
 			String path = furl.getPath();
 			//check again to see if it is a graph?  why this is checked prior to calling! 
-			if (!GraphSymUtils.isAGraphFilename(path) && path.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD) == false) {
+			if (!GraphSymUtils.isAGraphFilename(path) && !path.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
 				throw new IOException("Filename does not match any known type of graph:\n" + path);
 			}
-			if (Application.CACHE_GRAPHS) {
-				String graph_url = furl.toExternalForm();
-				//System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
-				fis = LocalUrlCacher.getInputStream(graph_url);
-			} else {
-				fis = furl.openStream();
-			}
-
-			graphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), gmodel, seq_group);
-
+			String graph_url = furl.toExternalForm();
+			fis = LocalUrlCacher.getInputStream(graph_url);
 			String graph_name = getGraphNameForURL(furl);
-
-			int graphSize = graphs.size();
-			// Now set the graph names (either the URL or the filename, possibly with an integer appended)
-			for (int i = 0; i < graphSize; i++) {
-				GraphSym gg = graphs.get(i);
-
-				IAnnotStyle style = gg.getGraphState().getTierStyle();
-
-				String name = graph_name;
-				if (graphSize > 1) {
-					name = name + " " + (i + 1);
-				}
-				if (style.getHumanName().equals(gg.getID())) {
-					//Only apply a new graph name if current name is the same as the ID.
-					//(Because the ID is mainly for internal use and if a different name
-					// has already been set by the parser, it is probably a good one.)
-					style.setHumanName(name);
-				}
-			}
-			//Here's a hack to set the same human name for the xxx.useq type graphs, still can't figure out, after an hour of looking, where the hell this is being set?!!!
-			if (graph_name.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
-				graph_name = graph_name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-				for (int i = 0; i < graphSize; i++) {
-					GraphSym gg = graphs.get(i);
-					IAnnotStyle style = gg.getGraphState().getTierStyle();
-					style.setHumanName(graph_name);
-				}
-			}
+			List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, graph_url, gmodel, seq_group, null);
+			GraphSymUtils.processGraphSyms(graphs, graph_url);
+			GraphSymUtils.setName(graphs, graph_name);
+			return graphs;
 		} finally {
 			GeneralUtils.safeClose(fis);
 		}
-		return graphs;
 	}
+
 
 
 	/** Loads graphs from a set of files.

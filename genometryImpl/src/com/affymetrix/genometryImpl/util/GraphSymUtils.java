@@ -16,6 +16,8 @@ import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 
 public final class GraphSymUtils {
 
@@ -178,14 +180,6 @@ public final class GraphSymUtils {
 
 	/**
 	 *  Reads one or more graphs from an input stream.
-	 *  Equivalent to a call to the other readGraphs() method using seq = null.
-	 */
-	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) throws IOException  {
-		return readGraphs(istr, stream_name, gmodel, seq_group, (BioSeq) null);
-	}
-
-	/**
-	 *  Reads one or more graphs from an input stream.
 	 *  Some graph file formats can contain only one graph, others contain
 	 *  more than one.  For consistency, always returns a List (possibly empty).
 	 *  Will accept "bar", "bgr", "gr", or "sgr".
@@ -195,15 +189,12 @@ public final class GraphSymUtils {
 	 *   do not specify a BioSeq, use this parameter to specify it.  If null
 	 *   then GenometryModel.getSelectedSeq() will be used.
 	 */
-	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
+	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq)
+			throws IOException  {
 		List<GraphSym> grafs = null;
 		StringBuffer stripped_name = new StringBuffer();
 		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
 		String sname = stripped_name.toString().toLowerCase();
-
-		if (seq == null) {
-			seq = gmodel.getSelectedSeq();
-		}
 
 		if (sname.endsWith(".bar"))  {
 			grafs = BarParser.parse(newstr, gmodel, seq_group, stream_name);
@@ -213,6 +204,9 @@ public final class GraphSymUtils {
 			grafs = up.parseGraphSyms(istr, gmodel, stream_name, null);
 		}
 		else if (sname.endsWith(".gr")) {
+			if (seq == null) {
+				seq = gmodel.getSelectedSeq();
+			}
 			// If this is a newly-created seq group, then go ahead and add a new 
 			// unnamed seq to it if necessary.
 			if (seq_group.getSeqCount() == 0) {
@@ -240,13 +234,10 @@ public final class GraphSymUtils {
 			throw new IOException("Unrecognized filename for a graph file:\n"+stream_name);
 		}
 
-		processGraphSyms(grafs, stream_name);
-
-		System.gc();	// this is just for IGB; give a more accurate estimate of how much memory is being used.
-
 		if (grafs == null) {
 			grafs = Collections.<GraphSym>emptyList();
 		}
+
 		return grafs;
 	}
 	
@@ -275,7 +266,7 @@ public final class GraphSymUtils {
 	 *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
 	 *  @param grafs  a List, empty or null is OK.
 	 */
-	private static void processGraphSyms(List<GraphSym> grafs, String original_stream_name) {
+	public static void processGraphSyms(List<GraphSym> grafs, String original_stream_name) {
 		if (grafs == null) {
 			return;
 		}
@@ -301,6 +292,36 @@ public final class GraphSymUtils {
 			}
 		}
 	}
+
+
+	public static void setName(List<GraphSym> graphs, String graph_name) {
+		int graphSize = graphs.size();
+		// Now set the graph names (either the URL or the filename, possibly with an integer appended)
+		for (int i = 0; i < graphSize; i++) {
+			GraphSym gg = graphs.get(i);
+			IAnnotStyle style = gg.getGraphState().getTierStyle();
+			String name = graph_name;
+			if (graphSize > 1) {
+				name = name + " " + (i + 1);
+			}
+			if (style.getHumanName().equals(gg.getID())) {
+				//Only apply a new graph name if current name is the same as the ID.
+				//(Because the ID is mainly for internal use and if a different name
+				// has already been set by the parser, it is probably a good one.)
+				style.setHumanName(name);
+			}
+		}
+		//Here's a hack to set the same human name for the xxx.useq type graphs, still can't figure out, after an hour of looking, where the hell this is being set?!!!
+		if (graph_name.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
+			graph_name = graph_name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+			for (int i = 0; i < graphSize; i++) {
+				GraphSym gg = graphs.get(i);
+				IAnnotStyle style = gg.getGraphState().getTierStyle();
+				style.setHumanName(graph_name);
+			}
+		}
+	}
+
 
 
 	/** Writes out in a variety of possible formats depending

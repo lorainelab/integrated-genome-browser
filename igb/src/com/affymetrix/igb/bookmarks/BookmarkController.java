@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -115,11 +116,11 @@ public abstract class BookmarkController {
     Map<String,IAnnotStyle> combos = new HashMap<String,IAnnotStyle>();
 
     // Figure out the "source_url" paths of all currently-loaded graphs
-    List loaded_graphs = Collections.EMPTY_LIST;
+    List<GlyphI> loaded_graphs = Collections.<GlyphI>emptyList();
     if (gviewer != null) {
       loaded_graphs = gviewer.collectGraphs();
     }
-    Iterator iter = loaded_graphs.iterator();
+    Iterator<GlyphI> iter = loaded_graphs.iterator();
     List<String> loaded_graph_paths = new ArrayList<String>(loaded_graphs.size());
     while (iter.hasNext()) {
       GraphGlyph gr = (GraphGlyph) iter.next();
@@ -130,9 +131,7 @@ public abstract class BookmarkController {
 
     InputStream istr = null;
     try {
-      //      while (map.get("graph"+i) != null) {
       for (int i=0; map.get("graph_source_url_"+i) != null; i++) {
-        //        String graph_path = UnibrowControlServlet.getStringParameter(map, "graph" + i);
         String graph_path = UnibrowControlServlet.getStringParameter(map, "graph_source_url_" + i);
 
         // Don't load any graph we already have loaded
@@ -221,8 +220,6 @@ public abstract class BookmarkController {
           System.out.println("red = " + col.getRed() +
               ", green = " + col.getGreen() + ", blue = " + col.getBlue());
           System.out.println("ypos = " + ypos);
-        }
-        if (DEBUG) {
           System.out.println(gmodel.getSelectedSeq());
           if (gviewer != null) System.out.println(gviewer.getSeqMap());
           System.out.println(col+", "+ypos+", "+ yheight
@@ -236,60 +233,18 @@ public abstract class BookmarkController {
           graph_name = graph_path;
         }
 
-		  if (Application.CACHE_GRAPHS) {
-			  istr = LocalUrlCacher.getInputStream(graph_path);
-		  } else {
-			  URL graphurl = new URL(graph_path);
-			  istr = graphurl.openStream();
-		  }
+		  istr = LocalUrlCacher.getInputStream(graph_path);
+
 		  List<GraphSym> grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-		  istr.close();
+		  GraphSymUtils.processGraphSyms(grafs, graph_path);
+
 		  GraphType graph_style_num = null;
 		  if (graph_style != null) {
 			  graph_style_num = GraphState.getStyleNumber(graph_style);
-			}
-			if (grafs != null) {
-				for (GraphSym graf : grafs) {
-					GraphState gstate = graf.getGraphState();
-					graf.setGraphName(graph_name);
-					if (graph_style_num != null) {
-						gstate.setGraphStyle(graph_style_num);
-					}
-					if (heatmap_name != null) {
-						HeatMap heat_map = HeatMap.getStandardHeatMap(heatmap_name);
-						if (heat_map != null) {
-							gstate.setHeatMap(heat_map);
-						}
-					}
-					IAnnotStyle tier_style = gstate.getTierStyle();
-					tier_style.setColor(col);
-					tier_style.setBackground(bg_col);
-					tier_style.setY(ypos);
-					tier_style.setHeight(yheight);
-					gstate.setFloatGraph(use_floating_graphs);
-					gstate.setShowLabel(show_label);
-					gstate.setShowAxis(show_axis);
-					gstate.setVisibleMinY((float) minvis);
-					gstate.setVisibleMaxY((float) maxvis);
-					gstate.setMinScoreThreshold((float) score_thresh);
-					gstate.setMinRunThreshold(minrun_thresh);
-					gstate.setMaxGapThreshold(maxgap_thresh);
-					gstate.setShowThreshold(show_thresh);
-					gstate.setThresholdDirection(thresh_direction);
-
-					if (combo_name != null) {
-						IAnnotStyle combo_style = combos.get(combo_name);
-						if (combo_style == null) {
-							combo_style = new DefaultIAnnotStyle("Joined Graphs", true);
-							combo_style.setHumanName("Joined Graphs");
-							combo_style.setExpandable(true);
-							combo_style.setCollapsed(true);
-							combos.put(combo_name, combo_style);
-						}
-						gstate.setComboStyle(combo_style);
-					}
-				}
-			}
+		  }
+		  if (grafs != null) {
+			  loopOverGraphs(grafs, graph_name, graph_style_num, heatmap_name, col, bg_col, ypos, yheight, use_floating_graphs, show_label, show_axis, minvis, maxvis, score_thresh, minrun_thresh, maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
+		  }
 		}
 
       // Because of combo graphs, have to completely re-draw the display
@@ -298,15 +253,56 @@ public abstract class BookmarkController {
       if (gviewer != null) {
         gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, false);
       }
-
     } catch (Exception ex) {
       ErrorHandler.errorPanel("ERROR", "Error while loading graphs", ex);
     } catch (Error er) {
       ErrorHandler.errorPanel("ERROR", "Error while loading graphs", er);
     } finally {
-      if (istr != null) try {istr.close();} catch (IOException ioe) {}
+		GeneralUtils.safeClose(istr);
     }
   }
+
+	private static void loopOverGraphs(List<GraphSym> grafs, String graph_name, GraphType graph_style_num, String heatmap_name, Color col, Color bg_col, double ypos, double yheight, boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis, double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction, String combo_name, Map<String, IAnnotStyle> combos) {
+		for (GraphSym graf : grafs) {
+			GraphState gstate = graf.getGraphState();
+			graf.setGraphName(graph_name);
+			if (graph_style_num != null) {
+				gstate.setGraphStyle(graph_style_num);
+			}
+			if (heatmap_name != null) {
+				HeatMap heat_map = HeatMap.getStandardHeatMap(heatmap_name);
+				if (heat_map != null) {
+					gstate.setHeatMap(heat_map);
+				}
+			}
+			IAnnotStyle tier_style = gstate.getTierStyle();
+			tier_style.setColor(col);
+			tier_style.setBackground(bg_col);
+			tier_style.setY(ypos);
+			tier_style.setHeight(yheight);
+			gstate.setFloatGraph(use_floating_graphs);
+			gstate.setShowLabel(show_label);
+			gstate.setShowAxis(show_axis);
+			gstate.setVisibleMinY((float) minvis);
+			gstate.setVisibleMaxY((float) maxvis);
+			gstate.setMinScoreThreshold((float) score_thresh);
+			gstate.setMinRunThreshold(minrun_thresh);
+			gstate.setMaxGapThreshold(maxgap_thresh);
+			gstate.setShowThreshold(show_thresh);
+			gstate.setThresholdDirection(thresh_direction);
+			if (combo_name != null) {
+				IAnnotStyle combo_style = combos.get(combo_name);
+				if (combo_style == null) {
+					combo_style = new DefaultIAnnotStyle("Joined Graphs", true);
+					combo_style.setHumanName("Joined Graphs");
+					combo_style.setExpandable(true);
+					combo_style.setCollapsed(true);
+					combos.put(combo_name, combo_style);
+				}
+				gstate.setComboStyle(combo_style);
+			}
+		}
+	}
 
   public static void addGraphProperties(SymWithProps mark_sym, List graphs) {
     if (DEBUG) {

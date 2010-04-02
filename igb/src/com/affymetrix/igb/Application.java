@@ -12,7 +12,6 @@ import javax.swing.*;
 
 public abstract class Application {
 
-	public static final boolean CACHE_GRAPHS = true;
 	public final static boolean DEBUG_EVENTS = false;
 	protected final StatusBar status_bar;
 	private final Set<String> progressStringList = new LinkedHashSet<String>(); // list of progress bar messages.

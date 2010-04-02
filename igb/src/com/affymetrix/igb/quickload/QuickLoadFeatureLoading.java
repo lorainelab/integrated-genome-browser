@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
@@ -147,7 +148,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 		return "";
 	}
 
-	public boolean loadFeatures(final SeqMapView gviewer, final SeqSpan overlapSpan)
+	public boolean loadFeatures(final SeqMapView gviewer, final SeqSpan overlapSpan, final LoadStrategy strategy)
 			throws OutOfMemoryError {
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
@@ -156,7 +157,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					List<? extends SeqSymmetry> results = loadFeature();
+					List<? extends SeqSymmetry> results = loadFeature(strategy, overlapSpan);
 					if (results != null && !results.isEmpty()) {
 						SimpleSymWithProps requestSym = new SimpleSymWithProps();
 						requestSym.setProperty("meth", QuickLoadFeatureLoading.this.f.getName());
@@ -166,8 +167,13 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 								QuickLoadFeatureLoading.this.f.getName(),
 								QuickLoadFeatureLoading.this.featureName,
 								overlapSpan);
-						for (BioSeq aseq : GenometryModel.getGenometryModel().getSelectedSeqGroup().getSeqList()) {
-							Das2ClientOptimizer.addAnnotations(results, requestSym, aseq);
+						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
+							Das2ClientOptimizer.addAnnotations(results, requestSym, GenometryModel.getGenometryModel().getSelectedSeq());
+						}
+						else if (strategy == LoadStrategy.GENOME) {
+							for (BioSeq aseq : QuickLoadFeatureLoading.this.version.group.getSeqList()) {
+								Das2ClientOptimizer.addAnnotations(results, requestSym, aseq);
+							}
 						}
 					}
 					return results;
@@ -197,7 +203,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	}
 
 
-	private List<? extends SeqSymmetry> loadFeature() throws IOException, OutOfMemoryError {
+	private List<? extends SeqSymmetry> loadFeature(final LoadStrategy strategy, SeqSpan overlapSpan) throws IOException, OutOfMemoryError {
 		if (!this.isInitialized) {
 			this.init();
 		}
@@ -218,7 +224,16 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
 			return graphs;
 		}
-		return this.getGenome();
+		if (strategy == LoadStrategy.GENOME) {
+			return this.getGenome();
+		}
+		if (strategy == LoadStrategy.CHROMOSOME) {
+			return this.getChromosome(GenometryModel.getGenometryModel().getSelectedSeq());
+		}
+		if (strategy == LoadStrategy.VISIBLE) {
+			return this.getRegion(GenometryModel.getGenometryModel().getSelectedSeq(), overlapSpan);
+		}
+		return null;
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public final class TableWithVisibleComboBox {
     DAScb.setEnabled(enabled);
     DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
 
-    JComboBox QuickLoadcb = new JComboBox(FeaturesTableModel.quickloadLoadChoices);
+    JComboBox QuickLoadcb = new JComboBox(FeaturesTableModel.newQuickloadLoadChoices);
     QuickLoadcb.setEnabled(enabled);
     DefaultCellEditor QuickLoadeditor = new DefaultCellEditor(QuickLoadcb);
 

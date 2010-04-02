@@ -155,7 +155,7 @@ public final class GeneralLoadView extends JComponent
 		buttonPanel.add(refresh_dataB);
 		this.add("South", buttonPanel);
 
-		this.feature_model = new FeaturesTableModel(this, null, null);
+		this.feature_model = new FeaturesTableModel(this, null);
 		this.feature_table = new JTableX(this.feature_model);
 		this.feature_table.setModel(this.feature_model);
 
@@ -801,7 +801,7 @@ public final class GeneralLoadView extends JComponent
 				String versionName = (String) versionCB.getSelectedItem();
 				final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 				if (features == null || features.isEmpty()) {
-					GeneralLoadView.this.feature_model = new FeaturesTableModel(GeneralLoadView.this, null, null);
+					GeneralLoadView.this.feature_model = new FeaturesTableModel(GeneralLoadView.this, null);
 					GeneralLoadView.this.feature_table.setModel(GeneralLoadView.this.feature_model);
 					featuresTableScrollPane.setViewportView(GeneralLoadView.this.feature_table);
 				}
@@ -828,7 +828,7 @@ public final class GeneralLoadView extends JComponent
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
 
-		final FeaturesTableModel ftm = new FeaturesTableModel(this, features, curSeq);
+		final FeaturesTableModel ftm = new FeaturesTableModel(this, features);
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {

@@ -23,6 +23,7 @@ import javax.swing.table.TableRowSorter;
  */
 public final class TableWithVisibleComboBox {
 	private static TableRowSorter<FeaturesTableModel> sorter;
+	
   
 	/**
 	 * Set the columm to use the ComboBox DAScb and renderer (which also depends on the row/server type)
@@ -129,29 +130,24 @@ class RowEditorModel {
  */
 class JTableX extends JTable {
 
-  public RowEditorModel rm;
+  private RowEditorModel rm;
 
   public JTableX(TableModel tm) {
     super(tm);
     rm = null;
   }
 
-  public void setRowEditorModel(RowEditorModel rm) {
+  void setRowEditorModel(RowEditorModel rm) {
     this.rm = rm;
-  }
-
-  public RowEditorModel getRowEditorModel() {
-    return rm;
   }
 
   @Override
   public TableCellEditor getCellEditor(int row, int col) {
-    TableCellEditor tmpEditor = null;
     if (rm != null) {
-      tmpEditor = rm.getEditor(row);
-    }
-    if (tmpEditor != null) {
-      return tmpEditor;
+      TableCellEditor tmpEditor = rm.getEditor(row);
+	  if (tmpEditor != null) {
+		  return tmpEditor;
+	  }
     }
     return super.getCellEditor(row, col);
   }

@@ -22,11 +22,10 @@ import javax.swing.table.AbstractTableModel;
 final class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
 	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
 	//Turn off "Load Status" for now.
-	private static String[] columnNames = { "Choose Load Mode", "Data Set","Data Source"};
-	static String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
-	public static String[] quickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.GENOME.toString()};
+	private static final String[] columnNames = { "Choose Load Mode", "Data Set","Data Source"};
+	static final String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
+	static final String[] quickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.GENOME.toString()};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
-	private final BioSeq cur_seq;
 	static final int LOAD_STRATEGY_COLUMN = 0;
 	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
@@ -34,12 +33,11 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	//private static final int LOAD_STATUS_COLUMN = 4;
 	final List<GenericFeature> features;
 	private final GeneralLoadView glv;
-	private final featureTableComparator visibleFeatureComp = new featureTableComparator();
+	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 
-	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, BioSeq cur_seq) {
+	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features) {
 		this.glv = glv;
 		this.features = getVisibleFeatures(features);
-		this.cur_seq = cur_seq;
 
 		// Here we map the friendly string back to the LoadStrategy.
 		this.reverseLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
@@ -164,8 +162,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		}
 
 		// This cell is only editable if the feature isn't already fully loaded.
-		GenericFeature gFeature = features.get(row);
-		return (gFeature.loadStrategy != LoadStrategy.GENOME);
+		return (features.get(row).loadStrategy != LoadStrategy.GENOME);
 	}
 
 	@Override
@@ -173,13 +170,13 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		if (col != LOAD_STRATEGY_COLUMN) {
 			return;
 		}
-
-		String valueString = value.toString();
+		
 		GenericFeature gFeature = features.get(row);
-	
+
 		if (gFeature.loadStrategy == LoadStrategy.GENOME) {
-				return;	// We can't change strategies once we've loaded the entire genome.
-			}
+			return;	// We can't change strategies once we've loaded the entire genome.
+		}
+		String valueString = value.toString();
 		if (!gFeature.loadStrategy.toString().equals(valueString)) {
 			// strategy changed.  Update the feature object.
 			gFeature.loadStrategy = this.reverseLoadStrategyMap.get(valueString);
@@ -196,13 +193,13 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	private void updatedStrategy(int row, int col, GenericFeature gFeature) {
 		fireTableCellUpdated(row, col);
 
-			if (gFeature.loadStrategy == LoadStrategy.GENOME) {
-				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, this);
-			}
+		if (gFeature.loadStrategy == LoadStrategy.GENOME) {
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, this);
+		}
 
-			//  Whatever feature strategy changed, it may have affected
-			// the enable status of the "load visible" button
-			this.glv.changeVisibleDataButtonIfNecessary(features);
+		//  Whatever feature strategy changed, it may have affected
+		// the enable status of the "load visible" button
+		this.glv.changeVisibleDataButtonIfNecessary(features);
 	}
 
 	public void stateChanged(ChangeEvent evt) {

@@ -2,6 +2,7 @@ package com.affymetrix.igb.quickload;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -25,8 +26,10 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.Das2ClientOptimizer;
+import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -180,19 +183,14 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 		if (style != null) {
 			style.setHumanName(featureName);
 		}
-		/*if (GraphSymUtils.isAGraphFilename(fileName)) {
-			URL url = new URL(annot_url);
-			List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-			if (graphs != null) {
-				// Reset the selected Seq Group to make sure that the DataLoadView knows
-				// about any new chromosomes that were added.
-				gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
-			}
-		} else {*/
-			//LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-			List<? extends SeqSymmetry> results = this.getGenome();
-			return results;
-		//}
+		if (GraphSymUtils.isAGraphFilename(this.f.getName())) {
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
+			FileInputStream fis = new FileInputStream(this.f);
+			List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
+			GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
+			return graphs;
+		}
+		return this.getGenome();
 	}
 
 

@@ -584,7 +584,7 @@ public final class IGB extends Application
 
 		WebLink.autoLoad();
 
-		showFirstTimeSurveyDialog();
+		//showFirstTimeSurveyDialog();
 
 
 		// Need to let the QuickLoad system get started-up before starting
@@ -821,7 +821,7 @@ public final class IGB extends Application
 		}
 	}
 
-	private void showFirstTimeSurveyDialog() {
+/*	private void showFirstTimeSurveyDialog() {
 		Preferences p = PreferenceUtils.getTopNode().node("survey");
 		String sawSurvey = "SawSurveyApr2010";
 		if (p.getBoolean(sawSurvey, false)) {
@@ -851,7 +851,7 @@ public final class IGB extends Application
 		dialog.setVisible(true);
 		GeneralUtils.browse(URL);
 	}
-
+*/
 	void showAboutDialog() {
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));

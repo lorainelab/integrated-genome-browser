@@ -827,21 +827,17 @@ public final class IGB extends Application
 		if (p.getBoolean(sawSurvey, false)) {
 			return;
 		}
-
+                String URL = "http://www.surveymonkey.com/s/NC87QRM";
 		p.putBoolean(sawSurvey, true);
 		// Only show the survey once
 
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea surveyText = new JTextArea();
-
-		final String URL = "http://cnn.com";
-		String text = "Help!  We need your feedback to continue improving and funding IGB!";
-		text += "\n";
-		text += "After this dialog is dismissed, your internet browser will open URL:";
-		text += "\n" + URL;
-		text += "\n\nPlease take the survey at that location.\n";
-		text += "This message will disappear the next time you run IGB.\n\n";
+		String text = "Help!  We need your feedback to continue improving IGB!";
+		text += "\n\n";
+		text += "Click OK to answer survey questions.\n\n";
+		text += "Click \"No thanks\" if you don't want to answer the survey questions.\n\n";
 		surveyText.append(text);
 
 		message_pane.add(new JScrollPane(surveyText));

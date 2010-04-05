@@ -433,6 +433,16 @@ public final class GraphGlyph extends Glyph {
 						Math.max(1, stairwidth),
 						Math.max(1, Math.abs(curr_point.y - zero_point.y)));
 			}
+		} else if (graph_style == GraphType.HEAT_MAP) {
+			double heatmap_scaling = (double)(state.getHeatMap().getColors().length - 1) / (getVisibleMaxY() - getVisibleMinY());
+			int heatmap_index = (int) (heatmap_scaling * (ytemp - getVisibleMinY()));
+			if (heatmap_index < 0) {
+				heatmap_index = 0;
+			} else if (heatmap_index > 255) {
+				heatmap_index = 255;
+			}
+			g.setColor(state.getHeatMap().getColor(heatmap_index));
+			drawRectOrLine(g, curr_point.x, pixelbox.y, Math.max(1, curr_x_plus_width.x - curr_point.x), pixelbox.height + 1);
 		}
 		prev_point.x = curr_point.x;
 		prev_point.y = curr_point.y;
@@ -1037,7 +1047,7 @@ public final class GraphGlyph extends Glyph {
 				heatmap_scaling = (double) (heatmap_colors.length - 1) / (-plot_top_ypixel + plot_bottom_ypixel);
 			}
 			g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
-			drawRectOrLine(g, prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+			drawRectOrLine(g, prev_point.x, plot_top_ypixel, 1, plot_bottom_ypixel - plot_top_ypixel);
 		}
 	}
 
@@ -1380,20 +1390,18 @@ public final class GraphGlyph extends Glyph {
 			}
 			this.addChild(thresh_glyph);
 		}
-		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
+		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH || graph_style == GraphType.HEAT_MAP) {
 			double xpixels_per_coord = ( view.getTransform()).getScaleX();
 			double xcoords_per_pixel = 1 / xpixels_per_coord;
 			if ((xcoords_per_pixel < transition_scale)) {
 				if (graph_style == GraphType.MINMAXAVG) {
 					this.oldDraw(view, GraphType.BAR_GRAPH);
 				} else {
-					this.oldDraw(view, GraphType.LINE_GRAPH);
+					this.oldDraw(view, graph_style);
 				}
 			} else {
 				drawSmart(view);
 			}
-		} else if (graph_style == GraphType.HEAT_MAP) {
-			drawSmart(view);
 		} else {
 			// Not one of the special styles, so default to regular GraphGlyph.draw method.
 			this.oldDraw(view, graph_style);

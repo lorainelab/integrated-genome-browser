@@ -14,6 +14,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
 
@@ -53,7 +54,7 @@ public final class Bookmark implements Serializable {
   public static final String DATA_URL_FILE_EXTENSIONS = "data_url_file_extension";
   
   
-  private static boolean DEBUG = false;
+  private static final boolean DEBUG = false;
 
   private String name;
   private URL url;
@@ -93,45 +94,40 @@ public final class Bookmark implements Serializable {
    *  All entries will be Strings.
    *  @param use_url_decoding whether or not to apply {@link URLDecoder} to all keys and values.
    */
-  public static void parseParametersFromQuery(Map<String,String[]> map, String query, boolean use_url_decoding) {
-    if (query != null) {
-      StringTokenizer st = new StringTokenizer(query, "&");
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-        int ind_1 = token.indexOf('=');
+ public static void parseParametersFromQuery(Map<String, String[]> map, String query, boolean use_url_decoding) {
+		if (query == null) {
+			return;
+		}
+		StringTokenizer st = new StringTokenizer(query, "&");
+		while (st.hasMoreTokens()) {
+			String token = st.nextToken();
+			int ind_1 = token.indexOf('=');
 
-        String key, value;
-        if (ind_1 > 0) {
-          key = token.substring(0, ind_1);
-          value = token.substring(ind_1+1);
-        } else {
-          key = token;
-          value = "";
-        }
+			String key, value;
+			if (ind_1 > 0) {
+				key = token.substring(0, ind_1);
+				value = token.substring(ind_1 + 1);
+			} else {
+				key = token;
+				value = "";
+			}
 
-        if (use_url_decoding) try {
-          key = URLDecoder.decode(key, UTF8);
-          value = URLDecoder.decode(value, UTF8);
-        } catch (java.io.UnsupportedEncodingException e) {
+			if (use_url_decoding) {
+				try {
+					key = URLDecoder.decode(key, UTF8);
+					value = URLDecoder.decode(value, UTF8);
+				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
+			}
 
-        addToMap(map, key, value);
+			addToMap(map, key, value);
 
-        if (DEBUG) System.out.println("Bookmark.parseParameters: Key  ->  "+key+",  value -> "+value);
-      }
-    }
-    if (DEBUG) System.out.println("Finished parsing");
-  }
-  
-  /*public static final String IGB_GRAPHS_PRAGMA = "##IGB-graphs ";
-  
-  public static void parseIGBGraphsPragma(Map<String,String[]> map, String line, boolean use_url_decoding) {
-    if (line.startsWith(IGB_GRAPHS_PRAGMA)) {
-      String graph_props = line.substring(IGB_GRAPHS_PRAGMA.length());
-      parseParametersFromQuery(map, graph_props, use_url_decoding);
-    }
-  }*/
+			if (DEBUG) {
+				System.out.println("Bookmark.parseParameters: Key  ->  " + key + ",  value -> " + value);
+			}
+		}
+	}
   
   /**
    *  Adds a key->value mapping to a map where the key will map to
@@ -185,7 +181,7 @@ public final class Bookmark implements Serializable {
     StringBuffer sb = new StringBuffer();
     sb.append(url_base);
     
-    Iterator iter = props.keySet().iterator();
+    Iterator<String> iter = props.keySet().iterator();
     
     // The first key in props is usually the first tag in the URL query string,
     // but *not* if the url_base already contains a '?' character.
@@ -193,7 +189,7 @@ public final class Bookmark implements Serializable {
 
     while (iter.hasNext()) {
       // for all properties, add as tag-val parameter pair in URL
-      String tag = (String)iter.next();
+      String tag = iter.next();
       Object val = props.get(tag);
       if (first_tag) {sb.append('?');}
       else {sb.append('&');}
@@ -234,7 +230,7 @@ public final class Bookmark implements Serializable {
           }
         }
       }
-    } catch (java.io.UnsupportedEncodingException e) {}
+    } catch (UnsupportedEncodingException e) {}
   }
   
   public Map<String,String[]> getParameters() {
@@ -266,11 +262,11 @@ public final class Bookmark implements Serializable {
     this.name = name;
   }
 
-  public java.net.URL getURL() {
+  public URL getURL() {
     return this.url;
   }
 
-  public void setURL(URL url) {
+  void setURL(URL url) {
     this.url = url;
   }
 }

@@ -17,7 +17,7 @@ import java.util.List;
  * 
  * @author Ido M. Tamir
  */
-public final class Das2Bookmark {
+final class Das2Bookmark {
     
     private final List<GraphBookmark> graphs = new ArrayList<GraphBookmark>();
     
@@ -29,7 +29,7 @@ public final class Das2Bookmark {
 	 *
      * @param id the id of the graph
      */
-    public void add(GraphSym graph){
+    void add(GraphSym graph){
 		if(!checkServerMatch(graph)){
 			graphs.add(new GraphBookmark());
 		}
@@ -70,7 +70,7 @@ public final class Das2Bookmark {
     * 
     *
     */
-    public String getSource() {
+    String getSource() {
         if(getLast().isValid()){
             return getLast().getServer();
         }
@@ -81,7 +81,7 @@ public final class Das2Bookmark {
     * returns true if valid url can be constructed
     *
     */
-    public boolean isValid(){
+    boolean isValid(){
         return getLast().isValid();
     }
     
@@ -90,7 +90,7 @@ public final class Das2Bookmark {
     * 
     *
     */
-     public static String getDas2Query(GraphBookmark bookmark, int start, int end, String chr){
+     static String getDas2Query(GraphBookmark bookmark, int start, int end, String chr){
          String cap = bookmark.getCapability() + "?";
          String seg = "segment=" + bookmark.getServer() + "/" + bookmark.getMapping() + "/" + chr + ";";
          String over = "overlaps=" + start + ":" + end + ";";
@@ -103,7 +103,7 @@ public final class Das2Bookmark {
     * 
     *
     */ 
-   public void set(SymWithProps mark_sym) {
+   void set(SymWithProps mark_sym) {
         List<String> queries = new ArrayList<String>();
         List<String> servers = new ArrayList<String>();
         for(GraphBookmark bookmark : this.graphs){

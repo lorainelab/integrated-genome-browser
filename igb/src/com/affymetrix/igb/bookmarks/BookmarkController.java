@@ -38,7 +38,6 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -304,7 +303,7 @@ public abstract class BookmarkController {
 		}
 	}
 
-  public static void addGraphProperties(SymWithProps mark_sym, List graphs) {
+  public static void addGraphProperties(SymWithProps mark_sym, List<GlyphI> graphs) {
     if (DEBUG) {
       System.out.println("in addGraphProperties, graph count = " + graphs.size());
     }
@@ -319,7 +318,7 @@ public abstract class BookmarkController {
     int i = -1;
     Das2Bookmark bookmark = new Das2Bookmark();
     for (int j=0; j<max; j++) {
-      Object graph_object = graphs.get(j);
+      GlyphI graph_object = graphs.get(j);
       if (!(graph_object instanceof GraphGlyph)) {
         System.out.println("Cannot bookmark graphs that do not implement GraphGlyph.");
         continue;

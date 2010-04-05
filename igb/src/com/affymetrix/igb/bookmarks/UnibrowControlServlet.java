@@ -66,7 +66,6 @@ public final class UnibrowControlServlet {
 	private static final boolean DEBUG_DAS2_LOAD = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
-	private Application uni;
 
 	/** Convenience method for retrieving a String parameter from a parameter map
 	 *  of an HttpServletRequest.
@@ -339,10 +338,6 @@ public final class UnibrowControlServlet {
 		return goToBookmark(uni, seqid, version, start, end, selstart, selend, graph_files);
 	}
 
-	/*static boolean goToBookmark(Application uni, String seqid, String version, int start, int end,
-	final String[] graph_files) {
-	return goToBookmark(uni, seqid, version, start, end, -1, -1, graph_files);
-	}*/
 	/** Loads the sequence and goes to the specified location.
 	 *  If version doesn't match the currently-loaded version,
 	 *  asks the user if it is ok to proceed.
@@ -358,7 +353,6 @@ public final class UnibrowControlServlet {
 					final String[] graph_files) {
 
 		final SeqMapView gviewer = uni.getMapView();
-		//final GenometryModel gmodel = GenometryModel.getGenometryModel();
 		final AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
 		final AnnotatedSeqGroup book_group;
 		if (version == null || "unknown".equals(version) || version.trim().equals("")) {
@@ -395,25 +389,14 @@ public final class UnibrowControlServlet {
 			}
 
 			private void setGroupAndSeqAndRegion() {
-				// System.out.println("current group: " + ((selected_group == null) ? "null" : selected_group.getID()) );
-				//System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
 				if (book_group != null && !book_group.equals(selected_group)) {
-					if (selected_group != null && !selected_group.equals("null")) {
-						// confirmation panel not needed since curations are not now possible
-						//if (uni.confirmPanel("Do you want to switch the Genome version to '" + version )) {
-						gmodel.setSelectedSeqGroup(book_group);
-						//}
-					} else {
-						gmodel.setSelectedSeqGroup(book_group);
-					}
+					gmodel.setSelectedSeqGroup(book_group);
 				}
 				// hopefully setting gmodel's selected seq group above triggered population of seqs
 				//   for group if not already populated
 				BioSeq selected_seq = gmodel.getSelectedSeq();
-				BioSeq book_seq = book_group.getSeq(seqid);
-				// System.out.println("current seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
-				//System.out.println("bookmark seq: " + ((book_seq == null) ? "null" : book_seq.getID()) );
-				if (seqid == null || "unknown".equals(seqid) || seqid.trim().equals("")) {
+				BioSeq book_seq;
+				if (seqid == null || "unknown".equals(seqid) || seqid.trim().length() == 0) {
 					book_seq = selected_seq;
 					if (book_seq == null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
 						book_seq = gmodel.getSelectedSeqGroup().getSeq(0);

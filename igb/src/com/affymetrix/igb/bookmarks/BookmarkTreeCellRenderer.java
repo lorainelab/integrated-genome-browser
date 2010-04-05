@@ -23,15 +23,12 @@ import javax.swing.tree.*;
  */
 public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
   
-  int underlined_row = -1;
-  int outlined_row = -1;
+  private int underlined_row = -1;
+  private int outlined_row = -1;
 
-  boolean is_separator = false;
-  boolean is_underline = false;
-  boolean is_outline = false;
-    
-  public BookmarkTreeCellRenderer() {
-  }
+  private boolean is_separator = false;
+  private boolean is_underline = false;
+  private boolean is_outline = false;
 
   public void setUnderlinedRow(int row) {
     underlined_row = row;
@@ -41,6 +38,7 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
     outlined_row = row;
   }
   
+	@Override
   public Component getTreeCellRendererComponent(JTree tree,
     Object value, boolean sel, boolean expanded,
     boolean leaf, int row, boolean hasFocus) {
@@ -60,7 +58,6 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
         if (user_object instanceof Separator) {
           is_separator = true;
           setIcon(null);
-          //setIcon(BookmarkIcon.SEPARATOR_ICON);
           
           // set a longish string to force the component to have a reasonable width
           // (setting an empty or null string will make a zero-size component: not good!)
@@ -104,11 +101,12 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
   }
 
   
-  /** Overriden to draw Separators in a special way and to outline or underline
+  /** Overridden to draw Separators in a special way and to outline or underline
    *  a chosen row.
    *  @see #setUnderlinedRow(int)
    *  @see #setOutlinedRow(int)
    */
+	@Override
   public void paint(Graphics g) {
     super.paint(g);
     if (is_separator) {

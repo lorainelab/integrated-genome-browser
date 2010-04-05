@@ -21,7 +21,7 @@ import java.awt.Font;
  */
 public final class BookmarkJMenuItem extends JMenuItem {
 
-  private Bookmark bookmark;
+  private final Bookmark bookmark;
   
   /** Creates a new instance of BookmarkJMenuItem.  The name of the JMenuItem 
    *  will be created from the name of the Bookmark object.
@@ -34,12 +34,10 @@ public final class BookmarkJMenuItem extends JMenuItem {
       Font f = this.getFont();
       Font f2 = new Font(f.getName(), Font.BOLD, f.getSize());
       setFont(f2);
-      //setIcon(new BookmarkIcon(BookmarkIcon.UNIBROW_CONTROL));
     } else {
       Font f = this.getFont();
       Font f2 = new Font(f.getName(), Font.ITALIC, f.getSize());
       setFont(f2);
-      //setIcon(new BookmarkIcon(BookmarkIcon.EXTERNAL));
     }
     this.bookmark = b;
   }

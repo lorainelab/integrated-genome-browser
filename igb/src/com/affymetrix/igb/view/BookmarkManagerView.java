@@ -13,14 +13,11 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genoviz.swing.dnd.AutoScrollingJTree;
-import com.affymetrix.genoviz.swing.dnd.JTreeDropTarget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.BookMarkAction;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkList;
@@ -29,14 +26,9 @@ import com.affymetrix.igb.bookmarks.BookmarkTreeCellRenderer;
 import com.affymetrix.igb.bookmarks.Separator;
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Point;
-import java.awt.datatransfer.*;
-import java.awt.dnd.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
 import javax.swing.*;
@@ -63,11 +55,14 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
 
   private final BookmarkTreeCellRenderer renderer;
 
+
+  protected int last_selected_row = -1;  // used by dragUnderFeedback()
+
   /** Creates a new instance of Class */
   public BookmarkManagerView() {
     super();
 
-    tree = new AutoScrollingJTree();
+    tree = new JTree();
     tree.setModel(tree_model);
 
     JScrollPane scroll_pane = new JScrollPane(tree);
@@ -77,7 +72,6 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     this.add(scroll_pane, BorderLayout.CENTER);
 
     thing = new BottomThing(tree);
-    //thing.setPreferredSize(new Dimension(100, 50));
     this.add(thing, BorderLayout.SOUTH);
     tree.addTreeSelectionListener(thing);
 
@@ -91,17 +85,11 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
 
     ToolTipManager.sharedInstance().registerComponent(tree);
 
-    DataFlavor[] flavors = new DataFlavor[] {
-      BookmarkManagerView.TreeNodeTransferable.my_flavor
-    };
-
-
     // Would love to try using setDragEnabled(true) because this gives a better
     // selection mechanism. But that would involve a re-write of much of this code
     // adding a custom TransferHandler.
-    //     tree.setDragEnabled(true);
+    //tree.setDragEnabled(true);
 
-    //refresh_action = makeRefreshAction();
     export_action = makeExportAction();
     import_action = makeImportAction();
     delete_action = makeDeleteAction();
@@ -134,7 +122,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     thing.setApplication(app);
   }
   
-  boolean insert(JTree tree, TreePath tree_path, DefaultMutableTreeNode[] nodes) {
+  private boolean insert(JTree tree, TreePath tree_path, DefaultMutableTreeNode[] nodes) {
     if (tree_path == null) {
       return false;
     }
@@ -183,11 +171,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     tree.clearSelection();
   }
 
-  public TreeModel getTreeModel() {
-    return tree_model;
-  }
-
-  static void setAccelerator(Action a) {
+  private static void setAccelerator(Action a) {
     KeyStroke ks = PreferenceUtils.getAccelerator("Bookmark Manager / "+a.getValue(Action.NAME));
     a.putValue(Action.ACCELERATOR_KEY, ks);
   }
@@ -196,7 +180,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
   /** A JPanel that listens for TreeSelectionEvents, displays
    *  the name(s) of the selected item(s), and may allow you to edit them.
    */
-  static class BottomThing extends JPanel implements TreeSelectionListener, ActionListener, FocusListener {
+  private static class BottomThing extends JPanel implements TreeSelectionListener, ActionListener, FocusListener {
     JLabel type_label = new JLabel("Type:");
     JLabel type_label_2 = new JLabel("");
     JLabel name_label = new JLabel("Name:");
@@ -263,7 +247,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
       this.app = app;
     }
 
-    public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
+    public void valueChanged(TreeSelectionEvent e) {
       Object source = e.getSource();
       assert source == tree;
       if (source != tree) {
@@ -413,27 +397,9 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     }
   }
 
-  public static void main(String[] args) throws Exception {
-    JFrame frame = new JFrame("BookmarkManagerView");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.getContentPane().setLayout(new BorderLayout());
-    frame.setBounds(10, 10, 800, 500);
-    Image icon = Application.getSingleton().getIcon();
-    if (icon != null) {frame.setIconImage(icon);}
-
-    BookmarkManagerView foo = new BookmarkManagerView();
-    foo.setBList(new BookmarkList("BOOKMARKS"));
-    frame.getContentPane().add(foo, BorderLayout.CENTER);
-    frame.pack();
-    frame.setVisible(true);
-  }
-
   public void valueChanged(TreeSelectionEvent e) {
     if (e.getSource() != tree) return;
-    TreePath[] paths = e.getPaths();
     int selections = tree.getSelectionCount();
-    //import_action.setEnabled(selections != 0);
-    //export_action.setEnabled(selections != 0);
     delete_action.setEnabled(selections != 0);
     add_separator_action.setEnabled(selections != 0);
     add_folder_action.setEnabled(selections != 0);
@@ -441,9 +407,10 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     //  the "properties" and "go to" actions belong to the BottomThing and it will enable or disable them
   }
 
-  void setUpMenuBar() {
+  private void setUpMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu bookmarks_menu = new JMenu("Bookmarks") {      
+			@Override
       public JMenuItem add(Action a) {
         JMenuItem menu_item = super.add(a);
         menu_item.setToolTipText(null);
@@ -452,7 +419,6 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     };
     bookmarks_menu.setMnemonic('B');
 
-    //bookmarks_menu.add(refresh_action);
     bookmarks_menu.add(add_bookmark_action);
     bookmarks_menu.add(add_folder_action);
     bookmarks_menu.add(add_separator_action);
@@ -469,8 +435,9 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     this.add(menu_bar, BorderLayout.NORTH);
   }
 
-  void setUpPopupMenu() {
+  private void setUpPopupMenu() {
     final JPopupMenu popup = new JPopupMenu() {      
+			@Override
       public JMenuItem add(Action a) {
         JMenuItem menu_item = super.add(a);
         menu_item.setToolTipText(null);
@@ -489,11 +456,13 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     popup.add(import_action);
     popup.add(export_action);
     MouseAdapter mouse_adapter = new MouseAdapter() {
+			@Override
       public void mousePressed(MouseEvent e) {
         if (popup.isPopupTrigger(e)) {
           popup.show(tree, e.getX(), e.getY());
         }
       }
+			@Override
       public void mouseReleased(MouseEvent e) {
         if (popup.isPopupTrigger(e)) {
           popup.show(tree, e.getX(), e.getY());
@@ -503,10 +472,9 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     tree.addMouseListener(mouse_adapter);
   }
 
-  void setUpToolBar() {
+  private void setUpToolBar() {
     JToolBar tool_bar = new JToolBar(JToolBar.VERTICAL);
     tool_bar.setFloatable(false);
-    //tool_bar.add(refresh_action);
     tool_bar.add(add_folder_action);
     tool_bar.add(add_separator_action);
     tool_bar.add(add_bookmark_action);
@@ -592,7 +560,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     return a;
   }
 
-  Action makeAddAction(final JTree tree, final int type) {
+  private Action makeAddAction(final JTree tree, final int type) {
     String title;
     ImageIcon icon = null;
     String tool_tip = null;
@@ -659,7 +627,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
    *  row contains a folder and that folder is currently expanded or empty
    *  or is the root node.
    */
-  boolean dropInto(int row) {
+  private boolean dropInto(int row) {
     boolean into = false;
     TreePath path = tree.getPathForRow(row);
     if (path == null) {
@@ -701,167 +669,5 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     tree.removeTreeSelectionListener(this);
     thing = null;
     tree = null;
-  }
-  
-  static class TreeNodeTransferable implements Transferable {
-
-    public static final DataFlavor my_flavor = new DataFlavor(BookmarkList[].class, "Array of BookmarkList objects");
-    BookmarkList[] nodes;
-
-    public TreeNodeTransferable(BookmarkList[] nodes) {
-      if (nodes==null) throw new IllegalArgumentException();
-      this.nodes = nodes;
-    }
-
-    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-      if (! isDataFlavorSupported(flavor) ) { throw new UnsupportedFlavorException(flavor); }
-      else return nodes;
-    }
-
-    public DataFlavor[] getTransferDataFlavors() {
-      return new DataFlavor[] { my_flavor };
-    }
-
-    public boolean isDataFlavorSupported(DataFlavor flavor) {
-      return flavor.equals(my_flavor);
-    }
-  }
-
-
- /** A JTree that handles Drag and Drop to itself. */
- class DoubleTree extends JTreeDropTarget implements DragGestureListener, DragSourceListener {
-
-    BookmarkList[] nodes_being_moved;
-
-    public DoubleTree(JTree tree, DataFlavor[] flavors) {
-      super();
-      setTree(tree);
-      setFlavors(flavors);
-      DragSource dragSource = DragSource.getDefaultDragSource();
-      dragSource.createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY_OR_MOVE, this);
-    }
-
-    /** If it was a COPY, do nothing special, but if it was a MOVE, delete the original. */
-    public void dragDropEnd(DragSourceDropEvent dsde) {
-      if (dsde.getDropSuccess() && dsde.getDropAction() == DnDConstants.ACTION_MOVE) {
-        for (int i=0; i<nodes_being_moved.length; i++) {
-          //DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[i].getLastPathComponent();
-          //System.out.println("NOT Removing: "+nodes[i]+", from parent: "+nodes[i].getParent());
-          ((DefaultTreeModel) tree.getModel()).removeNodeFromParent(nodes_being_moved[i]);
-        }
-      }
-    }
-
-    List<TreePath> dragging_paths = new ArrayList<TreePath>();
-
-    public void dragGestureRecognized(DragGestureEvent dge) {
-      dragging_paths.clear();
-
-      Point location = dge.getDragOrigin();
-      TreePath dragPath = tree.getClosestPathForLocation(location.x, location.y);
-      if (dragPath != null && tree.isPathSelected(dragPath)) {
-        TreePath[] paths = tree.getSelectionPaths();
-        if (paths != null && paths.length > 0) {
-          // TODO
-          // Might want to find a different way to put the node data into a Transferable.
-          // This way, the entire tree model always gets serialized, because tree nodes
-          // internally refer both to their parents and children.
-          // Better maybe to make a deep copy of only the nodes we want
-          // (with children, but without their parents) and transfer that.
-          // It works fine as is, but is inefficient.
-
-          nodes_being_moved = new BookmarkList[paths.length];
-          for (int i=0; i<paths.length; i++) {
-            nodes_being_moved[i] = (BookmarkList) paths[i].getLastPathComponent();
-            dragging_paths.add(paths[i]);
-          }
-          Transferable t = new TreeNodeTransferable(nodes_being_moved);
-          dge.startDrag((Cursor) null, t, this);
-        }
-      }
-    }
-
-    public void dragEnter(DragSourceDragEvent dsde) {
-      //System.out.println("DragEnter: "+dsde);
-    }
-
-    public void dragExit(DragSourceEvent dse) {
-      //System.out.println("DragExit: "+dse);
-    }
-
-    public void dragOver(DragSourceDragEvent dsde) {
-      //System.out.println("DragOver: "+dsde);
-    }
-
-    public void dropActionChanged(DragSourceDragEvent dsde) {
-      //System.out.println("dropActionChanged: "+dsde);
-    }
-
-    protected boolean dropImpl(DropTargetDropEvent dtde) {
-
-      Transferable transferable = dtde.getTransferable();
-      Point location = dtde.getLocation();
-
-      BookmarkList[] nodes = null;
-      try {
-        nodes = (BookmarkList[]) transferable.getTransferData(
-          BookmarkManagerView.TreeNodeTransferable.my_flavor);
-      } catch (Exception e) {
-        JFrame frame =
-            (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this.tree);
-        ErrorHandler.errorPanel(frame, "Error", "Error in Drag-and-drop", e);
-        return false;
-      }
-      if (nodes==null || nodes.length==0) {
-        return false;
-      }
-
-      TreePath tree_path = tree.getClosestPathForLocation(location.x, location.y);
-      if (isAcceptableDropPath(tree_path)) {
-        // Highlight the drop location while we perform the drop
-        //tree.setSelectionPath(tree_path);
-
-        return insert(tree, tree_path, nodes);
-      } else {
-        return false;
-      }
-    }
-
-    /** Returns false if the things currently being dragged contains the given path
-     *  or an ancestor of the given path.
-     *  Called from {@link #isAcceptableDropLocation(DropTargetDragEvent)}.
-     */
-    protected boolean isAcceptableDropPath(TreePath path) {
-      boolean b = super.isAcceptableDropPath(path);
-      if (b==false) return b;
-
-      boolean forbidden = false;
-      Iterator iter = dragging_paths.iterator();
-      while (iter.hasNext() && forbidden==false) {
-        TreePath tp = (TreePath) iter.next();
-        forbidden = forbidden || (tp.equals(path) || tp.isDescendant(path));
-      }
-      return !(forbidden);
-    }
-
-    protected int last_selected_row = -1;  // used by dragUnderFeedback()
-
-    protected void dragUnderFeedback(int row) {
-      renderer.setUnderlinedRow(-1);
-      renderer.setOutlinedRow(-1);
-      if (row >= 0) {
-        boolean drop_in = dropInto(row);
-        if (drop_in) {
-         renderer.setOutlinedRow(row);
-        } else {
-         renderer.setUnderlinedRow(row);
-        }
-      }
-      if (row != last_selected_row) {
-        tree.repaint();
-      }
-      last_selected_row = row;
-    }
-
   }
 }

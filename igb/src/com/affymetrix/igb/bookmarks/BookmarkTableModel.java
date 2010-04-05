@@ -25,7 +25,7 @@ public final class BookmarkTableModel extends AbstractTableModel {
   /** A silly little helper class that holds two strings. 
    *  A String[2] array would work just as well.
    */
-  static class Duple {
+  private static class Duple {
     public String a;
     public String b;
     public Duple(String a, String b) {
@@ -34,16 +34,14 @@ public final class BookmarkTableModel extends AbstractTableModel {
     }
   }
   
-  List<Duple> duples = Collections.<Duple>emptyList();
-  String[] names = {"Parameter", "Value"};
+  private List<Duple> duples = Collections.<Duple>emptyList();
+  private final String[] names = {"Parameter", "Value"};
   
   /** The number of extra rows to display to give users room to
    *  enter extra data into the table.
    */
-  public final static int EXTRA_ROWS = 5;
-  
-  public BookmarkTableModel() {
-  }
+  private final static int EXTRA_ROWS = 5;
+ 
 
   /** Fills the table model with data from the Map.
    *  Some extra empty rows may also be appended to the table to 
@@ -54,12 +52,11 @@ public final class BookmarkTableModel extends AbstractTableModel {
       throw new IllegalArgumentException("Map was null");
     }
     duples = new ArrayList<Duple>();
-    Iterator keys = map.keySet().iterator();
+    Iterator<String> keys = map.keySet().iterator();
     while (keys.hasNext()) {
-      String key = (String) keys.next();
+      String key = keys.next();
       String[] value = map.get(key);
       if (value.length == 0) {
-       //System.out.println("******************* length 0 for: "+key);
        duples.add(new Duple(key, ""));
       } else {
         for (int i=0; i<value.length; i++) {
@@ -79,8 +76,8 @@ public final class BookmarkTableModel extends AbstractTableModel {
    *  {@link #setValuesFromMap(Map)}.
    *  Any item with an empty key or value will not be included in the Map.
    */
-  public Map<String,String[]> getValuesAsMap() {
-    LinkedHashMap<String,String[]> m = new LinkedHashMap<String,String[]>();
+  Map<String,String[]> getValuesAsMap() {
+    Map<String,String[]> m = new LinkedHashMap<String,String[]>();
     for (int i=0; i<getRowCount(); i++) {
       String key = (String) getValueAt(i, 0);
       String value = (String) getValueAt(i, 1);
@@ -112,7 +109,6 @@ public final class BookmarkTableModel extends AbstractTableModel {
     } else if (col==1) {
       duple.b = s;
     }
-    //System.out.println("Set value: "+row+","+col+": "+aValue);
     fireTableCellUpdated(row, col);
   }
 

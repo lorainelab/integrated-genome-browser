@@ -67,8 +67,6 @@ public final class BookmarkListEditor {
     // re-size itself dynamically correctly.
     central_component.setLayout(new BorderLayout());
 
-    //central_component.setBorder(new javax.swing.border.EtchedBorder(javax.swing.border.EtchedBorder.LOWERED));
-
     Action cancel_action = new AbstractAction("Cancel") {
       public void actionPerformed(ActionEvent e) {
         frame.setVisible(false);
@@ -120,23 +118,20 @@ public final class BookmarkListEditor {
  }
   
   // Writes the window location to the persistent preferences.
-  void saveWindowLocation() {
+  private void saveWindowLocation() {
     PreferenceUtils.saveWindowLocation(frame, TITLE);
   }
   
   
   public void openDialog(BookmarkList bl) {
     this.setBookmarkList(bl);
-    //frame.pack();
     frame.doLayout();
     frame.repaint();
     
     DisplayUtils.bringFrameToFront(frame);
   }
 
-  boolean using_ucb_editor = true;
-  
-  public void setBookmarkList(BookmarkList bookmark_list) {
+  private void setBookmarkList(BookmarkList bookmark_list) {
     this.the_bookmark_list = bookmark_list;
     Object o = null;
     central_component.removeAll();
@@ -145,14 +140,11 @@ public final class BookmarkListEditor {
       Bookmark bm = (Bookmark) o;
       name.setText(bm.getName());
       central_component.add(ucb_editor.getComponent());
-      using_ucb_editor = true;
       
       if (bm.isUnibrowControl()) {
         type_label_2.setText("Internal Bookmark");
-        //central_component.add(ucb_editor.getComponent());
       } else {
         type_label_2.setText("External Bookmark");
-        //central_component.add(url_component);
       }
       
       this.setBookmark(bm);
@@ -178,7 +170,7 @@ public final class BookmarkListEditor {
   /** Tries to reset the bookmark from the GUI.
    *  @return true for sucess, false otherwise.
    */
-  boolean applyChanges() {
+  private boolean applyChanges() {
     if (the_bookmark_list == null) {
       return false;
     }
@@ -202,34 +194,16 @@ public final class BookmarkListEditor {
     return true;
   }
 
-  void setEnabled(boolean b) {
+  private void setEnabled(boolean b) {
     submit_button.setEnabled(b);
     name.setEnabled(b);
   }
 
-  void setBookmark(Bookmark bm) {
+  private void setBookmark(Bookmark bm) {
     ucb_editor.setGUIFromBookmark(bm);
   }
   
-  public void setIconImage(java.awt.Image image) {
+  public void setIconImage(Image image) {
     if (image != null) {frame.setIconImage(image);}
-  }
-
-  /** For testing, brings-up an editor with a bookmark in it. */
-  public static void main(String[] args) {
-    BookmarkListEditor editor = new BookmarkListEditor(null);
-    editor.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    Bookmark bm = null;
-    try {
-      bm = new Bookmark("Test Bookmark", 
-        "http://localhost:7085/UnibrowControl?seqid=chr21&end=33127379&version=Human_Apr_2003_Encode&start=32664811&data_url=http%3A%2F%2F205.217.46.81%3A9091%2FQueryServlet%2Fdas%2FHuman_Apr_2003%2Ffeatures%3Fsegment%3Dchr21%3A32664811%2C33127378%3Btype%3DAffy_u133_targets%3Bminmin%3D0%3Bmaxmax%3D46976537&data_url=http%3A%2F%2F205.217.46.81%3A9091%2FQueryServlet%2Fdas%2FHuman_Apr_2003%2Ffeatures%3Fsegment%3Dchr21%3A32664811%2C33127378%3Btype%3DAffy_u133_probes%3Bminmin%3D0%3Bmaxmax%3D46976537");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    BookmarkList bl = new BookmarkList(bm);
-    
-    editor.openDialog(bl);
-//    editor.submit_button.setEnabled(false);
-    editor.cancel_button.setEnabled(false);
   }
 }

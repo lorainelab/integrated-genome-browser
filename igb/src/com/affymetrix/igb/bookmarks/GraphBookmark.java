@@ -2,14 +2,14 @@ package com.affymetrix.igb.bookmarks;
 
 
 
-public class GraphBookmark {
+final class GraphBookmark {
       private final String server;
       private final String mapping;
       private final String path;
 	  private final String format;
       private final boolean valid;
 
-      public GraphBookmark(String server, String mapping, String path, String format){
+      GraphBookmark(String server, String mapping, String path, String format){
 			this.server = server;
 			this.mapping = mapping;
 			this.path = path;
@@ -17,7 +17,7 @@ public class GraphBookmark {
 			this.valid = true;
       }
 
-	  public GraphBookmark(){
+	  GraphBookmark(){
 			this.server = "";
 			this.mapping = "";
 			this.path = "";
@@ -25,31 +25,31 @@ public class GraphBookmark {
 			this.valid = false;
       }
       
-      public String getServer(){
+      String getServer(){
           return server;
       }
       
-      public String getMapping(){
+      String getMapping(){
           return mapping;
       }
          
-      public String getPath(){
+      String getPath(){
           return path;
       }
         
-	  public String getCapability(){
+	  String getCapability(){
           return server + "/" + mapping + "/features";
       }
 
-      public String getType(){
+      String getType(){
         return server + "/" + mapping + "/" + path;
       }
 
-	  public String getFormat(){
+	  String getFormat(){
 		  return format;
 	  }
 
-	  public boolean isValid(){
+	  boolean isValid(){
 		  return valid;
 	  }
 

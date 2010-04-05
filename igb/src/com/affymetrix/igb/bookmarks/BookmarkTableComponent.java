@@ -32,8 +32,6 @@ public final class BookmarkTableComponent {
 
     data_model = new BookmarkTableModel();
     table = new JTable(data_model);
-//    table.setSurrendersFocusOnKeystroke(true);
-//    table.setPreferredScrollableViewportSize(new java.awt.Dimension(60,60));
 
     JScrollPane scrollpane = new JScrollPane(table);
 

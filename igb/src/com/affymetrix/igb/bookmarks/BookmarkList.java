@@ -62,6 +62,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
    *  This is important so that a JTree will display
    *  BookmarkLists with a folder icon, not a leaf icon.
    */
+	@Override
   public boolean isLeaf() {
     return (! getAllowsChildren());
   }
@@ -69,6 +70,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
   /** Overridden to insure that all children are instances of BookmarkList.
    *  @throws IllegalArgumentException
    */
+	@Override
   public void insert(MutableTreeNode item, int index) {
     if (! (item instanceof BookmarkList)) {
       throw new IllegalArgumentException("All children of BookmarkList must be instances of BookmarkList");
@@ -77,6 +79,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
   }
   
   /** Not recommended.  Set the object during the constructor, then leave it alone. */
+	@Override
   public void setUserObject(Object o) throws IllegalArgumentException {
     if (o instanceof String) {
       setAllowsChildren(true);
@@ -94,6 +97,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
     return this.toString();
   }
 
+	@Override
   public String toString() {
     Object o = getUserObject();
     if (o instanceof String) {
@@ -174,7 +178,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
   /** Exports the BookmarkList in the Netscape/Mozilla/Firebird bookmark list
    *  format.  Microsoft IE can also read this format.
    */
-  public static void exportAsNetscapeHTML(BookmarkList list, File fil) throws IOException {
+  public static void exportAsHTML(BookmarkList list, File fil) throws IOException {
     Application app = Application.getSingleton();
     FileWriter fw = null;
     BufferedWriter bw = null;
@@ -191,7 +195,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
       bw.write("<H1>Bookmarks</H1>\n");
 
       bw.write("<DL><p>\n");
-      exportAsNetscapeHTML_recursive(list, bw, "  ");
+      exportAsHTML_recursive(list, bw, "  ");
       bw.write("</DL><p>\n");
       bw.close();
     } finally {
@@ -201,18 +205,16 @@ public final class BookmarkList extends DefaultMutableTreeNode {
   }
 
   // Used by exportAsNetscapeHTML
-  private static void exportAsNetscapeHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
+  private static void exportAsHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
     // Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
     Enumeration e = list.children();
-    //int i=0;
     while (e.hasMoreElements()) {
-      //i++;
       BookmarkList btn = (BookmarkList) e.nextElement();
       Object o = btn.getUserObject();
       if (o instanceof String) {
         bw.write(indent+"<DT><H3>"+o+"</H3>\n");
         bw.write(indent+"<DL><p>\n");
-        exportAsNetscapeHTML_recursive(btn, bw, indent+"  ");
+        exportAsHTML_recursive(btn, bw, indent+"  ");
         bw.write(indent+"</DL><p>\n");
       } else if (o instanceof Bookmark) {
         Bookmark bm = (Bookmark) o;

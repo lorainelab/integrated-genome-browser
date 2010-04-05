@@ -145,7 +145,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 				File f2 = new File(filename + "~");
 				try {
 					System.out.println("Creating backup bookmarks file: \"" + f2 + "\"");
-					BookmarkList.exportAsNetscapeHTML(main_bookmark_list, f2);
+					BookmarkList.exportAsHTML(main_bookmark_list, f2);
 				} catch (Exception e) {
 					System.out.println("Error while trying to create backup bookmarks file: \"" + f2 + "\"");
 				}
@@ -176,7 +176,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       if (parent_dir != null) {
         parent_dir.mkdirs();
       }
-      BookmarkList.exportAsNetscapeHTML(main_bookmark_list, f);
+      BookmarkList.exportAsHTML(main_bookmark_list, f);
       saved = true;
     } catch (FileNotFoundException fnfe) {
       System.err.println("Could not auto-save bookmarks to \""
@@ -368,7 +368,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
         }
 
         if (DEBUG) {System.out.println("bookmark file chosen: " + fil);}
-        BookmarkList.exportAsNetscapeHTML(main_bookmark_list, fil);
+        BookmarkList.exportAsHTML(main_bookmark_list, fil);
       }
       catch (Exception ex) {
         ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);

@@ -50,6 +50,7 @@ import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
+import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public final class GeneralLoadView extends JComponent
 		choicePanel.setLayout(new BoxLayout(choicePanel, BoxLayout.X_AXIS));
 		choicePanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
 
-		speciesCB = new JComboBox();
+		speciesCB = new JComboBoxWithSingleListener();
 		speciesCB.addItem(SELECT_SPECIES);
 		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width*4,speciesCB.getPreferredSize().height));
 		speciesCB.setEnabled(false);
@@ -105,26 +106,7 @@ public final class GeneralLoadView extends JComponent
 		choicePanel.add(speciesCB);
 		choicePanel.add(Box.createHorizontalStrut(50));
 
-		versionCB = new JComboBox() {
-			/**
-			 * Default implementation of addListener permits the same class
-			 * to be added as a listener multiple times, causing it to be
-			 * notified of an event multiple times.
-			 *
-			 * This is a quick kludge to prevent a listener from being added
-			 * multiple times.  Hopefully this can be removed once we
-			 * sort out adding and removing ItemListeners.
-			 */
-			@Override public void addItemListener(ItemListener aListener) {
-				for (ItemListener listener :  this.getItemListeners()) {
-					if (listener == aListener) {
-						Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Attempt to add duplicate ItemListener, ignoring");
-						return;
-					}
-				}
-				super.addItemListener(aListener);
-			}
-		};
+		versionCB = new JComboBoxWithSingleListener();
 		versionCB.addItem(SELECT_GENOME);
 		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width*4, versionCB.getPreferredSize().height));
 		versionCB.setEnabled(false);

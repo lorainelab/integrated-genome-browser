@@ -21,7 +21,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
-class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
+final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
 	private final static boolean DEBUG_EVENTS = false;
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -58,18 +58,6 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 		gmodel.addSeqSelectionListener(this);
 		lsm = seqtable.getSelectionModel();
 		lsm.addListSelectionListener(this);
-	}
-
-  /**
-   * Clear the sequence table, but don't apply any other actions.
-   */
- 	void clearSeqTable() {
-		SeqGroupTableModel mod = new SeqGroupTableModel(null);
-		sorter = new TableRowSorter<SeqGroupTableModel>(mod);
-		selected_seq = null;
-		seqtable.setModel(mod);
-		seqtable.validate();
-		seqtable.repaint();
 	}
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
@@ -125,19 +113,18 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
 		if (SeqGroupView.DEBUG_EVENTS) {
-			System.out.println("SeqGroupView received seqSelectionChanged() event");
+			System.out.println("SeqGroupView received seqSelectionChanged() event: seq is " + evt.getSelectedSeq());
 		}
 		synchronized (seqtable) {  // or should synchronize on lsm?
-			// if (selected_seq != evt.getSelectedSeq()) {
 			lsm.removeListSelectionListener(this);
-			//selected_seq = gmodel.getSelectedSeq();
 			selected_seq = evt.getSelectedSeq();
 			if (selected_seq == null) {
 				seqtable.clearSelection();
 			} else {
 				most_recent_seq_id = selected_seq.getID();
 
-				for (int i = 0; i < seqtable.getRowCount(); i++) {
+				int rowCount = seqtable.getRowCount();
+				for (int i = 0; i < rowCount; i++) {
 					// should be able to use == here instead of equals(), because table's model really returns seq.getID()
 					if (most_recent_seq_id == seqtable.getValueAt(i, 0)) {
 						if (seqtable.getSelectedRow() != i) {
@@ -149,7 +136,6 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 				}
 			}
 			lsm.addListSelectionListener(this);
-		// }
 		}
 	}
 

@@ -19,9 +19,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableRowSorter;
+//import javax.swing.table.TableRowSorter;
 
-class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
+final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
 	private final static boolean DEBUG_EVENTS = false;
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -30,8 +30,8 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 	private BioSeq selected_seq = null;
 	private AnnotatedSeqGroup previousGroup = null;
 	private int previousSeqCount = 0;
-	private ListSelectionModel lsm;
-	private TableRowSorter<SeqGroupTableModel> sorter;
+	private final ListSelectionModel lsm;
+	//private TableRowSorter<SeqGroupTableModel> sorter;
 	private String most_recent_seq_id = null;
 
 
@@ -60,18 +60,6 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 		lsm.addListSelectionListener(this);
 	}
 
-  /**
-   * Clear the sequence table, but don't apply any other actions.
-   */
- 	void clearSeqTable() {
-		SeqGroupTableModel mod = new SeqGroupTableModel(null);
-		sorter = new TableRowSorter<SeqGroupTableModel>(mod);
-		selected_seq = null;
-		seqtable.setModel(mod);
-		seqtable.validate();
-		seqtable.repaint();
-	}
-
   public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		if (SeqGroupView.DEBUG_EVENTS) {
@@ -83,14 +71,19 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 				System.out.println("  seq count: " + group.getSeqCount());
 			}
 		}
+		if (previousGroup == group) {
+			if (group == null) {
+				return;
+			}
+			warnAboutNewlyAddedChromosomes(previousSeqCount, group);
+		}
 
-		warnAboutNewlyAddedChromosomes(previousGroup, previousSeqCount, group);
 		previousGroup = group;
 		previousSeqCount = group == null ? 0 : group.getSeqCount();
 
 
 		SeqGroupTableModel mod = new SeqGroupTableModel(group);
-		sorter = new TableRowSorter<SeqGroupTableModel>(mod);
+		//sorter = new TableRowSorter<SeqGroupTableModel>(mod);
 		selected_seq = null;
 		seqtable.setModel(mod);
 		//seqtable.setRowSorter(sorter);
@@ -108,36 +101,33 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 		}
 	}
 
-	private static void warnAboutNewlyAddedChromosomes(AnnotatedSeqGroup previousGroup, int previousSeqCount, AnnotatedSeqGroup group) {
-		if (previousGroup != null && previousGroup == group) {
-			if (previousSeqCount > group.getSeqCount()) {
-				System.out.println("WARNING: chromosomes have been added");
-				if (previousSeqCount < group.getSeqCount()) {
-					System.out.print("New chromosomes:");
-					for (int i = previousSeqCount; i < group.getSeqCount(); i++) {
-						System.out.print(" " + group.getSeq(i).getID());
-					}
-					System.out.println();
+	private static void warnAboutNewlyAddedChromosomes(int previousSeqCount, AnnotatedSeqGroup group) {
+		if (previousSeqCount > group.getSeqCount()) {
+			System.out.println("WARNING: chromosomes have been added");
+			if (previousSeqCount < group.getSeqCount()) {
+				System.out.print("New chromosomes:");
+				for (int i = previousSeqCount; i < group.getSeqCount(); i++) {
+					System.out.print(" " + group.getSeq(i).getID());
 				}
+				System.out.println();
 			}
 		}
 	}
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
 		if (SeqGroupView.DEBUG_EVENTS) {
-			System.out.println("SeqGroupView received seqSelectionChanged() event");
+			System.out.println("SeqGroupView received seqSelectionChanged() event: seq is " + evt.getSelectedSeq());
 		}
 		synchronized (seqtable) {  // or should synchronize on lsm?
-			// if (selected_seq != evt.getSelectedSeq()) {
 			lsm.removeListSelectionListener(this);
-			//selected_seq = gmodel.getSelectedSeq();
 			selected_seq = evt.getSelectedSeq();
 			if (selected_seq == null) {
 				seqtable.clearSelection();
 			} else {
 				most_recent_seq_id = selected_seq.getID();
 
-				for (int i = 0; i < seqtable.getRowCount(); i++) {
+				int rowCount = seqtable.getRowCount();
+				for (int i = 0; i < rowCount; i++) {
 					// should be able to use == here instead of equals(), because table's model really returns seq.getID()
 					if (most_recent_seq_id == seqtable.getValueAt(i, 0)) {
 						if (seqtable.getSelectedRow() != i) {
@@ -149,7 +139,6 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 				}
 			}
 			lsm.addListSelectionListener(this);
-		// }
 		}
 	}
 

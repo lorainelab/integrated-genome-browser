@@ -20,7 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-public class DataLoadView extends JComponent {
+public final class DataLoadView extends JComponent {
 	final GeneralLoadView general_load_view;
 	private final SeqGroupView group_view;
 	public static int TAB_DATALOAD_PREFS = -1;
@@ -48,9 +48,5 @@ public class DataLoadView extends JComponent {
 
 	public void tableChanged() {
 		general_load_view.createFeaturesTable();
-	}
-
-	public void clearSeqTable() {
-		group_view.clearSeqTable();
 	}
 }

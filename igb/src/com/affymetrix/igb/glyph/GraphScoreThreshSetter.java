@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genoviz.swing.DisplayUtils;
+import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -75,7 +76,7 @@ public final class GraphScoreThreshSetter extends JPanel
 	private final JRadioButton thresh_unknownB; // invisible radio button
 	private final JTextField shift_startTF = new JTextField("0", 5);
 	private final JTextField shift_endTF = new JTextField("0", 5);
-	private final JComboBox threshCB = new JComboBox();
+	private final JComboBox threshCB = new JComboBoxWithSingleListener();
 	private final JButton tier_threshB = new JButton("Make Track");
 	private static final float sliders_per_percent = 10.0f;
 	private static final float percents_per_slider = 1.0f / sliders_per_percent;

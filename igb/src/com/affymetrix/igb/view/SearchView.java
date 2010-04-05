@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.das2.Das2VersionedSource;
+import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import java.awt.Dimension;
 import javax.swing.event.ListSelectionEvent;
@@ -68,8 +69,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private JTextField searchTF;
 	private final JPanel pan1 = new JPanel();
-	private final JComboBox sequence_CB = new JComboBox();
-	private final JComboBox searchCB = new JComboBox();
+	private final JComboBox sequence_CB = new JComboBoxWithSingleListener();
+	private final JComboBox searchCB = new JComboBoxWithSingleListener();
 	private final JCheckBox remoteSearchCheckBox = new JCheckBox("");
 	private final JCheckBox selectInMapCheckBox = new JCheckBox(SELECTINMAP_TEXT);
 	private final JButton searchButton = new JButton("Search");

@@ -40,6 +40,7 @@ import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -99,7 +100,7 @@ public final class SimpleGraphTab extends JPanel
 	}
 	private final JButton cloneB = new JButton("Go");
 	private final JLabel scale_type_label = new JLabel("Transformation:");
-	private final JComboBox scaleCB = new JComboBox();
+	private final JComboBox scaleCB = new JComboBoxWithSingleListener();
 	private final JCheckBox labelCB = new JCheckBox("Label");
 	private final JCheckBox yaxisCB = new JCheckBox("Y Axis");
 	private final JCheckBox floatCB = new JCheckBox("Floating");

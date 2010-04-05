@@ -20,15 +20,14 @@ public final class SeqSelectionEvent extends EventObject {
 			this.selected_seqs = Collections.<BioSeq>emptyList();
 		} else {
 			this.selected_seqs = seqs;
-		}
-
-		if (!selected_seqs.isEmpty()) {
-			primary_selection = selected_seqs.get(0);
+			if (!selected_seqs.isEmpty()) {
+				primary_selection = selected_seqs.get(0);
+			}
 		}
 	}
 
 	/** Gets the first entry in the list {@link #getSelectedSeq()}.
-	 *  @return an BioSeq or null.
+	 *  @return a BioSeq or null.
 	 */
 	public BioSeq getSelectedSeq() {
 		return primary_selection;

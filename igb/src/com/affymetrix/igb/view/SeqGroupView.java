@@ -19,7 +19,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableRowSorter;
+//import javax.swing.table.TableRowSorter;
 
 final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
@@ -30,8 +30,8 @@ final class SeqGroupView extends JComponent implements ListSelectionListener, Gr
 	private BioSeq selected_seq = null;
 	private AnnotatedSeqGroup previousGroup = null;
 	private int previousSeqCount = 0;
-	private ListSelectionModel lsm;
-	private TableRowSorter<SeqGroupTableModel> sorter;
+	private final ListSelectionModel lsm;
+	//private TableRowSorter<SeqGroupTableModel> sorter;
 	private String most_recent_seq_id = null;
 
 
@@ -71,14 +71,19 @@ final class SeqGroupView extends JComponent implements ListSelectionListener, Gr
 				System.out.println("  seq count: " + group.getSeqCount());
 			}
 		}
+		if (previousGroup == group) {
+			if (group == null) {
+				return;
+			}
+			warnAboutNewlyAddedChromosomes(previousSeqCount, group);
+		}
 
-		warnAboutNewlyAddedChromosomes(previousGroup, previousSeqCount, group);
 		previousGroup = group;
 		previousSeqCount = group == null ? 0 : group.getSeqCount();
 
 
 		SeqGroupTableModel mod = new SeqGroupTableModel(group);
-		sorter = new TableRowSorter<SeqGroupTableModel>(mod);
+		//sorter = new TableRowSorter<SeqGroupTableModel>(mod);
 		selected_seq = null;
 		seqtable.setModel(mod);
 		//seqtable.setRowSorter(sorter);
@@ -96,17 +101,15 @@ final class SeqGroupView extends JComponent implements ListSelectionListener, Gr
 		}
 	}
 
-	private static void warnAboutNewlyAddedChromosomes(AnnotatedSeqGroup previousGroup, int previousSeqCount, AnnotatedSeqGroup group) {
-		if (previousGroup != null && previousGroup == group) {
-			if (previousSeqCount > group.getSeqCount()) {
-				System.out.println("WARNING: chromosomes have been added");
-				if (previousSeqCount < group.getSeqCount()) {
-					System.out.print("New chromosomes:");
-					for (int i = previousSeqCount; i < group.getSeqCount(); i++) {
-						System.out.print(" " + group.getSeq(i).getID());
-					}
-					System.out.println();
+	private static void warnAboutNewlyAddedChromosomes(int previousSeqCount, AnnotatedSeqGroup group) {
+		if (previousSeqCount > group.getSeqCount()) {
+			System.out.println("WARNING: chromosomes have been added");
+			if (previousSeqCount < group.getSeqCount()) {
+				System.out.print("New chromosomes:");
+				for (int i = previousSeqCount; i < group.getSeqCount(); i++) {
+					System.out.print(" " + group.getSeq(i).getID());
 				}
+				System.out.println();
 			}
 		}
 	}

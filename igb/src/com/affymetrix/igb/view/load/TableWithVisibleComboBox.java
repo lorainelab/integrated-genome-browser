@@ -37,7 +37,7 @@ public final class TableWithVisibleComboBox {
 
     FeaturesTableModel ftm = (FeaturesTableModel) table.getModel();
 	sorter = new TableRowSorter<FeaturesTableModel>(ftm);
-	//table.setRowSorter(sorter);
+	table.setRowSorter(sorter);
 
     JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
     DAScb.setEnabled(enabled);

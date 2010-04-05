@@ -1005,6 +1005,8 @@ public final class GraphGlyph extends Glyph {
 			prev_point.x = curr_point.x;
 			prev_point.y = curr_point.y;
 		}
+		/* draw last pixel position */
+		drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, graph_style, g, ysum, points_in_pixel, draw_end_index);
 	}
 
 

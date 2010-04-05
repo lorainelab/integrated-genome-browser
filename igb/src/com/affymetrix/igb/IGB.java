@@ -534,6 +534,7 @@ public final class IGB extends Application
 		// that is created by an exception during plugin set-up will appear
 		// on top of the main frame, not hidden by it.
 
+		frm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frm.addWindowListener(new WindowAdapter() {
 
 			@Override

@@ -42,6 +42,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
@@ -228,7 +229,11 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {
+		boolean areAllServersInited = ServerList.areAllServersInited();	// do this first to avoid race condition
 		GenericServer gServer = (GenericServer)evt.getSource();
+		if (gServer.getServerStatus() != ServerStatus.Initialized) {
+			return;	// ignore uninitialized servers
+		}
 
 		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 
@@ -258,7 +263,7 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		// Only try restoring persistent genome if all the server responses have come back.
-		if (lookForPersistentGenome && ServerList.areAllServersInited()) {
+		if (lookForPersistentGenome && areAllServersInited) {
 			lookForPersistentGenome = false;
 			try {
 				// hack so event queue finishes
@@ -279,10 +284,6 @@ public final class GeneralLoadView extends JComponent
 		int speciesListLength = GeneralLoadUtils.species2genericVersionList.keySet().size();
 		if (speciesListLength == speciesCB.getItemCount() -1) {
 			// No new species.  Don't bother refreshing.
-			if (speciesListLength == 0 && speciesCB.isEnabled()) {
-				speciesCB.setEnabled(false);
-				// disable if there are no species yet.
-			}
 			return;
 		}
 

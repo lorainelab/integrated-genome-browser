@@ -106,23 +106,6 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 			sorted = true;
 		}
 
-		if (DEBUG) {
-			prev_min = Integer.MIN_VALUE;
-			for (int i = 0; i < child_count; i++) {
-				SeqSymmetry child = getChild(i);
-				int min = child.getSpan(search_seq).getMin();
-				if (prev_min > min) {
-					sorted = false;
-					System.out.println("$$$$$  WARNING: children of IntervalSearchSym not sorted! index = "
-							+ i + ", seq = " + search_seq.getID() + "  $$$$$");
-					break;
-				}
-				prev_min = min;
-			}
-			if (sorted) {
-				System.out.println("SORTED for seq: " + search_seq.getID());
-			}
-		}
 		determineMaxSymList(child_count);
 
 		ready_for_searching = true;
@@ -189,9 +172,21 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 		}
 
 		int cur_min = getChild(beg_index).getSpan(search_seq).getMin();
+		beg_index = minBackTrack(beg_index, cur_min);
+		int backtrack_max_index = maxBacktrack(beg_index, search_min);
 
 		// overlap check required up to beg_index
+		// and should have for just (min < search_max) search:
+		//    iterate through children from beg_index+1 till first one with min >= max
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(1000);
+		checkBackwards(backtrack_max_index, beg_index, search_min, search_max, results);
+		checkForwards(beg_index, child_count, search_max, results);
 
+		return results;
+	}
+
+	private int minBackTrack(int beg_index, int cur_min) {
+		// overlap check required up to beg_index
 		// backtrack if previous mins are equivalent to this min,
 		//   since binarySearch is not guaranteed to return lowest index of
 		//   equal mins
@@ -203,20 +198,10 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 				break;
 			}
 		}
-
 		if (DEBUG) {
 			System.out.println("done with min backtracking, beg_index = " + beg_index);
 		}
-		int backtrack_max_index = maxBacktrack(beg_index, search_min);
-
-		//    iterate through children from backtrack_max_index to beg_index
-		// and should have for just (min < search_max) search:
-		//    iterate through children from beg_index+1 till first one with min >= max
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(1000);
-		checkBackwards(backtrack_max_index, beg_index, search_min, search_max, results);
-		checkForwards(beg_index, child_count, search_max, results);
-
-		return results;
+		return beg_index;
 	}
 
 	private int maxBacktrack(int beg_index, int search_min) {

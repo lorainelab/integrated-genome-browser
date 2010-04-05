@@ -71,6 +71,7 @@ import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
 import java.text.MessageFormat;
+import java.util.prefs.Preferences;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
@@ -583,6 +584,8 @@ public final class IGB extends Application
 
 		WebLink.autoLoad();
 
+		showFirstTimeSurveyDialog();
+
 
 		// Need to let the QuickLoad system get started-up before starting
 		//   the control server that listens to ping requests?
@@ -816,6 +819,37 @@ public final class IGB extends Application
 			JFrame f = pv.getFrame();
 			f.setVisible(true);
 		}
+	}
+
+	private void showFirstTimeSurveyDialog() {
+		Preferences p = PreferenceUtils.getTopNode().node("survey");
+		String sawSurvey = "SawSurveyApr2010";
+		if (p.getBoolean(sawSurvey, false)) {
+			return;
+		}
+
+		p.putBoolean(sawSurvey, true);
+		// Only show the survey once
+
+		JPanel message_pane = new JPanel();
+		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
+		JTextArea surveyText = new JTextArea();
+
+		final String URL = "http://cnn.com";
+		String text = "Help!  We need your feedback to continue improving and funding IGB!";
+		text += "\n";
+		text += "After this dialog is dismissed, your internet browser will open URL:";
+		text += "\n" + URL;
+		text += "\n\nPlease take the survey at that location.\n";
+		text += "This message will disappear the next time you run IGB.\n\n";
+		surveyText.append(text);
+
+		message_pane.add(new JScrollPane(surveyText));
+
+		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE);
+		final JDialog dialog = pane.createDialog(frm, "We need feedback!");
+		dialog.setVisible(true);
+		GeneralUtils.browse(URL);
 	}
 
 	void showAboutDialog() {

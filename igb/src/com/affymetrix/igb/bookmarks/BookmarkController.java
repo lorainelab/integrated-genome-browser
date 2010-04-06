@@ -79,13 +79,6 @@ public abstract class BookmarkController {
     }
   }
 
-  /** Causes a bookmark to be executed.
-   *  @param gviewer  a useless, ignored parameter.
-   */
-  public static void viewBookmark(Application app, SeqMapView gviewer, Bookmark bm) {
-    viewBookmark(app, bm);
-  }
-
   public static void loadGraphsEventually(final SeqMapView gviewer, final Map props) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -98,7 +91,7 @@ public abstract class BookmarkController {
     });
   }
 
-  public static void loadGraphs(SeqMapView gviewer, Map map) {
+  private static void loadGraphs(SeqMapView gviewer, Map map) {
     double default_ypos = 30;
     double default_yheight = 60;
     Color default_col = Color.lightGray;
@@ -434,7 +427,7 @@ public abstract class BookmarkController {
   /** Returns a hexidecimal representation of the color with
    *  "0x" plus exactly 6 digits.  Example  Color.BLUE -> "0x0000FF".
    */
-  static String sixDigitHex(Color c) {
+  private static String sixDigitHex(Color c) {
     int i = c.getRGB() & 0xFFFFFF;
     String s = Integer.toHexString(i).toUpperCase();
     while (s.length() < 6) {

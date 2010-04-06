@@ -115,7 +115,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
   /** Finds a sublist with the given name.
    *  @param create if true, will create the sublist if it doesn't exist.
    */
-  public BookmarkList getSubListByName(String name, boolean create) {
+  private BookmarkList getSubListByName(String name, boolean create) {
     BookmarkList result = null;
     Enumeration childs = children();
     while (childs.hasMoreElements()) {

@@ -21,18 +21,14 @@ import javax.swing.*;
  *  form for one that opens in an external browser.
  *  (This is currently just a test class.  Not ready for production use.)
  */
-public final class BookmarkIcon implements Icon {
-    public static final int UNIBROW_CONTROL = 0;
-    public static final int EXTERNAL = 1;
-    public static final int SEPARATOR = 2;
-
+final class BookmarkIcon implements Icon {
     private final int width;
     private final int height;
 
     private final int[] xPoints;
     private final int[] yPoints;
 
-    public BookmarkIcon(int width, int height, int[] xPoints, int[] yPoints) {
+    private BookmarkIcon(int width, int height, int[] xPoints, int[] yPoints) {
       if (xPoints.length != yPoints.length || xPoints.length==0) {
         throw new IllegalArgumentException();
       }
@@ -42,17 +38,16 @@ public final class BookmarkIcon implements Icon {
       this.yPoints = yPoints;
     }
 
-    public static final BookmarkIcon UNIBROW_CONTROL_ICON = getRectangleIcon(6,6);
-    public static final BookmarkIcon EXTERNAL_ICON = getDiamondIcon(6,6);
-    //public static final BookmarkIcon SEPARATOR_ICON = getRectangleIcon(6,2);
+    static final BookmarkIcon UNIBROW_CONTROL_ICON = getRectangleIcon(6,6);
+    static final BookmarkIcon EXTERNAL_ICON = getDiamondIcon(6,6);
     
-    public static BookmarkIcon getRectangleIcon(int width, int height) {
+    private static BookmarkIcon getRectangleIcon(int width, int height) {
       int[] x = {0, width, width, 0};
       int[] y = {0, 0, height, height};
       return new BookmarkIcon(width, height, x, y);
     }
     
-    public static BookmarkIcon getDiamondIcon(int width, int height) {
+    private static BookmarkIcon getDiamondIcon(int width, int height) {
       int[] x = {0, width/2, width, width/2};
       int[] y = {height/2, height, height/2, 0};
       return new BookmarkIcon(width, height, x, y);

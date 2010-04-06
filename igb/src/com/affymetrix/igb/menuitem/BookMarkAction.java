@@ -214,7 +214,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       BookmarkJMenuItem item = (BookmarkJMenuItem) src;
       Bookmark bm = item.getBookmark();
       try {
-        BookmarkController.viewBookmark(uni, gviewer, bm);
+        BookmarkController.viewBookmark(uni, bm);
       } catch (Exception e) {
         Application.errorPanel("Problem viewing bookmark", e);
       }

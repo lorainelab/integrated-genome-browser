@@ -13,13 +13,13 @@
 
 package com.affymetrix.genometryImpl;
 
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import java.util.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genometryImpl.util.FloatList;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
@@ -170,9 +170,9 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		BioSeq aseq = pspan.getBioSeq();
 		int score_count = scores.length;
 
-		IntList xlist = new IntList(score_count);
-		IntList wlist = new IntList(score_count);
-		FloatList ylist = new FloatList(score_count);
+		IntArrayList xlist = new IntArrayList(score_count);
+		IntArrayList wlist = new IntArrayList(score_count);
+		FloatArrayList ylist = new FloatArrayList(score_count);
 		for (int i=0; i<score_count; i++) {
 			IndexedSym isym = (IndexedSym)this.getChild(i);
 			if (isym.getIndex() != i) {
@@ -197,11 +197,11 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		} else {
 			id = getGraphID(seq_group, name, '-');
 		}
-		int[] xcoords = xlist.copyToArray();
+		int[] xcoords = Arrays.copyOf(xlist.elements(), xlist.size());
 		xlist = null;
-		int[] wcoords = wlist.copyToArray();
+		int[] wcoords = Arrays.copyOf(wlist.elements(), wlist.size());
 		wlist = null;
-		float[] ycoords = ylist.copyToArray();
+		float[] ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
 		ylist = null;
 		GraphIntervalSym gsym = new GraphIntervalSym(xcoords, wcoords, ycoords, id, aseq);
 		if (orientation) {

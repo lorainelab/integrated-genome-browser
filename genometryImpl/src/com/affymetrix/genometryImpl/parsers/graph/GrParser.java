@@ -12,12 +12,12 @@
  */
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.PointIntFloat;
 import java.io.*;
 import java.util.*;
@@ -25,7 +25,7 @@ import java.util.*;
 
 public final class GrParser {
 
-	static Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
+	private static final Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
 
 	public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
 		BufferedOutputStream bos = null;
@@ -59,8 +59,8 @@ public final class GrParser {
 		boolean hasHeader = false;
 		int count = 0;
 
-		IntList xlist = new IntList();
-		FloatList ylist = new FloatList();
+		IntArrayList xlist = new IntArrayList();
+		FloatArrayList ylist = new FloatArrayList();
 
 		InputStreamReader isr = new InputStreamReader(istr);
 		BufferedReader br = new BufferedReader(isr);
@@ -99,7 +99,6 @@ public final class GrParser {
 		}
 		int x = 0;
 		float y = 0;
-		//    double xprev = Double.NEGATIVE_INFINITY;
 		int xprev = Integer.MIN_VALUE;
 		boolean sorted = true;
 		while ((line = br.readLine()) != null) {
@@ -139,6 +138,8 @@ public final class GrParser {
 				PointIntFloat pnt = new PointIntFloat(x, y);
 				points.add(pnt);
 			}
+			xlist = null;
+			ylist = null;
 			Collections.sort(points, pointcomp);
 			xcoords = new int[graph_length];
 			ycoords = new float[graph_length];
@@ -147,16 +148,14 @@ public final class GrParser {
 				xcoords[i] = pnt.x;
 				ycoords[i] = pnt.y;
 			}
+			points = null;
 		}
 		else {
-			xcoords = xlist.copyToArray();
+			xcoords = Arrays.copyOf(xlist.elements(), xlist.size());
 			xlist = null;
-			System.gc();
-			ycoords = ylist.copyToArray();
+			ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
 			ylist = null;
-			System.gc();
 		}
-		//    graf = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), name, aseq);
 		if (ensure_unique_id)  { name = AnnotatedSeqGroup.getUniqueGraphID(name, aseq); }
 		graf = new GraphSym(xcoords, ycoords, name, aseq);
 		System.out.println("loaded graph data, total points = " + count);

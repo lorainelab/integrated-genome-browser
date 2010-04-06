@@ -133,13 +133,13 @@ public final class ScoredIntervalParser {
 
 			// parse header lines (which must begin with "#")
 			while (((line = br.readLine())!= null) &&
-					(line.startsWith("#") ||
-					 line.startsWith(" ") ||
-					 line.startsWith("\t") )  ) {
+					(line.charAt(0) == '#' ||
+					 line.charAt(0) == ' ' ||
+					 line.charAt(0) == '\t' )  ) {
 
 				// skipping starting lines that begin with space or tab, since
 				// files output from GCOS begin with a header line that starts with a tab.
-				if (line.startsWith(" ")  || line.startsWith("\t")) {
+				if (line.charAt(0) == ' '  || line.charAt(0) == '\t') {
 					System.out.println("skipping line starting with whitespace: " + line);
 					continue;
 				}
@@ -264,7 +264,6 @@ public final class ScoredIntervalParser {
 				}   // end sin3 conditional
 
 				if (score_names == null) {
-					//          score_count = fields.length - 4;
 					score_count = fields.length - score_offset;
 					score_names = initScoreNames(score_count, index2id, stream_name);
 				}
@@ -315,7 +314,7 @@ public final class ScoredIntervalParser {
 				container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 
 				// Force the AnnotStyle for the container to have glyph depth of 1
-				IAnnotStyleExtended style = seq_group.getStateProvider().getAnnotStyle(unique_container_name);
+				IAnnotStyleExtended style = AnnotatedSeqGroup.getStateProvider().getAnnotStyle(unique_container_name);
 				style.setGlyphDepth(1);
 
 				List<SinEntry> entry_list = seq2sinentries.get(aseq);

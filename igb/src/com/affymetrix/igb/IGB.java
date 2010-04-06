@@ -71,6 +71,7 @@ import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
 import java.text.MessageFormat;
+import java.util.prefs.Preferences;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
@@ -583,6 +584,8 @@ public final class IGB extends Application
 
 		WebLink.autoLoad();
 
+		showFirstTimeSurveyDialog();
+
 
 		// Need to let the QuickLoad system get started-up before starting
 		//   the control server that listens to ping requests?
@@ -816,6 +819,53 @@ public final class IGB extends Application
 			JFrame f = pv.getFrame();
 			f.setVisible(true);
 		}
+	}
+
+	private void showFirstTimeSurveyDialog() {
+		Preferences p = PreferenceUtils.getTopNode().node("survey");
+		String sawSurvey = "SawSurveyApr2010";
+		if (p.getBoolean(sawSurvey, false)) {
+			return;
+		}
+		
+
+		String URL = "http://www.surveymonkey.com/s/NC87QRM";
+		
+		JPanel message_pane = new JPanel();
+		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
+		JTextArea surveyText = new JTextArea();
+		String text = "Help!  We need your feedback to continue improving IGB!";
+		text += "\n\n";
+		text += "Click \"Yes\" to answer survey questions.\n";
+		text += "This will open an external URL.\n";
+		text += "This dialog will not appear again.\n";
+		surveyText.append(text);
+
+		String title = "We need feedback!";
+		message_pane.add(new JScrollPane(surveyText));
+
+		Object[] options = new Object[] {"Yes","No thanks","Remind me later"};
+		int n = JOptionPane.showOptionDialog(
+				frm,
+				text,
+				title,
+			    JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				options,
+				options[0]);
+		if (n == JOptionPane.YES_OPTION) {
+			System.out.println("YES");
+			GeneralUtils.browse(URL);
+			p.putBoolean(sawSurvey, true);
+			// Only show the survey once
+		} else if (n == JOptionPane.NO_OPTION) {
+			p.putBoolean(sawSurvey, true);
+			// Only show the survey once
+		} else {
+			// Remind user later.
+		}
+		
 	}
 
 	void showAboutDialog() {

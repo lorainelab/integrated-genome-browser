@@ -149,8 +149,8 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 					// only set the AnnotStyle properties from it
 					// if this is NOT a ".link.psl" file.
 					if (is_link_psl) {
-						Map track_props = track_line_parser.parseTrackLine(line, track_name_prefix);
-						String track_name = (String) track_props.get(TrackLineParser.NAME);
+						Map<String,String> track_props = track_line_parser.parseTrackLine(line, track_name_prefix);
+						String track_name = track_props.get(TrackLineParser.NAME);
 						if (track_name != null && track_name.endsWith("probesets")) {
 							in_bottom_of_link_psl = true;
 						}

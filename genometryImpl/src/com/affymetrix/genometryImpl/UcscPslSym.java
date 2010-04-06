@@ -31,29 +31,28 @@ public class UcscPslSym
 	public static final int QUERY_INDEX = 0;
 	public static final int TARGET_INDEX = 1;
 
-	String type;
-	int matches;
-	int mismatches;
-	int repmatches; // should be derivable w/o residues
-	int ncount;
-	int qNumInsert;  // should be derivable w/o residues
-	int qBaseInsert; // should be derivable w/o residues
-	int tNumInsert;  // should be derivable w/o residues
-	int tBaseInsert; // should be derivable w/o residues
-	boolean same_orientation;
-	boolean overlapping_query_coords = false;
-	boolean overlapping_target_coords = false;
+	private String type;
+	private int matches;
+	private int mismatches;
+	private int repmatches; // should be derivable w/o residues
+	private int ncount;
+	private int qNumInsert;  // should be derivable w/o residues
+	private int qBaseInsert; // should be derivable w/o residues
+	private int tNumInsert;  // should be derivable w/o residues
+	private int tBaseInsert; // should be derivable w/o residues
+	protected boolean same_orientation;
+	private boolean overlapping_query_coords = false;
 
-	BioSeq queryseq;
-	int qmin;
-	int qmax;
-	BioSeq targetseq;
-	int tmin;
-	int tmax;
-	int[] blockSizes;
-	int[] qmins;
-	int[] tmins;
-	Map<String,Object> props;
+	protected BioSeq queryseq;
+	private int qmin;
+	private int qmax;
+	protected BioSeq targetseq;
+	private int tmin;
+	private int tmax;
+	protected int[] blockSizes;
+	protected int[] qmins;
+	protected int[] tmins;
+	private Map<String,Object> props;
 
 	/**
 	 *  @param blockcount  ignored, uses blockSizes.length
@@ -112,10 +111,6 @@ public class UcscPslSym
 			prevmin = qmins[i];
 		}
 			}
-
-	public boolean supportsFastIntervalQuery() {
-		return (! overlapping_query_coords);
-	}
 
 	public String getType() { return type; }
 
@@ -181,24 +176,6 @@ public class UcscPslSym
 	}
 
 	public int getChildCount() { return blockSizes.length; }
-
-	public boolean getChildSpan(int child_index, BioSeq span_seq, MutableSeqSpan mutspan) {
-		boolean success = false;
-		if (span_seq == queryseq) {
-			mutspan.set(qmins[child_index], qmins[child_index]+blockSizes[child_index], queryseq);
-			success = true;
-		}
-		else if (span_seq == targetseq) {
-			if (same_orientation) {
-				mutspan.set(tmins[child_index], tmins[child_index]+blockSizes[child_index], targetseq);
-			}
-			else {
-				mutspan.set(tmins[child_index]+blockSizes[child_index], tmins[child_index], targetseq);
-			}
-			success = true;
-		}
-		return success;
-	}
 
 	public SeqSymmetry getChild(int i) {
 		if (same_orientation) {
@@ -340,7 +317,7 @@ public class UcscPslSym
 	/**
 	 *  Writes a line of PSL to a writer, including property tag values.
 	 */
-	public void outputPslFormat(DataOutputStream out) throws IOException  {
+	public final void outputPslFormat(DataOutputStream out) throws IOException  {
 		outputStandardPsl(out, false);
 		outputPropTagVals(out);
 		out.write('\n');
@@ -419,10 +396,10 @@ public class UcscPslSym
 
 	protected void outputPropTagVals(DataOutputStream out)  throws IOException {
 		if (props != null) {
-			Iterator iter = props.entrySet().iterator();
+			Iterator<Map.Entry<String,Object>> iter = props.entrySet().iterator();
 			while (iter.hasNext()) {
-				Map.Entry entry = (Map.Entry)iter.next();
-				out.write(((String)entry.getKey()).getBytes());
+				Map.Entry<String,Object> entry = iter.next();
+				out.write((entry.getKey()).getBytes());
 				out.write('=');
 				out.write(entry.getValue().toString().getBytes());
 				out.write('\t');
@@ -430,7 +407,7 @@ public class UcscPslSym
 		}
 	}
 
-	public void outputBpsFormat(DataOutputStream dos) throws IOException  {
+	public final void outputBpsFormat(DataOutputStream dos) throws IOException  {
 		dos.writeInt(matches);
 		dos.writeInt(mismatches);
 		dos.writeInt(repmatches);
@@ -459,67 +436,5 @@ public class UcscPslSym
 		for (int i=0; i<blockcount; i++) {
 			dos.writeInt(tmins[i]);
 		}
-	}
-
-	/**
-	 *  Return a UcscPslSym that is the result of switching
-	 *    target and query.
-	 */
-	public UcscPslSym flipTargetAndQuery() {
-		//  if target and query are same orientation, then just need to switch t** with q**
-		//  if ! same_orientation, could still just switch, but then can lose advantage
-		//      quick interval search over query, since qmins (which used to be tmins)
-		//      will likely no longer be in ascending order
-		//  therefore to allow one to take advantage of quick query interval search,
-		//      if (! same_orientation) then also flipping order of  tmins, qmins, and blocksizes
-		int[] new_blockSizes;
-		int[] new_qmins;
-		int[] new_tmins;
-
-		new_blockSizes = blockSizes;
-		new_qmins = tmins;
-		new_tmins = qmins;
-
-		if (same_orientation) {
-			new_blockSizes = blockSizes;
-			new_qmins = tmins;
-			new_tmins = qmins;
-		}
-		else {
-			int bcount = blockSizes.length;
-			new_blockSizes = new int[bcount];
-			new_qmins = new int[bcount];
-			new_tmins = new int[bcount];
-			for (int i=0; i<bcount; i++) {
-				new_blockSizes[i] = blockSizes[bcount-i-1];
-				new_qmins[i] = tmins[bcount-i-1];
-				new_tmins[i] = qmins[bcount-i-1];
-			}
-		}
-
-		UcscPslSym new_sym =
-			new UcscPslSym(
-					type, // String type,
-					matches, // int matches,
-					mismatches, // int mismatches,
-					repmatches, // int repmatches,
-					ncount, // int ncount,
-					tNumInsert,     // int qNumInsert,
-					tBaseInsert, // int qBaseInsert,
-					qNumInsert, // int tNumInsert,
-					qBaseInsert, // int tBaseInsert,
-					same_orientation, // boolean same_orientation,
-					targetseq, // BioSeq queryseq,
-					tmin, // int qmin,
-					tmax, // int qmax,
-					queryseq, // BioSeq targetseq,
-					qmin, // int tmin,
-					qmax, // int tmax,
-					blockSizes.length, // int blockcount
-					new_blockSizes,  // int[] blockSizes,
-					new_qmins,
-					new_tmins
-						);
-		return new_sym;
 	}
 }

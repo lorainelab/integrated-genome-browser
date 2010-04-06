@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -66,10 +67,21 @@ public final class BAMParser {
 				}
 			}
 		}
-		
+		getGenome();
+	}
+
+	public void getGenome() {
 		for (BioSeq seq : group.getSeqList()) {
-			parse(seq, seq.getMin(), seq.getMax(), true, true);
+			getChromosome(seq);
 		}
+	}
+
+	public void getChromosome(BioSeq seq) {
+		parse(seq, seq.getMin(), seq.getMax(), true, true);
+	}
+
+	public void getRegion(BioSeq seq, SeqSpan span) {
+		parse(seq, span.getMin(), span.getMax(), true, true);
 	}
 	
 	/**
@@ -99,7 +111,9 @@ public final class BAMParser {
 				}
 			}
 		} finally {
-			iter.close();
+			if (iter != null) {
+				iter.close();
+			}
 		}
 
 		return symList;
@@ -115,33 +129,6 @@ public final class BAMParser {
 		sym.setProperty("method", f.getName());
 		seq.addAnnotation(sym);
 		return sym;
-	}
-
-	/**
-	 * Return intervals for the given chromosome range
-	 */
-	public void parseLoRes(BioSeq seq, int min, int max, float scaleFactor, int[]x, float[]y) {
-		CloseableIterator<SAMRecord> iter = null;
-		try {
-			if (reader != null) {
-				iter = reader.query(seq.getID(), min, max, true);
-				if (iter != null) {
-					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
-						SimpleSymWithProps sym = convertSAMRecordToSymWithProps(sr, seq, f.getName().intern());
-						int start = (int) ((sr.getAlignmentStart() - 1) * scaleFactor); // convert to interbase
-						int end = (int) (sr.getAlignmentEnd() * scaleFactor);
-						if (!sr.getReadNegativeStrandFlag()) {
-							// swap
-							int temp = start;
-							start = end;
-							end = temp;
-						}
-					}
-				}
-			}
-		} finally {
-			iter.close();
-		}
 	}
 
 	/**

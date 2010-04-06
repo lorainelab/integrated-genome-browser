@@ -580,9 +580,10 @@ public final class GeneralLoadUtils {
 
 		boolean result = false;
 
-		Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
+		
 
 		if (serverType == ServerType.DAS2) {
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
 			result = loadDAS2Annotations(
 							selected_seq,
 							gFeature.featureName,
@@ -591,16 +592,18 @@ public final class GeneralLoadUtils {
 							visible_seq,
 							overlap);
 		} else if (serverType == ServerType.DAS) {
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
 			result = DasFeatureLoader.loadFeatures(gFeature, overlap);
 		} else if (serverType == ServerType.QuickLoad) {
-			result = ((QuickLoadFeatureLoading)gFeature.gsr).loadFeatures(gviewer, overlap, gFeature.loadStrategy);
+			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading)gFeature.gsr;
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
+			result = gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
 		} else if (serverType == ServerType.LocalFiles) {
-			//result = ((QuickLoadFeatureLoading)gFeature.gsr).loadFeatures(gviewer, overlap);
-			//result = FeatureLoading.loadLocalFileAnnotations(gFeature, overlap);
-			result = ((QuickLoadFeatureLoading)gFeature.gsr).loadFeatures(gviewer, overlap, gFeature.loadStrategy);
+			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading)gFeature.gsr;
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
+			result = gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
 		} else {
 			System.out.println("class " + serverType + " is not implemented.");
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
 		}
 
 		return result;

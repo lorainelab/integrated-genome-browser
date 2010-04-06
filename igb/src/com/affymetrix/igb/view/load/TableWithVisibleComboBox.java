@@ -50,7 +50,7 @@ public final class TableWithVisibleComboBox {
     QuickLoadcb.setEnabled(enabled);
     DefaultCellEditor QuickLoadeditor = new DefaultCellEditor(QuickLoadcb);
 
-	JComboBox LocalFilecb = new JComboBox(FeaturesTableModel.quickloadLoadChoices);
+	JComboBox LocalFilecb = new JComboBox(FeaturesTableModel.newFileLoadChoices);
     LocalFilecb.setEnabled(true);
     DefaultCellEditor LocalFileeditor = new DefaultCellEditor(LocalFilecb);
 

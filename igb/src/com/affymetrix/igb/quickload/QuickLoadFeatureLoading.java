@@ -61,7 +61,7 @@ import javax.swing.SwingWorker;
 public class QuickLoadFeatureLoading extends GenericSymRequest {
 	private File f;
 	private final GenericVersion version;
-	private final String featureName;
+	public final String featureName;
 
 	public QuickLoadFeatureLoading(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName));
@@ -190,9 +190,10 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoadFeatureLoading.this.featureName);
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+				} finally {
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoadFeatureLoading.this.featureName);
 				}
 			}
 		};
@@ -255,7 +256,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
 				BAMParser parser = new BAMParser(this.f, this.version.group);
-				parser.parse();
+				parser.getGenome();
 			}
 			return feats;
 		}
@@ -275,6 +276,38 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
+		if (this.extension.endsWith("bam")) {
+
+			// special-case BAM files, because Picard can only parse from files.
+			if (this.version.group == null) {
+				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
+			} else {
+				BAMParser parser = new BAMParser(this.f, this.version.group);
+				parser.getChromosome(seq);
+			}
+			return null;
+		}
+		return super.getChromosome(seq);
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> getRegion(BioSeq seq, SeqSpan span) {
+		if (this.extension.endsWith("bam")) {
+
+			// special-case BAM files, because Picard can only parse from files.
+			if (this.version.group == null) {
+				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
+			} else {
+				BAMParser parser = new BAMParser(this.f, this.version.group);
+				parser.getRegion(seq, span);
+			}
+			return null;
+		}
+		return super.getRegion(seq, span);
 	}
 
 

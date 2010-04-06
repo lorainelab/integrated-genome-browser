@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
@@ -26,6 +25,8 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	static final String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
 	static final String[] quickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.GENOME.toString()};
 	static final String[] newQuickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
+	static final String[] newFileLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
+
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int LOAD_STRATEGY_COLUMN = 0;
 	static final int FEATURE_NAME_COLUMN = 1;

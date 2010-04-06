@@ -596,7 +596,8 @@ public final class GeneralLoadUtils {
 			result = ((QuickLoadFeatureLoading)gFeature.gsr).loadFeatures(gviewer, overlap, gFeature.loadStrategy);
 		} else if (serverType == ServerType.LocalFiles) {
 			//result = ((QuickLoadFeatureLoading)gFeature.gsr).loadFeatures(gviewer, overlap);
-			result = FeatureLoading.loadLocalFileAnnotations(gFeature, overlap);
+			//result = FeatureLoading.loadLocalFileAnnotations(gFeature, overlap);
+			result = ((QuickLoadFeatureLoading)gFeature.gsr).loadFeatures(gviewer, overlap, gFeature.loadStrategy);
 		} else {
 			System.out.println("class " + serverType + " is not implemented.");
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);

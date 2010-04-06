@@ -450,7 +450,7 @@ public abstract class SeqUtils {
 
 		// if can't find a linker span, then there's a problem...
 		if (linkSpan == null) {
-			System.out.println("Warning: Can't find a linker span...");
+			//System.out.println("Warning: Can't find a linker span...");
 			// what should happen???
 			return false;
 		}

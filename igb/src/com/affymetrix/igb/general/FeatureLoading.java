@@ -2,16 +2,11 @@ package com.affymetrix.igb.general;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasSource;
 import com.affymetrix.igb.das.DasType;
@@ -19,18 +14,10 @@ import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.das2.Das2Type;
 import com.affymetrix.igb.das2.Das2VersionedSource;
-import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -39,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 public final class FeatureLoading {
@@ -230,77 +215,5 @@ public final class FeatureLoading {
 			Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getShortName());
 		}
 	}
-
-	public static boolean loadLocalFileAnnotations(final GenericFeature gFeature, SeqSpan overlapSpan) throws OutOfMemoryError {
-		final File[] f = (File[]) gFeature.typeObj;
-		final FileInputStream fis;
-		try {
-			fis = new FileInputStream(f[0]);
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(FeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
-			return false;
-		}
-
-		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);
-
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-			public Void doInBackground() {
-				try {
-					try {
-						final String fileName = f[0].getAbsolutePath();
-						final String annot_url = "file://" + fileName;
-						BufferedInputStream bis = null;
-						loadStreamFeature(fileName, gFeature.featureName, annot_url, fis, bis);
-					} catch (Exception ex) {
-						Logger.getLogger(FeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
-					} finally {
-						GeneralUtils.safeClose(fis);
-					}
-					return null;
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return null;
-			}
-
-			@Override
-			public void done() {
-				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			}
-		};
-
-		vexec.execute(worker);
-		return true;
-	}
-
-	public static BufferedInputStream loadStreamFeature(
-			final String fileName, String featureName, final String annot_url, InputStream istr, BufferedInputStream bis) throws IOException, OutOfMemoryError {
-		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
-		if (style != null) {
-			style.setHumanName(featureName);
-		}
-		String unzippedName = GeneralUtils.getUnzippedName(fileName);
-		String extension = ParserController.getExtension(unzippedName); // .psl, .bed, et cetera
-		String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(extension));
-		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(strippedName);
-		if (style != null) {
-			style.setHumanName(featureName);
-		}
-		if (GraphSymUtils.isAGraphFilename(fileName)) {
-			URL url = new URL(annot_url);
-			List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-			if (graphs != null) {
-				// Reset the selected Seq Group to make sure that the DataLoadView knows
-				// about any new chromosomes that were added.
-				gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
-			}
-		} else {
-			bis = new BufferedInputStream(istr);
-			LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-		}
-		return bis;
-	}
-
 
 }

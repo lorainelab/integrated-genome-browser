@@ -80,8 +80,8 @@ public abstract class GenericSymRequest {
      * @param overlapSpan - span of overlap
      * @return List of symmetries satisfying requirements
      */
-    public List<? extends SeqSymmetry> getRegion(BioSeq seq, SeqSpan overlapSpan) {
-		List<? extends SeqSymmetry> chrResults = this.getChromosome(seq);
+    public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) {
+		List<? extends SeqSymmetry> chrResults = this.getChromosome(overlapSpan.getBioSeq());
 		if (chrResults == null || this.extension == null) {
 			return chrResults;
 		}

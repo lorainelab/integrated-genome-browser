@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -89,7 +88,8 @@ public final class BarParser implements AnnotationWriter {
 	 *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
 	 *  be used only inside a CompositeGraphSym.
 	 */
-	public static GraphSym getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {
+	public static GraphSym getRegion(String file_name, SeqSpan span) throws IOException {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Timer tim = new Timer();
 		tim.start();
 		GraphSym graf = null;
@@ -230,8 +230,6 @@ public final class BarParser implements AnnotationWriter {
 			long t1 = tim.read();
 			if (DEBUG_SLICE) {
 				System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1 / 1000f));
-			}
-			if (DEBUG_SLICE) {
 				System.out.println("made graph for slice: " + graf);
 			}
 
@@ -767,7 +765,7 @@ public final class BarParser implements AnnotationWriter {
 			BufferedOutputStream bos = new BufferedOutputStream(ostr);
 			DataOutputStream dos = new DataOutputStream(bos);
 			// for now assume just outputting one graph?
-			Iterator iter = syms.iterator();
+			Iterator<? extends SeqSymmetry> iter = syms.iterator();
 			GraphSym graf = (GraphSym) iter.next();
 
 			writeHeaderInfo(seq, dos);

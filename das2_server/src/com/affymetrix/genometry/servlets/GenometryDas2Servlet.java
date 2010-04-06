@@ -1540,7 +1540,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Class<? extends AnnotationWriter> writerclass, String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
 		GraphSym graf = null;
 		try {
-			graf = BarParser.getSlice(file_path, gmodel, span);
+			graf = BarParser.getRegion(file_path, span);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

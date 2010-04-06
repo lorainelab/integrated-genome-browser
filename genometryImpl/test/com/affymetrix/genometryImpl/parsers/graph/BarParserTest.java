@@ -118,10 +118,9 @@ public class BarParserTest {
 			@Test
 		  public void TestGetSlice() throws Exception{
 			String filename = "test/data/bar/small.bar";
-			GenometryModel gmodel = GenometryModel.getGenometryModel();
 			AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test_group");
 			BioSeq aseq = seq_group.addSeq("chr15_random",1881177);
-			GraphSym gr0 = BarParser.getSlice(filename,gmodel,new SimpleSeqSpan(1880135,1880205,aseq));
+			GraphSym gr0 = BarParser.getRegion(filename, new SimpleSeqSpan(1880135,1880205,aseq));
 		  assertEquals("chr15_random", gr0.getGraphSeq().getID());
 		  assertEquals(2, gr0.getPointCount());
 		  assertEquals(0.2127714902162552, gr0.getGraphYCoord(0), 0.01);

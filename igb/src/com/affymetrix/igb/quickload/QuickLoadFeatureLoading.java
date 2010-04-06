@@ -232,7 +232,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			return this.getChromosome(GenometryModel.getGenometryModel().getSelectedSeq());
 		}
 		if (strategy == LoadStrategy.VISIBLE) {
-			return this.getRegion(GenometryModel.getGenometryModel().getSelectedSeq(), overlapSpan);
+			return this.getRegion(overlapSpan);
 		}
 		return null;
 	}
@@ -295,7 +295,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	}
 
 	@Override
-	public List<? extends SeqSymmetry> getRegion(BioSeq seq, SeqSpan span) {
+	public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
 		if (this.extension.endsWith("bam")) {
 
 			// special-case BAM files, because Picard can only parse from files.
@@ -303,11 +303,11 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
 				BAMParser parser = new BAMParser(this.f, this.version.group);
-				parser.getRegion(seq, span);
+				parser.getRegion(span);
 			}
 			return null;
 		}
-		return super.getRegion(seq, span);
+		return super.getRegion(span);
 	}
 
 

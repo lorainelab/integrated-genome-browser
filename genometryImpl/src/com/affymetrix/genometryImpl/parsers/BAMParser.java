@@ -80,8 +80,8 @@ public final class BAMParser {
 		parse(seq, seq.getMin(), seq.getMax(), true, true);
 	}
 
-	public void getRegion(BioSeq seq, SeqSpan span) {
-		parse(seq, span.getMin(), span.getMax(), true, true);
+	public void getRegion(SeqSpan span) {
+		parse(span.getBioSeq(), span.getMin(), span.getMax(), true, true);
 	}
 	
 	/**

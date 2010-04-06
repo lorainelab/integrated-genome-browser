@@ -12,20 +12,20 @@
  */
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import cern.colt.GenericSorting;
+import cern.colt.Swapper;
+import cern.colt.function.IntComparator;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PointIntFloat;
 import java.io.*;
 import java.util.*;
 
 
 public final class GrParser {
-
-	private static final Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
 
 	public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
 		BufferedOutputStream bos = null;
@@ -120,45 +120,45 @@ public final class GrParser {
 		if (name == null && hasHeader) {
 			name = headerstr;
 		}
-		int graph_length = xlist.size();
-		int xcoords[] = null;
-		float ycoords[] = null;
-		/*
-		 *  check for sorting???
-		 */
+		int xcoords[] = Arrays.copyOf(xlist.elements(), xlist.size());
+		xlist = null;
+		float ycoords[] = Arrays.copyOf(ylist.elements(), ylist.size());
+		ylist = null;
+
 		if (! sorted) {
-			// make a List of double points
-			// sort using a Point.x comparator
-			// build array of x and y
 			System.err.println("input graph not sorted, sorting by base coord");
-			List<PointIntFloat> points = new ArrayList<PointIntFloat>(graph_length);
-			for (int i=0; i<graph_length; i++) {
-				x = xlist.get(i);
-				y = ylist.get(i);
-				PointIntFloat pnt = new PointIntFloat(x, y);
-				points.add(pnt);
-			}
-			xlist = null;
-			ylist = null;
-			Collections.sort(points, pointcomp);
-			xcoords = new int[graph_length];
-			ycoords = new float[graph_length];
-			for (int i=0; i<graph_length; i++) {
-				PointIntFloat pnt = points.get(i);
-				xcoords[i] = pnt.x;
-				ycoords[i] = pnt.y;
-			}
-			points = null;
-		}
-		else {
-			xcoords = Arrays.copyOf(xlist.elements(), xlist.size());
-			xlist = null;
-			ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
-			ylist = null;
+			sortXYDataOnX(xcoords,ycoords);
 		}
 		if (ensure_unique_id)  { name = AnnotatedSeqGroup.getUniqueGraphID(name, aseq); }
 		graf = new GraphSym(xcoords, ycoords, name, aseq);
 		System.out.println("loaded graph data, total points = " + count);
 		return graf;
+	}
+
+	/**
+	 * Sort xList, yList, and wList based upon xList
+	 * @param xList
+	 * @param yList
+	 * @param wList
+	 */
+	static void sortXYDataOnX(final int[] xList, final float[] yList) {
+		Swapper swapper = new Swapper() {
+
+			public void swap(int a, int b) {
+				int swapInt = xList[a];
+				xList[a] = xList[b];
+				xList[b] = swapInt;
+
+				float swapFloat = yList[a];
+				yList[a] = yList[b];
+				yList[b] = swapFloat;
+			}
+		};
+		IntComparator comp = new IntComparator() {
+			public int compare(int a, int b) {
+				return ((Integer) xList[a]).compareTo(xList[b]);
+			}
+		};
+		GenericSorting.quickSort(0, xList.length, comp, swapper);
 	}
 }

@@ -9,11 +9,9 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PointIntFloat;
 
 public final class SgrParser {
 	private static final boolean DEBUG = false;
-	private static final Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
 	public static List<GraphSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
@@ -46,12 +44,10 @@ public final class SgrParser {
 			
 			parseLines(br, xhash, yhash);
 
-			// after populating all xlists, now make sure sorted
-			sortAll(xhash, yhash);
-			
 			createResults(xhash, seq_group, yhash, gid, results);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			if (!(e instanceof IOException)) {
 				IOException ioe = new IOException("Trouble reading SGR file: " + stream_name);
 				ioe.initCause(e);
@@ -91,55 +87,6 @@ public final class SgrParser {
 			xlist.add(x);
 			ylist.add(y);
 		}
-	}
-
-
-	private static void sortAll(Map<String, IntArrayList> xhash, Map<String, FloatArrayList> yhash) {
-		// after populating all xlists, now make sure sorted
-		for (Map.Entry<String,IntArrayList> entry : xhash.entrySet()) {
-			String seqid = entry.getKey();
-			IntArrayList xlist = entry.getValue();
-			if (DEBUG) {
-				System.out.println("key = " + seqid);
-			}
-			int xcount = xlist.size();
-			boolean sorted = true;
-			int prevx = Integer.MIN_VALUE;
-			for (int i = 0; i < xcount; i++) {
-				int x = xlist.get(i);
-				if (x < prevx) {
-					sorted = false;
-					break;
-				}
-				prevx = x;
-			}
-			if (!sorted) {
-				pointSort(seqid, xhash, yhash);
-			}
-		}
-	}
-
-	private static void pointSort(String seqid, Map<String, IntArrayList> xhash, Map<String, FloatArrayList> yhash) {
-		IntArrayList xlist = xhash.get(seqid);
-		FloatArrayList ylist = yhash.get(seqid);
-		int graph_length = xlist.size();
-		List<PointIntFloat> points = new ArrayList<PointIntFloat>(graph_length);
-		for (int i = 0; i < graph_length; i++) {
-			int x = xlist.get(i);
-			float y = ylist.get(i);
-			PointIntFloat pnt = new PointIntFloat(x, y);
-			points.add(pnt);
-		}
-		Collections.sort(points, pointcomp);
-		IntArrayList new_xlist = new IntArrayList(graph_length);
-		FloatArrayList new_ylist = new FloatArrayList(graph_length);
-		for (int i = 0; i < graph_length; i++) {
-			PointIntFloat pnt = points.get(i);
-			new_xlist.add(pnt.x);
-			new_ylist.add(pnt.y);
-		}
-		xhash.put(seqid, new_xlist);
-		yhash.put(seqid, new_ylist);
 	}
 
 	public static boolean writeSgrFormat(GraphSym graf, OutputStream ostr) throws IOException {
@@ -185,6 +132,24 @@ public final class SgrParser {
 			xlist = null;
 			float[] ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
 			ylist = null;
+
+			//Is data sorted?
+			int xcount = xcoords.length;
+			boolean sorted = true;
+			int prevx = Integer.MIN_VALUE;
+			for (int i = 0; i < xcount; i++) {
+				int x = xcoords[i];
+				if (x < prevx) {
+					sorted = false;
+					break;
+				}
+				prevx = x;
+			}
+			
+			if (!sorted) {
+				GrParser.sortXYDataOnX(xcoords, ycoords);
+			}
+
 			GraphSym graf = new GraphSym(xcoords, ycoords, gid, aseq);
 			results.add(graf);
 		}

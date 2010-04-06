@@ -47,7 +47,7 @@ final class WiggleData {
 		int[] wList =  Arrays.copyOf(wData.elements(), dataSize);
 		wData.clear();
 		
-		sortTheData(xList, yList, wList);
+		sortXYZDataOnX(xList, yList, wList);
 
 		int largest_x = xList[dataSize-1] + wList[dataSize-1];
 		BioSeq seq = seq_group.addSeq(seq_id, largest_x);
@@ -55,7 +55,13 @@ final class WiggleData {
 		return new GraphIntervalSym(xList, wList, yList, graph_id, seq);
 	}
 
-	private static void sortTheData(final int[] xList, final float[] yList, final int[] wList) {
+	/**
+	 * Sort xList, yList, and wList based upon xList
+	 * @param xList
+	 * @param yList
+	 * @param wList
+	 */
+	static void sortXYZDataOnX(final int[] xList, final float[] yList, final int[] wList) {
 		Swapper swapper = new Swapper() {
 
 			public void swap(int a, int b) {

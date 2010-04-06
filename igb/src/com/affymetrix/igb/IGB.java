@@ -584,7 +584,7 @@ public final class IGB extends Application
 
 		WebLink.autoLoad();
 
-		//showFirstTimeSurveyDialog();
+		showFirstTimeSurveyDialog();
 
 
 		// Need to let the QuickLoad system get started-up before starting
@@ -821,33 +821,53 @@ public final class IGB extends Application
 		}
 	}
 
-/*	private void showFirstTimeSurveyDialog() {
+	private void showFirstTimeSurveyDialog() {
 		Preferences p = PreferenceUtils.getTopNode().node("survey");
 		String sawSurvey = "SawSurveyApr2010";
 		if (p.getBoolean(sawSurvey, false)) {
 			return;
 		}
-                String URL = "http://www.surveymonkey.com/s/NC87QRM";
-		p.putBoolean(sawSurvey, true);
-		// Only show the survey once
+		
 
+		String URL = "http://www.surveymonkey.com/s/NC87QRM";
+		
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea surveyText = new JTextArea();
 		String text = "Help!  We need your feedback to continue improving IGB!";
 		text += "\n\n";
-		text += "Click OK to answer survey questions.\n\n";
-		text += "Click \"No thanks\" if you don't want to answer the survey questions.\n\n";
+		text += "Click \"Yes\" to answer survey questions.\n";
+		text += "This will open an external URL.\n";
+		text += "This dialog will not appear again.\n";
 		surveyText.append(text);
 
+		String title = "We need feedback!";
 		message_pane.add(new JScrollPane(surveyText));
 
-		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE);
-		final JDialog dialog = pane.createDialog(frm, "We need feedback!");
-		dialog.setVisible(true);
-		GeneralUtils.browse(URL);
+		Object[] options = new Object[] {"Yes","No thanks","Remind me later"};
+		int n = JOptionPane.showOptionDialog(
+				frm,
+				text,
+				title,
+			    JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				options,
+				options[0]);
+		if (n == JOptionPane.YES_OPTION) {
+			System.out.println("YES");
+			GeneralUtils.browse(URL);
+			p.putBoolean(sawSurvey, true);
+			// Only show the survey once
+		} else if (n == JOptionPane.NO_OPTION) {
+			p.putBoolean(sawSurvey, true);
+			// Only show the survey once
+		} else {
+			// Remind user later.
+		}
+		
 	}
-*/
+
 	void showAboutDialog() {
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));

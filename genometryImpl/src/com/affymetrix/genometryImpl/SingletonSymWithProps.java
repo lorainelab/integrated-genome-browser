@@ -36,8 +36,9 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
 		return props;
 	}
 
+	@Override
 	public String getID() {
-		if (id != null) { return id.toString(); };
+		if (id != null) { return id.toString(); }
 		if (props != null) { return (String)props.get("id"); }
 		return null;
 	}
@@ -52,7 +53,15 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
 		if (props == null) {
 			return null;
 		}
-		return (Map<String,Object>)((HashMap)props).clone();
+		try {
+			Map<String, Object> newprops = (Map<String, Object>) props.getClass().newInstance();
+			newprops.putAll(props);
+			return newprops;
+		} catch (Exception ex) {
+			System.out.println("problem trying to clone SingletonSymWithProps properties, "
+					+ "returning null instead");
+			return null;
+		}
 	}
 
 	public boolean setProperty(String name, Object val) {

@@ -1,4 +1,8 @@
-<Context path="/das2" docBase="/path/to/das2/servlet/" debug="0" reloadable="true">
+<Context path="/das2" debug="0" reloadable="true">
+	<Parameter name="genometry_server_dir" value="/path/to/das2/data"/>
+	<Parameter name="maintainer_email" value="admin@example.com"/>
+	<Parameter name="xml_base" value="http://www.example.com/das2/genome"/>
+
 	<!-- Optimised Logging routine.  Configured to log in 'combined'
 	     log format. -->
 	<!--

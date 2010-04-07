@@ -14,8 +14,8 @@ There are two ways to configure the GenoViz Genometry DAS2 server:
 
 === CONFIGURATION ===
 
-== The web.xml file ==
-The web.xml file in the das2/WEB-INF directory must be properly configured before the das2 servlet will run. A list of the context parameters from the web.xml is below:
+== The context.xml file ==
+The web.xml file in the das2/META-INF directory must be properly configured before the das2 servlet will run. A list of the context parameters from the context.xml is below:
 
 	* genometry_server_dir - Path to the data files
 	* maintainer_email - Email address of the server's maintainer

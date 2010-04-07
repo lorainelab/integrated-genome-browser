@@ -70,18 +70,21 @@ public final class BAMParser {
 		getGenome();
 	}
 
-	public void getGenome() {
+	public List<SeqSymmetry> getGenome() {
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		for (BioSeq seq : group.getSeqList()) {
-			getChromosome(seq);
+			results.addAll(getChromosome(seq));
 		}
+		return results;
 	}
 
-	public void getChromosome(BioSeq seq) {
-		parse(seq, seq.getMin(), seq.getMax(), true, true);
+	public List<SeqSymmetry> getChromosome(BioSeq seq) {
+		return parse(seq, seq.getMin(), seq.getMax(), true, true);
 	}
 
-	public void getRegion(SeqSpan span) {
-		parse(span.getBioSeq(), span.getMin(), span.getMax(), true, true);
+
+	public List<SeqSymmetry> getRegion(SeqSpan span) {
+		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, true);
 	}
 	
 	/**
@@ -154,7 +157,69 @@ public final class BAMParser {
 		sym.setProperty("cigar", sr.getCigar());	// interpreted later
 		sym.setProperty("residues", sr.getReadString().intern());
 		sym.setProperty("method", meth);
+		/*for (SimpleSymWithProps child : getChildren(sr, seq, sr.getCigar(), sr.getReadString(), sym.getSpan(0).getLength())) {
+			sym.addChild(child);
+		}*/
 		return sym;
+	}
+
+	private static List<SimpleSymWithProps> getChildren(SAMRecord sr, BioSeq seq, Cigar cigar, String residues, int spanLength) {
+		List<SimpleSymWithProps> results = new ArrayList<SimpleSymWithProps>();
+		if (cigar == null || cigar.numCigarElements() == 0) {
+			return results;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		int currentPosition = 0;
+		int currentChildStart = 0;
+		int currentChildEnd = 0;
+		for (CigarElement cel : cigar.getCigarElements()) {
+			try {
+				int celLength = cel.getLength();
+				if (cel.getOperator() == CigarOperator.DELETION) {
+					currentPosition += celLength;	// skip over deletion
+				} else if (cel.getOperator() == CigarOperator.INSERTION) {
+					sb.append(residues.substring(currentPosition, currentPosition + celLength));
+					currentPosition += celLength;	// print insertion
+					currentChildEnd += celLength;
+				} else if (cel.getOperator() == CigarOperator.M) {
+					sb.append(residues.substring(currentPosition, currentPosition + celLength));
+					currentPosition += celLength;	// print matches
+					currentChildEnd += celLength;
+				} else if (cel.getOperator() == CigarOperator.N) {
+					// Create a new child
+					String childResidues = sb.toString().intern();
+					sb = new StringBuilder();
+					SimpleSymWithProps ss = new SimpleSymWithProps();
+					if (!sr.getReadNegativeStrandFlag()) {
+						ss.addSpan(new SimpleSeqSpan(currentChildStart, currentChildEnd, seq));
+					} else {
+						ss.addSpan(new SimpleSeqSpan(currentChildEnd, currentChildStart, seq));
+					}
+					ss.setProperty("residues", childResidues);
+					// init positions for next child
+					currentChildStart = currentChildEnd + celLength;
+					currentChildEnd = currentChildStart;
+
+				} else if (cel.getOperator() == CigarOperator.PADDING) {
+					char[] tempArr = new char[celLength];
+					Arrays.fill(tempArr, '*');		// print padding as '*'
+				} else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
+					currentPosition += celLength;	// skip over soft clip
+				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
+					continue;						// hard clip can be ignored
+				}
+				if (currentPosition > spanLength) {
+					Logger.getLogger(BAMParser.class.getName()).log(Level.FINE,
+							"currentPosition > spanLength: " + currentPosition + " > " + spanLength);
+					break;
+				}
+			} catch (Exception ex) {
+				return results;
+			}
+		}
+
+		return results;
 	}
 
 	/**

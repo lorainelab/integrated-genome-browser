@@ -148,6 +148,8 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 		return "";
 	}
 
+	
+
 	public boolean loadFeatures(final SeqMapView gviewer, final SeqSpan overlapSpan, final LoadStrategy strategy)
 			throws OutOfMemoryError {
 
@@ -311,71 +313,79 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	}
 
 
-    private static List<? extends SeqSymmetry> Parse(
-            String extension, InputStream istr, GenericVersion version, String featureName)
-            throws Exception {
+	private static List<? extends SeqSymmetry> Parse(
+			String extension, InputStream istr, GenericVersion version, String featureName)
+			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-        List<? extends SeqSymmetry> feats = null;
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
-        if (extension.equals("bed")) {
-            BedParser parser = new BedParser();
-			feats = parser.parse(bis, gmodel, version.group, false, featureName, false);
-        } else if (extension.equals("bgn")) {
-            BgnParser parser = new BgnParser();
-            feats = parser.parse(bis, featureName, version.group, false);
-        } else if (extension.equals("bps")) {
-            DataInputStream dis = new DataInputStream(bis);
-            feats = BpsParser.parse(dis, featureName, null, version.group, false, false);
-        } else if (extension.equals("brs")) {
-            DataInputStream dis = new DataInputStream(bis);
-            feats = BrsParser.parse(dis, featureName, version.group, false);
-        } else if (extension.equals("bar")) {
-            feats = BarParser.parse(bis, gmodel, version.group, featureName, false);
-        } else if (extension.equals("useq")) {
-        	//find out what kind of data it is, graph or region, from the ArchiveInfo object
-        	ZipInputStream zis = new ZipInputStream(bis);
-    		zis.getNextEntry();
-        	ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
-            if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)){
-            	USeqGraphParser gp = new USeqGraphParser();
-                feats = gp.parseGraphSyms(zis, gmodel, featureName, archiveInfo);
-            }
-            else {
-            	 USeqRegionParser rp = new USeqRegionParser();
-                 feats = rp.parse(zis, version.group, featureName, false, archiveInfo);
-            }
-        }else if (extension.equals("bp2")) {
-            Bprobe1Parser bp1_reader = new Bprobe1Parser();
-            // parsing probesets in bp2 format, also adding probeset ids
-            feats = bp1_reader.parse(bis, version.group, false, featureName, false);
-        } else if (extension.equals("ead")) {
-            ExonArrayDesignParser parser = new ExonArrayDesignParser();
-            feats = parser.parse(bis, version.group, false, featureName);
-        } else if (extension.equals("gff")) {
-            GFFParser parser = new GFFParser();
-            feats = parser.parse(bis, ".", version.group, false, false);
-        } else if (extension.equals("link.psl")) {
-            PSLParser parser = new PSLParser();
-            parser.setIsLinkPsl(true);
-            parser.enableSharedQueryTarget(true);
-            // annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
-            // why is annotate_target parameter below set to false?
-            feats = parser.parse(bis, featureName, null, version.group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
-        } else if (extension.equals("cyt")) {
-            CytobandParser parser = new CytobandParser();
-            feats = parser.parse(bis, version.group, false);
-        } else if (extension.equals("psl")) {
-            // reference to LoadFileAction.ParsePSL
-            PSLParser parser = new PSLParser();
-            parser.enableSharedQueryTarget(true);
-            DataInputStream dis = new DataInputStream(bis);
-            feats = parser.parse(dis, featureName, null, version.group, null, false, false, false);
-        } else {
-            System.out.println("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
-        }
-        return feats;
-    }
+		if (extension.equals("bar")) {
+			return BarParser.parse(bis, gmodel, version.group, featureName, false);
+		}
+		if (extension.equals("bed")) {
+			BedParser parser = new BedParser();
+			return parser.parse(bis, gmodel, version.group, false, featureName, false);
+		}
+		if (extension.equals("bgn")) {
+			BgnParser parser = new BgnParser();
+			return parser.parse(bis, featureName, version.group, false);
+		}
+		if (extension.equals("bps")) {
+			DataInputStream dis = new DataInputStream(bis);
+			return BpsParser.parse(dis, featureName, null, version.group, false, false);
+		}
+		if (extension.equals("bp2")) {
+			Bprobe1Parser bp1_reader = new Bprobe1Parser();
+			// parsing probesets in bp2 format, also adding probeset ids
+			return bp1_reader.parse(bis, version.group, false, featureName, false);
+		}
+		if (extension.equals("brs")) {
+			DataInputStream dis = new DataInputStream(bis);
+			return BrsParser.parse(dis, featureName, version.group, false);
+		}
+		if (extension.equals("cyt")) {
+			CytobandParser parser = new CytobandParser();
+			return parser.parse(bis, version.group, false);
+		}
+		if (extension.equals("ead")) {
+			ExonArrayDesignParser parser = new ExonArrayDesignParser();
+			return parser.parse(bis, version.group, false, featureName);
+		}
+		if (extension.equals("gff")) {
+			GFFParser parser = new GFFParser();
+			return parser.parse(bis, ".", version.group, false, false);
+		}
+		if (extension.equals("link.psl")) {
+			PSLParser parser = new PSLParser();
+			parser.setIsLinkPsl(true);
+			parser.enableSharedQueryTarget(true);
+			// annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
+			// why is annotate_target parameter below set to false?
+			return parser.parse(bis, featureName, null, version.group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
+		}
+		if (extension.equals("psl")) {
+			// reference to LoadFileAction.ParsePSL
+			PSLParser parser = new PSLParser();
+			parser.enableSharedQueryTarget(true);
+			DataInputStream dis = new DataInputStream(bis);
+			return parser.parse(dis, featureName, null, version.group, null, false, false, false);
+		}
+		if (extension.equals("useq")) {
+			//find out what kind of data it is, graph or region, from the ArchiveInfo object
+			ZipInputStream zis = new ZipInputStream(bis);
+			zis.getNextEntry();
+			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
+			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
+				USeqGraphParser gp = new USeqGraphParser();
+				return gp.parseGraphSyms(zis, gmodel, featureName, archiveInfo);
+			} else {
+				USeqRegionParser rp = new USeqRegionParser();
+				return rp.parse(zis, version.group, featureName, false, archiveInfo);
+			}
+		}
+		System.out.println("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
+		return null;
+	}
 
 
 }

@@ -336,9 +336,56 @@ public final class LoadFileAction {
 		int dotIndex = stream_name.lastIndexOf('.');
 		String annot_type = dotIndex <= 0 ? stream_name : stream_name.substring(0, dotIndex);
 
-		if (lcname.endsWith(".cyt")) {
-			CytobandParser parser = new CytobandParser();
-			parser.parse(str, selected_group, true);
+		if (lcname.endsWith(".bed")) {
+			BedParser parser = new BedParser();
+			// really need to switch create_container (last argument) to true soon!
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
+			parser.parse(str, gmodel, selected_group, true, annot_type, false);
+			return input_seq;
+		}
+		if (lcname.endsWith(".bgn")) {
+			BgnParser parser = new BgnParser();
+			parser.parse(str, annot_type, selected_group, true);
+			return input_seq;
+		}
+		if (lcname.endsWith(".bnib")) {
+			BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
+			if (aseq != gmodel.getSelectedSeq()) {
+				//TODO: maybe set the current seq to this seq
+				Application.getSingleton().logWarning("This is not the currently-selected sequence.");
+			}
+			return aseq;
+		}
+		if (lcname.endsWith(".bps")) {
+			DataInputStream dis = new DataInputStream(str);
+			BpsParser.parse(dis, annot_type, null, selected_group, false, true);
+			return input_seq;
+		}
+		if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {
+			Bprobe1Parser parser = new Bprobe1Parser();
+			parser.parse(str, selected_group, true, annot_type, true);
+			return input_seq;
+		}
+		if (lcname.endsWith(".brpt")) {
+			BrptParser parser = new BrptParser();
+			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, true);
+			Application.getSingleton().logDebug("total repeats loaded: " + alist.size());
+			return input_seq;
+		}
+		if (lcname.endsWith(".brs")) {
+			BrsParser.parse(str, annot_type, selected_group);
+			return input_seq;
+		}
+		if (lcname.endsWith(".bsnp")) {
+			List<SeqSymmetry> alist = BsnpParser.parse(str, annot_type, selected_group, true);
+			Application.getSingleton().logDebug("total snps loaded: " + alist.size());
+			return input_seq;
+		}
+
+		if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
+			AffyCnChpParser parser = new AffyCnChpParser();
+			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group);
 			return input_seq;
 		}
 		if (lcname.endsWith(".cnt")) {
@@ -346,24 +393,9 @@ public final class LoadFileAction {
 			parser.parse(str, selected_group);
 			return input_seq;
 		}
-		if (lcname.endsWith(".var")) {
-			VarParser parser = new VarParser();
-			parser.parse(str, selected_group);
-			return input_seq;
-		}
-		if ((lcname.endsWith("." + SegmenterRptParser.CN_REGION_FILE_EXT) || lcname.endsWith("." + SegmenterRptParser.LOH_REGION_FILE_EXT))) {
-			SegmenterRptParser parser = new SegmenterRptParser();
-			parser.parse(str, stream_name, selected_group);
-			return input_seq;
-		}
-		if (lcname.endsWith("." + FishClonesParser.FILE_EXT)) {
-			FishClonesParser parser = new FishClonesParser(true);
-			parser.parse(str, annot_type, selected_group);
-			return input_seq;
-		}
-		if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
-			AffyCnChpParser parser = new AffyCnChpParser();
-			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group);
+		if (lcname.endsWith(".cyt")) {
+			CytobandParser parser = new CytobandParser();
+			parser.parse(str, selected_group, true);
 			return input_seq;
 		}
 		if (lcname.endsWith(".das") || lcname.endsWith(".dasxml")) {
@@ -382,65 +414,24 @@ public final class LoadFileAction {
 			List<SeqSymmetry> results = parser.parse(new InputSource(str), stream_name, selected_group, true);
 			return LoadFileAction.<SeqSymmetry>getFirstSeq(results);
 		}
-		if (lcname.endsWith(".map")) {
-			ScoredMapParser parser = new ScoredMapParser();
-			parser.parse(str, stream_name, input_seq, selected_group);
-			return input_seq;
-		}
-		if (lcname.endsWith(".sin") || lcname.endsWith(".egr") || lcname.endsWith(".txt")) {
-			ScoredIntervalParser parser = new ScoredIntervalParser();
-			parser.parse(str, stream_name, selected_group);
-			return input_seq;
-		}
-		if (lcname.endsWith(".psl") || lcname.endsWith(".psl3")) {
-			ParsePSL(lcname, gviewerFrame, str, stream_name, selected_group);
-			return input_seq;
-		}
-		if (lcname.endsWith(".bps")) {
-			DataInputStream dis = new DataInputStream(str);
-			BpsParser.parse(dis, annot_type, null, selected_group, false, true);
-			return input_seq;
-		}
-		if (lcname.endsWith(".bed")) {
-			BedParser parser = new BedParser();
-			// really need to switch create_container (last argument) to true soon!
-			GenometryModel gmodel = GenometryModel.getGenometryModel();
-			parser.parse(str, gmodel, selected_group, true, annot_type, false);
-			return input_seq;
-		}
-		if (lcname.endsWith(".useq")) {
-			USeqRegionParser parser = new USeqRegionParser();
-			parser.parse(str, selected_group, stream_name, true, null);
-			return input_seq;
-		}
-		if (lcname.endsWith(".bgn")) {
-			BgnParser parser = new BgnParser();
-			parser.parse(str, annot_type, selected_group, true);
-			return input_seq;
-		}
-		if (lcname.endsWith(".brs")) {
-			BrsParser.parse(str, annot_type, selected_group);
-			return input_seq;
-		}
-		if (lcname.endsWith(".bsnp")) {
-			List<SeqSymmetry> alist = BsnpParser.parse(str, annot_type, selected_group, true);
-			Application.getSingleton().logDebug("total snps loaded: " + alist.size());
-			return input_seq;
-		}
-		if (lcname.endsWith(".brpt")) {
-			BrptParser parser = new BrptParser();
-			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, true);
-			Application.getSingleton().logDebug("total repeats loaded: " + alist.size());
-			return input_seq;
-		}
-		if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {
-			Bprobe1Parser parser = new Bprobe1Parser();
-			parser.parse(str, selected_group, true, annot_type, true);
-			return input_seq;
-		}
 		if (lcname.endsWith(".ead")) {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
 			parser.parse(str, selected_group, true, annot_type);
+			return input_seq;
+		}
+		if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
+			List<BioSeq> seqs = FastaParser.parseAll(str, selected_group);
+			if (input_seq != null && seqs.contains(input_seq)) {
+				return input_seq;
+			}
+			if (!seqs.isEmpty()) {
+				return seqs.get(0);
+			}
+			return null;
+		}
+		if (lcname.endsWith("." + FishClonesParser.FILE_EXT)) {
+			FishClonesParser parser = new FishClonesParser(true);
+			parser.parse(str, annot_type, selected_group);
 			return input_seq;
 		}
 		if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
@@ -456,26 +447,36 @@ public final class LoadFileAction {
 			parser.parse(str, annot_type, selected_group);
 			return input_seq;
 		}
-		if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
-			List<BioSeq> seqs = FastaParser.parseAll(str, selected_group);
-			if (input_seq != null && seqs.contains(input_seq)) {
-				return input_seq;
-			}
-			if (!seqs.isEmpty()) {
-				return seqs.get(0);
-			}
-			return null;
+		
+		if (lcname.endsWith(".map")) {
+			ScoredMapParser parser = new ScoredMapParser();
+			parser.parse(str, stream_name, input_seq, selected_group);
+			return input_seq;
 		}
-		if (lcname.endsWith(".bnib")) {
-			BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
-			GenometryModel gmodel = GenometryModel.getGenometryModel();
-			if (aseq != gmodel.getSelectedSeq()) {
-				//TODO: maybe set the current seq to this seq
-				Application.getSingleton().logWarning("This is not the currently-selected sequence.");
-			}
-			return aseq;
+		if (lcname.endsWith(".psl") || lcname.endsWith(".psl3")) {
+			ParsePSL(lcname, gviewerFrame, str, stream_name, selected_group);
+			return input_seq;
 		}
-
+		if ((lcname.endsWith("." + SegmenterRptParser.CN_REGION_FILE_EXT) || lcname.endsWith("." + SegmenterRptParser.LOH_REGION_FILE_EXT))) {
+			SegmenterRptParser parser = new SegmenterRptParser();
+			parser.parse(str, stream_name, selected_group);
+			return input_seq;
+		}
+		if (lcname.endsWith(".sin") || lcname.endsWith(".egr") || lcname.endsWith(".txt")) {
+			ScoredIntervalParser parser = new ScoredIntervalParser();
+			parser.parse(str, stream_name, selected_group);
+			return input_seq;
+		}
+		if (lcname.endsWith(".useq")) {
+			USeqRegionParser parser = new USeqRegionParser();
+			parser.parse(str, selected_group, stream_name, true, null);
+			return input_seq;
+		}
+		if (lcname.endsWith(".var")) {
+			VarParser parser = new VarParser();
+			parser.parse(str, selected_group);
+			return input_seq;
+		}
 		ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + stream_name, null);
 		return null;
 	}

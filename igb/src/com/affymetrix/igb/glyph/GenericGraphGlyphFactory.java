@@ -10,12 +10,14 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
+	private static IAnnotStyle defaultStyle = null;
 	private boolean check_same_seq = true;
 	/** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE.
 	 *  Determines whether the glyph factory will try to determine whether the GraphSym
@@ -60,6 +62,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		BioSeq vseq = smv.getViewSeq();
 		BioSeq graph_seq = graf.getGraphSeq();
+		boolean isGenome = false;
 
 		if (check_same_seq && graph_seq != aseq) {
 			// may need to modify to handle case where GraphGlyph's seq is one of seqs in aseq's composition...
@@ -87,6 +90,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		if (check_same_seq && graph_seq != vseq) {
 			if (vseq != null && "genome".equals(vseq.getID())) {
 				//TODO: Fix bug 1856102 "Genome View Bug" here. See Gregg's comments above.
+				isGenome = true;
 			}
 			// The new graph doesn't need a new GraphState or a new ID.
 			// Changing any graph properties will thus apply to the original graph.
@@ -104,7 +108,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			newgraf.setGraphName(graph_name);
 		}
 
-		return displayGraphSym(newgraf, graf, smv);
+		return displayGraphSym(newgraf, graf, smv, isGenome);
 	}
 
 	/**
@@ -117,13 +121,14 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param update_map
 	 * @return graph glyph
 	 */
-	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapView smv) {
+	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapView smv, boolean isGenome) {
 		AffyTieredMap map = smv.getSeqMap();
 		Rectangle2D.Double cbox = map.getCoordBounds();
 		GraphState gstate = graf.getGraphState();
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, gstate);
 		gstate.getTierStyle().setHumanName(newgraf.getGraphName());
-		IAnnotStyle tier_style = gstate.getTierStyle();
+		IAnnotStyle tier_style = gstate.getTierStyle();//getGenomeViewStyle(gstate.getTierStyle().getHumanName());
+		tier_style.setCollapsed(isGenome);
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
@@ -140,6 +145,12 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 				direction = TierGlyph.Direction.REVERSE;
 			}
 			TierGlyph tglyph = smv.getGraphTier(tier_style, direction);
+			if(isGenome && !(tglyph.getPacker() instanceof CollapsePacker)){
+				CollapsePacker cp = new CollapsePacker();
+				cp.setParentSpacer(0); // fill tier to the top and bottom edges
+				cp.setAlignment(CollapsePacker.ALIGN_CENTER);
+				tglyph.setPacker(cp);
+			}
 			tglyph.addChild(graph_glyph);
 			tglyph.pack(map.getView());
 		}

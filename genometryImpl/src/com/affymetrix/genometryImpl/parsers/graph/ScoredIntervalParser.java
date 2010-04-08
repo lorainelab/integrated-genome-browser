@@ -131,35 +131,7 @@ public final class ScoredIntervalParser {
 			List<String> score_names = null;
 			Map<String,Object> props = new HashMap<String,Object>();
 
-			// parse header lines (which must begin with "#")
-			while (((line = br.readLine())!= null) &&
-					(line.charAt(0) == '#' ||
-					 line.charAt(0) == ' ' ||
-					 line.charAt(0) == '\t' )  ) {
-
-				// skipping starting lines that begin with space or tab, since
-				// files output from GCOS begin with a header line that starts with a tab.
-				if (line.charAt(0) == ' '  || line.charAt(0) == '\t') {
-					System.out.println("skipping line starting with whitespace: " + line);
-					continue;
-				}
-				Matcher match = tagval_regex.matcher(line);
-				if (match.matches()) {
-					String tag = match.group(1);
-					String val = match.group(2);
-					if (tag.startsWith("score")) {
-						try {
-							int score_index = Integer.parseInt(tag.substring(tag.indexOf("score") + 5));
-							index2id.put(Integer.valueOf(score_index), val);
-						} catch (NumberFormatException nfe) {
-							throw new IOException("Tag '"+tag+"' is not in the format score# where # = 0,1,2,....");
-						}
-					}
-					else {
-						props.put(tag, val);
-					}
-				}
-					 }
+			line = parseHeader(br, line, index2id, props);
 
 			Matcher strand_matcher = strand_regex.matcher("");
 			List<IndexedSingletonSym> isyms = new ArrayList<IndexedSingletonSym>();
@@ -169,7 +141,7 @@ public final class ScoredIntervalParser {
 			for ( ; line != null ; line = br.readLine()) {
 				isyms.clear();
 				// skip comment lines (any lines that start with "#")
-				if (line.startsWith("#")) { continue; }
+				if (line.charAt(0) == '#') { continue; }
 
 				String[] fields = line_regex.split(line);
 				String annot_id = null;
@@ -285,7 +257,6 @@ public final class ScoredIntervalParser {
 					List<SinEntry> sin_entries = seq2sinentries.get(aseq);
 					if (sin_entries == null) {
 						sin_entries = new ArrayList<SinEntry>();
-						//          seq2sinentries.put(seqid, sin_entries);
 						seq2sinentries.put(aseq, sin_entries);
 					}
 					SinEntry sentry = new SinEntry(child, entry_floats);
@@ -293,7 +264,7 @@ public final class ScoredIntervalParser {
 				}
 
 				line_count++;
-			}  // end br.readLine() loop
+			}
 
 			// now for each sequence seen, sort the SinEntry list by span min/max
 			SinEntryComparator comp = new SinEntryComparator();
@@ -302,47 +273,6 @@ public final class ScoredIntervalParser {
 			}
 
 			System.out.println("number of scores per line: " + score_count);
-			// now make the container syms
-			for (BioSeq aseq : seq2sinentries.keySet()) {
-				ScoredContainerSym container = new ScoredContainerSym();
-				container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-				for (Map.Entry<String,Object> entry : props.entrySet())  {
-					container.setProperty(entry.getKey(), entry.getValue());
-				}
-
-				container.setProperty("method", unique_container_name);
-				container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-
-				// Force the AnnotStyle for the container to have glyph depth of 1
-				IAnnotStyleExtended style = AnnotatedSeqGroup.getStateProvider().getAnnotStyle(unique_container_name);
-				style.setGlyphDepth(1);
-
-				List<SinEntry> entry_list = seq2sinentries.get(aseq);
-				int entry_count = entry_list.size();
-				for (SinEntry entry : entry_list) {
-					container.addChild(entry.sym);
-				}
-
-				for (int i=0; i<score_count; i++) {
-					String score_name = score_names.get(i);
-					float[] score_column = new float[entry_count];
-					for (int k=0; k<entry_count; k++) {
-						SinEntry sentry = entry_list.get(k);
-						score_column[k] = sentry.scores[i];
-					}
-					container.addScores(score_name, score_column);
-				}
-
-
-				// always add the container as an annotation, and
-				// do not attach any graphs
-				// ScoredContainerGlyph factory will then draw container syms, or graphs, or both
-
-				container.setID(unique_container_name);
-
-				aseq.addAnnotation(container);
-			}
-
 			System.out.println("data lines in .sin file: " + line_count);
 			if ((hit_count + miss_count) > 0)  {
 				System.out.println("sin3 miss count: " + miss_count);
@@ -350,6 +280,8 @@ public final class ScoredIntervalParser {
 			}
 			if (mod_hit_count > 0)  {System.out.println("sin3 extended id hit count: " + mod_hit_count); }
 			if (total_mod_hit_count > 0)  { System.out.println("sin3 total extended id hit count: " + total_mod_hit_count); }
+
+			createContainerSyms(seq2sinentries, props, unique_container_name, score_count, score_names);			
 
 		}
 		catch (Exception ex) {
@@ -363,6 +295,76 @@ public final class ScoredIntervalParser {
 
 		if (all_sin3 && hit_count == 0 && mod_hit_count == 0 && miss_count > 0) {
 			throw new IOException("No data loaded. The ID's in the file did not match any ID's from data that has already been loaded.");
+		}
+	}
+
+	private static String parseHeader(
+			BufferedReader br, String line, Map<Integer, String> index2id, Map<String, Object> props)
+			throws IOException {
+		// parse header lines (which must begin with "#")
+		while (((line = br.readLine()) != null) && (line.charAt(0) == '#' || line.charAt(0) == ' ' || line.charAt(0) == '\t')) {
+			// skipping starting lines that begin with space or tab, since
+			// files output from GCOS begin with a header line that starts with a tab.
+			if (line.charAt(0) == ' ' || line.charAt(0) == '\t') {
+				System.out.println("skipping line starting with whitespace: " + line);
+				continue;
+			}
+			Matcher match = tagval_regex.matcher(line);
+			if (match.matches()) {
+				String tag = match.group(1);
+				String val = match.group(2);
+				if (tag.startsWith("score")) {
+					try {
+						int score_index = Integer.parseInt(tag.substring(tag.indexOf("score") + 5));
+						index2id.put(Integer.valueOf(score_index), val);
+					} catch (NumberFormatException nfe) {
+						throw new IOException("Tag '" + tag + "' is not in the format score# where # = 0,1,2,....");
+					}
+				} else {
+					props.put(tag, val);
+				}
+			}
+		}
+		return line;
+	}
+
+	private static void createContainerSyms(
+			Map<BioSeq, List<SinEntry>> seq2sinentries, 
+			Map<String, Object> props,
+			String unique_container_name,
+			int score_count,
+			List<String> score_names) {
+		// now make the container syms
+		for (BioSeq aseq : seq2sinentries.keySet()) {
+			ScoredContainerSym container = new ScoredContainerSym();
+			container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+			for (Map.Entry<String, Object> entry : props.entrySet()) {
+				container.setProperty(entry.getKey(), entry.getValue());
+			}
+			container.setProperty("method", unique_container_name);
+			container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+			// Force the AnnotStyle for the container to have glyph depth of 1
+			IAnnotStyleExtended style = AnnotatedSeqGroup.getStateProvider().getAnnotStyle(unique_container_name);
+			style.setGlyphDepth(1);
+			List<SinEntry> entry_list = seq2sinentries.get(aseq);
+			int entry_count = entry_list.size();
+			for (SinEntry entry : entry_list) {
+				container.addChild(entry.sym);
+			}
+			for (int i = 0; i < score_count; i++) {
+				String score_name = score_names.get(i);
+				float[] score_column = new float[entry_count];
+				for (int k = 0; k < entry_count; k++) {
+					SinEntry sentry = entry_list.get(k);
+					score_column[k] = sentry.scores[i];
+				}
+				container.addScores(score_name, score_column);
+			}
+			// always add the container as an annotation, and
+			// do not attach any graphs
+			// ScoredContainerGlyph factory will then draw container syms, or graphs, or both
+			container.setID(unique_container_name);
+			aseq.addAnnotation(container);
 		}
 	}
 

@@ -336,6 +336,28 @@ public final class LoadFileAction {
 		int dotIndex = stream_name.lastIndexOf('.');
 		String annot_type = dotIndex <= 0 ? stream_name : stream_name.substring(0, dotIndex);
 
+		// Sequence files
+		if (lcname.endsWith(".bnib")) {
+			BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
+			if (aseq != gmodel.getSelectedSeq()) {
+				//TODO: maybe set the current seq to this seq
+				Application.getSingleton().logWarning("This is not the currently-selected sequence.");
+			}
+			return aseq;
+		}
+		if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
+			List<BioSeq> seqs = FastaParser.parseAll(str, selected_group);
+			if (input_seq != null && seqs.contains(input_seq)) {
+				return input_seq;
+			}
+			if (!seqs.isEmpty()) {
+				return seqs.get(0);
+			}
+			return null;
+		}
+
+		// Annotation and graphs
 		if (lcname.endsWith(".bed")) {
 			BedParser parser = new BedParser();
 			// really need to switch create_container (last argument) to true soon!
@@ -348,15 +370,7 @@ public final class LoadFileAction {
 			parser.parse(str, annot_type, selected_group, true);
 			return input_seq;
 		}
-		if (lcname.endsWith(".bnib")) {
-			BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
-			GenometryModel gmodel = GenometryModel.getGenometryModel();
-			if (aseq != gmodel.getSelectedSeq()) {
-				//TODO: maybe set the current seq to this seq
-				Application.getSingleton().logWarning("This is not the currently-selected sequence.");
-			}
-			return aseq;
-		}
+		
 		if (lcname.endsWith(".bps")) {
 			DataInputStream dis = new DataInputStream(str);
 			BpsParser.parse(dis, annot_type, null, selected_group, false, true);
@@ -370,7 +384,7 @@ public final class LoadFileAction {
 		if (lcname.endsWith(".brpt")) {
 			BrptParser parser = new BrptParser();
 			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, true);
-			Application.getSingleton().logDebug("total repeats loaded: " + alist.size());
+			Application.logDebug("total repeats loaded: " + alist.size());
 			return input_seq;
 		}
 		if (lcname.endsWith(".brs")) {
@@ -379,7 +393,7 @@ public final class LoadFileAction {
 		}
 		if (lcname.endsWith(".bsnp")) {
 			List<SeqSymmetry> alist = BsnpParser.parse(str, annot_type, selected_group, true);
-			Application.getSingleton().logDebug("total snps loaded: " + alist.size());
+			Application.logDebug("total snps loaded: " + alist.size());
 			return input_seq;
 		}
 
@@ -418,16 +432,6 @@ public final class LoadFileAction {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
 			parser.parse(str, selected_group, true, annot_type);
 			return input_seq;
-		}
-		if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
-			List<BioSeq> seqs = FastaParser.parseAll(str, selected_group);
-			if (input_seq != null && seqs.contains(input_seq)) {
-				return input_seq;
-			}
-			if (!seqs.isEmpty()) {
-				return seqs.get(0);
-			}
-			return null;
 		}
 		if (lcname.endsWith("." + FishClonesParser.FILE_EXT)) {
 			FishClonesParser parser = new FishClonesParser(true);

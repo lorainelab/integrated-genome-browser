@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
@@ -334,7 +335,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			DataInputStream dis = new DataInputStream(bis);
 			return BpsParser.parse(dis, featureName, null, version.group, false, false);
 		}
-		if (extension.equals("bp2")) {
+		if (extension.equals("bp1") || extension.equals("bp2")) {
 			Bprobe1Parser bp1_reader = new Bprobe1Parser();
 			// parsing probesets in bp2 format, also adding probeset ids
 			return bp1_reader.parse(bis, version.group, false, featureName, false);
@@ -369,6 +370,11 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			parser.enableSharedQueryTarget(true);
 			DataInputStream dis = new DataInputStream(bis);
 			return parser.parse(dis, featureName, null, version.group, null, false, false, false);
+		}
+		if (extension.equals("sin") || extension.equals("egr") || extension.equals("txt")) {
+			ScoredIntervalParser parser = new ScoredIntervalParser();
+			parser.parse(bis, featureName, version.group);
+			return null;	// TODO: don't annotate by default
 		}
 		if (extension.equals("useq")) {
 			//find out what kind of data it is, graph or region, from the ArchiveInfo object

@@ -468,7 +468,6 @@ public final class Das2ClientOptimizer {
 			// why is annotate_target parameter below set to false?
 			return parser.parse(bis, type.getName(), null, seq_group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
 		}
-
 		if (extension.equals("psl")) {
 			// reference to LoadFileAction.ParsePSL
 			PSLParser parser = new PSLParser();
@@ -484,10 +483,9 @@ public final class Das2ClientOptimizer {
 			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
 				USeqGraphParser gp = new USeqGraphParser();
 				return gp.parseGraphSyms(zis, gmodel, type.getName(), archiveInfo);
-			} else {
-				USeqRegionParser rp = new USeqRegionParser();
-				return rp.parse(zis, seq_group, type.getName(), false, archiveInfo);
 			}
+			USeqRegionParser rp = new USeqRegionParser();
+			return rp.parse(zis, seq_group, type.getName(), false, archiveInfo);
 		}
 		System.out.println("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
 		request_log.setSuccess(false);

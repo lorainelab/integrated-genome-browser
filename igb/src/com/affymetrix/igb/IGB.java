@@ -829,8 +829,8 @@ public final class IGB extends Application
 		}
 		
 
-		String URL = "http://www.surveymonkey.com/s/NC87QRM";
-		
+                // Integrated Genome Browser User Survey 
+		String URL = "http://www.surveymonkey.com/s/8DVNXVP";
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea surveyText = new JTextArea();

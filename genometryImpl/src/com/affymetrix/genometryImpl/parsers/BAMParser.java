@@ -100,15 +100,15 @@ public final class BAMParser {
 				iter = reader.query(seq.getID(), min, max, contained);
 				if (iter != null) {
 					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
-						if (containerSym) {
-							// positive track
-							symList.add(createRandomAccessSym(sr, min, max, seq));
-
-							// negative track
-							symList.add(createRandomAccessSym(sr, max, min, seq));
-
-							return symList;
-						}
+//						if (containerSym) {
+//							// positive track
+//							symList.add(createRandomAccessSym(sr, min, max, seq));
+//
+//							// negative track
+//							symList.add(createRandomAccessSym(sr, max, min, seq));
+//
+//							return symList;
+//						}
 						symList.add(convertSAMRecordToSymWithProps(sr, seq, f.getName()));
 					}
 				}
@@ -157,9 +157,10 @@ public final class BAMParser {
 		sym.setProperty("cigar", sr.getCigar());	// interpreted later
 		sym.setProperty("residues", sr.getReadString().intern());
 		sym.setProperty("method", meth);
-		/*for (SimpleSymWithProps child : getChildren(sr, seq, sr.getCigar(), sr.getReadString(), sym.getSpan(0).getLength())) {
+		seq.addAnnotation(sym);
+		for (SimpleSymWithProps child : getChildren(sr, seq, sr.getCigar(), sr.getReadString(), sym.getSpan(0).getLength())) {
 			sym.addChild(child);
-		}*/
+		}
 		return sym;
 	}
 
@@ -173,9 +174,11 @@ public final class BAMParser {
 		int currentPosition = 0;
 		int currentChildStart = 0;
 		int currentChildEnd = 0;
+		int celLength = 0;
+		boolean flag = false;
 		for (CigarElement cel : cigar.getCigarElements()) {
 			try {
-				int celLength = cel.getLength();
+				celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
 					currentPosition += celLength;	// skip over deletion
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
@@ -200,7 +203,8 @@ public final class BAMParser {
 					// init positions for next child
 					currentChildStart = currentChildEnd + celLength;
 					currentChildEnd = currentChildStart;
-
+					results.add(ss);
+					flag = true;
 				} else if (cel.getOperator() == CigarOperator.PADDING) {
 					char[] tempArr = new char[celLength];
 					Arrays.fill(tempArr, '*');		// print padding as '*'

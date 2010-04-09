@@ -3,6 +3,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.igb.general.ServerList;
 import java.awt.event.ActionEvent;
@@ -75,7 +76,8 @@ public class IGBAuthenticator extends Authenticator {
 			final JLabel server,
 			final JTextField username,
 			final JPasswordField password,
-			final JCheckBox remember) {
+			final JCheckBox remember,
+			final boolean authOptional) {
 		JPanel dialog = new JPanel();
 		JLabel s = new JLabel(BUNDLE.getString("server"));
 		final JLabel u = new JLabel(BUNDLE.getString("username"));
@@ -137,7 +139,8 @@ public class IGBAuthenticator extends Authenticator {
 		group.add(auth);
 		anon.addActionListener(radioListener);
 		auth.addActionListener(radioListener);
-		anon.setSelected(true);
+		anon.setSelected(authOptional);
+		auth.setSelected(!authOptional);
 		radioListener.actionPerformed(null);
 
 		return dialog;
@@ -206,17 +209,20 @@ public class IGBAuthenticator extends Authenticator {
 	 * @return Password authentication to the user
 	 */
 	private static PasswordAuthentication displayDialog(final JFrame parent, final Preferences serverNode, final GenericServer serverObject, final String url) {
-		JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName);
+		boolean authOptional = serverObject != null && serverObject.serverType == ServerType.DAS2;
+		JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName, authOptional);
 		JLabel server = new JLabel();
 		JTextField     username = new JTextField();
 		JPasswordField password = new JPasswordField();
 		JRadioButton anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
 		JRadioButton auth = new JRadioButton(BUNDLE.getString("authToServer"));
 		JCheckBox remember = new JCheckBox();
-		JPanel dialog = buildDialog(messageContainer, anon, auth, server, username, password, remember);
+		JPanel dialog = buildDialog(messageContainer, anon, auth, server, username, password, remember, authOptional);
 
 		server.setText(url);
-		anon.setSelected(true);
+		anon.setSelected(authOptional);
+		anon.setEnabled(authOptional);
+		auth.setSelected(!authOptional);
 		remember.setEnabled(serverObject != null && serverNode != null && serverNode.parent().getBoolean(PREF_REMEMBER, true));
 
 		int result = JOptionPane.showOptionDialog(parent, dialog, null, OK_CANCEL_OPTION, PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
@@ -245,21 +251,23 @@ public class IGBAuthenticator extends Authenticator {
 		 * Das2ServerInfo: getSources() will call initialize() every time
 		 * if the login() fails.  Currently, this occurs 4 times on startup.
 		 */
-		return doAnonymous();
+		return authOptional ? doAnonymous() : null;
 	}
 
 	/**
 	 * Formats and word wraps the message of the authentication dialog.
 	 * 
-	 * @param serverName friendly name of the server that requested authentication
+	 * @param serverObject friendly name of the server that requested authentication
 	 * @return a JPanel containing the message
 	 */
-	private static JPanel setMessage(String serverName) {
+	private static JPanel setMessage(String serverName, boolean authOptional) {
 		JPanel messageContainer = new JPanel();
 		/* instantiante current simply to steal FontMetrics from it */
 		JLabel current = new JLabel();
 		String[] message = StringUtils.wrap(
-				MessageFormat.format(BUNDLE.getString("authOptional"), serverName),
+				MessageFormat.format(
+					BUNDLE.getString(authOptional ?  "authOptional" : "authRequired"),
+					serverName),
 				current.getFontMetrics(current.getFont()),
 				500);
 

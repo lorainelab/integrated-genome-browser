@@ -44,10 +44,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
@@ -74,7 +76,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	protected void init() {
 		String scheme = this.uri.getScheme().toLowerCase();
 		if (scheme.length() == 0 || scheme.equals("file")) {
-			f = new File(this.uri.getRawPath());
+			f = new File(this.uri);
 		} else if (scheme.startsWith("http")) {
 			InputStream istr = null;
 			try {
@@ -105,25 +107,21 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	private static URI determineURI(GenericVersion version, String featureName) {
 		URI uri = null;
 
-		try {
-			if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
-				int httpIndex = featureName.toLowerCase().indexOf("http:");
-				if (httpIndex > -1) {
-					// Strip off initial characters up to and including http:
-					// Sometimes this is necessary, as URLs can start with invalid "http:/"
-					featureName = GeneralUtils.convertStreamNameToValidURLName(featureName);
-					uri = new URI(featureName);
-				} else {
-					uri = new URI("file://" + featureName);
-				}
+		if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
+			int httpIndex = featureName.toLowerCase().indexOf("http:");
+			if (httpIndex > -1) {
+				// Strip off initial characters up to and including http:
+				// Sometimes this is necessary, as URLs can start with invalid "http:/"
+				featureName = GeneralUtils.convertStreamNameToValidURLName(featureName);
+				uri = URI.create(featureName);
 			} else {
-				uri = new URI(
-						version.gServer.URL + "/"
-						+ version.versionID + "/"
-						+ determineFileName(version, featureName));
+				uri = (new File(featureName)).toURI();
 			}
-		} catch (URISyntaxException ex) {
-			Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+		} else {
+			uri = URI.create(
+					version.gServer.URL + "/"
+					+ version.versionID + "/"
+					+ determineFileName(version, featureName));
 		}
 		return uri;
 	}

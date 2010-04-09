@@ -270,6 +270,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(insym, sym, the_style, annotseq, pglyph, map, coordseq);
+			handleResidues(insym, coordseq, pglyph);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
@@ -412,13 +413,26 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static void handleResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
 		if (sym instanceof SymWithProps) {
-			Object residues = ((SymWithProps) sym).getProperty("residues");
+
+			if(sym.getChildCount() > 0){
+				for(int i=0; i<sym.getChildCount(); i++){
+					setResidues(sym.getChild(i),coordseq,pglyph);
+				}
+			}else {
+				setResidues(sym,coordseq,pglyph);
+			}
+			
+		}
+	}
+
+	private static void setResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph){
+		Object residues = ((SymWithProps) sym).getProperty("residues");
 			if (residues != null) {
 				SeqSpan span = sym.getSpan(coordseq);
 				if (span != null) {
 					String residueStr = residues.toString();
-					Object cigarObj = ((SymWithProps) sym).getProperty("cigar");
-					residueStr = BAMParser.interpretCigar(cigarObj, residueStr, span.getLength());
+//					Object cigarObj = ((SymWithProps) sym).getProperty("cigar");
+//					residueStr = BAMParser.interpretCigar(cigarObj, residueStr, span.getLength());
 					CharSeqGlyph csg = new CharSeqGlyph();
 					csg.setResidues(residueStr);
 					csg.setShowBackground(false);
@@ -426,7 +440,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 					csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
 					pglyph.addChild(csg);
 				}
-			}
 		}
 	}
 }

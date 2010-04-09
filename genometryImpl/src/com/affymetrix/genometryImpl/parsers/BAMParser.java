@@ -5,8 +5,9 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.RandomAccessSym;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -100,15 +101,6 @@ public final class BAMParser {
 				iter = reader.query(seq.getID(), min, max, contained);
 				if (iter != null) {
 					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
-//						if (containerSym) {
-//							// positive track
-//							symList.add(createRandomAccessSym(sr, min, max, seq));
-//
-//							// negative track
-//							symList.add(createRandomAccessSym(sr, max, min, seq));
-//
-//							return symList;
-//						}
 						symList.add(convertSAMRecordToSymWithProps(sr, seq, f.getName()));
 					}
 				}
@@ -122,18 +114,6 @@ public final class BAMParser {
 		return symList;
 	}
 
-	private RandomAccessSym createRandomAccessSym(SAMRecord sr, int min, int max, BioSeq seq) {
-		RandomAccessSym sym = new RandomAccessSym(this);
-		sym.setID(sr.getReadName());
-		for (SAMTagAndValue tv : sr.getAttributes()) {
-			sym.setProperty(tv.tag, tv.value);
-		}
-		sym.addSpan(new SimpleSeqSpan(min, max, seq));
-		sym.setProperty("method", f.getName());
-		seq.addAnnotation(sym);
-		return sym;
-	}
-
 	/**
 	 * Convert SAMRecord to SymWithProps.
 	 * @param sr - SAMRecord
@@ -141,26 +121,46 @@ public final class BAMParser {
 	 * @param meth - method name
 	 * @return SimpleSymWithProps
 	 */
-	public static SimpleSymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth) {
-		SimpleSymWithProps sym = new SimpleSymWithProps();
-		sym.setID(sr.getReadName());
-		for (SAMTagAndValue tv : sr.getAttributes()) {
-			sym.setProperty(tv.tag, tv.value);
-		}
+	private static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth){
+		SimpleSeqSpan span = null;
 		int start = sr.getAlignmentStart() - 1; // convert to interbase
 		int end = sr.getAlignmentEnd();
 		if (!sr.getReadNegativeStrandFlag()) {
-			sym.addSpan(new SimpleSeqSpan(start, end, seq));
+			span = new SimpleSeqSpan(start, end, seq);
 		} else {
-			sym.addSpan(new SimpleSeqSpan(end, start, seq));
+			span = new SimpleSeqSpan(end, start, seq);
 		}
-		sym.setProperty("cigar", sr.getCigar());	// interpreted later
+
+		List<SimpleSymWithProps> childs = getChildren(sr, seq, sr.getCigar(), sr.getReadString(), span.getLength());
+
+		int blockMins[] = new int[childs.size()];
+		int blockMaxs[] = new int[childs.size()];
+		int i = 0;
+		for (SimpleSymWithProps child : childs) {
+			blockMins[i] =  child.getSpan(0).getMin() + span.getMin();
+			blockMaxs[i] =  blockMins[i] + child.getSpan(0).getLength();
+			i++;
+		}
+
+		if(childs.size() == 0){
+			blockMins = new int[1];
+			blockMins[0] = span.getStart();
+			blockMaxs = new int[1];
+			blockMaxs[0] = span.getEnd();
+		}
+
+		SymWithProps sym = new UcscBedSym(seq.getID(), seq, start, end, sr.getReadName(), 0.0f, span.isForward(), 0, 0, blockMins, blockMaxs);
+
+
+		sym.setProperty("id",sr.getReadName());
+		for (SAMTagAndValue tv : sr.getAttributes()) {
+			sym.setProperty(tv.tag, tv.value);
+		}
+		sym.setProperty("cigar", sr.getCigar());
 		sym.setProperty("residues", sr.getReadString().intern());
 		sym.setProperty("method", meth);
 		seq.addAnnotation(sym);
-		for (SimpleSymWithProps child : getChildren(sr, seq, sr.getCigar(), sr.getReadString(), sym.getSpan(0).getLength())) {
-			sym.addChild(child);
-		}
+
 		return sym;
 	}
 
@@ -169,13 +169,13 @@ public final class BAMParser {
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return results;
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
 		int currentPosition = 0;
 		int currentChildStart = 0;
 		int currentChildEnd = 0;
 		int celLength = 0;
-		boolean flag = false;
+		
 		for (CigarElement cel : cigar.getCigarElements()) {
 			try {
 				celLength = cel.getLength();
@@ -189,22 +189,20 @@ public final class BAMParser {
 					sb.append(residues.substring(currentPosition, currentPosition + celLength));
 					currentPosition += celLength;	// print matches
 					currentChildEnd += celLength;
-				} else if (cel.getOperator() == CigarOperator.N) {
-					// Create a new child
 					String childResidues = sb.toString().intern();
 					sb = new StringBuilder();
 					SimpleSymWithProps ss = new SimpleSymWithProps();
 					if (!sr.getReadNegativeStrandFlag()) {
 						ss.addSpan(new SimpleSeqSpan(currentChildStart, currentChildEnd, seq));
-					} else {
+					}
+					else {
 						ss.addSpan(new SimpleSeqSpan(currentChildEnd, currentChildStart, seq));
 					}
 					ss.setProperty("residues", childResidues);
-					// init positions for next child
+					results.add(ss);
+				} else if (cel.getOperator() == CigarOperator.N) {
 					currentChildStart = currentChildEnd + celLength;
 					currentChildEnd = currentChildStart;
-					results.add(ss);
-					flag = true;
 				} else if (cel.getOperator() == CigarOperator.PADDING) {
 					char[] tempArr = new char[celLength];
 					Arrays.fill(tempArr, '*');		// print padding as '*'
@@ -219,6 +217,7 @@ public final class BAMParser {
 					break;
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				return results;
 			}
 		}

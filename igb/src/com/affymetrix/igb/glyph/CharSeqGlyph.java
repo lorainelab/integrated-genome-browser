@@ -29,7 +29,6 @@ import java.util.prefs.PreferenceChangeListener;
 public final class CharSeqGlyph extends SequenceGlyph
 		 {
 	private SearchableCharIterator chariter;
-	private boolean residuesSet = false;
 	private int residue_length = 0;
 	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
 
@@ -92,9 +91,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 	@Override
 	public void setResidues(String residues) {
-		chariter = new ImprovedStringCharIter(residues);
-		residue_length = residues.length();
-		residuesSet = true;
+		setResiduesProvider(new ImprovedStringCharIter(residues), residues.length());
 	}
 
 	@Override
@@ -105,7 +102,6 @@ public final class CharSeqGlyph extends SequenceGlyph
 	public void setResiduesProvider(SearchableCharIterator iter, int seqlength) {
 		chariter = iter;
 		residue_length = seqlength;
-		residuesSet = true;
 	}
 
 	public SearchableCharIterator getResiduesProvider() {
@@ -116,44 +112,38 @@ public final class CharSeqGlyph extends SequenceGlyph
 	@Override
 	public void draw(ViewI view) {
 		Rectangle2D.Double coordclipbox = view.getCoordBox();
-		Graphics g = view.getGraphics();
-		double pixels_per_base;
-		int visible_ref_beg, visible_ref_end,
-				visible_seq_beg, visible_seq_end, visible_seq_span,
-				seq_beg_index, seq_end_index;
+		int visible_ref_beg, visible_seq_beg, seq_beg_index;
 		visible_ref_beg = (int) coordclipbox.x;
-		visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
-		// adding 1 to visible ref_end to make sure base is drawn if only
-		// part of it is visible
-		visible_ref_end = visible_ref_end + 1;
 
-		// ******** determine first base and last base displayed ********
-		visible_seq_beg = (seq_beg < visible_ref_beg) ? visible_ref_beg : seq_beg;
-		visible_seq_end = (seq_end > visible_ref_end) ? visible_ref_end : seq_end;
-		visible_seq_span = visible_seq_end - visible_seq_beg;
+		// determine first base displayed
+		visible_seq_beg = Math.max(seq_beg, visible_ref_beg);
 		seq_beg_index = visible_seq_beg - seq_beg;
-		seq_end_index = visible_seq_end - seq_beg;
 
 		if (null != chariter && seq_beg_index <= residue_length) {
-
-			if (seq_end_index > residue_length) {
-				seq_end_index = residue_length;
-			}
-
+			int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
+			// adding 1 to visible ref_end to make sure base is drawn if only
+			// part of it is visible
+			visible_ref_end = visible_ref_end + 1;
+			int visible_seq_end = Math.min(seq_end, visible_ref_end);
+			int visible_seq_span = visible_seq_end - visible_seq_beg;
 			Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, coordbox.y,
 					visible_seq_span, coordbox.height);
 			view.transformToPixels(scratchrect, pixelbox);
-			pixels_per_base = ( view.getTransform()).getScaleX();
-			
+			double pixel_width_per_base = ( view.getTransform()).getScaleX();
 			// ***** background already drawn in drawTraversal(), so just return if
 			// ***** scale is < 1 pixel per base
-			if (pixels_per_base < 1 || !residuesSet) {
+			if (pixel_width_per_base < 1) {
 				return;
 			} // ***** otherwise semantic zooming to show more detail *****
 			if (visible_seq_span > 0) {
+				int seq_end_index = visible_seq_end - seq_beg;
+				if (seq_end_index > residue_length) {
+					seq_end_index = residue_length;
+				}
 				int seq_pixel_offset = pixelbox.x;
 				String str = chariter.substring(seq_beg_index, seq_end_index);
-				drawHorizontalResidues(g, pixels_per_base, str, seq_beg_index, seq_end_index, seq_pixel_offset);
+				Graphics g = view.getGraphics();
+				drawHorizontalResidues(g, pixel_width_per_base, str, seq_beg_index, seq_end_index, seq_pixel_offset);
 			}
 		}
 		super.draw(view);
@@ -212,10 +202,10 @@ public final class CharSeqGlyph extends SequenceGlyph
 	}
 
 	private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {
-		g.setFont(getResidueFont());
-		g.setColor(getForegroundColor());
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
+			g.setFont(getResidueFont());
+			g.setColor(getForegroundColor());
 			int strLength = str.length();
 			for (int i = 0; i < strLength; i++) {
 				String c = String.valueOf(str.charAt(i));

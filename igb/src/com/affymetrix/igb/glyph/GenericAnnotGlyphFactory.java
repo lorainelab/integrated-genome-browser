@@ -378,9 +378,19 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		} else {
 			setResidues(sym, coordseq, pglyph, 0, false);
+			// don't need to process cigar, since entire residue string is used
 		}
 	}
 
+	/**
+	 * Determine and set the appropriate residues for this element.
+	 * @param sym
+	 * @param coordseq
+	 * @param pglyph
+	 * @param startPos - starting position of the current child in the residues string
+	 * @param handleCigar - indicates whether we need to process the cigar element.
+	 * @return
+	 */
 	private static int setResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph, int startPos, boolean handleCigar) {
 		if (!(sym instanceof SymWithProps)) {
 			return startPos;

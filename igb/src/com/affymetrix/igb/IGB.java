@@ -62,7 +62,7 @@ import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.util.ComponentWriter;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -890,7 +890,7 @@ public final class IGB extends Application
 						"the Picard package from http://picard.sourceforge.net\n" +
 						"(released under the Apache version 2.0 license)\n\n";
 		about_text.append(text);
-		String cache_root = com.affymetrix.igb.util.LocalUrlCacher.getCacheRoot();
+		String cache_root = com.affymetrix.genometryImpl.util.LocalUrlCacher.getCacheRoot();
 		File cache_file = new File(cache_root);
 		if (cache_file.exists()) {
 			about_text.append("\nCached data stored in: \n");

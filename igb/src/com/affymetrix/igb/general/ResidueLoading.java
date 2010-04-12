@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasLoader;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
 import java.io.InputStream;

@@ -27,7 +27,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

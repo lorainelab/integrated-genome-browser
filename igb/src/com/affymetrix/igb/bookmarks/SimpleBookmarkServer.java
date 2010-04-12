@@ -15,7 +15,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.igb.Application;
 
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.*;
 import java.io.*;
 

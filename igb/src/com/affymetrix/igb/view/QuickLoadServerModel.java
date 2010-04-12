@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.*;
 import java.net.URL;
 import java.util.*;

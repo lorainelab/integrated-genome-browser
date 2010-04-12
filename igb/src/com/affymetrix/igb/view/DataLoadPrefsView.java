@@ -26,7 +26,7 @@ import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.igb.util.IGBAuthenticator;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -48,7 +48,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import static com.affymetrix.igb.util.LocalUrlCacher.CacheUsage;
+import static com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.GroupLayout.Alignment.TRAILING;

@@ -34,7 +34,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
 import java.net.MalformedURLException;

@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.util.XMLUtils;
 import java.net.MalformedURLException;
 import java.net.URL;

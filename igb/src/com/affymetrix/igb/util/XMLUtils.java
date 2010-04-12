@@ -1,5 +1,6 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedInputStream;
 import java.io.IOException;

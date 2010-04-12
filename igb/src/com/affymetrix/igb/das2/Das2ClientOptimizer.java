@@ -60,7 +60,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
  *   4. full persistent caching based on (2)
  */
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 

@@ -1,10 +1,7 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.util.UrlToFileName;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -343,7 +340,7 @@ public final class LocalUrlCacher {
 		}
 		byte[] content = null;
 		ArrayList<byte[]> chunks = new ArrayList<byte[]>(1000);
-		IntList byte_counts = new IntList(100);
+		IntArrayList byte_counts = new IntArrayList(100);
 		int total_byte_count = readChunks(bis, chunks, byte_counts);
 		int content_length = total_byte_count;
 		content = new byte[content_length];
@@ -361,7 +358,7 @@ public final class LocalUrlCacher {
 	}
 
 
-	private static int readChunks(BufferedInputStream bis, ArrayList<byte[]> chunks, IntList byte_counts) throws IOException {
+	private static int readChunks(BufferedInputStream bis, ArrayList<byte[]> chunks, IntArrayList byte_counts) throws IOException {
 		int chunk_count = 0;
 		int chunk_size = 256 * 256;
 		int total_byte_count = 0;
@@ -641,6 +638,36 @@ public final class LocalUrlCacher {
 			if(u.usage == usage) { return u; }
 		}
 
+		return null;
+	}
+
+	public static File convertURIToFile(URI uri) {
+		String scheme = uri.getScheme().toLowerCase();
+		if (scheme.length() == 0 || scheme.equals("file")) {
+			return new File(uri);
+		}
+		if (scheme.startsWith("http")) {
+			InputStream istr = null;
+			try {
+				String uriStr = uri.toString();
+				istr = LocalUrlCacher.getInputStream(uriStr);
+				StringBuffer stripped_name = new StringBuffer();
+				InputStream str = GeneralUtils.unzipStream(istr, uriStr, stripped_name);
+				String stream_name = stripped_name.toString();
+				if (str instanceof BufferedInputStream) {
+					str = (BufferedInputStream) str;
+				} else {
+					str = new BufferedInputStream(str);
+				}
+				return GeneralUtils.convertStreamToFile(str, stream_name.substring(stream_name.lastIndexOf("/")));
+			} catch (IOException ex) {
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(istr);
+			}
+		}
+		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
+				"URL scheme: " + scheme + " not recognized");
 		return null;
 	}
 }

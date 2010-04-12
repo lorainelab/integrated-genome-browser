@@ -33,7 +33,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
@@ -71,38 +71,8 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 
 	@Override
 	protected void init() {
+		this.f = LocalUrlCacher.convertURIToFile(this.uri);
 		this.isInitialized = true;
-		this.f = convertURIToFile(this.uri);
-	}
-
-	public static File convertURIToFile(URI uri) {
-		String scheme = uri.getScheme().toLowerCase();
-		if (scheme.length() == 0 || scheme.equals("file")) {
-			return new File(uri);
-		}
-		if (scheme.startsWith("http")) {
-			InputStream istr = null;
-			try {
-				String uriStr = uri.toString();
-				istr = LocalUrlCacher.getInputStream(uriStr);
-				StringBuffer stripped_name = new StringBuffer();
-				InputStream str = GeneralUtils.unzipStream(istr, uriStr, stripped_name);
-				String stream_name = stripped_name.toString();
-				if (str instanceof BufferedInputStream) {
-					str = (BufferedInputStream) str;
-				} else {
-					str = new BufferedInputStream(str);
-				}
-				return GeneralUtils.convertStreamToFile(str, stream_name.substring(stream_name.lastIndexOf("/")));
-			} catch (IOException ex) {
-				Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
-			} finally {
-				GeneralUtils.safeClose(istr);
-			}
-		}
-		Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE,
-				"URL scheme: " + scheme + " not recognized");
-		return null;
 	}
 
 	private static URI determineURI(GenericVersion version, String featureName) {

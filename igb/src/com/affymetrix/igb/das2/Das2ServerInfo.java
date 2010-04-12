@@ -20,7 +20,7 @@ import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.util.XMLUtils;
 
 public final class Das2ServerInfo  {

@@ -13,7 +13,7 @@
 package com.affymetrix.igb.das;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.util.XMLUtils;
 import java.io.InputStream;
 import java.net.*;

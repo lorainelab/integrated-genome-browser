@@ -253,7 +253,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			if (this.version.group == null) {
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
-				BAMParser parser = new BAMParser(this.f, this.version.group);
+				BAMParser parser = new BAMParser(this.f, this.featureName, this.version.group);
 				parser.getGenome();
 			}
 			return feats;
@@ -284,7 +284,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			if (this.version.group == null) {
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
-				BAMParser parser = new BAMParser(this.f, this.version.group);
+				BAMParser parser = new BAMParser(this.f, this.featureName, this.version.group);
 				parser.getChromosome(seq);
 			}
 			return null;
@@ -300,7 +300,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			if (this.version.group == null) {
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
-				BAMParser parser = new BAMParser(this.f, this.version.group);
+				BAMParser parser = new BAMParser(this.f, this.featureName, this.version.group);
 				parser.getRegion(span);
 			}
 			return null;

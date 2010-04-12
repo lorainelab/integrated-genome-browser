@@ -10,8 +10,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -34,7 +32,7 @@ public class BAMParserTest {
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
 			BioSeq seq = group.addSeq("chr1", 197069962);
 			
-			BAMParser parser = new BAMParser(new File(filename), group);
+			BAMParser parser = new BAMParser(new File(filename), "featureName", group);
 			assertNotNull(parser);
 
 			List<SeqSymmetry> result = parser.parse(seq, seq.getMin(), seq.getMax(), false, true);

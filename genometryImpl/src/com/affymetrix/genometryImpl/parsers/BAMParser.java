@@ -34,10 +34,12 @@ public final class BAMParser {
     private SAMFileHeader header;
 	private File f;
 	private AnnotatedSeqGroup group;
+	private final String featureName;
 
-	public BAMParser(File f, AnnotatedSeqGroup seq_group) {
+	public BAMParser(File f, String featureName, AnnotatedSeqGroup seq_group) {
 		this.group = seq_group;
 		this.f = f;
+		this.featureName = featureName;
 		try {
 			reader = new SAMFileReader(f);
 			//header = reader.getFileHeader();
@@ -46,6 +48,33 @@ public final class BAMParser {
 		}
 	}
 
+	public List<BioSeq> getChromosomeList() {
+		List<BioSeq> seqs = new ArrayList<BioSeq>();
+		header = reader.getFileHeader();
+		if (header == null || header.getSequenceDictionary() == null) {
+			Logger.getLogger(BAMParser.class.getName()).log(
+					Level.WARNING, "Couldn't find sequence dictionary -- no sequences loaded from BAM");
+			return seqs;
+		}
+			// add sequences that aren't in the original group.  Especially useful for "unknown groups"
+		for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
+			try {
+				if (Thread.currentThread().isInterrupted()) {
+					break;
+				}
+
+				String seqID = ssr.getSequenceName();
+				if (group.getSeq(seqID) == null) {
+					int seqLength = ssr.getSequenceLength();
+					seqs.add(new BioSeq(seqID, group.getID(), seqLength));
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return seqs;
+	}
+	
 	public void parse() {
 		header = reader.getFileHeader();
 		if (header == null || header.getSequenceDictionary() == null) {
@@ -101,7 +130,7 @@ public final class BAMParser {
 				iter = reader.query(seq.getID(), min, max, contained);
 				if (iter != null) {
 					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
-						symList.add(convertSAMRecordToSymWithProps(sr, seq, f.getName()));
+						symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, f.getName()));
 					}
 				}
 			}
@@ -121,7 +150,7 @@ public final class BAMParser {
 	 * @param meth - method name
 	 * @return SimpleSymWithProps
 	 */
-	private static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth){
+	private static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String featureName, String meth){
 		SimpleSeqSpan span = null;
 		int start = sr.getAlignmentStart() - 1; // convert to interbase
 		int end = sr.getAlignmentEnd();
@@ -148,7 +177,7 @@ public final class BAMParser {
 			blockMaxs[0] = span.getEnd();
 		}
 
-		SymWithProps sym = new UcscBedSym(seq.getID(), seq, start, end, sr.getReadName(), 0.0f, span.isForward(), 0, 0, blockMins, blockMaxs);
+		SymWithProps sym = new UcscBedSym(featureName, seq, start, end, sr.getReadName(), 0.0f, span.isForward(), 0, 0, blockMins, blockMaxs);
 		sym.setProperty("id",sr.getReadName());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
 			sym.setProperty(tv.tag, tv.value);

@@ -1,7 +1,5 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +14,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author sgblanch
- * @version $Id$
+ * @version $Id: XMLUtils.java 5674 2010-04-12 19:14:03Z jnicol $
  */
 public class XMLUtils {
 	private XMLUtils() { }

@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.igb.util.XMLUtils;
+import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 

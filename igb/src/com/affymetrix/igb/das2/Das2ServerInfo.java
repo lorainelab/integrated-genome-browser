@@ -21,7 +21,7 @@ import org.w3c.dom.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.igb.util.XMLUtils;
+import com.affymetrix.genometryImpl.util.XMLUtils;
 
 public final class Das2ServerInfo  {
   private static boolean DEBUG_SOURCES_QUERY = false;

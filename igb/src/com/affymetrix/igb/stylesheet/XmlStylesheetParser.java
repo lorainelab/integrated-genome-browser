@@ -14,7 +14,7 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.util.XMLUtils;
+import com.affymetrix.genometryImpl.util.XMLUtils;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;

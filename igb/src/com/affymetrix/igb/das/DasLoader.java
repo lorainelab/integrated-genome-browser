@@ -13,12 +13,22 @@
 package com.affymetrix.igb.das;
 
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.QueryBuilder;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.XMLUtils;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -30,15 +40,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.QueryBuilder;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.igb.util.XMLUtils;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 /**
  * A class to help load and parse documents from a DAS server.

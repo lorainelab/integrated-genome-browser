@@ -1457,7 +1457,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	private void handleNameQuery(
+	private static void handleNameQuery(
 			List<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class<? extends AnnotationWriter> writerclass,
 			HttpServletResponse response, String xbase) {
 		String name = names.get(0);

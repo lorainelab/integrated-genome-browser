@@ -367,6 +367,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			regex = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
 			Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
+			return;
 		} catch (Exception ex) {
 			Application.errorPanel("Problem with regular expression...", ex);
 			return;

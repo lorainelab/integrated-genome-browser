@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.parsers.BAMParser;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
@@ -371,23 +372,29 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static void handleResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
 		if (sym.getChildCount() > 0) {
+			int startPos = 0;
 			for (int i = 0; i < sym.getChildCount(); i++) {
-				setResidues(sym.getChild(i), coordseq, pglyph);
+				startPos += setResidues(sym.getChild(i), coordseq, pglyph, startPos, true);
 			}
 		} else {
-			setResidues(sym, coordseq, pglyph);
+			setResidues(sym, coordseq, pglyph, 0, false);
 		}
 	}
 
-	private static void setResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
+	private static int setResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph, int startPos, boolean handleCigar) {
 		if (!(sym instanceof SymWithProps)) {
-			return;
+			return startPos;
 		}
 		Object residues = ((SymWithProps) sym).getProperty("residues");
 		if (residues != null) {
 			SeqSpan span = sym.getSpan(coordseq);
 			if (span != null) {
 				String residueStr = residues.toString();
+				if (handleCigar) {
+					Object cigar = ((SymWithProps) sym).getProperty("cigar");
+					residueStr = BAMParser.interpretCigar(cigar, residueStr, startPos, span.getLength());
+					startPos += residueStr.length();
+				}
 				CharSeqGlyph csg = new CharSeqGlyph();
 				csg.setResidues(residueStr);
 				csg.setShowBackground(false);
@@ -396,5 +403,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				pglyph.addChild(csg);
 			}
 		}
+		return startPos;
 	}
 }

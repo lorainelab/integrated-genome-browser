@@ -71,34 +71,38 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 
 	@Override
 	protected void init() {
-		String scheme = this.uri.getScheme().toLowerCase();
+		this.isInitialized = true;
+		this.f = convertURIToFile(this.uri);
+	}
+
+	public static File convertURIToFile(URI uri) {
+		String scheme = uri.getScheme().toLowerCase();
 		if (scheme.length() == 0 || scheme.equals("file")) {
-			f = new File(this.uri);
-		} else if (scheme.startsWith("http")) {
+			return new File(uri);
+		}
+		if (scheme.startsWith("http")) {
 			InputStream istr = null;
 			try {
-				String uriStr = this.uri.toString();
+				String uriStr = uri.toString();
 				istr = LocalUrlCacher.getInputStream(uriStr);
 				StringBuffer stripped_name = new StringBuffer();
 				InputStream str = GeneralUtils.unzipStream(istr, uriStr, stripped_name);
 				String stream_name = stripped_name.toString();
-
 				if (str instanceof BufferedInputStream) {
 					str = (BufferedInputStream) str;
 				} else {
 					str = new BufferedInputStream(str);
 				}
-
-				f = GeneralUtils.convertStreamToFile(str, stream_name.substring(stream_name.lastIndexOf("/")));
+				return GeneralUtils.convertStreamToFile(str, stream_name.substring(stream_name.lastIndexOf("/")));
 			} catch (IOException ex) {
 				Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
 				GeneralUtils.safeClose(istr);
 			}
-		} else {
-			System.out.println("URL scheme: " + scheme + " not recognized");
 		}
-		this.isInitialized = true;
+		Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE,
+				"URL scheme: " + scheme + " not recognized");
+		return null;
 	}
 
 	private static URI determineURI(GenericVersion version, String featureName) {

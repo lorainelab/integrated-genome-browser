@@ -222,9 +222,6 @@ public final class BAMParser {
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return residues;
 		}
-		if (cigar.toString().equals("65M305N10M")) {
-			System.out.println("here");
-		}
 		StringBuilder sb = new StringBuilder(spanLength);
 		int currentPos = 0;
 		for (CigarElement cel : cigar.getCigarElements()) {

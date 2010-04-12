@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.CompositeGraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
@@ -473,6 +474,62 @@ public final class GraphSymUtils {
 		return span_graph;
 
 	}
+
+	 /**
+     *  Given a child GraphSym, find the appropriate parent [Composite]GraphSym and add child to it
+     *
+     *  Assumes ids of parent graphs are unique among annotations on seq
+     *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
+     *  Uses type URI as graph ID, type name as graph name
+     */
+   public static void addChildGraph(GraphSym cgraf, String id, String name, SeqSpan overlapSpan) {
+		BioSeq aseq = cgraf.getGraphSeq();
+		GraphSym pgraf = getParentGraph(id, name, aseq, cgraf);
+
+		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
+		//    remove that span, then add overlap span from Das2FeatureRequestSym
+		//    could instead create new span based on start and end xcoord, but for better integration with
+		//    rest of Das2ClientOptimizer span of request is preferred
+		cgraf.removeSpan(cgraf.getSpan(aseq));
+		cgraf.addSpan(overlapSpan);
+		pgraf.addChild(cgraf);
+		//add properties of child to parent
+		pgraf.setProperties(cgraf.getProperties());
+	}
+
+
+	public static GraphSym getParentGraph(String id, String name, BioSeq aseq, GraphSym cgraf) {
+		// check and see if parent graph already exists
+
+		//is it a useq graph? modify name and id for strandedness?
+		if (name.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)){
+			//strip off useq
+			id = id.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+			name = name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+			//add strand?
+			Object obj = cgraf.getProperty(GraphSym.PROP_GRAPH_STRAND);
+			if (obj != null){
+				String strand = null;
+				Integer strInt = (Integer)obj;
+				if (strInt.equals(GraphSym.GRAPH_STRAND_PLUS)) strand = "+";
+				else if (strInt.equals(GraphSym.GRAPH_STRAND_MINUS)) strand = "-";
+				if (strand != null){
+					id = id+strand;
+					name = name+strand;
+				}
+			}
+		}
+
+		GraphSym pgraf = (GraphSym) aseq.getAnnotation(id);
+		if (pgraf == null) {
+			// don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
+			pgraf = new CompositeGraphSym(id, aseq);
+			pgraf.setGraphName(name);
+			aseq.addAnnotation(pgraf);
+		}
+		return pgraf;
+	}
+
 
 	private final static boolean hasWidth(GraphSym graf) {
 		return graf instanceof GraphIntervalSym;

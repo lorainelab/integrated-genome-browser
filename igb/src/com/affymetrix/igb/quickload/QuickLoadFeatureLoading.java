@@ -29,11 +29,10 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
@@ -124,6 +123,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			throws OutOfMemoryError {
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
+		final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 
 		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
 
@@ -133,18 +133,18 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 					if (results != null && !results.isEmpty()) {
 						SimpleSymWithProps requestSym = new SimpleSymWithProps();
 						requestSym.setProperty("meth", QuickLoadFeatureLoading.this.f.getName());
-						Das2ClientOptimizer.addToRequestSym(
+						GenericSymRequest.addToRequestSym(
 								results,
 								requestSym,
 								QuickLoadFeatureLoading.this.f.getName(),
 								QuickLoadFeatureLoading.this.featureName,
 								overlapSpan);
 						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
-							Das2ClientOptimizer.addAnnotations(results, requestSym, GenometryModel.getGenometryModel().getSelectedSeq());
+							GenericSymRequest.addAnnotations(results, requestSym, seq);
 						}
 						else if (strategy == LoadStrategy.GENOME) {
 							for (BioSeq aseq : QuickLoadFeatureLoading.this.version.group.getSeqList()) {
-								Das2ClientOptimizer.addAnnotations(results, requestSym, aseq);
+								GenericSymRequest.addAnnotations(results, requestSym, aseq);
 							}
 						}
 					}
@@ -159,8 +159,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 				try {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
-						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-						gviewer.setAnnotatedSeq(aseq, true, true);
+						gviewer.setAnnotatedSeq(seq, true, true);
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);

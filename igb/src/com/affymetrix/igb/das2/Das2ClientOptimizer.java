@@ -23,14 +23,13 @@ import java.util.zip.ZipInputStream;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.CompositeGraphSym;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.das2.Das2RequestLog;
+import com.affymetrix.genometryImpl.general.GenericSymRequest;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -44,8 +43,6 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 /*
@@ -398,9 +395,11 @@ public final class Das2ClientOptimizer {
 
             if (request_log.getSuccess()) {
 				AddParsingLogMessage(content_subtype);
-                List feats = DetermineFormatAndParse(content_subtype, request_log, istr, feature_query, seq_group, type);
-                addToRequestSym(feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
-				addAnnotations(feats, request_sym, aseq);
+                List<? extends SeqSymmetry> feats =
+						DetermineFormatAndParse(content_subtype, request_log, istr, feature_query, seq_group, type);
+                GenericSymRequest.addToRequestSym(
+						feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
+				GenericSymRequest.addAnnotations(feats, request_sym, aseq);
             }
             return request_log.getSuccess();
         } finally {
@@ -409,7 +408,7 @@ public final class Das2ClientOptimizer {
         }
     }
 
-    private static List DetermineFormatAndParse(
+    private static List<? extends SeqSymmetry> DetermineFormatAndParse(
             String extension, Das2RequestLog request_log, InputStream istr, String feature_query, AnnotatedSeqGroup seq_group,
             Das2Type type)
             throws IOException, SAXException {
@@ -496,115 +495,4 @@ public final class Das2ClientOptimizer {
         System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
     }
 
-     public static void addToRequestSym(
-			 List feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan) {
-        if (feats == null || feats.isEmpty()) {
-            // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
-            //    populate with empty sym child/grandchild
-            //    [ though a better way might be to have request sym's span on aseq be dependent on children, so
-            //       if no children then no span on aseq (though still an overlap_span and inside_span) ]
-            SimpleSymWithProps child = new SimpleSymWithProps();
-            child.addChild(new SimpleSymWithProps());
-            request_sym.addChild(child);
-        } else {
-            int feat_count = feats.size();
-            System.out.println("parsed query results, annot count = " + feat_count);
-            for (int k = 0; k < feat_count; k++) {
-                SeqSymmetry feat = (SeqSymmetry) feats.get(k);
-                if (feat instanceof GraphSym) {
-                    addChildGraph((GraphSym) feat, id, name, overlapSpan);
-                } else {
-                    request_sym.addChild(feat);
-                }
-            }
-        }
-    }
-
-	public static void addAnnotations(
-			List feats, SimpleSymWithProps request_sym, BioSeq aseq) {
-		if (feats != null && !feats.isEmpty()) {
-			int feat_count = feats.size();
-			for (int k = 0; k < feat_count; k++) {
-				SeqSymmetry feat = (SeqSymmetry) feats.get(k);
-				if (feat instanceof GraphSym) {
-					return;
-				}
-			}
-		}
-
-		// if graphs, then adding to annotation BioSeq is already handled by addChildGraph() method
-		synchronized (aseq) {
-			aseq.addAnnotation(request_sym);
-		}
-	}
-
-
-    /**
-     *  Given a child GraphSym, find the appropriate parent [Composite]GraphSym and add child to it
-     *
-     *  Assumes ids of parent graphs are unique among annotations on seq
-     *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
-     *  Uses type URI as graph ID, type name as graph name
-     */
-   private static void addChildGraph(GraphSym cgraf, String id, String name, SeqSpan overlapSpan) {
-		if (DEBUG) {
-			System.out.println("adding a child GraphSym to parent graph");
-		}
-		BioSeq aseq = cgraf.getGraphSeq();
-		GraphSym pgraf = getParentGraph(id, name, aseq, cgraf);
-
-		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
-		//    remove that span, then add overlap span from Das2FeatureRequestSym
-		//    could instead create new span based on start and end xcoord, but for better integration with
-		//    rest of Das2ClientOptimizer span of request is preferred
-		cgraf.removeSpan(cgraf.getSpan(aseq));
-		cgraf.addSpan(overlapSpan);
-		if (DEBUG) {
-			System.out.println("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
-		}
-		pgraf.addChild(cgraf);
-		//add properties of child to parent
-		pgraf.setProperties(cgraf.getProperties());
-	}
-
-
-	private static GraphSym getParentGraph(String id, String name, BioSeq aseq, GraphSym cgraf) {
-		// check and see if parent graph already exists
-		
-		//is it a useq graph? modify name and id for strandedness?
-		if (name.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)){
-			//strip off useq
-			id = id.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-			name = name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-			//add strand?
-			Object obj = cgraf.getProperty(GraphSym.PROP_GRAPH_STRAND);
-			if (obj != null){
-				String strand = null;
-				Integer strInt = (Integer)obj;
-				if (strInt.equals(GraphSym.GRAPH_STRAND_PLUS)) strand = "+";
-				else if (strInt.equals(GraphSym.GRAPH_STRAND_MINUS)) strand = "-";
-				if (strand != null){
-					id = id+strand;
-					name = name+strand;
-				}
-			}
-		}
-		
-		if (DEBUG) {
-			System.out.println("   child graph id: " + id);
-			System.out.println("   child graph name: " + name);
-			System.out.println("   seq: " + aseq.getID());
-		}
-		GraphSym pgraf = (GraphSym) aseq.getAnnotation(id);
-		if (pgraf == null) {
-			if (DEBUG) {
-				System.out.println("$$$$ creating new parent composite graph sym");
-			}
-			// don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
-			pgraf = new CompositeGraphSym(id, aseq);
-			pgraf.setGraphName(name);
-			aseq.addAnnotation(pgraf);
-		}
-		return pgraf;
-	}
 }

@@ -403,7 +403,7 @@ public final class GeneralLoadUtils {
 		if (group.getSeqCount() == 0) {
 			loadChromInfo(group);
 		}
-		addGenomeVirtualSeq(group, default_genome_min, DEBUG_VIRTUAL_GENOME);	// okay to run this multiple times
+		addGenomeVirtualSeq(group);	// okay to run this multiple times
 	}
 
 
@@ -448,7 +448,7 @@ public final class GeneralLoadUtils {
 		}
 	}
 
-	private static void addGenomeVirtualSeq(AnnotatedSeqGroup group, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
+	private static void addGenomeVirtualSeq(AnnotatedSeqGroup group) {
 		int chrom_count = group.getSeqCount();
 		if (chrom_count <= 1) {
 			// no need to make a virtual "genome" chrom if there is only a single chromosome
@@ -481,7 +481,7 @@ public final class GeneralLoadUtils {
 			if (chrom_seq == genome_seq) {
 				continue;
 			}
-			addSeqToVirtualGenome(genome_seq, chrom_seq, default_genome_min, DEBUG_VIRTUAL_GENOME);
+			addSeqToVirtualGenome(genome_seq, chrom_seq);
 		}
 	}
 
@@ -511,7 +511,7 @@ public final class GeneralLoadUtils {
 		return true;
 	}
 
-	private static void addSeqToVirtualGenome(BioSeq genome_seq, BioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
+	private static void addSeqToVirtualGenome(BioSeq genome_seq, BioSeq chrom) {
 		double glength = genome_seq.getLengthDouble();
 		int clength = chrom.getLength();
 		int spacer = (clength > 5000000) ? 5000000 : 100000;

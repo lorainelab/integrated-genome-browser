@@ -1,9 +1,12 @@
 package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.net.URI;
@@ -95,4 +98,47 @@ public abstract class GenericSymRequest {
 	public boolean supportsRegion() {
 		return true;
 	}
+
+
+     public static void addToRequestSym(
+			 List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan) {
+        if (feats == null || feats.isEmpty()) {
+            // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
+            //    populate with empty sym child/grandchild
+            //    [ though a better way might be to have request sym's span on aseq be dependent on children, so
+            //       if no children then no span on aseq (though still an overlap_span and inside_span) ]
+            SimpleSymWithProps child = new SimpleSymWithProps();
+            child.addChild(new SimpleSymWithProps());
+            request_sym.addChild(child);
+        } else {
+            int feat_count = feats.size();
+            System.out.println("parsed query results, annot count = " + feat_count);
+            for (SeqSymmetry feat : feats) {
+                if (feat instanceof GraphSym) {
+                    GraphSymUtils.addChildGraph((GraphSym) feat, id, name, overlapSpan);
+                } else {
+                    request_sym.addChild(feat);
+                }
+            }
+        }
+    }
+
+	public static void addAnnotations(
+			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, BioSeq aseq) {
+		if (feats != null && !feats.isEmpty()) {
+			for (SeqSymmetry feat : feats) {
+				if (feat instanceof GraphSym) {
+					return;
+				}
+			}
+		}
+
+		// if graphs, then adding to annotation BioSeq is already handled by addChildGraph() method
+		synchronized (aseq) {
+			aseq.addAnnotation(request_sym);
+		}
+	}
+
+
+
 }

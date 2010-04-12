@@ -22,12 +22,13 @@ import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public final class QuickLoadServerModel {
@@ -119,7 +120,8 @@ public final class QuickLoadServerModel {
 	}
 
 	private void initGenome(String genome_name) {
-		Application.getApplicationLogger().fine("initializing data for genome: " + genome_name);
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
+			"initializing data for genome: " + genome_name);
 		if (loadSeqInfo(genome_name) && loadAnnotationNames(genome_name)) {
 			genome2init.put(genome_name, Boolean.TRUE);
 			return;
@@ -142,7 +144,8 @@ public final class QuickLoadServerModel {
 	private boolean loadAnnotationNames(String genome_name) {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		String genome_root = root_url + genome_name + "/";
-		Application.getApplicationLogger().fine("loading list of available annotations for genome: " + genome_name);
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
+				"loading list of available annotations for genome: " + genome_name);
 
 		// Make a new list of typeNames, in case this is being re-initialized
 		// If this search fails, then we're just returning an empty map.
@@ -226,19 +229,22 @@ public final class QuickLoadServerModel {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
 		String genome_root = root_url + genome_name + "/";
-		Application.getApplicationLogger().fine("loading list of chromosomes for genome: " + genome_name);
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
+				"loading list of chromosomes for genome: " + genome_name);
 		InputStream lift_stream = null;
 		InputStream cinfo_stream = null;
 		try {
 
-			Application.getApplicationLogger().fine("lift URL: " + genome_root + liftAll);
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
+					"lift URL: " + genome_root + liftAll);
 			String lift_path = genome_root + liftAll;
 			try {
 				// don't warn about this file, since we'll look for modChromInfo file
 				lift_stream = LocalUrlCacher.getInputStream(lift_path, getCacheAnnots(), null, true);
 			} catch (Exception ex) {
 				// exception can be ignored, since we'll look for modChromInfo file.
-				Application.getApplicationLogger().fine("couldn't find " + liftAll + ", looking instead for " + modChromInfo);
+				Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
+						"couldn't find " + liftAll + ", looking instead for " + modChromInfo);
 				lift_stream = null;
 			}
 			if (lift_stream == null) {

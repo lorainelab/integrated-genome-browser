@@ -7,6 +7,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 
@@ -72,7 +73,8 @@ public abstract class Application {
 
 			public void run() {
 				if (!progressStringList.remove(s)) {
-					Application.getApplicationLogger().fine("Didn't find progress message: " + s);
+					Logger.getLogger(Application.class.getName()).log(Level.FINE,
+						"Didn't find progress message: " + s);
 				}
 				status_bar.setCancelPopup(progressStringList);
 				if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
@@ -159,27 +161,5 @@ public abstract class Application {
 		JFrame frame = (app == null) ? null : app.getFrame();
 		return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
 				frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
-	}
-
-	public abstract Logger getLogger();
-
-	public static Logger getApplicationLogger() {
-		return getSingleton().getLogger();
-	}
-
-	public static void logError(String msg) {
-		getApplicationLogger().severe(msg);
-	}
-
-	public static void logWarning(String msg) {
-		getApplicationLogger().warning(msg);
-	}
-
-	public static void logInfo(String msg) {
-		getApplicationLogger().info(msg);
-	}
-
-	public static void logDebug(String msg) {
-		getApplicationLogger().fine(msg);
 	}
 }

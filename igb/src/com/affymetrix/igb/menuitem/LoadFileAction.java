@@ -280,7 +280,8 @@ public final class LoadFileAction {
 			throw new IOException("Must select a genome before loading a file");
 		}
 
-		Application.getSingleton().logInfo("loading file: " + stream_name);
+		Logger.getLogger(LoadFileAction.class.getName()).log(Level.INFO,
+				"loading file: " + stream_name);
 
 		Exception the_exception = null;
 		BioSeq aseq = null;
@@ -342,7 +343,8 @@ public final class LoadFileAction {
 			GenometryModel gmodel = GenometryModel.getGenometryModel();
 			if (aseq != gmodel.getSelectedSeq()) {
 				//TODO: maybe set the current seq to this seq
-				Application.getSingleton().logWarning("This is not the currently-selected sequence.");
+				Logger.getLogger(LoadFileAction.class.getName()).log(Level.WARNING,
+					"This is not the currently-selected sequence.");
 			}
 			return aseq;
 		}
@@ -384,7 +386,8 @@ public final class LoadFileAction {
 		if (lcname.endsWith(".brpt")) {
 			BrptParser parser = new BrptParser();
 			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, true);
-			Application.logDebug("total repeats loaded: " + alist.size());
+			Logger.getLogger(LoadFileAction.class.getName()).log(Level.FINE,
+					"total repeats loaded: " + alist.size());
 			return input_seq;
 		}
 		if (lcname.endsWith(".brs")) {
@@ -393,7 +396,8 @@ public final class LoadFileAction {
 		}
 		if (lcname.endsWith(".bsnp")) {
 			List<SeqSymmetry> alist = BsnpParser.parse(str, annot_type, selected_group, true);
-			Application.logDebug("total snps loaded: " + alist.size());
+			Logger.getLogger(LoadFileAction.class.getName()).log(Level.FINE,
+					"total snps loaded: " + alist.size());
 			return input_seq;
 		}
 

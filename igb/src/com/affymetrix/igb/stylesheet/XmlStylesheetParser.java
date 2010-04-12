@@ -14,9 +14,10 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.XMLUtils;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -47,7 +48,8 @@ public final class XmlStylesheetParser {
 	  if (system_stylesheet == null) {
 		  InputStream istr = null;
 		  try {
-			  Application.getSingleton().getLogger().info("Loading system stylesheet from resource:" + system_stylesheet_resource_name);
+			  Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
+				"Loading system stylesheet from resource:" + system_stylesheet_resource_name);
 			  XmlStylesheetParser parser = new XmlStylesheetParser();
 			  // If using class.getResource... use name beginning with "/"
 			  istr = XmlStylesheetParser.class.getResourceAsStream(system_stylesheet_resource_name);
@@ -87,7 +89,8 @@ public final class XmlStylesheetParser {
 			 parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
 
 			 // then load the user stylesheet on top of that
-			 Application.getSingleton().getLogger().info("Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
+			 Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
+				"Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
 
 			 user_stylesheet = parser.parse(istr);
 

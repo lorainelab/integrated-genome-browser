@@ -304,7 +304,8 @@ public final class WebLink {
 		}
 
 		if (field_value == null) {
-			Application.logWarning("Selected item has no value for property '" + id_field_name +
+			Logger.getLogger(WebLink.class.getName()).log(Level.WARNING,
+				"Selected item has no value for property '" + id_field_name +
 							"' which is needed to construct the web link.");
 			return replacePlaceholderWithId(getUrl(), "");
 		}
@@ -401,12 +402,13 @@ public final class WebLink {
 		}
 		String filename = f.getAbsolutePath();
 		try {
-			Application.logInfo("Loading web links from file \"" + filename + "\"");
+			Logger.getLogger(WebLink.class.getName()).log(Level.INFO,
+					"Loading web links from file \"" + filename + "\"");
 
 			WebLink.importWebLinks(f);
 		} catch (Exception ioe) {
-
-			Application.logError("Could not load web links from file \"" + filename + "\"");
+			Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE,
+				"Could not load web links from file \"" + filename + "\"");
 		}
 	}
 
@@ -418,7 +420,8 @@ public final class WebLink {
 		File f = getLinksFile();
 		String filename = f.getAbsolutePath();
 		try {
-			Application.logInfo("Saving web links to file \"" + filename + "\"");
+			Logger.getLogger(WebLink.class.getName()).log(Level.INFO,
+					"Saving web links to file \"" + filename + "\"");
 			File parent_dir = f.getParentFile();
 			if (parent_dir != null) {
 				parent_dir.mkdirs();
@@ -426,7 +429,8 @@ public final class WebLink {
 			WebLink.exportWebLinks(f, true);
 			return true;
 		} catch (IOException ioe) {
-			Application.logError("Error while saving web links to \"" + filename + "\"");
+			Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE,
+					"Error while saving web links to \"" + filename + "\"");
 		}
 		return false;
 	}

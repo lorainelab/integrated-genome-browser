@@ -17,6 +17,8 @@ import com.affymetrix.igb.Application;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class BookmarkHttpRequestHandler implements Runnable {
 
@@ -73,7 +75,8 @@ class BookmarkHttpRequestHandler implements Runnable {
   }
 
 	private void parseAndGoToBookmark(String command) throws NumberFormatException {
-		Application.logDebug("Command = " + command);
+		Logger.getLogger(BookmarkHttpRequestHandler.class.getName()).log(Level.FINE,
+				"Command = " + command);
 		// at this point, the command will look something like this:
 		// '/IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310'
 		//TODO: We could check to see that the command is "IGBControl" or "UnibrowControl",

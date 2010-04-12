@@ -18,6 +18,8 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  A very simple servlet that listens for bookmark commands as http GET requests.
@@ -51,7 +53,7 @@ public final class SimpleBookmarkServer {
       server_port = findAvailablePort();
 
       if (server_port == -1) {
-        Application.logError(
+		  Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.SEVERE,
             "Couldn't find an available port for IGB to listen to control requests!\n"
         + "Turning off IGB's URL-based control features");
       }
@@ -61,7 +63,8 @@ public final class SimpleBookmarkServer {
 
         while (true) {
           Socket socket = server.accept();
-          Application.logDebug("Connection accepted " +
+		  Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.FINE,
+			"Connection accepted " +
                   socket.getInetAddress() +
                   ":" + socket.getPort());
 
@@ -103,8 +106,8 @@ public final class SimpleBookmarkServer {
         // and must try another one.
         ports_tried++;
       } catch (IOException ex) {
-        Application.logInfo("Found available port for bookmark server: " +
-                server_port);
+		  Logger.getLogger(SimpleBookmarkServer.class.getName()).log(Level.INFO,
+				  "Found available port for bookmark server: " + server_port);
         available_port_found = true;
       }
     }

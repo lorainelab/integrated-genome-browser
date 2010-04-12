@@ -23,14 +23,12 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.parsers.BAMParser;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
-import com.affymetrix.genometryImpl.symmetry.RandomAccessSym;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -209,53 +207,14 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			// I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
 			IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
 
-			if (insym instanceof RandomAccessSym) {
-				handleRandomAccessSym(
-						the_tier, the_style, (RandomAccessSym) insym, pspan, map,
-						annotseq,
-						coordseq);
-			} else {
-				the_tier.addChild(determinePGlyph(
-						parent_and_child, insym, the_style, the_tier, pspan, map, sym, annotseq, coordseq));
-			}
+
+			the_tier.addChild(determinePGlyph(
+					parent_and_child, insym, the_style, the_tier, pspan, map, sym, annotseq, coordseq));
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void handleRandomAccessSym(
-			TierGlyph the_tier, IAnnotStyleExtended the_style,
-			RandomAccessSym sym, SeqSpan span,
-			AffyTieredMap map,
-			BioSeq annotseq,
-			BioSeq coordseq) {
-		// How big is the display?  How many syms do we have?
-
-		List<SeqSymmetry> symList = sym.parser.parse(annotseq, span.getMin(), span.getMax(), false, true);
-		for (SeqSymmetry symElt : symList) {
-			try {
-				SeqSpan symSpan = symElt.getSpan(annotseq);
-				if (
-						
-						(symSpan.isForward() && !span.isForward() ||
-						(!symSpan.isForward() && span.isForward()))) {
-					continue;
-				}
-				GlyphI pglyph = (GlyphI) child_glyph_class.newInstance();
-				pglyph.setCoords(symSpan.getMin(), 0, symSpan.getLength(), DEFAULT_THICK_HEIGHT);
-				pglyph.setColor(getSymColor(symElt, the_style));
-				handleResidues(symElt, annotseq, pglyph);
-				map.setDataModelFromOriginalSym(pglyph, symElt);
-				the_tier.addChild(pglyph);
-			} catch (InstantiationException ex) {
-				Logger.getLogger(GenericAnnotGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(GenericAnnotGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-			}
-
-		}
-
 	}
 
 	private GlyphI determinePGlyph(
@@ -274,7 +233,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
-			//handleResidues(insym, coordseq, pglyph);
 		}
 		return pglyph;
 	}
@@ -412,34 +370,31 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	private static void handleResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
-		if (sym instanceof SymWithProps) {
-
-			if(sym.getChildCount() > 0){
-				for(int i=0; i<sym.getChildCount(); i++){
-					setResidues(sym.getChild(i),coordseq,pglyph);
-				}
-			}else {
-				setResidues(sym,coordseq,pglyph);
+		if (sym.getChildCount() > 0) {
+			for (int i = 0; i < sym.getChildCount(); i++) {
+				setResidues(sym.getChild(i), coordseq, pglyph);
 			}
-			
+		} else {
+			setResidues(sym, coordseq, pglyph);
 		}
 	}
 
-	private static void setResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph){
+	private static void setResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
+		if (!(sym instanceof SymWithProps)) {
+			return;
+		}
 		Object residues = ((SymWithProps) sym).getProperty("residues");
-			if (residues != null) {
-				SeqSpan span = sym.getSpan(coordseq);
-				if (span != null) {
-					String residueStr = residues.toString();
-//					Object cigarObj = ((SymWithProps) sym).getProperty("cigar");
-//					residueStr = BAMParser.interpretCigar(cigarObj, residueStr, span.getLength());
-					CharSeqGlyph csg = new CharSeqGlyph();
-					csg.setResidues(residueStr);
-					csg.setShowBackground(false);
-					csg.setHitable(false);
-					csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
-					pglyph.addChild(csg);
-				}
+		if (residues != null) {
+			SeqSpan span = sym.getSpan(coordseq);
+			if (span != null) {
+				String residueStr = residues.toString();
+				CharSeqGlyph csg = new CharSeqGlyph();
+				csg.setResidues(residueStr);
+				csg.setShowBackground(false);
+				csg.setHitable(false);
+				csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
+				pglyph.addChild(csg);
+			}
 		}
 	}
 }

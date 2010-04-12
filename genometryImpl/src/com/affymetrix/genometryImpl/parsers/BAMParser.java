@@ -150,14 +150,11 @@ public final class BAMParser {
 		}
 
 		SymWithProps sym = new UcscBedSym(seq.getID(), seq, start, end, sr.getReadName(), 0.0f, span.isForward(), 0, 0, blockMins, blockMaxs);
-
-
 		sym.setProperty("id",sr.getReadName());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
 			sym.setProperty(tv.tag, tv.value);
 		}
-		sym.setProperty("cigar", sr.getCigar());
-		sym.setProperty("residues", sr.getReadString().intern());
+		sym.setProperty("residues", sr.getReadString());
 		sym.setProperty("method", meth);
 		seq.addAnnotation(sym);
 
@@ -204,8 +201,12 @@ public final class BAMParser {
 					currentChildStart = currentChildEnd + celLength;
 					currentChildEnd = currentChildStart;
 				} else if (cel.getOperator() == CigarOperator.PADDING) {
+					// TODO -- allow possibility that PADDING is terminator, not M
 					char[] tempArr = new char[celLength];
 					Arrays.fill(tempArr, '*');		// print padding as '*'
+					sb.append(tempArr);
+					currentPosition += celLength;	// print matches
+					currentChildEnd += celLength;
 				} else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
 					currentPosition += celLength;	// skip over soft clip
 				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
@@ -223,59 +224,6 @@ public final class BAMParser {
 		}
 
 		return results;
-	}
-
-	/**
-	 * Rewrite the residue string, based upon cigar information
-	 * @param cigarObj
-	 * @param residues
-	 * @param spanLength
-	 * @return
-	 */
-	public static String interpretCigar(Object cigarObj, String residues, int spanLength) {
-		Cigar cigar = (Cigar)cigarObj;
-		if (cigar == null || cigar.numCigarElements() == 0) {
-			return residues;
-		}
-		StringBuilder sb = new StringBuilder(spanLength);
-		int currentPosition = 0;
-		for (CigarElement cel : cigar.getCigarElements()) {
-			try {
-				int celLength = cel.getLength();
-				if (cel.getOperator() == CigarOperator.DELETION) {
-					currentPosition += celLength;	// skip over deletion
-				} else if (cel.getOperator() == CigarOperator.INSERTION) {
-					sb.append(residues.substring(currentPosition, currentPosition + celLength));
-					currentPosition += celLength;	// print insertion
-				} else if (cel.getOperator() == CigarOperator.M) {
-					sb.append(residues.substring(currentPosition, currentPosition + celLength));
-					currentPosition += celLength;	// print matches
-				} else if (cel.getOperator() == CigarOperator.N) {
-					char[] tempArr = new char[celLength];
-					Arrays.fill(tempArr, '.');
-					sb.append(tempArr);				// print N as '.'
-				} else if (cel.getOperator() == CigarOperator.PADDING) {
-					char[] tempArr = new char[celLength];
-					Arrays.fill(tempArr, '*');		// print padding as '*'
-				} else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
-					currentPosition += celLength;	// skip over soft clip
-				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
-					continue;						// hard clip can be ignored
-				}
-				if (currentPosition > spanLength) {
-					Logger.getLogger(BAMParser.class.getName()).log(Level.FINE, "currentPosition > spanLength: " + currentPosition + " > " + spanLength);
-					break;
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				char[] tempArr = new char[spanLength-currentPosition];
-				Arrays.fill(tempArr, '-');
-				sb.append(tempArr);
-				return sb.toString().intern();
-			}
-		}
-
-		return sb.toString().intern();
 	}
 
 	public String getMimeType() {

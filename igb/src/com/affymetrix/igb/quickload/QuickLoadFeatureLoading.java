@@ -6,10 +6,10 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.general.GenericSymRequest;
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
-import com.affymetrix.genometryImpl.parsers.BAMParser;
+import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -57,17 +57,17 @@ import javax.swing.SwingWorker;
  *
  * @author jnicol
  */
-public class QuickLoadFeatureLoading extends GenericSymRequest {
+public class QuickLoadFeatureLoading extends SymLoader {
 	private File f;
 	private final GenericVersion version;
 	public final String featureName;
-	private GenericSymRequest gsr;	// parser factory
+	private SymLoader gsr;	// parser factory
 
 	public QuickLoadFeatureLoading(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
-		this.gsr = determineParser();
+		this.gsr = determineLoader();
 	}
 
 	@Override
@@ -135,18 +135,18 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 					if (results != null && !results.isEmpty()) {
 						SimpleSymWithProps requestSym = new SimpleSymWithProps();
 						requestSym.setProperty("meth", QuickLoadFeatureLoading.this.f.getName());
-						GenericSymRequest.addToRequestSym(
+						SymLoader.addToRequestSym(
 								results,
 								requestSym,
 								QuickLoadFeatureLoading.this.f.getName(),
 								QuickLoadFeatureLoading.this.featureName,
 								overlapSpan);
 						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
-							GenericSymRequest.addAnnotations(results, requestSym, seq);
+							SymLoader.addAnnotations(results, requestSym, seq);
 						}
 						else if (strategy == LoadStrategy.GENOME) {
 							for (BioSeq aseq : QuickLoadFeatureLoading.this.version.group.getSeqList()) {
-								GenericSymRequest.addAnnotations(results, requestSym, aseq);
+								SymLoader.addAnnotations(results, requestSym, aseq);
 							}
 						}
 					}
@@ -259,16 +259,16 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	}
 
 	/**
-	 * Determine the appropriate parser.
+	 * Determine the appropriate loader.
 	 * @return
 	 */
-	private GenericSymRequest determineParser() {
+	private SymLoader determineLoader() {
 		if (this.extension.endsWith("bam")) {
 			// special-case BAM files, because Picard can only parse from files.
 			if (this.version.group == null) {
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
-				return new BAMParser(this.uri, this.featureName, this.version.group);
+				return new BAM(this.uri, this.featureName, this.version.group);
 			}
 		}
 		return null;
@@ -354,6 +354,4 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
 		return null;
 	}
-
-
 }

@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscBedSym;
-import com.affymetrix.genometryImpl.general.GenericSymRequest;
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
@@ -32,14 +32,14 @@ import net.sf.samtools.util.CloseableIterator;
 /**
  * @author jnicol
  */
-public final class BAMParser extends GenericSymRequest {
+public final class BAM extends SymLoader {
 	private SAMFileReader reader;
     private SAMFileHeader header;
 	private File f;
 	private AnnotatedSeqGroup group;
 	private final String featureName;
 
-	public BAMParser(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+	public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
 		this.f = LocalUrlCacher.convertURIToFile(uri);
 		this.group = seq_group;
@@ -57,7 +57,7 @@ public final class BAMParser extends GenericSymRequest {
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
 		header = reader.getFileHeader();
 		if (header == null || header.getSequenceDictionary() == null) {
-			Logger.getLogger(BAMParser.class.getName()).log(
+			Logger.getLogger(BAM.class.getName()).log(
 					Level.WARNING, "Couldn't find sequence dictionary -- no sequences loaded from BAM");
 			return seqs;
 		}
@@ -83,7 +83,7 @@ public final class BAMParser extends GenericSymRequest {
 	public void parse() {
 		header = reader.getFileHeader();
 		if (header == null || header.getSequenceDictionary() == null) {
-			Logger.getLogger(BAMParser.class.getName()).log(
+			Logger.getLogger(BAM.class.getName()).log(
 					Level.WARNING, "Couldn't find sequence dictionary -- no sequences loaded from BAM");
 		} else {
 			// add sequences that aren't in the original group.  Especially useful for "unknown groups"

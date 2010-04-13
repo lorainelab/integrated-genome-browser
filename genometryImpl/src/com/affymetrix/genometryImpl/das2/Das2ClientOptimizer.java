@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.general.GenericSymRequest;
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -398,9 +398,9 @@ public final class Das2ClientOptimizer {
 				AddParsingLogMessage(content_subtype);
                 List<? extends SeqSymmetry> feats =
 						DetermineFormatAndParse(content_subtype, request_log, istr, feature_query, seq_group, type);
-                GenericSymRequest.addToRequestSym(
+                SymLoader.addToRequestSym(
 						feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
-				GenericSymRequest.addAnnotations(feats, request_sym, aseq);
+				SymLoader.addAnnotations(feats, request_sym, aseq);
             }
             return request_log.getSuccess();
         } finally {

@@ -4,6 +4,8 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.symloader.BAM;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,10 +34,10 @@ public class BAMParserTest {
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
 			BioSeq seq = group.addSeq("chr1", 197069962);
 			
-			BAMParser parser = new BAMParser(new File(filename).toURI(), "featureName", group);
+			BAM parser = new BAM(new File(filename).toURI(), "featureName", group);
 			assertNotNull(parser);
 
-			List<SeqSymmetry> result = parser.parse(seq, seq.getMin(), seq.getMax(), false, true);
+			List<? extends SeqSymmetry> result = parser.parse(seq, seq.getMin(), seq.getMax(), false, true);
 			assertNotNull(result);
 			assertEquals(189, result.size());	// 189 alignments in sample file
 

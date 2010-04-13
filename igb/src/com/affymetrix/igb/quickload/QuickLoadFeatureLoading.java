@@ -217,8 +217,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 			//    a parse() method that takes the file name
 			// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
 			// Also cannot handle compressed chp files
-			ChpParser.parse(f.getAbsolutePath());
-			return feats;
+			return ChpParser.parse(f.getAbsolutePath());
 		}
 		if (this.extension.endsWith("bam")) {
 
@@ -227,7 +226,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
 				BAMParser parser = new BAMParser(this.f, this.featureName, this.version.group);
-				parser.getGenome();
+				feats = parser.getGenome();
 			}
 			return feats;
 		}
@@ -271,6 +270,7 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 
 			// special-case BAM files, because Picard can only parse from files.
 			if (this.version.group == null) {
+				//TODO
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
 				BAMParser parser = new BAMParser(this.f, this.featureName, this.version.group);
@@ -357,7 +357,8 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 				return rp.parse(zis, version.group, featureName, false, archiveInfo);
 			}
 		}
-		System.out.println("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
+		Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.WARNING,
+				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
 		return null;
 	}
 

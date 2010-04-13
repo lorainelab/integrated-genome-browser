@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -186,7 +185,6 @@ public final class BAMParser {
 		sym.setProperty("residues", sr.getReadString());
 		sym.setProperty("cigar", sr.getCigar());
 		sym.setProperty("method", meth);
-		seq.addAnnotation(sym);
 
 		return sym;
 	}

@@ -100,7 +100,7 @@ public final class Das2ClientOptimizer {
         }
 
         for (Das2FeatureRequestSym request : output_requests) {
-            optimizedLoadFeatures(request);
+            loadRequestSym(request);
         }
 
         return output_requests;
@@ -108,7 +108,8 @@ public final class Das2ClientOptimizer {
 
 
     private static void OptimizeDas2Query(
-			BioSeq aseq, String typeid, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym) {
+			BioSeq aseq, String typeid,
+			Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym) {
 		// overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
 		SeqSymmetry overlap_sym = request_sym.getOverlapSym();
 		Das2Region region = request_sym.getRegion();
@@ -230,7 +231,7 @@ public final class Das2ClientOptimizer {
         }
     }
 
-    private static Das2RequestLog optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
+    private static Das2RequestLog loadRequestSym(Das2FeatureRequestSym request_sym) {
         Das2RequestLog request_log = request_sym.getLog();
         request_log.setSuccess(true);
 
@@ -277,7 +278,8 @@ public final class Das2ClientOptimizer {
                 System.out.println("url-encoded query URL:  " + URLEncoder.encode(feature_query, Constants.UTF8));
                 System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, Constants.UTF8));
             }
-			boolean success = LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, request_sym);
+			boolean success = LoadFeaturesFromQuery(
+					overlap_span, aseq, feature_query, format, request_log, seq_group, type, request_sym);
 			request_log.setSuccess(success);
 		} catch (Exception ex) {
 			ex.printStackTrace();

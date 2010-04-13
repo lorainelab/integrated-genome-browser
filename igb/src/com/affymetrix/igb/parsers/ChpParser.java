@@ -57,8 +57,8 @@ import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 public final class ChpParser {
   private static final boolean DEBUG = false;
   private static boolean reader_registered = false;
-  public static List parse(String file_name) throws IOException {
-    List results = null;
+  public static List<? extends SeqSymmetry> parse(String file_name) throws IOException {
+    List<? extends SeqSymmetry> results = null;
     if (! (reader_registered)) {
       FusionCHPTilingData.registerReader();
       FusionCHPQuantificationData.registerReader();
@@ -506,8 +506,8 @@ public final class ChpParser {
 
 
 
-  public static List parseLegacyChp(FusionCHPLegacyData chp) {
-	  List results = new ArrayList();
+  public static List<? extends SeqSymmetry> parseLegacyChp(FusionCHPLegacyData chp) {
+	  List<? extends SeqSymmetry> results = new ArrayList<SeqSymmetry>();
     FusionCHPHeader header = chp.getHeader();
     System.out.println("Alg name: " + header.getAlgName());
     System.out.println("Alg version: " + header.getAlgVersion());
@@ -621,10 +621,10 @@ public final class ChpParser {
       if (ensure_unique_id) { graph_id = GraphSymUtils.getUniqueGraphID(graph_id, aseq); }
       GraphSym gsym = new GraphSym(xcoords, ycoords, graph_id, aseq);
 
-      Iterator fiter = file_prop_hash.entrySet().iterator();
+      Iterator<Map.Entry<String,String>> fiter = file_prop_hash.entrySet().iterator();
       while (fiter.hasNext()) {
-        Map.Entry ent = (Map.Entry)fiter.next();
-        gsym.setProperty((String)ent.getKey(), ent.getValue());
+        Map.Entry<String,String> ent = fiter.next();
+        gsym.setProperty(ent.getKey(), ent.getValue());
       }
 
       List seq_params = seq.getParameters();

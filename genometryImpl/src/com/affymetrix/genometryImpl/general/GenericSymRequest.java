@@ -35,6 +35,15 @@ public abstract class GenericSymRequest {
 		this.isInitialized = true;
 	}
 
+	/**
+	 * Get list of chromosomes used in the file/uri.
+	 * Especially useful when loading a file into an "unknown" genome
+	 * @return List of chromosomes
+	 */
+	public List<BioSeq> getChromosomeList() {
+		return null;
+	}
+	
     /**
      * @return List of symmetries in genome
      */

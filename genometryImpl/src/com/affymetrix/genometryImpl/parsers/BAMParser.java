@@ -7,9 +7,12 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscBedSym;
+import com.affymetrix.genometryImpl.general.GenericSymRequest;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,16 +32,17 @@ import net.sf.samtools.util.CloseableIterator;
 /**
  * @author jnicol
  */
-public final class BAMParser {
+public final class BAMParser extends GenericSymRequest {
 	private SAMFileReader reader;
     private SAMFileHeader header;
 	private File f;
 	private AnnotatedSeqGroup group;
 	private final String featureName;
 
-	public BAMParser(File f, String featureName, AnnotatedSeqGroup seq_group) {
+	public BAMParser(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+		super(uri);
+		this.f = LocalUrlCacher.convertURIToFile(uri);
 		this.group = seq_group;
-		this.f = f;
 		this.featureName = featureName;
 		try {
 			reader = new SAMFileReader(f);
@@ -48,6 +52,7 @@ public final class BAMParser {
 		}
 	}
 
+	@Override
 	public List<BioSeq> getChromosomeList() {
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
 		header = reader.getFileHeader();
@@ -100,6 +105,7 @@ public final class BAMParser {
 		getGenome();
 	}
 
+	@Override
 	public List<SeqSymmetry> getGenome() {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		for (BioSeq seq : group.getSeqList()) {
@@ -108,11 +114,13 @@ public final class BAMParser {
 		return results;
 	}
 
+	@Override
 	public List<SeqSymmetry> getChromosome(BioSeq seq) {
 		return parse(seq, seq.getMin(), seq.getMax(), true, true);
 	}
 
 
+	@Override
 	public List<SeqSymmetry> getRegion(SeqSpan span) {
 		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, true);
 	}
@@ -238,7 +246,7 @@ public final class BAMParser {
 		return results;
 	}
 
-		/**
+	/**
 	 * Rewrite the residue string, based upon cigar information
 	 * @param cigarObj
 	 * @param residues
@@ -294,8 +302,6 @@ public final class BAMParser {
 
 		return sb.toString().intern();
 	}
-
-
 
 	public String getMimeType() {
 		return "binary/BAM";

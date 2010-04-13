@@ -32,7 +32,7 @@ public class BAMParserTest {
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
 			BioSeq seq = group.addSeq("chr1", 197069962);
 			
-			BAMParser parser = new BAMParser(new File(filename), "featureName", group);
+			BAMParser parser = new BAMParser(new File(filename).toURI(), "featureName", group);
 			assertNotNull(parser);
 
 			List<SeqSymmetry> result = parser.parse(seq, seq.getMin(), seq.getMax(), false, true);

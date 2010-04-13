@@ -61,11 +61,13 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 	private File f;
 	private final GenericVersion version;
 	public final String featureName;
+	private GenericSymRequest gsr;	// parser factory
 
 	public QuickLoadFeatureLoading(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
+		this.gsr = determineParser();
 	}
 
 	@Override
@@ -210,38 +212,30 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
+		if (this.gsr != null) {
+			return this.gsr.getGenome();
+		}
+
 		List<? extends SeqSymmetry> feats = null;
 		try {
-		if (this.extension.endsWith(".chp")) {
-			// special-case CHP files. ChpParser only has
-			//    a parse() method that takes the file name
-			// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
-			// Also cannot handle compressed chp files
-			return ChpParser.parse(f.getAbsolutePath());
-		}
-		if (this.extension.endsWith("bam")) {
-
-			// special-case BAM files, because Picard can only parse from files.
-			if (this.version.group == null) {
-				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
-			} else {
-				BAMParser parser = new BAMParser(this.f, this.featureName, this.version.group);
-				feats = parser.getGenome();
+			if (this.extension.endsWith(".chp")) {
+				// special-case CHP files. ChpParser only has
+				//    a parse() method that takes the file name
+				// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
+				// Also cannot handle compressed chp files
+				return ChpParser.parse(f.getAbsolutePath());
 			}
-			return feats;
-		}
-		
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(f);
-			feats = Parse(this.extension, fis, this.version, this.featureName);
-			return feats;
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(fis);
-		}
-		return null;
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(f);
+				feats = Parse(this.extension, fis, this.version, this.featureName);
+				return feats;
+			} catch (FileNotFoundException ex) {
+				Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(fis);
+			}
+			return null;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
@@ -250,35 +244,34 @@ public class QuickLoadFeatureLoading extends GenericSymRequest {
 
 	@Override
 	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
-		if (this.extension.endsWith("bam")) {
-
-			// special-case BAM files, because Picard can only parse from files.
-			if (this.version.group == null) {
-				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
-			} else {
-				BAMParser parser = new BAMParser(this.f, this.featureName, this.version.group);
-				parser.getChromosome(seq);
-			}
-			return null;
+		if (this.gsr != null) {
+			return this.gsr.getChromosome(seq);
 		}
 		return super.getChromosome(seq);
 	}
 
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
-		if (this.extension.endsWith("bam")) {
-
-			// special-case BAM files, because Picard can only parse from files.
-			if (this.version.group == null) {
-				//TODO
-				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
-			} else {
-				BAMParser parser = new BAMParser(this.f, this.featureName, this.version.group);
-				parser.getRegion(span);
-			}
-			return null;
+		if (this.gsr != null) {
+			return this.gsr.getRegion(span);
 		}
 		return super.getRegion(span);
+	}
+
+	/**
+	 * Determine the appropriate parser.
+	 * @return
+	 */
+	private GenericSymRequest determineParser() {
+		if (this.extension.endsWith("bam")) {
+			// special-case BAM files, because Picard can only parse from files.
+			if (this.version.group == null) {
+				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
+			} else {
+				return new BAMParser(this.uri, this.featureName, this.version.group);
+			}
+		}
+		return null;
 	}
 
 

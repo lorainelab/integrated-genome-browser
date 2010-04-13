@@ -1,7 +1,8 @@
-package com.affymetrix.igb.das2;
+package com.affymetrix.genometryImpl.das2;
 
-import java.net.*;
-import java.util.*;
+import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public final class Das2Capability {
   private final String type;

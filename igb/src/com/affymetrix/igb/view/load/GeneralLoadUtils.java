@@ -24,12 +24,12 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.das.DasFeatureLoader;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das.DasSource;
-import com.affymetrix.igb.das2.Das2FeatureRequestSym;
-import com.affymetrix.igb.das2.Das2Region;
-import com.affymetrix.igb.das2.Das2ServerInfo;
-import com.affymetrix.igb.das2.Das2Source;
-import com.affymetrix.igb.das2.Das2Type;
-import com.affymetrix.igb.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
+import com.affymetrix.genometryImpl.das2.Das2Region;
+import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2Source;
+import com.affymetrix.genometryImpl.das2.Das2Type;
+import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
@@ -578,35 +578,32 @@ public final class GeneralLoadUtils {
 
 		ServerType serverType = gFeature.gVersion.gServer.serverType;
 
-		boolean result = false;
-
-		
-
 		if (serverType == ServerType.DAS2) {
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			result = loadDAS2Annotations(
-							selected_seq,
-							gFeature.featureName,
-							(Das2VersionedSource) gFeature.gVersion.versionSourceObj,
-							gviewer,
-							visible_seq,
-							overlap);
-		} else if (serverType == ServerType.DAS) {
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			result = DasFeatureLoader.loadFeatures(gFeature, overlap);
-		} else if (serverType == ServerType.QuickLoad) {
-			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading)gFeature.gsr;
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
-			result = gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
-		} else if (serverType == ServerType.LocalFiles) {
-			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading)gFeature.gsr;
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
-			result = gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
-		} else {
-			System.out.println("class " + serverType + " is not implemented.");
+			return loadDAS2Annotations(
+					selected_seq,
+					gFeature.featureName,
+					(Das2VersionedSource) gFeature.gVersion.versionSourceObj,
+					gviewer,
+					visible_seq,
+					overlap);
 		}
-
-		return result;
+		if (serverType == ServerType.DAS) {
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
+			return DasFeatureLoader.loadFeatures(gFeature, overlap);
+		}
+		if (serverType == ServerType.QuickLoad) {
+			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading) gFeature.gsr;
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
+			return gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
+		}
+		if (serverType == ServerType.LocalFiles) {
+			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading) gFeature.gsr;
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
+			return gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
+		}
+		System.out.println("class " + serverType + " is not implemented.");
+		return false;
 	}
 
 	

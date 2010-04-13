@@ -477,8 +477,6 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("Visible load request span: " + request_span.getStart() + " " + request_span.getEnd());
 		}
 
-		BioSeq curSeq = gmodel.getSelectedSeq();
-
 		// Load any features that have a visible strategy and haven't already been loaded.
 		String genomeVersionName = (String) versionCB.getSelectedItem();
 		for (GenericFeature gFeature : GeneralLoadUtils.getFeatures(genomeVersionName)) {

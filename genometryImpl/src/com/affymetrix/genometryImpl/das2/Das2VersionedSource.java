@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.das2;
+package com.affymetrix.genometryImpl.das2;
 
 import java.io.*;
 import java.net.*;
@@ -20,14 +20,13 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import static com.affymetrix.genometryImpl.util.Constants.UTF8;
 
 import org.xml.sax.InputSource;
-import static com.affymetrix.igb.IGBConstants.UTF8;
 
 public final class Das2VersionedSource {
     private static final boolean URL_ENCODE_QUERY = true;
@@ -190,7 +189,9 @@ public final class Das2VersionedSource {
 			}
 			getRegionList(regionlist, region_request);
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Error initializing DAS2 region points for\n" + region_request, ex);
+			ex.printStackTrace();
+			// TODO
+			//ErrorHandler.errorPanel("Error initializing DAS2 region points for\n" + region_request, ex);
 		}
 		//TODO should regions_initialized be true if an exception occurred?
 		regions_initialized = true;
@@ -277,7 +278,9 @@ public final class Das2VersionedSource {
 						System.out.println("Out of Das2 Types Request: " + types_request);
 					}
 				} catch (Exception ex) {
-            ErrorHandler.errorPanel("Error initializing DAS2 types for\n" + types_request, ex);
+					ex.printStackTrace();
+					// TODO
+					//ErrorHandler.errorPanel("Error initializing DAS2 types for\n" + types_request, ex);
         }
         //TODO should types_initialized be true after an exception?
         types_initialized = true;

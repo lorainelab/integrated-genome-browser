@@ -1,4 +1,4 @@
-package com.affymetrix.igb.das2;
+package com.affymetrix.genometryImpl.das2;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;

@@ -44,7 +44,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.igb.glyph.EfficientPaintRectGlyph;

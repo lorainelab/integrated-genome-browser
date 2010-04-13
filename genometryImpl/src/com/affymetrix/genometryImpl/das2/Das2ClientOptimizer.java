@@ -10,16 +10,16 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.das2;
+package com.affymetrix.genometryImpl.das2;
 
-import com.affymetrix.genometryImpl.parsers.graph.BarParser;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.ZipInputStream;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -28,7 +28,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.das2.Das2RequestLog;
 import com.affymetrix.genometryImpl.general.GenericSymRequest;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
@@ -43,7 +42,8 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
-import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.Constants;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /*
  * Desired optimizations:
@@ -56,7 +56,6 @@ import com.affymetrix.genoviz.util.GeneralUtils;
  *   4. addition of containment constraints to ensure uniqueness
  *   4. full persistent caching based on (2)
  */
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -110,7 +109,6 @@ public final class Das2ClientOptimizer {
 
     private static void OptimizeDas2Query(
 			BioSeq aseq, String typeid, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym) {
-        Das2RequestLog request_log = request_sym.getLog();
 		// overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
 		SeqSymmetry overlap_sym = request_sym.getOverlapSym();
 		Das2Region region = request_sym.getRegion();
@@ -151,18 +149,19 @@ public final class Das2ClientOptimizer {
             qnewlist.add(overlap_sym);
             List<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
             qoldlist.add(prev_union);
-            SplitQuery(qnewlist, qoldlist, aseq, request_log, typeid, prev_union, type, region, output_requests);
+            SplitQuery(qnewlist, qoldlist, aseq, typeid, prev_union, type, region, output_requests);
         }
     }
 
 
-    private static void SplitQuery(List<SeqSymmetry> qnewlist, List<SeqSymmetry> qoldlist, BioSeq aseq, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
+    private static void SplitQuery(
+			List<SeqSymmetry> qnewlist, List<SeqSymmetry> qoldlist, BioSeq aseq, 
+			String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
         SeqSymmetry split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
         if (split_query == null || split_query.getChildCount() == 0) {
             // all of current query overlap range covered by previous queries, so return empty list
             if (DEBUG) {
                 System.out.println("ALL OF NEW QUERY COVERED BY PREVIOUS QUERIES FOR TYPE: " + typeid);
-
             }
             return;
         }
@@ -200,11 +199,12 @@ public final class Das2ClientOptimizer {
             last_within_max = (union_spans.get(insert)).getMin();
         }
         // done determining first_within_min and last_within_max
-        splitIntoSubSpans(split_query, aseq, first_within_min, last_within_max, request_log, type, region, output_requests, typeid);
+        splitIntoSubSpans(split_query, aseq, first_within_min, last_within_max, type, region, output_requests);
     }
 
     private static void splitIntoSubSpans(
-            SeqSymmetry split_query, BioSeq aseq, int first_within_min, int last_within_max, Das2RequestLog request_log, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests, String typeid) {
+            SeqSymmetry split_query, BioSeq aseq, int first_within_min, int last_within_max, Das2Type type,
+			Das2Region region, List<Das2FeatureRequestSym> output_requests) {
         int split_count = split_query.getChildCount();
         int cur_within_min;
         int cur_within_max;
@@ -274,9 +274,8 @@ public final class Das2ClientOptimizer {
             String feature_query = request_root + "?" + query_part;
             if (DEBUG) {
                 System.out.println("feature query URL:  " + feature_query);
-                System.out.println("url-encoded query URL:  " + URLEncoder.encode(feature_query, IGBConstants.UTF8));
-                System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, IGBConstants.UTF8));
-
+                System.out.println("url-encoded query URL:  " + URLEncoder.encode(feature_query, Constants.UTF8));
+                System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, Constants.UTF8));
             }
 			boolean success = LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, request_sym);
 			request_log.setSuccess(success);
@@ -291,22 +290,22 @@ public final class Das2ClientOptimizer {
     private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
       StringBuffer buf = new StringBuffer(200);
 		buf.append("segment=");
-		buf.append(URLEncoder.encode(region.getID(), IGBConstants.UTF8));
+		buf.append(URLEncoder.encode(region.getID(), Constants.UTF8));
 		buf.append(";");
         buf.append("overlaps=");
-        buf.append(URLEncoder.encode(overlap_filter, IGBConstants.UTF8));
+        buf.append(URLEncoder.encode(overlap_filter, Constants.UTF8));
         buf.append(";");
         if (inside_filter != null) {
             buf.append("inside=");
-            buf.append(URLEncoder.encode(inside_filter, IGBConstants.UTF8));
+            buf.append(URLEncoder.encode(inside_filter, Constants.UTF8));
             buf.append(";");
         }
         buf.append("type=");
-        buf.append(URLEncoder.encode(type.getID(), IGBConstants.UTF8));
+        buf.append(URLEncoder.encode(type.getID(), Constants.UTF8));
         if (format != null) {
             buf.append(";");
             buf.append("format="); 
-            buf.append(URLEncoder.encode(format, IGBConstants.UTF8));
+            buf.append(URLEncoder.encode(format, Constants.UTF8));
         }
         String query_part = buf.toString();
 

@@ -30,7 +30,7 @@ import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
 import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import com.affymetrix.igb.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import java.awt.Dimension;

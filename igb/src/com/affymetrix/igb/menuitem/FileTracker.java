@@ -1,6 +1,6 @@
 package com.affymetrix.igb.menuitem;
 
-import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.File;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.io.IOException;

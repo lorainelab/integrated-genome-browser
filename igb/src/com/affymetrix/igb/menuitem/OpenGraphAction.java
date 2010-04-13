@@ -20,12 +20,11 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;

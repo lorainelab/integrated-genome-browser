@@ -21,7 +21,7 @@ import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.*;

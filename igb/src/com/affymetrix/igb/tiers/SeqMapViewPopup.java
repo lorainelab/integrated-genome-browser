@@ -32,7 +32,7 @@ import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.prefs.PreferencesPanel;

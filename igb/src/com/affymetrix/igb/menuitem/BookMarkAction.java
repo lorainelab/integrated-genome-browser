@@ -31,7 +31,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.BookmarkManagerView;
 import com.affymetrix.genoviz.swing.DisplayUtils;

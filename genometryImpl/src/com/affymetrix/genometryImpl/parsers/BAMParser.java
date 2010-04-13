@@ -96,7 +96,9 @@ public final class BAMParser {
 				}
 			}
 		} finally {
-			iter.close();
+			if (iter != null) {
+				iter.close();
+			}
 		}
 
 		return symList;
@@ -137,7 +139,9 @@ public final class BAMParser {
 				}
 			}
 		} finally {
-			iter.close();
+			if (iter != null) {
+				iter.close();
+			}
 		}
 	}
 

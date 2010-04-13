@@ -78,7 +78,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	private static final Pattern emin_regex = Pattern.compile(",");
 	private static final Pattern emax_regex = Pattern.compile(",");
 
-	public static List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+	/*public static List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		System.out.println("loading file: " + file_name);
 		List<SeqSymmetry> result = null;
@@ -92,7 +92,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 			GeneralUtils.safeClose(fis);
 		}
 		return result;
-	}
+	}*/
 
 	public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
@@ -100,15 +100,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	}
 
 	public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
-		throws IOException {
-		return parse(istr, annot_type, seq_group, annotate_seq, -1);
-	}
-
-	/**
-	 *  @param blength  buffer length, if unknown use -1;
-	 */
-	public static List<SeqSymmetry> parse(InputStream istr, String annot_type,
-			AnnotatedSeqGroup seq_group, boolean annotate_seq, long blength)
 		throws IOException {
 		Timer tim = new Timer();
 		tim.start();
@@ -131,15 +122,15 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 
 
 		try {
-			if (blength > 0) {
+			/*if (blength > 0) {
 				byte[] bytebuf = new byte[(int)blength];
 				bis.read(bytebuf);
 				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
 				dis = new DataInputStream(bytestream);
 			}
-			else {
+			else {*/
 				dis = new DataInputStream(bis);
-			}
+			//}
 			if (true) {
 				// just keep looping till hitting end-of-file throws an EOFException
 				Thread thread = Thread.currentThread();

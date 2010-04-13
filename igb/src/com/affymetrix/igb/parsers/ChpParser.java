@@ -12,15 +12,12 @@
 */
 package com.affymetrix.igb.parsers;
 
+import java.io.*;
+import java.util.*;
 import affymetrix.calvin.data.CHPTilingEntry;
 import affymetrix.calvin.data.ProbeSetQuantificationData;
 import affymetrix.calvin.data.ProbeSetQuantificationDetectionData;
 import affymetrix.calvin.data.TilingSequenceData;
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
-import java.io.*;
-import java.util.*;
 import affymetrix.calvin.parameter.ParameterNameValue;
 import affymetrix.calvin.utils.AffymetrixGuidType;
 import affymetrix.fusion.chp.FusionCHPData;
@@ -32,6 +29,9 @@ import affymetrix.fusion.chp.FusionCHPQuantificationData;
 import affymetrix.fusion.chp.FusionCHPQuantificationDetectionData;
 import affymetrix.fusion.chp.FusionCHPTilingData;
 import affymetrix.fusion.chp.FusionExpressionProbeSetResults;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;

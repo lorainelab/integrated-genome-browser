@@ -141,7 +141,7 @@ public final class GrParser {
 	 * @param yList
 	 * @param wList
 	 */
-	static void sortXYDataOnX(final int[] xList, final float[] yList) {
+	public static void sortXYDataOnX(final int[] xList, final float[] yList) {
 		Swapper swapper = new Swapper() {
 
 			public void swap(int a, int b) {

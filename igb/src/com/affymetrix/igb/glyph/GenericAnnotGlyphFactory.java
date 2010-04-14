@@ -16,6 +16,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -38,8 +39,6 @@ import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.Color;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 
@@ -230,7 +229,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(insym, sym, the_style, annotseq, pglyph, map, coordseq);
-			handleResidues(insym, coordseq, pglyph);
+			handleResidues(insym, annotseq, pglyph);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
@@ -370,14 +369,14 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return DEFAULT_THIN_HEIGHT;
 	}
 
-	private static void handleResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph) {
+	private static void handleResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph) {
 		if (sym.getChildCount() > 0) {
 			int startPos = 0;
 			for (int i = 0; i < sym.getChildCount(); i++) {
-				startPos += setResidues(sym.getChild(i), coordseq, pglyph, startPos, true);
+				startPos += setResidues(sym.getChild(i), annotseq, pglyph, startPos, true);
 			}
 		} else {
-			setResidues(sym, coordseq, pglyph, 0, false);
+			setResidues(sym, annotseq, pglyph, 0, false);
 			// don't need to process cigar, since entire residue string is used
 		}
 	}
@@ -385,19 +384,19 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	/**
 	 * Determine and set the appropriate residues for this element.
 	 * @param sym
-	 * @param coordseq
+	 * @param annotseq
 	 * @param pglyph
 	 * @param startPos - starting position of the current child in the residues string
 	 * @param handleCigar - indicates whether we need to process the cigar element.
 	 * @return
 	 */
-	private static int setResidues(SeqSymmetry sym, BioSeq coordseq, GlyphI pglyph, int startPos, boolean handleCigar) {
+	private static int setResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, int startPos, boolean handleCigar) {
 		if (!(sym instanceof SymWithProps)) {
 			return startPos;
 		}
 		Object residues = ((SymWithProps) sym).getProperty("residues");
 		if (residues != null) {
-			SeqSpan span = sym.getSpan(coordseq);
+			SeqSpan span = sym.getSpan(annotseq);
 			if (span != null) {
 				String residueStr = residues.toString();
 				if (handleCigar) {

@@ -14,14 +14,14 @@ import java.util.Arrays;
 /**
  *  A class used to temporarily hold data during processing of Wiggle-format files.
  */
-final class WiggleData {
+public final class WiggleData {
 	private final IntArrayList xData;
 	private final FloatArrayList yData;
 	private final IntArrayList wData;
 
 	private final String seq_id;
 
-	WiggleData(String seq_id) {
+	public WiggleData(String seq_id) {
 		this.xData = new IntArrayList();
 		this.yData = new FloatArrayList();
 		this.wData = new IntArrayList();
@@ -32,7 +32,7 @@ final class WiggleData {
 	 *  Creates a GraphSym from the stored data, or returns null if no data
 	 *  has been stored yet.
 	 */
-	GraphSym createGraph(AnnotatedSeqGroup seq_group, String graph_id) {
+	public GraphSym createGraph(AnnotatedSeqGroup seq_group, String graph_id) {
 		if (xData.isEmpty()) {
 			return null;
 		}
@@ -53,6 +53,31 @@ final class WiggleData {
 		BioSeq seq = seq_group.addSeq(seq_id, largest_x);
 
 		return new GraphIntervalSym(xList, wList, yList, graph_id, seq);
+	}
+
+	/**
+	 * Create BioSeq
+	 */
+	public BioSeq getBioSeq(){
+		if (xData.isEmpty()) {
+			return null;
+		}
+
+		int dataSize = xData.size();
+
+		// Make an array copy of the data elements (not a clone, because that might be larger).
+		int[] xList = Arrays.copyOf(xData.elements(), dataSize);
+		xData.clear();
+		float[] yList = Arrays.copyOf(yData.elements(), dataSize);
+		yData.clear();
+		int[] wList =  Arrays.copyOf(wData.elements(), dataSize);
+		wData.clear();
+
+		sortXYZDataOnX(xList, yList, wList);
+
+		int largest_x = xList[dataSize-1] + wList[dataSize-1];
+		
+		return (new BioSeq(seq_id, null, largest_x));
 	}
 
 	/**
@@ -90,5 +115,9 @@ final class WiggleData {
 		xData.add(x);
 		yData.add(y);
 		wData.add(w);
+	}
+
+	public boolean isEmpty(){
+		return xData.isEmpty();
 	}
 }

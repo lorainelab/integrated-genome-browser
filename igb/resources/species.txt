@@ -71,6 +71,7 @@ Otolemur garnettii	Nothern Greater galago	O_garnettii		Otolemur_garnettii
 Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
 Pan troglodytes	Chimp	P_troglodytes	panTro	Pan_troglodytes
 Petromyzon marinus	Lamprey	P_marinus	petMar
+Pinus taeda	Loblolly Pine	P. taeda	P_taeda
 Plasmodium falciparum	P. falciparum	P_falciparum	Pfalciparum_3D7_plasmoDB-5.4	Pfalciparum_3D7_plasmoDB-5.5
 Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe	Pongo_pygmaeus
 Populus trichocarpa	Black Cottonwood	P_trichocarpa	
@@ -98,4 +99,6 @@ Tursiops truncatus	Bottlenose dolphin	T_truncatus	turTru	Tursiops_truncatus
 Vicugna pacos	Alpaca	V_pacos	vicPac	Vicugna_pacos
 Vitis vinifera	Common Grape Vine	V_vinifera	
 Xenopus tropicalis	Pipid Frog	X_tropicalis	xenTro	Xenopus_tropicalis
+Yersinia pestis	Y. pestis	Y_pestis
+Yersinia pseudotuberculosis	Y. pseudotuberculosis	Y_pseudotuberculosis
 Zea mays	Maize	Z_mays

@@ -96,9 +96,7 @@ public final class BarParser implements AnnotationWriter {
 		BioSeq aseq = span.getBioSeq();
 		int min_base = span.getMin();
 		int max_base = span.getMax();
-		if (DEBUG_SLICE) {
-			GenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base);
-		}
+
 		// first check and see if the file is already indexed
 		//  if not already indexed, index it (unless it's too small?)
 		//
@@ -110,6 +108,7 @@ public final class BarParser implements AnnotationWriter {
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
 		if (DEBUG_SLICE) {
+			GenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base);
 			System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
 		}
 		if (chunk_mins == null) {
@@ -148,7 +147,7 @@ public final class BarParser implements AnnotationWriter {
 			}
 		}
 
-		DataInput dis = null;
+		DataInputStream dis = null;
 		try {
 
 			FileInputStream fis = new FileInputStream(new File(file_name));
@@ -176,19 +175,7 @@ public final class BarParser implements AnnotationWriter {
 				System.out.println("points to read: " + points_to_read);
 				System.out.println("bytes to read: " + bytes_to_read);
 			}
-			while (bytes_to_skip > 0) {
-				int skipped = dis.skipBytes(bytes_to_skip);
-				if (DEBUG_SLICE) {
-					System.out.println("   skipped: " + skipped);
-				}
-				if (skipped < 0) {
-					if (DEBUG_SLICE) {
-						System.out.println("end of file reached");
-					}
-					break;
-				} // EOF reached
-				bytes_to_skip -= skipped;
-			}
+			skipBytes(bytes_to_skip, dis);
 			byte[] buf = new byte[bytes_to_read];
 			dis.readFully(buf);
 			((InputStream) dis).close();
@@ -232,22 +219,7 @@ public final class BarParser implements AnnotationWriter {
 				System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1 / 1000f));
 				System.out.println("made graph for slice: " + graf);
 			}
-
-			//fetch tagValues and write properties
-			Map<String, String> seq_tagvals = seq_header.tagvals;
-			if (seq_tagvals != null && seq_tagvals.size() > 0) {
-				copyProps(graf, seq_tagvals);
-				//attempt to find and set strand information
-				if (seq_tagvals.containsKey("strand")) {
-					String strand = seq_tagvals.get("strand");
-					if (strand.equals("+")) {
-						graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-					}
-					if (strand.equals("-")) {
-						graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
-					}
-				}
-			}
+			setTagValues(seq_header, graf);
 			// now output bar file slice??
 
 		} finally {
@@ -255,6 +227,24 @@ public final class BarParser implements AnnotationWriter {
 		}
 		return graf;
 	}
+
+	private static void setTagValues(BarSeqHeader seq_header, GraphSym graf) {
+		Map<String, String> seq_tagvals = seq_header.tagvals;
+		if (seq_tagvals != null && seq_tagvals.size() > 0) {
+			copyProps(graf, seq_tagvals);
+			//attempt to find and set strand information
+			if (seq_tagvals.containsKey("strand")) {
+				String strand = seq_tagvals.get("strand");
+				if (strand.equals("+")) {
+					graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+				}
+				if (strand.equals("-")) {
+					graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+				}
+			}
+		}
+	}
+
 
 	/**
 	 *  Builds an index for each sequence in the BAR file.
@@ -322,19 +312,8 @@ public final class BarParser implements AnnotationWriter {
 				if (DEBUG_INDEXER) {
 					System.out.println("chunk: " + chunk_count + ", index: " + point_count + ",  start base: " + base_pos);
 				}
-				int bytes_to_skip = skip_offset;
-				while (bytes_to_skip > 0) {
-					int skipped = (int) dis.skip(bytes_to_skip);
-					if (DEBUG_INDEXER) {
-						System.out.println("   skipped: " + skipped);
-					}
-					if (skipped < 0) {
-						if (DEBUG_INDEXER) {
-							System.out.println("end of file reached");
-						}
-						break CHUNK_LOOP;
-					} // EOF reached
-					bytes_to_skip -= skipped;
+				if (skipBytes(skip_offset, dis)) {
+					break CHUNK_LOOP;
 				}
 				point_count += points_per_chunk;
 				if (DEBUG_INDEXER) {
@@ -361,10 +340,21 @@ public final class BarParser implements AnnotationWriter {
 		}
 	}
 
-	/** Parse a file in BAR format. */
-	public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String stream_name)
-			throws IOException {
-		return parse(istr, gmodel, seq_group, stream_name, true);
+	private static boolean skipBytes(int bytes_to_skip, DataInputStream dis) throws IOException {
+		while (bytes_to_skip > 0) {
+			int skipped = (int) dis.skip(bytes_to_skip);
+			if (DEBUG_INDEXER) {
+				System.out.println("   skipped: " + skipped);
+			}
+			if (skipped < 0) {
+				if (DEBUG_INDEXER) {
+					System.out.println("end of file reached");
+				}
+				return true;
+			} // EOF reached
+			bytes_to_skip -= skipped;
+		}
+		return false;
 	}
 
 	/** Parse a file in BAR format. */

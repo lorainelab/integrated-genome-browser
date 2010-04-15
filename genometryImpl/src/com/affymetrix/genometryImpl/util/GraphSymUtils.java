@@ -198,7 +198,7 @@ public final class GraphSymUtils {
 		String sname = stripped_name.toString().toLowerCase();
 
 		if (sname.endsWith(".bar"))  {
-			grafs = BarParser.parse(newstr, gmodel, seq_group, stream_name);
+			grafs = BarParser.parse(newstr, gmodel, seq_group, stream_name, true);
 		}
 		else if (sname.endsWith(".useq")) {
 			USeqGraphParser up = new USeqGraphParser();

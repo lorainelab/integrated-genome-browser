@@ -10,11 +10,10 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleData;
-import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -23,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,6 +29,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -420,33 +419,24 @@ public class Wiggle extends SymLoader{
 		}
 	}
 
+	/**
+	 * Writes the give GraphSym in bar format.
+	 * @param syms		GraphSym to be written.
+	 * @param seq		BioSeq to be written.
+	 * @param type		Type required for bar format.
+	 * @param ostr		Outputstream to write bar file.
+	 * @return			Returns true if bar file is written sucessfully.
+	 */
+	public static boolean writeBarFormat(Collection<GraphSym> syms, BioSeq seq,
+			String type, OutputStream ostr){
+
+			BarParser instance = new BarParser();
+			return instance.writeAnnotations(syms, seq, type, ostr);
+	}
+
 	public String getMimeType() {
 		return "binary/wig";
 	}
 
-	public static void main(String[] args){
-
-
-		InputStream istr = null;
-		try {
-			String filename = "/Users/aloraine/Downloads/test_wiggle.wig";
-			File file = new File(filename);
-			AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-			Wiggle parser = new Wiggle(file.toURI(), filename, seq_group);
-			istr = new FileInputStream(filename);
-			//List<GraphSym> results = parser.getChromosome((new AnnotatedSeqGroup("dummy")).addSeq("chr2", 59304700));
-			List<GraphSym> results = parser.getGenome();
-			int i = 0;
-
-		} catch (Exception ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			try {
-				istr.close();
-			} catch (IOException ex) {
-				Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-
-	}
+	
 }

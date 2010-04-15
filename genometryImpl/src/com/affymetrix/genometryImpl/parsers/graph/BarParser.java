@@ -58,10 +58,8 @@ BAR SEQ/DATA SECTION HEADER
  */
 public final class BarParser implements AnnotationWriter {
 
-	private static final boolean DEBUG_READ = false;
-	private static final boolean DEBUG_SLICE = false;
-	private static final boolean DEBUG_DATA = false;
-	private static final boolean DEBUG_INDEXER = false;
+	private static final boolean DEBUG = false;
+
 	/** 8-byte floating-point.  Names of the other data-type constants can be interpreted similarly. */
 	private static final int BYTE4_FLOAT = 1;
 	private static final int BYTE4_SIGNED_INT = 2;
@@ -107,7 +105,7 @@ public final class BarParser implements AnnotationWriter {
 
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
-		if (DEBUG_SLICE) {
+		if (DEBUG) {
 			GenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base);
 			System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
 		}
@@ -129,7 +127,7 @@ public final class BarParser implements AnnotationWriter {
 					min_index = 0;
 				}
 			}
-			if (DEBUG_SLICE) {
+			if (DEBUG) {
 				System.out.println("min_index = " + min_index + ", base_pos = " + chunk_mins[min_index]);
 				if (min_index > 0) {
 					System.out.println("  prev index, base_pos = " + chunk_mins[min_index - 1]);
@@ -169,7 +167,7 @@ public final class BarParser implements AnnotationWriter {
 				points_to_read = seq_header.data_point_count;
 			}
 			int bytes_to_read = points_to_read * bytes_per_point;
-			if (DEBUG_SLICE) {
+			if (DEBUG) {
 				System.out.println("points to skip: " + points_to_skip);
 				System.out.println("bytes to skip: " + bytes_to_skip);
 				System.out.println("points to read: " + points_to_read);
@@ -199,7 +197,7 @@ public final class BarParser implements AnnotationWriter {
 				}
 			}
 			int graph_point_count = end_index - start_index + 1;
-			if (DEBUG_SLICE) {
+			if (DEBUG) {
 				System.out.println("start of byte array, base coord = " + xcoord[0]);
 				System.out.println("coords returned: count = " + graph_point_count + ", first = " + xcoord[start_index] + ", last = " + xcoord[end_index]);
 			}
@@ -215,7 +213,7 @@ public final class BarParser implements AnnotationWriter {
 			graf.removeSpan(graf.getSpan(aseq));
 			graf.addSpan(span);
 			long t1 = tim.read();
-			if (DEBUG_SLICE) {
+			if (DEBUG) {
 				System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1 / 1000f));
 				System.out.println("made graph for slice: " + graf);
 			}
@@ -228,22 +226,7 @@ public final class BarParser implements AnnotationWriter {
 		return graf;
 	}
 
-	private static void setTagValues(BarSeqHeader seq_header, GraphSym graf) {
-		Map<String, String> seq_tagvals = seq_header.tagvals;
-		if (seq_tagvals != null && seq_tagvals.size() > 0) {
-			copyProps(graf, seq_tagvals);
-			//attempt to find and set strand information
-			if (seq_tagvals.containsKey("strand")) {
-				String strand = seq_tagvals.get("strand");
-				if (strand.equals("+")) {
-					graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-				}
-				if (strand.equals("-")) {
-					graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
-				}
-			}
-		}
-	}
+	
 
 
 	/**
@@ -297,7 +280,7 @@ public final class BarParser implements AnnotationWriter {
 			int total_chunks = (total_points / points_per_chunk) + 1;
 			int[] chunk_mins = new int[total_chunks];
 
-			if (DEBUG_READ) {
+			if (DEBUG) {
 				System.out.println("total points: " + total_points);
 				System.out.println("bytes per data point: " + bytes_per_point);
 				System.out.println("points_per_chunk: " + points_per_chunk);
@@ -309,14 +292,14 @@ public final class BarParser implements AnnotationWriter {
 			while (point_count < total_points) {
 				int base_pos = dis.readInt();
 				chunk_mins[chunk_count] = base_pos;
-				if (DEBUG_INDEXER) {
+				if (DEBUG) {
 					System.out.println("chunk: " + chunk_count + ", index: " + point_count + ",  start base: " + base_pos);
 				}
 				if (skipBytes(skip_offset, dis)) {
 					break CHUNK_LOOP;
 				}
 				point_count += points_per_chunk;
-				if (DEBUG_INDEXER) {
+				if (DEBUG) {
 					System.out.println("  point count: " + point_count);
 				}
 				chunk_count++;
@@ -325,7 +308,7 @@ public final class BarParser implements AnnotationWriter {
 			if (chunk_mins[total_chunks - 1] == 0) {
 				chunk_mins[total_chunks - 1] = seq_header.aseq.getLength();
 			}
-			if (DEBUG_READ) {
+			if (DEBUG) {
 				System.out.println("chunk count: " + chunk_count);
 				System.out.println("expected chunk count: " + total_chunks);
 			}
@@ -333,21 +316,42 @@ public final class BarParser implements AnnotationWriter {
 		} finally {
 			GeneralUtils.safeClose(dis);
 		}
-		if (DEBUG_READ) {
+		if (DEBUG) {
 			long index_time = tim.read();
 			System.out.println("time to index: " + index_time / 1000f);
 			System.out.println(" ");
 		}
 	}
 
+	private static void setTagValues(BarSeqHeader seq_header, GraphSym graf) {
+		Map<String, String> seq_tagvals = seq_header.tagvals;
+		if (seq_tagvals != null && seq_tagvals.size() > 0) {
+			copyProps(graf, seq_tagvals);
+			setStrandProp(seq_tagvals, graf);
+		}
+	}
+
+	//attempt to find and set strand information
+	private static void setStrandProp(Map<String, String> seq_tagvals, GraphSym graf) {
+		if (seq_tagvals.containsKey("strand")) {
+			String strand = seq_tagvals.get("strand");
+			if (strand.equals("+")) {
+				graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+			}
+			if (strand.equals("-")) {
+				graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+			}
+		}
+	}
+
 	private static boolean skipBytes(int bytes_to_skip, DataInputStream dis) throws IOException {
 		while (bytes_to_skip > 0) {
 			int skipped = (int) dis.skip(bytes_to_skip);
-			if (DEBUG_INDEXER) {
+			if (DEBUG) {
 				System.out.println("   skipped: " + skipped);
 			}
 			if (skipped < 0) {
-				if (DEBUG_INDEXER) {
+				if (DEBUG) {
 					System.out.println("end of file reached");
 				}
 				return true;
@@ -364,7 +368,7 @@ public final class BarParser implements AnnotationWriter {
 			throws IOException {
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
-		List<GraphSym> graphs = null;
+		List<GraphSym> graphs = new ArrayList<GraphSym>();
 
 		Timer tim = new Timer();
 		tim.start();
@@ -397,115 +401,18 @@ public final class BarParser implements AnnotationWriter {
 				BioSeq seq = seq_header.aseq;
 				if (vals_per_point == 1) {
 					throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
-				} else if (vals_per_point == 2) {
-					if (val_types[0] == BYTE4_SIGNED_INT
-							&& val_types[1] == BYTE4_FLOAT) {
-						if (graphs == null) {
-							graphs = new ArrayList<GraphSym>();
-						}
-						int xcoords[] = new int[total_points];
-						float ycoords[] = new float[total_points];
-						float prev_max_xcoord = -1;
-						boolean sort_reported = false;
-						for (int i = 0; i < total_points; i++) {
-							int col0 = dis.readInt();
-							float col1 = dis.readFloat();
-							if (col0 < prev_max_xcoord && (!sort_reported)) {
-								if (DEBUG_READ) {
-									System.out.println("WARNING!! not sorted by ascending xcoord");
-								}
-								sort_reported = true;
-							}
-							prev_max_xcoord = col0;
-							xcoords[i] = col0;
-							ycoords[i] = col1;
-							if ((DEBUG_DATA) && (i < 100)) {
-								System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
-							}
-						}
-						if (DEBUG_READ) {
-							System.out.println("^^^ creating GraphSym in BarParser, group = " + seq.getSeqGroup().getID()
-									+ ", seq = " + seq.getID());
-							System.out.println("      graph id: " + graph_id);
-						}
-						if (ensure_unique_id) {
-							graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq);
-						}
-						checkSeqLength(seq, xcoords);
-						GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
-						copyProps(graf, file_tagvals);
-						if (bar2) {
-							copyProps(graf, seq_tagvals);
-						}
-
-						//attempt to find and set strand information
-						if (seq_tagvals.containsKey("strand")) {
-							String strand = seq_tagvals.get("strand");
-							if (strand.equals("+")) {
-								graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-							}
-							if (strand.equals("-")) {
-								graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
-							}
-						}
-
-						graphs.add(graf);
-					} else {
+				}
+				if (vals_per_point == 2) {
+					if (val_types[0] != BYTE4_SIGNED_INT || val_types[1] != BYTE4_FLOAT) {
 						throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
 					}
+					handle2ValPerPoint(total_points, dis, seq, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
 				} else if (vals_per_point == 3) {
 					// if three values per point, assuming #1 is int base coord, #2 is Pm score, #3 is Mm score
-					if (val_types[0] == BYTE4_SIGNED_INT
-							&& val_types[1] == BYTE4_FLOAT
-							&& val_types[2] == BYTE4_FLOAT) {
-						if (graphs == null) {
-							graphs = new ArrayList<GraphSym>();
-						}
-						if (DEBUG_READ) {
-							System.out.println("reading graph data: " + k);
-						}
-						int xcoords[] = new int[total_points];
-						float ycoords[] = new float[total_points];
-						float zcoords[] = new float[total_points];
-						for (int i = 0; i < total_points; i++) {
-							int col0 = dis.readInt();
-							float col1 = dis.readFloat();
-							float col2 = dis.readFloat();
-							xcoords[i] = col0;
-							ycoords[i] = col1;
-							zcoords[i] = col2;
-							if (DEBUG_DATA && i < 100) {
-								System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1 + "\t" + col2);
-							}
-						}
-						String pm_name = graph_id + " : pm";
-						String mm_name = graph_id + " : mm";
-						if (ensure_unique_id) {
-							pm_name = AnnotatedSeqGroup.getUniqueGraphID(pm_name, seq);
-							mm_name = AnnotatedSeqGroup.getUniqueGraphID(mm_name, seq);
-						}
-						checkSeqLength(seq, xcoords);
-						GraphSym pm_graf =
-								new GraphSym(xcoords, ycoords, pm_name, seq);
-						GraphSym mm_graf = new GraphSym(xcoords, zcoords, mm_name, seq);
-						copyProps(pm_graf, file_tagvals);
-						copyProps(mm_graf, file_tagvals);
-						if (bar2) {
-							copyProps(pm_graf, seq_tagvals);
-							copyProps(mm_graf, seq_tagvals);
-						}
-						if (DEBUG_READ) {
-							System.out.println("done reading graph data: ");
-							System.out.println("pmgraf, yval = column1: " + pm_graf);
-							System.out.println("mmgraf, yval = column2: " + mm_graf);
-						}
-						pm_graf.setProperty("probetype", "PM (perfect match)");
-						mm_graf.setProperty("probetype", "MM (mismatch)");
-						graphs.add(pm_graf);
-						graphs.add(mm_graf);
-					} else {
+					if (val_types[0] != BYTE4_SIGNED_INT || val_types[1] != BYTE4_FLOAT || val_types[2] != BYTE4_FLOAT) {
 						throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
 					}
+					handle3ValPerPoint(total_points, dis, seq, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
 				}
 			}
 			long t1 = tim.read();
@@ -518,9 +425,99 @@ public final class BarParser implements AnnotationWriter {
 		return graphs;
 	}
 
+
+
+	private static void handle2ValPerPoint(
+			int total_points, DataInputStream dis, BioSeq seq, String graph_id, boolean ensure_unique_id, 
+			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
+			throws IOException {
+		int[] xcoords = new int[total_points];
+		float[] ycoords = new float[total_points];
+		float prev_max_xcoord = -1;
+		boolean sort_reported = false;
+		for (int i = 0; i < total_points; i++) {
+			int col0 = dis.readInt();
+			float col1 = dis.readFloat();
+			if (col0 < prev_max_xcoord && (!sort_reported)) {
+				if (DEBUG) {
+					System.out.println("WARNING!! not sorted by ascending xcoord");
+				}
+				sort_reported = true;
+			}
+			prev_max_xcoord = col0;
+			xcoords[i] = col0;
+			ycoords[i] = col1;
+			if (DEBUG && i < 100) {
+				System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
+			}
+		}
+		if (DEBUG) {
+			System.out.println("^^^ creating GraphSym in BarParser, group = " + seq.getSeqGroup().getID() + ", seq = " + seq.getID());
+			System.out.println("      graph id: " + graph_id);
+		}
+		if (ensure_unique_id) {
+			graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq);
+		}
+		checkSeqLength(seq, xcoords);
+		GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
+		copyProps(graf, file_tagvals);
+		if (bar2) {
+			copyProps(graf, seq_tagvals);
+		}
+		setStrandProp(seq_tagvals, graf);
+		graphs.add(graf);
+	}
+
+
+	private static void handle3ValPerPoint(
+			int total_points, DataInputStream dis, BioSeq seq, String graph_id, boolean ensure_unique_id, 
+			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
+			throws IOException {
+		int[] xcoords = new int[total_points];
+		float[] ycoords = new float[total_points];
+		float[] zcoords = new float[total_points];
+		for (int i = 0; i < total_points; i++) {
+			int col0 = dis.readInt();
+			float col1 = dis.readFloat();
+			float col2 = dis.readFloat();
+			xcoords[i] = col0;
+			ycoords[i] = col1;
+			zcoords[i] = col2;
+			if (DEBUG && i < 100) {
+				System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1 + "\t" + col2);
+			}
+		}
+		String pm_name = graph_id + " : pm";
+		String mm_name = graph_id + " : mm";
+		if (ensure_unique_id) {
+			pm_name = AnnotatedSeqGroup.getUniqueGraphID(pm_name, seq);
+			mm_name = AnnotatedSeqGroup.getUniqueGraphID(mm_name, seq);
+		}
+		checkSeqLength(seq, xcoords);
+		GraphSym pm_graf = new GraphSym(xcoords, ycoords, pm_name, seq);
+		GraphSym mm_graf = new GraphSym(xcoords, zcoords, mm_name, seq);
+		copyProps(pm_graf, file_tagvals);
+		copyProps(mm_graf, file_tagvals);
+		if (bar2) {
+			copyProps(pm_graf, seq_tagvals);
+			copyProps(mm_graf, seq_tagvals);
+		}
+		if (DEBUG) {
+			System.out.println("done reading graph data: ");
+			System.out.println("pmgraf, yval = column1: " + pm_graf);
+			System.out.println("mmgraf, yval = column2: " + mm_graf);
+		}
+		pm_graf.setProperty("probetype", "PM (perfect match)");
+		mm_graf.setProperty("probetype", "MM (mismatch)");
+		graphs.add(pm_graf);
+		graphs.add(mm_graf);
+	}
+
+
+
 	private static final HashMap<String, String> readTagValPairs(DataInput dis, int pair_count) throws IOException {
 		HashMap<String, String> tvpairs = new HashMap<String, String>(pair_count);
-		if (DEBUG_READ) {
+		if (DEBUG) {
 			System.out.println("reading tagvals: ");
 		}
 		for (int i = 0; i < pair_count; i++) {
@@ -534,7 +531,7 @@ public final class BarParser implements AnnotationWriter {
 			dis.readFully(barray);
 			String val = new String(barray);
 			tvpairs.put(tag, val);
-			if (DEBUG_READ) {
+			if (DEBUG) {
 				System.out.println("    tag = " + tag + ", val = " + val);
 			}
 		}
@@ -558,7 +555,7 @@ public final class BarParser implements AnnotationWriter {
 			float version = dis.readFloat();       // int  #rows in data section (nrow)
 			int total_seqs = dis.readInt();
 			int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)
-			if (DEBUG_READ) {
+			if (DEBUG) {
 				System.out.println("bar version: " + version);
 				System.out.println("total seqs: " + total_seqs);
 				System.out.println("vals per point: " + vals_per_point);
@@ -566,12 +563,12 @@ public final class BarParser implements AnnotationWriter {
 			int[] val_types = new int[vals_per_point];
 			for (int i = 0; i < vals_per_point; i++) {
 				val_types[i] = dis.readInt();
-				if (DEBUG_READ) {
+				if (DEBUG) {
 					System.out.println("val type for column " + i + ": " + valstrings[val_types[i]]);
 				}
 			}
 			int tvcount = dis.readInt();
-			if (DEBUG_READ) {
+			if (DEBUG) {
 				System.out.println("file tagval count: " + tvcount);
 			}
 			HashMap<String, String> file_tagvals = readTagValPairs(dis, tvcount);
@@ -590,7 +587,7 @@ public final class BarParser implements AnnotationWriter {
 		byte[] barray = new byte[namelength];
 		dis.readFully(barray);
 		String seqname = new String(barray);
-		if (DEBUG_READ) {
+		if (DEBUG) {
 			System.out.println("seq: " + seqname);
 		}
 
@@ -601,7 +598,7 @@ public final class BarParser implements AnnotationWriter {
 			barray = new byte[grouplength];
 			dis.readFully(barray);
 			groupname = new String(barray);
-			if (DEBUG_READ) {
+			if (DEBUG) {
 				System.out.println("group length: " + grouplength + ", group: " + groupname);
 			}
 		}
@@ -610,7 +607,7 @@ public final class BarParser implements AnnotationWriter {
 		barray = new byte[verslength];
 		dis.readFully(barray);
 		String seqversion = new String(barray);
-		if (DEBUG_READ) {
+		if (DEBUG) {
 			System.out.println("version length: " + verslength + ", version: " + seqversion);
 		}
 
@@ -621,7 +618,7 @@ public final class BarParser implements AnnotationWriter {
 		if (sc_pos >= 0) {
 			seqversion = seqname.substring(0, sc_pos);
 			seqname = seqname.substring(sc_pos + 1);
-			if (DEBUG_READ) {
+			if (DEBUG) {
 				System.out.println("seqname = " + seqname + ", seqversion = " + seqversion);
 			}
 		}
@@ -629,14 +626,14 @@ public final class BarParser implements AnnotationWriter {
 		HashMap<String, String> seq_tagvals = null;
 		if (bar2) {
 			int seq_tagval_count = dis.readInt();
-			if (DEBUG_READ) {
+			if (DEBUG) {
 				System.out.println("seq tagval count: " + seq_tagval_count);
 			}
 			seq_tagvals = readTagValPairs(dis, seq_tagval_count);
 		}
 
 		int total_points = dis.readInt();
-		if (DEBUG_READ) {
+		if (DEBUG) {
 			System.out.println("   seqname = " + seqname + ", version = " + seqversion
 					+ ", group = " + groupname
 					+ ", data points = " + total_points);
@@ -676,7 +673,7 @@ public final class BarParser implements AnnotationWriter {
 					} else {
 						String test_version = testseq.getVersion();
 						if ((lookup.isSynonym(test_version, seqversion)) || (lookup.isSynonym(test_version, groupname)) || (lookup.isSynonym(test_version, groupname + ":" + seqversion))) {
-							if (DEBUG_READ) {
+							if (DEBUG) {
 								System.out.println("found synonymn");
 							}
 							seq = testseq;
@@ -692,7 +689,7 @@ public final class BarParser implements AnnotationWriter {
 			}*/
 			seq = seq_group.addSeq(seqname, 1000);
 		}
-		if (DEBUG_READ) {
+		if (DEBUG) {
 			System.out.println("seq: " + seq);
 		}
 		return seq;
@@ -728,7 +725,7 @@ public final class BarParser implements AnnotationWriter {
 				} else {
 					new_group_name = version;
 				}
-				if (DEBUG_READ) {
+				if (DEBUG) {
 					System.out.println("group not found, creating new seq group: " + new_group_name);
 				}
 				group = gmodel.addSeqGroup(new_group_name);

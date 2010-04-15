@@ -66,7 +66,6 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.TempFileTracker;
 import com.affymetrix.igb.action.AutoScrollAction;
 import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -336,8 +335,6 @@ public final class IGB extends Application
 				mi.setDockIconImage(this.getIcon());
 			}
 		}
-
-		TempFileTracker.addShutdownHook();
 
 		frm = new JFrame(APP_NAME + " " + APP_VERSION);
 		RepaintManager rm = RepaintManager.currentManager(frm);

@@ -66,6 +66,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.TempFileTracker;
 import com.affymetrix.igb.action.AutoScrollAction;
 import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -335,6 +336,9 @@ public final class IGB extends Application
 				mi.setDockIconImage(this.getIcon());
 			}
 		}
+
+		TempFileTracker.addShutdownHook();
+
 		frm = new JFrame(APP_NAME + " " + APP_VERSION);
 		RepaintManager rm = RepaintManager.currentManager(frm);
 
@@ -624,7 +628,7 @@ public final class IGB extends Application
 		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_minus_action));
 		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
 		view_menu.add(strands_menu);
-		MenuUtil.addToMenu(view_menu, new JMenuItem(new AutoScrollAction()));
+		MenuUtil.addToMenu(view_menu, new JMenuItem(AutoScrollAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new UCSCViewAction()));
 		MenuUtil.addToMenu(view_menu, toggle_edge_matching_item);
 		MenuUtil.addToMenu(view_menu, adjust_edgematch_item);

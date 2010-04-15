@@ -1,7 +1,6 @@
-package com.affymetrix.genometryImpl.parsers.graph;
+package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.*;
 import java.util.*;
 
@@ -9,10 +8,13 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.Timer;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Parser for files in BAR format.
@@ -56,7 +58,7 @@ BAR SEQ/DATA SECTION HEADER
 23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
  *</pre>
  */
-public final class BarParser implements AnnotationWriter {
+public final class Bar extends SymLoader {
 
 	private static final boolean DEBUG = false;
 
@@ -80,20 +82,29 @@ public final class BarParser implements AnnotationWriter {
 	 *  For indexing of base coord sets, how many point to compress into single index entry
 	 */
 	private static final int points_per_chunk = 1024;
-	private static Map<String, Object> coordset2seqs = new HashMap<String, Object>();
 
+	private final File f;
+	private final BioSeq seq;
+	private int[] chunk_mins;
+
+	public Bar(URI uri, BioSeq seq) {
+		super(uri);
+		this.f = LocalUrlCacher.convertURIToFile(uri);
+		this.seq = seq;
+	}
 
 	/**
 	 *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
 	 *  be used only inside a CompositeGraphSym.
 	 */
-	public static GraphSym getRegion(String file_name, SeqSpan span) throws IOException {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+	@Override
+	public List<GraphSym> getRegion(SeqSpan span) {
 		Timer tim = new Timer();
 		tim.start();
 		BioSeq aseq = span.getBioSeq();
 		int min_base = span.getMin();
 		int max_base = span.getMax();
+		List<GraphSym> graphs = new ArrayList<GraphSym>();
 
 		// first check and see if the file is already indexed
 		//  if not already indexed, index it (unless it's too small?)
@@ -101,18 +112,23 @@ public final class BarParser implements AnnotationWriter {
 		//  To make slicing functional, still need to change this so coord set is _not_ the file name,
 		//     but rather extracted from a field (or set of fields) in the bar file, so can be shared
 		//     across bar files that have the exact same base coords
-		int[] chunk_mins = (int[]) coordset2seqs.get(file_name);
 
-		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
-
-		if (DEBUG) {
-			GenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base);
-			System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
+		if (aseq == null) {
+			Logger.getLogger(Bar.class.getName()).log(
+					Level.WARNING, "Chromosome was null");
+			return graphs;
 		}
-		if (chunk_mins == null) {
-			buildIndex(file_name, file_name, gmodel, seq_group);
-			// index??
-			chunk_mins = (int[]) coordset2seqs.get(file_name);
+		if (aseq != this.seq) {
+			Logger.getLogger(Bar.class.getName()).log(
+					Level.WARNING, "Chromosomes " + aseq.getID() + " and " + seq.getID() + " do not match.");
+			return graphs;
+		}
+
+		if (!this.isInitialized) {
+			if (!buildIndex()) {
+				return graphs;	// something went wrong; return empty list and don't init
+			}
+			super.init();
 		}
 		int min_index = 0;
 		int max_index = 0;
@@ -144,21 +160,26 @@ public final class BarParser implements AnnotationWriter {
 				readToEnd = true;
 			}
 		}
-		return constructGraf(
-				file_name, gmodel, seq_group, min_index, readToEnd, max_index, min_base, max_base, aseq, span, tim);
+		
+		GraphSym graf = constructGraf(
+				min_index, readToEnd, max_index, min_base, max_base, aseq, span, tim);
+		if (graf != null) {
+			graphs.add(graf);
+		}
+		return graphs;
 	}
 
-	private static GraphSym constructGraf(
-			String file_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, int min_index,
+	private GraphSym constructGraf(
+			int min_index,
 			boolean readToEnd, int max_index, int min_base, int max_base, BioSeq aseq, SeqSpan span, Timer tim)
-			throws IOException {
+			{
 		GraphSym graf = null;
 		DataInputStream dis = null;
 		try {
-			FileInputStream fis = new FileInputStream(new File(file_name));
+			FileInputStream fis = new FileInputStream(this.f);
 			dis = new DataInputStream(new BufferedInputStream(fis));
 			BarFileHeader bar_header = parseBarHeader(dis);
-			BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, seq_group, bar_header);
+			BarSeqHeader seq_header = parseSeqHeader(dis, bar_header);
 			int bytes_per_point = bar_header.bytes_per_point;
 			int points_per_index = points_per_chunk;
 			int points_to_skip = min_index * points_per_index;
@@ -222,6 +243,8 @@ public final class BarParser implements AnnotationWriter {
 			}
 			setTagValues(seq_header, graf);
 			// now output bar file slice??
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose((InputStream) dis);
 		}
@@ -263,24 +286,23 @@ public final class BarParser implements AnnotationWriter {
 	 *    least 10x > N), so overhead for reading extra data will be minor.
 	 * </pre>
 	 */
-	public static void buildIndex(String file_name, String coord_set_id, GenometryModel gmodel, AnnotatedSeqGroup seq_group)
-			throws IOException {
+	public boolean buildIndex() {
 		Timer tim = new Timer();
 		tim.start();
 		// builds an index per sequence in the bar file
 		DataInputStream dis = null;
 		try {
-			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(file_name))));
+			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(this.f)));
 			BarFileHeader file_header = parseBarHeader(dis);
 			int bytes_per_point = file_header.bytes_per_point;
-			BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, seq_group, file_header);
+			BarSeqHeader seq_header = parseSeqHeader(dis, file_header);
 			int total_points = seq_header.data_point_count;
 
 			int point_count = 0;
 			int chunk_count = 0;
 			// adding one because indexing _start_ of chunk, so also have partial chunk at end??
 			int total_chunks = (total_points / points_per_chunk) + 1;
-			int[] chunk_mins = new int[total_chunks];
+			chunk_mins = new int[total_chunks];
 
 			if (DEBUG) {
 				System.out.println("total points: " + total_points);
@@ -314,7 +336,9 @@ public final class BarParser implements AnnotationWriter {
 				System.out.println("chunk count: " + chunk_count);
 				System.out.println("expected chunk count: " + total_chunks);
 			}
-			coordset2seqs.put(coord_set_id, chunk_mins);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return false;
 		} finally {
 			GeneralUtils.safeClose(dis);
 		}
@@ -323,6 +347,7 @@ public final class BarParser implements AnnotationWriter {
 			System.out.println("time to index: " + index_time / 1000f);
 			System.out.println(" ");
 		}
+		return true;
 	}
 
 	private static void setTagValues(BarSeqHeader seq_header, GraphSym graf) {
@@ -364,8 +389,7 @@ public final class BarParser implements AnnotationWriter {
 	}
 
 	/** Parse a file in BAR format. */
-	public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel,
-			AnnotatedSeqGroup default_seq_group, String stream_name,
+	public List<GraphSym> parse(InputStream istr, String stream_name,
 			boolean ensure_unique_id)
 			throws IOException {
 		BufferedInputStream bis = null;
@@ -397,10 +421,7 @@ public final class BarParser implements AnnotationWriter {
 				graph_id += ":" + file_tagvals.get("file_type");
 			}
 			for (int k = 0; k < total_seqs; k++) {
-				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
-				int total_points = seq_header.data_point_count;
-				Map<String, String> seq_tagvals = seq_header.tagvals;
-				BioSeq seq = seq_header.aseq;
+				
 				if (vals_per_point == 1) {
 					throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
 				}
@@ -408,13 +429,13 @@ public final class BarParser implements AnnotationWriter {
 					if (val_types[0] != BYTE4_SIGNED_INT || val_types[1] != BYTE4_FLOAT) {
 						throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
 					}
-					handle2ValPerPoint(total_points, dis, seq, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
+					handle2ValPerPoint(bar_header, dis, graph_id, ensure_unique_id, file_tagvals, bar2, graphs);
 				} else if (vals_per_point == 3) {
 					// if three values per point, assuming #1 is int base coord, #2 is Pm score, #3 is Mm score
 					if (val_types[0] != BYTE4_SIGNED_INT || val_types[1] != BYTE4_FLOAT || val_types[2] != BYTE4_FLOAT) {
 						throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
 					}
-					handle3ValPerPoint(total_points, dis, seq, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
+					handle3ValPerPoint(bar_header, dis, graph_id, ensure_unique_id, file_tagvals, bar2, graphs);
 				}
 			}
 			long t1 = tim.read();
@@ -429,10 +450,16 @@ public final class BarParser implements AnnotationWriter {
 
 
 
-	private static void handle2ValPerPoint(
-			int total_points, DataInputStream dis, BioSeq seq, String graph_id, boolean ensure_unique_id, 
-			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
+	private void handle2ValPerPoint(
+			BarFileHeader bar_header,
+			DataInputStream dis, String graph_id, boolean ensure_unique_id,
+			Map<String, String> file_tagvals, boolean bar2, List<GraphSym> graphs)
 			throws IOException {
+		BarSeqHeader seq_header = parseSeqHeader(dis, bar_header);
+				int total_points = seq_header.data_point_count;
+				Map<String, String> seq_tagvals = seq_header.tagvals;
+				// TODO: handle case where there are multiple chromosomes in single file.
+				//BioSeq seq = seq_header.aseq;
 		int[] xcoords = new int[total_points];
 		float[] ycoords = new float[total_points];
 		float prev_max_xcoord = -1;
@@ -471,10 +498,16 @@ public final class BarParser implements AnnotationWriter {
 	}
 
 
-	private static void handle3ValPerPoint(
-			int total_points, DataInputStream dis, BioSeq seq, String graph_id, boolean ensure_unique_id, 
-			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
+	private void handle3ValPerPoint(
+			BarFileHeader bar_header,
+			DataInputStream dis, String graph_id, boolean ensure_unique_id,
+			Map<String, String> file_tagvals, boolean bar2, List<GraphSym> graphs)
 			throws IOException {
+		BarSeqHeader seq_header = parseSeqHeader(dis, bar_header);
+				int total_points = seq_header.data_point_count;
+				Map<String, String> seq_tagvals = seq_header.tagvals;
+				// TODO: handle case where there are multiple chromosomes in single file.
+				//BioSeq seq = seq_header.aseq;
 		int[] xcoords = new int[total_points];
 		float[] ycoords = new float[total_points];
 		float[] zcoords = new float[total_points];
@@ -584,7 +617,7 @@ public final class BarParser implements AnnotationWriter {
 		}
 	}
 
-	private static BarSeqHeader parseSeqHeader(DataInput dis, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header) throws IOException {
+	private BarSeqHeader parseSeqHeader(DataInput dis, BarFileHeader file_header) throws IOException {
 		int namelength = dis.readInt();
 		byte[] barray = new byte[namelength];
 		dis.readFully(barray);
@@ -641,134 +674,7 @@ public final class BarParser implements AnnotationWriter {
 					+ ", data points = " + total_points);
 		}
 
-		AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, gmodel, default_seq_group);
-		BioSeq seq = determineSeq(seq_group, seqname, orig_seqname, seqversion, groupname, bar2);
-		return new BarSeqHeader(seq, total_points, seq_tagvals);
-	}
-
-	private static BioSeq determineSeq(AnnotatedSeqGroup seq_group, String seqname, String orig_seqname, String seqversion, String groupname, boolean bar2) {
-		// trying standard AnnotatedSeqGroup seq id resolution first
-		BioSeq seq = seq_group.getSeq(seqname);
-		if (seq == null) {
-			seq = seq_group.getSeq(orig_seqname);
-		}
-		// if standard AnnotatedSeqGroup seq id resolution doesn't work, try old technique
-		//    (hopefully can eliminate this soon)
-		if (seq == null) {
-			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-			//TODO: Convert this to the standard way of getting synomous sequences,
-			// but we may have to check for extra bar-specific synonyms involving seq group and version
-			for (BioSeq testseq : seq_group.getSeqList()) {
-				// testing both seq id and version id (if version id is available)
-				if (lookup.isSynonym(testseq.getID(), seqname)) {
-					// GAH 1-23-2005
-					// need to ensure that if bar2 format, the seq group is also a synonym!
-					// GAH 7-7-2005
-					//    but now there's some confusion about seqversion vs seqgroup, so try all three possibilities:
-					//      groupname
-					//      seqversion
-					//      groupname + ":" + seqversion
-					if ((seqversion == null && groupname == null)
-							|| (((seqversion == null) || seqversion.equals("")) && ((groupname == null) || groupname.equals("")))) {
-						seq = testseq;
-						break;
-					} else {
-						String test_version = testseq.getVersion();
-						if ((lookup.isSynonym(test_version, seqversion)) || (lookup.isSynonym(test_version, groupname)) || (lookup.isSynonym(test_version, groupname + ":" + seqversion))) {
-							if (DEBUG) {
-								System.out.println("found synonymn");
-							}
-							seq = testseq;
-							break;
-						}
-					}
-				}
-			}
-		}
-		if (seq == null) {
-			/*if (bar2 && groupname != null) {
-				seqversion = groupname + ":" + seqversion;
-			}*/
-			seq = seq_group.addSeq(seqname, 1000);
-		}
-		if (DEBUG) {
-			System.out.println("seq: " + seq);
-		}
-		return seq;
-	}
-
-	/**
-	 *  if group and version are null/blank, assume default_seq_group is correct.
-	 *  otherwise try an match with an existing AnnotatedSeqGroup
-	 *  if existing AnnotatedSeqGroup can't be found, create a new one?
-	 */
-	private static AnnotatedSeqGroup getSeqGroup(String groupname, String version, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group) {
-		AnnotatedSeqGroup group = null;
-		if (((version == null) || version.equals(""))
-				&& ((groupname == null) || groupname.equals(""))) {
-			group = default_seq_group;
-		} else {
-			if (groupname != null && version != null) {
-				group = gmodel.getSeqGroup(groupname + ":" + version);
-			}
-			if (group == null && groupname != null) {
-				group = gmodel.getSeqGroup(groupname);
-			}
-			if (group == null && version != null) {
-				group = gmodel.getSeqGroup(version);
-			}
-			// no group found, so create a new one
-			if (group == null) {
-				String new_group_name;
-				if (groupname != null && groupname.length() > 0 && version != null && version.length() > 0) {
-					new_group_name = groupname + ":" + version;
-				} else if (version == null || version.length() == 0) {
-					new_group_name = groupname;
-				} else {
-					new_group_name = version;
-				}
-				if (DEBUG) {
-					System.out.println("group not found, creating new seq group: " + new_group_name);
-				}
-				group = gmodel.addSeqGroup(new_group_name);
-			}
-
-			if (gmodel.getSelectedSeqGroup() != group) {
-				// This is necessary to make sure new groups get added to the DataLoadView.
-				// maybe need a SeqGroupModifiedEvent class instead.
-				gmodel.setSelectedSeqGroup(group);
-			}
-		}
-		return group;
-	}
-
-	/**
-	 * Writes bar format.
-	 * Assumes syms size is one and single sym is a GraphSym with same BioSeq as seq
-	 */
-	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
-			String type, OutputStream ostr) {
-
-
-		try {
-			BufferedOutputStream bos = new BufferedOutputStream(ostr);
-			DataOutputStream dos = new DataOutputStream(bos);
-			// for now assume just outputting one graph?
-			Iterator<? extends SeqSymmetry> iter = syms.iterator();
-			GraphSym graf = (GraphSym) iter.next();
-
-			writeHeaderInfo(seq, dos);
-
-			//write out all properties from seq and/or graphs as tag/vals
-			writeTagValuePairs(dos, graf.getProperties());
-			writeGraphPoints(graf, dos);
-			dos.close();  // or should responsibility for closing stream be left to the caller??
-			return true;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		return false;
+		return new BarSeqHeader(this.seq, total_points, seq_tagvals);
 	}
 
 	private static void writeHeaderInfo(BioSeq seq, DataOutputStream dos) throws IOException {
@@ -875,7 +781,7 @@ final class BarFileHeader {
 
 		for (int i = 0; i < val_types.length; i++) {
 			int valtype = val_types[i];
-			bytes_per_point += BarParser.bytes_per_val[valtype];
+			bytes_per_point += Bar.bytes_per_val[valtype];
 		}
 	}
 }

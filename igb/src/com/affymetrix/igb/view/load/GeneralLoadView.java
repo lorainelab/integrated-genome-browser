@@ -217,7 +217,9 @@ public final class GeneralLoadView extends JComponent
 			return;	// ignore uninitialized servers
 		}
 
-		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+		if (gServer.serverType != ServerType.LocalFiles) {
+			Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+		}
 
 		// Need to refresh species names
 		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;

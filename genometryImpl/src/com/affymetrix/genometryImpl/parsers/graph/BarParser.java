@@ -689,7 +689,7 @@ public final class BarParser implements AnnotationWriter {
 			/*if (bar2 && groupname != null) {
 				seqversion = groupname + ":" + seqversion;
 			}*/
-			seq = seq_group.addSeq(seqname, 1000);
+			seq = seq_group.addSeq(seqname, 1);
 		}
 		if (DEBUG) {
 			System.out.println("seq: " + seq);
@@ -753,15 +753,18 @@ public final class BarParser implements AnnotationWriter {
 		try {
 			BufferedOutputStream bos = new BufferedOutputStream(ostr);
 			DataOutputStream dos = new DataOutputStream(bos);
-			// for now assume just outputting one graph?
+
+			writeHeaderInfo(dos,syms.size());
+
 			Iterator<? extends SeqSymmetry> iter = syms.iterator();
-			GraphSym graf = (GraphSym) iter.next();
+			for(GraphSym graf; iter.hasNext(); ){
+				graf = (GraphSym)iter.next();
+				writeSeqInfo(graf.getGraphSeq(), dos);
+				//write out all properties from seq and/or graphs as tag/vals
+				writeTagValuePairs(dos, graf.getProperties());
+				writeGraphPoints(graf, dos);
+			}
 
-			writeHeaderInfo(seq, dos);
-
-			//write out all properties from seq and/or graphs as tag/vals
-			writeTagValuePairs(dos, graf.getProperties());
-			writeGraphPoints(graf, dos);
 			dos.close();  // or should responsibility for closing stream be left to the caller??
 			return true;
 		} catch (Exception ex) {
@@ -770,19 +773,26 @@ public final class BarParser implements AnnotationWriter {
 
 		return false;
 	}
-
-	private static void writeHeaderInfo(BioSeq seq, DataOutputStream dos) throws IOException {
-		AnnotatedSeqGroup group = seq.getSeqGroup();
-		String groupid = group.getID();
-		String seqid = seq.getID();
+	
+	private static void writeHeaderInfo(DataOutputStream dos, int size) throws IOException{
 		dos.writeBytes("barr\r\n\032\n"); // char  "barr\r\n\032\n"
 		dos.writeFloat(2.0f); // version of bar format = 2.0
-		dos.writeInt(1); // number of seq data sections in file -- if single graph, then 1
+		dos.writeInt(size); // number of seq data sections in file -- if single graph, then 1
 		dos.writeInt(2); // number of columns (dimensions) per data point
 		dos.writeInt(BYTE4_SIGNED_INT); // int  first column/dimension type ==> 4-byte signed int
 		dos.writeInt(BYTE4_FLOAT); // int  second column/dimension type ==> 4-byte float
+		writeTagValues(dos);
+	}
+
+	private static void writeTagValues(DataOutputStream dos) throws IOException{
 		// should write out all properties from group and/or graphs as tag/vals?  For now just saying no tag/vals
 		dos.writeInt(0);
+	}
+
+	private static void writeSeqInfo(BioSeq seq, DataOutputStream dos) throws IOException {
+		AnnotatedSeqGroup group = seq.getSeqGroup();
+		String groupid = group.getID();
+		String seqid = seq.getID();
 		// assuming one graph for now, so only one seq section
 		dos.writeInt(seqid.length());
 		dos.writeBytes(seqid);
@@ -823,7 +833,7 @@ public final class BarParser implements AnnotationWriter {
 
 	private static void writeGraphPoints(GraphSym graf, DataOutputStream dos) throws IOException {
 		int total_points = graf.getPointCount();
-		dos.writeInt(total_points);
+		dos.writeInt(calculateTotalPoints(graf));
 		for (int i = 0; i < total_points; i++) {
 			int w = graf.getGraphWidthCoord(i);
 			if (w == 0) {
@@ -831,12 +841,22 @@ public final class BarParser implements AnnotationWriter {
 				dos.writeFloat(graf.getGraphYCoord(i));
 			} else {
 				// Write a point at each interval location.
-				for (int j = 0; j < w; j++) {
+				for (int j = 0; j < w+1; j++) {
 					dos.writeInt(j + graf.getGraphXCoord(i));
 					dos.writeFloat(graf.getGraphYCoord(i));
 				}
 			}
 		}
+	}
+
+	private static int calculateTotalPoints(GraphSym graf){
+		int total_points = graf.getPointCount();
+		int return_points = total_points;
+		for (int i = 0; i < total_points; i++) {
+			int w = graf.getGraphWidthCoord(i);
+			return_points += w;
+		}
+		return return_points;
 	}
 
 	public String getMimeType() {

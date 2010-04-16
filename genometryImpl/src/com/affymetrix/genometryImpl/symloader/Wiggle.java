@@ -7,9 +7,11 @@ package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
@@ -20,8 +22,11 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -427,16 +432,14 @@ public class Wiggle extends SymLoader{
 	 * @param ostr		Outputstream to write bar file.
 	 * @return			Returns true if bar file is written sucessfully.
 	 */
-	public static boolean writeBarFormat(Collection<GraphSym> syms, BioSeq seq,
-			String type, OutputStream ostr){
-
+	public static boolean writeBarFormat(Collection<? extends SeqSymmetry> syms, String type, OutputStream ostr){
+			
 			BarParser instance = new BarParser();
-			return instance.writeAnnotations(syms, seq, type, ostr);
+			return instance.writeAnnotations(syms, null, type, ostr);
 	}
 
 	public String getMimeType() {
 		return "binary/wig";
 	}
 
-	
 }

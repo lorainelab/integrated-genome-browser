@@ -263,7 +263,7 @@ public final class BarParser implements AnnotationWriter {
 	 *    least 10x > N), so overhead for reading extra data will be minor.
 	 * </pre>
 	 */
-	public static void buildIndex(String file_name, String coord_set_id, GenometryModel gmodel, AnnotatedSeqGroup seq_group)
+	private static void buildIndex(String file_name, String coord_set_id, GenometryModel gmodel, AnnotatedSeqGroup seq_group)
 			throws IOException {
 		Timer tim = new Timer();
 		tim.start();

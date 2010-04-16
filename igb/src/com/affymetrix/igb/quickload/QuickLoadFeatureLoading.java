@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
-import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -26,6 +25,9 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symloader.Bar;
+import com.affymetrix.genometryImpl.symloader.Sgr;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -191,13 +193,6 @@ public class QuickLoadFeatureLoading extends SymLoader {
 		if (style != null) {
 			style.setHumanName(featureName);
 		}
-		if (GraphSymUtils.isAGraphFilename(this.f.getName())) {
-			GenometryModel gmodel = GenometryModel.getGenometryModel();
-			FileInputStream fis = new FileInputStream(this.f);
-			List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
-			GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
-			return graphs;
-		}
 		if (strategy == LoadStrategy.GENOME) {
 			return this.getGenome();
 		}
@@ -214,6 +209,20 @@ public class QuickLoadFeatureLoading extends SymLoader {
 	public List<? extends SeqSymmetry> getGenome() {
 		if (this.gsr != null) {
 			return this.gsr.getGenome();
+		}
+		if (GraphSymUtils.isAGraphFilename(this.f.getName())) {
+			FileInputStream fis = null;
+			try {
+				GenometryModel gmodel = GenometryModel.getGenometryModel();
+				fis = new FileInputStream(this.f);
+				List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
+				GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
+				return graphs;
+			} catch (Exception ex) {
+				Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(fis);
+			}
 		}
 
 		List<? extends SeqSymmetry> feats = null;
@@ -264,12 +273,14 @@ public class QuickLoadFeatureLoading extends SymLoader {
 	 */
 	private SymLoader determineLoader() {
 		if (this.extension.endsWith("bam")) {
-			// special-case BAM files, because Picard can only parse from files.
 			if (this.version.group == null) {
 				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
 			} else {
 				return new BAM(this.uri, this.featureName, this.version.group);
 			}
+		}
+		if (this.extension.endsWith("bar")) {
+			return new Bar(this.uri, this.featureName, this.version.group);
 		}
 		return null;
 	}
@@ -281,9 +292,6 @@ public class QuickLoadFeatureLoading extends SymLoader {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
-		if (extension.equals("bar")) {
-			return BarParser.parse(bis, gmodel, version.group, featureName, false);
-		}
 		if (extension.equals("bed")) {
 			BedParser parser = new BedParser();
 			return parser.parse(bis, gmodel, version.group, false, featureName, false);

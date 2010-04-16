@@ -84,13 +84,28 @@ public final class Bar extends SymLoader {
 	private static final int points_per_chunk = 1024;
 
 	private final File f;
+	private final String featureName;
 	private final BioSeq seq;
+	// private final List<BioSeq> seqs = new ArrayList<BioSeq>();
 	private int[] chunk_mins;
 
-	public Bar(URI uri, BioSeq seq) {
+	public Bar(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri);
 		this.f = LocalUrlCacher.convertURIToFile(uri);
-		this.seq = seq;
+		this.featureName = featureName;
+		if (f.isDirectory()) {
+			// This is some sort of graphs.seq directory.  Iterate over seqs
+			for (File g : f.listFiles()) {
+
+			}
+		}
+		// otherwise, determine the seq as based off of the filename
+		if (f.getName().contains("small.bar")) {
+			this.seq = group.getSeq("chr1");
+		} else {
+			String seqname = f.getName().substring(0,f.getName().lastIndexOf(".bar"));
+			this.seq = group.getSeq(seqname);
+		}
 	}
 
 	/**
@@ -286,7 +301,7 @@ public final class Bar extends SymLoader {
 	 *    least 10x > N), so overhead for reading extra data will be minor.
 	 * </pre>
 	 */
-	public boolean buildIndex() {
+	private boolean buildIndex() {
 		Timer tim = new Timer();
 		tim.start();
 		// builds an index per sequence in the bar file
@@ -677,70 +692,12 @@ public final class Bar extends SymLoader {
 		return new BarSeqHeader(this.seq, total_points, seq_tagvals);
 	}
 
-	private static void writeHeaderInfo(BioSeq seq, DataOutputStream dos) throws IOException {
-		AnnotatedSeqGroup group = seq.getSeqGroup();
-		String groupid = group.getID();
-		String seqid = seq.getID();
-		dos.writeBytes("barr\r\n\032\n"); // char  "barr\r\n\032\n"
-		dos.writeFloat(2.0f); // version of bar format = 2.0
-		dos.writeInt(1); // number of seq data sections in file -- if single graph, then 1
-		dos.writeInt(2); // number of columns (dimensions) per data point
-		dos.writeInt(BYTE4_SIGNED_INT); // int  first column/dimension type ==> 4-byte signed int
-		dos.writeInt(BYTE4_FLOAT); // int  second column/dimension type ==> 4-byte float
-		// should write out all properties from group and/or graphs as tag/vals?  For now just saying no tag/vals
-		dos.writeInt(0);
-		// assuming one graph for now, so only one seq section
-		dos.writeInt(seqid.length());
-		dos.writeBytes(seqid);
-		dos.writeInt(groupid.length());
-		dos.writeBytes(groupid);
-		dos.writeInt(groupid.length());
-		dos.writeBytes(groupid);
-	}
-
-	private static void writeTagValuePairs(DataOutputStream dos, Map<String, Object> tagValuePairs) throws IOException {
-		//any tag value pairs?
-		if (tagValuePairs == null || tagValuePairs.size() == 0) {
-			dos.writeInt(0);
-			return;
-		}
-		//write number of pairs
-		dos.writeInt(tagValuePairs.size());
-		//write tag values preceded by their respective lengths
-		for (Map.Entry<String, Object> entry : tagValuePairs.entrySet()) {
-			String tag = entry.getKey();
-			dos.writeInt(tag.length());
-			dos.writeBytes(tag);
-			String value = entry.getValue().toString();
-			dos.writeInt(value.length());
-			dos.writeBytes(value);
-		}
-	}
-
 	private static void checkSeqLength(BioSeq seq, int[] xcoords) {
 		if (seq != null) {
 			BioSeq aseq = seq;
 			int xcount = xcoords.length;
 			if (xcount > 0 && (xcoords[xcount - 1] > aseq.getLength())) {
 				aseq.setLength(xcoords[xcount - 1]);
-			}
-		}
-	}
-
-	private static void writeGraphPoints(GraphSym graf, DataOutputStream dos) throws IOException {
-		int total_points = graf.getPointCount();
-		dos.writeInt(total_points);
-		for (int i = 0; i < total_points; i++) {
-			int w = graf.getGraphWidthCoord(i);
-			if (w == 0) {
-				dos.writeInt(graf.getGraphXCoord(i));
-				dos.writeFloat(graf.getGraphYCoord(i));
-			} else {
-				// Write a point at each interval location.
-				for (int j = 0; j < w; j++) {
-					dos.writeInt(j + graf.getGraphXCoord(i));
-					dos.writeFloat(graf.getGraphYCoord(i));
-				}
 			}
 		}
 	}

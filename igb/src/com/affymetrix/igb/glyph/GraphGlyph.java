@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -118,11 +117,11 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private int getWCoord(int i) {
-		return ((GraphIntervalSym) graf).getGraphWidthCoord(i);
+		return graf.getGraphWidthCoord(i);
 	}
 
 	public int[] getWCoords() {
-		return ((GraphIntervalSym) graf).getGraphWidthCoords();
+		return graf.getGraphWidthCoords();
 	}
 
 	/**
@@ -867,19 +866,20 @@ public final class GraphGlyph extends Glyph {
 
 
 	private void drawSmart(ViewI view) {
-		// could size cache to just the view's pixelbox, but then may end up creating a
-		//   new int array every time the pixelbox changes (which with view damage or
-		//   scrolling optimizations turned on could be often)
-		int comp_ysize = ((View) view).getComponentSize().width;
-		// could check for exact match with comp_ysize, but allowing larger comp size here
-		//    may be good for multiple maps that share the same scene, so that new int array
-		//    isn't created every time paint switches from mapA to mapB -- the array will
-		//    be reused and be the length of the component with greatest width...
-		if ((pixel_avg_cache == null) || (pixel_avg_cache.length < comp_ysize)) {
-			//      System.out.println("in SmartGraphGlyph, creating new pixel cache");
-			pixel_avg_cache = new int[comp_ysize];
+		if (getGraphStyle() == GraphType.MINMAXAVG) {
+			// could size cache to just the view's pixelbox, but then may end up creating a
+			//   new int array every time the pixelbox changes (which with view damage or
+			//   scrolling optimizations turned on could be often)
+			int comp_ysize = ((View) view).getComponentSize().width;
+			// could check for exact match with comp_ysize, but allowing larger comp size here
+			//    may be good for multiple maps that share the same scene, so that new int array
+			//    isn't created every time paint switches from mapA to mapB -- the array will
+			//    be reused and be the length of the component with greatest width...
+			if ((pixel_avg_cache == null) || (pixel_avg_cache.length < comp_ysize)) {
+				pixel_avg_cache = new int[comp_ysize];
+			}
+			Arrays.fill(pixel_avg_cache, 0, comp_ysize - 1, Integer.MIN_VALUE);
 		}
-		Arrays.fill(pixel_avg_cache, 0, comp_ysize-1, Integer.MIN_VALUE);
 
 		if (TIME_DRAWING) {
 			tim.start();
@@ -987,7 +987,6 @@ public final class GraphGlyph extends Glyph {
 		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			int xtemp = graf.getGraphXCoord(i);
-			
 			float ytemp = graf.getGraphYCoord(i);
 			// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 			ytemp = Math.min(ytemp, getVisibleMaxY());
@@ -1024,22 +1023,7 @@ public final class GraphGlyph extends Glyph {
 			int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, GraphType graph_style, Graphics g, int ysum, int points_in_pixel, int i) {
 		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
-		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
-			int yheight = yend - ystart;
-			// cache for drawing later
-				if (prev_point.x > 0 && prev_point.x < pixel_avg_cache.length) {
-					int yavg_pixel = ysum / points_in_pixel;
-					pixel_avg_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
-				}
-			drawRectOrLine(g, prev_point.x, ystart, 1, yheight);
-			if (graph_style == GraphType.LINE_GRAPH) {
-				if (i > 0) {
-					int y1 = Math.min(Math.max(prev_point.y, plot_top_ypixel), plot_bottom_ypixel);
-					int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
-					g.drawLine(prev_point.x, y1, curr_point.x, y2);
-				}
-			}
-		} else if (graph_style == GraphType.HEAT_MAP) {
+		if (graph_style == GraphType.HEAT_MAP) {
 			double heatmap_scaling = 1;
 			if (state.getHeatMap() != null) {
 				Color[] heatmap_colors = state.getHeatMap().getColors();
@@ -1048,6 +1032,23 @@ public final class GraphGlyph extends Glyph {
 			}
 			g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
 			drawRectOrLine(g, prev_point.x, plot_top_ypixel, 1, plot_bottom_ypixel - plot_top_ypixel);
+			return;
+		}
+
+		if (graph_style == GraphType.MINMAXAVG) {
+			// cache for drawing later
+			if (prev_point.x > 0 && prev_point.x < pixel_avg_cache.length) {
+				int yavg_pixel = ysum / points_in_pixel;
+				pixel_avg_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
+			}
+		}
+
+		drawRectOrLine(g, prev_point.x, ystart, 1, yend - ystart);
+
+		if (graph_style == GraphType.LINE_GRAPH && i > 0) {
+			int y1 = Math.min(Math.max(prev_point.y, plot_top_ypixel), plot_bottom_ypixel);
+			int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
+			g.drawLine(prev_point.x, y1, curr_point.x, y2);
 		}
 	}
 

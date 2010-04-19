@@ -129,6 +129,8 @@ public class GraphSym extends SimpleSymWithProps {
 			xMax += w[pointCount - 1];
 		}
 
+		this.hasWidth = (w != null);
+
 		bufFile = index(this.getGraphName() + this.getGraphSeq().getID(), x,y,w);
 	}
 
@@ -238,6 +240,9 @@ public class GraphSym extends SimpleSymWithProps {
 	 * @return tempCoords
 	 */
 	public final int[] getGraphWidthCoords() {
+		if (!this.hasWidth) {
+			return null;
+		}
 		int[] tempCoords = new int[this.pointCount];
 		for (int i=0;i<this.pointCount;i++) {
 			tempCoords[i] = getGraphWidthCoord(i);

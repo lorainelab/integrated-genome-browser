@@ -12,6 +12,8 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -48,6 +50,8 @@ public abstract class SymLoader {
      * @return List of symmetries in genome
      */
     public List<? extends SeqSymmetry> getGenome() {
+		Logger.getLogger(this.getClass().getName()).log(
+					Level.WARNING, "Retrieving genome is not defined");
         return null;
     }
 

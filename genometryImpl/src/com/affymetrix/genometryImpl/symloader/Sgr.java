@@ -46,7 +46,7 @@ public final class Sgr extends SymLoader {
 		try {
 			fis = new FileInputStream(this.f);
 			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
-			return SgrParser.parse(is, featureName, group, isInitialized, true);
+			return SgrParser.parse(is, featureName, group, false, true);
 		} catch (Exception ex) {
 			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {

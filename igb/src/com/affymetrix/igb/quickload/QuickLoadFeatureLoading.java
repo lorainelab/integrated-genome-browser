@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.Bar;
 import com.affymetrix.genometryImpl.symloader.Sgr;
+import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -121,7 +122,6 @@ public class QuickLoadFeatureLoading extends SymLoader {
 		return "";
 	}
 
-	
 
 	public boolean loadFeatures(final SeqMapView gviewer, final SeqSpan overlapSpan, final LoadStrategy strategy)
 			throws OutOfMemoryError {
@@ -279,9 +279,15 @@ public class QuickLoadFeatureLoading extends SymLoader {
 				return new BAM(this.uri, this.featureName, this.version.group);
 			}
 		}
-		if (this.extension.endsWith("bar")) {
+		/*if (this.extension.endsWith("bar")) {
 			return new Bar(this.uri, this.featureName, this.version.group);
+		}*/
+		if (this.extension.endsWith("sgr")) {
+			return new Sgr(this.uri, this.featureName, this.version.group);
 		}
+		/*if (this.extension.endsWith("wig")) {
+			return new Wiggle(this.uri, this.featureName, this.version.group);
+		}*/
 		return null;
 	}
 
@@ -292,6 +298,9 @@ public class QuickLoadFeatureLoading extends SymLoader {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
+		if (extension.equals("bar")) {
+			return BarParser.parse(bis, gmodel, version.group, featureName, false);
+		}
 		if (extension.equals("bed")) {
 			BedParser parser = new BedParser();
 			return parser.parse(bis, gmodel, version.group, false, featureName, false);

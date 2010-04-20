@@ -120,10 +120,11 @@ public class Wiggle extends SymLoader{
 		int current_step=0;
 		int current_span=0;
 
+		BufferedReader br = null;
 		try {
 			fis = new FileInputStream(this.f);
 			istr = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
-			BufferedReader br = new BufferedReader(new InputStreamReader(istr));
+			br = new BufferedReader(new InputStreamReader(istr));
 
 
 			while ((line = br.readLine()) != null && !Thread.currentThread().isInterrupted()) {
@@ -180,9 +181,10 @@ public class Wiggle extends SymLoader{
 						previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, reqSeq);
 			}
 		} catch (Exception ex) {
-			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
 			GeneralUtils.safeClose(istr);
+			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(fis);
 		}
 

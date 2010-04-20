@@ -56,9 +56,9 @@ public final class BAM extends SymLoader {
 	public List<BioSeq> getChromosomeList() {
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
 		header = reader.getFileHeader();
-		if (header == null || header.getSequenceDictionary() == null) {
+		if (header == null || header.getSequenceDictionary() == null || header.getSequenceDictionary().getSequences() == null) {
 			Logger.getLogger(BAM.class.getName()).log(
-					Level.WARNING, "Couldn't find sequence dictionary -- no sequences loaded from BAM");
+					Level.WARNING, "Couldn't find sequences in file");
 			return seqs;
 		}
 			// add sequences that aren't in the original group.  Especially useful for "unknown groups"

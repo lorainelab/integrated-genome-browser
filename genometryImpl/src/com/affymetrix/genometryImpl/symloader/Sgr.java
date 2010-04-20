@@ -4,8 +4,6 @@ import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -13,7 +11,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
-import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
@@ -23,6 +20,7 @@ public final class Sgr extends SymLoader {
 	private final File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
+	private Map<String,BioSeq> seqID2seqs = new HashMap<String,BioSeq>();
 	
 	public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
@@ -33,27 +31,16 @@ public final class Sgr extends SymLoader {
 
 	@Override
 	public List<BioSeq> getChromosomeList() {
-		List<BioSeq> seqs = new ArrayList<BioSeq>();
-
-		return seqs;
+		if (seqID2seqs.isEmpty()) {
+			parse(null, -1, -1);
+		}
+		return new ArrayList<BioSeq>(seqID2seqs.values());
 	}
 
 
 	@Override
 	public List<GraphSym> getGenome() {
-		FileInputStream fis = null;
-		InputStream is = null;
-		try {
-			fis = new FileInputStream(this.f);
-			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
-			return SgrParser.parse(is, featureName, group, false, true);
-		} catch (Exception ex) {
-			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(is);
-			GeneralUtils.safeClose(fis);
-		}
-		return null;
+		return parse(null, 0, 0);
 	}
 
 	@Override
@@ -106,6 +93,9 @@ public final class Sgr extends SymLoader {
 			throws IOException, NumberFormatException {
 		String line;
 		AnnotatedSeqGroup group = seq.getSeqGroup();
+		int x = 0;
+		float y = 0.0f;
+
 		while ((line = br.readLine()) != null) {
 			if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
 				continue;
@@ -115,24 +105,33 @@ public final class Sgr extends SymLoader {
 				continue;
 			}
 			String seqid = fields[0];
-			// only look at same chromosome
-			if (group == null) {
-				if (!seq.getID().equalsIgnoreCase(seqid)) {
+			
+			if (seq != null) {
+				// getChromosome() or getRegion()
+				if (group == null) {
+					if (!seq.getID().equalsIgnoreCase(seqid)) {
+						continue;
+					}
+				} else {
+					BioSeq synonymSeq = group.getSeq(seqid);
+					if (synonymSeq == null || !synonymSeq.equals(seq)) {
+						continue;
+					}
+				}
+				x = Integer.parseInt(fields[1]);
+				if (x < min || x > max) {
+					// only look in range
 					continue;
 				}
 			} else {
-				BioSeq synonymSeq = group.getSeq(seqid);
-				if (synonymSeq == null || !synonymSeq.equals(seq)) {
-					continue;
+				// getGenome() or getChromosomeList()
+				x = Integer.parseInt(fields[1]);
+				if (min == -1 && max == -1) {
+					// getChromosomeList()
 				}
 			}
-
-			int x = Integer.parseInt(fields[1]);
-			if (x < min || x > max) {
-				// only look in range
-				continue;
-			}
-			float y = Float.parseFloat(fields[2]);
+			
+			y = Float.parseFloat(fields[2]);
 			xlist.add(x);
 			ylist.add(y);
 		}

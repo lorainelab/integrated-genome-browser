@@ -18,7 +18,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * Model for table of features.
  */
-final class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
+public final class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
 	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
 	//Turn off "Load Status" for now.
 	private static final String[] columnNames = { "Choose Load Mode", "Data Set","Data Source"};

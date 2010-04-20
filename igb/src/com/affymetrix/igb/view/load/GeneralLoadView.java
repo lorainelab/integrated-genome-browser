@@ -78,8 +78,8 @@ public final class GeneralLoadView extends JComponent
 	private final JButton partial_residuesB;
 	private final RefreshDataAction refreshDataAction;
 	private static final SeqMapView gviewer = Application.getSingleton().getMapView();
-	private JTableX feature_table;
-	private FeaturesTableModel feature_model;
+	private static JTableX feature_table;
+	public static FeaturesTableModel feature_model;
 	JScrollPane featuresTableScrollPane;
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
@@ -138,11 +138,11 @@ public final class GeneralLoadView extends JComponent
 		buttonPanel.add(refresh_dataB);
 		this.add("South", buttonPanel);
 
-		this.feature_model = new FeaturesTableModel(this, null);
-		this.feature_table = new JTableX(this.feature_model);
-		this.feature_table.setModel(this.feature_model);
+		feature_model = new FeaturesTableModel(this, null);
+		feature_table = new JTableX(feature_model);
+		feature_table.setModel(feature_model);
 
-		featuresTableScrollPane = new JScrollPane(this.feature_table);
+		featuresTableScrollPane = new JScrollPane(GeneralLoadView.feature_table);
 
 		JPanel featuresPanel = new JPanel();
 		featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
@@ -784,9 +784,9 @@ public final class GeneralLoadView extends JComponent
 				String versionName = (String) versionCB.getSelectedItem();
 				final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 				if (features == null || features.isEmpty()) {
-					GeneralLoadView.this.feature_model = new FeaturesTableModel(GeneralLoadView.this, null);
-					GeneralLoadView.this.feature_table.setModel(GeneralLoadView.this.feature_model);
-					featuresTableScrollPane.setViewportView(GeneralLoadView.this.feature_table);
+					feature_model = new FeaturesTableModel(GeneralLoadView.this, null);
+					feature_table.setModel(feature_model);
+					featuresTableScrollPane.setViewportView(feature_table);
 				}
 				feature_tree_view.initOrRefreshTree(features);
 			}
@@ -815,24 +815,24 @@ public final class GeneralLoadView extends JComponent
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				GeneralLoadView.this.feature_model = ftm;
-				GeneralLoadView.this.feature_table = new JTableX(GeneralLoadView.this.feature_model);
-				GeneralLoadView.this.feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
+				feature_model = ftm;
+				feature_table = new JTableX(feature_model);
+				feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 
 				// Handle sizing of the columns
-				GeneralLoadView.this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
+				feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
 
 				// the second column contains the feature names.  Resize it so that feature names are fully displayed.
-				TableColumn col = GeneralLoadView.this.feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
+				TableColumn col = feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
 				col.setPreferredWidth(finalMaxFeatureNameLength);
 
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
 				TableWithVisibleComboBox.setComboBoxEditors(
-						GeneralLoadView.this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN,
+						feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN,
 						!GeneralLoadView.IsGenomeSequence());
-				GeneralLoadView.this.feature_model.fireTableDataChanged();
-				featuresTableScrollPane.setViewportView(GeneralLoadView.this.feature_table);
+				feature_model.fireTableDataChanged();
+				featuresTableScrollPane.setViewportView(feature_table);
 			}
 		});
 
@@ -845,7 +845,6 @@ public final class GeneralLoadView extends JComponent
 	 * @param versionName
 	 */
 	private void loadWholeRangeFeatures(String versionName) {
-		BioSeq curSeq = gmodel.getSelectedSeq();
 		for (GenericFeature gFeature : GeneralLoadUtils.getFeatures(versionName)) {
 			if (gFeature.loadStrategy != LoadStrategy.GENOME) {
 				continue;

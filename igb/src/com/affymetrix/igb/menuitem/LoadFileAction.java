@@ -62,9 +62,13 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genoviz.swing.threads.InvokeUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
+import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import org.xml.sax.SAXException;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -204,8 +208,12 @@ public final class LoadFileAction {
 		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
-		version.addFeature(new GenericFeature(
-				fils[0].getName(), null, version, new QuickLoadFeatureLoading(version, fils[0].getAbsolutePath()), fils));
+		GenericFeature gFeature = new GenericFeature(
+				fils[0].getName(), null, version, new QuickLoadFeatureLoading(version, fils[0].getAbsolutePath()), fils);
+		version.addFeature(gFeature);
+		gFeature.setVisible();	// this should be automatically checked in the feature tree
+		DataLoadView view = ((IGB)Application.getSingleton()).data_load_view;
+		view.tableChanged();
 
 		// force a refresh of this server
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true);

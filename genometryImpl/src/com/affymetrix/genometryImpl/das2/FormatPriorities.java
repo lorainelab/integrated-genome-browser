@@ -29,11 +29,11 @@ final class FormatPriorities {
 		"bgn",
 		"bps",
 		"cyt",
+		"useq",
 		"bed",
 		"psl",
 		"gff",
-		"bar",
-		"useq"};
+		"bar"};
 
 	static String getFormat(Das2Type type) {
 		if (type.getID().endsWith(".bar")) {  // temporary way to recognize graph "types"...

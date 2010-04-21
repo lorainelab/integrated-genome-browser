@@ -487,7 +487,7 @@ public final class GraphSymUtils {
 		GraphSym pgraf = getParentGraph(id, name, aseq, cgraf);
 
 		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
-		//    remove that span, then add overlap span from Das2FeatureRequestSym
+		//    remove that span, then add overlap span from FeatureRequestSym
 		//    could instead create new span based on start and end xcoord, but for better integration with
 		//    rest of Das2ClientOptimizer span of request is preferred
 		cgraf.removeSpan(cgraf.getSpan(aseq));

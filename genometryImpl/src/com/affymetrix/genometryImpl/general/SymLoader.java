@@ -51,7 +51,7 @@ public abstract class SymLoader {
      */
     public List<? extends SeqSymmetry> getGenome() {
 		Logger.getLogger(this.getClass().getName()).log(
-					Level.WARNING, "Retrieving genome is not defined");
+					Level.SEVERE, "Retrieving genome is not defined");
         return null;
     }
 
@@ -68,6 +68,8 @@ public abstract class SymLoader {
      * @return List of symmetries in chromosome
      */
     public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
+		Logger.getLogger(this.getClass().getName()).log(
+					Level.FINE, "Retrieving chromosome is not optimized");
 		List<? extends SeqSymmetry> genomeResults = this.getGenome();
 		if (seq == null || genomeResults == null) {
 			return genomeResults;
@@ -97,8 +99,15 @@ public abstract class SymLoader {
      * @return List of symmetries satisfying requirements
      */
     public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) {
+		Logger.getLogger(this.getClass().getName()).log(
+					Level.FINE, "Retrieving region is not optimized");
 		List<? extends SeqSymmetry> chrResults = this.getChromosome(overlapSpan.getBioSeq());
 		if (chrResults == null || this.extension == null) {
+			return chrResults;
+		}
+		if (chrResults.size() == 1 && chrResults.get(0) instanceof GraphSym) {
+			Logger.getLogger(this.getClass().getName()).log(
+					Level.WARNING, "Can't do unoptimized region for Graph.  Returning entire chromosome.");
 			return chrResults;
 		}
 		return ServerUtils.getIntersectedSymmetries(overlapSpan, this.extension, null);
@@ -151,7 +160,4 @@ public abstract class SymLoader {
 			aseq.addAnnotation(request_sym);
 		}
 	}
-
-
-
 }

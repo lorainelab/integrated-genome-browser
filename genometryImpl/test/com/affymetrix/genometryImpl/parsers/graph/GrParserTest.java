@@ -6,7 +6,9 @@ import static org.junit.Assert.*;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.symloader.Gr;
 import java.io.*;
+import java.util.List;
 
 public class GrParserTest {
 
@@ -60,6 +62,30 @@ public class GrParserTest {
 		GrParser.writeGrFormat(gr0, outstream);
 
 		assertEquals(string, outstream.toString());
+	}
+
+	@Test
+	public void testGr() throws IOException {
+		String filename = "test/data/gr/test1.gr";
+		assertTrue(new File(filename).exists());
+
+		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+
+		Gr gr = new Gr(new File(filename).toURI(), filename, seq_group);
+		
+		String stream_name = "test_file";
+		BioSeq aseq = seq_group.addSeq(stream_name, 948034);
+
+		List<GraphSym> results = gr.getChromosome(aseq);
+
+		GraphSym gr0 = results.get(0);
+
+		assertEquals(stream_name, gr0.getGraphSeq().getID());
+		assertEquals(10, gr0.getPointCount());
+		assertEquals(-0.0447924, gr0.getGraphYCoord(2), 0.01);
+		assertEquals(0.275948, gr0.getGraphYCoord(3), 0.01);
+		assertEquals(948028, gr0.getGraphXCoord(3));
+
 	}
 }
 

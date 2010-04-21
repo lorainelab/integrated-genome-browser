@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
@@ -23,6 +24,7 @@ public final class Sgr extends SymLoader {
 	private final File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
+	protected final Map<String,File> chrList = new HashMap<String,File>();
 	
 	public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
@@ -73,8 +75,16 @@ public final class Sgr extends SymLoader {
 		FileInputStream fis = null;
 		InputStream is = null;
 		BufferedReader br = null;
+
+		if(!this.isInitialized)
+			buildIndex();
+		
 		try {
-			fis = new FileInputStream(this.f);
+			if(this.isInitialized)
+				fis = new FileInputStream(chrList.get(seq.getID()));
+			else
+				fis = new FileInputStream(f);
+			
 			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			
@@ -194,6 +204,53 @@ public final class Sgr extends SymLoader {
 			}
 
 			return new GraphSym(xcoords, ycoords, gid, aseq);
+	}
+
+	protected boolean buildIndex(){
+		FileInputStream fis = null;
+		InputStream is = null;
+		BufferedReader br = null;
+		Map<String, DataOutputStream> chrs = new HashMap<String, DataOutputStream>();
+		BufferedWriter bw = null;
+		try {
+			fis = new FileInputStream(this.f);
+			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
+			br = new BufferedReader(new InputStreamReader(is));
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
+					continue;
+				}
+				String[] fields = line_regex.split(line);
+				String seqid = fields[0];
+				int x = Integer.parseInt(fields[1]);
+
+				File tempFile = chrList.get(seqid);
+				String fileName = seqid;
+				if (fileName.length() < 3) {
+					fileName += "___";
+
+				}
+				if (tempFile == null) {
+					tempFile = File.createTempFile(fileName, "sgr");
+					tempFile.deleteOnExit();
+					bw = new BufferedWriter(new FileWriter(tempFile.getName(), true));
+					chrList.put(seqid, tempFile);
+				}
+				bw.write(line);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		} finally {
+			try {
+				bw.close();
+			} catch (IOException ex) {
+				Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		init();
+		return true;
 	}
 
 }

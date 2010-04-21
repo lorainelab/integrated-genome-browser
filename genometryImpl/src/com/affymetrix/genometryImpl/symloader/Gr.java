@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -48,14 +49,9 @@ public final class Gr extends SymLoader {
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList() {
-		return null;
-	}
-
-
-	@Override
-	public List<GraphSym> getGenome() {
-		return null;
+	public String[] getLoadChoices() {
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
+		return choices;
 	}
 
 	@Override

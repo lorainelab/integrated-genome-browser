@@ -240,10 +240,7 @@ public final class Das2ClientOptimizer {
         }
     }
 
-    private static Das2RequestLog loadRequestSym(Das2FeatureRequestSym request_sym) {
-        Das2RequestLog request_log = request_sym.getLog();
-        request_log.setSuccess(true);
-
+    private static void loadRequestSym(Das2FeatureRequestSym request_sym) {
         Das2Region region = request_sym.getRegion();
         SeqSpan overlap_span = request_sym.getOverlapSpan();
         SeqSpan inside_span = request_sym.getInsideSpan();
@@ -287,15 +284,11 @@ public final class Das2ClientOptimizer {
                 System.out.println("url-encoded query URL:  " + URLEncoder.encode(feature_query, Constants.UTF8));
                 System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, Constants.UTF8));
             }
-			boolean success = LoadFeaturesFromQuery(
-					overlap_span, aseq, feature_query, format, request_log, seq_group, type, request_sym);
-			request_log.setSuccess(success);
+			LoadFeaturesFromQuery(
+					overlap_span, aseq, feature_query, format, seq_group, type, request_sym);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			request_log.setSuccess(false);
-			//request_log.setException(ex);
 		}
-		return request_log;
     }
 
     private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
@@ -324,7 +317,7 @@ public final class Das2ClientOptimizer {
     }
 
     private static boolean LoadFeaturesFromQuery(
-            SeqSpan overlap_span, BioSeq aseq, String feature_query, String format, Das2RequestLog request_log,
+            SeqSpan overlap_span, BioSeq aseq, String feature_query, String format, 
             AnnotatedSeqGroup seq_group, Das2Type type, Das2FeatureRequestSym request_sym)
             throws SAXException, IOException, IOException {
 
@@ -341,7 +334,6 @@ public final class Das2ClientOptimizer {
                 istr = LocalUrlCacher.getInputStream(feature_query);
                 if (istr == null) {
                     System.out.println("Server couldn't be accessed with query " + feature_query);
-                    request_log.setSuccess(false);
                     return false;
                 }
                 // for now, assume that when caching, content type returned is same as content type requested
@@ -355,8 +347,6 @@ public final class Das2ClientOptimizer {
                 HttpURLConnection query_con = (HttpURLConnection) query_url.openConnection();
                 int response_code = query_con.getResponseCode();
                 String response_message = query_con.getResponseMessage();
-
-                //request_log.setHttpResponse(response_code, response_message);
 
                 if (DEBUG) {
                     System.out.println("http response code: " + response_code + ", " + response_message);
@@ -381,7 +371,6 @@ public final class Das2ClientOptimizer {
 
                 if (response_code >= 400 && response_code < 600) {
                     System.out.println("Server returned error code, aborting response parsing!");
-                    request_log.setSuccess(false);
                     return false;
                 }
                 String content_type = query_con.getContentType();
@@ -403,15 +392,14 @@ public final class Das2ClientOptimizer {
 				}
             }
 
-            if (request_log.getSuccess()) {
-				AddParsingLogMessage(content_subtype);
-                List<? extends SeqSymmetry> feats =
-						DetermineFormatAndParse(content_subtype, request_log, istr, feature_query, seq_group, type);
-                SymLoader.addToRequestSym(
-						feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
-				SymLoader.addAnnotations(feats, request_sym, aseq);
-            }
-            return request_log.getSuccess();
+            AddParsingLogMessage(content_subtype);
+			List<? extends SeqSymmetry> feats =
+					DetermineFormatAndParse(content_subtype, istr, feature_query, seq_group, type);
+			SymLoader.addToRequestSym(
+					feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
+			SymLoader.addAnnotations(feats, request_sym, aseq);
+            
+            return (feats != null);
         } finally {
             GeneralUtils.safeClose(bis);
             GeneralUtils.safeClose(istr);
@@ -419,7 +407,7 @@ public final class Das2ClientOptimizer {
     }
 
     private static List<? extends SeqSymmetry> DetermineFormatAndParse(
-            String extension, Das2RequestLog request_log, InputStream istr, String feature_query, AnnotatedSeqGroup seq_group,
+            String extension, InputStream istr, String feature_query, AnnotatedSeqGroup seq_group,
             Das2Type type)
             throws IOException, SAXException {
 		BufferedInputStream bis = new BufferedInputStream(istr);
@@ -497,7 +485,6 @@ public final class Das2ClientOptimizer {
 			return rp.parse(zis, seq_group, type.getName(), false, archiveInfo);
 		}
 		System.out.println("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
-		request_log.setSuccess(false);
 		return null;
     }
 

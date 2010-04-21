@@ -19,8 +19,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.TypedSym;
+import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 
 /**
  *  Encapsulates a <b>constrained</b> DAS2 feature query and the features returned from the query.
@@ -40,10 +40,7 @@ import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
  *       (bounds of all returned spans [or union of overlap_span and bounds of all returned spans?]
  *
  */
-public final class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSym  {  // or should extend TypeContainerAnnot?
-
-  private final LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
-  private final SeqSpan inside_span;
+public final class Das2FeatureRequestSym extends FeatureRequestSym implements TypedSym  {  // or should extend TypeContainerAnnot?s
 
   private final Das2Region das2_region;
   private final Das2Type das2_type;
@@ -56,35 +53,15 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
 
   //  for now trying to do without container info in constructor
   public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap, SeqSpan inside) {
+	super(overlap, inside);
     das2_type = type;
     das2_region = region;
-    overlap_span = new LeafSingletonSymmetry(overlap);
-    inside_span = inside;
-    aseq = overlap_span.getBioSeq();
+    aseq = overlap.getBioSeq();
 
     this.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
   }
 
   public String getType() { return das2_type.getID(); }
-
-  /**
-   *  Returns the overlap span, the span specified in the original DAS query
-   *    that returned annotation must overlap with.
-   */
-  // May need to returns a sym instead of span to better match up with SeqSymmetrySummarizer methods??
-  public SeqSpan getOverlapSpan() { return overlap_span; }
-
-  /**
-   *  Convenience method for returning overlap span as a SeqSymmetry with 1 span and 0 children.
-   */
-  SeqSymmetry getOverlapSym() { return overlap_span; }
-
-  /**
-   *  Returns the inside span, the span specified in the original DAS query
-   *    that returned annotation must be contained within.
-   */
-  //  May need to returns a sym instead of span to better match up with SeqSymmetrySummarizer methods??
-  SeqSpan getInsideSpan() { return inside_span; }
 
   public Das2Region getRegion() { return das2_region; }
   public Das2Type getDas2Type() { return das2_type; }

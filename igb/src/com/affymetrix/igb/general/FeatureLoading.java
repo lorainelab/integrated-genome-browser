@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.das2.Das2ClientOptimizer;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
@@ -142,7 +143,7 @@ public final class FeatureLoading {
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
 			return;
 		}
-		final List<Das2FeatureRequestSym> result_syms = new ArrayList<Das2FeatureRequestSym>();
+		final List<FeatureRequestSym> result_syms = new ArrayList<FeatureRequestSym>();
 
 		Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version = splitDAS2RequestsByVersion(requests);
 
@@ -199,7 +200,7 @@ public final class FeatureLoading {
 		return requests_by_version;
 	}
 
-	private static final void createDAS2ResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<Das2FeatureRequestSym> result_syms) {
+	private static final void createDAS2ResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<FeatureRequestSym> result_syms) {
 		for (Das2FeatureRequestSym request_sym : request_set) {
 			// Create an AnnotStyle so that we can automatically set the
 			// human-readable name to the DAS2 name, rather than the ID, which is a URI
@@ -210,7 +211,7 @@ public final class FeatureLoading {
 			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
 			style.setHumanName(type.getName());
 			Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());
-			List<Das2FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
+			List<? extends FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
 			result_syms.addAll(feature_list);
 			Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getShortName());
 		}

@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
@@ -83,8 +84,8 @@ public final class Das2ClientOptimizer {
     //
     // also attaches
     // assume for now one type, one overlap span
-    public static List<Das2FeatureRequestSym> loadFeatures(Das2FeatureRequestSym request_sym) {
-        List<Das2FeatureRequestSym> output_requests = new ArrayList<Das2FeatureRequestSym>();
+    public static List<? extends FeatureRequestSym> loadFeatures(Das2FeatureRequestSym request_sym) {
+        List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
        
         SeqSpan overlap_span = request_sym.getOverlapSpan();
         BioSeq seq = overlap_span.getBioSeq();
@@ -93,31 +94,33 @@ public final class Das2ClientOptimizer {
         String typeid = type.getID();
 
         if (seq == null) {
-            System.out.println("Can't optimize DAS/2 query for type: " + typeid + ", seq is null!");
+            System.out.println("Can't optimize query: " + typeid + ", seq is null!");
             output_requests.add(request_sym);
         } else {
-			OptimizeDas2Query(seq, typeid, type, output_requests, request_sym);
+			OptimizeQuery(seq, typeid, type, output_requests, request_sym);
         }
 
-        for (Das2FeatureRequestSym request : output_requests) {
-            loadRequestSym(request);
+        for (FeatureRequestSym request : output_requests) {
+            loadRequestSym((Das2FeatureRequestSym)request);
         }
 
         return output_requests;
     }
 
 
-    private static void OptimizeDas2Query(
+    private static void OptimizeQuery(
 			BioSeq aseq, String typeid,
-			Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym) {
+			Das2Type type, List<FeatureRequestSym> output_requests, FeatureRequestSym request_sym) {
 		// overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
 		SeqSymmetry overlap_sym = request_sym.getOverlapSym();
-		Das2Region region = request_sym.getRegion();
-        MutableSeqSymmetry cont_sym;
+		Das2Region region = null;
+		if (request_sym instanceof Das2FeatureRequestSym) {
+			region = ((Das2FeatureRequestSym)request_sym).getRegion();
+		}
+        MutableSeqSymmetry cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid);
         // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
-        cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid);
-        // little hack for GraphSyms, need to resolve when to use id vs. name vs. type
 
+		// little hack for GraphSyms, need to resolve when to use id vs. name vs. type
 		if (cont_sym == null && typeid.endsWith(".bar")) {
 			cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(type.getName());
             if (DEBUG) {
@@ -125,7 +128,7 @@ public final class Das2ClientOptimizer {
 				System.out.println("cont_sym: " + cont_sym);
 			}
         }
-        if ((cont_sym == null) || (cont_sym.getChildCount() == 0)) {
+        if (cont_sym == null || cont_sym.getChildCount() == 0) {
             if (DEBUG) {
                 System.out.println("Can't optimize DAS/2 query, no previous annotations of type: " + typeid);
             }
@@ -139,8 +142,8 @@ public final class Das2ClientOptimizer {
             List<SeqSymmetry> prev_overlaps = new ArrayList<SeqSymmetry>(prevcount);
             for (int i = 0; i < prevcount; i++) {
                 SeqSymmetry prev_request = cont_sym.getChild(i);
-                if (prev_request instanceof Das2FeatureRequestSym) {
-                    prev_overlaps.add(((Das2FeatureRequestSym) prev_request).getOverlapSym());
+                if (prev_request instanceof FeatureRequestSym) {
+                    prev_overlaps.add(((FeatureRequestSym) prev_request).getOverlapSym());
                 } else if (prev_request instanceof GraphSym) {
                     prev_overlaps.add(prev_request);
                 }
@@ -150,15 +153,16 @@ public final class Das2ClientOptimizer {
             qnewlist.add(overlap_sym);
             List<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
             qoldlist.add(prev_union);
-            SplitQuery(qnewlist, qoldlist, aseq, typeid, prev_union, type, region, output_requests);
+			SeqSymmetry split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
+            SplitQuery(split_query, aseq, typeid, prev_union, type, region, output_requests);
         }
     }
 
 
     private static void SplitQuery(
-			List<SeqSymmetry> qnewlist, List<SeqSymmetry> qoldlist, BioSeq aseq, 
-			String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
-        SeqSymmetry split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
+			SeqSymmetry split_query, BioSeq aseq,
+			String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<FeatureRequestSym> output_requests) {
+        
         if (split_query == null || split_query.getChildCount() == 0) {
             // all of current query overlap range covered by previous queries, so return empty list
             if (DEBUG) {
@@ -205,7 +209,7 @@ public final class Das2ClientOptimizer {
 
     private static void splitIntoSubSpans(
             SeqSymmetry split_query, BioSeq aseq, int first_within_min, int last_within_max, Das2Type type,
-			Das2Region region, List<Das2FeatureRequestSym> output_requests) {
+			Das2Region region, List<FeatureRequestSym> output_requests) {
         int split_count = split_query.getChildCount();
         int cur_within_min;
         int cur_within_max;
@@ -226,7 +230,12 @@ public final class Das2ClientOptimizer {
             if (DEBUG) {
                 System.out.println("   new request: " + SeqUtils.spanToString(ispan));
             }
-            Das2FeatureRequestSym new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
+			FeatureRequestSym new_request = null;
+			if (region == null) {
+				new_request = new FeatureRequestSym(ospan, ispan);
+			} else {
+				new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
+			}
             output_requests.add(new_request);
         }
     }

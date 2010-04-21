@@ -141,12 +141,12 @@ public abstract class SymLoader {
 		if (feats != null && !feats.isEmpty()) {
 			for (SeqSymmetry feat : feats) {
 				if (feat instanceof GraphSym) {
+					// if graphs, then adding to annotation BioSeq is handled by addChildGraph() method
 					return;
 				}
 			}
 		}
 
-		// if graphs, then adding to annotation BioSeq is already handled by addChildGraph() method
 		synchronized (aseq) {
 			aseq.addAnnotation(request_sym);
 		}

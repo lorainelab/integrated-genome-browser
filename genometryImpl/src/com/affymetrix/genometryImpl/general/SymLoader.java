@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -79,7 +80,13 @@ public abstract class SymLoader {
 
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		for (SeqSymmetry sym : genomeResults) {
-			if (seq.equals(sym.getSpanSeq(0))) {
+			BioSeq seq2 = null;
+			if (sym instanceof UcscPslSym) {
+				seq2 = ((UcscPslSym)sym).getTargetSeq();
+			} else {
+				seq2 = sym.getSpanSeq(0);
+			}
+			if (seq.equals(seq2)) {
 				results.add(sym);
 			}
 		}

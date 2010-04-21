@@ -14,7 +14,9 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.symloader.Wiggle;
 import java.io.*;
 import java.util.*;
 
@@ -82,6 +84,33 @@ public class WiggleParserTest {
 
 	}
 
+	@Test
+	public void testWriteBarFormat() throws IOException {
+		String filename = "test/data/wiggle/wiggleExample.wig";
+		assertTrue(new File(filename).exists());
+
+		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
+
+		List<GraphSym> results = wiggle.getGenome();
+
+		GraphSym gr0 = results.get(0);
+
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+
+		boolean written = Wiggle.writeBarFormat(results, seq_group.getID(), outstream);
+		assertTrue(written);
+
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+
+		InputStream istr = new ByteArrayInputStream(outstream.toByteArray());
+		results = BarParser.parse(istr,gmodel,seq_group,"chr19",true);
+
+		GraphSym gr1 = results.get(0);
+		assertEquals(gr0.getGraphSeq().getID(),gr1.getGraphSeq().getID());
+		assertEquals(gr0.getGraphSeq().getMin(),gr1.getGraphSeq().getMin());
+		assertEquals(gr0.getGraphSeq().getMax(),gr1.getGraphSeq().getMax());
+	}
 	/*
 	@Test
 	public void testWriteGraphs() {

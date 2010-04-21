@@ -60,23 +60,36 @@ import javax.swing.SwingWorker;
  *
  * @author jnicol
  */
-public class QuickLoadFeatureLoading extends SymLoader {
+public final class QuickLoadFeatureLoading extends SymLoader {
 	private File f;
 	private final GenericVersion version;
 	public final String featureName;
-	private SymLoader gsr;	// parser factory
+	private SymLoader symL;	// parser factory
 
 	public QuickLoadFeatureLoading(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
-		this.gsr = determineLoader();
+		this.symL = determineLoader();
 	}
 
 	@Override
 	protected void init() {
 		this.f = LocalUrlCacher.convertURIToFile(this.uri);
 		this.isInitialized = true;
+	}
+
+	/**
+	 * Return possible strategies to load this URI.
+	 * @return
+	 */
+	@Override
+	public String[] getLoadChoices() {
+		// If we're using a symloader, return its load choices.
+		if (this.symL != null) {
+			return this.symL.getLoadChoices();
+		}
+		return super.getLoadChoices();
 	}
 
 	private static URI determineURI(GenericVersion version, String featureName) {
@@ -207,8 +220,8 @@ public class QuickLoadFeatureLoading extends SymLoader {
 
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
-		if (this.gsr != null) {
-			return this.gsr.getGenome();
+		if (this.symL != null) {
+			return this.symL.getGenome();
 		}
 		if (GraphSymUtils.isAGraphFilename(this.f.getName())) {
 			FileInputStream fis = null;
@@ -253,16 +266,16 @@ public class QuickLoadFeatureLoading extends SymLoader {
 
 	@Override
 	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
-		if (this.gsr != null) {
-			return this.gsr.getChromosome(seq);
+		if (this.symL != null) {
+			return this.symL.getChromosome(seq);
 		}
 		return super.getChromosome(seq);
 	}
 
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
-		if (this.gsr != null) {
-			return this.gsr.getRegion(span);
+		if (this.symL != null) {
+			return this.symL.getRegion(span);
 		}
 		return super.getRegion(span);
 	}

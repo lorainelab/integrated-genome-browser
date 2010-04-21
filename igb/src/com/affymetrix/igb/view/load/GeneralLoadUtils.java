@@ -593,12 +593,12 @@ public final class GeneralLoadUtils {
 			return DasFeatureLoader.loadFeatures(gFeature, overlap);
 		}
 		if (serverType == ServerType.QuickLoad) {
-			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading) gFeature.gsr;
+			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading) gFeature.symL;
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
 			return gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
 		}
 		if (serverType == ServerType.LocalFiles) {
-			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading) gFeature.gsr;
+			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading) gFeature.symL;
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
 			return gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
 		}

@@ -3,8 +3,10 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.SymLoader;
 import java.awt.Component;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -31,7 +33,7 @@ public final class TableWithVisibleComboBox {
 	 * @param column
 	 * @param enabled
 	 */
-  public static void setComboBoxEditors(JTableX table, int column, boolean enabled) {
+	static void setComboBoxEditors(JTableX table, int column, boolean enabled) {
    
     FeaturesTableModel ftm = (FeaturesTableModel) table.getModel();
 	sorter = new TableRowSorter<FeaturesTableModel>(ftm);
@@ -46,22 +48,24 @@ public final class TableWithVisibleComboBox {
     DAScb.setEnabled(enabled);
     DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
 
-    JComboBox QuickLoadcb = new JComboBox(FeaturesTableModel.newQuickloadLoadChoices);
-    QuickLoadcb.setEnabled(enabled);
-    DefaultCellEditor QuickLoadeditor = new DefaultCellEditor(QuickLoadcb);
-
 	JComboBox LocalFilecb = new JComboBox(FeaturesTableModel.newFileLoadChoices);
     LocalFilecb.setEnabled(true);
     DefaultCellEditor LocalFileeditor = new DefaultCellEditor(LocalFilecb);
 
     for (int row = 0; row < featureSize; row++) {
       GenericFeature gFeature = ftm.features.get(row);
-      ServerType serverType = gFeature.gVersion.gServer.serverType;
+	  SymLoader symL = gFeature.symL;
+	  if (symL != null) {
+		  JComboBox featureCB = new JComboBox(symL.getLoadChoices());
+		  featureCB.setEnabled(true);
+		  DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
+		  rm.addEditorForRow(row, featureEditor);
+		  continue;
+	  }
 
+      ServerType serverType = gFeature.gVersion.gServer.serverType;
       if (serverType == ServerType.DAS || serverType == ServerType.DAS2) {
         rm.addEditorForRow(row, DASeditor);
-      } else if (serverType == ServerType.QuickLoad) {
-        rm.addEditorForRow(row, QuickLoadeditor);
       } else if (serverType == ServerType.LocalFiles) {
 		rm.addEditorForRow(row, LocalFileeditor);
 	  } else {
@@ -106,21 +110,17 @@ public final class TableWithVisibleComboBox {
  */
 class RowEditorModel {
 
-  private final Hashtable<Integer, TableCellEditor> row2Editor;
+  private final Map<Integer, TableCellEditor> row2Editor;
 
-  public RowEditorModel(int size) {
-    row2Editor = new Hashtable<Integer, TableCellEditor>(size);
+  RowEditorModel(int size) {
+    row2Editor = new HashMap<Integer, TableCellEditor>(size);
   }
 
-  public void addEditorForRow(int row, TableCellEditor e) {
+  void addEditorForRow(int row, TableCellEditor e) {
     row2Editor.put(Integer.valueOf(row), e);
   }
 
-  public void removeEditorForRow(int row) {
-    row2Editor.remove(Integer.valueOf(row));
-  }
-
-  public TableCellEditor getEditor(int row) {
+  TableCellEditor getEditor(int row) {
     return row2Editor.get(Integer.valueOf(row));
   }
 }

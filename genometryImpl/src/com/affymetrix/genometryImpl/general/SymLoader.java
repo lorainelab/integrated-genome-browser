@@ -7,10 +7,12 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,12 +40,20 @@ public abstract class SymLoader {
 	}
 
 	/**
+	 * Return possible strategies to load this URI.
+	 * @return
+	 */
+	public String[] getLoadChoices() {
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
+		return choices;
+	}
+	/**
 	 * Get list of chromosomes used in the file/uri.
 	 * Especially useful when loading a file into an "unknown" genome
 	 * @return List of chromosomes
 	 */
 	public List<BioSeq> getChromosomeList() {
-		return null;
+		return Collections.<BioSeq>emptyList();
 	}
 	
     /**
@@ -54,14 +64,6 @@ public abstract class SymLoader {
 					Level.SEVERE, "Retrieving genome is not defined");
         return null;
     }
-
-	/**
-	 * Does this support genome requests?
-	 * @return
-	 */
-	public boolean supportsGenome() {
-		return true;
-	}
 
     /**
      * @param seq - chromosome
@@ -84,14 +86,6 @@ public abstract class SymLoader {
 		return results;
     }
 
-	/**
-	 * Does this support chromosome requests?
-	 * @return
-	 */
-	public boolean supportsChromosome() {
-		return true;
-	}
-
     /**
      * Get a region of the chromosome.
      * @param seq - chromosome
@@ -113,16 +107,7 @@ public abstract class SymLoader {
 		return ServerUtils.getIntersectedSymmetries(overlapSpan, this.extension, null);
     }
 
-	/**
-	 * Does this support region requests?
-	 * @return
-	 */
-	public boolean supportsRegion() {
-		return true;
-	}
-
-
-     public static void addToRequestSym(
+	public static void addToRequestSym(
 			 List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan) {
         if (feats == null || feats.isEmpty()) {
             // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to

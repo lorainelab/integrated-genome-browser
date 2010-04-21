@@ -7,7 +7,6 @@ package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -22,11 +21,8 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,7 +44,7 @@ import java.util.regex.Pattern;
  *
  * @author hiralv
  */
-public class Wiggle extends SymLoader{
+public final class Wiggle extends SymLoader{
 	
 	private static enum WigFormat {
 
@@ -85,18 +81,18 @@ public class Wiggle extends SymLoader{
 
 	@Override
 	public List<GraphSym> getGenome() {
-		return parse(null);
+		return parse(null,-1,-1);
 	}
 
 	@Override
 	public List<GraphSym> getChromosome(BioSeq seq) {
-		return parse(seq);
+		return parse(seq,seq.getMin(),seq.getMax());
 	}
 
 
 	@Override
 	public List<GraphSym> getRegion(SeqSpan span) {
-		return parse(span.getBioSeq());
+		return parse(span.getBioSeq(),span.getMin(),span.getMax());
 	}
 
 		
@@ -106,7 +102,7 @@ public class Wiggle extends SymLoader{
 	 *  The format must be specified on the first line following a track line,
 	 *  otherwise BED4 is assumed.
 	 */
-	private List<GraphSym> parse(BioSeq reqSeq){
+	public List<GraphSym> parse(BioSeq reqSeq, int min, int max){
 		FileInputStream fis = null;
 		InputStream istr = null;
 		
@@ -183,7 +179,7 @@ public class Wiggle extends SymLoader{
 				}
 
 				current_start = parseData(
-						previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, reqSeq);
+						previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, reqSeq, min, max);
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
@@ -201,7 +197,7 @@ public class Wiggle extends SymLoader{
 
 	private static int parseData(boolean previous_track_line, String line, WigFormat current_format,
 			WiggleData current_data, Map<String, WiggleData> current_datamap, String current_seq_id,
-			int current_span, int current_start, int current_step, BioSeq reqSeq)
+			int current_span, int current_start, int current_step, BioSeq reqSeq, int min, int max)
 			throws IllegalArgumentException {
 		// There should have been one track line at least...
 		if (!previous_track_line) {
@@ -227,19 +223,19 @@ public class Wiggle extends SymLoader{
 				if (fields.length < 4) {
 					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
 				}
-				parseDataLine(fields, current_data, current_datamap);
+				parseDataLine(fields, current_data, current_datamap, min, max);
 				break;
 			case VARSTEP:
 				if (fields.length < 2) {
 					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
 				}
-				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span);
+				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span, min, max);
 				break;
 			case FIXEDSTEP:
 				if (fields.length < 1) {
 					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
 				}
-				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span, current_start);
+				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span, current_start, min, max);
 				current_start += current_step; // We advance the start based upon the step.
 				break;
 		}
@@ -256,7 +252,7 @@ public class Wiggle extends SymLoader{
 	private static void parseDataLine(
 					String[] fields,
 					WiggleData current_data,
-					Map<String, WiggleData> current_datamap) {
+					Map<String, WiggleData> current_datamap, int min, int max) {
 
 		// chrom  start end value
 		String seq_id = fields[0];	// chrom
@@ -271,6 +267,9 @@ public class Wiggle extends SymLoader{
 		int x2 = Integer.parseInt(fields[2]);	// start, or perhaps end
 		int start = Math.min(x1, x2);
 		int width = Math.max(x1, x2) - start;
+
+		if(!checkRange(x1,width,min,max))
+			return;
 
 		current_data.add(x1, Float.parseFloat(fields[3]), width);
 	}
@@ -289,7 +288,7 @@ public class Wiggle extends SymLoader{
 					WiggleData current_data,
 					Map<String, WiggleData> current_datamap,
 					String current_seq_id,
-					int current_span) {
+					int current_span, int min, int max) {
 
 		current_data = current_datamap.get(current_seq_id);
 		if (current_data == null) {
@@ -303,6 +302,9 @@ public class Wiggle extends SymLoader{
 		}
 		current_start -=1;	// This is because fixedStep and variableStep sequences are 1-indexed.  See http://genome.ucsc.edu/goldenPath/help/wiggle.html
 
+		if(!checkRange(current_start,current_span,min,max))
+			return;
+		
 		current_data.add(current_start, Float.parseFloat(fields[1]), current_span);
 
 	}
@@ -322,7 +324,7 @@ public class Wiggle extends SymLoader{
 					Map<String, WiggleData> current_datamap,
 					String current_seq_id,
 					int current_span,
-					int current_start) {
+					int current_start, int min, int max) {
 
 		current_data = current_datamap.get(current_seq_id);
 		if (current_data == null) {
@@ -332,10 +334,25 @@ public class Wiggle extends SymLoader{
 
 		current_start -=1;	// This is because fixedStep and variableStep formats are 1-indexed.  See http://genome.ucsc.edu/goldenPath/help/wiggle.html
 
+		if(!checkRange(current_start,current_span,min,max))
+			return;
+		
 		current_data.add(current_start, Float.parseFloat(fields[0]), current_span);
 	}
 
+	private static boolean checkRange(int start, int width, int min, int max){
+		//getGenome && getChromosomeList
+		if(min == max && min == -1){
+			return true;
+		}
 
+		//getChromosome && getRegion
+		if(start+width < min || start > max){
+			return false;
+		}
+
+		return true;
+	}
 
 	/**
 	 * Parse the line, looking for the field name.  If it can't be found, return the default value.
@@ -446,7 +463,7 @@ public class Wiggle extends SymLoader{
 	}
 
 	public String getMimeType() {
-		return "binary/wig";
+		return "text/wig";
 	}
 
 }

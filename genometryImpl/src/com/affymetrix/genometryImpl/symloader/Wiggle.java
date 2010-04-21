@@ -74,7 +74,12 @@ public class Wiggle extends SymLoader{
 	@Override
 	public List<BioSeq> getChromosomeList() {
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
-		
+		List<GraphSym> allSyms = getGenome();
+		for(GraphSym sym : allSyms){
+			if(!seqs.contains(sym.getGraphSeq()))
+				seqs.add(sym.getGraphSeq());
+		}
+		allSyms = null;
 		return seqs;
 	}
 

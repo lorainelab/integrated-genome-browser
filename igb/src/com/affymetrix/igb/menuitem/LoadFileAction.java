@@ -65,7 +65,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
+import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -209,7 +209,7 @@ public final class LoadFileAction {
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
 		GenericFeature gFeature = new GenericFeature(
-				fils[0].getName(), null, version, new QuickLoadFeatureLoading(version, fils[0].getAbsolutePath()), fils);
+				fils[0].getName(), null, version, new QuickLoad(version, fils[0].getAbsolutePath()), fils);
 		version.addFeature(gFeature);
 		gFeature.setVisible();	// this should be automatically checked in the feature tree
 		DataLoadView view = ((IGB)Application.getSingleton()).data_load_view;

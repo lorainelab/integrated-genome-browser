@@ -33,7 +33,7 @@ import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
+import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.IOException;
@@ -593,12 +593,12 @@ public final class GeneralLoadUtils {
 			return DasFeatureLoader.loadFeatures(gFeature, overlap);
 		}
 		if (serverType == ServerType.QuickLoad) {
-			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading) gFeature.symL;
+			QuickLoad gsr = (QuickLoad) gFeature.symL;
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
 			return gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
 		}
 		if (serverType == ServerType.LocalFiles) {
-			QuickLoadFeatureLoading gsr = (QuickLoadFeatureLoading) gFeature.symL;
+			QuickLoad gsr = (QuickLoad) gFeature.symL;
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
 			return gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
 		}

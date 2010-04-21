@@ -1,4 +1,4 @@
-package com.affymetrix.igb.quickload;
+package com.affymetrix.igb.symloader;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -60,13 +60,13 @@ import javax.swing.SwingWorker;
  *
  * @author jnicol
  */
-public final class QuickLoadFeatureLoading extends SymLoader {
+public final class QuickLoad extends SymLoader {
 	private File f;
 	private final GenericVersion version;
 	public final String featureName;
 	private SymLoader symL;	// parser factory
 
-	public QuickLoadFeatureLoading(GenericVersion version, String featureName) {
+	public QuickLoad(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
@@ -149,18 +149,18 @@ public final class QuickLoadFeatureLoading extends SymLoader {
 					List<? extends SeqSymmetry> results = loadFeature(strategy, overlapSpan);
 					if (results != null && !results.isEmpty()) {
 						SimpleSymWithProps requestSym = new SimpleSymWithProps();
-						requestSym.setProperty("meth", QuickLoadFeatureLoading.this.f.getName());
+						requestSym.setProperty("meth", QuickLoad.this.f.getName());
 						SymLoader.addToRequestSym(
 								results,
 								requestSym,
-								QuickLoadFeatureLoading.this.f.getName(),
-								QuickLoadFeatureLoading.this.featureName,
+								QuickLoad.this.f.getName(),
+								QuickLoad.this.featureName,
 								overlapSpan);
 						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
 							SymLoader.addAnnotations(results, requestSym, seq);
 						}
 						else if (strategy == LoadStrategy.GENOME) {
-							for (BioSeq aseq : QuickLoadFeatureLoading.this.version.group.getSeqList()) {
+							for (BioSeq aseq : QuickLoad.this.version.group.getSeqList()) {
 								SymLoader.addAnnotations(results, requestSym, aseq);
 							}
 						}
@@ -179,9 +179,9 @@ public final class QuickLoadFeatureLoading extends SymLoader {
 						gviewer.setAnnotatedSeq(seq, true, true);
 					}
 				} catch (Exception ex) {
-					Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoadFeatureLoading.this.featureName);
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
 				}
 			}
 		};
@@ -232,7 +232,7 @@ public final class QuickLoadFeatureLoading extends SymLoader {
 				GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
 				return graphs;
 			} catch (Exception ex) {
-				Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
 				GeneralUtils.safeClose(fis);
 			}
@@ -253,7 +253,7 @@ public final class QuickLoadFeatureLoading extends SymLoader {
 				feats = Parse(this.extension, fis, this.version, this.featureName);
 				return feats;
 			} catch (FileNotFoundException ex) {
-				Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
 				GeneralUtils.safeClose(fis);
 			}
@@ -380,7 +380,7 @@ public final class QuickLoadFeatureLoading extends SymLoader {
 				return rp.parse(zis, version.group, featureName, false, archiveInfo);
 			}
 		}
-		Logger.getLogger(QuickLoadFeatureLoading.class.getName()).log(Level.WARNING,
+		Logger.getLogger(QuickLoad.class.getName()).log(Level.WARNING,
 				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
 		return null;
 	}

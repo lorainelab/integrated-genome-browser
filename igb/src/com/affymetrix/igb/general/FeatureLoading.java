@@ -15,7 +15,7 @@ import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
-import com.affymetrix.igb.quickload.QuickLoadFeatureLoading;
+import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
@@ -102,7 +102,7 @@ public final class FeatureLoading {
 					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
 					gVersion.addFeature(
 							new GenericFeature(
-							type_name, type_props, gVersion, new QuickLoadFeatureLoading(gVersion, type_name), null));
+							type_name, type_props, gVersion, new QuickLoad(gVersion, type_name), null));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

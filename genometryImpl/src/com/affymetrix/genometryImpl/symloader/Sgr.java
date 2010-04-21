@@ -11,16 +11,18 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
+import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Sgr extends SymLoader {
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 	private final File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
-	private Map<String,BioSeq> seqID2seqs = new HashMap<String,BioSeq>();
 	
 	public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
@@ -29,18 +31,22 @@ public final class Sgr extends SymLoader {
 		this.featureName = featureName;
 	}
 
-	@Override
-	public List<BioSeq> getChromosomeList() {
-		if (seqID2seqs.isEmpty()) {
-			parse(null, -1, -1);
-		}
-		return new ArrayList<BioSeq>(seqID2seqs.values());
-	}
-
 
 	@Override
 	public List<GraphSym> getGenome() {
-		return parse(null, 0, 0);
+		FileInputStream fis = null;
+		InputStream is = null;
+		try {
+			fis = new FileInputStream(this.f);
+			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
+			return SgrParser.parse(is, featureName, group, false, true);
+		} catch (Exception ex) {
+			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(is);
+			GeneralUtils.safeClose(fis);
+		}
+		return null;
 	}
 
 	@Override
@@ -119,16 +125,13 @@ public final class Sgr extends SymLoader {
 					}
 				}
 				x = Integer.parseInt(fields[1]);
-				if (x < min || x > max) {
+				if (x < min || x >= max) {
 					// only look in range
 					continue;
 				}
 			} else {
-				// getGenome() or getChromosomeList()
+				// getGenome()
 				x = Integer.parseInt(fields[1]);
-				if (min == -1 && max == -1) {
-					// getChromosomeList()
-				}
 			}
 			
 			y = Float.parseFloat(fields[2]);

@@ -80,7 +80,10 @@ public final class BAM extends SymLoader {
 				String seqID = ssr.getSequenceName();
 				if (group.getSeq(seqID) == null) {
 					int seqLength = ssr.getSequenceLength();
-					seqs.add(new BioSeq(seqID, group.getID(), seqLength));
+					BioSeq seq = new BioSeq(seqID, group.getID(), seqLength);
+					seqs.add(seq);
+					Logger.getLogger(BAM.class.getName()).log(Level.INFO, "Adding chromosome " + seqID + " to group " + group.getID());
+					group.addSeq(seq);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

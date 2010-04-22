@@ -570,7 +570,13 @@ public abstract class ServerUtils {
 		return span;
 	}
 
-	/** this is the main call to retrieve symmetries meeting query constraints */
+	/**
+	 * Retrieve symmetries meeting query constraints.
+	 * @param overlap_span
+	 * @param query_type - annotation "type", which is feature name.
+	 * @param inside_span
+	 * @return
+	 */
 	public static List<SeqSymmetry> getIntersectedSymmetries(SeqSpan overlap_span, String query_type, SeqSpan inside_span) {
 		List<SeqSymmetry> result =
 				ServerUtils.getOverlappedSymmetries(overlap_span, query_type);

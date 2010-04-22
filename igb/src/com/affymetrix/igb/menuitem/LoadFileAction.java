@@ -68,7 +68,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import org.xml.sax.SAXException;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -210,6 +209,13 @@ public final class LoadFileAction {
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
 		GenericFeature gFeature = new GenericFeature(
 				fils[0].getName(), null, version, new QuickLoad(version, fils[0].getAbsolutePath()), fils);
+		if (!mergeSelected && gFeature.symL != null) {
+			addChromosomesForUnknownGroup(fils, gFeature, loadGroup);
+			if (loadGroup.getSeqCount() > 0) {
+				GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
+				// select a chromosomes
+			}
+		}
 		version.addFeature(gFeature);
 		gFeature.setVisible();	// this should be automatically checked in the feature tree
 		DataLoadView view = ((IGB)Application.getSingleton()).data_load_view;
@@ -217,6 +223,20 @@ public final class LoadFileAction {
 
 		// force a refresh of this server
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true);
+	}
+
+	private static void addChromosomesForUnknownGroup(final File[] fils, GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {
+		String notLockedUpMsg = "Retrieving chromosomes for " + fils[0].getName();
+		Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
+		try {
+			for (BioSeq seq : gFeature.symL.getChromosomeList()) {
+				if (seq.getSeqGroup() == null) {
+					seq.setSeqGroup(loadGroup);
+				}
+			}
+		} finally {
+			Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
+		}
 	}
 
 

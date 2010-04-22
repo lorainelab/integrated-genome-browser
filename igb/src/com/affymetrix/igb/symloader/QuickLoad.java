@@ -218,6 +218,20 @@ public final class QuickLoad extends SymLoader {
 		return null;
 	}
 
+	/**
+	 * Get list of chromosomes used in the file/uri.
+	 * Especially useful when loading a file into an "unknown" genome
+	 * @return List of chromosomes
+	 */
+	@Override
+	public List<BioSeq> getChromosomeList() {
+		if (this.symL != null) {
+			return this.symL.getChromosomeList();
+		}
+		return super.getChromosomeList();
+	}
+
+
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
 		if (this.symL != null) {

@@ -21,21 +21,30 @@ import java.util.logging.Logger;
 
 public final class Sgr extends SymLoader {
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
-	private final File f;
+	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
 	protected final Map<String,File> chrList = new HashMap<String,File>();
 	
 	public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
-		this.f = LocalUrlCacher.convertURIToFile(uri);
 		this.group = seq_group;
 		this.featureName = featureName;
 	}
 
+	@Override
+	public void init() {
+		if (this.isInitialized) {
+			return;
+		}
+		super.init();
+		this.f = LocalUrlCacher.convertURIToFile(uri);
+		buildIndex();
+	}
 
 	@Override
 	public List<GraphSym> getGenome() {
+		init();
 		FileInputStream fis = null;
 		InputStream is = null;
 		try {
@@ -53,12 +62,14 @@ public final class Sgr extends SymLoader {
 
 	@Override
 	public List<GraphSym> getChromosome(BioSeq seq) {
+		init();
 		return parse(seq, seq.getMin(), seq.getMax());
 	}
 
 
 	@Override
 	public List<GraphSym> getRegion(SeqSpan span) {
+		init();
 		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
@@ -67,7 +78,7 @@ public final class Sgr extends SymLoader {
 	}
 
 
-	public List<GraphSym> parse(BioSeq seq, int min, int max) {
+	private List<GraphSym> parse(BioSeq seq, int min, int max) {
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		IntArrayList xlist = new IntArrayList();
 		FloatArrayList ylist = new FloatArrayList();
@@ -75,16 +86,15 @@ public final class Sgr extends SymLoader {
 		FileInputStream fis = null;
 		InputStream is = null;
 		BufferedReader br = null;
-
-		if(!this.isInitialized)
-			buildIndex();
 		
 		try {
-			if(this.isInitialized)
-				fis = new FileInputStream(chrList.get(seq.getID()));
-			else
-				fis = new FileInputStream(f);
+			File f = chrList.get(seq.getID());
+			if (f == null) {
+				Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
+				return Collections.<GraphSym>emptyList();
+			}
 			
+			fis = new FileInputStream(f);
 			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			
@@ -206,7 +216,7 @@ public final class Sgr extends SymLoader {
 			return new GraphSym(xcoords, ycoords, gid, aseq);
 	}
 
-	protected boolean buildIndex(){
+	private boolean buildIndex(){
 		FileInputStream fis = null;
 		InputStream is = null;
 		BufferedReader br = null;
@@ -243,11 +253,7 @@ public final class Sgr extends SymLoader {
 			ex.printStackTrace();
 			return false;
 		} finally {
-			try {
-				bw.close();
-			} catch (IOException ex) {
-				Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			GeneralUtils.safeClose(fis);
 		}
 		init();
 		return true;

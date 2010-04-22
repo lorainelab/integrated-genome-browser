@@ -37,15 +37,23 @@ import java.util.List;
  * @author hiralv
  */
 public final class Gr extends SymLoader {
-	private final File f;
+	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
 
 	public Gr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
-		this.f = LocalUrlCacher.convertURIToFile(uri);
 		this.group = seq_group;
 		this.featureName = featureName;
+	}
+
+	@Override
+	public void init() {
+		if (this.isInitialized) {
+			return;
+		}
+		super.init();
+		this.f = LocalUrlCacher.convertURIToFile(uri);
 	}
 
 	@Override

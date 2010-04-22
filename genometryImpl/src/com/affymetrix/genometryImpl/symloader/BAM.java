@@ -41,9 +41,17 @@ public final class BAM extends SymLoader {
 
 	public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
-		this.f = LocalUrlCacher.convertURIToFile(uri);
 		this.group = seq_group;
 		this.featureName = featureName;
+	}
+
+	@Override
+	public void init() {
+		if (this.isInitialized) {
+			return;
+		}
+		super.init();
+		this.f = LocalUrlCacher.convertURIToFile(uri);
 		try {
 			reader = new SAMFileReader(f);
 			//header = reader.getFileHeader();
@@ -54,6 +62,7 @@ public final class BAM extends SymLoader {
 
 	@Override
 	public List<BioSeq> getChromosomeList() {
+		init();
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
 		header = reader.getFileHeader();
 		if (header == null || header.getSequenceDictionary() == null || header.getSequenceDictionary().getSequences() == null) {
@@ -81,6 +90,7 @@ public final class BAM extends SymLoader {
 	}
 	
 	public void parse() {
+		init();
 		header = reader.getFileHeader();
 		if (header == null || header.getSequenceDictionary() == null) {
 			Logger.getLogger(BAM.class.getName()).log(
@@ -107,6 +117,7 @@ public final class BAM extends SymLoader {
 
 	@Override
 	public List<SeqSymmetry> getGenome() {
+		init();
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		for (BioSeq seq : group.getSeqList()) {
 			results.addAll(getChromosome(seq));
@@ -116,12 +127,14 @@ public final class BAM extends SymLoader {
 
 	@Override
 	public List<SeqSymmetry> getChromosome(BioSeq seq) {
+		init();
 		return parse(seq, seq.getMin(), seq.getMax(), true, true);
 	}
 
 
 	@Override
 	public List<SeqSymmetry> getRegion(SeqSpan span) {
+		init();
 		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, true);
 	}
 	
@@ -131,6 +144,7 @@ public final class BAM extends SymLoader {
 	 * @return
 	 */
 	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) {
+		init();
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
 		CloseableIterator<SAMRecord> iter = null;
 		try {

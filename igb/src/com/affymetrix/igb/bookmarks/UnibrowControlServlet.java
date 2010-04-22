@@ -253,10 +253,9 @@ public final class UnibrowControlServlet {
 
 		if (das2_requests.size() > 0) {
 			addFeaturesToDataLoadView(das2_requests);
-			SeqMapView gviewer = Application.getSingleton().getMapView();
 			String featureName = "bookmarked data";
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + featureName);
-			FeatureLoading.processDas2FeatureRequests(das2_requests, featureName, true, gmodel, gviewer);
+			FeatureLoading.processDas2FeatureRequests(das2_requests, featureName, true, gmodel);
 		}
 		if (opaque_requests.size() > 0) {
 			String[] data_urls = new String[opaque_requests.size()];

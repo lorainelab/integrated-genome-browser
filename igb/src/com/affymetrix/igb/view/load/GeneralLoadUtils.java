@@ -580,27 +580,21 @@ public final class GeneralLoadUtils {
 
 		if (serverType == ServerType.DAS2) {
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			return loadDAS2Annotations(
-					selected_seq,
-					gFeature.featureName,
-					(Das2VersionedSource) gFeature.gVersion.versionSourceObj,
-					gviewer,
-					visible_seq,
-					overlap);
+			return loadFeatures(overlap, gFeature);
 		}
 		if (serverType == ServerType.DAS) {
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
 			return DasFeatureLoader.loadFeatures(gFeature, overlap);
 		}
 		if (serverType == ServerType.QuickLoad) {
-			QuickLoad gsr = (QuickLoad) gFeature.symL;
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
-			return gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
+			QuickLoad symL = (QuickLoad) gFeature.symL;
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + symL.featureName);
+			return symL.loadFeatures(overlap, gFeature.loadStrategy);
 		}
 		if (serverType == ServerType.LocalFiles) {
-			QuickLoad gsr = (QuickLoad) gFeature.symL;
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gsr.featureName);
-			return gsr.loadFeatures(gviewer, overlap, gFeature.loadStrategy);
+			QuickLoad symL = (QuickLoad) gFeature.symL;
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + symL.featureName);
+			return symL.loadFeatures(overlap, gFeature.loadStrategy);
 		}
 		System.out.println("class " + serverType + " is not implemented.");
 		return false;
@@ -612,23 +606,23 @@ public final class GeneralLoadUtils {
 	 * Loads (and displays) DAS/2 annotations.
 	 * This is done in a multithreaded fashion so that the UI doesn't lock up.
 	 * @param selected_seq
-	 * @param feature_name
-	 * @param version
+	 * @param gFeature
 	 * @param gviewer
-	 * @param visible_seq
 	 * @param overlap
 	 * @return true or false
 	 */
-	private static boolean loadDAS2Annotations(
-					BioSeq selected_seq, final String feature_name, Das2VersionedSource version, SeqMapView gviewer, BioSeq visible_seq, SeqSpan overlap) {
+	private static boolean loadFeatures(SeqSpan overlap, GenericFeature gFeature) {
+		final String feature_name = gFeature.featureName;
+		final BioSeq selected_seq = overlap.getBioSeq();
 		if (selected_seq == null) {
 			ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
 			return false;
 		}
 		if (DEBUG) {
-			System.out.println("seq = " + visible_seq.getID() + ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
+			System.out.println("seq = " + selected_seq.getID() + ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
 		}
+		Das2VersionedSource version = (Das2VersionedSource)gFeature.gVersion.versionSourceObj;
 		List<Das2FeatureRequestSym> requests = new ArrayList<Das2FeatureRequestSym>();
 
 		List<Das2Type> type_list = version.getTypesByName(feature_name);
@@ -642,7 +636,7 @@ public final class GeneralLoadUtils {
 			}
 		}
 
-		FeatureLoading.processDas2FeatureRequests(requests, feature_name, true, gmodel, gviewer);
+		FeatureLoading.processDas2FeatureRequests(requests, feature_name, true, gmodel);
 		return true;
 	}
 

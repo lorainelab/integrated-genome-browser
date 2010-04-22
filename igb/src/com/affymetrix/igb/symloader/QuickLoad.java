@@ -136,9 +136,10 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
-	public boolean loadFeatures(final SeqMapView gviewer, final SeqSpan overlapSpan, final LoadStrategy strategy)
+	public boolean loadFeatures(final SeqSpan overlapSpan, final LoadStrategy strategy)
 			throws OutOfMemoryError {
 
+		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
 		final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 

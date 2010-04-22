@@ -76,10 +76,9 @@ public class USeqUtilities {
 	public static final Pattern USEQ_ARCHIVE = Pattern.compile("(.+)\\.(useq)$");
 
 	//for GenoViz DAS/2
-	public static final ArrayList<String> USEQ_FORMATS = new ArrayList<String>();
+	public static final List<String> USEQ_FORMATS = new ArrayList<String>();
 	static {
 		USEQ_FORMATS.add(USEQ_EXTENSION_NO_PERIOD);
-		USEQ_FORMATS.add("bed"); 
 	}
 
 	//static helper methods from the USeq project util.gen.Misc, util.gen.IO

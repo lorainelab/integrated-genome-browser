@@ -1349,19 +1349,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				useqArchive = new USeqArchive(useqArchiveFile);
 				file2USeqArchive.put(useqArchiveFile.toString(), useqArchive);
 			}
-			
-			//bed format or default it to useq format?
-			if (outputFormat.endsWith("bed")){
-				//set mime type
-				response.setContentType("text/bed");
-				//implement
-				System.out.println("Call for useq output in bed file format! Not implemented just yet....");
-				response.setStatus(response.SC_SERVICE_UNAVAILABLE);
-				PrintWriter pw = response.getWriter();
-				pw.println("Bed format retrieval for useq data is not implemented at this time.");
-				pw.close();
-				return;
-			}
 
 			//set mime type for binary useq archives
 			response.setContentType("binary/"+USeqUtilities.USEQ_EXTENSION_NO_PERIOD);

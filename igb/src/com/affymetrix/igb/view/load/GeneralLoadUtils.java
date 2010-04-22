@@ -57,13 +57,13 @@ import java.util.logging.Logger;
  */
 public final class GeneralLoadUtils {
 	private static final boolean DEBUG = false;
-	private static final boolean DEBUG_VIRTUAL_GENOME = false;
+	private static final boolean DEBUG_VIRTUAL_GENOME = true;
 	/**
 	 *  using negative start coord for virtual genome chrom because (at least for human genome)
 	 *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
 	 */
 //    final double default_genome_min = -2100200300;
-	private static final double default_genome_min = 0;
+	private static final double default_genome_min = -2100200300;
 
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
@@ -458,7 +458,8 @@ public final class GeneralLoadUtils {
 		if (DEBUG) {
 			System.out.println("$$$$$ adding virtual genome seq to seq group");
 		}
-		if (!isVirtualGenomeSmallEnough(group, chrom_count)) {
+		double seqBounds = determineSeqBounds(group, chrom_count);
+		if (seqBounds > Integer.MAX_VALUE) {
 			return;
 		}
 		if (group.getSeq(IGBConstants.GENOME_SEQ_ID) != null) {
@@ -481,7 +482,8 @@ public final class GeneralLoadUtils {
 			if (chrom_seq == genome_seq) {
 				continue;
 			}
-			addSeqToVirtualGenome(genome_seq, chrom_seq);
+			// Add seq to virtual genome.  Keep values above 0 if possible.
+			addSeqToVirtualGenome(seqBounds < 0 ? 0.0 : default_genome_min, genome_seq, chrom_seq);
 		}
 	}
 
@@ -490,8 +492,8 @@ public final class GeneralLoadUtils {
 	 * @param group
 	 * @return true or false
 	 */
-	private static boolean isVirtualGenomeSmallEnough(AnnotatedSeqGroup group, int chrom_count) {
-		double seq_bounds = 0.0;
+	private static double determineSeqBounds(AnnotatedSeqGroup group, int chrom_count) {
+		double seq_bounds = default_genome_min;
 
 		for (int i = 0; i < chrom_count; i++) {
 			BioSeq chrom_seq = group.getSeq(i);
@@ -501,23 +503,17 @@ public final class GeneralLoadUtils {
 			if (DEBUG_VIRTUAL_GENOME) {
 				System.out.println("seq_bounds:" + seq_bounds);
 			}
-			if (seq_bounds > Integer.MAX_VALUE) {
-				if (DEBUG_VIRTUAL_GENOME) {
-					System.out.println("Virtual genome too large for " + group.getID());
-				}
-				return false;
-			}
 		}
-		return true;
+		return seq_bounds;
 	}
 
-	private static void addSeqToVirtualGenome(BioSeq genome_seq, BioSeq chrom) {
+	private static void addSeqToVirtualGenome(double genome_min, BioSeq genome_seq, BioSeq chrom) {
 		double glength = genome_seq.getLengthDouble();
 		int clength = chrom.getLength();
 		int spacer = (clength > 5000000) ? 5000000 : 100000;
 		double new_glength = glength + clength + spacer;
 		//	genome_seq.setLength(new_glength);
-		genome_seq.setBoundsDouble(default_genome_min, default_genome_min + new_glength);
+		genome_seq.setBoundsDouble(genome_min, genome_min + new_glength);
 		if (DEBUG_VIRTUAL_GENOME) {
 			System.out.println("added seq: " + chrom.getID() + ", new genome bounds: min = " + genome_seq.getMin() + ", max = " + genome_seq.getMax() + ", length = " + genome_seq.getLengthDouble());
 		}
@@ -525,14 +521,14 @@ public final class GeneralLoadUtils {
 		MutableSeqSymmetry mapping = (MutableSeqSymmetry) genome_seq.getComposition();
 		if (mapping == null) {
 			mapping = new SimpleMutableSeqSymmetry();
-			mapping.addSpan(new MutableDoubleSeqSpan(default_genome_min, default_genome_min + clength, genome_seq));
+			mapping.addSpan(new MutableDoubleSeqSpan(genome_min, genome_min + clength, genome_seq));
 			genome_seq.setComposition(mapping);
 		} else {
 			MutableDoubleSeqSpan mspan = (MutableDoubleSeqSpan) mapping.getSpan(genome_seq);
-			mspan.setDouble(default_genome_min, default_genome_min + new_glength, genome_seq);
+			mspan.setDouble(genome_min, genome_min + new_glength, genome_seq);
 		}
 		// using doubles for coords, because may end up with coords > MAX_INT
-		child.addSpan(new MutableDoubleSeqSpan(glength + default_genome_min, glength + clength + default_genome_min, genome_seq));
+		child.addSpan(new MutableDoubleSeqSpan(glength + genome_min, glength + clength + genome_min, genome_seq));
 		child.addSpan(new MutableDoubleSeqSpan(0, clength, chrom));
 		if (DEBUG_VIRTUAL_GENOME) {
 			SeqUtils.printSpan(child.getSpan(0));

@@ -72,7 +72,7 @@ final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener {
     this.map = gview.getSeqMap();
 
 	range_box = new JTextField("");
-    Dimension d = new Dimension(200, range_box.getPreferredSize().height);
+    Dimension d = new Dimension(250, range_box.getPreferredSize().height);
     range_box.setPreferredSize(d);
     range_box.setMaximumSize(d);
     

@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.ParserController;
-import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +44,7 @@ public abstract class SymLoader {
 	 * @return
 	 */
 	public String[] getLoadChoices() {
-		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
 		return choices;
 	}
 	/**
@@ -101,17 +100,9 @@ public abstract class SymLoader {
      */
     public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) {
 		Logger.getLogger(this.getClass().getName()).log(
-					Level.FINE, "Retrieving region is not optimized");
+					Level.WARNING, "Retrieving region is not supported.  Returning entire chromosome.");
 		List<? extends SeqSymmetry> chrResults = this.getChromosome(overlapSpan.getBioSeq());
-		if (chrResults == null || this.extension == null) {
-			return chrResults;
-		}
-		if (chrResults.size() == 1 && chrResults.get(0) instanceof GraphSym) {
-			Logger.getLogger(this.getClass().getName()).log(
-					Level.WARNING, "Can't do unoptimized region for Graph.  Returning entire chromosome.");
-			return chrResults;
-		}
-		return ServerUtils.getIntersectedSymmetries(overlapSpan, this.extension, null);
+		return chrResults;
     }
 
 	public static void addToRequestSym(

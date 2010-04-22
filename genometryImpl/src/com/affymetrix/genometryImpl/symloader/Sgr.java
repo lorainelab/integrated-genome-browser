@@ -9,10 +9,9 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
-import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
@@ -24,7 +23,7 @@ public final class Sgr extends SymLoader {
 	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
-	protected final Map<String,File> chrList = new HashMap<String,File>();
+	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 	
 	public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
@@ -43,21 +42,22 @@ public final class Sgr extends SymLoader {
 	}
 
 	@Override
+	public List<BioSeq> getChromosomeList(){
+		init();
+		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+		Collections.sort(chromosomeList,new BioSeqComparator());
+		return chromosomeList;
+	}
+
+	@Override
 	public List<GraphSym> getGenome() {
 		init();
-		FileInputStream fis = null;
-		InputStream is = null;
-		try {
-			fis = new FileInputStream(this.f);
-			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
-			return SgrParser.parse(is, featureName, group, false, true);
-		} catch (Exception ex) {
-			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(is);
-			GeneralUtils.safeClose(fis);
+		List<BioSeq> allSeq = getChromosomeList();
+		List<GraphSym> retList = new ArrayList<GraphSym>();
+		for(BioSeq seq : allSeq){
+			retList.addAll(getChromosome(seq));
 		}
-		return null;
+		return retList;
 	}
 
 	@Override
@@ -88,13 +88,14 @@ public final class Sgr extends SymLoader {
 		BufferedReader br = null;
 		
 		try {
-			File f = chrList.get(seq.getID());
-			if (f == null) {
+			
+			fis = new FileInputStream(chrList.get(seq));
+			
+			if (fis == null) {
 				Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
 				return Collections.<GraphSym>emptyList();
 			}
 			
-			fis = new FileInputStream(f);
 			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			
@@ -145,7 +146,7 @@ public final class Sgr extends SymLoader {
 					}
 				}
 				x = Integer.parseInt(fields[1]);
-				if (x < min || x >= max) {
+				if (x < min || x > max) {
 					// only look in range
 					continue;
 				}
@@ -220,13 +221,14 @@ public final class Sgr extends SymLoader {
 		FileInputStream fis = null;
 		InputStream is = null;
 		BufferedReader br = null;
-		Map<String, DataOutputStream> chrs = new HashMap<String, DataOutputStream>();
+		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		BufferedWriter bw = null;
 		try {
 			fis = new FileInputStream(this.f);
 			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			String line;
+			File directory = new File("/Users/aloraine/Downloads/temp");
 			while ((line = br.readLine()) != null) {
 				if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
 					continue;
@@ -234,29 +236,58 @@ public final class Sgr extends SymLoader {
 				String[] fields = line_regex.split(line);
 				String seqid = fields[0];
 				int x = Integer.parseInt(fields[1]);
+				BioSeq seq = group.getSeq(seqid);
+				
+				
+				if (!chrList.containsKey(seq)) {
+					String fileName = seqid;
 
-				File tempFile = chrList.get(seqid);
-				String fileName = seqid;
-				if (fileName.length() < 3) {
-					fileName += "___";
+					if (fileName.length() < 3) {
+						fileName += "___";
+					}
 
-				}
-				if (tempFile == null) {
-					tempFile = File.createTempFile(fileName, "sgr");
+					File tempFile = File.createTempFile(fileName,".sgr",directory);
 					tempFile.deleteOnExit();
-					bw = new BufferedWriter(new FileWriter(tempFile.getName(), true));
-					chrList.put(seqid, tempFile);
+					seq = group.addSeq(seqid, x);
+					chrList.put(seq, tempFile);
+					chrs.put(seq.getID(), new BufferedWriter(new FileWriter(tempFile, true)));
 				}
-				bw.write(line);
+				
+				bw = chrs.get(seq.getID());
+				checkSeqLength(seq,x);
+				bw.write(line + "\n");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
 		} finally {
+	
+			for (BufferedWriter b : chrs.values()) {
+				GeneralUtils.safeClose(b);
+			}
+
 			GeneralUtils.safeClose(fis);
 		}
-		init();
 		return true;
 	}
 
+	private static void checkSeqLength(BioSeq seq, int x) {
+			if (x > seq.getLength()) 
+				seq.setLength(x);
+	}
+
+	public static void main(String[] args){
+		String filename = "/Users/aloraine/Downloads/test4.sgr";
+		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+
+		Sgr sgr = new Sgr(new File(filename).toURI(), filename, seq_group);
+
+//		String stream_name = "test_file";
+//		BioSeq aseq = seq_group.addSeq("chr1", 948034);
+
+		List<GraphSym> results = sgr.getGenome();
+
+		int i = 0;
+	}
+	
 }

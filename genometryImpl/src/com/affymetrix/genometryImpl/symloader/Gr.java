@@ -64,6 +64,7 @@ public final class Gr extends SymLoader {
 
 	@Override
 	public List<GraphSym> getChromosome(BioSeq seq) {
+		init();
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		results.add(parse(seq,seq.getMin(),seq.getMax()));
 		return results;
@@ -72,6 +73,7 @@ public final class Gr extends SymLoader {
 
 	@Override
 	public List<GraphSym> getRegion(SeqSpan span) {
+		init();
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		results.add(parse(span.getBioSeq(),span.getMin(),span.getMax()));
 		return results;

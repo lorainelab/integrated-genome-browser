@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
 import java.util.Map.Entry;
@@ -40,6 +41,12 @@ public final class Sgr extends SymLoader {
 		super.init();
 		this.f = LocalUrlCacher.convertURIToFile(uri);
 		buildIndex();
+	}
+
+	@Override
+	public String[] getLoadChoices() {
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
+		return choices;
 	}
 
 	@Override
@@ -166,7 +173,7 @@ public final class Sgr extends SymLoader {
 				// getGenome()
 				x = Integer.parseInt(fields[1]);
 			}
-			
+
 			y = Float.parseFloat(fields[2]);
 			xlist.add(x);
 			ylist.add(y);
@@ -262,7 +269,9 @@ public final class Sgr extends SymLoader {
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		BufferedReader br = null;
 		BufferedWriter bw = null;
-		String line;
+		String[] fields = null;
+		String line, seqid;
+		int x;
 		
 		try {
 			br = new BufferedReader(new InputStreamReader(istr));
@@ -270,9 +279,11 @@ public final class Sgr extends SymLoader {
 				if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
 					continue;
 				}
-				String[] fields = line_regex.split(line);
-				String seqid = fields[0];
-				int x = Integer.parseInt(fields[1]);
+
+				fields = line_regex.split(line);
+				seqid = fields[0];
+				x = Integer.parseInt(fields[1]);
+				
 				if (!chrs.containsKey(seqid)) {
 					String fileName = seqid;
 					if (fileName.length() < 3) {
@@ -284,10 +295,12 @@ public final class Sgr extends SymLoader {
 					chrFiles.put(seqid, tempFile);
 					chrLength.put(seqid, x);
 				}
-				bw = chrs.get(seqid);
+
 				if (x > chrLength.get(seqid)) {
 					chrLength.put(seqid, x);
 				}
+				
+				bw = chrs.get(seqid);
 				bw.write(line + "\n");
 			}
 		} catch (IOException ex) {

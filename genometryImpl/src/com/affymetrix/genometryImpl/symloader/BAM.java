@@ -28,6 +28,8 @@ import net.sf.samtools.CigarOperator;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMFileReader.ValidationStringency;
+import net.sf.samtools.SAMFormatException;
 import net.sf.samtools.SAMRecord.SAMTagAndValue;
 import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.util.CloseableIterator;
@@ -40,7 +42,6 @@ public final class BAM extends SymLoader {
     private SAMFileHeader header;
 	private AnnotatedSeqGroup group;
 	private final String featureName;
-	private String methodName = "";
 	private List<BioSeq> seqs;
 
 	public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
@@ -68,8 +69,8 @@ public final class BAM extends SymLoader {
 			if (scheme.length() == 0 || scheme.equals("file")) {
 				// BAM is file.
 				File f = new File(uri);
-				methodName = f.getName();
 				reader = new SAMFileReader(f);
+				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else if (scheme.startsWith("http")) {
 				// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
 
@@ -81,8 +82,8 @@ public final class BAM extends SymLoader {
 					Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
 							"Could not find URL of BAM index at " + baiUriStr + ". Please be sure this is in the same directory as the BAM file.");
 				}
-
 				reader = new SAMFileReader(uri.toURL(), indexFile, false);
+				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else {
 				Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
 						"URL scheme: " + scheme + " not recognized");
@@ -90,7 +91,11 @@ public final class BAM extends SymLoader {
 			}
 
 			initTheSeqs();
-			
+		} catch (SAMFormatException ex) {
+			ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n" +
+					"Please contact the Picard project at http://picard.sourceforge.net." +
+					"See console for the details of the exception.\n");
+			ex.printStackTrace();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -169,7 +174,7 @@ public final class BAM extends SymLoader {
 				iter = reader.query(seq.getID(), min, max, contained);
 				if (iter != null) {
 					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
-						symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, methodName));
+						symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
 					}
 				}
 			}

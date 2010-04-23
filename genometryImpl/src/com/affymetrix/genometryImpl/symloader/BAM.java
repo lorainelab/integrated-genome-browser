@@ -93,7 +93,7 @@ public final class BAM extends SymLoader {
 			initTheSeqs();
 		} catch (SAMFormatException ex) {
 			ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n" +
-					"Please contact the Picard project at http://picard.sourceforge.net." +
+					"Please validate your BAM files and contact the Picard project at http://picard.sourceforge.net." +
 					"See console for the details of the exception.\n");
 			ex.printStackTrace();
 		} catch (Exception ex) {

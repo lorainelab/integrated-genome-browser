@@ -142,7 +142,7 @@ public final class Wiggle extends SymLoader{
 		BufferedReader br = null;
 		try {
 			fis = new FileInputStream(this.f);
-			istr = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
+			istr = GeneralUtils.unzipStream(fis, f.getName(), new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(istr));
 
 

@@ -249,7 +249,7 @@ public final class Sgr extends SymLoader {
 		
 		try {
 			fis = new FileInputStream(this.f);
-			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());	
+			is = GeneralUtils.unzipStream(fis, f.getName(), new StringBuffer());
 			parseLines(is, chrLength, chrFiles);
 			createResults(chrLength, chrFiles);
 		} catch (Exception ex) {

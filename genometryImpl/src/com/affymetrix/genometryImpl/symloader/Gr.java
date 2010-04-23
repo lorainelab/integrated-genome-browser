@@ -143,7 +143,7 @@ public final class Gr extends SymLoader {
 		try {
 
 			fis = new FileInputStream(this.f);
-			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
+			is = GeneralUtils.unzipStream(fis, f.getName(), new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			// check first line, may be a header for column labels...
 			line = br.readLine();

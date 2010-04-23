@@ -21,12 +21,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 //import javax.swing.table.TableRowSorter;
 
-final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
+public final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
 	private final static boolean DEBUG_EVENTS = false;
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final String NO_GENOME = "No Genome Selected";
-	private final JTable seqtable;
+	private static final JTable seqtable = new JTable();
 	private BioSeq selected_seq = null;
 	private AnnotatedSeqGroup previousGroup = null;
 	private int previousSeqCount = 0;
@@ -35,8 +35,7 @@ final class SeqGroupView extends JComponent implements ListSelectionListener, Gr
 	private String most_recent_seq_id = null;
 
 
-  public SeqGroupView() {
-		seqtable = new JTable();
+  SeqGroupView() {
 		seqtable.setToolTipText(CHOOSESEQ);
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);
@@ -59,6 +58,14 @@ final class SeqGroupView extends JComponent implements ListSelectionListener, Gr
 		lsm = seqtable.getSelectionModel();
 		lsm.addListSelectionListener(this);
 	}
+
+  /**
+   * Refresh seqtable if more chromosomes are added, for example.
+   */
+  public static void refreshTable() {
+	  seqtable.validate();
+	  seqtable.repaint();
+  }
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
@@ -89,8 +96,7 @@ final class SeqGroupView extends JComponent implements ListSelectionListener, Gr
 		//seqtable.setRowSorter(sorter);
 
 
-		seqtable.validate();
-		seqtable.repaint();
+		refreshTable();
 
 		if (group != null && most_recent_seq_id != null) {
 			// When changing genomes, try to keep the same chromosome selected when possible

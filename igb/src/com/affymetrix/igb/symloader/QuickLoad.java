@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.Bar;
+import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symloader.Sgr;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -323,6 +324,8 @@ public final class QuickLoad extends SymLoader {
 		}
 		if (this.extension.endsWith("wig")) {
 			return new Wiggle(this.uri, this.featureName, this.version.group);
+		}if (this.extension.endsWith("gr")) {
+			return new Gr(this.uri, this.featureName, this.version.group);
 		}
 		return null;
 	}

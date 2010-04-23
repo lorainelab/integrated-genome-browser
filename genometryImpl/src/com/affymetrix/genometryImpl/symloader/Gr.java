@@ -66,7 +66,7 @@ public final class Gr extends SymLoader {
 	public List<GraphSym> getChromosome(BioSeq seq) {
 		init();
 		List<GraphSym> results = new ArrayList<GraphSym>();
-		results.add(parse(seq,seq.getMin(),seq.getMax()));
+		results.add(parse(seq,seq.getMin(),seq.getMax() + 1));
 		return results;
 	}
 
@@ -75,7 +75,7 @@ public final class Gr extends SymLoader {
 	public List<GraphSym> getRegion(SeqSpan span) {
 		init();
 		List<GraphSym> results = new ArrayList<GraphSym>();
-		results.add(parse(span.getBioSeq(),span.getMin(),span.getMax()));
+		results.add(parse(span.getBioSeq(),span.getMin(),span.getMax() + 1));
 		return results;
 	}
 
@@ -148,7 +148,7 @@ public final class Gr extends SymLoader {
 					System.out.println("format not recognized");
 					return null;
 				}
-				if(!(firstx < min || firstx > max)){
+				if(!(firstx < min || firstx >= max)){
 					xlist.add(firstx);
 					ylist.add(firsty);
 					count++;  // first line parses as numbers, so is not a header, increment count
@@ -173,7 +173,7 @@ public final class Gr extends SymLoader {
 					y = Float.parseFloat(line.substring(line.indexOf('\t') + 1));
 				}
 
-				if (x < min || x > max) {
+				if (x < min || x >= max) {
 					continue;
 				}
 

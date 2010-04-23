@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,7 +41,8 @@ public final class Gr extends SymLoader {
 	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
-
+	private boolean isSorted = false;
+	
 	public Gr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
 		this.group = seq_group;
@@ -105,7 +107,22 @@ public final class Gr extends SymLoader {
 	}
 
 	private GraphSym parse(BioSeq aseq, int min, int max){
-		return parse(aseq, min, max, true);
+		GraphSym sym = parse(aseq, min, max, true);
+
+		if(!isSorted){
+		FileOutputStream fos = null;
+			try{
+				fos = new FileOutputStream(f);
+				writeGrFormat(sym,fos);
+				isSorted = true;
+			}catch(IOException ex){
+				ex.printStackTrace();
+			}finally{
+				GeneralUtils.safeClose(fos);
+			}
+		}
+		
+		return sym;
 	}
 	
 	private GraphSym parse(BioSeq aseq, int min, int max, boolean ensure_unique_id){
@@ -122,7 +139,7 @@ public final class Gr extends SymLoader {
 		FileInputStream fis = null;
 		InputStream is = null;
 		BufferedReader br = null;
-
+		
 		try {
 
 			fis = new FileInputStream(this.f);
@@ -173,7 +190,15 @@ public final class Gr extends SymLoader {
 					y = Float.parseFloat(line.substring(line.indexOf('\t') + 1));
 				}
 
-				if (x < min || x >= max) {
+				if (x >= max) {
+					if (isSorted) {
+						break;
+					} else {
+						continue;
+					}
+				}
+
+				if (x < min ) {
 					continue;
 				}
 
@@ -181,11 +206,16 @@ public final class Gr extends SymLoader {
 				ylist.add(y);
 				count++;
 				// checking on whether graph is sorted...
-				if (xprev > x) {
-					sorted = false;
+				if(!isSorted){
+					if (xprev > x) {
+						sorted = false;
+					}else
+						xprev = x;
 				}
-				xprev = x;
+				
 			}
+			isSorted = sorted;
+
 			if (name == null && hasHeader) {
 				name = headerstr;
 			}

@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import java.io.File;
@@ -43,6 +44,12 @@ public final class BAM extends SymLoader {
 		super(uri);
 		this.group = seq_group;
 		this.featureName = featureName;
+	}
+
+	@Override
+	public String[] getLoadChoices() {
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString()};
+		return choices;
 	}
 
 	@Override

@@ -57,7 +57,7 @@ import java.util.logging.Logger;
  */
 public final class GeneralLoadUtils {
 	private static final boolean DEBUG = false;
-	private static final boolean DEBUG_VIRTUAL_GENOME = true;
+	private static final boolean DEBUG_VIRTUAL_GENOME = false;
 	/**
 	 *  using negative start coord for virtual genome chrom because (at least for human genome)
 	 *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)

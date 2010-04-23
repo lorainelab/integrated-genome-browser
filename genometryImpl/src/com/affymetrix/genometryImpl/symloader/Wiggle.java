@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleData;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -55,20 +56,34 @@ public final class Wiggle extends SymLoader{
 	private static final boolean ensure_unique_id = true;
 	private final TrackLineParser track_line_parser;
 
-	private final File f;
+	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
 
 	public Wiggle(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
-		this.f = LocalUrlCacher.convertURIToFile(uri);
 		this.group = seq_group;
 		this.featureName = featureName;
 		track_line_parser = new TrackLineParser();
 	}
 
 	@Override
+	public String[] getLoadChoices() {
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.GENOME.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
+		return choices;
+	}
+
+	public void init() {
+		if (this.isInitialized) {
+			return;
+		}
+		super.init();
+		this.f = LocalUrlCacher.convertURIToFile(uri);
+	}
+
+	@Override
 	public List<BioSeq> getChromosomeList() {
+		init();
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
 		List<GraphSym> allSyms = getGenome();
 		for(GraphSym sym : allSyms){
@@ -81,17 +96,20 @@ public final class Wiggle extends SymLoader{
 
 	@Override
 	public List<GraphSym> getGenome() {
+		init();
 		return parse(null,-1,-1);
 	}
 
 	@Override
 	public List<GraphSym> getChromosome(BioSeq seq) {
+		init();
 		return parse(seq,seq.getMin(),seq.getMax());
 	}
 
 
 	@Override
 	public List<GraphSym> getRegion(SeqSpan span) {
+		init();
 		return parse(span.getBioSeq(),span.getMin(),span.getMax());
 	}
 
@@ -102,7 +120,7 @@ public final class Wiggle extends SymLoader{
 	 *  The format must be specified on the first line following a track line,
 	 *  otherwise BED4 is assumed.
 	 */
-	public List<GraphSym> parse(BioSeq reqSeq, int min, int max){
+	private List<GraphSym> parse(BioSeq reqSeq, int min, int max){
 		FileInputStream fis = null;
 		InputStream istr = null;
 		

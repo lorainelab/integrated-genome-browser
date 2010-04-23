@@ -86,7 +86,8 @@ public final class Sgr extends SymLoader {
 		FileInputStream fis = null;
 		InputStream is = null;
 		BufferedReader br = null;
-		
+		FileOutputStream fos = null;
+
 		try {
 			
 			fis = new FileInputStream(chrList.get(seq));
@@ -103,25 +104,36 @@ public final class Sgr extends SymLoader {
 			// will make sure the GraphState is also unique on the whole genome.
 			String gid = AnnotatedSeqGroup.getUniqueGraphID(this.featureName, this.group);
 			
-			parseLines(br, xlist, ylist, seq, min, max);
+			boolean sorted = parseLines(br, xlist, ylist, seq, min, max);
 
-			results.add(createResults(xlist, seq, ylist, gid));
+			GraphSym sym = createResults(xlist, seq, ylist, gid);
+
+			results.add(sym);
+
+			if(!sorted){
+				fos = new FileOutputStream(chrList.get(sym.getGraphSeq()));
+				writeSgrFormat(sym,fos);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(fos);
 		}
 
 		return results;
 	}
 
-	private static void parseLines(
+	private static boolean parseLines(
 			BufferedReader br, IntArrayList xlist, FloatArrayList ylist, BioSeq seq, int min, int max)
 			throws IOException, NumberFormatException {
 		String line;
 		AnnotatedSeqGroup group = seq.getSeqGroup();
 		int x = 0;
 		float y = 0.0f;
+		int prevx = 0;
+		boolean sorted = true;
 
 		while ((line = br.readLine()) != null) {
 			if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
@@ -158,7 +170,15 @@ public final class Sgr extends SymLoader {
 			y = Float.parseFloat(fields[2]);
 			xlist.add(x);
 			ylist.add(y);
+
+			if(prevx > x && sorted){
+				sorted = false;
+			}
+
+			prevx = x;
 		}
+
+		return sorted;
 	}
 
 	public static boolean writeSgrFormat(GraphSym graf, OutputStream ostr) throws IOException {
@@ -275,19 +295,6 @@ public final class Sgr extends SymLoader {
 			if (x > seq.getLength()) 
 				seq.setLength(x);
 	}
-
-	public static void main(String[] args){
-		String filename = "/Users/aloraine/Downloads/test4.sgr";
-		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-
-		Sgr sgr = new Sgr(new File(filename).toURI(), filename, seq_group);
-
-//		String stream_name = "test_file";
-//		BioSeq aseq = seq_group.addSeq("chr1", 948034);
-
-		List<GraphSym> results = sgr.getGenome();
-
-		int i = 0;
-	}
+	
 	
 }

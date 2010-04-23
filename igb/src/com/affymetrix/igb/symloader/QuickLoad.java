@@ -61,7 +61,6 @@ import javax.swing.SwingWorker;
  * @author jnicol
  */
 public final class QuickLoad extends SymLoader {
-	private File f;
 	private final GenericVersion version;
 	public final String featureName;
 	private SymLoader symL;	// parser factory
@@ -73,9 +72,18 @@ public final class QuickLoad extends SymLoader {
 		this.symL = determineLoader();
 	}
 
+	public QuickLoad(GenericVersion version, URI uri) {
+		super(uri);
+		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
+		String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(this.extension));
+		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);
+		this.featureName = friendlyName;
+		this.version = version;
+		this.symL = determineLoader();
+	}
+
 	@Override
 	protected void init() {
-		this.f = LocalUrlCacher.convertURIToFile(this.uri);
 		this.isInitialized = true;
 	}
 
@@ -150,11 +158,11 @@ public final class QuickLoad extends SymLoader {
 					List<? extends SeqSymmetry> results = loadFeature(strategy, overlapSpan);
 					if (results != null && !results.isEmpty()) {
 						SimpleSymWithProps requestSym = new SimpleSymWithProps();
-						requestSym.setProperty("meth", QuickLoad.this.f.getName());
+						requestSym.setProperty("method", featureName);
 						SymLoader.addToRequestSym(
 								results,
 								requestSym,
-								QuickLoad.this.f.getName(),
+								QuickLoad.this.featureName,
 								QuickLoad.this.featureName,
 								overlapSpan);
 						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
@@ -201,9 +209,7 @@ public final class QuickLoad extends SymLoader {
 		if (style != null) {
 			style.setHumanName(featureName);
 		}
-		String unzippedName = GeneralUtils.getUnzippedName(this.f.getName());
-		String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(this.extension));
-		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(strippedName);
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName);
 		if (style != null) {
 			style.setHumanName(featureName);
 		}
@@ -238,11 +244,12 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getGenome();
 		}
-		if (GraphSymUtils.isAGraphFilename(this.f.getName())) {
+		if (GraphSymUtils.isAGraphFilename(this.extension)) {
 			FileInputStream fis = null;
 			try {
 				GenometryModel gmodel = GenometryModel.getGenometryModel();
-				fis = new FileInputStream(this.f);
+				File f = LocalUrlCacher.convertURIToFile(this.uri);
+				fis = new FileInputStream(f);
 				List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
 				GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
 				return graphs;
@@ -255,6 +262,7 @@ public final class QuickLoad extends SymLoader {
 
 		List<? extends SeqSymmetry> feats = null;
 		try {
+			File f = LocalUrlCacher.convertURIToFile(this.uri);
 			if (this.extension.endsWith(".chp")) {
 				// special-case CHP files. ChpParser only has
 				//    a parse() method that takes the file name

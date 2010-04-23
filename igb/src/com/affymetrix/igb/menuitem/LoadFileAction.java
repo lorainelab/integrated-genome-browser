@@ -68,6 +68,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import java.net.URI;
 import org.xml.sax.SAXException;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -207,8 +208,21 @@ public final class LoadFileAction {
 		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
+		
+		URI uri = fils[0].toURI();
+
+		// handle URL case.
+		String uriString = uri.toString();
+		int httpIndex = uriString.toLowerCase().indexOf("http:");
+		if (httpIndex > -1) {
+			// Strip off initial characters up to and including http:
+			// Sometimes this is necessary, as URLs can start with invalid "http:/"
+			uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
+			uri = URI.create(uriString);
+		}
+
 		GenericFeature gFeature = new GenericFeature(
-				fils[0].getName(), null, version, new QuickLoad(version, fils[0].getAbsolutePath()), fils);
+				fils[0].getName(), null, version, new QuickLoad(version, uri), fils);
 		if (!mergeSelected && gFeature.symL != null) {
 			addChromosomesForUnknownGroup(fils, gFeature, loadGroup);
 			if (loadGroup.getSeqCount() > 0) {

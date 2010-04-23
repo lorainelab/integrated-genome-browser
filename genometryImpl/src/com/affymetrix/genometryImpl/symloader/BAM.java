@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
@@ -62,35 +63,37 @@ public final class BAM extends SymLoader {
 		}
 		super.init();
 
-		String scheme = uri.getScheme().toLowerCase();
-		if (scheme.length() == 0 || scheme.equals("file")) {
-			// BAM is file.
-			File f = new File(uri);
-			methodName = f.getName();
-			reader = new SAMFileReader(f);
-		} else if (scheme.startsWith("http")) {
-			// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
-			
-			String uriStr = uri.toString();
-			// Guess at the location of the .bai URL as BAM URL + ".bai"
-			String baiUriStr = uriStr + ".bai";
-			File indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
-			if (indexFile == null) {
-				Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
-						"Could not find URL of BAM index at " + baiUriStr + ". Please be sure this is in the same directory as the BAM file.");
-			}
-			try {
-				reader = new SAMFileReader(uri.toURL(), indexFile, false);
-			} catch (MalformedURLException ex) {
-				Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		} else {
-			Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
-					"URL scheme: " + scheme + " not recognized");
-			return;
-		}
+		try {
+			String scheme = uri.getScheme().toLowerCase();
+			if (scheme.length() == 0 || scheme.equals("file")) {
+				// BAM is file.
+				File f = new File(uri);
+				methodName = f.getName();
+				reader = new SAMFileReader(f);
+			} else if (scheme.startsWith("http")) {
+				// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
 
-		initTheSeqs();
+				String uriStr = uri.toString();
+				// Guess at the location of the .bai URL as BAM URL + ".bai"
+				String baiUriStr = uriStr + ".bai";
+				File indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
+				if (indexFile == null) {
+					Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
+							"Could not find URL of BAM index at " + baiUriStr + ". Please be sure this is in the same directory as the BAM file.");
+				}
+
+				reader = new SAMFileReader(uri.toURL(), indexFile, false);
+			} else {
+				Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
+						"URL scheme: " + scheme + " not recognized");
+				return;
+			}
+
+			initTheSeqs();
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 

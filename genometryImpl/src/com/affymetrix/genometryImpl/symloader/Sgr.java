@@ -115,7 +115,7 @@ public final class Sgr extends SymLoader {
 			
 			boolean sort = parseLines(br, xlist, ylist, min, max, !file.canWrite());
 
-			GraphSym sym = createResults(xlist, seq, ylist, gid);
+			GraphSym sym = createResults(xlist, seq, ylist, gid, sort);
 
 			results.add(sym);
 
@@ -215,26 +215,26 @@ public final class Sgr extends SymLoader {
 
 
 	private static GraphSym createResults(
-			IntArrayList xlist, BioSeq aseq, FloatArrayList ylist, String gid) {
+			IntArrayList xlist, BioSeq aseq, FloatArrayList ylist, String gid, boolean sort) {
 			int[] xcoords = Arrays.copyOf(xlist.elements(), xlist.size());
 			xlist = null;
 			float[] ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
 			ylist = null;
 
-			//Is data sorted?
-			int xcount = xcoords.length;
-			boolean sorted = true;
-			int prevx = Integer.MIN_VALUE;
-			for (int i = 0; i < xcount; i++) {
-				int x = xcoords[i];
-				if (x < prevx) {
-					sorted = false;
-					break;
-				}
-				prevx = x;
-			}
+//			//Is data sorted?
+//			int xcount = xcoords.length;
+//			boolean sorted = true;
+//			int prevx = Integer.MIN_VALUE;
+//			for (int i = 0; i < xcount; i++) {
+//				int x = xcoords[i];
+//				if (x < prevx) {
+//					sorted = false;
+//					break;
+//				}
+//				prevx = x;
+//			}
 			
-			if (!sorted) {
+			if (sort) {
 				GrParser.sortXYDataOnX(xcoords, ycoords);
 			}
 

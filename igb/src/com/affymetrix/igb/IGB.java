@@ -119,7 +119,7 @@ public final class IGB extends Application
 	private JMenuItem console_item;
 	private JMenuItem clear_item;
 	private JMenuItem clear_graphs_item;
-	private JMenuItem open_file_item;
+	private JMenuItem open_file_or_URL_item;
 	private JMenuItem print_item;
 	private JMenuItem print_frame_item;
 	private JMenuItem export_map_item;
@@ -400,8 +400,8 @@ public final class IGB extends Application
 		open_file_action = new LoadFileAction(map_view.getFrame(), load_directory);
 		clear_item = new JMenuItem(BUNDLE.getString("clearAll"), KeyEvent.VK_C);
 		clear_graphs_item = new JMenuItem(BUNDLE.getString("clearGraphs"), KeyEvent.VK_L);
-		open_file_item = new JMenuItem(BUNDLE.getString("openFile"), KeyEvent.VK_O);
-		open_file_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
+		open_file_or_URL_item = new JMenuItem(BUNDLE.getString("openFileOrUrl"), KeyEvent.VK_O);
+		open_file_or_URL_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
 		print_item = new JMenuItem(BUNDLE.getString("print"), KeyEvent.VK_P);
 		print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
 		print_frame_item = new JMenuItem(BUNDLE.getString("printWhole"), KeyEvent.VK_F);
@@ -476,7 +476,7 @@ public final class IGB extends Application
 		console_item.addActionListener(this);
 		clear_item.addActionListener(this);
 		clear_graphs_item.addActionListener(this);
-		open_file_item.addActionListener(this);
+		open_file_or_URL_item.addActionListener(this);
 		print_item.addActionListener(this);
 		print_frame_item.addActionListener(this);
 		export_map_item.addActionListener(this);
@@ -599,7 +599,7 @@ public final class IGB extends Application
 		preferences_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, BUNDLE.getString("preferences")), KeyEvent.VK_E);
 		preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
 		preferences_item.addActionListener(this);
-		MenuUtil.addToMenu(file_menu, open_file_item);
+		MenuUtil.addToMenu(file_menu, open_file_or_URL_item);
 		MenuUtil.addToMenu(file_menu, clear_item);
 		MenuUtil.addToMenu(file_menu, clear_graphs_item);
 		file_menu.addSeparator();
@@ -718,7 +718,7 @@ public final class IGB extends Application
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		if (src == open_file_item) {
+		if (src == open_file_or_URL_item) {
 			open_file_action.actionPerformed(evt);
 		} else if (src == print_item) {
 			try {

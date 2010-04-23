@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -425,7 +426,8 @@ public final class BioSeq implements SearchableCharIterator {
 	private String getResiduesNoProvider(int start, int end, char fillchar) {
 		int residue_length = this.getLength();
 		if (start < 0 || residue_length <= 0) {
-			throw new IllegalArgumentException("start: " + start + " residues: " + this.getResidues());
+			Logger.getLogger(BioSeq.class.getName()).fine("Invalid arguments: " + start + "," + end + "," + residue_length);
+			return "";
 		}
 
 		//TODO: If start is greater than residue_length then

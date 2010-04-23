@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -139,6 +140,11 @@ public final class CharSeqGlyph extends SequenceGlyph
 				int seq_end_index = visible_seq_end - seq_beg;
 				if (seq_end_index > residue_length) {
 					seq_end_index = residue_length;
+				}
+				if (Math.abs((long)seq_end_index - (long)seq_beg_index) > 100000) {
+					// something's gone wrong.  Ignore.
+					Logger.getLogger(CharSeqGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
+					return;
 				}
 				int seq_pixel_offset = pixelbox.x;
 				String str = chariter.substring(seq_beg_index, seq_end_index);

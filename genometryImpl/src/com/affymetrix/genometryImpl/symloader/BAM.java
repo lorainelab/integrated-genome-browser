@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,9 +37,10 @@ import net.sf.samtools.util.CloseableIterator;
 public final class BAM extends SymLoader {
 	private SAMFileReader reader;
     private SAMFileHeader header;
-	private File f;
 	private AnnotatedSeqGroup group;
 	private final String featureName;
+	private String methodName = "";
+	private List<BioSeq> seqs;
 
 	public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
@@ -48,6 +50,7 @@ public final class BAM extends SymLoader {
 
 	@Override
 	public String[] getLoadChoices() {
+		// BAM files are generally large, so only allow loading visible data.
 		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString()};
 		return choices;
 	}
@@ -58,10 +61,63 @@ public final class BAM extends SymLoader {
 			return;
 		}
 		super.init();
-		this.f = LocalUrlCacher.convertURIToFile(uri);
-		try {
+
+		String scheme = uri.getScheme().toLowerCase();
+		if (scheme.length() == 0 || scheme.equals("file")) {
+			// BAM is file.
+			File f = new File(uri);
+			methodName = f.getName();
 			reader = new SAMFileReader(f);
-			//header = reader.getFileHeader();
+		} else if (scheme.startsWith("http")) {
+			// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
+			
+			String uriStr = uri.toString();
+			// Guess at the location of the .bai URL as BAM URL + ".bai"
+			String baiUriStr = uriStr + ".bai";
+			File indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
+			if (indexFile == null) {
+				Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
+						"Could not find URL of BAM index at " + baiUriStr + ". Please be sure this is in the same directory as the BAM file.");
+			}
+			try {
+				reader = new SAMFileReader(uri.toURL(), indexFile, false);
+			} catch (MalformedURLException ex) {
+				Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		} else {
+			Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
+					"URL scheme: " + scheme + " not recognized");
+			return;
+		}
+
+		initTheSeqs();
+	}
+
+
+
+	private void initTheSeqs() {
+		try {
+			header = reader.getFileHeader();
+			if (header == null || header.getSequenceDictionary() == null || header.getSequenceDictionary().getSequences() == null) {
+				Logger.getLogger(BAM.class.getName()).log(Level.WARNING, "Couldn't find sequences in file");
+			}
+			for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
+				try {
+					if (Thread.currentThread().isInterrupted()) {
+						break;
+					}
+					String seqID = ssr.getSequenceName();
+					if (group.getSeq(seqID) == null) {
+						int seqLength = ssr.getSequenceLength();
+						BioSeq seq = new BioSeq(seqID, group.getID(), seqLength);
+						seqs.add(seq);
+						Logger.getLogger(BAM.class.getName()).log(Level.INFO, "Adding chromosome " + seqID + " to group " + group.getID());
+						group.addSeq(seq);
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -70,59 +126,7 @@ public final class BAM extends SymLoader {
 	@Override
 	public List<BioSeq> getChromosomeList() {
 		init();
-		List<BioSeq> seqs = new ArrayList<BioSeq>();
-		header = reader.getFileHeader();
-		if (header == null || header.getSequenceDictionary() == null || header.getSequenceDictionary().getSequences() == null) {
-			Logger.getLogger(BAM.class.getName()).log(
-					Level.WARNING, "Couldn't find sequences in file");
-			return seqs;
-		}
-			// add sequences that aren't in the original group.  Especially useful for "unknown groups"
-		for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
-			try {
-				if (Thread.currentThread().isInterrupted()) {
-					break;
-				}
-
-				String seqID = ssr.getSequenceName();
-				if (group.getSeq(seqID) == null) {
-					int seqLength = ssr.getSequenceLength();
-					BioSeq seq = new BioSeq(seqID, group.getID(), seqLength);
-					seqs.add(seq);
-					Logger.getLogger(BAM.class.getName()).log(Level.INFO, "Adding chromosome " + seqID + " to group " + group.getID());
-					group.addSeq(seq);
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
 		return seqs;
-	}
-	
-	public void parse() {
-		init();
-		header = reader.getFileHeader();
-		if (header == null || header.getSequenceDictionary() == null) {
-			Logger.getLogger(BAM.class.getName()).log(
-					Level.WARNING, "Couldn't find sequence dictionary -- no sequences loaded from BAM");
-		} else {
-			// add sequences that aren't in the original group.  Especially useful for "unknown groups"
-			for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
-				try {
-					if(Thread.currentThread().isInterrupted())
-						break;
-
-					String seqID = ssr.getSequenceName();
-					if (group.getSeq(seqID) == null) {
-						int seqLength = ssr.getSequenceLength();
-						group.addSeq(new BioSeq(seqID, group.getID(), seqLength));
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-		getGenome();
 	}
 
 	@Override
@@ -162,7 +166,7 @@ public final class BAM extends SymLoader {
 				iter = reader.query(seq.getID(), min, max, contained);
 				if (iter != null) {
 					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
-						symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, f.getName()));
+						symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, methodName));
 					}
 				}
 			}

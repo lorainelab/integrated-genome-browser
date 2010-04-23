@@ -248,7 +248,7 @@ public final class Sgr extends SymLoader {
 			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			String line;
-			File directory = new File("/Users/aloraine/Downloads/temp");
+			
 			while ((line = br.readLine()) != null) {
 				if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
 					continue;
@@ -266,7 +266,7 @@ public final class Sgr extends SymLoader {
 						fileName += "___";
 					}
 
-					File tempFile = File.createTempFile(fileName,".sgr",directory);
+					File tempFile = File.createTempFile(fileName,".sgr");
 					tempFile.deleteOnExit();
 					seq = group.addSeq(seqid, x);
 					chrList.put(seq, tempFile);
@@ -292,9 +292,9 @@ public final class Sgr extends SymLoader {
 	}
 
 	private static void checkSeqLength(BioSeq seq, int x) {
-			if (x > seq.getLength()) 
-				seq.setLength(x);
+		if (x > seq.getLength()) 
+			seq.setLength(x);
 	}
-	
+
 	
 }

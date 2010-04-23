@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -89,14 +90,13 @@ public final class Sgr extends SymLoader {
 		FileOutputStream fos = null;
 
 		try {
-			
-			fis = new FileInputStream(chrList.get(seq));
-			
-			if (fis == null) {
+
+			if (!chrList.containsKey(seq)) {
 				Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
 				return Collections.<GraphSym>emptyList();
 			}
-			
+
+			fis = new FileInputStream(chrList.get(seq));
 			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			
@@ -240,15 +240,32 @@ public final class Sgr extends SymLoader {
 	private boolean buildIndex(){
 		FileInputStream fis = null;
 		InputStream is = null;
-		BufferedReader br = null;
-		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
-		BufferedWriter bw = null;
+		Map<String, Integer> chrLength = new HashMap<String, Integer>();
+		Map<String, File> chrFiles = new HashMap<String, File>();
+		
 		try {
 			fis = new FileInputStream(this.f);
-			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
-			br = new BufferedReader(new InputStreamReader(is));
-			String line;
-			
+			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());	
+			parseLines(is, chrLength, chrFiles);
+			createResults(chrLength, chrFiles);
+		} catch (Exception ex) {
+			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
+			return false;
+		} finally {
+			GeneralUtils.safeClose(fis);
+			GeneralUtils.safeClose(is);
+		}
+		return true;
+	}
+
+	private static void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles) {
+		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+		String line;
+		
+		try {
+			br = new BufferedReader(new InputStreamReader(istr));
 			while ((line = br.readLine()) != null) {
 				if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
 					continue;
@@ -256,45 +273,40 @@ public final class Sgr extends SymLoader {
 				String[] fields = line_regex.split(line);
 				String seqid = fields[0];
 				int x = Integer.parseInt(fields[1]);
-				BioSeq seq = group.getSeq(seqid);
-				
-				
-				if (!chrList.containsKey(seq)) {
+				if (!chrs.containsKey(seqid)) {
 					String fileName = seqid;
-
 					if (fileName.length() < 3) {
 						fileName += "___";
 					}
-
-					File tempFile = File.createTempFile(fileName,".sgr");
+					File tempFile = File.createTempFile(fileName, ".sgr");
 					tempFile.deleteOnExit();
-					seq = group.addSeq(seqid, x);
-					chrList.put(seq, tempFile);
-					chrs.put(seq.getID(), new BufferedWriter(new FileWriter(tempFile, true)));
+					chrs.put(seqid, new BufferedWriter(new FileWriter(tempFile, true)));
+					chrFiles.put(seqid, tempFile);
+					chrLength.put(seqid, x);
 				}
-				
-				bw = chrs.get(seq.getID());
-				checkSeqLength(seq,x);
+				bw = chrs.get(seqid);
+				if (x > chrLength.get(seqid)) {
+					chrLength.put(seqid, x);
+				}
 				bw.write(line + "\n");
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return false;
-		} finally {
-	
-			for (BufferedWriter b : chrs.values()) {
+		} catch (IOException ex) {
+			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
+		}finally{
+			for(BufferedWriter b : chrs.values()){
 				GeneralUtils.safeClose(b);
 			}
-
-			GeneralUtils.safeClose(fis);
+			GeneralUtils.safeClose(bw);
+			GeneralUtils.safeClose(br);
 		}
-		return true;
 	}
 
-	private static void checkSeqLength(BioSeq seq, int x) {
-		if (x > seq.getLength()) 
-			seq.setLength(x);
+	private void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
+		for(Entry<String, Integer> bioseq :chrLength.entrySet()){
+			chrList.put(group.addSeq(bioseq.getKey(), bioseq.getValue()), chrFiles.get(bioseq.getKey()));
+		}
 	}
+
 
 	
 }

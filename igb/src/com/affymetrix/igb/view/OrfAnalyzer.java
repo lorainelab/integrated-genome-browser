@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -23,7 +24,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
-import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -46,23 +46,22 @@ public final class OrfAnalyzer extends JComponent
 	public static final Color default_dynamic_orf_color = new Color(100, 200, 100);
 	// GAH 8-23-2004
 	// As IGB is currently configured, smv should be set to the internal SeqMapView of the AltSpliceView...
-	SeqMapView smv;
-	JSlider orf_thresh_slider;
-	JCheckBox showCB;
-	JLabel orf_threshL;
-	JLabel orfL;
-	TransformTierGlyph fortier;
-	TransformTierGlyph revtier;
-	int current_orf_thresh = 300;
-	int orf_thresh_min = 10;
-	int orf_thresh_max = 500;
-	int max_analysis_span = 1000000;
-	boolean show_orfs;
-	BioSeq current_seq;
-	private List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
-	String[] stop_codons = {"TAA", "TAG", "TGA", "TTA", "CTA", "TCA"};
-	Color[] stop_colors = {Color.red, Color.orange, Color.yellow};
-	boolean vertical_layout = false;
+	private final SeqMapView smv;
+	private JSlider orf_thresh_slider;
+	private JCheckBox showCB;
+	private JLabel orf_threshL;
+	private JLabel orfL;
+	private TransformTierGlyph fortier;
+	private TransformTierGlyph revtier;
+	private int current_orf_thresh = 300;
+	private static final int orf_thresh_min = 10;
+	private static final int orf_thresh_max = 500;
+	private static final int max_analysis_span = 1000000;
+	private boolean show_orfs;
+	private final List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
+	private static final String[] stop_codons = {"TAA", "TAG", "TGA", "TTA", "CTA", "TCA"};
+	//Color[] stop_colors = {Color.red, Color.orange, Color.yellow};
+	private boolean vertical_layout = false;
 
 	public OrfAnalyzer(SeqMapView view, boolean vlayout) {
 		super();
@@ -75,7 +74,6 @@ public final class OrfAnalyzer extends JComponent
 
 		orfL = new JLabel("Min ORF Length:", SwingConstants.CENTER);
 		orf_threshL = new JLabel(Integer.toString(current_orf_thresh), SwingConstants.CENTER);
-		;
 		showCB = new JCheckBox("Analyze ORFs");
 		orf_thresh_slider = new JSlider(JSlider.HORIZONTAL, orf_thresh_min, orf_thresh_max, current_orf_thresh);
 		JPanel pan1 = new JPanel();
@@ -130,8 +128,7 @@ public final class OrfAnalyzer extends JComponent
 			return;
 		}
 		BioSeq vseq = smv.getViewSeq();
-		current_seq = vseq;
-		if (current_seq == null) {
+		if (vseq == null) {
 			return;
 		}
 		removeTiersFromMap();
@@ -140,37 +137,23 @@ public final class OrfAnalyzer extends JComponent
 			return;
 		}
 		SeqSpan vspan = smv.getVisibleSpan();
-		int span_start = vspan.getMin();
-		int span_end = vspan.getMax();
-		int span_mid = (int) (0.5f * span_start + 0.5f * span_end);
+		
 
-		span_start = span_mid - (max_analysis_span / 2);
-		span_start -= span_start % 3;
-		span_end = span_mid + (max_analysis_span / 2);
-		span_end -= span_end % 3;
-
-		int span_length = span_end - span_start;
-
-		int residue_offset = 0;
-
-
-		AffyTieredMap map = smv.getSeqMap();
-		orf_holders = new ArrayList<FlyPointLinkerGlyph>();
-		if (vseq == null || !(vseq.isComplete())) {
+		orf_holders.clear();
+		if (!(vseq.isComplete())) {
 			Application.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
 			show_orfs = false;
 			showCB.setSelected(false);
 			return;
 		}
 
-		residue_offset = vseq.getMin();
-
-
 		fortier = new TransformTierGlyph(new DefaultIAnnotStyle());
 		fortier.setLabel("Stop Codons");
 		fortier.setFixedPixHeight(25);
 		fortier.setFillColor(Color.darkGray);
 		fortier.setDirection(TierGlyph.Direction.FORWARD);
+
+		AffyTieredMap map = smv.getSeqMap();
 		map.addTier(fortier, true);  // put forward tier above axis
 
 		revtier = new TransformTierGlyph(new DefaultIAnnotStyle());
@@ -183,15 +166,26 @@ public final class OrfAnalyzer extends JComponent
 		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
 		Color linkcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
 
-		IntList[] frame_lists = new IntList[6];
+		int span_start = vspan.getMin();
+		int span_end = vspan.getMax();
+		int span_mid = (int) (0.5f * span_start + 0.5f * span_end);
+
+		span_start = span_mid - (max_analysis_span / 2);
+		span_start -= span_start % 3;
+		span_end = span_mid + (max_analysis_span / 2);
+		span_end -= span_end % 3;
+
+		int span_length = span_end - span_start;
+		int residue_offset = vseq.getMin();
+
+		IntArrayList[] frame_lists = new IntArrayList[6];
 		for (int i = 0; i < 6; i++) {
 			// estimating number of stop codons, then padding by 20%
-			frame_lists[i] = new IntList((int) ((span_length / 64) / 1.2));
+			frame_lists[i] = new IntArrayList((int) ((span_length / 64) / 1.2));
 		}
 
 
 		for (int i = 0; i < stop_codons.length; i++) {
-			//int count = 0;
 			boolean forward_codon = (i <= 2);
 			String codon = stop_codons[i];
 
@@ -215,15 +209,13 @@ public final class OrfAnalyzer extends JComponent
 				} // reverse frames = (3, 4, 5)
 				frame_lists[frame].add(seq_index);
 				res_index = vseq.indexOf(codon, res_index + 1);
-
-				//count++;
 			}
 		}
 
 		for (int frame = 0; frame < 6; frame++) {
 			boolean forward = frame <= 2;
-			IntList xpos_vec = frame_lists[frame];
-			int[] xpos = xpos_vec.copyToArray();
+			IntArrayList xpos_vec = frame_lists[frame];
+			int[] xpos = xpos_vec.elements();
 			// must sort positions!  because positions were added to IntList for each type of
 			//   stop codon before other types, positions in IntList will _not_ be in
 			//   ascending order (though for a particular type, e.g. "TAA", they will be)

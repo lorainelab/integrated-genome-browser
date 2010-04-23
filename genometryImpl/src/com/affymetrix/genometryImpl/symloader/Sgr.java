@@ -25,7 +25,7 @@ public final class Sgr extends SymLoader {
 	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
-	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
+	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 	
 	public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
@@ -71,14 +71,14 @@ public final class Sgr extends SymLoader {
 	@Override
 	public List<GraphSym> getChromosome(BioSeq seq) {
 		init();
-		return parse(seq, seq.getMin(), seq.getMax());
+		return parse(seq, seq.getMin(), seq.getMax() + 1); //interbase format
 	}
 
 
 	@Override
 	public List<GraphSym> getRegion(SeqSpan span) {
 		init();
-		return parse(span.getBioSeq(), span.getMin(), span.getMax());
+		return parse(span.getBioSeq(), span.getMin(), span.getMax() + 1); //interbaseformat
 	}
 
 	public String getMimeType() {
@@ -98,12 +98,14 @@ public final class Sgr extends SymLoader {
 
 		try {
 
-			if (!chrList.containsKey(seq)) {
+			File file = chrList.get(seq);
+
+			if (file == null) {
 				Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
 				return Collections.<GraphSym>emptyList();
 			}
 
-			fis = new FileInputStream(chrList.get(seq));
+			fis = new FileInputStream(file);
 			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			
@@ -111,17 +113,19 @@ public final class Sgr extends SymLoader {
 			// will make sure the GraphState is also unique on the whole genome.
 			String gid = AnnotatedSeqGroup.getUniqueGraphID(this.featureName, this.group);
 			
-			boolean sorted = parseLines(br, xlist, ylist, seq, min, max);
+			boolean sort = parseLines(br, xlist, ylist, min, max, !file.canWrite());
 
 			GraphSym sym = createResults(xlist, seq, ylist, gid);
 
 			results.add(sym);
 
-			if(!sorted){
-				fos = new FileOutputStream(chrList.get(sym.getGraphSeq()));
+			if(sort){
+				fos = new FileOutputStream(file);
 				writeSgrFormat(sym,fos);
 			}
 
+			file.setReadOnly();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -133,59 +137,52 @@ public final class Sgr extends SymLoader {
 	}
 
 	private static boolean parseLines(
-			BufferedReader br, IntArrayList xlist, FloatArrayList ylist, BioSeq seq, int min, int max)
+			BufferedReader br, IntArrayList xlist, FloatArrayList ylist, int min, int max, boolean sorted)
 			throws IOException, NumberFormatException {
+		String[] fields;
 		String line;
-		AnnotatedSeqGroup group = seq.getSeqGroup();
 		int x = 0;
 		float y = 0.0f;
 		int prevx = 0;
-		boolean sorted = true;
+		boolean sort = false;
 
 		while ((line = br.readLine()) != null) {
 			if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
 				continue;
 			}
-			String[] fields = line_regex.split(line);
+			fields = line_regex.split(line);
 			if (fields == null || fields.length == 0) {
 				continue;
 			}
-			String seqid = fields[0];
 			
-			if (seq != null) {
-				// getChromosome() or getRegion()
-				if (group == null) {
-					if (!seq.getID().equalsIgnoreCase(seqid)) {
-						continue;
-					}
-				} else {
-					BioSeq synonymSeq = group.getSeq(seqid);
-					if (synonymSeq == null || !synonymSeq.equals(seq)) {
-						continue;
-					}
-				}
-				x = Integer.parseInt(fields[1]);
-				if (x < min || x > max) {
-					// only look in range
-					continue;
-				}
-			} else {
-				// getGenome()
-				x = Integer.parseInt(fields[1]);
-			}
+			
+			x = Integer.parseInt(fields[1]);
 
+			if(x >= max){
+				if(sorted)
+					break;
+				else
+					continue;
+			}
+				
+			if (x < min)
+				continue;	//only look in range
+			
 			y = Float.parseFloat(fields[2]);
 			xlist.add(x);
 			ylist.add(y);
 
-			if(prevx > x && sorted){
-				sorted = false;
+			if(!sorted){
+				if(prevx > x)
+					sort = true;
+				else
+					prevx = x;
 			}
-
-			prevx = x;
+			
+			
 		}
 
-		return sorted;
+		return sort;
 	}
 
 	public static boolean writeSgrFormat(GraphSym graf, OutputStream ostr) throws IOException {
@@ -319,7 +316,6 @@ public final class Sgr extends SymLoader {
 			chrList.put(group.addSeq(bioseq.getKey(), bioseq.getValue()), chrFiles.get(bioseq.getKey()));
 		}
 	}
-
 
 	
 }

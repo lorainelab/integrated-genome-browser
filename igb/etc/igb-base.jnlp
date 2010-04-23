@@ -19,7 +19,7 @@
 		<jar href="commons-codec-1.4.jar" />
 		<jar href="colt.jar"          download="lazy" part="colt" />
 		<jar href="freehep-2.1.1.jar" download="lazy" part="freehep" />
-		<jar href="sam-1.16.jar"      download="lazy" part="sam"/>
+		<jar href="sam.jar"      download="lazy" part="sam"/>
 
 		<property name="apple.laf.useScreenMenuBar" value="true" />
 

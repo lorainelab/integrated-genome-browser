@@ -27,7 +27,7 @@
                         <xs:annotation>
                             <xs:documentation>In ProtAnnot, the content of the descriptor tags will appear in the Property Sheet table when users click 
                                 Glyphs representing mRNAs, simhits, etc. Also, each mRNA needs a single descriptor element with type equal to 
-                                &quot;protein_product_id&quot;. In addition, there should be one &lt;aaseq&gt; element in the file with &quot;id&quot; attribute equal to
+                                "protein_product_id". In addition, there should be one &lt;aaseq&gt; element in the file with "id" attribute equal to
                                 that protein_product_id descriptor's value. This is how ProtAnnot links protein annotations (conserved motifs) 
                                 to the mRNA transcripts that encode them.                         
                             </xs:documentation>
@@ -37,7 +37,7 @@
                                 <xs:complexType>
                                     <xs:simpleContent>
                                         <xs:extension base="xs:string">
-                                            <xs:attribute name="name" type="xs:string"
+                                            <xs:attribute name="type" type="xs:string"
                                                 use="required"/>
                                         </xs:extension>
                                     </xs:simpleContent>
@@ -71,9 +71,9 @@
                                             indicates the end of the termination codon and the CDS start indicates the position of the first translated
                                             base, e.g., the A in the ATG initial methionine. The reason we include the stop codon in the bounds of the CDS
                                             is mainly for convenience. Bed files obtained from UCSC include the stop codon in the region bounded by
-                                            the bed &quot;thickStart&quot; and &quot;thickEnd&quot; fields.
+                                            the bed "thickStart" and "thickEnd" fields.
                                         </xs:documentation>
-                                    </xs:annotation>                                 
+                                    </xs:annotation>
                                     <xs:attribute name="start" type="xs:nonNegativeInteger"
                                         use="required"/>
                                     <xs:attribute name="end" type="xs:nonNegativeInteger"
@@ -102,7 +102,7 @@
                                                   <xs:complexType>
                                                   <xs:simpleContent>
                                                   <xs:extension base="xs:string">
-                                                  <xs:attribute name="name" type="xs:string"
+                                                  <xs:attribute name="type" type="xs:string"
                                                   use="required"/>
                                                   </xs:extension>
                                                   </xs:simpleContent>
@@ -117,7 +117,7 @@
                                                   <xs:complexType>
                                                   <xs:simpleContent>
                                                   <xs:extension base="xs:string">
-                                                  <xs:attribute name="name" type="xs:string"
+                                                  <xs:attribute name="type" type="xs:string"
                                                   use="required"/>
                                                   </xs:extension>
                                                   </xs:simpleContent>

@@ -30,11 +30,9 @@ public final class JComboBoxToolTipRenderer extends BasicComboBoxRenderer {
 			setBackground(list.getSelectionBackground());
 			setForeground(list.getSelectionForeground());
 			if (value != null && toolTipMap.containsKey(value)) {
-				System.out.println("Setting tooltip to " + toolTipMap.get(value));
 				list.setToolTipText(toolTipMap.get(value));
 			} else {
 				list.setToolTipText("");
-				System.out.println("Setting tooltip to blank.");
 			}
 		} else {
 			setBackground(list.getBackground());

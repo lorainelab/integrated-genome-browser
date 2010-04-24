@@ -4,6 +4,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import java.awt.Component;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ import javax.swing.table.TableRowSorter;
  */
 public final class TableWithVisibleComboBox {
 	private static TableRowSorter<FeaturesTableModel> sorter;
-	
+	static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
   
 	/**
 	 * Set the columm to use the ComboBox DAScb and renderer (which also depends on the row/server type)
@@ -34,72 +36,81 @@ public final class TableWithVisibleComboBox {
 	 * @param enabled
 	 */
 	static void setComboBoxEditors(JTableX table, int column, boolean enabled) {
-   
-    FeaturesTableModel ftm = (FeaturesTableModel) table.getModel();
-	sorter = new TableRowSorter<FeaturesTableModel>(ftm);
-	table.setRowSorter(sorter);
+		comboRenderer.setToolTipEntry(LoadStrategy.NO_LOAD.toString(), IGBConstants.BUNDLE.getString("noLoadCBToolTip"));
+		comboRenderer.setToolTipEntry(LoadStrategy.VISIBLE.toString(), IGBConstants.BUNDLE.getString("visibleCBToolTip"));
+		comboRenderer.setToolTipEntry(LoadStrategy.CHROMOSOME.toString(), IGBConstants.BUNDLE.getString("chromosomeCBToolTip"));
+		comboRenderer.setToolTipEntry(LoadStrategy.GENOME.toString(), IGBConstants.BUNDLE.getString("genomeCBToolTip"));
+		FeaturesTableModel ftm = (FeaturesTableModel) table.getModel();
+		sorter = new TableRowSorter<FeaturesTableModel>(ftm);
+		table.setRowSorter(sorter);
 
-	int featureSize = ftm.features.size();
-	RowEditorModel rm = new RowEditorModel(featureSize);
-    // tell the JTableX which RowEditorModel we are using
-    table.setRowEditorModel(rm);
+		int featureSize = ftm.features.size();
+		RowEditorModel rm = new RowEditorModel(featureSize);
+		// tell the JTableX which RowEditorModel we are using
+		table.setRowEditorModel(rm);
 
-    JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
-    DAScb.setEnabled(enabled);
-    DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
+		JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
+		DAScb.setRenderer(comboRenderer);
+		DAScb.setEnabled(enabled);
+		DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
 
-	JComboBox LocalFilecb = new JComboBox(FeaturesTableModel.newFileLoadChoices);
-    LocalFilecb.setEnabled(true);
-    DefaultCellEditor LocalFileeditor = new DefaultCellEditor(LocalFilecb);
+		JComboBox LocalFilecb = new JComboBox(FeaturesTableModel.newFileLoadChoices);
+		LocalFilecb.setRenderer(comboRenderer);
+		LocalFilecb.setEnabled(true);
+		DefaultCellEditor LocalFileeditor = new DefaultCellEditor(LocalFilecb);
 
-    for (int row = 0; row < featureSize; row++) {
-      GenericFeature gFeature = ftm.features.get(row);
-	  SymLoader symL = gFeature.symL;
-	  if (symL != null) {
-		  JComboBox featureCB = new JComboBox(symL.getLoadChoices());
-		  featureCB.setEnabled(true);
-		  DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
-		  rm.addEditorForRow(row, featureEditor);
-		  continue;
-	  }
+		for (int row = 0; row < featureSize; row++) {
+			GenericFeature gFeature = ftm.features.get(row);
+			SymLoader symL = gFeature.symL;
+			if (symL != null) {
+				JComboBox featureCB = new JComboBox(symL.getLoadChoices());
+				featureCB.setRenderer(comboRenderer);
+				featureCB.setEnabled(true);
+				DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
+				rm.addEditorForRow(row, featureEditor);
+				continue;
+			}
 
-      ServerType serverType = gFeature.gVersion.gServer.serverType;
-      if (serverType == ServerType.DAS || serverType == ServerType.DAS2) {
-        rm.addEditorForRow(row, DASeditor);
-      } else if (serverType == ServerType.LocalFiles) {
-		rm.addEditorForRow(row, LocalFileeditor);
-	  } else {
-        System.out.println("ERROR: Undefined class " + serverType);
-      }
-    }
+			ServerType serverType = gFeature.gVersion.gServer.serverType;
+			if (serverType == ServerType.DAS || serverType == ServerType.DAS2) {
+				rm.addEditorForRow(row, DASeditor);
+			} else if (serverType == ServerType.LocalFiles) {
+				rm.addEditorForRow(row, LocalFileeditor);
+			} else {
+				System.out.println("ERROR: Undefined class " + serverType);
+			}
+		}
 
-    TableColumn c = table.getColumnModel().getColumn(column);
-    c.setCellRenderer(new ColumnRenderer());
-    ((JComponent) c.getCellRenderer()).setEnabled(enabled);
-  }
+		TableColumn c = table.getColumnModel().getColumn(column);
+		c.setCellRenderer(new ColumnRenderer());
+		((JComponent) c.getCellRenderer()).setEnabled(enabled);
+	}
 
   private static final class ColumnRenderer extends JComponent implements TableCellRenderer {
 
-    private final JComboBox comboBoxRender;
-    private final JTextField textFieldRender;	// If an entire genome is loaded in, change the combo box to a text field.
+    private final JComboBox comboBox;
+    private final JTextField textField;	// If an entire genome is loaded in, change the combo box to a text field.
 
     public ColumnRenderer() {
-      comboBoxRender = new JComboBox();
-      textFieldRender = new JTextField(LoadStrategy.GENOME.toString());
-      comboBoxRender.setBorder(null);
-      textFieldRender.setBorder(null);
+      comboBox = new JComboBox();
+	  comboBox.setRenderer(comboRenderer);
+      comboBox.setBorder(null);
+
+	  textField = new JTextField(LoadStrategy.GENOME.toString());
+	  textField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	// only for whole genome
+      textField.setBorder(null);
     }
 
     public Component getTableCellRendererComponent(
             JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
 
-      if (((String) value).equals(textFieldRender.getText())) {
-        return textFieldRender;
+      if (((String) value).equals(textField.getText())) {
+        return textField;
       } else {
-        comboBoxRender.removeAllItems();
-        comboBoxRender.addItem(value);
-        return comboBoxRender;
+        comboBox.removeAllItems();
+        comboBox.addItem(value);
+        return comboBox;
       }
     }
   }

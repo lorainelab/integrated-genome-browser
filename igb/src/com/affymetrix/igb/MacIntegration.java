@@ -1,5 +1,6 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.igb.action.AboutIGBAction;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Image;
 import java.lang.reflect.InvocationHandler;
@@ -99,7 +100,8 @@ final class ApplicationListenerProxy implements InvocationHandler {
 		Object result = null;
 		try {
 			if (method.getName().equals("handleAbout")) {
-				IGB.singleton_igb.showAboutDialog();
+				AboutIGBAction a = new AboutIGBAction();
+				a.actionPerformed(null);
 				Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
 				setHandled.invoke(args[0], true);
 			} else if (method.getName().equals("handleQuit")) {

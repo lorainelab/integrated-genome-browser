@@ -37,7 +37,6 @@ public class AltSpliceView extends JComponent
 				TierLabelManager.PopupListener {
 
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static final boolean CONTROLS_ON_SIDE = false;
 	private final SeqMapView original_view;
 	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
@@ -55,7 +54,7 @@ public class AltSpliceView extends JComponent
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.SUBSELECT_SEQUENCE = false;
-		orf_analyzer = new OrfAnalyzer(spliced_view, CONTROLS_ON_SIDE);
+		orf_analyzer = new OrfAnalyzer(spliced_view);
 		buffer_sizeTF = new JTextField(4);
 		buffer_sizeTF.setText("" + spliced_view.getSliceBuffer());
 		slice_by_selectionCB = new JCheckBox("Slice By Selection", true);
@@ -64,41 +63,20 @@ public class AltSpliceView extends JComponent
 		buf_adjustP.add(new JLabel("Slice Buffer: "));
 		buf_adjustP.add(buffer_sizeTF);
 
-		JPanel pan1;
-		if (CONTROLS_ON_SIDE) {
-			pan1 = new JPanel(new GridLayout(2, 1));
-		} else {
-			pan1 = new JPanel(new GridLayout(1, 2));
-		}
+		JPanel pan1 = new JPanel(new GridLayout(1, 2));
 
 		pan1.add(slice_by_selectionCB);
 		pan1.add(buf_adjustP);
 		JPanel options_panel = new JPanel(new BorderLayout());
 
-		if (CONTROLS_ON_SIDE) {
-			options_panel.add("North", pan1);
-			options_panel.add("South", orf_analyzer);
-
-			JScrollPane oscroller = new JScrollPane(options_panel);
-			JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-			//splitpane.setOneTouchExpandable(true);		// confusing to new users
-			splitpane.setDividerSize(8);
-			int dloc = (int) frmbounds.getWidth() - (int) oscroller.getPreferredSize().getWidth() - 25;  // -20 for border etc.
-			splitpane.setDividerLocation(dloc);
-			splitpane.setLeftComponent(spliced_view);
-			splitpane.setRightComponent(oscroller);
-			this.add("Center", splitpane);
-		} else {
-			options_panel.add("West", pan1);
-			options_panel.add("East", orf_analyzer);
-			JSplitPane splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-			splitpane.setResizeWeight(1);  // allocate as much space as possible to top panel
-			//splitpane.setOneTouchExpandable(true);		// confusing to new users
-			splitpane.setDividerSize(8);
-			splitpane.setTopComponent(spliced_view);
-			splitpane.setBottomComponent(options_panel);
-			this.add("Center", splitpane);
-		}
+		options_panel.add("West", pan1);
+		options_panel.add("East", orf_analyzer);
+		JSplitPane splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		splitpane.setResizeWeight(1);  // allocate as much space as possible to top panel
+		splitpane.setDividerSize(8);
+		splitpane.setTopComponent(spliced_view);
+		splitpane.setBottomComponent(options_panel);
+		this.add("Center", splitpane);
 
 		this.addComponentListener(this);
 		spliced_view.setFrame(original_view.getFrame());
@@ -134,18 +112,15 @@ public class AltSpliceView extends JComponent
 			//    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
 			last_selected_syms = evt.getSelectedSyms();
 			last_selected_syms = removeGraphs(last_selected_syms);
-			int symcount = last_selected_syms.size();
-			if (symcount > 0) {
-				{
-					if (!this.isShowing()) {
-						pending_selection_change = true;
-					} else if (slice_by_selection_on) {
-						this.sliceAndDice(last_selected_syms);
-						pending_selection_change = false;
-					} else {
-						spliced_view.select(last_selected_syms);
-						pending_selection_change = false;
-					}
+			if (last_selected_syms.size() > 0) {
+				if (!this.isShowing()) {
+					pending_selection_change = true;
+				} else if (slice_by_selection_on) {
+					this.sliceAndDice(last_selected_syms);
+					pending_selection_change = false;
+				} else {
+					spliced_view.select(last_selected_syms);
+					pending_selection_change = false;
 				}
 			}
 		}
@@ -171,8 +146,8 @@ public class AltSpliceView extends JComponent
 		slice_by_selection_on = b;
 	}
 
-	private void setSliceBuffer(int buf_size, boolean refresh) {
-		spliced_view.setSliceBuffer(buf_size, refresh);
+	private void setSliceBuffer(int buf_size) {
+		spliced_view.setSliceBuffer(buf_size);
 		orf_analyzer.redoOrfs();
 	}
 
@@ -225,7 +200,7 @@ public class AltSpliceView extends JComponent
 			String str = buffer_sizeTF.getText();
 			if (str != null) {
 				int new_buf_size = Integer.parseInt(str);
-				this.setSliceBuffer(new_buf_size, true);
+				this.setSliceBuffer(new_buf_size);
 			}
 		}
 	}
@@ -233,11 +208,7 @@ public class AltSpliceView extends JComponent
 	public void itemStateChanged(ItemEvent evt) {
 		Object src = evt.getSource();
 		if (src == slice_by_selectionCB) {
-			if (evt.getStateChange() == ItemEvent.SELECTED) {
-				setSliceBySelection(true);
-			} else {
-				setSliceBySelection(false);
-			}
+			setSliceBySelection(evt.getStateChange() == ItemEvent.SELECTED);
 		}
 	}
 

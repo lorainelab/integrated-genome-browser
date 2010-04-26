@@ -71,14 +71,14 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		return glyphs;
 	}
 
-	protected final void setSliceBuffer(int bases, boolean refresh) {
+	protected final void setSliceBuffer(int bases) {
 		slice_buffer = bases;
-		if (refresh && slicing_in_effect) {
+		if (slicing_in_effect) {
 			sliceAndDice(slice_symmetry);
 		}
 	}
 
-	public final int getSliceBuffer() {
+	final int getSliceBuffer() {
 		return slice_buffer;
 	}
 

@@ -61,11 +61,9 @@ public final class OrfAnalyzer extends JComponent
 	private final List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
 	private static final String[] stop_codons = {"TAA", "TAG", "TGA", "TTA", "CTA", "TCA"};
 	//Color[] stop_colors = {Color.red, Color.orange, Color.yellow};
-	private boolean vertical_layout = false;
 
-	public OrfAnalyzer(SeqMapView view, boolean vlayout) {
+	public OrfAnalyzer(SeqMapView view) {
 		super();
-		vertical_layout = vlayout;
 		smv = view;
 		init();
 	}
@@ -81,17 +79,10 @@ public final class OrfAnalyzer extends JComponent
 		pan1.add(orfL);
 		pan1.add(orf_threshL);
 
-		if (vertical_layout) {
-			this.setLayout(new GridLayout(3, 1));
-			this.add(showCB);
-			this.add(pan1);
-			this.add(orf_thresh_slider);
-		} else {
-			this.setLayout(new FlowLayout());
-			this.add(showCB);
-			this.add(pan1);
-			this.add(orf_thresh_slider);
-		}
+		this.setLayout(new FlowLayout());
+		this.add(showCB);
+		this.add(pan1);
+		this.add(orf_thresh_slider);
 
 		showCB.addActionListener(this);
 		orf_thresh_slider.addChangeListener(this);

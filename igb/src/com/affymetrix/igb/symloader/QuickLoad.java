@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.Bar;
 import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symloader.Sgr;
+import com.affymetrix.genometryImpl.symloader.USeq;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -322,13 +323,17 @@ public final class QuickLoad extends SymLoader {
 		/*if (this.extension.endsWith("bar")) {
 			return new Bar(this.uri, this.featureName, this.version.group);
 		}*/
+		if (this.extension.endsWith("gr")) {
+			return new Gr(this.uri, this.featureName, this.version.group);
+		}
 		if (this.extension.endsWith("sgr")) {
 			return new Sgr(this.uri, this.featureName, this.version.group);
 		}
+		if (this.extension.endsWith("useq")) {
+			return new USeq(this.uri, this.featureName, this.version.group);
+		}
 		if (this.extension.endsWith("wig")) {
 			return new Wiggle(this.uri, this.featureName, this.version.group);
-		}if (this.extension.endsWith("gr")) {
-			return new Gr(this.uri, this.featureName, this.version.group);
 		}
 		return null;
 	}

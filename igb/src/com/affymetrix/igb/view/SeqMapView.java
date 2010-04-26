@@ -684,7 +684,7 @@ public class SeqMapView extends JPanel
 		if (cytoband_glyph_A != null) {
 			cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());
 			cytoband_glyph.addChild(cytoband_glyph_A);
-		} else {
+		} else if (cytoband_glyph_B != null) {
 			cytoband_glyph.setCoordBox(cytoband_glyph_B.getCoordBox());
 			cytoband_glyph.addChild(cytoband_glyph_B);
 		}
@@ -1462,7 +1462,7 @@ public class SeqMapView extends JPanel
 	 * If a region of sequence is selected, should copy genomic residues
 	 * If an annotation is selected, should the residues of the leaf nodes of the annotation, spliced together
 	 */
-	public boolean copySelectedResidues() {
+	public final boolean copySelectedResidues() {
 		boolean success = false;
 		SeqSymmetry residues_sym = null;
 		Clipboard clipboard = this.getToolkit().getSystemClipboard();

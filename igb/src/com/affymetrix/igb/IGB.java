@@ -67,6 +67,7 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.AutoScrollAction;
+import com.affymetrix.igb.action.PreferencesAction;
 import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
@@ -110,7 +111,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private LoadFileAction open_file_action;
 	private JMenuItem gc_item;
 	private JMenuItem memory_item;
 	private JMenuItem about_item;
@@ -119,14 +119,12 @@ public final class IGB extends Application
 	private JMenuItem console_item;
 	private JMenuItem clear_item;
 	private JMenuItem clear_graphs_item;
-	private JMenuItem open_file_or_URL_item;
 	private JMenuItem print_item;
 	private JMenuItem print_frame_item;
 	private JMenuItem export_map_item;
 	private JMenuItem export_labelled_map_item;
 	private JMenuItem export_slice_item;
 	private JMenuItem export_whole_frame;
-	private JMenuItem preferences_item;
 	private JMenuItem exit_item;
 	private JMenuItem res2clip_item;
 	private JMenuItem clamp_view_item;
@@ -397,11 +395,8 @@ public final class IGB extends Application
 
 		bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
-		open_file_action = new LoadFileAction(map_view.getFrame(), load_directory);
 		clear_item = new JMenuItem(BUNDLE.getString("clearAll"), KeyEvent.VK_C);
 		clear_graphs_item = new JMenuItem(BUNDLE.getString("clearGraphs"), KeyEvent.VK_L);
-		open_file_or_URL_item = new JMenuItem(BUNDLE.getString("openFileOrUrl"), KeyEvent.VK_O);
-		open_file_or_URL_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
 		print_item = new JMenuItem(BUNDLE.getString("print"), KeyEvent.VK_P);
 		print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
 		print_frame_item = new JMenuItem(BUNDLE.getString("printWhole"), KeyEvent.VK_F);
@@ -476,7 +471,6 @@ public final class IGB extends Application
 		console_item.addActionListener(this);
 		clear_item.addActionListener(this);
 		clear_graphs_item.addActionListener(this);
-		open_file_or_URL_item.addActionListener(this);
 		print_item.addActionListener(this);
 		print_frame_item.addActionListener(this);
 		export_map_item.addActionListener(this);
@@ -596,10 +590,7 @@ public final class IGB extends Application
 
 	private void fileMenu() {
 		web_links_item = new JMenuItem(WebLinksManagerView.getShowFrameAction());
-		preferences_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, BUNDLE.getString("preferences")), KeyEvent.VK_E);
-		preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
-		preferences_item.addActionListener(this);
-		MenuUtil.addToMenu(file_menu, open_file_or_URL_item);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadFileAction(map_view.getFrame(), load_directory)));
 		MenuUtil.addToMenu(file_menu, clear_item);
 		MenuUtil.addToMenu(file_menu, clear_graphs_item);
 		file_menu.addSeparator();
@@ -610,7 +601,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(export_to_file_menu, export_labelled_map_item);
 		MenuUtil.addToMenu(export_to_file_menu, export_whole_frame);
 		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, preferences_item);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new PreferencesAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, exit_item);
 	}
@@ -718,9 +709,7 @@ public final class IGB extends Application
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		if (src == open_file_or_URL_item) {
-			open_file_action.actionPerformed(evt);
-		} else if (src == print_item) {
+		if (src == print_item) {
 			try {
 				map_view.getSeqMap().print();
 			} catch (Exception ex) {
@@ -815,10 +804,6 @@ public final class IGB extends Application
 			showDocumentationDialog();
 		} else if (src == console_item) {
 			ConsoleView.showConsole();
-		} else if (src == preferences_item) {
-			PreferencesPanel pv = PreferencesPanel.getSingleton();
-			JFrame f = pv.getFrame();
-			f.setVisible(true);
 		}
 	}
 

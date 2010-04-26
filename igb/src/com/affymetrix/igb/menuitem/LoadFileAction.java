@@ -69,6 +69,7 @@ import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.URI;
+import java.text.MessageFormat;
 import org.xml.sax.SAXException;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -76,7 +77,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @version $Id$
  */
-public final class LoadFileAction {
+public final class LoadFileAction extends AbstractAction {
 
 	private final JFrame gviewerFrame;
 	private final FileTracker load_dir_tracker;
@@ -91,6 +92,12 @@ public final class LoadFileAction {
 	 *  @param ft  a FileTracker used to keep track of directory to load from
 	 */
 	public LoadFileAction(JFrame gviewerFrame, FileTracker ft) {
+		super(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("openFileOrUrl")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
+		this.putValue(MNEMONIC_KEY, KeyEvent.VK_O);
+
 		this.gviewerFrame = gviewerFrame;
 		load_dir_tracker = ft;
 	}

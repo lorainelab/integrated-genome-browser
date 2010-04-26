@@ -424,6 +424,10 @@ public final class BioSeq implements SearchableCharIterator {
 		return DNAUtils.reverseComplement(residues_provider.substring(end, start));
 	}
 	private String getResiduesNoProvider(int start, int end, char fillchar) {
+		if (this.getLengthDouble() > Integer.MAX_VALUE) {
+			Logger.getLogger(BioSeq.class.getName()).fine("Length exceeds integer size");
+			return "";
+		}
 		int residue_length = this.getLength();
 		if (start < 0 || residue_length <= 0) {
 			Logger.getLogger(BioSeq.class.getName()).fine("Invalid arguments: " + start + "," + end + "," + residue_length);

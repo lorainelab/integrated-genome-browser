@@ -114,7 +114,7 @@ public final class OrfAnalyzer extends JComponent
 		}
 	}
 
-	public void redoOrfs() {
+	void redoOrfs() {
 		if (smv == null) {
 			return;
 		}
@@ -166,42 +166,8 @@ public final class OrfAnalyzer extends JComponent
 		span_end = span_mid + (max_analysis_span / 2);
 		span_end -= span_end % 3;
 
-		int span_length = span_end - span_start;
 		int residue_offset = vseq.getMin();
-
-		IntArrayList[] frame_lists = new IntArrayList[6];
-		for (int i = 0; i < 6; i++) {
-			// estimating number of stop codons, then padding by 20%
-			frame_lists[i] = new IntArrayList((int) ((span_length / 64) / 1.2));
-		}
-
-
-		for (int i = 0; i < stop_codons.length; i++) {
-			boolean forward_codon = (i <= 2);
-			String codon = stop_codons[i];
-
-			int seq_index = span_start;
-			int res_index = span_start - residue_offset;
-			res_index = vseq.indexOf(codon, res_index);
-
-			// need to factor in possible offset of residues string from start of
-			//    sequence (for example, when sequence is a CompNegSeq)
-			while (res_index >= 0 && (seq_index < span_end)) {
-				int frame;
-				// need to factor in possible offset of residues string from start of
-				//    sequence (for example, when sequence is a CompNegSeq)
-				seq_index = res_index + residue_offset;
-
-				if (forward_codon) {
-					frame = res_index % 3;
-				} // forward frames = (0, 1, 2)
-				else {
-					frame = 3 + (res_index % 3);
-				} // reverse frames = (3, 4, 5)
-				frame_lists[frame].add(seq_index);
-				res_index = vseq.indexOf(codon, res_index + 1);
-			}
-		}
+		IntArrayList[] frame_lists = buildFrameLists(span_start, residue_offset, vseq, span_end);
 
 		for (int frame = 0; frame < 6; frame++) {
 			boolean forward = frame <= 2;
@@ -246,6 +212,40 @@ public final class OrfAnalyzer extends JComponent
 			tier.addChild(orf_glyph);
 		}
 		adjustMap();
+	}
+
+	private static IntArrayList[] buildFrameLists(int span_start, int residue_offset, BioSeq vseq, int span_end) {
+		int span_length = span_end - span_start;
+		IntArrayList[] frame_lists = new IntArrayList[6];
+		for (int i = 0; i < 6; i++) {
+			// estimating number of stop codons, then padding by 20%
+			frame_lists[i] = new IntArrayList((int) ((span_length / 64) / 1.2));
+		}
+		for (int i = 0; i < stop_codons.length; i++) {
+			boolean forward_codon = i <= 2;
+			String codon = stop_codons[i];
+			int seq_index = span_start;
+			int res_index = span_start - residue_offset;
+			res_index = vseq.indexOf(codon, res_index);
+			// need to factor in possible offset of residues string from start of
+			//    sequence (for example, when sequence is a CompNegSeq)
+			while (res_index >= 0 && (seq_index < span_end)) {
+				int frame;
+				// need to factor in possible offset of residues string from start of
+				//    sequence (for example, when sequence is a CompNegSeq)
+				seq_index = res_index + residue_offset;
+				if (forward_codon) {
+					frame = res_index % 3;
+				} // forward frames = (0, 1, 2)
+				else {
+					frame = 3 + (res_index % 3);
+				} // reverse frames = (3, 4, 5)
+				// reverse frames = (3, 4, 5)
+				frame_lists[frame].add(seq_index);
+				res_index = vseq.indexOf(codon, res_index + 1);
+			}
+		}
+		return frame_lists;
 	}
 
 	private void removeTiersFromMap() {

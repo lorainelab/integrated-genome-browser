@@ -126,6 +126,21 @@ public class AltSpliceView extends JComponent
 		}
 	}
 
+	/**
+	 * takes a list of SeqSymmetries and removes any GraphSyms from it.
+	 * @param syms
+	 * @return
+	 */
+	private static List<SeqSymmetry> removeGraphs(List<SeqSymmetry> syms) {
+		List<SeqSymmetry> v = new ArrayList<SeqSymmetry>(syms.size());
+		for (SeqSymmetry sym : syms) {
+			if (!(sym instanceof GraphSym)) {
+				v.add(sym);
+			}
+		}
+		return v;
+	}
+
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		if (Application.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
@@ -142,7 +157,7 @@ public class AltSpliceView extends JComponent
 		}
 	}
 
-	public void setSliceBySelection(boolean b) {
+	private void setSliceBySelection(boolean b) {
 		slice_by_selection_on = b;
 	}
 
@@ -156,17 +171,6 @@ public class AltSpliceView extends JComponent
 			spliced_view.sliceAndDice(syms);
 			orf_analyzer.redoOrfs();
 		}
-	}
-
-	// takes a list (of SeqSymmetry) and removes any GraphSym's from it.
-	List<SeqSymmetry> removeGraphs(List<SeqSymmetry> syms) {
-		ArrayList<SeqSymmetry> v = new ArrayList<SeqSymmetry>(syms.size());
-		for (SeqSymmetry sym : syms) {
-			if (!(sym instanceof GraphSym)) {
-				v.add(sym);
-			}
-		}
-		return v;
 	}
 
 	// ComponentListener implementation

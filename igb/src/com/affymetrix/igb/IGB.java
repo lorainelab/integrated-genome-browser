@@ -111,7 +111,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JMenuItem memory_item;
 	private JMenuItem about_item;
 	private JMenuItem documentation_item;
 	private JMenuItem bug_item;
@@ -439,7 +438,6 @@ public final class IGB extends Application
 
 		MenuUtil.addToMenu(tools_menu, web_links_item);
 
-		memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
 		about_item = new JMenuItem(
 				MessageFormat.format(
 					MENU_ITEM_HAS_DIALOG,
@@ -459,7 +457,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, documentation_item);
 		MenuUtil.addToMenu(help_menu, console_item);
 
-		memory_item.addActionListener(this);
 		about_item.addActionListener(this);
 		bug_item.addActionListener(this);
 		documentation_item.addActionListener(this);

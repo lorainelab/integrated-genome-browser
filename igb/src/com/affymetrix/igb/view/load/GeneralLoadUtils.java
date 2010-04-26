@@ -687,5 +687,26 @@ public final class GeneralLoadUtils {
 		return LOOKUP.getPreferredName(gVersions.iterator().next().versionName);
 	}
 
+	/**
+	 * Get synonyms of version.
+	 * @param versionName - version name
+	 * @return a friendly HTML string of version synonyms (not including versionName).
+	 */
+	static String listSynonyms(String versionName) {
+		StringBuilder synonymBuilder = new StringBuilder(100);
+		synonymBuilder.append("<html>" + IGBConstants.BUNDLE.getString("synonymList"));
+		Set<String> synonymSet = LOOKUP.getSynonyms(versionName);
+		for (String synonym : synonymSet) {
+			if (synonym.equalsIgnoreCase(versionName)) {
+				continue;
+			}
+			synonymBuilder.append("<p>" + synonym + "</p>");
+		}
+		if (synonymSet.size() <= 1) {
+			synonymBuilder.append(IGBConstants.BUNDLE.getString("noSynonyms"));
+		}
+		synonymBuilder.append("</html>");
+		return synonymBuilder.toString();
+	}
 
 }

@@ -50,6 +50,7 @@ import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
+import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import java.text.MessageFormat;
 
@@ -73,7 +74,9 @@ public final class GeneralLoadView extends JComponent
 	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
 	private AnnotatedSeqGroup curGroup = null;
 	private final JComboBox versionCB;
+	private final JComboBoxToolTipRenderer versionCBRenderer;
 	private final JComboBox speciesCB;
+	private final JComboBoxToolTipRenderer speciesCBRenderer;
 	private final JButton all_residuesB;
 	private final JButton partial_residuesB;
 	private final RefreshDataAction refreshDataAction;
@@ -101,6 +104,10 @@ public final class GeneralLoadView extends JComponent
 		speciesCB.setEditable(false);
 		speciesCB.setToolTipText(CHOOSE + " " + SELECT_SPECIES);
 
+		speciesCBRenderer = new JComboBoxToolTipRenderer();
+		speciesCB.setRenderer(speciesCBRenderer);
+		speciesCBRenderer.setToolTipEntry(SELECT_SPECIES, CHOOSE + " " + SELECT_SPECIES);
+		
 		choicePanel.add(new JLabel(CHOOSE + ":"));
 		choicePanel.add(Box.createHorizontalStrut(5));
 		choicePanel.add(speciesCB);
@@ -112,6 +119,11 @@ public final class GeneralLoadView extends JComponent
 		versionCB.setEnabled(false);
 		versionCB.setEditable(false);
 		versionCB.setToolTipText(CHOOSE + " " + SELECT_GENOME);
+
+		versionCBRenderer = new JComboBoxToolTipRenderer();
+		versionCB.setRenderer(versionCBRenderer);
+		versionCBRenderer.setToolTipEntry(SELECT_GENOME, CHOOSE + " " + SELECT_GENOME);
+
 		choicePanel.add(versionCB);
 
 
@@ -311,8 +323,10 @@ public final class GeneralLoadView extends JComponent
 		if (versionList != null) {
 			for (GenericVersion gVersion : versionList) {
 				// the same versionName name may occur on multiple servers
-				if (!versionNames.contains(gVersion.versionName)) {
-					versionNames.add(gVersion.versionName);
+				String versionName = gVersion.versionName;
+				if (!versionNames.contains(versionName)) {
+					versionNames.add(versionName);
+					versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName));
 				}
 			}
 			Collections.sort(versionNames, new StringVersionDateComparator());

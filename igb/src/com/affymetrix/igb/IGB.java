@@ -15,7 +15,6 @@ package com.affymetrix.igb;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
@@ -67,7 +66,10 @@ import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.AboutIGBAction;
 import com.affymetrix.igb.action.AutoScrollAction;
+import com.affymetrix.igb.action.DocumentationAction;
+import com.affymetrix.igb.action.ShowConsoleAction;
 import com.affymetrix.igb.action.PreferencesAction;
+import com.affymetrix.igb.action.ReportBugAction;
 import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
@@ -90,7 +92,6 @@ public final class IGB extends Application
 
 	static IGB singleton_igb;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
-	private static final String BUG_URL = "http://sourceforge.net/tracker/?group_id=129420&atid=714744";
 	private static final String MENU_ITEM_HAS_DIALOG = BUNDLE.getString("menuItemHasDialog");
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static String[] main_args;
@@ -111,9 +112,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JMenuItem documentation_item;
-	private JMenuItem bug_item;
-	private JMenuItem console_item;
 	private JMenuItem clear_item;
 	private JMenuItem clear_graphs_item;
 	private JMenuItem print_item;
@@ -131,7 +129,6 @@ public final class IGB extends Application
 	private JMenuItem adjust_edgematch_item;
 	private JCheckBoxMenuItem toggle_hairline_label_item;
 	private JCheckBoxMenuItem toggle_edge_matching_item;
-	private JMenuItem web_links_item;
 	private JMenuItem move_tab_to_window_item;
 	private JMenuItem move_tabbed_panel_to_window_item;
 	private SeqMapView map_view;
@@ -435,22 +432,13 @@ public final class IGB extends Application
 		editMenu();
 		viewMenu();
 
-		MenuUtil.addToMenu(tools_menu, web_links_item);
-
-		console_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG,BUNDLE.getString("showConsole"), KeyEvent.VK_C));
-		console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
-		bug_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG,BUNDLE.getString("reportABug"), KeyEvent.VK_D));
-		documentation_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG,BUNDLE.getString("documentation"), KeyEvent.VK_D));
-		documentation_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
+		MenuUtil.addToMenu(tools_menu, new JMenuItem(WebLinksManagerView.getShowFrameAction()));
 
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new AboutIGBAction()));
-		MenuUtil.addToMenu(help_menu, bug_item);
-		MenuUtil.addToMenu(help_menu, documentation_item);
-		MenuUtil.addToMenu(help_menu, console_item);
+		MenuUtil.addToMenu(help_menu, new JMenuItem(new ReportBugAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(new DocumentationAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
 
-		bug_item.addActionListener(this);
-		documentation_item.addActionListener(this);
-		console_item.addActionListener(this);
 		clear_item.addActionListener(this);
 		clear_graphs_item.addActionListener(this);
 		print_item.addActionListener(this);
@@ -571,7 +559,6 @@ public final class IGB extends Application
 	}
 
 	private void fileMenu() {
-		web_links_item = new JMenuItem(WebLinksManagerView.getShowFrameAction());
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadFileAction(map_view.getFrame(), load_directory)));
 		MenuUtil.addToMenu(file_menu, clear_item);
 		MenuUtil.addToMenu(file_menu, clear_graphs_item);
@@ -770,18 +757,6 @@ public final class IGB extends Application
 			openTabInNewWindow(tab_pane);
 		} else if (src == move_tabbed_panel_to_window_item) {
 			openTabbedPanelInNewWindow(tab_pane);
-		} else if (src == bug_item) {
-			try {
-				Desktop.getDesktop().browse(new URI(BUG_URL));
-			} catch (URISyntaxException ex) {
-				Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, "Unable to open URL " + BUG_URL, ex);
-			} catch (IOException ex) {
-				Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, "Unable to open URL " + BUG_URL, ex);
-			}
-		} else if (src == documentation_item) {
-			showDocumentationDialog();
-		} else if (src == console_item) {
-			ConsoleView.showConsole();
 		}
 	}
 
@@ -830,53 +805,6 @@ public final class IGB extends Application
 			// Remind user later.
 		}
 		
-	}
-
-	private void showDocumentationDialog() {
-		JPanel message_pane = new JPanel();
-		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
-		JTextArea about_text = new JTextArea();
-		about_text.append(getDocumentationText());
-		message_pane.add(new JScrollPane(about_text));
-
-		JButton sfB = new JButton("Visit Genoviz Project");
-		sfB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("http://genoviz.sourceforge.net");
-			}
-		});
-		Box buttonP = Box.createHorizontalBox();
-		buttonP.add(sfB);
-
-		message_pane.add(buttonP);
-
-		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
-						JOptionPane.DEFAULT_OPTION);
-		final JDialog dialog = pane.createDialog(frm, "Documentation");
-		dialog.setResizable(true);
-		dialog.setVisible(true);
-	}
-
-	private static String getDocumentationText() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("\n");
-		sb.append("Documentation and user forums for IGB can be found at SourceForge.\n");
-		sb.append("\n");
-		sb.append("The source code is hosted at SourceForge.net as part of the GenoViz project. \n");
-		sb.append("There you can find downloads of source code, pre-compiled executables, \n");
-		sb.append("extra documentation, and a place to report bugs or feature requests.\n");
-		sb.append("\n");
-		sb.append("Introduction Page: http://genoviz.sourceforge.net/\n");
-		sb.append("User's Guide (PDF): \n http://genoviz.sourceforge.net/IGB_User_Guide.pdf\n");
-		sb.append("Release Notes: \n http://genoviz.sourceforge.net/release_notes/igb_release.html");
-		sb.append("\n");
-		sb.append("Downloads: \n http://sourceforge.net/project/showfiles.php?group_id=129420\n");
-		sb.append("Documentation: \n http://sourceforge.net/apps/trac/genoviz/wiki/IGB\n");
-		sb.append("Bug Reports: \n http://sourceforge.net/tracker/?group_id=129420&atid=714744\n");
-		sb.append("\n");
-
-		return sb.toString();
 	}
 
 	/** Returns the icon stored in the jar file.

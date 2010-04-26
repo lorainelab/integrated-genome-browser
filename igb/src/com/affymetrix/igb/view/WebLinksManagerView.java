@@ -12,6 +12,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.text.MessageFormat;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -98,7 +99,11 @@ public final class WebLinksManagerView extends JPanel {
   
   
   public static Action getShowFrameAction() {
-    Action a = new AbstractAction(BUNDLE.getString("configureWebLinks")) {
+    Action a = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("configureWebLinks"))) {
+		private static final long serialVersionUID = 1l;
+
       public void actionPerformed(ActionEvent evt) {
         showManager();
       }

@@ -92,17 +92,7 @@ public final class JTableCutPasteAdapter {
   
   private static void showInvalidSelectionMessage() {
     String msg = "Invalid selection";
-    try {
-      String msg2 = Application.getSingleton().getResourceString("invalid_selection");
-      if (msg2 != null) {
-        msg = msg2;
-      }
-      
-      JOptionPane.showMessageDialog(null, msg, msg, JOptionPane.ERROR_MESSAGE);
-
-    } catch (Exception ex) {
-      Application.errorPanel("ERROR", ex);
-    }
+    JOptionPane.showMessageDialog(null, msg, msg, JOptionPane.ERROR_MESSAGE);
   }
   
   public Action copyAction = new AbstractAction("Copy") {

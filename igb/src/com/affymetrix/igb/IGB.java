@@ -1148,11 +1148,6 @@ public final class IGB extends Application
 		return APP_VERSION_FULL;
 	}
 
-	/** Not yet implemented. */
-	public String getResourceString(String key) {
-		return null;
-	}
-
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
 		if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {

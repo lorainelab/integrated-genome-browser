@@ -48,9 +48,6 @@ public abstract class Application {
 
 	abstract public String getVersion();
 
-	/** Allows you to get arbitrary parameter strings, possibly from a ResourceBundle. */
-	abstract public String getResourceString(String key);
-
 	public static boolean isSequenceAccessible() {
 		return true;
 	}

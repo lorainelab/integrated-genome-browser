@@ -1,8 +1,6 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.Application;
 import java.awt.Cursor;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +12,7 @@ import java.util.Set;
 import javax.swing.GroupLayout.Alignment;
 
 public final class StatusBar extends JPanel {
+	private static final long serialVersionUID = 1l;
 
 	private final JLabel status_ta;
 	public final JProgressBar progressBar;
@@ -27,27 +26,8 @@ public final class StatusBar extends JPanel {
 	private static final int timer_delay_ms = 5000;
 
 	public StatusBar() {
-		Application app = Application.getSingleton();
-
-		String gc_name = app.getResourceString("perform_garbage_collection");
-		if (gc_name != null && gc_name.length() > 0) {
-			performGcAction.putValue(Action.NAME, gc_name);
-		}
-
-		String tt_hairline = app.getResourceString("status_bar_hairline_desc");
-		String tt_status = app.getResourceString("status_bar_desc");
-		String tt_status_memory = app.getResourceString("status_bar_memory_desc");
-		if (tt_hairline == null || tt_hairline.length() == 0) {
-			tt_hairline = "Hairline Position";
-		}
-
-		if (tt_status == null || tt_status.length() == 0) {
-			tt_status = "Shows Selected Item, or other Message";
-		}
-
-		if (tt_status_memory == null || tt_status_memory.length() == 0) {
-			tt_status_memory = "Memory Used / Available";
-		}
+		String tt_status = "Shows Selected Item, or other Message";
+		String tt_status_memory = "Memory Used / Available";
 
 		java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("x_icon.gif");
 		closeIcon = new ImageIcon(imgURL);
@@ -157,6 +137,7 @@ public final class StatusBar extends JPanel {
 	}
 
 	Action performGcAction = new AbstractAction("Release Unused Memory") {
+		private static final long serialVersionUID = 1l;
 
 		public void actionPerformed(ActionEvent ae) {
 			System.gc();
@@ -184,6 +165,7 @@ public final class StatusBar extends JPanel {
 	}
 
 	Action cancel = new AbstractAction() {
+		private static final long serialVersionUID = 1l;
 
 		public void actionPerformed(ActionEvent ae) {
 			hideRunningTasks();
@@ -191,6 +173,7 @@ public final class StatusBar extends JPanel {
 	};
 
 	Action showTasks = new AbstractAction() {
+		private static final long serialVersionUID = 1l;
 
 		public void actionPerformed(ActionEvent ae) {
 			showRunningTasks();

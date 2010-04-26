@@ -146,8 +146,6 @@ public final class IGB extends Application
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
 	
-	private static final Logger APP = Logger.getLogger("app");
-
 	/**
 	 * Start the program.
 	 */
@@ -1267,9 +1265,5 @@ public final class IGB extends Application
 			Persistence.saveSeqVisibleSpan(map_view);
 		}
 		prev_selected_seq = selected_seq;
-	}
-
-	public Logger getLogger() {
-		return APP;
 	}
 }

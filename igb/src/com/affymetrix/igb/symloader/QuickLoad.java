@@ -1,6 +1,5 @@
 package com.affymetrix.igb.symloader;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -21,9 +20,6 @@ import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
@@ -41,7 +37,6 @@ import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
-import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -57,7 +52,6 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipInputStream;
 import javax.swing.SwingWorker;
 
 /**
@@ -320,9 +314,9 @@ public final class QuickLoad extends SymLoader {
 				return new BAM(this.uri, this.featureName, this.version.group);
 			}
 		}
-		/*if (this.extension.endsWith("bar")) {
+		if (this.extension.endsWith("bar")) {
 			return new Bar(this.uri, this.featureName, this.version.group);
-		}*/
+		}
 		if (this.extension.endsWith("gr")) {
 			return new Gr(this.uri, this.featureName, this.version.group);
 		}
@@ -400,19 +394,6 @@ public final class QuickLoad extends SymLoader {
 			ScoredIntervalParser parser = new ScoredIntervalParser();
 			parser.parse(bis, featureName, version.group);
 			return null;	// TODO: don't annotate by default
-		}
-		if (extension.equals("useq")) {
-			//find out what kind of data it is, graph or region, from the ArchiveInfo object
-			ZipInputStream zis = new ZipInputStream(bis);
-			zis.getNextEntry();
-			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
-			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
-				USeqGraphParser gp = new USeqGraphParser();
-				return gp.parseGraphSyms(zis, gmodel, featureName, archiveInfo);
-			} else {
-				USeqRegionParser rp = new USeqRegionParser();
-				return rp.parse(zis, version.group, featureName, false, archiveInfo);
-			}
 		}
 		Logger.getLogger(QuickLoad.class.getName()).log(Level.WARNING,
 				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);

@@ -69,10 +69,12 @@ public final class Wiggle extends SymLoader{
 
 	@Override
 	public String[] getLoadChoices() {
-		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.GENOME.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), 
+		LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
 		return choices;
 	}
 
+	@Override
 	public void init() {
 		if (this.isInitialized) {
 			return;

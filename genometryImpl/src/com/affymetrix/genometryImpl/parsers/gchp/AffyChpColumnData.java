@@ -13,8 +13,8 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
+import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genometryImpl.util.ByteList;
-import com.affymetrix.genometryImpl.util.DoubleList;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.ShortList;
@@ -27,7 +27,7 @@ public final class AffyChpColumnData {
 	int size;
 	Object theData = null;
 	ByteList dataByte = null;
-	DoubleList dataDouble = null;
+	DoubleArrayList dataDouble = null;
 	IntList dataInt = null;
 	FloatList dataFloat = null;
 	ShortList dataShort = null;
@@ -55,7 +55,7 @@ public final class AffyChpColumnData {
 			case FLOAT:
 				theData = dataFloat = new FloatList(); break;
 			case DOUBLE:
-				theData = dataDouble = new DoubleList(); break;
+				theData = dataDouble = new DoubleArrayList(); break;
 			case TEXT_ASCII:
 				theData = dataString = new ArrayList<CharSequence>(); break;
 			case TEXT_UTF16BE:
@@ -99,7 +99,7 @@ public final class AffyChpColumnData {
 
 	/**
 	 *  Returns the data as an instance of FloatList, IntList, ShortList, 
-	 *  ByteList, DoubleList, ArrayList<CharSequence>, or null.
+	 *  ByteList, DoubleArrayList, ArrayList<CharSequence>, or null.
 	 */
 	public Object getData() {
 		return theData;

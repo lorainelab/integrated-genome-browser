@@ -1,10 +1,9 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.util.DoubleList;
+import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.util.*;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -158,7 +157,7 @@ public final class FasterExpandPacker extends ExpandPacker {
 		 */
 
 		int slot_checks = 0;
-		DoubleList slot_maxes = new DoubleList(1000);
+		DoubleArrayList slot_maxes = new DoubleArrayList(1000);
 
 		double slot_height = getMaxChildHeight(parent) + 2 * spacing;
 

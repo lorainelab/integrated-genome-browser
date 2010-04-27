@@ -670,4 +670,35 @@ public final class LocalUrlCacher {
 				"URL scheme: " + scheme + " not recognized");
 		return null;
 	}
+
+	/**
+	 * Get stream associated with this uri.  Don't unzip here.
+	 * @param uri
+	 * @return
+	 */
+	public static BufferedInputStream convertURIToBufferedUnzippedStream(URI uri) {
+		String scheme = uri.getScheme().toLowerCase();
+		InputStream is = null;
+		try {
+			if (scheme.length() == 0 || scheme.equals("file")) {
+				is = new FileInputStream(new File(uri));
+			} else if (scheme.startsWith("http")) {
+				is = LocalUrlCacher.getInputStream(uri.toString());
+			} else {
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
+					"URL scheme: " + scheme + " not recognized");
+				return null;
+			}
+
+			StringBuffer stripped_name = new StringBuffer();
+			InputStream str = GeneralUtils.unzipStream(is, uri.toString(), stripped_name);
+			if (str instanceof BufferedInputStream) {
+				return (BufferedInputStream) str;
+			}
+			return new BufferedInputStream(str);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
 }

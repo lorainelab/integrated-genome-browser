@@ -54,15 +54,16 @@ public class USeq extends SymLoader {
 			return;
 		}
 		super.init();
-		f = LocalUrlCacher.convertURIToFile(uri);
 	}
 
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
 		init();
 		ZipInputStream zis = null;
+		BufferedInputStream bis = null;
 		try {
-			zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(f)));
+			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			zis = new ZipInputStream(bis);
 			zis.getNextEntry();
 			archiveInfo = new ArchiveInfo(zis, false);
 			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
@@ -75,6 +76,7 @@ public class USeq extends SymLoader {
 		} catch (Exception ex) {
 			Logger.getLogger(USeq.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
+			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(zis);
 		}
 		return Collections.<SeqSymmetry>emptyList();

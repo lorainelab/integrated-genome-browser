@@ -37,15 +37,15 @@ public final class Bar extends SymLoader {
 
 	@Override
 	public List<GraphSym> getGenome() {
-		FileInputStream fis = null;
+		BufferedInputStream bis = null;
 		try {
 			init();
-			fis = new FileInputStream(f);
-			return BarParser.parse(fis, GenometryModel.getGenometryModel(), group, featureName, true);
+			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, featureName, true);
 		} catch (Exception ex) {
 			Logger.getLogger(Bar.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
-			GeneralUtils.safeClose(fis);
+			GeneralUtils.safeClose(bis);
 		}
 		return null;
 	}

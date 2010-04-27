@@ -312,11 +312,7 @@ public final class QuickLoad extends SymLoader {
 	 */
 	private SymLoader determineLoader() {
 		if (this.extension.endsWith("bam")) {
-			if (this.version.group == null) {
-				//ErrorHandler.errorPanel(gviewerFrame, "ERROR", MERGE_MESSAGE, null);
-			} else {
-				return new BAM(this.uri, this.featureName, this.version.group);
-			}
+			return new BAM(this.uri, this.featureName, this.version.group);
 		}
 		if (this.extension.endsWith("bar")) {
 			return new Bar(this.uri, this.featureName, this.version.group);

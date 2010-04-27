@@ -496,21 +496,23 @@ public final class IGB extends Application
 						Object plugin = setUpPlugIn(pi);
 						plugins.add(plugin);
 					}
+
+					for (Object plugin : plugins) {
+						if (plugin instanceof DataLoadView) {
+							data_load_view = (DataLoadView) plugin;
+							break;
+						}
+					}
+
+					if (slice_view != null) {
+						MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
+						export_slice_item.setEnabled(true);
+					}
 				}
 			});
 		}
 
-		for (Object plugin : plugins) {
-			if (plugin instanceof DataLoadView) {
-				data_load_view = (DataLoadView) plugin;
-				break;
-			}
-		}
-
-		if (slice_view != null) {
-			MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
-			export_slice_item.setEnabled(true);
-		}
+		
 
 		WebLink.autoLoad();
 

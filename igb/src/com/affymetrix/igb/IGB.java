@@ -17,7 +17,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -99,7 +98,6 @@ public final class IGB extends Application
 	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
 	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
 	private final JMenu popup_windowsM = new JMenu(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Open in Window"));
-	private SimpleBookmarkServer web_control = null;
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JMenu file_menu;
@@ -262,7 +260,7 @@ public final class IGB extends Application
 		Runnable r = new Runnable() {
 
 			public void run() {
-				web_control = new SimpleBookmarkServer(IGB.this);
+				new SimpleBookmarkServer(IGB.this);
 			}
 		};
 
@@ -327,9 +325,6 @@ public final class IGB extends Application
 		}
 
 		frm = new JFrame(APP_NAME + " " + APP_VERSION);
-		RepaintManager rm = RepaintManager.currentManager(frm);
-
-		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
 		// when HTTP authentication is needed, getPasswordAuthentication will
 		//    be called on the authenticator set as the default

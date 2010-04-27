@@ -48,10 +48,6 @@ public abstract class Application {
 
 	abstract public String getVersion();
 
-	public static boolean isSequenceAccessible() {
-		return true;
-	}
-
 	public final void addNotLockedUpMsg(final String s) {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 

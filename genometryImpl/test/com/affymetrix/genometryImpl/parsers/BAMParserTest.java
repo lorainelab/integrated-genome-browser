@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import java.io.DataInputStream;
 import java.io.File;
@@ -34,10 +35,10 @@ public class BAMParserTest {
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
 			BioSeq seq = group.addSeq("chr1", 197069962);
 			
-			BAM parser = new BAM(new File(filename).toURI(), "featureName", group);
-			assertNotNull(parser);
+			SymLoader symL = new BAM(new File(filename).toURI(), "featureName", group);
+			assertNotNull(symL);
 
-			List<? extends SeqSymmetry> result = parser.parse(seq, seq.getMin(), seq.getMax(), false, true);
+			List<? extends SeqSymmetry> result = symL.getChromosome(seq);
 			assertNotNull(result);
 			assertEquals(189, result.size());	// 189 alignments in sample file
 
@@ -60,10 +61,10 @@ public class BAMParserTest {
 			assertEquals("ACATTCATCTAATTCATGAATGGCAAAGACACGTCC",residues.toString());
 
 			// Strange, considering the span length is only 36
-			result = parser.parse(seq, 51120000, 51120038, false, true);
+			result = symL.getRegion(new SimpleSeqSpan(51120000, 51120038, seq));
 			assertEquals(0, result.size());
 
-			result = parser.parse(seq, 51120000, 51120039, false, true);
+			result = symL.getRegion(new SimpleSeqSpan(51120000, 51120039, seq));
 			assertEquals(1, result.size());
 			sym = result.get(0);	// first (positive) strand
 			assertEquals("0", sym.getID());

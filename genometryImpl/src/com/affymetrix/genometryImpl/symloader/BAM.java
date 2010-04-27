@@ -42,7 +42,7 @@ public final class BAM extends SymLoader {
     private SAMFileHeader header;
 	private AnnotatedSeqGroup group;
 	private final String featureName;
-	private List<BioSeq> seqs;
+	private final List<BioSeq> seqs = new ArrayList<BioSeq>();
 
 	public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);

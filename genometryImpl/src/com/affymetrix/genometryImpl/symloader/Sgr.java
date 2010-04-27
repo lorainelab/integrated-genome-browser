@@ -128,7 +128,7 @@ public final class Sgr extends SymLoader {
 	}
 
 	/**
-	 * Parse the lines in the stream.
+	 * Parse the lines in the one-chromosome stream.
 	 * @param br
 	 * @param xlist
 	 * @param ylist
@@ -249,6 +249,12 @@ public final class Sgr extends SymLoader {
 		return true;
 	}
 
+	/**
+	 * Parse lines in the arbitrary-chromosome stream.
+	 * @param istr
+	 * @param chrLength
+	 * @param chrFiles
+	 */
 	private static void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles) {
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		BufferedReader br = null;

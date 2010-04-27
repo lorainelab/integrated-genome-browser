@@ -32,6 +32,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -109,15 +110,15 @@ public final class Gr extends SymLoader {
 	private GraphSym parse(BioSeq aseq, int min, int max){
 		GraphSym sym = parse(aseq, min, max, true);
 
-		if(!isSorted){
-		FileOutputStream fos = null;
-			try{
+		if (!isSorted) {
+			FileOutputStream fos = null;
+			try {
 				fos = new FileOutputStream(f);
-				writeGrFormat(sym,fos);
+				writeGrFormat(sym, fos);
 				isSorted = true;
-			}catch(IOException ex){
+			} catch (IOException ex) {
 				ex.printStackTrace();
-			}finally{
+			} finally {
 				GeneralUtils.safeClose(fos);
 			}
 		}
@@ -182,12 +183,20 @@ public final class Gr extends SymLoader {
 			int xprev = Integer.MIN_VALUE;
 			boolean sorted = true;
 			while ((line = br.readLine()) != null) {
-				if (line.indexOf(' ') > 0) {
-					x = Integer.parseInt(line.substring(0, line.indexOf(' ')));
-					y = Float.parseFloat(line.substring(line.indexOf(' ') + 1));
-				} else if (line.indexOf('\t') > 0) {
-					x = Integer.parseInt(line.substring(0, line.indexOf('\t')));
-					y = Float.parseFloat(line.substring(line.indexOf('\t') + 1));
+				int indexOfDelimiter = line.indexOf(' ');
+				if (indexOfDelimiter > 0) {
+					x = Integer.parseInt(line.substring(0, indexOfDelimiter));
+					y = Float.parseFloat(line.substring(indexOfDelimiter + 1));
+				} else {
+					indexOfDelimiter = line.indexOf('\t');
+					if (indexOfDelimiter > 0) {
+						x = Integer.parseInt(line.substring(0, indexOfDelimiter));
+						y = Float.parseFloat(line.substring(indexOfDelimiter + 1));
+					} else {
+						Logger.getLogger(Gr.class.getName()).warning(
+								"Line " + line + " doesn't match... ignoring");
+						continue;
+					}
 				}
 
 				if (x >= max) {
@@ -198,7 +207,7 @@ public final class Gr extends SymLoader {
 					}
 				}
 
-				if (x < min ) {
+				if (x < min) {
 					continue;
 				}
 
@@ -206,34 +215,19 @@ public final class Gr extends SymLoader {
 				ylist.add(y);
 				count++;
 				// checking on whether graph is sorted...
-				if(!isSorted){
+				if (!isSorted) {
 					if (xprev > x) {
 						sorted = false;
-					}else
+					} else {
 						xprev = x;
+					}
 				}
-				
+
 			}
 			isSorted = sorted;
 
-			if (name == null && hasHeader) {
-				name = headerstr;
-			}
-			int xcoords[] = Arrays.copyOf(xlist.elements(), xlist.size());
-			xlist = null;
-			float ycoords[] = Arrays.copyOf(ylist.elements(), ylist.size());
-			ylist = null;
+			graf = createResults(name, hasHeader, headerstr, xlist, ylist, sorted, ensure_unique_id, aseq);
 
-			if (!sorted) {
-				System.err.println("input graph not sorted, sorting by base coord");
-				sortXYDataOnX(xcoords, ycoords);
-			}
-			if (ensure_unique_id) {
-				name = AnnotatedSeqGroup.getUniqueGraphID(this.featureName, this.group);
-			}
-
-			
-			graf = new GraphSym(xcoords, ycoords, name, aseq);
 			System.out.println("loaded graph data, total points = " + count);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -242,6 +236,31 @@ public final class Gr extends SymLoader {
 		}
 		return graf;
 	}
+
+
+	private GraphSym createResults(
+			String name, boolean hasHeader, String headerstr, 
+			IntArrayList xlist, FloatArrayList ylist,
+			boolean sorted, boolean ensure_unique_id, BioSeq aseq) {
+		GraphSym graf;
+		if (name == null && hasHeader) {
+			name = headerstr;
+		}
+		int[] xcoords = Arrays.copyOf(xlist.elements(), xlist.size());
+		xlist = null;
+		float[] ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
+		ylist = null;
+		if (!sorted) {
+			System.err.println("input graph not sorted, sorting by base coord");
+			sortXYDataOnX(xcoords, ycoords);
+		}
+		if (ensure_unique_id) {
+			name = AnnotatedSeqGroup.getUniqueGraphID(this.featureName, this.group);
+		}
+		graf = new GraphSym(xcoords, ycoords, name, aseq);
+		return graf;
+	}
+
 
 	/**
 	 * Sort xList, yList, and wList based upon xList

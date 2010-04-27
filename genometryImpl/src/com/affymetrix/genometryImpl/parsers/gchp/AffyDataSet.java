@@ -13,9 +13,9 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 public final class AffyDataSet {
 
@@ -49,7 +49,8 @@ public final class AffyDataSet {
 		name = AffyGenericChpFile.parseWString(dis);
 		param_count = dis.readInt();
 
-		GenometryModel.logDebug("Parsing data set: name=" + name);
+		Logger.getLogger(AffyDataSet.class.getName()).fine(
+				"Parsing data set: name=" + name);
 
 		params = new LinkedHashMap<String,AffyChpParameter>(param_count);
 		for (int i=0; i<param_count; i++) {
@@ -85,13 +86,15 @@ public final class AffyDataSet {
 
 				AffySingleChromData chromData = new AffySingleChromData(chpFile, this,
 						chromNum, chromName, start, count, chromDataColumns);
-				GenometryModel.logDebug("Made chrom: " + chromData.toString());
+				Logger.getLogger(AffyDataSet.class.getName()).fine(
+						"Made chrom: " + chromData.toString());
 
 				num2chromData.put(chromNum, chromData);
 			}
 		}
 
-		GenometryModel.logDebug("Chromosome Numbers: " + num2chromData.keySet());
+		Logger.getLogger(AffyDataSet.class.getName()).fine(
+				"Chromosome Numbers: " + num2chromData.keySet());
 
 		// I am making the assumption that chromosome number n is always stored
 		// before chromosome number n+1.  I don't think the documentation makes that

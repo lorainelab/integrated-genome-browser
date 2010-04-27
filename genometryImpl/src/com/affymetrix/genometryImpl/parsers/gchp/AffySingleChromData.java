@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
+import cern.colt.list.ShortArrayList;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -20,7 +21,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genometryImpl.util.ShortList;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -131,14 +131,14 @@ final class AffySingleChromData {
 				}
 				GraphSym gsym = new GraphSym(positions.getInternalArray(), y, graphId, seq);
 				results.add(gsym);
-			} else if (colData.getData() instanceof ShortList) {
+			} else if (colData.getData() instanceof ShortArrayList) {
 				GraphSym gsym;
 				if (colData.name.startsWith("CNState")) {
 					// In the "CNStateMin" and "CNStateMax" graphs, the number "255"
 					// is used to represent "unknown".  These x,y pairs should be discarded.
-					List<Object> trimmedXandY = trim255(positions, (ShortList) colData.getData());
+					List<Object> trimmedXandY = trim255(positions, (ShortArrayList) colData.getData());
 					IntList xlist = (IntList) trimmedXandY.get(0);
-					ShortList ilist = (ShortList) trimmedXandY.get(1);
+					ShortArrayList ilist = (ShortArrayList) trimmedXandY.get(1);
 
 					xlist.trimToSize();
 					ilist.trimToSize();
@@ -148,7 +148,7 @@ final class AffySingleChromData {
 					}
 					gsym = new GraphSym(xlist.getInternalArray(), y, graphId, seq);
 				} else {
-					ShortList ilist = (ShortList) colData.getData();
+					ShortArrayList ilist = (ShortArrayList) colData.getData();
 					ilist.trimToSize();
 					y = new float[ilist.size()];
 					for (int i = 0; i < ilist.size(); i++) {
@@ -214,14 +214,14 @@ final class AffySingleChromData {
 	 *  new objects.  If the given ShortList contains ONLY invalid values,
 	 *  then the returned IntList and 3hortList will both be empty.
 	 */
-	private List<Object> trim255(IntList x, ShortList y) {
+	private List<Object> trim255(IntList x, ShortArrayList y) {
 		if (x.size() != y.size()) {
 			throw new IllegalArgumentException("Lists must be the same size " + x.size() + " != " + y.size());
 		}
 
 		boolean had_bad_values = false;
 		IntList x_out = new IntList(x.size());
-		ShortList y_out = new ShortList(y.size());
+		ShortArrayList y_out = new ShortArrayList(y.size());
 
 		for (int i=0; i<x.size(); i++) {
 			short f = y.get(i);

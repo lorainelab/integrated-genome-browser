@@ -14,10 +14,10 @@
 package com.affymetrix.genometryImpl.parsers.gchp;
 
 import cern.colt.list.DoubleArrayList;
+import cern.colt.list.ShortArrayList;
 import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genometryImpl.util.ShortList;
 import java.io.*;
 import java.util.*;
 
@@ -30,11 +30,11 @@ public final class AffyChpColumnData {
 	DoubleArrayList dataDouble = null;
 	IntList dataInt = null;
 	FloatList dataFloat = null;
-	ShortList dataShort = null;
+	ShortArrayList dataShort = null;
 	ArrayList<CharSequence> dataString = null;
 	AffySingleChromData singleChromData;
 
-	public AffyChpColumnData(AffySingleChromData singleChromData, String name, AffyDataType type, int size) {
+	AffyChpColumnData(AffySingleChromData singleChromData, String name, AffyDataType type, int size) {
 		this.singleChromData = singleChromData;
 		this.name = name;
 		this.type = type;
@@ -43,9 +43,9 @@ public final class AffyChpColumnData {
 			case INT8:
 				theData = dataByte = new ByteList(); break;
 			case UINT8:
-				theData = dataShort = new ShortList(); break;
+				theData = dataShort = new ShortArrayList(); break;
 			case INT16:
-				theData = dataShort = new ShortList(); break;
+				theData = dataShort = new ShortArrayList(); break;
 			case UINT16:
 				theData = dataInt = new IntList(); break;
 			case INT32:
@@ -65,7 +65,7 @@ public final class AffyChpColumnData {
 		}
 	}
 
-	public void addData(DataInputStream dis) throws IOException {
+	void addData(DataInputStream dis) throws IOException {
 		switch (this.type) {
 			case INT8:
 				dataByte.add(dis.readByte()); break;
@@ -93,15 +93,15 @@ public final class AffyChpColumnData {
 	}
 
 	/** Gets the number of bytes required to store one data entry. */
-	public int getByteLength() {
+	int getByteLength() {
 		return size;
 	}
 
 	/**
-	 *  Returns the data as an instance of FloatList, IntList, ShortList, 
+	 *  Returns the data as an instance of FloatList, IntList, ShortArrayList,
 	 *  ByteList, DoubleArrayList, ArrayList<CharSequence>, or null.
 	 */
-	public Object getData() {
+	Object getData() {
 		return theData;
 	}
 

@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import cern.colt.list.FloatArrayList;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -20,7 +21,6 @@ import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.util.FloatList;
 
 import java.io.*;
 import java.util.*;
@@ -50,11 +50,11 @@ public final class ScoredMapParser {
 			line = br.readLine();
 			String[] headers = line_regex.split(line);
 			List<String> score_names = new ArrayList<String>();
-			List<FloatList> score_arrays = new ArrayList<FloatList>();
+			List<FloatArrayList> score_arrays = new ArrayList<FloatArrayList>(headers.length);
 			System.out.println("headers: " + line);
 			for (int i=2; i<headers.length; i++) {
 				score_names.add(headers[i]);
-				score_arrays.add(new FloatList());
+				score_arrays.add(new FloatArrayList());
 			}
 
 			int line_count = 0;
@@ -65,7 +65,7 @@ public final class ScoredMapParser {
 				SeqSymmetry child = new IndexedSingletonSym(min, max, aseq);
 				parent.addChild(child);   // ScoredContainerSym.addChild() handles setting of child index and parent fields
 				for (int field_index = 2; field_index < fields.length; field_index++) {
-					FloatList flist = score_arrays.get(field_index-2);
+					FloatArrayList flist = score_arrays.get(field_index-2);
 					float score = Float.parseFloat(fields[field_index]);
 					flist.add(score);
 				}
@@ -75,8 +75,8 @@ public final class ScoredMapParser {
 			int score_count = score_names.size();
 			for (int i=0; i<score_count; i++) {
 				String score_name = score_names.get(i);
-				FloatList flist = score_arrays.get(i);
-				float[] scores = flist.copyToArray();
+				FloatArrayList flist = score_arrays.get(i);
+				float[] scores = flist.elements();
 				parent.addScores(score_name, scores);
 			}
 			aseq.addAnnotation(parent);

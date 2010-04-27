@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 public final class Sgr extends SymLoader {
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
-	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
 	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
@@ -39,7 +38,6 @@ public final class Sgr extends SymLoader {
 			return;
 		}
 		super.init();
-		this.f = LocalUrlCacher.convertURIToFile(uri);
 		buildIndex();
 	}
 
@@ -136,6 +134,18 @@ public final class Sgr extends SymLoader {
 		return results;
 	}
 
+	/**
+	 * Parse the lines in the stream.
+	 * @param br
+	 * @param xlist
+	 * @param ylist
+	 * @param min
+	 * @param max
+	 * @param sorted
+	 * @return boolean indicating whether we need to sort the data
+	 * @throws IOException
+	 * @throws NumberFormatException
+	 */
 	private static boolean parseLines(
 			BufferedReader br, IntArrayList xlist, FloatArrayList ylist, int min, int max, boolean sorted)
 			throws IOException, NumberFormatException {
@@ -155,31 +165,32 @@ public final class Sgr extends SymLoader {
 				continue;
 			}
 			
-			
 			x = Integer.parseInt(fields[1]);
 
-			if(x >= max){
-				if(sorted)
-					break;
-				else
-					continue;
+			if (x >= max) {
+				// only look in range
+				if (sorted) {
+					break;	// if data is sorted on x, no further points will be < max
+				}
+				continue;
 			}
-				
-			if (x < min)
-				continue;	//only look in range
+
+			if (x < min) {
+				// only look in range
+				continue;
+			}	
 			
 			y = Float.parseFloat(fields[2]);
 			xlist.add(x);
 			ylist.add(y);
 
-			if(!sorted){
-				if(prevx > x)
+			if (!sorted) {
+				if (prevx > x) {
 					sort = true;
-				else
+				} else {
 					prevx = x;
+				}
 			}
-			
-			
 		}
 
 		return sort;
@@ -220,19 +231,6 @@ public final class Sgr extends SymLoader {
 			xlist = null;
 			float[] ycoords = Arrays.copyOf(ylist.elements(), ylist.size());
 			ylist = null;
-
-//			//Is data sorted?
-//			int xcount = xcoords.length;
-//			boolean sorted = true;
-//			int prevx = Integer.MIN_VALUE;
-//			for (int i = 0; i < xcount; i++) {
-//				int x = xcoords[i];
-//				if (x < prevx) {
-//					sorted = false;
-//					break;
-//				}
-//				prevx = x;
-//			}
 			
 			if (sort) {
 				GrParser.sortXYDataOnX(xcoords, ycoords);
@@ -242,22 +240,18 @@ public final class Sgr extends SymLoader {
 	}
 
 	private boolean buildIndex(){
-		FileInputStream fis = null;
-		InputStream is = null;
+		BufferedInputStream bis = null;
 		Map<String, Integer> chrLength = new HashMap<String, Integer>();
 		Map<String, File> chrFiles = new HashMap<String, File>();
-		
 		try {
-			fis = new FileInputStream(this.f);
-			is = GeneralUtils.unzipStream(fis, f.getName(), new StringBuffer());
-			parseLines(is, chrLength, chrFiles);
+			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			parseLines(bis, chrLength, chrFiles);
 			createResults(chrLength, chrFiles);
 		} catch (Exception ex) {
 			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		} finally {
-			GeneralUtils.safeClose(fis);
-			GeneralUtils.safeClose(is);
+			GeneralUtils.safeClose(bis);
 		}
 		return true;
 	}
@@ -312,8 +306,9 @@ public final class Sgr extends SymLoader {
 	}
 
 	private void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
-		for(Entry<String, Integer> bioseq :chrLength.entrySet()){
-			chrList.put(group.addSeq(bioseq.getKey(), bioseq.getValue()), chrFiles.get(bioseq.getKey()));
+		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
+			String key = bioseq.getKey();
+			chrList.put(group.addSeq(key, bioseq.getValue()), chrFiles.get(key));
 		}
 	}
 

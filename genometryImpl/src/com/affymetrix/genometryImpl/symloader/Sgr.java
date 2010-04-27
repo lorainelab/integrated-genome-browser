@@ -2,9 +2,6 @@ package com.affymetrix.genometryImpl.symloader;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import java.io.*;
-import java.util.*;
-import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -16,6 +13,9 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -88,24 +88,17 @@ public final class Sgr extends SymLoader {
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		IntArrayList xlist = new IntArrayList();
 		FloatArrayList ylist = new FloatArrayList();
-
-		FileInputStream fis = null;
-		InputStream is = null;
 		BufferedReader br = null;
 		FileOutputStream fos = null;
 
 		try {
-
 			File file = chrList.get(seq);
-
 			if (file == null) {
 				Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
 				return Collections.<GraphSym>emptyList();
 			}
 
-			fis = new FileInputStream(file);
-			is = GeneralUtils.unzipStream(fis, featureName, new StringBuffer());
-			br = new BufferedReader(new InputStreamReader(is));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			
 			// Making sure the ID is unique on the whole genome, not just this seq
 			// will make sure the GraphState is also unique on the whole genome.

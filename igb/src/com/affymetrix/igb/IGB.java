@@ -103,7 +103,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JMenuItem export_slice_item;
 	private JMenuItem exit_item;
 	private JMenuItem res2clip_item;
 	private JMenuItem clamp_view_item;
@@ -117,7 +116,6 @@ public final class IGB extends Application
 	private JMenuItem move_tabbed_panel_to_window_item;
 	private SeqMapView map_view;
 	public DataLoadView data_load_view = null;
-	private AltSpliceView slice_view = null;
 	private final List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
 	private final List<Object> plugins = new ArrayList<Object>(16);
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
@@ -370,7 +368,6 @@ public final class IGB extends Application
 
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
-		export_slice_item = new JMenuItem(BUNDLE.getString("slicedViewWithLabels"), KeyEvent.VK_S);
 
 		exit_item = new JMenuItem(BUNDLE.getString("exit"), KeyEvent.VK_E);
 
@@ -411,7 +408,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new DocumentationAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
 
-		export_slice_item.addActionListener(this);
 		exit_item.addActionListener(this);
 
 		toggle_edge_matching_item.addActionListener(this);
@@ -503,16 +499,9 @@ public final class IGB extends Application
 							break;
 						}
 					}
-
-					if (slice_view != null) {
-						MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
-						export_slice_item.setEnabled(true);
-					}
 				}
 			});
 		}
-
-		
 
 		WebLink.autoLoad();
 
@@ -612,7 +601,7 @@ public final class IGB extends Application
 				data_load_view = (DataLoadView) plugin;
 			}
 			if (plugin instanceof AltSpliceView) {
-				slice_view = (AltSpliceView) plugin;
+				MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()));
 			}
 
 			comp2plugin.put((Component) plugin, pi);
@@ -645,16 +634,7 @@ public final class IGB extends Application
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		if (src == export_slice_item) {
-			try {
-				if (slice_view != null) {
-					AffyLabelledTierMap tm = (AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap();
-					ComponentWriter.showExportDialog(tm.getSplitPane());
-				}
-			} catch (Exception ex) {
-				errorPanel("Problem during output.", ex);
-			}
-		} else if (src == exit_item) {
+		if (src == exit_item) {
 			exit();
 		} else if (src == res2clip_item) {
 			map_view.copySelectedResidues();

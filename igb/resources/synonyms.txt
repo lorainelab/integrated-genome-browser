@@ -1,5 +1,6 @@
-A_carolinensis_Feb_2007	anoCar1	Anolis_carolinensis.AnoCar1.0.reference
+_carolinensis_Feb_2007	anoCar1 Anolis_carolinensis.AnoCar1.0.reference
 A_gambiae_Jul_2003	anoGam1	Anopheles_Jul_2003	Ag	ag	ag:Jul_2003	Ag:Jul_2003
+A_melanoleuca_Apr_2010	ailMel1
 A_mellifera_Jan_2005	apiMel2
 A_mellifera_Jul_2004	apiMel1
 A_thaliana_Jan_2004	At:NCBIv5	At:NCBI5	at.NCBIv5	at5	NCBIv5	TIGRv5	at:TIGRv5	At:TIGRv5	at:Jan_2004	At:Jan_2004	TAIR7	tair7	Tair7
@@ -76,6 +77,7 @@ MoEx-1_0-st-Probes	MoEx-1_0-st-v1	MoEx-1_0-st	MoEx-1_0-st-v1-Probes	moex-1_0-st-
 MoEx-1_0-st-Transcripts	MoEx-1_0-st-v1-Transcripts	moex-1_0-st-transcripts	moex-1_0-st-v1-transcripts	affy/moex-1_0-st-transcripts	affy/moex-1_0-st-v1-transcripts
 MoGene-1_0-st-Probes	MoGene-1_0-st-v1	MoGene-1_0-st	MoGene-1_0-st-v1-Probes	mogene-1_0-st-probes	mogene-1_0-st-v1-probes	affy/mogene-1_0-st-v1-probes	affy/mogene-1_0-st-probes
 MoGene-1_0-st-Transcripts	MoGene-1_0-st-v1-Transcripts	mogene-1_0-st-transcripts	mogene-1_0-st-v1-transcripts	affy/mogene-1_0-st-transcripts	affy/mogene-1_0-st-v1-transcripts
+O_cuniculus_Apr_2009	oryCun2	Oryctolagus_cuniculus.oryCun2.reference
 O_sativa_Jan_2007	Rice_Tigr_Pseudomolecules_5	TIGR_pseudomol5
 O_sativa_Jun_2009	RGAP_Pseudomolecules_6	RGAP_pseudomolecules_6	RGAP_pseudomol6	Rice_Tigr_Pseudomolecules_6	TIGR_pseudomol6
 R_norvegicus_Jan_2003	Rat_Jan_2003	Rat jan2003	rn2	rn:Jan_2003	Rn:Jan_2003

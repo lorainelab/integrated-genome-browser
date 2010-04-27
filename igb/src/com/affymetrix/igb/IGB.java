@@ -30,7 +30,6 @@ import java.util.*;
 import java.util.List;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -63,13 +62,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.action.AboutIGBAction;
-import com.affymetrix.igb.action.AutoScrollAction;
-import com.affymetrix.igb.action.DocumentationAction;
-import com.affymetrix.igb.action.ShowConsoleAction;
-import com.affymetrix.igb.action.PreferencesAction;
-import com.affymetrix.igb.action.ReportBugAction;
-import com.affymetrix.igb.action.UCSCViewAction;
+import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
 import java.text.MessageFormat;
@@ -110,10 +103,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JMenuItem clear_item;
-	private JMenuItem clear_graphs_item;
-	private JMenuItem print_item;
-	private JMenuItem print_frame_item;
 	private JMenuItem export_map_item;
 	private JMenuItem export_labelled_map_item;
 	private JMenuItem export_slice_item;
@@ -382,12 +371,6 @@ public final class IGB extends Application
 
 		bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
-		clear_item = new JMenuItem(BUNDLE.getString("clearAll"), KeyEvent.VK_C);
-		clear_graphs_item = new JMenuItem(BUNDLE.getString("clearGraphs"), KeyEvent.VK_L);
-		print_item = new JMenuItem(BUNDLE.getString("print"), KeyEvent.VK_P);
-		print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
-		print_frame_item = new JMenuItem(BUNDLE.getString("printWhole"), KeyEvent.VK_F);
-		print_frame_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 		export_map_item = new JMenuItem(BUNDLE.getString("mainView"), KeyEvent.VK_M);
@@ -434,10 +417,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new DocumentationAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
 
-		clear_item.addActionListener(this);
-		clear_graphs_item.addActionListener(this);
-		print_item.addActionListener(this);
-		print_frame_item.addActionListener(this);
 		export_map_item.addActionListener(this);
 		export_labelled_map_item.addActionListener(this);
 		export_slice_item.addActionListener(this);
@@ -555,11 +534,11 @@ public final class IGB extends Application
 
 	private void fileMenu() {
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadFileAction(map_view.getFrame(), load_directory)));
-		MenuUtil.addToMenu(file_menu, clear_item);
-		MenuUtil.addToMenu(file_menu, clear_graphs_item);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new ClearAllAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new ClearGraphsAction()));
 		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, print_item);
-		MenuUtil.addToMenu(file_menu, print_frame_item);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new PrintAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new PrintFrameAction()));
 		file_menu.add(export_to_file_menu);
 		MenuUtil.addToMenu(export_to_file_menu, export_map_item);
 		MenuUtil.addToMenu(export_to_file_menu, export_labelled_map_item);
@@ -673,20 +652,7 @@ public final class IGB extends Application
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		if (src == print_item) {
-			try {
-				map_view.getSeqMap().print();
-			} catch (Exception ex) {
-				errorPanel("Problem trying to print.", ex);
-			}
-		} else if (src == print_frame_item) {
-			ComponentPagePrinter cprinter = new ComponentPagePrinter(getFrame());
-			try {
-				cprinter.print();
-			} catch (Exception ex) {
-				errorPanel("Problem trying to print.", ex);
-			}
-		} else if (src == export_map_item) {
+		if (src == export_map_item) {
 			try {
 				AffyLabelledTierMap tm = (AffyLabelledTierMap) map_view.getSeqMap();
 				ComponentWriter.showExportDialog(tm.getNeoCanvas());
@@ -714,14 +680,6 @@ public final class IGB extends Application
 				}
 			} catch (Exception ex) {
 				errorPanel("Problem during output.", ex);
-			}
-		} else if (src == clear_item) {
-			if (confirmPanel("Really clear entire view?")) {
-				map_view.clear();
-			}
-		} else if (src == clear_graphs_item) {
-			if (confirmPanel("Really clear graphs?")) {
-				map_view.clearGraphs();
 			}
 		} else if (src == exit_item) {
 			exit();

@@ -322,10 +322,10 @@ public final class QuickLoad extends SymLoader {
 			return new Bar(this.uri, this.featureName, this.version.group);
 		}
 		if (this.extension.endsWith("gr")) {
+			if (this.extension.endsWith("sgr")) {
+				return new Sgr(this.uri, this.featureName, this.version.group);
+			}
 			return new Gr(this.uri, this.featureName, this.version.group);
-		}
-		if (this.extension.endsWith("sgr")) {
-			return new Sgr(this.uri, this.featureName, this.version.group);
 		}
 		if (this.extension.endsWith("useq")) {
 			return new USeq(this.uri, this.featureName, this.version.group);

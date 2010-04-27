@@ -243,6 +243,9 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getGenome();
 		}
+
+		//TODO: if this is coming from a URL, use the InputStream instead of converting to a file
+
 		if (GraphSymUtils.isAGraphFilename(this.extension)) {
 			FileInputStream fis = null;
 			try {
@@ -269,15 +272,16 @@ public final class QuickLoad extends SymLoader {
 				// Also cannot handle compressed chp files
 				return ChpParser.parse(f.getAbsolutePath());
 			}
-			FileInputStream fis = null;
+			InputStream is = null;
 			try {
-				fis = new FileInputStream(f);
-				feats = Parse(this.extension, fis, this.version, this.featureName);
+				// This will also unzip the stream if necessary
+				is = GeneralUtils.getInputStream(f, new StringBuffer());
+				feats = Parse(this.extension, is, this.version, this.featureName);
 				return feats;
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
-				GeneralUtils.safeClose(fis);
+				GeneralUtils.safeClose(is);
 			}
 			return null;
 		} catch (Exception ex) {

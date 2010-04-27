@@ -1018,4 +1018,8 @@ public final class IGB extends Application
 		}
 		prev_selected_seq = selected_seq;
 	}
+
+	public List<Object> getPlugins() {
+		return Collections.<Object>unmodifiableList(plugins);
+	}
 }

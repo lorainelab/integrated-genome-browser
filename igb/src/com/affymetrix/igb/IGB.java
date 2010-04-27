@@ -492,13 +492,6 @@ public final class IGB extends Application
 						Object plugin = setUpPlugIn(pi);
 						plugins.add(plugin);
 					}
-
-					for (Object plugin : plugins) {
-						if (plugin instanceof DataLoadView) {
-							data_load_view = (DataLoadView) plugin;
-							break;
-						}
-					}
 				}
 			});
 		}

@@ -51,21 +51,21 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String SEARCHLABELTEXT = "Search ";
 	private static final String INLABELTEXT = "in ";
 	private static final String FORLABELTEXT = "for ";
-	private static final String REGEXID = "Matching IDs";
-	private static final String REGEXIDTF = "IDs match string or Regular Expression";
-	private static final String REGEXRESIDUE = "Matching residues";
-	private static final String REGEXRESIDUETF = "Residues match string or Regular Expression";
-	private static final String CHOOSESEARCH = "Choose search method";
+	private static final String REGEXID = IGBConstants.BUNDLE.getString("searchRegexID");
+	private static final String REGEXIDTF = IGBConstants.BUNDLE.getString("searchRegexIDTF");
+	private static final String REGEXRESIDUE = IGBConstants.BUNDLE.getString("searchRegexResidue");
+	private static final String REGEXRESIDUETF = IGBConstants.BUNDLE.getString("searchRegexResidueTF");
+	private static final String CHOOSESEARCH = IGBConstants.BUNDLE.getString("searchChooseSearch");
 	private static final String FINDANNOTS = "Find Annotations For ";
-	private static final String FINDANNOTSNULL = "Please select genome before continuing";
-	private static final String SEQUENCETOSEARCH = "Sequence to search";
+	private static final String FINDANNOTSNULL = IGBConstants.BUNDLE.getString("pleaseSelectGenome");
+	private static final String SEQUENCETOSEARCH = IGBConstants.BUNDLE.getString("searchSequenceToSearch");
 	private static final String REMOTESERVERSEARCH1 = "also search remotely (";
 	private static final String REMOTESERVERSEARCH2 = " server)";
 	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
 
-	private static final String SELECTINMAP_TEXT = "select in map";
-	private static final String SELECTINMAP_TIP = "highlight matches in sequence map";
+	private static final String SELECTINMAP_TEXT = IGBConstants.BUNDLE.getString("searchSelectInMapText");
+	private static final String SELECTINMAP_TIP = IGBConstants.BUNDLE.getString("searchSelectInMapTip");
 
 	private JTextField searchTF;
 	private final JPanel pan1 = new JPanel();
@@ -645,7 +645,14 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private class SearchResultsTableModel extends AbstractTableModel {
 
-		private final String[] column_names = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
+		private final String[] column_names = {
+			IGBConstants.BUNDLE.getString("searchTableID"),
+			IGBConstants.BUNDLE.getString("searchTableTier"),
+			IGBConstants.BUNDLE.getString("searchTableStart"),
+			IGBConstants.BUNDLE.getString("searchTableEnd"),
+			IGBConstants.BUNDLE.getString("searchTableChromosome"),
+			IGBConstants.BUNDLE.getString("searchTableStrand")
+		};
 		private static  final int ID_COLUMN = 0;
 		private static final int TIER_COLUMN = 1;
 		private static final int START_COLUMN = 2;

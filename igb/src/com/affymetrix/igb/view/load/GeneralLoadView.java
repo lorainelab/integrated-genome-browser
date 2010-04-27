@@ -295,6 +295,7 @@ public final class GeneralLoadView extends JComponent
 				speciesCB.removeAllItems();
 				speciesCB.addItem(SELECT_SPECIES);
 				for (String speciesName : speciesList) {
+					speciesCBRenderer.setToolTipEntry(speciesName, GeneralLoadUtils.getSpeciesCommonName(speciesName));
 					speciesCB.addItem(speciesName);
 				}
 				if (oldSpecies == null) {

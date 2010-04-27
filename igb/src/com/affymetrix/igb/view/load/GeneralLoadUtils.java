@@ -709,4 +709,7 @@ public final class GeneralLoadUtils {
 		return synonymBuilder.toString();
 	}
 
+	static String getSpeciesCommonName(String speciesName) {
+		return SPECIES_LOOKUP.getCommonSpeciesName(speciesName);
+	}
 }

@@ -47,6 +47,18 @@ public final class SpeciesLookup {
 	}
 
 	/**
+	 * Return the common name of a species for the given version using
+	 * the default case sensitivity of this lookup.
+	 *
+	 * @param version the version to find the species name of.
+	 * @return the user-friendly name of the species.
+	 */
+	public String getCommonSpeciesName(String species) {
+		return this.speciesLookup.findSecondSynonym(species);
+	}
+
+
+	/**
 	 * Return the user-friendly name of a species for the given version using
 	 * the default case sensitivity of this lookup.
 	 *

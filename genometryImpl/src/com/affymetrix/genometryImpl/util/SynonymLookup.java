@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -309,6 +310,27 @@ public final class SynonymLookup {
 			}
 		}
 		return synonym;
+	}
+
+	/**
+	 * Find the second synonym, if it exists.  Otherwise return the first.
+	 * @param synonym
+	 * @return
+	 */
+	public String findSecondSynonym(String synonym) {
+		Set<String> synonymSet = this.lookupHash.get(synonym);
+		if (synonymSet == null) {
+			return synonym;
+		}
+		String firstSynonym = "";
+		for (String id : this.lookupHash.get(synonym)) {
+			if (firstSynonym.length() == 0) {
+				firstSynonym = id;
+			} else {
+				return id;	// second synonym
+			}
+		}
+		return firstSynonym;
 	}
 
 	/**

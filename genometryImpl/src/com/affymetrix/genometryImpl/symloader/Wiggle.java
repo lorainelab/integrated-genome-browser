@@ -356,11 +356,7 @@ public final class Wiggle extends SymLoader{
 	}
 
 	private static boolean checkRange(int start, int width, int min, int max){
-		//getGenome && getChromosomeList
-		if(min == max && min == -1){
-			return true;
-		}
-
+		
 		//getChromosome && getRegion
 		if(start+width < min || start > max){
 			return false;
@@ -634,5 +630,5 @@ public final class Wiggle extends SymLoader{
 			chrList.put(group.addSeq(key, bioseq.getValue()), chrFiles.get(key));
 		}
 	}
-	
+
 }

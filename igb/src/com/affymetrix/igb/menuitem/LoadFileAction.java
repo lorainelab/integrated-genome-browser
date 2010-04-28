@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -58,6 +59,7 @@ import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
 import com.affymetrix.genometryImpl.parsers.graph.CntParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
+import com.affymetrix.genoviz.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genoviz.swing.threads.InvokeUtils;
@@ -86,7 +88,18 @@ public final class LoadFileAction extends AbstractAction {
 	private static final String MERGE_MESSAGE = 
 			"Must select a genome before loading a graph.  "
 			+ "Graph data must be merged with already loaded genomic data.";
+	private final TransferHandler fdh = new FileDropHandler(){
 
+		@Override
+		public void openFileAction(File f) {
+			LoadFileAction.openFileAction(gviewerFrame,f);
+		}
+
+		@Override
+		public void openURLAction(String url) {
+			LoadFileAction.openURLAction(gviewerFrame,url);
+		}
+	};
 	/**
 	 *  Constructor.
 	 *  @param ft  a FileTracker used to keep track of directory to load from
@@ -100,6 +113,7 @@ public final class LoadFileAction extends AbstractAction {
 
 		this.gviewerFrame = gviewerFrame;
 		load_dir_tracker = ft;
+		this.gviewerFrame.setTransferHandler(fdh);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -214,9 +228,14 @@ public final class LoadFileAction extends AbstractAction {
 		
 		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
 
-		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
-		
 		URI uri = fils[0].toURI();
+		
+		openURI(uri, fils[0].getName(), mergeSelected, loadGroup);
+	}
+
+	private static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup) {
+
+		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
 
 		// handle URL case.
 		String uriString = uri.toString();
@@ -227,27 +246,24 @@ public final class LoadFileAction extends AbstractAction {
 			uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
 			uri = URI.create(uriString);
 		}
-
-		GenericFeature gFeature = new GenericFeature(
-				fils[0].getName(), null, version, new QuickLoad(version, uri), fils);
+		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class);
 		if (!mergeSelected && gFeature.symL != null) {
-			addChromosomesForUnknownGroup(fils, gFeature, loadGroup);
+			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
 			if (loadGroup.getSeqCount() > 0) {
 				GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
 				// select a chromosomes
 			}
 		}
 		version.addFeature(gFeature);
-		gFeature.setVisible();	// this should be automatically checked in the feature tree
-		DataLoadView view = ((IGB)Application.getSingleton()).data_load_view;
+		gFeature.setVisible(); // this should be automatically checked in the feature tree
+		DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
 		view.tableChanged();
-
 		// force a refresh of this server
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true);
 	}
 
-	private static void addChromosomesForUnknownGroup(final File[] fils, GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {
-		String notLockedUpMsg = "Retrieving chromosomes for " + fils[0].getName();
+	private static void addChromosomesForUnknownGroup(final String fileName, GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {
+		String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
 		Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
 		try {
 			for (BioSeq seq : gFeature.symL.getChromosomeList()) {
@@ -369,6 +385,46 @@ public final class LoadFileAction extends AbstractAction {
 			}
 		}
 		return aseq;
+	}
+
+	private static void openURLAction(JFrame gviewerFrame,String url){
+		try {
+			URI uri = new URI(url);
+		
+			if(!openURI(uri)){
+				ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, null);
+			}
+			
+		} catch (URISyntaxException ex) {
+			ErrorHandler.errorPanel(gviewerFrame, "INVALID URL", url + "\n Url provided is not valid: ", null);
+		}
+	}
+
+	private static void openFileAction(JFrame gviewerFrame, File f){
+		URI uri = f.toURI();
+		if(!openURI(uri)){
+			ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName(), null);			
+		}
+	}
+
+	private static boolean openURI(URI uri) {
+		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
+		String friendlyName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
+
+		if(!getFileChooser().accept(new File(friendlyName))){
+			return false;
+		}
+
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
+		boolean mergeSelected = loadGroup == null ? false :true;
+		if (loadGroup == null) {
+			loadGroup = gmodel.addSeqGroup("unknowGroup");
+		}
+
+		openURI(uri, friendlyName, mergeSelected, loadGroup);
+		
+		return true;
 	}
 
 	private static BioSeq DoParse(

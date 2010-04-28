@@ -96,7 +96,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JMenuItem exit_item;
 	private JMenuItem res2clip_item;
 	private JMenuItem clamp_view_item;
 	private JMenuItem unclamp_item;
@@ -362,8 +361,6 @@ public final class IGB extends Application
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 
-		exit_item = new JMenuItem(BUNDLE.getString("exit"), KeyEvent.VK_E);
-
 		adjust_edgematch_item = new JMenuItem(BUNDLE.getString("adjustEdgeMatchFuzziness"), KeyEvent.VK_F);
 
 		clamp_view_item = new JMenuItem(BUNDLE.getString("clampToView"), KeyEvent.VK_V);
@@ -400,8 +397,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ReportBugAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new DocumentationAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
-
-		exit_item.addActionListener(this);
 
 		toggle_edge_matching_item.addActionListener(this);
 		adjust_edgematch_item.addActionListener(this);
@@ -454,12 +449,26 @@ public final class IGB extends Application
 		// that is created by an exception during plugin set-up will appear
 		// on top of the main frame, not hidden by it.
 
-		frm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frm.addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(WindowEvent evt) {
-				exit();
+				JFrame frame = (JFrame) evt.getComponent();
+				boolean ask_before_exit = PreferenceUtils.getBooleanParam(PreferenceUtils.ASK_BEFORE_EXITING,
+						PreferenceUtils.default_ask_before_exiting);
+				String message = "Do you really want to exit?";
+
+				if ((!ask_before_exit) || confirmPanel(message)) {
+					if (bmark_action != null) {
+						bmark_action.autoSaveBookmarks();
+					}
+					WebLink.autoSave();
+					saveWindowLocations();
+					Persistence.saveCurrentView(map_view);
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				} else {
+					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				}
 			}
 		});
 		frm.setVisible(true);
@@ -514,7 +523,7 @@ public final class IGB extends Application
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PreferencesAction()));
 		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, exit_item);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new ExitAction()));
 	}
 
 	private void editMenu() {
@@ -620,9 +629,7 @@ public final class IGB extends Application
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		if (src == exit_item) {
-			exit();
-		} else if (src == res2clip_item) {
+		if (src == res2clip_item) {
 			map_view.copySelectedResidues();
 		} else if (src == toggle_edge_matching_item) {
 			map_view.setEdgeMatching(!map_view.getEdgeMatching());
@@ -715,21 +722,6 @@ public final class IGB extends Application
 			// It isn't a big deal if we can't find the icon, just return null
 		}
 		return icon;
-	}
-
-	void exit() {
-		boolean ask_before_exit = PreferenceUtils.getBooleanParam(PreferenceUtils.ASK_BEFORE_EXITING,
-						PreferenceUtils.default_ask_before_exiting);
-		String message = "Do you really want to exit?";
-		if ((!ask_before_exit) || confirmPanel(message)) {
-			if (bmark_action != null) {
-				bmark_action.autoSaveBookmarks();
-			}
-			WebLink.autoSave();
-			saveWindowLocations();
-			Persistence.saveCurrentView(map_view);
-			System.exit(0);
-		}
 	}
 
 	/**

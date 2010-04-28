@@ -1,6 +1,7 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.action.AboutIGBAction;
+import com.affymetrix.igb.action.ExitAction;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Image;
 import java.lang.reflect.InvocationHandler;
@@ -105,7 +106,8 @@ final class ApplicationListenerProxy implements InvocationHandler {
 				Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
 				setHandled.invoke(args[0], true);
 			} else if (method.getName().equals("handleQuit")) {
-				IGB.singleton_igb.exit();
+				ExitAction a = new ExitAction();
+				a.actionPerformed(null);
 			} else if (method.getName().equals("handlePreferences")) {
 				PreferencesPanel pv = PreferencesPanel.getSingleton();
 				JFrame f = pv.getFrame();

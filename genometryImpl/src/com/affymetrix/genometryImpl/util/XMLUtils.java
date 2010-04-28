@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
  * @version $Id: XMLUtils.java 5674 2010-04-12 19:14:03Z jnicol $
  */
 public class XMLUtils {
+
 	private XMLUtils() { }
 
 	/**
@@ -29,15 +30,18 @@ public class XMLUtils {
 	public static DocumentBuilderFactory nonValidatingFactory() {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(false);
+		setFeature(factory,"http://xml.org/sax/features/validation");
+		setFeature(factory,"http://apache.org/xml/features/validation/dynamic");
+		setFeature(factory,"http://apache.org/xml/features/nonvalidating/load-external-dtd");
+		return factory;
+	}
+
+	private static void setFeature(DocumentBuilderFactory factory, String feature) {
 		try {
-			factory.setFeature("http://xml.org/sax/features/validation", false);
-			factory.setFeature("http://apache.org/xml/features/validation/dynamic", false);
-			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			factory.setFeature(feature, false);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-
-		return factory;
 	}
 
 	/**

@@ -76,6 +76,7 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.RefreshDataAction;
+import com.affymetrix.igb.tiers.MouseSortCut;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -324,7 +325,7 @@ public class SeqMapView extends JPanel
 		super();
 
 		seqmap = createAffyTieredMap();
-
+		
 		seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
 		seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
 
@@ -353,6 +354,9 @@ public class SeqMapView extends JPanel
 
 
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
+		SeqMapViewPopup popup = new SeqMapViewPopup(tier_manager,this);
+		MouseSortCut msc = new MouseSortCut(popup);
+		
 		tier_manager.setDoGraphSelections(true);
 		if (add_popups) {
 			//NOTE: popup listeners are called in reverse of the order that they are added
@@ -361,7 +365,7 @@ public class SeqMapView extends JPanel
 			//tier_manager.addPopupListener(new GraphSelectionManager(this));
 			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
-			tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
+			tier_manager.addPopupListener(popup);
 		}
 
 		// Listener for track selection events.  We will use this to populate 'Selection Info'
@@ -377,6 +381,8 @@ public class SeqMapView extends JPanel
 
 		seqmap.setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		seqmap.addMouseListener(mouse_listener);
+		seqmap.addMouseListener(msc);
+		((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(msc);
 
 		tier_manager.setDoGraphSelections(true);
 
@@ -1607,6 +1613,8 @@ public class SeqMapView extends JPanel
 		} else if (getSelectedRegion() != null) {
 			SeqSpan span = getViewSeqSpan(getSelectedRegion());
 			zoomTo(span);
+		}else{
+			zoomToRectangle(seqmap.getCoordBounds());
 		}
 	}
 
@@ -1863,7 +1871,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Select the parents of the current selections */
-	final void selectParents() {
+	final public void selectParents() {
 		if (seqmap.getSelected().isEmpty()) {
 			Application.errorPanel("Nothing selected");
 		} else if (seqmap.getSelected().size() == 1) {

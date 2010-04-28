@@ -301,7 +301,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     handler.sortTiers();
   }
 
-  private void showAllTiers() {
+  void showAllTiers() {
 	  List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
 
 	  for (TierLabelGlyph label : tiervec) {
@@ -356,7 +356,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   /** Hides multiple tiers and then repacks.
    *  @param tiers  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
    */
-  private void hideTiers(List<TierLabelGlyph> tiers) {
+  void hideTiers(List<TierLabelGlyph> tiers) {
     for (TierLabelGlyph g : tiers) {
       if (g.getInfo() instanceof TierGlyph) {
         TierGlyph tier = (TierGlyph) g.getInfo();
@@ -568,7 +568,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     gl.setColor(atier.getForegroundColor());
   }
 
-  private void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
+  void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
     if (gviewer != null) {
       // if an AnnotatedSeqViewer is being used, ask it to update itself.
       // later this can be made more specific to just update the tiers that changed
@@ -716,5 +716,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			System.out.println("Tier: " + tg);
 			System.out.println("Style: " + style);
 		}
+	}
+
+	SeqMapView getSeqMapView() {
+		return gviewer;
 	}
 }

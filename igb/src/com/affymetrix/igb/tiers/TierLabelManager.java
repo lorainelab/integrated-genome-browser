@@ -294,29 +294,43 @@ public final class TierLabelManager {
 	 */
 	void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
 		for (TierLabelGlyph tlg : tier_labels) {
-			IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
-			if (style.getExpandable()) {
-				style.setCollapsed(collapsed);
-
-				// When collapsing, make them all be the same height as the tier.
-				// (this is for simplicity in figuring out how to draw things.)
-				if (collapsed) {
-					List<GraphGlyph> graphs = getContainedGraphs(tlg);
-					double tier_height = style.getHeight();
-					for (GraphGlyph graph : graphs) {
-						graph.getGraphState().getTierStyle().setHeight(tier_height);
-					}
-				}
-
-				for (ViewI v : tlg.getReferenceTier().getScene().getViews()) {
-					tlg.getReferenceTier().pack(v);
-				}
-			}
+			setTierCollapsed(tlg, collapsed);
 		}
-
 		repackTheTiers(true, true);
 	}
 
+	/**
+	 * Collapse or expand tier.
+	 * @param tlg
+	 * @param collapsed - boolean indicating whether to collapse or expand tiers.
+	 */
+	 void setTierCollapsed(TierLabelGlyph tlg, boolean collapsed) {
+		IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
+		if (style.getExpandable()) {
+			style.setCollapsed(collapsed);
+			// When collapsing, make them all be the same height as the tier.
+			// (this is for simplicity in figuring out how to draw things.)
+			if (collapsed) {
+				List<GraphGlyph> graphs = getContainedGraphs(tlg);
+				double tier_height = style.getHeight();
+				for (GraphGlyph graph : graphs) {
+					graph.getGraphState().getTierStyle().setHeight(tier_height);
+				}
+			}
+			for (ViewI v : tlg.getReferenceTier().getScene().getViews()) {
+				tlg.getReferenceTier().pack(v);
+			}
+		}
+	}
+
+	public void toggleTierCollapsed(List<TierLabelGlyph> tier_glyphs){
+		for(TierLabelGlyph glyph : tier_glyphs){
+			IAnnotStyle style = glyph.getReferenceTier().getAnnotStyle();
+			setTierCollapsed(glyph, !style.getCollapsed());
+		}
+		repackTheTiers(true, true);
+	}
+	
 	/**
 	 * Rearrange tiers in case mouse is dragged.
 	 */

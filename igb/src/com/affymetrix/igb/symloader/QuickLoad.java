@@ -391,9 +391,9 @@ public final class QuickLoad extends SymLoader {
 		if (this.extension.endsWith("useq")) {
 			return new USeq(this.uri, this.featureName, this.version.group);
 		}
-		if (this.extension.endsWith("wig")) {
+		/*if (this.extension.endsWith("wig")) {
 			return new Wiggle(this.uri, this.featureName, this.version.group);
-		}
+		}*/
 		return null;
 	}
 

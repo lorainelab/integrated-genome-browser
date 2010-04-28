@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
@@ -20,10 +21,12 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.awt.Color;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,6 +40,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -46,7 +50,7 @@ import java.util.regex.Pattern;
  * @author hiralv
  */
 public final class Wiggle extends SymLoader{
-	
+
 	private static enum WigFormat {
 
 		BED4, VARSTEP, FIXEDSTEP
@@ -56,10 +60,10 @@ public final class Wiggle extends SymLoader{
 	private static final boolean ensure_unique_id = true;
 	private final TrackLineParser track_line_parser;
 
-	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
-
+	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
+	
 	public Wiggle(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
 		this.group = seq_group;
@@ -80,27 +84,28 @@ public final class Wiggle extends SymLoader{
 			return;
 		}
 		super.init();
-		this.f = LocalUrlCacher.convertURIToFile(uri);
+		buildIndex();
 	}
 
 	@Override
-	public List<BioSeq> getChromosomeList() {
+	public List<BioSeq> getChromosomeList(){
 		init();
-		List<BioSeq> seqs = new ArrayList<BioSeq>();
-		List<GraphSym> allSyms = getGenome();
-		for(GraphSym sym : allSyms){
-			if(!seqs.contains(sym.getGraphSeq()))
-				seqs.add(sym.getGraphSeq());
-		}
-		allSyms = null;
-		return seqs;
+		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+		Collections.sort(chromosomeList,new BioSeqComparator());
+		return chromosomeList;
 	}
 
 	@Override
 	public List<GraphSym> getGenome() {
 		init();
-		return parse(null,-1,-1);
+		List<BioSeq> allSeq = getChromosomeList();
+		List<GraphSym> retList = new ArrayList<GraphSym>();
+		for(BioSeq seq : allSeq){
+			retList.addAll(getChromosome(seq));
+		}
+		return retList;
 	}
+
 
 	@Override
 	public List<GraphSym> getChromosome(BioSeq seq) {
@@ -115,14 +120,14 @@ public final class Wiggle extends SymLoader{
 		return parse(span.getBioSeq(),span.getMin(),span.getMax());
 	}
 
-		
+
 	/**
 	 *  Reads a Wiggle-formatted file using any combination of the three formats
 	 *  BED4,VARSTEP,FIXEDSTEP.
 	 *  The format must be specified on the first line following a track line,
 	 *  otherwise BED4 is assumed.
 	 */
-	private List<GraphSym> parse(BioSeq reqSeq, int min, int max){
+	private List<GraphSym> parse(BioSeq seq, int min, int max){
 		FileInputStream fis = null;
 		InputStream istr = null;
 		
@@ -143,10 +148,13 @@ public final class Wiggle extends SymLoader{
 
 		BufferedReader br = null;
 		try {
-			fis = new FileInputStream(this.f);
-			istr = GeneralUtils.unzipStream(fis, f.getName(), new StringBuffer());
-			br = new BufferedReader(new InputStreamReader(istr));
+			File file = chrList.get(seq);
+			if (file == null) {
+				Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
+				return Collections.<GraphSym>emptyList();
+			}
 
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
 			while ((line = br.readLine()) != null && !Thread.currentThread().isInterrupted()) {
 				if (line.length() == 0) {
@@ -199,7 +207,7 @@ public final class Wiggle extends SymLoader{
 				}
 
 				current_start = parseData(
-						previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, reqSeq, min, max);
+						previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, seq, min, max);
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
@@ -224,19 +232,6 @@ public final class Wiggle extends SymLoader{
 			throw new IllegalArgumentException("Wiggle format error: File does not have a previous 'track' line");
 		}
 		String[] fields = field_regex.split(line.trim()); // trim() because lines are allowed to start with whitespace
-
-
-		if(reqSeq != null){
-			String seq_id = null;
-			if(current_format.equals(WigFormat.BED4))
-				seq_id = fields[0];
-			else
-				seq_id = current_seq_id;
-
-			if(!seq_id.equals(reqSeq.getID())){
-				return current_start;
-			}
-		}
 
 		switch(current_format) {
 			case BED4:
@@ -486,4 +481,158 @@ public final class Wiggle extends SymLoader{
 		return "text/wig";
 	}
 
+	private void buildIndex(){
+		BufferedInputStream bis = null;
+		Map<String, Integer> chrLength = new HashMap<String, Integer>();
+		Map<String, File> chrFiles = new HashMap<String, File>();
+		
+		try {
+			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			parseLines(bis, chrLength,  chrFiles);
+			createResults(chrLength, chrFiles);
+		} catch (Exception ex) {
+			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(bis);
+		}
+
+	}
+
+	private static void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+		BufferedReader br = null;
+		BufferedWriter bw = null;
+
+		WigFormat current_format = WigFormat.BED4;
+		boolean previous_track_line = false;
+		String line, current_seq_id = null, trackLine = null;
+		int current_start = 0;
+		int current_step = 0;
+		int current_span = 0;
+		int length = 0;
+
+		Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
+		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
+	
+		try {
+
+			br = new BufferedReader(new InputStreamReader(istr));
+			while ((line = br.readLine()) != null && !Thread.currentThread().isInterrupted()) {
+				if (line.length() == 0) {
+					continue;
+				}
+				if (line.charAt(0) == '#' || line.charAt(0) == '%' || line.startsWith("browser")) {
+					continue;
+				}
+				if (line.startsWith("track")) {
+					chrTrack = new HashMap<String, Boolean>();
+					trackLine = line;
+					previous_track_line = true;
+					current_format = WigFormat.BED4; // assume BED4 until changed.
+					continue;
+				}
+				if (line.startsWith("variableStep") || line.startsWith("fixedStep")) {
+					if (!previous_track_line) {
+						throw new IllegalArgumentException("Wiggle format error: line does not have a previous 'track' line");
+					}
+
+					if (line.startsWith("variableStep")) {
+						current_format = WigFormat.VARSTEP;
+						current_seq_id = Wiggle.parseFormatLine(line, "chrom", "unknown");
+						current_span = Integer.parseInt(Wiggle.parseFormatLine(line, "span", "1"));
+					} else {
+						current_format = WigFormat.FIXEDSTEP;
+						current_seq_id = Wiggle.parseFormatLine(line, "chrom", "unknown");
+						current_start = Integer.parseInt(Wiggle.parseFormatLine(line, "start", "1"));
+						if (current_start < 1) {
+							throw new IllegalArgumentException("'fixedStep' format with start of " + current_start + ".");
+						}
+						current_step = Integer.parseInt(Wiggle.parseFormatLine(line, "step", "1"));
+						current_span = Integer.parseInt(Wiggle.parseFormatLine(line, "span", "1"));
+					}
+
+					if (!chrs.containsKey(current_seq_id)) {
+						addToLists(chrs, current_seq_id, chrFiles, chrLength);
+					}
+					bw = chrs.get(current_seq_id);
+					if (!chrTrack.containsKey(current_seq_id)) {
+						chrTrack.put(current_seq_id, true);
+						bw.write(trackLine + "\n");
+					}
+					bw.write(line + "\n");
+					continue;
+				}
+
+				String[] fields = field_regex.split(line.trim());
+				switch (current_format) {
+					case BED4:
+						if (fields.length < 4) {
+							throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+						}
+						current_seq_id = fields[0];
+						length = Integer.parseInt(fields[2]);
+						if (!chrs.containsKey(current_seq_id)) {
+							addToLists(chrs, current_seq_id, chrFiles, chrLength);
+						}
+						break;
+
+					case VARSTEP:
+						if (fields.length < 2) {
+							throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+						}
+						current_start = Integer.parseInt(fields[0]) - 1;
+						length = current_start + current_span;
+						break;
+						
+					case FIXEDSTEP:
+						if (fields.length < 1) {
+							throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+						}
+						length = current_start + current_span - 1;
+						current_start += current_step;
+						break;
+				}
+
+				bw = chrs.get(current_seq_id);
+				if (!chrTrack.containsKey(current_seq_id)) {
+					chrTrack.put(current_seq_id, true);
+					bw.write(trackLine + "\n");
+				}
+				bw.write(line + "\n");
+				if (length > chrLength.get(current_seq_id)) {
+					chrLength.put(current_seq_id, length);
+				}
+			}
+
+		} catch (IOException ex) {
+			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
+		}finally{
+			for (BufferedWriter b : chrs.values()) {
+				GeneralUtils.safeClose(b);
+			}
+		}
+	}
+
+
+	private static void addToLists(
+			Map<String, BufferedWriter> chrs, String current_seq_id, Map<String, File> chrFiles, Map<String,Integer> chrLength) throws IOException {
+
+		String fileName = current_seq_id;
+		if (fileName.length() < 3) {
+			fileName += "___";
+		}
+		File tempFile = File.createTempFile(fileName, ".wig");
+		tempFile.deleteOnExit();
+		chrs.put(current_seq_id, new BufferedWriter(new FileWriter(tempFile, true)));
+		chrFiles.put(current_seq_id, tempFile);
+		chrLength.put(current_seq_id, 0);
+	}
+	
+
+	private void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
+		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
+			String key = bioseq.getKey();
+			chrList.put(group.addSeq(key, bioseq.getValue()), chrFiles.get(key));
+		}
+	}
+	
 }

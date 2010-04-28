@@ -76,7 +76,7 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.RefreshDataAction;
-import com.affymetrix.igb.tiers.MouseSortCut;
+import com.affymetrix.igb.tiers.MouseShortCut;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -355,7 +355,7 @@ public class SeqMapView extends JPanel
 
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
 		SeqMapViewPopup popup = new SeqMapViewPopup(tier_manager,this);
-		MouseSortCut msc = new MouseSortCut(popup);
+		MouseShortCut msc = new MouseShortCut(popup);
 		
 		tier_manager.setDoGraphSelections(true);
 		if (add_popups) {
@@ -382,7 +382,7 @@ public class SeqMapView extends JPanel
 		seqmap.setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		seqmap.addMouseListener(mouse_listener);
 		seqmap.addMouseListener(msc);
-		((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(msc);
+		//((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(msc); //Enable mouse short cut here.
 
 		tier_manager.setDoGraphSelections(true);
 

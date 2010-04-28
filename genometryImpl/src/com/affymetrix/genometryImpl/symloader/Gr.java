@@ -43,6 +43,7 @@ public final class Gr extends SymLoader {
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
 	private boolean isSorted = false;
+	private File tempFile = null;
 	
 	public Gr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
@@ -113,15 +114,17 @@ public final class Gr extends SymLoader {
 		if (!isSorted) {
 			FileOutputStream fos = null;
 			try {
-				fos = new FileOutputStream(f);
+				tempFile = File.createTempFile(f.getName(), ".gr");
+				tempFile.deleteOnExit();
+				fos = new FileOutputStream(tempFile);
 				writeGrFormat(sym, fos);
-				isSorted = true;
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			} finally {
 				GeneralUtils.safeClose(fos);
 			}
 		}
+		isSorted = true;
 		
 		return sym;
 	}
@@ -143,7 +146,11 @@ public final class Gr extends SymLoader {
 		
 		try {
 
-			fis = new FileInputStream(this.f);
+			if(tempFile != null)
+				fis = new FileInputStream(tempFile);
+			else
+				fis = new FileInputStream(this.f);
+
 			is = GeneralUtils.unzipStream(fis, f.getName(), new StringBuffer());
 			br = new BufferedReader(new InputStreamReader(is));
 			// check first line, may be a header for column labels...

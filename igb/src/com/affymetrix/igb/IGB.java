@@ -32,8 +32,6 @@ import java.util.List;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -63,7 +61,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
-import java.text.MessageFormat;
 import java.util.prefs.Preferences;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -78,17 +75,15 @@ import static com.affymetrix.igb.IGBConstants.USER_AGENT;
  * @version $Id$
  */
 public final class IGB extends Application
-				implements ActionListener, ContextualPopupListener, GroupSelectionListener, SeqSelectionListener {
+				implements ActionListener, GroupSelectionListener, SeqSelectionListener {
 
 	static IGB singleton_igb;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
-	private static final String MENU_ITEM_HAS_DIALOG = BUNDLE.getString("menuItemHasDialog");
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static String[] main_args;
 	private static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
 	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
 	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
-	private final JMenu popup_windowsM = new JMenu(MessageFormat.format(MENU_ITEM_HAS_DIALOG, "Open in Window"));
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JMenu file_menu;
@@ -943,13 +938,8 @@ public final class IGB extends Application
 		PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_WINDOW);
 	}
 
-	public void popupNotify(JPopupMenu popup, List selected_items, SeqSymmetry primary_sym) {
-		popup.add(popup_windowsM);
-	}
-
 	private void addToPopupWindows(final JComponent comp, final String title) {
 		JCheckBoxMenuItem popupMI = new JCheckBoxMenuItem(title);
-		popup_windowsM.add(popupMI);
 		popupMI.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
@@ -962,7 +952,6 @@ public final class IGB extends Application
 			}
 		});
 		comp2menu_item.put(comp, popupMI);
-		popup_windowsM.add(new JCheckBoxMenuItem("foo"));
 	}
 
 	public String getApplicationName() {

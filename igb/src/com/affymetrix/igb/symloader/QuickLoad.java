@@ -18,14 +18,16 @@ import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.Bar;
+import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symloader.Sgr;
+import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.symloader.USeq;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -62,6 +64,7 @@ public final class QuickLoad extends SymLoader {
 	private final GenericVersion version;
 	public final String featureName;
 	private SymLoader symL;	// parser factory
+	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
 
 	public QuickLoad(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName));
@@ -196,7 +199,6 @@ public final class QuickLoad extends SymLoader {
 
 		vexec.execute(worker);
 		return true;
-
 	}
 
 
@@ -222,6 +224,43 @@ public final class QuickLoad extends SymLoader {
 			return this.getRegion(overlapSpan);
 		}
 		return null;
+	}
+
+	public boolean loadResidues(final LoadStrategy strategy, final SeqSpan span) {
+		final SeqMapView gviewer = Application.getSingleton().getMapView();
+		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
+		final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+
+		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+
+			public String doInBackground() {
+				try {
+					String results = QuickLoad.this.getRegionResidues(span);
+					return results;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				return null;
+			}
+			@Override
+			public void done() {
+				try {
+					final String results = get();
+					if (results != null && !results.isEmpty()) {
+						//seq.addResiduesToComposition(seq, results, span);
+						gviewer.setAnnotatedSeq(seq, true, true);
+						//SeqGroupView.refreshTable();
+					}
+				} catch (Exception ex) {
+					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
+				} finally {
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
+				}
+			}
+		};
+
+		vexec.execute(worker);
+		return true;
 	}
 
 	/**
@@ -306,11 +345,37 @@ public final class QuickLoad extends SymLoader {
 		return super.getRegion(span);
 	}
 
+	@Override
+	public String getRegionResidues(SeqSpan span) {
+		if (this.symL != null && this.isResidueLoader) {
+			return this.symL.getRegionResidues(span);
+		}
+		Logger.getLogger(QuickLoad.class.getName()).log(
+				Level.SEVERE, "Residue loading was called with a non-residue format.");
+		return "";
+	}
+
 	/**
 	 * Determine the appropriate loader.
 	 * @return
 	 */
 	private SymLoader determineLoader() {
+		// residue loaders
+		if (this.extension.endsWith("bnib")) {
+			isResidueLoader = true;
+			return new BNIB(this.uri);
+		}
+		if (this.extension.endsWith("fa") || this.extension.endsWith("fasta")) {
+			isResidueLoader = true;
+			return new Fasta(this.uri, this.version.group);
+		}
+		if (this.extension.endsWith("2bit")) {
+			isResidueLoader = true;
+			return new TwoBit(this.uri);
+		}
+
+
+		// symmetry loaders
 		if (this.extension.endsWith("bam")) {
 			return new BAM(this.uri, this.featureName, this.version.group);
 		}
@@ -339,9 +404,6 @@ public final class QuickLoad extends SymLoader {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
-		if (extension.equals("bar")) {
-			return BarParser.parse(bis, gmodel, version.group, featureName, false);
-		}
 		if (extension.equals("bed")) {
 			BedParser parser = new BedParser();
 			return parser.parse(bis, gmodel, version.group, false, featureName, false);

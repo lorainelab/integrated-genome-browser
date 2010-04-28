@@ -105,6 +105,18 @@ public abstract class SymLoader {
 		return chrResults;
     }
 
+	/**
+     * Get residues in the region of the chromosome.  This is generally only defined for some parsers
+     * @param span - span of chromosome
+     * @return String of residues
+     */
+    public String getRegionResidues(SeqSpan span) {
+		Logger.getLogger(this.getClass().getName()).log(
+					Level.WARNING, "Not supported.  Returning empty string.");
+		return "";
+    }
+
+
 	public static void addToRequestSym(
 			 List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan) {
         if (feats == null || feats.isEmpty()) {

@@ -64,7 +64,7 @@ public final class TrackLineParser {
 	 *  Convert a color in string representation "RRR,GGG,BBB" into a Color.
 	 *  Note that this can throw an exception if the String is poorly formatted.
 	 */
-	static Color reformatColor(String color_string) {
+	public static Color reformatColor(String color_string) {
 		String[] rgb = comma_regex.split(color_string);
 		if (rgb.length == 3) {
 			int red = Integer.parseInt(rgb[0]);
@@ -135,7 +135,7 @@ public final class TrackLineParser {
 	 *  A default track name must be provided in case none is specified by the
 	 *  track line itself.
 	 */
-	static IAnnotStyle createAnnotStyle(Map<String,String> track_hash, String default_track_name) {
+	public static IAnnotStyle createAnnotStyle(Map<String,String> track_hash, String default_track_name) {
 		String name = track_hash.get(NAME);
 		
 		//this will create the correct track name for IGB to display the track correctly

@@ -196,15 +196,15 @@ final class NormalizeXmlStrand {
 
 	private class SimpleErrorHandler implements ErrorHandler {
     public void warning(SAXParseException e) throws SAXException {
-        System.out.println(e.getMessage());
+        System.out.println("Line " + e.getLineNumber() + ": " + e.getMessage());
     }
 
     public void error(SAXParseException e) throws SAXException {
-        System.err.println(e.getMessage());
+        System.err.println("Line " + e.getLineNumber() + ": " + e.getMessage());
     }
 
     public void fatalError(SAXParseException e) throws SAXException {
-        System.err.println(e.getMessage());
+        System.err.println("Line " + e.getLineNumber() + ": " + e.getMessage());
     }
 }
 

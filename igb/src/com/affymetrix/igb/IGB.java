@@ -52,7 +52,6 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
 import com.affymetrix.igb.general.Persistence;
-import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -96,12 +95,7 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JMenuItem res2clip_item;
-	private JMenuItem clamp_view_item;
-	private JMenuItem unclamp_item;
-	private JMenuItem rev_comp_item;
 	private JCheckBoxMenuItem shrink_wrap_item;
-	private JMenuItem adjust_edgematch_item;
 	private JCheckBoxMenuItem toggle_hairline_label_item;
 	private JCheckBoxMenuItem toggle_edge_matching_item;
 	private JMenuItem move_tab_to_window_item;
@@ -361,13 +355,6 @@ public final class IGB extends Application
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 
-		adjust_edgematch_item = new JMenuItem(BUNDLE.getString("adjustEdgeMatchFuzziness"), KeyEvent.VK_F);
-
-		clamp_view_item = new JMenuItem(BUNDLE.getString("clampToView"), KeyEvent.VK_V);
-		res2clip_item = new JMenuItem(BUNDLE.getString("copySelectedResiduesToClipboard"), KeyEvent.VK_C);
-		res2clip_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
-		unclamp_item = new JMenuItem(BUNDLE.getString("unclamp"), KeyEvent.VK_U);
-		rev_comp_item = new JMenuItem(BUNDLE.getString("reverseComplement"));
 		shrink_wrap_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleShrinkWrapping"));
 		shrink_wrap_item.setMnemonic(KeyEvent.VK_S);
 		shrink_wrap_item.setState(map_view.getShrinkWrap());
@@ -399,13 +386,8 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
 
 		toggle_edge_matching_item.addActionListener(this);
-		adjust_edgematch_item.addActionListener(this);
 
-		res2clip_item.addActionListener(this);
-		rev_comp_item.addActionListener(this);
 		shrink_wrap_item.addActionListener(this);
-		clamp_view_item.addActionListener(this);
-		unclamp_item.addActionListener(this);
 		toggle_hairline_label_item.addActionListener(this);
 		move_tab_to_window_item.addActionListener(this);
 		move_tabbed_panel_to_window_item.addActionListener(this);
@@ -527,7 +509,7 @@ public final class IGB extends Application
 	}
 
 	private void editMenu() {
-		MenuUtil.addToMenu(edit_menu, res2clip_item);
+		MenuUtil.addToMenu(edit_menu, new JMenuItem(new CopyResiduesAction()));
 	}
 
 	private void viewMenu() {
@@ -539,9 +521,9 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JMenuItem(AutoScrollAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new UCSCViewAction()));
 		MenuUtil.addToMenu(view_menu, toggle_edge_matching_item);
-		MenuUtil.addToMenu(view_menu, adjust_edgematch_item);
-		MenuUtil.addToMenu(view_menu, clamp_view_item);
-		MenuUtil.addToMenu(view_menu, unclamp_item);
+		MenuUtil.addToMenu(view_menu, new JMenuItem(new AdjustEdgeMatchAction()));
+		MenuUtil.addToMenu(view_menu, new JMenuItem(new ClampViewAction()));
+		MenuUtil.addToMenu(view_menu, new JMenuItem(new UnclampViewAction()));
 		MenuUtil.addToMenu(view_menu, shrink_wrap_item);
 		MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
 		MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
@@ -629,24 +611,15 @@ public final class IGB extends Application
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		if (src == res2clip_item) {
-			map_view.copySelectedResidues();
-		} else if (src == toggle_edge_matching_item) {
+		if (src == toggle_edge_matching_item) {
 			map_view.setEdgeMatching(!map_view.getEdgeMatching());
 			toggle_edge_matching_item.setState(map_view.getEdgeMatching());
-		} else if (src == adjust_edgematch_item) {
-			EdgeMatchAdjuster.showFramedThresholder(map_view.getEdgeMatcher(), map_view);
-		}
-		else if (src == shrink_wrap_item) {
+		} else if (src == shrink_wrap_item) {
 			if (DEBUG_EVENTS) {
 				System.out.println("trying to toggle map bounds shrink wrapping to extent of annotations");
 			}
 			map_view.setShrinkWrap(!map_view.getShrinkWrap());
 			shrink_wrap_item.setState(map_view.getShrinkWrap());
-		} else if (src == clamp_view_item) {
-			map_view.clampToView();
-		} else if (src == unclamp_item) {
-			map_view.unclamp();
 		} else if (src == toggle_hairline_label_item) {
 			map_view.toggleHairlineLabel();
 			boolean b = map_view.isHairlineLabeled();

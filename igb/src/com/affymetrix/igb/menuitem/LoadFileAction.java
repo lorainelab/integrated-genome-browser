@@ -12,13 +12,6 @@
  */
 package com.affymetrix.igb.menuitem;
 
-import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
-import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -31,7 +24,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
+import java.net.URI;
+import java.text.MessageFormat;
+import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -58,11 +58,14 @@ import com.affymetrix.genometryImpl.parsers.das.DASSymmetry;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
 import com.affymetrix.genometryImpl.parsers.graph.CntParser;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
-import com.affymetrix.genoviz.util.FileDropHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.threads.InvokeUtils;
+import com.affymetrix.genoviz.util.FileDropHandler;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
@@ -70,9 +73,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import java.net.URI;
-import java.text.MessageFormat;
-import org.xml.sax.SAXException;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -389,13 +389,14 @@ public final class LoadFileAction extends AbstractAction {
 
 	private static void openURLAction(JFrame gviewerFrame,String url){
 		try {
-			URI uri = new URI(url);
+			URI uri = new URI(url.trim());
 		
 			if(!openURI(uri)){
 				ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, null);
 			}
 			
 		} catch (URISyntaxException ex) {
+			ex.printStackTrace();
 			ErrorHandler.errorPanel(gviewerFrame, "INVALID URL", url + "\n Url provided is not valid: ", null);
 		}
 	}

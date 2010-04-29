@@ -283,44 +283,41 @@ public final class QuickLoad extends SymLoader {
 			return this.symL.getGenome();
 		}
 
-		//TODO: if this is coming from a URL, use the InputStream instead of converting to a file
-
 		if (GraphSymUtils.isAGraphFilename(this.extension)) {
-			FileInputStream fis = null;
+			BufferedInputStream bis = null;
 			try {
 				GenometryModel gmodel = GenometryModel.getGenometryModel();
-				File f = LocalUrlCacher.convertURIToFile(this.uri);
-				fis = new FileInputStream(f);
-				List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
+				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
+				List<GraphSym> graphs = GraphSymUtils.readGraphs(bis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
 				GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
 				return graphs;
 			} catch (Exception ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
-				GeneralUtils.safeClose(fis);
+				GeneralUtils.safeClose(bis);
 			}
 		}
 
 		List<? extends SeqSymmetry> feats = null;
 		try {
-			File f = LocalUrlCacher.convertURIToFile(this.uri);
 			if (this.extension.endsWith(".chp")) {
 				// special-case CHP files. ChpParser only has
 				//    a parse() method that takes the file name
 				// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
 				// Also cannot handle compressed chp files
+				File f = LocalUrlCacher.convertURIToFile(this.uri);
 				return ChpParser.parse(f.getAbsolutePath());
 			}
-			InputStream is = null;
+			BufferedInputStream bis = null;
 			try {
 				// This will also unzip the stream if necessary
-				is = GeneralUtils.getInputStream(f, new StringBuffer());
-				feats = Parse(this.extension, is, this.version, this.featureName);
+				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
+				feats = Parse(this.extension, bis, this.version, this.featureName);
 				return feats;
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
-				GeneralUtils.safeClose(is);
+				GeneralUtils.safeClose(bis);
 			}
 			return null;
 		} catch (Exception ex) {

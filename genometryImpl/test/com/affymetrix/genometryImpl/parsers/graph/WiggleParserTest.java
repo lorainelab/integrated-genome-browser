@@ -84,8 +84,9 @@ public class WiggleParserTest {
 
 	}
 
+	//Test to see if one file is created.
 	@Test
-	public void testWiggle() throws IOException {
+	public void testWiggle1() throws IOException {
 		String filename = "test/data/wiggle/wiggleExample.wig";
 		assertTrue(new File(filename).exists());
 
@@ -170,7 +171,56 @@ public class WiggleParserTest {
 		seq = allSeqs.get(0);
 		assertEquals(seq.getID(),"chr19");
 	}
-	
+
+	//Test to see if multiple files are created.
+	@Test
+	public void testWiggle2() throws IOException{
+		String filename = "test/data/wiggle/wiggleExample2.wig";
+		assertTrue(new File(filename).exists());
+
+		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
+
+		List<GraphSym> results = wiggle.getGenome();
+
+		assertEquals(3, results.size());
+
+		GraphSym gr0 = results.get(0);
+
+		BioSeq seq = gr0.getGraphSeq();
+
+		// BED format
+		assertTrue(gr0 instanceof GraphIntervalSym);
+		assertEquals("chr19", gr0.getGraphSeq().getID());
+		assertEquals(9, gr0.getPointCount());
+		assertEquals(59302000, gr0.getSpan(seq).getMin());
+		assertEquals(59304700, gr0.getSpan(seq).getMax());
+
+		// variableStep format
+		GraphSym gr1 = results.get(1);
+		seq = gr1.getGraphSeq();
+		assertTrue(gr1 instanceof GraphIntervalSym);
+		assertEquals("chr20", gr1.getGraphSeq().getID());
+		assertEquals(9, gr1.getChildCount());
+		assertTrue(gr1.getChild(0) instanceof Scored);
+		assertEquals(59304701 - 1, gr1.getSpan(seq).getMin());	// variableStep: 1-relative format
+		assertEquals(59308021 - 1, gr1.getSpan(seq).getMax());	// variableStep: 1-relative foramt
+
+		// fixedStep format
+		GraphSym gr2 = results.get(2);
+		seq = gr2.getGraphSeq();
+		assertTrue(gr2 instanceof GraphIntervalSym);
+		assertEquals("chr21", gr2.getGraphSeq().getID());
+		assertEquals(10, gr2.getChildCount());
+		assertEquals(59307401 - 1, gr2.getSpan(seq).getMin());			// fixedStep: 1-relative format
+		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
+		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
+
+		assertEquals("Bed Format", gr0.getID());
+		assertEquals("variableStep", gr1.getID());
+		assertEquals("fixedStep", gr2.getID());
+	}
+
 	public void testWriteBarFormat() throws IOException {
 		String filename = "test/data/wiggle/wiggleExample.wig";
 		assertTrue(new File(filename).exists());
@@ -197,6 +247,7 @@ public class WiggleParserTest {
 		assertEquals(gr0.getGraphSeq().getMin(),gr1.getGraphSeq().getMin());
 		assertEquals(gr0.getGraphSeq().getMax(),gr1.getGraphSeq().getMax());
 	}
+	
 	/*
 	@Test
 	public void testWriteGraphs() {

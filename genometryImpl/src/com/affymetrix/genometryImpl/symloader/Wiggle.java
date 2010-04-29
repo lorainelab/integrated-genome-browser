@@ -180,9 +180,9 @@ public final class Wiggle extends SymLoader{
 				}
 
 				if (line.startsWith("variableStep")) {
-					if (!previous_track_line) {
-						throw new IllegalArgumentException("Wiggle format error: 'variableStep' line does not have a previous 'track' line");
-					}
+//					if (!previous_track_line) {
+//						throw new IllegalArgumentException("Wiggle format error: 'variableStep' line does not have a previous 'track' line");
+//					}
 
 					current_format = WigFormat.VARSTEP;
 					current_seq_id = Wiggle.parseFormatLine(line, "chrom", "unknown");
@@ -191,9 +191,9 @@ public final class Wiggle extends SymLoader{
 				}
 
 				if (line.startsWith("fixedStep")) {
-					if (!previous_track_line) {
-						throw new IllegalArgumentException("Wiggle format error: 'fixedStep' line does not have a previous 'track' line");
-					}
+//					if (!previous_track_line) {
+//						throw new IllegalArgumentException("Wiggle format error: 'fixedStep' line does not have a previous 'track' line");
+//					}
 
 					current_format = WigFormat.FIXEDSTEP;
 					current_seq_id = Wiggle.parseFormatLine(line, "chrom", "unknown");
@@ -228,28 +228,28 @@ public final class Wiggle extends SymLoader{
 			int current_span, int current_start, int current_step, BioSeq reqSeq, int min, int max)
 			throws IllegalArgumentException {
 		// There should have been one track line at least...
-		if (!previous_track_line) {
-			throw new IllegalArgumentException("Wiggle format error: File does not have a previous 'track' line");
-		}
+//		if (!previous_track_line) {
+//			throw new IllegalArgumentException("Wiggle format error: File does not have a previous 'track' line");
+//		}
 		String[] fields = field_regex.split(line.trim()); // trim() because lines are allowed to start with whitespace
 
 		switch(current_format) {
 			case BED4:
-				if (fields.length < 4) {
-					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-				}
+//				if (fields.length < 4) {
+//					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+//				}
 				parseDataLine(fields, current_data, current_datamap, min, max);
 				break;
 			case VARSTEP:
-				if (fields.length < 2) {
-					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-				}
+//				if (fields.length < 2) {
+//					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+//				}
 				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span, min, max);
 				break;
 			case FIXEDSTEP:
-				if (fields.length < 1) {
-					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-				}
+//				if (fields.length < 1) {
+//					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+//				}
 				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span, current_start, min, max);
 				current_start += current_step; // We advance the start based upon the step.
 				break;
@@ -557,7 +557,7 @@ public final class Wiggle extends SymLoader{
 					bw.write(line + "\n");
 					continue;
 				}
-
+				
 				String[] fields = field_regex.split(line.trim());
 				switch (current_format) {
 					case BED4:
@@ -569,6 +569,11 @@ public final class Wiggle extends SymLoader{
 						if (!chrs.containsKey(current_seq_id)) {
 							addToLists(chrs, current_seq_id, chrFiles, chrLength);
 						}
+						bw = chrs.get(current_seq_id);
+						if (!chrTrack.containsKey(current_seq_id)) {
+							chrTrack.put(current_seq_id, true);
+							bw.write(trackLine + "\n");
+						}
 						break;
 
 					case VARSTEP:
@@ -578,7 +583,7 @@ public final class Wiggle extends SymLoader{
 						current_start = Integer.parseInt(fields[0]) - 1;
 						length = current_start + current_span;
 						break;
-						
+
 					case FIXEDSTEP:
 						if (fields.length < 1) {
 							throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
@@ -588,11 +593,7 @@ public final class Wiggle extends SymLoader{
 						break;
 				}
 
-				bw = chrs.get(current_seq_id);
-				if (!chrTrack.containsKey(current_seq_id)) {
-					chrTrack.put(current_seq_id, true);
-					bw.write(trackLine + "\n");
-				}
+
 				bw.write(line + "\n");
 				if (length > chrLength.get(current_seq_id)) {
 					chrLength.put(current_seq_id, length);
@@ -605,6 +606,8 @@ public final class Wiggle extends SymLoader{
 			for (BufferedWriter b : chrs.values()) {
 				GeneralUtils.safeClose(b);
 			}
+			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(bw);
 		}
 	}
 

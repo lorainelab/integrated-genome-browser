@@ -151,7 +151,13 @@ public final class QuickLoad extends SymLoader {
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
 		final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		if (!this.isResidueLoader) {
+			return loadSymmetriesThread(strategy, overlapSpan, seq, gviewer, vexec);
+		}
+		return loadResiduesThread(strategy, overlapSpan, seq, gviewer, vexec);
+	}
 
+	private boolean loadSymmetriesThread(final LoadStrategy strategy, final SeqSpan overlapSpan, final BioSeq seq, final SeqMapView gviewer, Executor vexec) throws OutOfMemoryError {
 		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
 
 			public List<? extends SeqSymmetry> doInBackground() {
@@ -160,16 +166,10 @@ public final class QuickLoad extends SymLoader {
 					if (results != null && !results.isEmpty()) {
 						SimpleSymWithProps requestSym = new SimpleSymWithProps();
 						requestSym.setProperty("method", featureName);
-						SymLoader.addToRequestSym(
-								results,
-								requestSym,
-								QuickLoad.this.featureName,
-								QuickLoad.this.featureName,
-								overlapSpan);
+						SymLoader.addToRequestSym(results, requestSym, QuickLoad.this.featureName, QuickLoad.this.featureName, overlapSpan);
 						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
 							SymLoader.addAnnotations(results, requestSym, seq);
-						}
-						else if (strategy == LoadStrategy.GENOME) {
+						} else if (strategy == LoadStrategy.GENOME) {
 							for (BioSeq aseq : QuickLoad.this.version.group.getSeqList()) {
 								SymLoader.addAnnotations(results, requestSym, aseq);
 							}
@@ -181,6 +181,7 @@ public final class QuickLoad extends SymLoader {
 				}
 				return null;
 			}
+
 			@Override
 			public void done() {
 				try {
@@ -196,7 +197,6 @@ public final class QuickLoad extends SymLoader {
 				}
 			}
 		};
-
 		vexec.execute(worker);
 		return true;
 	}
@@ -226,11 +226,7 @@ public final class QuickLoad extends SymLoader {
 		return null;
 	}
 
-	public boolean loadResidues(final LoadStrategy strategy, final SeqSpan span) {
-		final SeqMapView gviewer = Application.getSingleton().getMapView();
-		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
-		final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-
+	public boolean loadResiduesThread(final LoadStrategy strategy, final SeqSpan span, final BioSeq seq, final SeqMapView gviewer, Executor vexec) {
 		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
 
 			public String doInBackground() {
@@ -247,9 +243,8 @@ public final class QuickLoad extends SymLoader {
 				try {
 					final String results = get();
 					if (results != null && !results.isEmpty()) {
-						//seq.addResiduesToComposition(seq, results, span);
+						BioSeq.addResiduesToComposition(seq, results, span);
 						gviewer.setAnnotatedSeq(seq, true, true);
-						//SeqGroupView.refreshTable();
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);

@@ -4,11 +4,16 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -19,25 +24,49 @@ import java.util.regex.Pattern;
  * @author jnicol
  */
 public class Fasta extends SymLoader {
-	private static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
+	private static final Pattern header_regex = 
+			Pattern.compile("^\\s*>\\s*(.+)");
 	private final AnnotatedSeqGroup group;
+	private final Set<BioSeq> chrSet = new HashSet<BioSeq>();
+
 	public Fasta(URI uri, AnnotatedSeqGroup group) {
 		super(uri);
 		this.group = group;
 	}
 
 	@Override
-	public String getRegionResidues(SeqSpan span) {
+	public void init() {
+		if (this.isInitialized) {
+			return;
+		}
+		super.init();
+		initChromosomes();
+	}
+
+	@Override
+	public String[] getLoadChoices() {
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
+		return choices;
+	}
+
+	@Override
+	public List<BioSeq> getChromosomeList(){
+		init();
+		return new ArrayList<BioSeq>(chrSet);
+	}
+
+	/**
+	 * Get seqids and lengths for all chromosomes.
+	 */
+	private void initChromosomes() {
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
-		int count = 0;
-		String residues = "";
 		Matcher matcher = header_regex.matcher("");
 		try {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			br = new BufferedReader(new InputStreamReader(bis));
-			String header = br.readLine();
 			while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
+				String header = br.readLine();
 				if (header == null) {
 					continue;
 				}  // skip null lines
@@ -47,7 +76,65 @@ public class Fasta extends SymLoader {
 				if (!matched) {
 					continue;
 				}
-				String seqid = matcher.group(1);
+				String seqid = matcher.group(1).split(" ")[0];	//get rid of spaces
+				BioSeq seq = group.getSeq(seqid);
+				int count = 0;
+				while (br.ready() && (!Thread.currentThread().isInterrupted())) {
+					String line = br.readLine();
+					if (line == null || line.length() == 0) {
+						continue;
+					}  // skip null and empty lines
+
+					if (line.charAt(0) == ';') {
+						continue;
+					} // skip comment lines
+
+					// break if hit header for another sequence --
+					if (line.startsWith(">")) {
+						header = line;
+						break;
+					}
+					line = line.trim();
+					count += line.length();
+				}
+				if (seq == null) {
+					chrSet.add(new BioSeq(seqid, "", count));
+				} else {
+					group.addSeq(seqid, count);
+					chrSet.add(seq);
+				}
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+
+
+	@Override
+	public String getRegionResidues(SeqSpan span) {
+		init();
+		BufferedInputStream bis = null;
+		BufferedReader br = null;
+		int count = 0;
+		String residues = "";
+		Matcher matcher = header_regex.matcher("");
+		try {
+			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			br = new BufferedReader(new InputStreamReader(bis));
+			while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
+				String header = br.readLine();
+				if (header == null) {
+					continue;
+				}  // skip null lines
+				matcher.reset(header);
+				boolean matched = matcher.matches();
+
+				if (!matched) {
+					continue;
+				}
+				String seqid = matcher.group(1).split(" ")[0];	// get rid of spaces
 				BioSeq seq = group.getSeq(seqid);
 				boolean seqMatch = (seq != null && seq == span.getBioSeq());
 
@@ -103,4 +190,6 @@ public class Fasta extends SymLoader {
 		}
 		return residues;
 	}
+
+
 }

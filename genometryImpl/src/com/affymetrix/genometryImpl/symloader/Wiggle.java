@@ -631,18 +631,6 @@ public final class Wiggle extends SymLoader{
 		}
 	}
 
-	public static void main(String[] args){
-		String filename = "/Users/aloraine/Downloads/wiggleExample.wig";
-		//String filename = "/Users/aloraine/Downloads/test_wiggle2.wig";
-		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
-		List<GraphSym> results = null;
-		BioSeq aseq = seq_group.addSeq("chr19", 59310300);
 
-		results = wiggle.getChromosome(aseq);
-
-		GraphSym g0 = results.get(0);
-		int i = 0;
-	}
 	
 }

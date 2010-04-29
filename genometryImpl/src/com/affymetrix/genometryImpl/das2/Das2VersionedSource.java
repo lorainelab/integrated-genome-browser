@@ -190,6 +190,7 @@ public final class Das2VersionedSource {
 			getRegionList(regionlist, region_request);
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			LocalUrlCacher.invalidateCacheFile(region_request);
 			// TODO
 			//ErrorHandler.errorPanel("Error initializing DAS2 region points for\n" + region_request, ex);
 		}
@@ -279,6 +280,7 @@ public final class Das2VersionedSource {
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
+					LocalUrlCacher.invalidateCacheFile(types_request);
 					// TODO
 					//ErrorHandler.errorPanel("Error initializing DAS2 types for\n" + types_request, ex);
         }

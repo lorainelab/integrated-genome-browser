@@ -39,6 +39,7 @@ public final class Das2Source {
 
   public String getID() { return source_uri.toString(); }
   public String getName() { return name; }
+  @Override
   public String toString() { return getName(); }
 
   Das2ServerInfo getServerInfo() { return server; }

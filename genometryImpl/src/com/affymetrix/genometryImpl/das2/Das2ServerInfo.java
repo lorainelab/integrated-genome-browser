@@ -108,9 +108,10 @@ public final class Das2ServerInfo  {
 	 */
 	private synchronized boolean initialize() {
 		InputStream response = null;
+		String das_query = "";
 		try {
 			if (server_uri == null) { return false; }
-			String das_query = server_uri.toString();
+			das_query = server_uri.toString();
 			
 			if (login() == false) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
@@ -145,6 +146,7 @@ public final class Das2ServerInfo  {
 			parseSources(sources, das_query);
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			LocalUrlCacher.invalidateCacheFile(das_query);
 			return false;   // not successfully initialized if there was an exception.
 		} finally {
 			GeneralUtils.safeClose(response);

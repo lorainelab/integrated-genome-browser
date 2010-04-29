@@ -320,7 +320,15 @@ public final class LocalUrlCacher {
 	 * @param url
 	 */
 	public static void invalidateCacheFile(String url) {
+		File cache_file = getCacheFile(cache_content_root, url);
+		if (cache_file.exists()) {
+			cache_file.delete();
+		}
 
+		File header_cache_file = getCacheFile(cache_header_root, url);
+		if (header_cache_file.exists()) {
+			header_cache_file.delete();
+		}
 	}
 
 

@@ -116,7 +116,7 @@ public class GrParserTest {
 	}
 
 	public File createFileFromString(String string) throws Exception{
-		File tempFile = File.createTempFile("tempFile", ".bed");
+		File tempFile = File.createTempFile("tempFile", ".gr");
 		tempFile.deleteOnExit();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
 		bw.write(string);

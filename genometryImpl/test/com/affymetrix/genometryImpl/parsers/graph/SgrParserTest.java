@@ -108,4 +108,31 @@ public class SgrParserTest {
 		assertEquals(0.275948, gr3.getGraphYCoord(3), 0.01);
 		assertEquals(948028, gr3.getGraphXCoord(3));
 	}
+
+	@Test
+	public void testWriteAnnotation() throws Exception {
+		String string =
+						"16	948025	0.128646\n" +
+						"16	948026	0.363933\n";
+
+		File file = createFileFromString(string);
+		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+		Sgr sgr = new Sgr(file.toURI(), file.getName(), seq_group);
+		List<GraphSym> results = sgr.getGenome();
+
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+
+		sgr.writeAnnotations(results, null, null, outstream);
+
+		assertEquals(string, outstream.toString());
+	}
+
+	public File createFileFromString(String string) throws Exception{
+		File tempFile = File.createTempFile("tempFile", ".sgr");
+		tempFile.deleteOnExit();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
+		bw.write(string);
+		bw.close();
+		return tempFile;
+	}
 }

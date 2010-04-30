@@ -86,6 +86,42 @@ public class GrParserTest {
 		assertEquals(0.275948, gr0.getGraphYCoord(3), 0.01);
 		assertEquals(948028, gr0.getGraphXCoord(3));
 
+		results = gr.getGenome();
+
+		gr0 = results.get(0);
+
+		assertEquals(filename, gr0.getGraphSeq().getID());
+		assertEquals(10, gr0.getPointCount());
+		assertEquals(-0.0447924, gr0.getGraphYCoord(2), 0.01);
+		assertEquals(0.275948, gr0.getGraphYCoord(3), 0.01);
+		assertEquals(948028, gr0.getGraphXCoord(3));
+	}
+
+	@Test
+	public void testWriteAnnotation() throws Exception {
+		String string =
+				"948025	0.128646\n" +
+				"948026	0.363933\n";
+
+		File file = createFileFromString(string);
+		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+		Gr gr = new Gr(file.toURI(), file.getName(), seq_group);
+		List<GraphSym> results = gr.getGenome();
+
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+
+		gr.writeAnnotations(results, null, null, outstream);
+
+		assertEquals(string, outstream.toString());
+	}
+
+	public File createFileFromString(String string) throws Exception{
+		File tempFile = File.createTempFile("tempFile", ".bed");
+		tempFile.deleteOnExit();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
+		bw.write(string);
+		bw.close();
+		return tempFile;
 	}
 }
 

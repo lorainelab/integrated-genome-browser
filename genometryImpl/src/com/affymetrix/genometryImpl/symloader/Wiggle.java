@@ -638,22 +638,17 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	}
 
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {
-		BufferedWriter bw = null;
 		try {
-
-			bw = new BufferedWriter(new OutputStreamWriter(ostr));
 
 			Iterator<? extends SeqSymmetry> iter = syms.iterator();
 			for(GraphIntervalSym graf; iter.hasNext(); ){
 				graf = (GraphIntervalSym)iter.next();
-				writeGraphPoints(graf, bw, graf.getGraphSeq().getID());
+				writeBedFormat(graf, graf.getGraphSeq().getID(), ostr);
 			}
 
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally{
-			GeneralUtils.safeClose(bw);
 		}
 
 		return false;

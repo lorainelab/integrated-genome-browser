@@ -362,15 +362,27 @@ public final class UnibrowControlServlet {
 
 		if (book_group == null) {
 			Application.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n" +
-							"You may need to choose a different QuickLoad server.");
+							"You may need to choose a different server.");
 			return false; // cancel
+		}
+
+		if (!book_group.equals(selected_group)) {
+			// TODO -- move this code into GeneralLoadView's group change handler
+			Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + version);
+			try {
+				// Make sure this genome versionName's feature names are initialized.
+				GeneralLoadUtils.initVersionAndSeq(version);
+			} finally {
+				Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + version);
+			}
+			gmodel.setSelectedSeqGroup(book_group);
 		}
 
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
 				try {
-					setGroupAndSeqAndRegion();
+					setSeqAndRegion();
 
 					// Now process "graph_files" url's
 					if (graph_files != null) {
@@ -387,10 +399,7 @@ public final class UnibrowControlServlet {
 				}
 			}
 
-			private void setGroupAndSeqAndRegion() {
-				if (book_group != null && !book_group.equals(selected_group)) {
-					gmodel.setSelectedSeqGroup(book_group);
-				}
+			private void setSeqAndRegion() {
 				// hopefully setting gmodel's selected seq group above triggered population of seqs
 				//   for group if not already populated
 				BioSeq selected_seq = gmodel.getSelectedSeq();
@@ -411,16 +420,20 @@ public final class UnibrowControlServlet {
 					if (book_seq != selected_seq) {
 						gmodel.setSelectedSeq(book_seq);
 					}
-					final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-					final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
-					final double middle = (start + end) / 2.0;
-					if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
-						gviewer.setZoomSpotX(middle);
-						gviewer.zoomTo(view_span);
-					}
-					if (selstart >= 0 && selend >= 0) {
-						gviewer.setSelectedRegion(regionsym, true);
-					}
+					setRegion(book_seq);
+				}
+			}
+
+			private void setRegion(BioSeq book_seq) {
+				final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
+				final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
+				final double middle = (start + end) / 2.0;
+				if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
+					gviewer.setZoomSpotX(middle);
+					gviewer.zoomTo(view_span);
+				}
+				if (selstart >= 0 && selend >= 0) {
+					gviewer.setSelectedRegion(regionsym, true);
 				}
 			}
 		});

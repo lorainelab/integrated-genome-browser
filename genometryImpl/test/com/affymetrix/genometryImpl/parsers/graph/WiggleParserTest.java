@@ -183,6 +183,11 @@ public class WiggleParserTest {
 
 		List<GraphSym> results = wiggle.getGenome();
 
+		testResults2(results, true);
+	}
+
+	public boolean testResults2(List<GraphSym> results, boolean checkId){
+		
 		assertEquals(3, results.size());
 
 		GraphSym gr0 = results.get(0);
@@ -216,11 +221,15 @@ public class WiggleParserTest {
 		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-		assertEquals("Bed Format", gr0.getID());
-		assertEquals("variableStep", gr1.getID());
-		assertEquals("fixedStep", gr2.getID());
-	}
+		if(checkId){
+			assertEquals("Bed Format", gr0.getID());
+			assertEquals("variableStep", gr1.getID());
+			assertEquals("fixedStep", gr2.getID());
+		}
 
+		return true;
+	}
+	
 	public void testWriteBarFormat() throws IOException {
 		String filename = "test/data/wiggle/wiggleExample.wig";
 		assertTrue(new File(filename).exists());
@@ -247,7 +256,38 @@ public class WiggleParserTest {
 		assertEquals(gr0.getGraphSeq().getMin(),gr1.getGraphSeq().getMin());
 		assertEquals(gr0.getGraphSeq().getMax(),gr1.getGraphSeq().getMax());
 	}
-	
+
+	@Test
+	public void testWriteAnnotation() throws Exception {
+		String filename = "test/data/wiggle/wiggleExample2.wig";
+		assertTrue(new File(filename).exists());
+
+		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+		Wiggle wiggle = new Wiggle(new File(filename).toURI(), filename, seq_group);
+
+		List<GraphSym> results = wiggle.getGenome();
+
+		testResults2(results, true);
+
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+
+		wiggle.writeAnnotations(results, null, null, outstream);
+
+		File outfile = createFileFromString(outstream.toString());
+		Wiggle outwiggle = new Wiggle(outfile.toURI(), outfile.getName(), seq_group);
+		List<GraphSym> outresults = outwiggle.getGenome();
+
+		testResults2(outresults, false);
+	}
+
+	public File createFileFromString(String string) throws Exception{
+		File tempFile = File.createTempFile("tempFile", ".wig");
+		tempFile.deleteOnExit();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
+		bw.write(string);
+		bw.close();
+		return tempFile;
+	}
 	/*
 	@Test
 	public void testWriteGraphs() {

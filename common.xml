@@ -65,7 +65,7 @@
 
 		<!-- Location of JUnit -->
 		<!-- OS X and Debian do not appear to have junit in ant's path -->
-		<property name="junit.jar"       value="/usr/share/junit/junit.jar:/usr/share/java/junit4.jar" />
+		<property name="junit.jar"       value="${basedir}/ext/junit.jar" />
 
 		<!-- Java VM configuration -->
 		<property name="igb.jvmargs" value="" />

@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.util.ParserController;
 import java.io.*;
 import java.util.*;
@@ -42,25 +43,33 @@ public class BedParserTest {
 			assertNotNull(parser);
 			List result = parser.parse(dis, filename, group);
 
-			assertEquals(6, result.size());    
+			testFileResult(result);
 
-			UcscBedSym sym = (UcscBedSym) result.get(2);
-			assertEquals(1, sym.getSpanCount());
-			SeqSpan span = sym.getSpan(0);
-			assertEquals(1790361, span.getMax());
-			assertEquals(1789140, span.getMin());
-			assertEquals(false, span.isForward());
-			assertEquals(false, sym.hasCdsSpan());
-			assertEquals(null, sym.getCdsSpan());
-			assertEquals(2, sym.getChildCount());
-
-			sym = (UcscBedSym) result.get(5);
-			assertEquals(sym.hasCdsSpan(), true);
-			SeqSpan cds = sym.getCdsSpan();
-			assertEquals(1965425, cds.getMin());
-			assertEquals(1965460, cds.getMax());
-			assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+			BED bed = new BED(new File(filename).toURI(), filename, group, gmodel);
+			result = bed.getGenome();
+			testFileResult(result);
 		}
+
+	public void testFileResult(List result){
+		assertEquals(6, result.size());
+
+		UcscBedSym sym = (UcscBedSym) result.get(2);
+		assertEquals(1, sym.getSpanCount());
+		SeqSpan span = sym.getSpan(0);
+		assertEquals(1790361, span.getMax());
+		assertEquals(1789140, span.getMin());
+		assertEquals(false, span.isForward());
+		assertEquals(false, sym.hasCdsSpan());
+		assertEquals(null, sym.getCdsSpan());
+		assertEquals(2, sym.getChildCount());
+
+		sym = (UcscBedSym) result.get(5);
+		assertEquals(sym.hasCdsSpan(), true);
+		SeqSpan cds = sym.getCdsSpan();
+		assertEquals(1965425, cds.getMin());
+		assertEquals(1965460, cds.getMax());
+		assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+	}
 
 	/**
 	 * Test of parse method, of class com.affymetrix.igb.parsers.BedParser.
@@ -90,26 +99,37 @@ public class BedParserTest {
 
 			List<SeqSymmetry> result = instance.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
 
-			assertEquals(6, result.size());    
+			testStringResult(result);
 
-			UcscBedSym sym = (UcscBedSym) result.get(2);
-			assertEquals(1, sym.getSpanCount());
-			SeqSpan span = sym.getSpan(0);
-			assertEquals(1790361, span.getMax());
-			assertEquals(1789140, span.getMin());
-			assertEquals(false, span.isForward());
-			assertEquals(false, sym.hasCdsSpan());
-			assertEquals(null, sym.getCdsSpan());
-			assertEquals(2, sym.getChildCount());
-
-			sym = (UcscBedSym) result.get(5);
-			assertEquals(sym.hasCdsSpan(), true);
-			SeqSpan cds = sym.getCdsSpan();
-			assertEquals(1965425, cds.getMin());
-			assertEquals(1965460, cds.getMax());
-			assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+			
+			File tempFile = createFileFromString(string);
+			
+			BED bed = new BED(tempFile.toURI(), tempFile.getName(), group, gmodel);
+			result = bed.getGenome();
+			testStringResult(result);
 		}
 
+	public void testStringResult(List result) {
+		assertEquals(6, result.size());
+
+		UcscBedSym sym = (UcscBedSym) result.get(2);
+		assertEquals(1, sym.getSpanCount());
+		SeqSpan span = sym.getSpan(0);
+		assertEquals(1790361, span.getMax());
+		assertEquals(1789140, span.getMin());
+		assertEquals(false, span.isForward());
+		assertEquals(false, sym.hasCdsSpan());
+		assertEquals(null, sym.getCdsSpan());
+		assertEquals(2, sym.getChildCount());
+
+		sym = (UcscBedSym) result.get(5);
+		assertEquals(sym.hasCdsSpan(), true);
+		SeqSpan cds = sym.getCdsSpan();
+		assertEquals(1965425, cds.getMin());
+		assertEquals(1965460, cds.getMax());
+		assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+	}
+	
 	/**
 	 * Test of parseIntArray method, of class com.affymetrix.igb.parsers.BedParser.
 	 */
@@ -122,7 +142,12 @@ public class BedParserTest {
 			int[] result = BedParser.parseIntArray(int_array);
 			for (int i=0; i<expResult.length; i++) {
 				assertEquals(expResult[i], result[i]);
-			}    
+			}
+
+			result = BED.parseIntArray(int_array);
+			for (int i=0; i<expResult.length; i++) {
+				assertEquals(expResult[i], result[i]);
+			}
 		}
 
 	@Test
@@ -135,6 +160,16 @@ public class BedParserTest {
 			boolean passed = false;
 			try {
 				BedParser.parseIntArray(int_array);
+			} catch (NumberFormatException nfe) {
+				passed = true;
+			}
+			if (!passed) {
+				fail("Expected exception was not thrown");
+			}
+
+			passed = false;
+			try {
+				BED.parseIntArray(int_array);
 			} catch (NumberFormatException nfe) {
 				passed = true;
 			}
@@ -157,7 +192,12 @@ public class BedParserTest {
 			int[] result = BedParser.makeBlockMins(min, blockStarts);
 			for (int i=0; i<expResult.length; i++) {
 				assertEquals(expResult[i], result[i]);
-			}    
+			}
+
+			result = BED.makeBlockMins(min, blockStarts);
+			for (int i=0; i<expResult.length; i++) {
+				assertEquals(expResult[i], result[i]);
+			}
 		}
 
 	/**
@@ -173,7 +213,12 @@ public class BedParserTest {
 			int[] result = BedParser.makeBlockMaxs(blockMins, blockSizes);
 			for (int i=0; i<expResult.length; i++) {
 				assertEquals(expResult[i], result[i]);
-			}    
+			}
+
+			result = BED.makeBlockMaxs(blockMins, blockSizes);
+			for (int i=0; i<expResult.length; i++) {
+				assertEquals(expResult[i], result[i]);
+			}
 		}
 
 	/**
@@ -195,13 +240,19 @@ public class BedParserTest {
 
 			BedParser.writeSymmetry(dos, sym, seq);
 			assertEquals("chr12\t500\t800\n", baos.toString());
+
+			baos = new ByteArrayOutputStream();
+			dos = new DataOutputStream(baos);
+			
+			BED.writeSymmetry(dos, sym, seq);
+			assertEquals("chr12\t500\t800\n", baos.toString());
 		}
 
 	/**
 	 * Test of writeAnnotations method, of class com.affymetrix.igb.parsers.BedParser.
 	 */
 	@Test
-		public void testWriteAnnotations() {
+		public void testWriteAnnotations() throws Exception {
 
 			String string = 
 				"chr2L	901490	901662	CR31656-RA	0	-	901490	901662	0	1	172,	0,\n"+
@@ -226,15 +277,16 @@ public class BedParserTest {
 				fail("Exception: " + ioe);
 			}
 
-			// Now we have read the data into "syms", so let's try writing it.
-
 			BioSeq seq = group.getSeq("chr2L");
-			String type = "test_type";
-			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+			
+			testWrite(syms,seq,string);
 
-			boolean result = instance.writeAnnotations(syms, seq, type, outstream);
-			assertEquals(true, result);
-			assertEquals(string, outstream.toString());
+			File file = createFileFromString(string);
+			
+			BED bed = new BED(file.toURI(), file.getName(), group, gmodel);
+			syms = bed.getGenome();
+
+			testWrite(syms,seq,string);
 		}
 
 	/**
@@ -243,7 +295,7 @@ public class BedParserTest {
 	 * gives the same information.
 	 */
 	@Test
-		public void testWriteAnnotations2() {
+		public void testWriteAnnotations2() throws Exception {
 
 			String string =
 				"chr1	455031	455267	EL049618	0	+	455031	455267	0	3	9,36,26,	0,80,210,\n"+
@@ -267,14 +319,28 @@ public class BedParserTest {
 			// Now we have read the data into "syms", so let's try writing it.
 
 			BioSeq seq = group.getSeq("chr1");
+
+			testWrite(syms,seq,string);
+
+			File file = createFileFromString(string);
+
+			BED bed = new BED(file.toURI(), file.getName(), group, gmodel);
+			syms = bed.getGenome();
+
+			testWrite(syms,seq,string);
+		}
+
+	public void testWrite(Collection<SeqSymmetry> syms, BioSeq seq, String expResult){
+		// Now we have read the data into "syms", so let's try writing it.
+			BedParser instance = new BedParser();
+
 			String type = "test_type";
 			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
 			boolean result = instance.writeAnnotations(syms, seq, type, outstream);
 			assertEquals(true, result);
-			assertEquals(string, outstream.toString());
-		}
-
+			assertEquals(expResult, outstream.toString());
+	}
 
 	/**
 	 * Test of getMimeType method, of class com.affymetrix.igb.parsers.BedParser.
@@ -287,5 +353,50 @@ public class BedParserTest {
 			String result = instance.getMimeType();
 			assertTrue("text/plain".equals(result) || "text/bed".equals(result));
 		}
+
+	public File createFileFromString(String string) throws Exception{
+		File tempFile = File.createTempFile("tempFile", ".bed");
+		tempFile.deleteOnExit();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
+		bw.write(string);
+		bw.close();
+		return tempFile;
+	}
+
+	@Test
+	public void testBEDParseFromFile() throws IOException {
+
+		
+
+		String filename = "test/data/bed/bed_02.bed";
+		assertTrue(new File(filename).exists());
+		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+		BioSeq seq = group.addSeq("chr2L", 1965498);
+
+		BED bed = new BED(new File(filename).toURI(), filename, group, GenometryModel.getGenometryModel());
+
+		List<BioSeq> allSeq = bed.getChromosomeList();
+		assertEquals(4, allSeq.size());
+
+		List result = bed.getChromosome(seq);
+		assertEquals(6, result.size());
+
+		UcscBedSym sym = (UcscBedSym) result.get(2);
+		assertEquals(1, sym.getSpanCount());
+		SeqSpan span = sym.getSpan(0);
+		assertEquals(1790361, span.getMax());
+		assertEquals(1789140, span.getMin());
+		assertEquals(false, span.isForward());
+		assertEquals(false, sym.hasCdsSpan());
+		assertEquals(null, sym.getCdsSpan());
+		assertEquals(2, sym.getChildCount());
+
+		sym = (UcscBedSym) result.get(5);
+		assertEquals(sym.hasCdsSpan(), true);
+		SeqSpan cds = sym.getCdsSpan();
+		assertEquals(1965425, cds.getMin());
+		assertEquals(1965460, cds.getMax());
+		assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+	}
 
 }

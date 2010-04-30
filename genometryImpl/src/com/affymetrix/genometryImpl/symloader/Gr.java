@@ -14,7 +14,9 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -31,6 +33,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -38,7 +42,7 @@ import java.util.logging.Logger;
  *
  * @author hiralv
  */
-public final class Gr extends SymLoader {
+public final class Gr extends SymLoader implements AnnotationWriter{
 	private File f;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
@@ -66,6 +70,13 @@ public final class Gr extends SymLoader {
 		return choices;
 	}
 
+	@Override
+	public List<GraphSym> getGenome(){
+		init();
+		BioSeq seq = group.addSeq(this.featureName, Integer.MAX_VALUE - 1);
+		return getChromosome(seq);
+	}
+	
 	@Override
 	public List<GraphSym> getChromosome(BioSeq seq) {
 		init();
@@ -294,6 +305,26 @@ public final class Gr extends SymLoader {
 			}
 		};
 		GenericSorting.quickSort(0, xList.length, comp, swapper);
+	}
+
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {
+		try {
+			BufferedOutputStream bos = new BufferedOutputStream(ostr);
+			DataOutputStream dos = new DataOutputStream(bos);
+
+			Iterator<? extends SeqSymmetry> iter = syms.iterator();
+			for(GraphSym graf; iter.hasNext(); ){
+				graf = (GraphSym)iter.next();
+				writeGraphPoints(graf, dos);
+			}
+
+			dos.close();  
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 }

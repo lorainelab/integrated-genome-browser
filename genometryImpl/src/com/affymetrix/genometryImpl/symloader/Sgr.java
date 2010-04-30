@@ -6,8 +6,10 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -20,7 +22,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class Sgr extends SymLoader {
+public final class Sgr extends SymLoader implements AnnotationWriter {
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
@@ -311,5 +313,24 @@ public final class Sgr extends SymLoader {
 		}
 	}
 
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {
+		try {
+			BufferedOutputStream bos = new BufferedOutputStream(ostr);
+			DataOutputStream dos = new DataOutputStream(bos);
+
+			Iterator<? extends SeqSymmetry> iter = syms.iterator();
+			for(GraphSym graf; iter.hasNext(); ){
+				graf = (GraphSym)iter.next();
+				writeGraphPoints(graf, dos, graf.getGraphSeq().getID());
+			}
+
+			dos.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
 	
 }

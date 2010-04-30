@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.genoviz.util.FileDropHandler;
 
 import org.freehep.util.export.ExportDialog;
 import java.awt.BorderLayout;
@@ -58,6 +59,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
+import javax.swing.TransferHandler;
 
 /**
  * @see     com.affymetrix.genometryImpl.BioSeq
@@ -88,6 +90,18 @@ final class ProtAnnotMain implements WindowListener {
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
 	private static final String imageIcon = "protannot/resources/spots.png";
+	private final TransferHandler fdh = new FileDropHandler(){
+
+		@Override
+		public void openFileAction(File f) {
+			load(f);
+		}
+
+		@Override
+		public void openURLAction(String url) {
+			load(url);
+		}
+	};
 	
     private enum Arguments {
         SERVER,
@@ -156,6 +170,7 @@ final class ProtAnnotMain implements WindowListener {
      */
     private void start(String[] args) {
         frm = new JFrame("ProtAnnot");
+		frm.setTransferHandler(fdh);
 		frm.setIconImage(new ImageIcon(imageIcon).getImage());
         screen = frm.getToolkit().getScreenSize();
         int frm_width = (int) (screen.width * .8f);

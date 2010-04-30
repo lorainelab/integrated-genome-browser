@@ -314,9 +314,11 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	}
 
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {
+		BufferedOutputStream bos = null;
+		DataOutputStream dos = null;
 		try {
-			BufferedOutputStream bos = new BufferedOutputStream(ostr);
-			DataOutputStream dos = new DataOutputStream(bos);
+			bos = new BufferedOutputStream(ostr);
+			dos = new DataOutputStream(bos);
 
 			Iterator<? extends SeqSymmetry> iter = syms.iterator();
 			for(GraphSym graf; iter.hasNext(); ){
@@ -324,10 +326,11 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 				writeGraphPoints(graf, dos, graf.getGraphSeq().getID());
 			}
 
-			dos.close();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(dos);
 		}
 
 		return false;

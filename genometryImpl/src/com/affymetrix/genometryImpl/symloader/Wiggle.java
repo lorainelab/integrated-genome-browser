@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleData;
@@ -22,8 +23,10 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.awt.Color;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -49,7 +52,7 @@ import java.util.regex.Pattern;
  *
  * @author hiralv
  */
-public final class Wiggle extends SymLoader{
+public final class Wiggle extends SymLoader implements AnnotationWriter {
 
 	private static enum WigFormat {
 
@@ -634,6 +637,25 @@ public final class Wiggle extends SymLoader{
 		}
 	}
 
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {
+		BufferedWriter bw = null;
+		try {
 
-	
+			bw = new BufferedWriter(new OutputStreamWriter(ostr));
+
+			Iterator<? extends SeqSymmetry> iter = syms.iterator();
+			for(GraphIntervalSym graf; iter.hasNext(); ){
+				graf = (GraphIntervalSym)iter.next();
+				writeGraphPoints(graf, bw, graf.getGraphSeq().getID());
+			}
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			GeneralUtils.safeClose(bw);
+		}
+
+		return false;
+	}
 }

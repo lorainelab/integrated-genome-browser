@@ -759,17 +759,4 @@ public class BED extends SymLoader{
 		}
 	}
 
-	public static void main(String[] args){
-		String filename = "/Users/aloraine/Downloads/bed_01.bed";
-		//String filename = "/Users/aloraine/Downloads/test_wiggle2.wig";
-		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-		BED bed = new BED(new File(filename).toURI(), filename, seq_group, GenometryModel.getGenometryModel());
-		List<SeqSymmetry> results = null;
-		BioSeq aseq = seq_group.addSeq("chr19", 59310300);
-
-		results = bed.getGenome();
-
-		SeqSymmetry g0 = results.get(0);
-		int i = 0;
-	}
 }

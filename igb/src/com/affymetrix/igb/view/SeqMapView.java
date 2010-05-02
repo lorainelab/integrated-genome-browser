@@ -1613,9 +1613,10 @@ public class SeqMapView extends JPanel
 		} else if (getSelectedRegion() != null) {
 			SeqSpan span = getViewSeqSpan(getSelectedRegion());
 			zoomTo(span);
-		}else{
-			zoomToRectangle(seqmap.getCoordBounds());
 		}
+//		else{
+//			zoomToRectangle(seqmap.getCoordBounds()); //Enable double click to zoom out here.
+//		}
 	}
 
 	/**

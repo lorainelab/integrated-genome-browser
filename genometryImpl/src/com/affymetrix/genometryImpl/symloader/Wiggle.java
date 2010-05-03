@@ -163,11 +163,12 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 				if (line.length() == 0) {
 					continue;
 				}
-				if (line.charAt(0) == '#' || line.charAt(0) == '%' || line.startsWith("browser")) {
+				char firstChar = line.charAt(0);
+				if (firstChar == '#' || firstChar == '%' || (firstChar == 'b' && line.startsWith("browser"))) {
 					continue;
 				}
 
-				if (line.startsWith("track")) {
+				if (firstChar == 't' && line.startsWith("track")) {
 					if (previous_track_line) {
 						// finish previous graph(s) using previous track properties
 						grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, featureName));
@@ -182,30 +183,24 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 					continue;
 				}
 
-				if (line.startsWith("variableStep")) {
-//					if (!previous_track_line) {
-//						throw new IllegalArgumentException("Wiggle format error: 'variableStep' line does not have a previous 'track' line");
-//					}
-
+				if (firstChar == 'v' && line.startsWith("variableStep")) {
+					String[] fields = field_regex.split(line);
 					current_format = WigFormat.VARSTEP;
-					current_seq_id = Wiggle.parseFormatLine(line, "chrom", "unknown");
-					current_span = Integer.parseInt(Wiggle.parseFormatLine(line, "span", "1"));
+					current_seq_id = Wiggle.parseFormatFields(fields, "chrom", "unknown");
+					current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
 					continue;
 				}
 
-				if (line.startsWith("fixedStep")) {
-//					if (!previous_track_line) {
-//						throw new IllegalArgumentException("Wiggle format error: 'fixedStep' line does not have a previous 'track' line");
-//					}
-
+				if (firstChar == 'f' && line.startsWith("fixedStep")) {
+					String[] fields = field_regex.split(line);
 					current_format = WigFormat.FIXEDSTEP;
-					current_seq_id = Wiggle.parseFormatLine(line, "chrom", "unknown");
-					current_start = Integer.parseInt(Wiggle.parseFormatLine(line, "start", "1"));
+					current_seq_id = Wiggle.parseFormatFields(fields, "chrom", "unknown");
+					current_start = Integer.parseInt(Wiggle.parseFormatFields(fields, "start", "1"));
 					if (current_start < 1) {
 						throw new IllegalArgumentException("'fixedStep' format with start of " + current_start + ".");
 					}
-					current_step = Integer.parseInt(Wiggle.parseFormatLine(line, "step", "1"));
-					current_span = Integer.parseInt(Wiggle.parseFormatLine(line, "span", "1"));
+					current_step = Integer.parseInt(Wiggle.parseFormatFields(fields, "step", "1"));
+					current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
 					continue;
 				}
 
@@ -231,28 +226,16 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 			int current_span, int current_start, int current_step, BioSeq reqSeq, int min, int max)
 			throws IllegalArgumentException {
 		// There should have been one track line at least...
-//		if (!previous_track_line) {
-//			throw new IllegalArgumentException("Wiggle format error: File does not have a previous 'track' line");
-//		}
 		String[] fields = field_regex.split(line.trim()); // trim() because lines are allowed to start with whitespace
 
 		switch(current_format) {
 			case BED4:
-//				if (fields.length < 4) {
-//					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-//				}
 				parseDataLine(fields, current_data, current_datamap, min, max);
 				break;
 			case VARSTEP:
-//				if (fields.length < 2) {
-//					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-//				}
 				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span, min, max);
 				break;
 			case FIXEDSTEP:
-//				if (fields.length < 1) {
-//					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-//				}
 				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span, current_start, min, max);
 				current_start += current_step; // We advance the start based upon the step.
 				break;
@@ -371,12 +354,11 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	/**
 	 * Parse the line, looking for the field name.  If it can't be found, return the default value.
 	 * @param name
-	 * @param line
+	 * @param fields
 	 * @param default_val
 	 * @return string
 	 */
-	private static String parseFormatLine(String line, String name, String default_val) {
-		String[] fields = field_regex.split(line);
+	private static String parseFormatFields(String[] fields, String name, String default_val) {
 		String fieldName = name +"=";
 		for (String field : fields) {
 			if (field.startsWith(fieldName)) {
@@ -519,34 +501,36 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 				if (line.length() == 0) {
 					continue;
 				}
-				if (line.charAt(0) == '#' || line.charAt(0) == '%' || line.startsWith("browser")) {
+				char firstChar = line.charAt(0);
+				if (firstChar == '#' || firstChar == '%' || (firstChar == 'b' && line.startsWith("browser"))) {
 					continue;
 				}
-				if (line.startsWith("track")) {
+				if (firstChar == 't' && line.startsWith("track")) {
 					chrTrack = new HashMap<String, Boolean>();
 					trackLine = line;
 					previous_track_line = true;
 					current_format = WigFormat.BED4; // assume BED4 until changed.
 					continue;
 				}
-				if (line.startsWith("variableStep") || line.startsWith("fixedStep")) {
+				if ((firstChar == 'v' && line.startsWith("variableStep")) || (firstChar == 'f' && line.startsWith("fixedStep"))) {
 					if (!previous_track_line) {
 						throw new IllegalArgumentException("Wiggle format error: line does not have a previous 'track' line");
 					}
 
-					if (line.startsWith("variableStep")) {
+					String[] fields = field_regex.split(line);
+					if (firstChar == 'v') {
 						current_format = WigFormat.VARSTEP;
-						current_seq_id = Wiggle.parseFormatLine(line, "chrom", "unknown");
-						current_span = Integer.parseInt(Wiggle.parseFormatLine(line, "span", "1"));
+						current_seq_id = Wiggle.parseFormatFields(fields, "chrom", "unknown");
+						current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
 					} else {
 						current_format = WigFormat.FIXEDSTEP;
-						current_seq_id = Wiggle.parseFormatLine(line, "chrom", "unknown");
-						current_start = Integer.parseInt(Wiggle.parseFormatLine(line, "start", "1"));
+						current_seq_id = Wiggle.parseFormatFields(fields, "chrom", "unknown");
+						current_start = Integer.parseInt(Wiggle.parseFormatFields(fields, "start", "1"));
 						if (current_start < 1) {
 							throw new IllegalArgumentException("'fixedStep' format with start of " + current_start + ".");
 						}
-						current_step = Integer.parseInt(Wiggle.parseFormatLine(line, "step", "1"));
-						current_span = Integer.parseInt(Wiggle.parseFormatLine(line, "span", "1"));
+						current_step = Integer.parseInt(Wiggle.parseFormatFields(fields, "step", "1"));
+						current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
 					}
 
 					if (!chrs.containsKey(current_seq_id)) {

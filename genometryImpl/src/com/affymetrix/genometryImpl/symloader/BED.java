@@ -179,10 +179,14 @@ public class BED extends SymLoader{
 		Thread thread = Thread.currentThread();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-			if (line.startsWith("#") || line.length() == 0) {  // skip comment lines
+			if (line.length() == 0) {
 				continue;
 			}
-			else if (line.startsWith("track")) {
+			char firstChar = line.charAt(0);
+			if (firstChar == '#') {  // skip comment lines
+				continue;
+			}
+			else if (firstChar == 't' && line.startsWith("track")) {
 				track_line_parser.parseTrackLine(line);
 				TrackLineParser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), default_type);
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
@@ -190,7 +194,7 @@ public class BED extends SymLoader{
 				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
 				continue;
 			}
-			else if (line.startsWith("browser")) {
+			else if (firstChar == 'b' && line.startsWith("browser")) {
 				// currently take no action for browser lines
 			}
 			else {

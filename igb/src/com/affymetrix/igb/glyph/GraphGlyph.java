@@ -342,12 +342,7 @@ public final class GraphGlyph extends Glyph {
 		}
 
 		Point curr_x_plus_width = new Point(0, 0);
-
-
-		for (int i = draw_beg_index; i <= draw_end_index; i++) {
-			bigDrawLoop(
-					i, offset, yscale, view, curr_x_plus_width, graph_style, g, max_x_plus_width, draw_end_index);
-		}
+		bigDrawLoop(draw_beg_index, draw_end_index, offset, yscale, view, curr_x_plus_width, graph_style, g, max_x_plus_width);
 
 		g.translate(-xpix_offset, 0);
 		if (g instanceof Graphics2D) {
@@ -360,91 +355,93 @@ public final class GraphGlyph extends Glyph {
 	}
 
 
-	private void bigDrawLoop(int i, double offset, double yscale, ViewI view, Point curr_x_plus_width, GraphType graph_style, Graphics g, Point max_x_plus_width, int draw_end_index) {
-		// flipping about yaxis... should probably make this optional
-		// also offsetting to place within glyph bounds
-		int xtemp = graf.getGraphXCoord(i);
-		coord.x = xtemp;
-		float ytemp = graf.getGraphYCoord(i);
-		if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
-			return;
-		}
-		// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
-		ytemp = Math.min(ytemp, getVisibleMaxY());
-		ytemp = Math.max(ytemp, getVisibleMinY());
+	private void bigDrawLoop(int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width, GraphType graph_style, Graphics g, Point max_x_plus_width) {
+		for (int i = draw_beg_index; i <= draw_end_index; i++) {
+			// flipping about yaxis... should probably make this optional
+			// also offsetting to place within glyph bounds
+			int xtemp = graf.getGraphXCoord(i);
+			coord.x = xtemp;
+			float ytemp = graf.getGraphYCoord(i);
+			if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
+				return;
+			}
+			// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
+			ytemp = Math.min(ytemp, getVisibleMaxY());
+			ytemp = Math.max(ytemp, getVisibleMinY());
 
-		coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
-		view.transformToPixels(coord, curr_point);
-		if (graf.hasWidth()) {
-			Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
-			x_plus_width2D.x = xtemp + this.getWCoord(i);
-			x_plus_width2D.y = coord.y;
-			view.transformToPixels(x_plus_width2D, curr_x_plus_width);
-		}
-		if (graph_style == GraphType.LINE_GRAPH) {
-			if (!graf.hasWidth()) {
-				g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
-			} else {
-				// Draw a line representing the width: (x,y) to (x + width,y)
-				g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_x_plus_width.y);
-				// Usually draw a line from (xA + widthA,yA) to next (xB,yB), but when there
-				// are overlapping spans, only do this from the largest previous (x+width) value
-				// to an xA that is larger than that.
-				if (curr_point.x >= max_x_plus_width.x && max_x_plus_width.x != Integer.MIN_VALUE) {
-					g.drawLine(max_x_plus_width.x, max_x_plus_width.y, curr_point.x, curr_point.y);
+			coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
+			view.transformToPixels(coord, curr_point);
+			if (graf.hasWidth()) {
+				Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
+				x_plus_width2D.x = xtemp + this.getWCoord(i);
+				x_plus_width2D.y = coord.y;
+				view.transformToPixels(x_plus_width2D, curr_x_plus_width);
+			}
+			if (graph_style == GraphType.LINE_GRAPH) {
+				if (!graf.hasWidth()) {
+					g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
+				} else {
+					// Draw a line representing the width: (x,y) to (x + width,y)
+					g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_x_plus_width.y);
+					// Usually draw a line from (xA + widthA,yA) to next (xB,yB), but when there
+					// are overlapping spans, only do this from the largest previous (x+width) value
+					// to an xA that is larger than that.
+					if (curr_point.x >= max_x_plus_width.x && max_x_plus_width.x != Integer.MIN_VALUE) {
+						g.drawLine(max_x_plus_width.x, max_x_plus_width.y, curr_point.x, curr_point.y);
+					}
+					if (curr_x_plus_width.x >= max_x_plus_width.x) {
+						max_x_plus_width.x = curr_x_plus_width.x; // xB + widthB
+						max_x_plus_width.y = curr_x_plus_width.y; // yB
+					}
 				}
-				if (curr_x_plus_width.x >= max_x_plus_width.x) {
-					max_x_plus_width.x = curr_x_plus_width.x; // xB + widthB
-					max_x_plus_width.y = curr_x_plus_width.y; // yB
+			} else if (graph_style == GraphType.BAR_GRAPH) {
+				int ymin_pixel = Math.min(curr_point.y, zero_point.y);
+				int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
+				yheight_pixel = Math.max(1, yheight_pixel);
+				if (!graf.hasWidth()) {
+					g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
+				} else {
+					final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
+					g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 				}
+			} else if (graph_style == GraphType.DOT_GRAPH) {
+				if (!graf.hasWidth()) {
+					g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
+				} else {
+					g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
+				}
+			} else if (graph_style == GraphType.STAIRSTEP_GRAPH) {
+				int stairwidth = curr_point.x - prev_point.x;
+				if (stairwidth >= 0 && stairwidth <= 10000 && (i == 0 || graf.getGraphYCoord(i - 1) != 0)) {
+					// skip drawing if width > 10000... (fix for linux problem?)
+					// draw the same regardless of whether wcoords == null
+					drawRectOrLine(g, prev_point.x,
+							Math.min(zero_point.y, prev_point.y),
+							Math.max(1, stairwidth),
+							Math.max(1, Math.abs(prev_point.y - zero_point.y)));
+				}
+				// If this is the very last point, special rules apply
+				if (i == draw_end_index) {
+					stairwidth = (!graf.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
+					drawRectOrLine(g, curr_point.x,
+							Math.min(zero_point.y, curr_point.y),
+							Math.max(1, stairwidth),
+							Math.max(1, Math.abs(curr_point.y - zero_point.y)));
+				}
+			} else if (graph_style == GraphType.HEAT_MAP) {
+				double heatmap_scaling = (double) (state.getHeatMap().getColors().length - 1) / (getVisibleMaxY() - getVisibleMinY());
+				int heatmap_index = (int) (heatmap_scaling * (ytemp - getVisibleMinY()));
+				if (heatmap_index < 0) {
+					heatmap_index = 0;
+				} else if (heatmap_index > 255) {
+					heatmap_index = 255;
+				}
+				g.setColor(state.getHeatMap().getColor(heatmap_index));
+				drawRectOrLine(g, curr_point.x, pixelbox.y, Math.max(1, curr_x_plus_width.x - curr_point.x), pixelbox.height + 1);
 			}
-		} else if (graph_style == GraphType.BAR_GRAPH) {
-			int ymin_pixel = Math.min(curr_point.y, zero_point.y);
-			int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
-			yheight_pixel = Math.max(1, yheight_pixel);
-			if (!graf.hasWidth()) {
-				g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
-			} else {
-				final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
-				g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
-			}
-		} else if (graph_style == GraphType.DOT_GRAPH) {
-			if (!graf.hasWidth()) {
-				g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
-			} else {
-				g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
-			}
-		} else if (graph_style == GraphType.STAIRSTEP_GRAPH) {
-			int stairwidth = curr_point.x - prev_point.x;
-			if (stairwidth >= 0 && stairwidth <= 10000 && (i == 0 || graf.getGraphYCoord(i - 1) != 0)) {
-				// skip drawing if width > 10000... (fix for linux problem?)
-				// draw the same regardless of whether wcoords == null
-				drawRectOrLine(g, prev_point.x,
-						Math.min(zero_point.y, prev_point.y),
-						Math.max(1, stairwidth),
-						Math.max(1, Math.abs(prev_point.y - zero_point.y)));
-			}
-			// If this is the very last point, special rules apply
-			if (i == draw_end_index) {
-				stairwidth = (!graf.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
-				drawRectOrLine(g,curr_point.x,
-						Math.min(zero_point.y, curr_point.y),
-						Math.max(1, stairwidth),
-						Math.max(1, Math.abs(curr_point.y - zero_point.y)));
-			}
-		} else if (graph_style == GraphType.HEAT_MAP) {
-			double heatmap_scaling = (double)(state.getHeatMap().getColors().length - 1) / (getVisibleMaxY() - getVisibleMinY());
-			int heatmap_index = (int) (heatmap_scaling * (ytemp - getVisibleMinY()));
-			if (heatmap_index < 0) {
-				heatmap_index = 0;
-			} else if (heatmap_index > 255) {
-				heatmap_index = 255;
-			}
-			g.setColor(state.getHeatMap().getColor(heatmap_index));
-			drawRectOrLine(g, curr_point.x, pixelbox.y, Math.max(1, curr_x_plus_width.x - curr_point.x), pixelbox.height + 1);
+			prev_point.x = curr_point.x;
+			prev_point.y = curr_point.y;
 		}
-		prev_point.x = curr_point.x;
-		prev_point.y = curr_point.y;
 	}
 
 	private void drawLabel(ViewI view) {

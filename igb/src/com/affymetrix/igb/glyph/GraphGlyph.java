@@ -322,7 +322,7 @@ public final class GraphGlyph extends Glyph {
 
 		// set up prev_point before starting loop
 		coord.x = graf.getMinXCoord();
-		float prev_ytemp = graf.getGraphYCoord(0);
+		float prev_ytemp = graf.getFirstYCoord();
 		coord.y = offset - ((prev_ytemp - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, prev_point);
 

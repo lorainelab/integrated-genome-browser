@@ -26,6 +26,8 @@ public class GraphSym extends SimpleSymWithProps {
 	private int xMin = 0;		// min X coord
 	private int xMax = 0;		// max X coord
 
+	private float yFirst = 0;		// Y value at 0th coord
+
 	private boolean hasWidth = false;
 
 	private final BioSeq graph_original_seq;
@@ -123,6 +125,7 @@ public class GraphSym extends SimpleSymWithProps {
 			throw new IllegalArgumentException("X,W, and Y arrays must have the same length");
 		}
 		xMin = x[0];
+		yFirst = y[0];
 		pointCount = x.length;
 		xMax = x[pointCount - 1];
 		if (w != null) {
@@ -181,6 +184,10 @@ public class GraphSym extends SimpleSymWithProps {
 
 	public final void moveX(double delta) {
 		this.xDelta += delta;
+	}
+
+	public final float getFirstYCoord() {
+		return yFirst;
 	}
 
 	/**

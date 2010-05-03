@@ -282,13 +282,21 @@ public class GraphSym extends SimpleSymWithProps {
 	 * @return 0
 	 */
 	public final int determineBegIndex(double xmin) {
-		int begIndex = 0;
+		int index = Arrays.binarySearch(xCoords, (int)Math.floor(xmin));
+		if (index >=0) {
+			return index;
+		}
+		// negative, which means it's (-(first elt > key) - 1).
+		// Thus first elt <= key = (-index - 1) -1 = (-index -2)
+		return Math.max(0, (-index -2));
+		
+		/* The below code should be used if we need to use accessors on GraphXCoord (for example, if we start using the buffer again).
+		 int begIndex = 0;
 		for (int i=begIndex;i<this.pointCount;i++) {
 			if (this.getGraphXCoord(i) > (int)xmin) {
 				return Math.max(0, i-1);
 			}
-		}
-		return 0;
+		}*/
 	}
 
 	/**
@@ -299,13 +307,22 @@ public class GraphSym extends SimpleSymWithProps {
 	 * @return pointCount-1
 	 */
 	public final int determineEndIndex(double xmax, int prevIndex) {
-		int begIndex = 0;
-		for (int i=begIndex;i<this.pointCount;i++) {
+		int index = Arrays.binarySearch(xCoords, (int)Math.ceil(xmax));
+		if (index >=0) {
+			return index;
+		}
+		// negative, which means it's (-(first elt > key) - 1).
+		// We want that first elt.
+		return Math.max(0, (-index -1));
+
+		/* The below code should be used if we need to use accessors on GraphXCoord (for example, if we start using the buffer again).
+		for (int i=prevIndex;i<this.pointCount;i++) {
 			if (this.getGraphXCoord(i) >= (int)xmax) {
 				return i;
 			}
 		}
 		return this.pointCount-1;
+		 */
 	}
 
 

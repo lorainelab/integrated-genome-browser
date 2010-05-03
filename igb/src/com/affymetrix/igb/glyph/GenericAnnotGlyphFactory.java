@@ -373,7 +373,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		if (sym.getChildCount() > 0) {
 			int startPos = 0;
 			for (int i = 0; i < sym.getChildCount(); i++) {
-				startPos += setResidues(sym.getChild(i), annotseq, pglyph, startPos, true);
+				startPos = setResidues(sym.getChild(i), annotseq, pglyph, startPos, true);
 			}
 		} else {
 			setResidues(sym, annotseq, pglyph, 0, false);

@@ -108,37 +108,6 @@ public abstract class SeqUtils {
 	}
 
 
-	/**
-	 *  "Logical" NOT of SeqSymmetry (relative to a particular BioSeq).
-	 *
-	 *  @param include_ends indicates whether to extend to ends of BioSeq
-	 */
-	private static final SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq, boolean include_ends) {
-		// put leaf syms in list
-		List<SeqSpan> spans = SeqUtils.getLeafSpans(symA, seq);
-
-		// merge any overlaps
-		MutableSeqSymmetry mergedSym = spanMerger(spans);
-		List<SeqSpan> mergedSpans = SeqUtils.getLeafSpans(mergedSym, seq);
-
-		// order them based on start
-		Collections.sort(mergedSpans, new SeqSpanComparator());
-
-		// invert and add to new SeqSymmetry
-		//   for now ignoring the ends...
-		MutableSeqSymmetry invertedSym = new SimpleMutableSeqSymmetry();
-
-		int spanCount = mergedSpans.size();
-		if (spanCount > 0) {
-			addInvertChildren(mergedSpans, seq, invertedSym, spanCount);
-		}	
-
-		invertedSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-
-		return invertedSym;
-	}
-
-
 	private static void addInvertChildren(List<SeqSpan> mergedSpans, BioSeq seq, MutableSeqSymmetry invertedSym, int spanCount) {
 		SeqSpan firstSpan = mergedSpans.get(0);
 		if (firstSpan.getMin() > 0) {
@@ -175,9 +144,40 @@ public abstract class SeqUtils {
 	private static final SeqSymmetry xor(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
 		SeqSymmetry unionAB = union(symA, symB, seq);
 		SeqSymmetry interAB = intersection(symA, symB, seq);
-		SeqSymmetry inverseInterAB = inverse(interAB, seq, true);
+		SeqSymmetry inverseInterAB = inverse(interAB, seq);
 		return intersection( unionAB, inverseInterAB, seq);
 	}
+
+
+	/**
+	 *  "Logical" NOT of SeqSymmetry (relative to a particular BioSeq).
+	 */
+	private static final SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq) {
+		// put leaf syms in list
+		List<SeqSpan> spans = SeqUtils.getLeafSpans(symA, seq);
+
+		// merge any overlaps
+		MutableSeqSymmetry mergedSym = spanMerger(spans);
+		List<SeqSpan> mergedSpans = SeqUtils.getLeafSpans(mergedSym, seq);
+
+		// order them based on start
+		Collections.sort(mergedSpans, new SeqSpanComparator());
+
+		// invert and add to new SeqSymmetry
+		//   for now ignoring the ends...
+		MutableSeqSymmetry invertedSym = new SimpleMutableSeqSymmetry();
+
+		int spanCount = mergedSpans.size();
+		if (spanCount > 0) {
+			addInvertChildren(mergedSpans, seq, invertedSym, spanCount);
+		}
+
+		invertedSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+
+		return invertedSym;
+	}
+
+
 
 	/**
 	 *  "Logical" OR of SeqSymmetries (relative to a particular BioSeq).

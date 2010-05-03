@@ -1,5 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -61,11 +63,11 @@ public final class GraphSymUtils {
 		if (initcap > MAX_INITCAP) {
 			initcap = MAX_INITCAP;
 		}
-		IntList new_xcoords = new IntList(initcap);
-		FloatList new_ycoords = new FloatList(initcap);
-		IntList new_wcoords = null;
+		IntArrayList new_xcoords = new IntArrayList(initcap);
+		FloatArrayList new_ycoords = new FloatArrayList(initcap);
+		IntArrayList new_wcoords = null;
 		if (hasWidth(original_graf)) {
-			new_wcoords = new IntList(initcap);
+			new_wcoords = new IntArrayList(initcap);
 		}
 		
 		addCoords(mapsym, fromseq, toseq, original_graf, new_xcoords, new_ycoords, new_wcoords);
@@ -73,31 +75,9 @@ public final class GraphSymUtils {
 		return createGraphSym(new_xcoords, new_ycoords, original_graf, toseq, new_wcoords, new_graf);
 	}
 
-	private static GraphSym createGraphSym(
-			IntList new_xcoords, FloatList new_ycoords, GraphSym original_graf, BioSeq toseq,
-			IntList new_wcoords, GraphSym new_graf) {
-		String newid = original_graf.getID();
-		// create GraphSym.
-		// keep maximum memory requirement down by nulling out lists after final use
-		int[] new_xcoordArr = new_xcoords.copyToArray();
-		new_xcoords = null;
-		float[] new_ycoordArr = new_ycoords.copyToArray();
-		new_ycoords = null;
-		if (!hasWidth(original_graf)) {
-			new_graf = new GraphSym(new_xcoordArr, new_ycoordArr, newid, toseq);
-		} else {
-			int[] new_wcoordArr = new_wcoords.copyToArray();
-			new_wcoords = null;
-			new_graf = new GraphIntervalSym(new_xcoordArr, new_wcoordArr, new_ycoordArr, newid, toseq);
-		}
-		new_graf.setGraphName(original_graf.getGraphName());
-		return new_graf;
-	}
-
-
 	private static void addCoords(
 			SeqSymmetry mapsym, BioSeq fromseq, BioSeq toseq, GraphSym original_graf,
-			IntList new_xcoords, FloatList new_ycoords, IntList new_wcoords) {
+			IntArrayList new_xcoords, FloatArrayList new_ycoords, IntArrayList new_wcoords) {
 		List<SeqSymmetry> leaf_syms = SeqUtils.getLeafSyms(mapsym);
 		for (SeqSymmetry leafsym : leaf_syms) {
 			SeqSpan fspan = leafsym.getSpan(fromseq);
@@ -162,6 +142,25 @@ public final class GraphSymUtils {
 	}
 
 
+	private static GraphSym createGraphSym(
+			IntArrayList new_xcoords, FloatArrayList new_ycoords, GraphSym original_graf, BioSeq toseq,
+			IntArrayList new_wcoords, GraphSym new_graf) {
+		String newid = original_graf.getID();
+		// create GraphSym.
+		new_xcoords.trimToSize();
+		int[] new_xcoordArr = new_xcoords.elements();
+		new_ycoords.trimToSize();
+		float[] new_ycoordArr = new_ycoords.elements();
+		if (!hasWidth(original_graf)) {
+			new_graf = new GraphSym(new_xcoordArr, new_ycoordArr, newid, toseq);
+		} else {
+			new_wcoords.trimToSize();
+			int[] new_wcoordArr = new_wcoords.elements();
+			new_graf = new GraphIntervalSym(new_xcoordArr, new_wcoordArr, new_ycoordArr, newid, toseq);
+		}
+		new_graf.setGraphName(original_graf.getGraphName());
+		return new_graf;
+	}
 
 
 	/** Detects whether the given filename ends with a recognized ending for
@@ -430,8 +429,8 @@ public final class GraphSymUtils {
 
 		int transfrag_max_spacer = 20;
 		BioSeq seq = trans_frag_graph.getGraphSeq();
-		IntList newx = new IntList();
-		FloatList newy = new FloatList();
+		IntArrayList newx = new IntArrayList();
+		FloatArrayList newy = new FloatArrayList();
 
 		// transfrag ycoords should be irrelevant
 		int xmin = trans_frag_graph.getMinXCoord();
@@ -464,7 +463,9 @@ public final class GraphSymUtils {
 		newx.add(curx);
 		newy.add(cury);
 		String newid = GraphSymUtils.getUniqueGraphID(trans_frag_graph.getGraphName(), seq);
-		GraphSym span_graph = new GraphSym(newx.copyToArray(), newy.copyToArray(), newid, seq);
+		newx.trimToSize();
+		newy.trimToSize();
+		GraphSym span_graph = new GraphSym(newx.elements(), newy.elements(), newid, seq);
 
 		// copy properties over...
 		span_graph.setProperties(trans_frag_graph.cloneProperties());
@@ -498,7 +499,7 @@ public final class GraphSymUtils {
 	}
 
 
-	public static GraphSym getParentGraph(String id, String name, BioSeq aseq, GraphSym cgraf) {
+	private static GraphSym getParentGraph(String id, String name, BioSeq aseq, GraphSym cgraf) {
 		// check and see if parent graph already exists
 
 		//is it a useq graph? modify name and id for strandedness?

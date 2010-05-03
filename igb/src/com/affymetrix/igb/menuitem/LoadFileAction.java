@@ -228,6 +228,11 @@ public final class LoadFileAction extends AbstractAction {
 		
 		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
 
+		if (!mergeSelected) {
+			// Select the "unknown" group.
+			gmodel.setSelectedSeqGroup(loadGroup);
+		}
+		
 		URI uri = fils[0].toURI();
 		
 		openURI(uri, fils[0].getName(), mergeSelected, loadGroup);
@@ -266,7 +271,8 @@ public final class LoadFileAction extends AbstractAction {
 		String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
 		Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
 		try {
-			for (BioSeq seq : gFeature.symL.getChromosomeList()) {
+			List<BioSeq> seqs = gFeature.symL.getChromosomeList();
+			for (BioSeq seq : seqs) {
 				if (seq.getSeqGroup() == null) {
 					seq.setSeqGroup(loadGroup);
 				}

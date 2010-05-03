@@ -71,6 +71,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
+import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -83,8 +84,8 @@ public final class LoadFileAction extends AbstractAction {
 
 	private final JFrame gviewerFrame;
 	private final FileTracker load_dir_tracker;
-	private static int unknown_group_count = 1;
-	private static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
+	public static int unknown_group_count = 1;
+	public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 	private static final String MERGE_MESSAGE = 
 			"Must select a genome before loading a graph.  "
 			+ "Graph data must be merged with already loaded genomic data.";
@@ -100,6 +101,7 @@ public final class LoadFileAction extends AbstractAction {
 			LoadFileAction.openURLAction(gviewerFrame,url);
 		}
 	};
+	private static MergeOptionChooser chooser = null;
 	/**
 	 *  Constructor.
 	 *  @param ft  a FileTracker used to keep track of directory to load from
@@ -119,14 +121,14 @@ public final class LoadFileAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		loadFile(load_dir_tracker, gviewerFrame);
 	}
-	private static MergeOptionFileChooser chooser = null;
+	
 
-	private static MergeOptionFileChooser getFileChooser() {
+	private static MergeOptionChooser getFileChooser() {
 		if (chooser != null) {
 			return chooser;
 		}
 
-		chooser = new MergeOptionFileChooser();
+		chooser = new MergeOptionChooser();
 		chooser.setMultiSelectionEnabled(true);
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"bam"}, "BAM Files"));
@@ -169,7 +171,7 @@ public final class LoadFileAction extends AbstractAction {
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"map"}, "Scored Map Files"));
 
-		HashSet<String> all_known_endings = new HashSet<String>();
+		Set<String> all_known_endings = new HashSet<String>();
 		for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
 			if (filter instanceof UniFileFilter) {
 				UniFileFilter uff = (UniFileFilter) filter;
@@ -191,7 +193,7 @@ public final class LoadFileAction extends AbstractAction {
 	private static void loadFile(final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
 
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		MergeOptionFileChooser fileChooser = getFileChooser();
+		MergeOptionChooser fileChooser = getFileChooser();
 		File currDir = load_dir_tracker.getFile();
 		if (currDir == null) {
 			currDir = new File(System.getProperty("user.home"));
@@ -238,7 +240,7 @@ public final class LoadFileAction extends AbstractAction {
 		openURI(uri, fils[0].getName(), mergeSelected, loadGroup);
 	}
 
-	private static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup) {
+	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup) {
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
 
@@ -283,55 +285,6 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 
-	/** A JFileChooser that has a checkbox for whether you want to merge annotations.
-	 *  Note that an alternative way of adding a checkbox to a JFileChooser
-	 *  is to use JFileChooser.setAccessory().  The only advantage to this
-	 *  subclass is more control of where the JCheckBox is placed inside the
-	 *  dialog.
-	 */
-	private static class MergeOptionFileChooser extends JFileChooser {
-
-		ButtonGroup bgroup = new ButtonGroup();
-		public JRadioButton merge_button = new JRadioButton(BUNDLE.getString("mergeWithCurrentlyLoadedData"), true);
-		public JRadioButton no_merge_button = new JRadioButton(BUNDLE.getString("createNewGenome"), false);
-		public JTextField genome_name_TF = new JTextField(BUNDLE.getString("unknownGenome"));
-		Box box = null;
-
-		public MergeOptionFileChooser() {
-			super();
-			bgroup.add(no_merge_button);
-			bgroup.add(merge_button);
-			merge_button.setSelected(true);
-
-			genome_name_TF.setEnabled(no_merge_button.isSelected());
-
-			no_merge_button.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					genome_name_TF.setEnabled(no_merge_button.isSelected());
-				}
-			});
-
-			box = new Box(BoxLayout.X_AXIS);
-			box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
-			box.add(Box.createHorizontalStrut(5));
-			box.add(merge_button);
-			box.add(no_merge_button);
-			box.add(Box.createRigidArea(new Dimension(5, 0)));
-			box.add(genome_name_TF);
-
-			merge_button.setMnemonic('M');
-			no_merge_button.setMnemonic('C');
-		}
-
-		@Override
-		protected JDialog createDialog(Component parent) throws HeadlessException {
-			JDialog dialog = super.createDialog(parent);
-
-			dialog.getContentPane().add(box, BorderLayout.SOUTH);
-			return dialog;
-		}
-	}
 
 	/** Loads from an InputStream.
 	 *  Detects the type of file based on the filename ending of the

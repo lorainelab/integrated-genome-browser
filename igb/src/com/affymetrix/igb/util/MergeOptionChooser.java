@@ -16,11 +16,11 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public final class MergeOptionChooser extends JFileChooser {
 
-	ButtonGroup bgroup = new ButtonGroup();
-	public JRadioButton merge_button = new JRadioButton(BUNDLE.getString("mergeWithCurrentlyLoadedData"), true);
-	public JRadioButton no_merge_button = new JRadioButton(BUNDLE.getString("createNewGenome"), false);
-	public JTextField genome_name_TF = new JTextField(BUNDLE.getString("unknownGenome"));
-	Box box = null;
+	private final ButtonGroup bgroup = new ButtonGroup();
+	public final JRadioButton merge_button = new JRadioButton(BUNDLE.getString("mergeWithCurrentlyLoadedData"), true);
+	public final JRadioButton no_merge_button = new JRadioButton(BUNDLE.getString("createNewGenome"), false);
+	public final JTextField genome_name_TF = new JTextField(BUNDLE.getString("unknownGenome"));
+	public final Box box;
 
 	public MergeOptionChooser() {
 		super();
@@ -31,6 +31,13 @@ public final class MergeOptionChooser extends JFileChooser {
 		genome_name_TF.setEnabled(no_merge_button.isSelected());
 
 		no_merge_button.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				genome_name_TF.setEnabled(no_merge_button.isSelected());
+			}
+		});
+
+		merge_button.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				genome_name_TF.setEnabled(no_merge_button.isSelected());

@@ -109,7 +109,7 @@ public final class LoadFileAction extends AbstractAction {
 	public LoadFileAction(JFrame gviewerFrame, FileTracker ft) {
 		super(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("openFileOrUrl")),
+					BUNDLE.getString("openFile")),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_O);
 

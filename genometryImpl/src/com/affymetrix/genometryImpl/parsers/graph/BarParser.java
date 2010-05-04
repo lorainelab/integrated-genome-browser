@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.Timer;
+import java.util.logging.Logger;
 
 /**
  * Parser for files in BAR format.
@@ -706,39 +707,25 @@ public final class BarParser implements AnnotationWriter {
 		AnnotatedSeqGroup group = null;
 		if (((version == null) || version.equals(""))
 				&& ((groupname == null) || groupname.equals(""))) {
-			group = default_seq_group;
-		} else {
-			if (groupname != null && version != null) {
-				group = gmodel.getSeqGroup(groupname + ":" + version);
-			}
-			if (group == null && groupname != null) {
-				group = gmodel.getSeqGroup(groupname);
-			}
-			if (group == null && version != null) {
-				group = gmodel.getSeqGroup(version);
-			}
-			// no group found, so create a new one
-			if (group == null) {
-				String new_group_name;
-				if (groupname != null && groupname.length() > 0 && version != null && version.length() > 0) {
-					new_group_name = groupname + ":" + version;
-				} else if (version == null || version.length() == 0) {
-					new_group_name = groupname;
-				} else {
-					new_group_name = version;
-				}
-				if (DEBUG) {
-					System.out.println("group not found, creating new seq group: " + new_group_name);
-				}
-				group = gmodel.addSeqGroup(new_group_name);
-			}
-
-			if (gmodel.getSelectedSeqGroup() != group) {
-				// This is necessary to make sure new groups get added to the DataLoadView.
-				// maybe need a SeqGroupModifiedEvent class instead.
-				gmodel.setSelectedSeqGroup(group);
-			}
+			return default_seq_group;
 		}
+		if (groupname != null && version != null) {
+			group = gmodel.getSeqGroup(groupname + ":" + version);
+		}
+		if (group == null && groupname != null) {
+			group = gmodel.getSeqGroup(groupname);
+		}
+		if (group == null && version != null) {
+			group = gmodel.getSeqGroup(version);
+		}
+		if (group == null) {
+			Logger.getLogger(BarParser.class.getName()).warning("Did not find group " + version + ".  Adding to default group " + default_seq_group.getID());
+			return default_seq_group;
+		}
+
+		// This is necessary to make sure new groups get added to the DataLoadView.
+		// maybe need a SeqGroupModifiedEvent class instead.
+		gmodel.setSelectedSeqGroup(group);
 		return group;
 	}
 

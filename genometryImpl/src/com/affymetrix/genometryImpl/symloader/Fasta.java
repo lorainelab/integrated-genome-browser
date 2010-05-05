@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,9 +69,8 @@ public class Fasta extends SymLoader {
 					continue;
 				}  // skip null lines
 				matcher.reset(header);
-				boolean matched = matcher.matches();
 
-				if (!matched) {
+				if (!matcher.matches()) {
 					continue;
 				}
 				String seqid = matcher.group(1).split(" ")[0];	//get rid of spaces
@@ -85,17 +82,17 @@ public class Fasta extends SymLoader {
 						continue;
 					}  // skip null and empty lines
 
-					if (line.charAt(0) == ';') {
+					char firstChar = line.charAt(0);
+					if (firstChar == ';') {
 						continue;
 					} // skip comment lines
 
 					// break if hit header for another sequence --
-					if (line.startsWith(">")) {
+					if (firstChar == '>') {
 						header = line;
 						break;
 					}
-					line = line.trim();
-					count += line.length();
+					count += line.trim().length();
 				}
 				if (seq == null) {
 					chrSet.add(new BioSeq(seqid, "", count));
@@ -109,8 +106,6 @@ public class Fasta extends SymLoader {
 			ex.printStackTrace();
 		}
 	}
-
-
 
 	@Override
 	public String getRegionResidues(SeqSpan span) {
@@ -129,9 +124,8 @@ public class Fasta extends SymLoader {
 					continue;
 				}  // skip null lines
 				matcher.reset(header);
-				boolean matched = matcher.matches();
 
-				if (!matched) {
+				if (!matcher.matches()) {
 					continue;
 				}
 				String seqid = matcher.group(1).split(" ")[0];	// get rid of spaces
@@ -145,12 +139,13 @@ public class Fasta extends SymLoader {
 						continue;
 					}  // skip null and empty lines
 
-					if (line.charAt(0) == ';') {
+					char firstChar = line.charAt(0);
+					if (firstChar == ';') {
 						continue;
 					} // skip comment lines
 
 					// break if hit header for another sequence --
-					if (line.startsWith(">")) {
+					if (firstChar == '>') {
 						header = line;
 						break;
 					}
@@ -190,6 +185,4 @@ public class Fasta extends SymLoader {
 		}
 		return residues;
 	}
-
-
 }

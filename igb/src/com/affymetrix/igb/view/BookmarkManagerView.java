@@ -63,7 +63,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
   public BookmarkManagerView() {
     super();
 
-    tree = new JTree();
+    tree = new DragDropTree();
     tree.setModel(tree_model);
 
     JScrollPane scroll_pane = new JScrollPane(tree);

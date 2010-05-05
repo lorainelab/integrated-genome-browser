@@ -238,9 +238,17 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		final JLabel usageLabel = new JLabel("Cache Behavior");
 		final JLabel emptyLabel = new JLabel();
 		final JComboBox	cacheUsage = new JComboBox(CacheUsage.values());
-		final JButton clearCache = createButton("Empty Cache", new ActionListener() {
+		final JButton clearCache = new JButton("Empty Cache");
+		clearCache.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				clearCache.setEnabled(false);
+				try {
+					Thread.sleep(300);
+				} catch (InterruptedException ex) {
+					Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
+				}
 				LocalUrlCacher.clearCache();
+				clearCache.setEnabled(true);
 			}
 		});
 

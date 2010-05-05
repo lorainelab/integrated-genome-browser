@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.TierPrefsView;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -30,16 +31,27 @@ public final class PreferencesPanel extends JPanel {
   private static final String WINDOW_NAME = "Preferences Window";
   private static final String HELP_WINDOW_NAME = "Preferences Help Window";
 
-  JFrame frame = null;
+  private JFrame frame = null;
   public static PreferencesPanel singleton = null;
 
-  JTabbedPane tab_pane;
+  private final JTabbedPane tab_pane;
 
-  Action export_action;
-  Action import_action;
+  private Action export_action;
+  private Action import_action;
   //Action clear_action;
-  Action help_action;
-  Action help_for_tab_action;
+  private Action help_action;
+  private Action help_for_tab_action;
+
+  public static int TAB_NUM_TIERS = -1;
+
+  private final static String PREFERENCES = BUNDLE.getString("Preferences");
+  private final static String HELP = BUNDLE.getString("helpMenu");
+  public final static String IMPORT_ACTION_COMMAND = WINDOW_NAME + " / " + BUNDLE.getString("Import");
+  public final static String EXPORT_ACTION_COMMAND = WINDOW_NAME + " / " + BUNDLE.getString("Export");
+  public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / " + HELP;
+  public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / " + BUNDLE.getString("HelpForCurrentTab");
+
+  private TierPrefsView tpv = null;
 
   private PreferencesPanel() {
     this.setLayout(new BorderLayout());
@@ -50,15 +62,6 @@ public final class PreferencesPanel extends JPanel {
     // using SCROLL_TAB_LAYOUT would disable the tool-tips, due to a Swing bug.
     //tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
   }
-
-  public static int TAB_NUM_TIERS = -1;
-	
-  public final static String IMPORT_ACTION_COMMAND = WINDOW_NAME + " / Import";
-  public final static String EXPORT_ACTION_COMMAND = WINDOW_NAME + " / Export";
-  public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / Help";
-  public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / Help for current tab";
-
-  private TierPrefsView tpv = null;
 
   /** Creates an instance of PreferencesView.  It will contain tabs for
    *  setting various types of preferences.  You can put this view in any
@@ -128,7 +131,7 @@ public final class PreferencesPanel extends JPanel {
   /** Gets a JFrame containing the PreferencesView */
   public JFrame getFrame() {
     if (frame == null) {
-      frame = new JFrame("Preferences");
+      frame = new JFrame(PREFERENCES);
       final Container cont = frame.getContentPane();
       frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       frame.addWindowListener( new WindowAdapter() {
@@ -171,7 +174,7 @@ public final class PreferencesPanel extends JPanel {
 
   private JMenuBar getMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
-    JMenu prefs_menu = new JMenu("Preferences");
+    JMenu prefs_menu = new JMenu(PREFERENCES);
     prefs_menu.setMnemonic('P');
 
     prefs_menu.add(getExportAction());
@@ -179,7 +182,7 @@ public final class PreferencesPanel extends JPanel {
 
     menu_bar.add(prefs_menu);
 
-    JMenu help_menu = new JMenu("Help");
+    JMenu help_menu = new JMenu(HELP);
     help_menu.setMnemonic('H');
     menu_bar.add(help_menu);
     help_menu.add(getHelpAction());
@@ -198,7 +201,7 @@ public final class PreferencesPanel extends JPanel {
     scroller.setPreferredSize(new java.awt.Dimension(300, 400));
 
     JFrame frameAncestor = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
-    final JDialog dialog = new JDialog(frameAncestor, "Help", true);
+    final JDialog dialog = new JDialog(frameAncestor, HELP, true);
     dialog.getContentPane().add(scroller, "Center");
     Action close_action = new AbstractAction("OK") {
       public void actionPerformed(ActionEvent e) {
@@ -234,7 +237,7 @@ public final class PreferencesPanel extends JPanel {
   private String getHelpTextHTML() {
     StringBuffer sb = new StringBuffer(1000);
 
-    sb.append("<h1>Preferences</h1>\n");
+    sb.append("<h1>" + PREFERENCES + "</h1>\n");
     sb.append("<p>\n");
     sb.append("The tabs in the Help window control different aspects of the program.  ");
     sb.append("In each case, any values you set will remain in effect when you shut down and restart the program.  ");
@@ -242,15 +245,15 @@ public final class PreferencesPanel extends JPanel {
     sb.append("In other cases, it will be necessary to shut down and restart the program before the changes take effect.  ");
     sb.append("</p>\n");
 
-    sb.append("<h2>Export</h2>\n");
+    sb.append("<h2>" + BUNDLE.getString("Export") + "</h2>\n");
     sb.append("<p>\n");
-    sb.append("<b>Export</b> allows you to save all the persistent preferences in the program to an XML file.  ");
+    sb.append("<b>" + BUNDLE.getString("Export") + "</b> allows you to save all the persistent preferences in the program to an XML file.  ");
     sb.append("A file chooser will open allowing you to choose the location to save the XML file.  ");
     sb.append("All preferences set by the user will be saved.  ");
     sb.append("</p>\n");
-    sb.append("<h2>Import</h2>\n");
+    sb.append("<h2>" + BUNDLE.getString("Import") + "</h2>\n");
     sb.append("<p>\n");
-    sb.append("<b>Import</b> allows you to load persistent preferences from an XML file.  ");
+    sb.append("<b>" + BUNDLE.getString("Import") + "</b> allows you to load persistent preferences from an XML file.  ");
     sb.append("A file chooser will open allowing you to choose the file.  ");
     sb.append("Use this to load an XML file previously saved with <b>Export</b>. ");
     sb.append("All loaded preferences are <em>merged</em> with your existing preferences.  ");
@@ -352,7 +355,7 @@ public final class PreferencesPanel extends JPanel {
 
   private Action getHelpTabAction() {
     if (help_for_tab_action == null) {
-      help_for_tab_action = new AbstractAction("Help for Current Tab") {
+      help_for_tab_action = new AbstractAction(BUNDLE.getString("HelpForCurrentTab")) {
         public void actionPerformed(ActionEvent ae) {
           showHelpForTab();
         }

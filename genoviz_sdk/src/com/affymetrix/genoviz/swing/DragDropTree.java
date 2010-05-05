@@ -7,7 +7,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragGestureRecognizer;
 import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
@@ -29,17 +28,17 @@ import javax.swing.tree.TreePath;
 
 public class DragDropTree extends JTree implements DragSourceListener, DropTargetListener, DragGestureListener {
 
-	DragSource source;
-	DropTarget target;
-	DragGestureRecognizer recognizer;
-	TransferableTreeNode transferable;
-	DefaultMutableTreeNode oldNode;
-
+	private final DragSource source;
+	private TransferableTreeNode transferable;
+	private DefaultMutableTreeNode oldNode;
+	private final boolean DEBUG = false;
+	
 	public DragDropTree() {
 		super();
+		
 		source = new DragSource();
-		target = new DropTarget(this, this);
-		recognizer = source.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
+		this.setDropTarget(new DropTarget(this, this));
+		source.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
 	}
 
 	/*
@@ -73,16 +72,18 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	}
 
 	public void dropActionChanged(DragSourceDragEvent dsde) {
-		System.out.println("Action: " + dsde.getDropAction());
-		System.out.println("Target Action: " + dsde.getTargetActions());
-		System.out.println("User Action: " + dsde.getUserAction());
+		if(DEBUG){
+			System.out.println("Action: " + dsde.getDropAction());
+			System.out.println("Target Action: " + dsde.getTargetActions());
+			System.out.println("User Action: " + dsde.getUserAction());
+		}
 	}
 
 	public void dragDropEnd(DragSourceDropEvent dsde) {
-		/*
-		 * to support move or copy, we have to check which occurred:
-		 */
-		System.out.println("Drop Action: " + dsde.getDropAction());
+		if(DEBUG){
+			System.out.println("Drop Action: " + dsde.getDropAction());
+		}
+		
 		if (dsde.getDropSuccess() && (dsde.getDropAction() == DnDConstants.ACTION_MOVE)) {
 			((DefaultTreeModel) getModel()).removeNodeFromParent(oldNode);
 		}

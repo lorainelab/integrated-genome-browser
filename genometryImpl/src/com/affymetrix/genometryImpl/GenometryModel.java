@@ -18,8 +18,6 @@ public final class GenometryModel {
 	private static GenometryModel smodel = new GenometryModel();
 	private static final Logger default_logger = Logger.getLogger(GenometryModel.class.getName());
 	private static Logger logger = default_logger;
-
-
 	
 
 	/**
@@ -31,18 +29,18 @@ public final class GenometryModel {
 
 	private static final boolean DEBUG = false;
 
-	Map<String,AnnotatedSeqGroup> seq_groups = new LinkedHashMap<String,AnnotatedSeqGroup>();
+	private final Map<String,AnnotatedSeqGroup> seq_groups = new LinkedHashMap<String,AnnotatedSeqGroup>();
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
 	// maps sequences to lists of selected symmetries
-	Map<BioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
+	private final Map<BioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
 
-	final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<SeqSelectionListener>();
-	final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<GroupSelectionListener>();
-	final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
+	private final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<SeqSelectionListener>();
+	private final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<GroupSelectionListener>();
+	private final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
 
-	AnnotatedSeqGroup selected_group = null;
-	BioSeq selected_seq = null;
+	private AnnotatedSeqGroup selected_group = null;
+	private BioSeq selected_seq = null;
 
 	private GenometryModel() {
 	}

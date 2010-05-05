@@ -4,26 +4,13 @@ import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetContext;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
+import java.awt.dnd.*;
 import java.io.IOException;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
 public class DragDropTree extends JTree implements DragSourceListener, DropTargetListener, DragGestureListener {
@@ -60,7 +47,7 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	}
 
 	/*
-	 * Drag Event Handlers
+	 * Source Drag Event Handlers
 	 */
 	public void dragEnter(DragSourceDragEvent dsde) {
 	}
@@ -91,36 +78,15 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 	}
 
 	/*
-	 * Drop Event Handlers
+	 * Target Drag Event Handlers
 	 */
-	private TreeNode getNodeForEvent(DropTargetDragEvent dtde) {
-		Point p = dtde.getLocation();
-		DropTargetContext dtc = dtde.getDropTargetContext();
-		JTree tree = (JTree) dtc.getComponent();
-		TreePath path = tree.getClosestPathForLocation(p.x, p.y);
-		return (TreeNode) path.getLastPathComponent();
-	}
 
 	public void dragEnter(DropTargetDragEvent dtde) {
-		TreeNode node = getNodeForEvent(dtde);
-		if (node.isLeaf()) {
-			dtde.rejectDrag();
-		} else {
-			// start by supporting move operations
-			//dtde.acceptDrag(DnDConstants.ACTION_MOVE);
-			dtde.acceptDrag(dtde.getDropAction());
-		}
+		dtde.acceptDrag(dtde.getDropAction());
 	}
 
 	public void dragOver(DropTargetDragEvent dtde) {
-		TreeNode node = getNodeForEvent(dtde);
-		if (node.isLeaf()) {
-			dtde.rejectDrag();
-		} else {
-			// start by supporting move operations
-			//dtde.acceptDrag(DnDConstants.ACTION_MOVE);
-			dtde.acceptDrag(dtde.getDropAction());
-		}
+		dtde.acceptDrag(dtde.getDropAction());
 	}
 
 	public void dragExit(DropTargetEvent dte) {
@@ -136,10 +102,6 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 		TreePath parentpath = tree.getClosestPathForLocation(pt.x, pt.y);
 		DefaultMutableTreeNode parent = (DefaultMutableTreeNode) parentpath.getLastPathComponent();
 
-		if (parent.isLeaf()) {
-			dtde.rejectDrop();
-			return;
-		}
 
 		try {
 			Transferable tr = dtde.getTransferable();
@@ -150,6 +112,13 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 					TreePath p = (TreePath) tr.getTransferData(flavors[i]);
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) p.getLastPathComponent();
 					DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+					if(parent.isLeaf()){
+						MutableTreeNode actualparent = (MutableTreeNode) parent.getParent();
+						int index = model.getIndexOfChild(actualparent, parent);
+						model.insertNodeInto(node, actualparent, index + 1);
+						dtde.dropComplete(true);
+						return;
+					}
 					model.insertNodeInto(node, parent, 0);
 					dtde.dropComplete(true);
 					return;

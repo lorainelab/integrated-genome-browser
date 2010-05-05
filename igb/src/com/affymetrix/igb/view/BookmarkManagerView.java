@@ -18,6 +18,7 @@ import com.affymetrix.igb.menuitem.BookMarkAction;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkList;
@@ -62,7 +63,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
   public BookmarkManagerView() {
     super();
 
-    tree = new JTree();
+    tree = new DragDropTree();
     tree.setModel(tree_model);
 
     JScrollPane scroll_pane = new JScrollPane(tree);

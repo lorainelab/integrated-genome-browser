@@ -278,6 +278,16 @@ public class WiggleParserTest {
 		List<GraphSym> outresults = outwiggle.getGenome();
 
 		testResults2(outresults, false);
+
+		File testFile = new File("test/data/wiggle/testFile.wig");
+
+		FileInputStream fin = new FileInputStream(testFile);
+		byte fileContent[] = new byte[(int)testFile.length()];
+		fin.read(fileContent);
+		String strFileContent = new String(fileContent);
+		fin.close();
+		
+		assertEquals(strFileContent,outstream.toString());
 	}
 
 	public File createFileFromString(String string) throws Exception{

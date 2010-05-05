@@ -51,8 +51,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String SEARCHLABELTEXT = "Search ";
 	private static final String INLABELTEXT = "in ";
 	private static final String FORLABELTEXT = "for ";
-	private static final String REGEXID = IGBConstants.BUNDLE.getString("searchRegexID");
-	private static final String REGEXIDTF = IGBConstants.BUNDLE.getString("searchRegexIDTF");
+	private static final String REGEXID = IGBConstants.BUNDLE.getString("searchRegexIDOrName");
+	private static final String REGEXIDTF = IGBConstants.BUNDLE.getString("searchRegexIDOrNameTF");
 	private static final String REGEXRESIDUE = IGBConstants.BUNDLE.getString("searchRegexResidue");
 	private static final String REGEXRESIDUETF = IGBConstants.BUNDLE.getString("searchRegexResidueTF");
 	private static final String CHOOSESEARCH = IGBConstants.BUNDLE.getString("searchChooseSearch");

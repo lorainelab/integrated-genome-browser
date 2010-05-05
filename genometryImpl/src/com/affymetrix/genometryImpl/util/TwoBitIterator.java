@@ -116,7 +116,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 					temp = parseByte(valueBuffer[k],k,bytesToRead,start,requiredLength,beginLength,endLength);
 					
-					for (int j = 0; j < temp.length; j++) {
+					for (int j = 0; j < temp.length && residueCounter < requiredLength; j++) {
 						nBlock = processResidue(residuePosition, temp, j, nBlock, tempNBlocks, false);
 						maskBlock = processResidue(residuePosition, temp, j, maskBlock, tempMaskBlocks, true);
 						residues[residueCounter++] = temp[j];

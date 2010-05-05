@@ -53,12 +53,11 @@ public class DragDropTree extends JTree implements DragSourceListener, DropTarge
 		}
 		oldNode = (DefaultMutableTreeNode) path.getLastPathComponent();
 		transferable = new TransferableTreeNode(path);
-		source.startDrag(dge, DragSource.DefaultMoveNoDrop, transferable, this);
+		//source.startDrag(dge, DragSource.DefaultMoveNoDrop, transferable, this);
 
 		// If you support dropping the node anywhere, you should probably
 		// start with a valid move cursor:
-		//source.startDrag(dge, DragSource.DefaultMoveDrop, transferable,
-		// this);
+		source.startDrag(dge, DragSource.DefaultMoveDrop, transferable, this);
 	}
 
 	/*

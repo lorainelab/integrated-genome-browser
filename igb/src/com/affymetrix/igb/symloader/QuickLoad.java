@@ -355,7 +355,7 @@ public final class QuickLoad extends SymLoader {
 		// residue loaders
 		if (this.extension.endsWith("bnib")) {
 			isResidueLoader = true;
-			return new BNIB(this.uri);
+			return new BNIB(this.uri, this.version.group);
 		}
 		if (this.extension.endsWith("fa") || this.extension.endsWith("fasta")) {
 			isResidueLoader = true;

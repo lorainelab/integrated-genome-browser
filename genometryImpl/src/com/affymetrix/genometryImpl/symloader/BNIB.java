@@ -1,8 +1,20 @@
 package com.affymetrix.genometryImpl.symloader;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,14 +23,72 @@ import java.util.logging.Logger;
  * @author jnicol
  */
 public class BNIB extends SymLoader {
-	public BNIB(URI uri) {
+	private File f = null;
+	private List<BioSeq> chrList = null;
+	private final AnnotatedSeqGroup group;
+
+	public BNIB(URI uri, AnnotatedSeqGroup group) {
 		super(uri);
+		this.group = group;
+	}
+
+	@Override
+	public void init() {
+		if (this.isInitialized) {
+			return;
+		}
+		super.init();
+		f = LocalUrlCacher.convertURIToFile(uri);
+	}
+
+	@Override
+	public String[] getLoadChoices() {
+		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
+		return choices;
+	}
+
+	@Override
+	public List<BioSeq> getChromosomeList() {
+		if (this.chrList != null) {
+			return this.chrList;
+		}
+
+		init();
+		chrList = new ArrayList<BioSeq>(1);
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(f);
+			BioSeq seq = NibbleResiduesParser.determineChromosome(fis, group);
+			if (seq != null) {
+				chrList.add(seq);
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(fis);
+		}
+		return chrList;
 	}
 
 	@Override
 	public String getRegionResidues(SeqSpan span) {
-		Logger.getLogger(this.getClass().getName()).log(
-				Level.WARNING, "Retrieving region is not supported.  Returning entire chromosome.");
-		return "";
+		init();
+
+		FileInputStream fis = null;
+		ByteArrayOutputStream outStream = null;
+		try {
+			outStream = new ByteArrayOutputStream();
+			fis = new FileInputStream(f);
+			NibbleResiduesParser.parse(fis, span.getStart(), span.getEnd(), outStream);
+			byte[] bytes = outStream.toByteArray();
+			return new String(bytes);
+		} catch (Exception ex) {
+			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
+			return null;
+		} finally {
+			GeneralUtils.safeClose(outStream);
+			GeneralUtils.safeClose(fis);
+		}
 	}
+
 }

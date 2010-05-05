@@ -20,6 +20,11 @@ import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class NibbleResiduesParser {
 	private static int BUFSIZE = 65536;	// buffer for outputting
@@ -119,6 +124,36 @@ public final class NibbleResiduesParser {
 	{
 		BioSeq seq = parse(istr,seq_group,start,end);
 		return writeAnnotations(seq,start,end,output);
+	}
+
+	/**
+	 * Determine the chromosome referenced by the BNIB stream.
+	 * @param istr
+	 * @param seq_group
+	 * @return
+	 */
+	public static BioSeq determineChromosome(InputStream istr, AnnotatedSeqGroup seq_group) {
+		BioSeq result_seq = null;
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		try {
+			if (istr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream) istr;
+			} else {
+				bis = new BufferedInputStream(istr);
+			}
+			dis = new DataInputStream(bis);
+			String name = dis.readUTF();
+			dis.readUTF();
+			int total_residues = dis.readInt();
+			if (seq_group.getSeq(name) != null) {
+				return seq_group.getSeq(name);
+			}
+			result_seq = new BioSeq(name, seq_group.getID(), total_residues);
+		} catch (Exception ex) {
+			Logger.getLogger(NibbleResiduesParser.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return result_seq;
 	}
 
 	public static byte[] readBNIB(File seqfile) throws FileNotFoundException, IOException {

@@ -96,7 +96,7 @@ public final class QuickLoad extends SymLoader {
 	 * @return
 	 */
 	@Override
-	public String[] getLoadChoices() {
+	public LoadStrategy[] getLoadChoices() {
 		// If we're using a symloader, return its load choices.
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();

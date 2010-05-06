@@ -97,7 +97,7 @@ public final class Das2ClientOptimizer {
             System.out.println("Can't optimize query: " + typeid + ", seq is null!");
             output_requests.add(request_sym);
         } else {
-			OptimizeQuery(seq, typeid, type, output_requests, request_sym);
+			OptimizeQuery(seq, typeid, type, type.getName(), output_requests, request_sym);
         }
 
         for (FeatureRequestSym request : output_requests) {
@@ -108,9 +108,9 @@ public final class Das2ClientOptimizer {
     }
 
 
-    private static void OptimizeQuery(
+    public static void OptimizeQuery(
 			BioSeq aseq, String typeid,
-			Das2Type type, List<FeatureRequestSym> output_requests, FeatureRequestSym request_sym) {
+			Das2Type type, String typeName, List<FeatureRequestSym> output_requests, FeatureRequestSym request_sym) {
 		// overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
 		SeqSymmetry overlap_sym = request_sym.getOverlapSym();
 		Das2Region region = null;
@@ -122,9 +122,9 @@ public final class Das2ClientOptimizer {
 
 		// little hack for GraphSyms, need to resolve when to use id vs. name vs. type
 		if (cont_sym == null && typeid.endsWith(".bar")) {
-			cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(type.getName());
+			cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeName);
             if (DEBUG) {
-                System.out.println("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
+                System.out.println("trying to use type name for bar type, name: " + typeName + ", id: " + typeid);
 				System.out.println("cont_sym: " + cont_sym);
 			}
         }
@@ -148,6 +148,13 @@ public final class Das2ClientOptimizer {
                     prev_overlaps.add(prev_request);
                 }
             }
+			if (prev_overlaps.isEmpty()) {
+				if (DEBUG) {
+					System.out.println("Can't optimize DAS/2 query, no previous requests found: " + typeid);
+				}
+				output_requests.add(request_sym);
+				return;
+			}
             SeqSymmetry prev_union = SeqSymSummarizer.getUnion(prev_overlaps, aseq);
             List<SeqSymmetry> qnewlist = new ArrayList<SeqSymmetry>();
             qnewlist.add(overlap_sym);

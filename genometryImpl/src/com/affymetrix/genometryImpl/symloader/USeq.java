@@ -43,8 +43,8 @@ public class USeq extends SymLoader {
 	}
 
 	@Override
-	public String[] getLoadChoices() {
-		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.GENOME.toString()};
+	public LoadStrategy[] getLoadChoices() {
+		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.GENOME};
 		return choices;
 	}
 

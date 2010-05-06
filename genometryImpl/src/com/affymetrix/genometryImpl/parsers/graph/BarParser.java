@@ -696,9 +696,6 @@ public final class BarParser implements AnnotationWriter {
 					} else {
 						String test_version = testseq.getVersion();
 						if ((lookup.isSynonym(test_version, seqversion)) || (lookup.isSynonym(test_version, groupname)) || (lookup.isSynonym(test_version, groupname + ":" + seqversion))) {
-							if (DEBUG) {
-								System.out.println("found synonymn");
-							}
 							seq = testseq;
 							break;
 						}
@@ -707,13 +704,7 @@ public final class BarParser implements AnnotationWriter {
 			}
 		}
 		if (seq == null) {
-			/*if (bar2 && groupname != null) {
-				seqversion = groupname + ":" + seqversion;
-			}*/
 			seq = seq_group.addSeq(seqname, 1);
-		}
-		if (DEBUG) {
-			System.out.println("seq: " + seq);
 		}
 		return seq;
 	}

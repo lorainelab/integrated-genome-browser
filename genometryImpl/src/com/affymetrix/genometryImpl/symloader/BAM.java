@@ -51,9 +51,9 @@ public final class BAM extends SymLoader {
 	}
 
 	@Override
-	public String[] getLoadChoices() {
+	public LoadStrategy[] getLoadChoices() {
 		// BAM files are generally large, so only allow loading visible data.
-		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString()};
+		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE};
 		return choices;
 	}
 

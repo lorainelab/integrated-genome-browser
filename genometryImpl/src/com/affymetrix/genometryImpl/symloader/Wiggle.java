@@ -23,10 +23,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.awt.Color;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -75,9 +73,8 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	}
 
 	@Override
-	public String[] getLoadChoices() {
-		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), 
-		LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
+	public LoadStrategy[] getLoadChoices() {
+		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE, LoadStrategy.CHROMOSOME, LoadStrategy.GENOME};
 		return choices;
 	}
 

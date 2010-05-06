@@ -43,8 +43,8 @@ public abstract class SymLoader {
 	 * Return possible strategies to load this URI.
 	 * @return
 	 */
-	public String[] getLoadChoices() {
-		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
+	public LoadStrategy[] getLoadChoices() {
+		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.CHROMOSOME, LoadStrategy.GENOME};
 		return choices;
 	}
 	/**

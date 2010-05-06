@@ -60,9 +60,8 @@ public class BED extends SymLoader{
 	}
 
 	@Override
-	public String[] getLoadChoices() {
-		String[] choices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(),
-		LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
+	public LoadStrategy[] getLoadChoices() {
+		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE, LoadStrategy.CHROMOSOME, LoadStrategy.GENOME};
 		return choices;
 	}
 	

@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
 import java.util.logging.Level;
@@ -26,6 +27,12 @@ public final class Bar extends SymLoader {
 		super(uri);
 		this.featureName = featureName;
 		this.group = group;
+	}
+
+	@Override
+	public LoadStrategy[] getLoadChoices() {
+		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE, LoadStrategy.CHROMOSOME, LoadStrategy.GENOME};
+		return choices;
 	}
 
 	@Override

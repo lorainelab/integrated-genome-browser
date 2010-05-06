@@ -120,7 +120,7 @@ public abstract class SymLoader {
 	public static void addToRequestSym(
 			 List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan) {
         if (feats == null || feats.isEmpty()) {
-            // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
+            // because many operations will treat empty FeatureRequestSym as a leaf sym, want to
             //    populate with empty sym child/grandchild
             //    [ though a better way might be to have request sym's span on aseq be dependent on children, so
             //       if no children then no span on aseq (though still an overlap_span and inside_span) ]

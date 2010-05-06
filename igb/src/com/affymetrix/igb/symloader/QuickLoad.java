@@ -6,6 +6,8 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.das2.Das2ClientOptimizer;
+import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
@@ -22,6 +24,7 @@ import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.Bar;
 import com.affymetrix.genometryImpl.symloader.Fasta;
@@ -43,13 +46,13 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
@@ -152,21 +155,35 @@ public final class QuickLoad extends SymLoader {
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
 		final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		if (!this.isResidueLoader) {
-			return loadSymmetriesThread(strategy, overlapSpan, seq, gviewer, vexec);
+			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
+			List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
+			Das2ClientOptimizer.OptimizeQuery(seq, featureName, null, featureName, output_requests, requestSym);
+			if (output_requests.isEmpty()) {
+				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
+				return true;
+			}
+			boolean result = true;
+			for (FeatureRequestSym request : output_requests) {
+				// short-circuit if there's a failure... which may not even be signaled in the code
+				result = result && loadSymmetriesThread(strategy, request, seq, gviewer, vexec);
+			}
+			return result;
 		}
 		return loadResiduesThread(strategy, overlapSpan, seq, gviewer, vexec);
 	}
 
-	private boolean loadSymmetriesThread(final LoadStrategy strategy, final SeqSpan overlapSpan, final BioSeq seq, final SeqMapView gviewer, Executor vexec) throws OutOfMemoryError {
+	private boolean loadSymmetriesThread(
+			final LoadStrategy strategy, final FeatureRequestSym requestSym, final BioSeq seq, final SeqMapView gviewer, Executor vexec)
+			throws OutOfMemoryError {
+
 		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					List<? extends SeqSymmetry> results = loadFeature(strategy, overlapSpan);
+					List<? extends SeqSymmetry> results = loadFeature(strategy, requestSym.getOverlapSpan());
 					if (results != null && !results.isEmpty()) {
-						SimpleSymWithProps requestSym = new SimpleSymWithProps();
 						requestSym.setProperty("method", featureName);
-						SymLoader.addToRequestSym(results, requestSym, QuickLoad.this.featureName, QuickLoad.this.featureName, overlapSpan);
+						SymLoader.addToRequestSym(results, requestSym, QuickLoad.this.featureName, QuickLoad.this.featureName, requestSym.getOverlapSpan());
 						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
 							SymLoader.addAnnotations(results, requestSym, seq);
 						} else if (strategy == LoadStrategy.GENOME) {
@@ -373,6 +390,9 @@ public final class QuickLoad extends SymLoader {
 		}
 		if (this.extension.endsWith("bar")) {
 			return new Bar(this.uri, this.featureName, this.version.group);
+		}
+		if (this.extension.endsWith("bed")) {
+			return new BED(this.uri, this.featureName, this.version.group);
 		}
 		if (this.extension.endsWith("gr")) {
 			if (this.extension.endsWith("sgr")) {

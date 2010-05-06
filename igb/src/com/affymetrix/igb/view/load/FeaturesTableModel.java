@@ -116,7 +116,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	public Object getValueAt(int row, int col) {
 		if (features == null || features.size() == 0) {
 			// Indicate to user that there's no data.
-			if (col == 2) {
+			if (row == 0 && col == 2) {
 				return "No feature data found";
 			}
 			return "";

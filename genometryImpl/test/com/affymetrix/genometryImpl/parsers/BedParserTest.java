@@ -45,7 +45,7 @@ public class BedParserTest {
 
 			testFileResult(result);
 
-			BED bed = new BED(new File(filename).toURI(), filename, group, gmodel);
+			BED bed = new BED(new File(filename).toURI(), filename, group);
 			result = bed.getGenome();
 			testFileResult(result);
 		}
@@ -104,7 +104,7 @@ public class BedParserTest {
 			
 			File tempFile = createFileFromString(string);
 			
-			BED bed = new BED(tempFile.toURI(), tempFile.getName(), group, gmodel);
+			BED bed = new BED(tempFile.toURI(), tempFile.getName(), group);
 			result = bed.getGenome();
 			testStringResult(result);
 		}
@@ -283,7 +283,7 @@ public class BedParserTest {
 
 			File file = createFileFromString(string);
 			
-			BED bed = new BED(file.toURI(), file.getName(), group, gmodel);
+			BED bed = new BED(file.toURI(), file.getName(), group);
 			syms = bed.getGenome();
 
 			testWrite(syms,seq,string);
@@ -324,7 +324,7 @@ public class BedParserTest {
 
 			File file = createFileFromString(string);
 
-			BED bed = new BED(file.toURI(), file.getName(), group, gmodel);
+			BED bed = new BED(file.toURI(), file.getName(), group);
 			syms = bed.getGenome();
 
 			testWrite(syms,seq,string);
@@ -365,15 +365,12 @@ public class BedParserTest {
 
 	@Test
 	public void testBEDParseFromFile() throws IOException {
-
-		
-
 		String filename = "test/data/bed/bed_02.bed";
 		assertTrue(new File(filename).exists());
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		BioSeq seq = group.addSeq("chr2L", 1965498);
 
-		BED bed = new BED(new File(filename).toURI(), filename, group, GenometryModel.getGenometryModel());
+		BED bed = new BED(new File(filename).toURI(), filename, group);
 
 		List<BioSeq> allSeq = bed.getChromosomeList();
 		assertEquals(4, allSeq.size());

@@ -31,8 +31,6 @@ import java.util.Map.Entry;
  * @author hiralv
  */
 public class BED extends SymLoader{
-
-	private final GenometryModel gmodel;
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
 	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
@@ -55,11 +53,10 @@ public class BED extends SymLoader{
 
 	private final TrackLineParser track_line_parser = new TrackLineParser();
 
-	public BED(URI uri, String featureName, AnnotatedSeqGroup group, GenometryModel gmodel){
+	public BED(URI uri, String featureName, AnnotatedSeqGroup group){
 		super(uri);
 		this.featureName = featureName;
 		this.group = group;
-		this.gmodel = gmodel;
 	}
 
 	@Override
@@ -120,7 +117,7 @@ public class BED extends SymLoader{
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parse(istr, this.gmodel, this.group, true, this.featureName, false, min, max);
+			return parse(istr, GenometryModel.getGenometryModel(), this.group, true, this.featureName, false, min, max);
 		}catch (Exception ex) {
 			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -728,6 +725,7 @@ public class BED extends SymLoader{
 
 
 	private void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
 			String seq_name = bioseq.getKey();
 			BioSeq seq = group.getSeq(seq_name);

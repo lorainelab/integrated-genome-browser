@@ -5,7 +5,9 @@ import java.util.*;
 
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -40,8 +42,38 @@ public final class Bar extends SymLoader {
 		BufferedInputStream bis = null;
 		try {
 			init();
-			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, featureName, true);
+			bis = new BufferedInputStream(new FileInputStream(f));
+			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, featureName, true);
+		} catch (Exception ex) {
+			Logger.getLogger(Bar.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(bis);
+		}
+		return null;
+	}
+
+	@Override
+	public List<GraphSym> getChromosome(BioSeq seq) {
+		BufferedInputStream bis = null;
+		try {
+			init();
+			bis = new BufferedInputStream(new FileInputStream(f));
+			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, seq, 0, seq.getMax() + 1, featureName, true);
+		} catch (Exception ex) {
+			Logger.getLogger(Bar.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(bis);
+		}
+		return null;
+	}
+
+	@Override
+	public List<GraphSym> getRegion(SeqSpan span) {
+		BufferedInputStream bis = null;
+		try {
+			init();
+			bis = new BufferedInputStream(new FileInputStream(f));
+			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, span.getBioSeq(), span.getMin(), span.getMax(), featureName, true);
 		} catch (Exception ex) {
 			Logger.getLogger(Bar.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {

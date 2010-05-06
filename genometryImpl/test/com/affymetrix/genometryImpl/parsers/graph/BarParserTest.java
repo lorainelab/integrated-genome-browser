@@ -58,7 +58,7 @@ public class BarParserTest {
 
 		boolean ensure_unique_id = true;
 		
-		List<GraphSym> results = BarParser.parse(istr,gmodel,group,stream_name,ensure_unique_id);
+		List<GraphSym> results = BarParser.parse(istr,gmodel,group,null,0, Integer.MAX_VALUE, stream_name,ensure_unique_id);
 		assertEquals(1, results.size());
 		GraphSym gr0 = results.get(0);
 		assertEquals(stream_name, gr0.getGraphSeq().getID());

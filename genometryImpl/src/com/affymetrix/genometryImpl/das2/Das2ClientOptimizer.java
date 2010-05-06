@@ -421,7 +421,7 @@ public final class Das2ClientOptimizer {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 		if (extension.equals("bar")) {
-			return BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
+			return BarParser.parse(bis, gmodel, seq_group, null, 0, Integer.MAX_VALUE, type.getName(), false);
 		}
 		if (extension.equals("bed")) {
 			BedParser parser = new BedParser();

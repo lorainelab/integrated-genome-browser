@@ -1,5 +1,7 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.*;
@@ -366,7 +368,7 @@ public final class BarParser implements AnnotationWriter {
 
 	/** Parse a file in BAR format. */
 	public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel,
-			AnnotatedSeqGroup default_seq_group, String stream_name,
+			AnnotatedSeqGroup default_seq_group, BioSeq chrFilter, int min, int max, String stream_name,
 			boolean ensure_unique_id)
 			throws IOException {
 		BufferedInputStream bis = null;
@@ -405,17 +407,23 @@ public final class BarParser implements AnnotationWriter {
 				if (vals_per_point == 1) {
 					throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
 				}
+				if (chrFilter != null && chrFilter != seq) {
+					// Filtering on chromosome.
+					// Skip all points relating to this BarSeqHeader.
+					skipBytes(total_points * vals_per_point, dis);
+					continue;
+				}
 				if (vals_per_point == 2) {
 					if (val_types[0] != BYTE4_SIGNED_INT || val_types[1] != BYTE4_FLOAT) {
 						throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
 					}
-					handle2ValPerPoint(total_points, dis, seq, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
+					handle2ValPerPoint(total_points, dis, seq, min, max, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
 				} else if (vals_per_point == 3) {
 					// if three values per point, assuming #1 is int base coord, #2 is Pm score, #3 is Mm score
 					if (val_types[0] != BYTE4_SIGNED_INT || val_types[1] != BYTE4_FLOAT || val_types[2] != BYTE4_FLOAT) {
 						throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
 					}
-					handle3ValPerPoint(total_points, dis, seq, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
+					handle3ValPerPoint(total_points, dis, seq, min, max, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
 				}
 			}
 			long t1 = tim.read();
@@ -428,14 +436,12 @@ public final class BarParser implements AnnotationWriter {
 		return graphs;
 	}
 
-
-
 	private static void handle2ValPerPoint(
-			int total_points, DataInputStream dis, BioSeq seq, String graph_id, boolean ensure_unique_id, 
+			int total_points, DataInputStream dis, BioSeq seq, int min, int max, String graph_id, boolean ensure_unique_id,
 			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
 			throws IOException {
-		int[] xcoords = new int[total_points];
-		float[] ycoords = new float[total_points];
+		IntArrayList xcoords = new IntArrayList();
+		FloatArrayList ycoords = new FloatArrayList();
 		float prev_max_xcoord = -1;
 		boolean sort_reported = false;
 		for (int i = 0; i < total_points; i++) {
@@ -448,8 +454,10 @@ public final class BarParser implements AnnotationWriter {
 				sort_reported = true;
 			}
 			prev_max_xcoord = col0;
-			xcoords[i] = col0;
-			ycoords[i] = col1;
+			if (col0 >= min && col0 < max) {
+				xcoords.add(col0);
+				ycoords.add(col1);
+			}
 			if (DEBUG && i < 100) {
 				System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
 			}
@@ -461,8 +469,12 @@ public final class BarParser implements AnnotationWriter {
 		if (ensure_unique_id) {
 			graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq);
 		}
-		checkSeqLength(seq, xcoords);
-		GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
+		xcoords.trimToSize();
+		ycoords.trimToSize();
+		int[] xArr = xcoords.elements();
+		float[] yArr = ycoords.elements();
+		checkSeqLength(seq, xArr);
+		GraphSym graf = new GraphSym(xArr, yArr, graph_id, seq);
 		copyProps(graf, file_tagvals);
 		if (bar2) {
 			copyProps(graf, seq_tagvals);
@@ -473,19 +485,21 @@ public final class BarParser implements AnnotationWriter {
 
 
 	private static void handle3ValPerPoint(
-			int total_points, DataInputStream dis, BioSeq seq, String graph_id, boolean ensure_unique_id, 
+			int total_points, DataInputStream dis, BioSeq seq, int min, int max, String graph_id, boolean ensure_unique_id,
 			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
 			throws IOException {
-		int[] xcoords = new int[total_points];
-		float[] ycoords = new float[total_points];
-		float[] zcoords = new float[total_points];
+		IntArrayList xcoords = new IntArrayList();
+		FloatArrayList ycoords = new FloatArrayList();
+		FloatArrayList zcoords = new FloatArrayList();
 		for (int i = 0; i < total_points; i++) {
 			int col0 = dis.readInt();
 			float col1 = dis.readFloat();
 			float col2 = dis.readFloat();
-			xcoords[i] = col0;
-			ycoords[i] = col1;
-			zcoords[i] = col2;
+			if (col0 >= min && col0 < max) {
+				xcoords.add(col0);
+				ycoords.add(col1);
+				zcoords.add(col2);
+			}
 			if (DEBUG && i < 100) {
 				System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1 + "\t" + col2);
 			}
@@ -496,9 +510,15 @@ public final class BarParser implements AnnotationWriter {
 			pm_name = AnnotatedSeqGroup.getUniqueGraphID(pm_name, seq);
 			mm_name = AnnotatedSeqGroup.getUniqueGraphID(mm_name, seq);
 		}
-		checkSeqLength(seq, xcoords);
-		GraphSym pm_graf = new GraphSym(xcoords, ycoords, pm_name, seq);
-		GraphSym mm_graf = new GraphSym(xcoords, zcoords, mm_name, seq);
+		xcoords.trimToSize();
+		ycoords.trimToSize();
+		zcoords.trimToSize();
+		int[] xArr = xcoords.elements();
+		float[] yArr = ycoords.elements();
+		float[] zArr = zcoords.elements();
+		checkSeqLength(seq, xArr);
+		GraphSym pm_graf = new GraphSym(xArr, yArr, pm_name, seq);
+		GraphSym mm_graf = new GraphSym(xArr, zArr, mm_name, seq);
 		copyProps(pm_graf, file_tagvals);
 		copyProps(mm_graf, file_tagvals);
 		if (bar2) {

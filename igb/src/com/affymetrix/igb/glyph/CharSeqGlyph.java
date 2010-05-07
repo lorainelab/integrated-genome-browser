@@ -121,27 +121,28 @@ public final class CharSeqGlyph extends SequenceGlyph
 		seq_beg_index = visible_seq_beg - seq_beg;
 
 		if (null != chariter && seq_beg_index <= residue_length) {
+			double pixel_width_per_base = ( view.getTransform()).getScaleX();
+			// ***** background already drawn in drawTraversal(), so just return if
+			// ***** scale is < 1 pixel per base
+			if (pixel_width_per_base < 1) {
+				return;
+			}
 			int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
 			// adding 1 to visible ref_end to make sure base is drawn if only
 			// part of it is visible
 			visible_ref_end = visible_ref_end + 1;
 			int visible_seq_end = Math.min(seq_end, visible_ref_end);
 			int visible_seq_span = visible_seq_end - visible_seq_beg;
-			Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, coordbox.y,
-					visible_seq_span, coordbox.height);
-			view.transformToPixels(scratchrect, pixelbox);
-			double pixel_width_per_base = ( view.getTransform()).getScaleX();
-			// ***** background already drawn in drawTraversal(), so just return if
-			// ***** scale is < 1 pixel per base
-			if (pixel_width_per_base < 1) {
-				return;
-			} // ***** otherwise semantic zooming to show more detail *****
+			// ***** otherwise semantic zooming to show more detail *****
 			if (visible_seq_span > 0) {
+				Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, coordbox.y,
+						visible_seq_span, coordbox.height);
+				view.transformToPixels(scratchrect, pixelbox);
 				int seq_end_index = visible_seq_end - seq_beg;
 				if (seq_end_index > residue_length) {
 					seq_end_index = residue_length;
 				}
-				if (Math.abs((long)seq_end_index - (long)seq_beg_index) > 100000) {
+				if (Math.abs((long) seq_end_index - (long) seq_beg_index) > 100000) {
 					// something's gone wrong.  Ignore.
 					Logger.getLogger(CharSeqGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
 					return;
@@ -169,16 +170,14 @@ public final class CharSeqGlyph extends SequenceGlyph
 			int pixelStart) {
 		int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 
-		drawResidueRectangles(g, pixelsPerBase, str);
-		drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
+		char[] charArray = str.toCharArray();
+		drawResidueRectangles(g, pixelsPerBase, charArray);
+		drawResidueStrings(g, pixelsPerBase, charArray, pixelStart, baseline);
 	}
 
-	private void drawResidueRectangles(Graphics g, double pixelsPerBase, String str) {
-		int strLength = str.length();
-		for (int j = 0; j < strLength; j++) {
-			char charAt = str.charAt(j);
-
-			g.setColor(determineResidueColor(charAt));
+	private void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray) {
+		for (int j = 0; j < charArray.length; j++) {
+			g.setColor(determineResidueColor(charArray[j]));
 
 			//Create a colored rectangle.
 			//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
@@ -207,17 +206,13 @@ public final class CharSeqGlyph extends SequenceGlyph
 		}
 	}
 
-	private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {
+	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart, int baseline) {
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
-			int strLength = str.length();
-			for (int i = 0; i < strLength; i++) {
-				String c = String.valueOf(str.charAt(i));
-				if (c != null) {
-					g.drawString(c, pixelStart + (int) (i * pixelsPerBase), baseline);
-				}
+			for (int i = 0; i < charArray.length; i++) {
+				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase), baseline);
 			}
 		}
 	}

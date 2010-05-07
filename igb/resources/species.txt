@@ -20,7 +20,7 @@ Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus
 Chlamydomanas reinhardtii	motile single-celled green alga C_reinhardtii
 Choloepus hoffmanni	Two-toed sloth	C_hoffmanni	choHof	Choloepus_hoffmanni
 Ciona intestinalis	vase tunicate (sea squirt)	C_intestinalis	ci	Ciona_intestinalis
-Ciona savignyi	Pactific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
+Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
 Dasypus novemcinctus	Nine-banded armadillo	D_novemcinctus		Dasypus_novemcinctus

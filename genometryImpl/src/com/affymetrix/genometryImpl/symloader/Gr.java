@@ -48,7 +48,14 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	private final String featureName;
 	private boolean isSorted = false;
 	private File tempFile = null;
-	
+
+	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.VISIBLE);
+		strategyList.add(LoadStrategy.CHROMOSOME);
+	}
+
 	public Gr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
 		this.group = seq_group;
@@ -65,9 +72,8 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	}
 
 	@Override
-	public LoadStrategy[] getLoadChoices() {
-		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE, LoadStrategy.CHROMOSOME};
-		return choices;
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
 	}
 
 	@Override

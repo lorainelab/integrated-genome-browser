@@ -5,13 +5,11 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.das2.Das2ClientOptimizer;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
-import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
@@ -96,7 +94,7 @@ public final class QuickLoad extends SymLoader {
 	 * @return
 	 */
 	@Override
-	public LoadStrategy[] getLoadChoices() {
+	public List<LoadStrategy> getLoadChoices() {
 		// If we're using a symloader, return its load choices.
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();

@@ -23,6 +23,14 @@ public final class Bar extends SymLoader {
 	private final AnnotatedSeqGroup group;
 	private File f = null;
 
+	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.VISIBLE);
+		strategyList.add(LoadStrategy.CHROMOSOME);
+		strategyList.add(LoadStrategy.GENOME);
+	}
+
 	public Bar(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri);
 		this.featureName = featureName;
@@ -30,9 +38,8 @@ public final class Bar extends SymLoader {
 	}
 
 	@Override
-	public LoadStrategy[] getLoadChoices() {
-		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE, LoadStrategy.CHROMOSOME, LoadStrategy.GENOME};
-		return choices;
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
 	}
 
 	@Override

@@ -64,6 +64,14 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	private final AnnotatedSeqGroup group;
 	private final String featureName;
 	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
+
+	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.VISIBLE);
+		strategyList.add(LoadStrategy.CHROMOSOME);
+		strategyList.add(LoadStrategy.GENOME);
+	}
 	
 	public Wiggle(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
@@ -73,9 +81,8 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	}
 
 	@Override
-	public LoadStrategy[] getLoadChoices() {
-		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE, LoadStrategy.CHROMOSOME, LoadStrategy.GENOME};
-		return choices;
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
 	}
 
 	@Override

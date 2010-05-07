@@ -44,6 +44,13 @@ public final class BAM extends SymLoader {
 	private final String featureName;
 	private final List<BioSeq> seqs = new ArrayList<BioSeq>();
 
+	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		// BAM files are generally large, so only allow loading visible data.
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.VISIBLE);
+	}
+
 	public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri);
 		this.group = seq_group;
@@ -51,10 +58,8 @@ public final class BAM extends SymLoader {
 	}
 
 	@Override
-	public LoadStrategy[] getLoadChoices() {
-		// BAM files are generally large, so only allow loading visible data.
-		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE};
-		return choices;
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
 	}
 
 	@Override

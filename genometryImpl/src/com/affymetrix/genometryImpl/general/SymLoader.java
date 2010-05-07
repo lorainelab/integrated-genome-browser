@@ -26,6 +26,12 @@ public abstract class SymLoader {
 	protected final URI uri;
 	protected final String extension;	// used for ServerUtils call
 	protected volatile boolean isInitialized = false;
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.CHROMOSOME);
+		strategyList.add(LoadStrategy.GENOME);
+	}
 
 	public SymLoader(URI uri) {
         this.uri = uri;
@@ -43,9 +49,8 @@ public abstract class SymLoader {
 	 * Return possible strategies to load this URI.
 	 * @return
 	 */
-	public LoadStrategy[] getLoadChoices() {
-		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.CHROMOSOME, LoadStrategy.GENOME};
-		return choices;
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
 	}
 	/**
 	 * Get list of chromosomes used in the file/uri.

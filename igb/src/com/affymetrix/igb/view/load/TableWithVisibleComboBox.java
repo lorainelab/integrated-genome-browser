@@ -63,7 +63,7 @@ public final class TableWithVisibleComboBox {
 			GenericFeature gFeature = ftm.features.get(row);
 			SymLoader symL = gFeature.symL;
 			if (symL != null) {
-				JComboBox featureCB = new JComboBox(symL.getLoadChoices());
+				JComboBox featureCB = new JComboBox(symL.getLoadChoices().toArray());
 				featureCB.setRenderer(comboRenderer);
 				featureCB.setEnabled(true);
 				DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);

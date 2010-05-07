@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,6 +22,14 @@ import java.util.logging.Logger;
  */
 public class TwoBit extends SymLoader {
 	private File f = null;
+
+	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		// BAM files are generally large, so only allow loading visible data.
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.VISIBLE);
+		strategyList.add(LoadStrategy.CHROMOSOME);
+	}
 	
 	public TwoBit(URI uri) {
 		super(uri);
@@ -36,9 +45,8 @@ public class TwoBit extends SymLoader {
 	}
 
 	@Override
-	public LoadStrategy[] getLoadChoices() {
-		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE, LoadStrategy.CHROMOSOME};
-		return choices;
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
 	}
 
 	@Override

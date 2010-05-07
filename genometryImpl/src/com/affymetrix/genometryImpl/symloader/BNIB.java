@@ -27,6 +27,14 @@ public class BNIB extends SymLoader {
 	private List<BioSeq> chrList = null;
 	private final AnnotatedSeqGroup group;
 
+	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		// BAM files are generally large, so only allow loading visible data.
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.VISIBLE);
+		strategyList.add(LoadStrategy.CHROMOSOME);
+	}
+
 	public BNIB(URI uri, AnnotatedSeqGroup group) {
 		super(uri);
 		this.group = group;
@@ -42,9 +50,8 @@ public class BNIB extends SymLoader {
 	}
 
 	@Override
-	public LoadStrategy[] getLoadChoices() {
-		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.VISIBLE, LoadStrategy.CHROMOSOME};
-		return choices;
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
 	}
 
 	@Override

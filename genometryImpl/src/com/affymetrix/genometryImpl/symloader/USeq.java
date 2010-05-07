@@ -19,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,6 +37,12 @@ public class USeq extends SymLoader {
 	private final String featureName;
 	private File f = null;
 
+	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.GENOME);
+	}
+
 	public USeq(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri);
 		this.featureName = featureName;
@@ -43,9 +50,8 @@ public class USeq extends SymLoader {
 	}
 
 	@Override
-	public LoadStrategy[] getLoadChoices() {
-		LoadStrategy[] choices = {LoadStrategy.NO_LOAD, LoadStrategy.GENOME};
-		return choices;
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
 	}
 
 	@Override

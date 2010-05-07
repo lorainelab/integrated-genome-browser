@@ -29,7 +29,7 @@ import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
- *
+ * Open a window showing information about Integrated Genome Browser.
  * @author sgblanch
  */
 public class AboutIGBAction extends AbstractAction {
@@ -52,20 +52,17 @@ public class AboutIGBAction extends AbstractAction {
 
 		String text = APP_NAME + ", version: " + APP_VERSION_FULL + "\n\n" +
 						"IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n" +
-						"which develops interactive visualization software for genomics.\n" +
-						"Affymetrix, Inc., donated Genoviz and IGB to the open source community in 2004.\n" +
-						"IGB and Genoviz receive support from National Science Foundation's Arabidopsis 2010 program\n" +
-						"and from a growing community of developers and scientists. For details, see:\n" +
-						"http://igb.bioviz.org\n" +
-						"http://genoviz.sourceforge.net\n\n" +
-						"Source code for IGB is released under the Common Public License, v1.0.\n" +
-						"IGB is Copyright (c) 2000-2005 Affymetrix, Inc.\n" +
-						"IGB uses:\n" +
-						"the Fusion SDK from Affymetrix,\n" +
-						"the Vector Graphics package from http://java.freehep.org\n" +
-						"(released under the LGPL license),\n" +
-						"the Picard package from http://picard.sourceforge.net\n" +
-						"(released under the Apache version 2.0 license)\n\n";
+						"which develops interactive visualization software for genomics.\n\n" +
+						"If you use IGB to create images for publication, please cite the IGB\n" +
+						"Applications Note:\n\n" +
+						"Nicol JW, Helt GA, Blanchard SG Jr, Raja A, Loraine AE.\n" +
+						"The Integrated Genome Browser: free software for distribution and exploration of\n" +
+						"genome-scale datasets.\n"+
+						"Bioinformatics. 2009 Oct 15;25(20):2730-1.\n\n"+
+
+						"For more details, including license information, see:\n" +
+						"\thttp://www.bioviz.org/igb\n" +
+						"\thttp://genoviz.sourceforge.net\n\n" ;
 		about_text.append(text);
 		String cache_root = com.affymetrix.genometryImpl.util.LocalUrlCacher.getCacheRoot();
 		File cache_file = new File(cache_root);
@@ -81,39 +78,39 @@ public class AboutIGBAction extends AbstractAction {
 		}
 
 		message_pane.add(new JScrollPane(about_text));
-		JButton licenseB = new JButton("View IGB License");
-		JButton apacheB = new JButton("View Apache License");
-		JButton freehepB = new JButton("View FreeHEP Vector Graphics License");
-		JButton fusionB = new JButton("View Fusion SDK License");
-		licenseB.addActionListener(new ActionListener() {
+		JButton igb_paper = new JButton("View IGB Paper");
+		JButton bioviz_org = new JButton("Visit Bioviz.org");
+		JButton request_feature = new JButton("Request a Feature");
+		JButton report_bug = new JButton("Report a Bug");
+		igb_paper.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx?to");
+				GeneralUtils.browse("http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2759552/?tool=pubmed");
 			}
 		});
-		apacheB.addActionListener(new ActionListener() {
+		bioviz_org.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("http://www.apache.org/licenses/LICENSE-2.0");
+				GeneralUtils.browse("bioviz_org");
 			}
 		});
-		freehepB.addActionListener(new ActionListener() {
+		request_feature.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("http://java.freehep.org/vectorgraphics/license.html");
+				GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714747");
 			}
 		});
-		fusionB.addActionListener(new ActionListener() {
+		report_bug.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("http://www.affymetrix.com/support/developer/fusion/index.affx");
+				GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714744");
 			}
 		});
 		JPanel buttonP = new JPanel(new GridLayout(2, 2));
-		buttonP.add(licenseB);
-		buttonP.add(apacheB);
-		buttonP.add(freehepB);
-		buttonP.add(fusionB);
+		buttonP.add(igb_paper);
+		buttonP.add(bioviz_org);
+		buttonP.add(request_feature);
+		buttonP.add(report_bug);
 		message_pane.add(buttonP);
 
 		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,

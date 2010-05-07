@@ -12,6 +12,8 @@ import java.util.*;
 public final class GeneralUtils  {
 
 	private static Hashtable<String,Color> colormap;
+	private static final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    private static final Graphics g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
 
 	/**
 	 * toObjectString(obj) is a debugging tool
@@ -109,10 +111,7 @@ public final class GeneralUtils  {
    * will work just as well as Toolkit.getFontMetrics(Font).
    */
   public static FontMetrics getFontMetrics(Font fnt) {
-    BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-    Graphics g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
     return g.getFontMetrics(fnt);
-    // return Toolkit.getDefaultToolkit().getFontMetrics(fnt);
   }
 
 	/**
@@ -128,14 +127,14 @@ public final class GeneralUtils  {
 	 *  false if any of them are not equivalent to each other
 	 */
 	public static boolean isReallyMonospaced(Font fnt, char[] chars) {
-		FontMetrics fontmet = getFontMetrics(fnt);
 		String name = fnt.getName();
-		if ((!name.equals("Courier")) &&
-				(!name.equals("Monospaced"))) {
+		if ((!name.equals("Courier"))
+				&& (!name.equals("Monospaced"))) {
 			return false;
-				}
+		}
+		FontMetrics fontmet = getFontMetrics(fnt);
 		int width = fontmet.charWidth(chars[0]);
-		for (int i=0; i<chars.length; i++) {
+		for (int i = 0; i < chars.length; i++) {
 			if (fontmet.charWidth(chars[i]) != width) {
 				return false;
 			}

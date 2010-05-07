@@ -21,7 +21,7 @@
    
     <mx:HTTPService             
     id="verifyDAS2Refresh" 
-    url="genopub/verify"
+    url="genopub/verifyReload"
     resultFormat="e4x"
     showBusyCursor="true" 
     result="onVerifyDAS2Refresh(event)"
@@ -31,7 +31,7 @@
     <mx:request>
     </mx:request>
    </mx:HTTPService> 
-
+   
 
 	<mx:HTTPService             
     id="getAnnotations" 
@@ -816,30 +816,18 @@
 				"Warning", 
 				(Alert.YES | Alert.NO), 
 				this,
-				onPromptInvalidDAS2Refresh);
+				onPromptVerifyDAS2Refresh);
 			} else {
-				if (verifyDAS2Refresh.lastResult.name() == "SUCCESS") {
-					this.promptToStartDAS2Refresh();
-				}
+				Alert.show(verifyDAS2Refresh.lastResult.@message, 
+				"Ready to Refresh DAS/2", 
+				(Alert.YES | Alert.NO), 
+				this,
+				onPromptVerifyDAS2Refresh);
 			}
 		}
 
-		private function onPromptInvalidDAS2Refresh(event:CloseEvent):void {
-			if (event.detail == Alert.YES) {
-				this.promptToStartDAS2Refresh();
-			}
-		}
-		
-		private function promptToStartDAS2Refresh():void {
-			Alert.show("Reloading DAS/2 can be time consuming and resource intensive.  Do you wish to continue?", 
-				"Warning", 
-				(Alert.YES | Alert.NO), 
-				this,
-				onPromptToStartDAS2Refresh);
-		}
-		
-		private function onPromptToStartDAS2Refresh(event:CloseEvent):void {
-			if (event.detail == Alert.YES) {
+		private function onPromptVerifyDAS2Refresh(event:CloseEvent):void {
+			if (event.detail == Alert.YES || event.detail == Alert.OK) {
 				this.startDAS2Refresh();
 			}
 		}
@@ -2277,7 +2265,7 @@
 				        	icon="@Embed(source='assets/refresh.png')" 
 				        	click="{treeItemToSelect=null;refreshAnnotations()}" id="linkbutton8"/>
 				        <mx:VRule height="20" id="vrule2" width="2"/>
-			            <mx:LinkButton styleName="linkMenuButton" label="Reload DAS/2 Server" 
+			            <mx:LinkButton styleName="linkMenuButton" label="Refresh DAS/2 Server" 
 			            	icon="@Embed(source='assets/database_lightning.png')" 
 			            	click="{refreshDAS2()}" 
 			            	id="reloadDas2ServerButton" textAlign="left"/>
@@ -2689,7 +2677,6 @@
 			<mx:SetProperty target="{cbAlwaysExpandTree}" name="selected" value="true"/>
 			<mx:SetProperty target="{linkbutton1}" name="enabled" value="false"/>
 			<mx:SetProperty target="{linkbutton2}" name="enabled" value="false"/>
-			<mx:RemoveChild target="{reloadDas2ServerButton}"/>
 			<mx:RemoveChild target="{vrule2}"/>
 
 		</mx:State>

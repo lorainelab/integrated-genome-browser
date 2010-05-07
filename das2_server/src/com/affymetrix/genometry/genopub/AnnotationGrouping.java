@@ -98,6 +98,22 @@ public class AnnotationGrouping implements Serializable {
       this.idUserGroup = idUserGroup;
     } 
 
+    /*
+     * Get the type name (no genome version in path)
+     */
+    public String getQualifiedTypeName() {
+    	if (getIdParentAnnotationGrouping() == null) {
+    		return "";
+    	}
+    	
+        String typeName = getName();
+        typeName = recurseGetParentNameExcludingRoot(typeName);			 		
+        return typeName;
+      }
+
+    /*
+     * Get the fully qualifed type name (with genome version in path)
+     */
     public String getQualifiedName() {
       String qualifiedName = getName();
       qualifiedName = recurseGetParentName(qualifiedName);			 		
@@ -106,8 +122,7 @@ public class AnnotationGrouping implements Serializable {
 
     private String recurseGetParentName(String qualifiedName) {
       AnnotationGrouping parent = this.getParentAnnotationGrouping();
-
-      // Stop before the root annotation grouping
+      
       if (parent != null) {
         if (parent.getName() != null) {
           qualifiedName = parent.getName() + "/" + qualifiedName;
@@ -117,7 +132,25 @@ public class AnnotationGrouping implements Serializable {
       }
       return qualifiedName;
     }
-    
+
+    private String recurseGetParentNameExcludingRoot(String typeName) {
+        AnnotationGrouping parent = this.getParentAnnotationGrouping();
+
+       
+        if (parent != null) {
+          if (parent.getName() != null) {
+        	  // Stop before the root annotation grouping
+        	  if (parent.getIdParentAnnotationGrouping() != null) {
+                  typeName = parent.getName() + "/" + typeName;
+
+                  typeName = parent.recurseGetParentNameExcludingRoot(typeName);
+        		  
+        	  }
+          }
+        }
+        return typeName;
+      }
+
     
 
     public void recurseGetChildren(List<Object> descendents) {

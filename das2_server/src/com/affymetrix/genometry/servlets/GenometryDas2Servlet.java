@@ -37,6 +37,8 @@ import com.affymetrix.genometryImpl.util.Optimize;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 
 import com.affymetrix.genometry.genopub.*;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
@@ -47,6 +49,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 
 
 /**
@@ -300,7 +303,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			if (is_genometry_genopub_mode) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
-				loadGenomesFromDB();				  
+				loadGenomesFromGenoPub(null, false);				  
 			} else {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from file system....");
 				loadGenomesFromFileSystem(data_root, organisms, org_order_filename);
@@ -450,14 +453,16 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	private boolean loadGenomesFromDB()  {
+	private boolean loadGenomesFromGenoPub(GenoPubSecurity genoPubSecurity, boolean isServerRefreshMode)  {
 		Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading Genomes from DB");
 		Session sess  = null;
+		Transaction tx = null;
 		try {
 			sess  = HibernateUtil.getSessionFactory().openSession();
+			tx = sess.beginTransaction();
 
 			AnnotationQuery annotationQuery = new AnnotationQuery();
-			annotationQuery.runAnnotationQuery(sess, null);
+			annotationQuery.runAnnotationQuery(sess, genoPubSecurity, isServerRefreshMode);
 			for (Organism organism : annotationQuery.getOrganisms()) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Organism = " + organism.getName());
 
@@ -465,6 +470,23 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
 
 					GenomeVersion gv = annotationQuery.getGenomeVersion(genomeVersionName);
+					
+					// If this is a server refresh, unload annotations from DAS/2 that were deleted from GenoPub.  Otherwise,
+					// if this is a full reload, just clear out all pending unloads.
+					for (UnloadAnnotation unloadAnnotation : AnnotationQuery.getUnloadedAnnotations(sess, genoPubSecurity, gv)) {
+
+						if (isServerRefreshMode) {
+							AnnotatedSeqGroup genomeVersion = gmodel.getSeqGroup(genomeVersionName);
+							if (genomeVersion != null) {
+								ServerUtils.unloadGenoPubAnnot(unloadAnnotation.getTypeName(), genomeVersion, genome2graphdirs.get(genomeVersion));																
+							}
+						}
+
+						// Get rid of the pending unload entry
+						sess.delete(unloadAnnotation);
+					}
+					
+					// Obtain the list of annotations and segments for this genome version
 					List<QualifiedAnnotation> qualifiedAnnotations = annotationQuery.getQualifiedAnnotations(organism, genomeVersionName);
 					List<Segment> segments = annotationQuery.getSegments(organism, genomeVersionName);
 
@@ -486,9 +508,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					AnnotatedSeqGroup genomeVersion = gmodel.addSeqGroup(genomeVersionName);
 					genomeVersion.setOrganism(organism.getName());
 
-					// Initialize hash tables   
-					genome2graphdirs.put(genomeVersion, new LinkedHashMap<String, String>());
-					genome2graphfiles.put(genomeVersion, new LinkedHashMap<String, String>());
+
+					// Hash the organism and genome version
 					List<AnnotatedSeqGroup> versions = organisms.get(organism.getName());
 					if (versions == null) {
 						versions = new ArrayList<AnnotatedSeqGroup>();
@@ -508,7 +529,15 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 					// Get the hash maps for graph dirs and graph files for this genome version
 					Map<String,String> graph_name2dir = genome2graphdirs.get(genomeVersion);
+					if (graph_name2dir == null) {
+						graph_name2dir = new LinkedHashMap<String, String>();
+						genome2graphdirs.put(genomeVersion, graph_name2dir);
+					}
 					Map<String,String> graph_name2file = genome2graphfiles.get(genomeVersion);
+					if (graph_name2file == null) {
+						graph_name2file = new LinkedHashMap<String, String>();
+						genome2graphfiles.put(genomeVersion, graph_name2file);
+					}
 
 					// Load annotations for the genome version
 					for (QualifiedAnnotation qa : qualifiedAnnotations) {
@@ -521,7 +550,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 							if (file.isDirectory() ) {
 								if (isMultiFileAnnotationType(file)) {
-									ServerUtils.loadDBAnnotsFromDir(typePrefix, 
+									ServerUtils.loadGenoPubAnnotFromDir(typePrefix, 
 											file.getPath(), 
 											genomeVersion, 
 											file, 
@@ -537,7 +566,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 							} else {
 
-								ServerUtils.loadDBAnnotsFromFile(genometry_server_dir,
+								ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
 										file, 
 										genomeVersion, 
 										annots_map,
@@ -545,19 +574,34 @@ public final class GenometryDas2Servlet extends HttpServlet {
 										qa.getAnnotation().getIdAnnotation(),
 										graph_name2file);                                            
 							}
+							
+							// Update the flag indicating that the annotation has been loaded
+							if (qa.getAnnotation().getIsLoaded() != null && qa.getAnnotation().getIsLoaded().equals("N")) {
+								qa.getAnnotation().setIsLoaded("Y");								
+							}
+							
 						} else {
 							Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Annotation not loaded. File does not exist: " + (typePrefix != null  ? typePrefix : "") + "\t" + (fileName != null ? fileName : ""));
 						}
 
 					}
+					
 					Optimize.genome(genomeVersion);
 				}
 
+				
 			}
+			// Commit updates and deletes to the genopub database
+			sess.flush();
+			tx.commit();
 
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).severe("Problems reading annotations from database " + e.toString());
 			e.printStackTrace();
+			if (tx != null) {
+				tx.rollback();
+			}
 		} finally {
 			HibernateUtil.getSessionFactory().close();
 		}
@@ -566,7 +610,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static boolean isMultiFileAnnotationType(File dir) {
-		if (dir.exists()) {
+		if (dir.exists() && dir.isDirectory()) {
 			String[] childFileNames = dir.list();
 			if (childFileNames != null) {
 				for (int x = 0; x < childFileNames.length; x++) {
@@ -1069,8 +1113,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 		pw.println("</LOGIN>");
 	}
+	
 
-	/**Refresh the annotations from the db */
+	/**Refresh the not-yet-loaded annotations from genopub */
 	private final void handleRefreshRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
 		// Refresh is not supported in classic mode
@@ -1080,27 +1125,22 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return;
 		}
 		
-		// Refresh is not allowed in genopub mode unless the
-		// user has admin privileges.
-		if (!this.getGenoPubSecurity(request).isAdminRole()) {
+		// Guest users cannot perform refresh.
+		// Admins can perform refresh and so can normal genopub (non-guest) users.
+		// (A non-admins will only reload those annotations he owns.) 
+		if (this.getGenoPubSecurity(request).isGuestRole()) {
 			PrintWriter pw = response.getWriter();
-			pw.println("DAS/2 refresh can only be performed by genopub admins.");
+			pw.println("DAS/2 refresh cannot by performed by guest users.");
 			return;
 		}
 		
 		Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing DAS2 server.  User: " + request.getUserPrincipal().getName());
 		try {
 
-			// Clear out organisms
-			organisms.clear();
-
-			// Clear out the the GenometryModel
-			gmodel.resetGenometryModel();
-
 			// Reload the annotation files
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
-			this.loadGenomesFromDB();
-
+			this.loadGenomesFromGenoPub(getGenoPubSecurity(request), true);
+			
 			// Refresh the authorized resources for this user
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing authorized resources....");
 			Session sess  = HibernateUtil.getSessionFactory().openSession();

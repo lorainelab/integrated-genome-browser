@@ -67,6 +67,7 @@ CREATE TABLE `Annotation` (
   `summary` varchar(5000) default NULL,
   `createdBy` varchar(200) default NULL,
   `createDate` datetime default NULL,  
+  `isLoaded` char(1) default 'N',  
   PRIMARY KEY  (`idAnnotation`),
   KEY `FK_Annotation_ExperimentPlatform` (`idExperimentPlatform`),
   KEY `FK_Annotation_ExperimentMethod` (`idExperimentMethod`),
@@ -466,6 +467,23 @@ INSERT INTO `Organism` (`idOrganism`,`commonName`,`sortOrder`,`binomialName`,`NC
  (6200,'Pipid Frog',NULL,'Xenopus tropicalis','',NULL,'X_tropicalis');
 /*!40000 ALTER TABLE `Organism` ENABLE KEYS */;
 
+
+
+--
+-- Definition of table `UnloadAnnotation`
+--
+DROP TABLE IF EXISTS `UnloadAnnotation`;
+CREATE TABLE  `UnloadAnnotation` (
+  `idUnloadAnnotation` int(10) unsigned NOT NULL auto_increment,
+  `typeName` varchar(2000) NOT NULL,
+  `idUser` int(10) unsigned default NULL,
+  `idGenomeVersion` int(10) unsigned NOT NULL,
+  PRIMARY KEY  (`idUnloadAnnotation`),
+  KEY `FK_UnloadAnnotation_User` (`idUser`),
+  KEY `FK_UnloadAnnotation_GenomeVersion` (`idGenomeVersion`),
+  CONSTRAINT `FK_UnloadAnnotation_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
+  CONSTRAINT `FK_UnloadAnnotation_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 --
 -- Definition of table `UserGroup`

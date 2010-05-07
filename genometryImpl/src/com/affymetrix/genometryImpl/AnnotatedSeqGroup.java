@@ -91,6 +91,10 @@ public class AnnotatedSeqGroup {
 		type_id2annot_id.put(type, annot_id);
 	}
 	
+	final public void removeType(String type) {
+		type_id2annot_id.remove(type);
+	}
+	
 	public final Set<String> getTypeList() {
 		return type_id2annot_id.keySet();
 	}

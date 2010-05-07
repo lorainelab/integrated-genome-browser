@@ -27,6 +27,7 @@ public class AnnotationQuery {
 	private String             isVisibilityPublic = "Y";
 	private String             isVisibilityMembers = "Y";
 	private String             isVisibilityMembersAndCollabs = "Y";
+	private String             isServerRefreshMode = "N";
 
     
 	private StringBuffer        queryBuf;
@@ -49,6 +50,24 @@ public class AnnotationQuery {
 	private HashMap<String,  GenomeVersion>            genomeVersionNameMap;
 	private HashMap<Integer, Annotation>               annotationMap;
 	private HashMap<Integer, AnnotationGrouping>       annotationGroupingMap;
+	
+	@SuppressWarnings("unchecked")
+	public static List<UnloadAnnotation> getUnloadedAnnotations(Session sess, GenoPubSecurity genoPubSecurity, GenomeVersion genomeVersion) throws Exception {
+		StringBuffer queryBuf = new StringBuffer();
+		queryBuf.append(" SELECT     u  ");
+		queryBuf.append(" FROM       UnloadAnnotation as u  ");
+		queryBuf.append(" WHERE      u.idGenomeVersion = " + genomeVersion.getIdGenomeVersion());
+		
+		if (genoPubSecurity != null && !genoPubSecurity.isAdminRole()) {
+			queryBuf.append(" AND u.idUser = " + genoPubSecurity.getIdUser());		
+		}
+
+		queryBuf.append(" ORDER BY   u.idUnloadAnnotation");
+		
+		List<UnloadAnnotation> results = (List<UnloadAnnotation>)sess.createQuery(queryBuf.toString()).list();
+		
+		return results;
+	}
 	
 	public AnnotationQuery() {
 		if (scopeLevel == null || scopeLevel.equals("")) {
@@ -97,8 +116,11 @@ public class AnnotationQuery {
 		
 	}
 	
+
 	@SuppressWarnings("unchecked")
-	public void runAnnotationQuery(Session sess, GenoPubSecurity genoPubSecurity) throws Exception {
+	public void runAnnotationQuery(Session sess, GenoPubSecurity genoPubSecurity, boolean isServerRefreshMode) throws Exception {
+		this.isServerRefreshMode = isServerRefreshMode ? "Y" : "N";
+		
 		// Run query to get annotation groupings, organized under
 		// organism and genome version
 		StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
@@ -135,6 +157,7 @@ public class AnnotationQuery {
 		queryBuf.append(" JOIN       org.genomeVersions as ver ");
 		queryBuf.append(" JOIN       ver.annotationGroupings as ag ");
 		queryBuf.append(" LEFT JOIN  ag.parentAnnotationGrouping as pag ");
+		
 
 		addWhere = true;
 
@@ -165,15 +188,31 @@ public class AnnotationQuery {
 		queryBuf.append(" JOIN       ver.annotationGroupings as ag ");
 		queryBuf.append(" LEFT JOIN  ag.parentAnnotationGrouping as pag ");
 		queryBuf.append(" LEFT JOIN  ag.annotations as a ");
+		
 
 		addWhere = true;
 
 		addCriteria(ANNOTATION_LEVEL);
 		
 		if (genoPubSecurity != null) {
-			genoPubSecurity.appendAnnotationHQLSecurity(scopeLevel, queryBuf, "a", "ag", addWhere);			
+			addWhere = genoPubSecurity.appendAnnotationHQLSecurity(scopeLevel, queryBuf, "a", "ag", addWhere);			
 		}
 		
+		
+		// If this is a server reload, get annotations not yet loaded
+		if (this.isServerRefreshMode.equals("Y")) {
+			this.AND();
+			queryBuf.append("(");
+			queryBuf.append(" a.isLoaded = 'N' ");
+
+			if (!genoPubSecurity.isAdminRole()) {
+				this.AND();
+				queryBuf.append(" a.idUser = " + genoPubSecurity.getIdUser());		
+			}
+
+			queryBuf.append(")");
+		}
+
 		queryBuf.append(" ORDER BY org.name asc, ver.buildDate desc, ag.name asc, a.name asc ");
 
 		return queryBuf;
@@ -615,6 +654,7 @@ public class AnnotationQuery {
 													
 						Annotation annot = annotationMap.get(idAnnotation);
 						
+						
 						String fullTypePrefix = concatenateTypePrefix(typePrefix, groupingName, showGroupingLevel);
 						if (fullTypePrefix != null && fullTypePrefix.length() > 0) {
 							fullTypePrefix += "/";
@@ -823,6 +863,9 @@ public class AnnotationQuery {
 			}
 			
 		}
+		
+		
+
 
 	}
 
@@ -863,8 +906,6 @@ public class AnnotationQuery {
             String isVisibilityMembersAndCollabs) {
     	this.isVisibilityMembersAndCollabs = isVisibilityMembersAndCollabs;
     }
-
-
 
   
 }

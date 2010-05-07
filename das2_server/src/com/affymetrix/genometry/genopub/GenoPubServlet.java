@@ -105,7 +105,7 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String DICTIONARY_ADD_REQUEST             = "dictionaryAdd";
 	public static final String DICTIONARY_UPDATE_REQUEST          = "dictionaryUpdate"; 
 	public static final String DICTIONARY_DELETE_REQUEST          = "dictionaryDelete"; 
-	public static final String VERIFY_REQUEST                     = "verify";
+	public static final String VERIFY_RELOAD_REQUEST              = "verifyReload";
 
 	private GenoPubSecurity genoPubSecurity = null;
 
@@ -116,6 +116,7 @@ public class GenoPubServlet extends HttpServlet {
 			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() GenoPubServlet, aborting!");
 			throw new ServletException("FAILED " + this.getClass().getName() + ".init(), aborting!");
 		}
+		
 	}
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -229,9 +230,11 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleDictionaryUpdateRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.DICTIONARY_DELETE_REQUEST)) {
 				this.handleDictionaryDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.VERIFY_REQUEST)) {
-				this.handleVerifyRequest(req, res);
-			} 
+			} else if (req.getPathInfo().endsWith(this.VERIFY_RELOAD_REQUEST)) {
+				this.handleVerifyReloadRequest(req, res);
+			} else {
+				throw new Exception("Unknown GenoPub request " + req.getPathInfo());
+			}
 
 			res.setHeader("Cache-Control", "max-age=0, must-revalidate");
 
@@ -1697,6 +1700,7 @@ public class GenoPubServlet extends HttpServlet {
 		annotation.setIdGenomeVersion(idGenomeVersion);
 		annotation.setCodeVisibility(codeVisibility);
 		annotation.setIdUserGroup(idUserGroup);
+		annotation.setIsLoaded("N");
 
 		// Only set ownership if this is not an admin
 		if (!genoPubSecurity.isAdminRole()) {
@@ -1876,9 +1880,9 @@ public class GenoPubServlet extends HttpServlet {
 			dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
 			dup.setIdUser(sourceAnnot.getIdUser());
 			dup.setIdGenomeVersion(sourceAnnot.getIdGenomeVersion());
-
-			sourceAnnot.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
-			sourceAnnot.setCreatedBy(this.genoPubSecurity.getUserName());
+			dup.setIsLoaded("N");
+			dup.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
+			dup.setCreatedBy(this.genoPubSecurity.getUserName());
 
 
 			sess.save(dup);
@@ -1957,7 +1961,8 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-	private void handleAnnotationDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	@SuppressWarnings("unchecked")
+    private void handleAnnotationDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
 
@@ -1973,12 +1978,34 @@ public class GenoPubServlet extends HttpServlet {
 				throw new InsufficientPermissionException("Insufficient permision to delete annotation.");
 			}
 
+			// insert annotation reload entry which will cause
+			// das/2 type to be unloaded on next 'das2 reload' request
+			// Note:  If annotation is under more than one folder, there
+			// can be multiple das/2 types for one annotation.
+			for(AnnotationGrouping ag : (Set<AnnotationGrouping>)annotation.getAnnotationGroupings()) {
+				String path = ag.getQualifiedTypeName();
+				if (path.length() > 0) {
+					path += "/";
+				}
+				String typeName = path + annotation.getName();
+		
+				UnloadAnnotation unload = new UnloadAnnotation();
+				unload.setTypeName(typeName);
+				unload.setIdUser(this.genoPubSecurity.getIdUser());
+				unload.setIdGenomeVersion(annotation.getIdGenomeVersion());
+				
+				sess.save(unload);
+			}
+		
 
 			// remove annotation files
 			annotation.removeFiles(genometry_genopub_dir);
 
 			// delete database object
 			sess.delete(annotation);
+			
+			sess.flush();
+			
 
 			tx.commit();
 
@@ -2047,6 +2074,14 @@ public class GenoPubServlet extends HttpServlet {
 				// Otherwise, find the annotation grouping passed in as a request parameter.
 				annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
 			}
+			
+			// Create a pending unload of the annotation
+			String typeName = annotationGrouping.getQualifiedTypeName() + "/" + annotation.getName();
+			UnloadAnnotation unload = new UnloadAnnotation();
+			unload.setTypeName(typeName);
+			unload.setIdUser(this.genoPubSecurity.getIdUser());
+			sess.save(unload);
+			
 
 			// Remove the annotation grouping the annotation was in
 			// by adding back the annotations to the annotation grouping, 
@@ -4068,15 +4103,18 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	private void handleVerifyRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	private void handleVerifyReloadRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess  = null;
+
 		StringBuffer invalidGenomeVersions = new StringBuffer();
 		StringBuffer emptyAnnotations = new StringBuffer();
+		int loadCount = 0;
+		int unloadCount = 0;
 		try {
 			sess  = HibernateUtil.getSessionFactory().openSession();
 
 			AnnotationQuery annotationQuery = new AnnotationQuery();
-			annotationQuery.runAnnotationQuery(sess, null);
+			annotationQuery.runAnnotationQuery(sess, this.genoPubSecurity, true);
 			for (Organism organism : annotationQuery.getOrganisms()) {
 				for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
 
@@ -4096,6 +4134,7 @@ public class GenoPubServlet extends HttpServlet {
 					// Keep track of how many annotations have missing files
 					for(Iterator i = annotationQuery.getQualifiedAnnotations(organism, genomeVersionName).iterator(); i.hasNext();) {
 						QualifiedAnnotation qa = (QualifiedAnnotation)i.next();
+						
 						if (qa.getAnnotation().getFileCount(this.genometry_genopub_dir) == 0) {
 							if (emptyAnnotations.length() > 0) {
 								emptyAnnotations.append("\n");
@@ -4116,14 +4155,34 @@ public class GenoPubServlet extends HttpServlet {
 								}								
 							}
 							emptyAnnotations.append(qa.getAnnotation().getName());
+						} else {
+							loadCount++; 
 						}
 					}
+					List<UnloadAnnotation> unloadAnnotations = AnnotationQuery.getUnloadedAnnotations(sess, genoPubSecurity, gv);
+					unloadCount = unloadCount + unloadAnnotations.size();
 
 				}
 			}
+			
+			
+			StringBuffer confirmMessage = new StringBuffer();
 
+			if (loadCount > 0 || unloadCount > 0) {
+				if (loadCount > 0) {
+					confirmMessage.append(loadCount + " annotation(s) and ready to load to DAS/2.\n\n");
+				}
+				if (unloadCount > 0) {
+					confirmMessage.append(unloadCount + " annotation(s) ready to unload from DAS/2.\n\n");
+				} 
+				confirmMessage.append("Do you wish to continue?\n\n");					
+			} else {
+				confirmMessage.append("No annotations are queued for reload.  Do you wish to continue?\n\n");
+			}
+			
+			StringBuffer message = new StringBuffer();
 			if (invalidGenomeVersions.length() > 0 || emptyAnnotations.length() > 0) {
-				StringBuffer message = new StringBuffer();
+			
 				if (invalidGenomeVersions.length() > 0) {
 					message.append("Annotations and sequence for the following genome versions will be bypassed due to missing segment information:\n" + 
 							invalidGenomeVersions.toString() +  
@@ -4134,11 +4193,11 @@ public class GenoPubServlet extends HttpServlet {
 							emptyAnnotations.toString() +  
 					".\n\n");			
 				}
-				message.append("Do you wish to continue with DAS/2 reload?\n\n");
+				message.append(confirmMessage.toString());
 				this.reportError(res, message.toString()); 
 
-			} else {
-				this.reportSuccess(res);
+			} else {				
+				this.reportSuccess(res, confirmMessage.toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -4151,7 +4210,6 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		}
 	}
-
 
 
 	private String getFlexHTMLWrapper(HttpServletRequest request) {
@@ -4319,6 +4377,23 @@ public class GenoPubServlet extends HttpServlet {
 	}
 	private void reportSuccess(HttpServletResponse response) {
 		this.reportSuccess(response, null, null);
+	}
+	
+	
+	private void reportSuccess(HttpServletResponse response, String message) {
+		try {
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("SUCCESS");
+			if (message != null) {
+				root.addAttribute("message", message);
+			}
+			XMLWriter writer = new XMLWriter(response.getOutputStream(), OutputFormat.createCompactFormat());
+			writer.write(doc);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		
 	}
 
 

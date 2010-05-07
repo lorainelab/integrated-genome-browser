@@ -26,11 +26,14 @@
         <property name="idUserGroup"                 column="idUserGroup"                type="integer"/>
         <property name="createdBy"                   column="createdBy"                  type="string"/>
         <property name="createDate"                  column="createDate"                 type="java.sql.Date"/>
+        <property name="isLoaded"                    column="isLoaded"                   type="string"/>
         
 		  	<set name="annotationGroupings" table="AnnotationToAnnotationGrouping" lazy="true" cascade="none">
 					<key column="idAnnotation"/>
 					<many-to-many column="idAnnotationGrouping" class="com.affymetrix.genometry.genopub.AnnotationGrouping"/>
-				</set>        
+				</set>    
+				
+      
     </class>
 
     <!--  AnnotationGrouping -->
@@ -57,6 +60,7 @@
 			    <many-to-many column="idAnnotation" class="com.affymetrix.genometry.genopub.Annotation"/>
 		    </set>
     </class>
+
     
     <!--  GenomeVersion -->
     <class name="com.affymetrix.genometry.genopub.GenomeVersion" table="GenomeVersion">
@@ -114,6 +118,7 @@
 		    </set>        
     </class>
     
+
     <!--  Segment -->
     <class name="com.affymetrix.genometry.genopub.Segment" table="Segment">
         <id name="idSegment"            column="idSegment"         type="integer">
@@ -124,6 +129,17 @@
         <property name="sortOrder"       column="sortOrder"         type="integer"/>
         <property name="idGenomeVersion" column="idGenomeVersion"   type="integer"/>
     </class>
+
+    <!--  UnloadAnnotation -->
+    <class name="com.affymetrix.genometry.genopub.UnloadAnnotation" table="UnloadAnnotation">
+        <id name="idUnloadAnnotation"                column="idUnloadAnnotation"         type="integer">
+            <generator class="native"/>
+        </id>
+        <property name="typeName"                    column="typeName"               type="string"/>
+        <property name="idUser"                      column="idUser"                 type="integer"/>
+        <property name="idGenomeVersion"             column="idGenomeVersion"        type="integer"/>
+    </class>
+        
     
     <!--  User -->
     <class name="com.affymetrix.genometry.genopub.User" table="User">

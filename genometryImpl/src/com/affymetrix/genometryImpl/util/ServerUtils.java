@@ -324,7 +324,7 @@ public abstract class ServerUtils {
 	 *   if not directory, see if can parse as annotation file.
 	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
 	 */
-	public static final void loadDBAnnotsFromFile(String dataroot,
+	public static final void loadGenoPubAnnotsFromFile(String dataroot,
 			File current_file,
 			AnnotatedSeqGroup genome,
 			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
@@ -332,8 +332,8 @@ public abstract class ServerUtils {
 			Integer annot_id,
 			Map<String,String> graph_name2file) throws FileNotFoundException, IOException {
 
-		if (isDBSequenceFile(current_file)
-				|| isDBGraph(current_file, type_prefix, graph_name2file, genome, annot_id)) {
+		if (isGenoPubSequenceFile(current_file)
+				|| isGenoPubGraph(current_file, type_prefix, graph_name2file, genome, annot_id)) {
 			return;
 		}
 
@@ -342,7 +342,7 @@ public abstract class ServerUtils {
 	}
 
 
-	public static final void loadDBAnnotsFromDir(String type_name,
+	public static final void loadGenoPubAnnotFromDir(String type_name,
 			String file_path,
 			AnnotatedSeqGroup genome,
 			File current_file,
@@ -357,12 +357,45 @@ public abstract class ServerUtils {
 
 	}
 
+	public static final void unloadGenoPubAnnot(String type_name,
+			AnnotatedSeqGroup genome,
+			Map<String,String> graph_name2dir) {
+		
+		
+		if (graph_name2dir.containsKey(type_name)) {
+			System.out.println("@@@ removing graph directory to types: " + type_name);
+			graph_name2dir.remove(type_name);
+			
+		}  else {
+			System.out.println("@@@ removing annotation " + type_name);
+			List<BioSeq> seqList = genome.getSeqList();
+			for (BioSeq aseq : seqList) {
+				SymWithProps tannot = aseq.getAnnotation(type_name);			
+				if (tannot != null) {
+					aseq.unloadAnnotation(tannot);
+					tannot = null;
+				} else {
+					IndexedSyms iSyms = aseq.getIndexedSym(type_name);
+					if (iSyms != null) {
+						if (!aseq.removeIndexedSym(type_name)) {
+							Logger.getLogger(ServerUtils.class.getName()).warning("Unable to remove indexed annotation " + type_name);
+						}
+						iSyms = null;
+					}
+				}
+			}
+		}
+		genome.removeType(type_name);
 
-	private static boolean isDBSequenceFile(File current_file) {
+	}
+	
+
+
+	private static boolean isGenoPubSequenceFile(File current_file) {
 		return (current_file.getName().equals("mod_chromInfo.txt") || current_file.getName().equals("liftAll.lft"));
 	}
 
-	private static boolean isDBGraph(File current_file, String type_prefix, Map<String, String> graph_name2file, AnnotatedSeqGroup genome, Integer annot_id) {
+	private static boolean isGenoPubGraph(File current_file, String type_prefix, Map<String, String> graph_name2file, AnnotatedSeqGroup genome, Integer annot_id) {
 		String file_name = current_file.getName();
 		if (file_name.endsWith(".bar") || USeqUtilities.USEQ_ARCHIVE.matcher(file_name).matches()) {
 			String file_path = current_file.getPath();

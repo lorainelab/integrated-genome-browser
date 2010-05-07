@@ -301,6 +301,34 @@ public final class BioSeq implements SearchableCharIterator {
 					" have a _method_ property");
 		}
 	}
+	
+	/*
+	 * Remove annotation (clear and unload) from DAS/2 server
+	 */
+	public synchronized void unloadAnnotation(SeqSymmetry annot) {
+		if (annot != null) {
+			this.getSeqGroup().removeSymmetry(annot);
+		}
+		if (! needsContainer(annot)) {
+			if (null != annots) {
+				annots.remove(annot);
+			}
+		} else {
+			String type = determineMethod(annot);
+			if ((type != null) && (getAnnotation(type) != null)) {
+				MutableSeqSymmetry container = (MutableSeqSymmetry) getAnnotation(type);
+				if (container == annot) {
+					type_id2sym.remove(type);
+					if (null != annots) {
+						annots.remove(annot);
+					}
+				} else {
+					container.removeChild(annot);
+				}
+				container.clear();
+			}
+		}
+	}
 
 	public synchronized void removeAnnotation(SeqSymmetry annot) {
 		if (annot != null) {
@@ -341,6 +369,15 @@ public final class BioSeq implements SearchableCharIterator {
 
 	public final IndexedSyms getIndexedSym(String type) {
 		return type_id2indexedsym.get(type);
+	}
+	
+	public boolean  removeIndexedSym(String type) {
+		if (type_id2indexedsym.containsKey(type)) {
+			type_id2indexedsym.remove(type);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 

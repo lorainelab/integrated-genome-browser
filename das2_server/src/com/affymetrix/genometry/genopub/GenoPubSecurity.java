@@ -591,7 +591,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 		
 		// Cache the authorized annotation ids of each genome version for this user
 		AnnotationQuery annotationQuery = new AnnotationQuery();
-		annotationQuery.runAnnotationQuery(sess, this);
+		annotationQuery.runAnnotationQuery(sess, this, false);
 		
 		// Cache the genome versions
 		this.versionNameToVersionMap = annotationQuery.getGenomeVersionNameMap();

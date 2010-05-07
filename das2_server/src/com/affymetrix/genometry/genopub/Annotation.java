@@ -46,6 +46,7 @@ public class Annotation implements Serializable, Owned {
     public static final String PROP_EXPERIMENT_PLATFORM = "experiment_platform";
     public static final String PROP_URL                 = "url";
     
+
     private Integer             idAnnotation;
     private String              name;
     private String              summary;
@@ -61,6 +62,8 @@ public class Annotation implements Serializable, Owned {
     private Integer             idUserGroup;
     private String              createdBy;
     private java.sql.Date       createDate;
+    private String              isLoaded;
+
     
     private Map<String, Object> props;  // tag/value representation of annotation properties
     
@@ -443,5 +446,12 @@ public class Annotation implements Serializable, Owned {
 	public void setCreateDate(java.sql.Date createDate) {
     	this.createDate = createDate;
     }
-   
+
+	public String getIsLoaded() {
+    	return isLoaded;
+    }
+	public void setIsLoaded(String isLoaded) {
+    	this.isLoaded = isLoaded;
+    }
+	
 }

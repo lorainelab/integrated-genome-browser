@@ -116,7 +116,7 @@ public class BED extends SymLoader{
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parse(istr, GenometryModel.getGenometryModel(), this.group, true, this.featureName, false, min, max);
+			return parse(istr, GenometryModel.getGenometryModel(), this.group, false, this.featureName, false, min, max);
 		}catch (Exception ex) {
 			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {

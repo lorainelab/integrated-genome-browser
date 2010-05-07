@@ -416,10 +416,6 @@ public final class QuickLoad extends SymLoader {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
-		if (extension.equals("bed")) {
-			BedParser parser = new BedParser();
-			return parser.parse(bis, gmodel, version.group, false, featureName, false);
-		}
 		if (extension.equals("bgn")) {
 			BgnParser parser = new BgnParser();
 			return parser.parse(bis, featureName, version.group, false);

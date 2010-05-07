@@ -46,8 +46,7 @@ public class ScoredIntervalParserTest {
 
 		try {
 			ScoredIntervalParser tester = new ScoredIntervalParser();
-			tester.parse(istr, stream_name, seq_group);
-
+			tester.parse(istr, stream_name, seq_group, true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -84,7 +83,7 @@ public class ScoredIntervalParserTest {
 		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
 		String stream_name = "chr1";
 		ScoredIntervalParser tester = new ScoredIntervalParser();
-		tester.parse(istr, stream_name, seq_group);
+		tester.parse(istr, stream_name, seq_group, true);
 		assertEquals(1, seq_group.getSeqCount());
 		BioSeq aseq = seq_group.getSeq(0);
 		assertEquals("chr1", aseq.getID());

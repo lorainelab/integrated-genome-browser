@@ -541,7 +541,7 @@ public final class UrlLoaderThread extends Thread {
 		}
 		if (lcname.endsWith(".sin") || lcname.endsWith(".egr") || lcname.endsWith(".txt")) {
 			ScoredIntervalParser parser = new ScoredIntervalParser();
-			parser.parse(str, stream_name, selected_group);
+			parser.parse(str, stream_name, selected_group, true);
 			return;
 		}
 		if (lcname.endsWith(".useq")) {

@@ -233,7 +233,7 @@ public final class QuickLoad extends SymLoader {
 			return this.getGenome();
 		}
 		if (strategy == LoadStrategy.CHROMOSOME) {
-			return this.getChromosome(GenometryModel.getGenometryModel().getSelectedSeq());
+			return this.getChromosome(overlapSpan.getBioSeq());
 		}
 		if (strategy == LoadStrategy.VISIBLE) {
 			return this.getRegion(overlapSpan);
@@ -368,40 +368,40 @@ public final class QuickLoad extends SymLoader {
 	 */
 	private SymLoader determineLoader() {
 		// residue loaders
-		if (this.extension.endsWith("bnib")) {
+		if (this.extension.endsWith(".bnib")) {
 			isResidueLoader = true;
 			return new BNIB(this.uri, this.version.group);
 		}
-		if (this.extension.endsWith("fa") || this.extension.endsWith("fasta")) {
+		if (this.extension.endsWith(".fa") || this.extension.endsWith(".fasta")) {
 			isResidueLoader = true;
 			return new Fasta(this.uri, this.version.group);
 		}
-		if (this.extension.endsWith("2bit")) {
+		if (this.extension.endsWith(".2bit")) {
 			isResidueLoader = true;
 			return new TwoBit(this.uri);
 		}
 
 
 		// symmetry loaders
-		if (this.extension.endsWith("bam")) {
+		if (this.extension.endsWith(".bam")) {
 			return new BAM(this.uri, this.featureName, this.version.group);
 		}
-		if (this.extension.endsWith("bar")) {
+		if (this.extension.endsWith(".bar")) {
 			return new Bar(this.uri, this.featureName, this.version.group);
 		}
-		if (this.extension.endsWith("bed")) {
+		if (this.extension.endsWith(".bed")) {
 			return new BED(this.uri, this.featureName, this.version.group);
 		}
-		if (this.extension.endsWith("gr")) {
-			if (this.extension.endsWith("sgr")) {
-				return new Sgr(this.uri, this.featureName, this.version.group);
-			}
+		if (this.extension.endsWith(".gr")) {
 			return new Gr(this.uri, this.featureName, this.version.group);
 		}
-		if (this.extension.endsWith("useq")) {
+		if (this.extension.endsWith(".sgr")) {
+			return new Sgr(this.uri, this.featureName, this.version.group);
+		}
+		if (this.extension.endsWith(".useq")) {
 			return new USeq(this.uri, this.featureName, this.version.group);
 		}
-		if (this.extension.endsWith("wig")) {
+		if (this.extension.endsWith(".wig")) {
 			return new Wiggle(this.uri, this.featureName, this.version.group);
 		}
 		return null;
@@ -412,7 +412,6 @@ public final class QuickLoad extends SymLoader {
 			String extension, InputStream istr, GenericVersion version, String featureName)
 			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
 		if (extension.equals("bgn")) {
 			BgnParser parser = new BgnParser();
@@ -460,8 +459,7 @@ public final class QuickLoad extends SymLoader {
 		}
 		if (extension.equals("sin") || extension.equals("egr") || extension.equals("txt")) {
 			ScoredIntervalParser parser = new ScoredIntervalParser();
-			parser.parse(bis, featureName, version.group);
-			return null;	// TODO: don't annotate by default
+			return parser.parse(bis, featureName, version.group, false);
 		}
 		Logger.getLogger(QuickLoad.class.getName()).log(Level.WARNING,
 				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);

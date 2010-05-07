@@ -98,18 +98,8 @@ public final class ScoredIntervalParser {
 
 	static public final String PREF_ATTACH_GRAPHS = "Make graphs from scored intervals";
 	static public final boolean default_attach_graphs = true;
-	// if attaching graphs to seq, then if separate by strand make a separate graph sym
-	//     for + and - strand, otherwise put both strands in same graph
-	//static public final boolean separate_by_strand = true;
 
-	/**
-	 *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
-	 *      each array of scores is converted to a GraphSym and also added as annotation to seq.
-	 */
-	//  boolean attach_graphs = default_attach_graphs;
-
-
-	public void parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group)
+	public List<ScoredContainerSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotate_seq)
 		throws IOException {
 		String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
 
@@ -278,11 +268,16 @@ public final class ScoredIntervalParser {
 				System.out.println("sin3 miss count: " + miss_count);
 				System.out.println("sin3 exact id hit count: " + hit_count);
 			}
-			if (mod_hit_count > 0)  {System.out.println("sin3 extended id hit count: " + mod_hit_count); }
-			if (total_mod_hit_count > 0)  { System.out.println("sin3 total extended id hit count: " + total_mod_hit_count); }
-
-			createContainerSyms(seq2sinentries, props, unique_container_name, score_count, score_names);			
-
+			if (mod_hit_count > 0) {
+				System.out.println("sin3 extended id hit count: " + mod_hit_count);
+			}
+			if (total_mod_hit_count > 0) {
+				System.out.println("sin3 total extended id hit count: " + total_mod_hit_count);
+			}
+			if (all_sin3 && hit_count == 0 && mod_hit_count == 0 && miss_count > 0) {
+				throw new IOException("No data loaded. The ID's in the file did not match any ID's from data that has already been loaded.");
+			}
+			return createContainerSyms(seq2sinentries, props, unique_container_name, score_count, score_names, annotate_seq);
 		}
 		catch (Exception ex) {
 			IOException ioe = new IOException("Error while reading '.egr' or '.sin' file from: '"+stream_name+"'");
@@ -293,9 +288,7 @@ public final class ScoredIntervalParser {
 			GeneralUtils.safeClose(br);
 		}
 
-		if (all_sin3 && hit_count == 0 && mod_hit_count == 0 && miss_count > 0) {
-			throw new IOException("No data loaded. The ID's in the file did not match any ID's from data that has already been loaded.");
-		}
+		
 	}
 
 	private static String parseHeader(
@@ -328,12 +321,14 @@ public final class ScoredIntervalParser {
 		return line;
 	}
 
-	private static void createContainerSyms(
+	private static List<ScoredContainerSym> createContainerSyms(
 			Map<BioSeq, List<SinEntry>> seq2sinentries, 
 			Map<String, Object> props,
 			String unique_container_name,
 			int score_count,
-			List<String> score_names) {
+			List<String> score_names,
+			boolean annotate_seq) {
+		List<ScoredContainerSym> containerSyms = new ArrayList<ScoredContainerSym>(seq2sinentries.keySet().size());
 		// now make the container syms
 		for (BioSeq aseq : seq2sinentries.keySet()) {
 			ScoredContainerSym container = new ScoredContainerSym();
@@ -364,8 +359,12 @@ public final class ScoredIntervalParser {
 			// do not attach any graphs
 			// ScoredContainerGlyph factory will then draw container syms, or graphs, or both
 			container.setID(unique_container_name);
-			aseq.addAnnotation(container);
+			containerSyms.add(container);
+			if (annotate_seq) {
+				aseq.addAnnotation(container);
+			}
 		}
+		return containerSyms;
 	}
 
 	/** Find the first matching symmetry in the seq_group, or null */

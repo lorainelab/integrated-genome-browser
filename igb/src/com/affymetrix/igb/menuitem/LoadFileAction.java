@@ -72,8 +72,12 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.MergeOptionChooser;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -130,6 +134,9 @@ public final class LoadFileAction extends AbstractAction {
 
 		chooser = new MergeOptionChooser();
 		chooser.setMultiSelectionEnabled(true);
+		chooser.addChoosableFileFilter(new UniFileFilter(
+						new String[]{"2bit"},
+						".2bit Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"bam"}, "BAM Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
@@ -269,19 +276,30 @@ public final class LoadFileAction extends AbstractAction {
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true);
 	}
 
-	private static void addChromosomesForUnknownGroup(final String fileName, GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {
-		String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
-		Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
-		try {
-			List<BioSeq> seqs = gFeature.symL.getChromosomeList();
-			for (BioSeq seq : seqs) {
-				if (seq.getSeqGroup() == null) {
-					seq.setSeqGroup(loadGroup);
+	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {
+		ExecutorService vexec = Executors.newSingleThreadExecutor();
+		final String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			@Override
+			public Void doInBackground() {
+				Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
+				List<BioSeq> seqs = gFeature.symL.getChromosomeList();
+				for (BioSeq seq : seqs) {
+					if (seq.getSeqGroup() == null) {
+						seq.setSeqGroup(loadGroup);
+					}
 				}
+				return null;
 			}
-		} finally {
-			Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
-		}
+
+			@Override
+			public void done() {
+				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
+			}
+		};
+		vexec.execute(worker);
+		vexec.shutdown();
 	}
 
 

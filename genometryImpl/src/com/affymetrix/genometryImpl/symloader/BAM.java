@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.samtools.Cigar;
@@ -30,7 +31,10 @@ import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.SAMFormatException;
+import net.sf.samtools.SAMProgramRecord;
+import net.sf.samtools.SAMReadGroupRecord;
 import net.sf.samtools.SAMRecord.SAMTagAndValue;
+import net.sf.samtools.SAMSequenceDictionary;
 import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.util.CloseableIterator;
 
@@ -236,9 +240,41 @@ public final class BAM extends SymLoader {
 		sym.setProperty("cigar", sr.getCigar());
 		sym.setProperty("method", meth);
 
+		SAMFileHeader hr = sr.getHeader();
+		if(hr != null){
+
+			//Seqeunce Dictionary
+			SAMSequenceDictionary ssd = hr.getSequenceDictionary();
+			for(SAMSequenceRecord ssr : ssd.getSequences()){
+				if(ssr.getAssembly() != null)
+					sym.setProperty("genomeAssembly", ssr.getAssembly());
+
+				if(ssr.getSpecies() != null)
+					sym.setProperty("species  ", ssr.getSpecies());
+			}
+
+			//Read Group
+			for(SAMReadGroupRecord srgr : hr.getReadGroups()){
+				for (Entry<String,Object> en : srgr.getAttributes()) {
+					if(en.getValue() instanceof String){
+						sym.setProperty(en.getKey(), en.getValue());
+					}
+				}
+			}
+
+			//Program
+			for(SAMProgramRecord  spr : hr.getProgramRecords()){
+				for (Entry<String,Object> en : spr.getAttributes()) {
+					if(en.getValue() instanceof String){
+						sym.setProperty(en.getKey(), en.getValue());
+					}
+				}
+			}
+		}
+
 		return sym;
 	}
-
+	
 	private static List<SimpleSymWithProps> getChildren(SAMRecord sr, BioSeq seq, Cigar cigar, String residues, int spanLength) {
 		List<SimpleSymWithProps> results = new ArrayList<SimpleSymWithProps>();
 		if (cigar == null || cigar.numCigarElements() == 0) {

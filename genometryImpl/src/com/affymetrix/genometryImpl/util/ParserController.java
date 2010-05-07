@@ -196,6 +196,13 @@ public final class ParserController {
 	// 2.  (Default) The stream name with the extension stripped off.
 	public static String getAnnotType(
 			List<AnnotMapElt> annotsList, String stream_name, String extension, String type_name) {
+		
+		// Cytoband files appear to require a specific name.
+		if (stream_name.endsWith(".cyt")) {
+			return CytobandParser.CYTOBAND_TIER_NAME;
+		}
+		
+		
 		// Check if this was in the annots mapping.
 		if (annotsList != null) {
 			AnnotMapElt annotMapElt = AnnotMapElt.findFileNameElt(stream_name, annotsList);

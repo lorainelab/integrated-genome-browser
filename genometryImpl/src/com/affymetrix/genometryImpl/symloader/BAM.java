@@ -222,6 +222,7 @@ public final class BAM extends SymLoader {
 		}
 
 		SymWithProps sym = new UcscBedSym(featureName, seq, start, end, sr.getReadName(), 0.0f, span.isForward(), 0, 0, blockMins, blockMaxs);
+		sym.setProperty("baseQuality", sr.getBaseQualityString());
 		sym.setProperty("id",sr.getReadName());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
 			sym.setProperty(tv.tag, tv.value);

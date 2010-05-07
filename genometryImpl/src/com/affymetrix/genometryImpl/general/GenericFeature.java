@@ -56,13 +56,21 @@ public final class GenericFeature {
 		if (this.loadStrategy != LoadStrategy.NO_LOAD) {
 			return;
 		}
-		if (gVersion != null
-				&& gVersion.gServer != null
-				&& (gVersion.gServer.serverType == ServerType.DAS2
-				|| gVersion.gServer.serverType == ServerType.DAS)) {
-			this.loadStrategy = LoadStrategy.VISIBLE;
-		} else {
-			this.loadStrategy = LoadStrategy.NO_LOAD;
+		if (gVersion != null && gVersion.gServer != null) {
+			if (gVersion.gServer.serverType == ServerType.DAS || gVersion.gServer.serverType == ServerType.DAS2) {
+				this.loadStrategy = LoadStrategy.VISIBLE;
+			} else {
+				// Local File or QuickLoad
+				if (this.symL != null) {
+					if (this.symL.getLoadChoices().contains(LoadStrategy.VISIBLE)) {
+						this.loadStrategy = LoadStrategy.VISIBLE;
+					} else if (this.symL.getLoadChoices().contains(LoadStrategy.CHROMOSOME)) {
+						this.loadStrategy = LoadStrategy.CHROMOSOME;
+					} else {
+						this.loadStrategy = LoadStrategy.GENOME;
+					}
+				}
+			}
 		}
 	}
 

@@ -91,7 +91,7 @@ public class AboutIGBAction extends AbstractAction {
 		bioviz_org.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("bioviz_org");
+				GeneralUtils.browse("http://www.bioviz.org");
 			}
 		});
 		request_feature.addActionListener(new ActionListener() {

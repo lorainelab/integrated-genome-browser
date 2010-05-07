@@ -82,40 +82,35 @@ public final class BrptParser {
 	Map source_hash = new HashMap();
 	Map type_hash = new HashMap();
 
-	public void outputBrptFormat(List<SeqSymmetry> parents, String genome_version, DataOutputStream dos) 
-		throws IOException {
-		try        {
-			int pcount = parents.size();
-			dos.writeUTF(genome_version);
-			dos.writeInt(pcount);  // how many seqs there are
-			for (int i=0; i<pcount; i++) {
-				SeqSymmetry parent = parents.get(i);
-				BioSeq seq = parent.getSpanSeq(0);
-				String seqid = seq.getID();
-				int rpt_count = parent.getChildCount();
-				dos.writeUTF(seqid);
-				dos.writeInt(rpt_count);
-			}
-
-			for (int i=0; i<pcount; i++) {
-				SeqSymmetry parent = parents.get(i);
-				int rpt_count = parent.getChildCount();
-				for (int k=0; k<rpt_count; k++) {
-					LeafSingletonSymmetry rpt = (LeafSingletonSymmetry)parent.getChild(k);
-					SeqSpan span = rpt.getSpan(0);
-					int start = span.getStart();
-					int end = span.getEnd();
-					dos.writeInt(start);
-					dos.writeInt(end);
-				}
-			}
+	private static void outputBrptFormat(List<SeqSymmetry> parents, String genome_version, DataOutputStream dos)
+			throws IOException {
+		int pcount = parents.size();
+		dos.writeUTF(genome_version);
+		dos.writeInt(pcount);  // how many seqs there are
+		for (int i = 0; i < pcount; i++) {
+			SeqSymmetry parent = parents.get(i);
+			BioSeq seq = parent.getSpanSeq(0);
+			String seqid = seq.getID();
+			int rpt_count = parent.getChildCount();
+			dos.writeUTF(seqid);
+			dos.writeInt(rpt_count);
 		}
-		finally {
-			// close the stream?
+
+		for (int i = 0; i < pcount; i++) {
+			SeqSymmetry parent = parents.get(i);
+			int rpt_count = parent.getChildCount();
+			for (int k = 0; k < rpt_count; k++) {
+				LeafSingletonSymmetry rpt = (LeafSingletonSymmetry) parent.getChild(k);
+				SeqSpan span = rpt.getSpan(0);
+				int start = span.getStart();
+				int end = span.getEnd();
+				dos.writeInt(start);
+				dos.writeInt(end);
+			}
 		}
 	}
 
-	public List<SeqSymmetry> readTextFormat(BufferedReader br) throws IOException {
+	private static List<SeqSymmetry> readTextFormat(BufferedReader br) throws IOException {
 		//int weird_length_count = 0;
 		Map<String,MutableSeqSymmetry> id2psym = new HashMap<String,MutableSeqSymmetry>();
 		ArrayList<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
@@ -170,7 +165,7 @@ public final class BrptParser {
 		return parent_syms;
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq)
+	public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq)
 		throws IOException {
 		System.out.println("parsing brpt file");
 		List<SeqSymmetry> rpt_syms = null;
@@ -235,13 +230,11 @@ public final class BrptParser {
 			if (TEST_BINARY_PARSE) {
 				String binfile = args[0];
 				System.out.println("parsing in rpt data from .brpt file: " + binfile);
-				BrptParser tester = new BrptParser();
 				File ifil = new File(binfile);
 				InputStream istr = new FileInputStream(ifil);
 				GenometryModel gmodel = GenometryModel.getGenometryModel();
 				AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
-
-				tester.parse(istr, "rpt", seq_group, true);
+				parse(istr, "rpt", seq_group, true);
 				System.out.println("finished parsing in rpt data from .brpt file");
 			}
 			else {
@@ -258,16 +251,15 @@ public final class BrptParser {
 					else {
 						bin_outfile = text_infile + ".brpt";
 					}
-					BrptParser tester = new BrptParser();
+
 					File ifil = new File(text_infile);
 					BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
 					System.out.println("reading in text data from: " + text_infile);
-					List<SeqSymmetry> parent_syms = tester.readTextFormat(br);
+					List<SeqSymmetry> parent_syms = readTextFormat(br);
 					File ofil = new File(bin_outfile);
 					DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
 					System.out.println("outputing binary data to: " + bin_outfile);
-					tester.outputBrptFormat(parent_syms, genome_version, dos);
-					dos.close();
+					outputBrptFormat(parent_syms, genome_version, dos);
 					System.out.println("finished converting text data to binary .brpt format");
 				}
 				else {

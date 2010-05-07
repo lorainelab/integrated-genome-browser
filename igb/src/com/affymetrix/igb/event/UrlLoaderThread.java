@@ -455,9 +455,8 @@ public final class UrlLoaderThread extends Thread {
 			return;
 		}
 		if (lcname.endsWith(".brpt")) {
-			BrptParser parser = new BrptParser();
-			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, true);
-			Logger.getLogger(LoadFileAction.class.getName()).log(Level.FINE,
+			List<SeqSymmetry> alist = BrptParser.parse(str, annot_type, selected_group, true);
+			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.FINE,
 					"total repeats loaded: " + alist.size());
 			return;
 		}

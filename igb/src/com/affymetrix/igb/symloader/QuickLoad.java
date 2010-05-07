@@ -13,12 +13,21 @@ import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
+import com.affymetrix.genometryImpl.parsers.BrptParser;
 import com.affymetrix.genometryImpl.parsers.BrsParser;
+import com.affymetrix.genometryImpl.parsers.BsnpParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
+import com.affymetrix.genometryImpl.parsers.FishClonesParser;
+import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.parsers.VarParser;
+import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
+import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
+import com.affymetrix.genometryImpl.parsers.graph.CntParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
@@ -372,7 +381,7 @@ public final class QuickLoad extends SymLoader {
 			isResidueLoader = true;
 			return new BNIB(this.uri, this.version.group);
 		}
-		if (this.extension.endsWith(".fa") || this.extension.endsWith(".fasta")) {
+		if (this.extension.endsWith(".fa") || this.extension.endsWith(".fas") || this.extension.endsWith(".fasta")) {
 			isResidueLoader = true;
 			return new Fasta(this.uri, this.version.group);
 		}
@@ -426,10 +435,32 @@ public final class QuickLoad extends SymLoader {
 			// parsing probesets in bp2 format, also adding probeset ids
 			return bp1_reader.parse(bis, version.group, false, featureName, false);
 		}
+		if (extension.equals("brpt")) {
+			List<SeqSymmetry> alist = BrptParser.parse(bis, featureName, version.group, false);
+			Logger.getLogger(QuickLoad.class.getName()).log(Level.FINE,
+					"total repeats loaded: " + alist.size());
+			return alist;
+		}
 		if (extension.equals("brs")) {
 			DataInputStream dis = new DataInputStream(bis);
 			return BrsParser.parse(dis, featureName, version.group, false);
 		}
+		if (extension.equals("bsnp")) {
+			List<SeqSymmetry> alist = BsnpParser.parse(bis, featureName, version.group, false);
+			Logger.getLogger(QuickLoad.class.getName()).log(Level.FINE,
+					"total snps loaded: " + alist.size());
+			return alist;
+		}
+		/*if (extension.equals("cnchp") || extension.equals("lohchp")) {
+			AffyCnChpParser parser = new AffyCnChpParser();
+			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), bis, featureName, version.group);
+			return;
+		}
+		if (extension.equals(".cnt")) {
+			CntParser parser = new CntParser();
+			parser.parse(bis, version.group);
+			return;
+		}*/
 		if (extension.equals("cyt")) {
 			CytobandParser parser = new CytobandParser();
 			return parser.parse(bis, version.group, false);
@@ -438,9 +469,19 @@ public final class QuickLoad extends SymLoader {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
 			return parser.parse(bis, version.group, false, featureName);
 		}
-		if (extension.equals("gff")) {
+		/*if (extension.equals("." + FishClonesParser.FILE_EXT)) {
+			FishClonesParser parser = new FishClonesParser(true);
+			parser.parse(bis, featureName, version.group);
+			return;
+		}*/
+		if (extension.equals("gff") || extension.equals("gtf")) {
 			GFFParser parser = new GFFParser();
-			return parser.parse(bis, ".", version.group, false, false);
+			return parser.parse(bis, featureName, version.group, false, false);
+		}
+		if (extension.equals("gff3")) {
+			/* Force parsing as GFF3 */
+			GFF3Parser parser = new GFF3Parser();
+			return parser.parse(bis, featureName, version.group);
 		}
 		if (extension.equals("link.psl")) {
 			PSLParser parser = new PSLParser();
@@ -450,7 +491,12 @@ public final class QuickLoad extends SymLoader {
 			// why is annotate_target parameter below set to false?
 			return parser.parse(bis, featureName, null, version.group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
 		}
-		if (extension.equals("psl")) {
+		/*if (extension.equals("map")) {
+			ScoredMapParser parser = new ScoredMapParser();
+			parser.parse(bis, featureName, input_seq, version.group);
+			return;
+		}*/
+		if (extension.equals("psl") || extension.equals("psl3")) {
 			// reference to LoadFileAction.ParsePSL
 			PSLParser parser = new PSLParser();
 			parser.enableSharedQueryTarget(true);
@@ -461,6 +507,11 @@ public final class QuickLoad extends SymLoader {
 			ScoredIntervalParser parser = new ScoredIntervalParser();
 			return parser.parse(bis, featureName, version.group, false);
 		}
+		/*if (extension.equals("var")) {
+			VarParser parser = new VarParser();
+			parser.parse(bis, version.group);
+			return;
+		}*/
 		Logger.getLogger(QuickLoad.class.getName()).log(Level.WARNING,
 				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
 		return null;

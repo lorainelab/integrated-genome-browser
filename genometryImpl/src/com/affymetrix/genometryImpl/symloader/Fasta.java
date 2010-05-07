@@ -29,7 +29,6 @@ public class Fasta extends SymLoader {
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
-		// BAM files are generally large, so only allow loading visible data.
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
 		strategyList.add(LoadStrategy.CHROMOSOME);

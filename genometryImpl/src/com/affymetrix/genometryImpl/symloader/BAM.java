@@ -47,6 +47,7 @@ public final class BAM extends SymLoader {
 	private AnnotatedSeqGroup group;
 	private final String featureName;
 	private final List<BioSeq> seqs = new ArrayList<BioSeq>();
+	private File indexFile = null;
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -77,6 +78,7 @@ public final class BAM extends SymLoader {
 			String scheme = uri.getScheme().toLowerCase();
 			if (scheme.length() == 0 || scheme.equals("file")) {
 				// BAM is file.
+				//indexFile = new File(uri.)
 				File f = new File(uri);
 				reader = new SAMFileReader(f);
 				reader.setValidationStringency(ValidationStringency.SILENT);
@@ -86,10 +88,12 @@ public final class BAM extends SymLoader {
 				String uriStr = uri.toString();
 				// Guess at the location of the .bai URL as BAM URL + ".bai"
 				String baiUriStr = uriStr + ".bai";
-				File indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
+				indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
 				if (indexFile == null) {
-					Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
+					ErrorHandler.errorPanel("No BAM index file",
 							"Could not find URL of BAM index at " + baiUriStr + ". Please be sure this is in the same directory as the BAM file.");
+					this.isInitialized = false;
+					return;
 				}
 				reader = new SAMFileReader(uri.toURL(), indexFile, false);
 				reader.setValidationStringency(ValidationStringency.SILENT);

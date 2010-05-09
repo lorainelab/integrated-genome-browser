@@ -114,7 +114,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	}
 
 	public Object getValueAt(int row, int col) {
-		if (features == null || features.size() == 0) {
+		if (features == null || features.isEmpty()) {
 			// Indicate to user that there's no data.
 			if (row == 0 && col == 2) {
 				return "No feature data found";
@@ -169,7 +169,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 	@Override
 	public void setValueAt(Object value, int row, int col) {
-		if (col != LOAD_STRATEGY_COLUMN) {
+		if (value == null || col != LOAD_STRATEGY_COLUMN) {
 			return;
 		}
 		

@@ -86,13 +86,12 @@ public final class Das2ClientOptimizer {
         BioSeq seq = overlap_span.getBioSeq();
         
         Das2Type type = request_sym.getDas2Type();
-        String typeid = type.getID();
 
         if (seq == null) {
-            System.out.println("Can't optimize query: " + typeid + ", seq is null!");
+            System.out.println("Can't optimize query: " + type.getURI() + ", seq is null!");
             output_requests.add(request_sym);
         } else {
-			ClientOptimizer.OptimizeQuery(seq, typeid, type, type.getName(), output_requests, request_sym);
+			ClientOptimizer.OptimizeQuery(seq, type.getURI(), type, type.getName(), output_requests, request_sym);
         }
 
         for (FeatureRequestSym request : output_requests) {

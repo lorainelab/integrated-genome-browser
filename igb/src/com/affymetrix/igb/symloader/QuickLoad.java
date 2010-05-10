@@ -164,7 +164,7 @@ public final class QuickLoad extends SymLoader {
 		if (!this.isResidueLoader) {
 			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
 			List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
-			ClientOptimizer.OptimizeQuery(seq, uri.toString(), null, featureName, output_requests, requestSym);
+			ClientOptimizer.OptimizeQuery(seq, uri, null, featureName, output_requests, requestSym);
 			if (output_requests.isEmpty()) {
 				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
 				return true;

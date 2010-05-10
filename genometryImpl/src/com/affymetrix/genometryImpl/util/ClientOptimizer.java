@@ -13,11 +13,12 @@ import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
+import java.net.URI;
 import java.util.logging.Logger;
 
 public class ClientOptimizer {
     public static void OptimizeQuery(
-			BioSeq aseq, String typeid,
+			BioSeq aseq, URI typeid,
 			Das2Type type, String typeName, List<FeatureRequestSym> output_requests, FeatureRequestSym request_sym) {
 		// overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
 		SeqSymmetry overlap_sym = request_sym.getOverlapSym();
@@ -25,11 +26,11 @@ public class ClientOptimizer {
 		if (request_sym instanceof Das2FeatureRequestSym) {
 			region = ((Das2FeatureRequestSym)request_sym).getRegion();
 		}
-        MutableSeqSymmetry cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid);
+        MutableSeqSymmetry cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid.toString());
         // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
 
 		// little hack for GraphSyms, need to resolve when to use id vs. name vs. type
-		if (cont_sym == null && typeid.endsWith(".bar")) {
+		if (cont_sym == null && typeid.toString().endsWith(".bar")) {
 			cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeName);
 			Logger.getLogger(ClientOptimizer.class.getName()).fine(
 					"trying to use type name for bar type, name: " + typeName + ", id: " + typeid +
@@ -67,7 +68,7 @@ public class ClientOptimizer {
 
     private static void SplitQuery(
 			SeqSymmetry split_query, BioSeq aseq,
-			String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<FeatureRequestSym> output_requests) {
+			URI typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<FeatureRequestSym> output_requests) {
 
         if (split_query == null || split_query.getChildCount() == 0) {
             // all of current query overlap range covered by previous queries, so return empty list

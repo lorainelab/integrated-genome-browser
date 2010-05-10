@@ -23,7 +23,7 @@ public class AnnotatedSeqGroup {
 	final private Set<GenericVersion> gVersions = new CopyOnWriteArraySet<GenericVersion>();	// list of (visible) GenericVersions associated with this group
 	private boolean use_synonyms;
 	final private Map<String, BioSeq> id2seq;
-	private ArrayList<BioSeq> seqlist; //lazy copy of id2seq.values()
+	private List<BioSeq> seqlist; //lazy copy of id2seq.values()
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
 	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
@@ -84,6 +84,14 @@ public class AnnotatedSeqGroup {
 			}
 		}
 		return versions;
+	}
+
+	/**
+	 * Return all versions.
+	 * @return
+	 */
+	final public Set<GenericVersion> getAllVersions() {
+		return Collections.unmodifiableSet(gVersions);
 	}
 	
 

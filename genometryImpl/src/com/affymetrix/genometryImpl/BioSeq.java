@@ -216,41 +216,6 @@ public final class BioSeq implements SearchableCharIterator {
 
 
 	/**
-	 *  Creates an empty top-level container sym.
-	 *  @return an instance of {@link TypeContainerAnnot}
-	 */
-	private synchronized TypeContainerAnnot addAnnotation(String type) {
-		TypeContainerAnnot container = new TypeContainerAnnot(type);
-		container.setProperty("method", type);
-		SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
-		container.addSpan(span);
-		type_id2sym.put(type, container);
-		if (annots == null) {
-			annots = new ArrayList<SeqSymmetry>();
-		}
-		annots.add(container);
-
-		return container;
-	}
-
-	/**
-	 *  Adds an annotation as a child of the top-level container sym
-	 *     for the given type.  Creates new top-level container
-	 *     if doesn't yet exist.
-	 */
-	public synchronized void addAnnotation(SeqSymmetry sym, String type) {
-		if (type_id2sym == null) { 
-			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
-		}
-		MutableSeqSymmetry container = (MutableSeqSymmetry) type_id2sym.get(type);
-		if (container == null) {
-			container = addAnnotation(type);
-		}
-		container.addChild(sym);
-	}
-
-
-	/**
 	 *  Overriding addAnnotation(sym) to try and extract a "method"/"type" property
 	 *    from the sym.
 	 *  <pre>
@@ -300,6 +265,30 @@ public final class BioSeq implements SearchableCharIterator {
 					" SeqSymmetries that are also SymWithProps and " +
 					" have a _method_ property");
 		}
+	}
+
+	/**
+	 *  Adds an annotation as a child of the top-level container sym
+	 *     for the given type.  Creates new top-level container
+	 *     if doesn't yet exist.
+	 */
+	private synchronized void addAnnotation(SeqSymmetry sym, String type) {
+		if (type_id2sym == null) {
+			type_id2sym = new LinkedHashMap<String, SymWithProps>();
+		}
+		MutableSeqSymmetry container = (MutableSeqSymmetry) type_id2sym.get(type);
+		if (container == null) {
+			container = new TypeContainerAnnot(type);
+			((TypeContainerAnnot) container).setProperty("method", type);
+			SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
+			container.addSpan(span);
+			type_id2sym.put(type, (TypeContainerAnnot) container);
+			if (annots == null) {
+				annots = new ArrayList<SeqSymmetry>();
+			}
+			annots.add(container);
+		}
+		container.addChild(sym);
 	}
 	
 	/*

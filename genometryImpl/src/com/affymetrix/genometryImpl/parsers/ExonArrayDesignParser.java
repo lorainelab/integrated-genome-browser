@@ -611,7 +611,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			System.out.println("Input '"+in_file+"'");
 			System.out.println("Output '"+out_file+"'");
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
-			parser.convertGff(in_file, out_file, genomeid, versionid, annot_type, id_prefix);
+			parser.convertGff(in_file, out_file, genomeid, annot_type, id_prefix);
 			System.out.println("DONE!  Finished converting GFF file to EAD file.");
 			System.out.println("");
 		}
@@ -638,8 +638,8 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *     All annotations in GFF file are genome-based probes (contiguous intervals on genome);
 	 *     25-mer probes (for now)
 	 */
-	public void convertGff(String in_file, String out_file, String genome_id,
-			String version_id, String annot_type, String id_prefix)  {
+	private void convertGff(String in_file, String out_file, String genome_id,
+			String annot_type, String id_prefix)  {
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
 		int probe_length = 25;
 		try {
@@ -778,15 +778,13 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 					}
 				}  // end transcript_cluster loop
 				bis.close();
-				System.gc();
 			}
-			System.gc();
 
 			for (Map.Entry<BioSeq,SimpleSymWithProps> ent : seq2container.entrySet()) {
 
 				BioSeq aseq = ent.getKey();
 				SeqSymmetry container = ent.getValue();
-				aseq.addAnnotation(container, annot_type);
+				aseq.addAnnotation(container);
 			}
 
 			FileOutputStream fos = new FileOutputStream(new File(out_file));

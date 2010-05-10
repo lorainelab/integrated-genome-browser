@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
 import com.affymetrix.genometryImpl.parsers.graph.CntParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
@@ -44,7 +45,9 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -160,27 +163,40 @@ public final class QuickLoad extends SymLoader {
 
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
-		final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		if (!this.isResidueLoader) {
-			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
-			List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
-			ClientOptimizer.OptimizeQuery(seq, uri, null, featureName, output_requests, requestSym);
-			if (output_requests.isEmpty()) {
-				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
-				return true;
-			}
-			boolean result = true;
-			for (FeatureRequestSym request : output_requests) {
-				// short-circuit if there's a failure... which may not even be signaled in the code
-				result = result && loadSymmetriesThread(strategy, request, seq, gviewer, vexec);
-			}
-			return result;
+		if (this.isResidueLoader) {
+			final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			return loadResiduesThread(strategy, overlapSpan, seq, gviewer, vexec);
 		}
-		return loadResiduesThread(strategy, overlapSpan, seq, gviewer, vexec);
+
+		List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
+		if (strategy == LoadStrategy.GENOME) {
+			for (BioSeq aseq : QuickLoad.this.version.group.getSeqList()) {
+				if (aseq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
+					continue;
+				}
+				SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+				FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
+				ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
+			}
+		} else {
+			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
+			ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
+		}
+		if (output_requests.isEmpty()) {
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
+			return true;
+		}
+		boolean result = true;
+		for (FeatureRequestSym request : output_requests) {
+			// short-circuit if there's a failure... which may not even be signaled in the code
+			result = result && loadSymmetriesThread(strategy, request, gviewer, vexec);
+		}
+		return result;
+
 	}
 
 	private boolean loadSymmetriesThread(
-			final LoadStrategy strategy, final FeatureRequestSym requestSym, final BioSeq seq, final SeqMapView gviewer, Executor vexec)
+			final LoadStrategy strategy, final FeatureRequestSym requestSym, final SeqMapView gviewer, Executor vexec)
 			throws OutOfMemoryError {
 
 		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
@@ -188,16 +204,11 @@ public final class QuickLoad extends SymLoader {
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
 					List<? extends SeqSymmetry> results = loadFeature(strategy, requestSym.getOverlapSpan());
+					results = ServerUtils.filterForOverlappingSymmetries(requestSym.getOverlapSpan(), results);
 					if (results != null && !results.isEmpty()) {
 						requestSym.setProperty("method", uri.toString());
 						SymLoader.addToRequestSym(results, requestSym, QuickLoad.this.uri, QuickLoad.this.featureName, requestSym.getOverlapSpan());
-						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
-							SymLoader.addAnnotations(results, requestSym, seq);
-						} else if (strategy == LoadStrategy.GENOME) {
-							for (BioSeq aseq : QuickLoad.this.version.group.getSeqList()) {
-								SymLoader.addAnnotations(results, requestSym, aseq);
-							}
-						}
+						SymLoader.addAnnotations(results, requestSym, requestSym.getOverlapSpan().getBioSeq());
 					}
 					return results;
 				} catch (Exception ex) {
@@ -211,7 +222,7 @@ public final class QuickLoad extends SymLoader {
 				try {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
-						gviewer.setAnnotatedSeq(seq, true, true);
+						gviewer.setAnnotatedSeq(requestSym.getOverlapSpan().getBioSeq(), true, true);
 						//SeqGroupView.refreshTable();
 					}
 				} catch (Exception ex) {
@@ -238,10 +249,7 @@ public final class QuickLoad extends SymLoader {
 		if (style != null) {
 			style.setHumanName(featureName);
 		}
-		if (strategy == LoadStrategy.GENOME) {
-			return this.getGenome();
-		}
-		if (strategy == LoadStrategy.CHROMOSOME) {
+		if (strategy == LoadStrategy.GENOME || strategy == LoadStrategy.CHROMOSOME) {
 			return this.getChromosome(overlapSpan.getBioSeq());
 		}
 		if (strategy == LoadStrategy.VISIBLE) {

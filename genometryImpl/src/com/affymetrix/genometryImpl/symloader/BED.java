@@ -119,7 +119,7 @@ public class BED extends SymLoader{
 		try {
 			File file = chrList.get(seq);
 			if (file == null) {
-				Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
+				Logger.getLogger(BED.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);

@@ -715,7 +715,7 @@ public abstract class ServerUtils {
 	 * @param symList
 	 * @return list of overlapping seq symmetries
 	 */
-	private static List<SeqSymmetry> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<? extends SeqSymmetry> symList) {
+	public static List<SeqSymmetry> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<? extends SeqSymmetry> symList) {
 		List<SeqSymmetry> newList = new ArrayList<SeqSymmetry>(symList.size());
 		for (SeqSymmetry sym : symList) {
 			if (sym instanceof UcscPslSym) {

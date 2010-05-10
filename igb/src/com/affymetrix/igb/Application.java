@@ -1,7 +1,6 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.prefs.IPlugin;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
@@ -112,38 +111,11 @@ public abstract class Application {
 		});
 	}
 
-	/** Opens a JOptionPane.ERROR_MESSAGE panel with the application frame
-	 *  as its parent.
-	 */
-	public static void errorPanel(String title, String message) {
-		Application app = getSingleton();
-		JFrame frame = (app == null) ? null : app.getFrame();
-		ErrorHandler.errorPanel(frame, title, message, null);
-	}
-
-	/** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
-	 *  panel as its parent, and the title "ERROR".
-	 */
-	public static void errorPanel(String message) {
-		Application app = getSingleton();
-		JFrame frame = (app == null) ? null : app.getFrame();
-		ErrorHandler.errorPanel(frame, "ERROR", message, null);
-	}
-
-	/** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
-	 *  panel as its parent, and the title "ERROR".
-	 *  @param e an exception (or error), if any.  null is ok. If not null,
-	 *  the exception text will be appended to the message and
-	 *  a stack trace might be printed on standard error.
-	 */
-	public static void errorPanel(String message, Throwable e) {
-		Application app = getSingleton();
-		JFrame frame = (app == null) ? null : app.getFrame();
-		ErrorHandler.errorPanel(frame, "ERROR", message, e);
-	}
-
-	/** Shows a panel asking for the user to confirm something.
-	 *  @return true if the user confirms, else false.
+	/**
+	 * Shows a panel asking for the user to confirm something.
+	 *
+	 * @param message the message String to display to the user
+	 * @return true if the user confirms, else false.
 	 */
 	public static boolean confirmPanel(String message) {
 		Application app = getSingleton();

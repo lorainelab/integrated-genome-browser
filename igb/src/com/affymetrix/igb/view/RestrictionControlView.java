@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -69,7 +70,7 @@ public final class RestrictionControlView extends JComponent
 						Application.class.getResourceAsStream(rest_file);
 		
 		if (file_input_str == null) {
-			Application.errorPanel("Cannot open restriction enzyme file",
+			ErrorHandler.errorPanel("Cannot open restriction enzyme file",
 							"Cannot find restriction enzyme file '" + rest_file + "'.\n" +
 							"Restriction mapping will not be available.");
 		}
@@ -97,7 +98,7 @@ public final class RestrictionControlView extends JComponent
 				}
 			} catch (Exception ex) {
 				load_success = false;
-				Application.errorPanel("Problem loading restriction site file, aborting load\n" +
+				ErrorHandler.errorPanel("Problem loading restriction site file, aborting load\n" +
 								ex.toString());
 			} finally {
 				GeneralUtils.safeClose(d);
@@ -185,7 +186,7 @@ public final class RestrictionControlView extends JComponent
 
 		BioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
-			Application.errorPanel("Residues for seq not available, search aborted.");
+			ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 			return;
 		}
 
@@ -210,7 +211,7 @@ public final class RestrictionControlView extends JComponent
 		GlyphI seq_glyph = null;
 		BioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
-			Application.errorPanel("Residues for seq not available, search aborted.");
+			ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 			return;
 		}
 		int residue_offset = 0;

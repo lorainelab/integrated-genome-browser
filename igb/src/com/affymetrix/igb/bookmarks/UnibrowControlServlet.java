@@ -42,6 +42,7 @@ import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
@@ -306,7 +307,7 @@ public final class UnibrowControlServlet {
 				t.join();
 			}
 		} catch (MalformedURLException e) {
-			Application.errorPanel("Error loading bookmark\nData URL malformed\n", e);
+			ErrorHandler.errorPanel("Error loading bookmark\nData URL malformed\n", e);
 		} catch (InterruptedException ex) {
 		}
 	}
@@ -361,7 +362,7 @@ public final class UnibrowControlServlet {
 		}
 
 		if (book_group == null) {
-			Application.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n" +
+			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n" +
 							"You may need to choose a different server.");
 			return false; // cancel
 		}
@@ -413,7 +414,7 @@ public final class UnibrowControlServlet {
 					book_seq = book_group.getSeq(seqid);
 				}
 				if (book_seq == null) {
-					Application.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
+					ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
 				} else {
 					// gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
 					//     gviewer is registered as a SeqSelectionListener on gmodel

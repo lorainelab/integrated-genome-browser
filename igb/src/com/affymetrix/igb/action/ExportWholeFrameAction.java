@@ -1,9 +1,9 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.ComponentWriter;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import javax.swing.AbstractAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -26,7 +26,7 @@ public class ExportWholeFrameAction extends AbstractAction {
 		try {
 			ComponentWriter.showExportDialog(IGB.getSingleton().getFrame());
 		} catch (Exception ex) {
-			IGB.errorPanel("Problem during output.", ex);
+			ErrorHandler.errorPanel("Problem during output.", ex);
 		}
 	}
 }

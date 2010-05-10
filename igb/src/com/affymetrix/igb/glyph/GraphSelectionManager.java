@@ -272,7 +272,7 @@ public final class GraphSelectionManager
 			PercentThresholder.showFramedThresholder(current_graph, current_source);
 		} else if (src == thresh_graph) {
 			if (second_current_graph != null) {
-				Application.errorPanel("ERROR", "Must select exactly one graph");
+				ErrorHandler.errorPanel("ERROR", "Must select exactly one graph");
 			} else {
 				boolean show = !current_graph.getShowThreshold();
 				current_graph.setShowThreshold(show);
@@ -441,23 +441,23 @@ public final class GraphSelectionManager
         }
       }
       catch (Exception ex) {
-         Application.errorPanel("Error saving graph", ex);
+         ErrorHandler.errorPanel("Error saving graph", ex);
       } finally {
 				GeneralUtils.safeClose(ostr);
       }
     }
     else {
-      Application.errorPanel("Can't Save", "Graph does not have associated GraphSym data model");
+      ErrorHandler.errorPanel("Can't Save", "Graph does not have associated GraphSym data model");
     }
   }
 
   void graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String function) {
     if (gviewer == null) {
-      Application.errorPanel("This action is invalid at this time");
+      ErrorHandler.errorPanel("This action is invalid at this time");
     }
     if (graphA == null || graphB == null) {
       // This error condition is likely never triggered
-      Application.errorPanel("Must select exactly two graphs.");
+      ErrorHandler.errorPanel("Must select exactly two graphs.");
     }
     String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
     if (error != null) {

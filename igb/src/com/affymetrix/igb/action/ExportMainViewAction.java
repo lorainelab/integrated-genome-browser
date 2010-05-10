@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.ComponentWriter;
 import java.awt.event.ActionEvent;
@@ -27,7 +28,7 @@ public class ExportMainViewAction extends AbstractAction {
 		try {
 			ComponentWriter.showExportDialog(IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas());
 		} catch (Exception ex) {
-			IGB.errorPanel("Problem during output.", ex);
+			ErrorHandler.errorPanel("Problem during output.", ex);
 		}
 	}
 }

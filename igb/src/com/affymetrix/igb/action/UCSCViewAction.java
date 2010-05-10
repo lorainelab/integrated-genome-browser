@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.Application;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.menuitem.MenuUtil;
@@ -56,7 +56,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 		if (!query.isEmpty()) {
 			GeneralUtils.browse(UCSC_URL + query);
 		} else {
-			Application.errorPanel("Unable to map genome '" + SEQ_MAP.getAnnotatedSeq().getVersion() + "' to a UCSC genome.");
+			ErrorHandler.errorPanel("Unable to map genome '" + SEQ_MAP.getAnnotatedSeq().getVersion() + "' to a UCSC genome.");
 		}
 	}
 

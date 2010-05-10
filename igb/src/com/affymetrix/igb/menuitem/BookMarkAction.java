@@ -216,7 +216,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       try {
         BookmarkController.viewBookmark(uni, bm);
       } catch (Exception e) {
-        Application.errorPanel("Problem viewing bookmark", e);
+        ErrorHandler.errorPanel("Problem viewing bookmark", e);
       }
     } else if (DEBUG) {
       System.out.println("Got an action event from an unknown source: "+src);
@@ -379,7 +379,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 	private void bookmarkCurrentPosition(boolean include_graphs) {
 		BioSeq aseq = gmodel.getSelectedSeq();
 		if (aseq == null) {
-			Application.errorPanel("Error", "Nothing to bookmark");
+			ErrorHandler.errorPanel("Error", "Nothing to bookmark");
 			return;
 		}
 
@@ -432,11 +432,11 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     JMenuItem markMI = null;
     JMenu parent_menu = (JMenu) component_hash.get(bl);
     if (parent_menu == null) {
-      Application.errorPanel("Couldn't add bookmark. Lost reference to menu");
+      ErrorHandler.errorPanel("Couldn't add bookmark. Lost reference to menu");
       return null;
     }
     if (name == null || name.equals("")) {
-      Application.errorPanel("A bookmark must have a name.");
+      ErrorHandler.errorPanel("A bookmark must have a name.");
       return null;
     } else try {
       String url = Bookmark.constructURL(props);
@@ -444,7 +444,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       addBookmarkMI(parent_menu, bm);
       bl.addBookmark(bm);
     } catch (MalformedURLException m) {
-      Application.errorPanel("Couldn't add bookmark", m);
+      ErrorHandler.errorPanel("Couldn't add bookmark", m);
     }
 
     updateBookmarkManager();

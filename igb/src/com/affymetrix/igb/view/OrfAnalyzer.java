@@ -16,13 +16,11 @@ import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
@@ -32,6 +30,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.util.ErrorHandler;
 
 /**
  *  OrfAnalyzer2 is used on the virtual sequence being viewed in AltSpliceView.  It does
@@ -132,7 +131,7 @@ public final class OrfAnalyzer extends JComponent
 
 		orf_holders.clear();
 		if (!(vseq.isComplete())) {
-			Application.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
+			ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
 			show_orfs = false;
 			showCB.setSelected(false);
 			return;

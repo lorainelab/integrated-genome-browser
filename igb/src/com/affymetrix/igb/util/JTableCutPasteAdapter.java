@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.Application;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
@@ -106,7 +106,7 @@ public final class JTableCutPasteAdapter {
       try {
         doPaste();
       } catch (Exception ex){
-        Application.errorPanel("ERROR", ex);
+        ErrorHandler.errorPanel("ERROR", ex);
       }
     }
   };

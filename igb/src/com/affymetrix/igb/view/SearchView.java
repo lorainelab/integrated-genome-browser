@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import java.awt.Dimension;
@@ -366,10 +367,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		try {
 			regex = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
-			Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
+			ErrorHandler.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
 			return;
 		} catch (Exception ex) {
-			Application.errorPanel("Problem with regular expression...", ex);
+			ErrorHandler.errorPanel("Problem with regular expression...", ex);
 			return;
 		}
 
@@ -397,7 +398,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		if (this.remoteSearchCheckBox.isSelected()) {
 			if (actualChars < 3) {
-				Application.errorPanel(friendlySearchStr + ": Text is too short to allow remote search.");
+				ErrorHandler.errorPanel(friendlySearchStr + ": Text is too short to allow remote search.");
 				return;
 			}
 
@@ -470,7 +471,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private void displayRegexResidues() {
 		BioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
-			Application.errorPanel(
+			ErrorHandler.errorPanel(
 					"Residues for " + this.sequence_CB.getSelectedItem().toString() + " not available.  Please load residues before searching.");
 			return;
 		}
@@ -491,16 +492,16 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		String searchStr = searchTF.getText();
 		String friendlySearchStr = friendlyString(searchStr, vseq.getID());
 		if (searchStr.length() < 3) {
-			Application.errorPanel("Search must contain at least 3 characters");
+			ErrorHandler.errorPanel("Search must contain at least 3 characters");
 			return;
 		}
 		Pattern regex = null;
 		try {
 			regex = Pattern.compile(searchStr, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
-			Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
+			ErrorHandler.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
 		} catch (Exception ex) {
-			Application.errorPanel("Problem with regular expression...", ex);
+			ErrorHandler.errorPanel("Problem with regular expression...", ex);
 			return;
 		}
 

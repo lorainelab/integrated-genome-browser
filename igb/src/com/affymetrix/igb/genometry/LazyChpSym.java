@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.util.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 import com.affymetrix.genometryImpl.util.StringUtils;
@@ -28,6 +27,7 @@ import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genoviz.util.ErrorHandler;
 
 /**
  *  Want to automatically load location data for probesets on chip
@@ -188,18 +188,18 @@ public final class LazyChpSym extends ScoredContainerSym {
 		// server and vsource should already be checked before making this LazyChpSym, but checking again
 		//     in case connection can no longer be established
 		if (gServer == null) {
-			Application.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + PROBESET_SERVER_NAME);
+			ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + PROBESET_SERVER_NAME);
 			return;
 		}
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		Das2VersionedSource vsource = server.getVersionedSource(aseq.getSeqGroup());
 		if (vsource == null) {
-			Application.errorPanel("Couldn't find genome data on server for CHP file, genome = " + aseq.getSeqGroup().getID());
+			ErrorHandler.errorPanel("Couldn't find genome data on server for CHP file, genome = " + aseq.getSeqGroup().getID());
 			return;
 		}
 		Das2Region das_segment = vsource.getSegment(aseq);
 		if (das_segment == null) {
-			Application.errorPanel("Couldn't find sequence data on server for CHP file, seq = " + aseq.getID());
+			ErrorHandler.errorPanel("Couldn't find sequence data on server for CHP file, seq = " + aseq.getID());
 			return;
 		}
 

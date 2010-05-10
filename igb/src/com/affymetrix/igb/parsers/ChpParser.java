@@ -43,10 +43,10 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.genometry.LazyChpSym;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
@@ -126,11 +126,11 @@ public final class ChpParser {
       System.out.println("CHP file is generic: " + genchp);
       //      results = parseGenericChp(genchp);
       System.out.println("WARNING: generic CHP files currently not supported in IGB");
-      Application.errorPanel("CHP file is in generic format, cannot be loaded");
+      ErrorHandler.errorPanel("CHP file is in generic format, cannot be loaded");
     }
     else {
       System.out.println("WARNING: not parsing file, CHP file type not recognized: " + chp);
-      Application.errorPanel("CHP file type not recognized, cannot be loaded");
+      ErrorHandler.errorPanel("CHP file type not recognized, cannot be loaded");
     }
     if (! has_coord_data) {
       /**
@@ -171,19 +171,19 @@ public final class ChpParser {
 		GenericServer gServer = ServerList.getServer(LazyChpSym.PROBESET_SERVER_NAME);
     // Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
     if (gServer == null) {
-      Application.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
+      ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
       return null;
     }
 		Das2ServerInfo server = (Das2ServerInfo)gServer.serverObj;
     
     // Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
     if (server == null) {
-      Application.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
+      ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
       return null;
     }
     Das2VersionedSource vsource = server.getVersionedSource(group);
     if (vsource == null) {
-      Application.errorPanel("Couldn't find genome data on server for CHP file, genome = " + group.getID());
+      ErrorHandler.errorPanel("Couldn't find genome data on server for CHP file, genome = " + group.getID());
       return null;
     }
 
@@ -465,7 +465,7 @@ public final class ChpParser {
     if (match_count == 0) {
       System.out.println("WARNING: Could not automatically load location data for CHP file,\n " +
 			 "  and could not find any previously loaded location data matching CHP file");
-      Application.errorPanel("Could not automatically load location data for CHP file,\n " +
+      ErrorHandler.errorPanel("Could not automatically load location data for CHP file,\n " +
 		     "  and could not find any previously loaded location data matching CHP file");
       return null;
     }
@@ -530,7 +530,7 @@ public final class ChpParser {
       exp.clear();
     }
     System.out.println("Stopped loading, parsing Legacy CHP data only partially implemented!");
-    Application.errorPanel("CHP file is in legacy format, cannot be loaded");
+    ErrorHandler.errorPanel("CHP file is in legacy format, cannot be loaded");
     return results;
   }
 

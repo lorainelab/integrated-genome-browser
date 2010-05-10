@@ -33,7 +33,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
@@ -197,7 +197,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   
   private final Action delete_action = new AbstractAction("Delete selected tiers (NOT IMPLEMENTED") {
     public void actionPerformed(ActionEvent e) {
-      if (Application.confirmPanel("Really remove selected tiers?\n"+
+      if (IGB.confirmPanel("Really remove selected tiers?\n"+
           "Data will be removed from all chromosomes on this genome.")) {
         removeTiers(handler.getSelectedTierLabels());
       }

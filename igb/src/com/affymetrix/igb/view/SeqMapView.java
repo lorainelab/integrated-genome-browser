@@ -75,6 +75,7 @@ import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
@@ -1488,12 +1489,12 @@ public class SeqMapView extends JPanel
 		}
 
 		if (residues_sym == null) {
-			Application.errorPanel("Can't copy to clipboard",
+			ErrorHandler.errorPanel("Can't copy to clipboard",
 							"No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
 		} else {
 			if (aseq == null) {
 				// This is a fishy test.  How could aseq possibly be null?
-				Application.errorPanel("Don't have residues, can't copy to clipboard");
+				ErrorHandler.errorPanel("Don't have residues, can't copy to clipboard");
 			}
 			else {
 				SeqSpan span = residues_sym.getSpan(aseq);
@@ -1551,7 +1552,7 @@ public class SeqMapView extends JPanel
 						setStatus(message);
 						success = true;
 					} else {
-						Application.errorPanel("Missing Sequence Residues",
+						ErrorHandler.errorPanel("Missing Sequence Residues",
 										"Don't have all the needed residues, can't copy to clipboard.\n" +
 										"Please load sequence residues for this region.");
 					}
@@ -1881,7 +1882,7 @@ public class SeqMapView extends JPanel
 	/** Select the parents of the current selections */
 	final public void selectParents() {
 		if (seqmap.getSelected().isEmpty()) {
-			Application.errorPanel("Nothing selected");
+			ErrorHandler.errorPanel("Nothing selected");
 		} else if (seqmap.getSelected().size() == 1) {
 			// one selection: select its parent, not recursively
 			selectParents(false);

@@ -644,7 +644,7 @@ public final class IGB extends Application
 			public void run() {
 				int index = tab_pane.getSelectedIndex();
 				if (index < 0) {
-					errorPanel("No more panes!");
+					ErrorHandler.errorPanel("No more panes!");
 					return;
 				}
 				final JComponent comp = (JComponent) tab_pane.getComponentAt(index);

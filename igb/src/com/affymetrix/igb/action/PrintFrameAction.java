@@ -1,6 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import java.awt.event.ActionEvent;
@@ -31,7 +32,7 @@ public class PrintFrameAction extends AbstractAction {
 		try {
 			cprinter.print();
 		} catch (Exception ex) {
-			IGB.errorPanel("Problem trying to print.", ex);
+			ErrorHandler.errorPanel("Problem trying to print.", ex);
 		}
 	}
 }

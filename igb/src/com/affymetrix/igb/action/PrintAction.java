@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import java.awt.event.ActionEvent;
@@ -28,7 +29,7 @@ public class PrintAction extends AbstractAction {
 		try {
 			IGB.getSingleton().getMapView().getSeqMap().print();
 		} catch (Exception ex) {
-			IGB.errorPanel("Problem trying to print.", ex);
+			ErrorHandler.errorPanel("Problem trying to print.", ex);
 		}
 	}
 }

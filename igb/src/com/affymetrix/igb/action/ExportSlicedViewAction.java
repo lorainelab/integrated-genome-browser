@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.util.ComponentWriter;
@@ -42,7 +43,7 @@ public class ExportSlicedViewAction extends AbstractAction {
 				ComponentWriter.showExportDialog(tm.getSplitPane());
 			}
 		} catch (Exception ex) {
-			IGB.errorPanel("Problem during output.", ex);
+			ErrorHandler.errorPanel("Problem during output.", ex);
 		}
 	}
 }

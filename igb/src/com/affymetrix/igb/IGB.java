@@ -839,14 +839,6 @@ public final class IGB extends Application
 		comp2menu_item.put(comp, popupMI);
 	}
 
-	public String getApplicationName() {
-		return APP_NAME;
-	}
-
-	public String getVersion() {
-		return APP_VERSION_FULL;
-	}
-
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
 		if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {

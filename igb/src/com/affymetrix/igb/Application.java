@@ -44,10 +44,6 @@ public abstract class Application {
 
 	abstract public SeqMapView getMapView();
 
-	abstract public String getApplicationName();
-
-	abstract public String getVersion();
-
 	public final void addNotLockedUpMsg(final String s) {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 

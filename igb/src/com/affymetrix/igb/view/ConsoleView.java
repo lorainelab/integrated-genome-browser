@@ -18,7 +18,6 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DisplayUtils;
@@ -26,6 +25,12 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.affymetrix.igb.IGBConstants.APP_NAME;
+
+/**
+ *
+ * @version $Id$
+ */
 public final class ConsoleView {
 	private static final String encoding;
 
@@ -39,7 +44,7 @@ public final class ConsoleView {
   private static JFrame frame;
     
   private ConsoleView() {
-    TITLE = Application.getSingleton().getApplicationName() + " Console";
+    TITLE = APP_NAME + " Console";
   }
   
   /**

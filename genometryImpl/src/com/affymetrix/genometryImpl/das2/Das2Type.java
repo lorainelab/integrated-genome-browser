@@ -38,8 +38,10 @@ public final class Das2Type {
 
   public Das2VersionedSource getVersionedSource() { return versioned_source; }
   public String getID() { return type_uri.toString(); }
+  public URI getURI() { return type_uri; }
   public String getName() { return name; }
   public String getShortName() { return short_name; }
+	@Override
   public String toString() {
     if (getName() == null) { return getID(); }
     else { return getName(); }

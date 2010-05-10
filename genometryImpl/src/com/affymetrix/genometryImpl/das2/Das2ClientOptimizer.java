@@ -258,7 +258,7 @@ public final class Das2ClientOptimizer {
 			List<? extends SeqSymmetry> feats =
 					DetermineFormatAndParse(content_subtype, istr, feature_query, seq_group, type);
 			SymLoader.addToRequestSym(
-					feats, request_sym, request_sym.getDas2Type().getID(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
+					feats, request_sym, request_sym.getDas2Type().getURI(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
 			SymLoader.addAnnotations(feats, request_sym, aseq);
             
             return (feats != null);

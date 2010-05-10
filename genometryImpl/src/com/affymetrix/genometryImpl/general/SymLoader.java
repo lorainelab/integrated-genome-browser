@@ -123,7 +123,7 @@ public abstract class SymLoader {
 
 
 	public static void addToRequestSym(
-			 List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, String id, String name, SeqSpan overlapSpan) {
+			 List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, URI id, String name, SeqSpan overlapSpan) {
         if (feats == null || feats.isEmpty()) {
             // because many operations will treat empty FeatureRequestSym as a leaf sym, want to
             //    populate with empty sym child/grandchild

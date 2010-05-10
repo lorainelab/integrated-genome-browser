@@ -164,7 +164,7 @@ public final class QuickLoad extends SymLoader {
 		if (!this.isResidueLoader) {
 			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
 			List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
-			ClientOptimizer.OptimizeQuery(seq, featureName, null, featureName, output_requests, requestSym);
+			ClientOptimizer.OptimizeQuery(seq, uri.toString(), null, featureName, output_requests, requestSym);
 			if (output_requests.isEmpty()) {
 				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
 				return true;
@@ -189,8 +189,8 @@ public final class QuickLoad extends SymLoader {
 				try {
 					List<? extends SeqSymmetry> results = loadFeature(strategy, requestSym.getOverlapSpan());
 					if (results != null && !results.isEmpty()) {
-						requestSym.setProperty("method", featureName);
-						SymLoader.addToRequestSym(results, requestSym, QuickLoad.this.featureName, QuickLoad.this.featureName, requestSym.getOverlapSpan());
+						requestSym.setProperty("method", uri.toString());
+						SymLoader.addToRequestSym(results, requestSym, QuickLoad.this.uri, QuickLoad.this.featureName, requestSym.getOverlapSpan());
 						if (strategy == LoadStrategy.CHROMOSOME || strategy == LoadStrategy.VISIBLE) {
 							SymLoader.addAnnotations(results, requestSym, seq);
 						} else if (strategy == LoadStrategy.GENOME) {

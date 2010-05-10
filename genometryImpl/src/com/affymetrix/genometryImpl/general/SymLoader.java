@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader {
-	protected final URI uri;
+	public final URI uri;
 	protected final String extension;	// used for ServerUtils call
 	protected volatile boolean isInitialized = false;
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();

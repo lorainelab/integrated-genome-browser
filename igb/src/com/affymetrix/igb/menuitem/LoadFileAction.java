@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.FishClonesParser;
@@ -210,6 +211,24 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup) {
+		// Make sure this URI is not already used within the group.  Otherwise there could be collisions in BioSeq.addAnnotations(type)
+		boolean uniqueURI = true;
+		for (GenericVersion version : loadGroup.getAllVersions()) {
+			// See if symloader feature was created with the same uri.
+			for (GenericFeature feature : version.getFeatures()) {
+				if (feature.symL != null) {
+					if (feature.symL.uri.equals(uri)) {
+						uniqueURI = false;
+						break;
+					}
+				}
+			}
+		}
+		if (!uniqueURI) {
+			ErrorHandler.errorPanel("Cannot add same feature",
+					"The feature " + uri + " has already been added.");
+			return;
+		}
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
 

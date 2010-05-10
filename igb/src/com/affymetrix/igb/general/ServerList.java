@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -369,7 +370,10 @@ public final class ServerList {
 	}
 	public static void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate) {
 		if (status == ServerStatus.NotResponding) {
-				GeneralLoadUtils.removeServer(server);
+			GeneralLoadUtils.removeServer(server);
+			if (server.serverType != ServerType.LocalFiles) {
+				Application.getSingleton().removeNotLockedUpMsg("Loading server " + server + " (" + server.serverType.toString() + ")");
+			}
 		}
 
 		if (forceUpdate || server.getServerStatus() != status) {

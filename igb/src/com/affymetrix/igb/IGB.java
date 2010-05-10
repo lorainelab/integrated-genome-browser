@@ -94,7 +94,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JCheckBoxMenuItem toggle_hairline_label_item;
 	private JCheckBoxMenuItem toggle_edge_matching_item;
 	private JMenuItem move_tab_to_window_item;
 	private JMenuItem move_tabbed_panel_to_window_item;
@@ -353,14 +352,6 @@ public final class IGB extends Application
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 
-		toggle_hairline_label_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleHairlineLabel"));
-		toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
-		boolean use_hairline_label = PreferenceUtils.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, true);
-		if (map_view.isHairlineLabeled() != use_hairline_label) {
-			map_view.toggleHairlineLabel();
-		}
-		toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
-
 		toggle_edge_matching_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleEdgeMatching"));
 		toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
 		toggle_edge_matching_item.setState(map_view.getEdgeMatching());
@@ -381,7 +372,6 @@ public final class IGB extends Application
 
 		toggle_edge_matching_item.addActionListener(this);
 
-		toggle_hairline_label_item.addActionListener(this);
 		move_tab_to_window_item.addActionListener(this);
 		move_tabbed_panel_to_window_item.addActionListener(this);
 
@@ -516,7 +506,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new ClampViewAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new UnclampViewAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ShrinkWrapAction.getAction()));
-		MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
+		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
 		MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
 	}
@@ -605,11 +595,6 @@ public final class IGB extends Application
 		if (src == toggle_edge_matching_item) {
 			map_view.setEdgeMatching(!map_view.getEdgeMatching());
 			toggle_edge_matching_item.setState(map_view.getEdgeMatching());
-		} else if (src == toggle_hairline_label_item) {
-			map_view.toggleHairlineLabel();
-			boolean b = map_view.isHairlineLabeled();
-			toggle_hairline_label_item.setState(b);
-			PreferenceUtils.getTopNode().putBoolean(SeqMapView.PREF_HAIRLINE_LABELED, b);
 		} else if (src == move_tab_to_window_item) {
 			openTabInNewWindow(tab_pane);
 		} else if (src == move_tabbed_panel_to_window_item) {

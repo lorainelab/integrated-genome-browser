@@ -77,6 +77,7 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
+import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -1825,8 +1826,11 @@ public class SeqMapView extends JPanel
 		seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, y);
 	}
 
-	/** Toggles the hairline between labeled/unlabeled and returns true
-	 *  if it ends sup labeled.
+	/**
+	 * Toggles the hairline between labeled/unlabeled and returns true
+	 * if it ends up labeled.
+	 *
+	 * @return true if hairline is labelled
 	 */
 	public final boolean toggleHairlineLabel() {
 		hairline_is_labeled = !hairline_is_labeled;
@@ -1835,6 +1839,7 @@ public class SeqMapView extends JPanel
 			s.setLabeled(hairline_is_labeled);
 			seqmap.updateWidget();
 		}
+		ToggleHairlineLabelAction.getAction().putValue(Action.SELECTED_KEY, hairline_is_labeled);
 		return hairline_is_labeled;
 	}
 

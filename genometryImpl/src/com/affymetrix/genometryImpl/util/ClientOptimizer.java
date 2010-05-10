@@ -17,6 +17,7 @@ import java.net.URI;
 import java.util.logging.Logger;
 
 public class ClientOptimizer {
+	private static boolean DEBUG = false;
     public static void OptimizeQuery(
 			BioSeq aseq, URI typeid,
 			Das2Type type, String typeName, List<FeatureRequestSym> output_requests, FeatureRequestSym request_sym) {
@@ -77,7 +78,9 @@ public class ClientOptimizer {
         }
 
         SeqSpan split_query_span = split_query.getSpan(aseq);
-        Logger.getLogger(ClientOptimizer.class.getName()).fine("split query: " + SeqUtils.symToString(split_query));
+		if (DEBUG) {
+			Logger.getLogger(ClientOptimizer.class.getName()).fine("split query: " + SeqUtils.spanToString(split_query_span));
+		}
         // figure out min/max within bounds based on location of previous queries relative to new query
         int first_within_min;
         int last_within_max;
@@ -130,7 +133,9 @@ public class ClientOptimizer {
                 cur_within_max = ospan.getMax();
             }
             SeqSpan ispan = new SimpleSeqSpan(cur_within_min, cur_within_max, aseq);
-            Logger.getLogger(ClientOptimizer.class.getName()).fine("new request: " + SeqUtils.spanToString(ispan));
+			if (DEBUG) {
+				Logger.getLogger(ClientOptimizer.class.getName()).fine("new inside span: " + SeqUtils.spanToString(ispan));
+			}
 			FeatureRequestSym new_request = null;
 			if (region == null) {
 				new_request = new FeatureRequestSym(ospan, ispan);

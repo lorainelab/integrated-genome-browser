@@ -53,6 +53,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
  *   4. full persistent caching based on (2)
  */
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import java.util.logging.Logger;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -107,9 +108,9 @@ public final class Das2ClientOptimizer {
         SeqSpan inside_span = request_sym.getInsideSpan();
         String overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
         String inside_filter = inside_span == null ? null : Das2FeatureSaxParser.getRangeString(inside_span, false);
-       
+
         if (DEBUG) {
-            System.out.println("^^^^^^^  in Das2ClientOptimizer.optimizedLoadFeatures(), overlap = " + overlap_filter +
+            Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("overlap = " + overlap_filter +
                     ", inside = " + inside_filter);
         }
         Das2Type type = request_sym.getDas2Type();
@@ -128,8 +129,8 @@ public final class Das2ClientOptimizer {
         String request_root = featcap.getRootURI().toString();
 
         if (DEBUG) {
-            System.out.println("   request root: " + request_root);
-            System.out.println("   preferred format: " + format);
+            Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("   request root: " + request_root);
+            Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("   preferred format: " + format);
         }
 
         try {
@@ -141,9 +142,9 @@ public final class Das2ClientOptimizer {
 
             String feature_query = request_root + "?" + query_part;
             if (DEBUG) {
-                System.out.println("feature query URL:  " + feature_query);
-                System.out.println("url-encoded query URL:  " + URLEncoder.encode(feature_query, Constants.UTF8));
-                System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, Constants.UTF8));
+                Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("feature query URL:  " + feature_query);
+                Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("url-encoded query URL:  " + URLEncoder.encode(feature_query, Constants.UTF8));
+                Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("url-decoded query:  " + URLDecoder.decode(feature_query, Constants.UTF8));
             }
 			LoadFeaturesFromQuery(
 					overlap_span, aseq, feature_query, format, seq_group, type, request_sym);

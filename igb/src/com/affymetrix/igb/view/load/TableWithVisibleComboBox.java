@@ -27,7 +27,7 @@ import javax.swing.table.TableRowSorter;
  */
 public final class TableWithVisibleComboBox {
 	private static TableRowSorter<FeaturesTableModel> sorter;
-	static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
+	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
   
 	/**
 	 * Set the columm to use the ComboBox DAScb and renderer (which also depends on the row/server type)
@@ -54,11 +54,6 @@ public final class TableWithVisibleComboBox {
 		DAScb.setEnabled(enabled);
 		DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
 
-		JComboBox LocalFilecb = new JComboBox(FeaturesTableModel.newFileLoadChoices);
-		LocalFilecb.setRenderer(comboRenderer);
-		LocalFilecb.setEnabled(true);
-		DefaultCellEditor LocalFileeditor = new DefaultCellEditor(LocalFilecb);
-
 		for (int row = 0; row < featureSize; row++) {
 			GenericFeature gFeature = ftm.features.get(row);
 			SymLoader symL = gFeature.symL;
@@ -74,10 +69,8 @@ public final class TableWithVisibleComboBox {
 			ServerType serverType = gFeature.gVersion.gServer.serverType;
 			if (serverType == ServerType.DAS || serverType == ServerType.DAS2) {
 				rm.addEditorForRow(row, DASeditor);
-			} else if (serverType == ServerType.LocalFiles) {
-				rm.addEditorForRow(row, LocalFileeditor);
 			} else {
-				System.out.println("ERROR: Undefined class " + serverType);
+				System.out.println("ERROR: Unexpected class " + serverType);
 			}
 		}
 

@@ -19,20 +19,14 @@ import javax.swing.table.AbstractTableModel;
  * Model for table of features.
  */
 public final class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
-	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
-	//Turn off "Load Status" for now.
 	private static final String[] columnNames = { "Choose Load Mode", "Data Set","Data Source"};
 	static final String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
-	static final String[] quickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.GENOME.toString()};
-	static final String[] newQuickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
-	static final String[] newFileLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString(), LoadStrategy.GENOME.toString()};
 
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int LOAD_STRATEGY_COLUMN = 0;
 	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
 	//private static final int SERVER_TYPE_COLUMN = 3;
-	//private static final int LOAD_STATUS_COLUMN = 4;
 	final List<GenericFeature> features;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
@@ -138,11 +132,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 			/*case SERVER_TYPE_COLUMN:
 				// return the server type
 				serverType = gFeature.gVersion.gServer.serverType;
-				return serverType.toString();
-			case LOAD_STATUS_COLUMN:
-				// return the load status
-				LoadStatus ls = gFeature.LoadStatusMap.get(this.cur_seq);
-				return this.LoadStatusMap.get(ls);*/
+				return serverType.toString();*/
 			default:
 				System.out.println("Shouldn't reach here: " + row + " " + col);
 				return null;

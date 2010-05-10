@@ -168,49 +168,52 @@ public final class QuickLoad extends SymLoader {
 			return loadResiduesThread(strategy, overlapSpan, seq, gviewer, vexec);
 		}
 
-		List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
-		if (strategy == LoadStrategy.GENOME) {
-			for (BioSeq aseq : QuickLoad.this.version.group.getSeqList()) {
-				if (aseq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
-					continue;
-				}
-				SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-				FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
-				ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
-			}
-		} else {
-			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
-			ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
-		}
-		if (output_requests.isEmpty()) {
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
-			return true;
-		}
-		boolean result = true;
-		for (FeatureRequestSym request : output_requests) {
-			// short-circuit if there's a failure... which may not even be signaled in the code
-			result = result && loadSymmetriesThread(strategy, request, gviewer, vexec);
-		}
-		return result;
+		return loadSymmetriesThread(strategy, overlapSpan, gviewer, vexec);
 
 	}
 
 	private boolean loadSymmetriesThread(
-			final LoadStrategy strategy, final FeatureRequestSym requestSym, final SeqMapView gviewer, Executor vexec)
+			final LoadStrategy strategy, final SeqSpan overlapSpan, final SeqMapView gviewer, Executor vexec)
 			throws OutOfMemoryError {
 
 		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					List<? extends SeqSymmetry> results = loadFeature(strategy, requestSym.getOverlapSpan());
-					results = ServerUtils.filterForOverlappingSymmetries(requestSym.getOverlapSpan(), results);
-					if (results != null && !results.isEmpty()) {
-						requestSym.setProperty("method", uri.toString());
-						SymLoader.addToRequestSym(results, requestSym, QuickLoad.this.uri, QuickLoad.this.featureName, requestSym.getOverlapSpan());
-						SymLoader.addAnnotations(results, requestSym, requestSym.getOverlapSpan().getBioSeq());
+					List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
+					if (strategy == LoadStrategy.GENOME) {
+						for (BioSeq aseq : QuickLoad.this.version.group.getSeqList()) {
+							if (aseq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
+								continue;
+							}
+							SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+							FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
+							ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
+						}
+					} else {
+						FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
+						ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
 					}
-					return results;
+					if (output_requests.isEmpty()) {
+						return null;
+					}
+					List<? extends SeqSymmetry> results;
+					List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
+					for (FeatureRequestSym request : output_requests) {
+						// short-circuit if there's a failure... which may not even be signaled in the code
+						results = loadFeature(strategy, request.getOverlapSpan());
+						results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
+						if (request.getInsideSpan() != null) {
+							results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
+						}
+						if (results != null && !results.isEmpty()) {
+							request.setProperty("method", uri.toString());
+							SymLoader.addToRequestSym(results, request, QuickLoad.this.uri, QuickLoad.this.featureName, request.getOverlapSpan());
+							SymLoader.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
+						}
+						overallResults.addAll(results);
+					}
+					return overallResults;
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -222,7 +225,7 @@ public final class QuickLoad extends SymLoader {
 				try {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
-						gviewer.setAnnotatedSeq(requestSym.getOverlapSpan().getBioSeq(), true, true);
+						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
 						//SeqGroupView.refreshTable();
 					}
 				} catch (Exception ex) {

@@ -680,7 +680,9 @@ public abstract class ServerUtils {
 				result.add(sym);
 			}
 		}
-		System.out.println("  overlapping annotations that passed inside_span constraints: " + result.size());
+		if (DEBUG) {
+			System.out.println("  overlapping annotations that passed inside_span constraints: " + result.size());
+		}
 		return result;
 	}
 

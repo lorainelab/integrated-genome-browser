@@ -17,20 +17,20 @@ public abstract class Application {
 	protected final StatusBar status_bar;
 	private final Set<String> progressStringList = new LinkedHashSet<String>(); // list of progress bar messages.
 	static Application singleton = null;
-	private final Map<Class, IPlugin> plugin_hash = new HashMap<Class, IPlugin>();
+	private final Map<Class<?>, IPlugin> plugin_hash = new HashMap<Class<?>, IPlugin>();
 
 	public Application() {
 		singleton = this;
 		status_bar = new StatusBar();
 	}
 
-	public void setPluginInstance(Class c, IPlugin plugin) {
+	public void setPluginInstance(Class<?> c, IPlugin plugin) {
 		plugin_hash.put(c, plugin);
 		plugin.putPluginProperty(IPlugin.TEXT_KEY_APP, this);
 		plugin.putPluginProperty(IPlugin.TEXT_KEY_SEQ_MAP_VIEW, this.getMapView());
 	}
 
-	public IPlugin getPluginInstance(Class c) {
+	public IPlugin getPluginInstance(Class<?> c) {
 		return plugin_hash.get(c);
 	}
 

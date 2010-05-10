@@ -580,7 +580,7 @@ public final class IGB extends Application
 	}
 
 	@Override
-	public void setPluginInstance(Class c, IPlugin plugin) {
+	public void setPluginInstance(Class<?> c, IPlugin plugin) {
 		super.setPluginInstance(c, plugin);
 		if (c.equals(BookmarkManagerView.class)) {
 			bmark_action.setBookmarkManager((BookmarkManagerView) plugin);

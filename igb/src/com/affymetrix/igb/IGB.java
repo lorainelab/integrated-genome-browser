@@ -78,7 +78,6 @@ public final class IGB extends Application
 	static IGB singleton_igb;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static String[] main_args;
 	private static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
 	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
 	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
@@ -165,8 +164,6 @@ public final class IGB extends Application
 
 			System.out.println();
 
-			main_args = args;
-
 			String offline = get_arg("-offline", args);
 			if (offline != null) {
 				LocalUrlCacher.setOffLine("true".equals(offline));
@@ -174,9 +171,9 @@ public final class IGB extends Application
 
 			singleton_igb = new IGB();
 
-			PrefsLoader.loadIGBPrefs(main_args); // force loading of prefs
+			PrefsLoader.loadIGBPrefs(args); // force loading of prefs
 
-			singleton_igb.init();
+			singleton_igb.init(args);
 
 			goToBookmark(args);
 
@@ -280,7 +277,7 @@ public final class IGB extends Application
 		}
 	}
 
-	private void init() {
+	private void init(String[] args) {
 		loadSynonyms("/synonyms.txt");
 		loadSynonyms("/chromosomes.txt");
 
@@ -302,7 +299,7 @@ public final class IGB extends Application
 		// usually since IGB.main() is called first, prefs will have already been loaded
 		//   via loadIGBPrefs() call in main().  But if for some reason an IGB instance
 		//   is created without call to main(), will force loading of prefs here...
-		PrefsLoader.loadIGBPrefs(main_args);
+		PrefsLoader.loadIGBPrefs(args);
 
 		StateProvider stateProvider = new IGBStateProvider();
 		DefaultStateProvider.setGlobalStateProvider(stateProvider);

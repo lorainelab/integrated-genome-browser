@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.das2.Das2ClientOptimizer;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -40,6 +39,7 @@ import com.affymetrix.genometryImpl.symloader.Sgr;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.symloader.USeq;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
+import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -164,7 +164,7 @@ public final class QuickLoad extends SymLoader {
 		if (!this.isResidueLoader) {
 			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
 			List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
-			Das2ClientOptimizer.OptimizeQuery(seq, featureName, null, featureName, output_requests, requestSym);
+			ClientOptimizer.OptimizeQuery(seq, featureName, null, featureName, output_requests, requestSym);
 			if (output_requests.isEmpty()) {
 				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
 				return true;

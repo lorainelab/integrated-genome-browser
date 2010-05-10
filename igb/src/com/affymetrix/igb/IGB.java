@@ -60,7 +60,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
-import java.util.prefs.Preferences;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
@@ -95,7 +94,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JCheckBoxMenuItem shrink_wrap_item;
 	private JCheckBoxMenuItem toggle_hairline_label_item;
 	private JCheckBoxMenuItem toggle_edge_matching_item;
 	private JMenuItem move_tab_to_window_item;
@@ -355,10 +353,6 @@ public final class IGB extends Application
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 
-		shrink_wrap_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleShrinkWrapping"));
-		shrink_wrap_item.setMnemonic(KeyEvent.VK_S);
-		shrink_wrap_item.setState(map_view.getShrinkWrap());
-
 		toggle_hairline_label_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleHairlineLabel"));
 		toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
 		boolean use_hairline_label = PreferenceUtils.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, true);
@@ -387,7 +381,6 @@ public final class IGB extends Application
 
 		toggle_edge_matching_item.addActionListener(this);
 
-		shrink_wrap_item.addActionListener(this);
 		toggle_hairline_label_item.addActionListener(this);
 		move_tab_to_window_item.addActionListener(this);
 		move_tabbed_panel_to_window_item.addActionListener(this);
@@ -522,7 +515,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new AdjustEdgeMatchAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new ClampViewAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new UnclampViewAction()));
-		MenuUtil.addToMenu(view_menu, shrink_wrap_item);
+		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ShrinkWrapAction.getAction()));
 		MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
 		MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
 		MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
@@ -612,12 +605,6 @@ public final class IGB extends Application
 		if (src == toggle_edge_matching_item) {
 			map_view.setEdgeMatching(!map_view.getEdgeMatching());
 			toggle_edge_matching_item.setState(map_view.getEdgeMatching());
-		} else if (src == shrink_wrap_item) {
-			if (DEBUG_EVENTS) {
-				System.out.println("trying to toggle map bounds shrink wrapping to extent of annotations");
-			}
-			map_view.setShrinkWrap(!map_view.getShrinkWrap());
-			shrink_wrap_item.setState(map_view.getShrinkWrap());
 		} else if (src == toggle_hairline_label_item) {
 			map_view.toggleHairlineLabel();
 			boolean b = map_view.isHairlineLabeled();

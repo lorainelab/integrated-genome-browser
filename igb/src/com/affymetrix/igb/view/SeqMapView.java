@@ -76,6 +76,7 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.RefreshDataAction;
+import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -1762,6 +1763,7 @@ public class SeqMapView extends JPanel
 	public final void setShrinkWrap(boolean b) {
 		SHRINK_WRAP_MAP_BOUNDS = b;
 		setAnnotatedSeq(aseq);
+		ShrinkWrapAction.getAction().putValue(Action.SELECTED_KEY, b);
 	}
 
 	public final boolean getShrinkWrap() {

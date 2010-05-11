@@ -58,7 +58,7 @@ public final class ChpParser {
 	private static final boolean DEBUG = false;
 	private static boolean reader_registered = false;
 
-	public static List<? extends SeqSymmetry> parse(String file_name) throws IOException {
+	public static List<? extends SeqSymmetry> parse(String file_name, boolean annotate_seq) throws IOException {
 		List<? extends SeqSymmetry> results = null;
 		if (!(reader_registered)) {
 			FusionCHPTilingData.registerReader();
@@ -75,9 +75,7 @@ public final class ChpParser {
 			return null;
 		}
 
-		AffymetrixGuidType chp_type = chp.getFileTypeIdentifier();
-		String chp_type_name = chp_type.getGuid();
-		System.out.println("CHP file type guid: " + chp_type_name);
+		System.out.println("CHP file type guid: " + chp.getFileTypeIdentifier().getGuid());
 
 		// The following function will determine if the CHP file read contains "legacy" format data. This
 		// can be either a GCOS/XDA file or a Command Console file. The "legacy" format data is that
@@ -107,15 +105,15 @@ public final class ChpParser {
 		/** expression CHP file (gene or WTA), without detection */
 		if ((qchp = FusionCHPQuantificationData.fromBase(chp)) != null) {
 			System.out.println("CHP file is for expression array, without detection info: " + qchp);
-			results = parseQuantChp(qchp);
+			results = parseQuantChp(qchp, annotate_seq);
 		} /** expression CHP file (gene or WTA), with detection */
 		else if ((qdchp = FusionCHPQuantificationDetectionData.fromBase(chp)) != null) {
 			System.out.println("CHP file is for expression array, with detection info: " + qdchp);
-			results = parseQuantDetectChp(qdchp);
+			results = parseQuantDetectChp(qdchp, annotate_seq);
 		} /** tiling CHP file */
 		else if ((tilechp = FusionCHPTilingData.fromBase(chp)) != null) {
 			System.out.println("CHP file is for tiling array: " + tilechp);
-			results = parseTilingChp(tilechp, true, true);
+			results = parseTilingChp(tilechp, annotate_seq, true);
 			has_coord_data = true;
 		} /** legacy data */
 		else if ((legchp = FusionCHPLegacyData.fromBase(chp)) != null) {
@@ -154,7 +152,8 @@ public final class ChpParser {
 	 *     and match by id to associate locations with the probeset results.
 	 *
 	 */
-	private static List<LazyChpSym> makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data, List int_entries) {
+	private static List<LazyChpSym> makeLazyChpSyms(
+			String file_name, String chp_array_type, Map id2data, Map name2data, List int_entries, boolean annotate_seq) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
@@ -197,7 +196,9 @@ public final class ChpParser {
 				chp_sym.setProperty("method", type_name);
 				chp_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 				chp_sym.setID(type_name);
-				aseq.addAnnotation(chp_sym);
+				if (annotate_seq) {
+					aseq.addAnnotation(chp_sym);
+				}
 				results.add(chp_sym);
 			}
 		}
@@ -205,7 +206,7 @@ public final class ChpParser {
 	}
 
 	/** same as parseQuantChp, but adding detection/pval */
-	private static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
+	private static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp, boolean annotate_seq) {
 		List<LazyChpSym> results = null;
 		String file_name = chp.getFileName();
 		String algName = chp.getAlgName();
@@ -262,7 +263,7 @@ public final class ChpParser {
 			System.out.println("Probsets with integer id: " + int_id_count);
 			System.out.println("Probsets with string id: " + str_id_count);
 			System.out.println("done parsing quantification + detection CHP file");
-			results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null, int_entries);
+			results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null, int_entries, annotate_seq);
 		} else {
 			System.out.println("CHP quantification/detection data is not for exon chip, "
 					+ "falling back on older method for handling expression CHP files");
@@ -271,7 +272,7 @@ public final class ChpParser {
 		return results;
 	}
 
-	private static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp) {
+	private static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) {
 		List<LazyChpSym> results = null;
 		String file_name = chp.getFileName();
 		String algName = chp.getAlgName();
@@ -325,11 +326,11 @@ public final class ChpParser {
 			System.out.println("Probsets with integer id: " + int_id_count);
 			System.out.println("Probsets with string id: " + str_id_count);
 			System.out.println("done parsing quantification CHP file");
-			results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null, int_entries);
+			results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null, int_entries, annotate_seq);
 		} else {
 			System.out.println("CHP quantification data is not for exon chip, "
 					+ "falling back on older method for handling expression CHP files");
-			results = oldParseQuantChp(chp);
+			results = oldParseQuantChp(chp, annotate_seq);
 		}
 		return results;
 	}
@@ -341,7 +342,7 @@ public final class ChpParser {
 	 *  class) stores an "id" for Exon results and "name" for 3' IVT results. The "name" property will be
 	 *  empty for Exon results.
 	 */
-	private static List<LazyChpSym> oldParseQuantChp(FusionCHPQuantificationData chp) {
+	private static List<LazyChpSym> oldParseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
@@ -401,7 +402,7 @@ public final class ChpParser {
 				syms.clear();
 			}
 		} else {  // 3' IVT results, so try to match up names of probesets with ids already seen
-			ArrayList<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 			for (int i = 0; i < ps_count; i++) {
 				psqData = chp.getQuantificationEntry(i);
 				float val = psqData.getQuantification();
@@ -476,7 +477,9 @@ public final class ChpParser {
 			}
 			container.addScores("probeset scores: " + type_name, scores);
 			container.setID(type_name);
-			aseq.addAnnotation(container);
+			if (annotate_seq) {
+				aseq.addAnnotation(container);
+			}
 		}
 
 		System.out.println("done parsing quantification data CHP file");

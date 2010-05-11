@@ -345,7 +345,7 @@ public final class QuickLoad extends SymLoader {
 				// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
 				// Also cannot handle compressed chp files
 				File f = LocalUrlCacher.convertURIToFile(this.uri);
-				return ChpParser.parse(f.getAbsolutePath());
+				return ChpParser.parse(f.getAbsolutePath(), false);
 			}
 			BufferedInputStream bis = null;
 			try {

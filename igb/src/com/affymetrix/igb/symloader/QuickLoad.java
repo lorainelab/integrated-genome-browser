@@ -181,8 +181,8 @@ public final class QuickLoad extends SymLoader {
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
 					List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
-					if (strategy == LoadStrategy.GENOME) {
-						for (BioSeq aseq : QuickLoad.this.version.group.getSeqList()) {
+					if (strategy == LoadStrategy.GENOME && QuickLoad.this.symL != null) {
+						for (BioSeq aseq : QuickLoad.this.symL.getChromosomeList()) {
 							if (aseq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
 								continue;
 							}
@@ -252,6 +252,10 @@ public final class QuickLoad extends SymLoader {
 		if (style != null) {
 			style.setHumanName(featureName);
 		}
+		if (strategy == LoadStrategy.GENOME && this.symL == null) {
+			// no symloader... only option is whole genome.
+			return this.getGenome();
+		}
 		if (strategy == LoadStrategy.GENOME || strategy == LoadStrategy.CHROMOSOME) {
 			return this.getChromosome(overlapSpan.getBioSeq());
 		}
@@ -307,9 +311,14 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
+	/**
+	 * Only used for non-symloader files.
+	 * @return
+	 */
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
 		if (this.symL != null) {
+			Logger.getLogger(QuickLoad.class.getName()).severe("Should not get genome here");
 			return this.symL.getGenome();
 		}
 

@@ -441,6 +441,16 @@ public class SeqMapView extends JPanel
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 	}
 
+	private void removeGraphsFromSeq(BioSeq mseq) {
+		int acount = mseq.getAnnotationCount();
+		for (int i = acount - 1; i >= 0; i--) {
+			SeqSymmetry annot = mseq.getAnnotation(i);
+			if (annot instanceof GraphSym) {
+				mseq.removeAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
+			}
+		}
+	}
+
 	public final class SeqMapViewComponentListener extends ComponentAdapter {
 		// update graphs and annotations when the map is resized.
 
@@ -755,14 +765,14 @@ public class SeqMapView extends JPanel
 	 */
 	public final void clearGraphs() {
 		if (aseq != null) {
-			BioSeq mseq = aseq;
-			int acount = mseq.getAnnotationCount();
-			for (int i = acount - 1; i >= 0; i--) {
-				SeqSymmetry annot = mseq.getAnnotation(i);
-				if (annot instanceof GraphSym) {
-					mseq.removeAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
+			if (IGBConstants.GENOME_SEQ_ID.equals(aseq.getID())) {
+				// clear graphs for all sequences in the genome
+				for (BioSeq seq : aseq.getSeqGroup().getSeqList()) {
+					removeGraphsFromSeq(seq);
 				}
 			}
+			BioSeq mseq = aseq;
+			removeGraphsFromSeq(mseq);
 		} else {
 			System.err.println("Current annotated seq is not mutable, cannot call SeqMapView.clearGraphs()!");
 		}

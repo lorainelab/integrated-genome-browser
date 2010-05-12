@@ -74,7 +74,8 @@ public class TierGlyph extends SolidGlyph {
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	private IAnnotStyle style;
-
+	private String parentURL;
+	
 	public TierGlyph(IAnnotStyle style) {
 		setHitable(false);
 		setSpacer(spacer);
@@ -539,5 +540,13 @@ public class TierGlyph extends SolidGlyph {
 	@Override
 	protected void drawSelectedReverse(ViewI view) {
 		this.drawSelectedOutline(view);
+	}
+
+	public String getParentURL(){
+		return parentURL;
+	}
+
+	public void setParentURL(String str){
+		parentURL = str;
 	}
 }

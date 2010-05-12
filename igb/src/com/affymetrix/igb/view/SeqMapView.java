@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
@@ -45,6 +46,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.igb.glyph.EfficientPaintRectGlyph;
@@ -80,6 +82,7 @@ import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.tiers.MouseShortCut;
+import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -92,6 +95,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.prefs.*;
 import java.util.regex.Pattern;
@@ -178,6 +182,8 @@ public class SeqMapView extends JPanel
 	private final Map<String, TierGlyph> method2ftier = new HashMap<String, TierGlyph>();
 	/** Hash of method names (lower case) to reverse tiers */
 	private final Map<String, TierGlyph> method2rtier = new HashMap<String, TierGlyph>();
+	/** Hash of TierGlyph to GraphSym for summary */
+	private final Map<TierGlyph, GraphSym> summary_list = new HashMap<TierGlyph, GraphSym>();
 	/** Hash of GraphStates to TierGlyphs. */
 	private final Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
 	//Map gstyle2floatTier = new HashMap();
@@ -746,6 +752,7 @@ public class SeqMapView extends JPanel
 		method2ftier.clear();
 		gstyle2tier.clear();
 		match_glyphs.clear();
+		summary_list.clear();
 		seqmap.updateWidget();
 	}
 
@@ -894,7 +901,7 @@ public class SeqMapView extends JPanel
 			}
 
 			seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
-
+			updateSummariesData();
 			addGlyphs(temp_tiers, axis_index);
 		}
 
@@ -963,6 +970,7 @@ public class SeqMapView extends JPanel
 			setZoomSpotX(0.5 * (range[0] + range[1]));
 		}
 		seqmap.updateWidget();
+		updateSummariesStyle();
 	}
 
 
@@ -2220,7 +2228,7 @@ public class SeqMapView extends JPanel
 	public final TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style, boolean constant_heights) {
 		if (style == null) {
 			throw new NullPointerException();
-		}
+		}		
 		AffyTieredMap map = this.getSeqMap();
 
 		// try to match up method with tiers...
@@ -2234,6 +2242,7 @@ public class SeqMapView extends JPanel
 		TierGlyph axis_tier = this.getAxisTier();
 		if (fortier == null) {
 			fortier = new TierGlyph(style);
+			fortier.setParentURL(meth);
 			setUpTierPacker(fortier, true, constant_heights);
 			method2ftier.put(meth.toLowerCase(), fortier);
 		}
@@ -2256,6 +2265,7 @@ public class SeqMapView extends JPanel
 
 		if (revtier == null) {
 			revtier = new TierGlyph(style);
+			revtier.setParentURL(meth);
 			revtier.setDirection(TierGlyph.Direction.REVERSE);
 			setUpTierPacker(revtier, false, constant_heights);
 			method2rtier.put(meth.toLowerCase(), revtier);
@@ -2327,5 +2337,45 @@ public class SeqMapView extends JPanel
 	public final SeqSpan getViewSeqSpan(SeqSymmetry sym) {
 		return sym.getSpan(viewseq);
 	}
+	
+	public final void addToSummaryList(TierGlyph atier, GraphSym gsym){
+		summary_list.put(atier, gsym);
+	}
+
+	private final void updateSummariesData(){
+		for(Entry<TierGlyph, GraphSym> entry : summary_list.entrySet()){
+			TierGlyph atier = entry.getKey();
+			String name = atier.getParentURL();
+			Direction direction = atier.getDirection();
+
+			SeqSymmetry sym = aseq.getAnnotation(name);
+			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+			syms.add(sym);
+			BioSeq seq = gmodel.getSelectedSeq();
+			String graphid = "summary: " + atier.getLabel();
+			GraphSym gsym = null;
+			if(direction == Direction.FORWARD || direction == Direction.REVERSE){
+				Boolean isForward = direction == Direction.FORWARD ? true : false;
+				gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, graphid, isForward);
+			}else
+				gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, graphid);
+
+			gsym.setGraphName("depth: " + atier.getLabel());
+			seq.addAnnotation(gsym);
+			seq.removeAnnotation(entry.getValue());
+			entry.setValue(gsym);
+		}
+	}
+
+	private final void updateSummariesStyle(){
+		for(Entry<TierGlyph, GraphSym> entry : summary_list.entrySet()){
+			TierGlyph atier = entry.getKey();
+			GraphSym gsym = entry.getValue();
+			GraphGlyph gl = (GraphGlyph)getSeqMap().getItem(gsym);
+			gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
+			gl.setColor(atier.getForegroundColor());
+		}
+	}
+
 }
 

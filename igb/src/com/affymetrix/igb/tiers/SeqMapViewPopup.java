@@ -37,6 +37,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
+import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
@@ -556,16 +557,19 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         "The selected tier is empty. It contains nothing to summarize");
       return;
     }
-
+	
     BioSeq aseq = gmodel.getSelectedSeq();
     String graphid = "summary: " + atier.getLabel();
     GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, graphid);
-    gsym.setGraphName("depth: " + atier.getLabel());
-    aseq.addAnnotation(gsym);
-    gviewer.setAnnotatedSeq(aseq, true, true);
-    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
-    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-    gl.setColor(atier.getForegroundColor());
+//    gsym.setGraphName("depth: " + atier.getLabel());
+//    aseq.addAnnotation(gsym);
+//    gviewer.setAnnotatedSeq(aseq, true, true);
+//    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
+//    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
+//    gl.setColor(atier.getForegroundColor());
+
+	gviewer.addToSummaryList(atier, gsym);
+	gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
   void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {

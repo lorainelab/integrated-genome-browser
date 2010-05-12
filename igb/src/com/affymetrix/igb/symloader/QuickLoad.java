@@ -9,13 +9,10 @@ import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
@@ -25,11 +22,9 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
@@ -43,7 +38,7 @@ import javax.swing.SwingWorker;
 public final class QuickLoad extends SymLoader {
 	private final GenericVersion version;
 	public final String featureName;
-	private SymLoader symL;	// parser factorys
+	private SymLoader symL;	// parser factory
 
 	public QuickLoad(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName));
@@ -152,7 +147,8 @@ public final class QuickLoad extends SymLoader {
 					if (output_requests.isEmpty()) {
 						return null;
 					}
-					List<SeqSymmetry> overallResults = loadAndAddSymmetries(strategy, output_requests);
+					List<SeqSymmetry> overallResults = loadAndAddSymmetries(
+							QuickLoad.this.symL, QuickLoad.this.featureName, strategy, output_requests);
 					return overallResults;
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -179,55 +175,6 @@ public final class QuickLoad extends SymLoader {
 		return true;
 	}
 
-	private List<SeqSymmetry> loadAndAddSymmetries(LoadStrategy strategy, List<FeatureRequestSym> output_requests) throws IOException, OutOfMemoryError {
-		if (output_requests.isEmpty()) {
-			return null;
-		}
-		
-		List<? extends SeqSymmetry> results;
-		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
-		for (FeatureRequestSym request : output_requests) {
-			// short-circuit if there's a failure... which may not even be signaled in the code
-			results = loadFeature(strategy, request.getOverlapSpan());
-			results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
-			if (request.getInsideSpan() != null) {
-				results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
-			}
-			if (results != null && !results.isEmpty()) {
-				request.setProperty("method", this.uri.toString());
-				SymLoader.addToRequestSym(results, request, this.uri, this.featureName, request.getOverlapSpan());
-				SymLoader.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
-			}
-			overallResults.addAll(results);
-		}
-		return overallResults;
-	}
-
-
-	private List<? extends SeqSymmetry> loadFeature(final LoadStrategy strategy, SeqSpan overlapSpan) throws IOException, OutOfMemoryError {
-		if (!this.isInitialized) {
-			this.init();
-		}
-		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString());
-		if (style != null) {
-			style.setHumanName(featureName);
-		}
-		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName);
-		if (style != null) {
-			style.setHumanName(featureName);
-		}
-		if (strategy == LoadStrategy.GENOME && this.symL == null) {
-			// no symloader... only option is whole genome.
-			return this.getGenome();
-		}
-		if (strategy == LoadStrategy.GENOME || strategy == LoadStrategy.CHROMOSOME) {
-			return this.getChromosome(overlapSpan.getBioSeq());
-		}
-		if (strategy == LoadStrategy.VISIBLE) {
-			return this.getRegion(overlapSpan);
-		}
-		return null;
-	}
 
 	public boolean loadResiduesThread(final LoadStrategy strategy, final SeqSpan span, final BioSeq seq, final SeqMapView gviewer, Executor vexec) {
 		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {

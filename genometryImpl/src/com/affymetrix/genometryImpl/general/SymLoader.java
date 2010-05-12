@@ -22,6 +22,8 @@ import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.parsers.graph.CntParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.symloader.BNIB;
@@ -38,8 +40,10 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.ParserController;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -155,6 +159,68 @@ public abstract class SymLoader {
     }
 
 
+	
+
+	/**
+	 * Below are methods normally used by QuickLoad, DAS, DAS/2, etc.
+	 */
+
+
+	protected List<SeqSymmetry> loadAndAddSymmetries(
+			SymLoader symL, String featureName,
+			LoadStrategy strategy, List<FeatureRequestSym> output_requests)
+			throws IOException, OutOfMemoryError {
+		if (output_requests.isEmpty()) {
+			return null;
+		}
+
+		List<? extends SeqSymmetry> results;
+		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
+		for (FeatureRequestSym request : output_requests) {
+			// short-circuit if there's a failure... which may not even be signaled in the code
+			results = loadFeature(symL, featureName, strategy, request.getOverlapSpan());
+			results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
+			if (request.getInsideSpan() != null) {
+				results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
+			}
+			if (results != null && !results.isEmpty()) {
+				request.setProperty("method", this.uri.toString());
+				SymLoader.addToRequestSym(results, request, this.uri, featureName, request.getOverlapSpan());
+				SymLoader.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
+			}
+			overallResults.addAll(results);
+		}
+		return overallResults;
+	}
+
+
+	protected List<? extends SeqSymmetry> loadFeature(
+			SymLoader symL, String featureName, final LoadStrategy strategy, SeqSpan overlapSpan)
+			throws IOException, OutOfMemoryError {
+		if (!this.isInitialized) {
+			this.init();
+		}
+		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString());
+		if (style != null) {
+			style.setHumanName(featureName);
+		}
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName);
+		if (style != null) {
+			style.setHumanName(featureName);
+		}
+		if (strategy == LoadStrategy.GENOME && symL == null) {
+			// no symloader... only option is whole genome.
+			return this.getGenome();
+		}
+		if (strategy == LoadStrategy.GENOME || strategy == LoadStrategy.CHROMOSOME) {
+			return this.getChromosome(overlapSpan.getBioSeq());
+		}
+		if (strategy == LoadStrategy.VISIBLE) {
+			return this.getRegion(overlapSpan);
+		}
+		return null;
+	}
+
 	public static void addToRequestSym(
 			 List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, URI id, String name, SeqSpan overlapSpan) {
         if (feats == null || feats.isEmpty()) {
@@ -216,7 +282,7 @@ public abstract class SymLoader {
 	 * Determine the appropriate loader.
 	 * @return
 	 */
-	protected SymLoader determineLoader(String featureName, GenericVersion version) {
+	protected final SymLoader determineLoader(String featureName, GenericVersion version) {
 		// residue loaders
 		if (this.extension.endsWith(".bnib")) {
 			isResidueLoader = true;

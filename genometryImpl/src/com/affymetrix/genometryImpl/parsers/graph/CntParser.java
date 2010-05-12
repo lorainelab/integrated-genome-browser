@@ -39,7 +39,7 @@ public final class CntParser {
 
 	Map<String, String> unique_gids = new HashMap<String, String>();
 
-	public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
+	public List<GraphSym> parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotateSeq)
 			throws IOException {
 
 		String line;
@@ -51,6 +51,7 @@ public final class CntParser {
 		Matcher tag_val_matcher = tag_val.matcher("");
 		String current_section = "";
 		Map<String, Object> headerData = new HashMap<String, Object>();
+		List<GraphSym> results = new ArrayList<GraphSym>();
 
 
 		// First read the header
@@ -153,9 +154,13 @@ public final class CntParser {
 				}
 				id = getGraphIdForColumn(id, seq_group);
 				GraphSym graf = new GraphSym(x.getInternalArray(), y.copyToArray(), id, seq);
-				seq.addAnnotation(graf);
+				if (annotateSeq) {
+					seq.addAnnotation(graf);
+				}
+				results.add(graf);
 			}
 		}
+		return results;
 
 	}
 

@@ -67,11 +67,15 @@ public class DASFeatureParserTest {
 
 		assertEquals(32, results.size());
 
-		Set<SeqSymmetry> syms = group.findSyms("235371_at.chr3.73089142");
-		assertEquals(1, syms.size());
-		SeqSymmetry s = syms.iterator().next();
-		assertTrue("Result is not a DASSymmetry", s instanceof DASSymmetry);
-		DASSymmetry sym = (DASSymmetry) s;
+		SeqSymmetry newSym = null;
+		for (SeqSymmetry sym: results) {
+			if (sym.getID().equals("235371_at.chr3.73089142")) {
+				newSym = sym;
+			}
+		}
+		assertNotNull(newSym);
+		assertTrue("Result is not a DASSymmetry", newSym instanceof DASSymmetry);
+		DASSymmetry sym = (DASSymmetry) newSym;
 
 		String link = (String) sym.getProperty("link");
 		String linkName = (String) sym.getProperty("link_name");

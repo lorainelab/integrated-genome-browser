@@ -16,12 +16,14 @@ import com.affymetrix.genometryImpl.parsers.BrptParser;
 import com.affymetrix.genometryImpl.parsers.BrsParser;
 import com.affymetrix.genometryImpl.parsers.BsnpParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
 import com.affymetrix.genometryImpl.parsers.FishClonesParser;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.VarParser;
+import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
 import com.affymetrix.genometryImpl.parsers.graph.CntParser;
@@ -68,6 +70,7 @@ import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
+import org.xml.sax.InputSource;
 
 /**
  *
@@ -351,7 +354,7 @@ public final class QuickLoad extends SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				feats = Parse(this.extension, bis, this.version, this.featureName);
+				feats = Parse(this.extension, this.uri, bis, this.version, this.featureName);
 				return feats;
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
@@ -438,7 +441,7 @@ public final class QuickLoad extends SymLoader {
 
 
 	private static List<? extends SeqSymmetry> Parse(
-			String extension, InputStream istr, GenericVersion version, String featureName)
+			String extension, URI uri, InputStream istr, GenericVersion version, String featureName)
 			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
@@ -475,15 +478,22 @@ public final class QuickLoad extends SymLoader {
 			AffyCnChpParser parser = new AffyCnChpParser();
 			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), bis, featureName, version.group);
 			return;
-		}
+		}*/
 		if (extension.equals(".cnt")) {
 			CntParser parser = new CntParser();
-			parser.parse(bis, version.group);
-			return;
-		}*/
+			return parser.parse(bis, version.group, false);
+		}
 		if (extension.equals("cyt")) {
 			CytobandParser parser = new CytobandParser();
 			return parser.parse(bis, version.group, false);
+		}
+		if (extension.equals("das") || extension.equals("dasxml")) {
+			DASFeatureParser parser = new DASFeatureParser();
+			return (List<? extends SeqSymmetry>) parser.parse(bis, version.group);
+		}
+		if (extension.equals("das2xml")) {
+			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+			return parser.parse(new InputSource(bis), uri.toString(), version.group, false);
 		}
 		if (extension.equals("ead")) {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();

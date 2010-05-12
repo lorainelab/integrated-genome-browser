@@ -231,8 +231,6 @@ public final class DASFeatureParser {
 
 		/* Create a new groupSymmetry for ID */
 		DASSymmetry groupSymmetry = new DASSymmetry(group, feature, sequence);
-		sequence.addAnnotation(groupSymmetry);
-		seqGroup.addToIndex(groupSymmetry.getID(), groupSymmetry);
 		groupMap.put(groupSymmetry.getID(), groupSymmetry);
 
 		return groupSymmetry;

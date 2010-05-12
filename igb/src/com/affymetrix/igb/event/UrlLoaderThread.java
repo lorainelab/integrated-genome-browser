@@ -478,7 +478,7 @@ public final class UrlLoaderThread extends Thread {
 		}
 		if (lcname.endsWith(".cnt")) {
 			CntParser parser = new CntParser();
-			parser.parse(str, selected_group);
+			parser.parse(str, selected_group, true);
 			return;
 		}
 		if (lcname.endsWith(".cyt")) {

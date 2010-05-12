@@ -1,11 +1,14 @@
 package com.affymetrix.genometryImpl.general;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
@@ -22,9 +25,13 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.VarParser;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.CntParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
+import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
+import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
+import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
@@ -55,6 +62,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipInputStream;
 import org.xml.sax.InputSource;
 
 /**
@@ -65,7 +73,7 @@ import org.xml.sax.InputSource;
 public abstract class SymLoader {
 	public final URI uri;
 	protected final String extension;	// used for ServerUtils call
-	protected boolean isResidueLoader = false;	// Let other classes know if this is just residues
+	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
 	protected volatile boolean isInitialized = false;
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -282,122 +290,102 @@ public abstract class SymLoader {
 		return output_requests;
 	}
 
-	/**
-	 * Determine the appropriate loader.
-	 * @return
-	 */
-	protected final SymLoader determineLoader(String featureName, GenericVersion version) {
-		// residue loaders
-		if (this.extension.endsWith(".bnib")) {
-			isResidueLoader = true;
-			return new BNIB(this.uri, version.group);
-		}
-		if (this.extension.endsWith(".fa") || this.extension.endsWith(".fas") || this.extension.endsWith(".fasta")) {
-			isResidueLoader = true;
-			return new Fasta(this.uri, version.group);
-		}
-		if (this.extension.endsWith(".2bit")) {
-			isResidueLoader = true;
-			return new TwoBit(this.uri);
-		}
-
-
-		// symmetry loaders
-		if (this.extension.endsWith(".bam")) {
-			return new BAM(this.uri, featureName, version.group);
-		}
-		if (this.extension.endsWith(".bar")) {
-			return new Bar(this.uri, featureName, version.group);
-		}
-		if (this.extension.endsWith(".bed")) {
-			return new BED(this.uri, featureName, version.group);
-		}
-		if (this.extension.endsWith(".gr")) {
-			return new Gr(this.uri, featureName, version.group);
-		}
-		if (this.extension.endsWith(".sgr")) {
-			return new Sgr(this.uri, featureName, version.group);
-		}
-		if (this.extension.endsWith(".useq")) {
-			return new USeq(this.uri, featureName, version.group);
-		}
-		if (this.extension.endsWith(".wig")) {
-			return new Wiggle(this.uri, featureName, version.group);
-		}
-		return null;
-	}
-
-
 	public static List<? extends SeqSymmetry> Parse(
-			String extension, URI uri, InputStream istr, GenericVersion version, String featureName)
+			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName)
 			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
+
+		// These extensions are overloaded by QuickLoad
+		if (extension.equals("bar")) {
+			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, featureName, false);
+		}
+		if (extension.equals("bed")) {
+			BedParser parser = new BedParser();
+			return parser.parse(bis, GenometryModel.getGenometryModel(), group, false, uri.toString(), false);
+		}
+		if (extension.equals("useq")) {
+			//find out what kind of data it is, graph or region, from the ArchiveInfo object
+			ZipInputStream zis = new ZipInputStream(bis);
+			zis.getNextEntry();
+			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
+			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
+				USeqGraphParser gp = new USeqGraphParser();
+				return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), featureName, archiveInfo);
+			}
+			USeqRegionParser rp = new USeqRegionParser();
+			return rp.parse(zis, group, featureName, false, archiveInfo);
+		}
+
+		// Not overloaded extensions
 		if (extension.equals("bgn")) {
 			BgnParser parser = new BgnParser();
-			return parser.parse(bis, featureName, version.group, false);
+			return parser.parse(bis, featureName, group, false);
 		}
 		if (extension.equals("bps")) {
 			DataInputStream dis = new DataInputStream(bis);
-			return BpsParser.parse(dis, featureName, null, version.group, false, false);
+			return BpsParser.parse(dis, featureName, null, group, false, false);
 		}
 		if (extension.equals("bp1") || extension.equals("bp2")) {
 			Bprobe1Parser bp1_reader = new Bprobe1Parser();
 			// parsing probesets in bp2 format, also adding probeset ids
-			return bp1_reader.parse(bis, version.group, false, featureName, false);
+			return bp1_reader.parse(bis, group, false, featureName, false);
 		}
 		if (extension.equals("brpt")) {
-			List<SeqSymmetry> alist = BrptParser.parse(bis, featureName, version.group, false);
+			List<SeqSymmetry> alist = BrptParser.parse(bis, featureName, group, false);
 			Logger.getLogger(SymLoader.class.getName()).log(Level.FINE,
 					"total repeats loaded: " + alist.size());
 			return alist;
 		}
 		if (extension.equals("brs")) {
 			DataInputStream dis = new DataInputStream(bis);
-			return BrsParser.parse(dis, featureName, version.group, false);
+			return BrsParser.parse(dis, featureName, group, false);
 		}
 		if (extension.equals("bsnp")) {
-			List<SeqSymmetry> alist = BsnpParser.parse(bis, featureName, version.group, false);
+			List<SeqSymmetry> alist = BsnpParser.parse(bis, featureName, group, false);
 			Logger.getLogger(SymLoader.class.getName()).log(Level.FINE,
 					"total snps loaded: " + alist.size());
 			return alist;
 		}
 		if (extension.equals("cnchp") || extension.equals("lohchp")) {
 			AffyCnChpParser parser = new AffyCnChpParser();
-			return parser.parse(null, bis, featureName, version.group, false);
+			return parser.parse(null, bis, featureName, group, false);
 		}
 		if (extension.equals(".cnt")) {
 			CntParser parser = new CntParser();
-			return parser.parse(bis, version.group, false);
+			return parser.parse(bis, group, false);
 		}
 		if (extension.equals("cyt")) {
 			CytobandParser parser = new CytobandParser();
-			return parser.parse(bis, version.group, false);
+			return parser.parse(bis, group, false);
 		}
 		if (extension.equals("das") || extension.equals("dasxml")) {
 			DASFeatureParser parser = new DASFeatureParser();
-			return (List<? extends SeqSymmetry>) parser.parse(bis, version.group);
+			return (List<? extends SeqSymmetry>) parser.parse(bis, group);
 		}
-		if (extension.equals("das2xml")) {
+		if (extension.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE)
+				|| extension.equals("das2feature")
+				|| extension.equals("das2xml")
+				|| extension.startsWith("x-das-feature")) {
 			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-			return parser.parse(new InputSource(bis), uri.toString(), version.group, false);
+			return parser.parse(new InputSource(bis), uri.toString(), group, false);
 		}
 		if (extension.equals("ead")) {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
-			return parser.parse(bis, version.group, false, featureName);
+			return parser.parse(bis, group, false, featureName);
 		}
 		if (extension.equals("." + FishClonesParser.FILE_EXT)) {
 			FishClonesParser parser = new FishClonesParser(false);
-			return parser.parse(bis, featureName, version.group);
+			return parser.parse(bis, featureName, group);
 		}
 		if (extension.equals("gff") || extension.equals("gtf")) {
 			GFFParser parser = new GFFParser();
-			return parser.parse(bis, featureName, version.group, false, false);
+			return parser.parse(bis, featureName, group, false, false);
 		}
 		if (extension.equals("gff3")) {
 			/* Force parsing as GFF3 */
 			GFF3Parser parser = new GFF3Parser();
-			return parser.parse(bis, featureName, version.group);
+			return parser.parse(bis, featureName, group);
 		}
 		if (extension.equals("link.psl")) {
 			PSLParser parser = new PSLParser();
@@ -405,22 +393,23 @@ public abstract class SymLoader {
 			parser.enableSharedQueryTarget(true);
 			// annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
 			// why is annotate_target parameter below set to false?
-			return parser.parse(bis, featureName, null, version.group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
+			return parser.parse(bis, featureName, null, group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
 		}
 		if (extension.equals("psl") || extension.equals("psl3")) {
 			// reference to LoadFileAction.ParsePSL
 			PSLParser parser = new PSLParser();
 			parser.enableSharedQueryTarget(true);
 			DataInputStream dis = new DataInputStream(bis);
-			return parser.parse(dis, featureName, null, version.group, null, false, false, false);
+			return parser.parse(dis, featureName, null, group, null, false, false, false);
 		}
 		if (extension.equals("sin") || extension.equals("egr") || extension.equals("txt")) {
 			ScoredIntervalParser parser = new ScoredIntervalParser();
-			return parser.parse(bis, featureName, version.group, false);
+			return parser.parse(bis, featureName, group, false);
 		}
 		if (extension.equals("var")) {
-			return VarParser.parse(bis, version.group);
+			return VarParser.parse(bis, group);
 		}
+
 		Logger.getLogger(SymLoader.class.getName()).log(Level.WARNING,
 				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
 		return null;

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.symloader;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -9,6 +10,16 @@ import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
+import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symloader.BED;
+import com.affymetrix.genometryImpl.symloader.BNIB;
+import com.affymetrix.genometryImpl.symloader.Bar;
+import com.affymetrix.genometryImpl.symloader.Fasta;
+import com.affymetrix.genometryImpl.symloader.Gr;
+import com.affymetrix.genometryImpl.symloader.Sgr;
+import com.affymetrix.genometryImpl.symloader.TwoBit;
+import com.affymetrix.genometryImpl.symloader.USeq;
+import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -44,7 +55,7 @@ public final class QuickLoad extends SymLoader {
 		super(determineURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
-		this.symL = determineLoader(featureName, version);
+		this.symL = determineLoader(extension, uri, featureName, version.group);
 	}
 
 	public QuickLoad(GenericVersion version, URI uri) {
@@ -54,7 +65,7 @@ public final class QuickLoad extends SymLoader {
 		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);
 		this.featureName = friendlyName;
 		this.version = version;
-		this.symL = determineLoader(featureName, version);
+		this.symL = determineLoader(extension, uri, featureName, version.group);
 	}
 
 	@Override
@@ -124,7 +135,7 @@ public final class QuickLoad extends SymLoader {
 
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
-		if (this.isResidueLoader) {
+		if (this.symL != null && this.symL.isResidueLoader) {
 			final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 			return loadResiduesThread(strategy, overlapSpan, seq, gviewer, vexec);
 		}
@@ -262,7 +273,7 @@ public final class QuickLoad extends SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				feats = Parse(this.extension, this.uri, bis, this.version, this.featureName);
+				feats = Parse(this.extension, this.uri, bis, this.version.group, this.featureName);
 				return feats;
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
@@ -274,6 +285,49 @@ public final class QuickLoad extends SymLoader {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+
+	/**
+	 * Determine the appropriate loader.
+	 * @return
+	 */
+	private final static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {
+		// residue loaders
+		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
+		if (extension.equals("bnib")) {
+			return new BNIB(uri, group);
+		}
+		if (extension.equals("fa") || extension.equals("fas") || extension.equals("fasta")) {
+			return new Fasta(uri, group);
+		}
+		if (extension.equals("2bit")) {
+			return new TwoBit(uri);
+		}
+
+		// symmetry loaders
+		if (extension.equals("bam")) {
+			return new BAM(uri, featureName, group);
+		}
+		if (extension.equals("bar")) {
+			return new Bar(uri, featureName, group);
+		}
+		if (extension.equals("bed")) {
+			return new BED(uri, featureName, group);
+		}
+		if (extension.equals("gr")) {
+			return new Gr(uri, featureName, group);
+		}
+		if (extension.equals("sgr")) {
+			return new Sgr(uri, featureName, group);
+		}
+		if (extension.equals("useq")) {
+			return new USeq(uri, featureName, group);
+		}
+		if (extension.equals("wig")) {
+			return new Wiggle(uri, featureName, group);
+		}
+		return null;
 	}
 
 	@Override

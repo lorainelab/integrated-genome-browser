@@ -38,6 +38,7 @@ public class BNIB extends SymLoader {
 	public BNIB(URI uri, AnnotatedSeqGroup group) {
 		super(uri);
 		this.group = group;
+		this.isResidueLoader = true;
 	}
 
 	@Override

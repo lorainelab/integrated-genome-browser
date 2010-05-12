@@ -37,6 +37,7 @@ public class Fasta extends SymLoader {
 	public Fasta(URI uri, AnnotatedSeqGroup group) {
 		super(uri);
 		this.group = group;
+		this.isResidueLoader = true;
 	}
 
 	@Override

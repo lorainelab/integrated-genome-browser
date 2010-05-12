@@ -74,6 +74,21 @@ public abstract class SeqUtils {
 		return leafSpans;
 	}
 
+	public static final void collectLeafSpans(SeqSymmetry sym, BioSeq seq, Boolean isForward, Collection<SeqSpan> leafs) {
+		if (sym.getChildCount() == 0) {
+			SeqSpan span = sym.getSpan(seq);
+			if (span != null && span.isForward() == isForward) {
+				leafs.add(span);
+			}
+		}
+		else  {
+			int childCount = sym.getChildCount();
+			for (int i=0; i<childCount; i++) {
+				collectLeafSpans(sym.getChild(i), seq, isForward, leafs);
+			}
+		}
+	}
+
 	public static final void collectLeafSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
 		if (sym.getChildCount() == 0) {
 			SeqSpan span = sym.getSpan(seq);

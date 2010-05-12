@@ -17,6 +17,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 // VariationID	Landmark	Chr	Start	End	VariationType
@@ -30,18 +32,15 @@ import java.util.regex.Pattern;
  */
 public final class VarParser {
 
-	public static final String GENOMIC_VARIANTS = "Genomic Variants";
+	private static final String GENOMIC_VARIANTS = "Genomic Variants";
 
-	static Pattern line_regex = Pattern.compile("\\t");
-
-	public VarParser() {
-	}
-
-	public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
+	private static final Pattern line_regex = Pattern.compile("\\t");
+	
+	public static List<SingletonSymWithProps> parse(InputStream dis, AnnotatedSeqGroup seq_group)
 		throws IOException  {
 
 		String line;
-
+		List<SingletonSymWithProps> results = new ArrayList<SingletonSymWithProps>();
 		Thread thread = Thread.currentThread();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 
@@ -77,7 +76,6 @@ public final class VarParser {
 
 			SingletonSymWithProps var = new SingletonSymWithProps(variationId, start, end, aseq);
 			var.setProperty("id", variationId);
-			//child.setProperty("VariationID", variationId);
 			var.setProperty("method", GENOMIC_VARIANTS);
 			var.setProperty(column_names[1], fields[1]);
 			for (int c=5; c < fields.length; c++) {
@@ -86,9 +84,8 @@ public final class VarParser {
 					var.setProperty(propName, fields[c]);
 				}
 			}
-
-			aseq.addAnnotation(var);
-			seq_group.addToIndex(fields[0], var); // variation id
-		}   // end of line-reading loop
+			results.add(var);
+		}
+		return results;
 	}
 }

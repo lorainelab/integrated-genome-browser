@@ -22,15 +22,17 @@ import java.io.*;
 import java.util.*;
 
 public final class AffyCnChpParser {
-	public void parse(File file, ChromLoadPolicy loadPolicy, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) throws IOException {
+	public List<SeqSymmetry> parse(
+			File file, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotateSeq)
+			throws IOException {
 		GenometryModel.logInfo("Parsing with " + this.getClass().getName() + ": " + stream_name);
+		ChromLoadPolicy loadPolicy = ChromLoadPolicy.getLoadAllPolicy();
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		try {
-
 			AffyGenericChpFile chpFile = AffyGenericChpFile.parse(file, loadPolicy, istr, false);
 
 			AffyDataGroup group = chpFile.groups.get(0);
 			AffyDataSet dataSet = group.getDataSets().get(0);
-
 
 			for (String seq_name : dataSet.getChromosomeNames()) {
 				// Make sure that all the seq's mentioned in the header are
@@ -41,11 +43,13 @@ public final class AffyCnChpParser {
 			for (AffySingleChromData data : dataSet.getSingleChromData()) {
 				BioSeq seq = getSeq(seq_group, data.displayName);
 				List<SeqSymmetry> syms = data.makeGraphs(seq);
-				for (SeqSymmetry sym : syms) {
-					seq.addAnnotation(sym); 
+				if (annotateSeq) {
+					for (SeqSymmetry sym : syms) {
+						seq.addAnnotation(sym);
+					}
 				}
+				results.addAll(syms);
 			}
-
 		} catch (Exception e) {
 			if (! (e instanceof IOException)) {
 				IOException ioe = new IOException("IOException for file: " + stream_name);
@@ -54,6 +58,7 @@ public final class AffyCnChpParser {
 				throw ioe;
 			}
 		}
+		return results;
 	}
 
 	private BioSeq getSeq(AnnotatedSeqGroup seq_group, String seqid) {

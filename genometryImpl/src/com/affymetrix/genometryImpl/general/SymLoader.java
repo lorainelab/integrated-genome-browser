@@ -15,12 +15,16 @@ import com.affymetrix.genometryImpl.parsers.BsnpParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
+import com.affymetrix.genometryImpl.parsers.FishClonesParser;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.parsers.VarParser;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
+import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.graph.CntParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
@@ -358,11 +362,10 @@ public abstract class SymLoader {
 					"total snps loaded: " + alist.size());
 			return alist;
 		}
-		/*if (extension.equals("cnchp") || extension.equals("lohchp")) {
+		if (extension.equals("cnchp") || extension.equals("lohchp")) {
 			AffyCnChpParser parser = new AffyCnChpParser();
-			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), bis, featureName, version.group);
-			return;
-		}*/
+			return parser.parse(null, bis, featureName, version.group, false);
+		}
 		if (extension.equals(".cnt")) {
 			CntParser parser = new CntParser();
 			return parser.parse(bis, version.group, false);
@@ -383,11 +386,10 @@ public abstract class SymLoader {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
 			return parser.parse(bis, version.group, false, featureName);
 		}
-		/*if (extension.equals("." + FishClonesParser.FILE_EXT)) {
-			FishClonesParser parser = new FishClonesParser(true);
-			parser.parse(bis, featureName, version.group);
-			return;
-		}*/
+		if (extension.equals("." + FishClonesParser.FILE_EXT)) {
+			FishClonesParser parser = new FishClonesParser(false);
+			return parser.parse(bis, featureName, version.group);
+		}
 		if (extension.equals("gff") || extension.equals("gtf")) {
 			GFFParser parser = new GFFParser();
 			return parser.parse(bis, featureName, version.group, false, false);
@@ -405,11 +407,6 @@ public abstract class SymLoader {
 			// why is annotate_target parameter below set to false?
 			return parser.parse(bis, featureName, null, version.group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
 		}
-		/*if (extension.equals("map")) {
-			ScoredMapParser parser = new ScoredMapParser();
-			parser.parse(bis, featureName, input_seq, version.group);
-			return;
-		}*/
 		if (extension.equals("psl") || extension.equals("psl3")) {
 			// reference to LoadFileAction.ParsePSL
 			PSLParser parser = new PSLParser();
@@ -421,11 +418,9 @@ public abstract class SymLoader {
 			ScoredIntervalParser parser = new ScoredIntervalParser();
 			return parser.parse(bis, featureName, version.group, false);
 		}
-		/*if (extension.equals("var")) {
-			VarParser parser = new VarParser();
-			parser.parse(bis, version.group);
-			return;
-		}*/
+		if (extension.equals("var")) {
+			return VarParser.parse(bis, version.group);
+		}
 		Logger.getLogger(SymLoader.class.getName()).log(Level.WARNING,
 				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
 		return null;

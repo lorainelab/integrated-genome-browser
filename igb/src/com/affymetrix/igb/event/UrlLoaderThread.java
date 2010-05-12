@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -473,7 +474,7 @@ public final class UrlLoaderThread extends Thread {
 
 		if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
 			AffyCnChpParser parser = new AffyCnChpParser();
-			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group);
+			parser.parse(null, str, stream_name, selected_group, true);
 			return;
 		}
 		if (lcname.endsWith(".cnt")) {

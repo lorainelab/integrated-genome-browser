@@ -33,51 +33,30 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
  *  Which columns to use for start, end, etc. are specified in the constructor.
  */
 public class TabDelimitedParser {
-	int chromosome_col;
-	int start_col;
-	int end_col;     // should need only end_col or length_col, not both
-	int length_col;  // should need only end_col or length_col, not both
-	int strand_col;  // column to use for determining strand
-	int group_col;  // column to use for grouping features...
-	int type_col;   // column to use for setting feature type
+	private final int chromosome_col;
+	private final int start_col;
+	private final int end_col;     // should need only end_col or length_col, not both
+	private final int length_col;  // should need only end_col or length_col, not both
+	private final int strand_col;  // column to use for determining strand
+	private final int group_col;  // column to use for grouping features...
+	private final int type_col;   // column to use for setting feature type
 
-	boolean addToIndex; // whether to add annotation id's to the index on the seq group
+	private final boolean annotateSeq; // whether to add annotation id's to the index on the seq group
 
-	int id_col;
-	int seq_col;
-	int seq_col2;
-	int start_col2;
-	int end_col2;     // should need only end_col or length_col, not both
-	int strand_col2;  // column to use for determining strand
+	private int id_col;
 
 	// if makeProps, then each column (other than start, end, length, group) will become a
 	//    property in the SymWithProps that is generated
-	boolean make_props = true;
+	private boolean make_props = true;
 
-	boolean use_length = false;
-	boolean use_group = false;
-	boolean use_type = false;
-	boolean use_strand = false;
-	boolean has_header = false;
-	boolean has_id = false;
+	private boolean use_length = false;
+	private boolean use_group = false;
+	private boolean use_type = false;
+	private boolean use_strand = false;
+	private boolean has_header = false;
+	private boolean has_id = false;
 
-	static final Pattern line_splitter = Pattern.compile("\t");
-
-	public void setSeqColumn(int col) { seq_col = col; }
-	public void setStartColumn(int col) { start_col = col; }
-	public void setEndColumn(int col) { end_col = col; }
-	public void setStrandColumn(int col) { strand_col = col; }
-	public void setLengthColumn(int col) { length_col = col; }
-
-	public void setSeqColumn2(int col) { seq_col2 = col; }
-	public void setStartColumn2(int col) {  start_col2 = col; }
-	public void setEndColumn2(int col) { end_col2 = col; }
-
-	public void setGroupColumn(int col) { group_col = col; }
-	public void setTypeColumn(int col) { type_col = col; }
-	public void setPropertyColumn(int col, String prop_name) {
-
-	}
+	private static final Pattern line_splitter = Pattern.compile("\t");
 
 	/**
 	 *  Constructor.
@@ -90,7 +69,7 @@ public class TabDelimitedParser {
 	 *    AnnotatedSeqGroup
 	 */
 	public TabDelimitedParser(int type, int chromosome, int start, int end, int length,
-			int strand, int group, int id, boolean props, boolean header, boolean addToIndex) {
+			int strand, int group, int id, boolean props, boolean header, boolean annotateSeq) {
 
 		if (chromosome < 0) {
 			throw new IllegalArgumentException("Chromosome column number must be 0 or greater.");
@@ -104,7 +83,7 @@ public class TabDelimitedParser {
 		type_col = type;
 		strand_col = strand;
 		id_col = id;
-		this.addToIndex = addToIndex;
+		this.annotateSeq = annotateSeq;
 
 		has_header = header;
 		use_length = (length >= 0);
@@ -124,12 +103,12 @@ public class TabDelimitedParser {
 	 *    "type" column parameter in the constructor was -1.
 	 *  @param seq_group  The AnnotatedSeqGroup on which to add the data.
 	 */
-	public void parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
+	public List<SeqSymmetry> parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
 
-		HashMap<String,SeqSymmetry> group_hash = new HashMap<String,SeqSymmetry>();
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		Map<String,SeqSymmetry> group_hash = new HashMap<String,SeqSymmetry>();
 		MutableSeqSpan union_span = new SimpleMutableSeqSpan();
-		ArrayList<String> col_names = null;
-		//    System.out.println("use_type: " + use_type);
+		List<String> col_names = null;
 		try {
 			InputStreamReader asr = new InputStreamReader(istr);
 			BufferedReader br = new BufferedReader(asr);
@@ -152,7 +131,6 @@ public class TabDelimitedParser {
 					int length = Integer.parseInt(cols[length_col]);
 					if (use_strand) {
 						String strand = cols[strand_col];
-						//	    boolean revstrand = strand.equals("-");
 						if (strand.equals("-")) {
 							end = start - length;
 						}
@@ -168,7 +146,6 @@ public class TabDelimitedParser {
 				String type = default_type;
 				if (use_type) {
 					type = cols[type_col];
-					//	  System.out.println("type = " + type);
 				}
 
 				String id = null;
@@ -205,15 +182,11 @@ public class TabDelimitedParser {
 
 				if (use_group) {
 					String group = cols[group_col];
-					//	  SingletonSymWithProps parent = (SingletonSymWithProps)group_hash.get(group);
-					SimpleSymWithProps parent = (SimpleSymWithProps)group_hash.get(group);
+					SimpleSymWithProps parent = (SimpleSymWithProps) group_hash.get(group);
 					if (parent == null) {
-						//	    parent = new SingletonSymWithProps(start, end, aseq);
-						//	    parent = new SimpleSymWithProps(start, end, aseq);
 						parent = new SimpleSymWithProps();
 						SimpleMutableSeqSpan span = new SimpleMutableSeqSpan(start, end, seq);
 						parent.addSpan(span);
-						//	    System.out.println("parent type = " + type);
 						parent.setProperty("method", type);
 						if (id == null) {
 							id = type + " " + span.getBioSeq().getID() + ":" + span.getStart() + "-" + span.getEnd();
@@ -222,53 +195,28 @@ public class TabDelimitedParser {
 						parent.setProperty("id", id);
 						group_hash.put(group, parent);
 						// or maybe should add all parents to a grandparent, and add _grandparent_ to aseq???
-						seq.addAnnotation(parent);
-						seq_group.addToIndex(parent.getID(), parent);
+						results.add(parent);
+						if (annotateSeq) {
+							seq.addAnnotation(parent);
+							seq_group.addToIndex(parent.getID(), parent);
+						}
 					} else {
-						MutableSeqSpan pspan = (MutableSeqSpan)parent.getSpan(seq);
-						//	    SeqUtils.encompass((SeqSpan)parent, (SeqSpan)child, union_span);
-						SeqUtils.encompass(pspan, (SeqSpan)child, union_span);
-						//	    System.out.println("expanding parent");
-						//	    parent.set(union_span.getStart(), union_span.getEnd(), aseq);
+						MutableSeqSpan pspan = (MutableSeqSpan) parent.getSpan(seq);
+						SeqUtils.encompass(pspan, (SeqSpan) child, union_span);
 						pspan.set(union_span.getStart(), union_span.getEnd(), seq);
 					}
 					parent.addChild(child);
 				} else {
-					//          SingletonSymWithProps sym = new SingletonSymWithProps(start, end, seq);
-					//          sym.setProperty("method", type);
-					seq.addAnnotation(child);
-					seq_group.addToIndex(child.getID(), child);
+					results.add(child);
+					if (annotateSeq) {
+						seq.addAnnotation(child);
+						seq_group.addToIndex(child.getID(), child);
+					}
 				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		return results;
 	}
-
-	/*
-	   public static void main(String[] args) {
-	   String fil = System.getProperty("user.dir") + "/data/copy_number/DUKE_US_DukeCNV_NSP_T24_1_1.rpt";
-// type, start, end, length, strand, group, boolean props, boolean has_header
-TabDelimitedParser tester = new TabDelimitedParser(0, 1, 9, 10, -1, -1, -1, -1, true, true, true);
-try {
-File file = new File(fil);
-FileInputStream fis = new FileInputStream(file);
-AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-
-tester.parse(fis, file.getName(), seq_group);
-
-for (int s=0; s<seq_group.getSeqCount(); s++) {
-BioSeq aseq = seq_group.getSeq(s);
-for (int i=0; i<aseq.getAnnotationCount(); i++) {
-SeqSymmetry annot = aseq.getAnnotation(i);
-SeqUtils.printSymmetry(annot, "  ", true);
-}
-}
-
-} catch (Exception ex) {
-ex.printStackTrace();
-}
-}*/
-
-
 }

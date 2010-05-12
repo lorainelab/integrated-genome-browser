@@ -23,6 +23,19 @@ import com.affymetrix.genometryImpl.util.IntList;
 
 public final class SeqSymSummarizer {
 
+	public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, Boolean isForward)  {
+		int symcount = syms.size();
+		List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
+		for (SeqSymmetry sym : syms) {
+			SeqUtils.collectLeafSpans(sym, seq, isForward, leaf_spans);
+		}
+		if (leaf_spans.isEmpty()) {
+			return null;
+		} else {
+			return getSpanSummary(leaf_spans, binary_depth, id);
+		}
+	}
+
 	/**
 	 *  Makes a summary graph of a set the spans of some SeqSymmetries on a given BioSeq.
 	 *  Descends into parent's descendants, collecting all leaf symmetries and

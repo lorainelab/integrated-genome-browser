@@ -1,5 +1,7 @@
 package com.affymetrix.igb.das;
 
+import com.affymetrix.genometryImpl.das.DasSource;
+import com.affymetrix.genometryImpl.das.DasType;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;

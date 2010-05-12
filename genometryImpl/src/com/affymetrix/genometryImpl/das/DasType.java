@@ -1,4 +1,4 @@
-package com.affymetrix.igb.das;
+package com.affymetrix.genometryImpl.das;
 
 import java.net.URL;
 

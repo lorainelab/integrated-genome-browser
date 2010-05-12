@@ -9,58 +9,23 @@ import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
-import com.affymetrix.genometryImpl.parsers.BgnParser;
-import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
-import com.affymetrix.genometryImpl.parsers.BpsParser;
-import com.affymetrix.genometryImpl.parsers.BrptParser;
-import com.affymetrix.genometryImpl.parsers.BrsParser;
-import com.affymetrix.genometryImpl.parsers.BsnpParser;
-import com.affymetrix.genometryImpl.parsers.CytobandParser;
-import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
-import com.affymetrix.genometryImpl.parsers.FishClonesParser;
-import com.affymetrix.genometryImpl.parsers.GFF3Parser;
-import com.affymetrix.genometryImpl.parsers.GFFParser;
-import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.VarParser;
-import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
-import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
-import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
-import com.affymetrix.genometryImpl.parsers.graph.CntParser;
-import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symloader.BED;
-import com.affymetrix.genometryImpl.symloader.BNIB;
-import com.affymetrix.genometryImpl.symloader.Bar;
-import com.affymetrix.genometryImpl.symloader.Fasta;
-import com.affymetrix.genometryImpl.symloader.Gr;
-import com.affymetrix.genometryImpl.symloader.Sgr;
-import com.affymetrix.genometryImpl.symloader.TwoBit;
-import com.affymetrix.genometryImpl.symloader.USeq;
-import com.affymetrix.genometryImpl.symloader.Wiggle;
-import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -70,7 +35,6 @@ import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
-import org.xml.sax.InputSource;
 
 /**
  *
@@ -79,14 +43,13 @@ import org.xml.sax.InputSource;
 public final class QuickLoad extends SymLoader {
 	private final GenericVersion version;
 	public final String featureName;
-	private SymLoader symL;	// parser factory
-	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
+	private SymLoader symL;	// parser factorys
 
 	public QuickLoad(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
-		this.symL = determineLoader();
+		this.symL = determineLoader(featureName, version);
 	}
 
 	public QuickLoad(GenericVersion version, URI uri) {
@@ -96,7 +59,7 @@ public final class QuickLoad extends SymLoader {
 		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);
 		this.featureName = friendlyName;
 		this.version = version;
-		this.symL = determineLoader();
+		this.symL = determineLoader(featureName, version);
 	}
 
 	@Override
@@ -183,46 +146,20 @@ public final class QuickLoad extends SymLoader {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
-					if (strategy == LoadStrategy.GENOME && QuickLoad.this.symL != null) {
-						for (BioSeq aseq : QuickLoad.this.symL.getChromosomeList()) {
-							if (aseq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
-								continue;
-							}
-							SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-							FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
-							ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
-						}
-					} else {
-						FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
-						ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
-					}
+					List<FeatureRequestSym> output_requests = determineFeatureRequestSyms(
+							QuickLoad.this.symL, QuickLoad.this.uri, QuickLoad.this.featureName,
+							strategy, overlapSpan);
 					if (output_requests.isEmpty()) {
 						return null;
 					}
-					List<? extends SeqSymmetry> results;
-					List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
-					for (FeatureRequestSym request : output_requests) {
-						// short-circuit if there's a failure... which may not even be signaled in the code
-						results = loadFeature(strategy, request.getOverlapSpan());
-						results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
-						if (request.getInsideSpan() != null) {
-							results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
-						}
-						if (results != null && !results.isEmpty()) {
-							request.setProperty("method", uri.toString());
-							SymLoader.addToRequestSym(results, request, QuickLoad.this.uri, QuickLoad.this.featureName, request.getOverlapSpan());
-							SymLoader.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
-						}
-						overallResults.addAll(results);
-					}
+					List<SeqSymmetry> overallResults = loadAndAddSymmetries(strategy, output_requests);
 					return overallResults;
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 				return null;
 			}
-
+			
 			@Override
 			public void done() {
 				try {
@@ -240,6 +177,30 @@ public final class QuickLoad extends SymLoader {
 		};
 		vexec.execute(worker);
 		return true;
+	}
+
+	private List<SeqSymmetry> loadAndAddSymmetries(LoadStrategy strategy, List<FeatureRequestSym> output_requests) throws IOException, OutOfMemoryError {
+		if (output_requests.isEmpty()) {
+			return null;
+		}
+		
+		List<? extends SeqSymmetry> results;
+		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
+		for (FeatureRequestSym request : output_requests) {
+			// short-circuit if there's a failure... which may not even be signaled in the code
+			results = loadFeature(strategy, request.getOverlapSpan());
+			results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
+			if (request.getInsideSpan() != null) {
+				results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
+			}
+			if (results != null && !results.isEmpty()) {
+				request.setProperty("method", this.uri.toString());
+				SymLoader.addToRequestSym(results, request, this.uri, this.featureName, request.getOverlapSpan());
+				SymLoader.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
+			}
+			overallResults.addAll(results);
+		}
+		return overallResults;
 	}
 
 
@@ -392,158 +353,5 @@ public final class QuickLoad extends SymLoader {
 		Logger.getLogger(QuickLoad.class.getName()).log(
 				Level.SEVERE, "Residue loading was called with a non-residue format.");
 		return "";
-	}
-
-	/**
-	 * Determine the appropriate loader.
-	 * @return
-	 */
-	private SymLoader determineLoader() {
-		// residue loaders
-		if (this.extension.endsWith(".bnib")) {
-			isResidueLoader = true;
-			return new BNIB(this.uri, this.version.group);
-		}
-		if (this.extension.endsWith(".fa") || this.extension.endsWith(".fas") || this.extension.endsWith(".fasta")) {
-			isResidueLoader = true;
-			return new Fasta(this.uri, this.version.group);
-		}
-		if (this.extension.endsWith(".2bit")) {
-			isResidueLoader = true;
-			return new TwoBit(this.uri);
-		}
-
-
-		// symmetry loaders
-		if (this.extension.endsWith(".bam")) {
-			return new BAM(this.uri, this.featureName, this.version.group);
-		}
-		if (this.extension.endsWith(".bar")) {
-			return new Bar(this.uri, this.featureName, this.version.group);
-		}
-		if (this.extension.endsWith(".bed")) {
-			return new BED(this.uri, this.featureName, this.version.group);
-		}
-		if (this.extension.endsWith(".gr")) {
-			return new Gr(this.uri, this.featureName, this.version.group);
-		}
-		if (this.extension.endsWith(".sgr")) {
-			return new Sgr(this.uri, this.featureName, this.version.group);
-		}
-		if (this.extension.endsWith(".useq")) {
-			return new USeq(this.uri, this.featureName, this.version.group);
-		}
-		if (this.extension.endsWith(".wig")) {
-			return new Wiggle(this.uri, this.featureName, this.version.group);
-		}
-		return null;
-	}
-
-
-	private static List<? extends SeqSymmetry> Parse(
-			String extension, URI uri, InputStream istr, GenericVersion version, String featureName)
-			throws Exception {
-		BufferedInputStream bis = new BufferedInputStream(istr);
-		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
-		if (extension.equals("bgn")) {
-			BgnParser parser = new BgnParser();
-			return parser.parse(bis, featureName, version.group, false);
-		}
-		if (extension.equals("bps")) {
-			DataInputStream dis = new DataInputStream(bis);
-			return BpsParser.parse(dis, featureName, null, version.group, false, false);
-		}
-		if (extension.equals("bp1") || extension.equals("bp2")) {
-			Bprobe1Parser bp1_reader = new Bprobe1Parser();
-			// parsing probesets in bp2 format, also adding probeset ids
-			return bp1_reader.parse(bis, version.group, false, featureName, false);
-		}
-		if (extension.equals("brpt")) {
-			List<SeqSymmetry> alist = BrptParser.parse(bis, featureName, version.group, false);
-			Logger.getLogger(QuickLoad.class.getName()).log(Level.FINE,
-					"total repeats loaded: " + alist.size());
-			return alist;
-		}
-		if (extension.equals("brs")) {
-			DataInputStream dis = new DataInputStream(bis);
-			return BrsParser.parse(dis, featureName, version.group, false);
-		}
-		if (extension.equals("bsnp")) {
-			List<SeqSymmetry> alist = BsnpParser.parse(bis, featureName, version.group, false);
-			Logger.getLogger(QuickLoad.class.getName()).log(Level.FINE,
-					"total snps loaded: " + alist.size());
-			return alist;
-		}
-		/*if (extension.equals("cnchp") || extension.equals("lohchp")) {
-			AffyCnChpParser parser = new AffyCnChpParser();
-			parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), bis, featureName, version.group);
-			return;
-		}*/
-		if (extension.equals(".cnt")) {
-			CntParser parser = new CntParser();
-			return parser.parse(bis, version.group, false);
-		}
-		if (extension.equals("cyt")) {
-			CytobandParser parser = new CytobandParser();
-			return parser.parse(bis, version.group, false);
-		}
-		if (extension.equals("das") || extension.equals("dasxml")) {
-			DASFeatureParser parser = new DASFeatureParser();
-			return (List<? extends SeqSymmetry>) parser.parse(bis, version.group);
-		}
-		if (extension.equals("das2xml")) {
-			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-			return parser.parse(new InputSource(bis), uri.toString(), version.group, false);
-		}
-		if (extension.equals("ead")) {
-			ExonArrayDesignParser parser = new ExonArrayDesignParser();
-			return parser.parse(bis, version.group, false, featureName);
-		}
-		/*if (extension.equals("." + FishClonesParser.FILE_EXT)) {
-			FishClonesParser parser = new FishClonesParser(true);
-			parser.parse(bis, featureName, version.group);
-			return;
-		}*/
-		if (extension.equals("gff") || extension.equals("gtf")) {
-			GFFParser parser = new GFFParser();
-			return parser.parse(bis, featureName, version.group, false, false);
-		}
-		if (extension.equals("gff3")) {
-			/* Force parsing as GFF3 */
-			GFF3Parser parser = new GFF3Parser();
-			return parser.parse(bis, featureName, version.group);
-		}
-		if (extension.equals("link.psl")) {
-			PSLParser parser = new PSLParser();
-			parser.setIsLinkPsl(true);
-			parser.enableSharedQueryTarget(true);
-			// annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
-			// why is annotate_target parameter below set to false?
-			return parser.parse(bis, featureName, null, version.group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
-		}
-		/*if (extension.equals("map")) {
-			ScoredMapParser parser = new ScoredMapParser();
-			parser.parse(bis, featureName, input_seq, version.group);
-			return;
-		}*/
-		if (extension.equals("psl") || extension.equals("psl3")) {
-			// reference to LoadFileAction.ParsePSL
-			PSLParser parser = new PSLParser();
-			parser.enableSharedQueryTarget(true);
-			DataInputStream dis = new DataInputStream(bis);
-			return parser.parse(dis, featureName, null, version.group, null, false, false, false);
-		}
-		if (extension.equals("sin") || extension.equals("egr") || extension.equals("txt")) {
-			ScoredIntervalParser parser = new ScoredIntervalParser();
-			return parser.parse(bis, featureName, version.group, false);
-		}
-		/*if (extension.equals("var")) {
-			VarParser parser = new VarParser();
-			parser.parse(bis, version.group);
-			return;
-		}*/
-		Logger.getLogger(QuickLoad.class.getName()).log(Level.WARNING,
-				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
-		return null;
 	}
 }

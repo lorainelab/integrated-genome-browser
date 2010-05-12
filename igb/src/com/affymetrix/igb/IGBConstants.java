@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.util.Constants;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -53,6 +54,6 @@ public interface IGBConstants {
 
 	public static final String UTF8 = "UTF-8";
 
-	public final static String GENOME_SEQ_ID = IGBConstants.BUNDLE.getString("genomeSeqID");
+	public final static String GENOME_SEQ_ID = Constants.GENOME_SEQ_ID;
 	public final static String ENCODE_REGIONS_ID = "encode_regions";
 }

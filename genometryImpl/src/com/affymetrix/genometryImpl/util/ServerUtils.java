@@ -852,8 +852,8 @@ public abstract class ServerUtils {
 					}
 				}
 				
-		        if (annotSecurity == null || genome.isAuthorized(annotSecurity, type)) {
-					genome_types.put(type, new SimpleDas2Type(type, flist, genome.getProperties(annotSecurity, type)));
+		        if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
+					genome_types.put(type, new SimpleDas2Type(type, flist, getProperties(genome, annotSecurity, type)));
 		        }
 			}
 			for (String type : aseq.getIndexedTypeList()) {
@@ -864,8 +864,8 @@ public abstract class ServerUtils {
 				List<String> flist = new ArrayList<String>();
 				flist.addAll(iSyms.iWriter.getFormatPrefList());
 				
-		        if (annotSecurity == null || genome.isAuthorized(annotSecurity, type)) {
-					genome_types.put(type, new SimpleDas2Type(type, flist, genome.getProperties(annotSecurity, type)));
+		        if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
+					genome_types.put(type, new SimpleDas2Type(type, flist, getProperties(genome, annotSecurity, type)));
 		        }
 
 			}
@@ -883,30 +883,40 @@ public abstract class ServerUtils {
 	public static void getGraphTypes(
 		String data_root, AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
 		for (String type : genome.getTypeList()) {
-			if (genome_types.containsKey(type) || !genome.isAuthorized(annotSecurity, type)) {
+			if (genome_types.containsKey(type) || !isAuthorized(genome, annotSecurity, type)) {
 				continue;
 			}
 
 			if (annotSecurity == null) {
 				// DAS2 "classic"
 				if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()) {
-					genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
+					genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
 				} else {
-					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
+					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, getProperties(genome, annotSecurity, type)));
 				}
 				continue;
 			}
 			// GenoPub
-			if (genome.isBarGraphData(data_root, annotSecurity, type)) {
-				genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type)));
-			} else if (genome.isUseqGraphData(data_root, annotSecurity, type)) {
-				genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
+			if (annotSecurity.isBarGraphData(data_root, genome.getID(), type, genome.getAnnotationId(type))) {
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, getProperties(genome, annotSecurity, type)));
+			} else if (annotSecurity.isUseqGraphData(data_root, genome.getID(), type, genome.getAnnotationId(type))) {
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
 			} else {
 				Logger.getLogger(ServerUtils.class.getName()).warning("Non-graph annotation " + type + " encountered, but does not match known entry.  This annotation will not show in the types request.");
 			}
 		}
 	}
 
+	private static boolean isAuthorized(AnnotatedSeqGroup group, AnnotSecurity annotSecurity, String type) {
+		boolean isAuthorized = annotSecurity == null || annotSecurity.isAuthorized(group.getID(), type, group.getAnnotationId(type));
+		Logger.getLogger(AnnotatedSeqGroup.class.getName()).fine((isAuthorized ?
+			"Showing  " : "Blocking ") + " Annotation " + type + " ID=" + group.getAnnotationId(type));
+		return isAuthorized;
+	}
+
+	private static Map<String, Object> getProperties(AnnotatedSeqGroup group, AnnotSecurity annotSecurity, String type) {
+		return annotSecurity == null ? null : annotSecurity.getProperties(group.getID(), type, group.getAnnotationId(type));
+	}
 
 	private static void getAddedChroms(AnnotatedSeqGroup newGenome, AnnotatedSeqGroup oldGenome, boolean isIgnored) {
 		if (oldGenome.getSeqCount() == newGenome.getSeqCount()) {

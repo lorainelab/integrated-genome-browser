@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl;
 
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -107,29 +106,9 @@ public class AnnotatedSeqGroup {
 		return type_id2annot_id.keySet();
 	}
 
-	private final Integer getAnnotationId(String type) {
+	public final Integer getAnnotationId(String type) {
 		return type_id2annot_id.get(type);
 	}
-	
-	public final boolean isAuthorized(AnnotSecurity annotSecurity, String type) {
-		boolean isAuthorized = annotSecurity == null || annotSecurity.isAuthorized(this.getID(), type, getAnnotationId(type));
-		Logger.getLogger(AnnotatedSeqGroup.class.getName()).fine((isAuthorized ? "Showing  " : "Blocking ") + " Annotation " + type + " ID=" + getAnnotationId(type));
-		return isAuthorized;
-	}
-	
-	public final Map<String, Object> getProperties(AnnotSecurity annotSecurity, String type) {
-		return annotSecurity == null ? null : annotSecurity.getProperties(this.getID(), type, getAnnotationId(type));
-	}
-	
-	public final boolean isBarGraphData(String data_root, AnnotSecurity annotSecurity, String type) {
-		return annotSecurity != null && annotSecurity.isBarGraphData(data_root, this.getID(), type, getAnnotationId(type));
-	}
-	
-	public final boolean isUseqGraphData(String data_root, AnnotSecurity annotSecurity, String type) {
-		return annotSecurity != null && annotSecurity.isUseqGraphData(data_root, this.getID(), type, getAnnotationId(type));
-	}
-	
-
 	
 	/** By default, simply returns the global StateProvider, but subclasses
 	 *  can implement a different one for each seq group.

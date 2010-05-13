@@ -4,6 +4,22 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-6.2.2
+client features:
++ DAS/1 support.  (Ensembl, UCSC, others?)
++ External (UCSC) browser tab
++ Localization
++ GUI bugfixes and enhancements (threading, zooming)
++ Preferences bugfixes and enhancements (data sources, linkouts)
++ USeq support
+
+DAS/2 server:
++ Serving of partial residue sequences
++ Loading of compressed (.gz, .zip) files
++ Security bugfix
++ USeq support
+
+
 IGB-6.1
 client features:
 

@@ -98,7 +98,7 @@ public final class GraphGlyph extends Glyph {
 	private final Rectangle2D.Double thresh_coord_box = new Rectangle2D.Double();
 	private ThreshGlyph thresh_glyph = new ThreshGlyph();
 	private final Rectangle thresh_pix_box = new Rectangle();
-	private static final double transition_scale = 100;
+	private static final double transition_scale = 500;
 
 
 	private Color lighter;

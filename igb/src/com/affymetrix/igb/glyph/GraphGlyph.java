@@ -198,29 +198,6 @@ public final class GraphGlyph extends Glyph {
 		setColor(state.getTierStyle().getColor());
 	}
 
-	public static float[] getVisibleYRange(GraphSym graf) {
-		float[] result = new float[2];
-		float min_ycoord = Float.POSITIVE_INFINITY;
-		float max_ycoord = Float.NEGATIVE_INFINITY;
-		float f;
-
-		// evaluate outside of loop conditional -- saves time when there are a lot of points.
-		int pointCount = graf.getPointCount();
-
-		for (int i = 0; i < pointCount; i++) {
-			f = graf.getGraphYCoord(i);
-			if (f < min_ycoord) {
-				min_ycoord = f;
-			}
-			if (f > max_ycoord) {
-				max_ycoord = f;
-			}
-		}
-		result[0] = min_ycoord;
-		result[1] = max_ycoord;
-		return result;
-	}
-
 	private boolean isUninitialized() {
 		return getVisibleMinY() == Float.POSITIVE_INFINITY ||
 				getVisibleMinY() == Float.NEGATIVE_INFINITY ||

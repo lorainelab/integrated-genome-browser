@@ -203,7 +203,7 @@ public class AffyTieredMap extends NeoMap {
 		}
 
 		if (stretch_map) {
-			if (tiers.size() <= 0) {
+			if (tiers.isEmpty()) {
 				return;
 			}
 			Rectangle2D.Double pbox = getCoordBounds();

@@ -186,7 +186,7 @@ public class SeqMapView extends JPanel
 	private final Map<TierGlyph, GraphSym> summary_list = new HashMap<TierGlyph, GraphSym>();
 	/** Hash of GraphStates to TierGlyphs. */
 	private final Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
-	//Map gstyle2floatTier = new HashMap();
+
 	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 	private GlyphEdgeMatcher edge_matcher = null;
 	private JPopupMenu sym_popup;
@@ -210,7 +210,7 @@ public class SeqMapView extends JPanel
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
-	GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static final Font axisFont = new Font("Courier", Font.BOLD, 12);
 	boolean report_hairline_position_in_status_bar = false;
@@ -219,9 +219,6 @@ public class SeqMapView extends JPanel
 
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
-	/** Whether the Application name goes first in the title bar.
-	 */
-	protected boolean appNameFirstInTitle = false;
 
 	// We only need a single ScoredContainerGlyphFactory because all graph properties
 	// are in the GraphState object.
@@ -288,7 +285,7 @@ public class SeqMapView extends JPanel
 	protected TransformTierGlyph axis_tier;
 
 		/** An un-collapsible instance.  It is hideable, though. */
-	private static AnnotStyle axis_annot_style = new AnnotStyle() {
+	private static final AnnotStyle axis_annot_style = new AnnotStyle() {
 
 		{ // a non-static initializer block
 			setHumanName("Coordinates");
@@ -518,25 +515,21 @@ public class SeqMapView extends JPanel
 		return sym_popup;
 	}
 
-	private IAnnotStyleExtended getAxisAnnotStyle() {
-		return axis_annot_style;
-	}
-
 	public final TransformTierGlyph getAxisTier() {
 		return axis_tier;
 	}
 
 	/** Set up a tier with fixed pixel height and place axis in it. */
 	private final TransformTierGlyph addAxisTier(int tier_index) {
-		axis_tier = new TransformTierGlyph(getAxisAnnotStyle());
+		axis_tier = new TransformTierGlyph(axis_annot_style);
 		axis_tier.setFixedPixHeight(45);
 		axis_tier.setDirection(TierGlyph.Direction.AXIS);
 		AxisGlyph axis = seqmap.addAxis(0);
 		axis.setHitable(false);
 		axis.setFont(axisFont);
 
-		Color axis_bg = getAxisAnnotStyle().getBackground();
-		Color axis_fg = getAxisAnnotStyle().getColor();
+		Color axis_bg = axis_annot_style.getBackground();
+		Color axis_fg = axis_annot_style.getColor();
 
 		axis.setBackgroundColor(axis_bg);
 		axis_tier.setBackgroundColor(axis_bg);
@@ -1058,17 +1051,14 @@ public class SeqMapView extends JPanel
 	}
 
 	private void setTitleBar(BioSeq seq) {
-		Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
 		if (frm != null) {
 			StringBuffer title = new StringBuffer(128);
-			if (appNameFirstInTitle) {
-				title.append(IGBConstants.APP_NAME + " " + IGBConstants.APP_VERSION);
-			}
 			if (seq != null) {
 				if (title.length() > 0) {
 					title.append(" - ");
 				}
 				String seqid = seq.getID().trim();
+				Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
 				if (pattern.matcher(seqid).matches()) {
 					seqid = seqid.replace("chr", "Chromosome ");
 				}
@@ -1079,12 +1069,10 @@ public class SeqMapView extends JPanel
 					title.append("  (").append(version_info).append(')');
 				}
 			}
-			if (!appNameFirstInTitle) {
-				if (title.length() > 0) {
-					title.append(" - ");
-				}
-				title.append(IGBConstants.APP_NAME + " " + IGBConstants.APP_VERSION);
+			if (title.length() > 0) {
+				title.append(" - ");
 			}
+			title.append(IGBConstants.APP_NAME + " " + IGBConstants.APP_VERSION);
 			frm.setTitle(title.toString());
 		}
 	}
@@ -1360,14 +1348,12 @@ public class SeqMapView extends JPanel
 	}
 
 	public final void selectAllGraphs() {
-		List<GlyphI> glyphlist = new ArrayList<GlyphI>();
-		GlyphI rootglyph = seqmap.getScene().getGlyph();
-		collectGraphs(rootglyph, glyphlist);
+		List<GlyphI> glyphlist = collectGraphs();
 		// convert graph glyphs to GraphSyms via glyphsToSyms
 
 		// Bring them all into the visual area
-		for (int i = 0; i < glyphlist.size(); i++) {
-			GraphGlyphUtils.checkPixelBounds((GraphGlyph) glyphlist.get(i), getSeqMap());
+		for (GlyphI gl : glyphlist) {
+			GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, getSeqMap());
 		}
 
 		List<SeqSymmetry> symlist = glyphsToSyms(glyphlist);
@@ -1409,43 +1395,6 @@ public class SeqMapView extends JPanel
 	}
 
 	/**
-	 * Given a list of glyphs, returns a list of syms that those
-	 *  glyphs represent.
-	 */
-	private List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(glyphs.size());
-		if (glyphs.size() > 0) {
-			// if some syms are represented by multiple glyphs, then want to make sure glyphsToSyms()
-			//    doesn't return the same sym multiple times, so have to do a bit more work
-			if (seqmap.hasMultiGlyphsPerModel()) {
-				//	System.out.println("#########    in SeqMapView.glyphsToSyms(), possible multiple glyphs per sym");
-				HashMap<SeqSymmetry, SeqSymmetry> symhash = new HashMap<SeqSymmetry, SeqSymmetry>();
-				for (int i = 0; i < glyphs.size(); i++) {
-					GlyphI gl = glyphs.get(i);
-					SeqSymmetry sym = glyphToSym(gl);
-					if (sym != null) {
-						symhash.put(sym, sym);
-					}
-				}
-				Iterator<SeqSymmetry> iter = symhash.values().iterator();
-				while (iter.hasNext()) {
-					syms.add(iter.next());
-				}
-			} else {
-				//  no syms represented by multiple glyphs, so can use more efficient way of collecting syms
-				for (int i = 0; i < glyphs.size(); i++) {
-					GlyphI gl = glyphs.get(i);
-					SeqSymmetry sym = glyphToSym(gl);
-					if (sym != null) {
-						syms.add(sym);
-					}
-				}
-			}
-		}
-		return syms;
-	}
-
-	/**
 	 *  Figures out which symmetries are currently selected and then calls
 	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
 	 */
@@ -1456,6 +1405,25 @@ public class SeqMapView extends JPanel
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(selected_syms, this);
 	}
+
+
+	/**
+	 * Given a list of glyphs, returns a list of syms that those
+	 *  glyphs represent.
+	 */
+	private static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
+		Set<SeqSymmetry> symSet = new HashSet<SeqSymmetry>(glyphs.size());
+		if (!glyphs.isEmpty()) {
+			for (GlyphI gl : glyphs) {
+				SeqSymmetry sym = glyphToSym(gl);
+				if (sym != null) {
+					symSet.add(sym);
+				}
+			}
+		}
+		return new ArrayList<SeqSymmetry>(symSet);
+	}
+
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
 	public void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
@@ -1594,7 +1562,7 @@ public class SeqMapView extends JPanel
 	 *  region, if any.  Use getSelectedRegion() for that.
 	 *  @return a List of SeqSymmetry objects, possibly empty.
 	 */
-	List<SeqSymmetry> getSelectedSyms() {
+	private List<SeqSymmetry> getSelectedSyms() {
 		List<GlyphI> glyphs = seqmap.getSelected();
 		return glyphsToSyms(glyphs);
 	}
@@ -2137,7 +2105,7 @@ public class SeqMapView extends JPanel
 
 	/** Recurse through glyphs and collect those that are instanceof GraphGlyph. */
 	public final List<GlyphI> collectGraphs() {
-		ArrayList<GlyphI> graphs = new ArrayList<GlyphI>();
+		List<GlyphI> graphs = new ArrayList<GlyphI>();
 		GlyphI root = seqmap.getScene().getGlyph();
 		collectGraphs(root, graphs);
 		return graphs;
@@ -2231,15 +2199,11 @@ public class SeqMapView extends JPanel
 		}		
 		AffyTieredMap map = this.getSeqMap();
 
-		// try to match up method with tiers...
-		TierGlyph fortier = method2ftier.get(meth.toLowerCase());
-		TierGlyph revtier = method2rtier.get(meth.toLowerCase());
-
 		if (style.isGraphTier()) {
 			constant_heights = false;
 		}
 
-		TierGlyph axis_tier = this.getAxisTier();
+		TierGlyph fortier = method2ftier.get(meth.toLowerCase());
 		if (fortier == null) {
 			fortier = new TierGlyph(style);
 			fortier.setParentURL(meth);
@@ -2256,13 +2220,14 @@ public class SeqMapView extends JPanel
 
 		if (map.getTierIndex(fortier) == -1) {
 			if (next_to_axis) {
-				int axis_index = map.getTierIndex(axis_tier);
+				int axis_index = map.getTierIndex(this.getAxisTier());
 				map.addTier(fortier, axis_index);
 			} else {
 				map.addTier(fortier, true);
 			}
 		}
 
+		TierGlyph revtier = method2rtier.get(meth.toLowerCase());
 		if (revtier == null) {
 			revtier = new TierGlyph(style);
 			revtier.setParentURL(meth);
@@ -2274,7 +2239,7 @@ public class SeqMapView extends JPanel
 
 		if (map.getTierIndex(revtier) == -1) {
 			if (next_to_axis) {
-				int axis_index = map.getTierIndex(axis_tier);
+				int axis_index = map.getTierIndex(this.getAxisTier());
 				map.addTier(revtier, axis_index + 1);
 			} else {
 				map.addTier(revtier, false);

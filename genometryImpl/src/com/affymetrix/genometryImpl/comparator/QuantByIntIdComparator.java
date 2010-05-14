@@ -1,4 +1,4 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.genometryImpl.comparator;
 
 import java.util.Comparator;
 import affymetrix.calvin.data.ProbeSetQuantificationData;
@@ -11,8 +11,6 @@ public final class QuantByIntIdComparator implements Comparator<ProbeSetQuantifi
   public int compare(ProbeSetQuantificationData dataA, ProbeSetQuantificationData dataB) {
     int idA = dataA.getId();
     int idB = dataB.getId();
-    if (idA < idB) { return -1; }
-    else if (idA > idB) { return 1; }
-    else {  return 0; }
+    return Integer.valueOf(idA).compareTo(idB);
   }
 }

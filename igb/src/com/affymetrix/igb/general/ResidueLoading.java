@@ -33,10 +33,13 @@ public final class ResidueLoading {
 	enum FORMAT {
 		RAW,
 		BNIB,
-		FASTA,
-		FAS,
-		FA,
-		TWOBIT
+		FASTA
+	};
+
+	enum QFORMAT{
+		BNIB,
+		TWOBIT,
+		FA
 	};
 	
 	private static final boolean DEBUG = true;
@@ -94,20 +97,6 @@ public final class ResidueLoading {
 				}
 			}
 		}
-
-//		//Try to load from Quickload server.
-//		for (GenericVersion version : versionsWithChrom) {
-//			GenericServer server = version.gServer;
-//			if (server.serverType == ServerType.QuickLoad) {
-//				String residues = GetPartialQuickLoadResidues(aseq.getSeqGroup(), seq_name, server.URL, span);
-//				if (residues != null) {
-//					// span is non-null, here
-//					BioSeq.addResiduesToComposition(aseq, residues, span);
-//					gviewer.setAnnotatedSeq(aseq, true, true, true);
-//					return true;
-//				}
-//			}
-//		}
 
 		// Try to load in fasta format from DAS2 server.
 		for (GenericVersion version : versionsWithChrom) {
@@ -233,7 +222,7 @@ public final class ResidueLoading {
 	 * @return residue String.
 	 */
 
-	private static String GetPartialQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span){
+	private static String GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span){
 		String genome_name = seq_group.getID();
 		String common_url = root_url + "/" + genome_name + "/" + seq_name + ".";
 		
@@ -247,7 +236,7 @@ public final class ResidueLoading {
 	}
 
 	private static SymLoader determineLoader(String common_url, AnnotatedSeqGroup seq_group){
-		FORMAT format = determineFormat(common_url);
+		QFORMAT format = determineFormat(common_url);
 
 		if(format == null)
 			return null;
@@ -267,17 +256,15 @@ public final class ResidueLoading {
 				return new TwoBit(uri);
 
 			case FA:
-			case FAS:
-			case FASTA:
 				return new Fasta(uri, seq_group);
 		}
 
 		return null;
 	}
 
-	private static FORMAT determineFormat(String common_url){
+	private static QFORMAT determineFormat(String common_url){
 
-		for(FORMAT format : FORMAT.values()){
+		for(QFORMAT format : QFORMAT.values()){
 			String url_path = generateQuickLoadURI(common_url,format);
 			if(LocalUrlCacher.isValidURL(url_path)){
 
@@ -356,7 +343,7 @@ public final class ResidueLoading {
 	}
 
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
-	private static String generateQuickLoadURI(String common_url, FORMAT Format) {
+	private static String generateQuickLoadURI(String common_url, QFORMAT Format) {
 		if (DEBUG) {
 			System.out.println("trying to load residues via Quickload");
 		}
@@ -364,14 +351,6 @@ public final class ResidueLoading {
 		{
 			case BNIB:
 				common_url += "bnib";
-				break;
-
-			case FASTA:
-				common_url += "fasta";
-				break;
-
-			case FAS:
-				common_url += "fas";
 				break;
 
 			case FA:

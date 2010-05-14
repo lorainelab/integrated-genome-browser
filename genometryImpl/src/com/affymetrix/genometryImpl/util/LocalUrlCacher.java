@@ -728,4 +728,29 @@ public final class LocalUrlCacher {
 		}
 		return null;
 	}
+
+	public static boolean isValidURI(URI uri){
+		
+		String scheme = uri.getScheme().toLowerCase();
+		if (scheme.length() == 0 || scheme.equals("file")) {
+			File f = new File(uri);
+			if(f != null && f.exists()){
+				return true;
+			}
+		}
+
+		if (scheme.startsWith("http")) {
+			InputStream istr = null;
+			try {
+				String uriStr = uri.toString();
+				istr = LocalUrlCacher.getInputStream(uriStr);
+				if(istr != null){
+					return true;
+				}
+			}catch(Exception ex){}
+			finally{GeneralUtils.safeClose(istr);}
+		}
+		
+		return false;
+	}
 }

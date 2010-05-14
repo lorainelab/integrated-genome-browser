@@ -13,6 +13,8 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.das.DasLoader;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.symloader.BNIB;
+import com.affymetrix.genometryImpl.symloader.Fasta;
+import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
@@ -93,19 +95,19 @@ public final class ResidueLoading {
 			}
 		}
 
-		//Try to load from Quickload server.
-		for (GenericVersion version : versionsWithChrom) {
-			GenericServer server = version.gServer;
-			if (server.serverType == ServerType.QuickLoad) {
-				String residues = GetPartialQuickLoadResidues(aseq.getSeqGroup(), seq_name, server.URL, span);
-				if (residues != null) {
-					// span is non-null, here
-					BioSeq.addResiduesToComposition(aseq, residues, span);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
-					return true;
-				}
-			}
-		}
+//		//Try to load from Quickload server.
+//		for (GenericVersion version : versionsWithChrom) {
+//			GenericServer server = version.gServer;
+//			if (server.serverType == ServerType.QuickLoad) {
+//				String residues = GetPartialQuickLoadResidues(aseq.getSeqGroup(), seq_name, server.URL, span);
+//				if (residues != null) {
+//					// span is non-null, here
+//					BioSeq.addResiduesToComposition(aseq, residues, span);
+//					gviewer.setAnnotatedSeq(aseq, true, true, true);
+//					return true;
+//				}
+//			}
+//		}
 
 		// Try to load in fasta format from DAS2 server.
 		for (GenericVersion version : versionsWithChrom) {
@@ -233,25 +235,62 @@ public final class ResidueLoading {
 
 	private static String GetPartialQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span){
 		String genome_name = seq_group.getID();
-		String url_path = root_url + "/" + genome_name + "/" + seq_name + ".bnib";
-		if (DEBUG) {
-			System.out.println("  Quickload location of bnib file: " + url_path);
-		}
-		String residues = null;
-		URI uri;
+		String common_url = root_url + "/" + genome_name + "/" + seq_name + ".";
+		
+		
+		SymLoader symloader = determineLoader(common_url, seq_group);
+
+		if(symloader != null )
+			return symloader.getRegionResidues(span);
+		
+		return null;
+	}
+
+	private static SymLoader determineLoader(String common_url, AnnotatedSeqGroup seq_group){
+		FORMAT format = determineFormat(common_url);
+
+		if(format == null)
+			return null;
+
+		URI uri = null;
 		try {
-			uri = new URI(url_path);
-			if(LocalUrlCacher.isValidURI(uri)){
-				SymLoader sym = new BNIB(uri, seq_group);
-				residues = sym.getRegionResidues(span);
-			}
+			uri = new URI(generateQuickLoadURI(common_url, format));
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-		return residues;
+		switch(format){
+			case BNIB:
+				return new BNIB(uri, seq_group);
+
+			case TWOBIT:
+				return new TwoBit(uri);
+
+			case FA:
+			case FAS:
+			case FASTA:
+				return new Fasta(uri, seq_group);
+		}
+
+		return null;
 	}
 
+	private static FORMAT determineFormat(String common_url){
+
+		for(FORMAT format : FORMAT.values()){
+			String url_path = generateQuickLoadURI(common_url,format);
+			if(LocalUrlCacher.isValidURL(url_path)){
+
+				if (DEBUG) {
+					System.out.println("  Quickload location of bnib file: " + url_path);
+				}
+				
+				return format;
+			}
+		}
+		
+		return null;
+	}
 	/**
 	 * Get the residues from the specified QuickLoad server.
 	 * @param seq_group
@@ -317,36 +356,35 @@ public final class ResidueLoading {
 	}
 
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
-	private static String generateQuickLoadURI(String root_url, String genome_name, String seq_name, FORMAT Format) {
+	private static String generateQuickLoadURI(String common_url, FORMAT Format) {
 		if (DEBUG) {
 			System.out.println("trying to load residues via Quickload");
 		}
-		String url_path = root_url + "/" + genome_name + "/" + seq_name + ".";
 		switch(Format)
 		{
 			case BNIB:
-				url_path += "bnib";
+				common_url += "bnib";
 				break;
 
 			case FASTA:
-				url_path += "fasta";
+				common_url += "fasta";
 				break;
 
 			case FAS:
-				url_path += "fas";
+				common_url += "fas";
 				break;
 
 			case FA:
-				url_path += "fa";
+				common_url += "fa";
 				break;
 
 			case TWOBIT:
-				url_path += "2bit";
+				common_url += "2bit";
 				break;
 
 		}
 
-		return url_path;
+		return common_url;
 	}
 
 	// try loading via DAS/2 server that genome was originally modeled from

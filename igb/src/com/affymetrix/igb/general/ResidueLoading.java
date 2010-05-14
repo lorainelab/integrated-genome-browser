@@ -11,14 +11,20 @@ import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.das.DasLoader;
+import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class ResidueLoading {
 
@@ -83,6 +89,21 @@ public final class ResidueLoading {
 				}
 			}
 		}
+
+		//Try to load from Quickload server.
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.QuickLoad) {
+				String residues = GetPartialQuickLoadResidues(aseq.getSeqGroup(), seq_name, server.URL, span);
+				if (residues != null) {
+					// span is non-null, here
+					BioSeq.addResiduesToComposition(aseq, residues, span);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
+				}
+			}
+		}
+
 		// Try to load in fasta format from DAS2 server.
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
@@ -110,7 +131,7 @@ public final class ResidueLoading {
 				}
 			}
 		}
-		// QuickLoad only supports full files.
+		
 		return false;
 	}
 
@@ -196,6 +217,36 @@ public final class ResidueLoading {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Get the partial residues from the specified QuickLoad server.
+	 * @param seq_group
+	 * @param seq_name
+	 * @param root_url
+	 * @param span
+	 * @return residue String.
+	 */
+
+	private static String GetPartialQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span){
+		String genome_name = seq_group.getID();
+		String url_path = root_url + "/" + genome_name + "/" + seq_name + ".bnib";
+		if (DEBUG) {
+			System.out.println("  Quickload location of bnib file: " + url_path);
+		}
+		String residues = null;
+		URI uri;
+		try {
+			uri = new URI(url_path);
+			if(LocalUrlCacher.isValidURI(uri)){
+				SymLoader sym = new BNIB(uri, seq_group);
+				residues = sym.getRegionResidues(span);
+			}
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		return residues;
 	}
 
 	/**

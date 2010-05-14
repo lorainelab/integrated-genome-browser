@@ -266,8 +266,8 @@ public final class UnibrowControlServlet {
 			loadDataFromURLs(uni, data_urls, null, null);
 		}
 	}
-        
-        public static void addFeaturesToDataLoadView(List<Das2FeatureRequestSym> requests){
+
+	public static void addFeaturesToDataLoadView(List<Das2FeatureRequestSym> requests){
             for(Das2FeatureRequestSym request : requests){
                String version = request.getDas2Type().getVersionedSource().getName();
                String name = request.getDas2Type().getName();
@@ -353,30 +353,11 @@ public final class UnibrowControlServlet {
 					final String[] graph_files) {
 
 		final SeqMapView gviewer = uni.getMapView();
-		final AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
-		final AnnotatedSeqGroup book_group;
-		if (version == null || "unknown".equals(version) || version.trim().equals("")) {
-			book_group = selected_group;
-		} else {
-			book_group = gmodel.getSeqGroup(version);
-		}
-
+		final AnnotatedSeqGroup book_group = determineAndSetGroup(version);
 		if (book_group == null) {
 			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n" +
 							"You may need to choose a different server.");
 			return false; // cancel
-		}
-
-		if (!book_group.equals(selected_group)) {
-			// TODO -- move this code into GeneralLoadView's group change handler
-			Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + version);
-			try {
-				// Make sure this genome versionName's feature names are initialized.
-				GeneralLoadUtils.initVersionAndSeq(version);
-			} finally {
-				Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + version);
-			}
-			gmodel.setSelectedSeqGroup(book_group);
 		}
 
 		SwingUtilities.invokeLater(new Runnable() {
@@ -401,24 +382,13 @@ public final class UnibrowControlServlet {
 			}
 
 			private void setSeqAndRegion() {
-				// hopefully setting gmodel's selected seq group above triggered population of seqs
-				//   for group if not already populated
-				BioSeq selected_seq = gmodel.getSelectedSeq();
-				BioSeq book_seq;
-				if (seqid == null || "unknown".equals(seqid) || seqid.trim().length() == 0) {
-					book_seq = selected_seq;
-					if (book_seq == null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
-						book_seq = gmodel.getSelectedSeqGroup().getSeq(0);
-					}
-				} else {
-					book_seq = book_group.getSeq(seqid);
-				}
+				BioSeq book_seq = determineSeq(seqid, book_group);
 				if (book_seq == null) {
 					ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
 				} else {
 					// gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
 					//     gviewer is registered as a SeqSelectionListener on gmodel
-					if (book_seq != selected_seq) {
+					if (book_seq != gmodel.getSelectedSeq()) {
 						gmodel.setSelectedSeq(book_seq);
 					}
 					setRegion(book_seq);
@@ -426,19 +396,56 @@ public final class UnibrowControlServlet {
 			}
 
 			private void setRegion(BioSeq book_seq) {
-				final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-				final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
-				final double middle = (start + end) / 2.0;
 				if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
+					final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
+					final double middle = (start + end) / 2.0;
 					gviewer.setZoomSpotX(middle);
 					gviewer.zoomTo(view_span);
 				}
 				if (selstart >= 0 && selend >= 0) {
+					final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
 					gviewer.setSelectedRegion(regionsym, true);
 				}
 			}
 		});
 		return true; // was not cancelled, was successful
+	}
+
+	public static AnnotatedSeqGroup determineAndSetGroup(final String version) {
+		final AnnotatedSeqGroup group;
+		if (version == null || "unknown".equals(version) || version.trim().equals("")) {
+			group = gmodel.getSelectedSeqGroup();
+		} else {
+			group = gmodel.getSeqGroup(version);
+		}
+		if (group != null && !group.equals(gmodel.getSelectedSeqGroup())) {
+			// TODO -- move this code into GeneralLoadView's group change handler
+			Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + version);
+			try {
+				// Make sure this genome versionName's feature names are initialized.
+				GeneralLoadUtils.initVersionAndSeq(version);
+			} finally {
+				Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + version);
+			}
+			gmodel.setSelectedSeqGroup(group);
+		}
+		return group;
+	}
+
+
+	public static BioSeq determineSeq(String seqid, AnnotatedSeqGroup group) {
+		// hopefully setting gmodel's selected seq group above triggered population of seqs
+		//   for group if not already populated
+		BioSeq book_seq;
+		if (seqid == null || "unknown".equals(seqid) || seqid.trim().length() == 0) {
+			book_seq = gmodel.getSelectedSeq();
+			if (book_seq == null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+				book_seq = gmodel.getSelectedSeqGroup().getSeq(0);
+			}
+		} else {
+			book_seq = group.getSeq(seqid);
+		}
+		return book_seq;
 	}
 
 	/**

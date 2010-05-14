@@ -58,6 +58,7 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.*;
+import com.affymetrix.igb.util.ResponseFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.external.ExternalViewer;
 
@@ -174,6 +175,17 @@ public final class IGB extends Application
 			PrefsLoader.loadIGBPrefs(args); // force loading of prefs
 
 			singleton_igb.init(args);
+
+			File batchFile = ResponseFileLoader.getResponseFile(args);
+			if (batchFile != null && batchFile.exists()) {
+				BufferedReader br = null;
+				try {
+					br = new BufferedReader(new FileReader(batchFile));
+					ResponseFileLoader.doActions(br);
+				} finally {
+					GeneralUtils.safeClose(br);
+				}
+			}
 
 			goToBookmark(args);
 

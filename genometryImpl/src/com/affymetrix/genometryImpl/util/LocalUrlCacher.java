@@ -729,6 +729,18 @@ public final class LocalUrlCacher {
 		return null;
 	}
 
+	public static boolean isValidURL(String url){
+		URI uri = null;
+
+		try {
+			uri = new URI(url);
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, null, "Invalid url :" + url);
+		}
+		
+		return isValidURI(uri);
+
+	}
 	public static boolean isValidURI(URI uri){
 		
 		String scheme = uri.getScheme().toLowerCase();
@@ -747,7 +759,10 @@ public final class LocalUrlCacher {
 				if(istr != null){
 					return true;
 				}
-			}catch(Exception ex){}
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :" + uriStr);
+			}catch(Exception ex){
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :" + uri.getPath(), ex);
+			}
 			finally{GeneralUtils.safeClose(istr);}
 		}
 		

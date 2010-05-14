@@ -31,7 +31,10 @@ public final class ResidueLoading {
 	enum FORMAT {
 		RAW,
 		BNIB,
-		FASTA
+		FASTA,
+		FAS,
+		FA,
+		TWOBIT
 	};
 	
 	private static final boolean DEBUG = true;
@@ -311,6 +314,39 @@ public final class ResidueLoading {
 			System.out.println("   request URI: " + uri);
 		}
 		return uri;
+	}
+
+	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
+	private static String generateQuickLoadURI(String root_url, String genome_name, String seq_name, FORMAT Format) {
+		if (DEBUG) {
+			System.out.println("trying to load residues via Quickload");
+		}
+		String url_path = root_url + "/" + genome_name + "/" + seq_name + ".";
+		switch(Format)
+		{
+			case BNIB:
+				url_path += "bnib";
+				break;
+
+			case FASTA:
+				url_path += "fasta";
+				break;
+
+			case FAS:
+				url_path += "fas";
+				break;
+
+			case FA:
+				url_path += "fa";
+				break;
+
+			case TWOBIT:
+				url_path += "2bit";
+				break;
+
+		}
+
+		return url_path;
 	}
 
 	// try loading via DAS/2 server that genome was originally modeled from

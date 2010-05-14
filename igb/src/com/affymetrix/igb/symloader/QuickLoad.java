@@ -29,6 +29,7 @@ import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -160,6 +161,7 @@ public final class QuickLoad extends SymLoader {
 					}
 					List<SeqSymmetry> overallResults = loadAndAddSymmetries(
 							QuickLoad.this.symL, QuickLoad.this.featureName, strategy, output_requests);
+					SeqGroupView.refreshTable();	// in case there were new chromosomes
 					return overallResults;
 				} catch (Exception ex) {
 					ex.printStackTrace();

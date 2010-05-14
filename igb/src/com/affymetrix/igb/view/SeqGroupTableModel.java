@@ -6,7 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 final class SeqGroupTableModel extends AbstractTableModel {
 
-	AnnotatedSeqGroup group;
+	private final AnnotatedSeqGroup group;
 
 	public SeqGroupTableModel(AnnotatedSeqGroup seq_group) {
 		group = seq_group;

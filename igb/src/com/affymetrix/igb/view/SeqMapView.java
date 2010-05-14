@@ -1387,7 +1387,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	protected void clearSelection() {
+	protected final void clearSelection() {
 		sym_used_for_title = null;
 		seqmap.clearSelected();
 		setSelectedRegion(null, false);
@@ -1398,7 +1398,7 @@ public class SeqMapView extends JPanel
 	 *  Figures out which symmetries are currently selected and then calls
 	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
 	 */
-	void postSelections() {
+	final void postSelections() {
 		List<GlyphI> selected_glyphs = seqmap.getSelected();
 
 		List<SeqSymmetry> selected_syms = glyphsToSyms(selected_glyphs);
@@ -1426,7 +1426,7 @@ public class SeqMapView extends JPanel
 
 
 	// assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
-	public void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
+	public final void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
 		seq_selected_sym = region_sym;
 		// Note: SUBSELECT_SEQUENCE might possibly be set to false in the AltSpliceView
 		if (SUBSELECT_SEQUENCE && seq_glyph != null) {

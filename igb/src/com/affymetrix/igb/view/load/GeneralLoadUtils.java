@@ -189,7 +189,7 @@ public final class GeneralLoadUtils {
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
-	private synchronized static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
+	private static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		Map<String,DasSource> sources = server.getDataSources();
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
@@ -211,7 +211,7 @@ public final class GeneralLoadUtils {
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
-	private synchronized static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
+	private static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = server.getSources();
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
@@ -309,14 +309,14 @@ public final class GeneralLoadUtils {
 		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
 
-	private static GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {
+	private static synchronized GenericVersion discoverVersion(String versionID, String versionName, GenericServer gServer, Object versionSourceObj, String speciesName) {
 		// Make sure we use the preferred synonym for the genome version.
 		String preferredVersionName = LOOKUP.getPreferredName(versionName);
-		versionName2species.put(preferredVersionName, speciesName);
 		AnnotatedSeqGroup group = gmodel.addSeqGroup(preferredVersionName); // returns existing group if found, otherwise creates a new group
 
 		GenericVersion gVersion = new GenericVersion(group, versionID, preferredVersionName, gServer, versionSourceObj);
 		List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
+		versionName2species.put(preferredVersionName, speciesName);
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
 		}

@@ -67,11 +67,11 @@ public final class GenometryModel {
 
 
 	/** Returns a Map of String names to AnnotatedSeqGroup objects. */
-	public Map<String,AnnotatedSeqGroup> getSeqGroups() {
+	private Map<String,AnnotatedSeqGroup> getSeqGroups() {
 		return seq_groups;
 	}
 
-	public List<String> getSeqGroupNames() {
+	public synchronized List<String> getSeqGroupNames() {
 		List<String> list = new ArrayList<String>(getSeqGroups().keySet());
 		Collections.sort(list);
 		return Collections.unmodifiableList(list);
@@ -96,7 +96,7 @@ public final class GenometryModel {
 	 *  isn't an existing one.
 	 *  @return a non-null AnnotatedSeqGroup
 	 */
-	public AnnotatedSeqGroup addSeqGroup(String group_id) {
+	public synchronized AnnotatedSeqGroup addSeqGroup(String group_id) {
 		// if AnnotatedSeqGroup with same or synonymous id already exists, then return it
 		AnnotatedSeqGroup group = getSeqGroup(group_id);
 		// otherwise create a new AnnotatedSeqGroup
@@ -115,7 +115,7 @@ public final class GenometryModel {
 		return new AnnotatedSeqGroup(group_id);
 	}
 
-	public void addSeqGroup(AnnotatedSeqGroup group) {
+	public synchronized void addSeqGroup(AnnotatedSeqGroup group) {
 		seq_groups.put(group.getID(), group);
 		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
 	}

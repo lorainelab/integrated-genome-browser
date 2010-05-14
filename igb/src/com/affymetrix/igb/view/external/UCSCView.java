@@ -87,7 +87,7 @@ public class UCSCView extends BrowserView {
 			text += "<ol><li><p>Obtain your user id by clicking on the \"UCSC info\" button.</p><p>Or open <a href=\"http://genome.ucsc.edu/cgi-bin/cartDump\">http://genome.ucsc.edu/cgi-bin/cartDump</a> in your browser</p></li>";
 			text += "<li>Then scroll down in the opened window and copy the value of hguid into the \"UCSC user id\" field.</li>";
 			text += "<li>Click the submit button.</li>";
-			text += "<li>Your IGB UCSC View is now synchronized with you browser track configuration.</br>";
+			text += "<li>Your IGB UCSC View is now synchronized with your browser track configuration.</br>";
 			text += "The settings in your browser now change the view.</li></ol>";
 			pane.setText(text);
 			pane.setEditable(false);

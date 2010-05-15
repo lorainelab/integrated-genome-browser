@@ -1,5 +1,7 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -56,6 +58,9 @@ final public class MouseShortCut implements MouseListener{
 				smv.centerAtHairline();
 			}
 
+			List<GlyphI> glyphs = smv.getSeqMap().getSelected();
+			if(glyphs.size() != 0 && glyphs.get(0) instanceof GraphGlyph)
+				return;
 			//Zoom to selection.
 			smv.zoomToSelections();
 			return;

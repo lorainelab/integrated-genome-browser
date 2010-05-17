@@ -236,7 +236,7 @@ public final class GeneralLoadUtils {
 	 * @param gServer
 	 * @return false if there's an obvious failure.
 	 */
-	private synchronized static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
+	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
@@ -244,7 +244,7 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
-		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
+		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 		if (quickloadServer == null) {
 			System.out.println("ERROR: No quickload server model found for server: " + gServer);
 			return false;

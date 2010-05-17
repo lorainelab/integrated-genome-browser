@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 public final class QuickLoadServerModel {
 
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-	private final GenometryModel gmodel;
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	private String root_url;
 	private final List<String> genome_names = new ArrayList<String>();
@@ -43,8 +42,7 @@ public final class QuickLoadServerModel {
 	private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
 	private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
 
-	private QuickLoadServerModel(GenometryModel gmodel, String url) {
-		this.gmodel = gmodel;
+	private QuickLoadServerModel(String url) {
 		root_url = url;
 		if (!root_url.endsWith("/")) {
 			root_url = root_url + "/";
@@ -52,14 +50,14 @@ public final class QuickLoadServerModel {
 		loadGenomeNames();
 	}
 
-	public static QuickLoadServerModel getQLModelForURL(GenometryModel gmodel, URL url) {
+	public static synchronized QuickLoadServerModel getQLModelForURL(URL url) {
 		String ql_http_root = url.toExternalForm();
 		if (!ql_http_root.endsWith("/")) {
 			ql_http_root = ql_http_root + "/";
 		}
 		QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
 		if (ql_server == null) {
-			ql_server = new QuickLoadServerModel(gmodel, ql_http_root);
+			ql_server = new QuickLoadServerModel(ql_http_root);
 			url2quickload.put(ql_http_root, ql_server);
 			LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + "synonyms.txt");
 		}
@@ -79,7 +77,8 @@ public final class QuickLoadServerModel {
 	}
 
 	private AnnotatedSeqGroup getSeqGroup(String genome_name) {
-		return gmodel.addSeqGroup(LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genome_name));
+		return GenometryModel.getGenometryModel().addSeqGroup(LOOKUP.findMatchingSynonym(
+				GenometryModel.getGenometryModel().getSeqGroupNames(), genome_name));
 	}
 
 	public List<AnnotMapElt> getAnnotsMap(String genomeName) {
@@ -119,7 +118,7 @@ public final class QuickLoadServerModel {
 		return props;
 	}
 
-	private void initGenome(String genome_name) {
+	private synchronized void initGenome(String genome_name) {
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
 			"initializing data for genome: " + genome_name);
 		if (loadSeqInfo(genome_name) && loadAnnotationNames(genome_name)) {
@@ -260,10 +259,10 @@ public final class QuickLoadServerModel {
 
 			boolean annot_contigs = false;
 			if (lift_stream != null) {
-				LiftParser.parse(lift_stream, gmodel, genome_name, annot_contigs);
+				LiftParser.parse(lift_stream, GenometryModel.getGenometryModel(), genome_name, annot_contigs);
 				success = true;
 			} else if (cinfo_stream != null) {
-				ChromInfoParser.parse(cinfo_stream, gmodel, genome_name);
+				ChromInfoParser.parse(cinfo_stream, GenometryModel.getGenometryModel(), genome_name);
 				success = true;
 			}
 		} catch (Exception ex) {
@@ -275,7 +274,7 @@ public final class QuickLoadServerModel {
 		return success;
 	}
 
-	private void loadGenomeNames() {
+	private synchronized void loadGenomeNames() {
 		String contentsTxt = IGBConstants.contentsTxt;
 		InputStream istr = null;
 		InputStreamReader ireader = null;

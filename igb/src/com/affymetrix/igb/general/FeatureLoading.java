@@ -89,7 +89,7 @@ public final class FeatureLoading {
 					System.out.println("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String) gVersion.gServer.serverObj);
 				}
 
-				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
+				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 				List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
 				for (String type_name : typeNames) {
 					if (type_name == null || type_name.length() == 0) {

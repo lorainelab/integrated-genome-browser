@@ -90,7 +90,7 @@ Sorex araneus	Eurasian shrew	S_araneus		Sorex_araneus
 Sorghum bicolor	Sorghum	S_bicolor	
 Spermophilus tridecemlineatus	Thirteen-lined ground squirrel	S_tridecemlineatus		Spermophilus_tridecemlineatus
 Strongylocentrotus purpuratus	Purple sea urchin	S_purpuratus	strPur
-Sus scrofa	Wild boar	S_scrofa		Sus_scrofa
+Sus scrofa	Wild boar	S_scrofa		Sus_scrofa	susScr
 Taeniopygia guttata	Zebra finch	T_guttata	taeGut	Taeniopygia_guttata
 Takifugu rubripes	Fugu	T_rubripes	fr	Takifugu_rubripes
 Tarsius syrichta	Philippine tarsier	T_syrichta	tarSyr	Tarsius_syrichta

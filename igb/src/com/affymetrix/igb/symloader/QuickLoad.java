@@ -118,7 +118,7 @@ public final class QuickLoad extends SymLoader {
 			return "";
 		}
 
-		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(GenometryModel.getGenometryModel(), quickloadURL);
+		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 		List<AnnotMapElt> annotsList = quickloadServer.getAnnotsMap(version.versionID);
 
 		// Linear search, but over a very small list.

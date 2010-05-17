@@ -80,8 +80,8 @@ public class AboutIGBAction extends AbstractAction {
 		message_pane.add(new JScrollPane(about_text));
 		JButton igb_paper = new JButton("View IGB Paper");
 		JButton bioviz_org = new JButton("Visit Bioviz.org");
-		JButton request_feature = new JButton("Request a Feature");
-		JButton report_bug = new JButton("Report a Bug");
+		// vikram JButton request_feature = new JButton("Request a Feature");
+		// vikram JButton report_bug = new JButton("Report a Bug");
 		igb_paper.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
@@ -94,23 +94,11 @@ public class AboutIGBAction extends AbstractAction {
 				GeneralUtils.browse("http://www.bioviz.org");
 			}
 		});
-		request_feature.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714747");
-			}
-		});
-		report_bug.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714744");
-			}
-		});
-		JPanel buttonP = new JPanel(new GridLayout(2, 2));
+			
+		JPanel buttonP = new JPanel(new GridLayout(2, 1));
 		buttonP.add(igb_paper);
 		buttonP.add(bioviz_org);
-		buttonP.add(request_feature);
-		buttonP.add(report_bug);
+	
 		message_pane.add(buttonP);
 
 		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,

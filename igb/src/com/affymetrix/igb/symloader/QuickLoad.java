@@ -323,9 +323,10 @@ public final class QuickLoad extends SymLoader {
 		if (extension.equals("sgr")) {
 			return new Sgr(uri, featureName, group);
 		}
-		if (extension.equals("useq")) {
-			return new USeq(uri, featureName, group);
-		}
+		// commented out until the USeq class is updated
+//		if (extension.equals("useq")) {
+//			return new USeq(uri, featureName, group);
+//		}
 		if (extension.equals("wig")) {
 			return new Wiggle(uri, featureName, group);
 		}

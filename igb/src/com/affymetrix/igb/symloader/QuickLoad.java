@@ -62,7 +62,7 @@ public final class QuickLoad extends SymLoader {
 	public QuickLoad(GenericVersion version, URI uri) {
 		super(uri);
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
-		String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(this.extension));
+		String strippedName = unzippedName.substring(0, unzippedName.toLowerCase().lastIndexOf(this.extension));
 		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);
 		this.featureName = friendlyName;
 		this.version = version;

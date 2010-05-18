@@ -271,7 +271,6 @@ public final class QuickLoad extends SymLoader {
 				// special-case CHP files. ChpParser only has
 				//    a parse() method that takes the file name
 				// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
-				// Also cannot handle compressed chp files
 				File f = LocalUrlCacher.convertURIToFile(this.uri);
 				if (!GeneralUtils.getUnzippedName(f.getName()).equalsIgnoreCase(f.getName())) {
 					File f2 = File.createTempFile(f.getName(), ".chp");

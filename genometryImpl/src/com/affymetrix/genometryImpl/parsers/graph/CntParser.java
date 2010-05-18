@@ -26,18 +26,18 @@ import java.util.regex.*;
  */
 public final class CntParser {
 
-	static Pattern tag_val = Pattern.compile("(.*)=(.*)");
-	static Pattern line_regex = Pattern.compile("\\t");
-	static Pattern section_regex = Pattern.compile("\\[.*\\]");
-	static final String SECTION_HEADER = "[Header]";
-	static final String SECTION_COL_NAME = "[ColumnName]";
-	static final String SECTION_DATA = "[Data]";
+	private static final Pattern tag_val = Pattern.compile("(.*)=(.*)");
+	private static final Pattern line_regex = Pattern.compile("\\t");
+	private static final Pattern section_regex = Pattern.compile("\\[.*\\]");
+	private static final String SECTION_HEADER = "[Header]";
+	private static final String SECTION_COL_NAME = "[ColumnName]";
+	private static final String SECTION_DATA = "[Data]";
 	// index of the first column containing data
-	static final int FIRST_DATA_COLUMN = 3;
-	Map<String, FloatArrayList[]> thing = new HashMap<String, FloatArrayList[]>();
-	Map<String, IntArrayList> thing2 = new HashMap<String, IntArrayList>();
+	private static final int FIRST_DATA_COLUMN = 3;
+	private final Map<String, FloatArrayList[]> seq2Floats = new HashMap<String, FloatArrayList[]>();
+	private final Map<String, IntArrayList> seqToIntList = new HashMap<String, IntArrayList>();
 
-	Map<String, String> unique_gids = new HashMap<String, String>();
+	private final Map<String, String> unique_gids = new HashMap<String, String>();
 
 	public List<GraphSym> parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotateSeq)
 			throws IOException {
@@ -139,12 +139,11 @@ public final class CntParser {
 		}   // end of line-reading loop
 
 
-		Iterator seqids = thing2.keySet().iterator();
-		while (seqids.hasNext()) {
-			String seqid = (String) seqids.next();
-			IntArrayList x = thing2.get(seqid);
+		for (Map.Entry<String,IntArrayList> entry : seqToIntList.entrySet()) {
+			String seqid = entry.getKey();
+			IntArrayList x = entry.getValue();
 			x.trimToSize();
-			FloatArrayList[] ys = thing.get(seqid);
+			FloatArrayList[] ys = seq2Floats.get(seqid);
 			BioSeq seq = seq_group.getSeq(seqid);
 			for (int i = 0; i < ys.length; i++) {
 				FloatArrayList y = ys[i];
@@ -185,25 +184,25 @@ public final class CntParser {
 	}
 
 	FloatArrayList[] getFloatsForSeq(BioSeq seq, int numScores) {
-		FloatArrayList[] floats = thing.get(seq.getID());
+		FloatArrayList[] floats = seq2Floats.get(seq.getID());
 
 		if (floats == null) {
 			floats = new FloatArrayList[numScores];
 			for (int i = 0; i < numScores; i++) {
 				floats[i] = new FloatArrayList();
 			}
-			thing.put(seq.getID(), floats);
+			seq2Floats.put(seq.getID(), floats);
 		}
 
 		return floats;
 	}
 
 	IntArrayList getXCoordsForSeq(BioSeq seq) {
-		IntArrayList xcoords = thing2.get(seq.getID());
+		IntArrayList xcoords = seqToIntList.get(seq.getID());
 
 		if (xcoords == null) {
 			xcoords = new IntArrayList();
-			thing2.put(seq.getID(), xcoords);
+			seqToIntList.put(seq.getID(), xcoords);
 		}
 
 		return xcoords;

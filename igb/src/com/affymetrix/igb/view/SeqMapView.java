@@ -1826,7 +1826,9 @@ public class SeqMapView extends JPanel
 			s.setLabeled(hairline_is_labeled);
 			seqmap.updateWidget();
 		}
-		ToggleHairlineLabelAction.getAction().putValue(Action.SELECTED_KEY, hairline_is_labeled);
+		if (ToggleHairlineLabelAction.getAction() != null) {
+			ToggleHairlineLabelAction.getAction().putValue(Action.SELECTED_KEY, hairline_is_labeled);
+		}
 		return hairline_is_labeled;
 	}
 

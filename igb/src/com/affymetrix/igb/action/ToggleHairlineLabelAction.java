@@ -29,6 +29,7 @@ public class ToggleHairlineLabelAction extends AbstractAction {
 		if (map_view.isHairlineLabeled() != use_hairline_label) {
 			map_view.toggleHairlineLabel();
 		}
+		this.putValue(SELECTED_KEY, use_hairline_label);
 	}
 
 	public static ToggleHairlineLabelAction getAction() {

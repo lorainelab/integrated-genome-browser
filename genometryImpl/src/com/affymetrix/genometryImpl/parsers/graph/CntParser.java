@@ -12,11 +12,11 @@
  */
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.util.FloatList;
-import com.affymetrix.genometryImpl.util.IntList;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -34,8 +34,8 @@ public final class CntParser {
 	static final String SECTION_DATA = "[Data]";
 	// index of the first column containing data
 	static final int FIRST_DATA_COLUMN = 3;
-	Map<String, Object> thing = new HashMap<String, Object>();
-	Map<String, Object> thing2 = new HashMap<String, Object>();
+	Map<String, FloatArrayList[]> thing = new HashMap<String, FloatArrayList[]>();
+	Map<String, IntArrayList> thing2 = new HashMap<String, IntArrayList>();
 
 	Map<String, String> unique_gids = new HashMap<String, String>();
 
@@ -127,12 +127,12 @@ public final class CntParser {
 				aseq.setLength(x);
 			}
 
-			IntList xVals = getXCoordsForSeq(aseq);
+			IntArrayList xVals = getXCoordsForSeq(aseq);
 			xVals.add(x);
 
-			FloatList[] floats = getFloatsForSeq(aseq, numScores);
+			FloatArrayList[] floats = getFloatsForSeq(aseq, numScores);
 			for (int j = 0; j < numScores; j++) {
-				FloatList floatList = floats[j];
+				FloatArrayList floatList = floats[j];
 				float floatVal = parseFloat(fields[FIRST_DATA_COLUMN + j]);
 				floatList.add(floatVal);
 			}
@@ -142,18 +142,19 @@ public final class CntParser {
 		Iterator seqids = thing2.keySet().iterator();
 		while (seqids.hasNext()) {
 			String seqid = (String) seqids.next();
-			IntList x = (IntList) thing2.get(seqid);
+			IntArrayList x = thing2.get(seqid);
 			x.trimToSize();
-			FloatList[] ys = (FloatList[]) thing.get(seqid);
+			FloatArrayList[] ys = thing.get(seqid);
 			BioSeq seq = seq_group.getSeq(seqid);
 			for (int i = 0; i < ys.length; i++) {
-				FloatList y = ys[i];
+				FloatArrayList y = ys[i];
+				y.trimToSize();
 				String id = column_names[i + FIRST_DATA_COLUMN];
 				if ("ChipNum".equals(id)) {
 					continue;
 				}
 				id = getGraphIdForColumn(id, seq_group);
-				GraphSym graf = new GraphSym(x.getInternalArray(), y.copyToArray(), id, seq);
+				GraphSym graf = new GraphSym(x.elements(), y.elements(), id, seq);
 				if (annotateSeq) {
 					seq.addAnnotation(graf);
 				}
@@ -183,13 +184,13 @@ public final class CntParser {
 		return val;
 	}
 
-	FloatList[] getFloatsForSeq(BioSeq seq, int numScores) {
-		FloatList[] floats = (FloatList[]) thing.get(seq.getID());
+	FloatArrayList[] getFloatsForSeq(BioSeq seq, int numScores) {
+		FloatArrayList[] floats = thing.get(seq.getID());
 
 		if (floats == null) {
-			floats = new FloatList[numScores];
+			floats = new FloatArrayList[numScores];
 			for (int i = 0; i < numScores; i++) {
-				floats[i] = new FloatList();
+				floats[i] = new FloatArrayList();
 			}
 			thing.put(seq.getID(), floats);
 		}
@@ -197,11 +198,11 @@ public final class CntParser {
 		return floats;
 	}
 
-	IntList getXCoordsForSeq(BioSeq seq) {
-		IntList xcoords = (IntList) thing2.get(seq.getID());
+	IntArrayList getXCoordsForSeq(BioSeq seq) {
+		IntArrayList xcoords = thing2.get(seq.getID());
 
 		if (xcoords == null) {
-			xcoords = new IntList();
+			xcoords = new IntArrayList();
 			thing2.put(seq.getID(), xcoords);
 		}
 

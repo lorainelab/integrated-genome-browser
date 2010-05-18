@@ -19,7 +19,6 @@ import affymetrix.calvin.data.ProbeSetQuantificationData;
 import affymetrix.calvin.data.ProbeSetQuantificationDetectionData;
 import affymetrix.calvin.data.TilingSequenceData;
 import affymetrix.calvin.parameter.ParameterNameValue;
-import affymetrix.calvin.utils.AffymetrixGuidType;
 import affymetrix.fusion.chp.FusionCHPData;
 import affymetrix.fusion.chp.FusionCHPDataReg;
 import affymetrix.fusion.chp.FusionCHPGenericData;
@@ -72,6 +71,7 @@ public final class ChpParser {
 
 		FusionCHPData chp = FusionCHPDataReg.read(file_name);
 		if (chp == null) {
+			ErrorHandler.errorPanel("Could not parse file: " + file_name);
 			return null;
 		}
 
@@ -91,6 +91,7 @@ public final class ChpParser {
 		FusionCHPGenericData genchp;
 		boolean has_coord_data = false;
 
+		try {
 		/** For all chips other than tiling (and potentially resequencing?), the genomic location of the
 		 *   probesets is not specified in the CHP file.  Therefore it needs to be obtained from another
 		 *   source, based on info that _is_ in the CHP file and the current genome/AnnotatedSeqGroup (or
@@ -127,6 +128,9 @@ public final class ChpParser {
 		} else {
 			System.out.println("WARNING: not parsing file, CHP file type not recognized: " + chp);
 			ErrorHandler.errorPanel("CHP file type not recognized, cannot be loaded");
+		}
+		} catch (Exception ex) {
+			ErrorHandler.errorPanel("Chp parsing failed", "Chp parsing failed with the following exception:", ex);
 		}
 		if (!has_coord_data) {
 			/**
@@ -206,7 +210,7 @@ public final class ChpParser {
 	}
 
 	/** same as parseQuantChp, but adding detection/pval */
-	private static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp, boolean annotate_seq) {
+	private static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp, boolean annotate_seq) throws Exception {
 		List<LazyChpSym> results = null;
 		String file_name = chp.getFileName();
 		String algName = chp.getAlgName();
@@ -272,7 +276,7 @@ public final class ChpParser {
 		return results;
 	}
 
-	private static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) {
+	private static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) throws Exception {
 		List<LazyChpSym> results = null;
 		String file_name = chp.getFileName();
 		String algName = chp.getAlgName();
@@ -342,7 +346,7 @@ public final class ChpParser {
 	 *  class) stores an "id" for Exon results and "name" for 3' IVT results. The "name" property will be
 	 *  empty for Exon results.
 	 */
-	private static List<LazyChpSym> oldParseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) {
+	private static List<LazyChpSym> oldParseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) throws Exception {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
@@ -486,7 +490,7 @@ public final class ChpParser {
 		return Collections.<LazyChpSym>emptyList();
 	}
 
-	private static List<? extends SeqSymmetry> parseLegacyChp(FusionCHPLegacyData chp) {
+	private static List<? extends SeqSymmetry> parseLegacyChp(FusionCHPLegacyData chp) throws Exception  {
 		List<? extends SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		FusionCHPHeader header = chp.getHeader();
 		System.out.println("Alg name: " + header.getAlgName());
@@ -514,7 +518,7 @@ public final class ChpParser {
 		return results;
 	}
 
-	private static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) {
+	private static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) throws Exception  {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		int seq_count = tchp.getNumberSequences();

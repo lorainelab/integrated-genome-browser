@@ -180,6 +180,9 @@ public abstract class SymLoader {
 		for (FeatureRequestSym request : output_requests) {
 			// short-circuit if there's a failure... which may not even be signaled in the code
 			results = loadFeature(symL, featureName, strategy, request.getOverlapSpan());
+			if (results == null) {
+				return overallResults;
+			}
 			results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
 			if (request.getInsideSpan() != null) {
 				results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);

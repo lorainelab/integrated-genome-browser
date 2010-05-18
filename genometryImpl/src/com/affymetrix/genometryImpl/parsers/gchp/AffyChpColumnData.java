@@ -13,11 +13,11 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
+import cern.colt.list.ByteArrayList;
 import cern.colt.list.DoubleArrayList;
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import cern.colt.list.ShortArrayList;
-import com.affymetrix.genometryImpl.util.ByteList;
-import com.affymetrix.genometryImpl.util.FloatList;
-import com.affymetrix.genometryImpl.util.IntList;
 import java.io.*;
 import java.util.*;
 
@@ -26,10 +26,10 @@ public final class AffyChpColumnData {
 	AffyDataType type;
 	int size;
 	Object theData = null;
-	ByteList dataByte = null;
+	ByteArrayList dataByte = null;
 	DoubleArrayList dataDouble = null;
-	IntList dataInt = null;
-	FloatList dataFloat = null;
+	IntArrayList dataInt = null;
+	FloatArrayList dataFloat = null;
 	ShortArrayList dataShort = null;
 	ArrayList<CharSequence> dataString = null;
 	AffySingleChromData singleChromData;
@@ -41,19 +41,19 @@ public final class AffyChpColumnData {
 		this.size = size;
 		switch (this.type) {
 			case INT8:
-				theData = dataByte = new ByteList(); break;
+				theData = dataByte = new ByteArrayList(); break;
 			case UINT8:
 				theData = dataShort = new ShortArrayList(); break;
 			case INT16:
 				theData = dataShort = new ShortArrayList(); break;
 			case UINT16:
-				theData = dataInt = new IntList(); break;
+				theData = dataInt = new IntArrayList(); break;
 			case INT32:
-				theData = dataInt = new IntList(); break;
+				theData = dataInt = new IntArrayList(); break;
 			case UINT32:
-				theData = dataInt = new IntList(); break; //TODO: really need to use unsigned int
+				theData = dataInt = new IntArrayList(); break; //TODO: really need to use unsigned int
 			case FLOAT:
-				theData = dataFloat = new FloatList(); break;
+				theData = dataFloat = new FloatArrayList(); break;
 			case DOUBLE:
 				theData = dataDouble = new DoubleArrayList(); break;
 			case TEXT_ASCII:

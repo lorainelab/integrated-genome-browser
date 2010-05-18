@@ -40,8 +40,6 @@ public final class AffyDataSet {
 		this.chpFile = chpFile;
 	}
 
-	static boolean LOAD_NOW = false;
-
 	public void parse(AffyGenericChpFile chpFile, DataInputStream dis) throws IOException {
 
 		pos_first_data_element = dis.readInt();

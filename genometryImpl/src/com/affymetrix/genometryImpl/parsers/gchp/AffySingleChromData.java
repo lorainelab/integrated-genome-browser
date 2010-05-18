@@ -13,14 +13,14 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
+import cern.colt.list.ByteArrayList;
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import cern.colt.list.ShortArrayList;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.util.ByteList;
-import com.affymetrix.genometryImpl.util.FloatList;
-import com.affymetrix.genometryImpl.util.IntList;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -96,7 +96,7 @@ final class AffySingleChromData {
 
 		// column 2 contains chromosome number, but we already know that information so ignore it.
 
-		IntList positions = (IntList) columns.get(2).getData();
+		IntArrayList positions = (IntArrayList) columns.get(2).getData();
 		positions.trimToSize();
 
 		if (positions.size() <= -1) {
@@ -113,23 +113,23 @@ final class AffySingleChromData {
 		for (AffyChpColumnData colData : columns.subList(3, columns.size())) {
 			String graphId = colData.name;
 			float[] y;
-			if (colData.getData() instanceof FloatList) {
-				List<Object> trimmedXandY = trimNaN(positions, (FloatList) colData.getData());
-				IntList xlist = (IntList) trimmedXandY.get(0);
-				FloatList flist = (FloatList) trimmedXandY.get(1);
+			if (colData.getData() instanceof FloatArrayList) {
+				List<Object> trimmedXandY = trimNaN(positions, (FloatArrayList) colData.getData());
+				IntArrayList xlist = (IntArrayList) trimmedXandY.get(0);
+				FloatArrayList flist = (FloatArrayList) trimmedXandY.get(1);
 
 				xlist.trimToSize();
 				flist.trimToSize();
-				GraphSym gsym = new GraphSym(xlist.getInternalArray(), flist.getInternalArray(), graphId, seq);
+				GraphSym gsym = new GraphSym(xlist.elements(), flist.elements(), graphId, seq);
 				results.add(gsym);
-			} else if (colData.getData() instanceof IntList) {
-				IntList ilist = (IntList) colData.getData();
+			} else if (colData.getData() instanceof IntArrayList) {
+				IntArrayList ilist = (IntArrayList) colData.getData();
 				ilist.trimToSize();
 				y = new float[ilist.size()];
 				for (int i=0;i<ilist.size();i++) {
 					y[i] = ilist.get(i);
 				}
-				GraphSym gsym = new GraphSym(positions.getInternalArray(), y, graphId, seq);
+				GraphSym gsym = new GraphSym(positions.elements(), y, graphId, seq);
 				results.add(gsym);
 			} else if (colData.getData() instanceof ShortArrayList) {
 				GraphSym gsym;
@@ -137,7 +137,7 @@ final class AffySingleChromData {
 					// In the "CNStateMin" and "CNStateMax" graphs, the number "255"
 					// is used to represent "unknown".  These x,y pairs should be discarded.
 					List<Object> trimmedXandY = trim255(positions, (ShortArrayList) colData.getData());
-					IntList xlist = (IntList) trimmedXandY.get(0);
+					IntArrayList xlist = (IntArrayList) trimmedXandY.get(0);
 					ShortArrayList ilist = (ShortArrayList) trimmedXandY.get(1);
 
 					xlist.trimToSize();
@@ -146,7 +146,7 @@ final class AffySingleChromData {
 					for (int i = 0; i < ilist.size(); i++) {
 						y[i] = ilist.get(i);
 					}
-					gsym = new GraphSym(xlist.getInternalArray(), y, graphId, seq);
+					gsym = new GraphSym(xlist.elements(), y, graphId, seq);
 				} else {
 					ShortArrayList ilist = (ShortArrayList) colData.getData();
 					ilist.trimToSize();
@@ -154,17 +154,17 @@ final class AffySingleChromData {
 					for (int i = 0; i < ilist.size(); i++) {
 						y[i] = ilist.get(i);
 					}
-					gsym = new GraphSym(positions.getInternalArray(), y, graphId, seq);
+					gsym = new GraphSym(positions.elements(), y, graphId, seq);
 				}
 				results.add(gsym);
-			} else if (colData.getData() instanceof ByteList) {
-				ByteList ilist = (ByteList) colData.getData();
+			} else if (colData.getData() instanceof ByteArrayList) {
+				ByteArrayList ilist = (ByteArrayList) colData.getData();
 				ilist.trimToSize();
-				y = new float[ilist.getInternalArray().length];
-				for (int i = 0; i < ilist.getInternalArray().length; i++) {
+				y = new float[ilist.size()];
+				for (int i = 0; i < ilist.size(); i++) {
 					y[i] = ilist.get(i);
 				}
-				GraphSym gsym = new GraphSym(positions.getInternalArray(), y, graphId, seq);
+				GraphSym gsym = new GraphSym(positions.elements(), y, graphId, seq);
 				results.add(gsym);
 			} else {
 				GenometryModel.logError("Don't know how to make a graph for data of type: " + colData.type);
@@ -181,14 +181,14 @@ final class AffySingleChromData {
 	 *  new objects.  If the given FloatList contains ONLY invalid values,
 	 *  then the returned IntList and FloatList will both be empty.
 	 */
-	private List<Object> trimNaN(IntList x, FloatList y) {
+	private List<Object> trimNaN(IntArrayList x, FloatArrayList y) {
 		if (x.size() != y.size()) {
 			throw new IllegalArgumentException("Lists must be the same size " + x.size() + " != " + y.size());
 		}
 
 		boolean had_bad_values = false;
-		IntList x_out = new IntList(x.size());
-		FloatList y_out = new FloatList(y.size());
+		IntArrayList x_out = new IntArrayList(x.size());
+		FloatArrayList y_out = new FloatArrayList(y.size());
 
 		for (int i=0; i<x.size(); i++) {
 			float f = y.get(i);
@@ -214,13 +214,13 @@ final class AffySingleChromData {
 	 *  new objects.  If the given ShortList contains ONLY invalid values,
 	 *  then the returned IntList and 3hortList will both be empty.
 	 */
-	private List<Object> trim255(IntList x, ShortArrayList y) {
+	private List<Object> trim255(IntArrayList x, ShortArrayList y) {
 		if (x.size() != y.size()) {
 			throw new IllegalArgumentException("Lists must be the same size " + x.size() + " != " + y.size());
 		}
 
 		boolean had_bad_values = false;
-		IntList x_out = new IntList(x.size());
+		IntArrayList x_out = new IntArrayList(x.size());
 		ShortArrayList y_out = new ShortArrayList(y.size());
 
 		for (int i=0; i<x.size(); i++) {

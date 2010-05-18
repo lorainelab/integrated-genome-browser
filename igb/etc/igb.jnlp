@@ -6,7 +6,7 @@
 		<homepage href="http://genoviz.sourceforge.net/" />
 		<description>Integrated Genome Browser (@jnlp.version@)</description>
 		<icon href="@jnlp.icon.name@"/>
-		<icon href="@jnlp.splashicon.name@" kind="splash" />
+<!--		<icon href="@jnlp.splashicon.name@" kind="splash" />-->
 		<offline-allowed/>
 		<shortcut online="true">
 			<desktop/>

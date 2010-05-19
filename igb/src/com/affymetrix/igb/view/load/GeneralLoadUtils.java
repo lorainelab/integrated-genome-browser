@@ -580,7 +580,7 @@ public final class GeneralLoadUtils {
 		}
 		if (serverType == ServerType.DAS) {
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			return DasFeatureLoader.loadFeatures(gFeature, overlap);
+			return DasFeatureLoader.loadFeatures(overlap, gFeature);
 		}
 		if (serverType == ServerType.QuickLoad) {
 			QuickLoad symL = (QuickLoad) gFeature.symL;

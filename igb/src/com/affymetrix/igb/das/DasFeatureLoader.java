@@ -59,7 +59,7 @@ public final class DasFeatureLoader {
 	 * @param query_span SeqSpan containing the range for which you want annotations.
 	 * @return true if data was loaded
 	 */
-	public static boolean loadFeatures(GenericFeature gFeature, SeqSpan query_span) {
+	public static boolean loadFeatures( SeqSpan query_span, GenericFeature gFeature) {
 		DasType feature = (DasType)gFeature.typeObj;
 		URL serverURL = feature.getServerURL();
 		BioSeq current_seq = gviewer.getViewSeq();
@@ -113,13 +113,17 @@ public final class DasFeatureLoader {
 	 * @throws java.io.UnsupportedEncodingException
 	 * @throws java.net.MalformedURLException
 	 */
-	private static void walksym(SeqSymmetry sym, QueryBuilder builder, String segment, List<URL> urls) throws UnsupportedEncodingException, MalformedURLException {
-		for (int i=0; i< sym.getChildCount(); i++) {
-			walksym(sym.getChild(i), builder, segment, urls);
-		}
-		if (sym.getChildCount() == 0) {
+	private static void walksym(SeqSymmetry sym, QueryBuilder builder, String segment, List<URL> urls)
+			throws UnsupportedEncodingException, MalformedURLException {
+		int childCount = sym.getChildCount();
+		if (childCount > 0) {
+			for (int i = 0; i < childCount; i++) {
+				walksym(sym.getChild(i), builder, segment, urls);
+			}
+		} else {
 			SeqSpan span;
-			for (int i = 0; i < sym.getSpanCount(); i++) {
+			int spanCount = sym.getSpanCount();
+			for (int i = 0; i < spanCount; i++) {
 				span = sym.getSpan(i);
 				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
 				urls.add(builder.build());

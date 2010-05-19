@@ -45,6 +45,7 @@ public final class DasSource {
 	private final Set<DasType> types = new LinkedHashSet<DasType>();
 	private boolean entries_initialized = false;
 	private boolean types_initialized = false;
+	private AnnotatedSeqGroup genome = null;	// lazily instantiate
 
 	DasSource(URL server, URL master) {
 		this.server = server;
@@ -72,7 +73,11 @@ public final class DasSource {
 	 * @return a non-null AnnotatedSeqGroup representing this genome
 	 */
 	public AnnotatedSeqGroup getGenome() {
-		return GenometryModel.getGenometryModel().addSeqGroup(this.getID());
+		if (genome == null) {
+			// cache, otherwise we potentially are doing thousands of synonym lookups
+			genome = GenometryModel.getGenometryModel().addSeqGroup(this.getID());
+		}
+		return genome;
 	}
 
 	public synchronized Set<String> getEntryPoints() {
@@ -158,8 +163,9 @@ public final class DasSource {
 			}
 			Document doc = XMLUtils.getDocument(stream);
 			NodeList typelist = doc.getElementsByTagName("TYPE");
-			System.out.println("types: " + typelist.getLength());
-			for (int i = 0; i < typelist.getLength(); i++) {
+			int typeLength = typelist.getLength();
+			System.out.println("types: " + typeLength);
+			for (int i = 0; i < typeLength; i++) {
 				Element typenode = (Element) typelist.item(i);
 				String typeid = typenode.getAttribute("id");
 
@@ -199,10 +205,10 @@ public final class DasSource {
 		String ref1 = url1.getRef() == null ? "" : url1.getRef();
 		String ref2 = url2.getRef() == null ? "" : url2.getRef();
 
-		return url1.getProtocol().equalsIgnoreCase(url2.getProtocol())
+		return port1 == port2
+				&& ref1.equals(ref2)
+				&& url1.getProtocol().equalsIgnoreCase(url2.getProtocol())
 				&& url1.getHost().equalsIgnoreCase(url2.getHost())
-				&& port1 == port2
-				&& url1.getFile().equals(url2.getFile())
-				&& ref1.equals(ref2);
+				&& url1.getFile().equals(url2.getFile());
 	}
 }

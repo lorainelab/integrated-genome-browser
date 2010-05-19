@@ -1,9 +1,11 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import com.affymetrix.igb.menuitem.LoadFileAction;
+import com.affymetrix.igb.view.MapRangeBox;
 import java.io.BufferedReader;
 import java.io.File;
 import java.util.logging.Level;
@@ -86,7 +88,7 @@ public class ResponseFileLoader {
 	}
 
 	private static void goToRegion(String region) {
-
+		MapRangeBox.setRange(Application.getSingleton().getMapView(), region);
 	}
 
 	private static void loadData(String serverType, String URIorFeature) {

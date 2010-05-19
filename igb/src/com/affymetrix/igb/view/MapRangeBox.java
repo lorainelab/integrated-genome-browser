@@ -39,7 +39,7 @@ import javax.swing.JTextField;
  * 
  * @version $Id$
  */
-final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener {
+public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionListener {
 
 	private static final long serialVersionUID = 1l;
 	private final NeoMap map;

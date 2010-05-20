@@ -268,6 +268,10 @@ public final class UnibrowControlServlet {
 					}
 					server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
 					Das2VersionedSource version = Das2Capability.getCapabilityMap().get(cap_url);
+					if (version == null) {
+						Logger.getLogger(UnibrowControlServlet.class.getName()).severe("Couldn't find version in url: " + cap_url);
+						continue;
+					}
 					if (DEBUG_DAS2_LOAD) {
 						Logger.getLogger(UnibrowControlServlet.class.getName()).info("     version: " + version.getID());
 					}

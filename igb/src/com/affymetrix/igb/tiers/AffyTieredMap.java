@@ -21,6 +21,8 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -479,12 +481,27 @@ public class AffyTieredMap extends NeoMap {
 		packTiers(false, true, false);
 	}
 
-	/** Prints this component. */
-	public void print() throws java.awt.print.PrinterException {
-		ComponentPagePrinter cpp = new ComponentPagePrinter(this);
-		cpp.print();
-		cpp = null; // for garbage collection
+	/** Prints this component with dialogue box. */
+ 	public void print() throws PrinterException {
+		print(PageFormat.LANDSCAPE, false);
 	}
+
+	/*  prints this component with choice of dialogue box
+	 *  This is used when called from command prompt
+	 *	Date: 5/19/2010
+	 *	Author: vikram
+	 */
+	public void print(int pageFormat, boolean noDialog) throws PrinterException {
+ 		ComponentPagePrinter cpp = new ComponentPagePrinter(this);
+		cpp.print();
+		if (noDialog) {
+			cpp.print(pageFormat, noDialog);
+		} else {
+			cpp.print();
+		}
+ 		cpp = null; // for garbage collection
+ 	}
+
 
 	/** Sets the data model to the given SeqSymmetry, unless it is a
 	 *  DerivedSeqSymmetry, in which case the original SeqSymmetry is used.

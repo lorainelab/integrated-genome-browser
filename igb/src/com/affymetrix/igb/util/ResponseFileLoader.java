@@ -1,6 +1,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
@@ -76,6 +77,16 @@ public class ResponseFileLoader {
 			}
 			if (fields.length == 3) {
 				loadData(fields[1], fields[2]);
+				return;
+			}
+		}
+		if (action.equals("print")) {
+			if (fields.length == 1) {
+				try {
+					Application.getSingleton().getMapView().getSeqMap().print(0, true);
+				} catch (Exception ex) {
+					ErrorHandler.errorPanel("Problem trying to print.", ex);
+				}
 				return;
 			}
 		}

@@ -157,9 +157,9 @@ public final class BarParser implements AnnotationWriter {
 			throws IOException {
 		GraphSym graf = null;
 		DataInputStream dis = null;
+		DataInputStream bufstr = null;
 		try {
-			FileInputStream fis = new FileInputStream(new File(file_name));
-			dis = new DataInputStream(new BufferedInputStream(fis));
+			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(file_name))));
 			BarFileHeader bar_header = parseBarHeader(dis);
 			BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, seq_group, bar_header);
 			int bytes_per_point = bar_header.bytes_per_point;
@@ -186,8 +186,9 @@ public final class BarParser implements AnnotationWriter {
 			skipBytes(bytes_to_skip, dis);
 			byte[] buf = new byte[bytes_to_read];
 			dis.readFully(buf);
-			((InputStream) dis).close();
-			DataInputStream bufstr = new DataInputStream(new ByteArrayInputStream(buf));
+			GeneralUtils.safeClose(dis);
+
+			bufstr = new DataInputStream(new ByteArrayInputStream(buf));
 			int[] xcoord = new int[points_to_read];
 			float[] ycoord = new float[points_to_read];
 			int start_index = 0;
@@ -226,7 +227,8 @@ public final class BarParser implements AnnotationWriter {
 			setTagValues(seq_header, graf);
 			// now output bar file slice??
 		} finally {
-			GeneralUtils.safeClose((InputStream) dis);
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(bufstr);
 		}
 		return graf;
 	}

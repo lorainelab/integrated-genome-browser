@@ -2,6 +2,7 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import com.affymetrix.igb.menuitem.LoadFileAction;
@@ -21,7 +22,7 @@ public class ResponseFileLoader {
 	public static File getResponseFile(String[] args) {
 		for (int i=0;i<args.length;i++) {
 			System.err.println("arg " + args[i]);
-			if (args[i].equalsIgnoreCase("-batch")) {
+			if (args[i].equalsIgnoreCase("-" + IGBConstants.RESPONSEFILETAG)) {
 				if (i+1 < args.length) {
 					File f = new File(args[i+1]);
 					if (!f.exists()) {
@@ -80,6 +81,9 @@ public class ResponseFileLoader {
 		}
 		if (action.equals("refresh")) {
 			RefreshDataAction.getAction().actionPerformed(null);
+		}
+		if (action.equals("select") && fields.length==2) {
+			UnibrowControlServlet.performSelection(fields[1]);
 		}
 	}
 

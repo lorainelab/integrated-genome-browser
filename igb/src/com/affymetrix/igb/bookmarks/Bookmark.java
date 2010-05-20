@@ -53,7 +53,6 @@ public final class Bookmark implements Serializable {
    */
   public static final String DATA_URL_FILE_EXTENSIONS = "data_url_file_extension";
   
-  
   private static final boolean DEBUG = false;
 
   private String name;

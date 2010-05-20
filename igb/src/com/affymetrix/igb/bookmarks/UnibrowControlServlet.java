@@ -43,9 +43,14 @@ import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
+import com.affymetrix.igb.util.ResponseFileLoader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -97,6 +102,24 @@ public final class UnibrowControlServlet {
 	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
 	public static void goToBookmark(Application uni, Map<String, String[]> parameters) throws NumberFormatException {
+		String batchFileStr = getStringParameter(parameters, IGBConstants.RESPONSEFILETAG);
+		if (batchFileStr != null && batchFileStr.length() > 0) {
+			// A response file was requested.  Run response file parser, and ignore any other parameters.
+			File f = new File(batchFileStr);
+			if (f != null && f.exists()) {
+				BufferedReader br = null;
+				try {
+					br = new BufferedReader(new FileReader(f));
+					ResponseFileLoader.doActions(br);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				} finally {
+					GeneralUtils.safeClose(br);
+				} 
+			}
+			return;
+		}
+
 		String seqid = getStringParameter(parameters, Bookmark.SEQID);
 		String version = getStringParameter(parameters, Bookmark.VERSION);
 		String start_param = getStringParameter(parameters, Bookmark.START);
@@ -456,7 +479,7 @@ public final class UnibrowControlServlet {
 	 * lie on different sequences.
 	 * @param selectParam The select parameter passed in through the API
 	 */
-	private static void performSelection(String selectParam) {
+	public static void performSelection(String selectParam) {
 
 		if (selectParam == null) {
 			return;

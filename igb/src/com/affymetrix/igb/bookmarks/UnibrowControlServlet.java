@@ -42,6 +42,7 @@ import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.FeatureLoading;
@@ -179,27 +180,43 @@ public final class UnibrowControlServlet {
 			return;
 		}
 		if (DEBUG_DAS2_LOAD) {
-			System.out.println("UnibrowControlServlet.loadDataFromDas2 called");
+			Logger.getLogger(UnibrowControlServlet.class.getName()).info("loadDataFromDas2 called");
 		}
 		List<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
 		List<String> opaque_requests = new ArrayList<String>();
+		createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
+
+		if (!das2_requests.isEmpty()) {
+			addFeaturesToDataLoadView(das2_requests);
+			String featureName = "bookmarked data";
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + featureName);
+			FeatureLoading.processDas2FeatureRequests(das2_requests, featureName, true, gmodel);
+		}
+		if (!opaque_requests.isEmpty()) {
+			String[] data_urls = new String[opaque_requests.size()];
+			for (int r = 0; r < opaque_requests.size(); r++) {
+				data_urls[r] = opaque_requests.get(r);
+			}
+			loadDataFromURLs(uni, data_urls, null, null);
+		}
+	}
+
+	private static void createDAS2andOpaqueRequests(
+			final String[] das2_server_urls, final String[] das2_query_urls, List<Das2FeatureRequestSym> das2_requests, List<String> opaque_requests) {
 		for (int i = 0; i < das2_server_urls.length; i++) {
 			String das2_server_url = GeneralUtils.URLDecode(das2_server_urls[i]);
 			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);
-
 			String cap_url = null;
 			String seg_uri = null;
 			String type_uri = null;
 			String overstr = null;
 			String format = null;
-
 			boolean use_optimizer = true;
-
 			int qindex = das2_query_url.indexOf('?');
 			if (qindex > -1) {
 				cap_url = das2_query_url.substring(0, qindex);
 				if (DEBUG_DAS2_LOAD) {
-					System.out.println("     capability: " + cap_url);
+					Logger.getLogger(UnibrowControlServlet.class.getName()).info("     capability: " + cap_url);
 				}
 				String query = das2_query_url.substring(qindex + 1);
 				String[] query_array = query_splitter.split(query);
@@ -209,7 +226,7 @@ public final class UnibrowControlServlet {
 					String tag = tagval.substring(0, eqindex);
 					String val = tagval.substring(eqindex + 1);
 					if (DEBUG_DAS2_LOAD) {
-						System.out.println("     query param, tag = : " + tag + ", val = " + val);
+						Logger.getLogger(UnibrowControlServlet.class.getName()).info("     query param, tag = : " + tag + ", val = " + val);
 					}
 					if (tag.equals("format") && (format == null)) {
 						format = val;
@@ -230,7 +247,6 @@ public final class UnibrowControlServlet {
 			} else {
 				use_optimizer = false;
 			}
-
 			//
 			// only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
 			// otherwise treat like any other opaque data url via loadDataFromURLs call
@@ -240,21 +256,31 @@ public final class UnibrowControlServlet {
 					GenericServer gServer = ServerList.getServer(das2_server_url);
 					if (gServer == null) {
 						gServer = ServerList.addServer(ServerType.DAS2, das2_server_url, das2_server_url, true);
+					} else if (!gServer.isEnabled()) {
+						gServer.setEnabled(true);
+						GeneralLoadUtils.discoverServer(gServer);
+						// enable the server.
+						// TODO - this will be saved in preferences as enabled, although it shouldn't.
 					}
-					Das2ServerInfo server = (Das2ServerInfo)gServer.serverObj;
-
+					Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 					if (DEBUG_DAS2_LOAD) {
-						System.out.println("     server: " + server.getURI().toString());
+						Logger.getLogger(UnibrowControlServlet.class.getName()).info("     server: " + server.getURI().toString());
 					}
 					server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
-
 					Das2VersionedSource version = Das2Capability.getCapabilityMap().get(cap_url);
 					if (DEBUG_DAS2_LOAD) {
-						System.out.println("     version: " + version.getID());
+						Logger.getLogger(UnibrowControlServlet.class.getName()).info("     version: " + version.getID());
 					}
-                                        
 					Das2Type dtype = version.getTypes().get(type_uri);
+					if (dtype == null) {
+						Logger.getLogger(UnibrowControlServlet.class.getName()).severe("Couldn't find type: " + type_uri + " in server: " + das2_server_url);
+						continue;
+					}
 					Das2Region segment = version.getSegments().get(seg_uri);
+					if (segment == null) {
+						Logger.getLogger(UnibrowControlServlet.class.getName()).severe("Couldn't find segment: " + seg_uri + " in server: " + das2_server_url);
+						continue;
+					}
 					String[] minmax = overstr.split(":");
 					int min = Integer.parseInt(minmax[0]);
 					int max = Integer.parseInt(minmax[1]);
@@ -262,7 +288,7 @@ public final class UnibrowControlServlet {
 					Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap, null);
 					request.setFormat(format);
 					if (DEBUG_DAS2_LOAD) {
-						System.out.println("adding das2 request: " + das2_query_url);
+						Logger.getLogger(UnibrowControlServlet.class.getName()).info("adding das2 request: " + das2_query_url);
 					}
 					das2_requests.add(request);
 				} catch (Exception ex) {
@@ -272,21 +298,6 @@ public final class UnibrowControlServlet {
 					opaque_requests.add(das2_query_url);
 				}
 			}
-
-		}
-
-		if (das2_requests.size() > 0) {
-			addFeaturesToDataLoadView(das2_requests);
-			String featureName = "bookmarked data";
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + featureName);
-			FeatureLoading.processDas2FeatureRequests(das2_requests, featureName, true, gmodel);
-		}
-		if (opaque_requests.size() > 0) {
-			String[] data_urls = new String[opaque_requests.size()];
-			for (int r = 0; r < opaque_requests.size(); r++) {
-				data_urls[r] = opaque_requests.get(r);
-			}
-			loadDataFromURLs(uni, data_urls, null, null);
 		}
 	}
 
@@ -492,11 +503,12 @@ public final class UnibrowControlServlet {
 			return;
 		}
 
+		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		List<SeqSymmetry> sym_list = new ArrayList<SeqSymmetry>(ids.length);
-		for (int i = 0; i < ids.length; i++) {
-			sym_list.addAll(gmodel.getSelectedSeqGroup().findSyms(ids[i]));
+		for (String id : ids) {
+			sym_list.addAll(group.findSyms(id));
 		}
 
-		gmodel.setSelectedSymmetriesAndSeq(sym_list, UnibrowControlServlet.class);
+		GenometryModel.getGenometryModel().setSelectedSymmetriesAndSeq(sym_list, UnibrowControlServlet.class);
 	}
 }

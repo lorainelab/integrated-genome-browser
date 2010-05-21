@@ -10,7 +10,7 @@ public final class Das2Region {
     private  BioSeq aseq;
     private final Das2VersionedSource versioned_source;
 
-    public Das2Region(Das2VersionedSource source, URI reg_uri, String nm, String info, int ln) {
+    public Das2Region(Das2VersionedSource source, URI reg_uri, String name, String info, int len) {
         region_uri = reg_uri;
 
         versioned_source = source;
@@ -22,7 +22,7 @@ public final class Das2Region {
         //   But if genome is a Das2SeqGroup, then can assume that no seqs are in group that aren't
         //      being put there in this constructor, and these will be unique, so can skip check for prior existence
         if (!(genome instanceof Das2SeqGroup)) {
-            aseq = genome.getSeq(nm);
+            aseq = genome.getSeq(name);
             if (aseq == null) {
                 aseq = genome.getSeq(this.getID());
             }
@@ -31,7 +31,7 @@ public final class Das2Region {
         //     create a new genome entry
         if (aseq == null) {
             // using name instead of id for now
-            aseq = genome.addSeq(nm, ln);
+            aseq = genome.addSeq(name, len);
         }
     }
 
@@ -43,7 +43,6 @@ public final class Das2Region {
         return versioned_source;
     }
 
-    // or should this return a SmartAnnotbioSeq???
     public BioSeq getAnnotatedSeq() {
         return aseq;
     }

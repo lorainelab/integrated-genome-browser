@@ -113,7 +113,7 @@ public class AnnotatedSeqGroup {
 	/** By default, simply returns the global StateProvider, but subclasses
 	 *  can implement a different one for each seq group.
 	 */
-	final public static StateProvider getStateProvider() {
+	public static StateProvider getStateProvider() {
 		return DefaultStateProvider.getGlobalStateProvider();
 	}
 
@@ -127,11 +127,11 @@ public class AnnotatedSeqGroup {
 		}
 	}
 
-	final private static Set<SymMapChangeListener> getSymMapChangeListeners() {
+	private static Set<SymMapChangeListener> getSymMapChangeListeners() {
 		return sym_map_change_listeners;
 	}
 
-	final public static void addSymMapChangeListener(SymMapChangeListener l) {
+	public static void addSymMapChangeListener(SymMapChangeListener l) {
 		sym_map_change_listeners.add(l);
 	}
 
@@ -172,7 +172,7 @@ public class AnnotatedSeqGroup {
 	 *  NOT later set it back to true unless you are sure you did not add
 	 *  some synonymous sequences.
 	 */
-	public void setUseSynonyms(boolean b) {
+	public final void setUseSynonyms(boolean b) {
 		use_synonyms = b;
 	}
 
@@ -217,7 +217,7 @@ public class AnnotatedSeqGroup {
 		return null;
 	}
 
-	final public boolean isSynonymous(String synonym) {
+	public final boolean isSynonymous(String synonym) {
 		return id.equals(synonym) || lookup.isSynonym(id, synonym);
 	}
 
@@ -225,7 +225,7 @@ public class AnnotatedSeqGroup {
 	 *  Returns the BioSeq with the given id (or synonym), creating it if necessary,
 	 *  and increasing its length to the given sym if necessary.
 	 */
-	public BioSeq addSeq(String seqid, int length) {
+	public final BioSeq addSeq(String seqid, int length) {
 		if (seqid == null) {
 			throw new NullPointerException();
 		}
@@ -362,7 +362,7 @@ public class AnnotatedSeqGroup {
 	 *  Otherwise uses id to build a new unique id.
 	 *  The id returned is unique for GraphSyms on all seqs in the given group.
 	 */
-	final public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
+	public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
 		String result = id;
 		for (BioSeq seq : seq_group.getSeqList()) {
 			result = getUniqueGraphID(result, seq);
@@ -376,7 +376,7 @@ public class AnnotatedSeqGroup {
 	 *     currently on the seq.
 	 *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs.
 	 */
-	final public static String getUniqueGraphID(String id, BioSeq seq) {
+	public static String getUniqueGraphID(String id, BioSeq seq) {
 		if (id == null) {
 			return null;
 		}
@@ -399,7 +399,7 @@ public class AnnotatedSeqGroup {
 	 * @param id ID string (lower-cased).
 	 * @param sym SeqSymmetry to add to the hash.
 	 */
-	final private void putSeqInList(String id, SeqSymmetry sym) {
+	private void putSeqInList(String id, SeqSymmetry sym) {
 		Set<SeqSymmetry> seq_list = id2sym_hash.get(id);
 		if (seq_list == null) {
 			seq_list = new LinkedHashSet<SeqSymmetry>();

@@ -49,11 +49,7 @@ public final class ChromInfoParser {
 				System.out.println("WARNING: chromInfo line does not match.  Ignoring: " + line);
 				continue;
 			}
-			BioSeq chrom = seq_group.getSeq(chrom_name);
-			if (chrom == null) {  // if chrom already in seq group, then don't add to list
-				chrom = seq_group.addSeq(chrom_name, chrLength);
-				chrom.setVersion(genome_version);
-			}
+			seq_group.addSeq(chrom_name, chrLength);	// adds if it doesn't already exist.
 		}
 		return seq_group;
 	}

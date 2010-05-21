@@ -36,7 +36,12 @@ public final class DASFeatureParser {
 
 	private BioSeq sequence;
 	private String note;
+	private boolean annotateSeq = true;
 
+	public void setAnnotateSeq(boolean annotateSeq) {
+		this.annotateSeq = annotateSeq;
+	}
+	
 	public Collection<DASSymmetry> parse(InputStream s, AnnotatedSeqGroup seqGroup) throws XMLStreamException {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLEventReader reader = factory.createXMLEventReader(s);
@@ -70,7 +75,7 @@ public final class DASFeatureParser {
 
 	/**
 	 * Handle an XML start tag.  This creates various storage beans when
-	 * necessary and stores XML attributes in the appropiate bean.
+	 * necessary and stores XML attributes in the appropriate bean.
 	 *
 	 * @param current
 	 * @param seqGroup
@@ -172,9 +177,11 @@ public final class DASFeatureParser {
 				DASSymmetry groupSymmetry;
 				DASSymmetry featureSymmetry = new DASSymmetry(feature, sequence);
 
-				if (feature.getGroups().size() == 0) {
-					sequence.addAnnotation(featureSymmetry);
-					groupMap.put(featureSymmetry.getID(), featureSymmetry);
+				if (feature.getGroups().isEmpty()) {
+					if (annotateSeq) {
+						sequence.addAnnotation(featureSymmetry);
+						groupMap.put(featureSymmetry.getID(), featureSymmetry);
+					}
 				} else {
 					for (GroupBean groupBean : feature.getGroups()) {
 						groupSymmetry = getGroupSymmetry(groupMap, feature, groupBean, seqGroup);
@@ -231,6 +238,10 @@ public final class DASFeatureParser {
 
 		/* Create a new groupSymmetry for ID */
 		DASSymmetry groupSymmetry = new DASSymmetry(group, feature, sequence);
+		if (annotateSeq) {
+			sequence.addAnnotation(groupSymmetry);
+			seqGroup.addToIndex(groupSymmetry.getID(), groupSymmetry);
+		}
 		groupMap.put(groupSymmetry.getID(), groupSymmetry);
 
 		return groupSymmetry;

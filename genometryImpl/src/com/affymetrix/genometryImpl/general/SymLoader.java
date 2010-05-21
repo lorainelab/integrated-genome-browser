@@ -353,6 +353,7 @@ public abstract class SymLoader {
 		}
 		if (extension.equals("das") || extension.equals("dasxml")) {
 			DASFeatureParser parser = new DASFeatureParser();
+			parser.setAnnotateSeq(false);
 			return (List<? extends SeqSymmetry>) parser.parse(bis, group);
 		}
 		if (extension.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE)

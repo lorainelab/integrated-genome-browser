@@ -54,6 +54,7 @@ public class DASFeatureParserTest {
 
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		DASFeatureParser parser = new DASFeatureParser();
+		parser.setAnnotateSeq(false);
 
 		Collection<DASSymmetry> results = null;
 		try {
@@ -99,6 +100,7 @@ public class DASFeatureParserTest {
 
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		DASFeatureParser parser = new DASFeatureParser();
+		parser.setAnnotateSeq(false);
 
 		Collection<DASSymmetry> results = null;
 		try {

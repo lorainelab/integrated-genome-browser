@@ -1,31 +1,17 @@
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.igb.util.ArchiveHelper;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
 
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -44,8 +30,6 @@ public class ChpParserTest {
 
 	@Test
 	public void TestParseFromFile() throws IOException, Exception {
-
-		ArchiveHelper archiveHelper = new ArchiveHelper();
 		 // unzip this file.
 		String zippedFileStr= ("../genometryImpl/test/data/chp/TisMap_Brain_01_v1_WTGene1.rma-gene-default.chp.gz");
 
@@ -61,18 +45,9 @@ public class ChpParserTest {
 		group.addSeq(seq);
 		GenometryModel.getGenometryModel().setSelectedSeqGroup(group);
 		//List<? extends SeqSymmetry> results = ChpParser.parse(f2.getAbsolutePath(), true);
-		
-	///	assertEquals(1, results.size());
-
-		// Delete on exit.
-		
-		
-
-
-
-		 
-		 		
+		//	assertEquals(1, results.size());
 	}
+
 	private static void unzipFile(File f, File f2) throws IOException {
 		// File must be unzipped!
 		InputStream is = null;

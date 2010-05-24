@@ -7,7 +7,7 @@
 		<homepage href="http://genoviz.sourceforge.net/" />
 		<description>Integrated Genome Browser (Vendor)</description>
 		<icon href="http://bioviz.org/igb/releases/current/igb.gif"/>
-		<icon href="http://bioviz.org/igb/releases/current/igb-splash.gif" kind="splash" />
+		<icon href="http://bioviz.org/igb/releases/current/igb_splash.gif" kind="splash" />
 		<offline-allowed/>
 		<!-- Should IGB install  shortcut?  NOTE: Windows/Linux appear not to ask the user -->
 		<shortcut online="true">

@@ -27,7 +27,7 @@ public class USeqGraphParser {
 	@SuppressWarnings("unchecked")
 	public List<GraphSym> parseGraphSyms(InputStream istr, GenometryModel gmodel, String stream_name, ArchiveInfo archiveInfo) {		
 		this.gmodel = gmodel;
-		this.stream_name = stream_name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+		this.stream_name = stream_name;
 		this.archiveInfo = archiveInfo;
 
 		BufferedInputStream bis = null;
@@ -58,7 +58,7 @@ public class USeqGraphParser {
 			SliceInfo si = null;
 			while ((ze = zis.getNextEntry()) != null){
 				//make SliceInfo
-				si = new SliceInfo(ze.getName());			
+				si = new SliceInfo(ze.getName());	
 				//PositionData, just positions, no values
 				if (USeqUtilities.POSITION.matcher(si.getBinaryType()).matches()) {
 					PositionData pd = new PositionData (dis, si);
@@ -134,11 +134,8 @@ public class USeqGraphParser {
 		checkSeqLength(chromosomeBS, xcoords);
 		//get strand
 		String strand = sliceInfo.getStrand();
-		//make graph_id, stranded?
-		String graph_id = stream_name;
-		if (strand.equals("+") || strand.equals("-")) graph_id = graph_id+strand;
 		//make GraphSym
-		GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, chromosomeBS);
+		GraphSym graf = new GraphSym(xcoords, ycoords, stream_name, chromosomeBS);
 		//add properties
 		copyProps(graf, archiveInfo.getKeyValues());
 		//set strand

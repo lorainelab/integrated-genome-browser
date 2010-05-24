@@ -254,7 +254,7 @@ public final class QuickLoad extends SymLoader {
 			BufferedInputStream bis = null;
 			try {
 				GenometryModel gmodel = GenometryModel.getGenometryModel();
-				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
+				bis = LocalUrlCacher.convertURIToBufferedStream(this.uri);
 				List<GraphSym> graphs = GraphSymUtils.readGraphs(bis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
 				GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
 				return graphs;

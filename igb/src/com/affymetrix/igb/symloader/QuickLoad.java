@@ -272,11 +272,6 @@ public final class QuickLoad extends SymLoader {
 				//    a parse() method that takes the file name
 				// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
 				File f = LocalUrlCacher.convertURIToFile(this.uri);
-				if (!GeneralUtils.getUnzippedName(f.getName()).equalsIgnoreCase(f.getName())) {
-					File f2 = File.createTempFile(f.getName(), ".chp");
-					unzipFile(f, f2);
-					return ChpParser.parse(f2.getAbsolutePath(), false);
-				}
 				return ChpParser.parse(f.getAbsolutePath(), false);
 			}
 			BufferedInputStream bis = null;
@@ -294,26 +289,6 @@ public final class QuickLoad extends SymLoader {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
-		}
-	}
-
-
-	private static void unzipFile(File f, File f2) throws IOException {
-		// File must be unzipped!
-		InputStream is = null;
-		OutputStream out = null;
-		try {
-			// This will also unzip the stream if necessary
-			is = GeneralUtils.getInputStream(f, new StringBuffer());
-			out = new FileOutputStream(f2);
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = is.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-		} finally {
-			GeneralUtils.safeClose(is);
-			GeneralUtils.safeClose(out);
 		}
 	}
 
@@ -339,9 +314,9 @@ public final class QuickLoad extends SymLoader {
 		if (extension.equals("bam")) {
 			return new BAM(uri, featureName, group);
 		}
-		if (extension.equals("bar")) {
+		/*if (extension.equals("bar")) {
 			return new Bar(uri, featureName, group);
-		}
+		}*/
 		if (extension.equals("bed")) {
 			return new BED(uri, featureName, group);
 		}

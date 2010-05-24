@@ -226,27 +226,27 @@ public abstract class SymLoader {
 	}
 
 	public static void addToRequestSym(
-			 List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, URI id, String name, SeqSpan overlapSpan) {
-        if (feats == null || feats.isEmpty()) {
-            // because many operations will treat empty FeatureRequestSym as a leaf sym, want to
-            //    populate with empty sym child/grandchild
-            //    [ though a better way might be to have request sym's span on aseq be dependent on children, so
-            //       if no children then no span on aseq (though still an overlap_span and inside_span) ]
-            SimpleSymWithProps child = new SimpleSymWithProps();
-            child.addChild(new SimpleSymWithProps());
-            request_sym.addChild(child);
-        } else {
-            int feat_count = feats.size();
-            System.out.println("parsed query results, annot count = " + feat_count);
-            for (SeqSymmetry feat : feats) {
-                if (feat instanceof GraphSym) {
-                    GraphSymUtils.addChildGraph((GraphSym) feat, id, name, overlapSpan);
-                } else {
-                    request_sym.addChild(feat);
-                }
-            }
-        }
-    }
+			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, URI id, String name, SeqSpan overlapSpan) {
+		int feat_count = feats == null ? 0 : feats.size();
+		System.out.println("parsed query results, annot count = " + feat_count);
+		if (feat_count == 0) {
+			// because many operations will treat empty FeatureRequestSym as a leaf sym, want to
+			//    populate with empty sym child/grandchild
+			//    [ though a better way might be to have request sym's span on aseq be dependent on children, so
+			//       if no children then no span on aseq (though still an overlap_span and inside_span) ]
+			SimpleSymWithProps child = new SimpleSymWithProps();
+			child.addChild(new SimpleSymWithProps());
+			request_sym.addChild(child);
+		} else {
+			for (SeqSymmetry feat : feats) {
+				if (feat instanceof GraphSym) {
+					GraphSymUtils.addChildGraph((GraphSym) feat, id, name, overlapSpan);
+				} else {
+					request_sym.addChild(feat);
+				}
+			}
+		}
+	}
 
 	public static void addAnnotations(
 			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, BioSeq aseq) {

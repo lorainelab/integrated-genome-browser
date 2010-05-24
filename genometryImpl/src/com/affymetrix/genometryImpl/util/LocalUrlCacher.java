@@ -671,7 +671,18 @@ public final class LocalUrlCacher {
 	public static File convertURIToFile(URI uri) {
 		String scheme = uri.getScheme().toLowerCase();
 		if (scheme.length() == 0 || scheme.equals("file")) {
-			return new File(uri);
+			File f = new File(uri);
+			if (!GeneralUtils.getUnzippedName(f.getName()).equalsIgnoreCase(f.getName())) {
+				try {
+					File f2 = File.createTempFile(f.getName(), null);
+					unzipFile(f, f2);
+					return f2;
+				} catch (IOException ex) {
+					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, null, ex);
+					return null;
+				}
+			}
+			return f;
 		}
 		if (scheme.startsWith("http")) {
 			InputStream istr = null;
@@ -696,6 +707,25 @@ public final class LocalUrlCacher {
 		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
 				"URL scheme: " + scheme + " not recognized");
 		return null;
+	}
+
+	public static void unzipFile(File f, File f2) throws IOException {
+		// File must be unzipped!
+		InputStream is = null;
+		OutputStream out = null;
+		try {
+			// This will also unzip the stream if necessary
+			is = GeneralUtils.getInputStream(f, new StringBuffer());
+			out = new FileOutputStream(f2);
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = is.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+		} finally {
+			GeneralUtils.safeClose(is);
+			GeneralUtils.safeClose(out);
+		}
 	}
 
 	/**

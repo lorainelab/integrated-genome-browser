@@ -38,6 +38,7 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -257,8 +258,13 @@ public final class Das2ClientOptimizer {
             AddParsingLogMessage(content_subtype);
 			List<? extends SeqSymmetry> feats = SymLoader.Parse(content_subtype, type.getURI(), istr, seq_group, type.getName());
 
+			//watch out for useq format, this can contain stranded graph data from a single DAS/2 response, modify the name so it can be caught while making graphs
+			String name = request_sym.getDas2Type().getName();
+			if (request_sym.getFormat().equals(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) name = name + USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
+			
+			//add data
 			SymLoader.addToRequestSym(
-					feats, request_sym, request_sym.getDas2Type().getURI(), request_sym.getDas2Type().getName(), request_sym.getOverlapSpan());
+					feats, request_sym, request_sym.getDas2Type().getURI(), name, request_sym.getOverlapSpan());
 			SymLoader.addAnnotations(feats, request_sym, aseq);
             
             return (feats != null);

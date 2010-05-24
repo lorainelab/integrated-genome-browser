@@ -45,7 +45,7 @@ public final class USeqRegionParser  {
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group, String stream_name, boolean addAnnotationsToSeq, ArchiveInfo ai) {		
 		this.group = group;
 		symlist = new ArrayList<SeqSymmetry>();
-		nameOfTrack = stream_name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");;
+		nameOfTrack = stream_name;
 		this.addAnnotationsToSeq = addAnnotationsToSeq;
 		this.archiveInfo = ai;
 

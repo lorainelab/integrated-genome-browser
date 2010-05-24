@@ -57,53 +57,31 @@ import java.util.*;
 public final class LazyChpSym extends ScoredContainerSym {
 
   public static final String PROBESET_SERVER_NAME = "NetAffx";
-  BioSeq aseq;
+  private final BioSeq aseq;
 
   /**
    *  map of probeset integer IDs to probeset result data, for probesets whose name/id can be
    *   represented as an integer
    */
-  Map probeset_id2data = null;
+  private Map probeset_id2data = null;
 
   /**
    *  map of probeset name Strings to probeset result data, for probesets whose name/id can _NOT_ be
    *   represented as an integer
    *  NOT CURRENTLY USED (ALWAYS NULL)
    */
-  Map probeset_name2data = null;
+  private Map probeset_name2data = null;
 
   /**
    *  list of probeset result data for probesets whose name/id can be
    *   represented as an integer
    *  list should be sorted by integer id
    */
-  final List int_entries;
+  private final List int_entries;
 
   /** in Affy Fusion SDK this is called "CHP array type", for example "HuEx-1_0-st-v2" */
-  String chp_array_type = null;
+  private final String chp_array_type;
 
-  /**
-   *  Class used to represent experimental data for a single probeset
-   *
-   *  Possible values:  all from package affymetrix.calvin.data in Affy Fusion SDK
-   *     exon and gene chips:
-   *         ProbeSetQuantificationData
-   *         ProbeSetQuantificationDetectionData
-   *         ProbeSetMultiDataExpressionData ???
-   *     genotyping:
-   *         ProbeSetMultiDataGenotypeData
-   *
-   *  For ProbeSetQuantificatonData and ProbeSetQuantificationDetectionData,
-   *     if getID() >= 0, then Integer(id) should be used for hashing
-   */
-  Class probeset_data_class;
-
-  /**
-   *  Convenience field to gather all probeset syms on this seq out of the annotation hierarchy
-   *    (otherwise would have to traverse "chp_array_type" annotation branch on seq every time)
-   *    (hmmm -- tree traversal is actually probably fine...)
-   */
-  List probesets_on_seq = null;
 
   /**
    *  Assumes entries_with_int_id is already sorted by int id
@@ -216,33 +194,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 				quant_comp = new QuantByIntIdComparator();
 			}
 		}
-
-		/**
-		 *  May need to load multiple annotations from DAS/2 server --
-		 *     for instance, for exon arrays both probesets (in bp2 format) and transcripts (in bgn format)
-		 *     [moving towards single load, for example probesets/transcripts/etc. all in "ead" format]
-		 *  Assume that any annotation type whose name starts with chp_array_type,
-		 *     or starts with any synonym of chp_array_type, need to be loaded...-st
-		 *     (caveat -- need to remove any path prefix from type name first) -- GAH
-		 */
-		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-		Map<String, Das2Type> types = vsource.getTypes();
-		Map<Das2Type, Das2Type> matched_types = new HashMap<Das2Type, Das2Type>();
-		Collection<String> chp_array_syns = lookup.getSynonyms(chp_array_type);
-		if (chp_array_syns == null) {
-			chp_array_syns = new ArrayList<String>();
-			chp_array_syns.add(chp_array_type);
-		}
-		for (String synonym : chp_array_syns) {
-			String lcsyn = synonym.toLowerCase();
-			for (Das2Type type : types.values()) {
-				//  Switched to type.getShortName() to fix problem with name matching when name has a path prefix...
-				String tname = type.getShortName();
-				if ((tname.startsWith(synonym) || tname.startsWith(lcsyn)) && (matched_types.get(type) == null)) {
-					matched_types.put(type, type);
-				}
-			}
-		}
+		Map<Das2Type, Das2Type> matched_types = determineMatchedTypes(chp_array_type,vsource);
 
 		if (matched_types.isEmpty()) {
 			// no DAS/2 type found for the CHP!
@@ -361,6 +313,16 @@ public final class LazyChpSym extends ScoredContainerSym {
 		// now see what was found
 		float[] quants = new float[id_hit_count];
 		float[] pvals = new float[id_hit_count];
+		boolean has_pvals = generateDataArrays(id_hit_count, id_data_hits, id_sym_hits, quants, pvals);
+		this.addScores("score", quants);
+		if (has_pvals) {
+			this.addScores("pval", pvals);
+		}
+		System.out.println("Matching probeset integer IDs with CHP data, matches: " + id_hit_count);
+		System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
+	}
+
+	private boolean generateDataArrays(int id_hit_count, List id_data_hits, List<SeqSymmetry> id_sym_hits, float[] quants, float[] pvals) {
 		boolean has_pvals = false;
 		for (int i = 0; i < id_hit_count; i++) {
 			Object data = id_data_hits.get(i);
@@ -368,7 +330,6 @@ public final class LazyChpSym extends ScoredContainerSym {
 			SeqSpan span = sym.getSpan(0);
 			IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), span.getBioSeq());
 			this.addChild(isym);
-
 			if (data instanceof ProbeSetQuantificationData) {
 				ProbeSetQuantificationData pdata = (ProbeSetQuantificationData) data;
 				quants[i] = pdata.getQuantification();
@@ -383,36 +344,51 @@ public final class LazyChpSym extends ScoredContainerSym {
 				pvals[i] = 0;
 			}
 		}
-		this.addScores("score", quants);
-		if (has_pvals) {
-			this.addScores("pval", pvals);
-		}
-		System.out.println("Matching probeset integer IDs with CHP data, matches: " + id_hit_count);
-		System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
+		return has_pvals;
 	}
 
+	private static Map<Das2Type, Das2Type> determineMatchedTypes(String chp_array_type, Das2VersionedSource vsource) {
+		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+		Map<String, Das2Type> types = vsource.getTypes();
+		Map<Das2Type, Das2Type> matched_types = new HashMap<Das2Type, Das2Type>();
+		Collection<String> chp_array_syns = lookup.getSynonyms(chp_array_type);
+		if (chp_array_syns == null) {
+			chp_array_syns = new ArrayList<String>();
+			chp_array_syns.add(chp_array_type);
+		}
+		for (String synonym : chp_array_syns) {
+			String lcsyn = synonym.toLowerCase();
+			for (Das2Type type : types.values()) {
+				//  Switched to type.getShortName() to fix problem with name matching when name has a path prefix...
+				String tname = type.getShortName();
+				if ((tname.startsWith(synonym) || tname.startsWith(lcsyn)) && (matched_types.get(type) == null)) {
+					matched_types.put(type, type);
+				}
+			}
+		}
+		return matched_types;
+	}
 
-  /**
-   *  syms should be one of:
-   *     EfficientProbesetSymA (for exon array probesets)
-   *     SingletonSymWithIntId (for exon array transcript_clusters, exon_clusters, PSRs)
-   *     ??? (for gene chips)
-   *     ??? (for genotyping chips)
-   */
-  protected void addIdSyms(SeqSymmetry sym, List<SeqSymmetry> symlist) {
-    if (sym instanceof IntId) {
-      symlist.add(sym);
-    }
-    else if (sym.getID() != null)  {
-      symlist.add(sym);
-    }
-    // if SingletonSymWithIntId, recursively descend through children and add those with IDs
-    if ((sym.getChildCount() > 0) && (sym instanceof SingletonSymWithIntId))  {
-      for (int i=0; i<sym.getChildCount(); i++) {
-	SeqSymmetry child = sym.getChild(i);
-	addIdSyms(child, symlist);
-      }
-    }
-  }
+	/**
+	 *  syms should be one of:
+	 *     EfficientProbesetSymA (for exon array probesets)
+	 *     SingletonSymWithIntId (for exon array transcript_clusters, exon_clusters, PSRs)
+	 *     ??? (for gene chips)
+	 *     ??? (for genotyping chips)
+	 */
+	private static void addIdSyms(SeqSymmetry sym, List<SeqSymmetry> symlist) {
+		if (sym instanceof IntId) {
+			symlist.add(sym);
+		} else if (sym.getID() != null) {
+			symlist.add(sym);
+		}
+		// if SingletonSymWithIntId, recursively descend through children and add those with IDs
+		if ((sym.getChildCount() > 0) && (sym instanceof SingletonSymWithIntId)) {
+			for (int i = 0; i < sym.getChildCount(); i++) {
+				SeqSymmetry child = sym.getChild(i);
+				addIdSyms(child, symlist);
+			}
+		}
+	}
 
 }

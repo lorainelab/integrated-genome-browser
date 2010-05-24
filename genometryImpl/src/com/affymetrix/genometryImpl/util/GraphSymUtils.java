@@ -501,14 +501,8 @@ public final class GraphSymUtils {
 
 
 	private static GraphSym getParentGraph(String id, String name, BioSeq aseq, GraphSym cgraf) {
-		// check and see if parent graph already exists
-
-		//is it a useq graph? modify name and id for strandedness?
-		if (name.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)){
-			//strip off useq
-			id = id.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-			name = name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-			//add strand?
+		//is it a useq graph? modify name and id for strandedness? must uniquify with strand info since no concept of stranded data from same graph file
+		if (id.endsWith(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD) || name.endsWith(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)){
 			Object obj = cgraf.getProperty(GraphSym.PROP_GRAPH_STRAND);
 			if (obj != null){
 				String strand = null;

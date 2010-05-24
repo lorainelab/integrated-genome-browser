@@ -1,5 +1,6 @@
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.igb.util.ArchiveHelper;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
@@ -8,14 +9,19 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -37,32 +43,52 @@ public class ChpParserTest {
 	}
 
 	@Test
-	public void TestParseFromFile() throws IOException {
+	public void TestParseFromFile() throws IOException, Exception {
 
-
+		ArchiveHelper archiveHelper = new ArchiveHelper();
 		 // unzip this file.
-		String zippedFileStr="../genometryImpl/test/data/chp/TisMap_Brain_01_v1_WTGene1.rma-gene-default.chp.gz";
-		assertTrue(new File(zippedFileStr).exists());
+		String zippedFileStr= ("../genometryImpl/test/data/chp/TisMap_Brain_01_v1_WTGene1.rma-gene-default.chp.gz");
 
-				/*
-		 * Sample code for testing.
-		 *
-		 * 
-		String newFileStr="../genometryImpl/test/data/chp/TisMap_Brain_01_v1_WTGene1.rma-gene-default.chp";
-		assertTrue(new File(newFileStr).exists());
+		File f = new File(zippedFileStr);
+		assertTrue(f.exists());
+		File f2 = File.createTempFile(f.getName(), ".chp");
+		assertTrue(f2.exists());
+		unzipFile(f, f2);
+		f2.deleteOnExit();
+		
+		AnnotatedSeqGroup group = new AnnotatedSeqGroup("test");
+		BioSeq seq = new BioSeq("chr1","test version", 100);
+		group.addSeq(seq);
+		GenometryModel.getGenometryModel().setSelectedSeqGroup(group);
+		//List<? extends SeqSymmetry> results = ChpParser.parse(f2.getAbsolutePath(), true);
+		
+	///	assertEquals(1, results.size());
 
 		// Delete on exit.
-		File newFile = new File(newFileStr);
-		newFile.deleteOnExit();
-
-		// read in new file and parse it.
-		List<? extends SeqSymmetry> results = ChpParser.parse(newFileStr, false);
-		assertNotNull(results);
-
-		assertEquals(10, results.size());  // or whatever it is
-
-		 *
-		 */
 		
+		
+
+
+
+		 
+		 		
+	}
+	private static void unzipFile(File f, File f2) throws IOException {
+		// File must be unzipped!
+		InputStream is = null;
+		OutputStream out = null;
+		try {
+			// This will also unzip the stream if necessary
+			is = GeneralUtils.getInputStream(f, new StringBuffer());
+			out = new FileOutputStream(f2);
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = is.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+		} finally {
+			GeneralUtils.safeClose(is);
+			GeneralUtils.safeClose(out);
+		}
 	}
 }

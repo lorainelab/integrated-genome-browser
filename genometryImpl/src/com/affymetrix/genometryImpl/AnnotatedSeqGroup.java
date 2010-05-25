@@ -26,7 +26,6 @@ public class AnnotatedSeqGroup {
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
 	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
-	final private static Set<SymMapChangeListener> sym_map_change_listeners = new CopyOnWriteArraySet<SymMapChangeListener>();
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
 	
 	
@@ -115,24 +114,6 @@ public class AnnotatedSeqGroup {
 	 */
 	public static StateProvider getStateProvider() {
 		return DefaultStateProvider.getGlobalStateProvider();
-	}
-
-	/** Call this method if you alter the Map of IDs to SeqSymmetries.
-	 *  @param source  The source responsible for the change, used in constructing
-	 *    the {@link SymMapChangeEvent}.
-	 */
-	final public void symHashChanged(Object source) {
-		for (SymMapChangeListener l : getSymMapChangeListeners()) {
-			l.symMapModified(new SymMapChangeEvent(source, this));
-		}
-	}
-
-	private static Set<SymMapChangeListener> getSymMapChangeListeners() {
-		return sym_map_change_listeners;
-	}
-
-	public static void addSymMapChangeListener(SymMapChangeListener l) {
-		sym_map_change_listeners.add(l);
 	}
 
 	/**

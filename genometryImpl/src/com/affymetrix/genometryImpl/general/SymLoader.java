@@ -198,7 +198,7 @@ public abstract class SymLoader {
 	}
 
 
-	protected List<? extends SeqSymmetry> loadFeature(
+	protected final List<? extends SeqSymmetry> loadFeature(
 			SymLoader symL, String featureName, final LoadStrategy strategy, SeqSpan overlapSpan)
 			throws IOException, OutOfMemoryError {
 		if (!this.isInitialized) {

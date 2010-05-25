@@ -272,7 +272,7 @@ public final class QuickLoad extends SymLoader {
 				//    a parse() method that takes the file name
 				// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
 				File f = LocalUrlCacher.convertURIToFile(this.uri);
-				return ChpParser.parse(f.getAbsolutePath(), false);
+				return ChpParser.parse(f.getAbsolutePath(), true);
 			}
 			BufferedInputStream bis = null;
 			try {

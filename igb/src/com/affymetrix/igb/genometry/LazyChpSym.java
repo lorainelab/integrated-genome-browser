@@ -59,18 +59,6 @@ public final class LazyChpSym extends ScoredContainerSym {
   public static final String PROBESET_SERVER_NAME = "NetAffx";
   private final BioSeq aseq;
 
-  /**
-   *  map of probeset integer IDs to probeset result data, for probesets whose name/id can be
-   *   represented as an integer
-   */
-  private Map probeset_id2data = null;
-
-  /**
-   *  map of probeset name Strings to probeset result data, for probesets whose name/id can _NOT_ be
-   *   represented as an integer
-   *  NOT CURRENTLY USED (ALWAYS NULL)
-   */
-  private Map probeset_name2data = null;
 
   /**
    *  list of probeset result data for probesets whose name/id can be
@@ -86,11 +74,9 @@ public final class LazyChpSym extends ScoredContainerSym {
   /**
    *  Assumes entries_with_int_id is already sorted by int id
    */
-  public LazyChpSym(BioSeq seq, String array_type, Map id2data, Map name2data, List entries_with_int_id) {
+  public LazyChpSym(BioSeq seq, String array_type, List entries_with_int_id) {
     this.aseq = seq;
     this.chp_array_type = array_type;
-    this.probeset_id2data = id2data;
-    this.probeset_name2data = name2data;
     this.int_entries = entries_with_int_id;
   }
 
@@ -275,12 +261,6 @@ public final class LazyChpSym extends ScoredContainerSym {
 				//     NO, for now consider that a miss -- if id in CHP file _can_ be an integer,
 				//     should have been converted in ChpParser to an Integer and populated in probeset_id2data ]
 				if (id != null) {
-					if (probeset_name2data != null) {
-						data = probeset_name2data.get(id);
-						if (data != null) {
-							str_hit_count++;
-						}
-					}
 					if (data == null && StringUtils.isAllDigits(id)) {
 						// using a simple isAllDigits() method here, which will miss some
 						//    want to avoid needing try/catch unless most likely can parse as integer

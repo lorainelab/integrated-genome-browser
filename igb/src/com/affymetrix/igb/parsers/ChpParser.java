@@ -141,74 +141,6 @@ public final class ChpParser {
 		return results;
 	}
 
-	/**
-	 *  Want to automatically load location data for probesets on chip
-	 *
-	 *  Needed for:
-	 *      3' IVT Expression chips
-	 *      Exon chips and other expression that is non-3' IVT
-	 *      Genotyping chips
-	 *
-	 *  Not necessary for tiling array chips
-	 *  Probably not necessary for sequencing chips (but those aren't supported yet)
-	 *
-	 *  Basic strategy is to retrieve probeset id and location data from the main public Affymetrix DAS/2 server,
-	 *     and match by id to associate locations with the probeset results.
-	 *
-	 */
-	private static List<LazyChpSym> makeLazyChpSyms(
-			String file_name, String chp_array_type, Map id2data, Map name2data, List int_entries, boolean annotate_seq) {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-
-		GenericServer gServer = ServerList.getServer(LazyChpSym.PROBESET_SERVER_NAME);
-		// Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
-		if (gServer == null) {
-			ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
-			return null;
-		}
-		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-
-		// Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
-		if (server == null) {
-			ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
-			return null;
-		}
-		Das2VersionedSource vsource = server.getVersionedSource(group);
-		if (vsource == null) {
-			ErrorHandler.errorPanel("Couldn't find genome data on server for CHP file, genome = " + group.getID());
-			return null;
-		}
-
-		String type_name = OpenGraphAction.getGraphNameForFile(file_name);
-		// Force the AnnotStyle for the container to have glyph depth of 1
-		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
-		style.setGlyphDepth(1);
-
-		List<LazyChpSym> results = new ArrayList<LazyChpSym>();
-		int scount = group.getSeqCount();
-		for (int i = 0; i < scount; i++) {
-			BioSeq aseq = group.getSeq(i);
-			// Don't make LazyChpSym if can't find sequence on DAS/2 server
-			Das2Region das_segment = vsource.getSegment(aseq);
-			// I think above test for presence of sequence on server will handle skipping the genome and encode regions
-			//  (at least as long as the DAS/2 coord server does not serve virtual seqs for these)
-			if (das_segment != null) {
-				// LazyChpSym constructor handles adding span to itself for aseq
-				LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data, int_entries);
-				chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-				chp_sym.setProperty("method", type_name);
-				chp_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-				chp_sym.setID(type_name);
-				if (annotate_seq) {
-					aseq.addAnnotation(chp_sym);
-				}
-				results.add(chp_sym);
-			}
-		}
-		return results;
-	}
-
 	/** same as parseQuantChp, but adding detection/pval */
 	private static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp, boolean annotate_seq) throws Exception {
 		List<LazyChpSym> results = null;
@@ -267,7 +199,7 @@ public final class ChpParser {
 			System.out.println("Probsets with integer id: " + int_id_count);
 			System.out.println("Probsets with string id: " + str_id_count);
 			System.out.println("done parsing quantification + detection CHP file");
-			results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null, int_entries, annotate_seq);
+			results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, int_entries, annotate_seq);
 		} else {
 			System.out.println("CHP quantification/detection data is not for exon chip, "
 					+ "falling back on older method for handling expression CHP files");
@@ -330,11 +262,80 @@ public final class ChpParser {
 			System.out.println("Probsets with integer id: " + int_id_count);
 			System.out.println("Probsets with string id: " + str_id_count);
 			System.out.println("done parsing quantification CHP file");
-			results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null, int_entries, annotate_seq);
+			results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, int_entries, annotate_seq);
 		} else {
 			System.out.println("CHP quantification data is not for exon chip, "
 					+ "falling back on older method for handling expression CHP files");
 			results = oldParseQuantChp(chp, annotate_seq);
+		}
+		return results;
+	}
+
+
+	/**
+	 *  Want to automatically load location data for probesets on chip
+	 *
+	 *  Needed for:
+	 *      3' IVT Expression chips
+	 *      Exon chips and other expression that is non-3' IVT
+	 *      Genotyping chips
+	 *
+	 *  Not necessary for tiling array chips
+	 *  Probably not necessary for sequencing chips (but those aren't supported yet)
+	 *
+	 *  Basic strategy is to retrieve probeset id and location data from the main public Affymetrix DAS/2 server,
+	 *     and match by id to associate locations with the probeset results.
+	 *
+	 */
+	private static List<LazyChpSym> makeLazyChpSyms(
+			String file_name, String chp_array_type, Map id2data, List int_entries, boolean annotate_seq) {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+
+		GenericServer gServer = ServerList.getServer(LazyChpSym.PROBESET_SERVER_NAME);
+		// Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
+		if (gServer == null) {
+			ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
+			return null;
+		}
+		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+
+		// Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
+		if (server == null) {
+			ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
+			return null;
+		}
+		Das2VersionedSource vsource = server.getVersionedSource(group);
+		if (vsource == null) {
+			ErrorHandler.errorPanel("Couldn't find genome data on server for CHP file, genome = " + group.getID());
+			return null;
+		}
+
+		String type_name = OpenGraphAction.getGraphNameForFile(file_name);
+		// Force the AnnotStyle for the container to have glyph depth of 1
+		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
+		style.setGlyphDepth(1);
+
+		List<LazyChpSym> results = new ArrayList<LazyChpSym>();
+		int scount = group.getSeqCount();
+		for (int i = 0; i < scount; i++) {
+			BioSeq aseq = group.getSeq(i);
+			// Don't make LazyChpSym if can't find sequence on DAS/2 server
+			Das2Region das_segment = vsource.getSegment(aseq);
+			// I think above test for presence of sequence on server will handle skipping the genome and encode regions
+			//  (at least as long as the DAS/2 coord server does not serve virtual seqs for these)
+			if (das_segment != null) {
+				// LazyChpSym constructor handles adding span to itself for aseq
+				LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, int_entries);
+				chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+				chp_sym.setProperty("method", type_name);
+				chp_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+				chp_sym.setID(type_name);
+				if (annotate_seq) {
+					aseq.addAnnotation(chp_sym);
+				}
+				results.add(chp_sym);
+			}
 		}
 		return results;
 	}

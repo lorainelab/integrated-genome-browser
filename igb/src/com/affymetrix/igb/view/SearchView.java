@@ -26,8 +26,6 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
-import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
@@ -40,7 +38,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
-public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SymMapChangeListener {
+public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final long serialVersionUID = 0;
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
@@ -177,7 +175,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		bottom_row.add(status_bar, BorderLayout.CENTER);
 		validate();
 
-		AnnotatedSeqGroup.addSymMapChangeListener(this);
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
 		searchCB.addActionListener(this);
@@ -622,16 +619,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			initRemoteServerCheckBox(group);
 
 		}
-	}
-
-	/** Causes a call to {@link #setStatus(String)}.
-	 * }
-	 *  Normally, this occurs as a result of a call to
-	 *  {@link AnnotatedSeqGroup#symHashChanged(Object)}.
-	 */
-	public void symMapModified(SymMapChangeEvent evt) {
-		//showSymHash(evt.getSeqGroup());
-		setStatus("Data modified, search again");
 	}
 
 	/** Set the text in the status bar in a thread-safe way. */

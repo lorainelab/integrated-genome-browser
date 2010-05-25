@@ -235,18 +235,21 @@ public final class BioSeq implements SearchableCharIterator {
 	 */
 	public synchronized void addAnnotation(SeqSymmetry sym) {
 		if (! needsContainer(sym)) {
-			if (type_id2sym == null) { 
-				type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
+			if (!(sym instanceof SymWithProps)) {
+				throw new RuntimeException("sym must be a SymWithProps");
 			}
 			String symID = sym.getID();
 			if (symID == null) {
 				throw new RuntimeException("sym.getID() == null && (! needsContainer(sym)), this should never happen!");
 			}
-			if (sym instanceof SymWithProps) {
-				type_id2sym.put(symID, (SymWithProps) sym);
+			if (type_id2sym == null) { 
+				type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
 			} else {
-				throw new RuntimeException("sym must be a SymWithProps");
+				if (type_id2sym.containsKey(symID) && sym.equals(type_id2sym.get(id))) {
+					return;	// sym already in hash (and thus also annots list)
+				}
 			}
+			type_id2sym.put(symID, (SymWithProps) sym);
 			if (annots == null) {
 				annots = new ArrayList<SeqSymmetry>();
 			}
@@ -286,7 +289,7 @@ public final class BioSeq implements SearchableCharIterator {
 			if (annots == null) {
 				annots = new ArrayList<SeqSymmetry>();
 			}
-			annots.add(container);
+			annots.add(container);	// Can't be a duplicate; the container object was just created.
 		}
 		container.addChild(sym);
 	}

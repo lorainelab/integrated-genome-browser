@@ -10,20 +10,21 @@ import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.symloader.BNIB;
-import com.affymetrix.genometryImpl.symloader.Bar;
 import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symloader.Sgr;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
-import com.affymetrix.genometryImpl.symloader.USeq;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
@@ -34,13 +35,11 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
@@ -157,7 +156,7 @@ public final class QuickLoad extends SymLoader {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					List<FeatureRequestSym> output_requests = determineFeatureRequestSyms(
+					List<FeatureRequestSym> output_requests = FeatureRequestSym.determineFeatureRequestSyms(
 							QuickLoad.this.symL, QuickLoad.this.uri, QuickLoad.this.featureName,
 							strategy, overlapSpan);
 					if (output_requests.isEmpty()) {
@@ -191,6 +190,70 @@ public final class QuickLoad extends SymLoader {
 		vexec.execute(worker);
 		return true;
 	}
+
+	/**
+	 * Below are methods normally used by QuickLoad, DAS, DAS/2, etc.
+	 */
+
+
+	protected List<SeqSymmetry> loadAndAddSymmetries(
+			SymLoader symL, String featureName,
+			LoadStrategy strategy, List<FeatureRequestSym> output_requests)
+			throws IOException, OutOfMemoryError {
+		if (output_requests.isEmpty()) {
+			return null;
+		}
+
+		List<? extends SeqSymmetry> results;
+		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
+		for (FeatureRequestSym request : output_requests) {
+			// short-circuit if there's a failure... which may not even be signaled in the code
+			results = loadFeature(symL, featureName, strategy, request.getOverlapSpan());
+			if (results == null) {
+				return overallResults;
+			}
+			results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
+			if (request.getInsideSpan() != null) {
+				results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
+			}
+			if (results != null && !results.isEmpty()) {
+				request.setProperty("method", this.uri.toString());
+				FeatureRequestSym.addToRequestSym(results, request, this.uri, featureName, request.getOverlapSpan());
+				FeatureRequestSym.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
+			}
+			overallResults.addAll(results);
+		}
+		return overallResults;
+	}
+
+
+	private List<? extends SeqSymmetry> loadFeature(
+			SymLoader symL, String featureName, final LoadStrategy strategy, SeqSpan overlapSpan)
+			throws IOException, OutOfMemoryError {
+		if (!this.isInitialized) {
+			this.init();
+		}
+		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString());
+		if (style != null) {
+			style.setHumanName(featureName);
+		}
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName);
+		if (style != null) {
+			style.setHumanName(featureName);
+		}
+		if (strategy == LoadStrategy.GENOME && symL == null) {
+			// no symloader... only option is whole genome.
+			return this.getGenome();
+		}
+		if (strategy == LoadStrategy.GENOME || strategy == LoadStrategy.CHROMOSOME) {
+			return this.getChromosome(overlapSpan.getBioSeq());
+		}
+		if (strategy == LoadStrategy.VISIBLE) {
+			return this.getRegion(overlapSpan);
+		}
+		return null;
+	}
+
 
 
 	public boolean loadResiduesThread(final LoadStrategy strategy, final SeqSpan span, final BioSeq seq, final SeqMapView gviewer, Executor vexec) {
@@ -278,7 +341,7 @@ public final class QuickLoad extends SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				feats = Parse(this.extension, this.uri, bis, this.version.group, this.featureName);
+				feats = FeatureRequestSym.Parse(this.extension, this.uri, bis, this.version.group, this.featureName);
 				return feats;
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);

@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.event.ActionEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
@@ -402,8 +401,7 @@ public class AffyTieredMap extends NeoMap {
 		}
 
 		// transforming fixed coord to find fixed pixel
-		AffineTransform affineTransform = new AffineTransform();
-		fixed_pixel = trans.transform(affineTransform, Y, fixed_coord);
+		fixed_pixel = trans.transform(Y, fixed_coord);
 
 		// calculate transform offset needed to hold coords at same fixed pixel
 		double pix_offset = fixed_pixel - pixels_per_coord[id] * fixed_coord;

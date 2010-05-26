@@ -21,7 +21,7 @@ public final class ConstrainLinearTrnsfm extends LinearTransform {
 		return constrain_value;
 	}
 
-	@Override
+	
 	public double transform(int orientation, double in) {
 		double out = 0;
 		if (orientation == NeoConstants.HORIZONTAL) {

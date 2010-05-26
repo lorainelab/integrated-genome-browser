@@ -8,6 +8,7 @@ public class LinearTransform extends AffineTransform  {
 	public LinearTransform() {
 		super();
 	}
+	private static double out = 0;
 
 	/**
 	 * Transforms the coordinate on the axis indicated.
@@ -17,12 +18,12 @@ public class LinearTransform extends AffineTransform  {
 	 * @param in the coordinate
 	 * @return transformed coord.
 	 */
-	public double transform(int orientation, double in) {
-		double out = 0;
+	public static double transform(AffineTransform at, int orientation, double in) {
+			out = 0;
 		if (orientation == NeoConstants.HORIZONTAL) {
-			out = in * this.getScaleX() + this.getTranslateX();
+			out = in * at.getScaleX() + at.getTranslateX();
 		} else if (orientation == NeoConstants.VERTICAL) {
-			out = in * this.getScaleY() + this.getTranslateY();
+			out = in * at.getScaleY() + at.getTranslateY();
 		}
 		return out;
 	}

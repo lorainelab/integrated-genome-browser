@@ -36,6 +36,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
@@ -893,8 +894,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 			int id;
 			if (source == scroller[X]) { id = X; }
 			else { id = Y; }
-
-			scroller_value[id] = (int) scrolltrans[id].transform(id, source.getValue());
+			AffineTransform affineTransform = new AffineTransform();
+			scroller_value[id] = (int) LinearTransform.transform(affineTransform, id, source.getValue());
 
 			if (DEBUG_SCROLL)  {
 				System.out.println("Scrolling to: " + scroller_value[id] + ", " +

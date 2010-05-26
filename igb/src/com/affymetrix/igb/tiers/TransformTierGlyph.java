@@ -89,8 +89,7 @@ public final class TransformTierGlyph extends TierGlyph {
       yscale = (double)fixedPixHeight / coordbox.height;
     }
     yscale = yscale / view_transform.getScaleY();
-    LinearTransform.setScaleY(tier_transform, tier_transform.getScaleY() * yscale );
-
+    tier_transform.setTransform(tier_transform.getScaleX(),0,0,tier_transform.getScaleY() * yscale,tier_transform.getTranslateX(),tier_transform.getTranslateY());
     coordbox.height = coordbox.height * yscale;
   }
 
@@ -129,7 +128,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void moveRelative(double diffx, double diffy) {
     coordbox.x += diffx;
     coordbox.y += diffy;
-    LinearTransform.setTranslateY(tier_transform, tier_transform.getTranslateY() + diffy);
+   tier_transform.setTransform(tier_transform.getScaleX(), 0, 0, tier_transform.getScaleY(), tier_transform.getTranslateX(), tier_transform.getTranslateY() + diffy);
   }
 
   public void setFixedPixHeight(int pix_height) {

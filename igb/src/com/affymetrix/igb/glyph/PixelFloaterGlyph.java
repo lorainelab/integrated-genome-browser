@@ -72,20 +72,21 @@ public final class PixelFloaterGlyph extends Glyph  {
   protected void setChildTransform(ViewI view)  {
     LinearTransform vtrans = view.getTransform();
     if (YPIXEL_FLOAT) {
-      LinearTransform.setScaleY(childtrans, 1.0);
-      LinearTransform.setTranslateY(childtrans, 0.0);
+      childtrans.setTransform(childtrans.getScaleX(),0,0,1.0,childtrans.getTranslateX(),childtrans.getTranslateY());
+      childtrans.setTransform(childtrans.getScaleX(), 0, 0, childtrans.getScaleY(), childtrans.getTranslateX(), 0.0);
+
     }
     else {
-      LinearTransform.setScaleY(childtrans, vtrans.getScaleY());
-      LinearTransform.setTranslateY(childtrans, vtrans.getTranslateY());
+      childtrans.setTransform(childtrans.getScaleX(),0,0,vtrans.getScaleY(),childtrans.getTranslateX(),childtrans.getTranslateY());
+      childtrans.setTransform(childtrans.getScaleX(), 0, 0, childtrans.getScaleY(), childtrans.getTranslateX(), vtrans.getTranslateY());
     }
     if (XPIXEL_FLOAT) {
-      LinearTransform.setScaleX(childtrans, 1.0);
-      LinearTransform.setTranslateX(childtrans, 0.0);
+      childtrans.setTransform(1.0,0,0,childtrans.getScaleY(),childtrans.getTranslateX(),childtrans.getTranslateY());
+      childtrans.setTransform(childtrans.getScaleX(), 0, 0, childtrans.getScaleY(), 0.0, childtrans.getTranslateY());
     }
     else {
-      LinearTransform.setScaleX(childtrans, vtrans.getScaleX());
-      LinearTransform.setTranslateX(childtrans, vtrans.getTranslateX());
+      childtrans.setTransform(vtrans.getScaleX(),0,0,childtrans.getScaleY(),childtrans.getTranslateX(),childtrans.getTranslateY());
+      childtrans.setTransform(childtrans.getScaleX(), 0, 0, childtrans.getScaleY(), vtrans.getTranslateX(), childtrans.getTranslateY());
     }
   }
 

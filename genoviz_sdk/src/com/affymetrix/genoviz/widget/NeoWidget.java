@@ -569,12 +569,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		if (id == X) {
 			pixels_per_coord[id] = trans.getScaleX();
 			pixel_value = coord_value * pixels_per_coord[id];
-			LinearTransform.setTranslateX(trans, -pixel_value);
+			trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), -pixel_value, trans.getTranslateY());
 		}
 		else {
 			pixels_per_coord[id] = trans.getScaleY();
 			pixel_value = coord_value * pixels_per_coord[id];
-			LinearTransform.setTranslateY(trans, -pixel_value);
+			trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), -pixel_value);
 			if (DEBUG_SCROLL) {
 				System.out.println("Coord Value = " + coord_value +
 						", Pixels/Coord = " + pixels_per_coord[id] +
@@ -1121,12 +1121,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		}
 
 		if (id == X) {
-			LinearTransform.setTranslateX(trans, -pixel_offset[id]);
-			LinearTransform.setScaleX(trans, pixels_per_coord[id]);
+			trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), -pixel_offset[id], trans.getTranslateY());
+			trans.setTransform(pixels_per_coord[id],0,0,trans.getScaleY(),trans.getTranslateX(),trans.getTranslateY());
 		}
 		else {
-			LinearTransform.setTranslateY(trans, -pixel_offset[id]);
-			LinearTransform.setScaleY(trans, pixels_per_coord[id]);
+			trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), -pixel_offset[id]);
+			trans.setTransform(trans.getScaleX(),0,0,pixels_per_coord[id],trans.getTranslateX(),trans.getTranslateY());
 		}
 		if (zoom_scale != zoomer_scale[id]) {
 			adjustZoomer(id);

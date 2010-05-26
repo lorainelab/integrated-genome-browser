@@ -569,9 +569,8 @@ public final class GraphSelectionManager
       gl.getGlobalTransform(widg.getView(), trans);
     }
 
-    LinearTransform.setScaleX(trans, vtrans.getScaleX());
-    LinearTransform.setTranslateX(trans, vtrans.getTranslateX());
-
+    trans.setTransform(vtrans.getScaleX(),0,0,trans.getScaleY(),trans.getTranslateX(),trans.getTranslateY());
+	trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), vtrans.getTranslateX(), trans.getTranslateY());
 	dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 
     dragger.addGlyphDragListener(this);

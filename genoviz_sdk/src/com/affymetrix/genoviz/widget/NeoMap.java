@@ -773,15 +773,14 @@ public class NeoMap extends NeoWidget implements
 			   //   scale larger than max_pixels_per_coord
 			   if (min_pixels_per_coord[X] >= max_pixels_per_coord[X]) {
 				   min_pixels_per_coord[X] = max_pixels_per_coord[X];
-				   LinearTransform.setScaleX(trans, min_pixels_per_coord[X]);
-				   LinearTransform.setTranslateX(trans, canvas.getSize().width/2 -
-						   trans.getScaleX()*scene.getCoordBox().width/2);
+				   trans.setTransform(min_pixels_per_coord[X],0,0,trans.getScaleY(),trans.getTranslateX(),trans.getTranslateY());
+				   trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), canvas.getSize().width/2 -
+						   trans.getScaleX()*scene.getCoordBox().width/2, trans.getTranslateY());
 			   }
 			   if (min_pixels_per_coord[Y] >= max_pixels_per_coord[Y]) {
 				   min_pixels_per_coord[Y] = max_pixels_per_coord[Y];
-				   LinearTransform.setScaleY(trans, min_pixels_per_coord[Y]);
-				   LinearTransform.setTranslateY(trans,
-						   canvas.getSize().height/2 -
+				   trans.setTransform(trans.getScaleX(),0,0,min_pixels_per_coord[Y],trans.getTranslateX(),trans.getTranslateY());
+				   trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), canvas.getSize().height/2 -
 						   trans.getScaleY()*scene.getCoordBox().height/2);
 			   }
 
@@ -799,8 +798,8 @@ public class NeoMap extends NeoWidget implements
 				   Rectangle scenepix;
 				   int pixel_value;
 				   if (!xfit) {
-					   LinearTransform.setScaleX(trans, xscale);
-					   LinearTransform.setTranslateX(trans, xoffset);
+					   trans.setTransform(xscale,0,0,trans.getScaleY(),trans.getTranslateX(),trans.getTranslateY());
+					   trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), xoffset, trans.getTranslateY());
 					   view.calcCoordBox();
 					   viewbox = view.getCoordBox();
 					   if (fit_check)  {
@@ -818,13 +817,13 @@ public class NeoMap extends NeoWidget implements
 								   visible_start = scene_end - viewbox.width;
 							   }
 							   pixel_value = (int)(visible_start * trans.getScaleX());
-							   LinearTransform.setTranslateX(trans, -pixel_value);
+							   trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), -pixel_value, trans.getTranslateY());
 						   }
 					   }
 				   }
 				   if (!yfit) {
-					   LinearTransform.setScaleY(trans, yscale);
-					   LinearTransform.setTranslateY(trans, yoffset);
+					   trans.setTransform(trans.getScaleX(),0,0,yscale,trans.getTranslateX(),trans.getTranslateY());
+					   trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), yoffset);
 					   view.calcCoordBox();
 					   viewbox = view.getCoordBox();
 					   if (fit_check) {
@@ -842,7 +841,7 @@ public class NeoMap extends NeoWidget implements
 								   visible_start = scene_end - viewbox.height;
 							   }
 							   pixel_value = (int)(visible_start * trans.getScaleY());
-							   LinearTransform.setTranslateY(trans, -pixel_value);
+							   trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), -pixel_value);
 						   }
 					   }
 				   }

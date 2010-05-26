@@ -72,7 +72,7 @@ public class LinearTransform extends AffineTransform  {
 		return dst;
 	}
 
-	public static final void setScaleX(AffineTransform t, double scale) {
+	/*public static final void setScaleX(AffineTransform t, double scale) {
 		t.setTransform(scale,0,0,t.getScaleY(),t.getTranslateX(),t.getTranslateY());
 	}
 
@@ -86,7 +86,7 @@ public class LinearTransform extends AffineTransform  {
 
 	public static final void setTranslateY(AffineTransform t, double offset) {
 		t.setTransform(t.getScaleX(), 0, 0, t.getScaleY(), t.getTranslateX(), offset);
-	}
+	}*/
 
 	public boolean equals(LinearTransform lint) {
 		if (lint == null) {

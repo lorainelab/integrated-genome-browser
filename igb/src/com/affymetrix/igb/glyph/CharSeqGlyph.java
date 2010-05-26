@@ -168,46 +168,50 @@ public final class CharSeqGlyph extends SequenceGlyph
 			int seqBegIndex,
 			int seqEndIndex,
 			int pixelStart) {
-		int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
-
 		char[] charArray = str.toCharArray();
-		drawResidueRectangles(g, pixelsPerBase, charArray);
-		drawResidueStrings(g, pixelsPerBase, charArray, pixelStart, baseline);
+		drawResidueRectangles(g, pixelsPerBase, charArray, pixelbox.x, pixelbox.y, pixelbox.height);
+		drawResidueStrings(g, pixelsPerBase, charArray, pixelStart);
 	}
 
-	private void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray) {
-		for (int j = 0; j < charArray.length; j++) {
-			g.setColor(determineResidueColor(charArray[j]));
+	private static void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, int x, int y, int height) {
+		int pixelsPerBaseInt = (int)Math.ceil(pixelsPerBase);
+		//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
+		
+		for (int i=0;i<helper.colors.length;i++) {
+			// Latency is determined by drawing time, not CPU time.  Thus we iterate over each color, and draw all bases associated with it.
+			g.setColor(helper.colors[i]);
 
-			//Create a colored rectangle.
-			//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
-			int offset = (int) (j * pixelsPerBase);
-			//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
-			g.fillRect(pixelbox.x + offset, pixelbox.y, (int) Math.ceil(pixelsPerBase), pixelbox.height);
+			for (int j = 0; j < charArray.length; j++) {
+				if (i == determineResidueColorIndex(charArray[j])) {
+					//For the x coord, we calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
+					g.fillRect(x + (int) (j * pixelsPerBase), y, pixelsPerBaseInt, height);
+				}
+			}
 		}
 	}
 
-	private static Color determineResidueColor(char charAt) {
+	private static int determineResidueColorIndex(char charAt) {
 		switch (charAt) {
 			case 'A':
 			case 'a':
-				return helper.colors[0];
+				return 0;
 			case 'T':
 			case 't':
-				return helper.colors[1];
+				return 1;
 			case 'G':
 			case 'g':
-				return helper.colors[2];
+				return 2;
 			case 'C':
 			case 'c':
-				return helper.colors[3];
+				return 3;
 			default:
-				return helper.colors[4];
+				return 4;
 		}
 	}
 
-	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart, int baseline) {
+	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart) {
 		if (this.font_width <= pixelsPerBase) {
+			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());

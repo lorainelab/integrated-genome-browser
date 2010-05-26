@@ -22,7 +22,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
@@ -38,10 +37,10 @@ public final class RestrictionControlView extends JComponent
 				implements ListSelectionListener, ActionListener {
 
 	private final SeqMapView gviewer;
-	private final Hashtable<String,String> site_hash = new Hashtable<String,String>();
+	private final Map<String,String> site_hash = new HashMap<String,String>();
 	private JList siteList;
 	private JPanel labelP;
-	private final Vector<String> sites = new Vector<String>();
+	private final List<String> sites = new ArrayList<String>();
 	private static Color colors[] = {
 		Color.magenta,
 		new Color(0x00cd00),
@@ -50,12 +49,12 @@ public final class RestrictionControlView extends JComponent
 		new Color(0xb50000),
 		Color.blue,
 		Color.gray,
-		Color.pink};
+		Color.pink};//Distinct Colors for View/Print Ease
 	private JLabel labels[];
 	private JButton actionB;
 	private JButton clearB;
 
-		/**
+	/**
 	 *  keep track of added glyphs
 	 */
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
@@ -81,6 +80,7 @@ public final class RestrictionControlView extends JComponent
 			load_success = false;
 		} else {
 			try {
+				//Loading the name of all the restriction sites to GUI
 				d = new BufferedReader(new InputStreamReader(file_input_str));
 				StringTokenizer string_toks;
 				String site_name, site_dna;
@@ -107,28 +107,25 @@ public final class RestrictionControlView extends JComponent
 		}
 
 		if (load_success) {
-			siteList = new JList(sites);
+			siteList = new JList(sites.toArray());
 			JScrollPane scrollPane = new JScrollPane(siteList);
 			labelP = new JPanel();
 			labelP.setBackground(Color.white);
-			labelP.setLayout(new GridLayout(colors.length, 1));
+			labelP.setLayout(new GridLayout(sites.size(), 1));
 
-			labels = new JLabel[colors.length];
+			labels = new JLabel[sites.size()];
 			JLabel label;
-			for (int i = 0; i < colors.length; i++) {
+			for (int i = 0; i < labels.length; i++) {//Make a label for the selected pane for each restriction enzyme
 				label = new JLabel();
-				label.setForeground(colors[i]);
-				//      label.setBackground(colors[i]);
+				label.setForeground(colors[i%colors.length]);//We're repeating the colors..deal with it, users.
 				label.setText("           ");
 				labelP.add(label);
 				labels[i] = label;
 			}
 
 			this.setLayout(new BorderLayout());
-			//    this.setLayout(new GridLayout(1, 2));
 			scrollPane.setPreferredSize(new Dimension(100, 100));
-			//    this.add(scrollPane);
-			//    this.add(labelP);
+
 			this.add("West", scrollPane);
 			actionB = new JButton("Map Selected Restriction Sites");
 			clearB = new JButton("Clear");
@@ -176,7 +173,6 @@ public final class RestrictionControlView extends JComponent
 	}
 
 	public void actionPerformed(ActionEvent evt) {
-
 		if (evt.getSource() == clearB) {
 			clearAll();
 			return;
@@ -189,68 +185,63 @@ public final class RestrictionControlView extends JComponent
 			ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 			return;
 		}
-
-		for (int i = 0; i < labels.length; i++) {
-			String site_name = labels[i].getText();
-			// done when hit first non-labelled JLabel
-			if (site_name == null || site_name.equals("")) {
-				break;
-			}
-			String site_residues = site_hash.get(site_name);
-			if (site_residues == null) {
-				continue;
-			}
-			glyphifyMatches(site_residues, colors[i]);
-		}
+		
+		new Thread(new GliphifyMatchesThread()).start();
 	}
 
+	
 
-	private void glyphifyMatches(String site, Color col) {
-		NeoMap map = gviewer.getSeqMap();
-		TransformTierGlyph axis_tier = gviewer.getAxisTier();
-		GlyphI seq_glyph = null;
-		BioSeq vseq = gviewer.getViewSeq();
-		if (vseq == null || !vseq.isComplete()) {
-			ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
-			return;
-		}
-		int residue_offset = 0;
+	private class GliphifyMatchesThread implements Runnable
+	{
+		public void run()
+		{
+			Application.getSingleton().addNotLockedUpMsg("Finding Restriction Sites... ");
+			try{
+				BioSeq vseq = gviewer.getViewSeq();
+				if (vseq == null || !vseq.isComplete()) {
+					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
+					return;
+				}
+				NeoMap map = gviewer.getSeqMap();
+				TransformTierGlyph axis_tier = gviewer.getAxisTier();
+				int residue_offset = vseq.getMin();
 
-		residue_offset = vseq.getMin();
+				for (int i = 0; i < labels.length; i++) {
+					String site_name = labels[i].getText();
+					// done when hit first non-labelled JLabel
+					if (site_name == null || site_name.equals("")) {
+						break;
+					}
+					String site_residues = site_hash.get(site_name);
+					if (site_residues == null) {
+						continue;
+					}
 
+					// find the sequence glyph on axis tier...
 
-		// find the sequence glyph on axis tier...
-		for (int i = 0; i < axis_tier.getChildCount(); i++) {
-			if (axis_tier.getChild(i) instanceof SequenceGlyph) {
-				seq_glyph = axis_tier.getChild(i);
-				break;
+					System.out.println("searching for occurrences of \"" + site_residues + "\" in sequence");
+					int res_index = vseq.indexOf(site_residues, 0);
+
+					int seq_index;
+					int length = site_residues.length();
+					int hit_count = 0;
+					FillRectGlyph gl;
+					while (res_index >= 0) {
+						seq_index = res_index + residue_offset;
+						gl = new FillRectGlyph();
+						gl.setColor(colors[i % colors.length]);//Same as above: We're repeating the colors
+						gl.setCoords(seq_index, 15, length, 10);
+						axis_tier.addChild(gl);
+						glyphs.add(gl);
+						hit_count++;
+						res_index = vseq.indexOf(site_residues, res_index + 1);
+					}
+					System.out.println(site_residues + ", hits = " + hit_count);
+					map.updateWidget();
+				}
+			}finally{
+				Application.getSingleton().removeNotLockedUpMsg("Finding Restriction Sites... ");
 			}
 		}
-
-		System.out.println("searching for occurrences of \"" + site + "\" in sequence");
-		int res_index = vseq.indexOf(site, 0);
-
-		int seq_index;
-		int length = site.length();
-		int hit_count = 0;
-		while (res_index >= 0) {
-			seq_index = res_index + residue_offset;
-			FillRectGlyph gl = new FillRectGlyph();
-			gl.setColor(col);
-			if (seq_glyph != null) {
-				gl.setCoords(seq_index, seq_glyph.getCoordBox().y,
-								length, seq_glyph.getCoordBox().height);
-				seq_glyph.addChild(gl);
-			} else {
-				gl.setCoords(seq_index, 10, length, 10);
-				axis_tier.addChild(gl);
-			}
-			glyphs.add(gl);
-			hit_count++;
-			res_index = vseq.indexOf(site, res_index + 1);
-		}
-		//    hitCountL.setText("" + hit_count + " hits");
-		System.out.println(site + ", hits = " + hit_count);
-		map.updateWidget();
 	}
 }

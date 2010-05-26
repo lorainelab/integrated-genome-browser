@@ -25,6 +25,30 @@ public final class StatusBar extends JPanel {
 	/** Delay in milliseconds between updates of the status (such as memory usage).  */
 	private static final int timer_delay_ms = 5000;
 
+	private final Action cancel = new AbstractAction() {
+		private static final long serialVersionUID = 1l;
+
+		public void actionPerformed(ActionEvent ae) {
+			hideRunningTasks();
+		}
+	};
+
+	private final Action showTasks = new AbstractAction() {
+		private static final long serialVersionUID = 1l;
+
+		public void actionPerformed(ActionEvent ae) {
+			showRunningTasks();
+		}
+	};
+
+	private final Action performGcAction = new AbstractAction("Release Unused Memory") {
+		private static final long serialVersionUID = 1l;
+
+		public void actionPerformed(ActionEvent ae) {
+			System.gc();
+		}
+	};
+
 	public StatusBar() {
 		String tt_status = "Shows Selected Item, or other Message";
 		String tt_status_memory = "Memory Used / Available";
@@ -136,14 +160,6 @@ public final class StatusBar extends JPanel {
 		return status_ta.getText();
 	}
 
-	Action performGcAction = new AbstractAction("Release Unused Memory") {
-		private static final long serialVersionUID = 1l;
-
-		public void actionPerformed(ActionEvent ae) {
-			System.gc();
-		}
-	};
-	
 	/**
 	 *  Causes the memory indicator to update its value.  Normally you do not
 	 *  need to call this method as the memory value will be updated from
@@ -163,22 +179,6 @@ public final class StatusBar extends JPanel {
 		}
 		memory_ta.setText(text);
 	}
-
-	Action cancel = new AbstractAction() {
-		private static final long serialVersionUID = 1l;
-
-		public void actionPerformed(ActionEvent ae) {
-			hideRunningTasks();
-		}
-	};
-
-	Action showTasks = new AbstractAction() {
-		private static final long serialVersionUID = 1l;
-
-		public void actionPerformed(ActionEvent ae) {
-			showRunningTasks();
-		}
-	};
 
 	/**
 	 * Populate popup menu with running processPanel.
@@ -228,6 +228,9 @@ public final class StatusBar extends JPanel {
 	 * Shows Running Threads in popup menu.
 	 */
 	private final void showRunningTasks() {
+		if (!mainCancel.isVisible()) {
+			return;	 // should not happen
+		}
 		int x = (int) mainCancel.getAlignmentX() - mainCancel.getWidth() - progressBar.getWidth();
 		int y = (int) mainCancel.getAlignmentY() + mainCancel.getHeight();
 		//int y = (int) getAlignmentY() - runningTasks.getHeight();

@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -32,6 +33,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.regex.Pattern;
 
 public final class RestrictionControlView extends JComponent
 				implements ListSelectionListener, ActionListener {
@@ -205,6 +207,9 @@ public final class RestrictionControlView extends JComponent
 				NeoMap map = gviewer.getSeqMap();
 				TransformTierGlyph axis_tier = gviewer.getAxisTier();
 				int residue_offset = vseq.getMin();
+				String residues = vseq.getResidues();
+				// Search for reverse complement of query string
+				String rev_searchstring = DNAUtils.reverseComplement(residues);
 
 				for (int i = 0; i < labels.length; i++) {
 					String site_name = labels[i].getText();
@@ -216,27 +221,26 @@ public final class RestrictionControlView extends JComponent
 					if (site_residues == null) {
 						continue;
 					}
-
-					// find the sequence glyph on axis tier...
+					Pattern regex = null;
+					try {
+						regex = Pattern.compile(site_residues, Pattern.CASE_INSENSITIVE);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 
 					System.out.println("searching for occurrences of \"" + site_residues + "\" in sequence");
-					int res_index = vseq.indexOf(site_residues, 0);
 
-					int seq_index;
-					int length = site_residues.length();
-					int hit_count = 0;
-					FillRectGlyph gl;
-					while (res_index >= 0) {
-						seq_index = res_index + residue_offset;
-						gl = new FillRectGlyph();
-						gl.setColor(colors[i % colors.length]);//Same as above: We're repeating the colors
-						gl.setCoords(seq_index, 15, length, 10);
-						axis_tier.addChild(gl);
-						glyphs.add(gl);
-						hit_count++;
-						res_index = vseq.indexOf(site_residues, res_index + 1);
-					}
-					System.out.println(site_residues + ", hits = " + hit_count);
+					residue_offset = vseq.getMin();
+					int hit_count1 = SearchView.searchForRegexInResidues(
+							true, regex, residues, residue_offset, axis_tier, glyphs, colors[i % colors.length]);
+
+					// Search for reverse complement of query string
+					//   flip searchstring around, and redo nibseq search...
+					residue_offset = vseq.getMax();
+					int hit_count2 = SearchView.searchForRegexInResidues(
+							false, regex, rev_searchstring, residue_offset, axis_tier, glyphs, colors[i % colors.length]);
+
+					System.out.println(site_residues + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
 					map.updateWidget();
 				}
 			}finally{

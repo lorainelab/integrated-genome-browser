@@ -76,7 +76,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private final JButton clear_button = new JButton("Clear");
 	private final SeqMapView gviewer;
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
-	private final Color hitcolor = new Color(150, 150, 255);
+	private final static Color hitcolor = new Color(150, 150, 255);
 
 	private  JTable table = new JTable();
 	private  JTextField filterText = new JTextField();
@@ -475,16 +475,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		regexTF(vseq);
 	}
 
-	private static GlyphI findSeqGlyph(TransformTierGlyph axis_tier) {
-		// find the sequence glyph on axis tier.
-		for (GlyphI seq_glyph : axis_tier.getChildren()) {
-			if (seq_glyph instanceof AbstractResiduesGlyph) {
-				return seq_glyph;
-			}
-		}
-		return null;
-	}
-
 	private void regexTF(BioSeq vseq) {
 		String searchStr = searchTF.getText();
 		String friendlySearchStr = friendlyString(searchStr, vseq.getID());
@@ -507,22 +497,22 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		String residues = vseq.getResidues();
 		TransformTierGlyph axis_tier = gviewer.getAxisTier();
-		GlyphI seq_glyph = findSeqGlyph(axis_tier);
 		int residue_offset = vseq.getMin();
-		int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, seq_glyph, axis_tier);
+		int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, axis_tier, glyphs, hitcolor);
 
 		// Search for reverse complement of query string
 		//   flip searchstring around, and redo nibseq search...
 		String rev_searchstring = DNAUtils.reverseComplement(residues);
 		residue_offset = vseq.getMax();
-		int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, seq_glyph, axis_tier);
+		int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, axis_tier, glyphs, hitcolor);
 
 		setStatus(friendlySearchStr + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
 		NeoMap map = gviewer.getSeqMap();
 		map.updateWidget();
 	}
 
-	private int searchForRegexInResidues(boolean forward, Pattern regex, String residues, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier) {
+	static int searchForRegexInResidues(
+			boolean forward, Pattern regex, String residues, int residue_offset, TransformTierGlyph axis_tier, List<GlyphI> glyphs, Color hitColor) {
 		int hit_count = 0;
 		Matcher matcher = regex.matcher(residues);
 		while (matcher.find()) {
@@ -530,20 +520,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
 			//int end = matcher.end(0) + residue_offset;
 			GlyphI gl = new FillRectGlyph();
-			gl.setColor(hitcolor);
-			/*if (seq_glyph != null) {
-				double offset = forward ? 0 : seq_glyph.getCoordBox().height / 2;
-
-				gl.setCoords(start, seq_glyph.getCoordBox().y, end - start, seq_glyph.getCoordBox().height);
-				seq_glyph.addChild(gl);
-
-				// when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
-				gl.setCoords(start, seq_glyph.getCoordBox().y + offset, end - start, seq_glyph.getCoordBox().height / 2);
-			} else {*/
-				double pos = forward ? 10 : 15;
+			gl.setColor(hitColor);
+			double pos = forward ? 10 : 15;
 				gl.setCoords(start, pos, end - start, 10);
 				axis_tier.addChild(gl);
-//			}
 			glyphs.add(gl);
 			hit_count++;
 		}

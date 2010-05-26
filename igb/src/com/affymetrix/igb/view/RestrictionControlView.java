@@ -186,12 +186,12 @@ public final class RestrictionControlView extends JComponent
 			return;
 		}
 		
-		new Thread(new GliphifyMatchesThread()).start();
+		new Thread(new GlyphifyMatchesThread()).start();
 	}
 
 	
 
-	private class GliphifyMatchesThread implements Runnable
+	private class GlyphifyMatchesThread implements Runnable
 	{
 		public void run()
 		{

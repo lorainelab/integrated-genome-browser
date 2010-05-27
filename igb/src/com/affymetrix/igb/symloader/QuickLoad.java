@@ -164,7 +164,6 @@ public final class QuickLoad extends SymLoader {
 					}
 					List<SeqSymmetry> overallResults = loadAndAddSymmetries(
 							QuickLoad.this.symL, QuickLoad.this.featureName, strategy, output_requests);
-					SeqGroupView.refreshTable();	// in case there were new chromosomes
 					return overallResults;
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -178,7 +177,7 @@ public final class QuickLoad extends SymLoader {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
 						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
-						//SeqGroupView.refreshTable();
+						SeqGroupView.refreshTable();
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);

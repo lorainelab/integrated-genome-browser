@@ -51,7 +51,7 @@ public final class TableWithVisibleComboBox {
 
 		JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
 		DAScb.setRenderer(comboRenderer);
-		DAScb.setEnabled(enabled);
+		DAScb.setEnabled(true);
 		DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
 
 		for (int row = 0; row < featureSize; row++) {

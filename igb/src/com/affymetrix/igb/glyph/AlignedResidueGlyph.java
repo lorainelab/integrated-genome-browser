@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class AlignedResidueGlyph extends SequenceGlyph
 		 {
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
-	private byte[] residueMask = null;
+	private BitSet residueMask = null;
 	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
 
 	// default to true for backward compatability
@@ -109,14 +110,32 @@ public class AlignedResidueGlyph extends SequenceGlyph
 			int minResLen = Math.min(residues.length(), residue_length);
 			char[] residuesArr = residues.toLowerCase().toCharArray();
 			char[] displayResArr = chariter.substring(0, minResLen).toLowerCase().toCharArray();
-			residueMask = new byte[minResLen];	// 8 times too large, but shouldn't matter
+			residueMask = new BitSet(minResLen);
 			for(int i=0;i<minResLen;i++) {
-				if(displayResArr[i] == residuesArr[i]) {
-					residueMask[i] = 1;
-				} else {
-					residueMask[i] = 0;
-				}
+				residueMask.set(i, displayResArr[i] != residuesArr[i]);
 			}
+			if (residueMask.cardinality() == 0) {
+				// Save space and time if all residues match the reference sequence.
+				residueMask = null;
+				residue_length = 0;
+				chariter = null;
+			}
+		}
+	}
+
+	public void setResidueMask(byte[] SEQ) {
+		String SEQStr = new String(SEQ).toLowerCase();
+		residueMask = new BitSet(SEQ.length);
+		for (int i = 0; i < SEQ.length; i++) {
+			residueMask.set(i, SEQ[i] != '=');
+		}
+		if (residueMask.cardinality() == 0) {
+			// Save space and time if all residues match the reference sequence.
+			residueMask = null;
+			residue_length = 0;
+			chariter = null;
+		} else {
+			this.setResidues(SEQStr);
 		}
 	}
 
@@ -196,10 +215,10 @@ public class AlignedResidueGlyph extends SequenceGlyph
 		drawResidueStrings(g, pixelsPerBase, charArray, residueMask, pixelStart);
 	}
 
-	private static void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, byte[] residueMask, int x, int y, int height) {
+	private static void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int x, int y, int height) {
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		for (int j = 0; j < charArray.length; j++) {
-			if (residueMask != null && residueMask.length > j && residueMask[j] == 1) {
+			if (residueMask != null && !residueMask.get(j)) {
 				continue;	// skip drawing of this residue
 			}
 			g.setColor(determineResidueColor(charArray[j]));
@@ -231,14 +250,14 @@ public class AlignedResidueGlyph extends SequenceGlyph
 		}
 	}
 
-	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, byte[] residueMask, int pixelStart) {
+	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int pixelStart) {
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
 			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 			for (int i = 0; i < charArray.length; i++) {
-				if (residueMask != null && residueMask.length > i && residueMask[i] == 1) {
+				if (residueMask != null && !residueMask.get(i)) {
 					continue;	// skip drawing of this residue
 				}
 				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase), baseline);

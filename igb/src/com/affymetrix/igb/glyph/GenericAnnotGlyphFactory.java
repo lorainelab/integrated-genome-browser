@@ -40,8 +40,6 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 import java.util.*;
 
-
-
 /**
  *
  * @version $Id$
@@ -401,34 +399,49 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		if (!(sym instanceof SymWithProps)) {
 			return startPos;
 		}
+		SeqSpan span = sym.getSpan(annotseq);
+		if (span == null) {
+			return startPos;
+		}
+		if (((SymWithProps) sym).getProperty("SEQ") != null) {
+			byte[] seqArr = (byte[])((SymWithProps) sym).getProperty("SEQ");
+			// SEQ property is set; don't need to look at individual residues
+			AlignedResidueGlyph csg = new AlignedResidueGlyph();
+			csg.setResidueMask(seqArr);
+			csg.setShowBackground(false);
+			csg.setHitable(false);
+			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
+			if (isChild) {
+				pglyph.addChild(csg);
+			} else {
+				pglyph = csg;	// dispense with extra glyph, which is just overwritten when drawing.
+			}
+			return startPos;
+		}
 		Object residues = ((SymWithProps) sym).getProperty("residues");
 		if (residues != null) {
-			SeqSpan span = sym.getSpan(annotseq);
-			if (span != null) {
-				String residueStr = residues.toString();
+			String residueStr = residues.toString();
+			if (handleCigar) {
+				Object cigar = ((SymWithProps) sym).getProperty("cigar");
+				residueStr = BAM.interpretCigar(cigar, residueStr, startPos, span.getLength());
+				startPos += residueStr.length();
+			}
+			AlignedResidueGlyph csg = new AlignedResidueGlyph();
+			csg.setResidues(residueStr);
+			if (annotseq.getResidues(span.getStart(), span.getEnd()) != null) {
 				if (handleCigar) {
-					Object cigar = ((SymWithProps) sym).getProperty("cigar");
-					residueStr = BAM.interpretCigar(cigar, residueStr, startPos, span.getLength());
-					startPos += residueStr.length();
-				}
-				AlignedResidueGlyph csg = new AlignedResidueGlyph();
-				csg.setResidues(residueStr);
-				if (annotseq.getResidues(span.getStart(), span.getEnd()) != null) {
-					if (handleCigar)
-					{
-						csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length()));
-					} else {
-						csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMax()));
-					}
-				}
-				csg.setShowBackground(false);
-				csg.setHitable(false);
-				csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
-				if (isChild) {
-					pglyph.addChild(csg);
+					csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length()));
 				} else {
-					pglyph = csg;	// dispense with extra glyph, which is just overwritten when drawing.
+					csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMax()));
 				}
+			}
+			csg.setShowBackground(false);
+			csg.setHitable(false);
+			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
+			if (isChild) {
+				pglyph.addChild(csg);
+			} else {
+				pglyph = csg;	// dispense with extra glyph, which is just overwritten when drawing.
 			}
 		}
 		return startPos;

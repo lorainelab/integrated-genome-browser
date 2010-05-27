@@ -294,16 +294,37 @@ public final class NibbleResiduesParser {
 	public static String getMimeType() {
 		return "binary/bnib";
 	}
+	
+	public static void writeFastaToFile(File bnibFile){
+		try {
+			InputStream in = new FileInputStream(bnibFile);
+			BioSeq b = NibbleResiduesParser.parse(in, new AnnotatedSeqGroup(bnibFile.toString()));
+			String name = bnibFile.getName().replace(".bnib", ".fasta");
+			File outFile = new File (bnibFile.getParentFile(), name);
+			PrintWriter out = new PrintWriter( new FileWriter(outFile));
+			String seq = b.getResidues();
+			out.println(">"+b.getID()+"\n"+seq);
+			out.close();
+			in.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/** Reads a FASTA file and outputs a binary sequence file.
 	 *  @param args  sequence name, input file, output file, sequence version
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) { 
 		try {
 			String infile_name = null;
 			String outfile_name = null;
 			String seq_version = null;
 			String seq_name = null;
+			if (args.length == 1) {
+				writeFastaToFile(new File(args[0]));
+				return;
+			}
 			if (args.length >= 4) {
 				seq_name = args[0];
 				infile_name = args[1];
@@ -311,7 +332,7 @@ public final class NibbleResiduesParser {
 				seq_version = args[3];
 			}
 			else {
-				System.err.println("Usage: java -cp <exe_filename> com.affymetrix.genometryImpl.parsers.NibbleResiduesParser [seq_name] [in_file] [out_file] [seq_version]");
+				System.err.println("Usage: java -cp <exe_filename> com.affymetrix.genometryImpl.parsers.NibbleResiduesParser [seq_name] [in_file] [out_file] [seq_version]. Alternatively, provide just a xxx.bnib file to convert it to xxx.fasta");
 				System.exit(1);
 			}
 			File fil = new File(infile_name);

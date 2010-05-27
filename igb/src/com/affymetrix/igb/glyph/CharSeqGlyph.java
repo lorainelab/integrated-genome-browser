@@ -43,7 +43,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 	public static final Color default_A_color = Color.GREEN;
 	public static final Color default_T_color = Color.PINK;
 	public static final Color default_G_color = Color.YELLOW;
-	public static final Color default_C_color = Color.CYAN;
+	public static final Color default_C_color = Color.BLUE;
 	public static final Color default_other_color = Color.GRAY;
 
 	private static final ColorHelper helper = new ColorHelper();

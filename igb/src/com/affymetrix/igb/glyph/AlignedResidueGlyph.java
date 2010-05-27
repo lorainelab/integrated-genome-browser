@@ -25,7 +25,7 @@ import java.util.prefs.PreferenceChangeListener;
  * Residues can be masked out if they agree with a reference sequence.
  *
  */
-public class SAMGlyph extends SequenceGlyph
+public class AlignedResidueGlyph extends SequenceGlyph
 		 {
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
@@ -42,7 +42,7 @@ public class SAMGlyph extends SequenceGlyph
 	public static final Color default_A_color = Color.GREEN;
 	public static final Color default_T_color = Color.PINK;
 	public static final Color default_G_color = Color.YELLOW;
-	public static final Color default_C_color = Color.CYAN;
+	public static final Color default_C_color = Color.BLUE;
 	public static final Color default_other_color = Color.GRAY;
 
 	private static final ColorHelper helper = new ColorHelper();
@@ -84,7 +84,7 @@ public class SAMGlyph extends SequenceGlyph
 		}
 	}
 
-	public SAMGlyph() {
+	public AlignedResidueGlyph() {
 		super();
 		setResidueFont(mono_default_font);
 	}

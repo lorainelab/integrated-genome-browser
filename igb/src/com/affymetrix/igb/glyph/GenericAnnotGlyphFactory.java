@@ -229,7 +229,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(insym, sym, the_style, annotseq, pglyph, map, coordseq);
-			handleResidues(insym, annotseq, pglyph);
+			handleAlignedResidueGlyphs(insym, annotseq, pglyph);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
@@ -369,15 +369,21 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return DEFAULT_THIN_HEIGHT;
 	}
 
-	private static void handleResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph) {
+	private static void handleAlignedResidueGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph) {
+		if (!(sym instanceof SymWithProps) || ((SymWithProps) sym).getProperty("residues") == null) {
+			return;
+		}
+
+		// We are in an aligned residue glyph.
 		int childCount = sym.getChildCount();
 		if (childCount > 0) {
 			int startPos = 0;
 			for (int i = 0; i < childCount; i++) {
-				startPos = setResidues(sym.getChild(i), annotseq, pglyph, startPos, true);
+				startPos = setResidues(sym.getChild(i), annotseq, pglyph, startPos, true, true);
 			}
 		} else {
-			setResidues(sym, annotseq, pglyph, 0, false);
+			setResidues(sym, annotseq, pglyph, 0, false, false);
+			// Note that pglyph is replaced here.
 			// don't need to process cigar, since entire residue string is used
 		}
 	}
@@ -391,7 +397,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param handleCigar - indicates whether we need to process the cigar element.
 	 * @return
 	 */
-	private static int setResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, int startPos, boolean handleCigar) {
+	private static int setResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, int startPos, boolean handleCigar, boolean isChild) {
 		if (!(sym instanceof SymWithProps)) {
 			return startPos;
 		}
@@ -405,7 +411,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 					residueStr = BAM.interpretCigar(cigar, residueStr, startPos, span.getLength());
 					startPos += residueStr.length();
 				}
-				SAMGlyph csg = new SAMGlyph();
+				AlignedResidueGlyph csg = new AlignedResidueGlyph();
 				csg.setResidues(residueStr);
 				if (annotseq.getResidues(span.getStart(), span.getEnd()) != null) {
 					if (handleCigar)
@@ -418,7 +424,11 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				csg.setShowBackground(false);
 				csg.setHitable(false);
 				csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
-				pglyph.addChild(csg);
+				if (isChild) {
+					pglyph.addChild(csg);
+				} else {
+					pglyph = csg;	// dispense with extra glyph, which is just overwritten when drawing.
+				}
 			}
 		}
 		return startPos;

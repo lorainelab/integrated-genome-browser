@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -500,7 +501,7 @@ public final class BioSeq implements SearchableCharIterator {
 			SeqSpan residue_span = new SimpleSeqSpan(res_start, res_end, this);
 			int reslength = Math.abs(res_end - res_start);
 			char[] char_array = new char[reslength];
-			java.util.Arrays.fill(char_array, fillchar);
+			Arrays.fill(char_array, fillchar);
 			SeqSymmetry rootsym = this.getComposition();
 			if (rootsym != null) {
 				// adjusting index into array to compensate for possible seq start < 0
@@ -542,9 +543,8 @@ public final class BioSeq implements SearchableCharIterator {
 			}
 			if (spanResidues != null) {
 				int offset = ispan.getMin() - this_residue_span.getMin();
-				for (int j = 0; j < spanResidues.length(); j++) {
-					residues[offset + j] = spanResidues.charAt(j);
-				}
+				System.arraycopy(
+						spanResidues.toCharArray(), 0, residues, offset, spanResidues.length());
 			}
 		} else {
 			// recurse to children

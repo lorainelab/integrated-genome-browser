@@ -220,7 +220,7 @@ public class View implements ViewI, NeoPaintListener,
 	 */
 	public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst) {
 		// Written to avoid overflows
-		transform.transform(src, scratch_coords);
+		LinearTransform.transform(transform, src, scratch_coords);
 		dst.x = (int) scratch_coords.x;
 		dst.y = (int) scratch_coords.y;
 		dst.width = (int) (scratch_coords.x - dst.x + scratch_coords.width);

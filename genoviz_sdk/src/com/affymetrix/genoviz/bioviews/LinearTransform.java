@@ -33,11 +33,11 @@ public class LinearTransform extends AffineTransform  {
 	 * @param dst ignored
 	 * @return the Souce rectangle transformed.
 	 */
-	public final Rectangle2D.Double transform(Rectangle2D.Double src, Rectangle2D.Double dst) {
-		dst.x = src.x * this.getScaleX() + this.getTranslateX();
-		dst.y = src.y * this.getScaleY() + this.getTranslateY();
-		dst.width = src.width * this.getScaleX();
-		dst.height = src.height * this.getScaleY();
+	public static final Rectangle2D.Double transform(AffineTransform at, Rectangle2D.Double src, Rectangle2D.Double dst) {
+		dst.x = src.x * at.getScaleX() + at.getTranslateX();
+		dst.y = src.y * at.getScaleY() + at.getTranslateY();
+		dst.width = src.width * at.getScaleX();
+		dst.height = src.height * at.getScaleY();
 		if (dst.height < 0) {
 			dst.y = dst.y + dst.height;
 			dst.height = -dst.height;

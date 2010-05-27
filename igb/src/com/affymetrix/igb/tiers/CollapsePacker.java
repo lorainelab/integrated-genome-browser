@@ -30,7 +30,7 @@ public final class CollapsePacker extends CollapsedTierPacker {
 			newbox.setRect(parent.getCoordBox());
 			TransformTierGlyph transtier = (TransformTierGlyph) parent;
 			LinearTransform tier_transform = transtier.getTransform();
-			tier_transform.transform(newbox, newbox);
+			LinearTransform.transform(tier_transform, newbox, newbox);
 			parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
 		}
 

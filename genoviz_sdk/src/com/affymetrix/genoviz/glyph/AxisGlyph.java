@@ -537,7 +537,7 @@ public class AxisGlyph extends Glyph {
 			g.setFont(label_font);
 		}
 
-		cumulative.transform(unitrect, scratchcoords);
+		LinearTransform.transform(cumulative, unitrect, scratchcoords);
 		double pixels_per_unit = (orient == VERTICAL) ?
 			scratchcoords.height :
 			scratchcoords.width;
@@ -670,7 +670,7 @@ public class AxisGlyph extends Glyph {
 		if (orient == VERTICAL) {
 			scratchcoords.y = (reversed ? rev_tick_loc : tick_loc);
 			scratchcoords.height = tick_increment;
-			cumulative.transform(scratchcoords, scratchcoords);
+			LinearTransform.transform(cumulative, scratchcoords, scratchcoords);
 			tick_scaled_loc = scratchcoords.y;
 			tick_scaled_increment = scratchcoords.height;
 			rev_tick_scaled_loc = scratchcoords.y;
@@ -678,7 +678,7 @@ public class AxisGlyph extends Glyph {
 		else {
 			scratchcoords.x = (reversed ? rev_tick_loc : tick_loc);
 			scratchcoords.width = tick_increment;
-			cumulative.transform(scratchcoords, scratchcoords);
+			LinearTransform.transform(cumulative, scratchcoords, scratchcoords);
 			tick_scaled_loc = scratchcoords.x;
 			tick_scaled_increment = scratchcoords.width;
 			rev_tick_scaled_loc = scratchcoords.x;
@@ -780,7 +780,7 @@ public class AxisGlyph extends Glyph {
 		if (orient == VERTICAL) {
 			scratchcoords.y = subtick_loc;
 			scratchcoords.height = subtick_increment;
-			cumulative.transform(scratchcoords, scratchcoords);
+			LinearTransform.transform(cumulative, scratchcoords, scratchcoords);
 			subtick_scaled_loc = scratchcoords.y;
 			subtick_scaled_increment = scratchcoords.height;
 		} else {
@@ -792,7 +792,7 @@ public class AxisGlyph extends Glyph {
 				scratchcoords.x = rev_subtick_loc;
 			}
 			scratchcoords.width = subtick_increment;
-			cumulative.transform(scratchcoords, scratchcoords);
+			LinearTransform.transform(cumulative, scratchcoords, scratchcoords);
 			subtick_scaled_loc = scratchcoords.x;
 			subtick_scaled_increment = scratchcoords.width;
 		}

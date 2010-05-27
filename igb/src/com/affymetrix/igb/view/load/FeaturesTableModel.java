@@ -152,7 +152,9 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		if (col != LOAD_STRATEGY_COLUMN) {
 			return false;
 		}
-
+		if(features == null){
+			return false;
+		}
 		// This cell is only editable if the feature isn't already fully loaded.
 		return (features.get(row).loadStrategy != LoadStrategy.GENOME);
 	}

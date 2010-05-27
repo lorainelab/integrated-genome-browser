@@ -14,23 +14,22 @@ import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-
 /**
- * CharSeqGlyph differs from SequenceGlyph in that it can take either a 
- * String as residues (via sg.setResidues()) or a {@link SearchableCharIterator}
- * as a provider of residues (via sg.setResiduesProvider()) .
- * This allows one to glyphify large biological sequences while maintaining a more 
- * compressed representation of the sequences residues.
  *
- * A glyph that shows a sequence of residues.
+ * @author jnicol
+ *
+ * A glyph that shows a sequence of aligned residues.
  * At low resolution (small scale) as a solid background rectangle
  * and at high resolution overlays the residue letters.
  *
+ * Residues can be masked out if they agree with a reference sequence.
+ *
  */
-public final class CharSeqGlyph extends SequenceGlyph
+public class SAMGlyph extends SequenceGlyph
 		 {
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
+	private byte[] residueMask = null;
 	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
 
 	// default to true for backward compatability
@@ -85,7 +84,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 		}
 	}
 
-	public CharSeqGlyph() {
+	public SAMGlyph() {
 		super();
 		setResidueFont(mono_default_font);
 	}
@@ -98,6 +97,27 @@ public final class CharSeqGlyph extends SequenceGlyph
 	@Override
 	public String getResidues() {
 		return null;
+	}
+
+	/**
+	 * If this is set, we will only display residues that disagree with the residue mask.
+	 * This is useful for BAM visualization.
+	 * @param residues
+	 */
+	public void setResidueMask(String residues) {
+		if (residues != null && chariter != null) {
+			int minResLen = Math.max(residues.length(), residue_length);
+			char[] residuesArr = residues.toLowerCase().toCharArray();
+			char[] displayResArr = chariter.substring(0, minResLen).toLowerCase().toCharArray();
+			residueMask = new byte[minResLen];	// 8 times too large, but shouldn't matter
+			for(int i=0;i<minResLen;i++) {
+				if(displayResArr[i] == residuesArr[i]) {
+					residueMask[i] = 1;
+				} else {
+					residueMask[i] = 0;
+				}
+			}
+		}
 	}
 
 	public void setResiduesProvider(SearchableCharIterator iter, int seqlength) {
@@ -122,9 +142,12 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 		if (null != chariter && seq_beg_index <= residue_length) {
 			double pixel_width_per_base = ( view.getTransform()).getScaleX();
-			// ***** background already drawn in drawTraversal(), so just return if
-			// ***** scale is < 1 pixel per base
-			if (pixel_width_per_base < 1) {
+			// If we're drawing all the residues, return if there's less than one pixel per base
+			if (residueMask == null && pixel_width_per_base < 1) {
+				return;
+			}
+			// If we're masking the residues, draw up to 5 residues at one pixel.
+			if (pixel_width_per_base < 0.2) {
 				return;
 			}
 			int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
@@ -169,13 +192,16 @@ public final class CharSeqGlyph extends SequenceGlyph
 			int seqEndIndex,
 			int pixelStart) {
 		char[] charArray = residueStr.toCharArray();
-		drawResidueRectangles(g, pixelsPerBase, charArray, pixelbox.x, pixelbox.y, pixelbox.height);
-		drawResidueStrings(g, pixelsPerBase, charArray, pixelStart);
+		drawResidueRectangles(g, pixelsPerBase, charArray, residueMask, pixelbox.x, pixelbox.y, pixelbox.height);
+		drawResidueStrings(g, pixelsPerBase, charArray, residueMask, pixelStart);
 	}
 
-	private static void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, int x, int y, int height) {
+	private static void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, byte[] residueMask, int x, int y, int height) {
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		for (int j = 0; j < charArray.length; j++) {
+			if (residueMask != null && residueMask.length > j && residueMask[j] == 1) {
+				continue;	// skip drawing of this residue
+			}
 			g.setColor(determineResidueColor(charArray[j]));
 
 			//Create a colored rectangle.
@@ -205,19 +231,22 @@ public final class CharSeqGlyph extends SequenceGlyph
 		}
 	}
 
-	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart) {
+	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, byte[] residueMask, int pixelStart) {
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
 			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 			for (int i = 0; i < charArray.length; i++) {
+				if (residueMask != null && residueMask.length > i && residueMask[i] == 1) {
+					continue;	// skip drawing of this residue
+				}
 				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase), baseline);
 			}
 		}
 	}
 
-	
+
 	public void setHitable(boolean h) {
 		this.hitable = h;
 	}

@@ -370,9 +370,10 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	private static void handleResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph) {
-		if (sym.getChildCount() > 0) {
+		int childCount = sym.getChildCount();
+		if (childCount > 0) {
 			int startPos = 0;
-			for (int i = 0; i < sym.getChildCount(); i++) {
+			for (int i = 0; i < childCount; i++) {
 				startPos = setResidues(sym.getChild(i), annotseq, pglyph, startPos, true);
 			}
 		} else {
@@ -404,8 +405,16 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 					residueStr = BAM.interpretCigar(cigar, residueStr, startPos, span.getLength());
 					startPos += residueStr.length();
 				}
-				CharSeqGlyph csg = new CharSeqGlyph();
+				SAMGlyph csg = new SAMGlyph();
 				csg.setResidues(residueStr);
+				if (annotseq.getResidues(span.getStart(), span.getEnd()) != null) {
+					if (handleCigar)
+					{
+						csg.setResidueMask(annotseq.getResidues(span.getMin() + startPos - residueStr.length(), span.getMin() + startPos));
+					} else {
+						csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMax()));
+					}
+				}
 				csg.setShowBackground(false);
 				csg.setHitable(false);
 				csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);

@@ -416,7 +416,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				if (annotseq.getResidues(span.getStart(), span.getEnd()) != null) {
 					if (handleCigar)
 					{
-						csg.setResidueMask(annotseq.getResidues(span.getMin() + startPos - residueStr.length(), span.getMin() + startPos));
+						csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMin() + residueStr.length()));
 					} else {
 						csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMax()));
 					}

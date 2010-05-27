@@ -106,7 +106,7 @@ public class AlignedResidueGlyph extends SequenceGlyph
 	 */
 	public void setResidueMask(String residues) {
 		if (residues != null && chariter != null) {
-			int minResLen = Math.max(residues.length(), residue_length);
+			int minResLen = Math.min(residues.length(), residue_length);
 			char[] residuesArr = residues.toLowerCase().toCharArray();
 			char[] displayResArr = chariter.substring(0, minResLen).toLowerCase().toCharArray();
 			residueMask = new byte[minResLen];	// 8 times too large, but shouldn't matter

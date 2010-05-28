@@ -151,10 +151,20 @@ public final class NibbleResiduesParser {
 			} // EOF reached
 			bytes_to_skip -= skipped;
 		}
-		//dis.skipBytes(start/2);
-		dis.readFully(nibble_array);
-		String temp = NibbleIterator.nibblesToString(nibble_array, first, last);
-		nibble_array = NibbleIterator.stringToNibbles(temp, 0, temp.length());
+
+		dis.readFully(nibble_array);	// this only reads nibble_array.len bytes, per spec.
+
+		if (result_seq.getMin() < start || result_seq.getMax() > end) {
+			// We're only asking for a partial result -- used on the server.
+			// if we're skipping an even number of residues, there's no problem.  We've already skipped the first and last byte segments.
+			// However, if we're skipping an odd number of residues, then we have to re-shift every residue 4 bits.
+			// We do this in a naive way -- convert the nibbles to a string, then convert back from the string.
+			// This potentially can use a lot of memory, if a large, odd-start, query is made.
+			if (first == 1) {
+				String temp = NibbleIterator.nibblesToString(nibble_array, first, last);
+				nibble_array = NibbleIterator.stringToNibbles(temp, 0, temp.length());
+			}
+		}
 		NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
 		result_seq.setResiduesProvider(residues_provider);
 	}
@@ -209,8 +219,6 @@ public final class NibbleResiduesParser {
 			else {
 				dos.write(nibble_array);
 			}
-			dos.flush();
-			dos.close();
 			System.out.println("done writing out nibble file");
 		}
 		finally {

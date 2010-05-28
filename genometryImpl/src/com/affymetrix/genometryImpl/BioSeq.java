@@ -121,16 +121,15 @@ public final class BioSeq implements SearchableCharIterator {
 		if ((residues != null) && (residues.length() != length)) {
 			System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() +
 					", seq = " + this.length);
-			//residues = null;
 		}
 	}
 
 		/**
 	 * Sets the start and end of the sequence as double values.
 	 * <p />
-	 * <em>WARNING:</em> min and max are stored intenally using integers.  If
+	 * <em>WARNING:</em> min and max are stored internally using integers.  If
 	 * min or max are outside of the range Integer.MIN_VALUE and
-	 * Interger.MAX_VALUE, the values will not be stored properly.  The length
+	 * Integer.MAX_VALUE, the values will not be stored properly.  The length
 	 * (min - max) is computed and stored as a double before min and max are
 	 * downcast to int.
 	 *
@@ -557,10 +556,8 @@ public final class BioSeq implements SearchableCharIterator {
 	public void setResidues(String residues) {
 		if (DEBUG)  { System.out.println("**** called SimpleCompAnnotBioSeq.setResidues()"); }
 		if (residues.length() != this.length) {
-			System.out.println("********************************");
 			System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() +
 					", seq = " + this.length + " ****");
-			System.out.println("********************************");
 		}
 		this.residues = residues;
 		this.length = residues.length();

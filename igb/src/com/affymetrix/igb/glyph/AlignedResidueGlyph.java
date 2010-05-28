@@ -30,7 +30,7 @@ public class AlignedResidueGlyph extends SequenceGlyph
 		 {
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
-	private BitSet residueMask = null;
+	private final BitSet residueMask = new BitSet();
 	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
 
 	// default to true for backward compatability
@@ -110,13 +110,13 @@ public class AlignedResidueGlyph extends SequenceGlyph
 			int minResLen = Math.min(residues.length(), residue_length);
 			char[] residuesArr = residues.toLowerCase().toCharArray();
 			char[] displayResArr = chariter.substring(0, minResLen).toLowerCase().toCharArray();
-			residueMask = new BitSet(minResLen);
+			
+			// determine which residues disagree with the reference sequence
 			for(int i=0;i<minResLen;i++) {
 				residueMask.set(i, displayResArr[i] != residuesArr[i]);
 			}
-			if (residueMask.cardinality() == 0) {
+			if (residueMask.isEmpty()) {
 				// Save space and time if all residues match the reference sequence.
-				residueMask = null;
 				residue_length = 0;
 				chariter = null;
 			}
@@ -125,13 +125,11 @@ public class AlignedResidueGlyph extends SequenceGlyph
 
 	public void setResidueMask(byte[] SEQ) {
 		String SEQStr = new String(SEQ).toLowerCase();
-		residueMask = new BitSet(SEQ.length);
 		for (int i = 0; i < SEQ.length; i++) {
 			residueMask.set(i, SEQ[i] != '=');
 		}
-		if (residueMask.cardinality() == 0) {
+		if (residueMask.isEmpty()) {
 			// Save space and time if all residues match the reference sequence.
-			residueMask = null;
 			residue_length = 0;
 			chariter = null;
 		} else {
@@ -162,7 +160,7 @@ public class AlignedResidueGlyph extends SequenceGlyph
 		if (null != chariter && seq_beg_index <= residue_length) {
 			double pixel_width_per_base = ( view.getTransform()).getScaleX();
 			// If we're drawing all the residues, return if there's less than one pixel per base
-			if (residueMask == null && pixel_width_per_base < 1) {
+			if (residueMask.isEmpty() && pixel_width_per_base < 1) {
 				return;
 			}
 			// If we're masking the residues, draw up to 5 residues at one pixel.
@@ -211,14 +209,15 @@ public class AlignedResidueGlyph extends SequenceGlyph
 			int seqEndIndex,
 			int pixelStart) {
 		char[] charArray = residueStr.toCharArray();
-		drawResidueRectangles(g, pixelsPerBase, charArray, residueMask, pixelbox.x, pixelbox.y, pixelbox.height);
-		drawResidueStrings(g, pixelsPerBase, charArray, residueMask, pixelStart);
+		drawResidueRectangles(g, pixelsPerBase, charArray, residueMask.get(seqBegIndex,seqEndIndex), pixelbox.x, pixelbox.y, pixelbox.height);
+		drawResidueStrings(g, pixelsPerBase, charArray, residueMask.get(seqBegIndex,seqEndIndex), pixelStart);
 	}
 
-	private static void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int x, int y, int height) {
+	private static void drawResidueRectangles(
+			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int x, int y, int height) {
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		for (int j = 0; j < charArray.length; j++) {
-			if (residueMask != null && !residueMask.get(j)) {
+			if (!residueMask.get(j)) {
 				continue;	// skip drawing of this residue
 			}
 			g.setColor(determineResidueColor(charArray[j]));
@@ -250,14 +249,15 @@ public class AlignedResidueGlyph extends SequenceGlyph
 		}
 	}
 
-	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int pixelStart) {
+	private void drawResidueStrings(
+			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int pixelStart) {
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
 			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 			for (int i = 0; i < charArray.length; i++) {
-				if (residueMask != null && !residueMask.get(i)) {
+				if (!residueMask.get(i)) {
 					continue;	// skip drawing of this residue
 				}
 				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase), baseline);

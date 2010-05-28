@@ -227,7 +227,7 @@ public final class BAM extends SymLoader {
 			blockMaxs[i] =  blockMins[i] + child.getSpan(0).getLength();
 		}
 
-		if(childs.size() == 0){
+		if(childs.isEmpty()) {
 			blockMins = new int[1];
 			blockMins[0] = span.getStart();
 			blockMaxs = new int[1];

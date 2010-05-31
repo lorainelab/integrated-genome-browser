@@ -2,6 +2,7 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
@@ -10,6 +11,8 @@ import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.MapRangeBox;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,17 +44,33 @@ public class ResponseFileLoader {
 	}
 
 	/**
-	 * Read out and execute the actions from the stream.
+	 * Read and execute the actions from a file.
 	 * @param bis
 	 */
-	public static void doActions(BufferedReader br) {
+	public static void doActions(File f) {
+		BufferedReader br = null;
 		try {
-			Thread.sleep(5000);	// give it time to init
+			br = new BufferedReader(new FileReader(f));
+			ResponseFileLoader.doActions(br);
+		} catch (FileNotFoundException ex) {
+			Logger.getLogger(ResponseFileLoader.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(br);
+		}
+	}
+
+	/**
+	 * Read and execute the actions from the stream.
+	 * @param bis
+	 */
+	private static void doActions(BufferedReader br) {
+		try {
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				String[] fields = line.split("\\t");
-				System.out.println("parsing line " + line + " with field len" + fields.length);
+				//System.out.println("parsing line " + line + " with field len" + fields.length);
 				doSingleAction(fields);
+				Thread.sleep(500);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(ResponseFileLoader.class.getName()).log(Level.SEVERE, null, ex);

@@ -108,15 +108,7 @@ public final class UnibrowControlServlet {
 			// A response file was requested.  Run response file parser, and ignore any other parameters.
 			File f = new File(batchFileStr);
 			if (f != null && f.exists()) {
-				BufferedReader br = null;
-				try {
-					br = new BufferedReader(new FileReader(f));
-					ResponseFileLoader.doActions(br);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				} finally {
-					GeneralUtils.safeClose(br);
-				} 
+				ResponseFileLoader.doActions(f);
 			}
 			return;
 		}

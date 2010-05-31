@@ -78,7 +78,6 @@ public final class IGB extends Application
 
 	static IGB singleton_igb;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
-	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
 	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
 	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
@@ -104,6 +103,7 @@ public final class IGB extends Application
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
+	public static File commandLineBatchFile = null;	// Used to run batch file actions if passed via command-line
 	
 	/**
 	 * Start the program.
@@ -176,16 +176,7 @@ public final class IGB extends Application
 
 			singleton_igb.init(args);
 
-			File batchFile = ResponseFileLoader.getResponseFile(args);
-			if (batchFile != null && batchFile.exists()) {
-				BufferedReader br = null;
-				try {
-					br = new BufferedReader(new FileReader(batchFile));
-					ResponseFileLoader.doActions(br);
-				} finally {
-					GeneralUtils.safeClose(br);
-				}
-			}
+			commandLineBatchFile = ResponseFileLoader.getResponseFile(args);	// potentially used in GeneralLoadView
 
 			goToBookmark(args);
 
@@ -327,6 +318,7 @@ public final class IGB extends Application
 		mbar = MenuUtil.getMainMenuBar();
 		frm.setJMenuBar(mbar);
 
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
 		// WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,

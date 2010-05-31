@@ -44,6 +44,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -52,6 +53,8 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
+import com.affymetrix.igb.util.ResponseFileLoader;
+import java.io.File;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -258,16 +261,90 @@ public final class GeneralLoadView extends JComponent
 			this.speciesCB.addItemListener(this);
 		}
 
-		// Only try restoring persistent genome if all the server responses have come back.
-		if (lookForPersistentGenome && areAllServersInited) {
-			lookForPersistentGenome = false;
-			try {
-				// hack so event queue finishes
-				Thread.sleep(1000);
-				RestorePersistentGenome();
-			} catch (InterruptedException ex) {
-				Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
+		if (areAllServersInited) {
+			runBatchOrRestore();
+		}
+
+	}
+
+	private synchronized void runBatchOrRestore() {
+		try {
+			// Only run batch script or restore persistent genome once all the server responses have come back.
+			if (IGB.commandLineBatchFile != null && IGB.commandLineBatchFile.exists()) {
+				File f = IGB.commandLineBatchFile;
+				IGB.commandLineBatchFile = null;	// we're not using this again!
+				lookForPersistentGenome = false;	
+				Thread.sleep(1000);	// hack so event queue finishes
+				ResponseFileLoader.doActions(f);
+			} else {
+				if (lookForPersistentGenome) {
+					lookForPersistentGenome = false;
+					Thread.sleep(1000);	// hack so event queue finishes
+					RestorePersistentGenome();
+				}
 			}
+		} catch (Exception ex) {
+			Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	/**
+	 * bootstrap bookmark from Preferences for last species/versionName/genome / sequence / region
+	 */
+	private void RestorePersistentGenome() {
+		// Get group and seq info from persistent preferences.
+		// (Recovering as much data as possible before activating listeners.)
+		AnnotatedSeqGroup group = Persistence.restoreGroupSelection();
+		if (group == null) {
+			return;
+		}
+
+		Set<GenericVersion> gVersions = group.getEnabledVersions();
+		if (gVersions == null || gVersions.isEmpty()) {
+			return;
+		}
+		String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
+		if (versionName == null || GeneralLoadUtils.versionName2species.get(versionName) == null || gmodel.getSeqGroup(versionName) != group) {
+			return;
+		}
+
+		if (gmodel.getSelectedSeqGroup() != null || gmodel.getSelectedSeq() != null) {
+			return;
+		}
+
+		try {
+			Application.getSingleton().addNotLockedUpMsg("Loading previous genome " + versionName +" ...");
+
+			gmodel.addGroupSelectionListener(this);
+
+			initVersion(versionName);
+
+			List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+			if (features == null || features.isEmpty()) {
+				return;
+			}
+
+			gmodel.setSelectedSeqGroup(group);
+
+			BioSeq seq = Persistence.restoreSeqSelection(group);
+			if (seq == null) {
+				seq = group.getSeq(0);
+				if (seq == null) {
+					return;
+				}
+			}
+
+			gmodel.addSeqSelectionListener(this);
+			gmodel.setSelectedSeq(seq);
+
+			// Try/catch may not be needed.
+			try {
+				Persistence.restoreSeqVisibleSpan(gviewer);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} finally {
+			Application.getSingleton().removeNotLockedUpMsg("Loading previous genome " + versionName +" ...");
 		}
 	}
 
@@ -366,66 +443,6 @@ public final class GeneralLoadView extends JComponent
 		});
 	}
 
-
-	/**
-	 * bootstrap bookmark from Preferences for last species/versionName/genome / sequence / region
-	 */
-	private void RestorePersistentGenome() {
-		// Get group and seq info from persistent preferences.
-		// (Recovering as much data as possible before activating listeners.)
-		AnnotatedSeqGroup group = Persistence.restoreGroupSelection();
-		if (group == null) {
-			return;
-		}
-	
-		Set<GenericVersion> gVersions = group.getEnabledVersions();
-		if (gVersions == null || gVersions.isEmpty()) {
-			return;
-		}
-		String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
-		if (versionName == null || GeneralLoadUtils.versionName2species.get(versionName) == null || gmodel.getSeqGroup(versionName) != group) {
-			return;
-		}
-
-		if (gmodel.getSelectedSeqGroup() != null || gmodel.getSelectedSeq() != null) {
-			return;
-		}
-
-		try {
-			Application.getSingleton().addNotLockedUpMsg("Loading previous genome " + versionName +" ...");
-
-			gmodel.addGroupSelectionListener(this);
-
-			initVersion(versionName);
-
-			List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
-			if (features == null || features.isEmpty()) {
-				return;
-			}
-
-			gmodel.setSelectedSeqGroup(group);
-
-			BioSeq seq = Persistence.restoreSeqSelection(group);
-			if (seq == null) {
-				seq = group.getSeq(0);
-				if (seq == null) {
-					return;
-				}
-			}
-
-			gmodel.addSeqSelectionListener(this);
-			gmodel.setSelectedSeq(seq);
-
-			// Try/catch may not be needed.
-			try {
-				Persistence.restoreSeqVisibleSpan(gviewer);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} finally {
-			Application.getSingleton().removeNotLockedUpMsg("Loading previous genome " + versionName +" ...");
-		}
-	}
 
 	private static void initVersion(String versionName) {
 		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + versionName);

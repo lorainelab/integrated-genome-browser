@@ -70,7 +70,7 @@ public final class ServerList {
 		return true;
 	}
 
-	public static Collection<GenericServer> getAllServers() {
+	public static synchronized Collection<GenericServer> getAllServers() {
 		return url2server.values();
 	}
 

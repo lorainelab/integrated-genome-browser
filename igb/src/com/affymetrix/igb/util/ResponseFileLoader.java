@@ -3,6 +3,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
@@ -13,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,17 +25,12 @@ import java.util.logging.Logger;
  */
 public class ResponseFileLoader {
 
-	public static File getResponseFile(String[] args) {
+	public static String getResponseFileStr(String[] args) {
 		for (int i=0;i<args.length;i++) {
 			System.err.println("arg " + args[i]);
 			if (args[i].equalsIgnoreCase("-" + IGBConstants.RESPONSEFILETAG)) {
 				if (i+1 < args.length) {
-					File f = new File(args[i+1]);
-					if (!f.exists()) {
-						Logger.getLogger(ResponseFileLoader.class.getName()).severe("File " + f.toString() + " does not exist.");
-						return null;
-					}
-					return f;
+					return args[i+1];
 				} else {
 					Logger.getLogger(ResponseFileLoader.class.getName()).severe("File was not specified.");
 					return null;
@@ -43,11 +40,25 @@ public class ResponseFileLoader {
 		return null;
 	}
 
+	public static void doActions(String batchFileStr) {
+		// A response file was requested.  Run response file parser, and ignore any other parameters.
+			File f = new File(batchFileStr);
+			if (!f.exists()) {
+				f = LocalUrlCacher.convertURIToFile(URI.create(batchFileStr));
+			}
+			if (f == null || !f.exists()) {
+				Logger.getLogger(ResponseFileLoader.class.getName()).log(Level.SEVERE, "Couldn't find response file: " + batchFileStr);
+				return;
+			}
+
+			ResponseFileLoader.doActions(f);
+	}
+
 	/**
 	 * Read and execute the actions from a file.
 	 * @param bis
 	 */
-	public static void doActions(File f) {
+	private static void doActions(File f) {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(f));
@@ -58,6 +69,7 @@ public class ResponseFileLoader {
 			GeneralUtils.safeClose(br);
 		}
 	}
+
 
 	/**
 	 * Read and execute the actions from the stream.

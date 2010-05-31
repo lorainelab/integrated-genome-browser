@@ -103,7 +103,7 @@ public final class IGB extends Application
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
-	public static File commandLineBatchFile = null;	// Used to run batch file actions if passed via command-line
+	public static String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
 	
 	/**
 	 * Start the program.
@@ -176,7 +176,7 @@ public final class IGB extends Application
 
 			singleton_igb.init(args);
 
-			commandLineBatchFile = ResponseFileLoader.getResponseFile(args);	// potentially used in GeneralLoadView
+			commandLineBatchFileStr = ResponseFileLoader.getResponseFileStr(args);	// potentially used in GeneralLoadView
 
 			goToBookmark(args);
 

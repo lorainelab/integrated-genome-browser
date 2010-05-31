@@ -54,7 +54,6 @@ import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ResponseFileLoader;
-import java.io.File;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -270,12 +269,12 @@ public final class GeneralLoadView extends JComponent
 	private synchronized void runBatchOrRestore() {
 		try {
 			// Only run batch script or restore persistent genome once all the server responses have come back.
-			if (IGB.commandLineBatchFile != null && IGB.commandLineBatchFile.exists()) {
-				File f = IGB.commandLineBatchFile;
-				IGB.commandLineBatchFile = null;	// we're not using this again!
+			if (IGB.commandLineBatchFileStr != null) {
+				String batchFile = IGB.commandLineBatchFileStr;
+				IGB.commandLineBatchFileStr = null;	// we're not using this again!
 				lookForPersistentGenome = false;	
 				Thread.sleep(1000);	// hack so event queue finishes
-				ResponseFileLoader.doActions(f);
+				ResponseFileLoader.doActions(batchFile);
 			} else {
 				if (lookForPersistentGenome) {
 					lookForPersistentGenome = false;

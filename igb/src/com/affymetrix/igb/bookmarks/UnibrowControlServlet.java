@@ -42,16 +42,12 @@ import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.util.ResponseFileLoader;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -105,11 +101,7 @@ public final class UnibrowControlServlet {
 	public static void goToBookmark(Application uni, Map<String, String[]> parameters) throws NumberFormatException {
 		String batchFileStr = getStringParameter(parameters, IGBConstants.RESPONSEFILETAG);
 		if (batchFileStr != null && batchFileStr.length() > 0) {
-			// A response file was requested.  Run response file parser, and ignore any other parameters.
-			File f = new File(batchFileStr);
-			if (f != null && f.exists()) {
-				ResponseFileLoader.doActions(f);
-			}
+			ResponseFileLoader.doActions(batchFileStr);
 			return;
 		}
 

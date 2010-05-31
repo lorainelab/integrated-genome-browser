@@ -55,7 +55,6 @@ import javax.swing.SwingUtilities;
  * @version $Id$
  */
 public abstract class BookmarkController {
-  static GenometryModel gmodel = GenometryModel.getGenometryModel();
   private final static boolean DEBUG= false;
 
   /** Causes a bookmark to be executed.  If this is a Unibrow bookmark,
@@ -121,6 +120,7 @@ public abstract class BookmarkController {
       loaded_graph_paths.add(source_url);
     }
 
+	GenometryModel gmodel = GenometryModel.getGenometryModel();
     InputStream istr = null;
     try {
       for (int i=0; map.get("graph_source_url_"+i) != null; i++) {

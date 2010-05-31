@@ -20,9 +20,6 @@ import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -303,20 +300,28 @@ public final class NibbleResiduesParser {
 		return "binary/bnib";
 	}
 	
-	public static void writeFastaToFile(File bnibFile){
+	private static void writeFastaToFile(File bnibFile){
+		InputStream in = null;
+		FileOutputStream fos = null;
 		try {
-			InputStream in = new FileInputStream(bnibFile);
-			BioSeq b = NibbleResiduesParser.parse(in, new AnnotatedSeqGroup(bnibFile.toString()));
+			in = new FileInputStream(bnibFile);
+			BioSeq seq = NibbleResiduesParser.parse(in, new AnnotatedSeqGroup(bnibFile.toString()));
 			String name = bnibFile.getName().replace(".bnib", ".fasta");
 			File outFile = new File (bnibFile.getParentFile(), name);
-			PrintWriter out = new PrintWriter( new FileWriter(outFile));
-			String seq = b.getResidues();
-			out.println(">"+b.getID()+"\n"+seq);
-			out.close();
-			in.close();
+
+			// We avoid string manipulation here; important for large chromosomes
+			fos = new FileOutputStream(outFile);
+			fos.write('>');
+			fos.write(seq.getID().getBytes());
+			fos.write('\n');
+			NibbleResiduesParser.writeAnnotations(seq, 0, seq.getLength(), fos);
+			fos.write('\n');
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(fos);
+			GeneralUtils.safeClose(in);
 		}
 	}
 

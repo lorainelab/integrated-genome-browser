@@ -83,7 +83,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 
 	public GenericFeature getFeature(int row) {
-		return (features == null) ? null : features.get(row);
+		return (getRowCount() <= row) ? null : features.get(row);
 	}
 
 	public int getRow(GenericFeature feature) {
@@ -113,6 +113,9 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 			if (row == 0 && col == 2) {
 				return "No feature data found";
 			}
+			return "";
+		}
+		if(getFeature(row) == null) {
 			return "";
 		}
 		GenericFeature gFeature = features.get(row);
@@ -152,11 +155,11 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		if (col != LOAD_STRATEGY_COLUMN) {
 			return false;
 		}
-		if(features == null){
+		if(getFeature(row) == null){
 			return false;
 		}
 		// This cell is only editable if the feature isn't already fully loaded.
-		return (features.get(row).loadStrategy != LoadStrategy.GENOME);
+		return (getFeature(row).loadStrategy != LoadStrategy.GENOME);
 	}
 
 	@Override
@@ -164,8 +167,11 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		if (value == null || col != LOAD_STRATEGY_COLUMN) {
 			return;
 		}
-		
-		GenericFeature gFeature = features.get(row);
+
+		if(getFeature(row) == null){
+			return;
+		}
+		GenericFeature gFeature = getFeature(row);
 
 		if (gFeature.loadStrategy == LoadStrategy.GENOME) {
 			return;	// We can't change strategies once we've loaded the entire genome.

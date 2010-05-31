@@ -37,6 +37,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.MergeOptionChooser;
+import com.affymetrix.igb.util.ResponseFileLoader;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.util.concurrent.ExecutorService;
@@ -140,6 +141,8 @@ public final class LoadFileAction extends AbstractAction {
 						FishClonesParser.FILE_EXT, "FishClones")); // ".fsh" files (fishClones.txt from UCSC)
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"map"}, "Scored Map Files"));
+		chooser.addChoosableFileFilter(new UniFileFilter(
+						new String[]{"igb"}, "IGB Script File"));
 
 		Set<String> all_known_endings = new HashSet<String>();
 		for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
@@ -211,6 +214,13 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup) {
+		if (uri.toString().toLowerCase().endsWith(".igb")) {
+			// response file.  Do its actions and return.
+			// Potential for an infinite loop here, of course.
+			ResponseFileLoader.doActions(uri.toString());
+			return;
+		}
+
 		// Make sure this URI is not already used within the group.  Otherwise there could be collisions in BioSeq.addAnnotations(type)
 		boolean uniqueURI = true;
 		for (GenericVersion version : loadGroup.getAllVersions()) {

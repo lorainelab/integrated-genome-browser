@@ -26,7 +26,7 @@ import java.util.prefs.PreferenceChangeListener;
  * Residues can be masked out if they agree with a reference sequence.
  *
  */
-public class AlignedResidueGlyph extends SequenceGlyph
+public final class AlignedResidueGlyph extends SequenceGlyph
 		 {
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;

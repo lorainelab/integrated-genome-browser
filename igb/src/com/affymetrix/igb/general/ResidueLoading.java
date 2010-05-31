@@ -269,7 +269,7 @@ public final class ResidueLoading {
 			if(LocalUrlCacher.isValidURL(url_path)){
 
 				if (DEBUG) {
-					System.out.println("  Quickload location of bnib file: " + url_path);
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "  Quickload location of bnib file: " + url_path);
 				}
 				
 				return format;
@@ -289,7 +289,7 @@ public final class ResidueLoading {
 		String genome_name = seq_group.getID();
 		String url_path = root_url + "/" + genome_name + "/" + seq_name + ".bnib";
 		if (DEBUG) {
-			System.out.println("  Quickload location of bnib file: " + url_path);
+			Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "  Quickload location of bnib file: " + url_path);
 		}
 		InputStream istr = null;
 		try {
@@ -313,7 +313,7 @@ public final class ResidueLoading {
 	private static String generateDas2URI(String URL, String genomeVersionName,
 			String segmentName, int min, int max, FORMAT Format) {
 		if (DEBUG) {
-			System.out.println("trying to load residues via DAS/2");
+			Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "trying to load residues via DAS/2");
 		}
 		String uri = URL + "/" + genomeVersionName + "/" + segmentName + "?format=";
 		switch(Format)
@@ -345,7 +345,7 @@ public final class ResidueLoading {
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
 	private static String generateQuickLoadURI(String common_url, QFORMAT Format) {
 		if (DEBUG) {
-			System.out.println("trying to load residues via Quickload");
+			Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "trying to load residues via Quickload");
 		}
 		switch(Format)
 		{
@@ -374,11 +374,11 @@ public final class ResidueLoading {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
 			String content_type = headers.get("content-type");
 			if (DEBUG) {
-				System.out.println("    response content-type: " + content_type);
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "    response content-type: " + content_type);
 			}
 			if (istr == null || content_type == null) {
 				if (DEBUG) {
-					System.out.println("  Improper response from DAS/2; aborting DAS/2 residues loading.");
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "  Improper response from DAS/2; aborting DAS/2 residues loading.");
 				}
 				return false;
 			}
@@ -386,7 +386,7 @@ public final class ResidueLoading {
 				// check for bnib format
 				// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
 				if (DEBUG) {
-					System.out.println("   response is in bnib format, parsing...");
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is in bnib format, parsing...");
 				}
 				NibbleResiduesParser.parse(istr, seq_group);
 				return true;
@@ -395,13 +395,13 @@ public final class ResidueLoading {
 			if (content_type.equals(FastaParser.getMimeType())) {
 				// check for fasta format
 				if (DEBUG) {
-					System.out.println("   response is in fasta format, parsing...");
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is in fasta format, parsing...");
 				}
 				FastaParser.parseSingle(istr, seq_group);
 				return true;
 			}
 			if (DEBUG) {
-				System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is not in accepted format, aborting DAS/2 residues loading");
 			}
 			return false;
 		} catch (Exception ex) {
@@ -422,25 +422,25 @@ public final class ResidueLoading {
 			// System.out.println(headers);
 			String content_type = headers.get("content-type");
 			if (DEBUG) {
-				System.out.println("    response content-type: " + content_type);
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "    response content-type: " + content_type);
 			}
 			if (istr == null || content_type == null) {
 				if (DEBUG) {
-					System.out.println("  Improper response from DAS/2; aborting DAS/2 residues loading.");
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "  Improper response from DAS/2; aborting DAS/2 residues loading.");
 				}
 				return null;
 			}
 			if(content_type.equals("text/raw"))
 			{
 				if (DEBUG) {
-					System.out.println("   response is in raw format, parsing...");
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is in raw format, parsing...");
 				}
 				buff = new BufferedReader(new InputStreamReader(istr));
 				return buff.readLine();
 			}
 
 			if (DEBUG) {
-				System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is not in accepted format, aborting DAS/2 residues loading");
 			}
 			return null;
 		} catch (Exception ex) {
@@ -463,11 +463,11 @@ public final class ResidueLoading {
 			// System.out.println(headers);
 			String content_type = headers.get("content-type");
 			if (DEBUG) {
-				System.out.println("    response content-type: " + content_type);
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "    response content-type: " + content_type);
 			}
 			if (istr == null || content_type == null) {
 				if (DEBUG) {
-					System.out.println("  Didn't get a proper response from DAS/2; aborting DAS/2 residues loading.");
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "  Didn't get a proper response from DAS/2; aborting DAS/2 residues loading.");
 				}
 				return null;
 			}
@@ -475,7 +475,7 @@ public final class ResidueLoading {
 			if(content_type.equals("text/raw"))
 			{
 				if (DEBUG) {
-					System.out.println("   response is in raw format, parsing...");
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is in raw format, parsing...");
 				}
 				buff = new BufferedReader(new InputStreamReader(istr));
 				return buff.readLine();
@@ -484,13 +484,13 @@ public final class ResidueLoading {
 			if (content_type.equals(FastaParser.getMimeType())) {
 				// check for fasta format
 				if (DEBUG) {
-					System.out.println("   response is in fasta format, parsing...");
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is in fasta format, parsing...");
 				}
 				return FastaParser.parseResidues(istr);
 			}
 			
 			if (DEBUG) {
-				System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is not in accepted format, aborting DAS/2 residues loading");
 			}
 			return null;
 		} catch (Exception ex) {

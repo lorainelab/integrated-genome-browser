@@ -1,4 +1,5 @@
-_carolinensis_Feb_2007	anoCar1 Anolis_carolinensis.AnoCar1.0.reference
+A_californica_Sep_2008	aplCal1
+A_carolinensis_Feb_2007	anoCar1	Anolis_carolinensis.AnoCar1.0.reference
 A_gambiae_Jul_2003	anoGam1	Anopheles_Jul_2003	Ag	ag	ag:Jul_2003	Ag:Jul_2003
 A_melanoleuca_Apr_2010	ailMel1
 A_mellifera_Jan_2005	apiMel2
@@ -12,6 +13,9 @@ B_taurus_Oct_2007	bosTau4	Cow_Oct_2007	Bos_taurus.Btau_4.0.reference
 B_floridae_Mar_2006	braFlo1
 C_brenneri_Feb_2008	caePb2
 C_brenneri_Jan_2007	caePb1
+C_briggsae_Jan_2007	caePb3
+C_briggsae_Aug_2005	caePb2
+C_briggsae_Jul_2002	caePb1
 C_elegans_May_2003	C_Elegans_May_2003	ceMay2003	ce1	ce:May_2003	Ce:May_2003
 C_elegans_May_2003	http://www.wormbase.org/genome/C_elegans/WS100	http://www.wormbase.org/genome/C_elegans/WS100/
 C_elegans_Oct_2003	http://www.wormbase.org/genome/C_elegans/WS110	http://www.wormbase.org/genome/C_elegans/WS110/
@@ -26,8 +30,11 @@ C_elegans_Jan_2009	Caenorhabditis_elegans.WS200.reference
 C_japonica_Mar_2008	caeJap1
 C_remanei_May_2007	caeRem3
 C_remanei_Mar_2006	caeRem2
+C_remanei_Mar_2005	caeRem1
 C_jacchus_Jun_2007	calJac1
 C_jacchus_Feb_2009	Callithrix_jacchus.calJac3.reference
+C_japonica_Jan_2009	caeJap2
+C_japonica_Mar_2008	caeJap1
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
 C_porcellus_Mar_2008	cavPor3	Cavia_porcellus.cavPor3.reference
@@ -36,8 +43,10 @@ Chimp_Nov_2003	panTro1	CGSC Build 1 Version 1
 D_melanogaster_Apr_2004	Drosophila_Apr_2004	BDGP Release 4	dm2	dm:Apr_2004	Dm:Apr_2004	Dm:R4	Dm:BDGPv4	Dm;BDGPv4	Dm:BDGPv4h	Dm;BDGPv4h
 D_melanogaster_Apr_2006	Drosophila_Apr_2006	BDGP Release 5	dm3	dm:Apr_2006	Dm:Apr_2006	Dm:R5	Dm:BDGPv5	Dm;BDGPv5	Dm:BDGPv5h	Dm;BDGPv5h
 D_melanogaster_Jan_2003	Drosophila_Jan_2003	Drosophila jan2003	dm1		dm:Jan_2003	Dm:Jan_2003	Dm:R3	Dm:BDGPv3	Dm;BDGPv3
+D_rerio_Dec_2008	danRer6	Zv8	Zebrafish_Dec_2008
 D_rerio_Jul_2007	danRer5	Zv7	Zebrafish_Jul_2007
 D_rerio_Mar_2006	danRer4	Zv6	Zebrafish_Mar_2006
+D_rerio_May_2005	danRer3	Zv5	Zebrafish_May_2005
 G_gallus_May_2006	galGal3	Chicken_May_2006
 G_max_Dec_2008	Glyma1	Soybean_Dec_2008	JGI_Soybean_v101
 H_sapiens_Apr_2001	Human_Apr_2001	Human 1apr2002	Human_1apr2001	Chr_21_22 ABC Human	hg7	hs:Apr_2001	Hs:Apr_2001
@@ -90,3 +99,9 @@ RaGene-1_0-st-Probes	RaGene-1_0-st-v1	RaGene-1_0-st	RaGene-1_0-st-v1-Probes	rage
 RaGene-1_0-st-Transcripts	RaGene-1_0-st-v1-Transcripts	ragene-1_0-st-transcripts	ragene-1_0-st-v1-transcripts	affy/ragene-1_0-st-transcripts	affy/ragene-1_0-st-v1-transcripts
 S_cerevisiae_Oct_2003	sacCer1	sc:Oct_2003	Sc:Oct_2003	S_cerevisiae_Oct_2003_and_S_pombe_Jul_2005
 S_pombe_Sep_2004	Sp:Sep_2004	sp:Sep_2004
+T_nigroviridis_Feb_2004	tetNig1
+T_nigroviridis_Mar_2007	tetNig2
+T_rubripes_Aug_2002	fr1
+T_rubripes_Oct_2004	fr2
+X_tropicalis_Aug_2005	xenTro2	Xenopus_tropicalis.JGI4.1.reference
+X_tropicalis_Oct_2004	xenTro1	Xenopus_tropicalis.JGI3.0.reference

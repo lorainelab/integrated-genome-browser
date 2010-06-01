@@ -1,6 +1,6 @@
 Ailuropoda melanoleuca	Giant panda	A_melanoleuca	ailMel
 Anolis carolinensis	Anole Lizard	A_carolinensis	anoCar	Anolis_carolinensis
-Anopheles gambiae	mosquito	A_gambiae	anoGam
+Anopheles gambiae	Mosquito	A_gambiae	anoGam
 Apis mellifera	European honey bee	A. mellifera	A_mellifera	apiMel
 Aplysia californica	California sea hare	A_californica	aplCal
 Arabidopsis thaliana	Thale cress	A_thaliana	
@@ -76,7 +76,7 @@ Pinus taeda	Loblolly Pine	P. taeda	P_taeda
 Plasmodium falciparum	P. falciparum	P_falciparum	Pfalciparum_3D7_plasmoDB-5.4	Pfalciparum_3D7_plasmoDB-5.5
 Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe	Pongo_pygmaeus
 Populus trichocarpa	Black cottonwood	P_trichocarpa	
-Pristionchus pacificus	P. pacificus	P_pacificus	priPac
+Pristionchus pacificus	P. pacificus (nematode)	P_pacificus	priPac
 Procavia capensis	Rock hyrax	P_capensis	proCap	Procavia_capensis
 Pseudomonas aeruginosa	P_aeruginosa	P. aeruginosa
 Pteropus vampyrus	Large flying fox	P_vampyrus	pteVam	Pteropus_vampyrus

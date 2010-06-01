@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE dnaseq>
+<dnaseq seq="chr17" version="hg19" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="protannot.xsd">
+<mRNA end="41132545" start="41120106" strand="-">
+<descriptor type="mRNA GI">217416404</descriptor>
+<descriptor type="mRNA coding sequence">ATGTTCTCTCTTCCTCTCAACTGCTCTCCCGACCATATAAGGAGAGGCAGCTGCTGGGGGCGTCCCCAGGATCTAAAGATAGCGGCCCCTGCCTGGAACTCTAAATGCCACCCTGGAGCGGGAGCCGCAATGGCACGGCAGCACGCCCGGACCTTGTGGTACGACAGGCCCAGGTATGTGTTCATGGAGTTTTGTGTTGAGGACAGCACCGATGTCCACGTGCTTATTGAGGATCACCGCATTGTGTTCAGCTGCAAGAATGCCGATGGAGTGGAGTTGTACAATGAGATTGAGTTCTATGCCAAAGTGAACTCCAAGCCAGTGTGGCTGTCTGTGGACTTTGATAACTGGAGAGACTGGGAAGGGGATGAAGAGATGGAGCTGGCTCATGTGGAACATTATGCAGAGCTTTTGAAGAAGGTCAGCACCAAGAGACCTCCACCTGCCATGGATGATTTGGATGATGATTCTGACAGTGCTGATGATGCAACAAGTAAT</descriptor>
+<descriptor type="protein GI">217416405</descriptor>
+<descriptor type="mRNA accession">NM_001142653.1</descriptor>
+<descriptor type="URL">http://www.ncbi.nlm.nih.gov/nuccore/NM_001142653.1</descriptor>
+<descriptor type="Gene symbol">AARSD1</descriptor>
+<descriptor type="protein_product_id">NP_001136125.1</descriptor>
+<descriptor type="Entrez Gene">80755</descriptor>
+<descriptor type="Gene Description">alanyl-tRNA synthetase domain containing 1</descriptor>
+<descriptor type="protein sequence">MFSLPLNCSPDHIRRGSCWGRPQDLKIAAPAWNSKCHPGAGAAMARQHARTLWYDRPRYVFMEFCVEDSTDVHVLIEDHRIVFSCKNADGVELYNEIEFYAKVNSKPVWLSVDFDNWRDWEGDEEMELAHVEHYAELLKKVSTKRPPPAMDDLDDDSDSADDATSN</descriptor>
+<exon end="41121203" start="41120106">
+<descriptor type="genomic sequence">CAAGAGCAAAGTCTATAGGCAATGCATTTATTTTGTTTAAGTTACAGTCAACTGTACATATTAGGCACTCAAAAAAGTTTATGGACAAATAGAATAGCTGTTGGACAAATAAACATAGACATTAACTAGAGTAACAATCAGTTTTAAAAGTATAAAGAGGGCCGGGTGTGGTGGCTCATACATGTAATCCTAGCACTTTGGGAGGCTGAGGTGGGTGGATTACTTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCATCTCTGCTAAAAATACAAAAATTAGCTGGGCCTGGTGGTGCACATCTGTAGTCCCATCTACTTGGGAGGCTGAGGCAGGAGAATTGCTTGAACCCAGAAGGTGGAGGTTGCAGTGAACAGAGACTGCACCACTGCACTCCAGCCTGGGCGACAGAGCAAGACTCCATCTCGGAAAAAAAAAAAAAAAGTATAAAGAGATTTCTAGAGTGTGCAGGAAGCTGAAGTGGCTGGTTCTAGAGATGACAGAATTAGCTGTAAGAAATCAGAGCACAAATCTGGGCAAGAGGAAGCACCCCAGCTTGGTTACTAGAGGGAGAAGAGGCTTGCCACCAGGAGGAATAAGTACAAGAAGGAAACAGACAGAGAACAGTTCCTAGAGATTTATTATAATCTGTTTCTTCTTTGGCTTTTTGCTTTGCCCCATATGCACACATAGTAGAGATTTCTATAATCTGCATTCTTCTTTGGCTTTTGTTTTGCCACATACACACACATACTCAAATAATCAAGTGGCCTAAACACAGAGATTAGAAACCAATCAGTAAGAAATCAGAAGCCCTACCAGTCTACCCCTCCCCGACCCTGCATCTGATGTGGAGCCATAGTCAAGTGCCTAGGAGGAAGACAAGCTTGAAGGACGACCCTTAATAAAGAGCTTCTAGGAAAGTTCAGAGATCTCAGAAGAACTTGGTGCACAGCCAAAGCGCTGACAAAGGCCTAGGCGCTAGCTTTCTAGAACAACTGGAAAATAGCCACAGCTGCCTTCCCAGCTTTGCGTCACAGAAAGTTAATTACTTGTTGCATCATCAGCACTGTCAGAATCATC</descriptor>
+</exon>
+<exon end="41122359" start="41122305">
+<descriptor type="genomic sequence">ATCCAAATCATCCATGGCAGGTGGAGGTCTCTTGGTGCTGACCTTCTTCAAAAG</descriptor>
+</exon>
+<exon end="41123713" start="41123623">
+<descriptor type="genomic sequence">CTCTGCATAATGTTCCACATGAGCCAGCTCCATCTCTTCATCCCCTTCCCAGTCTCTCCAGTTATCAAAGTCCACAGACAGCCACACTGG</descriptor>
+</exon>
+<exon end="41131461" start="41131394">
+<descriptor type="genomic sequence">CTTGGAGTTCACTTTGGCATAGAACTCAATCTCATTGTACAACTCCACTCCATCGGCATTCTTGCAG</descriptor>
+</exon>
+<exon end="41131680" start="41131566">
+<descriptor type="genomic sequence">CTGAACACAATGCGGTGATCCTCAATAAGCACGTGGACATCGGTGCTGTCCTCAACACAAAACTCCATGAACACATACCTGGGCCTGTCGTACCACAAGGTCCGGGCGTGCTGC</descriptor>
+</exon>
+<exon end="41132545" start="41132062">
+<descriptor type="genomic sequence">CGTGCCATTGCGGCTCCCGCTCCAGGGTGGCATTTAGAGTTCCAGGCAGGGGCCGCTATCTTTAGATCCTGGGGACGCCCCCAGCAGCTGCCTCTCCTTATATGGTCGGGAGAGCAGTTGAGAGGAAGAGAGAACATGACCTGGCAGCCAAGGGATCTGCACTCTGGAGATACTCTGGGACAGCTTCATCCTTGCAGCCCTTCACCGTGGGGTCTTCAGAAATGCATAGACTATGAAGAGACAACCCATCTGCTGGAACCAGGGCAAAGGCTGCCCTAGACGCTACACACAGGGAATGACTTTTCCCCGGTATCATTCACCTGTTTCTCCGACGCTTACTGCTCAGTGTCTGATTCACAATAGGCGCTCAATAAAACATTATTGTCCTGAATTAAATTCCCGGGGAAGGCGCGCCCTCGGGGACTTGGGTACTTCAGGCCCCGCCCACCACTCCCCTGGGGTTCCAGGCCACCGCGCCGTTGC</descriptor>
+</exon>
+<cds end="41132199" start="41121164"/>
+</mRNA>
+<aaseq id="NP_001136125.1">
+<simsearch method="InterPro">
+<simhit>
+<descriptor type="InterPro Accession">IPR007052</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
+<descriptor type="Match id">PS51203</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">CS domain</descriptor>
+<simspan query_end="154" query_start="45">
+<descriptor type="score">9.189</descriptor>
+<descriptor type="evidence">ProfileScan</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR008978</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
+<descriptor type="Match id">SSF49764</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">HSP20-like chaperone</descriptor>
+<simspan query_end="121" query_start="45">
+<descriptor type="score">4.4e-15</descriptor>
+<descriptor type="evidence">superfamily</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR017447</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR017447</descriptor>
+<descriptor type="Match id">PF04969</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">CS</descriptor>
+<simspan query_end="108" query_start="49">
+<descriptor type="score">0.00023</descriptor>
+<descriptor type="evidence">HMMPfam</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">noIPR</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=PTHR22932</descriptor>
+<descriptor type="Match id">PTHR22932</descriptor>
+<descriptor type="Match Database">PANTHER</descriptor>
+<descriptor type="InterPro Type">unintegrated</descriptor>
+<descriptor type="InterPro Name">unintegrated</descriptor>
+<simspan query_end="138" query_start="48">
+<descriptor type="score">1.2e-19</descriptor>
+<descriptor type="evidence">HMMPanther</descriptor>
+</simspan>
+</simhit>
+</simsearch>
+</aaseq>
+<mRNA end="41132545" start="41102544" strand="-">
+<descriptor type="mRNA GI">217416401</descriptor>
+<descriptor type="mRNA coding sequence">ATGTTCTCTCTTCCTCTCAACTGCTCTCCCGACCATATAAGGAGAGGCAGCTGCTGGGGGCGTCCCCAGGATCTAAAGATAGCGGCCCCTGCCTGGAACTCTAAATGCCACCCTGGAGCGGGAGCCGCAATGGCACGGCAGCACGCCCGGACCTTGTGGTACGACAGGCCCAGGTATGTGTTCATGGAGTTTTGTGTTGAGGACAGCACCGATGTCCACGTGCTTATTGAGGATCACCGCATTGTGTTCAGCTGCAAGAATGCCGATGGAGTGGAGTTGTACAATGAGATTGAGTTCTATGCCAAAGTGAACTCCAAGGACTCCCAGGATAAGCGCTCTTCCCGCTCTATTACTTGTTTTGTGAGAAAATGGAAGGAAAAGGTGGCCTGGCCGCGGCTTACCAAGGAGGATATCAAGCCAGTGTGGCTGTCTGTGGACTTTGATAACTGGAGAGACTGGGAAGGGGATGAAGAGATGGAGCTGGCTCATGTGGAACATTATGCAGAGCTTTTGAAGAAGGTCAGCACCAAGAGACCTCCACCTGCCATGGATGATTTGGATTTCACCACCACCGTGGTCTCCTGCTGTCCCGCGGAGCTGCAGACTGAAGGGAGCAACGGCAAGAAAGAAGTGCTGAGCGGTTTCCAAGTGGTGCTGGAAGACACAGTGCTTTTCCCTGAGGGCGGGGGACAGCCTGATGACCGTGGTACAATCAATGACATCTCTGTGCTGAGAGTGACTCGCCGTGGGGAACAGGCTGATCATTTCACCCAGACACCCCTGGATCCAGGAAGCCAGGTTCTGGTCCGGGTAGATTGGGAGCGGAGGTTTGACCACATGCAGCAGCATTCAGGGCAGCATCTCATCACGGCAGTTGCTGACCATCTATTTAAGCTGAAGACAACATCATGGGAGTTAGGGAGATTTCGGAGTGCGATTGAGCTGGACACCCCCTCTATGACTGCAGAGCAAGTAGCTGCCATTGAGCAGAGCGTCAATGAAAAAATCAGAGATCGGCTGCCTGTGAATGTCCGAGAACTGAGCCTGGATGATCCTGAGGTGGAGCAGGTGAGTGGCCGGGGTTTGCCTGATGATCATGCTGGGCCCATTCGGGTTGTTAACATCGAGGGCGTTGATTCCAACATGTGCTGTGGGACCCATGTGAGCAATCTCAGTGACCTTCAGGTCATTAAGATTCTGGGCACTGAGAAGGGGAAAAAGAACAGAACCAACCTGATATTTCTGTCTGGGAACCGGGTGCTGAAGTGGATGGAGAGAAGTCATGGAACTGAAAAAGCACTGACTGCTCTGCTTAAGTGTGGAGCAGAGGATCATGTGGAAGCAGTGAAAAAGCTCCAGAACTCCACCAAGATCCTGCAGAAGAATAACCTGAATCTGCTCAGAGACCTGGCTGTGCACATTGCCCATAGCCTCAGGAACAGTCCAGACTGGGGAGGTGTGGTCATATTACACAGGAAGGAGGGTGATTCAGAGTTCATGAATATCATTGCCAATGAGATTGGGTCAGAGGAGACCCTCCTGTTCTTAACTGTGGGCGATGAGAAAGGTGGTGGACTCTTCTTACTGGCAGGGCCACCTGCGTCTGTGGAGACCCTGGGGCCCAGGGTGGCTGAGGTCCTGGAAGGCAAAGGAGCAGGGAAGAAAGGCCGTTTTCAGGGCAAGGCCACCAAGATGAGCCGGCGGATGGAGGCGCAGGCGCTTCTCCAGGACTACATCAGCACGCAGAGTGCTAAGGAG</descriptor>
+<descriptor type="protein GI">217416402</descriptor>
+<descriptor type="mRNA accession">NM_001136042.2</descriptor>
+<descriptor type="URL">http://www.ncbi.nlm.nih.gov/nuccore/NM_001136042.2</descriptor>
+<descriptor type="Gene symbol">AARSD1</descriptor>
+<descriptor type="protein_product_id">NP_001129514.2</descriptor>
+<descriptor type="Entrez Gene">80755</descriptor>
+<descriptor type="Gene Description">alanyl-tRNA synthetase domain containing 1</descriptor>
+<descriptor type="protein sequence">MFSLPLNCSPDHIRRGSCWGRPQDLKIAAPAWNSKCHPGAGAAMARQHARTLWYDRPRYVFMEFCVEDSTDVHVLIEDHRIVFSCKNADGVELYNEIEFYAKVNSKDSQDKRSSRSITCFVRKWKEKVAWPRLTKEDIKPVWLSVDFDNWRDWEGDEEMELAHVEHYAELLKKVSTKRPPPAMDDLDFTTTVVSCCPAELQTEGSNGKKEVLSGFQVVLEDTVLFPEGGGQPDDRGTINDISVLRVTRRGEQADHFTQTPLDPGSQVLVRVDWERRFDHMQQHSGQHLITAVADHLFKLKTTSWELGRFRSAIELDTPSMTAEQVAAIEQSVNEKIRDRLPVNVRELSLDDPEVEQVSGRGLPDDHAGPIRVVNIEGVDSNMCCGTHVSNLSDLQVIKILGTEKGKKNRTNLIFLSGNRVLKWMERSHGTEKALTALLKCGAEDHVEAVKKLQNSTKILQKNNLNLLRDLAVHIAHSLRNSPDWGGVVILHRKEGDSEFMNIIANEIGSEETLLFLTVGDEKGGGLFLLAGPPASVETLGPRVAEVLEGKGAGKKGRFQGKATKMSRRMEAQALLQDYISTQSAKE</descriptor>
+<exon end="41102745" start="41102544">
+<descriptor type="genomic sequence">CTGAGTCAATCTATTTTATTGACCAAAAGATTCCTGTGGAAACAGGAGGTGAGTGCCCTAAGCCCTCACTCCTTAGCACTCTGCGTGCTGATGTAGTCCTGGAGAAGCGCCTGCGCCTCCATCCGCCGGCTCATCTTGGTGGCCTTGCCCTGAAAACGGCCTTTCTTCCCTGCTCCTTTGCCTTCCAGGACCTCAGCCACC</descriptor>
+</exon>
+<exon end="41103911" start="41103816">
+<descriptor type="genomic sequence">CTGGGCCCCAGGGTCTCCACAGACGCAGGTGGCCCTGCCAGTAAGAAGAGTCCACCACCTTTCTCATCGCCCACAGTTAAGAACAGGAGGGTCTC</descriptor>
+</exon>
+<exon end="41105795" start="41105740">
+<descriptor type="genomic sequence">CTCTGACCCAATCTCATTGGCAATGATATTCATGAACTCTGAATCACCCTCCTTC</descriptor>
+</exon>
+<exon end="41106984" start="41106892">
+<descriptor type="genomic sequence">CTGTGTAATATGACCACACCTCCCCAGTCTGGACTGTTCCTGAGGCTATGGGCAATGTGCACAGCCAGGTCTCTGAGCAGATTCAGGTTATT</descriptor>
+</exon>
+<exon end="41107241" start="41107174">
+<descriptor type="genomic sequence">CTTCTGCAGGATCTTGGTGGAGTTCTGGAGCTTTTTCACTGCTTCCACATGATCCTCTGCTCCACAC</descriptor>
+</exon>
+<exon end="41107989" start="41107858">
+<descriptor type="genomic sequence">TTAAGCAGAGCAGTCAGTGCTTTTTCAGTTCCATGACTTCTCTCCATCCACTTCAGCACCCGGTTCCCAGACAGAAATATCAGGTTGGTTCTGTTCTTTTTCCCCTTCTCAGTGCCCAGAATCTTAATGAC</descriptor>
+</exon>
+<exon end="41108337" start="41108220">
+<descriptor type="genomic sequence">CTGAAGGTCACTGAGATTGCTCACATGGGTCCCACAGCACATGTTGGAATCAACGCCCTCGATGTTAACAACCCGAATGGGCCCAGCATGATCATCAGGCAAACCCCGGCCACTCAC</descriptor>
+</exon>
+<exon end="41108577" start="41108420">
+<descriptor type="genomic sequence">CTGCTCCACCTCAGGATCATCCAGGCTCAGTTCTCGGACATTCACAGGCAGCCGATCTCTGATTTTTTCATTGACGCTCTGCTCAATGGCAGCTACTTGCTCTGCAGTCATAGAGGGGGTGTCCAGCTCAATCGCACTCCGAAATCTCCCTAACTCC</descriptor>
+</exon>
+<exon end="41109212" start="41109154">
+<descriptor type="genomic sequence">CATGATGTTGTCTTCAGCTTAAATAGATGGTCAGCAACTGCCGTGATGAGATGCTGCC</descriptor>
+</exon>
+<exon end="41113368" start="41113208">
+<descriptor type="genomic sequence">CTGAATGCTGCTGCATGTGGTCAAACCTCCGCTCCCAATCTACCCGGACCAGAACCTGGCTTCCTGGATCCAGGGGTGTCTGGGTGAAATGATCAGCCTGTTCCCCACGGCGAGTCACTCTCAGCACAGAGATGTCATTGATTGTACCACGGTCATCAGG</descriptor>
+</exon>
+<exon end="41116254" start="41116122">
+<descriptor type="genomic sequence">CTGTCCCCCGCCCTCAGGGAAAAGCACTGTGTCTTCCAGCACCACTTGGAAACCGCTCAGCACTTCTTTCTTGCCGTTGCTCCCTTCAGTCTGCAGCTCCGCGGGACAGCAGGAGACCACGGTGGTGGTGAA</descriptor>
+</exon>
+<exon end="41122359" start="41122305">
+<descriptor type="genomic sequence">ATCCAAATCATCCATGGCAGGTGGAGGTCTCTTGGTGCTGACCTTCTTCAAAAG</descriptor>
+</exon>
+<exon end="41123713" start="41123623">
+<descriptor type="genomic sequence">CTCTGCATAATGTTCCACATGAGCCAGCTCCATCTCTTCATCCCCTTCCCAGTCTCTCCAGTTATCAAAGTCCACAGACAGCCACACTGG</descriptor>
+</exon>
+<exon end="41131285" start="41131186">
+<descriptor type="genomic sequence">CTTGATATCCTCCTTGGTAAGCCGCGGCCAGGCCACCTTTTCCTTCCATTTTCTCACAAAACAAGTAATAGAGCGGGAAGAGCGCTTATCCTGGGAGTC</descriptor>
+</exon>
+<exon end="41131461" start="41131394">
+<descriptor type="genomic sequence">CTTGGAGTTCACTTTGGCATAGAACTCAATCTCATTGTACAACTCCACTCCATCGGCATTCTTGCAG</descriptor>
+</exon>
+<exon end="41131680" start="41131566">
+<descriptor type="genomic sequence">CTGAACACAATGCGGTGATCCTCAATAAGCACGTGGACATCGGTGCTGTCCTCAACACAAAACTCCATGAACACATACCTGGGCCTGTCGTACCACAAGGTCCGGGCGTGCTGC</descriptor>
+</exon>
+<exon end="41132545" start="41132062">
+<descriptor type="genomic sequence">CGTGCCATTGCGGCTCCCGCTCCAGGGTGGCATTTAGAGTTCCAGGCAGGGGCCGCTATCTTTAGATCCTGGGGACGCCCCCAGCAGCTGCCTCTCCTTATATGGTCGGGAGAGCAGTTGAGAGGAAGAGAGAACATGACCTGGCAGCCAAGGGATCTGCACTCTGGAGATACTCTGGGACAGCTTCATCCTTGCAGCCCTTCACCGTGGGGTCTTCAGAAATGCATAGACTATGAAGAGACAACCCATCTGCTGGAACCAGGGCAAAGGCTGCCCTAGACGCTACACACAGGGAATGACTTTTCCCCGGTATCATTCACCTGTTTCTCCGACGCTTACTGCTCAGTGTCTGATTCACAATAGGCGCTCAATAAAACATTATTGTCCTGAATTAAATTCCCGGGGAAGGCGCGCCCTCGGGGACTTGGGTACTTCAGGCCCCGCCCACCACTCCCCTGGGGTTCCAGGCCACCGCGCCGTTGC</descriptor>
+</exon>
+<cds end="41132199" start="41102609"/>
+</mRNA>
+<aaseq id="NP_001129514.2">
+<simsearch method="InterPro">
+<simhit>
+<descriptor type="InterPro Accession">IPR007052</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
+<descriptor type="Match id">PS51203</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">CS domain</descriptor>
+<simspan query_end="134" query_start="45">
+<descriptor type="score">14.446</descriptor>
+<descriptor type="evidence">ProfileScan</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR008978</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
+<descriptor type="Match id">SSF49764</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">HSP20-like chaperone</descriptor>
+<simspan query_end="154" query_start="45">
+<descriptor type="score">5.8e-30</descriptor>
+<descriptor type="evidence">superfamily</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR012947</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR012947</descriptor>
+<descriptor type="Match id">PF07973</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">Threonyl/alanyl tRNA synthetase, SAD</descriptor>
+<simspan query_end="408" query_start="369">
+<descriptor type="score">7.3e-10</descriptor>
+<descriptor type="evidence">HMMPfam</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR017447</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR017447</descriptor>
+<descriptor type="Match id">PF04969</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">CS</descriptor>
+<simspan query_end="123" query_start="49">
+<descriptor type="score">1.3e-05</descriptor>
+<descriptor type="evidence">HMMPfam</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR018163</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018163</descriptor>
+<descriptor type="Match id">SSF55186</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">Threonyl/alanyl tRNA synthetase, class II-like, putative editing domain</descriptor>
+<simspan query_end="428" query_start="270">
+<descriptor type="score">3.8e-32</descriptor>
+<descriptor type="evidence">superfamily</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR018164</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018164</descriptor>
+<descriptor type="Match id">PF01411</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">Alanyl-tRNA synthetase, class IIc, N-terminal</descriptor>
+<simspan query_end="275" query_start="164">
+<descriptor type="score">8.1e-06</descriptor>
+<descriptor type="evidence">HMMPfam</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR018165</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018165</descriptor>
+<descriptor type="Match id">PS50860</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">Alanyl-tRNA synthetase, class IIc, core domain</descriptor>
+<simspan query_end="426" query_start="216">
+<descriptor type="score">13.827</descriptor>
+<descriptor type="evidence">ProfileScan</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">noIPR</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=PTHR11777</descriptor>
+<descriptor type="Match id">PTHR11777</descriptor>
+<descriptor type="Match Database">PANTHER</descriptor>
+<descriptor type="InterPro Type">unintegrated</descriptor>
+<descriptor type="InterPro Name">unintegrated</descriptor>
+<simspan query_end="580" query_start="226">
+<descriptor type="score">2.6e-138</descriptor>
+<descriptor type="evidence">HMMPanther</descriptor>
+</simspan>
+</simhit>
+</simsearch>
+</aaseq>
+<mRNA end="41132020" start="41102544" strand="-">
+<descriptor type="mRNA GI">217416403</descriptor>
+<descriptor type="mRNA coding sequence">ATGGAGTTTTGTGTTGAGGACAGCACCGATGTCCACGTGCTTATTGAGGATCACCGCATTGTGTTCAGCTGCAAGAATGCCGATGGAGTGGAGTTGTACAATGAGATTGAGTTCTATGCCAAAGTGAACTCCAAGGACTCCCAGGATAAGCGCTCTTCCCGCTCTATTACTTGTTTTGTGAGAAAATGGAAGGAAAAGGTGGCCTGGCCGCGGCTTACCAAGGAGGATATCAAGCCAGTGTGGCTGTCTGTGGACTTTGATAACTGGAGAGACTGGGAAGGGGATGAAGAGATGGAGCTGGCTCATGTGGAACATTATGCAGAGCTTTTGAAGAAGGTCAGCACCAAGAGACCTCCACCTGCCATGGATGATTTGGATTTCACCACCACCGTGGTCTCCTGCTGTCCCGCGGAGCTGCAGACTGAAGGGAGCAACGGCAAGAAAGAAGTGCTGAGCGGTTTCCAAGTGGTGCTGGAAGACACAGTGCTTTTCCCTGAGGGCGGGGGACAGCCTGATGACCGTGGTACAATCAATGACATCTCTGTGCTGAGAGTGACTCGCCGTGGGGAACAGGCTGATCATTTCACCCAGACACCCCTGGATCCAGGAAGCCAGGTTCTGGTCCGGGTAGATTGGGAGCGGAGGTTTGACCACATGCAGCAGCATTCAGGGCAGCATCTCATCACGGCAGTTGCTGACCATCTATTTAAGCTGAAGACAACATCATGGGAGTTAGGGAGATTTCGGAGTGCGATTGAGCTGGACACCCCCTCTATGACTGCAGAGCAAGTAGCTGCCATTGAGCAGAGCGTCAATGAAAAAATCAGAGATCGGCTGCCTGTGAATGTCCGAGAACTGAGCCTGGATGATCCTGAGGTGGAGCAGGTGAGTGGCCGGGGTTTGCCTGATGATCATGCTGGGCCCATTCGGGTTGTTAACATCGAGGGCGTTGATTCCAACATGTGCTGTGGGACCCATGTGAGCAATCTCAGTGACCTTCAGGTCATTAAGATTCTGGGCACTGAGAAGGGGAAAAAGAACAGAACCAACCTGATATTTCTGTCTGGGAACCGGGTGCTGAAGTGGATGGAGAGAAGTCATGGAACTGAAAAAGCACTGACTGCTCTGCTTAAGTGTGGAGCAGAGGATCATGTGGAAGCAGTGAAAAAGCTCCAGAACTCCACCAAGATCCTGCAGAAGAATAACCTGAATCTGCTCAGAGACCTGGCTGTGCACATTGCCCATAGCCTCAGGAACAGTCCAGACTGGGGAGGTGTGGTCATATTACACAGGAAGGAGGGTGATTCAGAGTTCATGAATATCATTGCCAATGAGATTGGGTCAGAGGAGACCCTCCTGTTCTTAACTGTGGGCGATGAGAAAGGTGGTGGACTCTTCTTACTGGCAGGGCCACCTGCGTCTGTGGAGACCCTGGGGCCCAGGGTGGCTGAGGTCCTGGAAGGCAAAGGAGCAGGGAAGAAAGGCCGTTTTCAGGGCAAGGCCACCAAGATGAGCCGGCGGATGGAGGCGCAGGCGCTTCTCCAGGACTACATCAGCACGCAGAGTGCTAAGGAG</descriptor>
+<descriptor type="protein GI">13376886</descriptor>
+<descriptor type="mRNA accession">NM_025267.3</descriptor>
+<descriptor type="URL">http://www.ncbi.nlm.nih.gov/nuccore/NM_025267.3</descriptor>
+<descriptor type="Gene symbol">AARSD1</descriptor>
+<descriptor type="protein_product_id">NP_079543.1</descriptor>
+<descriptor type="Entrez Gene">80755</descriptor>
+<descriptor type="Gene Description">alanyl-tRNA synthetase domain containing 1</descriptor>
+<descriptor type="protein sequence">MEFCVEDSTDVHVLIEDHRIVFSCKNADGVELYNEIEFYAKVNSKDSQDKRSSRSITCFVRKWKEKVAWPRLTKEDIKPVWLSVDFDNWRDWEGDEEMELAHVEHYAELLKKVSTKRPPPAMDDLDFTTTVVSCCPAELQTEGSNGKKEVLSGFQVVLEDTVLFPEGGGQPDDRGTINDISVLRVTRRGEQADHFTQTPLDPGSQVLVRVDWERRFDHMQQHSGQHLITAVADHLFKLKTTSWELGRFRSAIELDTPSMTAEQVAAIEQSVNEKIRDRLPVNVRELSLDDPEVEQVSGRGLPDDHAGPIRVVNIEGVDSNMCCGTHVSNLSDLQVIKILGTEKGKKNRTNLIFLSGNRVLKWMERSHGTEKALTALLKCGAEDHVEAVKKLQNSTKILQKNNLNLLRDLAVHIAHSLRNSPDWGGVVILHRKEGDSEFMNIIANEIGSEETLLFLTVGDEKGGGLFLLAGPPASVETLGPRVAEVLEGKGAGKKGRFQGKATKMSRRMEAQALLQDYISTQSAKE</descriptor>
+<exon end="41102745" start="41102544">
+<descriptor type="genomic sequence">CTGAGTCAATCTATTTTATTGACCAAAAGATTCCTGTGGAAACAGGAGGTGAGTGCCCTAAGCCCTCACTCCTTAGCACTCTGCGTGCTGATGTAGTCCTGGAGAAGCGCCTGCGCCTCCATCCGCCGGCTCATCTTGGTGGCCTTGCCCTGAAAACGGCCTTTCTTCCCTGCTCCTTTGCCTTCCAGGACCTCAGCCACC</descriptor>
+</exon>
+<exon end="41103911" start="41103816">
+<descriptor type="genomic sequence">CTGGGCCCCAGGGTCTCCACAGACGCAGGTGGCCCTGCCAGTAAGAAGAGTCCACCACCTTTCTCATCGCCCACAGTTAAGAACAGGAGGGTCTC</descriptor>
+</exon>
+<exon end="41105795" start="41105740">
+<descriptor type="genomic sequence">CTCTGACCCAATCTCATTGGCAATGATATTCATGAACTCTGAATCACCCTCCTTC</descriptor>
+</exon>
+<exon end="41106984" start="41106892">
+<descriptor type="genomic sequence">CTGTGTAATATGACCACACCTCCCCAGTCTGGACTGTTCCTGAGGCTATGGGCAATGTGCACAGCCAGGTCTCTGAGCAGATTCAGGTTATT</descriptor>
+</exon>
+<exon end="41107241" start="41107174">
+<descriptor type="genomic sequence">CTTCTGCAGGATCTTGGTGGAGTTCTGGAGCTTTTTCACTGCTTCCACATGATCCTCTGCTCCACAC</descriptor>
+</exon>
+<exon end="41107989" start="41107858">
+<descriptor type="genomic sequence">TTAAGCAGAGCAGTCAGTGCTTTTTCAGTTCCATGACTTCTCTCCATCCACTTCAGCACCCGGTTCCCAGACAGAAATATCAGGTTGGTTCTGTTCTTTTTCCCCTTCTCAGTGCCCAGAATCTTAATGAC</descriptor>
+</exon>
+<exon end="41108337" start="41108220">
+<descriptor type="genomic sequence">CTGAAGGTCACTGAGATTGCTCACATGGGTCCCACAGCACATGTTGGAATCAACGCCCTCGATGTTAACAACCCGAATGGGCCCAGCATGATCATCAGGCAAACCCCGGCCACTCAC</descriptor>
+</exon>
+<exon end="41108577" start="41108420">
+<descriptor type="genomic sequence">CTGCTCCACCTCAGGATCATCCAGGCTCAGTTCTCGGACATTCACAGGCAGCCGATCTCTGATTTTTTCATTGACGCTCTGCTCAATGGCAGCTACTTGCTCTGCAGTCATAGAGGGGGTGTCCAGCTCAATCGCACTCCGAAATCTCCCTAACTCC</descriptor>
+</exon>
+<exon end="41109212" start="41109154">
+<descriptor type="genomic sequence">CATGATGTTGTCTTCAGCTTAAATAGATGGTCAGCAACTGCCGTGATGAGATGCTGCC</descriptor>
+</exon>
+<exon end="41113368" start="41113208">
+<descriptor type="genomic sequence">CTGAATGCTGCTGCATGTGGTCAAACCTCCGCTCCCAATCTACCCGGACCAGAACCTGGCTTCCTGGATCCAGGGGTGTCTGGGTGAAATGATCAGCCTGTTCCCCACGGCGAGTCACTCTCAGCACAGAGATGTCATTGATTGTACCACGGTCATCAGG</descriptor>
+</exon>
+<exon end="41116254" start="41116122">
+<descriptor type="genomic sequence">CTGTCCCCCGCCCTCAGGGAAAAGCACTGTGTCTTCCAGCACCACTTGGAAACCGCTCAGCACTTCTTTCTTGCCGTTGCTCCCTTCAGTCTGCAGCTCCGCGGGACAGCAGGAGACCACGGTGGTGGTGAA</descriptor>
+</exon>
+<exon end="41122359" start="41122305">
+<descriptor type="genomic sequence">ATCCAAATCATCCATGGCAGGTGGAGGTCTCTTGGTGCTGACCTTCTTCAAAAG</descriptor>
+</exon>
+<exon end="41123713" start="41123623">
+<descriptor type="genomic sequence">CTCTGCATAATGTTCCACATGAGCCAGCTCCATCTCTTCATCCCCTTCCCAGTCTCTCCAGTTATCAAAGTCCACAGACAGCCACACTGG</descriptor>
+</exon>
+<exon end="41131285" start="41131186">
+<descriptor type="genomic sequence">CTTGATATCCTCCTTGGTAAGCCGCGGCCAGGCCACCTTTTCCTTCCATTTTCTCACAAAACAAGTAATAGAGCGGGAAGAGCGCTTATCCTGGGAGTC</descriptor>
+</exon>
+<exon end="41131461" start="41131394">
+<descriptor type="genomic sequence">CTTGGAGTTCACTTTGGCATAGAACTCAATCTCATTGTACAACTCCACTCCATCGGCATTCTTGCAG</descriptor>
+</exon>
+<exon end="41131680" start="41131566">
+<descriptor type="genomic sequence">CTGAACACAATGCGGTGATCCTCAATAAGCACGTGGACATCGGTGCTGTCCTCAACACAAAACTCCATGAACACATACCTGGGCCTGTCGTACCACAAGGTCCGGGCGTGCTGC</descriptor>
+</exon>
+<exon end="41132020" start="41131921">
+<descriptor type="genomic sequence">CTTCCCTCACCCCACAGTTACAGAGACCAGGGGTCCGGGGCTCCCGTGGGGCCTCACAGAACCTGGAGCGCCCAGAAGACTTGGAGCAGGGAATCTCCA</descriptor>
+</exon>
+<cds end="41131634" start="41102609"/>
+</mRNA>
+<aaseq id="NP_079543.1">
+<simsearch method="InterPro">
+<simhit>
+<descriptor type="InterPro Accession">IPR007052</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
+<descriptor type="Match id">PS51203</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">CS domain</descriptor>
+<simspan query_end="73" query_start="0">
+<descriptor type="score">11.702</descriptor>
+<descriptor type="evidence">ProfileScan</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR008978</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
+<descriptor type="Match id">SSF49764</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">HSP20-like chaperone</descriptor>
+<simspan query_end="93" query_start="0">
+<descriptor type="score">8.6e-22</descriptor>
+<descriptor type="evidence">superfamily</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR012947</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR012947</descriptor>
+<descriptor type="Match id">PF07973</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">Threonyl/alanyl tRNA synthetase, SAD</descriptor>
+<simspan query_end="347" query_start="308">
+<descriptor type="score">6.4e-10</descriptor>
+<descriptor type="evidence">HMMPfam</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR018163</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018163</descriptor>
+<descriptor type="Match id">SSF55186</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">Threonyl/alanyl tRNA synthetase, class II-like, putative editing domain</descriptor>
+<simspan query_end="367" query_start="209">
+<descriptor type="score">3.8e-32</descriptor>
+<descriptor type="evidence">superfamily</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR018164</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018164</descriptor>
+<descriptor type="Match id">PF01411</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">Alanyl-tRNA synthetase, class IIc, N-terminal</descriptor>
+<simspan query_end="214" query_start="102">
+<descriptor type="score">6.8e-06</descriptor>
+<descriptor type="evidence">HMMPfam</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">IPR018165</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018165</descriptor>
+<descriptor type="Match id">PS50860</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">Alanyl-tRNA synthetase, class IIc, core domain</descriptor>
+<simspan query_end="365" query_start="155">
+<descriptor type="score">13.827</descriptor>
+<descriptor type="evidence">ProfileScan</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">noIPR</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=PTHR11777</descriptor>
+<descriptor type="Match id">PTHR11777</descriptor>
+<descriptor type="Match Database">PANTHER</descriptor>
+<descriptor type="InterPro Type">unintegrated</descriptor>
+<descriptor type="InterPro Name">unintegrated</descriptor>
+<simspan query_end="519" query_start="165">
+<descriptor type="score">2.6e-138</descriptor>
+<descriptor type="evidence">HMMPanther</descriptor>
+</simspan>
+</simhit>
+</simsearch>
+</aaseq>
+<mRNA end="41132545" start="41120106" strand="-">
+<descriptor type="mRNA GI">217416406</descriptor>
+<descriptor type="mRNA coding sequence">ATGTTCTCTCTTCCTCTCAACTGCTCTCCCGACCATATAAGGAGAGGCAGCTGCTGGGGGCGTCCCCAGGATCTAAAGATAGCGGCCCCTGCCTGGAACTCTAAATGCCACCCTGGAGCGGGAGCCGCAATGGCACGCTGCAAGAATGCCGATGGAGTGGAGTTGTACAATGAGATTGAGTTCTATGCCAAAGTGAACTCCAAGGACTCCCAGGATAAGCGCTCTTCCCGCTCTATTACTTGTTTTGTGAGAAAATGGAAGGAAAAGGTGGCCTGGCCGCGGCTTACCAAGGAGGATATCAAGCCAGTGTGGCTGTCTGTGGACTTTGATAACTGGAGAGACTGGGAAGGGGATGAAGAGATGGAGCTGGCTCATGTGGAACATTATGCAGAGCTTTTGAAGAAGGTCAGCACCAAGAGACCTCCACCTGCCATGGATGATTTGGATGATGATTCTGACAGTGCTGATGATGCAACAAGTAAT</descriptor>
+<descriptor type="protein GI">217416407</descriptor>
+<descriptor type="mRNA accession">NM_001142654.1</descriptor>
+<descriptor type="URL">http://www.ncbi.nlm.nih.gov/nuccore/NM_001142654.1</descriptor>
+<descriptor type="Gene symbol">AARSD1</descriptor>
+<descriptor type="protein_product_id">NP_001136126.1</descriptor>
+<descriptor type="Entrez Gene">80755</descriptor>
+<descriptor type="Gene Description">alanyl-tRNA synthetase domain containing 1</descriptor>
+<descriptor type="protein sequence">MFSLPLNCSPDHIRRGSCWGRPQDLKIAAPAWNSKCHPGAGAAMARCKNADGVELYNEIEFYAKVNSKDSQDKRSSRSITCFVRKWKEKVAWPRLTKEDIKPVWLSVDFDNWRDWEGDEEMELAHVEHYAELLKKVSTKRPPPAMDDLDDDSDSADDATSN</descriptor>
+<exon end="41121203" start="41120106">
+<descriptor type="genomic sequence">CAAGAGCAAAGTCTATAGGCAATGCATTTATTTTGTTTAAGTTACAGTCAACTGTACATATTAGGCACTCAAAAAAGTTTATGGACAAATAGAATAGCTGTTGGACAAATAAACATAGACATTAACTAGAGTAACAATCAGTTTTAAAAGTATAAAGAGGGCCGGGTGTGGTGGCTCATACATGTAATCCTAGCACTTTGGGAGGCTGAGGTGGGTGGATTACTTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCATCTCTGCTAAAAATACAAAAATTAGCTGGGCCTGGTGGTGCACATCTGTAGTCCCATCTACTTGGGAGGCTGAGGCAGGAGAATTGCTTGAACCCAGAAGGTGGAGGTTGCAGTGAACAGAGACTGCACCACTGCACTCCAGCCTGGGCGACAGAGCAAGACTCCATCTCGGAAAAAAAAAAAAAAAGTATAAAGAGATTTCTAGAGTGTGCAGGAAGCTGAAGTGGCTGGTTCTAGAGATGACAGAATTAGCTGTAAGAAATCAGAGCACAAATCTGGGCAAGAGGAAGCACCCCAGCTTGGTTACTAGAGGGAGAAGAGGCTTGCCACCAGGAGGAATAAGTACAAGAAGGAAACAGACAGAGAACAGTTCCTAGAGATTTATTATAATCTGTTTCTTCTTTGGCTTTTTGCTTTGCCCCATATGCACACATAGTAGAGATTTCTATAATCTGCATTCTTCTTTGGCTTTTGTTTTGCCACATACACACACATACTCAAATAATCAAGTGGCCTAAACACAGAGATTAGAAACCAATCAGTAAGAAATCAGAAGCCCTACCAGTCTACCCCTCCCCGACCCTGCATCTGATGTGGAGCCATAGTCAAGTGCCTAGGAGGAAGACAAGCTTGAAGGACGACCCTTAATAAAGAGCTTCTAGGAAAGTTCAGAGATCTCAGAAGAACTTGGTGCACAGCCAAAGCGCTGACAAAGGCCTAGGCGCTAGCTTTCTAGAACAACTGGAAAATAGCCACAGCTGCCTTCCCAGCTTTGCGTCACAGAAAGTTAATTACTTGTTGCATCATCAGCACTGTCAGAATCATC</descriptor>
+</exon>
+<exon end="41122359" start="41122305">
+<descriptor type="genomic sequence">ATCCAAATCATCCATGGCAGGTGGAGGTCTCTTGGTGCTGACCTTCTTCAAAAG</descriptor>
+</exon>
+<exon end="41123713" start="41123623">
+<descriptor type="genomic sequence">CTCTGCATAATGTTCCACATGAGCCAGCTCCATCTCTTCATCCCCTTCCCAGTCTCTCCAGTTATCAAAGTCCACAGACAGCCACACTGG</descriptor>
+</exon>
+<exon end="41131285" start="41131186">
+<descriptor type="genomic sequence">CTTGATATCCTCCTTGGTAAGCCGCGGCCAGGCCACCTTTTCCTTCCATTTTCTCACAAAACAAGTAATAGAGCGGGAAGAGCGCTTATCCTGGGAGTC</descriptor>
+</exon>
+<exon end="41131461" start="41131394">
+<descriptor type="genomic sequence">CTTGGAGTTCACTTTGGCATAGAACTCAATCTCATTGTACAACTCCACTCCATCGGCATTCTTGCAG</descriptor>
+</exon>
+<exon end="41132545" start="41132062">
+<descriptor type="genomic sequence">CGTGCCATTGCGGCTCCCGCTCCAGGGTGGCATTTAGAGTTCCAGGCAGGGGCCGCTATCTTTAGATCCTGGGGACGCCCCCAGCAGCTGCCTCTCCTTATATGGTCGGGAGAGCAGTTGAGAGGAAGAGAGAACATGACCTGGCAGCCAAGGGATCTGCACTCTGGAGATACTCTGGGACAGCTTCATCCTTGCAGCCCTTCACCGTGGGGTCTTCAGAAATGCATAGACTATGAAGAGACAACCCATCTGCTGGAACCAGGGCAAAGGCTGCCCTAGACGCTACACACAGGGAATGACTTTTCCCCGGTATCATTCACCTGTTTCTCCGACGCTTACTGCTCAGTGTCTGATTCACAATAGGCGCTCAATAAAACATTATTGTCCTGAATTAAATTCCCGGGGAAGGCGCGCCCTCGGGGACTTGGGTACTTCAGGCCCCGCCCACCACTCCCCTGGGGTTCCAGGCCACCGCGCCGTTGC</descriptor>
+</exon>
+<cds end="41132199" start="41121164"/>
+</mRNA>
+<aaseq id="NP_001136126.1">
+<simsearch method="InterPro">
+<simhit>
+<descriptor type="InterPro Accession">IPR008978</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
+<descriptor type="Match id">SSF49764</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="InterPro Name">HSP20-like chaperone</descriptor>
+<simspan query_end="116" query_start="45">
+<descriptor type="score">1.4e-15</descriptor>
+<descriptor type="evidence">superfamily</descriptor>
+</simspan>
+</simhit>
+<simhit>
+<descriptor type="InterPro Accession">noIPR</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=PTHR22932</descriptor>
+<descriptor type="Match id">PTHR22932</descriptor>
+<descriptor type="Match Database">PANTHER</descriptor>
+<descriptor type="InterPro Type">unintegrated</descriptor>
+<descriptor type="InterPro Name">unintegrated</descriptor>
+<simspan query_end="133" query_start="48">
+<descriptor type="score">1.9e-27</descriptor>
+<descriptor type="evidence">HMMPanther</descriptor>
+</simspan>
+</simhit>
+</simsearch>
+</aaseq>
+<residues end="41137545" start="41097544">agctactcaggaggctgaagtgggaggatcgcttgagcccaggaaagtcgaggctgcaatgagacaagatttccattgcactccagcccaggaaacagagtaagaccttgtctaaaaaaaaaaaaaaagcaaacaagcccacaagcagacaaaaaaaaaaaaaaaaaatcaaaaaacttattcctcctatctaactaaaagtgtgtatcctttgaccaacaactcctcaacccctctccctcctccaaactcttggctttgaggttggtgttttaaaatgaacagggatatttactaacaggcctctgccacaggtcacttctgcagggagtttatggctcagcaaaagagaaagctgtccctgtgagagcctcttctgctccagacacaactccaggtcagttaactaagtcctacttattccttagtttgaagcctggcactctgcctgtagtattttgcacagaagatacagacctttctaaagaaagaaggaaattcctccatcactcgttcccaaacatccctacttgccctctgttgagaacactagtcatagtttggatcaaattcaggaaaggaatgggagacagagacgctttctgaaaaagatttttttcattagggcaaacactgtctgttttccttttggtaccaggttttaaataaaccctagagtttatttaagttctcattcagggacagatctggcattctagcacagcttggccgactcactggtttccactcaggactccaaggcagggtggagcacaggacactggcacaatgccttcctgaattcagtctgtgtgtgtttgttgttgttgttgttgttgttgttgtttttgagacggagctttgctcttgttgcctaggctggatggagtgcaacggcgcgatcttggctcactgcaacctccgcctcccgggttcaagcaattctcctacctcagcctccagagtagctgggattgcaggcatgcgccaccacacttggctaattttgtatttttagtagaggcggggtttttcccatgttggtcaggctgatctcaaactcccgacctcaggtgatccacctgcctcagcctcccaaagtgttgggattacaggcatgagccacagcgccggccctgaattcagtctgtctactgctctgggtctcttccacctgatacctttcatctttcatactaacatctgttctagtacctacatgcatcaccttagtggaagctacagcagctgtcttcagcaatttatgggtacgcacataaaaaaatttccttagaagccaaggagtcccccttactatttctgtgccgtaaagtgggttatagtaacattccagaatatataacctgtgtgtgtacctaaaacttgattactccaataaatgaactcattttgtttcctggtgaacctcataaaagacaatccaccccttcccctgaacacactctgttcttctccccctctccctggggcattggattagggcctcagtgacaggcaagaatgacatcaccagttcaaaaactgctgctttattttctctttctttatacaaccaattaccattttcacataatttgctcaagtgtttatggcttttcttaattatttcataaggttccttccttcttaggacacccagttcatgtgtccattttcaggtcaagaaactgaagctcagggagtctcagcagggggaccagacatccaggctaccttaacaccgtctgggtttctgactgttgttctggcatgaggtttgcctaactctggatattaaaattacatggttgctctaggtctaagtgacaagaacccacctgagtggtagtgagcaagagtggcctcccaggtcactgttcttgttgttgcacctgtgttctgaatctttgtgtacccctaaaaattcatatgttgaaatcctaaccccctaagtggtatcaggaggtgggccctttagcaggtgattaggtcacgggggcagagccttcgtgaatgaaattagtgcattataaaagaggcccgagagggctgggtgcggaggctcatgcctgtaatcccagcactttgggaggctgaggcaggcggatcacctgaggtcaggagttcgagaccagcctggccaacatggtgaaaccccatctctactaaaaatacaaaatattagctgggtgggatggcaggcgcctgtaatcccagctactcgggaggctgaggcaggagaatcacttgaacctagggggtggaggttgcagtgagctgagattgcaccattgcacttcagcctgagcaacaagagtgaaactccatctgtctcaaaaaaaaaaaaaaaaaaaaaaggcccaagaaagaccccttaccctttgcaccaagggtgcaaaaagatggctattcctgaaccagtatttgaaccttcacaccagacactgaatttgccagcttcccagcctccactgtgagaaatacatttttgttgtttataagctacctagtttttgttattatagcagtcagatcagactaaggcacaccctaaagaaacaaacacagagagggacagagatctcacacagagacaaattcacatgggtctctgttcaagatcctgcctgagtccttctacaaaagtaaggaagcttctgtgaagcaaacatttccctttctcccactaatggacccattttgtatagcatgagtgttacactatggttttatctaaaacatggcactctgagaaaagcaagatgcagaagagtatacaatgtgctaccatttatgtttaaaaagagggaagatttatgtacatctattttttaaaatactaccagagggatatataagaaattggtaacaggctgggcatggtggctcacgcctgtaatcccaacactgggaggccaaagtggacaaattgctagagcccaggagttcaagactagtgtgggcaacacggcaaagcactgtctctagaaaaaatacaaaaaattagccaggtgtggtggtgcacacctctagtcccagctactcagagggctgaggtgggaggatcacctgttcccaggaggttgagactgcagtaagccatgattgtgccactgcattccagcctgggcaacagagtgagactatatctggaaaaaaaaaaaaaaaaaaggccaggcatggtggctcatacttgtaatcccagcactttgggaggccgaggccggcggattacctgaggtcaggagctcgagaccagcctggccaacatggtgaaaccccatctctactaaaaatacaaaattagccgggcatggtggcacatgcctgtaatcccagctactcggtaggctgaggcaggagaattgcttgaactcgggaggcggaggttgcagtgagcggagactgcgccattgcactccagcctgggcaacaagagcgaaactccatctaaaacaaaaaaattaagtgattgattctggagaaagaaattgggtaactcagtggcagggttgaaggaaatttttggtagcacacacctgtaatcccagctacttgggtggctgaggcacaagaattgcttgaacccaggaagcggaggttgcagtgagccaaaatcatgccactgcactccggcctaggtggcagaacaagactcttatctccaaaaaaaaaaaaagttcctttcagagtcggaagaacaaatagctgaacacagccacagccacagccacaggttatctcccctggatgtcagcttttgtatttctcctctgttatttcatcctggctgtctaggccttaaccatctttgttctagctaaagctgtgactggatctttgttttatcacctttcctggatgtgcaaatccagtatttctacccaggtctgtgaaacttcaaagcctgtgctcctgaacatattatgcttccatttgctctatcactaatgaaagatgagcttaagtcttccgttgattacagatttgtccgtttctcccttgagatctgtcaatgtctgctttatgtattttgaggctgttattagatgcatacaaatttagaactgttatatttttcatcattacacgtccctcttaatctctgattcttactttaacccttttcctgtttgccctgagaatactcgccagtgatgcttgcaactgcagcacttaccccaagaaggtgacaatgctgtcaacattccacagtgatactgtgattgaagtagacaacagaaatggaaagaaaactaagaagccagctgggcacagtggctcatgcctgtaatcccaacactttgggaggccaaggtgggcggatcacgaggtcaagaggtggagaccatcctggccaacatagtgaaaccccatctctactaaaaatacaaaaattagctggcatggtggtgcgagcctgtagttccagctactcgggaggctgaggcaggagattagtttgaacctgggaggtagaggttgcagtgagccaagatcgcaccaccgcactccagcctggtgacagagcgagactccatctcaaacaaaaacaaaaaacaaaaacaaaaaaatcagccaggcatggtggcacacacctgtaatcctggctactctggaggctgaggcaggaaaatcccttcaacccgggaggcagaggttgcagtgagctgagatcacaccactatatccagcctgggcaacaaagcaagagtccatctcagggggtggggcggtaggggcgggaaaaagccatgtgcctttgtggattataacaaaattatgggagcagtggactcagctgatcagatgttcatttcttatccaactgagtgcaaaagcacaaggtttggtataaattaatccaccaccttctaaacattacagtgcatgaactaaattagaaaattatctatttataaacggaaagtaaccacacaagcacaatggagtatacagtacgaattagtcatataaatacaagtggtagcgcaaccattctgagtcaatctattttattgaccaaaagattcctgtggaaacaggaggtgagtgccctaagccctcactccttagcactctgcgtgctgatgtagtcctggagaagcgcctgcgcctccatccgccggctcatcttggtggccttgccctgaaaacggcctttcttccctgctcctttgccttccaggacctcagccaccctggggaacagaggtatagtcagggagactttgagggaaaagtcacaaaaaaaaacaagggcagctctgagtctttttccagggactgggagagggataagaagagtagatgacttctaggaatctttcttgaaaacacttgcacataggctgggcatggtggctcacacctgtaatcccagcactttgggaggccaaagtgggtggatcacctgaggtcaggacttcaagaccagcctgaccaataggatgaaaccccgtctctactaaaaataaaaaaatcagccgggcatggtggtatgcgccataatcccagctactcaggaagctgagacaggagaattgcttgaacccgggaggcagaggttgcagtgagccgagatggtgccattgcactccagcctgggcaacaagagtgaaactttgtctcaaaaaaacacttgcacatatgcacaaagatatatgtaccatcatcacataagagtgaataactggaaacaacatcagtgtctatgaattgggctagataaattatgttaatctccagagagcagggtgagcacctgtaatcccagcactttgggagggcaaggcaggtggatcacttgaggtcaggagttcgagaccagcctggccaacatggtgaaaccctatctgtactaaaaatacaaaaaattggacgggtatggttatgtgcacctgtaatcccagctacttgagtggctgaggcaggaaaattgcttaaacctgggaggtggtggctgcagtgagctgagtagcctgggctctccaggctgggcaacagactaagactccatctcaaaaaacaaaaacaaacacatttcataaaaacaaaaacaaaaacatacatgtgagatgtggagccaaaagaccttcaactgtcaaactggaaatgacagtagtaataattatctctgctcagcccacctcacatgcccatgatgtgaattaaatgagatcgcagatgtgatggtcctttgactcagtaaaggaatgtatttgtaggatacaggctctactacatgtgcaagagagtccacaaagaattacctgggccccagggtctccacagacgcaggtggccctgccagtaagaagagtccaccacctttctcatcgcccacagttaagaacaggagggtctcctaggaggtaagacaaggagataagctctgatactgaaggatgtagagtcaaccccccaaatcctgcactctcttcaatcttaagaatagattatttccccctaaaccaccaagtgacgctcctgatgaatgatgatacagcccctccacactggcccacgagggccaagaaactttttgagagcaactatgggaacttaggtgaaacattaagaaggcagcagaagactgctgatcctggctaagcagaaaatgcctttcatggtttcactcttgcaaacttttccccaccacacatcctttccctgccactgcctaaaccaccaggtttccctctgcctggccgcctctgccccttgtctgtctgatgacctctaagcagtcttcaagggcccctcccctgaaacctccctatccttcaggtaatgtgctcctccacctctagcattcatcactctatcattctgaattataaatgtcgacatacatatttgtctcccagactagaatatgagcttcttgagaatcagttctgtctatacagaagaattatgaaaagagagatacacaacgctttacccacagtaggcattccaaagaagggttctggagtaaatacaaaagagatagtggggcatggtggctcatgcttgcagtcccaactactcaggaggctgacgtgggaggactgcttgagcccaggagttcaagactgcagtgagccataatcacgccactgtactccagcctgggtgacagagcaagactctgtctctgaaaaaaacaaacaaacaaacaaacaaacaaaagacctggaaatctctaggctagagaccatcaggagtgggaagagtaagtaaagccagaggaagaggaaaatggacggggatggctttcaaaggggcttgcccactcctgtatttactttttttttttttttttggagacagtctgtgttgcccaggctggagtgcagtggcgcaatctcggctcactgcaacctcagcctccagggttcaagcaattctcctgcctcaacctcccaagtagctgggtctacaggcacctgccaccacacccagcaaatttttgtcttctgttttgagacagaatctcactctgtagcccatgctagagtgctgtggcacaatctcagctcactgcaacctctgcctaccaggctcaagagattctcatgcctcagcctcccgagtagctgggattacaggcgcatgccaccacgcctagctaattttttgtattttagtagagatagggttttaccatgttgcccagggtggtctcgaactcctgagctgaggcaatccacccgcctcagcctcccaaagtgctggaattacaggcgtgagccaccatgcctggcctgatttttctatttttagtagagatggggtttcaccatgttggctaggctggtctcctgatcttaagtgatccacccaccttggcctcccaaagtgctgggattacatgcgtgagccaccgcgaccagcccactgatatatttctaatattggatccccagcacacataaacctgaatggctttgaggagctagagctctgatgaaaggagctcagaagctaataaacatcacagccccagagagagcaataacatagatctagctcaacacctaaaacagagcttggcatatagctagtactaagaaaacagtattgaatgaatggctatttcctcctcctcatgtgttcatgtggagggactttggctaaactagcgcccctcacttatgtctccctaggtctctatccaggccggggtagagaatctcatgctcctcttacctctgacccaatctcattggcaatgatattcatgaactctgaatcaccctccttcctacaacaaaggacacagacatgagacccaggttggagtggtggctgtgaaactgcaggaagcctggcccctccttctgaggctggccttgctgcctatgtacacataaagtcccatatcccttagccaagagagagtactggctgaaagccagcaagctgcccttctcagcctctgcagtttgtaatcaacctccaggtttgtttccatctcccttaaataggattcaccaggataagcagaaatctgttagagagtaaaggaggtaggggacagtcctaaagaaagatacaggctggacacagtggctcacacctgtaatctcagcactttgggaggccaaggtgggcagattgcttgaggtcaggagttcaaaaccagcctggccaacatggggaaaccccagctctaccaaaaatacaaaagttagcctggtgtggtggcacatgcctgtgatcccccagctactcgggaggctgaagcacgagaaccgcttggacccaggaggcacaggttacactgagccgagatcatgccactgcactccagacacactaagactccatctcaaaaaaaacacaaaaaacaaaagatacagagttacagtaaatatgttaatatcaaacccaggaggcctggtatgtaacatatttctttttttttttatatttttgagatggggtctcactctgttggtccaggccggagtgctgtggcgtgatctccactcaccacaacctctgcctcccgggttcaagtgattctcctgcctcagcctcctgagtagctgggactacaggcgcgtactaccatgcctagctaatttttgtacttttagtagagaaggggtttcaccatgctggccaggctggtttcgaactcctgaccttgtgatccacccgcctcagcctcccaaagtgctgggattacaggcgtgagccaccgcgcccggccagtaacatatttcttaggatctactcaaccttgagaataccagtgagcaatccacctcccactgtacattgcatatagagaagacactgagccctaagcccaacacagttccccttccttgtgtccagctcctaatttctcacctgtgtaatatgaccacacctccccagtctggactgttcctgaggctatgggcaatgtgcacagccaggtctctgagcagattcaggttattctgaaatggatatggtaactcagtagataaatggaaaggataacaatagagagtatcagcttccctccacctcattctcccctcactcccactttgacaaactacacatctgtttaggcagaagaccaagtctgcagagcctatcctaggcagggcccatgccctctctaccctccatggaataaatcaccttctgcaggatcttggtggagttctggagctttttcactgcttccacatgatcctctgctccacacctgaaagagaaaggtcagaggagacctgcgcagcttcccagtcgtttctgatgttggggacataaatcaataatttccttcttgctatggtgcctccctgcagtcagggaccaggagatattctgaggaggtctcttaggcaactgggagaaaacatacaaaggaattaaccacttttcgtggttctgatttactatccaaagcacttgatcttttttttttttttttttttgagacagagtcttgctctatcgcccaggctggagtgcagtggaacgatcttggctcactgcaagctccacctcccgggttcacgccattctcctgcctcagcctctcgagtagctgggactacaggcgcccaccaccatgcctggctaagttctttttgtatttttagtagagacggggtttcacggtgttagccaggaaggtcttgatctcctgacctcgtgatccgcccacctcggcctcccaaagtgctgggattacagatgtgggccaccacgcctggccgcactttatcatttacgattgcatcttatctcccagaggtaagagattatgtcgaaaatctcagaaatgggaggtaatcgaaggtactgaaacaggcatacttaagcagagcagtcagtgctttttcagttccatgacttctctccatccacttcagcacccggttcccagacagaaatatcaggttggttctgttctttttccccttctcagtgcccagaatcttaatgacctacatgaggcaagggggtaacacacacacacacgtgtgcacatgcataaaccacagcggatcctagaacctgaaggcaggagaaacctatctgttcctcagctctgaaacagtgaaggggagatttcacttaggactcctcgattatccccctctcccactcccagccccatgtgatcccctctcccccaatccctcttctcagccactccacagccgttcctcacttacctgaaggtcactgagattgctcacatgggtcccacagcacatgttggaatcaacgccctcgatgttaacaacccgaatgggcccagcatgatcatcaggcaaaccccggccactcacctggactcaaggagaggggagggactgtctgaatctgatgaggaatcattccgcagaaaccatccctctggctctacccttacctgctccacctcaggatcatccaggctcagttctcggacattcacaggcagccgatctctgattttttcattgacgctctgctcaatggcagctacttgctctgcagtcatagagggggtgtccagctcaatcgcactccgaaatctccctaactccctgtcagaagtacagtggccacagataacatatcttactgaacaagaaaaagctgaaagcttttcctctaaaaactggaacaagcataccctctcaccactttttttttttttttttttttttttgagacggagtctcgctctgtcgcccaggctggagtgcagtggcgcgatctcggctcactgcaagctccgcctcccgggttcacgccattcacctgcctcagcctcccgagtagctgggactacaggcgcccgccaccacgcccggctaattttttgtatttttagtagagacggggtttcaccgtgttagccaggatggtctcgatctcctgacctcgtgatccgcccgcctcggcctcccaaagtgctgggattacaagcgtgagccactgcgcctggccttttttttttttttttttaagacaagctcgctgtcacccatgctgccatttggtggcaatcacagctcaccacagccttaatctccccggctcaagcaattctcccacctccgcctccctcccagtgctgggatgggcctgcctacagttagtcttatgcctcccactcaccatgatgttgtcttcagcttaaatagatggtcagcaactgccgtgatgagatgctgccctaagcaaagagagccagagacaggagaaaagtgagaagcctacatactcccacaatgataaaatatgagctacaatgataaaagcacagaaattctccttgttgaagacctgctaagcactgggtaatacactttagatactttattgaaaatcacaatgagaattctgcaagaggccttatgataccatttcacagatgaggaaactgaagcctagagagatcaaataacttgccatggcaatgtaacttataaggggctggacttgaacttaacttcctttttttttttttttttttttttttgagacagtctcattctgttgcccaggctggagtgcaggggctcactgcagcctccgcctcccaggatcaagcaattctcgtgcctcagcctcctgagttgctgggattatagacgtgcatcaccgtgcccggctaatttttctacttttagtagagatggggtttcaccacgttggccaagctggtcttgaactcttgacctcaagtgatccacctgccttggcctcccaaaatgctgggattacaggtgtgagccactgtgcccagtgaacttaagttccaatatgcagcattcatccattcaacaagtatttattgagtacctaccaaatgcaaggcacagggcttgacataagagatacagcagcatccctgattgacaagagtgatgatgaggagaaagaagaggaagaggaggaggaagaaaaggagaaagaggaggaactatcaaggaagagggaacaagacagccaaaggccttaaggaagaaagaagtagcgcatgtcaaaggaatccagagatgacaagcaaggccaggatgcagccagcaagaggtcaagggacaccagatgaggctacagcagtagacaagagccacccagatacagcttgtatgccatggtaaaaagtttggctttacacgaagacctacaggaagcctctgaagagctttaagcagaggagtgacataatattttcattttttaaaatttatttcagtcaggcgcggtggctcactcctgtaatcccagcactttgagaggccaaggcaagtggatcatgaggtcaagagtttgagaccagcctgaaacaacgtggtgaaacctcgtctctactaaaaatacaaaaattagccgggtgtggtggcatgcacctgtaatcccagctactcaggaggctgagttgcttgaatcccaggggtggaagttgcagtgagccaagattgcaccacggcactccagcctgggcaacaaagtgagactctgtctcaaaaaaaaataaaaataacaaataaaattaaataaaatttatttcattttacatatttatttttatttatttttgtatttatttatttatttattttgagatggagtatcgctctgtcacccaggctggagtgcagtggtgcaatctcagctcactgcaacctctgcctctcgggttcaagcgattctcctgcctcagcctcccaagtagctgggattacaggtgcacgccaccatgcctaatttttgtacttttagtagagtcagggtttcaccatgttgaccaggttggtctcaaactcctgacctcaggtgatctgcccacctcagcttcccaaagtgcctgggattacaggcatgagccaccacgctcagtctgtttttatttttcttgtttacatttccactttaacttatatttatttatgccaggtgcggtggctcaagcctgtaatcccagcactttgggaggccgaggcgagcagatcacaaggtcaggagttcaagaccagcctggccaacatggtgaacccccatctctactaaaaatacaaaaattagccggatgtggtggtgcgtgcccgtaatcccagctactcaggaggctgaggcaggagaatcacccgaacccagtaggcagaggttgcagtgagccaagactgcaccactgcactccagcctgggtgacagagcgagactttgtctcaaaaaaaaaaaaaaaaaaaaaaagttatatttacttttttgagacggagtcttgctctgttgcccaggctggcgtgcagtggtgccatctcagctcactgccacctctggctcctgggttcaagcaattctgcctcagcctcctgagtggctgggactacaggcatgcaccaccacgcccagctaatttttgtgtttttagtagagacagggtttcacaatgttggccaggctggtctcgaactcctggcctcaaatgcctgacctcatgatctgtccgacttggcctcccaaaatgctgggattacaggcgtgagccatcgcgagcagcctacatttattttctgagacagggtttcactatcttgctcaggctggtatggaattcctagcctcaagcgatcttcccgtgtcagcctcccagagtgctaggactacagcagtgagccacagtgcccagccatttctcttttctttttttttttttgagatggagtctcgctctgtcgccaggctggagtgcagtggcgcgatctcggctcactgcaacctccacctcccaggttaaagcgattctcctgtgtcagcctcctgagcagctaggactacaggcgcgcatcaccatgcctggctaatttttgtatttttagtagagacagggtttcatcatgttggccaggatggtctcgatctcttaacttcatgatctgcccacctcggtctcccaaagtgctgggattacaggcgtgagccaccgcacctggctgccatattttcatttttaagattgttcagctgggcgcagtggctcccgcctgtaatctcagcacattgagaagccgaggcgggcggatcacgaggtctggagttcgagaccagcctggccaacatggtgaaacaccgtctctactaaaaatacaaaaattagccaggcatggtggcacgcacctgttatcccagctactcgggaggccaaggcaagaggatcacttgagcccgggaggtgaggttgcagtgagccgagatcatgccattgcactccagcctgggcgacagagcgagactccaactcaaaaaaaaaaagactgttctggtgctatgtggagaatgggctacagaggagccagactgaatgtggggcaatcaattaggaaactgttagagaggtccagggggaagacagctaggagctgggactaggatgacagtgactgtggaaagaagtggacagacatttagaaaacaaaccaacatgctgggggggtgtggctcatgcctgtactttgcggggtcaaggcaggcggatcatctgaggtcaggagttcaagaccagcctgaccaatatggtgaaacaccgtctctattaaaaatacaaaattagctgggcatggtggtgggggcctataatcccagctactcgggaggctgaggcaggagaatcgcttgaacccgagaggcagaggttgcagtgagccgagatcgcaccattgcactccagcctgggtgacagagcgaaactctgtgtcaaaaaaaaaaaaaaaaaagaaaagaaaccaacaggactcagtgattggctggctgtctatgcctgaagaggtatctggaatgacttccagaacttgagtgactaggtgcatgctgatgccctgcgatgaacacacaggatgctaatgaaagaccaggagggaggggaaggctttttgtttcattttggacattttgagtttgaaaaggctgtgagacatccagatggagatatcgagtgggaagttgataatacctaaatccagcagttattctaatacttttttttacttcagttgttcatgttgctgttataacatttaggatatccttcctgaattacagctgattctgaatagtctgtcttttccaaaaggttaactcctagagaacccaaactacgtctcagtcatcacagcatccccatacatggcaactgctccggtgttatgtcccccatcccagcctttacctgaatgctgctgcatgtggtcaaacctccgctcccaatctacccggaccagaacctggcttcctggatccaggggtgtctgggtgaaatgatcagcctgttccccacggcgagtcactctcagcacagagatgtcattgattgtaccacggtcatcaggctggtggaaataagtaaacgtaatcaatggcaaggcagggctcaccctaacttctaggtacaaagaccctctagggtgagagacccagaatctgggctccctaagggagagggagaaagcaatgccaagtgaaatgagtccactttgttccatgagaggattctcagtccttttcattctaaacacctatgtgttgtgatcttcagaataacagaattaaagagattgtaactacagcaacaaaaattttagtaaaacccgaagaatcttaatcctcaactctccttgccttagtctagattcttttgtagtctctaaaatgatctgatttttcctccctccctccactccatcctcttgcagtggtattagaattagattcaaaaatgttcatttaggctgggcatggtagcttattcctgtaatcccaccactttgggagaccaaggcaggaggatcgcttgagatcagactggacaacacagtgagaccccacctctatgaaaaataaaaaattagctggccatgatactccctgctacttgggaggctgaggtgggagaatcacttgagcccaaaaggttgagactgcagtgtgctatgattgctccactacactccagcctgggtgacagagtgagacactgtctcatttaaaaaaaaaaaagggccaggtacagtggctcacacctgtaatcccagtactttggaaggccgaggtgggcggatcacaaggtcaggagatcaagaccatcctggccaacatggtgaaaccccgtctctactaaaatacaaaaaattaactgggcatggtggtgcacacctgtagtcctagctactcgggagactgaggcaggggaattgcttgaacctggcagacggagattgcagtaagccgagatcacgccgctgcgctccagcctggcaacagagcaagacaccatctcaaaaaaaaaaaaaaaaaaagttcattcattttaaaacatttcaagtgccaactgcttacaaaagactgtgccagcccaagaatacaatgtaaacaagatatggtacctcatggaacttaagagtctagagaacagaggctggaaaacagacaattgcaatatgacctataacatgccataatatgaaaaagtatatgacgctagagaacctcaaaggaaagagacctaacagtcttggggaatcaaaaaaagacttcctgaaagaaatgctgtctaaaatgagaccttctatggatacttgaggtcacaggttttccttcagcagatcagggaaatcttcatactgggaaaatcaccataataatgactgatatgaaattggaactctctcaataccaagtctactgaacatgttctctcatgtcacttatttgcttaagaacctgagtggaggccagggcagtggctcacacctgtaggcccagcctttgggaggccaaggtgggaggactgtttgaggccaggagctcaagatcagcctgggcaataaagtgagacctcatctctacaaaaaagcagccaagcatgttggttgtgcgcctgtagtccccactactggagaggctaaaacaggaggattgcttgagcctgggagttcgaggctgcagtgagctagatcaggccactgcactccagcctgggtgacatagcaagatcctgtctcttaaaaataaaaaagaaagaaaataacctgcatggttcgctgcccacacaccttaatacaccttttttttttcttttgagacggagtcttgttctgtcccccacgctgaagtgcagtggcacaatcttggctcactgcaacttcagcctcccggttcaagtgattctcatgcctcagcctcccgagtagctgggactacaggggcctgccagtatgcctggttaatttttatatttttagtagagacaaggtttcatcatgttggtcaggctacttgggaggctgagacaggagaatcacttgaacccaggaggcggaggttgcagagctgagatcatgccactgcacttcagcctgatgacagcgagagattctgtctcaaaaaaaaaaagaaagaaagaaagaaaagaaaagaaagaaaagcctttctcataatgcccacctttggtgttattatcctcctcttccatcttcacaatgtacctcacttgcgctcatgttgtacctagtcctcatcacagcactgataaatatgctctctgctgtactactgtaacccgtctatctcacctgaactccttcaggaacatctttttcagtccctaaaacccgaagctaattccttccttggggcctttgcacctgctattctacctgcctgaatactccctctgccccccagcaccactagataattgcaaagactcaccccctcacttcgtttaggtctctactgaaataacttacccttcatctagacaagcatcccatcactctctttccctttacttggtttttgtttattacttattatacctagcacacacagttgtcttcaataaacattccacgtatataaaggcactgtgttgttcaccggttatccttacagcctggaataatatctagcatatgttatgtctagataagcaattgctgataaatactcattaaatgaataacaaaatgaattaaactaaagctcatctgaattcattatggctgagaaaaaaggggcaggagagcatttcggcctgagcacaaagaaactgggggcttcctgggaagagatcgttttggtacctgtcccccgccctcagggaaaagcactgtgtcttccagcaccacttggaaaccgctcagcacttctttcttgccgttgctcccttcagtctgcagctccgcgggacagcaggagaccacggtggtggtgaactgaacagagaggaatgagagaataagccccgaccccagccctagccctagccctctccacaccaggacagaatgccatgttggcactccctacacgtggcgccctcttccccaaaccgccttgccggcccggcagtctcaagtgcctcgccgtgacgccgtacctctcgggcataactgtcacgctgacaccagaacgccatacctgcaggcgtgtgaggaggcgcacgcgcagagaagcctgggagcgaacggagagcgacgtgggacaaacgtcatcaagggcgcttgtctgcgcagaagcaggagggtaaggaatggaatgcggtttggataaatttactgaaaacgcgaattgcatatttgctgggttgtttaacgactgttctaaggctttacaaaggacaagaccaggaggaaaaaaacaaacaaacaaaaacaaaaaaacgcgacctggacaaggcacgtggtttagtgagccccttggggccccagggatgtaagtattctggctgcggaatcccagcgcatagaggcggggacgggactggcatggttactgagcagcactgcccagtagaaatagaaagcaaggagctgggggaggtggctcacgcctgtaatcccagcattttgggaggtcgaggcgggtggatcacctcaggccaggagttcgagaccagcctggccaacatagcgaaactccgtctctactaaaaatacaaaaattagccgggcgtggtggcgggcgcctgtaatcccagctacccgggaggctgaggcaggagaatcgctggaacccgggaggcggggttgcagtgagcagagattgcaccactgcactccagcctgggcgacagagcgagactccgtctcaattaaaaaaaaaaaaaaaaaaaaaaaaaaaggccgagcgcggtgactcacgcctgtaatcccagcactttgggaggccgaggcgggcggatcacgaggtcaggatatcgagaccatcctgactaacgcggtgaaatcccgtctctactaaaaatacaaaaaattagccgggcgtggtggcggacgcctgtagtcccagctactccggaggctgaggcaggagaatggcgtgaacctgggaggcggagcttgcagtgagccgagatcgcaccattgcactccagcctgggcgacagagcgagactccgtctcaaaaaaaaaaaaaaaaaaaaaaaagaagaacaatttggccagcgtggccaacatggtgaaaccctgtttctactaaaaacacaaaaacattagccaggcgtggtggcacacgcctatataatcccagctacacgggaggctgaggcaggagaatcactttaacccgagaggaggaggttgcagtgagccgaaatcgtaccactgcactccagcctgggtaacccagcgagactacgtctcaagaaaattacattacattacattaaaatagtttgggccagacacagtggctcacatctgtaatcccagcagtttgggaggccgaggtgcctggatcagctgaggccagaagttcgataccagcctggccaacatggcaaaaccctgtgtctactaaaaatacaaaaattagctcggtgtggtggcgggcacctacaggctgggattacatcccagcttctaaggaggctgaagcaggagaatcgcttgaacctggcaggcggaggttgccgtgaactgagatcgcgatactgcactccagcctggctgacaaagcgagacttcgtctcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagcaaattaaaccaggtgctaatttttatcttgtcaaatatctgaaacgatttagagaatggaacactctcattgttcgtaggagtgagaattggtacaatttcatcaaagagcaacttggtaacagctatcaaaatgtttaaatgtattttatctactccttgacctagcaattctacttctagaaatgtaccctacagatatcctggcaaaaatatgtaaagatccacatttttaaatgttgattgcaatattgtttgcaaatggtaaaagactgccggacgcggtggctcatgcctgtaatcccggcactttgggaggccgaggcaggtggatcacctgaggtcaggagttctagaccagcctggccaacgtggtaaaaccccgtctctactaaaaatacaaaaattagctgggcctggtggcaggcgcctgtaatcccagctactaggggagccgaggcaagagaatcgcttgaacccgggatgcggaggttgcagtgagctgagaccacgccgtcgcattccagcctgggggacaagagcgagacttcgtctcaaaaaaaaagaatatggtaaaagactaacgacctacgtgtccctcaataaagaacctgtgaaattatgaaaaatacattcaatggaataccatatagccatgaaaaaaatgagttagatctatatgttctgacttgtaaagatctccaatatatattaaatgaaaaagggcacaatgcaagatgcggatggtatgattccagttgtgtacacacacagacacacacaacacatctgctaattaagttttaacatactgcatgtaagtaatatatactatatgtttatgttccatgttatatattgttttgtatgttatataattataccttagaactacatagtataaaataaattataggtattatagtatttataatgcagtatggggccagggatggtggctcaggcctgtaatcccagcactttgggaggccgaggaaggaggcttaaggccaggagtttgagagcagcctgggcaacaagcaaatctttacaaaaaaatagtttgtcctaaagacaaggtctttacatatatataaaatatatattatataatatataatataatatataaaatatatattatataatatataatataatatataaaatatatattatataatatataatataatatataaaatatatattatataatatataatataatatataaaatatatattatataatatataatataatatataaaatatatattatataatatataatataatatataaaatatatattatataatatataatataatatataaaatatatattatataatatataatataatatataatatataaatatatatgtatttatatatgtagatatataatatataaaatatatataatatgtatcatatataatttatatattatatattttaaatatataatttatatataatatataaaattaatatatataatatatattttatatataaaattaatatataatatatatatattttatagagcgagacggagtttcgctcttgttgccctggctggagtgcaatggtgtgatctcggctcacagcaacctccacctcctggattcaagccattctcctgcctcagcctctgaagcagctgggattacaggcatgagccaccacgcctgactaattttgtatttttagtggagacagggtttctccatgttggtcaggctggtctcgaactcctgacctcaggtgatccacccacctcagcctcccaaagtgttgggattacaagcataagccaccgcacctagcctacaaaaatattttttaacttagtcagctgtagtgtagtcctagctacccaggaggctgaggcaggaggattacttgagcccaggaagtcagggctccatgaataatgaatgtaccactgtattccagcctgggcaacaaagcaagactctatctcaaacataaataaataaataaagtttacttttaaagtaaatcctaatagtttaccatgagttcaagagcaaagtctataggcaatgcatttattttgtttaagttacagtcaactgtacatattaggcactcaaaaaagtttatggacaaatagaatagctgttggacaaataaacatagacattaactagagtaacaatcagttttaaaagtataaagagggccgggtgtggtggctcatacatgtaatcctagcactttgggaggctgaggtgggtggattacttgaggtcaggagttcgagaccagcctggccaacatggtgaaaccccatctctgctaaaaatacaaaaattagctgggcctggtggtgcacatctgtagtcccatctacttgggaggctgaggcaggagaattgcttgaacccagaaggtggaggttgcagtgaacagagactgcaccactgcactccagcctgggcgacagagcaagactccatctcggaaaaaaaaaaaaaaagtataaagagatttctagagtgtgcaggaagctgaagtggctggttctagagatgacagaattagctgtaagaaatcagagcacaaatctgggcaagaggaagcaccccagcttggttactagagggagaagaggcttgccaccaggaggaataagtacaagaaggaaacagacagagaacagttcctagagatttattataatctgtttcttctttggctttttgctttgccccatatgcacacatagtagagatttctataatctgcattcttctttggcttttgttttgccacatacacacacatactcaaataatcaagtggcctaaacacagagattagaaaccaatcagtaagaaatcagaagccctaccagtctacccctccccgaccctgcatctgatgtggagccatagtcaagtgcctaggaggaagacaagcttgaaggacgacccttaataaagagcttctaggaaagttcagagatctcagaagaacttggtgcacagccaaagcgctgacaaaggcctaggcgctagctttctagaacaactggaaaatagccacagctgccttcccagctttgcgtcacagaaagttaattacttgttgcatcatcagcactgtcagaatcatcctgggggcgggggggaaaaaagacaaagcacctgtagaccctgcaaagcaggaacatttgtgttaacaaatactgcttcctctctcctgttctccaagtttctttttgtgatttcctaaaccacccaacttagggggctaatatgaaaggttttaacttactttggatgttaagtaaaccaacactactttgtcatacatcattagtttcaggactttttttttttttttttttttttttgagacagggtcttgcttcatcacccagctgcagtgcagtggcatgatctcagctcagtgcaacctctgcctcacagtctcaagcgatcctcccacctcagccacttgagtagctgggattataggctactgtgcctggctaatttttgtacttttggtagagacagggttttgccctgttgcccaggctggtctcaaactgctgagcacaagtgatccacctgccttggcctctcaaagtgctgggattacaggcgtgagccaccacacccaccctagtttcagaattttaattaatgctattgctccttacagctggggtaggtcttctctaggatggagaaacagaggggtagatggaaagcaggagggtcttgctagggttttctaaagcctggagaagaatattagccttcttgggccaggcgtggtggctcacgcctgtaatcccaatactttgggaggccgaggcgggtggatcacctcaggccaggagttcgagaccagcctggctaacatggcaaaaccctgtctctactaaaaatacaaaaattagctgggcgtggtggcaggcacctatattcccagctactcaggagtctgaggcaggagaatctcttgaacccaggaggcagaggttgcagtgagccaagatcgggccactgcactccaacctgggcgaaagagtgaaactcctcccccaccccccaaaaaaagaatattagccctcttgggtcaaactcaaatttggttaacaggcactgagaactactgtgtgctaggaactgggataggagctctctagtgggttgtttttaagggctacaaagaaactgaagggttgaggggaaggctttacttacatccaaatcatccatggcaggtggaggtctcttggtgctgaccttcttcaaaagctagtgggaagaaaaaataatcacaagggagaagggagtgaaggaagaacaatctgcacattgatggtccatagaagaatggttgcagccagaactggtcaggcaactgctcccatctttaaaacatcactggaattaatttgagaaaagtaaattgatccccttcttaaaagaaaatttaacacaaatccagattggagtcggctagtgtttttataactgaaaccaaataatataacgacagtgtgtgatttactgggggccaattatttatgatgtgagtttttatactgctagttttaacatcccatgaagttgtctggcttaacacgcgcacacacacacacacacacacacacacacacacacacacacagaggccgggtttggtggctcacatttgtaatgtgagcactttgggaggctgagacagacagatcacttgaggccaggagttccagaccagcctggccaacatgatgaaaccccatctctaccaaaaatacaaaaaaaaattagccaggggtggtggcgcatgcctgtaatcccagctactcaggtggctgaggcacaagaatcacttgaacctgggaagtggaggttgcagggagctactgcactccagcctgggagacagagcaagactctgtctcaaaaagaaaaccacacacacaggccaggcatggtgacttacgcctgtaatcccaccacttgggagggtgaggcaggtggatcacctgaggtcaggaatttgagaccagcctggccaacatggtgaaactccgtctctactaaaaaaatacaaaaattatccagaagtggtggtgggcacctgtaatcccagctactcaggaggatgagacaaaattgcttgaacccagaggcagaggttgcagtgagctgagatcgcgccattgcactccagcctaggcgacagaaaaccacacacacacacacacacacagaaaacagtagaacaagaattacagaaaagtggaaaaacgttttgtcaaacttcttcagaatacaggctctacactgaataagtgaatcaatgtatataatttcaataatattctttcctctcatccctattaaataaacattgcacaaaatacgtaaagaatatcagcatcaatgagtaacctgcctagagagcttgcatatctctgcttggccccagtgacaatcctccagagacatgtgtgcagagaaacacaaagaatgatcaagtgggcagaacacagtaggtgttgtctctcacctctgcataatgttccacatgagccagctccatctcttcatccccttcccagtctctccagttatcaaagtccacagacagccacactggctgcaagaagaggcaccaagagtcacaggccaggagggcaggagcaggagtgtgtgggagagtgtgggcatatgcatgggagcacgcctggggaaaagagggtcagtaggtccctagtcctcccaactgcactcctttgaccaggaacctgccaatctacacacaaagctaggcatgatagagtctgaaaatctcagaagtcctaccctccggccaggcgtggtggctcatgcctgtaatctcagcactttggaaggccgaggcaggaggatcacaaggtcaggagttcgagaccagcctggccaatatggtgaaacctcgtctctagtaaaaatacaaaaattatccgggcgtggtgacgggcacctgtagtcccagctactcgggaggctgaggcaggagaattgcttgagcctgggaggcggaggtcgcagtgagccaagatcgtgccactgcaccccagcctgggtgacagagcaagactgcatctcaaaaaaaaaaaaaaaaaaaaaaagaagtcccaccctccaggagccgattgactgaggagacaacacatctggaaagataattgtatcataaagcaacataggcattatgccctctctctctccctctccctctccccctccccctccccctccccatggtctccctctctttccacggtctccctctcatgcggagccgaagctggactgtactgctgccatctcggctcactgcaacctccctgcctgattctcctgcctcagcctgccgagtgcctgcgattgcaggcacgcaccgccacgcctgactggttttggtggagacggggtttcgctgtgttggctgggccggtctccagcccctaaccgcgagtgatccgccagcctcggcctcccgaggtgccgggattgcagacggagtctcgttcactcagtgctcaatggtgcccaggctggagtgcagtggcatgatctcggctcgctacaacctacacctcccagccgcctgccttggcctcccaaagtgctgagattgcagcctctgcccggccgccaccccgtctgggaagtgaggagtgtctctgcctggccgcccatcgtctgggatgtgaggagcccctctgcctggctgcccagtctggaaagtgaggagcgtctccgcccggccgccatcccatctaggaagtgaggagcgcctcttcccggccgccatcacatctaggaagtgatgagcgtctctgcccggccacccatcgtctgagatgtggggagcacctctgccccgctgccccatctgggatgtgaggagcgcctctgcccggccgcgaccccgtctgggaggtgaggagcgtctctgcccggccgccccgtctgagaagtgaggagaccctctgcctggcaaccaccccgtctgagaagtgaggagcctctccgcccggcagccaccccatctgggaagtgaggagcgtctctgcccagcagccaccccatccgggagggaggtgggggggggtcagccccccgcccggccagccgccccgtccgggagggaggtgggggggtcagccccccgcccggccagccgccccgtccgggaggtgaggggcgcctctgcccggcggcccctactgggaagtgaagagcccctccgcccggccagccgccccgtccgggagggaagtggggggggtcagccccctgcccggccagccgccccgtccgggaggtgaggggcgcctctgcccggccgcccctactgggaagtgaggagcccctctgcctggccaccaccccgtctgggaggtgtgcccaacagctcactgagaacgggccaggatgacaatggcggctttgtggaatagaaaggcggaaaaggtggggaaaagattgagaaatcggatggttgccgtgtctgtgtagaaagaagtagacatgggagacttttcattttgttctgcactaagaaaaattcttctgccttgggatcctgttgatctgtgaccttacccccaaccctgtgctctctgaaacatgtgctgtgtccactcagggttaaatgggttaagggcggtgcaagatgtgctttgttaaacagatgcttgaaggcagcatgctcgttaagagtcatcaccactccctaatctcaagtaatcagggacacaaacactgcggaaggccgcagggtcctctgcctaggaaaaccagagacctttgttcacttgtttatctgctgaccttccctccactattgtcccatgaccctgccaaatccccctctgtgagaaacacccaagaattatcaataaaaaaataaattaaaaaaaaataaaaataaaaataaaaaaaaataaagcaacataggagtcaaccaataagacagacaagctgcagccaggcgcagtggctcacacaacctgtaatcccagcactctgcggggccagggtgggtggatcacctgaggtcaggagttcgagaccagcctggccaacatggtaaaaccccatctctactaaaaatacaaaattagctgggcatggtggcacatgcttctagtcccagctacttgggaggctgaggcaggaaaattgcttgaacctggcaggtggaagctgcagtaagctgagatcgcgccactgcaccccagcctgggcaacaagagtggaactctgtctcgaaaaaaaaaaaaaaaaagacaagctgcattccatggagtcagagacagcccttcaaggtccatgttccaaagtttccacatttatacagggaagaagttattcactccttcattcaaaagatatttattggccaggtgcagtggctaacatctgtaatcccagcattttgggaggctgaggcaggtggatcacttgacgtcaggagtttgagaccagcctggccaacatggtgaaaccccatctctactaaaaatacagaaattagctgggaatgctggtgggcacttgtaatcccatctactcaggagactaacgcaggaggattactggaacccggaaggtggaggttgcagtgagtcgagatcacgccactgtactccaacctgggcgatggagtgagactctgtctcaaaaaaaaaaaaaaaaaaatttattgaacacatactatggacagactctcagcttggcactgggtttataaaaatgttctggccgggcgcagtggctatcacttataatcacagcactttgggaggccaaggcacatcaattgcttgagcccaggggttcgagaccagcctagggcaacatggcaaaaccccatctctacaaaaaatacaaaaattagccaggcatggtggcacacttctgttgttccacctactcaagaggctaaggtgagaggattgcttgagcccagaagggcaacgctgctgtgaaccttgattatgccactgtactccagcctgagtaacagtacgacatcctgtctcaaaaaaaaaaaaaaaaaaaaaggtcaacacactgtcccagccacttggaagcaagctggggagggagatataaataaagcactataatacagtgtgaaaagtgtggtggtggagttatataggggacatcatgggaaccccaaaaggagtcacaagaacccaggtttctggagtggcagggctttgaaggatgcacagggattgggtgggtgaaggtagtaatgatggtaacttttcaggaagaaggcataccttgagcaaaggtacagaggtgagaaacagcctggtttttgcaaaacaaacaaaacacaacagtctgctgtggctagaagataaagcttggggcagagagtgtgggatgtgctagtgtgttatgtaacggatctcaacctaaagggcaggaaatcaaacgctcaaatacccaagagagtcagggaggtaatgaaaaggagcaagtgaggtgaagtacatgatccactgaaaacttcaactctaggcatctggggatgtgtatcagtggggctagattctctcatttttctttttcttttttctttctgagacagagtctcactctgtcatccaggctagagtgcagtggggtgatctcggctgactgcaacctctgcctcccgggttcaagcaattctcctgcctcagcctccggagcagctgggattacaggcacgtgctaccgcgctctgctaactttcgtatttttagtagagacggggtttcaccacgtcggccaggctggtctcaaattccccaccttgtgatctgcctgcctcggccttccaaagtgctgggattacagtcacgagccaccgaacctggctccccgttttatttatttattttttttgaaatggagtctcactctattgcacaggcaggagtgcagtggtgagctcttggctcactgcaacctctgcctcccgggttcaagcaattctcccgcctcagcctcccgagtagctggcactacaggctcgcaccaccacgcccagctcattttttgtatttttagtagagatggggttttgccatgttggccaggctggtcttgaactcctgacctaaatcaatccatccacctcagcctcccaaagtgctgggattgtgagccacctctctcagcctcccatttttcaacagaagcttatagtctggatttttagaagatgcacatttttaaatgtcagcaactaataaaaattttttaatgtcagtaacaagtcaaaataatttctttttttttgagacgttgtctcgctctgtcgcccaggctggaatgcagtggcacgatctcagctcactgcaacctccacttcccaggttcaagcgattattctgcctcagcctcctgaatagctaggactacagacatgcgccaccacacccagctaattttttgtatttttagtagagacggcgtttcactatgttgtctgggctggtctccaactcctgacctcaagcaatctgcctgcctcggcctcctacagtgctgggattacaggcgtgagccaccacacccggccttaaaataatttttgacactgtaaagattaaaacaaatctgagagccagatccagccatcaggcagtcagttttcaacctttaaggaggagacgactttggagggccttaagtgggggagcatcagggtcaaatgtgtgttttagacagaccatgctgagggcaatgcagagaatggattgaaaatggaactgaaaatatgcaacaaacttctcactgtatgctggtgaggcttgaactaggaagaaattaagtagtgaattcattaatatttaagaggtcagtagagcctggttgtaagccactactagaaagaataagagtcatcagggctaggtgtggtggctcatgcctgtaattccagcaccctgggaggctgaggcaggcagatcacctgaggtctgaagttcgagaccagcctagtcaacatggcaaaaccccatctctactaaaaatacaaaaaattaccaggtgcggtggcttacacctgtaatcccagcactttgggaggccgaggcgagcagatcacctgaggtcaggagttcaagagcagccgggccaacatggtgaaaccctgtctctattaaaaatacaaaaattagctgggcatggtggtgggcacctgtaatcccagctactcaggaggctgaggaaggagaatcacttgaacccaggagacagaggttgcagtgagctgagatcacgccactgcactccagcctgggtgacagagtgagactctatctcaaaaaaaaaaaaatacaaaaatacaaaaattagccgggcgtggtggcacacgcctgtaatcccagctactcaggaggctgatgaaggagaatcgcttgaacccaggaggcggaggttgcagtgagccgagatggcgccattgcactccagcctgggcaacaagagagaaactctgtctcaaaaaaaaaaaaaagaaaagaagaaaaagaaagaaagagagagagggggagggaggaagggagggagagagagagagagaaagaaagaaaagaaagaaagaaagaaagaaaagaaagaataagactcatcaattaatttctacagtggaaactacttctgggactggaatatagaaaacaagaattggcagaggccgggtgcagtggctcacagctgtaatcccagcactttaggaggccgatgcaggtggatcacctgtggtcaggagtttgagaccagcctggccaacatgttgaaacactgtctctactaaaaatacaaaattagctgggtgtggtggcacatgcctgtaatcacagctactcgggagactgaggcaggagaatcgcttgaatctgggaggcggaggtgtagtgagctgcgatcatgccattgcactccagcctgggcaacaagagcgaaactccgaatcaaaaaaaaaaaaaaaaaaaaaaacagaaagaaaaaagaaaaagaaatggctgggcacattggctcacgcctgtaatcctagcagtttgggaggctgaggcgggtagaccacctgaggtcaggaattcaagaccagcctgaccaatatggtgaaaccccgtctctactaaaaatacaaaaattagccaggcgtgggggcacaagccagtaatcccagctactcaggaggctgaggaaggagaatcgcttgaacccgggaagtggatgttgcagtgggccaagatcgcgccactgcactccagcctgtgctacgggagtgagaatccatctcacacaaacacacacacaaaaagaatcaaaggttttgattgtgagttgcagtaaagggaaagaccatgttcatagcagtgccaatatctgaagtggagtcttacacatttcatcacctacaacgaaagtaagttaactgggagagattaccaagagagtaaaaagagactcaggacaaatagctaatgtatgcaggacttaaaacctgcatgacgggttgatagatgcagcaaaccaccatggcacacgtatacctatgtaacaaacctgcatgttctgcacatgtatcccagaactttaagttaaaaaataagccaggcgcggtggctcacgcctgtaatcccagcactttgggaggccgaggcgggcagatcacctgaagtcgggagttcgagaccagcctgagcaacaaggagaaaccccatctctactaaaaatacaaaattagctgggcgtggtggtgcatgcctgtaatcccagctacccaggaggctgaggcaggagaattgcttgaacccgggaggcggaggccatggtgagctgagatcacgccactgcactccagcctgggcaacaagagtgaaactccgtctcaaaataaataaataaataaaaataaaaagagagactaatacagttggaaaaaaaagattaggcaggacttgttgagtgattgaatattggctggaaaggaggcaaggacaatcccagctgtaacctgggtacatggagagaagaagcaggccactttccacacacccaccttgatatcctccttggtaagccgcggccaggccaccttttccttccattttctcacaaaacaagtaatagagcgggaagagcgcttatcctgggagtcctgccagatagagagcctcattcttagggtctggggtttagaattaatctccagtttccctgggcagcccggtttccatccaaaccttactgtcccatttcacccttaccttggagttcactttggcatagaactcaatctcattgtacaactccactccatcggcattcttgcagctgaggagacaatgaagctgaggagatgcggaatactccgtgtggggacattaggaaaggggtagattcctgggaagccaggccctcggacggcagggccactacctgaacacaatgcggtgatcctcaataagcacgtggacatcggtgctgtcctcaacacaaaactccatgaacacatacctgggcctgtcgtaccacaaggtccgggcgtgctgcctgaagagaagttgaggtgtggcttcataggggtgggagagggaagactgaggtcatttgggaagggactacccagggacctttgatgccacagttttttcaaagtggagctaaatgagacagaaggggtgaaagggaagggaatgacaggagtgggtgggtgtggtgaatgtgaacctgggaagaatagaacgtgcaagactaggaaactaggaggtcagggagaacattcaggtcacaccttccctcaccccacagttacagagaccaggggtccggggctcccgtggggcctcacagaacctggagcgcccagaagacttggagcagggaatctccagggaaaagggccagggggagcaccggagccggaaacactcaccgtgccattgcggctcccgctccagggtggcatttagagttccaggcaggggccgctatctttagatcctggggacgcccccagcagctgcctctccttatatggtcgggagagcagttgagaggaagagagaacatgacctggcagccaagggatctgcactctggagatactctgggacagcttcatccttgcagcccttcaccgtggggtcttcagaaatgcatagactatgaagagacaacccatctgctggaaccagggcaaaggctgccctagacgctacacacagggaatgacttttccccggtatcattcacctgtttctccgacgcttactgctcagtgtctgattcacaataggcgctcaataaaacattattgtcctgaattaaattcccggggaaggcgcgccctcggggacttgggtacttcaggccccgcccaccactcccctggggttccaggccaccgcgccgttgccatggcagcaggggggcgcggctgacgtgcggtggtgtttccgggaagatggcggctgtcgaagcggctgcagagccggtaacggtggtggcggctgttgggccaaaggcgaaagacgaagaggaggaggaagaggagccgctgccaccgtgcgaggcggtgcgctgggccccagtgggggcggtggcggaggcccggcctggggcaaccgcgtttttagaagaggcgacggccgaggagcctggcgcggccccgggctccccgccggattcgccgggccggacgctgcggcggctgcgggcagagcggcggcggctggactcggcgctgctggcgctgtcctcgcacttcgcgcaggtgcagttccgcctgcgccaggtggtgcgcggggcgccggcggagcagcagcgccttctgcgggagctcgaagacttcgccttccgcggctgccctcacgtcctaggttacgaagggcccggcgaccccgccagcgatgagggcgatgggctgccaggggaccggccatggttgcggggcgaggaccaggtgagtggctggagccgggccgcgaggaatatgggaatagtggggtcgtgtgggtggcgatccagacccggatgatggtgcatgcggggagaagcctccccgactcggtcggtgagtacgtgtgtcggagaccaggggactggagtgcggggccggctgaagggcaagaggacagaggcctgggaacctgagggtgagcggtgtgcacggaggatgtggagagatgtcggtgcgtgatgacgtgagtggtagaggagcggtgagcgaagtgagtcgttgagagggcagcagagcagccaagagcagtgctgcgcccactcacctttccctcacgtatctcagtcttgaacactttggctgctagaggaccccgactctggggattgggaaaattggcaaaggaaaggaaagtgagttggaatccgtggaaatttaggttaactccctgtccctgctttcctgaaatctaggcagtctttacacttctttgggtgggagtttggattaacagcagggtctcttagtaactgaaataaacacaactcttgattagataaatttcctaatgttggaatttttcctttttaagagacgggagggtcttggtatgttgcccaggctggtctcgaactcctggtctcaagccatcctcccgcctcagcctcaggactacaggcgtgtgccaccgtgcaggctataatgttgaaatttttaaactcttcctccatcctgcttaatcattaggcattctgaatgaggtcctctgataactgacaagatcgattcagtgtgcctaccccagaagtagtgaaactatgtataagacaccaggtaaacgtttccttacaagctttgcatctctggaagtgcacaaagtgctggctttattggaagtgttgaggtacactgccttttcactttttttttttgagacagagtctcactctgtcacctaggccagactgcattggcgcaatttctgcttactgcaacctctgcctcctgggctcaagcaatcctcctgcctcagcttccccagtatctgggactacaggtgtgtgccaccacacccagttaattttgtttattttttgttgaggcggggtttcaccacattgcccaggctggtctcgaactcctgagctcaagcgatctgccctcctcagcctaccaaagtgctgggattagagaagtgagccaccatgccccatcccttttcaccattttattcttcaaactacaatctacatgtggctttcttcccacttacattggttttagccaagaagatttatcaagcagataatgatttgtttattttagtctgaactgtttccagtgcaatcctgtgtttactgttccacccttctccacatacctgcaactccttacacaaggagcagccacctcaaactgtcagatttaagggctagaaaggggtggacagcaccaaaggttctacatgataggaaactctgttgttcattttcacctttagaaacagtaggccaaccccattttccatgatgtgattatgacacattgcatgcctgtagcaacatttcatgtaccccataaatatatacacatactatgtacccataaaaattaaaaactagcccagcgcagtggctcacgcctgtaatcctagcactttgggaggccaaggcgggcggatcacctgaggttgggagttcgagaccagcctgaccaacatgatgaaaccccgtctctactaaaaatacaaaaaaaaaaaaaaaaaactagccagacatggtggcacattcctgtaatcccagctactcgggaggctgaggcaggagaatcgcttgaacctgggaggcagaggttgcggtgagccaagatcgtgccatcgcaccccagcctggggcaacaagagtgaaactctgtctcaaaaaaaaacacacaaaaaattaaaaactgaaaaaaaaaaaaagactgtgtgcagtggctcatgactgtaatcccaacacttggggaggcgaaggctggaggaggatcacttgagcccaggagttggaggctgcagagagctatgatcataccgctgcactccagcctgagtaacagagcaagaccctgtctcaaaaaaaaaaggcaaaagaaacattgtaccaccttaaaaaaaaaaaaaaaaagtagtgctcaatccacctacaagttgtaatcttgtatttatacattgaatacattgacaggtgaacaggtaggaccagagtagggaatatcattgaactgaatgatttacttcttaccacttacctttttttttctttttccttttttttttttttttttttgagacagagtctcactctgttgccaggctagagtgcactggcatgatcaggactcactgcagccttgactcccaggctcagtagatcctcctacctcagcctctcgagtaactgggaccacaggcgagcatcaccatgctcagctagtttttgtatttgtagagatgaggtttcaccatattgcccaggctggtcttgaactcctgggctcaagcaagccacccaccttggccacccaaagtgctggattacaggcatgaaccactgtaccccgccaatttttttttttttcttgagacagagtctcactctgtcgcccaggctggaatgcagtggcaccatcttggctcacagcaacctccgcctcctgggttcaagcgattctcctgcctcagcttcccaagtagctgggactacaggtgcccgtcaccacgcctggctaatttttgtatttttagtagagatggggttttgccatgtcggccaggctggtctcgaactcctggcctcgaacgcctgacctcataatctgtccgactcggcctcccaaagtgctgggattataggtgtgagccaccgtgcccggccctaaatttttattttccactctgttgcccaggctggtgtgcagcagcatgatcacaactcactgcatcctcaacctcctgggctcaatccatcctcccagctcagcctcccaagtagctgggaccacaggcgcacactaccatgactagctaattaaaaaatatattttttctgtagaggtggggctctccctatgttgctcagctggtctctgactcctgggctcaagccaccctcccaccttagcctccctaagtgctgggattacaggcatgagccactgcacctggcccccagttttttttttttttttttgagacagagtctggccctgtcacccaggctggagtgcagtagcatgatctcagctcactgcaacctccacctcctaggttcaagctgttctgctgcctcagcctccctagtagctgggactgcaggcatgtgccactatccccggctaaattttgtattttgagtagagacagggttttgccatgttggccaggctggtctcgaactcctgacctcaagtgatccacccacctcaaccccaaatattttaaaccaatattttctcttatcttacttcatactggaaatgatttatgttatttcctgctttgcaccagagctcattgttctctcttgtttgcccacactccagcaaatagcatatcgtagctaccatggcaagtgacagagttcaacagacttggtcatgaaaatggaatcaaaatttatggctgatttctttcttccctgacataaagttgggtaacagtgagaacaaaaacaaaagacttttccacagttctttctccttaggctggttagacaactttctccactcagagttcattatttggaatttgtcattcttttctttttctttttctttctttctttttttttttttttttttttttggacacagagtcttgctgtgacacccaggctggagtgcaatgctgcggtcttggctcactccaacctccgcctcctgggttcaagccattctcctgcctcagcctcccaagtagctaggattacaggcacgtgccaccacactgggctagtttttgtagagacggggttccaccatgttggccaggctggtctcgaactcctgacctcaggtgatctgcctgctttggcctcccaaagtgctgggattacaggcatgagccactgcgttcggccatactttccttaattcagttcagtaacatacaacaaatgcatgttgagaacttatcttgtgccagacactgtgcctggcatttgtggttcaaagtcaaaacctttgtccttaaggagttcatagactagaagagacagaatcctaaacaaataatgtgatatgagctagactagaagtgtgaacaacctctagaggaaatgtttagttatgcctggggaaatcaggaagcctcttaaaggagaactaggccttcaccaaatggggaagtgggatagggttctaacagtatgcaactgcgctctgaaaggattacagagggactgccctgagaaaaggcttgc</residues>
+</dnaseq>

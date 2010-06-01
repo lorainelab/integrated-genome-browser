@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.parsers.CytobandParser.CytobandSym;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -34,7 +33,6 @@ import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
-import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -48,8 +46,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
-import com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph;
-import com.affymetrix.igb.glyph.EfficientPaintRectGlyph;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -57,11 +53,9 @@ import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.GridGlyph;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
-import com.affymetrix.igb.glyph.RoundRectMaskGlyph;
 import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.igb.stylesheet.InvisibleBoxGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -81,6 +75,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
+import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import java.awt.Adjustable;
@@ -111,7 +106,6 @@ public class SeqMapView extends JPanel
 	private static final boolean DEBUG_TIERS = false;
 	private static final boolean DEBUG_COMP = false;
 
-	private static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
 	protected boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
@@ -211,7 +205,6 @@ public class SeqMapView extends JPanel
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static final Font axisFont = new Font("Courier", Font.BOLD, 12);
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
@@ -520,7 +513,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Set up a tier with fixed pixel height and place axis in it. */
-	private final TransformTierGlyph addAxisTier(int tier_index) {
+	private TransformTierGlyph addAxisTier(int tier_index) {
 		axis_tier = new TransformTierGlyph(axis_annot_style);
 		axis_tier.setFixedPixHeight(45);
 		axis_tier.setDirection(TierGlyph.Direction.AXIS);
@@ -538,7 +531,7 @@ public class SeqMapView extends JPanel
 		axis_tier.setForegroundColor(axis_fg);
 		setAxisFormatFromPrefs(axis);
 
-		GlyphI cytoband_glyph = makeCytobandGlyph();
+		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), axis_tier, this);
 		if (cytoband_glyph != null) {
 			axis_tier.addChild(cytoband_glyph);
 			axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
@@ -561,7 +554,7 @@ public class SeqMapView extends JPanel
 		return axis_tier;
 	}
 
-	private static final CharSeqGlyph initSeqGlyph(BioSeq viewSeq, Color axis_fg, AxisGlyph axis) {
+	private static CharSeqGlyph initSeqGlyph(BioSeq viewSeq, Color axis_fg, AxisGlyph axis) {
 		CharSeqGlyph seq_glyph = new CharSeqGlyph();
 		seq_glyph.setForegroundColor(axis_fg);
 		seq_glyph.setShowBackground(false);
@@ -578,7 +571,7 @@ public class SeqMapView extends JPanel
 
 
 
-	private static final void showFillRect(BioSeq viewSeq, CharSeqGlyph seqGlyph, SeqSymmetry compsym, AxisGlyph axis) {
+	private static void showFillRect(BioSeq viewSeq, CharSeqGlyph seqGlyph, SeqSymmetry compsym, AxisGlyph axis) {
 		int compcount = compsym.getChildCount();
 		// create a color, c3, in between the foreground and background colors
 		Color c1 = axis.getForegroundColor();
@@ -623,106 +616,8 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-
-	/**
-	 *  Creates a cytoband glyph.  Handling two cases:
-	 * 1. cytoband syms are children of TypeContainerAnnot;
-	 * 2. cytoband syms are grandchildren of TypeContainerAnnot
-	 *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
-	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
-	 */
-	private final Glyph makeCytobandGlyph() {
-		BioSeq sma = getAnnotatedSeq();
-		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
-		if (cyto_tiers.isEmpty()) {
-			return null;
-		}
-		SymWithProps cyto_annots = cyto_tiers.get(0);
-		if (!(cyto_annots instanceof TypeContainerAnnot)) {
-			return null;
-		}
-
-		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
-
-		RoundRectMaskGlyph cytoband_glyph_A = null;
-		RoundRectMaskGlyph cytoband_glyph_B = null;
-		List<CytobandSym> bands = CytobandParser.generateBands(cyto_annots);
-		int centromerePoint = CytobandParser.determineCentromerePoint(bands);
-
-		for (int q = 0; q < bands.size(); q++) {
-			CytobandSym cyto_sym = bands.get(q);
-			SeqSymmetry sym2 = transformForViewSeq(cyto_sym, getAnnotatedSeq());
-
-			SeqSpan cyto_span = getViewSeqSpan(sym2);
-			if (cyto_span == null) {
-				continue;
-			}
-			GlyphI efg;
-			if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
-				efg = new EfficientPaintRectGlyph();
-				efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-				((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
-
-			} else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
-				efg = new EfficientPaintRectGlyph();
-				efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-				((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
-
-			} else if ("".equals(cyto_sym.getBand())) {
-				efg = new EfficientOutlinedRectGlyph();
-				efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-			} else {
-				efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
-				efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-				((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
-				((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
-				((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
-			}
-			efg.setColor(cyto_sym.getColor());
-			getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
-
-			if (q <= centromerePoint) {
-				cytoband_glyph_A = createSingleCytobandGlyph(cytoband_glyph_A, efg);
-			} else {
-				cytoband_glyph_B = createSingleCytobandGlyph(cytoband_glyph_B, efg);
-			}
-		}
-
-		InvisibleBoxGlyph cytoband_glyph = new InvisibleBoxGlyph();
-		cytoband_glyph.setMoveChildren(false);
-		if (cytoband_glyph_A != null && cytoband_glyph_B != null) {
-			cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());
-			cytoband_glyph.getCoordBox().add(cytoband_glyph_B.getCoordBox());
-			cytoband_glyph.addChild(cytoband_glyph_A);
-			cytoband_glyph.addChild(cytoband_glyph_B);
-			return cytoband_glyph;
-		}
-
-		// Handle case where centomere is at beginning or end (telocentric)
-		if (cytoband_glyph_A != null) {
-			cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());
-			cytoband_glyph.addChild(cytoband_glyph_A);
-		} else if (cytoband_glyph_B != null) {
-			cytoband_glyph.setCoordBox(cytoband_glyph_B.getCoordBox());
-			cytoband_glyph.addChild(cytoband_glyph_B);
-		}
-
-		return cytoband_glyph;
-	}
-
-	private RoundRectMaskGlyph createSingleCytobandGlyph(RoundRectMaskGlyph cytobandGlyph, GlyphI efg) {
-		if (cytobandGlyph == null) {
-			cytobandGlyph = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
-			cytobandGlyph.setColor(Color.GRAY);
-			cytobandGlyph.setCoordBox(efg.getCoordBox());
-		}
-		cytobandGlyph.addChild(efg);
-		cytobandGlyph.getCoordBox().add(efg.getCoordBox());
-		return cytobandGlyph;
-	}
-
 	/** Sets the axis label format from the value in the persistent preferences. */
-	public static final void setAxisFormatFromPrefs(AxisGlyph axis) {
+	public static void setAxisFormatFromPrefs(AxisGlyph axis) {
 		// It might be good to move this to AffyTieredMap
 		String axis_format = PreferenceUtils.getTopNode().get(PREF_AXIS_LABEL_FORMAT, VALUE_AXIS_LABEL_FORMAT_COMMA);
 		if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
@@ -1012,7 +907,6 @@ public class SeqMapView extends JPanel
 			 */
 			SeqSpan annot_bounds = getAnnotationBounds(aseq);
 			if (annot_bounds != null) {
-				System.out.println("annot bounds: " + annot_bounds.getMin() + ", " + annot_bounds.getMax());
 				// transform to view
 				MutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
 				sym.addSpan(annot_bounds);
@@ -1020,7 +914,6 @@ public class SeqMapView extends JPanel
 					SeqUtils.transformSymmetry(sym, transform_path);
 				}
 				SeqSpan view_bounds = sym.getSpan(viewseq);
-				System.out.println("annot view bounds: " + view_bounds.getMin() + ", " + view_bounds.getMax());
 				seqmap.setMapRange(view_bounds.getMin(), view_bounds.getMax());
 			}
 		}
@@ -1052,7 +945,7 @@ public class SeqMapView extends JPanel
 
 	private void setTitleBar(BioSeq seq) {
 		if (frm != null) {
-			StringBuffer title = new StringBuffer(128);
+			StringBuilder title = new StringBuilder(128);
 			if (seq != null) {
 				if (title.length() > 0) {
 					title.append(" - ");
@@ -1094,7 +987,7 @@ public class SeqMapView extends JPanel
 		return layers;
 	}
 
-	private final void removeEmptyTiers() {
+	private void removeEmptyTiers() {
 		// Hides all empty tiers.  Doesn't really remove them.
 		for (TierGlyph tg : seqmap.getTiers()) {
 			if (tg.getChildCount() <= 0) {
@@ -1116,11 +1009,11 @@ public class SeqMapView extends JPanel
 	 *
 	 * Synchronized to keep aseq non-null
 	 */
-	private static final SeqSpan getAnnotationBounds(BioSeq aseq) {
+	private static SeqSpan getAnnotationBounds(BioSeq aseq) {
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
 		synchronized (aseq) {
 			int annotCount = aseq == null ? 0 : aseq.getAnnotationCount();
-			int min = Integer.MAX_VALUE;
-			int max = Integer.MIN_VALUE;
 			for (int i = 0; i < annotCount; i++) {
 				// all_gene_searches, all_repeat_searches, etc.
 				SeqSymmetry annotSym = aseq.getAnnotation(i);
@@ -1158,7 +1051,7 @@ public class SeqMapView extends JPanel
 	 *  @param min  an initial minimum value.
 	 *  @param max  an initial maximum value.
 	 */
-	private static final int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, int min, int max) {
+	private static int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, int min, int max) {
 		int[] min_max = new int[2];
 		min_max[0] = min;
 		min_max[1] = max;
@@ -1199,7 +1092,7 @@ public class SeqMapView extends JPanel
 			if (annotSym instanceof TypeContainerAnnot) {
 				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
 
-				if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
+				if (CytobandGlyph.CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
 					continue;
 				}
 			}
@@ -1817,7 +1710,7 @@ public class SeqMapView extends JPanel
 	 * Toggles the hairline between labeled/unlabeled and returns true
 	 * if it ends up labeled.
 	 *
-	 * @return true if hairline is labelled
+	 * @return true if hairline is labeled
 	 */
 	public final boolean toggleHairlineLabel() {
 		hairline_is_labeled = !hairline_is_labeled;
@@ -1836,7 +1729,7 @@ public class SeqMapView extends JPanel
 		return hairline_is_labeled;
 	}
 
-	private final JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {
+	private JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {
 		return setUpMenuItem((Container) menu, action_command, action_listener);
 	}
 
@@ -1908,7 +1801,7 @@ public class SeqMapView extends JPanel
 	 *  @return a list where each child is replaced by its top-most parent, if it
 	 *  has a parent, or else the child itself is included in the list
 	 */
-	public static final List<GlyphI> getParents(List<GlyphI> childGlyphs) {
+	public static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
 		boolean top_level = true;
 		// linked hash set keeps parents in same order as child list so that comparison
 		// like childList.equals(parentList) can be used.
@@ -2309,7 +2202,7 @@ public class SeqMapView extends JPanel
 		summary_list.put(atier, gsym);
 	}
 
-	private final void updateSummariesData(){
+	private void updateSummariesData(){
 		for(Entry<TierGlyph, GraphSym> entry : summary_list.entrySet()){
 			TierGlyph atier = entry.getKey();
 			String name = atier.getParentURL();
@@ -2334,7 +2227,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	private final void updateSummariesStyle(){
+	private void updateSummariesStyle(){
 		for(Entry<TierGlyph, GraphSym> entry : summary_list.entrySet()){
 			TierGlyph atier = entry.getKey();
 			GraphSym gsym = entry.getValue();

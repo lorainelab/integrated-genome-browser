@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * Parse actions from IGB response file.
  */
 public class ScriptFileLoader {
-
+	private static String splitter = "\\s";
 	public static String getScriptFileStr(String[] args) {
 		for (int i=0;i<args.length;i++) {
 			if (args[i].equalsIgnoreCase("-" + IGBConstants.SCRIPTFILETAG)) {
@@ -79,40 +79,47 @@ public class ScriptFileLoader {
 		try {
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				String[] fields = line.split("\\t");
 				Logger.getLogger(ScriptFileLoader.class.getName()).info("line " + line);
 				//System.out.println("parsing line " + line + " with field len" + fields.length);
-				doSingleAction(fields);
-				Thread.sleep(500);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
+				doSingleAction(line);
+				Thread.sleep(2000);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
-	private static void doSingleAction(String[] fields) {
+	private static void doSingleAction(String line) {
+		String[] fields = line.split(splitter);
 		String action = fields[0].toLowerCase();
 		if (action.equals("genome") && fields.length == 2) {
 			// go to genome
-			goToGenome(fields[1]);
+			goToGenome(join(fields,1));
 			return;
 		}
 		if (action.equals("goto") && fields.length == 2) {
 			// go to region
-			goToRegion(fields[1]);
+			goToRegion(join(fields,1));
 			return;
 		}
 		if (action.equals("load")) {
-			if (fields.length == 2) {
-				loadFile(fields[1]);
-				return;
+			// Allowing multiple files to be specified, split by commas
+			String[] loadFiles = join(fields,1).split(",");
+			for (int i=0;i<loadFiles.length;i++) {
+				if (i > 0) {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException ex) {
+						Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
+				loadFile(loadFiles[i]);
 			}
-			if (fields.length == 3) {
-				loadData(fields[1], fields[2]);
-				return;
-			}
-			if (fields.length == 4) {
-				loadData(fields[1], fields[2], fields[3]);
+			return;
+		}
+		if (action.equals("loadfromserver")) {
+			if (fields.length >= 4) {
+				loadData(fields[1], fields[2], join(fields,3));
 				return;
 			}
 		}
@@ -142,12 +149,6 @@ public class ScriptFileLoader {
 		MapRangeBox.setRange(Application.getSingleton().getMapView(), region);
 	}
 
-	private static void loadData(String serverType, String URIorFeature) {
-		if (serverType.equalsIgnoreCase("file")) {
-			loadFile(URIorFeature);
-		}
-	}
-
 	private static void loadData(String serverType, String serverURIorName, String feature) {
 		if (serverType.equalsIgnoreCase("quickload")) {
 			//loadQuickLoad(URIorFeature);
@@ -163,6 +164,20 @@ public class ScriptFileLoader {
 	private static void loadFile(String fileName) {
 		File f = new File(fileName);
 		LoadFileAction.openURI(f.toURI(), f.getName(), true, GenometryModel.getGenometryModel().getSelectedSeqGroup());
+	}
+
+	/**
+	 * Join fields from startField to end of fields.
+	 * @param fields
+	 * @param startField
+	 * @return
+	 */
+	private static String join(String[] fields, int startField) {
+		StringBuilder buffer = new StringBuilder("");
+		for(int i=startField;i<fields.length;i++) {
+			buffer.append(fields[i]);
+		}
+		return buffer.toString();
 	}
 
 }

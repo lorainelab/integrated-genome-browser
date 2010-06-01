@@ -37,7 +37,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.MergeOptionChooser;
-import com.affymetrix.igb.util.ResponseFileLoader;
+import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.util.concurrent.ExecutorService;
@@ -217,7 +217,7 @@ public final class LoadFileAction extends AbstractAction {
 		if (uri.toString().toLowerCase().endsWith(".igb")) {
 			// response file.  Do its actions and return.
 			// Potential for an infinite loop here, of course.
-			ResponseFileLoader.doActions(uri.toString());
+			ScriptFileLoader.doActions(uri.toString());
 			return;
 		}
 

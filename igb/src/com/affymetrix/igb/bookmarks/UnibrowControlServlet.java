@@ -47,7 +47,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.util.ResponseFileLoader;
+import com.affymetrix.igb.util.ScriptFileLoader;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -99,9 +99,9 @@ public final class UnibrowControlServlet {
 	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
 	public static void goToBookmark(Application uni, Map<String, String[]> parameters) throws NumberFormatException {
-		String batchFileStr = getStringParameter(parameters, IGBConstants.RESPONSEFILETAG);
+		String batchFileStr = getStringParameter(parameters, IGBConstants.SCRIPTFILETAG);
 		if (batchFileStr != null && batchFileStr.length() > 0) {
-			ResponseFileLoader.doActions(batchFileStr);
+			ScriptFileLoader.doActions(batchFileStr);
 			return;
 		}
 

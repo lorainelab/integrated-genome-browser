@@ -23,16 +23,15 @@ import java.util.logging.Logger;
  * @author jnicol
  * Parse actions from IGB response file.
  */
-public class ResponseFileLoader {
+public class ScriptFileLoader {
 
-	public static String getResponseFileStr(String[] args) {
+	public static String getScriptFileStr(String[] args) {
 		for (int i=0;i<args.length;i++) {
-			System.err.println("arg " + args[i]);
-			if (args[i].equalsIgnoreCase("-" + IGBConstants.RESPONSEFILETAG)) {
+			if (args[i].equalsIgnoreCase("-" + IGBConstants.SCRIPTFILETAG)) {
 				if (i+1 < args.length) {
 					return args[i+1];
 				} else {
-					Logger.getLogger(ResponseFileLoader.class.getName()).severe("File was not specified.");
+					Logger.getLogger(ScriptFileLoader.class.getName()).severe("File was not specified.");
 					return null;
 				}
 			}
@@ -47,11 +46,12 @@ public class ResponseFileLoader {
 				f = LocalUrlCacher.convertURIToFile(URI.create(batchFileStr));
 			}
 			if (f == null || !f.exists()) {
-				Logger.getLogger(ResponseFileLoader.class.getName()).log(Level.SEVERE, "Couldn't find response file: " + batchFileStr);
+				Logger.getLogger(ScriptFileLoader.class.getName()).log(
+						Level.SEVERE, "Couldn't find response file: " + batchFileStr);
 				return;
 			}
 
-			ResponseFileLoader.doActions(f);
+			ScriptFileLoader.doActions(f);
 	}
 
 	/**
@@ -62,9 +62,9 @@ public class ResponseFileLoader {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(f));
-			ResponseFileLoader.doActions(br);
+			ScriptFileLoader.doActions(br);
 		} catch (FileNotFoundException ex) {
-			Logger.getLogger(ResponseFileLoader.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
 			GeneralUtils.safeClose(br);
 		}
@@ -80,12 +80,13 @@ public class ResponseFileLoader {
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				String[] fields = line.split("\\t");
+				Logger.getLogger(ScriptFileLoader.class.getName()).info("line " + line);
 				//System.out.println("parsing line " + line + " with field len" + fields.length);
 				doSingleAction(fields);
 				Thread.sleep(500);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
 			}
 		} catch (Exception ex) {
-			Logger.getLogger(ResponseFileLoader.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -108,6 +109,10 @@ public class ResponseFileLoader {
 			}
 			if (fields.length == 3) {
 				loadData(fields[1], fields[2]);
+				return;
+			}
+			if (fields.length == 4) {
+				loadData(fields[1], fields[2], fields[3]);
 				return;
 			}
 		}
@@ -141,6 +146,9 @@ public class ResponseFileLoader {
 		if (serverType.equalsIgnoreCase("file")) {
 			loadFile(URIorFeature);
 		}
+	}
+
+	private static void loadData(String serverType, String serverURIorName, String feature) {
 		if (serverType.equalsIgnoreCase("quickload")) {
 			//loadQuickLoad(URIorFeature);
 		}

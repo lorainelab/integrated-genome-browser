@@ -53,7 +53,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
-import com.affymetrix.igb.util.ResponseFileLoader;
+import com.affymetrix.igb.util.ScriptFileLoader;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -274,7 +274,7 @@ public final class GeneralLoadView extends JComponent
 				IGB.commandLineBatchFileStr = null;	// we're not using this again!
 				lookForPersistentGenome = false;	
 				Thread.sleep(1000);	// hack so event queue finishes
-				ResponseFileLoader.doActions(batchFile);
+				ScriptFileLoader.doActions(batchFile);
 			} else {
 				if (lookForPersistentGenome) {
 					lookForPersistentGenome = false;

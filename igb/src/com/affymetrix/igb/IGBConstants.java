@@ -59,5 +59,5 @@ public interface IGBConstants {
 	/**
 	 * A potential parameter in either the URL of a bookmark, or a command-line option.  This allows a response file to be loaded, instead of anything else.
 	 */
-	public final static String RESPONSEFILETAG = "responsefile";
+	public final static String SCRIPTFILETAG = "scriptfile";
 }

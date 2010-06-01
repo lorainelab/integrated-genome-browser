@@ -50,7 +50,7 @@
                                             <xs:complexType>
                                                 <xs:simpleContent>
                                                   <xs:extension base="xs:string">
-                                                  <xs:attribute name="name" type="xs:string"
+                                                  <xs:attribute name="type" type="xs:string"
                                                   use="required"/>
                                                   </xs:extension>
                                                 </xs:simpleContent>
@@ -142,7 +142,7 @@
                         <xs:attribute name="id" type="xs:string" use="required"/>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="residues">
+                <xs:element name="residues" maxOccurs="1">
                     <xs:complexType>
                         <xs:simpleContent>
                             <xs:extension base="xs:string">

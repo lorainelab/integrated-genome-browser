@@ -5,6 +5,7 @@
 
 package org.bioviz.protannot;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,10 +57,13 @@ public class TestSamples {
         try {
             bistr = new BufferedInputStream(new FileInputStream(filename));
 			NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
-			nxs.outputXMLToScreen(nxs.doc);
+			//NormalizeXmlStrand.outputXMLToScreen(nxs.doc);
             Xml2GenometryParser parser = new Xml2GenometryParser();
 			try {
-				if (parser.parse(nxs.doc) != null) {
+				BioSeq seq = parser.parse(nxs.doc);
+				if (seq != null) {
+					GenomeView gview = new GenomeView(GenomeView.COLORS.defaultColorList());
+					gview.setBioSeq(seq, true);
 					return true;
 				}
 			} catch (Exception ex) {
@@ -68,6 +72,25 @@ public class TestSamples {
         } catch (FileNotFoundException ex) {
             System.err.println(filename + "File not found");
         }
+		moveToFailedDir(filename);
         return false;
     }
+
+	/**
+	 * Moves give file to dir named failed.
+	 * @param filename	File to be moved
+	 * @return boolean true if file was move sucessfully, false if not.
+	 */
+	static private boolean moveToFailedDir(String filename){
+		File file = new File(filename);
+		File dir = new File(file.getParentFile().getPath() + "/failed");
+		if(!dir.exists()){
+			dir.mkdir();
+		}
+		File newFile = new File(dir.getPath() + "/" + file.getName());
+		if(newFile.exists()){
+			newFile.delete();
+		}
+		return file.renameTo(newFile);
+	}
 }

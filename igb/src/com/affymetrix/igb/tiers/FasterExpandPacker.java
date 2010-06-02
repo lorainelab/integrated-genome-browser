@@ -4,6 +4,7 @@ import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -101,15 +102,10 @@ public final class FasterExpandPacker extends ExpandPacker {
 	/**
 	 *  Sets the maximum depth of glyphs to pack in the tier.
 	 *  @param slotnum  a positive integer or zero; zero implies there is no
-	 *  limit to the depth of packing.  If a negative number is given, it is
-	 *  reset to zero.
+	 *  limit to the depth of packing.
 	 */
 	public void setMaxSlots(int slotnum) {
-		if (slotnum >= 0) {
-			max_slots_allowed = slotnum;
-		} else {
-			slotnum = 0;
-		}
+		max_slots_allowed = Math.max(slotnum, 0);
 	}
 
 	/** Set whether or not packer can assume all children glyphs are the same height.
@@ -120,32 +116,14 @@ public final class FasterExpandPacker extends ExpandPacker {
 		constant_heights = b;
 	}
 
-	private double getMaxChildHeight(GlyphI parent) {
-		double max = 0;
-		if (constant_heights) {
-			max = parent.getChild(0).getCoordBox().height;
-		} else {
-			int children = parent.getChildCount();
-			for (int i = 0; i < children; i++) {
-				max = Math.max(parent.getChild(i).getCoordBox().height, max);
-			}
-		}
-		return max;
-	}
-
 	@Override
 	public Rectangle pack(GlyphI parent, ViewI view) {
-		boolean REPORT_SLOT_CHECKS = false;
-		Rectangle2D.Double cbox;
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		// resetting height of parent to just spacers
-		//    parent.setCoords(pbox.x, pbox.y, pbox.width, 2 * parent_spacer);
 		parent.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
-		double ymin = Double.POSITIVE_INFINITY;
-		double ymax = Double.NEGATIVE_INFINITY;
-
+		
 		int child_count = parent.getChildCount();
-		if (child_count <= 0) {
+		if (child_count == 0) {
 			return null;
 		}
 
@@ -156,16 +134,14 @@ public final class FasterExpandPacker extends ExpandPacker {
 		 *  (prev_slot_index)
 		 */
 
-		int slot_checks = 0;
+		Rectangle2D.Double cbox;
+		double ymin = Double.POSITIVE_INFINITY;
 		DoubleArrayList slot_maxes = new DoubleArrayList(1000);
-
 		double slot_height = getMaxChildHeight(parent) + 2 * spacing;
-
 		double prev_min_xmax = Double.POSITIVE_INFINITY;
-		// min_xmax_slot_index is index of slot with max of prev_min_xmax
-		int min_xmax_slot_index = 0;
+		int min_xmax_slot_index = 0;	//index of slot with max of prev_min_xmax
 		int prev_slot_index = 0;
-		int optimize2_count = 0;
+		GlyphI layeredChild = null;
 
 		for (int i = 0; i < child_count; i++) {
 			GlyphI child = parent.getChild(i);
@@ -179,11 +155,9 @@ public final class FasterExpandPacker extends ExpandPacker {
 				// no point in checking slots prior to and including prev_slot_index, so
 				//  modify start_slot_index to be prev_slot_index++;
 				start_slot_index = prev_slot_index + 1;
-				optimize2_count++;
 			}
 			int slot_count = slot_maxes.size();
 			for (int slot_index = start_slot_index; slot_index < slot_count; slot_index++) {
-				slot_checks++;
 				double slot_max = slot_maxes.get(slot_index);
 				if (slot_max < prev_min_xmax) {
 					min_xmax_slot_index = slot_index;
@@ -209,13 +183,23 @@ public final class FasterExpandPacker extends ExpandPacker {
 			if (!child_placed) {
 				// make new slot for child (unless already have max number of slots allowed,
 				//   in which case layer at top/bottom depending on movetype
-				child.setVisibility(true);
 				double new_ycoord = determineYCoord(this.getMoveType(),slot_maxes.size(), slot_height, spacing);
 				child.moveAbsolute(child_min, new_ycoord);
 
-				if ((max_slots_allowed > 0) && slot_maxes.size() >= max_slots_allowed) {
+				if (max_slots_allowed > 0 && slot_maxes.size() >= max_slots_allowed) {
 					int slot_index = slot_maxes.size() - 1;
 					prev_slot_index = slot_index;
+
+					if (layeredChild == null) {
+						layeredChild = child;	// First child that could be layered
+					} else {
+						// indicate to user that we're layering the glyphs -- we do this by making the layered glyphs a darker color
+						recurseSetColor(child.getColor().darker(), child);
+						if (layeredChild.getColor() != child.getColor()) {
+							// first time through -- we haven't set the previous child's color yet.
+							recurseSetColor(layeredChild.getColor().darker(), layeredChild);
+						}
+					}
 				} else {
 					slot_maxes.add(child_max);
 					int slot_index = slot_maxes.size() - 1;
@@ -227,12 +211,6 @@ public final class FasterExpandPacker extends ExpandPacker {
 				}
 			}
 			ymin = Math.min(cbox.y, ymin);
-			ymax = Math.max(cbox.y + cbox.height, ymax);
-		}
-
-		if (REPORT_SLOT_CHECKS) {
-			System.out.println("slot checks: " + slot_checks);
-			System.out.println("optimize2 count: " + optimize2_count);
 		}
 
 		/*
@@ -256,18 +234,32 @@ public final class FasterExpandPacker extends ExpandPacker {
 		return null;
 	}
 
+	private double getMaxChildHeight(GlyphI parent) {
+		if (constant_heights) {
+			return parent.getChild(0).getCoordBox().height;
+		}
+		double max = 0;
+		int children = parent.getChildCount();
+		for (int i = 0; i < children; i++) {
+			max = Math.max(parent.getChild(i).getCoordBox().height, max);
+		}
+		return max;
+	}
+
+	private static void recurseSetColor(Color c, GlyphI glyph) {
+		glyph.setBackgroundColor(c);
+		glyph.setForegroundColor(c);
+		int count = glyph.getChildCount();
+		for (int i=0;i<count;i++) {
+			recurseSetColor(c, glyph.getChild(i));
+		}
+	}
 
 	private static double determineYCoord(int moveType, int slot_index, double slot_height, double spacing) {
-		// move child to slot;
-		double new_ycoord;
 		if (moveType == NeoConstants.UP) {
-			// stacking up for layout
-			new_ycoord = -((slot_index * slot_height) + spacing);
-		} else {
-			// stacking down for layout
-			new_ycoord = (slot_index * slot_height) + spacing;
+			return -((slot_index * slot_height) + spacing);		// stacking up for layout
 		}
-		return new_ycoord;
+		return (slot_index * slot_height) + spacing;	// stacking down for layout
 	}
 
 }

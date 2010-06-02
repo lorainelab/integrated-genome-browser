@@ -8,8 +8,10 @@ package org.bioviz.protannot;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,16 +30,20 @@ public class TestSamples {
 		String dirpath = ".";
 		if (args.length==1) {
 			dirpath = args[0];
+			if(!dirpath.endsWith("/"))
+				dirpath += "/";
 		}
         File dir = new File(dirpath);
-        String[] files = dir.list();
+        String[] files = dir.list(new FilenameFilter() {
+
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".paxml");
+			}
+		});
+		
         System.err.println("Total files " + files.length);
         for(String s : files)
         {
-			if (!s.endsWith(".paxml")) {
-				System.err.println(s + " doesn't end with .paxml.Skipping it.");
-				continue;
-			}
             if(testFile(dirpath+s))
                 System.err.println(s + "read sucessfully.");
             else

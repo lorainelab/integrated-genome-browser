@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.w3c.dom.DOMException;
@@ -34,11 +35,9 @@ import org.w3c.dom.Text;
 final class Xml2GenometryParser {
 
     private static final boolean DEBUG = false;
-    private HashMap<String,BioSeq> mrna_hash;
-    private HashMap<String,BioSeq> prot_hash;
+    private Map<String,BioSeq> mrna_hash;
+    private Map<String,BioSeq> prot_hash;
     // instance variables needed during the parse
-    private String current_simsearch_method = null;
-	private String residues;
     private List<int[]> transCheckExons;	// used to sanity-check exon translation
 
     /**
@@ -86,7 +85,7 @@ final class Xml2GenometryParser {
      * @return          Returns BioSeq of given document object.
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
-       private BioSeq processDocument(Document seqdoc) {
+	private BioSeq processDocument(Document seqdoc) {
        Element top_element = seqdoc.getDocumentElement();
 		String name = top_element.getTagName();
 		if (!name.equalsIgnoreCase("dnaseq")) {
@@ -115,7 +114,7 @@ final class Xml2GenometryParser {
 		return chrom;
     }
 
-    private BioSeq buildChromosome(Element top_element, String seq, String version)
+    private static BioSeq buildChromosome(Element top_element, String seq, String version)
             throws DOMException {
         BioSeq chrom = null;
         NodeList children = top_element.getChildNodes();
@@ -124,7 +123,7 @@ final class Xml2GenometryParser {
             String cname = child.getNodeName();
             if (cname != null && cname.equalsIgnoreCase("residues")) {
                 Text resnode = (Text) child.getFirstChild();
-                residues = resnode.getData();
+                String residues = resnode.getData();
                 chrom = new BioSeq(seq, version, residues.length());
                 chrom.setResidues(residues);
             }
@@ -158,7 +157,7 @@ final class Xml2GenometryParser {
             Node child = children.item(i);
             String name = child.getNodeName();
             if (name != null && name.equalsIgnoreCase("aaseq")) {
-                processProtein((Element) child);
+                processProtein(prot_hash, (Element) child);
             }
         }
     }
@@ -168,7 +167,7 @@ final class Xml2GenometryParser {
      * @param   elem        Node for which protein is to be processed
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
-    private void processProtein(Element elem) {
+    private static void processProtein(Map<String,BioSeq> prot_hash, Element elem) {
         String pid = elem.getAttribute("id");
         BioSeq protein = prot_hash.get(pid);
         if (protein == null) {
@@ -196,15 +195,14 @@ final class Xml2GenometryParser {
      * @param   elem
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
-    private void processSimSearch(BioSeq query_seq, Element elem) {
+    private static void processSimSearch(BioSeq query_seq, Element elem) {
         NodeList children = elem.getChildNodes();
         String method = elem.getAttribute("method");
-        this.current_simsearch_method = method;
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String name = child.getNodeName();
             if (name != null && name.equalsIgnoreCase("simhit")) {
-                processSimHit(query_seq, (Element) child);
+                processSimHit(query_seq, (Element) child, method);
             }
         }
     }
@@ -221,8 +219,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.TypeContainerAnnot
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
-    private void processSimHit(BioSeq query_seq, Element elem) {
-        String method = this.current_simsearch_method;
+    private static void processSimHit(BioSeq query_seq, Element elem, String method) {
         // method can never be null -- if it is, the XML is wrong
         TypeContainerAnnot hitSym = new TypeContainerAnnot(method);
         addDescriptors(elem, hitSym);

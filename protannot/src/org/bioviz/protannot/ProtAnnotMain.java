@@ -54,6 +54,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -89,7 +91,7 @@ final class ProtAnnotMain implements WindowListener {
     private Dimension screen;
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
-	private static final String imageIcon = "protannot/resources/spots.png";
+	private static final Image imageIcon = getIcon();
 	private final TransferHandler fdh = new FileDropHandler(){
 
 		@Override
@@ -127,6 +129,23 @@ final class ProtAnnotMain implements WindowListener {
         test.start(args);
     }
 
+	/** Returns the icon stored in the jar file.
+	 *  It is expected to be at com.affymetrix.igb.igb.gif.
+	 *  @return null if the image file is not found or can't be opened.
+	 */
+	private static Image getIcon() {
+		Image icon = null;
+		try {
+			URL url = ProtAnnotMain.class.getResource("protannot_icon.gif");
+			if (url != null) {
+				icon = Toolkit.getDefaultToolkit().getImage(url);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// It isn't a big deal if we can't find the icon, just return null
+		}
+		return icon;
+	}
     /**
      * Unloads everything from GnomeView if unable to read the selected file.
      */
@@ -169,9 +188,15 @@ final class ProtAnnotMain implements WindowListener {
      * @param   args    - optional file name as a parameter.
      */
     private void start(String[] args) {
+		if ("Mac OS X".equals(System.getProperty("os.name"))) {
+			MacIntegration mi = MacIntegration.getInstance();
+			if (imageIcon != null) {
+				mi.setDockIconImage(imageIcon);
+			}
+		}
         frm = new JFrame("ProtAnnot");
 		frm.setTransferHandler(fdh);
-		frm.setIconImage(new ImageIcon(imageIcon).getImage());
+		frm.setIconImage(imageIcon);
         screen = frm.getToolkit().getScreenSize();
         int frm_width = (int) (screen.width * .8f);
         int frm_height = (int) (screen.height * .8f);

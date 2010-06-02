@@ -1306,12 +1306,10 @@ public class SeqMapView extends JPanel
 	 */
 	private static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
 		Set<SeqSymmetry> symSet = new HashSet<SeqSymmetry>(glyphs.size());
-		if (!glyphs.isEmpty()) {
-			for (GlyphI gl : glyphs) {
-				SeqSymmetry sym = glyphToSym(gl);
-				if (sym != null) {
-					symSet.add(sym);
-				}
+		for (GlyphI gl : glyphs) {
+			SeqSymmetry sym = glyphToSym(gl);
+			if (sym != null) {
+				symSet.add(sym);
 			}
 		}
 		return new ArrayList<SeqSymmetry>(symSet);

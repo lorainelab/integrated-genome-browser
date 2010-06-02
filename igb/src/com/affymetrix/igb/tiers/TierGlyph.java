@@ -69,7 +69,7 @@ public class TierGlyph extends SolidGlyph {
 	private Color other_fill_color = null;
 	private String label = null;
 	private static final Font default_font = new Font("Monospaced", Font.PLAIN, 12);
-	private ExpandPacker expand_packer = new FasterExpandPacker();
+	private FasterExpandPacker expand_packer = new FasterExpandPacker();
 	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
@@ -411,14 +411,10 @@ public class TierGlyph extends SolidGlyph {
 		return TierState.FIXED_COORD_HEIGHT;
 	}
 
-	private PackerI getExpandedPacker() {
-		return expand_packer;
-	}
-
 	/** Sets the expand packer.  Note that you are responsible for setting
 	 *  any properties of the packer, such as those based on the AnnotStyle.
 	 */
-	public final void setExpandedPacker(ExpandPacker packer) {
+	public final void setExpandedPacker(FasterExpandPacker packer) {
 		this.expand_packer = packer;
 		setSpacer(getSpacer());
 		setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
@@ -516,18 +512,10 @@ public class TierGlyph extends SolidGlyph {
 	}
 
 	/** Changes the maximum depth of the expanded packer.
-	 *  This does not call pack() afterwards, and has no effect if the
-	 *  getExpandedPacker() is not of the correct type to allow for setting the max depth.
-	 *  @return true if the current expand packer allowed the max depth to be set.
+	 *  This does not call pack() afterwards.
 	 */
-	public final boolean setMaxExpandDepth(int max) {
-		PackerI epacker = getExpandedPacker();
-		if (epacker instanceof FasterExpandPacker) {
-			FasterExpandPacker fpacker = (FasterExpandPacker) epacker;
-			fpacker.setMaxSlots(max);
-			return true;
-		}
-		return false;
+	public final void setMaxExpandDepth(int max) {
+		expand_packer.setMaxSlots(max);
 	}
 
 	/** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */

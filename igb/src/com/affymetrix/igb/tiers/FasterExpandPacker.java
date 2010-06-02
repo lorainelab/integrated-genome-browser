@@ -26,7 +26,7 @@ import java.awt.geom.Rectangle2D;
  *  </p>
  *
  * <p>
- *  Basic idea is that since all children are the same height, there is a discreet
+ *  Basic idea is that since all children are the same height, there is a discrete
  *     number of y-position slots that a child can occupy.  Therefore, when packing
  *     all the children, one can sweep through the sorted list of children while keeping
  *     track of the maximum x-position (x+width) of all the children in a slot/subtier,
@@ -95,7 +95,8 @@ import java.awt.geom.Rectangle2D;
  */
 public final class FasterExpandPacker extends ExpandPacker {
 
-	int max_slots_allowed = 1000;
+	private int max_slots_allowed = 1000;
+	private boolean constant_heights = true;
 
 	/**
 	 *  Sets the maximum depth of glyphs to pack in the tier.
@@ -110,7 +111,6 @@ public final class FasterExpandPacker extends ExpandPacker {
 			slotnum = 0;
 		}
 	}
-	boolean constant_heights = true;
 
 	/** Set whether or not packer can assume all children glyphs are the same height.
 	 *  Default is true.  If false, it will pack into layers based on the maximum

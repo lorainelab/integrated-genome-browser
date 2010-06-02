@@ -146,35 +146,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		}
 	}
 
-	private static Color getSymColor(SeqSymmetry insym, IAnnotStyleExtended style) {
-		boolean use_score_colors = style.getColorByScore();
-		boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
-
-		if (!(use_score_colors || use_item_rgb)) {
-			return style.getColor();
-		}
-
-		SeqSymmetry sym = insym;
-		if (insym instanceof DerivedSeqSymmetry) {
-			sym = (SymWithProps) getMostOriginalSymmetry(insym);
-		}
-
-		if (use_item_rgb && sym instanceof SymWithProps) {
-			Color cc = (Color) ((SymWithProps) sym).getProperty(TrackLineParser.ITEM_RGB);
-			if (cc != null) {
-				return cc;
-			}
-		}
-		if (use_score_colors && sym instanceof Scored) {
-			float score = ((Scored) sym).getScore();
-			if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
-				return style.getScoreColor(score);
-			}
-		}
-
-		return style.getColor();
-	}
-
 	/**
 	 *  @param parent_and_child  Whether to draw this sym as a parent and
 	 *    also draw its children, or to just draw the sym itself
@@ -336,6 +307,37 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		//    orginal annotation are completely outside the view
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
 	}
+
+
+	private static Color getSymColor(SeqSymmetry insym, IAnnotStyleExtended style) {
+		boolean use_score_colors = style.getColorByScore();
+		boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
+
+		if (!(use_score_colors || use_item_rgb)) {
+			return style.getColor();
+		}
+
+		SeqSymmetry sym = insym;
+		if (insym instanceof DerivedSeqSymmetry) {
+			sym = (SymWithProps) getMostOriginalSymmetry(insym);
+		}
+
+		if (use_item_rgb && sym instanceof SymWithProps) {
+			Color cc = (Color) ((SymWithProps) sym).getProperty(TrackLineParser.ITEM_RGB);
+			if (cc != null) {
+				return cc;
+			}
+		}
+		if (use_score_colors && sym instanceof Scored) {
+			float score = ((Scored) sym).getScore();
+			if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
+				return style.getScoreColor(score);
+			}
+		}
+
+		return style.getColor();
+	}
+
 
 	private double handleCDSSpan(
 			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,

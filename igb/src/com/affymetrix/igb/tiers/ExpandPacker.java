@@ -20,17 +20,14 @@ public class ExpandPacker extends ExpandedTierPacker {
 	}
 
 	@Override
-	public Rectangle pack(GlyphI parent, ViewI view) {
-		List<GlyphI> sibs;
-		
-		sibs = parent.getChildren();
-		
+	public Rectangle pack(GlyphI parent, ViewI view) {		
 		Rectangle2D.Double pbox = parent.getCoordBox();
 
 		// resetting height of parent to just spacers
 		parent.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
 
-		if (sibs == null || sibs.size() <= 0) {
+		List<GlyphI> sibs = parent.getChildren();
+		if (sibs == null || sibs.isEmpty()) {
 			return null;
 		}
 

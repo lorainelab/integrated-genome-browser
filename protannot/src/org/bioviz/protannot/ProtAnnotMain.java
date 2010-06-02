@@ -101,7 +101,7 @@ final class ProtAnnotMain implements WindowListener {
 
 		@Override
 		public void openURLAction(String url) {
-			load(url);
+			loadFromURL(url);
 		}
 	};
 	
@@ -497,6 +497,18 @@ final class ProtAnnotMain implements WindowListener {
 
 	}
 
+	private void loadFromURL(String path) {
+		URLConnection conn = null;
+		try {
+			URL url = new URL(path);
+			conn = url.openConnection();
+			conn.setConnectTimeout(1000 * 10);
+			conn.setReadTimeout(1000 * 10);
+			load(conn.getInputStream(), url.toString());
+		} catch (Exception e) {
+			Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
+		}
+	}
 
 	/**
 	 * Loads the file selected in the file browser.

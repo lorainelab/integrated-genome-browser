@@ -167,6 +167,7 @@ final class GenomeView extends JPanel implements MouseListener{
         initPrefs(phash);
         popup = new JPopupMenu();
         seqmap = new TieredNeoMap(true, false);
+		seqmap.enableDragScrolling(true);
         seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
         seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoAbstractWidget.FITWIDGET);
         seqmap.setMapOffset(0, seqmap_pixel_height);

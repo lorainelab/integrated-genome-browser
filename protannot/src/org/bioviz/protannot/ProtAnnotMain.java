@@ -308,6 +308,11 @@ final class ProtAnnotMain implements WindowListener {
         b_action.setEnabled(false);
 
         gview.popup.add(b_action);
+
+		ZoomToFeatureAction z_action = new ZoomToFeatureAction(this.gview);
+        menuitem = menu.add(z_action);
+        menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0));
+		gview.popup.add(z_action);
     }
 
     /**

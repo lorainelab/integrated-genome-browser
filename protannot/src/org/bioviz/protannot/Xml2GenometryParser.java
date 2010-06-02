@@ -130,7 +130,7 @@ final class Xml2GenometryParser {
         }
         return chrom;
     }
-	
+
     /**
      * Process dna in BioSeq for each child node of element provided.
      * @param   genomic
@@ -248,7 +248,7 @@ final class Xml2GenometryParser {
                     hitSym.addChild(spanSym);
                     SeqSpan spanSpan = spanSym.getSpan(query_seq);
                     if (hitSpan == null) {
-                        hitSpan = new SimpleMutableSeqSpan(spanSpan.getStart(), spanSpan.getEnd(), query_seq);
+                        hitSpan = new SimpleMutableSeqSpan(spanSpan.getMin(), spanSpan.getMax(), query_seq); // Doubtful
                     } else {
                         SeqUtils.encompass(hitSpan, spanSpan, (MutableSeqSpan) hitSpan);
                     }
@@ -332,7 +332,7 @@ final class Xml2GenometryParser {
         spanSym.setProperty("aa_end", prop);
         prop = (Integer.valueOf(end - start + 1)).toString();
         spanSym.setProperty("aa_length", prop);
-        SeqSpan qspan = new SimpleSeqSpan(start, end, query_seq);
+        SeqSpan qspan = new SimpleSeqSpan(start+query_seq.getMin(), end+query_seq.getMin(), query_seq); // Doubtful
         spanSym.addSpan(qspan);
         return spanSym;
     }
@@ -361,7 +361,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
     private void processGene(BioSeq genomic, Element elem) {
-       
+
         if (DEBUG) {
 			int start = Integer.parseInt(elem.getAttribute("start"));
 			int end = Integer.parseInt(elem.getAttribute("end"));
@@ -416,7 +416,7 @@ final class Xml2GenometryParser {
     private void processMRNA(BioSeq genomic, Element elem) {
         int start = Integer.parseInt(elem.getAttribute("start"));
         int end = Integer.parseInt(elem.getAttribute("end"));
-		
+
         if (DEBUG) {
             System.err.println("mrna:  start = " + start + "  end = " + end);
         }
@@ -461,7 +461,7 @@ final class Xml2GenometryParser {
         for (SeqSymmetry esym : exon_list) {
             m2gSym.addChild(esym);
         }
-		
+
 		BioSeq mrna = addSpans(m2gSym, genomic, exon_insert_list, start);
 
 		String protein_id = determineProteinID(children);
@@ -510,7 +510,7 @@ final class Xml2GenometryParser {
 		BioSeq mrna = new BioSeq(mrna_id, null, mrnalength);
 		mrna.setBounds(start, start+mrnalength);
 		mrna_hash.put(mrna_id, mrna);
-		SeqSpan mrna_span = new SimpleSeqSpan(mrna.getMin(), mrnalength, mrna);
+		SeqSpan mrna_span = new SimpleSeqSpan(mrna.getMin(), mrna.getMax(), mrna); //Corrected
 		m2gSym.addSpan(mrna_span);
 		for (int i = 0; i < exoncount; i++) {
 			SimpleSymWithProps esym = (SimpleSymWithProps) m2gSym.getChild(i);
@@ -691,7 +691,7 @@ final class Xml2GenometryParser {
         int end = Integer.parseInt(attr);
 
         checkTranslationLength(start,end);
-        
+
 
         // could just do this as a single seq span (start, end, seq), but then would end up recreating
         //   the cds segments, which will get ignored afterwards...
@@ -716,15 +716,15 @@ final class Xml2GenometryParser {
 		if(mend_point == null) {
 			throw new NullPointerException("Conflict with start and end in processCDS.");
 		}
-		
+
         TypeContainerAnnot m2pSym = new TypeContainerAnnot(elem.getAttribute("method"));
 
         SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrna);
         BioSeq protein = new BioSeq(protein_id, null, mspan.getLength() / 3);
-		protein.setBounds(mspan.getMin(), mspan.getLength()/3);
-		
+		protein.setBounds(mspan.getMin(), mspan.getMin() + mspan.getLength()/3); // Corrected
+
         prot_hash.put(protein_id, protein);
-        SeqSpan pspan = new SimpleSeqSpan(protein.getMin(), protein.getLength(), protein);
+        SeqSpan pspan = new SimpleSeqSpan(protein.getMin(), protein.getMax(), protein); //Corrected
         if (DEBUG) {
             System.err.println("protein: length = " + pspan.getLength());
         }
@@ -745,7 +745,7 @@ final class Xml2GenometryParser {
         for(int[] exon : transCheckExons){
             int exon_start = exon[0];
             int exon_end = exon[1];
-			
+
 			//int old_length = length;
             if(exon_start >= start && exon_end <= end){
 				// exon completely in translated region

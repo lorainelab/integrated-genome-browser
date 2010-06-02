@@ -21,6 +21,10 @@ public class ClientOptimizer {
     public static void OptimizeQuery(
 			BioSeq aseq, URI typeid,
 			Das2Type type, String typeName, List<FeatureRequestSym> output_requests, FeatureRequestSym request_sym) {
+		if (aseq == null) {
+			Logger.getLogger(ClientOptimizer.class.getName()).severe("Chromosome was not selected -- cannot load data");
+			return;
+		}
 		// overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
 		SeqSymmetry overlap_sym = request_sym.getOverlapSym();
 		Das2Region region = null;

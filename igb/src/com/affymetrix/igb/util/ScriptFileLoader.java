@@ -1,6 +1,8 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -79,10 +81,9 @@ public class ScriptFileLoader {
 		try {
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				Logger.getLogger(ScriptFileLoader.class.getName()).info("line " + line);
-				//System.out.println("parsing line " + line + " with field len" + fields.length);
+				Logger.getLogger(ScriptFileLoader.class.getName()).info("line: " + line);
 				doSingleAction(line);
-				Thread.sleep(2000);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
+				Thread.sleep(1000);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
@@ -92,12 +93,12 @@ public class ScriptFileLoader {
 	private static void doSingleAction(String line) {
 		String[] fields = line.split(splitter);
 		String action = fields[0].toLowerCase();
-		if (action.equals("genome") && fields.length == 2) {
+		if (action.equals("genome") && fields.length >= 2) {
 			// go to genome
 			goToGenome(join(fields,1));
 			return;
 		}
-		if (action.equals("goto") && fields.length == 2) {
+		if (action.equals("goto") && fields.length >= 2) {
 			// go to region
 			goToRegion(join(fields,1));
 			return;
@@ -136,16 +137,33 @@ public class ScriptFileLoader {
 		if (action.equals("refresh")) {
 			RefreshDataAction.getAction().actionPerformed(null);
 		}
-		if (action.equals("select") && fields.length==2) {
+		if (action.equals("select") && fields.length>=2) {
 			UnibrowControlServlet.performSelection(fields[1]);
 		}
 	}
 
 	private static void goToGenome(String genomeVersion) {
-		UnibrowControlServlet.determineAndSetGroup(genomeVersion);
+		AnnotatedSeqGroup group = UnibrowControlServlet.determineAndSetGroup(genomeVersion);
+		if (group == null) {
+			return;
+		}
+		for (int i=0;i<30;i++) {
+			// sleep until versions are initialized
+			for (GenericVersion version: group.getEnabledVersions()) {
+				if (version.isInitialized()) {
+					continue;
+				}
+				try {
+					Thread.sleep(1000); // not finished initializing versions
+				} catch (InterruptedException ex) {
+					Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+		}
 	}
 
 	private static void goToRegion(String region) {
+		System.out.println("Region:--" + region + "--");
 		MapRangeBox.setRange(Application.getSingleton().getMapView(), region);
 	}
 

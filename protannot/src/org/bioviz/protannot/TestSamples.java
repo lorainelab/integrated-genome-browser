@@ -8,7 +8,6 @@ package org.bioviz.protannot;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -19,20 +18,29 @@ import java.util.logging.Logger;
  * This class opens a directory and then attempts to read every file in the
  * directory that terminates with file extension suffix .paxml. Use this
  * class to test whether each .paxml file in the directory is readable by
- * the ProtAnnot Xml2GenometryParser class.
+ * the ProtAnnot Xml2GenometryParser class. Files that are not readable are
+ * moved into directory failed (created if not present).
  * @author hvora1
  * @author loraine
  */
 public class TestSamples {
 
+	/**
+	 * Usage: java -cp protannot_exe.jar org.bioviz.protannot.TestSamples [dir_path]
+	 * @param args
+	 */
     static public void main(String args[])
     {
-		String dirpath = ".";
-		if (args.length==1) {
-			dirpath = args[0];
-			if(!dirpath.endsWith("/"))
-				dirpath += "/";
+		
+		if (args.length!=1) {
+			printUsage();
+			return;
 		}
+		
+		String dirpath = args[0];
+		if(!dirpath.endsWith("/"))
+			dirpath += "/";
+
         File dir = new File(dirpath);
         String[] files = dir.list(new FilenameFilter() {
 
@@ -98,5 +106,12 @@ public class TestSamples {
 			newFile.delete();
 		}
 		return file.renameTo(newFile);
+	}
+
+	/**
+	 * Prints how to use the tool.
+	 */
+	static private void printUsage(){
+		System.err.println("Usage: java -cp protannot_exe.jar org.bioviz.protannot.TestSamples [dir_path]");
 	}
 }

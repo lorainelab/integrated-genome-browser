@@ -75,7 +75,7 @@ final class ProtAnnotMain implements WindowListener {
     private JFileChooser chooser = null;
     // for printing
     private ComponentPagePrinter print_panel = null;
-    // for choosing sample file from server
+    // for choosing sample path from server
     private JFrame sampleChooser = null;
     // for choosing colors
     private JFrame colorChooser = null;
@@ -101,7 +101,7 @@ final class ProtAnnotMain implements WindowListener {
 
 		@Override
 		public void openURLAction(String url) {
-			loadFromURL(url);
+			load(url);
 		}
 	};
 	
@@ -129,9 +129,9 @@ final class ProtAnnotMain implements WindowListener {
         test.start(args);
     }
 
-	/** Returns the icon stored in the jar file.
+	/** Returns the icon stored in the jar path.
 	 *  It is expected to be at com.affymetrix.igb.igb.gif.
-	 *  @return null if the image file is not found or can't be opened.
+	 *  @return null if the image path is not found or can't be opened.
 	 */
 	private static Image getIcon() {
 		Image icon = null;
@@ -147,7 +147,7 @@ final class ProtAnnotMain implements WindowListener {
 		return icon;
 	}
     /**
-     * Unloads everything from GnomeView if unable to read the selected file.
+     * Unloads everything from GnomeView if unable to read the selected path.
      */
     private void no_data() {
         frm.setTitle(" ProtAnnot");
@@ -156,7 +156,7 @@ final class ProtAnnotMain implements WindowListener {
     }
 
     /**
-     * Loads preferences from the file.
+     * Loads preferences from the path.
      *
      * @return Returns a hashtable with name as key and Color as a value.
      */
@@ -185,7 +185,7 @@ final class ProtAnnotMain implements WindowListener {
 
     /**
      * Setup the outer frame.
-     * @param   args    - optional file name as a parameter.
+     * @param   args    - optional path name as a parameter.
      */
     private void start(String[] args) {
 		if ("Mac OS X".equals(System.getProperty("os.name"))) {
@@ -210,8 +210,14 @@ final class ProtAnnotMain implements WindowListener {
 
         frm.addWindowListener(this);
         frm.setVisible(true);
-        if(getArgumentValue(Arguments.FILENAME)!=null)
-            load(getArgumentValue(Arguments.FILENAME));
+		String file = getArgumentValue(Arguments.FILENAME);
+        if(file != null)
+		{
+			if(getArgumentValue(Arguments.SERVER)!=null)
+				load(getArgumentValue(Arguments.SERVER) + file);
+			else
+				load(file);
+		}
     }
 
     /**
@@ -244,7 +250,7 @@ final class ProtAnnotMain implements WindowListener {
     }
 
     /**
-     * Action perfomed when a file is seleced in the file browser. Calls up load(name) to load the file.
+     * Action perfomed when a path is seleced in the path browser. Calls up load(name) to load the path.
      */
     private void doLoadFile() {
         if (this.chooser == null) {
@@ -436,7 +442,7 @@ final class ProtAnnotMain implements WindowListener {
 
 
     /**
-     * Sets up interface to select file from the server.
+     * Sets up interface to select path from the server.
      */
     private void setupSamplesFromServer()
     {
@@ -463,7 +469,7 @@ final class ProtAnnotMain implements WindowListener {
         open.addActionListener(new ActionListener(){
 
                 public void actionPerformed(ActionEvent e) {
-                    load(filesList.getSelectedValue().toString());
+                    load(getArgumentValue(Arguments.SERVER) + filesList.getSelectedValue().toString());
                     sampleChooser.setVisible(false);
                 }
             });
@@ -483,13 +489,13 @@ final class ProtAnnotMain implements WindowListener {
     }
 
 
-	private void load(String file) {
-		if (file.startsWith("/")) {
-			load(new File(file));
+	private void load(String path) {
+		if (!(path.startsWith("http:/") || path.startsWith("https:/"))) {
+			load(new File(path));
 		} else {
 			URLConnection conn = null;
 			try {
-				String path = getArgumentValue(Arguments.SERVER) + file;
+				//String path = getArgumentValue(Arguments.SERVER) + path;
 				URL url = new URL(path);
 				conn = url.openConnection();
 				conn.setConnectTimeout(1000 * 10);
@@ -502,22 +508,9 @@ final class ProtAnnotMain implements WindowListener {
 
 	}
 
-	private void loadFromURL(String path) {
-		URLConnection conn = null;
-		try {
-			URL url = new URL(path);
-			conn = url.openConnection();
-			conn.setConnectTimeout(1000 * 10);
-			conn.setReadTimeout(1000 * 10);
-			load(conn.getInputStream(), url.toString());
-		} catch (Exception e) {
-			Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
-		}
-	}
-
 	/**
-	 * Loads the file selected in the file browser.
-	 * @param   seqfile - Name of file to be loaded
+	 * Loads the path selected in the path browser.
+	 * @param   seqfile - Name of path to be loaded
 	 */
 	private void load(File seqfile) {
 
@@ -538,7 +531,7 @@ final class ProtAnnotMain implements WindowListener {
 			bistr = new BufferedInputStream(fistr);
 			NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
 			if (DEBUG) {
-				nxs.outputXMLToScreen(nxs.doc);
+				NormalizeXmlStrand.outputXMLToScreen(nxs.doc);
 			}
 			Xml2GenometryParser parser = new Xml2GenometryParser();
 			BioSeq genome_seq = parser.parse(nxs.doc);
@@ -598,7 +591,7 @@ final class ProtAnnotMain implements WindowListener {
 	private boolean checkArguments(String arg, String argValue)
 	{
 		arg = arg.toLowerCase();
-		argValue = argValue.toLowerCase();
+		//argValue = argValue.toLowerCase();
 		
 		//Check if it server's argument.
 		if (arg.equals("-s")) {
@@ -610,17 +603,17 @@ final class ProtAnnotMain implements WindowListener {
 				if(argValue.endsWith("/")) {
 					return addToArgumentDictionary(new String[]{"-s", argValue});
 				} else {
-					//Check if it is file on a server. Then add file name and server name.
+					//Check if it is path on a server. Then add path name and server name.
 					//eg https://protannot.bioviz.org/samples/ABCB1.paxml
 					String file = argValue.substring(argValue.lastIndexOf("/") + 1);
 					String server = argValue.replace(file, "");
 
-					//Check file name is valid.
+					//Check path name is valid.
 					if(file.contains(".")){
 						checkArguments("-f", file);
 						return addToArgumentDictionary(new String[]{"-s", server});
 					}
-					//If file name is invalid then should be server name without '/' at the end.
+					//If path name is invalid then should be server name without '/' at the end.
 					//eg http://protannot.bioviz.org/samples
 					else
 						return addToArgumentDictionary(new String[]{"-s", argValue+"/"});

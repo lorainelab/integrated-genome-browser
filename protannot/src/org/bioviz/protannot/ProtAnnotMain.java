@@ -504,10 +504,11 @@ final class ProtAnnotMain implements WindowListener {
 	 */
 	private void load(File seqfile) {
 
-		FileInputStream fistr = null;
+		InputStream fistr = null;
 		try {
-			fistr = new FileInputStream(seqfile);
-			load(fistr, seqfile.getName());
+			StringBuffer filename = new StringBuffer();
+			fistr = GeneralUtils.getInputStream(seqfile, filename);
+			load(fistr, filename.toString());
 		} catch (Exception e) {
 			Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
 		} finally {

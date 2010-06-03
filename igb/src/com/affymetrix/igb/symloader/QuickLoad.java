@@ -228,12 +228,12 @@ public final class QuickLoad extends SymLoader {
 			if (request.getInsideSpan() != null) {
 				results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
 			}
-			if (results != null && !results.isEmpty()) {
+			if (!results.isEmpty()) {
 				request.setProperty("method", this.uri.toString());
 				FeatureRequestSym.addToRequestSym(results, request, this.uri, featureName, request.getOverlapSpan());
 				FeatureRequestSym.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
+				overallResults.addAll(results);
 			}
-			overallResults.addAll(results);
 		}
 		return overallResults;
 	}

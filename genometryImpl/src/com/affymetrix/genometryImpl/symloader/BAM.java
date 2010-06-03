@@ -14,7 +14,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +36,7 @@ import net.sf.samtools.SAMRecord.SAMTagAndValue;
 import net.sf.samtools.SAMSequenceDictionary;
 import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.util.CloseableIterator;
+import net.sf.samtools.util.SequenceUtil;
 
 /**
  * @author jnicol
@@ -180,7 +180,7 @@ public final class BAM extends SymLoader {
 	 */
 	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) {
 		init();
-		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		CloseableIterator<SAMRecord> iter = null;
 		try {
 			if (reader != null) {
@@ -240,41 +240,18 @@ public final class BAM extends SymLoader {
 		for (SAMTagAndValue tv : sr.getAttributes()) {
 			sym.setProperty(tv.tag, tv.value);
 		}
-		sym.setProperty("residues", sr.getReadString());
 		sym.setProperty("cigar", sr.getCigar());
+		sym.setProperty("residues", sr.getReadString());
+		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
+			//sym.setProperty("residues", sr.getReadString());
+		} else {
+			// If both the MD and Cigar properties are set, don't need to specify residues.
+			byte[] SEQ = SequenceUtil.makeReferenceFromAlignment(sr, false);
+			sym.setProperty("SEQ", SEQ);
+		}
 		sym.setProperty("method", meth);
 
-		SAMFileHeader hr = sr.getHeader();
-		if(hr != null){
-
-			//Seqeunce Dictionary
-			SAMSequenceDictionary ssd = hr.getSequenceDictionary();
-			for(SAMSequenceRecord ssr : ssd.getSequences()){
-				if(ssr.getAssembly() != null)
-					sym.setProperty("genomeAssembly", ssr.getAssembly());
-
-				if(ssr.getSpecies() != null)
-					sym.setProperty("species  ", ssr.getSpecies());
-			}
-
-			//Read Group
-			for(SAMReadGroupRecord srgr : hr.getReadGroups()){
-				for (Entry<String,Object> en : srgr.getAttributes()) {
-					if(en.getValue() instanceof String){
-						sym.setProperty(en.getKey(), en.getValue());
-					}
-				}
-			}
-
-			//Program
-			for(SAMProgramRecord  spr : hr.getProgramRecords()){
-				for (Entry<String,Object> en : spr.getAttributes()) {
-					if(en.getValue() instanceof String){
-						sym.setProperty(en.getKey(), en.getValue());
-					}
-				}
-			}
-		}
+		getFileHeaderProperties(sr.getHeader(), sym);
 
 		return sym;
 	}
@@ -326,6 +303,38 @@ public final class BAM extends SymLoader {
 		}
 
 		return results;
+	}
+
+	private static void getFileHeaderProperties(SAMFileHeader hr, SymWithProps sym) {
+		if (hr == null) {
+			return;
+		}
+		//Sequence Dictionary
+		SAMSequenceDictionary ssd = hr.getSequenceDictionary();
+		for (SAMSequenceRecord ssr : ssd.getSequences()) {
+			if (ssr.getAssembly() != null) {
+				sym.setProperty("genomeAssembly", ssr.getAssembly());
+			}
+			if (ssr.getSpecies() != null) {
+				sym.setProperty("species  ", ssr.getSpecies());
+			}
+		}
+		//Read Group
+		for (SAMReadGroupRecord srgr : hr.getReadGroups()) {
+			for (Entry<String, Object> en : srgr.getAttributes()) {
+				if (en.getValue() instanceof String) {
+					sym.setProperty(en.getKey(), en.getValue());
+				}
+			}
+		}
+		//Program
+		for (SAMProgramRecord spr : hr.getProgramRecords()) {
+			for (Entry<String, Object> en : spr.getAttributes()) {
+				if (en.getValue() instanceof String) {
+					sym.setProperty(en.getKey(), en.getValue());
+				}
+			}
+		}
 	}
 
 	/**

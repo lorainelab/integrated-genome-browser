@@ -6,6 +6,7 @@ package org.bioviz.protannot;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
@@ -216,7 +217,7 @@ final class ProtAnnotMain implements WindowListener {
 			if(getArgumentValue(Arguments.SERVER)!=null)
 				load(getArgumentValue(Arguments.SERVER) + file);
 			else
-				load(file);
+				load(new File(file));
 		}
     }
 
@@ -489,23 +490,12 @@ final class ProtAnnotMain implements WindowListener {
     }
 
 
-	private void load(String path) {
-		if (!(isServer(path))) {
-			load(new File(path));
-		} else {
-			URLConnection conn = null;
-			try {
-				//String path = getArgumentValue(Arguments.SERVER) + path;
-				URL url = new URL(path);
-				conn = url.openConnection();
-				conn.setConnectTimeout(1000 * 10);
-				conn.setReadTimeout(1000 * 10);
-				load(conn.getInputStream(), url.toString());
-			} catch (Exception e) {
-				Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
-			}
+	private void load(String path){
+		try {
+			load(LocalUrlCacher.getInputStream(path), path);
+		} catch (IOException e) {
+			Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
 		}
-
 	}
 
 	/**
@@ -806,19 +796,18 @@ final class ProtAnnotMain implements WindowListener {
      * @param prefs_col     Hashtable<String,Color>
      * @return  Object[][]  Returns color preferences in two dimentional object.
      */
-    private Object[][] getData(Hashtable<String, Color> prefs_col)
-    {
-                Object[][] colordata = new Object[prefs_col.size()][2];
-                int i=0;
-                Enumeration<String> e = prefs_col.keys();
+    private Object[][] getData(Hashtable<String, Color> prefs_col) {
+		Object[][] colordata = new Object[prefs_col.size()][2];
+		int i = 0;
+		Enumeration<String> e = prefs_col.keys();
 
-                while (e.hasMoreElements()) {
-                    String key = e.nextElement();
-                    colordata[i++] = new Object[]{key,prefs_col.get(key)};
-                }
-                return colordata;
+		while (e.hasMoreElements()) {
+			String key = e.nextElement();
+			colordata[i++] = new Object[]{key, prefs_col.get(key)};
+		}
+		return colordata;
 
-     }
+	}
 
 	private boolean isServer(String string){
 		return (string.startsWith("http:/") || string.startsWith("https:/"));

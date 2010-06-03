@@ -674,14 +674,7 @@ final class ProtAnnotMain implements WindowListener {
 			BufferedReader buff = null;
 			try {
 				URL url = new URL(getArgumentValue(Arguments.SERVER));
-				URLConnection conn = url.openConnection();
-
-				// setting these timeouts ensures the client does not deadlock indefinitely
-				// when the server has problems.
-				conn.setConnectTimeout(1000 * 10);
-				conn.setReadTimeout(1000 * 10);
-
-				buff = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				buff = new BufferedReader(new InputStreamReader(LocalUrlCacher.getInputStream(url)));
 				boolean eof = false;
 				while (!eof) {
 					String line = buff.readLine();

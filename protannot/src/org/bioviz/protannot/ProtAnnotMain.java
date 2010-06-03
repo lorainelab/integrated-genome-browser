@@ -504,11 +504,10 @@ final class ProtAnnotMain implements WindowListener {
 	 */
 	private void load(File seqfile) {
 
-		InputStream fistr = null;
+		FileInputStream fistr = null;
 		try {
-			StringBuffer filename = new StringBuffer();
-			fistr = GeneralUtils.getInputStream(seqfile, filename);
-			load(fistr, filename.toString());
+			fistr = new FileInputStream(seqfile);
+			load(fistr, seqfile.getName());
 		} catch (Exception e) {
 			Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
 		} finally {
@@ -519,7 +518,7 @@ final class ProtAnnotMain implements WindowListener {
 	private void load(InputStream fistr, String filename) {
 		BufferedInputStream bistr = null;
 		try {
-			bistr = new BufferedInputStream(fistr);
+			bistr = new BufferedInputStream(GeneralUtils.unzipStream(fistr, filename, new StringBuffer()));
 			NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
 			if (DEBUG) {
 				NormalizeXmlStrand.outputXMLToScreen(nxs.doc);

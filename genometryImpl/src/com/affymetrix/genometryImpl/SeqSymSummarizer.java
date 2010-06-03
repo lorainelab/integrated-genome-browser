@@ -13,13 +13,13 @@
 
 package com.affymetrix.genometryImpl;
 
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.util.FloatList;
-import com.affymetrix.genometryImpl.util.IntList;
 
 public final class SeqSymSummarizer {
 
@@ -92,9 +92,9 @@ public final class SeqSymSummarizer {
 		int max_depth = 0;
 		// initializing capacity of sum_starts and sum_stops to max that could theoretically be
 		//   needed, though likely won't fill it
-		IntList transition_xpos = new IntList(span_num * 2);
-		FloatList transition_ypos = new FloatList(span_num * 2);
-		//int transitions = 0; // the value of this variable is never used for anything
+		IntArrayList transition_xpos = new IntArrayList(span_num * 2);
+		FloatArrayList transition_ypos = new FloatArrayList(span_num * 2);
+
 		int prev_depth = 0;
 		while ((starts_index < span_num) && (stops_index < span_num)) {
 			// figure out whether next position is a start, stop, or both
@@ -119,20 +119,17 @@ public final class SeqSymSummarizer {
 				if ((prev_depth <= 0) && (depth > 0)) {
 					transition_xpos.add(next_transition);
 					transition_ypos.add(1);
-					//transitions++;
 					prev_depth = 1;
 				}
 				else if ((prev_depth > 0) && (depth <= 0)) {
 					transition_xpos.add(next_transition);
 					transition_ypos.add(0);
-					//transitions++;
 					prev_depth = 0;
 				}
 			}
 			else {
 				transition_xpos.add(next_transition);
 				transition_ypos.add(depth);
-				//transitions++;
 				max_depth = Math.max(depth, max_depth);
 			}
 		}
@@ -149,25 +146,23 @@ public final class SeqSymSummarizer {
 				if ((prev_depth <= 0) && (depth > 0)) {
 					transition_xpos.add(next_transition);
 					transition_ypos.add(1);
-					//transitions++;
 					prev_depth = 1;
 				}
 				else if ((prev_depth > 0) && (depth <= 0)) {
 					transition_xpos.add(next_transition);
 					transition_ypos.add(0);
-					//transitions++;
 					prev_depth = 0;
 				}
 			}
 			else {
 				transition_xpos.add(next_transition);
 				transition_ypos.add(depth);
-				//transitions++;
 				max_depth = Math.max(depth, max_depth);
 			}
 		}
-
-		int[] x_positions = transition_xpos.copyToArray();
+		transition_xpos.trimToSize();
+		transition_ypos.trimToSize();
+		int[] x_positions = transition_xpos.elements();
 		int[] widths = new int[x_positions.length];
 		for (int i=0; i<widths.length-1; i++) {
 			widths[i] = x_positions[i+1] - x_positions[i];
@@ -179,7 +174,7 @@ public final class SeqSymSummarizer {
 		// does not need to change.
 		String uid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq);
 		GraphIntervalSym gsym =
-			new GraphIntervalSym(x_positions, widths, transition_ypos.copyToArray(), uid, seq);
+			new GraphIntervalSym(x_positions, widths, transition_ypos.elements(), uid, seq);
 		return gsym;
 	}
 

@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +33,6 @@ import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
@@ -174,65 +174,66 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
     return results.toArray(new GraphIntervalSym[results.size()]);
   }
   
-  // strands should be one of '+', '-' or '.'
-  // name -- should be a score name in the original ScoredContainerSym
-  private static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name,
-      AnnotatedSeqGroup seq_group, BioSeq seq, final char strands) {
-    ScoredContainerSym original_container = (ScoredContainerSym) derived_parent.getOriginalSymmetry();
-    
-    float[] original_scores = original_container.getScores(name);
-    
-    // Simply knowing the correct graph ID is the key to getting the correct
-    // graph state, with the accompanying tier style and tier combo style.
-    String id = original_container.getGraphID(seq_group, name, strands);
-    
-    if (original_scores == null) {
-      System.err.println("ScoreContainerSym.makeGraphSym() called, but no scores found for: " + name);
-      return null;
-    }
-    
-    //int score_count = original_scores.length;
-    int derived_child_count = derived_parent.getChildCount();
-    IntList xcoords = new IntList(derived_child_count);
-    IntList wcoords = new IntList(derived_child_count);
-    FloatList ycoords = new FloatList(derived_child_count);
-    
-    for (int i=0; i<derived_child_count; i++) {
-      Object child = derived_parent.getChild(i);
-      if (child instanceof DerivedSeqSymmetry) {
-        DerivedSeqSymmetry derived_child = (DerivedSeqSymmetry) derived_parent.
-            getChild(i);
-        SeqSpan cspan = derived_child.getSpan(seq);
-        if (cspan != null) {
-          if (strands == '.' || (strands == '+' && cspan.isForward()) ||
-              (strands == '-' && !cspan.isForward())) {
-            xcoords.add(cspan.getMin());
-            wcoords.add(cspan.getLength());
-            IndexedSym original_child = (IndexedSym) derived_child.
-                getOriginalSymmetry();
-            // the index of this child in the original parent symmetry.
-            // it is very possible that original_index==i in all cases,
-            // but I'm not sure of that yet
-            int original_index = original_child.getIndex();
-            ycoords.add(original_scores[original_index]);
-          }
-        }
-      }
-    }
-    GraphIntervalSym gsym = null;
-    if (xcoords.size() != 0) {
-      gsym = new GraphIntervalSym(xcoords.copyToArray(),
-          wcoords.copyToArray(), ycoords.copyToArray(), id, seq);
-      if (strands == '-') {
-        gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
-      } else if (strands == '+') {
-        gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-      } else {
-        gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
-      }
-    }
-    return gsym;
-  }
+	// strands should be one of '+', '-' or '.'
+	// name -- should be a score name in the original ScoredContainerSym
+	private static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name,
+			AnnotatedSeqGroup seq_group, BioSeq seq, final char strands) {
+		ScoredContainerSym original_container = (ScoredContainerSym) derived_parent.getOriginalSymmetry();
+
+		float[] original_scores = original_container.getScores(name);
+
+		// Simply knowing the correct graph ID is the key to getting the correct
+		// graph state, with the accompanying tier style and tier combo style.
+		String id = original_container.getGraphID(seq_group, name, strands);
+
+		if (original_scores == null) {
+			System.err.println("ScoreContainerSym.makeGraphSym() called, but no scores found for: " + name);
+			return null;
+		}
+
+		//int score_count = original_scores.length;
+		int derived_child_count = derived_parent.getChildCount();
+		IntArrayList xcoords = new IntArrayList(derived_child_count);
+		IntArrayList wcoords = new IntArrayList(derived_child_count);
+		FloatArrayList ycoords = new FloatArrayList(derived_child_count);
+
+		for (int i = 0; i < derived_child_count; i++) {
+			Object child = derived_parent.getChild(i);
+			if (child instanceof DerivedSeqSymmetry) {
+				DerivedSeqSymmetry derived_child = (DerivedSeqSymmetry) derived_parent.getChild(i);
+				SeqSpan cspan = derived_child.getSpan(seq);
+				if (cspan != null) {
+					if (strands == '.' || (strands == '+' && cspan.isForward())
+							|| (strands == '-' && !cspan.isForward())) {
+						xcoords.add(cspan.getMin());
+						wcoords.add(cspan.getLength());
+						IndexedSym original_child = (IndexedSym) derived_child.getOriginalSymmetry();
+						// the index of this child in the original parent symmetry.
+						// it is very possible that original_index==i in all cases,
+						// but I'm not sure of that yet
+						int original_index = original_child.getIndex();
+						ycoords.add(original_scores[original_index]);
+					}
+				}
+			}
+		}
+		xcoords.trimToSize();
+		wcoords.trimToSize();
+		ycoords.trimToSize();
+		GraphIntervalSym gsym = null;
+		if (!xcoords.isEmpty()) {
+			gsym = new GraphIntervalSym(xcoords.elements(),
+					wcoords.elements(), ycoords.elements(), id, seq);
+			if (strands == '-') {
+				gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+			} else if (strands == '+') {
+				gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+			} else {
+				gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
+			}
+		}
+		return gsym;
+	}
 
 
 	private static void displayGraphSym(GraphIntervalSym graf, AffyTieredMap map, SeqMapView smv) {

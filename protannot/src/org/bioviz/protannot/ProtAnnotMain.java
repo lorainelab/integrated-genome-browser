@@ -62,6 +62,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
+import javax.swing.JTextField;
 import javax.swing.TransferHandler;
 
 /**
@@ -80,6 +81,8 @@ final class ProtAnnotMain implements WindowListener {
     private JFrame sampleChooser = null;
     // for choosing colors
     private JFrame colorChooser = null;
+	// for adding server
+	private JFrame addServer = null;
     // the JFrame containing all the widgets
     private JFrame frm;
     // has NeoMaps and PropertySheet (JTable)
@@ -90,8 +93,15 @@ final class ProtAnnotMain implements WindowListener {
     private Preferences prefs;
     // width of the user's screen
     private Dimension screen;
+	private boolean ofs = false;
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
+	final AbstractAction server_load_action = new AbstractAction("Open from server ...") {
+
+		public void actionPerformed(ActionEvent e) {
+			sampleChooser.setVisible(true);
+		}
+	};
 	private static final Image imageIcon = getIcon();
 	private final TransferHandler fdh = new FileDropHandler(){
 
@@ -206,6 +216,7 @@ final class ProtAnnotMain implements WindowListener {
         setUpPanels();
         setUpMenus();
         setupColorChooser();
+		setupAddServer();
         if(getArgumentValue(Arguments.SERVER)!=null)
             setupSamplesFromServer();
 
@@ -306,7 +317,7 @@ final class ProtAnnotMain implements WindowListener {
     }
 
     /**
-     * Adds menu item to View menu. Adds open browser action to it.
+     * Adds menu item to View menu. Adds add browser action to it.
      * @param   menu    Menu name to which submenus should be added.
      */
     private void addViewActions(JMenu menu) {
@@ -328,9 +339,10 @@ final class ProtAnnotMain implements WindowListener {
      * Adds menu item to File menu. Adds Load,print and quit to it.
      * @param   file_menu   Menu name to which submenus should be added.
      */
-    private void addFileActions(JMenu file_menu) {
+    private void addFileActions(final JMenu file_menu) {
         JMenuItem menuitem;
-
+		
+		
         AbstractAction load_action = new AbstractAction("Open File ...") {
 
             public void actionPerformed(ActionEvent e) {
@@ -341,18 +353,22 @@ final class ProtAnnotMain implements WindowListener {
         menuitem = file_menu.add(load_action);
         menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 0));
 
-        if(getArgumentValue(Arguments.SERVER)!=null)
-        {
-            AbstractAction server_load_action = new AbstractAction("Open from server ...") {
-
-                public void actionPerformed(ActionEvent e) {
-                        sampleChooser.setVisible(true);
-                }
-            };
-            server_load_action.setEnabled(true);
-            menuitem = file_menu.add(server_load_action);
-            menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
-        }
+		AbstractAction add_server = new AbstractAction("Add Server ..."){
+			public void actionPerformed(ActionEvent e){
+				addServer.setVisible(true);
+			}
+		};
+		add_server.setEnabled(true);
+		menuitem = file_menu.add(add_server);
+		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0));
+		
+		
+		if(getArgumentValue(Arguments.SERVER)==null)
+			server_load_action.setEnabled(false);
+		else
+			server_load_action.setEnabled(true);
+		menuitem = file_menu.add(server_load_action);
+		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
 
         AbstractAction print_action = new AbstractAction("Print") {
 
@@ -406,6 +422,41 @@ final class ProtAnnotMain implements WindowListener {
         menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0));
 
     }
+
+	private void setupAddServer(){
+		addServer = new JFrame("Add Server Address ...");
+        addServer.setSize(250, 85);
+        addServer.setLocation((int) (screen.width * .4f), (int) (screen.height * .15f));
+        addServer.setLayout(new BoxLayout(addServer.getContentPane(), BoxLayout.Y_AXIS));
+
+		final JTextField address = new JTextField();
+		address.setSize(225, 40);
+		JPanel buttonpanel = new JPanel();
+        buttonpanel.setLayout(new FlowLayout());
+        JButton add    = new JButton(" Add  ");
+        JButton cancel = new JButton("Cancel");
+        buttonpanel.add(add);
+        buttonpanel.add(cancel);
+
+        add.addActionListener(new ActionListener(){
+
+                public void actionPerformed(ActionEvent e) {
+					checkArguments("",address.getText());
+					setupSamplesFromServer();
+					server_load_action.setEnabled(true);
+					addServer.setVisible(false);
+                }
+            });
+
+        cancel.addActionListener(new ActionListener(){
+
+                public void actionPerformed(ActionEvent e) {
+					addServer.setVisible(false);
+                }
+            });
+		addServer.add(address);
+		addServer.add(buttonpanel);
+	}
 
     /**
      * In testmode, adds 3 buttons in menubar to load files.

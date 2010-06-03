@@ -4,6 +4,7 @@ import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.glyph.AlignedResidueGlyph;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -195,9 +196,11 @@ public final class FasterExpandPacker extends ExpandPacker {
 					} else {
 						// indicate to user that we're layering the glyphs -- we do this by making the layered glyphs a darker color
 						recurseSetColor(child.getColor().darker(), child);
+						recurseSetPackerClipping(child);	// don't draw everything in the overlapped glyphs (for performance)
 						if (layeredChild.getColor() != child.getColor()) {
 							// first time through -- we haven't set the previous child's color yet.
 							recurseSetColor(layeredChild.getColor().darker(), layeredChild);
+							recurseSetPackerClipping(layeredChild);	// don't draw everything in the overlapped glyphs (for performance)
 						}
 					}
 				} else {
@@ -252,6 +255,16 @@ public final class FasterExpandPacker extends ExpandPacker {
 		int count = glyph.getChildCount();
 		for (int i=0;i<count;i++) {
 			recurseSetColor(c, glyph.getChild(i));
+		}
+	}
+
+	private static void recurseSetPackerClipping(GlyphI glyph) {
+		if (glyph instanceof AlignedResidueGlyph) {
+			((AlignedResidueGlyph)glyph).packerClip = true;
+		}
+		int count = glyph.getChildCount();
+		for (int i=0;i<count;i++) {
+			recurseSetPackerClipping(glyph.getChild(i));
 		}
 	}
 

@@ -37,7 +37,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 
 	private static final boolean drawingRects = false;
 	public final boolean isDrawingRects() {
-		return this.drawingRects;
+		return SequenceGlyph.drawingRects;
 	}
 
 	public SequenceGlyph() {
@@ -55,11 +55,13 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 		this.setCoords(cb.x, cb.y, cb.width, cb.height);
 	}
 
+	@Override
 	public void setCoords(double x, double y, double width, double height) {
 		super.setCoords(x, y, width, height);
 		full_rect.setCoords(x, y, width, height);
 	}
 
+	@Override
 	public void setCoordBox(Rectangle2D.Double coordbox) {
 		super.setCoordBox(coordbox);
 		full_rect.setCoordBox(coordbox);
@@ -91,6 +93,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 	 * If set to FILL, will visually fill whole glyph
 	 * even if only part of glyph is actually selected.
 	 */
+	@Override
 	public void drawTraversal(ViewI view)  {
 		if (isVisible && coordbox.intersects(view.getCoordBox())) {
 			int sel_style = view.getScene().getSelectionAppearance();
@@ -116,6 +119,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 		}
 	}
 
+	@Override
 	public void draw(ViewI view) {
 		if (orient == HORIZONTAL) {
 			drawHorizontal( view );

@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -26,7 +27,7 @@ import java.util.prefs.PreferenceChangeListener;
  * Residues can be masked out if they agree with a reference sequence.
  *
  */
-public final class AlignedResidueGlyph extends SequenceGlyph
+public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 		 {
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
@@ -45,8 +46,25 @@ public final class AlignedResidueGlyph extends SequenceGlyph
 	public static final Color default_G_color = Color.YELLOW;
 	public static final Color default_C_color = Color.BLUE;
 	public static final Color default_other_color = Color.GRAY;
+	public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
 
 	private static final ColorHelper helper = new ColorHelper();
+
+	public void setParentSeqStart(int beg) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void setParentSeqEnd(int end) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public int getParentSeqStart() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public int getParentSeqEnd() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 	private static final class ColorHelper implements PreferenceChangeListener {
 		private static final Map<String, Color> DEFAULT_COLORS;
 		private final Color[] colors;
@@ -149,6 +167,9 @@ public final class AlignedResidueGlyph extends SequenceGlyph
 	// Essentially the same as SequenceGlyph.drawHorizontal
 	@Override
 	public void draw(ViewI view) {
+		if (packerClip || chariter == null) {
+			return;	// don't draw residues
+		}
 		Rectangle2D.Double coordclipbox = view.getCoordBox();
 		int visible_ref_beg, visible_seq_beg, seq_beg_index;
 		visible_ref_beg = (int) coordclipbox.x;
@@ -157,43 +178,43 @@ public final class AlignedResidueGlyph extends SequenceGlyph
 		visible_seq_beg = Math.max(seq_beg, visible_ref_beg);
 		seq_beg_index = visible_seq_beg - seq_beg;
 
-		if (null != chariter && seq_beg_index <= residue_length) {
-			double pixel_width_per_base = ( view.getTransform()).getScaleX();
-			// If we're drawing all the residues, return if there's less than one pixel per base
-			if (residueMask.isEmpty() && pixel_width_per_base < 1) {
-				return;
-			}
-			// If we're masking the residues, draw up to 5 residues at one pixel.
-			if (pixel_width_per_base < 0.2) {
-				return;
-			}
-			int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
-			// adding 1 to visible ref_end to make sure base is drawn if only
-			// part of it is visible
-			visible_ref_end = visible_ref_end + 1;
-			int visible_seq_end = Math.min(seq_end, visible_ref_end);
-			int visible_seq_span = visible_seq_end - visible_seq_beg;
-			// ***** otherwise semantic zooming to show more detail *****
-			if (visible_seq_span > 0) {
-				Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, coordbox.y,
-						visible_seq_span, coordbox.height);
-				view.transformToPixels(scratchrect, pixelbox);
-				int seq_end_index = visible_seq_end - seq_beg;
-				if (seq_end_index > residue_length) {
-					seq_end_index = residue_length;
-				}
-				if (Math.abs((long) seq_end_index - (long) seq_beg_index) > 100000) {
-					// something's gone wrong.  Ignore.
-					Logger.getLogger(CharSeqGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
-					return;
-				}
-				int seq_pixel_offset = pixelbox.x;
-				String str = chariter.substring(seq_beg_index, seq_end_index);
-				Graphics g = view.getGraphics();
-				drawHorizontalResidues(g, pixel_width_per_base, str, seq_beg_index, seq_end_index, seq_pixel_offset);
-			}
+		if (seq_beg_index > residue_length) {
+			return;	// no residues to draw
 		}
-		super.draw(view);
+		
+		double pixel_width_per_base = (view.getTransform()).getScaleX();
+		if (residueMask.isEmpty() && pixel_width_per_base < 1) {
+			return;	// If we're drawing all the residues, return if there's less than one pixel per base
+		}
+		if (pixel_width_per_base < 0.2) {
+			return;	// If we're masking the residues, draw up to 5 residues at one pixel.
+		}
+		
+		int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
+		// adding 1 to visible ref_end to make sure base is drawn if only
+		// part of it is visible
+		visible_ref_end = visible_ref_end + 1;
+		int visible_seq_end = Math.min(seq_end, visible_ref_end);
+		int visible_seq_span = visible_seq_end - visible_seq_beg;
+		if (visible_seq_span > 0) {
+			// ***** semantic zooming to show more detail *****
+			Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg, coordbox.y,
+					visible_seq_span, coordbox.height);
+			view.transformToPixels(scratchrect, pixelbox);
+			int seq_end_index = visible_seq_end - seq_beg;
+			if (seq_end_index > residue_length) {
+				seq_end_index = residue_length;
+			}
+			if (Math.abs((long) seq_end_index - (long) seq_beg_index) > 100000) {
+				// something's gone wrong.  Ignore.
+				Logger.getLogger(CharSeqGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
+				return;
+			}
+			int seq_pixel_offset = pixelbox.x;
+			String str = chariter.substring(seq_beg_index, seq_end_index);
+			Graphics g = view.getGraphics();
+			drawHorizontalResidues(g, pixel_width_per_base, str, seq_beg_index, seq_end_index, seq_pixel_offset);
+		}
 	}
 
 	/**
@@ -201,8 +222,7 @@ public final class AlignedResidueGlyph extends SequenceGlyph
 	 *
 	 * <p> We are showing letters regardless of the height constraints on the glyph.
 	 */
-	@Override
-	protected void drawHorizontalResidues(Graphics g,
+	private void drawHorizontalResidues(Graphics g,
 			double pixelsPerBase,
 			String residueStr,
 			int seqBegIndex,

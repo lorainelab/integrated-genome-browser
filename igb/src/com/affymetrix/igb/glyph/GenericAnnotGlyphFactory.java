@@ -410,7 +410,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			// SEQ property is set; don't need to look at individual residues
 			AlignedResidueGlyph csg = new AlignedResidueGlyph();
 			csg.setResidueMask(seqArr);
-			csg.setShowBackground(false);
+			//csg.setShowBackground(false);
 			csg.setHitable(false);
 			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
 			if (isChild) {
@@ -437,7 +437,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 					csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMax()));
 				}
 			}
-			csg.setShowBackground(false);
+			//csg.setShowBackground(false);
 			csg.setHitable(false);
 			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
 			if (isChild) {

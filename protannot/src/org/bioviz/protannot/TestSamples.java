@@ -6,11 +6,12 @@
 package org.bioviz.protannot;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,7 +46,7 @@ public class TestSamples {
         String[] files = dir.list(new FilenameFilter() {
 
 			public boolean accept(File dir, String name) {
-				return name.endsWith(".paxml");
+				return GeneralUtils.getUnzippedName(name).endsWith(".paxml");
 			}
 		});
 		
@@ -69,7 +70,7 @@ public class TestSamples {
     {
         BufferedInputStream bistr = null;
         try {
-            bistr = new BufferedInputStream(new FileInputStream(filename));
+            bistr = new BufferedInputStream(GeneralUtils.getInputStream(new File(filename), new StringBuffer()));
 			NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
 			//NormalizeXmlStrand.outputXMLToScreen(nxs.doc);
             Xml2GenometryParser parser = new Xml2GenometryParser();
@@ -85,7 +86,9 @@ public class TestSamples {
 			}
         } catch (FileNotFoundException ex) {
             System.err.println(filename + "File not found");
-        }
+        } catch (IOException ex){
+			System.err.println(ex.getMessage());
+		}
 		moveToFailedDir(filename);
         return false;
     }

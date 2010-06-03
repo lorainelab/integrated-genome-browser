@@ -214,7 +214,9 @@ final class ProtAnnotMain implements WindowListener {
 		String file = getArgumentValue(Arguments.FILENAME);
         if(file != null)
 		{
-			if(getArgumentValue(Arguments.SERVER)!=null)
+			if(isServer(file))
+				load(file);
+			else if(getArgumentValue(Arguments.SERVER)!=null)
 				load(getArgumentValue(Arguments.SERVER) + file);
 			else
 				load(new File(file));
@@ -547,7 +549,7 @@ final class ProtAnnotMain implements WindowListener {
     {
         List<String> ret = new ArrayList<String>();
         String page = loadPage();
-        Pattern pattern = Pattern.compile("<a.+href=\"(.+paxml)\"");
+        Pattern pattern = Pattern.compile("<a.+href=\"((.+paxml)|(.+paxml.*))\"");
         Matcher matcher = pattern.matcher(page);
         while (matcher.find()) {
             ret.add(matcher.group(1));
@@ -613,7 +615,7 @@ final class ProtAnnotMain implements WindowListener {
 						"\n eg. http://protannot.bioviz.org/samples/");
 			
 		} else if(arg.equals("-f")){
-			if (argValue.endsWith(".paxml")) 
+			if (GeneralUtils.getUnzippedName(argValue).endsWith(".paxml"))
 				return addToArgumentDictionary(new String[]{"-f", argValue});
 			else
 				return outputErrorMessage("Invalid file name: File name should end with .paxml" +

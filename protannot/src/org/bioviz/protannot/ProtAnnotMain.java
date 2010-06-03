@@ -490,7 +490,7 @@ final class ProtAnnotMain implements WindowListener {
 
 
 	private void load(String path) {
-		if (!(path.startsWith("http:/") || path.startsWith("https:/"))) {
+		if (!(isServer(path))) {
 			load(new File(path));
 		} else {
 			URLConnection conn = null;
@@ -597,7 +597,7 @@ final class ProtAnnotMain implements WindowListener {
 		if (arg.equals("-s")) {
 			//Check if server name starts with http:/ or https:/
 			//eg http:// or https://
-			if ((argValue.startsWith("http:/") || argValue.startsWith("https:/"))) {
+			if (isServer(argValue)) {
 				//Check if it is server name.
 				//eg http://protannot.bioviz.org/samples/
 				if(argValue.endsWith("/")) {
@@ -631,7 +631,7 @@ final class ProtAnnotMain implements WindowListener {
 						"\n eg. https://protannot.bioviz.org/samples/ABCD.paxml");
 			
 		} else if(arg.equals("")){
-			if(argValue.startsWith("http:/") || argValue.startsWith("https:/"))
+			if(isServer(argValue))
 				checkArguments("-s",argValue);
 			else
 				checkArguments("-f",argValue);
@@ -820,6 +820,9 @@ final class ProtAnnotMain implements WindowListener {
 
      }
 
+	private boolean isServer(String string){
+		return (string.startsWith("http:/") || string.startsWith("https:/"));
+	}
     /**
      * Table model for color prefrences
      */

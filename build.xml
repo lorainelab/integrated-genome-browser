@@ -268,6 +268,7 @@
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="freehep-2.1.1.jar"/>
+				<include name="colt.jar" />
 			</zipgroupfileset>
 		</jar>
 	</target>
@@ -296,6 +297,7 @@
 		<java fork="true" classname="org.bioviz.protannot.ProtAnnotMain">
 			<classpath>
 				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
+				<fileset dir="${lib.dir}" includes="colt.jar" />
 				<dirset dir="${basedir}">
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />
@@ -309,6 +311,7 @@
         <nbjpdastart addressproperty="jpda.address" name="protannot" transport="dt_socket">
             <classpath>
 				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
+				<fileset dir="${lib.dir}" includes="colt.jar" />
 				<dirset dir="${basedir}">
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />
@@ -319,6 +322,7 @@
         <java fork="true" classname="org.bioviz.protannot.ProtAnnotMain">
 			<classpath>
 				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
+				<fileset dir="${lib.dir}" includes="colt.jar" />
 				<dirset dir="${basedir}">
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />

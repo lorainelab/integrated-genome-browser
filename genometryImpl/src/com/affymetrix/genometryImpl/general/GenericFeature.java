@@ -61,7 +61,7 @@ public final class GenericFeature {
 				this.loadStrategy = LoadStrategy.VISIBLE;
 			} else {
 				// Local File or QuickLoad
-				if (this.symL != null) {
+				/*if (this.symL != null) {
 					if (this.symL.getLoadChoices().contains(LoadStrategy.VISIBLE)) {
 						this.loadStrategy = LoadStrategy.VISIBLE;
 					} else if (this.symL.getLoadChoices().contains(LoadStrategy.CHROMOSOME)) {
@@ -69,7 +69,7 @@ public final class GenericFeature {
 					} else {
 						this.loadStrategy = LoadStrategy.GENOME;
 					}
-				}
+				}*/
 			}
 		}
 	}

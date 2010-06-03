@@ -87,6 +87,12 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();
 		}
+		if (this.extension.endsWith(".chp")) {
+			List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+			strategyList.add(LoadStrategy.NO_LOAD);
+			strategyList.add(LoadStrategy.GENOME);
+			return strategyList;
+		}
 		return super.getLoadChoices();
 	}
 
@@ -156,6 +162,13 @@ public final class QuickLoad extends SymLoader {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
+					if (QuickLoad.this.extension.endsWith(".chp") && strategy == LoadStrategy.GENOME) {
+						// special-case chp files, due to their LazyChpSym DAS/2 loading
+						QuickLoad.this.getGenome();
+						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
+						SeqGroupView.refreshTable();
+						return null;
+					}
 					List<FeatureRequestSym> output_requests = FeatureRequestSym.determineFeatureRequestSyms(
 							QuickLoad.this.symL, QuickLoad.this.uri, QuickLoad.this.featureName,
 							strategy, overlapSpan);

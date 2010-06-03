@@ -143,13 +143,11 @@ public final class ChpParser {
 
 	/** same as parseQuantChp, but adding detection/pval */
 	private static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp, boolean annotate_seq) throws Exception {
-		List<LazyChpSym> results = null;
 		String file_name = chp.getFileName();
 		String algName = chp.getAlgName();
 		String algVersion = chp.getAlgVersion();
 		String array_type = chp.getArrayType();
 		int ps_count = chp.getEntryCount();
-		Map id2data = new HashMap(ps_count);
 		List<ProbeSetQuantificationDetectionData> int_entries = new ArrayList<ProbeSetQuantificationDetectionData>(ps_count);
 		int int_id_count = 0;
 		int str_id_count = 0;
@@ -199,23 +197,22 @@ public final class ChpParser {
 			System.out.println("Probsets with integer id: " + int_id_count);
 			System.out.println("Probsets with string id: " + str_id_count);
 			System.out.println("done parsing quantification + detection CHP file");
-			results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, int_entries, annotate_seq);
-		} else {
-			System.out.println("CHP quantification/detection data is not for exon chip, "
-					+ "falling back on older method for handling expression CHP files");
-			//      results = oldParseQuantDetectChp(chp);
+			return ChpParser.makeLazyChpSyms(type_name, array_type, int_entries, annotate_seq);
 		}
-		return results;
+
+		System.out.println("CHP quantification/detection data is not for exon chip, "
+				+ "falling back on older method for handling expression CHP files");
+		//      results = oldParseQuantDetectChp(chp);
+
+		return null;
 	}
 
 	private static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) throws Exception {
-		List<LazyChpSym> results = null;
 		String file_name = chp.getFileName();
 		String algName = chp.getAlgName();
 		String algVersion = chp.getAlgVersion();
 		String array_type = chp.getArrayType();
 		int ps_count = chp.getEntryCount();
-		Map id2data = new HashMap(ps_count);
 		List<ProbeSetQuantificationData> int_entries = new ArrayList<ProbeSetQuantificationData>(ps_count);
 		int int_id_count = 0;
 		int str_id_count = 0;
@@ -258,17 +255,15 @@ public final class ChpParser {
 		QuantByIntIdComparator comp = new QuantByIntIdComparator();
 		Collections.sort(int_entries, comp);
 		if (int_id_count > 0) {
-			//      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
 			System.out.println("Probsets with integer id: " + int_id_count);
 			System.out.println("Probsets with string id: " + str_id_count);
 			System.out.println("done parsing quantification CHP file");
-			results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, int_entries, annotate_seq);
-		} else {
-			System.out.println("CHP quantification data is not for exon chip, "
-					+ "falling back on older method for handling expression CHP files");
-			results = oldParseQuantChp(chp, annotate_seq);
+			return ChpParser.makeLazyChpSyms(file_name, array_type, int_entries, annotate_seq);
 		}
-		return results;
+		
+		System.out.println("CHP quantification data is not for exon chip, "
+				+ "falling back on older method for handling expression CHP files");
+		return oldParseQuantChp(chp, annotate_seq);
 	}
 
 
@@ -288,7 +283,7 @@ public final class ChpParser {
 	 *
 	 */
 	private static List<LazyChpSym> makeLazyChpSyms(
-			String file_name, String chp_array_type, Map id2data, List int_entries, boolean annotate_seq) {
+			String file_name, String chp_array_type, List int_entries, boolean annotate_seq) {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 

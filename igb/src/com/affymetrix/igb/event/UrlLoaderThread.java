@@ -197,7 +197,7 @@ public final class UrlLoaderThread extends Thread {
 
 			public void run() {
 				try {
-					gviewer.updateSummariesData();
+					gviewer.updateDependentData();
 					gviewer.setAnnotatedSeq(seq, true, true);
 				} catch (Exception e) {
 					handleException(e);

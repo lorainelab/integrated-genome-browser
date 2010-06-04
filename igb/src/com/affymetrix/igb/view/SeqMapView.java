@@ -175,7 +175,7 @@ public class SeqMapView extends JPanel
 	/** Hash of method names (lower case) to reverse tiers */
 	private final Map<String, TierGlyph> method2rtier = new HashMap<String, TierGlyph>();
 	/** Hash of TierGlyph to GraphSym for summary */
-	private final Map<TierGlyph, SymWithProps> summary_list = new HashMap<TierGlyph, SymWithProps>();
+	private final Map<TierGlyph, SymWithProps> dependent_list = new HashMap<TierGlyph, SymWithProps>();
 	/** Hash of GraphStates to TierGlyphs. */
 	private final Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
 
@@ -576,7 +576,7 @@ public class SeqMapView extends JPanel
 		method2ftier.clear();
 		gstyle2tier.clear();
 		match_glyphs.clear();
-		summary_list.clear();
+		dependent_list.clear();
 		seqmap.updateWidget();
 	}
 
@@ -2131,11 +2131,11 @@ public class SeqMapView extends JPanel
 	}
 	
 	public final void addToSummaryList(TierGlyph atier, SymWithProps gsym){
-		summary_list.put(atier, gsym);
+		dependent_list.put(atier, gsym);
 	}
 
-	public void updateSummariesData(){
-		for(Entry<TierGlyph, SymWithProps> entry : summary_list.entrySet()){
+	public void updateDependentData(){
+		for(Entry<TierGlyph, SymWithProps> entry : dependent_list.entrySet()){
 			TierGlyph atier = entry.getKey();
 			String name = atier.getParentURL();
 			Direction direction = atier.getDirection();

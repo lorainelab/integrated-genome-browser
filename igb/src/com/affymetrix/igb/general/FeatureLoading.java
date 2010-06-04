@@ -167,7 +167,7 @@ public final class FeatureLoading {
 				public void done() {
 					if (update_display && gviewer != null && !result_syms.isEmpty()) {
 						BioSeq aseq = gmodel.getSelectedSeq();
-						Application.getSingleton().getMapView().updateSummariesData();
+						Application.getSingleton().getMapView().updateDependentData();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
 					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);

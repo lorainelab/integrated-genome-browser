@@ -789,7 +789,6 @@ public class SeqMapView extends JPanel
 			}
 
 			seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
-			updateSummariesData();
 			addGlyphs(temp_tiers, axis_index);
 		}
 
@@ -858,7 +857,6 @@ public class SeqMapView extends JPanel
 			setZoomSpotX(0.5 * (range[0] + range[1]));
 		}
 		seqmap.updateWidget();
-		updateSummariesStyle();
 	}
 
 
@@ -2200,7 +2198,7 @@ public class SeqMapView extends JPanel
 		summary_list.put(atier, gsym);
 	}
 
-	private void updateSummariesData(){
+	public void updateSummariesData(){
 		for(Entry<TierGlyph, GraphSym> entry : summary_list.entrySet()){
 			TierGlyph atier = entry.getKey();
 			String name = atier.getParentURL();
@@ -2209,31 +2207,26 @@ public class SeqMapView extends JPanel
 			SeqSymmetry sym = aseq.getAnnotation(name);
 			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 			syms.add(sym);
+			GraphSym gsym = createSummaryGraph(entry.getValue().getID(),syms,direction);
 			BioSeq seq = gmodel.getSelectedSeq();
-			String graphid = "summary: " + atier.getLabel();
-			GraphSym gsym = null;
-			if(direction == Direction.FORWARD || direction == Direction.REVERSE){
-				Boolean isForward = direction == Direction.FORWARD ? true : false;
-				gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, graphid, isForward);
-			}else
-				gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, graphid);
-
-			gsym.setGraphName("depth: " + atier.getLabel());
-			seq.addAnnotation(gsym);
 			seq.removeAnnotation(entry.getValue());
 			entry.setValue(gsym);
 		}
 	}
 
-	private void updateSummariesStyle(){
-		for(Entry<TierGlyph, GraphSym> entry : summary_list.entrySet()){
-			TierGlyph atier = entry.getKey();
-			GraphSym gsym = entry.getValue();
-			GraphGlyph gl = (GraphGlyph)getSeqMap().getItem(gsym);
-			gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-			gl.setColor(atier.getForegroundColor());
+	public GraphSym createSummaryGraph(String graphid, List<SeqSymmetry> syms, Direction direction){
+		BioSeq seq = gmodel.getSelectedSeq();
+		GraphSym gsym = null;
+		if (direction == Direction.FORWARD || direction == Direction.REVERSE) {
+			Boolean isForward = direction == Direction.FORWARD ? true : false;
+			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, graphid, isForward);
+		} else {
+			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, graphid);
 		}
-	}
 
+		gsym.setID(graphid);
+		seq.addAnnotation(gsym);
+		return gsym;
+	}
 }
 

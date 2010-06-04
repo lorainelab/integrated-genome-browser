@@ -2189,5 +2189,18 @@ public class SeqMapView extends JPanel
 		aseq.addAnnotation(wrapperSym);
 		return wrapperSym;
 	}
+
+		public void deleteTier(TierGlyph tg) {
+		String URL = tg.getParentURL();
+		for (BioSeq seq : aseq.getSeqGroup().getSeqList()) {
+			SeqSymmetry sym = seq.getAnnotation(URL);
+			if (sym != null) {
+				seq.removeAnnotation(sym);
+			}
+		}
+		if (dependent_list.containsKey(tg)) {
+			dependent_list.remove(tg);
+		}
+	}
 }
 

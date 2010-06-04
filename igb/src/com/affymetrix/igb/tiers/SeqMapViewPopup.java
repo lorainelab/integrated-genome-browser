@@ -19,10 +19,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
@@ -51,7 +49,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final JMenu showMenu = new JMenu("Show...");
   private final JMenu changeMenu = new JMenu("Change...");
   private final JMenu strandsMenu = new JMenu("Strands...");
-  private final JMenuItem deleteMI = new JMenuItem("Delete");
 
   private final ActionToggler at1;
   private final ActionToggler at2;
@@ -602,6 +599,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     customize_action.setEnabled(true);
 
     hide_action.setEnabled(num_selections > 0);
+	delete_action.setEnabled(num_selections > 0);
     show_all_action.setEnabled(not_empty);
 
     change_color_action.setEnabled(num_selections > 0);
@@ -656,6 +654,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(customize_action);
     popup.add(new JSeparator());
     popup.add(hide_action);
+	//popup.add(delete_action);
     popup.add(showMenu);
     popup.add(show_all_action);
 
@@ -678,8 +677,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(save_menu);
     save_menu.add(save_bed_action);
 
-    //popup.add(delete_action);
-
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);
     popup.add(coverage_action);
@@ -696,8 +693,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private void removeTiers(List<TierLabelGlyph> tiers) {
 	  for (TierLabelGlyph tlg: tiers) {
 		  System.out.println("DEBUG: eventually would delete this tier: " + tlg);
+		  gviewer.deleteTier(tlg.getReferenceTier());
 	  }
+	  gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());	// refresh
   }
+  
   // purely for debugging
 	private void doDebugAction() {
 		for (TierGlyph tg : handler.getSelectedTiers()) {

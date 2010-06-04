@@ -559,17 +559,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
 	
     BioSeq aseq = gmodel.getSelectedSeq();
-    String graphid = "summary: " + atier.getLabel();
-    GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, graphid);
-//    gsym.setGraphName("depth: " + atier.getLabel());
-//    aseq.addAnnotation(gsym);
-//    gviewer.setAnnotatedSeq(aseq, true, true);
-//    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
-//    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
-//    gl.setColor(atier.getForegroundColor());
-
+	String id = atier.getLabel() + getSymbol(atier.getDirection());
+	GraphSym gsym = gviewer.createSummaryGraph(id, syms, Direction.NONE);
+	gsym.setGraphName("depth: " + id);
 	gviewer.addToSummaryList(atier, gsym);
-	gviewer.setAnnotatedSeq(aseq, true, true);
+    gviewer.setAnnotatedSeq(aseq, true, true);
+    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
+    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
+    gl.setColor(atier.getForegroundColor());
   }
 
   void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
@@ -722,6 +719,25 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
+	private String getSymbol(Direction direction){
+		String symbol = " ";
+		switch (direction) {
+			case FORWARD:
+				symbol += "(+)";
+				break;
+			case REVERSE:
+				symbol += "(-)";
+				break;
+
+			case BOTH:
+				symbol += "(+/-)";
+				break;
+
+			default:
+				symbol += "*";
+		}
+		return symbol;
+	}
 	SeqMapView getSeqMapView() {
 		return gviewer;
 	}

@@ -36,6 +36,8 @@ import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
+import com.affymetrix.igb.view.DependentData;
+import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
@@ -525,7 +527,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     style.setExpandable(false); // cannot expand and collapse
     style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 
-	gviewer.addToDependentList(atier, wrapperSym);
+	gviewer.addToDependentList(new DependentData(unique_name,DependentType.COVERAGE,atier.getParentURL(),wrapperSym));
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
@@ -547,7 +549,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	String id = atier.getLabel() + getSymbol(atier.getDirection());
 	GraphSym gsym = gviewer.createSummaryGraph(id, syms, Direction.NONE);
 	gsym.setGraphName("depth: " + id);
-	gviewer.addToDependentList(atier, gsym);
+	gviewer.addToDependentList(new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),atier.getDirection(), gsym));
     gviewer.setAnnotatedSeq(aseq, true, true);
     GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
     gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
@@ -693,7 +695,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private void removeTiers(List<TierLabelGlyph> tiers) {
 	  for (TierLabelGlyph tlg: tiers) {
 		  System.out.println("DEBUG: eventually would delete this tier: " + tlg);
-		  gviewer.deleteTier(tlg.getReferenceTier());
+		  //gviewer.deleteTier(tlg.getReferenceTier());
 	  }
 	  gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());	// refresh
   }

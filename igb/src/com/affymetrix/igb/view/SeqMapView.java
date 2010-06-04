@@ -174,8 +174,8 @@ public class SeqMapView extends JPanel
 	private final Map<String, TierGlyph> method2ftier = new HashMap<String, TierGlyph>();
 	/** Hash of method names (lower case) to reverse tiers */
 	private final Map<String, TierGlyph> method2rtier = new HashMap<String, TierGlyph>();
-	/** Hash of TierGlyph to GraphSym for summary */
-	private final Map<TierGlyph, SymWithProps> dependent_list = new HashMap<TierGlyph, SymWithProps>();
+	/**List of Dependent data */
+	private final List<DependentData> dependent_list = new ArrayList<DependentData>();
 	/** Hash of GraphStates to TierGlyphs. */
 	private final Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
 
@@ -2002,7 +2002,7 @@ public class SeqMapView extends JPanel
 	 *  Generally called by the Glyph Factory.
 	 *  Note that this can create empty tiers.  But if the tiers are not filled with
 	 *  something, they will later be removed automatically. 
-	 *  @param meth  The tier name; it will be treated as case-insensitive.
+	 *  @param meth  The tier annot; it will be treated as case-insensitive.
 	 *  @param next_to_axis Do you want the Tier as close to the axis as possible?
 	 *  @param style  a non-null instance of IAnnotStyle; tier label and other properties
 	 *   are determined by the IAnnotStyle.
@@ -2130,35 +2130,19 @@ public class SeqMapView extends JPanel
 		return sym.getSpan(viewseq);
 	}
 	
-	public final void addToDependentList(TierGlyph atier, SymWithProps gsym){
-		dependent_list.put(atier, gsym);
+	public final void addToDependentList(DependentData dd){
+		dependent_list.add(dd);
 	}
 
 	public void updateDependentData(){
-		for(Entry<TierGlyph, SymWithProps> entry : dependent_list.entrySet()){
-			TierGlyph atier = entry.getKey();
-			String name = atier.getParentURL();
-			Direction direction = atier.getDirection();
-
-			SeqSymmetry sym = aseq.getAnnotation(name);
-			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-			syms.add(sym);
-
-			SymWithProps gsym = null;
-			SymWithProps oldsym = entry.getValue();
-			if(oldsym instanceof GraphSym)
-				gsym = createSummaryGraph(oldsym.getID(),syms,direction);
-			else
-				gsym = createCoverageTier((String) oldsym.getProperty("method"),syms);
-			
-			
+		for(DependentData dd : dependent_list){
 			BioSeq seq = gmodel.getSelectedSeq();
-			seq.removeAnnotation(entry.getValue());
-			entry.setValue(gsym);
+			seq.removeAnnotation(dd.getSym());
+			dd.createTier();
 		}
 	}
 
-	public GraphSym createSummaryGraph(String graphid, List<SeqSymmetry> syms, Direction direction){
+	public static GraphSym createSummaryGraph(String graphid, List<SeqSymmetry> syms, Direction direction){
 		BioSeq seq = gmodel.getSelectedSeq();
 		GraphSym gsym = null;
 		if (direction == Direction.FORWARD || direction == Direction.REVERSE) {
@@ -2173,7 +2157,8 @@ public class SeqMapView extends JPanel
 		return gsym;
 	}
 
-	public SymWithProps createCoverageTier(String id, List<SeqSymmetry> syms) {
+	public static SymWithProps createCoverageTier(String id, List<SeqSymmetry> syms) {
+		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 		SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
 		SymWithProps wrapperSym;
 		if (union_sym instanceof SymWithProps) {
@@ -2189,18 +2174,5 @@ public class SeqMapView extends JPanel
 		aseq.addAnnotation(wrapperSym);
 		return wrapperSym;
 	}
-
-		public void deleteTier(TierGlyph tg) {
-		String URL = tg.getParentURL();
-		for (BioSeq seq : aseq.getSeqGroup().getSeqList()) {
-			SeqSymmetry sym = seq.getAnnotation(URL);
-			if (sym != null) {
-				seq.removeAnnotation(sym);
-			}
-		}
-		if (dependent_list.containsKey(tg)) {
-			dependent_list.remove(tg);
-		}
-	}
+	
 }
-

@@ -2,14 +2,20 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.das.DasType;
+import com.affymetrix.genometryImpl.das2.Das2Type;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.MapRangeBox;
 import java.io.BufferedReader;
@@ -17,6 +23,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -124,6 +133,11 @@ public class ScriptFileLoader {
 				return;
 			}
 		}
+		if (action.equals("loadmode")) {
+			if (fields.length >=2) {
+				loadMode(fields[1], join(fields,2));
+			}
+		}
 		if (action.equals("print")) {
 			if (fields.length == 1) {
 				try {
@@ -180,8 +194,34 @@ public class ScriptFileLoader {
 	}
 
 	private static void loadFile(String fileName) {
-		File f = new File(fileName);
+		File f = new File(fileName.trim());
 		LoadFileAction.openURI(f.toURI(), f.getName(), true, GenometryModel.getGenometryModel().getSelectedSeqGroup());
+	}
+
+	private static void loadMode(String loadMode, String featureURIStr) {
+		URI featureURI = null;
+		File featureFile = new File(featureURIStr.trim());
+		if (featureFile.exists()) {
+			featureURI = featureFile.toURI();
+		} else {
+			featureURI = URI.create(featureURIStr.trim());
+		}
+		LoadStrategy s = LoadStrategy.NO_LOAD;
+		if (loadMode.equalsIgnoreCase("no_load")) {
+			s = LoadStrategy.NO_LOAD;
+		} else if (loadMode.equalsIgnoreCase("visible")) {
+			s = LoadStrategy.VISIBLE;
+		} else if (loadMode.equalsIgnoreCase("chromosome")) {
+			s = LoadStrategy.CHROMOSOME;
+		} else if (loadMode.equalsIgnoreCase("genome")) {
+			s = LoadStrategy.GENOME;
+		}
+		GenericFeature feature = ServerList.findFeatureWithURI(featureURI);
+		if (feature != null) {
+			feature.loadStrategy = s;
+		} else {
+			Logger.getLogger(ScriptFileLoader.class.getName()).severe("Couldn't find feature :" + featureURIStr);
+		}
 	}
 
 	/**

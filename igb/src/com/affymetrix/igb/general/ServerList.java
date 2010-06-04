@@ -7,7 +7,11 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das.DasType;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2Type;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -72,6 +76,29 @@ public final class ServerList {
 
 	public static synchronized Collection<GenericServer> getAllServers() {
 		return url2server.values();
+	}
+
+
+	public static GenericFeature findFeatureWithURI(URI uri) {
+		Set<GenericServer> serverSet = ServerList.getInitializedServers();
+		serverSet.add(ServerList.getLocalFilesServer());
+		for (GenericServer server : serverSet) {
+			for (GenericVersion version: server.getVersions()) {
+				for (GenericFeature feature : version.getFeatures()) {
+					if (feature.typeObj instanceof Das2Type && ((Das2Type)feature.typeObj).getURI().equals(uri)) {
+						return feature;
+					}
+					if (feature.typeObj instanceof DasType) {
+						// not implemented yet
+						continue;
+					}
+					if (feature.symL != null && feature.symL.uri.equals(uri)) {
+						return feature;
+					}
+				}
+			}
+		}
+		return null;	// couldn't find it
 	}
 
 	/*public static Map<String, String> getUrls() {

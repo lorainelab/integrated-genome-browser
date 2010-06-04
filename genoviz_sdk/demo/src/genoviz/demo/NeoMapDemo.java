@@ -146,8 +146,8 @@ public class NeoMapDemo extends JApplet
     map.setZoomer(NeoMap.Y, yzoomer);
 
     // Place an axis along the center of the map.
-    map.addAxis(0);
-
+    map.addAxis(1);
+	
     addItemsDirectly();  // examples of adding items directly to map
     addItemsWithFactory();  // examples of adding items using factories
     addItemsWithDataAdapter();  // examples of adding items using data adapters

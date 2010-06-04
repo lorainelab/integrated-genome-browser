@@ -38,6 +38,7 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+import javax.swing.JApplet;
 import javax.swing.JFrame;
 
 /**
@@ -46,7 +47,7 @@ import javax.swing.JFrame;
  *
  * @version $Id$
  */
-public class ShadowDemo extends Applet
+public class ShadowDemo extends JApplet
 	implements MouseMotionListener, MouseListener,
 			   NeoRangeListener
 {
@@ -82,7 +83,7 @@ public class ShadowDemo extends Applet
 	// "Selection" by the mouse of the shadow
 
 	private boolean shadowActive = false;
-
+	AdjustableJSlider hzoom;
 	final int SEQVIEW_WIDTH = 300;
 	final int SEQVIEW_HEIGHT = 150;
 	final int MAP_WIDTH = 400;
@@ -158,7 +159,8 @@ public class ShadowDemo extends Applet
 		};
 		seqview.setStripeColors(okayColors);
 
-		Panel controlP = new Panel();
+		Container controlP = this.getContentPane();
+		//Panel controlP = new Panel();
 		controlP.setLayout(new BorderLayout());
 		
 		this.setLayout(new BorderLayout());
@@ -166,14 +168,15 @@ public class ShadowDemo extends Applet
 		// hardwired sizing of seqview...
 		((Component)seqview).setSize(SEQVIEW_WIDTH, SEQVIEW_HEIGHT);
 
-		Panel seq_pan = new NeoPanel();
+		/*Panel seq_pan = new NeoPanel();
 		seq_pan.setLayout(new BorderLayout());
-		seq_pan.add("Center", (Component)seqview);
+		seq_pan.add("Center", (Component)seqview);*/
 		
-		controlP.add("West",seq_pan);
-		controlP.add("East",mapframe);
+		controlP.add("West",seqview);
+		controlP.add("Center", hzoom);
+		controlP.add("East",mapview);
 		
-		add("Center", controlP);
+		//add("Center", controlP);
 		
 		/*   testing NeoSeq.preferredSize() methods...
 			 seqview.setPreferredSize(50, 15);
@@ -200,7 +203,7 @@ public class ShadowDemo extends Applet
 			parent = parent.getParent();
 		}
 		super.start();
-		if ( mapframe != null ) mapframe.setVisible(true);
+		//if ( mapframe != null ) mapframe.setVisible(true);
 		mapframe_active = true;
 		mapview.updateWidget();
 	}
@@ -292,29 +295,29 @@ public class ShadowDemo extends Applet
 		// Build up the UI around the mapview
 
 		//mapframe = new Frame("NeoMap - Shadowing Demo");
-		mapframe = new NeoPanel();
-		mapframe.setLayout(new BorderLayout());
+		//mapframe = new NeoPanel();
+		///mapframe.setLayout(new BorderLayout());
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
-		mapframe.setLocation((screen_size.width-MAP_WIDTH)/4,
+		mapview.setLocation((screen_size.width-MAP_WIDTH)/4,
 				(screen_size.height-MAP_HEIGHT)/3);
 
 		mapview.setSize(MAP_WIDTH, MAP_HEIGHT);
 		mapview.setBackground(new Color(180, 250, 250));
 
-		AdjustableJSlider hzoom = new AdjustableJSlider(Adjustable.VERTICAL);
+		hzoom = new AdjustableJSlider(Adjustable.VERTICAL);
 		mapview.setZoomer(NeoMap.X, hzoom);
 
-		NeoPanel map_pan = new NeoPanel();
+		/*NeoPanel map_pan = new NeoPanel();
 		map_pan.setLayout(new BorderLayout());
 		map_pan.add("Center", mapview);
 		mapframe.add("Center", map_pan);
 
 		NeoPanel zoom_pan = new NeoPanel();
 		zoom_pan.setLayout(new BorderLayout());
-		zoom_pan.add("Center", hzoom);
+		zoom_pan.add("Center", hzoom);*/
 		
-		mapframe.add("West", zoom_pan);
-		mapframe.setVisible(true);//mapframe.show();
+		//mapframe.add("West", zoom_pan);
+		mapview.setVisible(true);//mapframe.show();
 //		mapframe.pack();
 //		mapframe.toFront();
 //		mapframe.addWindowListener(
@@ -351,7 +354,7 @@ public class ShadowDemo extends Applet
 		// add rglyph as a child of transient glyph
 
 		destination.addItem(tg, rglyph);
-		mapview.updateWidget();
+		destination.updateWidget();
 		return rglyph;
 	}
 

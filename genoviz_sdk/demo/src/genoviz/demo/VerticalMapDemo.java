@@ -28,7 +28,9 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.widget.VisibleRange;
+import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *  Demonstrates using the vertical map option
@@ -36,8 +38,8 @@ import javax.swing.JFrame;
  *
  * @version $Id$
  */
-public class VerticalMapDemo extends Applet {
-	Panel panel1, panel2;
+public class VerticalMapDemo extends JApplet {
+	JPanel panel1, panel2;
 
 	static public void main(String[] args)
 	{
@@ -55,13 +57,14 @@ public class VerticalMapDemo extends Applet {
 	public void init() {
 		panel1 = testMap(NeoConstants.HORIZONTAL);
 		panel2 = testMap(NeoConstants.VERTICAL);
-		this.setLayout(new GridLayout(1,2,10,0));
-		this.add(panel1);
-		this.add(panel2);
+		Container cpane = this.getContentPane();
+		cpane.setLayout(new GridLayout(1,2,10,0));
+		cpane.add(panel1);
+		cpane.add(panel2);
 
 	}
 
-	public Panel testMap(int orient) {
+	public JPanel testMap(int orient) {
 		final NeoMap map = new NeoMap(true,true,orient,new LinearTransform());
 		final VisibleRange selectedRange = new VisibleRange();
 
@@ -89,7 +92,8 @@ public class VerticalMapDemo extends Applet {
 		AdjustableJSlider yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
 		map.setZoomer(NeoMap.Y, yzoomer);
 		
-		NeoPanel map_pan = new NeoPanel();
+		JPanel map_pan = new JPanel();
+		//NeoPanel map_pan = new NeoPanel();
 		map_pan.setLayout(new BorderLayout());
 		map_pan.add("Center", map);
 		map_pan.add("West", yzoomer);

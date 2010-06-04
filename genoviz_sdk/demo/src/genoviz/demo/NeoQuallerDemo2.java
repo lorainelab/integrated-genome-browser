@@ -18,18 +18,20 @@ import java.awt.event.WindowEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
+import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 /**
  *
  * @version $Id$
  */
-public final class NeoQuallerDemo2 extends Applet
+public final class NeoQuallerDemo2 extends JApplet
 				implements ActionListener, NeoRangeListener {
 
-	NeoPanel widg_pan;
+	JPanel widg_pan;
 	ReadConfidence read_conf;
 	NeoQualler widget;
 	NeoQualler oneClone;
@@ -114,7 +116,7 @@ public final class NeoQuallerDemo2 extends Applet
 		 *  (such as Swing), you should _not_ wrap them with a NeoPanel
 		 *  (since the NeoPanel is a heavyweight component).
 		 */
-		widg_pan = new NeoPanel();
+		widg_pan = new JPanel();
 		widg_pan.setLayout(new BorderLayout());
 		widg_pan.add("Center", (Component) widget);
 

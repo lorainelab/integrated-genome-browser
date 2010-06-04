@@ -54,9 +54,11 @@ import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 import genoviz.demo.datamodel.Assembly;
 import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
+import java.awt.Container;
 import java.net.MalformedURLException;
 import java.util.Hashtable;
 import java.util.Iterator;
+import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -66,7 +68,7 @@ import javax.swing.WindowConstants;
  *  NeoAssembler to construct visual representation of assembly (instead
  *  of a data adapter, which is used in NeoAssemblerDemo2)
  */
-public class NeoAssemblerDemo extends Applet
+public class NeoAssemblerDemo extends JApplet
 	implements NeoRangeListener, WindowListener,
 			   MouseListener, ActionListener
 {
@@ -225,11 +227,17 @@ public class NeoAssemblerDemo extends Applet
 		 *  (such as Swing), you should _not_ wrap them with a NeoPanel
 		 *  (since the NeoPanel is a heavyweight component).
 		 */
-		Panel map_pan;
+
+		Container cpane = this.getContentPane();
+		//cpane.setLayout(new BorderLayout());
+		cpane.add(map);
+		//cpane.add("North", xzoomer);
+		//cpane.add("West", yzoomer);
+		/*Panel map_pan;
 		map_pan = new NeoPanel();
 		map_pan.setLayout(new BorderLayout());
-		map_pan.add("Center", map);
-		mapframe.add("Center", map_pan);
+		map_pan.add("Center", map);*/
+		mapframe.add(cpane);
 
 		mapframe.setSize(pixel_width, pixel_height);
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -618,7 +626,8 @@ public class NeoAssemblerDemo extends Applet
 		zoomframe.add("North", hzoom);
 		zoomframe.pack();
 		zoomframe.setSize(200, zoomframe.getSize().height);
-		zoomframe.setVisible(true);//zoomframe.show();
+		zoomframe.setVisible(true);
+		//zoomframe.show();
 	}
 
 	/**
@@ -1054,7 +1063,7 @@ public class NeoAssemblerDemo extends Applet
 			return parameters.get(name);
 		return super.getParameter(name);
 	}
-	
+
 	static Boolean isApplication = false;
 	static Hashtable<String,String> parameters;
 	static public void main(String[] args)
@@ -1066,11 +1075,11 @@ public class NeoAssemblerDemo extends Applet
 		parameters.put("map_file","data/test-assembly.data");
 		me.init();
 		me.start();
-//		JFrame frm = new JFrame("GenoViz NeoAssembler Demo");
-//		frm.getContentPane().add("Center", me);
-//		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//		frm.pack();
-//		//frm.setBounds(20, 40, 900, 400);
-//		frm.setVisible(true);
+		/*JFrame frm = new JFrame("GenoViz NeoAssembler Demo");
+		frm.getContentPane().add("Center", me);
+		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frm.pack();
+		frm.setBounds(20, 40, 900, 400);
+		frm.setVisible(true);*/
 	}
 }

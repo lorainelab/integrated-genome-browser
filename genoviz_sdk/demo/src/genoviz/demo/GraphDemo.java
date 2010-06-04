@@ -10,7 +10,6 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-
 package genoviz.demo;
 
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
@@ -24,14 +23,18 @@ import com.affymetrix.genoviz.glyph.BasicGraphGlyph;
 import com.affymetrix.genoviz.glyph.BasicImageGlyph;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.net.URL;
+import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-public class GraphDemo extends Applet {
+public class GraphDemo extends JApplet {
+
 	NeoMap map;
 	AdjustableJSlider xzoomer;
 	AdjustableJSlider yzoomer;
@@ -52,27 +55,26 @@ public class GraphDemo extends Applet {
 		map.setMapOffset(-200, 200);
 		map.setMapRange(0, 1000);
 		map.addAxis(0);
+
 		xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
 		yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-
-		NeoPanel widg_pan = new NeoPanel();
-		widg_pan.setLayout(new BorderLayout());
-		widg_pan.add("Center", map);
-		widg_pan.add("North", xzoomer);
-		widg_pan.add("West", yzoomer);
-		setLayout(new BorderLayout());
-		add("Center", widg_pan);
-
 		map.setZoomer(NeoMap.X, xzoomer);
 		map.setZoomer(NeoMap.Y, yzoomer);
 
-		double xcoords[] = { 100, 200, 300, 400, 500, 600, 700, 800, 900 };
-		double ycoords[] = { -50, -25,  25, 100,  50, 175, -10,  50,  74 };
+		Container cpane = this.getContentPane();
+		cpane.setLayout(new BorderLayout());
+		cpane.add("Center", map);
+		cpane.add("North", xzoomer);
+		cpane.add("West", yzoomer);
 
-		map.configure("-glyphtype BasicGraphGlyph -color red -offset 0 " +
-				"-width 200 -packer null");
-		BasicGraphGlyph sg = (BasicGraphGlyph)map.addItem(0, 1000);
+		double xcoords[] = {0, 100, 200, 300, 400, 500, 600, 700, 800, 900};
+		double ycoords[] = {0, -50, -25, 25, 100, 50, 175, -10, 50, 74};
+
+		map.configure("-glyphtype BasicGraphGlyph -foreground pink -offset 0 "
+				+ "-width 200 -packer null");
+		BasicGraphGlyph sg = (BasicGraphGlyph) map.addItem(0, 900);
 		sg.setPointCoords(xcoords, ycoords);
+		sg.setBackgroundColor(Color.red);
 
 		Image img1 = this.getImage(getCodeBase(), "./images/red-ball.gif");
 		this.prepareImage(img1, this);
@@ -85,57 +87,51 @@ public class GraphDemo extends Applet {
 
 		// Put a an alpha helix image (or images, if tiled) from 600 to 700.
 		BasicImageGlyph ig;
-		ig = (BasicImageGlyph)map.addItem(600, 700);
+		ig = (BasicImageGlyph) map.addItem(600, 700);
 		ig.setImage(img2, this);
 		ig.setPrimaryFill(BasicImageGlyph.TILED);
 		ig.setSecondaryFill(BasicImageGlyph.NONE);
 
+
 		// Put a red ball at 600.
 		map.configure("-offset 0");
-		ig = (BasicImageGlyph)map.addItem(600, 601);
+		ig = (BasicImageGlyph) map.addItem(600, 601);
 		ig.setImage(img1, this);
 
 		// Put a logo near the bottom center of the map.
 		/*Image img3 = this.getImage(getCodeBase(), "./images/affymetrix_logo.gif");
-		  map.configure("-offset 140");
-		  ig = (BasicImageGlyph)map.addItem(0, 999);
-		  ig.setImage(img3, this);*/
+		map.configure("-offset 140");
+		ig = (BasicImageGlyph)map.addItem(0, 999);
+		ig.setImage(img3, this);*/
 	}
 
-
 	@Override
-	public URL getCodeBase()
-	{
+	public URL getCodeBase() {
 		if (isApplication) {
-				return this.getClass().getResource("/");
-			}
+			return this.getClass().getResource("/");
+		}
 		return super.getCodeBase();
 	}
 
-
 	@Override
-	public AppletContext getAppletContext()
-	{
-		if(isApplication)
+	public AppletContext getAppletContext() {
+		if (isApplication) {
 			return null;
+		}
 		return super.getAppletContext();
 	}
 
-
 	@Override
-	public URL getDocumentBase()
-	{
-		if(isApplication)
+	public URL getDocumentBase() {
+		if (isApplication) {
 			return getCodeBase();
+		}
 		return super.getDocumentBase();
 	}
 
-
 	@Override
-	public Image getImage(URL filebaseurl, String filename)
-	{
-		if(isApplication)
-		{
+	public Image getImage(URL filebaseurl, String filename) {
+		if (isApplication) {
 			try {
 				String filepath = filebaseurl.toString();
 				filepath += filename.substring(2, filename.length());
@@ -146,10 +142,9 @@ public class GraphDemo extends Applet {
 		}
 		return super.getImage(filebaseurl, filename);
 	}
-
 	static Boolean isApplication = false;
-	static public void main(String[] args)
-	{
+
+	static public void main(String[] args) {
 		isApplication = true;
 		GraphDemo me = new GraphDemo();
 		me.init();

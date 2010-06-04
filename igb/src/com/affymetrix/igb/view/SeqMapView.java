@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
@@ -174,7 +175,7 @@ public class SeqMapView extends JPanel
 	/** Hash of method names (lower case) to reverse tiers */
 	private final Map<String, TierGlyph> method2rtier = new HashMap<String, TierGlyph>();
 	/** Hash of TierGlyph to GraphSym for summary */
-	private final Map<TierGlyph, GraphSym> summary_list = new HashMap<TierGlyph, GraphSym>();
+	private final Map<TierGlyph, SymWithProps> summary_list = new HashMap<TierGlyph, SymWithProps>();
 	/** Hash of GraphStates to TierGlyphs. */
 	private final Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
 
@@ -2129,12 +2130,12 @@ public class SeqMapView extends JPanel
 		return sym.getSpan(viewseq);
 	}
 	
-	public final void addToSummaryList(TierGlyph atier, GraphSym gsym){
+	public final void addToSummaryList(TierGlyph atier, SymWithProps gsym){
 		summary_list.put(atier, gsym);
 	}
 
 	public void updateSummariesData(){
-		for(Entry<TierGlyph, GraphSym> entry : summary_list.entrySet()){
+		for(Entry<TierGlyph, SymWithProps> entry : summary_list.entrySet()){
 			TierGlyph atier = entry.getKey();
 			String name = atier.getParentURL();
 			Direction direction = atier.getDirection();
@@ -2142,7 +2143,15 @@ public class SeqMapView extends JPanel
 			SeqSymmetry sym = aseq.getAnnotation(name);
 			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 			syms.add(sym);
-			GraphSym gsym = createSummaryGraph(entry.getValue().getID(),syms,direction);
+
+			SymWithProps gsym = null;
+			SymWithProps oldsym = entry.getValue();
+			if(oldsym instanceof GraphSym)
+				gsym = createSummaryGraph(oldsym.getID(),syms,direction);
+//			else
+//				gsym = createCoverageTier((String) oldsym.getProperty("method"),syms);
+			
+			
 			BioSeq seq = gmodel.getSelectedSeq();
 			seq.removeAnnotation(entry.getValue());
 			entry.setValue(gsym);

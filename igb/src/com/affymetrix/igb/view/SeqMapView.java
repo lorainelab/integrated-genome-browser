@@ -7,13 +7,11 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.util.Timer;
@@ -44,7 +42,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
-import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
@@ -547,73 +544,11 @@ public class SeqMapView extends JPanel
 			seqmap.addTier(axis_tier, false);
 		}
 		
-		seq_glyph = initSeqGlyph(viewseq, axis_fg, axis);
+		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis);
 
 		axis_tier.addChild(seq_glyph);
 
 		return axis_tier;
-	}
-
-	private static CharSeqGlyph initSeqGlyph(BioSeq viewSeq, Color axis_fg, AxisGlyph axis) {
-		CharSeqGlyph seq_glyph = new CharSeqGlyph();
-		seq_glyph.setForegroundColor(axis_fg);
-		seq_glyph.setShowBackground(false);
-		seq_glyph.setHitable(false);
-		seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
-		seq_glyph.setCoords(viewSeq.getMin(), 0, viewSeq.getLengthDouble(), 10);
-		seq_glyph.setResiduesProvider(viewSeq, viewSeq.getLength());
-		SeqSymmetry compsym = viewSeq.getComposition();
-		if (compsym != null) {
-			showFillRect(viewSeq, seq_glyph, compsym, axis);
-		}
-		return seq_glyph;
-	}
-
-
-
-	private static void showFillRect(BioSeq viewSeq, CharSeqGlyph seqGlyph, SeqSymmetry compsym, AxisGlyph axis) {
-		int compcount = compsym.getChildCount();
-		// create a color, c3, in between the foreground and background colors
-		Color c1 = axis.getForegroundColor();
-		Color c2 = axis.getBackgroundColor();
-		Color c3 = new Color((c1.getRed() + 2 * c2.getRed()) / 3, (c1.getGreen() + 2 * c2.getGreen()) / 3, (c1.getBlue() + 2 * c2.getBlue()) / 3);
-		for (int i = 0; i < compcount; i++) {
-			// Make glyphs for contigs
-			SeqSymmetry childsym = compsym.getChild(i);
-			SeqSpan childspan = childsym.getSpan(viewSeq);
-			SeqSpan ospan = SeqUtils.getOtherSpan(childsym, childspan);
-			GlyphI cgl;
-			if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
-				cgl = new FillRectGlyph();
-				cgl.setColor(c3);
-			} else {
-				if (viewSeq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
-					// hide axis numbering
-					axis.setLabelFormat(AxisGlyph.NO_LABELS);
-					cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-					String label = ospan.getBioSeq().getID();
-					if (label.toLowerCase().startsWith("chr")) {
-						label = label.substring(3);
-					}
-					((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
-					cgl.setColor(axis.getForegroundColor());
-				} else if (viewSeq.getID().equals(IGBConstants.ENCODE_REGIONS_ID)) {
-					cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-					String label = childsym.getID();
-					if (label != null) {
-						((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
-					}
-					cgl.setColor(axis.getForegroundColor());
-				} else {
-					cgl = new OutlineRectGlyph();
-					cgl.setColor(axis.getForegroundColor());
-				}
-			}
-			cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);
-			// also note that "Load residues in view" produces additional
-			// contig-like glyphs that can partially hide these glyphs.
-			seqGlyph.addChild(cgl);
-		}
 	}
 
 	/** Sets the axis label format from the value in the persistent preferences. */

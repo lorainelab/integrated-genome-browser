@@ -189,6 +189,7 @@ public final class QuickLoad extends SymLoader {
 				try {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
+						gviewer.updateSummariesData();
 						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
 						SeqGroupView.refreshTable();
 					}

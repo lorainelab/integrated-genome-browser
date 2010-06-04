@@ -514,25 +514,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       return;
     }
 
-    SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
-    SymWithProps wrapperSym;
-    if (union_sym instanceof SymWithProps) {
-      wrapperSym = (SymWithProps) union_sym;
-    } else {
-      wrapperSym = new SimpleSymWithProps();
-      ((SimpleSymWithProps) wrapperSym).addChild(union_sym);
-      for (int i=0; i<union_sym.getSpanCount(); i++) {
-        ((SimpleSymWithProps) wrapperSym).addSpan(union_sym.getSpan(i));
-      }
-    }
-
-    String human_name = "coverage: " + atier.getLabel();
+	String human_name = "coverage: " + atier.getLabel();
+	String unique_name = AnnotStyle.getUniqueName(human_name);
+	SymWithProps wrapperSym = gviewer.createCoverageTier(unique_name,syms);
 
     // Generate a non-persistent style.
     // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
 
-    String unique_name = AnnotStyle.getUniqueName(human_name);
-    wrapperSym.setProperty("method", unique_name);
     AnnotStyle style = AnnotStyle.getInstance(unique_name, false);
     style.setHumanName(human_name);
     style.setGlyphDepth(1);
@@ -540,7 +528,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     style.setExpandable(false); // cannot expand and collapse
     style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 
-    aseq.addAnnotation(wrapperSym);
+	gviewer.addToSummaryList(atier, wrapperSym);
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
 

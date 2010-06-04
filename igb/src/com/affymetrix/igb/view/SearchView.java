@@ -275,7 +275,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 							SeqSpan span = sym.getSpan(0);
 							if (span != null) {
 								// zoom to its coordinates
-								MapRangeBox.zoomToSeqAndSpan(seqID, span.getStart(), span.getEnd());
+								MapRangeBox.zoomToSeqAndSpan(gviewer, seqID, span.getStart(), span.getEnd());
 							}
 						}
 

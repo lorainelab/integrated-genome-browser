@@ -1,6 +1,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.das.DasType;
 import com.affymetrix.genometryImpl.das2.Das2Type;
@@ -10,6 +11,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -52,17 +54,17 @@ public class ScriptFileLoader {
 
 	public static void doActions(String batchFileStr) {
 		// A response file was requested.  Run response file parser, and ignore any other parameters.
-			File f = new File(batchFileStr);
-			if (!f.exists()) {
-				f = LocalUrlCacher.convertURIToFile(URI.create(batchFileStr));
-			}
-			if (f == null || !f.exists()) {
-				Logger.getLogger(ScriptFileLoader.class.getName()).log(
-						Level.SEVERE, "Couldn't find response file: " + batchFileStr);
-				return;
-			}
-
-			ScriptFileLoader.doActions(f);
+		File f = new File(batchFileStr);
+		if (!f.exists()) {
+			f = LocalUrlCacher.convertURIToFile(URI.create(batchFileStr));
+		}
+		if (f == null || !f.exists()) {
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(
+					Level.SEVERE, "Couldn't find response file: " + batchFileStr);
+			return;
+		}
+		
+		ScriptFileLoader.doActions(f);
 	}
 
 	/**
@@ -161,14 +163,14 @@ public class ScriptFileLoader {
 		if (group == null) {
 			return;
 		}
-		for (int i=0;i<30;i++) {
+		for (int i=0;i<100;i++) {
 			// sleep until versions are initialized
 			for (GenericVersion version: group.getEnabledVersions()) {
-				if (version.isInitialized()) {
+				if (version.isInitialized() && group == GenometryModel.getGenometryModel().getSelectedSeqGroup()) {
 					continue;
 				}
 				try {
-					Thread.sleep(1000); // not finished initializing versions
+					Thread.sleep(300); // not finished initializing versions
 				} catch (InterruptedException ex) {
 					Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -177,20 +179,28 @@ public class ScriptFileLoader {
 	}
 
 	private static void goToRegion(String region) {
-		System.out.println("Region:--" + region + "--");
 		MapRangeBox.setRange(Application.getSingleton().getMapView(), region);
 	}
 
 	private static void loadData(String serverType, String serverURIorName, String feature) {
+		/*ServerType sType = ServerType.LocalFiles;
 		if (serverType.equalsIgnoreCase("quickload")) {
+			sType = ServerType.QuickLoad;
 			//loadQuickLoad(URIorFeature);
-		}
-		if (serverType.equalsIgnoreCase("das")) {
+		} else if (serverType.equalsIgnoreCase("das")) {
+			sType = ServerType.DAS;
 			//loadDAS(URIorFeature):
-		}
-		if (serverType.equalsIgnoreCase("das2")) {
+		} else if (serverType.equalsIgnoreCase("das2")) {
+			sType = ServerType.DAS2;
 			//loadDAS(URIorFeature):
+		}*/
+		GenericServer server = ServerList.getServer(serverURIorName);
+		if (server != null) {
+			
+		} else {
+			Logger.getLogger(ScriptFileLoader.class.getName()).severe("Couldn't find server :" + serverURIorName);
 		}
+
 	}
 
 	private static void loadFile(String fileName) {

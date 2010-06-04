@@ -266,13 +266,13 @@ public final class GeneralLoadView extends JComponent
 
 	}
 
-	private synchronized void runBatchOrRestore() {
+	private void runBatchOrRestore() {
 		try {
 			// Only run batch script or restore persistent genome once all the server responses have come back.
-			if (IGB.commandLineBatchFileStr != null) {
-				String batchFile = IGB.commandLineBatchFileStr;
+			String batchFile = IGB.commandLineBatchFileStr;
+			if (batchFile != null) {
 				IGB.commandLineBatchFileStr = null;	// we're not using this again!
-				lookForPersistentGenome = false;	
+				lookForPersistentGenome = false;
 				Thread.sleep(1000);	// hack so event queue finishes
 				ScriptFileLoader.doActions(batchFile);
 			} else {
@@ -507,7 +507,7 @@ public final class GeneralLoadView extends JComponent
 	public void loadVisibleData() {
 		if (DEBUG_EVENTS) {
 			SeqSpan request_span = gviewer.getVisibleSpan();
-			System.out.println("Visible load request span: " + request_span.getStart() + " " + request_span.getEnd());
+			System.out.println("Visible load request span: " + request_span.getBioSeq() + ":" + request_span.getStart() + "-" + request_span.getEnd());
 		}
 
 		// Load any features that have a visible strategy and haven't already been loaded.

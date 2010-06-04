@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
@@ -30,6 +32,8 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JTextField;
@@ -114,11 +118,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	 * @param range - a string like "chr1: 40000 - 60000", or "40000:60000", or "40,000:60000", etc.
 	 */
 	public static void setRange(SeqMapView gview, String range) {
-		int[] current = gview.getSeqMap().getVisibleRange();
-		double start = current[0];
-		double end = current[1];
-		gview.zoomTo(start, end);
-		double width = end - start;
+		double start, end, width;
 		try {
 			Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range);
 			Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range);
@@ -145,7 +145,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 				} else {
 					end = end_or_width;
 				}
-				zoomToSeqAndSpan(chrom_text, (int) start, (int) end);
+				zoomToSeqAndSpan(gview, chrom_text, (int) start, (int) end);
 			} else if (start_end_matcher.matches()) {
 				String start_text = start_end_matcher.group(1);
 				String end_text = start_end_matcher.group(2);
@@ -161,26 +161,70 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 			} else if (center_matcher.matches()) {
 				String center_text = center_matcher.group(1);
 				double center = nformat.parse(center_text).doubleValue();
+				int[] current = gview.getSeqMap().getVisibleRange();
+				start = current[0];
+				end = current[1];
+				width = end - start;
 				start = center - width / 2;
 				end = center + width / 2;
 				gview.zoomTo(start, end);
 				gview.setZoomSpotX(center);
-			} // a call back to change this text.
+			} else {
+				int[] current = gview.getSeqMap().getVisibleRange();
+				start = current[0];
+				end = current[1];
+				gview.zoomTo(start, end);
+			}
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	static void zoomToSeqAndSpan(String chrom_text, int start, int end) throws NumberFormatException {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		if (gmodel.getSelectedSeqGroup() != null) {
-			Map<String, String[]> m = new HashMap<String, String[]>();
-			m.put(Bookmark.SEQID, new String[]{chrom_text});
-			m.put(Bookmark.START, new String[]{Integer.toString(start)});
-			m.put(Bookmark.END, new String[]{Integer.toString(end)});
-			m.put(Bookmark.VERSION, new String[]{gmodel.getSelectedSeqGroup().getID()});
-			UnibrowControlServlet.goToBookmark(Application.getSingleton(), m);
+	public static String determineChr(String range) {
+		Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range);
+		Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range);
+		if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
+			Matcher matcher;
+			if (chrom_start_width_matcher.matches()) {
+				matcher = chrom_start_width_matcher;
+			} else {
+				matcher = chrom_start_end_matcher;
+			}
+			String chrom_text = matcher.group(1);
+			return chrom_text;
 		}
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		return seq == null ? "" : seq.getID();
+	}
+
+	static void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {
+		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		if (group == null) {
+			Logger.getLogger(MapRangeBox.class.getName()).severe("Group wasn't set");
+			return;
+		}
+
+		BioSeq newSeq = group.getSeq(chrom_text);
+		if (newSeq == null) {
+			Logger.getLogger(MapRangeBox.class.getName()).severe("Couldn't find chromosome " + chrom_text + " in group " + group.getID());
+			return;
+		}
+
+		if (newSeq != GenometryModel.getGenometryModel().getSelectedSeq()) {
+			// set the chromosome, and sleep until it's set.
+			GenometryModel.getGenometryModel().setSelectedSeq(newSeq);
+			for (int i = 0; i < 100; i++) {
+				if (GenometryModel.getGenometryModel().getSelectedSeq() != newSeq) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException ex) {
+						Logger.getLogger(MapRangeBox.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
+			}
+		}
+
+		UnibrowControlServlet.setRegion(gview, start, end, newSeq);
 	}
 }

@@ -413,22 +413,14 @@ public final class UnibrowControlServlet {
 					if (book_seq != gmodel.getSelectedSeq()) {
 						gmodel.setSelectedSeq(book_seq);
 					}
-					setRegion(book_seq);
+					setRegion(gviewer, start, end, book_seq);
+					if (selstart >= 0 && selend >= 0) {
+						final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
+						gviewer.setSelectedRegion(regionsym, true);
+					}
 				}
 			}
 
-			private void setRegion(BioSeq book_seq) {
-				if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
-					final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
-					final double middle = (start + end) / 2.0;
-					gviewer.setZoomSpotX(middle);
-					gviewer.zoomTo(view_span);
-				}
-				if (selstart >= 0 && selend >= 0) {
-					final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-					gviewer.setSelectedRegion(regionsym, true);
-				}
-			}
 		});
 		return true; // was not cancelled, was successful
 	}
@@ -468,6 +460,15 @@ public final class UnibrowControlServlet {
 			book_seq = group.getSeq(seqid);
 		}
 		return book_seq;
+	}
+
+	public static void setRegion(SeqMapView gviewer, int start, int end, BioSeq book_seq) {
+		if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
+			final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
+			gviewer.zoomTo(view_span);
+			final double middle = (start + end) / 2.0;
+			gviewer.setZoomSpotX(middle);
+		}
 	}
 
 	/**

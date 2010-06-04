@@ -528,7 +528,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     style.setExpandable(false); // cannot expand and collapse
     style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 
-	gviewer.addToSummaryList(atier, wrapperSym);
+	gviewer.addToDependentList(atier, wrapperSym);
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
@@ -550,7 +550,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	String id = atier.getLabel() + getSymbol(atier.getDirection());
 	GraphSym gsym = gviewer.createSummaryGraph(id, syms, Direction.NONE);
 	gsym.setGraphName("depth: " + id);
-	gviewer.addToSummaryList(atier, gsym);
+	gviewer.addToDependentList(atier, gsym);
     gviewer.setAnnotatedSeq(aseq, true, true);
     GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
     gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);

@@ -2130,7 +2130,7 @@ public class SeqMapView extends JPanel
 		return sym.getSpan(viewseq);
 	}
 	
-	public final void addToSummaryList(TierGlyph atier, SymWithProps gsym){
+	public final void addToDependentList(TierGlyph atier, SymWithProps gsym){
 		dependent_list.put(atier, gsym);
 	}
 

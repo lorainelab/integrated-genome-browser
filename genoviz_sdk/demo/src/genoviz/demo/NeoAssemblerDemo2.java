@@ -27,10 +27,12 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Panel;
 import java.awt.event.*;
 import java.net.*;
 import java.util.*;
+import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -42,7 +44,7 @@ import javax.swing.WindowConstants;
  *
  * @version $Id$
  */
-public class NeoAssemblerDemo2 extends Applet {
+public class NeoAssemblerDemo2 extends JApplet {
 
 	Assembly assem; // the data model
 
@@ -53,22 +55,22 @@ public class NeoAssemblerDemo2 extends Applet {
 		// setting up buttons to demo layout configurations
 		Panel buttonpanel = buttonSetup();
 
-		this.map = new NeoAssembler();
+		map = new NeoAssembler();
 
 		/**
 		 *  Assembler inherits from Panel, and thus all of the methods of
 		 *  java.awt.Component, Container, and Panel are available,
 		 *  such as setting the background color, and resizing
 		 */
-		((Component)this.map).setBackground(new Color(180, 250, 250));
-		((Component)this.map).setSize( 840, 200);
+		((Component)map).setBackground(new Color(180, 250, 250));
+		((Component)map).setSize( 840, 200);
 
 		// Let's give the labels lots of room.
-		this.map.setLabelWidth( 200 );
+		map.setLabelWidth( 200 );
 
 		// Use the NeoAssembler's built-in selection methods.
-		this.map.setSelectionEvent(NeoAssembler.ON_MOUSE_DOWN);
-		this.map.setSelectionBehavior(NeoAssembler.SELECT_RESIDUES);
+		map.setSelectionEvent(NeoAssembler.ON_MOUSE_DOWN);
+		map.setSelectionBehavior(NeoAssembler.SELECT_RESIDUES);
 
 		/**
 		  In order for the assembly map to automatically respond to resize events
@@ -76,14 +78,15 @@ public class NeoAssemblerDemo2 extends Applet {
 		  BorderLayout (or similarly flexible layout manager) be used for the
 		  Container that holds the BasicMap, and add the BasicMap in the center.
 		  */
-		this.setLayout(new BorderLayout());
+		Container cpane = this.getContentPane();
+		cpane.setLayout(new BorderLayout());
 
-		add("North", buttonpanel);
+		cpane.add("North", buttonpanel);
 
 		NeoPanel widg_pan = new NeoPanel();
 		widg_pan.setLayout(new BorderLayout());
-		widg_pan.add("Center", (Component)this.map);
-		add("Center", widg_pan);
+		cpane.add("Center", (Component)this.map);
+		//add("Center", widg_pan);
 
 	}
 

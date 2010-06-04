@@ -2148,8 +2148,8 @@ public class SeqMapView extends JPanel
 			SymWithProps oldsym = entry.getValue();
 			if(oldsym instanceof GraphSym)
 				gsym = createSummaryGraph(oldsym.getID(),syms,direction);
-//			else
-//				gsym = createCoverageTier((String) oldsym.getProperty("method"),syms);
+			else
+				gsym = createCoverageTier((String) oldsym.getProperty("method"),syms);
 			
 			
 			BioSeq seq = gmodel.getSelectedSeq();
@@ -2171,6 +2171,23 @@ public class SeqMapView extends JPanel
 		gsym.setID(graphid);
 		seq.addAnnotation(gsym);
 		return gsym;
+	}
+
+	public SymWithProps createCoverageTier(String id, List<SeqSymmetry> syms) {
+		SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
+		SymWithProps wrapperSym;
+		if (union_sym instanceof SymWithProps) {
+			wrapperSym = (SymWithProps) union_sym;
+		} else {
+			wrapperSym = new SimpleSymWithProps();
+			((SimpleSymWithProps) wrapperSym).addChild(union_sym);
+			for (int i = 0; i < union_sym.getSpanCount(); i++) {
+				((SimpleSymWithProps) wrapperSym).addSpan(union_sym.getSpan(i));
+			}
+		}
+		wrapperSym.setProperty("method", id);
+		aseq.addAnnotation(wrapperSym);
+		return wrapperSym;
 	}
 }
 

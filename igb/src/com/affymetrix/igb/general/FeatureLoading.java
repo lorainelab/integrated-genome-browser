@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
@@ -40,6 +41,8 @@ public final class FeatureLoading {
 	 * @param gVersion
 	 */
 	public static void loadFeatureNames(final GenericVersion gVersion) {
+		boolean autoload = PreferenceUtils.getBooleanParam(
+						PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		if (!gVersion.getFeatures().isEmpty()) {
 			if (DEBUG) {
 				System.out.println("Feature names are already loaded.");
@@ -60,7 +63,7 @@ public final class FeatureLoading {
 					continue;
 				}
 				Map<String, String> type_props = type.getProps();
-				gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion, null, type));
+				gVersion.addFeature(new GenericFeature(type_name, type_props, gVersion, null, type, autoload));
 			}
 			return;
 		}
@@ -76,7 +79,7 @@ public final class FeatureLoading {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type));
+				gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type, autoload));
 			}
 			return;
 		}
@@ -102,7 +105,7 @@ public final class FeatureLoading {
 					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
 					gVersion.addFeature(
 							new GenericFeature(
-							type_name, type_props, gVersion, new QuickLoad(gVersion, type_name), null));
+							type_name, type_props, gVersion, new QuickLoad(gVersion, type_name), null, autoload));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

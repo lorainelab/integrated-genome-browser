@@ -3,6 +3,7 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.DataLoadView;
@@ -264,9 +265,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			}
 		}
 
+		boolean autoload = PreferenceUtils.getBooleanParam(
+						PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		// Couldn't find matching node.  Add new one.
 		// John -- not really sure what the following code is for. ?
-		GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion, null, null);
+		GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion, null, null, autoload);
 		TreeNodeUserInfo dummyFeatureUInfo = new TreeNodeUserInfo(dummyFeature);
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeatureUInfo);
 		root.add(newNode);

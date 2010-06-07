@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.parsers.FishClonesParser;
 import com.affymetrix.genometryImpl.parsers.SegmenterRptParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.util.FileDropHandler;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -251,7 +252,9 @@ public final class LoadFileAction extends AbstractAction {
 			uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
 			uri = URI.create(uriString);
 		}
-		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class);
+		boolean autoload = PreferenceUtils.getBooleanParam(
+						PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
 		if (!mergeSelected && gFeature.symL != null) {
 			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
 			if (loadGroup.getSeqCount() > 0) {

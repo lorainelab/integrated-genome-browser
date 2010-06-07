@@ -35,11 +35,11 @@ public final class GenericFeature {
 	 * @param typeObj
 	 */
 	public GenericFeature(
-			String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj) {
+			String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload){
 		this.featureName = featureName;
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
-		if (shouldAutoLoad(featureProps)) {
+		if (shouldAutoLoad(featureProps) && autoload) {
 			this.loadStrategy = LoadStrategy.GENOME;
 			this.setVisible();
 		} else {

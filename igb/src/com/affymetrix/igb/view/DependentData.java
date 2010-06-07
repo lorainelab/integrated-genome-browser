@@ -26,15 +26,14 @@ public class DependentData {
 	private Direction direction;
 	private SymWithProps sym;
 
-	public DependentData(String id, DependentType type, String parentUrl, SymWithProps sym) {
+	public DependentData(String id, DependentType type, String parentUrl) {
 		this.id = id;
 		this.parentUrl = parentUrl;
 		this.type = type;
-		this.sym = sym;
 	}
 
-	public DependentData(String id, DependentType type, String parentUrl, Direction direction, SymWithProps sym) {
-		this(id, type, parentUrl, sym);
+	public DependentData(String id, DependentType type, String parentUrl, Direction direction) {
+		this(id, type, parentUrl);
 		this.direction = direction;
 	}
 

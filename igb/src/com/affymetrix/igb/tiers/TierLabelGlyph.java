@@ -5,6 +5,7 @@ import java.awt.*;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.igb.tiers.TierGlyph.Direction;
 
 /**
  * A glyph used to display a label for a TierGlyph.
@@ -48,7 +49,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	}
 
 	private static String getDirectionString(TierGlyph tg) {
-		switch (tg.direction) {
+		return getDirectionSymbol(tg.direction);
+	}
+
+	public static String getDirectionSymbol(Direction direction){
+		switch (direction) {
 			case FORWARD:
 				return " (+)";
 			case REVERSE:
@@ -59,7 +64,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 				return "";
 		}
 	}
-
+	
 	/**
 	 * Returns the label of the reference tier, or some default string if there isn't one.
 	 * @return string

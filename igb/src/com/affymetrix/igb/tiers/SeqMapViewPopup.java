@@ -742,23 +742,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
 	static private String getSymbol(Direction direction){
-		String symbol = " ";
-		switch (direction) {
-			case FORWARD:
-				symbol += "(+)";
-				break;
-			case REVERSE:
-				symbol += "(-)";
-				break;
-
-			case BOTH:
-				symbol += "(+/-)";
-				break;
-
-			default:
-				symbol += "*";
-		}
-		return symbol;
+		return TierLabelGlyph.getDirectionSymbol(direction);
 	}
 
 	SeqMapView getSeqMapView() {

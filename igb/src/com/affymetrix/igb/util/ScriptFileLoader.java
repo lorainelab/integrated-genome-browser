@@ -156,6 +156,14 @@ public class ScriptFileLoader {
 		if (action.equals("select") && fields.length>=2) {
 			UnibrowControlServlet.performSelection(fields[1]);
 		}
+		if (action.equals("sleep") && fields.length == 2) {
+			try {
+				int sleepTime = Integer.parseInt(fields[1]);
+				Thread.sleep(sleepTime);
+			} catch (Exception ex) {
+				Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
 	}
 
 	private static void goToGenome(String genomeVersion) {

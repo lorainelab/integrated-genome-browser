@@ -124,17 +124,13 @@ public final class GraphAdjusterView {
 		// if this is not a floating graph, then it's in a tier,
 		//    so check tier -- if this graph is only child, then get rid of the tier also
 		if (!gl.getGraphState().getFloatGraph()) {
-			AffyTieredMap map = gviewer.getSeqMap();
+			
 			GlyphI parentgl = gl.getParent();
 			parentgl.removeChild(gl);
 			if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
 				if (parentgl instanceof TierGlyph) {
-					map.removeTier((TierGlyph) parentgl);
-
-					// This method doesn't exist. But could if we really cared
-					// about cleaning-up references to this GraphState and its Tier
-					//gviewer.deleteGraphTier(gsym.getGraphState());
-
+					gviewer.deleteTier((TierGlyph) parentgl);
+					AffyTieredMap map = gviewer.getSeqMap();
 					map.packTiers(false, true, false);
 					map.stretchToFit(false, false);
 				}

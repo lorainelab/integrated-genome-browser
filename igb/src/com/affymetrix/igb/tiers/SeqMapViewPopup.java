@@ -532,6 +532,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	DependentData dd = new DependentData(unique_name,DependentType.COVERAGE,atier.getParentURL());
 	SymWithProps wrapperSym = gviewer.addToDependentList(dd);
 
+	if (wrapperSym == null) {
+		ErrorHandler.errorPanel("Empty Tier",
+			"The selected tier is empty.  Can not make a coverage tier for an empty tier.");
+		return;
+    }
+	
     // Generate a non-persistent style.
     // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
 
@@ -575,6 +581,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 	
 	GraphSym gsym = (GraphSym) gviewer.addToDependentList(dd);
+
+	if (gsym == null) {
+		ErrorHandler.errorPanel("Nothing to Summarize",
+			"The selected tier is empty. It contains nothing to summarize");
+		return;
+    }
+
 	gsym.setGraphName("depth: " + id);
     gviewer.setAnnotatedSeq(aseq, true, true);
     GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);

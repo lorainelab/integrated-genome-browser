@@ -2135,11 +2135,13 @@ public class SeqMapView extends JPanel
 		return dd.createTier();
 	}
 
-	public void updateDependentData(){
-		for(DependentData dd : dependent_list){
-			BioSeq seq = gmodel.getSelectedSeq();
-			seq.removeAnnotation(dd.getSym());
-			dd.createTier();
+	public void updateDependentData() {
+		BioSeq seq = gmodel.getSelectedSeq();
+		if (seq != null) {
+			for (DependentData dd : dependent_list) {
+				seq.removeAnnotation(dd.getSym());
+				dd.createTier();
+			}
 		}
 	}
 

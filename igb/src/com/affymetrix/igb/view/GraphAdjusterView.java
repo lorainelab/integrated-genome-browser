@@ -110,8 +110,7 @@ public final class GraphAdjusterView {
 	public static void deleteGraph(GenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
 		BioSeq aseq = gsym.getGraphSeq();
 		if (aseq != null) {
-			BioSeq mut = aseq;
-			mut.removeAnnotation(gsym);
+			aseq.removeAnnotation(gsym);
 		}
 
 		GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);

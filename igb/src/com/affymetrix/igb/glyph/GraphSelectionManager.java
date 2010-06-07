@@ -370,8 +370,7 @@ public final class GraphSelectionManager
       gsym = (GraphSym) info;
       BioSeq aseq = gsym.getGraphSeq();
       if (aseq != null) {
-        BioSeq mut = aseq;
-        mut.removeAnnotation(gsym);
+        aseq.removeAnnotation(gsym);
       }
     }
 

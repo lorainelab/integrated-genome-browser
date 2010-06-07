@@ -2157,8 +2157,10 @@ public class SeqMapView extends JPanel
 				seq.removeAnnotation(sym);
 			}
 		}
-		//if (dependent_list.contains(tg)) {
-		//	dependent_list.remove(tg);
-		//}
+
+		for(DependentData dd : dependent_list){
+			if(tg.getParentURL() == dd.getParentUrl())
+				dependent_list.remove(dd);
+		}
 	}
 }

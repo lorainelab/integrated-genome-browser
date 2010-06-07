@@ -503,19 +503,21 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private void addSymCoverageTier(TierGlyph atier) {
     BioSeq aseq = gmodel.getSelectedSeq();
-    int child_count = atier.getChildCount();
+    //int child_count = atier.getChildCount();
+    //List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(child_count);
+    //collectSyms(atier, syms);
 
-    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(child_count);
-    collectSyms(atier, syms);
-    if (child_count == 0 || syms.size() == 0) {
-      ErrorHandler.errorPanel("Empty Tier",
-        "The selected tier is empty.  Can not make a coverage tier for an empty tier.");
-      return;
-    }
+//	  TODO: If tierglyph is empty then it is never displayed. So check when below mentioned condition is met.
+    //if (child_count == 0 || syms.size() == 0) {
+    //  ErrorHandler.errorPanel("Empty Tier",
+    //    "The selected tier is empty.  Can not make a coverage tier for an empty tier.");
+    //  return;
+    //}
 
 	String human_name = "coverage: " + atier.getLabel();
 	String unique_name = AnnotStyle.getUniqueName(human_name);
-	SymWithProps wrapperSym = gviewer.createCoverageTier(unique_name,syms);
+	DependentData dd = new DependentData(unique_name,DependentType.COVERAGE,atier.getParentURL());
+	SymWithProps wrapperSym = gviewer.addToDependentList(dd);
 
     // Generate a non-persistent style.
     // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
@@ -527,7 +529,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     style.setExpandable(false); // cannot expand and collapse
     style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 
-	gviewer.addToDependentList(new DependentData(unique_name,DependentType.COVERAGE,atier.getParentURL(),wrapperSym));
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
@@ -537,19 +538,23 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     //   just recursively descend through child glyphs of the tier, and if
     //   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
     //   (don't descend into childA's children)
-    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-    collectSyms(atier, syms);
-    if (syms.size() == 0) {
-      ErrorHandler.errorPanel("Nothing to Summarize",
-        "The selected tier is empty. It contains nothing to summarize");
-      return;
-    }
-	
+
+
+//    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+//    collectSyms(atier, syms);
+
+//	  TODO: If tierglyph is empty then it is never displayed. So check when below mentioned condition is met.
+    //if (syms.size() == 0) {
+    //ErrorHandler.errorPanel("Nothing to Summarize",
+    //    "The selected tier is empty. It contains nothing to summarize");
+    //return;
+    //}
+
     BioSeq aseq = gmodel.getSelectedSeq();
 	String id = atier.getLabel() + getSymbol(atier.getDirection());
-	GraphSym gsym = gviewer.createSummaryGraph(id, syms, Direction.NONE);
+	DependentData dd = new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),atier.getDirection());
+	GraphSym gsym = (GraphSym) gviewer.addToDependentList(dd);
 	gsym.setGraphName("depth: " + id);
-	gviewer.addToDependentList(new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),atier.getDirection(), gsym));
     gviewer.setAnnotatedSeq(aseq, true, true);
     GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
     gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
@@ -709,7 +714,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-	private String getSymbol(Direction direction){
+	static private String getSymbol(Direction direction){
 		String symbol = " ";
 		switch (direction) {
 			case FORWARD:
@@ -728,6 +733,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 		return symbol;
 	}
+
 	SeqMapView getSeqMapView() {
 		return gviewer;
 	}

@@ -2130,8 +2130,9 @@ public class SeqMapView extends JPanel
 		return sym.getSpan(viewseq);
 	}
 	
-	public final void addToDependentList(DependentData dd){
+	public final SymWithProps addToDependentList(DependentData dd){
 		dependent_list.add(dd);
+		return dd.createTier();
 	}
 
 	public void updateDependentData(){

@@ -51,6 +51,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final JMenu showMenu = new JMenu("Show...");
   private final JMenu changeMenu = new JMenu("Change...");
   private final JMenu strandsMenu = new JMenu("Strands...");
+  private final JMenu summaryMenu = new JMenu("Make Annotation Depth Graph");
 
   private final ActionToggler at1;
   private final ActionToggler at2;
@@ -151,16 +152,28 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
   
-  private final Action sym_summarize_action = new AbstractAction("Make Annotation Depth Graph") {
+  private final Action sym_summarize_single_action = new AbstractAction("") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one tier");
       }
       TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
-      addSymSummaryTier(current_tier);
+      addSymSummaryTier(current_tier,false);
     }
   };
+
+  private final Action sym_summarize_both_action = new AbstractAction("") {
+    public void actionPerformed(ActionEvent e) {
+      List current_tiers = handler.getSelectedTiers();
+      if (current_tiers.size() > 1) {
+        ErrorHandler.errorPanel("Must select only one tier");
+      }
+      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      addSymSummaryTier(current_tier,true);
+    }
+  };
+
   private final Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
@@ -533,7 +546,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
 
-  private void addSymSummaryTier(TierGlyph atier) {
+  private void addSymSummaryTier(TierGlyph atier, boolean bothDirection) {
     // not sure best way to collect syms from tier, but for now,
     //   just recursively descend through child glyphs of the tier, and if
     //   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
@@ -551,8 +564,16 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     //}
 
     BioSeq aseq = gmodel.getSelectedSeq();
-	String id = atier.getLabel() + getSymbol(atier.getDirection());
-	DependentData dd = new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),atier.getDirection());
+	String id = null;
+	DependentData dd = null;
+	if(bothDirection){
+		id = atier.getLabel() + getSymbol(Direction.BOTH);
+		dd = new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),Direction.BOTH);
+	}else{
+		id = atier.getLabel() + getSymbol(atier.getDirection());
+		dd = new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),atier.getDirection());
+	}
+	
 	GraphSym gsym = (GraphSym) gviewer.addToDependentList(dd);
 	gsym.setGraphName("depth: " + id);
     gviewer.setAnnotatedSeq(aseq, true, true);
@@ -634,12 +655,16 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       TierGlyph glyph = (TierGlyph) label.getInfo();
       IAnnotStyle style = glyph.getAnnotStyle();
       boolean is_annotation_type = ! style.isGraphTier();
-      sym_summarize_action.setEnabled(is_annotation_type);
+	  summaryMenu.setEnabled(is_annotation_type);
+	  sym_summarize_single_action.putValue(sym_summarize_single_action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
+	  sym_summarize_both_action.putValue(sym_summarize_both_action.NAME, glyph.getLabel() + getSymbol(Direction.BOTH));
+      //sym_summarize_single_action.setEnabled(is_annotation_type);
       coverage_action.setEnabled(is_annotation_type);
       save_menu.setEnabled(is_annotation_type);
       save_bed_action.setEnabled(is_annotation_type);
     } else {
-      sym_summarize_action.setEnabled(false);
+	  summaryMenu.setEnabled(false);
+      //sym_summarize_single_action.setEnabled(false);
       coverage_action.setEnabled(false);
       save_menu.setEnabled(false);
       save_bed_action.setEnabled(false);
@@ -684,7 +709,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     save_menu.add(save_bed_action);
 
     popup.add(new JSeparator());
-    popup.add(sym_summarize_action);
+	summaryMenu.removeAll();
+	summaryMenu.add(sym_summarize_single_action);
+	summaryMenu.add(sym_summarize_both_action);
+	
+    popup.add(summaryMenu);
     popup.add(coverage_action);
 
     if (DEBUG) {

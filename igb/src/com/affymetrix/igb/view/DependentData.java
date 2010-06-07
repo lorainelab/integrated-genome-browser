@@ -1,8 +1,10 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import java.util.ArrayList;
@@ -37,17 +39,52 @@ public class DependentData {
 		this.direction = direction;
 	}
 
-	public SymWithProps createTier() {
-		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		syms.add(aseq.getAnnotation(parentUrl));
+	public SymWithProps createTier(BioSeq aseq) {
+		
+		//Check if type is summary.
 		if (type == DependentType.SUMMARY) {
-			sym = SeqMapView.createSummaryGraph(id, syms, direction);
+			sym = createSummaryGraph(aseq);
 			return sym;
 		}
 
-		sym = SeqMapView.createCoverageTier(id, syms);
+		//If type is not summary then it should be coverage.
+		sym = createCoverageTier(aseq);
 		return sym;
+	}
+
+	private GraphSym createSummaryGraph(BioSeq aseq){
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		syms.add(aseq.getAnnotation(parentUrl));
+		GraphSym gsym = null;
+		if (direction == Direction.FORWARD || direction == Direction.REVERSE) {
+			Boolean isForward = direction == Direction.FORWARD ? true : false;
+			gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, id, isForward);
+		} else {
+			gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, id);
+		}
+
+		gsym.setID(id);
+		aseq.addAnnotation(gsym);
+		return gsym;
+	}
+
+	private SymWithProps createCoverageTier(BioSeq aseq) {
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		syms.add(aseq.getAnnotation(parentUrl));
+		SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
+		SymWithProps wrapperSym;
+		if (union_sym instanceof SymWithProps) {
+			wrapperSym = (SymWithProps) union_sym;
+		} else {
+			wrapperSym = new SimpleSymWithProps();
+			((SimpleSymWithProps) wrapperSym).addChild(union_sym);
+			for (int i = 0; i < union_sym.getSpanCount(); i++) {
+				((SimpleSymWithProps) wrapperSym).addSpan(union_sym.getSpan(i));
+			}
+		}
+		wrapperSym.setProperty("method", id);
+		aseq.addAnnotation(wrapperSym);
+		return wrapperSym;
 	}
 
 	public String getParentUrl(){

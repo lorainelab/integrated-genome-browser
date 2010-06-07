@@ -2131,8 +2131,12 @@ public class SeqMapView extends JPanel
 	}
 	
 	public final SymWithProps addToDependentList(DependentData dd){
+		BioSeq seq = gmodel.getSelectedSeq();
+		if(seq == null)
+			return null;
+
 		dependent_list.add(dd);
-		return dd.createTier();
+		return dd.createTier(seq);
 	}
 
 	public void updateDependentData() {
@@ -2140,42 +2144,9 @@ public class SeqMapView extends JPanel
 		if (seq != null) {
 			for (DependentData dd : dependent_list) {
 				seq.removeAnnotation(dd.getSym());
-				dd.createTier();
+				dd.createTier(seq);
 			}
 		}
-	}
-
-	public static GraphSym createSummaryGraph(String graphid, List<SeqSymmetry> syms, Direction direction){
-		BioSeq seq = gmodel.getSelectedSeq();
-		GraphSym gsym = null;
-		if (direction == Direction.FORWARD || direction == Direction.REVERSE) {
-			Boolean isForward = direction == Direction.FORWARD ? true : false;
-			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, graphid, isForward);
-		} else {
-			gsym = SeqSymSummarizer.getSymmetrySummary(syms, seq, false, graphid);
-		}
-
-		gsym.setID(graphid);
-		seq.addAnnotation(gsym);
-		return gsym;
-	}
-
-	public static SymWithProps createCoverageTier(String id, List<SeqSymmetry> syms) {
-		BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-		SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
-		SymWithProps wrapperSym;
-		if (union_sym instanceof SymWithProps) {
-			wrapperSym = (SymWithProps) union_sym;
-		} else {
-			wrapperSym = new SimpleSymWithProps();
-			((SimpleSymWithProps) wrapperSym).addChild(union_sym);
-			for (int i = 0; i < union_sym.getSpanCount(); i++) {
-				((SimpleSymWithProps) wrapperSym).addSpan(union_sym.getSpan(i));
-			}
-		}
-		wrapperSym.setProperty("method", id);
-		aseq.addAnnotation(wrapperSym);
-		return wrapperSym;
 	}
 
 	public void deleteTier(TierGlyph tg) {

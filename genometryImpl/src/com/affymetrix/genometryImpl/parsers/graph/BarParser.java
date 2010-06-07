@@ -718,8 +718,8 @@ public final class BarParser implements AnnotationWriter {
 	 */
 	private static AnnotatedSeqGroup getSeqGroup(String groupname, String version, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group) {
 		AnnotatedSeqGroup group = null;
-		if (((version == null) || version.equals(""))
-				&& ((groupname == null) || groupname.equals(""))) {
+		if ((version == null || version.trim().length()==0)
+				&& (groupname == null || groupname.trim().length()==0)) {
 			return default_seq_group;
 		}
 		if (groupname != null && version != null) {
@@ -735,9 +735,13 @@ public final class BarParser implements AnnotationWriter {
 			Logger.getLogger(BarParser.class.getName()).warning("Did not find group " + version + ".  Adding to default group " + default_seq_group.getID());
 			return default_seq_group;
 		}
+		if (group == default_seq_group) {
+			return group;	// nothing to do if the group that's found matches the default group.
+		}
 
 		// This is necessary to make sure new groups get added to the DataLoadView.
 		// maybe need a SeqGroupModifiedEvent class instead.
+		Logger.getLogger(BarParser.class.getName()).warning("Switching to group " + group.getID());
 		gmodel.setSelectedSeqGroup(group);
 		return group;
 	}

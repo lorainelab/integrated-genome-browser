@@ -76,7 +76,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		final JPanel sourcePanel = initSourcePanel();
 		final JPanel synonymsPanel = initSynonymsPanel(this);
 		final JPanel cachePanel = initCachePanel();
-
+	
 		this.setName("Data Sources");
 		this.setToolTipText("Edit data sources and preferences");
 
@@ -149,6 +149,9 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		});
 		editAuthButton.setEnabled(false);
 
+		final JCheckBox autoload = PreferenceUtils.createCheckBox(PreferenceUtils.AUTO_LOAD, PreferenceUtils.getTopNode(),
+				PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+		
 		sourcesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				int viewRow = sourcesTable.getSelectedRow();
@@ -161,6 +164,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 		layout.setHorizontalGroup(layout.createParallelGroup(TRAILING)
 				.addComponent(sourcesScrollPane)
+				.addComponent(autoload)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(addServerButton)
 					.addComponent(editAuthButton)
@@ -168,6 +172,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 		layout.setVerticalGroup(layout.createSequentialGroup()
 				.addComponent(sourcesScrollPane)
+				.addComponent(autoload)
 				.addGroup(layout.createParallelGroup(BASELINE)
 					.addComponent(addServerButton)
 					.addComponent(editAuthButton)

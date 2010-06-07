@@ -605,7 +605,7 @@ public class SeqMapView extends JPanel
 			BioSeq mseq = aseq;
 			removeGraphsFromSeq(mseq);
 		} else {
-			System.err.println("Current annotated seq is not mutable, cannot call SeqMapView.clearGraphs()!");
+			System.err.println("Please select a chromosome!");
 		}
 
 		//Make sure the graph is un-selected in the genometry model, to allow GC
@@ -2159,7 +2159,7 @@ public class SeqMapView extends JPanel
 		}
 
 		for(DependentData dd : dependent_list){
-			if(tg.getParentURL() == dd.getParentUrl())
+			if(tg.getParentURL() == null ? dd.getParentUrl() == null : tg.getParentURL().equals(dd.getParentUrl()))
 				dependent_list.remove(dd);
 		}
 	}

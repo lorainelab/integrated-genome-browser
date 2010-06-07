@@ -298,50 +298,41 @@ public final class BioSeq implements SearchableCharIterator {
 	 * Remove annotation (clear and unload) from DAS/2 server
 	 */
 	public synchronized void unloadAnnotation(SeqSymmetry annot) {
-		if (annot != null) {
-			this.getSeqGroup().removeSymmetry(annot);
-		}
-		if (! needsContainer(annot)) {
-			if (null != annots) {
-				annots.remove(annot);
-			}
-		} else {
-			String type = determineMethod(annot);
-			if ((type != null) && (getAnnotation(type) != null)) {
-				MutableSeqSymmetry container = (MutableSeqSymmetry) getAnnotation(type);
-				if (container == annot) {
-					type_id2sym.remove(type);
-					if (null != annots) {
-						annots.remove(annot);
-					}
-				} else {
-					container.removeChild(annot);
-				}
-				container.clear();
-			}
-		}
+		removeAnnotation(annot, true);
 	}
 
+	/**
+	 * Remove annotation from the BioSeq and its parent AnnotatedSeqGroup.
+	 * @param annot
+	 */
 	public synchronized void removeAnnotation(SeqSymmetry annot) {
+		removeAnnotation(annot, false);
+	}
+
+	private synchronized void removeAnnotation(SeqSymmetry annot, boolean clearContainer) {
 		if (annot != null) {
 			this.getSeqGroup().removeSymmetry(annot);
 		}
-		if (! needsContainer(annot)) {
-			if (null != annots) {
-				annots.remove(annot);
+		if (null != annots) {
+			annots.remove(annot);
+		}
+
+		// If the annotation contains other annotations, remove the container
+		String type = determineMethod(annot);
+		if (type == null) {
+			return;
+		}
+		SymWithProps sym = getAnnotation(type);
+		if (sym != null && sym instanceof MutableSeqSymmetry) {
+			MutableSeqSymmetry container = (MutableSeqSymmetry) sym;
+			if (container == annot) {
+				type_id2sym.remove(type);
+			} else {
+				container.removeChild(annot);
 			}
-		} else {
-			String type = determineMethod(annot);
-			if ((type != null) && (getAnnotation(type) != null)) {
-				MutableSeqSymmetry container = (MutableSeqSymmetry) getAnnotation(type);
-				if (container == annot) {
-					type_id2sym.remove(type);
-					if (null != annots) {
-						annots.remove(annot);
-					}
-				} else {
-					container.removeChild(annot);
-				}
+			if (clearContainer) {
+				// Additional clearing done on the DAS/2 server
+				container.clear();
 			}
 		}
 	}

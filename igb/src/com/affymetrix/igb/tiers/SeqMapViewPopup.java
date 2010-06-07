@@ -195,7 +195,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   };
 
   
-  private final Action delete_action = new AbstractAction("Delete selected tiers (NOT IMPLEMENTED") {
+  private final Action delete_action = new AbstractAction("Delete selected tiers") {
     public void actionPerformed(ActionEvent e) {
       if (IGB.confirmPanel("Really remove selected tiers?\n"+
           "Data will be removed from all chromosomes on this genome.")) {
@@ -626,7 +626,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     change_expand_max_all_action.setEnabled(not_empty);
     showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 
-    save_bed_action.setEnabled(num_selections == 1);
     JMenu save_menu = new JMenu("Save Annotations");
 
     if (num_selections == 1) {
@@ -661,7 +660,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(customize_action);
     popup.add(new JSeparator());
     popup.add(hide_action);
-	//popup.add(delete_action);
+	popup.add(delete_action);
     popup.add(showMenu);
     popup.add(show_all_action);
 
@@ -699,7 +698,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private void removeTiers(List<TierLabelGlyph> tiers) {
 	  for (TierLabelGlyph tlg: tiers) {
-		  System.out.println("DEBUG: eventually would delete this tier: " + tlg);
 		  gviewer.deleteTier(tlg.getReferenceTier());
 	  }
 	  gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());	// refresh

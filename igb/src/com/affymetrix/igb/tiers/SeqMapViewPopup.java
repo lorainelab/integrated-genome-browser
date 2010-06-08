@@ -702,13 +702,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(showMenu);
     popup.add(show_all_action);
 
-    if (gviewer instanceof SeqMapView) {
-      strandsMenu.removeAll();
-      strandsMenu.add(at1);
-      strandsMenu.add(at2);
-      strandsMenu.add(at3);
-      popup.add(strandsMenu);
-    }
+	strandsMenu.removeAll();
+	strandsMenu.add(at1);
+	strandsMenu.add(at2);
+	strandsMenu.add(at3);
+	popup.add(strandsMenu);
     popup.add(new JSeparator());
     popup.add(select_all_tiers_action);
     popup.add(changeMenu);

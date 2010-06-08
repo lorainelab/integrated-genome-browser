@@ -354,7 +354,6 @@ public final class SimpleGraphTab extends JPanel
 		boolean all_show_label = false;
 		boolean any_are_combined = false; // are any selections inside a combined tier
 		boolean all_are_combined = false; // are all selections inside (a) combined tier(s)
-		boolean all_are_smart_glyphs = false; // all implement SmartGraphGlyph
 
 		// Take the first glyph in the list as a prototype
 		GraphGlyph first_glyph = null;
@@ -373,7 +372,6 @@ public final class SimpleGraphTab extends JPanel
 			boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
 			any_are_combined = this_one_is_combined;
 			all_are_combined = this_one_is_combined;
-			all_are_smart_glyphs = (first_glyph instanceof GraphGlyph);
 		}
 
 		// Now loop through other glyphs if there are more than one
@@ -385,7 +383,6 @@ public final class SimpleGraphTab extends JPanel
 			boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);
 			any_are_combined = any_are_combined || this_one_is_combined;
 			all_are_combined = all_are_combined && this_one_is_combined;
-			all_are_smart_glyphs = all_are_smart_glyphs && (gl instanceof GraphGlyph);
 
 			if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
 				graph_style = GraphType.LINE_GRAPH;
@@ -459,7 +456,7 @@ public final class SimpleGraphTab extends JPanel
 		height_slider.setEnabled(b);
 		graph_threshold_action.setEnabled(b);
 		enableButtons(stylegroup, b);
-		mmavgB.setEnabled(all_are_smart_glyphs);
+		mmavgB.setEnabled(true);
 		floatCB.setEnabled(b);
 		yaxisCB.setEnabled(b);
 		labelCB.setEnabled(b);

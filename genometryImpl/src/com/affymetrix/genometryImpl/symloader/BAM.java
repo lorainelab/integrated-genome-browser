@@ -121,6 +121,7 @@ public final class BAM extends SymLoader {
 			header = reader.getFileHeader();
 			if (header == null || header.getSequenceDictionary() == null || header.getSequenceDictionary().getSequences() == null) {
 				Logger.getLogger(BAM.class.getName()).log(Level.WARNING, "Couldn't find sequences in file");
+				return;
 			}
 			for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
 				try {

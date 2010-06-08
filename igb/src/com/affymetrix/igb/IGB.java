@@ -738,8 +738,6 @@ public final class IGB extends Application
 
 		final String title = TABBED_PANES_TITLE;
 		final String display_name = title;
-		//final String tool_tip = null;
-		Image temp_icon = null;
 
 		// If not already open in a new window, make a new window
 		if (comp2window.get(comp) == null) {
@@ -747,7 +745,7 @@ public final class IGB extends Application
 			splitpane.validate();
 
 			final JFrame frame = new JFrame(display_name);
-			final Image icon = temp_icon;
+			final Image icon = getIcon();
 			if (icon != null) {
 				frame.setIconImage(icon);
 			}

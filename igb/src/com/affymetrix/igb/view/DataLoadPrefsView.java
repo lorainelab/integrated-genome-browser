@@ -151,6 +151,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 		final JCheckBox autoload = PreferenceUtils.createCheckBox(PreferenceUtils.AUTO_LOAD, PreferenceUtils.getTopNode(),
 				PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+		autoload.setToolTipText("Automatically load default features when available (e.g., cytoband and refseq)");
 		
 		sourcesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {

@@ -147,7 +147,7 @@ final class ProtAnnotMain implements WindowListener {
 	private static Image getIcon() {
 		Image icon = null;
 		try {
-			URL url = ProtAnnotMain.class.getResource("protannot_icon.gif");
+			URL url = ProtAnnotMain.class.getResource("protannot.gif");
 			if (url != null) {
 				icon = Toolkit.getDefaultToolkit().getImage(url);
 			}

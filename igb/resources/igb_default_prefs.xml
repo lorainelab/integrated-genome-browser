@@ -8,7 +8,6 @@
 
 <server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" />
 <server type="quickload" name="Bioviz" url="http://bioviz.org/quickload/"/>
-<server type="quickload" name="LocalQuickLoad" url="file:///Users/aloraine/Catalina%20Base/webapps/quickload/" primary="true" />
 
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" />
 

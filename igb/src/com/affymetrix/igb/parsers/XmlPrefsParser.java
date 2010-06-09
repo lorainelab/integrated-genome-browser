@@ -138,10 +138,12 @@ public final class XmlPrefsParser {
 					String server_url = el.getAttribute("url");
 					String en = el.getAttribute("enabled");
 					Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
+					String pr = el.getAttribute("primary");
+					Boolean primary = pr == null || pr.isEmpty() ? false : Boolean.valueOf(pr);
 					if (IGBConstants.DEBUG) {
 						System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url + ", enabled: " + enabled);
 					}
-					ServerList.addServer(server_type, server_name, server_url, enabled);
+					ServerList.addServer(server_type, server_name, server_url, enabled, primary);
 				}
 			}
 		}

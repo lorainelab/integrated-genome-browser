@@ -40,6 +40,18 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 			ServerStatus.NotInitialized;				// Is this server initialized?
 	private final Set<GenericVersion>versions =
 			new CopyOnWriteArraySet<GenericVersion>();	// list of versions associated with this server
+	private final boolean primary;
+
+	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj, boolean primary) {
+		this(
+				serverName,
+				URL,
+				serverType,
+				enabled,
+				false,
+				PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
+				serverObj, primary);
+	}
 
 	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj) {
 		this(
@@ -49,7 +61,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				enabled,
 				false,
 				PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
-				serverObj);
+				serverObj, false);
 	}
 
 	public GenericServer(Preferences node, Object serverObj) {
@@ -60,11 +72,11 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				true,
 				false,
 				node,
-				serverObj);
+				serverObj, false);
 	}
 
 	private GenericServer(
-			String serverName, String URL, ServerType serverType, boolean enabled, boolean referenceOnly, Preferences node, Object serverObj) {
+			String serverName, String URL, ServerType serverType, boolean enabled, boolean referenceOnly, Preferences node, Object serverObj, boolean primary) {
 		this.serverName = serverName;
 		this.URL = URL;
 		this.serverType = serverType;
@@ -79,6 +91,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.setPassword(decrypt(this.node.get("password", "")));
 
 		this.node.addPreferenceChangeListener(this);
+		this.primary = primary;
 	}
 
 	public ImageIcon getFriendlyIcon() {
@@ -170,6 +183,10 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		return this.password;
 	}
 
+	public boolean isPrimary(){
+		return this.primary;
+	}
+	
 	@Override
 	public String toString() {
 		return serverName;

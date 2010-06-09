@@ -130,9 +130,10 @@ public final class ServerList {
 	 * @param name
 	 * @param url
 	 * @param enabled
+	 * @param isPrimary
 	 * @return GenericServer
 	 */
-	public static GenericServer addServer(ServerType serverType, String name, String url, boolean enabled) {
+	public static GenericServer addServer(ServerType serverType, String name, String url, boolean enabled, boolean primary) {
 		GenericServer server = url2server.get(url);
 		Object info;
 
@@ -140,7 +141,7 @@ public final class ServerList {
 			info = getServerInfo(serverType, url, name);
 
 			if (info != null) {
-				server = new GenericServer(name, url, serverType, enabled, info);
+				server = new GenericServer(name, url, serverType, enabled, info, primary);
 
 				if (server != null) {
 					url2server.put(url, server);
@@ -149,6 +150,18 @@ public final class ServerList {
 		}
 		
 		return server;
+	}
+
+	/**
+	 *
+	 * @param serverType
+	 * @param name
+	 * @param url
+	 * @param enabled
+	 * @return GenericServer
+	 */
+	public static GenericServer addServer(ServerType serverType, String name, String url, boolean enabled) {
+		return addServer(serverType, name, url, enabled, false);
 	}
 
 	public static GenericServer addServer(Preferences node) {

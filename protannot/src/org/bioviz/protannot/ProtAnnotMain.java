@@ -578,7 +578,7 @@ final class ProtAnnotMain implements WindowListener {
 			}
 			Xml2GenometryParser parser = new Xml2GenometryParser();
 			BioSeq genome_seq = parser.parse(nxs.doc);
-			gview.setTitle("viewing file: " + filename + " version :" + genome_seq.getVersion() + " id :" + genome_seq.getID());
+			gview.setTitle("viewing file: " + filename + "genome version :" + genome_seq.getVersion() + " sequence :" + genome_seq.getID());
 			gview.setBioSeq(genome_seq, true);
 			frm.setTitle(" ProtAnnot: " + filename + " version :" + genome_seq.getVersion() + " id :" + genome_seq.getID());
 		} catch (Exception ex) {

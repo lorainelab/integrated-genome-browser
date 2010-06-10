@@ -119,7 +119,9 @@ final class GenomeView extends JPanel implements MouseListener{
     private List<GlyphI> exonGlyphs = null;
     private List<SeqSymmetry> exonList = new ArrayList<SeqSymmetry>();
     private Hashtable<String,Color> prefs_hash;
-
+	private boolean showhairline = true;
+	private Shadow hairline, axishairline;
+	
     private Color col_bg = COLORS.BACKGROUND.defaultColor();
     private Color col_frame0 = COLORS.FRAME0.defaultColor();
     private Color col_frame1 = COLORS.FRAME1.defaultColor();
@@ -336,13 +338,15 @@ final class GenomeView extends JPanel implements MouseListener{
         exonList = new ArrayList<SeqSymmetry>();
 
         zoomPoint = new VisibleRange();
-        Shadow hairline = new Shadow( this.seqmap, NeoConstants.HORIZONTAL, Color.black );
+        hairline = new Shadow( this.seqmap, NeoConstants.HORIZONTAL, Color.black );
 		hairline.setSelectable( false );
-		zoomPoint.addListener( hairline );
-
-        Shadow axishairline = new Shadow( this.axismap, NeoConstants.HORIZONTAL, Color.black );
+		
+        axishairline = new Shadow( this.axismap, NeoConstants.HORIZONTAL, Color.black );
 		axishairline.setSelectable( false );
-		zoomPoint.addListener( axishairline );
+		if(showhairline){
+			zoomPoint.addListener(hairline);
+			zoomPoint.removeListener(axishairline);
+		}
                 
         int acount = gseq.getAnnotationCount();
 
@@ -407,6 +411,14 @@ final class GenomeView extends JPanel implements MouseListener{
         
     }
 
+	void showHairline(boolean bool){
+		showhairline = bool;
+		if(!showhairline){
+			zoomPoint.removeListener(hairline);
+			zoomPoint.removeListener(axishairline);
+		}
+		setBioSeq(gseq,false);
+	}
     /**
      * Sets the title of the frame provided by the parameter title.
      * @param   title	Title of the frame. Usually the name of the file on display.

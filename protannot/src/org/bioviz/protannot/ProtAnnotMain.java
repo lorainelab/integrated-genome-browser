@@ -62,6 +62,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 import javax.swing.TransferHandler;
 
@@ -85,6 +86,8 @@ final class ProtAnnotMain implements WindowListener {
 	private JFrame addServer = null;
     // the JFrame containing all the widgets
     private JFrame frm;
+	// for show/hide hairline.
+	private JCheckBox showhairline;
     // has NeoMaps and PropertySheet (JTable)
     private GenomeView gview;
     // is populated from prefs_file
@@ -164,6 +167,7 @@ final class ProtAnnotMain implements WindowListener {
         frm.setTitle(" ProtAnnot");
         gview.setTitle("");
         gview.no_data();
+		showhairline.setEnabled(false);
     }
 
     /**
@@ -333,8 +337,23 @@ final class ProtAnnotMain implements WindowListener {
         menuitem = menu.add(z_action);
         menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0));
 		gview.popup.add(z_action);
+
+		showhairline = getShowHairline();
+		menu.add(showhairline);
     }
 
+	private JCheckBox getShowHairline(){
+		final JCheckBox show = new JCheckBox("Show Hairline");
+		show.setSelected(true);
+		show.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				gview.showHairline(show.isSelected());
+			}
+		});
+		show.setEnabled(false);
+		return show;
+	}
     /**
      * Adds menu item to File menu. Adds Load,print and quit to it.
      * @param   file_menu   Menu name to which submenus should be added.
@@ -581,6 +600,7 @@ final class ProtAnnotMain implements WindowListener {
 			gview.setTitle("viewing file: " + filename + "genome version :" + genome_seq.getVersion() + " sequence :" + genome_seq.getID());
 			gview.setBioSeq(genome_seq, true);
 			frm.setTitle(" ProtAnnot: " + filename + " version :" + genome_seq.getVersion() + " id :" + genome_seq.getID());
+			showhairline.setEnabled(true);
 		} catch (Exception ex) {
 			Reporter.report("Couldn't read file: " + filename + "\n"
 					+ "Error : " + ex.getMessage(),
@@ -627,7 +647,7 @@ final class ProtAnnotMain implements WindowListener {
     }
 
 	/**
-	 * Check arguments and add to Dictionary. If arguments are invalid show error message.
+	 * Check arguments and add to Dictionary. If arguments are invalid showhairline error message.
 	 * @param	arg			Argument type.
 	 * @param	argValue	Argument Value.
 	 */
@@ -684,7 +704,7 @@ final class ProtAnnotMain implements WindowListener {
 	}
 
 	/**
-	 * Create a dialog box to show error message.
+	 * Create a dialog box to showhairline error message.
 	 * @param	error	Error message to be displayed.
 	 */
 	private boolean outputErrorMessage(String error){

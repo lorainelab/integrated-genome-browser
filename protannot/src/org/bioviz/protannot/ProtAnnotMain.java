@@ -384,12 +384,12 @@ final class ProtAnnotMain implements WindowListener {
         menuitem = file_menu.add(print_action);
         menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0));
 
+		final ExportDialog export = new ExportDialog();
+		export.setIcon(new ImageIcon(imageIcon));
         AbstractAction export_action = new AbstractAction("Export as ...") {
 
             public void actionPerformed(ActionEvent e) {
-                try {
-                    ExportDialog export = new ExportDialog();
-					export.setIcon(new ImageIcon(imageIcon));
+                try {    
                     export.showExportDialog(gview, "Export view as ...", gview, "export");
                 } catch (Exception ex) {
                     ex.printStackTrace();

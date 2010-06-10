@@ -11,19 +11,17 @@ import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.SchemaFactory;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -39,17 +37,18 @@ final class NormalizeXmlStrand {
 	private static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 	private static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 	private static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
-	private static final String schemaSource = "protannot/resources/protannot.xsd";
+	private static final String schemaSource = "protannot.xsd";
 	 /**
      *Initialize dbFactory and dBuilder
      */
     NormalizeXmlStrand(BufferedInputStream bistr) {
         try {
+			URL url = ProtAnnotMain.class.getResource(schemaSource);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			dbFactory.setNamespaceAware(true);
 			dbFactory.setValidating(true);
 			dbFactory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA); // use LANGUAGE here instead of SOURCE
-			dbFactory.setAttribute( JAXP_SCHEMA_SOURCE, schemaSource);
+			dbFactory.setAttribute( JAXP_SCHEMA_SOURCE, url.toExternalForm());
 
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			dBuilder.setErrorHandler(new SimpleErrorHandler());

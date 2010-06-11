@@ -31,7 +31,9 @@ import java.util.Hashtable;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import javax.swing.plaf.basic.BasicArrowButton;
 
 
 /**
@@ -53,7 +55,7 @@ public class NeoTracerDemo extends Applet
 
 	int pixel_width = 500;
 	int pixel_height = 250;
-
+	int next_or_prev = 0;
 	int scroll_value = 100;
 	float xzoom_value = 2.0f;
 	float yzoom_value = 0.1f;
@@ -68,7 +70,6 @@ public class NeoTracerDemo extends Applet
 	TextField strText;
 	Label posLabel;
 	Label descLabel;
-	Choice searchChoice;
 	Button cloneButton;
 	Panel controlPanel;
 
@@ -77,9 +78,23 @@ public class NeoTracerDemo extends Applet
 	Frame propFrame; // For Properties
 	private boolean propFrameShowing = false;
 
-	private ActionListener searcher = new ActionListener() {
-		public void actionPerformed( ActionEvent evt ) {
+		private ActionListener nextAction = new ActionListener(){
+			public void actionPerformed( ActionEvent evt ) {
+				next_or_prev = 1;
+				searcher(next_or_prev);
+			}
+		};
+		private ActionListener prevAction = new ActionListener(){
+			public void actionPerformed( ActionEvent evt ) {
+				next_or_prev = 2;
+				searcher(next_or_prev);
+			}
+		};
+		
+	    private void searcher(int next_or_prev){
+		
 			String searchString = strText.getText().toUpperCase();
+			System.out.println(searchString);
 			if ( searchString.length() < 1 ) return;
 			String traceString;
 			BaseCalls bc = ( ( Trace ) trace ).getActiveBaseCalls();
@@ -99,18 +114,18 @@ public class NeoTracerDemo extends Applet
 			  */
 			traceString = bc.getBaseString().toUpperCase();
 			//}
-			String searchOption = searchChoice.getSelectedItem();
+			
 			int basenum = -1;
-			if (searchOption == "First") {
+			/*if (next_or_prev == "First") {
 				basenum = traceString.indexOf(searchString);
 			}
 			else if (searchOption == "Last") {
 				basenum = traceString.lastIndexOf(searchString);
-			}
-			else if (searchOption == "Next") {
+			}*/
+			if (next_or_prev == 1) {
 				basenum = traceString.indexOf(searchString, prevSearchPosition+1);
 			}
-			else if (searchOption == "Prev") {
+			else if (next_or_prev == 2) {
 				basenum = traceString.lastIndexOf(searchString,
 						prevSearchPosition-1);
 			}
@@ -118,13 +133,13 @@ public class NeoTracerDemo extends Applet
 				showStatus( "Could not find \"" + searchString + "\"" );
 			}
 			else {
-				showStatus( "Found it starting at " + basenum );
+				//showStatus( "Found it starting at " + basenum );
 				centerAtBase(basenum);
 				prevSearchPosition = basenum;
 				widget.selectResidues( basenum, basenum + searchString.length() - 1 );
 			}
 		}
-	};
+	
 
 	public NeoTracerDemo() {
 		if (external_zoomers) {
@@ -193,16 +208,17 @@ public class NeoTracerDemo extends Applet
 		strText.addTextListener( new TextListener() {
 			public void textValueChanged( TextEvent e ) {
 				findButton.setEnabled( 0 < strText.getText().length() );
+				prevSearchPosition = -1;
 			}
 		} );
-		strText.addActionListener( this.searcher );
-		findButton = new Button( "Find:" );
-		findButton.addActionListener( this.searcher );
-		searchChoice = new Choice();
-		searchChoice.addItem("Next");
-		searchChoice.addItem("Prev");
-		searchChoice.addItem("First");
-		searchChoice.addItem("Last");
+		strText.addActionListener(nextAction);
+		findButton = new Button("Find");
+		findButton.setEnabled(false);
+		findButton.addActionListener(nextAction);
+		JButton nextButton = new BasicArrowButton(SwingConstants.EAST);
+		nextButton.addActionListener(nextAction);
+		JButton prevButton = new BasicArrowButton(SwingConstants.WEST);
+		prevButton.addActionListener(prevAction);
 		cloneButton = new Button("Clone");
 		cloneButton.addActionListener(this);
 
@@ -214,9 +230,10 @@ public class NeoTracerDemo extends Applet
 		controlPanel.add(descLabel);
 		//    controlPanel.add(posLabel);
 		//    controlPanel.add(posText);
-		controlPanel.add(findButton);
-		controlPanel.add(searchChoice);
+		controlPanel.add(prevButton);
 		controlPanel.add(strText);
+		controlPanel.add(nextButton);
+		controlPanel.add(findButton);
 		controlPanel.add(cloneButton);
 
 		//    controlPanel.add(xzoomB);
@@ -562,8 +579,8 @@ public class NeoTracerDemo extends Applet
 	@Override
 	public AppletContext getAppletContext()
 	{
-		if(isApplication)
-			return null;
+		//if(isApplication)
+			//return null;
 		return super.getAppletContext();
 	}
 

@@ -46,7 +46,7 @@ public class NeoTracerDemo extends Applet
 	NeoPanel widg_pan;
 	boolean clone_in_same_frame = true;
 	boolean optScrolling = false, optDamage = false;
-	boolean external_zoomers = true;
+	boolean external_zoomers = false;
 	TraceI trace;
 	public NeoTracer widget;
 	NeoTracer oneClone;

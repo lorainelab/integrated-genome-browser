@@ -177,8 +177,8 @@ public final class GraphScoreThreshSetter extends JPanel
 		threshCB.addItem(BLANK);
 		threshCB.addItem(ON);
 		threshCB.addItem(OFF);
-		threshCB.setPreferredSize(new Dimension(30, 10));
-		threshCB.setMaximumSize(new Dimension(60, 30));
+		threshCB.setPreferredSize(new Dimension(60, 10));
+		threshCB.setMaximumSize(new Dimension(90, 30));
 
 		JPanel thresh_butP = new JPanel();
 		thresh_butP.setLayout(new BoxLayout(thresh_butP, BoxLayout.X_AXIS));

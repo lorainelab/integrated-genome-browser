@@ -46,7 +46,7 @@ public class NeoTracerDemo extends Applet
 	NeoPanel widg_pan;
 	boolean clone_in_same_frame = true;
 	boolean optScrolling = false, optDamage = false;
-	boolean external_zoomers = false;
+	boolean external_zoomers = true;
 	TraceI trace;
 	public NeoTracer widget;
 	NeoTracer oneClone;
@@ -90,11 +90,17 @@ public class NeoTracerDemo extends Applet
 				searcher(next_or_prev);
 			}
 		};
+		private ActionListener propAction = new ActionListener()
+		{
+			public void actionPerformed( ActionEvent evt ) {
+				showProperties();
+			}
+		};
 		
 	    private void searcher(int next_or_prev){
 		
 			String searchString = strText.getText().toUpperCase();
-			System.out.println(searchString);
+			//System.out.println(searchString);
 			if ( searchString.length() < 1 ) return;
 			String traceString;
 			BaseCalls bc = ( ( Trace ) trace ).getActiveBaseCalls();
@@ -143,7 +149,7 @@ public class NeoTracerDemo extends Applet
 
 	public NeoTracerDemo() {
 		if (external_zoomers) {
-			widget = new NeoTracer(true, false, false);
+			widget = new NeoTracer(true, true, true);
 			xzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
 			yzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
 			widget.setZoomer(NeoTracer.X, xzoomer);
@@ -175,11 +181,7 @@ public class NeoTracerDemo extends Applet
 
 		editMenu.addSeparator();
 		editMenu.add(propertiesMenuItem);
-		propertiesMenuItem.addActionListener( new ActionListener() {
-			public void actionPerformed( ActionEvent evt ) {
-				showProperties();
-			}
-		});
+		
 
 		xzoomB = new Button("XZoom");
 		xzoomB.addActionListener(this);
@@ -615,6 +617,7 @@ public class NeoTracerDemo extends Applet
 		JFrame frm = new JFrame("Genoviz NeoTracer Demo");
 		frm.getContentPane().add("Center", me);
 		JButton properties = new JButton("Properties");
+		properties.addActionListener(me.propAction);
 		frm.getContentPane().add("South", properties);
 		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frm.pack();

@@ -9,16 +9,22 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.menuitem.MenuUtil;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.net.URL;
 import java.text.MessageFormat;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -95,7 +101,7 @@ public class AboutIGBAction extends AbstractAction {
 			}
 		});
 			
-		JPanel buttonP = new JPanel(new GridLayout(2, 1));
+		JPanel buttonP = new JPanel(new GridLayout(1, 2));
 		buttonP.add(igb_paper);
 		buttonP.add(bioviz_org);
 	

@@ -36,29 +36,31 @@ public class DocumentationAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		JPanel message_pane = new JPanel();
-		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
-		JTextArea about_text = new JTextArea();
-		about_text.append(getDocumentationText());
-		message_pane.add(new JScrollPane(about_text));
+		GeneralUtils.browse("https://wiki.transvar.org/confluence/display/igbman");
 
-		JButton sfB = new JButton("Visit Genoviz Project");
-		sfB.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent evt) {
-				GeneralUtils.browse("http://genoviz.sourceforge.net");
-			}
-		});
-		Box buttonP = Box.createHorizontalBox();
-		buttonP.add(sfB);
-
-		message_pane.add(buttonP);
-
-		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
-						JOptionPane.DEFAULT_OPTION);
-		final JDialog dialog = pane.createDialog(IGB.getSingleton().getFrame(), "Documentation");
-		dialog.setResizable(true);
-		dialog.setVisible(true);
+//		JPanel message_pane = new JPanel();
+//		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
+//		JTextArea about_text = new JTextArea();
+//		about_text.append(getDocumentationText());
+//		message_pane.add(new JScrollPane(about_text));
+//
+//		JButton sfB = new JButton("Visit Genoviz Project");
+//		sfB.addActionListener(new ActionListener() {
+//
+//			public void actionPerformed(ActionEvent evt) {
+//				GeneralUtils.browse("http://genoviz.sourceforge.net");
+//			}
+//		});
+//		Box buttonP = Box.createHorizontalBox();
+//		buttonP.add(sfB);
+//
+//		message_pane.add(buttonP);
+//
+//		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
+//						JOptionPane.DEFAULT_OPTION);
+//		final JDialog dialog = pane.createDialog(IGB.getSingleton().getFrame(), "Documentation");
+//		dialog.setResizable(true);
+//		dialog.setVisible(true);
 	}
 
 	private static final String getDocumentationText() {

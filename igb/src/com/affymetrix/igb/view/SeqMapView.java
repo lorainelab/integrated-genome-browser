@@ -153,7 +153,7 @@ public class SeqMapView extends JPanel
 	public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
 	public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
 	/** Name of a boolean preference for whether the hairline lable should be on. */
-	public static final String PREF_HAIRLINE_LABELED = "Hairline Label On";
+	public static final String PREF_HAIRLINE_LABELED = "Zoom Stripe Label On";
 	/** Name of a boolean preference for whether the horizontal zoom slider is above the map. */
 	private static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
 	/** Name of a boolean preference for whether the vertical zoom slider is left of the map. */
@@ -490,7 +490,7 @@ public class SeqMapView extends JPanel
 		sym_info = new JLabel("");
 		sym_info.setEnabled(false); // makes the text look different (usually lighter)
 
-		centerMI = setUpMenuItem(sym_popup, "Center at hairline");
+		centerMI = setUpMenuItem(sym_popup, "Center at zoom stripe");
 
 		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
 		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));

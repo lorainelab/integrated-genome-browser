@@ -63,6 +63,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JTextField;
 import javax.swing.TransferHandler;
 
@@ -338,22 +339,12 @@ final class ProtAnnotMain implements WindowListener {
         menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0));
 		gview.popup.add(z_action);
 
-		showhairline = getShowHairline();
-		menu.add(showhairline);
+		ToggleHairlineAction h_action = new ToggleHairlineAction(this.gview);
+		menuitem = menu.add(new JCheckBoxMenuItem(h_action));
+		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0));
+		gview.popup.add(new JCheckBoxMenuItem(h_action));
     }
 
-	private JCheckBox getShowHairline(){
-		final JCheckBox show = new JCheckBox("Show Hairline");
-		show.setSelected(true);
-		show.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent e) {
-				gview.showHairline(show.isSelected());
-			}
-		});
-		show.setEnabled(false);
-		return show;
-	}
     /**
      * Adds menu item to File menu. Adds Load,print and quit to it.
      * @param   file_menu   Menu name to which submenus should be added.
@@ -600,7 +591,6 @@ final class ProtAnnotMain implements WindowListener {
 			gview.setTitle("viewing file: " + filename + "genome version :" + genome_seq.getVersion() + " sequence :" + genome_seq.getID());
 			gview.setBioSeq(genome_seq, true);
 			frm.setTitle(" ProtAnnot: " + filename + " version :" + genome_seq.getVersion() + " id :" + genome_seq.getID());
-			showhairline.setEnabled(true);
 		} catch (Exception ex) {
 			Reporter.report("Couldn't read file: " + filename + "\n"
 					+ "Error : " + ex.getMessage(),

@@ -411,14 +411,25 @@ final class GenomeView extends JPanel implements MouseListener{
         
     }
 
-	void showHairline(boolean bool){
-		showhairline = bool;
+	/**
+	 * Toggle hairline on/off.
+	 * @return
+	 */
+	boolean toggleHairline() {
+		showhairline = !showhairline;
+
+		if(gseq == null)
+			return showhairline;
+		
 		if(!showhairline){
 			zoomPoint.removeListener(hairline);
 			zoomPoint.removeListener(axishairline);
 		}
 		setBioSeq(gseq,false);
+
+		return showhairline;
 	}
+	
     /**
      * Sets the title of the frame provided by the parameter title.
      * @param   title	Title of the frame. Usually the name of the file on display.

@@ -338,8 +338,8 @@ public class NeoTracerDemo extends Applet
 
 		}
 
-		//widget.setBasesTrimmedLeft(9);
-		//widget.setBasesTrimmedRight(19);
+//		widget.setBasesTrimmedLeft(9);
+//		widget.setBasesTrimmedRight(19);
 
 	}
 

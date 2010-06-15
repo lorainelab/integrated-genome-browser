@@ -24,4 +24,8 @@ public final class IGBStateProvider implements StateProvider {
       return state;
   }
 
+  public IAnnotStyleExtended getAnnotStyle(String name, String human_name) {
+	 return AnnotStyle.getInstance(name,human_name);
+  }
+
 }

@@ -70,4 +70,8 @@ public final class DefaultStateProvider implements StateProvider {
 		return state;
 	}
 
+	public IAnnotStyleExtended getAnnotStyle(String name, String human_name) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 }

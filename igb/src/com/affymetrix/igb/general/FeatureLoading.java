@@ -212,8 +212,7 @@ public final class FeatureLoading {
 			if (DEBUG) {
 				System.out.println("$$$$$ in processFeatureRequests(), getting style for: " + type.getName());
 			}
-			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
-			style.setHumanName(type.getName());
+			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID(),type.getName());
 			Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());
 			List<? extends FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
 			result_syms.addAll(feature_list);

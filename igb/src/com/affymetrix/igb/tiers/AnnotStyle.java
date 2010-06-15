@@ -83,6 +83,31 @@ public class AnnotStyle implements IAnnotStyleExtended {
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 
+	public static final AnnotStyle getInstance(String name, String human_name) {
+		return getInstance(name, human_name, true, true);
+	}
+
+	private static final AnnotStyle getInstance(String unique_name, String human_name, boolean persistent, boolean force_human_name){
+		// if unique_name is null, maybe assign it "unknown" to avoid exceptions
+		// if (unique_name == null)  { unique_name = "unknown";}
+		AnnotStyle style = static_map.get(unique_name.toLowerCase());
+		if (style == null) {
+			if (DEBUG) {
+				System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
+			}
+			// apply any default stylesheet stuff
+			AnnotStyle template = getDefaultInstance();
+			// at this point template should already have all modifications to default applied from stylesheets and preferences nodes (A & B)
+			// apply any stylesheet stuff...
+			style = new AnnotStyle(unique_name, persistent, template);
+			static_map.put(unique_name.toLowerCase(), style);
+
+			if(force_human_name)
+				style.human_name = human_name;
+		}
+		return style;
+	}
+
 	public static final AnnotStyle getInstance(String unique_name) {
 		return getInstance(unique_name, true);
 	}

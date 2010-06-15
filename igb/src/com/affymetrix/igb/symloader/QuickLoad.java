@@ -246,14 +246,8 @@ public final class QuickLoad extends SymLoader {
 		if (!this.isInitialized) {
 			this.init();
 		}
-		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString());
-		if (style != null) {
-			style.setHumanName(featureName);
-		}
-		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName);
-		if (style != null) {
-			style.setHumanName(featureName);
-		}
+		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName);
 		if (strategy == LoadStrategy.GENOME && symL == null) {
 			// no symloader... only option is whole genome.
 			return this.getGenome();

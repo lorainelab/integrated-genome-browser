@@ -21,6 +21,7 @@ import java.net.*;
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.BaseCalls;
+import com.affymetrix.genoviz.datamodel.Range;
 import com.affymetrix.genoviz.datamodel.ReadConfidence;
 import com.affymetrix.genoviz.datamodel.Trace;
 import com.affymetrix.genoviz.datamodel.TraceI;
@@ -337,8 +338,8 @@ public class NeoTracerDemo extends Applet
 
 		}
 
-		widget.setBasesTrimmedLeft(9);
-		widget.setBasesTrimmedRight(19);
+		//widget.setBasesTrimmedLeft(9);
+		//widget.setBasesTrimmedRight(19);
 
 	}
 
@@ -480,7 +481,8 @@ public class NeoTracerDemo extends Applet
 			widget.updateWidget();
 		}
 		else if (evtSource == clipper) {
-			clipTrace(100, 200);
+			clipTrace(widget.getSel_range_start(), widget.getSel_range_end());
+			//clipTrace(100, 200);
 			widget.updateWidget();
 		}
 		else if (evtSource == toggleRevCompB) {
@@ -546,21 +548,28 @@ public class NeoTracerDemo extends Applet
 
 	public void clipTrace(int theFirstBase, int theLastBase) {
 		System.err.println("clipping from base " + theFirstBase + " to " + theLastBase);
-		int theFirstPeak = 0;
-		if ( 0 < theFirstBase ) {
-			// Ann's note: It seems weird to me that we have to cast the interface trace to
-			// its implementation. Why is this? Anyhow, to get this file to compile, I need
-			// to cast trace to Trace, which implements TraceI
-			int a = (((Trace)trace).getBaseCall(theFirstBase-1)).getTracePoint();
-			int b = (((Trace)trace).getBaseCall(theFirstBase)).getTracePoint();
-			theFirstPeak = ( a + b ) / 2;
-		}
-		int theLastPeak = trace.getTraceLength() - 1;
-		if ( theLastBase < trace.getBaseCount() - 1 ) {
-			int a = ((Trace)trace).getBaseCall(theLastBase).getTracePoint();
-			int b = ((Trace) trace).getBaseCall(theLastBase+1).getTracePoint();
-			theLastPeak = ( a + b ) / 2;
-		}
+//		int theFirstPeak = 0;
+//		if ( 0 < theFirstBase ) {
+//			// Ann's note: It seems weird to me that we have to cast the interface trace to
+//			// its implementation. Why is this? Anyhow, to get this file to compile, I need
+//			// to cast trace to Trace, which implements TraceI
+//			int a = (((Trace)trace).getBaseCall(theFirstBase-1)).getTracePoint();
+//			int b = (((Trace)trace).getBaseCall(theFirstBase)).getTracePoint();
+//
+//			theFirstPeak = ( a + b ) / 2;
+//		}
+//		int theLastPeak = trace.getTraceLength() - 1;
+//		if ( theLastBase < trace.getBaseCount() - 1 ) {
+//			int a = ((Trace)trace).getBaseCall(theLastBase).getTracePoint();
+//			int b = ((Trace) trace).getBaseCall(theLastBase+1).getTracePoint();
+//
+//			theLastPeak = ( a + b ) / 2;
+//		}
+		BaseCalls bc = widget.getActiveBaseCalls();
+		Range trace_range = widget.baseRange2TraceRange(bc, theFirstBase, theLastBase);
+		int theFirstPeak = trace_range.beg;
+		int theLastPeak = trace_range.end;
+		System.out.println(theFirstPeak +" " + theLastPeak);
 		widget.setRange(theFirstPeak, theLastPeak);
 
 	}

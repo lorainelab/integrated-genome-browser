@@ -10,7 +10,6 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-
 package com.affymetrix.genoviz.widget;
 
 import java.awt.event.*;
@@ -90,8 +89,8 @@ import javax.swing.JScrollBar;
  * @version $Id$
  */
 public class NeoTracer extends NeoContainerWidget
-	implements Observer, NeoViewBoxListener
-{
+		implements Observer, NeoViewBoxListener {
+
 	/**
 	 * Orientation (Direction) for a trace.
 	 * If orientation is FORWARD,
@@ -100,7 +99,6 @@ public class NeoTracer extends NeoContainerWidget
 	 * @see #setDirection
 	 */
 	public static final int FORWARD = 1;
-
 	/**
 	 * Orientation (Direction) for a trace.
 	 * If the orientation is REVERSE_COMPLEMENT,
@@ -112,37 +110,31 @@ public class NeoTracer extends NeoContainerWidget
 	 * @see #setDirection
 	 */
 	public static final int REVERSE_COMPLEMENT = 2;
-
 	/**
 	 * component identifier constant for the trace chromogram display
 	 * @see #getItems
 	 */
 	public static final int TRACES = 7000;
-
 	/**
 	 * component identifier constant for the base letter display
 	 * @see #getItems
 	 */
 	public static final int BASES = TRACES + 1;
-
 	/**
 	 * component identifier constant for the panning axis scroller
 	 * @see #getItems
 	 */
 	public static final int AXIS_SCROLLER = TRACES + 1;
-
 	/**
 	 * component identifier constant for the zooming adjustable
 	 * @see #getItems
 	 */
 	public static final int AXIS_ZOOMER = TRACES + 2;
-
 	/**
 	 * component identifier constant for the vertical scaling adjustable
 	 * @see #getItems
 	 */
 	public static final int OFFSET_ZOOMER = TRACES + 3;
-
 	/**
 	 * component identifier constant for other components not part
 	 * of the interface description.
@@ -151,62 +143,44 @@ public class NeoTracer extends NeoContainerWidget
 	 */
 	@Deprecated
 	public static final int UNKNOWN = TRACES + 4;
-
 	//  To allow multiple base calls, this can no longer be static final.
 	private int base_map_pixel_height;
-
 	protected NeoMap trace_map;
 	protected NeoMap base_map;
-
 	protected JScrollBar hscroll;
-  protected Adjustable hzoom, vzoom;
-
+	protected Adjustable hzoom, vzoom;
 	// locations for scrollbars, consensus, and labels
 	protected int hscroll_loc = PLACEMENT_BOTTOM;
 	protected int vzoom_loc = PLACEMENT_RIGHT;
 	protected int hzoom_loc = PLACEMENT_TOP;
-
 	protected int trace_loc = PLACEMENT_TOP;
 	protected int base_loc = PLACEMENT_BOTTOM;
-
 	private static final int PEAK_WIDTH = 10;
-
 	protected TraceI trace;
 	protected TraceGlyph trace_glyph;
-
 	protected List<BaseCalls> base_calls_vector; // vector of BaseCalls's;
 	protected List<TraceBaseGlyph> base_glyphs; // vector of TraceBaseGlyphs
 	private AsymAxisGlyph base_axis;
 	private TraceBaseGlyph activeBaseCallsGlyph;
-
 	// optional - for aligned bases
 	private BaseCalls consensus; // reference string
-
 	private final Set<NeoBaseSelectListener> base_listeners = new CopyOnWriteArraySet<NeoBaseSelectListener>();
-
 	protected Glyph line_glyph;
 	protected FillRectGlyph left_trim_glyph, right_trim_glyph;
-
 	private static final Color default_trace_background = Color.black;
 	private static final Color default_base_background = Color.black;
 	private static final Color default_panel_background = Color.lightGray;
-
 	protected Color trim_color = Color.lightGray;
-
 	protected int sel_behavior = ON_MOUSE_DOWN;
 	protected Selection sel_range;
 	protected Selection traceSelection;
-
 	protected int trace_length;
 	protected int trace_height_max;
 	protected int base_count;
-
 	protected boolean optimize_scrolling = false;
 	protected boolean optimize_damage = false;
-
 	protected boolean forward = true;
 	protected boolean hscroll_show, hzoom_show, vzoom_show;
-
 	protected Range range;
 	protected Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 
@@ -226,10 +200,10 @@ public class NeoTracer extends NeoContainerWidget
 	 * respectively.
 	 */
 	public NeoTracer(JScrollBar scroller, Adjustable hzoom, Adjustable vzoom) {
-		this (true, true, true);
+		this(true, true, true);
 		setScroller(scroller);
-		setHorizontalZoomer (hzoom);
-		setVerticalZoomer (vzoom);
+		setHorizontalZoomer(hzoom);
+		setVerticalZoomer(vzoom);
 	}
 
 	/**
@@ -257,20 +231,20 @@ public class NeoTracer extends NeoContainerWidget
 		base_map.setMapColor(default_base_background);
 		this.setLayout(null);
 
-		if (hscroll_show)  {
+		if (hscroll_show) {
 			hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
 			add((Component) hscroll);
-			setRangeScroller( hscroll );
+			setRangeScroller(hscroll);
 		}
-		if (hzoom_show)  {
+		if (hzoom_show) {
 			hzoom = new JScrollBar(JScrollBar.VERTICAL);
-			add((Component)hzoom);
-			setRangeZoomer( hzoom );
+			add((Component) hzoom);
+			setRangeZoomer(hzoom);
 		}
-		if (vzoom_show)  {
+		if (vzoom_show) {
 			vzoom = new JScrollBar(JScrollBar.VERTICAL);
-			add((Component)vzoom);
-			setOffsetZoomer( vzoom );
+			add((Component) vzoom);
+			setOffsetZoomer(vzoom);
 		}
 
 		add(trace_map);
@@ -346,8 +320,8 @@ public class NeoTracer extends NeoContainerWidget
 
 		// We need to set up a derived view from  each individual NeoMap
 		// within this widget based on corresponding NeoMap within the root.
-		NeoMap root_trace_map = (NeoMap)root.getWidget(NeoTracer.TRACES);
-		NeoMap root_base_map = (NeoMap)root.getWidget(NeoTracer.BASES);
+		NeoMap root_trace_map = (NeoMap) root.getWidget(NeoTracer.TRACES);
+		NeoMap root_base_map = (NeoMap) root.getWidget(NeoTracer.BASES);
 		trace_map.setRoot(root_trace_map);
 		base_map.setRoot(root_base_map);
 
@@ -397,7 +371,7 @@ public class NeoTracer extends NeoContainerWidget
 		base_count = root.base_count;
 
 		optimize_scrolling = root.optimize_scrolling;
-		optimize_damage = root.optimize_damage ;
+		optimize_damage = root.optimize_damage;
 
 		// locations for scrollbars, consensus, and labels
 		hscroll_loc = root.hscroll_loc;
@@ -407,9 +381,9 @@ public class NeoTracer extends NeoContainerWidget
 		trace_loc = root.trace_loc;
 		base_loc = root.base_loc;
 
-		forward = root.forward ;
+		forward = root.forward;
 
-		setTrimColor( root.getTrimColor() );
+		setTrimColor(root.getTrimColor());
 
 	}
 
@@ -425,10 +399,9 @@ public class NeoTracer extends NeoContainerWidget
 		theSelection.addObserver(this);
 	}
 
-	public void addSelectionObserver( Observer observer ) {
-		sel_range.addObserver( observer );
+	public void addSelectionObserver(Observer observer) {
+		sel_range.addObserver(observer);
 	}
-
 
 	public void setScrollingOptimized(boolean optimize) {
 		this.optimize_scrolling = optimize;
@@ -437,8 +410,7 @@ public class NeoTracer extends NeoContainerWidget
 		if (optimize) {
 			trace_map.setScaleConstraint(trace_map.X, trace_map.INTEGRAL_PIXELS);
 			base_map.setScaleConstraint(base_map.X, base_map.INTEGRAL_PIXELS);
-		}
-		else {
+		} else {
 			trace_map.setScaleConstraint(trace_map.X, NeoConstants.NONE);
 			base_map.setScaleConstraint(base_map.X, NeoConstants.NONE);
 		}
@@ -491,7 +463,7 @@ public class NeoTracer extends NeoContainerWidget
 		trace_map.setMapRange(start, end);
 		base_map.setMapRange(start, end);
 		Rectangle2D.Double box = base_axis.getCoordBox();
-		base_axis.setCoords ( start, box.y, end - start, box.height );
+		base_axis.setCoords(start, box.y, end - start, box.height);
 	}
 
 	/**
@@ -517,42 +489,43 @@ public class NeoTracer extends NeoContainerWidget
 	public void configureLayout(int component, int placement) {
 		if (component == AXIS_SCROLLER) {
 			hscroll_loc = placement;
-		}
-		else if (component == AXIS_ZOOMER) {
+		} else if (component == AXIS_ZOOMER) {
 			hzoom_loc = placement;
-		}
-		else if (component == OFFSET_ZOOMER) {
+		} else if (component == OFFSET_ZOOMER) {
 			vzoom_loc = placement;
-		}
-		else if (component == TRACES) {
+		} else if (component == TRACES) {
 			trace_loc = placement;
-		}
-		else if (component == BASES) {
+		} else if (component == BASES) {
 			base_loc = placement;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(
-					"can only configureLayout for AXIS_SCROLLER, AXIS_ZOOMER, " +
-					"OFFSET_ZOOMER, TRACES, or BASES.");
+					"can only configureLayout for AXIS_SCROLLER, AXIS_ZOOMER, "
+					+ "OFFSET_ZOOMER, TRACES, or BASES.");
 		}
 		doLayout();
 		// trying to fix paint issues when configuring layout
 		Container parent = getParent();
 		if (parent instanceof NeoPanel) {
-			((NeoPanel)parent).forceBackgroundFill();
+			((NeoPanel) parent).forceBackgroundFill();
 		}
 		repaint();
 	}
 
 	public int getPlacement(int component) {
-		if (component == AXIS_SCROLLER)  { return hscroll_loc; }
-		else if (component == AXIS_ZOOMER)  { return hzoom_loc; }
-		else if (component == OFFSET_ZOOMER) { return vzoom_loc; }
-		else if (component == TRACES)  { return trace_loc; }
-		else if (component == BASES)   { return base_loc; }
+		if (component == AXIS_SCROLLER) {
+			return hscroll_loc;
+		} else if (component == AXIS_ZOOMER) {
+			return hzoom_loc;
+		} else if (component == OFFSET_ZOOMER) {
+			return vzoom_loc;
+		} else if (component == TRACES) {
+			return trace_loc;
+		} else if (component == BASES) {
+			return base_loc;
+		}
 		throw new IllegalArgumentException(
-				"can only getPlacement for AXIS_SCROLLER, AXIS_ZOOMER, " +
-				"OFFSET_ZOOMER, TRACES, or BASES.");
+				"can only getPlacement for AXIS_SCROLLER, AXIS_ZOOMER, "
+				+ "OFFSET_ZOOMER, TRACES, or BASES.");
 	}
 
 	public synchronized void doLayout() {
@@ -562,13 +535,19 @@ public class NeoTracer extends NeoContainerWidget
 		// The base_map_pixel_height is now being correctly set in addBaseGlyph.
 		int base_height = base_map_pixel_height;
 		int hz_size = 0, vz_size = 0, hs_size = 0;
-		if (hscroll_show)  { hs_size = ((Component)hscroll).getPreferredSize().height; }
-		if (hzoom_show) { hz_size = ((Component)hzoom).getPreferredSize().width; }
-		if (vzoom_show) { vz_size = ((Component)vzoom).getPreferredSize().width; }
+		if (hscroll_show) {
+			hs_size = ((Component) hscroll).getPreferredSize().height;
+		}
+		if (hzoom_show) {
+			hz_size = ((Component) hzoom).getPreferredSize().width;
+		}
+		if (vzoom_show) {
+			vz_size = ((Component) vzoom).getPreferredSize().width;
+		}
 
 		int trace_x = hz_size;
 		int trace_y = 0;
-		int trace_width = dim.width - hz_size - vz_size ;
+		int trace_width = dim.width - hz_size - vz_size;
 		int trace_height = dim.height - base_height - hs_size;
 
 		int base_x = trace_x;
@@ -578,102 +557,104 @@ public class NeoTracer extends NeoContainerWidget
 		trace_map.setBounds(trace_x, trace_y, trace_width, trace_height);
 		base_map.setBounds(base_x, base_y, base_width, base_height);
 
-		if (hscroll_show)  {
-			int hscroll_y = base_y + base_height ;
+		if (hscroll_show) {
+			int hscroll_y = base_y + base_height;
 			int hscroll_x = trace_x;
 			int hscroll_width = trace_width;
-			((Component)hscroll).setBounds(hscroll_x, hscroll_y, hscroll_width, hs_size);
+			((Component) hscroll).setBounds(hscroll_x, hscroll_y, hscroll_width, hs_size);
 		}
 
-		if (vzoom_show)  {
+		if (vzoom_show) {
 			int vzoom_x = trace_x + trace_width;
 			int vzoom_y = 0;
 			int vzoom_height = trace_height + base_height;
-			((Component)vzoom).setBounds(vzoom_x, vzoom_y, vz_size, vzoom_height);
+			((Component) vzoom).setBounds(vzoom_x, vzoom_y, vz_size, vzoom_height);
 		}
 
-		if (hzoom_show)  {
+		if (hzoom_show) {
 			int hzoom_x = 0;
 			int hzoom_y = 0;
 			int hzoom_height = trace_height + base_height;
-			((Component)hzoom).setBounds(hzoom_x, hzoom_y, hz_size, hzoom_height);
+			((Component) hzoom).setBounds(hzoom_x, hzoom_y, hz_size, hzoom_height);
 		}
 	}
 
 	public Range getVisiblePeakRange() {
 		Rectangle2D.Double visible_box = trace_map.getView().calcCoordBox();
-		return new Range((int)visible_box.x,
-				(int)(visible_box.x + visible_box.width));
+		return new Range((int) visible_box.x,
+				(int) (visible_box.x + visible_box.width));
 	}
 
 	// this is a slow way to do this
 	public Range getVisibleBaseRange() {
 		Rectangle2D.Double visible_box = trace_map.getView().calcCoordBox();
-		int visible_left = (int)(visible_box.x);
-		int visible_right = (int)(visible_left + visible_box.width);
-		Range r = new Range(-1,-1);
+		int visible_left = (int) (visible_box.x);
+		int visible_right = (int) (visible_left + visible_box.width);
+		Range r = new Range(-1, -1);
 		BaseCall calledBase;
 		int baseCoordPoint;
 
-		if( getActiveBaseCalls() == null ) {
+		if (getActiveBaseCalls() == null) {
 			return r;
 		}
 
 		int baseCount = getBaseCount();
 
-		if( getBaseCall(0).getTracePoint() > visible_left ){
+		if (getBaseCall(0).getTracePoint() > visible_left) {
 			// left edge is past the edge of the view box, return -1
 			r.beg = -99;
 		}
-		if( getBaseCall( baseCount-1 ).getTracePoint() < visible_right ) {
+		if (getBaseCall(baseCount - 1).getTracePoint() < visible_right) {
 			// past the right edge
 			r.end = -99;
 		}
 
-		for (int i=0; i<baseCount; i++) {
+		for (int i = 0; i < baseCount; i++) {
 			if ((calledBase = getBaseCall(i)) != null) {
 				baseCoordPoint = calledBase.getTracePoint();
 				if (r.beg == -1) { // looking for beginning
 					if (baseCoordPoint >= visible_left) {
 						r.beg = i;
-						if( r.end == -99 ) { // already established end
+						if (r.end == -99) { // already established end
 							break;
 						}
 					}
-				}
-				else { // setting end
-					if (baseCoordPoint >= (visible_right) ) {
+				} else { // setting end
+					if (baseCoordPoint >= (visible_right)) {
 						break;
-					}
-					else {
+					} else {
 						r.end = i;
 					}
 				}
 			}
 		}
-		if( r.beg == -99 ) r.beg = -1;
-		if( r.end == -99 ) r.end = -1;
+		if (r.beg == -99) {
+			r.beg = -1;
+		}
+		if (r.end == -99) {
+			r.end = -1;
+		}
 
 		return r;
 	}
 
-	public void setChromatogram ( TraceI theChromatogram ) {
-		setChromatogram ( theChromatogram, 0 );
+	public void setChromatogram(TraceI theChromatogram) {
+		setChromatogram(theChromatogram, 0);
 	}
 
 	/**
 	 * Sets the chromatogram to display.
 	 * @param theChromatogram ignore any base calls.
 	 */
-	public void setChromatogram( TraceI theChromatogram, int start ) {
+	public void setChromatogram(TraceI theChromatogram, int start) {
 
 		this.trace = theChromatogram;
 		trace_length = this.trace.getTraceLength();
 		trace_height_max = this.trace.getMaxValue();
 
-		trace_map.setMapRange(0,trace_length);
+		trace_map.setMapRange(0, trace_length);
 		// attempting to allow negative scrolling tss
-		trace_map.setMapOffset(0,trace_height_max);
+		trace_map.setMapOffset(0, trace_height_max);
 
 		if (trace_glyph == null) {
 			trace_glyph = new TraceGlyph();
@@ -685,17 +666,17 @@ public class NeoTracer extends NeoContainerWidget
 		// instead
 
 		trace_glyph.setTrace(this.trace);
-		trace_glyph.setCoords(start,0,trace_length,trace_height_max);
+		trace_glyph.setCoords(start, 0, trace_length, trace_height_max);
 
 		// Any initial zoom and scroll is currently being ovewritten
 		//   by stretch to fit --
 
-		base_map.setMapRange(0,trace_length);
-		base_map.setMapOffset(0,base_map_pixel_height);
+		base_map.setMapRange(0, trace_length);
+		base_map.setMapOffset(0, base_map_pixel_height);
 
 		line_glyph = new FillRectGlyph();
 		//Changing the start of line_glyph from beginning of traces to start of the map
-		line_glyph.setCoords(0,1,trace_length,1);
+		line_glyph.setCoords(0, 1, trace_length, 1);
 		line_glyph.setBackgroundColor(Color.white);
 		base_map.getScene().addGlyph(line_glyph);
 	}
@@ -705,8 +686,8 @@ public class NeoTracer extends NeoContainerWidget
 	 *
 	 * @see #setTrace(TraceI, int)
 	 */
-	public void setTrace ( TraceI trace ) {
-		setTrace ( trace, 0 );
+	public void setTrace(TraceI trace) {
+		setTrace(trace, 0);
 	}
 
 	/**
@@ -721,8 +702,8 @@ public class NeoTracer extends NeoContainerWidget
 	 *
 	 */
 	public void setTrace(TraceI trace, int start) {
-		setChromatogram( trace, start );
-		if ( 0 < trace.getBaseCount() ) { // deprecated storage of base calls has been done.
+		setChromatogram(trace, start);
+		if (0 < trace.getBaseCount()) { // deprecated storage of base calls has been done.
 			// Move the base calls out of the trace
 			// and add them directly.
 			this.base_count = trace.getBaseCount();
@@ -735,7 +716,7 @@ public class NeoTracer extends NeoContainerWidget
 			}
 		}
 	}
-	
+
 	/**
 	 * @return the Trace set via setTrace.
 	 *
@@ -754,12 +735,11 @@ public class NeoTracer extends NeoContainerWidget
 	 *
 	 * @param theCalls an array of new calls.
 	 */
-	public void replaceBaseCalls( BaseCall[] theCalls ) {
-		if ( this.base_calls_vector.size() < 1 ) {
-			addBaseCalls( theCalls );
-		}
-		else {
-			replaceBaseCalls( theCalls, 0 );
+	public void replaceBaseCalls(BaseCall[] theCalls) {
+		if (this.base_calls_vector.size() < 1) {
+			addBaseCalls(theCalls);
+		} else {
+			replaceBaseCalls(theCalls, 0);
 		}
 	}
 
@@ -776,57 +756,55 @@ public class NeoTracer extends NeoContainerWidget
 	 * @param theCalls an array of new calls.
 	 * @param bases_index an index into all the sets of base calls.
 	 */
-	private void replaceBaseCalls( BaseCall[] theCalls, int bases_index ) {
+	private void replaceBaseCalls(BaseCall[] theCalls, int bases_index) {
 		try {
-			BaseCalls bc = base_calls_vector.get( bases_index );
-			bc.setBaseCalls( theCalls );
-		} catch ( ArrayIndexOutOfBoundsException e ) {
+			BaseCalls bc = base_calls_vector.get(bases_index);
+			bc.setBaseCalls(theCalls);
+		} catch (ArrayIndexOutOfBoundsException e) {
 		}
 	}
 
-	public void addBaseCalls ( BaseCall[] residues ) {
-		addBaseCalls ( residues, 0 );
+	public void addBaseCalls(BaseCall[] residues) {
+		addBaseCalls(residues, 0);
 	}
 
-
-	public void addBaseCalls( BaseCall[] residues, int start ) {
+	public void addBaseCalls(BaseCall[] residues, int start) {
 		BaseCalls base_calls = new BaseCalls(residues);
-		addBaseCalls( base_calls, start );
+		addBaseCalls(base_calls, start);
 	}
 
-	public void addBaseCalls ( BaseCalls base_calls ) {
-		addBaseCalls ( base_calls, 0 );
+	public void addBaseCalls(BaseCalls base_calls) {
+		addBaseCalls(base_calls, 0);
 	}
 
 	/**
-	  Allows for setting the base calls starting at a particular coord point,
-	  which is useful for displaying several NeoTracers together in the
-	  same widget.  Make sure that the trace you are displaying has the same
-	  start; you can do this by using setTrace ( TraceI trace, int start ),
-	  with a trace that has basecalls in it; that method will call this one.
-	  */
-
-	public void addBaseCalls( BaseCalls base_calls, int start ) {
-		base_calls.setTrace( trace );
-		base_calls_vector.add( base_calls );
+	Allows for setting the base calls starting at a particular coord point,
+	which is useful for displaying several NeoTracers together in the
+	same widget.  Make sure that the trace you are displaying has the same
+	start; you can do this by using setTrace ( TraceI trace, int start ),
+	with a trace that has basecalls in it; that method will call this one.
+	 */
+	public void addBaseCalls(BaseCalls base_calls, int start) {
+		base_calls.setTrace(trace);
+		base_calls_vector.add(base_calls);
 
 		// Create a new glyph for the base calls.
 		TraceBaseGlyph base_glyph = new TraceBaseGlyph();
 		base_glyph.setTrace(trace);
-		base_glyph.setBaseCalls( base_calls );
+		base_glyph.setBaseCalls(base_calls);
 
 		int old_base_height = 4; // arbitrary number to keep highlighting rectangle from colliding with horizontal rule.
 		int iBaseGlyphs = base_glyphs.size();
-		for( int i =0; i < iBaseGlyphs; i++ ) {
+		for (int i = 0; i < iBaseGlyphs; i++) {
 			TraceBaseGlyph old_base_glyph = base_glyphs.get(i);
 			old_base_height += old_base_glyph.getHeight() + 1;
 		}
 
 		int last_glyph_height = base_glyph.getHeight();
-		base_glyph.setCoords(start, old_base_height, trace_length, last_glyph_height );
+		base_glyph.setCoords(start, old_base_height, trace_length, last_glyph_height);
 		base_map_pixel_height = old_base_height + last_glyph_height;
 
-		base_glyphs.add( base_glyph );
+		base_glyphs.add(base_glyph);
 
 		// adjust the base_map to fit the multiple base_glyphs
 		base_map.getScene().addGlyph(base_glyph);
@@ -838,30 +816,30 @@ public class NeoTracer extends NeoContainerWidget
 		}
 
 		int axis_height = base_axis.getHeight();
-		base_axis.setCoords( 0, base_map_pixel_height, trace_length, axis_height );
+		base_axis.setCoords(0, base_map_pixel_height, trace_length, axis_height);
 		base_map_pixel_height += axis_height;
 
 
 		base_map.scrollOffset(40); // 40?? -- if this is constant it does not need to be reset
-		base_map.setMapOffset( 0, base_map_pixel_height );
+		base_map.setMapOffset(0, base_map_pixel_height);
 		// Still need to deal with possiblity that new calls are different length
 		// or starting point from already existing
-		base_map.setMapRange( 0, trace_length );
+		base_map.setMapRange(0, trace_length);
 
-		setActiveBaseCalls( base_calls ); // Make last added active.
+		setActiveBaseCalls(base_calls); // Make last added active.
 	}
 
 	/**
 	 * clears all the BaseCalls's added with addBaseCalls.
 	 */
 	private void removeAllBaseCalls() {
-		setActiveBaseCalls( new NullBaseCalls() );
+		setActiveBaseCalls(new NullBaseCalls());
 		// Not removing based axis because,
 		// this is only called when about to replace the base calls with reverse complements.
 		// To be correct,
 		// we should remove all the base glyphs.
 		int iBaseGlyphs = base_glyphs.size();
-		for ( int i =0; i < iBaseGlyphs; i++ ) {
+		for (int i = 0; i < iBaseGlyphs; i++) {
 			TraceBaseGlyph baseGlyph = base_glyphs.get(i);
 			base_map.getScene().removeGlyph(baseGlyph);
 		}
@@ -872,19 +850,18 @@ public class NeoTracer extends NeoContainerWidget
 	/**
 	 * selects which set of base calls is the active one.
 	 */
-	public void setActiveBaseCalls( BaseCalls bc ) {
-		if ( null == bc || base_calls_vector.contains( bc ) ) {
-			trace.setActiveBaseCalls( bc );
-			for( int i=0; i < base_glyphs.size(); i++ ) {
+	public void setActiveBaseCalls(BaseCalls bc) {
+		if (null == bc || base_calls_vector.contains(bc)) {
+			trace.setActiveBaseCalls(bc);
+			for (int i = 0; i < base_glyphs.size(); i++) {
 				TraceBaseGlyph base_glyph = base_glyphs.get(i);
-				if ( base_glyph.getBaseCalls() == trace.getActiveBaseCalls() ) {
+				if (base_glyph.getBaseCalls() == trace.getActiveBaseCalls()) {
 					this.activeBaseCallsGlyph = base_glyph;
-				}
-				else {
+				} else {
 					base_glyph.clearSelection();
 				}
 			}
-			base_axis.setBaseCalls( trace.getActiveBaseCalls() );
+			base_axis.setBaseCalls(trace.getActiveBaseCalls());
 		}
 	}
 
@@ -895,16 +872,15 @@ public class NeoTracer extends NeoContainerWidget
 	public void scrollRange(double value) {
 
 		Range r = getVisiblePeakRange();
-		if ( value < r.beg ) {
+		if (value < r.beg) {
 			if (value >= 0) {
 				trace_map.scrollRange(value);
 				base_map.scrollRange(value);
 			}
-		}
-		else if ( value > r.end ) {
+		} else if (value > r.end) {
 			if (value <= trace_length) {
-				int delta = (int)value - r.end;
-				int off = r.beg + delta ;
+				int delta = (int) value - r.end;
+				int off = r.beg + delta;
 				trace_map.scrollRange(off);
 				base_map.scrollRange(off);
 			}
@@ -924,18 +900,18 @@ public class NeoTracer extends NeoContainerWidget
 		}
 		// if baseNum is too big, set to last base in trace
 		int base_count = getBaseCount();
-		if (baseNum >= base_count ) {
+		if (baseNum >= base_count) {
 			//      baseNum = base_count ; // commenting this out for NeoMultiTracer -- could cause trouble
 			return false;
 		}
 
-		double current_trace_point = (double)getBaseTracePoint( baseNum );
+		double current_trace_point = (double) getBaseTracePoint(baseNum);
 
 		Rectangle2D.Double viewbox = trace_map.getView().getCoordBox();
-		double new_scroll_pos = current_trace_point - viewbox.width/2;
+		double new_scroll_pos = current_trace_point - viewbox.width / 2;
 
-		trace_map.scrollRange((int)new_scroll_pos);
-		base_map.scrollRange((int)new_scroll_pos);
+		trace_map.scrollRange((int) new_scroll_pos);
+		base_map.scrollRange((int) new_scroll_pos);
 		return true;
 	}
 
@@ -952,59 +928,64 @@ public class NeoTracer extends NeoContainerWidget
 	 * @param view_point is position to put it.
 	 * @return true iff the repositioning succeeded.
 	 */
-	public boolean positionBase( int baseNum, int view_point ) {
+	public boolean positionBase(int baseNum, int view_point) {
 		// if baseNum is < 0, do nothing -- quick fix for negative indexes
 		if (baseNum < 0) {
 			return false;
 		}
 		// if baseNum is too big, set to last base in trace
 		int base_count = getBaseCount();
-		if (baseNum >= base_count ) {
+		if (baseNum >= base_count) {
 			//      baseNum = base_count ;
 			return false;
 		}
 
-		double current_trace_point = (double)getBaseTracePoint( baseNum );
+		double current_trace_point = (double) getBaseTracePoint(baseNum);
 
 		// determine view_point as fraction of view width
 		int view_width = trace_map.getView().getPixelBox().width;
 		double view_fraction;
-		if( view_point == -1 ) { // special code for right side
+		if (view_point == -1) { // special code for right side
 			view_fraction = 1;
-		}
-		else {
-			view_fraction = (double)view_point / (double)view_width;
+		} else {
+			view_fraction = (double) view_point / (double) view_width;
 		}
 
 		Rectangle2D.Double viewbox = trace_map.getView().getCoordBox();
-		double new_scroll_pos = current_trace_point - ( viewbox.width * view_fraction );
+		double new_scroll_pos = current_trace_point - (viewbox.width * view_fraction);
 
-		trace_map.scrollRange( (int)new_scroll_pos );
-		base_map.scrollRange( (int)new_scroll_pos );
+		trace_map.scrollRange((int) new_scroll_pos);
+		base_map.scrollRange((int) new_scroll_pos);
 		//System.out.println( "moving trace from " + current_trace_point +",  "+ new_scroll_pos );
 		return true;
 	}
 
-	public int getBaseTracePoint( int base_index ) {
-		return getBaseCall( base_index ).getTracePoint();
+	public int getBaseTracePoint(int base_index) {
+		return getBaseCall(base_index).getTracePoint();
 	}
 
-	public int getBaseViewPoint( int base_index ) {
-		int trace_point = getBaseCall( base_index ).getTracePoint();
+	public int getBaseViewPoint(int base_index) {
+		int trace_point = getBaseCall(base_index).getTracePoint();
 		Point p = new Point();
-		trace_map.getView().transformToPixels( new Point2D.Double( trace_point, 0 ), p );
+		trace_map.getView().transformToPixels(new Point2D.Double(trace_point, 0), p);
 		return p.x;
 	}
 
 	public int getLocation(NeoAbstractWidget widg) {
-		if (widg == trace_map) { return TRACES; }
-		else if (widg == base_map) { return BASES; }
+		if (widg == trace_map) {
+			return TRACES;
+		} else if (widg == base_map) {
+			return BASES;
+		}
 		throw new IllegalArgumentException("unknown widget");
 	}
 
 	public NeoAbstractWidget getWidget(int location) {
-		if (location == TRACES) { return trace_map; }
-		else if (location == BASES) { return base_map; }
+		if (location == TRACES) {
+			return trace_map;
+		} else if (location == BASES) {
+			return base_map;
+		}
 		throw new IllegalArgumentException(
 				"only widgets to get are TRACES, or BASES.");
 	}
@@ -1038,11 +1019,10 @@ public class NeoTracer extends NeoContainerWidget
 	 * @param end   the second border, in trace coords
 	 */
 	public void highlightBases(int start, int end) {
-		if ( null != this.activeBaseCallsGlyph ) {
-			base_map.select( this.activeBaseCallsGlyph, start, end );
-		}
-		else {
-			for( int i=0; i < base_glyphs.size(); i++ ) {
+		if (null != this.activeBaseCallsGlyph) {
+			base_map.select(this.activeBaseCallsGlyph, start, end);
+		} else {
+			for (int i = 0; i < base_glyphs.size(); i++) {
 				TraceBaseGlyph base_glyph = base_glyphs.get(i);
 				base_map.select(base_glyph, start, end);
 			}
@@ -1051,16 +1031,16 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 	protected void traceMapStartHighlight(NeoMouseEvent evt) {
-		if ( null != getActiveBaseCalls() ) {
-			int base = getActiveBaseCalls().getBaseIndexAtTracePoint( (int)evt.getCoordX() );
+		if (null != getActiveBaseCalls()) {
+			int base = getActiveBaseCalls().getBaseIndexAtTracePoint((int) evt.getCoordX());
 			sel_range.setPoint(base);
 			sel_range.notifyObservers();
 		}
 	}
 
 	protected void traceMapExtendHighlight(NeoMouseEvent evt) {
-		if ( null != getActiveBaseCalls() ) {
-			int base = getActiveBaseCalls().getBaseIndexAtTracePoint( (int)evt.getCoordX() );
+		if (null != getActiveBaseCalls()) {
+			int base = getActiveBaseCalls().getBaseIndexAtTracePoint((int) evt.getCoordX());
 			sel_range.update(base);
 			sel_range.notifyObservers();
 		}
@@ -1069,62 +1049,61 @@ public class NeoTracer extends NeoContainerWidget
 	@Override
 	public void heardMouseEvent(MouseEvent evt) {
 		if (evt instanceof NeoMouseEvent) {
-			NeoMouseEvent nevt = (NeoMouseEvent)evt;
+			NeoMouseEvent nevt = (NeoMouseEvent) evt;
 			int id = nevt.getID();
 			Object source = nevt.getSource();
-			if( source == base_map ) {
-				if ((id == nevt.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN) ||
-						(id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
+			if (source == base_map) {
+				if ((id == nevt.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN)
+						|| (id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 					// Switch which set of base calls is the active one.
 					// Note this needs to be done before the selection stuff below.
 					for (GlyphI glyph : nevt.getItems()) {
-						if( glyph instanceof TraceBaseGlyph ) {
-							BaseCalls bc = ( ( TraceBaseGlyph ) glyph ).getBaseCalls();
-							if ( bc != getActiveBaseCalls() ) {
+						if (glyph instanceof TraceBaseGlyph) {
+							BaseCalls bc = ((TraceBaseGlyph) glyph).getBaseCalls();
+							if (bc != getActiveBaseCalls()) {
 								this.sel_range.clear();
 								this.sel_range.notifyObservers();
-								setActiveBaseCalls( bc );
+								setActiveBaseCalls(bc);
 							}
 						}
 					}
-						}
+				}
 			}
-			if ( source == trace_map || source == base_map ) {
-				if ((id == nevt.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN) ||
-						(id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
+			if (source == trace_map || source == base_map) {
+				if ((id == nevt.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN)
+						|| (id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 					if (nevt.isShiftDown() && (!sel_range.isEmpty())) {
 						traceMapExtendHighlight(nevt);
-					}
-					else {
+					} else {
 						traceMapStartHighlight(nevt);
 					}
-						}
-				else if (id == nevt.MOUSE_DRAGGED &&
-						sel_behavior == ON_MOUSE_DOWN) {
+				} else if (id == nevt.MOUSE_DRAGGED
+						&& sel_behavior == ON_MOUSE_DOWN) {
 					traceMapExtendHighlight(nevt);
-						}
+				}
 			}
-			if( source == base_map ) {
+			if (source == base_map) {
 				// Let everybody else know that a base has been selected.
-				if ( ( ( id == nevt.MOUSE_PRESSED || id == nevt.MOUSE_DRAGGED ) && sel_behavior == ON_MOUSE_DOWN ) ||
-						( id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP ) ) {
+				if (((id == nevt.MOUSE_PRESSED || id == nevt.MOUSE_DRAGGED) && sel_behavior == ON_MOUSE_DOWN)
+						|| (id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 					BaseCalls bc = getActiveBaseCalls();
-					int index = bc.getBaseIndexAtTracePoint( (int)nevt.getCoordX() );
-					sendBaseSelectedEvent( index );
-						}
+					int index = bc.getBaseIndexAtTracePoint((int) nevt.getCoordX());
+					sendBaseSelectedEvent(index);
+				}
 			}
 		}
 		super.heardMouseEvent(evt);
 	}
 
-	public int getSel_range_start(){
+	public int getSel_range_start() {
 		return this.sel_range.getStart();
 	}
-	public int getSel_range_end(){
+
+	public int getSel_range_end() {
 		return this.sel_range.getEnd();
 	}
-	/** Methods for dealing with selection **/
 
+	/** Methods for dealing with selection **/
 	/**
 	 * gets a base call from the active set of base calls.
 	 * For backward compatibility,
@@ -1134,25 +1113,25 @@ public class NeoTracer extends NeoContainerWidget
 	 * @param theBaseIndex indicates which one.
 	 * @return the indicated base call.
 	 */
-	private BaseCall getBaseCall( int theBaseIndex ) {
+	private BaseCall getBaseCall(int theBaseIndex) {
 		BaseCalls bc = getActiveBaseCalls();
-		if ( null == bc ) { // for backward compatibility
+		if (null == bc) { // for backward compatibility
 			return this.trace.getActiveBaseCalls().getBaseCall(theBaseIndex);
 		}
-		return bc.getBaseCall( theBaseIndex );
+		return bc.getBaseCall(theBaseIndex);
 	}
 
 	private int getBaseCount() {
 		BaseCalls bc = getActiveBaseCalls();
-		if ( null == bc ) { // for backward compatibility
+		if (null == bc) { // for backward compatibility
 			return this.trace.getBaseCount();
 		}
 		return bc.getBaseCount();
 	}
-
 	private static final int BEFORE = -1;
 	private static final int AT = 0;
 	private static final int AFTER = 1;
+
 	/**
 	 * converts from "residue space" to "sample space".
 	 *
@@ -1163,29 +1142,27 @@ public class NeoTracer extends NeoContainerWidget
 	 * It can be BEFORE, AFTER, or AT.
 	 */
 	private int samplePoint(int theBaseIndex, int where) {
-		BaseCall bc = getBaseCall( theBaseIndex );
+		BaseCall bc = getBaseCall(theBaseIndex);
 		int peak_at = bc.getTracePoint();
 		switch (where) {
 			case BEFORE:
-				if ( 0 < theBaseIndex) {
-					BaseCall bc2 = getBaseCall( theBaseIndex-1 );
+				if (0 < theBaseIndex) {
+					BaseCall bc2 = getBaseCall(theBaseIndex - 1);
 					int peak_2 = bc2.getTracePoint();
-					peak_at = ( peak_at + peak_2 ) / 2;
-				}
-				else {
+					peak_at = (peak_at + peak_2) / 2;
+				} else {
 					peak_at = 0;
 				}
 				break;
 			case AT:
 				break;
 			case AFTER:
-				if ( theBaseIndex + 1 < getBaseCount() ) {
-					BaseCall bc2 = getBaseCall( theBaseIndex+1 );
+				if (theBaseIndex + 1 < getBaseCount()) {
+					BaseCall bc2 = getBaseCall(theBaseIndex + 1);
 					int peak_2 = bc2.getTracePoint();
-					peak_at = ( peak_at + peak_2 ) / 2;
+					peak_at = (peak_at + peak_2) / 2;
 					peak_at--; // so that we do not overlap with next base.
-				}
-				else {
+				} else {
 					peak_at += PEAK_WIDTH / 2;
 				}
 				break;
@@ -1193,8 +1170,7 @@ public class NeoTracer extends NeoContainerWidget
 		return peak_at;
 	}
 
-
-	public Range baseRange2TraceRange( BaseCalls bc, int basenum_start, int basenum_end) {
+	public Range baseRange2TraceRange(BaseCalls bc, int basenum_start, int basenum_end) {
 		BaseCall base_start = bc.getBaseCall(basenum_start);
 		BaseCall base_end = bc.getBaseCall(basenum_end);
 
@@ -1204,22 +1180,20 @@ public class NeoTracer extends NeoContainerWidget
 		int startAt, endAt;
 
 		if (0 < basenum_start) {
-			int pre_start_peak = bc.getBaseCall( basenum_start-1).getTracePoint();
+			int pre_start_peak = bc.getBaseCall(basenum_start - 1).getTracePoint();
 			startAt = (peak_start + pre_start_peak) / 2;
-		}
-		else {
+		} else {
 			startAt = 0;
 		}
 
 		if (basenum_end + 1 < getBaseCount()) {
-			int post_end_peak = bc.getBaseCall( basenum_end+1).getTracePoint();
+			int post_end_peak = bc.getBaseCall(basenum_end + 1).getTracePoint();
 			endAt = (peak_end + post_end_peak) / 2;
 			endAt--;
+		} else {
+			endAt = peak_end + PEAK_WIDTH / 2;
 		}
-		else {
-			endAt = peak_end + PEAK_WIDTH/2;
-		}
-		Range range = new Range( startAt, endAt );
+		Range range = new Range(startAt, endAt);
 		return range;
 	}
 
@@ -1231,11 +1205,12 @@ public class NeoTracer extends NeoContainerWidget
 	 */
 	public void selectResidues(int basenum_start, int basenum_end) {
 		BaseCalls bc = getActiveBaseCalls();
-		if ( null == bc ) return; // There are no residues to select.
-		Range trace_range = baseRange2TraceRange( bc, basenum_start, basenum_end );
-		highlight( trace_range.beg, trace_range.end );
+		if (null == bc) {
+			return; // There are no residues to select.
+		}
+		Range trace_range = baseRange2TraceRange(bc, basenum_start, basenum_end);
+		highlight(trace_range.beg, trace_range.end);
 	}
-
 
 	public void setSelectionEvent(int theOption) {
 		switch (theOption) {
@@ -1246,8 +1221,8 @@ public class NeoTracer extends NeoContainerWidget
 				break;
 			default:
 				throw new IllegalArgumentException(
-						"SelectionEvent can only be NO_SELECTION, ON_MOUSE_DOWN, or " +
-						"ON_MOUSE_UP.");
+						"SelectionEvent can only be NO_SELECTION, ON_MOUSE_DOWN, or "
+						+ "ON_MOUSE_UP.");
 		}
 	}
 
@@ -1263,7 +1238,10 @@ public class NeoTracer extends NeoContainerWidget
 	 */
 	public void setVisibility(int traceID, boolean visible) {
 		switch (traceID) {
-			case TraceGlyph.A: case TraceGlyph.C: case TraceGlyph.G: case TraceGlyph.T:
+			case TraceGlyph.A:
+			case TraceGlyph.C:
+			case TraceGlyph.G:
+			case TraceGlyph.T:
 				setTraceVisibility(traceID, visible);
 				setBaseVisibility(traceID, visible);
 				break;
@@ -1297,13 +1275,12 @@ public class NeoTracer extends NeoContainerWidget
 
 	public void setBaseVisibility(int baseID, boolean visible) {
 		if (!(getBaseVisibility(baseID) == visible)) {
-			for( int i=0; i < base_glyphs.size(); i++ ) {
+			for (int i = 0; i < base_glyphs.size(); i++) {
 				base_glyphs.get(i).setVisibility(baseID, visible);
 			}
 			base_map.getScene().maxDamage();
 		}
 	}
-
 
 	/**
 	 * Gets the color used for the background
@@ -1390,26 +1367,28 @@ public class NeoTracer extends NeoContainerWidget
 						"orientation must be either FORWARD or REVERSE_COMPLEMENT.");
 		}
 
-		if (null == trace) return;
+		if (null == trace) {
+			return;
+		}
 
 		trace = trace.reverseComplement();
 		setChromatogram(trace);
 		// Switch the visibility of complimentary traces.
-		setTraceVisibility( TraceGlyph.A, getTraceVisibility( TraceGlyph.A ) ^ getTraceVisibility( TraceGlyph.T ) );
-		setTraceVisibility( TraceGlyph.T, getTraceVisibility( TraceGlyph.A ) ^ getTraceVisibility( TraceGlyph.T ) );
-		setTraceVisibility( TraceGlyph.A, getTraceVisibility( TraceGlyph.A ) ^ getTraceVisibility( TraceGlyph.T ) );
-		setTraceVisibility( TraceGlyph.C, getTraceVisibility( TraceGlyph.C ) ^ getTraceVisibility( TraceGlyph.G ) );
-		setTraceVisibility( TraceGlyph.G, getTraceVisibility( TraceGlyph.C ) ^ getTraceVisibility( TraceGlyph.G ) );
-		setTraceVisibility( TraceGlyph.C, getTraceVisibility( TraceGlyph.C ) ^ getTraceVisibility( TraceGlyph.G ) );
+		setTraceVisibility(TraceGlyph.A, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
+		setTraceVisibility(TraceGlyph.T, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
+		setTraceVisibility(TraceGlyph.A, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
+		setTraceVisibility(TraceGlyph.C, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
+		setTraceVisibility(TraceGlyph.G, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
+		setTraceVisibility(TraceGlyph.C, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
 
 		// Need to reverse each set of base calls.
-		boolean aViz = getBaseVisibility( TraceGlyph.A );
-		boolean cViz = getBaseVisibility( TraceGlyph.C );
-		boolean gViz = getBaseVisibility( TraceGlyph.G );
-		boolean tViz = getBaseVisibility( TraceGlyph.T );
+		boolean aViz = getBaseVisibility(TraceGlyph.A);
+		boolean cViz = getBaseVisibility(TraceGlyph.C);
+		boolean gViz = getBaseVisibility(TraceGlyph.G);
+		boolean tViz = getBaseVisibility(TraceGlyph.T);
 		List<BaseCalls> newBaseCalls = new ArrayList<BaseCalls>();
-		for (BaseCalls bc : base_calls_vector ) {
-			newBaseCalls.add( bc.reverseComplement() );
+		for (BaseCalls bc : base_calls_vector) {
+			newBaseCalls.add(bc.reverseComplement());
 		}
 		// Remove the old.
 		removeAllBaseCalls();
@@ -1417,10 +1396,10 @@ public class NeoTracer extends NeoContainerWidget
 		base_calls_vector.addAll(newBaseCalls);
 
 		// Switch the visibility of complimentary bases.
-		setBaseVisibility( TraceGlyph.A, tViz );
-		setBaseVisibility( TraceGlyph.T, aViz );
-		setBaseVisibility( TraceGlyph.C, gViz );
-		setBaseVisibility( TraceGlyph.G, cViz );
+		setBaseVisibility(TraceGlyph.A, tViz);
+		setBaseVisibility(TraceGlyph.T, aViz);
+		setBaseVisibility(TraceGlyph.C, gViz);
+		setBaseVisibility(TraceGlyph.G, cViz);
 
 		// want to move to "same" location as in previous orientation,
 		// but since rev-comped from previous, need to calculate this
@@ -1439,8 +1418,7 @@ public class NeoTracer extends NeoContainerWidget
 
 		if (newbeg < tbeg) {
 			newbeg = tbeg;
-		}
-		else if ((newbeg+vwidth) > tend) {
+		} else if ((newbeg + vwidth) > tend) {
 			newbeg = tend - vbeg;
 		}
 
@@ -1468,31 +1446,31 @@ public class NeoTracer extends NeoContainerWidget
 		if (!sel_range.isEmpty()) {
 			beg = sel_range.getStart();
 			end = sel_range.getEnd();
-			new_beg = (int)(getBaseCount() - end - 1);
-			new_end = (int)(getBaseCount() - beg - 1);
-			sel_range.setRange((int)new_beg, (int)new_end);
+			new_beg = (int) (getBaseCount() - end - 1);
+			new_end = (int) (getBaseCount() - beg - 1);
+			sel_range.setRange((int) new_beg, (int) new_end);
 			sel_range.notifyObservers();
 		}
-		//if(trace_glyph.getChildCount()>0){
-		List gchildren = trace_glyph.getChildren();
-		GlyphI gchild;
-		Rectangle2D.Double childbox;
-		for (int i=0; i<gchildren.size(); i++) {
-			gchild = (GlyphI)gchildren.get(i);
-			// since selection glyph already dealt with, need to skip it
-			//    should try eliminating special seleciton handling above and
-			//    see if can just deal with it here -- GAH 12-9-97
-			if (gchild == trace_glyph.getSelectionGlyph()) {
-				continue;
+		if (trace_glyph.getChildCount() > 0) {
+			List gchildren = trace_glyph.getChildren();
+			GlyphI gchild;
+			Rectangle2D.Double childbox;
+			for (int i = 0; i < gchildren.size(); i++) {
+				gchild = (GlyphI) gchildren.get(i);
+				// since selection glyph already dealt with, need to skip it
+				//    should try eliminating special seleciton handling above and
+				//    see if can just deal with it here -- GAH 12-9-97
+				if (gchild == trace_glyph.getSelectionGlyph()) {
+					continue;
+				}
+				childbox = gchild.getCoordBox();
+				beg = childbox.x;
+				end = childbox.x + childbox.width;
+				// need a -1 for some reason???!!!...
+				new_beg = (int) (tend - end - 1);
+				gchild.setCoords(new_beg, childbox.y, childbox.width, childbox.height);
 			}
-			childbox = gchild.getCoordBox();
-			beg = childbox.x;
-			end = childbox.x + childbox.width;
-			// need a -1 for some reason???!!!...
-			new_beg = (int)(tend - end - 1);
-			gchild.setCoords(new_beg, childbox.y, childbox.width, childbox.height);
 		}
-		//}
 
 		// This seems to be needed to avoid a gap being put in between the traces
 		// and the horizontal line separating the traces from the base calls. elb - 1999-12-07
@@ -1515,25 +1493,32 @@ public class NeoTracer extends NeoContainerWidget
 
 	public void setBackground(int id, Color col) {
 		switch (id) {
-			case TRACES: trace_map.setMapColor(col); break;
-			case BASES:  base_map.setMapColor(col); break;
+			case TRACES:
+				trace_map.setMapColor(col);
+				break;
+			case BASES:
+				base_map.setMapColor(col);
+				break;
 			default:
-						 throw new IllegalArgumentException("NeoTracer.setBackground(id, " +
-								 "color) currently only supports ids of TRACES or BASES");
+				throw new IllegalArgumentException("NeoTracer.setBackground(id, "
+						+ "color) currently only supports ids of TRACES or BASES");
 		}
 	}
+
 	public Color getBackground(int id) {
 		switch (id) {
-			case TRACES: return trace_map.getMapColor();
-			case BASES:  return base_map.getMapColor();
+			case TRACES:
+				return trace_map.getMapColor();
+			case BASES:
+				return base_map.getMapColor();
 		}
-		throw new IllegalArgumentException("NeoTracer.getBackground(id) " +
-				"currently only supports ids of TRACES or BASES");
+		throw new IllegalArgumentException("NeoTracer.getBackground(id) "
+				+ "currently only supports ids of TRACES or BASES");
 	}
 
 	public void update(Observable theObserved, Object theArgument) {
 		if (theObserved instanceof Selection) {
-			update((Selection)theObserved);
+			update((Selection) theObserved);
 		}
 	}
 
@@ -1542,13 +1527,11 @@ public class NeoTracer extends NeoContainerWidget
 			// I dont think this is ever being called 5/12/99
 			// System.err.println( "NeoTracer.update: trace" );
 			highlight(theSelection.getStart(), theSelection.getEnd());
-		}
-		else { // selecting residues
+		} else { // selecting residues
 			selectResidues(theSelection.getStart(), theSelection.getEnd());
 		}
 		updateWidget();
 	}
-
 	private int leftTrim, rightTrim;
 
 	/**
@@ -1563,15 +1546,15 @@ public class NeoTracer extends NeoContainerWidget
 	public void setBasesTrimmedLeft(int theBasesTrimmed) {
 
 		this.leftTrim = theBasesTrimmed;
-		if ( this.leftTrim < 1 ) {
-			if ( null != left_trim_glyph ) {
+		if (this.leftTrim < 1) {
+			if (null != left_trim_glyph) {
 				trace_glyph.removeChild(left_trim_glyph);
 			}
 			return;
 		}
 
-		int lastTrimmedBase = this.leftTrim-1;
-		int endAt = samplePoint( lastTrimmedBase, AFTER );
+		int lastTrimmedBase = this.leftTrim - 1;
+		int endAt = samplePoint(lastTrimmedBase, AFTER);
 
 		endAt++; // This seems to be needed to match selection. Why?
 
@@ -1603,15 +1586,15 @@ public class NeoTracer extends NeoContainerWidget
 	public void setBasesTrimmedRight(int theBasesTrimmed) {
 
 		this.rightTrim = theBasesTrimmed;
-		if ( this.rightTrim < 1 ) {
-			if ( null != right_trim_glyph ) {
+		if (this.rightTrim < 1) {
+			if (null != right_trim_glyph) {
 				trace_glyph.removeChild(right_trim_glyph);
 			}
 			return;
 		}
 
 		int firstTrimmedBase = getBaseCount() - this.rightTrim;
-		int startAt = samplePoint( firstTrimmedBase, BEFORE );
+		int startAt = samplePoint(firstTrimmedBase, BEFORE);
 
 		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
 		if (right_trim_glyph != null) {
@@ -1627,20 +1610,21 @@ public class NeoTracer extends NeoContainerWidget
 		trace_glyph.addChild(right_trim_glyph);
 		trace_map.toBack(right_trim_glyph);
 	}
+
 	public int getBasesTrimmedRight() {
 		return this.rightTrim;
 	}
 
 	public void setTraceColors(Color[] colors) {
 		trace_glyph.setTraceColors(colors);
-		for( int i=0; i < base_glyphs.size(); i++ ) {
+		for (int i = 0; i < base_glyphs.size(); i++) {
 			base_glyphs.get(i).setBaseColors(colors);
 		}
 	}
 
 	public void viewBoxChanged(NeoViewBoxChangeEvent evt) {
 		if (evt.getSource() == trace_map) {
-			if (range_listeners.size() > 0)  {
+			if (range_listeners.size() > 0) {
 				Range visRange = getVisibleBaseRange();
 				NeoRangeEvent nevt = new NeoRangeEvent(this,
 						visRange.beg, visRange.end);
@@ -1660,18 +1644,17 @@ public class NeoTracer extends NeoContainerWidget
 		range_listeners.remove(l);
 	}
 
-
-	public void setRangeScroller(JScrollBar scroll ) {
+	public void setRangeScroller(JScrollBar scroll) {
 		trace_map.setRangeScroller(scroll);
 		base_map.setRangeScroller(scroll);
 	}
 
-	public void setRangeZoomer( Adjustable scroll ) {
+	public void setRangeZoomer(Adjustable scroll) {
 		trace_map.setRangeZoomer(scroll);
 		base_map.setRangeZoomer(scroll);
 	}
 
-	public void setOffsetZoomer( Adjustable scroll ) {
+	public void setOffsetZoomer(Adjustable scroll) {
 		trace_map.setOffsetZoomer(scroll);
 	}
 
@@ -1683,18 +1666,18 @@ public class NeoTracer extends NeoContainerWidget
 		base_listeners.remove(l);
 	}
 
-	private void sendBaseSelectedEvent( int base_index ) {
-		NeoBaseSelectEvent event = new NeoBaseSelectEvent( (Object)this, base_index );
+	private void sendBaseSelectedEvent(int base_index) {
+		NeoBaseSelectEvent event = new NeoBaseSelectEvent((Object) this, base_index);
 		for (NeoBaseSelectListener nbsl : base_listeners) {
-			nbsl.baseSelected( event );
+			nbsl.baseSelected(event);
 		}
 	}
 
-	public int mapToAxisPos( int base_index ) {
+	public int mapToAxisPos(int base_index) {
 		return base_index + base_axis.getStartPos(); // needs to be smarter
 	}
 
-	public int mapFromAxisPos( int axis_pos ) {
+	public int mapFromAxisPos(int axis_pos) {
 		return axis_pos - base_axis.getStartPos(); // needs to be smarter
 	}
 
@@ -1702,18 +1685,17 @@ public class NeoTracer extends NeoContainerWidget
 	 * Align one of the trace's set of base calls with an external consensus sequence.
 	 * Only one set of base calls can be aligned with the consensus at any time.
 	 */
-	public void setConsensus( Sequence cons_bases, Mapping cons_aligner, Mapping active_aligner,
-			BaseCalls active_base_calls ) {
+	public void setConsensus(Sequence cons_bases, Mapping cons_aligner, Mapping active_aligner,
+			BaseCalls active_base_calls) {
 		// map the consensus to the active base calls
-		if( active_base_calls != null ) {
-			setActiveBaseCalls( active_base_calls );
-		}
-		else {
+		if (active_base_calls != null) {
+			setActiveBaseCalls(active_base_calls);
+		} else {
 			active_base_calls = getActiveBaseCalls();
 		}
 		consensus = new BaseCalls();
 		List<Character> inserts = new ArrayList<Character>();
-		int last_pos=0;
+		int last_pos = 0;
 
 		int calls_index = active_aligner.getMappedStart();
 
@@ -1722,11 +1704,10 @@ public class NeoTracer extends NeoContainerWidget
 
 		// Search for good cons_index starting point.
 		// We can't always make round trip from space transformations.
-		while( ( cons_index = cons_aligner.mapToMapped( active_aligner.mapToReference( calls_index ) ) )
-				==
-				Integer.MIN_VALUE ) {
+		while ((cons_index = cons_aligner.mapToMapped(active_aligner.mapToReference(calls_index)))
+				== Integer.MIN_VALUE) {
 			calls_index++;
-				}
+		}
 		// Save the starting consensus position for use in starting the axis numbers at the right first number.
 		cons_start = cons_index;
 
@@ -1740,9 +1721,9 @@ public class NeoTracer extends NeoContainerWidget
 
 		// TODO -- need to build aligner as I go, from new cons_BaseCalls, back to the reference space
 		//       - for numbering + selection information???
-		while( calls_index <= active_aligner.getMappedEnd() ) {
-			int cons_ref = cons_aligner.mapToReference( cons_index );
-			int calls_ref = active_aligner.mapToReference( calls_index );
+		while (calls_index <= active_aligner.getMappedEnd()) {
+			int cons_ref = cons_aligner.mapToReference(cons_index);
+			int calls_ref = active_aligner.mapToReference(calls_index);
 
 			int position;
 			char new_base;
@@ -1750,61 +1731,58 @@ public class NeoTracer extends NeoContainerWidget
 			BaseConfidence new_base_obj;
 
 			// consesus + calls aligned
-			if( cons_ref == calls_ref ) {
-				new_base = cons_bases.getResidue( cons_index );
-				position = getBaseCall( calls_index ).getTracePoint();
+			if (cons_ref == calls_ref) {
+				new_base = cons_bases.getResidue(cons_index);
+				position = getBaseCall(calls_index).getTracePoint();
 				calls_index++;
 				cons_index++;
 
 				// insert the cashed inserts
 				int iSize = inserts.size();
 				int span = position - last_pos;// amount of space we have to stuff in inserts
-				double spacing = span / ( iSize + 1 ); // space inbetween edges
-				for( int i=0; i < iSize; i++ ) {
+				double spacing = span / (iSize + 1); // space inbetween edges
+				for (int i = 0; i < iSize; i++) {
 					char insert_base = inserts.get(i).charValue();
-					int insert_pos = last_pos + (int)( spacing * (i+1) );
-					new_base_obj = new BaseConfidence( insert_base, conf, insert_pos );
-					consensus.addBase( new_base_obj );
+					int insert_pos = last_pos + (int) (spacing * (i + 1));
+					new_base_obj = new BaseConfidence(insert_base, conf, insert_pos);
+					consensus.addBase(new_base_obj);
 				}
 				inserts.clear(); // clear insert bases
 
 				// insert the latest base
-				new_base_obj = new BaseConfidence( new_base, conf, position );
-				consensus.addBase( new_base_obj );
+				new_base_obj = new BaseConfidence(new_base, conf, position);
+				consensus.addBase(new_base_obj);
 				last_pos = position;
-			}
-			// show gap in consensus
-			else if( cons_ref > calls_ref ) {
+			} // show gap in consensus
+			else if (cons_ref > calls_ref) {
 				new_base = 'N';
-				position = getBaseCall( calls_index ).getTracePoint();
+				position = getBaseCall(calls_index).getTracePoint();
 				calls_index++;
 
-				new_base_obj = new BaseConfidence( new_base, conf, position );
-				consensus.addBase( new_base_obj );
+				new_base_obj = new BaseConfidence(new_base, conf, position);
+				consensus.addBase(new_base_obj);
 				last_pos = position;
-			}
-			// fit extra consensus bases in as best as possible
+			} // fit extra consensus bases in as best as possible
 			else { // cons_ref < calls_ref
-				char insert_base = cons_bases.getResidue( cons_index );
-				inserts.add( new Character( insert_base ) );
+				char insert_base = cons_bases.getResidue(cons_index);
+				inserts.add(new Character(insert_base));
 				cons_index++;
 			}
 		} // end while loop for base calls
 
-		this.addBaseCalls( consensus );
+		this.addBaseCalls(consensus);
 		// sync base numbers with consensus
-		base_axis.setBaseCalls( consensus );
-		base_axis.setStartPos( cons_start );
+		base_axis.setBaseCalls(consensus);
+		base_axis.setStartPos(cons_start);
 	}
-
 
 	/**
 	 * Make the maps big enough to allow scrolling off the side.
 	 */
-	public void padCoordBox () {
+	public void padCoordBox() {
 		// 1000 is arbitrary
-		trace_map.setMapRange( -1000, trace_length + 2000 );
-		base_map.setMapRange( -1000, trace_length + 2000 );
+		trace_map.setMapRange(-1000, trace_length + 2000);
+		base_map.setMapRange(-1000, trace_length + 2000);
 	}
 
 	/**
@@ -1814,12 +1792,12 @@ public class NeoTracer extends NeoContainerWidget
 	 *
 	 * @param axisid Either NeoAbstractWidget.X or NeoAbstractWidget.Y
 	 */
-	public void setScroller(int axisid, JScrollBar adj){
+	public void setScroller(int axisid, JScrollBar adj) {
 		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
-					"Can set zoomer for X ("+NeoAbstractWidget.X
-					+") or Y ("+NeoAbstractWidget.Y+") axis. "
-					+"Not for " + axisid);
+					"Can set zoomer for X (" + NeoAbstractWidget.X
+					+ ") or Y (" + NeoAbstractWidget.Y + ") axis. "
+					+ "Not for " + axisid);
 		}
 		trace_map.setScroller(axisid, adj);
 		if (axisid == NeoAbstractWidget.X) {
@@ -1838,16 +1816,15 @@ public class NeoTracer extends NeoContainerWidget
 	public void setZoomer(int axisid, Adjustable adj) {
 		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
-					"Can set zoomer for X ("+NeoAbstractWidget.X
-					+") or Y ("+NeoAbstractWidget.Y+") axis. "
-					+"Not for " + axisid);
+					"Can set zoomer for X (" + NeoAbstractWidget.X
+					+ ") or Y (" + NeoAbstractWidget.Y + ") axis. "
+					+ "Not for " + axisid);
 		}
 		trace_map.setZoomer(axisid, adj);
 		if (axisid == NeoAbstractWidget.X) {
 			base_map.setZoomer(axisid, adj);
 		}
 	}
-
 
 	/**
 	 * Get the <em>internal</em> Adjustable responsible for scrolling.
@@ -1867,14 +1844,15 @@ public class NeoTracer extends NeoContainerWidget
 	 */
 	public void setScroller(JScrollBar scroller) {
 
-		if (!(scroller instanceof Component) ||
-				(scroller == null) ||
-				!hscroll_show)
+		if (!(scroller instanceof Component)
+				|| (scroller == null)
+				|| !hscroll_show) {
 			return;
+		}
 
-		remove((Component)hscroll);
+		remove((Component) hscroll);
 		hscroll = scroller;
-		add ((Component)hscroll);
+		add((Component) hscroll);
 
 		setRangeScroller(hscroll);
 	}
@@ -1882,7 +1860,7 @@ public class NeoTracer extends NeoContainerWidget
 	/**
 	 * Get the <em>internal</em> Adjustable responsible for horizontal zooming.
 	 */
-	public Adjustable getHorizontalZoomer () {
+	public Adjustable getHorizontalZoomer() {
 		return hzoom;
 	}
 
@@ -1895,19 +1873,20 @@ public class NeoTracer extends NeoContainerWidget
 	 * the call will be ignored.
 	 * @see #setZoomer(int,Adjustable)
 	 */
-	public void setHorizontalZoomer (Adjustable zoomer) {
-		if (!(zoomer instanceof Component) || (zoomer == null) || !hzoom_show)
+	public void setHorizontalZoomer(Adjustable zoomer) {
+		if (!(zoomer instanceof Component) || (zoomer == null) || !hzoom_show) {
 			return;
-		remove((Component)hzoom);
+		}
+		remove((Component) hzoom);
 		hzoom = zoomer;
-		add ((Component)hzoom);
-		setRangeZoomer (hzoom);
+		add((Component) hzoom);
+		setRangeZoomer(hzoom);
 	}
 
 	/**
 	 * Get the <em>internal</em> Adjustable responsible for vertical zooming.
 	 */
-	public Adjustable getVerticalZoomer () {
+	public Adjustable getVerticalZoomer() {
 		return vzoom;
 	}
 
@@ -1920,13 +1899,13 @@ public class NeoTracer extends NeoContainerWidget
 	 * the call will be ignored.
 	 * @see #setZoomer(int,Adjustable)
 	 */
-	public void setVerticalZoomer (Adjustable zoomer) {
-		if (!(zoomer instanceof Component) || (zoomer == null) || !vzoom_show)
+	public void setVerticalZoomer(Adjustable zoomer) {
+		if (!(zoomer instanceof Component) || (zoomer == null) || !vzoom_show) {
 			return;
-		remove((Component)vzoom);
+		}
+		remove((Component) vzoom);
 		vzoom = zoomer;
-		add ((Component)vzoom);
-		setOffsetZoomer (vzoom);
+		add((Component) vzoom);
+		setOffsetZoomer(vzoom);
 	}
-
 }

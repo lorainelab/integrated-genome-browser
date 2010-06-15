@@ -1066,6 +1066,7 @@ public class NeoTracer extends NeoContainerWidget
 		}
 	}
 
+	@Override
 	public void heardMouseEvent(MouseEvent evt) {
 		if (evt instanceof NeoMouseEvent) {
 			NeoMouseEvent nevt = (NeoMouseEvent)evt;
@@ -1116,6 +1117,12 @@ public class NeoTracer extends NeoContainerWidget
 		super.heardMouseEvent(evt);
 	}
 
+	public int getSel_range_start(){
+		return this.sel_range.getStart();
+	}
+	public int getSel_range_end(){
+		return this.sel_range.getEnd();
+	}
 	/** Methods for dealing with selection **/
 
 	/**

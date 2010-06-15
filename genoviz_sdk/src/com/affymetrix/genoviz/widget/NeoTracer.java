@@ -865,7 +865,7 @@ public class NeoTracer extends NeoContainerWidget
 			TraceBaseGlyph baseGlyph = base_glyphs.get(i);
 			base_map.getScene().removeGlyph(baseGlyph);
 		}
-		base_glyphs.clear();
+		//base_glyphs.clear();
 		base_calls_vector.clear();
 	}
 
@@ -1473,7 +1473,7 @@ public class NeoTracer extends NeoContainerWidget
 			sel_range.setRange((int)new_beg, (int)new_end);
 			sel_range.notifyObservers();
 		}
-
+		//if(trace_glyph.getChildCount()>0){
 		List gchildren = trace_glyph.getChildren();
 		GlyphI gchild;
 		Rectangle2D.Double childbox;
@@ -1492,6 +1492,7 @@ public class NeoTracer extends NeoContainerWidget
 			new_beg = (int)(tend - end - 1);
 			gchild.setCoords(new_beg, childbox.y, childbox.width, childbox.height);
 		}
+		//}
 
 		// This seems to be needed to avoid a gap being put in between the traces
 		// and the horizontal line separating the traces from the base calls. elb - 1999-12-07

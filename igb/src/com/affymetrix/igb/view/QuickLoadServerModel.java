@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -305,7 +306,12 @@ public final class QuickLoadServerModel {
 						continue;
 					}
 					group = this.getSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
-					genome_names.add(genome_name);
+					
+					if(fields.length >= 3){
+						GeneralLoadUtils.getSpeciesList(fields[2]).add(genome_name);
+					}else{
+						genome_names.add(genome_name);
+					}
 				}
 				// if quickload server has description, and group is new or doesn't yet have description, add description to group
 				if ((fields.length >= 2) && (group.getDescription() == null)) {

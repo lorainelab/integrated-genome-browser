@@ -30,14 +30,19 @@ import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +55,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -107,6 +113,9 @@ public final class GeneralLoadUtils {
 		}
 	}
 	
+	// the list of servers associated with the species.
+	static final Map<URI, Set<String>> server2speciesList = new LinkedHashMap<URI, Set<String>>();
+
 	/**
 	 * Add specified server, finding species and versions associated with it.
 	 * @param serverName
@@ -154,6 +163,10 @@ public final class GeneralLoadUtils {
 	}
 
 	public static boolean discoverServer(GenericServer gServer) {
+		return discoverServer(gServer, true);
+	}
+
+	public static boolean discoverServer(GenericServer gServer, boolean loadGenome) {
 		try {
 			if (gServer == null || gServer.serverType == ServerType.LocalFiles) {
 				// should never happen

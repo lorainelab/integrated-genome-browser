@@ -173,7 +173,7 @@ public final class GeneralLoadUtils {
 				return false;
 			}
 			if (gServer.serverType == ServerType.QuickLoad) {
-				if (!getQuickLoadSpeciesAndVersions(gServer)) {
+				if (!getQuickLoadSpeciesAndVersions(gServer, loadGenome)) {
 					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
 					return false;
 				}
@@ -247,9 +247,10 @@ public final class GeneralLoadUtils {
 	/**
 	 * Discover genomes from Quickload
 	 * @param gServer
+	 * @param loadGenome boolean to check load genomes from server.
 	 * @return false if there's an obvious failure.
 	 */
-	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
+	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer, boolean loadGenome) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
@@ -257,7 +258,15 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
-		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+		GenericServer primaryServer = ServerList.getPrimaryServer();
+		QuickLoadServerModel quickloadServer;
+
+		if(loadGenome && primaryServer != null){
+			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+		}else{
+			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryServer.friendlyURL,getSpeciesList(quickloadURL.toExternalForm()));
+		}
+
 		if (quickloadServer == null) {
 			System.out.println("ERROR: No quickload server model found for server: " + gServer);
 			return false;
@@ -289,6 +298,7 @@ public final class GeneralLoadUtils {
 		}
 		return true;
 	}
+
 
 	/**
 	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.

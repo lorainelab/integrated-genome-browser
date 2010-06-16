@@ -139,7 +139,8 @@ public final class QuickLoadServerModel {
 		}
 		List<String> typeNames = new ArrayList<String>();
 		for (AnnotMapElt annotMapElt : getAnnotsMap(genome_name)) {
-			typeNames.add(annotMapElt.title);
+			if(annotMapElt.serverURL.equals(root_url))
+				typeNames.add(annotMapElt.title);
 		}
 		
 		return typeNames;
@@ -190,8 +191,14 @@ public final class QuickLoadServerModel {
 		List<AnnotMapElt> annotList = new ArrayList<AnnotMapElt>();
 		genome2annotsMap.put(genome_name, annotList);
 
-		return processAnnotsXml(genome_root + IGBConstants.annotsXml, annotList) ||
+		boolean processed = processAnnotsXml(genome_root + IGBConstants.annotsXml, annotList) ||
 				processAnnotsTxt(genome_root + IGBConstants.annotsTxt, annotList);
+
+		if(processed){
+			SetServerURL(annotList);
+		}
+
+		return processed;
 	}
 
 	/**
@@ -218,6 +225,13 @@ public final class QuickLoadServerModel {
 			return false;
 		} finally {
 			GeneralUtils.safeClose(istr);
+		}
+	}
+
+	private void SetServerURL(List<AnnotMapElt> annotList){
+		for (AnnotMapElt annotMapElt : annotList) {
+			if(annotMapElt.serverURL.equals("") && primary_url == null)
+				annotMapElt.serverURL = root_url;
 		}
 	}
 
@@ -266,7 +280,7 @@ public final class QuickLoadServerModel {
 		String modChromInfo = IGBConstants.modChromInfoTxt;
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
-		String genome_root = getLoadURL() + genome_name + "/";
+		String genome_root = root_url + genome_name + "/";
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
 				"loading list of chromosomes for genome: " + genome_name);
 		InputStream lift_stream = null;

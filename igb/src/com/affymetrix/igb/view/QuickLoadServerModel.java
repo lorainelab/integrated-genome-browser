@@ -181,7 +181,7 @@ public final class QuickLoadServerModel {
 	 */
 	private boolean loadAnnotationNames(String genome_name) {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
-		String genome_root = root_url + genome_name + "/";
+		String genome_root = getLoadURL() + genome_name + "/";
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
 				"loading list of available annotations for genome: " + genome_name);
 
@@ -266,7 +266,7 @@ public final class QuickLoadServerModel {
 		String modChromInfo = IGBConstants.modChromInfoTxt;
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
-		String genome_root = root_url + genome_name + "/";
+		String genome_root = getLoadURL() + genome_name + "/";
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
 				"loading list of chromosomes for genome: " + genome_name);
 		InputStream lift_stream = null;
@@ -365,6 +365,14 @@ public final class QuickLoadServerModel {
 		}
 	}
 
+	private String getLoadURL(){
+		String url = root_url;
+		if(primary_url != null)
+			url = primary_url;
+
+		return url;
+	}
+	
 	@Override
 	public String toString() {
 		return "QuickLoadServerModel: url='" + getRootUrl() + "'";

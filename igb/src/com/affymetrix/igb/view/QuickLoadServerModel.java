@@ -42,29 +42,67 @@ public final class QuickLoadServerModel {
 	// A map from String genome name to a Map of (typeName,fileName) on the server for that group
 	private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
 	private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
+	private String primary_url;
 
-	private QuickLoadServerModel(String url) {
+	/**
+	 * Initialize quickload server model for given url.
+	 * @param url	server url.
+	 * @param loadGenome	boolean to check if genomes should be loaded from server.
+	 */
+	private QuickLoadServerModel(String url, boolean loadGenome) {
 		root_url = url;
 		if (!root_url.endsWith("/")) {
 			root_url = root_url + "/";
 		}
-		loadGenomeNames();
+		if(loadGenome)
+			loadGenomeNames();
 	}
 
-	public static synchronized QuickLoadServerModel getQLModelForURL(URL url) {
+	/**
+	 * Initialize quickload server model for given url.
+	 * @param url	server url.
+	 * @param loadGenome	boolean to check if genomes should be loaded from server.
+	 * @return	an instance of QuickLoadServerModel
+	 */
+	private static synchronized QuickLoadServerModel getQLModelForURL(URL url, boolean loadGenome) {
 		String ql_http_root = url.toExternalForm();
 		if (!ql_http_root.endsWith("/")) {
 			ql_http_root = ql_http_root + "/";
 		}
 		QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
 		if (ql_server == null) {
-			ql_server = new QuickLoadServerModel(ql_http_root);
+			ql_server = new QuickLoadServerModel(ql_http_root, loadGenome);
 			url2quickload.put(ql_http_root, ql_server);
 			LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + "synonyms.txt");
 		}
 		return ql_server;
 	}
 
+	/**
+	 * Initialize quickload server model for given url. Then add gnomes names provided in set.
+	 * @param url	server url.
+	 * @param primary_url	url of primary server. 
+	 * @param genome_names	Set of genomes names to be added.
+	 * @return an instance of QuickLoadServerModel
+	 */
+	public static synchronized QuickLoadServerModel getQLModelForURL(URL url, URL primary_url, Set<String> genome_names) {
+		QuickLoadServerModel gl_server = getQLModelForURL(url, false);
+		gl_server.genome_names.addAll(genome_names);
+		String primary_root = primary_url.toExternalForm();
+		if (!primary_root.endsWith("/")) {
+			primary_root = primary_root + "/";
+		}
+		gl_server.primary_url = primary_root;
+		return gl_server;
+	}
+
+	/**
+	 * Initialize quickload server model for given url.
+	 */
+	public static synchronized QuickLoadServerModel getQLModelForURL(URL url) {
+		return getQLModelForURL(url, true);
+	}
+	
 	private static boolean getCacheAnnots() {
 		return true;
 	}

@@ -182,8 +182,8 @@ public final class GeneralLoadView extends JComponent
 
 		ServerList.addServerInitListener(this);
 
-		populateSpeciesData();
-		
+		//populateSpeciesDataFromPrimary();
+		populateSpeciesData(true);
 		addListeners();
 	}
 
@@ -208,20 +208,51 @@ public final class GeneralLoadView extends JComponent
 
 	/**
 	 * Discover servers, species, etc., asynchronously.
+	 * @param loadGenome parameter to check if genomes should be loaded from
+	 * actual server or not.
 	 */
-	private void populateSpeciesData() {
+	private void populateSpeciesData(final boolean loadGenome) {
 		for (final GenericServer gServer : ServerList.getEnabledServers()) {
 			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 				protected Void doInBackground() throws Exception {
+					if(gServer.isPrimary() && !loadGenome)
+						return null;
+					
 					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
-					GeneralLoadUtils.discoverServer(gServer);
+					GeneralLoadUtils.discoverServer(gServer, loadGenome);
 					return null;
 				}
 			};
 
 			vexec.execute(worker);
 		}
+	}
+
+	/**
+	 * Checks if primary server is present. If present then loads species
+	 * and version from it. And then initialize the servers.
+	 */
+	private void populateSpeciesDataFromPrimary() {
+
+		Executor vexec = Executors.newSingleThreadExecutor();
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			protected Void doInBackground() throws Exception {
+				GenericServer primaryServer = ServerList.getPrimaryServer();
+				if (primaryServer == null) {
+					populateSpeciesData(true);
+					return null;
+				}
+
+				GeneralLoadUtils.discoverServer(primaryServer);
+				populateSpeciesData(false);
+				return null;
+			}
+		};
+
+		vexec.execute(worker);
+
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {

@@ -261,7 +261,7 @@ public final class GeneralLoadUtils {
 		GenericServer primaryServer = ServerList.getPrimaryServer();
 		QuickLoadServerModel quickloadServer;
 
-		if(loadGenome && primaryServer != null){
+		if(loadGenome || primaryServer == null){
 			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 		}else{
 			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryServer.friendlyURL,getSpeciesList(quickloadURL.toExternalForm()));

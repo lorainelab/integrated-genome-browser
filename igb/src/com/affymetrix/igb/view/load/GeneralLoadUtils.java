@@ -357,7 +357,18 @@ public final class GeneralLoadUtils {
 		return gVersionList;
 	}
 
-
+	public static Set<String> getSpeciesList(String serverString){
+		URI uri = URI.create(serverString);
+		Set<String> speciesList;
+		if(!server2speciesList.containsKey(uri)){
+			speciesList = new HashSet<String>();
+			server2speciesList.put(uri, speciesList);
+		}else{
+			speciesList = server2speciesList.get(uri);
+		}
+		return speciesList;
+	}
+	
 	/**
 	 *  Returns the list of features for the genome with the given version name.
 	 *  The list may (rarely) be empty, but never null.

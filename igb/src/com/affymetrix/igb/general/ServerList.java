@@ -78,24 +78,6 @@ public final class ServerList {
 		return url2server.values();
 	}
 
-	/**
-	 * Find the server matching this URI.
-	 * @param serverURI
-	 * @return
-	 */
-	public static GenericServer findMatchingServer(URI serverURI) {
-		for (GenericServer server : ServerList.getEnabledServers()) {
-			try {
-				if (serverURI.equals(server.friendlyURL.toURI())) {
-					return server;
-				}
-			} catch (URISyntaxException ex) {
-				Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-		return null;
-	}
-
 	public static GenericFeature findFeatureWithURI(URI uri) {
 		Set<GenericServer> serverSet = ServerList.getEnabledServers();
 		serverSet.add(ServerList.getLocalFilesServer());
@@ -118,9 +100,6 @@ public final class ServerList {
 		return null;	// couldn't find it
 	}
 
-	/*public static Map<String, String> getUrls() {
-	return url2Name;
-	}*/
 	/**
 	 *  Given an URLorName string which should be the resolvable root URL
 	 *  (but may optionally be the server name)

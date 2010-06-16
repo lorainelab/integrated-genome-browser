@@ -39,10 +39,9 @@ public abstract class AnnotsXmlParser {
 				String title = fileElement.getAttribute("title");
 				String desc = fileElement.getAttribute("description");   // not currently used
 				String friendlyURL = fileElement.getAttribute("url");
-				String serverURL = fileElement.getAttribute("serverURL");
 
 				if (filename != null) {
-					AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc, friendlyURL, serverURL);
+					AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc, friendlyURL);
 					annotList.add(annotMapElt);
 				}
 			}
@@ -54,18 +53,16 @@ public abstract class AnnotsXmlParser {
 	public static class AnnotMapElt {
 		public String fileName;
 		public String title;
-		public String serverURL;
 		public Map<String,String> props = new HashMap<String,String>();
 
 		public AnnotMapElt(String fileName, String title) {
-			this(fileName, title, "", "", "");
+			this(fileName, title, "", "");
 		}
 
-		public AnnotMapElt(String fileName, String title, String description, String URL, String serverURL) {
+		public AnnotMapElt(String fileName, String title, String description, String URL) {
 			// filename's case is important, since we may be loading this file locally (in QuickLoad).
 			this.fileName = fileName;
 			this.title = (title == null ? "" : title);
-			this.serverURL = (serverURL == null ? "" : serverURL);
 			this.props.put("description", description);
 			this.props.put("url", URL);
 		}

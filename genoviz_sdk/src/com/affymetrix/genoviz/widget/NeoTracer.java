@@ -158,8 +158,8 @@ public class NeoTracer extends NeoContainerWidget
 	private static final int PEAK_WIDTH = 10;
 	protected TraceI trace;
 	protected TraceGlyph trace_glyph;
-	protected List<BaseCalls> base_calls_vector; // vector of BaseCalls's;
-	protected List<TraceBaseGlyph> base_glyphs; // vector of TraceBaseGlyphs
+	protected List<BaseCalls> base_calls_vector; // list of BaseCallss;
+	protected List<TraceBaseGlyph> base_glyphs; // list of TraceBaseGlyphs
 	private AsymAxisGlyph base_axis;
 	private TraceBaseGlyph activeBaseCallsGlyph;
 	// optional - for aligned bases
@@ -250,18 +250,18 @@ public class NeoTracer extends NeoContainerWidget
 		add(trace_map);
 		add(base_map);
 
-		trace_map.setScaleConstraint(trace_map.Y, trace_map.INTEGRAL_COORDS);
+		trace_map.setScaleConstraint(NeoMap.Y, NeoMap.INTEGRAL_COORDS);
 		trace_map.setMapRange(0, 100);
 		trace_map.setMapOffset(0, 100);
-		trace_map.setReshapeBehavior(trace_map.X, NeoConstants.NONE);
-		trace_map.setReshapeBehavior(trace_map.Y, FITWIDGET);
-		trace_map.setZoomBehavior(trace_map.Y, trace_map.CONSTRAIN_END);
-		trace_map.setZoomBehavior(trace_map.X, trace_map.CONSTRAIN_MIDDLE);
+		trace_map.setReshapeBehavior(NeoMap.X, NeoConstants.NONE);
+		trace_map.setReshapeBehavior(NeoMap.Y, FITWIDGET);
+		trace_map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_END);
+		trace_map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_MIDDLE);
 
 		base_map.setMapRange(0, 100);
 		base_map.setMapOffset(0, 100);
-		base_map.setReshapeBehavior(base_map.X, NeoConstants.NONE);
-		base_map.setReshapeBehavior(base_map.Y, base_map.FITWIDGET);
+		base_map.setReshapeBehavior(NeoMap.X, NeoConstants.NONE);
+		base_map.setReshapeBehavior(NeoMap.Y, NeoMap.FITWIDGET);
 
 		trace_map.addMouseListener(this);
 		trace_map.addMouseMotionListener(this);
@@ -403,26 +403,29 @@ public class NeoTracer extends NeoContainerWidget
 		sel_range.addObserver(observer);
 	}
 
+	@Override
 	public void setScrollingOptimized(boolean optimize) {
 		this.optimize_scrolling = optimize;
 		trace_map.setScrollingOptimized(optimize);
 		base_map.setScrollingOptimized(optimize);
 		if (optimize) {
-			trace_map.setScaleConstraint(trace_map.X, trace_map.INTEGRAL_PIXELS);
-			base_map.setScaleConstraint(base_map.X, base_map.INTEGRAL_PIXELS);
+			trace_map.setScaleConstraint(NeoMap.X, NeoMap.INTEGRAL_PIXELS);
+			base_map.setScaleConstraint(NeoMap.X, NeoMap.INTEGRAL_PIXELS);
 		} else {
-			trace_map.setScaleConstraint(trace_map.X, NeoConstants.NONE);
-			base_map.setScaleConstraint(base_map.X, NeoConstants.NONE);
+			trace_map.setScaleConstraint(NeoMap.X, NeoConstants.NONE);
+			base_map.setScaleConstraint(NeoMap.X, NeoConstants.NONE);
 		}
 		zoom(X, 1.0f);
 	}
 
+	@Override
 	public void setDamageOptimized(boolean optimize) {
 		this.optimize_damage = optimize;
 		trace_map.setDamageOptimized(optimize);
 		base_map.setDamageOptimized(optimize);
 	}
 
+	@Override
 	public void scroll(int id, double coord_value) {
 		if (id == X) {
 			base_map.scroll(id, coord_value);
@@ -430,6 +433,7 @@ public class NeoTracer extends NeoContainerWidget
 		trace_map.scroll(id, coord_value);
 	}
 
+	@Override
 	public void zoom(int id, double scale) {
 		if (id == X) {
 			base_map.zoom(id, scale);
@@ -437,6 +441,7 @@ public class NeoTracer extends NeoContainerWidget
 		trace_map.zoom(id, scale);
 	}
 
+	@Override
 	public void setMinZoom(int id, double min) {
 		if (id == X) {
 			base_map.setMinZoom(id, min);
@@ -444,6 +449,7 @@ public class NeoTracer extends NeoContainerWidget
 		trace_map.setMinZoom(id, min);
 	}
 
+	@Override
 	public void setMaxZoom(int id, double max) {
 		if (id == X) {
 			base_map.setMaxZoom(id, max);
@@ -528,6 +534,7 @@ public class NeoTracer extends NeoContainerWidget
 				+ "OFFSET_ZOOMER, TRACES, or BASES.");
 	}
 
+	@Override
 	public synchronized void doLayout() {
 
 		Dimension dim = this.getSize();
@@ -1053,8 +1060,8 @@ public class NeoTracer extends NeoContainerWidget
 			int id = nevt.getID();
 			Object source = nevt.getSource();
 			if (source == base_map) {
-				if ((id == nevt.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN)
-						|| (id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
+				if ((id == NeoMouseEvent.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN)
+						|| (id == NeoMouseEvent.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 					// Switch which set of base calls is the active one.
 					// Note this needs to be done before the selection stuff below.
 					for (GlyphI glyph : nevt.getItems()) {
@@ -1070,22 +1077,22 @@ public class NeoTracer extends NeoContainerWidget
 				}
 			}
 			if (source == trace_map || source == base_map) {
-				if ((id == nevt.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN)
-						|| (id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
+				if ((id == NeoMouseEvent.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN)
+						|| (id == NeoMouseEvent.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 					if (nevt.isShiftDown() && (!sel_range.isEmpty())) {
 						traceMapExtendHighlight(nevt);
 					} else {
 						traceMapStartHighlight(nevt);
 					}
-				} else if (id == nevt.MOUSE_DRAGGED
+				} else if (id == NeoMouseEvent.MOUSE_DRAGGED
 						&& sel_behavior == ON_MOUSE_DOWN) {
 					traceMapExtendHighlight(nevt);
 				}
 			}
 			if (source == base_map) {
 				// Let everybody else know that a base has been selected.
-				if (((id == nevt.MOUSE_PRESSED || id == nevt.MOUSE_DRAGGED) && sel_behavior == ON_MOUSE_DOWN)
-						|| (id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
+				if (((id == NeoMouseEvent.MOUSE_PRESSED || id == NeoMouseEvent.MOUSE_DRAGGED) && sel_behavior == ON_MOUSE_DOWN)
+						|| (id == NeoMouseEvent.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 					BaseCalls bc = getActiveBaseCalls();
 					int index = bc.getBaseIndexAtTracePoint((int) nevt.getCoordX());
 					sendBaseSelectedEvent(index);
@@ -1193,8 +1200,7 @@ public class NeoTracer extends NeoContainerWidget
 		} else {
 			endAt = peak_end + PEAK_WIDTH / 2;
 		}
-		Range range = new Range(startAt, endAt);
-		return range;
+		return new Range(startAt, endAt);
 	}
 
 	/**
@@ -1429,7 +1435,7 @@ public class NeoTracer extends NeoContainerWidget
 		// Forcing the adjustment here appears to fix the problem.
 		// This could be a synchronization problem. -- need to synchronize
 		//    NeoMap.scrollRange() ???    GAH 12-9-97
-		base_map.adjustScroller(base_map.X);
+		base_map.adjustScroller(NeoMap.X);
 
 		double beg, end, new_beg, new_end;
 
@@ -1452,11 +1458,11 @@ public class NeoTracer extends NeoContainerWidget
 			sel_range.notifyObservers();
 		}
 		if (trace_glyph.getChildCount() > 0) {
-			List gchildren = trace_glyph.getChildren();
+			List<GlyphI> gchildren = trace_glyph.getChildren();
 			GlyphI gchild;
 			Rectangle2D.Double childbox;
 			for (int i = 0; i < gchildren.size(); i++) {
-				gchild = (GlyphI) gchildren.get(i);
+				gchild = gchildren.get(i);
 				// since selection glyph already dealt with, need to skip it
 				//    should try eliminating special seleciton handling above and
 				//    see if can just deal with it here -- GAH 12-9-97
@@ -1792,6 +1798,7 @@ public class NeoTracer extends NeoContainerWidget
 	 *
 	 * @param axisid Either NeoAbstractWidget.X or NeoAbstractWidget.Y
 	 */
+	@Override
 	public void setScroller(int axisid, JScrollBar adj) {
 		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
@@ -1813,6 +1820,7 @@ public class NeoTracer extends NeoContainerWidget
 	 * in Y direction.
 	 * @param axisid Either NeoAbstractWidget.X or NeoAbstractWidget.Y
 	 */
+	@Override
 	public void setZoomer(int axisid, Adjustable adj) {
 		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(

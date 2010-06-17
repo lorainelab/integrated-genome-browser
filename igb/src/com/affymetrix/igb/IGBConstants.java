@@ -51,6 +51,7 @@ public interface IGBConstants {
 	public static final String annotsXml = "annots.xml";
 	public static final String liftAllLft = "liftAll.lft";
 	public static final String modChromInfoTxt = "mod_chromInfo.txt";
+	public static final String serverMapping = "serverMapping.txt";
 
 	public static final String UTF8 = "UTF-8";
 

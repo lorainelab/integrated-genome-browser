@@ -228,7 +228,8 @@ public final class GeneralLoadUtils {
 	 */
 	private static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-		Map<String,Das2Source> sources = server.getSources();
+		URL primaryURL = getServerDirectory(gServer.friendlyURL);
+		Map<String,Das2Source> sources = server.getSources(primaryURL);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
 			return false;
@@ -260,17 +261,9 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
-		GenericServer primaryServer = ServerList.getPrimaryServer();
 		URL primaryURL = getServerDirectory(gServer.friendlyURL);
-		QuickLoadServerModel quickloadServer;
-
-		//Check if primary server is available and it has cached data for this server.
-		if(primaryServer == null || primaryURL == null){
-			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-		}else{
-			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL);
-		}
-
+		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL);
+		
 		if (quickloadServer == null) {
 			System.out.println("ERROR: No quickload server model found for server: " + gServer);
 			return false;
@@ -791,6 +784,11 @@ public final class GeneralLoadUtils {
 	 * @return	Returns a directory exists else null.
 	 */
 	private static URL getServerDirectory(URL url){
+		GenericServer primaryServer = ServerList.getPrimaryServer();
+
+		if(primaryServer == null)
+			return null;
+		
 		for(Entry<URL, URL> primary : servermapping.entrySet()){
 			if(url.sameFile(primary.getKey()))
 				return primary.getValue();

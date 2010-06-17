@@ -24,7 +24,6 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -49,33 +48,19 @@ public final class QuickLoadServerModel {
 	 * @param url	server url.
 	 * @param loadGenome	boolean to check if genomes should be loaded from server.
 	 */
-	private QuickLoadServerModel(String url, boolean loadGenome) {
+	private QuickLoadServerModel(String url, String pri_url) {
 		root_url = url;
 		if (!root_url.endsWith("/")) {
 			root_url = root_url + "/";
 		}
-		if(loadGenome)
-			loadGenomeNames();
-	}
 
-	/**
-	 * Initialize quickload server model for given url.
-	 * @param url	server url.
-	 * @param loadGenome	boolean to check if genomes should be loaded from server.
-	 * @return	an instance of QuickLoadServerModel
-	 */
-	private static synchronized QuickLoadServerModel getQLModelForURL(URL url, boolean loadGenome) {
-		String ql_http_root = url.toExternalForm();
-		if (!ql_http_root.endsWith("/")) {
-			ql_http_root = ql_http_root + "/";
+		primary_url = pri_url;
+		if (pri_url != null && !primary_url.endsWith("/")) {
+			primary_url = primary_url + "/";
 		}
-		QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
-		if (ql_server == null) {
-			ql_server = new QuickLoadServerModel(ql_http_root, loadGenome);
-			url2quickload.put(ql_http_root, ql_server);
-			LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + "synonyms.txt");
-		}
-		return ql_server;
+
+		
+		loadGenomeNames();
 	}
 
 	/**
@@ -85,22 +70,37 @@ public final class QuickLoadServerModel {
 	 * @param genome_names	Set of genomes names to be added.
 	 * @return an instance of QuickLoadServerModel
 	 */
-	public static synchronized QuickLoadServerModel getQLModelForURL(URL url, URL primary_url, Set<String> genome_names) {
-		QuickLoadServerModel gl_server = getQLModelForURL(url, false);
-		gl_server.genome_names.addAll(genome_names);
-		String primary_root = primary_url.toExternalForm();
-		if (!primary_root.endsWith("/")) {
-			primary_root = primary_root + "/";
-		}
-		gl_server.primary_url = primary_root;
-		return gl_server;
-	}
+	public static synchronized QuickLoadServerModel getQLModelForURL(URL url, URL primary_url) {
 
+		String ql_http_root = url.toExternalForm();
+		if (!ql_http_root.endsWith("/")) {
+			ql_http_root = ql_http_root + "/";
+		}
+
+		String primary_root = null;
+		if(primary_url != null){
+			primary_root = primary_url.toExternalForm();
+			if (!primary_root.endsWith("/")) {
+				primary_root = primary_root + "/";
+			}
+		}
+
+		QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
+		if (ql_server == null) {
+			ql_server = new QuickLoadServerModel(ql_http_root, primary_root);
+			url2quickload.put(ql_http_root, ql_server);
+			LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + "synonyms.txt");
+		}
+		
+		return ql_server;
+		
+	}
+	
 	/**
 	 * Initialize quickload server model for given url.
 	 */
 	public static synchronized QuickLoadServerModel getQLModelForURL(URL url) {
-		return getQLModelForURL(url, true);
+		return getQLModelForURL(url, null);
 	}
 	
 	private static boolean getCacheAnnots() {
@@ -139,7 +139,6 @@ public final class QuickLoadServerModel {
 		}
 		List<String> typeNames = new ArrayList<String>();
 		for (AnnotMapElt annotMapElt : getAnnotsMap(genome_name)) {
-			if(annotMapElt.serverURL.equals(root_url))
 				typeNames.add(annotMapElt.title);
 		}
 		
@@ -191,14 +190,9 @@ public final class QuickLoadServerModel {
 		List<AnnotMapElt> annotList = new ArrayList<AnnotMapElt>();
 		genome2annotsMap.put(genome_name, annotList);
 
-		boolean processed = processAnnotsXml(genome_root + IGBConstants.annotsXml, annotList) ||
+		return processAnnotsXml(genome_root + IGBConstants.annotsXml, annotList) ||
 				processAnnotsTxt(genome_root + IGBConstants.annotsTxt, annotList);
 
-		if(processed){
-			SetServerURL(annotList);
-		}
-
-		return processed;
 	}
 
 	/**
@@ -225,13 +219,6 @@ public final class QuickLoadServerModel {
 			return false;
 		} finally {
 			GeneralUtils.safeClose(istr);
-		}
-	}
-
-	private void SetServerURL(List<AnnotMapElt> annotList){
-		for (AnnotMapElt annotMapElt : annotList) {
-			if(annotMapElt.serverURL.equals("") && primary_url == null)
-				annotMapElt.serverURL = root_url;
 		}
 	}
 
@@ -280,7 +267,7 @@ public final class QuickLoadServerModel {
 		String modChromInfo = IGBConstants.modChromInfoTxt;
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
-		String genome_root = root_url + genome_name + "/";
+		String genome_root = getLoadURL() + genome_name + "/";
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
 				"loading list of chromosomes for genome: " + genome_name);
 		InputStream lift_stream = null;
@@ -334,13 +321,13 @@ public final class QuickLoadServerModel {
 		BufferedReader br = null;
 		try {
 			try {
-				istr = LocalUrlCacher.getInputStream(root_url + contentsTxt, getCacheAnnots());
+				istr = LocalUrlCacher.getInputStream(getLoadURL() + contentsTxt, getCacheAnnots());
 			} catch (Exception e) {
-				System.out.println("ERROR: Couldn't open '" + root_url + contentsTxt + "\n:  " + e.toString());
+				System.out.println("ERROR: Couldn't open '" + getLoadURL() + contentsTxt + "\n:  " + e.toString());
 				istr = null; // dealt with below
 			}
 			if (istr == null) {
-				System.out.println("Could not load QuickLoad contents from\n" + root_url + contentsTxt);
+				System.out.println("Could not load QuickLoad contents from\n" + getLoadURL() + contentsTxt);
 				return;
 			}
 			ireader = new InputStreamReader(istr);
@@ -358,12 +345,7 @@ public final class QuickLoadServerModel {
 						continue;
 					}
 					group = this.getSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
-					
-					if(fields.length >= 3){
-						GeneralLoadUtils.getSpeciesList(fields[2]).add(genome_name);
-					}else{
-						genome_names.add(genome_name);
-					}
+					genome_names.add(genome_name);
 				}
 				// if quickload server has description, and group is new or doesn't yet have description, add description to group
 				if ((fields.length >= 2) && (group.getDescription() == null)) {

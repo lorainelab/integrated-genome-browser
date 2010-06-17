@@ -41,7 +41,7 @@ public final class QuickLoadServerModel {
 	// A map from String genome name to a Map of (typeName,fileName) on the server for that group
 	private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
 	private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
-	private String primary_url;
+	private final String primary_url;
 
 	/**
 	 * Initialize quickload server model for given url.
@@ -54,10 +54,13 @@ public final class QuickLoadServerModel {
 			root_url = root_url + "/";
 		}
 
-		primary_url = pri_url;
-		if (pri_url != null && !primary_url.endsWith("/")) {
-			primary_url = primary_url + "/";
+		if (pri_url != null) {
+			if(!pri_url.endsWith("/")){
+				pri_url = pri_url + "/";
+			}
 		}
+
+		primary_url = pri_url;
 
 		
 		loadGenomeNames();

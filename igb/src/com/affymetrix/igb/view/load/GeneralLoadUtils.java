@@ -75,6 +75,7 @@ public final class GeneralLoadUtils {
 
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
+	// File name storing directory name associated with server on a cached server.
 	public static final String SERVER_MAPPING = "/serverMapping.txt";
 
 	/**
@@ -115,7 +116,10 @@ public final class GeneralLoadUtils {
 			GeneralUtils.safeClose(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
 		}
 	}
-	
+
+	/**
+	 * Map to store directory name associated with the server on a cached server.
+	 */
 	private static Map<URL,URL> servermapping = new HashMap<URL,URL>();
 	/**
 	 * Add specified server, finding species and versions associated with it.
@@ -260,6 +264,7 @@ public final class GeneralLoadUtils {
 		URL primaryURL = getServerDirectory(gServer.friendlyURL);
 		QuickLoadServerModel quickloadServer;
 
+		//Check if primary server is available and it has cached data for this server.
 		if(primaryServer == null || primaryURL == null){
 			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 		}else{
@@ -734,6 +739,9 @@ public final class GeneralLoadUtils {
 		return SPECIES_LOOKUP.getCommonSpeciesName(speciesName);
 	}
 
+	/**
+	 * Method to load server directory mapping.
+	 */
 	public static void loadServerMapping() {
 		InputStream istr = null;
 		InputStreamReader ireader = null;
@@ -777,6 +785,11 @@ public final class GeneralLoadUtils {
 		}
 	}
 
+	/**
+	 * //Get directory url on cached server from server mapping.
+	 * @param url	URL of the server.
+	 * @return	Returns a directory exists else null.
+	 */
 	private static URL getServerDirectory(URL url){
 		for(Entry<URL, URL> primary : servermapping.entrySet()){
 			if(url.sameFile(primary.getKey()))

@@ -162,18 +162,15 @@ public final class GeneralLoadUtils {
 		}
 	}
 
+	
 	public static boolean discoverServer(GenericServer gServer) {
-		return discoverServer(gServer, true);
-	}
-
-	public static boolean discoverServer(GenericServer gServer, boolean loadGenome) {
 		try {
 			if (gServer == null || gServer.serverType == ServerType.LocalFiles) {
 				// should never happen
 				return false;
 			}
 			if (gServer.serverType == ServerType.QuickLoad) {
-				if (!getQuickLoadSpeciesAndVersions(gServer, loadGenome)) {
+				if (!getQuickLoadSpeciesAndVersions(gServer)) {
 					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
 					return false;
 				}
@@ -250,7 +247,7 @@ public final class GeneralLoadUtils {
 	 * @param loadGenome boolean to check load genomes from server.
 	 * @return false if there's an obvious failure.
 	 */
-	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer, boolean loadGenome) {
+	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
@@ -261,7 +258,7 @@ public final class GeneralLoadUtils {
 		GenericServer primaryServer = ServerList.getPrimaryServer();
 		QuickLoadServerModel quickloadServer;
 
-		if(loadGenome || primaryServer == null){
+		if(primaryServer == null || true){
 			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 		}else{
 			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryServer.friendlyURL);

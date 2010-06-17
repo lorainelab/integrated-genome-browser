@@ -730,15 +730,13 @@ public class NeoMap extends NeoWidget implements
 		//   scale larger than max_pixels_per_coord
 		if (min_pixels_per_coord[X] >= max_pixels_per_coord[X]) {
 			min_pixels_per_coord[X] = max_pixels_per_coord[X];
-			trans.setTransform(min_pixels_per_coord[X], 0, 0, trans.getScaleY(), trans.getTranslateX(), trans.getTranslateY());
-			trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), canvas.getSize().width / 2
-					- trans.getScaleX() * scene.getCoordBox().width / 2, trans.getTranslateY());
+			trans.setTransform(min_pixels_per_coord[X], 0, 0, trans.getScaleY(), 
+					canvas.getSize().width / 2 - trans.getScaleX() * scene.getCoordBox().width / 2, trans.getTranslateY());
 		}
 		if (min_pixels_per_coord[Y] >= max_pixels_per_coord[Y]) {
 			min_pixels_per_coord[Y] = max_pixels_per_coord[Y];
-			trans.setTransform(trans.getScaleX(), 0, 0, min_pixels_per_coord[Y], trans.getTranslateX(), trans.getTranslateY());
-			trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), canvas.getSize().height / 2
-					- trans.getScaleY() * scene.getCoordBox().height / 2);
+			trans.setTransform(trans.getScaleX(), 0, 0, min_pixels_per_coord[Y], 
+					trans.getTranslateX(), canvas.getSize().height / 2 - trans.getScaleY() * scene.getCoordBox().height / 2);
 		}
 
 		if (!(xfit && yfit)) {
@@ -755,8 +753,7 @@ public class NeoMap extends NeoWidget implements
 			Rectangle scenepix;
 			int pixel_value;
 			if (!xfit) {
-				trans.setTransform(xscale, 0, 0, trans.getScaleY(), trans.getTranslateX(), trans.getTranslateY());
-				trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), xoffset, trans.getTranslateY());
+				trans.setTransform(xscale, 0, 0, trans.getScaleY(), xoffset, trans.getTranslateY());
 				view.calcCoordBox();
 				viewbox = view.getCoordBox();
 				if (fit_check) {
@@ -778,8 +775,7 @@ public class NeoMap extends NeoWidget implements
 				}
 			}
 			if (!yfit) {
-				trans.setTransform(trans.getScaleX(), 0, 0, yscale, trans.getTranslateX(), trans.getTranslateY());
-				trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), yoffset);
+				trans.setTransform(trans.getScaleX(), 0, 0, yscale, trans.getTranslateX(), yoffset);
 				view.calcCoordBox();
 				viewbox = view.getCoordBox();
 				if (fit_check) {

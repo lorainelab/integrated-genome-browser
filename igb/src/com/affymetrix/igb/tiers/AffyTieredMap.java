@@ -421,8 +421,7 @@ public class AffyTieredMap extends NeoMap {
 		// [later, may be able to leverage off the fact that tier maps always
 		//   pack down from 0, so that scene starts at 0 and ends at (y+height)
 		//   of last packed tier]
-		trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), pix_offset);
-		trans.setTransform(trans.getScaleX(),0,0,pixels_per_coord[id],trans.getTranslateX(),trans.getTranslateY());
+		trans.setTransform(trans.getScaleX(), 0, 0, pixels_per_coord[id], trans.getTranslateX(), pix_offset);
 		// pack tiers (which may modify scene bounds) based on view with transform
 		//    modified to take into account zoom_scale and "proposed" offset
 		packTiers(false, true, false); 
@@ -448,12 +447,8 @@ public class AffyTieredMap extends NeoMap {
 
 		// redoing setting of transform, in case there were any adjusments to trim to scene...
 		// assuming modifying Y
-		trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), pixel_offset[id]);
-		trans.setTransform(trans.getScaleX(),0,0,pixels_per_coord[id],trans.getTranslateX(),trans.getTranslateY());
+		trans.setTransform(trans.getScaleX(), 0, 0, pixels_per_coord[id], trans.getTranslateX(), pixel_offset[id]);
 
-//		System.out.println("     Zoom scale : "+ zoom_scale +
-//						   "\t\t pixels_per_base = " + zoomer_scale[id] +
-//						   "\t\t coords_per_pixel[id] = " + 1/zoomer_scale[Y]);
 		if (zoom_scale != zoomer_scale[id]) {
 			adjustZoomer(id);
 		}

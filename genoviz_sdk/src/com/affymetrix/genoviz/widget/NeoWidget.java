@@ -1121,12 +1121,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		}
 
 		if (id == X) {
-			trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), -pixel_offset[id], trans.getTranslateY());
-			trans.setTransform(pixels_per_coord[id],0,0,trans.getScaleY(),trans.getTranslateX(),trans.getTranslateY());
+			trans.setTransform(pixels_per_coord[id], 0, 0, trans.getScaleY(), -pixel_offset[id], trans.getTranslateY());
 		}
 		else {
-			trans.setTransform(trans.getScaleX(), 0, 0, trans.getScaleY(), trans.getTranslateX(), -pixel_offset[id]);
-			trans.setTransform(trans.getScaleX(),0,0,pixels_per_coord[id],trans.getTranslateX(),trans.getTranslateY());
+			trans.setTransform(trans.getScaleX(), 0, 0, pixels_per_coord[id], trans.getTranslateX(), -pixel_offset[id]);
 		}
 		if (zoom_scale != zoomer_scale[id]) {
 			adjustZoomer(id);

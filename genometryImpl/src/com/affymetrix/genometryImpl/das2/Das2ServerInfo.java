@@ -70,9 +70,10 @@ public final class Das2ServerInfo  {
 	@Override
 	public String toString() { return name; }
 
-	public synchronized Map<String, Das2Source> getSources(String primary_string) {
+	public synchronized Map<String, Das2Source> getSources(URL primary_url) {
 		try {
-			if (primary_string != null) {
+			if (primary_url != null) {
+				String primary_string = primary_url.toExternalForm();
 				if (!primary_string.endsWith("/")) {
 					primary_string = primary_string + "/";
 				}

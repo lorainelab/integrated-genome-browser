@@ -32,7 +32,6 @@ public final class Das2ServerInfo  {
 	private URI primary_uri;
 	private final String name;
 	private final Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
-	private final Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 	private String sessionId = null; //used to store a session id following authentication with a DAS2 server
 
@@ -95,9 +94,8 @@ public final class Das2ServerInfo  {
 		return getSources(null);
 	}
 
-	private void addDataSource(Das2Source ds) {
+	private synchronized void addDataSource(Das2Source ds) {
 		sources.put(ds.getID(), ds);
-		name2source.put(ds.getName(), ds);
 	}
 
 	/**
@@ -165,9 +163,7 @@ public final class Das2ServerInfo  {
 			}
 			System.out.println("Initializing " + server_uri);
 			Document doc = XMLUtils.getDocument(response);
-
-			NodeList sources = doc.getElementsByTagName("SOURCE");
-			parseSources(sources, das_query);
+			parseSources(doc.getElementsByTagName("SOURCE"), das_query);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			LocalUrlCacher.invalidateCacheFile(das_query);

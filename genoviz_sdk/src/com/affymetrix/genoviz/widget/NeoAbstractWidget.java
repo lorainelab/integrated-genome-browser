@@ -257,10 +257,10 @@ public abstract class NeoAbstractWidget extends Container
 	protected Set<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArraySet<MouseMotionListener>();
 	protected Set<KeyListener> key_listeners = new CopyOnWriteArraySet<KeyListener>();
 
-	protected Hashtable<GlyphI,Object> glyph_hash = new Hashtable<GlyphI,Object>();
+	protected Map<GlyphI,Object> glyph_hash = new HashMap<GlyphI,Object>();
 
 	//TODO: This should maybe be Map<Object,List<GlyphI>>
-	protected Hashtable<Object,Object> model_hash = new Hashtable<Object,Object>();
+	protected Map<Object,Object> model_hash = new HashMap<Object,Object>();
 
 	protected boolean models_have_multiple_glyphs = false;
 
@@ -790,10 +790,10 @@ public abstract class NeoAbstractWidget extends Container
 	public void clearWidget() {
 		selected.clear();
 		// reset glyph_hash
-		glyph_hash = new Hashtable<GlyphI,Object>();
+		glyph_hash = new HashMap<GlyphI,Object>();
 
 		// reset model_hash
-		model_hash = new Hashtable<Object,Object>();
+		model_hash = new HashMap<Object,Object>();
 
 		models_have_multiple_glyphs = false;
 	}

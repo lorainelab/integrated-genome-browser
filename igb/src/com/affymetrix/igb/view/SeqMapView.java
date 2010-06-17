@@ -582,7 +582,7 @@ public class SeqMapView extends JPanel
 	 *  really need to fix some underlying GenoViz issues for this to be effective in
 	 *    actually reclaiming memory from graphs:
 	 *  Specifically, NeoMap.removeItem(GlyphI gl) need to recursively remove child glyphs from
-	 *     objects such as the Hashtable in NeoMap that maps data models to glyphs
+	 *     objects such as the map in NeoMap that maps data models to glyphs
 	 *  Also, should really be removing not just GraphGlyphs (and their parent
 	 *     PixelFloaterGlyphs and TierGlyphs)
 

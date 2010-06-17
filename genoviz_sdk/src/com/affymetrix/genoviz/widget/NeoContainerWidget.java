@@ -54,6 +54,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		widgets.add(widget);
 	}
 
+	@Override
 	public void destroy() {
 		for ( int i = 0; i < widgets.size(); i++ ) {
 			widgets.get(i).destroy();
@@ -87,6 +88,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	/**
 	 * sets the background color for all the contained Widgets.
 	 */
+	@Override
 	public void setBackground(Color theColor) {
 		super.setBackground(theColor);
 		for (NeoAbstractWidget w : widgets) {
@@ -470,6 +472,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		}
 	}
 
+	@Override
 	public void clearWidget() {
 		super.clearWidget();
 		for (int i=0;i<widgets.size();i++) {

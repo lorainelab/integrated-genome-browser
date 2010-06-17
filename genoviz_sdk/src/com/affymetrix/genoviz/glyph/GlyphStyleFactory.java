@@ -25,10 +25,10 @@ import java.awt.Font;
 public class GlyphStyleFactory {
 
 	private static Font default_font = new Font("Courier", Font.PLAIN, 12);
-	private final Hashtable<GlyphStyle,GlyphStyle> styles;
+	private final Map<GlyphStyle,GlyphStyle> styles;
 
 	public GlyphStyleFactory() {
-		styles = new Hashtable<GlyphStyle,GlyphStyle>();
+		styles = new HashMap<GlyphStyle,GlyphStyle>();
 	};
 
 	/**

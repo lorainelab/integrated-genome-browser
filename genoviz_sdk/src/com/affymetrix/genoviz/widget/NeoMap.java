@@ -411,8 +411,8 @@ public class NeoMap extends NeoWidget implements
     }
 
     factory_hash = new Hashtable<String, MapGlyphFactory>();
-    glyph_hash = new Hashtable<GlyphI, Object>();
-    model_hash = new Hashtable<Object, Object>();
+    glyph_hash = new HashMap<GlyphI, Object>();
+    model_hash = new HashMap<Object, Object>();
 
     // defaults to black background!!!
     setBackground(default_panel_background);
@@ -559,6 +559,7 @@ public class NeoMap extends NeoWidget implements
 			*  (due to weirdness in the Container source code from Sun).
 			*/
 		   @Deprecated
+	@Override
 			   public void reshape(int x, int y, int width, int height) {
 				   reshapeCount++;
 				   if (width < 1) width = 1;
@@ -1145,10 +1146,10 @@ public class NeoMap extends NeoWidget implements
 			   scene.setGlyph(neweve);
 
 			   // reset glyph_hash
-			   glyph_hash = new Hashtable<GlyphI,Object>();
+			   glyph_hash = new HashMap<GlyphI,Object>();
 
 			   // reset model_hash
-			   model_hash = new Hashtable<Object,Object>();
+			   model_hash = new HashMap<Object,Object>();
 
 			   // reset axes
 			   axes.clear();
@@ -1653,7 +1654,7 @@ public class NeoMap extends NeoWidget implements
 			   }
 		   }
 
-		   public Hashtable getModelMapping() {
+		   public Map getModelMapping() {
 			   return model_hash;
 		   }
 

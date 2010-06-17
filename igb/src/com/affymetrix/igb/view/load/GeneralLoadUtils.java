@@ -51,6 +51,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -256,12 +257,13 @@ public final class GeneralLoadUtils {
 			return false;
 		}
 		GenericServer primaryServer = ServerList.getPrimaryServer();
+		URL primaryURL = getServerDirectory(gServer.friendlyURL);
 		QuickLoadServerModel quickloadServer;
 
-		if(primaryServer == null || true){
+		if(primaryServer == null || primaryURL == null){
 			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 		}else{
-			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryServer.friendlyURL);
+			quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL);
 		}
 
 		if (quickloadServer == null) {
@@ -773,5 +775,13 @@ public final class GeneralLoadUtils {
 				GeneralUtils.safeClose(br);
 			}
 		}
+	}
+
+	private static URL getServerDirectory(URL url){
+		for(Entry<URL, URL> primary : servermapping.entrySet()){
+			if(url.sameFile(primary.getKey()))
+				return primary.getValue();
+		}
+		return null;
 	}
 }

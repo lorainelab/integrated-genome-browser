@@ -215,7 +215,7 @@ public final class GeneralLoadView extends JComponent
 		for (final GenericServer gServer : ServerList.getEnabledServers()) {
 			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-				protected Void doInBackground() throws Exception {	
+				protected Void doInBackground() throws Exception {
 					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;

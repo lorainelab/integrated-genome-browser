@@ -1,7 +1,9 @@
 package com.affymetrix.igb.view.external;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.UCSCViewAction;
+import com.affymetrix.igb.view.SeqMapView;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Image;
@@ -32,7 +34,6 @@ import javax.swing.SwingWorker;
  * @author Ido M. Tamir
  */
 public abstract class BrowserView extends JPanel {
-
 	private SwingWorker<Image, Void> worker = null;
 	private final Map<String, String> cookieMap = new HashMap<String, String>();
 	private final JButton update_button = new JButton("update");
@@ -45,7 +46,7 @@ public abstract class BrowserView extends JPanel {
 
 	public abstract void initializeCookies();
 
-	public abstract Image getImage(String query, int pixWidth);
+	public abstract Image getImage(Loc loc, int pixWidth);
 
 	public abstract String getViewName();
 
@@ -96,7 +97,12 @@ public abstract class BrowserView extends JPanel {
 
 					@Override
 					public Image doInBackground() {
-						return getImage(UCSCViewAction.getUCSCQuery(), pixWidth);
+						String ucscQuery = UCSCViewAction.getUCSCQuery();
+						Loc loc = Loc.fromUCSCQuery(ucscQuery);
+						if(ucscQuery.equals("") || loc.db.equals("")){
+							return BrowserLoader.createErrorImage("could not resolve url for genome", pixWidth);
+						}
+						return getImage(loc, pixWidth);
 					}
 
 					@Override

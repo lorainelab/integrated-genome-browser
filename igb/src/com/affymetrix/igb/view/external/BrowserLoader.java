@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public abstract class BrowserLoader {
 
-	public Image createErrorImage(String error, int pixWidth) {
+	public static BufferedImage createErrorImage(String error, int pixWidth) {
 		final BufferedImage image = new BufferedImage(pixWidth, 70, BufferedImage.TYPE_3BYTE_BGR);
 		image.createGraphics();
 		final Graphics2D g = (Graphics2D) image.getGraphics();
@@ -42,7 +42,7 @@ public abstract class BrowserLoader {
 		return image;
 	}
 
-	abstract public Image getImage(String query, int pixWidth, Map<String, String> cookies);
+	abstract public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies);
 
 	/**
 	 *
@@ -67,7 +67,7 @@ public abstract class BrowserLoader {
 
 		} catch (SocketException e) {
 			Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);
-			return ("Error: the UCSC Browser was not able to return the answer in the appropriate time");
+			return ("Error: the Server was not able to return the answer in the appropriate time");
 		} catch (IOException e) {
 			Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);
 			return ("Error: " + e.getMessage());

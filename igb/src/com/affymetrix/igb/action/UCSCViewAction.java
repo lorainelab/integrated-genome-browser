@@ -83,7 +83,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 
 	/**
 	 * generates part of UCSC query url for current genome coordinates.
-	 * @return query URL for current view. "ucsc version not resolvable" on error.
+	 * @return query URL for current view. "" on error.
 	 */
 	public static String getUCSCQuery(){
 		BioSeq aseq = SEQ_MAP.getAnnotatedSeq();

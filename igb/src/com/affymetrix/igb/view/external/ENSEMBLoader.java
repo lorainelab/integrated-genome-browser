@@ -23,18 +23,17 @@ class ENSEMBLoader extends BrowserLoader {
 	
 
 	static {
-		dbmap.put("mm8", new EnsemblURL("http://aug2007.archive.ensembl.org/Mus_musculus","http://aug2007.archive.ensembl.org"));
-		dbmap.put("mm9", new EnsemblURL("http://sep2009.archive.ensembl.org/Mus_musculus","http://sep2009.archive.ensembl.org"));
-		dbmap.put("hg19",new EnsemblURL("http://sep2009.archive.ensembl.org/Homo_sapiens","http://sep2009.archive.ensembl.org"));
-		dbmap.put("hg18",new EnsemblURL("http://may2009.archive.ensembl.org/Homo_sapiens","http://may2009.archive.ensembl.org"));
-		dbmap.put("dm3", new EnsemblURL("http://sep2009.archive.ensembl.org/Drosophila_melanogaster","http://sep2009.archive.ensembl.org"));
+		dbmap.put("mm9", new EnsemblURL("http://may2010.archive.ensembl.org/Mus_musculus","http://may2010.archive.ensembl.org"));
+		dbmap.put("hg19",new EnsemblURL("http://may2010.archive.ensembl.org/Homo_sapiens","http://may2010.archive.ensembl.org"));
+		dbmap.put("dm3", new EnsemblURL("http://may2010.archive.ensembl.org/Drosophila_melanogaster","http://may2010.archive.ensembl.org"));
 	}
 
 	public static String getUrlForView(Loc loc, int pixWidth) {
 		if (!dbmap.containsKey(loc.db)) {
 			return "Error: could not transpose the genome " + loc.db + " for ENSEMBL";
 		}
-		String url = dbmap.get(loc.db).url + "/Location/View?r=" + loc.chr + ":" + loc.start + "-" + loc.end;
+		String chr = loc.chr.replaceAll("chr", "");
+		String url = dbmap.get(loc.db).url + "/Location/View?r=" + chr + ":" + loc.start + "-" + loc.end;
 		Logger.getLogger(ENSEMBLoader.class.getName()).log(Level.FINE, "url was : " + url);
 		return url;
 	}
@@ -48,15 +47,13 @@ class ENSEMBLoader extends BrowserLoader {
 	 * @return
 	 */
 	@Override
-	public Image getImage(String query, int pixWidth, Map<String, String> cookies) {
+	public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies) {
 		String url = "";
-		Loc loc = null;
 		try{
-			loc = new Loc(query);
 			url = getUrlForView(loc, pixWidth);
 		}
 		catch(Exception e){
-			url = "Error: Could not translate UCSC query for ENSEMBL: " + query;
+			url = "Error: Could not translate UCSC query for ENSEMBL: " + loc;
 		}
 		if(url.startsWith("http")){
 			String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
@@ -67,18 +64,26 @@ class ENSEMBLoader extends BrowserLoader {
 			url = getImageUrl(url, cookie, new ENSEMBLURLFinder(dbmap.get(loc.db).host));
 			if (url.startsWith("http")) {
 				try {
-					return ImageIO.read(new URL(url));
+					return new ImageError(ImageIO.read(new URL(url)),"");
 				} catch (IOException e) {
 					Logger.getLogger(BrowserView.class.getName()).log(Level.FINE, "url was : " + url, e);
 				}
 			}
 		}
-		return createErrorImage(url, pixWidth);
+		return new ImageError(createErrorImage(url, pixWidth),"Error");
 	}
 }
 
+/**
+ * Extracts the image url from the returned html page.
+ * ENSEMBL likes to change the ids of the elments quite often
+ * e.g. sep2009 id = "BottomViewPanel" -> may2010 id ="contigviewbottom"
+ *
+ * 
+ *
+ */
 class ENSEMBLURLFinder implements URLFinder {
-	private final static Pattern panelPattern = Pattern.compile("id=\"ViewBottomPanel\"");
+	private final static Pattern panelPattern = Pattern.compile("id=\"contigviewbottom\"");
 	private final static Pattern imagePattern = Pattern.compile("img-tmp(.*png)");
 	private final String url;
 	public ENSEMBLURLFinder(String url){
@@ -114,24 +119,3 @@ class EnsemblURL {
 	}
 }
 
-
-class Loc {
-	private static final Pattern ucscPattern = Pattern.compile("db=(\\w+)&position=(\\w+):(\\d+)-(\\d+)");
-	final String db;
-	final String chr;
-	final String start;
-	final String end;
-	Loc(String location){
-		Matcher m = ucscPattern.matcher(location);
-		if (m.find()) {
-			db = m.group(1);
-			String chrs = m.group(2);
-			chr = chrs.replaceAll("chr", "");
-			start = m.group(3);
-			end = m.group(4);
-		}
-		else{
-			throw new RuntimeException("Could not parse location from UCSC");
-		}
-	}
-}

@@ -53,10 +53,10 @@ public class UCSCView extends BrowserView {
 	}
 
 	@Override
-	public Image getImage(String query, int pixWidth) {
+	public Image getImage(Loc loc, int pixWidth) {
 		Map<String, String> cookies = new HashMap<String, String>();
 		cookies.put(UCSCUSERID, getCookie(UCSCUSERID));
-		return new UCSCLoader().getImage(query, pixWidth, cookies);
+		return new UCSCLoader().getImage(loc, pixWidth, cookies).image;
 	}
 
 	@Override

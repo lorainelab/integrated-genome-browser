@@ -21,29 +21,22 @@ public class UCSCLoader extends BrowserLoader {
 
 	private static final Pattern fileNamePattern = Pattern.compile("(hgt_genome.*gif)");
 
-	public String getUrlForView(String query, int pixWidth) {
-
-		if (query.startsWith("db")) {
-			String width = "pix=" + pixWidth + "&";
-			return "http://genome.ucsc.edu/cgi-bin/hgTracks?" + width + query;
-		} else {
-			return query;
-		}
+	public String getUrlForView(Loc loc, int pixWidth) {
+		String width = "pix=" + pixWidth + "&";
+		return "http://genome.ucsc.edu/cgi-bin/hgTracks?" + width +"db="+loc.db+"&position="+loc.chr+":"+loc.start+"-"+loc.end;
 	}
 
-	public Image getImage(String query, int pixWidth, Map<String, String> cookies) {
-		String url = getUrlForView(query, pixWidth);
+	public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies) {
+		String url = getUrlForView(loc, pixWidth);
+		url = getImageUrl(url, UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID), new UCSCURLFinder());
 		if (url.startsWith("http")) {
-			url = getImageUrl(url, UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID), new UCSCURLFinder());
-			if (url.startsWith("http")) {
-				try {
-					return ImageIO.read(new URL(url));
-				} catch (IOException e) {
-					Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "url was : " + url, e);
-				}
+			try {
+				return new ImageError(ImageIO.read(new URL(url)),"");
+			} catch (IOException e) {
+				Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "url was : " + url, e);
 			}
 		}
-		return createErrorImage(url, pixWidth);
+		return new ImageError(createErrorImage(url, pixWidth),"Error");
 	}
 
 	class UCSCURLFinder implements URLFinder {

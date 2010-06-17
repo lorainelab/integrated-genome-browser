@@ -15,8 +15,7 @@ import javax.swing.JComponent;
  */
 public class ExternalViewer extends JComponent implements ItemListener {
 
-	//private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
-	private static final String[] names = {UCSCView.viewName};
+	private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
 	final JComboBox ucscBox;
 	final JComboBox ensemblBox;
 
@@ -29,7 +28,7 @@ public class ExternalViewer extends JComponent implements ItemListener {
 		final EnsemblView ensembl = new EnsemblView(ensemblBox);
 
 		add(ucsc, ucsc.getViewName());
-	//	add(ensembl, ensembl.getViewName());
+		add(ensembl, ensembl.getViewName());
 	}
 
 	private JComboBox createBox() {
@@ -41,13 +40,7 @@ public class ExternalViewer extends JComponent implements ItemListener {
 		return box;
 	}
 
-	/**
-	 * This mess is because cardlayout makes every component
-	 * invisible that is not on the shown card. So I have to synchronize
-	 * the two comboboxes...
-	 *
-	 * @param e
-	 */
+	
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getID() == ItemEvent.ITEM_STATE_CHANGED) {
 			CardLayout cl = (CardLayout) (getLayout());

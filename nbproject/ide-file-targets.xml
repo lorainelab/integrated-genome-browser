@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir=".." name="IGB-IDE">
     <import file="../build.xml"/>
-    <target name="run-selected-file-in-src" depends="demos">
-        <fail unless="run.class">Must set property 'run.class'</fail>
+    
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-test">
+        <fail unless="run.class">ENSEMBLoaderTest</fail>
+        <ant antfile="build.xml" inheritall="false" target="compile"/>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="genoviz_sdk/demo" />
-                <fileset dir="${lib.dir}" includes="*.jar" />
-                <dirset dir="${basedir}">
-                    <include name="*/build" />
-                </dirset>
+                <pathelement path="ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometryImpl/src:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:genoviz_sdk/src:ext/commons-compress-1.0.jar:ext/sam.jar:ext/colt.jar:ext/junit.jar"/>
+                <pathelement location="das2_server/build"/>
+                <pathelement location="genometryImpl/build"/>
+                <pathelement location="genoviz_sdk/build"/>
+                <pathelement location="igb/build"/>
+                <pathelement location="genoviz_sdk/demo"/>
             </classpath>
         </java>
     </target>
+
+
 </project>

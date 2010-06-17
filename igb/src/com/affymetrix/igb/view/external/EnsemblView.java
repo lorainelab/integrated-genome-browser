@@ -53,11 +53,11 @@ public class EnsemblView extends BrowserView {
 	}
 
 	@Override
-	public Image getImage(String query, int pixWidth) {
+	public Image getImage(Loc loc, int pixWidth) {
 		Map<String, String> cookies = new HashMap<String, String>();
 		cookies.put(ENSEMBLSESSION, getCookie(ENSEMBLSESSION));
 		cookies.put(ENSEMBLWIDTH, Integer.toString(pixWidth));
-		return new ENSEMBLoader().getImage(query, pixWidth, cookies);
+		return new ENSEMBLoader().getImage(loc, pixWidth, cookies).image;
 	}
 
 	@Override

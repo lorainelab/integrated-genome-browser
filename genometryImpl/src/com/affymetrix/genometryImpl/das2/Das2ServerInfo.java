@@ -16,6 +16,8 @@ package com.affymetrix.genometryImpl.das2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -24,8 +26,9 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 
 public final class Das2ServerInfo  {
-  private static boolean DEBUG_SOURCES_QUERY = false;
+  private static boolean DEBUG_SOURCES_QUERY = true;
 	private final URI server_uri;
+	private URI primary_uri;
 	private final String name;
 	private final Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
 	private final Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
@@ -39,7 +42,8 @@ public final class Das2ServerInfo  {
 	private static String TYPE = "type";
 	private static String QUERY_URI = "query_uri";
 	private static String QUERY_ID = "query_id";
-
+	private static String XML = ".xml";
+	
 	/** Creates an instance of Das2ServerInfo for the given DAS2 server.
 	 *  @param init  whether or not to initialize the data right away.  If false
 	 *    will not contact the server to initialize data until needed.
@@ -66,9 +70,27 @@ public final class Das2ServerInfo  {
 	@Override
 	public String toString() { return name; }
 
-	public synchronized Map<String,Das2Source> getSources() {
-		if (!initialized) { initialize(); }
+	public synchronized Map<String, Das2Source> getSources(String primary_string) {
+		try {
+			if (primary_string != null) {
+				if (!primary_string.endsWith("/")) {
+					primary_string = primary_string + "/";
+				}
+				this.primary_uri = new URI(primary_string);
+			}
+
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		if (!initialized) {
+			initialize();
+		}
 		return sources;
+	}
+
+	public synchronized Map<String, Das2Source> getSources() {
+		return getSources(null);
 	}
 
 	private void addDataSource(Das2Source ds) {
@@ -111,8 +133,8 @@ public final class Das2ServerInfo  {
 		String das_query = "";
 		try {
 			if (server_uri == null) { return false; }
-			das_query = server_uri.toString();
-			
+			das_query = getPrimaryQuery();
+					
 			if (login() == false) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;
@@ -122,7 +144,7 @@ public final class Das2ServerInfo  {
 				System.out.println("Das2 Request: " + server_uri);
 			}
 			Map<String,String> headers = new LinkedHashMap<String,String>();
-			response = LocalUrlCacher.getInputStream(das_query, true, headers);
+			response = LocalUrlCacher.getInputStream(getQueryFor(das_query), true, headers);
 			if (response == null) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;
@@ -155,7 +177,31 @@ public final class Das2ServerInfo  {
 		return initialized;
 	}
 
+	/**
+	 * Get url string to load data from.
+	 * Returns primary server's url if present else
+	 * actual servers's url.
+	 * @return
+	 */
+	private String getPrimaryQuery(){
+		if(primary_uri == null){
+			return server_uri.toString();
+		}
+		return primary_uri.toString();
+	}
 
+	/**
+	 * Determines if .xml extension is required or not.
+	 * @param query	Query to which .xml extension is to be added.
+	 * @return
+	 */
+	private String getQueryFor(String query){
+		if(primary_uri == null){
+			return query;
+		}
+		return query+XML;
+	}
+	
 	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then
 	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
 	private synchronized boolean login() {
@@ -221,12 +267,12 @@ public final class Das2ServerInfo  {
 			this.addDataSource(dasSource);
 			
 			NodeList slist = source.getChildNodes();
-			parseSourceChildren(slist, das_query, dasSource);
+			parseSourceChildren(slist, das_query, dasSource, primary_uri);
 		}
 	}
 
 
-	private static void parseSourceChildren(NodeList slist, String das_query, Das2Source dasSource) {
+	private static void parseSourceChildren(NodeList slist, String das_query, Das2Source dasSource, URI primary_uri) {
 		for (int k = 0; k < slist.getLength(); k++) {
 			if (!slist.item(k).getNodeName().equals("VERSION")) {
 				continue;
@@ -283,7 +329,7 @@ public final class Das2ServerInfo  {
 				}
 			}
 
-			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
+			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false, primary_uri);
 			Iterator<Das2Capability> capiter = caps.values().iterator();
 			while (capiter.hasNext()) {
 				Das2Capability cap = capiter.next();

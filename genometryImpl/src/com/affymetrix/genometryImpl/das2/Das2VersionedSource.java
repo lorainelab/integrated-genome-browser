@@ -33,7 +33,8 @@ public final class Das2VersionedSource {
     public static final String SEGMENTS_CAP_QUERY = "segments";
     public static final String TYPES_CAP_QUERY = "types";
     public static final String FEATURES_CAP_QUERY = "features";
-    private static final boolean DEBUG = false;
+	private static final String XML = ".xml";
+    private static final boolean DEBUG = true;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
@@ -42,6 +43,7 @@ public final class Das2VersionedSource {
     static GenometryModel gmodel = GenometryModel.getGenometryModel();
     private final URI version_uri;
     private final URI coords_uri;
+	private final URI primary_uri; // Cached primary server. If
     private final Das2Source source;
     private final String name;
     private final Map<String,Das2Capability> capabilities = new HashMap<String,Das2Capability>();
@@ -55,10 +57,16 @@ public final class Das2VersionedSource {
 
 
     public Das2VersionedSource(Das2Source das_source, URI vers_uri, URI coords_uri, String name,
-            String href, String description, boolean init) {
+            String href, String description, boolean init, URI pri_uri) {
         this.name = name;
         this.coords_uri = coords_uri;
         version_uri = vers_uri;
+		
+		if(pri_uri != null)
+			primary_uri = URI.create(pri_uri.toString() + name + "/");
+		else
+			primary_uri = null;
+		
         source = das_source;
         if (init) {
             initSegments();
@@ -172,9 +180,9 @@ public final class Das2VersionedSource {
 
     /** Get regions from das server. */
 	private synchronized void initSegments() {
-		String region_request;
-		Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
-		region_request = segcap.getRootURI().toString();
+		String region_request = getRegionString(SEGMENTS_CAP_QUERY);
+		//Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
+		//region_request = segcap.getRootURI().toString();
 		try {
 			if (DEBUG) {
 				System.out.println("Das2 Segments Request: " + region_request);
@@ -245,8 +253,9 @@ public final class Das2VersionedSource {
 
         // how should xml:base be handled?
         //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
-        Das2Capability typecap = this.getCapability(TYPES_CAP_QUERY);
-        String types_request = typecap.getRootURI().toString();
+        //Das2Capability typecap = this.getCapability(TYPES_CAP_QUERY);
+        //String types_request = typecap.getRootURI().toString();
+		String types_request = getRegionString(TYPES_CAP_QUERY);
 
         try {
 					if (DEBUG) {
@@ -365,8 +374,9 @@ public final class Das2VersionedSource {
 		InputStream istr = null;
 		BufferedInputStream bis = null;
 		try {
-			Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
-			String request_root = featcap.getRootURI().toString();
+			//Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
+			//String request_root = featcap.getRootURI().toString();
+			String request_root = getRegionString(FEATURES_CAP_QUERY);
 			String nameglob = name;
 			if (URL_ENCODE_QUERY) {
 				nameglob = URLEncoder.encode(nameglob, UTF8);
@@ -400,5 +410,19 @@ public final class Das2VersionedSource {
 			GeneralUtils.safeClose(istr);
 		}
 		return null;
+	}
+
+	/**
+	 * If primary uri is null then load data from actual server.
+	 * @param type	Required das2capability type.
+	 * @return	Returns region string.
+	 */
+	private String getRegionString(String type){
+		if(primary_uri == null){
+			Das2Capability segcap = getCapability(type);
+			return segcap.getRootURI().toString();
+		}
+
+		return primary_uri.toString() + type + XML;
 	}
 }

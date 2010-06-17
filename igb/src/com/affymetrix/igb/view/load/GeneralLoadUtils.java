@@ -206,7 +206,8 @@ public final class GeneralLoadUtils {
 	 */
 	private static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
-		Map<String,DasSource> sources = server.getDataSources();
+		URL primaryURL = getServerDirectory(gServer.friendlyURL);
+		Map<String,DasSource> sources = server.getDataSources(primaryURL);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
 			return false;

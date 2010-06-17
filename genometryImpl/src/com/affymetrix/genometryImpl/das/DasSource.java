@@ -39,6 +39,7 @@ public final class DasSource {
 
 	private final URL server;
 	private final URL master;
+	private final URL primary;
 	private final String id;
 	private final Set<String> sources = new HashSet<String>();
 	private final Set<String> entry_points = new LinkedHashSet<String>();
@@ -47,10 +48,15 @@ public final class DasSource {
 	private boolean types_initialized = false;
 	private AnnotatedSeqGroup genome = null;	// lazily instantiate
 
-	DasSource(URL server, URL master) {
+	DasSource(URL server, URL master, URL primary){
 		this.server = server;
 		this.master = master;
+		this.primary = primary;
 		this.id = getID(master);
+	}
+
+	DasSource(URL server, URL master) {
+		this(server,master,null);
 	}
 
 	static String getID(URL master) {
@@ -98,8 +104,12 @@ public final class DasSource {
 	private synchronized void initEntryPoints() {
 		InputStream stream = null;
 		try {
-			URL entryURL = new URL(master, master.getPath() + "/entry_points");
-
+			URL entryURL;
+			if(primary == null)
+				entryURL = new URL(master, master.getPath() + "/entry_points");
+			else
+				entryURL = new URL(primary,id + "/entry_points.xml");
+			
 			System.out.println("Das Entry Request: " + entryURL);
 			stream = LocalUrlCacher.getInputStream(entryURL);
 			Document doc = XMLUtils.getDocument(stream);
@@ -153,12 +163,14 @@ public final class DasSource {
 	private boolean initType(String source) {
 		InputStream stream = null;
 		try {
+			URL loadURL = getLoadURL(server, source + "/types");
+
 			URL typesURL = new URL(server, source + "/types");
 			URL testMasterURL = new URL(master, master.getPath() + "/types");
-			System.out.println("Das Types Request: " + typesURL);
-			stream = LocalUrlCacher.getInputStream(typesURL);
+			System.out.println("Das Types Request: " + loadURL);
+			stream = LocalUrlCacher.getInputStream(loadURL);
 			if (stream == null) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request failed for " + typesURL + ", skipping");
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request failed for " + loadURL + ", skipping");
 				return false;
 			}
 			Document doc = XMLUtils.getDocument(stream);
@@ -191,6 +203,12 @@ public final class DasSource {
 		return true;
 	}
 
+	private URL getLoadURL(URL server, String query) throws MalformedURLException{
+		if(primary == null)
+			return new URL(server,query);
+		return new URL(primary, query + ".xml");
+	}
+	
 	/**
 	 * Custom equals for URLs since the default implementation will do a DNS lookup
 	 * on both URLs.

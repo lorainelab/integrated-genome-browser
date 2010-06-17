@@ -31,6 +31,7 @@ public final class DasServerInfo {
 	private static final boolean REPORT_SOURCES = false;
 	private static final boolean REPORT_CAPS = true;
 	private URL serverURL;
+	private URL primaryURL;
 	private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 
@@ -56,11 +57,29 @@ public final class DasServerInfo {
 		return serverURL;
 	}
 
-	public Map<String, DasSource> getDataSources() {
+	public Map<String, DasSource> getDataSources(URL primaryURL) {
+
+		if(primaryURL != null){
+			try {
+				String primary_string = primaryURL.toExternalForm();
+				if (!primary_string.endsWith("/")) {
+					primary_string += "/";
+				}
+				this.primaryURL = new URL(primary_string);
+			} catch (MalformedURLException ex) {
+				Logger.getLogger(DasServerInfo.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}else
+			this.primaryURL = primaryURL;
+		
 		if (!initialized) {
 			initialize();
 		}
 		return sources;
+	}
+
+	public Map<String, DasSource> getDataSources() {
+		return getDataSources(null);
 	}
 
 	/**
@@ -71,9 +90,9 @@ public final class DasServerInfo {
 	private void initialize() {
 		InputStream stream = null;
 		try {
-			System.out.println("Das Request: " + serverURL);
+			System.out.println("Das Request: " + getLoadURL());
 			Map<String, List<String>> headers = new HashMap<String, List<String>>();
-			stream = LocalUrlCacher.getInputStream(serverURL, true, null, headers);
+			stream = LocalUrlCacher.getInputStream(getLoadURL(), true, null, headers);
 
 			List<String> list;
 			String das_version = "";
@@ -108,7 +127,7 @@ public final class DasServerInfo {
 					parseDSNElement(dsn);
 				} catch (Exception ex) {
 					// log and continue with remainder of parsing.
-					System.out.println("Error initializing DAS server info for\n" + serverURL);
+					System.out.println("Error initializing DAS server info for\n" + getLoadURL());
 					ex.printStackTrace();
 				}
 			}
@@ -152,7 +171,7 @@ public final class DasServerInfo {
 			}
 			DasSource das_source = sources.get(DasSource.getID(masterURL));
 			if (das_source == null) {
-				das_source = new DasSource(serverURL, masterURL);
+				das_source = new DasSource(serverURL, masterURL, primaryURL);
 				sources.put(DasSource.getID(masterURL), das_source);
 			}
 			das_source.add(sourceid);
@@ -162,5 +181,12 @@ public final class DasServerInfo {
 		if (REPORT_SOURCES) {
 			System.out.println("sourceid = " + sourceid + ", mapmaster = " + master_url);
 		}
+	}
+
+	private URL getLoadURL() throws MalformedURLException{
+		if(primaryURL == null)
+			return serverURL;
+
+		return new URL(primaryURL.toExternalForm() +"/dsn.xml");
 	}
 }

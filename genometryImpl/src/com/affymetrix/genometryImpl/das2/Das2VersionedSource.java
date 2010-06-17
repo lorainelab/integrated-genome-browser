@@ -34,7 +34,7 @@ public final class Das2VersionedSource {
     public static final String TYPES_CAP_QUERY = "types";
     public static final String FEATURES_CAP_QUERY = "features";
 	private static final String XML = ".xml";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;

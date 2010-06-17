@@ -21,12 +21,13 @@ import java.util.logging.Logger;
 import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 
 public final class Das2ServerInfo  {
-  private static boolean DEBUG_SOURCES_QUERY = true;
+  private static boolean DEBUG_SOURCES_QUERY = false;
 	private final URI server_uri;
 	private URI primary_uri;
 	private final String name;
@@ -200,7 +201,7 @@ public final class Das2ServerInfo  {
 		if(primary_uri == null){
 			return query;
 		}
-		return query+XML;
+		return query+Constants.GENOME_SEQ_ID+XML;
 	}
 	
 	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then

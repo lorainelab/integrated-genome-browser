@@ -30,13 +30,17 @@ import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -58,6 +63,8 @@ import java.util.logging.Logger;
 public final class GeneralLoadUtils {
 	private static final boolean DEBUG = false;
 	private static final boolean DEBUG_VIRTUAL_GENOME = false;
+
+	private static final Pattern tab_regex = Pattern.compile("\t");
 	/**
 	 *  using negative start coord for virtual genome chrom because (at least for human genome)
 	 *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
@@ -67,6 +74,7 @@ public final class GeneralLoadUtils {
 
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
+	public static final String SERVER_MAPPING = "/serverMapping.txt";
 
 	/**
 	 * Location of synonym file for correlating versions to species.
@@ -107,7 +115,7 @@ public final class GeneralLoadUtils {
 		}
 	}
 	
-
+	private static Map<URL,URL> servermapping = new HashMap<URL,URL>();
 	/**
 	 * Add specified server, finding species and versions associated with it.
 	 * @param serverName
@@ -725,5 +733,48 @@ public final class GeneralLoadUtils {
 
 	static String getSpeciesCommonName(String speciesName) {
 		return SPECIES_LOOKUP.getCommonSpeciesName(speciesName);
+	}
+
+	public static void loadServerMapping() {
+		InputStream istr = null;
+		InputStreamReader ireader = null;
+		BufferedReader br = null;
+		GenericServer primaryServer = ServerList.getPrimaryServer();
+
+		if (primaryServer != null) {
+			try {
+				try {
+					istr = LocalUrlCacher.getInputStream(primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
+				} catch (Exception e) {
+					System.out.println("ERROR: Couldn't open '" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING + "\n:  " + e.toString());
+					istr = null; // dealt with below
+				}
+				if (istr == null) {
+					System.out.println("Could not load server mapping contents from\n" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
+					return;
+				}
+				ireader = new InputStreamReader(istr);
+				br = new BufferedReader(ireader);
+				String line;
+				while ((line = br.readLine()) != null) {
+					if ((line.length() == 0) || line.startsWith("#")) {
+						continue;
+					}
+
+					String[] fields = tab_regex.split(line);
+					if(fields.length >= 2){
+						URL serverURL = new URL(fields[0]);
+						URL dirURL = new URL(primaryServer.URL + fields[1]);
+						servermapping.put(serverURL, dirURL);
+					}
+				}
+			} catch (Exception ex) {
+				ErrorHandler.errorPanel("ERROR", "Error loading server mapping", ex);
+			} finally {
+				GeneralUtils.safeClose(istr);
+				GeneralUtils.safeClose(ireader);
+				GeneralUtils.safeClose(br);
+			}
+		}
 	}
 }

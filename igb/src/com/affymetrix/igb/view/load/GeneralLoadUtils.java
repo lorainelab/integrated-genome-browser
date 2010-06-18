@@ -780,9 +780,9 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * //Get directory url on cached server from server mapping.
+	 * Get directory url on cached server from servermapping map.
 	 * @param url	URL of the server.
-	 * @return	Returns a directory exists else null.
+	 * @return	Returns a directory if exists else null.
 	 */
 	private static URL getServerDirectory(URL url){
 		GenericServer primaryServer = ServerList.getPrimaryServer();

@@ -47,10 +47,15 @@ C_savignyi_Apr_2003	cioSav1
 D_melanogaster_Apr_2004	Drosophila_Apr_2004	BDGP Release 4	dm2	dm:Apr_2004	Dm:Apr_2004	Dm:R4	Dm:BDGPv4	Dm;BDGPv4	Dm:BDGPv4h	Dm;BDGPv4h
 D_melanogaster_Apr_2006	Drosophila_Apr_2006	BDGP Release 5	dm3	dm:Apr_2006	Dm:Apr_2006	Dm:R5	Dm:BDGPv5	Dm;BDGPv5	Dm:BDGPv5h	Dm;BDGPv5h
 D_melanogaster_Jan_2003	Drosophila_Jan_2003	Drosophila jan2003	dm1		dm:Jan_2003	Dm:Jan_2003	Dm:R3	Dm:BDGPv3	Dm;BDGPv3
+D_novemcinctus_Jul_2008	dasNov2	Dasypus_novemcinctus.dasNov2.reference
+D_ordii_Jul_2008	dipOrd1	Dipodomys_ordii.dipOrd1.reference
 D_rerio_Dec_2008	danRer6	Zv8	Zebrafish_Dec_2008
+Danio_rerio.Zv8.reference
 D_rerio_Jul_2007	danRer5	Zv7	Zebrafish_Jul_2007
 D_rerio_Mar_2006	danRer4	Zv6	Zebrafish_Mar_2006
 D_rerio_May_2005	danRer3	Zv5	Zebrafish_May_2005
+D_sechellia_Oct_2005	droSec1
+D_simulans_Apr_2005	droSim1
 G_gallus_May_2006	galGal3	Chicken_May_2006
 G_gorilla_Aug_2009	gorGor2
 G_gorilla_Oct_2008	gorGor1

@@ -71,6 +71,18 @@ public final class Das2ServerInfo  {
 	public String toString() { return name; }
 
 	public synchronized Map<String, Das2Source> getSources(URL primary_url) {
+
+		if(this.primary_uri == null){
+			setPrimaryURL(primary_url);
+		}
+
+		if (!initialized) {
+			initialize();
+		}
+		return sources;
+	}
+
+	private void setPrimaryURL(URL primary_url) {
 		try {
 			if (primary_url != null) {
 				String primary_string = primary_url.toExternalForm();
@@ -79,15 +91,9 @@ public final class Das2ServerInfo  {
 				}
 				this.primary_uri = new URI(primary_string);
 			}
-
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.SEVERE, null, ex);
 		}
-
-		if (!initialized) {
-			initialize();
-		}
-		return sources;
 	}
 
 	public synchronized Map<String, Das2Source> getSources() {

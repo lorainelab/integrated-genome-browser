@@ -43,7 +43,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	public void init() {
 		this.servers.clear();
-		this.servers.addAll(ServerList.getAllServers());
+		this.servers.addAll(ServerList.getAllServersExceptCached());
 		this.fireTableDataChanged();
 	}
 

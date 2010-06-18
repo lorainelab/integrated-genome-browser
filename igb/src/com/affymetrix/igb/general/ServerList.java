@@ -78,6 +78,14 @@ public final class ServerList {
 		return url2server.values();
 	}
 
+	public static synchronized Collection<GenericServer> getAllServersExceptCached(){
+		Collection<GenericServer> servers = getAllServers();
+		GenericServer server = getPrimaryServer();
+		if(server != null)
+			servers.remove(server);
+		return servers;
+	}
+
 	public static GenericFeature findFeatureWithURI(URI uri) {
 		Set<GenericServer> serverSet = ServerList.getEnabledServers();
 		serverSet.add(ServerList.getLocalFilesServer());
@@ -331,7 +339,8 @@ public final class ServerList {
 	 * @param server GenericServer object of the server to add or update.
 	 */
 	public static void addServerToPrefs(GenericServer server) {
-		addServerToPrefs(server.URL, server.serverName, server.serverType);
+		if(!server.isPrimary())
+			addServerToPrefs(server.URL, server.serverName, server.serverType);
 	}
 
 	/**

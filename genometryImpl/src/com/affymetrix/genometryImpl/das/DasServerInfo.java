@@ -59,7 +59,18 @@ public final class DasServerInfo {
 
 	public Map<String, DasSource> getDataSources(URL primaryURL) {
 
-		if(primaryURL != null){
+		if(this.primaryURL == null){
+			setPrimaryURL(primaryURL);
+		}
+		
+		if (!initialized) {
+			initialize();
+		}
+		return sources;
+	}
+
+	private void setPrimaryURL(URL primaryURL) {
+		if (primaryURL != null) {
 			try {
 				String primary_string = primaryURL.toExternalForm();
 				if (!primary_string.endsWith("/")) {
@@ -69,13 +80,9 @@ public final class DasServerInfo {
 			} catch (MalformedURLException ex) {
 				Logger.getLogger(DasServerInfo.class.getName()).log(Level.SEVERE, null, ex);
 			}
-		}else
+		} else {
 			this.primaryURL = primaryURL;
-		
-		if (!initialized) {
-			initialize();
 		}
-		return sources;
 	}
 
 	public Map<String, DasSource> getDataSources() {

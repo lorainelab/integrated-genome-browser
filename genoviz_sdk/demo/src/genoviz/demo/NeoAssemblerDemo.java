@@ -142,8 +142,8 @@ public class NeoAssemblerDemo extends JApplet
 	Color nicePaleBlue = new Color(180, 250, 250);
 	AlignmentGlyph consglyph;
 
-	@Override
-		public void init() {
+
+		public void NeoAssemblerDemo() {
 
 			String param;
 
@@ -177,23 +177,27 @@ public class NeoAssemblerDemo extends JApplet
 		//if (isMemed)  { memcheck = new Memer(); }
 		//if (isTimed)  { tm = new Timer(); }
 
-		map = new NeoAssembler(use_internal_zoomer);
+		map = new NeoAssembler();
 		if (!use_internal_zoomer) {
 			hzoom = new JScrollBar(JScrollBar.HORIZONTAL);
 			map.setZoomer(NeoAssembler.X, hzoom);
 			zoomFrameSetup();
 		}
 
+
+		map.setBackground(nicePaleBlue);
 		map.setLabelsBackground(nicePaleBlue);
 		map.setDamageOptimized(optimize_damage);
 		map.setAutoSort(false);
-
+		map.setLabelWidth( 200 );
+		map.setSize(840, 200);
 		// Use the NeoAssembler's built-in selection methods.
 		map.setSelectionEvent(NeoAssembler.ON_MOUSE_DOWN);
 		//    map.setSelectionBehavior(map.SELECT_RESIDUES);
 		map.setSelectionBehavior(NeoAssembler.SELECT_RESIDUES);
 
 		assem = loadData();  // parses in data and populates assembly data model
+		map.setRange(0, assem.getLength()+1);
 		consensus = assem.getConsensus();
 		List aligns = assem.getAlignments();
 
@@ -204,7 +208,7 @@ public class NeoAssemblerDemo extends JApplet
 		if (show_half_first) {
 			//if (isTimed)  { tm.start(); }
 			int half = aligns.size()/2;
-			for (int i=1; i<half; i++) {
+			for (int i=1; i<2*half-1; i++) {
 				addNext();
 			}
 			//if (isTimed)  { tm.print(); }
@@ -212,9 +216,9 @@ public class NeoAssemblerDemo extends JApplet
 
 		//if (isMemed)  { memcheck.printMemory(); }
 
-		mapframe = new Frame("Genoviz NeoAssembler Demo");
-		setupMenus(mapframe);
-		mapframe.setLayout(new BorderLayout());
+//		mapframe = new Frame("Genoviz NeoAssembler Demo");
+//		setupMenus(mapframe);
+//		mapframe.setLayout(new BorderLayout());
 
 		/**
 		 *  All NeoWidgets in this release are lightweight components.
@@ -229,25 +233,26 @@ public class NeoAssemblerDemo extends JApplet
 		 */
 
 		Container cpane = this.getContentPane();
-		//cpane.setLayout(new BorderLayout());
-		cpane.add(map);
+		cpane.setLayout(new BorderLayout());
+		cpane.add("Center", this.map);
 		//cpane.add("North", xzoomer);
 		//cpane.add("West", yzoomer);
 		/*Panel map_pan;
 		map_pan = new NeoPanel();
 		map_pan.setLayout(new BorderLayout());
 		map_pan.add("Center", map);*/
-		mapframe.add(cpane);
+//		mapframe.add(map);
 
-		mapframe.setSize(pixel_width, pixel_height);
-		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
-		mapframe.setLocation((screen_size.width-pixel_width)/2,
-				(screen_size.height-pixel_height)/2);
-		mapframe.setVisible(true);//mapframe.show();
-
-		mapframe.addWindowListener(this);
+//		mapframe.setSize(pixel_width, pixel_height);
+//		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
+//		mapframe.setLocation((screen_size.width-pixel_width)/2,
+//				(screen_size.height-pixel_height)/2);
+//		mapframe.setVisible(true);//mapframe.show();
+//
+//		mapframe.addWindowListener(this);
 		map.addMouseListener(this);
 		map.addRangeListener(this);
+		cpane.setVisible(true);
 	}
 
 
@@ -513,6 +518,7 @@ public class NeoAssemblerDemo extends JApplet
 		URL seq_URL = null, align_URL = null;
 		try {
 			seq_URL = new URL(this.getDocumentBase(), getParameter("seq_file"));
+			System.out.println(seq_URL);
 			align_URL = new URL(this.getDocumentBase(), getParameter("map_file"));
 		}
 		catch(Exception ex) {
@@ -1075,11 +1081,11 @@ public class NeoAssemblerDemo extends JApplet
 		parameters.put("map_file","data/test-assembly.data");
 		me.init();
 		me.start();
-		/*JFrame frm = new JFrame("GenoViz NeoAssembler Demo");
+		JFrame frm = new JFrame("GenoViz NeoAssembler Demo");
 		frm.getContentPane().add("Center", me);
 		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frm.pack();
 		frm.setBounds(20, 40, 900, 400);
-		frm.setVisible(true);*/
+		frm.setVisible(true);
 	}
 }

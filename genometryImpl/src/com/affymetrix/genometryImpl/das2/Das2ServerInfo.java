@@ -172,7 +172,7 @@ public final class Das2ServerInfo  {
 			parseSources(doc.getElementsByTagName("SOURCE"), das_query);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			LocalUrlCacher.invalidateCacheFile(das_query);
+			LocalUrlCacher.invalidateCacheFile(getQueryFor(das_query));
 			return false;   // not successfully initialized if there was an exception.
 		} finally {
 			GeneralUtils.safeClose(response);

@@ -75,14 +75,14 @@ public abstract class SeqUtils {
 	}
 
 	public static final void collectLeafSpans(SeqSymmetry sym, BioSeq seq, Boolean isForward, Collection<SeqSpan> leafs) {
-		if (sym.getChildCount() == 0) {
+		int childCount = sym.getChildCount();
+		if (childCount == 0) {
 			SeqSpan span = sym.getSpan(seq);
 			if (span != null && span.isForward() == isForward) {
 				leafs.add(span);
 			}
 		}
 		else  {
-			int childCount = sym.getChildCount();
 			for (int i=0; i<childCount; i++) {
 				collectLeafSpans(sym.getChild(i), seq, isForward, leafs);
 			}
@@ -90,14 +90,14 @@ public abstract class SeqUtils {
 	}
 
 	public static final void collectLeafSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
-		if (sym.getChildCount() == 0) {
+		int childCount = sym.getChildCount();
+		if (childCount == 0) {
 			SeqSpan span = sym.getSpan(seq);
 			if (span != null) {
 				leafs.add(span);
 			}
 		}
 		else  {
-			int childCount = sym.getChildCount();
 			for (int i=0; i<childCount; i++) {
 				collectLeafSpans(sym.getChild(i), seq, leafs);
 			}
@@ -111,11 +111,11 @@ public abstract class SeqUtils {
 	}
 
 	private static final void collectLeafSyms(SeqSymmetry sym, Collection<SeqSymmetry> leafs) {
-		if (sym.getChildCount() == 0) {
+		int childCount = sym.getChildCount();
+		if (childCount == 0) {
 			leafs.add(sym);
 		}
 		else  {
-			int childCount = sym.getChildCount();
 			for (int i=0; i<childCount; i++) {
 				collectLeafSyms(sym.getChild(i), leafs);
 			}
@@ -419,13 +419,12 @@ public abstract class SeqUtils {
 	public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqSymmetry mapSym,
 			boolean src2dst_recurse) {
 		// is resultSym leaf?  no
-		if (resultSym.getChildCount() > 0) {
-			int resChildCount = resultSym.getChildCount();
+		int resChildCount = resultSym.getChildCount();
+		if (resChildCount > 0) {
 			for (int child_index = 0; child_index < resChildCount; child_index++) {
 				MutableSeqSymmetry childResSym = (MutableSeqSymmetry) resultSym.getChild(child_index);
 				transformSymmetry(childResSym, mapSym, src2dst_recurse);
 			}
-			//
 			addParentSpans(resultSym, mapSym);
 			return true;
 		}

@@ -35,7 +35,7 @@ import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.symloader.QuickLoad;
-import com.affymetrix.igb.view.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
 import java.io.IOException;

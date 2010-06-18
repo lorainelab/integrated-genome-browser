@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.view;
+package com.affymetrix.genometryImpl.quickload;
 
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;

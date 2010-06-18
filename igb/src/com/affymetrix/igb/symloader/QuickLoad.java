@@ -29,7 +29,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.view.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;

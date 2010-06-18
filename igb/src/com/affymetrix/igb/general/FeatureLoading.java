@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.view.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.net.URL;
 import java.util.ArrayList;

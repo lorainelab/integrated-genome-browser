@@ -24,6 +24,8 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static com.affymetrix.genometryImpl.util.Constants.UTF8;
 
 import org.xml.sax.InputSource;
@@ -253,16 +255,13 @@ public final class Das2VersionedSource {
 
         // how should xml:base be handled?
         //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
-        //Das2Capability typecap = this.getCapability(TYPES_CAP_QUERY);
-        //String types_request = typecap.getRootURI().toString();
 		String types_request = getRegionString(TYPES_CAP_QUERY);
+		InputStream response = null;
 
         try {
-					if (DEBUG) {
-						System.out.println("Das2 Types Request: " + types_request);
-					}
+					Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Das2 Types Request: " + types_request);
 					Map<String, String> headers = new LinkedHashMap<String, String>();
-					InputStream response;
+					
 					//set in header a sessionId for types authentication?
 					//Also, if there is a sessionId then should ignore cache so user can get hidden types
 					String sessionId = source.getServerInfo().getSessionId();
@@ -270,13 +269,12 @@ public final class Das2VersionedSource {
 						headers.put("sessionId", sessionId);
 						//if sessionID then connected so ignore cache
 						response = LocalUrlCacher.getInputStream(types_request, LocalUrlCacher.IGNORE_CACHE, false, headers);
-					} //get input stream
+					}
 					else {
-						// don't cache this!  If the file is corrupted, this can hose the IGB instance until the cache and preferences are cleared.
-						response = LocalUrlCacher.getInputStream(types_request, false, headers);           
+						response = LocalUrlCacher.getInputStream(types_request, true, headers);
 					}
 					if (response == null) {
-						System.out.println("Types request " + types_request + " was not reachable.");
+						Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request " + types_request + " was not reachable.");
 						return;
 					}
 					Document doc = XMLUtils.getDocument(response);
@@ -284,15 +282,13 @@ public final class Das2VersionedSource {
 
 					getTypeList(typelist, types_request);
 
-					if (DEBUG) {
-						System.out.println("Out of Das2 Types Request: " + types_request);
-					}
+					Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Out of Das2 Types Request: " + types_request);
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 					LocalUrlCacher.invalidateCacheFile(types_request);
-					// TODO
-					//ErrorHandler.errorPanel("Error initializing DAS2 types for\n" + types_request, ex);
-        }
+        } finally {
+			GeneralUtils.safeClose(response);
+		}
         //TODO should types_initialized be true after an exception?
         types_initialized = true;
     }

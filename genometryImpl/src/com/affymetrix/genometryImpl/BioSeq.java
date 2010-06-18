@@ -431,7 +431,7 @@ public final class BioSeq implements SearchableCharIterator {
 	 *  @param fillchar  Character to use for missing residues;
 	 *     warning: this parameter is used only if {@link #getResiduesProvider()} is null.
 	 */
-	public String getResidues(int start, int end, char fillchar) {
+	private String getResidues(int start, int end, char fillchar) {
 		if (residues_provider == null) {
 			return getResiduesNoProvider(start, end, '-');
 		}
@@ -545,7 +545,6 @@ public final class BioSeq implements SearchableCharIterator {
 		}
 	}
 	public void setResidues(String residues) {
-		if (DEBUG)  { System.out.println("**** called SimpleCompAnnotBioSeq.setResidues()"); }
 		if (residues.length() != this.length) {
 			System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() +
 					", seq = " + this.length + " ****");

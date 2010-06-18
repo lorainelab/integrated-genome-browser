@@ -45,13 +45,6 @@ public interface IGBConstants {
 	public static final String DEFAULT_PREFS_API_RESOURCE = "/igb_default_APIprefs.xml";
 	public static final String default_prefs_resource = "/igb_default_prefs.xml";
 
-	//QuickLoad filenames
-	public static final String contentsTxt = "contents.txt";
-	public static final String annotsTxt = "annots.txt";
-	public static final String annotsXml = "annots.xml";
-	public static final String liftAllLft = "liftAll.lft";
-	public static final String modChromInfoTxt = "mod_chromInfo.txt";
-
 	public static final String UTF8 = "UTF-8";
 
 	public final static String GENOME_SEQ_ID = Constants.GENOME_SEQ_ID;

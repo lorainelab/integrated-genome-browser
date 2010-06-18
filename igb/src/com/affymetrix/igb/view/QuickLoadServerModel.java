@@ -19,10 +19,10 @@ import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
+import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.*;
 import java.net.URL;
@@ -193,8 +193,8 @@ public final class QuickLoadServerModel {
 		List<AnnotMapElt> annotList = new ArrayList<AnnotMapElt>();
 		genome2annotsMap.put(genome_name, annotList);
 
-		return processAnnotsXml(genome_root + IGBConstants.annotsXml, annotList) ||
-				processAnnotsTxt(genome_root + IGBConstants.annotsTxt, annotList);
+		return processAnnotsXml(genome_root + Constants.annotsXml, annotList) ||
+				processAnnotsTxt(genome_root + Constants.annotsTxt, annotList);
 
 	}
 
@@ -266,8 +266,8 @@ public final class QuickLoadServerModel {
 	}
 
 	private boolean loadSeqInfo(String genome_name) {
-		String liftAll = IGBConstants.liftAllLft;
-		String modChromInfo = IGBConstants.modChromInfoTxt;
+		String liftAll = Constants.liftAllLft;
+		String modChromInfo = Constants.modChromInfoTxt;
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
 		String genome_root = getLoadURL() + genome_name + "/";
@@ -318,7 +318,7 @@ public final class QuickLoadServerModel {
 	}
 
 	private synchronized void loadGenomeNames() {
-		String contentsTxt = IGBConstants.contentsTxt;
+		String contentsTxt = Constants.contentsTxt;
 		InputStream istr = null;
 		InputStreamReader ireader = null;
 		BufferedReader br = null;

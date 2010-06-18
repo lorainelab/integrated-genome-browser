@@ -23,17 +23,20 @@ class ENSEMBLoader extends BrowserLoader {
 	
 
 	static {
-		dbmap.put("mm9", new EnsemblURL("http://may2010.archive.ensembl.org/Mus_musculus","http://may2010.archive.ensembl.org"));
-		dbmap.put("hg19",new EnsemblURL("http://may2010.archive.ensembl.org/Homo_sapiens","http://may2010.archive.ensembl.org"));
-		dbmap.put("dm3", new EnsemblURL("http://may2010.archive.ensembl.org/Drosophila_melanogaster","http://may2010.archive.ensembl.org"));
+		dbmap.put("mm9", new EnsemblURL("http://may2010.archive.ensembl.org/Mus_musculus"));
+		dbmap.put("hg19",new EnsemblURL("http://may2010.archive.ensembl.org/Homo_sapiens"));
+		dbmap.put("dm3", new EnsemblURL("http://may2010.archive.ensembl.org/Drosophila_melanogaster"));
 	}
 
 	public static String getUrlForView(Loc loc, int pixWidth) {
 		if (!dbmap.containsKey(loc.db)) {
 			return "Error: could not transpose the genome " + loc.db + " for ENSEMBL";
 		}
+		if( loc.length() >= 100000){
+			return "Error: the selected region is too large (>100000)";
+		}
 		String chr = loc.chr.replaceAll("chr", "");
-		String url = dbmap.get(loc.db).url + "/Location/View?r=" + chr + ":" + loc.start + "-" + loc.end;
+		String url = dbmap.get(loc.db).url + "/Location/View?r=" + chr + ":" + (loc.start+1) + "-" + loc.end; //ensembl = 1 based
 		Logger.getLogger(ENSEMBLoader.class.getName()).log(Level.FINE, "url was : " + url);
 		return url;
 	}
@@ -61,7 +64,7 @@ class ENSEMBLoader extends BrowserLoader {
 			if(session != null && !session.equals("")){
 				cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
 			}
-			url = getImageUrl(url, cookie, new ENSEMBLURLFinder(dbmap.get(loc.db).host));
+			url = getImageUrl(url, cookie, new ENSEMBLURLFinder());
 			if (url.startsWith("http")) {
 				try {
 					return new ImageError(ImageIO.read(new URL(url)),"");
@@ -79,18 +82,15 @@ class ENSEMBLoader extends BrowserLoader {
  * ENSEMBL likes to change the ids of the elments quite often
  * e.g. sep2009 id = "BottomViewPanel" -> may2010 id ="contigviewbottom"
  *
- * 
+ * the panelPattern could be part of the ensemblurl and passed into the constructor to be
+ * more flexible and allow other ensembl versions
  *
  */
 class ENSEMBLURLFinder implements URLFinder {
 	private final static Pattern panelPattern = Pattern.compile("id=\"contigviewbottom\"");
 	private final static Pattern imagePattern = Pattern.compile("img-tmp(.*png)");
-	private final String url;
-	public ENSEMBLURLFinder(String url){
-		this.url = url;
-	}
 
-	public String findUrl(BufferedReader reader) throws IOException {
+	public String findUrl(BufferedReader reader, URL redirectedURL) throws IOException {
 		String inputLine = "";
 		boolean panel = false;
 		while ((inputLine = reader.readLine()) != null) {
@@ -102,7 +102,7 @@ class ENSEMBLURLFinder implements URLFinder {
 				if (m.find()) {
 					Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "found fileName " + inputLine);
 					String fileName = m.group(1);
-					return url + "/img-tmp" + fileName;
+					return "http://"+redirectedURL.getHost() + "/img-tmp" + fileName;
 				}
 			}
 		}
@@ -112,10 +112,8 @@ class ENSEMBLURLFinder implements URLFinder {
 
 class EnsemblURL {
 	final String url;
-	final String host;
-	EnsemblURL(String url, String host){
+	EnsemblURL(String url){
 		this.url = url;
-		this.host = host;
 	}
 }
 

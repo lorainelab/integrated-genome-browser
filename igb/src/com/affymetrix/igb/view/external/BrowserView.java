@@ -38,7 +38,7 @@ public abstract class BrowserView extends JPanel {
 	private final Map<String, String> cookieMap = new HashMap<String, String>();
 	private final JButton update_button = new JButton("update");
 	private final JButton settingsButton = new JButton("settings");
-	private final BrowserImage browserImage = new BrowserImage();
+	private BrowserImage browserImage = new BrowserImage();
 	private final JScrollPane scroll = new JScrollPane();
 
 
@@ -109,7 +109,9 @@ public abstract class BrowserView extends JPanel {
 					public void done() {
 						try {
 							Image image = get();
+							browserImage = new BrowserImage();
 							browserImage.setImage(image);
+							scroll.setViewportView(browserImage);
 						} catch (InterruptedException ignore) {
 						} catch (CancellationException ignore) {
 						} catch (java.util.concurrent.ExecutionException e) {

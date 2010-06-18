@@ -41,7 +41,7 @@ public class UCSCLoader extends BrowserLoader {
 
 	class UCSCURLFinder implements URLFinder {
 
-		public String findUrl(BufferedReader reader) throws IOException {
+		public String findUrl(BufferedReader reader, URL redirectedUrl) throws IOException {
 			String inputLine = "";
 			while ((inputLine = reader.readLine()) != null) {
 				Matcher m = fileNamePattern.matcher(inputLine);

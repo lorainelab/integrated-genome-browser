@@ -8,16 +8,9 @@ public class Loc {
 	private static final Pattern ucscPattern = Pattern.compile("db=(\\w+)&position=(\\w+):(\\d+)-(\\d+)");
 	final String db;
 	final String chr;
-	final String start;
-	final String end;
+	final int start;
+	final int end;
 	Loc(String db, String chromosome, int start, int end){
-		this.db = db;
-		this.chr = chromosome;
-		this.start = Integer.toString(start);
-		this.end = Integer.toString(end);
-	}
-
-	Loc(String db, String chromosome, String start, String end){
 		this.db = db;
 		this.chr = chromosome;
 		this.start = start;
@@ -29,6 +22,10 @@ public class Loc {
 		return db+"\t"+chr+":"+start+"-"+end;
 	}
 
+	public int length(){
+		return (end - start);
+	}
+
 	public static Loc fromUCSCQuery(String ucscQuery){
 		Matcher m = ucscPattern.matcher(ucscQuery);
 		if(m.matches()){
@@ -36,10 +33,10 @@ public class Loc {
 			String chr = m.group(2);
 			String start = m.group(3);
 			String end = m.group(4);
-			return new Loc(db,chr,start, end);
+			return new Loc(db,chr,Integer.parseInt(start),Integer.parseInt(end));
 		}
 		else{
-			return new Loc("","","","");
+			return new Loc("","",0,0);
 		}
 	}
 }

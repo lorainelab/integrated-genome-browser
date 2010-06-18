@@ -2,6 +2,7 @@ package com.affymetrix.igb.view.external;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Parses a html page for the image URL
@@ -10,5 +11,5 @@ import java.io.IOException;
  */
 public interface URLFinder {
 
-	public String findUrl(BufferedReader reader) throws IOException;
+	public String findUrl(BufferedReader reader, URL url) throws IOException;
 }

@@ -11,8 +11,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,6 +47,33 @@ public abstract class BrowserLoader {
 
 	abstract public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies);
 
+	/***
+	 * we  check for one level of redirection
+	 * @param url
+	 * @param cookie
+	 * @return
+	 */
+	public HttpURLConnection getConnection(String url, String cookie) throws IOException {
+		HttpURLConnection.setFollowRedirects(false);
+		HttpURLConnection request_con = null;
+		URL request_url = null;
+		request_url = new URL(url);
+		request_con = (HttpURLConnection) request_url.openConnection();
+		request_con.setConnectTimeout(120 * 1000); //2min
+		request_con.setUseCaches(false);
+		request_con.addRequestProperty("Cookie", cookie);
+		if (request_con.getResponseCode() == 301) {
+			String newloc = request_con.getHeaderField("Location");
+			request_con.disconnect();
+			request_url = new URL(newloc);
+			request_con = (HttpURLConnection) request_url.openConnection();
+			request_con.setConnectTimeout(120 * 1000); //2min
+			request_con.setUseCaches(false);
+			request_con.addRequestProperty("Cookie", cookie);
+		}
+		return request_con;
+	}
+
 	/**
 	 *
 	 * @param url the UCSC genome/region url
@@ -51,23 +81,18 @@ public abstract class BrowserLoader {
 	 * @return url of the image of the region
 	 */
 	public String getImageUrl(String url, String cookie, URLFinder urlfinder) {
-		URL request_url = null;
 		HttpURLConnection request_con = null;
 		InputStream input_stream = null;
 		BufferedReader in = null;
 		try {
-			request_url = new URL(url);
-			request_con = (HttpURLConnection) request_url.openConnection();
-			request_con.setConnectTimeout(120 * 1000); //2min
-			request_con.setUseCaches(false);
-			request_con.addRequestProperty("Cookie", cookie);
+			request_con = getConnection(url, cookie);
 			input_stream = request_con.getInputStream();
 			in = new BufferedReader(new InputStreamReader(input_stream));
-			return urlfinder.findUrl(in);
+			return urlfinder.findUrl(in, request_con.getURL());
 
 		} catch (SocketException e) {
 			Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);
-			return ("Error: the Server was not able to return the answer in the appropriate time");
+			return ("Error: the server was not able to return the answer in the appropriate time");
 		} catch (IOException e) {
 			Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, null, e);
 			return ("Error: " + e.getMessage());

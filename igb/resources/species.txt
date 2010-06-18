@@ -24,17 +24,17 @@ Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
 Dasypus novemcinctus	Nine-banded armadillo	D_novemcinctus		Dasypus_novemcinctus
-Drosophila ananassae	D_ananassae	droAna
-Drosophila erecta	D_erecta	droEre
-Drosophila grimshawi	D_grimshawi	droGri
+Drosophila ananassae	D. ananassae (fruit fly)	D_ananassae	droAna
+Drosophila erecta	D. erecta (fruit fly)	D_erecta	droEre
+Drosophila grimshawi	D. grimshawi (fruit fly)	D_grimshawi	droGri
 Drosophila melanogaster	Common fruit fly	D. melanogaster	D_melanogaster	dm	Drosophila_melanogaster
-Drosophila mojavensis	D_mojavensis	droMoj
-Drosophila persimilis	D_persimilis	droPer
-Drosophila pseudoobscura	D_pseudoobscura	dp
-Drosophila sechellia	D_sechellia	droSec
-Drosophila simulans	D_simulans	droSim
-Drosophila virilis	D_virilis	droVir
-Drosophila yakuba	D_yakuba	droYak
+Drosophila mojavensis	D. mojavensis (fruit fly)	D_mojavensis	droMoj
+Drosophila persimilis	D. persimilis (fruit fly)	D_persimilis	droPer
+Drosophila pseudoobscura	D. pseudoobscura (fruit fly)	D_pseudoobscura	dp
+Drosophila sechellia	D. sechelia (fruit fly)	D_sechellia	droSec
+Drosophila simulans	D. simulans (fruit fly)	D_simulans	droSim
+Drosophila virilis	D. virilis (fruit fly)	D_virilis	droVir
+Drosophila yakuba	D. yakuba (fruit fly)	D_yakuba	droYak
 Dipodomys ordii	Kangaroo rat	D_ordii	dipOrd	Dipodomys_ordii
 Echinops telfairi	Lesser hedgehog tenrec	E_telfairi		Echinops_telfairi
 Equus caballus	Horse	E_caballus	equCab	Equus_caballus

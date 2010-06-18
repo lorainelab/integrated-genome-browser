@@ -35,7 +35,7 @@ public final class QuickLoadServerModel {
 
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	private static final Pattern tab_regex = Pattern.compile("\t");
-	private String root_url;
+	private final String root_url;
 	private final List<String> genome_names = new ArrayList<String>();
 	private final Map<String, Boolean> genome2init = new HashMap<String, Boolean>();
 	// A map from String genome name to a Map of (typeName,fileName) on the server for that group
@@ -43,16 +43,23 @@ public final class QuickLoadServerModel {
 	private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
 	private final String primary_url;
 
+
+	public QuickLoadServerModel(String url) {
+		this(url, null);
+	}
+
 	/**
 	 * Initialize quickload server model for given url.
 	 * @param url	server url.
 	 * @param loadGenome	boolean to check if genomes should be loaded from server.
 	 */
 	private QuickLoadServerModel(String url, String pri_url) {
-		root_url = url;
-		if (!root_url.endsWith("/")) {
-			root_url = root_url + "/";
+		
+		if (!url.endsWith("/")) {
+			url = url + "/";
 		}
+
+		root_url = url;
 
 		if (pri_url != null) {
 			if(!pri_url.endsWith("/")){
@@ -62,7 +69,6 @@ public final class QuickLoadServerModel {
 
 		primary_url = pri_url;
 
-		
 		loadGenomeNames();
 	}
 

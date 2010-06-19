@@ -1,5 +1,8 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2Source;
+import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.io.BufferedReader;
@@ -11,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,16 +31,18 @@ public class CacheScript {
 	
 	
 	private static boolean processQuickLoad(GenericServer gServer){
+		String serverCachePath = path+gServer.serverName;
+		MakeDir(serverCachePath);
 
 		//Get file file and move it to preferred location.
 		File file = getFile(gServer.URL+Constants.contentsTxt);
 		Set<String> genome_names = processContentTxt(file);
-		if(!MoveFileTo(file,Constants.contentsTxt,path))
+		if(!MoveFileTo(file,Constants.contentsTxt,serverCachePath))
 			return false;
 
 		for(String genome_name : genome_names){
 			String server_path = gServer.URL + "/" + genome_name;
-			String local_path = path+genome_name;
+			String local_path = serverCachePath+ "/" + genome_name;
 			MakeDir(local_path);
 
 			getAllQuickLoadFiles(server_path,local_path);
@@ -124,7 +130,45 @@ public class CacheScript {
 	}
 
 	private static boolean processDas2Server(GenericServer gServer){
-		return false;
+		String serverCachePath = path+gServer.serverName;
+		MakeDir(serverCachePath);
+
+		File file = getFile(gServer.URL);
+		MoveFileTo(file, "genome.xml", serverCachePath);
+		
+		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
+		Map<String,Das2Source> sources = serverInfo.getSources();
+		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
+			System.out.println("WARNING: Couldn't find species for server: " + gServer);
+			return false;
+		}
+		for (Das2Source source : sources.values()) {
+			// Das/2 has versioned sources.  Get each version.
+			for (Das2VersionedSource versionSource : source.getVersions().values()) {
+				String serverPath = gServer.URL + "/" + versionSource.getName();
+				String localPath = serverCachePath + "/" + versionSource.getName();
+				MakeDir(localPath);
+
+				getAllDas2Files(serverPath,localPath);
+
+			}
+		}
+
+		return true;
+	}
+
+	private static void getAllDas2Files(String server_path,String local_path){
+		File file;
+		final Set<String> Das2Files = new HashSet<String>();
+
+		Das2Files.add(Das2VersionedSource.TYPES_CAP_QUERY);
+		Das2Files.add(Das2VersionedSource.SEGMENTS_CAP_QUERY);
+		Das2Files.add(Das2VersionedSource.FEATURES_CAP_QUERY);
+	
+		for(String fileName : Das2Files){
+			file = getFile(server_path+"/"+fileName);
+			MoveFileTo(file,fileName+".xml",local_path);
+		}
 	}
 
 	private static boolean processDasServer(GenericServer gServer){
@@ -163,7 +207,26 @@ public class CacheScript {
 												 ServerType.QuickLoad,			 //Server type
 												 true,							 //Enable
 												 null);				 //Server Object
+
 		processQuickLoad(gServer);
+
+		String bioviz_das2 = formatURL("http://bioviz.org/das2/genome", ServerType.DAS);
+		Das2ServerInfo serverInfo = null;
+		try {
+			serverInfo = new Das2ServerInfo(bioviz_das2, "Bioviz Das", true);
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		gServer = new GenericServer("Bioviz Das",
+									bioviz_das2,
+									ServerType.DAS2,
+									true,
+									serverInfo);
+		
+		processDas2Server(gServer);
+
+		
 	}
 
 }

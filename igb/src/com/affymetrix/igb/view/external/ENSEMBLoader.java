@@ -73,7 +73,7 @@ class ENSEMBLoader extends BrowserLoader {
 				}
 			}
 		}
-		return new ImageError(createErrorImage(url, pixWidth),"Error");
+		return new ImageError(createErrorImage(url, pixWidth), url);
 	}
 }
 

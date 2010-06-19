@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -137,9 +136,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			int desired_leaf_depth) {
 		int depth = getDepth(sym);
 		if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
-			for (int i = 0; i < sym.getChildCount(); i++) {
-				SeqSymmetry child = sym.getChild(i);
-				addLeafsToTier(child, ftier, rtier, desired_leaf_depth);
+			int childCount = sym.getChildCount();
+			for (int i = 0; i < childCount; i++) {
+				addLeafsToTier(sym.getChild(i), ftier, rtier, desired_leaf_depth);
 			}
 		} else {  // depth == desired_leaf_depth
 			addToTier(sym, ftier, rtier, (depth >= 2));
@@ -176,11 +175,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			// I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
 			IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
 
-
 			the_tier.addChild(determinePGlyph(
 					parent_and_child, insym, the_style, the_tier, pspan, map, sym, annotseq, coordseq));
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -405,21 +401,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		if (span == null) {
 			return startPos;
 		}
-		if (((SymWithProps) sym).getProperty("SEQ") != null) {
-			byte[] seqArr = (byte[])((SymWithProps) sym).getProperty("SEQ");
-			// SEQ property is set; don't need to look at individual residues
-			AlignedResidueGlyph csg = new AlignedResidueGlyph();
-			csg.setResidueMask(seqArr);
-			//csg.setShowBackground(false);
-			csg.setHitable(false);
-			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
-			if (isChild) {
-				pglyph.addChild(csg);
-			} else {
-				pglyph = csg;	// dispense with extra glyph, which is just overwritten when drawing.
-			}
-			return startPos;
-		}
+		AlignedResidueGlyph csg = null;
 		Object residues = ((SymWithProps) sym).getProperty("residues");
 		if (residues != null) {
 			String residueStr = residues.toString();
@@ -428,7 +410,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				residueStr = BAM.interpretCigar(cigar, residueStr, startPos, span.getLength());
 				startPos += residueStr.length();
 			}
-			AlignedResidueGlyph csg = new AlignedResidueGlyph();
+			csg = new AlignedResidueGlyph();
 			csg.setResidues(residueStr);
 			if (annotseq.getResidues(span.getStart(), span.getEnd()) != null) {
 				if (handleCigar) {
@@ -437,7 +419,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 					csg.setResidueMask(annotseq.getResidues(span.getMin(), span.getMax()));
 				}
 			}
-			//csg.setShowBackground(false);
 			csg.setHitable(false);
 			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
 			if (isChild) {
@@ -445,7 +426,18 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			} else {
 				pglyph = csg;	// dispense with extra glyph, which is just overwritten when drawing.
 			}
+
+			// SEQ array has unexpected behavior;  commenting out for now.
+			/*if (((SymWithProps) sym).getProperty("SEQ") != null) {
+				byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
+				for (int i = 0; i < seqArr.length; i++) {
+					System.out.print((char) seqArr[i]);
+				}
+				System.out.println();
+				csg.setResidueMask(seqArr);
+			}*/
 		}
+
 		return startPos;
 	}
 }

@@ -142,16 +142,17 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 	}
 
 	public void setResidueMask(byte[] SEQ) {
-		String SEQStr = new String(SEQ).toLowerCase();
-		for (int i = 0; i < SEQ.length; i++) {
-			residueMask.set(i, SEQ[i] != '=');
+		char[] seqArr = new String(SEQ).toLowerCase().toCharArray();
+		char[] displayResArr = chariter.substring(0, Math.min(seqArr.length, residue_length)).toLowerCase().toCharArray();
+		boolean setRes = false;
+		for (int i = 0; i < displayResArr.length; i++) {
+			setRes = (SEQ[i] != '=') && (displayResArr[i] != seqArr[i]);
+			residueMask.set(i, setRes);
 		}
 		if (residueMask.isEmpty()) {
 			// Save space and time if all residues match the reference sequence.
 			residue_length = 0;
 			chariter = null;
-		} else {
-			this.setResidues(SEQStr);
 		}
 	}
 

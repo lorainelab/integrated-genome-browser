@@ -106,7 +106,7 @@ class ENSEMBLURLFinder implements URLFinder {
 				}
 			}
 		}
-		return "Error: could not find image URL in page";
+		return "Error: could not find image URL in page " + redirectedURL.toExternalForm();
 	}
 }
 

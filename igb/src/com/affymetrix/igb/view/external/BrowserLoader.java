@@ -48,31 +48,39 @@ public abstract class BrowserLoader {
 	abstract public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies);
 
 	/***
-	 * we  check for one level of redirection
+	 * we  check for up to 5 levels of redirection
 	 * @param url
 	 * @param cookie
 	 * @return
 	 */
+	public HttpURLConnection getRedirectedConnection(String url, String cookie) throws IOException {
+		for(int con = 0, max = 5; con < max; con++){
+			HttpURLConnection request_con = getConnection(url, cookie);
+			if(request_con.getResponseCode() == 301){
+				url = request_con.getHeaderField("Location");
+				request_con.disconnect();
+			}
+			else{
+				return request_con;
+			}
+		}
+		return null;
+	}
+
+
 	public HttpURLConnection getConnection(String url, String cookie) throws IOException {
 		HttpURLConnection.setFollowRedirects(false);
-		HttpURLConnection request_con = null;
-		URL request_url = null;
-		request_url = new URL(url);
-		request_con = (HttpURLConnection) request_url.openConnection();
+		URL request_url = new URL(url);
+		HttpURLConnection request_con = (HttpURLConnection) request_url.openConnection();
 		request_con.setConnectTimeout(120 * 1000); //2min
 		request_con.setUseCaches(false);
 		request_con.addRequestProperty("Cookie", cookie);
-		if (request_con.getResponseCode() == 301) {
-			String newloc = request_con.getHeaderField("Location");
-			request_con.disconnect();
-			request_url = new URL(newloc);
-			request_con = (HttpURLConnection) request_url.openConnection();
-			request_con.setConnectTimeout(120 * 1000); //2min
-			request_con.setUseCaches(false);
-			request_con.addRequestProperty("Cookie", cookie);
-		}
 		return request_con;
 	}
+
+
+
+
 
 	/**
 	 *
@@ -85,7 +93,10 @@ public abstract class BrowserLoader {
 		InputStream input_stream = null;
 		BufferedReader in = null;
 		try {
-			request_con = getConnection(url, cookie);
+			request_con = getRedirectedConnection(url, cookie);
+			if(request_con == null){
+				return ("Error: could not resolve connection");
+			}
 			input_stream = request_con.getInputStream();
 			in = new BufferedReader(new InputStreamReader(input_stream));
 			return urlfinder.findUrl(in, request_con.getURL());

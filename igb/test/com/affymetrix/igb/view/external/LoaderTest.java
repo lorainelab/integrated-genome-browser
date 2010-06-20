@@ -53,7 +53,7 @@ public class LoaderTest extends junit.framework.TestCase {
 				new LocName(new Loc("dm3","chr2L",6203693,6206373), "drosophila_dm3.png")
 		);
 		for(LocName ln : locs){
-			checkDownLoadEnsembl(ln.loc,ln.name);
+//			checkDownLoadEnsembl(ln.loc,ln.name);
 			checkDownLoadUCSC(ln.loc,ln.name);
 		}
 	}

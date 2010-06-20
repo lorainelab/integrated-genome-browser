@@ -56,8 +56,12 @@ public abstract class BrowserLoader {
 	public HttpURLConnection getRedirectedConnection(String url, String cookie) throws IOException {
 		for(int con = 0, max = 5; con < max; con++){
 			HttpURLConnection request_con = getConnection(url, cookie);
-			if(request_con.getResponseCode() == 301){
+			if(request_con.getResponseCode() >= 300 && request_con.getResponseCode() < 400){
 				url = request_con.getHeaderField("Location");
+				int endredirect = url.indexOf(";"); //ensembl is appending something to the url
+				if(endredirect > 0){
+					url = url.substring(0, endredirect);
+				}
 				request_con.disconnect();
 			}
 			else{

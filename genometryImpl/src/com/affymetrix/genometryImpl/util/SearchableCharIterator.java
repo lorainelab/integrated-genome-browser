@@ -8,7 +8,7 @@ package com.affymetrix.genometryImpl.util;
  *  to SearchableCharIterator rather than more specific class [such as GeneralBioSeq])
  */
 public interface SearchableCharIterator {
-	public String substring(int offset, int length);
+	public String substring(int start, int end);
 	public int indexOf(String searchstring, int offset);
 	public int getLength();
 }

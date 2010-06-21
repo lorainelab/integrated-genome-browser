@@ -237,4 +237,8 @@ public final class DasSource {
 	public URL getMasterURL(){
 		return master;
 	}
+
+	public URL getServerURL(){
+		return server;
+	}
 }

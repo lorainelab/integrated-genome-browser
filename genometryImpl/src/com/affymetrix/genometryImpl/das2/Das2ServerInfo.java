@@ -23,13 +23,15 @@ import org.w3c.dom.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 
 public final class Das2ServerInfo  {
   private static boolean DEBUG_SOURCES_QUERY = false;
 	private final URI server_uri;
-	private URI primary_uri;
+	private URI primary_uri = null;
 	private final String name;
 	private final Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
@@ -49,14 +51,11 @@ public final class Das2ServerInfo  {
 	 *    will not contact the server to initialize data until needed.
 	 */
 	public Das2ServerInfo(String uri, String name, boolean init) throws URISyntaxException {
-		String root_string = uri;
 		// FIXME: if you remove the trailing slash then relative URI resolution doesn't work
 		// on the das.biopackages.net server!
 		// all trailing "/" chars are stripped off the end if present
-		while (root_string.endsWith("/")) {
-			root_string = root_string.substring(0, root_string.length()-1);
-		}
-
+		String root_string = ServerUtils.formatURL(uri, ServerType.DAS2);
+		
 		this.server_uri = new URI(root_string);
 		this.name = name;
 		if (init) {
@@ -83,16 +82,14 @@ public final class Das2ServerInfo  {
 	}
 
 	private void setPrimaryURL(URL primary_url) {
-		try {
-			if (primary_url != null) {
-				String primary_string = primary_url.toExternalForm();
-				if (!primary_string.endsWith("/")) {
-					primary_string = primary_string + "/";
-				}
-				this.primary_uri = new URI(primary_string);
+		if (primary_url != null) {
+			try {
+				this.primary_uri = new URI(ServerUtils.formatURL(primary_url.toExternalForm(), ServerType.QuickLoad));
+			} catch (URISyntaxException ex) {
+				Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.SEVERE, null, ex);
 			}
-		} catch (URISyntaxException ex) {
-			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.SEVERE, null, ex);
+		} else {
+			this.primary_uri = null;
 		}
 	}
 

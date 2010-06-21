@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -55,18 +56,7 @@ public final class QuickLoadServerModel {
 	 */
 	private QuickLoadServerModel(String url, String pri_url) {
 		
-		if (!url.endsWith("/")) {
-			url = url + "/";
-		}
-
 		root_url = url;
-
-		if (pri_url != null) {
-			if(!pri_url.endsWith("/")){
-				pri_url = pri_url + "/";
-			}
-		}
-
 		primary_url = pri_url;
 
 		loadGenomeNames();
@@ -81,17 +71,11 @@ public final class QuickLoadServerModel {
 	 */
 	public static synchronized QuickLoadServerModel getQLModelForURL(URL url, URL primary_url) {
 
-		String ql_http_root = url.toExternalForm();
-		if (!ql_http_root.endsWith("/")) {
-			ql_http_root = ql_http_root + "/";
-		}
-
+		String ql_http_root = ServerUtils.formatURL(url.toExternalForm(), LoadUtils.ServerType.QuickLoad);
+		
 		String primary_root = null;
 		if(primary_url != null){
-			primary_root = primary_url.toExternalForm();
-			if (!primary_root.endsWith("/")) {
-				primary_root = primary_root + "/";
-			}
+			primary_root = ServerUtils.formatURL(primary_url.toExternalForm(), LoadUtils.ServerType.QuickLoad);
 		}
 
 		QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);

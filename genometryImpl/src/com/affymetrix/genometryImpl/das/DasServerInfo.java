@@ -13,7 +13,9 @@
 package com.affymetrix.genometryImpl.das;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import java.io.InputStream;
 import java.net.*;
@@ -31,7 +33,7 @@ public final class DasServerInfo {
 	private static final boolean REPORT_SOURCES = false;
 	private static final boolean REPORT_CAPS = true;
 	private URL serverURL;
-	private URL primaryURL;
+	private URL primaryURL = null;
 	private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 
@@ -72,16 +74,12 @@ public final class DasServerInfo {
 	private void setPrimaryURL(URL primaryURL) {
 		if (primaryURL != null) {
 			try {
-				String primary_string = primaryURL.toExternalForm();
-				if (!primary_string.endsWith("/")) {
-					primary_string += "/";
-				}
-				this.primaryURL = new URL(primary_string);
+				this.primaryURL = new URL(ServerUtils.formatURL(primaryURL.toExternalForm(), ServerType.QuickLoad));
 			} catch (MalformedURLException ex) {
 				Logger.getLogger(DasServerInfo.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		} else {
-			this.primaryURL = primaryURL;
+			this.primaryURL = null;
 		}
 	}
 

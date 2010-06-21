@@ -152,7 +152,15 @@ public final class LocalUrlCacher {
 		File cache_file = getCacheFile(cache_content_root, url);
 		File header_cache_file = getCacheFile(cache_header_root, url);
 		long local_timestamp = -1;
-		if (cache_file.exists()) {
+		
+		// special-case when one cache file exists, but not the other.  Shouldn't happen, really.
+		if (cache_file.exists() && !header_cache_file.exists()) {
+			cache_file.delete();
+		} else if (!cache_file.exists() && header_cache_file.exists()) {
+			header_cache_file.delete();
+		}
+		
+		if ((offline || cache_option != IGNORE_CACHE) && cache_file.exists() && header_cache_file.exists()) {
 			local_timestamp = cache_file.lastModified();
 		}
 		URLConnection conn = null;
@@ -169,7 +177,7 @@ public final class LocalUrlCacher {
 		// if offline or if cache_option == ONLY_CACHE, then don't even try to retrieve from url
 		if (cache_option != ONLY_CACHE) {
 			try {
-				conn = connectToUrl(url, conn, sessionId, cache_file, cache_option, local_timestamp);
+				conn = connectToUrl(url, sessionId, local_timestamp);
 
 				if (DEBUG_CONNECTION) {
 					reportHeaders(conn);
@@ -218,10 +226,10 @@ public final class LocalUrlCacher {
 			}
 		}
 		
-		// if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache
-		if (cache_file.exists() && (cache_option != IGNORE_CACHE)) {
+		// found cached data
+		if (local_timestamp != -1) {
 			result_stream = TryToRetrieveFromCache(url_reachable, http_status, cache_file, remote_timestamp, local_timestamp, url, cache_option);
-			if (rqstHeaders != null && header_cache_file.exists()) {
+			if (rqstHeaders != null) {
 				retrieveHeadersFromCache(rqstHeaders, header_cache_file);
 			}
 		}
@@ -242,7 +250,8 @@ public final class LocalUrlCacher {
 	}
 
 
-	private static URLConnection connectToUrl(String url, URLConnection conn, String sessionId, File cache_file, int cache_option, long local_timestamp) throws MalformedURLException, IOException {
+	private static URLConnection connectToUrl(String url, String sessionId, long local_timestamp) throws MalformedURLException, IOException {
+		URLConnection conn;
 		URL theurl = new URL(url);
 		conn = theurl.openConnection();
 		conn.setConnectTimeout(CONNECT_TIMEOUT);
@@ -252,7 +261,7 @@ public final class LocalUrlCacher {
 		if (sessionId != null) {
 			conn.setRequestProperty("Cookie", sessionId);
 		}
-		if (cache_file.exists() && cache_option != IGNORE_CACHE) {
+		if (local_timestamp != -1) {
 			conn.setIfModifiedSince(local_timestamp);
 		} //    because some method calls on URLConnection like those below don't always throw errors
 		//    when connection can't be opened -- which would end up allowing url_reachable to be set to true
@@ -301,7 +310,9 @@ public final class LocalUrlCacher {
 		File fil = new File(root);
 		if (!fil.exists()) {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Creating new cache directory: " + fil.getAbsolutePath());
-			fil.mkdirs();
+			if (!fil.mkdirs()) {
+				Logger.getLogger(LocalUrlCacher.class.getName()).severe("Could not create directory: " + fil.toString());
+			}
 		}
 		String encoded_url = UrlToFileName.encode(url);
 		String cache_file_name = root + encoded_url;
@@ -322,14 +333,162 @@ public final class LocalUrlCacher {
 	public static void invalidateCacheFile(String url) {
 		File cache_file = getCacheFile(cache_content_root, url);
 		if (cache_file.exists()) {
-			cache_file.delete();
+			if (!cache_file.delete()) {
+				cache_file.deleteOnExit();	// something went wrong.  Try to delete it later
+			}
 		}
 
 		File header_cache_file = getCacheFile(cache_header_root, url);
 		if (header_cache_file.exists()) {
-			header_cache_file.delete();
+			if (!header_cache_file.delete()) {
+				header_cache_file.deleteOnExit();	// something went wrong.  Try to delete it later
+			}
 		}
 	}
+
+	private static InputStream TryToRetrieveFromCache(
+			boolean url_reachable, int http_status, File cache_file, long remote_timestamp, long local_timestamp,
+			String url, int cache_option)
+			throws IOException, FileNotFoundException {
+		if (url_reachable) {
+			//  has a timestamp and response contents not modified since local cached copy last modified, so use local
+			if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
+				if (DEBUG_CONNECTION) {
+					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
+							"Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
+				}		
+			} else if (remote_timestamp > 0 && remote_timestamp <= local_timestamp) {
+				if (DEBUG_CONNECTION) {
+					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
+							"Cache exists and is more recent, using cache: " + cache_file);
+				}
+			} else {
+				if (DEBUG_CONNECTION) {
+					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
+						"cached file exists, but URL is more recent, so reloading cache: " + url);
+				}
+				return null;
+			}
+		} else {
+			// url is not reachable
+			if (cache_option != ONLY_CACHE) {
+				if (DEBUG_CONNECTION) {
+					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
+						"Remote URL not reachable: " + url);
+				}
+			}
+			if (DEBUG_CONNECTION) {
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
+					"Loading cached file for URL: " + url);
+			}
+			
+		}
+		return new BufferedInputStream(new FileInputStream(cache_file));
+	}
+
+	private static void retrieveHeadersFromCache(Map<String, String> rqstHeaders, File header_cache_file) throws IOException {
+		// using cached content, so should also use cached headers
+		//   eventually want to improve so headers get updated if server is accessed and url is reachable
+		BufferedInputStream hbis = null;
+		try {
+			hbis = new BufferedInputStream(new FileInputStream(header_cache_file));
+			Properties headerprops = new Properties();
+			headerprops.load(hbis);
+			for (String propKey : headerprops.stringPropertyNames()) {
+				rqstHeaders.put(propKey, headerprops.getProperty(propKey));
+			}
+		} finally {
+			GeneralUtils.safeClose(hbis);
+		}
+	}
+
+	private static InputStream RetrieveFromURL(
+			URLConnection conn, Map<String,String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException, IOException {
+		int content_length = -1;
+		final InputStream connstr;
+		String contentEncoding = conn.getHeaderField("Content-Encoding");
+		boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
+		if (isGZipped) {
+			// unknown content length, stick with -1
+			connstr = new GZIPInputStream(conn.getInputStream());
+			if (DEBUG_CONNECTION) {
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
+						"gzipped stream, so ignoring reported content length of " + conn.getContentLength());
+			}
+		} else {
+			connstr = conn.getInputStream();
+			content_length = conn.getContentLength();
+		}
+
+		/*
+		 * TODO: tee output stream to cache file
+		 */
+		/*
+		if (write_to_cache) {
+			return new InputStream() {
+				public int read() throws IOException {
+					int b = connstr.read();
+					// write b
+					return b;
+				}
+
+				@Override
+				public long skip(long n) {
+					// consume bytes
+					return 0;
+				}
+
+				@Override
+				public void close() throws IOException {
+					// consume remainder of stream
+					super.close();
+				}
+			};
+		} else {
+			return connstr;
+		}
+		*/
+
+		if (!write_to_cache) {
+			return connstr;
+		}
+
+		BufferedInputStream bis = null;
+		byte[] content = null;
+		try {
+			bis = new BufferedInputStream(connstr);
+			content = readIntoContentArray(content_length, bis);
+			Properties headerprops = populateHeaderProperties(conn, headers);
+			WriteToCache(content, cache_file, header_cache_file, headerprops);
+		} finally {
+			GeneralUtils.safeClose(bis);
+		}
+
+		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE, "Cache object is " + content.length + " bytes");
+		
+		return new ByteArrayInputStream(content);
+	}
+
+
+	private static byte[] readIntoContentArray(int content_length, BufferedInputStream bis) throws IOException {
+		if (content_length < 0) {
+			return loadContentInChunks(bis);
+		}
+
+		// if content_length header was set, can load based on length
+		byte[] content = new byte[content_length];
+		int total_bytes_read = 0;
+		while (total_bytes_read < content_length) {
+			int bytes_read = bis.read(content, total_bytes_read, content_length - total_bytes_read);
+			total_bytes_read += bytes_read;
+		}
+		if (total_bytes_read != content_length) {
+			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
+					"Bytes read not same as content length");
+		}
+		return content;
+	}
+
 
 
 	/**
@@ -401,115 +560,6 @@ public final class LocalUrlCacher {
 		return total_byte_count;
 	}
 
-
-	private static InputStream TryToRetrieveFromCache(
-			boolean url_reachable, int http_status, File cache_file, long remote_timestamp, long local_timestamp,
-			String url, int cache_option)
-			throws IOException, FileNotFoundException {
-		if (url_reachable) {
-			//  has a timestamp and response contents not modified since local cached copy last modified, so use local
-			if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
-				if (DEBUG_CONNECTION) {
-					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-							"Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
-				}		
-			} else if (remote_timestamp > 0 && remote_timestamp <= local_timestamp) {
-				if (DEBUG_CONNECTION) {
-					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-							"Cache exists and is more recent, using cache: " + cache_file);
-				}
-			} else {
-				if (DEBUG_CONNECTION) {
-					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-						"cached file exists, but URL is more recent, so reloading cache: " + url);
-				}
-				return null;
-			}
-		} else {
-			// url is not reachable
-			if (cache_option != ONLY_CACHE) {
-				if (DEBUG_CONNECTION) {
-					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-						"Remote URL not reachable: " + url);
-				}
-			}
-			if (DEBUG_CONNECTION) {
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-					"Loading cached file for URL: " + url);
-			}
-			
-		}
-		return new BufferedInputStream(new FileInputStream(cache_file));
-	}
-
-	private static void retrieveHeadersFromCache(Map<String, String> rqstHeaders, File header_cache_file) throws IOException {
-		// using cached content, so should also use cached headers
-		//   eventuallly want to improve so headers get updated if server is accessed and url is reachable
-		BufferedInputStream hbis = null;
-		try {
-			hbis = new BufferedInputStream(new FileInputStream(header_cache_file));
-			Properties headerprops = new Properties();
-			headerprops.load(hbis);
-			for (String propKey : headerprops.stringPropertyNames()) {
-				rqstHeaders.put(propKey, headerprops.getProperty(propKey));
-			}
-		} finally {
-			GeneralUtils.safeClose(hbis);
-		}
-	}
-
-	private static InputStream RetrieveFromURL(URLConnection conn, Map<String,String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException, IOException {
-		int content_length = -1;
-		InputStream connstr;
-		String contentEncoding = conn.getHeaderField("Content-Encoding");
-		boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
-		if (isGZipped) {
-			// unknown content length, stick with -1
-			connstr = new GZIPInputStream(conn.getInputStream());
-			if (DEBUG_CONNECTION) {
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-						"gzipped stream, so ignoring reported content length of " + conn.getContentLength());
-			}
-		} else {
-			connstr = conn.getInputStream();
-			content_length = conn.getContentLength();
-		}
-
-		BufferedInputStream bis = null;
-		byte[] content = null;
-		try {
-			bis = new BufferedInputStream(connstr);
-			content = ReadIntoContentArray(content_length, bis);
-			if (write_to_cache) {
-				Properties headerprops = populateHeaderProperties(conn, headers);
-				WriteToCache(content, cache_file, header_cache_file, headerprops);
-			}
-		} finally {
-			GeneralUtils.safeClose(bis);
-		}
-		
-		return new ByteArrayInputStream(content);
-	}
-
-
-	private static byte[] ReadIntoContentArray(int content_length, BufferedInputStream bis) throws IOException {
-		if (content_length < 0) {
-			return loadContentInChunks(bis);
-		}
-
-		// if content_length header was set, can load based on length
-		byte[] content = new byte[content_length];
-		int total_bytes_read = 0;
-		while (total_bytes_read < content_length) {
-			int bytes_read = bis.read(content, total_bytes_read, content_length - total_bytes_read);
-			total_bytes_read += bytes_read;
-		}
-		if (total_bytes_read != content_length) {
-			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-					"Bytes read not same as content length");
-		}
-		return content;
-	}
 
 
 	// populating header Properties (for persisting) and header input Map

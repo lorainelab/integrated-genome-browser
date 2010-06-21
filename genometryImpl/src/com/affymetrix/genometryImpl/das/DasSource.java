@@ -37,6 +37,10 @@ import org.xml.sax.SAXException;
  */
 public final class DasSource {
 
+	public final static String ENTRY_POINTS = "entry_points";
+	public final static String TYPES = "types";
+	private final static String XML = ".xml";
+	
 	private final URL server;
 	private final URL master;
 	private final URL primary;
@@ -106,9 +110,9 @@ public final class DasSource {
 		try {
 			URL entryURL;
 			if(primary == null)
-				entryURL = new URL(master, master.getPath() + "/entry_points");
+				entryURL = new URL(master, master.getPath() + "/" + ENTRY_POINTS);
 			else
-				entryURL = new URL(primary,id + "/entry_points.xml");
+				entryURL = new URL(primary,id + "/" + ENTRY_POINTS + XML);
 			
 			System.out.println("Das Entry Request: " + entryURL);
 			stream = LocalUrlCacher.getInputStream(entryURL);
@@ -163,10 +167,10 @@ public final class DasSource {
 	private boolean initType(String source) {
 		InputStream stream = null;
 		try {
-			URL loadURL = getLoadURL(server, source + "/types");
+			URL loadURL = getLoadURL(server, source + "/" + TYPES);
 
-			URL typesURL = new URL(server, source + "/types");
-			URL testMasterURL = new URL(master, master.getPath() + "/types");
+			URL typesURL = new URL(server, source + "/" + TYPES);
+			URL testMasterURL = new URL(master, master.getPath() + "/" + TYPES);
 			System.out.println("Das Types Request: " + loadURL);
 			stream = LocalUrlCacher.getInputStream(loadURL);
 			if (stream == null) {
@@ -228,5 +232,9 @@ public final class DasSource {
 				&& url1.getProtocol().equalsIgnoreCase(url2.getProtocol())
 				&& url1.getHost().equalsIgnoreCase(url2.getHost())
 				&& url1.getFile().equals(url2.getFile());
+	}
+
+	public URL getMasterURL(){
+		return master;
 	}
 }

@@ -739,6 +739,10 @@ public final class LocalUrlCacher {
 			try {
 				String uriStr = uri.toString();
 				istr = LocalUrlCacher.getInputStream(uriStr);
+
+				if(istr == null)
+					return null;
+				
 				StringBuffer stripped_name = new StringBuffer();
 				InputStream str = GeneralUtils.unzipStream(istr, uriStr, stripped_name);
 				String stream_name = stripped_name.toString();

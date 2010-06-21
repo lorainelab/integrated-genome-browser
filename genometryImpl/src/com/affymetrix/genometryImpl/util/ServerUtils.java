@@ -971,6 +971,13 @@ public abstract class ServerUtils {
 		}
 	}
 
+	/**
+	 * Format a URL based on the ServerType's requirements.
+	 *
+	 * @param url URL to format
+	 * @param type type of server the URL represents
+	 * @return formatted URL
+	 */
 	public static String formatURL(String url, ServerType type) {
 		try {
 			/* remove .. and // from URL */

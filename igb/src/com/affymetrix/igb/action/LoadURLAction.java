@@ -64,7 +64,7 @@ public final class LoadURLAction extends AbstractAction {
 		chooser.genome_name_TF.setEnabled(chooser.no_merge_button.isSelected());
 		chooser.genome_name_TF.setText(LoadFileAction.UNKNOWN_GROUP_PREFIX + " " + LoadFileAction.unknown_group_count);
 
-		JOptionPane pane = new JOptionPane("Enter URL");
+		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION );
 		pane.setWantsInput(true);
 
 		dialog = pane.createDialog(gviewerFrame, BUNDLE.getString("openURL"));
@@ -75,6 +75,9 @@ public final class LoadURLAction extends AbstractAction {
 		dialog.setVisible(true);
 
 		String urlStr = (String)pane.getInputValue();
+		if(urlStr == null || JOptionPane.UNINITIALIZED_VALUE.equals(urlStr)){
+			return;
+		}
 		urlStr = urlStr.trim();
 		URL url;
 		URI uri;

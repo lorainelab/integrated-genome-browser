@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -33,6 +34,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -968,4 +971,26 @@ public abstract class ServerUtils {
 		}
 	}
 
+	public static String formatURL(String url, ServerType type) {
+		try {
+			/* remove .. and // from URL */
+			url = new URI(url).normalize().toASCIIString();
+		} catch (URISyntaxException ex) {
+			String message = "Unable to parse URL: '" + url + "'";
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, message, ex);
+			throw new IllegalArgumentException(message, ex);
+		}
+		switch (type) {
+			case DAS:
+			case DAS2:
+				while (url.endsWith("/")) {
+					url = url.substring(0, url.length()-1);
+				}
+				return url;
+			case QuickLoad:
+				return url.endsWith("/") ? url : url + "/";
+			default:
+				return url;
+		}
+	}
 }

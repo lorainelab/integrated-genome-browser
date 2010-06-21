@@ -219,7 +219,7 @@ public final class ServerList {
 
 		try {
 			if (serverType == ServerType.QuickLoad) {
-				info = url.endsWith("/") ? url : url + "/";
+				info = ServerUtils.formatURL(url, serverType);
 			} else if (serverType == ServerType.DAS) {
 				info = new DasServerInfo(url);
 			} else if (serverType == ServerType.DAS2) {

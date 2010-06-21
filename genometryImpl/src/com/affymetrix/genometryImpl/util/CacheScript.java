@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +16,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +25,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A class to get meta data from all servers.
@@ -34,8 +39,26 @@ public class CacheScript {
 
 	private static final String XML = ".xml";
 	private static final Pattern tab_regex = Pattern.compile("\t");
-	private static final String path = "";
+	private static final String path = "/Users/aloraine/Desktop/Caching/";
+	
+	private static final String defaultList =	" <servers> " +
 
+												" <server type='das2' name='NetAffx' url='http://netaffxdas.affymetrix.com/das2/genome' />" +
+												" <server type='quickload' name='NetAffx' url='http://netaffxdas.affymetrix.com/quickload_data' />" +
+
+												" <server type='das2' name='Bioviz' url='http://bioviz.org/das2/genome' />" +
+												" <server type='quickload' name='Bioviz' url='http://bioviz.org/quickload/'/>" +
+
+												" <server type='das' name='UCSC' url='http://genome.cse.ucsc.edu/cgi-bin/das/dsn' />" +
+
+												" <server type='quickload' name='HughesLab' url='http://hugheslab.ccbr.utoronto.ca/igb/'/>" +
+
+
+												" <server type='das' name='Ensembl' url='http://www.ensembl.org/das/dsn' enabled='false' />" +
+												" <server type='das2' name='UofUtahBioinfoCore' url='http://bioserver.hci.utah.edu:8080/DAS2DB/genome' enabled='false' />" +
+
+												" </servers> ";
+	
 	/**
 	 * Creates directory of server name.
 	 * Determines the server type and process it accordingly.
@@ -43,7 +66,7 @@ public class CacheScript {
 	 */
 	private static void processServer(GenericServer gServer){
 		String serverCachePath = path+gServer.serverName;
-		MakeDir(serverCachePath);
+		makeDir(serverCachePath);
 
 		switch(gServer.serverType){
 			case QuickLoad:
@@ -70,13 +93,13 @@ public class CacheScript {
 		//Get file file and move it to preferred location.
 		File file = getFile(gServer.URL+Constants.contentsTxt);
 		Set<String> genome_names = processContentTxt(file);
-		if(!MoveFileTo(file,Constants.contentsTxt,serverCachePath))
+		if(!moveFileTo(file,Constants.contentsTxt,serverCachePath))
 			return false;
 
 		for(String genome_name : genome_names){
 			String server_path = gServer.URL + "/" + genome_name;
 			String local_path = serverCachePath+ "/" + genome_name;
-			MakeDir(local_path);
+			makeDir(local_path);
 
 			getAllQuickLoadFiles(server_path,local_path);
 
@@ -141,7 +164,7 @@ public class CacheScript {
 
 		for(String fileName : quickloadFile){
 			file = getFile(server_path+"/"+fileName);
-			MoveFileTo(file,fileName,local_path);
+			moveFileTo(file,fileName,local_path);
 		}
 	}
 
@@ -153,7 +176,7 @@ public class CacheScript {
 	 */
 	private static boolean processDas2Server(GenericServer gServer, String serverCachePath){
 		File file = getFile(gServer.URL);
-		MoveFileTo(file, Constants.GENOME_SEQ_ID+XML, serverCachePath);
+		moveFileTo(file, Constants.GENOME_SEQ_ID+XML, serverCachePath);
 
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = serverInfo.getSources();
@@ -166,7 +189,7 @@ public class CacheScript {
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
 				String serverPath = gServer.URL + "/" + versionSource.getName();
 				String localPath = serverCachePath + "/" + versionSource.getName();
-				MakeDir(localPath);
+				makeDir(localPath);
 
 				getAllDas2Files(serverPath,localPath);
 
@@ -191,7 +214,7 @@ public class CacheScript {
 	
 		for(String fileName : Das2Files){
 			file = getFile(server_path+"/"+fileName);
-			MoveFileTo(file,fileName+XML,local_path);
+			moveFileTo(file,fileName+XML,local_path);
 		}
 	}
 
@@ -213,7 +236,7 @@ public class CacheScript {
 		for (DasSource source : sources.values()) {
 			
 			String localPath = serverCachePath + "/" + source.getID();
-			MakeDir(localPath);
+			makeDir(localPath);
 			getAllDasFiles(source.getID(),source.getServerURL(), source.getMasterURL(), localPath);
 		}
 
@@ -237,7 +260,7 @@ public class CacheScript {
 
 		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
 			file = getFile(fileDet.getKey());
-			MoveFileTo(file,fileDet.getValue(),local_path);
+			moveFileTo(file,fileDet.getValue(),local_path);
 		}
 		
 	}
@@ -266,7 +289,7 @@ public class CacheScript {
 	 * @param path	Path to where file is moved.
 	 * @return
 	 */
-	private static boolean MoveFileTo(File file, String fileName, String path){
+	private static boolean moveFileTo(File file, String fileName, String path){
 		if(file == null)
 			return false;
 
@@ -280,7 +303,7 @@ public class CacheScript {
 	 * @param path	Path where directory is to be created.
 	 * @return
 	 */
-	private static boolean MakeDir(String path){
+	private static boolean makeDir(String path){
 		File dir = new File(path);
 		if(!dir.exists()){
 			dir.mkdir();
@@ -303,46 +326,77 @@ public class CacheScript {
 		return file;
 	}
 
-	static public void main(String[] args){
-		String bioviz_quickload = ServerUtils.formatURL("http://bioviz.org/quickload/",ServerType.QuickLoad);
+	/**
+	 * Parses xml file of server list.
+	 * @param istr
+	 * @return	Returns a list of generic server.
+	 */
+	private static Set<GenericServer> parseServerList(InputStream istr) throws Exception {
+		Set<GenericServer> serverList = new HashSet<GenericServer>();
 
-		GenericServer gServer = new GenericServer("Bioviz QuickLoad",			 //Server Name
-												 bioviz_quickload,				 //Server URL
-												 ServerType.QuickLoad,			 //Server type
-												 true,							 //Enable
-												 null);				 //Server Object
-
-		processServer(gServer);
-
-		String bioviz_das2 = ServerUtils.formatURL("http://bioviz.org/das2/genome", ServerType.DAS2);
-		Das2ServerInfo serverInfo = null;
-		try {
-			serverInfo = new Das2ServerInfo(bioviz_das2, "Bioviz Das", true);
-		} catch (URISyntaxException ex) {
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
+		Document list = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(istr);
+		Element top_element = list.getDocumentElement();
+		String topname = top_element.getTagName();
+		if (!(topname.equalsIgnoreCase("servers"))) {
+			System.err.println("not a server list file -- can't parse!");
 		}
-		
-		gServer = new GenericServer("Bioviz Das",
-									bioviz_das2,
-									ServerType.DAS2,
-									true,
-									serverInfo);
-		
-		processServer(gServer);
+		NodeList children = top_element.getChildNodes();
+		Node child;
+		String name;
+		Element el = null;
 
-		String ucsc_das = ServerUtils.formatURL("http://genome.cse.ucsc.edu/cgi-bin/das/dsn", ServerType.DAS);
-		DasServerInfo serverInf = new DasServerInfo(ucsc_das);
-	
+		for (int i = 0; i < children.getLength(); i++) {
+			child = children.item(i);
+			name = child.getNodeName();
+			if (child instanceof Element) {
+				el = (Element) child;
+				if (name.equalsIgnoreCase("server")) {
+					ServerType server_type = getServerType(el.getAttribute("type"));
+					String server_name = el.getAttribute("name");
+					String server_url = el.getAttribute("url");
+					String en = el.getAttribute("enabled");
+					Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
 
-		gServer = new GenericServer("UCSC",
-									ucsc_das,
-									ServerType.DAS,
-									true,
-									serverInf);
+					String serverURL = ServerUtils.formatURL(server_url, server_type);
+					Object serverInfo = ServerUtils.getServerInfo(server_type, serverURL, server_name);
+					GenericServer server = new GenericServer(server_name, serverURL, server_type, enabled, serverInfo);
+					serverList.add(server);
+				}
+			}
+		}
 
-		processServer(gServer);
+		return serverList;
+	}
 
-		
+	/**
+	 * Returns server type.
+	 * @param type	Type name.
+	 * @return
+	 */
+	private static ServerType getServerType(String type) {
+		for (ServerType t : ServerType.values()) {
+			if (type.equalsIgnoreCase(t.toString())) {
+				return t;
+			}
+		}
+		return ServerType.LocalFiles;
+	}
+
+	static public void main(String[] args){
+		InputStream istr = null;
+		try{
+			istr = new ByteArrayInputStream(defaultList.getBytes());
+			Set<GenericServer> server_list = parseServerList(istr);
+			for(GenericServer gServer : server_list){
+				if(gServer.isEnabled())
+					processServer(gServer);
+			}
+		}catch(Exception ex){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
+		}finally{
+			GeneralUtils.safeClose(istr);
+		}
+				
 	}
 
 }

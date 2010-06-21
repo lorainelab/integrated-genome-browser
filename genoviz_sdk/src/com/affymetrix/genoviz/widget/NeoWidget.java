@@ -499,8 +499,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 			zoomer[id].removeAdjustmentListener(this);
 		}
 		zoomer[id] = adj;
-		zoomer[id].setMinimum(0);
-		zoomer[id].setVisibleAmount(10);
+		zoomer[id].setMinimum(0);		
 		zoomer[id].setMaximum(200 + zoomer[id].getVisibleAmount());
 		zoomer[id].setValue(0);
 

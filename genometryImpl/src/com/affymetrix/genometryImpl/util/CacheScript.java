@@ -1,5 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
@@ -11,10 +13,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,9 +32,9 @@ import java.util.regex.Pattern;
  */
 public class CacheScript {
 
+	private static final String XML = ".xml";
 	private static final Pattern tab_regex = Pattern.compile("\t");
-	private static final String path = "";
-	
+	private static final String path = "/Users/aloraine/Desktop/Caching/";
 	
 	private static boolean processQuickLoad(GenericServer gServer){
 		String serverCachePath = path+gServer.serverName;
@@ -71,7 +77,7 @@ public class CacheScript {
 					String genome_name = fields[0];
 					genome_name = genome_name.trim();
 					if (genome_name.length() == 0) {
-						System.out.println("Found blank QuickLoad genome -- skipping");
+						Logger.getLogger(CacheScript.class.getName()).log(Level.WARNING,"Found blank QuickLoad genome -- skipping",file);
 						continue;
 					}
 					genome_names.add(genome_name);
@@ -124,7 +130,7 @@ public class CacheScript {
 		try{
 			file = LocalUrlCacher.convertURIToFile(URI.create(path));
 		}catch(Exception ex){
-			
+			ex.printStackTrace();
 		}
 		return file;
 	}
@@ -134,12 +140,12 @@ public class CacheScript {
 		MakeDir(serverCachePath);
 
 		File file = getFile(gServer.URL);
-		MoveFileTo(file, "genome.xml", serverCachePath);
+		MoveFileTo(file, Constants.GENOME_SEQ_ID+XML, serverCachePath);
 		
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = serverInfo.getSources();
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
-			System.out.println("WARNING: Couldn't find species for server: " + gServer);
+			Logger.getLogger(CacheScript.class.getName()).log(Level.WARNING,"Couldn't find species for server: ",gServer);
 			return false;
 		}
 		for (Das2Source source : sources.values()) {
@@ -167,14 +173,58 @@ public class CacheScript {
 	
 		for(String fileName : Das2Files){
 			file = getFile(server_path+"/"+fileName);
-			MoveFileTo(file,fileName+".xml",local_path);
+			MoveFileTo(file,fileName+XML,local_path);
 		}
 	}
 
 	private static boolean processDasServer(GenericServer gServer){
-		return false;
+		String serverCachePath = path+gServer.serverName;
+		MakeDir(serverCachePath);
+		
+		DasServerInfo server = (DasServerInfo) gServer.serverObj;
+		Map<String, DasSource> sources = server.getDataSources();
+
+		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
+			Logger.getLogger(CacheScript.class.getName()).log(Level.WARNING,"Couldn't find species for server: ",gServer);
+			return false;
+		}
+
+		for (DasSource source : sources.values()) {
+			
+			String localPath = serverCachePath + "/" + source.getID();
+			MakeDir(localPath);
+			getAllDasFiles(source.getID(),source.getServerURL(), source.getMasterURL(), localPath);
+		}
+
+		return true;
 	}
 
+	private static void getAllDasFiles(String id, URL server, URL master, String local_path){
+		File file;
+		final Map<String, String> DasFilePath = new HashMap<String, String>();
+
+		String entry_point = getPath(master.getPath(),master, DasSource.ENTRY_POINTS);
+		String types = getPath(id,server,DasSource.TYPES);
+	
+		DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + XML);
+		DasFilePath.put(types, DasSource.TYPES + XML);
+
+		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
+			file = getFile(fileDet.getKey());
+			MoveFileTo(file,fileDet.getValue(),local_path);
+		}
+		
+	}
+
+	private static String getPath(String id, URL server, String file){
+		try {
+			URL server_path = new URL(server, id + "/" + file);
+			return server_path.toExternalForm();
+		} catch (MalformedURLException ex) {
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
 
 	private static String formatURL(String url, ServerType type) {
 		try {
@@ -210,7 +260,7 @@ public class CacheScript {
 
 		processQuickLoad(gServer);
 
-		String bioviz_das2 = formatURL("http://bioviz.org/das2/genome", ServerType.DAS);
+		String bioviz_das2 = formatURL("http://bioviz.org/das2/genome", ServerType.DAS2);
 		Das2ServerInfo serverInfo = null;
 		try {
 			serverInfo = new Das2ServerInfo(bioviz_das2, "Bioviz Das", true);
@@ -225,6 +275,18 @@ public class CacheScript {
 									serverInfo);
 		
 		processDas2Server(gServer);
+
+		String ucsc_das = formatURL("http://genome.cse.ucsc.edu/cgi-bin/das/dsn", ServerType.DAS);
+		DasServerInfo serverInf = new DasServerInfo(ucsc_das);
+	
+
+		gServer = new GenericServer("UCSC",
+									ucsc_das,
+									ServerType.DAS,
+									true,
+									serverInf);
+
+		processDasServer(gServer);
 
 		
 	}

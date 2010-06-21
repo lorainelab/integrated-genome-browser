@@ -11,9 +11,11 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -22,9 +24,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,25 +42,24 @@ import org.w3c.dom.NodeList;
  */
 public class CacheScript {
 
-	private static final String XML = ".xml";
 	private static final Pattern tab_regex = Pattern.compile("\t");
-	private static final String path = "/Users/aloraine/Desktop/Caching/";
+	private static final String path = ".";
 	
 	private static final String defaultList =	" <servers> " +
 
-												" <server type='das2' name='NetAffx' url='http://netaffxdas.affymetrix.com/das2/genome' />" +
-												" <server type='quickload' name='NetAffx' url='http://netaffxdas.affymetrix.com/quickload_data' />" +
+												" <server type='das2' name='NetAffx Das2' url='http://netaffxdas.affymetrix.com/das2/genome' />" +
+												" <server type='quickload' name='NetAffx Quickload' url='http://netaffxdas.affymetrix.com/quickload_data' />" +
 
-												" <server type='das2' name='Bioviz' url='http://bioviz.org/das2/genome' />" +
-												" <server type='quickload' name='Bioviz' url='http://bioviz.org/quickload/'/>" +
+												" <server type='das2' name='Bioviz Das2' url='http://bioviz.org/das2/genome' />" +
+												" <server type='quickload' name='Bioviz Quickload' url='http://bioviz.org/quickload/' />" +
 
-												" <server type='das' name='UCSC' url='http://genome.cse.ucsc.edu/cgi-bin/das/dsn' />" +
+												" <server type='das' name='UCSC Das' url='http://genome.cse.ucsc.edu/cgi-bin/das/dsn' />" +
 
-												" <server type='quickload' name='HughesLab' url='http://hugheslab.ccbr.utoronto.ca/igb/'/>" +
+												" <server type='quickload' name='HughesLab' url='http://hugheslab.ccbr.utoronto.ca/igb/' />" +
 
 
-												" <server type='das' name='Ensembl' url='http://www.ensembl.org/das/dsn' enabled='false' />" +
-												" <server type='das2' name='UofUtahBioinfoCore' url='http://bioserver.hci.utah.edu:8080/DAS2DB/genome' enabled='false' />" +
+//												" <server type='das' name='Ensembl' url='http://www.ensembl.org/das/dsn' enabled='false' />" +
+//												" <server type='das2' name='UofUtahBioinfoCore' url='http://bioserver.hci.utah.edu:8080/DAS2DB/genome' enabled='false' />" +
 
 												" </servers> ";
 	
@@ -85,12 +89,12 @@ public class CacheScript {
 
 	/**
 	 * Gets files for all genomes from Quickload server and copies it to appropriate directory.
-	 * @param gServer	GenericServer from where file are fetched.
+	 * @param gServer	GenericServer from where mapping are fetched.
 	 * @param serverCachePath	Local path where fetched files are stored.
 	 * @return
 	 */
 	private static boolean processQuickLoad(GenericServer gServer, String serverCachePath){
-		//Get file file and move it to preferred location.
+		//Get mapping mapping and move it to preferred location.
 		File file = getFile(gServer.URL+Constants.contentsTxt);
 		Set<String> genome_names = processContentTxt(file);
 		if(!moveFileTo(file,Constants.contentsTxt,serverCachePath))
@@ -109,8 +113,8 @@ public class CacheScript {
 	}
 
 	/**
-	 * Parses content.txt file of Quickload and returns the list of genome names.
-	 * @param file	File to be parsed.
+	 * Parses content.txt mapping of Quickload and returns the list of genome names.
+	 * @param mapping	File to be parsed.
 	 * @return
 	 */
 	private static Set<String> processContentTxt(File file){
@@ -150,8 +154,8 @@ public class CacheScript {
 
 	/**
 	 * Gets files for a genome and copies it to it's directory.
-	 * @param server_path	Server path from where file is to be copied.
-	 * @param local_path	Local path from where file is to saved.
+	 * @param server_path	Server path from where mapping is to be copied.
+	 * @param local_path	Local path from where mapping is to saved.
 	 */
 	private static void getAllQuickLoadFiles(String server_path,String local_path){
 		File file;
@@ -170,13 +174,13 @@ public class CacheScript {
 
 	/**
 	 * Gets files for all genomes from Das2 server and copies it to appropriate directory.
-	 * @param gServer	GenericServer from where file are fetched.
+	 * @param gServer	GenericServer from where mapping are fetched.
 	 * @param serverCachePath	Local path where fetched files are stored.
 	 * @return
 	 */
 	private static boolean processDas2Server(GenericServer gServer, String serverCachePath){
 		File file = getFile(gServer.URL);
-		moveFileTo(file, Constants.GENOME_SEQ_ID+XML, serverCachePath);
+		moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, serverCachePath);
 
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = serverInfo.getSources();
@@ -201,8 +205,8 @@ public class CacheScript {
 
 	/**
 	 * Gets files for a genome and copies it to it's directory.
-	 * @param server_path	Server path from where file is to be copied.
-	 * @param local_path	Local path from where file is to saved.
+	 * @param server_path	Server path from where mapping is to be copied.
+	 * @param local_path	Local path from where mapping is to saved.
 	 */
 	private static void getAllDas2Files(String server_path,String local_path){
 		File file;
@@ -214,13 +218,13 @@ public class CacheScript {
 	
 		for(String fileName : Das2Files){
 			file = getFile(server_path+"/"+fileName);
-			moveFileTo(file,fileName+XML,local_path);
+			moveFileTo(file,fileName+ Constants.xml_ext,local_path);
 		}
 	}
 
 	/**
 	 * Gets files for all genomes from Das server and copies it to appropriate directory.
-	 * @param gServer	GenericServer from where file are fetched.
+	 * @param gServer	GenericServer from where mapping are fetched.
 	 * @param serverCachePath	Local path where fetched files are stored.
 	 * @return
 	 */
@@ -245,8 +249,8 @@ public class CacheScript {
 
 	/**
 	 * Gets files for a genome and copies it to it's directory.
-	 * @param server_path	Server path from where file is to be copied.
-	 * @param local_path	Local path from where file is to saved.
+	 * @param server_path	Server path from where mapping is to be copied.
+	 * @param local_path	Local path from where mapping is to saved.
 	 */
 	private static void getAllDasFiles(String id, URL server, URL master, String local_path){
 		File file;
@@ -255,8 +259,8 @@ public class CacheScript {
 		String entry_point = getPath(master.getPath(),master, DasSource.ENTRY_POINTS);
 		String types = getPath(id,server,DasSource.TYPES);
 	
-		DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + XML);
-		DasFilePath.put(types, DasSource.TYPES + XML);
+		DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + Constants.xml_ext);
+		DasFilePath.put(types, DasSource.TYPES + Constants.xml_ext);
 
 		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
 			file = getFile(fileDet.getKey());
@@ -266,10 +270,10 @@ public class CacheScript {
 	}
 
 	/**
-	 * Returns server path for a file on Das server.
+	 * Returns server path for a mapping on Das server.
 	 * @param id	Genome id
 	 * @param server	Server url.
-	 * @param file	File name.
+	 * @param mapping	File name.
 	 * @return
 	 */
 	private static String getPath(String id, URL server, String file){
@@ -283,10 +287,10 @@ public class CacheScript {
 	}
 
 	/**
-	 * Moves file to the given path and renames it to filename.
-	 * @param file	File to be moved.
-	 * @param fileName	File name to be given to moved file.
-	 * @param path	Path to where file is moved.
+	 * Moves mapping to the given path and renames it to filename.
+	 * @param mapping	File to be moved.
+	 * @param fileName	File name to be given to moved mapping.
+	 * @param path	Path to where mapping is moved.
 	 * @return
 	 */
 	private static boolean moveFileTo(File file, String fileName, String path){
@@ -312,7 +316,7 @@ public class CacheScript {
 	}
 
 	/**
-	 * Returns file for give path.
+	 * Returns mapping for give path.
 	 * @param path	File path.
 	 * @return
 	 */
@@ -327,7 +331,7 @@ public class CacheScript {
 	}
 
 	/**
-	 * Parses xml file of server list.
+	 * Parses xml mapping of server list.
 	 * @param istr
 	 * @return	Returns a list of generic server.
 	 */
@@ -384,17 +388,41 @@ public class CacheScript {
 
 	static public void main(String[] args){
 		InputStream istr = null;
-		try{
+		FileOutputStream fos = null;
+		File mapping = new File(path + "/" + Constants.serverMapping);
+		Timer tim = new Timer();
+		tim.start();
+		try {
 			istr = new ByteArrayInputStream(defaultList.getBytes());
+			mapping.createNewFile();
+			fos = new FileOutputStream(mapping);
+			final PrintStream out = new PrintStream(fos);
 			Set<GenericServer> server_list = parseServerList(istr);
-			for(GenericServer gServer : server_list){
-				if(gServer.isEnabled())
-					processServer(gServer);
+			for (final GenericServer gServer : server_list) {
+
+				Executor vexec = Executors.newSingleThreadExecutor();
+				SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+					protected Void doInBackground() throws Exception {
+						Timer ser_tim = new Timer();
+						ser_tim.start();
+						processServer(gServer);
+						out.println(gServer.friendlyURL.toExternalForm() + "\t" + gServer.serverName);
+						Logger.getLogger(CacheScript.class.getName()).log(Level.INFO, "Time required to cache " + gServer.serverName + " :" + (ser_tim.read()/ 1000f), ser_tim);
+						return null;
+					}
+
+				};
+
+				vexec.execute(worker);
+
 			}
-		}catch(Exception ex){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.INFO, "Total time required to cache all server:" + (tim.read()/ 1000f), tim);
+		} catch (Exception ex) {
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
-		}finally{
+		} finally {
 			GeneralUtils.safeClose(istr);
+			GeneralUtils.safeClose(fos);
 		}
 				
 	}

@@ -34,12 +34,39 @@ public class CacheScript {
 
 	private static final String XML = ".xml";
 	private static final Pattern tab_regex = Pattern.compile("\t");
-	private static final String path = "/Users/aloraine/Desktop/Caching/";
-	
-	private static boolean processQuickLoad(GenericServer gServer){
+	private static final String path = "";
+
+	/**
+	 * Creates directory of server name.
+	 * Determines the server type and process it accordingly.
+	 * @param gServer	GenericServer to be processed.
+	 */
+	private static void processServer(GenericServer gServer){
 		String serverCachePath = path+gServer.serverName;
 		MakeDir(serverCachePath);
 
+		switch(gServer.serverType){
+			case QuickLoad:
+				processQuickLoad(gServer, serverCachePath);
+				break;
+
+			case DAS2:
+				processDas2Server(gServer, serverCachePath);
+				break;
+
+			case DAS:
+				processDasServer(gServer, serverCachePath);
+				break;
+		}
+	}
+
+	/**
+	 * Gets files for all genomes from Quickload server and copies it to appropriate directory.
+	 * @param gServer	GenericServer from where file are fetched.
+	 * @param serverCachePath	Local path where fetched files are stored.
+	 * @return
+	 */
+	private static boolean processQuickLoad(GenericServer gServer, String serverCachePath){
 		//Get file file and move it to preferred location.
 		File file = getFile(gServer.URL+Constants.contentsTxt);
 		Set<String> genome_names = processContentTxt(file);
@@ -54,10 +81,15 @@ public class CacheScript {
 			getAllQuickLoadFiles(server_path,local_path);
 
 		}
-		
+
 		return true;
 	}
 
+	/**
+	 * Parses content.txt file of Quickload and returns the list of genome names.
+	 * @param file	File to be parsed.
+	 * @return
+	 */
 	private static Set<String> processContentTxt(File file){
 		Set<String> genome_names = new HashSet<String>();
 		InputStream istr = null;
@@ -93,6 +125,11 @@ public class CacheScript {
 		return genome_names;
 	}
 
+	/**
+	 * Gets files for a genome and copies it to it's directory.
+	 * @param server_path	Server path from where file is to be copied.
+	 * @param local_path	Local path from where file is to saved.
+	 */
 	private static void getAllQuickLoadFiles(String server_path,String local_path){
 		File file;
 		final Set<String> quickloadFile = new HashSet<String>();
@@ -108,40 +145,16 @@ public class CacheScript {
 		}
 	}
 
-	private static boolean MoveFileTo(File file, String fileName, String path){
-		if(file == null)
-			return false;
-		
-		File newLocation = new File(path+ "/" +fileName);
-		file.renameTo(newLocation);
-		return true;
-	}
-
-	private static boolean MakeDir(String path){
-		File dir = new File(path);
-		if(!dir.exists()){
-			dir.mkdir();
-		}
-		return true;
-	}
-
-	private static File getFile(String path){
-		File file = null;
-		try{
-			file = LocalUrlCacher.convertURIToFile(URI.create(path));
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
-		return file;
-	}
-
-	private static boolean processDas2Server(GenericServer gServer){
-		String serverCachePath = path+gServer.serverName;
-		MakeDir(serverCachePath);
-
+	/**
+	 * Gets files for all genomes from Das2 server and copies it to appropriate directory.
+	 * @param gServer	GenericServer from where file are fetched.
+	 * @param serverCachePath	Local path where fetched files are stored.
+	 * @return
+	 */
+	private static boolean processDas2Server(GenericServer gServer, String serverCachePath){
 		File file = getFile(gServer.URL);
 		MoveFileTo(file, Constants.GENOME_SEQ_ID+XML, serverCachePath);
-		
+
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = serverInfo.getSources();
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
@@ -163,6 +176,11 @@ public class CacheScript {
 		return true;
 	}
 
+	/**
+	 * Gets files for a genome and copies it to it's directory.
+	 * @param server_path	Server path from where file is to be copied.
+	 * @param local_path	Local path from where file is to saved.
+	 */
 	private static void getAllDas2Files(String server_path,String local_path){
 		File file;
 		final Set<String> Das2Files = new HashSet<String>();
@@ -177,10 +195,13 @@ public class CacheScript {
 		}
 	}
 
-	private static boolean processDasServer(GenericServer gServer){
-		String serverCachePath = path+gServer.serverName;
-		MakeDir(serverCachePath);
-		
+	/**
+	 * Gets files for all genomes from Das server and copies it to appropriate directory.
+	 * @param gServer	GenericServer from where file are fetched.
+	 * @param serverCachePath	Local path where fetched files are stored.
+	 * @return
+	 */
+	private static boolean processDasServer(GenericServer gServer, String serverCachePath){
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		Map<String, DasSource> sources = server.getDataSources();
 
@@ -199,6 +220,11 @@ public class CacheScript {
 		return true;
 	}
 
+	/**
+	 * Gets files for a genome and copies it to it's directory.
+	 * @param server_path	Server path from where file is to be copied.
+	 * @param local_path	Local path from where file is to saved.
+	 */
 	private static void getAllDasFiles(String id, URL server, URL master, String local_path){
 		File file;
 		final Map<String, String> DasFilePath = new HashMap<String, String>();
@@ -216,6 +242,13 @@ public class CacheScript {
 		
 	}
 
+	/**
+	 * Returns server path for a file on Das server.
+	 * @param id	Genome id
+	 * @param server	Server url.
+	 * @param file	File name.
+	 * @return
+	 */
 	private static String getPath(String id, URL server, String file){
 		try {
 			URL server_path = new URL(server, id + "/" + file);
@@ -226,31 +259,52 @@ public class CacheScript {
 		return null;
 	}
 
-	private static String formatURL(String url, ServerType type) {
-		try {
-			/* remove .. and // from URL */
-			url = new URI(url).normalize().toASCIIString();
-		} catch (URISyntaxException ex) {
-			String message = "Unable to parse URL: '" + url + "'";
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, message, ex);
-			throw new IllegalArgumentException(message, ex);
+	/**
+	 * Moves file to the given path and renames it to filename.
+	 * @param file	File to be moved.
+	 * @param fileName	File name to be given to moved file.
+	 * @param path	Path to where file is moved.
+	 * @return
+	 */
+	private static boolean MoveFileTo(File file, String fileName, String path){
+		if(file == null)
+			return false;
+
+		File newLocation = new File(path+ "/" +fileName);
+		file.renameTo(newLocation);
+		return true;
+	}
+
+	/**
+	 * Creates directory for the given path.
+	 * @param path	Path where directory is to be created.
+	 * @return
+	 */
+	private static boolean MakeDir(String path){
+		File dir = new File(path);
+		if(!dir.exists()){
+			dir.mkdir();
 		}
-		switch (type) {
-			case DAS:
-			case DAS2:
-				while (url.endsWith("/")) {
-					url = url.substring(0, url.length()-1);
-				}
-				return url;
-			case QuickLoad:
-				return url.endsWith("/") ? url : url + "/";
-			default:
-				return url;
+		return true;
+	}
+
+	/**
+	 * Returns file for give path.
+	 * @param path	File path.
+	 * @return
+	 */
+	private static File getFile(String path){
+		File file = null;
+		try{
+			file = LocalUrlCacher.convertURIToFile(URI.create(path));
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
+		return file;
 	}
 
 	static public void main(String[] args){
-		String bioviz_quickload = formatURL("http://bioviz.org/quickload/",ServerType.QuickLoad);
+		String bioviz_quickload = ServerUtils.formatURL("http://bioviz.org/quickload/",ServerType.QuickLoad);
 
 		GenericServer gServer = new GenericServer("Bioviz QuickLoad",			 //Server Name
 												 bioviz_quickload,				 //Server URL
@@ -258,9 +312,9 @@ public class CacheScript {
 												 true,							 //Enable
 												 null);				 //Server Object
 
-		processQuickLoad(gServer);
+		processServer(gServer);
 
-		String bioviz_das2 = formatURL("http://bioviz.org/das2/genome", ServerType.DAS2);
+		String bioviz_das2 = ServerUtils.formatURL("http://bioviz.org/das2/genome", ServerType.DAS2);
 		Das2ServerInfo serverInfo = null;
 		try {
 			serverInfo = new Das2ServerInfo(bioviz_das2, "Bioviz Das", true);
@@ -274,9 +328,9 @@ public class CacheScript {
 									true,
 									serverInfo);
 		
-		processDas2Server(gServer);
+		processServer(gServer);
 
-		String ucsc_das = formatURL("http://genome.cse.ucsc.edu/cgi-bin/das/dsn", ServerType.DAS);
+		String ucsc_das = ServerUtils.formatURL("http://genome.cse.ucsc.edu/cgi-bin/das/dsn", ServerType.DAS);
 		DasServerInfo serverInf = new DasServerInfo(ucsc_das);
 	
 
@@ -286,7 +340,7 @@ public class CacheScript {
 									true,
 									serverInf);
 
-		processDasServer(gServer);
+		processServer(gServer);
 
 		
 	}

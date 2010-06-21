@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.net.URI;
@@ -297,7 +298,7 @@ public final class ServerList {
 			for (String encodedURL : servers.childrenNames()) {
 				currentServer = servers.node(encodedURL);
 				decodedURL = GeneralUtils.URLDecode(encodedURL);
-				normalizedURL = formatURL(decodedURL, ServerType.valueOf(currentServer.get("type", "Unknown")));
+				normalizedURL = ServerUtils.formatURL(decodedURL, ServerType.valueOf(currentServer.get("type", "Unknown")));
 
 				if (!decodedURL.equals(normalizedURL)) {
 					Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading server URL: '" + decodedURL + "' in preferences");
@@ -323,8 +324,8 @@ public final class ServerList {
 	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
 	 */
 	private static GenericServer addServerToPrefs(String url, String name, ServerType type) {
-		url = formatURL(url, type);
-		Preferences node = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(formatURL(url, type)));
+		url = ServerUtils.formatURL(url, type);
+		Preferences node = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(ServerUtils.formatURL(url, type)));
 
 		node.put("name",  name);
 		node.put("type", type.toString());
@@ -357,32 +358,6 @@ public final class ServerList {
 		}
 	}
 
-	/**
-	 * Format a URL based on the ServerType's requirements.
-	 *
-	 * @param url URL to format
-	 * @param type type of server the URL represents
-	 * @return formatted URL
-	 */
-	private static String formatURL(String url, ServerType type) {
-		try {
-			/* remove .. and // from URL */
-			url = new URI(url).normalize().toASCIIString();
-		} catch (URISyntaxException ex) {
-			String message = "Unable to parse URL: '" + url + "'";
-			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, message, ex);
-			throw new IllegalArgumentException(message, ex);
-		}
-		switch (type) {
-			case DAS:
-			case DAS2:
-				return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
-			case QuickLoad:
-				return url.endsWith("/") ? url : url + "/";
-			default:
-				return url;
-		}
-	}
 
 	/**
 	 * Get server from ServerList that matches the URL.

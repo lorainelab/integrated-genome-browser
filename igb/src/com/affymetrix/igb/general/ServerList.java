@@ -143,7 +143,7 @@ public final class ServerList {
 		Object info;
 
 		if (server == null) {
-			info = getServerInfo(serverType, url, name);
+			info = ServerUtils.getServerInfo(serverType, url, name);
 
 			if (info != null) {
 				server = new GenericServer(name, url, serverType, enabled, info, primary);
@@ -180,7 +180,7 @@ public final class ServerList {
 			url = GeneralUtils.URLDecode(node.name());
 			name = node.get("name", "Unknown");
 			serverType = ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
-			info = getServerInfo(serverType, url, name);
+			info = ServerUtils.getServerInfo(serverType, url, name);
 
 			if (info != null) {
 				server = new GenericServer(node, info);
@@ -204,32 +204,6 @@ public final class ServerList {
 		url2server.remove(url);
 		server.setEnabled(false);
 		fireServerInitEvent(server, ServerStatus.NotResponding);	// remove it from our lists.
-	}
-
-	/**
-	 * Initialize the server.
-	 *
-	 * @param serverType
-	 * @param url
-	 * @param name
-	 * @return initialized server
-	 */
-	private static Object getServerInfo(ServerType serverType, String url, String name) {
-		Object info = null;
-
-		try {
-			if (serverType == ServerType.QuickLoad) {
-				info = ServerUtils.formatURL(url, serverType);
-			} else if (serverType == ServerType.DAS) {
-				info = new DasServerInfo(url);
-			} else if (serverType == ServerType.DAS2) {
-				info = new Das2ServerInfo(url, name, false);
-			}			
-		} catch (URISyntaxException e) {
-			System.out.println("WARNING: Could not initialize " + serverType + " server with address: " + url);
-			e.printStackTrace(System.out);
-		}
-		return info;
 	}
 
 	/**

@@ -15,6 +15,8 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
@@ -969,6 +971,32 @@ public abstract class ServerUtils {
 			}
 			System.out.println();
 		}
+	}
+
+	/**
+	 * Initialize the server.
+	 *
+	 * @param serverType
+	 * @param url
+	 * @param name
+	 * @return initialized server
+	 */
+	public static Object getServerInfo(ServerType serverType, String url, String name) {
+		Object info = null;
+
+		try {
+			if (serverType == ServerType.QuickLoad) {
+				info = ServerUtils.formatURL(url, serverType);
+			} else if (serverType == ServerType.DAS) {
+				info = new DasServerInfo(url);
+			} else if (serverType == ServerType.DAS2) {
+				info = new Das2ServerInfo(url, name, false);
+			}
+		} catch (URISyntaxException e) {
+			System.out.println("WARNING: Could not initialize " + serverType + " server with address: " + url);
+			e.printStackTrace(System.out);
+		}
+		return info;
 	}
 
 	/**

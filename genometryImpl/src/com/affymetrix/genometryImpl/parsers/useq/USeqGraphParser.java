@@ -29,7 +29,7 @@ public class USeqGraphParser {
 		this.gmodel = gmodel;
 		this.stream_name = stream_name;
 		this.archiveInfo = archiveInfo;
-
+		
 		BufferedInputStream bis = null;
 		ZipInputStream zis = null;
 		List<GraphSym> graphs = new ArrayList<GraphSym>();
@@ -48,6 +48,12 @@ public class USeqGraphParser {
 			if (archiveInfo == null){
 				zis.getNextEntry();
 				this.archiveInfo = new ArchiveInfo(zis, false);
+			}
+			
+			//check that they are loading the data into the correct genome build
+			String genomeVersion = archiveInfo.getVersionedGenome();
+			if (gmodel.getSelectedSeqGroup().isSynonymous(genomeVersion) == false){
+				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 
 			//for each entry build appropriate arrays, may contain multiple stranded chromosome slices so first build and hash them. 

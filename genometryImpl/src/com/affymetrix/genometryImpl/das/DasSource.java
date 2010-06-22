@@ -97,7 +97,7 @@ public final class DasSource {
 		return entry_points;
 	}
 
-	public synchronized Set<DasType> getTypes() {
+	public Set<DasType> getTypes() {
 		if (!types_initialized) {
 			initTypes();
 		}
@@ -105,16 +105,18 @@ public final class DasSource {
 	}
 
 	/** Get entry points from das server. */
-	private synchronized boolean initEntryPoints() {
+	private boolean initEntryPoints() {
 		InputStream stream = null;
 		try {
 			URL entryURL;
-			if(primary == null)
+			if(primary == null) {
 				entryURL = new URL(master, master.getPath() + "/" + ENTRY_POINTS);
-			else
+			}
+			else {
 				entryURL = new URL(primary,id + "/" + ENTRY_POINTS + XML);
+			}
 			
-			System.out.println("Das Entry Request: " + entryURL);
+			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Das Entry Request: {0}", entryURL);
 			stream = LocalUrlCacher.getInputStream(entryURL);
 			if (stream == null) {
 				Logger.getLogger(this.getClass().getName()).log(
@@ -123,23 +125,7 @@ public final class DasSource {
 			}
 			Document doc = XMLUtils.getDocument(stream);
 			NodeList segments = doc.getElementsByTagName("SEGMENT");
-			int length = segments.getLength();
-			System.out.println("segments: " + length);
-			for (int i = 0; i < length; i++) {
-				Element seg = (Element) segments.item(i);
-				String segid = seg.getAttribute("id");
-				String stopstr = seg.getAttribute("stop");
-				String sizestr = seg.getAttribute("size");  // can optionally use "size" instead of "start" and "stop"
-
-				int stop = 1;
-				if (stopstr != null && !stopstr.isEmpty()) {
-					stop = Integer.parseInt(stopstr);
-				} else if (sizestr != null) {
-					stop = Integer.parseInt(sizestr);
-				}
-				getGenome().addSeq(segid, stop);
-				entry_points.add(segid);
-			}
+			addSegments(segments);
 		} catch (MalformedURLException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
 		} catch (ParserConfigurationException ex) {
@@ -150,12 +136,35 @@ public final class DasSource {
 			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
 		} finally {
 			GeneralUtils.safeClose(stream);
-			entries_initialized = true;	// set even if there's an error
+			synchronized(this) {
+				entries_initialized = true;	// set even if there's an error?
+			}
 		}
 		return true;
 	}
 
-	private synchronized void initTypes() {
+	private void addSegments(NodeList segments) throws NumberFormatException {
+		int length = segments.getLength();
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "segments: {0}", length);
+		for (int i = 0; i < length; i++) {
+			Element seg = (Element) segments.item(i);
+			String segid = seg.getAttribute("id");
+			String stopstr = seg.getAttribute("stop");
+			String sizestr = seg.getAttribute("size"); // can optionally use "size" instead of "start" and "stop"
+			int stop = 1;
+			if (stopstr != null && !stopstr.isEmpty()) {
+				stop = Integer.parseInt(stopstr);
+			} else if (sizestr != null) {
+				stop = Integer.parseInt(sizestr);
+			}
+			synchronized (this) {
+				getGenome().addSeq(segid, stop);
+				entry_points.add(segid);
+			}
+		}
+	}
+
+	private void initTypes() {
 		Set<String> badSources = new HashSet<String>();
 		
 		for (String source : sources) {
@@ -164,10 +173,12 @@ public final class DasSource {
 			}
 		}
 		/* Remove any failed sources */
-		for (String source : badSources) {
-			sources.remove(source);
+		synchronized (this) {
+			for (String source : badSources) {
+				sources.remove(source);
+			}
+			types_initialized = true;
 		}
-		types_initialized = true;
 	}
 
 	private boolean initType(String source) {
@@ -177,7 +188,7 @@ public final class DasSource {
 
 			URL typesURL = new URL(server, source + "/" + TYPES);
 			URL testMasterURL = new URL(master, master.getPath() + "/" + TYPES);
-			System.out.println("Das Types Request: " + loadURL);
+			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Das Types Request: {0}", loadURL);
 			stream = LocalUrlCacher.getInputStream(loadURL);
 			if (stream == null) {
 				Logger.getLogger(this.getClass().getName()).log(
@@ -187,14 +198,17 @@ public final class DasSource {
 			Document doc = XMLUtils.getDocument(stream);
 			NodeList typelist = doc.getElementsByTagName("TYPE");
 			int typeLength = typelist.getLength();
-			System.out.println("types: " + typeLength);
+			Logger.getLogger(this.getClass().getName()).log(Level.FINE, "types: {0}", typeLength);
 			for (int i = 0; i < typeLength; i++) {
 				Element typenode = (Element) typelist.item(i);
 				String typeid = typenode.getAttribute("id");
 
 				/* URL.equals() does DNS lookups! */
 				String name = URLEquals(typesURL, testMasterURL) ? null : source + "/" + typeid;
-				types.add(new DasType(server, typeid, source, name));
+				DasType type = new DasType(server, typeid, source, name);
+				synchronized(this) {
+					types.add(type);
+				}
 			}
 		} catch (MalformedURLException ex) {
 			ErrorHandler.errorPanel("Error initializing DAS types for\n" + getID() + " on " + server, ex);

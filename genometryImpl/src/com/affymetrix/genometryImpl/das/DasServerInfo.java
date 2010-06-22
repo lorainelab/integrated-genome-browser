@@ -92,12 +92,19 @@ public final class DasServerInfo {
 	 * see DAS specification for returned XML format in response to "dsn" command:
 	 *      http://biodas.org/documents/spec.html
 	 */
-	private void initialize() {
+	private boolean initialize() {
 		InputStream stream = null;
 		try {
-			System.out.println("Das Request: " + getLoadURL());
+			Logger.getLogger(this.getClass().getName()).log(
+					Level.INFO, "Das Request: {0}", getLoadURL());
+			
 			Map<String, List<String>> headers = new HashMap<String, List<String>>();
 			stream = LocalUrlCacher.getInputStream(getLoadURL(), true, null, headers);
+			if (stream == null) {
+				Logger.getLogger(this.getClass().getName()).log(
+						Level.SEVERE, "Could not find URL {0}", getLoadURL());
+				return false;
+			}
 
 			List<String> list;
 			String das_version = "";
@@ -125,8 +132,9 @@ public final class DasServerInfo {
 			Document doc = XMLUtils.getDocument(stream);
 
 			NodeList dsns = doc.getElementsByTagName("DSN");
-			System.out.println("dsn count: " + dsns.getLength());
-			for (int i = 0; i < dsns.getLength(); i++) {
+			int dsnLength = dsns.getLength();
+			System.out.println("dsn count: " + dsnLength);
+			for (int i = 0; i < dsnLength; i++) {
 				Element dsn = (Element) dsns.item(i);
 				try {
 					parseDSNElement(dsn);
@@ -139,11 +147,12 @@ public final class DasServerInfo {
 		} catch (Exception ex) {
 			System.out.println("Error initializing DAS server info for\n" + serverURL);
 			ex.printStackTrace();
-			return;
+			return false;
 		} finally {
 			GeneralUtils.safeClose(stream);
 		}
 		initialized = true;
+		return true;
 	}
 
 	private void parseDSNElement(Element dsn) throws DOMException {
@@ -171,15 +180,18 @@ public final class DasServerInfo {
 		try {
 			URL masterURL = new URL(master_url);
 			if (DasSource.getID(masterURL).isEmpty()) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Skipping " + sourceid + " as MAPMASTER could not be parsed");
+				Logger.getLogger(this.getClass().getName()).log(
+						Level.WARNING, "Skipping {0} as MAPMASTER could not be parsed", sourceid);
 				return;
 			}
 			DasSource das_source = sources.get(DasSource.getID(masterURL));
-			if (das_source == null) {
-				das_source = new DasSource(serverURL, masterURL, primaryURL);
-				sources.put(DasSource.getID(masterURL), das_source);
+			synchronized (this) {
+				if (das_source == null) {
+					das_source = new DasSource(serverURL, masterURL, primaryURL);
+					sources.put(DasSource.getID(masterURL), das_source);
+				}
+				das_source.add(sourceid);
 			}
-			das_source.add(sourceid);
 		} catch (MalformedURLException ex) {
 			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "", ex);
 		}

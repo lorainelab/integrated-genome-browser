@@ -145,6 +145,8 @@ public class CacheScript extends Thread {
 	 * @param gServer	GenericServer to be processed.
 	 */
 	private static boolean processServer(GenericServer gServer, String path){
+		Logger.getLogger(CacheScript.class.getName()).log(Level.FINE, "Caching " + gServer.serverName  + " at path " + path);
+
 		String serverCachePath = path+gServer.serverName+temp;
 		makeDir(serverCachePath);
 
@@ -179,12 +181,16 @@ public class CacheScript extends Thread {
 		QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
 
 		List<String> genome_names = quickloadServer.getGenomeNames();
-		if(!moveFileTo(file,Constants.contentsTxt,serverCachePath))
+		if(!moveFileTo(file,Constants.contentsTxt,serverCachePath)){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find " + Constants.contentsTxt + " for " + gServer.serverName + " !!!");
 			return false;
+		}
 
 		for(String genome_name : genome_names){
-			if(!getAllFiles(gServer,genome_name,serverCachePath))
+			if(!getAllFiles(gServer,genome_name,serverCachePath)){
+				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for " + gServer.serverName + " !!!");
 				return false;
+			}
 		}
 
 		return true;
@@ -198,7 +204,11 @@ public class CacheScript extends Thread {
 	 */
 	private static boolean processDas2Server(GenericServer gServer, String serverCachePath){
 		File file = getFile(gServer.URL);
-		moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, serverCachePath);
+		if(!moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, serverCachePath)){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find " + Constants.GENOME_SEQ_ID + " for " + gServer.serverName + " !!!");
+			return false;
+		}
+
 
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = serverInfo.getSources();
@@ -211,8 +221,10 @@ public class CacheScript extends Thread {
 		for (Das2Source source : sources.values()) {
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
-				if(!getAllFiles(gServer,versionSource.getName(),serverCachePath))
+				if(!getAllFiles(gServer,versionSource.getName(),serverCachePath)){
+					Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for " + gServer.serverName + " !!!");
 					return false;
+				}
 			}
 		}
 
@@ -255,8 +267,10 @@ public class CacheScript extends Thread {
 			if(gServer.serverType.equals(ServerType.DAS2))
 				fileName += Constants.xml_ext;
 			
-			if(!moveFileTo(file,fileName,local_path))
+			if(!moveFileTo(file,fileName,local_path)){
+				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find " + server_path + "/" + fileName + " !!!");
 				return false;
+			}
 		}
 
 		return true;
@@ -270,7 +284,10 @@ public class CacheScript extends Thread {
 	 */
 	private static boolean processDasServer(GenericServer gServer, String serverCachePath){
 		File file = getFile(gServer.URL);
-		moveFileTo(file,dsn,serverCachePath);
+		if(!moveFileTo(file,dsn,serverCachePath)){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find " + dsn + "for " + gServer.serverName + " !!!");
+			return false;
+		}
 		
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		Map<String, DasSource> sources = server.getDataSources();
@@ -282,7 +299,10 @@ public class CacheScript extends Thread {
 
 		for (DasSource source : sources.values()) {
 			
-			getAllDasFiles(source.getID(),source.getServerURL(), source.getMasterURL(), serverCachePath);
+			if(!getAllDasFiles(source.getID(),source.getServerURL(), source.getMasterURL(), serverCachePath)){
+				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for " + gServer.serverName + " !!!");
+				return false;
+			}
 		}
 
 		return true;
@@ -312,8 +332,10 @@ public class CacheScript extends Thread {
 			if(file == null)
 				continue;
 			
-			if(!moveFileTo(file,fileDet.getValue(),local_path))
+			if(!moveFileTo(file,fileDet.getValue(),local_path)){
+				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find " + fileDet.getKey() + " !!!");
 				return false;
+			}
 		}
 
 		return true;
@@ -466,7 +488,7 @@ public class CacheScript extends Thread {
 		InputStream istr = null;
 		try {
 			istr = new ByteArrayInputStream(defaultList.getBytes());
-			String path = "./";
+			String path = "/";
 
 			if(args.length >= 1)
 				path = args[0];

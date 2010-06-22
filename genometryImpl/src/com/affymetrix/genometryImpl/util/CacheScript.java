@@ -41,7 +41,7 @@ import org.w3c.dom.NodeList;
 public class CacheScript extends Thread {
 
 	private static final String dsn = "dsn.xml";
-	private static final String temp = " temp";
+	private static final String temp = "temp";
 	
 	/** Local path where data is cached. **/
 	private final String path;
@@ -52,7 +52,7 @@ public class CacheScript extends Thread {
 	private static final Set<String> quickloadFiles = new HashSet<String>();
 	private static final Set<String> das2Files = new HashSet<String>();
 
-	/** Add filed to be looked up. **/
+	/** Add files to be looked up. **/
 	static{
 		quickloadFiles.add(Constants.annotsTxt);
 		quickloadFiles.add(Constants.annotsXml);
@@ -424,7 +424,7 @@ public class CacheScript extends Thread {
 				el = (Element) child;
 				if (name.equalsIgnoreCase("server")) {
 					ServerType server_type = getServerType(el.getAttribute("type"));
-					String server_name = el.getAttribute("name");
+					String server_name = el.getAttribute("name").replaceAll("\\W","");
 					String server_url = el.getAttribute("url");
 					String en = el.getAttribute("enabled");
 					Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);

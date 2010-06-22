@@ -164,6 +164,7 @@ public class CacheScript {
 
 	/**
 	 * Gets files for a genome and copies it to it's directory.
+	 * @param servertype	Server type to determine which set of files to be used.
 	 * @param server_path	Server path from where mapping is to be copied.
 	 * @param local_path	Local path from where mapping is to saved.
 	 */
@@ -195,6 +196,7 @@ public class CacheScript {
 
 		return true;
 	}
+	
 	/**
 	 * Gets files for all genomes from Das server and copies it to appropriate directory.
 	 * @param gServer	GenericServer from where mapping are fetched.
@@ -355,26 +357,29 @@ public class CacheScript {
 				return t;
 			}
 		}
-		return ServerType.LocalFiles;
+		return null;
 	}
 
-	static public void main(String[] args){
-		InputStream istr = null;
+	/**
+	 * Runs caching script for given set of server list.
+	 * @param server_list	List of server.
+	 */
+	static public void runScript(Set<GenericServer> server_list){
+
 		FileOutputStream fos = null;
 		File mapping = new File(path + "/" + Constants.serverMapping);
 		try {
-			istr = new ByteArrayInputStream(defaultList.getBytes());
 			mapping.createNewFile();
 			fos = new FileOutputStream(mapping);
 			final PrintStream out = new PrintStream(fos);
-			Set<GenericServer> server_list = parseServerList(istr);
+
 			for (final GenericServer gServer : server_list) {
 
 				final Timer ser_tim = new Timer();
 				ExecutorService vexec = Executors.newSingleThreadExecutor();
 				SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-					protected Void doInBackground(){				
+					protected Void doInBackground(){
 						ser_tim.start();
 						processServer(gServer);
 						return null;
@@ -393,8 +398,20 @@ public class CacheScript {
 		} catch (Exception ex) {
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
-			GeneralUtils.safeClose(istr);
 			GeneralUtils.safeClose(fos);
+		}
+	}
+
+	static public void main(String[] args){
+		InputStream istr = null;
+		try {
+			istr = new ByteArrayInputStream(defaultList.getBytes());
+			Set<GenericServer> server_list = parseServerList(istr);
+			runScript(server_list);
+		} catch (Exception ex) {
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(istr);
 		}
 				
 	}

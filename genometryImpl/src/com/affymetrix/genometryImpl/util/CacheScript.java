@@ -6,21 +6,19 @@ import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -28,7 +26,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javax.swing.SwingWorker;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -42,7 +39,6 @@ import org.w3c.dom.NodeList;
  */
 public class CacheScript {
 
-	private static final Pattern tab_regex = Pattern.compile("\t");
 	private static final String path = ".";
 	
 	private static final String defaultList =	" <servers> " +
@@ -94,9 +90,14 @@ public class CacheScript {
 	 * @return
 	 */
 	private static boolean processQuickLoad(GenericServer gServer, String serverCachePath){
-		//Get mapping mapping and move it to preferred location.
 		File file = getFile(gServer.URL+Constants.contentsTxt);
-		Set<String> genome_names = processContentTxt(file);
+
+		String quickloadStr = null;
+		quickloadStr = (String) gServer.serverObj;
+		
+		QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
+
+		List<String> genome_names = quickloadServer.getGenomeNames();
 		if(!moveFileTo(file,Constants.contentsTxt,serverCachePath))
 			return false;
 
@@ -110,46 +111,6 @@ public class CacheScript {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Parses content.txt mapping of Quickload and returns the list of genome names.
-	 * @param mapping	File to be parsed.
-	 * @return
-	 */
-	private static Set<String> processContentTxt(File file){
-		Set<String> genome_names = new HashSet<String>();
-		InputStream istr = null;
-		InputStreamReader ireader = null;
-		BufferedReader br = null;
-		try {
-			istr = new FileInputStream(file);
-			ireader = new InputStreamReader(istr);
-			br = new BufferedReader(ireader);
-			String line;
-			while ((line = br.readLine()) != null) {
-				if ((line.length() == 0) || line.startsWith("#")) {
-					continue;
-				}
-				String[] fields = tab_regex.split(line);
-				if (fields.length >= 1) {
-					String genome_name = fields[0];
-					genome_name = genome_name.trim();
-					if (genome_name.length() == 0) {
-						Logger.getLogger(CacheScript.class.getName()).log(Level.WARNING,"Found blank QuickLoad genome -- skipping",file);
-						continue;
-					}
-					genome_names.add(genome_name);
-				}
-			}
-		} catch (IOException ex) {
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(istr);
-			GeneralUtils.safeClose(ireader);
-			GeneralUtils.safeClose(br);
-		}
-		return genome_names;
 	}
 
 	/**
@@ -390,8 +351,6 @@ public class CacheScript {
 		InputStream istr = null;
 		FileOutputStream fos = null;
 		File mapping = new File(path + "/" + Constants.serverMapping);
-		Timer tim = new Timer();
-		tim.start();
 		try {
 			istr = new ByteArrayInputStream(defaultList.getBytes());
 			mapping.createNewFile();
@@ -413,11 +372,8 @@ public class CacheScript {
 					}
 
 				};
-
 				vexec.execute(worker);
-
 			}
-			Logger.getLogger(CacheScript.class.getName()).log(Level.INFO, "Total time required to cache all server:" + (tim.read()/ 1000f), tim);
 		} catch (Exception ex) {
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {

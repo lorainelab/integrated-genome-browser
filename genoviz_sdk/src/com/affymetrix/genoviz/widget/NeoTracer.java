@@ -1276,7 +1276,7 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 	public final boolean getBaseVisibility(int baseID) {
-		return base_glyphs.get(0).getVisibility(baseID);
+		return base_glyphs!=null && !base_glyphs.isEmpty() && base_glyphs.get(0).getVisibility(baseID);
 	}
 
 	public void setBaseVisibility(int baseID, boolean visible) {

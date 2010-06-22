@@ -124,11 +124,8 @@ public class CacheScript {
 			return false;
 
 		for(String genome_name : genome_names){
-			String server_path = gServer.URL + genome_name;
-			String local_path = serverCachePath+ "/" + genome_name;
-			makeDir(local_path);
-
-			getAllFiles(gServer.serverType,server_path,local_path);
+			if(!getAllFiles(gServer,genome_name,serverCachePath))
+				return false;
 		}
 
 		return true;
@@ -146,18 +143,17 @@ public class CacheScript {
 
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = serverInfo.getSources();
+		
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			Logger.getLogger(CacheScript.class.getName()).log(Level.WARNING,"Couldn't find species for server: ",gServer);
 			return false;
 		}
+
 		for (Das2Source source : sources.values()) {
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
-				String server_path = gServer.URL + "/" + versionSource.getName();
-				String local_path = serverCachePath + "/" + versionSource.getName();
-				makeDir(local_path);
-
-				getAllFiles(gServer.serverType,server_path,local_path);
+				if(!getAllFiles(gServer,versionSource.getName(),serverCachePath))
+					return false;
 			}
 		}
 
@@ -170,11 +166,11 @@ public class CacheScript {
 	 * @param server_path	Server path from where mapping is to be copied.
 	 * @param local_path	Local path from where mapping is to saved.
 	 */
-	private static boolean getAllFiles(ServerType servertype, String server_path, String local_path){
+	private static boolean getAllFiles(GenericServer gServer, String genome_name, String local_path){
 		File file;
 		Set<String> files = null;
 
-		switch(servertype){
+		switch(gServer.serverType){
 			case QuickLoad:
 				files = quickloadFiles;
 				break;
@@ -186,14 +182,22 @@ public class CacheScript {
 			default:
 				return false;
 		}
-		
+
+		String server_path = gServer.URL + "/" + genome_name;
+		local_path += "/" + genome_name;
+		makeDir(local_path);
+
 		for(String fileName : files){
 			file = getFile(server_path+"/"+fileName);
 
-			if(servertype.equals(ServerType.DAS2))
+			if(file == null)
+				continue;
+			
+			if(gServer.serverType.equals(ServerType.DAS2))
 				fileName += Constants.xml_ext;
 			
-			moveFileTo(file,fileName,local_path);
+			if(!moveFileTo(file,fileName,local_path))
+				return false;
 		}
 
 		return true;
@@ -274,9 +278,6 @@ public class CacheScript {
 	 * @return
 	 */
 	private static boolean moveFileTo(File file, String fileName, String path){
-		if(file == null)
-			return false;
-
 		File newLocation = new File(path+ "/" +fileName);
 		return file.renameTo(newLocation);
 	}

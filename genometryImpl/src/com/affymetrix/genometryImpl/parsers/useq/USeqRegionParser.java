@@ -77,6 +77,13 @@ public final class USeqRegionParser  {
 				zis.getNextEntry();
 				this.archiveInfo = new ArchiveInfo(zis, false);
 			}
+			
+			//check that they are loading the data into the correct genome build
+			String genomeVersion = archiveInfo.getVersionedGenome();
+			if (group.isSynonymous(genomeVersion) == false){
+				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
+			}
+			
 			//for each entry parse, will contain all of the same kind of data so just parse first to find out data type 
 			ZipEntry ze;
 			while ((ze = zis.getNextEntry()) != null){

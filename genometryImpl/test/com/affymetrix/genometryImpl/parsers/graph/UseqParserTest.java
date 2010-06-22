@@ -45,7 +45,7 @@ public class UseqParserTest {
 		assertTrue(new File(filename).exists());
 		InputStream istr = new FileInputStream(filename);
 		assertNotNull(istr);
-		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+		AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");
 		
 		USeqRegionParser up = new USeqRegionParser();
 		List<SeqSymmetry> results = up.parse(istr, group, stream_name, false, null);
@@ -87,6 +87,9 @@ public class UseqParserTest {
 		InputStream istr = new FileInputStream(filename);
 		assertNotNull(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");
+		gmodel.addSeqGroup(group);
+		gmodel.setSelectedSeqGroup(group);
 
 		USeqGraphParser up = new USeqGraphParser();
 		List<GraphSym> results = up.parseGraphSyms(istr, gmodel, "test", null);

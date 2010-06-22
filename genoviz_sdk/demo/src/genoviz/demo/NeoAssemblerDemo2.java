@@ -14,7 +14,11 @@
 package genoviz.demo;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.datamodel.*;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
+import com.affymetrix.genoviz.glyph.AlignmentGlyph;
 import com.affymetrix.genoviz.widget.*;
 
 import genoviz.demo.adapter.AssemblyAdapter;
@@ -30,6 +34,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Panel;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.net.*;
 import java.util.*;
 import javax.swing.JApplet;
@@ -44,7 +49,9 @@ import javax.swing.WindowConstants;
  *
  * @version $Id$
  */
-public class NeoAssemblerDemo2 extends JApplet {
+public class NeoAssemblerDemo2 extends JApplet
+		implements NeoRangeListener,
+			   MouseListener{
 
 	Assembly assem; // the data model
 
@@ -71,7 +78,8 @@ public class NeoAssemblerDemo2 extends JApplet {
 		// Use the NeoAssembler's built-in selection methods.
 		map.setSelectionEvent(NeoAssembler.ON_MOUSE_DOWN);
 		map.setSelectionBehavior(NeoAssembler.SELECT_RESIDUES);
-
+		map.addMouseListener(this);
+		map.addRangeListener(this);
 		/**
 		  In order for the assembly map to automatically respond to resize events
 		  by filling the available space, it is highly recommended a
@@ -83,8 +91,8 @@ public class NeoAssemblerDemo2 extends JApplet {
 
 		cpane.add("North", buttonpanel);
 
-		NeoPanel widg_pan = new NeoPanel();
-		widg_pan.setLayout(new BorderLayout());
+//		NeoPanel widg_pan = new NeoPanel();
+//		widg_pan.setLayout(new BorderLayout());
 		cpane.add("Center", (Component)this.map);
 		//add("Center", widg_pan);
 
@@ -97,6 +105,7 @@ public class NeoAssemblerDemo2 extends JApplet {
 		int alignwidth = Integer.parseInt(getParameter("alignwidth"));
 		try {
 			seq_URL = new URL(this.getDocumentBase(), getParameter("seq_file"));
+			System.out.println(seq_URL);
 			align_URL = new URL(this.getDocumentBase(), getParameter("map_file"));
 		}
 		catch(Exception ex) {
@@ -115,9 +124,12 @@ public class NeoAssemblerDemo2 extends JApplet {
 		map.getSelectedObjects();
 		map.addItemListener( new ItemListener() {
 			public void itemStateChanged( ItemEvent e ) {
-				showStatus( e.getItem().toString() );
+				System.out.println(e.getItem().toString());
+
+				
 			}
 		} );
+
 	}
 
 
@@ -229,8 +241,19 @@ public class NeoAssemblerDemo2 extends JApplet {
 		Vector seqs = null;
 		Vector aligns = null;
 		Hashtable seqhash = new Hashtable();
+		System.out.println(align_URL);
 		seqs = SequenceParser.getSequences(seq_URL);
+
+		Iterator i = seqs.iterator();
+		while(i.hasNext()){
+			System.out.print(i.next());
+		}
 		aligns = AlignmentParser.getAlignments(align_URL);
+		System.out.println("");
+		i = aligns.iterator();
+		while(i.hasNext()){
+			System.out.print(i.next());
+		}
 		// This assumes consensus is FIRST in alignment/mapping input
 		Mapping consmap = (Mapping)aligns.elementAt(0);
 		Assembly model = new Assembly(consmap, aligns, seqs);
@@ -288,7 +311,111 @@ public class NeoAssemblerDemo2 extends JApplet {
 		frm.getContentPane().add("Center", me);
 		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frm.pack();
-		//frm.setBounds(20, 40, 900, 400);
+		frm.setBounds(20, 40, 900, 400);
 		frm.setVisible(true);
 	}
+	public void mouseClicked(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { }
+	public void mouseReleased(MouseEvent e) {
+		if (e.getSource() == map) {
+			reportSelectedResidues();
+		}
+		/*else {
+			if (clicking) {
+				if (framesShowing) {
+					hideFrames();
+				}
+				else {
+					showFrames();
+				}
+				framesShowing = !framesShowing;
+			}*/
+		}
+
+
+	@SuppressWarnings("unchecked")
+	public void mousePressed(MouseEvent e) {
+		if (e.getSource() == map) {
+			//selectedDataModels.removeAllElements();
+			List<GlyphI> items = map.getSelected();
+			for (Iterator<GlyphI> it = items.iterator(); it.hasNext();) {
+				GlyphI gl = it.next();
+				if (map.getDataModel(gl) != null) {
+				//	selectedDataModels.addElement(map.getDataModel(gl));
+				}
+			}
+		}
+	}
+
+	/** RangeListener implelementation */
+
+	public void rangeChanged(NeoRangeEvent evt) {
+	}
+
+	public void reportSelectedResidues() {
+
+		AlignmentGlyph aglyph = getSelectedGlyph ( map );
+		if (null !=aglyph) {
+
+			int[] theRange = getSelectedRange ( aglyph );
+			System.out.println( "from " + theRange[0] + " to " + theRange[1] );
+			System.out.println( getSelectedResidues ( aglyph ) );
+			//Vector aspans = aglyph.getAlignedSpans();
+
+			//AlignedResiduesGlyph aspan;
+		}
+	}
+
+	public String getSelectedResidues ( AlignmentGlyph theGlyph ) {
+		if ( ! (theGlyph.isSelected() ) ) return( "" );
+		Rectangle2D.Double selectedBox = theGlyph.getSelectedRegion();
+		Mapping glyphMap = theGlyph.getMapping();
+		SequenceI glyphSeq = theGlyph.getSequence();
+		int begSeq = (int)selectedBox.x;
+		int endSeq = (int) ( selectedBox.x + selectedBox.width );
+		int seqPos = 0;
+		StringBuffer retSeq = new StringBuffer( "" );
+		for ( int i = begSeq; i < endSeq; i++ ) {
+			seqPos = glyphMap.mapToMapped(i); //seqPos = glyphMap.mapToSequence( i );
+			char c = glyphSeq.getResidue( seqPos );
+			if ( ' ' < c ) {
+				retSeq.append ( glyphSeq.getResidue ( seqPos ) );
+			}
+		}
+		return ( retSeq.toString() );
+	}
+
+	public int[] getSelectedRange (AlignmentGlyph theGlyph ) {
+		int[] theRange = new int[2];
+		if (null != theGlyph) {
+			if ( ! (theGlyph.isSelected() ) ) {
+				theRange[0] = 0;
+				theRange[1] = 0;
+			}
+			else {
+				Rectangle2D.Double selectedBox = theGlyph.getSelectedRegion();
+				theRange[0] = (int)(selectedBox.x);
+				theRange[1] = (int)(selectedBox.x + selectedBox.width - 1);
+			}
+		}
+		return theRange;
+	}
+
+	protected AlignmentGlyph getSelectedGlyph ( NeoAssembler theAssembler ) {
+		AlignmentGlyph oneGlyph;
+		oneGlyph = (AlignmentGlyph)theAssembler.getConsensusGlyph();
+		if (oneGlyph.isSelected() ) return oneGlyph;
+		else {
+			List<GlyphI> theGlyphs = theAssembler.getAlignmentGlyphs();
+
+			for ( int i  = 0; i < theGlyphs.size(); i++ ) {
+				oneGlyph = (AlignmentGlyph)theGlyphs.get ( i );
+				if (oneGlyph.isSelected() ) return oneGlyph;
+			}
+		}
+		return ( null );
+	}
+
+
 }

@@ -101,7 +101,7 @@ public class USeqGraphParser {
 					graphs.add(graf);
 				}
 			}
-			else {
+			else if (USeqUtilities.POSITION_SCORE.matcher(si.getBinaryType()).matches()) {
 				Iterator<String> it = chromData.keySet().iterator();
 				while (it.hasNext()){
 					chromStrand = it.next();
@@ -115,6 +115,9 @@ public class USeqGraphParser {
 					GraphSym graf = makeGraph(merged.getSliceInfo(), xcoords, ycoords);
 					graphs.add(graf);
 				}
+			}
+			else {
+				throw new IOException ("USeq graph parsing for "+si.getBinaryType()+" is not implemented.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -21,19 +21,23 @@ import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.glyph.BasicGraphGlyph;
 import com.affymetrix.genoviz.glyph.BasicImageGlyph;
+import com.affymetrix.genoviz.widget.NeoWidget;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.net.URL;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-public class GraphDemo extends JApplet {
+public class GraphDemo extends JApplet implements ComponentListener{
 
 	NeoMap map;
 	AdjustableJSlider xzoomer;
@@ -42,30 +46,23 @@ public class GraphDemo extends JApplet {
 
 	@Override
 	public void init() {
-		map = new NeoMap(true, true) {
-
-			@Override
-			public void componentResized(ComponentEvent evt) {
-				if (evt.getSource() == canvas) {
-					this.stretchToFit(false, true);
-					this.updateWidget();
-				}
-			}
-		};  // no internal vertical scroller
+		map = new NeoMap(true, true);  // no internal vertical scroller
 		map.setMapOffset(-200, 200);
 		map.setMapRange(0, 1000);
 		map.addAxis(0);
-
+		//map.stretchToFit(true, true);
 		xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
 		yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
 		map.setZoomer(NeoMap.X, xzoomer);
 		map.setZoomer(NeoMap.Y, yzoomer);
-
+//		map.addComponentListener(this);
 		Container cpane = this.getContentPane();
 		cpane.setLayout(new BorderLayout());
 		cpane.add("Center", map);
 		cpane.add("North", xzoomer);
 		cpane.add("West", yzoomer);
+		cpane.addComponentListener(this);
+
 
 		double xcoords[] = {0, 100, 200, 300, 400, 500, 600, 700, 800, 900};
 		double ycoords[] = {0, -50, -25, 25, 100, 50, 175, -10, 50, 74};
@@ -142,6 +139,26 @@ public class GraphDemo extends JApplet {
 		}
 		return super.getImage(filebaseurl, filename);
 	}
+	public void componentHidden(ComponentEvent e) {
+
+    }
+
+    public void componentMoved(ComponentEvent e) {
+
+    }
+
+    public void componentResized(ComponentEvent e) {
+//	if (e.getSource() == canvas) {
+					map.stretchToFit(false, false);
+//					map.updateWidget();
+//				}
+    }
+
+    public void componentShown(ComponentEvent e) {
+
+
+    }
+
 	static Boolean isApplication = false;
 
 	static public void main(String[] args) {

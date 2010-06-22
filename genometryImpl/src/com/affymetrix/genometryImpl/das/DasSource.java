@@ -72,7 +72,7 @@ public final class DasSource {
 		return id;
 	}
 
-	void add(String source) {
+	synchronized void add(String source) {
 		sources.add(source);
 	}
 
@@ -90,7 +90,7 @@ public final class DasSource {
 		return genome;
 	}
 
-	public synchronized Set<String> getEntryPoints() {
+	public Set<String> getEntryPoints() {
 		if (!entries_initialized) {
 			initEntryPoints();
 		}
@@ -105,7 +105,7 @@ public final class DasSource {
 	}
 
 	/** Get entry points from das server. */
-	private synchronized void initEntryPoints() {
+	private synchronized boolean initEntryPoints() {
 		InputStream stream = null;
 		try {
 			URL entryURL;
@@ -116,6 +116,11 @@ public final class DasSource {
 			
 			System.out.println("Das Entry Request: " + entryURL);
 			stream = LocalUrlCacher.getInputStream(entryURL);
+			if (stream == null) {
+				Logger.getLogger(this.getClass().getName()).log(
+						Level.SEVERE, "Could not contact server at {0}", entryURL);
+				return false;
+			}
 			Document doc = XMLUtils.getDocument(stream);
 			NodeList segments = doc.getElementsByTagName("SEGMENT");
 			int length = segments.getLength();
@@ -145,8 +150,9 @@ public final class DasSource {
 			ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex);
 		} finally {
 			GeneralUtils.safeClose(stream);
+			entries_initialized = true;	// set even if there's an error
 		}
-		entries_initialized = true;
+		return true;
 	}
 
 	private synchronized void initTypes() {
@@ -174,7 +180,8 @@ public final class DasSource {
 			System.out.println("Das Types Request: " + loadURL);
 			stream = LocalUrlCacher.getInputStream(loadURL);
 			if (stream == null) {
-				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request failed for " + loadURL + ", skipping");
+				Logger.getLogger(this.getClass().getName()).log(
+						Level.WARNING, "Types request failed for {0}, skipping", loadURL);
 				return false;
 			}
 			Document doc = XMLUtils.getDocument(stream);

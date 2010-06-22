@@ -148,7 +148,6 @@ public final class Das2ServerInfo  {
 			}
 			Map<String,String> headers = new LinkedHashMap<String,String>();
 			response = LocalUrlCacher.getInputStream(getQueryFor(das_query), true, headers);
-			response.mark(Integer.MAX_VALUE);
 			if (response == null) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;
@@ -170,7 +169,6 @@ public final class Das2ServerInfo  {
 			parseSources(doc.getElementsByTagName("SOURCE"), das_query);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Not deleteing cache for '" + getQueryFor(das_query) + "'");
 			LocalUrlCacher.invalidateCacheFile(getQueryFor(das_query));
 			return false;   // not successfully initialized if there was an exception.
 		} finally {

@@ -39,6 +39,8 @@ import org.w3c.dom.NodeList;
  */
 public class CacheScript {
 
+	private static final String dsn = "dsn.xml";
+	
 	/** Local path where data is cached. **/
 	private static final String path = ".";
 
@@ -204,6 +206,9 @@ public class CacheScript {
 	 * @return
 	 */
 	private static boolean processDasServer(GenericServer gServer, String serverCachePath){
+		File file = getFile(gServer.URL);
+		moveFileTo(file,dsn,serverCachePath);
+		
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		Map<String, DasSource> sources = server.getDataSources();
 

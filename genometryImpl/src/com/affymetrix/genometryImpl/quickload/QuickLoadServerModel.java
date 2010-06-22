@@ -44,17 +44,19 @@ public final class QuickLoadServerModel {
 	private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
 	private final String primary_url;
 
-
+	/**
+	 * Initialize quickload server model for given url.
+	 * @param url	server url.
+	 */
 	public QuickLoadServerModel(String url) {
 		this(url, null);
 	}
 
-	/**
-	 * Initialize quickload server model for given url.
-	 * @param url	server url.
-	 * @param loadGenome	boolean to check if genomes should be loaded from server.
-	 */
 	private QuickLoadServerModel(String url, String pri_url) {
+		url = ServerUtils.formatURL(url, LoadUtils.ServerType.QuickLoad);
+
+		if(pri_url != null)
+			pri_url = ServerUtils.formatURL(pri_url, LoadUtils.ServerType.QuickLoad);
 		
 		root_url = url;
 		primary_url = pri_url;
@@ -71,11 +73,11 @@ public final class QuickLoadServerModel {
 	 */
 	public static synchronized QuickLoadServerModel getQLModelForURL(URL url, URL primary_url) {
 
-		String ql_http_root = ServerUtils.formatURL(url.toExternalForm(), LoadUtils.ServerType.QuickLoad);
+		String ql_http_root = url.toExternalForm();
 		
 		String primary_root = null;
 		if(primary_url != null){
-			primary_root = ServerUtils.formatURL(primary_url.toExternalForm(), LoadUtils.ServerType.QuickLoad);
+			primary_root = primary_url.toExternalForm();
 		}
 
 		QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);

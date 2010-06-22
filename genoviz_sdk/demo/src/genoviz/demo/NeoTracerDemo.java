@@ -42,7 +42,7 @@ import javax.swing.plaf.basic.BasicArrowButton;
  * @version $Id$
  */
 public class NeoTracerDemo extends Applet
-	implements ActionListener, NeoRangeListener {
+	implements ActionListener, NeoRangeListener, ComponentListener {
 
 	NeoPanel widg_pan;
 	boolean clone_in_same_frame = true;
@@ -158,9 +158,10 @@ public class NeoTracerDemo extends Applet
 		}
 		else {
 			widget = new NeoTracer();
+			//widget.setRange(1, 500);
 		}
 		widget.addRangeListener(this);
-
+//		widget.addComponentListener(this);
 		descLabel = new Label("");
 		this.setLayout(new BorderLayout());
 
@@ -170,6 +171,7 @@ public class NeoTracerDemo extends Applet
 		widg_pan.add("Center", (Component)widget);
 		this.setLayout(new BorderLayout());
 		this.add("Center", widg_pan);
+		this.addComponentListener(this);
 	}
 
 	@Override
@@ -611,6 +613,26 @@ public class NeoTracerDemo extends Applet
 			return parameters.get(name);
 		return super.getParameter(name);
 	}
+
+	public void componentHidden(ComponentEvent e) {
+
+    }
+
+    public void componentMoved(ComponentEvent e) {
+
+    }
+
+    public void componentResized(ComponentEvent e) {
+//	if (e.getSource() == canvas) {
+					widget.stretchToFit(true, true);
+					widget.updateWidget();
+//				}
+    }
+
+    public void componentShown(ComponentEvent e) {
+
+
+    }
 
 	static Boolean isApplication = false;
 	static Hashtable<String,String> parameters;

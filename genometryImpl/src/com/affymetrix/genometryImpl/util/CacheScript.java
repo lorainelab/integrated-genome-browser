@@ -38,13 +38,15 @@ import org.w3c.dom.NodeList;
  * A class to get meta data from all servers.
  * @author hiralv
  */
-public class CacheScript {
+public class CacheScript extends Thread {
 
 	private static final String dsn = "dsn.xml";
 	private static final String temp = " temp";
 	
 	/** Local path where data is cached. **/
-	private static final String path = "/";
+	private final String path;
+	/** List of server to be cached. **/
+	private final Set<GenericServer> server_list;
 
 	/** For files too be looked up on server. **/
 	private static final Set<String> quickloadFiles = new HashSet<String>();
@@ -82,13 +84,67 @@ public class CacheScript {
 //												" <server type='das2' name='UofUtahBioinfoCore' url='http://bioserver.hci.utah.edu:8080/DAS2DB/genome' enabled='false' />" +
 
 												" </servers> ";
-	
+
+	public CacheScript(String path, Set<GenericServer> server_list){
+		this.path = path;
+		this.server_list = server_list;
+	}
+
+	/**
+	 * Runs caching script for given set of server list.
+	 */
+	@Override
+	public void run() {
+		for (final GenericServer gServer : server_list) {
+
+			final Timer ser_tim = new Timer();
+			ExecutorService vexec = Executors.newSingleThreadExecutor();
+			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+				protected Void doInBackground() {
+					ser_tim.start();
+					if(processServer(gServer, path))
+						copyDirectoryFor(path,gServer.serverName);
+					return null;
+				}
+
+				@Override
+				public void done() {
+					Logger.getLogger(CacheScript.class.getName()).log(Level.INFO, "Time required to cache " + gServer.serverName + " :" + (ser_tim.read() / 1000f), ser_tim);
+				}
+			};
+			vexec.execute(worker);
+			vexec.shutdown();
+		}
+	}
+
+	/**
+	 * Create serverMapping.txt and adds server name and corresponding directory to it.
+	 * @param server_list
+	 */
+	public void writeServerMapping(){
+		FileOutputStream fos = null;
+		try {
+			File mapping = new File(path + "/" + Constants.serverMapping);
+			mapping.createNewFile();
+			fos = new FileOutputStream(mapping);
+			final PrintStream out = new PrintStream(fos);
+			for (final GenericServer gServer : server_list) {
+				out.println(gServer.friendlyURL.toExternalForm() + "\t" + gServer.serverName);
+			}
+		} catch (IOException ex) {
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(fos);
+		}
+	}
+
 	/**
 	 * Creates directory of server name.
 	 * Determines the server type and process it accordingly.
 	 * @param gServer	GenericServer to be processed.
 	 */
-	private static boolean processServer(GenericServer gServer){
+	private static boolean processServer(GenericServer gServer, String path){
 		String serverCachePath = path+gServer.serverName+temp;
 		makeDir(serverCachePath);
 
@@ -377,27 +433,6 @@ public class CacheScript {
 	}
 
 	/**
-	 * Create serverMapping.txt and adds server name and corresponding directory to it.
-	 * @param server_list
-	 */
-	private static void writeServerMapping(Set<GenericServer> server_list){
-		FileOutputStream fos = null;
-		try {
-			File mapping = new File(path + "/" + Constants.serverMapping);
-			mapping.createNewFile();
-			fos = new FileOutputStream(mapping);
-			final PrintStream out = new PrintStream(fos);
-			for (final GenericServer gServer : server_list) {
-				out.println(gServer.friendlyURL.toExternalForm() + "\t" + gServer.serverName);
-			}
-		} catch (IOException ex) {
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(fos);
-		}
-	}
-
-	/**
 	 * Recursively copies data from source to destination.
 	 * @param source	Source directory.
 	 * @param dest		Destination directory.
@@ -416,7 +451,7 @@ public class CacheScript {
 	 * Recursively copies directory data for given server name.
 	 * @param servername	Name of the server.
 	 */
-	private static void copyDirectoryFor(String servername){
+	private static void copyDirectoryFor(String path, String servername){
 		File temp_dir = new File(path + servername + temp);
 
 		String perm_path = path + servername;
@@ -427,42 +462,19 @@ public class CacheScript {
 		copyRecursively(temp_dir,perm_dir);
 	}
 
-	/**
-	 * Runs caching script for given set of server list.
-	 * @param server_list	List of server.
-	 */
-	static public void runScript(Set<GenericServer> server_list) {
-
-		for (final GenericServer gServer : server_list) {
-
-			final Timer ser_tim = new Timer();
-			ExecutorService vexec = Executors.newSingleThreadExecutor();
-			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-				protected Void doInBackground() {
-					ser_tim.start();
-					if(processServer(gServer))
-						copyDirectoryFor(gServer.serverName);
-					return null;
-				}
-
-				@Override
-				public void done() {
-					Logger.getLogger(CacheScript.class.getName()).log(Level.INFO, "Time required to cache " + gServer.serverName + " :" + (ser_tim.read() / 1000f), ser_tim);
-				}
-			};
-			vexec.execute(worker);
-			vexec.shutdown();
-		}
-	}
-
 	static public void main(String[] args){
 		InputStream istr = null;
 		try {
 			istr = new ByteArrayInputStream(defaultList.getBytes());
+			String path = "./";
+
+			if(args.length >= 1)
+				path = args[0];
+			
 			Set<GenericServer> server_list = parseServerList(istr);
-			runScript(server_list);
-			writeServerMapping(server_list);
+			CacheScript script = new CacheScript(path,server_list);
+			script.start();
+			script.writeServerMapping();
 		} catch (Exception ex) {
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {

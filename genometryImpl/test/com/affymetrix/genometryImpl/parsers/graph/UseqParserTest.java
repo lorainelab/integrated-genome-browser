@@ -30,11 +30,11 @@ public class UseqParserTest {
 	@Test
 	public void TestParseFromFile() throws IOException {
 		
-		//System.out.println("Graph file parsing tests.............");
-		//testGraphFileParsing();
+		System.out.println("Graph file parsing tests.............");
+		testGraphFileParsing();
 		
-		//System.out.println("\nRegion file parsing tests.............");
-		//testRegionFileParsing();
+		System.out.println("\nRegion file parsing tests.............");
+		testRegionFileParsing();
 		
 	}
 	
@@ -120,11 +120,11 @@ public class UseqParserTest {
 	
 	@Test
 	public void TestWriteAnnotations() throws Exception {
-		//System.out.println("\nTesting writing Graph data to file..........");
-		//testWritingGraphToFile();
+		System.out.println("\nTesting writing Graph data to file..........");
+		testWritingGraphToFile();
 		
-		//System.out.println("\nTesting writing Regions to file..........");
-		//testWritingRegionsToFile();
+		System.out.println("\nTesting writing Regions to file..........");
+		testWritingRegionsToFile();
 		
 	}
 	

@@ -259,6 +259,10 @@ public final class DasSource {
 				&& url1.getFile().equals(url2.getFile());
 	}
 
+	public Set<String> getSources(){
+		return sources;
+	}
+	
 	public URL getMasterURL(){
 		return master;
 	}

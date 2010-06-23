@@ -75,7 +75,6 @@ public final class NibbleResiduesParser {
 			int num_residues = end - start;
 			num_residues = Math.max(0, num_residues);
 
-			System.out.println("Number of residues :" + num_residues);
 			BioSeq existing_seq = seq_group.getSeq(name);
 			if (existing_seq != null) {
 				result_seq = existing_seq;
@@ -83,12 +82,9 @@ public final class NibbleResiduesParser {
 				result_seq = seq_group.addSeq(name, num_residues);
 			}
 
-			System.out.println("NibbleBioSeq: " + result_seq);
-
+			Logger.getLogger(NibbleResiduesParser.class.getName()).info(
+					"Chromosome: " + result_seq + " : residues: " + num_residues);
 			SetResiduesIterator(start, end, dis, result_seq);
-
-			float read_time = tim.read()/1000f;
-			System.out.println("time to read in bnib residues file: " + read_time);
 		}
 		finally {
 			GeneralUtils.safeClose(dis);

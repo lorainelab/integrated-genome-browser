@@ -308,14 +308,12 @@ public final class FastaParser {
 		//      doing the double-copy
 		String residues = null;
 		if (use_buffer_directly) {
-			//      System.out.println("using buffer directly");
 			System.gc();
 			residues = new String(buf);
-			printMemory();
+			//printMemory();
 		}
 		else {
-			//      System.out.println("constructing residues via array");
-			printMemory();
+			//printMemory();
 			// trying new strategy with String(String) constructor
 			// looks weird, but not as convoluted as other technique
 			//  use String(String) constructor, whose side effect is to trim new String's
@@ -323,19 +321,17 @@ public final class FastaParser {
 			//  and hopefully will save space...
 			String temp_residues = new String(buf);
 			residues = new String(temp_residues);
-			printMemory();
+			//printMemory();
 			temp_residues = null;
 		
 			System.gc();
-			//      try  { Thread.currentThread().sleep(1000); } catch (Exception ex) { }
-			printMemory();
+			//printMemory();
 			System.out.println("done constructing residues via array");
 			buf = null;
 		}
 		System.gc();
 		
 		System.out.println("id: " + seqid);
-		//    System.out.println("residues: " + residues.length());
 		if (seq == null) {
 			seq = new BioSeq(seqid, seqid, residues.length());
 			seq.setResidues(residues);
@@ -624,14 +620,14 @@ public final class FastaParser {
 
 			public static String getMimeType()  { return "text/fasta"; } 
 
-			static void printMemory() {
+			/*static void printMemory() {
 				Runtime rt = Runtime.getRuntime();
 				long currFreeMem = rt.freeMemory();
 				long currTotalMem = rt.totalMemory();
 				long currMemUsed = currTotalMem - currFreeMem;
 				System.out.println("memory used = " + currMemUsed/1000000 + " MB  ," +
 						" total memory = " + currTotalMem/1000000 + " MB");
-			}
+			}*/
 		}
 
 

@@ -120,7 +120,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * Map to store directory name associated with the server on a cached server.
 	 */
-	private static Map<URL,URL> servermapping = new HashMap<URL,URL>();
+	private static Map<String, String> servermapping = new HashMap<String, String>();
 	/**
 	 * Add specified server, finding species and versions associated with it.
 	 * @param serverName
@@ -206,7 +206,7 @@ public final class GeneralLoadUtils {
 	 */
 	private static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
-		URL primaryURL = getServerDirectory(gServer.friendlyURL);
+		URL primaryURL = getServerDirectory(gServer.URL);
 		Map<String,DasSource> sources = server.getDataSources(primaryURL);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
@@ -229,7 +229,7 @@ public final class GeneralLoadUtils {
 	 */
 	private static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-		URL primaryURL = getServerDirectory(gServer.friendlyURL);
+		URL primaryURL = getServerDirectory(gServer.URL);
 		Map<String,Das2Source> sources = server.getSources(primaryURL);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
@@ -265,7 +265,7 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
-		URL primaryURL = getServerDirectory(gServer.friendlyURL);
+		URL primaryURL = getServerDirectory(gServer.URL);
 		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL);
 		
 		if (quickloadServer == null) {
@@ -767,8 +767,8 @@ public final class GeneralLoadUtils {
 
 					String[] fields = tab_regex.split(line);
 					if(fields.length >= 2){
-						URL serverURL = new URL(fields[0]);
-						URL dirURL = new URL(primaryServer.URL + fields[1]);
+						String serverURL = fields[0];
+						String dirURL = primaryServer.URL + fields[1];
 						servermapping.put(serverURL, dirURL);
 					}
 				}
@@ -787,16 +787,23 @@ public final class GeneralLoadUtils {
 	 * @param url	URL of the server.
 	 * @return	Returns a directory if exists else null.
 	 */
-	private static URL getServerDirectory(URL url){
+	public static URL getServerDirectory(String url){
 		GenericServer primaryServer = ServerList.getPrimaryServer();
 
 		if(primaryServer == null)
 			return null;
 		
-		for(Entry<URL, URL> primary : servermapping.entrySet()){
-			if(url.sameFile(primary.getKey()))
-				return primary.getValue();
+		for(Entry<String, String> primary : servermapping.entrySet()){
+			if(url.equals(primary.getKey())){
+				try {
+					return new URL(primary.getValue());
+				} catch (MalformedURLException ex) {
+					Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
+					return null;
+				}
+			}
 		}
+		
 		return null;
 	}
 }

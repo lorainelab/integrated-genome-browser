@@ -25,6 +25,8 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -43,16 +45,17 @@ public final class QuickLoadServerModel {
 	private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
 	private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
 	private final String primary_url;
+	private final GenericServer primaryServer;
 
 	/**
 	 * Initialize quickload server model for given url.
 	 * @param url	server url.
 	 */
 	public QuickLoadServerModel(String url) {
-		this(url, null);
+		this(url, null, null);
 	}
 
-	private QuickLoadServerModel(String url, String pri_url) {
+	private QuickLoadServerModel(String url, String pri_url, GenericServer priServer) {
 		url = ServerUtils.formatURL(url, LoadUtils.ServerType.QuickLoad);
 
 		if(pri_url != null)
@@ -60,7 +63,8 @@ public final class QuickLoadServerModel {
 		
 		root_url = url;
 		primary_url = pri_url;
-
+		primaryServer = priServer;
+		
 		loadGenomeNames();
 	}
 
@@ -71,7 +75,7 @@ public final class QuickLoadServerModel {
 	 * @param genome_names	Set of genomes names to be added.
 	 * @return an instance of QuickLoadServerModel
 	 */
-	public static synchronized QuickLoadServerModel getQLModelForURL(URL url, URL primary_url) {
+	public static synchronized QuickLoadServerModel getQLModelForURL(URL url, URL primary_url, GenericServer primaryServer) {
 
 		String ql_http_root = url.toExternalForm();
 		
@@ -82,7 +86,7 @@ public final class QuickLoadServerModel {
 
 		QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
 		if (ql_server == null) {
-			ql_server = new QuickLoadServerModel(ql_http_root, primary_root);
+			ql_server = new QuickLoadServerModel(ql_http_root, primary_root, primaryServer);
 			url2quickload.put(ql_http_root, ql_server);
 			LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + "synonyms.txt");
 		}
@@ -95,7 +99,7 @@ public final class QuickLoadServerModel {
 	 * Initialize quickload server model for given url.
 	 */
 	public static synchronized QuickLoadServerModel getQLModelForURL(URL url) {
-		return getQLModelForURL(url, null);
+		return getQLModelForURL(url, null, null);
 	}
 	
 	private static boolean getCacheAnnots() {
@@ -357,13 +361,15 @@ public final class QuickLoadServerModel {
 	}
 
 	private String getLoadURL(){
-		String url = root_url;
-		if(primary_url != null)
-			url = primary_url;
+		
+		if(primary_url == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,"Load URL :" + root_url);
+			return root_url;
+		}
+			
 
-		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
-						"Load URL :" + url);
-		return url;
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,"Load URL :" + primary_url);
+		return primary_url;
 	}
 	
 	@Override

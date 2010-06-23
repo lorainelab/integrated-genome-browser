@@ -24,9 +24,11 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static com.affymetrix.genometryImpl.util.Constants.UTF8;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 
 import org.xml.sax.InputSource;
 
@@ -45,7 +47,8 @@ public final class Das2VersionedSource {
     static GenometryModel gmodel = GenometryModel.getGenometryModel();
     private final URI version_uri;
     private final URI coords_uri;
-	private final URI primary_uri; // Cached primary server. If
+	private final URI primary_uri; // Cached primary server.
+	private final GenericServer primaryServer;
     private final Das2Source source;
     private final String name;
     private final Map<String,Das2Capability> capabilities = new HashMap<String,Das2Capability>();
@@ -59,10 +62,11 @@ public final class Das2VersionedSource {
 
 
     public Das2VersionedSource(Das2Source das_source, URI vers_uri, URI coords_uri, String name,
-            String href, String description, boolean init, URI pri_uri) {
+            String href, String description, boolean init, URI pri_uri, GenericServer primaryServer) {
         this.name = name;
         this.coords_uri = coords_uri;
         version_uri = vers_uri;
+		this.primaryServer = primaryServer;
 		
 		if(pri_uri != null)
 			primary_uri = URI.create(pri_uri.toString() + name + "/");
@@ -414,7 +418,7 @@ public final class Das2VersionedSource {
 	 * @return	Returns region string.
 	 */
 	private String getRegionString(String type){
-		if(primary_uri == null){
+		if(primary_uri == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
 			Das2Capability segcap = getCapability(type);
 			Logger.getLogger(Das2VersionedSource.class.getName()).log(Level.FINE, "Region String :" + segcap.getRootURI().toString());
 			return segcap.getRootURI().toString();

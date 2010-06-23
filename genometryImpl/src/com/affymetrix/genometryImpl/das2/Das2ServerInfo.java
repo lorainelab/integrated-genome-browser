@@ -27,9 +27,12 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 
 public final class Das2ServerInfo  {
   private static boolean DEBUG_SOURCES_QUERY = false;
+	private GenericServer primaryServer = null;
 	private final URI server_uri;
 	private URI primary_uri = null;
 	private final String name;
@@ -69,10 +72,11 @@ public final class Das2ServerInfo  {
 	@Override
 	public String toString() { return name; }
 
-	public synchronized Map<String, Das2Source> getSources(URL primary_url) {
+	public synchronized Map<String, Das2Source> getSources(URL primary_url, GenericServer primaryServer) {
 
 		if(this.primary_uri == null){
 			setPrimaryURL(primary_url);
+			this.primaryServer = primaryServer;
 		}
 
 		if (!initialized) {
@@ -94,7 +98,7 @@ public final class Das2ServerInfo  {
 	}
 
 	public synchronized Map<String, Das2Source> getSources() {
-		return getSources(null);
+		return getSources(null, null);
 	}
 
 	private synchronized void addDataSource(Das2Source ds) {
@@ -185,7 +189,7 @@ public final class Das2ServerInfo  {
 	 * @return
 	 */
 	private String getPrimaryQuery(){
-		if(primary_uri == null){
+		if(primary_uri == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
 			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Primary Query :" + server_uri.toString());
 			return server_uri.toString();
 		}
@@ -199,7 +203,7 @@ public final class Das2ServerInfo  {
 	 * @return
 	 */
 	private String getQueryFor(String query){
-		if(primary_uri == null){
+		if(primary_uri == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
 			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Query :" + query);
 			return query;
 		}
@@ -272,12 +276,12 @@ public final class Das2ServerInfo  {
 			this.addDataSource(dasSource);
 			
 			NodeList slist = source.getChildNodes();
-			parseSourceChildren(slist, das_query, dasSource, primary_uri);
+			parseSourceChildren(slist, das_query, dasSource, primary_uri, primaryServer);
 		}
 	}
 
 
-	private static void parseSourceChildren(NodeList slist, String das_query, Das2Source dasSource, URI primary_uri) {
+	private static void parseSourceChildren(NodeList slist, String das_query, Das2Source dasSource, URI primary_uri, GenericServer primaryServer) {
 		for (int k = 0; k < slist.getLength(); k++) {
 			if (!slist.item(k).getNodeName().equals("VERSION")) {
 				continue;
@@ -334,7 +338,7 @@ public final class Das2ServerInfo  {
 				}
 			}
 
-			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false, primary_uri);
+			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false, primary_uri, primaryServer);
 			Iterator<Das2Capability> capiter = caps.values().iterator();
 			while (capiter.hasNext()) {
 				Das2Capability cap = capiter.next();

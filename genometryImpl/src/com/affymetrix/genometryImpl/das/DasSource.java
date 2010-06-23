@@ -229,8 +229,12 @@ public final class DasSource {
 	}
 
 	private URL getLoadURL(URL server, String query) throws MalformedURLException{
-		if(primary == null)
+		if(primary == null){
+			Logger.getLogger(DasSource.class.getName()).log(Level.FINE, "Load URL :" + server.toExternalForm());
 			return new URL(server,query);
+		}
+		
+		Logger.getLogger(DasSource.class.getName()).log(Level.FINE, "Load URL :" + primary.toExternalForm());
 		return new URL(primary, query + ".xml");
 	}
 	

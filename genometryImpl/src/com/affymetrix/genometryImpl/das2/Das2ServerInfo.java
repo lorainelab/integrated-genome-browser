@@ -186,8 +186,10 @@ public final class Das2ServerInfo  {
 	 */
 	private String getPrimaryQuery(){
 		if(primary_uri == null){
+			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Primary Query :" + server_uri.toString());
 			return server_uri.toString();
 		}
+		Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Primary Query :" + primary_uri.toString());
 		return primary_uri.toString();
 	}
 
@@ -198,8 +200,10 @@ public final class Das2ServerInfo  {
 	 */
 	private String getQueryFor(String query){
 		if(primary_uri == null){
+			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Query :" + query);
 			return query;
 		}
+		Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Query :" + query+Constants.GENOME_SEQ_ID+XML);
 		return query+Constants.GENOME_SEQ_ID+XML;
 	}
 	

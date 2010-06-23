@@ -416,9 +416,11 @@ public final class Das2VersionedSource {
 	private String getRegionString(String type){
 		if(primary_uri == null){
 			Das2Capability segcap = getCapability(type);
+			Logger.getLogger(Das2VersionedSource.class.getName()).log(Level.FINE, "Region String :" + segcap.getRootURI().toString());
 			return segcap.getRootURI().toString();
 		}
 
+		Logger.getLogger(Das2VersionedSource.class.getName()).log(Level.FINE, "Region String :" + primary_uri.toString() + type + XML);
 		return primary_uri.toString() + type + XML;
 	}
 }

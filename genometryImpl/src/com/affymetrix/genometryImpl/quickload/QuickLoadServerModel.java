@@ -361,6 +361,8 @@ public final class QuickLoadServerModel {
 		if(primary_url != null)
 			url = primary_url;
 
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
+						"Load URL :" + url);
 		return url;
 	}
 	

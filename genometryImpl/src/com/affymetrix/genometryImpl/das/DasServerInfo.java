@@ -201,9 +201,12 @@ public final class DasServerInfo {
 	}
 
 	private URL getLoadURL() throws MalformedURLException{
-		if(primaryURL == null)
+		if(primaryURL == null){
+			Logger.getLogger(DasServerInfo.class.getName()).log(Level.FINE, "Load URL :" + serverURL.toExternalForm());
 			return serverURL;
+		}
 
+		Logger.getLogger(DasServerInfo.class.getName()).log(Level.FINE, "Load URL :" + primaryURL.toExternalForm() + "/dsn.xml");
 		return new URL(primaryURL.toExternalForm() +"/dsn.xml");
 	}
 }

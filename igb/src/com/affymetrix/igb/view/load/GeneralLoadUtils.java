@@ -255,6 +255,9 @@ public final class GeneralLoadUtils {
 	 * @return false if there's an obvious failure.
 	 */
 	private static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
+		if(gServer.isPrimary())
+			return true;
+
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);

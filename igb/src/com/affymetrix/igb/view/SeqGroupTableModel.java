@@ -2,6 +2,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.igb.IGBConstants;
 import javax.swing.table.AbstractTableModel;
 
 final class SeqGroupTableModel extends AbstractTableModel {
@@ -26,6 +27,9 @@ final class SeqGroupTableModel extends AbstractTableModel {
 			if (col == 0) {
 				return seq.getID();
 			} else if (col == 1) {
+				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
+					return "";	// don't show the "whole genome" size, because it disagrees with the chromosome total
+				}
 				return Long.toString((long) seq.getLengthDouble());
 			}
 		}

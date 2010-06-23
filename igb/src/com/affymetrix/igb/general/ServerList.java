@@ -139,6 +139,7 @@ public final class ServerList {
 	 * @return GenericServer
 	 */
 	public static GenericServer addServer(ServerType serverType, String name, String url, boolean enabled, boolean primary) {
+		url = ServerUtils.formatURL(url, serverType);
 		GenericServer server = url2server.get(url);
 		Object info;
 
@@ -180,6 +181,7 @@ public final class ServerList {
 			url = GeneralUtils.URLDecode(node.name());
 			name = node.get("name", "Unknown");
 			serverType = ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
+			url = ServerUtils.formatURL(url, serverType);
 			info = ServerUtils.getServerInfo(serverType, url, name);
 
 			if (info != null) {

@@ -314,8 +314,7 @@ public final class ServerList {
 	 * @param server GenericServer object of the server to add or update.
 	 */
 	public static void addServerToPrefs(GenericServer server) {
-		if(!server.isPrimary())
-			addServerToPrefs(server.URL, server.serverName, server.serverType);
+		addServerToPrefs(server.URL, server.serverName, server.serverType);
 	}
 
 	/**

@@ -20,7 +20,7 @@ public class USeqGraphParser {
 	private String stream_name;
 	private static final float defaultFloatValue = 1f;
 	private ArchiveInfo archiveInfo;
-
+	
 	/** Parse a USeq zip archive stream returning a List of graphs for IGB. Returns null if something goes wrong.
 	 * Only works with Position or PositionScore data, others should use the USeqRegionParser. 
 	 * @param archiveInfo can be null, include if already read from the stream.*/
@@ -29,7 +29,7 @@ public class USeqGraphParser {
 		this.gmodel = gmodel;
 		this.stream_name = stream_name;
 		this.archiveInfo = archiveInfo;
-		
+
 		BufferedInputStream bis = null;
 		ZipInputStream zis = null;
 		List<GraphSym> graphs = new ArrayList<GraphSym>();
@@ -48,13 +48,13 @@ public class USeqGraphParser {
 			if (this.archiveInfo == null){
 				zis.getNextEntry();
 				this.archiveInfo = new ArchiveInfo(zis, false);
+				archiveInfo = this.archiveInfo;
 			}
 			
 			//check that they are loading the data into the correct genome build
-			String genomeVersion = this.archiveInfo.getVersionedGenome();
-			if (gmodel.getSelectedSeqGroup() == null) {
-				throw new RuntimeException("Unhandled case");
-			} else if (gmodel.getSelectedSeqGroup().isSynonymous(genomeVersion) == false){
+			String genomeVersion = archiveInfo.getVersionedGenome();
+			AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
+			if (asg!= null && asg.isSynonymous(genomeVersion) == false){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 

@@ -80,7 +80,7 @@ public class CacheScript extends Thread {
 												" <server type='quickload' name='HughesLab' url='http://hugheslab.ccbr.utoronto.ca/igb/' />" +
 
 
-//												" <server type='das' name='Ensembl' url='http://www.ensembl.org/das/dsn' enabled='false' />" +
+												" <server type='das' name='Ensembl' url='http://www.ensembl.org/das/dsn' enabled='false' />" +
 //												" <server type='das2' name='UofUtahBioinfoCore' url='http://bioserver.hci.utah.edu:8080/DAS2DB/genome' enabled='false' />" +
 
 												" </servers> ";
@@ -130,7 +130,7 @@ public class CacheScript extends Thread {
 			fos = new FileOutputStream(mapping);
 			final PrintStream out = new PrintStream(fos);
 			for (final GenericServer gServer : server_list) {
-				out.println(gServer.friendlyURL.toExternalForm() + "\t" + gServer.serverName);
+				out.println(gServer.URL + "\t" + gServer.serverName);
 			}
 		} catch (IOException ex) {
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
@@ -303,6 +303,14 @@ public class CacheScript extends Thread {
 				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for " + gServer.serverName + " !!!");
 				return false;
 			}
+
+			for(String src : source.getSources()){
+				if(!getAllDasFiles(src,source.getServerURL(), source.getMasterURL(), serverCachePath)){
+					Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for " + gServer.serverName + " !!!");
+					return false;
+				}
+			}
+
 		}
 
 		return true;
@@ -322,7 +330,7 @@ public class CacheScript extends Thread {
 
 		String entry_point = getPath(master.getPath(),master, DasSource.ENTRY_POINTS);
 		String types = getPath(id,server,DasSource.TYPES);
-	
+
 		DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + Constants.xml_ext);
 		DasFilePath.put(types, DasSource.TYPES + Constants.xml_ext);
 

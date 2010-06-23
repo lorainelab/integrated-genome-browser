@@ -211,11 +211,10 @@ public final class LocalUrlCacher {
 				if (rqstHeaders != null) {
 					rqstHeaders.put("LocalUrlCacher", URL_NOT_REACHABLE);
 				}
-				// if (! cached) { throw new IOException("URL is not reachable, and is not cached!"); }
 				if (!cache_file.exists()) {
 					if (!fileMayNotExist) {
 						Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-								"URL is not reachable, and is not cached!");
+								"URL " + url + " is not reachable, and is not cached!");
 					}
 					return null;
 				}
@@ -285,7 +284,6 @@ public final class LocalUrlCacher {
 				return null; // We don't care if the file doesn't exist.
 			}
 		}
-		//Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
 		return fstr;
 	}
 

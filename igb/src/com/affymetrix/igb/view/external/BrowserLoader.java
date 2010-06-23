@@ -4,18 +4,14 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,9 +69,9 @@ public abstract class BrowserLoader {
 
 
 	public HttpURLConnection getConnection(String url, String cookie) throws IOException {
-		HttpURLConnection.setFollowRedirects(false);
 		URL request_url = new URL(url);
 		HttpURLConnection request_con = (HttpURLConnection) request_url.openConnection();
+		request_con.setInstanceFollowRedirects(false);
 		request_con.setConnectTimeout(120 * 1000); //2min
 		request_con.setUseCaches(false);
 		request_con.addRequestProperty("Cookie", cookie);

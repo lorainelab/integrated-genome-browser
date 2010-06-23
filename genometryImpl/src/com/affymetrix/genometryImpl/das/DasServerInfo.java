@@ -17,6 +17,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import java.io.InputStream;
 import java.net.*;
 import java.util.*;
@@ -36,7 +38,8 @@ public final class DasServerInfo {
 	private URL primaryURL = null;
 	private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
-
+	private GenericServer primaryServer = null;
+	
 	/**
 	 * Creates an instance of DasServerInfo for the given DAS server url.
 	 * @param url
@@ -59,10 +62,11 @@ public final class DasServerInfo {
 		return serverURL;
 	}
 
-	public Map<String, DasSource> getDataSources(URL primaryURL) {
+	public Map<String, DasSource> getDataSources(URL primaryURL, GenericServer primaryServer) {
 
 		if(this.primaryURL == null){
 			setPrimaryURL(primaryURL);
+			this.primaryServer = primaryServer;
 		}
 		
 		if (!initialized) {
@@ -84,7 +88,7 @@ public final class DasServerInfo {
 	}
 
 	public Map<String, DasSource> getDataSources() {
-		return getDataSources(null);
+		return getDataSources(null, null);
 	}
 
 	/**
@@ -187,7 +191,7 @@ public final class DasServerInfo {
 			DasSource das_source = sources.get(DasSource.getID(masterURL));
 			synchronized (this) {
 				if (das_source == null) {
-					das_source = new DasSource(serverURL, masterURL, primaryURL);
+					das_source = new DasSource(serverURL, masterURL, primaryURL, primaryServer);
 					sources.put(DasSource.getID(masterURL), das_source);
 				}
 				das_source.add(sourceid);
@@ -201,7 +205,7 @@ public final class DasServerInfo {
 	}
 
 	private URL getLoadURL() throws MalformedURLException{
-		if(primaryURL == null){
+		if(primaryURL == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
 			Logger.getLogger(DasServerInfo.class.getName()).log(Level.FINE, "Load URL :" + serverURL.toExternalForm());
 			return serverURL;
 		}

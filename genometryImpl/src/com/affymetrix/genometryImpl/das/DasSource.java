@@ -21,6 +21,8 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.XMLUtils;
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -44,6 +46,7 @@ public final class DasSource {
 	private final URL server;
 	private final URL master;
 	private final URL primary;
+	private final GenericServer primaryServer;
 	private final String id;
 	private final Set<String> sources = new HashSet<String>();
 	private final Set<String> entry_points = new LinkedHashSet<String>();
@@ -52,15 +55,16 @@ public final class DasSource {
 	private boolean types_initialized = false;
 	private AnnotatedSeqGroup genome = null;	// lazily instantiate
 
-	DasSource(URL server, URL master, URL primary){
+	DasSource(URL server, URL master, URL primary, GenericServer primaryServer){
 		this.server = server;
 		this.master = master;
 		this.primary = primary;
 		this.id = getID(master);
+		this.primaryServer = primaryServer;
 	}
 
 	DasSource(URL server, URL master) {
-		this(server,master,null);
+		this(server,master,null,null);
 	}
 
 	static String getID(URL master) {
@@ -109,7 +113,7 @@ public final class DasSource {
 		InputStream stream = null;
 		try {
 			URL entryURL;
-			if(primary == null) {
+			if(primary == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)) {
 				entryURL = new URL(master, master.getPath() + "/" + ENTRY_POINTS);
 			}
 			else {
@@ -229,7 +233,7 @@ public final class DasSource {
 	}
 
 	private URL getLoadURL(URL server, String query) throws MalformedURLException{
-		if(primary == null){
+		if(primary == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
 			Logger.getLogger(DasSource.class.getName()).log(Level.FINE, "Load URL :" + server.toExternalForm());
 			return new URL(server,query);
 		}

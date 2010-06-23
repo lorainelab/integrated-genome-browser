@@ -75,7 +75,7 @@ public final class LocalUrlCacher {
 	}
 
 	public static InputStream getInputStream(URL url) throws IOException {
-		return getInputStream(url, true, null, null);
+		return getInputStream(url.toString(), getPreferredCacheUsage(), true, null, null, false);
 	}
 
 	public static InputStream getInputStream(URL url, boolean write_to_cache, Map<String, String> rqstHeaders, Map<String, List<String>> respHeaders) throws IOException {
@@ -83,12 +83,12 @@ public final class LocalUrlCacher {
 	}
 
 	public static InputStream getInputStream(String url) throws IOException {
-		return getInputStream(url, getPreferredCacheUsage(), true);
+		return getInputStream(url, getPreferredCacheUsage(), true, null, null, false);
 	}
 
 	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> rqstHeaders)
 					throws IOException {
-		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, rqstHeaders);
+		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, rqstHeaders, null, false);
 	}
 	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> rqstHeaders, boolean fileMayNotExist)
 					throws IOException {
@@ -97,12 +97,7 @@ public final class LocalUrlCacher {
 
 	public static InputStream getInputStream(String url, boolean write_to_cache)
 					throws IOException {
-		return getInputStream(url, getPreferredCacheUsage(), write_to_cache);
-	}
-
-	private static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
-					throws IOException {
-		return getInputStream(url, cache_option, write_to_cache, null);
+		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, null, null, false);
 	}
 
 	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> rqstHeaders)
@@ -123,7 +118,8 @@ public final class LocalUrlCacher {
 	 * @return input stream from the loaded url
 	 * @throws java.io.IOException
 	 */
-	private static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> rqstHeaders, Map<String, List<String>> respHeaders, boolean fileMayNotExist)
+	private static InputStream getInputStream(
+			String url, int cache_option, boolean write_to_cache, Map<String,String> rqstHeaders, Map<String, List<String>> respHeaders, boolean fileMayNotExist)
 					throws IOException {
 		//look to see if a sessionId is present in the headers
 		String sessionId = null;
@@ -251,9 +247,8 @@ public final class LocalUrlCacher {
 
 
 	private static URLConnection connectToUrl(String url, String sessionId, long local_timestamp) throws MalformedURLException, IOException {
-		URLConnection conn;
 		URL theurl = new URL(url);
-		conn = theurl.openConnection();
+		URLConnection conn = theurl.openConnection();
 		conn.setConnectTimeout(CONNECT_TIMEOUT);
 		conn.setReadTimeout(READ_TIMEOUT);
 		conn.setRequestProperty("Accept-Encoding", "gzip");
@@ -719,8 +714,10 @@ public final class LocalUrlCacher {
 	}
 
 	public static File convertURIToFile(URI uri) {
-		String scheme = uri.getScheme().toLowerCase();
-		if (scheme.length() == 0 || scheme.equals("file")) {
+		if (uri.getScheme() == null) {
+			// attempt to find a local file
+		}
+		if (uri.getScheme() == null || uri.getScheme().length() == 0 || uri.getScheme().equalsIgnoreCase("file")) {
 			File f = new File(uri);
 			if (!GeneralUtils.getUnzippedName(f.getName()).equalsIgnoreCase(f.getName())) {
 				try {
@@ -734,6 +731,7 @@ public final class LocalUrlCacher {
 			}
 			return f;
 		}
+		String scheme = uri.getScheme().toLowerCase();
 		if (scheme.startsWith("http")) {
 			InputStream istr = null;
 			try {

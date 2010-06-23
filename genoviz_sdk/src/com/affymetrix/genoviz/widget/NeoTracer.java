@@ -825,8 +825,6 @@ public class NeoTracer extends NeoContainerWidget
 		int axis_height = base_axis.getHeight();
 		base_axis.setCoords(0, base_map_pixel_height, trace_length, axis_height);
 		base_map_pixel_height += axis_height;
-
-
 		base_map.scrollOffset(40); // 40?? -- if this is constant it does not need to be reset
 		base_map.setMapOffset(0, base_map_pixel_height);
 		// Still need to deal with possiblity that new calls are different length
@@ -1394,13 +1392,14 @@ public class NeoTracer extends NeoContainerWidget
 		boolean tViz = getBaseVisibility(TraceGlyph.T);
 		List<BaseCalls> newBaseCalls = new ArrayList<BaseCalls>();
 		for (BaseCalls bc : base_calls_vector) {
-			newBaseCalls.add(bc.reverseComplement());
+//			newBaseCalls.add(bc.reverseComplement());
+			trace.setActiveBaseCalls(bc.reverseComplement());
 		}
 		// Remove the old.
 		removeAllBaseCalls();
 		// Add the new.
-		base_calls_vector.addAll(newBaseCalls);
 
+		this.addBaseCalls(trace.getActiveBaseCalls());
 		// Switch the visibility of complimentary bases.
 		setBaseVisibility(TraceGlyph.A, tViz);
 		setBaseVisibility(TraceGlyph.T, aViz);

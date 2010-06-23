@@ -294,12 +294,11 @@ public final class GenometryModel {
 		clearSelectedSymmetries(); // do not send an event yet
 
 		// now perform the selections for each sequence that was matched
-		for(  BioSeq seq : seq2SymsHash.keySet()) {
-			List<SeqSymmetry> symslist = seq2SymsHash.get(seq);
+		for(Map.Entry<BioSeq,List<SeqSymmetry>> entry : seq2SymsHash.entrySet()) {
 			if (DEBUG) {
-				System.out.println("Syms " + symslist.size() + " on seq " + seq.getID());
+				System.out.println("Syms " + entry.getValue().size() + " on seq " + entry.getKey().getID());
 			}
-			setSelectedSymmetries(symslist, seq); // do not send an event yet
+			setSelectedSymmetries(entry.getValue(), entry.getKey()); // do not send an event yet
 		}
 
 		return new ArrayList<BioSeq>(all_seqs);

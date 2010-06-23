@@ -1,17 +1,13 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.das.DasType;
-import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -25,9 +21,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +32,9 @@ import java.util.logging.Logger;
 public class ScriptFileLoader {
 	private static String splitter = "\\s";
 	public static String getScriptFileStr(String[] args) {
+		if (args == null) {
+			return null;
+		}
 		for (int i=0;i<args.length;i++) {
 			if (args[i].equalsIgnoreCase("-" + IGBConstants.SCRIPTFILETAG)) {
 				if (i+1 < args.length) {

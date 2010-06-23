@@ -295,7 +295,7 @@ public final class UrlLoaderThread extends Thread {
 	}
 
 	private static void parseDataFromStream(
-			URL url, InputStream stream, String content_type, String type, String file_extension)
+			URL url, InputStream stream, String content_type, String file_extension, String type)
 			throws IOException {
 		BioSeq aseq = gmodel.getSelectedSeq();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();

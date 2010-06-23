@@ -42,11 +42,11 @@ public class UseqParserTest {
 		//test region parsing
 		String stream_name = "chr17";
 		String filename = "test/data/useq/chr17_H_sapiens_Mar_2006_Region.useq";
-		assertTrue(new File(filename).exists());
-		InputStream istr = new FileInputStream(filename);
+		File f = new File(filename);
+		assertTrue(f.exists());
+		InputStream istr = new FileInputStream(f);
 		assertNotNull(istr);
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");
-		
 		USeqRegionParser up = new USeqRegionParser();
 		List<SeqSymmetry> results = up.parse(istr, group, stream_name, false, null);
 		
@@ -81,10 +81,10 @@ public class UseqParserTest {
 	public void testGraphFileParsing() throws IOException{
 		//test graph parsing
 		String filename = "test/data/useq/chr17_H_sapiens_Mar_2006_Graph.useq";
+		File f = new File (filename);
 		String stream_name = "chr17";
-		
-		assertTrue(new File(filename).exists());
-		InputStream istr = new FileInputStream(filename);
+		assertTrue(f.exists());
+		InputStream istr = new FileInputStream(f);
 		assertNotNull(istr);
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");

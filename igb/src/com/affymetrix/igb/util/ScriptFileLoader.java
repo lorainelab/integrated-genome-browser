@@ -53,10 +53,21 @@ public class ScriptFileLoader {
 	}
 
 	public static void doActions(String batchFileStr) {
+		if (batchFileStr == null || batchFileStr.length() == 0) {
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(
+					Level.SEVERE, "Couldn't find response file: " + batchFileStr);
+			return;
+		}
 		// A response file was requested.  Run response file parser, and ignore any other parameters.
 		File f = new File(batchFileStr);
 		if (!f.exists()) {
-			f = LocalUrlCacher.convertURIToFile(URI.create(batchFileStr));
+			URI uri = URI.create(batchFileStr);
+			if (uri == null) {
+				Logger.getLogger(ScriptFileLoader.class.getName()).log(
+					Level.SEVERE, "Not a valid script file: " + batchFileStr);
+				return;
+			}
+			f = LocalUrlCacher.convertURIToFile(uri);
 		}
 		if (f == null || !f.exists()) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(

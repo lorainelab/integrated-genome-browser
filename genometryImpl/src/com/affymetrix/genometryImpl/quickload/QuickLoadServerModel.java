@@ -157,8 +157,8 @@ public final class QuickLoadServerModel {
 	}
 
 	private synchronized void initGenome(String genome_name) {
-		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
-			"initializing data for genome: " + genome_name);
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+				Level.FINE, "initializing data for genome: {0}", genome_name);
 		if (loadSeqInfo(genome_name) && loadAnnotationNames(genome_name)) {
 			genome2init.put(genome_name, Boolean.TRUE);
 			return;
@@ -181,8 +181,8 @@ public final class QuickLoadServerModel {
 	private boolean loadAnnotationNames(String genome_name) {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		String genome_root = genome_name + "/";
-		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
-				"loading list of available annotations for genome: " + genome_name);
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+				Level.FINE, "loading list of available annotations for genome: {0}", genome_name);
 
 		// Make a new list of typeNames, in case this is being re-initialized
 		// If this search fails, then we're just returning an empty map.
@@ -199,17 +199,16 @@ public final class QuickLoadServerModel {
 			if(annots_found)
 				return true;
 
-			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
-				"Couldn't found annots.xml for " + genome_name +
-				". Looking for annots.txt now.");
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+					Level.FINE, "Couldn''t found annots.xml for {0}. Looking for annots.txt now.", genome_name);
 			filename = genome_root + Constants.annotsTxt;
 			istr = getInputStream(filename, getCacheAnnots(), false);
 
 			return processAnnotsTxt(istr, annotList);
 
 		}catch (Exception ex) {
-			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
-				"Couldn't found either annots.xml or annots.txt for " + genome_name);
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+					Level.FINE, "Couldn''t found either annots.xml or annots.txt for {0}", genome_name);
 			System.out.println("Couldn't process file " + filename);
 			ex.printStackTrace();
 			return false;
@@ -286,8 +285,8 @@ public final class QuickLoadServerModel {
 				lift_stream = getInputStream(lift_path, getCacheAnnots(), true);
 			} catch (Exception ex) {
 				// exception can be ignored, since we'll look for modChromInfo file.
-				Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
-						"couldn't find " + liftAll + ", looking instead for " + modChromInfo);
+				Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+						Level.FINE, "couldn''t find {0}, looking instead for {1}", new Object[]{liftAll, modChromInfo});
 				lift_stream = null;
 			}
 			if (lift_stream == null) {
@@ -372,28 +371,25 @@ public final class QuickLoadServerModel {
 		/** Check to see if trying to load from primary server but primary server is not responding **/
 		if(istr == null && isLoadingFromPrimary() && !fileMayNotExist){
 
-			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.WARNING,"Primary Server :" +
-						primaryServer.serverName + " is not responding. So disabling it for this session.");
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+					Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.serverName);
 			primaryServer.setServerStatus(ServerStatus.NotResponding);
 
 			load_url = getLoadURL() + append_url;
 			istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist);
 		}
 
-		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,"Load URL :" + load_url);
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+				Level.FINE, "Load URL :{0}", load_url);
 		return istr;
 	}
 
 	private boolean isLoadingFromPrimary(){
-		if(primary_url == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding))
-			return false;
-
-		return true;
+		return (primary_url != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
 	}
 
 	private String getLoadURL(){
-		
-		if(primary_url == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
+		if (!isLoadingFromPrimary()) {
 			return root_url;
 		}
 			

@@ -35,11 +35,11 @@
 <aaseq id="NP_001136125.1">
 <simsearch method="InterPro">
 <simhit>
-<descriptor type="InterPro Accession">IPR007052</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
 <descriptor type="Match id">PS51203</descriptor>
-<descriptor type="Match Database">PROFILE</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Accession">IPR007052</descriptor>
 <descriptor type="InterPro Name">CS domain</descriptor>
 <simspan query_end="154" query_start="45">
 <descriptor type="score">9.189</descriptor>
@@ -47,11 +47,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR008978</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
 <descriptor type="Match id">SSF49764</descriptor>
-<descriptor type="Match Database">SUPERFAMILY</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Accession">IPR008978</descriptor>
 <descriptor type="InterPro Name">HSP20-like chaperone</descriptor>
 <simspan query_end="121" query_start="45">
 <descriptor type="score">4.4e-15</descriptor>
@@ -59,11 +59,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR017447</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR017447</descriptor>
 <descriptor type="Match id">PF04969</descriptor>
-<descriptor type="Match Database">PFAM</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR017447</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Accession">IPR017447</descriptor>
 <descriptor type="InterPro Name">CS</descriptor>
 <simspan query_end="108" query_start="49">
 <descriptor type="score">0.00023</descriptor>
@@ -71,11 +71,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">noIPR</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=PTHR22932</descriptor>
 <descriptor type="Match id">PTHR22932</descriptor>
-<descriptor type="Match Database">PANTHER</descriptor>
 <descriptor type="InterPro Type">unintegrated</descriptor>
+<descriptor type="URL">http://www.pantherdb.org/panther/family.do?clsAccession=PTHR22932</descriptor>
+<descriptor type="Match Database">PANTHER</descriptor>
+<descriptor type="InterPro Accession">noIPR</descriptor>
 <descriptor type="InterPro Name">unintegrated</descriptor>
 <simspan query_end="138" query_start="48">
 <descriptor type="score">1.2e-19</descriptor>
@@ -151,11 +151,11 @@
 <aaseq id="NP_001129514.2">
 <simsearch method="InterPro">
 <simhit>
-<descriptor type="InterPro Accession">IPR007052</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
 <descriptor type="Match id">PS51203</descriptor>
-<descriptor type="Match Database">PROFILE</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Accession">IPR007052</descriptor>
 <descriptor type="InterPro Name">CS domain</descriptor>
 <simspan query_end="134" query_start="45">
 <descriptor type="score">14.446</descriptor>
@@ -163,11 +163,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR008978</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
 <descriptor type="Match id">SSF49764</descriptor>
-<descriptor type="Match Database">SUPERFAMILY</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Accession">IPR008978</descriptor>
 <descriptor type="InterPro Name">HSP20-like chaperone</descriptor>
 <simspan query_end="154" query_start="45">
 <descriptor type="score">5.8e-30</descriptor>
@@ -175,11 +175,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR012947</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR012947</descriptor>
 <descriptor type="Match id">PF07973</descriptor>
-<descriptor type="Match Database">PFAM</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR012947</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Accession">IPR012947</descriptor>
 <descriptor type="InterPro Name">Threonyl/alanyl tRNA synthetase, SAD</descriptor>
 <simspan query_end="408" query_start="369">
 <descriptor type="score">7.3e-10</descriptor>
@@ -187,11 +187,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR017447</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR017447</descriptor>
 <descriptor type="Match id">PF04969</descriptor>
-<descriptor type="Match Database">PFAM</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR017447</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Accession">IPR017447</descriptor>
 <descriptor type="InterPro Name">CS</descriptor>
 <simspan query_end="123" query_start="49">
 <descriptor type="score">1.3e-05</descriptor>
@@ -199,11 +199,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR018163</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018163</descriptor>
 <descriptor type="Match id">SSF55186</descriptor>
-<descriptor type="Match Database">SUPERFAMILY</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018163</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Accession">IPR018163</descriptor>
 <descriptor type="InterPro Name">Threonyl/alanyl tRNA synthetase, class II-like, putative editing domain</descriptor>
 <simspan query_end="428" query_start="270">
 <descriptor type="score">3.8e-32</descriptor>
@@ -211,11 +211,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR018164</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018164</descriptor>
 <descriptor type="Match id">PF01411</descriptor>
-<descriptor type="Match Database">PFAM</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018164</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Accession">IPR018164</descriptor>
 <descriptor type="InterPro Name">Alanyl-tRNA synthetase, class IIc, N-terminal</descriptor>
 <simspan query_end="275" query_start="164">
 <descriptor type="score">8.1e-06</descriptor>
@@ -223,11 +223,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR018165</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018165</descriptor>
 <descriptor type="Match id">PS50860</descriptor>
-<descriptor type="Match Database">PROFILE</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018165</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Accession">IPR018165</descriptor>
 <descriptor type="InterPro Name">Alanyl-tRNA synthetase, class IIc, core domain</descriptor>
 <simspan query_end="426" query_start="216">
 <descriptor type="score">13.827</descriptor>
@@ -235,11 +235,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">noIPR</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=PTHR11777</descriptor>
 <descriptor type="Match id">PTHR11777</descriptor>
-<descriptor type="Match Database">PANTHER</descriptor>
 <descriptor type="InterPro Type">unintegrated</descriptor>
+<descriptor type="URL">http://www.pantherdb.org/panther/family.do?clsAccession=PTHR11777</descriptor>
+<descriptor type="Match Database">PANTHER</descriptor>
+<descriptor type="InterPro Accession">noIPR</descriptor>
 <descriptor type="InterPro Name">unintegrated</descriptor>
 <simspan query_end="580" query_start="226">
 <descriptor type="score">2.6e-138</descriptor>
@@ -315,11 +315,11 @@
 <aaseq id="NP_079543.1">
 <simsearch method="InterPro">
 <simhit>
-<descriptor type="InterPro Accession">IPR007052</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
 <descriptor type="Match id">PS51203</descriptor>
-<descriptor type="Match Database">PROFILE</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR007052</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Accession">IPR007052</descriptor>
 <descriptor type="InterPro Name">CS domain</descriptor>
 <simspan query_end="73" query_start="0">
 <descriptor type="score">11.702</descriptor>
@@ -327,11 +327,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR008978</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
 <descriptor type="Match id">SSF49764</descriptor>
-<descriptor type="Match Database">SUPERFAMILY</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Accession">IPR008978</descriptor>
 <descriptor type="InterPro Name">HSP20-like chaperone</descriptor>
 <simspan query_end="93" query_start="0">
 <descriptor type="score">8.6e-22</descriptor>
@@ -339,11 +339,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR012947</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR012947</descriptor>
 <descriptor type="Match id">PF07973</descriptor>
-<descriptor type="Match Database">PFAM</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR012947</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Accession">IPR012947</descriptor>
 <descriptor type="InterPro Name">Threonyl/alanyl tRNA synthetase, SAD</descriptor>
 <simspan query_end="347" query_start="308">
 <descriptor type="score">6.4e-10</descriptor>
@@ -351,11 +351,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR018163</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018163</descriptor>
 <descriptor type="Match id">SSF55186</descriptor>
-<descriptor type="Match Database">SUPERFAMILY</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018163</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Accession">IPR018163</descriptor>
 <descriptor type="InterPro Name">Threonyl/alanyl tRNA synthetase, class II-like, putative editing domain</descriptor>
 <simspan query_end="367" query_start="209">
 <descriptor type="score">3.8e-32</descriptor>
@@ -363,11 +363,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR018164</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018164</descriptor>
 <descriptor type="Match id">PF01411</descriptor>
-<descriptor type="Match Database">PFAM</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018164</descriptor>
+<descriptor type="Match Database">PFAM</descriptor>
+<descriptor type="InterPro Accession">IPR018164</descriptor>
 <descriptor type="InterPro Name">Alanyl-tRNA synthetase, class IIc, N-terminal</descriptor>
 <simspan query_end="214" query_start="102">
 <descriptor type="score">6.8e-06</descriptor>
@@ -375,11 +375,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">IPR018165</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018165</descriptor>
 <descriptor type="Match id">PS50860</descriptor>
-<descriptor type="Match Database">PROFILE</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR018165</descriptor>
+<descriptor type="Match Database">PROFILE</descriptor>
+<descriptor type="InterPro Accession">IPR018165</descriptor>
 <descriptor type="InterPro Name">Alanyl-tRNA synthetase, class IIc, core domain</descriptor>
 <simspan query_end="365" query_start="155">
 <descriptor type="score">13.827</descriptor>
@@ -387,11 +387,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">noIPR</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=PTHR11777</descriptor>
 <descriptor type="Match id">PTHR11777</descriptor>
-<descriptor type="Match Database">PANTHER</descriptor>
 <descriptor type="InterPro Type">unintegrated</descriptor>
+<descriptor type="URL">http://www.pantherdb.org/panther/family.do?clsAccession=PTHR11777</descriptor>
+<descriptor type="Match Database">PANTHER</descriptor>
+<descriptor type="InterPro Accession">noIPR</descriptor>
 <descriptor type="InterPro Name">unintegrated</descriptor>
 <simspan query_end="519" query_start="165">
 <descriptor type="score">2.6e-138</descriptor>
@@ -434,11 +434,11 @@
 <aaseq id="NP_001136126.1">
 <simsearch method="InterPro">
 <simhit>
-<descriptor type="InterPro Accession">IPR008978</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
 <descriptor type="Match id">SSF49764</descriptor>
-<descriptor type="Match Database">SUPERFAMILY</descriptor>
 <descriptor type="InterPro Type">Domain</descriptor>
+<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR008978</descriptor>
+<descriptor type="Match Database">SUPERFAMILY</descriptor>
+<descriptor type="InterPro Accession">IPR008978</descriptor>
 <descriptor type="InterPro Name">HSP20-like chaperone</descriptor>
 <simspan query_end="116" query_start="45">
 <descriptor type="score">1.4e-15</descriptor>
@@ -446,11 +446,11 @@
 </simspan>
 </simhit>
 <simhit>
-<descriptor type="InterPro Accession">noIPR</descriptor>
-<descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=PTHR22932</descriptor>
 <descriptor type="Match id">PTHR22932</descriptor>
-<descriptor type="Match Database">PANTHER</descriptor>
 <descriptor type="InterPro Type">unintegrated</descriptor>
+<descriptor type="URL">http://www.pantherdb.org/panther/family.do?clsAccession=PTHR22932</descriptor>
+<descriptor type="Match Database">PANTHER</descriptor>
+<descriptor type="InterPro Accession">noIPR</descriptor>
 <descriptor type="InterPro Name">unintegrated</descriptor>
 <simspan query_end="133" query_start="48">
 <descriptor type="score">1.9e-27</descriptor>

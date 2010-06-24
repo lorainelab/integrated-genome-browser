@@ -152,7 +152,7 @@ public final class GeneralLoadView extends JComponent
 		buttonPanel.add(refresh_dataB);
 		this.add("South", buttonPanel);
 
-		feature_model = new FeaturesTableModel(this, null);
+		feature_model = new FeaturesTableModel(this);
 		feature_table = new JTableX(feature_model);
 		feature_table.setModel(feature_model);
 		feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
@@ -824,7 +824,6 @@ public final class GeneralLoadView extends JComponent
 				final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 				if (features == null || features.isEmpty()) {
 					feature_model.clearFeatures();
-					return;
 				}
 				feature_tree_view.initOrRefreshTree(features);
 			}
@@ -849,10 +848,12 @@ public final class GeneralLoadView extends JComponent
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
 
+		final List<GenericFeature> visibleFeatures = FeaturesTableModel.getVisibleFeatures(features);
+
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				feature_model.setFeatures(features);
+				feature_model.setFeatures(visibleFeatures);
 
 				// the second column contains the feature names.  Resize it so that feature names are fully displayed.
 				TableColumn col = feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);

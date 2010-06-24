@@ -31,9 +31,9 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 
-	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features) {
+	FeaturesTableModel(GeneralLoadView glv) {
 		this.glv = glv;
-		this.features = getVisibleFeatures(features);
+		this.features = null;
 
 		// Here we map the friendly string back to the LoadStrategy.
 		this.reverseLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
@@ -50,7 +50,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	}
 
 	void setFeatures(List<GenericFeature> features) {
-		this.features = getVisibleFeatures(features);
+		this.features = features;
 		this.fireTableDataChanged();
 	}
 
@@ -59,7 +59,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	 * @param features
 	 * @return list of visible features
 	 */
-	private List<GenericFeature> getVisibleFeatures(List<GenericFeature> features) {
+	static List<GenericFeature> getVisibleFeatures(List<GenericFeature> features) {
 		if (features == null) {
 			return null;
 		}

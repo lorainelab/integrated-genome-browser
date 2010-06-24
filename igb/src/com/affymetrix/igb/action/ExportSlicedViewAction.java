@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import java.awt.Component;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -27,23 +28,29 @@ public class ExportSlicedViewAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		Component slice_component = determineSlicedComponent();
+		if (slice_component == null) {
+			return;
+		}
+
+		try {
+			ComponentWriter.showExportDialog(slice_component);
+		} catch (Exception ex) {
+			ErrorHandler.errorPanel("Problem during output.", ex);
+		}
+	}
+
+	public static Component determineSlicedComponent() {
 		AltSpliceView slice_view = null;
-		for (Object plugin : ((IGB)IGB.getSingleton()).getPlugins()) {
+		for (Object plugin : ((IGB) IGB.getSingleton()).getPlugins()) {
 			if (plugin instanceof AltSpliceView) {
 				slice_view = (AltSpliceView) plugin;
 				break;
 			}
 		}
-
-		if (slice_view == null) { return; }
-
-		try {
-			if (slice_view != null) {
-				AffyLabelledTierMap tm = (AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap();
-				ComponentWriter.showExportDialog(tm.getSplitPane());
-			}
-		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Problem during output.", ex);
+		if (slice_view == null) {
+			return null;
 		}
+		return ((AffyLabelledTierMap)slice_view.getSplicedView().getSeqMap()).getSplitPane();
 	}
 }

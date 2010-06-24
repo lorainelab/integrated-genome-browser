@@ -367,7 +367,7 @@ public final class QuickLoad extends SymLoader {
 	 * Determine the appropriate loader.
 	 * @return
 	 */
-	private final static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {
+	private static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {
 		// residue loaders
 		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
 		if (extension.equals("bnib")) {
@@ -424,7 +424,7 @@ public final class QuickLoad extends SymLoader {
 
 	@Override
 	public String getRegionResidues(SeqSpan span) {
-		if (this.symL != null && this.isResidueLoader) {
+		if (this.symL != null && this.symL.isResidueLoader) {
 			return this.symL.getRegionResidues(span);
 		}
 		Logger.getLogger(QuickLoad.class.getName()).log(

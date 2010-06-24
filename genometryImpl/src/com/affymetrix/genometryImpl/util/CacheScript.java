@@ -42,6 +42,9 @@ public class CacheScript extends Thread {
 
 	private static final String dsn = "dsn.xml";
 	private static final String temp = "temp";
+
+	/** boolean to indicate should script continue to run if error occurs **/
+	private static final boolean exitOnError = false;
 	
 	/** Local path where data is cached. **/
 	private final String path;
@@ -172,7 +175,7 @@ public class CacheScript extends Thread {
 	 * @return
 	 */
 	private static boolean processQuickLoad(GenericServer gServer, String serverCachePath){
-		File file = getFile(gServer.URL+Constants.contentsTxt);
+		File file = getFile(gServer.URL+Constants.contentsTxt, false);
 
 		String quickloadStr = null;
 		quickloadStr = (String) gServer.serverObj;
@@ -180,11 +183,9 @@ public class CacheScript extends Thread {
 		QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
 
 		List<String> genome_names = quickloadServer.getGenomeNames();
-		if(!moveFileTo(file,Constants.contentsTxt,serverCachePath)){
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find {0} for {1} !!!", new Object[]{Constants.contentsTxt,gServer.serverName});
+		if(!moveFileTo(file,Constants.contentsTxt,serverCachePath))
 			return false;
-		}
-
+		
 		for(String genome_name : genome_names){
 			if(!getAllFiles(gServer,genome_name,serverCachePath)){
 				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
@@ -202,13 +203,10 @@ public class CacheScript extends Thread {
 	 * @return
 	 */
 	private static boolean processDas2Server(GenericServer gServer, String serverCachePath){
-		File file = getFile(gServer.URL);
-		if(!moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, serverCachePath)){
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find {0} for {1} !!!", new Object[]{Constants.GENOME_SEQ_ID,gServer.serverName});
+		File file = getFile(gServer.URL, false);
+		if(!moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, serverCachePath))
 			return false;
-		}
-
-
+		
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
 		Map<String,Das2Source> sources = serverInfo.getSources();
 		
@@ -228,6 +226,18 @@ public class CacheScript extends Thread {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Returns true if file may not exist else false.
+	 * @param fileName
+	 * @return
+	 */
+	private static boolean getFileAvailability(String fileName){
+		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft))
+			return true;
+
+		return false;
 	}
 
 	/**
@@ -256,20 +266,17 @@ public class CacheScript extends Thread {
 		String server_path = gServer.URL + "/" + genome_name;
 		local_path += "/" + genome_name;
 		makeDir(local_path);
-
+		boolean fileMayNotExist;
 		for(String fileName : files){
-			file = getFile(server_path+"/"+fileName);
+			fileMayNotExist = getFileAvailability(fileName);
 
-			if(file == null)
-				continue;
-			
+			file = getFile(server_path+"/"+fileName, fileMayNotExist);
+
 			if(gServer.serverType.equals(ServerType.DAS2))
 				fileName += Constants.xml_ext;
-			
-			if(!moveFileTo(file,fileName,local_path)){
-				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find {0}/{1} !!!", new Object[]{server_path, fileName});
-				return false;
-			}
+
+			if((file == null && !fileMayNotExist) || !moveFileTo(file,fileName,local_path))
+				return false;			
 		}
 
 		return true;
@@ -282,11 +289,9 @@ public class CacheScript extends Thread {
 	 * @return
 	 */
 	private static boolean processDasServer(GenericServer gServer, String serverCachePath){
-		File file = getFile(gServer.URL);
-		if(!moveFileTo(file,dsn,serverCachePath)){
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find {0} for {1} !!!", new Object[]{dsn, gServer.serverName});
+		File file = getFile(gServer.URL, false);
+		if(!moveFileTo(file,dsn,serverCachePath))
 			return false;
-		}
 		
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		Map<String, DasSource> sources = server.getDataSources();
@@ -328,21 +333,21 @@ public class CacheScript extends Thread {
 		final Map<String, String> DasFilePath = new HashMap<String, String>();
 
 		String entry_point = getPath(master.getPath(),master, DasSource.ENTRY_POINTS);
+
+		//Temporary hack to redirect until Ensembl makes a fix.
+		entry_point = entry_point.replaceAll("test.ensembl", "uswest.ensembl");
+		
 		String types = getPath(id,server,DasSource.TYPES);
 
 		DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + Constants.xml_ext);
 		DasFilePath.put(types, DasSource.TYPES + Constants.xml_ext);
 
 		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
-			file = getFile(fileDet.getKey());
+			file = getFile(fileDet.getKey(), false);
 
-			if(file == null)
-				continue;
-			
-			if(!moveFileTo(file,fileDet.getValue(),local_path)){
-				Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find {0} !!!", fileDet.getKey());
+			if((file == null || !moveFileTo(file,fileDet.getValue(),local_path)) && exitOnError)
 				return false;
-			}
+
 		}
 
 		return true;
@@ -374,7 +379,13 @@ public class CacheScript extends Thread {
 	 */
 	private static boolean moveFileTo(File file, String fileName, String path){
 		File newLocation = new File(path+ "/" +fileName);
-		return file.renameTo(newLocation);
+		boolean sucess = file.renameTo(newLocation);
+
+		if(!sucess){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find move file {0} to {1} !!!", new Object[]{fileName,path});
+		}
+		
+		return sucess;
 	}
 
 	/**
@@ -393,15 +404,21 @@ public class CacheScript extends Thread {
 	/**
 	 * Returns mapping for give path.
 	 * @param path	File path.
+	 * @param fileMayNotExist 
 	 * @return
 	 */
-	private static File getFile(String path){
+	private static File getFile(String path, boolean fileMayNotExist){
 		File file = null;
 		try{
-			file = LocalUrlCacher.convertURIToFile(URI.create(path));
+			file = LocalUrlCacher.convertURIToFile(URI.create(path),fileMayNotExist);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
+
+		if(file == null && !fileMayNotExist){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Invalid path : {0} !!!", path);
+		}
+		
 		return file;
 	}
 

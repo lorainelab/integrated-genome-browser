@@ -63,7 +63,6 @@ public class CacheScript extends Thread {
 	static{
 		das2Files.add(Das2VersionedSource.TYPES_CAP_QUERY);
 		das2Files.add(Das2VersionedSource.SEGMENTS_CAP_QUERY);
-		das2Files.add(Das2VersionedSource.FEATURES_CAP_QUERY);
 	}
 
 	/** Default server list. **/

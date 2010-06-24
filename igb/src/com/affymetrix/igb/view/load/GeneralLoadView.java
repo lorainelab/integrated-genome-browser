@@ -710,7 +710,7 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-							// refreshTreeView should only decided if feature table
+							// refreshTreeView should only be called if feature table
 							// needs to be cleared.
 
 		disableAllButtons();
@@ -811,15 +811,15 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	private void refreshTreeView() {
+
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				String versionName = (String) versionCB.getSelectedItem();
 				final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 				if (features == null || features.isEmpty()) {
-					feature_model = new FeaturesTableModel(GeneralLoadView.this, null);
-					feature_table.setModel(feature_model);
-					featuresTableScrollPane.setViewportView(feature_table);
+					feature_model.clearFeatures();
+					return;
 				}
 				feature_tree_view.initOrRefreshTree(features);
 			}

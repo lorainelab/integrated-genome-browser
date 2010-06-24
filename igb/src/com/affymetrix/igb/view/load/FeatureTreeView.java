@@ -178,7 +178,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				//this.setVisible(root != null && (root.getChildCount() > 0));
 				tree.setModel(tmodel);
 				tree_scroller.invalidate();
 			}

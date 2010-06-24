@@ -27,7 +27,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
 	//private static final int SERVER_TYPE_COLUMN = 3;
-	final List<GenericFeature> features;
+	private final List<GenericFeature> features;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 
@@ -40,6 +40,13 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {
 			this.reverseLoadStrategyMap.put(strategy.toString(), strategy);
 		}
+	}
+
+	void clearFeatures() {
+		if (this.features != null) {
+			this.features.clear();
+		}
+		this.fireTableDataChanged();
 	}
 
 	/**
@@ -82,16 +89,12 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 
 
-	public GenericFeature getFeature(int row) {
+	GenericFeature getFeature(int row) {
 		return (getRowCount() <= row) ? null : features.get(row);
 	}
 
-	public int getRow(GenericFeature feature) {
+	private int getRow(GenericFeature feature) {
 		return (features == null) ? -1 : features.indexOf(feature);
-	}
-
-	public List<GenericFeature> getFeatures() {
-		return features;
 	}
 
 	public int getColumnCount() {

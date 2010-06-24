@@ -30,7 +30,7 @@ public final class TableWithVisibleComboBox {
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
   
 	/**
-	 * Set the columm to use the ComboBox DAScb and renderer (which also depends on the row/server type)
+	 * Set the columns to use the ComboBox DAScb and renderer (which also depends on the row/server type)
 	 * @param table
 	 * @param column
 	 * @param enabled
@@ -44,7 +44,7 @@ public final class TableWithVisibleComboBox {
 		sorter = new TableRowSorter<FeaturesTableModel>(ftm);
 		table.setRowSorter(sorter);
 
-		int featureSize = ftm.features.size();
+		int featureSize = ftm.getRowCount();
 		RowEditorModel rm = new RowEditorModel(featureSize);
 		// tell the JTableX which RowEditorModel we are using
 		table.setRowEditorModel(rm);
@@ -55,7 +55,7 @@ public final class TableWithVisibleComboBox {
 		DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
 
 		for (int row = 0; row < featureSize; row++) {
-			GenericFeature gFeature = ftm.features.get(row);
+			GenericFeature gFeature = ftm.getFeature(row);
 			SymLoader symL = gFeature.symL;
 			if (symL != null) {
 				JComboBox featureCB = new JComboBox(symL.getLoadChoices().toArray());

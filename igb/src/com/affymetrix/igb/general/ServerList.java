@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
@@ -366,6 +367,7 @@ public final class ServerList {
 	public static void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate) {
 		if (status == ServerStatus.NotResponding) {
 			GeneralLoadUtils.removeServer(server);
+			ErrorHandler.errorPanel(server.serverName, "Server " + server.serverName + "is not responding. Disabling it for this session.");
 			if (server.serverType != ServerType.LocalFiles) {
 				Application.getSingleton().removeNotLockedUpMsg("Loading server " + server + " (" + server.serverType.toString() + ")");
 			}

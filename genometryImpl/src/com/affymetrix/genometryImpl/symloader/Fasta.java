@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
@@ -111,6 +112,9 @@ public class Fasta extends SymLoader {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(bis);
 		}
 	}
 
@@ -189,6 +193,9 @@ public class Fasta extends SymLoader {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(bis);
 		}
 		return residues;
 	}

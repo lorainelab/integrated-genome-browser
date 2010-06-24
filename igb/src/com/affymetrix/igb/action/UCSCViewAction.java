@@ -5,6 +5,8 @@
 
 package com.affymetrix.igb.action;
 
+import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -61,8 +63,9 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		this.setEnabled(evt.getSelectedSeq() != null
-				&& !getUcscGenomeVersion(SEQ_MAP.getAnnotatedSeq().getVersion()).isEmpty());
+		boolean enableThis = evt.getSelectedSeq() != null;	
+		// don't do the enabling tests, because it will contact the UCSC server when it's not truly necessary.
+		this.setEnabled(enableThis);
 	}
 
 	/** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */
@@ -75,7 +78,16 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	private static void initUCSCSources() {
 		synchronized(UCSCSources) {
 			if (UCSCSources.isEmpty()) {
-				DasServerInfo ucsc = new DasServerInfo(UCSC_DAS_URL);
+				// Get the sources from the UCSC server.  If the server has already been initialized, get from there.
+				// This is done to avoid additional slow DAS queries.
+				DasServerInfo ucsc = null;
+				GenericServer server = null;
+				if ((server = ServerList.getServer(UCSC_DAS_URL)) != null) {
+					// UCSC server already exists!
+					ucsc = (DasServerInfo)server.serverObj;
+				} else {
+					ucsc = new DasServerInfo(UCSC_DAS_URL);
+				}
 				UCSCSources.addAll(ucsc.getDataSources().keySet());
 			}
 		}

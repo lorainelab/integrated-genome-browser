@@ -112,19 +112,12 @@ public final class DasSource {
 	private boolean initEntryPoints() {
 		InputStream stream = null;
 		try {
-			URL entryURL;
-			if(primary == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)) {
-				entryURL = new URL(master, master.getPath() + "/" + ENTRY_POINTS);
-			}
-			else {
-				entryURL = new URL(primary,id + "/" + ENTRY_POINTS + XML);
-			}
-			
-			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Das Entry Request: {0}", entryURL);
-			stream = LocalUrlCacher.getInputStream(entryURL);
+			String entry_point = master.getPath() + "/" + ENTRY_POINTS;
+			String pri_entry_point = id + "/" + ENTRY_POINTS;
+			stream = getInputStream(master, entry_point, pri_entry_point, "Das Entry Request");
 			if (stream == null) {
 				Logger.getLogger(this.getClass().getName()).log(
-						Level.SEVERE, "Could not contact server at {0}", entryURL);
+						Level.SEVERE, "Could not contact server at {0}", master);
 				return false;
 			}
 			Document doc = XMLUtils.getDocument(stream);
@@ -188,15 +181,13 @@ public final class DasSource {
 	private boolean initType(String source) {
 		InputStream stream = null;
 		try {
-			URL loadURL = getLoadURL(server, source + "/" + TYPES);
-
-			URL typesURL = new URL(server, source + "/" + TYPES);
+			String type_req = source + "/" + TYPES;
+			URL typesURL = new URL(server, type_req);
 			URL testMasterURL = new URL(master, master.getPath() + "/" + TYPES);
-			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Das Types Request: {0}", loadURL);
-			stream = LocalUrlCacher.getInputStream(loadURL);
+			stream = getInputStream(server, type_req, type_req, "Das Types Request");
 			if (stream == null) {
 				Logger.getLogger(this.getClass().getName()).log(
-						Level.WARNING, "Types request failed for {0}, skipping", loadURL);
+						Level.WARNING, "Types request failed for {0}, skipping", typesURL);
 				return false;
 			}
 			Document doc = XMLUtils.getDocument(stream);
@@ -231,16 +222,6 @@ public final class DasSource {
 		}
 		return true;
 	}
-
-	private URL getLoadURL(URL server, String query) throws MalformedURLException{
-		if(primary == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
-			Logger.getLogger(DasSource.class.getName()).log(Level.FINE, "Load URL :" + server.toExternalForm());
-			return new URL(server,query);
-		}
-		
-		Logger.getLogger(DasSource.class.getName()).log(Level.FINE, "Load URL :" + primary.toExternalForm());
-		return new URL(primary, query + ".xml");
-	}
 	
 	/**
 	 * Custom equals for URLs since the default implementation will do a DNS lookup
@@ -261,6 +242,37 @@ public final class DasSource {
 				&& url1.getProtocol().equalsIgnoreCase(url2.getProtocol())
 				&& url1.getHost().equalsIgnoreCase(url2.getHost())
 				&& url1.getFile().equals(url2.getFile());
+	}
+
+	public InputStream getInputStream(URL server, String query, String pri_default, String log_string) throws MalformedURLException, IOException {
+		URL load_url = getLoadURL(server, query, pri_default);
+		InputStream istr = LocalUrlCacher.getInputStream(load_url);
+
+		/** Check to see if trying to load from primary server but primary server is not responding **/
+		if(istr == null && isLoadingFromPrimary()){
+
+			Logger.getLogger(DasSource.class.getName()).log(
+					Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.serverName);
+			primaryServer.setServerStatus(ServerStatus.NotResponding);
+
+			load_url = getLoadURL(server, query, pri_default);
+			istr = LocalUrlCacher.getInputStream(load_url);
+		}
+
+		Logger.getLogger(DasServerInfo.class.getName()).log(
+				Level.INFO, "{0} : {1}", new Object[]{log_string, load_url});
+		return istr;
+	}
+
+	private boolean isLoadingFromPrimary(){
+		return (primary != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
+	}
+
+	private URL getLoadURL(URL server, String query, String pri_default) throws MalformedURLException{
+		if (!isLoadingFromPrimary())
+			return new URL(server,query);
+		
+		return new URL(primary, pri_default + ".xml");
 	}
 
 	public Set<String> getSources(){

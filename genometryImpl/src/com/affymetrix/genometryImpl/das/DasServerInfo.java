@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.util.*;
@@ -99,14 +100,11 @@ public final class DasServerInfo {
 	private boolean initialize() {
 		InputStream stream = null;
 		try {
-			Logger.getLogger(this.getClass().getName()).log(
-					Level.INFO, "Das Request: {0}", getLoadURL());
-			
 			Map<String, List<String>> headers = new HashMap<String, List<String>>();
-			stream = LocalUrlCacher.getInputStream(getLoadURL(), true, null, headers);
+			stream = getInputStream(headers, "Das Request");
 			if (stream == null) {
 				Logger.getLogger(this.getClass().getName()).log(
-						Level.SEVERE, "Could not find URL {0}", getLoadURL());
+						Level.SEVERE, "Could not find URL {0}", serverURL);
 				return false;
 			}
 
@@ -144,7 +142,7 @@ public final class DasServerInfo {
 					parseDSNElement(dsn);
 				} catch (Exception ex) {
 					// log and continue with remainder of parsing.
-					System.out.println("Error initializing DAS server info for\n" + getLoadURL());
+					System.out.println("Error initializing DAS server info for\n" + serverURL);
 					ex.printStackTrace();
 				}
 			}
@@ -204,13 +202,34 @@ public final class DasServerInfo {
 		}
 	}
 
-	private URL getLoadURL() throws MalformedURLException{
-		if(primaryURL == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
-			Logger.getLogger(DasServerInfo.class.getName()).log(Level.FINE, "Load URL :" + serverURL.toExternalForm());
-			return serverURL;
+	public InputStream getInputStream(Map<String, List<String>> headers, String log_string) throws MalformedURLException, IOException {
+		URL load_url = getLoadURL();
+		InputStream istr = LocalUrlCacher.getInputStream(load_url, true, null, headers);
+
+		/** Check to see if trying to load from primary server but primary server is not responding **/
+		if(istr == null && isLoadingFromPrimary()){
+
+			Logger.getLogger(DasServerInfo.class.getName()).log(
+					Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.serverName);
+			primaryServer.setServerStatus(ServerStatus.NotResponding);
+
+			load_url = getLoadURL();
+			istr = LocalUrlCacher.getInputStream(load_url, true, null, headers);
 		}
 
-		Logger.getLogger(DasServerInfo.class.getName()).log(Level.FINE, "Load URL :" + primaryURL.toExternalForm() + "/dsn.xml");
+		Logger.getLogger(DasServerInfo.class.getName()).log(
+				Level.INFO, "{0} : {1}", new Object[]{log_string, load_url});
+		return istr;
+	}
+
+	private boolean isLoadingFromPrimary(){
+		return (primaryURL != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
+	}
+
+	private URL getLoadURL() throws MalformedURLException{
+		if (!isLoadingFromPrimary())
+			return serverURL;
+		
 		return new URL(primaryURL.toExternalForm() +"/dsn.xml");
 	}
 }

@@ -28,6 +28,8 @@ public class TestSamples {
 
 	/**
 	 * Usage: java -cp protannot_exe.jar org.bioviz.protannot.TestSamples [dir_path]
+	 * You can build protannot_exe.jar by running ant exe in the top-level genoviz
+	 * trunk directory.
 	 * @param args
 	 */
     static public void main(String args[])

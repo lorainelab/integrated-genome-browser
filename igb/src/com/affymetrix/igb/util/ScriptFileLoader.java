@@ -9,20 +9,26 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.action.ExportSlicedViewAction;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.MapRangeBox;
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.freehep.util.export.ExportFileType;
 
 /**
  *
@@ -31,6 +37,26 @@ import java.util.logging.Logger;
  */
 public class ScriptFileLoader {
 	private static String splitter = "\\s";
+
+	private static enum ExportMode {
+		MAIN ("mainView"),
+		MAINWITHLABELS ("mainViewWithLabels"),
+		SLICEDWITHLABELS ("slicedViewWithLabels"),
+		WHOLEFRAME ("wholeFrame");
+
+		private String name;
+
+		ExportMode(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+	};
+
+
 	public static String getScriptFileStr(String[] args) {
 		if (args == null) {
 			return null;
@@ -51,7 +77,7 @@ public class ScriptFileLoader {
 	public static void doActions(String batchFileStr) {
 		if (batchFileStr == null || batchFileStr.length() == 0) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
-					Level.SEVERE, "Couldn't find response file: " + batchFileStr);
+					Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
 			return;
 		}
 		// A response file was requested.  Run response file parser, and ignore any other parameters.
@@ -60,14 +86,14 @@ public class ScriptFileLoader {
 			URI uri = URI.create(batchFileStr);
 			if (uri == null) {
 				Logger.getLogger(ScriptFileLoader.class.getName()).log(
-					Level.SEVERE, "Not a valid script file: " + batchFileStr);
+					Level.SEVERE, "Not a valid script file: {0}", batchFileStr);
 				return;
 			}
 			f = LocalUrlCacher.convertURIToFile(uri);
 		}
 		if (f == null || !f.exists()) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
-					Level.SEVERE, "Couldn't find response file: " + batchFileStr);
+					Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
 			return;
 		}
 		
@@ -99,7 +125,8 @@ public class ScriptFileLoader {
 		try {
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				Logger.getLogger(ScriptFileLoader.class.getName()).info("line: " + line);
+				Logger.getLogger(ScriptFileLoader.class.getName()).log(
+						Level.INFO, "line: {0}", line);
 				doSingleAction(line);
 				Thread.sleep(1000);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
 			}
@@ -161,7 +188,7 @@ public class ScriptFileLoader {
 			RefreshDataAction.getAction().actionPerformed(null);
 		}
 		if (action.equals("select") && fields.length>=2) {
-			UnibrowControlServlet.performSelection(fields[1]);
+			UnibrowControlServlet.performSelection(join(fields,2));
 		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {
@@ -170,6 +197,77 @@ public class ScriptFileLoader {
 			} catch (Exception ex) {
 				Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 			}
+		}
+		if (action.startsWith("snapshot")) {
+			// determine the export mode
+			action = action.substring(8,action.length());
+			ExportMode exportMode = ExportMode.WHOLEFRAME;
+			if (action.length() == 0 || action.equalsIgnoreCase(ExportMode.WHOLEFRAME.toString())) {
+				exportMode = ExportMode.WHOLEFRAME;
+			} else if (action.equalsIgnoreCase(ExportMode.MAIN.toString())) {
+				exportMode = ExportMode.MAIN;
+			} else if (action.equalsIgnoreCase(ExportMode.MAINWITHLABELS.toString())) {
+				exportMode = ExportMode.MAINWITHLABELS;
+			} else if (action.equalsIgnoreCase(ExportMode.SLICEDWITHLABELS.toString())) {
+				exportMode = ExportMode.SLICEDWITHLABELS;
+			}
+
+			// determine the file name, and export.
+			if (fields.length >= 1) {
+				snapShot(exportMode,new File(join(fields,1)));	// second field and possibly others are a single filename
+			} else {
+				// base filename upon organism and timestamp
+				String id = GenometryModel.getGenometryModel().getSelectedSeqGroup() == null ? "default" :
+					GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
+				snapShot(exportMode,new File(id + System.currentTimeMillis() + ".png"));
+			}
+		}
+	}
+
+	/**
+	 * Take a snapshot, i.e., export to a file.
+	 * @param f
+	 */
+	private static void snapShot(ExportMode exportMode, File f) {
+		Logger.getLogger(ScriptFileLoader.class.getName()).log(
+				Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
+		String extension = ParserController.getExtension(f.getName().toLowerCase());
+		if (extension.length() == 0) {
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(
+					Level.SEVERE, "no file extension given for file", f.getName());
+			return;
+		}
+		extension = extension.substring(1, extension.length());
+		List efts = ExportFileType.getExportFileTypes(extension);
+		if (efts.isEmpty()) {
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(
+					Level.SEVERE, "image file extension {0} is not supported", extension);
+			return;
+		}
+
+		try {
+			ExportFileType eft = (ExportFileType) efts.get(0);
+			Component c = null;
+			switch(exportMode) {
+				case WHOLEFRAME:
+					c = IGB.getSingleton().getFrame();
+					break;
+				case MAIN:
+					c = IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas();
+					break;
+				case MAINWITHLABELS:
+					c = IGB.getSingleton().getMapView().getSeqMap();
+					break;
+				case SLICEDWITHLABELS:
+					c = ExportSlicedViewAction.determineSlicedComponent();
+					break;
+			}
+			if (!ComponentWriter.exportComponent(f, c, eft)) {
+				Logger.getLogger(ScriptFileLoader.class.getName()).log(
+						Level.SEVERE, "Unknown error in outputting file {0}", f.getName());
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -213,7 +311,8 @@ public class ScriptFileLoader {
 		if (server != null) {
 			
 		} else {
-			Logger.getLogger(ScriptFileLoader.class.getName()).severe("Couldn't find server :" + serverURIorName);
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(
+					Level.SEVERE, "Couldn''t find server :{0}", serverURIorName);
 		}
 
 	}
@@ -245,7 +344,8 @@ public class ScriptFileLoader {
 		if (feature != null) {
 			feature.loadStrategy = s;
 		} else {
-			Logger.getLogger(ScriptFileLoader.class.getName()).severe("Couldn't find feature :" + featureURIStr);
+			Logger.getLogger(ScriptFileLoader.class.getName()).log(
+					Level.SEVERE, "Couldn''t find feature :{0}", featureURIStr);
 		}
 	}
 

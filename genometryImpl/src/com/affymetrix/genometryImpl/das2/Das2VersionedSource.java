@@ -186,15 +186,14 @@ public final class Das2VersionedSource {
 
     /** Get regions from das server. */
 	private synchronized void initSegments() {
-		String region_request = getRegionString(SEGMENTS_CAP_QUERY);
-		//Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
-		//region_request = segcap.getRootURI().toString();
+		Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
+		String region_request = segcap.getRootURI().toString();
 		try {
 			if (DEBUG) {
 				System.out.println("Das2 Segments Request: " + region_request);
 			}
 			// don't cache this!  If the file is corrupted, this can hose the IGB instance until the cache and preferences are cleared.
-			InputStream response = LocalUrlCacher.getInputStream(region_request, false);
+			InputStream response = getInputStream(SEGMENTS_CAP_QUERY, LocalUrlCacher.getPreferredCacheUsage(), false, null, "Das2 Segments Request");
 
 			Document doc = XMLUtils.getDocument(response);
 			NodeList regionlist = doc.getElementsByTagName("SEGMENT");
@@ -259,11 +258,12 @@ public final class Das2VersionedSource {
 
         // how should xml:base be handled?
         //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
-		String types_request = getRegionString(TYPES_CAP_QUERY);
+		Das2Capability segcap = getCapability(TYPES_CAP_QUERY);
+		String types_request = segcap.getRootURI().toString();
 		InputStream response = null;
 
         try {
-					Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Das2 Types Request: " + types_request);
+					
 					Map<String, String> headers = new LinkedHashMap<String, String>();
 					
 					//set in header a sessionId for types authentication?
@@ -272,13 +272,13 @@ public final class Das2VersionedSource {
 					if (sessionId != null) {
 						headers.put("sessionId", sessionId);
 						//if sessionID then connected so ignore cache
-						response = LocalUrlCacher.getInputStream(types_request, LocalUrlCacher.IGNORE_CACHE, false, headers);
+						response = getInputStream(TYPES_CAP_QUERY, LocalUrlCacher.IGNORE_CACHE, false, headers, "Das2 Types Request");
 					}
 					else {
-						response = LocalUrlCacher.getInputStream(types_request, true, headers);
+						response = getInputStream(TYPES_CAP_QUERY, LocalUrlCacher.getPreferredCacheUsage(), true, headers, "Das2 Types Request");
 					}
 					if (response == null) {
-						Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request " + types_request + " was not reachable.");
+						Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request {0} was not reachable.", types_request);
 						return;
 					}
 					Document doc = XMLUtils.getDocument(response);
@@ -286,7 +286,7 @@ public final class Das2VersionedSource {
 
 					getTypeList(typelist, types_request);
 
-					Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Out of Das2 Types Request: " + types_request);
+					Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Out of Das2 Types Request: {0}", types_request);
 				} catch (Exception ex) {
 					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 					LocalUrlCacher.invalidateCacheFile(types_request);
@@ -374,9 +374,8 @@ public final class Das2VersionedSource {
 		InputStream istr = null;
 		BufferedInputStream bis = null;
 		try {
-			//Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
-			//String request_root = featcap.getRootURI().toString();
-			String request_root = getRegionString(FEATURES_CAP_QUERY);
+			Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
+			String request_root = featcap.getRootURI().toString();
 			String nameglob = name;
 			if (URL_ENCODE_QUERY) {
 				nameglob = URLEncoder.encode(nameglob, UTF8);
@@ -412,19 +411,42 @@ public final class Das2VersionedSource {
 		return null;
 	}
 
+	public InputStream getInputStream(String query_type, int cache_opt, boolean write_to_cache, Map<String, String> headers, String log_string) throws MalformedURLException, IOException {
+		String load_url = getRegionString(query_type);
+		InputStream istr = LocalUrlCacher.getInputStream(load_url, cache_opt, write_to_cache, headers);
+
+		/** Check to see if trying to load from primary server but primary server is not responding **/
+		if(istr == null && isLoadingFromPrimary()){
+			LocalUrlCacher.invalidateCacheFile(load_url);
+			Logger.getLogger(Das2ServerInfo.class.getName()).log(
+					Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.serverName);
+			primaryServer.setServerStatus(ServerStatus.NotResponding);
+
+			load_url = getRegionString(query_type);
+			istr = LocalUrlCacher.getInputStream(load_url, cache_opt, write_to_cache, headers);
+		}
+
+		Logger.getLogger(Das2ServerInfo.class.getName()).log(
+				Level.INFO, "{0} : {1}", new Object[]{log_string, load_url});
+
+		return istr;
+	}
+
+	private boolean isLoadingFromPrimary(){
+		return (primary_uri != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
+	}
+
 	/**
 	 * If primary uri is null then load data from actual server.
 	 * @param type	Required das2capability type.
 	 * @return	Returns region string.
 	 */
 	private String getRegionString(String type){
-		if(primary_uri == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
+		if(!isLoadingFromPrimary()){
 			Das2Capability segcap = getCapability(type);
-			Logger.getLogger(Das2VersionedSource.class.getName()).log(Level.FINE, "Region String :" + segcap.getRootURI().toString());
 			return segcap.getRootURI().toString();
 		}
 
-		Logger.getLogger(Das2VersionedSource.class.getName()).log(Level.FINE, "Region String :" + primary_uri.toString() + type + XML);
 		return primary_uri.toString() + type + XML;
 	}
 }

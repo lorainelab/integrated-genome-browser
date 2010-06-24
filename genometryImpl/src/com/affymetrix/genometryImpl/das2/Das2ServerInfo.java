@@ -137,10 +137,9 @@ public final class Das2ServerInfo  {
 	 */
 	private synchronized boolean initialize() {
 		InputStream response = null;
-		String das_query = "";
+		String das_query = server_uri.toString();
 		try {
 			if (server_uri == null) { return false; }
-			das_query = getPrimaryQuery();
 					
 			if (login() == false) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
@@ -151,7 +150,7 @@ public final class Das2ServerInfo  {
 				System.out.println("Das2 Request: " + server_uri);
 			}
 			Map<String,String> headers = new LinkedHashMap<String,String>();
-			response = LocalUrlCacher.getInputStream(getQueryFor(das_query), true, headers);
+			response = getInputStream(headers, "Loading from server ");
 			if (response == null) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;
@@ -173,7 +172,7 @@ public final class Das2ServerInfo  {
 			parseSources(doc.getElementsByTagName("SOURCE"), das_query);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			LocalUrlCacher.invalidateCacheFile(getQueryFor(das_query));
+			LocalUrlCacher.invalidateCacheFile(das_query);
 			return false;   // not successfully initialized if there was an exception.
 		} finally {
 			GeneralUtils.safeClose(response);
@@ -182,35 +181,45 @@ public final class Das2ServerInfo  {
 		return initialized;
 	}
 
+
+	public InputStream getInputStream(Map<String, String> headers, String log_string) throws MalformedURLException, IOException {
+		String load_url = getLoadURL();
+		InputStream istr = LocalUrlCacher.getInputStream(load_url, true, headers);
+
+		/** Check to see if trying to load from primary server but primary server is not responding **/
+		if(istr == null && isLoadingFromPrimary()){
+			LocalUrlCacher.invalidateCacheFile(load_url);
+			Logger.getLogger(Das2ServerInfo.class.getName()).log(
+					Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.serverName);
+			primaryServer.setServerStatus(ServerStatus.NotResponding);
+
+			load_url = getLoadURL();
+			istr = LocalUrlCacher.getInputStream(load_url, true, headers);
+		}
+
+		Logger.getLogger(Das2ServerInfo.class.getName()).log(
+				Level.INFO, "{0} : {1}", new Object[]{log_string, load_url});
+		
+		return istr;
+	}
+
+	private boolean isLoadingFromPrimary(){
+		return (primary_uri != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
+	}
+
 	/**
 	 * Get url string to load data from.
 	 * Returns primary server's url if present else
 	 * actual servers's url.
 	 * @return
 	 */
-	private String getPrimaryQuery(){
-		if(primary_uri == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
-			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Primary Query :" + server_uri.toString());
+	private String getLoadURL(){
+		if(!isLoadingFromPrimary())
 			return server_uri.toString();
-		}
-		Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Primary Query :" + primary_uri.toString());
-		return primary_uri.toString();
+
+		return primary_uri.toString() + "/" + Constants.GENOME_SEQ_ID+XML;
 	}
 
-	/**
-	 * Determines if .xml extension is required or not.
-	 * @param query	Query to which .xml extension is to be added.
-	 * @return
-	 */
-	private String getQueryFor(String query){
-		if(primary_uri == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
-			Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Query :" + query);
-			return query;
-		}
-		Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "Query :" + query+Constants.GENOME_SEQ_ID+XML);
-		return query+Constants.GENOME_SEQ_ID+XML;
-	}
-	
 	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then
 	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
 	private synchronized boolean login() {

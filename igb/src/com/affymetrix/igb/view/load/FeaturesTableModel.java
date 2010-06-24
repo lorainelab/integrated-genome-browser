@@ -27,7 +27,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
 	//private static final int SERVER_TYPE_COLUMN = 3;
-	private final List<GenericFeature> features;
+	private List<GenericFeature> features;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
 
@@ -49,6 +49,11 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		this.fireTableDataChanged();
 	}
 
+	void setFeatures(List<GenericFeature> features) {
+		this.features = getVisibleFeatures(features);
+		this.fireTableDataChanged();
+	}
+
 	/**
 	 * Only want to display features with visible attribute set to true.
 	 * @param features
@@ -66,7 +71,6 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 
 		Collections.sort(visibleFeatures,visibleFeatureComp);
-
 
 		// Also sort these features so the features to be loaded are at the top.
 

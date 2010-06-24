@@ -155,13 +155,18 @@ public final class GeneralLoadView extends JComponent
 		feature_model = new FeaturesTableModel(this, null);
 		feature_table = new JTableX(feature_model);
 		feature_table.setModel(feature_model);
+		feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
+		// Handle sizing of the columns
+		feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
 
 		featuresTableScrollPane = new JScrollPane(GeneralLoadView.feature_table);
+		featuresTableScrollPane.setViewportView(feature_table);
 
 		JPanel featuresPanel = new JPanel();
 		featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
 		featuresPanel.add(new JLabel(IGBConstants.BUNDLE.getString("chooseLoadMode")));
 		featuresPanel.add(featuresTableScrollPane);
+
 
 		this.add("North", choicePanel);
 
@@ -844,16 +849,10 @@ public final class GeneralLoadView extends JComponent
 		}
 		final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
 
-		final FeaturesTableModel ftm = new FeaturesTableModel(this, features);
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				feature_model = ftm;
-				feature_table = new JTableX(feature_model);
-				feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
-
-				// Handle sizing of the columns
-				feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
+				feature_model.setFeatures(features);
 
 				// the second column contains the feature names.  Resize it so that feature names are fully displayed.
 				TableColumn col = feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
@@ -864,8 +863,6 @@ public final class GeneralLoadView extends JComponent
 				TableWithVisibleComboBox.setComboBoxEditors(
 						feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN,
 						!GeneralLoadView.IsGenomeSequence());
-				feature_model.fireTableDataChanged();
-				featuresTableScrollPane.setViewportView(feature_table);
 			}
 		});
 

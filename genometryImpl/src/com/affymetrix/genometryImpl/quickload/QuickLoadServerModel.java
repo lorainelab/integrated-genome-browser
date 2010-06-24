@@ -180,7 +180,7 @@ public final class QuickLoadServerModel {
 	 */
 	private boolean loadAnnotationNames(String genome_name) {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
-		String genome_root = getLoadURL() + genome_name + "/";
+		String genome_root = genome_name + "/";
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
 				"loading list of available annotations for genome: " + genome_name);
 
@@ -189,9 +189,34 @@ public final class QuickLoadServerModel {
 		List<AnnotMapElt> annotList = new ArrayList<AnnotMapElt>();
 		genome2annotsMap.put(genome_name, annotList);
 
-		return processAnnotsXml(genome_root + Constants.annotsXml, annotList) ||
-				processAnnotsTxt(genome_root + Constants.annotsTxt, annotList);
+		InputStream istr = null;
+		String filename = null;
+		try{
+			filename = genome_root + Constants.annotsXml;
+			istr = getInputStream(filename, false, true);
+			boolean annots_found = processAnnotsXml(istr, annotList);
 
+			if(annots_found)
+				return true;
+
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
+				"Couldn't found annots.xml for " + genome_name +
+				". Looking for annots.txt now.");
+			filename = genome_root + Constants.annotsTxt;
+			istr = getInputStream(filename, getCacheAnnots(), false);
+
+			return processAnnotsTxt(istr, annotList);
+
+		}catch (Exception ex) {
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
+				"Couldn't found either annots.xml or annots.txt for " + genome_name);
+			System.out.println("Couldn't process file " + filename);
+			ex.printStackTrace();
+			return false;
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+		
 	}
 
 	/**
@@ -201,10 +226,7 @@ public final class QuickLoadServerModel {
 	 * @param annotList
 	 * @return true or false
 	 */
-	private static boolean processAnnotsXml(String filename, List<AnnotMapElt> annotList) {
-		InputStream istr = null;
-		try {
-			istr = LocalUrlCacher.getInputStream(filename, false, null, true);
+	private static boolean processAnnotsXml(InputStream istr, List<AnnotMapElt> annotList) {
 			if (istr == null) {
 				// Search failed.  That's fine, since there's a backup test for annots.txt.
 				return false;
@@ -212,13 +234,6 @@ public final class QuickLoadServerModel {
 
 			AnnotsXmlParser.parseAnnotsXml(istr, annotList);
 			return true;
-		} catch (Exception ex) {
-			System.out.println("Couldn't process file " + filename);
-			ex.printStackTrace();
-			return false;
-		} finally {
-			GeneralUtils.safeClose(istr);
-		}
 	}
 
 	/**
@@ -227,11 +242,9 @@ public final class QuickLoadServerModel {
 	 * @param annotList
 	 * @return true or false
 	 */
-	private static boolean processAnnotsTxt(String filename, List<AnnotMapElt> annotList) {
-		InputStream istr = null;
+	private static boolean processAnnotsTxt(InputStream istr, List<AnnotMapElt> annotList) {
 		BufferedReader br = null;
 		try {
-			istr = LocalUrlCacher.getInputStream(filename, getCacheAnnots());
 			if (istr == null) {
 				// Search failed.  getInputStream has already logged warnings about this.
 				return false;
@@ -252,12 +265,9 @@ public final class QuickLoadServerModel {
 			}
 			return true;
 		} catch (Exception ex) {
-			System.out.println("Couldn't find or couldn't process file " + filename);
-			ex.printStackTrace();
 			return false;
 		} finally {
 			GeneralUtils.safeClose(br);
-			GeneralUtils.safeClose(istr);
 		}
 	}
 
@@ -266,19 +276,14 @@ public final class QuickLoadServerModel {
 		String modChromInfo = Constants.modChromInfoTxt;
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
-		String genome_root = getLoadURL() + genome_name + "/";
-		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
-				"loading list of chromosomes for genome: " + genome_name);
+		String genome_root = genome_name + "/";
 		InputStream lift_stream = null;
 		InputStream cinfo_stream = null;
 		try {
-
-			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
-					"lift URL: " + genome_root + liftAll);
 			String lift_path = genome_root + liftAll;
 			try {
 				// don't warn about this file, since we'll look for modChromInfo file
-				lift_stream = LocalUrlCacher.getInputStream(lift_path, getCacheAnnots(), null, true);
+				lift_stream = getInputStream(lift_path, getCacheAnnots(), true);
 			} catch (Exception ex) {
 				// exception can be ignored, since we'll look for modChromInfo file.
 				Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,
@@ -288,7 +293,7 @@ public final class QuickLoadServerModel {
 			if (lift_stream == null) {
 				String cinfo_path = genome_root + modChromInfo;
 				try {
-					cinfo_stream = LocalUrlCacher.getInputStream(cinfo_path, getCacheAnnots(), null, false);
+					cinfo_stream = getInputStream(cinfo_path, getCacheAnnots(), false);
 				} catch (Exception ex) {
 					System.err.println("ERROR: could find neither " + lift_path + " nor " + cinfo_path);
 					ex.printStackTrace();
@@ -320,7 +325,7 @@ public final class QuickLoadServerModel {
 		BufferedReader br = null;
 		try {
 			try {
-				istr = LocalUrlCacher.getInputStream(getLoadURL() + contentsTxt, getCacheAnnots());
+				istr = getInputStream(contentsTxt, getCacheAnnots(), false);
 			} catch (Exception e) {
 				System.out.println("ERROR: Couldn't open '" + getLoadURL() + contentsTxt + "\n:  " + e.toString());
 				istr = null; // dealt with below
@@ -360,15 +365,38 @@ public final class QuickLoadServerModel {
 		}
 	}
 
+	public InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist) throws IOException{
+		String load_url = getLoadURL() + append_url;
+		InputStream istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist);
+
+		/** Check to see if trying to load from primary server but primary server is not responding **/
+		if(istr == null && isLoadingFromPrimary() && !fileMayNotExist){
+
+			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.WARNING,"Primary Server :" +
+						primaryServer.serverName + " is not responding. So disabling it for this session.");
+			primaryServer.setServerStatus(ServerStatus.NotResponding);
+
+			load_url = getLoadURL() + append_url;
+			istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist);
+		}
+
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,"Load URL :" + load_url);
+		return istr;
+	}
+
+	private boolean isLoadingFromPrimary(){
+		if(primary_url == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding))
+			return false;
+
+		return true;
+	}
+
 	private String getLoadURL(){
 		
 		if(primary_url == null || primaryServer == null || primaryServer.getServerStatus().equals(ServerStatus.NotResponding)){
-			Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,"Load URL :" + root_url);
 			return root_url;
 		}
 			
-
-		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE,"Load URL :" + primary_url);
 		return primary_url;
 	}
 	

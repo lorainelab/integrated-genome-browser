@@ -712,6 +712,10 @@ public final class LocalUrlCacher {
 	}
 
 	public static File convertURIToFile(URI uri) {
+		return convertURIToFile(uri, false);
+	}
+
+	public static File convertURIToFile(URI uri, boolean fileMayNotExist) {
 		if (uri.getScheme() == null) {
 			// attempt to find a local file
 		}
@@ -734,7 +738,7 @@ public final class LocalUrlCacher {
 			InputStream istr = null;
 			try {
 				String uriStr = uri.toString();
-				istr = LocalUrlCacher.getInputStream(uriStr);
+				istr = LocalUrlCacher.getInputStream(uriStr, false, null, fileMayNotExist);
 
 				if(istr == null)
 					return null;

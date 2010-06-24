@@ -326,11 +326,11 @@ public final class QuickLoadServerModel {
 			try {
 				istr = getInputStream(contentsTxt, getCacheAnnots(), false);
 			} catch (Exception e) {
-				System.out.println("ERROR: Couldn't open '" + getLoadURL() + contentsTxt + "\n:  " + e.toString());
+				System.out.println("ERROR: Couldn't open '" + root_url + contentsTxt + "\n:  " + e.toString());
 				istr = null; // dealt with below
 			}
 			if (istr == null) {
-				System.out.println("Could not load QuickLoad contents from\n" + getLoadURL() + contentsTxt);
+				System.out.println("Could not load QuickLoad contents from\n" + root_url + contentsTxt);
 				return;
 			}
 			ireader = new InputStreamReader(istr);

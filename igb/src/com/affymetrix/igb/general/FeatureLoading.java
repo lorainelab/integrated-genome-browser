@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das.DasType;
@@ -33,8 +32,6 @@ import javax.swing.SwingWorker;
 public final class FeatureLoading {
 
 	private static final boolean DEBUG = false;
-	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-
 
 	/**
 	 * Load the annotations for the given version.  This is specific to one server.
@@ -141,7 +138,7 @@ public final class FeatureLoading {
 					final String feature_name,
 					final boolean update_display,
 					final GenometryModel gmodel) {
-		if ((requests == null) || (requests.size() == 0)) {
+		if ((requests == null) || (requests.isEmpty())) {
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
 			return;
 		}
@@ -159,7 +156,7 @@ public final class FeatureLoading {
 
 				public Void doInBackground() {
 					try {
-					createDAS2ResultSyms(request_set, result_syms);
+						createDAS2ResultSyms(request_set, result_syms);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -204,7 +201,7 @@ public final class FeatureLoading {
 		return requests_by_version;
 	}
 
-	private static final void createDAS2ResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<FeatureRequestSym> result_syms) {
+	private static void createDAS2ResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<FeatureRequestSym> result_syms) {
 		for (Das2FeatureRequestSym request_sym : request_set) {
 			// Create an AnnotStyle so that we can automatically set the
 			// human-readable name to the DAS2 name, rather than the ID, which is a URI
@@ -212,11 +209,15 @@ public final class FeatureLoading {
 			if (DEBUG) {
 				System.out.println("$$$$$ in processFeatureRequests(), getting style for: " + type.getName());
 			}
-			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID(),type.getName());
-			Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());
-			List<? extends FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
-			result_syms.addAll(feature_list);
-			Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getShortName());
+			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID(), type.getName());
+
+			try {
+				Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());
+				List<? extends FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
+				result_syms.addAll(feature_list);
+			} finally {
+				Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getShortName());
+			}
 		}
 	}
 

@@ -267,7 +267,7 @@ public final class LoadFileAction extends AbstractAction {
 		DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
 		view.tableChanged();
 		// force a refresh of this server
-		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true);
+		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true, true);
 	}
 
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {

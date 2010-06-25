@@ -17,8 +17,6 @@
 <server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" />
 <server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" />
 
-<!--<server type="quickload" name="Bioviz" url="http://bioviz.org/cached/" primary="true"/>-->
-
   <!-- <annotation_url> associates a "method" or "id" regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression (case insensitive by default)

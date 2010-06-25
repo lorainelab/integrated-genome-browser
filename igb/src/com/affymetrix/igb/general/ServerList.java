@@ -362,12 +362,20 @@ public final class ServerList {
 	}
 
 	public static void fireServerInitEvent(GenericServer server, ServerStatus status) {
-		fireServerInitEvent(server, status, false);
+		fireServerInitEvent(server, status, false, true);
 	}
-	public static void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate) {
+
+	public static void fireServerInitEvent(GenericServer server, ServerStatus status, boolean removedManually) {
+		fireServerInitEvent(server, status, false, removedManually);
+	}
+
+	public static void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {
 		if (status == ServerStatus.NotResponding) {
 			GeneralLoadUtils.removeServer(server);
-			ErrorHandler.errorPanel(server.serverName, "Server " + server.serverName + "is not responding. Disabling it for this session.");
+
+			if(!removedManually)
+				ErrorHandler.errorPanel(server.serverName, "Server " + server.serverName + " is not responding. Disabling it for this session.");
+			
 			if (server.serverType != ServerType.LocalFiles) {
 				Application.getSingleton().removeNotLockedUpMsg("Loading server " + server + " (" + server.serverType.toString() + ")");
 			}

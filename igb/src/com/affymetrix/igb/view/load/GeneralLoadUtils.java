@@ -176,17 +176,17 @@ public final class GeneralLoadUtils {
 			}
 			if (gServer.serverType == ServerType.QuickLoad) {
 				if (!getQuickLoadSpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS) {
 				if (!getDAS1SpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS2) {
 				if (!getDAS2SpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			}

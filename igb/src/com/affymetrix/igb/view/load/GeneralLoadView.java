@@ -187,7 +187,7 @@ public final class GeneralLoadView extends JComponent
 
 		ServerList.addServerInitListener(this);
 
-		//GeneralLoadUtils.loadServerMapping();
+		GeneralLoadUtils.loadServerMapping();
 		populateSpeciesData();
 		addListeners();
 	}

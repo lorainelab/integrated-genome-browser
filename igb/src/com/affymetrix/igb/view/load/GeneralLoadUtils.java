@@ -176,17 +176,17 @@ public final class GeneralLoadUtils {
 			}
 			if (gServer.serverType == ServerType.QuickLoad) {
 				if (!getQuickLoadSpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS) {
 				if (!getDAS1SpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS2) {
 				if (!getDAS2SpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			}
@@ -720,13 +720,13 @@ public final class GeneralLoadUtils {
 	 */
 	static String listSynonyms(String versionName) {
 		StringBuilder synonymBuilder = new StringBuilder(100);
-		synonymBuilder.append("<html>" + IGBConstants.BUNDLE.getString("synonymList"));
+		synonymBuilder.append("<html>").append(IGBConstants.BUNDLE.getString("synonymList"));
 		Set<String> synonymSet = LOOKUP.getSynonyms(versionName);
 		for (String synonym : synonymSet) {
 			if (synonym.equalsIgnoreCase(versionName)) {
 				continue;
 			}
-			synonymBuilder.append("<p>" + synonym + "</p>");
+			synonymBuilder.append("<p>").append(synonym).append("</p>");
 		}
 		if (synonymSet.size() <= 1) {
 			synonymBuilder.append(IGBConstants.BUNDLE.getString("noSynonyms"));
@@ -753,11 +753,13 @@ public final class GeneralLoadUtils {
 				try {
 					istr = LocalUrlCacher.getInputStream(primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
 				} catch (Exception e) {
-					System.out.println("ERROR: Couldn't open '" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING + "\n:  " + e.toString());
+					Logger.getLogger(GeneralLoadUtils.class.getName()).severe(
+							"Couldn't open '" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING + "\n:  " + e.toString());
 					istr = null; // dealt with below
 				}
 				if (istr == null) {
-					System.out.println("Could not load server mapping contents from\n" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
+					Logger.getLogger(GeneralLoadUtils.class.getName()).info(
+							"Could not load server mapping contents from\n" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
 					return;
 				}
 				ireader = new InputStreamReader(istr);

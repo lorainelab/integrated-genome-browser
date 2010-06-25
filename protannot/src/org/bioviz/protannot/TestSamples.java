@@ -52,13 +52,13 @@ public class TestSamples {
 			}
 		});
 		
-        System.err.println("Total files " + files.length);
+        System.out.println("Total files " + files.length);
         for(String s : files)
         {
             if(testFile(dirpath+s))
-                System.err.println(s + "read sucessfully.");
+                System.out.println(s + " read sucessfully.");
             else
-                System.err.println("Error reading " + s);
+                System.out.println("Error reading " + s);
         }
         
     }
@@ -87,9 +87,9 @@ public class TestSamples {
 				Logger.getLogger(TestSamples.class.getName()).log(Level.SEVERE, null, ex);
 			}
         } catch (FileNotFoundException ex) {
-            System.err.println(filename + "File not found");
+            System.out.println(filename + "File not found");
         } catch (IOException ex){
-			System.err.println(ex.getMessage());
+			System.out.println(ex.getMessage());
 		}
 		moveToFailedDir(filename);
         return false;

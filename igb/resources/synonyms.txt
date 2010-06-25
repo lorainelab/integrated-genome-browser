@@ -70,9 +70,9 @@ D_virilis_Jul_2004	droVir1
 D_yakuba_Apr_2004	droYak1
 D_yakuba_Nov_2005	droYak2
 F_catus_Mar_2006	felCat3
-G_aculeatus_Feb_2006	gasAcu1
-G_gallus_May_2006	galGal2
-G_gallus_May_2006	galGal3	Chicken_May_2006
+G_aculeatus_Feb_2006	gasAcu1	Gasterosteus_aculeatus.BROADS1.reference
+G_gallus_Feb_2004	galGal2
+G_gallus_May_2006	galGal3	Chicken_May_2006	Gallus_gallus.WASHUC2.reference
 G_gorilla_Aug_2009	gorGor2
 G_gorilla_Oct_2008	gorGor1
 G_max_Dec_2008	Glyma1	Soybean_Dec_2008	JGI_Soybean_v101

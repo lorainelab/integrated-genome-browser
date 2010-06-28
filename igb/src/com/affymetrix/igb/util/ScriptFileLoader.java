@@ -333,7 +333,7 @@ public class ScriptFileLoader {
 		LoadStrategy s = LoadStrategy.NO_LOAD;
 		if (loadMode.equalsIgnoreCase("no_load")) {
 			s = LoadStrategy.NO_LOAD;
-		} else if (loadMode.equalsIgnoreCase("visible")) {
+		} else if (loadMode.equalsIgnoreCase("region_in_view") || loadMode.equalsIgnoreCase("visible")) {
 			s = LoadStrategy.VISIBLE;
 		} else if (loadMode.equalsIgnoreCase("chromosome")) {
 			s = LoadStrategy.CHROMOSOME;

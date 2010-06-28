@@ -193,7 +193,7 @@ final class NormalizeXmlStrand {
 		}
 	}
 
-	private class SimpleErrorHandler implements ErrorHandler {
+	private static class SimpleErrorHandler implements ErrorHandler {
     public void warning(SAXParseException e) throws SAXException {
         System.out.println("Line " + e.getLineNumber() + ": " + e.getMessage());
     }

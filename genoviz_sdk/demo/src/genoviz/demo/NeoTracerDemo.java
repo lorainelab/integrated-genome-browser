@@ -173,7 +173,7 @@ public class NeoTracerDemo extends Applet
 		this.setLayout(new BorderLayout());
 		this.add("Center", widg_pan);
 		this.addComponentListener(this);
-		
+
 	}
 
 	@Override
@@ -342,6 +342,7 @@ public class NeoTracerDemo extends Applet
 
 		}
 
+		widget.setMinZoom(NeoTracer.X, 0.1f);
 //		widget.setBasesTrimmedLeft(9);
 //		widget.setBasesTrimmedRight(19);
 
@@ -577,7 +578,7 @@ public class NeoTracerDemo extends Applet
 		int theLastPeak = trace_range.end;
 		System.out.println(theFirstPeak +" " + theLastPeak);
 		widget.setRange(theFirstPeak, theLastPeak);
-
+		
 	}
 
 	public void rangeChanged(NeoRangeEvent evt) {

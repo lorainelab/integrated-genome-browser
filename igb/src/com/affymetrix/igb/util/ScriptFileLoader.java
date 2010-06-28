@@ -125,6 +125,10 @@ public class ScriptFileLoader {
 		try {
 			String line = null;
 			while ((line = br.readLine()) != null) {
+				//Ignore comments.
+				if(line.startsWith("#"))
+					continue;
+
 				Logger.getLogger(ScriptFileLoader.class.getName()).log(
 						Level.INFO, "line: {0}", line);
 				doSingleAction(line);

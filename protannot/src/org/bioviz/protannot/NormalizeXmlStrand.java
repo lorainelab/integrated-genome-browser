@@ -118,6 +118,7 @@ final class NormalizeXmlStrand {
 
 				} catch (Exception ex) {
 					// Ignore exceptions here, since residue end may not be defined.
+					Logger.getLogger(NormalizeXmlStrand.class.getName()).log(Level.WARNING, "Residue end not defined", ex);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

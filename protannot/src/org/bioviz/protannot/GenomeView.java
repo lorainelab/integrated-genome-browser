@@ -122,15 +122,15 @@ final class GenomeView extends JPanel implements MouseListener{
 	private boolean showhairline = true;
 	private Shadow hairline, axishairline;
 	
-    private Color col_bg = COLORS.BACKGROUND.defaultColor();
-    private Color col_frame0 = COLORS.FRAME0.defaultColor();
-    private Color col_frame1 = COLORS.FRAME1.defaultColor();
-    private Color col_frame2 = COLORS.FRAME2.defaultColor();
-    private Color col_ts = COLORS.TRANSCRIPT.defaultColor();
-    private Color col_domain = COLORS.DOMAIN.defaultColor();
-    private Color col_exon_summary = COLORS.EXONSUMMARY.defaultColor();
-    private Color col_sequence = Color.black;
-    private Color col_axis_bg = Color.lightGray;
+    private static Color col_bg = COLORS.BACKGROUND.defaultColor();
+    private static Color col_frame0 = COLORS.FRAME0.defaultColor();
+    private static Color col_frame1 = COLORS.FRAME1.defaultColor();
+    private static Color col_frame2 = COLORS.FRAME2.defaultColor();
+    private static Color col_ts = COLORS.TRANSCRIPT.defaultColor();
+    private static Color col_domain = COLORS.DOMAIN.defaultColor();
+    private static Color col_exon_summary = COLORS.EXONSUMMARY.defaultColor();
+    private static Color col_sequence = Color.black;
+    private static Color col_axis_bg = Color.lightGray;
     
     private List<GlyphI> selected = new ArrayList<GlyphI>();
     private List<GlyphI> storeSelected;
@@ -263,7 +263,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Changes color preferences
      * @param phash     Hashtable<String,Color> 
      */
-    private void tempColorPrefs(Hashtable<String,Color> phash)
+    private static void tempColorPrefs(Hashtable<String,Color> phash)
     {
         if (phash == null) {
             return;
@@ -622,7 +622,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      * @see     com.affymetrix.genometryImpl.SeqSpan
      */
-    private void colorByFrame(GlyphI gl, SeqSpan protSpan, SeqSpan genSpan) {
+    private static void colorByFrame(GlyphI gl, SeqSpan protSpan, SeqSpan genSpan) {
         double pstart = protSpan.getStartDouble();
         double fraction = Math.abs(pstart - (int) pstart);
         int genome_codon_start = genSpan.getStart();
@@ -683,7 +683,7 @@ final class GenomeView extends JPanel implements MouseListener{
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         // will return a color from the prefs for the protein annotation
         // span -- or else the default - col_domain
-        Color color = pick_color_for_domain(aSpan);
+        Color color = pick_color_for_domain(aSpan, prefs_hash);
         aGlyph.setColor(color);
 
         // for now, need to descend two levels because that is depth of path --
@@ -720,7 +720,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * @return  Color
      * @see     com.affymetrix.genometryImpl.SymWithProps
      */
-    private Color pick_color_for_domain(Object propertied) {
+    private static Color pick_color_for_domain(Object propertied, Hashtable<String,Color> prefs_hash) {
         Color to_return = col_domain;
         if (propertied instanceof SymWithProps) {
             Object property = ((SymWithProps) propertied).getProperty("method");
@@ -890,7 +890,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * @param   prop	a Map containing meta-data name/value pairs for an item
      * @return  Properties the meta-data values transformed to Property objects
      */
-    private Properties convertPropsToProperties(Map<String, Object> prop) {
+    private static Properties convertPropsToProperties(Map<String, Object> prop) {
         Properties retval = new Properties();
         for (Entry<String, Object> ent : prop.entrySet()) {
             retval.put(ent.getKey(), ent.getValue());

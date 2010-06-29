@@ -31,11 +31,11 @@ public class DNAUtils implements Translatable  {
 
 	/** Genetic Code in 1-character amino acid codes */
 
-	protected static String aa1[][][] = new String[16][16][16];
+	protected static final String aa1[][][] = new String[16][16][16];
 
 	/** Genetic Code in 3-character amino acid codes */
 
-	protected static String aa3[][][] = new String[16][16][16];
+	protected static final String aa3[][][] = new String[16][16][16];
 
 	/** number of "letters" that are valid in a string of nucleotide codes. */
 
@@ -46,10 +46,10 @@ public class DNAUtils implements Translatable  {
 	 * associated with each possible ascii character code.
 	 * Unused characters are associated with the integer -1.
 	 */
-	protected static int[] letter_to_id = new int[256];
+	protected static final int[] letter_to_id = new int[256];
 
 	/** ascii character codes for each nucleotide (or set of nucleotides). */
-	protected static char[] id_to_letter = new char[LETTERS];
+	protected static final char[] id_to_letter = new char[LETTERS];
 
 	static {
 		int A = 0;
@@ -779,11 +779,9 @@ public class DNAUtils implements Translatable  {
 	 */
 	public static String reverse(String s) {
 		if (s == null) { return null; }
-		StringBuffer buf = new StringBuffer(s.length());
-		//    int j=0;
+		StringBuilder buf = new StringBuilder(s);
 		for (int i=s.length()-1; i>=0; i--) {
 			buf.append(s.charAt(i));
-			//      j++;
 		}
 		return buf.toString();
 	}
@@ -801,7 +799,7 @@ public class DNAUtils implements Translatable  {
 	public static String chunkReverse(String s, int offset, int chunk_size) {
 		if (s == null) { return null; }
 		int reverse_offset = (s.length()-offset) % chunk_size;
-		StringBuffer buf = new StringBuffer(s.length());
+		StringBuilder buf = new StringBuilder(s.length());
 		for (int i = 0; i < reverse_offset; i++) {
 			buf.append(' ');
 		}
@@ -1081,7 +1079,7 @@ public class DNAUtils implements Translatable  {
 		if (pre_string != null) { residue_charsize += pre_string.length(); }
 		if (post_string != null) { residue_charsize += post_string.length(); }
 
-		StringBuffer amino_acids = new StringBuffer(length);
+		StringBuilder amino_acids = new StringBuilder(length);
 
 		if (initial_string != null ) amino_acids.append(initial_string);
 		// checking for no spaces, can build non-spaced faster by avoiding
@@ -1160,7 +1158,7 @@ public class DNAUtils implements Translatable  {
 	}
 
 	/**
-	 * Fill a color matrix with settings for the given match, mismathc,
+	 * Fill a color matrix with settings for the given match, mismatch,
 	 * and semi_match.  The color matrix must be at least LETTERS sized
 	 * in both dimensions.
 	 */

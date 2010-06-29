@@ -87,7 +87,8 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();
 		}
-		if (this.extension.endsWith(".chp")) {
+		if (this.extension.endsWith(".chp")
+				|| (extension.endsWith(".sin") || extension.endsWith(".egr") || extension.endsWith(".txt"))) {
 			List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 			strategyList.add(LoadStrategy.NO_LOAD);
 			strategyList.add(LoadStrategy.GENOME);

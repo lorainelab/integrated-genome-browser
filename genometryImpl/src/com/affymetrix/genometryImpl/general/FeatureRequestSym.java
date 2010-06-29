@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -91,7 +92,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, URI id, String name, SeqSpan overlapSpan) {
 		int feat_count = feats == null ? 0 : feats.size();
 		Logger.getLogger(FeatureRequestSym.class.getName()).log(
-				Level.INFO,"parsed query results, annot count = " + feat_count);
+				Level.INFO, "parsed query results, annot count = {0}", feat_count);
 		if (feat_count == 0) {
 			// because many operations will treat empty FeatureRequestSym as a leaf sym, want to
 			//    populate with empty sym child/grandchild
@@ -113,17 +114,25 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 
 	public static void addAnnotations(
 			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, BioSeq aseq) {
+		boolean skipOverallAdd = false;
 		if (feats != null && !feats.isEmpty()) {
 			for (SeqSymmetry feat : feats) {
 				if (feat instanceof GraphSym) {
 					// if graphs, then adding to annotation BioSeq is handled by addChildGraph() method
 					return;
 				}
+				if (feat instanceof ScoredContainerSym) {
+					// TODO: This is a hack for the EGR format, which is using containers for its symmetries.
+					aseq.addAnnotation(feat);
+					skipOverallAdd = true;	// don't add twice
+				}
 			}
 		}
 
-		synchronized (aseq) {
-			aseq.addAnnotation(request_sym);
+		if (!skipOverallAdd) {
+			synchronized (aseq) {
+				aseq.addAnnotation(request_sym);
+			}
 		}
 	}
 
@@ -188,8 +197,8 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		}
 		if (extension.equals("brpt")) {
 			List<SeqSymmetry> alist = BrptParser.parse(bis, featureName, group, false);
-			Logger.getLogger(FeatureRequestSym.class.getName()).log(Level.FINE,
-					"total repeats loaded: " + alist.size());
+			Logger.getLogger(FeatureRequestSym.class.getName()).log(
+					Level.FINE, "total repeats loaded: {0}", alist.size());
 			return alist;
 		}
 		if (extension.equals("brs")) {
@@ -198,8 +207,8 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		}
 		if (extension.equals("bsnp")) {
 			List<SeqSymmetry> alist = BsnpParser.parse(bis, featureName, group, false);
-			Logger.getLogger(FeatureRequestSym.class.getName()).log(Level.FINE,
-					"total snps loaded: " + alist.size());
+			Logger.getLogger(FeatureRequestSym.class.getName()).log(
+					Level.FINE, "total snps loaded: {0}", alist.size());
 			return alist;
 		}
 		if (extension.equals("cnchp") || extension.equals("lohchp")) {
@@ -266,8 +275,8 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			return VarParser.parse(bis, group);
 		}
 
-		Logger.getLogger(FeatureRequestSym.class.getName()).log(Level.WARNING,
-				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + extension);
+		Logger.getLogger(FeatureRequestSym.class.getName()).log(
+				Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", extension);
 		return null;
 	}
 

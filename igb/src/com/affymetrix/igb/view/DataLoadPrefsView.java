@@ -452,12 +452,13 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 	private static void removeDataSource(String url) {
 		if (ServerList.getServer(url) == null) {
-			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, "Can not remove Server '" + url +"': it does not exist in ServerList");
+			Logger.getLogger(DataLoadPrefsView.class.getName()).log(
+					Level.SEVERE, "Can not remove Server ''{0}'': it does not exist in ServerList", url);
 			return;
 		}
 
-		ServerList.removeServerFromPrefs(url);
 		ServerList.removeServer(url);
+		ServerList.removeServerFromPrefs(url);	// this is done last; other methods can depend upon the preference node
 	}
 
 	private static boolean loadSynonymFile(JTextField synonymFile) {

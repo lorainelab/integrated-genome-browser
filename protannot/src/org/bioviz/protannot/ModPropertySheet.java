@@ -122,7 +122,8 @@ final class ModPropertySheet extends JPanel {
             }
         };
         table.setModel(model);
-        table.setRowSelectionAllowed(false);
+        table.setRowSelectionAllowed(true);
+		table.setCellSelectionEnabled(true);
         // measure column headings so we can make size decisions
         int champion = 0;
         int candidate = 0;
@@ -132,7 +133,7 @@ final class ModPropertySheet extends JPanel {
             candidate = metrix.stringWidth(col_headings[i]);
             champion = (candidate > champion ? candidate : champion);
         }
-        table.setEnabled(false);
+        table.setEnabled(true);
 		Dimension size = new Dimension(1000, 1000);
         size.height = table.getSize().height;
         table.setSize(size);

@@ -343,6 +343,11 @@ final class ProtAnnotMain implements WindowListener {
 		menuitem = menu.add(new JCheckBoxMenuItem(h_action));
 		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0));
 		gview.popup.add(new JCheckBoxMenuItem(h_action));
+
+		ToggleHairlineLabelAction hl_action = new ToggleHairlineLabelAction(this.gview);
+		menuitem = menu.add(new JCheckBoxMenuItem(hl_action));
+		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
+		gview.popup.add(new JCheckBoxMenuItem(hl_action));
     }
 
     /**

@@ -406,6 +406,10 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 		return this.tg.getUseXOR();
 	}
 
+	public final void setShowHairline(boolean bool){
+		this.tg.setVisibility(bool);
+	}
+
 	public void destroy() {
 		if ( map != null ) {
 			map.removeViewBoxListener(this);

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * This packer makes sure siblings do not overlap.
  * i.e. it makes sure all the direct children of the parent do not overlap.
- * This does not try to recursivly pack each child.
+ * This does not try to recursively pack each child.
  * <p> Note that this packer ignores the coordFuzziness property.
  */
 public class SiblingCoordAvoid extends AbstractCoordPacker {
@@ -55,7 +55,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 		boolean childMoved = true;
 		while (childMoved) {
 			childMoved = false;
-			for (GlyphI sibling : children) {
+			for (GlyphI sibling : sibsinrange) {
 				if (sibling == child) { continue; }
 				siblingbox = sibling.getCoordBox();
 				if (child.hit(siblingbox, view) ) {

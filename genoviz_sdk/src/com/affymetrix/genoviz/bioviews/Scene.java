@@ -28,7 +28,6 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
  * See SceneI for better documentation of methods.
  */
 public class Scene implements SceneI  {
-	//private static final boolean DEBUG_EVENTS = false;
 	private static final boolean debug = false;
 
 	protected GlyphI eveGlyph;
@@ -240,7 +239,7 @@ public class Scene implements SceneI  {
 	}
 
 	/**
-	 * Sets visibility for a partiuclar glyph in the scene.
+	 * Sets visibility for a particular glyph in the scene.
 	 * @param glyph the glyph to set.
 	 * @param isVisible whether or not the glyph is visible.
 	 */
@@ -390,8 +389,6 @@ public class Scene implements SceneI  {
 		else {
 			GlyphI parent = gl.getParent();
 			parent.removeChild(gl);
-			//      Vector siblings = parent.getChildren();
-			//      siblings.remove(gl);
 		}
 		if (gl instanceof TransientGlyph) {
 			removeTransient((TransientGlyph)gl);
@@ -532,7 +529,7 @@ public class Scene implements SceneI  {
 	/**
 	 * Make glyph gl be drawn behind all its sibling glyphs.
 	 */
-	public void toBackOfSiblings(GlyphI gl) {
+	public static void toBackOfSiblings(GlyphI gl) {
 		GlyphI parent = gl.getParent();
 		if (parent != null) {
 			parent.removeChild(gl);
@@ -544,7 +541,7 @@ public class Scene implements SceneI  {
 	 * Make this glyph be drawn in front of all its sibling glyphs.
 	 * (with the exception that it will not be drawn in front of transient glyphs)
 	 */
-	public void toFrontOfSiblings(GlyphI gl) {
+	public static void toFrontOfSiblings(GlyphI gl) {
 		GlyphI parent = gl.getParent();
 		if (parent != null) {
 			parent.removeChild(gl);
@@ -556,7 +553,7 @@ public class Scene implements SceneI  {
 	 * Make glyph gl be drawn behind all other glyphs.
 	 * (before all other glyphs)
 	 */
-	public void toBack(GlyphI gl) {
+	public static void toBack(GlyphI gl) {
 		GlyphI child = gl;
 		GlyphI parent = gl.getParent();
 		while (parent != null) {
@@ -571,7 +568,7 @@ public class Scene implements SceneI  {
 	 * (after all other glyphs)
 	 * Except, will not be drawn in front of transient glyphs.
 	 */
-	public void toFront(GlyphI gl) {
+	public static void toFront(GlyphI gl) {
 		GlyphI child = gl;
 		GlyphI parent = child.getParent();
 		while (parent != null) {  // maybe also check for parent != child ???

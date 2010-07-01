@@ -16,6 +16,7 @@ public class ToggleHairlineLabelAction extends AbstractAction{
 	ToggleHairlineLabelAction(GenomeView gview){
 		super(BUNDLE.getString("toggleHairlineLabel"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_L);
+		this.putValue(SHORT_DESCRIPTION, BUNDLE.getString("toggleHairlineLabelTip"));
 		this.gview = gview;
 		this.putValue(SELECTED_KEY, true);
 	}

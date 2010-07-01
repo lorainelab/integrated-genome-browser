@@ -27,6 +27,7 @@ final class ZoomToFeatureAction extends AbstractAction implements MouseListener 
         super(BUNDLE.getString("zoomToFeature"),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_Z);
+		this.putValue(SHORT_DESCRIPTION, BUNDLE.getString("zoomToFeatureTip"));
         setEnabled(false);
         this.view = view;
         view.addMapListener(this);

@@ -375,6 +375,7 @@ final class ProtAnnotMain implements WindowListener {
             }
         };
 		load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
+		load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("openFileTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(load_action));
 
 
@@ -387,6 +388,7 @@ final class ProtAnnotMain implements WindowListener {
 			}
 		};
 		add_server.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
+		add_server.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("addServerTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(add_server));
 		
 		
@@ -395,6 +397,7 @@ final class ProtAnnotMain implements WindowListener {
 		else
 			server_load_action.setEnabled(true);
 		server_load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_S);
+		server_load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("serverLoadTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(server_load_action));
 
         AbstractAction print_action = new AbstractAction(MessageFormat.format(
@@ -411,6 +414,7 @@ final class ProtAnnotMain implements WindowListener {
             }
         };
         print_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+		print_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("printTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(print_action));
 
 		final ExportDialog export = new ExportDialog();
@@ -429,6 +433,7 @@ final class ProtAnnotMain implements WindowListener {
             }
         };
         export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_E);
+		export_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exportTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(export_action));
 
         AbstractAction preference = new AbstractAction(MessageFormat.format(
@@ -441,6 +446,7 @@ final class ProtAnnotMain implements WindowListener {
             }
         };
         preference.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+		preference.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("preferencesTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(preference));
 
         AbstractAction quit_action = new AbstractAction(MessageFormat.format(
@@ -456,6 +462,7 @@ final class ProtAnnotMain implements WindowListener {
             }
         };
         quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+		quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(quit_action));
 
     }

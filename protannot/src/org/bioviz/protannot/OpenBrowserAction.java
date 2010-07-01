@@ -21,6 +21,7 @@ final class OpenBrowserAction extends AbstractAction implements MouseListener {
     OpenBrowserAction(GenomeView view) {
         super(BUNDLE.getString("openBrowser"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_B);
+		this.putValue(SHORT_DESCRIPTION, BUNDLE.getString("openBrowserTip"));
         setEnabled(false);
         this.view = view;
         view.addMapListener(this);

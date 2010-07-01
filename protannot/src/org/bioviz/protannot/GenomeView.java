@@ -55,7 +55,7 @@ final class GenomeView extends JPanel implements MouseListener{
     static enum COLORS
     {
         BACKGROUND("background", Color.white),
-        FRAME0("frame0", new Color(0,0,145)),
+        FRAME0("frame0", new Color(0,100,145)),
         FRAME1("frame1", new Color(0,100,255)),
         FRAME2("frame2", new Color(192,192,114)),
         TRANSCRIPT("transcript", Color.black),
@@ -609,7 +609,7 @@ final class GenomeView extends JPanel implements MouseListener{
 			aGlyph.addChild(cglyph);
 			
 			if(amino_acid != null){
-				SequenceGlyph sg = new SequenceGlyph();
+				SequenceGlyph sg = new ColoredResiduesGlyph(false);
 				int start = prev_amino_end;
 				int end = start + gSpan.getLength();
 				String sub_amino_acid = amino_acid.substring(start, end);
@@ -792,7 +792,7 @@ final class GenomeView extends JPanel implements MouseListener{
         
         axismap.addAxis(upper_white_space+axis_pixel_height);
         //String residues = gseq.getResidues();
-        ColoredResiduesGlyph sg = new ColoredResiduesGlyph();
+        ColoredResiduesGlyph sg = new ColoredResiduesGlyph(true);
         sg.setResiduesProvider(gseq, gseq.getLength());
         //sg.setResidues(residues);
         sg.setCoords(gseq.getMin(), upper_white_space + axis_pixel_height

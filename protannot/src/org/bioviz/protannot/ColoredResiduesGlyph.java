@@ -26,11 +26,12 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
     private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
     // default to true for backward compatability
     protected boolean hitable = true;
+	private final boolean drawRect;
 
-
-    public ColoredResiduesGlyph() {
+    public ColoredResiduesGlyph(boolean drawRect) {
         super();
         setResidueFont(mono_default_font);
+		this.drawRect = drawRect;
     }
 
     @Override
@@ -116,7 +117,8 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
             int pixelStart) {
         int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 
-        drawResidueRectangles(g, pixelsPerBase, str);
+		if(drawRect)
+			drawResidueRectangles(g, pixelsPerBase, str);
         drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
     }
 

@@ -652,15 +652,16 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
 	private static String processAminoAcid(String residue){
-		String amino_acid = "";
-		for(int i=0; i < residue.length() * 3; i++ ){
+		char[] amino_acid = new char[residue.length()*3];
+		for(int i=0; i < amino_acid.length; i++ ){
 			if(i % 3 == 0){
-				amino_acid += residue.charAt(i/3);
+				amino_acid[i] = residue.charAt(i/3);
 			}else
-				amino_acid += " ";
+				amino_acid[i] = ' ';
 		}
-		return amino_acid;
+		return String.valueOf(amino_acid);
 	}
+	
     /**
      * Colors by exon frame relative to genomic coordinates
      * @param   gl

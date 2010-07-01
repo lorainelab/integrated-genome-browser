@@ -148,7 +148,8 @@ final class GenomeView extends JPanel implements MouseListener{
     private static final int table_height = 150;
     private static final int seqmap_pixel_height = 500;
 	private static final double zoomRatio = 30.0;
-    
+
+	private static final String end_codon = "Z";
     /**
      * Removes currently loaded data by clearing maps.
      */
@@ -580,7 +581,7 @@ final class GenomeView extends JPanel implements MouseListener{
 
         SeqSpan pSpan = SeqUtils.getOtherSpan(annot2mrna, mrna_span);
         BioSeq protein = pSpan.getBioSeq();
-		String amino_acid = protein.getResidues(0, protein.getLength());
+		String amino_acid = processAminoAcid(protein.getResidues(0, protein.getLength()) + end_codon) ;
 
         GlyphI aGlyph = new LineContainerGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
@@ -588,6 +589,7 @@ final class GenomeView extends JPanel implements MouseListener{
         aGlyph.setColor(col_ts);
         seqmap.setDataModel(aGlyph, annot2mrna);
         int cdsCount = annot2genome.getChildCount();
+		int prev_amino_end = 0;
         for (int j = 0; j < cdsCount; j++) {
             SeqSymmetry cds2genome = annot2genome.getChild(j);
             SeqSpan gSpan = cds2genome.getSpan(vseq);
@@ -601,15 +603,19 @@ final class GenomeView extends JPanel implements MouseListener{
 
 			SequenceGlyph sg = new SequenceGlyph();
 			try{
-				String sub_amino_acid = getAminoAcid(amino_acid,protSpan.getStart(),protSpan.getEnd(),protein.getMin());
+				int start = prev_amino_end;
+				int end = start + gSpan.getLength();
+				String sub_amino_acid = amino_acid.substring(start, end);
+				prev_amino_end += gSpan.getLength();
 				sg.setResidues(sub_amino_acid);
-				sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-				sg.setForegroundColor(cglyph.getForegroundColor());
-				sg.setBackgroundColor(cglyph.getBackgroundColor());
+				
 			}catch(Exception ex){
-
+				ex.printStackTrace();
 			}
-		
+			sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+			sg.setForegroundColor(cglyph.getForegroundColor());
+			sg.setBackgroundColor(cglyph.getBackgroundColor());
+			
             aGlyph.addChild(cglyph);
 			aGlyph.addChild(sg);
         }
@@ -642,8 +648,11 @@ final class GenomeView extends JPanel implements MouseListener{
         }
     }
 
-	private static String getAminoAcid(String amino_acid, int start, int end, int offset){
-		return processAminoAcid(amino_acid.substring(start-offset, end-offset));
+	private static String getAminoAcid(String amino_acid, int start_offset, int length, int offset){
+		int start = start_offset - offset;
+		int end = start + length;
+	
+		return amino_acid.substring(start, end);
 	}
 
 	private static String processAminoAcid(String residue){

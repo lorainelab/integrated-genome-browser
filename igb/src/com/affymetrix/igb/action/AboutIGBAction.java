@@ -8,7 +8,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;

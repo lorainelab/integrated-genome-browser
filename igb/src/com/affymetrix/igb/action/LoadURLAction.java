@@ -5,7 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;

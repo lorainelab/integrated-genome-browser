@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 
 final class LinkControl implements ContextualPopupListener {

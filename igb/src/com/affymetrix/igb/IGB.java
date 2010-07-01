@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;

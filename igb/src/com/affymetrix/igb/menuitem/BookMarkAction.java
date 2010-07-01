@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.Component;

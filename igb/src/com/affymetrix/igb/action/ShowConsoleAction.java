@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.view.ConsoleView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

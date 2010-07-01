@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.GridLayout;
 import java.awt.Toolkit;

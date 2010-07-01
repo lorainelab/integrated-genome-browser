@@ -51,7 +51,7 @@ import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.glyph.SmartRubberBand;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;

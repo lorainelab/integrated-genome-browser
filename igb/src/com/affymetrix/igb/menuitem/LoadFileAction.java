@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;

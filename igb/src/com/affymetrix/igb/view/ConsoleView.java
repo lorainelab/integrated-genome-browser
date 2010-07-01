@@ -18,7 +18,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 import java.nio.charset.Charset;

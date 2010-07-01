@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.menuitem;
+package com.affymetrix.genometryImpl.util;
 
 import java.awt.MediaTracker;
 import javax.swing.*;

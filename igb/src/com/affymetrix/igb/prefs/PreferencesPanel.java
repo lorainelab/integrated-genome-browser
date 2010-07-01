@@ -14,7 +14,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.TierPrefsView;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

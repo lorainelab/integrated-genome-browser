@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;

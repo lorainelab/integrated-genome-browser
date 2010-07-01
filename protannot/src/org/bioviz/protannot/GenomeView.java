@@ -14,7 +14,6 @@ import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
@@ -647,13 +646,6 @@ final class GenomeView extends JPanel implements MouseListener{
             }
         }
     }
-
-	private static String getAminoAcid(String amino_acid, int start_offset, int length, int offset){
-		int start = start_offset - offset;
-		int end = start + length;
-	
-		return amino_acid.substring(start, end);
-	}
 
 	private static String processAminoAcid(String residue){
 		String amino_acid = "";

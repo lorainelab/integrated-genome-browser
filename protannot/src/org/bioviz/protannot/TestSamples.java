@@ -72,11 +72,12 @@ public class TestSamples {
     {
         BufferedInputStream bistr = null;
         try {
-            bistr = new BufferedInputStream(GeneralUtils.getInputStream(new File(filename), new StringBuffer()));
-			NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
-			//NormalizeXmlStrand.outputXMLToScreen(nxs.doc);
-            Xml2GenometryParser parser = new Xml2GenometryParser();
+          bistr = new BufferedInputStream(GeneralUtils.getInputStream(new File(filename), new StringBuffer()));
 			try {
+				NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
+				//NormalizeXmlStrand.outputXMLToScreen(nxs.doc);
+				Xml2GenometryParser parser = new Xml2GenometryParser();
+
 				BioSeq seq = parser.parse(nxs.doc);
 				if (seq != null) {
 					GenomeView gview = new GenomeView(GenomeView.COLORS.defaultColorList());
@@ -96,9 +97,9 @@ public class TestSamples {
     }
 
 	/**
-	 * Moves give file to dir named failed.
+	 * Moves given file to directory named failed.
 	 * @param filename	File to be moved
-	 * @return boolean true if file was move sucessfully, false if not.
+	 * @return boolean true if file was move successfully, false if not.
 	 */
 	static private boolean moveToFailedDir(String filename){
 		File file = new File(filename);

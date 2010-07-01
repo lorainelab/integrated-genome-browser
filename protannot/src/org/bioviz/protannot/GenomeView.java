@@ -580,7 +580,13 @@ final class GenomeView extends JPanel implements MouseListener{
 
         SeqSpan pSpan = SeqUtils.getOtherSpan(annot2mrna, mrna_span);
         BioSeq protein = pSpan.getBioSeq();
-		String amino_acid = processAminoAcid(protein.getResidues(0, protein.getLength()) + end_codon) ;
+		String amino_acid = null;
+
+		try{
+			amino_acid = processAminoAcid(protein.getResidues(0, protein.getLength()) + end_codon) ;
+		}catch(Exception ex){
+			System.out.println("*** Warning: No amino acid found ");
+		}
 
         GlyphI aGlyph = new LineContainerGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
@@ -600,23 +606,21 @@ final class GenomeView extends JPanel implements MouseListener{
             colorByFrame(cglyph, protSpan, gSpan);
             cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
 
-			SequenceGlyph sg = new SequenceGlyph();
-			try{
+			aGlyph.addChild(cglyph);
+			
+			if(amino_acid != null){
+				SequenceGlyph sg = new SequenceGlyph();
 				int start = prev_amino_end;
 				int end = start + gSpan.getLength();
 				String sub_amino_acid = amino_acid.substring(start, end);
 				prev_amino_end += gSpan.getLength();
 				sg.setResidues(sub_amino_acid);
-				
-			}catch(Exception ex){
-				ex.printStackTrace();
+				sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+				sg.setForegroundColor(cglyph.getForegroundColor());
+				sg.setBackgroundColor(cglyph.getBackgroundColor());
+				aGlyph.addChild(sg);
 			}
-			sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-			sg.setForegroundColor(cglyph.getForegroundColor());
-			sg.setBackgroundColor(cglyph.getBackgroundColor());
 			
-            aGlyph.addChild(cglyph);
-			aGlyph.addChild(sg);
         }
         trans_parent.addChild(aGlyph);
 

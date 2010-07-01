@@ -1,6 +1,8 @@
 package org.bioviz.protannot;
 
 import com.affymetrix.genometryImpl.util.DNAUtils;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -28,7 +30,7 @@ import org.xml.sax.SAXParseException;
 
 /**
  * Internal to the application, convert to a "positive strand" format.
- * @author jnicol1
+ * @author jnicol
  */
 final class NormalizeXmlStrand {
 	private boolean isNegativeStrand = false;
@@ -41,24 +43,20 @@ final class NormalizeXmlStrand {
 	 /**
      *Initialize dbFactory and dBuilder
      */
-    NormalizeXmlStrand(BufferedInputStream bistr) {
-        try {
-			URL url = ProtAnnotMain.class.getResource(schemaSource);
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			dbFactory.setNamespaceAware(true);
-			dbFactory.setValidating(true);
-			dbFactory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA); // use LANGUAGE here instead of SOURCE
-			dbFactory.setAttribute( JAXP_SCHEMA_SOURCE, url.toExternalForm());
+   NormalizeXmlStrand(BufferedInputStream bistr) throws ParserConfigurationException, SAXException, IOException {
+		URL url = ProtAnnotMain.class.getResource(schemaSource);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		dbFactory.setNamespaceAware(true);
+		dbFactory.setValidating(true);
+		dbFactory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA); // use LANGUAGE here instead of SOURCE
+		dbFactory.setAttribute(JAXP_SCHEMA_SOURCE, url.toExternalForm());
 
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			dBuilder.setErrorHandler(new SimpleErrorHandler());
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		dBuilder.setErrorHandler(new SimpleErrorHandler());
 
-			Document seqdoc = dBuilder.parse(bistr);
-			doc = processDocument(seqdoc);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		Document seqdoc = dBuilder.parse(bistr);
+		doc = processDocument(seqdoc);
+	}
 
 	static void outputXMLToScreen(Document doc) {
 		Transformer transformer;

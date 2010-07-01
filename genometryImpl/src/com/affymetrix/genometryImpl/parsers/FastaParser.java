@@ -43,8 +43,7 @@ public final class FastaParser {
 	 * a subset of the sequences in the group.
 	 */
 	public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-		ArrayList<BioSeq> seqlist = new ArrayList<BioSeq>();
-		//int line_count = 0;
+		List<BioSeq> seqlist = new ArrayList<BioSeq>();
 		BufferedReader br = null;
 		Matcher matcher = header_regex.matcher("");
 		try {
@@ -182,19 +181,7 @@ public final class FastaParser {
 	 *  @param istr an InputStream that will be read and then closed
 	 */
 	public static BioSeq parse(InputStream istr) throws IOException {
-		return FastaParser.parse(istr, null);
-	}
-
-
-	/**
-	 *  Parse an input stream into a BioSeq.
-	 *  @param istr an InputStream that will be read and then closed
-	 *  @param aseq Usually null, but can be an existing seq that you want to load the
-	 *   residues into.  If not null, then the sequence in the file must have a name
-	 *   that is synonymous with aseq.
-	 */
-	private static BioSeq parse(InputStream istr, BioSeq aseq) {
-		return FastaParser.parse(istr, aseq, -1);
+		return FastaParser.parse(istr, null, -1);
 	}
 
 	// to help eliminate memory spike (by dynamic reallocation of memory in StringBuffer -- don't ask...)
@@ -240,7 +227,6 @@ public final class FastaParser {
 		// maybe guesstimate size of buffer needed based on file size???
 		StringBuffer buf;
 		if (fixed_length_buffer) {
-			//      buf = new StringBuffer(max_residues);
 			buf = new StringBuffer(max_seq_length);
 		}
 		else {
@@ -258,7 +244,6 @@ public final class FastaParser {
 				if (header == null) { continue; }  // skip null lines
 				matcher.reset(header);
 				boolean matched = matcher.matches();
-				//        if (! matched) { continue; }
 				if (matched) {
 					seqid = matcher.group(1);
 					break;
@@ -276,11 +261,11 @@ public final class FastaParser {
 				if (line.startsWith(">")) {
 					break;
 				}
-				//        buf.append(line.substring(0, line.length()-1));
+
 				buf.append(line);
 				line_count++;
 			}
-			//      System.out.println("Read entire sequence, length = " + buf.length());
+
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -289,7 +274,6 @@ public final class FastaParser {
 			GeneralUtils.safeClose(istr);
 		}
 		System.gc();
-		//    try  { Thread.currentThread().sleep(1000); } catch (Exception ex) { }
 
 		// GAH 6-26-2002
 		// contortions to try and minimize length of String's internal char array, because:
@@ -310,10 +294,8 @@ public final class FastaParser {
 		if (use_buffer_directly) {
 			System.gc();
 			residues = new String(buf);
-			//printMemory();
 		}
 		else {
-			//printMemory();
 			// trying new strategy with String(String) constructor
 			// looks weird, but not as convoluted as other technique
 			//  use String(String) constructor, whose side effect is to trim new String's
@@ -321,11 +303,9 @@ public final class FastaParser {
 			//  and hopefully will save space...
 			String temp_residues = new String(buf);
 			residues = new String(temp_residues);
-			//printMemory();
 			temp_residues = null;
 		
 			System.gc();
-			//printMemory();
 			System.out.println("done constructing residues via array");
 			buf = null;
 		}
@@ -400,7 +380,6 @@ public final class FastaParser {
 				byte[] header = skipFASTAHeader(seqfile.getName(), bis);
 				int header_len = (header == null ? 0 : header.length);
 
-				//System.out.println("header was :" + header + " with len:" + header_len);
 
 				bis.reset();
 				long skip_status = BlockUntilSkipped(bis, header_len);
@@ -415,11 +394,6 @@ public final class FastaParser {
 				int full_lines_to_skip = (begin_sequence / LINELENGTH);
 				int chars_to_skip = (LINELENGTH+1) * full_lines_to_skip;
 				int line_location = begin_sequence % LINELENGTH;
-				/*System.out.println("begin_sequence :" + begin_sequence + " " + 
-				  full_lines_to_skip + " " +
-				  chars_to_skip + " " +
-				  line_location);
-				  */
 
 				// skip all the full lines
 				skip_status = BlockUntilSkipped(bis, chars_to_skip);
@@ -436,11 +410,7 @@ public final class FastaParser {
 				}
 
 				int nucleotides_len = end_sequence - begin_sequence;
-				//buf = new byte[nucleotides_len + header_len];
 				buf = new byte[nucleotides_len];
-
-				//for (int i=0;i<header_len;i++)
-				//    buf[i] = header[i];
 
 				for (int i=0;i<nucleotides_len;) {
 					if (line_location == LINELENGTH) {
@@ -464,7 +434,6 @@ public final class FastaParser {
 
 					// Read several characters if possible
 					int nucleotides_left_on_this_line = Math.min(LINELENGTH - line_location, nucleotides_len - i);
-					//int nucleotides_read = bis.read(buf, i + header_len, nucleotides_left_on_this_line);
 					int nucleotides_read = bis.read(buf, i, nucleotides_left_on_this_line);
 					if (nucleotides_read == -1)
 						return trimBuffer(buf);
@@ -536,11 +505,9 @@ public final class FastaParser {
 		public static byte[] skipFASTAHeader(String filename, BufferedInputStream bis)
 			throws IOException, UnsupportedEncodingException {
 			// The header is less than 500 bytes, and if it exists, the header begins with a ">" and ends with a newline.
-		//System.out.println("Reading FASTA file");
 			byte[] header = new byte[500];
 
 			bis.mark(500);
-//			bis.read(header, 0, 500);
 			
 			int bytes_to_read = header.length;
 			int begin = 0;
@@ -553,15 +520,11 @@ public final class FastaParser {
 				begin = bytesRead;
 				bytes_to_read -= bytesRead;
 			}
-			//System.out.println("Header : " + header.toString());
 			if (header[0] == '>') {
 				// We found a header
 				// Parse until we're done with header.
 				for (int i=1;i<500;i++) {
-					//System.out.print(header[i] + " ");
 					if (header[i] == '\n') {
-						//System.out.println("");
-						//System.out.println("Header was :" + header.toString());
 						byte[] header2 = new byte[i+1];
 						System.arraycopy(header, 0, header2, 0, i+1);
 						return header2;
@@ -576,36 +539,6 @@ public final class FastaParser {
 			return null;
 		}
 
-		// Convert oldfile to (our) standardized fasta format.
-		// Standardized fasta format has:
-		// a header of less than 500 characters, terminated by a newline.
-		// exactly one sequence.
-		// no comment lines.
-		// exactly linelength nucleotides per line (until the last line), with a carriage return following each line.
-		/*public static void ConvertFASTAToNormalizedFASTA(File oldfile, String newfilename, int linelength)
-			throws FileNotFoundException, IOException, IllegalArgumentException {
-			if (linelength <= 0)
-				throw new java.lang.IllegalArgumentException(
-						"linelength " + linelength + " is invalid");
-
-			File newfile = new File(newfilename);
-			if (newfile.exists())
-				throw new java.lang.IllegalArgumentException(
-						"file " + newfilename + " already exists.  Please remove this file before continuing.");
-
-			byte[] buf = null;
-			DataInputStream dis = new DataInputStream(new FileInputStream(oldfile));
-			BufferedInputStream bis = new BufferedInputStream(dis);
-
-			// try {
-			// Skip to the location past the header.
-			byte[] header = skipFASTAHeader(oldfile.getName(), bis);
-			int header_len = (header == null ? 0 : header.length);
-			bis.reset();
-			bis.skip(header_len);
-			//FileOutputStream fos = new FileOutputStream(newfile);
-			}*/
-
 			// Turns out you can't trust Java to skip to a location in a file.
 			// (See http://java.sun.com/j2se/1.5.0/docs/api/java/io/InputStream.html#skip(long) .)
 			// This wrapper method will block until the appropriate bytes are skipped.
@@ -619,15 +552,4 @@ public final class FastaParser {
 
 
 			public static String getMimeType()  { return "text/fasta"; } 
-
-			/*static void printMemory() {
-				Runtime rt = Runtime.getRuntime();
-				long currFreeMem = rt.freeMemory();
-				long currTotalMem = rt.totalMemory();
-				long currMemUsed = currTotalMem - currFreeMem;
-				System.out.println("memory used = " + currMemUsed/1000000 + " MB  ," +
-						" total memory = " + currTotalMem/1000000 + " MB");
-			}*/
 		}
-
-

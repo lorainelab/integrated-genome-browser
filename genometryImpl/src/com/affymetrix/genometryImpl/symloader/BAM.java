@@ -98,8 +98,8 @@ public final class BAM extends SymLoader {
 				reader = new SAMFileReader(uri.toURL(), indexFile, false);
 				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else {
-				Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,
-						"URL scheme: " + scheme + " not recognized");
+				Logger.getLogger(BAM.class.getName()).log(
+						Level.SEVERE, "URL scheme: {0} not recognized", scheme);
 				return;
 			}
 
@@ -133,7 +133,8 @@ public final class BAM extends SymLoader {
 						int seqLength = ssr.getSequenceLength();
 						BioSeq seq = new BioSeq(seqID, group.getID(), seqLength);
 						seqs.add(seq);
-						Logger.getLogger(BAM.class.getName()).log(Level.INFO, "Adding chromosome " + seqID + " to group " + group.getID());
+						Logger.getLogger(BAM.class.getName()).log(
+								Level.INFO, "Adding chromosome {0} to group {1}", new Object[]{seqID, group.getID()});
 						group.addSeq(seq);
 					}
 				} catch (Exception ex) {
@@ -164,14 +165,14 @@ public final class BAM extends SymLoader {
 	@Override
 	public List<SeqSymmetry> getChromosome(BioSeq seq) {
 		init();
-		return parse(seq, seq.getMin(), seq.getMax(), true, true);
+		return parse(seq, seq.getMin(), seq.getMax(), true, false);
 	}
 
 
 	@Override
 	public List<SeqSymmetry> getRegion(SeqSpan span) {
 		init();
-		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, true);
+		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
 	}
 	
 	/**

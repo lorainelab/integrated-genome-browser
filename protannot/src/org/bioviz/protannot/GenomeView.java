@@ -580,7 +580,7 @@ final class GenomeView extends JPanel implements MouseListener{
 
         SeqSpan pSpan = SeqUtils.getOtherSpan(annot2mrna, mrna_span);
         BioSeq protein = pSpan.getBioSeq();
-
+		String amino_acid = protein.getResidues(0, protein.getLength());
 
         GlyphI aGlyph = new LineContainerGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
@@ -598,7 +598,20 @@ final class GenomeView extends JPanel implements MouseListener{
 
             colorByFrame(cglyph, protSpan, gSpan);
             cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+
+			SequenceGlyph sg = new SequenceGlyph();
+			try{
+				String sub_amino_acid = getAminoAcid(amino_acid,protSpan.getStart(),protSpan.getEnd(),protein.getMin());
+				sg.setResidues(sub_amino_acid);
+				sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+				sg.setForegroundColor(cglyph.getForegroundColor());
+				sg.setBackgroundColor(cglyph.getBackgroundColor());
+			}catch(Exception ex){
+
+			}
+		
             aGlyph.addChild(cglyph);
+			aGlyph.addChild(sg);
         }
         trans_parent.addChild(aGlyph);
 
@@ -629,6 +642,20 @@ final class GenomeView extends JPanel implements MouseListener{
         }
     }
 
+	private static String getAminoAcid(String amino_acid, int start, int end, int offset){
+		return processAminoAcid(amino_acid.substring(start-offset, end-offset));
+	}
+
+	private static String processAminoAcid(String residue){
+		String amino_acid = "";
+		for(int i=0; i < residue.length() * 3; i++ ){
+			if(i % 3 == 0){
+				amino_acid += residue.charAt(i/3);
+			}else
+				amino_acid += " ";
+		}
+		return amino_acid;
+	}
     /**
      * Colors by exon frame relative to genomic coordinates
      * @param   gl

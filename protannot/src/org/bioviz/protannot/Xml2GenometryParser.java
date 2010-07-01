@@ -463,15 +463,25 @@ final class Xml2GenometryParser {
         }
 
 		BioSeq mrna = addSpans(m2gSym, genomic, exon_insert_list, start);
-
+		
 		String protein_id = determineProteinID(children);
 
-		processCDS(children, genomic, m2gSym, mrna, protein_id);
+		String amino_acid = getAminoAcid(m2gSym);
+		processCDS(children, genomic, m2gSym, mrna, protein_id, amino_acid);
 
         m2gSym.setID("");
         genomic.addAnnotation(m2gSym);
         mrna.addAnnotation(m2gSym);
     }
+
+	private String getAminoAcid(TypeContainerAnnot m2gSym){
+		String residue = (String) m2gSym.getProperty("protein sequence");
+
+		if(residue == null)
+			return "";
+
+		return residue;
+	}
 
 	private static String determineProteinID(NodeList children) throws DOMException {
 		for (int i = 0; i < children.getLength(); i++) {
@@ -648,12 +658,12 @@ final class Xml2GenometryParser {
         return exonsym;
     }
 
-	private void processCDS(NodeList children, BioSeq genomic, TypeContainerAnnot m2gSym, BioSeq mrna, String protein_id) {
+	private void processCDS(NodeList children, BioSeq genomic, TypeContainerAnnot m2gSym, BioSeq mrna, String protein_id, String amino_acid) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			String nodename = child.getNodeName();
 			if (nodename != null && nodename.equalsIgnoreCase("cds")) {
-					processCDS(genomic, (Element) child, m2gSym, mrna, protein_id);
+					processCDS(genomic, (Element) child, m2gSym, mrna, protein_id, amino_acid);
 			}
 		}
 	}
@@ -675,7 +685,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
     private void processCDS(BioSeq genomic, Element elem, SimpleSymWithProps m2gSym,
-            BioSeq mrna, String protein_id) {
+            BioSeq mrna, String protein_id, String amino_acid) {
 
         String attr = elem.getAttribute("transstart");
         if (attr == null || attr.length() == 0) {
@@ -720,8 +730,9 @@ final class Xml2GenometryParser {
         TypeContainerAnnot m2pSym = new TypeContainerAnnot(elem.getAttribute("method"));
 
         SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrna);
-        BioSeq protein = new BioSeq(protein_id, null, mspan.getLength() / 3);
-		protein.setBounds(mspan.getMin(), mspan.getMin() + mspan.getLength()/3); // Corrected
+        BioSeq protein = new BioSeq(protein_id, null, mspan.getLength() / 3 - 1);
+		protein.setResidues(amino_acid);
+		protein.setBounds(mspan.getMin(), mspan.getMin() + mspan.getLength()/3 - 1); // Corrected
 
         prot_hash.put(protein_id, protein);
         SeqSpan pspan = new SimpleSeqSpan(protein.getMin(), protein.getMax(), protein); //Corrected
@@ -739,7 +750,8 @@ final class Xml2GenometryParser {
         //    (so that cds becomes mrna2protein symmetry on mrna (and on protein...)
 
     }
-	 private void checkTranslationLength(int start ,int end){
+
+	private void checkTranslationLength(int start ,int end){
 
         int length = 0;
         for(int[] exon : transCheckExons){

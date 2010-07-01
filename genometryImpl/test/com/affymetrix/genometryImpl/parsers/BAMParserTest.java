@@ -62,10 +62,10 @@ public class BAMParserTest {
 
 			// Strange, considering the span length is only 36
 			result = symL.getRegion(new SimpleSeqSpan(51120000, 51120038, seq));
-			assertEquals(0, result.size());
+			assertEquals(2, result.size());
 
 			result = symL.getRegion(new SimpleSeqSpan(51120000, 51120039, seq));
-			assertEquals(1, result.size());
+			assertEquals(2, result.size());
 			sym = result.get(0);	// first (positive) strand
 			assertEquals("0", sym.getID());
 			assertEquals(51119999, sym.getSpan(seq).getMin());

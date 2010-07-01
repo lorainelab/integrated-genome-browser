@@ -7,6 +7,7 @@ package org.bioviz.protannot;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
@@ -31,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,9 +57,11 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -73,6 +75,8 @@ import javax.swing.TransferHandler;
  */
 
 final class ProtAnnotMain implements WindowListener {
+	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
+
     // where the application is first invoked
     private static String user_dir = System.getProperty("user.dir");
     // used for choosing new files to load
@@ -86,7 +90,7 @@ final class ProtAnnotMain implements WindowListener {
 	// for adding server
 	private JFrame addServer = null;
     // the JFrame containing all the widgets
-    private JFrame frm;
+    final private JFrame frm;
 	// for show/hide hairline.
 	private JCheckBox showhairline;
     // has NeoMaps and PropertySheet (JTable)
@@ -100,7 +104,10 @@ final class ProtAnnotMain implements WindowListener {
 	private boolean ofs = false;
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
-	final AbstractAction server_load_action = new AbstractAction("Open from server ...") {
+	final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("serverLoad")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
 
 		public void actionPerformed(ActionEvent e) {
 			sampleChooser.setVisible(true);
@@ -199,6 +206,9 @@ final class ProtAnnotMain implements WindowListener {
         return prefs_hash;
     }
 
+	ProtAnnotMain(){
+		frm = new JFrame(BUNDLE.getString("appName"));
+	}
     /**
      * Setup the outer frame.
      * @param   args    - optional path name as a parameter.
@@ -210,7 +220,6 @@ final class ProtAnnotMain implements WindowListener {
 				mi.setDockIconImage(imageIcon);
 			}
 		}
-        frm = new JFrame("ProtAnnot");
 		frm.setTransferHandler(fdh);
 		frm.setIconImage(imageIcon);
         screen = frm.getToolkit().getScreenSize();
@@ -254,14 +263,17 @@ final class ProtAnnotMain implements WindowListener {
      * One of part in setting up the outer frame. Sets up menus.
      */
     private void setUpMenus() {
-        JMenuBar mbar = new JMenuBar();
-        JMenu menu = new JMenu("File");
+        JMenuBar mbar = MenuUtil.getMainMenuBar();
+        JMenu menu = MenuUtil.getMenu(BUNDLE.getString("fileMenu"));
+		menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
         addFileActions(menu);
-        mbar.add(menu);
-        menu = new JMenu("View");
+        
+        menu = MenuUtil.getMenu(BUNDLE.getString("viewMenu"));
+		menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
         addViewActions(menu);
-        mbar.add(menu);
+        
         frm.setJMenuBar(mbar);
+		
         if(testmode)
         {
             addQuickLaunch(mbar);
@@ -322,31 +334,26 @@ final class ProtAnnotMain implements WindowListener {
     }
 
     /**
-     * Adds menu item to View menu. Adds add browser action to it.
-     * @param   menu    Menu name to which submenus should be added.
+     * Adds view_menu item to View view_menu. Adds add browser action to it.
+     * @param   view_menu    Menu name to which submenus should be added.
      */
-    private void addViewActions(JMenu menu) {
+    private void addViewActions(JMenu view_menu) {
         JMenuItem menuitem;
         OpenBrowserAction b_action = new OpenBrowserAction(this.gview);
-        menuitem = menu.add(b_action);
-        menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0));
-        b_action.setEnabled(false);
-
+		b_action.setEnabled(false);
+        MenuUtil.addToMenu(view_menu, new JMenuItem(b_action));
         gview.popup.add(b_action);
 
 		ZoomToFeatureAction z_action = new ZoomToFeatureAction(this.gview);
-        menuitem = menu.add(z_action);
-        menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0));
+        MenuUtil.addToMenu(view_menu, new JMenuItem(z_action));
 		gview.popup.add(z_action);
 
 		ToggleHairlineAction h_action = new ToggleHairlineAction(this.gview);
-		menuitem = menu.add(new JCheckBoxMenuItem(h_action));
-		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0));
+		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(h_action));
 		gview.popup.add(new JCheckBoxMenuItem(h_action));
 
 		ToggleHairlineLabelAction hl_action = new ToggleHairlineLabelAction(this.gview);
-		menuitem = menu.add(new JCheckBoxMenuItem(hl_action));
-		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
+		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(hl_action));
 		gview.popup.add(new JCheckBoxMenuItem(hl_action));
     }
 
@@ -358,34 +365,42 @@ final class ProtAnnotMain implements WindowListener {
         JMenuItem menuitem;
 		
 		
-        AbstractAction load_action = new AbstractAction("Open File ...") {
+        AbstractAction load_action = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("openFile")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")) {
 
             public void actionPerformed(ActionEvent e) {
                     doLoadFile();
             }
         };
-        load_action.setEnabled(true);
-        menuitem = file_menu.add(load_action);
-        menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 0));
+		load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(load_action));
 
-		AbstractAction add_server = new AbstractAction("Add Server ..."){
+
+		AbstractAction add_server = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("addServer")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
 			public void actionPerformed(ActionEvent e){
 				addServer.setVisible(true);
 			}
 		};
-		add_server.setEnabled(true);
-		menuitem = file_menu.add(add_server);
-		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0));
+		add_server.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(add_server));
 		
 		
 		if(getArgumentValue(Arguments.SERVER)==null)
 			server_load_action.setEnabled(false);
 		else
 			server_load_action.setEnabled(true);
-		menuitem = file_menu.add(server_load_action);
-		menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
+		server_load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_S);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(server_load_action));
 
-        AbstractAction print_action = new AbstractAction("Print") {
+        AbstractAction print_action = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("print")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
 
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -395,13 +410,15 @@ final class ProtAnnotMain implements WindowListener {
                 }
             }
         };
-        print_action.setEnabled(true);
-        menuitem = file_menu.add(print_action);
-        menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0));
+        print_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(print_action));
 
 		final ExportDialog export = new ExportDialog();
 		export.setIcon(new ImageIcon(imageIcon));
-        AbstractAction export_action = new AbstractAction("Export as ...") {
+        AbstractAction export_action = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("export")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
 
             public void actionPerformed(ActionEvent e) {
                 try {    
@@ -411,30 +428,35 @@ final class ProtAnnotMain implements WindowListener {
                 }
             }
         };
-        export_action.setEnabled(true);
-        menuitem = file_menu.add(export_action);
-        menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, 0));
+        export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_E);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(export_action));
 
-        AbstractAction preference = new AbstractAction("Set Color Preferences ...") {
+        AbstractAction preference = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("preferences")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
 
             public void actionPerformed(ActionEvent e) {
                 colorChooser.setVisible(true);
             }
         };
-        preference.setEnabled(true);
-        menuitem = file_menu.add(preference);
-        menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0));
+        preference.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(preference));
 
-        AbstractAction quit_action = new AbstractAction("Quit") {
+        AbstractAction quit_action = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("exit")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
 
             public void actionPerformed(ActionEvent e) {
                 updatePrefs(gview.getColorPrefs());
-                System.exit(0);
+                Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
+				new WindowEvent(frm,
+					WindowEvent.WINDOW_CLOSING));
             }
         };
-        quit_action.setEnabled(true);
-        menuitem = file_menu.add(quit_action);
-        menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0));
+        quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+		MenuUtil.addToMenu(file_menu, new JMenuItem(quit_action));
 
     }
 
@@ -593,9 +615,9 @@ final class ProtAnnotMain implements WindowListener {
 			}
 			Xml2GenometryParser parser = new Xml2GenometryParser();
 			BioSeq genome_seq = parser.parse(nxs.doc);
-			gview.setTitle("viewing file: " + filename + "genome version :" + genome_seq.getVersion() + " sequence :" + genome_seq.getID());
+			gview.setTitle("viewing file: " + filename + "\t genome version: " + genome_seq.getVersion() + "\t sequence: " + genome_seq.getID());
 			gview.setBioSeq(genome_seq, true);
-			frm.setTitle(" ProtAnnot: " + filename + " version :" + genome_seq.getVersion() + " id :" + genome_seq.getID());
+			frm.setTitle(" ProtAnnot: " + filename + "\t version: " + genome_seq.getVersion() + "\t id: " + genome_seq.getID());
 		} catch (Exception ex) {
 			Reporter.report("Couldn't read file: " + filename + "\n"
 					+ "Error : " + ex.getMessage(),

@@ -5,7 +5,7 @@ import javax.swing.AbstractAction;
 import java.util.Properties;
 import java.awt.event.*;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-
+import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
 /**
  * Asks ProtAnnot to open a browser window showing info
  * on the currently selected Glyph.
@@ -19,7 +19,8 @@ final class OpenBrowserAction extends AbstractAction implements MouseListener {
      * Create a OpenBrowserAction.
      */
     OpenBrowserAction(GenomeView view) {
-        super("Open Browser");
+        super(BUNDLE.getString("openBrowser"));
+		this.putValue(MNEMONIC_KEY, KeyEvent.VK_B);
         setEnabled(false);
         this.view = view;
         view.addMapListener(this);

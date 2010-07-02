@@ -492,17 +492,20 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 					// Ignore genome version if there are not annotations nor sequence associated with it.
 					if (!gv.hasSequence(data_root) && (qualifiedAnnotations == null || qualifiedAnnotations.isEmpty())) {
-						Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Bypassing Genome version = " + genomeVersionName + ". No annotations nor sequence exists.");
+						Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+								Level.FINE, "Bypassing Genome version = {0}. No annotations nor sequence exists.", genomeVersionName);
 						continue;
 					}
 
 					// Ignore genome version if no segment information is present.
-					if (segments == null || segments.size() == 0) {
-						Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotations/sequence for Genome version " + genomeVersionName + ".  No segments have been defined.");
+					if (segments == null || segments.isEmpty()) {
+						Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+								Level.WARNING, "Bypassing annotations/sequence for Genome version {0}.  No segments have been defined.", genomeVersionName);
 						continue;
 					}
 
-					Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Genome version = " + genomeVersionName);
+					Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+							Level.FINE, "Genome version = {0}", genomeVersionName);
 
 					// Instantiate an AnnotatedSeqGroup (the genome version).         
 					AnnotatedSeqGroup genomeVersion = gmodel.addSeqGroup(genomeVersionName);
@@ -546,7 +549,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						String typePrefix = qa.getTypePrefix();     
 						File file = new File(fileName);
 						if (file.exists()) {
-							Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Annotation type = " + (typePrefix != null  ? typePrefix : "") + "\t" + (fileName != null ? fileName : ""));
+							Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+									Level.FINE, "Annotation type = {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
 
 							if (file.isDirectory() ) {
 								if (isMultiFileAnnotationType(file)) {
@@ -558,9 +562,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 											graph_name2dir);                  
 
 								} else if (!file.exists() || file.list() == null || file.list().length == 0) {
-									Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotation " + typePrefix + ".  No files associated with this annotation.");
+									Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+											Level.WARNING, "Bypassing annotation {0}.  No files associated with this annotation.", typePrefix);
 								} else {
-									Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotation " + typePrefix + " for file " + fileName + ". Only the bar and useq format permit multiple annotation files.");
+									Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+											Level.WARNING, "Bypassing annotation {0} for file {1}. Only the bar and useq format permit multiple annotation files.", new Object[]{typePrefix, fileName});
 								}
 
 
@@ -581,7 +587,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 							}
 							
 						} else {
-							Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Annotation not loaded. File does not exist: " + (typePrefix != null  ? typePrefix : "") + "\t" + (fileName != null ? fileName : ""));
+							Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+									Level.WARNING, "Annotation not loaded. File does not exist: {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
 						}
 
 					}
@@ -597,7 +604,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 		} catch (Exception e) {
-			Logger.getLogger(GenometryDas2Servlet.class.getName()).severe("Problems reading annotations from database " + e.toString());
+			Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+					Level.SEVERE, "Problems reading annotations from database {0}", e.toString());
 			e.printStackTrace();
 			if (tx != null) {
 				tx.rollback();
@@ -625,7 +633,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 
 	
 
-	private final void loadGenomesFromFileSystem(String dataRoot,
+	private void loadGenomesFromFileSystem(String dataRoot,
 			Map<String, List<AnnotatedSeqGroup>> organisms,
 			String org_order_filename) throws IOException {
 		// get list of all directories in data root
@@ -655,7 +663,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		ServerUtils.sortGenomes(organisms, org_order_filename);
 	}
 
-	private final void loadGenome(File genome_directory, String organism, String dataRoot) throws IOException {
+	private void loadGenome(File genome_directory, String organism, String dataRoot) throws IOException {
 		String genome_version = genome_directory.getName();
 
 		// create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
@@ -716,7 +724,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		handleDas2Request(response, request);
 	}
 
-	private final void handleDas2Request(HttpServletResponse response, HttpServletRequest request) throws IOException {
+	private void handleDas2Request(HttpServletResponse response, HttpServletRequest request) throws IOException {
 		String path_info = request.getPathInfo();
 		if (DEBUG) {
 			String query = request.getQueryString();
@@ -791,7 +799,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * Extracts name of (versioned?) genome from servlet request,
 	 *    and uses to retrieve AnnotatedSeqGroup (genome) from GenometryModel
 	 */
-	private static final AnnotatedSeqGroup getGenome(String path_info) {
+	private static AnnotatedSeqGroup getGenome(String path_info) {
 		int last_slash = path_info.lastIndexOf('/');
 		int prev_slash = path_info.lastIndexOf('/', last_slash - 1);
 		String genome_name = path_info.substring(prev_slash + 1, last_slash);
@@ -809,7 +817,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @throws java.io.IOExceptionhandleSequenceRequest
 	 */
 	@SuppressWarnings("deprecation")
-	private  final void handleSequenceRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
+	private void handleSequenceRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 	throws IOException {
 		String queryString = request.getQueryString();
 		if (queryString == null) {
@@ -878,7 +886,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	private static final void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response, String date_init_string)
+	private static void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response, String date_init_string)
 	throws IOException {
 		response.setContentType(SOURCES_CONTENT_TYPE);
 		PrintWriter pw = response.getWriter();
@@ -933,7 +941,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println("</SOURCES>");
 	}
 
-	private static final void handleSegmentsRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
+	private static void handleSegmentsRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 	throws IOException {
 		// genome null check already handled, so if it get this far the genome is non-null
 		Das2Coords coords = genomeid2coord.get(genome.getID());
@@ -975,7 +983,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *  filtered based on the users Session object. 
 	 *  
 	 */
-	private final void handleTypesRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
+	private void handleTypesRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 	throws IOException {
 
 		// Get the  genopub security which will determine which resources (annotations)
@@ -1029,7 +1037,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private static final void writeTypesXML(
+	private static void writeTypesXML(
 			PrintWriter pw,
 			String xbase,
 			Map<String,SimpleDas2Type> types_hash,
@@ -1091,10 +1099,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 	/**We are using basic authentication, so if we get to this point, that means the user has 
-	 * passed authenication.  Just send back XML indicating we are authenicated. */
-	private final void handleLoginRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	 * passed authentication.  Just send back XML indicating we are authenticated. */
+	private void handleLoginRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		boolean authorized = true;
-
 
 		//send response
 		response.setContentType(LOGIN_CONTENT_TYPE);
@@ -1116,7 +1123,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	
 
 	/**Refresh the not-yet-loaded annotations from genopub */
-	private final void handleRefreshRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void handleRefreshRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
 		// Refresh is not supported in classic mode
 		if (!is_genometry_genopub_mode) {
@@ -1134,7 +1141,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return;
 		}
 		
-		Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing DAS2 server.  User: " + request.getUserPrincipal().getName());
+		Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+				Level.INFO, "Refreshing DAS2 server.  User: {0}", request.getUserPrincipal().getName());
 		try {
 
 			// Reload the annotation files
@@ -1147,7 +1155,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			this.getGenoPubSecurity(request).loadAuthorizedResources(sess);
 
 		} catch (Exception e) {
-			Logger.getLogger(GenometryDas2Servlet.class.getName()).severe("ERROR - problems refreshing annotations " + e.toString());
+			Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
+					Level.SEVERE, "ERROR - problems refreshing annotations {0}", e.toString());
 			e.printStackTrace();
 		} finally {
 			HibernateUtil.getSessionFactory().close();
@@ -1227,7 +1236,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *        filter by name(s)
 	 *
 	 */
-	private final void handleFeaturesRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response) {
+	private void handleFeaturesRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response) {
 		String query = request.getQueryString();
 		String xbase = getXmlBase(request);
 		String output_format = default_feature_format;
@@ -1304,8 +1313,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					segments.size() == 1 && // one and only one segment
 					overlaps.size() <= 1 && // one and only one overlaps
 					insides.size() <= 1 && // zere or one inside
-					excludes.size() == 0 && // zero excludes
-					names.size() == 0) {
+					excludes.isEmpty() && // zero excludes
+					names.isEmpty()) {
 
 				String seqid = segments.get(0);
 				// using end of URI for internal seqid if segment is given as full URI (as it should according to DAS/2 spec)
@@ -1520,7 +1529,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * or, 2) looks for graph files as bar files sans seq grouping directories, but within data directory hierarchy
 	 * or, 3) tries to directly access file
 	 */
-	private final void handleGraphRequest(Map<String, Class<? extends AnnotationWriter>> output_registry, String xbase, HttpServletResponse response,
+	private void handleGraphRequest(
+			Map<String, Class<? extends AnnotationWriter>> output_registry, String xbase, HttpServletResponse response,
 			String type, SeqSpan span) {
 		BioSeq seq = span.getBioSeq();
 		String seqid = seq.getID();
@@ -1544,7 +1554,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @param seqid
 	 * @return file path of the graph
 	 */
-	private static final String DetermineFilePath(Map<String, String> graph_name2dir, Map<String, String> graph_name2file, String graph_name, String seqid) {
+	private static String DetermineFilePath(
+			Map<String, String> graph_name2dir, Map<String, String> graph_name2file, String graph_name, String seqid) {
 		// for now using graph_name as graph type
 		String file_path = graph_name2dir.get(graph_name);
 		if (file_path != null) {
@@ -1563,7 +1574,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return file_path;
 	}
 
-	private static final void OutputGraphSlice(
+	private static void OutputGraphSlice(
 			Class<? extends AnnotationWriter> writerclass, String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
 		GraphSym graf = null;
 		try {
@@ -1590,7 +1601,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private static final void OutputTheAnnotations(
+	private static void OutputTheAnnotations(
 			Class<? extends AnnotationWriter> writerclass,
 			String output_format,
 			HttpServletResponse response,
@@ -1614,7 +1625,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private static final String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
+	private static String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
 		String query_type = GeneralUtils.URLDecode(full_type_uri);
 		// using end of URI for internal typeid if type is given as full URI
 		//    (as it should according to DAS/2 spec)
@@ -1629,7 +1640,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return query_type;
 	}
 
-	private static final boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
+	private static boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
 			String annot_type,
 			String xbase, HttpServletResponse response,
 			Class<? extends AnnotationWriter> writerclass,
@@ -1660,7 +1671,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return false;
 	}
 
-	private static final void printXmlDeclaration(PrintWriter pw) {
+	private static void printXmlDeclaration(PrintWriter pw) {
 		// medium declaration (version, encoding)
 		pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		// long declaration (version, encoding, standalone)
@@ -1668,7 +1679,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
 	}
 
-	static final void setXmlBase(String xbase) {
+	static void setXmlBase(String xbase) {
 		xml_base = xbase;
 		String trimmed_xml_base;
 		if (xml_base.endsWith("/")) {
@@ -1684,7 +1695,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	/** getXmlBase() should no longer depend on request, should always be set via setXmlBase()
 	when servlet starts up -- need to remove request arg soon
 	 */
-	private static final String getXmlBase(HttpServletRequest request) {
+	private static String getXmlBase(HttpServletRequest request) {
 		if (xml_base != null) {
 			return xml_base;
 		} else {

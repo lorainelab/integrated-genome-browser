@@ -19,8 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 
 final class ServletUtils {
 
-	static final void retrieveRAW(
-			List<String> ranges, SeqSpan span, String sequence_directory, String seqname, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	static void retrieveRAW(
+			List<String> ranges, SeqSpan span, String sequence_directory, String seqname, HttpServletResponse response, HttpServletRequest request)
+			throws IOException {
 
 		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
@@ -30,7 +31,7 @@ final class ServletUtils {
 			response.setContentType("text/raw"); // set text type
 			try {
 				fis = new FileInputStream(seqfile);
-				if (ranges.size() != 0) {
+				if (!ranges.isEmpty()) {
 					int spanStart = 0, spanEnd = 0;
 					spanStart = span.getStart();
 					spanEnd = span.getEnd();
@@ -49,7 +50,7 @@ final class ServletUtils {
 		if (seqfile.exists()) {
 			response.setContentType("text/raw"); // set text type
 
-			if (ranges.size() != 0) {
+			if (!ranges.isEmpty()) {
 				int spanStart = 0, spanEnd = 0;
 				spanStart = span.getStart();
 				spanEnd = span.getEnd();
@@ -67,7 +68,7 @@ final class ServletUtils {
 
 	}
 
-	static final void retrieveBNIB(
+	static void retrieveBNIB(
 			String sequence_directory, String seqname, HttpServletResponse response, HttpServletRequest request) throws IOException {
 
 		String file_name = sequence_directory + seqname + ".bnib";
@@ -114,7 +115,7 @@ final class ServletUtils {
 	 * @deprecated
 	 */
 	@Deprecated
-	static final void retrieveFASTA(
+	static void retrieveFASTA(
 			List<String> ranges, SeqSpan span, String sequence_directory, String organism_name, String seqname, HttpServletResponse response, HttpServletRequest request)
 	throws IOException {
 		String file_name = sequence_directory + seqname + ".fa";
@@ -130,7 +131,7 @@ final class ServletUtils {
 
 		// Determine spanStart and spanEnd.  If it's an unranged query, then just make SpanEnd no larger than the filesize.
 		int spanStart = 0, spanEnd = 0;
-		if (ranges.size() == 0) {
+		if (ranges.isEmpty()) {
 			if (seqfile.length() > (long) Integer.MAX_VALUE) {
 				spanEnd = Integer.MAX_VALUE;
 			} else {
@@ -148,7 +149,7 @@ final class ServletUtils {
 	}
 
 	// Write a formatted fasta file out to the ServletOutputStream.
-	private static final void OutputFormattedFasta(byte[] buf, byte[] header, ServletOutputStream sos)
+	private static void OutputFormattedFasta(byte[] buf, byte[] header, ServletOutputStream sos)
 	throws IOException, IOException, IllegalArgumentException {
 		if (buf == null) {
 			return;

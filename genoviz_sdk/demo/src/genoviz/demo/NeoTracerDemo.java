@@ -295,7 +295,7 @@ public class NeoTracerDemo extends Applet
 					ReadConfidence rc = new ReadConfidence();
 					ContentParser parser = new PHDReadConfParser();
 					rc = (ReadConfidence) parser.importContent(r.openStream());
-					widget.addBaseCalls(rc.getBaseCalls());
+					widget.addBaseCalls(rc.getBaseCalls(), 0);
 				}
 			} catch (Exception phdex) {
 				System.err.println(phdex.getMessage());
@@ -531,8 +531,8 @@ public class NeoTracerDemo extends Applet
 		int theLastPeak = trace_range.end;
 		System.out.println(theFirstPeak + " " + theLastPeak);
 		widget.setRange(theFirstPeak, theLastPeak);
-//		widget.stretchToFit(true, true);
-
+		widget.stretchToFit(true, true);
+		widget.updateWidget();
 	}
 
 	public void rangeChanged(NeoRangeEvent evt) {

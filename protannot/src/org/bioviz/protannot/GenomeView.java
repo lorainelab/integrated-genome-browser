@@ -44,7 +44,7 @@ import java.util.Map.Entry;
  * that shows how the transcript structures vary.
  */
 
-final class GenomeView extends JPanel implements MouseListener{
+final public class GenomeView extends JPanel implements MouseListener{
 
 	// We allow users to change the colors of transcripts, protein
 	// annotations, etc
@@ -306,7 +306,7 @@ final class GenomeView extends JPanel implements MouseListener{
 	 * user interactions with the dispflay.
      * @param   listener    Listener that is to be added to maps.
      */
-    void addMapListener(MouseListener listener) {
+    public void addMapListener(MouseListener listener) {
         seqmap.addMouseListener(listener);
         axismap.addMouseListener(listener);
     }
@@ -417,7 +417,7 @@ final class GenomeView extends JPanel implements MouseListener{
 	 * Toggle hairline on/off.
 	 * @return
 	 */
-	boolean toggleHairline() {
+	public boolean toggleHairline() {
 		showhairline = !showhairline;
 
 		hairline.setShowHairline(showhairline);
@@ -432,7 +432,7 @@ final class GenomeView extends JPanel implements MouseListener{
 	 * Toggle hairline label on/off.
 	 * @return
 	 */
-	boolean toggleHairlineLabel() {
+	public boolean toggleHairlineLabel() {
 		showhairlineLabel = !showhairlineLabel;
 
 		hairline.setLabeled(showhairlineLabel);
@@ -1027,14 +1027,14 @@ final class GenomeView extends JPanel implements MouseListener{
      * @return  Returns list of selected Glyphs 
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
-    List<GlyphI> getSelected() {
+    public List<GlyphI> getSelected() {
         return selected;
     }
 
     /**
      * Return the Properties for whatever's currently selected.
      */
-    Properties[] getProperties() {
+    public Properties[] getProperties() {
         return table_view.getProperties();
     }
 
@@ -1051,7 +1051,7 @@ final class GenomeView extends JPanel implements MouseListener{
     /**
      * Zoom to the selected glyphs.
      */
-    void zoomToSelection() {       
+    public void zoomToSelection() {
         List<GlyphI> selections = getSelected();
         if (selections.isEmpty()) {
             return;

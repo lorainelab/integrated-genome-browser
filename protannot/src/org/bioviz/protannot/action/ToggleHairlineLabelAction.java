@@ -1,8 +1,9 @@
-package org.bioviz.protannot;
+package org.bioviz.protannot.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
+import org.bioviz.protannot.GenomeView;
 import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
 
 /**
@@ -13,7 +14,7 @@ public class ToggleHairlineLabelAction extends AbstractAction{
 
 	final private GenomeView gview;
 
-	ToggleHairlineLabelAction(GenomeView gview){
+	public ToggleHairlineLabelAction(GenomeView gview){
 		super(BUNDLE.getString("toggleHairlineLabel"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_L);
 		this.putValue(SHORT_DESCRIPTION, BUNDLE.getString("toggleHairlineLabelTip"));

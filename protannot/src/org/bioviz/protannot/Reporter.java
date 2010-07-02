@@ -2,7 +2,7 @@ package org.bioviz.protannot;
 
 import javax.swing.JOptionPane;
 
-final class Reporter {
+final public class Reporter {
 
     /**
      * Report message to the user, optionally showing a JOptionPane
@@ -14,7 +14,7 @@ final class Reporter {
      * @param print_stack_trace
      * @param show_dialog
      */
-    static void report(String message,
+    public static void report(String message,
             Exception ex,
             boolean print_to_stderr,
             boolean print_stack_trace,

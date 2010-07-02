@@ -4,6 +4,10 @@
  */
 package org.bioviz.protannot;
 
+import org.bioviz.protannot.action.OpenBrowserAction;
+import org.bioviz.protannot.action.ToggleHairlineAction;
+import org.bioviz.protannot.action.ToggleHairlineLabelAction;
+import org.bioviz.protannot.action.ZoomToFeatureAction;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -68,13 +72,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JTextField;
 import javax.swing.TransferHandler;
+import org.bioviz.protannot.action.AboutProtannotAction;
 
 /**
  * @see     com.affymetrix.genometryImpl.BioSeq
  * @see     com.affymetrix.genoviz.util.ComponentPagePrinter
  */
 
-final class ProtAnnotMain implements WindowListener {
+final public class ProtAnnotMain implements WindowListener {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
 
     // where the application is first invoked
@@ -107,7 +112,7 @@ final class ProtAnnotMain implements WindowListener {
 	final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("serverLoad")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
+				MenuUtil.getIcon("toolbarButtonGraphics/general/History16.gif")){
 
 		public void actionPerformed(ActionEvent e) {
 			sampleChooser.setVisible(true);
@@ -271,7 +276,11 @@ final class ProtAnnotMain implements WindowListener {
         menu = MenuUtil.getMenu(BUNDLE.getString("viewMenu"));
 		menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
         addViewActions(menu);
-        
+
+		menu = MenuUtil.getMenu(BUNDLE.getString("helpMenu"));
+		menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
+        addHelpActions(menu);
+
         frm.setJMenuBar(mbar);
 		
         if(testmode)
@@ -334,11 +343,11 @@ final class ProtAnnotMain implements WindowListener {
     }
 
     /**
-     * Adds view_menu item to View view_menu. Adds add browser action to it.
+     * Adds view_menu item to View view_menu..
      * @param   view_menu    Menu name to which submenus should be added.
      */
     private void addViewActions(JMenu view_menu) {
-        JMenuItem menuitem;
+        
         OpenBrowserAction b_action = new OpenBrowserAction(this.gview);
 		b_action.setEnabled(false);
         MenuUtil.addToMenu(view_menu, new JMenuItem(b_action));
@@ -362,8 +371,7 @@ final class ProtAnnotMain implements WindowListener {
      * @param   file_menu   Menu name to which submenus should be added.
      */
     private void addFileActions(final JMenu file_menu) {
-        JMenuItem menuitem;
-		
+        
 		
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
@@ -382,7 +390,7 @@ final class ProtAnnotMain implements WindowListener {
 		AbstractAction add_server = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("addServer")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Add16.gif")){
 			public void actionPerformed(ActionEvent e){
 				addServer.setVisible(true);
 			}
@@ -403,7 +411,7 @@ final class ProtAnnotMain implements WindowListener {
         AbstractAction print_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("print")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif")){
 
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -422,7 +430,7 @@ final class ProtAnnotMain implements WindowListener {
         AbstractAction export_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("export")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif")){
 
             public void actionPerformed(ActionEvent e) {
                 try {    
@@ -439,7 +447,7 @@ final class ProtAnnotMain implements WindowListener {
         AbstractAction preference = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("preferences")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif")){
 
             public void actionPerformed(ActionEvent e) {
                 colorChooser.setVisible(true);
@@ -452,7 +460,7 @@ final class ProtAnnotMain implements WindowListener {
         AbstractAction quit_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("exit")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")){
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Stop16.gif")){
 
             public void actionPerformed(ActionEvent e) {
                 updatePrefs(gview.getColorPrefs());
@@ -466,6 +474,15 @@ final class ProtAnnotMain implements WindowListener {
 		MenuUtil.addToMenu(file_menu, new JMenuItem(quit_action));
 
     }
+
+	/**
+	 * Adds help menu item to Help help_menu.
+	 * @param help_menu Menu name to which submenus should be added.
+	 */
+	private void addHelpActions(final JMenu help_menu){
+		AboutProtannotAction h_action = new AboutProtannotAction(frm);
+        MenuUtil.addToMenu(help_menu, new JMenuItem(h_action));
+	}
 
 	private void setupAddServer(){
 		addServer = new JFrame("Add Server Address ...");
@@ -882,9 +899,9 @@ final class ProtAnnotMain implements WindowListener {
     }
 
     /**
-     * Returns color preferences in two dimentional object.
+     * Returns color preferences in two dimensional object.
      * @param prefs_col     Map<String,Color>
-     * @return  Object[][]  Returns color preferences in two dimentional object.
+     * @return  Object[][]  Returns color preferences in two dimensional object.
      */
     private Object[][] getData(Map<String, Color> prefs_col) {
 		Object[][] colordata = new Object[prefs_col.size()][2];
@@ -901,8 +918,9 @@ final class ProtAnnotMain implements WindowListener {
 	private boolean isServer(String string){
 		return (string.startsWith("http:/") || string.startsWith("https:/"));
 	}
+	
     /**
-     * Table model for color prefrences
+     * Table model for color preferences
      */
     private class ColorTableModel extends AbstractTableModel{
 

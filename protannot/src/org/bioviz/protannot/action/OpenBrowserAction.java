@@ -1,16 +1,20 @@
-package org.bioviz.protannot;
+package org.bioviz.protannot.action;
 
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import javax.swing.AbstractAction;
 import java.util.Properties;
 import java.awt.event.*;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
+import org.bioviz.protannot.GenomeView;
+import org.bioviz.protannot.Reporter;
 import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
+
 /**
  * Asks ProtAnnot to open a browser window showing info
  * on the currently selected Glyph.
  */
-final class OpenBrowserAction extends AbstractAction implements MouseListener {
+final public class OpenBrowserAction extends AbstractAction implements MouseListener {
 
     private final GenomeView view;
     private String url = null;
@@ -18,8 +22,9 @@ final class OpenBrowserAction extends AbstractAction implements MouseListener {
     /**
      * Create a OpenBrowserAction.
      */
-    OpenBrowserAction(GenomeView view) {
-        super(BUNDLE.getString("openBrowser"));
+    public OpenBrowserAction(GenomeView view) {
+        super(BUNDLE.getString("openBrowser"),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_B);
 		this.putValue(SHORT_DESCRIPTION, BUNDLE.getString("openBrowserTip"));
         setEnabled(false);

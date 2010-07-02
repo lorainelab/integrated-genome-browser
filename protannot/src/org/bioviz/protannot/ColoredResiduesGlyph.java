@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
  * Draws colored rectangles and corresponding character based upon nucleotide.
  * @see     com.affymetrix.genoviz.glyph.SequenceGlyph
  */
-public class ColoredResiduesGlyph extends SequenceGlyph {
+class ColoredResiduesGlyph extends SequenceGlyph {
 
     public static final Color default_A_color = Color.GREEN;
     public static final Color default_T_color = Color.PINK;

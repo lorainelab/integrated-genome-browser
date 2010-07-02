@@ -1,4 +1,4 @@
-package org.bioviz.protannot;
+package org.bioviz.protannot.action;
 
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -9,12 +9,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
+import org.bioviz.protannot.GenomeView;
 import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
 /**
  * Asks ProtAnnot to center on the location of the 
  * currently selected Glyph.
  */
-final class ZoomToFeatureAction extends AbstractAction implements MouseListener {
+final public class ZoomToFeatureAction extends AbstractAction implements MouseListener {
 
     private final GenomeView view;
 
@@ -23,9 +24,9 @@ final class ZoomToFeatureAction extends AbstractAction implements MouseListener 
      * @param   view    
      * @see             GenomeView
      */
-    ZoomToFeatureAction(GenomeView view) {
+    public ZoomToFeatureAction(GenomeView view) {
         super(BUNDLE.getString("zoomToFeature"),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_Z);
 		this.putValue(SHORT_DESCRIPTION, BUNDLE.getString("zoomToFeatureTip"));
         setEnabled(false);

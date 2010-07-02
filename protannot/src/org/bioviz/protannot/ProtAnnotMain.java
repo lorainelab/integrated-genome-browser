@@ -9,6 +9,7 @@ import org.bioviz.protannot.action.ToggleHairlineAction;
 import org.bioviz.protannot.action.ToggleHairlineLabelAction;
 import org.bioviz.protannot.action.ZoomToFeatureAction;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -73,6 +74,9 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JTextField;
 import javax.swing.TransferHandler;
 import org.bioviz.protannot.action.AboutProtannotAction;
+import org.bioviz.protannot.action.ReportBugAction;
+import org.bioviz.protannot.action.RequestFeatureAction;
+import org.bioviz.protannot.action.ShowConsoleAction;
 
 /**
  * @see     com.affymetrix.genometryImpl.BioSeq
@@ -151,6 +155,7 @@ final public class ProtAnnotMain implements WindowListener {
 
     public static void main(String[] args) {
         ProtAnnotMain test = new ProtAnnotMain();
+		ConsoleView.init(BUNDLE.getString("appName"));
         test.parseArguments(args);
         test.loadPrefs();
         test.start(args);
@@ -348,14 +353,8 @@ final public class ProtAnnotMain implements WindowListener {
      */
     private void addViewActions(JMenu view_menu) {
         
-        OpenBrowserAction b_action = new OpenBrowserAction(this.gview);
-		b_action.setEnabled(false);
-        MenuUtil.addToMenu(view_menu, new JMenuItem(b_action));
-        gview.popup.add(b_action);
-
-		ZoomToFeatureAction z_action = new ZoomToFeatureAction(this.gview);
-        MenuUtil.addToMenu(view_menu, new JMenuItem(z_action));
-		gview.popup.add(z_action);
+        gview.popup.add(MenuUtil.addToMenu(view_menu, new JMenuItem(new OpenBrowserAction(this.gview))));
+		gview.popup.add(MenuUtil.addToMenu(view_menu, new JMenuItem(new ZoomToFeatureAction(this.gview))));
 
 		ToggleHairlineAction h_action = new ToggleHairlineAction(this.gview);
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(h_action));
@@ -480,8 +479,10 @@ final public class ProtAnnotMain implements WindowListener {
 	 * @param help_menu Menu name to which submenus should be added.
 	 */
 	private void addHelpActions(final JMenu help_menu){
-		AboutProtannotAction h_action = new AboutProtannotAction(frm);
-        MenuUtil.addToMenu(help_menu, new JMenuItem(h_action));
+        MenuUtil.addToMenu(help_menu, new JMenuItem(new AboutProtannotAction(frm)));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(new ReportBugAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(new RequestFeatureAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
 	}
 
 	private void setupAddServer(){

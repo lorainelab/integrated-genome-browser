@@ -10,9 +10,11 @@ import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
+import java.io.*;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
+import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFormatException;
 import net.sf.samtools.SAMProgramRecord;
 import net.sf.samtools.SAMReadGroupRecord;
@@ -394,6 +397,82 @@ public final class BAM extends SymLoader {
 		}
 
 		return sb.toString().intern();
+	}
+
+	/**
+	 * Write annotations from min-max on the given chromosome to stream.
+	 * @param seq -- chromosome
+	 * @param min -- min coordinate
+	 * @param max -- max coordinate
+	 * @param dos -- output stream
+	 * @param BAMWriter -- write as BAM or as SAM
+	 */
+	public void writeAnnotations(BioSeq seq, int min, int max, DataOutputStream dos, boolean BAMWriter) {
+		if (reader == null) {
+			return;
+		}
+		CloseableIterator<SAMRecord> iter = null;
+		SAMFileWriter sfw = null;
+		File tempBAMFile = null;
+		try {
+			iter = reader.query(seq.getID(), min, max, false);
+			if (iter != null) {
+				net.sf.samtools.SAMFileWriterFactory sfwf = new net.sf.samtools.SAMFileWriterFactory();
+				if (BAMWriter) {
+					// BAM files cannot be written to the stream one line at a time.
+					// Rather, a tempfile is created, and later read into the stream.
+					try {
+						tempBAMFile = File.createTempFile(group.getID() + featureName, ".bam");
+						tempBAMFile.deleteOnExit();
+					} catch (IOException ex) {
+						Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
+						return; // Can't create the temporary file!
+					}
+					sfw = sfwf.makeBAMWriter(header, true, tempBAMFile);
+				} else {
+					sfw = sfwf.makeSAMWriter(header, true, dos);
+				}
+				
+				// read each record, and add to the SAMFileWriter
+				for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
+					sfw.addAlignment(sr);
+				}
+			}
+		} finally {
+			if (iter != null) {
+				try {
+					iter.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			if (sfw != null) {
+				try {
+					sfw.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			if (tempBAMFile != null && tempBAMFile.exists()) {
+				writeBAMFileToStream(tempBAMFile, dos);
+			}
+		}
+	}
+
+	private static void writeBAMFileToStream(File tempBAMFile, DataOutputStream dos) {
+		FileInputStream is = null;
+		try {
+			is = new FileInputStream(tempBAMFile);
+			byte[] buffer = new byte[4096]; // tweaking this number may increase performance
+			int len;
+			while ((len = is.read(buffer)) != -1) {
+				dos.write(buffer, 0, len);
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(is);
+		}
 	}
 
 	public String getMimeType() {

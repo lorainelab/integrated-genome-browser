@@ -439,7 +439,7 @@ final public class ProtAnnotMain implements WindowListener {
                 }
             }
         };
-        export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_E);
+        export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_T);
 		export_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exportTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(export_action));
 
@@ -452,7 +452,7 @@ final public class ProtAnnotMain implements WindowListener {
                 colorChooser.setVisible(true);
             }
         };
-        preference.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+        preference.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_E);
 		preference.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("preferencesTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(preference));
 
@@ -468,7 +468,7 @@ final public class ProtAnnotMain implements WindowListener {
 					WindowEvent.WINDOW_CLOSING));
             }
         };
-        quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
+        quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
 		quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(quit_action));
 

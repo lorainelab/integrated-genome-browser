@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import java.awt.event.ActionEvent;
@@ -25,6 +26,6 @@ public class ShowConsoleAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		ConsoleView.showConsole();
+		ConsoleView.showConsole(IGBConstants.APP_NAME);
 	}
 }

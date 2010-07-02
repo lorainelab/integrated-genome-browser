@@ -149,8 +149,7 @@ public final class IGB extends Application
 
 			// Initialize the ConsoleView right off, so that ALL output will
 			// be captured there.
-			new ConsoleView(APP_NAME);
-			ConsoleView.init();
+			ConsoleView.init(APP_NAME);
 
 			System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
 			System.out.println("UserAgent: " + USER_AGENT);

@@ -33,23 +33,17 @@ public final class ConsoleView {
 		String enc = System.getProperty("file.encoding");
 		encoding = enc == null || enc.isEmpty() ? "UTF-8" : enc;
 	}
-  
-  private static String TITLE;
-  
+   
   private static JFrame frame;
     
-  public ConsoleView(String APP_NAME) {
-    TITLE = APP_NAME + " Console";
-  }
-  
   /**
    *  Call this to create and initialize the singleton JFrame and
    *  to start the redirection of standard out and err streams into it.
    *  Call {@link #showConsole()} or {@link #getFrame()} when you are
    *  ready to display the frame.
    */
-  public static void init() {
-    getFrame();
+  public static void init(String APP_NAME) {
+    getFrame(APP_NAME);
   }
   
    /**
@@ -59,9 +53,9 @@ public final class ConsoleView {
    *  it is better for you to call init() at the time you want
    *  the console to begin working. 
    */
-  public static void showConsole() {
+  public static void showConsole(String APP_NAME) {
     if (frame == null) {
-      init();
+      init(APP_NAME);
     }
     frame.doLayout();
     frame.repaint();
@@ -74,9 +68,10 @@ public final class ConsoleView {
    *  but not displaying it if it isn't already displayed.
    *  If you want to display the frame, call {@link #showConsole()} instead.
    */
-  private static JFrame getFrame() {
+  private static JFrame getFrame(String APP_NAME) {
+	  String TITLE =  TITLE = APP_NAME + " Console";
     if (frame == null) {
-      frame = createFrame();
+      frame = createFrame(TITLE);
       Container cpane = frame.getContentPane();
       cpane.setLayout(new BorderLayout());
 
@@ -130,7 +125,7 @@ public final class ConsoleView {
   /**
    *  Creates a JFrame to hold the console.
    */
-  private static JFrame createFrame() {
+  private static JFrame createFrame(final String TITLE) {
     final JFrame frame = new JFrame(TITLE);
 
     ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif");

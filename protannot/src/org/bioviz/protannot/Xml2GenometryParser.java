@@ -566,7 +566,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.SeqSpan
      */
-    private static void processExonInsert(MutableSeqSymmetry exonSym, Vector<Element> hit_inserts,
+    private static void processExonInsert(MutableSeqSymmetry exonSym, List<Element> hit_inserts,
             BioSeq genomic, BioSeq mrna) {
         // assumes that hit_inserts are in order 5' to 3' along transcript
         // assumes that each exon_insert in hit_inserts actually is contained in the exon

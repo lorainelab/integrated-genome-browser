@@ -9,22 +9,16 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.util.MenuUtil;
-import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.net.URL;
 import java.text.MessageFormat;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -55,7 +49,7 @@ public class AboutIGBAction extends AbstractAction {
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea about_text = new JTextArea();
-
+		about_text.setEditable(false);
 		String text = APP_NAME + ", version: " + APP_VERSION_FULL + "\n\n" +
 						"IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n" +
 						"which develops interactive visualization software for genomics.\n\n" +

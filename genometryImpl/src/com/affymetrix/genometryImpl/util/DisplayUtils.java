@@ -1,4 +1,4 @@
-package com.affymetrix.genoviz.swing;
+package com.affymetrix.genometryImpl.util;
 
 import java.awt.*;
 import javax.swing.*;

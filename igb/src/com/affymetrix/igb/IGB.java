@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -31,7 +32,7 @@ import java.util.*;
 import java.util.List;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.DisplayUtils;
+import com.affymetrix.genometryImpl.util.DisplayUtils;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;

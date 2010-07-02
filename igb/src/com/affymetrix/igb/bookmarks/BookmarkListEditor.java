@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genoviz.swing.DisplayUtils;
+import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import java.awt.*;
 import java.awt.event.*;

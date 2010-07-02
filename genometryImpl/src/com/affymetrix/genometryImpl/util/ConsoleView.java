@@ -11,16 +11,13 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.view;
+package com.affymetrix.genometryImpl.util;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
-import com.affymetrix.genometryImpl.util.MenuUtil;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.swing.DisplayUtils;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;

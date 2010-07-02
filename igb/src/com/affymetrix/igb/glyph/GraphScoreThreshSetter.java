@@ -25,7 +25,7 @@ import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.genoviz.swing.DisplayUtils;
+import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 
 import java.awt.Color;

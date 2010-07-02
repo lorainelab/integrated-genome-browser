@@ -35,7 +35,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.BookmarkManagerView;
-import com.affymetrix.genoviz.swing.DisplayUtils;
+import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;

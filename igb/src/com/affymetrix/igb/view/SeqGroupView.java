@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genoviz.swing.DisplayUtils;
+import com.affymetrix.genometryImpl.util.DisplayUtils;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.Box;

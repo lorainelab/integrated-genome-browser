@@ -13,6 +13,7 @@
 package com.affymetrix.genoviz.widget;
 
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D.Double;
 import java.util.*;
 import java.awt.geom.Point2D;
 
@@ -744,10 +745,76 @@ public class NeoTracer extends NeoContainerWidget
 	 */
 	public void replaceBaseCalls(BaseCall[] theCalls) {
 		if (this.base_calls_vector.size() < 1) {
-			addBaseCalls(theCalls);
+			addBaseCalls(theCalls, 0);
 		} else {
 			replaceBaseCalls(theCalls, 0);
 		}
+	}
+
+	private void redrawRevComp(Double tbox, Double vbox) {
+		double twidth = tbox.width;
+		double tbeg = tbox.x;
+		double tend = tbeg + twidth;
+		double vwidth = vbox.width;
+		double vbeg = vbox.x;
+		double vend = vbeg + vwidth;
+		// testing -1 here as well...
+		double newbeg = tend - vend;
+		if (newbeg < tbeg) {
+			newbeg = tbeg;
+		} else if ((newbeg + vwidth) > tend) {
+			newbeg = tend - vbeg;
+		}
+		trace_map.scrollRange(newbeg);
+		base_map.scrollRange(newbeg);
+		// There seems to be a bug in scrolling.
+		// Occasionally the scrollbar is not getting properly adjusted.
+		// Forcing the adjustment here appears to fix the problem.
+		// This could be a synchronization problem. -- need to synchronize
+		//    NeoMap.scrollRange() ???    GAH 12-9-97
+		base_map.adjustScroller(NeoMap.X);
+		double beg;
+		double end;
+		double new_beg;
+		double new_end;
+		// If part of the trace is selected,
+		// we need to reverse the selection.
+		//
+		//Now adding other observers, must fix bug TODO!! 5/11/99
+		// Note that this introduces a bug
+		// if there are other observers of sel_range.
+		// In that case,
+		// we should probably remove ourselves
+		// as observers of sel_range.
+		// We might then create a new Selection to observe.
+		if (!sel_range.isEmpty()) {
+			beg = sel_range.getStart();
+			end = sel_range.getEnd();
+			new_beg = (int) (getBaseCount() - end - 1);
+			new_end = (int) (getBaseCount() - beg - 1);
+			sel_range.setRange((int) new_beg, (int) new_end);
+			sel_range.notifyObservers();
+		}
+		if (trace_glyph.getChildCount() > 0) {
+			List<GlyphI> gchildren = trace_glyph.getChildren();
+			GlyphI gchild;
+			Rectangle2D.Double childbox;
+			for (int i = 0; i < gchildren.size(); i++) {
+				gchild = gchildren.get(i);
+				// since selection glyph already dealt with, need to skip it
+				//    should try eliminating special seleciton handling above and
+				//    see if can just deal with it here -- GAH 12-9-97
+				if (gchild == trace_glyph.getSelectionGlyph()) {
+					continue;
+				}
+				childbox = gchild.getCoordBox();
+				beg = childbox.x;
+				end = childbox.x + childbox.width;
+				// need a -1 for some reason???!!!...
+				new_beg = (int) (tend - end - 1);
+				gchild.setCoords(new_beg, childbox.y, childbox.width, childbox.height);
+			}
+		} // and the horizontal line separating the traces from the base calls. elb - 1999-12-07
 	}
 
 	// TODO: Add this to NeoTracerI?
@@ -771,18 +838,12 @@ public class NeoTracer extends NeoContainerWidget
 		}
 	}
 
-	public void addBaseCalls(BaseCall[] residues) {
-		addBaseCalls(residues, 0);
-	}
 
 	public void addBaseCalls(BaseCall[] residues, int start) {
 		BaseCalls base_calls = new BaseCalls(residues);
 		addBaseCalls(base_calls, start);
 	}
 
-	public void addBaseCalls(BaseCalls base_calls) {
-		addBaseCalls(base_calls, 0);
-	}
 
 	/**
 	Allows for setting the base calls starting at a particular coord point,
@@ -800,14 +861,14 @@ public class NeoTracer extends NeoContainerWidget
 		base_glyph.setTrace(trace);
 		base_glyph.setBaseCalls(base_calls);
 
-		int old_base_height = 4; // arbitrary number to keep highlighting rectangle from colliding with horizontal rule.
+		final int old_base_height = 4; // arbitrary number to keep highlighting rectangle from colliding with horizontal rule.
 		int iBaseGlyphs = base_glyphs.size();
 		for (int i = 0; i < iBaseGlyphs; i++) {
 			TraceBaseGlyph old_base_glyph = base_glyphs.get(i);
-			old_base_height += old_base_glyph.getHeight() + 1;
+//			old_base_height += old_base_glyph.getHeight() + 1;
 		}
 
-		int last_glyph_height = base_glyph.getHeight();
+		final int last_glyph_height = base_glyph.getHeight();
 		base_glyph.setCoords(start, old_base_height, trace_length, last_glyph_height);
 		base_map_pixel_height = old_base_height + last_glyph_height;
 
@@ -1377,14 +1438,22 @@ public class NeoTracer extends NeoContainerWidget
 
 		trace = trace.reverseComplement();
 		setChromatogram(trace);
-		// Switch the visibility of complimentary traces.
-		setTraceVisibility(TraceGlyph.A, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
-		setTraceVisibility(TraceGlyph.T, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
-		setTraceVisibility(TraceGlyph.A, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
-		setTraceVisibility(TraceGlyph.C, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
-		setTraceVisibility(TraceGlyph.G, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
-		setTraceVisibility(TraceGlyph.C, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
+		setTraceVisible();
+		setBaseVisible();
 
+		// want to move to "same" location as in previous orientation,
+		// but since rev-comped from previous, need to calculate this
+		Rectangle2D.Double tbox = trace_map.getScene().getCoordBox();
+		Rectangle2D.Double vbox = trace_map.getView().getCoordBox();
+		redrawRevComp(tbox, vbox);
+
+		// This seems to be needed to avoid a gap being put in between the traces
+		// and the horizontal line separating the traces from the base calls. elb - 1999-12-07
+		doLayout();
+
+	}
+
+	private void setBaseVisible() {
 		// Need to reverse each set of base calls.
 		boolean aViz = getBaseVisibility(TraceGlyph.A);
 		boolean cViz = getBaseVisibility(TraceGlyph.C);
@@ -1392,95 +1461,28 @@ public class NeoTracer extends NeoContainerWidget
 		boolean tViz = getBaseVisibility(TraceGlyph.T);
 		List<BaseCalls> newBaseCalls = new ArrayList<BaseCalls>();
 		for (BaseCalls bc : base_calls_vector) {
-//			newBaseCalls.add(bc.reverseComplement());
+			//			newBaseCalls.add(bc.reverseComplement());
 			trace.setActiveBaseCalls(bc.reverseComplement());
 		}
 		// Remove the old.
 		removeAllBaseCalls();
 		// Add the new.
-
-		this.addBaseCalls(trace.getActiveBaseCalls());
+		this.addBaseCalls(trace.getActiveBaseCalls(), 0);
 		// Switch the visibility of complimentary bases.
 		setBaseVisibility(TraceGlyph.A, tViz);
 		setBaseVisibility(TraceGlyph.T, aViz);
 		setBaseVisibility(TraceGlyph.C, gViz);
 		setBaseVisibility(TraceGlyph.G, cViz);
+	}
 
-		// want to move to "same" location as in previous orientation,
-		// but since rev-comped from previous, need to calculate this
-		Rectangle2D.Double tbox = trace_map.getScene().getCoordBox();
-		Rectangle2D.Double vbox = trace_map.getView().getCoordBox();
-
-		double twidth = tbox.width;
-		double tbeg = tbox.x;
-		double tend = tbeg + twidth;
-		double vwidth = vbox.width;
-		double vbeg = vbox.x;
-		double vend = vbeg + vwidth;
-
-		// testing -1 here as well...
-		double newbeg = tend - vend;
-
-		if (newbeg < tbeg) {
-			newbeg = tbeg;
-		} else if ((newbeg + vwidth) > tend) {
-			newbeg = tend - vbeg;
-		}
-
-		trace_map.scrollRange(newbeg);
-		base_map.scrollRange(newbeg);
-		// There seems to be a bug in scrolling.
-		// Occasionally the scrollbar is not getting properly adjusted.
-		// Forcing the adjustment here appears to fix the problem.
-		// This could be a synchronization problem. -- need to synchronize
-		//    NeoMap.scrollRange() ???    GAH 12-9-97
-		base_map.adjustScroller(NeoMap.X);
-
-		double beg, end, new_beg, new_end;
-
-		// If part of the trace is selected,
-		// we need to reverse the selection.
-		//
-		//Now adding other observers, must fix bug TODO!! 5/11/99
-		// Note that this introduces a bug
-		// if there are other observers of sel_range.
-		// In that case,
-		// we should probably remove ourselves
-		// as observers of sel_range.
-		// We might then create a new Selection to observe.
-		if (!sel_range.isEmpty()) {
-			beg = sel_range.getStart();
-			end = sel_range.getEnd();
-			new_beg = (int) (getBaseCount() - end - 1);
-			new_end = (int) (getBaseCount() - beg - 1);
-			sel_range.setRange((int) new_beg, (int) new_end);
-			sel_range.notifyObservers();
-		}
-		if (trace_glyph.getChildCount() > 0) {
-			List<GlyphI> gchildren = trace_glyph.getChildren();
-			GlyphI gchild;
-			Rectangle2D.Double childbox;
-			for (int i = 0; i < gchildren.size(); i++) {
-				gchild = gchildren.get(i);
-				// since selection glyph already dealt with, need to skip it
-				//    should try eliminating special seleciton handling above and
-				//    see if can just deal with it here -- GAH 12-9-97
-				if (gchild == trace_glyph.getSelectionGlyph()) {
-					continue;
-				}
-				childbox = gchild.getCoordBox();
-				beg = childbox.x;
-				end = childbox.x + childbox.width;
-				// need a -1 for some reason???!!!...
-				new_beg = (int) (tend - end - 1);
-				gchild.setCoords(new_beg, childbox.y, childbox.width, childbox.height);
-			}
-		}
-
-		// This seems to be needed to avoid a gap being put in between the traces
-		// and the horizontal line separating the traces from the base calls. elb - 1999-12-07
-		doLayout();
-
+	private void setTraceVisible() {
+		// Switch the visibility of complimentary traces.
+		setTraceVisibility(TraceGlyph.A, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
+		setTraceVisibility(TraceGlyph.T, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
+		setTraceVisibility(TraceGlyph.A, getTraceVisibility(TraceGlyph.A) ^ getTraceVisibility(TraceGlyph.T));
+		setTraceVisibility(TraceGlyph.C, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
+		setTraceVisibility(TraceGlyph.G, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
+		setTraceVisibility(TraceGlyph.C, getTraceVisibility(TraceGlyph.C) ^ getTraceVisibility(TraceGlyph.G));
 	}
 
 	/**
@@ -1775,7 +1777,7 @@ public class NeoTracer extends NeoContainerWidget
 			}
 		} // end while loop for base calls
 
-		this.addBaseCalls(consensus);
+		this.addBaseCalls(consensus, 0);
 		// sync base numbers with consensus
 		base_axis.setBaseCalls(consensus);
 		base_axis.setStartPos(cons_start);

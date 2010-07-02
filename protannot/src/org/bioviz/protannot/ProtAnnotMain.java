@@ -297,7 +297,7 @@ final public class ProtAnnotMain implements WindowListener {
     /**
      * Action perfomed when a path is seleced in the path browser. Calls up load(name) to load the path.
      */
-    private void doLoadFile() {
+    void doLoadFile() {
         if (this.chooser == null) {
             this.chooser = new JFileChooser(user_dir);
         }
@@ -332,18 +332,15 @@ final public class ProtAnnotMain implements WindowListener {
 
     /** Close everything and exit upon closing the window */
     public void windowClosing(WindowEvent evt) {
-        //    System.out.println(evt);
         if (evt.getSource() == frm) {
-            updatePrefs(gview.getColorPrefs());
-            System.exit(0);
+           close();
         }
     }
 
     /** Close everything and exit upon closing the window */
     public void windowClosed(WindowEvent evt) {
         if (evt.getSource() == frm) {
-            updatePrefs(gview.getColorPrefs());
-            System.exit(0);
+            close();
         }
     }
 
@@ -370,33 +367,10 @@ final public class ProtAnnotMain implements WindowListener {
      * @param   file_menu   Menu name to which submenus should be added.
      */
     private void addFileActions(final JMenu file_menu) {
-        
+        Actions action = new Actions(this);
 		
-        AbstractAction load_action = new AbstractAction(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("openFile")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")) {
-
-            public void actionPerformed(ActionEvent e) {
-                    doLoadFile();
-            }
-        };
-		load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
-		load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("openFileTip"));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(load_action));
-
-
-		AbstractAction add_server = new AbstractAction(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("addServer")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Add16.gif")){
-			public void actionPerformed(ActionEvent e){
-				addServer.setVisible(true);
-			}
-		};
-		add_server.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
-		add_server.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("addServerTip"));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(add_server));
+        MenuUtil.addToMenu(file_menu, new JMenuItem(action.getLoadAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getAddServerAction()));
 		
 		
 		if(getArgumentValue(Arguments.SERVER)==null)
@@ -407,70 +381,10 @@ final public class ProtAnnotMain implements WindowListener {
 		server_load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("serverLoadTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(server_load_action));
 
-        AbstractAction print_action = new AbstractAction(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("print")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif")){
-
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    print_panel.print();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        };
-        print_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
-		print_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("printTip"));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(print_action));
-
-		final ExportDialog export = new ExportDialog();
-		export.setIcon(new ImageIcon(imageIcon));
-        AbstractAction export_action = new AbstractAction(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("export")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif")){
-
-            public void actionPerformed(ActionEvent e) {
-                try {    
-                    export.showExportDialog(gview, "Export view as ...", gview, "export");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        };
-        export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_T);
-		export_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exportTip"));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(export_action));
-
-        AbstractAction preference = new AbstractAction(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("preferences")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif")){
-
-            public void actionPerformed(ActionEvent e) {
-                colorChooser.setVisible(true);
-            }
-        };
-        preference.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_E);
-		preference.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("preferencesTip"));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(preference));
-
-        AbstractAction quit_action = new AbstractAction(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("exit")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Stop16.gif")){
-
-            public void actionPerformed(ActionEvent e) {
-                updatePrefs(gview.getColorPrefs());
-                Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
-				new WindowEvent(frm,
-					WindowEvent.WINDOW_CLOSING));
-            }
-        };
-        quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
-		quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(quit_action));
+        MenuUtil.addToMenu(file_menu, new JMenuItem(action.getPrintAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getExportAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getPreferencesAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getExitAction()));
 
     }
 
@@ -483,6 +397,44 @@ final public class ProtAnnotMain implements WindowListener {
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ReportBugAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new RequestFeatureAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
+	}
+
+	public void colorChooser(){
+		if(colorChooser == null){
+			setupColorChooser();
+		}
+		colorChooser.setVisible(true);
+	}
+
+	public void export() {
+		final ExportDialog export = new ExportDialog();
+		export.setIcon(new ImageIcon(imageIcon));
+		try {
+			export.showExportDialog(gview, "Export view as ...", gview, "export");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	public void print() {
+		try {
+			print_panel.print();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void addServer(){
+		if(addServer == null){
+			setupAddServer();
+		}
+		addServer.setVisible(true);
+	}
+
+	public void close() {
+		updatePrefs(gview.getColorPrefs());
+		System.exit(0);
 	}
 
 	private void setupAddServer(){

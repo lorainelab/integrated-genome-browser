@@ -22,8 +22,6 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.affymetrix.igb.IGBConstants.APP_NAME;
-
 /**
  *
  * @version $Id$
@@ -40,7 +38,7 @@ public final class ConsoleView {
   
   private static JFrame frame;
     
-  private ConsoleView() {
+  public ConsoleView(String APP_NAME) {
     TITLE = APP_NAME + " Console";
   }
   

@@ -149,6 +149,7 @@ public final class IGB extends Application
 
 			// Initialize the ConsoleView right off, so that ALL output will
 			// be captured there.
+			new ConsoleView(APP_NAME);
 			ConsoleView.init();
 
 			System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");

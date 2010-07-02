@@ -1,6 +1,10 @@
 package org.bioviz.protannot;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Expresses allowed property names for SeqFeatures.  Offers
@@ -12,7 +16,7 @@ final class ModPropertyKeys {
     private final String[] keys = new String[0];
 
     /**
-     * Fills up a Vector with arrays containing names and values
+     * Fills up a List with arrays containing names and values
      * for each of the given Properties.
      * e.g., {name,value0,value1,value2,...,valueN} for
      * N different Properties Objects representing a list of
@@ -21,11 +25,11 @@ final class ModPropertyKeys {
      * @param props - the list of Properties derived from
      *   SeqFeatures.
      */
-    Vector<String[]> getNameValues(Properties[] props) {
-        Vector<String[]> result = new Vector<String[]>();
+    List<String[]> getNameValues(Properties[] props) {
+        List<String[]> result = new ArrayList<String[]>();
         // collect all possible names from the given Properties
         int num_props = props.length;
-        Hashtable<String,String[]> rows_thus_far = new Hashtable<String,String[]>();
+        Map<String,String[]> rows_thus_far = new HashMap<String,String[]>();
         for (int i = 0; i < props.length; i++) {
             if (props[i] == null) {
                 continue;
@@ -53,12 +57,12 @@ final class ModPropertyKeys {
         for (int i = 0; i < keys.length; i++) {
             String[] row = rows_thus_far.get(keys[i]);
             if (row != null) {
-                result.addElement(row);
+                result.add(row);
             }
             rows_thus_far.remove(keys[i]);
         }
         for (String[] row : rows_thus_far.values()) {
-            result.addElement(row);
+            result.add(row);
         }
         return result;
     }

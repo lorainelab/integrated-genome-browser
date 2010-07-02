@@ -87,9 +87,9 @@ final class GenomeView extends JPanel implements MouseListener{
             return color.getRGB();
         }
 
-        static Hashtable<String,Color> defaultColorList()
+        static Map<String,Color> defaultColorList()
         {
-            Hashtable<String,Color> defaults = new Hashtable<String,Color>();
+            Map<String,Color> defaults = new HashMap<String,Color>();
 
             for(COLORS C : values())
                 defaults.put(C.toString(), C.defaultColor());
@@ -117,7 +117,7 @@ final class GenomeView extends JPanel implements MouseListener{
     private BioSeq vseq;
     private List<GlyphI> exonGlyphs = null;
     private List<SeqSymmetry> exonList = new ArrayList<SeqSymmetry>();
-    private Hashtable<String,Color> prefs_hash;
+    private Map<String,Color> prefs_hash;
 	private boolean showhairline = true;
 	private boolean showhairlineLabel = true;
 	private Shadow hairline, axishairline;
@@ -165,7 +165,7 @@ final class GenomeView extends JPanel implements MouseListener{
 	 * part of the application.
      * @param   phash   Color perefrences stored in hashtable to setup the layout. 
      */
-    GenomeView(Hashtable<String,Color> phash) {
+    GenomeView(Map<String,Color> phash) {
 
         initPrefs(phash);
         popup = new JPopupMenu();
@@ -263,7 +263,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Initialized GenomeView colors with preferences provided in the parameter phash
      * @param   phash   Hashtable providing color prefrences for GenomeView
      */
-    private void initPrefs(Hashtable<String,Color> phash) {
+    private void initPrefs(Map<String,Color> phash) {
         tempColorPrefs(phash);
         prefs_hash = phash;
     }
@@ -272,7 +272,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Changes color preferences
      * @param phash     Hashtable<String,Color> 
      */
-    private static void tempColorPrefs(Hashtable<String,Color> phash)
+    private static void tempColorPrefs(Map<String,Color> phash)
     {
         if (phash == null) {
             return;
@@ -769,7 +769,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * @return  Color
      * @see     com.affymetrix.genometryImpl.SymWithProps
      */
-    private static Color pick_color_for_domain(Object propertied, Hashtable<String,Color> prefs_hash) {
+    private static Color pick_color_for_domain(Object propertied, Map<String,Color> prefs_hash) {
         Color to_return = col_domain;
         if (propertied instanceof SymWithProps) {
             Object property = ((SymWithProps) propertied).getProperty("method");
@@ -1149,7 +1149,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Action to be performed when user saves color changes.
      * @param   colorhash   Hashtable<String,Color> new color preferences
      */
-    void changePreference(Hashtable<String,Color> colorhash)
+    void changePreference(Map<String,Color> colorhash)
     {
         tempChangePreference(colorhash);
         initPrefs(colorhash);
@@ -1159,7 +1159,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Action to be performed when user attempts to apply color changes.
      * @param   colorhash   Hashtable<String,Color> new color preferences
      */
-    void tempChangePreference(Hashtable<String,Color> colorhash)
+    void tempChangePreference(Map<String,Color> colorhash)
     {
         tempColorPrefs(colorhash);
         if(gseq != null)
@@ -1189,7 +1189,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Returns color preferences.
      * @return  Hashtable<String,Color>     Returns color preferences.
      */
-    Hashtable<String,Color> getColorPrefs()
+    Map<String,Color> getColorPrefs()
     {
         return prefs_hash;
     }

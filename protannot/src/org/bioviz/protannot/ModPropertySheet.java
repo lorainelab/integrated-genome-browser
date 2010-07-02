@@ -1,12 +1,22 @@
 package org.bioviz.protannot;
 
-import java.awt.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 
 /**
- * Displays Propertys (name, value pairs) associated with
+ * Displays Properties (name, value pairs) associated with
  * whatever Glyph objects the user has selected.
  */
 final class ModPropertySheet extends JPanel {
@@ -30,7 +40,7 @@ final class ModPropertySheet extends JPanel {
     }
 
     /**
-     * Set the title, a Jlabel attached to a JViewPort.
+     * Set the title, a JLabel attached to a JViewPort.
      * @param   ttl     Name of the title
      */
     void setTitle(String ttl) {
@@ -40,7 +50,7 @@ final class ModPropertySheet extends JPanel {
 
     /**
      * Gets column heading from properties.
-     * @param   props   Properties from which header names are to be retrived.
+     * @param   props   Properties from which header names are to be retrieved.
      * @return          Returns array of string containing header names.
      */
     private String[] getColumnHeadings(
@@ -74,14 +84,14 @@ final class ModPropertySheet extends JPanel {
      * this PropertySheet.
      * If there are no Properties to be shown, then returns
      * default rows.
-     * @param   name_values - a Vector containing name-values for a
+     * @param   name_values - a List containing name-values for a
      * one or more Properties
      * @param   props       - the list of Properties
      * @return  String[]
      */
-    private String[][] buildRows(Vector<String[]> name_values, Properties[] props) {
+    private String[][] buildRows(List<String[]> name_values, Properties[] props) {
         int num_props = props.length;
-        Vector<String[]> nv = new Vector<String[]>();
+        List<String[]> nv = new ArrayList<String[]>();
         for (String[] vals : name_values) {
             String content = vals[0];
             if (!content.equals("id") && !content.equals("name")) {
@@ -91,11 +101,9 @@ final class ModPropertySheet extends JPanel {
         String[][] rows = null;
         rows = new String[nv.size()][num_props + 1];
         for (int i = 0; i < nv.size(); i++) {
-            String[] vals = nv.elementAt(i);
+            String[] vals = nv.get(i);
             rows[i][0] = vals[0];
-            for (int j = 1; j < vals.length; j++) {
-                rows[i][j] = vals[j];
-            }
+			System.arraycopy(vals, 1, rows[i], 1, vals.length - 1);
         }
         return rows;
     }
@@ -105,12 +113,12 @@ final class ModPropertySheet extends JPanel {
      * Uses buildRows() to retrieve ordered name-value pairs.
      * @param   props - the given Properties
      * @see     java.util.Properties
-     * @see     #buildRows(Vector, Properties[])
+     * @see     #buildRows(List, Properties[])
      */
     void showProperties(Properties[] props) {
         this.props = props;
         ModPropertyKeys propkeys = new ModPropertyKeys();
-        Vector<String[]> name_values = propkeys.getNameValues(props);
+        java.util.List<String[]> name_values = propkeys.getNameValues(props);
         String[][] rows = buildRows(name_values, props);
         String[] col_headings = getColumnHeadings(props);
         JTable table = new JTable(); // the table showing name-value pairs

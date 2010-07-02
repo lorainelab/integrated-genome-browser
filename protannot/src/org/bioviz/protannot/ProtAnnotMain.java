@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -47,7 +46,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -59,8 +57,10 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
@@ -96,7 +96,7 @@ final class ProtAnnotMain implements WindowListener {
     // has NeoMaps and PropertySheet (JTable)
     private GenomeView gview;
     // is populated from prefs_file
-    private Hashtable<String,Color> prefs_hash;
+    private Map<String,Color> prefs_hash;
     // for storing user prefrences
     private Preferences prefs;
     // width of the user's screen
@@ -142,7 +142,7 @@ final class ProtAnnotMain implements WindowListener {
         }
 
     };
-    private final Hashtable<Arguments,String> ArgumentValues = new Hashtable<Arguments,String>();
+    private final Map<Arguments,String> ArgumentValues = new HashMap<Arguments,String>();
 
     public static void main(String[] args) {
         ProtAnnotMain test = new ProtAnnotMain();
@@ -181,10 +181,10 @@ final class ProtAnnotMain implements WindowListener {
     /**
      * Loads preferences from the path.
      *
-     * @return Returns a hashtable with name as key and Color as a value.
+     * @return Returns a Map with name as key and Color as a value.
      */
-    private Hashtable<String,Color> loadPrefs() {
-        Hashtable<String,Color> phash = new Hashtable<String,Color>();
+    private Map<String,Color> loadPrefs() {
+        Map<String,Color> phash = new HashMap<String,Color>();
 
         prefs = Preferences.userNodeForPackage(ProtAnnotMain.class);
 
@@ -767,7 +767,7 @@ final class ProtAnnotMain implements WindowListener {
      */
     private String loadPage() {
 		try {
-			StringBuffer output = new StringBuffer(2000);
+			StringBuilder output = new StringBuilder(2000);
 			BufferedReader buff = null;
 			try {
 				URL url = new URL(getArgumentValue(Arguments.SERVER));
@@ -778,7 +778,7 @@ final class ProtAnnotMain implements WindowListener {
 					if (line == null) {
 						eof = true;
 					} else {
-						output.append(line + "\n");
+						output.append(line).append("\n");
 					}
 				}
 			} catch (IOException e) {
@@ -795,15 +795,15 @@ final class ProtAnnotMain implements WindowListener {
 
     /**
      * Updates users color preferences
-     * @param   hash    Hashtable containing color name and color value pairs.
+     * @param   hash    Map containing color name and color value pairs.
      */
-    private void updatePrefs(Hashtable<String,Color> hash)
+    private void updatePrefs(Map<String,Color> hash)
     {
         prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotMain.class);
-        Enumeration<String> e = hash.keys();
+        Iterator<String> e = hash.keySet().iterator();
 
-        while (e.hasMoreElements()) {
-            String key = e.nextElement();
+        while (e.hasNext()) {
+            String key = e.next();
             prefs.putInt(key, hash.get(key).getRGB());
         }
     }
@@ -883,16 +883,15 @@ final class ProtAnnotMain implements WindowListener {
 
     /**
      * Returns color preferences in two dimentional object.
-     * @param prefs_col     Hashtable<String,Color>
+     * @param prefs_col     Map<String,Color>
      * @return  Object[][]  Returns color preferences in two dimentional object.
      */
-    private Object[][] getData(Hashtable<String, Color> prefs_col) {
+    private Object[][] getData(Map<String, Color> prefs_col) {
 		Object[][] colordata = new Object[prefs_col.size()][2];
 		int i = 0;
-		Enumeration<String> e = prefs_col.keys();
-
-		while (e.hasMoreElements()) {
-			String key = e.nextElement();
+		Iterator<String> e = prefs_col.keySet().iterator();
+		while (e.hasNext()) {
+			String key = e.next();
 			colordata[i++] = new Object[]{key, prefs_col.get(key)};
 		}
 		return colordata;
@@ -982,12 +981,12 @@ final class ProtAnnotMain implements WindowListener {
             }
 
             /**
-             * Returns table value in form of hashtable
-             * @return  Hashtable<String,Color> Hashtable of values in rows.
+             * Returns table value in form of Map
+             * @return  Map<String,Color> Map of values in rows.
              */
-            public Hashtable<String,Color> colorList()
+            public Map<String,Color> colorList()
             {
-                Hashtable<String,Color> colorhash = new Hashtable<String,Color>();
+                Map<String,Color> colorhash = new HashMap<String,Color>();
 
                 for(int i=0; i<data.length; i++)
                     colorhash.put((String)data[i][0], (Color)data[i][1]);
@@ -999,7 +998,7 @@ final class ProtAnnotMain implements WindowListener {
              * Sets all values of the data
              * @param prefs_cols
              */
-            public void setValues(Hashtable<String,Color> prefs_cols)
+            public void setValues(Map<String,Color> prefs_cols)
             {
                 data = getData(prefs_cols);
             }

@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -526,7 +525,7 @@ final class Xml2GenometryParser {
 			SimpleSymWithProps esym = (SimpleSymWithProps) m2gSym.getChild(i);
 			SeqSpan gspan = esym.getSpan(genomic);
 			end = start + gspan.getLength();
-			Vector<Element> hit_inserts = new Vector<Element>();
+			List<Element> hit_inserts = new ArrayList<Element>();
 			/** check each exon_insert, figure out which (if any) exons it overlaps */
 			for (int insert_index = 0; insert_index < exon_insert_list.size(); insert_index++) {
 				Element iel = (Element) exon_insert_list.get(insert_index);

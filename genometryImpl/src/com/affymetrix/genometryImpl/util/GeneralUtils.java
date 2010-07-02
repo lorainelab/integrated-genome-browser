@@ -272,4 +272,26 @@ public final class GeneralUtils {
 			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
+
+	/**
+	 * Write contents of file to output stream.
+	 * @param f
+	 * @param dos
+	 */
+	public static void writeFileToStream(File f, OutputStream dos) {
+		FileInputStream is = null;
+		try {
+			is = new FileInputStream(f);
+			byte[] buffer = new byte[4096]; // tweaking this number may increase performance
+			int len;
+			while ((len = is.read(buffer)) != -1) {
+				dos.write(buffer, 0, len);
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(is);
+
+		}
+	}
 }

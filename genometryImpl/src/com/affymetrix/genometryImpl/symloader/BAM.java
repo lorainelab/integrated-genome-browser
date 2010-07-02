@@ -454,26 +454,16 @@ public final class BAM extends SymLoader {
 				}
 			}
 			if (tempBAMFile != null && tempBAMFile.exists()) {
-				writeBAMFileToStream(tempBAMFile, dos);
+				GeneralUtils.writeFileToStream(tempBAMFile, dos);
+				// delete tempfile if possible.
+				if (!tempBAMFile.delete()) {
+					Logger.getLogger(BAM.class.getName()).log(
+							Level.WARNING, "Couldn''t delete file {0}", tempBAMFile.getName());
+				}
 			}
 		}
 	}
 
-	private static void writeBAMFileToStream(File tempBAMFile, DataOutputStream dos) {
-		FileInputStream is = null;
-		try {
-			is = new FileInputStream(tempBAMFile);
-			byte[] buffer = new byte[4096]; // tweaking this number may increase performance
-			int len;
-			while ((len = is.read(buffer)) != -1) {
-				dos.write(buffer, 0, len);
-			}
-		} catch (Exception ex) {
-			Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(is);
-		}
-	}
 
 	public String getMimeType() {
 		return "binary/BAM";

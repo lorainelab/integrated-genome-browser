@@ -70,7 +70,7 @@ public abstract class ServerUtils {
 		BAR_FORMATS.add("bar");
 	}
 
-	public static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
+	public static void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
 		File chrom_info_file = new File(genome_directory, modChromInfo);
 		if (chrom_info_file.exists()) {
 			System.out.println("parsing " + modChromInfo + " for: " + genome_version);
@@ -99,7 +99,7 @@ public abstract class ServerUtils {
 	 * Skips blank lines and those starting with a '#'
 	 * @return null if an exception in thrown
 	 * */
-	public static final HashMap<String, String> loadFileIntoHashMap(File file) {
+	public static HashMap<String, String> loadFileIntoHashMap(File file) {
 		BufferedReader in = null;
 		HashMap<String, String> names = new HashMap<String, String>();
 		try {
@@ -124,7 +124,7 @@ public abstract class ServerUtils {
 		return names;
 	}
 
-	public static final void loadSynonyms(String synonym_file) {
+	public static void loadSynonyms(String synonym_file) {
 		File synfile = new File(synonym_file);
 		if (synfile.exists()) {
 			System.out.println("Synonym file " + synonym_file + " found, loading synonyms");
@@ -148,7 +148,7 @@ public abstract class ServerUtils {
 	 * @param organisms
 	 * @param org_order_filename
 	 */
-	public static final void sortGenomes(Map<String, List<AnnotatedSeqGroup>> organisms, String org_order_filename) {
+	public static void sortGenomes(Map<String, List<AnnotatedSeqGroup>> organisms, String org_order_filename) {
 		// sort genomes based on "organism_order.txt" config originalFile if present
 		// get Map.Entry for organism, sort based on order in organism_order.txt,
 		//    put in order in new LinkedHashMap(), then replace as organisms field
@@ -179,7 +179,7 @@ public abstract class ServerUtils {
 	 * @param graph_name2file
 	 * @param dataRoot
 	 */
-	public static final void loadAnnots(
+	public static void loadAnnots(
 			File genomeDir,
 			AnnotatedSeqGroup genome,
 			Map<AnnotatedSeqGroup, List<AnnotMapElt>> annots_map,
@@ -205,7 +205,7 @@ public abstract class ServerUtils {
 	 * @param graph_name2file
 	 * @param dataRoot
 	 */
-	private static final void loadAnnotsFromDir(
+	private static void loadAnnotsFromDir(
 			String type_name,
 			AnnotatedSeqGroup genome,
 			File current_file,
@@ -260,7 +260,7 @@ public abstract class ServerUtils {
 	 * @param graph_name2file
 	 * @param dataRoot
 	 */
-	private static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
+	private static void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
 			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
@@ -329,7 +329,7 @@ public abstract class ServerUtils {
 	 *   if not directory, see if can parse as annotation file.
 	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
 	 */
-	public static final void loadGenoPubAnnotsFromFile(String dataroot,
+	public static void loadGenoPubAnnotsFromFile(String dataroot,
 			File current_file,
 			AnnotatedSeqGroup genome,
 			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
@@ -347,7 +347,7 @@ public abstract class ServerUtils {
 	}
 
 
-	public static final void loadGenoPubAnnotFromDir(String type_name,
+	public static void loadGenoPubAnnotFromDir(String type_name,
 			String file_path,
 			AnnotatedSeqGroup genome,
 			File current_file,
@@ -362,7 +362,7 @@ public abstract class ServerUtils {
 
 	}
 
-	public static final void unloadGenoPubAnnot(String type_name,
+	public static void unloadGenoPubAnnot(String type_name,
 			AnnotatedSeqGroup genome,
 			Map<String,String> graph_name2dir) {
 		
@@ -383,7 +383,8 @@ public abstract class ServerUtils {
 					IndexedSyms iSyms = aseq.getIndexedSym(type_name);
 					if (iSyms != null) {
 						if (!aseq.removeIndexedSym(type_name)) {
-							Logger.getLogger(ServerUtils.class.getName()).warning("Unable to remove indexed annotation " + type_name);
+							Logger.getLogger(ServerUtils.class.getName()).log(
+									Level.WARNING, "Unable to remove indexed annotation {0}", type_name);
 						}
 						iSyms = null;
 					}
@@ -519,7 +520,7 @@ public abstract class ServerUtils {
 
 
 
-	public static final List<SeqSymmetry> findNameInGenome(String name, AnnotatedSeqGroup genome) {
+	public static List<SeqSymmetry> findNameInGenome(String name, AnnotatedSeqGroup genome) {
 		//int resultLimit = 1000000;
 
 		boolean glob_start = name.startsWith("*");
@@ -570,7 +571,7 @@ public abstract class ServerUtils {
 	 *     Won't add unrecognized seqids or null groups
 	 *     If rng is null or "", will set to span to [0, originalSeq.getLength()]
 	 */
-	public static final SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
+	public static SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
 		if (seqid == null || group == null) {
 			return null;
 		}
@@ -635,7 +636,7 @@ public abstract class ServerUtils {
 	 *  Should expand soon so loadedSyms can be returned from multiple IntervalSearchSyms children
 	 *      of the TypeContainerAnnot
 	 */
-	public static final List<SeqSymmetry> getOverlappedSymmetries(SeqSpan query_span, String annot_type) {
+	public static List<SeqSymmetry> getOverlappedSymmetries(SeqSpan query_span, String annot_type) {
 		BioSeq seq = query_span.getBioSeq();
 		SymWithProps container = seq.getAnnotation(annot_type);
 		if (container != null) {
@@ -669,7 +670,7 @@ public abstract class ServerUtils {
 
 	// if an inside_span specified, then filter out intersected symmetries based on this:
 	//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-	public static final <SymExtended extends SeqSymmetry> List<SymExtended> specifiedInsideSpan(
+	public static <SymExtended extends SeqSymmetry> List<SymExtended> specifiedInsideSpan(
 			SeqSpan inside_span, List<SymExtended> result) {
 		int inside_min = inside_span.getMin();
 		int inside_max = inside_span.getMax();
@@ -734,26 +735,25 @@ public abstract class ServerUtils {
 				newList.add(sym);
 				continue;
 			}
-
-			int spanCount = sym.getSpanCount();
-			boolean overlaps = false;
-			for (int i=0;i<spanCount;i++) {
-				SeqSpan span = sym.getSpan(i);
-				if (span == null) {
-					continue;
-				}
-				if (!SeqUtils.overlap(span, overlapSpan)) {
-					continue;
-				}
-				overlaps = true;
-				break;
-			}
-			if (overlaps) {
+			if (isOverlapping(sym, overlapSpan)) {
 				newList.add(sym);
 			}
 		}
 		return newList;
 	}
+
+
+	private static boolean isOverlapping(SeqSymmetry sym, SeqSpan overlapSpan) {
+		int spanCount = sym.getSpanCount();
+		for (int i = 0; i < spanCount; i++) {
+			SeqSpan span = sym.getSpan(i);
+			if (span != null && SeqUtils.overlap(span, overlapSpan)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 
 	/**
@@ -814,7 +814,7 @@ public abstract class ServerUtils {
 
 
 	// Print out the genomes
-	public static final void printGenomes(Map<String, List<AnnotatedSeqGroup>> organisms) {
+	public static void printGenomes(Map<String, List<AnnotatedSeqGroup>> organisms) {
 		for (Map.Entry<String, List<AnnotatedSeqGroup>> ent : organisms.entrySet()) {
 			String org = ent.getKey();
 			System.out.println("Organism: " + org);
@@ -833,7 +833,7 @@ public abstract class ServerUtils {
 	 *
 	 *  may want to cache this info (per versioned source) at some point...
 	 */
-	public static final Map<String, SimpleDas2Type> getAnnotationTypes(
+	public static Map<String, SimpleDas2Type> getAnnotationTypes(
 					String data_root,
 					AnnotatedSeqGroup genome,
 					AnnotSecurity annotSecurity) {
@@ -907,7 +907,8 @@ public abstract class ServerUtils {
 			} else if (annotSecurity.isUseqGraphData(data_root, genome.getID(), type, genome.getAnnotationId(type))) {
 				genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
 			} else {
-				Logger.getLogger(ServerUtils.class.getName()).warning("Non-graph annotation " + type + " encountered, but does not match known entry.  This annotation will not show in the types request.");
+				Logger.getLogger(ServerUtils.class.getName()).log(
+						Level.WARNING, "Non-graph annotation {0} encountered, but does not match known entry.  This annotation will not show in the types request.", type);
 			}
 		}
 	}

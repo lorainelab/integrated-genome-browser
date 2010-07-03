@@ -369,6 +369,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(tools_menu, new JMenuItem(WebLinksManagerView.getShowFrameAction()));
 
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new AboutIGBAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(new ForumHelpAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ReportBugAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new RequestFeatureAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new DocumentationAction()));

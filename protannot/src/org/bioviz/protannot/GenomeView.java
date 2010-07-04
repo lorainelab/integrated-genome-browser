@@ -148,7 +148,6 @@ final public class GenomeView extends JPanel implements MouseListener{
     private static final int seqmap_pixel_height = 500;
 	private static final double zoomRatio = 30.0;
 
-	private static final String end_codon = "Z";
     /**
      * Removes currently loaded data by clearing maps.
      */
@@ -583,7 +582,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 		String amino_acid = null;
 
 		try{
-			amino_acid = processAminoAcid(protein.getResidues(0, protein.getLength()) + end_codon) ;
+			amino_acid = processAminoAcid(protein.getResidues(0, protein.getLength()));
 		}catch(Exception ex){
 			System.out.println("*** Warning: No amino acid found ");
 		}

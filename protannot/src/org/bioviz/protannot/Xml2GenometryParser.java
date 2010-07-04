@@ -38,6 +38,7 @@ final class Xml2GenometryParser {
     private Map<String,BioSeq> prot_hash;
     // instance variables needed during the parse
     private List<int[]> transCheckExons;	// used to sanity-check exon translation
+	private static final String end_codon = "Z";
 
     /**
      * Create a new BioSeq and add annotations to it.
@@ -478,6 +479,8 @@ final class Xml2GenometryParser {
 
 		if(residue == null)
 			return "";
+		else
+			residue += end_codon;
 
 		return residue;
 	}
@@ -729,9 +732,9 @@ final class Xml2GenometryParser {
         TypeContainerAnnot m2pSym = new TypeContainerAnnot(elem.getAttribute("method"));
 
         SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrna);
-        BioSeq protein = new BioSeq(protein_id, null, mspan.getLength() / 3 - 1);
+        BioSeq protein = new BioSeq(protein_id, null, mspan.getLength() / 3);
 		protein.setResidues(amino_acid);
-		protein.setBounds(mspan.getMin(), mspan.getMin() + mspan.getLength()/3 - 1); // Corrected
+		protein.setBounds(mspan.getMin(), mspan.getMin() + mspan.getLength()/3); // Corrected
 
         prot_hash.put(protein_id, protein);
         SeqSpan pspan = new SimpleSeqSpan(protein.getMin(), protein.getMax(), protein); //Corrected

@@ -158,7 +158,7 @@ final public class ProtAnnotMain implements WindowListener {
 		ConsoleView.init(BUNDLE.getString("appName"));
         test.parseArguments(args);
         test.loadPrefs();
-        test.start(args);
+        test.start();
     }
 
 	/** Returns the icon stored in the jar path.
@@ -223,7 +223,7 @@ final public class ProtAnnotMain implements WindowListener {
      * Setup the outer frame.
      * @param   args    - optional path name as a parameter.
      */
-    private void start(String[] args) {
+    private void start() {
 		if ("Mac OS X".equals(System.getProperty("os.name"))) {
 			MacIntegration mi = MacIntegration.getInstance();
 			if (imageIcon != null) {

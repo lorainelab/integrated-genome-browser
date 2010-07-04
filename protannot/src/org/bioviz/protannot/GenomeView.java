@@ -258,7 +258,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     
     /**
      * Initialized GenomeView colors with preferences provided in the parameter phash
-     * @param   phash   Hashtable providing color prefrences for GenomeView
+     * @param   phash   Map providing color preferences for GenomeView
      */
     private void initPrefs(Map<String,Color> phash) {
         tempColorPrefs(phash);
@@ -267,7 +267,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Changes color preferences
-     * @param phash     Hashtable<String,Color> 
+     * @param phash     Map<String,Color>
      */
     private static void tempColorPrefs(Map<String,Color> phash)
     {
@@ -300,7 +300,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Add mouse listener to maps so that the application can detect
-	 * user interactions with the dispflay.
+	 * user interactions with the display.
      * @param   listener    Listener that is to be added to maps.
      */
     public void addMapListener(MouseListener listener) {
@@ -316,7 +316,7 @@ final public class GenomeView extends JPanel implements MouseListener{
      * Set the data model - the BioSeq object - that the application
 	 * will display.
 	 *
-     * @param   gseq the data model representing the trancripts, their
+     * @param   gseq the data model representing the transcripts, their
 	 * annotations, and their meta-data properties, such as their ids
 	 * in external databases.
 	 * @param is_new whether or not this BioSeq object has not been displayed
@@ -477,7 +477,7 @@ final public class GenomeView extends JPanel implements MouseListener{
             SeqSpan gSpan = exon2genome.getSpan(vseq);
             GlyphI cglyph = new OutlineRectGlyph();
             seqmap.setDataModel(cglyph, exon2genome);
-            // rats -- can't give this a type and therefore signal
+            // can't give this a type and therefore signal
             // to the selection logic that this is first class selectable
             // object
             // so let's put it in a list
@@ -506,25 +506,19 @@ final public class GenomeView extends JPanel implements MouseListener{
 
         // now follow symmetry link to annotated mrna seqs, map those annotations to genomic
         //    coords, and display
-        //    BioSeq mrna = SeqUtils.getOtherSpan(mrna2genome, tSpan).getBioSeq();
-
         BioSeq mrna = SeqUtils.getOtherSpan(mrna2genome, mrna2genome.getSpan(gseq)).getBioSeq();
-        if (DEBUG_TRANSCRIPT_ANNOTS) {
-            System.out.println(mrna.getID() + ",  " + mrna);
-        }
         if (mrna != null) {
+			if (DEBUG_TRANSCRIPT_ANNOTS) {
+				System.out.println(mrna.getID() + ",  " + mrna);
+			}
             SeqSymmetry[] new_path2view = new SeqSymmetry[path2view.length + 1];
             System.arraycopy(path2view, 0, new_path2view, 1, path2view.length);
             new_path2view[0] = mrna2genome;
-
             BioSeq amrna = mrna;
-
             int acount = amrna.getAnnotationCount();
             for (int i = 0; i < acount; i++) {
                 SeqSymmetry annot2mrna = amrna.getAnnotation(i);
                 if (annot2mrna != mrna2genome) {
-                    // old way	  glyphifyTranscriptAnnots(amrna, annot2mrna, mrna2genome, tier, tGlyph);
-
                     glyphifyTranscriptAnnots(amrna, annot2mrna, new_path2view, tier, tGlyph);
                 }
             }
@@ -609,10 +603,10 @@ final public class GenomeView extends JPanel implements MouseListener{
 
         // now follow symmetry link to annotated mrna seqs, map those annotations to genomic
         //    coords, and display
-        if (DEBUG_PROTEIN_ANNOTS) {
-            System.out.println(protein.getID() + ",  " + protein);
-        }
         if (protein != null) {
+			if (DEBUG_PROTEIN_ANNOTS) {
+				System.out.println(protein.getID() + ",  " + protein);
+			}
             SeqSymmetry prot2mrna = annot2mrna;
 
             // construct a new path which includes entire previous path plus prot2mrna

@@ -50,6 +50,7 @@ final class Xml2GenometryParser {
 	public static final String MRNASTR = "mrna";
 	public static final String STRANDSTR = "strand";
 	public static final String CDSSTR = "cds";
+	public static final String METHODSTR = "method";
 
 	/**
 	 * Create a new BioSeq and add annotations to it.
@@ -208,7 +209,7 @@ final class Xml2GenometryParser {
      */
     private static void processSimSearch(BioSeq query_seq, Element elem) {
         NodeList children = elem.getChildNodes();
-        String method = elem.getAttribute("method");
+        String method = elem.getAttribute(METHODSTR);
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String name = child.getNodeName();
@@ -255,7 +256,7 @@ final class Xml2GenometryParser {
                 Element chelem = (Element) child;
                 if (name.equalsIgnoreCase("simspan")) {
                     SeqSymmetry spanSym = processSimSpan(query_seq, chelem);
-                    ((SymWithProps) spanSym).setProperty("method", method);
+                    ((SymWithProps) spanSym).setProperty(METHODSTR, method);
                     hitSym.addChild(spanSym);
                     SeqSpan spanSpan = spanSym.getSpan(query_seq);
                     if (hitSpan == null) {
@@ -458,10 +459,10 @@ final class Xml2GenometryParser {
             }
         }
 
-        // NEED TO SORT EXON_INSERTS!!!
-        //    5' TO 3' ALONG TRANSCRIPT.  OTHERWISE TRYING TO INSERT A 5' ONE
-        //    AFTER A 3' ONE HAS ALREADY BEEN INSERTED WILL MESS UP COORDINATES OF 3' ONE
-        // NOT YET IMPLEMENTED -- ASSUMING FOR NOW THAT EXON_INSERTS ARE ALREADY ORDERED IN THE XML
+        // need to sort exon inserts...
+        //    5' to 3' along transcript.  Otherwise, trying to insert a 5'
+        //    after a 3' has been inserted ill mess up coordinates of 3'.
+        // assuming for now that exon inserts are ordered in the XML
 
         // sorting exons, so that later position calculations are accurate
 
@@ -482,7 +483,7 @@ final class Xml2GenometryParser {
         mrna.addAnnotation(m2gSym);
     }
 
-	private String getAminoAcid(TypeContainerAnnot m2gSym){
+	private static String getAminoAcid(TypeContainerAnnot m2gSym){
 		String residue = (String) m2gSym.getProperty("protein sequence");
 
 		if(residue == null)
@@ -727,8 +728,7 @@ final class Xml2GenometryParser {
         }
         int end = Integer.parseInt(attr);
 
-        checkTranslationLength(start,end);
-
+        checkTranslationLength(transCheckExons,start,end);
 
         // could just do this as a single seq span (start, end, seq), but then would end up recreating
         //   the cds segments, which will get ignored afterwards...
@@ -754,7 +754,7 @@ final class Xml2GenometryParser {
 			throw new NullPointerException("Conflict with start and end in processCDS.");
 		}
 
-        TypeContainerAnnot m2pSym = new TypeContainerAnnot(elem.getAttribute("method"));
+        TypeContainerAnnot m2pSym = new TypeContainerAnnot(elem.getAttribute(METHODSTR));
 
         SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrna);
         BioSeq protein = new BioSeq(protein_id, null, mspan.getLength() / 3);
@@ -778,7 +778,13 @@ final class Xml2GenometryParser {
 
     }
 
-	private void checkTranslationLength(int start ,int end){
+	/**
+	 * Sanity check on length of translations (the total should be divisible by 3).
+	 * @param transCheckExons
+	 * @param start
+	 * @param end
+	 */
+	private static void checkTranslationLength(List<int[]> transCheckExons, int start ,int end){
 
         int length = 0;
         for(int[] exon : transCheckExons){
@@ -796,7 +802,6 @@ final class Xml2GenometryParser {
 				// translation end is before ending of exon
                 length += end - exon_start;
             }
-			//System.out.println(",added length: " + (length - old_length));
         }
 
         if(length % 3 != 0)

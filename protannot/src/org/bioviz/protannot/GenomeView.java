@@ -142,7 +142,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     private static final int middle_white_space = 2;
     private static final int lower_white_space = 2;
     private static final int divider_size = 8;
-    private static final int table_height = 150;
+    private static final int table_height = 200;
     private static final int seqmap_pixel_height = 500;
 	private static final double zoomRatio = 30.0;
 
@@ -160,7 +160,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     /**
      * Sets up the layout for the maps and the other elements that are
 	 * part of the application.
-     * @param   phash   Color perefrences stored in hashtable to setup the layout. 
+     * @param   phash   Color perferences stored in hashtable to setup the layout.
      */
     GenomeView(Map<String,Color> phash) {
 
@@ -730,7 +730,10 @@ final public class GenomeView extends JPanel implements MouseListener{
                 SeqSymmetry grandchild = child.getChild(j);
                 SeqSpan gSpan = grandchild.getSpan(vseq);
                 GlyphI cglyph = new FillRectGlyph();
-                cglyph.setColor(color);
+				if(i%2 == 2)
+					cglyph.setColor(color);
+				else
+					cglyph.setColor(color.darker());
                 cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
                 aGlyph.addChild(cglyph);
                 seqmap.setDataModel(cglyph, original_child);

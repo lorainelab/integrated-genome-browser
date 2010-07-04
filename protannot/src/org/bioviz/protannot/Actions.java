@@ -11,9 +11,9 @@ import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
  *
  * @author hiralv
  */
-public class Actions {
+class Actions {
 
-	final ProtAnnotMain protannot;
+	private final ProtAnnotMain protannot;
 
 	Actions(ProtAnnotMain protannot){
 		this.protannot = protannot;
@@ -47,10 +47,6 @@ public class Actions {
 		add_server.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("addServerTip"));
 		return add_server;
 	}
-
-//	AbstractAction getLoadFromServerAction(){
-//
-//	}
 
 	AbstractAction getPrintAction(){
 		AbstractAction print_action = new AbstractAction(MessageFormat.format(

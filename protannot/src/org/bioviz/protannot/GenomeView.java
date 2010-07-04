@@ -100,8 +100,6 @@ final public class GenomeView extends JPanel implements MouseListener{
 
     JPopupMenu popup;
 
-	// Ann's note: is this still be used?
-    private boolean rev_comp = false;
     private static final boolean DEBUG_GENOMIC_ANNOTS = false;
     private static final boolean DEBUG_TRANSCRIPT_ANNOTS = false;
     private static final boolean DEBUG_PROTEIN_ANNOTS = false;
@@ -357,11 +355,7 @@ final public class GenomeView extends JPanel implements MouseListener{
         vseq = new BioSeq("view seq", null, gseq.getLength());
         vseq.setBounds(gseq.getMin(), gseq.getMax());
 
-        if (rev_comp) {
-            viewSym.addSpan(new SimpleSeqSpan(vseq.getMax(), vseq.getMin(), vseq));
-        } else {
-            viewSym.addSpan(new SimpleSeqSpan(vseq.getMin(), vseq.getMax(), vseq));
-        }
+        viewSym.addSpan(new SimpleSeqSpan(vseq.getMin(), vseq.getMax(), vseq));
 
         path2view[0] = viewSym;
 
@@ -390,17 +384,8 @@ final public class GenomeView extends JPanel implements MouseListener{
         table_view.showProperties(new Properties[0]);
         setupAxisMap();
 
-        if(is_new)
-        {
-            axismap.stretchToFit(true, false);
-            seqmap.stretchToFit(true, true);
-			//seqmap.getScroller(NeoMap.X).setValue(gseq.getMin());
-        }
-        else
-        {
-            axismap.stretchToFit(false, false);
-            seqmap.stretchToFit(false, false);
-        }
+		axismap.stretchToFit(is_new, false);
+		seqmap.stretchToFit(is_new, true);
 
 		seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
                 ((gseq.getMin()+gseq.getMax())/2.0));
@@ -409,7 +394,6 @@ final public class GenomeView extends JPanel implements MouseListener{
 
         seqmap.updateWidget();
         axismap.updateWidget();
-        
     }
 
 	/**
@@ -784,8 +768,6 @@ final public class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genoviz.glyph.SequenceGlyph
      */
     private void setupAxisMap() { 
-        
-
         /* Implementing it in this way because in above method synchronization is lost when
          zoomtoselected feature is used. So to correct it below used method is used */
         
@@ -793,7 +775,6 @@ final public class GenomeView extends JPanel implements MouseListener{
         //String residues = gseq.getResidues();
         ColoredResiduesGlyph sg = new ColoredResiduesGlyph(true);
         sg.setResiduesProvider(gseq, gseq.getLength());
-        //sg.setResidues(residues);
         sg.setCoords(gseq.getMin(), upper_white_space + axis_pixel_height
                 + middle_white_space, gseq.getLength() , seq_pixel_height);
         sg.setForegroundColor(col_sequence);
@@ -936,7 +917,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Coverts Map to Properties to for display in property table.
+     * Converts Map to Properties to for display in property table.
      * @param   prop	a Map containing meta-data name/value pairs for an item
      * @return  Properties the meta-data values transformed to Property objects
      */
@@ -1105,7 +1086,7 @@ final public class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan
      */
-    private static final void copyToMutable(SeqSymmetry sym, MutableSeqSymmetry mut) {
+    private static void copyToMutable(SeqSymmetry sym, MutableSeqSymmetry mut) {
         mut.clear();
         int spanCount = sym.getSpanCount();
         for (int i = 0; i < spanCount; i++) {
@@ -1146,7 +1127,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     
     /**
      * Action to be performed when user saves color changes.
-     * @param   colorhash   Hashtable<String,Color> new color preferences
+     * @param   colorhash   Map<String,Color> new color preferences
      */
     void changePreference(Map<String,Color> colorhash)
     {
@@ -1156,7 +1137,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Action to be performed when user attempts to apply color changes.
-     * @param   colorhash   Hashtable<String,Color> new color preferences
+     * @param   colorhash   Map<String,Color> new color preferences
      */
     void tempChangePreference(Map<String,Color> colorhash)
     {
@@ -1186,7 +1167,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Returns color preferences.
-     * @return  Hashtable<String,Color>     Returns color preferences.
+     * @return  Map<String,Color>     Returns color preferences.
      */
     Map<String,Color> getColorPrefs()
     {

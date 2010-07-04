@@ -46,14 +46,10 @@ class ColoredResiduesGlyph extends SequenceGlyph {
         return null;
     }
 
-    public void setResiduesProvider(SearchableCharIterator iter, int seqlength) {
+    public final void setResiduesProvider(SearchableCharIterator iter, int seqlength) {
         chariter = iter;
         residue_length = seqlength;
         residuesSet = true;
-    }
-
-    public SearchableCharIterator getResiduesProvider() {
-        return chariter;
     }
 
     // Essentially the same as SequenceGlyph.drawHorizontal
@@ -157,14 +153,6 @@ class ColoredResiduesGlyph extends SequenceGlyph {
                 }
             }
         }
-    }
-
-    /**
-     *
-     * @param h
-     */
-    public void setHitable(boolean h) {
-        this.hitable = h;
     }
 
     @Override

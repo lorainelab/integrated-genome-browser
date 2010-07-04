@@ -19,7 +19,7 @@ final class GlyphSummarizer {
     // scaling factor -- scale to apply to hit counts to get height of summary
     // at any point
     private static final float scale_factor = 10.0f;
-    private Color glyph_color = Color.blue;
+    private final Color glyph_color;
 
     /**
      * Create a new GlyphSummarizer, which will be drawn using the given

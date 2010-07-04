@@ -98,7 +98,7 @@ final class NormalizeXmlStrand {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			String name = child.getNodeName();
-			if (name == null || !name.equalsIgnoreCase("residues")) {
+			if (name == null || !name.equalsIgnoreCase(Xml2GenometryParser.RESIDUESSTR)) {
 				continue;
 			}
 			Element residuesNode = (Element) child;
@@ -106,12 +106,12 @@ final class NormalizeXmlStrand {
 			Text resnode = (Text) residuesChildNode;
 			residues = resnode.getData();
 			try {
-				residuesStart = Integer.parseInt((residuesNode).getAttribute(ProtAnnotMain.STARTSTR));
-				residuesNode.setAttribute(ProtAnnotMain.STARTSTR, Integer.toString(0)); // normalize start of residues to 0
+				residuesStart = Integer.parseInt((residuesNode).getAttribute(Xml2GenometryParser.STARTSTR));
+				residuesNode.setAttribute(Xml2GenometryParser.STARTSTR, Integer.toString(0)); // normalize start of residues to 0
 
 				try {
-					int residuesEnd = Integer.parseInt((residuesNode).getAttribute(ProtAnnotMain.ENDSTR));
-					residuesNode.setAttribute(ProtAnnotMain.ENDSTR, Integer.toString(residuesEnd - residuesStart));
+					int residuesEnd = Integer.parseInt((residuesNode).getAttribute(Xml2GenometryParser.ENDSTR));
+					residuesNode.setAttribute(Xml2GenometryParser.ENDSTR, Integer.toString(residuesEnd - residuesStart));
 					// normalize end of residues, if end exists
 
 				} catch (Exception ex) {
@@ -135,17 +135,17 @@ final class NormalizeXmlStrand {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			String name = child.getNodeName();
-			if (name == null || !name.equalsIgnoreCase("mRNA")) {
+			if (name == null || !name.equalsIgnoreCase(Xml2GenometryParser.MRNASTR)) {
 				continue;
 			}
 			Element childElem = (Element) child;
-			int start = Integer.parseInt(childElem.getAttribute(ProtAnnotMain.STARTSTR));
-			int end = Integer.parseInt(childElem.getAttribute(ProtAnnotMain.ENDSTR));
+			int start = Integer.parseInt(childElem.getAttribute(Xml2GenometryParser.STARTSTR));
+			int end = Integer.parseInt(childElem.getAttribute(Xml2GenometryParser.ENDSTR));
 			start = start - residuesStart;
 			end = end - residuesStart;
 
 			try {
-				String strand = childElem.getAttribute("strand");
+				String strand = childElem.getAttribute(Xml2GenometryParser.STRANDSTR);
 				isNegativeStrand = "-".equals(strand);
 				if (isNegativeStrand) {
 					int newEnd = residues.length() - start;
@@ -156,16 +156,16 @@ final class NormalizeXmlStrand {
 						residuesChildNode.setNodeValue(residues);
 						isStrandSet = true;
 					}
-					childElem.setAttribute("strand", "+"); // Normalizing to positive strand
+					childElem.setAttribute(Xml2GenometryParser.STRANDSTR, "+"); // Normalizing to positive strand
 				}
 			} catch (Exception e) {
 				System.out.println("No strand attribute found");
 			}
-			childElem.setAttribute(ProtAnnotMain.STARTSTR, Integer.toString(start));
-			childElem.setAttribute(ProtAnnotMain.ENDSTR, Integer.toString(end));
+			childElem.setAttribute(Xml2GenometryParser.STARTSTR, Integer.toString(start));
+			childElem.setAttribute(Xml2GenometryParser.ENDSTR, Integer.toString(end));
 
-			normalizeNodes("exon",childElem.getChildNodes(), residuesStart, residues);
-			normalizeNodes("cds",childElem.getChildNodes(), residuesStart, residues);
+			normalizeNodes(Xml2GenometryParser.EXONSTR,childElem.getChildNodes(), residuesStart, residues);
+			normalizeNodes(Xml2GenometryParser.CDSSTR,childElem.getChildNodes(), residuesStart, residues);
 		}
 	}
 
@@ -178,8 +178,8 @@ final class NormalizeXmlStrand {
 				continue;
 			}
 			Element childElem = (Element) child;
-			int start = Integer.parseInt(childElem.getAttribute(ProtAnnotMain.STARTSTR));
-			int end = Integer.parseInt(childElem.getAttribute(ProtAnnotMain.ENDSTR));
+			int start = Integer.parseInt(childElem.getAttribute(Xml2GenometryParser.STARTSTR));
+			int end = Integer.parseInt(childElem.getAttribute(Xml2GenometryParser.ENDSTR));
 			start = start - residuesStart;
 			end = end - residuesStart;
 			if (isNegativeStrand) {
@@ -187,8 +187,8 @@ final class NormalizeXmlStrand {
 				start = residues.length() - end;
 				end = newEnd;
 			}
-			childElem.setAttribute(ProtAnnotMain.STARTSTR, Integer.toString(start));
-			childElem.setAttribute(ProtAnnotMain.ENDSTR, Integer.toString(end));
+			childElem.setAttribute(Xml2GenometryParser.STARTSTR, Integer.toString(start));
+			childElem.setAttribute(Xml2GenometryParser.ENDSTR, Integer.toString(end));
 		}
 	}
 

@@ -40,6 +40,17 @@ final class Xml2GenometryParser {
     private List<int[]> transCheckExons;	// used to sanity-check exon translation
 	private static final String end_codon = "Z";
 
+	public static final String STARTSTR = "start";
+	public static final String ENDSTR = "end";
+	public static final String TYPESTR = "type";
+	public static final String NAMESTR = "name";
+	public static final String EXONSTR = "exon";
+	public static final String IDSTR = "id";
+	public static final String RESIDUESSTR = "residues";
+	public static final String MRNASTR = "mrna";
+	public static final String STRANDSTR = "strand";
+	public static final String CDSSTR = "cds";
+
 	/**
 	 * Create a new BioSeq and add annotations to it.
 	 * @param doc
@@ -121,7 +132,7 @@ final class Xml2GenometryParser {
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String cname = child.getNodeName();
-            if (cname != null && cname.equalsIgnoreCase("residues")) {
+            if (cname != null && cname.equalsIgnoreCase(RESIDUESSTR)) {
                 Text resnode = (Text) child.getFirstChild();
                 String residues = resnode.getData();
                 chrom = new BioSeq(seq, version, residues.length());
@@ -146,7 +157,7 @@ final class Xml2GenometryParser {
                 if (name.equalsIgnoreCase("genesearch")) {
                     processGeneSearch(genomic, (Element) child);
                 } else {
-                    if (name.equalsIgnoreCase("mRNA")) {
+                    if (name.equalsIgnoreCase(MRNASTR)) {
                         processMRNA(genomic, (Element) child);
                     }
                 }
@@ -168,7 +179,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.BioSeq
      */
     private static void processProtein(Map<String,BioSeq> prot_hash, Element elem) {
-        String pid = elem.getAttribute("id");
+        String pid = elem.getAttribute(IDSTR);
         BioSeq protein = prot_hash.get(pid);
         if (protein == null) {
             System.err.println("Error: no bioseq matching id: " + pid
@@ -224,11 +235,11 @@ final class Xml2GenometryParser {
         TypeContainerAnnot hitSym = new TypeContainerAnnot(method);
         addDescriptors(elem, hitSym);
 
-        String hit_name = elem.getAttribute("name");
+        String hit_name = elem.getAttribute(NAMESTR);
         String hit_descr = elem.getAttribute("desc");
 
         if (hit_name != null && hit_name.length() > 0) {
-            hitSym.setProperty("name", hit_name);
+            hitSym.setProperty(NAMESTR, hit_name);
         }
         if (hit_descr != null && hit_descr.length() > 0) {
             hitSym.setProperty("descr", hit_descr);
@@ -252,14 +263,14 @@ final class Xml2GenometryParser {
                     } else {
                         SeqUtils.encompass(hitSpan, spanSpan, (MutableSeqSpan) hitSpan);
                     }
-                    hitSym.setProperty(ProtAnnotMain.TYPESTR, "hitspan");
+                    hitSym.setProperty(TYPESTR, "hitspan");
                     num_spans++;
                 }
             }
         }
         String prop =  (Integer.valueOf(num_spans)).toString();
         hitSym.setProperty("num_spans", prop);
-        hitSym.setProperty(ProtAnnotMain.TYPESTR, "hit");
+        hitSym.setProperty(TYPESTR, "hit");
         hitSym.addSpan(hitSpan);
         hitSym.setID("");
         query_seq.addAnnotation(hitSym);
@@ -280,7 +291,7 @@ final class Xml2GenometryParser {
             if (child instanceof Element) {
                 Element chelem = (Element) child;
                 if (name.equalsIgnoreCase("descriptor")) {
-                    String desc_name = chelem.getAttribute(ProtAnnotMain.TYPESTR);
+                    String desc_name = chelem.getAttribute(TYPESTR);
                     Text tnode = (Text) chelem.getFirstChild();
                     if (tnode != null) {
                         String desc_text = tnode.getData();
@@ -291,7 +302,7 @@ final class Xml2GenometryParser {
         }
         Object test = sym.getProperty("domain_pos");
         if (test != null) {
-            sym.setProperty("name", test);
+            sym.setProperty(NAMESTR, test);
         }
     }
 
@@ -363,8 +374,8 @@ final class Xml2GenometryParser {
     private void processGene(BioSeq genomic, Element elem) {
 
         if (DEBUG) {
-			int start = Integer.parseInt(elem.getAttribute(ProtAnnotMain.STARTSTR));
-			int end = Integer.parseInt(elem.getAttribute(ProtAnnotMain.ENDSTR));
+			int start = Integer.parseInt(elem.getAttribute(STARTSTR));
+			int end = Integer.parseInt(elem.getAttribute(ENDSTR));
             System.err.println("gene:  start = " + start + "  end = " + end);
         }
 
@@ -386,15 +397,15 @@ final class Xml2GenometryParser {
      */
     private void processTranscript(BioSeq genomic, Element elem) {
         if (DEBUG) {
-			int start = Integer.parseInt(elem.getAttribute(ProtAnnotMain.STARTSTR));
-			int end = Integer.parseInt(elem.getAttribute(ProtAnnotMain.ENDSTR));
+			int start = Integer.parseInt(elem.getAttribute(STARTSTR));
+			int end = Integer.parseInt(elem.getAttribute(ENDSTR));
             System.err.println("transcript:  start = " + start + "  end = " + end);
         }
         NodeList children = elem.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String nodename = child.getNodeName();
-            if (null != nodename && nodename.equalsIgnoreCase("mrna")) {
+            if (null != nodename && nodename.equalsIgnoreCase(MRNASTR)) {
                 processMRNA(genomic, (Element) child);
             }
         }
@@ -414,8 +425,8 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
     private void processMRNA(BioSeq genomic, Element elem) {
-        int start = Integer.parseInt(elem.getAttribute(ProtAnnotMain.STARTSTR));
-        int end = Integer.parseInt(elem.getAttribute(ProtAnnotMain.ENDSTR));
+        int start = Integer.parseInt(elem.getAttribute(STARTSTR));
+        int end = Integer.parseInt(elem.getAttribute(ENDSTR));
 
         if (DEBUG) {
             System.err.println("mrna:  start = " + start + "  end = " + end);
@@ -426,7 +437,7 @@ final class Xml2GenometryParser {
         TypeContainerAnnot m2gSym = new TypeContainerAnnot(elem.getAttribute("method"));
         m2gSym.addSpan(span);
         addDescriptors(elem, m2gSym);
-        m2gSym.setProperty(ProtAnnotMain.TYPESTR, "mRNA");
+        m2gSym.setProperty(TYPESTR, "mRNA");
         boolean forward = (span.isForward());
 
 
@@ -437,9 +448,9 @@ final class Xml2GenometryParser {
             Node child = children.item(i);
             String nodename = child.getNodeName();
             if (nodename != null) {
-                if (nodename.equalsIgnoreCase("exon")) {
+                if (nodename.equalsIgnoreCase(EXONSTR)) {
                     SymWithProps exSym = processExon(genomic, (Element) child);
-                    exSym.setProperty(ProtAnnotMain.TYPESTR, "exon");
+                    exSym.setProperty(TYPESTR, EXONSTR);
                     exon_list.add(exSym);
                 } else if (nodename.equalsIgnoreCase("exon_insert")) {
                     exon_insert_list.add(child);
@@ -488,7 +499,7 @@ final class Xml2GenometryParser {
 			String nodename = child.getNodeName();
 			if (nodename != null && nodename.equalsIgnoreCase("descriptor")) {
 				Element el = (Element) child;
-				String type = el.getAttribute(ProtAnnotMain.TYPESTR);
+				String type = el.getAttribute(TYPESTR);
 				if (type != null && type.equalsIgnoreCase("protein_product_id")) {
 					Text tnode = (Text) el.getFirstChild();
 					return tnode.getData();
@@ -502,20 +513,9 @@ final class Xml2GenometryParser {
 	private BioSeq addSpans(TypeContainerAnnot m2gSym, BioSeq genomic, List exon_insert_list, int start)
 			throws NumberFormatException {
 		int exoncount = m2gSym.getChildCount();
-        int mrnalength = 0;
-        for (int i = 0; i < exoncount; i++) {
-            SeqSymmetry esym = m2gSym.getChild(i);
-            SeqSpan gspan = esym.getSpan(genomic);
-            mrnalength += gspan.getLength();
-        }
-        for (int i = 0; i < exon_insert_list.size(); i++) {
-            Element iel = (Element) exon_insert_list.get(i);
-            int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
-            mrnalength += ilength;
-        }
-
+		int mrnalength = determinemRNALength(exoncount, m2gSym, genomic, exon_insert_list);
 		int end = 0;
-		String mrna_id = "mrna";
+		String mrna_id = MRNASTR;
 		BioSeq mrna = new BioSeq(mrna_id, null, mrnalength);
 		mrna.setBounds(start, start+mrnalength);
 		mrna_hash.put(mrna_id, mrna);
@@ -526,25 +526,7 @@ final class Xml2GenometryParser {
 			SeqSpan gspan = esym.getSpan(genomic);
 			end = start + gspan.getLength();
 			List<Element> hit_inserts = new ArrayList<Element>();
-			/** check each exon_insert, figure out which (if any) exons it overlaps */
-			for (int insert_index = 0; insert_index < exon_insert_list.size(); insert_index++) {
-				Element iel = (Element) exon_insert_list.get(insert_index);
-				int istart = Integer.parseInt(iel.getAttribute("insert_at"));
-				int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
-				if (SeqUtils.contains(gspan, (SeqSpan) iel)) {
-					// need to add children to this exon symmetry to indicate an insertion
-					//   (or possibly deletion?) of bases in the transcript relative to the genomic
-					//	    processExonInsert(esym, istart, ilength);
-					System.err.println("insert: insertion_start = " + istart + ", length = " + ilength);
-					// remove this exon_insert from list to consider in future passes
-					//    need to also decrement the insert_index to make sure removal doesn't cause
-					//    next exon_insert to not be considered...
-					exon_insert_list.remove(insert_index);
-					hit_inserts.add(iel);
-					insert_index--;
-					end += ilength;
-				}
-			}
+			end = determineOverlappingExons(exon_insert_list, gspan, hit_inserts, end);
 			SeqSpan tspan = new SimpleSeqSpan(start, end, mrna);
 			esym.addSpan(tspan);
 			if (!hit_inserts.isEmpty()) {
@@ -553,6 +535,52 @@ final class Xml2GenometryParser {
 			start = end;
 		}
 		return mrna;
+	}
+
+	/**
+	 * check each exon_insert, figure out which (if any) exons it overlaps
+	 * @param exon_insert_list
+	 * @param gspan
+	 * @param hit_inserts
+	 * @param end
+	 * @return
+	 * @throws NumberFormatException
+	 */
+	private static int determineOverlappingExons(List exon_insert_list, SeqSpan gspan, List<Element> hit_inserts, int end) throws NumberFormatException {
+		for (int insert_index = 0; insert_index < exon_insert_list.size(); insert_index++) {
+			Element iel = (Element) exon_insert_list.get(insert_index);
+			int istart = Integer.parseInt(iel.getAttribute("insert_at"));
+			int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
+			if (SeqUtils.contains(gspan, (SeqSpan) iel)) {
+				// need to add children to this exon symmetry to indicate an insertion
+				//   (or possibly deletion?) of bases in the transcript relative to the genomic
+				//	    processExonInsert(esym, istart, ilength);
+				System.err.println("insert: insertion_start = " + istart + ", length = " + ilength);
+				// remove this exon_insert from list to consider in future passes
+				//    need to also decrement the insert_index to make sure removal doesn't cause
+				//    next exon_insert to not be considered...
+				exon_insert_list.remove(insert_index);
+				hit_inserts.add(iel);
+				insert_index--;
+				end += ilength;
+			}
+		}
+		return end;
+	}
+
+	private static int determinemRNALength(int exoncount, TypeContainerAnnot m2gSym, BioSeq genomic, List exon_insert_list) throws NumberFormatException {
+		int mrnalength = 0;
+		for (int i = 0; i < exoncount; i++) {
+			SeqSymmetry esym = m2gSym.getChild(i);
+			SeqSpan gspan = esym.getSpan(genomic);
+			mrnalength += gspan.getLength();
+		}
+		for (int i = 0; i < exon_insert_list.size(); i++) {
+			Element iel = (Element) exon_insert_list.get(i);
+			int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
+			mrnalength += ilength;
+		}
+		return mrnalength;
 	}
 
 
@@ -642,16 +670,16 @@ final class Xml2GenometryParser {
     private SymWithProps processExon(BioSeq genomic, Element elem) {
          // should not be any nodes underneath exon tags (at least in current pseudo-DTD
         //  GAH 10-6-2001
-        int start = Integer.parseInt(elem.getAttribute(ProtAnnotMain.STARTSTR));
-        int end = Integer.parseInt(elem.getAttribute(ProtAnnotMain.ENDSTR));
+        int start = Integer.parseInt(elem.getAttribute(STARTSTR));
+        int end = Integer.parseInt(elem.getAttribute(ENDSTR));
 
         transCheckExons.add(new int[]{start,end});
 
         SeqSpan span = new SimpleSeqSpan(start, end, genomic);
         SimpleSymWithProps exonsym = new SimpleSymWithProps();
         addDescriptors(elem, exonsym);
-        exonsym.setProperty(ProtAnnotMain.STARTSTR, elem.getAttribute(ProtAnnotMain.STARTSTR));
-        exonsym.setProperty(ProtAnnotMain.ENDSTR, elem.getAttribute(ProtAnnotMain.ENDSTR));
+        exonsym.setProperty(STARTSTR, elem.getAttribute(STARTSTR));
+        exonsym.setProperty(ENDSTR, elem.getAttribute(ENDSTR));
 		exonsym.setProperty("length", String.valueOf(end - start));
         exonsym.addSpan(span);
         return exonsym;
@@ -661,7 +689,7 @@ final class Xml2GenometryParser {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			String nodename = child.getNodeName();
-			if (nodename != null && nodename.equalsIgnoreCase("cds")) {
+			if (nodename != null && nodename.equalsIgnoreCase(CDSSTR)) {
 					processCDS(genomic, (Element) child, m2gSym, mrna, protein_id, amino_acid);
 			}
 		}
@@ -688,14 +716,14 @@ final class Xml2GenometryParser {
 
         String attr = elem.getAttribute("transstart");
         if (attr == null || attr.length() == 0) {
-            attr = elem.getAttribute("start");
+            attr = elem.getAttribute(STARTSTR);
         }
         int start = Integer.parseInt(attr);
 
 		// transstop indicates last base of actual translation
         attr = elem.getAttribute("transstop");
         if (attr == null || attr.length() == 0) {
-            attr = elem.getAttribute(ProtAnnotMain.ENDSTR);
+            attr = elem.getAttribute(ENDSTR);
         }
         int end = Integer.parseInt(attr);
 

@@ -86,10 +86,6 @@ import org.bioviz.protannot.action.ShowConsoleAction;
 final public class ProtAnnotMain implements WindowListener {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
 
-	public static final String STARTSTR = "start";
-	public static final String ENDSTR = "end";
-	public static final String TYPESTR = "type";
-
     // where the application is first invoked
     private static String user_dir = System.getProperty("user.dir");
     // used for choosing new files to load
@@ -704,7 +700,7 @@ final public class ProtAnnotMain implements WindowListener {
 	 * Create a dialog box to show hairline error message.
 	 * @param	error	Error message to be displayed.
 	 */
-	private boolean outputErrorMessage(String error){
+	private static boolean outputErrorMessage(String error){
 		JOptionPane.showMessageDialog(new JFrame(), error, "", JOptionPane.ERROR_MESSAGE);
 		return false;
 	}
@@ -858,19 +854,17 @@ final public class ProtAnnotMain implements WindowListener {
      * @param prefs_col     Map<String,Color>
      * @return  Object[][]  Returns color preferences in two dimensional object.
      */
-    private Object[][] getData(Map<String, Color> prefs_col) {
+    private static Object[][] getData(Map<String, Color> prefs_col) {
 		Object[][] colordata = new Object[prefs_col.size()][2];
 		int i = 0;
-		Iterator<String> e = prefs_col.keySet().iterator();
-		while (e.hasNext()) {
-			String key = e.next();
-			colordata[i++] = new Object[]{key, prefs_col.get(key)};
+		for (Map.Entry<String,Color> entry: prefs_col.entrySet()) {
+			colordata[i++] = new Object[]{entry.getKey(), entry.getValue()};
 		}
 		return colordata;
 
 	}
 
-	private boolean isServer(String string){
+	private static boolean isServer(String string){
 		return (string.startsWith("http:/") || string.startsWith("https:/"));
 	}
 	

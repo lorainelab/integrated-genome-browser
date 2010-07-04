@@ -94,7 +94,7 @@ final class ModPropertySheet extends JPanel {
         List<String[]> nv = new ArrayList<String[]>();
         for (String[] vals : name_values) {
             String content = vals[0];
-            if (!"id".equals(content) && !"name".equals(content)) {
+            if (!Xml2GenometryParser.IDSTR.equals(content) && !Xml2GenometryParser.NAMESTR.equals(content)) {
                 nv.add(vals);
             }
         }

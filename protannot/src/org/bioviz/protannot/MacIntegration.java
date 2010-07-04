@@ -18,16 +18,13 @@ import java.util.logging.Logger;
 final class MacIntegration {
 	/** private instance of MacIntegration for singleton pattern */
 	private static MacIntegration instance = null;
-	private  Class<?> applicationClass;
-	private Object application;
+	private Class<?> applicationClass = null;
+	private Object application = null;
 
 	/**
 	 * Private constructor to enforce singleton pattern
 	 */
 	private MacIntegration() {
-		applicationClass = null;
-		application = null;
-
 		try {
 			applicationClass = Class.forName("com.apple.eawt.Application");
 			Method getApplication = applicationClass.getDeclaredMethod("getApplication");

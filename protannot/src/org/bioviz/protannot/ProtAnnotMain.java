@@ -86,6 +86,10 @@ import org.bioviz.protannot.action.ShowConsoleAction;
 final public class ProtAnnotMain implements WindowListener {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
 
+	public static final String STARTSTR = "start";
+	public static final String ENDSTR = "end";
+	public static final String TYPESTR = "type";
+
     // where the application is first invoked
     private static String user_dir = System.getProperty("user.dir");
     // used for choosing new files to load
@@ -110,7 +114,7 @@ final public class ProtAnnotMain implements WindowListener {
     private Preferences prefs;
     // width of the user's screen
     private Dimension screen;
-	private boolean ofs = false;
+
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
 	final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
@@ -648,10 +652,9 @@ final public class ProtAnnotMain implements WindowListener {
 	private boolean checkArguments(String arg, String argValue)
 	{
 		arg = arg.toLowerCase();
-		//argValue = argValue.toLowerCase();
 		
 		//Check if it server's argument.
-		if (arg.equals("-s")) {
+		if ("-s".equals(arg)) {
 			//Check if server name starts with http:/ or https:/
 			//eg http:// or https://
 			if (isServer(argValue)) {
@@ -662,7 +665,7 @@ final public class ProtAnnotMain implements WindowListener {
 				} else {
 					//Check if it is path on a server. Then add path name and server name.
 					//eg https://protannot.bioviz.org/samples/ABCB1.paxml
-					String file = argValue.substring(argValue.lastIndexOf("/") + 1);
+					String file = argValue.substring(argValue.lastIndexOf('/') + 1);
 					String server = argValue.replace(file, "");
 
 					//Check path name is valid.
@@ -679,7 +682,7 @@ final public class ProtAnnotMain implements WindowListener {
 				return outputErrorMessage("Invalid server name: Server name should start with http or https. " +
 						"\n eg. http://protannot.bioviz.org/samples/");
 			
-		} else if(arg.equals("-f")){
+		} else if("-f".equals(arg)){
 			if (GeneralUtils.getUnzippedName(argValue).endsWith(".paxml"))
 				return addToArgumentDictionary(new String[]{"-f", argValue});
 			else
@@ -687,7 +690,7 @@ final public class ProtAnnotMain implements WindowListener {
 						"\n eg. /user/home/protannot/samples/ABCD.paxml OR " +
 						"\n eg. https://protannot.bioviz.org/samples/ABCD.paxml");
 			
-		} else if(arg.equals("")){
+		} else if(arg.length()==0){
 			if(isServer(argValue))
 				checkArguments("-s",argValue);
 			else
@@ -698,7 +701,7 @@ final public class ProtAnnotMain implements WindowListener {
 	}
 
 	/**
-	 * Create a dialog box to showhairline error message.
+	 * Create a dialog box to show hairline error message.
 	 * @param	error	Error message to be displayed.
 	 */
 	private boolean outputErrorMessage(String error){
@@ -788,7 +791,6 @@ final public class ProtAnnotMain implements WindowListener {
         colorChooser.setSize(375, 175);
         colorChooser.setLocation((int) (screen.width * .4f), (int) (screen.height * .15f));
         colorChooser.setLayout(new BorderLayout());
-        //colorChooser.setResizable(false);
 
         final ColorTableModel model = new ColorTableModel();
         JTable table = new JTable(model);
@@ -922,11 +924,7 @@ final public class ProtAnnotMain implements WindowListener {
              */
             @Override
             public boolean isCellEditable(int row, int col) {
-                if (col > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
+				return col > 0;
             }
 
             /**

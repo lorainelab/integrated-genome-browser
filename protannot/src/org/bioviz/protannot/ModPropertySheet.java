@@ -94,7 +94,7 @@ final class ModPropertySheet extends JPanel {
         List<String[]> nv = new ArrayList<String[]>();
         for (String[] vals : name_values) {
             String content = vals[0];
-            if (!content.equals("id") && !content.equals("name")) {
+            if (!"id".equals(content) && !"name".equals(content)) {
                 nv.add(vals);
             }
         }

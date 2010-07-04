@@ -106,12 +106,12 @@ final class NormalizeXmlStrand {
 			Text resnode = (Text) residuesChildNode;
 			residues = resnode.getData();
 			try {
-				residuesStart = Integer.parseInt((residuesNode).getAttribute("start"));
-				residuesNode.setAttribute("start", Integer.valueOf(0).toString());	// normalize start of residues to 0
+				residuesStart = Integer.parseInt((residuesNode).getAttribute(ProtAnnotMain.STARTSTR));
+				residuesNode.setAttribute(ProtAnnotMain.STARTSTR, Integer.toString(0)); // normalize start of residues to 0
 
 				try {
-					int residuesEnd = Integer.parseInt((residuesNode).getAttribute("end"));
-					residuesNode.setAttribute("end", Integer.valueOf(residuesEnd - residuesStart).toString());
+					int residuesEnd = Integer.parseInt((residuesNode).getAttribute(ProtAnnotMain.ENDSTR));
+					residuesNode.setAttribute(ProtAnnotMain.ENDSTR, Integer.toString(residuesEnd - residuesStart));
 					// normalize end of residues, if end exists
 
 				} catch (Exception ex) {
@@ -139,14 +139,14 @@ final class NormalizeXmlStrand {
 				continue;
 			}
 			Element childElem = (Element) child;
-			int start = Integer.parseInt(childElem.getAttribute("start"));
-			int end = Integer.parseInt(childElem.getAttribute("end"));
+			int start = Integer.parseInt(childElem.getAttribute(ProtAnnotMain.STARTSTR));
+			int end = Integer.parseInt(childElem.getAttribute(ProtAnnotMain.ENDSTR));
 			start = start - residuesStart;
 			end = end - residuesStart;
 
 			try {
 				String strand = childElem.getAttribute("strand");
-				isNegativeStrand = strand.equals("-");
+				isNegativeStrand = "-".equals(strand);
 				if (isNegativeStrand) {
 					int newEnd = residues.length() - start;
 					start = residues.length() - end;
@@ -161,8 +161,8 @@ final class NormalizeXmlStrand {
 			} catch (Exception e) {
 				System.out.println("No strand attribute found");
 			}
-			childElem.setAttribute("start", Integer.valueOf(start).toString());
-			childElem.setAttribute("end", Integer.valueOf(end).toString());
+			childElem.setAttribute(ProtAnnotMain.STARTSTR, Integer.toString(start));
+			childElem.setAttribute(ProtAnnotMain.ENDSTR, Integer.toString(end));
 
 			normalizeNodes("exon",childElem.getChildNodes(), residuesStart, residues);
 			normalizeNodes("cds",childElem.getChildNodes(), residuesStart, residues);
@@ -178,8 +178,8 @@ final class NormalizeXmlStrand {
 				continue;
 			}
 			Element childElem = (Element) child;
-			int start = Integer.parseInt(childElem.getAttribute("start"));
-			int end = Integer.parseInt(childElem.getAttribute("end"));
+			int start = Integer.parseInt(childElem.getAttribute(ProtAnnotMain.STARTSTR));
+			int end = Integer.parseInt(childElem.getAttribute(ProtAnnotMain.ENDSTR));
 			start = start - residuesStart;
 			end = end - residuesStart;
 			if (isNegativeStrand) {
@@ -187,8 +187,8 @@ final class NormalizeXmlStrand {
 				start = residues.length() - end;
 				end = newEnd;
 			}
-			childElem.setAttribute("start", Integer.valueOf(start).toString());
-			childElem.setAttribute("end", Integer.valueOf(end).toString());
+			childElem.setAttribute(ProtAnnotMain.STARTSTR, Integer.toString(start));
+			childElem.setAttribute(ProtAnnotMain.ENDSTR, Integer.toString(end));
 		}
 	}
 

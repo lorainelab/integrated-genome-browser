@@ -60,7 +60,8 @@ final public class GenomeView extends JPanel implements MouseListener{
         FRAME2("frame2", new Color(192,192,114)),
         TRANSCRIPT("transcript", Color.black),
         DOMAIN("domain", new Color(84,168,132)),
-        EXONSUMMARY("exonsummary", Color.blue);
+        EXONSUMMARY("exonsummary", Color.blue),
+		AMINOACID("amino_acid",Color.black);
 
         private final String name;
         private final Color color;
@@ -127,6 +128,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     private static Color col_ts = COLORS.TRANSCRIPT.defaultColor();
     private static Color col_domain = COLORS.DOMAIN.defaultColor();
     private static Color col_exon_summary = COLORS.EXONSUMMARY.defaultColor();
+	private static Color col_amino_acid = COLORS.AMINOACID.defaultColor();
     private static Color col_sequence = Color.black;
     private static Color col_axis_bg = Color.lightGray;
     
@@ -299,6 +301,9 @@ final public class GenomeView extends JPanel implements MouseListener{
         }
         if (phash.containsKey(COLORS.EXONSUMMARY.toString())) {
             col_exon_summary = phash.get(COLORS.EXONSUMMARY.toString());
+        }
+		if (phash.containsKey(COLORS.AMINOACID.toString())) {
+            col_amino_acid = phash.get(COLORS.AMINOACID.toString());
         }
     }
 
@@ -597,7 +602,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 				prev_amino_end += gSpan.getLength();
 				sg.setResidues(sub_amino_acid);
 				sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-				sg.setForegroundColor(cglyph.getForegroundColor());
+				sg.setForegroundColor(col_amino_acid);
 				sg.setBackgroundColor(cglyph.getBackgroundColor());
 				aGlyph.addChild(sg);
 			}

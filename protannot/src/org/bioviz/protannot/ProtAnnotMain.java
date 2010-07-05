@@ -209,6 +209,7 @@ final public class ProtAnnotMain implements WindowListener {
             phash.put(GenomeView.COLORS.TRANSCRIPT.toString(), new Color(prefs.getInt(GenomeView.COLORS.TRANSCRIPT.toString(), GenomeView.COLORS.TRANSCRIPT.getRGB())));
             phash.put(GenomeView.COLORS.DOMAIN.toString(), new Color(prefs.getInt(GenomeView.COLORS.DOMAIN.toString(), GenomeView.COLORS.DOMAIN.getRGB())));
             phash.put(GenomeView.COLORS.EXONSUMMARY.toString(), new Color(prefs.getInt(GenomeView.COLORS.EXONSUMMARY.toString(), GenomeView.COLORS.EXONSUMMARY.getRGB())));
+			phash.put(GenomeView.COLORS.AMINOACID.toString(), new Color(prefs.getInt(GenomeView.COLORS.AMINOACID.toString(), GenomeView.COLORS.AMINOACID.getRGB())));
             updatePrefs(phash);
         } catch (Exception ex) {
             Logger.getLogger(ProtAnnotMain.class.getName()).log(Level.SEVERE, null, ex);

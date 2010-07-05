@@ -24,6 +24,7 @@ public class ReportBugAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714744");
+		String u = "https://sourceforge.net/tracker/?limit=25&group_id=129420&atid=714744&category=1343170&status=1&category=1343170";
+		GeneralUtils.browse(u);
 	}
 }

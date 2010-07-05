@@ -110,7 +110,9 @@ final public class ProtAnnotMain implements WindowListener {
     private Preferences prefs;
     // width of the user's screen
     private Dimension screen;
-
+	
+	Actions action = new Actions(this);
+	
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
 	final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
@@ -349,9 +351,14 @@ final public class ProtAnnotMain implements WindowListener {
      * @param   view_menu    Menu name to which submenus should be added.
      */
     private void addViewActions(JMenu view_menu) {
-        
-        gview.popup.add(MenuUtil.addToMenu(view_menu, new JMenuItem(new OpenBrowserAction(this.gview))));
-		gview.popup.add(MenuUtil.addToMenu(view_menu, new JMenuItem(new ZoomToFeatureAction(this.gview))));
+
+		OpenBrowserAction b_action = new OpenBrowserAction(this.gview);
+		MenuUtil.addToMenu(view_menu, new JMenuItem(b_action));
+        gview.popup.add(b_action);
+
+		ZoomToFeatureAction z_action = new ZoomToFeatureAction(this.gview);
+		MenuUtil.addToMenu(view_menu, new JMenuItem(z_action));
+		gview.popup.add(z_action);
 
 		ToggleHairlineAction h_action = new ToggleHairlineAction(this.gview);
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(h_action));
@@ -360,6 +367,8 @@ final public class ProtAnnotMain implements WindowListener {
 		ToggleHairlineLabelAction hl_action = new ToggleHairlineLabelAction(this.gview);
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(hl_action));
 		gview.popup.add(new JCheckBoxMenuItem(hl_action));
+
+		MenuUtil.addToMenu(view_menu, new JMenuItem(action.getOpenInNewWindow()));
     }
 
     /**
@@ -367,8 +376,7 @@ final public class ProtAnnotMain implements WindowListener {
      * @param   file_menu   Menu name to which submenus should be added.
      */
     private void addFileActions(final JMenu file_menu) {
-        Actions action = new Actions(this);
-		
+        
         MenuUtil.addToMenu(file_menu, new JMenuItem(action.getLoadAction()));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getAddServerAction()));
 		
@@ -437,6 +445,10 @@ final public class ProtAnnotMain implements WindowListener {
 		System.exit(0);
 	}
 
+	public GenomeView getGenomeView(){
+		return gview;
+	}
+	
 	private void setupAddServer(){
 		addServer = new JFrame("Add Server Address ...");
         addServer.setSize(250, 85);

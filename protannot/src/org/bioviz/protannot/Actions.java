@@ -1,5 +1,9 @@
 package org.bioviz.protannot;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
+import javax.swing.JPanel;
+import javax.swing.JFrame;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -107,4 +111,39 @@ class Actions {
 		quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
 		return quit_action;
 	}
+
+	AbstractAction getOpenInNewWindow() {
+		final AbstractAction newwin_action = new AbstractAction("Open table in new window") {
+
+			public void actionPerformed(ActionEvent e) {
+				final AbstractAction action = this;
+				action.setEnabled(false);
+
+				final GenomeView gview = protannot.getGenomeView();
+				final JPanel table_panel = gview.getTablePanel();
+				gview.remove(table_panel);
+				gview.updateUI();
+
+				final JFrame jframe = new JFrame();
+				jframe.setSize(table_panel.getSize());
+				jframe.addWindowListener(new WindowAdapter() {
+
+					@Override
+					public void windowClosing(WindowEvent evt) {
+						gview.add("South",table_panel);
+						gview.updateUI();
+						jframe.dispose();
+						action.setEnabled(true);
+					}
+				});
+				jframe.add(table_panel);
+				jframe.setVisible(true);
+
+			}
+		};
+	
+		return newwin_action;
+	}
 }
+
+

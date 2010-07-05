@@ -425,7 +425,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 		return showhairlineLabel;
 	}
 
-	private void updateWidget(){
+	public void updateWidget(){
 		seqmap.updateWidget();
 		axismap.updateWidget();
 	}
@@ -730,7 +730,7 @@ final public class GenomeView extends JPanel implements MouseListener{
                 SeqSymmetry grandchild = child.getChild(j);
                 SeqSpan gSpan = grandchild.getSpan(vseq);
                 GlyphI cglyph = new FillRectGlyph();
-				if(i%2 == 2)
+				if(i%2 == 0)
 					cglyph.setColor(color);
 				else
 					cglyph.setColor(color.darker());
@@ -865,6 +865,10 @@ final public class GenomeView extends JPanel implements MouseListener{
             popup.show(this, e.getX(), e.getY());
         }
     }
+
+	public JPanel getTablePanel(){
+		return table_view;
+	}
 
     /**
      * Shows properties (meta-data about selected items) in the property table

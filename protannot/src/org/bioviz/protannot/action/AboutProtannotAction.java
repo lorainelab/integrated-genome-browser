@@ -21,8 +21,9 @@ import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
 
 
 /**
- * Open a window showing information about Integrated Genome Browser.
+ * Open a window showing information about ProtAnnot.
  * @author sgblanch
+ * @author loraine
  */
 public class AboutProtannotAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
@@ -55,7 +56,7 @@ public class AboutProtannotAction extends AbstractAction {
 						"ProtAnnot is a program developed by Hiral Vora, John Nicol\n " +
 						"and Ann Loraine at the University of North Carolina at Charlotte. \n\n" +
 
-						"For more details, including license information, see:\n" +
+						"For more information, see:\n" +
 						"http://www.bioviz.org/protannot\n";
 
 		about_text.append(text);

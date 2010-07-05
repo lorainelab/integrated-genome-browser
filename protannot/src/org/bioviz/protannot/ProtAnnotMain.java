@@ -235,8 +235,8 @@ final public class ProtAnnotMain implements WindowListener {
 		frm.setTransferHandler(fdh);
 		frm.setIconImage(imageIcon);
         screen = frm.getToolkit().getScreenSize();
-        int frm_width = (int) (screen.width * .8f);
-        int frm_height = (int) (screen.height * .8f);
+        int frm_width = (int) (screen.width * .5f);
+        int frm_height = (int) (screen.height * .5f);
         frm.setSize(frm_width, frm_height);
         frm.setLocation((int) (screen.width * .1f), (int) (screen.height * .05f));
         setUpPanels();
@@ -247,6 +247,7 @@ final public class ProtAnnotMain implements WindowListener {
             setupSamplesFromServer();
 
         frm.addWindowListener(this);
+		//frm.pack();
         frm.setVisible(true);
 		String file = getArgumentValue(Arguments.FILENAME);
         if(file != null)

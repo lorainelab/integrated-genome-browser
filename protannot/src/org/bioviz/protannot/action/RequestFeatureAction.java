@@ -20,6 +20,7 @@ private static final long serialVersionUID = 1l;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		GeneralUtils.browse("http://sourceforge.net/tracker/?group_id=129420&atid=714747");
+		String u = "https://sourceforge.net/tracker/?limit=25&func=&group_id=129420&atid=714747&status=1&category=1449149";
+		GeneralUtils.browse(u);
 	}
 }

@@ -230,8 +230,12 @@ final public class GenomeView extends JPanel implements MouseListener{
         table_view = new ModPropertySheet();
         table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
 
-        this.add("Center", p);
-        this.add("South", table_view);
+
+		JSplitPane split_pane =
+				new JSplitPane(JSplitPane.VERTICAL_SPLIT,p,table_view);
+		this.add("Center",split_pane);
+        //this.add("Center", p);
+        //this.add("South", table_view);
         seqmap.addMouseListener(this);
         seqmap.setSelectionEvent(TieredNeoMap.NO_SELECTION);
 

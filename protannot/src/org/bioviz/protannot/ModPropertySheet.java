@@ -64,9 +64,9 @@ final class ModPropertySheet extends JPanel {
         col_headings[0] = "";
         for (int i = 1; i < col_headings.length; i++) {
             Properties properties = props[i - 1];
-            Object value = properties.getProperty("name");
+            Object value = properties.getProperty("Match id");
             if (value == null) {
-                value = properties.getProperty("id");
+                value = properties.getProperty("mRNA accession");
                 if (value == null) {
                     value = "";
                 }

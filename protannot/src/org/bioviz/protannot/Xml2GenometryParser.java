@@ -260,7 +260,7 @@ final class Xml2GenometryParser {
                     hitSym.addChild(spanSym);
                     SeqSpan spanSpan = spanSym.getSpan(query_seq);
                     if (hitSpan == null) {
-                        hitSpan = new SimpleMutableSeqSpan(spanSpan.getMin(), spanSpan.getMax(), query_seq); // Doubtful
+                        hitSpan = new SimpleMutableSeqSpan(spanSpan.getMin(), spanSpan.getMax(), query_seq); 
                     } else {
                         SeqUtils.encompass(hitSpan, spanSpan, (MutableSeqSpan) hitSpan);
                     }
@@ -344,7 +344,7 @@ final class Xml2GenometryParser {
         spanSym.setProperty("aa_end", prop);
         prop = (Integer.valueOf(end - start + 1)).toString();
         spanSym.setProperty("aa_length", prop);
-        SeqSpan qspan = new SimpleSeqSpan(start+query_seq.getMin(), end+query_seq.getMin(), query_seq); // Doubtful
+        SeqSpan qspan = new SimpleSeqSpan(start+query_seq.getMin(), end+query_seq.getMin(), query_seq); 
         spanSym.addSpan(qspan);
         return spanSym;
     }
@@ -520,7 +520,7 @@ final class Xml2GenometryParser {
 		BioSeq mrna = new BioSeq(mrna_id, null, mrnalength);
 		mrna.setBounds(start, start+mrnalength);
 		mrna_hash.put(mrna_id, mrna);
-		SeqSpan mrna_span = new SimpleSeqSpan(mrna.getMin(), mrna.getMax(), mrna); //Corrected
+		SeqSpan mrna_span = new SimpleSeqSpan(mrna.getMin(), mrna.getMax(), mrna); 
 		m2gSym.addSpan(mrna_span);
 		for (int i = 0; i < exoncount; i++) {
 			SimpleSymWithProps esym = (SimpleSymWithProps) m2gSym.getChild(i);
@@ -757,12 +757,12 @@ final class Xml2GenometryParser {
         TypeContainerAnnot m2pSym = new TypeContainerAnnot(elem.getAttribute(METHODSTR));
 
         SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrna);
-        BioSeq protein = new BioSeq(protein_id, null, mspan.getLength() / 3);
-		protein.setResidues(amino_acid);
-		protein.setBounds(mspan.getMin(), mspan.getMin() + mspan.getLength()/3); // Corrected
+        BioSeq protein = new BioSeq(protein_id, null, mspan.getLength());
+		protein.setResidues(processAminoAcid(amino_acid));
+		protein.setBounds(mspan.getMin(), mspan.getMin() + mspan.getLength());
 
         prot_hash.put(protein_id, protein);
-        SeqSpan pspan = new SimpleSeqSpan(protein.getMin(), protein.getMax(), protein); //Corrected
+        SeqSpan pspan = new SimpleSeqSpan(protein.getMin(), protein.getMax(), protein); 
         if (DEBUG) {
             System.err.println("protein: length = " + pspan.getLength());
         }
@@ -777,6 +777,25 @@ final class Xml2GenometryParser {
         //    (so that cds becomes mrna2protein symmetry on mrna (and on protein...)
 
     }
+
+	/**
+	 * Create String with amino acids, left-justified with spaces versus nucleotides
+	 * @param residue - String of amino acids
+	 * @return - left-justified String
+	 */
+	private static String processAminoAcid(String residue){
+		if(residue.isEmpty())
+			return residue;
+		
+		char[] amino_acid = new char[residue.length()*3];
+		for(int i=0; i < amino_acid.length; i++ ){
+			if(i % 3 == 0){
+				amino_acid[i] = residue.charAt(i/3);
+			}else
+				amino_acid[i] = ' ';
+		}
+		return String.valueOf(amino_acid);
+	}
 
 	/**
 	 * Sanity check on length of translations (the total should be divisible by 3).

@@ -1,5 +1,12 @@
 package org.bioviz.protannot;
 
+import com.affymetrix.genometryImpl.util.ConsoleView;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.BoxLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 import javax.swing.JPanel;
@@ -17,10 +24,17 @@ import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
  */
 class Actions {
 
+	private static final String APP_NAME = BUNDLE.getString("appName");
+	private static final String APP_VERSION_FULL = MessageFormat.format(
+	                        BUNDLE.getString("appVersionFull"),
+	                        APP_NAME);
+
 	private final ProtAnnotMain protannot;
+	private final GenomeView gview;
 
 	Actions(ProtAnnotMain protannot){
 		this.protannot = protannot;
+		this.gview = protannot.getGenomeView();
 	}
 
 	AbstractAction getLoadAction(){
@@ -112,6 +126,32 @@ class Actions {
 		return quit_action;
 	}
 
+	AbstractAction getToggleHairlineAction(){
+		AbstractAction toggle_hairline_action = new AbstractAction(BUNDLE.getString("toggleHairline")){
+
+            public void actionPerformed(ActionEvent e) {
+                protannot.getGenomeView().toggleHairline();
+            }
+        };
+        toggle_hairline_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_H);
+		toggle_hairline_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("toggleHairlineTip"));
+		toggle_hairline_action.putValue(AbstractAction.SELECTED_KEY, true);
+		return toggle_hairline_action;
+	}
+
+	AbstractAction getToggleHairlineLabelAction(){
+		AbstractAction toggle_label_action = new AbstractAction(BUNDLE.getString("toggleHairlineLabel")){
+
+            public void actionPerformed(ActionEvent e) {
+                protannot.getGenomeView().toggleHairlineLabel();
+            }
+        };
+        toggle_label_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_L);
+		toggle_label_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("toggleHairlineLabelTip"));
+		toggle_label_action.putValue(AbstractAction.SELECTED_KEY, true);
+		return toggle_label_action;
+	}
+
 	AbstractAction getOpenInNewWindow() {
 		final AbstractAction newwin_action = new AbstractAction("Open table in new window") {
 
@@ -119,7 +159,6 @@ class Actions {
 				final AbstractAction action = this;
 				action.setEnabled(false);
 
-				final GenomeView gview = protannot.getGenomeView();
 				final JPanel table_panel = gview.getTablePanel();
 				gview.remove(table_panel);
 				gview.updateUI();
@@ -144,6 +183,89 @@ class Actions {
 	
 		return newwin_action;
 	}
+
+	AbstractAction getAboutAction(){
+		
+		final JFrame frm = protannot.getFrame();
+		AbstractAction about_action = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					MessageFormat.format(
+						BUNDLE.getString("about"),
+						APP_NAME)),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif")){
+
+            public void actionPerformed(ActionEvent e) {
+               JPanel message_pane = new JPanel();
+				message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
+				JTextArea about_text = new JTextArea();
+				about_text.setEditable(false);
+
+				String text = APP_VERSION_FULL + "\n\n"
+						+ "ProtAnnot implements many useful features designed for \n"
+						+ "understanding how alternative splicing, alternative promoters, \n"
+						+ "alternative promoters, and alternative polyadenylation can \n"
+						+ "affect the sequence and function of proteins encoded \n"
+						+ "by diverse variants expressed from the same gene. \n\n"
+						+ "ProtAnnot is a program developed by Hiral Vora, John Nicol\n "
+						+ "and Ann Loraine at the University of North Carolina at Charlotte. \n\n"
+						+ "For more information, see:\n"
+						+ "http://www.bioviz.org/protannot\n";
+
+				about_text.append(text);
+				message_pane.add(new JScrollPane(about_text));
+
+				final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
+						JOptionPane.DEFAULT_OPTION);
+				final JDialog dialog = pane.createDialog(frm, MessageFormat.format(BUNDLE.getString("about"), APP_NAME));
+				dialog.setVisible(true);
+            }
+        };
+		about_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
+		return about_action;
+	}
+
+	AbstractAction getReportBugAction(){
+		AbstractAction report_bug_action = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("reportABug"))){
+
+            public void actionPerformed(ActionEvent e) {
+                String u = "https://sourceforge.net/tracker/?limit=25&group_id=129420&atid=714744&category=1343170&status=1&category=1343170";
+				GeneralUtils.browse(u);
+            }
+        };
+		report_bug_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_R);
+		return report_bug_action;
+	}
+
+	AbstractAction getFeatureAction(){
+		AbstractAction feature_acton = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("requestAFeature"))){
+
+            public void actionPerformed(ActionEvent e) {
+				String u = "https://sourceforge.net/tracker/?limit=25&func=&group_id=129420&atid=714747&status=1&category=1449149";
+				GeneralUtils.browse(u);
+            }
+        };
+		feature_acton.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_F);
+		return feature_acton;
+	}
+
+	AbstractAction getShowConsoleAction(){
+		AbstractAction show_console_action = new AbstractAction(MessageFormat.format(
+					BUNDLE.getString("menuItemHasDialog"),
+					BUNDLE.getString("showConsole")),
+				MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif")){
+
+            public void actionPerformed(ActionEvent e) {
+				ConsoleView.showConsole(APP_NAME);
+            }
+        };
+		show_console_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_C);
+		return show_console_action;
+	}
+
 }
 
 

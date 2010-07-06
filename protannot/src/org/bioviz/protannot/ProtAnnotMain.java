@@ -4,10 +4,6 @@
  */
 package org.bioviz.protannot;
 
-import org.bioviz.protannot.action.OpenBrowserAction;
-import org.bioviz.protannot.action.ToggleHairlineAction;
-import org.bioviz.protannot.action.ToggleHairlineLabelAction;
-import org.bioviz.protannot.action.ZoomToFeatureAction;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -73,10 +69,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JTextField;
 import javax.swing.TransferHandler;
-import org.bioviz.protannot.action.AboutProtannotAction;
-import org.bioviz.protannot.action.ReportBugAction;
-import org.bioviz.protannot.action.RequestFeatureAction;
-import org.bioviz.protannot.action.ShowConsoleAction;
 
 /**
  * @see     com.affymetrix.genometryImpl.BioSeq
@@ -361,11 +353,11 @@ final public class ProtAnnotMain implements WindowListener {
 		MenuUtil.addToMenu(view_menu, new JMenuItem(z_action));
 		gview.popup.add(z_action);
 
-		ToggleHairlineAction h_action = new ToggleHairlineAction(this.gview);
+		AbstractAction h_action = action.getToggleHairlineAction();
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(h_action));
 		gview.popup.add(new JCheckBoxMenuItem(h_action));
 
-		ToggleHairlineLabelAction hl_action = new ToggleHairlineLabelAction(this.gview);
+		AbstractAction hl_action = action.getToggleHairlineLabelAction();
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(hl_action));
 		gview.popup.add(new JCheckBoxMenuItem(hl_action));
 
@@ -402,10 +394,10 @@ final public class ProtAnnotMain implements WindowListener {
 	 * @param help_menu Menu name to which submenus should be added.
 	 */
 	private void addHelpActions(final JMenu help_menu){
-        MenuUtil.addToMenu(help_menu, new JMenuItem(new AboutProtannotAction(frm)));
-		MenuUtil.addToMenu(help_menu, new JMenuItem(new ReportBugAction()));
-		MenuUtil.addToMenu(help_menu, new JMenuItem(new RequestFeatureAction()));
-		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
+        MenuUtil.addToMenu(help_menu, new JMenuItem(action.getAboutAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(action.getReportBugAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(action.getFeatureAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(action.getShowConsoleAction()));
 	}
 
 	public void colorChooser(){
@@ -789,6 +781,14 @@ final public class ProtAnnotMain implements WindowListener {
             prefs.putInt(key, hash.get(key).getRGB());
         }
     }
+
+	/**
+	 * 
+	 * @return Returns protannot frame.
+	 */
+	public JFrame getFrame(){
+		return frm;
+	}
 
     /**
      * Sets up interface to choose color preferences.

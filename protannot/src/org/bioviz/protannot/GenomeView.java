@@ -15,6 +15,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.LabelGlyph;
+import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
@@ -602,7 +604,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 		String amino_acid = null;
 
 		try{
-			amino_acid = processAminoAcid(protein.getResidues(0, protein.getLength()));
+			amino_acid = protein.getResidues(0, protein.getLength());
 		}catch(Exception ex){
 			System.out.println("*** Warning: No amino acid found ");
 		}
@@ -617,21 +619,6 @@ final public class GenomeView extends JPanel implements MouseListener{
 		displayAssociatedmRNAforProtein(protein, path2view, annot2mrna, tier);
     }
 
-	/**
-	 * Create String with amino acids, left-justified with spaces versus nucleotides
-	 * @param residue - String of amino acids
-	 * @return - left-justified String
-	 */
-	private static String processAminoAcid(String residue){
-		char[] amino_acid = new char[residue.length()*3];
-		for(int i=0; i < amino_acid.length; i++ ){
-			if(i % 3 == 0){
-				amino_acid[i] = residue.charAt(i/3);
-			}else
-				amino_acid[i] = ' ';
-		}
-		return String.valueOf(amino_acid);
-	}
 
 	/**
 	 * Add glyphs for CDS regions.
@@ -760,11 +747,18 @@ final public class GenomeView extends JPanel implements MouseListener{
             for (int j = 0; j < count2; j++) {
                 SeqSymmetry grandchild = child.getChild(j);
                 SeqSpan gSpan = grandchild.getSpan(vseq);
-                GlyphI cglyph = new FillRectGlyph();
+                LabelledRectGlyph cglyph = new LabelledRectGlyph();
 				if(i%2 == 0)
 					cglyph.setColor(color);
 				else
 					cglyph.setColor(color.darker());
+
+				String spanno = "Span " + String.valueOf(i+1) + " of ";
+				String interpro = (String) ((SymWithProps)annot2protein).getProperty("InterPro Name");
+				if(interpro != null){
+					spanno += interpro;
+				}
+				cglyph.setText(spanno);
                 cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
                 aGlyph.addChild(cglyph);
                 seqmap.setDataModel(cglyph, original_child);

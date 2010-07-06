@@ -767,11 +767,13 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		Application.getSingleton().addNotLockedUpMsg("Loading features for " + versionName);
-
-		createFeaturesTable();
-		loadWholeRangeFeatures(versionName);
-		Application.getSingleton().removeNotLockedUpMsg("Loading features for " + versionName);
+		try {
+			Application.getSingleton().addNotLockedUpMsg("Loading features for " + versionName);
+			createFeaturesTable();
+			loadWholeRangeFeatures(versionName);
+		} finally {
+			Application.getSingleton().removeNotLockedUpMsg("Loading features for " + versionName);
+		}
 	}
 
 

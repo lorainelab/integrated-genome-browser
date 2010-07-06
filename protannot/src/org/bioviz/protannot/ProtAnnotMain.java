@@ -103,7 +103,7 @@ final public class ProtAnnotMain implements WindowListener {
     // width of the user's screen
     private Dimension screen;
 	
-	Actions action = new Actions(this);
+	Actions action;
 	
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
@@ -260,6 +260,7 @@ final public class ProtAnnotMain implements WindowListener {
         Container cpane = frm.getContentPane();
         cpane.setLayout(new BorderLayout());
         gview = new GenomeView(prefs_hash);
+		action = new Actions(this);
         cpane.add("Center", gview);
         print_panel = new ComponentPagePrinter(gview);
     }
@@ -345,11 +346,11 @@ final public class ProtAnnotMain implements WindowListener {
      */
     private void addViewActions(JMenu view_menu) {
 
-		OpenBrowserAction b_action = new OpenBrowserAction(this.gview);
+		AbstractAction b_action = action.getOpenInBrowserAction();
 		MenuUtil.addToMenu(view_menu, new JMenuItem(b_action));
         gview.popup.add(b_action);
 
-		ZoomToFeatureAction z_action = new ZoomToFeatureAction(this.gview);
+		AbstractAction z_action = action.getZoomToFeatureAction();
 		MenuUtil.addToMenu(view_menu, new JMenuItem(z_action));
 		gview.popup.add(z_action);
 

@@ -1,5 +1,12 @@
 package org.bioviz.protannot;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import java.util.List;
+import java.util.Properties;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import javax.swing.JDialog;
@@ -19,7 +26,7 @@ import javax.swing.AbstractAction;
 import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
 
 /**
- *
+ * 
  * @author hiralv
  */
 class Actions {
@@ -124,6 +131,87 @@ class Actions {
         quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
 		quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
 		return quit_action;
+	}
+
+	/**
+	* Asks ProtAnnot to open a browser window showing info
+	* on the currently selected Glyph.
+	*/
+	AbstractAction getOpenInBrowserAction(){
+
+		final StringBuilder url = new StringBuilder();
+		
+		final AbstractAction open_browser_action = new AbstractAction(BUNDLE.getString("openBrowser"),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif")){
+			
+			public void actionPerformed(ActionEvent e) {
+				if (url.length() > 0) {
+					GeneralUtils.browse(url.toString());
+				} else {
+					Reporter.report("No URL associated with selected item",
+							null, false, false, true);
+				}
+			}
+		};
+
+		open_browser_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_B);
+		open_browser_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("openBrowserTip"));
+        open_browser_action.setEnabled(false);
+
+		MouseListener ml = new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (!(e instanceof NeoMouseEvent)) {
+					return;
+				}
+				Properties[] props = gview.getProperties();
+				if (props != null && props.length == 1) {
+					url.delete(0, url.length());
+					url.append(build_url(props[0]));
+				} else {
+					url.delete(0, url.length());
+				}
+				open_browser_action.setEnabled(url.length() > 0 ? true : false);
+			}
+		};
+		gview.addMapListener(ml);
+		
+		return open_browser_action;
+	}
+
+	/**
+	* Asks ProtAnnot to center on the location of the
+	* currently selected Glyph.
+	*/
+	AbstractAction getZoomToFeatureAction(){
+
+
+		final AbstractAction zoom_to_feature_action = new AbstractAction(BUNDLE.getString("zoomToFeature"),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif")) {
+
+			public void actionPerformed(ActionEvent e) {
+				gview.zoomToSelection();
+			}
+		};
+		zoom_to_feature_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_Z);
+		zoom_to_feature_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("zoomToFeatureTip"));
+		zoom_to_feature_action.setEnabled(false);
+
+		MouseListener ml = new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (!(e instanceof NeoMouseEvent)) {
+					return;
+				}
+				List<GlyphI> selected = gview.getSelected();
+				zoom_to_feature_action.setEnabled(selected != null && !selected.isEmpty());
+			}
+		};
+		gview.addMapListener(ml);
+
+		return zoom_to_feature_action;
 	}
 
 	AbstractAction getToggleHairlineAction(){
@@ -266,6 +354,31 @@ class Actions {
 		return show_console_action;
 	}
 
+	 /**
+     * Builds url of selected glyphs
+     * @param p Property of the selected glyph
+     * @return  String of build url.
+     */
+    private static String build_url(Properties p) {
+        String val = p.getProperty("URL");
+        if (val != null) {
+            return val;
+        }
+        val = p.getProperty("interpro_id");
+        if (val != null) {
+            return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + val;
+        }
+        val = p.getProperty("exp_ngi");
+        if (val != null) {
+            if (val.startsWith("gi:")) {
+                val = val.substring(3);
+            }
+
+            return "http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=Retrieve&db=nucleotide&list_uids=" + val + "&dopt=GenBank";
+        } else {
+            return null;
+        }
+    }
 }
 
 

@@ -56,12 +56,14 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.lang.String;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
@@ -775,11 +777,9 @@ final public class ProtAnnotMain implements WindowListener {
     private void updatePrefs(Map<String,Color> hash)
     {
         prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotMain.class);
-        Iterator<String> e = hash.keySet().iterator();
-
-        while (e.hasNext()) {
-            String key = e.next();
-            prefs.putInt(key, hash.get(key).getRGB());
+        
+        for(Entry<String, Color> entry : hash.entrySet()) {
+            prefs.putInt(entry.getKey(), entry.getValue().getRGB());
         }
     }
 

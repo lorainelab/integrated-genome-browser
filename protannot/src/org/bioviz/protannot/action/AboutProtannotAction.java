@@ -28,6 +28,9 @@ import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
 public class AboutProtannotAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
 	private static final String APP_NAME = BUNDLE.getString("appName");
+	private static final String APP_VERSION_FULL = MessageFormat.format(
+			BUNDLE.getString("appVersionFull"),
+			APP_NAME);
 	private final JFrame frm;
 	public AboutProtannotAction(JFrame frm) {
 		super(MessageFormat.format(
@@ -46,7 +49,7 @@ public class AboutProtannotAction extends AbstractAction {
 		JTextArea about_text = new JTextArea();
 		about_text.setEditable(false);
 
-		String text = APP_NAME + "\n\n" +
+		String text = APP_VERSION_FULL + "\n\n" +
 						"ProtAnnot implements many useful features designed for \n" +
 						"understanding how alternative splicing, alternative promoters, \n" +
 						"alternative promoters, and alternative polyadenylation can \n" +

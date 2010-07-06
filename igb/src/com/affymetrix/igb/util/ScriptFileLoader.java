@@ -26,8 +26,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 import org.freehep.util.export.ExportFileType;
 
 /**
@@ -74,30 +77,42 @@ public class ScriptFileLoader {
 		return null;
 	}
 
-	public static void doActions(String batchFileStr) {
-		if (batchFileStr == null || batchFileStr.length() == 0) {
-			Logger.getLogger(ScriptFileLoader.class.getName()).log(
-					Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
-			return;
-		}
-		// A response file was requested.  Run response file parser, and ignore any other parameters.
-		File f = new File(batchFileStr);
-		if (!f.exists()) {
-			URI uri = URI.create(batchFileStr);
-			if (uri == null) {
-				Logger.getLogger(ScriptFileLoader.class.getName()).log(
-					Level.SEVERE, "Not a valid script file: {0}", batchFileStr);
-				return;
-			}
-			f = LocalUrlCacher.convertURIToFile(uri);
-		}
-		if (f == null || !f.exists()) {
-			Logger.getLogger(ScriptFileLoader.class.getName()).log(
-					Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
-			return;
-		}
-		
-		ScriptFileLoader.doActions(f);
+	/**
+	 * Done in a thread to avoid GUI lockup.
+	 * @param batchFileStr
+	 */
+	public static void doActions(final String batchFileStr) {
+		Executor vexec = Executors.newSingleThreadExecutor();
+			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+				protected Void doInBackground() throws Exception {
+					if (batchFileStr == null || batchFileStr.length() == 0) {
+						Logger.getLogger(ScriptFileLoader.class.getName()).log(
+								Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
+						return null;
+					}
+					// A response file was requested.  Run response file parser, and ignore any other parameters.
+					File f = new File(batchFileStr);
+					if (!f.exists()) {
+						URI uri = URI.create(batchFileStr);
+						if (uri == null) {
+							Logger.getLogger(ScriptFileLoader.class.getName()).log(
+									Level.SEVERE, "Not a valid script file: {0}", batchFileStr);
+							return null;
+						}
+						f = LocalUrlCacher.convertURIToFile(uri);
+					}
+					if (f == null || !f.exists()) {
+						Logger.getLogger(ScriptFileLoader.class.getName()).log(
+								Level.SEVERE, "Couldn''t find response file: {0}", batchFileStr);
+						return null;
+					}
+
+					ScriptFileLoader.doActions(f);
+					return null;
+				}
+			};
+
+			vexec.execute(worker);
 	}
 
 	/**
@@ -129,10 +144,15 @@ public class ScriptFileLoader {
 				if(line.startsWith("#"))
 					continue;
 
-				Logger.getLogger(ScriptFileLoader.class.getName()).log(
-						Level.INFO, "line: {0}", line);
-				doSingleAction(line);
-				Thread.sleep(1000);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
+				try {
+					IGB.getSingleton().addNotLockedUpMsg("Executing script line: " + line);
+					Logger.getLogger(ScriptFileLoader.class.getName()).log(
+							Level.INFO, "line: {0}", line);
+					doSingleAction(line);
+					Thread.sleep(1000);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
+				} finally {
+					IGB.getSingleton().removeNotLockedUpMsg("Executing script line: " + line);
+				}
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.SEVERE, null, ex);

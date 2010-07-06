@@ -967,10 +967,12 @@ final public class GenomeView extends JPanel implements MouseListener{
             List<GlyphI> prev_glyphs,
             boolean multiselect) {
         List<GlyphI> candidates = new ArrayList<GlyphI>();
-        filterGlyphs(candidates, clicked_glyphs);
+        
         if (multiselect) {
             filterGlyphs(candidates, prev_glyphs);
         }
+		filterGlyphs(candidates, clicked_glyphs);
+		
         List<GlyphI> to_return = new ArrayList<GlyphI>();
         GlyphI champion = null;
         Rectangle2D candidate_box;

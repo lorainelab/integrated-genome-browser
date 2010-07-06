@@ -261,7 +261,6 @@ final public class GenomeView extends JPanel implements MouseListener{
 		hairline.setLabeled(showhairlineLabel);
     }
 
-    
     /**
      * Initialized GenomeView colors with preferences provided in the parameter phash
      * @param   phash   Map providing color preferences for GenomeView
@@ -316,10 +315,6 @@ final public class GenomeView extends JPanel implements MouseListener{
         seqmap.addMouseListener(listener);
         axismap.addMouseListener(listener);
     }
-
-	/**
-	 * Ann's note: Please explain what parameter is_new does
-	 */
 
     /**
      * Set the data model - the BioSeq object - that the application
@@ -446,15 +441,10 @@ final public class GenomeView extends JPanel implements MouseListener{
         table_view.setTitle(title);
     }
 
-	/**
-	 * Ann's note:
-	 * Please explain what path2view represents.
-	 */
-
     /**
      * Make a Glyph to represent the given mRNA object.
-     * @param   mrna2genome	a data model represented an mRNA, a set of exons
-     * @param   path2view	Ann's note: please explain what this is
+     * @param   mrna2genome	a data model representing an mRNA, a set of exons
+     * @param   path2view	"view seq" symmetry enclosed in an array
      * @see     com.affymetrix.genometryImpl.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
@@ -476,71 +466,114 @@ final public class GenomeView extends JPanel implements MouseListener{
         copyToMutable(mrna2genome, annot2genome);
 
         SeqUtils.transformSymmetry(annot2genome, path2view);
-        GlyphI tGlyph = new LineContainerGlyph();
-        seqmap.setDataModel(tGlyph, mrna2genome);
-        SeqSpan tSpan = annot2genome.getSpan(vseq);
-        tGlyph.setCoords(tSpan.getMin(), 0, tSpan.getLength(), 20);
-        tGlyph.setColor(col_ts);
-        for (int i = 0; i < childcount; i++) {
-            SeqSymmetry exon2genome = annot2genome.getChild(i);
-            SeqSpan gSpan = exon2genome.getSpan(vseq);
-            GlyphI cglyph = new OutlineRectGlyph();
-            seqmap.setDataModel(cglyph, exon2genome);
-            // can't give this a type and therefore signal
-            // to the selection logic that this is first class selectable
-            // object
-            // so let's put it in a list
-            exonList.add(exon2genome);
-            cglyph.setColor(col_ts);
-            cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-            exonGlyphs.add(cglyph);
-            tGlyph.addChild(cglyph);
-            //  testing display of "exon segments" for transcripts that have
-            //     base inserts relative to the genomic sequence
-            //  haven't dealt with display of base deletions in transcript relative to genomic yet
-            //  if exon is segmented by inserts, then it will have children
-            //     that specify this segmentation
-            for (int seg_index = 0; seg_index < exon2genome.getChildCount(); seg_index++) {
-                    SeqSymmetry eseg2genome = exon2genome.getChild(seg_index);
-                    SeqSpan seg_gspan = eseg2genome.getSpan(vseq);
-                    if (seg_gspan.getLength() == 0) {  // only mark the inserts (those whose genomic extent is zero
-                        GlyphI segGlyph = new OutlineRectGlyph();
-                        segGlyph.setColor(col_bg);
-                        segGlyph.setCoords(seg_gspan.getMin(), 0, seg_gspan.getLength(), 25);
-                        tGlyph.addChild(segGlyph);
-                    }
-                }
-        }
+		GlyphI tGlyph = glyphifyExons(mrna2genome, annot2genome, childcount);
         tier.addChild(tGlyph);
+		BioSeq mrna = SeqUtils.getOtherSpan(mrna2genome, mrna2genome.getSpan(gseq)).getBioSeq();
+		displayAssociatedmRNAforTranscript(mrna, path2view, mrna2genome, tier, tGlyph);
+    }
 
-        // now follow symmetry link to annotated mrna seqs, map those annotations to genomic
-        //    coords, and display
-        BioSeq mrna = SeqUtils.getOtherSpan(mrna2genome, mrna2genome.getSpan(gseq)).getBioSeq();
-        if (mrna != null) {
+	/**
+	 * Create glyphs for exons.
+	 * @param mrna2genome
+	 * @param annot2genome
+	 * @param childcount - exon count
+	 * @return
+	 */
+	private GlyphI glyphifyExons(
+			SeqSymmetry mrna2genome, MutableSeqSymmetry annot2genome, int childcount) {
+		GlyphI tGlyph = new LineContainerGlyph();
+		seqmap.setDataModel(tGlyph, mrna2genome);
+		SeqSpan tSpan = annot2genome.getSpan(vseq);
+		tGlyph.setCoords(tSpan.getMin(), 0, tSpan.getLength(), 20);
+		tGlyph.setColor(col_ts);
+		for (int i = 0; i < childcount; i++) {
+			SeqSymmetry exon2genome = annot2genome.getChild(i);
+			SeqSpan gSpan = exon2genome.getSpan(vseq);
+			GlyphI cglyph = new OutlineRectGlyph();
+			seqmap.setDataModel(cglyph, exon2genome);
+			// can't give this a type and therefore signal
+			// to the selection logic that this is first class selectable
+			// object
+			// so let's put it in a list
+			exonList.add(exon2genome);
+			cglyph.setColor(col_ts);
+			cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+			exonGlyphs.add(cglyph);
+			tGlyph.addChild(cglyph);
+			//  testing display of "exon segments" for transcripts that have
+			//     base inserts relative to the genomic sequence
+			//  haven't dealt with display of base deletions in transcript relative to genomic yet
+			//  if exon is segmented by inserts, then it will have children
+			//     that specify this segmentation
+			for (int seg_index = 0; seg_index < exon2genome.getChildCount(); seg_index++) {
+				SeqSymmetry eseg2genome = exon2genome.getChild(seg_index);
+				SeqSpan seg_gspan = eseg2genome.getSpan(vseq);
+				if (seg_gspan.getLength() == 0) {
+					// only mark the inserts (those whose genomic extent is zero
+					GlyphI segGlyph = new OutlineRectGlyph();
+					segGlyph.setColor(col_bg);
+					segGlyph.setCoords(seg_gspan.getMin(), 0, seg_gspan.getLength(), 25);
+					tGlyph.addChild(segGlyph);
+				}
+			}
+		}
+		return tGlyph;
+	}
+
+
+	// now follow symmetry link to annotated mrna seqs, map those annotations to genomic
+	//    coords, and display
+	private void displayAssociatedmRNAforTranscript(
+			BioSeq mrna, SeqSymmetry[] path2view, SeqSymmetry mrna2genome, MapTierGlyph tier, GlyphI tGlyph) {
+		if (mrna != null) {
 			if (DEBUG_TRANSCRIPT_ANNOTS) {
 				System.out.println(mrna.getID() + ",  " + mrna);
 			}
-            SeqSymmetry[] new_path2view = new SeqSymmetry[path2view.length + 1];
-            System.arraycopy(path2view, 0, new_path2view, 1, path2view.length);
-            new_path2view[0] = mrna2genome;
-            BioSeq amrna = mrna;
-            int acount = amrna.getAnnotationCount();
-            for (int i = 0; i < acount; i++) {
-                SeqSymmetry annot2mrna = amrna.getAnnotation(i);
-                if (annot2mrna != mrna2genome) {
-                    glyphifyTranscriptAnnots(amrna, annot2mrna, new_path2view, tier, tGlyph);
-                }
-            }
-        }
-    }
+			SeqSymmetry[] new_path2view = new SeqSymmetry[path2view.length + 1];
+			System.arraycopy(path2view, 0, new_path2view, 1, path2view.length);
+			new_path2view[0] = mrna2genome;
+			int acount = mrna.getAnnotationCount();
+			for (int i = 0; i < acount; i++) {
+				SeqSymmetry annot2mrna = mrna.getAnnotation(i);
+				if (annot2mrna != mrna2genome) {
+					glyphifyTranscriptAnnots(mrna, annot2mrna, new_path2view, tier, tGlyph);
+				}
+			}
+		}
+	}
+
+
+	// now follow symmetry link to annotated mrna seqs, map those annotations to genomic
+	//    coords, and display
+	// consider merging with displayAssociatedmRNAforTranscript
+	private void displayAssociatedmRNAforProtein(
+			BioSeq protein, SeqSymmetry[] path2view, SeqSymmetry annot2mrna, MapTierGlyph tier) {
+		if (protein != null) {
+			if (DEBUG_PROTEIN_ANNOTS) {
+				System.out.println(protein.getID() + ",  " + protein);
+			}
+			//   new path info is added to _beginning_ of path
+			SeqSymmetry[] new_path2view = new SeqSymmetry[path2view.length + 1];
+			System.arraycopy(path2view, 0, new_path2view, 1, path2view.length);
+			new_path2view[0] = annot2mrna;
+			int acount = protein.getAnnotationCount();
+			for (int i = 0; i < acount; i++) {
+				SeqSymmetry annot2protein = protein.getAnnotation(i);
+				if (annot2protein != annot2mrna) {
+					glyphifyProteinAnnots(annot2protein, new_path2view, tier);
+				}
+			}
+		}
+	}
+
 
     /**
-     * Create Glyphs that represent each transcript.
-     * @param   amrna
+     * Create glyphs that represent each transcript.
+     * @param   mrna
      * @param   annot2mrna
      * @param   path2view
-     * @param   tier
-     * @param   trans_parent
+     * @param   tier - tier where glyphs will be added
+     * @param   trans_parent - parent glyph
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.SeqSymmetry
      * @see     com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
@@ -549,13 +582,13 @@ final public class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genometryImpl.SeqSpan
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      */
-    private void glyphifyTranscriptAnnots(BioSeq amrna,
+    private void glyphifyTranscriptAnnots(BioSeq mrna,
             SeqSymmetry annot2mrna, SeqSymmetry[] path2view,
             MapTierGlyph tier, GlyphI trans_parent) {
         if (DEBUG_TRANSCRIPT_ANNOTS) {
             SeqUtils.printSymmetry(annot2mrna);
         }
-        SeqSpan mrna_span = annot2mrna.getSpan(amrna);
+        SeqSpan mrna_span = annot2mrna.getSpan(mrna);
         MutableSeqSymmetry annot2genome = new SimpleMutableSeqSymmetry();
         copyToMutable(annot2mrna, annot2genome);
         
@@ -609,34 +642,14 @@ final public class GenomeView extends JPanel implements MouseListener{
 			
         }
         trans_parent.addChild(aGlyph);
-
-        // now follow symmetry link to annotated mrna seqs, map those annotations to genomic
-        //    coords, and display
-        if (protein != null) {
-			if (DEBUG_PROTEIN_ANNOTS) {
-				System.out.println(protein.getID() + ",  " + protein);
-			}
-            SeqSymmetry prot2mrna = annot2mrna;
-
-            // construct a new path which includes entire previous path plus prot2mrna
-            //   new path info is added to _beginning_ of path
-            // hmm, this is starting to look like a good argument for some sort of List/Vector/Stack
-            //   for the path instead of arrays...
-            SeqSymmetry[] new_path2view = new SeqSymmetry[path2view.length + 1];
-            System.arraycopy(path2view, 0, new_path2view, 1, path2view.length);
-            new_path2view[0] = prot2mrna;
-
-            BioSeq aprotein = protein;
-            int acount = aprotein.getAnnotationCount();
-            for (int i = 0; i < acount; i++) {
-                SeqSymmetry annot2protein = aprotein.getAnnotation(i);
-                if (annot2protein != prot2mrna) {
-                    glyphifyProteinAnnots(aprotein, annot2protein, new_path2view, tier);
-                }
-            }
-        }
+		displayAssociatedmRNAforProtein(protein, path2view, annot2mrna, tier);
     }
 
+	/**
+	 * Create String with amino acids, left-justified with spaces versus nucleotides
+	 * @param residue - String of amino acids
+	 * @return - left-justified String
+	 */
 	private static String processAminoAcid(String residue){
 		char[] amino_acid = new char[residue.length()*3];
 		for(int i=0; i < amino_acid.length; i++ ){
@@ -680,9 +693,9 @@ final public class GenomeView extends JPanel implements MouseListener{
         }  // genome_codon_start = 2
     }
 
+
     /**
      *
-     * @param   protein
      * @param   annot2protein
      * @param   path2view
      * @param   tier
@@ -695,7 +708,7 @@ final public class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genometryImpl.util.SeqUtils
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
-    private void glyphifyProteinAnnots(BioSeq protein,
+    private void glyphifyProteinAnnots(
             SeqSymmetry annot2protein,
             SeqSymmetry[] path2view,
             MapTierGlyph tier) {

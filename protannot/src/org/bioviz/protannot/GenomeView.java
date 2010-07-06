@@ -571,7 +571,7 @@ final public class GenomeView extends JPanel implements MouseListener{
      * Create glyphs that represent each transcript.
      * @param   mrna
      * @param   annot2mrna
-     * @param   path2view
+     * @param   path2view - "view seq" symmetry enclosed in an array appended with mrna2genome
      * @param   tier - tier where glyphs will be added
      * @param   trans_parent - parent glyph
      * @see     com.affymetrix.genometryImpl.BioSeq
@@ -612,35 +612,7 @@ final public class GenomeView extends JPanel implements MouseListener{
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(col_ts);
         seqmap.setDataModel(aGlyph, annot2mrna);
-        int cdsCount = annot2genome.getChildCount();
-		int prev_amino_end = 0;
-        for (int j = 0; j < cdsCount; j++) {
-            SeqSymmetry cds2genome = annot2genome.getChild(j);
-            SeqSpan gSpan = cds2genome.getSpan(vseq);
-            GlyphI cglyph = new FillRectGlyph();
-
-            // coloring based on frame
-            SeqSpan protSpan = cds2genome.getSpan(protein);
-
-            colorByFrame(cglyph, protSpan, gSpan);
-            cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-
-			aGlyph.addChild(cglyph);
-			
-			if(amino_acid != null){
-				SequenceGlyph sg = new ColoredResiduesGlyph(false);
-				int start = prev_amino_end;
-				int end = start + gSpan.getLength();
-				String sub_amino_acid = amino_acid.substring(start, end);
-				prev_amino_end += gSpan.getLength();
-				sg.setResidues(sub_amino_acid);
-				sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-				sg.setForegroundColor(col_amino_acid);
-				sg.setBackgroundColor(cglyph.getBackgroundColor());
-				aGlyph.addChild(sg);
-			}
-			
-        }
+		glyphifyCDSs(annot2genome, protein, aGlyph, amino_acid, vseq);
         trans_parent.addChild(aGlyph);
 		displayAssociatedmRNAforProtein(protein, path2view, annot2mrna, tier);
     }
@@ -660,6 +632,43 @@ final public class GenomeView extends JPanel implements MouseListener{
 		}
 		return String.valueOf(amino_acid);
 	}
+
+	/**
+	 * Add glyphs for CDS regions.
+	 * @param annot2genome
+	 * @param protein
+	 * @param aGlyph parent glyph
+	 * @param amino_acid String representing amino acids; visible when zoomed in
+	 * @param vseq
+	 */
+	private static void glyphifyCDSs(
+			MutableSeqSymmetry annot2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
+		int cdsCount = annot2genome.getChildCount();
+		int prev_amino_end = 0;
+		for (int j = 0; j < cdsCount; j++) {
+			SeqSymmetry cds2genome = annot2genome.getChild(j);
+			SeqSpan gSpan = cds2genome.getSpan(vseq);
+			GlyphI cglyph = new FillRectGlyph();
+			// coloring based on frame
+			SeqSpan protSpan = cds2genome.getSpan(protein);
+			colorByFrame(cglyph, protSpan, gSpan);
+			cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+			aGlyph.addChild(cglyph);
+			if (amino_acid != null) {
+				SequenceGlyph sg = new ColoredResiduesGlyph(false);
+				int start = prev_amino_end;
+				int end = start + gSpan.getLength();
+				String sub_amino_acid = amino_acid.substring(start, end);
+				prev_amino_end += gSpan.getLength();
+				sg.setResidues(sub_amino_acid);
+				sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+				sg.setForegroundColor(col_amino_acid);
+				sg.setBackgroundColor(cglyph.getBackgroundColor());
+				aGlyph.addChild(sg);
+			}
+		}
+	}
+
 	
     /**
      * Colors by exon frame relative to genomic coordinates
@@ -697,7 +706,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     /**
      *
      * @param   annot2protein
-     * @param   path2view
+     * @param   path2view - "view seq" symmetry enclosed in an array appended with annot2mrna
      * @param   tier
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.SeqSymmetry
@@ -783,7 +792,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Sets the axismap. Sets range,background and foreground color.
+     * Sets the axis map. Sets range,background and foreground color.
      * @see     com.affymetrix.genoviz.glyph.SequenceGlyph
      */
     private void setupAxisMap() { 
@@ -1035,7 +1044,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Return the Properties for whatever's currently selected.
+     * Return the Properties for current selection.
      */
     public Properties[] getProperties() {
         return table_view.getProperties();

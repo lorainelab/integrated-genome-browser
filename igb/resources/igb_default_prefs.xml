@@ -26,6 +26,11 @@
   -->
 <!-- use (?i) at the start of a regex to force case-insensitive matching of the whole regex -->
 
+  <annotation_url annot_id_regex="DDB_G\d+$"
+    name="DictyBase Gene"
+    url="http://dictybase.org/gene/$$"
+  />
+
   <annotation_url annot_id_regex="^gb\|.+\.\d+$"
     name="Genbank Nucleotide"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"

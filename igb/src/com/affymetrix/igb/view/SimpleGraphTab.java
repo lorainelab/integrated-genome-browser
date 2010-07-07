@@ -34,6 +34,7 @@ import com.affymetrix.genometryImpl.util.FloatTransformer.InverseLogTransform;
 import com.affymetrix.genometryImpl.util.FloatTransformer.LogTransform;
 
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
@@ -64,13 +65,13 @@ public final class SimpleGraphTab extends JPanel
 	// Whether to use this tab or not
 	public static boolean USE_SIMPLE_GRAPH_TAB = true;
 	boolean DEBUG_EVENTS = false;
-	JLabel selected_graphs_label = new JLabel("No Graphs Selected");
-	JRadioButton mmavgB = new JRadioButton("Min/Max/Avg");
-	JRadioButton lineB = new JRadioButton("Line");
-	JRadioButton barB = new JRadioButton("Bar");
-	JRadioButton dotB = new JRadioButton("Dot");
-	JRadioButton sstepB = new JRadioButton("Stairstep");
-	JRadioButton hmapB = new JRadioButton("Heat Map");
+	JLabel selected_graphs_label = new JLabel(IGBConstants.BUNDLE.getString("selectedGraphsLabel"));
+	JRadioButton mmavgB = new JRadioButton(IGBConstants.BUNDLE.getString("minMaxAvgButton"));
+	JRadioButton lineB = new JRadioButton(IGBConstants.BUNDLE.getString("lineButton"));
+	JRadioButton barB = new JRadioButton(IGBConstants.BUNDLE.getString("barButton"));
+	JRadioButton dotB = new JRadioButton(IGBConstants.BUNDLE.getString("dotButton"));
+	JRadioButton sstepB = new JRadioButton(IGBConstants.BUNDLE.getString("stairStepButton"));
+	JRadioButton hmapB = new JRadioButton(IGBConstants.BUNDLE.getString("heatMapButton"));
 	JRadioButton hidden_styleB = new JRadioButton("No Selection"); // this button will not be displayed
 	ButtonGroup stylegroup = new ButtonGroup();
 	JButton colorB = new JButton("Color");
@@ -98,15 +99,15 @@ public final class SimpleGraphTab extends JPanel
 		name2transform.put(INVERSE_LOG_2, new InverseLogTransform(2));
 		name2transform.put(INVERSE_LOG_NATURAL, new InverseLogTransform(Math.E));
 	}
-	private final JButton cloneB = new JButton("Go");
-	private final JLabel scale_type_label = new JLabel("Transformation:");
+	private final JButton cloneB = new JButton(IGBConstants.BUNDLE.getString("goButton"));
+	private final JLabel scale_type_label = new JLabel(IGBConstants.BUNDLE.getString("transformationLabel"));
 	private final JComboBox scaleCB = new JComboBoxWithSingleListener();
-	private final JCheckBox labelCB = new JCheckBox("Label");
-	private final JCheckBox yaxisCB = new JCheckBox("Y Axis");
-	private final JCheckBox floatCB = new JCheckBox("Floating");
+	private final JCheckBox labelCB = new JCheckBox(IGBConstants.BUNDLE.getString("labelCheckBox"));
+	private final JCheckBox yaxisCB = new JCheckBox(IGBConstants.BUNDLE.getString("yAxisCheckBox"));
+	private final JCheckBox floatCB = new JCheckBox(IGBConstants.BUNDLE.getString("floatingCheckBox"));
 
 
-	private final Action select_all_graphs_action = new AbstractAction("Select All Graphs") {
+	private final Action select_all_graphs_action = new AbstractAction(IGBConstants.BUNDLE.getString("selectAllGraphs")) {
 
 		public void actionPerformed(ActionEvent e) {
 			if (gviewer != null) {
@@ -114,19 +115,20 @@ public final class SimpleGraphTab extends JPanel
 			}
 		}
 	};
-	private final Action delete_selected_graphs_action = new AbstractAction("Delete Selected Graphs") {
+	private final Action delete_selected_graphs_action = new AbstractAction(IGBConstants.BUNDLE.getString("deleteSelectedGraphs")) {
 
 		public void actionPerformed(ActionEvent e) {
 			GraphAdjusterView.deleteGraphs(gmodel, gviewer, grafs);
 		}
 	};
-	private final Action save_selected_graphs_action = new AbstractAction("Save Selected Graphs...") {
+	private final Action save_selected_graphs_action = new AbstractAction(IGBConstants.BUNDLE.getString("saveSelectedGraphs") + "...") {
 
 		public void actionPerformed(ActionEvent e) {
 			GraphAdjusterView.saveGraphs(gviewer, gmodel, grafs);
 		}
 	};
-	private final Action graph_threshold_action = new AbstractAction("Graph Thresholding...") {
+	private final Action graph_threshold_action = new AbstractAction(
+			IGBConstants.BUNDLE.getString("graphThresholding") + "...") {
 
 		public void actionPerformed(ActionEvent e) {
 			showGraphScoreThreshSetter();
@@ -136,8 +138,8 @@ public final class SimpleGraphTab extends JPanel
 	private final JButton saveB = new JButton(save_selected_graphs_action);
 	private final JButton deleteB = new JButton(delete_selected_graphs_action);
 	private final JButton threshB = new JButton(graph_threshold_action);
-	private final JButton combineB = new JButton("Join");
-	private final JButton splitB = new JButton("Split");
+	private final JButton combineB = new JButton(IGBConstants.BUNDLE.getString("combineButton"));
+	private final JButton splitB = new JButton(IGBConstants.BUNDLE.getString("splitButton"));
 	private JButton addB;
 	private JButton subB;
 	private JButton mulB;
@@ -159,7 +161,6 @@ public final class SimpleGraphTab extends JPanel
 		Box heat_mapCB_box = Box.createHorizontalBox();
 		heat_mapCB_box.add(Box.createHorizontalStrut(16));
 		heat_mapCB_box.add(heat_mapCB);
-		//heat_mapCB_box.add(Box.createHorizontalGlue());
 		heat_mapCB_box.setMaximumSize(heat_mapCB_box.getPreferredSize());
 
 		Box stylebox_radiobox = Box.createHorizontalBox();
@@ -183,7 +184,6 @@ public final class SimpleGraphTab extends JPanel
 		stylebox.add(color_button_box);
 		stylebox_radiobox.setAlignmentX(0.0f);
 		stylebox.add(stylebox_radiobox);
-		//stylebox.add(heat_map_label);
 		heat_mapCB_box.setAlignmentX(0.0f);
 		stylebox.add(heat_mapCB_box);
 
@@ -201,21 +201,14 @@ public final class SimpleGraphTab extends JPanel
 		stylegroup.add(mmavgB);
 		stylegroup.add(sstepB);
 		stylegroup.add(hidden_styleB); // invisible button
-		stylebox.setBorder(BorderFactory.createTitledBorder("Style"));
+		stylebox.setBorder(BorderFactory.createTitledBorder(IGBConstants.BUNDLE.getString("stylePanel")));
 
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
-		/*if (gviewer == null) {
-		vis_bounds_setter = new GraphVisibleBoundsSetter(null);
-		} else {*/
 		vis_bounds_setter = new GraphVisibleBoundsSetter(gviewer.getSeqMap());
-		//}
 		score_thresh_adjuster = new GraphScoreThreshSetter(gviewer, vis_bounds_setter);
 
-
-		//Box height_and_color_box = Box.createHorizontalBox();
-		height_slider.setBorder(BorderFactory.createTitledBorder("Height"));
-		//height_and_color_box.add(height_slider);
+		height_slider.setBorder(BorderFactory.createTitledBorder(IGBConstants.BUNDLE.getString("heightSlider")));
 
 		Box scalebox = Box.createVerticalBox();
 		vis_bounds_setter.setAlignmentX(0.0f);
@@ -226,7 +219,6 @@ public final class SimpleGraphTab extends JPanel
 		height_slider.addChangeListener(new GraphHeightSetter());
 
 		Box butbox = Box.createHorizontalBox();
-		//butbox.add(Box.createHorizontalGlue());
 		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
 		butbox.add(selectAllB);
 		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
@@ -297,15 +289,6 @@ public final class SimpleGraphTab extends JPanel
 		this.gviewer = smv;
 	}
 
-	private void enableButtons(ButtonGroup g, boolean b) {
-		Enumeration e = g.getElements();
-		while (e.hasMoreElements()) {
-			AbstractButton but = (AbstractButton) e.nextElement();
-			but.setEnabled(b);
-		}
-	}
-
-
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		List selected_syms = evt.getSelectedSyms();
 		// Only pay attention to selections from the main SeqMapView or its map.
@@ -322,28 +305,7 @@ public final class SimpleGraphTab extends JPanel
 	private void resetSelectedGraphGlyphs(List selected_syms) {
 		int symcount = selected_syms.size();
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
-		if (grafs != selected_syms) {
-			// in certain cases selected_syms arg and grafs list may be same, for example when method is being
-			//     called to catch changes in glyphs representing selected sym, not the syms themselves)
-			//     therefore don't want to change grafs list if same as selected_syms (especially don't want to clear it!)
-			grafs.clear();
-		}
-		glyphs.clear();
-
-		// First loop through and collect graphs and glyphs
-		for (int i = 0; i < symcount; i++) {
-			if (selected_syms.get(i) instanceof GraphSym) {
-				GraphSym graf = (GraphSym) selected_syms.get(i);
-				// only add to grafs if list is not identical to selected_syms arg
-				if (grafs != selected_syms) {
-					grafs.add(graf);
-				}
-				List<GraphGlyph> multigl = gviewer.getSeqMap().<GraphGlyph>getItems(graf);
-				// add all graph glyphs representing graph sym
-				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
-				glyphs.addAll(multigl);
-			}
-		}
+		collectGraphsAndGlyphs(selected_syms, symcount);
 
 		int num_glyphs = glyphs.size();
 		//    System.out.println("number of selected graphs: " + num_glyphs);
@@ -404,30 +366,8 @@ public final class SimpleGraphTab extends JPanel
 		} else {
 			selected_graphs_label.setText(num_glyphs + " graphs selected");
 		}
-
-		switch (graph_style) {
-			case MINMAXAVG:
-				mmavgB.setSelected(true);
-				break;
-			case LINE_GRAPH:
-				lineB.setSelected(true);
-				break;
-			case BAR_GRAPH:
-				barB.setSelected(true);
-				break;
-			case DOT_GRAPH:
-				dotB.setSelected(true);
-				break;
-			case HEAT_MAP:
-				hmapB.setSelected(true);
-				break;
-			case STAIRSTEP_GRAPH:
-				sstepB.setSelected(true);
-				break;
-			default:
-				hidden_styleB.setSelected(true);
-				break;
-		}
+		
+		selectButtonBasedOnGraphStyle(graph_style);
 
 		if (graph_style == GraphType.HEAT_MAP) {
 			heat_mapCB.setEnabled(true);
@@ -456,7 +396,7 @@ public final class SimpleGraphTab extends JPanel
 		height_slider.setEnabled(b);
 		graph_threshold_action.setEnabled(b);
 		enableButtons(stylegroup, b);
-		mmavgB.setEnabled(true);
+		
 		floatCB.setEnabled(b);
 		yaxisCB.setEnabled(b);
 		labelCB.setEnabled(b);
@@ -466,9 +406,6 @@ public final class SimpleGraphTab extends JPanel
 		delete_selected_graphs_action.setEnabled(b);
 		cloneB.setEnabled(b);
 		scaleCB.setEnabled(cloneB.isEnabled());
-
-		//combineB.setSelected(all_are_combined);
-		//splitB.setSelected(any_are_not_combined);
 
 		combineB.setEnabled(!all_are_combined && grafs.size() >= 2);
 		splitB.setEnabled(any_are_combined);
@@ -480,12 +417,71 @@ public final class SimpleGraphTab extends JPanel
 		is_listening = true; // turn back on GUI events
 	}
 
+	private void collectGraphsAndGlyphs(List selected_syms, int symcount) {
+		if (grafs != selected_syms) {
+			// in certain cases selected_syms arg and grafs list may be same, for example when method is being
+			//     called to catch changes in glyphs representing selected sym, not the syms themselves)
+			//     therefore don't want to change grafs list if same as selected_syms (especially don't want to clear it!)
+			grafs.clear();
+		}
+		glyphs.clear();
+		// First loop through and collect graphs and glyphs
+		for (int i = 0; i < symcount; i++) {
+			if (selected_syms.get(i) instanceof GraphSym) {
+				GraphSym graf = (GraphSym) selected_syms.get(i);
+				// only add to grafs if list is not identical to selected_syms arg
+				if (grafs != selected_syms) {
+					grafs.add(graf);
+				}
+				List<GraphGlyph> multigl = gviewer.getSeqMap().<GraphGlyph>getItems(graf);
+				// add all graph glyphs representing graph sym
+				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
+				glyphs.addAll(multigl);
+			}
+		}
+	}
+
+	private void selectButtonBasedOnGraphStyle(GraphType graph_style) {
+		switch (graph_style) {
+			case MINMAXAVG:
+				mmavgB.setSelected(true);
+				break;
+			case LINE_GRAPH:
+				lineB.setSelected(true);
+				break;
+			case BAR_GRAPH:
+				barB.setSelected(true);
+				break;
+			case DOT_GRAPH:
+				dotB.setSelected(true);
+				break;
+			case HEAT_MAP:
+				hmapB.setSelected(true);
+				break;
+			case STAIRSTEP_GRAPH:
+				sstepB.setSelected(true);
+				break;
+			default:
+				hidden_styleB.setSelected(true);
+				break;
+		}
+	}
+
+
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		if (DEBUG_EVENTS) {
 			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
 		}
 		current_seq = evt.getSelectedSeq();
 		resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
+	}
+
+	private static void enableButtons(ButtonGroup g, boolean b) {
+		Enumeration e = g.getElements();
+		while (e.hasMoreElements()) {
+			AbstractButton but = (AbstractButton) e.nextElement();
+			but.setEnabled(b);
+		}
 	}
 
 	private final class GraphStyleSetter implements ActionListener {
@@ -640,7 +636,6 @@ public final class SimpleGraphTab extends JPanel
 			decoration_row.add(yaxisCB);
 			decoration_row.add(floatCB);
 
-
 			// A box to contain the scaleCB JComboBox, to help get the alignment right
 			Box scaleCB_box = Box.createHorizontalBox();
 			scaleCB_box.setAlignmentX(0.0f);
@@ -652,8 +647,7 @@ public final class SimpleGraphTab extends JPanel
 
 			scaleCB_box.setMaximumSize(scaleCB_box.getPreferredSize());
 
-
-			advanced_panel.setBorder(BorderFactory.createTitledBorder("Advanced"));
+			advanced_panel.setBorder(BorderFactory.createTitledBorder(IGBConstants.BUNDLE.getString("advancedPanel")));
 
 			decoration_row.setAlignmentX(0.0f);
 			advanced_panel.add(decoration_row);
@@ -669,7 +663,6 @@ public final class SimpleGraphTab extends JPanel
 			advanced_panel.add(Box.createRigidArea(new Dimension(5, 12)));
 			advanced_panel.add(grouping_box);
 
-			//char division_symbol = (char) 0x00f7;
 			addB = new JButton("A + B");
 			subB = new JButton("A - B");
 			mulB = new JButton("A * B");

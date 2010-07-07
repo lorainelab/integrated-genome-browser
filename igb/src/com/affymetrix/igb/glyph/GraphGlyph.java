@@ -332,7 +332,9 @@ public final class GraphGlyph extends Glyph {
 	}
 
 
-	private void bigDrawLoop(int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width, GraphType graph_style, Graphics g, Point max_x_plus_width) {
+	private void bigDrawLoop(
+			int draw_beg_index, int draw_end_index, double offset, double yscale, ViewI view, Point curr_x_plus_width,
+			GraphType graph_style, Graphics g, Point max_x_plus_width) {
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			// flipping about yaxis... should probably make this optional
 			// also offsetting to place within glyph bounds
@@ -541,7 +543,7 @@ public final class GraphGlyph extends Glyph {
 	/** Draws the outline in a way that looks good for tiers.  With other glyphs,
 	 *  the outline is usually drawn a pixel or two larger than the glyph.
 	 *  With TierGlyphs, it is better to draw the outline inside of or contiguous
-	 *  with the glyphs borders.
+	 *  with the glyph borders.
 	 *  This method assumes the tiers are horizontal.
 	 *  The left and right border are taken from the view's pixel box,
 	 *  the top and bottom border are from the coord box.
@@ -806,7 +808,7 @@ public final class GraphGlyph extends Glyph {
 
 	/**
 	 *  Same as GraphGlyph.getInternalLinearTransform(), except
-	 *  also caclulates a bottom y offset for showing thresholded
+	 *  also calculates a bottom y offset for showing thresholded
 	 *  regions, if showThresholdedRegions() == true.
 	 */
 	private double getLowerYCoordInset(ViewI view) {

@@ -313,7 +313,15 @@ public class GraphSym extends SimpleSymWithProps {
 		}
 		// negative, which means it's (-(first elt > key) - 1).
 		// We want that first elt.
-		return Math.max(0, (-index -1));
+		index = -index -1;
+
+		// need to be sure that this doesn't go beyond the end of the array, if all points are less than xmax
+		index = Math.min(index, this.pointCount - 1);
+
+		// need to be sure it's not less than 0
+		index = Math.max(0, index);
+		
+		return index;
 
 		/* The below code should be used if we need to use accessors on GraphXCoord (for example, if we start using the buffer again).
 		for (int i=prevIndex;i<this.pointCount;i++) {

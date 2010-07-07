@@ -17,7 +17,7 @@ import java.nio.channels.FileChannel;
  */
 public final class TwoBitIterator implements SearchableCharIterator {
 
-	/** Use a 4KB buffer, as that is the block size of most filesystems */
+	/** Use a 4KB buffer, as that is the block size of most file systems */
 	private static final int BUFFER_SIZE = 4096;
 	
 	/** Number of residues in each byte */
@@ -70,18 +70,13 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	 * @return			Returns string of residues.
 	 */
 	public String substring(int start, int end) {
-		FileChannel channel = null;
-
+		
 		//Sanity Check
 		start = Math.max(0, start);
 		end = Math.max(end, start);
 		end = Math.min(end, getLength());
 
 		int requiredLength = end - start;
-		char[] residues = new char[requiredLength];
-		byte[] valueBuffer = new byte[BUFFER_SIZE];
-		long residuePosition = start;
-		int residueCounter = 0;
 		long startOffset = start / RESIDUES_PER_BYTE;
 		long bytesToRead = calculateBytesToRead(start, end);
 		int beginLength = Math.min(RESIDUES_PER_BYTE - start % 4,requiredLength);
@@ -94,13 +89,21 @@ public final class TwoBitIterator implements SearchableCharIterator {
 			}
 		}
 
+		return parse(start, startOffset, bytesToRead, requiredLength, beginLength, endLength);
+	}
+
+	private String parse(int start, long startOffset, long bytesToRead, int requiredLength, int beginLength, int endLength) {
+		FileChannel channel = null;
+		char[] residues = new char[requiredLength];
+		byte[] valueBuffer = new byte[BUFFER_SIZE];
+		int residueCounter = 0;
+		long residuePosition = start;
+
 		MutableSeqSymmetry tempNBlocks = GetBlocks(start, nBlocks);
 		MutableSeqSymmetry tempMaskBlocks = GetBlocks(start, maskBlocks);
-		
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		buffer.order(this.byteOrder);
 		try {
-
 			channel = new RandomAccessFile(file, "r").getChannel();
 			channel.position(this.offset + startOffset);
 			loadBuffer(channel, buffer);
@@ -109,33 +112,30 @@ public final class TwoBitIterator implements SearchableCharIterator {
 			SeqSpan nBlock = null;
 			SeqSpan maskBlock = null;
 			char[] temp = null;
-
 			for (int i = 0; i < bytesToRead; i += BUFFER_SIZE) {
 				buffer.get(valueBuffer);
 				for (int k = 0; k < BUFFER_SIZE && residueCounter < requiredLength; k++) {
-
-					temp = parseByte(valueBuffer[k],k,bytesToRead,start,requiredLength,beginLength,endLength);
-					
+					temp = parseByte(valueBuffer[k], k, bytesToRead, start, requiredLength, beginLength, endLength);
 					for (int j = 0; j < temp.length && residueCounter < requiredLength; j++) {
 						nBlock = processResidue(residuePosition, temp, j, nBlock, tempNBlocks, false);
 						maskBlock = processResidue(residuePosition, temp, j, maskBlock, tempMaskBlocks, true);
 						residues[residueCounter++] = temp[j];
 						residuePosition++;
-					}		
+					}
 				}
 				channel.position(channel.position() + BUFFER_SIZE);
 				loadBuffer(channel, buffer);
 			}
-				
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}finally{
+		} finally {
 			GeneralUtils.safeClose(channel);
 			valueBuffer = null;
 			buffer = null;
 			tempNBlocks = null;
 			tempMaskBlocks = null;
 		}
+
 		return new String(residues);
 	}
 
@@ -181,7 +181,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	/**
 	 * Process the residue if it falls into maskBlocks or nBlocks.
 	 * @param residuePosition	Actual residue position.
-	 * @param temp				Temporary arry in which residues are stored to processed.
+	 * @param temp				Temporary array in which residues are stored to processed.
 	 * @param pos				Position of residue in temporary array.
 	 * @param block				Current block.
 	 * @param blocks			maskBlocks or nBlocks.
@@ -210,7 +210,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	/**
 	 * Gets next block from blocks.
 	 * @param Blocks	Blocks.
-	 * @return			Returns nextblock if present else returns null.
+	 * @return			Returns next block if present else returns null.
 	 */
 	private static SeqSpan GetNextBlock(MutableSeqSymmetry Blocks){
 		if(Blocks.getSpanCount() > 0) {
@@ -225,7 +225,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	 * @param k					Byte position. Required for special cases. i.e. first or last byte.
 	 * @param bytesToRead		Total number of bytes to read.
 	 * @param start				Start position for requested residue.
-	 * @param requiredLength	Required lenght of residue. Need when only one byte is to read.
+	 * @param requiredLength	Required length of residue. Need when only one byte is to read.
 	 * @param beginLength		Residue length of the first byte.
 	 * @param endLength			Residue length of the last byte.
 	 * @return					Returns the read residues.
@@ -247,7 +247,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	}
 
 	/**
-	 * Speacial case to read residues. i.e when it first or last byte.
+	 * Special case to read residues. i.e when it first or last byte.
 	 * @param valueBuffer	Byte from which residues are to be read.
 	 * @param size			Size of resides to be read.
 	 * @param isFirst		Boolean to determine if residues are to be read from first or last position. True for the first and false for last.
@@ -308,7 +308,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 	/**
 	 * Returns length of residues.
-	 * @return	Returns lenght of residues.
+	 * @return	Returns length of residues.
 	 */
 	public int getLength() {
 		return (int) length;

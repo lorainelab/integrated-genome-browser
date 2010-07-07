@@ -64,12 +64,12 @@ public final class TwoBitParser {
 	}
 
 	public static boolean parse(File file, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(file);
+		BioSeq seq = parse(file, new AnnotatedSeqGroup("No_Data"));
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
 	public static boolean parse(File file, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(file);
+		BioSeq seq = parse(file, new AnnotatedSeqGroup("No_Data"));
 		return writeAnnotations(seq,start,end,out);
 	}
 

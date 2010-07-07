@@ -2,18 +2,13 @@ package com.affymetrix.genoviz.widget.tieredmap;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.util.*;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
-public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
-
-	protected boolean DEBUG_CHECKS = false;
-	protected double coord_fuzziness = 1;
-	protected double spacing = 2;
-	protected int movetype;
-	protected Rectangle2D.Double before = new Rectangle2D.Double();
+public class ExpandedTierPacker extends AbstractCoordPacker implements PaddedPackerI {
 	private boolean STRETCH_HORIZONTAL = true;
 	boolean use_search_nodes = false;
 	/**
@@ -28,7 +23,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 	 * Constructs a packer that moves glyphs away from the horizontal axis.
 	 */
 	public ExpandedTierPacker() {
-		this(DOWN);
+		this(NeoConstants.DOWN);
 	}
 
 	/**
@@ -39,112 +34,12 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 	 */
 	public ExpandedTierPacker(int movetype) {
 		setMoveType(movetype);
+		spacing = 2;
 	}
 
-	/**
-	 * Sets the direction this packer should move glyphs.
-	 *
-	 * @param movetype indicates which direction the glyph_to_move should move.
-	 *                 It must be one of {@link #UP}, {@link #DOWN}, {@link #LEFT}, {@link #RIGHT},
-	 *                 {@link #MIRROR_VERTICAL}, or {@link #MIRROR_HORIZONTAL}.
-	 *                 The last two mean "away from the orthoganal axis".
-	 */
-	public void setMoveType(int movetype) {
-		this.movetype = movetype;
-	}
 
 	public int getMoveType() {
 		return movetype;
-	}
-
-	/**
-	 *     Sets the fuzziness of hit detection in layout.
-	 *     This is the minimal distance glyph coordboxes need to be separated by
-	 *     in order to be considered not overlapping.
-	 * <p> <em>WARNING: better not make this greater than spacing.</em>
-	 * <p> Note that since Rectangle2D does not consider two rects
-	 *     that only share an edge to be intersecting,
-	 *     will need to have a coord_fuzziness &gt; 0
-	 *     in order to consider these to be overlapping.
-	 */
-	public void setCoordFuzziness(double fuzz) {
-		if (fuzz > spacing) {
-			throw new IllegalArgumentException("Can't set packer fuzziness greater than spacing");
-		} else {
-			coord_fuzziness = fuzz;
-		}
-	}
-
-	public double getCoordFuzziness() {
-		return coord_fuzziness;
-	}
-
-	/**
-	 * Sets the spacing desired between glyphs.
-	 * If glyphB is found to hit glyphA,
-	 * this is the distance away from glyphA's coordbox
-	 * that glyphB's coord box will be moved.
-	 */
-	public void setSpacing(double sp) {
-		if (sp < coord_fuzziness) {
-			throw new IllegalArgumentException("Can't set packer spacing less than fuzziness");
-		} else {
-			spacing = sp;
-		}
-	}
-
-	public double getSpacing() {
-		return spacing;
-	}
-
-	/**
-	 * Moves one glyph to avoid another.
-	 * This is called from subclasses
-	 * in their <code>pack(parent, glyph, view)</code> methods.
-	 *
-	 * @param glyph_to_move
-	 * @param glyph_to_avoid
-	 * @param movetype indicates which direction the glyph_to_move should move.
-	 * @see #setMoveType
-	 */
-	public void moveToAvoid(
-			GlyphI glyph_to_move, GlyphI glyph_to_avoid, int movetype) {
-		Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
-		Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
-		if (!movebox.intersects(avoidbox)) {
-			return;
-		}
-		if (movetype == MIRROR_VERTICAL) {
-			if (movebox.y < 0) {
-				glyph_to_move.moveAbsolute(movebox.x,
-						avoidbox.y - movebox.height - spacing);
-			} else {
-				glyph_to_move.moveAbsolute(movebox.x,
-						avoidbox.y + avoidbox.height + spacing);
-			}
-		} else if (movetype == MIRROR_HORIZONTAL) {
-			if (movebox.x < 0) {
-				glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
-						movebox.y);
-			} else {
-				glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
-						movebox.y);
-			}
-		} else if (movetype == DOWN) {
-			glyph_to_move.moveAbsolute(movebox.x,
-					avoidbox.y + avoidbox.height + spacing);
-		} else if (movetype == UP) {
-			glyph_to_move.moveAbsolute(movebox.x,
-					avoidbox.y - movebox.height - spacing);
-		} else if (movetype == RIGHT) {
-			glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
-					movebox.y);
-		} else if (movetype == LEFT) {
-			glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
-					movebox.y);
-		} else {
-			throw new IllegalArgumentException("movetype must be one of UP, DOWN, LEFT, RIGHT, MIRROR_HORIZONTAL, or MIRROR_VERTICAL");
-		}
 	}
 
 	public void setParentSpacer(double spacer) {
@@ -163,6 +58,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 		return STRETCH_HORIZONTAL;
 	}
 
+	@Override
 	public Rectangle pack(GlyphI parent, ViewI view) {
 		List<GlyphI> sibs;
 		GlyphI child;
@@ -259,7 +155,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 		Rectangle2D.Double childbox, siblingbox;
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		childbox = child.getCoordBox();
-		if (movetype == UP) {
+		if (movetype == NeoConstants.UP) {
 			child.moveAbsolute(childbox.x,
 					pbox.y + pbox.height - childbox.height - parent_spacer);
 		} else {

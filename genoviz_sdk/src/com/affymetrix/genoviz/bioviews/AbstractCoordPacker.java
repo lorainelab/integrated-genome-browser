@@ -66,11 +66,9 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 	}
 
 	public Rectangle pack(GlyphI parent, ViewI view) {
-		List children = parent.getChildren();
-		GlyphI child;
+		List<GlyphI> children = parent.getChildren();
 		if (children == null) { return null; }
-		for (int i=0; i<children.size(); i++) {
-			child = (GlyphI)children.get(i);
+		for (GlyphI child : children) {
 			pack(parent, child, view);
 		}
 		return null;
@@ -136,7 +134,9 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 			GlyphI glyph_to_avoid, int movetype)  {
 		Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
 		Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
-
+		if (!movebox.intersects(avoidbox)) {
+			return;
+		}
 		/*
 		 * Mirror vertically about the horizontal coordinate axis
 		 */
@@ -149,7 +149,6 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 			if (movebox.y < 0) {
 				// move UP (decreasing y)
 
-				// movebox.y = avoidbox.y - movebox.height - spacing;
 				// switched to using moveAbsolute to handle packing glyph
 				// that have children, since moveAbsolute (and moveRelative)
 				// will descend through the glyph hierarchy -- GAH 10-2-97

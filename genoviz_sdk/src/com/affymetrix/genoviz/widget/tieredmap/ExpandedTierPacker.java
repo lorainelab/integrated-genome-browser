@@ -10,7 +10,6 @@ import java.awt.geom.Rectangle2D;
 
 public class ExpandedTierPacker extends AbstractCoordPacker implements PaddedPackerI {
 	private boolean STRETCH_HORIZONTAL = true;
-	boolean use_search_nodes = false;
 	/**
 	 * Parent_spacer is <em>not</em> the same as AbstractCoordPacker.spacing.
 	 * Spacing is between each child.
@@ -165,29 +164,21 @@ public class ExpandedTierPacker extends AbstractCoordPacker implements PaddedPac
 		}
 		childbox = child.getCoordBox();
 
-		List<? extends GlyphI> sibs = parent.getChildren();
+		List<GlyphI> sibs = parent.getChildren();
 		if (sibs == null) {
 			return null;
 		}
 
-		List<GlyphI> sibsinrange;
-
-		if (parent instanceof MapTierGlyph && use_search_nodes) {
-			sibsinrange = ((MapTierGlyph) parent).getOverlappingSibs(child);
-		} else {
-			sibsinrange = new ArrayList<GlyphI>();
-			int sibs_size = sibs.size();
-			for (int i = 0; i < sibs_size; i++) {
-				GlyphI sibling = (GlyphI) sibs.get(i);
-				siblingbox = sibling.getCoordBox();
-				if (!(siblingbox.x > (childbox.x + childbox.width)
-						|| ((siblingbox.x + siblingbox.width) < childbox.x))) {
-					sibsinrange.add(sibling);
-				}
+		List<GlyphI> sibsinrange = new ArrayList<GlyphI>();
+		for (GlyphI sibling : sibs) {
+			siblingbox = sibling.getCoordBox();
+			if (!(siblingbox.x > (childbox.x + childbox.width)
+					|| ((siblingbox.x + siblingbox.width) < childbox.x))) {
+				sibsinrange.add(sibling);
 			}
-			if (DEBUG_CHECKS) {
-				System.out.println("sibs in range: " + sibsinrange.size());
-			}
+		}
+		if (DEBUG_CHECKS) {
+			System.out.println("sibs in range: " + sibsinrange.size());
 		}
 
 		this.before.x = childbox.x;
@@ -197,9 +188,7 @@ public class ExpandedTierPacker extends AbstractCoordPacker implements PaddedPac
 		boolean childMoved = true;
 		while (childMoved) {
 			childMoved = false;
-			int sibsinrange_size = sibsinrange.size();
-			for (int j = 0; j < sibsinrange_size; j++) {
-				GlyphI sibling = sibsinrange.get(j);
+			for (GlyphI sibling : sibsinrange) {
 				if (sibling == child) {
 					continue;
 				}

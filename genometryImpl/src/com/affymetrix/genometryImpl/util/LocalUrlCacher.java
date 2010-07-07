@@ -74,6 +74,13 @@ public final class LocalUrlCacher {
 		return (url.substring(0, 5).compareToIgnoreCase("file:") == 0);
 	}
 
+	public static boolean isFile(URI uri){
+		if(uri.getScheme() == null || uri.getScheme().length() == 0 || uri.getScheme().equalsIgnoreCase("file"))
+			return true;
+
+		return false;
+	}
+
 	public static InputStream getInputStream(URL url) throws IOException {
 		return getInputStream(url.toString(), getPreferredCacheUsage(), true, null, null, false);
 	}
@@ -719,7 +726,7 @@ public final class LocalUrlCacher {
 		if (uri.getScheme() == null) {
 			// attempt to find a local file
 		}
-		if (uri.getScheme() == null || uri.getScheme().length() == 0 || uri.getScheme().equalsIgnoreCase("file")) {
+		if (isFile(uri)) {
 			File f = new File(uri);
 			if (!GeneralUtils.getUnzippedName(f.getName()).equalsIgnoreCase(f.getName())) {
 				try {

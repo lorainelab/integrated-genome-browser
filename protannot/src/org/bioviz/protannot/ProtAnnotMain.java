@@ -56,11 +56,9 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.lang.String;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -108,17 +106,10 @@ final public class ProtAnnotMain implements WindowListener {
 	//To enforce singleton pattern
 	private static ProtAnnotMain singleton;
 
+	AbstractAction server_load_action = Actions.getLoadFromServerAction();
+	
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
-	final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("serverLoad")),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/History16.gif")){
-
-		public void actionPerformed(ActionEvent e) {
-			sampleChooser.setVisible(true);
-		}
-	};
 	private static final Image imageIcon = getIcon();
 	private final TransferHandler fdh = new FileDropHandler(){
 
@@ -383,13 +374,12 @@ final public class ProtAnnotMain implements WindowListener {
         MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getLoadAction()));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getAddServerAction()));
 		
-		
+	
 		if(getArgumentValue(Arguments.SERVER)==null)
 			server_load_action.setEnabled(false);
 		else
 			server_load_action.setEnabled(true);
-		server_load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_S);
-		server_load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("serverLoadTip"));
+		
 		MenuUtil.addToMenu(file_menu, new JMenuItem(server_load_action));
 
         MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getPrintAction()));
@@ -443,6 +433,10 @@ final public class ProtAnnotMain implements WindowListener {
 		addServer.setVisible(true);
 	}
 
+	void loadFromServer(){
+		sampleChooser.setVisible(true);
+	}
+	
 	void close() {
 		updatePrefs(gview.getColorPrefs());
 		System.exit(0);
@@ -474,6 +468,7 @@ final public class ProtAnnotMain implements WindowListener {
 					setupSamplesFromServer();
 					server_load_action.setEnabled(true);
 					addServer.setVisible(false);
+					loadFromServer();
                 }
             });
 

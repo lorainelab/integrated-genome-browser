@@ -65,6 +65,22 @@ class Actions {
 		return add_server;
 	}
 
+	static AbstractAction getLoadFromServerAction() {
+		final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
+				BUNDLE.getString("menuItemHasDialog"),
+				BUNDLE.getString("serverLoad")),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/History16.gif")) {
+
+			public void actionPerformed(ActionEvent e) {
+				ProtAnnotMain.getInstance().loadFromServer();
+			}
+		};
+		server_load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_S);
+		server_load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("serverLoadTip"));
+		
+		return server_load_action;
+	}
+	
 	static AbstractAction getPrintAction(){
 		AbstractAction print_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),

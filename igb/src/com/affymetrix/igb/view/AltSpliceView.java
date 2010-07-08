@@ -50,7 +50,6 @@ public class AltSpliceView extends JComponent
 
 	public AltSpliceView() {
 		original_view = Application.getSingleton().getMapView();
-		Rectangle frmbounds = SwingUtilities.getWindowAncestor(original_view).getBounds();
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.SUBSELECT_SEQUENCE = false;

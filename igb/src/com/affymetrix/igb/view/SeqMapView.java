@@ -1584,26 +1584,16 @@ public class SeqMapView extends JPanel
 	 */
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		Object src = evt.getSource();
-		String src_id = src.getClass().getName() + "@" + Integer.toHexString(src.hashCode());
 
 		// ignore self-generated xym selection -- already handled internally
 		if (src == this) {
-			if (Application.DEBUG_EVENTS) {
-				System.out.println("SeqMapView received selection event originating from itself: " + src_id);
-			}
 			String title = getSelectionTitle(seqmap.getSelected());
 			setStatus(title);
 		} // ignore sym selection originating from AltSpliceView, don't want to change internal selection based on this
 		else if ((src instanceof AltSpliceView) || (src instanceof SeqMapView)) {
 			// catching SeqMapView as source of event because currently sym selection events actually originating
 			//    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
-			if (Application.DEBUG_EVENTS) {
-				System.out.println("SeqMapView received selection event from another SeqMapView: " + src_id);
-			}
 		} else {
-			if (Application.DEBUG_EVENTS) {
-				System.out.println("SeqMapView received selection event originating from: " + src_id);
-			}
 			List<SeqSymmetry> symlist = evt.getSelectedSyms();
 			// select:
 			//   add_to_previous ==> false

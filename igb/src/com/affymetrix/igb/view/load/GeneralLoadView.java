@@ -837,9 +837,9 @@ public final class GeneralLoadView extends JComponent
 	 */
 	public void createFeaturesTable() {
 		String versionName = (String) this.versionCB.getSelectedItem();
-		final BioSeq curSeq = gmodel.getSelectedSeq();
 		final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 		if (DEBUG_EVENTS) {
+			BioSeq curSeq = gmodel.getSelectedSeq();
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
 			System.out.println("features for " + versionName + ": " + features.toString());
 		}

@@ -163,19 +163,17 @@ public final class ChpParser {
 			float pval = psqData.getPValue();
 			int intid = psqData.getId();
 			String name = null;
-			Integer nid = null;
 			if (DEBUG && (i < 4 || i >= (ps_count - 4))) {
 				System.out.println("preprocessed, id: " + intid + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
 			}
 			if (intid >= 0) {
-				nid = new Integer(intid);
 				psqData.setName(null);
 				int_entries.add(psqData);
 				int_id_count++;
 			} else {  // nid < 0, then nid field not being used, so name should be used instead
 				name = psqData.getName();
 				try {
-					nid = new Integer(name);
+					Integer nid = new Integer(name);
 					intid = nid.intValue();
 					psqData.setId(intid);
 					psqData.setName(null);
@@ -224,19 +222,17 @@ public final class ChpParser {
 			float quant = psqData.getQuantification();
 			int intid = psqData.getId();
 			String name = null;
-			Integer nid = null;
 			if (DEBUG && (i < 2 || i >= (ps_count - 2))) {
 				System.out.println("preprocessed, id: " + intid + ", name: " + psqData.getName() + ", quant: " + quant);
 			}
 			if (intid >= 0) {
-				nid = new Integer(intid);
 				psqData.setName(null);
 				int_entries.add(psqData);
 				int_id_count++;
 			} else {  // nid < 0, then nid field not being used, so name should be used instead
 				name = psqData.getName();
 				try {
-					nid = new Integer(name);
+					Integer nid = new Integer(name);
 					intid = nid.intValue();
 					psqData.setId(intid);
 					psqData.setName(null);

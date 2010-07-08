@@ -76,6 +76,10 @@ public final class SynonymLookup {
 			ireader = new InputStreamReader(istream);
 			br = new BufferedReader(ireader);
 			while ((line = br.readLine()) != null) {
+				//Ignore comments.
+				if(line.startsWith("#"))
+					continue;
+
 				String[] fields = LINE_REGEX.split(line);
 				if (fields.length >= 2) {
 					if (setPreferredNames) {

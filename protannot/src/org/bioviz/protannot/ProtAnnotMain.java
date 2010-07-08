@@ -104,9 +104,10 @@ final public class ProtAnnotMain implements WindowListener {
     private Preferences prefs;
     // width of the user's screen
     private Dimension screen;
-	
-	Actions action;
-	
+		
+	//To enforce singleton pattern
+	private static ProtAnnotMain singleton;
+
     private final static boolean testmode = false;
 	private static final boolean DEBUG = false;
 	final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
@@ -150,13 +151,20 @@ final public class ProtAnnotMain implements WindowListener {
     private final Map<Arguments,String> ArgumentValues = new HashMap<Arguments,String>();
 
     public static void main(String[] args) {
-        ProtAnnotMain test = new ProtAnnotMain();
+        singleton = ProtAnnotMain.getInstance();
 		ConsoleView.init(BUNDLE.getString("appName"));
-        test.parseArguments(args);
-        test.loadPrefs();
-        test.start();
+        singleton.parseArguments(args);
+        singleton.loadPrefs();
+        singleton.start();
     }
 
+	static ProtAnnotMain getInstance(){
+		if(singleton == null){
+			singleton = new ProtAnnotMain();
+		}
+		return singleton;
+	}
+	
 	/** Returns the icon stored in the jar path.
 	 *  It is expected to be at com.affymetrix.igb.igb.gif.
 	 *  @return null if the image path is not found or can't be opened.
@@ -213,7 +221,7 @@ final public class ProtAnnotMain implements WindowListener {
         return prefs_hash;
     }
 
-	ProtAnnotMain(){
+	private ProtAnnotMain(){
 		frm = new JFrame(BUNDLE.getString("appName"));
 	}
     /**
@@ -262,7 +270,6 @@ final public class ProtAnnotMain implements WindowListener {
         Container cpane = frm.getContentPane();
         cpane.setLayout(new BorderLayout());
         gview = new GenomeView(prefs_hash);
-		action = new Actions(this);
         cpane.add("Center", gview);
         print_panel = new ComponentPagePrinter(gview);
     }
@@ -348,23 +355,23 @@ final public class ProtAnnotMain implements WindowListener {
      */
     private void addViewActions(JMenu view_menu) {
 
-		AbstractAction b_action = action.getOpenInBrowserAction();
+		AbstractAction b_action = Actions.getOpenInBrowserAction();
 		MenuUtil.addToMenu(view_menu, new JMenuItem(b_action));
         gview.popup.add(b_action);
 
-		AbstractAction z_action = action.getZoomToFeatureAction();
+		AbstractAction z_action = Actions.getZoomToFeatureAction();
 		MenuUtil.addToMenu(view_menu, new JMenuItem(z_action));
 		gview.popup.add(z_action);
 
-		AbstractAction h_action = action.getToggleHairlineAction();
+		AbstractAction h_action = Actions.getToggleHairlineAction();
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(h_action));
 		gview.popup.add(new JCheckBoxMenuItem(h_action));
 
-		AbstractAction hl_action = action.getToggleHairlineLabelAction();
+		AbstractAction hl_action = Actions.getToggleHairlineLabelAction();
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(hl_action));
 		gview.popup.add(new JCheckBoxMenuItem(hl_action));
 
-		MenuUtil.addToMenu(view_menu, new JMenuItem(action.getOpenInNewWindow()));
+		MenuUtil.addToMenu(view_menu, new JMenuItem(Actions.getOpenInNewWindow()));
     }
 
     /**
@@ -373,8 +380,8 @@ final public class ProtAnnotMain implements WindowListener {
      */
     private void addFileActions(final JMenu file_menu) {
         
-        MenuUtil.addToMenu(file_menu, new JMenuItem(action.getLoadAction()));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getAddServerAction()));
+        MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getLoadAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getAddServerAction()));
 		
 		
 		if(getArgumentValue(Arguments.SERVER)==null)
@@ -385,10 +392,10 @@ final public class ProtAnnotMain implements WindowListener {
 		server_load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("serverLoadTip"));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(server_load_action));
 
-        MenuUtil.addToMenu(file_menu, new JMenuItem(action.getPrintAction()));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getExportAction()));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getPreferencesAction()));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(action.getExitAction()));
+        MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getPrintAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getExportAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getPreferencesAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getExitAction()));
 
     }
 
@@ -397,20 +404,20 @@ final public class ProtAnnotMain implements WindowListener {
 	 * @param help_menu Menu name to which submenus should be added.
 	 */
 	private void addHelpActions(final JMenu help_menu){
-        MenuUtil.addToMenu(help_menu, new JMenuItem(action.getAboutAction()));
-		MenuUtil.addToMenu(help_menu, new JMenuItem(action.getReportBugAction()));
-		MenuUtil.addToMenu(help_menu, new JMenuItem(action.getFeatureAction()));
-		MenuUtil.addToMenu(help_menu, new JMenuItem(action.getShowConsoleAction()));
+        MenuUtil.addToMenu(help_menu, new JMenuItem(Actions.getAboutAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(Actions.getReportBugAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(Actions.getFeatureAction()));
+		MenuUtil.addToMenu(help_menu, new JMenuItem(Actions.getShowConsoleAction()));
 	}
 
-	public void colorChooser(){
+	void colorChooser(){
 		if(colorChooser == null){
 			setupColorChooser();
 		}
 		colorChooser.setVisible(true);
 	}
 
-	public void export() {
+	void export() {
 		final ExportDialog export = new ExportDialog();
 		export.setIcon(new ImageIcon(imageIcon));
 		try {
@@ -421,7 +428,7 @@ final public class ProtAnnotMain implements WindowListener {
 
 	}
 
-	public void print() {
+	void print() {
 		try {
 			print_panel.print();
 		} catch (Exception ex) {
@@ -429,19 +436,19 @@ final public class ProtAnnotMain implements WindowListener {
 		}
 	}
 
-	public void addServer(){
+	void addServer(){
 		if(addServer == null){
 			setupAddServer();
 		}
 		addServer.setVisible(true);
 	}
 
-	public void close() {
+	void close() {
 		updatePrefs(gview.getColorPrefs());
 		System.exit(0);
 	}
 
-	public GenomeView getGenomeView(){
+	GenomeView getGenomeView(){
 		return gview;
 	}
 	
@@ -787,7 +794,7 @@ final public class ProtAnnotMain implements WindowListener {
 	 * 
 	 * @return Returns protannot frame.
 	 */
-	public JFrame getFrame(){
+	JFrame getFrame(){
 		return frm;
 	}
 

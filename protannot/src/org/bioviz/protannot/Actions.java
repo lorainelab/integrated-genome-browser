@@ -36,22 +36,14 @@ class Actions {
 	                        BUNDLE.getString("appVersionFull"),
 	                        APP_NAME);
 
-	private final ProtAnnotMain protannot;
-	private final GenomeView gview;
-
-	Actions(ProtAnnotMain protannot){
-		this.protannot = protannot;
-		this.gview = protannot.getGenomeView();
-	}
-
-	AbstractAction getLoadAction(){
+	static AbstractAction getLoadAction(){
 		 AbstractAction load_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("openFile")),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif")) {
 
             public void actionPerformed(ActionEvent e) {
-                    protannot.doLoadFile();
+                    ProtAnnotMain.getInstance().doLoadFile();
             }
         };
 		load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
@@ -59,13 +51,13 @@ class Actions {
 		return load_action;
 	}
 
-	AbstractAction getAddServerAction(){
+	static AbstractAction getAddServerAction(){
 		AbstractAction add_server = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("addServer")),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Add16.gif")){
 			public void actionPerformed(ActionEvent e){
-				protannot.addServer();
+				ProtAnnotMain.getInstance().addServer();
 			}
 		};
 		add_server.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
@@ -73,14 +65,14 @@ class Actions {
 		return add_server;
 	}
 
-	AbstractAction getPrintAction(){
+	static AbstractAction getPrintAction(){
 		AbstractAction print_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("print")),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif")){
 
             public void actionPerformed(ActionEvent e) {
-                protannot.print();
+                ProtAnnotMain.getInstance().print();
             }
         };
         print_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
@@ -88,14 +80,14 @@ class Actions {
 		return print_action;
 	}
 
-	AbstractAction getExportAction(){
+	static AbstractAction getExportAction(){
 		AbstractAction export_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("export")),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif")){
 
             public void actionPerformed(ActionEvent e) {
-                protannot.export();
+                ProtAnnotMain.getInstance().export();
             }
         };
         export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_T);
@@ -103,14 +95,14 @@ class Actions {
 		return export_action;
 	}
 
-	AbstractAction getPreferencesAction(){
+	static AbstractAction getPreferencesAction(){
 		AbstractAction preference_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("preferences")),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif")){
 
             public void actionPerformed(ActionEvent e) {
-                protannot.colorChooser();
+                ProtAnnotMain.getInstance().colorChooser();
             }
         };
         preference_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_E);
@@ -118,14 +110,14 @@ class Actions {
 		return preference_action;
 	}
 	
-	AbstractAction getExitAction(){
+	static AbstractAction getExitAction(){
 		AbstractAction quit_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("exit")),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Stop16.gif")){
 
             public void actionPerformed(ActionEvent e) {
-                protannot.close();
+                ProtAnnotMain.getInstance().close();
             }
         };
         quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
@@ -134,10 +126,10 @@ class Actions {
 	}
 
 	/**
-	* Asks ProtAnnot to open a browser window showing info
+	* Asks ProtAnnotMain.getInstance() to open a browser window showing info
 	* on the currently selected Glyph.
 	*/
-	AbstractAction getOpenInBrowserAction(){
+	static AbstractAction getOpenInBrowserAction(){
 
 		final StringBuilder url = new StringBuilder();
 		
@@ -165,7 +157,7 @@ class Actions {
 				if (!(e instanceof NeoMouseEvent)) {
 					return;
 				}
-				Properties[] props = gview.getProperties();
+				Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
 				if (props != null && props.length == 1) {
 					url.delete(0, url.length());
 					url.append(build_url(props[0]));
@@ -175,23 +167,23 @@ class Actions {
 				open_browser_action.setEnabled(url.length() > 0 ? true : false);
 			}
 		};
-		gview.addMapListener(ml);
+		ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);
 		
 		return open_browser_action;
 	}
 
 	/**
-	* Asks ProtAnnot to center on the location of the
+	* Asks ProtAnnotMain.getInstance() to center on the location of the
 	* currently selected Glyph.
 	*/
-	AbstractAction getZoomToFeatureAction(){
+	static AbstractAction getZoomToFeatureAction(){
 
 
 		final AbstractAction zoom_to_feature_action = new AbstractAction(BUNDLE.getString("zoomToFeature"),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif")) {
 
 			public void actionPerformed(ActionEvent e) {
-				gview.zoomToSelection();
+				ProtAnnotMain.getInstance().getGenomeView().zoomToSelection();
 			}
 		};
 		zoom_to_feature_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_Z);
@@ -205,20 +197,20 @@ class Actions {
 				if (!(e instanceof NeoMouseEvent)) {
 					return;
 				}
-				List<GlyphI> selected = gview.getSelected();
+				List<GlyphI> selected = ProtAnnotMain.getInstance().getGenomeView().getSelected();
 				zoom_to_feature_action.setEnabled(selected != null && !selected.isEmpty());
 			}
 		};
-		gview.addMapListener(ml);
+		ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);
 
 		return zoom_to_feature_action;
 	}
 
-	AbstractAction getToggleHairlineAction(){
+	static AbstractAction getToggleHairlineAction(){
 		AbstractAction toggle_hairline_action = new AbstractAction(BUNDLE.getString("toggleHairline")){
 
             public void actionPerformed(ActionEvent e) {
-                protannot.getGenomeView().toggleHairline();
+                ProtAnnotMain.getInstance().getGenomeView().toggleHairline();
             }
         };
         toggle_hairline_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_H);
@@ -227,11 +219,11 @@ class Actions {
 		return toggle_hairline_action;
 	}
 
-	AbstractAction getToggleHairlineLabelAction(){
+	static AbstractAction getToggleHairlineLabelAction(){
 		AbstractAction toggle_label_action = new AbstractAction(BUNDLE.getString("toggleHairlineLabel")){
 
             public void actionPerformed(ActionEvent e) {
-                protannot.getGenomeView().toggleHairlineLabel();
+                ProtAnnotMain.getInstance().getGenomeView().toggleHairlineLabel();
             }
         };
         toggle_label_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_L);
@@ -240,16 +232,16 @@ class Actions {
 		return toggle_label_action;
 	}
 
-	AbstractAction getOpenInNewWindow() {
+	static AbstractAction getOpenInNewWindow() {
 		final AbstractAction newwin_action = new AbstractAction("Open table in new window") {
 
 			public void actionPerformed(ActionEvent e) {
 				final AbstractAction action = this;
 				action.setEnabled(false);
 
-				final JPanel table_panel = gview.getTablePanel();
-				gview.remove(table_panel);
-				gview.updateUI();
+				final JPanel table_panel = ProtAnnotMain.getInstance().getGenomeView().getTablePanel();
+				ProtAnnotMain.getInstance().getGenomeView().remove(table_panel);
+				ProtAnnotMain.getInstance().getGenomeView().updateUI();
 
 				final JFrame jframe = new JFrame();
 				jframe.setSize(table_panel.getSize());
@@ -257,8 +249,8 @@ class Actions {
 
 					@Override
 					public void windowClosing(WindowEvent evt) {
-						gview.add("South",table_panel);
-						gview.updateUI();
+						ProtAnnotMain.getInstance().getGenomeView().add("South",table_panel);
+						ProtAnnotMain.getInstance().getGenomeView().updateUI();
 						jframe.dispose();
 						action.setEnabled(true);
 					}
@@ -272,9 +264,9 @@ class Actions {
 		return newwin_action;
 	}
 
-	AbstractAction getAboutAction(){
+	static AbstractAction getAboutAction(){
 		
-		final JFrame frm = protannot.getFrame();
+		final JFrame frm = ProtAnnotMain.getInstance().getFrame();
 		AbstractAction about_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					MessageFormat.format(
@@ -289,15 +281,15 @@ class Actions {
 				about_text.setEditable(false);
 
 				String text = APP_VERSION_FULL + "\n\n"
-						+ "ProtAnnot implements many useful features designed for \n"
+						+ "Protannot implements many useful features designed for \n"
 						+ "understanding how alternative splicing, alternative promoters, \n"
 						+ "alternative promoters, and alternative polyadenylation can \n"
 						+ "affect the sequence and function of proteins encoded \n"
 						+ "by diverse variants expressed from the same gene. \n\n"
-						+ "ProtAnnot is a program developed by Hiral Vora, John Nicol\n "
+						+ "Protannot is a program developed by Hiral Vora, John Nicol\n "
 						+ "and Ann Loraine at the University of North Carolina at Charlotte. \n\n"
 						+ "For more information, see:\n"
-						+ "http://www.bioviz.org/protannot\n";
+						+ "http://www.bioviz.org/ProtAnnotMain.getInstance()\n";
 
 				about_text.append(text);
 				message_pane.add(new JScrollPane(about_text));
@@ -312,7 +304,7 @@ class Actions {
 		return about_action;
 	}
 
-	AbstractAction getReportBugAction(){
+	static AbstractAction getReportBugAction(){
 		AbstractAction report_bug_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("reportABug"))){
@@ -326,8 +318,8 @@ class Actions {
 		return report_bug_action;
 	}
 
-	AbstractAction getFeatureAction(){
-		AbstractAction feature_acton = new AbstractAction(MessageFormat.format(
+	static AbstractAction getFeatureAction(){
+		AbstractAction feature_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("requestAFeature"))){
 
@@ -336,11 +328,11 @@ class Actions {
 				GeneralUtils.browse(u);
             }
         };
-		feature_acton.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_F);
-		return feature_acton;
+		feature_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_F);
+		return feature_action;
 	}
 
-	AbstractAction getShowConsoleAction(){
+	static AbstractAction getShowConsoleAction(){
 		AbstractAction show_console_action = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("showConsole")),

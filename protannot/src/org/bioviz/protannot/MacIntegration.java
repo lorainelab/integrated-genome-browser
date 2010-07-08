@@ -93,7 +93,17 @@ final class ApplicationListenerProxy implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Object result = null;
 		try {
-			result = method.invoke(o, args);
+			if (method.getName().equals("handleAbout")) {
+				Actions.getAboutAction().actionPerformed(null);
+				Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
+				setHandled.invoke(args[0], true);
+			} else if (method.getName().equals("handleQuit")) {
+				Actions.getExitAction().actionPerformed(null);
+			} else if (method.getName().equals("handlePreferences")) {
+				Actions.getPreferencesAction().actionPerformed(null);
+			} else {
+				result = method.invoke(o, args);
+			}
 		} catch (Exception ex) {
 			Logger.getLogger(MacIntegration.class.getName()).log(Level.SEVERE, null, ex);
 		}

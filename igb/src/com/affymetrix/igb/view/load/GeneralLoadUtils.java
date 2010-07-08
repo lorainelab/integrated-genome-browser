@@ -514,7 +514,7 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * Make sure virtual genome doesn't overflow int bounds.
+	 * Make sure virtual genome doesn't overflow integer bounds.
 	 * @param group
 	 * @return true or false
 	 */
@@ -626,7 +626,7 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Loads (and displays) DAS/2 annotations.
-	 * This is done in a multithreaded fashion so that the UI doesn't lock up.
+	 * This is done in a multi-threaded fashion so that the UI doesn't lock up.
 	 * @param selected_seq
 	 * @param gFeature
 	 * @param gviewer
@@ -665,7 +665,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * Load residues on span.
 	 * First, attempt to load them with DAS/2 servers.
-	 * Second, attempt to load them with Quickload servers.
+	 * Second, attempt to load them with QuickLoad servers.
 	 * Third, attempt to load them with DAS/1 servers.
 	 * @param aseq
 	 * @param span	-- may be null, if the entire sequence is requested.
@@ -691,11 +691,8 @@ public final class GeneralLoadUtils {
 		// We'll need to know what the appropriate synonym is, for the given server.
 
 		// Determine list of servers that might have this chromosome sequence.
-		List<GenericFeature> features = getFeatures(genomeVersionName);
 		Set<GenericVersion> versionsWithChrom = new HashSet<GenericVersion>();
-		for (GenericFeature feature : features) {
-			versionsWithChrom.add(feature.gVersion);
-		}
+		versionsWithChrom.addAll(aseq.getSeqGroup().getEnabledVersions());
 
 		if ((min <= 0) && (max >= aseq.getLength())) {
 			if (DEBUG) {

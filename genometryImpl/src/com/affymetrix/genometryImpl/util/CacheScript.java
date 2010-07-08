@@ -275,8 +275,11 @@ public class CacheScript extends Thread {
 			if(gServer.serverType.equals(ServerType.DAS2))
 				fileName += Constants.xml_ext;
 
-			if((file == null && !fileMayNotExist) || !moveFileTo(file,fileName,local_path))
-				return false;			
+			if((file == null && !fileMayNotExist))
+				return false;
+
+			if(!moveFileTo(file,fileName,local_path))
+				return false;
 		}
 
 		return true;

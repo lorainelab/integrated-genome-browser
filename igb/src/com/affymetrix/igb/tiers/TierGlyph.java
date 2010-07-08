@@ -51,13 +51,13 @@ public class TierGlyph extends SolidGlyph {
 	 *  Note: You probably do NOT want the TierGlyph to draw a label and for the
 	 *  included GraphGlyph to also draw a label.
 	 */
-	public static final String SHOW_TIER_LABELS_PROPERTY = "Show Tier Labels";
+	public static final String SHOW_TIER_LABELS_PROPERTY = "Show Track Labels";
 	/** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
 	 *  Boolean.TRUE, the tier will draw a handle on the left side.
 	 *  Note: You probably do NOT want the TierGlyph to draw a handle and for the
 	 *  included GraphGlyph to also draw a handle.
 	 */
-	public static final String SHOW_TIER_HANDLES_PROPERTY = "Show Tier Handles";
+	public static final String SHOW_TIER_HANDLES_PROPERTY = "Show Track Handles";
 	private double spacer = 2;
 
 	/*
@@ -296,7 +296,7 @@ public class TierGlyph extends SolidGlyph {
 		Rectangle vbox = view.getPixelBox();
 		pixelbox = pixelbox.intersection(vbox);
 
-		if (middle_glyphs.size() == 0) { // no middle glyphs, so use fill color to fill entire tier
+		if (middle_glyphs.isEmpty()) { // no middle glyphs, so use fill color to fill entire tier
 			if (style.getBackground() != null) {
 				g.setColor(style.getBackground());
 				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);

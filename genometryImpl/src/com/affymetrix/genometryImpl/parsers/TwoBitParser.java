@@ -6,6 +6,8 @@ import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.SeekableBufferedStream;
 import com.affymetrix.genometryImpl.util.TwoBitIterator;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,11 +16,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.net.URI;
+import net.sf.samtools.util.SeekableFileStream;
+import net.sf.samtools.util.SeekableHTTPStream;
+import net.sf.samtools.util.SeekableStream;
 
 /**
  * @author sgblanch
@@ -49,53 +53,62 @@ public final class TwoBitParser {
 
 	private static final boolean DEBUG = false;
 	
-    public static BioSeq parse(File file, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
-        FileChannel channel = new RandomAccessFile(file, "r").getChannel();
+    public static BioSeq parse(URI uri, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
+		SeekableBufferedStream bistr = new SeekableBufferedStream(getHeaderChannel(uri));
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-		loadBuffer(channel, buffer);
+		loadBuffer(bistr, buffer);
         int seq_count = readFileHeader(buffer);
-        BioSeq seq = readSequenceIndex(file, channel, buffer, seq_count, seq_group);
-		GeneralUtils.safeClose(channel);
+        BioSeq seq = readSequenceIndex(uri, bistr, buffer, seq_count, seq_group);
+		GeneralUtils.safeClose(bistr);
 		return seq;
     }
 
-	public static BioSeq parse(File file) throws FileNotFoundException, IOException {
-		return parse(file,new AnnotatedSeqGroup("No_Data"));
+	public static BioSeq parse(URI uri) throws FileNotFoundException, IOException {
+		return parse(uri,new AnnotatedSeqGroup("No_Data"));
 	}
 
-	public static boolean parse(File file, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(file, new AnnotatedSeqGroup("No_Data"));
+	public static boolean parse(URI uri, OutputStream out) throws FileNotFoundException, IOException {
+		BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data"));
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
-	public static boolean parse(File file, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(file, new AnnotatedSeqGroup("No_Data"));
+	public static boolean parse(URI uri, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
+		BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data"));
 		return writeAnnotations(seq,start,end,out);
 	}
 
-	public static boolean parse(File file, AnnotatedSeqGroup seq_group, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(file,seq_group);
+	public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, OutputStream out) throws FileNotFoundException, IOException {
+		BioSeq seq = parse(uri, seq_group);
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
-	public static boolean parse(File file, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(file,seq_group);
+	public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
+		BioSeq seq = parse(uri, seq_group);
 		return writeAnnotations(seq,start,end,out);
 	}
-	
+
     private static String getString(ByteBuffer buffer, int length) {
         byte[] string = new byte[length];
         buffer.get(string);
         return new String(string, charset);
     }
 
+	private static SeekableStream getHeaderChannel(URI uri) throws FileNotFoundException, IOException {
+
+		if (LocalUrlCacher.isFile(uri)) {
+			File f = new File(uri.getPath());
+			return new SeekableFileStream(f);
+		}
+
+		return new SeekableHTTPStream(uri.toURL());
+	}
 	/**
-	 * Load data from the channel into the buffer.  This convenience method is
+	 * Load data from the bistr into the buffer.  This convenience method is
 	 * used to ensure that the buffer has the correct endian and is rewound.
 	 */
-	private static void loadBuffer(FileChannel channel, ByteBuffer buffer) throws IOException {
+	private static void loadBuffer(SeekableBufferedStream bistr, ByteBuffer buffer) throws IOException {
 		buffer.rewind();
-		channel.read(buffer);
+		bistr.read(buffer.array());
 		//buffer.order(byteOrder);
 		buffer.rewind();
 	}
@@ -129,9 +142,10 @@ public final class TwoBitParser {
         return seq_count;
     }
 
-    private static void readBlocks(ByteBuffer buffer, BioSeq seq, MutableSeqSymmetry sym) throws IOException {
+    private static void readBlocks(SeekableBufferedStream bistr, ByteBuffer buffer, BioSeq seq, MutableSeqSymmetry sym) throws IOException {
 		//xBlockCount, where x = n OR mask
 		int block_count = buffer.getInt();
+		long position = bistr.position();
 
 		if(DEBUG){
 			System.out.println("I want " + block_count + " blocks");
@@ -140,6 +154,10 @@ public final class TwoBitParser {
         int[] blockStarts = new int[block_count];
         //ByteBuffer buffer = ByteBuffer.allocate(2 * block_count * INT_SIZE + INT_SIZE);
         for (int i = 0; i < block_count; i++) {
+			if (buffer.remaining() < INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
+
 			//xBlockStart, where x = n OR mask
             blockStarts[i] = buffer.getInt();
         }
@@ -151,21 +169,21 @@ public final class TwoBitParser {
 
     }
 
-    private static BioSeq readSequenceIndex(File file, FileChannel channel, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
+    private static BioSeq readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
         String name;
         int name_length;
 		long offset, position;
 
-		position = channel.position();
+		position = bistr.position();
 		//for (int i = 0; i < seq_count; i++) {
 		if (buffer.remaining() < INT_SIZE) {
-			position = updateBuffer(channel, buffer, position);
+			position = updateBuffer(bistr, buffer, position);
 		}
 
 		name_length = buffer.get() & BYTE_MASK;
 
 		if (buffer.remaining() < name_length + INT_SIZE) {
-			position = updateBuffer(channel, buffer, position);
+			position = updateBuffer(bistr, buffer, position);
 		}
 
 		name = getString(buffer, name_length);
@@ -175,19 +193,19 @@ public final class TwoBitParser {
 			System.out.println("Sequence '" + name + "', offset " + offset);
 		}
 		
-		return readSequenceHeader(file, channel, buffer.order(), offset, seq_group, name);
+		return readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name);
 		//}
     }
 
-    private static BioSeq readSequenceHeader(File file, FileChannel channel, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
+    private static BioSeq readSequenceHeader(URI uri, SeekableBufferedStream bistr, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		buffer.order(order);
 		MutableSeqSymmetry nBlocks    = new SimpleMutableSeqSymmetry();
 		MutableSeqSymmetry maskBlocks = new SimpleMutableSeqSymmetry();
 		long residueOffset = offset;
 
-        channel.position(offset);
-        loadBuffer(channel, buffer);
+        bistr.position(offset);
+        loadBuffer(bistr, buffer);
 
 		//dnaSize
         long size = buffer.getInt() & INT_MASK;
@@ -205,11 +223,11 @@ public final class TwoBitParser {
 		BioSeq seq = seq_group.addSeq(name, (int) size);
 
 		//nBlockCount, nBlockStart, nBlockSize
-        readBlocks(buffer, seq, nBlocks);
+        readBlocks(bistr, buffer, seq, nBlocks);
 		residueOffset += INT_SIZE + nBlocks.getSpanCount() * INT_SIZE * 2;
 
 		//maskBlockCount, maskBlockStart, maskBlockSize
-		readBlocks(buffer, seq, maskBlocks);
+		readBlocks(bistr ,buffer, seq, maskBlocks);
 		residueOffset += INT_SIZE + maskBlocks.getSpanCount() * INT_SIZE * 2;
 
 		//reserved
@@ -218,15 +236,15 @@ public final class TwoBitParser {
         }
 		residueOffset += INT_SIZE;
 
-		seq.setResiduesProvider(new TwoBitIterator(file,size,residueOffset,buffer.order(),nBlocks,maskBlocks));
+		seq.setResiduesProvider(new TwoBitIterator(uri,size,residueOffset,buffer.order(),nBlocks,maskBlocks));
 
 		return seq;
     }
 
-	private static long updateBuffer(FileChannel channel, ByteBuffer buffer, long position) throws IOException {
-		channel.position(position - buffer.remaining());
-		loadBuffer(channel, buffer);
-		return channel.position();
+	private static long updateBuffer(SeekableBufferedStream bistr, ByteBuffer buffer, long position) throws IOException {
+		bistr.position(position - buffer.remaining());
+		loadBuffer(bistr, buffer);
+		return bistr.position();
 	}
 
 	public static String getMimeType() {
@@ -271,9 +289,10 @@ public final class TwoBitParser {
 			int start = 11;
 			int end = residues.length() + 4;
 			outStream = new ByteArrayOutputStream();
-			boolean result = TwoBitParser.parse(f,start,end,outStream);
+			URI uri = URI.create("http://test.bioviz.org/testdata/nblocks.2bit");
+			TwoBitParser.parse(uri,start,end,outStream);
 			//BioSeq seq = TwoBitParser.parse(f);
-			
+
 
 			System.out.println("Result   :" + outStream.toString());
 
@@ -288,7 +307,7 @@ public final class TwoBitParser {
 				end = 0;
 			}
 			System.out.println("Expected :" + residues.substring(start, end));
-			
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}finally{

@@ -1,9 +1,11 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import java.net.URI;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Random;
 import org.junit.Before;
@@ -26,7 +28,8 @@ public class TwoBitParserTest {
 	String mnblocks_file = "test/data/2bit/mnblocks.2bit";
 	String residues, file;
 	File infile = null;
-
+	String url = "http://test.bioviz.org/testdata/";
+	boolean runRemote = false;
 
 	@Before
 	public void setup() throws Exception
@@ -63,7 +66,7 @@ public class TwoBitParserTest {
 	public void testOriginal() throws Exception
 	{
 		infile = new File(file);
-		BioSeq seq= TwoBitParser.parse(infile);
+		BioSeq seq= TwoBitParser.parse(infile.toURI());
 		assertEquals(seq.getResidues(),residues);
 		//System.out.println(residues + "==" +seq.getResidues());
 	}
@@ -116,24 +119,28 @@ public class TwoBitParserTest {
 	public void testCase(int start, int end) throws Exception
 	{
 		infile = new File(file);
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		boolean result = TwoBitParser.parse(infile,start,end,outStream);
+		testACase(infile.toURI(), start, end);
 
+		if(runRemote){
+			URI uri = URI.create(url+infile.getName());
+			testACase(uri, start, end);
+		}
+	}
+
+	private void testACase(URI uri, int start, int end) throws IOException {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		boolean result = TwoBitParser.parse(uri, start, end, outStream);
 		if (start < end) {
 			start = Math.max(0, start);
 			start = Math.min(residues.length(), start);
-
 			end = Math.max(0, end);
 			end = Math.min(residues.length(), end);
-		}
-		else
-		{
+		} else {
 			start = 0;
 			end = 0;
 		}
-
 		assertTrue(result);
-		assertEquals(residues.substring(start, end),outStream.toString());
+		assertEquals(residues.substring(start, end), outStream.toString());
 		//System.out.println(residues.substring(start, end) + "==" +outStream.toString());
 		GeneralUtils.safeClose(outStream);
 	}

@@ -4,11 +4,15 @@ import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.sf.samtools.util.SeekableFileStream;
+import net.sf.samtools.util.SeekableHTTPStream;
 
 /**
  *
@@ -31,13 +35,13 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 	private static final char[] BASES = { 'T', 'C', 'A', 'G'};
 
-	private final File file;
+	private final URI uri;
 	private final long length, offset;
 	private final MutableSeqSymmetry nBlocks, maskBlocks;
 	private final ByteOrder byteOrder;
 
-	public TwoBitIterator(File file, long length, long offset, ByteOrder byteOrder, MutableSeqSymmetry nBlocks, MutableSeqSymmetry maskBlocks) {
-		this.file       = file;
+	public TwoBitIterator(URI uri, long length, long offset, ByteOrder byteOrder, MutableSeqSymmetry nBlocks, MutableSeqSymmetry maskBlocks) {
+		this.uri	    = uri;
 		this.length     = length;
 		this.offset     = offset;
 		this.nBlocks    = nBlocks;
@@ -51,15 +55,15 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	}
 
 	/**
-	 * Load data of size of buffer into buffer from file channel.
+	 * Load data of size of buffer into buffer from file istr.
 	 *
-	 * @param channel	File channel from which data is to be loaded.
-	 * @param buffer	Buffer in which data from file channel is read.
+	 * @param istr	File istr from which data is to be loaded.
+	 * @param buffer	Buffer in which data from file istr is read.
 	 * @throws IOException
 	 */
-	private void loadBuffer(FileChannel channel, ByteBuffer buffer) throws IOException {
+	private void loadBuffer(SeekableBufferedStream bistr, ByteBuffer buffer) throws IOException {
 		buffer.rewind();
-		channel.read(buffer);
+		bistr.read(buffer.array());
 		buffer.rewind();
 	}
 
@@ -70,30 +74,48 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	 * @return			Returns string of residues.
 	 */
 	public String substring(int start, int end) {
-		
-		//Sanity Check
-		start = Math.max(0, start);
-		end = Math.max(end, start);
-		end = Math.min(end, getLength());
-
-		int requiredLength = end - start;
-		long startOffset = start / RESIDUES_PER_BYTE;
-		long bytesToRead = calculateBytesToRead(start, end);
-		int beginLength = Math.min(RESIDUES_PER_BYTE - start % 4,requiredLength);
-		int endLength = Math.min(end % RESIDUES_PER_BYTE,requiredLength);
-		if (bytesToRead == 1) {
-			if (start % RESIDUES_PER_BYTE == 0) {
-				beginLength = 0;
-			} else {
-				endLength = 0;
+		SeekableBufferedStream bistr = null;
+		File file = null;
+		try {
+			//Sanity Check
+			start = Math.max(0, start);
+			end = Math.max(end, start);
+			end = Math.min(end, getLength());
+			int requiredLength = end - start;
+			long startOffset = start / RESIDUES_PER_BYTE;
+			long bytesToRead = calculateBytesToRead(start, end);
+			int beginLength = Math.min(RESIDUES_PER_BYTE - start % 4, requiredLength);
+			int endLength = Math.min(end % RESIDUES_PER_BYTE, requiredLength);
+			if (bytesToRead == 1) {
+				if (start % RESIDUES_PER_BYTE == 0) {
+					beginLength = 0;
+				} else {
+					endLength = 0;
+				}
 			}
-		}
 
-		return parse(start, startOffset, bytesToRead, requiredLength, beginLength, endLength);
+			if(LocalUrlCacher.isFile(uri)){
+				file = new File(uri.getPath());
+				bistr = new SeekableBufferedStream(new SeekableFileStream(file));
+			}else{
+				bistr = new SeekableBufferedStream(new SeekableHTTPStream(uri.toURL()));
+			}
+
+			bistr.position(this.offset + startOffset);
+			
+			return parse(bistr, start, bytesToRead, requiredLength, beginLength, endLength);
+
+		} catch (FileNotFoundException ex) {
+			Logger.getLogger(TwoBitIterator.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IOException ex){
+			Logger.getLogger(TwoBitIterator.class.getName()).log(Level.SEVERE, null, ex);
+		} finally{
+			GeneralUtils.safeClose(bistr);
+		}
+		return "";
 	}
 
-	private String parse(int start, long startOffset, long bytesToRead, int requiredLength, int beginLength, int endLength) {
-		FileChannel channel = null;
+	private String parse(SeekableBufferedStream bistr, int start, long bytesToRead, int requiredLength, int beginLength, int endLength) throws IOException {
 		char[] residues = new char[requiredLength];
 		byte[] valueBuffer = new byte[BUFFER_SIZE];
 		int residueCounter = 0;
@@ -103,37 +125,26 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		MutableSeqSymmetry tempMaskBlocks = GetBlocks(start, maskBlocks);
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		buffer.order(this.byteOrder);
-		try {
-			channel = new RandomAccessFile(file, "r").getChannel();
-			channel.position(this.offset + startOffset);
-			loadBuffer(channel, buffer);
-			
-			//packedDNA
-			SeqSpan nBlock = null;
-			SeqSpan maskBlock = null;
-			char[] temp = null;
-			for (int i = 0; i < bytesToRead; i += BUFFER_SIZE) {
-				buffer.get(valueBuffer);
-				for (int k = 0; k < BUFFER_SIZE && residueCounter < requiredLength; k++) {
-					temp = parseByte(valueBuffer[k], k, bytesToRead, start, requiredLength, beginLength, endLength);
-					for (int j = 0; j < temp.length && residueCounter < requiredLength; j++) {
-						nBlock = processResidue(residuePosition, temp, j, nBlock, tempNBlocks, false);
-						maskBlock = processResidue(residuePosition, temp, j, maskBlock, tempMaskBlocks, true);
-						residues[residueCounter++] = temp[j];
-						residuePosition++;
-					}
+
+		loadBuffer(bistr, buffer);
+
+		//packedDNA
+		SeqSpan nBlock = null;
+		SeqSpan maskBlock = null;
+		char[] temp = null;
+		for (int i = 0; i < bytesToRead; i += BUFFER_SIZE) {
+			buffer.get(valueBuffer);
+			for (int k = 0; k < BUFFER_SIZE && residueCounter < requiredLength; k++) {
+				temp = parseByte(valueBuffer[k], k, bytesToRead, start, requiredLength, beginLength, endLength);
+				for (int j = 0; j < temp.length && residueCounter < requiredLength; j++) {
+					nBlock = processResidue(residuePosition, temp, j, nBlock, tempNBlocks, false);
+					maskBlock = processResidue(residuePosition, temp, j, maskBlock, tempMaskBlocks, true);
+					residues[residueCounter++] = temp[j];
+					residuePosition++;
 				}
-				channel.position(channel.position() + BUFFER_SIZE);
-				loadBuffer(channel, buffer);
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(channel);
-			valueBuffer = null;
-			buffer = null;
-			tempNBlocks = null;
-			tempMaskBlocks = null;
+			bistr.position(bistr.position() + BUFFER_SIZE);
+			loadBuffer(bistr, buffer);
 		}
 
 		return new String(residues);

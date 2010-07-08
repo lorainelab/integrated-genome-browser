@@ -21,8 +21,7 @@ import java.util.logging.Logger;
  * @author jnicol
  */
 public class TwoBit extends SymLoader {
-	private File f = null;
-
+	
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		// BAM files are generally large, so only allow loading visible data.
@@ -42,7 +41,6 @@ public class TwoBit extends SymLoader {
 			return;
 		}
 		super.init();
-		f = LocalUrlCacher.convertURIToFile(uri);
 	}
 
 	@Override
@@ -63,7 +61,7 @@ public class TwoBit extends SymLoader {
 		ByteArrayOutputStream outStream = null;
 		try {
 			outStream = new ByteArrayOutputStream();
-			TwoBitParser.parse(f, span.getStart(), span.getEnd(), outStream);
+			TwoBitParser.parse(uri, span.getStart(), span.getEnd(), outStream);
 			byte[] bytes = outStream.toByteArray();
 			return new String(bytes);
 		} catch (Exception ex) {

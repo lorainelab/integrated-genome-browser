@@ -54,9 +54,9 @@ final class ServletUtils {
 				int spanStart = 0, spanEnd = 0;
 				spanStart = span.getStart();
 				spanEnd = span.getEnd();
-				TwoBitParser.parse(seqfile, spanStart, spanEnd, response.getOutputStream());
+				TwoBitParser.parse(seqfile.toURI(), spanStart, spanEnd, response.getOutputStream());
 			} else {
-				TwoBitParser.parse(seqfile, response.getOutputStream());
+				TwoBitParser.parse(seqfile.toURI(), response.getOutputStream());
 			}
 			return;
 		}

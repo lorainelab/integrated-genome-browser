@@ -295,7 +295,12 @@
 	</target>
 
 	<target name="run_Protannot" depends="compile" description="run Protannot">
+		<condition property="apple.jvmargs" value="-Xdock:name=Protannot " else="" >
+			<os family="mac" />
+		</condition>
 		<java fork="true" classname="org.bioviz.protannot.ProtAnnotMain">
+			<jvmarg line="${apple.jvmargs}" />
+			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
 			<classpath>
 				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
 				<fileset dir="${lib.dir}" includes="jlfgr-1_0.jar"/>

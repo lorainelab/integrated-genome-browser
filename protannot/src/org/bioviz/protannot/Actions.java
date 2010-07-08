@@ -1,5 +1,6 @@
 package org.bioviz.protannot;
 
+import java.awt.Toolkit;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.util.List;
 import java.util.Properties;
@@ -133,7 +134,9 @@ class Actions {
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Stop16.gif")){
 
             public void actionPerformed(ActionEvent e) {
-                ProtAnnotMain.getInstance().close();
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
+				new WindowEvent(ProtAnnotMain.getInstance().getFrame(),
+					WindowEvent.WINDOW_CLOSING));
             }
         };
         quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);

@@ -123,7 +123,7 @@ final public class ProtAnnotMain implements WindowListener {
 			load(url);
 		}
 	};
-	
+
     private enum Arguments {
         SERVER,
         FILENAME;
@@ -328,18 +328,23 @@ final public class ProtAnnotMain implements WindowListener {
 
     /** Close everything and exit upon closing the window */
     public void windowClosing(WindowEvent evt) {
-        if (evt.getSource() == frm) {
-           close();
-        }
+       if (evt.getSource() == frm) {
+			updatePrefs(gview.getColorPrefs());
+
+			JFrame frame = (JFrame) evt.getComponent();
+
+			String message = "Do you really want to exit?";
+			if (confirmPanel(message)) {
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			} else {
+				frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			}
+		}
     }
 
-    /** Close everything and exit upon closing the window */
-    public void windowClosed(WindowEvent evt) {
-        if (evt.getSource() == frm) {
-            close();
-        }
-    }
-
+	public void windowClosed(WindowEvent evt) {
+		
+	}
     /**
      * Adds view_menu item to View view_menu..
      * @param   view_menu    Menu name to which submenus should be added.
@@ -438,8 +443,7 @@ final public class ProtAnnotMain implements WindowListener {
 	}
 	
 	void close() {
-		updatePrefs(gview.getColorPrefs());
-		System.exit(0);
+		
 	}
 
 	GenomeView getGenomeView(){
@@ -631,6 +635,19 @@ final public class ProtAnnotMain implements WindowListener {
         }
         return ret.toArray(new String[0]);
     }
+
+	/**
+	 * Shows a panel asking for the user to confirm something.
+	 *
+	 * @param message the message String to display to the user
+	 * @return true if the user confirms, else false.
+	 */
+	public static boolean confirmPanel(String message) {
+		ProtAnnotMain pa = getInstance();
+		JFrame frame = (pa == null) ? null : pa.getFrame();
+		return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
+				frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
+	}
 
     /**
      * Parses command line argument and adds valid arguments to the argument dictionary.

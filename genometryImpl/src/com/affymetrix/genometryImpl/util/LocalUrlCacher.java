@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import net.sf.samtools.util.SeekableStream;
 import net.sf.samtools.util.SeekableFileStream;
-import net.sf.samtools.util.SeekableHTTPStream;
 
 public final class LocalUrlCacher {
 

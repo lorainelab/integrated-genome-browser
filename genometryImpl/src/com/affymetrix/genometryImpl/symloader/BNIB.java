@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,6 @@ public class BNIB extends SymLoader {
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
-		// BAM files are generally large, so only allow loading visible data.
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
 		strategyList.add(LoadStrategy.CHROMOSOME);
@@ -62,7 +60,8 @@ public class BNIB extends SymLoader {
 		chrList = new ArrayList<BioSeq>(1);
 		SeekableStream sis = null;
 		try {
-			BioSeq seq = NibbleResiduesParser.determineChromosome(LocalUrlCacher.getSeekableStream(uri), group);
+			sis = LocalUrlCacher.getSeekableStream(uri);
+			BioSeq seq = NibbleResiduesParser.determineChromosome(sis, group);
 			if (seq != null) {
 				chrList.add(seq);
 			}
@@ -82,7 +81,8 @@ public class BNIB extends SymLoader {
 		ByteArrayOutputStream outStream = null;
 		try {
 			outStream = new ByteArrayOutputStream();
-			NibbleResiduesParser.parse(LocalUrlCacher.getSeekableStream(uri), span.getStart(), span.getEnd(), outStream);
+			sis = LocalUrlCacher.getSeekableStream(uri);
+			NibbleResiduesParser.parse(sis, span.getStart(), span.getEnd(), outStream);
 			byte[] bytes = outStream.toByteArray();
 			return new String(bytes);
 		} catch (Exception ex) {

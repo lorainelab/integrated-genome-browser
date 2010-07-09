@@ -20,8 +20,10 @@ import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.SeekableBufferedStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.samtools.util.SeekableStream;
 
 public final class NibbleResiduesParser {
 	private static int BUFSIZE = 65536;	// buffer for outputting
@@ -42,18 +44,23 @@ public final class NibbleResiduesParser {
 	public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end) throws IOException
 	{
 		BioSeq result_seq = null;
-		BufferedInputStream bis = null;
+		InputStream bis = null;
 		DataInputStream dis = null;
 		try {
 			Timer tim = new Timer();
 			tim.start();
-			if (istr instanceof BufferedInputStream) {
-				bis = (BufferedInputStream)istr;
-			}
-			else {
+
+			//If istr is instance of Seekablestream then use SeekableBufferedStream else use BufferedInputStream.
+			if (istr instanceof SeekableStream) {
+				bis = new SeekableBufferedStream((SeekableStream) istr);
+			} else if (istr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream) istr;
+			} else {
 				bis = new BufferedInputStream(istr);
 			}
 			dis = new DataInputStream(bis);
+
+			
 			String name = dis.readUTF();
 			dis.readUTF();
 			int total_residues = dis.readInt();
@@ -82,8 +89,17 @@ public final class NibbleResiduesParser {
 				result_seq = seq_group.addSeq(name, num_residues);
 			}
 
-			Logger.getLogger(NibbleResiduesParser.class.getName()).info(
-					"Chromosome: " + result_seq + " : residues: " + num_residues);
+			int bytes_to_skip = start / 2;
+			while (bytes_to_skip > 0) {
+				int skipped = (int) bis.skip(bytes_to_skip);
+				if (skipped < 0) {
+					break;
+				} // EOF reached
+				bytes_to_skip -= skipped;
+			}
+
+			Logger.getLogger(NibbleResiduesParser.class.getName()).log(
+					Level.INFO, "Chromosome: {0} : residues: {1}", new Object[]{result_seq, num_residues});
 			SetResiduesIterator(start, end, dis, result_seq);
 		}
 		finally {
@@ -170,15 +186,6 @@ public final class NibbleResiduesParser {
 		byte[] nibble_array = new byte[num_residues / 2 + extra];
 		int first = start%2;
 		int last = first + num_residues;
-
-		int bytes_to_skip = start/2;
-		while (bytes_to_skip > 0) {
-			int skipped = (int)dis.skip(bytes_to_skip);
-			if (skipped < 0) {
-				break;
-			} // EOF reached
-			bytes_to_skip -= skipped;
-		}
 
 		dis.readFully(nibble_array);	// this only reads nibble_array.len bytes, per spec.
 

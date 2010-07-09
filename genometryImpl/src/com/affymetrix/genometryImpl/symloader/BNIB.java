@@ -10,20 +10,18 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.samtools.util.SeekableStream;
 
 /**
  *
  * @author jnicol
  */
 public class BNIB extends SymLoader {
-	private File f = null;
 	private List<BioSeq> chrList = null;
 	private final AnnotatedSeqGroup group;
 
@@ -47,7 +45,6 @@ public class BNIB extends SymLoader {
 			return;
 		}
 		super.init();
-		f = LocalUrlCacher.convertURIToFile(uri);
 	}
 
 	@Override
@@ -63,17 +60,16 @@ public class BNIB extends SymLoader {
 
 		init();
 		chrList = new ArrayList<BioSeq>(1);
-		FileInputStream fis = null;
+		SeekableStream sis = null;
 		try {
-			fis = new FileInputStream(f);
-			BioSeq seq = NibbleResiduesParser.determineChromosome(fis, group);
+			BioSeq seq = NibbleResiduesParser.determineChromosome(LocalUrlCacher.getSeekableStream(uri), group);
 			if (seq != null) {
 				chrList.add(seq);
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
-			GeneralUtils.safeClose(fis);
+			GeneralUtils.safeClose(sis);
 		}
 		return chrList;
 	}
@@ -82,12 +78,11 @@ public class BNIB extends SymLoader {
 	public String getRegionResidues(SeqSpan span) {
 		init();
 
-		FileInputStream fis = null;
+		SeekableStream sis = null;
 		ByteArrayOutputStream outStream = null;
 		try {
 			outStream = new ByteArrayOutputStream();
-			fis = new FileInputStream(f);
-			NibbleResiduesParser.parse(fis, span.getStart(), span.getEnd(), outStream);
+			NibbleResiduesParser.parse(LocalUrlCacher.getSeekableStream(uri), span.getStart(), span.getEnd(), outStream);
 			byte[] bytes = outStream.toByteArray();
 			return new String(bytes);
 		} catch (Exception ex) {
@@ -95,7 +90,7 @@ public class BNIB extends SymLoader {
 			return null;
 		} finally {
 			GeneralUtils.safeClose(outStream);
-			GeneralUtils.safeClose(fis);
+			GeneralUtils.safeClose(sis);
 		}
 	}
 

@@ -112,6 +112,21 @@ public final class ResidueLoading {
 				}
 			}
 		}
+
+		//Try to load from Quickload server. Try in order bnib, 2bit and fasta.
+		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.QuickLoad) {
+				String residues = GetQuickLoadResidues(seq_group, seq_name, server.URL, span);
+				if (residues != null) {
+					BioSeq.addResiduesToComposition(aseq, residues, span);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
+				}
+			}
+		}
+		
 		// Try to load via DAS/1 server.
 		for (GenericVersion version : versionsWithChrom) {
 			if (version.gServer.serverType == ServerType.DAS) {
@@ -255,8 +270,8 @@ public final class ResidueLoading {
 			case TWOBIT:
 				return new TwoBit(uri);
 
-			case FA:
-				return new Fasta(uri, seq_group);
+//			case FA:
+//				return new Fasta(uri, seq_group);
 		}
 
 		return null;

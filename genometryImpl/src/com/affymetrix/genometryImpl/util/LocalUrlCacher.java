@@ -7,6 +7,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+import net.sf.samtools.util.SeekableStream;
+import net.sf.samtools.util.SeekableFileStream;
+import net.sf.samtools.util.SeekableHTTPStream;
 
 public final class LocalUrlCacher {
 
@@ -79,6 +82,14 @@ public final class LocalUrlCacher {
 			return true;
 
 		return false;
+	}
+
+	public static SeekableStream getSeekableStream(URI uri) throws FileNotFoundException, MalformedURLException{
+		if (LocalUrlCacher.isFile(uri)) {
+			File f = new File(uri.getPath());
+			return new SeekableFileStream(f);
+		}
+		return new SeekableHTTPStream(uri.toURL());
 	}
 
 	public static InputStream getInputStream(URL url) throws IOException {

@@ -20,9 +20,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.net.URI;
-import net.sf.samtools.util.SeekableFileStream;
-import net.sf.samtools.util.SeekableHTTPStream;
-import net.sf.samtools.util.SeekableStream;
 
 /**
  * @author sgblanch
@@ -54,7 +51,7 @@ public final class TwoBitParser {
 	private static final boolean DEBUG = false;
 	
     public static BioSeq parse(URI uri, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
-		SeekableBufferedStream bistr = new SeekableBufferedStream(getHeaderChannel(uri));
+		SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		loadBuffer(bistr, buffer);
         int seq_count = readFileHeader(buffer);
@@ -93,15 +90,6 @@ public final class TwoBitParser {
         return new String(string, charset);
     }
 
-	private static SeekableStream getHeaderChannel(URI uri) throws FileNotFoundException, IOException {
-
-		if (LocalUrlCacher.isFile(uri)) {
-			File f = new File(uri.getPath());
-			return new SeekableFileStream(f);
-		}
-
-		return new SeekableHTTPStream(uri.toURL());
-	}
 	/**
 	 * Load data from the bistr into the buffer.  This convenience method is
 	 * used to ensure that the buffer has the correct endian and is rewound.

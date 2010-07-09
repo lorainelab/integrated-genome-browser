@@ -11,8 +11,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.samtools.util.SeekableFileStream;
-import net.sf.samtools.util.SeekableHTTPStream;
 
 /**
  *
@@ -94,12 +92,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 				}
 			}
 
-			if(LocalUrlCacher.isFile(uri)){
-				file = new File(uri.getPath());
-				bistr = new SeekableBufferedStream(new SeekableFileStream(file));
-			}else{
-				bistr = new SeekableBufferedStream(new SeekableHTTPStream(uri.toURL()));
-			}
+			bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
 
 			bistr.position(this.offset + startOffset);
 			

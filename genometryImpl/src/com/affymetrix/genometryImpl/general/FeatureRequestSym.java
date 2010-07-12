@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -47,7 +48,10 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
@@ -121,6 +125,53 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		}
 	}
 
+   public static Map<String, List<SeqSymmetry>> splitResultsByTracks(FeatureRequestSym request, List<? extends SeqSymmetry> results) {
+		Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
+		List<SeqSymmetry> resultList = null;
+		String method = null;
+		for (SeqSymmetry result : results) {
+			method = (result instanceof SymWithProps) ? (String) ((SymWithProps) result).getProperty("method") : null;
+			if (track2Results.containsKey(method)) {
+				resultList = track2Results.get(method);
+			} else {
+				resultList = new ArrayList<SeqSymmetry>();
+				track2Results.put(method, resultList);
+			}
+			resultList.add(result);
+		}
+
+	  return track2Results;
+  }
+
+  /**
+   * If children of FeatureRequestSym have track information, then split the FeatureRequestSym based on them.
+   * This is necessary for some formats (such as GFF1).
+   * @param requests
+   */
+   public static Collection<FeatureRequestSym> splitFeatureSymByTracks(FeatureRequestSym request, List<? extends SeqSymmetry> results) {
+		Map<String, FeatureRequestSym> track2requestSym = new HashMap<String, FeatureRequestSym>();
+		FeatureRequestSym frs = null;
+		String method = null;
+		for (Map.Entry<String, List<SeqSymmetry>> entry : splitResultsByTracks(request, results).entrySet()) {
+			method = entry.getKey();
+			frs = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
+			frs.setProperty("method", method);
+		}
+		for (SeqSymmetry result : results) {
+			method = (result instanceof SymWithProps) ? (String) ((SymWithProps) result).getProperty("method") : null;
+			if (track2requestSym.containsKey(method)) {
+				frs = track2requestSym.get(method);
+			} else {
+				frs = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
+				frs.setProperty("method", method);
+				track2requestSym.put(method, frs);
+			}
+			frs.addChild(result);
+		}
+	  
+	  return track2requestSym.values();
+  }
+
 	public static void addAnnotations(
 			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, BioSeq aseq) {
 		boolean skipOverallAdd = false;
@@ -148,7 +199,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 	public static List<FeatureRequestSym> determineFeatureRequestSyms(SymLoader symL, URI uri, String featureName, LoadStrategy strategy, SeqSpan overlapSpan) {
 		List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
 		if (strategy == LoadStrategy.GENOME && symL != null) {
-			buildFeatureSymList(symL.getChromosomeList(), uri, featureName, output_requests);
+			buildFeatureSymListByChromosome(symL.getChromosomeList(), uri, featureName, output_requests);
 		} else {
 			// Note that if we're loading the whole genome and symL isn't defined, we return one requestSym.  That's okay -- it will be ignored
 			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
@@ -157,7 +208,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		return output_requests;
 	}
 
-	public static void buildFeatureSymList(List<BioSeq> seqList, URI uri, String featureName, List<FeatureRequestSym> output_requests) {
+	public static void buildFeatureSymListByChromosome(List<BioSeq> seqList, URI uri, String featureName, List<FeatureRequestSym> output_requests) {
 		for (BioSeq aseq : seqList) {
 			if (aseq.getID().equals(Constants.GENOME_SEQ_ID)) {
 				continue;

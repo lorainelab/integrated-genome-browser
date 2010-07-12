@@ -79,12 +79,21 @@ public abstract class SymLoader {
 		if (seq == null || genomeResults == null) {
 			return genomeResults;
 		}
+		return filterResultsByChromosome(genomeResults, seq);
+    }
 
+	/**
+	 * Return the symmetries that match the given chromosome.
+	 * @param genomeResults
+	 * @param seq
+	 * @return
+	 */
+	public static List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		for (SeqSymmetry sym : genomeResults) {
 			BioSeq seq2 = null;
 			if (sym instanceof UcscPslSym) {
-				seq2 = ((UcscPslSym)sym).getTargetSeq();
+				seq2 = ((UcscPslSym) sym).getTargetSeq();
 			} else {
 				seq2 = sym.getSpanSeq(0);
 			}
@@ -93,7 +102,7 @@ public abstract class SymLoader {
 			}
 		}
 		return results;
-    }
+	}
 
     /**
      * Get a region of the chromosome.

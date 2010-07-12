@@ -59,8 +59,9 @@ import org.xml.sax.InputSource;
  */
 public class FeatureRequestSym extends SimpleSymWithProps {
 
+
   private final LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
-   private final SeqSpan inside_span;
+  private final SeqSpan inside_span;
 
   //  for now trying to do without container info in constructor
   public FeatureRequestSym(SeqSpan overlap, SeqSpan inside) {
@@ -88,6 +89,14 @@ public class FeatureRequestSym extends SimpleSymWithProps {
    */
   public final SeqSpan getInsideSpan() { return inside_span; }
 
+  /**
+   * Add the specified symmetries to the FeatureRequestSym.  It is assumed these correspond to the same chromosome.
+   * @param feats - list of symmetries
+   * @param request_sym - FeatureRequestSym
+   * @param id
+   * @param name
+   * @param overlapSpan
+   */
   public static void addToRequestSym(
 			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, URI id, String name, SeqSpan overlapSpan) {
 		int feat_count = feats == null ? 0 : feats.size();
@@ -139,21 +148,36 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 	public static List<FeatureRequestSym> determineFeatureRequestSyms(SymLoader symL, URI uri, String featureName, LoadStrategy strategy, SeqSpan overlapSpan) {
 		List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
 		if (strategy == LoadStrategy.GENOME && symL != null) {
-			for (BioSeq aseq : symL.getChromosomeList()) {
-				if (aseq.getID().equals(Constants.GENOME_SEQ_ID)) {
-					continue;
-				}
-				SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-				FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
-				ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
-			}
+			buildFeatureSymList(symL.getChromosomeList(), uri, featureName, output_requests);
 		} else {
+			// Note that if we're loading the whole genome and symL isn't defined, we return one requestSym.  That's okay -- it will be ignored
 			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
 			ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
 		}
 		return output_requests;
 	}
 
+	public static void buildFeatureSymList(List<BioSeq> seqList, URI uri, String featureName, List<FeatureRequestSym> output_requests) {
+		for (BioSeq aseq : seqList) {
+			if (aseq.getID().equals(Constants.GENOME_SEQ_ID)) {
+				continue;
+			}
+			SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+			FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
+			ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
+		}
+	}
+
+	/**
+	 * parse the input stream, with parser determined by extension.
+	 * @param extension
+	 * @param uri - the URI corresponding to the file/URL
+	 * @param istr
+	 * @param group
+	 * @param featureName
+	 * @return list of symmetries
+	 * @throws Exception
+	 */
 	public static List<? extends SeqSymmetry> Parse(
 			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName)
 			throws Exception {

@@ -132,6 +132,7 @@ final class ModPropertySheet extends JPanel {
         table.setModel(model);
         table.setRowSelectionAllowed(true);
 		table.setCellSelectionEnabled(true);
+		table.setAutoCreateRowSorter(true);
         // measure column headings so we can make size decisions
         int champion = 0;
         int candidate = 0;

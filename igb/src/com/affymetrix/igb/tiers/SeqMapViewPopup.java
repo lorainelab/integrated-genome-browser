@@ -57,7 +57,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final ActionToggler at2;
   private final ActionToggler at3;
 
-  private final Action select_all_tiers_action = new AbstractAction("Select All Tiers") {
+  private final Action select_all_tiers_action = new AbstractAction("Select All Tracks") {
     public void actionPerformed(ActionEvent e) {
       handler.selectAllTiers();
     }
@@ -67,7 +67,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() != 1) {
-        ErrorHandler.errorPanel("Must select only one tier");
+        ErrorHandler.errorPanel("Must select only one track");
       }
       TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
       renameTier(current_tier);
@@ -140,13 +140,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-  private final Action show_two_tiers = new AbstractAction("Show 2 tiers (+) and (-)") {
+  private final Action show_two_tiers = new AbstractAction("Show 2 tracks (+) and (-)") {
     public void actionPerformed(ActionEvent e) {
       setTwoTiers(handler.getSelectedTierLabels(), true);
     }
   };
 
-  private final Action show_single_tier = new AbstractAction("Show 1 tier (+/-)") {
+  private final Action show_single_tier = new AbstractAction("Show 1 track (+/-)") {
     public void actionPerformed(ActionEvent e) {
       setTwoTiers(handler.getSelectedTierLabels(), false);
     }
@@ -156,7 +156,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one tier");
+        ErrorHandler.errorPanel("Must select only one track");
       }
       TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
       addSymSummaryTier(current_tier,false);
@@ -167,7 +167,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one tier");
+        ErrorHandler.errorPanel("Must select only one track");
       }
       TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
       addSymSummaryTier(current_tier,true);
@@ -178,17 +178,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one tier");
+        ErrorHandler.errorPanel("Must select only one track");
       }
       TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
       addSymCoverageTier(current_tier);
     }
   };
-  private final Action save_bed_action = new AbstractAction("Save tier as BED file") {
+  private final Action save_bed_action = new AbstractAction("Save track as BED file") {
     public void actionPerformed(ActionEvent e) {
       List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one tier");
+        ErrorHandler.errorPanel("Must select only one track");
       }
       TierGlyph current_tier = current_tiers.get(0);
       saveAsBedFile(current_tier);
@@ -208,9 +208,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   };
 
   
-  private final Action delete_action = new AbstractAction("Delete selected tiers") {
+  private final Action delete_action = new AbstractAction("Delete selected tracks") {
     public void actionPerformed(ActionEvent e) {
-      if (IGB.confirmPanel("Really remove selected tiers?\n"+
+      if (IGB.confirmPanel("Really remove selected tracks?\n"+
           "Data will be removed from all chromosomes on this genome.")) {
         removeTiers(handler.getSelectedTierLabels());
       }
@@ -233,7 +233,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   List<IAnnotStyle> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
-		if (tier_label_glyphs.size() == 0) {
+		if (tier_label_glyphs.isEmpty()) {
 			return Collections.<IAnnotStyle>emptyList();
 		}
 
@@ -257,7 +257,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   public void changeExpandMax(List<TierLabelGlyph> tier_labels) {
-    if (tier_labels == null || tier_labels.size() == 0) {
+    if (tier_labels == null || tier_labels.isEmpty()) {
       ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
       return;
     }
@@ -272,8 +272,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     String input =
       (String)JOptionPane.showInputDialog(null,
-					  "Enter new maximum tier height, 0 for unlimited",
-					  "Change Selected Tiers Max Height", JOptionPane.PLAIN_MESSAGE,
+					  "Enter new maximum track height, 0 for unlimited",
+					  "Change Selected Tracks Max Height", JOptionPane.PLAIN_MESSAGE,
 					  null, null, initial_value);
 
     if ( input == null || input.equals(JOptionPane.UNINITIALIZED_VALUE)) {
@@ -285,7 +285,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       newmax = Integer.parseInt(input);
     }
     catch (NumberFormatException ex) {
-      ErrorHandler.errorPanel("Couldn't parse new tier max '"+input+"'");
+      ErrorHandler.errorPanel("Couldn't parse new track max '"+input+"'");
       return;
     }
 
@@ -327,7 +327,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	  }
 	  showMenu.removeAll();
 	  handler.sortTiers();
-	  refreshMap(true,true); // when re-showing all tiers, do strech_to_fit in the y-direction
+	  refreshMap(true,true); // when re-showing all tier, do strech_to_fit in the y-direction
 	}
 
   /** Hides one tier and creates a JMenuItem that can be used to show it again.
@@ -380,7 +380,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	handler.repackTheTiers(false, true);
 
 	/** Possible bug : When all strands are hidden.
-	 * tier label and tiers do appear at same position.
+	 * tier label and tier do appear at same position.
 	 **/
 
 	// NOTE: Below call to stretchToFit is not redundancy. It is there
@@ -522,8 +522,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 //	  TODO: If tierglyph is empty then it is never displayed. So check when below mentioned condition is met.
     //if (child_count == 0 || syms.size() == 0) {
-    //  ErrorHandler.errorPanel("Empty Tier",
-    //    "The selected tier is empty.  Can not make a coverage tier for an empty tier.");
+    //  ErrorHandler.errorPanel("Empty Track",
+    //    "The selected track is empty.  Can not make a coverage track for an empty track.");
     //  return;
     //}
 
@@ -533,8 +533,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	SymWithProps wrapperSym = gviewer.addToDependentList(dd);
 
 	if (wrapperSym == null) {
-		ErrorHandler.errorPanel("Empty Tier",
-			"The selected tier is empty.  Can not make a coverage tier for an empty tier.");
+		ErrorHandler.errorPanel("Empty Track",
+			"The selected track is empty.  Can not make a coverage track for an empty track.");
 		return;
     }
 	
@@ -565,7 +565,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //	  TODO: If tierglyph is empty then it is never displayed. So check when below mentioned condition is met.
     //if (syms.size() == 0) {
     //ErrorHandler.errorPanel("Nothing to Summarize",
-    //    "The selected tier is empty. It contains nothing to summarize");
+    //    "The selected track is empty. It contains nothing to summarize");
     //return;
     //}
 
@@ -584,7 +584,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	if (gsym == null) {
 		ErrorHandler.errorPanel("Nothing to Summarize",
-			"The selected tier is empty. It contains nothing to summarize");
+			"The selected track is empty. It contains nothing to summarize");
 		return;
     }
 
@@ -747,7 +747,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private void doDebugAction() {
 		for (TierGlyph tg : handler.getSelectedTiers()) {
 			IAnnotStyle style = tg.getAnnotStyle();
-			System.out.println("Tier: " + tg);
+			System.out.println("Track: " + tg);
 			System.out.println("Style: " + style);
 		}
 	}

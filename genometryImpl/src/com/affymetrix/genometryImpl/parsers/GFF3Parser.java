@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GFF3Sym;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import java.io.*;
 import java.util.*;
@@ -106,7 +107,7 @@ public final class GFF3Parser {
 			String line = null;
 
 			Map<String,GFF3Sym> id2sym = new HashMap<String,GFF3Sym>();
-			ArrayList<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
+			List<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
 			String track_name = null;
 
 			try {
@@ -216,7 +217,7 @@ public final class GFF3Parser {
 					}
 				}
 			} finally {
-				br.close();
+				GeneralUtils.safeClose(br);
 			}
 
 			for (GFF3Sym sym : all_syms) {

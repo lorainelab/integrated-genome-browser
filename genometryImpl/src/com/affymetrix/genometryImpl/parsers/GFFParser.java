@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *  GFF parser.  For GFF Version 3, you can use the class GFF3Parser directly, or
@@ -370,7 +371,6 @@ public final class GFFParser implements AnnotationWriter  {
 					if (gff_version == GFF3) {
 						// temporary hack to make GFF3 look like GFF1
 						last_field = hackGff3GroupId(last_field);
-						//            System.out.println("group id: " + last_field);
 					}
 					UcscGffSym sym = new UcscGffSym(seq, source, feature_type, coord_a, coord_b,
 							score, strand_str.charAt(0), frame_str.charAt(0),
@@ -403,7 +403,7 @@ public final class GFFParser implements AnnotationWriter  {
 				}
 			}
 		} finally {
-			br.close();
+			GeneralUtils.safeClose(br);
 		}
 		hierarchy_levels.clear();
 		

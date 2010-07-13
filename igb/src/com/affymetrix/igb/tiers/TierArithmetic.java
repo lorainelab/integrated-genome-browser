@@ -21,7 +21,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final SeqMapView gviewer;
 	private final TierLabelManager handler;
-	private final JMenu combineMenu = new JMenu("Combine Selected Tiers");
+	private final JMenu combineMenu = new JMenu("Combine Selected Tracks");
 	private final JMenuItem intersectMI = new JMenuItem("Intersect");
 	private final JMenuItem unionMI = new JMenuItem("Union");
 	private final JMenuItem a_not_b_MI = new JMenuItem("A not B");
@@ -74,7 +74,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		if (!selected.isEmpty()) {
 			addUnionTier(selected);
 		} else {
-			ErrorHandler.errorPanel("Must select one or more annotation tiers for union");
+			ErrorHandler.errorPanel("Must select one or more annotation tracks for union");
 		}
 	}
 
@@ -85,7 +85,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 			TierGlyph tierB = selected.get(1);
 			addExclusiveTier(tierA, tierB, exclusiveA);
 		} else {
-			ErrorHandler.errorPanel("Must select two and only two tiers for union");
+			ErrorHandler.errorPanel("Must select two and only two tracks for union");
 		}
 	}
 
@@ -96,7 +96,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 			TierGlyph tierB = selected.get(1);
 			addXorTier(tierA, tierB);
 		} else {
-			ErrorHandler.errorPanel("Must select two and only two tiers for XOR(A,B)");
+			ErrorHandler.errorPanel("Must select two and only two tracks for XOR(A,B)");
 		}
 	}
 
@@ -106,7 +106,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 			TierGlyph tierA = selected.get(0);
 			addNotTier(tierA);
 		} else {
-			ErrorHandler.errorPanel("Must select one and only one tier for NOT(A)");
+			ErrorHandler.errorPanel("Must select one and only one track for NOT(A)");
 		}
 	}
 
@@ -117,7 +117,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 			TierGlyph tierB = selected.get(1);
 			addIntersectTier(tierA, tierB);
 		} else {
-			ErrorHandler.errorPanel("Must select two and only two tiers for intersection");
+			ErrorHandler.errorPanel("Must select two and only two tracks for intersection");
 		}
 	}
 
@@ -126,7 +126,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		List<SeqSymmetry> listA = findChildSyms(tierA);
 		if (listA.isEmpty()) {
 			ErrorHandler.errorPanel("Illegal Operation",
-					"Cannot perform this operation on this tier.");
+					"Cannot perform this operation on this track.");
 			return;
 		}
 		SeqSymmetry inverse_sym = SeqSymSummarizer.getNot(listA, aseq);
@@ -180,10 +180,10 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		}
 		SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
 		if (union_sym != null) {
-			StringBuffer meth = new StringBuffer();
+			StringBuilder meth = new StringBuilder();
 			meth.append("union: ");
 			for (TierGlyph tier : tiers) {
-				meth.append(tier.getLabel() + ", ");
+				meth.append(tier.getLabel()).append(", ");
 			}
 			addStyleAndAnnotation(union_sym, meth.toString(), aseq);
 		}

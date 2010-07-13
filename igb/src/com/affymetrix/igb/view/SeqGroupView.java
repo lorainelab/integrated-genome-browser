@@ -64,6 +64,7 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
    */
   public static void refreshTable() {
 	  seqtable.validate();
+	  seqtable.updateUI();
 	  seqtable.repaint();
   }
 

@@ -201,9 +201,11 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		if (strategy == LoadStrategy.GENOME && symL != null) {
 			buildFeatureSymListByChromosome(symL.getChromosomeList(), uri, featureName, output_requests);
 		} else {
-			// Note that if we're loading the whole genome and symL isn't defined, we return one requestSym.  That's okay -- it will be ignored
-			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
-			ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
+			if (overlapSpan != null) {
+				// Note that if we're loading the whole genome and symL isn't defined, we return one requestSym.  That's okay -- it will be ignored
+				FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
+				ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
+			}
 		}
 		return output_requests;
 	}

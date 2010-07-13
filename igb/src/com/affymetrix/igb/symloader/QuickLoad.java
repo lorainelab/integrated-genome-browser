@@ -173,9 +173,6 @@ public final class QuickLoad extends SymLoader {
 					List<FeatureRequestSym> output_requests = FeatureRequestSym.determineFeatureRequestSyms(
 							QuickLoad.this.symL, QuickLoad.this.uri, QuickLoad.this.featureName,
 							strategy, overlapSpan);
-					if (output_requests.isEmpty()) {
-						return null;
-					}
 					List<SeqSymmetry> overallResults = loadAndAddSymmetries(
 							QuickLoad.this.symL, QuickLoad.this.featureName, strategy, output_requests);
 					return overallResults;
@@ -191,7 +188,14 @@ public final class QuickLoad extends SymLoader {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
 						gviewer.updateDependentData();
-						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
+						if (overlapSpan != null && overlapSpan.getBioSeq() != null) {
+							gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
+						} else {
+							// This can happen when loading a brand-new genome
+							if (QuickLoad.this.version.group != null) {
+								gviewer.setAnnotatedSeq(QuickLoad.this.version.group.getSeq(0),true,true);
+							}
+						}
 						SeqGroupView.refreshTable();
 					}
 				} catch (Exception ex) {
@@ -210,12 +214,15 @@ public final class QuickLoad extends SymLoader {
 	 */
 
 
-	protected List<SeqSymmetry> loadAndAddSymmetries(
+	private List<SeqSymmetry> loadAndAddSymmetries(
 			SymLoader symL, String featureName,
 			LoadStrategy strategy, List<FeatureRequestSym> output_requests)
 			throws IOException, OutOfMemoryError {
 		if (output_requests.isEmpty()) {
-			return null;
+			// if we're loading the whole genome from a file, the output_requests list will be ignored and rebuilt.
+			if (this.symL != null || strategy != LoadStrategy.GENOME) {
+				return null;
+			}
 		}
 
 		List<? extends SeqSymmetry> results;

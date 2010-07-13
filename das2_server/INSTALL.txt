@@ -72,11 +72,11 @@ mysql -u root -p
 * Create a database user account called 'genopub'.  Here is an example mysql command:
 
 <pre>
-      mysql> CREATE USER 'genopub'@'localhost' IDENTIFIED BY 'some_password';
-      mysql> GRANT ALL PRIVILEGES ON genopub.* TO 'genopub'@'localhost' WITH GRANT OPTION;
-      mysql> CREATE USER 'genopub'@'%' IDENTIFIED BY 'some_password';
-      mysql> GRANT ALL PRIVILEGES ON genopub.* TO 'genopub'@'%' WITH GRANT OPTION;
-      mysql> FLUSH PRIVILEGES;
+      CREATE USER 'genopub'@'localhost' IDENTIFIED BY 'some_password';
+      GRANT ALL PRIVILEGES ON genopub.* TO 'genopub'@'localhost' WITH GRANT OPTION;
+      CREATE USER 'genopub'@'%' IDENTIFIED BY 'some_password';
+      GRANT ALL PRIVILEGES ON genopub.* TO 'genopub'@'%' WITH GRANT OPTION;
+      FLUSH PRIVILEGES;
 </pre>
 
 * Logout of the root mysql account and login to mysql as the genopub user, 'mysql -u genopub -p'

@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -47,7 +48,10 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
@@ -59,8 +63,9 @@ import org.xml.sax.InputSource;
  */
 public class FeatureRequestSym extends SimpleSymWithProps {
 
+
   private final LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
-   private final SeqSpan inside_span;
+  private final SeqSpan inside_span;
 
   //  for now trying to do without container info in constructor
   public FeatureRequestSym(SeqSpan overlap, SeqSpan inside) {
@@ -88,6 +93,14 @@ public class FeatureRequestSym extends SimpleSymWithProps {
    */
   public final SeqSpan getInsideSpan() { return inside_span; }
 
+  /**
+   * Add the specified symmetries to the FeatureRequestSym.  It is assumed these correspond to the same chromosome.
+   * @param feats - list of symmetries
+   * @param request_sym - FeatureRequestSym
+   * @param id
+   * @param name
+   * @param overlapSpan
+   */
   public static void addToRequestSym(
 			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, URI id, String name, SeqSpan overlapSpan) {
 		int feat_count = feats == null ? 0 : feats.size();
@@ -111,6 +124,53 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			}
 		}
 	}
+
+   public static Map<String, List<SeqSymmetry>> splitResultsByTracks(FeatureRequestSym request, List<? extends SeqSymmetry> results) {
+		Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
+		List<SeqSymmetry> resultList = null;
+		String method = null;
+		for (SeqSymmetry result : results) {
+			method = (result instanceof SymWithProps) ? (String) ((SymWithProps) result).getProperty("method") : null;
+			if (track2Results.containsKey(method)) {
+				resultList = track2Results.get(method);
+			} else {
+				resultList = new ArrayList<SeqSymmetry>();
+				track2Results.put(method, resultList);
+			}
+			resultList.add(result);
+		}
+
+	  return track2Results;
+  }
+
+  /**
+   * If children of FeatureRequestSym have track information, then split the FeatureRequestSym based on them.
+   * This is necessary for some formats (such as GFF1).
+   * @param requests
+   */
+   public static Collection<FeatureRequestSym> splitFeatureSymByTracks(FeatureRequestSym request, List<? extends SeqSymmetry> results) {
+		Map<String, FeatureRequestSym> track2requestSym = new HashMap<String, FeatureRequestSym>();
+		FeatureRequestSym frs = null;
+		String method = null;
+		for (Map.Entry<String, List<SeqSymmetry>> entry : splitResultsByTracks(request, results).entrySet()) {
+			method = entry.getKey();
+			frs = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
+			frs.setProperty("method", method);
+		}
+		for (SeqSymmetry result : results) {
+			method = (result instanceof SymWithProps) ? (String) ((SymWithProps) result).getProperty("method") : null;
+			if (track2requestSym.containsKey(method)) {
+				frs = track2requestSym.get(method);
+			} else {
+				frs = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
+				frs.setProperty("method", method);
+				track2requestSym.put(method, frs);
+			}
+			frs.addChild(result);
+		}
+	  
+	  return track2requestSym.values();
+  }
 
 	public static void addAnnotations(
 			List<? extends SeqSymmetry> feats, SimpleSymWithProps request_sym, BioSeq aseq) {
@@ -139,21 +199,38 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 	public static List<FeatureRequestSym> determineFeatureRequestSyms(SymLoader symL, URI uri, String featureName, LoadStrategy strategy, SeqSpan overlapSpan) {
 		List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
 		if (strategy == LoadStrategy.GENOME && symL != null) {
-			for (BioSeq aseq : symL.getChromosomeList()) {
-				if (aseq.getID().equals(Constants.GENOME_SEQ_ID)) {
-					continue;
-				}
-				SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-				FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
-				ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
-			}
+			buildFeatureSymListByChromosome(symL.getChromosomeList(), uri, featureName, output_requests);
 		} else {
-			FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
-			ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
+			if (overlapSpan != null) {
+				// Note that if we're loading the whole genome and symL isn't defined, we return one requestSym.  That's okay -- it will be ignored
+				FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
+				ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
+			}
 		}
 		return output_requests;
 	}
 
+	public static void buildFeatureSymListByChromosome(List<BioSeq> seqList, URI uri, String featureName, List<FeatureRequestSym> output_requests) {
+		for (BioSeq aseq : seqList) {
+			if (aseq.getID().equals(Constants.GENOME_SEQ_ID)) {
+				continue;
+			}
+			SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+			FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
+			ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
+		}
+	}
+
+	/**
+	 * parse the input stream, with parser determined by extension.
+	 * @param extension
+	 * @param uri - the URI corresponding to the file/URL
+	 * @param istr
+	 * @param group
+	 * @param featureName
+	 * @return list of symmetries
+	 * @throws Exception
+	 */
 	public static List<? extends SeqSymmetry> Parse(
 			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName)
 			throws Exception {

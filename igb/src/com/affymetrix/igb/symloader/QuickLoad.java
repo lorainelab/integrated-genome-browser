@@ -173,9 +173,6 @@ public final class QuickLoad extends SymLoader {
 					List<FeatureRequestSym> output_requests = FeatureRequestSym.determineFeatureRequestSyms(
 							QuickLoad.this.symL, QuickLoad.this.uri, QuickLoad.this.featureName,
 							strategy, overlapSpan);
-					if (output_requests.isEmpty()) {
-						return null;
-					}
 					List<SeqSymmetry> overallResults = loadAndAddSymmetries(
 							QuickLoad.this.symL, QuickLoad.this.featureName, strategy, output_requests);
 					return overallResults;
@@ -191,7 +188,14 @@ public final class QuickLoad extends SymLoader {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
 						gviewer.updateDependentData();
-						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
+						if (overlapSpan != null && overlapSpan.getBioSeq() != null) {
+							gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
+						} else {
+							// This can happen when loading a brand-new genome
+							if (QuickLoad.this.version.group != null) {
+								gviewer.setAnnotatedSeq(QuickLoad.this.version.group.getSeq(0),true,true);
+							}
+						}
 						SeqGroupView.refreshTable();
 					}
 				} catch (Exception ex) {
@@ -210,34 +214,76 @@ public final class QuickLoad extends SymLoader {
 	 */
 
 
-	protected List<SeqSymmetry> loadAndAddSymmetries(
+	private List<SeqSymmetry> loadAndAddSymmetries(
 			SymLoader symL, String featureName,
 			LoadStrategy strategy, List<FeatureRequestSym> output_requests)
 			throws IOException, OutOfMemoryError {
 		if (output_requests.isEmpty()) {
-			return null;
+			// if we're loading the whole genome from a file, the output_requests list will be ignored and rebuilt.
+			if (this.symL != null || strategy != LoadStrategy.GENOME) {
+				return null;
+			}
 		}
 
 		List<? extends SeqSymmetry> results;
 		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
+		if (symL == null) {
+			if (strategy == LoadStrategy.CHROMOSOME) {
+				// Special case.  If chromosome expands during loading, the FeatureRequestSym needs to be rebuilt.
+				if (output_requests.size() == 1) {
+					output_requests = FeatureRequestSym.determineFeatureRequestSyms(
+							this.symL, this.uri, this.featureName,
+							strategy, output_requests.get(0).getOverlapSpan());
+				}
+			} else if (strategy == LoadStrategy.GENOME) {
+				// Special case.  At this point,
+				// we don't know which chromosomes are in the file; they may not correspond with those in the genome.
+
+				// parse data.  A side effect of the older parsers is to add the "missing" chromosomes to the genome
+				results = loadFeature(symL, featureName, strategy, null);
+				// short-circuit if there's a failure... which may not even be signaled in the code
+				if (results == null) {
+					return overallResults;
+				}
+
+				// rebuild the feature request list, since the chromosomes may have changed
+				output_requests.clear();
+				FeatureRequestSym.buildFeatureSymListByChromosome(this.version.group.getSeqList(), uri, featureName, output_requests);
+
+				List<? extends SeqSymmetry> chromResults = null;
+				// we've already parsed the data.  Special-case so that we don't parse it again.
+				for (FeatureRequestSym request : output_requests) {
+					// only get symmetries for this chromosome
+					chromResults = SymLoader.filterResultsByChromosome(results, request.getOverlapSpan().getBioSeq());
+					
+					filterAndAddAnnotations(request, chromResults, featureName, overallResults);
+				}
+				return overallResults;
+			}
+		}
 		for (FeatureRequestSym request : output_requests) {
 			// short-circuit if there's a failure... which may not even be signaled in the code
 			results = loadFeature(symL, featureName, strategy, request.getOverlapSpan());
 			if (results == null) {
 				return overallResults;
 			}
-			results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
-			if (request.getInsideSpan() != null) {
-				results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
-			}
-			if (!results.isEmpty()) {
-				request.setProperty("method", this.uri.toString());
-				FeatureRequestSym.addToRequestSym(results, request, this.uri, featureName, request.getOverlapSpan());
-				FeatureRequestSym.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
-				overallResults.addAll(results);
-			}
+			filterAndAddAnnotations(request, results, featureName, overallResults);
 		}
 		return overallResults;
+	}
+
+	private void filterAndAddAnnotations(
+			FeatureRequestSym request, List<? extends SeqSymmetry> results, String featureName, List<SeqSymmetry> overallResults) {
+		results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
+		if (request.getInsideSpan() != null) {
+			results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
+		}
+		if (!results.isEmpty()) {
+			request.setProperty("method", this.uri.toString());
+			FeatureRequestSym.addToRequestSym(results, request, this.uri, featureName, request.getOverlapSpan());
+			FeatureRequestSym.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
+			overallResults.addAll(results);
+		}
 	}
 
 

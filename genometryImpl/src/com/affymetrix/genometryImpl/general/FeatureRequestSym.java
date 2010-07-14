@@ -118,6 +118,15 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			for (SeqSymmetry feat : feats) {
 				if (feat instanceof GraphSym) {
 					GraphSymUtils.addChildGraph((GraphSym) feat, id, name, overlapSpan);
+
+					// We use processGraphSyms here, which should allow multiple tracks.
+					// However, we have to make a hack to get the type-checking working correctly
+					/*List<GraphSym> genericHackList = new ArrayList<GraphSym>(feats.size());
+					for(SeqSymmetry feat2 : feats) {
+						genericHackList.add((GraphSym)feat2);
+					}
+					GraphSymUtils.processGraphSyms(genericHackList, id.toString());
+					return;*/
 				} else {
 					request_sym.addChild(feat);
 				}
@@ -211,7 +220,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName)
 			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);
-		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
+		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
 
 		// These extensions are overloaded by QuickLoad
 		if (extension.equals("bar")) {
@@ -311,7 +320,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			parser.enableSharedQueryTarget(true);
 			// annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
 			// why is annotate_target parameter below set to false?
-			return parser.parse(bis, featureName, null, group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
+			return parser.parse(bis, featureName, null, group, null, false, true, false); // do not annotate_other (not applicable since not PSL3)
 		}
 		if (extension.equals("psl") || extension.equals("psl3")) {
 			// reference to LoadFileAction.ParsePSL

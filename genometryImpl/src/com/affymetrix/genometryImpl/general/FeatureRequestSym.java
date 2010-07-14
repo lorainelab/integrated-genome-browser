@@ -118,6 +118,15 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			for (SeqSymmetry feat : feats) {
 				if (feat instanceof GraphSym) {
 					GraphSymUtils.addChildGraph((GraphSym) feat, id, name, overlapSpan);
+
+					// We use processGraphSyms here, which should allow multiple tracks.
+					// However, we have to make a hack to get the type-checking working correctly
+					/*List<GraphSym> genericHackList = new ArrayList<GraphSym>(feats.size());
+					for(SeqSymmetry feat2 : feats) {
+						genericHackList.add((GraphSym)feat2);
+					}
+					GraphSymUtils.processGraphSyms(genericHackList, id.toString());
+					return;*/
 				} else {
 					request_sym.addChild(feat);
 				}
@@ -318,7 +327,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			PSLParser parser = new PSLParser();
 			parser.enableSharedQueryTarget(true);
 			DataInputStream dis = new DataInputStream(bis);
-			return parser.parse(dis, featureName, null, group, null, false, true, false);
+			return parser.parse(dis, featureName, null, group, null, false, false, false);
 		}
 		if (extension.equals("sin") || extension.equals("egr") || extension.equals("txt")) {
 			ScoredIntervalParser parser = new ScoredIntervalParser();

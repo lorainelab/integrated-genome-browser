@@ -211,7 +211,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName)
 			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);
-		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
+		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
 
 		// These extensions are overloaded by QuickLoad
 		if (extension.equals("bar")) {
@@ -311,14 +311,14 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			parser.enableSharedQueryTarget(true);
 			// annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
 			// why is annotate_target parameter below set to false?
-			return parser.parse(bis, featureName, null, group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
+			return parser.parse(bis, featureName, null, group, null, false, true, false); // do not annotate_other (not applicable since not PSL3)
 		}
 		if (extension.equals("psl") || extension.equals("psl3")) {
 			// reference to LoadFileAction.ParsePSL
 			PSLParser parser = new PSLParser();
 			parser.enableSharedQueryTarget(true);
 			DataInputStream dis = new DataInputStream(bis);
-			return parser.parse(dis, featureName, null, group, null, false, false, false);
+			return parser.parse(dis, featureName, null, group, null, false, true, false);
 		}
 		if (extension.equals("sin") || extension.equals("egr") || extension.equals("txt")) {
 			ScoredIntervalParser parser = new ScoredIntervalParser();

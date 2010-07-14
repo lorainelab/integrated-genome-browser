@@ -268,7 +268,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			AffyCnChpParser parser = new AffyCnChpParser();
 			return parser.parse(null, bis, featureName, group, false);
 		}
-		if (extension.equals(".cnt")) {
+		if (extension.equals("cnt")) {
 			CntParser parser = new CntParser();
 			return parser.parse(bis, group, false);
 		}
@@ -292,7 +292,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
 			return parser.parse(bis, group, false, featureName);
 		}
-		if (extension.equals("." + FishClonesParser.FILE_EXT)) {
+		if (extension.equals(FishClonesParser.FILE_EXT)) {
 			FishClonesParser parser = new FishClonesParser(false);
 			return parser.parse(bis, featureName, group);
 		}

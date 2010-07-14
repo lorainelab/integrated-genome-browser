@@ -125,7 +125,12 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		}
 	}
 
-   public static Map<String, List<SeqSymmetry>> splitResultsByTracks(FeatureRequestSym request, List<? extends SeqSymmetry> results) {
+  /**
+   * Split list of symmetries by track.
+   * @param results - list of symmetries
+   * @return - Map<String trackName,List<SeqSymmetry>>
+   */
+  public static Map<String, List<SeqSymmetry>> splitResultsByTracks(List<? extends SeqSymmetry> results) {
 		Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
 		List<SeqSymmetry> resultList = null;
 		String method = null;
@@ -141,35 +146,6 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		}
 
 	  return track2Results;
-  }
-
-  /**
-   * If children of FeatureRequestSym have track information, then split the FeatureRequestSym based on them.
-   * This is necessary for some formats (such as GFF1).
-   * @param requests
-   */
-   public static Collection<FeatureRequestSym> splitFeatureSymByTracks(FeatureRequestSym request, List<? extends SeqSymmetry> results) {
-		Map<String, FeatureRequestSym> track2requestSym = new HashMap<String, FeatureRequestSym>();
-		FeatureRequestSym frs = null;
-		String method = null;
-		for (Map.Entry<String, List<SeqSymmetry>> entry : splitResultsByTracks(request, results).entrySet()) {
-			method = entry.getKey();
-			frs = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
-			frs.setProperty("method", method);
-		}
-		for (SeqSymmetry result : results) {
-			method = (result instanceof SymWithProps) ? (String) ((SymWithProps) result).getProperty("method") : null;
-			if (track2requestSym.containsKey(method)) {
-				frs = track2requestSym.get(method);
-			} else {
-				frs = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
-				frs.setProperty("method", method);
-				track2requestSym.put(method, frs);
-			}
-			frs.addChild(result);
-		}
-	  
-	  return track2requestSym.values();
   }
 
 	public static void addAnnotations(
@@ -292,7 +268,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			AffyCnChpParser parser = new AffyCnChpParser();
 			return parser.parse(null, bis, featureName, group, false);
 		}
-		if (extension.equals(".cnt")) {
+		if (extension.equals("cnt")) {
 			CntParser parser = new CntParser();
 			return parser.parse(bis, group, false);
 		}
@@ -316,7 +292,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
 			return parser.parse(bis, group, false, featureName);
 		}
-		if (extension.equals("." + FishClonesParser.FILE_EXT)) {
+		if (extension.equals(FishClonesParser.FILE_EXT)) {
 			FishClonesParser parser = new FishClonesParser(false);
 			return parser.parse(bis, featureName, group);
 		}

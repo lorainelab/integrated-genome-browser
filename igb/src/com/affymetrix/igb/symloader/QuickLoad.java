@@ -30,6 +30,7 @@ import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
@@ -41,6 +42,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -278,11 +280,16 @@ public final class QuickLoad extends SymLoader {
 		if (request.getInsideSpan() != null) {
 			results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
 		}
-		if (!results.isEmpty()) {
-			request.setProperty("method", this.uri.toString());
-			FeatureRequestSym.addToRequestSym(results, request, this.uri, featureName, request.getOverlapSpan());
-			FeatureRequestSym.addAnnotations(results, request, request.getOverlapSpan().getBioSeq());
-			overallResults.addAll(results);
+		for (Map.Entry<String, List<SeqSymmetry>> entry : FeatureRequestSym.splitResultsByTracks(results).entrySet()) {
+			if (entry.getValue().isEmpty()) {
+				continue;
+			}
+			FeatureRequestSym requestSym = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
+			requestSym.setProperty("method",
+					entry.getKey() != null ? entry.getKey() : this.uri.toString());
+			FeatureRequestSym.addToRequestSym(entry.getValue(), requestSym, this.uri, (String)requestSym.getProperty("method"), requestSym.getOverlapSpan());
+			FeatureRequestSym.addAnnotations(entry.getValue(), requestSym, requestSym.getOverlapSpan().getBioSeq());
+			overallResults.addAll(entry.getValue());
 		}
 	}
 

@@ -109,9 +109,9 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			
-			// Making sure the ID is unique on the whole genome, not just this seq
-			// will make sure the GraphState is also unique on the whole genome.
-			String gid = AnnotatedSeqGroup.getUniqueGraphID(this.featureName, this.group);
+			// Making sure the ID is unique on the seq
+			// will make sure the GraphState is also unique on the seq.
+			String gid = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);
 			
 			boolean sort = parseLines(br, xlist, ylist, min, max, !file.canWrite());
 

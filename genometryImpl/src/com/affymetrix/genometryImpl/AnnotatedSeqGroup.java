@@ -334,6 +334,19 @@ public class AnnotatedSeqGroup {
 		return this.symid2id_hash.get(symID);
 	}
 
+	/**
+	 * Get unique id for id/trackName combination.
+	 * Note this does not auto-increment, in order for the name to be reproducible if we need to load from the same combination again.
+	 * @param id
+	 * @param trackName
+	 * @return unique but reproducible ID
+	 */
+	public static String getUniqueGraphTrackID(String id, String trackName) {
+		if (trackName == null || trackName.length() == 0) {
+			trackName = "_EMPTY";
+		}
+		return id + "_TRACK_" + trackName;
+	}
 
 	/**
 	 *  Returns input id if no GraphSyms on any seq in the given seq group

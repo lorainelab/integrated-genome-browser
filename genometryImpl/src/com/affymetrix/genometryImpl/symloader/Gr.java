@@ -279,7 +279,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 			sortXYDataOnX(xcoords, ycoords);
 		}
 		if (ensure_unique_id) {
-			name = AnnotatedSeqGroup.getUniqueGraphID(this.featureName, this.group);
+			name = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);
 		}
 		graf = new GraphSym(xcoords, ycoords, name, aseq);
 		return graf;

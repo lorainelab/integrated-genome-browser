@@ -40,6 +40,7 @@ import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -50,6 +51,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -335,7 +337,10 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		if (extension.equals("var")) {
 			return VarParser.parse(bis, group);
 		}
-
+		if (extension.equals("bam")) {
+			return Collections.<SeqSymmetry>emptyList();
+		}
+		
 		Logger.getLogger(FeatureRequestSym.class.getName()).log(
 				Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", extension);
 		return null;

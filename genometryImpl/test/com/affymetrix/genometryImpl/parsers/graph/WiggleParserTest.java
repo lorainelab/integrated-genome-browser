@@ -125,9 +125,9 @@ public class WiggleParserTest {
 		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-		assertEquals("Bed Format", gr0.getID());
-		assertEquals("variableStep", gr1.getID());
-		assertEquals("fixedStep", gr2.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "Bed Format"), gr0.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "variableStep"), gr1.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "fixedStep"), gr2.getID());
 
 		GraphState state = gr1.getGraphState();
 		assertEquals(0.0, state.getVisibleMinY(), 0.00001);
@@ -161,9 +161,9 @@ public class WiggleParserTest {
 		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-		assertEquals("Bed Format", gr0.getID());
-		assertEquals("variableStep", gr1.getID());
-		assertEquals("fixedStep", gr2.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "Bed Format"), gr0.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "variableStep"), gr1.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "fixedStep"), gr2.getID());
 
 		List<BioSeq> allSeqs = wiggle.getChromosomeList();
 		assertEquals(allSeqs.size(),1);
@@ -183,10 +183,10 @@ public class WiggleParserTest {
 
 		List<GraphSym> results = wiggle.getGenome();
 
-		testResults2(results, true);
+		testResults2(filename, results, true);
 	}
 
-	public boolean testResults2(List<GraphSym> results, boolean checkId){
+	public boolean testResults2(String filename, List<GraphSym> results, boolean checkId){
 		
 		assertEquals(3, results.size());
 
@@ -222,9 +222,9 @@ public class WiggleParserTest {
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
 		if(checkId){
-			assertEquals("Bed Format", gr0.getID());
-			assertEquals("variableStep", gr1.getID());
-			assertEquals("fixedStep", gr2.getID());
+			assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "Bed Format"), gr0.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "variableStep"), gr1.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "fixedStep"), gr2.getID());
 		}
 
 		return true;
@@ -267,7 +267,7 @@ public class WiggleParserTest {
 
 		List<GraphSym> results = wiggle.getGenome();
 
-		testResults2(results, true);
+		testResults2(filename, results, true);
 
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
@@ -277,7 +277,7 @@ public class WiggleParserTest {
 		Wiggle outwiggle = new Wiggle(outfile.toURI(), outfile.getName(), seq_group);
 		List<GraphSym> outresults = outwiggle.getGenome();
 
-		testResults2(outresults, false);
+		testResults2(filename, outresults, false);
 
 		File testFile = new File("test/data/wiggle/testFile.wig");
 

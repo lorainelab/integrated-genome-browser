@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
@@ -25,7 +26,8 @@ import java.util.regex.Pattern;
 public final class BioSeq implements SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
-	private Map<String, IndexedSyms> type_id2indexedsym = new HashMap<String, IndexedSyms>();
+	private Map<String, IndexedSyms> type_id2indexedsym = null;
+	private Map<String, SymLoader> type_id2symloader = null;
 	private AnnotatedSeqGroup seq_group;
 	private List<SeqSymmetry> annots;
 	private String version;
@@ -343,18 +345,30 @@ public final class BioSeq implements SearchableCharIterator {
 	 * @param value indexedSyms to add to the hash.
 	 */
 	public final void addIndexedSyms(String type, IndexedSyms value) {
+		if(type_id2indexedsym == null){
+			type_id2indexedsym = new HashMap<String, IndexedSyms>();
+		}
 		type_id2indexedsym.put(type,value);
 	}
 
 	public final Set<String> getIndexedTypeList() {
+		if(type_id2indexedsym == null){
+			return Collections.emptySet();
+		}
 		return type_id2indexedsym.keySet();
 	}
 
 	public final IndexedSyms getIndexedSym(String type) {
+		if(type_id2indexedsym == null){
+			return null;
+		}
 		return type_id2indexedsym.get(type);
 	}
 	
 	public boolean  removeIndexedSym(String type) {
+		if(type_id2indexedsym == null)
+			return false;
+		
 		if (type_id2indexedsym.containsKey(type)) {
 			type_id2indexedsym.remove(type);
 			return true;
@@ -363,7 +377,38 @@ public final class BioSeq implements SearchableCharIterator {
 		}
 	}
 
+	public final void addSymLoader(String type, SymLoader value){
+		if(type_id2symloader == null){
+			type_id2symloader = new HashMap<String, SymLoader>();
+		}
+		type_id2symloader.put(type, value);
+	}
 
+	public final Set<String> getSymloaderList(){
+		if(type_id2symloader == null){
+			return Collections.emptySet();
+		}
+		return type_id2symloader.keySet();
+	}
+
+	public final SymLoader getSymLoader(String type){
+		if(type_id2symloader == null)
+			return null;
+		return type_id2symloader.get(type);
+	}
+
+	public boolean  removeSymLoader(String type) {
+		if(type_id2symloader == null)
+			return false;
+		
+		if (type_id2symloader.containsKey(type)) {
+			type_id2symloader.remove(type);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
 	 * Returns true if the sym is of a type needs to be wrapped in a {@link TypeContainerAnnot}.
 	 * GraphSym's and ScoredContainerSym's are added directly, not in containers.

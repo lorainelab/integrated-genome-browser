@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.BgnParser;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
@@ -117,16 +118,14 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		} else {
 			for (SeqSymmetry feat : feats) {
 				if (feat instanceof GraphSym) {
-					GraphSymUtils.addChildGraph((GraphSym) feat, id, name, overlapSpan);
-
-					// We use processGraphSyms here, which should allow multiple tracks.
-					// However, we have to make a hack to get the type-checking working correctly
-					/*List<GraphSym> genericHackList = new ArrayList<GraphSym>(feats.size());
-					for(SeqSymmetry feat2 : feats) {
-						genericHackList.add((GraphSym)feat2);
+					if (request_sym instanceof Das2FeatureRequestSym) {
+						// old behavior
+						GraphSymUtils.addChildGraph((GraphSym) feat, id.toString(), name, overlapSpan);
+					} else {
+						// new behavior
+						// in this case, we need to respect the ID of the individual GraphSym, so that track info isn't lost.
+						GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), name, overlapSpan);
 					}
-					GraphSymUtils.processGraphSyms(genericHackList, id.toString());
-					return;*/
 				} else {
 					request_sym.addChild(feat);
 				}

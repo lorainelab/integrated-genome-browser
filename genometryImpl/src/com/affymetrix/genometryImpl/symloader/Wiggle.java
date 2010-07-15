@@ -387,7 +387,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 			graph_id = stream_name;
 		}
 		if (ensure_unique_id) {
-			graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq_group);
+			graph_id = AnnotatedSeqGroup.getUniqueGraphTrackID(stream_name, graph_id);
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
 

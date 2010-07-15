@@ -482,11 +482,11 @@ public final class GraphSymUtils {
      *
      *  Assumes ids of parent graphs are unique among annotations on seq
      *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
-     *  Uses type URI as graph ID, type name as graph name
+     *  Uses unique graph ID (generally stream URI plus track info), type name as graph name
      */
-   public static void addChildGraph(GraphSym cgraf, URI id, String name, SeqSpan overlapSpan) {
+   public static void addChildGraph(GraphSym cgraf, String id, String name, SeqSpan overlapSpan) {
 		BioSeq aseq = cgraf.getGraphSeq();
-		GraphSym pgraf = getParentGraph(id.toString(), name, aseq, cgraf);
+		GraphSym pgraf = getParentGraph(id, name, aseq, cgraf);
 
 		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
 		//    remove that span, then add overlap span from FeatureRequestSym

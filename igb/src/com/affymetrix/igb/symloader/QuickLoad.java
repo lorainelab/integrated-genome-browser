@@ -89,7 +89,8 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();
 		}
-		if (this.extension.endsWith(".chp")
+		if (extension.endsWith(".bar") || extension.endsWith(".useq") || extension.endsWith(".bgr")
+				||extension.endsWith(".chp")
 				|| (extension.endsWith(".sin") || extension.endsWith(".egr") || extension.endsWith(".txt") || extension.endsWith("link.psl"))) {
 			List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 			strategyList.add(LoadStrategy.NO_LOAD);

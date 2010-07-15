@@ -41,9 +41,11 @@ import org.hibernate.Transaction;
 
 
 import com.affymetrix.genometry.genopub.*;
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.symloader.BAM;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -1367,6 +1369,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 					outseq = overlap_span.getBioSeq();
 
+					if(formats.contains("bam")){
+						handleBamRequest(query_type, outseq, overlap_span, inside_span, response);
+						return;
+					}
 					/** this is the main call to retrieve symmetries meeting query constraints */
 					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
 				}
@@ -1701,5 +1707,26 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		} else {
 			return request.getRequestURL().toString();
 		}
+	}
+
+	private void handleBamRequest(String query_type, BioSeq seq, SeqSpan overlap_span, SeqSpan inside_span, HttpServletResponse response) {
+		BufferedOutputStream bos = null;
+		DataOutputStream dos = null;
+		try{
+			BAM bamfile = (BAM) seq.getSymLoader(query_type);
+			response.setContentType(bamfile.getMimeType());
+			bos = new BufferedOutputStream(response.getOutputStream());
+			dos = new DataOutputStream(bos);
+			bamfile.writeAnnotations(seq, overlap_span.getMin(), overlap_span.getMax(), dos, true);
+			//BedParser bed = new BedParser();
+			//response.setContentType(bamfile.getMimeType());
+			//bed.writeAnnotations(bamfile.getRegion(overlap_span), seq, "test", dos);
+		}catch(Exception ex){
+			Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.SEVERE, "Unable to load bam file", ex);
+		}finally{
+			GeneralUtils.safeClose(bos);
+			GeneralUtils.safeClose(dos);
+		}
+
 	}
 }

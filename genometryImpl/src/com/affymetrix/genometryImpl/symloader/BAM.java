@@ -408,6 +408,7 @@ public final class BAM extends SymLoader {
 	 * @param BAMWriter -- write as BAM or as SAM
 	 */
 	public void writeAnnotations(BioSeq seq, int min, int max, DataOutputStream dos, boolean BAMWriter) {
+		init();
 		if (reader == null) {
 			return;
 		}
@@ -416,13 +417,14 @@ public final class BAM extends SymLoader {
 		File tempBAMFile = null;
 		try {
 			iter = reader.query(seq.getID(), min, max, false);
+			reader.getFileHeader().setSortOrder(net.sf.samtools.SAMFileHeader.SortOrder.coordinate); // A hack to prevent error caused by picard tool.
 			if (iter != null) {
 				net.sf.samtools.SAMFileWriterFactory sfwf = new net.sf.samtools.SAMFileWriterFactory();
 				if (BAMWriter) {
 					// BAM files cannot be written to the stream one line at a time.
 					// Rather, a tempfile is created, and later read into the stream.
 					try {
-						tempBAMFile = File.createTempFile(group.getID() + featureName, ".bam");
+						tempBAMFile = File.createTempFile(featureName, ".bam");
 						tempBAMFile.deleteOnExit();
 					} catch (IOException ex) {
 						Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
@@ -438,6 +440,10 @@ public final class BAM extends SymLoader {
 					sfw.addAlignment(sr);
 				}
 			}
+		} catch(Exception ex){
+			Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,"SAM exception A SAMFormatException has been thrown by the Picard tools.\n" +
+					"Please validate your BAM files and contact the Picard project at http://picard.sourceforge.net." +
+					"See console for the details of the exception.\n", ex);
 		} finally {
 			if (iter != null) {
 				try {

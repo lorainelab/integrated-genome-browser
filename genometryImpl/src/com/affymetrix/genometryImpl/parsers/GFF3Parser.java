@@ -22,6 +22,8 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.*;
 
 /**
@@ -67,7 +69,7 @@ public final class GFF3Parser {
 	static {
 		Set<String> types = new HashSet<String>();
 
-		types.add("tf_binding_site");
+		//types.add("tf_binding_site");
 		types.add("protein");
 
 		IGNORABLE_TYPES = Collections.<String>unmodifiableSet(types);
@@ -288,6 +290,8 @@ public final class GFF3Parser {
 				throw new IOException("The specified GFF version can not be processed by this parser: version = '" + vstr + "'");
 			}
 			return;
+		} else {
+			Logger.getLogger(GFF3Parser.class.getName()).log(Level.WARNING, "Didn''t recognize directive: {0}", line);
 		}
 	}
 

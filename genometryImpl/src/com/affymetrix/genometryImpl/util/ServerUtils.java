@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
@@ -25,6 +26,7 @@ import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.symloader.*;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.io.BufferedReader;
@@ -65,9 +67,11 @@ public abstract class ServerUtils {
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";
 	public static final ArrayList<String> BAR_FORMATS = new ArrayList<String>();
-	
+	private static final ArrayList<String> BAM_FORMAT = new ArrayList<String>();
+
 	static {
 		BAR_FORMATS.add("bar");
+		BAM_FORMAT.add("bam");
 	}
 
 	public static void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
@@ -281,6 +285,19 @@ public abstract class ServerUtils {
 				|| isAnnotsFile(current_file)) {
 			return;
 		}
+
+		if(isSymLoader(current_file)){
+			String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
+			String extension = ParserController.getExtension(stream_name);
+			List<AnnotMapElt> annotList = annots_map.get(genome);
+			String annotTypeName = ParserController.getAnnotType(annotList, current_file.getName(), extension, type_name);
+			genome.addType(annotTypeName, null);
+			for (BioSeq originalSeq : genome.getSeqList()) {
+				SymLoader symloader = determineLoader(extension, current_file.toURI(), type_name, genome);
+				originalSeq.addSymLoader(annotTypeName, symloader);
+			}
+			return;
+		}
 		
 		if (!annots_map.isEmpty() && annots_map.containsKey(genome)) {
 			if (AnnotMapElt.findFileNameElt(file_name, annots_map.get(genome)) == null) {
@@ -320,7 +337,9 @@ public abstract class ServerUtils {
 		return false;
 	}
 
-
+	private static boolean isSymLoader(File current_file){
+		return current_file.getName().endsWith(".bam");
+	}
 
 	/**
 	 *   If current_file is directory:
@@ -896,7 +915,9 @@ public abstract class ServerUtils {
 				// DAS2 "classic"
 				if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()) {
 					genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
-				} else {
+				} else if (type.endsWith(".bam")){
+					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAM_FORMAT, getProperties(genome, annotSecurity, type)));
+				}else {
 					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, getProperties(genome, annotSecurity, type)));
 				}
 				continue;
@@ -1029,4 +1050,48 @@ public abstract class ServerUtils {
 				return url;
 		}
 	}
+
+	/**
+	 * Determine the appropriate loader.
+	 * @return
+	 */
+	public static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {
+		// residue loaders
+		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
+		if (extension.equals("bnib")) {
+			return new BNIB(uri, group);
+		}
+		if (extension.equals("fa") || extension.equals("fas") || extension.equals("fasta")) {
+			return new Fasta(uri, group);
+		}
+		if (extension.equals("2bit")) {
+			return new TwoBit(uri);
+		}
+
+		// symmetry loaders
+		if (extension.equals("bam")) {
+			return new BAM(uri, featureName, group);
+		}
+		/*if (extension.equals("bar")) {
+			return new Bar(uri, featureName, group);
+		}*/
+		if (extension.equals("bed")) {
+			return new BED(uri, featureName, group);
+		}
+		if (extension.equals("gr")) {
+			return new Gr(uri, featureName, group);
+		}
+		if (extension.equals("sgr")) {
+			return new Sgr(uri, featureName, group);
+		}
+		// commented out until the USeq class is updated
+//		if (extension.equals("useq")) {
+//			return new USeq(uri, featureName, group);
+//		}
+		if (extension.equals("wig")) {
+			return new Wiggle(uri, featureName, group);
+		}
+		return null;
+	}
+
 }

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.symloader;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -12,14 +11,6 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symloader.BED;
-import com.affymetrix.genometryImpl.symloader.BNIB;
-import com.affymetrix.genometryImpl.symloader.Fasta;
-import com.affymetrix.genometryImpl.symloader.Gr;
-import com.affymetrix.genometryImpl.symloader.Sgr;
-import com.affymetrix.genometryImpl.symloader.TwoBit;
-import com.affymetrix.genometryImpl.symloader.Wiggle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -30,7 +21,6 @@ import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
-import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
@@ -61,7 +51,7 @@ public final class QuickLoad extends SymLoader {
 		super(determineURI(version, featureName));
 		this.featureName = featureName;
 		this.version = version;
-		this.symL = determineLoader(extension, uri, featureName, version.group);
+		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
 	}
 
 	public QuickLoad(GenericVersion version, URI uri) {
@@ -71,7 +61,7 @@ public final class QuickLoad extends SymLoader {
 		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);
 		this.featureName = friendlyName;
 		this.version = version;
-		this.symL = determineLoader(extension, uri, featureName, version.group);
+		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
 	}
 
 	@Override
@@ -417,49 +407,6 @@ public final class QuickLoad extends SymLoader {
 		}
 	}
 
-
-	/**
-	 * Determine the appropriate loader.
-	 * @return
-	 */
-	private static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {
-		// residue loaders
-		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
-		if (extension.equals("bnib")) {
-			return new BNIB(uri, group);
-		}
-		if (extension.equals("fa") || extension.equals("fas") || extension.equals("fasta")) {
-			return new Fasta(uri, group);
-		}
-		if (extension.equals("2bit")) {
-			return new TwoBit(uri);
-		}
-
-		// symmetry loaders
-		if (extension.equals("bam")) {
-			return new BAM(uri, featureName, group);
-		}
-		/*if (extension.equals("bar")) {
-			return new Bar(uri, featureName, group);
-		}*/
-		if (extension.equals("bed")) {
-			return new BED(uri, featureName, group);
-		}
-		if (extension.equals("gr")) {
-			return new Gr(uri, featureName, group);
-		}
-		if (extension.equals("sgr")) {
-			return new Sgr(uri, featureName, group);
-		}
-		// commented out until the USeq class is updated
-//		if (extension.equals("useq")) {
-//			return new USeq(uri, featureName, group);
-//		}
-		if (extension.equals("wig")) {
-			return new Wiggle(uri, featureName, group);
-		}
-		return null;
-	}
 
 	@Override
 	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {

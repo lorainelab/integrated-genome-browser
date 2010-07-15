@@ -33,7 +33,8 @@ final class FormatPriorities {
 		"bed",
 		"psl",
 		"gff",
-		"bar"};
+		"bar",
+		"bam"};
 
 	static String getFormat(Das2Type type) {
 		if (type.getID().endsWith(".bar")) {  // temporary way to recognize graph "types"...

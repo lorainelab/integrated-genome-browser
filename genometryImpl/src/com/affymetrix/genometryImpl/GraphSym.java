@@ -44,6 +44,9 @@ public class GraphSym extends SimpleSymWithProps {
 
 	private double xDelta = 0.0f;	// used by GraphGlyph
 
+	private float min_ycoord = Float.POSITIVE_INFINITY;
+	private float max_ycoord = Float.NEGATIVE_INFINITY;
+
 	/**
 	 *  id_locked is a temporary fix to allow graph id to be changed after construction, 
 	 *  but then lock once lockID() is called.
@@ -134,7 +137,22 @@ public class GraphSym extends SimpleSymWithProps {
 
 		this.hasWidth = (w != null);
 
+		setVisibleYRange(y);
+
 		bufFile = index(this.getGraphName() + this.getGraphSeq().getID(), x,y,w);
+	}
+
+	private void setVisibleYRange(float[] y) {
+		min_ycoord = Float.POSITIVE_INFINITY;
+		max_ycoord = Float.NEGATIVE_INFINITY;
+		for (float f : y) {
+			if (f < min_ycoord) {
+				min_ycoord = f;
+			}
+			if (f > max_ycoord) {
+				max_ycoord = f;
+			}
+		}
 	}
 
 	protected final void nullCoords() {
@@ -201,6 +219,9 @@ public class GraphSym extends SimpleSymWithProps {
 		if (i >= this.pointCount) {
 			return 0;	// out of range
 		}
+		if (i == 0) {
+			return getFirstYCoord();
+		}
 		if (i < bufStart || i >= bufStart + BUFSIZE) {
 			this.bufStart = i;
 			readIntoBuffers(i);
@@ -225,18 +246,6 @@ public class GraphSym extends SimpleSymWithProps {
 
 	public final float[] getVisibleYRange() {
 		float[] result = new float[2];
-		float min_ycoord = Float.POSITIVE_INFINITY;
-		float max_ycoord = Float.NEGATIVE_INFINITY;
-
-		for (int i = 0; i < pointCount; i++) {
-			float f = this.getGraphYCoord(i);
-			if (f < min_ycoord) {
-				min_ycoord = f;
-			}
-			if (f > max_ycoord) {
-				max_ycoord = f;
-			}
-		}
 		result[0] = min_ycoord;
 		result[1] = max_ycoord;
 		return result;
@@ -395,12 +404,9 @@ public class GraphSym extends SimpleSymWithProps {
 				}
 			}
 			// zero out remainder of buffer, if necessary
-			for (int i=maxPoints;i<BUFSIZE;i++) {
-				//xBuf[i] = 0;
-				yBuf[i] = 0.0f;
-				if (this.hasWidth) {
-					wBuf[i] = 0;
-				}
+			Arrays.fill(yBuf, maxPoints,BUFSIZE,0.0f);
+			if (this.hasWidth) {
+				Arrays.fill(yBuf, maxPoints, BUFSIZE, 0);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

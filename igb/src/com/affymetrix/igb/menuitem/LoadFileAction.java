@@ -278,11 +278,9 @@ public final class LoadFileAction extends AbstractAction {
 			@Override
 			public Void doInBackground() {
 				Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
-				List<BioSeq> seqs = gFeature.symL.getChromosomeList();
-				for (BioSeq seq : seqs) {
-					if (seq.getSeqGroup() == null) {
-						seq.setSeqGroup(loadGroup);
-					}
+				// Here we are reading the whole file in.  We have no choice, since the chromosomes in this file are unknown.
+				for (BioSeq seq : gFeature.symL.getChromosomeList()) {
+					loadGroup.addSeq(seq);
 				}
 				return null;
 			}
@@ -330,7 +328,11 @@ public final class LoadFileAction extends AbstractAction {
 		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
 		boolean mergeSelected = loadGroup == null ? false :true;
 		if (loadGroup == null) {
-			loadGroup = gmodel.addSeqGroup("unknowGroup");
+			loadGroup = gmodel.addSeqGroup(UNKNOWN_GROUP_PREFIX + " " + unknown_group_count);
+			unknown_group_count++;
+
+			// Select the "unknown" group.
+			gmodel.setSelectedSeqGroup(loadGroup);
 		}
 
 		openURI(uri, friendlyName, mergeSelected, loadGroup);

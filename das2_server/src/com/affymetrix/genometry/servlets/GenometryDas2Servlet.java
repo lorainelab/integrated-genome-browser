@@ -999,6 +999,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				genome,
 				this.getGenoPubSecurity(request));
 
+		ServerUtils.getSymloaderTypes(genome,
+				this.getGenoPubSecurity(request),
+				types_hash);
+
 		ServerUtils.getGraphTypes(
 				data_root,
 				genome,

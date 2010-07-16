@@ -898,6 +898,24 @@ public abstract class ServerUtils {
 	}
 
 	/**
+	 * Add symloader types to map.
+	 * @param genome
+	 * @param types_hash
+	 */
+	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
+		for(BioSeq aseq : genome.getSeqList()){
+			for(String type: aseq.getSymloaderList()){
+				if(genome_types.containsKey(type))
+					return;
+
+				if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
+					genome_types.put(type, new SimpleDas2Type(type, BAM_FORMAT, getProperties(genome, annotSecurity, type)));
+		        }
+			}
+		}
+	}
+
+	/**
 	 * Add graph types to the map.
 	 * @param data_root
 	 * @param genome
@@ -915,9 +933,7 @@ public abstract class ServerUtils {
 				// DAS2 "classic"
 				if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()) {
 					genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
-				} else if (type.endsWith(".bam")){
-					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAM_FORMAT, getProperties(genome, annotSecurity, type)));
-				}else {
+				} else {
 					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, getProperties(genome, annotSecurity, type)));
 				}
 				continue;

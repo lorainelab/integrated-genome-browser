@@ -279,11 +279,9 @@ public final class LoadFileAction extends AbstractAction {
 			@Override
 			public Void doInBackground() {
 				Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
-				List<BioSeq> seqs = gFeature.symL.getChromosomeList();
-				for (BioSeq seq : seqs) {
-					if (seq.getSeqGroup() == null) {
-						seq.setSeqGroup(loadGroup);
-					}
+				// Here we are reading the whole file in.  We have no choice, since the chromosomes in this file are unknown.
+				for (BioSeq seq : gFeature.symL.getChromosomeList()) {
+					loadGroup.addSeq(seq);
 				}
 				return null;
 			}

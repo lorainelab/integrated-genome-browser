@@ -46,6 +46,7 @@ import net.sf.samtools.util.SequenceUtil;
  * @author jnicol
  */
 public final class BAM extends SymLoader {
+	private static final boolean DEBUG = false;
 	private SAMFileReader reader;
     private SAMFileHeader header;
 	private AnnotatedSeqGroup group;
@@ -475,20 +476,19 @@ public final class BAM extends SymLoader {
 		}
 	}
 
-	static private boolean createIndexFile(File bamfile) throws IOException{
+	static private void createIndexFile(File bamfile) throws IOException{
 		File indexfile = new File(bamfile.getAbsolutePath() + ".bai");
 		if (!indexfile.createNewFile()) {
-			return false;
+			return;
 		}
 		indexfile.deleteOnExit();
 
 		String input = "INPUT=" + bamfile.getAbsolutePath();
 		String output = "OUTPUT=" + indexfile.getAbsolutePath();
 		String overwrite = "OVERWRITE=true";
+		String quiet = "QUIET="+!DEBUG;
 		BuildBamIndex buildIndex = new BuildBamIndex();
-		buildIndex.instanceMain(new String[]{input, output, overwrite});
-
-		return true;
+		buildIndex.instanceMain(new String[]{input, output, overwrite, quiet});
 	}
 
 	static private boolean findIndexFile(URI uri) {

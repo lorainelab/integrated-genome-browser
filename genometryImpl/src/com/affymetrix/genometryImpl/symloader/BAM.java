@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.picard.util.BuildBamIndex;
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
@@ -83,6 +84,10 @@ public final class BAM extends SymLoader {
 				// BAM is file.
 				//indexFile = new File(uri.)
 				File f = new File(uri);
+
+				if(!findIndexFile(uri))
+					createIndexFile(f);
+				
 				reader = new SAMFileReader(f);
 				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else if (scheme.startsWith("http")) {
@@ -470,8 +475,30 @@ public final class BAM extends SymLoader {
 		}
 	}
 
+	static private boolean createIndexFile(File bamfile) throws IOException{
+		File indexfile = new File(bamfile.getAbsolutePath() + ".bai");
+		if (!indexfile.createNewFile()) {
+			return false;
+		}
+		indexfile.deleteOnExit();
+
+		String input = "INPUT=" + bamfile.getAbsolutePath();
+		String output = "OUTPUT=" + indexfile.getAbsolutePath();
+		String overwrite = "OVERWRITE=true";
+		BuildBamIndex buildIndex = new BuildBamIndex();
+		buildIndex.instanceMain(new String[]{input, output, overwrite});
+
+		return true;
+	}
+
+	static private boolean findIndexFile(URI uri) {
+		File f = new File(uri + ".bai");
+		return f.exists();
+	}
 
 	public String getMimeType() {
 		return "binary/BAM";
 	}
+
+
 }

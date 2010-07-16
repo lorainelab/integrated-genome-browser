@@ -331,7 +331,11 @@ public final class LoadFileAction extends AbstractAction {
 		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
 		boolean mergeSelected = loadGroup == null ? false :true;
 		if (loadGroup == null) {
-			loadGroup = gmodel.addSeqGroup("unknowGroup");
+			loadGroup = gmodel.addSeqGroup(UNKNOWN_GROUP_PREFIX + " " + unknown_group_count);
+			unknown_group_count++;
+
+			// Select the "unknown" group.
+			gmodel.setSelectedSeqGroup(loadGroup);
 		}
 
 		openURI(uri, friendlyName, mergeSelected, loadGroup);

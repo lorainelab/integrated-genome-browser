@@ -92,6 +92,7 @@
 		<my.signjar jar="${lib.dir}/image4j.jar"           signedjar="${webstart.dir}/image4j.jar" />
 		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
 		<my.signjar jar="${lib.dir}/sam.jar" signedjar="${webstart.dir}/sam.jar" />
+		<my.signjar jar="${lib.dir}/picard.jar" signedjar="${webstart.dir}/picard.jar" />
 		<my.signjar jar="${lib.dir}/colt.jar" signedjar="${webstart.dir}/colt.jar" />
 
 		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
@@ -254,6 +255,7 @@
 				<include name="image4j.jar" />
 				<include name="commons-codec-1.4.jar"/>
 				<include name="sam.jar" />
+				<include name="picard.jar" />
 				<include name="colt.jar" />
 			</zipgroupfileset>
 		</jar>

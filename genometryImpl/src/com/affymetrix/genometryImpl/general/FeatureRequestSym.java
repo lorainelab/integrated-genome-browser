@@ -43,10 +43,12 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.genometryImpl.util.Constants;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -58,6 +60,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
+import net.sf.picard.cmdline.CommandLineProgram;
+import net.sf.picard.util.BuildBamIndex;
 import org.xml.sax.InputSource;
 
 /**
@@ -218,7 +222,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 	 * @throws Exception
 	 */
 	public static List<? extends SeqSymmetry> Parse(
-			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName)
+			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName, SeqSpan overlap_span)
 			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
@@ -337,8 +341,12 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		if (extension.equals("var")) {
 			return VarParser.parse(bis, group);
 		}
-		if (extension.equals("bam")) {
-			return Collections.<SeqSymmetry>emptyList();
+		
+		if (extension.equalsIgnoreCase("bam")) {
+			File bamfile = GeneralUtils.convertStreamToFile(istr, featureName);
+			bamfile.deleteOnExit();
+			BAM bam = new BAM(bamfile.toURI(),featureName,group);
+			return bam.getRegion(overlap_span);
 		}
 		
 		Logger.getLogger(FeatureRequestSym.class.getName()).log(

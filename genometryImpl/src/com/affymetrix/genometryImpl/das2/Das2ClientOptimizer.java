@@ -256,7 +256,7 @@ public final class Das2ClientOptimizer {
             }
 
             AddParsingLogMessage(content_subtype);
-			List<? extends SeqSymmetry> feats = FeatureRequestSym.Parse(content_subtype, type.getURI(), istr, seq_group, type.getName());
+			List<? extends SeqSymmetry> feats = FeatureRequestSym.Parse(content_subtype, type.getURI(), istr, seq_group, type.getName(), overlap_span);
 
 			//watch out for useq format, this can contain stranded graph data from a single DAS/2 response, modify the name so it can be caught while making graphs
 			String name = request_sym.getDas2Type().getName();

@@ -336,9 +336,6 @@ public class CacheScript extends Thread {
 		final Map<String, String> DasFilePath = new HashMap<String, String>();
 
 		String entry_point = getPath(master.getPath(),master, DasSource.ENTRY_POINTS);
-
-		//Temporary hack to redirect until Ensembl makes a fix.
-		entry_point = entry_point.replaceAll("test.ensembl", "uswest.ensembl");
 		
 		String types = getPath(id,server,DasSource.TYPES);
 

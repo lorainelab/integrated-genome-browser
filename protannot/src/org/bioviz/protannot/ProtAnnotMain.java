@@ -60,6 +60,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -77,6 +78,20 @@ import javax.swing.TransferHandler;
 
 final public class ProtAnnotMain implements WindowListener {
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
+	public static final String APP_NAME = BUNDLE.getString("appName");
+	public static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
+	public static final String APP_VERSION      = BUNDLE.getString("appVersion");
+	public static final String APP_VERSION_FULL = MessageFormat.format(
+			BUNDLE.getString("appVersionFull"),
+			APP_VERSION);
+	public static final String USER_AGENT = MessageFormat.format(
+			BUNDLE.getString("userAgent"),
+			APP_NAME_SHORT,
+			APP_VERSION_FULL,
+			System.getProperty("os.name"),
+			System.getProperty("os.version"),
+			System.getProperty("os.arch"),
+			Locale.getDefault().toString());
 
     // where the application is first invoked
     private static String user_dir = System.getProperty("user.dir");
@@ -143,7 +158,25 @@ final public class ProtAnnotMain implements WindowListener {
 
     public static void main(String[] args) {
         singleton = ProtAnnotMain.getInstance();
-		ConsoleView.init(BUNDLE.getString("appName"));
+		ConsoleView.init(APP_NAME);
+
+		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
+		System.out.println("UserAgent: " + USER_AGENT);
+		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+		Runtime runtime = Runtime.getRuntime();
+		System.out.println("Locale: " + Locale.getDefault());
+		System.out.println("System memory: " + runtime.maxMemory() / 1024);
+		if (args != null && args.length > 0) {
+			System.out.print("arguments: ");
+			for (String arg : args) {
+				System.out.print(" " + arg);
+			}
+			System.out.println();
+		}else
+			System.out.print("No startup arguments");
+
+		System.out.println();
+
         singleton.parseArguments(args);
         singleton.loadPrefs();
         singleton.start();

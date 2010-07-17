@@ -25,17 +25,14 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.text.MessageFormat;
 import javax.swing.AbstractAction;
 import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
+import static org.bioviz.protannot.ProtAnnotMain.APP_NAME;
+import static org.bioviz.protannot.ProtAnnotMain.APP_VERSION_FULL;
 
 /**
  * 
  * @author hiralv
  */
 class Actions {
-
-	private static final String APP_NAME = BUNDLE.getString("appName");
-	private static final String APP_VERSION_FULL = MessageFormat.format(
-	                        BUNDLE.getString("appVersionFull"),
-	                        APP_NAME);
 
 	static AbstractAction getLoadAction(){
 		 AbstractAction load_action = new AbstractAction(MessageFormat.format(
@@ -299,7 +296,7 @@ class Actions {
 				JTextArea about_text = new JTextArea();
 				about_text.setEditable(false);
 
-				String text = APP_VERSION_FULL + "\n\n"
+				String text = APP_NAME + " " + APP_VERSION_FULL +  "\n\n"
 						+ "Protannot implements many useful features designed for \n"
 						+ "understanding how alternative splicing, alternative promoters, \n"
 						+ "alternative promoters, and alternative polyadenylation can \n"
@@ -308,7 +305,7 @@ class Actions {
 						+ "Protannot is a program developed by Hiral Vora, John Nicol\n "
 						+ "and Ann Loraine at the University of North Carolina at Charlotte. \n\n"
 						+ "For more information, see:\n"
-						+ "http://www.bioviz.org/ProtAnnotMain.getInstance()\n";
+						+ "http://www.bioviz.org/protannot\n";
 
 				about_text.append(text);
 				message_pane.add(new JScrollPane(about_text));

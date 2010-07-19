@@ -59,7 +59,6 @@ public final class OrfAnalyzer extends JComponent
 	private boolean show_orfs;
 	private final List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
 	private static final String[] stop_codons = {"TAA", "TAG", "TGA", "TTA", "CTA", "TCA"};
-	//Color[] stop_colors = {Color.red, Color.orange, Color.yellow};
 
 	public OrfAnalyzer(SeqMapView view) {
 		super();
@@ -107,7 +106,7 @@ public final class OrfAnalyzer extends JComponent
 			if (show_orfs) {
 				redoOrfs();
 			} else {
-				removeTiersFromMap();
+				removeTiersAndCleanup();
 				adjustMap();
 			}
 		}
@@ -121,17 +120,23 @@ public final class OrfAnalyzer extends JComponent
 		if (vseq == null) {
 			return;
 		}
-		removeTiersFromMap();
-
+		removeTiersAndCleanup();
 		if (!show_orfs) {
 			return;
 		}
-		SeqSpan vspan = smv.getVisibleSpan();
 		
-
-		orf_holders.clear();
 		if (!(vseq.isComplete())) {
-			ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
+			ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
+			show_orfs = false;
+			showCB.setSelected(false);
+			return;
+		}
+
+		SeqSpan vspan = smv.getVisibleSpan();
+		int span_start = vspan.getMin();
+		int span_end = vspan.getMax();
+		if (span_start < 0 || span_end < span_start) {
+			ErrorHandler.errorPanel("Cannot perform ORF analysis: first select a sliced region");
 			show_orfs = false;
 			showCB.setSelected(false);
 			return;
@@ -156,11 +161,10 @@ public final class OrfAnalyzer extends JComponent
 		Color pointcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
 		Color linkcol = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
 
-		int span_start = vspan.getMin();
-		int span_end = vspan.getMax();
 		int span_mid = (int) (0.5f * span_start + 0.5f * span_end);
 
 		span_start = span_mid - (max_analysis_span / 2);
+		span_start = Math.max(0, span_start);	// shouldn't have negative start
 		span_start -= span_start % 3;
 		span_end = span_mid + (max_analysis_span / 2);
 		span_end -= span_end % 3;
@@ -181,13 +185,13 @@ public final class OrfAnalyzer extends JComponent
 			point_template.setColor(pointcol);
 			point_template.setCoords(residue_offset, 0, vseq.getLength(), 10);
 
-			GlyphI link_template = new FillRectGlyph();
-			link_template.setColor(linkcol);
-			link_template.setCoords(0, 0, 0, 4);  // only height is retained
-
 			TierGlyph tier = forward ? fortier : revtier;
 			GlyphI orf_glyph = null;
 			if (xpos.length > 0) {
+				GlyphI link_template = new FillRectGlyph();
+				link_template.setColor(linkcol);
+				link_template.setCoords(0, 0, 0, 4);  // only height is retained
+
 				FlyPointLinkerGlyph fw = new FlyPointLinkerGlyph(point_template, link_template, xpos, 3,
 						span_start, span_end);
 				fw.setHitable(false);
@@ -225,7 +229,7 @@ public final class OrfAnalyzer extends JComponent
 			String codon = stop_codons[i];
 			int seq_index = span_start;
 			int res_index = span_start - residue_offset;
-			res_index = vseq.indexOf(codon, res_index);
+			res_index = caseInsensitiveIndexOfHack(vseq, codon, res_index);
 			// need to factor in possible offset of residues string from start of
 			//    sequence (for example, when sequence is a CompNegSeq)
 			while (res_index >= 0 && (seq_index < span_end)) {
@@ -234,20 +238,28 @@ public final class OrfAnalyzer extends JComponent
 				//    sequence (for example, when sequence is a CompNegSeq)
 				seq_index = res_index + residue_offset;
 				if (forward_codon) {
-					frame = res_index % 3;
-				} // forward frames = (0, 1, 2)
+					frame = res_index % 3;	 // forward frames = (0, 1, 2)
+				}
 				else {
-					frame = 3 + (res_index % 3);
-				} // reverse frames = (3, 4, 5)
-				// reverse frames = (3, 4, 5)
+					frame = 3 + (res_index % 3); // reverse frames = (3, 4, 5)
+				}
+
 				frame_lists[frame].add(seq_index);
-				res_index = vseq.indexOf(codon, res_index + 1);
+				res_index = caseInsensitiveIndexOfHack(vseq, codon, res_index+1);
 			}
 		}
 		return frame_lists;
 	}
 
-	private void removeTiersFromMap() {
+	private static int caseInsensitiveIndexOfHack(BioSeq vseq, String codon, int resIndex) {
+		int temp_index = vseq.indexOf(codon, resIndex);
+		if (temp_index == -1) {
+			temp_index = vseq.indexOf(codon.toLowerCase(), resIndex);	// hack for case-insensitivity
+		}
+		return temp_index;
+	}
+
+	private void removeTiersAndCleanup() {
 		AffyTieredMap map = smv.getSeqMap();
 		if (fortier != null) {
 			map.removeTier(fortier);
@@ -257,6 +269,7 @@ public final class OrfAnalyzer extends JComponent
 			map.removeTier(revtier);
 			revtier = null;
 		}
+		orf_holders.clear();
 	}
 
 	private void adjustMap() {

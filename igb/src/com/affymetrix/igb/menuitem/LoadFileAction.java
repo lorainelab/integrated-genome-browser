@@ -208,10 +208,11 @@ public final class LoadFileAction extends AbstractAction {
 			// Select the "unknown" group.
 			gmodel.setSelectedSeqGroup(loadGroup);
 		}
-		
-		URI uri = fils[0].toURI();
-		
-		openURI(uri, fils[0].getName(), mergeSelected, loadGroup);
+
+		for(File file : fils){
+			URI uri = file.toURI();
+			openURI(uri, file.getName(), mergeSelected, loadGroup);
+		}
 	}
 
 	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup) {

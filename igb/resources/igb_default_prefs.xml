@@ -10,11 +10,14 @@
 <server type="quickload" name="Bioviz" url="http://bioviz.org/quickload/"/>
 
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" />
+<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="true" />
 
 <server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/"/>
 
+<!-- caching of slow servers (e.g., UCSC and Ensembl) -->
+<server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true"/>
+
 <!-- servers disabled by default -->
-<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" />
 <server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" />
 
   <!-- <annotation_url> associates a "method" or "id" regular expression with a URL.
@@ -26,10 +29,15 @@
   -->
 <!-- use (?i) at the start of a regex to force case-insensitive matching of the whole regex -->
 
-  <annotation_url annot_id_regex="DDB_G\d+$"
+  <annotation_url annot_id_regex="^DDB_G\d+$"
     name="DictyBase Gene"
     url="http://dictybase.org/gene/$$"
   />
+
+  <annotation_url annot_id_regex="^DDB\d+$"
+    name="DictyBase"
+    url="http://www.dictybase.org/db/cgi-bin/search/search.pl?query=$$"
+   />
 
   <annotation_url annot_id_regex="^gb\|.+\.\d+$"
     name="Genbank Nucleotide"

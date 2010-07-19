@@ -10,9 +10,9 @@
 <server type="quickload" name="Bioviz" url="http://bioviz.org/quickload/"/>
 
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das/dsn" />
+<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="true" />
 
 <server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/"/>
-<server type="das" name="Ensembl" url="http://www.ensembl.org/das/dsn" enabled="false" />
 
 <!-- caching of slow servers (e.g., UCSC and Ensembl) -->
 <server type="quickload" name="BioVizServerCache" url="http://bioviz.org/cached/" primary="true"/>

@@ -63,7 +63,7 @@ import java.util.regex.Pattern;
  */
 public final class GeneralLoadUtils {
 	private static final boolean DEBUG = false;
-	private static final boolean DEBUG_VIRTUAL_GENOME = true;
+	private static final boolean DEBUG_VIRTUAL_GENOME = false;
 
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	/**

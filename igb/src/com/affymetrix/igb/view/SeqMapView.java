@@ -789,6 +789,11 @@ public class SeqMapView extends JPanel
 			setZoomSpotX(0.5 * (range[0] + range[1]));
 		}
 		seqmap.updateWidget();
+
+		//A Temporary hack to solve problem when a 'genome' is selected
+		if(IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))){
+			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
+		}
 	}
 
 

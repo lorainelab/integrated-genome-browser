@@ -722,7 +722,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(new JSeparator());
 	summaryMenu.removeAll();
 	summaryMenu.add(sym_summarize_single_action);
-	summaryMenu.add(sym_summarize_both_action);
+	if(!show_two_tiers.isEnabled())					// If showing both track then give a option to create
+		summaryMenu.add(sym_summarize_both_action); // depth graph in both direction.
 	
     popup.add(summaryMenu);
     popup.add(coverage_action);

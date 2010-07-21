@@ -289,10 +289,7 @@ public class TierGlyph extends SolidGlyph {
 	@Override
 	public void draw(ViewI view) {
 		view.transformToPixels(coordbox, pixelbox);
-		
-		pixelbox.x = Math.max(pixelbox.x, 0); //TODO:Fix this.
-											  //Temporary solution to avoid width becoming negative.
-
+	
 		pixelbox.width = Math.max(pixelbox.width, min_pixels_width);
 		pixelbox.height = Math.max(pixelbox.height, min_pixels_height);
 
@@ -333,6 +330,7 @@ public class TierGlyph extends SolidGlyph {
 				drawHandle(view);
 			}
 		}
+
 
 		super.draw(view);
 	}

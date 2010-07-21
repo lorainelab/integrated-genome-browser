@@ -307,18 +307,20 @@ public class TierGlyph extends SolidGlyph {
 			//   and fill_color to color middle glyphs
 			if (other_fill_color != null) {
 				g.setColor(other_fill_color);
-				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+				g.fillRect(pixelbox.x, pixelbox.y, 2 * pixelbox.width, pixelbox.height);
 			}
-		}
-
-		// cycle through "middleground" glyphs,
-		//   make sure their coord box y and height are set to same as TierGlyph,
-		//   then call mglyph.draw(view)
-		for (GlyphI mglyph : middle_glyphs) {
-			Rectangle2D.Double mbox = mglyph.getCoordBox();
-			mbox.setRect(mbox.x, coordbox.y, mbox.width, coordbox.height);
-			mglyph.setColor(style.getBackground());
-			mglyph.drawTraversal(view);
+			
+			// cycle through "middleground" glyphs,
+			//   make sure their coord box y and height are set to same as TierGlyph,
+			//   then call mglyph.draw(view)
+			// TODO: This will draw middle glyphs on the Whole Genome, which appears to cause problems due to coordinates vs. pixels
+			// See bug 3032785
+			for (GlyphI mglyph : middle_glyphs) {
+				Rectangle2D.Double mbox = mglyph.getCoordBox();
+				mbox.setRect(mbox.x, coordbox.y, mbox.width, coordbox.height);
+				mglyph.setColor(style.getBackground());
+				mglyph.drawTraversal(view);
+			}
 		}
 
 		if (!style.isGraphTier()) {

@@ -39,7 +39,8 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 		seqtable.setToolTipText(CHOOSESEQ);
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);
-
+		seqtable.setAutoCreateRowSorter(true);
+		
 		SeqGroupTableModel mod = new SeqGroupTableModel(null);
 		seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
 
@@ -167,7 +168,7 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
       if (SeqGroupView.DEBUG_EVENTS)  { System.out.println("SeqGroupView received valueChanged() ListSelectionEvent"); }
       int srow = seqtable.getSelectedRow();
       if (srow >= 0)  {
-        String seq_name = (String) seqtable.getModel().getValueAt(srow, 0);
+        String seq_name = (String) seqtable.getValueAt(srow, 0);
         selected_seq = gmodel.getSelectedSeqGroup().getSeq(seq_name);
         if (selected_seq != gmodel.getSelectedSeq()) {
           gmodel.setSelectedSeq(selected_seq);

@@ -90,7 +90,7 @@ public final class GeneralLoadUtils {
 	/** Unused list of chromosomes that may be used in a future chromosome lookup */
 	private static final String CHROM_SYNONYM_FILE = "/chromosomes.txt";
 
-	private static final double MAGIC_SPACER_NUMBER = 15.0;	// spacer factor used to keep genome spacing reasonable
+	private static final double MAGIC_SPACER_NUMBER = 10.0;	// spacer factor used to keep genome spacing reasonable
 	
 	private final static SeqMapView gviewer = Application.getSingleton().getMapView();
 

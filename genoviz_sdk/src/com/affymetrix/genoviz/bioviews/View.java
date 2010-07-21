@@ -219,12 +219,36 @@ public class View implements ViewI, NeoPaintListener,
 	transformToPixels() and transformToCoords().
 	 */
 	public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst) {
-		// Written to avoid overflows
 		LinearTransform.transform(transform, src, scratch_coords);
+
+		// Make sure width and height don't overflow integer values!
+		// shouldn't be necessary for x and y, since if they overflow (but width and height don't),
+		// then nothing should be drawn anyway.
+		if (scratch_coords.width > Integer.MAX_VALUE && scratch_coords.x < 0) {
+			// normalize the width
+			int norm = (int) (scratch_coords.width / Integer.MAX_VALUE);
+			norm = Math.min(norm, (int)-(scratch_coords.x / Integer.MAX_VALUE));	// may be an edge case here
+
+			// Bring scratch_coords.width to at most Integer.MAX_VALUE, assuming x is small enough.
+			double dNorm = ((double)norm)*Integer.MAX_VALUE;
+			scratch_coords.width -= dNorm;
+			scratch_coords.x += dNorm;
+		}
+		if (scratch_coords.height > Integer.MAX_VALUE && scratch_coords.y < 0) {
+			// normalize the height
+			int norm = (int) (scratch_coords.height / Integer.MAX_VALUE);
+			norm = Math.min(norm, (int)-(scratch_coords.y / Integer.MAX_VALUE));
+			double dNorm = ((double)norm)*Integer.MAX_VALUE;
+
+			// Bring scratch_coords.height to at most Integer.MAX_VALUE, assuming y is small enough.
+			scratch_coords.height -= dNorm;
+			scratch_coords.y += dNorm;
+		}
+
 		dst.x = (int) scratch_coords.x;
 		dst.y = (int) scratch_coords.y;
-		dst.width = (int) (scratch_coords.x - dst.x + scratch_coords.width);
-		dst.height = (int) (scratch_coords.y - dst.y + scratch_coords.height);
+		dst.width = (int) (scratch_coords.width);
+		dst.height = (int) (scratch_coords.height);
 		return dst;
 	}
 

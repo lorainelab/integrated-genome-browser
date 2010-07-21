@@ -198,6 +198,7 @@ public class ScriptFileLoader {
 			if (fields.length >=2) {
 				loadMode(fields[1], join(fields,2));
 			}
+			GeneralLoadView.getLoadView().createFeaturesTable();
 		}
 		if (action.equals("print")) {
 			if (fields.length == 1) {
@@ -211,7 +212,6 @@ public class ScriptFileLoader {
 		}
 		if (action.equals("refresh")) {
 			RefreshDataAction.getAction().actionPerformed(null);
-			GeneralLoadView.getLoadView().createFeaturesTable();
 		}
 		if (action.equals("select") && fields.length>=2) {
 			UnibrowControlServlet.performSelection(join(fields,2));

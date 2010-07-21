@@ -38,8 +38,6 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	private boolean friendlyIconAttempted = false;		// Don't keep on searching for friendlyIcon
 	private ServerStatus serverStatus = 
 			ServerStatus.NotInitialized;				// Is this server initialized?
-	private final Set<GenericVersion>versions =
-			new CopyOnWriteArraySet<GenericVersion>();	// list of versions associated with this server
 	private final boolean primary;
 
 	public GenericServer(String serverName, String URL, ServerType serverType, boolean enabled, Object serverObj, boolean primary) {
@@ -129,18 +127,6 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 			// Ignore an exception here, since this is only for making a pretty UI.
 		}
 		return tempFriendlyURL;
-	}
-
-	public void addVersion(GenericVersion v) {
-		versions.add(v);
-	}
-
-	/**
-	 * Return versions, but don't allow them to be modified.
-	 * @return
-	 */
-	public Set<GenericVersion> getVersions() {
-		return Collections.<GenericVersion>unmodifiableSet(versions);
 	}
 
 	public void setServerStatus(ServerStatus serverStatus) {

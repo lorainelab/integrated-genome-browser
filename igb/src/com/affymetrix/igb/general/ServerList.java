@@ -88,28 +88,6 @@ public final class ServerList {
 		return servers;
 	}
 
-	public static GenericFeature findFeatureWithURI(URI uri) {
-		Set<GenericServer> serverSet = ServerList.getEnabledServers();
-		serverSet.add(ServerList.getLocalFilesServer());
-		for (GenericServer server : serverSet) {
-			for (GenericVersion version: server.getVersions()) {
-				for (GenericFeature feature : version.getFeatures()) {
-					if (feature.typeObj instanceof Das2Type && ((Das2Type)feature.typeObj).getURI().equals(uri)) {
-						return feature;
-					}
-					if (feature.typeObj instanceof DasType) {
-						// not implemented yet
-						continue;
-					}
-					if (feature.symL != null && feature.symL.uri.equals(uri)) {
-						return feature;
-					}
-				}
-			}
-		}
-		return null;	// couldn't find it
-	}
-
 	/**
 	 *  Given an URLorName string which should be the resolvable root URL
 	 *  (but may optionally be the server name)

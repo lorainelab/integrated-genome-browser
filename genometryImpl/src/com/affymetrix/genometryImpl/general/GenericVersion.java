@@ -36,7 +36,6 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 		this.versionID = versionID;
 		this.versionName = versionName;
 		this.gServer = gServer;
-		gServer.addVersion(this);
 		this.versionSourceObj = versionSourceObj;
 	}
 

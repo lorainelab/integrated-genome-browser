@@ -19,6 +19,7 @@ import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.MapRangeBox;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
@@ -210,6 +211,7 @@ public class ScriptFileLoader {
 		}
 		if (action.equals("refresh")) {
 			RefreshDataAction.getAction().actionPerformed(null);
+			GeneralLoadView.getLoadView().createFeaturesTable();
 		}
 		if (action.equals("select") && fields.length>=2) {
 			UnibrowControlServlet.performSelection(join(fields,2));

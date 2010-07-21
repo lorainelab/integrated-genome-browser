@@ -24,7 +24,7 @@ Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
 Dasypus novemcinctus	Nine-banded armadillo	D_novemcinctus		Dasypus_novemcinctus
-Dictyostelium discoideum Ax4	sequenced slice mold strain	D_discoideum_Ax4
+Dictyostelium discoideum Ax4 	sequenced slice mold strain	D_discoideum
 Drosophila ananassae	D. ananassae (fruit fly)	D_ananassae	droAna
 Drosophila erecta	D. erecta (fruit fly)	D_erecta	droEre
 Drosophila grimshawi	D. grimshawi (fruit fly)	D_grimshawi	droGri

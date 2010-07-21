@@ -19,6 +19,7 @@ import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.MapRangeBox;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.io.BufferedReader;
@@ -198,7 +199,6 @@ public class ScriptFileLoader {
 			if (fields.length >=2) {
 				loadMode(fields[1], join(fields,2));
 			}
-			GeneralLoadView.getLoadView().createFeaturesTable();
 		}
 		if (action.equals("print")) {
 			if (fields.length == 1) {
@@ -349,6 +349,7 @@ public class ScriptFileLoader {
 	}
 
 	private static void loadMode(String loadMode, String featureURIStr) {
+		List<GenericFeature> features = GeneralLoadView.getLoadView().createFeaturesTable();
 		URI featureURI = null;
 		File featureFile = new File(featureURIStr.trim());
 		if (featureFile.exists()) {
@@ -366,9 +367,16 @@ public class ScriptFileLoader {
 		} else if (loadMode.equalsIgnoreCase("genome")) {
 			s = LoadStrategy.GENOME;
 		}
-		GenericFeature feature = ServerList.findFeatureWithURI(featureURI);
+		GenericFeature feature = GeneralUtils.findFeatureWithURI(features, featureURI);
 		if (feature != null) {
-			feature.loadStrategy = s;
+			if(feature.symL.getLoadChoices().contains(s))
+				feature.loadStrategy = s;
+			else{
+				feature.loadStrategy = feature.symL.getLoadChoices().get(1);
+				Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.WARNING,
+						"Given {0} strategy is not permitted instead using {1} "
+						+ "strategy.", new Object[]{s,feature.loadStrategy});
+			}
 		} else {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "Couldn''t find feature :{0}", featureURIStr);

@@ -835,7 +835,7 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * Create the table with the list of features and their status.
 	 */
-	public void createFeaturesTable() {
+	public List<GenericFeature> createFeaturesTable() {
 		String versionName = (String) this.versionCB.getSelectedItem();
 		final BioSeq curSeq = gmodel.getSelectedSeq();
 		final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
@@ -871,6 +871,7 @@ public final class GeneralLoadView extends JComponent
 
 		disableButtonsIfNecessary();
 		changeVisibleDataButtonIfNecessary(features);	// might have been disabled when switching to another chromosome or genome.
+		return features;
 	}
 
 	/**

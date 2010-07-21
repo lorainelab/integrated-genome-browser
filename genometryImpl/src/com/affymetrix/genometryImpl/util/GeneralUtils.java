@@ -1,5 +1,8 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.das.DasType;
+import com.affymetrix.genometryImpl.das2.Das2Type;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -19,7 +22,6 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -271,5 +273,21 @@ public final class GeneralUtils {
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+
+	public static GenericFeature findFeatureWithURI(List<GenericFeature> features, URI uri) {
+		for (GenericFeature feature : features) {
+			if (feature.typeObj instanceof Das2Type && ((Das2Type) feature.typeObj).getURI().equals(uri)) {
+				return feature;
+			}
+			if (feature.typeObj instanceof DasType) {
+				// not implemented yet
+				continue;
+			}
+			if (feature.symL != null && feature.symL.uri.equals(uri)) {
+				return feature;
+			}
+		}
+		return null;	// couldn't find it
 	}
 }

@@ -21,7 +21,7 @@ public final class SeqSymIdComparator implements Comparator<SeqSymmetry>, Serial
 		return id1.compareTo(id2);
 	}
 	
-	static int compareNullIDs(String id1, String id2) {
+	public static int compareNullIDs(String id1, String id2) {
 		if (id1 == null) {
 			if (id2 == null) {
 				return 0;

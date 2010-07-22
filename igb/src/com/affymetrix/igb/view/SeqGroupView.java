@@ -3,6 +3,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.comparator.SeqSymIdComparator;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -207,17 +208,15 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 	private final class SeqLengthComparator implements Comparator<String>{
 
 		public int compare(String o1, String o2) {
-			if(o1.equals("") && !o2.equals(""))
-				return -1;
-			else if(o2.equals("") && !o1.equals(""))
-				return 1;
-			else if (o1.equals("") && o2.equals(""))
-				return 0;
+			if (o1 == null || o2 == null) {
+				return SeqSymIdComparator.compareNullIDs(o2, o1);	// null is last
+			}
+			if (o1.length() == 0 || o2.length() == 0) {
+				return o2.compareTo(o1);	// empty string is last
+			}
 
-			Double d1 = Double.valueOf(o1);
-			Double d2 = Double.valueOf(o2);
-
-			return Double.compare(d1, d2);
+			// use valueOf to get a Long object versus a long primitive.
+			return Long.valueOf(o1).compareTo(Long.parseLong(o2));
 		}
 	}
 }

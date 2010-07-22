@@ -3,12 +3,14 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.comparator.SeqSymIdComparator;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genoviz.swing.DisplayUtils;
 import java.awt.Dimension;
+import java.util.Comparator;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -19,7 +21,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-//import javax.swing.table.TableRowSorter;
+import javax.swing.table.TableRowSorter;
 
 public final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
@@ -31,7 +33,7 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 	private AnnotatedSeqGroup previousGroup = null;
 	private int previousSeqCount = 0;
 	private final ListSelectionModel lsm;
-	//private TableRowSorter<SeqGroupTableModel> sorter;
+	private TableRowSorter<SeqGroupTableModel> sorter;
 	private String most_recent_seq_id = null;
 
 
@@ -39,7 +41,6 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 		seqtable.setToolTipText(CHOOSESEQ);
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);
-		seqtable.setAutoCreateRowSorter(true);
 		
 		SeqGroupTableModel mod = new SeqGroupTableModel(null);
 		seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
@@ -92,10 +93,20 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 
 
 		SeqGroupTableModel mod = new SeqGroupTableModel(group);
-		//sorter = new TableRowSorter<SeqGroupTableModel>(mod);
+
+		sorter = new TableRowSorter<SeqGroupTableModel>(mod){
+			@Override
+			public Comparator<?> getComparator(int column){
+				if(column == 0){
+					return String.CASE_INSENSITIVE_ORDER;
+				}
+				return new SeqLengthComparator();
+			}
+		};
+
 		selected_seq = null;
 		seqtable.setModel(mod);
-		//seqtable.setRowSorter(sorter);
+		seqtable.setRowSorter(sorter);
 
 
 		refreshTable();
@@ -182,4 +193,18 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
     @Override
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
+	private final class SeqLengthComparator implements Comparator<String>{
+
+		public int compare(String o1, String o2) {
+			if (o1 == null || o2 == null) {
+				return SeqSymIdComparator.compareNullIDs(o2, o1);	// null is last
+			}
+			if (o1.length() == 0 || o2.length() == 0) {
+				return o2.compareTo(o1);	// empty string is last
+			}
+
+			// use valueOf to get a Long object versus a long primitive.
+			return Long.valueOf(o1).compareTo(Long.parseLong(o2));
+		}
+	}
 }

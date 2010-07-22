@@ -29,11 +29,12 @@ C_elegans_May_2003	http://www.wormbase.org/genome/C_elegans/WS100	http://www.wor
 C_elegans_May_2008	C_Elegans_May_2008	ceMay2008	ce6	ce:May_2008	Ce:May_2008	WS190
 C_elegans_Nov_2005	http://www.wormbase.org/genome/C_elegans/WS150	http://www.wormbase.org/genome/C_elegans/WS150/
 C_elegans_Oct_2003	http://www.wormbase.org/genome/C_elegans/WS110	http://www.wormbase.org/genome/C_elegans/WS110/
+C_elegans_Jan_2010	Caenorhabditis_elegans.WS210.reference
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
 C_hoffmanni_Sep_2008	Choloepus_hoffmanni.choHof1.reference
-C_intestinalis_Dec_2002	ci1
-C_intestinalis_Mar_2005	ci2
+C_intestinalis_Dec_2002	ci1	Ciona_intestinalis.JGI1.reference
+C_intestinalis_Mar_2005	ci2	Ciona_intestinalis.JGI2.reference
 C_jacchus_Jun_2007	calJac1
 C_jacchus_Mar_2009	calJac3	Callithrix_jacchus.calJac3.reference
 C_japonica_Jan_2009	caeJap2
@@ -52,6 +53,7 @@ D_grimshawi_Aug_2005	droGri1
 D_melanogaster_Apr_2004	Drosophila_Apr_2004	BDGP Release 4	dm2	dm:Apr_2004	Dm:Apr_2004	Dm:R4	Dm:BDGPv4	Dm;BDGPv4	Dm:BDGPv4h	Dm;BDGPv4h
 D_melanogaster_Apr_2006	Drosophila_Apr_2006	BDGP Release 5	dm3	dm:Apr_2006	Dm:Apr_2006	Dm:R5	Dm:BDGPv5	Dm;BDGPv5	Dm:BDGPv5h	Dm;BDGPv5h
 D_melanogaster_Jan_2003	Drosophila_Jan_2003	Drosophila jan2003	dm1		dm:Jan_2003	Dm:Jan_2003	Dm:R3	Dm:BDGPv3	Dm;BDGPv3
+D_melanogaster_Nov_2008	Drosophila_melanogaster.BDGP5.13.reference
 D_mojavensis_Aug_2004	droMoj1
 D_mojavensis_Aug_2005	droMoj2
 D_novemcinctus_Jul_2008	dasNov2	Dasypus_novemcinctus.dasNov2.reference
@@ -75,6 +77,7 @@ F_catus_Mar_2006	felCat3
 G_aculeatus_Feb_2006	gasAcu1	Gasterosteus_aculeatus.BROADS1.reference
 G_gallus_Feb_2004	galGal2
 G_gallus_May_2006	galGal3	Chicken_May_2006	Gallus_gallus.WASHUC2.reference
+G_gorilla_Mar_2010	gorGor3	Gorilla_gorilla.gorGor3.reference
 G_gorilla_Aug_2009	gorGor2
 G_gorilla_Oct_2008	gorGor1
 G_max_Dec_2008	Glyma1	Soybean_Dec_2008	JGI_Soybean_v101
@@ -104,7 +107,7 @@ M_domestica_Oct_2006	monDom5	Monodelphus_domestica.BROAD05.reference	Monodelphis
 M_domestica_Jan_2006	monDom4
 M_domestica_Oct_2004	monDom1
 M_murinus_Jun_2003	micMur1	Microcebus_murinus.micMur1.reference
-M_mulatta_Jan_2006	Rhesus_Jan_2006	Macaque_Jan_2006	Rhesus_macaque_Jan_2006	rheMac2	Baylor Mmul_051212 v.1.0
+M_mulatta_Jan_2006	Rhesus_Jan_2006	Macaque_Jan_2006	Rhesus_macaque_Jan_2006	rheMac2	Baylor Mmul_051212 v.1.0	Macaca_mulatta.MMUL_1.reference
 M_musculus_Aug_2005	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1/
 M_musculus_Aug_2005	Mouse_Aug_2005	mm7	Mm:NCBIv35	Mm:NCBI35
 M_musculus_Feb_2002	Mouse_Feb_2002	Mouse feb2002	mm2	mm:Feb_2002	Mm:Feb_2002

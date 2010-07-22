@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import java.awt.Dimension;
+import java.util.Comparator;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -19,7 +20,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-//import javax.swing.table.TableRowSorter;
+import javax.swing.table.TableRowSorter;
 
 public final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
@@ -31,7 +32,7 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 	private AnnotatedSeqGroup previousGroup = null;
 	private int previousSeqCount = 0;
 	private final ListSelectionModel lsm;
-	//private TableRowSorter<SeqGroupTableModel> sorter;
+	private TableRowSorter<SeqGroupTableModel> sorter;
 	private String most_recent_seq_id = null;
 
 
@@ -39,7 +40,6 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 		seqtable.setToolTipText(CHOOSESEQ);
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);
-		seqtable.setAutoCreateRowSorter(true);
 		
 		SeqGroupTableModel mod = new SeqGroupTableModel(null);
 		seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
@@ -92,10 +92,20 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 
 
 		SeqGroupTableModel mod = new SeqGroupTableModel(group);
-		//sorter = new TableRowSorter<SeqGroupTableModel>(mod);
+
+		sorter = new TableRowSorter<SeqGroupTableModel>(mod){
+			@Override
+			public Comparator<?> getComparator(int column){
+				if(column == 0){
+					return String.CASE_INSENSITIVE_ORDER;
+				}
+				return new SeqLengthComparator();
+			}
+		};
+
 		selected_seq = null;
 		seqtable.setModel(mod);
-		//seqtable.setRowSorter(sorter);
+		seqtable.setRowSorter(sorter);
 
 
 		refreshTable();
@@ -182,4 +192,20 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
     @Override
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
+	private final class SeqLengthComparator implements Comparator<String>{
+
+		public int compare(String o1, String o2) {
+			if(o1.equals("") && !o2.equals(""))
+				return -1;
+			else if(o2.equals("") && !o1.equals(""))
+				return 1;
+			else if (o1.equals("") && o2.equals(""))
+				return 0;
+
+			Double d1 = Double.valueOf(o1);
+			Double d2 = Double.valueOf(o2);
+
+			return Double.compare(d1, d2);
+		}
+	}
 }

@@ -20,6 +20,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 public final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
@@ -67,6 +70,15 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 	  seqtable.validate();
 	  seqtable.updateUI();
 	  seqtable.repaint();
+	  updateTableHeader();
+  }
+
+  public static void updateTableHeader(){
+	JTableHeader headers = seqtable.getTableHeader();
+	TableColumnModel model = headers.getColumnModel();
+
+	TableColumn col1 = model.getColumn(0);
+	col1.setHeaderValue("("+ seqtable.getRowCount() +") Sequence(s)");
   }
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
@@ -188,9 +200,9 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
   }
 
   @Override
-  public Dimension getMinimumSize() { return new Dimension(200, 50); }
+  public Dimension getMinimumSize() { return new Dimension(220, 50); }
     @Override
-  public Dimension getPreferredSize() { return new Dimension(200, 50); }
+  public Dimension getPreferredSize() { return new Dimension(220, 50); }
 
 	private final class SeqLengthComparator implements Comparator<String>{
 

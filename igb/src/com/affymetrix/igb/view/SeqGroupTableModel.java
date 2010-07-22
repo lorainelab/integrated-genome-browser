@@ -39,7 +39,7 @@ final class SeqGroupTableModel extends AbstractTableModel {
 	@Override
 	public String getColumnName(int col) {
 		if (col == 0) {
-			return "Sequence";
+			return "("+ getRowCount() +") Sequence(s)";
 		} else if (col == 1) {
 			return "Length";
 		} else {

@@ -29,7 +29,6 @@ C_elegans_May_2003	http://www.wormbase.org/genome/C_elegans/WS100	http://www.wor
 C_elegans_May_2008	C_Elegans_May_2008	ceMay2008	ce6	ce:May_2008	Ce:May_2008	WS190
 C_elegans_Nov_2005	http://www.wormbase.org/genome/C_elegans/WS150	http://www.wormbase.org/genome/C_elegans/WS150/
 C_elegans_Oct_2003	http://www.wormbase.org/genome/C_elegans/WS110	http://www.wormbase.org/genome/C_elegans/WS110/
-C_elegans_Jan_2010	Caenorhabditis_elegans.WS210.reference
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
 C_hoffmanni_Sep_2008	Choloepus_hoffmanni.choHof1.reference
@@ -53,7 +52,6 @@ D_grimshawi_Aug_2005	droGri1
 D_melanogaster_Apr_2004	Drosophila_Apr_2004	BDGP Release 4	dm2	dm:Apr_2004	Dm:Apr_2004	Dm:R4	Dm:BDGPv4	Dm;BDGPv4	Dm:BDGPv4h	Dm;BDGPv4h
 D_melanogaster_Apr_2006	Drosophila_Apr_2006	BDGP Release 5	dm3	dm:Apr_2006	Dm:Apr_2006	Dm:R5	Dm:BDGPv5	Dm;BDGPv5	Dm:BDGPv5h	Dm;BDGPv5h
 D_melanogaster_Jan_2003	Drosophila_Jan_2003	Drosophila jan2003	dm1		dm:Jan_2003	Dm:Jan_2003	Dm:R3	Dm:BDGPv3	Dm;BDGPv3
-D_melanogaster_Nov_2008	Drosophila_melanogaster.BDGP5.13.reference
 D_mojavensis_Aug_2004	droMoj1
 D_mojavensis_Aug_2005	droMoj2
 D_novemcinctus_Jul_2008	dasNov2	Dasypus_novemcinctus.dasNov2.reference
@@ -77,7 +75,7 @@ F_catus_Mar_2006	felCat3
 G_aculeatus_Feb_2006	gasAcu1	Gasterosteus_aculeatus.BROADS1.reference
 G_gallus_Feb_2004	galGal2
 G_gallus_May_2006	galGal3	Chicken_May_2006	Gallus_gallus.WASHUC2.reference
-G_gorilla_Mar_2010	gorGor3	Gorilla_gorilla.gorGor3.reference
+gorGor3	Gorilla_gorilla.gorGor3.reference
 G_gorilla_Aug_2009	gorGor2
 G_gorilla_Oct_2008	gorGor1
 G_max_Dec_2008	Glyma1	Soybean_Dec_2008	JGI_Soybean_v101
@@ -130,8 +128,7 @@ O_anatinus_Mar_2007	ornAna1
 O_cuniculus_Apr_2009	oryCun2	Oryctolagus_cuniculus.oryCun2.reference
 O_cuniculus_May_2005	oryCun1
 O_garnetti_Dec_2006	Otolemur_garnetti.BUSHBABY1.reference	Otolemur_garnettii.BUSHBABY1.reference
-O_latipes_Oct_2005	oryLat2
-O_latipes_Apr_2006	oryLat1	Oryzias_latipes.MEDAKA1.reference
+O_latipes_Oct_2005	oryLat2	Oryzias_latipes.MEDAKA1.reference
 O_princeps_Jul_2008	ochPri2	Ochotona_princeps.pika.reference
 O_sativa_Jan_2007	Rice_Tigr_Pseudomolecules_5	TIGR_pseudomol5
 O_sativa_Jun_2009	RGAP_Pseudomolecules_6	RGAP_pseudomolecules_6	RGAP_pseudomol6	Rice_Tigr_Pseudomolecules_6	TIGR_pseudomol6

@@ -39,18 +39,22 @@ public final class GenericFeature {
 		this.featureName = featureName;
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
-		if (shouldAutoLoad(featureProps) && autoload) {
+		this.symL = gsr;
+		this.typeObj = typeObj;
+		this.setFriendlyURL();
+		this.setAutoload(autoload);
+	}
+
+	public void setAutoload(boolean auto){
+		if (shouldAutoLoad(featureProps) && auto) {
 			this.loadStrategy = LoadStrategy.GENOME;
 			this.setVisible();
 		} else {
 			this.loadStrategy = LoadStrategy.NO_LOAD;
 			this.visible = false;
 		}
-		this.symL = gsr;
-		this.typeObj = typeObj;
-		this.setFriendlyURL();
 	}
-
+	
 	public void setVisible() {
 		this.visible = true;
 		if (this.loadStrategy != LoadStrategy.NO_LOAD) {

@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.action.AutoLoadAction;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -149,9 +150,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		});
 		editAuthButton.setEnabled(false);
 
-		final JCheckBox autoload = PreferenceUtils.createCheckBox(PreferenceUtils.AUTO_LOAD, PreferenceUtils.getTopNode(),
-				PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
-		autoload.setToolTipText("Automatically load default features when available (e.g., cytoband and refseq)");
+		final JCheckBox autoload = AutoLoadAction.getAction();
 		
 		sourcesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {

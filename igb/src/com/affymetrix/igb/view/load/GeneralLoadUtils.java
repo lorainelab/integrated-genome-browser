@@ -828,4 +828,23 @@ public final class GeneralLoadUtils {
 		
 		return null;
 	}
+
+	/**
+	 * Set autoload variable in features.
+	 * @param autoload	
+	 */
+	public static void setFeatureAutoLoad(boolean autoload){
+		for(List<GenericVersion> genericVersions : species2genericVersionList.values()){
+			for(GenericVersion genericVersion : genericVersions){
+				for(GenericFeature genericFeature : genericVersion.getFeatures()){
+					genericFeature.setAutoload(autoload);
+				}
+			}
+		}
+
+		//It autoload data is selected then load.
+		if(autoload){
+			gmodel.setSelectedSeq(gmodel.getSelectedSeq());
+		}
+	}
 }

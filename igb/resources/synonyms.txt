@@ -125,18 +125,23 @@ MoEx-1_0-st-Probes	MoEx-1_0-st-v1	MoEx-1_0-st	MoEx-1_0-st-v1-Probes	moex-1_0-st-
 MoEx-1_0-st-Transcripts	MoEx-1_0-st-v1-Transcripts	moex-1_0-st-transcripts	moex-1_0-st-v1-transcripts	affy/moex-1_0-st-transcripts	affy/moex-1_0-st-v1-transcripts
 MoGene-1_0-st-Probes	MoGene-1_0-st-v1	MoGene-1_0-st	MoGene-1_0-st-v1-Probes	mogene-1_0-st-probes	mogene-1_0-st-v1-probes	affy/mogene-1_0-st-v1-probes	affy/mogene-1_0-st-probes
 MoGene-1_0-st-Transcripts	MoGene-1_0-st-v1-Transcripts	mogene-1_0-st-transcripts	mogene-1_0-st-v1-transcripts	affy/mogene-1_0-st-transcripts	affy/mogene-1_0-st-v1-transcripts
+M_lucifugus_Mar_2006	myoLuc1	Myotis_lucifugus.MICROBAT1.reference
 O_anatinus_Mar_2007	ornAna1
 O_cuniculus_Apr_2009	oryCun2	Oryctolagus_cuniculus.oryCun2.reference
 O_cuniculus_May_2005	oryCun1
 O_garnetti_Dec_2006	Otolemur_garnetti.BUSHBABY1.reference	Otolemur_garnettii.BUSHBABY1.reference
 O_latipes_Oct_2005	oryLat2
+O_latipes_Apr_2006	oryLat1	Oryzias_latipes.MEDAKA1.reference
+O_princeps_Jul_2008	ochPri2	Ochotona_princeps.pika.reference
 O_sativa_Jan_2007	Rice_Tigr_Pseudomolecules_5	TIGR_pseudomol5
 O_sativa_Jun_2009	RGAP_Pseudomolecules_6	RGAP_pseudomolecules_6	RGAP_pseudomol6	Rice_Tigr_Pseudomolecules_6	TIGR_pseudomol6
 P_abelii_Jul_2007	ponAbe2
+P_capensis_Jul_2008	proCap1	Procavia_capensis.proCap1.reference
 P_marinus_Mar_2007	petMar1
 P_pacificus_Feb_2007	priPac1
 P_troglodytes_Mar_2006	panTro2	Pan_troglodytes.CHIMP2.1.reference
 P_troglodytes_Nov_2003	panTro1	Chimp_Nov_2003	CGSC Build 1 Version 1
+P_vampyrus_Jul_2008	pteVam1	Pteropus_vampyrus.pteVam1.reference
 RaEx-1_0-st-Probes	RaEx-1_0-st-v1	RaEx-1_0-st	RaEx-1_0-st-v1-Probes	raex-1_0-st-probes	raex-1_0-st-v1-probes	affy/raex-1_0-st-probes	affy/raex-1_0-st-v1-probes
 RaEx-1_0-st-Transcripts	RaEx-1_0-st-v1-Transcripts	raex-1_0-st-transcripts	raex-1_0-st-v1-transcripts	affy/raex-1_0-st-transcripts	affy/raex-1_0-st-v1-transcripts
 RaGene-1_0-st-Probes	RaGene-1_0-st-v1	RaGene-1_0-st	RaGene-1_0-st-v1-Probes	ragene-1_0-st-probes	ragene-1_0-st-v1-probes	affy/ragene-1_0-st-v1-probes	affy/ragene-1_0-st-probes
@@ -147,10 +152,12 @@ R_norvegicus_Nov_2002	Rat_Nov_2002	Rat nov2002	rn1	rn:Nov_2002	Rn:Nov_2002
 R_norvegicus_Nov_2004	Rat_Nov_2004	Rat nov2004	rn4	rn:Nov_2004	Rn:Nov_2004
 S_cerevisiae_Jun_2008	sacCer2
 S_cerevisiae_Oct_2003	sacCer1	sc:Oct_2003	Sc:Oct_2003	S_cerevisiae_Oct_2003_and_S_pombe_Jul_2005
+S_araneus_Jun_2006	sorAra1	Sorex_araneus.COMMON_SHREW1.reference
 S_pombe_Sep_2004	Sp:Sep_2004	sp:Sep_2004
 S_purpuratus_Apr_2005	strPur1
 S_purpuratus_Sep_2006	strPur2
 S_scrofa_Nov_2009	susScr2
+S_tridecemlineatus_Feb_2008	speTri1	Spermophilus_tridecemlineatus.SQUIRREL.reference
 T_guttata_Jul_2008	taeGut1
 T_nigroviridis_Feb_2004	tetNig1
 T_nigroviridis_Mar_2007	tetNig2
@@ -158,5 +165,6 @@ T_rubripes_Aug_2002	fr1
 T_rubripes_Oct_2004	fr2
 T_belangeri_Dec_2006	Tupaia_belangeri.TREESHREW.reference
 T_truncatus_Feb_2008	turTru1	Tursiops_truncatus.turTru1.reference
+T_syrichta_Aug_2008	tarSyr1	Tarsius_syrichta.tarSyr1.reference
 X_tropicalis_Aug_2005	xenTro2	Xenopus_tropicalis.JGI4.1.reference
 X_tropicalis_Oct_2004	xenTro1	Xenopus_tropicalis.JGI3.0.reference

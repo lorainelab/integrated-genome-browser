@@ -199,8 +199,8 @@ public final class QuickLoad extends SymLoader {
 								gviewer.setAnnotatedSeq(QuickLoad.this.version.group.getSeq(0),true,true);
 							}
 						}
-						SeqGroupView.refreshTable();
 					}
+					SeqGroupView.refreshTable();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {

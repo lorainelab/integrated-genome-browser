@@ -6,12 +6,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.genometryImpl.das.DasType;
-import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.das2.Das2Type;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
@@ -273,17 +267,30 @@ public final class ServerList {
 		
 		try {
 			for (String encodedURL : servers.childrenNames()) {
+				try {
 				currentServer = servers.node(encodedURL);
 				decodedURL = GeneralUtils.URLDecode(encodedURL);
-				normalizedURL = ServerUtils.formatURL(decodedURL, ServerType.valueOf(currentServer.get("type", "Unknown")));
+				String serverType = currentServer.get("type", "Unknown");
+				if (serverType.equals("Unknown")) {
+					Logger.getLogger(ServerList.class.getName()).log(
+							Level.WARNING, "server URL: {0} could not be determined; ignoring.\nPreferences may be corrupted; clear preferences.", decodedURL);
+					continue;
+				}
+				
+				normalizedURL = ServerUtils.formatURL(decodedURL, ServerType.valueOf(serverType));
 
 				if (!decodedURL.equals(normalizedURL)) {
-					Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading server URL: '" + decodedURL + "' in preferences");
+					Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading server URL: ''{0}'' in preferences", decodedURL);
 					Preferences normalizedServer = servers.node(GeneralUtils.URLEncode(normalizedURL));
 					for (String key : currentServer.keys()) {
 						normalizedServer.put(key, currentServer.get(key, ""));
 					}
 					currentServer.removeNode();
+				}
+				} catch (Exception ex) {
+					// Allow preferences loading to continue if an exception is encountered.
+					Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+					continue;
 				}
 			}
 		} catch (BackingStoreException ex) {

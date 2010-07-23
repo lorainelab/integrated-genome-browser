@@ -36,9 +36,9 @@ public class ChpParserTest {
 		File f = new File(zippedFileStr);
 		assertTrue(f.exists());
 		File f2 = File.createTempFile(f.getName(), ".chp");
+		f2.deleteOnExit();
 		assertTrue(f2.exists());
 		unzipFile(f, f2);
-		f2.deleteOnExit();
 		
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("test");
 		BioSeq seq = new BioSeq("chr1","test version", 100);

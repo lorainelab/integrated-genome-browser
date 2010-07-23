@@ -164,13 +164,13 @@ public final class GeneralUtils {
 			String extension = ParserController.getExtension(unzippedStreamName);
 			File f = File.createTempFile(
 					unzippedStreamName,extension);
+			f.deleteOnExit();	// This is only a temporary file!  Delete when the app exits.
 			out = new FileOutputStream(f);
 			int read = 0;
 			byte[] bytes = new byte[1024];
 			while ((read = istr.read(bytes)) != -1) {
 				out.write(bytes, 0, read);
 			}
-			f.deleteOnExit();	// This is only a temporary file!  Delete when the app exits.
 			return f;
 		}  catch (Exception ex) {
 			ex.printStackTrace();

@@ -741,6 +741,7 @@ public final class LocalUrlCacher {
 			if (!GeneralUtils.getUnzippedName(f.getName()).equalsIgnoreCase(f.getName())) {
 				try {
 					File f2 = File.createTempFile(f.getName(), null);
+					f2.deleteOnExit();	// This is only a temporary file!  Delete on exit.
 					unzipFile(f, f2);
 					return f2;
 				} catch (IOException ex) {
@@ -780,7 +781,7 @@ public final class LocalUrlCacher {
 		return null;
 	}
 
-	public static void unzipFile(File f, File f2) throws IOException {
+	private static void unzipFile(File f, File f2) throws IOException {
 		// File must be unzipped!
 		InputStream is = null;
 		OutputStream out = null;

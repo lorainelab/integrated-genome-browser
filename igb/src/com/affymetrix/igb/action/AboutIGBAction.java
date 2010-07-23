@@ -55,7 +55,7 @@ public class AboutIGBAction extends AbstractAction {
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea about_text = new JTextArea();
-
+		about_text.setEditable(false);
 		String text = APP_NAME + ", version: " + APP_VERSION_FULL + "\n\n" +
 						"IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n" +
 						"which develops interactive visualization software for genomics.\n\n" +

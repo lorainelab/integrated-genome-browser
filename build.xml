@@ -272,6 +272,7 @@
 				<include name="freehep-2.1.1.jar"/>
 				<include name="jlfgr-1_0.jar"/>
 				<include name="colt.jar" />
+				<include name="sam.jar" />
 			</zipgroupfileset>
 		</jar>
 	</target>
@@ -307,6 +308,7 @@
 				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
 				<fileset dir="${lib.dir}" includes="jlfgr-1_0.jar"/>
 				<fileset dir="${lib.dir}" includes="colt.jar" />
+				<fileset dir="${lib.dir}" includes="sam.jar" />
 				<dirset dir="${basedir}">
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />
@@ -322,6 +324,7 @@
 				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
 				<fileset dir="${lib.dir}" includes="jlfgr-1_0.jar"/>
 				<fileset dir="${lib.dir}" includes="colt.jar" />
+				<fileset dir="${lib.dir}" includes="sam.jar" />
 				<dirset dir="${basedir}">
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />
@@ -333,6 +336,7 @@
 			<classpath>
 				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
 				<fileset dir="${lib.dir}" includes="colt.jar" />
+				<fileset dir="${lib.dir}" includes="sam.jar" />
 				<dirset dir="${basedir}">
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />

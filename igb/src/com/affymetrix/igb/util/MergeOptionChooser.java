@@ -1,5 +1,10 @@
 package com.affymetrix.igb.util;
 
+import com.affymetrix.igb.menuitem.LoadFileAction;
+import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -14,53 +19,95 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *  subclass is more control of where the JCheckBox is placed inside the
  *  dialog.
  */
-public final class MergeOptionChooser extends JFileChooser {
+public final class MergeOptionChooser extends JFileChooser implements ActionListener{
 
-	private final ButtonGroup bgroup = new ButtonGroup();
-	public final JRadioButton merge_button = new JRadioButton(BUNDLE.getString("mergeWithCurrentlyLoadedData"), true);
-	public final JRadioButton no_merge_button = new JRadioButton(BUNDLE.getString("createNewGenome"), false);
-	public final JTextField genome_name_TF = new JTextField(BUNDLE.getString("unknownGenome"));
+	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
+	private static final String CHOOSE = "Choose";
 	public final Box box;
+	public final JComboBox speciesCB = new JComboBox();
+	public final JComboBox versionCB = new JComboBox();
 
 	public MergeOptionChooser() {
 		super();
-		bgroup.add(no_merge_button);
-		bgroup.add(merge_button);
-		merge_button.setSelected(true);
-
-		genome_name_TF.setEnabled(no_merge_button.isSelected());
-
-		no_merge_button.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				genome_name_TF.setEnabled(no_merge_button.isSelected());
-			}
-		});
-
-		merge_button.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				genome_name_TF.setEnabled(no_merge_button.isSelected());
-			}
-		});
-
+		
+		speciesCB.addActionListener(this);
+		versionCB.addActionListener(this);
+		
 		box = new Box(BoxLayout.X_AXIS);
 		box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
-		box.add(Box.createHorizontalStrut(5));
-		box.add(merge_button);
-		box.add(no_merge_button);
-		box.add(Box.createRigidArea(new Dimension(5, 0)));
-		box.add(genome_name_TF);
 
-		merge_button.setMnemonic('M');
-		no_merge_button.setMnemonic('C');
+		box.add(new JLabel(CHOOSE + ":"));
+		box.add(Box.createHorizontalStrut(5));
+		box.add(speciesCB);
+
+		box.add(Box.createHorizontalStrut(5));
+		box.add(versionCB);
+		
 	}
 
 	@Override
 	protected JDialog createDialog(Component parent) throws HeadlessException {
 		JDialog dialog = super.createDialog(parent);
 
+		refreshSpeciesList();
 		dialog.getContentPane().add(box, BorderLayout.SOUTH);
 		return dialog;
 	}
+
+	public void refreshSpeciesList(){
+		speciesCB.removeAllItems();
+		speciesCB.addItem(LoadFileAction.UNKNOWN_SPECIES_PREFIX + " " + LoadFileAction.unknown_group_count);
+		for(String species : GeneralLoadUtils.getSpeciesList()){
+			speciesCB.addItem(species);
+		}
+
+		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+
+		if(!SELECT_SPECIES.equals(speciesName))
+			speciesCB.setSelectedItem(speciesName);
+		else
+			speciesCB.setSelectedIndex(0);
+
+		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		if (group != null) {
+			versionCB.setSelectedItem(group.getID());
+		} else {
+			versionCB.setSelectedIndex(0);
+		}
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if(e == null)
+			return;
+
+		if(e.getSource() == speciesCB){
+			
+			populateVersionCB();
+
+			if(speciesCB.getSelectedIndex() == 0)
+				speciesCB.setEditable(true);
+			else
+				speciesCB.setEditable(false);
+
+			versionCB.setSelectedIndex(0);
+		}
+
+		if (e.getSource() == versionCB) {
+			if (versionCB.getSelectedIndex() == 0) {
+				versionCB.setEditable(true);
+			} else {
+				versionCB.setEditable(false);
+			}
+		}
+	}
+
+	private void populateVersionCB(){
+		String speciesName = (String) speciesCB.getSelectedItem();
+		versionCB.removeAllItems();
+		versionCB.addItem(LoadFileAction.UNKNOWN_VERSION_PREFIX + " " + LoadFileAction.unknown_group_count);
+		for(String version : GeneralLoadUtils.getGenericVersions(speciesName)){
+			versionCB.addItem(version);
+		}
+	}
+
 }

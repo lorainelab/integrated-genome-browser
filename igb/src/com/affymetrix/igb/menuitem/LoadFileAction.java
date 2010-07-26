@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.io.*;
 import java.net.URISyntaxException;
@@ -23,7 +24,6 @@ import java.text.MessageFormat;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.FishClonesParser;
@@ -55,7 +55,9 @@ public final class LoadFileAction extends AbstractAction {
 	private final JFrame gviewerFrame;
 	private final FileTracker load_dir_tracker;
 	public static int unknown_group_count = 1;
-	public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
+	public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("unknownGenome");
+	public static final String UNKNOWN_VERSION_PREFIX = BUNDLE.getString("unknownVersion");
+	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 	private static final String MERGE_MESSAGE = 
 			"Must select a genome before loading a graph.  "
 			+ "Graph data must be merged with already loaded genomic data.";
@@ -175,18 +177,6 @@ public final class LoadFileAction extends AbstractAction {
 		}
 		fileChooser.setCurrentDirectory(currDir);
 		fileChooser.rescanCurrentDirectory();
-		if (gmodel.getSelectedSeqGroup() == null) {
-			fileChooser.no_merge_button.setEnabled(true);
-			fileChooser.no_merge_button.setSelected(true);
-			fileChooser.merge_button.setEnabled(false);
-		} else {
-			// default to "merge" if already have a selected seq group to merge with,
-			//    because non-merging is an uncommon choice
-			fileChooser.merge_button.setSelected(true);
-			fileChooser.merge_button.setEnabled(true);
-		}
-		fileChooser.genome_name_TF.setEnabled(fileChooser.no_merge_button.isSelected());
-		fileChooser.genome_name_TF.setText(UNKNOWN_GROUP_PREFIX + " " + unknown_group_count);
 
 		int option = fileChooser.showOpenDialog(gviewerFrame);
 
@@ -197,26 +187,23 @@ public final class LoadFileAction extends AbstractAction {
 		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
 
 		final File[] fils = fileChooser.getSelectedFiles();
-		final boolean mergeSelected = fileChooser.merge_button.isSelected();
-		if (!mergeSelected) {
-			// Not merging, so create a new Seq Group
-			unknown_group_count++;
-		}
 		
-		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(fileChooser.genome_name_TF.getText());
+		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)fileChooser.versionCB.getSelectedItem());
 
-		if (!mergeSelected) {
-			// Select the "unknown" group.
-			gmodel.setSelectedSeqGroup(loadGroup);
-		}
+		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
 
 		for(File file : fils){
 			URI uri = file.toURI();
-			openURI(uri, file.getName(), mergeSelected, loadGroup);
+			openURI(uri, file.getName(), mergeSelected, loadGroup, (String)fileChooser.speciesCB.getSelectedItem());
+		}
+
+		if(!mergeSelected){
+			unknown_group_count++;
+			gmodel.setSelectedSeqGroup(loadGroup);
 		}
 	}
 
-	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup) {
+	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup, String speciesName) {
 		if (uri.toString().toLowerCase().endsWith(".igb")) {
 			// response file.  Do its actions and return.
 			// Potential for an infinite loop here, of course.
@@ -224,7 +211,7 @@ public final class LoadFileAction extends AbstractAction {
 			return;
 		}
 
-		// Make sure this URI is not already used within the group.  Otherwise there could be collisions in BioSeq.addAnnotations(type)
+		// Make sure this URI is not already used within the selectedGroup.  Otherwise there could be collisions in BioSeq.addAnnotations(type)
 		boolean uniqueURI = true;
 		for (GenericVersion version : loadGroup.getAllVersions()) {
 			// See if symloader feature was created with the same uri.
@@ -243,7 +230,7 @@ public final class LoadFileAction extends AbstractAction {
 			return;
 		}
 
-		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup);
+		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
 
 		// handle URL case.
 		String uriString = uri.toString();
@@ -259,10 +246,6 @@ public final class LoadFileAction extends AbstractAction {
 		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
 		if (!mergeSelected && gFeature.symL != null) {
 			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
-			if (loadGroup.getSeqCount() > 0) {
-				GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
-				// select a chromosomes
-			}
 		}
 		version.addFeature(gFeature);
 		gFeature.setVisible(); // this should be automatically checked in the feature tree
@@ -289,6 +272,10 @@ public final class LoadFileAction extends AbstractAction {
 
 			@Override
 			public void done() {
+				if (loadGroup.getSeqCount() > 0) {
+					// select a chromosomes
+					GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
+				}
 				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
 			}
 		};
@@ -330,14 +317,19 @@ public final class LoadFileAction extends AbstractAction {
 		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
 		boolean mergeSelected = loadGroup == null ? false :true;
 		if (loadGroup == null) {
-			loadGroup = gmodel.addSeqGroup(UNKNOWN_GROUP_PREFIX + " " + unknown_group_count);
-			unknown_group_count++;
-
-			// Select the "unknown" group.
-			gmodel.setSelectedSeqGroup(loadGroup);
+			loadGroup = gmodel.addSeqGroup(UNKNOWN_VERSION_PREFIX + " " + unknown_group_count);
 		}
 
-		openURI(uri, friendlyName, mergeSelected, loadGroup);
+		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+		if(SELECT_SPECIES.equals(speciesName)){
+			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
+		}
+		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);
+
+		if(!mergeSelected){
+			unknown_group_count++;
+			gmodel.setSelectedSeqGroup(loadGroup);
+		}
 		
 		return true;
 	}

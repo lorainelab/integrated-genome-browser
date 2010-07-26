@@ -3,24 +3,17 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -51,22 +44,10 @@ public final class LoadURLAction extends AbstractAction {
 
 	private void loadURL() {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		if (gmodel.getSelectedSeqGroup() == null) {
-			chooser.no_merge_button.setEnabled(true);
-			chooser.no_merge_button.setSelected(true);
-			chooser.merge_button.setEnabled(false);
-		} else {
-			// default to "merge" if already have a selected seq group to merge with,
-			//    because non-merging is an uncommon choice
-			chooser.merge_button.setSelected(true);
-			chooser.merge_button.setEnabled(true);
-		}
-		chooser.genome_name_TF.setEnabled(chooser.no_merge_button.isSelected());
-		chooser.genome_name_TF.setText(LoadFileAction.UNKNOWN_GROUP_PREFIX + " " + LoadFileAction.unknown_group_count);
-
 		JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION );
 		pane.setWantsInput(true);
 
+		chooser.refreshSpeciesList();
 		dialog = pane.createDialog(gviewerFrame, BUNDLE.getString("openURL"));
 		dialog.setModal(true);
 		dialog.getContentPane().add(mergeOptionBox, BorderLayout.SOUTH);
@@ -90,20 +71,17 @@ public final class LoadURLAction extends AbstractAction {
 			return;
 		}
 			
-		final boolean mergeSelected = chooser.merge_button.isSelected();
+		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)chooser.versionCB.getSelectedItem());
+
+		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
+
+		LoadFileAction.openURI(uri, getFriendlyName(urlStr), mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem());
+		
 		if (!mergeSelected) {
-			// Not merging, so create a new Seq Group
 			LoadFileAction.unknown_group_count++;
-		}
-
-		final AnnotatedSeqGroup loadGroup = mergeSelected ? gmodel.getSelectedSeqGroup() : gmodel.addSeqGroup(chooser.genome_name_TF.getText());
-
-		if (!mergeSelected) {
-			// Select the "unknown" group.
 			gmodel.setSelectedSeqGroup(loadGroup);
 		}
 
-		LoadFileAction.openURI(uri, getFriendlyName(urlStr), mergeSelected, loadGroup);
 	}
 
 	private static String getFriendlyName(String urlStr) {

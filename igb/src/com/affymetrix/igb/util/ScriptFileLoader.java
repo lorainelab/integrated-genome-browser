@@ -345,7 +345,9 @@ public class ScriptFileLoader {
 
 	private static void loadFile(String fileName) {
 		File f = new File(fileName.trim());
-		LoadFileAction.openURI(f.toURI(), f.getName(), true, GenometryModel.getGenometryModel().getSelectedSeqGroup());
+		LoadFileAction.openURI(f.toURI(), f.getName(), true,
+				GenometryModel.getGenometryModel().getSelectedSeqGroup(),
+				GenometryModel.getGenometryModel().getSelectedSeqGroup().getID());
 	}
 
 	private static void loadMode(String loadMode, String featureURIStr) {

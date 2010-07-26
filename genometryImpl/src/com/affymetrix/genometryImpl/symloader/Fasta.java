@@ -71,10 +71,13 @@ public class Fasta extends SymLoader {
 		try {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			br = new BufferedReader(new InputStreamReader(bis));
+			String header = null;
 			while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
-				String header = br.readLine();
 				if (header == null) {
-					continue;
+					header = br.readLine();
+					if (header == null) {
+						continue;
+					}
 				}  // skip null lines
 				matcher.reset(header);
 
@@ -84,6 +87,7 @@ public class Fasta extends SymLoader {
 				String seqid = matcher.group(1).split(" ")[0];	//get rid of spaces
 				BioSeq seq = group.getSeq(seqid);
 				int count = 0;
+				header = null;	// reset for next header
 				while (br.ready() && (!Thread.currentThread().isInterrupted())) {
 					String line = br.readLine();
 					if (line == null || line.length() == 0) {
@@ -129,10 +133,13 @@ public class Fasta extends SymLoader {
 		try {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			br = new BufferedReader(new InputStreamReader(bis));
+			String header = null;
 			while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
-				String header = br.readLine();
 				if (header == null) {
-					continue;
+					header = br.readLine();
+					if (header == null) {
+						continue;
+					}
 				}  // skip null lines
 				matcher.reset(header);
 
@@ -142,6 +149,7 @@ public class Fasta extends SymLoader {
 				String seqid = matcher.group(1).split(" ")[0];	// get rid of spaces
 				BioSeq seq = group.getSeq(seqid);
 				boolean seqMatch = (seq != null && seq == span.getBioSeq());
+				header = null;	// reset for next header
 
 				StringBuffer buf = new StringBuffer();
 				while (br.ready() && (!Thread.currentThread().isInterrupted())) {
@@ -189,6 +197,9 @@ public class Fasta extends SymLoader {
 				buf.setLength(0);
 				buf = null; // immediately allow the gc to use this memory
 				residues = residues.trim();
+				if (seqMatch) {
+					break;
+				}
 			}
 
 		} catch (Exception ex) {

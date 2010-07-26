@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -326,14 +327,13 @@ public final class GeneralLoadUtils {
 	 * @param aseq
 	 * @return genome version
 	 */
-	public static GenericVersion getLocalFilesVersion(AnnotatedSeqGroup aseq) {
+	public static GenericVersion getLocalFilesVersion(AnnotatedSeqGroup aseq, String speciesName) {
 		String versionName = aseq.getID();
-		String speciesName = GeneralLoadUtils.versionName2species.get(versionName);
 		if (speciesName == null) {
 			 speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list
 		}
 		GenericServer server = ServerList.getLocalFilesServer();
-
+	
 		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
 
@@ -846,5 +846,28 @@ public final class GeneralLoadUtils {
 		if(autoload){
 			gmodel.setSelectedSeq(gmodel.getSelectedSeq());
 		}
+	}
+
+	public static List<String> getSpeciesList(){
+		final List<String> speciesList = new ArrayList<String>();
+		speciesList.addAll(species2genericVersionList.keySet());
+		Collections.sort(speciesList);
+		return speciesList;
+	}
+
+	public static List<String> getGenericVersions(final String speciesName){
+		final List<GenericVersion> versionList = species2genericVersionList.get(speciesName);
+		final List<String> versionNames = new ArrayList<String>();
+		if (versionList != null) {
+			for (GenericVersion gVersion : versionList) {
+				// the same versionName name may occur on multiple servers
+				String versionName = gVersion.versionName;
+				if (!versionNames.contains(versionName)) {
+					versionNames.add(versionName);
+				}
+			}
+			Collections.sort(versionNames, new StringVersionDateComparator());
+		}
+		return versionNames;
 	}
 }

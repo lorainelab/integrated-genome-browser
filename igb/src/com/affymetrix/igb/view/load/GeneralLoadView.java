@@ -878,7 +878,7 @@ public final class GeneralLoadView extends JComponent
 	 * Load any features that have a whole strategy and haven't already been loaded.
 	 * @param versionName
 	 */
-	private void loadWholeRangeFeatures(String versionName) {
+	private static void loadWholeRangeFeatures(String versionName) {
 		for (GenericFeature gFeature : GeneralLoadUtils.getFeatures(versionName)) {
 			if (gFeature.loadStrategy != LoadStrategy.GENOME) {
 				continue;

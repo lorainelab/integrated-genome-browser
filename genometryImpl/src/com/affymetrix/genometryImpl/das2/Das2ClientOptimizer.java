@@ -16,28 +16,12 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.zip.ZipInputStream;
-import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
-import com.affymetrix.genometryImpl.general.SymLoader;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.parsers.BgnParser;
-import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
-import com.affymetrix.genometryImpl.parsers.BpsParser;
-import com.affymetrix.genometryImpl.parsers.BrsParser;
-import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
-import com.affymetrix.genometryImpl.parsers.GFFParser;
-import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.genometryImpl.util.Constants;
@@ -56,8 +40,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
  */
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.util.logging.Logger;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public final class Das2ClientOptimizer {
     private static final boolean DEBUG = false;
@@ -112,8 +94,8 @@ public final class Das2ClientOptimizer {
         String inside_filter = inside_span == null ? null : Das2FeatureSaxParser.getRangeString(inside_span, false);
 
         if (DEBUG) {
-            Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("overlap = " + overlap_filter +
-                    ", inside = " + inside_filter);
+            Logger.getLogger(Das2ClientOptimizer.class.getName()).log(
+					Level.FINE, "overlap = {0}, inside = {1}", new Object[]{overlap_filter, inside_filter});
         }
         Das2Type type = request_sym.getDas2Type();
         String format = request_sym.getFormat();
@@ -131,8 +113,8 @@ public final class Das2ClientOptimizer {
         String request_root = featcap.getRootURI().toString();
 
         if (DEBUG) {
-            Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("   request root: " + request_root);
-            Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("   preferred format: " + format);
+            Logger.getLogger(Das2ClientOptimizer.class.getName()).log(Level.FINE, "   request root: {0}", request_root);
+            Logger.getLogger(Das2ClientOptimizer.class.getName()).log(Level.FINE, "   preferred format: {0}", format);
         }
 
         try {
@@ -144,9 +126,9 @@ public final class Das2ClientOptimizer {
 
             String feature_query = request_root + "?" + query_part;
             if (DEBUG) {
-                Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("feature query URL:  " + feature_query);
-                Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("url-encoded query URL:  " + URLEncoder.encode(feature_query, Constants.UTF8));
-                Logger.getLogger(Das2ClientOptimizer.class.getName()).fine("url-decoded query:  " + URLDecoder.decode(feature_query, Constants.UTF8));
+                Logger.getLogger(Das2ClientOptimizer.class.getName()).log(Level.FINE, "feature query URL:  {0}", feature_query);
+                Logger.getLogger(Das2ClientOptimizer.class.getName()).log(Level.FINE, "url-encoded query URL:  {0}", URLEncoder.encode(feature_query, Constants.UTF8));
+                Logger.getLogger(Das2ClientOptimizer.class.getName()).log(Level.FINE, "url-decoded query:  {0}", URLDecoder.decode(feature_query, Constants.UTF8));
             }
 			LoadFeaturesFromQuery(
 					overlap_span, aseq, feature_query, format, seq_group, type, request_sym);
@@ -155,30 +137,30 @@ public final class Das2ClientOptimizer {
 		}
     }
 
-    private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
-      StringBuffer buf = new StringBuffer(200);
+   private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
+		StringBuilder buf = new StringBuilder(200);
 		buf.append("segment=");
 		buf.append(URLEncoder.encode(region.getID(), Constants.UTF8));
 		buf.append(";");
-        buf.append("overlaps=");
-        buf.append(URLEncoder.encode(overlap_filter, Constants.UTF8));
-        buf.append(";");
-        if (inside_filter != null) {
-            buf.append("inside=");
-            buf.append(URLEncoder.encode(inside_filter, Constants.UTF8));
-            buf.append(";");
-        }
-        buf.append("type=");
-        buf.append(URLEncoder.encode(type.getID(), Constants.UTF8));
-        if (format != null) {
-            buf.append(";");
-            buf.append("format="); 
-            buf.append(URLEncoder.encode(format, Constants.UTF8));
-        }
-        String query_part = buf.toString();
+		buf.append("overlaps=");
+		buf.append(URLEncoder.encode(overlap_filter, Constants.UTF8));
+		buf.append(";");
+		if (inside_filter != null) {
+			buf.append("inside=");
+			buf.append(URLEncoder.encode(inside_filter, Constants.UTF8));
+			buf.append(";");
+		}
+		buf.append("type=");
+		buf.append(URLEncoder.encode(type.getID(), Constants.UTF8));
+		if (format != null) {
+			buf.append(";");
+			buf.append("format=");
+			buf.append(URLEncoder.encode(format, Constants.UTF8));
+		}
+		String query_part = buf.toString();
 
-        return query_part;
-    }
+		return query_part;
+	}
 
     private static boolean LoadFeaturesFromQuery(
             SeqSpan overlap_span, BioSeq aseq, String feature_query, String format, 

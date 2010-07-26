@@ -959,5 +959,8 @@ public final class GeneralLoadView extends JComponent
 		return (seqID == null || IGBConstants.GENOME_SEQ_ID.equals(seqID));
 	}
 
+	public String getSelectedSpecies(){
+		return (String) speciesCB.getSelectedItem();
+	}
 }
 

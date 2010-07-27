@@ -288,6 +288,7 @@ public final class QuickLoad extends SymLoader {
 			FeatureRequestSym requestSym = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
 			requestSym.setProperty("method",
 					entry.getKey() != null ? entry.getKey() : this.uri.toString());
+			ClientOptimizer.uri2type.put(uri, (String)requestSym.getProperty("method"));	// TODO: HACK for 6.3
 			FeatureRequestSym.addToRequestSym(entry.getValue(), requestSym, this.uri, (String)requestSym.getProperty("method"), requestSym.getOverlapSpan());
 			FeatureRequestSym.addAnnotations(entry.getValue(), requestSym, requestSym.getOverlapSpan().getBioSeq());
 			overallResults.addAll(entry.getValue());

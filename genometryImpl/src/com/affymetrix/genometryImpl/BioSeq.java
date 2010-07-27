@@ -1,7 +1,5 @@
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
-import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
@@ -258,14 +256,6 @@ public final class BioSeq implements SearchableCharIterator {
 			annots.add(sym);
 			return;
 		}
-		if (sym instanceof FeatureRequestSym && (!(sym instanceof Das2FeatureRequestSym))) {
-			// TODO: HACK before rearchitecting
-			String type = (String) ((SymWithProps) sym).getProperty("loadURI");
-			if (type != null) {
-				addAnnotation(sym, type); // side-effect calls notifyModified()
-				return;
-			}
-		}
 		String type = determineMethod(sym);
 		if (type != null)  {
 			// add as child to the top-level container
@@ -328,16 +318,9 @@ public final class BioSeq implements SearchableCharIterator {
 		}
 
 		// If the annotation contains other annotations, remove the container
-		String type = null;
-		if (annot instanceof FeatureRequestSym && (!(annot instanceof Das2FeatureRequestSym))) {
-			// TODO: HACK before rearchitecting
-			type = (String) ((SymWithProps) annot).getProperty("loadURI");
-		}
+		String type = determineMethod(annot);
 		if (type == null) {
-			type = determineMethod(annot);
-			if (type == null) {
-				return;
-			}
+			return;
 		}
 		SymWithProps sym = getAnnotation(type);
 		if (sym != null && sym instanceof MutableSeqSymmetry) {

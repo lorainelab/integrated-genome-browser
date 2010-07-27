@@ -286,7 +286,6 @@ public final class QuickLoad extends SymLoader {
 				continue;
 			}
 			FeatureRequestSym requestSym = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
-			requestSym.setProperty("loadURI", this.uri.toString());	// TODO: HACK to avoid multiple definitions of method property.
 			requestSym.setProperty("method",
 					entry.getKey() != null ? entry.getKey() : this.uri.toString());
 			FeatureRequestSym.addToRequestSym(entry.getValue(), requestSym, this.uri, (String)requestSym.getProperty("method"), requestSym.getOverlapSpan());

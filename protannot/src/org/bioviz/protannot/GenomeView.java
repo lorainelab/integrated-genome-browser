@@ -632,13 +632,15 @@ final public class GenomeView extends JPanel implements MouseListener{
 			MutableSeqSymmetry annot2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
 		int cdsCount = annot2genome.getChildCount();
 		int prev_amino_end = 0;
+		int prev_add = 0;
 		for (int j = 0; j < cdsCount; j++) {
 			SeqSymmetry cds2genome = annot2genome.getChild(j);
 			SeqSpan gSpan = cds2genome.getSpan(vseq);
 			GlyphI cglyph = new FillRectGlyph();
+			//SeqSpan protSpan = cds2genome.getSpan(protein);
 			// coloring based on frame
-			SeqSpan protSpan = cds2genome.getSpan(protein);
-			colorByFrame(cglyph, protSpan, gSpan);
+			colorByFrame(cglyph, gSpan.getMin() + prev_add);
+			prev_add += 3 - (gSpan.getLength() % 3);	//Keep a track of no of complete amino acid added.
 			cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
 			aGlyph.addChild(cglyph);
 			if (amino_acid != null) {
@@ -655,6 +657,23 @@ final public class GenomeView extends JPanel implements MouseListener{
 			}
 		}
 	}
+
+	/**
+	 * Colors by exon frame relative to genomic coordinates
+	 * @param gl
+	 * @param genome_codon_start	First position of complete amino acid.
+	 */
+	 private static void colorByFrame(GlyphI gl, int genome_codon_start) {
+
+        genome_codon_start = genome_codon_start % 3;
+        if (genome_codon_start == 0) {
+            gl.setColor(col_frame0);
+        } else if (genome_codon_start == 1) {
+            gl.setColor(col_frame1);
+        } else {
+            gl.setColor(col_frame2);
+        }  // genome_codon_start = 2
+    }
 
 	
     /**

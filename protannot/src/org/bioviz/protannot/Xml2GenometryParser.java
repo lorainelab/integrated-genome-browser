@@ -318,7 +318,7 @@ final class Xml2GenometryParser {
      * @see     com.affymetrix.genometryImpl.SimpleSymWithProps
      */
     private static SeqSymmetry processSimSpan(BioSeq query_seq, Element elem) {
-        int start = Integer.parseInt(elem.getAttribute("query_start"));
+        int start = Integer.parseInt(elem.getAttribute("query_start")) - 1;
         int end;
         //  need to standardize on which tag to use!
         // also, should be able to use Element.hasAttribute() to test here, but
@@ -326,9 +326,9 @@ final class Xml2GenometryParser {
         //  between DOM API I'm referring to and DOM implementation I'm actually using
         //  (the docs say Element.hasAttribute() is part of "DOM level 2" interface)
         try {
-            end = Integer.parseInt(elem.getAttribute("query_end"));
+            end = Integer.parseInt(elem.getAttribute("query_end")) - 1;
         } catch (Exception ex) {
-            end = Integer.parseInt(elem.getAttribute("query_stop"));
+            end = Integer.parseInt(elem.getAttribute("query_stop")) - 1;
         }
         if (start < end) {
             end++;
@@ -338,11 +338,11 @@ final class Xml2GenometryParser {
 
         SimpleSymWithProps spanSym = new SimpleSymWithProps();
         addDescriptors(elem, spanSym);
-        String prop = (Integer.valueOf(start)).toString();
+        String prop = (Integer.valueOf(start + 1)).toString();
         spanSym.setProperty("aa_start", prop);
-        prop = (Integer.valueOf(end)).toString();
+        prop = (Integer.valueOf(end + 1)).toString();
         spanSym.setProperty("aa_end", prop);
-        prop = (Integer.valueOf((end - start)/3)).toString();
+        prop = (Integer.valueOf(end - start + 1)).toString();
         spanSym.setProperty("aa_length", prop);
         SeqSpan qspan = new SimpleSeqSpan(start+query_seq.getMin(), end+query_seq.getMin(), query_seq); 
         spanSym.addSpan(qspan);

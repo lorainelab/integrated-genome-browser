@@ -1,8 +1,13 @@
 package org.bioviz.protannot;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
+import java.awt.Point;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -13,7 +18,6 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
 
 /**
  * Displays Properties (name, value pairs) associated with
@@ -89,7 +93,7 @@ final class ModPropertySheet extends JPanel {
      * @param   props       - the list of Properties
      * @return  String[]
      */
-    private String[][] buildRows(List<String[]> name_values, Properties[] props) {
+    private static String[][] buildRows(List<String[]> name_values, Properties[] props) {
         int num_props = props.length;
         List<String[]> nv = new ArrayList<String[]>();
         for (String[] vals : name_values) {
@@ -122,6 +126,7 @@ final class ModPropertySheet extends JPanel {
         String[][] rows = buildRows(name_values, props);
         String[] col_headings = getColumnHeadings(props);
         JTable table = new JTable(); // the table showing name-value pairs
+		table.addMouseListener(new URLListener(table));
         TableModel model = new DefaultTableModel(rows, col_headings) {
 
             @Override
@@ -161,4 +166,42 @@ final class ModPropertySheet extends JPanel {
     Properties[] getProperties() {
         return this.props;
     }
+
+	private class URLListener implements MouseListener{
+		private final JTable jtable;
+
+		public URLListener(JTable jtable){
+			this.jtable = jtable;
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent me){
+			Point p = me.getPoint();
+			int row = jtable.rowAtPoint(p);
+			int col = jtable.columnAtPoint(p);
+			if (jtable.getValueAt(row, 0).equals("URL") && col > 0)
+				setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+
+		@Override
+		public void mouseExited(MouseEvent me){
+			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent me){
+			
+			Point p = me.getPoint();
+			int row = jtable.rowAtPoint(p);
+			int col = jtable.columnAtPoint(p);
+			if (jtable.getValueAt(row, 0).equals("URL")) {
+				GeneralUtils.browse((String) jtable.getValueAt(row, col));
+			}
+			
+		}
+
+		public void mousePressed(MouseEvent e) {}
+		public void mouseReleased(MouseEvent e) {}
+	}
+	
 }

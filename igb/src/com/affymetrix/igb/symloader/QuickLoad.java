@@ -21,6 +21,7 @@ import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
@@ -278,6 +279,7 @@ public final class QuickLoad extends SymLoader {
 			FeatureRequestSym requestSym = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
 			requestSym.setProperty("method",
 					entry.getKey() != null ? entry.getKey() : this.uri.toString());
+			ClientOptimizer.uri2type.put(uri, (String)requestSym.getProperty("method"));	// TODO: HACK for 6.3
 			FeatureRequestSym.addToRequestSym(entry.getValue(), requestSym, this.uri, (String)requestSym.getProperty("method"), requestSym.getOverlapSpan());
 			FeatureRequestSym.addAnnotations(entry.getValue(), requestSym, requestSym.getOverlapSpan().getBioSeq());
 			overallResults.addAll(entry.getValue());

@@ -19,6 +19,11 @@ import java.util.logging.Logger;
 
 public class ClientOptimizer {
 	private static boolean DEBUG = false;
+
+	public static final Map<URI,String> uri2type = new HashMap<URI,String>();
+	// TODO: HACK for 6.3
+
+
     public static void OptimizeQuery(
 			BioSeq aseq, URI typeid,
 			Das2Type type, String typeName, List<FeatureRequestSym> output_requests, FeatureRequestSym request_sym) {
@@ -26,7 +31,13 @@ public class ClientOptimizer {
 			Logger.getLogger(ClientOptimizer.class.getName()).severe("Chromosome was not selected -- cannot load data");
 			return;
 		}
-        MutableSeqSymmetry cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid.toString());
+		MutableSeqSymmetry cont_sym = null;
+		if (!(request_sym instanceof Das2FeatureRequestSym)) {
+			// TODO: HACK for 6.3
+			cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(uri2type.get(typeid));
+		} else {
+			cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid.toString());
+		}
         // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
 
 		// little hack for GraphSyms, need to resolve when to use id vs. name vs. type

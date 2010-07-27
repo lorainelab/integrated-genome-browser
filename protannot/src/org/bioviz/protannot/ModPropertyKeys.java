@@ -13,7 +13,22 @@ import java.util.Properties;
  */
 final class ModPropertyKeys {
 
-    private final String[] keys = new String[0];
+    private static final String[] keys = new String[12];
+
+	static {
+		keys[0] = "Gene symbol";
+		keys[1] = "mRNA accession";
+		keys[2] = "InterPro Accession";
+		keys[3] = "InterPro Name";
+		keys[4] = "num_spans";
+		keys[5] = "start";
+		keys[6] = "aa_start";
+		keys[7] = "end";
+		keys[8] = "aa_end";
+		keys[9] = "length";
+		keys[10] = "aa_length";
+		keys[11] = "type";
+	}
 
     /**
      * Fills up a List with arrays containing names and values

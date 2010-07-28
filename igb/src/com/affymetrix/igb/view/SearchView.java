@@ -624,9 +624,9 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private class SearchResultsTableModel extends AbstractTableModel {
 
 		private final String[] column_names = {
-			IGBConstants.BUNDLE.getString("searchTableGeneName"),
 			IGBConstants.BUNDLE.getString("searchTableID"),
 			IGBConstants.BUNDLE.getString("searchTableTier"),
+			IGBConstants.BUNDLE.getString("searchTableGeneName"),
 			IGBConstants.BUNDLE.getString("searchTableStart"),
 			IGBConstants.BUNDLE.getString("searchTableEnd"),
 			IGBConstants.BUNDLE.getString("searchTableChromosome"),

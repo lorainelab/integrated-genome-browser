@@ -7,10 +7,14 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,6 +22,10 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import java.awt.Component;
+import javax.swing.JEditorPane;
 
 /**
  * Displays Properties (name, value pairs) associated with
@@ -126,15 +134,20 @@ final class ModPropertySheet extends JPanel {
         String[][] rows = buildRows(name_values, props);
         String[] col_headings = getColumnHeadings(props);
         JTable table = new JTable(); // the table showing name-value pairs
-		table.addMouseListener(new URLListener(table));
-        TableModel model = new DefaultTableModel(rows, col_headings) {
-
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        
+		TableModel model = new DefaultTableModel(rows, col_headings){
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
         table.setModel(model);
+		PropertySheetHelper helper = new PropertySheetHelper(table);
+		for(int i=0; i<table.getColumnCount(); i++){
+			table.getColumnModel().getColumn(i).setCellRenderer(helper);
+		}
+		table.addMouseListener(helper);
+		table.addMouseMotionListener(helper);
         table.setRowSelectionAllowed(true);
 		table.setCellSelectionEnabled(true);
 		table.setAutoCreateRowSorter(true);
@@ -167,41 +180,66 @@ final class ModPropertySheet extends JPanel {
         return this.props;
     }
 
-	private class URLListener implements MouseListener{
+	private class PropertySheetHelper extends DefaultTableCellRenderer implements
+			MouseListener, MouseMotionListener {
+		
 		private final JTable jtable;
+		private final DefaultTableCellRenderer cell = new DefaultTableCellRenderer();
+		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+		private final Cursor defaultCursor = null;
 
-		public URLListener(JTable jtable){
+		public PropertySheetHelper(JTable jtable){
 			this.jtable = jtable;
 		}
 
 		@Override
-		public void mouseEntered(MouseEvent me){
-			Point p = me.getPoint();
-			int row = jtable.rowAtPoint(p);
-			int col = jtable.columnAtPoint(p);
-			if (jtable.getValueAt(row, 0).equals("URL") && col > 0)
-				setCursor(new Cursor(Cursor.HAND_CURSOR));
-		}
+		public Component getTableCellRendererComponent (JTable table,
+				Object obj, boolean isSelected, boolean hasFocus, int row, int column){
 
-		@Override
-		public void mouseExited(MouseEvent me){
-			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-		}
-		
-		@Override
-		public void mouseClicked(MouseEvent me){
-			
-			Point p = me.getPoint();
-			int row = jtable.rowAtPoint(p);
-			int col = jtable.columnAtPoint(p);
-			if (jtable.getValueAt(row, 0).equals("URL")) {
-				GeneralUtils.browse((String) jtable.getValueAt(row, col));
+			if(isURLField(row,column)){
+
+				String url = "<html> <a href='" + (String)obj + "'>" +
+						(String)obj + "</a> </html>)";
+
+				cell.setText(url);
+			}else{
+				cell.setText((String) obj);
 			}
 			
+			return cell;
 		}
 
+		@Override
+		public void mouseClicked(MouseEvent e){
+
+			Point p = e.getPoint();
+			int row = jtable.rowAtPoint(p);
+			int column = jtable.columnAtPoint(p);
+			if (isURLField(row,column)) {
+				GeneralUtils.browse((String) jtable.getValueAt(row, column));
+			}
+
+		}
+		public void mouseMoved(MouseEvent e) {
+			Point p = e.getPoint();
+			int row = jtable.rowAtPoint(p);
+			int column = jtable.columnAtPoint(p);
+
+			if(isURLField(row,column)){
+				jtable.setCursor(handCursor);
+			}else if(jtable.getCursor() != defaultCursor) {
+				jtable.setCursor(defaultCursor);
+			}
+		}
+
+		public void mouseDragged(MouseEvent e) {}
+		public void mouseEntered(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {}
 		public void mousePressed(MouseEvent e) {}
 		public void mouseReleased(MouseEvent e) {}
+
+		private boolean isURLField(int row, int column){
+			return (column != 0 && jtable.getValueAt(row, 0).equals("URL"));
+		}
 	}
-	
 }

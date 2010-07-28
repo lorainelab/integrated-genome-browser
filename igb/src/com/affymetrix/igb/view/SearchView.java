@@ -360,7 +360,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private void displayRegexIDs(String text, BioSeq chrFilter) {
 		Pattern regex = null;
 		try {
-			regex = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
+			String regexText = text;
+			// Make sure this search is reasonable to do on a remote server.
+			if (!(regexText.contains("*") || regexText.contains("^") || regexText.contains("$"))) {
+				// Not much of a regular expression.  Assume the user wants to match at the start and end
+				regexText = ".*" + regexText + ".*";
+			}
+			regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
 			ErrorHandler.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
 			return;

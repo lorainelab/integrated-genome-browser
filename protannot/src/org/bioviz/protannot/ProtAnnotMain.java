@@ -241,7 +241,7 @@ final public class ProtAnnotMain implements WindowListener {
     }
 
 	private ProtAnnotMain(){
-		frm = new JFrame(BUNDLE.getString("appName"));
+		frm = new JFrame(APP_NAME);
 	}
     /**
      * Setup the outer frame.
@@ -301,7 +301,11 @@ final public class ProtAnnotMain implements WindowListener {
         JMenu menu = MenuUtil.getMenu(BUNDLE.getString("fileMenu"));
 		menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
         addFileActions(menu);
-        
+
+		menu = MenuUtil.getMenu(BUNDLE.getString("editMenu"));
+		menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
+        addEditActions(menu);
+
         menu = MenuUtil.getMenu(BUNDLE.getString("viewMenu"));
 		menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
         addViewActions(menu);
@@ -421,6 +425,12 @@ final public class ProtAnnotMain implements WindowListener {
 		MenuUtil.addToMenu(file_menu, new JMenuItem(Actions.getExitAction()));
 
     }
+
+	private void addEditActions(final JMenu edit_menu){
+		AbstractAction c_action = Actions.getCopyAction();
+		MenuUtil.addToMenu(edit_menu, new JMenuItem(c_action));
+		gview.popup.add(c_action);
+	}
 
 	/**
 	 * Adds help menu item to Help help_menu.

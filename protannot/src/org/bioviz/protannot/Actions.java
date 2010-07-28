@@ -1,5 +1,7 @@
 package org.bioviz.protannot;
 
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Clipboard;
 import java.awt.Toolkit;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.util.List;
@@ -139,6 +141,39 @@ class Actions {
         quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
 		quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
 		return quit_action;
+	}
+
+	static AbstractAction getCopyAction(){
+		final AbstractAction copy_action = new AbstractAction(
+					BUNDLE.getString("copy"),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif")){
+
+            public void actionPerformed(ActionEvent e) {
+				Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
+				Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
+				StringSelection data = new StringSelection(props[0].getProperty("protein sequence"));
+				system.setContents(data, null);
+            }
+        };
+
+		MouseListener ml = new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (!(e instanceof NeoMouseEvent)) {
+					return;
+				}
+				Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
+				if (props != null && props.length == 1) {
+					copy_action.setEnabled(props[0].containsKey("protein sequence"));
+				}else
+					copy_action.setEnabled(false);
+			}
+		};
+		ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);
+		copy_action.setEnabled(false);
+		
+		return copy_action;
 	}
 
 	/**

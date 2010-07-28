@@ -37,7 +37,7 @@ final class ModPropertySheet extends JPanel {
     private static final String DEFAULT_TITLE = " ";
     private Properties[] props;
 	private final JTable table;
-
+	private final PropertySheetHelper helper;
 
     /**
      * Create a new PropertySheet containing no data.
@@ -45,10 +45,11 @@ final class ModPropertySheet extends JPanel {
     ModPropertySheet() {
         super();
         title = new JLabel(DEFAULT_TITLE);
+		helper = new PropertySheetHelper();
         jvp = new JViewport();
 		table = new JTable();
 		scroll_pane = new JScrollPane(table);
-		
+
 		setUpPanel();
     }
 
@@ -60,7 +61,6 @@ final class ModPropertySheet extends JPanel {
         add(title, BorderLayout.NORTH);
         add(scroll_pane, BorderLayout.CENTER);
 
-		PropertySheetHelper helper = new PropertySheetHelper();
 		table.addMouseListener(helper);
 		table.addMouseMotionListener(helper);
         table.setRowSelectionAllowed(true);
@@ -158,6 +158,8 @@ final class ModPropertySheet extends JPanel {
 			}
 		};
         table.setModel(model);
+		table.setDefaultRenderer(Object.class, helper);
+		
 		setTableSize(rows, table);
         validate();
     }
@@ -201,9 +203,6 @@ final class ModPropertySheet extends JPanel {
 		private final Cursor defaultCursor = null;
 
 		public PropertySheetHelper(){
-			for(int i=0; i<table.getColumnCount(); i++){
-				table.getColumnModel().getColumn(i).setCellRenderer(this);
-			}
 		}
 
 		@Override

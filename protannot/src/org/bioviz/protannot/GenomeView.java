@@ -900,10 +900,23 @@ final public class GenomeView extends JPanel implements MouseListener{
         axismap.updateWidget();
         seqmap.updateWidget();
                 
-        showProperties();
+        Properties[] props = showProperties();
 
 		if(hairline != null)
 			hairline.setRange((int)nme.getCoordX(), (int)nme.getCoordX() + 1);
+
+		//Enable/Disable Browse action.
+		if (props != null && props.length == 0)
+			popup.getComponent(0).setEnabled(false);
+		else{
+			Properties prop = props[0];
+			popup.getComponent(0).setEnabled(prop.containsKey("URL") ||
+					prop.containsKey("interpro_id") ||
+					prop.containsKey("exp_ngi"));
+		}
+
+		//Enable/Disable Zoom to feature.
+		popup.getComponent(1).setEnabled(selected != null && !selected.isEmpty());
 		
         if (e.isPopupTrigger()) {
             popup.show(this, e.getX(), e.getY());
@@ -922,7 +935,7 @@ final public class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
-    private void showProperties() {
+    private Properties[] showProperties() {
         List<Properties> propvec = new ArrayList<Properties>();
         Properties props = null;
         for (GlyphI gl : selected) {
@@ -959,6 +972,8 @@ final public class GenomeView extends JPanel implements MouseListener{
         }
 		Properties[] prop_array = propvec.toArray(new Properties[0]);
         table_view.showProperties(prop_array);
+
+		return prop_array;
     }
 
     /**
@@ -1123,6 +1138,49 @@ final public class GenomeView extends JPanel implements MouseListener{
 		seqmap.adjustZoomer(NeoAbstractWidget.X);
     }
 
+	/**
+	 * Browse url found in properties.
+	 * @return
+	 */
+	public String getURL(){
+		final StringBuilder url = new StringBuilder();
+		Properties[] props = getProperties();
+		if (props != null && props.length == 1) {
+			url.delete(0, url.length());
+			url.append(build_url(props[0]));
+		} else {
+			url.delete(0, url.length());
+		}
+
+		return url.toString();
+	}
+
+	/**
+     * Builds url of selected glyphs
+     * @param p Property of the selected glyph
+     * @return  String of build url.
+     */
+    private static String build_url(Properties p) {
+        String val = p.getProperty("URL");
+        if (val != null) {
+            return val;
+        }
+        val = p.getProperty("interpro_id");
+        if (val != null) {
+            return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + val;
+        }
+        val = p.getProperty("exp_ngi");
+        if (val != null) {
+            if (val.startsWith("gi:")) {
+                val = val.substring(3);
+            }
+
+            return "http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=Retrieve&db=nucleotide&list_uids=" + val + "&dopt=GenBank";
+        } else {
+            return null;
+        }
+    }
+	
     /**
      * Copies a SeqSymmetry.
      * Note that this clears all previous data from the MutableSeqSymmetry.

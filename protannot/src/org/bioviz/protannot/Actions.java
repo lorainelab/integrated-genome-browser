@@ -1,13 +1,7 @@
 package org.bioviz.protannot;
 
 import java.awt.Toolkit;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import java.util.List;
 import java.util.Properties;
-import com.affymetrix.genoviz.event.NeoMouseEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseAdapter;
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import javax.swing.JDialog;
@@ -141,18 +135,27 @@ class Actions {
 		return quit_action;
 	}
 
+	static AbstractAction getCopyAction(){
+		AbstractAction copy_action = new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+		};
+		copy_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_C);
+		return copy_action;
+	}
+	
 	/**
 	* Asks ProtAnnotMain.getInstance() to open a browser window showing info
 	* on the currently selected Glyph.
 	*/
-	static AbstractAction getOpenInBrowserAction(){
+	static AbstractAction getOpenInBrowserAction() {
+		AbstractAction open_browser_action = new AbstractAction(BUNDLE.getString("openBrowser"),
+				MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif")) {
 
-		final StringBuilder url = new StringBuilder();
-		
-		final AbstractAction open_browser_action = new AbstractAction(BUNDLE.getString("openBrowser"),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif")){
-			
 			public void actionPerformed(ActionEvent e) {
+				String url = ProtAnnotMain.getInstance().getGenomeView().getURL();
 				if (url.length() > 0) {
 					GeneralUtils.browse(url.toString());
 				} else {
@@ -164,27 +167,8 @@ class Actions {
 
 		open_browser_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_B);
 		open_browser_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("openBrowserTip"));
-        open_browser_action.setEnabled(false);
+		open_browser_action.setEnabled(false);
 
-		MouseListener ml = new MouseAdapter() {
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (!(e instanceof NeoMouseEvent)) {
-					return;
-				}
-				Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
-				if (props != null && props.length == 1) {
-					url.delete(0, url.length());
-					url.append(build_url(props[0]));
-				} else {
-					url.delete(0, url.length());
-				}
-				open_browser_action.setEnabled(url.length() > 0 ? true : false);
-			}
-		};
-		ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);
-		
 		return open_browser_action;
 	}
 
@@ -193,9 +177,7 @@ class Actions {
 	* currently selected Glyph.
 	*/
 	static AbstractAction getZoomToFeatureAction(){
-
-
-		final AbstractAction zoom_to_feature_action = new AbstractAction(BUNDLE.getString("zoomToFeature"),
+		AbstractAction zoom_to_feature_action = new AbstractAction(BUNDLE.getString("zoomToFeature"),
 				MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif")) {
 
 			public void actionPerformed(ActionEvent e) {
@@ -205,19 +187,6 @@ class Actions {
 		zoom_to_feature_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_Z);
 		zoom_to_feature_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("zoomToFeatureTip"));
 		zoom_to_feature_action.setEnabled(false);
-
-		MouseListener ml = new MouseAdapter() {
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (!(e instanceof NeoMouseEvent)) {
-					return;
-				}
-				List<GlyphI> selected = ProtAnnotMain.getInstance().getGenomeView().getSelected();
-				zoom_to_feature_action.setEnabled(selected != null && !selected.isEmpty());
-			}
-		};
-		ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);
 
 		return zoom_to_feature_action;
 	}

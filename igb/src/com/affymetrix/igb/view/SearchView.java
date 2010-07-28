@@ -389,6 +389,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			actualChars -= 1;
 		}
 		if (text.endsWith(".*")) {
+			text = text.substring(0,text.length()-2) + "*";	// hack for bug in DAS/2 server
 			actualChars -= 2;
 		} else if (text.endsWith("*")) {
 			actualChars -= 1;

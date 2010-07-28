@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -29,6 +30,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -616,6 +618,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private class SearchResultsTableModel extends AbstractTableModel {
 
 		private final String[] column_names = {
+			IGBConstants.BUNDLE.getString("searchTableGeneName"),
 			IGBConstants.BUNDLE.getString("searchTableID"),
 			IGBConstants.BUNDLE.getString("searchTableTier"),
 			IGBConstants.BUNDLE.getString("searchTableStart"),
@@ -625,10 +628,11 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		};
 		private static  final int ID_COLUMN = 0;
 		private static final int TIER_COLUMN = 1;
-		private static final int START_COLUMN = 2;
-		private static final int END_COLUMN = 3;
-		private static final int CHROM_COLUMN = 4;
-		private static final int STRAND_COLUMN = 5;
+		private static  final int GENE_NAME_COLUMN = 2;
+		private static final int START_COLUMN = 3;
+		private static final int END_COLUMN = 4;
+		private static final int CHROM_COLUMN = 5;
+		private static final int STRAND_COLUMN = 6;
 		private final List<SeqSymmetry> search_results;
 
 		public SearchResultsTableModel(List<SeqSymmetry> results) {
@@ -643,6 +647,16 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 					return sym.getID();
 				case TIER_COLUMN:
 					return BioSeq.determineMethod(sym);
+				case GENE_NAME_COLUMN:
+					if (sym instanceof SimpleDas2Feature) {
+						String geneName = ((SimpleDas2Feature)sym).getName();
+						return geneName == null ? "" : geneName;
+					}
+					if (sym instanceof SymWithProps) {
+						String geneName = (String)((SymWithProps)sym).getProperty("gene name");
+						return geneName == null ? "" : geneName;
+					}
+					return "";
 				case START_COLUMN:
 					if (sym instanceof UcscPslSym) {
 						return (((UcscPslSym) sym).getSameOrientation()) ? 

@@ -16,16 +16,19 @@ final class ModPropertyKeys {
     private static final String[] keys = new String[12];
 
 	static {
+		//mRNA
 		keys[0] = "Gene symbol";
 		keys[1] = "mRNA accession";
-		keys[2] = "InterPro Accession";
-		keys[3] = "InterPro Name";
-		keys[4] = "num_spans";
-		keys[5] = "start";
-		keys[6] = "aa_start";
-		keys[7] = "end";
-		keys[8] = "aa_end";
-		keys[9] = "length";
+		keys[2] = "start";
+		keys[3] = "end";
+		keys[4] = "length";
+		
+		//SimSpan
+		keys[5] = "InterPro Accession";
+		keys[6] = "InterPro Name";
+		keys[7] = "num_spans";
+		keys[8] = "aa_start";
+		keys[9] = "aa_end";
 		keys[10] = "aa_length";
 		keys[11] = "type";
 	}
@@ -40,7 +43,7 @@ final class ModPropertyKeys {
      * @param props - the list of Properties derived from
      *   SeqFeatures.
      */
-    List<String[]> getNameValues(Properties[] props) {
+    static List<String[]> getNameValues(Properties[] props) {
         List<String[]> result = new ArrayList<String[]>();
         // collect all possible names from the given Properties
         int num_props = props.length;

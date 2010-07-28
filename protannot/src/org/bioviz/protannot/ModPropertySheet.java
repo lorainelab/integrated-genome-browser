@@ -129,8 +129,7 @@ final class ModPropertySheet extends JPanel {
      */
     void showProperties(Properties[] props) {
         this.props = props;
-        ModPropertyKeys propkeys = new ModPropertyKeys();
-        java.util.List<String[]> name_values = propkeys.getNameValues(props);
+        List<String[]> name_values = ModPropertyKeys.getNameValues(props);
         String[][] rows = buildRows(name_values, props);
         String[] col_headings = getColumnHeadings(props);
         JTable table = new JTable(); // the table showing name-value pairs
@@ -143,9 +142,6 @@ final class ModPropertySheet extends JPanel {
 		};
         table.setModel(model);
 		PropertySheetHelper helper = new PropertySheetHelper(table);
-		for(int i=0; i<table.getColumnCount(); i++){
-			table.getColumnModel().getColumn(i).setCellRenderer(helper);
-		}
 		table.addMouseListener(helper);
 		table.addMouseMotionListener(helper);
         table.setRowSelectionAllowed(true);
@@ -190,6 +186,9 @@ final class ModPropertySheet extends JPanel {
 
 		public PropertySheetHelper(JTable jtable){
 			this.jtable = jtable;
+			for(int i=0; i<jtable.getColumnCount(); i++){
+				jtable.getColumnModel().getColumn(i).setCellRenderer(this);
+			}
 		}
 
 		@Override

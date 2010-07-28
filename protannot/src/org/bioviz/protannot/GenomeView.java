@@ -96,7 +96,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 
             for(COLORS C : values())
                 defaults.put(C.toString(), C.defaultColor());
-            
+
             return defaults;
         }
     };
@@ -122,7 +122,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 	private boolean showhairline = true;
 	private boolean showhairlineLabel = true;
 	private Shadow hairline, axishairline;
-	
+
     private static Color col_bg = COLORS.BACKGROUND.defaultColor();
     private static Color col_frame0 = COLORS.FRAME0.defaultColor();
     private static Color col_frame1 = COLORS.FRAME1.defaultColor();
@@ -133,11 +133,11 @@ final public class GenomeView extends JPanel implements MouseListener{
 	private static Color col_amino_acid = COLORS.AMINOACID.defaultColor();
     private static Color col_sequence = Color.black;
     private static Color col_axis_bg = Color.lightGray;
-    
+
     private List<GlyphI> selected = new ArrayList<GlyphI>();
     private List<GlyphI> storeSelected;
     private VisibleRange zoomPoint = new VisibleRange();
-    
+
     // size constants - these are needed to control the layout
 	// of different elements within each map.
     private static final int axis_pixel_height = 20;
@@ -180,19 +180,19 @@ final public class GenomeView extends JPanel implements MouseListener{
         axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space
                 + lower_white_space);
-        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);                
+        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
         seqmap.setOffsetScroller(y_scroller);
 
         xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
         xzoomer.setBackground(Color.white);
         yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
         yzoomer.setBackground(Color.white);
-        
+
         seqmap.setZoomer(NeoMap.X, xzoomer);
         seqmap.setZoomer(NeoMap.Y, yzoomer);
-        
+
         axismap.setZoomer(NeoMap.X, seqmap.getZoomer(TieredNeoMap.X));
-        
+
 
         seqmap.getScroller(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
 
@@ -352,7 +352,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 		hairline.resetShadow(this.seqmap, NeoConstants.HORIZONTAL, Color.lightGray);
 		axishairline.resetShadow(this.axismap, NeoConstants.HORIZONTAL, Color.lightGray);
 		hairline.setLabeled(showhairlineLabel);
-    
+
         int acount = gseq.getAnnotationCount();
 
         SeqSymmetry[] path2view = new SeqSymmetry[1];
@@ -593,7 +593,7 @@ final public class GenomeView extends JPanel implements MouseListener{
         SeqSpan mrna_span = annot2mrna.getSpan(mrna);
         MutableSeqSymmetry annot2genome = new SimpleMutableSeqSymmetry();
         copyToMutable(annot2mrna, annot2genome);
-        
+
         SeqUtils.transformSymmetry(annot2genome, path2view);
         if (DEBUG_TRANSCRIPT_ANNOTS) {
             SeqUtils.printSymmetry(annot2genome);
@@ -675,13 +675,13 @@ final public class GenomeView extends JPanel implements MouseListener{
         }  // genome_codon_start = 2
     }
 
-	
+
     /**
      * Colors by exon frame relative to genomic coordinates
      * @param   gl
      * @param   protSpan	represents a protein annotation, an annotation on the
 	 * transcript's translated sequence
-     * @param   genSpan	
+     * @param   genSpan
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      * @see     com.affymetrix.genometryImpl.SeqSpan
      */
@@ -729,7 +729,7 @@ final public class GenomeView extends JPanel implements MouseListener{
             MapTierGlyph tier) {
 
         MutableSeqSymmetry annot2genome = new SimpleMutableSeqSymmetry();
-        copyToMutable(annot2protein, annot2genome); 
+        copyToMutable(annot2protein, annot2genome);
 
         if (DEBUG_PROTEIN_ANNOTS) {
             SeqUtils.printSymmetry(annot2genome);
@@ -808,10 +808,10 @@ final public class GenomeView extends JPanel implements MouseListener{
      * Sets the axis map. Sets range,background and foreground color.
      * @see     com.affymetrix.genoviz.glyph.SequenceGlyph
      */
-    private void setupAxisMap() { 
+    private void setupAxisMap() {
         /* Implementing it in this way because in above method synchronization is lost when
          zoomtoselected feature is used. So to correct it below used method is used */
-        
+
         axismap.addAxis(upper_white_space+axis_pixel_height);
         //String residues = gseq.getResidues();
         ColoredResiduesGlyph sg = new ColoredResiduesGlyph(true);
@@ -820,7 +820,7 @@ final public class GenomeView extends JPanel implements MouseListener{
                 + middle_white_space, gseq.getLength() , seq_pixel_height);
         sg.setForegroundColor(col_sequence);
         sg.setBackgroundColor(col_axis_bg);
-        axismap.getScene().addGlyph(sg);     
+        axismap.getScene().addGlyph(sg);
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -896,28 +896,15 @@ final public class GenomeView extends JPanel implements MouseListener{
             }
         }
 		zoomPoint.setSpot(seqmap.getZoomCoord(NeoMap.X));
-        
+
         axismap.updateWidget();
         seqmap.updateWidget();
-                
-        Properties[] props = showProperties();
+
+        showProperties();
 
 		if(hairline != null)
 			hairline.setRange((int)nme.getCoordX(), (int)nme.getCoordX() + 1);
 
-		//Enable/Disable Browse action.
-		if (props != null && props.length == 0)
-			popup.getComponent(0).setEnabled(false);
-		else{
-			Properties prop = props[0];
-			popup.getComponent(0).setEnabled(prop.containsKey("URL") ||
-					prop.containsKey("interpro_id") ||
-					prop.containsKey("exp_ngi"));
-		}
-
-		//Enable/Disable Zoom to feature.
-		popup.getComponent(1).setEnabled(selected != null && !selected.isEmpty());
-		
         if (e.isPopupTrigger()) {
             popup.show(this, e.getX(), e.getY());
         }
@@ -935,7 +922,7 @@ final public class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
-    private Properties[] showProperties() {
+    private void showProperties() {
         List<Properties> propvec = new ArrayList<Properties>();
         Properties props = null;
         for (GlyphI gl : selected) {
@@ -972,8 +959,6 @@ final public class GenomeView extends JPanel implements MouseListener{
         }
 		Properties[] prop_array = propvec.toArray(new Properties[0]);
         table_view.showProperties(prop_array);
-
-		return prop_array;
     }
 
     /**
@@ -1001,12 +986,12 @@ final public class GenomeView extends JPanel implements MouseListener{
             List<GlyphI> prev_glyphs,
             boolean multiselect) {
         List<GlyphI> candidates = new ArrayList<GlyphI>();
-        
+
         if (multiselect) {
             filterGlyphs(candidates, prev_glyphs);
         }
 		filterGlyphs(candidates, clicked_glyphs);
-		
+
         List<GlyphI> to_return = new ArrayList<GlyphI>();
         GlyphI champion = null;
         Rectangle2D candidate_box;
@@ -1066,7 +1051,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Returns selected Glyphs
-     * @return  Returns list of selected Glyphs 
+     * @return  Returns list of selected Glyphs
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
     public List<GlyphI> getSelected() {
@@ -1118,7 +1103,7 @@ final public class GenomeView extends JPanel implements MouseListener{
                 Math.min(seqmap.getView().getPixelBox().width / (width * 1.1f),
                 seqmap.getMaxZoom(NeoAbstractWidget.X));
 
-        
+
         if (pixels_per_coord < seqmap.getMinZoom(NeoAbstractWidget.X)) {
             unzoom();
             seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, zoom_focus);
@@ -1138,49 +1123,6 @@ final public class GenomeView extends JPanel implements MouseListener{
 		seqmap.adjustZoomer(NeoAbstractWidget.X);
     }
 
-	/**
-	 * Browse url found in properties.
-	 * @return
-	 */
-	public String getURL(){
-		final StringBuilder url = new StringBuilder();
-		Properties[] props = getProperties();
-		if (props != null && props.length == 1) {
-			url.delete(0, url.length());
-			url.append(build_url(props[0]));
-		} else {
-			url.delete(0, url.length());
-		}
-
-		return url.toString();
-	}
-
-	/**
-     * Builds url of selected glyphs
-     * @param p Property of the selected glyph
-     * @return  String of build url.
-     */
-    private static String build_url(Properties p) {
-        String val = p.getProperty("URL");
-        if (val != null) {
-            return val;
-        }
-        val = p.getProperty("interpro_id");
-        if (val != null) {
-            return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + val;
-        }
-        val = p.getProperty("exp_ngi");
-        if (val != null) {
-            if (val.startsWith("gi:")) {
-                val = val.substring(3);
-            }
-
-            return "http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=Retrieve&db=nucleotide&list_uids=" + val + "&dopt=GenBank";
-        } else {
-            return null;
-        }
-    }
-	
     /**
      * Copies a SeqSymmetry.
      * Note that this clears all previous data from the MutableSeqSymmetry.
@@ -1229,7 +1171,7 @@ final public class GenomeView extends JPanel implements MouseListener{
         showProperties();
 
     }
-    
+
     /**
      * Action to be performed when user saves color changes.
      * @param   colorhash   Map<String,Color> new color preferences
@@ -1257,7 +1199,7 @@ final public class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Action to be performed when user cancel color changes. So revert back to old color preferences.
-     * 
+     *
      */
     void cancelChangePrefernce()
     {

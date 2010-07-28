@@ -79,7 +79,7 @@ public final class LoadURLAction extends AbstractAction {
 		
 		if (!mergeSelected) {
 			LoadFileAction.unknown_group_count++;
-			gmodel.setSelectedSeqGroup(loadGroup);
+//			gmodel.setSelectedSeqGroup(loadGroup);
 		}
 
 	}

@@ -199,7 +199,7 @@ public final class LoadFileAction extends AbstractAction {
 
 		if(!mergeSelected){
 			unknown_group_count++;
-			gmodel.setSelectedSeqGroup(loadGroup);
+//			gmodel.setSelectedSeqGroup(loadGroup);
 		}
 	}
 
@@ -244,15 +244,21 @@ public final class LoadFileAction extends AbstractAction {
 		boolean autoload = PreferenceUtils.getBooleanParam(
 						PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
+		
+		version.addFeature(gFeature);
+		gFeature.setVisible(); // this should be automatically checked in the feature tree
 		if (!mergeSelected && gFeature.symL != null) {
 			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
 		}
-		version.addFeature(gFeature);
-		gFeature.setVisible(); // this should be automatically checked in the feature tree
-		DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
-		view.tableChanged();
+
 		// force a refresh of this server
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true, true);
+
+		//Annotated Seq Group must be selected before feature table change call.
+		GenometryModel.getGenometryModel().setSelectedSeqGroup(loadGroup);
+
+		DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
+		view.tableChanged();
 	}
 
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {
@@ -328,7 +334,7 @@ public final class LoadFileAction extends AbstractAction {
 
 		if(!mergeSelected){
 			unknown_group_count++;
-			gmodel.setSelectedSeqGroup(loadGroup);
+//			gmodel.setSelectedSeqGroup(loadGroup);
 		}
 		
 		return true;

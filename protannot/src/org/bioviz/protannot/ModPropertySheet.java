@@ -32,10 +32,11 @@ import java.awt.datatransfer.StringSelection;
 final class ModPropertySheet extends JPanel {
 
     private final JLabel title;
-    private JScrollPane scroll_pane;
+    private final JScrollPane scroll_pane;
     private final JViewport jvp;
     private static final String DEFAULT_TITLE = " ";
     private Properties[] props;
+	private final JTable table;
 
 
     /**
@@ -43,12 +44,30 @@ final class ModPropertySheet extends JPanel {
      */
     ModPropertySheet() {
         super();
-        scroll_pane = new JScrollPane();
         title = new JLabel(DEFAULT_TITLE);
         jvp = new JViewport();
-        jvp.setView(title);
-        scroll_pane.setColumnHeaderView(jvp);
+		table = new JTable();
+		scroll_pane = new JScrollPane(table);
+		
+		setUpPanel();
     }
+
+	private void setUpPanel(){
+		jvp.setView(title);
+		scroll_pane.setColumnHeaderView(jvp);
+
+		setLayout(new BorderLayout());
+        add(title, BorderLayout.NORTH);
+        add(scroll_pane, BorderLayout.CENTER);
+
+		PropertySheetHelper helper = new PropertySheetHelper();
+		table.addMouseListener(helper);
+		table.addMouseMotionListener(helper);
+        table.setRowSelectionAllowed(true);
+		table.setCellSelectionEnabled(true);
+		table.setAutoCreateRowSorter(true);
+        table.setEnabled(true);
+	}
 
     /**
      * Set the title, a JLabel attached to a JViewPort.
@@ -131,7 +150,6 @@ final class ModPropertySheet extends JPanel {
         List<String[]> name_values = ModPropertyKeys.getNameValues(props);
         String[][] rows = buildRows(name_values, props);
         String[] col_headings = getColumnHeadings(props);
-        JTable table = new JTable(); // the table showing name-value pairs
         
 		TableModel model = new DefaultTableModel(rows, col_headings){
 			@Override
@@ -140,27 +158,12 @@ final class ModPropertySheet extends JPanel {
 			}
 		};
         table.setModel(model);
-		PropertySheetHelper helper = new PropertySheetHelper(table);
-		table.addMouseListener(helper);
-		table.addMouseMotionListener(helper);
-        table.setRowSelectionAllowed(true);
-		table.setCellSelectionEnabled(true);
-		table.setAutoCreateRowSorter(true);
-        table.setEnabled(true);
-		setColmnWidth(rows, table);
-		Dimension size = new Dimension(1000, 1000);
-        size.height = table.getSize().height;
-        table.setSize(size);
-        this.removeAll();
-        this.setLayout(new BorderLayout());
-        scroll_pane = new JScrollPane(table);
-        this.add(title, BorderLayout.NORTH);
-        this.add(scroll_pane, BorderLayout.CENTER);
+		setTableSize(rows, table);
         validate();
     }
 
 	// measure column headings so we can make size decisions
-	private static void setColmnWidth(String[][] rows, JTable table){
+	private static void setTableSize(String[][] rows, JTable table){
 		int extra = 50;
         int champion = 0;
         int candidate = 0;
@@ -176,6 +179,10 @@ final class ModPropertySheet extends JPanel {
 				table.getColumnModel().getColumn(0).setMaxWidth(champion+extra);
 			}
 		}
+
+		Dimension size = new Dimension(1000, 1000);
+        size.height = table.getSize().height;
+        table.setSize(size);
 		
 	}
 	
@@ -190,14 +197,12 @@ final class ModPropertySheet extends JPanel {
 	private class PropertySheetHelper extends DefaultTableCellRenderer implements
 			MouseListener, MouseMotionListener {
 		
-		private final JTable jtable;
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private final Cursor defaultCursor = null;
 
-		public PropertySheetHelper(JTable jtable){
-			this.jtable = jtable;
-			for(int i=0; i<jtable.getColumnCount(); i++){
-				jtable.getColumnModel().getColumn(i).setCellRenderer(this);
+		public PropertySheetHelper(){
+			for(int i=0; i<table.getColumnCount(); i++){
+				table.getColumnModel().getColumn(i).setCellRenderer(this);
 			}
 		}
 
@@ -222,30 +227,30 @@ final class ModPropertySheet extends JPanel {
 		public void mouseClicked(MouseEvent e){
 
 			Point p = e.getPoint();
-			int row = jtable.rowAtPoint(p);
-			int column = jtable.columnAtPoint(p);
+			int row = table.rowAtPoint(p);
+			int column = table.columnAtPoint(p);
 
 			if(e.getClickCount() >= 2){
 				Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
-				StringSelection data = new StringSelection((String) jtable.getValueAt(row, column));
+				StringSelection data = new StringSelection((String) table.getValueAt(row, column));
 				system.setContents(data, null);
 				return;
 			}
 			
 			if (isURLField(row,column)) {
-				GeneralUtils.browse((String) jtable.getValueAt(row, column));
+				GeneralUtils.browse((String) table.getValueAt(row, column));
 			}
 
 		}
 		public void mouseMoved(MouseEvent e) {
 			Point p = e.getPoint();
-			int row = jtable.rowAtPoint(p);
-			int column = jtable.columnAtPoint(p);
+			int row = table.rowAtPoint(p);
+			int column = table.columnAtPoint(p);
 
 			if(isURLField(row,column)){
-				jtable.setCursor(handCursor);
-			}else if(jtable.getCursor() != defaultCursor) {
-				jtable.setCursor(defaultCursor);
+				table.setCursor(handCursor);
+			}else if(table.getCursor() != defaultCursor) {
+				table.setCursor(defaultCursor);
 			}
 		}
 
@@ -256,7 +261,7 @@ final class ModPropertySheet extends JPanel {
 		public void mouseReleased(MouseEvent e) {}
 
 		private boolean isURLField(int row, int column){
-			return (column != 0 && jtable.getValueAt(row, 0).equals("URL"));
+			return (column != 0 && table.getValueAt(row, 0).equals("URL"));
 		}
 	}
 }

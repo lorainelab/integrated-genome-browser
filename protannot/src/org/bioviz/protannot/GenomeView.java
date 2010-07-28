@@ -158,7 +158,7 @@ final public class GenomeView extends JPanel implements MouseListener{
         axismap.clearWidget();
         seqmap.updateWidget();
         axismap.updateWidget();
-        table_view.showProperties(new Properties[0]);
+//        table_view.showProperties(new Properties[0]);
     }
 
     /**
@@ -387,7 +387,7 @@ final public class GenomeView extends JPanel implements MouseListener{
         seqmap.addTier(sumTier);
         seqmap.repack();
 
-        table_view.showProperties(new Properties[0]);
+//        table_view.showProperties(new Properties[0]);
         setupAxisMap();
 
 		axismap.stretchToFit(is_new, false);

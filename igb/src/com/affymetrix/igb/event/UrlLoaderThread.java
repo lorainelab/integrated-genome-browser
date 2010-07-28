@@ -549,7 +549,7 @@ public final class UrlLoaderThread extends Thread {
 		if (lcname.endsWith(".gff3")) {
 			/* Force parcing as GFF3 */
 			GFF3Parser parser = new GFF3Parser();
-			parser.parse(str, annot_type, group);
+			parser.parse(str, annot_type, group, true);
 			return;
 		}
 

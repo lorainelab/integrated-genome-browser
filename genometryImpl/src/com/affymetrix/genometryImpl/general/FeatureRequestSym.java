@@ -317,7 +317,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		if (extension.equals("gff3")) {
 			/* Force parsing as GFF3 */
 			GFF3Parser parser = new GFF3Parser();
-			return parser.parse(bis, featureName, group);
+			return parser.parse(bis, featureName, group, false);
 		}
 		if (extension.equals("link.psl")) {
 			PSLParser parser = new PSLParser();

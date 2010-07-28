@@ -356,10 +356,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	private void displayRegexIDs(String text, BioSeq chrFilter) {
-		if (!(text.contains("*") || text.contains("^") || text.contains("$"))) {
-			// Not much of a regular expression.  Assume the user wants to match at the start and end
-			text = ".*" + text + ".*";
-		}
 		Pattern regex = null;
 		try {
 			regex = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
@@ -381,6 +377,11 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		remoteSymList = null;
 
 		// Make sure this search is reasonable to do on a remote server.
+			if (!(text.contains("*") || text.contains("^") || text.contains("$"))) {
+			// Not much of a regular expression.  Assume the user wants to match at the start and end
+			text = "*" + text + "*";
+		}
+		friendlySearchStr = friendlyString(text, this.sequence_CB.getSelectedItem().toString());
 		int actualChars = text.length();
 		if (text.startsWith(".*")) {
 			actualChars -= 2;

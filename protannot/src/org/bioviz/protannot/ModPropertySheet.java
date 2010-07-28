@@ -9,12 +9,9 @@ import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,9 +20,7 @@ import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import java.awt.Component;
-import javax.swing.JEditorPane;
 
 /**
  * Displays Properties (name, value pairs) associated with
@@ -65,7 +60,7 @@ final class ModPropertySheet extends JPanel {
      * @param   props   Properties from which header names are to be retrieved.
      * @return          Returns array of string containing header names.
      */
-    private String[] getColumnHeadings(
+    private static String[] getColumnHeadings(
             Properties[] props) {
         // will contain number of Properties + 1
         String[] col_headings = null;
@@ -147,15 +142,6 @@ final class ModPropertySheet extends JPanel {
         table.setRowSelectionAllowed(true);
 		table.setCellSelectionEnabled(true);
 		table.setAutoCreateRowSorter(true);
-        // measure column headings so we can make size decisions
-        int champion = 0;
-        int candidate = 0;
-        int num_cols = col_headings.length;
-        FontMetrics metrix = table.getFontMetrics(table.getFont());
-        for (int i = 0; i < num_cols; i++) {
-            candidate = metrix.stringWidth(col_headings[i]);
-            champion = (candidate > champion ? candidate : champion);
-        }
         table.setEnabled(true);
 		Dimension size = new Dimension(1000, 1000);
         size.height = table.getSize().height;
@@ -168,6 +154,19 @@ final class ModPropertySheet extends JPanel {
         validate();
     }
 
+	// measure column headings so we can make size decisions
+	private static int getColmnWidth(String[] col_headings, JTable table){
+        int champion = 0;
+        int candidate = 0;
+        int num_cols = col_headings.length;
+        FontMetrics metrix = table.getFontMetrics(table.getFont());
+        for (int i = 0; i < num_cols; i++) {
+            candidate = metrix.stringWidth(col_headings[i]);
+            champion = (candidate > champion ? candidate : champion);
+        }
+		return champion;
+	}
+	
     /**
      * Returns properties of selected glyph.
      * @return  Return properties of selected glyph.

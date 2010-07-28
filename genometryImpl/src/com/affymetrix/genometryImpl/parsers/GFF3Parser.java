@@ -85,20 +85,20 @@ public final class GFF3Parser {
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group)
+	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean annot_seq)
 		throws IOException {
 			BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 
 			// Note that the parse(BufferedReader) method will call br.close(), so
 			// don't worry about it.
-			return parse(br, default_source, seq_group);
+			return parse(br, default_source, seq_group, annot_seq);
 		}
 
 	/**
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public List<? extends SeqSymmetry> parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group)
+	List<? extends SeqSymmetry> parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group, boolean annot_seq)
 		throws IOException {
 			if (DEBUG) { System.out.println("starting GFF3 parse."); }
 
@@ -235,9 +235,11 @@ public final class GFF3Parser {
 					// If no parents, then it is top-level
 					results.add(sym);
 					/* Do we really need to do for every span? */
-					for(int i=0; i<sym.getSpanCount(); i++) {
-						BioSeq seq = sym.getSpanSeq(i);
-						seq.addAnnotation(sym);
+					if (annot_seq) {
+						for (int i = 0; i < sym.getSpanCount(); i++) {
+							BioSeq seq = sym.getSpanSeq(i);
+							seq.addAnnotation(sym);
+						}
 					}
 				} else {
 					// Else, add this as a child to *each* parent in its parent list.

@@ -28,11 +28,12 @@ import java.awt.Component;
  */
 final class ModPropertySheet extends JPanel {
 
-    private JLabel title;
+    private final JLabel title;
     private JScrollPane scroll_pane;
     private final JViewport jvp;
     private static final String DEFAULT_TITLE = " ";
     private Properties[] props;
+
 
     /**
      * Create a new PropertySheet containing no data.
@@ -51,7 +52,7 @@ final class ModPropertySheet extends JPanel {
      * @param   ttl     Name of the title
      */
     void setTitle(String ttl) {
-        this.title = new JLabel(ttl);
+        this.title.setText(ttl);
         jvp.setView(title);
     }
 
@@ -143,6 +144,7 @@ final class ModPropertySheet extends JPanel {
 		table.setCellSelectionEnabled(true);
 		table.setAutoCreateRowSorter(true);
         table.setEnabled(true);
+		setColmnWidth(rows, table);
 		Dimension size = new Dimension(1000, 1000);
         size.height = table.getSize().height;
         table.setSize(size);
@@ -155,16 +157,23 @@ final class ModPropertySheet extends JPanel {
     }
 
 	// measure column headings so we can make size decisions
-	private static int getColmnWidth(String[] col_headings, JTable table){
+	private static void setColmnWidth(String[][] rows, JTable table){
+		int extra = 50;
         int champion = 0;
         int candidate = 0;
-        int num_cols = col_headings.length;
         FontMetrics metrix = table.getFontMetrics(table.getFont());
-        for (int i = 0; i < num_cols; i++) {
-            candidate = metrix.stringWidth(col_headings[i]);
+        for (int i = 0; i < rows.length; i++) {
+            candidate = metrix.stringWidth(rows[i][0]);
             champion = (candidate > champion ? candidate : champion);
         }
-		return champion;
+
+		for(int i=0; i<table.getColumnCount(); i++){
+			if(i==0){
+				table.getColumnModel().getColumn(0).setPreferredWidth(champion+extra);
+				table.getColumnModel().getColumn(0).setMaxWidth(champion+extra);
+			}
+		}
+		
 	}
 	
     /**

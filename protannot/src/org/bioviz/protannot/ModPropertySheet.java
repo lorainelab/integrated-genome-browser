@@ -21,6 +21,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 /**
  * Displays Properties (name, value pairs) associated with
@@ -188,7 +191,6 @@ final class ModPropertySheet extends JPanel {
 			MouseListener, MouseMotionListener {
 		
 		private final JTable jtable;
-		private final DefaultTableCellRenderer cell = new DefaultTableCellRenderer();
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private final Cursor defaultCursor = null;
 
@@ -208,12 +210,12 @@ final class ModPropertySheet extends JPanel {
 				String url = "<html> <a href='" + (String)obj + "'>" +
 						(String)obj + "</a> </html>)";
 
-				cell.setText(url);
-			}else{
-				cell.setText((String) obj);
+				return super.getTableCellRendererComponent (table, url,
+						isSelected, hasFocus, row, column);
 			}
 			
-			return cell;
+			return super.getTableCellRendererComponent (table, obj, isSelected,
+					hasFocus, row, column);
 		}
 
 		@Override
@@ -222,6 +224,14 @@ final class ModPropertySheet extends JPanel {
 			Point p = e.getPoint();
 			int row = jtable.rowAtPoint(p);
 			int column = jtable.columnAtPoint(p);
+
+			if(e.getClickCount() >= 2){
+				Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
+				StringSelection data = new StringSelection((String) jtable.getValueAt(row, column));
+				system.setContents(data, null);
+				return;
+			}
+			
 			if (isURLField(row,column)) {
 				GeneralUtils.browse((String) jtable.getValueAt(row, column));
 			}

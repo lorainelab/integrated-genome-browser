@@ -196,7 +196,7 @@ public final class BAM extends SymLoader {
 		try {
 			if (reader != null) {
 				iter = reader.query(seq.getID(), min, max, contained);
-				if (iter != null) {
+				if (iter != null && iter.hasNext()) {
 					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
 						symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
 					}

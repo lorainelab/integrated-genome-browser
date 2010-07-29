@@ -91,7 +91,8 @@ public final class QuickLoad extends SymLoader {
 		}
 		if (extension.endsWith(".bar") || extension.endsWith(".useq") || extension.endsWith(".bgr")
 				||extension.endsWith(".chp")
-				|| (extension.endsWith(".sin") || extension.endsWith(".egr") || extension.endsWith(".txt") || extension.endsWith("link.psl"))) {
+				|| (extension.endsWith(".sin") || extension.endsWith(".egr") || extension.endsWith(".txt") || extension.endsWith("link.psl"))
+				|| (extension.endsWith(".gff") || extension.endsWith(".gff3"))) {
 			List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 			strategyList.add(LoadStrategy.NO_LOAD);
 			strategyList.add(LoadStrategy.GENOME);
@@ -196,10 +197,15 @@ public final class QuickLoad extends SymLoader {
 						} else {
 							// This can happen when loading a brand-new genome
 							if (QuickLoad.this.version.group != null) {
-								gviewer.setAnnotatedSeq(QuickLoad.this.version.group.getSeq(0),true,true);
+								GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 							}
 						}
+					} else 							
+					if (GenometryModel.getGenometryModel().getSelectedSeq() == null && QuickLoad.this.version.group != null) {
+						// This can happen when loading a brand-new genome
+						GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 					}
+
 					SeqGroupView.refreshTable();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);

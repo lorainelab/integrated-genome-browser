@@ -228,7 +228,7 @@ public final class GFF3Parser {
 					seq_group.addToIndex(id, sym);
 				}
 
-				if (parent_ids.length == 0 || sym.getFeatureType().equals("TF_binding_site")) {
+				if (parent_ids.length == 0) {
 					// If no parents, then it is top-level
 					results.add(sym);
 					/* Do we really need to do for every span? */
@@ -296,7 +296,7 @@ public final class GFF3Parser {
 	 *  Directives that are not understood are treated as comments.
 	 *  Directives that are understood include "##gff-version", which must match "3".
 	 */
-	private static void processDirective(String line) throws IOException {
+	static void processDirective(String line) throws IOException {
 		Matcher m = directive_version.matcher(line);
 		if (m.matches()) {
 			String vstr = m.group(1).trim();

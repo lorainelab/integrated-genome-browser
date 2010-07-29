@@ -78,9 +78,6 @@ public final class GFF3Parser {
 	/** Contains a list of parent ids which have been ignored */
 	private final Set<String> bad_parents = new HashSet<String>();
 
-	public GFF3Parser() {
-	}
-
 	/**
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
@@ -231,7 +228,7 @@ public final class GFF3Parser {
 					seq_group.addToIndex(id, sym);
 				}
 
-				if (parent_ids.length == 0) {
+				if (parent_ids.length == 0 || sym.getFeatureType().equals("TF_binding_site")) {
 					// If no parents, then it is top-level
 					results.add(sym);
 					/* Do we really need to do for every span? */
@@ -261,9 +258,17 @@ public final class GFF3Parser {
 								bad_parents.add(ids[0]);
 							}
 						} else if (parent_sym == null) {
-							throw new IOException("No parent found with ID: " + parent_id);
+							if (!bad_parents.contains(parent_id)) {
+								Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "No parent found with ID: {0}", parent_id);
+								bad_parents.add(parent_id);
+							}
+							addBadParent(sym);
 						} else if (parent_sym == sym) {
-							throw new IOException("Parent and child are the same for ID: " + parent_id);
+							if (!bad_parents.contains(parent_id)) {
+								Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Parent and child are the same for ID: {0}", parent_id);
+								bad_parents.add(parent_id);
+							}
+							addBadParent(sym);
 						} else {
 							parent_sym.addChild(sym);
 						}
@@ -279,12 +284,19 @@ public final class GFF3Parser {
 			return results;
 		}
 
+	private void addBadParent(GFF3Sym sym) {
+		String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
+		if (ids.length > 0) {
+			bad_parents.add(ids[0]);
+		}
+	}
+
 	/**
 	 *  Process directive lines in the input, which are lines beginning with "##".
 	 *  Directives that are not understood are treated as comments.
 	 *  Directives that are understood include "##gff-version", which must match "3".
 	 */
-	public void processDirective(String line) throws IOException {
+	private static void processDirective(String line) throws IOException {
 		Matcher m = directive_version.matcher(line);
 		if (m.matches()) {
 			String vstr = m.group(1).trim();

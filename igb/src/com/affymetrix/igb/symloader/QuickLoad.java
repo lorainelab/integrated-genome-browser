@@ -92,7 +92,7 @@ public final class QuickLoad extends SymLoader {
 		return super.getLoadChoices();
 	}
 
-	private static URI determineURI(GenericVersion version, String featureName) {
+	public static URI determineURI(GenericVersion version, String featureName) {
 		URI uri = null;
 
 		if (version.gServer.URL == null || version.gServer.URL.length() == 0) {

@@ -402,11 +402,11 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			return startPos;
 		}
 		AlignedResidueGlyph csg = null;
-		Object residues = ((SymWithProps) sym).getProperty("residues");
+		Object residues = ((SymWithProps) sym).getProperty(BAM.RESIDUESPROP);
 		if (residues != null) {
 			String residueStr = residues.toString();
 			if (handleCigar) {
-				Object cigar = ((SymWithProps) sym).getProperty("cigar");
+				Object cigar = ((SymWithProps) sym).getProperty(BAM.CIGARPROP);
 				residueStr = BAM.interpretCigar(cigar, residueStr, startPos, span.getLength());
 				startPos += residueStr.length();
 			}

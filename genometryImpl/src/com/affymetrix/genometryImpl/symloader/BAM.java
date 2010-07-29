@@ -55,6 +55,11 @@ public final class BAM extends SymLoader {
 	private File indexFile = null;
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+
+	public static final String CIGARPROP = "cigar";
+	public static final String RESIDUESPROP = "residues";
+	public static final String BASEQUALITYPROP = "baseQuality";
+
 	static {
 		// BAM files are generally large, so only allow loading visible data.
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -246,13 +251,13 @@ public final class BAM extends SymLoader {
 		}
 
 		SymWithProps sym = new UcscBedSym(featureName, seq, start, end, sr.getReadName(), 0.0f, span.isForward(), 0, 0, blockMins, blockMaxs);
-		sym.setProperty("baseQuality", sr.getBaseQualityString());
+		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
 		sym.setProperty("id",sr.getReadName());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
 			sym.setProperty(tv.tag, tv.value);
 		}
-		sym.setProperty("cigar", sr.getCigar());
-		sym.setProperty("residues", sr.getReadString());
+		sym.setProperty(CIGARPROP, sr.getCigar());
+		sym.setProperty(RESIDUESPROP, sr.getReadString());
 		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
 			//sym.setProperty("residues", sr.getReadString());
 		} else {

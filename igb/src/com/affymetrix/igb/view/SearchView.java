@@ -350,7 +350,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			String chrStr = (String) this.sequence_CB.getSelectedItem();
 			BioSeq chrfilter = IGBConstants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
 			if (REGEXID.equals(searchMode)) {
-				displayRegexIDs(this.searchTF.getText(), chrfilter);
+				displayRegexIDs(this.searchTF.getText().trim(), chrfilter);	// note we trim in case the user added spaces, which really shouldn't be on the outside of IDs or names
 			} else if (REGEXRESIDUE.equals(searchMode)) {
 				displayRegexResidues();
 			}
@@ -486,7 +486,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	private void regexTF(BioSeq vseq) {
-		String searchStr = searchTF.getText();
+		String searchStr = searchTF.getText().trim();
 		String friendlySearchStr = friendlyString(searchStr, vseq.getID());
 		if (searchStr.length() < 3) {
 			ErrorHandler.errorPanel("Search must contain at least 3 characters");

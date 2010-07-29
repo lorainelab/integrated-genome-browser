@@ -188,10 +188,15 @@ public final class QuickLoad extends SymLoader {
 						} else {
 							// This can happen when loading a brand-new genome
 							if (QuickLoad.this.version.group != null) {
-								gviewer.setAnnotatedSeq(QuickLoad.this.version.group.getSeq(0),true,true);
+								GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 							}
 						}
+					} else 							
+					if (GenometryModel.getGenometryModel().getSelectedSeq() == null && QuickLoad.this.version.group != null) {
+						// This can happen when loading a brand-new genome
+						GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 					}
+
 					SeqGroupView.refreshTable();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);

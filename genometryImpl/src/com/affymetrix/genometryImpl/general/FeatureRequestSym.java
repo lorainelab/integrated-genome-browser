@@ -312,12 +312,14 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		}
 		if (extension.equals("gff") || extension.equals("gtf")) {
 			GFFParser parser = new GFFParser();
-			return parser.parse(bis, featureName, group, false, false);
+			parser.parse(bis, featureName, group, false, true);
+			return null;	// hack -- cannot currently annotate with FRS!
 		}
 		if (extension.equals("gff3")) {
 			/* Force parsing as GFF3 */
 			GFF3Parser parser = new GFF3Parser();
-			return parser.parse(bis, featureName, group, false);
+			parser.parse(bis, featureName, group, true);
+			return null;	// cannot currently annotate with FRS!
 		}
 		if (extension.equals("link.psl")) {
 			PSLParser parser = new PSLParser();

@@ -82,7 +82,8 @@ public final class QuickLoad extends SymLoader {
 		}
 		if (extension.endsWith(".bar") || extension.endsWith(".useq") || extension.endsWith(".bgr")
 				||extension.endsWith(".chp")
-				|| (extension.endsWith(".sin") || extension.endsWith(".egr") || extension.endsWith(".txt") || extension.endsWith("link.psl"))) {
+				|| (extension.endsWith(".sin") || extension.endsWith(".egr") || extension.endsWith(".txt") || extension.endsWith("link.psl"))
+				|| (extension.endsWith(".gff") || extension.endsWith(".gff3"))) {
 			List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 			strategyList.add(LoadStrategy.NO_LOAD);
 			strategyList.add(LoadStrategy.GENOME);

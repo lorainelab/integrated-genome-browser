@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -37,7 +38,6 @@ public class CreateSpeciesDir extends AbstractAction {
 
 	static final String path = "/";
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
-	private static final String GENOME_ID = BUNDLE.getString("genomeSeqID");
 	
 	public CreateSpeciesDir(){
 		super(BUNDLE.getString("createGenome"));
@@ -47,7 +47,7 @@ public class CreateSpeciesDir extends AbstractAction {
 		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
 
 		if(SELECT_SPECIES.equals(speciesName)){
-			ErrorHandler.errorPanel("Please select a speceis first");
+			ErrorHandler.errorPanel("Please select a species first");
 			return;
 		}
 
@@ -98,8 +98,9 @@ public class CreateSpeciesDir extends AbstractAction {
 
 				annots.add(det);
 
-				chromInfo.addAll(feature.gVersion.group.getSeqList());
-
+				if(feature.symL != null)
+					chromInfo.addAll(feature.symL.getChromosomeList());
+				
 			}
 		}
 
@@ -148,6 +149,7 @@ public class CreateSpeciesDir extends AbstractAction {
 		return "";
 		
 	}
+
 
 	static interface IFormatWriter{
 		public String getString(Object obj);

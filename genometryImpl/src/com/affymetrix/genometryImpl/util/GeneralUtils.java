@@ -312,4 +312,76 @@ public final class GeneralUtils {
 		}
 		return null;	// couldn't find it
 	}
+
+
+	/**
+	 * Moves mapping to the given path and renames it to filename.
+	 * @param mapping	File to be moved.
+	 * @param fileName	File name to be given to moved mapping.
+	 * @param path	Path to where mapping is moved.
+	 * @return
+	 */
+	public static boolean moveFileTo(File file, String fileName, String path){
+		File newLocation = new File(path+ "/" +fileName);
+		boolean sucess = file.renameTo(newLocation);
+
+		if(!sucess){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find move file {0} to {1} !!!", new Object[]{fileName,path});
+		}
+
+		return sucess;
+	}
+
+	/**
+	 * Creates directory for the given path.
+	 * @param path	Path where directory is to be created.
+	 * @return
+	 */
+	public static File makeDir(String path){
+		File dir = new File(path);
+		if(!dir.exists()){
+			dir.mkdir();
+		}
+		return dir;
+	}
+
+	/**
+	 * Returns mapping for give path.
+	 * @param path	File path.
+	 * @param fileMayNotExist
+	 * @return
+	 */
+	public static File getFile(String path, boolean fileMayNotExist){
+		File file = null;
+		try{
+			file = LocalUrlCacher.convertURIToFile(URI.create(path),fileMayNotExist);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+
+		if(file == null && !fileMayNotExist){
+			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Invalid path : {0} !!!", path);
+		}
+
+		return file;
+	}
+
+	public static void unzipFile(File f, File f2) throws IOException {
+		// File must be unzipped!
+		InputStream is = null;
+		OutputStream out = null;
+		try {
+			// This will also unzip the stream if necessary
+			is = GeneralUtils.getInputStream(f, new StringBuffer());
+			out = new FileOutputStream(f2);
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = is.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+		} finally {
+			GeneralUtils.safeClose(is);
+			GeneralUtils.safeClose(out);
+		}
+	}
 }

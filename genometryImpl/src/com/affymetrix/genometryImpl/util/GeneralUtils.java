@@ -333,6 +333,33 @@ public final class GeneralUtils {
 	}
 
 	/**
+	 * Copies mapping to the given path.
+	 * @param mapping	File to be copied
+	 * @param fileName	File name to be given to copied mapping.
+	 * @param path	Path to where mapping is copied.
+	 * @return
+	 */
+	private static boolean copyFileTo(File file, String fileName, String path){
+		try {
+			File newLocation = new File(path + "/" + fileName);
+			boolean sucess;
+			if (!newLocation.createNewFile()) {
+				Logger.getLogger(GeneralUtils.class.getName()).log(
+						Level.SEVERE, "Could not find copy file from {0} to {1} !!!",
+						new Object[]{fileName, path});
+				return false;
+			}
+
+			GeneralUtils.unzipFile(file, newLocation);
+
+			return true;
+		} catch (IOException ex) {
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return false;
+	}
+	
+	/**
 	 * Creates directory for the given path.
 	 * @param path	Path where directory is to be created.
 	 * @return

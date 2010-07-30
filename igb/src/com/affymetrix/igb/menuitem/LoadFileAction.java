@@ -258,10 +258,6 @@ public final class LoadFileAction extends AbstractAction {
 		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
 		if (!mergeSelected && gFeature.symL != null) {
 			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
-			if (loadGroup.getSeqCount() > 0) {
-				GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
-				// select a chromosomes
-			}
 		}
 		version.addFeature(gFeature);
 		gFeature.setVisible(); // this should be automatically checked in the feature tree
@@ -288,6 +284,10 @@ public final class LoadFileAction extends AbstractAction {
 
 			@Override
 			public void done() {
+			if (loadGroup.getSeqCount() > 0) {
+				GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
+			}
+				// select a chromosomes
 				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
 			}
 		};

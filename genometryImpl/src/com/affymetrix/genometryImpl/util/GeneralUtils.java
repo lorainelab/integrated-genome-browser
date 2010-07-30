@@ -339,7 +339,7 @@ public final class GeneralUtils {
 	 * @param path	Path to where mapping is copied.
 	 * @return
 	 */
-	private static boolean copyFileTo(File file, String fileName, String path){
+	public static boolean copyFileTo(File file, String fileName, String path){
 		try {
 			File newLocation = new File(path + "/" + fileName);
 			boolean sucess;

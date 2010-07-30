@@ -150,7 +150,7 @@ public class CacheScript extends Thread {
 		Logger.getLogger(CacheScript.class.getName()).log(Level.FINE, "Caching {0} at path {1}", new Object[]{gServer.serverName, path});
 
 		String serverCachePath = path+gServer.serverName+temp;
-		makeDir(serverCachePath);
+		GeneralUtils.makeDir(serverCachePath);
 
 		switch(gServer.serverType){
 			case QuickLoad:
@@ -175,7 +175,7 @@ public class CacheScript extends Thread {
 	 * @return
 	 */
 	private static boolean processQuickLoad(GenericServer gServer, String serverCachePath){
-		File file = getFile(gServer.URL+Constants.contentsTxt, false);
+		File file = GeneralUtils.getFile(gServer.URL+Constants.contentsTxt, false);
 
 		String quickloadStr = null;
 		quickloadStr = (String) gServer.serverObj;
@@ -183,7 +183,7 @@ public class CacheScript extends Thread {
 		QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
 
 		List<String> genome_names = quickloadServer.getGenomeNames();
-		if(!moveFileTo(file,Constants.contentsTxt,serverCachePath))
+		if(!GeneralUtils.moveFileTo(file,Constants.contentsTxt,serverCachePath))
 			return false;
 		
 		for(String genome_name : genome_names){
@@ -203,8 +203,8 @@ public class CacheScript extends Thread {
 	 * @return
 	 */
 	private static boolean processDas2Server(GenericServer gServer, String serverCachePath){
-		File file = getFile(gServer.URL, false);
-		if(!moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, serverCachePath))
+		File file = GeneralUtils.getFile(gServer.URL, false);
+		if(!GeneralUtils.moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, serverCachePath))
 			return false;
 		
 		Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
@@ -265,12 +265,12 @@ public class CacheScript extends Thread {
 
 		String server_path = gServer.URL + "/" + genome_name;
 		local_path += "/" + genome_name;
-		makeDir(local_path);
+		GeneralUtils.makeDir(local_path);
 		boolean fileMayNotExist;
 		for(String fileName : files){
 			fileMayNotExist = getFileAvailability(fileName);
 
-			file = getFile(server_path+"/"+fileName, fileMayNotExist);
+			file = GeneralUtils.getFile(server_path+"/"+fileName, fileMayNotExist);
 
 			if(gServer.serverType.equals(ServerType.DAS2))
 				fileName += Constants.xml_ext;
@@ -278,7 +278,7 @@ public class CacheScript extends Thread {
 			if((file == null && !fileMayNotExist))
 				return false;
 
-			if(!moveFileTo(file,fileName,local_path))
+			if(!GeneralUtils.moveFileTo(file,fileName,local_path))
 				return false;
 		}
 
@@ -292,8 +292,8 @@ public class CacheScript extends Thread {
 	 * @return
 	 */
 	private static boolean processDasServer(GenericServer gServer, String serverCachePath){
-		File file = getFile(gServer.URL, false);
-		if(!moveFileTo(file,dsn,serverCachePath))
+		File file = GeneralUtils.getFile(gServer.URL, false);
+		if(!GeneralUtils.moveFileTo(file,dsn,serverCachePath))
 			return false;
 		
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
@@ -330,7 +330,7 @@ public class CacheScript extends Thread {
 	 */
 	private static boolean getAllDasFiles(String id, URL server, URL master, String local_path){
 		local_path += "/" + id;
-		makeDir(local_path);
+		GeneralUtils.makeDir(local_path);
 
 		File file;
 		final Map<String, String> DasFilePath = new HashMap<String, String>();
@@ -343,9 +343,9 @@ public class CacheScript extends Thread {
 		DasFilePath.put(types, DasSource.TYPES + Constants.xml_ext);
 
 		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
-			file = getFile(fileDet.getKey(), false);
+			file = GeneralUtils.getFile(fileDet.getKey(), false);
 
-			if((file == null || !moveFileTo(file,fileDet.getValue(),local_path)) && exitOnError)
+			if((file == null || !GeneralUtils.moveFileTo(file,fileDet.getValue(),local_path)) && exitOnError)
 				return false;
 
 		}
@@ -368,58 +368,6 @@ public class CacheScript extends Thread {
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return null;
-	}
-
-	/**
-	 * Moves mapping to the given path and renames it to filename.
-	 * @param mapping	File to be moved.
-	 * @param fileName	File name to be given to moved mapping.
-	 * @param path	Path to where mapping is moved.
-	 * @return
-	 */
-	private static boolean moveFileTo(File file, String fileName, String path){
-		File newLocation = new File(path+ "/" +fileName);
-		boolean sucess = file.renameTo(newLocation);
-
-		if(!sucess){
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Could not find move file {0} to {1} !!!", new Object[]{fileName,path});
-		}
-		
-		return sucess;
-	}
-
-	/**
-	 * Creates directory for the given path.
-	 * @param path	Path where directory is to be created.
-	 * @return
-	 */
-	private static File makeDir(String path){
-		File dir = new File(path);
-		if(!dir.exists()){
-			dir.mkdir();
-		}
-		return dir;
-	}
-
-	/**
-	 * Returns mapping for give path.
-	 * @param path	File path.
-	 * @param fileMayNotExist 
-	 * @return
-	 */
-	private static File getFile(String path, boolean fileMayNotExist){
-		File file = null;
-		try{
-			file = LocalUrlCacher.convertURIToFile(URI.create(path),fileMayNotExist);
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
-
-		if(file == null && !fileMayNotExist){
-			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, "Invalid path : {0} !!!", path);
-		}
-		
-		return file;
 	}
 
 	/**
@@ -486,9 +434,9 @@ public class CacheScript extends Thread {
 	private static void copyRecursively(File source, File dest){
 		for(File file: source.listFiles()){
 			if(file.isDirectory()){
-				copyRecursively(file,makeDir(dest.getPath()+ "/" +file.getName()));
+				copyRecursively(file,GeneralUtils.makeDir(dest.getPath()+ "/" +file.getName()));
 			}else{
-				moveFileTo(file,file.getName(),dest.getPath());
+				GeneralUtils.moveFileTo(file,file.getName(),dest.getPath());
 			}
 		}
 	}
@@ -501,7 +449,7 @@ public class CacheScript extends Thread {
 		File temp_dir = new File(path + servername + temp);
 
 		String perm_path = path + servername;
-		makeDir(perm_path);
+		GeneralUtils.makeDir(perm_path);
 
 		File perm_dir = new File(perm_path);
 

@@ -742,7 +742,7 @@ public final class LocalUrlCacher {
 				try {
 					File f2 = File.createTempFile(f.getName(), null);
 					f2.deleteOnExit();	// This is only a temporary file!  Delete on exit.
-					unzipFile(f, f2);
+					GeneralUtils.unzipFile(f, f2);
 					return f2;
 				} catch (IOException ex) {
 					Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, null, ex);
@@ -779,25 +779,6 @@ public final class LocalUrlCacher {
 		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
 				"URL scheme: {0} not recognized", scheme);
 		return null;
-	}
-
-	private static void unzipFile(File f, File f2) throws IOException {
-		// File must be unzipped!
-		InputStream is = null;
-		OutputStream out = null;
-		try {
-			// This will also unzip the stream if necessary
-			is = GeneralUtils.getInputStream(f, new StringBuffer());
-			out = new FileOutputStream(f2);
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = is.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-		} finally {
-			GeneralUtils.safeClose(is);
-			GeneralUtils.safeClose(out);
-		}
 	}
 
 	/**

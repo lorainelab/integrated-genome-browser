@@ -196,6 +196,11 @@ final class ModPropertySheet extends JPanel {
         return this.props;
     }
 
+	@Override
+	public Dimension getSize(){
+		return table.getSize();
+	}
+
 	private class PropertySheetHelper extends DefaultTableCellRenderer implements
 			MouseListener, MouseMotionListener {
 		

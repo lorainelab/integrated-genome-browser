@@ -1,5 +1,7 @@
 package org.bioviz.protannot;
 
+import java.awt.Dimension;
+import javax.swing.JSplitPane;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Clipboard;
 import java.awt.Toolkit;
@@ -290,24 +292,22 @@ class Actions {
 				action.setEnabled(false);
 
 				final JPanel table_panel = ProtAnnotMain.getInstance().getGenomeView().getTablePanel();
-				ProtAnnotMain.getInstance().getGenomeView().remove(table_panel);
-				ProtAnnotMain.getInstance().getGenomeView().updateUI();
+				final JSplitPane split_pane = ProtAnnotMain.getInstance().getGenomeView().getSplitPane();
+				split_pane.remove(table_panel);
 
 				final JFrame jframe = new JFrame();
+				jframe.setMinimumSize(new Dimension(table_panel.getWidth(),100));
 				jframe.setSize(table_panel.getSize());
 				jframe.addWindowListener(new WindowAdapter() {
 
 					@Override
 					public void windowClosing(WindowEvent evt) {
-						ProtAnnotMain.getInstance().getGenomeView().add("South",table_panel);
-						ProtAnnotMain.getInstance().getGenomeView().updateUI();
-						jframe.dispose();
+						split_pane.add(table_panel);
 						action.setEnabled(true);
 					}
 				});
 				jframe.add(table_panel);
 				jframe.setVisible(true);
-
 			}
 		};
 

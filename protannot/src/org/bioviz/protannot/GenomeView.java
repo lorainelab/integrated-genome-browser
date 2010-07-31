@@ -46,7 +46,7 @@ import java.util.Map.Entry;
  * that shows how the transcript structures vary.
  */
 
-final public class GenomeView extends JPanel implements MouseListener{
+final public class GenomeView extends JPanel implements MouseListener, ComponentListener{
 
 	// We allow users to change the colors of transcripts, protein
 	// annotations, etc
@@ -122,7 +122,8 @@ final public class GenomeView extends JPanel implements MouseListener{
 	private boolean showhairline = true;
 	private boolean showhairlineLabel = true;
 	private Shadow hairline, axishairline;
-
+	private final JSplitPane split_pane;
+	
     private static Color col_bg = COLORS.BACKGROUND.defaultColor();
     private static Color col_frame0 = COLORS.FRAME0.defaultColor();
     private static Color col_frame1 = COLORS.FRAME1.defaultColor();
@@ -146,7 +147,7 @@ final public class GenomeView extends JPanel implements MouseListener{
     private static final int middle_white_space = 2;
     private static final int lower_white_space = 2;
     private static final int divider_size = 8;
-    private static final int table_height = 200;
+    private static final int table_height = 100;
     private static final int seqmap_pixel_height = 500;
 	private static final double zoomRatio = 30.0;
 
@@ -226,6 +227,7 @@ final public class GenomeView extends JPanel implements MouseListener{
                 + divider_size + seqmap_pixel_height;
 
         JPanel p = new JPanel();
+		p.addComponentListener(this);
         p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
         p.setLayout(new BorderLayout());
         p.add("Center", map_panel);
@@ -234,9 +236,7 @@ final public class GenomeView extends JPanel implements MouseListener{
         table_view = new ModPropertySheet();
         table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
 
-
-		JSplitPane split_pane =
-				new JSplitPane(JSplitPane.VERTICAL_SPLIT,p,table_view);
+		split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,p,table_view);
 		this.add("Center",split_pane);
         //this.add("Center", p);
         //this.add("South", table_view);
@@ -401,7 +401,7 @@ final public class GenomeView extends JPanel implements MouseListener{
         seqmap.updateWidget();
         axismap.updateWidget();
     }
-
+	
 	/**
 	 * Toggle hairline on/off.
 	 * @return
@@ -431,6 +431,11 @@ final public class GenomeView extends JPanel implements MouseListener{
 		return showhairlineLabel;
 	}
 
+	public void stretchToFit(boolean x, boolean y){
+		seqmap.stretchToFit(x, y);
+		axismap.stretchToFit(x, y);
+	}
+	
 	public void updateWidget(){
 		seqmap.updateWidget();
 		axismap.updateWidget();
@@ -823,6 +828,17 @@ final public class GenomeView extends JPanel implements MouseListener{
         axismap.getScene().addGlyph(sg);
     }
 
+	public void componentResized(ComponentEvent e) {
+		split_pane.repaint();
+		stretchToFit(false,true);
+	}
+
+	public void componentMoved(ComponentEvent e) {}
+
+	public void componentShown(ComponentEvent e) {}
+
+	public void componentHidden(ComponentEvent e) {}
+
     public void mouseClicked(MouseEvent e) {
     }
 
@@ -910,6 +926,10 @@ final public class GenomeView extends JPanel implements MouseListener{
         }
     }
 
+	public JSplitPane getSplitPane(){
+		return split_pane;
+	}
+	
 	public JPanel getTablePanel(){
 		return table_view;
 	}

@@ -125,7 +125,7 @@ public class BED extends SymLoader{
 			istr = new FileInputStream(file);
 			return parse(istr, GenometryModel.getGenometryModel(), this.group, false, this.featureName, false, min, max);
 		}catch (Exception ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
@@ -638,7 +638,7 @@ public class BED extends SymLoader{
 			parseLines(bis, chrLength, chrFiles);
 			createResults(chrLength, chrFiles);
 		} catch (Exception ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
 			GeneralUtils.safeClose(bis);
 		}

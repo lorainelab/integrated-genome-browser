@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
@@ -24,7 +23,7 @@ import java.awt.geom.Rectangle2D;
  *  A new version of OutlineRectGlyph, 
  *     subclassed from EfficientGlyph instead of Glyph.
  */
-public class EfficientOutlineContGlyph extends Glyph  {
+public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
   private static final boolean DEBUG_OPTIMIZED_FILL = false;
   private boolean move_children = true;
   private Color fill_color = null;
@@ -90,7 +89,7 @@ public class EfficientOutlineContGlyph extends Glyph  {
   }
 
   /**
-   *  Overriden to force children to center on line
+   *  Overridden to force children to center on line
    */
 	@Override
   public void addChild(GlyphI glyph) {

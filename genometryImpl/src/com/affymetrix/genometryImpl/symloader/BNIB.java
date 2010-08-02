@@ -22,7 +22,6 @@ import net.sf.samtools.util.SeekableStream;
  */
 public class BNIB extends SymLoader {
 	private List<BioSeq> chrList = null;
-	private final AnnotatedSeqGroup group;
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -32,8 +31,7 @@ public class BNIB extends SymLoader {
 	}
 
 	public BNIB(URI uri, AnnotatedSeqGroup group) {
-		super(uri);
-		this.group = group;
+		super(uri, "", group);
 		this.isResidueLoader = true;
 	}
 

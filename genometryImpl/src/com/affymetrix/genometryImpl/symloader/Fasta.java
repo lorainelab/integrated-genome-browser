@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 public class Fasta extends SymLoader {
 	private static final Pattern header_regex = 
 			Pattern.compile("^\\s*>\\s*(.+)");
-	private final AnnotatedSeqGroup group;
 	private final Set<BioSeq> chrSet = new HashSet<BioSeq>();
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -36,8 +35,7 @@ public class Fasta extends SymLoader {
 	}
 
 	public Fasta(URI uri, AnnotatedSeqGroup group) {
-		super(uri);
-		this.group = group;
+		super(uri, "", group);
 		this.isResidueLoader = true;
 	}
 

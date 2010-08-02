@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -7,10 +8,15 @@ import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.ParserController;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +30,10 @@ public abstract class SymLoader {
 	protected final String extension;	// used for ServerUtils call
 	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
 	protected volatile boolean isInitialized = false;
+	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
+	protected final AnnotatedSeqGroup group;
+	protected final String featureName;
+
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -31,12 +41,15 @@ public abstract class SymLoader {
 		strategyList.add(LoadStrategy.GENOME);
 	}
 
-	public SymLoader(URI uri) {
+	public SymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
         this.uri = uri;
+		this.featureName = featureName;
+		this.group = group;
 		
 		String uriString = uri.toASCIIString().toLowerCase();
 		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
 		extension = ParserController.getExtension(unzippedStreamName);
+
     }
 
 	protected void init() {

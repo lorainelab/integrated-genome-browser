@@ -61,8 +61,6 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	private static final boolean ensure_unique_id = true;
 	private final TrackLineParser track_line_parser;
 
-	private final AnnotatedSeqGroup group;
-	private final String featureName;
 	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -74,9 +72,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	}
 	
 	public Wiggle(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
-		super(uri);
-		this.group = seq_group;
-		this.featureName = featureName;
+		super(uri, featureName, seq_group);
 		track_line_parser = new TrackLineParser();
 	}
 

@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,9 +31,7 @@ import java.util.zip.ZipInputStream;
  */
 public class USeq extends SymLoader {
 
-	private final AnnotatedSeqGroup group;
 	private ArchiveInfo archiveInfo = null;
-	private final String featureName;
 	private File f = null;
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -44,9 +41,7 @@ public class USeq extends SymLoader {
 	}
 
 	public USeq(URI uri, String featureName, AnnotatedSeqGroup group) {
-		super(uri);
-		this.featureName = featureName;
-		this.group = group;
+		super(uri, featureName, group);
 	}
 
 	@Override

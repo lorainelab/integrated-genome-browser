@@ -49,8 +49,6 @@ public final class BAM extends SymLoader {
 	private static final boolean DEBUG = false;
 	private SAMFileReader reader;
     private SAMFileHeader header;
-	private AnnotatedSeqGroup group;
-	private final String featureName;
 	private final List<BioSeq> seqs = new ArrayList<BioSeq>();
 	private File indexFile = null;
 
@@ -67,9 +65,7 @@ public final class BAM extends SymLoader {
 	}
 
 	public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
-		super(uri);
-		this.group = seq_group;
-		this.featureName = featureName;
+		super(uri, featureName, seq_group);
 	}
 
 	@Override

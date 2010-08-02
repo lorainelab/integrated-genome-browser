@@ -24,8 +24,6 @@ import java.util.logging.Logger;
 
 public final class Sgr extends SymLoader implements AnnotationWriter {
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
-	private final AnnotatedSeqGroup group;
-	private final String featureName;
 	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -37,9 +35,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	}
 	
 	public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
-		super(uri);
-		this.group = seq_group;
-		this.featureName = featureName;
+		super(uri, featureName, seq_group);
 	}
 
 	@Override

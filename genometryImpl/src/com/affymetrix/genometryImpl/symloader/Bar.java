@@ -19,8 +19,6 @@ import java.util.logging.Logger;
 
 public final class Bar extends SymLoader {
 
-	private final String featureName;
-	private final AnnotatedSeqGroup group;
 	private File f = null;
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -32,9 +30,7 @@ public final class Bar extends SymLoader {
 	}
 
 	public Bar(URI uri, String featureName, AnnotatedSeqGroup group) {
-		super(uri);
-		this.featureName = featureName;
-		this.group = group;
+		super(uri, featureName, group);
 	}
 
 	@Override

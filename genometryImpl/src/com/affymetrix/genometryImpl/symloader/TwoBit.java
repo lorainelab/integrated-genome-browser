@@ -31,7 +31,7 @@ public class TwoBit extends SymLoader {
 	}
 	
 	public TwoBit(URI uri) {
-		super(uri);
+		super(uri, "", null);
 		this.isResidueLoader = true;
 	}
 

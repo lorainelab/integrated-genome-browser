@@ -31,8 +31,6 @@ import java.util.Map.Entry;
  * @author hiralv
  */
 public class BED extends SymLoader{
-	private final AnnotatedSeqGroup group;
-	private final String featureName;
 	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
@@ -62,9 +60,7 @@ public class BED extends SymLoader{
 	}
 
 	public BED(URI uri, String featureName, AnnotatedSeqGroup group){
-		super(uri);
-		this.featureName = featureName;
-		this.group = group;
+		super(uri, featureName, group);
 	}
 
 	@Override

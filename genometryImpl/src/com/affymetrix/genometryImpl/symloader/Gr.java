@@ -44,8 +44,6 @@ import java.util.logging.Logger;
  */
 public final class Gr extends SymLoader implements AnnotationWriter{
 	private File f;
-	private final AnnotatedSeqGroup group;
-	private final String featureName;
 	private boolean isSorted = false;
 	private File tempFile = null;
 
@@ -57,9 +55,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	}
 
 	public Gr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
-		super(uri);
-		this.group = seq_group;
-		this.featureName = featureName;
+		super(uri, featureName, seq_group);
 	}
 
 	@Override

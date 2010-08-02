@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
  * @author $Id$
  */
 public final class BioSeq implements SearchableCharIterator {
-	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private Map<String, IndexedSyms> type_id2indexedsym = null;
 	private Map<String, SymLoader> type_id2symloader = null;
@@ -353,7 +352,7 @@ public final class BioSeq implements SearchableCharIterator {
 
 	public final Set<String> getIndexedTypeList() {
 		if(type_id2indexedsym == null){
-			return Collections.emptySet();
+			return Collections.<String>emptySet();
 		}
 		return type_id2indexedsym.keySet();
 	}
@@ -365,16 +364,12 @@ public final class BioSeq implements SearchableCharIterator {
 		return type_id2indexedsym.get(type);
 	}
 	
-	public boolean  removeIndexedSym(String type) {
-		if(type_id2indexedsym == null)
-			return false;
-		
-		if (type_id2indexedsym.containsKey(type)) {
-			type_id2indexedsym.remove(type);
-			return true;
-		} else {
+	public boolean removeIndexedSym(String type) {
+		if(type_id2indexedsym == null || !type_id2indexedsym.containsKey(type)) {
 			return false;
 		}
+		type_id2indexedsym.remove(type);
+		return true;
 	}
 
 	public final void addSymLoader(String type, SymLoader value){
@@ -386,27 +381,25 @@ public final class BioSeq implements SearchableCharIterator {
 
 	public final Set<String> getSymloaderList(){
 		if(type_id2symloader == null){
-			return Collections.emptySet();
+			return Collections.<String>emptySet();
 		}
 		return type_id2symloader.keySet();
 	}
 
 	public final SymLoader getSymLoader(String type){
-		if(type_id2symloader == null)
+		if(type_id2symloader == null) {
 			return null;
+		}
 		return type_id2symloader.get(type);
 	}
 
 	public boolean  removeSymLoader(String type) {
-		if(type_id2symloader == null)
-			return false;
-		
-		if (type_id2symloader.containsKey(type)) {
-			type_id2symloader.remove(type);
-			return true;
-		} else {
+		if(type_id2symloader == null || !type_id2symloader.containsKey(type)) {
 			return false;
 		}
+		
+		type_id2symloader.remove(type);
+		return true;
 	}
 	
 	/**

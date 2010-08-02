@@ -1,7 +1,12 @@
 package com.affymetrix.genometryImpl.general;
 
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -27,6 +32,9 @@ public final class GenericFeature {
 	public URL friendlyURL = null;			// friendly URL that users may look at.
 	public final Object typeObj;    // Das2Type, DasType, ...?
 	public final SymLoader symL;
+	
+	// Requests that have been made for this feature (to avoid overlaps)
+	private final MutableSeqSymmetry requestSym = new SimpleMutableSeqSymmetry();
 	
 	/**
 	 * @param featureName
@@ -119,6 +127,18 @@ public final class GenericFeature {
 			}
 		}
 		return featureName;
+	}
+
+	public SeqSymmetry optimizeRequest(SeqSpan span) {
+		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
+		query_sym.addSpan(span);
+
+		SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, requestSym, span.getBioSeq());
+		if (SeqUtils.hasSpan(optimized_sym)) {
+			requestSym.addChild(optimized_sym);
+			return optimized_sym;
+		}
+		return null;
 	}
 
 	@Override

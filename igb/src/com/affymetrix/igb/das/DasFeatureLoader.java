@@ -8,24 +8,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
-import com.affymetrix.igb.view.SeqMapView;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -37,18 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author sgblanch
  */
 public final class DasFeatureLoader {
-	/** A private copy of IGB's Map view */
-	private static final SeqMapView gviewer = Application.getSingleton().getMapView();
-	
-	/**
-	 * Map of annotation IDs to SeqSymmetry.
-	 * 
-	 * Each SeqSymmetry tracks what portions of a given annotation set have been loaded.
-	 * <p />
-	 * We should not have to track this: there must be a way to get this information from elsewhere in the code.
-	 */
-	private static final Map<String,MutableSeqSymmetry> loadMap = new ConcurrentHashMap<String,MutableSeqSymmetry>();
-
 	/** Private constructor to prevent instantiation. */
 	private DasFeatureLoader() { }
 
@@ -62,36 +42,25 @@ public final class DasFeatureLoader {
 	public static boolean loadFeatures( SeqSpan query_span, GenericFeature gFeature) {
 		DasType feature = (DasType)gFeature.typeObj;
 		URL serverURL = feature.getServerURL();
-		BioSeq current_seq = gviewer.getViewSeq();
+		BioSeq current_seq = query_span.getBioSeq();
 		List<URL> urls = new ArrayList<URL>();
 		Set<String> segments = ((DasSource)gFeature.gVersion.versionSourceObj).getEntryPoints();
 		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
-		QueryBuilder builder;
-		String id;
 
 		try {
-			builder = new QueryBuilder(new URL(serverURL, feature.getSource() + "/features"));
+			QueryBuilder builder = new QueryBuilder(new URL(serverURL, feature.getSource() + "/features"));
 			builder.add("segment", segment);
 			builder.add("type", feature.getID());
-			id = builder.build().toString();
 
-			SimpleSymWithProps query_sym = new SimpleSymWithProps();
-			query_sym.setProperty("method", id);
-			query_sym.addSpan(query_span);
+			SeqSymmetry optimized_sym = gFeature.optimizeRequest(query_span);
+			if (optimized_sym != null) {
+				convertSymToDasURLs(optimized_sym, builder, segment, urls);
 
-			MutableSeqSymmetry seen = loadMap.containsKey(id) ? loadMap.get(id) : new SimpleSymWithProps();
-			loadMap.put(id, seen);
-
-			SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, seen, current_seq);
-			walksym(optimized_sym, builder, segment, urls);
-
-			if (!urls.isEmpty()) {
-				seen.addChild(optimized_sym);
-			
 				String[] tier_names = new String[urls.size()];
 				Arrays.fill(tier_names, gFeature.featureName);
 
-				UrlLoaderThread loader = new UrlLoaderThread(gviewer, urls.toArray(new URL[urls.size()]), null, tier_names);
+				UrlLoaderThread loader = new UrlLoaderThread(
+						Application.getSingleton().getMapView(), urls.toArray(new URL[urls.size()]), null, tier_names);
 				loader.runEventually();
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -113,12 +82,12 @@ public final class DasFeatureLoader {
 	 * @throws java.io.UnsupportedEncodingException
 	 * @throws java.net.MalformedURLException
 	 */
-	private static void walksym(SeqSymmetry sym, QueryBuilder builder, String segment, List<URL> urls)
+	private static void convertSymToDasURLs(SeqSymmetry sym, QueryBuilder builder, String segment, List<URL> urls)
 			throws UnsupportedEncodingException, MalformedURLException {
 		int childCount = sym.getChildCount();
 		if (childCount > 0) {
 			for (int i = 0; i < childCount; i++) {
-				walksym(sym.getChild(i), builder, segment, urls);
+				convertSymToDasURLs(sym.getChild(i), builder, segment, urls);
 			}
 		} else {
 			SeqSpan span;

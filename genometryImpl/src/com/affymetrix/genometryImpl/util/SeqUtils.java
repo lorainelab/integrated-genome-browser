@@ -1073,7 +1073,18 @@ public static String getResidues(SeqSymmetry sym, BioSeq seq) {
 	return result;
 }
 
-
+	public static boolean hasSpan(SeqSymmetry sym) {
+		if (sym.getSpanCount() > 0) {
+			return true;
+		}
+		int childCount = sym.getChildCount();
+		for (int i = 0; i < childCount; i++) {
+			if (hasSpan(sym.getChild(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 public static void printSpan(SeqSpan span) {
 	System.out.println(spanToString(span));

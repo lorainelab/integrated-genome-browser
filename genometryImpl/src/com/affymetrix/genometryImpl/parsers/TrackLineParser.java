@@ -104,7 +104,7 @@ public final class TrackLineParser {
 	 *  Any old values are cleared from the existing track line hash first.
 	 *  If track_name_prefix arg is non-null, it is added as prefix to parsed in track name
 	 */
-	Map<String,String> parseTrackLine(String track_line, String track_name_prefix) {
+	public Map<String,String> parseTrackLine(String track_line, String track_name_prefix) {
 		track_hash.clear();
 		Matcher matcher = track_line_parser.matcher(track_line);
 		// If performance becomes important, it is possible to save and re-use a Matcher,

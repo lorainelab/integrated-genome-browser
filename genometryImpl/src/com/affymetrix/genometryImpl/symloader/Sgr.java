@@ -18,13 +18,11 @@ import java.net.URI;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class Sgr extends SymLoader implements AnnotationWriter {
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
-	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -278,19 +276,11 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 				fields = line_regex.split(line);
 				seqid = fields[0];
 				x = Integer.parseInt(fields[1]);
-				
-				if (!chrs.containsKey(seqid)) {
-					String fileName = seqid;
-					if (fileName.length() < 3) {
-						fileName += "___";
-					}
-					File tempFile = File.createTempFile(fileName, ".sgr");
-					tempFile.deleteOnExit();
-					chrs.put(seqid, new BufferedWriter(new FileWriter(tempFile, true)));
-					chrFiles.put(seqid, tempFile);
-					chrLength.put(seqid, x);
-				}
 
+				if (!chrs.containsKey(seqid)) {
+					addToLists(chrs, seqid, chrFiles, chrLength);
+				}
+				
 				if (x > chrLength.get(seqid)) {
 					chrLength.put(seqid, x);
 				}
@@ -306,13 +296,6 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 			}
 			GeneralUtils.safeClose(bw);
 			GeneralUtils.safeClose(br);
-		}
-	}
-
-	private void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
-		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
-			String key = bioseq.getKey();
-			chrList.put(group.addSeq(key, bioseq.getValue()), chrFiles.get(key));
 		}
 	}
 

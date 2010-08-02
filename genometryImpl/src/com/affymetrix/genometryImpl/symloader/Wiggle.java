@@ -27,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,7 +40,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -60,8 +58,6 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
 	private static final boolean ensure_unique_id = true;
 	private final TrackLineParser track_line_parser;
-
-	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -595,29 +591,6 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
-		}
-	}
-
-
-	private static void addToLists(
-			Map<String, BufferedWriter> chrs, String current_seq_id, Map<String, File> chrFiles, Map<String,Integer> chrLength) throws IOException {
-
-		String fileName = current_seq_id;
-		if (fileName.length() < 3) {
-			fileName += "___";
-		}
-		File tempFile = File.createTempFile(fileName, ".wig");
-		tempFile.deleteOnExit();
-		chrs.put(current_seq_id, new BufferedWriter(new FileWriter(tempFile, true)));
-		chrFiles.put(current_seq_id, tempFile);
-		chrLength.put(current_seq_id, 0);
-	}
-	
-
-	private void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
-		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
-			String key = bioseq.getKey();
-			chrList.put(group.addSeq(key, bioseq.getValue()), chrFiles.get(key));
 		}
 	}
 

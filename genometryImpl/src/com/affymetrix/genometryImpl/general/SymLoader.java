@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.ParserController;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URI;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -140,4 +142,27 @@ public abstract class SymLoader {
 					Level.WARNING, "Not supported.  Returning empty string.");
 		return "";
     }
+
+	protected static void addToLists(
+			Map<String, BufferedWriter> chrs, String current_seq_id, Map<String, File> chrFiles, Map<String,Integer> chrLength) throws IOException {
+
+		String fileName = current_seq_id;
+		if (fileName.length() < 3) {
+			fileName += "___";
+		}
+		File tempFile = File.createTempFile(fileName, ".sym");
+		tempFile.deleteOnExit();
+		chrs.put(current_seq_id, new BufferedWriter(new FileWriter(tempFile, true)));
+		chrFiles.put(current_seq_id, tempFile);
+		chrLength.put(current_seq_id, 0);
+	}
+
+
+	protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
+		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
+			String key = bioseq.getKey();
+			chrList.put(group.addSeq(key, bioseq.getValue()), chrFiles.get(key));
+		}
+	}
+
 }

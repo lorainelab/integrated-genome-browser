@@ -711,22 +711,8 @@ public class BED extends SymLoader{
 	}
 
 
-	private static void addToLists(
-			Map<String, BufferedWriter> chrs, String current_seq_id, Map<String, File> chrFiles, Map<String,Integer> chrLength) throws IOException {
-
-		String fileName = current_seq_id;
-		if (fileName.length() < 3) {
-			fileName += "___";
-		}
-		File tempFile = File.createTempFile(fileName, ".bed");
-		tempFile.deleteOnExit();
-		chrs.put(current_seq_id, new BufferedWriter(new FileWriter(tempFile, true)));
-		chrFiles.put(current_seq_id, tempFile);
-		chrLength.put(current_seq_id, 0);
-	}
-
-
-	private void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
+	@Override
+	protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
 			String seq_name = bioseq.getKey();

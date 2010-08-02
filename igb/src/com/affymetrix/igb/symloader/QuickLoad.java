@@ -49,14 +49,14 @@ public final class QuickLoad extends SymLoader {
 	private SymLoader symL;	// parser factory
 
 	public QuickLoad(GenericVersion version, String featureName) {
-		super(determineURI(version, featureName));
+		super(determineURI(version, featureName), featureName, null);
 		this.featureName = featureName;
 		this.version = version;
 		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
 	}
 
 	public QuickLoad(GenericVersion version, URI uri) {
-		super(uri);
+		super(uri, "", null);
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
 		String strippedName = unzippedName.substring(0, unzippedName.toLowerCase().lastIndexOf(this.extension));
 		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);

@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -26,11 +27,7 @@ import java.awt.geom.Rectangle2D;
 public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGlyphI {
 	// made abstract 6-24-98 to make explicit that should not be used directly --
 	//   use a subclass instead
-	protected static final Font default_font = new Font("Courier", Font.BOLD, 12);
 	private static final Color default_residue_color = Color.black;
-
-	//  protected Font residue_font;
-	//  protected Color residue_color;
 	protected FontMetrics fontmet;
 	protected int font_width, font_ascent, font_height;
 	Glyph sel_glyph;
@@ -57,7 +54,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 	public AbstractResiduesGlyph(int orientation) {
 		orient = orientation;
 		//setResidueColor(default_residue_color);
-		setResidueFont( default_font );
+		setResidueFont( NeoConstants.default_bold_font );
 		setForegroundColor( default_residue_color );
 	}
 

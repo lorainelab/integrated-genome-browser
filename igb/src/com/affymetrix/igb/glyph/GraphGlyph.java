@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
 
 import java.awt.Color;
@@ -51,7 +52,7 @@ public final class GraphGlyph extends Glyph {
 	private static final boolean TIME_DRAWING = false;
 	private static final boolean DEBUG = false;
 
-	private static Font default_font = new Font("Courier", Font.PLAIN, 12);
+	private static Font default_font = NeoConstants.default_plain_font;
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
 	private static final int xpix_offset = 0;

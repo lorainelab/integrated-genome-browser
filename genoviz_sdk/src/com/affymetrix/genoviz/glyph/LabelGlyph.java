@@ -37,8 +37,6 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	private static final boolean DEBUG_PIXELBOX = false;
 	private static final boolean DEBUG_HIT = true;
 
-	private static final Font DEFAULT_FONT = new Font("Courier", Font.PLAIN, 12);
-
 	protected int placement = ABOVE;
 	protected String text;
 	protected Font fnt;
@@ -99,7 +97,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	}
 
 	public LabelGlyph () {
-		setFont( DEFAULT_FONT );
+		setFont( NeoConstants.default_plain_font );
 		setFontExtras();
 		placement = ABOVE;
 		labeled_pix = new Rectangle();

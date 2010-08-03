@@ -13,6 +13,7 @@
 
 package com.affymetrix.genoviz.util;
 
+import java.awt.Font;
 import java.awt.Scrollbar;
 
 /**
@@ -57,5 +58,8 @@ public interface NeoConstants {
 	public static int MIRROR_HORIZONTAL = VERTICAL+6;
 
 	public static int UNKNOWN = VERTICAL+6;
+
+	public static Font default_bold_font = new Font("Courier", Font.BOLD, 12);
+	public static Font default_plain_font = new Font("Courier", Font.PLAIN, 12);
 
 }

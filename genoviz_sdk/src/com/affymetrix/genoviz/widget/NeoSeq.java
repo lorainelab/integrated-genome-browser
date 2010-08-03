@@ -283,7 +283,7 @@ public class NeoSeq extends NeoContainerWidget
 		num_map.getScene().addGlyph(num_glyph);
 		num_map.setDataModel(num_glyph, seq);
 
-		residue_font = new Font("Courier", Font.PLAIN, 12);
+		residue_font = NeoConstants.default_plain_font;
 		setFont(residue_font);
 
 		residue_map.setMapColor(default_map_background);

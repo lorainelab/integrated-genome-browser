@@ -122,7 +122,7 @@ public class NeoMap extends NeoWidget implements
 	boolean optimize_transients = false;
 	// fields for dealing with sequence residue font
 	// (only one residue font should be allowed per map)
-	Font font_for_max_zoom = new Font("Courier", Font.BOLD, 12);
+	Font font_for_max_zoom = NeoConstants.default_bold_font;
 	FontMetrics seqmetrics;
 	DragMonitor canvas_drag_monitor;
 	boolean drag_scrolling_enabled = false;

@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -51,7 +52,6 @@ final class CoverageSummarizerGlyph extends SolidGlyph {
 	static final int SIMPLE = 3;
 	static final int SMOOTHED_COVERAGE = 4;
 	static final int DEFAULT_STYLE = COVERAGE;
-	private static final Font default_font = new Font("Courier", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
 	private int[] mins = null;
 	private int[] maxs = null;
@@ -344,7 +344,7 @@ final class CoverageSummarizerGlyph extends SolidGlyph {
 		if (avg_coverage > 0.001) {
 			// drawing outline around bounding box
 			g.setColor(Color.lightGray);
-			g.setFont(default_font);
+			g.setFont(NeoConstants.default_plain_font);
 			String msg = "Max coverage in view: " + nformat.format(coverage);
 			g.drawString(msg, 3, pixelbox.y + 10);
 		}

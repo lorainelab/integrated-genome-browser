@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.Translatable;
 import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.*;
 
 
@@ -73,7 +74,7 @@ public abstract class WrapGlyph extends Glyph implements Translatable  {
 	protected boolean monospace = false;
 
 	public WrapGlyph () {
-		setFont(new Font("Courier", Font.BOLD, 12));
+		setFont(NeoConstants.default_bold_font);
 
 		allocateSpaceFor[NUCLEOTIDES] = true;
 		allocateSpaceFor[COMPLEMENT] = false;

@@ -199,7 +199,7 @@ public class SeqMapView extends JPanel
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	public static final Font axisFont = new Font("Courier", Font.BOLD, 12);
+	public static final Font axisFont = NeoConstants.default_bold_font;
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
 	protected SeqSymmetry sym_used_for_title = null;

@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.datamodel.Mapping;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.Sequence;
 import com.affymetrix.genoviz.datamodel.NASequence;
+import com.affymetrix.genoviz.util.NeoConstants;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -113,7 +114,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 
 	public AlignmentGlyph(int residueType) {
 		this.residueType = residueType;
-		setResidueFont(default_font);
+		setResidueFont(NeoConstants.default_bold_font);
 		setDrawOrder(AlignmentGlyph.DRAW_CHILDREN_FIRST);
 	}
 

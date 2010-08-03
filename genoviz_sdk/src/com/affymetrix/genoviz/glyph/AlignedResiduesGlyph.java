@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.bioviews.ResiduePainter;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -115,7 +116,6 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 	protected Color fg_color = Color.black;
 	protected Color bg_color = null;
 
-	private static final Font default_font = new Font("Courier", Font.BOLD, 12);
 	protected Font residue_font;
 
 	protected int font_width, font_height;
@@ -149,7 +149,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 		full_rect = new FillRectGlyph();
 		full_rect.setPacker(null);
 		scratchrect = new Rectangle2D.Double();
-		setResidueFont(default_font);
+		setResidueFont(NeoConstants.default_bold_font);
 	}
 
 

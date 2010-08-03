@@ -13,6 +13,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
@@ -23,8 +24,6 @@ import java.awt.Font;
  * that are shared by multiple glyphs.
  */
 public class GlyphStyleFactory {
-
-	private static Font default_font = new Font("Courier", Font.PLAIN, 12);
 	private final Map<GlyphStyle,GlyphStyle> styles;
 
 	public GlyphStyleFactory() {
@@ -40,7 +39,7 @@ public class GlyphStyleFactory {
 	 * and return a reference to it.
 	 */
 	public GlyphStyle getStyle( Color fg, Color bg ) {
-		return getStyle( fg, bg, default_font );
+		return getStyle( fg, bg, NeoConstants.default_plain_font );
 	}
 	public GlyphStyle getStyle( Color fg, Color bg, Font fnt ) {
 		GlyphStyle new_style = new GlyphStyle( fg, bg, fnt );

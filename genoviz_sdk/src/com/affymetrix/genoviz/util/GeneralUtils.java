@@ -127,9 +127,8 @@ public final class GeneralUtils  {
 	 *  false if any of them are not equivalent to each other
 	 */
 	public static boolean isReallyMonospaced(Font fnt, char[] chars) {
-		String name = fnt.getName();
-		if ((!name.equals("Courier"))
-				&& (!name.equals("Monospaced"))) {
+		String name = fnt.getName().toLowerCase();
+		if (!name.contains("Monospaced")) {
 			return false;
 		}
 		FontMetrics fontmet = getFontMetrics(fnt);

@@ -305,9 +305,8 @@ public class NeoAssembler extends NeoContainerWidget
 	protected Color unaligned_rect_color = new Color(220, 220, 220);
 	protected Color background_col = Color.lightGray;
 
-    //    protected Font label_font = new Font("Helvetica", Font.BOLD, 12);
-    protected Font label_font = new Font("Courier", Font.BOLD, 12);
-	protected Font residue_font = new Font("Courier", Font.BOLD, 12);
+    protected Font label_font = NeoConstants.default_bold_font;
+	protected Font residue_font = NeoConstants.default_bold_font;
 
 	// toggle for automatically applying new color settings
 	// to previously added glyphs -- NOT YET IMPLEMENTED

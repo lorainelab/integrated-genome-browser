@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -51,6 +52,19 @@ public class PSL extends SymLoader {
 	private final boolean annotate_query;
 	private final boolean annotate_target;
 	private final boolean annotate_other;
+
+	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	static {
+		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.VISIBLE);
+		strategyList.add(LoadStrategy.CHROMOSOME);
+		strategyList.add(LoadStrategy.GENOME);
+	}
+	
+	@Override
+	public List<LoadStrategy> getLoadChoices() {
+		return strategyList;
+	}
 
 	public PSL(URI uri, String featureName, AnnotatedSeqGroup target_group,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup other_group,
@@ -114,16 +128,18 @@ public class PSL extends SymLoader {
 	@Override
 	public List<UcscPslSym> getChromosome(BioSeq seq) {
 		init();
-		return parse(seq, featureName, query_group, target_group, other_group,
-			annotate_query, annotate_target, annotate_other);
+		return parse(seq, Integer.MAX_VALUE, Integer.MAX_VALUE, featureName,
+				query_group, target_group, other_group, annotate_query,
+				annotate_target, annotate_other);
 	}
 
 
 	@Override
 	public List<UcscPslSym> getRegion(SeqSpan span) {
 		init();
-		return parse(span.getBioSeq(),featureName, query_group, target_group, other_group,
-			annotate_query, annotate_target, annotate_other);
+		return parse(span.getBioSeq(), span.getMin(), span.getMax(), featureName,
+				query_group, target_group, other_group, annotate_query,
+				annotate_target, annotate_other);
 	}
 
 	private void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
@@ -282,7 +298,7 @@ public class PSL extends SymLoader {
 	 *  @param annotate_other   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
 	 *
 	 */
-	public List<UcscPslSym> parse(BioSeq seq, String annot_type,
+	public List<UcscPslSym> parse(BioSeq seq, int min, int max, String annot_type,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group,
 			boolean annotate_query, boolean annotate_target, boolean annotate_other){
 
@@ -405,6 +421,10 @@ public class PSL extends SymLoader {
 				int tsize = Integer.parseInt(fields[findex++]);
 				int tmin = Integer.parseInt(fields[findex++]);
 				int tmax = Integer.parseInt(fields[findex++]);
+
+				if(tmin < min || tmax > max)
+					continue;
+				
 				int blockcount = Integer.parseInt(fields[findex++]);
 
 				block_size_array = comma_regex.split(fields[findex++]);
@@ -825,25 +845,4 @@ public class PSL extends SymLoader {
 		return "text/plain";
 	}
 
-	static public void main(String[] args) throws Exception{
-		String string =
-		"70	1	0	0	0	0	2	165	+	EL049618	71	0	71	chr1	30432563	455031	455267	3	9,36,26,	0,9,45,	455031,455111,455241,\n" +
-		"71	0	0	0	0	0	2	176	+	EL049618	71	0	71	chr1	30432563	457618	457865	3	9,36,26,	0,9,45,	457618,457715,457839,\n";
-
-		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-		File file = new File("/Users/aloraine/Desktop/RT_U34.link.psl");
-		PSL psl = new PSL(file.toURI(), file.getName(), group, null, null,
-				false, true, false);
-		psl.setIsLinkPsl(true);
-		List<BioSeq> chromosomeList = psl.getChromosomeList();
-	}
-
-	public static File createFileFromString(String string) throws Exception{
-		File tempFile = File.createTempFile("tempFile", ".bed");
-		tempFile.deleteOnExit();
-		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
-		bw.write(string);
-		bw.close();
-		return tempFile;
-	}
 }

@@ -52,7 +52,6 @@ public class PSL extends SymLoader {
 	private final boolean annotate_query;
 	private final boolean annotate_target;
 	private final boolean annotate_other;
-	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 
 	public PSL(URI uri, String featureName, AnnotatedSeqGroup query_group,
 			AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group,
@@ -129,7 +128,7 @@ public class PSL extends SymLoader {
 			annotate_query, annotate_target, annotate_other);
 	}
 
-	private void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws IOException {
+	private void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
 
 		BufferedWriter bw = null;
 		BufferedReader br = null;
@@ -141,10 +140,10 @@ public class PSL extends SymLoader {
 			System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
 		}
 
-		int line_count = 0;
-		String line = null;
+		int line_count = 0, length = 0;
+		String line = null, current_seq_id;
+		String[] fields = null;
 
-		String[] block_size_array = null;
 		Thread thread = Thread.currentThread();
 		try {
 			br = new BufferedReader(new InputStreamReader(istr));
@@ -162,7 +161,7 @@ public class PSL extends SymLoader {
 					continue;
 				}
 				
-				String[] fields = line_regex.split(line);
+				fields = line_regex.split(line);
 				// filtering out header lines (and any other line that doesn't start with a first field of all digits)
 				String field0 = fields[0];
 				boolean non_digits_present = non_digit.matcher(field0).find(0);
@@ -174,26 +173,28 @@ public class PSL extends SymLoader {
 
 				findex = skipExtraBinField(findex, fields);
 				findex += 13;
-				String tname = fields[findex++];
+				current_seq_id = fields[findex++];
+				length = Integer.valueOf(fields[findex]);
 
-				if (!chrs.containsKey(tname)) {
-					addToLists(chrs, tname, chrFiles, chrLength);
+				if (!chrs.containsKey(current_seq_id)) {
+					addToLists(chrs, current_seq_id, chrFiles, chrLength);
 				}
-				bw = chrs.get(tname);
-				if (!chrTrack.containsKey(tname) && trackLine != null) {
-					chrTrack.put(tname, true);
+
+				bw = chrs.get(current_seq_id);
+				if (!chrTrack.containsKey(current_seq_id) && trackLine != null) {
+					chrTrack.put(current_seq_id, true);
 					bw.write(trackLine + "\n");
 				}
+
 				bw.write(line + "\n");
+				if (length > chrLength.get(current_seq_id)) {
+					chrLength.put(current_seq_id, length);
+				}
 			}
 		} catch (Exception e) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Error parsing PSL file\n");
 			sb.append("line count: ").append(line_count).append("\n");
-			if (block_size_array != null && block_size_array.length != 0) {
-				sb.append("block_size first element: **").append(block_size_array[0]).append("**\n");
-			}
-			throw new IOException(sb.toString(), e);
 		} finally {
 			for (BufferedWriter b : chrs.values()) {
 				GeneralUtils.safeClose(b);
@@ -790,24 +791,4 @@ public class PSL extends SymLoader {
 		return "text/plain";
 	}
 
-	static public void main(String[] args) throws Exception{
-		String string =
-		"70	1	0	0	0	0	2	165	+	EL049618	71	0	71	chr1	30432563	455031	455267	3	9,36,26,	0,9,45,	455031,455111,455241,\n" +
-		"71	0	0	0	0	0	2	176	+	EL049618	71	0	71	chr1	30432563	457618	457865	3	9,36,26,	0,9,45,	457618,457715,457839,\n";
-
-		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-		File file = new File("/Users/aloraine/Desktop/test1.psl");
-		PSL psl = new PSL(file.toURI(), file.getName(), group, group, group,
-				file.getName(), false, false, false);
-		List<BioSeq> chromosomeList = psl.getChromosomeList();
-	}
-
-	public static File createFileFromString(String string) throws Exception{
-		File tempFile = File.createTempFile("tempFile", ".bed");
-		tempFile.deleteOnExit();
-		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
-		bw.write(string);
-		bw.close();
-		return tempFile;
-	}
 }

@@ -54,16 +54,16 @@ public class PSLParserTest {
 			assertEquals(true, result);
 			assertEquals(string, outstream.toString());
 
-			File file = createFileFromString(string);
-			group = new AnnotatedSeqGroup("Test Group");
-			PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
-				true, false, false);
-			syms = psl.getGenome();
-			seq = group.getSeq("chrl");
-			outstream = new ByteArrayOutputStream();
-			result = psl.writeAnnotations(syms, seq, type, outstream);
-			assertEquals(true, result);
-			assertEquals(string, outstream.toString());
+//			File file = createFileFromString(string);
+//			group = new AnnotatedSeqGroup("Test Group");
+//			PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
+//				true, false, false);
+//			syms = psl.getGenome();
+//			seq = group.getSeq("chrl");
+//			outstream = new ByteArrayOutputStream();
+//			result = psl.writeAnnotations(syms, seq, type, outstream);
+//			assertEquals(true, result);
+//			assertEquals(string, outstream.toString());
 
 		}
 

@@ -8,6 +8,8 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.UcscPslSym;
@@ -28,7 +30,7 @@ import java.util.logging.Logger;
  *
  * @author hiralv
  */
-public class PSL extends SymLoader {
+public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 
 	private static final UcscPslComparator comp = new UcscPslComparator();
 	static List<String> psl_pref_list = Arrays.asList("psl");
@@ -128,7 +130,7 @@ public class PSL extends SymLoader {
 	@Override
 	public List<UcscPslSym> getChromosome(BioSeq seq) {
 		init();
-		return parse(seq, Integer.MAX_VALUE, Integer.MAX_VALUE, featureName,
+		return parse(seq, Integer.MIN_VALUE, Integer.MAX_VALUE, featureName,
 				query_group, target_group, other_group, annotate_query,
 				annotate_target, annotate_other);
 	}

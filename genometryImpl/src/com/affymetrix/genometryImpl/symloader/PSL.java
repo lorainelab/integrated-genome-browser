@@ -48,20 +48,18 @@ public class PSL extends SymLoader {
 	private final AnnotatedSeqGroup query_group;
 	private final AnnotatedSeqGroup target_group;
 	private final AnnotatedSeqGroup other_group;
-	private final String annot_type;
 	private final boolean annotate_query;
 	private final boolean annotate_target;
 	private final boolean annotate_other;
 
-	public PSL(URI uri, String featureName, AnnotatedSeqGroup query_group,
-			AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group,
-			String annot_type, boolean annotate_query, boolean annotate_target,
+	public PSL(URI uri, String featureName, AnnotatedSeqGroup target_group,
+			AnnotatedSeqGroup query_group, AnnotatedSeqGroup other_group,
+			boolean annotate_query, boolean annotate_target,
 			boolean annotate_other){
-		super(uri, featureName, new AnnotatedSeqGroup("Internal Group"));
+		super(uri, featureName, target_group);
+		this.target_group = target_group;
 		this.query_group = query_group;
-		this.target_group = query_group;
-		this.other_group = query_group;
-		this.annot_type = annot_type;
+		this.other_group = other_group;
 		this.annotate_query = annotate_query;
 		this.annotate_target = annotate_target;
 		this.annotate_other = annotate_other;
@@ -116,7 +114,7 @@ public class PSL extends SymLoader {
 	@Override
 	public List<UcscPslSym> getChromosome(BioSeq seq) {
 		init();
-		return parse(seq, annot_type, query_group, target_group, other_group,
+		return parse(seq, featureName, query_group, target_group, other_group,
 			annotate_query, annotate_target, annotate_other);
 	}
 
@@ -124,7 +122,7 @@ public class PSL extends SymLoader {
 	@Override
 	public List<UcscPslSym> getRegion(SeqSpan span) {
 		init();
-		return parse(span.getBioSeq(),annot_type, query_group, target_group, other_group,
+		return parse(span.getBioSeq(),featureName, query_group, target_group, other_group,
 			annotate_query, annotate_target, annotate_other);
 	}
 
@@ -134,6 +132,7 @@ public class PSL extends SymLoader {
 		BufferedReader br = null;
 		Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
+		Map<String, Set<String>> queryTarget = new HashMap<String, Set<String>>();
 		String trackLine = null;
 		
 		if (DEBUG) {
@@ -141,9 +140,10 @@ public class PSL extends SymLoader {
 		}
 
 		int line_count = 0, length = 0;
-		String line = null, current_seq_id;
+		String line = null, target_seq_id, query_seq_id;
 		String[] fields = null;
-
+		boolean in_bottom_of_link_psl = false;
+		
 		Thread thread = Thread.currentThread();
 		try {
 			br = new BufferedReader(new InputStreamReader(istr));
@@ -156,6 +156,13 @@ public class PSL extends SymLoader {
 					continue;
 				}
 				if (line.startsWith("track")) {
+					if (is_link_psl) {
+						Map<String,String> track_props = track_line_parser.parseTrackLine(line, track_name_prefix);
+						String track_name = track_props.get(TrackLineParser.NAME);
+						if (track_name != null && track_name.endsWith("probesets")) {
+							in_bottom_of_link_psl = true;
+						}
+					}
 					chrTrack = new HashMap<String, Boolean>();
 					trackLine = line;
 					continue;
@@ -172,23 +179,40 @@ public class PSL extends SymLoader {
 				int findex = 0;
 
 				findex = skipExtraBinField(findex, fields);
-				findex += 13;
-				current_seq_id = fields[findex++];
+
+				findex += 9;
+				query_seq_id = fields[findex];
+
+				findex += 4;
+				target_seq_id = fields[findex];
+
+				findex += 1;
 				length = Integer.valueOf(fields[findex]);
 
-				if (!chrs.containsKey(current_seq_id)) {
-					addToLists(chrs, current_seq_id, chrFiles, chrLength);
+				addToQueryTarget(queryTarget, query_seq_id, target_seq_id);
+
+				//TODO: What if query_group is not null.
+				if (!chrs.containsKey(target_seq_id) && !in_bottom_of_link_psl) {
+					addToLists(chrs, target_seq_id, chrFiles, chrLength);
 				}
 
-				bw = chrs.get(current_seq_id);
-				if (!chrTrack.containsKey(current_seq_id) && trackLine != null) {
-					chrTrack.put(current_seq_id, true);
-					bw.write(trackLine + "\n");
-				}
+				bw = chrs.get(target_seq_id);
 
-				bw.write(line + "\n");
-				if (length > chrLength.get(current_seq_id)) {
-					chrLength.put(current_seq_id, length);
+				if(bw == null){
+					for(String seq_id : queryTarget.get(target_seq_id)){
+						bw = chrs.get(seq_id);
+						bw.write(line + "\n");
+					}
+				} else {
+					if (!chrTrack.containsKey(target_seq_id) && trackLine != null) {
+						chrTrack.put(target_seq_id, true);
+						bw.write(trackLine + "\n");
+					}
+
+					bw.write(line + "\n");
+					if (length > chrLength.get(target_seq_id)) {
+						chrLength.put(target_seq_id, length);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -204,7 +228,17 @@ public class PSL extends SymLoader {
 		}
 
 	}
-	
+
+	private static void addToQueryTarget(Map<String, Set<String>> queryTarget, String query_seq_id, String target_seq_id){
+
+		if(!queryTarget.containsKey(query_seq_id)){
+			queryTarget.put(query_seq_id, new HashSet<String>());
+		}
+
+		Set<String> set = queryTarget.get(query_seq_id);
+		set.add(target_seq_id);
+	}
+
 	public void enableSharedQueryTarget(boolean b) {
 		look_for_targets_in_query_group = b;
 	}
@@ -254,7 +288,7 @@ public class PSL extends SymLoader {
 
 		File file = chrList.get(seq);
 		if (file == null) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
+			Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
 			return Collections.<UcscPslSym>emptyList();
 		}
 
@@ -791,4 +825,25 @@ public class PSL extends SymLoader {
 		return "text/plain";
 	}
 
+	static public void main(String[] args) throws Exception{
+		String string =
+		"70	1	0	0	0	0	2	165	+	EL049618	71	0	71	chr1	30432563	455031	455267	3	9,36,26,	0,9,45,	455031,455111,455241,\n" +
+		"71	0	0	0	0	0	2	176	+	EL049618	71	0	71	chr1	30432563	457618	457865	3	9,36,26,	0,9,45,	457618,457715,457839,\n";
+
+		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+		File file = new File("/Users/aloraine/Desktop/RT_U34.link.psl");
+		PSL psl = new PSL(file.toURI(), file.getName(), group, null, null,
+				false, true, false);
+		psl.setIsLinkPsl(true);
+		List<BioSeq> chromosomeList = psl.getChromosomeList();
+	}
+
+	public static File createFileFromString(String string) throws Exception{
+		File tempFile = File.createTempFile("tempFile", ".bed");
+		tempFile.deleteOnExit();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
+		bw.write(string);
+		bw.close();
+		return tempFile;
+	}
 }

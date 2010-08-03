@@ -52,16 +52,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
-import net.sf.picard.cmdline.CommandLineProgram;
-import net.sf.picard.util.BuildBamIndex;
 import org.xml.sax.InputSource;
 
 /**
@@ -69,15 +65,11 @@ import org.xml.sax.InputSource;
  * @author jnicol
  */
 public class FeatureRequestSym extends SimpleSymWithProps {
-
-
   private final LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
-  private final SeqSpan inside_span;
 
   //  for now trying to do without container info in constructor
-  public FeatureRequestSym(SeqSpan overlap, SeqSpan inside) {
+  public FeatureRequestSym(SeqSpan overlap) {
     overlap_span = new LeafSingletonSymmetry(overlap);
-	inside_span = inside;
 	
     this.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
   }
@@ -93,12 +85,6 @@ public class FeatureRequestSym extends SimpleSymWithProps {
    *  Convenience method for returning overlap span as a SeqSymmetry with 1 span and 0 children.
    */
   public final SeqSymmetry getOverlapSym() { return overlap_span; }
-  
-  /**
-   *  Returns the inside span, the span specified in the original query
-   *    that returned annotation must be contained within.
-   */
-  public final SeqSpan getInsideSpan() { return inside_span; }
 
   /**
    * Add the specified symmetries to the FeatureRequestSym.  It is assumed these correspond to the same chromosome.
@@ -193,7 +179,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		} else {
 			if (overlapSpan != null) {
 				// Note that if we're loading the whole genome and symL isn't defined, we return one requestSym.  That's okay -- it will be ignored
-				FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan, null);
+				FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan);
 				ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
 			}
 		}
@@ -206,7 +192,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 				continue;
 			}
 			SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-			FeatureRequestSym requestSym = new FeatureRequestSym(overlap, null);
+			FeatureRequestSym requestSym = new FeatureRequestSym(overlap);
 			ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
 		}
 	}

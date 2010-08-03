@@ -275,14 +275,11 @@ public final class QuickLoad extends SymLoader {
 	private void filterAndAddAnnotations(
 			FeatureRequestSym request, List<? extends SeqSymmetry> results, String featureName, List<SeqSymmetry> overallResults) {
 		results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
-		if (request.getInsideSpan() != null) {
-			results = ServerUtils.specifiedInsideSpan(request.getInsideSpan(), results);
-		}
 		for (Map.Entry<String, List<SeqSymmetry>> entry : FeatureRequestSym.splitResultsByTracks(results).entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}
-			FeatureRequestSym requestSym = new FeatureRequestSym(request.getOverlapSpan(), request.getInsideSpan());
+			FeatureRequestSym requestSym = new FeatureRequestSym(request.getOverlapSpan());
 			requestSym.setProperty("method",
 					entry.getKey() != null ? entry.getKey() : this.uri.toString());
 			ClientOptimizer.uri2type.put(uri, (String)requestSym.getProperty("method"));	// TODO: HACK for 6.3

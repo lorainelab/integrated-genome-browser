@@ -202,7 +202,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getID()).setHumanName(das_type.getName());
 
 			SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-			Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span, null);
+			Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span);
 			System.out.println("request: " + das_type.getName() + ", seq = " + aseq.getID() + ", length = " + aseq);
 
 			// if already retrieved chp_array_type coord annotations for this whole sequence (for example

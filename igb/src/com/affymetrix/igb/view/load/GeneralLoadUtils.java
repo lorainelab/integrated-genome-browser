@@ -673,7 +673,7 @@ public final class GeneralLoadUtils {
 		for (Das2Type dtype : type_list) {
 			if (dtype != null && region != null) {
 				// maybe add a fully_loaded flag so know which ones to skip because they're done?
-				Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(dtype, region, overlap, null);
+				Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(dtype, region, overlap);
 				requests.add(request_sym);
 			}
 		}

@@ -89,13 +89,11 @@ public final class Das2ClientOptimizer {
     private static void loadRequestSym(Das2FeatureRequestSym request_sym) {
         Das2Region region = request_sym.getRegion();
         SeqSpan overlap_span = request_sym.getOverlapSpan();
-        SeqSpan inside_span = request_sym.getInsideSpan();
         String overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
-        String inside_filter = inside_span == null ? null : Das2FeatureSaxParser.getRangeString(inside_span, false);
-
+      
         if (DEBUG) {
             Logger.getLogger(Das2ClientOptimizer.class.getName()).log(
-					Level.FINE, "overlap = {0}, inside = {1}", new Object[]{overlap_filter, inside_filter});
+					Level.FINE, "overlap = {0}", overlap_filter);
         }
         Das2Type type = request_sym.getDas2Type();
         String format = request_sym.getFormat();
@@ -118,7 +116,7 @@ public final class Das2ClientOptimizer {
         }
 
         try {
-            String query_part = DetermineQueryPart(region, overlap_filter, inside_filter, type, format);
+            String query_part = DetermineQueryPart(region, overlap_filter, type, format);
 
             if (format == null) {
                 format = default_format;
@@ -137,7 +135,7 @@ public final class Das2ClientOptimizer {
 		}
     }
 
-   private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
+   private static String DetermineQueryPart(Das2Region region, String overlap_filter, Das2Type type, String format) throws UnsupportedEncodingException {
 		StringBuilder buf = new StringBuilder(200);
 		buf.append("segment=");
 		buf.append(URLEncoder.encode(region.getID(), Constants.UTF8));
@@ -145,11 +143,6 @@ public final class Das2ClientOptimizer {
 		buf.append("overlaps=");
 		buf.append(URLEncoder.encode(overlap_filter, Constants.UTF8));
 		buf.append(";");
-		if (inside_filter != null) {
-			buf.append("inside=");
-			buf.append(URLEncoder.encode(inside_filter, Constants.UTF8));
-			buf.append(";");
-		}
 		buf.append("type=");
 		buf.append(URLEncoder.encode(type.getID(), Constants.UTF8));
 		if (format != null) {

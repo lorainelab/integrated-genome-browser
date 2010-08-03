@@ -273,7 +273,7 @@ public final class UnibrowControlServlet {
 					int min = Integer.parseInt(minmax[0]);
 					int max = Integer.parseInt(minmax[1]);
 					SeqSpan overlap = new SimpleSeqSpan(min, max, segment.getAnnotatedSeq());
-					Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap, null);
+					Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap);
 					request.setFormat(format);
 					if (DEBUG_DAS2_LOAD) {
 						Logger.getLogger(UnibrowControlServlet.class.getName()).info("adding das2 request: " + das2_query_url);

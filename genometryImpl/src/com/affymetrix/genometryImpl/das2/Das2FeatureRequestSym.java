@@ -52,8 +52,8 @@ public final class Das2FeatureRequestSym extends FeatureRequestSym implements Ty
   private final Das2RequestLog response = new Das2RequestLog();
 
   //  for now trying to do without container info in constructor
-  public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap, SeqSpan inside) {
-	super(overlap, inside);
+  public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap) {
+	super(overlap);
     das2_type = type;
     das2_region = region;
     aseq = overlap.getBioSeq();

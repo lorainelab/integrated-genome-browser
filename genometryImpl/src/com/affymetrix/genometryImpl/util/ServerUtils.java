@@ -1073,7 +1073,7 @@ public abstract class ServerUtils {
 	 */
 	public static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {
 		// residue loaders
-		extension = extension.substring(extension.lastIndexOf('.') + 1);	// strip off first .
+		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
 		if (extension.equals("bnib")) {
 			return new BNIB(uri, group);
 		}
@@ -1107,6 +1107,20 @@ public abstract class ServerUtils {
 		if (extension.equals("wig")) {
 			return new Wiggle(uri, featureName, group);
 		}
+		// Commented out since not tested yet.
+//		if(extension.equals("link.psl")) {
+//			PSL psl = new PSL(uri, featureName, group, null, null,
+//				false, true, false);
+//			psl.setIsLinkPsl(true);
+//			psl.enableSharedQueryTarget(true);
+//			return psl;
+//		}
+//		if(extension.equals("psl")) {
+//			PSL psl = new PSL(uri, featureName, group, null, null,
+//				false, true, false);
+//			psl.enableSharedQueryTarget(true);
+//			return psl;
+//		}
 		return null;
 	}
 

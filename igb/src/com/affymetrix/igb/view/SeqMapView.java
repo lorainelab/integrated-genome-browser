@@ -14,7 +14,6 @@ import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
@@ -46,7 +45,6 @@ import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
-import com.affymetrix.igb.glyph.GridGlyph;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
@@ -176,7 +174,7 @@ public class SeqMapView extends JPanel
 	private final Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
 
 	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
-	private GlyphEdgeMatcher edge_matcher = null;
+	private final GlyphEdgeMatcher edge_matcher;
 	private JPopupMenu sym_popup;
 	private JLabel sym_info;
 	// A fake menu item, prevents null pointer exceptions in actionPerformed()
@@ -187,8 +185,7 @@ public class SeqMapView extends JPanel
 	JMenuItem selectParentMI = empty_menu_item;
 	JMenuItem slicendiceMI = empty_menu_item;
 	// for right-click on background
-	private SeqMapViewActionListener action_listener;
-	private SeqMapViewMouseListener mouse_listener;
+	private final SeqMapViewActionListener action_listener;
 	private CharSeqGlyph seq_glyph = null;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
@@ -328,7 +325,7 @@ public class SeqMapView extends JPanel
 		edge_matcher = GlyphEdgeMatcher.getSingleton();
 
 		action_listener = new SeqMapViewActionListener(this);
-		mouse_listener = new SeqMapViewMouseListener(this);
+		SeqMapViewMouseListener mouse_listener = new SeqMapViewMouseListener(this);
 
 		seqmap.getNeoCanvas().setDoubleBuffered(false);
 

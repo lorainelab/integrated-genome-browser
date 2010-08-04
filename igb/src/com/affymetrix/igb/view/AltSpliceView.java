@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -36,8 +35,6 @@ public class AltSpliceView extends JComponent
 				SymSelectionListener, SeqSelectionListener,
 				TierLabelManager.PopupListener {
 
-	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private final SeqMapView original_view;
 	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
 	private final JTextField buffer_sizeTF;
@@ -49,7 +46,7 @@ public class AltSpliceView extends JComponent
 	private boolean slice_by_selection_on = true;
 
 	public AltSpliceView() {
-		original_view = Application.getSingleton().getMapView();
+		SeqMapView original_view = Application.getSingleton().getMapView();
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;
@@ -82,8 +79,8 @@ public class AltSpliceView extends JComponent
 		buffer_sizeTF.addActionListener(this);
 		slice_by_selectionCB.addItemListener(this);
 
-		gmodel.addSeqSelectionListener(this);
-		gmodel.addSymSelectionListener(this);
+		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
+		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 
 		TierLabelManager tlman = spliced_view.getTierManager();
 		if (tlman != null) {
@@ -144,7 +141,7 @@ public class AltSpliceView extends JComponent
 		if (Application.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
 		}
-		BioSeq newseq = gmodel.getSelectedSeq();
+		BioSeq newseq = GenometryModel.getGenometryModel().getSelectedSeq();
 		if (last_seq_changed != newseq) {
 			last_seq_changed = newseq;
 			if (this.isShowing() && slice_by_selection_on) {

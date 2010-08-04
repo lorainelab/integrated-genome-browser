@@ -74,7 +74,18 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	protected final void setSliceBuffer(int bases) {
 		slice_buffer = bases;
 		if (slicing_in_effect) {
-			sliceAndDice(slice_symmetry);
+			stopSlicingThread();
+
+			slice_thread = new Thread() {
+
+				@Override
+				public void run() {
+					enableSeqMap(false);
+					sliceAndDiceNow(slice_symmetry);
+					enableSeqMap(true);
+				}
+			};
+			slice_thread.start();
 		}
 	}
 
@@ -90,7 +101,9 @@ final class AltSpliceSeqMapView extends SeqMapView {
 			@Override
 			public void run() {
 				enableSeqMap(false);
-				sliceAndDiceNow(syms);
+				SimpleSymWithProps unionSym = new SimpleSymWithProps();
+				SeqUtils.union(syms, unionSym, aseq);
+				sliceAndDiceNow(unionSym);
 				enableSeqMap(true);
 			}
 		};
@@ -98,14 +111,8 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		slice_thread.start();
 	}
 
-	private final void sliceAndDiceNow(List<SeqSymmetry> syms) {
-		SimpleSymWithProps unionSym = new SimpleSymWithProps();
-		SeqUtils.union(syms, unionSym, aseq);
-		sliceAndDiceNow(unionSym);
-	}
-
 	// disables the sliced view while the slicing thread works
-	private final void enableSeqMap(boolean b) {
+	private void enableSeqMap(boolean b) {
 		seqmap.setVisible(b);
 		if (map_range_box != null) {
 			if (!b) {
@@ -122,24 +129,8 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		}
 	}
 
-	private final void sliceAndDice(final SeqSymmetry sym) {
-		stopSlicingThread();
-
-		slice_thread = new Thread() {
-
-			@Override
-			public void run() {
-				enableSeqMap(false);
-				sliceAndDiceNow(sym);
-				enableSeqMap(true);
-			}
-		};
-
-		slice_thread.start();
-	}
-
 	@SuppressWarnings("deprecation")
-	private final void stopSlicingThread() {
+	private void stopSlicingThread() {
 		if (slice_thread != null
 				&& slice_thread != Thread.currentThread()
 				&& slice_thread.isAlive()) {
@@ -168,8 +159,6 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		} else {
 			seq2viewSym.clear();
 		}
-
-
 
 		// rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
 		//    mapped to viewseq

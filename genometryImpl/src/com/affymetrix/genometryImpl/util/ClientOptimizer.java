@@ -145,31 +145,14 @@ public class ClientOptimizer {
             SeqSymmetry split_query, BioSeq aseq, int first_within_min, int last_within_max, Das2Type type,
 			Das2Region region, List<FeatureRequestSym> output_requests) {
         int split_count = split_query.getChildCount();
-        int cur_within_min;
-        int cur_within_max;
         for (int k = 0; k < split_count; k++) {
             SeqSymmetry csym = split_query.getChild(k);
             SeqSpan ospan = csym.getSpan(aseq);
-            if (k == 0) {
-                cur_within_min = first_within_min;
-            } else {
-                cur_within_min = ospan.getMin();
-            }
-            if (k == (split_count - 1)) {
-                cur_within_max = last_within_max;
-            } else {
-                cur_within_max = ospan.getMax();
-            }
-            SeqSpan ispan = new SimpleSeqSpan(cur_within_min, cur_within_max, aseq);
-			if (DEBUG) {
-				Logger.getLogger(ClientOptimizer.class.getName()).log(
-						Level.FINE, "new inside span: {0}", SeqUtils.spanToString(ispan));
-			}
 			FeatureRequestSym new_request = null;
 			if (region == null) {
-				new_request = new FeatureRequestSym(ospan, ispan);
+				new_request = new FeatureRequestSym(ospan);
 			} else {
-				new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
+				new_request = new Das2FeatureRequestSym(type, region, ospan);
 			}
             output_requests.add(new_request);
         }

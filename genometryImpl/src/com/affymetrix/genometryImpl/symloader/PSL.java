@@ -97,7 +97,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 
 		try {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			parseLines(bis,chrLength, chrFiles);
+			parseLines(bis, this.featureName, chrLength, chrFiles);
 			createResults(chrLength, chrFiles);
 		} catch (Exception ex) {
 			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
@@ -144,7 +144,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				annotate_target, annotate_other);
 	}
 
-	private void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
+	private void parseLines(InputStream istr, String featureName, Map<String, Integer> chrLength, Map<String, File> chrFiles){
 
 		BufferedWriter bw = null;
 		BufferedReader br = null;
@@ -152,7 +152,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		Map<String, Set<String>> queryTarget = new HashMap<String, Set<String>>();
 		String trackLine = null;
-		
+	
 		if (DEBUG) {
 			System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
 		}
@@ -173,6 +173,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 						line.startsWith("match\t") || line.startsWith("-------")) {
 					continue;
 				}
+
 				if (line.startsWith("track")) {
 					if (is_link_psl) {
 						Map<String,String> track_props = track_line_parser.parseTrackLine(line, track_name_prefix);
@@ -183,6 +184,14 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 					}
 					chrTrack = new HashMap<String, Boolean>();
 					trackLine = line;
+
+					if(in_bottom_of_link_psl){
+						for(String seq_id : chrs.keySet()){
+							bw = chrs.get(seq_id);
+							bw.write(trackLine + "\n");
+							bw.flush();
+						}
+					}
 					continue;
 				}
 				
@@ -207,30 +216,43 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				findex += 1;
 				length = Integer.valueOf(fields[findex]);
 
+
+				if(in_bottom_of_link_psl){
+					Set<String> seq_ids = queryTarget.get(target_seq_id);
+					
+					if(seq_ids == null){
+						Logger.getLogger(PSL.class.getName()).log(Level.INFO, 
+								"Ignoring orphan target sequence {0} at line {1} "
+								+ "in feature {2}",
+								new Object[]{target_seq_id, line_count, featureName});
+						continue;
+					}
+
+					for(String seq_id : seq_ids){
+						bw = chrs.get(seq_id);
+						bw.write(line + "\n");
+					}
+					continue;
+				}
+				
 				addToQueryTarget(queryTarget, query_seq_id, target_seq_id);
 
-				//TODO: What if query_group is not null.
-				if (!chrs.containsKey(target_seq_id) && !in_bottom_of_link_psl) {
+				// Ignoring chromosome seqs after last track line. It also ignores
+				// orphan chromosome seqs.
+				if (!chrs.containsKey(target_seq_id)) {
 					addToLists(chrs, target_seq_id, chrFiles, chrLength);
 				}
 
 				bw = chrs.get(target_seq_id);
+		
+				if (!chrTrack.containsKey(target_seq_id) && trackLine != null) {
+					chrTrack.put(target_seq_id, true);
+					bw.write(trackLine + "\n");
+				}
 
-				if(bw == null){
-					for(String seq_id : queryTarget.get(target_seq_id)){
-						bw = chrs.get(seq_id);
-						bw.write(line + "\n");
-					}
-				} else {
-					if (!chrTrack.containsKey(target_seq_id) && trackLine != null) {
-						chrTrack.put(target_seq_id, true);
-						bw.write(trackLine + "\n");
-					}
-
-					bw.write(line + "\n");
-					if (length > chrLength.get(target_seq_id)) {
-						chrLength.put(target_seq_id, length);
-					}
+				bw.write(line + "\n");
+				if (length > chrLength.get(target_seq_id)) {
+					chrLength.put(target_seq_id, length);
 				}
 			}
 		} catch (Exception e) {
@@ -239,12 +261,16 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			sb.append("line count: ").append(line_count).append("\n");
 		} finally {
 			for (BufferedWriter b : chrs.values()) {
+				try {
+					b.flush();
+				} catch (IOException ex) {
+					Logger.getLogger(PSL.class.getName()).log(Level.SEVERE, null, ex);
+				}
 				GeneralUtils.safeClose(b);
 			}
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
-
 	}
 
 	private static void addToQueryTarget(Map<String, Set<String>> queryTarget, String query_seq_id, String target_seq_id){

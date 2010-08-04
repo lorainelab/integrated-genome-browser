@@ -71,33 +71,23 @@ public class PSLParserTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testFiles() throws FileNotFoundException, IOException {
 		File file = new File("test/data/psl/test1.psl");
-		testFile(file, false);
-
-		file = new File("test/data/psl/RT_U34.link.psl.gz");
-		testFile(file, true);
+		testFile(file);
 	}
 
-	private void testFile(File file, boolean islinkpsl) throws FileNotFoundException, IOException {
+	private void testFile(File file) throws FileNotFoundException, IOException {
 		InputStream istr = GeneralUtils.getInputStream(file, new StringBuffer());
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		BioSeq seq = null;
 
-
-
 		PSLParser instance = new PSLParser();
-		instance.setIsLinkPsl(islinkpsl);
 		List<UcscPslSym> syms = instance.parse(istr, file.getName(), null, group, true, true);
-
-
 
 		PSL psl = new PSL(file.toURI(), file.getName(), group, null, null,
 				true, true, false);
-		psl.setIsLinkPsl(islinkpsl);
 		List<BioSeq> seqs = psl.getChromosomeList();
-
 
 		List<SeqSymmetry> syms1 = null;
 		List<UcscPslSym> syms2 = null;

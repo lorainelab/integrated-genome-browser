@@ -867,16 +867,17 @@ public final class LocalUrlCacher {
 		if (scheme.startsWith("http")) {
 			InputStream istr = null;
 			try {
-				String uriStr = uri.toString();
-				istr = LocalUrlCacher.getInputStream(uriStr);
-				if(istr != null){
+
+				URLConnection conn = uri.toURL().openConnection();
+				istr = conn.getInputStream();
+
+				if(istr != null)
 					return true;
-				}
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :{0}", uriStr);
+
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :{0}", uri.toString());
 			}catch(Exception ex){
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :" + uri.getPath(), ex);
-			}
-			finally{GeneralUtils.safeClose(istr);}
+			}finally{ GeneralUtils.safeClose(istr); }
 		}
 		
 		return false;

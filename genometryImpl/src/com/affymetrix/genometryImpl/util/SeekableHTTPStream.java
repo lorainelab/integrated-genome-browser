@@ -63,6 +63,8 @@ public class SeekableHTTPStream extends SeekableStream {
         int n = 0;
         try {
             connection = (HttpURLConnection) url.openConnection();
+			connection.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+			connection.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 
             long endRange = position + len - 1;
             // IF we know the total content length, limit the end range to that.

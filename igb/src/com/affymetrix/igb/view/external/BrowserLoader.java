@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view.external;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -72,7 +73,8 @@ public abstract class BrowserLoader {
 		URL request_url = new URL(url);
 		HttpURLConnection request_con = (HttpURLConnection) request_url.openConnection();
 		request_con.setInstanceFollowRedirects(false);
-		request_con.setConnectTimeout(120 * 1000); //2min
+		request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+		request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 		request_con.setUseCaches(false);
 		request_con.addRequestProperty("Cookie", cookie);
 		return request_con;

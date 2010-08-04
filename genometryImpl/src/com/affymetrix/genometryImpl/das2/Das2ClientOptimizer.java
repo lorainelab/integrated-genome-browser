@@ -183,6 +183,8 @@ public final class Das2ClientOptimizer {
                 }
                 // casting to HttpURLConnection, since Das2 servers should be either accessed via either HTTP or HTTPS
                 HttpURLConnection query_con = (HttpURLConnection) query_url.openConnection();
+				query_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+				query_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
                 int response_code = query_con.getResponseCode();
                 String response_message = query_con.getResponseMessage();
 

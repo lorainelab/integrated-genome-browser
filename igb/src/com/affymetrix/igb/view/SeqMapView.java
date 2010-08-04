@@ -193,11 +193,9 @@ public class SeqMapView extends JPanel
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 	protected TierLabelManager tier_manager;
-	GridGlyph grid_glyph = null;
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
-	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	public static final Font axisFont = NeoConstants.default_bold_font;
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
@@ -430,7 +428,7 @@ public class SeqMapView extends JPanel
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 	}
 
-	private void removeGraphsFromSeq(BioSeq mseq) {
+	private static void removeGraphsFromSeq(BioSeq mseq) {
 		int acount = mseq.getAnnotationCount();
 		for (int i = acount - 1; i >= 0; i--) {
 			SeqSymmetry annot = mseq.getAnnotation(i);
@@ -480,7 +478,7 @@ public class SeqMapView extends JPanel
 		return tier_manager;
 	}
 
-	public JFrame getFrame() {
+	public final JFrame getFrame() {
 		return frm;
 	}
 
@@ -502,48 +500,6 @@ public class SeqMapView extends JPanel
 	}
 
 	public final TransformTierGlyph getAxisTier() {
-		return axis_tier;
-	}
-
-	/** Set up a tier with fixed pixel height and place axis in it. */
-	private TransformTierGlyph addAxisTier(int tier_index) {
-		axis_tier = new TransformTierGlyph(axis_annot_style);
-		axis_tier.setFixedPixHeight(45);
-		axis_tier.setDirection(TierGlyph.Direction.AXIS);
-		AxisGlyph axis = seqmap.addAxis(0);
-		axis.setHitable(false);
-		axis.setFont(axisFont);
-
-		Color axis_bg = axis_annot_style.getBackground();
-		Color axis_fg = axis_annot_style.getColor();
-
-		axis.setBackgroundColor(axis_bg);
-		axis_tier.setBackgroundColor(axis_bg);
-		axis_tier.setFillColor(axis_bg);
-		axis.setForegroundColor(axis_fg);
-		axis_tier.setForegroundColor(axis_fg);
-		setAxisFormatFromPrefs(axis);
-
-		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), axis_tier, this);
-		if (cytoband_glyph != null) {
-			axis_tier.addChild(cytoband_glyph);
-			axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
-		}
-
-		axis_tier.addChild(axis);
-		
-		// it is important to set the colors before adding the tier
-		// to the map, else the label tier colors won't match
-		if (seqmap.getTiers().size() >= tier_index) {
-			seqmap.addTier(axis_tier, tier_index);
-		} else {
-			seqmap.addTier(axis_tier, false);
-		}
-		
-		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis);
-
-		axis_tier.addChild(seq_glyph);
-
 		return axis_tier;
 	}
 
@@ -604,7 +560,7 @@ public class SeqMapView extends JPanel
 		}
 
 		//Make sure the graph is un-selected in the genometry model, to allow GC
-		gmodel.clearSelectedSymmetries(this);
+		GenometryModel.getGenometryModel().clearSelectedSymmetries(this);
 		setAnnotatedSeq(aseq, false, true);
 	}
 
@@ -655,9 +611,6 @@ public class SeqMapView extends JPanel
 			clear();
 			return;
 		}
-
-		Timer tim = new Timer();
-		tim.start();
 
 		boolean same_seq = (seq == this.aseq);
 
@@ -744,7 +697,7 @@ public class SeqMapView extends JPanel
 			setZoomSpotY(old_zoom_spot_y);
 		} else {
 			// do selection based on what the genometry model thinks is selected
-			List<SeqSymmetry> symlist = gmodel.getSelectedSymmetries(seq);
+			List<SeqSymmetry> symlist = GenometryModel.getGenometryModel().getSelectedSymmetries(seq);
 			select(symlist, false, false, false);
 
 			setStatus(getSelectionTitle(seqmap.getSelected()));
@@ -759,7 +712,7 @@ public class SeqMapView extends JPanel
 		seqmap.toFront(axis_tier);
 
 		// restore floating layers to front of map
-		for (GlyphI layer_glyph : this.getFloatingLayers(seqmap.getScene().getGlyph())) {
+		for (GlyphI layer_glyph : getFloatingLayers(seqmap.getScene().getGlyph())) {
 			seqmap.toFront(layer_glyph);
 		}
 		// notifyPlugins();
@@ -806,14 +759,14 @@ public class SeqMapView extends JPanel
 		}
 		hairline = new UnibrowHairline(seqmap);
 		hairline.getShadow().setLabeled(hairline_is_labeled);
-		addPreviousTierGlyphs(temp_tiers);
-		addAxisTier(axis_index);
+		addPreviousTierGlyphs(seqmap, temp_tiers);
+		axis_tier = addAxisTier(axis_index);
 		addAnnotationTiers();
 		hideEmptyTiers(seqmap.getTiers());
 	}
 
 
-	private void addPreviousTierGlyphs(List<TierGlyph> temp_tiers) {
+	private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
 		// add back in previous annotation tiers (with all children removed)
 		if (temp_tiers != null) {
 			for (int i = 0; i < temp_tiers.size(); i++) {
@@ -828,6 +781,49 @@ public class SeqMapView extends JPanel
 			}
 			temp_tiers.clear(); // redundant hint to garbage collection
 		}
+	}
+
+
+	/** Set up a tier with fixed pixel height and place axis in it. */
+	private TransformTierGlyph addAxisTier(int tier_index) {
+		TransformTierGlyph resultAxisTier = new TransformTierGlyph(axis_annot_style);
+		resultAxisTier.setFixedPixHeight(45);
+		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
+		AxisGlyph axis = seqmap.addAxis(0);
+		axis.setHitable(false);
+		axis.setFont(axisFont);
+
+		Color axis_bg = axis_annot_style.getBackground();
+		Color axis_fg = axis_annot_style.getColor();
+
+		axis.setBackgroundColor(axis_bg);
+		resultAxisTier.setBackgroundColor(axis_bg);
+		resultAxisTier.setFillColor(axis_bg);
+		axis.setForegroundColor(axis_fg);
+		resultAxisTier.setForegroundColor(axis_fg);
+		setAxisFormatFromPrefs(axis);
+
+		GlyphI cytoband_glyph = CytobandGlyph.makeCytobandGlyph(getAnnotatedSeq(), resultAxisTier, this);
+		if (cytoband_glyph != null) {
+			resultAxisTier.addChild(cytoband_glyph);
+			resultAxisTier.setFixedPixHeight(resultAxisTier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
+		}
+
+		resultAxisTier.addChild(axis);
+
+		// it is important to set the colors before adding the tier
+		// to the map, else the label tier colors won't match
+		if (seqmap.getTiers().size() >= tier_index) {
+			seqmap.addTier(resultAxisTier, tier_index);
+		} else {
+			seqmap.addTier(resultAxisTier, false);
+		}
+
+		seq_glyph = CharSeqGlyph.initSeqGlyph(viewseq, axis_fg, axis);
+
+		resultAxisTier.addChild(seq_glyph);
+
+		return resultAxisTier;
 	}
 
 
@@ -1228,7 +1224,7 @@ public class SeqMapView extends JPanel
 
 		List<SeqSymmetry> selected_syms = glyphsToSyms(selected_glyphs);
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
-		gmodel.setSelectedSymmetries(selected_syms, this);
+		GenometryModel.getGenometryModel().setSelectedSymmetries(selected_syms, this);
 	}
 
 
@@ -1267,14 +1263,6 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	/** Returns the region of sequence residues that is selected, or null.
-	 *  Note that this SeqSymmetry is not included in the return value of
-	 *  getSelectedSyms().
-	 */
-	private SeqSymmetry getSelectedRegion() {
-		return seq_selected_sym;
-	}
-
 	/**
 	 * Copies residues of selection to clipboard
 	 * If a region of sequence is selected, should copy genomic residues
@@ -1287,7 +1275,7 @@ public class SeqMapView extends JPanel
 		String from = "";
 
 		if (seq_selected_sym != null) {
-			residues_sym = getSelectedRegion();
+			residues_sym = seq_selected_sym;
 			from = " from selected region";
 		} else {
 			List<SeqSymmetry> syms = getSelectedSyms();
@@ -1401,7 +1389,7 @@ public class SeqMapView extends JPanel
 		BioSeq zseq = span.getBioSeq();
 		if ((zseq != null) &&
 						(zseq != this.getAnnotatedSeq())) {
-			gmodel.setSelectedSeq(zseq);
+			GenometryModel.getGenometryModel().setSelectedSeq(zseq);
 		}
 		zoomTo(span.getMin(), span.getMax());
 	}
@@ -1422,8 +1410,8 @@ public class SeqMapView extends JPanel
 		List<GlyphI> selections = seqmap.getSelected();
 		if (selections.size() > 0) {
 			zoomToRectangle(getRegionForGlyphs(selections));
-		} else if (getSelectedRegion() != null) {
-			SeqSpan span = getViewSeqSpan(getSelectedRegion());
+		} else if (seq_selected_sym != null) {
+			SeqSpan span = getViewSeqSpan(seq_selected_sym);
 			zoomTo(span);
 		}
 //		else{
@@ -2110,7 +2098,7 @@ public class SeqMapView extends JPanel
 	}
 	
 	public final SymWithProps addToDependentList(DependentData dd){
-		BioSeq seq = gmodel.getSelectedSeq();
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		if(seq == null)
 			return null;
 
@@ -2119,7 +2107,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public void updateDependentData() {
-		BioSeq seq = gmodel.getSelectedSeq();
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		if (seq != null) {
 			for (DependentData dd : dependent_list) {
 				seq.removeAnnotation(dd.getSym());

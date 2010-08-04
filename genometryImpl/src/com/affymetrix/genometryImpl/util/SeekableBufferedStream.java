@@ -86,6 +86,12 @@ public class SeekableBufferedStream extends SeekableStream {
 		seek(position);
 	}
 
+	@Override
+	public long skip(long n) throws IOException {
+		seek(position + n);
+		return position + n;
+	}
+
     @Override
     public String getSource() {
         return wrappedStream.getSource();

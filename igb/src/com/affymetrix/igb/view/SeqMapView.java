@@ -100,7 +100,7 @@ public class SeqMapView extends JPanel
 	private static final boolean DEBUG_TIERS = false;
 	private static final boolean DEBUG_COMP = false;
 
-	protected boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
+	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
 	private boolean hairline_is_labeled = true;
@@ -117,7 +117,7 @@ public class SeqMapView extends JPanel
 	private static final int max_for_matching = 500;
 	/** boolean for setting map range to min and max bounds of
 	AnnotatedBioSeq's annotations */
-	private boolean SHRINK_WRAP_MAP_BOUNDS = false;
+	private boolean shrinkWrapMapBounds = false;
 
 	private JFrame frm;
 	protected AffyTieredMap seqmap;
@@ -831,7 +831,7 @@ public class SeqMapView extends JPanel
 
 
 	private void shrinkWrap() {
-		if (SHRINK_WRAP_MAP_BOUNDS) {
+		if (shrinkWrapMapBounds) {
 			/*
 			 *  Shrink wrapping is a little more complicated than one might expect, but it
 			 *   needs to take into account the mapping of the annotated sequence to the
@@ -1255,7 +1255,7 @@ public class SeqMapView extends JPanel
 	public final void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
 		seq_selected_sym = region_sym;
 		// Note: SUBSELECT_SEQUENCE might possibly be set to false in the AltSpliceView
-		if (SUBSELECT_SEQUENCE && seq_glyph != null) {
+		if (subselectSequence && seq_glyph != null) {
 			if (region_sym == null) {
 				seq_glyph.setSelected(false);
 			} else {
@@ -1575,13 +1575,13 @@ public class SeqMapView extends JPanel
 	}
 
 	public final void setShrinkWrap(boolean b) {
-		SHRINK_WRAP_MAP_BOUNDS = b;
+		shrinkWrapMapBounds = b;
 		setAnnotatedSeq(aseq);
 		ShrinkWrapAction.getAction().putValue(Action.SELECTED_KEY, b);
 	}
 
 	public final boolean getShrinkWrap() {
-		return SHRINK_WRAP_MAP_BOUNDS;
+		return shrinkWrapMapBounds;
 	}
 
 	/**
@@ -1684,22 +1684,13 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Select the parents of the current selections */
-	final public void selectParents() {
+	final void selectParents() {
 		if (seqmap.getSelected().isEmpty()) {
 			ErrorHandler.errorPanel("Nothing selected");
-		} else if (seqmap.getSelected().size() == 1) {
-			// one selection: select its parent, not recursively
-			selectParents(false);
-		} else {
-			// multiple selections: select parents recursively
-			selectParents(true);
+			return;
 		}
-	}
 
-	/** For each current selection, deselect it and select its parent instead.
-	 *  @param top_level if true, will select only top-level parents
-	 */
-	private void selectParents(boolean top_level) {
+		boolean top_level = seqmap.getSelected().size() > 1;
 		// copy selections to a new list before starting, because list of selections will be modified
 		List<GlyphI> all_selections = new ArrayList<GlyphI>(seqmap.getSelected());
 		Iterator<GlyphI> iter = all_selections.iterator();
@@ -1724,7 +1715,7 @@ public class SeqMapView extends JPanel
 	 *  @return a list where each child is replaced by its top-most parent, if it
 	 *  has a parent, or else the child itself is included in the list
 	 */
-	public static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
+	static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
 		boolean top_level = true;
 		// linked hash set keeps parents in same order as child list so that comparison
 		// like childList.equals(parentList) can be used.
@@ -1736,7 +1727,7 @@ public class SeqMapView extends JPanel
 		return new ArrayList<GlyphI>(results);
 	}
 
-	/** Get the parent, or top-level parent, of a glyph, with certain restictions.
+	/** Get the parent, or top-level parent, of a glyph, with certain restrictions.
 	 *  Will not return a TierGlyph or RootGlyph or a glyph that isn't hitable, but
 	 *  will return the original GlyphI instead.
 	 *  @param top_level if true, will recurse up to the top-level parent, with

@@ -52,7 +52,7 @@ public class AltSpliceView extends JComponent
 		original_view = Application.getSingleton().getMapView();
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
-		spliced_view.SUBSELECT_SEQUENCE = false;
+		spliced_view.subselectSequence = false;
 		orf_analyzer = new OrfAnalyzer(spliced_view);
 		buffer_sizeTF = new JTextField(4);
 		buffer_sizeTF.setText("" + spliced_view.getSliceBuffer());

@@ -105,7 +105,7 @@ public class SeqMapView extends JPanel
 	protected boolean coord_shift = false;
 	private boolean hairline_is_labeled = true;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
-	private final XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
+	private static final XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 	/**
 	 *  maximum number of query glyphs for edge matcher.
 	 *  any more than this and won't attempt to edge match
@@ -193,7 +193,6 @@ public class SeqMapView extends JPanel
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 	protected TierLabelManager tier_manager;
-	PixelFloaterGlyph grid_layer = null;
 	GridGlyph grid_glyph = null;
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
@@ -209,11 +208,11 @@ public class SeqMapView extends JPanel
 
 	// We only need a single ScoredContainerGlyphFactory because all graph properties
 	// are in the GraphState object.
-	private final ScoredContainerGlyphFactory container_factory = new ScoredContainerGlyphFactory();
+	private static final ScoredContainerGlyphFactory container_factory = new ScoredContainerGlyphFactory();
 
 	// We only need a single GraphGlyphFactory because all graph properties
 	// are in the GraphState object.
-	private final GenericGraphGlyphFactory graph_factory = new GenericGraphGlyphFactory();
+	private static final GenericGraphGlyphFactory graph_factory = new GenericGraphGlyphFactory();
 
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -648,7 +647,9 @@ public class SeqMapView extends JPanel
 		//            currently sequence is not properly displayed when reverse complementing
 		//
 
-		setTitleBar(seq);
+		if (frm != null) {
+			frm.setTitle(getTitleBar(seq));
+		}
 
 		if (seq == null) {
 			clear();
@@ -758,7 +759,7 @@ public class SeqMapView extends JPanel
 		seqmap.toFront(axis_tier);
 
 		// restore floating layers to front of map
-		for (GlyphI layer_glyph : this.getFloatingLayers()) {
+		for (GlyphI layer_glyph : this.getFloatingLayers(seqmap.getScene().getGlyph())) {
 			seqmap.toFront(layer_glyph);
 		}
 		// notifyPlugins();
@@ -808,7 +809,7 @@ public class SeqMapView extends JPanel
 		addPreviousTierGlyphs(temp_tiers);
 		addAxisTier(axis_index);
 		addAnnotationTiers();
-		removeEmptyTiers();
+		hideEmptyTiers(seqmap.getTiers());
 	}
 
 
@@ -854,6 +855,31 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	private static String getTitleBar(BioSeq seq) {
+		StringBuilder title = new StringBuilder(128);
+		if (seq != null) {
+			if (title.length() > 0) {
+				title.append(" - ");
+			}
+			String seqid = seq.getID().trim();
+			Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
+			if (pattern.matcher(seqid).matches()) {
+				seqid = seqid.replace("chr", "Chromosome ");
+			}
+
+			title.append(seqid);
+			String version_info = getVersionInfo(seq);
+			if (version_info != null) {
+				title.append("  (").append(version_info).append(')');
+			}
+		}
+		if (title.length() > 0) {
+			title.append(" - ");
+		}
+		title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
+		return title.toString();
+	}
+
 	private static String getVersionInfo(BioSeq seq) {
 		if (seq == null) {
 			return null;
@@ -878,54 +904,25 @@ public class SeqMapView extends JPanel
 		return version_info;
 	}
 
-	private void setTitleBar(BioSeq seq) {
-		if (frm != null) {
-			StringBuilder title = new StringBuilder(128);
-			if (seq != null) {
-				if (title.length() > 0) {
-					title.append(" - ");
-				}
-				String seqid = seq.getID().trim();
-				Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
-				if (pattern.matcher(seqid).matches()) {
-					seqid = seqid.replace("chr", "Chromosome ");
-				}
-
-				title.append(seqid);
-				String version_info = getVersionInfo(seq);
-				if (version_info != null) {
-					title.append("  (").append(version_info).append(')');
-				}
-			}
-			if (title.length() > 0) {
-				title.append(" - ");
-			}
-			title.append(IGBConstants.APP_NAME + " " + IGBConstants.APP_VERSION);
-			frm.setTitle(title.toString());
-		}
-	}
-
 	/**
 	 *  Returns all floating layers _except_ grid layer (which is supposed to stay
 	 *  behind everything else).
 	 */
-	private List<GlyphI> getFloatingLayers() {
+	private static List<GlyphI> getFloatingLayers(GlyphI root_glyph) {
 		List<GlyphI> layers = new ArrayList<GlyphI>();
-		GlyphI root_glyph = seqmap.getScene().getGlyph();
 		int gcount = root_glyph.getChildCount();
 		for (int i = 0; i < gcount; i++) {
 			GlyphI cgl = root_glyph.getChild(i);
-			if ((cgl instanceof PixelFloaterGlyph) && (cgl != grid_layer)) {
+			if (cgl instanceof PixelFloaterGlyph) {
 				layers.add(cgl);
 			}
 		}
 		return layers;
 	}
 
-	private void removeEmptyTiers() {
-		// Hides all empty tiers.  Doesn't really remove them.
-		for (TierGlyph tg : seqmap.getTiers()) {
-			if (tg.getChildCount() <= 0) {
+	private static void hideEmptyTiers(List<TierGlyph> tiers) {
+		for (TierGlyph tg : tiers) {
+			if (tg.getChildCount() == 0) {
 				tg.setVisibility(false);
 			}
 		}
@@ -1034,7 +1031,7 @@ public class SeqMapView extends JPanel
 
 			if (annotSym instanceof SymWithProps) {
 				addAnnotationGlyphs(annotSym);
-				doMiddlegroundShading(annotSym);
+				doMiddlegroundShading(annotSym, method2ftier, method2rtier);
 			}
 		}
 
@@ -1078,7 +1075,7 @@ public class SeqMapView extends JPanel
 
 	// XmlStylesheetGlyphFactory takes the method and type
 	// into account when determining how to draw a sym.
-	public final MapViewGlyphFactoryI getAnnotationGlyphFactory() {
+	public final XmlStylesheetGlyphFactory getAnnotationGlyphFactory() {
 		return default_glyph_factory;
 	}
 
@@ -1096,7 +1093,7 @@ public class SeqMapView extends JPanel
 		factory.createGlyph(annotSym, this);
 	}
 
-	private void doMiddlegroundShading(SeqSymmetry annotSym) {
+	private static void doMiddlegroundShading(SeqSymmetry annotSym, Map<String, TierGlyph> method2ftier, Map<String, TierGlyph> method2rtier) {
 		String meth = BioSeq.determineMethod(annotSym);
 		// do "middleground" shading for tracks loaded via DAS/2
 		if ((meth != null) &&

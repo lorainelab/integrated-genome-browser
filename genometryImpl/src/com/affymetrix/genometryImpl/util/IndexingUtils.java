@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symloader.PSL;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -347,7 +348,7 @@ public class IndexingUtils {
 			for (SeqSymmetry sym : syms) {
 				iSymWriter.writeSymmetry(sym, seq, dos);	// write out interval<->symmetries
 			}
-			if (iSymWriter instanceof PSLParser && indexesFileName.toLowerCase().endsWith(".link.psl")) {
+			if ((iSymWriter instanceof PSLParser || iSymWriter instanceof PSL) && indexesFileName.toLowerCase().endsWith(".link.psl")) {
 				writeAdditionalLinkPSLIndex(indexesFileName, syms, seq, iSyms.typeName);
 			}
 		} finally {

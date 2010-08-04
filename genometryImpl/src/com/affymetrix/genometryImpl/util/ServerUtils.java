@@ -809,7 +809,7 @@ public abstract class ServerUtils {
 			byte[] bytes = IndexingUtils.readBytesFromFile(
 					iSyms.file, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
 
-			if (iSyms.iWriter instanceof PSLParser && iSyms.file.getName().endsWith(".link.psl")) {
+			if ((iSyms.iWriter instanceof PSLParser || iSyms.iWriter instanceof PSL) && iSyms.file.getName().endsWith(".link.psl")) {
 				String indexesFileName = iSyms.file.getAbsolutePath();
 				newIstr = IndexingUtils.readAdditionalLinkPSLIndex(indexesFileName, annot_type, bytes);
 			} else {

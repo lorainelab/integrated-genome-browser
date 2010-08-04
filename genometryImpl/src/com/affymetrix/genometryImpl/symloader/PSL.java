@@ -23,7 +23,10 @@ import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -130,18 +133,14 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	@Override
 	public List<UcscPslSym> getChromosome(BioSeq seq) {
 		init();
-		return parse(seq, Integer.MIN_VALUE, Integer.MAX_VALUE, featureName,
-				query_group, target_group, other_group, annotate_query,
-				annotate_target, annotate_other);
+		return parse(seq, Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
 
 	@Override
 	public List<UcscPslSym> getRegion(SeqSpan span) {
 		init();
-		return parse(span.getBioSeq(), span.getMin(), span.getMax(), featureName,
-				query_group, target_group, other_group, annotate_query,
-				annotate_target, annotate_other);
+		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
 	private void parseLines(InputStream istr, String featureName, Map<String, Integer> chrLength, Map<String, File> chrFiles){
@@ -299,12 +298,33 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		is_link_psl = b;
 	}
 
-//	public List<UcscPslSym> parse(InputStream istr, String annot_type,
-//			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
-//			boolean annotate_query, boolean annotate_target) throws IOException {
-//		return parse(istr, annot_type, query_group, target_group, null,
-//				annotate_query, annotate_target, false);
-//	}
+	public List<UcscPslSym> parse(InputStream istr, String annot_type,
+			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
+			boolean annotate_query, boolean annotate_target) throws IOException {
+		return parse(istr, Integer.MIN_VALUE, Integer.MAX_VALUE, annot_type,
+				query_group, target_group, null, annotate_query, annotate_target,
+				false);
+	}
+
+	private List<UcscPslSym> parse(BioSeq seq, int min, int max){
+		InputStream istr = null;
+		try {
+			File file = chrList.get(seq);
+			if (file == null) {
+				Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+				return Collections.<UcscPslSym>emptyList();
+			}
+			istr = new FileInputStream(file);
+			return parse(istr, min, max, featureName, query_group, target_group,
+					other_group, annotate_query, annotate_target, annotate_other);
+
+		} catch (FileNotFoundException ex) {
+			Logger.getLogger(PSL.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+		return Collections.<UcscPslSym>emptyList();
+	}
 
 	/**
 	 *  Parse.
@@ -326,15 +346,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	 *  @param annotate_other   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
 	 *
 	 */
-	public List<UcscPslSym> parse(BioSeq seq, int min, int max, String annot_type,
+	private List<UcscPslSym> parse(InputStream istr, int min, int max, String annot_type,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group,
 			boolean annotate_query, boolean annotate_target, boolean annotate_other){
-
-		File file = chrList.get(seq);
-		if (file == null) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
-			return Collections.<UcscPslSym>emptyList();
-		}
 
 		if (DEBUG) {
 			System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
@@ -373,7 +387,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		String[] block_size_array = null;
 		Thread thread = Thread.currentThread();
 		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			br = new BufferedReader(new InputStreamReader(istr));
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				line_count++;
 				// Ignore psl header lines
@@ -854,7 +868,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	}
 
 	public List<UcscPslSym> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
-		return null;
+		return parse(dis, Integer.MIN_VALUE, Integer.MAX_VALUE, annot_type, null, group, null, false, false, false);
 	}
 
 	public void setTrackNamePrefix(String prefix) {

@@ -258,7 +258,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	 * @param chrLength
 	 * @param chrFiles
 	 */
-	private static void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles) {
+	private static void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles)  {
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		BufferedReader br = null;
 		BufferedWriter bw = null;
@@ -292,6 +292,11 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
 		}finally{
 			for(BufferedWriter b : chrs.values()){
+				try {
+					b.flush();
+				} catch (IOException ex) {
+					Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
+				}
 				GeneralUtils.safeClose(b);
 			}
 			GeneralUtils.safeClose(bw);

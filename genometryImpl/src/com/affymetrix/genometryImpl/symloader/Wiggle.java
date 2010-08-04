@@ -587,6 +587,11 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
 		}finally{
 			for (BufferedWriter b : chrs.values()) {
+				try {
+					b.flush();
+				} catch (IOException ex) {
+					Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
+				}
 				GeneralUtils.safeClose(b);
 			}
 			GeneralUtils.safeClose(br);

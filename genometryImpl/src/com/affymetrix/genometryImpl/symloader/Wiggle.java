@@ -83,7 +83,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 			return;
 		}
 		super.init();
-		buildIndex();
+		buildIndex(false);
 	}
 
 	@Override
@@ -458,24 +458,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		return "text/wig";
 	}
 
-	private void buildIndex(){
-		BufferedInputStream bis = null;
-		Map<String, Integer> chrLength = new HashMap<String, Integer>();
-		Map<String, File> chrFiles = new HashMap<String, File>();
-		
-		try {
-			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			parseLines(bis, chrLength,  chrFiles);
-			createResults(chrLength, chrFiles);
-		} catch (Exception ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(bis);
-		}
-
-	}
-
-	private static void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 

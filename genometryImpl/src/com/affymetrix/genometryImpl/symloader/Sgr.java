@@ -42,7 +42,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 			return;
 		}
 		super.init();
-		buildIndex();
+		buildIndex(false);
 	}
 
 	@Override
@@ -235,22 +235,6 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 			return new GraphSym(xcoords, ycoords, gid, aseq);
 	}
 
-	private boolean buildIndex(){
-		BufferedInputStream bis = null;
-		Map<String, Integer> chrLength = new HashMap<String, Integer>();
-		Map<String, File> chrFiles = new HashMap<String, File>();
-		try {
-			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			parseLines(bis, chrLength, chrFiles);
-			createResults(chrLength, chrFiles);
-		} catch (Exception ex) {
-			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
-			return false;
-		} finally {
-			GeneralUtils.safeClose(bis);
-		}
-		return true;
-	}
 
 	/**
 	 * Parse lines in the arbitrary-chromosome stream.
@@ -258,7 +242,8 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	 * @param chrLength
 	 * @param chrFiles
 	 */
-	private static void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles)  {
+	@Override
+	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles)  {
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		BufferedReader br = null;
 		BufferedWriter bw = null;

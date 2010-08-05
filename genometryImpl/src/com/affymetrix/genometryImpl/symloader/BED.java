@@ -31,7 +31,6 @@ import java.util.Map.Entry;
  * @author hiralv
  */
 public class BED extends SymLoader{
-	private final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
 	private static List<String> pref_list = new ArrayList<String>();
@@ -74,7 +73,7 @@ public class BED extends SymLoader{
 			return;
 		}
 		super.init();
-		buildIndex();
+		buildIndex(true);
 	}
 
 	@Override
@@ -624,24 +623,8 @@ public class BED extends SymLoader{
 		return true;
 	}
 	
-	private void buildIndex() {
-		BufferedInputStream bis = null;
-		Map<String, Integer> chrLength = new HashMap<String, Integer>();
-		Map<String, File> chrFiles = new HashMap<String, File>();
-
-		try {
-			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			parseLines(bis, chrLength, chrFiles);
-			createResults(chrLength, chrFiles);
-		} catch (Exception ex) {
-			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(bis);
-		}
-
-	}
-
-	private static void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	@Override
+	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 

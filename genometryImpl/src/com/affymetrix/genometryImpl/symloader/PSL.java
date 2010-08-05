@@ -23,10 +23,7 @@ import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.util.IndexingUtils;
-import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -90,24 +87,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			return;
 		}
 		super.init();
-		buildIndex();
-	}
-
-	private void buildIndex(){
-		BufferedInputStream bis = null;
-		Map<String, Integer> chrLength = new HashMap<String, Integer>();
-		Map<String, File> chrFiles = new HashMap<String, File>();
-
-		try {
-			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			parseLines(bis, this.featureName, chrLength, chrFiles);
-			createResults(chrLength, chrFiles);
-		} catch (Exception ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(bis);
-		}
-
+		buildIndex(true);
 	}
 
 	@Override
@@ -143,7 +123,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		return parse(span.getBioSeq(), span.getMin(), span.getMax());
 	}
 
-	private void parseLines(InputStream istr, String featureName, Map<String, Integer> chrLength, Map<String, File> chrFiles){
+	@Override
+	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
 
 		BufferedWriter bw = null;
 		BufferedReader br = null;

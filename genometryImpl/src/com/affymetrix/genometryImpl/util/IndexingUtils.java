@@ -39,24 +39,24 @@ import java.util.regex.Pattern;
  *
  * @author jnicol
  */
-public class IndexingUtils {
+public final class IndexingUtils {
 	private static final boolean DEBUG = false;
 
 	/**
 	 * Used to index the symmetries for interval searches.
 	 */
-	public static class IndexedSyms {
-		public final File file;
+	public final static class IndexedSyms {
+		final File file;
 		public final int[] min;
 		public final int[] max;
-		public final BitSet forward;
+		private final BitSet forward;
 		public final long[] filePos;
-		public final String typeName;
-		public final IndexWriter iWriter;
+		private final String typeName;
+		final IndexWriter iWriter;
 
 		// for each sym, we have an array of ids generated from the group's id2symhash.
 		// Each of these ids is in a byte array instead of a String to save memory
-		private byte[][][] id;
+		private final byte[][][] id;
 
 		public IndexedSyms(int resultSize, File file, String typeName, IndexWriter iWriter) {
 			min = new int[resultSize];
@@ -69,15 +69,6 @@ public class IndexingUtils {
 			this.iWriter = iWriter;
 		}
 
-		byte[][] getIDs(int i) {
-			return this.id[i];
-		}
-		String getID(int i) {
-			if (this.id[i] == null) {
-				return "";
-			}
-			return new String(this.id[i][0]);	// first String is the ID
-		}
 		private void setIDs(AnnotatedSeqGroup group, String symID, int i) {
 			if (symID == null) {
 				// no IDs
@@ -101,7 +92,7 @@ public class IndexingUtils {
 		
 		private SimpleSymWithProps convertToSymWithProps(int i, BioSeq seq, String type) {
 			SimpleSymWithProps sym = new SimpleSymWithProps();
-			String id = this.getID(i);
+			String id = this.id[i] == null ? "" : new String(this.id[i][0]);
 			sym.setID(id);
 			sym.setProperty("name", id);
 			sym.setProperty("method",type);
@@ -235,7 +226,7 @@ public class IndexingUtils {
 		int symSize = iSyms.min.length;
 		for (int i = 0; i < symSize; i++) {
 			// test against various IDs
-			byte[][] ids = iSyms.getIDs(i);
+			byte[][] ids = iSyms.id[i];
 			boolean foundID = false;
 			int idLength = (ids == null) ? 0 : ids.length;
 			for (int j=0;j<idLength;j++) {

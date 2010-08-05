@@ -73,7 +73,7 @@ public class BED extends SymLoader{
 			return;
 		}
 		super.init();
-		buildIndex(true);
+		buildIndex(false);
 	}
 
 	@Override

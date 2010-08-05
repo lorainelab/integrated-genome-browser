@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ParserController;
+import java.io.InputStream;
 import com.affymetrix.genometryImpl.util.SortTabFile;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;

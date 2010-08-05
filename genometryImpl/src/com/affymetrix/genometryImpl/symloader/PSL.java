@@ -87,7 +87,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			return;
 		}
 		super.init();
-		buildIndex(true);
+		buildIndex(false);
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -45,13 +46,13 @@ public class IndexingUtils {
 	 * Used to index the symmetries for interval searches.
 	 */
 	public static class IndexedSyms {
-		public File file;
-		public int[] min;
-		public int[] max;
-		public boolean[] forward;
-		public long[] filePos;
-		public String typeName;
-		public IndexWriter iWriter;
+		public final File file;
+		public final int[] min;
+		public final int[] max;
+		public final BitSet forward;
+		public final long[] filePos;
+		public final String typeName;
+		public final IndexWriter iWriter;
 
 		// for each sym, we have an array of ids generated from the group's id2symhash.
 		// Each of these ids is in a byte array instead of a String to save memory
@@ -60,7 +61,7 @@ public class IndexingUtils {
 		public IndexedSyms(int resultSize, File file, String typeName, IndexWriter iWriter) {
 			min = new int[resultSize];
 			max = new int[resultSize];
-			forward = new boolean[resultSize];
+			forward = new BitSet(resultSize);
 			id = new byte[resultSize][][];
 			filePos = new long[resultSize + 1];
 			this.file = file;
@@ -104,7 +105,7 @@ public class IndexingUtils {
 			sym.setID(id);
 			sym.setProperty("name", id);
 			sym.setProperty("method",type);
-			if (this.forward[i]) {
+			if (this.forward.get(i)) {
 				sym.addSpan(new SimpleSeqSpan(this.min[i], this.max[i], seq));
 			} else {
 				sym.addSpan(new SimpleSeqSpan(this.max[i], this.min[i], seq));
@@ -313,7 +314,7 @@ public class IndexingUtils {
 			iSyms.setIDs(group, sym.getID(), index);
 			iSyms.min[index] = iWriter.getMin(sym, seq);
 			iSyms.max[index] = iWriter.getMax(sym, seq);
-			iSyms.forward[index] = sym.getSpan(seq).isForward();
+			iSyms.forward.set(index,sym.getSpan(seq).isForward());
 			currentFilePos += buf.length;
 			index++;
 			iSyms.filePos[index] = currentFilePos;

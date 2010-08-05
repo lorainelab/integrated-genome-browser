@@ -425,16 +425,6 @@ public class SeqMapView extends JPanel
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 	}
 
-	private static void removeGraphsFromSeq(BioSeq mseq) {
-		int acount = mseq.getAnnotationCount();
-		for (int i = acount - 1; i >= 0; i--) {
-			SeqSymmetry annot = mseq.getAnnotation(i);
-			if (annot instanceof GraphSym) {
-				mseq.removeAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
-			}
-		}
-	}
-
 	public final class SeqMapViewComponentListener extends ComponentAdapter {
 		// update graphs and annotations when the map is resized.
 
@@ -550,8 +540,7 @@ public class SeqMapView extends JPanel
 					removeGraphsFromSeq(seq);
 				}
 			}
-			BioSeq mseq = aseq;
-			removeGraphsFromSeq(mseq);
+			removeGraphsFromSeq(aseq);
 		} else {
 			System.err.println("Please select a chromosome!");
 		}
@@ -559,6 +548,16 @@ public class SeqMapView extends JPanel
 		//Make sure the graph is un-selected in the genometry model, to allow GC
 		GenometryModel.getGenometryModel().clearSelectedSymmetries(this);
 		setAnnotatedSeq(aseq, false, true);
+	}
+
+	private static void removeGraphsFromSeq(BioSeq mseq) {
+		int acount = mseq.getAnnotationCount();
+		for (int i = acount - 1; i >= 0; i--) {
+			SeqSymmetry annot = mseq.getAnnotation(i);
+			if (annot instanceof GraphSym) {
+				mseq.removeAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
+			}
+		}
 	}
 
 	/** Sets the sequence; if null, has the same effect as calling clear(). */

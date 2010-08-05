@@ -32,7 +32,6 @@ import java.util.*;
  */
 public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 
-	private static final boolean DEBUG = false;
 	private Stylesheet stylesheet = null;
 	private final PropertyMap context = new PropertyMap();
 	private final Map<String, MapViewGlyphFactoryI> annot_factories = new LinkedHashMap<String, MapViewGlyphFactoryI>();
@@ -53,7 +52,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 		if (sym.getSpanCount() == 0) {
 			return;
 		}
-		// I'm assuming that for container glyphs, the container method is the
+		// I'm assuming that for container glyphs, the container  method is the
 		// same as the contained items method
 		String meth = BioSeq.determineMethod(sym);
 
@@ -74,9 +73,6 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 				MapViewGlyphFactoryI assfac = assel.getGlyphFactory();
 				if (assfac != null) {
 					if (assfac instanceof GenericAnnotGlyphFactory) {
-						if (DEBUG) {
-							System.out.println("in XmlStylesheetGlyphFactory.createGlyph(), adding factory to this.annot_factories (and initing): " + meth);
-						}
 						annot_factories.put(meth, assfac);
 						// need to make sure factory is initialized!
 						assfac.init(assel.getPropertyMap());
@@ -88,7 +84,8 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 			}
 
 			if (isContainer(sym)) {
-				for (int i = 0; i < sym.getChildCount(); i++) {
+				int childCount = sym.getChildCount();
+				for (int i = 0; i < childCount; i++) {
 					createGlyph(sym.getChild(i), gviewer);
 				}
 				return;
@@ -115,7 +112,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 		if (sym instanceof TypeContainerAnnot) {
 			return true;
 		} // faster than checking for CONTAINER_PROP
-		else if (sym instanceof SymWithProps) {
+		if (sym instanceof SymWithProps) {
 			SymWithProps swp = (SymWithProps) sym;
 			if (Boolean.TRUE.equals(swp.getProperty(SimpleSymWithProps.CONTAINER_PROP))) {
 				return true;

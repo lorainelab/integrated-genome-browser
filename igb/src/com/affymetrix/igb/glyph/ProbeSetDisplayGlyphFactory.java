@@ -70,11 +70,9 @@ the probeset, probe and pieces of probes
   /** Any method name (track-line name) ending with this is taken as a consensus/exemplar sequence. */
   public static final String NETAFFX_CONSENSUS = " netaffx consensus";
 
-  private static Color ps_color = Color.PINK;
-  private static Color ps_s_color = Color.GREEN;
-  private static Color ps_x_color = Color.ORANGE;
-  private static Color poly_a_site_color = Color.BLUE;
-  private static Color poly_a_stack_color = Color.CYAN;
+  private static final Color ps_color = Color.PINK;
+  private static final Color poly_a_site_color = Color.BLUE;
+  private static final Color poly_a_stack_color = Color.CYAN;
   
   private SeqMapView gviewer;
   
@@ -96,11 +94,7 @@ the probeset, probe and pieces of probes
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
-    createGlyph(sym, smv, false);
-  }
-
-  public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
-    setMapView(smv);
+	  gviewer = smv;
     String meth = BioSeq.determineMethod(sym);
     if (meth == null) {
       meth = "unknown";
@@ -112,13 +106,9 @@ the probeset, probe and pieces of probes
       IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
       label_field = style.getLabelField();
       
-      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
+      TierGlyph[] tiers = gviewer.getTiers(meth, false, style);
       addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
     }
-  }
-
-  public void setMapView(SeqMapView smv) {
-    gviewer = smv;
   }
 
   /**
@@ -146,39 +136,6 @@ the probeset, probe and pieces of probes
     }
     else {  // 1 <= depth <= depth_of_consensus
       addToTier(sym, ftier, rtier);
-    }
-  }
-  
-  /** 
-   *  If given a SeqSymmetry with exactly two Spans, will return
-   *  the BioSeq of the Span that is NOT the sequence you specify.
-   *  TODO: This could return more than one consensus sequence
-   */
-  private BioSeq getConsensusSeq(SeqSymmetry sym, BioSeq primary_seq) {
-    assert primary_seq != null;
-    assert sym != null;
-
-    int span_count = sym.getSpanCount();
-    if (span_count != 2) {
-      // Although this is normally an error, there are conditions where this glyph factory
-      // might be used to display things that are not consensus sequences (such as DAS queries)
-      // so just return null.
-      return null;
-    }
-
-    BioSeq consensus_seq = null;
-    for (int i=0; i<2; i++) {
-      BioSeq seq = sym.getSpan(i).getBioSeq();
-      if (seq != primary_seq) {
-        consensus_seq = seq; 
-        break;
-      }
-    }
-    if (consensus_seq != null) {
-      return consensus_seq;
-    } else {
-      System.out.println("ProbeSetDisplayGlyphFactory: Consensus Seq is null!");
-      return null;
     }
   }
   
@@ -289,6 +246,41 @@ the probeset, probe and pieces of probes
 
     return pglyph;
   }
+
+
+  /**
+   *  If given a SeqSymmetry with exactly two Spans, will return
+   *  the BioSeq of the Span that is NOT the sequence you specify.
+   *  TODO: This could return more than one consensus sequence
+   */
+  private static BioSeq getConsensusSeq(SeqSymmetry sym, BioSeq primary_seq) {
+    assert primary_seq != null;
+    assert sym != null;
+
+    int span_count = sym.getSpanCount();
+    if (span_count != 2) {
+      // Although this is normally an error, there are conditions where this glyph factory
+      // might be used to display things that are not consensus sequences (such as DAS queries)
+      // so just return null.
+      return null;
+    }
+
+    BioSeq consensus_seq = null;
+    for (int i=0; i<2; i++) {
+      BioSeq seq = sym.getSpan(i).getBioSeq();
+      if (seq != primary_seq) {
+        consensus_seq = seq;
+        break;
+      }
+    }
+    if (consensus_seq != null) {
+      return consensus_seq;
+    } else {
+      System.out.println("ProbeSetDisplayGlyphFactory: Consensus Seq is null!");
+      return null;
+    }
+  }
+
   
   /**
    *  Finds the annotations at depth 2 on the consensus_seq, which are assumed to be 

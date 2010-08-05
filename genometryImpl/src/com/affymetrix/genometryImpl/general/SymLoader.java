@@ -7,7 +7,10 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ParserController;
+import com.affymetrix.genometryImpl.util.SortTabFile;
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.File;
@@ -33,6 +36,7 @@ public abstract class SymLoader {
 	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
 	protected volatile boolean isInitialized = false;
 	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
+	private final Map<String,Boolean> chrSort = new HashMap<String,Boolean>();
 	protected final AnnotatedSeqGroup group;
 	protected final String featureName;
 
@@ -58,6 +62,30 @@ public abstract class SymLoader {
 		this.isInitialized = true;
 	}
 
+	protected void buildIndex(boolean sort){
+		BufferedInputStream bis = null;
+		Map<String, Integer> chrLength = new HashMap<String, Integer>();
+		Map<String, File> chrFiles = new HashMap<String, File>();
+
+		try {
+			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			parseLines(bis, chrLength, chrFiles);
+			createResults(chrLength, chrFiles);
+		} catch (Exception ex) {
+			Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(bis);
+		}
+
+
+		if(sort){
+			//Now Sort all files
+			for(Entry<BioSeq,File> file : chrList.entrySet()){
+				chrSort.put(file.getKey().getID(), SortTabFile.sort(file.getValue(), 1));
+			}
+		}
+	}
+	
 	/**
 	 * Return possible strategies to load this URI.
 	 * @return
@@ -143,6 +171,11 @@ public abstract class SymLoader {
 		return "";
     }
 
+	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
+		Logger.getLogger(this.getClass().getName()).log(
+					Level.SEVERE, "parseLines is not defined");
+	}
+	
 	protected static void addToLists(
 			Map<String, BufferedWriter> chrs, String current_seq_id, Map<String, File> chrFiles, Map<String,Integer> chrLength) throws IOException {
 

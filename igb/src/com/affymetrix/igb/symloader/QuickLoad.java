@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -136,29 +137,29 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
-	public boolean loadFeatures(final SeqSpan overlapSpan, final LoadStrategy strategy)
+	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError {
 
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
 		if (this.symL != null && this.symL.isResidueLoader) {
 			final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-			return loadResiduesThread(strategy, overlapSpan, seq, gviewer, vexec);
+			return loadResiduesThread(feature.loadStrategy, overlapSpan, seq, gviewer, vexec);
 		}
 
-		return loadSymmetriesThread(strategy, overlapSpan, gviewer, vexec);
+		return loadSymmetriesThread(feature, overlapSpan, gviewer, vexec);
 
 	}
 
 	private boolean loadSymmetriesThread(
-			final LoadStrategy strategy, final SeqSpan overlapSpan, final SeqMapView gviewer, Executor vexec)
+			final GenericFeature feature, final SeqSpan overlapSpan, final SeqMapView gviewer, Executor vexec)
 			throws OutOfMemoryError {
 
 		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					if (QuickLoad.this.extension.endsWith(".chp") && strategy == LoadStrategy.GENOME) {
+					if (QuickLoad.this.extension.endsWith(".chp") && feature.loadStrategy == LoadStrategy.GENOME) {
 						// special-case chp files, due to their LazyChpSym DAS/2 loading
 						QuickLoad.this.getGenome();
 						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
@@ -167,9 +168,9 @@ public final class QuickLoad extends SymLoader {
 					}
 					List<FeatureRequestSym> output_requests = FeatureRequestSym.determineFeatureRequestSyms(
 							QuickLoad.this.symL, QuickLoad.this.uri, QuickLoad.this.featureName,
-							strategy, overlapSpan);
+							feature.loadStrategy, overlapSpan);
 					List<SeqSymmetry> overallResults = loadAndAddSymmetries(
-							QuickLoad.this.symL, QuickLoad.this.featureName, strategy, output_requests);
+							QuickLoad.this.symL, feature, feature.loadStrategy, output_requests);
 					return overallResults;
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -215,7 +216,7 @@ public final class QuickLoad extends SymLoader {
 
 
 	private List<SeqSymmetry> loadAndAddSymmetries(
-			SymLoader symL, String featureName,
+			SymLoader symL, GenericFeature feature,
 			LoadStrategy strategy, List<FeatureRequestSym> output_requests)
 			throws IOException, OutOfMemoryError {
 		if (output_requests.isEmpty()) {
@@ -224,6 +225,7 @@ public final class QuickLoad extends SymLoader {
 				return null;
 			}
 		}
+
 
 		List<? extends SeqSymmetry> results;
 		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
@@ -240,7 +242,7 @@ public final class QuickLoad extends SymLoader {
 				// we don't know which chromosomes are in the file; they may not correspond with those in the genome.
 
 				// parse data.  A side effect of the older parsers is to add the "missing" chromosomes to the genome
-				results = loadFeature(symL, featureName, strategy, null);
+				results = loadFeature(symL, feature.featureName, strategy, null);
 				// short-circuit if there's a failure... which may not even be signaled in the code
 				if (results == null) {
 					return overallResults;
@@ -256,7 +258,7 @@ public final class QuickLoad extends SymLoader {
 					// only get symmetries for this chromosome
 					chromResults = SymLoader.filterResultsByChromosome(results, request.getOverlapSpan().getBioSeq());
 					
-					filterAndAddAnnotations(request, chromResults, featureName, overallResults);
+					filterAndAddAnnotations(request, chromResults, feature, overallResults);
 				}
 				return overallResults;
 			}
@@ -267,13 +269,13 @@ public final class QuickLoad extends SymLoader {
 			if (results == null) {
 				return overallResults;
 			}
-			filterAndAddAnnotations(request, results, featureName, overallResults);
+			filterAndAddAnnotations(request, results, feature, overallResults);
 		}
 		return overallResults;
 	}
 
 	private void filterAndAddAnnotations(
-			FeatureRequestSym request, List<? extends SeqSymmetry> results, String featureName, List<SeqSymmetry> overallResults) {
+			FeatureRequestSym request, List<? extends SeqSymmetry> results, GenericFeature feature, List<SeqSymmetry> overallResults) {
 		results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
 		for (Map.Entry<String, List<SeqSymmetry>> entry : FeatureRequestSym.splitResultsByTracks(results).entrySet()) {
 			if (entry.getValue().isEmpty()) {

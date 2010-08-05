@@ -631,12 +631,12 @@ public final class GeneralLoadUtils {
 		if (serverType == ServerType.QuickLoad) {
 			QuickLoad symL = (QuickLoad) gFeature.symL;
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + symL.featureName);
-			return symL.loadFeatures(overlap, gFeature.loadStrategy);
+			return symL.loadFeatures(overlap, gFeature);
 		}
 		if (serverType == ServerType.LocalFiles) {
 			QuickLoad symL = (QuickLoad) gFeature.symL;
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + symL.featureName);
-			return symL.loadFeatures(overlap, gFeature.loadStrategy);
+			return symL.loadFeatures(overlap, gFeature);
 		}
 		System.out.println("class " + serverType + " is not implemented.");
 		return false;

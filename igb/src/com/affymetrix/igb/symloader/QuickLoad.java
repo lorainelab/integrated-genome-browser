@@ -46,22 +46,16 @@ import javax.swing.SwingWorker;
  */
 public final class QuickLoad extends SymLoader {
 	private final GenericVersion version;
-	public final String featureName;
 	private SymLoader symL;	// parser factory
 
 	public QuickLoad(GenericVersion version, String featureName) {
 		super(determineURI(version, featureName), featureName, null);
-		this.featureName = featureName;
 		this.version = version;
 		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
 	}
 
 	public QuickLoad(GenericVersion version, URI uri) {
-		super(uri, "", null);
-		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
-		String strippedName = unzippedName.substring(0, unzippedName.toLowerCase().lastIndexOf(this.extension));
-		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);
-		this.featureName = friendlyName;
+		super(uri, detemineFriendlyName(uri), null);
 		this.version = version;
 		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
 	}
@@ -91,6 +85,13 @@ public final class QuickLoad extends SymLoader {
 			return strategyList;
 		}
 		return super.getLoadChoices();
+	}
+
+	private static String detemineFriendlyName(URI uri){
+		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
+		String strippedName = unzippedName.substring(0, unzippedName.indexOf('.'));
+		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);
+		return friendlyName;
 	}
 
 	public static URI determineURI(GenericVersion version, String featureName) {

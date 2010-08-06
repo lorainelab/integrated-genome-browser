@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 public final class OpenGraphAction {
 
@@ -90,7 +91,7 @@ public final class OpenGraphAction {
 			}
 			String graph_url = furl.toExternalForm();
 			fis = LocalUrlCacher.getInputStream(graph_url);
-			String graph_name = getGraphNameForURL(furl);
+			String graph_name = GraphSymUtils.getGraphNameForURL(furl);
 			List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, graph_url, gmodel, seq_group, null);
 			GraphSymUtils.processGraphSyms(graphs, graph_url);
 			GraphSymUtils.setName(graphs, graph_name);
@@ -129,46 +130,4 @@ public final class OpenGraphAction {
 		return graphs;
 	}
 
-
-	/**
-	 *  Return a graph name for the given URL.  The graph name is typically just
-	 *  the last portion of the URL, but the entire URL may be used, depending on
-	 *  the preference GraphGlyphUtils.PREF_USE_URL_AS_NAME.
-	 */
-	public static String getGraphNameForURL(URL furl) {
-		String name;
-		boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
-				GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
-		if (use_full_url) {
-			name = furl.toExternalForm();
-		} else { // use only the filename, not the whole url
-			name = furl.getFile();
-			int index = name.lastIndexOf('/');
-			if (index > 0) {
-				String last_name = name.substring(index + 1);
-				if (last_name.length() > 0) {
-					name = GeneralUtils.URLDecode(last_name);
-				}
-			}
-		}
-		return name;
-	}
-
-	public static String getGraphNameForFile(String name) {
-		boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
-				GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
-		if (use_full_url) {
-			// leave the name alone
-		} else { // use only the filename, not the whole url
-			int index = name.lastIndexOf(System.getProperty("file.separator"));
-			if (index > 0) {
-				String last_name = name.substring(index + 1);
-				if (last_name.length() > 0) {
-					// shouldn't need to do URLDecoder.decode()
-					name = last_name;
-				}
-			}
-		}
-		return name;
-	}
 }

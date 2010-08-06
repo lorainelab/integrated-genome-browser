@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -24,19 +23,12 @@ import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.prefs.Preferences;
 
 public final class GraphGlyphUtils {
 
 	public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
 	public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
-	/** Pref for whether newly-constructed graph glyphs should only show a
-	 *  limited range of values.
-	 */
-	public static final String PREF_APPLY_PERCENTAGE_FILTER = "apply graph percentage filter";
-	public static final String PREF_USE_URL_AS_NAME = "Use complete URL as graph name";
-	public static final boolean default_use_url_as_name = false;
-
+	
 	/**
 	 *  Checks to make sure the the boundaries of a floating glyph are
 	 *  inside the map view.
@@ -67,10 +59,6 @@ public final class GraphGlyphUtils {
 		} else {
 			return hasFloatingAncestor(gl.getParent());
 		}
-	}
-
-	public static Preferences getGraphPrefsNode() {
-		return PreferenceUtils.getTopNode().node("graphs");
 	}
 
 	/**

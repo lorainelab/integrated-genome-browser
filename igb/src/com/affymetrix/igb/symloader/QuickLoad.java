@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
@@ -379,7 +378,7 @@ public final class QuickLoad extends SymLoader {
 				GenometryModel gmodel = GenometryModel.getGenometryModel();
 				bis = LocalUrlCacher.convertURIToBufferedStream(this.uri);
 				List<GraphSym> graphs = GraphSymUtils.readGraphs(bis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
-				GraphSymUtils.setName(graphs, OpenGraphAction.getGraphNameForURL(this.uri.toURL()));
+				GraphSymUtils.setName(graphs, GraphSymUtils.getGraphNameForURL(this.uri.toURL()));
 				return graphs;
 			} catch (Exception ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
@@ -440,5 +439,9 @@ public final class QuickLoad extends SymLoader {
 		Logger.getLogger(QuickLoad.class.getName()).log(
 				Level.SEVERE, "Residue loading was called with a non-residue format.");
 		return "";
+	}
+
+	public SymLoader getSymLoader(){
+		return symL;
 	}
 }

@@ -111,6 +111,21 @@ public abstract class SymLoader {
      */
     public List<? extends SeqSymmetry> getGenome() {
 
+		if (GraphSymUtils.isAGraphFilename(this.extension)) {
+			BufferedInputStream bis = null;
+			try {
+				GenometryModel gmodel = GenometryModel.getGenometryModel();
+				bis = LocalUrlCacher.convertURIToBufferedStream(this.uri);
+				List<GraphSym> graphs = GraphSymUtils.readGraphs(bis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
+				GraphSymUtils.setName(graphs, GraphSymUtils.getGraphNameForURL(this.uri.toURL()));
+				return graphs;
+			} catch (Exception ex) {
+				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(bis);
+			}
+		}
+		
 		List<? extends SeqSymmetry> feats = null;
 		try {
 			BufferedInputStream bis = null;

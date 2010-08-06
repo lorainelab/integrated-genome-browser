@@ -95,6 +95,10 @@ public abstract class PreferenceUtils {
 		return PreferenceUtils.getTopNode().node("servers");
 	}
 
+	public static Preferences getGraphPrefsNode() {
+		return PreferenceUtils.getTopNode().node("graphs");
+	}
+	
 	public static void saveIntParam(String param_name, int param) {
 		try {
 			getTopNode().putInt(param_name, param);

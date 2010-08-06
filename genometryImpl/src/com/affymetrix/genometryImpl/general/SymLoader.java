@@ -110,6 +110,25 @@ public abstract class SymLoader {
      * @return List of symmetries in genome
      */
     public List<? extends SeqSymmetry> getGenome() {
+
+		List<? extends SeqSymmetry> feats = null;
+		try {
+			BufferedInputStream bis = null;
+			try {
+				// This will also unzip the stream if necessary
+				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
+				feats = FeatureRequestSym.Parse(this.extension, this.uri, bis, group, this.featureName, null);
+				return feats;
+			} catch (FileNotFoundException ex) {
+				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(bis);
+			}
+			return null;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.SEVERE, "Retrieving genome is not defined");
         return null;

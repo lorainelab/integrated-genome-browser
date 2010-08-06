@@ -89,8 +89,8 @@ public final class QuickLoad extends SymLoader {
 
 	private static String detemineFriendlyName(URI uri){
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
-		String strippedName = unzippedName.substring(0, unzippedName.indexOf('.'));
-		String friendlyName = strippedName.substring(strippedName.lastIndexOf("/") + 1);
+		String strippedName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
+		String friendlyName = strippedName.substring(0, strippedName.indexOf('.'));
 		return friendlyName;
 	}
 

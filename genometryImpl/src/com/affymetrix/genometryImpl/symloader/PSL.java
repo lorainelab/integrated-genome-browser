@@ -868,14 +868,4 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		return "text/plain";
 	}
 
-	public static void main(String[] args){
-		File file = new File("/Users/aloraine/Desktop/RT_U34.link.psl");
-
-		PSL psl = new PSL(file.toURI(), file.getName(), new AnnotatedSeqGroup("Test"), null, null, false, true, false);
-		psl.enableSharedQueryTarget(true);
-		psl.setIsLinkPsl(true);
-		psl.getChromosomeList();
-			
-		System.out.println("Done");
-	}
 }

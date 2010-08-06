@@ -183,10 +183,8 @@ public abstract class SymLoader {
 		if (fileName.length() < 3) {
 			fileName += "___";
 		}
-		fileName += "--";
-		File dir = new File("/Users/aloraine/Desktop/");
 		format = !format.startsWith(".") ? "." + format : format;
-		File tempFile = File.createTempFile(fileName, format, dir);
+		File tempFile = File.createTempFile(fileName, format);
 		tempFile.deleteOnExit();
 		chrs.put(current_seq_id, new BufferedWriter(new FileWriter(tempFile, true)));
 		chrFiles.put(current_seq_id, tempFile);

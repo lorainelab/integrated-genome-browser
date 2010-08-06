@@ -2,10 +2,13 @@ package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ParserController;
@@ -15,6 +18,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.net.URI;
 import java.util.ArrayList;
@@ -39,7 +43,7 @@ public abstract class SymLoader {
 	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
 	private final Map<String,Boolean> chrSort = new HashMap<String,Boolean>();
 	protected final AnnotatedSeqGroup group;
-	protected final String featureName;
+	public final String featureName;
 
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {

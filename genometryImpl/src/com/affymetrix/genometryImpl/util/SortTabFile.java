@@ -24,13 +24,14 @@ import java.util.regex.Pattern;
  */
 public class SortTabFile {
 
-	static private final Pattern tab_regex = Pattern.compile("\t");
-
-	public static boolean sort(File file, int column){
+	public static boolean sort(File file){
 		
 		BufferedReader br = null;
 		String line = null;
 		List<String> list = new ArrayList<String>();
+		String fileName = file.getName();
+		String ext = fileName.substring(fileName.indexOf('.'), fileName.length());
+		Comparator<String> comparator = new LineComparator(ext);
 		try {
 			
 			List<String> templist = new ArrayList<String>();
@@ -41,14 +42,14 @@ public class SortTabFile {
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 
 				if(line.startsWith("track")){
-					Collections.sort(templist, new LineComparator(column));
+					Collections.sort(templist, comparator);
 					list.addAll(templist);
 					templist = new ArrayList<String>();
 				}
 				
 				templist.add(line);
 			}
-			Collections.sort(templist, new LineComparator(column));
+			Collections.sort(templist, comparator);
 			list.addAll(templist);
 						
 		} catch (FileNotFoundException ex) {
@@ -63,7 +64,7 @@ public class SortTabFile {
 
 		return writeFile(file, list);
 	}
-
+	
 	private static boolean writeFile(File file, List<String> lines){
 		BufferedWriter bw = null;
 		try {
@@ -76,7 +77,7 @@ public class SortTabFile {
 			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
 
 			for(String line : lines){
-				bw.write(line);
+				bw.write(line + "\n");
 			}
 
 			bw.flush();
@@ -96,36 +97,78 @@ public class SortTabFile {
 	static class LineComparator implements Comparator<String>{
 
 		private final int column;
+		private final int or_column;
+		private final String ext;
+		private final Pattern regex;
 
-		public LineComparator(int column){
-			this.column = column - 1;
+		public LineComparator(String ext){
+			int[] columns = determineColumns(ext);
+			this.column		= columns[0] - 1;
+			this.or_column	= columns[1] - 1;
+			this.ext = ext;
+			this.regex = determineRegex(ext);
 		}
 		
 		public int compare(String o1, String o2) {
-			String[] o1Fields = tab_regex.split(o1);
-			String[] o2Fields = tab_regex.split(o2);
-			int o1Int, o2Int;
-			try {
-				o1Int = Integer.valueOf(o1Fields[column]);
-			} catch (Exception ex) {
+
+			if(o1.startsWith("track") || o2.startsWith("track"))
 				return 0;
+
+			int[] mins = minimum(o1,o2);
+
+			return Integer.valueOf(mins[0]).compareTo(mins[1]);
+		}
+
+		private int[] minimum(String o1, String o2){
+			int[] mins = new int[2];
+			int col = column;
+			int or_col = or_column;
+
+			String[] o1Fields = regex.split(o1);
+			String[] o2Fields = regex.split(o2);
+
+			if(ext.endsWith(".bed")){
+				boolean includes_bin_field = o1Fields.length > 6 &&
+						(o1Fields[6].startsWith("+") || o1Fields[6].startsWith("-")
+						|| o1Fields[6].startsWith("."));
+				
+				if(includes_bin_field){
+					col += 1;
+					or_col += 1;
+				}
 			}
 
-			try {
-				o2Int = Integer.valueOf(o2Fields[column]);
-			} catch (Exception ex) {
-				return 0;
+			mins[0] = Integer.valueOf(o1Fields[col]);
+			mins[1] = Integer.valueOf(o2Fields[col]);
+
+			
+			if(or_col > 0){
+				mins[0] = Math.min(mins[0], Integer.valueOf(o1Fields[or_col]));
+				mins[1] = Math.min(mins[1], Integer.valueOf(o2Fields[or_col]));
 			}
 
-			if (o1Int == o2Int) {
-				return 0;
+			return mins;
+		}
+
+		private static Pattern determineRegex(String ext){
+			if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
+				return Pattern.compile("\t");
+			} else if (ext.equals(".bed")) {
+				return Pattern.compile("\\s+");
 			}
 
-			if (o1Int > o2Int) {
-				return 1;
+			return null;
+		}
+
+		private static int[] determineColumns(String ext) {
+
+			if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
+				return new int[]{16, -1};
+			} else if (ext.equals(".bed")) {
+				return new int[]{2, 3};
 			}
 
-			return -1;
+			return new int[]{-1, -1};
 		}
 
 	}

@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
 import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
@@ -1107,20 +1108,29 @@ public abstract class ServerUtils {
 		if (extension.equals("wig")) {
 			return new Wiggle(uri, featureName, group);
 		}
-		// Commented out since not tested yet.
-//		if(extension.equals("link.psl")) {
-//			PSL psl = new PSL(uri, featureName, group, null, null,
-//				false, true, false);
-//			psl.setIsLinkPsl(true);
-//			psl.enableSharedQueryTarget(true);
-//			return psl;
-//		}
-//		if(extension.equals("psl")) {
-//			PSL psl = new PSL(uri, featureName, group, null, null,
-//				false, true, false);
-//			psl.enableSharedQueryTarget(true);
-//			return psl;
-//		}
+		if(extension.equals("link.psl")) {
+			PSL psl = new PSL(uri, featureName, group, null, null,
+				false, true, false);
+			psl.setIsLinkPsl(true);
+			psl.enableSharedQueryTarget(true);
+			return psl;
+		}
+		if(extension.equals("psl")) {
+			PSL psl = new PSL(uri, featureName, group, null, null,
+				false, true, false);
+			psl.enableSharedQueryTarget(true);
+			return psl;
+		}
+		if(extension.equals("bgn") || extension.equals("bp1") ||
+				extension.equals("bps") || extension.equals("brs") ||
+				extension.equals("cnt") || extension.equals("cyt")) {
+			return new SymLoaderInst(uri, featureName, group);
+		}
+		if((extension.equals("sin") || extension.equals("egr")) ||
+				extension.endsWith("gff") || extension.endsWith("gff3")){
+			return new SymLoaderInstNC(uri, featureName, group);
+		}
+
 		return null;
 	}
 

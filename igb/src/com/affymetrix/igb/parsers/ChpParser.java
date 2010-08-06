@@ -155,7 +155,7 @@ public final class ChpParser {
 		System.out.println("probeset count: " + ps_count);
 		ProbeSetQuantificationDetectionData psqData;
 
-		String type_name = OpenGraphAction.getGraphNameForFile(file_name);
+		String type_name = GraphSymUtils.getGraphNameForFile(file_name);
 
 		for (int i = 0; i < ps_count; i++) {
 			psqData = chp.getQuantificationDetectionEntry(i);
@@ -302,7 +302,7 @@ public final class ChpParser {
 			return null;
 		}
 
-		String type_name = OpenGraphAction.getGraphNameForFile(file_name);
+		String type_name = GraphSymUtils.getGraphNameForFile(file_name);
 		// Force the AnnotStyle for the container to have glyph depth of 1
 		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
 		style.setGlyphDepth(1);
@@ -446,7 +446,7 @@ public final class ChpParser {
 			return null;
 		}
 
-		String type_name = OpenGraphAction.getGraphNameForFile(file_name);
+		String type_name = GraphSymUtils.getGraphNameForFile(file_name);
 		// Force the AnnotStyle for the container to have glyph depth of 1
 		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
 		style.setGlyphDepth(1);
@@ -593,7 +593,7 @@ public final class ChpParser {
 			if (aseq.getLength() < last_base_pos) {
 				aseq.setLength(last_base_pos);
 			}
-			String graph_id = OpenGraphAction.getGraphNameForFile(tchp.getFileName());
+			String graph_id = GraphSymUtils.getGraphNameForFile(tchp.getFileName());
 			if (ensure_unique_id) {
 				graph_id = GraphSymUtils.getUniqueGraphID(graph_id, aseq);
 			}

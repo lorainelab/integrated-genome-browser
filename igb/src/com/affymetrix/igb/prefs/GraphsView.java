@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
@@ -29,8 +30,8 @@ public final class GraphsView extends IPrefEditorComponent  {
     graphs_box.setAlignmentX(0.0f);
     main_box.add(graphs_box);
     
-    graphs_box.add(PreferenceUtils.createCheckBox("Use file URL as graph name", GraphGlyphUtils.getGraphPrefsNode(),
-      GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name));
+    graphs_box.add(PreferenceUtils.createCheckBox("Use file URL as graph name", PreferenceUtils.getGraphPrefsNode(),
+      GraphSymUtils.PREF_USE_URL_AS_NAME, GraphSymUtils.default_use_url_as_name));
 
     graphs_box.add(Box.createRigidArea(new Dimension(0,5)));
     

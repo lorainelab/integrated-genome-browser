@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.util.logging.Level;
@@ -87,7 +86,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			return;
 		}
 		super.init();
-		buildIndex(false);
+		buildIndex();
+		sortCreatedFiles();
 	}
 
 	@Override
@@ -220,7 +220,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				// Ignoring chromosome seqs after last track line. It also ignores
 				// orphan chromosome seqs.
 				if (!chrs.containsKey(target_seq_id)) {
-					addToLists(chrs, target_seq_id, chrFiles, chrLength);
+					addToLists(chrs, target_seq_id, chrFiles, chrLength, is_link_psl ? ".link.psl" : ".psl");
 				}
 
 				bw = chrs.get(target_seq_id);
@@ -868,4 +868,14 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		return "text/plain";
 	}
 
+	public static void main(String[] args){
+		File file = new File("/Users/aloraine/Desktop/RT_U34.link.psl");
+
+		PSL psl = new PSL(file.toURI(), file.getName(), new AnnotatedSeqGroup("Test"), null, null, false, true, false);
+		psl.enableSharedQueryTarget(true);
+		psl.setIsLinkPsl(true);
+		psl.getChromosomeList();
+			
+		System.out.println("Done");
+	}
 }

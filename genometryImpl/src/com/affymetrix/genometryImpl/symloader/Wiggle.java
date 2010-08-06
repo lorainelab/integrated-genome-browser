@@ -83,7 +83,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 			return;
 		}
 		super.init();
-		buildIndex(false);
+		buildIndex();
 	}
 
 	@Override
@@ -513,7 +513,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 					}
 
 					if (!chrs.containsKey(current_seq_id)) {
-						addToLists(chrs, current_seq_id, chrFiles, chrLength);
+						addToLists(chrs, current_seq_id, chrFiles, chrLength, ".wig");
 					}
 					bw = chrs.get(current_seq_id);
 					if (!chrTrack.containsKey(current_seq_id)) {
@@ -533,7 +533,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 						current_seq_id = fields[0];
 						length = Integer.parseInt(fields[2]);
 						if (!chrs.containsKey(current_seq_id)) {
-							addToLists(chrs, current_seq_id, chrFiles, chrLength);
+							addToLists(chrs, current_seq_id, chrFiles, chrLength, ".wig");
 						}
 						bw = chrs.get(current_seq_id);
 						if (!chrTrack.containsKey(current_seq_id)) {

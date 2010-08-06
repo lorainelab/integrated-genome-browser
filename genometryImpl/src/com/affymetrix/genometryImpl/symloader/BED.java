@@ -22,7 +22,6 @@ import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
 import java.util.Map.Entry;
 
@@ -73,7 +72,8 @@ public class BED extends SymLoader{
 			return;
 		}
 		super.init();
-		buildIndex(false);
+		buildIndex();
+		sortCreatedFiles();
 	}
 
 	@Override
@@ -667,12 +667,14 @@ public class BED extends SymLoader{
 					int max = Math.max(beg, end);
 
 					if (!chrs.containsKey(seq_name)) {
-						addToLists(chrs, seq_name, chrFiles, chrLength);
+						addToLists(chrs, seq_name, chrFiles, chrLength, ".bed");
 					}
 					bw = chrs.get(seq_name);
 					if (!chrTrack.containsKey(seq_name)) {
 						chrTrack.put(seq_name, true);
-						bw.write(trackLine + "\n");
+
+						if(trackLine != null)
+							bw.write(trackLine + "\n");
 					}
 					bw.write(line + "\n");
 
@@ -732,4 +734,39 @@ public class BED extends SymLoader{
 		}
 	}
 
+	public static void main(String[] args) throws Exception{
+		File file = new File("/Users/aloraine/Desktop/bed_02.bed");
+		BED bed = new BED(file.toURI(), file.getName(), new AnnotatedSeqGroup("Test"));
+		//bed.getChromosomeList();
+
+		System.out.println("Done");
+
+		String string =
+				"591	chr2L	901490	901662	CR31656-RA	0	-	901490	901662	0	1	172,	0,\n"+
+				"595	chr2L	1432710	1432921	CR31927-RA	0	+	1432710	1432920	0	1	211,	0,\n"+
+
+				// Next line is line "2": we'll specifically test that it was read correctly
+				"598	chr2L	1789140	1790361	CR31930-RA	0	-	1789140	1789140	0	2	153,1010,	0,211,\n"+
+				"598	chr2L	1792056	1793268	CR31931-RA	0	-	1792056	1792056	0	2	153,1014,	0,198,\n"+
+				"599	chr2L	1938088	1938159	CR31667-RA	0	-	1938088	1938088	0	1	71,	0,\n"+
+
+				// This last line has a CDS: we'll test that it was read correctly as well
+				"599	chr2L	1965425	1965498	CR31942-RA	0	+	1965425	1965460	0	1	73,	0,\n"
+				;
+
+		File tempFile = createFileFromString(string);
+
+		bed = new BED(tempFile.toURI(), tempFile.getName(), new AnnotatedSeqGroup("Test"));
+		bed.getGenome();
+	}
+
+	public static File createFileFromString(String string) throws Exception{
+		File dir = new File("/Users/aloraine/Desktop/");
+		File tempFile = File.createTempFile("tempFile", ".bed", dir);
+		tempFile.deleteOnExit();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
+		bw.write(string);
+		bw.close();
+		return tempFile;
+	}
 }

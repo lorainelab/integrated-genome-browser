@@ -42,7 +42,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 			return;
 		}
 		super.init();
-		buildIndex(false);
+		buildIndex();
 	}
 
 	@Override
@@ -263,7 +263,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 				x = Integer.parseInt(fields[1]);
 
 				if (!chrs.containsKey(seqid)) {
-					addToLists(chrs, seqid, chrFiles, chrLength);
+					addToLists(chrs, seqid, chrFiles, chrLength, ".sgr");
 				}
 				
 				if (x > chrLength.get(seqid)) {

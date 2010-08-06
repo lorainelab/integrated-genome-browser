@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import java.io.*;
 import java.util.*;
+import java.net.URL;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.CompositeGraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;

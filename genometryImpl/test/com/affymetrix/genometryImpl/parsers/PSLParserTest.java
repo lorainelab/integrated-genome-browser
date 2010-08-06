@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -20,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class PSLParserTest {
@@ -41,13 +43,14 @@ public class PSLParserTest {
 		String stream_name = "test_file";
 		PSLParser instance = new PSLParser();
 
-		Collection<UcscPslSym> syms = null;
+		List<UcscPslSym> syms = null;
 		try {
 			syms = instance.parse(istr, stream_name, group, group, annot_query, true);
 		} catch (IOException ioe) {
 			fail("Exception: " + ioe);
 		}
 
+		Collections.sort(syms, new UcscPslComparator());
 		// Now we have read the data into "syms", so let's try writing it.
 
 		BioSeq seq = group.getSeq("chr1");
@@ -84,7 +87,8 @@ public class PSLParserTest {
 
 		PSLParser instance = new PSLParser();
 		List<UcscPslSym> syms = instance.parse(istr, file.getName(), null, group, true, true);
-
+		Collections.sort(syms, new UcscPslComparator());
+		
 		PSL psl = new PSL(file.toURI(), file.getName(), group, null, null,
 				true, true, false);
 		List<BioSeq> seqs = psl.getChromosomeList();

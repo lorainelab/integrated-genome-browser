@@ -63,7 +63,7 @@ public abstract class SymLoader {
 		this.isInitialized = true;
 	}
 
-	protected void buildIndex(boolean sort){
+	protected void buildIndex(){
 		BufferedInputStream bis = null;
 		Map<String, Integer> chrLength = new HashMap<String, Integer>();
 		Map<String, File> chrFiles = new HashMap<String, File>();
@@ -78,15 +78,14 @@ public abstract class SymLoader {
 			GeneralUtils.safeClose(bis);
 		}
 
+	}
 
-		if(sort){
-			//Now Sort all files
-			for(Entry<BioSeq,File> file : chrList.entrySet()){
-				chrSort.put(file.getKey().getID(), SortTabFile.sort(file.getValue(), 1));
-			}
+	protected void sortCreatedFiles(){
+		//Now Sort all files
+		for (Entry<BioSeq, File> file : chrList.entrySet()) {
+			chrSort.put(file.getKey().getID(), SortTabFile.sort(file.getValue()));
 		}
 	}
-	
 	/**
 	 * Return possible strategies to load this URI.
 	 * @return
@@ -178,13 +177,16 @@ public abstract class SymLoader {
 	}
 	
 	protected static void addToLists(
-			Map<String, BufferedWriter> chrs, String current_seq_id, Map<String, File> chrFiles, Map<String,Integer> chrLength) throws IOException {
+			Map<String, BufferedWriter> chrs, String current_seq_id, Map<String, File> chrFiles, Map<String,Integer> chrLength, String format) throws IOException {
 
 		String fileName = current_seq_id;
 		if (fileName.length() < 3) {
 			fileName += "___";
 		}
-		File tempFile = File.createTempFile(fileName, ".sym");
+		fileName += "--";
+		File dir = new File("/Users/aloraine/Desktop/");
+		format = !format.startsWith(".") ? "." + format : format;
+		File tempFile = File.createTempFile(fileName, format, dir);
 		tempFile.deleteOnExit();
 		chrs.put(current_seq_id, new BufferedWriter(new FileWriter(tempFile, true)));
 		chrFiles.put(current_seq_id, tempFile);

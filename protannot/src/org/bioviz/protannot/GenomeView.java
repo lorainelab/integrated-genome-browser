@@ -15,7 +15,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
@@ -943,7 +942,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
     private void showProperties() {
-        List<Properties> propvec = new ArrayList<Properties>();
+        Set<Properties> propvec = new HashSet<Properties>();
         Properties props = null;
         for (GlyphI gl : selected) {
             SymWithProps info = null;
@@ -951,11 +950,7 @@ final public class GenomeView extends JPanel implements MouseListener, Component
             if (candidate instanceof SymWithProps) {
                 info = (SymWithProps) candidate;
                 candidate = gl.getParent().getInfo();
-                    if (candidate instanceof SymWithProps) {
-                        SymWithProps parent = (SymWithProps) candidate;
-                        for(Entry<String,Object> E: parent.getProperties().entrySet())
-                            info.setProperty(E.getKey(),E.getValue());
-                    }
+				addParentInfo(candidate, info);
             } else {
                 if (candidate instanceof SimpleMutableSeqSymmetry && exonList.contains((SeqSymmetry) candidate)) {
                     props = new Properties();
@@ -980,6 +975,20 @@ final public class GenomeView extends JPanel implements MouseListener, Component
 		Properties[] prop_array = propvec.toArray(new Properties[0]);
         table_view.showProperties(prop_array);
     }
+
+	private void addParentInfo(Object candidate, SymWithProps info) {
+		if (candidate instanceof SymWithProps) {
+			SymWithProps parent = (SymWithProps) candidate;
+			for (Entry<String, Object> E : parent.getProperties().entrySet()) {
+				if (!Xml2GenometryParser.TYPESTR.equals(E.getKey()) &&
+						!Xml2GenometryParser.AA_START.equals(E.getKey()) &&
+						!Xml2GenometryParser.AA_END.equals(E.getKey()) &&
+						!Xml2GenometryParser.AA_LENGTH.equals(E.getKey()) ) {
+					info.setProperty(E.getKey(), E.getValue());
+				}
+			}
+		}
+	}
 
     /**
      * Converts Map to Properties to for display in property table.

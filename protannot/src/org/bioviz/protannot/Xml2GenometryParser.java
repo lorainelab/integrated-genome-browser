@@ -51,6 +51,9 @@ final class Xml2GenometryParser {
 	public static final String STRANDSTR = "strand";
 	public static final String CDSSTR = "cds";
 	public static final String METHODSTR = "method";
+	public static final String AA_START = "aa_start";
+	public static final String AA_END = "aa_end";
+	public static final String AA_LENGTH = "aa_length";
 
 	/**
 	 * Create a new BioSeq and add annotations to it.
@@ -264,14 +267,17 @@ final class Xml2GenometryParser {
                     } else {
                         SeqUtils.encompass(hitSpan, spanSpan, (MutableSeqSpan) hitSpan);
                     }
-                    hitSym.setProperty(TYPESTR, "hitspan");
+                    //hitSym.setProperty(TYPESTR, "hitspan");
                     num_spans++;
                 }
             }
         }
         String prop =  (Integer.valueOf(num_spans)).toString();
         hitSym.setProperty("num_spans", prop);
-        hitSym.setProperty(TYPESTR, "hit");
+        hitSym.setProperty(TYPESTR, "simHit");
+		hitSym.setProperty(AA_START, String.valueOf(hitSpan.getMin()));
+		hitSym.setProperty(AA_END, String.valueOf(hitSpan.getMax()));
+		hitSym.setProperty(AA_LENGTH, String.valueOf(hitSpan.getMax() - hitSpan.getMin()));
         hitSym.addSpan(hitSpan);
         hitSym.setID("");
         query_seq.addAnnotation(hitSym);
@@ -330,11 +336,12 @@ final class Xml2GenometryParser {
         SimpleSymWithProps spanSym = new SimpleSymWithProps();
         addDescriptors(elem, spanSym);
         String prop = (Integer.valueOf(start)).toString();
-        spanSym.setProperty("aa_start", prop);
+        spanSym.setProperty(AA_START, prop);
         prop = (Integer.valueOf(end)).toString();
-        spanSym.setProperty("aa_end", prop);
+        spanSym.setProperty(AA_END, prop);
         prop = (Integer.valueOf(end - start)).toString();
-        spanSym.setProperty("aa_length", prop);
+        spanSym.setProperty(AA_LENGTH, prop);
+		//Multiplying start and end by 3. Because three letters forms one amino acid.
         SeqSpan qspan = new SimpleSeqSpan((start*3)+query_seq.getMin(), (end*3)+query_seq.getMin(), query_seq);
         spanSym.addSpan(qspan);
         return spanSym;

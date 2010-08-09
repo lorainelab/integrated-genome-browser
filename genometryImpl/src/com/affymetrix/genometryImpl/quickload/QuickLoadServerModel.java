@@ -320,19 +320,33 @@ public final class QuickLoadServerModel {
 	private synchronized void loadGenomeNames() {
 		String contentsTxt = Constants.contentsTxt;
 		InputStream istr = null;
-		InputStreamReader ireader = null;
-		BufferedReader br = null;
+		
 		try {
 			try {
 				istr = getInputStream(contentsTxt, getCacheAnnots(), false);
 			} catch (Exception e) {
-				System.out.println("ERROR: Couldn't open '" + root_url + contentsTxt + "\n:  " + e.toString());
+				System.out.println("ERROR: Couldn't open '" + getLoadURL() + contentsTxt + "\n:  " + e.toString());
 				istr = null; // dealt with below
 			}
 			if (istr == null) {
-				System.out.println("Could not load QuickLoad contents from\n" + root_url + contentsTxt);
+				System.out.println("Could not load QuickLoad contents from\n" + getLoadURL() + contentsTxt);
 				return;
 			}
+
+			loadGenomes(istr);
+			
+		} catch (Exception ex) {
+			ErrorHandler.errorPanel("ERROR", "Error loading genome names", ex);
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+	}
+
+	private void loadGenomes(InputStream istr){
+		InputStreamReader ireader = null;
+		BufferedReader br = null;
+
+		try{
 			ireader = new InputStreamReader(istr);
 			br = new BufferedReader(ireader);
 			String line;
@@ -355,13 +369,13 @@ public final class QuickLoadServerModel {
 					group.setDescription(fields[1]);
 				}
 			}
-		} catch (Exception ex) {
+		}catch (IOException ex){
 			ErrorHandler.errorPanel("ERROR", "Error loading genome names", ex);
-		} finally {
-			GeneralUtils.safeClose(istr);
+		}finally{
 			GeneralUtils.safeClose(ireader);
 			GeneralUtils.safeClose(br);
 		}
+
 	}
 
 	public InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist) throws IOException{

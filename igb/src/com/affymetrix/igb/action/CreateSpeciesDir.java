@@ -135,7 +135,7 @@ public class CreateSpeciesDir extends AbstractAction {
 		
 		switch(type){
 			case QuickLoad:
-				return QuickLoad.determineURI(feature.gVersion, feature.featureName).toString();
+				return QuickLoad.determineURI(feature.gVersion, feature.featureName, "").toString();
 				
 			case LocalFiles:
 				return feature.symL.uri.toString();

@@ -1121,15 +1121,15 @@ public abstract class ServerUtils {
 			psl.enableSharedQueryTarget(true);
 			return psl;
 		}
-//		if(extension.equals("bgn") || extension.equals("bp1") ||
-//				extension.equals("bps") || extension.equals("brs") ||
-//				extension.equals("cnt") || extension.equals("cyt")) {
-//			return new SymLoaderInst(uri, featureName, group);
-//		}
-//		if((extension.equals("sin") || extension.equals("egr")) ||
-//				extension.endsWith("gff") || extension.endsWith("gff3")){
-//			return new SymLoaderInstNC(uri, featureName, group);
-//		}
+		if(extension.equals("bgn") || extension.equals("bp1") ||
+				extension.equals("bps") || extension.equals("brs") ||
+				extension.equals("cnt") || extension.equals("cyt")) {
+			return new SymLoaderInst(uri, featureName, group);
+		}
+		if((extension.equals("sin") || extension.equals("egr")) ||
+				extension.endsWith("gff") || extension.endsWith("gff3")){
+			return new SymLoaderInstNC(uri, featureName, group);
+		}
 
 		return null;
 	}

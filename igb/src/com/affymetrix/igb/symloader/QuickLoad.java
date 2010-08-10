@@ -47,8 +47,8 @@ public final class QuickLoad extends SymLoader {
 	private final GenericVersion version;
 	private SymLoader symL;	// parser factory
 
-	public QuickLoad(GenericVersion version, String featureName) {
-		super(determineURI(version, featureName), featureName, null);
+	public QuickLoad(GenericVersion version, String featureName, String organism_dir) {
+		super(determineURI(version, featureName, organism_dir), featureName, null);
 		this.version = version;
 		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
 	}
@@ -93,7 +93,7 @@ public final class QuickLoad extends SymLoader {
 		return friendlyName;
 	}
 
-	public static URI determineURI(GenericVersion version, String featureName) {
+	public static URI determineURI(GenericVersion version, String featureName, String organims_dir) {
 		URI uri = null;
 
 		if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
@@ -109,6 +109,7 @@ public final class QuickLoad extends SymLoader {
 		} else {
 			uri = URI.create(
 					version.gServer.URL + "/"
+					+ organims_dir + "/" 
 					+ version.versionID + "/"
 					+ determineFileName(version, featureName));
 		}

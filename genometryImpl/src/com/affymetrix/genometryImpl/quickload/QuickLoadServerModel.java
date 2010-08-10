@@ -40,6 +40,7 @@ public final class QuickLoadServerModel {
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	private final String root_url;
 	private final List<String> genome_names = new ArrayList<String>();
+	private final Map<String, String> genome_dir = new HashMap<String, String>();
 	private final Map<String, Boolean> genome2init = new HashMap<String, Boolean>();
 	// A map from String genome name to a Map of (typeName,fileName) on the server for that group
 	private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
@@ -180,7 +181,7 @@ public final class QuickLoadServerModel {
 	 */
 	private boolean loadAnnotationNames(String genome_name) {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
-		String genome_root = genome_name + "/";
+		String genome_root = getOrganismDir(genome_name) + "/" + genome_name + "/" ;
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(
 				Level.FINE, "loading list of available annotations for genome: {0}", genome_name);
 
@@ -275,7 +276,7 @@ public final class QuickLoadServerModel {
 		String modChromInfo = Constants.modChromInfoTxt;
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
-		String genome_root = genome_name + "/";
+		String genome_root = getOrganismDir(genome_name) + "/" + genome_name + "/" ;
 		InputStream lift_stream = null;
 		InputStream cinfo_stream = null;
 		try {
@@ -320,7 +321,9 @@ public final class QuickLoadServerModel {
 	private synchronized void loadGenomeNames() {
 		String contentsTxt = Constants.contentsTxt;
 		InputStream istr = null;
-		
+		InputStreamReader ireader = null;
+		BufferedReader br = null;
+
 		try {
 			try {
 				istr = getInputStream(contentsTxt, getCacheAnnots(), false);
@@ -328,34 +331,24 @@ public final class QuickLoadServerModel {
 				System.out.println("ERROR: Couldn't open '" + getLoadURL() + contentsTxt + "\n:  " + e.toString());
 				istr = null; // dealt with below
 			}
+
 			if (istr == null) {
 				System.out.println("Could not load QuickLoad contents from\n" + getLoadURL() + contentsTxt);
 				return;
 			}
 
-			loadGenomes(istr);
-			
-		} catch (Exception ex) {
-			ErrorHandler.errorPanel("ERROR", "Error loading genome names", ex);
-		} finally {
-			GeneralUtils.safeClose(istr);
-		}
-	}
-
-	private void loadGenomes(InputStream istr){
-		InputStreamReader ireader = null;
-		BufferedReader br = null;
-
-		try{
 			ireader = new InputStreamReader(istr);
 			br = new BufferedReader(ireader);
 			String line;
 			while ((line = br.readLine()) != null) {
-				if ( (line.length() == 0) || line.startsWith("#"))  { continue; }
+				if ((line.length() == 0) || line.startsWith("#")) {
+					continue;
+				}
 				AnnotatedSeqGroup group = null;
 				String[] fields = tab_regex.split(line);
+				String genome_name = "";
 				if (fields.length >= 1) {
-					String genome_name = fields[0];
+					genome_name = fields[0];
 					genome_name = genome_name.trim();
 					if (genome_name.length() == 0) {
 						System.out.println("Found blank QuickLoad genome -- skipping");
@@ -368,14 +361,23 @@ public final class QuickLoadServerModel {
 				if ((fields.length >= 2) && (group.getDescription() == null)) {
 					group.setDescription(fields[1]);
 				}
+
+				if (fields.length >= 3) {
+					genome_dir.put(genome_name, fields[2]);
+				}
 			}
-		}catch (IOException ex){
+
+		} catch (Exception ex) {
 			ErrorHandler.errorPanel("ERROR", "Error loading genome names", ex);
-		}finally{
+		} finally {
+			GeneralUtils.safeClose(istr);
 			GeneralUtils.safeClose(ireader);
 			GeneralUtils.safeClose(br);
 		}
+	}
 
+	public String getOrganismDir(String version){
+		return genome_dir.get(version);
 	}
 
 	public InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist) throws IOException{

@@ -91,6 +91,7 @@ public final class FeatureLoading {
 
 				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 				List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
+				String organism_dir = quickloadServer.getOrganismDir(gVersion.versionName);
 				for (String type_name : typeNames) {
 					if (type_name == null || type_name.length() == 0) {
 						System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
@@ -102,7 +103,7 @@ public final class FeatureLoading {
 					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
 					gVersion.addFeature(
 							new GenericFeature(
-							type_name, type_props, gVersion, new QuickLoad(gVersion, type_name), null, autoload));
+							type_name, type_props, gVersion, new QuickLoad(gVersion, type_name, organism_dir), null, autoload));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

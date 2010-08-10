@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.das.DasLoader;
 import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
@@ -20,8 +21,10 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -118,7 +121,16 @@ public final class ResidueLoading {
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
 			if (server.serverType == ServerType.QuickLoad) {
-				String residues = GetQuickLoadResidues(seq_group, seq_name, server.URL, span);
+				String organism_dir = "";
+				try {
+					URL quickloadURL = new URL((String) server.serverObj);
+					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+					organism_dir = quickloadServer.getOrganismDir(version.versionName);
+				} catch (MalformedURLException ex) {
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
+				}
+
+				String residues = GetQuickLoadResidues(seq_group, organism_dir, seq_name, server.URL, span);
 				if (residues != null) {
 					BioSeq.addResiduesToComposition(aseq, residues, span);
 					gviewer.setAnnotatedSeq(aseq, true, true, true);
@@ -178,7 +190,16 @@ public final class ResidueLoading {
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
 			if (server.serverType == ServerType.QuickLoad) {
-				if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
+				String organism_dir = "";
+				try {
+					URL quickloadURL = new URL((String) server.serverObj);
+					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+					organism_dir = quickloadServer.getOrganismDir(version.versionName);
+				} catch (MalformedURLException ex) {
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
+				}
+
+				if (GetQuickLoadResidues(seq_group, organism_dir, seq_name, server.URL)) {
 					BioSeq.addResiduesToComposition(aseq);
 					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
@@ -237,9 +258,9 @@ public final class ResidueLoading {
 	 * @return residue String.
 	 */
 
-	private static String GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span){
+	private static String GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String organism_dir, String seq_name, String root_url, SeqSpan span){
 		String genome_name = seq_group.getID();
-		String common_url = root_url + "/" + genome_name + "/" + seq_name + ".";
+		String common_url = root_url + "/" + organism_dir + "/" + genome_name + "/" + seq_name + ".";
 		
 		
 		SymLoader symloader = determineLoader(common_url, seq_group);
@@ -284,7 +305,8 @@ public final class ResidueLoading {
 			if(LocalUrlCacher.isValidURL(url_path)){
 
 				if (DEBUG) {
-					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "  Quickload location of bnib file: " + url_path);
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, 
+							"  Quickload location of bnib file: {0}", url_path);
 				}
 				
 				return format;
@@ -300,11 +322,12 @@ public final class ResidueLoading {
 	 * @param root_url
 	 * @return true or false
 	 */
-	private static boolean GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url) {
+	private static boolean GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String organism_dir, String seq_name, String root_url) {
 		String genome_name = seq_group.getID();
-		String url_path = root_url + "/" + genome_name + "/" + seq_name + ".bnib";
+		String url_path = root_url + "/" + organism_dir + "/" + genome_name + "/" + seq_name + ".bnib";
 		if (DEBUG) {
-			Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "  Quickload location of bnib file: " + url_path);
+			Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, 
+					"  Quickload location of bnib file: {0}", url_path);
 		}
 		InputStream istr = null;
 		try {
@@ -389,7 +412,8 @@ public final class ResidueLoading {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
 			String content_type = headers.get("content-type");
 			if (DEBUG) {
-				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "    response content-type: " + content_type);
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, 
+						"    response content-type: {0}", content_type);
 			}
 			if (istr == null || content_type == null) {
 				if (DEBUG) {
@@ -437,7 +461,8 @@ public final class ResidueLoading {
 			// System.out.println(headers);
 			String content_type = headers.get("content-type");
 			if (DEBUG) {
-				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "    response content-type: " + content_type);
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, 
+						"    response content-type: {0}", content_type);
 			}
 			if (istr == null || content_type == null) {
 				if (DEBUG) {
@@ -478,7 +503,8 @@ public final class ResidueLoading {
 			// System.out.println(headers);
 			String content_type = headers.get("content-type");
 			if (DEBUG) {
-				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "    response content-type: " + content_type);
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, 
+						"    response content-type: {0}", content_type);
 			}
 			if (istr == null || content_type == null) {
 				if (DEBUG) {

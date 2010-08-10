@@ -19,7 +19,7 @@ import javax.imageio.ImageIO;
  */
 public class UCSCLoader extends BrowserLoader {
 
-	private static final Pattern fileNamePattern = Pattern.compile("(hgt_genome.*gif)");
+	private static final Pattern fileNamePattern = Pattern.compile("(hgt_genome.*png)");
 
 	public String getUrlForView(Loc loc, int pixWidth) {
 		String width = "pix=" + pixWidth + "&";

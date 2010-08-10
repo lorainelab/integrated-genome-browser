@@ -32,6 +32,8 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genoviz.util.FileDropHandler;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
@@ -247,7 +249,12 @@ public final class LoadFileAction extends AbstractAction {
 		
 		version.addFeature(gFeature);
 		gFeature.setVisible(); // this should be automatically checked in the feature tree
-		if (!mergeSelected && gFeature.symL != null) {
+
+		if (((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+			loadAllFeatures(gFeature, loadGroup);
+		}
+		
+		if(!mergeSelected && gFeature.symL != null){
 			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
 		}
 
@@ -259,6 +266,30 @@ public final class LoadFileAction extends AbstractAction {
 
 		DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
 		view.tableChanged();
+	}
+
+	private static void loadAllFeatures(final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup){
+		ExecutorService vexec = Executors.newSingleThreadExecutor();
+		final String notLockedUpMsg = "Loading whole genome for " + gFeature.featureName;
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			@Override
+			public Void doInBackground() {
+				Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
+
+				gFeature.loadStrategy = LoadStrategy.GENOME;
+				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, null);
+
+				return null;
+			}
+
+			@Override
+			public void done() {
+				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
+			}
+		};
+		vexec.execute(worker);
+		vexec.shutdown();
 	}
 
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {

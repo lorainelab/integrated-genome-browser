@@ -589,7 +589,7 @@ public final class GeneralLoadUtils {
 	 * @param gFeature
 	 * @return true or false
 	 */
-	static boolean loadAndDisplayAnnotations(GenericFeature gFeature, FeaturesTableModel model) {
+	static public boolean loadAndDisplayAnnotations(GenericFeature gFeature, FeaturesTableModel model) {
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		BioSeq visible_seq = gviewer.getViewSeq();
 		if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerType.LocalFiles)) {

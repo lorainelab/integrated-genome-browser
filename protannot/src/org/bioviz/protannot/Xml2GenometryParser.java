@@ -251,7 +251,7 @@ final class Xml2GenometryParser {
 
         SeqSpan hitSpan = null;
         NodeList children = elem.getChildNodes();
-        int num_spans = 0;
+        int num_spans = 0, aa_start = Integer.MAX_VALUE, aa_end = Integer.MIN_VALUE;
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String name = child.getNodeName();
@@ -268,6 +268,10 @@ final class Xml2GenometryParser {
                         SeqUtils.encompass(hitSpan, spanSpan, (MutableSeqSpan) hitSpan);
                     }
                     //hitSym.setProperty(TYPESTR, "hitspan");
+					int start = Integer.valueOf(((SymWithProps)spanSym).getProperty(AA_START).toString());
+					int end = Integer.valueOf(((SymWithProps)spanSym).getProperty(AA_END).toString());
+					aa_start = Math.min(aa_start, start);
+					aa_end = Math.max(aa_end, end);
                     num_spans++;
                 }
             }
@@ -275,9 +279,9 @@ final class Xml2GenometryParser {
         String prop =  (Integer.valueOf(num_spans)).toString();
         hitSym.setProperty("num_spans", prop);
         hitSym.setProperty(TYPESTR, "simHit");
-		hitSym.setProperty(AA_START, String.valueOf(hitSpan.getMin()));
-		hitSym.setProperty(AA_END, String.valueOf(hitSpan.getMax()));
-		hitSym.setProperty(AA_LENGTH, String.valueOf(hitSpan.getMax() - hitSpan.getMin()));
+		hitSym.setProperty(AA_START, String.valueOf(aa_start));
+		hitSym.setProperty(AA_END, String.valueOf(aa_end));
+		hitSym.setProperty(AA_LENGTH, String.valueOf(aa_end - aa_start));
         hitSym.addSpan(hitSpan);
         hitSym.setID("");
         query_seq.addAnnotation(hitSym);

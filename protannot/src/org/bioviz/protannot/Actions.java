@@ -350,7 +350,7 @@ class Actions {
 				dialog.setVisible(true);
             }
         };
-		about_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
+		about_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_U);
 		return about_action;
 	}
 

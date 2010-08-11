@@ -346,6 +346,16 @@ public final class QuickLoadServerModel {
 				}
 				AnnotatedSeqGroup group = null;
 				String[] fields = tab_regex.split(line);
+
+				if (fields.length >= 3) {
+					Set<String> synonyms = SynonymLookup.getDefaultLookup().getSynonyms(fields[2]);
+					if(synonyms == null || synonyms.isEmpty()){
+						Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+								Level.WARNING,"Couldn't find synomym for {0}. "
+								+ "So skipping it.",new Object[]{fields[2]});
+					}
+				}
+				
 				String genome_name = "";
 				if (fields.length >= 1) {
 					genome_name = fields[0];

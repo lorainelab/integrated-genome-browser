@@ -353,6 +353,7 @@ public final class QuickLoadServerModel {
 						Logger.getLogger(QuickLoadServerModel.class.getName()).log(
 								Level.WARNING,"Couldn't find synomym for {0}. "
 								+ "So skipping it.",new Object[]{fields[2]});
+						continue;
 					}
 				}
 				
@@ -374,7 +375,8 @@ public final class QuickLoadServerModel {
 
 				if (fields.length >= 3) {
 					genome_dir.put(genome_name, fields[2]);
-				}
+				}else
+					genome_dir.put(genome_name, "");
 			}
 
 		} catch (Exception ex) {

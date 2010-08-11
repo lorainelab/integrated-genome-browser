@@ -584,12 +584,12 @@ public class SeqMapView extends JPanel
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
 		//   want to optimize for several situations:
 		//       a) merging newly loaded data with existing data (adding more annotations to
-		//           existing AnnotatedBioSeq) -- would like to avoid recreation and repacking
+		//           existing BioSeq) -- would like to avoid recreation and repacking
 		//           of already glyphified annotations
-		//       b) reverse complementing existing AnnotatedBioSeq
-		//       c) coord shifting existing AnnotatedBioSeq
+		//       b) reverse complementing existing BioSeq
+		//       c) coord shifting existing BioSeq
 		//   in all these cases:
-		//       "new" BioSeq == old AnnotatedBioSeq
+		//       "new" BioSeq == old BioSeq
 		//       existing glyphs could be reused (in (b) they'd have to be "flipped")
 		//       should preserve selection
 		//       should preserve view (x/y scale/offset) (in (b) would preserve "flipped" view)
@@ -626,26 +626,9 @@ public class SeqMapView extends JPanel
 
 		// stash annotation tiers for proper state restoration after resetting for same seq
 		//    (but presumably added / deleted / modified annotations...)
-
-		List<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
-		int axis_index = 0;
-		// copying map tiers to separate list to avoid problems when removing tiers
-		//   (and thus modifying map.getTiers() list -- could probably deal with this
-		//    via iterators, but feels safer this way...)
 		List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
-		for (int i = 0; i < cur_tiers.size(); i++) {
-			TierGlyph tg = cur_tiers.get(i);
-			if (tg == axis_tier) {
-				axis_index = i;
-			} else {
-				tg.removeAllChildren();
-				temp_tiers.add(tg);
-				if (DEBUG_TIERS) {
-					System.out.println("removing tier from map: " + tg.getLabel());
-				}
-				seqmap.removeTier(tg);
-			}
-		}
+		int axis_index = determineAxisIndex(cur_tiers, axis_tier);
+		List<TierGlyph> temp_tiers = copyMapTiers(cur_tiers, axis_index);
 
 		seqmap.clearWidget();
 		seqmap.clearSelected(); // may already be done by map.clearWidget()
@@ -711,7 +694,6 @@ public class SeqMapView extends JPanel
 		for (GlyphI layer_glyph : getFloatingLayers(seqmap.getScene().getGlyph())) {
 			seqmap.toFront(layer_glyph);
 		}
-		// notifyPlugins();
 
 		// Ignore preserve_view if seq has changed
 		if ((preserve_view_x || preserve_view_y) && same_seq) {
@@ -746,6 +728,35 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	private static int determineAxisIndex(List<TierGlyph> cur_tiers, TierGlyph axis_tier) {
+		for (int i = 0; i < cur_tiers.size(); i++) {
+			TierGlyph tg = cur_tiers.get(i);
+			if (tg == axis_tier) {
+				return i;
+			}
+		}
+		return 0;
+	}
+
+	// copying map tiers to separate list to avoid problems when removing tiers
+	//   (and thus modifying map.getTiers() list -- could probably deal with this
+	//    via iterators, but feels safer this way...)
+	private List<TierGlyph> copyMapTiers(List<TierGlyph> cur_tiers, int axis_index) {
+		List<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
+		for (int i = 0; i < cur_tiers.size(); i++) {
+			if (i == axis_index) {
+				continue;
+			}
+			TierGlyph tg = cur_tiers.get(i);
+			tg.removeAllChildren();
+			temp_tiers.add(tg);
+			if (DEBUG_TIERS) {
+				System.out.println("removing tier from map: " + tg.getLabel());
+			}
+			seqmap.removeTier(tg);
+		}
+		return temp_tiers;
+	}
 
 	private void addGlyphs(List<TierGlyph> temp_tiers, int axis_index) {
 		// The hairline needs to be among the first glyphs added,

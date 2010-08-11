@@ -1296,70 +1296,30 @@ public class SeqMapView extends JPanel
 			ErrorHandler.errorPanel("Can't copy to clipboard",
 							"No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
 		} else {
-			if (aseq == null) {
-				// This is a fishy test.  How could aseq possibly be null?
-				ErrorHandler.errorPanel("Don't have residues, can't copy to clipboard");
-			}
-			else {
-				SeqSpan span = residues_sym.getSpan(aseq);
-				int child_count = residues_sym.getChildCount();
-				if (child_count > 0) {
-					// make new resorted sym to fix any problems with orientation
-					//   within the original sym...
-					//
-					// GAH 12-15-2003  should really do some sort of recursive sort, but for
-					//   now assuming depth = 2...  actually, should _really_ fix this when building SeqSymmetries,
-					//   so order of children reflects the order they should be spliced in, rather
-					//   than their order relative to a particular seq
-					List<SeqSymmetry> sorted_children = new ArrayList<SeqSymmetry>(child_count);
-					for (int i = 0; i < child_count; i++) {
-						sorted_children.add(residues_sym.getChild(i));
-					}
-					boolean forward = span.isForward();
-
-					Comparator<SeqSymmetry> symcompare = new SeqSymStartComparator(aseq, forward);
-					Collections.sort(sorted_children, symcompare);
-					MutableSeqSymmetry sorted_sym = new SimpleMutableSeqSymmetry();
-					for (int i = 0; i < child_count; i++) {
-						sorted_sym.addChild(sorted_children.get(i));
-					}
-					residues_sym = sorted_sym;
-				}
-
-				String residues = SeqUtils.getResidues(residues_sym, aseq);
-				if (residues != null) {
-					int rescount = residues.length();
-					boolean complete = true;
-					for (int i = 0; i < rescount; i++) {
-						char res = residues.charAt(i);
-						if (res == '-' || res == ' ' || res == '.') {
-							complete = false;
-							break;
-						}
-					}
-					if (complete) {
-						/*
-						 *  WARNING
-						 *  This bit of code *looks* unnecessary, but is needed because
-						 *    StringSelection is buggy (at least with jdk1.3):
-						 *    making a StringSelection with a String that has been derived from another
-						 *    String via substring() ends up starting from the beginning of the _original_
-						 *    String (maybe because of the way derived and original Strings do char-array sharing)
-						 * THEREFORE, need to make a String with its _own_ internal char array that starts with
-						 *   the 0th character...
-						 */
-						StringBuffer hackbuf = new StringBuffer(residues);
-						String hackstr = new String(hackbuf);
-						StringSelection data = new StringSelection(hackstr);
-						clipboard.setContents(data, null);
-						String message = "Copied " + hackstr.length() + " residues" + from + " to clipboard";
-						setStatus(message);
-						success = true;
-					} else {
-						ErrorHandler.errorPanel("Missing Sequence Residues",
-										"Don't have all the needed residues, can't copy to clipboard.\n" +
-										"Please load sequence residues for this region.");
-					}
+			String residues = determineSelectedResidues(residues_sym, aseq);
+			if (residues != null) {
+				if (areResiduesComplete(residues)) {
+					/*
+					 *  WARNING
+					 *  This bit of code *looks* unnecessary, but is needed because
+					 *    StringSelection is buggy (at least with jdk1.3):
+					 *    making a StringSelection with a String that has been derived from another
+					 *    String via substring() ends up starting from the beginning of the _original_
+					 *    String (maybe because of the way derived and original Strings do char-array sharing)
+					 * THEREFORE, need to make a String with its _own_ internal char array that starts with
+					 *   the 0th character...
+					 */
+					StringBuffer hackbuf = new StringBuffer(residues);
+					String hackstr = new String(hackbuf);
+					StringSelection data = new StringSelection(hackstr);
+					clipboard.setContents(data, null);
+					String message = "Copied " + hackstr.length() + " residues" + from + " to clipboard";
+					setStatus(message);
+					success = true;
+				} else {
+					ErrorHandler.errorPanel("Missing Sequence Residues",
+							"Don't have all the needed residues, can't copy to clipboard.\n"
+							+ "Please load sequence residues for this region.");
 				}
 			}
 		}
@@ -1372,6 +1332,43 @@ public class SeqMapView extends JPanel
 			clipboard.setContents(new StringSelection(" "), null);
 		}
 		return success;
+	}
+
+
+	private static String determineSelectedResidues(SeqSymmetry residues_sym, BioSeq seq) {
+		int child_count = residues_sym.getChildCount();
+		if (child_count > 0) {
+			// make new resorted sym to fix any problems with orientation
+			//   within the original sym...
+			//
+			// GAH 12-15-2003  should really do some sort of recursive sort, but for
+			//   now assuming depth = 2...  actually, should _really_ fix this when building SeqSymmetries,
+			//   so order of children reflects the order they should be spliced in, rather
+			//   than their order relative to a particular seq
+			List<SeqSymmetry> sorted_children = new ArrayList<SeqSymmetry>(child_count);
+			for (int i = 0; i < child_count; i++) {
+				sorted_children.add(residues_sym.getChild(i));
+			}
+			Comparator<SeqSymmetry> symcompare = new SeqSymStartComparator(seq, residues_sym.getSpan(seq).isForward());
+			Collections.sort(sorted_children, symcompare);
+			MutableSeqSymmetry sorted_sym = new SimpleMutableSeqSymmetry();
+			for (int i = 0; i < child_count; i++) {
+				sorted_sym.addChild(sorted_children.get(i));
+			}
+			residues_sym = sorted_sym;
+		}
+		return SeqUtils.getResidues(residues_sym, seq);
+	}
+
+	private static boolean areResiduesComplete(String residues) {
+		int rescount = residues.length();
+		for (int i = 0; i < rescount; i++) {
+			char res = residues.charAt(i);
+			if (res == '-' || res == ' ' || res == '.') {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

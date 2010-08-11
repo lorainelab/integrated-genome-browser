@@ -215,7 +215,8 @@ public class AnnotatedSeqGroup {
 				aseq.setLength(length);
 			}
 		} else {
-			aseq = new BioSeq(seqid, this.getID(), length);
+			//Convert seq id to lowercase to make it case insensitive.
+			aseq = new BioSeq(seqid.toLowerCase(), this.getID(), length);
 			this.addSeq(aseq);
 		}
 		return aseq;

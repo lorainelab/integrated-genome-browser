@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static com.affymetrix.genometryImpl.util.Constants.UTF8;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 
 import org.xml.sax.InputSource;
 
@@ -56,6 +57,8 @@ public final class Das2VersionedSource {
     private AnnotatedSeqGroup genome = null;
     private final Map<String,Das2Type> types = new LinkedHashMap<String,Das2Type>();
     private final Map<String,List<Das2Type>> name2types = new LinkedHashMap<String,List<Das2Type>>();
+	private final Map<String,Das2Type> residuetypes = new LinkedHashMap<String,Das2Type>();
+	private final Map<String,List<Das2Type>> residue2types = new LinkedHashMap<String,List<Das2Type>>();
     private boolean regions_initialized = false;
     private boolean types_initialized = false;
     private String types_filter = null;
@@ -160,14 +163,37 @@ public final class Das2VersionedSource {
     }
 
     private synchronized void addType(Das2Type type) {
-        types.put(type.getID(), type);
-        String name = type.getName();
-        List<Das2Type> prevlist = name2types.get(name);
-        if (prevlist == null) {
-            prevlist = new ArrayList<Das2Type>();
-            name2types.put(name, prevlist);
-        }
-        prevlist.add(type);
+		
+		String tname = type.getName();
+		List<Das2Type> prevlist = null;
+
+		boolean isResidueFormat = false;
+		for(String format : type.getFormats().keySet()){
+			if(ServerUtils.isResidueFormat(format)){
+				isResidueFormat = true;
+				break;
+			}
+		}
+
+		if(isResidueFormat){
+			residuetypes.put(type.getID(), type);
+			prevlist = residue2types.get(tname);
+			if (prevlist == null) {
+				prevlist = new ArrayList<Das2Type>();
+				residue2types.put(tname, prevlist);
+			}
+		}
+		else{
+			types.put(type.getID(), type);
+			prevlist = name2types.get(tname);
+			if (prevlist == null) {
+				prevlist = new ArrayList<Das2Type>();
+				name2types.put(tname, prevlist);
+			}
+			
+		}
+		
+		prevlist.add(type);
     }
 
     public synchronized Map<String,Das2Type> getTypes() {
@@ -182,6 +208,20 @@ public final class Das2VersionedSource {
             initTypes(null);
         }
         return name2types.get(name);
+    }
+
+	public synchronized Map<String,Das2Type> getResidueTypes() {
+        if (!types_initialized || types_filter != null) {
+            initTypes(null);
+        }
+        return residuetypes;
+    }
+
+    public synchronized List<Das2Type> getResidueTypesByName(String name) {
+        if (!types_initialized || types_filter != null) {
+            initTypes(null);
+        }
+        return residue2types.get(name);
     }
 
     /** Get regions from das server. */

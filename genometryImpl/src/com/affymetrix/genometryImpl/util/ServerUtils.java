@@ -317,6 +317,10 @@ public abstract class ServerUtils {
 				current_file.getName().endsWith(".bnib") || current_file.getName().endsWith(".fa") || current_file.getName().endsWith(".2bit"));
 	}
 
+	public static boolean isResidueFormat(String format){
+		return (format.equalsIgnoreCase("bnib") || format.equalsIgnoreCase("fa") ||
+				format.equalsIgnoreCase(".2bit"));
+	}
 
 	private static boolean isAnnotsFile(File current_file) {
 		return current_file.getName().equals("annots.xml");

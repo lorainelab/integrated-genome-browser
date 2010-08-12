@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
 import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
@@ -68,11 +67,9 @@ public abstract class ServerUtils {
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";
 	public static final ArrayList<String> BAR_FORMATS = new ArrayList<String>();
-	private static final ArrayList<String> BAM_FORMAT = new ArrayList<String>();
 
 	static {
 		BAR_FORMATS.add("bar");
-		BAM_FORMAT.add("bam");
 	}
 
 	public static void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
@@ -313,13 +310,12 @@ public abstract class ServerUtils {
 	}
 
 	private static boolean isSequenceFile(File current_file) {
-		return (current_file.getName().equals("mod_chromInfo.txt") || current_file.getName().equals("liftAll.lft") ||
-				current_file.getName().endsWith(".bnib") || current_file.getName().endsWith(".fa") || current_file.getName().endsWith(".2bit"));
+		return (current_file.getName().equals("mod_chromInfo.txt") || current_file.getName().equals("liftAll.lft"));
 	}
 
-	public static boolean isResidueFormat(String format){
+	public static boolean isResidueFile(String format){
 		return (format.equalsIgnoreCase("bnib") || format.equalsIgnoreCase("fa") ||
-				format.equalsIgnoreCase(".2bit"));
+				format.equalsIgnoreCase("2bit"));
 	}
 
 	private static boolean isAnnotsFile(File current_file) {
@@ -343,7 +339,11 @@ public abstract class ServerUtils {
 	}
 
 	private static boolean isSymLoader(File current_file){
-		return current_file.getName().endsWith(".bam");
+		String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
+		String extension = ParserController.getExtension(stream_name);
+		extension = extension.substring(extension.indexOf('.') + 1);
+		
+		return (extension.endsWith("bam") || isResidueFile(extension));
 	}
 
 	/**
@@ -910,11 +910,12 @@ public abstract class ServerUtils {
 	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
 		for(BioSeq aseq : genome.getSeqList()){
 			for(String type: aseq.getSymloaderList()){
+				SymLoader sym = aseq.getSymLoader(type);
 				if(genome_types.containsKey(type))
 					return;
 
 				if (annotSecurity == null || isAuthorized(genome, annotSecurity, type)) {
-					genome_types.put(type, new SimpleDas2Type(type, BAM_FORMAT, getProperties(genome, annotSecurity, type)));
+					genome_types.put(type, new SimpleDas2Type(type, sym.getFormatPrefList(), getProperties(genome, annotSecurity, type)));
 		        }
 			}
 		}

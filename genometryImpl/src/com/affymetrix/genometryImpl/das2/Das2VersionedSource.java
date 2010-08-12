@@ -169,7 +169,7 @@ public final class Das2VersionedSource {
 
 		boolean isResidueFormat = false;
 		for(String format : type.getFormats().keySet()){
-			if(ServerUtils.isResidueFormat(format)){
+			if(ServerUtils.isResidueFile(format)){
 				isResidueFormat = true;
 				break;
 			}
@@ -223,6 +223,21 @@ public final class Das2VersionedSource {
         }
         return residue2types.get(name);
     }
+
+	public synchronized Set<String> getResidueFormat(String name) {
+		List<Das2Type> Localtypes = residue2types.get(name);
+		if(Localtypes == null || Localtypes.isEmpty()){
+			return Collections.<String>emptySet();
+		}
+
+		Set<String> formats = new HashSet<String>();
+		for(Das2Type type : Localtypes){
+			for(String format : type.getFormats().keySet())
+				formats.add(format.toLowerCase());
+		}
+
+		return formats;
+	}
 
     /** Get regions from das server. */
 	private synchronized void initSegments() {

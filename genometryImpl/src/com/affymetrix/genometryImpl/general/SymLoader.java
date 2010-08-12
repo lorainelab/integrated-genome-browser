@@ -163,6 +163,10 @@ public abstract class SymLoader {
 		return filterResultsByChromosome(genomeResults, seq);
     }
 
+	public List<String> getFormatPrefList(){
+		return Collections.<String>emptyList();
+	}
+	
 	/**
 	 * Return the symmetries that match the given chromosome.
 	 * @param genomeResults

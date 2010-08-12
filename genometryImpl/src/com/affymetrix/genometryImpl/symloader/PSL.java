@@ -841,6 +841,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		return ((UcscPslSym) sym).getTargetMax();
 	}
 
+	@Override
 	public List<String> getFormatPrefList() {
 		if (is_link_psl) {
 			return PSL.link_psl_pref_list;

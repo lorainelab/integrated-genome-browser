@@ -23,6 +23,11 @@ import java.util.regex.Pattern;
  * @author jnicol
  */
 public class Fasta extends SymLoader {
+	private static List<String> pref_list = new ArrayList<String>();
+	static {
+		pref_list.add("fa");
+	}
+
 	private static final Pattern header_regex = 
 			Pattern.compile("^\\s*>\\s*(.+)");
 	private final Set<BioSeq> chrSet = new HashSet<BioSeq>();
@@ -207,5 +212,10 @@ public class Fasta extends SymLoader {
 			GeneralUtils.safeClose(bis);
 		}
 		return residues;
+	}
+
+	@Override
+	public List<String> getFormatPrefList() {
+		return pref_list;
 	}
 }

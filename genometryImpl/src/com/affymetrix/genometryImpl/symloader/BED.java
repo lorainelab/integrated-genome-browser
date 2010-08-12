@@ -603,6 +603,7 @@ public class BED extends SymLoader{
 		return span.getMax();
 	}
 
+	@Override
 	public List<String> getFormatPrefList() {
 		return pref_list;
 	}

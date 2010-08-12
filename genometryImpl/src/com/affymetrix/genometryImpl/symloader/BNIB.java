@@ -21,6 +21,11 @@ import net.sf.samtools.util.SeekableStream;
  * @author jnicol
  */
 public class BNIB extends SymLoader {
+	private static List<String> pref_list = new ArrayList<String>();
+	static {
+		pref_list.add("bnib");
+	}
+
 	private List<BioSeq> chrList = null;
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -92,4 +97,8 @@ public class BNIB extends SymLoader {
 		}
 	}
 
+	@Override
+	public List<String> getFormatPrefList() {
+		return pref_list;
+	}
 }

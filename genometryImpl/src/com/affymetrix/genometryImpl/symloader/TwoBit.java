@@ -6,9 +6,7 @@ import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TwoBitParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +19,12 @@ import java.util.logging.Logger;
  * @author jnicol
  */
 public class TwoBit extends SymLoader {
-	
+
+	private static List<String> pref_list = new ArrayList<String>();
+	static {
+		pref_list.add("2bit");
+	}
+
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		// BAM files are generally large, so only allow loading visible data.
@@ -70,5 +73,10 @@ public class TwoBit extends SymLoader {
 		} finally {
 			GeneralUtils.safeClose(outStream);
 		}
+	}
+
+	@Override
+	public List<String> getFormatPrefList() {
+		return pref_list;
 	}
 }

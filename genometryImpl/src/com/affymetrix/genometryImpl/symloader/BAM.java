@@ -46,6 +46,12 @@ import net.sf.samtools.util.SequenceUtil;
  * @author jnicol
  */
 public final class BAM extends SymLoader {
+
+	private static List<String> pref_list = new ArrayList<String>();
+	static {
+		pref_list.add("bam");
+	}
+
 	private static final boolean DEBUG = false;
 	private SAMFileReader reader;
     private SAMFileHeader header;
@@ -184,7 +190,11 @@ public final class BAM extends SymLoader {
 		init();
 		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
 	}
-	
+
+	@Override
+	public List<String> getFormatPrefList() {
+		return pref_list;
+	}
 	/**
 	 * Return a list of symmetries for the given chromosome range
 	 * @param seq

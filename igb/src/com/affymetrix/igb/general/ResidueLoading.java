@@ -11,6 +11,8 @@ import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.das.DasLoader;
+import com.affymetrix.genometryImpl.das2.Das2Type;
+import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.BNIB;
@@ -26,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -86,6 +89,37 @@ public final class ResidueLoading {
 	 * @return
 	 */
 	private static boolean loadPartial(Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span, final SeqMapView gviewer) {
+		//Try to check if format data is available from Das2
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.DAS2) {
+				Das2VersionedSource das2version = (Das2VersionedSource) version.versionSourceObj;
+				Set<String> format = das2version.getResidueFormat(seq_name);
+
+				if(format == null || format.isEmpty())
+					continue;
+				
+				String uri = null;
+				if (format.contains("raw")) {
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
+				} else if (format.contains("fasta") || format.contains("fa")) {
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
+				}
+
+				String residues = GetPartialFASTADas2Residues(uri);
+				if (residues != null) {
+					// span is non-null, here
+					BioSeq.addResiduesToComposition(aseq, residues, span);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
+				}
+
+
+			}
+		}
+
+
+		// If no format information is available then try all formats.
 		// Try to load in raw format from DAS2 server.
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
@@ -173,6 +207,37 @@ public final class ResidueLoading {
 	private static boolean loadFull(
 			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, final SeqMapView gviewer) {
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+
+		//Try to check if format data is available from Das2
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.DAS2) {
+				Das2VersionedSource das2version = (Das2VersionedSource) version.versionSourceObj;
+				Set<String> format = das2version.getResidueFormat(seq_name);
+
+				if(format == null || format.isEmpty())
+					continue;
+
+				String uri = null;
+				if (format.contains("bnib")) {
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.BNIB);
+				}else if (format.contains("raw")) {
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
+				} else if (format.contains("fasta") || format.contains("fa")) {
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
+				}
+
+				if (LoadResiduesFromDAS2(seq_group, uri)) {
+					BioSeq.addResiduesToComposition(aseq);
+					gviewer.setAnnotatedSeq(aseq, true, true, true);
+					return true;
+				}
+
+
+			}
+		}
+
+		// If no format information is available then try all formats.
 		// Try to load in bnib format, as this format is more compactly represented internally.
 		// Try loading from DAS/2.
 		for (GenericVersion version : versionsWithChrom) {
@@ -379,7 +444,7 @@ public final class ResidueLoading {
 		}
 		return uri;
 	}
-
+	
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
 	private static String generateQuickLoadURI(String common_url, QFORMAT Format) {
 		if (DEBUG) {

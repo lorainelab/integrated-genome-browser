@@ -151,7 +151,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 	}
 
 	/**
-	 *  Overriden such that certain properties will be stored more efficiently.
+	 *  Overridden such that certain properties will be stored more efficiently.
 	 *  Setting certain properties this way is not supported:
 	 *  these include "attributes", "score" and "frame".
 	 */
@@ -348,12 +348,9 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 		return false;
 	}
 
-	private boolean isCdsSym(SeqSymmetry sym) {
-		if (sym instanceof GFF3Sym && ((GFF3Sym) sym).getFeatureType().equals(GFF3Sym.FEATURE_TYPE_CDS)) {
-			return true;
-		} else {
-			return false;
-		}
+	private static boolean isCdsSym(SeqSymmetry sym) {
+		return sym instanceof GFF3Sym
+				&& ((GFF3Sym) sym).getFeatureType().equals(GFF3Sym.FEATURE_TYPE_CDS);
 	}
 
 	/**
@@ -392,20 +389,17 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 		} else if (cdsSpans.size() > 1){
 			Logger.getLogger(
 					this.getClass().getName()).log(Level.WARNING,
-					"Multiple CDS spans for a single Symmetry is not " +
-					"supported.  Skipping all remaining CDS spans.  (found " +
-					cdsSpans.size() + " spans for " +
-					getIdFromGFF3Attributes(attributes) + ")");
+					"Multiple CDS spans detected.  Skipping remaining CDS spans.  (found {0} spans for {1})",
+					new Object[] {Integer.valueOf(cdsSpans.size()),
+					getIdFromGFF3Attributes(attributes)});
 
 			if (!multipleCdsWarning) {
 				multipleCdsWarning = !multipleCdsWarning;
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
+						/* TODO: This should use StringUtils.wrap() */
 						JOptionPane.showMessageDialog(null,
-								"Multiple CDS regions with distinct IDs and a shared parent have\n" +
-								"been detected in a GFF3 file.  IGB will only display the first\n" +
-								"CDS region encountered.  Bug reports containing the console log\n" +
-								"and offending GFF3 file would be much appreciated.",
+								"Multiple CDS regions for a shared parent have been\ndetected in a GFF3 file.  Only the first CDS region\nencountered will be displayed.  This is a known\nlimitation of the GFF3 parser.",
 								"Multiple CDS Regions Detected",
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -413,6 +407,6 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 			}
 		}
 
-		return cdsSpans.values().iterator().next();
+		return cdsSpans.entrySet().iterator().next().getValue();
 	}
 }

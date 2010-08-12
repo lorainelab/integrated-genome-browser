@@ -19,6 +19,7 @@ import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -168,7 +169,7 @@ public final class FeatureLoading {
 				public void done() {
 					if (update_display && gviewer != null && !result_syms.isEmpty()) {
 						BioSeq aseq = gmodel.getSelectedSeq();
-						Application.getSingleton().getMapView().updateDependentData();
+						TrackView.updateDependentData();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
 					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);

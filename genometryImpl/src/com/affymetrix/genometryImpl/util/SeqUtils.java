@@ -2,12 +2,15 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
+import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -1072,6 +1075,125 @@ public static String getResidues(SeqSymmetry sym, BioSeq seq) {
 	}
 	return result;
 }
+
+public static String determineSelectedResidues(SeqSymmetry residues_sym, BioSeq seq) {
+		int child_count = residues_sym.getChildCount();
+		if (child_count > 0) {
+			// make new resorted sym to fix any problems with orientation
+			//   within the original sym...
+			//
+			// GAH 12-15-2003  should really do some sort of recursive sort, but for
+			//   now assuming depth = 2...  actually, should _really_ fix this when building SeqSymmetries,
+			//   so order of children reflects the order they should be spliced in, rather
+			//   than their order relative to a particular seq
+			List<SeqSymmetry> sorted_children = new ArrayList<SeqSymmetry>(child_count);
+			for (int i = 0; i < child_count; i++) {
+				sorted_children.add(residues_sym.getChild(i));
+			}
+			Comparator<SeqSymmetry> symcompare = new SeqSymStartComparator(seq, residues_sym.getSpan(seq).isForward());
+			Collections.sort(sorted_children, symcompare);
+			MutableSeqSymmetry sorted_sym = new SimpleMutableSeqSymmetry();
+			for (int i = 0; i < child_count; i++) {
+				sorted_sym.addChild(sorted_children.get(i));
+			}
+			residues_sym = sorted_sym;
+		}
+		return SeqUtils.getResidues(residues_sym, seq);
+	}
+
+public static boolean areResiduesComplete(String residues) {
+		int rescount = residues.length();
+		for (int i = 0; i < rescount; i++) {
+			char res = residues.charAt(i);
+			if (res == '-' || res == ' ' || res == '.') {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+/**
+	 *  Find min and max of annotations along BioSeq aseq.
+	 *<p>
+	 *  takes a boolean argument for whether to excludes GraphSym bounds
+	 *    (actual bounds of GraphSyms are currently problematic, but if (!exclude_graphs) then
+	 *      this method uses the first and last point in graph to determine graph bounds, and
+	 *      assumes that graph x coords are in order)
+	 *<p>
+	 *    This method is currently somewhat problematic, since it does not descend into BioSeqs
+	 *      that aseq might be composed of to factor in bounds of annotations on those sequences
+	 *
+	 * Synchronized to keep aseq non-null
+	 */
+	public static SeqSpan getAnnotationBounds(BioSeq aseq) {
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		synchronized (aseq) {
+			int annotCount = aseq == null ? 0 : aseq.getAnnotationCount();
+			for (int i = 0; i < annotCount; i++) {
+				// all_gene_searches, all_repeat_searches, etc.
+				SeqSymmetry annotSym = aseq.getAnnotation(i);
+				if (annotSym instanceof GraphSym) {
+					continue;
+				}
+				if (annotSym instanceof TypeContainerAnnot) {
+					TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
+					int[] sub_bounds = getAnnotationBounds(aseq, tca, min, max);
+					min = sub_bounds[0];
+					max = sub_bounds[1];
+				} else { // this shouldn't happen: should only be TypeContainerAnnots
+					SeqSpan span = annotSym.getSpan(aseq);
+					if (span != null) {
+						min = Math.min(span.getMin(), min);
+						max = Math.max(span.getMax(), max);
+					}
+				}
+			}
+			if (min != Integer.MAX_VALUE && max != Integer.MIN_VALUE) {
+				min = Math.max(0, min - 100);
+				max = Math.min(aseq.getLength(), max + 100);
+				return new SimpleSeqSpan(min, max, aseq);
+			}
+			return null;
+		}
+	}
+
+	/** Returns the minimum and maximum positions of all included annotations.
+	 *  Necessary because getMin() and getMax() do not give this information
+	 *  for this type of SeqSymmetry.
+	 *
+	 *  @param seq  consider annotations only on this seq
+	 *  @param exclude_graphs if true, ignore graph annotations
+	 *  @param min  an initial minimum value.
+	 *  @param max  an initial maximum value.
+	 */
+	private static int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, int min, int max) {
+		int[] min_max = new int[2];
+		min_max[0] = min;
+		min_max[1] = max;
+
+		int child_count = tca.getChildCount();
+		for (int j = 0; j < child_count; j++) {
+			SeqSymmetry next_sym = tca.getChild(j);
+
+			int annotCount = next_sym.getChildCount();
+			for (int i = 0; i < annotCount; i++) {
+				// all_gene_searches, all_repeat_searches, etc.
+				SeqSymmetry annotSym = next_sym.getChild(i);
+				if (annotSym instanceof GraphSym) {
+					continue;
+				}
+				SeqSpan span = annotSym.getSpan(seq);
+				if (span != null) {
+					min_max[0] = Math.min(span.getMin(), min_max[0]);
+					min_max[1] = Math.max(span.getMax(), min_max[1]);
+				}
+			}
+		}
+		return min_max;
+	}
+
 
 	public static boolean hasSpan(SeqSymmetry sym) {
 		if (sym.getSpanCount() > 0) {

@@ -35,12 +35,12 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
   private static final boolean DEBUG = false;
@@ -59,8 +59,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
       if (DEBUG)  {System.out.println("&&&&& in ScoredContainerGlyphFactory, attach graphs: " + attach_graphs); }
       // first draw the little rectangle that will go in an annotation tier
       // and be used to select regions for the pivot view
-      XmlStylesheetGlyphFactory annotation_factory = smv.getAnnotationGlyphFactory();
-      annotation_factory.createGlyph(sym, smv);
+      TrackView.getAnnotationGlyphFactory().createGlyph(sym, smv);
       
       // then draw the graphs
       if (attach_graphs) {
@@ -247,7 +246,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
 			graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-			GraphGlyphUtils.checkPixelBounds(graph_glyph, smv.getSeqMap());
+			GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
 			smv.getPixelFloaterGlyph().addChild(graph_glyph);
 		} else {
 			if (gstate.getComboStyle() != null) {
@@ -257,7 +256,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 			if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
 				tier_direction = TierGlyph.Direction.REVERSE;
 			}
-			TierGlyph tglyph = smv.getGraphTier(tier_style, tier_direction);
+			TierGlyph tglyph = TrackView.getGraphTrack(map, tier_style, tier_direction);
 			tglyph.addChild(graph_glyph);
 			tglyph.pack(map.getView());
 		}

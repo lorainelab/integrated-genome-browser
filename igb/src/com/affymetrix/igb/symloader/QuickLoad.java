@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -184,7 +185,7 @@ public final class QuickLoad extends SymLoader {
 				try {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
-						gviewer.updateDependentData();
+						TrackView.updateDependentData();
 						if (overlapSpan != null && overlapSpan.getBioSeq() != null) {
 							gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
 						} else {

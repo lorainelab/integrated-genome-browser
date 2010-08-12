@@ -39,6 +39,7 @@ import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import com.affymetrix.igb.view.DependentData;
 import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -530,7 +531,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	String human_name = "coverage: " + atier.getLabel();
 	String unique_name = AnnotStyle.getUniqueName(human_name);
 	DependentData dd = new DependentData(unique_name,DependentType.COVERAGE,atier.getParentURL());
-	SymWithProps wrapperSym = gviewer.addToDependentList(dd);
+	SymWithProps wrapperSym = TrackView.addToDependentList(dd);
 
 	if (wrapperSym == null) {
 		ErrorHandler.errorPanel("Empty Track",
@@ -580,7 +581,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		dd = new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),atier.getDirection());
 	}
 	
-	GraphSym gsym = (GraphSym) gviewer.addToDependentList(dd);
+	GraphSym gsym = (GraphSym) TrackView.addToDependentList(dd);
 
 	if (gsym == null) {
 		ErrorHandler.errorPanel("Nothing to Summarize",
@@ -739,7 +740,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private void removeTiers(List<TierLabelGlyph> tiers) {
 	  for (TierLabelGlyph tlg: tiers) {
-		  gviewer.deleteTier(tlg.getReferenceTier());
+		  TrackView.deleteTrack(tlg.getReferenceTier());
 	  }
 	  gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());	// refresh
   }

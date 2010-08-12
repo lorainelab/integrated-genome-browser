@@ -51,6 +51,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.igb.view.TrackView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,7 +198,7 @@ public final class UrlLoaderThread extends Thread {
 
 			public void run() {
 				try {
-					gviewer.updateDependentData();
+					TrackView.updateDependentData();
 					gviewer.setAnnotatedSeq(seq, true, true);
 				} catch (Exception e) {
 					handleException(e);

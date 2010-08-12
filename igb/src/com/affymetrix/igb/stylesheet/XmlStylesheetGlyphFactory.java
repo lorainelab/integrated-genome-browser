@@ -23,6 +23,7 @@ import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 import java.util.*;
 
 /**
@@ -91,7 +92,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 				return;
 			}
 			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			TierGlyph[] tiers = gviewer.getTiers(meth, false, style, false);
+			TierGlyph[] tiers = TrackView.getTiers(gviewer, meth, false, style, false);
 			int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
 			TierGlyph the_tier = tiers[tier_index];
 

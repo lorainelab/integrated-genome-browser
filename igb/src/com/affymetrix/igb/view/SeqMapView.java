@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -14,7 +13,6 @@ import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
@@ -23,7 +21,6 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -34,20 +31,15 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
-import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
-import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
-import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
@@ -55,9 +47,6 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.tiers.CollapsePacker;
-import com.affymetrix.igb.tiers.ExpandPacker;
-import com.affymetrix.igb.tiers.FasterExpandPacker;
 import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.tiers.TierArithmetic;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -96,14 +85,12 @@ public class SeqMapView extends JPanel
 				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
 
 	private static final boolean DEBUG_TIERS = false;
-	private static final boolean DEBUG_COMP = false;
 
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
 	private boolean hairline_is_labeled = true;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
-	private static final XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 	/**
 	 *  maximum number of query glyphs for edge matcher.
 	 *  any more than this and won't attempt to edge match
@@ -164,14 +151,6 @@ public class SeqMapView extends JPanel
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
 	private static final boolean default_x_zoomer_above = true;
 	private static final boolean default_y_zoomer_left = true;
-	/** Hash of method names (lower case) to forward tiers */
-	private final Map<String, TierGlyph> method2ftier = new HashMap<String, TierGlyph>();
-	/** Hash of method names (lower case) to reverse tiers */
-	private final Map<String, TierGlyph> method2rtier = new HashMap<String, TierGlyph>();
-	/**List of Dependent data */
-	private final List<DependentData> dependent_list = new ArrayList<DependentData>();
-	/** Hash of GraphStates to TierGlyphs. */
-	private final Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
 
 	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 	private final GlyphEdgeMatcher edge_matcher;
@@ -200,14 +179,6 @@ public class SeqMapView extends JPanel
 
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
-
-	// We only need a single ScoredContainerGlyphFactory because all graph properties
-	// are in the GraphState object.
-	private static final ScoredContainerGlyphFactory container_factory = new ScoredContainerGlyphFactory();
-
-	// We only need a single GraphGlyphFactory because all graph properties
-	// are in the GraphState object.
-	private static final GenericGraphGlyphFactory graph_factory = new GenericGraphGlyphFactory();
 
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -420,7 +391,7 @@ public class SeqMapView extends JPanel
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 
-		default_glyph_factory.setStylesheet(XmlStylesheetParser.getUserStylesheet());
+		TrackView.getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getUserStylesheet());
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 	}
@@ -510,11 +481,8 @@ public class SeqMapView extends JPanel
 		aseq = null;
 		this.viewseq = null;
 		clearSelection();
-		method2rtier.clear();
-		method2ftier.clear();
-		gstyle2tier.clear();
+		TrackView.clear();
 		match_glyphs.clear();
-		dependent_list.clear();
 		seqmap.updateWidget();
 	}
 
@@ -628,7 +596,7 @@ public class SeqMapView extends JPanel
 		//    (but presumably added / deleted / modified annotations...)
 		List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
 		int axis_index = determineAxisIndex(cur_tiers, axis_tier);
-		List<TierGlyph> temp_tiers = copyMapTiers(cur_tiers, axis_index);
+		List<TierGlyph> temp_tiers = copyMapTierGlyphs(cur_tiers, axis_index);
 
 		seqmap.clearWidget();
 		seqmap.clearSelected(); // may already be done by map.clearWidget()
@@ -741,7 +709,7 @@ public class SeqMapView extends JPanel
 	// copying map tiers to separate list to avoid problems when removing tiers
 	//   (and thus modifying map.getTiers() list -- could probably deal with this
 	//    via iterators, but feels safer this way...)
-	private List<TierGlyph> copyMapTiers(List<TierGlyph> cur_tiers, int axis_index) {
+	private List<TierGlyph> copyMapTierGlyphs(List<TierGlyph> cur_tiers, int axis_index) {
 		List<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
 		for (int i = 0; i < cur_tiers.size(); i++) {
 			if (i == axis_index) {
@@ -768,8 +736,8 @@ public class SeqMapView extends JPanel
 		hairline.getShadow().setLabeled(hairline_is_labeled);
 		addPreviousTierGlyphs(seqmap, temp_tiers);
 		axis_tier = addAxisTier(axis_index);
-		addAnnotationTiers();
-		hideEmptyTiers(seqmap.getTiers());
+		addAnnotationTracks();
+		hideEmptyTierGlyphs(seqmap.getTiers());
 	}
 
 
@@ -844,7 +812,7 @@ public class SeqMapView extends JPanel
 			 *    is to base annotation bounds on map glyphs, but then have to go into tiers to
 			 *    get children bounds, and filter out stuff like axis and DNA glyphs, etc...)
 			 */
-			SeqSpan annot_bounds = getAnnotationBounds(aseq);
+			SeqSpan annot_bounds = SeqUtils.getAnnotationBounds(aseq);
 			if (annot_bounds != null) {
 				// transform to view
 				MutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
@@ -923,7 +891,7 @@ public class SeqMapView extends JPanel
 		return layers;
 	}
 
-	private static void hideEmptyTiers(List<TierGlyph> tiers) {
+	private static void hideEmptyTierGlyphs(List<TierGlyph> tiers) {
 		for (TierGlyph tg : tiers) {
 			if (tg.getChildCount() == 0) {
 				tg.setVisibility(false);
@@ -931,201 +899,51 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	/**
-	 *  Find min and max of annotations along BioSeq aseq.
-	 *<p>
-	 *  takes a boolean argument for whether to excludes GraphSym bounds
-	 *    (actual bounds of GraphSyms are currently problematic, but if (!exclude_graphs) then
-	 *      this method uses the first and last point in graph to determine graph bounds, and
-	 *      assumes that graph x coords are in order)
-	 *<p>
-	 *    This method is currently somewhat problematic, since it does not descend into BioSeqs
-	 *      that aseq might be composed of to factor in bounds of annotations on those sequences
-	 *
-	 * Synchronized to keep aseq non-null
-	 */
-	private static SeqSpan getAnnotationBounds(BioSeq aseq) {
-		int min = Integer.MAX_VALUE;
-		int max = Integer.MIN_VALUE;
-		synchronized (aseq) {
-			int annotCount = aseq == null ? 0 : aseq.getAnnotationCount();
-			for (int i = 0; i < annotCount; i++) {
-				// all_gene_searches, all_repeat_searches, etc.
-				SeqSymmetry annotSym = aseq.getAnnotation(i);
-				if (annotSym instanceof GraphSym) {
-					continue;
-				}
-				if (annotSym instanceof TypeContainerAnnot) {
-					TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
-					int[] sub_bounds = getAnnotationBounds(aseq, tca, min, max);
-					min = sub_bounds[0];
-					max = sub_bounds[1];
-				} else { // this shouldn't happen: should only be TypeContainerAnnots
-					SeqSpan span = annotSym.getSpan(aseq);
-					if (span != null) {
-						min = Math.min(span.getMin(), min);
-						max = Math.max(span.getMax(), max);
-					}
-				}
-			}
-			if (min != Integer.MAX_VALUE && max != Integer.MIN_VALUE) {
-				min = Math.max(0, min - 100);
-				max = Math.min(aseq.getLength(), max + 100);
-				return new SimpleSeqSpan(min, max, aseq);
-			}
-			return null;
-		}
-	}
-
-	/** Returns the minimum and maximum positions of all included annotations.
-	 *  Necessary because getMin() and getMax() do not give this information
-	 *  for this type of SeqSymmetry.
-	 *
-	 *  @param seq  consider annotations only on this seq
-	 *  @param exclude_graphs if true, ignore graph annotations
-	 *  @param min  an initial minimum value.
-	 *  @param max  an initial maximum value.
-	 */
-	private static int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, int min, int max) {
-		int[] min_max = new int[2];
-		min_max[0] = min;
-		min_max[1] = max;
-
-		int child_count = tca.getChildCount();
-		for (int j = 0; j < child_count; j++) {
-			SeqSymmetry next_sym = tca.getChild(j);
-
-			int annotCount = next_sym.getChildCount();
-			for (int i = 0; i < annotCount; i++) {
-				// all_gene_searches, all_repeat_searches, etc.
-				SeqSymmetry annotSym = next_sym.getChild(i);
-				if (annotSym instanceof GraphSym) {
-					continue;
-				}
-				SeqSpan span = annotSym.getSpan(seq);
-				if (span != null) {
-					min_max[0] = Math.min(span.getMin(), min_max[0]);
-					min_max[1] = Math.max(span.getMax(), min_max[1]);
-				}
-			}
-		}
-		return min_max;
-	}
-
-	private void addAnnotationTiers() {
-		if (DEBUG_COMP) {
-			System.out.println("$$$$$$$ called SeqMapView.addAnnotationTiers(), aseq: " + aseq.getID() + " $$$$$$$");
-		}
-		// WARNING: use aseq.getAnnotationCount() in loop, because some annotations end up lazily instantiating
-		//   other annotations and adding them to the annotation list
-		// For example, accessing methods for the first time on a LazyChpSym can cause it to dynamically add
-		//      probeset annotation tracks
-		for (int i = 0; i < aseq.getAnnotationCount(); i++) {
-			SeqSymmetry annotSym = aseq.getAnnotation(i);
-
-			// skip over any cytoband data.  It is shown in a different way
-			if (annotSym instanceof TypeContainerAnnot) {
-				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
-
-				if (CytobandGlyph.CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
-					continue;
-				}
-			}
-
-			if (annotSym instanceof SymWithProps) {
-				addAnnotationGlyphs(annotSym);
-				doMiddlegroundShading(annotSym, method2ftier, method2rtier);
-			}
-		}
+	
+	private void addAnnotationTracks() {
+		TrackView.addTracks(this, aseq);
 
 		if (aseq.getComposition() != null) {
-			// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
-			//   addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
-			BioSeq cached_aseq = aseq;
-			MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
-			SeqSymmetry[] cached_path = transform_path;
-
-			SeqSymmetry comp = aseq.getComposition();
-			// assuming a two-level deep composition hierarchy for now...
-			//   need to make more recursive at some point...
-			//   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
-			int scount = comp.getChildCount();
-			for (int i = 0; i < scount; i++) {
-				SeqSymmetry csym = comp.getChild(i);
-				// return seq in a symmetry span that _doesn't_ match aseq
-				BioSeq cseq = SeqUtils.getOtherSeq(csym, cached_aseq);
-				if (cseq != null) {
-					aseq = cseq;
-					if (cached_seq2viewSym == null) {
-						transform_path = new SeqSymmetry[1];
-						transform_path[0] = csym;
-					} else {
-						transform_path = new SeqSymmetry[2];
-						transform_path[0] = csym;
-						transform_path[1] = cached_seq2viewSym;
-					}
-					addAnnotationTiers();
-				}
-			}
-
-			// restore aseq and seq2viewsym afterwards...
-			aseq = cached_aseq;
-			seq2viewSym = cached_seq2viewSym;
-			transform_path = cached_path;
+			handleCompositionSequence();
 		}
 	}
 
-
-	// XmlStylesheetGlyphFactory takes the method and type
-	// into account when determining how to draw a sym.
-	public final XmlStylesheetGlyphFactory getAnnotationGlyphFactory() {
-		return default_glyph_factory;
-	}
-
-	private void addAnnotationGlyphs(SeqSymmetry annotSym) {
-		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
-		MapViewGlyphFactoryI factory = null;
-		if (annotSym instanceof ScoredContainerSym) {
-			factory = container_factory;
-		} else if (annotSym instanceof GraphSym) {
-			factory = graph_factory;
-		} else {
-			factory = default_glyph_factory;
-		}
-
-		factory.createGlyph(annotSym, this);
-	}
-
-	private static void doMiddlegroundShading(SeqSymmetry annotSym, Map<String, TierGlyph> method2ftier, Map<String, TierGlyph> method2rtier) {
-		String meth = BioSeq.determineMethod(annotSym);
-		// do "middleground" shading for tracks loaded via DAS/2
-		if ((meth != null) &&
-						(annotSym instanceof TypeContainerAnnot) &&
-						(annotSym.getChildCount() > 0) &&
-						(annotSym.getChild(0) instanceof Das2FeatureRequestSym)) {
-			int child_count = annotSym.getChildCount();
-			TierGlyph fortier = method2ftier.get(meth.toLowerCase());
-			TierGlyph revtier = method2rtier.get(meth.toLowerCase());
-			for (int i = 0; i < child_count; i++) {
-				SeqSymmetry csym = annotSym.getChild(i);
-				if (csym instanceof Das2FeatureRequestSym) {
-					Das2FeatureRequestSym dsym = (Das2FeatureRequestSym) csym;
-					SeqSpan ospan = dsym.getOverlapSpan();
-					if (fortier != null) {
-						GlyphI mglyph = new FillRectGlyph();
-						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
-						fortier.addMiddleGlyph(mglyph);
-					}
-					if (revtier != null) {
-						GlyphI mglyph = new FillRectGlyph();
-						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
-						revtier.addMiddleGlyph(mglyph);
-					}
+	// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
+	//   addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
+	private void handleCompositionSequence() {
+		BioSeq cached_aseq = aseq;
+		MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
+		SeqSymmetry[] cached_path = transform_path;
+		SeqSymmetry comp = aseq.getComposition();
+		// assuming a two-level deep composition hierarchy for now...
+		//   need to make more recursive at some point...
+		//   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
+		int scount = comp.getChildCount();
+		for (int i = 0; i < scount; i++) {
+			SeqSymmetry csym = comp.getChild(i);
+			// return seq in a symmetry span that _doesn't_ match aseq
+			BioSeq cseq = SeqUtils.getOtherSeq(csym, cached_aseq);
+			if (cseq != null) {
+				aseq = cseq;
+				if (cached_seq2viewSym == null) {
+					transform_path = new SeqSymmetry[1];
+					transform_path[0] = csym;
+				} else {
+					transform_path = new SeqSymmetry[2];
+					transform_path[0] = csym;
+					transform_path[1] = cached_seq2viewSym;
 				}
+				addAnnotationTracks();
 			}
 		}
-
+		// restore aseq and seq2viewsym afterwards...
+		aseq = cached_aseq;
+		seq2viewSym = cached_seq2viewSym;
+		transform_path = cached_path;
 	}
+
+
+
 
 	public final BioSeq getAnnotatedSeq() {
 		return aseq;
@@ -1296,9 +1114,9 @@ public class SeqMapView extends JPanel
 			ErrorHandler.errorPanel("Can't copy to clipboard",
 							"No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
 		} else {
-			String residues = determineSelectedResidues(residues_sym, aseq);
+			String residues = SeqUtils.determineSelectedResidues(residues_sym, aseq);
 			if (residues != null) {
-				if (areResiduesComplete(residues)) {
+				if (SeqUtils.areResiduesComplete(residues)) {
 					/*
 					 *  WARNING
 					 *  This bit of code *looks* unnecessary, but is needed because
@@ -1334,42 +1152,6 @@ public class SeqMapView extends JPanel
 		return success;
 	}
 
-
-	private static String determineSelectedResidues(SeqSymmetry residues_sym, BioSeq seq) {
-		int child_count = residues_sym.getChildCount();
-		if (child_count > 0) {
-			// make new resorted sym to fix any problems with orientation
-			//   within the original sym...
-			//
-			// GAH 12-15-2003  should really do some sort of recursive sort, but for
-			//   now assuming depth = 2...  actually, should _really_ fix this when building SeqSymmetries,
-			//   so order of children reflects the order they should be spliced in, rather
-			//   than their order relative to a particular seq
-			List<SeqSymmetry> sorted_children = new ArrayList<SeqSymmetry>(child_count);
-			for (int i = 0; i < child_count; i++) {
-				sorted_children.add(residues_sym.getChild(i));
-			}
-			Comparator<SeqSymmetry> symcompare = new SeqSymStartComparator(seq, residues_sym.getSpan(seq).isForward());
-			Collections.sort(sorted_children, symcompare);
-			MutableSeqSymmetry sorted_sym = new SimpleMutableSeqSymmetry();
-			for (int i = 0; i < child_count; i++) {
-				sorted_sym.addChild(sorted_children.get(i));
-			}
-			residues_sym = sorted_sym;
-		}
-		return SeqUtils.getResidues(residues_sym, seq);
-	}
-
-	private static boolean areResiduesComplete(String residues) {
-		int rescount = residues.length();
-		for (int i = 0; i < rescount; i++) {
-			char res = residues.charAt(i);
-			if (res == '-' || res == ' ' || res == '.') {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 *  Determines which SeqSymmetry's are selected by looking at which Glyph's
@@ -1932,42 +1714,6 @@ public class SeqMapView extends JPanel
 	}
 
 	/**
-	 *  Returns a tier for the given IAnnotStyle, creating the tier if necessary.
-	 *  Generally called by a Graph Glyph Factory.
-	 */
-	public final TierGlyph getGraphTier(IAnnotStyle style, TierGlyph.Direction tier_direction) {
-		if (style == null) {
-			throw new NullPointerException();
-		}
-
-		TierGlyph tier = gstyle2tier.get(style);
-		if (tier == null) {
-			tier = new TierGlyph(style);
-			tier.setDirection(tier_direction);
-			setUpTierPacker(tier, true, false);
-			gstyle2tier.put(style, tier);
-		}
-
-		PackerI pack = tier.getPacker();
-		if (pack instanceof CollapsePacker) {
-			CollapsePacker cp = (CollapsePacker) pack;
-			cp.setParentSpacer(0); // fill tier to the top and bottom edges
-			cp.setAlignment(CollapsePacker.ALIGN_CENTER);
-		}
-
-		tier.setDirection(tier_direction);
-		tier.setLabel(style.getHumanName());
-		tier.setFillColor(style.getBackground());
-		tier.setForegroundColor(style.getColor());
-
-		if (getSeqMap().getTierIndex(tier) == -1) {
-			boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);
-			getSeqMap().addTier(tier, above_axis);
-		}
-		return tier;
-	}
-
-	/**
 	 *  Returns a forward and reverse tier for the given method, creating them if they don't
 	 *  already exist.
 	 *  Generally called by the Glyph Factory.
@@ -1982,87 +1728,10 @@ public class SeqMapView extends JPanel
 	 *    in this case place glyphs for both forward and revers items into it.
 	 */
 	public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style) {
-		return getTiers(meth, next_to_axis, style, true);
+		return TrackView.getTiers(this, meth, next_to_axis, style, true);
 	}
 
-	/**
-	 *  This UcscVersion of getTiers() allows you to specify whether the tier will hold
-	 *  glyphs that are all of the same height.  If so, a more efficient packer can
-	 *  be used.  Note: if style.isGraphTier() is true, then the given value of
-	 *  constant_height will be ignored and re-set to false.
-	 */
-	public final TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style, boolean constant_heights) {
-		if (style == null) {
-			throw new NullPointerException();
-		}		
-		AffyTieredMap map = this.getSeqMap();
 
-		if (style.isGraphTier()) {
-			constant_heights = false;
-		}
-
-		TierGlyph fortier = method2ftier.get(meth.toLowerCase());
-		if (fortier == null) {
-			fortier = new TierGlyph(style);
-			fortier.setParentURL(meth);
-			setUpTierPacker(fortier, true, constant_heights);
-			method2ftier.put(meth.toLowerCase(), fortier);
-		}
-
-		if (style.getSeparate()) {
-			fortier.setDirection(TierGlyph.Direction.FORWARD);
-		} else {
-			fortier.setDirection(TierGlyph.Direction.BOTH);
-		}
-		fortier.setLabel(style.getHumanName());
-
-		if (map.getTierIndex(fortier) == -1) {
-			if (next_to_axis) {
-				int axis_index = map.getTierIndex(this.getAxisTier());
-				map.addTier(fortier, axis_index);
-			} else {
-				map.addTier(fortier, true);
-			}
-		}
-
-		TierGlyph revtier = method2rtier.get(meth.toLowerCase());
-		if (revtier == null) {
-			revtier = new TierGlyph(style);
-			revtier.setParentURL(meth);
-			revtier.setDirection(TierGlyph.Direction.REVERSE);
-			setUpTierPacker(revtier, false, constant_heights);
-			method2rtier.put(meth.toLowerCase(), revtier);
-		}
-		revtier.setLabel(style.getHumanName());
-
-		if (map.getTierIndex(revtier) == -1) {
-			if (next_to_axis) {
-				int axis_index = map.getTierIndex(this.getAxisTier());
-				map.addTier(revtier, axis_index + 1);
-			} else {
-				map.addTier(revtier, false);
-			}
-		}
-
-		if (style.getSeparate()) {
-			return new TierGlyph[]{fortier, revtier};
-		} else {
-			// put everything in a single tier
-			return new TierGlyph[]{fortier, fortier};
-		}
-	}
-
-	private static void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {
-		FasterExpandPacker ep = new FasterExpandPacker();
-		ep.setConstantHeights(constantHeights);
-		if (above_axis) {
-			ep.setMoveType(ExpandPacker.UP);
-		} else {
-			ep.setMoveType(ExpandPacker.DOWN);
-		}
-		tg.setExpandedPacker(ep);
-		tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
-	}
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup current_group = null;
@@ -2099,39 +1768,5 @@ public class SeqMapView extends JPanel
 	/** Get the span of the symmetry that is on the seq being viewed. */
 	public final SeqSpan getViewSeqSpan(SeqSymmetry sym) {
 		return sym.getSpan(viewseq);
-	}
-	
-	public final SymWithProps addToDependentList(DependentData dd){
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		if(seq == null)
-			return null;
-
-		dependent_list.add(dd);
-		return dd.createTier(seq);
-	}
-
-	public void updateDependentData() {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		if (seq != null) {
-			for (DependentData dd : dependent_list) {
-				seq.removeAnnotation(dd.getSym());
-				dd.createTier(seq);
-			}
-		}
-	}
-
-	public void deleteTier(TierGlyph tg) {
-		String URL = tg.getParentURL();
-		for (BioSeq seq : aseq.getSeqGroup().getSeqList()) {
-			SeqSymmetry sym = seq.getAnnotation(URL);
-			if (sym != null) {
-				seq.removeAnnotation(sym);
-			}
-		}
-
-		for(DependentData dd : dependent_list){
-			if(tg.getParentURL() == null ? dd.getParentUrl() == null : tg.getParentURL().equals(dd.getParentUrl()))
-				dependent_list.remove(dd);
-		}
 	}
 }

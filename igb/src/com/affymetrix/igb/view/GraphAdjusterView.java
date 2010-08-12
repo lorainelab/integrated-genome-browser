@@ -129,7 +129,7 @@ public final class GraphAdjusterView {
 			parentgl.removeChild(gl);
 			if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
 				if (parentgl instanceof TierGlyph) {
-					gviewer.deleteTier((TierGlyph) parentgl);
+					TrackView.deleteTrack((TierGlyph) parentgl);
 					AffyTieredMap map = gviewer.getSeqMap();
 					map.packTiers(false, true, false);
 					map.stretchToFit(false, false);

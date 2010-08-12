@@ -14,6 +14,7 @@ import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
@@ -134,7 +135,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
-			GraphGlyphUtils.checkPixelBounds(graph_glyph, smv.getSeqMap());
+			GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
 			smv.getPixelFloaterGlyph().addChild(graph_glyph);
 		} else {
 			if (gstate.getComboStyle() != null) {
@@ -144,7 +145,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
 				direction = TierGlyph.Direction.REVERSE;
 			}
-			TierGlyph tglyph = smv.getGraphTier(tier_style, direction);
+			TierGlyph tglyph = TrackView.getGraphTrack(map,tier_style, direction);
 			if(isGenome && !(tglyph.getPacker() instanceof CollapsePacker)){
 				CollapsePacker cp = new CollapsePacker();
 				cp.setParentSpacer(0); // fill tier to the top and bottom edges

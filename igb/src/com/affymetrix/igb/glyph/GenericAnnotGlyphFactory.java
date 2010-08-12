@@ -46,7 +46,6 @@ import java.util.*;
 public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static final boolean DEBUG = false;
-
 	/** Set to true if the we can assume the container SeqSymmetry being passed
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
 	 */
@@ -130,7 +129,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return depth;
 	}
 
-
 	private void addLeafsToTier(SeqSymmetry sym,
 			TierGlyph ftier, TierGlyph rtier,
 			int desired_leaf_depth) {
@@ -185,7 +183,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private GlyphI determinePGlyph(
 			boolean parent_and_child, SeqSymmetry insym,
 			ITrackStyleExtended the_style, TierGlyph the_tier, SeqSpan pspan,
-			AffyTieredMap map, SeqSymmetry sym, 
+			AffyTieredMap map, SeqSymmetry sym,
 			BioSeq annotseq, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
 		GlyphI pglyph = null;
@@ -290,7 +288,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				} else {
 					cglyph = (GlyphI) child_glyph_class.newInstance();
 				}
-				
+
 				Color child_color = getSymColor(child, the_style);
 				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, map);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
@@ -303,7 +301,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		//    orginal annotation are completely outside the view
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
 	}
-
 
 	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style) {
 		boolean use_score_colors = style.getColorByScore();
@@ -333,7 +330,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 		return style.getColor();
 	}
-
 
 	private double handleCDSSpan(
 			SeqSpan cdsSpan, SeqSpan cspan, SeqSymmetry cds_sym,
@@ -429,12 +425,12 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 			// SEQ array has unexpected behavior;  commenting out for now.
 			/*if (((SymWithProps) sym).getProperty("SEQ") != null) {
-				byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
-				for (int i = 0; i < seqArr.length; i++) {
-					System.out.print((char) seqArr[i]);
-				}
-				System.out.println();
-				csg.setResidueMask(seqArr);
+			byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
+			for (int i = 0; i < seqArr.length; i++) {
+			System.out.print((char) seqArr[i]);
+			}
+			System.out.println();
+			csg.setResidueMask(seqArr);
 			}*/
 		}
 

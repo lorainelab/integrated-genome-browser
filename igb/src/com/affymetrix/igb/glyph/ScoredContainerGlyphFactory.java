@@ -10,7 +10,6 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-
 package com.affymetrix.igb.glyph;
 
 import cern.colt.list.FloatArrayList;
@@ -42,37 +41,41 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 
-public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
-  private static final boolean DEBUG = false;
-  
-  private static final boolean separate_by_strand = true;
-  
-  /** Does nothing. */
-  public void init(Map options) {
-  }
-  
-  public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
-    boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
-        ScoredIntervalParser.default_attach_graphs);
-    if (sym instanceof ScoredContainerSym) {
-      ScoredContainerSym container = (ScoredContainerSym) sym;
-      if (DEBUG)  {System.out.println("&&&&& in ScoredContainerGlyphFactory, attach graphs: " + attach_graphs); }
-      // first draw the little rectangle that will go in an annotation tier
-      // and be used to select regions for the pivot view
-      TrackView.getAnnotationGlyphFactory().createGlyph(sym, smv);
-      
-      // then draw the graphs
-      if (attach_graphs) {
-        displayGraphs(container, smv, false);
-      }
-    } else {
-      System.err.println("ScoredContainerGlyphFactory.createGlyph() called, but symmetry " +
-          "passed in is NOT a ScoredContainerSym: " + sym);
-    }
-    if (DEBUG)  { System.out.println("&&&&& exiting ScoredContainerGlyphFactory"); }
-  }
-  
- private static void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map) {
+public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
+
+	private static final boolean DEBUG = false;
+	private static final boolean separate_by_strand = true;
+
+	/** Does nothing. */
+	public void init(Map options) {
+	}
+
+	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
+		boolean attach_graphs = PreferenceUtils.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
+				ScoredIntervalParser.default_attach_graphs);
+		if (sym instanceof ScoredContainerSym) {
+			ScoredContainerSym container = (ScoredContainerSym) sym;
+			if (DEBUG) {
+				System.out.println("&&&&& in ScoredContainerGlyphFactory, attach graphs: " + attach_graphs);
+			}
+			// first draw the little rectangle that will go in an annotation tier
+			// and be used to select regions for the pivot view
+			TrackView.getAnnotationGlyphFactory().createGlyph(sym, smv);
+
+			// then draw the graphs
+			if (attach_graphs) {
+				displayGraphs(container, smv, false);
+			}
+		} else {
+			System.err.println("ScoredContainerGlyphFactory.createGlyph() called, but symmetry "
+					+ "passed in is NOT a ScoredContainerSym: " + sym);
+		}
+		if (DEBUG) {
+			System.out.println("&&&&& exiting ScoredContainerGlyphFactory");
+		}
+	}
+
+	private static void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map) {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		if (DEBUG) {
 			System.out.println("   creating graphs on seq: " + aseq.getID());
@@ -94,84 +97,82 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 		}
 	}
 
+	private static GraphIntervalSym[] determineGraphSyms(SeqMapView smv, BioSeq aseq, ScoredContainerSym original_container) {
+		BioSeq vseq = smv.getViewSeq();
+		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		if (aseq != vseq) {
+			DerivedSeqSymmetry derived_sym = SeqUtils.copyToDerived(original_container);
+			SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());
+			return makeGraphsFromDerived(derived_sym, seq_group, vseq);
+		}
+		// aseq == vseq, so no transformation needed
+		return makeGraphs(original_container, seq_group);
+	}
 
- private static GraphIntervalSym[] determineGraphSyms(SeqMapView smv, BioSeq aseq, ScoredContainerSym original_container) {
-	 BioSeq vseq = smv.getViewSeq();
-	 AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
-	 if (aseq != vseq) {
-		 DerivedSeqSymmetry derived_sym = SeqUtils.copyToDerived(original_container);
-		 SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());
-		 return makeGraphsFromDerived(derived_sym, seq_group, vseq);
-	 }
-	 // aseq == vseq, so no transformation needed
-	 return makeGraphs(original_container, seq_group);
- }
-  
-  private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
-    int score_count = container.getScoreCount();
-    List<GraphIntervalSym> results = null;
-    if (separate_by_strand) {
-      results = new ArrayList<GraphIntervalSym>(score_count * 2);
-    } else {
-      results = new ArrayList<GraphIntervalSym>(score_count);
-    }
-    
-    for (int i=0; i<score_count; i++) {
-      String score_name = container.getScoreName(i);
-      if (separate_by_strand)  {
-        GraphIntervalSym forward_gsym = container.makeGraphSym(score_name, true, seq_group);
-        if (forward_gsym != null) {
-          results.add(forward_gsym);
-        }
-        GraphIntervalSym reverse_gsym = container.makeGraphSym(score_name, false, seq_group);
-        if (reverse_gsym != null) {
-          results.add(reverse_gsym);
-        }
-      } else {
-        GraphIntervalSym gsym = container.makeGraphSym(score_name, seq_group);
-        if (gsym != null) {
-          results.add(gsym);
-        }
-      }
-    }
-    return results.toArray(new GraphIntervalSym[results.size()]);
-  }
-  
-  
-  private static GraphIntervalSym[] makeGraphsFromDerived(DerivedSeqSymmetry derived_parent_sym,
-      AnnotatedSeqGroup seq_group, BioSeq seq) {
-    ScoredContainerSym original_container = (ScoredContainerSym) derived_parent_sym.getOriginalSymmetry();
-    
-    int score_count = original_container.getScoreCount();
-    List<GraphIntervalSym> results = null;
-    if (separate_by_strand) {
-      results = new ArrayList<GraphIntervalSym>(score_count * 2);
-    } else {
-      results = new ArrayList<GraphIntervalSym>(score_count);
-    }
-    
-    for (int i=0; i<score_count; i++) {
-      String score_name = original_container.getScoreName(i);
-      if (separate_by_strand)  {
-        GraphIntervalSym forward_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '+');
-        if (forward_gsym != null) {
-          results.add(forward_gsym);
-        }
-        GraphIntervalSym reverse_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '-');
-        if (reverse_gsym != null) {
-          results.add(reverse_gsym);
-        }
-      } else {
-        GraphIntervalSym gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '.');
-        if (gsym != null) {
-          results.add(gsym);
-        }
-      }
-    }
-    
-    return results.toArray(new GraphIntervalSym[results.size()]);
-  }
-  
+	private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
+		int score_count = container.getScoreCount();
+		List<GraphIntervalSym> results = null;
+		if (separate_by_strand) {
+			results = new ArrayList<GraphIntervalSym>(score_count * 2);
+		} else {
+			results = new ArrayList<GraphIntervalSym>(score_count);
+		}
+
+		for (int i = 0; i < score_count; i++) {
+			String score_name = container.getScoreName(i);
+			if (separate_by_strand) {
+				GraphIntervalSym forward_gsym = container.makeGraphSym(score_name, true, seq_group);
+				if (forward_gsym != null) {
+					results.add(forward_gsym);
+				}
+				GraphIntervalSym reverse_gsym = container.makeGraphSym(score_name, false, seq_group);
+				if (reverse_gsym != null) {
+					results.add(reverse_gsym);
+				}
+			} else {
+				GraphIntervalSym gsym = container.makeGraphSym(score_name, seq_group);
+				if (gsym != null) {
+					results.add(gsym);
+				}
+			}
+		}
+		return results.toArray(new GraphIntervalSym[results.size()]);
+	}
+
+	private static GraphIntervalSym[] makeGraphsFromDerived(DerivedSeqSymmetry derived_parent_sym,
+			AnnotatedSeqGroup seq_group, BioSeq seq) {
+		ScoredContainerSym original_container = (ScoredContainerSym) derived_parent_sym.getOriginalSymmetry();
+
+		int score_count = original_container.getScoreCount();
+		List<GraphIntervalSym> results = null;
+		if (separate_by_strand) {
+			results = new ArrayList<GraphIntervalSym>(score_count * 2);
+		} else {
+			results = new ArrayList<GraphIntervalSym>(score_count);
+		}
+
+		for (int i = 0; i < score_count; i++) {
+			String score_name = original_container.getScoreName(i);
+			if (separate_by_strand) {
+				GraphIntervalSym forward_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '+');
+				if (forward_gsym != null) {
+					results.add(forward_gsym);
+				}
+				GraphIntervalSym reverse_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '-');
+				if (reverse_gsym != null) {
+					results.add(reverse_gsym);
+				}
+			} else {
+				GraphIntervalSym gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '.');
+				if (gsym != null) {
+					results.add(gsym);
+				}
+			}
+		}
+
+		return results.toArray(new GraphIntervalSym[results.size()]);
+	}
+
 	// strands should be one of '+', '-' or '.'
 	// name -- should be a score name in the original ScoredContainerSym
 	private static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name,
@@ -232,7 +233,6 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 		}
 		return gsym;
 	}
-
 
 	private static void displayGraphSym(GraphIntervalSym graf, AffyTieredMap map, SeqMapView smv) {
 		GraphGlyph graph_glyph = new GraphGlyph(graf, graf.getGraphState());

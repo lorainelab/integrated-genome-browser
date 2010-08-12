@@ -18,7 +18,6 @@ import com.affymetrix.igb.view.TrackView;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
-	private static ITrackStyle defaultStyle = null;
 	private boolean check_same_seq = true;
 	/** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE.
 	 *  Determines whether the glyph factory will try to determine whether the GraphSym
@@ -27,11 +26,11 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 *  has a different ID without checking to see if the IDs match.
 	 */
 	private static final String CHECK_SAME_SEQ_OPTION = "Check Same Seq";
+
 	/** Name of a parameter for the init() method.  Set to an instance of Double.
 	 *  Controls a parameter of the GraphGlyph.
 	 *  @see GraphGlyph#setTransitionScale(double)
 	 */
-	
 	/** Allows you to set the parameter CHECK_SAME_SEQ_OPTION. */
 	public void init(Map options) {
 		Boolean ccs = (Boolean) options.get(CHECK_SAME_SEQ_OPTION);
@@ -42,10 +41,10 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
 		if (sym instanceof GraphSym) {
-			displayGraph((GraphSym)sym, smv, check_same_seq);
+			displayGraph((GraphSym) sym, smv, check_same_seq);
 		} else {
-			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry " +
-					"passed in is NOT a GraphSym: " + sym);
+			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry "
+					+ "passed in is NOT a GraphSym: " + sym);
 		}
 	}
 
@@ -85,7 +84,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		//       make multiple GraphGlyphs
 		//    Approach 3)
 		//       ???
-		
+
 
 		GraphSym newgraf = graf;
 		if (check_same_seq && graph_seq != vseq) {
@@ -145,8 +144,8 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
 				direction = TierGlyph.Direction.REVERSE;
 			}
-			TierGlyph tglyph = TrackView.getGraphTrack(map,tier_style, direction);
-			if(isGenome && !(tglyph.getPacker() instanceof CollapsePacker)){
+			TierGlyph tglyph = TrackView.getGraphTrack(map, tier_style, direction);
+			if (isGenome && !(tglyph.getPacker() instanceof CollapsePacker)) {
 				CollapsePacker cp = new CollapsePacker();
 				cp.setParentSpacer(0); // fill tier to the top and bottom edges
 				cp.setAlignment(CollapsePacker.ALIGN_CENTER);

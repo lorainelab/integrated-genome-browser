@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -45,11 +46,11 @@ public class TrackView {
 	// are in the GraphState object.
 	private static final GenericGraphGlyphFactory graph_factory = new GenericGraphGlyphFactory();
 
-	/** Hash of method names (lower case) to forward tiers */
-	private static final Map<String, TierGlyph> method2forwardTrack = new HashMap<String, TierGlyph>();
-	/** Hash of method names (lower case) to reverse tiers */
-	private static final Map<String, TierGlyph> method2reverseTrack = new HashMap<String, TierGlyph>();
-	/** Hash of GraphStates to TierGlyphs. */
+	/** Hash of ITrackStyle to forward TierGlyph */
+	private static final Map<ITrackStyle, TierGlyph> style2forwardTierGlyph = new HashMap<ITrackStyle, TierGlyph>();
+	/** Hash of ITrackStyle to reverse TierGlyph */
+	private static final Map<ITrackStyle, TierGlyph> style2reverseTierGlyph = new HashMap<ITrackStyle, TierGlyph>();
+	/** Hash of ITrackStyle to TierGlyph. */
 	private static final Map<ITrackStyle, TierGlyph> gstyle2track = new HashMap<ITrackStyle, TierGlyph>();
 
 
@@ -57,8 +58,8 @@ public class TrackView {
 	private static final List<DependentData> dependent_list = new ArrayList<DependentData>();
 
 	static void clear() {
-		method2reverseTrack.clear();
-		method2forwardTrack.clear();
+		style2forwardTierGlyph.clear();
+		style2reverseTierGlyph.clear();
 		gstyle2track.clear();
 		dependent_list.clear();
 	}
@@ -77,21 +78,19 @@ public class TrackView {
 	 */
 	public static TierGlyph[] getTiers(
 			SeqMapView smv, String meth, boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights) {
-		if (style == null) {
-			throw new NullPointerException();
-		}
 		AffyTieredMap map = smv.getSeqMap();
+		TierGlyph axisTier = smv.getAxisTier();
 
 		if (style.isGraphTier()) {
 			constant_heights = false;
 		}
 
-		TierGlyph fortier = method2forwardTrack.get(meth.toLowerCase());
+		TierGlyph fortier = style2forwardTierGlyph.get(style);
 		if (fortier == null) {
 			fortier = new TierGlyph(style);
 			fortier.setParentURL(meth);
 			setUpTrackPacker(fortier, true, constant_heights);
-			method2forwardTrack.put(meth.toLowerCase(), fortier);
+			style2forwardTierGlyph.put(style, fortier);
 		}
 
 		if (style.getSeparate()) {
@@ -103,26 +102,26 @@ public class TrackView {
 
 		if (map.getTierIndex(fortier) == -1) {
 			if (next_to_axis) {
-				int axis_index = map.getTierIndex(smv.getAxisTier());
+				int axis_index = map.getTierIndex(axisTier);
 				map.addTier(fortier, axis_index);
 			} else {
 				map.addTier(fortier, true);
 			}
 		}
 
-		TierGlyph revtier = method2reverseTrack.get(meth.toLowerCase());
+		TierGlyph revtier = style2reverseTierGlyph.get(style);
 		if (revtier == null) {
 			revtier = new TierGlyph(style);
 			revtier.setParentURL(meth);
 			revtier.setDirection(TierGlyph.Direction.REVERSE);
 			setUpTrackPacker(revtier, false, constant_heights);
-			method2reverseTrack.put(meth.toLowerCase(), revtier);
+			style2reverseTierGlyph.put(style, revtier);
 		}
 		revtier.setLabel(style.getHumanName());
 
 		if (map.getTierIndex(revtier) == -1) {
 			if (next_to_axis) {
-				int axis_index = map.getTierIndex(smv.getAxisTier());
+				int axis_index = map.getTierIndex(axisTier);
 				map.addTier(revtier, axis_index + 1);
 			} else {
 				map.addTier(revtier, false);
@@ -223,14 +222,15 @@ public class TrackView {
 
 	private static void doMiddlegroundShading(SymWithProps annotSym) {
 		String meth = BioSeq.determineMethod(annotSym);
+		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 		// do "middleground" shading for tracks loaded via DAS/2
 		if ((meth != null) &&
 						(annotSym instanceof TypeContainerAnnot) &&
 						(annotSym.getChildCount() > 0) &&
 						(annotSym.getChild(0) instanceof Das2FeatureRequestSym)) {
 			int child_count = annotSym.getChildCount();
-			TierGlyph forwardTrack = method2forwardTrack.get(meth.toLowerCase());
-			TierGlyph reverseTrack = method2reverseTrack.get(meth.toLowerCase());
+			TierGlyph forwardTrack = style2forwardTierGlyph.get(style);
+			TierGlyph reverseTrack = style2reverseTierGlyph.get(style);
 			for (int i = 0; i < child_count; i++) {
 				SeqSymmetry csym = annotSym.getChild(i);
 				if (csym instanceof Das2FeatureRequestSym) {

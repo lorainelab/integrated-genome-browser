@@ -19,10 +19,10 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import java.awt.*;
 import java.util.*;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -103,7 +103,7 @@ the probeset, probe and pieces of probes
       if (n>0) meth = meth.substring(0, n);
     }
     if (meth != null) {
-      IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+      ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
       label_field = style.getLabelField();
       
       TierGlyph[] tiers = gviewer.getTiers(meth, false, style);
@@ -175,7 +175,7 @@ the probeset, probe and pieces of probes
     int parent_y = 100; // irrelevant because packing will move the glyphs around
     int child_y = 100; // relevant relative to parent_y
 
-    IAnnotStyle the_style = the_tier.getAnnotStyle();
+    ITrackStyle the_style = the_tier.getAnnotStyle();
     Color consensus_color = the_style.getColor();
 
     boolean use_label = (label_field != null && (label_field.trim().length()>0) && 

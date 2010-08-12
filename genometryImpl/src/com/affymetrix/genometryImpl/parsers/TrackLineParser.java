@@ -16,8 +16,8 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import java.awt.Color;
 
@@ -71,20 +71,17 @@ public final class TrackLineParser {
 			int green = Integer.parseInt(rgb[1]);
 			int blue = Integer.parseInt(rgb[2]);
 			return new Color(red, green, blue);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/** If the string starts and ends with '\"' characters, this removes them. */
-	private static final String unquote(String str) {
+	private static String unquote(String str) {
 		int length = str.length();
 		if (length>1 && str.charAt(0)=='\"' && str.charAt(length-1)=='\"') {
 			return str.substring(1, length-1);
 		}
-		else {
-			return str;
-		}
+		return str;
 	}
 
 	/** Parses a track line putting the keys and values into the current value
@@ -99,7 +96,7 @@ public final class TrackLineParser {
 
 	/** Parses a track line putting the keys and values into the current value
 	 *  of getCurrentTrackHash(), but does not use these properties to change
-	 *  any settings of AnnotStyle, etc.
+	 *  any settings of TrackStyle, etc.
 	 *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
 	 *  Any old values are cleared from the existing track line hash first.
 	 *  If track_name_prefix arg is non-null, it is added as prefix to parsed in track name
@@ -131,16 +128,16 @@ public final class TrackLineParser {
 	}
 
 	/**
-	 *  Creates an instance of AnnotStyle based on the given track hash.
+	 *  Creates an instance of TrackStyle based on the given track hash.
 	 *  A default track name must be provided in case none is specified by the
 	 *  track line itself.
 	 */
-	public static IAnnotStyle createAnnotStyle(Map<String,String> track_hash, String default_track_name) {
+	public static ITrackStyle createTrackStyle(Map<String,String> track_hash, String default_track_name) {
 		String name = track_hash.get(NAME);
 		
 		//this will create the correct track name for IGB to display the track correctly
 		if (name != null) {
-			if (((default_track_name.indexOf("/") > -1) || (default_track_name.indexOf("\\\\") > -1)) && name != default_track_name) {
+			if (((default_track_name.indexOf("/") > -1) || (default_track_name.indexOf("\\\\") > -1)) && !name.equals(default_track_name)) {
 				String separator = "";
 				if (default_track_name.indexOf("/") > -1) {
 					separator = "/";
@@ -152,10 +149,10 @@ public final class TrackLineParser {
 				if (s[s.length - 1].equals(name)) {
 					name = default_track_name;
 				} else {  //if the track name does not equal the filename
-					StringBuffer newTrackName = new StringBuffer();
+					StringBuilder newTrackName = new StringBuilder();
 					//append path to name
 					for (int i = 0; i < s.length - 1; i++) {
-						newTrackName.append(s[i] + separator);
+						newTrackName.append(s[i]).append(separator);
 					}
 					//append track name
 					newTrackName.append(name);
@@ -170,19 +167,17 @@ public final class TrackLineParser {
 			name = default_track_name;
 		}
 		StateProvider provider = AnnotatedSeqGroup.getStateProvider();
-		IAnnotStyle style = provider.getAnnotStyle(name);
+		ITrackStyle style = provider.getAnnotStyle(name);
 		applyTrackProperties(track_hash, style);
 		return style;
 	}
 
 	/**
-	 *  Copies the properties, such as color, into a given IAnnotStyle.
-	 *  (For a graph, the IAnnotStyle will be an instance of DefaultIAnnotStyle,
-	 *   for a non-graph, it will be an instance of AnnotStyle.)
+	 *  Copies the properties, such as color, into a given ITrackStyle.
+	 *  (For a graph, the ITrackStyle will be an instance of DefaultTrackStyle,
+	 *   for a non-graph, it will be an instance of TrackStyle.)
 	 */
-	private static void applyTrackProperties(Map<String,String> track_hash, IAnnotStyle style) {
-		//System.out.println("setting track properties from: "+track_line);
-
+	private static void applyTrackProperties(Map<String,String> track_hash, ITrackStyle style) {
 		String description = track_hash.get(DESCRIPTION);
 		if (description != null) {
 			style.setHumanName(description);
@@ -219,8 +214,8 @@ public final class TrackLineParser {
 			}
 		}
 
-		if (style instanceof IAnnotStyleExtended) { // for non-graph tiers
-			IAnnotStyleExtended annot_style = (IAnnotStyleExtended) style;
+		if (style instanceof ITrackStyleExtended) { // for non-graph tiers
+			ITrackStyleExtended annot_style = (ITrackStyleExtended) style;
 			String url = track_hash.get(URL);
 			if (url != null) {
 				annot_style.setUrl(url);

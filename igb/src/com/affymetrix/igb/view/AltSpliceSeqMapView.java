@@ -7,11 +7,11 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
 import java.awt.Component;
 import java.util.List;
@@ -54,11 +54,11 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	// AnnotStyle from the TierGlyph in the main view.  (So that if we hide it,
 	// it won't become hidden in the main view.)
 	@Override
-	public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style) {
+	public TierGlyph[] getTiers(String meth, boolean next_to_axis, ITrackStyleExtended style) {
 		// Create a temporary style with all the properties of the given style.
 		// Thus any changes to this copy in the slice view
 		// will not affect the original in the main view
-		AnnotStyle style_copy = new AnnotStyle() {
+		TrackStyle style_copy = new TrackStyle() {
 		};
 		style_copy.copyPropertiesFrom(style);
 		TierGlyph[] glyphs = super.getTiers(meth, next_to_axis, style_copy);

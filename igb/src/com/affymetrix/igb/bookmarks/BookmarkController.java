@@ -22,11 +22,11 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import java.awt.Color;
 import java.util.List;
 import java.io.*;
-import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
+import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -104,7 +104,7 @@ public abstract class BookmarkController {
     int default_maxgap_thresh = 100;
     boolean default_show_thresh = false;
     int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
-    Map<String,IAnnotStyle> combos = new HashMap<String,IAnnotStyle>();
+    Map<String,ITrackStyle> combos = new HashMap<String,ITrackStyle>();
 
     // Figure out the "source_url" paths of all currently-loaded graphs
     List<GlyphI> loaded_graphs = Collections.<GlyphI>emptyList();
@@ -254,7 +254,7 @@ public abstract class BookmarkController {
     }
   }
 
-	private static void loopOverGraphs(List<GraphSym> grafs, String graph_name, GraphType graph_style_num, String heatmap_name, Color col, Color bg_col, double ypos, double yheight, boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis, double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction, String combo_name, Map<String, IAnnotStyle> combos) {
+	private static void loopOverGraphs(List<GraphSym> grafs, String graph_name, GraphType graph_style_num, String heatmap_name, Color col, Color bg_col, double ypos, double yheight, boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis, double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction, String combo_name, Map<String, ITrackStyle> combos) {
 		for (GraphSym graf : grafs) {
 			GraphState gstate = graf.getGraphState();
 			graf.setGraphName(graph_name);
@@ -267,7 +267,7 @@ public abstract class BookmarkController {
 					gstate.setHeatMap(heat_map);
 				}
 			}
-			IAnnotStyle tier_style = gstate.getTierStyle();
+			ITrackStyle tier_style = gstate.getTierStyle();
 			tier_style.setColor(col);
 			tier_style.setBackground(bg_col);
 			tier_style.setY(ypos);
@@ -283,9 +283,9 @@ public abstract class BookmarkController {
 			gstate.setShowThreshold(show_thresh);
 			gstate.setThresholdDirection(thresh_direction);
 			if (combo_name != null) {
-				IAnnotStyle combo_style = combos.get(combo_name);
+				ITrackStyle combo_style = combos.get(combo_name);
 				if (combo_style == null) {
-					combo_style = new DefaultIAnnotStyle("Joined Graphs", true);
+					combo_style = new DefaultTrackStyle("Joined Graphs", true);
 					combo_style.setHumanName("Joined Graphs");
 					combo_style.setExpandable(true);
 					combo_style.setCollapsed(true);
@@ -301,7 +301,7 @@ public abstract class BookmarkController {
       System.out.println("in addGraphProperties, graph count = " + graphs.size());
     }
     int max = graphs.size();
-    Map<IAnnotStyle,Integer> combo_styles = new HashMap<IAnnotStyle,Integer>();
+    Map<ITrackStyle,Integer> combo_styles = new HashMap<ITrackStyle,Integer>();
 
     // Holds a list of labels of graphs for which no url could be found.
     Set<String> unfound_labels = new LinkedHashSet<String>();
@@ -362,7 +362,7 @@ public abstract class BookmarkController {
           mark_sym.setProperty("graph_heatmap_" + i, gr.getGraphState().getHeatMap().getName());
         }
 
-        IAnnotStyle combo_style = gr.getGraphState().getComboStyle();
+        ITrackStyle combo_style = gr.getGraphState().getComboStyle();
         if (combo_style != null) {
           Integer combo_style_num = combo_styles.get(combo_style);
           if (combo_style_num == null) {

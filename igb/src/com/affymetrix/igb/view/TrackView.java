@@ -10,8 +10,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -50,7 +50,7 @@ public class TrackView {
 	/** Hash of method names (lower case) to reverse tiers */
 	private static final Map<String, TierGlyph> method2reverseTrack = new HashMap<String, TierGlyph>();
 	/** Hash of GraphStates to TierGlyphs. */
-	private static final Map<IAnnotStyle, TierGlyph> gstyle2track = new HashMap<IAnnotStyle, TierGlyph>();
+	private static final Map<ITrackStyle, TierGlyph> gstyle2track = new HashMap<ITrackStyle, TierGlyph>();
 
 
 	/**List of Dependent data */
@@ -76,7 +76,7 @@ public class TrackView {
 	 *  constant_height will be ignored and re-set to false.
 	 */
 	public static TierGlyph[] getTiers(
-			SeqMapView smv, String meth, boolean next_to_axis, IAnnotStyleExtended style, boolean constant_heights) {
+			SeqMapView smv, String meth, boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights) {
 		if (style == null) {
 			throw new NullPointerException();
 		}
@@ -142,7 +142,7 @@ public class TrackView {
 	 *  Returns a track for the given IAnnotStyle, creating the tier if necessary.
 	 *  Generally called by a Graph Glyph Factory.
 	 */
-	public static TierGlyph getGraphTrack(AffyTieredMap seqmap, IAnnotStyle style, TierGlyph.Direction tier_direction) {
+	public static TierGlyph getGraphTrack(AffyTieredMap seqmap, ITrackStyle style, TierGlyph.Direction tier_direction) {
 		if (style == null) {
 			throw new NullPointerException();
 		}

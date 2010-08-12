@@ -26,7 +26,7 @@ import com.affymetrix.genoviz.glyph.BridgeGlyph;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.glyph.EfficientLabelledGlyph;
 import com.affymetrix.igb.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.igb.glyph.EfficientLineContGlyph;
@@ -309,7 +309,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   private static Color findColor(PropertyMap pm) {
     Color color = pm.getColor(PROP_KEY_COLOR);
     if (color == null || "".equals(color.toString())) {
-      IAnnotStyleExtended style = (IAnnotStyleExtended) pm.get(IAnnotStyleExtended.class.getName());
+      ITrackStyleExtended style = (ITrackStyleExtended) pm.get(ITrackStyleExtended.class.getName());
       if (style != null) {
         color = style.getColor();
       }

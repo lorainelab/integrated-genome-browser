@@ -19,9 +19,9 @@ import java.awt.Color;
 import java.util.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -65,7 +65,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
     //SeqSpan span = sym.getSpan(0);
 
     String meth = BioSeq.determineMethod(sym);
-    IAnnotStyleExtended annot_style = AnnotStyle.getInstance(meth , false);
+    ITrackStyleExtended annot_style = TrackStyle.getInstance(meth , false);
 
     if (meth != null) {
       TierGlyph[] tiers = gviewer.getTiers(meth,
@@ -76,8 +76,8 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
             
       Color background_color;
       if (annot_style == null) {
-        glyph_color = AnnotStyle.getDefaultInstance().getColor();
-        background_color = AnnotStyle.getDefaultInstance().getBackground();
+        glyph_color = TrackStyle.getDefaultInstance().getColor();
+        background_color = TrackStyle.getDefaultInstance().getBackground();
       }
       else {
         glyph_color = annot_style.getColor();

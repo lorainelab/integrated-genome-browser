@@ -27,7 +27,7 @@ import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.regex.Matcher;
 
@@ -339,7 +339,7 @@ public final class ScoredIntervalParser {
 			container.setProperty("method", unique_container_name);
 			container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 			// Force the AnnotStyle for the container to have glyph depth of 1
-			IAnnotStyleExtended style = AnnotatedSeqGroup.getStateProvider().getAnnotStyle(unique_container_name);
+			ITrackStyleExtended style = AnnotatedSeqGroup.getStateProvider().getAnnotStyle(unique_container_name);
 			style.setGlyphDepth(1);
 			List<SinEntry> entry_list = seq2sinentries.get(aseq);
 			int entry_count = entry_list.size();

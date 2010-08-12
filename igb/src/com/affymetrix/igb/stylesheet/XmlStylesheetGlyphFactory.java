@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -91,7 +91,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 				}
 				return;
 			}
-			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 			TierGlyph[] tiers = TrackView.getTiers(gviewer, meth, false, style, false);
 			int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
 			TierGlyph the_tier = tiers[tier_index];
@@ -102,7 +102,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 			// the stylesheet may over-ride them.
 
 			// Allow StyleElement access to the AnnotStyle if it needs it.
-			context.put(IAnnotStyleExtended.class.getName(), style);
+			context.put(ITrackStyleExtended.class.getName(), style);
 			context.put(TierGlyph.class.getName(), the_tier);
 
 			drawable.symToGlyph(gviewer, sym, the_tier, stylesheet, context);

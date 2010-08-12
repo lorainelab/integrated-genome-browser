@@ -123,7 +123,7 @@ public final class GFF3Parser {
 					}
 					if (line.startsWith("##track")) {
 						track_line_parser.parseTrackLine(line);
-						TrackLineParser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), default_source);
+						TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_source);
 						track_name = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 						continue;
 					}

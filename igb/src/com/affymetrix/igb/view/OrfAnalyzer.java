@@ -23,7 +23,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
+import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -142,7 +142,7 @@ public final class OrfAnalyzer extends JComponent
 			return;
 		}
 
-		fortier = new TransformTierGlyph(new DefaultIAnnotStyle());
+		fortier = new TransformTierGlyph(new DefaultTrackStyle());
 		fortier.setLabel("Stop Codons");
 		fortier.setFixedPixHeight(25);
 		fortier.setFillColor(Color.darkGray);
@@ -151,7 +151,7 @@ public final class OrfAnalyzer extends JComponent
 		AffyTieredMap map = smv.getSeqMap();
 		map.addTier(fortier, true);  // put forward tier above axis
 
-		revtier = new TransformTierGlyph(new DefaultIAnnotStyle());
+		revtier = new TransformTierGlyph(new DefaultTrackStyle());
 		revtier.setLabel("Stop Codons");
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(Color.darkGray);

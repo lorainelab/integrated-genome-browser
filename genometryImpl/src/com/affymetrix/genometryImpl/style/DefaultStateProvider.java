@@ -17,15 +17,15 @@ import java.util.*;
 
 public final class DefaultStateProvider implements StateProvider {
 
-	Map<String,IAnnotStyleExtended> id2annotState;
+	Map<String,ITrackStyleExtended> id2annotState;
 	Map<String,GraphState> id2graphState;
 	static StateProvider globalStateProvider = new DefaultStateProvider();
 	public static final String DEFAULT_INSTANCE_NAME = "* default *";
-	SimpleAnnotStyle default_instance = new SimpleAnnotStyle(DEFAULT_INSTANCE_NAME, false);
+	SimpleTrackStyle default_instance = new SimpleTrackStyle(DEFAULT_INSTANCE_NAME, false);
 
 	/** Creates a new instance of DefaultIAnnotStyleProvider */
 	public DefaultStateProvider() {
-		id2annotState = new HashMap<String,IAnnotStyleExtended>();
+		id2annotState = new HashMap<String,ITrackStyleExtended>();
 		id2graphState = new HashMap<String,GraphState>();
 	}
 
@@ -45,16 +45,16 @@ public final class DefaultStateProvider implements StateProvider {
 	 * @param name Unique name for a style
 	 * @return A new or existing style
 	 */
-	public IAnnotStyleExtended getAnnotStyle(String name) {
-		IAnnotStyleExtended style = id2annotState.get(name.toLowerCase());
+	public ITrackStyleExtended getAnnotStyle(String name) {
+		ITrackStyleExtended style = id2annotState.get(name.toLowerCase());
 		if (style == null) {
-			style = new SimpleAnnotStyle(name, false);
+			style = new SimpleTrackStyle(name, false);
 			id2annotState.put(name.toLowerCase(), style);
 		}
 		return style;
 	}
 
-	public IAnnotStyleExtended getDefaultAnnotStyle() {
+	public ITrackStyleExtended getDefaultAnnotStyle() {
 		if (id2annotState.get(DEFAULT_INSTANCE_NAME) == null) {
 			id2annotState.put(DEFAULT_INSTANCE_NAME, default_instance);
 		}
@@ -70,7 +70,7 @@ public final class DefaultStateProvider implements StateProvider {
 		return state;
 	}
 
-	public IAnnotStyleExtended getAnnotStyle(String name, String human_name) {
+	public ITrackStyleExtended getAnnotStyle(String name, String human_name) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

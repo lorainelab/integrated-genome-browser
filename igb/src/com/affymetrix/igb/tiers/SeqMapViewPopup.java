@@ -23,11 +23,11 @@ import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -233,18 +233,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     f.setVisible(true);
   }
 
-  List<IAnnotStyle> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
+  List<ITrackStyle> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
 		if (tier_label_glyphs.isEmpty()) {
-			return Collections.<IAnnotStyle>emptyList();
+			return Collections.<ITrackStyle>emptyList();
 		}
 
 		// styles is a list of styles with no duplicates, so a Set rather than a List
 		// might make sense.  But at the moment it seems faster to use a List
-		List<IAnnotStyle> styles = new ArrayList<IAnnotStyle>(tier_label_glyphs.size());
+		List<ITrackStyle> styles = new ArrayList<ITrackStyle>(tier_label_glyphs.size());
 
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = tlg.getReferenceTier();
-			IAnnotStyle tps = tier.getAnnotStyle();
+			ITrackStyle tps = tier.getAnnotStyle();
 			if (tps != null && !styles.contains(tps)) {
 				styles.add(tps);
 			}
@@ -267,7 +267,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     if (tier_labels.size() == 1) {
       TierLabelGlyph tlg = tier_labels.get(0);
       TierGlyph tg = (TierGlyph) tlg.getInfo();
-      IAnnotStyle style = tg.getAnnotStyle();
+      ITrackStyle style = tg.getAnnotStyle();
       if (style != null) { initial_value = "" + style.getMaxDepth(); }
     }
 
@@ -296,7 +296,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	private void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
 			TierGlyph tier = (TierGlyph) tlg.getInfo();
-			IAnnotStyle style = tier.getAnnotStyle();
+			ITrackStyle style = tier.getAnnotStyle();
 			style.setMaxDepth(max);
 			tier.setMaxExpandDepth(max);
 		}
@@ -306,9 +306,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
     for (TierLabelGlyph tlg : tier_label_glyphs) {
       TierGlyph tier = (TierGlyph) tlg.getInfo();
-      IAnnotStyle style = tier.getAnnotStyle();
-      if (style instanceof IAnnotStyleExtended) {
-        ((IAnnotStyleExtended) style).setSeparate(b);
+      ITrackStyle style = tier.getAnnotStyle();
+      if (style instanceof ITrackStyleExtended) {
+        ((ITrackStyleExtended) style).setSeparate(b);
       }
     }
     refreshMap(false,true);
@@ -320,7 +320,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	  for (TierLabelGlyph label : tiervec) {
 		  TierGlyph tier = (TierGlyph) label.getInfo();
-		  IAnnotStyle style = tier.getAnnotStyle();
+		  ITrackStyle style = tier.getAnnotStyle();
 		  if (style != null) {
 			  style.setShow(true);
 			  tier.setVisibility(true);
@@ -335,7 +335,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
    *  Does not re-pack the given tier, or any other tiers.
    */
   private void hideOneTier(final TierGlyph tier) {
-    final IAnnotStyle style = tier.getAnnotStyle();
+    final ITrackStyle style = tier.getAnnotStyle();
 	  // if style.getShow() is already false, there is likely a bug somewhere!
 	  if (style == null) {
 		  return;
@@ -398,7 +398,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     TierLabelGlyph tlg_0 = tier_label_glyphs.get(0);
     TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
-    IAnnotStyle style_0 = tier_0.getAnnotStyle();
+    ITrackStyle style_0 = tier_0.getAnnotStyle();
     if (style_0 != null) {
       if (fg) {
         chooser.setColor(style_0.getColor());
@@ -412,7 +412,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		  public void actionPerformed(ActionEvent e) {
 			  for (TierLabelGlyph tlg : tier_label_glyphs) {
 				  TierGlyph tier = (TierGlyph) tlg.getInfo();
-				  IAnnotStyle style = tier.getAnnotStyle();
+				  ITrackStyle style = tier.getAnnotStyle();
 
 				  if (style != null) {
 					  if (fg) {
@@ -448,7 +448,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     if (tier == null) {
       return;
     }
-    IAnnotStyle style = tier.getAnnotStyle();
+    ITrackStyle style = tier.getAnnotStyle();
 
     String new_label = JOptionPane.showInputDialog("Label: ", style.getHumanName());
     if (new_label != null && new_label.length() > 0) {
@@ -459,9 +459,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
     for (TierLabelGlyph tlg : tier_labels) {
-      IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
-      if (style instanceof IAnnotStyleExtended) {
-        IAnnotStyleExtended astyle = (IAnnotStyleExtended) style;
+      ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
+      if (style instanceof ITrackStyleExtended) {
+        ITrackStyleExtended astyle = (ITrackStyleExtended) style;
         astyle.setColorByScore(b);
       }
     }
@@ -529,7 +529,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     //}
 
 	String human_name = "coverage: " + atier.getLabel();
-	String unique_name = AnnotStyle.getUniqueName(human_name);
+	String unique_name = TrackStyle.getUniqueName(human_name);
 	DependentData dd = new DependentData(unique_name,DependentType.COVERAGE,atier.getParentURL());
 	SymWithProps wrapperSym = TrackView.addToDependentList(dd);
 
@@ -542,7 +542,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     // Generate a non-persistent style.
     // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
 
-    AnnotStyle style = AnnotStyle.getInstance(unique_name, false);
+    TrackStyle style = TrackStyle.getInstance(unique_name, false);
     style.setHumanName(human_name);
     style.setGlyphDepth(1);
     style.setSeparate(false); // there are not separate (+) and (-) strands
@@ -623,9 +623,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	for (TierLabelGlyph label : labels) {
       TierGlyph glyph = label.getReferenceTier();
-      IAnnotStyle style = glyph.getAnnotStyle();
-      if (style instanceof IAnnotStyleExtended) {
-        IAnnotStyleExtended astyle = (IAnnotStyleExtended) style;
+      ITrackStyle style = glyph.getAnnotStyle();
+      if (style instanceof ITrackStyleExtended) {
+        ITrackStyleExtended astyle = (ITrackStyleExtended) style;
         any_are_color_on = any_are_color_on || astyle.getColorByScore();
         any_are_color_off = any_are_color_off || (! astyle.getColorByScore());
         any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
@@ -667,7 +667,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       // Check whether this selection is a graph or an annotation
       TierLabelGlyph label = labels.get(0);
       TierGlyph glyph = (TierGlyph) label.getInfo();
-      IAnnotStyle style = glyph.getAnnotStyle();
+      ITrackStyle style = glyph.getAnnotStyle();
       boolean is_annotation_type = ! style.isGraphTier();
 	  summaryMenu.setEnabled(is_annotation_type);
 	  sym_summarize_single_action.putValue(sym_summarize_single_action.NAME, glyph.getLabel() + getSymbol(glyph.getDirection()));
@@ -748,7 +748,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   // purely for debugging
 	private void doDebugAction() {
 		for (TierGlyph tg : handler.getSelectedTiers()) {
-			IAnnotStyle style = tg.getAnnotStyle();
+			ITrackStyle style = tg.getAnnotStyle();
 			System.out.println("Track: " + tg);
 			System.out.println("Style: " + style);
 		}

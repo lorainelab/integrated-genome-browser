@@ -6,7 +6,7 @@ import javax.swing.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
@@ -305,7 +305,7 @@ public final class TierLabelManager {
 	 * @param collapsed - boolean indicating whether to collapse or expand tiers.
 	 */
 	 void setTierCollapsed(TierLabelGlyph tlg, boolean collapsed) {
-		IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
+		ITrackStyle style = tlg.getReferenceTier().getAnnotStyle();
 		if (style.getExpandable()) {
 			style.setCollapsed(collapsed);
 			// When collapsing, make them all be the same height as the tier.
@@ -325,7 +325,7 @@ public final class TierLabelManager {
 
 	public void toggleTierCollapsed(List<TierLabelGlyph> tier_glyphs){
 		for(TierLabelGlyph glyph : tier_glyphs){
-			IAnnotStyle style = glyph.getReferenceTier().getAnnotStyle();
+			ITrackStyle style = glyph.getReferenceTier().getAnnotStyle();
 			setTierCollapsed(glyph, !style.getCollapsed());
 		}
 		repackTheTiers(true, true);

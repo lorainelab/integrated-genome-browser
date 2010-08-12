@@ -21,7 +21,7 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -750,7 +750,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		Color col = sgg.getColor();
 		//    Color col = Color.red;
-		AnnotStyle annot_style = AnnotStyle.getInstance(meth, false);
+		TrackStyle annot_style = TrackStyle.getInstance(meth, false);
 		annot_style.setColor(col);
 		annot_style.setGlyphDepth(1);
 		annot_style.setHumanName(description);

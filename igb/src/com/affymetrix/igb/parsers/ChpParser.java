@@ -40,7 +40,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
@@ -304,7 +304,7 @@ public final class ChpParser {
 
 		String type_name = GraphSymUtils.getGraphNameForFile(file_name);
 		// Force the AnnotStyle for the container to have glyph depth of 1
-		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
 		style.setGlyphDepth(1);
 
 		List<LazyChpSym> results = new ArrayList<LazyChpSym>();
@@ -448,7 +448,7 @@ public final class ChpParser {
 
 		String type_name = GraphSymUtils.getGraphNameForFile(file_name);
 		// Force the AnnotStyle for the container to have glyph depth of 1
-		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
 		style.setGlyphDepth(1);
 
 		// now for each sequence seen, sort the SinEntry list by span min/max

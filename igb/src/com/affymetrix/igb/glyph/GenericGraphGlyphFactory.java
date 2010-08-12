@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.CollapsePacker;
@@ -18,7 +18,7 @@ import com.affymetrix.igb.view.TrackView;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
-	private static IAnnotStyle defaultStyle = null;
+	private static ITrackStyle defaultStyle = null;
 	private boolean check_same_seq = true;
 	/** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE.
 	 *  Determines whether the glyph factory will try to determine whether the GraphSym
@@ -128,7 +128,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		GraphState gstate = graf.getGraphState();
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, gstate);
 		gstate.getTierStyle().setHumanName(newgraf.getGraphName());
-		IAnnotStyle tier_style = gstate.getTierStyle();//getGenomeViewStyle(gstate.getTierStyle().getHumanName());
+		ITrackStyle tier_style = gstate.getTierStyle();//getGenomeViewStyle(gstate.getTierStyle().getHumanName());
 		tier_style.setCollapsed(isGenome);
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)

@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -300,7 +300,7 @@ public final class QuickLoad extends SymLoader {
 		if (!this.isInitialized) {
 			this.init();
 		}
-		IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
 		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName);
 		if (strategy == LoadStrategy.GENOME && symL == null) {
 			// no symloader... only option is whole genome.

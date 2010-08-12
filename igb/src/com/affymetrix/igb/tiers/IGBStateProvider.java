@@ -4,15 +4,15 @@ package com.affymetrix.igb.tiers;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.StateProvider;
 
 public final class IGBStateProvider implements StateProvider {
 
   private final Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
 
-  public IAnnotStyleExtended getAnnotStyle(String name) {
-    return AnnotStyle.getInstance(name);
+  public ITrackStyleExtended getAnnotStyle(String name) {
+    return TrackStyle.getInstance(name);
   }
 
   public GraphState getGraphState(String id) {
@@ -24,8 +24,8 @@ public final class IGBStateProvider implements StateProvider {
       return state;
   }
 
-  public IAnnotStyleExtended getAnnotStyle(String name, String human_name) {
-	 return AnnotStyle.getInstance(name,human_name);
+  public ITrackStyleExtended getAnnotStyle(String name, String human_name) {
+	 return TrackStyle.getInstance(name,human_name);
   }
 
 }

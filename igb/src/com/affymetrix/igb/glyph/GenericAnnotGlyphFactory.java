@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
@@ -101,7 +101,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		String meth = BioSeq.determineMethod(sym);
 
 		if (meth != null) {
-			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 			int glyph_depth = style.getGlyphDepth();
 
 			TierGlyph[] tiers = smv.getTiers(meth, false, style);
@@ -173,7 +173,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
 
 			// I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
-			IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
+			ITrackStyleExtended the_style = (ITrackStyleExtended) the_tier.getAnnotStyle();
 
 			the_tier.addChild(determinePGlyph(
 					parent_and_child, insym, the_style, the_tier, pspan, map, sym, annotseq, coordseq));
@@ -184,7 +184,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 	private GlyphI determinePGlyph(
 			boolean parent_and_child, SeqSymmetry insym,
-			IAnnotStyleExtended the_style, TierGlyph the_tier, SeqSpan pspan,
+			ITrackStyleExtended the_style, TierGlyph the_tier, SeqSpan pspan,
 			AffyTieredMap map, SeqSymmetry sym, 
 			BioSeq annotseq, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
@@ -204,7 +204,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static GlyphI determineGlyph(
 			Class glyphClass, Class labelledGlyphClass,
-			IAnnotStyleExtended the_style, SeqSymmetry insym, TierGlyph the_tier,
+			ITrackStyleExtended the_style, SeqSymmetry insym, TierGlyph the_tier,
 			SeqSpan pspan, AffyTieredMap map, SeqSymmetry sym)
 			throws IllegalAccessException, InstantiationException {
 		GlyphI pglyph = null;
@@ -256,7 +256,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	private void addChildren(
-			SeqSymmetry insym, SeqSymmetry sym, IAnnotStyleExtended the_style, BioSeq annotseq,
+			SeqSymmetry insym, SeqSymmetry sym, ITrackStyleExtended the_style, BioSeq annotseq,
 			GlyphI pglyph, AffyTieredMap map, BioSeq coordseq)
 			throws InstantiationException, IllegalAccessException {
 		SeqSpan cdsSpan = null;
@@ -305,7 +305,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 
-	private static Color getSymColor(SeqSymmetry insym, IAnnotStyleExtended style) {
+	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style) {
 		boolean use_score_colors = style.getColorByScore();
 		boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
 

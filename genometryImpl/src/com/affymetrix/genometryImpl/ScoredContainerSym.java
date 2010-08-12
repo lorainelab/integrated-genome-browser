@@ -19,7 +19,7 @@ import java.util.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
@@ -33,9 +33,9 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 
 	private static Map<String,GraphState> id2gstate = new HashMap<String,GraphState>();
 
-	private static Map<String,IAnnotStyle> id2combo_style_plus = new HashMap<String,IAnnotStyle>();
-	private static Map<String,IAnnotStyle> id2combo_style_minus = new HashMap<String,IAnnotStyle>();
-	private static Map<String,IAnnotStyle> id2combo_style_neutral = new HashMap<String,IAnnotStyle>();
+	private static Map<String,ITrackStyle> id2combo_style_plus = new HashMap<String,ITrackStyle>();
+	private static Map<String,ITrackStyle> id2combo_style_minus = new HashMap<String,ITrackStyle>();
+	private static Map<String,ITrackStyle> id2combo_style_neutral = new HashMap<String,ITrackStyle>();
 
 	/**
 	 *  Adds scores.
@@ -237,12 +237,12 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	}
 
 
-	private IAnnotStyle getContainerStyle(char strand) {
+	private ITrackStyle getContainerStyle(char strand) {
 		// There are separate combo style items for +, - and +/-.
 		// They are shared by all scores with the same ID on different seqs.
 		// They do not need a "+" or "-" as part of their name, because the glyph
 		// factory will do that.
-		IAnnotStyle style;
+		ITrackStyle style;
 		String name = (String) this.getProperty("method");
 		if (name == null) {
 			name = "Scores";
@@ -272,8 +272,8 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		return style;
 	}
 
-	private static IAnnotStyle newComboStyle(String name) {
-		IAnnotStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name);
+	private static ITrackStyle newComboStyle(String name) {
+		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name);
 		style.setGraphTier(true);
 		style.setExpandable(true);
 		style.setCollapsed(false);

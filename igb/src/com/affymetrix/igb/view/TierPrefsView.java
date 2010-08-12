@@ -24,10 +24,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
-import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
@@ -87,7 +87,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 
   private SeqMapView smv;
 
-  private static AnnotStyle default_annot_style = AnnotStyle.getDefaultInstance(); // make sure at least the default instance exists;
+  private static TrackStyle default_annot_style = TrackStyle.getDefaultInstance(); // make sure at least the default instance exists;
 
   public TierPrefsView() {
     this(false, true);
@@ -193,7 +193,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     refreshSeqMapView();
   }
 
-  public void setStyleList(List<AnnotStyle> styles) {
+  public void setStyleList(List<TrackStyle> styles) {
     model.setStyles(styles);
     model.fireTableDataChanged();
   }
@@ -220,31 +220,31 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
   void refreshList() {
     boolean only_displayed_tiers = true;
     boolean include_graph_styles = false;
-    List<AnnotStyle> styles;
+    List<TrackStyle> styles;
     // if only_displayed_tiers, then only put AnnotStyles in table that are being used in tiers currently displayed in main view
     if (only_displayed_tiers) {
-      styles = new ArrayList<AnnotStyle>();
+      styles = new ArrayList<TrackStyle>();
       styles.add(default_annot_style);
       if (smv != null) {  
 	List<TierGlyph> tiers = smv.getSeqMap().getTiers();
-	LinkedHashMap<AnnotStyle,AnnotStyle> stylemap = new LinkedHashMap<AnnotStyle,AnnotStyle>();
+	LinkedHashMap<TrackStyle,TrackStyle> stylemap = new LinkedHashMap<TrackStyle,TrackStyle>();
 	Iterator<TierGlyph> titer = tiers.iterator();
 	while (titer.hasNext()) {
 	  TierGlyph tier = titer.next();
-	  IAnnotStyle style = tier.getAnnotStyle();
-	  if ((style instanceof AnnotStyle) &&
+	  ITrackStyle style = tier.getAnnotStyle();
+	  if ((style instanceof TrackStyle) &&
 	      (style.getShow()) && 
 	      (tier.getChildCount() > 0) ) {
-	    stylemap.put((AnnotStyle)style, (AnnotStyle)style);
+	    stylemap.put((TrackStyle)style, (TrackStyle)style);
 	  }
 	}
 	styles.addAll(stylemap.values());
       }
     }
-    else { styles = AnnotStyle.getAllLoadedInstances(); }
-    ArrayList<AnnotStyle> customizables = new ArrayList<AnnotStyle>(styles.size());
+    else { styles = TrackStyle.getAllLoadedInstances(); }
+    ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(styles.size());
     for (int i=0; i<styles.size(); i++) {
-      AnnotStyle the_style = styles.get(i);
+      TrackStyle the_style = styles.get(i);
       if (the_style.getCustomizable()) {
 	// if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
 	if ((! the_style.isGraphTier()) || include_graph_styles) {
@@ -257,9 +257,9 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 
   // Copy the background color from the default style to all loaded styles.
   void copyDefaultBG() {
-    Iterator<AnnotStyle> iter = AnnotStyle.getAllLoadedInstances().iterator();
+    Iterator<TrackStyle> iter = TrackStyle.getAllLoadedInstances().iterator();
     while (iter.hasNext()) {
-      AnnotStyle as = iter.next();
+      TrackStyle as = iter.next();
       as.setBackground(default_annot_style.getBackground());
     }
     table.repaint(); // table needs to redraw itself due to changed values
@@ -304,17 +304,17 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
   class TierPrefsTableModel extends AbstractTableModel {
 	  public static final long serialVersionUID = 1l;
 
-    List<AnnotStyle> tier_styles;
+    List<TrackStyle> tier_styles;
 
     TierPrefsTableModel() {
-      this.tier_styles = Collections.<AnnotStyle>emptyList();
+      this.tier_styles = Collections.<TrackStyle>emptyList();
     }
 
-    public void setStyles(List<AnnotStyle> tier_styles) {
+    public void setStyles(List<TrackStyle> tier_styles) {
       this.tier_styles = tier_styles;
     }
 
-    public List<AnnotStyle> getStyles() {
+    public List<TrackStyle> getStyles() {
       return this.tier_styles;
     }
 
@@ -359,7 +359,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     }
 
     public Object getValueAt(int row, int column) {
-      AnnotStyle style = tier_styles.get(row);
+      TrackStyle style = tier_styles.get(row);
       switch (column) {
         case COL_COLOR:
           return style.getColor();
@@ -395,7 +395,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 		@Override
     public void setValueAt(Object value, int row, int col) {
       try {
-      AnnotStyle style = tier_styles.get(row);
+      TrackStyle style = tier_styles.get(row);
       switch (col) {
         case COL_COLOR:
           style.setColor((Color) value);

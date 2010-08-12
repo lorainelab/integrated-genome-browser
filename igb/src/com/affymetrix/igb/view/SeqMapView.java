@@ -31,7 +31,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -46,7 +46,7 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.tiers.TierArithmetic;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -237,7 +237,7 @@ public class SeqMapView extends JPanel
 	protected TransformTierGlyph axis_tier;
 
 		/** An un-collapsible instance.  It is hideable, though. */
-	private static final AnnotStyle axis_annot_style = new AnnotStyle() {
+	private static final TrackStyle axis_annot_style = new TrackStyle() {
 
 		{ // a non-static initializer block
 			setHumanName("Coordinates");
@@ -1727,7 +1727,7 @@ public class SeqMapView extends JPanel
 	 *    The array may instead contain two copies of one mixed-direction tier;
 	 *    in this case place glyphs for both forward and revers items into it.
 	 */
-	public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style) {
+	public TierGlyph[] getTiers(String meth, boolean next_to_axis, ITrackStyleExtended style) {
 		return TrackView.getTiers(this, meth, next_to_axis, style, true);
 	}
 

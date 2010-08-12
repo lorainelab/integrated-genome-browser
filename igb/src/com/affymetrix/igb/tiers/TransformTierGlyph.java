@@ -1,6 +1,6 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -36,7 +36,7 @@ public final class TransformTierGlyph extends TierGlyph {
   // for caching in pickTraversal() methods
   private final Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
   
-  public TransformTierGlyph(IAnnotStyle style)  {
+  public TransformTierGlyph(ITrackStyle style)  {
     super(style);
   }
 

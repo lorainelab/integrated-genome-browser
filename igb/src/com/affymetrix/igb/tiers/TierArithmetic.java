@@ -249,12 +249,12 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 		return true;
 	}
 
-	private static AnnotStyle makeNonPersistentStyle(SymWithProps sym, String human_name) {
+	private static TrackStyle makeNonPersistentStyle(SymWithProps sym, String human_name) {
 		// Needs a unique name so that if any later tier is produced with the same
 		// human name, it will not automatically get the same color, etc.
-		String unique_name = AnnotStyle.getUniqueName(human_name);
+		String unique_name = TrackStyle.getUniqueName(human_name);
 		sym.setProperty("method", unique_name);
-		AnnotStyle style = AnnotStyle.getInstance(unique_name, false);
+		TrackStyle style = TrackStyle.getInstance(unique_name, false);
 		style.setHumanName(human_name);
 		style.setGlyphDepth(1);
 		style.setSeparate(false); // there are not separate (+) and (-) strands

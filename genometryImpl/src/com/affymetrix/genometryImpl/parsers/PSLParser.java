@@ -156,7 +156,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 						}
 					} else {
 						track_line_parser.parseTrackLine(line, track_name_prefix);
-						TrackLineParser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), annot_type);
+						TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), annot_type);
 					}
 					// You can later get the track properties with getCurrentTrackHash();
 					continue;

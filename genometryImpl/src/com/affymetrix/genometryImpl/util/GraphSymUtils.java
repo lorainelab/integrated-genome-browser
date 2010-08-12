@@ -21,7 +21,7 @@ import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 
 public final class GraphSymUtils {
 
@@ -307,7 +307,7 @@ public final class GraphSymUtils {
 		// Now set the graph names (either the URL or the filename, possibly with an integer appended)
 		for (int i = 0; i < graphSize; i++) {
 			GraphSym gg = graphs.get(i);
-			IAnnotStyle style = gg.getGraphState().getTierStyle();
+			ITrackStyle style = gg.getGraphState().getTierStyle();
 			String name = graph_name;
 			if (graphSize > 1) {
 				name = name + " " + (i + 1);
@@ -324,7 +324,7 @@ public final class GraphSymUtils {
 			graph_name = graph_name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
 			for (int i = 0; i < graphSize; i++) {
 				GraphSym gg = graphs.get(i);
-				IAnnotStyle style = gg.getGraphState().getTierStyle();
+				ITrackStyle style = gg.getGraphState().getTierStyle();
 				style.setHumanName(graph_name);
 			}
 		}

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.PackerI;
@@ -73,16 +73,16 @@ public class TierGlyph extends SolidGlyph {
 	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
-	private IAnnotStyle style;
+	private ITrackStyle style;
 	private String parentURL;
 	
-	public TierGlyph(IAnnotStyle style) {
+	public TierGlyph(ITrackStyle style) {
 		setHitable(false);
 		setSpacer(spacer);
 		setStyle(style);
 	}
 
-	public void setStyle(IAnnotStyle style) {
+	public void setStyle(ITrackStyle style) {
 		this.style = style;
 
 		if (style != null) {
@@ -104,7 +104,7 @@ public class TierGlyph extends SolidGlyph {
 		}
 	}
 
-	public IAnnotStyle getAnnotStyle() {
+	public ITrackStyle getAnnotStyle() {
 		return style;
 	}
 

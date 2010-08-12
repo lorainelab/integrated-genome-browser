@@ -22,6 +22,7 @@ public class TwoBit extends SymLoader {
 
 	private static List<String> pref_list = new ArrayList<String>();
 	static {
+		pref_list.add("raw");
 		pref_list.add("2bit");
 	}
 

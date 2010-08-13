@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.style;
 
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Color;
 import java.util.Map;
 
@@ -59,6 +60,9 @@ public interface ITrackStyle {
 	/** Indicates whether this track will be used for a graph. */
 	public boolean isGraphTier();
 	public void setGraphTier(boolean b);
+
+	public void setFeature(GenericFeature f);
+	public GenericFeature getFeature();
 
 	/**
 	 *  Gets a reference to a Map that can be used to store any arbitrary 

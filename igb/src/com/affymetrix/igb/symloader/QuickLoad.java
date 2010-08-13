@@ -244,7 +244,7 @@ public final class QuickLoad extends SymLoader {
 				// we don't know which chromosomes are in the file; they may not correspond with those in the genome.
 
 				// parse data.  A side effect of the older parsers is to add the "missing" chromosomes to the genome
-				results = loadFeature(symL, feature.featureName, strategy, null);
+				results = loadFeature(symL, feature, strategy, null);
 				// short-circuit if there's a failure... which may not even be signaled in the code
 				if (results == null) {
 					return overallResults;
@@ -267,7 +267,7 @@ public final class QuickLoad extends SymLoader {
 		}
 		for (FeatureRequestSym request : output_requests) {
 			// short-circuit if there's a failure... which may not even be signaled in the code
-			results = loadFeature(symL, featureName, strategy, request.getOverlapSpan());
+			results = loadFeature(symL, feature, strategy, request.getOverlapSpan());
 			if (results == null) {
 				return overallResults;
 			}
@@ -295,13 +295,20 @@ public final class QuickLoad extends SymLoader {
 
 
 	private List<? extends SeqSymmetry> loadFeature(
-			SymLoader symL, String featureName, final LoadStrategy strategy, SeqSpan overlapSpan)
+			SymLoader symL, GenericFeature feature, final LoadStrategy strategy, SeqSpan overlapSpan)
 			throws IOException, OutOfMemoryError {
 		if (!this.isInitialized) {
 			this.init();
 		}
+
+		// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
+		style.setFeature(feature);
+
+		// TODO - probably not necessary
 		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName);
+		style.setFeature(feature);
+		
 		if (strategy == LoadStrategy.GENOME && symL == null) {
 			// no symloader... only option is whole genome.
 			return this.getGenome();

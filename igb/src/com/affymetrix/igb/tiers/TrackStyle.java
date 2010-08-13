@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
 import java.util.regex.Pattern;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -82,6 +83,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	private boolean is_graph = false;
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
+	private GenericFeature feature = null;
 
 	public static TrackStyle getInstance(String name, String human_name) {
 		return getInstance(name, human_name, true, true);
@@ -658,5 +660,13 @@ public class TrackStyle implements ITrackStyleExtended {
 				+ " color: " + getColor()
 				+ " bg: " + getBackground();
 		return s;
+	}
+
+	public void setFeature(GenericFeature f) {
+		this.feature = f;
+	}
+
+	public GenericFeature getFeature() {
+		return this.feature;
 	}
 }

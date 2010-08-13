@@ -21,7 +21,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *    A convenient base class for glyphs that are "solid", meaning any event within 
  *    the coordinate bounds of the glyph is considered to hit the glyph.
  *
- *    Mainly a convenience so other Glyph's don't have to implement hit 
+ *    Mainly a convenience so other Glyphs don't have to implement hit 
  *       methods if they are willing to stick with simple hits.
  */
 public class EfficientSolidGlyph extends Glyph  {
@@ -29,12 +29,14 @@ public class EfficientSolidGlyph extends Glyph  {
    * @return whether or not this glyph is hitable
    * @see #setHitable
    */
+	@Override
   public boolean isHitable() {
     return true;
   }
 
+	@Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return true;
+    return isVisible() && coord_hitbox.intersects(this.coordbox);
   }
 
 }

@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
@@ -31,12 +30,14 @@ import java.util.List;
  *  has multiple sub-ranges within it, such as genes which have a known intron/exon
  *  structure.
  *
- *  This is a new version of ImprovedLineContGlyph.
+ *  This is a new version of ImprovedLineContGlyph,
+ *     subclassed from EfficientGlyph instead of Glyph,
+ *     and renamed EfficientLineContGlyph.
  *
  *  Optimized to just draw a filled rect if glyph is small, and skip drawing children
  *
  */
-public final class EfficientLineContGlyph extends Glyph  {
+public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
   private static final boolean DEBUG_OPTIMIZED_FILL = false;
   private boolean move_children = true;
 

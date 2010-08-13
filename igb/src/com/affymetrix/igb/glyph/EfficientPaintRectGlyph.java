@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genoviz.bioviews.Glyph;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -21,7 +20,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 /**
  *  A glyph that is drawn as a painted rectangle.
  */
-public final class EfficientPaintRectGlyph extends Glyph  {
+public final class EfficientPaintRectGlyph extends EfficientSolidGlyph  {
     
   private Paint paint = new GradientPaint(0, 0, Color.GREEN, 5, 2, Color.YELLOW, true);
   

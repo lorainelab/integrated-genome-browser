@@ -12,7 +12,7 @@ public final class IGBStateProvider implements StateProvider {
   private final Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
 
   public ITrackStyleExtended getAnnotStyle(String name) {
-    return TrackStyle.getInstance(name);
+    return TrackStyle.getInstance(name,true);
   }
 
   public GraphState getGraphState(String id) {

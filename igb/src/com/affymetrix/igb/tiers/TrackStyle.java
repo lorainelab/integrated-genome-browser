@@ -87,34 +87,11 @@ public class TrackStyle implements ITrackStyleExtended {
 		return getInstance(name, human_name, true, true);
 	}
 
-	private static TrackStyle getInstance(String unique_name, String human_name, boolean persistent, boolean force_human_name){
-		// if unique_name is null, maybe assign it "unknown" to avoid exceptions
-		// if (unique_name == null)  { unique_name = "unknown";}
-		TrackStyle style = static_map.get(unique_name.toLowerCase());
-		if (style == null) {
-			if (DEBUG) {
-				System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
-			}
-			// apply any default stylesheet stuff
-			TrackStyle template = getDefaultInstance();
-			// at this point template should already have all modifications to default applied from stylesheets and preferences nodes (A & B)
-			// apply any stylesheet stuff...
-			style = new TrackStyle(unique_name, persistent, template);
-			static_map.put(unique_name.toLowerCase(), style);
-
-			if(force_human_name)
-				style.human_name = human_name;
-		}
-		return style;
-	}
-
-	public static TrackStyle getInstance(String unique_name) {
-		return getInstance(unique_name, true);
-	}
-
 	public static TrackStyle getInstance(String unique_name, boolean persistent) {
-		// if unique_name is null, maybe assign it "unknown" to avoid exceptions
-		// if (unique_name == null)  { unique_name = "unknown";}
+		return getInstance(unique_name, null, persistent, false);
+	}
+
+	private static TrackStyle getInstance(String unique_name, String human_name, boolean persistent, boolean force_human_name){
 		TrackStyle style = static_map.get(unique_name.toLowerCase());
 		if (style == null) {
 			if (DEBUG) {
@@ -126,6 +103,10 @@ public class TrackStyle implements ITrackStyleExtended {
 			// apply any stylesheet stuff...
 			style = new TrackStyle(unique_name, persistent, template);
 			static_map.put(unique_name.toLowerCase(), style);
+
+			if(force_human_name) {
+				style.human_name = human_name;
+			}
 		}
 		return style;
 	}

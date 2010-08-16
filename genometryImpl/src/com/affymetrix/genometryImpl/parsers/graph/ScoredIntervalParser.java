@@ -151,7 +151,9 @@ public final class ScoredIntervalParser {
 					max = Integer.parseInt(fields[2]);
 					strand = fields[3];
 					BioSeq aseq = seq_group.getSeq(seqid);
-					if (aseq == null) { aseq = makeNewSeq(seqid, seq_group); }
+					if (aseq == null) {
+						aseq = seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
+					}
 					IndexedSingletonSym child;
 					if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
 					else { child = new IndexedSingletonSym(min, max, aseq); }
@@ -169,7 +171,9 @@ public final class ScoredIntervalParser {
 					strand = fields[4];
 
 					BioSeq aseq = seq_group.getSeq(seqid);
-					if (aseq == null) { aseq = makeNewSeq(seqid, seq_group); }
+					if (aseq == null) {
+						aseq = seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
+					}
 					if (max > aseq.getLength()) { aseq.setLength(max); }
 					IndexedSingletonSym child;
 					if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
@@ -368,7 +372,7 @@ public final class ScoredIntervalParser {
 	}
 
 	/** Find the first matching symmetry in the seq_group, or null */
-	private SeqSymmetry findSym(AnnotatedSeqGroup seq_group, String id) {
+	private static SeqSymmetry findSym(AnnotatedSeqGroup seq_group, String id) {
 		//TODO: Make this parser deal with the fact that there can be multiple
 		// syms with the same ID rather than insisting on taking only the first match.
 		// This probably will make this parser simpler, since we may be able to drop
@@ -381,12 +385,7 @@ public final class ScoredIntervalParser {
 		}
 	}
 
-	protected BioSeq makeNewSeq(String seqid, AnnotatedSeqGroup seq_group) {
-		System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
-		return seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
-	}
-
-	private List<String> initScoreNames(int score_count, Map<Integer,String> index2id, String stream_name) {
+	private static List<String> initScoreNames(int score_count, Map<Integer,String> index2id, String stream_name) {
 		List<String> names = new ArrayList<String>();
 		for (int i=0; i<score_count; i++) {
 			Integer index = Integer.valueOf(i);

@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
@@ -219,6 +220,8 @@ public final class GFF3Parser {
 				GeneralUtils.safeClose(br);
 			}
 
+			Set<GFF3Sym> moreCdsSpans = new HashSet<GFF3Sym>();
+
 			for (GFF3Sym sym : all_syms) {
 
 				String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
@@ -228,7 +231,9 @@ public final class GFF3Parser {
 					seq_group.addToIndex(id, sym);
 				}
 
-				if (parent_ids.length == 0) {
+				// Adding "TF_binding_site" to top container to fix
+				// gff3 display bug. hiralv 08-16-10
+				if (parent_ids.length == 0 || sym.getFeatureType().equals("TF_binding_site")) {
 					// If no parents, then it is top-level
 					results.add(sym);
 					/* Do we really need to do for every span? */
@@ -271,10 +276,60 @@ public final class GFF3Parser {
 							addBadParent(sym);
 						} else {
 							parent_sym.addChild(sym);
+
+							if (parent_sym.getCdsSpans().size() > 1) {
+								moreCdsSpans.add(parent_sym);
+							}
 						}
 					}
 				}
 			}
+
+			for(GFF3Sym parent_sym : moreCdsSpans){
+				String[] top_parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, parent_sym.getAttributes());
+
+				if(top_parent_ids.length == 0){
+					Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
+					parent_sym.removeCdsSpans();
+
+					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
+						GFF3Sym clone = (GFF3Sym) parent_sym.clone();
+						for (SeqSymmetry seqsym : entry.getValue()) {
+							clone.addChild(seqsym);
+						}
+						results.add(clone);
+
+						if(annot_seq){
+							for (int i = 0; i < clone.getSpanCount(); i++) {
+								BioSeq seq = clone.getSpanSeq(i);
+								seq.addAnnotation(clone);
+							}
+						}
+					}
+					continue;
+
+				}
+
+				for (int k = 0; k < top_parent_ids.length; k++) {
+					String top_parent_id = top_parent_ids[k];
+					GFF3Sym top_parent_sym = id2sym.get(top_parent_id);
+					top_parent_sym.removeChild(parent_sym);
+
+					Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
+					parent_sym.removeCdsSpans();
+
+					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
+						GFF3Sym clone = (GFF3Sym) parent_sym.clone();
+						for (SeqSymmetry seqsym : entry.getValue()) {
+							clone.addChild(seqsym);
+						}
+						top_parent_sym.addChild(clone);
+					}
+				}
+
+
+			}
+
 			// hashtable no longer needed
 			id2sym.clear();
 

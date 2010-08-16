@@ -162,11 +162,11 @@ public class AnnotatedSeqGroup {
 	 * @return a BioSeq for the given synonym or null
 	 */
 	public BioSeq getSeq(String synonym) {
-		BioSeq aseq = id2seq.get(synonym);
+		BioSeq aseq = id2seq.get(synonym.toLowerCase());
 		if (use_synonyms && aseq == null) {
 			// Try and find a synonym.
 			for (String syn : lookup.getSynonyms(synonym,false)) {
-				aseq = id2seq.get(syn);
+				aseq = id2seq.get(syn.toLowerCase());
 				if (aseq != null) {
 					return aseq;
 				}
@@ -188,7 +188,7 @@ public class AnnotatedSeqGroup {
 			SeqSpan span = sym.getSpan(i);
 			BioSeq seq1 = span.getBioSeq();
 			String seqid = seq1.getID();
-			BioSeq seq2 = id2seq.get(seqid);
+			BioSeq seq2 = id2seq.get(seqid.toLowerCase());
 			if ((seq2 != null) && (seq1 == seq2)) {
 				return seq2;
 			}
@@ -226,11 +226,11 @@ public class AnnotatedSeqGroup {
 	 */
 	final public void addSeq(BioSeq seq) {
 		String seqID = seq.getID();
-		final BioSeq oldseq = id2seq.get(seqID);
+		final BioSeq oldseq = id2seq.get(seqID.toLowerCase());
 		if (oldseq == null) {
 			synchronized (this) {
 				id2seq_dirty_bit = true;
-				id2seq.put(seqID, seq);
+				id2seq.put(seqID.toLowerCase(), seq);
 				seq.setSeqGroup(this);
 			}
 		} else {

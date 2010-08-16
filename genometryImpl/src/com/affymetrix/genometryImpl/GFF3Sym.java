@@ -31,7 +31,7 @@ import javax.swing.SwingUtilities;
  *
  * @version $Id$
  */
-public final class GFF3Sym extends SimpleSymWithProps implements Scored, SupportsCdsSpan {
+public final class GFF3Sym extends SimpleSymWithProps implements Scored, SupportsCdsSpan, Cloneable {
 	private String id;
 	private static boolean multipleCdsWarning = false;
 
@@ -414,5 +414,54 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 		}
 
 		return cdsSpans.values().iterator().next();
+	}
+
+	public Map<String, List<SeqSymmetry>> getCdsSpans() {
+		String gff3ID;
+		Map<String, List<SeqSymmetry>> cdsSpans = new LinkedHashMap<String, List<SeqSymmetry>>();
+		MutableSeqSpan span = null;
+
+		for (SeqSymmetry child : children) {
+			if (isCdsSym(child)) {
+				gff3ID = getIdFromGFF3Attributes(((GFF3Sym) child).getAttributes());
+				for (int i = 0; i < child.getSpanCount(); i++) {
+					List<SeqSymmetry> list = cdsSpans.get(gff3ID);
+					if (list == null) {
+						list = new ArrayList<SeqSymmetry>();
+						cdsSpans.put(gff3ID, list);
+						list.add(child);
+					}
+				}
+			}
+		}
+		return cdsSpans;
+	}
+
+
+	public void removeCdsSpans(){
+		List<SeqSymmetry> remove_list = new ArrayList<SeqSymmetry>();
+		for(SeqSymmetry child : children) {
+			if (isCdsSym(child)) {
+				remove_list.add(child);
+			}
+		}
+		children.removeAll(remove_list);
+	}
+
+	@Override
+	public Object clone() {
+		GFF3Sym dup = new GFF3Sym(this.source, this.feature_type, this.score, this.frame, this.attributes);
+		if (children != null) {
+			for (SeqSymmetry child : children) {
+				dup.addChild(child);
+			}
+		}
+		if (spans != null) {
+			for (SeqSpan span : spans) {
+				dup.addSpan(span);
+			}
+		}
+		dup.props = this.cloneProperties();
+		return dup;
 	}
 }

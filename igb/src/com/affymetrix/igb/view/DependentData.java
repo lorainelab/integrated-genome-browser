@@ -83,6 +83,7 @@ public class DependentData {
 			}
 		}
 		wrapperSym.setProperty("method", id);
+		wrapperSym.setProperty("id", id);
 		aseq.addAnnotation(wrapperSym);
 		return wrapperSym;
 	}

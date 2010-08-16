@@ -14,6 +14,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -33,6 +34,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -377,9 +379,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		String friendlySearchStr = friendlyString(text, this.sequence_CB.getSelectedItem().toString());
 		status_bar.setText(friendlySearchStr + ": Searching locally...");
-
-		// Local symmetries
-		List <SeqSymmetry> localSymList = group.findSyms(regex);
+		List <SeqSymmetry> localSymList = findLocalSyms(group, chrFilter, regex);
 		remoteSymList = null;
 
 		// Make sure this search is reasonable to do on a remote server.
@@ -431,6 +431,55 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		tableRows = filterBySeq(localSymList, chrFilter);
 		displayInTable(tableRows);
 
+	}
+
+	/**
+	 * Due to disagreements between group ID search and BioSeq ID search, do both and combine their results
+	 * @param group
+	 * @param chrFilter
+	 * @param regex
+	 * @return
+	 */
+	private static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex) {
+		Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>(group.findSyms(regex));
+		List<BioSeq> chrs;
+		if (chrFilter != null) {
+			chrs = new ArrayList<BioSeq>();
+			chrs.add(chrFilter);
+		} else {
+			chrs = group.getSeqList();
+		}
+		Matcher match = regex.matcher("");
+		SymWithProps sym = null;
+		for (BioSeq chr : chrs) {
+			int annotCount = chr.getAnnotationCount();
+			for (int i=0;i<annotCount;i++) {
+				sym = (SymWithProps)chr.getAnnotation(i);
+				findIDsInSym(syms, sym, match);
+			}
+		}
+		return new ArrayList<SeqSymmetry>(syms);
+	}
+
+	/**
+	 * Recursively search for symmetries that match regex.
+	 * @param syms
+	 * @param sym
+	 * @param match
+	 */
+	private static void findIDsInSym(Set<SeqSymmetry> syms, SeqSymmetry sym, Matcher match) {
+		if (sym == null) {
+			return;
+		}
+		if (sym.getID() != null && match.reset(sym.getID()).matches()) {
+			syms.add(sym);
+		} else if (sym instanceof SymWithProps && match.reset(BioSeq.determineMethod(sym)).matches()) {
+			syms.add(sym);
+		}
+		int childCount = sym.getChildCount();
+		for (int i=0;i< childCount;i++) {
+			findIDsInSym(syms, sym.getChild(i), match);
+		}
 	}
 
 

@@ -456,6 +456,8 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 			}
 		}
 		dup.props = this.cloneProperties();
+		dup.method = this.method;
+		
 		return dup;
 	}
 }

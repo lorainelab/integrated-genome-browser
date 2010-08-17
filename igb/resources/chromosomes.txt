@@ -38,7 +38,7 @@ chr37	37
 chr38	38
 chrX	X	arm_X
 chrY	Y
-chrM	M	chrMT	mitochondria	mitochondrion	NC_001709	chrM|11706
+chrM	M	MT	chrMT	mitochondria	mitochondrion	NC_001709	chrM|11706
 chrC	C	chloroplast	chrC|11562
 chrUn	U	Un	chrU	ArmU
 chrUextra	ArmUextra

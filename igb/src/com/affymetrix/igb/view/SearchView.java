@@ -272,24 +272,35 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 						if (group == null) {
 							return;
 						}
-						// remote symmetry.  We must zoom to its coordinate and select its seq.
-						String seqID = sym.getSpanSeq(0).getID();
-						BioSeq seq = group.getSeq(seqID);
-						if (seq != null) {
-							SeqSpan span = sym.getSpan(0);
-							if (span != null) {
-								// zoom to its coordinates
-								MapRangeBox.zoomToSeqAndSpan(gviewer, seqID, span.getStart(), span.getEnd());
-							}
-						}
-
+						zoomToCoord(sym);
 						return;
 					}
+
+					/*if (Application.getSingleton().getMapView().getSeqMap().<GlyphI>getItem(sym) == null) {
+						if (group == null) {
+							return;
+						}
+						// Couldn't find sym in map view! Go ahead and zoom to it.
+						zoomToCoord(sym);
+						return;
+					}*/
 
 					// Set selected symmetry normally
 					List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
 					syms.add(sym);
 					gmodel.setSelectedSymmetriesAndSeq(syms, this);
+				}
+			}
+		}
+
+		private void zoomToCoord(SeqSymmetry sym) throws NumberFormatException {
+			String seqID = sym.getSpanSeq(0).getID();
+			BioSeq seq = group.getSeq(seqID);
+			if (seq != null) {
+				SeqSpan span = sym.getSpan(0);
+				if (span != null) {
+					// zoom to its coordinates
+					MapRangeBox.zoomToSeqAndSpan(gviewer, seqID, span.getStart(), span.getEnd());
 				}
 			}
 		}
@@ -475,11 +486,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 		if (!(sym instanceof FeatureRequestSym)) {
 			// don't add the request sym itself.
-			
 			if (sym.getID() != null && match.reset(sym.getID()).matches()) {
 				syms.add(sym);	// ID matches
-			} else if (sym instanceof SymWithProps && match.reset(BioSeq.determineMethod(sym)).matches()) {
-				syms.add(sym);	// method matches
+			} else if (sym instanceof SymWithProps) {
+				String method = BioSeq.determineMethod(sym);
+				if (method != null && match.reset(method).matches()) {
+					syms.add(sym);	// method matches
+				}
 			}
 		}
 		int childCount = sym.getChildCount();

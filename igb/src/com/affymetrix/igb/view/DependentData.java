@@ -23,14 +23,14 @@ public class DependentData {
 	}
 
 	final private String id;
-	final private String parentUrl;
+	final private String parent_method;
 	final private DependentType type;
 	private Direction direction;
 	private SymWithProps sym;
 
 	public DependentData(String id, DependentType type, String parentUrl) {
 		this.id = id;
-		this.parentUrl = parentUrl;
+		this.parent_method = parentUrl;
 		this.type = type;
 	}
 
@@ -54,7 +54,7 @@ public class DependentData {
 
 	private GraphSym createSummaryGraph(BioSeq aseq){
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		syms.add(aseq.getAnnotation(parentUrl));
+		syms.add(aseq.getAnnotation(parent_method));
 		GraphSym gsym = null;
 		if (direction == Direction.FORWARD || direction == Direction.REVERSE) {
 			Boolean isForward = direction == Direction.FORWARD ? true : false;
@@ -70,7 +70,7 @@ public class DependentData {
 
 	private SymWithProps createCoverageTier(BioSeq aseq) {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		syms.add(aseq.getAnnotation(parentUrl));
+		syms.add(aseq.getAnnotation(parent_method));
 		SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
 		SymWithProps wrapperSym;
 		if (union_sym instanceof SymWithProps) {
@@ -88,8 +88,8 @@ public class DependentData {
 		return wrapperSym;
 	}
 
-	public String getParentUrl(){
-		return parentUrl;
+	public String getParentMethod(){
+		return parent_method;
 	}
 
 	public String getID(){

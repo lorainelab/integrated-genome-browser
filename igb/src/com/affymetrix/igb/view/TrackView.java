@@ -287,7 +287,7 @@ public class TrackView {
 		}
 
 		for (DependentData dd : dependent_list) {
-			if (URL == null ? dd.getParentUrl() == null : URL.equals(dd.getParentUrl()))
+			if (URL == null ? dd.getParentMethod() == null : URL.equals(dd.getParentMethod()))
 				dependent_list.remove(dd);
 		}
 	}

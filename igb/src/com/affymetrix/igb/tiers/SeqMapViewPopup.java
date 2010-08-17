@@ -530,7 +530,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	String human_name = "coverage: " + atier.getLabel();
 	String unique_name = TrackStyle.getUniqueName(human_name);
-	DependentData dd = new DependentData(unique_name,DependentType.COVERAGE,atier.getParentURL());
+	String method = atier.getAnnotStyle().getMethodName();
+	DependentData dd = new DependentData(unique_name,DependentType.COVERAGE,method);
 	SymWithProps wrapperSym = TrackView.addToDependentList(dd);
 
 	if (wrapperSym == null) {
@@ -573,12 +574,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     BioSeq aseq = gmodel.getSelectedSeq();
 	String id = null;
 	DependentData dd = null;
+	String method = atier.getAnnotStyle().getMethodName();
 	if(bothDirection){
 		id = atier.getLabel() + getSymbol(Direction.BOTH);
-		dd = new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),Direction.BOTH);
+		dd = new DependentData(id,DependentType.SUMMARY,method,Direction.BOTH);
 	}else{
 		id = atier.getLabel() + getSymbol(atier.getDirection());
-		dd = new DependentData(id,DependentType.SUMMARY,atier.getParentURL(),atier.getDirection());
+		dd = new DependentData(id,DependentType.SUMMARY,method,atier.getDirection());
 	}
 	
 	GraphSym gsym = (GraphSym) TrackView.addToDependentList(dd);

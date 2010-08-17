@@ -77,6 +77,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	private HeatMap custom_heatmap = null;
 	private String unique_name;
 	private String human_name;
+	final private String method_name;
 	private Preferences node;
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
 	private static TrackStyle default_instance = null;
@@ -131,6 +132,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	}
 
 	protected TrackStyle() {
+		method_name = null;
 	}
 
 	/** Creates an instance associated with a case-insensitive form of the unique name.
@@ -145,6 +147,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	 *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
 	 */
 	protected TrackStyle(String name, boolean is_persistent, TrackStyle template) {
+		this.method_name = name;
 		this.human_name = name; // this is the default human name, and is not lower case
 		this.unique_name = name.toLowerCase();
 		this.is_persistent = is_persistent;
@@ -330,6 +333,10 @@ public class TrackStyle implements ITrackStyleExtended {
 
 	public String getUniqueName() {
 		return unique_name;
+	}
+
+	public String getMethodName() {
+		return method_name;
 	}
 
 	/** Gets a name that may be shorter and more user-friendly than the unique name.

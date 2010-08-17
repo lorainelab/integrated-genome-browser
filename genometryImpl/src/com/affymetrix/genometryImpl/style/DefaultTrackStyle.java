@@ -117,4 +117,8 @@ public class DefaultTrackStyle implements ITrackStyle {
 	public GenericFeature getFeature() {
 		return this.feature;
 	}
+
+	public String getMethodName() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

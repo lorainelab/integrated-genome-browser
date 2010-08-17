@@ -33,6 +33,8 @@ public interface ITrackStyle {
 	public String getHumanName();
 	public void setHumanName(String s);
 
+	public String getMethodName();
+	
 	public Color getBackground();
 	public void setBackground(Color c);
 

@@ -99,7 +99,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 			label_field = style.getLabelField();
 
-			TierGlyph[] tiers = gviewer.getTiers(meth, false, style);
+			TierGlyph[] tiers = gviewer.getTiers(false, style);
 			addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
 		}
 	}

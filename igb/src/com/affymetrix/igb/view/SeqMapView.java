@@ -1727,8 +1727,8 @@ public class SeqMapView extends JPanel
 	 *    The array may instead contain two copies of one mixed-direction tier;
 	 *    in this case place glyphs for both forward and revers items into it.
 	 */
-	public TierGlyph[] getTiers(String meth, boolean next_to_axis, ITrackStyleExtended style) {
-		return TrackView.getTiers(this, meth, next_to_axis, style, true);
+	public TierGlyph[] getTiers(boolean next_to_axis, ITrackStyleExtended style) {
+		return TrackView.getTiers(this, next_to_axis, style, true);
 	}
 
 

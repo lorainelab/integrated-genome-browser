@@ -77,7 +77,7 @@ public class TrackView {
 	 *  constant_height will be ignored and re-set to false.
 	 */
 	public static TierGlyph[] getTiers(
-			SeqMapView smv, String meth, boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights) {
+			SeqMapView smv, boolean next_to_axis, ITrackStyleExtended style, boolean constant_heights) {
 		AffyTieredMap map = smv.getSeqMap();
 		TierGlyph axisTier = smv.getAxisTier();
 
@@ -88,7 +88,6 @@ public class TrackView {
 		TierGlyph fortier = style2forwardTierGlyph.get(style);
 		if (fortier == null) {
 			fortier = new TierGlyph(style);
-			fortier.setParentURL(meth);
 			setUpTrackPacker(fortier, true, constant_heights);
 			style2forwardTierGlyph.put(style, fortier);
 		}
@@ -112,7 +111,6 @@ public class TrackView {
 		TierGlyph revtier = style2reverseTierGlyph.get(style);
 		if (revtier == null) {
 			revtier = new TierGlyph(style);
-			revtier.setParentURL(meth);
 			revtier.setDirection(TierGlyph.Direction.REVERSE);
 			setUpTrackPacker(revtier, false, constant_heights);
 			style2reverseTierGlyph.put(style, revtier);

@@ -92,7 +92,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
 				return;
 			}
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			TierGlyph[] tiers = TrackView.getTiers(gviewer, meth, false, style, false);
+			TierGlyph[] tiers = TrackView.getTiers(gviewer, false, style, false);
 			int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
 			TierGlyph the_tier = tiers[tier_index];
 

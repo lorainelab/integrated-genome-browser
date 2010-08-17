@@ -391,12 +391,41 @@ public final class TierLabelManager {
 	private void doPopup(MouseEvent e) {
 		popup.removeAll();
 
+		setPopuptitle();
+		
 		for (PopupListener pl : popup_listeners) {
 			pl.popupNotify(popup, this);
 		}
 
 		if (popup.getComponentCount() > 0) {
 			popup.show(labelmap, e.getX() + xoffset_pop, e.getY() + yoffset_pop);
+		}
+	}
+
+	/**
+	 * Sets title for popup.
+	 * Sets feature name as title if available else shows number of selection.
+	 */
+	private void setPopuptitle(){
+		List<TierGlyph> tiers = getSelectedTiers();
+
+		if(tiers.isEmpty())
+			return;
+
+		String label = null;
+		if(tiers.size() == 1 && tiers.get(0).getAnnotStyle().getFeature() != null)
+			label = tiers.get(0).getAnnotStyle().getFeature().featureName;
+		else
+			label = tiers.size() + " Selections";
+
+		if (label != null && label.length() > 30) {
+			label = label.substring(0, 30) + " ...";
+		}
+
+		if(label != null && label.length() > 0){
+			JLabel label_name = new JLabel(label);
+			label_name.setEnabled(false); // makes the text look different (usually lighter)
+			popup.add(label_name);
 		}
 	}
 

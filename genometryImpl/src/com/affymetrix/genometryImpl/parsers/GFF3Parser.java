@@ -220,115 +220,7 @@ public final class GFF3Parser {
 				GeneralUtils.safeClose(br);
 			}
 
-			Set<GFF3Sym> moreCdsSpans = new HashSet<GFF3Sym>();
-
-			for (GFF3Sym sym : all_syms) {
-
-				String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
-
-				String id = sym.getID();
-				if (id != null && ! "-".equals(id)) {
-					seq_group.addToIndex(id, sym);
-				}
-
-				// Adding "TF_binding_site" to top container to fix
-				// gff3 display bug. hiralv 08-16-10
-				if (parent_ids.length == 0 || sym.getFeatureType().equals("TF_binding_site")) {
-					// If no parents, then it is top-level
-					results.add(sym);
-					/* Do we really need to do for every span? */
-					if (annot_seq) {
-						for (int i = 0; i < sym.getSpanCount(); i++) {
-							BioSeq seq = sym.getSpanSeq(i);
-							seq.addAnnotation(sym);
-						}
-					}
-				} else {
-					// Else, add this as a child to *each* parent in its parent list.
-					// It is an error if the parent doesn't exist.
-					for (int i=0; i<parent_ids.length; i++) {
-						String parent_id = parent_ids[i];
-						if ("-".equals(parent_id)) {
-							throw new IOException("Parent ID cannot be '-'");
-						}
-						GFF3Sym parent_sym = id2sym.get(parent_id);
-						if (bad_parents.contains(parent_id)) {
-							/*
-							 * bad_parents list contains ignored parents.  Child
-							 * ids are added to the bad_parents list since we are
-							 * ignoring them too.
-							 */
-							String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
-							if (ids.length > 0) {
-								bad_parents.add(ids[0]);
-							}
-						} else if (parent_sym == null) {
-							if (!bad_parents.contains(parent_id)) {
-								Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "No parent found with ID: {0}", parent_id);
-								bad_parents.add(parent_id);
-							}
-							addBadParent(sym);
-						} else if (parent_sym == sym) {
-							if (!bad_parents.contains(parent_id)) {
-								Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Parent and child are the same for ID: {0}", parent_id);
-								bad_parents.add(parent_id);
-							}
-							addBadParent(sym);
-						} else {
-							parent_sym.addChild(sym);
-
-							if (parent_sym.getCdsSpans().size() > 1) {
-								moreCdsSpans.add(parent_sym);
-							}
-						}
-					}
-				}
-			}
-
-			for(GFF3Sym parent_sym : moreCdsSpans){
-				String[] top_parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, parent_sym.getAttributes());
-
-				if(top_parent_ids.length == 0){
-					Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
-					parent_sym.removeCdsSpans();
-
-					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
-						GFF3Sym clone = (GFF3Sym) parent_sym.clone();
-						for (SeqSymmetry seqsym : entry.getValue()) {
-							clone.addChild(seqsym);
-						}
-						results.add(clone);
-
-						if(annot_seq){
-							for (int i = 0; i < clone.getSpanCount(); i++) {
-								BioSeq seq = clone.getSpanSeq(i);
-								seq.addAnnotation(clone);
-							}
-						}
-					}
-					continue;
-
-				}
-
-				for (int k = 0; k < top_parent_ids.length; k++) {
-					String top_parent_id = top_parent_ids[k];
-					GFF3Sym top_parent_sym = id2sym.get(top_parent_id);
-					top_parent_sym.removeChild(parent_sym);
-
-					Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
-					parent_sym.removeCdsSpans();
-
-					for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
-						GFF3Sym clone = (GFF3Sym) parent_sym.clone();
-						for (SeqSymmetry seqsym : entry.getValue()) {
-							clone.addChild(seqsym);
-						}
-						top_parent_sym.addChild(clone);
-					}
-				}
-
-
-			}
+			addToParent(all_syms, seq_group, results, annot_seq, id2sym);
 
 			// hashtable no longer needed
 			id2sym.clear();
@@ -338,6 +230,120 @@ public final class GFF3Parser {
 			System.out.println("  result count: " + results.size());
 			return results;
 		}
+
+	/**
+	 * Iterate through each symmetry and add it to parent symmetry or top container.
+	 * @param all_syms	List of all symmetries.
+	 * @param seq_group	Annotated Sequence group.
+	 * @param results	List of result to be returned.
+	 * @param annot_seq	Weather to annotate sequence or not.
+	 * @param id2sym	Map of ids to symmetries.
+	 * @throws IOException
+	 */
+	private void addToParent(List<GFF3Sym> all_syms, AnnotatedSeqGroup seq_group, List<GFF3Sym> results, boolean annot_seq, Map<String, GFF3Sym> id2sym) throws IOException {
+		Set<GFF3Sym> moreCdsSpans = new HashSet<GFF3Sym>();
+		for (GFF3Sym sym : all_syms) {
+			String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
+			String id = sym.getID();
+			if (id != null && !"-".equals(id)) {
+				seq_group.addToIndex(id, sym);
+			} // gff3 display bug. hiralv 08-16-10
+			if (parent_ids.length == 0 || sym.getFeatureType().equals("TF_binding_site")) {
+				// If no parents, then it is top-level
+				results.add(sym);
+				/* Do we really need to do for every span? */ if (annot_seq) {
+					for (int i = 0; i < sym.getSpanCount(); i++) {
+						BioSeq seq = sym.getSpanSeq(i);
+						seq.addAnnotation(sym);
+					}
+				}
+			} else {
+				// Else, add this as a child to *each* parent in its parent list.
+				// It is an error if the parent doesn't exist.
+				for (int i = 0; i < parent_ids.length; i++) {
+					String parent_id = parent_ids[i];
+					if ("-".equals(parent_id)) {
+						throw new IOException("Parent ID cannot be '-'");
+					}
+					GFF3Sym parent_sym = id2sym.get(parent_id);
+					if (bad_parents.contains(parent_id)) {
+						/*
+						 * bad_parents list contains ignored parents.  Child
+						 * ids are added to the bad_parents list since we are
+						 * ignoring them too.
+						 */ String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
+						if (ids.length > 0) {
+							bad_parents.add(ids[0]);
+						}
+					} else if (parent_sym == null) {
+						if (!bad_parents.contains(parent_id)) {
+							Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "No parent found with ID: {0}", parent_id);
+							bad_parents.add(parent_id);
+						}
+						addBadParent(sym);
+					} else if (parent_sym == sym) {
+						if (!bad_parents.contains(parent_id)) {
+							Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Parent and child are the same for ID: {0}", parent_id);
+							bad_parents.add(parent_id);
+						}
+						addBadParent(sym);
+					} else {
+						parent_sym.addChild(sym);
+						if (parent_sym.getCdsSpans().size() > 1) {
+							moreCdsSpans.add(parent_sym);
+						}
+					}
+				}
+			}
+		}
+		handleMultipleCDS(moreCdsSpans, results, annot_seq, id2sym);
+	}
+
+	/**
+	 * Handles symmetries that has more than one cds spans.
+	 * Create a clone of parent and adds one cds span to each.
+	 * @param moreCdsSpans	Symmetries that has more than one cds spans.
+	 * @param results	List of symmetries to be returned.
+	 * @param annot_seq	Boolean weather to annotate sequence or not.
+	 * @param id2sym	Map of ids to symmetries.
+	 */
+	private void handleMultipleCDS(Set<GFF3Sym> moreCdsSpans, List<GFF3Sym> results, boolean annot_seq, Map<String, GFF3Sym> id2sym) {
+		for (GFF3Sym parent_sym : moreCdsSpans) {
+			String[] top_parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, parent_sym.getAttributes());
+			if (top_parent_ids.length == 0) {
+				Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
+				parent_sym.removeCdsSpans();
+				for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
+					GFF3Sym clone = (GFF3Sym) parent_sym.clone();
+					for (SeqSymmetry seqsym : entry.getValue()) {
+						clone.addChild(seqsym);
+					}
+					results.add(clone);
+					if (annot_seq) {
+						for (int i = 0; i < clone.getSpanCount(); i++) {
+							BioSeq seq = clone.getSpanSeq(i);
+							seq.addAnnotation(clone);
+						}
+					}
+				}
+				continue;
+			}
+			for (int k = 0; k < top_parent_ids.length; k++) {
+				String top_parent_id = top_parent_ids[k];
+				GFF3Sym top_parent_sym = id2sym.get(top_parent_id);
+				top_parent_sym.removeChild(parent_sym);
+				Map<String, List<SeqSymmetry>> cdsSpans = parent_sym.getCdsSpans();
+				parent_sym.removeCdsSpans();
+				for (Entry<String, List<SeqSymmetry>> entry : cdsSpans.entrySet()) {
+					GFF3Sym clone = (GFF3Sym) parent_sym.clone();
+					for (SeqSymmetry seqsym : entry.getValue()) {
+						clone.addChild(seqsym);
+					}
+					top_parent_sym.addChild(clone);
+				}
+			}
+		}
+	}
 
 	private void addBadParent(GFF3Sym sym) {
 		String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());

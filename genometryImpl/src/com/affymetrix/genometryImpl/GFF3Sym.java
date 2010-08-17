@@ -410,6 +410,9 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 		return cdsSpans.entrySet().iterator().next().getValue();
 	}
 
+	/*
+	 *Returns Map of id to list of symmetries of cds spans.
+	 */
 	public Map<String, List<SeqSymmetry>> getCdsSpans() {
 		String gff3ID;
 		Map<String, List<SeqSymmetry>> cdsSpans = new LinkedHashMap<String, List<SeqSymmetry>>();
@@ -431,7 +434,9 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 		return cdsSpans;
 	}
 
-
+	/**
+	 * Removes all cds symmetries.
+	 */
 	public void removeCdsSpans(){
 		List<SeqSymmetry> remove_list = new ArrayList<SeqSymmetry>();
 		for(SeqSymmetry child : children) {

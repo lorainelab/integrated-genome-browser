@@ -276,14 +276,14 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 						return;
 					}
 
-					/*if (Application.getSingleton().getMapView().getSeqMap().<GlyphI>getItem(sym) == null) {
+					if (Application.getSingleton().getMapView().getSeqMap().<GlyphI>getItem(sym) == null) {
 						if (group == null) {
 							return;
 						}
 						// Couldn't find sym in map view! Go ahead and zoom to it.
 						zoomToCoord(sym);
 						return;
-					}*/
+					}
 
 					// Set selected symmetry normally
 					List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);

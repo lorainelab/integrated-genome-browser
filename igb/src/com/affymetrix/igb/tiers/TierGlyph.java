@@ -74,7 +74,6 @@ public class TierGlyph extends SolidGlyph {
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	private ITrackStyle style;
-	private String parentURL;
 	
 	public TierGlyph(ITrackStyle style) {
 		setHitable(false);
@@ -534,11 +533,4 @@ public class TierGlyph extends SolidGlyph {
 		this.drawSelectedOutline(view);
 	}
 
-	public String getParentURL(){
-		return parentURL;
-	}
-
-	public void setParentURL(String str){
-		parentURL = str;
-	}
 }

@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
+import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -472,13 +473,17 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		if (sym == null) {
 			return;
 		}
-		if (sym.getID() != null && match.reset(sym.getID()).matches()) {
-			syms.add(sym);
-		} else if (sym instanceof SymWithProps && match.reset(BioSeq.determineMethod(sym)).matches()) {
-			syms.add(sym);
+		if (!(sym instanceof FeatureRequestSym)) {
+			// don't add the request sym itself.
+			
+			if (sym.getID() != null && match.reset(sym.getID()).matches()) {
+				syms.add(sym);	// ID matches
+			} else if (sym instanceof SymWithProps && match.reset(BioSeq.determineMethod(sym)).matches()) {
+				syms.add(sym);	// method matches
+			}
 		}
 		int childCount = sym.getChildCount();
-		for (int i=0;i< childCount;i++) {
+		for (int i = 0; i < childCount; i++) {
 			findIDsInSym(syms, sym.getChild(i), match);
 		}
 	}

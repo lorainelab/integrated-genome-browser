@@ -413,7 +413,7 @@ public final class LocalUrlCacher {
 	}
 
 	private static InputStream RetrieveFromURL(
-			URLConnection conn, Map<String,String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException, IOException {
+			URLConnection conn, Map<String,String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException {
 		int content_length = -1;
 		final InputStream connstr;
 		String contentEncoding = conn.getHeaderField("Content-Encoding");

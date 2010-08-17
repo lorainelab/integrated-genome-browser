@@ -150,7 +150,7 @@ public final class Das2ServerInfo  {
 				System.out.println("Das2 Request: " + server_uri);
 			}
 			Map<String,String> headers = new LinkedHashMap<String,String>();
-			response = getInputStream(headers, "Loading from server ");
+			response = getInputStream(headers);
 			if (response == null) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;
@@ -182,7 +182,7 @@ public final class Das2ServerInfo  {
 	}
 
 
-	public InputStream getInputStream(Map<String, String> headers, String log_string) throws MalformedURLException, IOException {
+	private InputStream getInputStream(Map<String, String> headers) throws MalformedURLException, IOException {
 		String load_url = getLoadURL();
 		InputStream istr = LocalUrlCacher.getInputStream(load_url, true, headers);
 
@@ -198,7 +198,7 @@ public final class Das2ServerInfo  {
 		}
 
 		Logger.getLogger(Das2ServerInfo.class.getName()).log(
-				Level.INFO, "{0} : {1}", new Object[]{log_string, load_url});
+				Level.INFO, "Loading from server : {0}", load_url);
 		
 		return istr;
 	}

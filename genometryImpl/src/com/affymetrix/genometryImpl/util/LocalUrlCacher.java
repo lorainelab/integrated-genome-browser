@@ -481,6 +481,7 @@ public final class LocalUrlCacher {
 
 
 	private static byte[] readIntoContentArray(int content_length, BufferedInputStream bis) throws IOException {
+		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINEST, "Content-Length: {0}", content_length);
 		if (content_length < 0) {
 			return loadContentInChunks(bis);
 		}
@@ -510,10 +511,8 @@ public final class LocalUrlCacher {
 	 * @throws java.io.IOException
 	 */
 	private static byte[] loadContentInChunks(BufferedInputStream bis) throws IOException {
-		if (DEBUG_CONNECTION) {
-			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
+		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
 					"No content length header, so doing piecewise loading");
-		}
 		byte[] content = null;
 		ArrayList<byte[]> chunks = new ArrayList<byte[]>(1000);
 		IntArrayList byte_counts = new IntArrayList(100);
@@ -563,10 +562,8 @@ public final class LocalUrlCacher {
 			}
 			chunk_count++;
 		}
-		if (DEBUG_CONNECTION) {
-			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
+		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
 					"total bytes: {0}, chunks with > 0 bytes: {1}", new Object[]{total_byte_count, chunks.size()});
-		}
 		return total_byte_count;
 	}
 

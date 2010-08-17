@@ -466,7 +466,11 @@ public final class LocalUrlCacher {
 		BufferedInputStream bis = null;
 		byte[] content = null;
 		try {
-			bis = new BufferedInputStream(connstr);
+			if (connstr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream)connstr;
+			} else {
+				bis = new BufferedInputStream(connstr);
+			}
 			content = readIntoContentArray(content_length, bis);
 			Properties headerprops = populateHeaderProperties(conn, headers);
 			WriteToCache(content, cache_file, header_cache_file, headerprops);

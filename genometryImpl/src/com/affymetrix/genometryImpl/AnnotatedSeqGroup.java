@@ -31,7 +31,7 @@ public class AnnotatedSeqGroup {
 	 * Private copy of the synonym lookup table.
 	 * @see com.affymetrix.genometryImpl.util.SynonymLookup#getDefaultLookup()
 	 */
-	private final static SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+	private final static SynonymLookup lookup = SynonymLookup.getChromosomeLookup();
 
 	public AnnotatedSeqGroup(String gid) {
 		id = gid;

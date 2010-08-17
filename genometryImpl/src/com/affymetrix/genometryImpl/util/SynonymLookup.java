@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -42,6 +41,9 @@ public final class SynonymLookup {
 	/** The default instance of this class, used by most code for synonym lookups. */
 	private static final SynonymLookup DEFAULT_LOOKUP = new SynonymLookup();
 
+	/** The default instance of this class for chromosome, used by most code for synonym lookups. */
+	private static final SynonymLookup CHROM_LOOKUP = new SynonymLookup();
+	
 	/** Hash to map every synonym to all equivalent synonyms. */
 	private final LinkedHashMap<String, Set<String>> lookupHash = new LinkedHashMap<String, Set<String>>();
 
@@ -57,6 +59,15 @@ public final class SynonymLookup {
 		return DEFAULT_LOOKUP;
 	}
 
+	/**
+	 * Returns the default instance of SynonymLookup.  This is used to share
+	 * a common SynonymLookup across the entire code.
+	 *
+	 * @return the default instance of chromosome SynonymLookup.
+	 */
+	public static SynonymLookup getChromosomeLookup(){
+		return CHROM_LOOKUP;
+	}
 	/**
 	 * Loads synonyms from the given input stream.
 	 *

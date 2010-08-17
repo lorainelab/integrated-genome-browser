@@ -273,11 +273,11 @@ public class TrackView {
 	}
 
 	public static void deleteTrack(TierGlyph tg) {
-		String URL = tg.getParentURL();
+		String method = tg.getAnnotStyle().getMethodName();
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		if (group != null) {
 			for (BioSeq seq : group.getSeqList()) {
-				SeqSymmetry sym = seq.getAnnotation(URL);
+				SeqSymmetry sym = seq.getAnnotation(method);
 				if (sym != null) {
 					seq.removeAnnotation(sym);
 				}
@@ -285,7 +285,7 @@ public class TrackView {
 		}
 
 		for (DependentData dd : dependent_list) {
-			if (URL == null ? dd.getParentMethod() == null : URL.equals(dd.getParentMethod()))
+			if (method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod()))
 				dependent_list.remove(dd);
 		}
 	}

@@ -52,12 +52,14 @@ public final class QuickLoad extends SymLoader {
 		super(determineURI(version, featureName, organism_dir), featureName, null);
 		this.version = version;
 		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
+		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader);
 	}
 
 	public QuickLoad(GenericVersion version, URI uri) {
 		super(uri, detemineFriendlyName(uri), null);
 		this.version = version;
 		this.symL = ServerUtils.determineLoader(extension, uri, featureName, version.group);
+		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader);
 	}
 
 	@Override

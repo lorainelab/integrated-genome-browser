@@ -62,6 +62,7 @@ public final class QuickLoad extends SymLoader {
 		this.featureName = featureName;
 		this.version = version;
 		this.symL = determineLoader(extension, uri, featureName, version.group);
+		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader);
 	}
 
 	public QuickLoad(GenericVersion version, URI uri) {
@@ -72,6 +73,7 @@ public final class QuickLoad extends SymLoader {
 		this.featureName = friendlyName;
 		this.version = version;
 		this.symL = determineLoader(extension, uri, featureName, version.group);
+		this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader);
 	}
 
 	@Override

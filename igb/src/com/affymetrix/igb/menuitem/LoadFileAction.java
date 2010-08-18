@@ -258,6 +258,9 @@ public final class LoadFileAction extends AbstractAction {
 		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
 		if (!mergeSelected && gFeature.symL != null) {
 			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
+		} else if (mergeSelected && gFeature.symL != null && gFeature.symL.isResidueLoader) {
+			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
+			// special-case for residues, which we know won't have side-effects during parsing.
 		}
 		version.addFeature(gFeature);
 		gFeature.setVisible(); // this should be automatically checked in the feature tree

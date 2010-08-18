@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import java.util.*;
 import java.text.NumberFormat;
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
 import java.awt.BorderLayout;
+import java.net.URL;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -28,7 +30,8 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	public static final String PROPERTY = "property";
 	public static final String DEFAULT_TITLE = "Property Sheet";
 	private static final List<String> prop_order = determineOrder();
-
+	private final PropertyViewHelper helper;
+	
 	public PropertyView() {
 		super();
 		determineOrder();
@@ -38,6 +41,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		setPreferredSize(new java.awt.Dimension(100, 250));
 		setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
+		helper = new PropertyViewHelper(table);
 	}
 
 
@@ -64,6 +68,9 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		orderList.add("seq id");
 		orderList.add("cds min");
 		orderList.add("cds max");
+		orderList.add("description");
+		orderList.add("loadmode");
+		orderList.add("feature url");
 
 		return orderList;
 	}
@@ -247,7 +254,8 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 			}
 		};
 		table.setModel(model);
-
+		table.setDefaultRenderer(Object.class, helper);
+		
 		sorter = new TableRowSorter<TableModel>(model);
 		table.setRowSorter(sorter);
 

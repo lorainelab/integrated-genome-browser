@@ -473,6 +473,9 @@ public final class LocalUrlCacher {
 		int total_bytes_read = 0;
 		while (total_bytes_read < content_length) {
 			int bytes_read = bis.read(content, total_bytes_read, content_length - total_bytes_read);
+			if (bytes_read < 0) {
+				throw new IOException("Error during content read");
+			}
 			total_bytes_read += bytes_read;
 		}
 		if (total_bytes_read != content_length) {

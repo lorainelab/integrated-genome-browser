@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.igb.tiers.TierLabelManager;
 import java.util.*;
 import java.text.NumberFormat;
 import javax.swing.JPanel;
@@ -74,19 +75,30 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 			return;
 		}
 		SeqMapView mapView = null;
+		TierLabelManager tlm = null;
+
 		if (src instanceof SeqMapView) {
 			mapView = (SeqMapView) src;
+			tlm = mapView.getTierManager();
+		} else if (src instanceof TierLabelManager){
+			tlm = (TierLabelManager)src;
 		}
-		showSyms(evt.getSelectedSyms(), mapView);
+		
+		showSyms(evt.getSelectedSyms(), mapView, tlm);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void showSyms(List<SeqSymmetry> selected_syms, SeqMapView seqMap) {
+	private void showSyms(List<SeqSymmetry> selected_syms, SeqMapView seqMap, TierLabelManager tlm) {
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		for (SeqSymmetry sym : selected_syms) {
 			Map<String, Object> props = determineProps(sym, seqMap);
 			if (props != null) {
 				propList.add(props);
+			}
+			
+			Map<String, Object> tierInfo = determineTierInfo(sym, tlm);
+			if(tierInfo != null){
+				props.putAll(tierInfo);
 			}
 		}
 		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
@@ -94,6 +106,16 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		this.showProperties(prop_array, prop_order, "");
 	}
 
+	private static Map<String, Object> determineTierInfo(SeqSymmetry sym, TierLabelManager tlm){
+		Map<String, Object> props = null;
+
+		if(tlm != null){
+			props = tlm.getTierProperties(sym);
+		}
+
+		return props;
+	}
+	
 	private static Map<String, Object> determineProps(SeqSymmetry sym, SeqMapView seqMap) {
 		Map<String, Object> props = null;
 		if (sym instanceof SymWithProps) {

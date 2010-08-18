@@ -5,6 +5,7 @@ import java.util.*;
 import javax.swing.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
@@ -15,6 +16,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -70,7 +72,7 @@ public final class TierLabelManager {
 				}
 
 				// Dispatch track selection event
-				doTrackSelection(topgl);
+				//doTrackSelection(topgl);
 
 				// Normally, clicking will clear previons selections before selecting new things.
 				// but we preserve the current selections if:
@@ -161,6 +163,26 @@ public final class TierLabelManager {
 		return tlg;
 	}
 
+	public Map<String, Object> getTierProperties(SeqSymmetry seq){
+		Map<String, Object> props = null;
+
+		for(TierGlyph glyph : getSelectedTiers()){
+			if(glyph.getInfo() == seq ){
+				GenericFeature feature = glyph.getAnnotStyle().getFeature();
+
+				if(feature == null)
+					continue;
+
+				props = new HashMap<String, Object>();
+				String server = feature.gVersion.gServer.serverName + "(" + feature.gVersion.gServer.serverType.name() + ")";
+				props.put("Server Name", server);
+
+			}
+		}
+	
+		return props;
+	}
+
 	/** Returns a list of all TierLabelGlyph items. */
 	public List<TierLabelGlyph> getAllTierLabels() {
 		return tiermap.getTierLabels();
@@ -199,6 +221,7 @@ public final class TierLabelManager {
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
 			TierGlyph tg = tierlabel.getReferenceTier();
 			int child_count = tg.getChildCount();
+			SeqSymmetry seqsym = (SeqSymmetry) tg.getInfo();
 			if (child_count > 0 && tg.getChild(0) instanceof GraphGlyph) {
 				// It would be nice if we could assume that a tier contains only
 				// GraphGlyph's or only non-GraphGlyph's, but that is not true.
@@ -227,10 +250,16 @@ public final class TierLabelManager {
 						symmetries.remove(sym);
 					}
 				}
+			}else if(seqsym != null){
+				if (tierlabel.isSelected()) {
+					if (!symmetries.contains(seqsym)) {
+						symmetries.add(seqsym);
+					}
+				}
 			}
 		}
 
-		gmodel.setSelectedSymmetries(symmetries, tiermap);
+		gmodel.setSelectedSymmetries(symmetries, this);
 	}
 
 	/** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */

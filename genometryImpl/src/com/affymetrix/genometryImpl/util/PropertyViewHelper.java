@@ -13,14 +13,14 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  * @author hiralv
  */
-public abstract class PropertyVierHelper extends DefaultTableCellRenderer implements
+public class PropertyViewHelper extends DefaultTableCellRenderer implements
 			MouseListener, MouseMotionListener {
 
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private final Cursor defaultCursor = null;
 		private final JTable table;
 
-		public PropertyVierHelper(JTable table){
+		public PropertyViewHelper(JTable table){
 			this.table = table;
 			table.addMouseListener(this);
 			table.addMouseMotionListener(this);
@@ -73,5 +73,15 @@ public abstract class PropertyVierHelper extends DefaultTableCellRenderer implem
 		public void mousePressed(MouseEvent e) {}
 		public void mouseReleased(MouseEvent e) {}
 
-		public abstract boolean isURLField(int row, int column);
+		private boolean isURLField(int row, int column){
+			String value = (String) table.getValueAt(row, column);
+
+			if(value.length() <= 0)
+				return false;
+
+			if(value.startsWith("http://") || value.startsWith("https://"))
+				return true;
+
+			return false;
+		};
 }

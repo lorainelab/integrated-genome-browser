@@ -270,17 +270,16 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 						if (group == null) {
 							return;
 						}
-						// remote symmetry.  We must zoom to its coordinate and select its seq.
-						String seqID = sym.getSpanSeq(0).getID();
-						BioSeq seq = group.getSeq(seqID);
-						if (seq != null) {
-							SeqSpan span = sym.getSpan(0);
-							if (span != null) {
-								// zoom to its coordinates
-								MapRangeBox.zoomToSeqAndSpan(gviewer, seqID, span.getStart(), span.getEnd());
-							}
-						}
+						zoomToCoord(sym);
+						return;
+					}
 
+					if (Application.getSingleton().getMapView().getSeqMap().<GlyphI>getItem(sym) == null) {
+						if (group == null) {
+							return;
+						}
+						// Couldn't find sym in map view! Go ahead and zoom to it.
+						zoomToCoord(sym);
 						return;
 					}
 
@@ -288,6 +287,18 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 					List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
 					syms.add(sym);
 					gmodel.setSelectedSymmetriesAndSeq(syms, this);
+				}
+			}
+		}
+
+		private void zoomToCoord(SeqSymmetry sym) throws NumberFormatException {
+			String seqID = sym.getSpanSeq(0).getID();
+			BioSeq seq = group.getSeq(seqID);
+			if (seq != null) {
+				SeqSpan span = sym.getSpan(0);
+				if (span != null) {
+					// zoom to its coordinates
+					MapRangeBox.zoomToSeqAndSpan(gviewer, seqID, span.getStart(), span.getEnd());
 				}
 			}
 		}

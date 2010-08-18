@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -174,9 +173,16 @@ public final class TierLabelManager {
 					continue;
 
 				props = new HashMap<String, Object>();
-				String server = feature.gVersion.gServer.serverName + "(" + feature.gVersion.gServer.serverType.name() + ")";
-				props.put("Server Name", server);
-
+				props.put("id", feature.featureName);
+				props.put("description", feature.description());
+				if(feature.friendlyURL != null){
+					props.put("feature url", feature.friendlyURL);
+				}
+				props.put("loadmode", feature.loadStrategy.name());
+				String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
+				props.put("server", server);
+				props.put("server url", feature.gVersion.gServer.friendlyURL);
+		
 			}
 		}
 	

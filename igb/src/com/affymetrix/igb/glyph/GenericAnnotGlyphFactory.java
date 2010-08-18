@@ -104,6 +104,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			int glyph_depth = style.getGlyphDepth();
 
 			TierGlyph[] tiers = smv.getTiers(false, style);
+			tiers[0].setInfo(sym);
+			tiers[1].setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
 			} else {

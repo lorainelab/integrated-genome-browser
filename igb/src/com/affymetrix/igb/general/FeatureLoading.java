@@ -132,14 +132,11 @@ public final class FeatureLoading {
 	 *
 	 * @param requests
 	 * @param update_display
-	 * @param gmodel
-	 * @param gviewer
 	 */
 	public static void processDas2FeatureRequests(
 					List<Das2FeatureRequestSym> requests,
 					final String feature_name,
-					final boolean update_display,
-					final GenometryModel gmodel) {
+					final boolean update_display) {
 		if ((requests == null) || (requests.isEmpty())) {
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
 			return;
@@ -147,7 +144,6 @@ public final class FeatureLoading {
 		final List<FeatureRequestSym> result_syms = new ArrayList<FeatureRequestSym>();
 
 		Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version = splitDAS2RequestsByVersion(requests);
-		final SeqMapView gviewer = Application.getSingleton().getMapView();
 
 		for (Map.Entry<Das2VersionedSource, Set<Das2FeatureRequestSym>> entry : requests_by_version.entrySet()) {
 			Das2VersionedSource version = entry.getKey();
@@ -167,8 +163,9 @@ public final class FeatureLoading {
 
 				@Override
 				public void done() {
+					final SeqMapView gviewer = Application.getSingleton().getMapView();
 					if (update_display && gviewer != null && !result_syms.isEmpty()) {
-						BioSeq aseq = gmodel.getSelectedSeq();
+						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 						TrackView.updateDependentData();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}

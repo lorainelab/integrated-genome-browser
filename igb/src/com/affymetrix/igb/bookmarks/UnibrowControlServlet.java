@@ -66,7 +66,6 @@ import com.affymetrix.igb.util.ScriptFileLoader;
  */
 public final class UnibrowControlServlet {
 
-	private static final boolean DEBUG_DAS2_LOAD = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
@@ -158,13 +157,8 @@ public final class UnibrowControlServlet {
 	 *       (which in turn call Das2ClientOptimizer.loadFeatures(request_sym))
 	 */
 	private static void loadDataFromDas2(final Application uni, final String[] das2_server_urls, final String[] das2_query_urls) {
-		if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0) {
+		if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
 			return;
-		} else if (das2_server_urls.length != das2_query_urls.length) {
-			return;
-		}
-		if (DEBUG_DAS2_LOAD) {
-			Logger.getLogger(UnibrowControlServlet.class.getName()).info("loadDataFromDas2 called");
 		}
 		List<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
 		List<String> opaque_requests = new ArrayList<String>();
@@ -174,7 +168,7 @@ public final class UnibrowControlServlet {
 			addFeaturesToDataLoadView(das2_requests);
 			String featureName = "bookmarked data";
 			Application.getSingleton().addNotLockedUpMsg("Loading feature " + featureName);
-			FeatureLoading.processDas2FeatureRequests(das2_requests, featureName, true, gmodel);
+			FeatureLoading.processDas2FeatureRequests(das2_requests, featureName, true);
 		}
 		if (!opaque_requests.isEmpty()) {
 			String[] data_urls = new String[opaque_requests.size()];
@@ -199,9 +193,6 @@ public final class UnibrowControlServlet {
 			int qindex = das2_query_url.indexOf('?');
 			if (qindex > -1) {
 				cap_url = das2_query_url.substring(0, qindex);
-				if (DEBUG_DAS2_LOAD) {
-					Logger.getLogger(UnibrowControlServlet.class.getName()).info("     capability: " + cap_url);
-				}
 				String query = das2_query_url.substring(qindex + 1);
 				String[] query_array = query_splitter.split(query);
 				for (int k = -0; k < query_array.length; k++) {
@@ -209,9 +200,6 @@ public final class UnibrowControlServlet {
 					int eqindex = tagval.indexOf('=');
 					String tag = tagval.substring(0, eqindex);
 					String val = tagval.substring(eqindex + 1);
-					if (DEBUG_DAS2_LOAD) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).info("     query param, tag = : " + tag + ", val = " + val);
-					}
 					if (tag.equals("format") && (format == null)) {
 						format = val;
 					} else if (tag.equals("type") && (type_uri == null)) {
@@ -247,26 +235,20 @@ public final class UnibrowControlServlet {
 						// TODO - this will be saved in preferences as enabled, although it shouldn't.
 					}
 					Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-					if (DEBUG_DAS2_LOAD) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).info("     server: " + server.getURI().toString());
-					}
 					server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
 					Das2VersionedSource version = Das2Capability.getCapabilityMap().get(cap_url);
 					if (version == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).severe("Couldn't find version in url: " + cap_url);
+						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find version in url: {0}", cap_url);
 						continue;
-					}
-					if (DEBUG_DAS2_LOAD) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).info("     version: " + version.getID());
 					}
 					Das2Type dtype = version.getTypes().get(type_uri);
 					if (dtype == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).severe("Couldn't find type: " + type_uri + " in server: " + das2_server_url);
+						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find type: {0} in server: {1}", new Object[]{type_uri, das2_server_url});
 						continue;
 					}
 					Das2Region segment = version.getSegments().get(seg_uri);
 					if (segment == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).severe("Couldn't find segment: " + seg_uri + " in server: " + das2_server_url);
+						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find segment: {0} in server: {1}", new Object[]{seg_uri, das2_server_url});
 						continue;
 					}
 					String[] minmax = overstr.split(":");
@@ -275,9 +257,6 @@ public final class UnibrowControlServlet {
 					SeqSpan overlap = new SimpleSeqSpan(min, max, segment.getAnnotatedSeq());
 					Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap);
 					request.setFormat(format);
-					if (DEBUG_DAS2_LOAD) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).info("adding das2 request: " + das2_query_url);
-					}
 					das2_requests.add(request);
 				} catch (Exception ex) {
 					// something went wrong with deconstructing DAS/2 query URL, so just add URL to list of opaque requests

@@ -1131,7 +1131,8 @@ public abstract class ServerUtils {
 				extension.equals("cnt") || extension.equals("cyt")) {
 			return new SymLoaderInst(uri, featureName, group);
 		}
-		if((extension.equals("sin") || extension.equals("egr")) ){
+		if((extension.equals("sin") || extension.equals("egr") ||
+				extension.equals("bgr")) ){
 				// Remvoing gff and gff3 to prevent autoloading.
 				//|| extension.endsWith("gff") || extension.endsWith("gff3")){
 			return new SymLoaderInstNC(uri, featureName, group);

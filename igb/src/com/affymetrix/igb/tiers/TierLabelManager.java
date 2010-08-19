@@ -178,7 +178,7 @@ public final class TierLabelManager {
 				if(feature.friendlyURL != null){
 					props.put("feature url", feature.friendlyURL);
 				}
-				props.put("loadmode", feature.loadStrategy.name());
+				props.put("loadmode", feature.loadStrategy.toString());
 				String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
 				props.put("server", server);
 				props.put("server url", feature.gVersion.gServer.friendlyURL);

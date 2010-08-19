@@ -1115,14 +1115,14 @@ public abstract class ServerUtils {
 		}
 		if(extension.equals("link.psl")) {
 			PSL psl = new PSL(uri, featureName, group, null, null,
-				false, true, false);
+				false, false, false);
 			psl.setIsLinkPsl(true);
 			psl.enableSharedQueryTarget(true);
 			return psl;
 		}
 		if(extension.equals("psl")) {
 			PSL psl = new PSL(uri, featureName, group, null, null,
-				false, true, false);
+				false, false, false);
 			psl.enableSharedQueryTarget(true);
 			return psl;
 		}

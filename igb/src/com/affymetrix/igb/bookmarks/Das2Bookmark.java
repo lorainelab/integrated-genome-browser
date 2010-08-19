@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -44,7 +45,11 @@ final class Das2Bookmark {
 				if(gid.endsWith(feature.featureName)){
 					GenericServer server = version.gServer;
 					if(server.serverType == ServerType.DAS2){
-						graphs.add(new GraphBookmark(server.URL, version.versionID, feature.featureName, "bar"));
+						// Need to get server url form Das2VersionedSource only.
+						// It should match to key in Das2Capability.getCapabilityMap().
+						Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
+						String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
+						graphs.add(new GraphBookmark(server_str, version.versionID, feature.featureName, "bar"));
 						return true;
 					}
 				}

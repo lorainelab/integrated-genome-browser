@@ -252,13 +252,8 @@ public final class LoadFileAction extends AbstractAction {
 
 		if (((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			loadAllFeatures(gFeature, loadGroup);
-		}
-		
-		if(!mergeSelected && gFeature.symL != null){
+		} else if (gFeature.symL != null){
 			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
-		} else if (mergeSelected && gFeature.symL != null && gFeature.symL.isResidueLoader) {
-			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
-			// special-case for residues, which we know won't have side-effects during parsing.
 		}
 
 		// force a refresh of this server

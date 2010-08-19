@@ -342,7 +342,6 @@ public final class GeneralUtils {
 	public static boolean copyFileTo(File file, String fileName, String path){
 		try {
 			File newLocation = new File(path + "/" + fileName);
-			boolean sucess;
 			if (!newLocation.createNewFile()) {
 				Logger.getLogger(GeneralUtils.class.getName()).log(
 						Level.SEVERE, "Could not find copy file from {0} to {1} !!!",

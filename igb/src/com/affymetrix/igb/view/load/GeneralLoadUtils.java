@@ -678,7 +678,7 @@ public final class GeneralLoadUtils {
 			}
 		}
 
-		FeatureLoading.processDas2FeatureRequests(requests, feature_name, true);
+		FeatureLoading.processDas2FeatureRequests(requests, gFeature, true);
 		return true;
 	}
 

@@ -163,12 +163,22 @@ public final class UnibrowControlServlet {
 		List<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
 		List<String> opaque_requests = new ArrayList<String>();
 		createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
-
-		if (!das2_requests.isEmpty()) {
-			addFeaturesToDataLoadView(das2_requests);
-			String featureName = "bookmarked data";
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + featureName);
-			FeatureLoading.processDas2FeatureRequests(das2_requests, featureName, true);
+		for (Das2FeatureRequestSym frs : das2_requests) {
+			URI uri = frs.getDas2Type().getURI();
+			String version = frs.getDas2Type().getVersionedSource().getName();
+			GenericFeature feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
+			if (feature != null) {
+				feature.setVisible();
+				DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
+				view.tableChanged();
+				Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
+				List<Das2FeatureRequestSym> frsWrapperList = new ArrayList<Das2FeatureRequestSym>();
+				frsWrapperList.add(frs);
+				FeatureLoading.processDas2FeatureRequests(frsWrapperList, feature, true);
+			} else {
+				Logger.getLogger(GeneralUtils.class.getName()).log(
+						Level.SEVERE, "Couldn't find feature for bookmark URL: {0}", uri);
+			}
 		}
 		if (!opaque_requests.isEmpty()) {
 			String[] data_urls = new String[opaque_requests.size()];
@@ -223,78 +233,53 @@ public final class UnibrowControlServlet {
 			// only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
 			// otherwise treat like any other opaque data url via loadDataFromURLs call
 			//
-			if (use_optimizer) {
-				try {
-					GenericServer gServer = ServerList.getServer(das2_server_url);
-					if (gServer == null) {
-						gServer = ServerList.addServer(ServerType.DAS2, das2_server_url, das2_server_url, true);
-					} else if (!gServer.isEnabled()) {
-						gServer.setEnabled(true);
-						GeneralLoadUtils.discoverServer(gServer);
-						// enable the server.
-						// TODO - this will be saved in preferences as enabled, although it shouldn't.
-					}
-					Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-					server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
-					Das2VersionedSource version = Das2Capability.getCapabilityMap().get(cap_url);
-					if (version == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find version in url: {0}", cap_url);
-						continue;
-					}
-					Das2Type dtype = version.getTypes().get(type_uri);
-					if (dtype == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find type: {0} in server: {1}", new Object[]{type_uri, das2_server_url});
-						continue;
-					}
-					Das2Region segment = version.getSegments().get(seg_uri);
-					if (segment == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find segment: {0} in server: {1}", new Object[]{seg_uri, das2_server_url});
-						continue;
-					}
-					String[] minmax = overstr.split(":");
-					int min = Integer.parseInt(minmax[0]);
-					int max = Integer.parseInt(minmax[1]);
-					SeqSpan overlap = new SimpleSeqSpan(min, max, segment.getAnnotatedSeq());
-					Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap);
-					request.setFormat(format);
-					das2_requests.add(request);
-				} catch (Exception ex) {
-					// something went wrong with deconstructing DAS/2 query URL, so just add URL to list of opaque requests
-					ex.printStackTrace();
-					use_optimizer = false;
-					opaque_requests.add(das2_query_url);
+			if (!use_optimizer) {
+				opaque_requests.add(das2_query_url);
+				continue;
+			}
+
+			try {
+				GenericServer gServer = ServerList.getServer(das2_server_url);
+				if (gServer == null) {
+					gServer = ServerList.addServer(ServerType.DAS2, das2_server_url, das2_server_url, true);
+				} else if (!gServer.isEnabled()) {
+					gServer.setEnabled(true);
+					GeneralLoadUtils.discoverServer(gServer);
+					// enable the server.
+					// TODO - this will be saved in preferences as enabled, although it shouldn't.
 				}
+				Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+				server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
+				Das2VersionedSource version = Das2Capability.getCapabilityMap().get(cap_url);
+				if (version == null) {
+					Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find version in url: {0}", cap_url);
+					continue;
+				}
+				Das2Type dtype = version.getTypes().get(type_uri);
+				if (dtype == null) {
+					Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find type: {0} in server: {1}", new Object[]{type_uri, das2_server_url});
+					continue;
+				}
+				Das2Region segment = version.getSegments().get(seg_uri);
+				if (segment == null) {
+					Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find segment: {0} in server: {1}", new Object[]{seg_uri, das2_server_url});
+					continue;
+				}
+				String[] minmax = overstr.split(":");
+				int min = Integer.parseInt(minmax[0]);
+				int max = Integer.parseInt(minmax[1]);
+				SeqSpan overlap = new SimpleSeqSpan(min, max, segment.getAnnotatedSeq());
+				Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap);
+				request.setFormat(format);
+				das2_requests.add(request);
+			} catch (Exception ex) {
+				// something went wrong with deconstructing DAS/2 query URL, so just add URL to list of opaque requests
+				ex.printStackTrace();
+				use_optimizer = false;
+				opaque_requests.add(das2_query_url);
 			}
 		}
 	}
-
-	public static void addFeaturesToDataLoadView(List<Das2FeatureRequestSym> requests){
-            for(Das2FeatureRequestSym request : requests){
-               String version = request.getDas2Type().getVersionedSource().getName();
-               String name = request.getDas2Type().getName();
-			   String host = "";
-			   try{
-				   URI uri = new URI(request.getRegion().getID());
-				   host = uri.getHost();
-			   }
-			   catch(URISyntaxException e){
-				   continue; //uri not parsable
-			   }
-               List<GenericFeature> features = GeneralLoadUtils.getFeatures(version);
-               for(GenericFeature feature : features){
-                  try {
-                     URL url = new URL(feature.gVersion.gServer.URL);
-                     if(url.getHost().equals(host) && name.equals(feature.featureName)){
-                        feature.setVisible();
-                     }
-                  } catch (MalformedURLException ex) {
-                      Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.WARNING, "could not convert :" + feature.gVersion.gServer.URL, ex);
-                  }
-               } 
-            }
-            DataLoadView view = ((IGB)Application.getSingleton()).data_load_view;
-            view.tableChanged();
-        }
         
 	private static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
 		try {

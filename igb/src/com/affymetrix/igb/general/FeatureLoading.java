@@ -18,6 +18,8 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import java.net.URL;
@@ -130,15 +132,16 @@ public final class FeatureLoading {
 	 *     and finishing with a gviewer.setAnnotatedSeq() call on the event thread to revise main view to show new annotations
 	 *
 	 *
-	 * @param requests
-	 * @param update_display
+	 * @param requests - FeatureRequestSyms on this GenericFeature
+ 	 * @param feature
+	 * @param update_display - whether to update the display or not
 	 */
 	public static void processDas2FeatureRequests(
 					List<Das2FeatureRequestSym> requests,
-					final String feature_name,
+					final GenericFeature feature,
 					final boolean update_display) {
 		if ((requests == null) || (requests.isEmpty())) {
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 			return;
 		}
 		final List<FeatureRequestSym> result_syms = new ArrayList<FeatureRequestSym>();
@@ -154,7 +157,7 @@ public final class FeatureLoading {
 
 				public Void doInBackground() {
 					try {
-						createDAS2ResultSyms(request_set, result_syms);
+						createDAS2ResultSyms(feature, request_set, result_syms);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -169,7 +172,7 @@ public final class FeatureLoading {
 						TrackView.updateDependentData();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
 			};
 
@@ -200,7 +203,8 @@ public final class FeatureLoading {
 		return requests_by_version;
 	}
 
-	private static void createDAS2ResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<FeatureRequestSym> result_syms) {
+	private static void createDAS2ResultSyms(
+			final GenericFeature feature, final Set<Das2FeatureRequestSym> request_set, final List<FeatureRequestSym> result_syms) {
 		for (Das2FeatureRequestSym request_sym : request_set) {
 			// Create an AnnotStyle so that we can automatically set the
 			// human-readable name to the DAS2 name, rather than the ID, which is a URI
@@ -208,7 +212,8 @@ public final class FeatureLoading {
 			if (DEBUG) {
 				System.out.println("$$$$$ in processFeatureRequests(), getting style for: " + type.getName());
 			}
-			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID(), type.getName());
+			ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID(), type.getName());
+			ts.setFeature(feature);
 
 			try {
 				Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());

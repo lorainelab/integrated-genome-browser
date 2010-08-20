@@ -52,7 +52,40 @@ public final class Bookmark implements Serializable {
       for each of the {@link #DATA_URL} parameters given 
    */
   public static final String DATA_URL_FILE_EXTENSIONS = "data_url_file_extension";
-  
+
+  public static enum GRAPH{
+		SOURCE_URL		("graph_source_url_"),
+		YPOS			("graph_ypos_"),
+		YHEIGHT			("graph_yheight_"),
+		COL				("graph_col_"),
+		BG				("graph_bg_"),
+		FLOAT			("graph_float_"),
+		NAME			("graph_name_"),
+		SHOW_LABEL		("graph_show_label_"),
+		SHOW_AXIS		("graph_show_axis_"),
+		MINVIS			("graph_minvis_"),
+		MAXVIS			("graph_maxvis_"),
+		SCORE_THRESH	("graph_score_thresh_"),
+		MAXGAP_THRESH	("graph_maxgap_thresh_"),
+		MINRUN_THRESH	("graph_minrun_thresh_"),
+		SHOW_THRESH		("graph_show_thresh_"),
+		STYLE			("graph_style_"),
+		THRESH_DIRECTION("graph_thresh_direction_"),
+		HEATMAP			("graph_heatmap_"),
+		COMBO			("graph_combo_");
+
+		private String name;
+
+		GRAPH(String name){
+			this.name = name;
+		}
+
+		@Override
+		public String toString(){
+			return name;
+		}
+	};
+	
   private static final boolean DEBUG = false;
 
   private String name;

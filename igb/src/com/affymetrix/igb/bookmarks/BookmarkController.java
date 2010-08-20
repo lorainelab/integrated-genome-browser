@@ -35,6 +35,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
 import java.net.MalformedURLException;
@@ -123,8 +124,8 @@ public abstract class BookmarkController {
 	GenometryModel gmodel = GenometryModel.getGenometryModel();
     InputStream istr = null;
     try {
-      for (int i=0; map.get("graph_source_url_"+i) != null; i++) {
-        String graph_path = UnibrowControlServlet.getStringParameter(map, "graph_source_url_" + i);
+      for (int i=0; map.get(GRAPH.SOURCE_URL.toString()+i) != null; i++) {
+        String graph_path = UnibrowControlServlet.getStringParameter(map, GRAPH.SOURCE_URL.toString() + i);
 
         // Don't load any graph we already have loaded
         if (loaded_graph_paths.contains(graph_path)) {
@@ -133,40 +134,40 @@ public abstract class BookmarkController {
 
         // for some parameters, testing more than one parameter name because how some params used to have
         //    slightly different names, and we need to support legacy bookmarks
-        String graph_name = UnibrowControlServlet.getStringParameter(map, "graph_name_" + i);
+        String graph_name = UnibrowControlServlet.getStringParameter(map, GRAPH.NAME.toString() + i);
         if (DEBUG) {
           System.out.println("loading from bookmark, graph name: " + graph_name + ", url: " + graph_path);
         }
-        String graph_ypos = UnibrowControlServlet.getStringParameter(map, "graph_ypos_" + i);
+        String graph_ypos = UnibrowControlServlet.getStringParameter(map, GRAPH.YPOS.toString() + i);
         if (graph_ypos == null)  { graph_ypos = UnibrowControlServlet.getStringParameter(map, "graphypos" + i); }
 
-        String graph_height = UnibrowControlServlet.getStringParameter(map, "graph_yheight_" + i);
+        String graph_height = UnibrowControlServlet.getStringParameter(map, GRAPH.YHEIGHT.toString() + i);
         if (graph_height == null) { graph_height = UnibrowControlServlet.getStringParameter(map, "graphyheight" + i); }
         // graph_col is String rep of RGB integer
-        String graph_col = UnibrowControlServlet.getStringParameter(map, "graph_col_" + i);
+        String graph_col = UnibrowControlServlet.getStringParameter(map, GRAPH.COL.toString() + i);
         if (graph_col == null)  { graph_col = UnibrowControlServlet.getStringParameter(map, "graphcol" + i); }
 
-        String graph_bg_col = UnibrowControlServlet.getStringParameter(map, "graph_bg_" + i);
+        String graph_bg_col = UnibrowControlServlet.getStringParameter(map, GRAPH.BG.toString() + i);
         // graph_bg_col will often be null
 
-        String graph_float = UnibrowControlServlet.getStringParameter(map, "graph_float_" + i);
+        String graph_float = UnibrowControlServlet.getStringParameter(map, GRAPH.FLOAT.toString() + i);
         if (graph_float == null)  { graph_float = UnibrowControlServlet.getStringParameter(map, "graphfloat" + i); }
 
-        String show_labelstr = UnibrowControlServlet.getStringParameter(map, "graph_show_label_" + i);
-        String show_axisstr = UnibrowControlServlet.getStringParameter(map, "graph_show_axis_" + i);
-        String minvis_str = UnibrowControlServlet.getStringParameter(map, "graph_minvis_" + i);
-        String maxvis_str = UnibrowControlServlet.getStringParameter(map, "graph_maxvis_" + i);
-        String score_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_score_thresh_" + i);
-        String maxgap_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_maxgap_thresh_" + i);
-        String minrun_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_minrun_thresh_" + i);
-        String show_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_show_thresh_" + i);
-        String thresh_directionstr = UnibrowControlServlet.getStringParameter(map, "graph_thresh_direction_" + i);
+        String show_labelstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_LABEL.toString() + i);
+        String show_axisstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_AXIS.toString() + i);
+        String minvis_str = UnibrowControlServlet.getStringParameter(map, GRAPH.MINVIS.toString() + i);
+        String maxvis_str = UnibrowControlServlet.getStringParameter(map, GRAPH.MINVIS.toString() + i);
+        String score_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SCORE_THRESH.toString() + i);
+        String maxgap_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.MAXGAP_THRESH.toString() + i);
+        String minrun_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.MINRUN_THRESH.toString() + i);
+        String show_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_THRESH.toString() + i);
+        String thresh_directionstr = UnibrowControlServlet.getStringParameter(map, GRAPH.THRESH_DIRECTION.toString() + i);
 
         //        int graph_min = (graph_visible_min == null) ?
-        String graph_style = UnibrowControlServlet.getStringParameter(map, "graph_style_" + i);
-        String heatmap_name = UnibrowControlServlet.getStringParameter(map, "graph_heatmap_" + i);
+        String graph_style = UnibrowControlServlet.getStringParameter(map, GRAPH.STYLE.toString() + i);
+        String heatmap_name = UnibrowControlServlet.getStringParameter(map, GRAPH.HEATMAP.toString() + i);
 
-        String combo_name = UnibrowControlServlet.getStringParameter(map, "graph_combo_" + i);
+        String combo_name = UnibrowControlServlet.getStringParameter(map, GRAPH.COMBO.toString() + i);
 
         double ypos = (graph_ypos == null) ? default_ypos : Double.parseDouble(graph_ypos);
         double yheight = (graph_height == null)  ? default_yheight : Double.parseDouble(graph_height);
@@ -336,30 +337,30 @@ public abstract class BookmarkController {
 
         boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gr);
         if(!bookmark.isValid()){
-            mark_sym.setProperty("graph_source_url_" + i, source_url);
+            mark_sym.setProperty(GRAPH.SOURCE_URL.toString() + i, source_url);
         }
-        mark_sym.setProperty("graph_ypos_" + i, Integer.toString((int)gbox.y));
-        mark_sym.setProperty("graph_yheight_" + i, Integer.toString((int)gbox.height));
-        mark_sym.setProperty("graph_col_" + i, sixDigitHex(gr.getGraphState().getTierStyle().getColor()));
-        mark_sym.setProperty("graph_bg_" + i, sixDigitHex(gr.getGraphState().getTierStyle().getBackground()));
-        if (is_floating) { mark_sym.setProperty("graph_float_" + i, "true"); } else  {mark_sym.setProperty("graph_float_" + i, "false"); }
+        mark_sym.setProperty(GRAPH.YPOS.toString() + i, Integer.toString((int)gbox.y));
+        mark_sym.setProperty(GRAPH.YHEIGHT.toString() + i, Integer.toString((int)gbox.height));
+        mark_sym.setProperty(GRAPH.COL.toString() + i, sixDigitHex(gr.getGraphState().getTierStyle().getColor()));
+        mark_sym.setProperty(GRAPH.BG.toString() + i, sixDigitHex(gr.getGraphState().getTierStyle().getBackground()));
+        if (is_floating) { mark_sym.setProperty(GRAPH.FLOAT.toString() + i, "true"); } else  {mark_sym.setProperty(GRAPH.FLOAT.toString() + i, "false"); }
 
         if (DEBUG) {
           System.out.println("setting bookmark prop graph_name_" + i + ": " + graph.getGraphName());
         }
-        mark_sym.setProperty("graph_name_" + i, graph.getGraphName());
-        mark_sym.setProperty("graph_show_label_" + i, (gr.getShowLabel()?"true":"false"));
-        mark_sym.setProperty("graph_show_axis_" + i, (gr.getShowAxis()?"true":"false"));
-        mark_sym.setProperty("graph_minvis_" + i, Double.toString(gr.getVisibleMinY()));
-        mark_sym.setProperty("graph_maxvis_" + i, Double.toString(gr.getVisibleMaxY()));
-        mark_sym.setProperty("graph_score_thresh_" + i, Double.toString(gr.getMinScoreThreshold()));
-        mark_sym.setProperty("graph_maxgap_thresh_" + i, Integer.toString((int)gr.getMaxGapThreshold()));
-        mark_sym.setProperty("graph_minrun_thresh_" + i, Integer.toString((int)gr.getMinRunThreshold()));
-        mark_sym.setProperty("graph_show_thresh_" + i, (gr.getShowThreshold()?"true":"false"));
-        mark_sym.setProperty("graph_style_" + i, gr.getGraphStyle().name().toLowerCase());
-        mark_sym.setProperty("graph_thresh_direction_" + i, Integer.toString(gr.getThresholdDirection()));
+        mark_sym.setProperty(GRAPH.NAME.toString() + i, graph.getGraphName());
+        mark_sym.setProperty(GRAPH.SHOW_LABEL.toString() + i, (gr.getShowLabel()?"true":"false"));
+        mark_sym.setProperty(GRAPH.SHOW_AXIS.toString() + i, (gr.getShowAxis()?"true":"false"));
+        mark_sym.setProperty(GRAPH.MINVIS.toString() + i, Double.toString(gr.getVisibleMinY()));
+        mark_sym.setProperty(GRAPH.MAXVIS.toString() + i, Double.toString(gr.getVisibleMaxY()));
+        mark_sym.setProperty(GRAPH.SCORE_THRESH.toString() + i, Double.toString(gr.getMinScoreThreshold()));
+        mark_sym.setProperty(GRAPH.MAXGAP_THRESH.toString() + i, Integer.toString((int)gr.getMaxGapThreshold()));
+        mark_sym.setProperty(GRAPH.MINRUN_THRESH.toString() + i, Integer.toString((int)gr.getMinRunThreshold()));
+        mark_sym.setProperty(GRAPH.SHOW_THRESH.toString() + i, (gr.getShowThreshold()?"true":"false"));
+        mark_sym.setProperty(GRAPH.STYLE.toString() + i, gr.getGraphStyle().name().toLowerCase());
+        mark_sym.setProperty(GRAPH.THRESH_DIRECTION.toString() + i, Integer.toString(gr.getThresholdDirection()));
         if (gr.getGraphStyle() == GraphType.HEAT_MAP && gr.getGraphState().getHeatMap() != null) {
-          mark_sym.setProperty("graph_heatmap_" + i, gr.getGraphState().getHeatMap().getName());
+          mark_sym.setProperty(GRAPH.HEATMAP.toString() + i, gr.getGraphState().getHeatMap().getName());
         }
 
         ITrackStyle combo_style = gr.getGraphState().getComboStyle();
@@ -369,7 +370,7 @@ public abstract class BookmarkController {
             combo_style_num = new Integer(combo_styles.size() + 1);
             combo_styles.put(combo_style, combo_style_num);
           }
-          mark_sym.setProperty("graph_combo_"+i, combo_style_num.toString());
+          mark_sym.setProperty(GRAPH.COMBO.toString()+i, combo_style_num.toString());
         }
         
        

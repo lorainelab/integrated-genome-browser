@@ -2,14 +2,14 @@ package com.affymetrix.igb.bookmarks;
 
 
 
-final class GraphBookmark {
+final class SymBookmark {
       private final String server;
       private final String mapping;
       private final String path;
 	  private final String format;
       private final boolean valid;
 
-      GraphBookmark(String server, String mapping, String path, String format){
+      SymBookmark(String server, String mapping, String path, String format){
 			this.server = server;
 			this.mapping = mapping;
 			this.path = path;
@@ -17,7 +17,7 @@ final class GraphBookmark {
 			this.valid = true;
       }
 
-	  GraphBookmark(){
+	  SymBookmark(){
 			this.server = "";
 			this.mapping = "";
 			this.path = "";

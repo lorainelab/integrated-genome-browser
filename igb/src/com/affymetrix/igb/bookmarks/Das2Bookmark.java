@@ -4,7 +4,9 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.das2.FormatPriorities;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -18,10 +20,31 @@ import java.util.List;
  * 
  * @author Ido M. Tamir
  */
-final class Das2Bookmark {
+final public class Das2Bookmark {
     
-    private final List<GraphBookmark> graphs = new ArrayList<GraphBookmark>();
-    
+    private final List<SymBookmark> graphs = new ArrayList<SymBookmark>();
+
+	public void add(GenericFeature feature){
+		if(feature == null)
+			return;
+
+		GenericVersion version = feature.gVersion;
+
+		if(version.gServer.serverType != ServerType.DAS2)
+			return;
+
+		Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
+		String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
+
+		Das2Type type = (Das2Type) feature.typeObj;
+
+		String file_name = type.getID();
+		file_name = file_name.substring(file_name.lastIndexOf('/') + 1);	// strip off first .
+		String extension =  FormatPriorities.getFormat(type);
+		
+		graphs.add(new SymBookmark(server_str, version.versionID, file_name, extension));
+	}
+	
     /**
      * adds one id
      *
@@ -32,7 +55,7 @@ final class Das2Bookmark {
      */
     void add(GraphSym graph){
 		if(!checkServerMatch(graph)){
-			graphs.add(new GraphBookmark());
+			graphs.add(new SymBookmark());
 		}
     }
 
@@ -49,7 +72,7 @@ final class Das2Bookmark {
 						// It should match to key in Das2Capability.getCapabilityMap().
 						Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
 						String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
-						graphs.add(new GraphBookmark(server_str, version.versionID, feature.featureName, "bar"));
+						graphs.add(new SymBookmark(server_str, version.versionID, feature.featureName, "bar"));
 						return true;
 					}
 				}
@@ -62,7 +85,7 @@ final class Das2Bookmark {
     * returns the current/last parser
     *
     */ 
-    private GraphBookmark getLast(){
+    private SymBookmark getLast(){
         if(graphs.size() > 0){
             return graphs.get(graphs.size() - 1);
         }
@@ -95,7 +118,7 @@ final class Das2Bookmark {
     * 
     *
     */
-     static String getDas2Query(GraphBookmark bookmark, int start, int end, String chr){
+     static String getDas2Query(SymBookmark bookmark, int start, int end, String chr){
          String cap = bookmark.getCapability() + "?";
          String seg = "segment=" + bookmark.getServer() + "/" + bookmark.getMapping() + "/" + chr + ";";
          String over = "overlaps=" + start + ":" + end + ";";
@@ -108,10 +131,10 @@ final class Das2Bookmark {
     * 
     *
     */ 
-   void set(SymWithProps mark_sym) {
+   public void set(SymWithProps mark_sym) {
         List<String> queries = new ArrayList<String>();
         List<String> servers = new ArrayList<String>();
-        for(GraphBookmark bookmark : this.graphs){
+        for(SymBookmark bookmark : this.graphs){
             if(bookmark.isValid()){
                 String server = bookmark.getServer();
                 int start = (Integer) mark_sym.getProperty("start");

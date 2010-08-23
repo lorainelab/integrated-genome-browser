@@ -22,7 +22,7 @@ import java.util.List;
  */
 final public class Das2Bookmark {
     
-    private final List<SymBookmark> graphs = new ArrayList<SymBookmark>();
+    private final List<SymBookmark> syms = new ArrayList<SymBookmark>();
 
 	public void add(GenericFeature feature){
 		if(feature == null)
@@ -42,7 +42,7 @@ final public class Das2Bookmark {
 		file_name = file_name.substring(file_name.lastIndexOf('/') + 1);	// strip off first .
 		String extension =  FormatPriorities.getFormat(type);
 		
-		graphs.add(new SymBookmark(server_str, version.versionID, file_name, extension));
+		syms.add(new SymBookmark(server_str, version.versionID, file_name, extension));
 	}
 	
     /**
@@ -55,7 +55,7 @@ final public class Das2Bookmark {
      */
     void add(GraphSym graph){
 		if(!checkServerMatch(graph)){
-			graphs.add(new SymBookmark());
+			syms.add(new SymBookmark());
 		}
     }
 
@@ -72,7 +72,7 @@ final public class Das2Bookmark {
 						// It should match to key in Das2Capability.getCapabilityMap().
 						Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
 						String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
-						graphs.add(new SymBookmark(server_str, version.versionID, feature.featureName, "bar"));
+						syms.add(new SymBookmark(server_str, version.versionID, feature.featureName, "bar"));
 						return true;
 					}
 				}
@@ -86,8 +86,8 @@ final public class Das2Bookmark {
     *
     */ 
     private SymBookmark getLast(){
-        if(graphs.size() > 0){
-            return graphs.get(graphs.size() - 1);
+        if(syms.size() > 0){
+            return syms.get(syms.size() - 1);
         }
         throw new IndexOutOfBoundsException("No parsers in bookmark");
     }
@@ -134,7 +134,7 @@ final public class Das2Bookmark {
    public void set(SymWithProps mark_sym) {
         List<String> queries = new ArrayList<String>();
         List<String> servers = new ArrayList<String>();
-        for(SymBookmark bookmark : this.graphs){
+        for(SymBookmark bookmark : this.syms){
             if(bookmark.isValid()){
                 String server = bookmark.getServer();
                 int start = (Integer) mark_sym.getProperty("start");
@@ -148,6 +148,9 @@ final public class Das2Bookmark {
         mark_sym.setProperty(Bookmark.DAS2_QUERY_URL, queries.toArray(new String[queries.size()]));
         mark_sym.setProperty(Bookmark.DAS2_SERVER_URL, servers.toArray(new String[servers.size()]));
     }
-    
+
+   public List<SymBookmark> getSyms(){
+	   return syms;
+   }
 }
 

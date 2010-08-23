@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.bookmarks.Das2Bookmark;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -408,6 +409,12 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 
 		Das2Bookmark bookmark = new Das2Bookmark();
 		for(TierGlyph glyph : gviewer.getSeqMap().getTiers()){
+			if(glyph.getChildCount() == 0)
+				continue;
+
+			if(glyph.getChild(0) instanceof GraphGlyph)
+				continue;
+			
 			GenericFeature feature = glyph.getAnnotStyle().getFeature();
 			bookmark.add(feature);
 		}
@@ -417,6 +424,11 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 			BookmarkController.addGraphProperties(mark_sym, graphs, bookmark);
 		}
 
+		if(bookmark.getSyms().isEmpty()){
+			ErrorHandler.errorPanel("Error: No Symmtries or graphs to bookmark.");
+			return;
+		}
+		
 		bookmark.set(mark_sym);
 		
 		String bookmark_name = (String) JOptionPane.showInputDialog(gviewer,

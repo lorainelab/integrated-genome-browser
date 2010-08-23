@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
  *   format priorities that apply to all types
  *
  */
-final class FormatPriorities {
+final public class FormatPriorities {
 
 	/**
 	 *  Different format types, prioritized
@@ -36,7 +36,7 @@ final class FormatPriorities {
 		"bar",
 		"bam"};
 
-	static String getFormat(Das2Type type) {
+	public static String getFormat(Das2Type type) {
 		if (type.getID().endsWith(".bar")) {  // temporary way to recognize graph "types"...
 			return "bar";
 		}

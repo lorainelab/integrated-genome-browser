@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.igb.tiers.TierGlyph;
 import java.awt.Color;
 import java.util.List;
 import java.io.*;
@@ -297,7 +298,7 @@ public abstract class BookmarkController {
 		}
 	}
 
-  public static void addGraphProperties(SymWithProps mark_sym, List<GlyphI> graphs) {
+  public static void addGraphProperties(SymWithProps mark_sym, List<GlyphI> graphs, Das2Bookmark bookmark) {
     if (DEBUG) {
       System.out.println("in addGraphProperties, graph count = " + graphs.size());
     }
@@ -310,7 +311,7 @@ public abstract class BookmarkController {
     // "j" loops throug all graphs, while "i" counts only the ones
     // that are actually book-markable (thus i <= j)
     int i = -1;
-    Das2Bookmark bookmark = new Das2Bookmark();
+    
     for (int j=0; j<max; j++) {
       GlyphI graph_object = graphs.get(j);
       if (!(graph_object instanceof GraphGlyph)) {
@@ -378,7 +379,7 @@ public abstract class BookmarkController {
         // (the graph_ypos variable can be used for this)
       }
     }
-    bookmark.set(mark_sym);
+   // bookmark.set(mark_sym);
     // TODO: Now save the colors and such of the combo graphs!
 
     if (! unfound_labels.isEmpty()) {

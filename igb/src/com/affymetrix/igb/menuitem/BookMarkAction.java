@@ -13,6 +13,11 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.bookmarks.Das2Bookmark;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -401,11 +406,19 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		mark_sym.setProperty("start", new Integer(mark_span.getMin()));
 		mark_sym.setProperty("end", new Integer(mark_span.getMax()));
 
-		if (include_graphs) {
-			List<GlyphI> graphs = gviewer.collectGraphs();
-			BookmarkController.addGraphProperties(mark_sym, graphs);
+		Das2Bookmark bookmark = new Das2Bookmark();
+		for(TierGlyph glyph : gviewer.getSeqMap().getTiers()){
+			GenericFeature feature = glyph.getAnnotStyle().getFeature();
+			bookmark.add(feature);
 		}
 
+		if (include_graphs) {
+			List<GlyphI> graphs = gviewer.collectGraphs();
+			BookmarkController.addGraphProperties(mark_sym, graphs, bookmark);
+		}
+
+		bookmark.set(mark_sym);
+		
 		String bookmark_name = (String) JOptionPane.showInputDialog(gviewer,
 				"Enter name for bookmark", "Input",
 				JOptionPane.PLAIN_MESSAGE, null, null, default_name);

@@ -192,8 +192,8 @@ public final class UnibrowControlServlet {
 	private static void createDAS2andOpaqueRequests(
 			final String[] das2_server_urls, final String[] das2_query_urls, List<Das2FeatureRequestSym> das2_requests, List<String> opaque_requests) {
 		for (int i = 0; i < das2_server_urls.length; i++) {
-			String das2_server_url = GeneralUtils.URLDecode(das2_server_urls[i]);
-			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);
+			String das2_server_url = das2_server_urls[i];	//Don't decode url
+			String das2_query_url = das2_query_urls[i];		//Don't decode url
 			String cap_url = null;
 			String seg_uri = null;
 			String type_uri = null;

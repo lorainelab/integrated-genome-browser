@@ -402,10 +402,10 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		String default_name =
 				version + ", " + aseq.getID() + ":" + mark_span.getMin() +
 				", " + mark_span.getMax();
-		mark_sym.setProperty("version", version);
-		mark_sym.setProperty("seqid", aseq.getID());
-		mark_sym.setProperty("start", new Integer(mark_span.getMin()));
-		mark_sym.setProperty("end", new Integer(mark_span.getMax()));
+		mark_sym.setProperty(Bookmark.VERSION, version);
+		mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
+		mark_sym.setProperty(Bookmark.START, new Integer(mark_span.getMin()));
+		mark_sym.setProperty(Bookmark.END, new Integer(mark_span.getMax()));
 
 		Das2Bookmark bookmark = new Das2Bookmark();
 

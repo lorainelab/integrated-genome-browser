@@ -418,10 +418,10 @@ public abstract class BookmarkController {
     SeqSpan span = sym.getSpan(0);
     BioSeq seq = span.getBioSeq();
     Map<String,String[]> props = new LinkedHashMap<String,String[]>();
-    props.put("seqid", new String[] {seq.getID()});
-	props.put("version", new String[] {seq.getVersion()});
-    props.put("start", new String[] {Integer.toString(span.getMin())});
-    props.put("end", new String[] {Integer.toString(span.getMax())});
+    props.put(Bookmark.SEQID, new String[] {seq.getID()});
+	props.put(Bookmark.VERSION, new String[] {seq.getVersion()});
+    props.put(Bookmark.START, new String[] {Integer.toString(span.getMin())});
+    props.put(Bookmark.END, new String[] {Integer.toString(span.getMax())});
     return props;
   }
 

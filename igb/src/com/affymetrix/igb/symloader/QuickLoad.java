@@ -262,7 +262,7 @@ public final class QuickLoad extends SymLoader {
 					// only get symmetries for this chromosome
 					chromResults = SymLoader.filterResultsByChromosome(results, request.getOverlapSpan().getBioSeq());
 					
-					filterAndAddAnnotations(request, chromResults, feature, overallResults);
+					filterAndAddAnnotations(request, chromResults, uri, overallResults);
 				}
 				return overallResults;
 			}
@@ -273,13 +273,13 @@ public final class QuickLoad extends SymLoader {
 			if (results == null) {
 				return overallResults;
 			}
-			filterAndAddAnnotations(request, results, feature, overallResults);
+			filterAndAddAnnotations(request, results, uri, overallResults);
 		}
 		return overallResults;
 	}
 
-	private void filterAndAddAnnotations(
-			FeatureRequestSym request, List<? extends SeqSymmetry> results, GenericFeature feature, List<SeqSymmetry> overallResults) {
+	private static void filterAndAddAnnotations(
+			FeatureRequestSym request, List<? extends SeqSymmetry> results, URI uri, List<SeqSymmetry> overallResults) {
 		results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
 		for (Map.Entry<String, List<SeqSymmetry>> entry : FeatureRequestSym.splitResultsByTracks(results).entrySet()) {
 			if (entry.getValue().isEmpty()) {
@@ -287,9 +287,9 @@ public final class QuickLoad extends SymLoader {
 			}
 			FeatureRequestSym requestSym = new FeatureRequestSym(request.getOverlapSpan());
 			requestSym.setProperty("method",
-					entry.getKey() != null ? entry.getKey() : this.uri.toString());
+					entry.getKey() != null ? entry.getKey() : uri.toString());
 			ClientOptimizer.uri2type.put(uri, (String)requestSym.getProperty("method"));	// TODO: HACK for 6.3
-			FeatureRequestSym.addToRequestSym(entry.getValue(), requestSym, this.uri, (String)requestSym.getProperty("method"), requestSym.getOverlapSpan());
+			FeatureRequestSym.addToRequestSym(entry.getValue(), requestSym, uri, (String)requestSym.getProperty("method"), requestSym.getOverlapSpan());
 			FeatureRequestSym.addAnnotations(entry.getValue(), requestSym, requestSym.getOverlapSpan().getBioSeq());
 			overallResults.addAll(entry.getValue());
 		}

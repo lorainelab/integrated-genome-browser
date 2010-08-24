@@ -412,9 +412,19 @@ public final class LocalUrlCacher {
 		}
 	}
 
+	/**
+	 * Retrieve a page from a URL, optionally storing it in the cache.
+	 *
+	 * @param conn
+	 * @param headers
+	 * @param write_to_cache
+	 * @param cache_file
+	 * @param header_cache_file
+	 * @return
+	 * @throws IOException
+	 */
 	private static InputStream RetrieveFromURL(
 			URLConnection conn, Map<String,String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException {
-		int content_length = -1;
 		final InputStream connstr;
 		String contentEncoding = conn.getHeaderField("Content-Encoding");
 		boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
@@ -427,153 +437,15 @@ public final class LocalUrlCacher {
 			}
 		} else {
 			connstr = conn.getInputStream();
-			content_length = conn.getContentLength();
 		}
 
-		/*
-		 * TODO: tee output stream to cache file
-		 */
-		/*
 		if (write_to_cache) {
-			return new InputStream() {
-				public int read() throws IOException {
-					int b = connstr.read();
-					// write b
-					return b;
-				}
-
-				@Override
-				public long skip(long n) {
-					// consume bytes
-					return 0;
-				}
-
-				@Override
-				public void close() throws IOException {
-					// consume remainder of stream
-					super.close();
-				}
-			};
+			writeHeadersToCache(header_cache_file, populateHeaderProperties(conn, headers));
+			return new CachingInputStream(connstr, cache_file, conn.getURL().toExternalForm());
 		} else {
 			return connstr;
 		}
-		*/
-
-		if (!write_to_cache) {
-			return connstr;
-		}
-
-		BufferedInputStream bis = null;
-		byte[] content = null;
-		try {
-			if (connstr instanceof BufferedInputStream) {
-				bis = (BufferedInputStream)connstr;
-			} else {
-				bis = new BufferedInputStream(connstr);
-			}
-			content = readIntoContentArray(content_length, bis);
-			Properties headerprops = populateHeaderProperties(conn, headers);
-			WriteToCache(content, cache_file, header_cache_file, headerprops);
-		} finally {
-			GeneralUtils.safeClose(bis);
-		}
-
-		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE, "Cache object is {0} bytes", content.length);
-		
-		return new ByteArrayInputStream(content);
 	}
-
-
-	private static byte[] readIntoContentArray(int content_length, BufferedInputStream bis) throws IOException {
-		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINEST, "Content-Length: {0}", content_length);
-		if (content_length < 0) {
-			return loadContentInChunks(bis);
-		}
-
-		// if content_length header was set, can load based on length
-		byte[] content = new byte[content_length];
-		int total_bytes_read = 0;
-		while (total_bytes_read < content_length) {
-			int bytes_read = bis.read(content, total_bytes_read, content_length - total_bytes_read);
-			if (bytes_read < 0) {
-				throw new IOException("Error during content read");
-			}
-			total_bytes_read += bytes_read;
-		}
-		if (total_bytes_read != content_length) {
-			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-					"Bytes read not same as content length");
-		}
-		return content;
-	}
-
-
-
-	/**
-	 * if no content_length header, then need to load a chunk at a time
-	 * till find end, then piece back together into content byte array
-	 * Note, must set initial capacity to 1000 to avoid stream loading interruption.
-	 * @param bis
-	 * @return loaded content in the form of a byte array
-	 * @throws java.io.IOException
-	 */
-	private static byte[] loadContentInChunks(BufferedInputStream bis) throws IOException {
-		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-					"No content length header, so doing piecewise loading");
-		byte[] content = null;
-		ArrayList<byte[]> chunks = new ArrayList<byte[]>(1000);
-		IntArrayList byte_counts = new IntArrayList(100);
-		int total_byte_count = readChunks(bis, chunks, byte_counts);
-		int content_length = total_byte_count;
-		content = new byte[content_length];
-		total_byte_count = 0;
-		for (int i = 0; i < chunks.size(); i++) {
-			byte[] chunk = chunks.get(i);
-			int byte_count = byte_counts.get(i);
-			if (byte_count > 0) {
-				System.arraycopy(chunk, 0, content, total_byte_count, byte_count);
-				total_byte_count += byte_count;
-			}
-		}
-		chunks = null;
-		return content;
-	}
-
-
-	private static int readChunks(BufferedInputStream bis, ArrayList<byte[]> chunks, IntArrayList byte_counts) throws IOException {
-		int chunk_count = 0;
-		int chunk_size = 256 * 256;
-		int total_byte_count = 0;
-		int bytes_read = 0;
-		while (bytes_read != -1) {
-			byte[] orig_chunk = new byte[chunk_size];
-			byte[] chunk;
-			bytes_read = bis.read(orig_chunk, 0, chunk_size);
-			if (bytes_read < chunk_size && bytes_read > 0) {
-				// save space by shrinking the chunk
-				chunk = new byte[bytes_read];
-				System.arraycopy(orig_chunk, 0, chunk, 0, bytes_read);
-				orig_chunk = null;
-			} else {
-				chunk = orig_chunk;
-			}
-
-			if (DEBUG_CONNECTION) {
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-						"   chunk: {0}, byte count: {1}", new Object[]{chunk_count, bytes_read});
-			}
-			if (bytes_read > 0) {
-				total_byte_count += bytes_read;
-				chunks.add(chunk);
-				byte_counts.add(bytes_read);
-			}
-			chunk_count++;
-		}
-		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-					"total bytes: {0}, chunks with > 0 bytes: {1}", new Object[]{total_byte_count, chunks.size()});
-		return total_byte_count;
-	}
-
 
 
 	// populating header Properties (for persisting) and header input Map
@@ -684,28 +556,6 @@ public final class LocalUrlCacher {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Unable to load synonyms from '" + synonym_loc + "'", ioe);
 		} finally {
 			GeneralUtils.safeClose(syn_stream);
-		}
-	}
-
-	private static void WriteToCache(byte[] content, File cache_file, File header_cache_file, Properties headerprops) throws IOException, IOException, FileNotFoundException {
-		writeContentToCache(content, cache_file);
-		writeHeadersToCache(header_cache_file, headerprops);
-	}
-
-	private static void writeContentToCache(byte[] content, File cache_file) throws IOException {
-		if (content != null && content.length > 0) {
-			if (DEBUG_CONNECTION) {
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-						"writing content to cache: {0}", cache_file.getPath());
-			}
-			BufferedOutputStream bos = null;
-			try {
-				bos = new BufferedOutputStream(new FileOutputStream(cache_file));
-				// no API for returning number of bytes successfully written, so write all in one shot...
-				bos.write(content, 0, content.length);
-			} finally {
-				GeneralUtils.safeClose(bos);
-			}
 		}
 	}
 

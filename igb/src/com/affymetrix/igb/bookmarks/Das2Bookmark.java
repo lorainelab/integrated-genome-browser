@@ -10,6 +10,8 @@ import com.affymetrix.genometryImpl.das2.FormatPriorities;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,19 +32,17 @@ final public class Das2Bookmark {
 
 		GenericVersion version = feature.gVersion;
 
-		if(version.gServer.serverType != ServerType.DAS2)
-			return;
+		if(version.gServer.serverType == ServerType.DAS2){
+			Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
+			String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
 
-		Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
-		String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
+			Das2Type type = (Das2Type) feature.typeObj;
 
-		Das2Type type = (Das2Type) feature.typeObj;
+			String file_name = type.getID();
+			String extension =  FormatPriorities.getFormat(type);
 
-		String file_name = type.getID();
-		file_name = file_name.substring(file_name.lastIndexOf('/') + 1);	// strip off first .
-		String extension =  FormatPriorities.getFormat(type);
-		
-		syms.add(new SymBookmark(server_str, version.versionID, file_name, extension));
+			syms.add(new SymBookmark(server_str, version.versionID, file_name, extension));
+		}
 	}
 	
     /**
@@ -122,31 +122,29 @@ final public class Das2Bookmark {
          String cap = bookmark.getCapability() + "?";
          String seg = "segment=" + bookmark.getServer() + "/" + bookmark.getMapping() + "/" + chr + ";";
          String over = "overlaps=" + start + ":" + end + ";";
-         String type = "type=" +  bookmark.getType() + ";" + "format=" + bookmark.getFormat();
-         return cap + seg + over + type;
+         String type = "type=" +  bookmark.getPath() + ";" + "format=" + bookmark.getFormat();
+         return GeneralUtils.URLEncode(cap + seg + over + type);
      }
-
+	 
     /**
-    * sets the das2 properties of the bookmark and deletes source_url
-    * 
-    *
+    * sets the das2 and quickload properties of the bookmark and deletes source_url.
     */ 
    public void set(SymWithProps mark_sym) {
-        List<String> queries = new ArrayList<String>();
-        List<String> servers = new ArrayList<String>();
+        List<String> das2queries = new ArrayList<String>();
+        List<String> das2servers = new ArrayList<String>();
         for(SymBookmark bookmark : this.syms){
             if(bookmark.isValid()){
-                String server = bookmark.getServer();
-                int start = (Integer) mark_sym.getProperty("start");
-                int end = (Integer) mark_sym.getProperty("end");
-                String chr = (String) mark_sym.getProperty("seqid");
-                String query = getDas2Query(bookmark, start, end, chr);
-                servers.add(server);
-                queries.add(query);
+					String server = bookmark.getServer();
+					int start = (Integer) mark_sym.getProperty("start");
+					int end = (Integer) mark_sym.getProperty("end");
+					String chr = (String) mark_sym.getProperty("seqid");
+					String query = getDas2Query(bookmark, start, end, chr);
+					das2servers.add(server);
+					das2queries.add(query);
             }
         }
-        mark_sym.setProperty(Bookmark.DAS2_QUERY_URL, queries.toArray(new String[queries.size()]));
-        mark_sym.setProperty(Bookmark.DAS2_SERVER_URL, servers.toArray(new String[servers.size()]));
+        mark_sym.setProperty(Bookmark.DAS2_QUERY_URL, das2queries.toArray(new String[das2queries.size()]));
+        mark_sym.setProperty(Bookmark.DAS2_SERVER_URL, das2servers.toArray(new String[das2servers.size()]));
     }
 
    public List<SymBookmark> getSyms(){

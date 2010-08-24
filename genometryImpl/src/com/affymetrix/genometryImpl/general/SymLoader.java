@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  */
 public abstract class SymLoader {
 	public final URI uri;
-	protected final String extension;	// used for ServerUtils call
+	public final String extension;	// used for ServerUtils call
 	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
 	protected volatile boolean isInitialized = false;
 	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();

@@ -132,16 +132,14 @@ public final class UrlLoaderThread extends Thread {
 
 				System.out.println("Attempting to load data from URL: " + url.toExternalForm());
 				try {
-					parseUrl(url, file_extension, tier_name);
+					try {
+						parseDataFromURL(url, file_extension, tier_name);
+					} finally {
+						Application.getSingleton().removeNotLockedUpMsg("Loading feature " + tier_name);
+					}
 				} catch (IOException ioe) {
 					handleException(ioe);
-					if (Thread.currentThread().isInterrupted()) {
-						return;
-					}
 					continue; // try the next url
-				}
-				if (Thread.currentThread().isInterrupted()) {
-					return;
 				}
 
 				// update the view, except for the last time where we let the "finally" block do it
@@ -161,27 +159,14 @@ public final class UrlLoaderThread extends Thread {
 		}
 	}
 
-	private static void parseUrl(URL url, String file_extension, String tier_name)
-			throws IOException {
-		try {
-			if (Thread.currentThread().isInterrupted()) {
-				return;
-			}
-			parseDataFromURL(url, file_extension, tier_name);
-		} finally {
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + tier_name);
-		}
-	}
-
-	private void handleException(final Exception e) {
+	private static void handleException(final Exception e) {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
 				if (e instanceof UnknownHostException) {
 					Application.getSingleton().setStatus("Unknown host: " + e.getMessage());
 				} else if (e instanceof FileNotFoundException) {
-					ErrorHandler.errorPanel(gviewer.getFrame(), "File not found",
-							"File missing or not readable:\n " + e.getMessage(), null);
+					ErrorHandler.errorPanel("File not found", "File missing or not readable:\n " + e.getMessage());
 				} else {
 					Application.getSingleton().setStatus(e.getMessage());
 					e.printStackTrace();
@@ -190,8 +175,8 @@ public final class UrlLoaderThread extends Thread {
 		});
 	}
 
-	private void updateViewer(final SeqMapView gviewer, final BioSeq seq) {
-		if (gviewer == null || seq == null) {
+	private static void updateViewer(final SeqMapView gviewer, final BioSeq seq) {
+		if (gviewer == null) {
 			return;
 		}
 		SwingUtilities.invokeLater(new Runnable() {

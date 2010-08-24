@@ -245,7 +245,7 @@ public final class QuickLoad extends SymLoader {
 				// we don't know which chromosomes are in the file; they may not correspond with those in the genome.
 
 				// parse data.  A side effect of the older parsers is to add the "missing" chromosomes to the genome
-				results = loadFeature(this.symL, feature, strategy, null);
+				results = loadFeature(feature, null);
 				// short-circuit if there's a failure... which may not even be signaled in the code
 				if (results == null) {
 					return overallResults;
@@ -268,7 +268,7 @@ public final class QuickLoad extends SymLoader {
 		}
 		for (FeatureRequestSym request : output_requests) {
 			// short-circuit if there's a failure... which may not even be signaled in the code
-			results = loadFeature(this.symL, feature, strategy, request.getOverlapSpan());
+			results = loadFeature(feature, request.getOverlapSpan());
 			if (results == null) {
 				return overallResults;
 			}
@@ -295,9 +295,10 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
-	private List<? extends SeqSymmetry> loadFeature(
-			SymLoader symL, GenericFeature feature, final LoadStrategy strategy, SeqSpan overlapSpan)
+	private List<? extends SeqSymmetry> loadFeature(GenericFeature feature, SeqSpan overlapSpan)
 			throws IOException, OutOfMemoryError {
+
+		final LoadStrategy strategy = feature.loadStrategy;
 		if (!this.isInitialized) {
 			this.init();
 		}
@@ -309,7 +310,8 @@ public final class QuickLoad extends SymLoader {
 		// TODO - probably not necessary
 		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName);
 		style.setFeature(feature);
-		
+
+		// TODO - no need to check if symL is null.
 		if (strategy == LoadStrategy.GENOME && symL == null) {
 			// no symloader... only option is whole genome.
 			return this.getGenome();

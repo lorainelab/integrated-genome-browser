@@ -14,7 +14,7 @@
 package com.affymetrix.igb.menuitem;
 
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.bookmarks.Das2Bookmark;
+import com.affymetrix.igb.bookmarks.Bookmarks;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -407,7 +407,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		mark_sym.setProperty(Bookmark.START, new Integer(mark_span.getMin()));
 		mark_sym.setProperty(Bookmark.END, new Integer(mark_span.getMax()));
 
-		Das2Bookmark bookmark = new Das2Bookmark();
+		Bookmarks bookmark = new Bookmarks();
 
 		BookmarkController.addSymmetries(bookmark);
 		

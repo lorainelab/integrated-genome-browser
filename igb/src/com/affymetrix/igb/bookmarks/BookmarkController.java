@@ -301,7 +301,7 @@ public abstract class BookmarkController {
 		}
 	}
 
-  public static void addSymmetries(Das2Bookmark bookmark){
+  public static void addSymmetries(Bookmarks bookmark){
 	BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 	AnnotatedSeqGroup  group = seq.getSeqGroup();
 
@@ -314,7 +314,7 @@ public abstract class BookmarkController {
 		}
   }
 
-  public static void addGraphProperties(SymWithProps mark_sym, List<GlyphI> graphs, Das2Bookmark bookmark) {
+  public static void addGraphProperties(SymWithProps mark_sym, List<GlyphI> graphs, Bookmarks bookmark) {
     if (DEBUG) {
       System.out.println("in addGraphProperties, graph count = " + graphs.size());
     }

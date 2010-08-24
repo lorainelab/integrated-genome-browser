@@ -22,7 +22,7 @@ import java.util.List;
  * 
  * @author Ido M. Tamir
  */
-final public class Das2Bookmark {
+final public class Bookmarks {
     
     private final List<SymBookmark> syms = new ArrayList<SymBookmark>();
 
@@ -42,6 +42,16 @@ final public class Das2Bookmark {
 			String extension =  FormatPriorities.getFormat(type);
 
 			syms.add(new SymBookmark(server_str, version.versionID, file_name, extension, version.gServer.serverType));
+		}else if (version.gServer.serverType == ServerType.QuickLoad){
+			SymLoader sym = feature.symL;
+
+			if(sym == null)
+				return;
+
+			String extension = sym.extension;
+			extension = extension.substring(extension.indexOf(".") + 1);
+
+			syms.add(new SymBookmark(version.gServer.URL, version.versionID, sym.uri.toString(), extension, version.gServer.serverType));
 		}
 	}
 	
@@ -132,8 +142,11 @@ final public class Das2Bookmark {
    public void set(SymWithProps mark_sym) {
         List<String> das2queries = new ArrayList<String>();
         List<String> das2servers = new ArrayList<String>();
+		List<String> quickqueries = new ArrayList<String>();
+		List<String> quickserver = new ArrayList<String>();
         for(SymBookmark bookmark : this.syms){
             if(bookmark.isValid()){
+				if(bookmark.getServerType() == ServerType.DAS2){
 					String server = bookmark.getServer();
 					int start = (Integer) mark_sym.getProperty("start");
 					int end = (Integer) mark_sym.getProperty("end");
@@ -141,10 +154,18 @@ final public class Das2Bookmark {
 					String query = getDas2Query(bookmark, start, end, chr);
 					das2servers.add(server);
 					das2queries.add(query);
-            }
+				}else if (bookmark.getServerType() == ServerType.QuickLoad){
+					String server = bookmark.getServer();
+					quickserver.add(server);
+					quickqueries.add(bookmark.getPath() + "?" + (String) mark_sym.getProperty("seqid"));
+				}
+			}
         }
         mark_sym.setProperty(Bookmark.DAS2_QUERY_URL, das2queries.toArray(new String[das2queries.size()]));
         mark_sym.setProperty(Bookmark.DAS2_SERVER_URL, das2servers.toArray(new String[das2servers.size()]));
+		mark_sym.setProperty(Bookmark.QUICK_QUERY_URL, quickqueries.toArray(new String[quickqueries.size()]));
+	    mark_sym.setProperty(Bookmark.QUICK_SERVER_URL, quickserver.toArray(new String[quickserver.size()]));
+		
     }
 
    public List<SymBookmark> getSyms(){

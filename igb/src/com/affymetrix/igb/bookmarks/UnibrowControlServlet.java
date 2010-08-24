@@ -42,6 +42,8 @@ import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.general.FeatureRequestSym;
+import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.FeatureLoading;
@@ -136,11 +138,14 @@ public final class UnibrowControlServlet {
 
 		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
 		String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+		String[] quick_query_urls = parameters.get(Bookmark.QUICK_QUERY_URL);
+		String[] quick_server_urls = parameters.get(Bookmark.QUICK_SERVER_URL);
 		String[] data_urls = parameters.get(Bookmark.DATA_URL);
 		String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
 		loadDataFromURLs(uni, data_urls, url_file_extensions, null);
 		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
-
+		//loadDataFromQuickLoad(uni, quick_query_urls, quick_server_urls);
+		
 		String selectParam = getStringParameter(parameters, "select");
 		if (selectParam != null) {
 			performSelection(selectParam);
@@ -192,8 +197,8 @@ public final class UnibrowControlServlet {
 	private static void createDAS2andOpaqueRequests(
 			final String[] das2_server_urls, final String[] das2_query_urls, List<Das2FeatureRequestSym> das2_requests, List<String> opaque_requests) {
 		for (int i = 0; i < das2_server_urls.length; i++) {
-			String das2_server_url = das2_server_urls[i];	//Don't decode url
-			String das2_query_url = das2_query_urls[i];		//Don't decode url
+			String das2_server_url = GeneralUtils.URLDecode(das2_server_urls[i]);	//Don't decode url
+			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);		//Don't decode url
 			String cap_url = null;
 			String seg_uri = null;
 			String type_uri = null;
@@ -280,7 +285,46 @@ public final class UnibrowControlServlet {
 			}
 		}
 	}
-        
+
+	private static void loadDataFromQuickLoad(final Application uni, final String[] quick_server_urls, final String[] quick_query_urls) {
+		if (quick_server_urls == null || quick_query_urls == null ||
+				quick_query_urls.length == 0 || quick_server_urls.length != quick_query_urls.length) {
+			return;
+		}
+
+		List<FeatureRequestSym> quick_requests = new ArrayList<FeatureRequestSym>();
+		createQuickloadRequests(quick_server_urls, quick_query_urls, quick_requests);
+
+	}
+
+	private static void createQuickloadRequests(String[] quick_server_urls,
+			String[] quick_query_urls, List<FeatureRequestSym> quick_requests) {
+		for (int i = 0; i < quick_server_urls.length; i++) {
+			String quick_server_url = quick_server_urls[i];	//Don't decode url
+			String quick_query_url = quick_query_urls[i];		//Don't decode url
+
+			try {
+				GenericServer gServer = ServerList.getServer(quick_server_url);
+				if (gServer == null) {
+					gServer = ServerList.addServer(ServerType.DAS2, quick_server_url, quick_server_url, true);
+				} else if (!gServer.isEnabled()) {
+					gServer.setEnabled(true);
+					GeneralLoadUtils.discoverServer(gServer);
+					// enable the server.
+					// TODO - this will be saved in preferences as enabled, although it shouldn't.
+				}
+				URL quickloadURL = new URL((String) gServer.serverObj);
+				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+				
+				
+			} catch (Exception ex) {
+				// something went wrong with deconstructing DAS/2 query URL, so just add URL to list of opaque requests
+				ex.printStackTrace();
+			}
+		}
+
+	}
+	
 	private static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
 		try {
 			if (data_urls != null && data_urls.length != 0) {

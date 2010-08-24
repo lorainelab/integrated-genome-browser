@@ -408,17 +408,9 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		mark_sym.setProperty("end", new Integer(mark_span.getMax()));
 
 		Das2Bookmark bookmark = new Das2Bookmark();
-		for(TierGlyph glyph : gviewer.getSeqMap().getTiers()){
-			if(glyph.getChildCount() == 0)
-				continue;
 
-			if(glyph.getChild(0) instanceof GraphGlyph)
-				continue;
-			
-			GenericFeature feature = glyph.getAnnotStyle().getFeature();
-			bookmark.add(feature);
-		}
-
+		BookmarkController.addSymmetries(bookmark);
+		
 		if (include_graphs) {
 			List<GlyphI> graphs = gviewer.collectGraphs();
 			BookmarkController.addGraphProperties(mark_sym, graphs, bookmark);

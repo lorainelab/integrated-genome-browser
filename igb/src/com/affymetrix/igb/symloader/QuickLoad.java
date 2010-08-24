@@ -173,8 +173,7 @@ public final class QuickLoad extends SymLoader {
 					List<FeatureRequestSym> output_requests = FeatureRequestSym.determineFeatureRequestSyms(
 							QuickLoad.this.symL, QuickLoad.this.uri, QuickLoad.this.featureName,
 							feature.loadStrategy, overlapSpan);
-					List<SeqSymmetry> overallResults = loadAndAddSymmetries(
-							QuickLoad.this.symL, feature, feature.loadStrategy, output_requests);
+					List<SeqSymmetry> overallResults = loadAndAddSymmetries(feature, output_requests);
 					return overallResults;
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -219,10 +218,10 @@ public final class QuickLoad extends SymLoader {
 	 */
 
 
-	private List<SeqSymmetry> loadAndAddSymmetries(
-			SymLoader symL, GenericFeature feature,
-			LoadStrategy strategy, List<FeatureRequestSym> output_requests)
+	private List<SeqSymmetry> loadAndAddSymmetries(GenericFeature feature, List<FeatureRequestSym> output_requests)
 			throws IOException, OutOfMemoryError {
+		LoadStrategy strategy = feature.loadStrategy;
+		
 		if (output_requests.isEmpty()) {
 			// if we're loading the whole genome from a file, the output_requests list will be ignored and rebuilt.
 			if (this.symL != null || strategy != LoadStrategy.GENOME) {
@@ -233,7 +232,7 @@ public final class QuickLoad extends SymLoader {
 
 		List<? extends SeqSymmetry> results;
 		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
-		if (symL == null) {
+		if (this.symL == null) {
 			if (strategy == LoadStrategy.CHROMOSOME) {
 				// Special case.  If chromosome expands during loading, the FeatureRequestSym needs to be rebuilt.
 				if (output_requests.size() == 1) {
@@ -246,7 +245,7 @@ public final class QuickLoad extends SymLoader {
 				// we don't know which chromosomes are in the file; they may not correspond with those in the genome.
 
 				// parse data.  A side effect of the older parsers is to add the "missing" chromosomes to the genome
-				results = loadFeature(symL, feature, strategy, null);
+				results = loadFeature(this.symL, feature, strategy, null);
 				// short-circuit if there's a failure... which may not even be signaled in the code
 				if (results == null) {
 					return overallResults;
@@ -254,7 +253,7 @@ public final class QuickLoad extends SymLoader {
 
 				// rebuild the feature request list, since the chromosomes may have changed
 				output_requests.clear();
-				FeatureRequestSym.buildFeatureSymListByChromosome(this.version.group.getSeqList(), uri, featureName, output_requests);
+				FeatureRequestSym.buildFeatureSymListByChromosome(this.version.group.getSeqList(), this.uri, featureName, output_requests);
 
 				List<? extends SeqSymmetry> chromResults = null;
 				// we've already parsed the data.  Special-case so that we don't parse it again.
@@ -262,18 +261,18 @@ public final class QuickLoad extends SymLoader {
 					// only get symmetries for this chromosome
 					chromResults = SymLoader.filterResultsByChromosome(results, request.getOverlapSpan().getBioSeq());
 					
-					filterAndAddAnnotations(request, chromResults, uri, overallResults);
+					filterAndAddAnnotations(request, chromResults, this.uri, overallResults);
 				}
 				return overallResults;
 			}
 		}
 		for (FeatureRequestSym request : output_requests) {
 			// short-circuit if there's a failure... which may not even be signaled in the code
-			results = loadFeature(symL, feature, strategy, request.getOverlapSpan());
+			results = loadFeature(this.symL, feature, strategy, request.getOverlapSpan());
 			if (results == null) {
 				return overallResults;
 			}
-			filterAndAddAnnotations(request, results, uri, overallResults);
+			filterAndAddAnnotations(request, results, this.uri, overallResults);
 		}
 		return overallResults;
 	}

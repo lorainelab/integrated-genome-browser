@@ -41,7 +41,7 @@ final public class Das2Bookmark {
 			String file_name = type.getID();
 			String extension =  FormatPriorities.getFormat(type);
 
-			syms.add(new SymBookmark(server_str, version.versionID, file_name, extension));
+			syms.add(new SymBookmark(server_str, version.versionID, file_name, extension, version.gServer.serverType));
 		}
 	}
 	
@@ -72,7 +72,7 @@ final public class Das2Bookmark {
 						// It should match to key in Das2Capability.getCapabilityMap().
 						Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
 						String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
-						syms.add(new SymBookmark(server_str, version.versionID, feature.featureName, "bar"));
+						syms.add(new SymBookmark(server_str, version.versionID, feature.featureName, "bar", version.gServer.serverType));
 						return true;
 					}
 				}

@@ -13,13 +13,15 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import java.awt.Color;
 import java.util.List;
 import java.io.*;
@@ -32,6 +34,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -256,7 +259,7 @@ public abstract class BookmarkController {
     }
   }
 
-	private static void loopOverGraphs(List<GraphSym> grafs, String graph_name, GraphType graph_style_num, String heatmap_name, Color col, Color bg_col, double ypos, double yheight, boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis, double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction, String combo_name, Map<String, ITrackStyle> combos) {
+  private static void loopOverGraphs(List<GraphSym> grafs, String graph_name, GraphType graph_style_num, String heatmap_name, Color col, Color bg_col, double ypos, double yheight, boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis, double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction, String combo_name, Map<String, ITrackStyle> combos) {
 		for (GraphSym graf : grafs) {
 			GraphState gstate = graf.getGraphState();
 			graf.setGraphName(graph_name);
@@ -297,6 +300,19 @@ public abstract class BookmarkController {
 			}
 		}
 	}
+
+  public static void addSymmetries(Das2Bookmark bookmark){
+	BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+	AnnotatedSeqGroup  group = seq.getSeqGroup();
+
+	for(GenericVersion version : group.getEnabledVersions()){
+			for( GenericFeature feature : version.getFeatures()){
+				if(feature.loadStrategy != LoadStrategy.NO_LOAD){
+					bookmark.add(feature);
+				}
+			}
+		}
+  }
 
   public static void addGraphProperties(SymWithProps mark_sym, List<GlyphI> graphs, Das2Bookmark bookmark) {
     if (DEBUG) {

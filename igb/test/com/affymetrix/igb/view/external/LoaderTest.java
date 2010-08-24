@@ -54,7 +54,7 @@ public class LoaderTest extends junit.framework.TestCase {
 		);
 		for(LocName ln : locs){
 			//checkDownLoadEnsembl(ln.loc,ln.name);
-			checkDownLoadUCSC(ln.loc,ln.name);
+			//checkDownLoadUCSC(ln.loc,ln.name);
 		}
 	}
 

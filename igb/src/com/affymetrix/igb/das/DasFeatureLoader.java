@@ -14,6 +14,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
@@ -55,6 +57,16 @@ public final class DasFeatureLoader {
 			SeqSymmetry optimized_sym = gFeature.optimizeRequest(query_span);
 			if (optimized_sym != null) {
 				convertSymToDasURLs(optimized_sym, builder, segment, urls);
+				
+				// initialize styles
+				for (int i=0;i<urls.size();i++) {
+					// TODO: temp hack.  The style should be determined by the URI, not the feature name.
+					ITrackStyleExtended style =
+						DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
+					//ITrackStyleExtended style =
+					//	DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(urls.get(i).toString(), gFeature.featureName);
+					style.setFeature(gFeature);
+				}
 
 				String[] tier_names = new String[urls.size()];
 				Arrays.fill(tier_names, gFeature.featureName);

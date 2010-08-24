@@ -157,7 +157,7 @@ final public class Bookmarks {
 				}else if (bookmark.getServerType() == ServerType.QuickLoad){
 					String server = bookmark.getServer();
 					quickserver.add(server);
-					quickqueries.add(bookmark.getPath() + "?" + (String) mark_sym.getProperty("seqid"));
+					quickqueries.add(bookmark.getPath());
 				}
 			}
         }

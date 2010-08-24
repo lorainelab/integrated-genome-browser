@@ -145,7 +145,7 @@ public final class UnibrowControlServlet {
 		String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
 		loadDataFromURLs(uni, data_urls, url_file_extensions, null);
 		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
-		loadDataFromQuickLoad(version, quick_server_urls, quick_query_urls, start_param, end_param);
+		loadDataFromQuickLoad(quick_server_urls, quick_query_urls, version, seqid, start_param, end_param);
 		
 		String selectParam = getStringParameter(parameters, "select");
 		if (selectParam != null) {
@@ -287,7 +287,7 @@ public final class UnibrowControlServlet {
 		}
 	}
 
-	private static void loadDataFromQuickLoad(String version, final String[] quick_server_urls, final String[] quick_query_urls, String start_param, String end_param) {
+	private static void loadDataFromQuickLoad(final String[] quick_server_urls, final String[] quick_query_urls, String version, String chromosome, String start_param, String end_param) {
 		if (quick_server_urls == null || quick_query_urls == null
 				|| quick_query_urls.length == 0 || quick_server_urls.length != quick_query_urls.length) {
 			return;
@@ -306,15 +306,8 @@ public final class UnibrowControlServlet {
 		}
 		
 		for (int i = 0; i < quick_server_urls.length; i++) {
-			String quick_server_url = GeneralUtils.URLDecode(quick_server_urls[i]);
-			String quick_query_url = GeneralUtils.URLDecode(quick_query_urls[i]);
-			String chromosome = null;
-			String feature_url = quick_query_url;
-			int qindex = quick_query_url.indexOf('?');
-			if(qindex > 1){
-				feature_url = quick_query_url.substring(0,qindex);
-				chromosome = quick_query_url.substring(qindex + 1, quick_query_url.length());
-			}
+			String quick_server_url = quick_server_urls[i];
+			String quick_query_url = quick_query_urls[i];
 			try {
 				GenericServer gServer = ServerList.getServer(quick_server_url);
 				if (gServer == null) {
@@ -328,7 +321,7 @@ public final class UnibrowControlServlet {
 				URL quickloadURL = new URL((String) gServer.serverObj);
 				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 				List<String> typeNames = quickloadServer.getTypes(version);
-				URI uri = URI.create(feature_url);
+				URI uri = URI.create(quick_query_url);
 				GenericFeature feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
 
 				if (feature != null) {

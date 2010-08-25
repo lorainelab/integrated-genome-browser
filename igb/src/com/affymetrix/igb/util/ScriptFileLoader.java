@@ -371,20 +371,23 @@ public class ScriptFileLoader {
 		}
 		GenericFeature feature = GeneralUtils.findFeatureWithURI(features, featureURI);
 		if (feature != null) {
-			if(feature.symL.getLoadChoices().contains(s))
-				feature.loadStrategy = s;
-			else{
-				feature.loadStrategy = feature.symL.getLoadChoices().get(1);
-				Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.WARNING,
-						"Given {0} strategy is not permitted instead using {1} "
-						+ "strategy.", new Object[]{s,feature.loadStrategy});
-			}
+			feature.loadStrategy = getFeatureLoadStrategy(feature.symL.getLoadChoices(), s);
 		} else {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "Couldn''t find feature :{0}", featureURIStr);
 		}
 	}
 
+	private static LoadStrategy getFeatureLoadStrategy(List<LoadStrategy> choices, LoadStrategy s){
+		if (choices.contains(s))
+			return s;
+
+		Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.WARNING,
+					"Given {0} strategy is not permitted instead using {1} "
+					+ "strategy.", new Object[]{s, choices.get(0)});
+		return choices.get(0);
+	}
+	
 	/**
 	 * Join fields from startField to end of fields.
 	 * @param fields

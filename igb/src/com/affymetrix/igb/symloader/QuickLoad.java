@@ -43,6 +43,7 @@ import javax.swing.SwingWorker;
 /**
  *
  * @author jnicol
+ * @version $Id$
  */
 public final class QuickLoad extends SymLoader {
 	private final GenericVersion version;
@@ -96,7 +97,7 @@ public final class QuickLoad extends SymLoader {
 		return friendlyName;
 	}
 
-	public static URI determineURI(GenericVersion version, String featureName, String organims_dir) {
+	public static URI determineURI(GenericVersion version, String featureName, String organism_dir) {
 		URI uri = null;
 
 		if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
@@ -112,7 +113,7 @@ public final class QuickLoad extends SymLoader {
 		} else {
 			uri = URI.create(
 					version.gServer.URL
-					+ organims_dir + "/" 
+					+ ((organism_dir != null && !organism_dir.isEmpty()) ? organism_dir + "/"  : "")
 					+ version.versionID + "/"
 					+ determineFileName(version, featureName));
 		}

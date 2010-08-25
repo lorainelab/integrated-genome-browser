@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -42,6 +43,9 @@ public class TwoBitParserTest {
 
 	@Test
 	public void testCaseFiles() throws Exception{
+		if(!LocalUrlCacher.isValidURL(url))
+			return;
+
 		residues = noblocks;
 		file = noblocks_file;
 		testOriginal();

@@ -4,6 +4,8 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das.DasType;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.FormatPriorities;
@@ -67,13 +69,13 @@ final public class Bookmarks {
 
 			Das2Type type = (Das2Type) feature.typeObj;
 
-			String file_name = type.getID();
+			String path = type.getID();
 			String format =  FormatPriorities.getFormat(type);
 
 			Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
 			String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
 
-			syms.add(new SymBookmark(server_str, version.versionID, file_name, format, version.gServer.serverType));
+			syms.add(new SymBookmark(server_str, version.versionID, path, format, version.gServer.serverType));
 
 			return true;
 		}else if (version.gServer.serverType == ServerType.QuickLoad){
@@ -87,6 +89,20 @@ final public class Bookmarks {
 
 			syms.add(new SymBookmark(version.gServer.URL, version.versionID, sym.uri.toString(), format, version.gServer.serverType));
 
+			return true;
+		}else if (version.gServer.serverType == ServerType.DAS){
+
+			DasServerInfo dasServerInfo = (DasServerInfo) version.versionSourceObj;
+
+			DasType type = (DasType)feature.typeObj;
+
+			String source = type.getSource();
+			String name = type.getName();
+
+			String path = source + "?" + name;
+
+			syms.add(new SymBookmark(version.gServer.URL, version.versionID, path, "", version.gServer.serverType));
+			
 			return true;
 		}
 
@@ -144,8 +160,13 @@ final public class Bookmarks {
    public void set(SymWithProps mark_sym) {
         List<String> das2queries = new ArrayList<String>();
         List<String> das2servers = new ArrayList<String>();
+
 		List<String> quickqueries = new ArrayList<String>();
-		List<String> quickserver = new ArrayList<String>();
+		List<String> quickservers = new ArrayList<String>();
+
+		List<String> dasqueries = new ArrayList<String>();
+		List<String> dasservers = new ArrayList<String>();
+
         for(SymBookmark bookmark : this.syms){
             if(bookmark.isValid()){
 				if(bookmark.getServerType() == ServerType.DAS2){
@@ -157,17 +178,23 @@ final public class Bookmarks {
 					das2servers.add(server);
 					das2queries.add(query);
 				}else if (bookmark.getServerType() == ServerType.QuickLoad){
-					String server = bookmark.getServer();
-					quickserver.add(server);
+					quickservers.add(bookmark.getServer());
 					quickqueries.add(bookmark.getPath());
+				}else if (bookmark.getServerType() == ServerType.DAS){
+					dasservers.add(bookmark.getServer());
+					dasqueries.add(bookmark.getPath());
 				}
 			}
         }
         mark_sym.setProperty(Bookmark.DAS2_QUERY_URL, das2queries.toArray(new String[das2queries.size()]));
         mark_sym.setProperty(Bookmark.DAS2_SERVER_URL, das2servers.toArray(new String[das2servers.size()]));
+
 		mark_sym.setProperty(Bookmark.QUICK_QUERY_URL, quickqueries.toArray(new String[quickqueries.size()]));
-	    mark_sym.setProperty(Bookmark.QUICK_SERVER_URL, quickserver.toArray(new String[quickserver.size()]));
-		
+	    mark_sym.setProperty(Bookmark.QUICK_SERVER_URL, quickservers.toArray(new String[quickservers.size()]));
+
+		mark_sym.setProperty(Bookmark.DAS_QUERY_URL, dasqueries.toArray(new String[dasqueries.size()]));
+	    mark_sym.setProperty(Bookmark.DAS_SERVER_URL, dasservers.toArray(new String[dasservers.size()]));
+
     }
 
    public List<SymBookmark> getSyms(){

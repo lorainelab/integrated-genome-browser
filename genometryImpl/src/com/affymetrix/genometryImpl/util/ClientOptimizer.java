@@ -4,10 +4,8 @@ import java.util.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Region;
@@ -57,7 +55,7 @@ public class ClientOptimizer {
 						Level.INFO, "Can''t optimize query, no previous requests found: {0}", typeid);
 				output_requests.add(request_sym);
 			} else {
-				optimizeRequestVsPreviousRequests(request_sym, prev_overlaps, aseq, typeid, type, output_requests);
+				optimizeRequestVsPreviousRequests(request_sym, prev_overlaps, aseq, type, output_requests);
 			}
 		}
     }
@@ -76,7 +74,7 @@ public class ClientOptimizer {
 		return prev_overlaps;
 	}
 
-	private static void optimizeRequestVsPreviousRequests(FeatureRequestSym request_sym, List<SeqSymmetry> prev_overlaps, BioSeq aseq, URI typeid, Das2Type type, List<FeatureRequestSym> output_requests) {
+	private static void optimizeRequestVsPreviousRequests(FeatureRequestSym request_sym, List<SeqSymmetry> prev_overlaps, BioSeq aseq, Das2Type type, List<FeatureRequestSym> output_requests) {
 		// overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
 		SeqSymmetry overlap_sym = request_sym.getOverlapSym();
 		Das2Region region = null;
@@ -89,61 +87,20 @@ public class ClientOptimizer {
 		List<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
 		qoldlist.add(prev_union);
 		SeqSymmetry split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
-		SplitQuery(split_query, aseq, typeid, prev_union, type, region, output_requests);
+		SplitQuery(split_query, aseq, type, region, output_requests);
 	}
 
 
     private static void SplitQuery(
 			SeqSymmetry split_query, BioSeq aseq,
-			URI typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<FeatureRequestSym> output_requests) {
-
-        if (split_query == null || split_query.getChildCount() == 0) {
-            // all of current query overlap range covered by previous queries, so return empty list
-            Logger.getLogger(ClientOptimizer.class.getName()).log(
-					Level.INFO, "All of new query covered by previous queries for type: {0}", typeid);
-            return;
-        }
+			Das2Type type, Das2Region region, List<FeatureRequestSym> output_requests) {
 
         SeqSpan split_query_span = split_query.getSpan(aseq);
 		if (DEBUG) {
 			Logger.getLogger(ClientOptimizer.class.getName()).log(
 					Level.FINE, "split query: {0}", SeqUtils.spanToString(split_query_span));
 		}
-        // figure out min/max within bounds based on location of previous queries relative to new query
-        int first_within_min;
-        int last_within_max;
-        List<SeqSpan> union_spans = SeqUtils.getLeafSpans(prev_union, aseq);
-        SeqSpanComparator spancomp = new SeqSpanComparator();
-        // since prev_union was created via SeqSymSummarizer, spans should come out already
-        //   sorted by ascending min (and with no overlaps)
-        //          Collections.sort(union_spans, spancomp);
-        int insert = Collections.binarySearch(union_spans, split_query_span, spancomp);
-        if (insert < 0) {
-            insert = -insert - 1;
-        }
-        if (insert == 0) {
-            first_within_min = 0;
-        } else {
-            first_within_min = (union_spans.get(insert - 1)).getMax();
-        }
-        // since sorted by min, need to make sure that we are at the insert index
-        //   at which get(index).min >= exclusive_span.max,
-        //   so increment till this (or end) is reached
-        while ((insert < union_spans.size()) && ((union_spans.get(insert)).getMin() < split_query_span.getMax())) {
-            insert++;
-        }
-        if (insert == union_spans.size()) {
-            last_within_max = aseq.getLength();
-        } else {
-            last_within_max = (union_spans.get(insert)).getMin();
-        }
-        // done determining first_within_min and last_within_max
-        splitIntoSubSpans(split_query, aseq, first_within_min, last_within_max, type, region, output_requests);
-    }
 
-	 private static void splitIntoSubSpans(
-            SeqSymmetry split_query, BioSeq aseq, int first_within_min, int last_within_max, Das2Type type,
-			Das2Region region, List<FeatureRequestSym> output_requests) {
         int split_count = split_query.getChildCount();
         for (int k = 0; k < split_count; k++) {
             SeqSymmetry csym = split_query.getChild(k);
@@ -157,5 +114,4 @@ public class ClientOptimizer {
             output_requests.add(new_request);
         }
     }
-
 }

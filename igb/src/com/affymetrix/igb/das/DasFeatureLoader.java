@@ -20,6 +20,8 @@ import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -55,26 +57,13 @@ public final class DasFeatureLoader {
 			builder.add("type", feature.getID());
 
 			SeqSymmetry optimized_sym = gFeature.optimizeRequest(query_span);
-			if (optimized_sym != null) {
-				convertSymToDasURLs(optimized_sym, builder, segment, urls);
-				
-				// initialize styles
-				for (int i=0;i<urls.size();i++) {
-					// TODO: temp hack.  The style should be determined by the URI, not the feature name.
-					ITrackStyleExtended style =
-						DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
-					//ITrackStyleExtended style =
-					//	DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(urls.get(i).toString(), gFeature.featureName);
-					style.setFeature(gFeature);
-				}
-
-				String[] tier_names = new String[urls.size()];
-				Arrays.fill(tier_names, gFeature.featureName);
-
-				UrlLoaderThread loader = new UrlLoaderThread(
-						Application.getSingleton().getMapView(), urls.toArray(new URL[urls.size()]), null, tier_names);
-				loader.runEventually();
+			if (optimized_sym == null) {
+				Logger.getLogger(DasFeatureLoader.class.getName()).log(
+						Level.INFO,"All of new query covered by previous queries for feature {0}", gFeature.featureName);
+				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
+				return true;
 			}
+			loadOptimizedSym(optimized_sym, builder, segment, urls, gFeature);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return false;
@@ -83,6 +72,23 @@ public final class DasFeatureLoader {
 			return false;
 		}
 		return true;
+	}
+
+
+	private static void loadOptimizedSym(SeqSymmetry optimized_sym, QueryBuilder builder, String segment, List<URL> urls, GenericFeature gFeature) throws MalformedURLException, UnsupportedEncodingException {
+		convertSymToDasURLs(optimized_sym, builder, segment, urls);
+		// initialize styles
+		for (int i = 0; i < urls.size(); i++) {
+			// TODO: temp hack.  The style should be determined by the URI, not the feature name.
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
+			//ITrackStyleExtended style =
+			//	DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(urls.get(i).toString(), gFeature.featureName);
+			style.setFeature(gFeature);
+		}
+		String[] tier_names = new String[urls.size()];
+		Arrays.fill(tier_names, gFeature.featureName);
+		UrlLoaderThread loader = new UrlLoaderThread(Application.getSingleton().getMapView(), urls.toArray(new URL[urls.size()]), null, tier_names);
+		loader.runEventually();
 	}
 
 	/**

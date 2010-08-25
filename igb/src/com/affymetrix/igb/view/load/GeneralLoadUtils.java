@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -654,6 +655,13 @@ public final class GeneralLoadUtils {
 	 * @return true or false
 	 */
 	private static boolean loadFeatures(SeqSpan overlap, GenericFeature gFeature) {
+		SeqSymmetry optimized_sym = gFeature.optimizeRequest(overlap);
+		if (optimized_sym == null) {
+			Logger.getLogger(QuickLoad.class.getName()).log(
+					Level.INFO, "All of new query covered by previous queries for feature {0}", gFeature.featureName);
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
+			return true;
+		}
 		final String feature_name = gFeature.featureName;
 		final BioSeq selected_seq = overlap.getBioSeq();
 		if (selected_seq == null) {

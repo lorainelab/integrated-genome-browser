@@ -26,12 +26,8 @@ public class AnnotatedSeqGroup {
 	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
 	
-	
-	/**
-	 * Private copy of the synonym lookup table.
-	 * @see com.affymetrix.genometryImpl.util.SynonymLookup#getDefaultLookup()
-	 */
-	private final static SynonymLookup lookup = SynonymLookup.getChromosomeLookup();
+	private final static SynonymLookup chrLookup = SynonymLookup.getChromosomeLookup();
+	private final static SynonymLookup groupLookup = SynonymLookup.getDefaultLookup();
 
 	public AnnotatedSeqGroup(String gid) {
 		id = gid;
@@ -165,7 +161,7 @@ public class AnnotatedSeqGroup {
 		BioSeq aseq = id2seq.get(synonym.toLowerCase());
 		if (use_synonyms && aseq == null) {
 			// Try and find a synonym.
-			for (String syn : lookup.getSynonyms(synonym,false)) {
+			for (String syn : chrLookup.getSynonyms(synonym,false)) {
 				aseq = id2seq.get(syn.toLowerCase());
 				if (aseq != null) {
 					return aseq;
@@ -197,7 +193,7 @@ public class AnnotatedSeqGroup {
 	}
 
 	public final boolean isSynonymous(String synonym) {
-		return id.equals(synonym) || lookup.isSynonym(id, synonym);
+		return id.equals(synonym) || groupLookup.isSynonym(id, synonym);
 	}
 
 	/**

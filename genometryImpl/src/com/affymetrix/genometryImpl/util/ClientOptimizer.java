@@ -95,6 +95,13 @@ public class ClientOptimizer {
 			SeqSymmetry split_query, BioSeq aseq,
 			Das2Type type, Das2Region region, List<FeatureRequestSym> output_requests) {
 
+		if (split_query == null || split_query.getChildCount() == 0) {
+			// all of current query overlap range covered by previous queries, so return empty list
+			Logger.getLogger(ClientOptimizer.class.getName()).log(
+					Level.INFO, "All of new query covered by previous queries");
+			return;
+		}
+
         SeqSpan split_query_span = split_query.getSpan(aseq);
 		if (DEBUG) {
 			Logger.getLogger(ClientOptimizer.class.getName()).log(

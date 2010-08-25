@@ -6,20 +6,22 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public final class GenometryModel {
 
 	private static GenometryModel smodel = new GenometryModel();
-	private static final Logger default_logger = Logger.getLogger(GenometryModel.class.getName());
-	private static Logger logger = default_logger;
 	
-
 	/**
 	 * Ann's comment: There is a lot of logic related to selection of
 	 * SeqSymmetry objects. It appears that SeqSymmetry on many different
@@ -364,32 +366,4 @@ public final class GenometryModel {
 		}
 		seq2selectedSymsHash.clear();
 	}
-
-	public static Logger getLogger() {
-		return logger;
-	}
-
-	public static void setLogger(Logger log) {
-		logger = log;
-		if (logger == null) {
-			logger = default_logger;
-		}
-	}
-
-	public static void logError(String msg) {
-		getLogger().log(Level.SEVERE, msg);
-	}
-
-	public static void logWarning(String msg) {
-		getLogger().log(Level.WARNING, msg);
-	}
-
-	public static void logInfo(String msg) {
-		getLogger().log(Level.INFO, msg);
-	}
-
-	public static void logDebug(String msg) {
-		getLogger().log(Level.FINE, msg);
-	}
-
 }

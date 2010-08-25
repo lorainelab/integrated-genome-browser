@@ -10,6 +10,8 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  A SeqSymmetry for holding graph data.
@@ -107,7 +109,8 @@ public class GraphSym extends SimpleSymWithProps {
 	@Override
 	public void setID(String id) {
 		if (id_locked) {
-			GenometryModel.getLogger().warning("called GraphSym.setID() while id was locked:  " + this.getID() + " -> " + id);
+			Logger.getLogger(GraphSym.class.getName()).log(
+					Level.WARNING, "called GraphSym.setID() while id was locked:  {0} -> {1}", new Object[]{this.getID(), id});
 		}
 		else {
 			gid = id;

@@ -30,7 +30,6 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	static boolean main_batch_mode = false; // main() should run in batch mode (processing PSL files in psl_input_dir)
 	static boolean write_from_text = true; // main() should read psl file from text_file and write bps to bin_file
 	static boolean read_from_bps = false;  // main() should read bps file bin_file
-	static boolean REPORT_LOAD_STATS = false;
 
 	static String user_dir = System.getProperty("user.dir");
 
@@ -89,7 +88,8 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 					String in_path = fil.getPath();
 					String in_name = fil.getName();
 					if (in_name.endsWith(".psl")) {
-						GenometryModel.logInfo("processing PSL file: " + in_path);
+						Logger.getLogger(BpsParser.class.getName()).log(
+								Level.INFO, "processing PSL file: {0}", in_path);
 						String barename;
 						if (in_name.endsWith(".psl.psl")) {
 							barename = in_name.substring(0, in_name.lastIndexOf(".psl.psl"));
@@ -122,7 +122,8 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			String bin_file = args[0];
 			List syms = parse(bin_file, default_annot_type, seq_group);
 			int symcount = syms.size();
-			GenometryModel.logInfo("total sym count: " + symcount);
+			Logger.getLogger(BpsParser.class.getName()).log(
+					Level.INFO, "total sym count: {0}", symcount);
 			int[] blockcount = new int[100];
 			for (int i=0; i<symcount; i++) {
 				SeqSymmetry sym = (SeqSymmetry)syms.get(i);
@@ -131,7 +132,8 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			}
 			for (int i=0; i<blockcount.length; i++) {
 				if (blockcount[i] != 0) {
-					GenometryModel.logInfo("syms with " + i + " children: " + blockcount[i]);
+					Logger.getLogger(BpsParser.class.getName()).log(
+							Level.INFO, "syms with {0} children: {1}", new Object[]{i, blockcount[i]});
 				}
 			}
 		}
@@ -151,7 +153,8 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 
 	public static List<UcscPslSym> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
 			throws IOException {
-		GenometryModel.logInfo("loading file: " + file_name);
+		Logger.getLogger(BpsParser.class.getName()).log(
+							Level.INFO, "loading file: {0}", file_name);
 		List<UcscPslSym> results = null;
 		FileInputStream fis = null;
 		DataInputStream dis = null;
@@ -198,8 +201,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		HashMap<String,SeqSymmetry> query2sym = new HashMap<String,SeqSymmetry>(); // maps query chrom name to top-level symmetry
 		ArrayList<UcscPslSym> results = new ArrayList<UcscPslSym>(estimated_count);
 		int count = 0;
-		Timer tim = new Timer();
-		tim.start();
+
 		boolean reached_EOF = false;
 		try {
 			Thread thread = Thread.currentThread();
@@ -300,26 +302,12 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			GeneralUtils.safeClose(dis);
 		}
 
-		long timecount = tim.read();
-		if (REPORT_LOAD_STATS) {
-			GenometryModel.logInfo("PSL binary file load time: " + timecount/1000f);
-			if (! reached_EOF) {
-				GenometryModel.logInfo("File loading was terminated early.");
-			}
-		}
 		if (count <= 0) {
-			GenometryModel.logInfo("PSL total counts <= 0 ???");
+			Logger.getLogger(BpsParser.class.getName()).log(
+							Level.INFO, "PSL total counts <= 0 ???");
 		}
 		else {
-			tim.start();
 			Collections.sort(results, comp);
-			if (REPORT_LOAD_STATS) {
-				GenometryModel.logInfo("PSL sort time: " + tim.read()/1000f);
-				GenometryModel.logInfo("PSL alignment count = " + count);
-				GenometryModel.logInfo("PSL total block count = " + total_block_count);
-				GenometryModel.logInfo("PSL average blocks / alignment = " +
-						((double)total_block_count/(double)count));
-			}
 		}
 		return results;
 	}
@@ -353,7 +341,8 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(fis);
 		}
-		GenometryModel.logInfo("finished reading PSL file, time to read = " + (tim.read() / 1000f));
+		Logger.getLogger(BpsParser.class.getName()).log(
+							Level.INFO, "finished reading PSL file, time to read = {0}", (tim.read() / 1000f));
 		return results;
 	}
 

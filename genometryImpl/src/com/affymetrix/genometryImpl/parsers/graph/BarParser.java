@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.Timer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -109,7 +110,8 @@ public final class BarParser implements AnnotationWriter {
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
 		if (DEBUG) {
-			GenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base);
+			Logger.getLogger(BarParser.class.getName()).log(
+							Level.INFO, "trying to get slice, min = {0}, max = {1}", new Object[]{min_base, max_base});
 			System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
 		}
 		if (chunk_mins == null) {
@@ -429,7 +431,8 @@ public final class BarParser implements AnnotationWriter {
 				}
 			}
 			long t1 = tim.read();
-			GenometryModel.getLogger().fine("bar load time: " + t1 / 1000f);
+			Logger.getLogger(BarParser.class.getName()).log(
+							Level.FINE, "bar load time: {0}", t1 / 1000f);
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(dis);
@@ -540,7 +543,7 @@ public final class BarParser implements AnnotationWriter {
 
 
 
-	private static final HashMap<String, String> readTagValPairs(DataInput dis, int pair_count) throws IOException {
+	private static HashMap<String, String> readTagValPairs(DataInput dis, int pair_count) throws IOException {
 		HashMap<String, String> tvpairs = new HashMap<String, String>(pair_count);
 		if (DEBUG) {
 			System.out.println("reading tagvals: ");
@@ -732,7 +735,7 @@ public final class BarParser implements AnnotationWriter {
 			group = gmodel.getSeqGroup(version);
 		}
 		if (group == null) {
-			Logger.getLogger(BarParser.class.getName()).warning("Did not find group " + version + ".  Adding to default group " + default_seq_group.getID());
+			Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Did not find group {0}.  Adding to default group {1}", new Object[]{version, default_seq_group.getID()});
 			return default_seq_group;
 		}
 		if (group == default_seq_group) {
@@ -741,7 +744,7 @@ public final class BarParser implements AnnotationWriter {
 
 		// This is necessary to make sure new groups get added to the DataLoadView.
 		// maybe need a SeqGroupModifiedEvent class instead.
-		Logger.getLogger(BarParser.class.getName()).warning("Switching to group " + group.getID());
+		Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Switching to group {0}", group.getID());
 		gmodel.setSelectedSeqGroup(group);
 		return group;
 	}
@@ -808,7 +811,7 @@ public final class BarParser implements AnnotationWriter {
 
 	private static void writeTagValuePairs(DataOutputStream dos, Map<String, Object> tagValuePairs) throws IOException {
 		//any tag value pairs?
-		if (tagValuePairs == null || tagValuePairs.size() == 0) {
+		if (tagValuePairs == null || tagValuePairs.isEmpty()) {
 			dos.writeInt(0);
 			return;
 		}

@@ -13,10 +13,11 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class AffyDataGroup {
 
@@ -56,7 +57,8 @@ public final class AffyDataGroup {
 		group.num_datasets = dis.readInt(); // INT32
 		group.name = AffyGenericChpFile.parseWString(dis);
 
-		GenometryModel.logDebug("Parsing group: pos=" + group.file_pos + ", name=" + group.name + ", datasets=" + group.num_datasets);
+		Logger.getLogger(AffyDataGroup.class.getName()).log(
+							Level.FINE, "Parsing group: pos={0}, name={1}, datasets={2}", new Object[]{group.file_pos, group.name, group.num_datasets});
 
 		if (group.num_datasets > 1) {
 			//TODO: figure out why there is a bug in parsing multiple datasets.

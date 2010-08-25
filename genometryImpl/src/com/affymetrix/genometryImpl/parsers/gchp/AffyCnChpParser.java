@@ -17,15 +17,18 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class AffyCnChpParser {
 	public List<SeqSymmetry> parse(
 			File file, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotateSeq)
 			throws IOException {
-		GenometryModel.logInfo("Parsing with " + this.getClass().getName() + ": " + stream_name);
+
+		Logger.getLogger(AffyCnChpParser.class.getName()).log(
+							Level.FINE, "Parsing with {0}: {1}", new Object[]{this.getClass().getName(), stream_name});
 		ChromLoadPolicy loadPolicy = ChromLoadPolicy.getLoadAllPolicy();
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		try {

@@ -20,10 +20,11 @@ import cern.colt.list.ShortArrayList;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 final class AffySingleChromData {
 
@@ -53,7 +54,8 @@ final class AffySingleChromData {
 	}
 
 	private void parse(DataInputStream dis) throws IOException {
-		GenometryModel.logDebug("Parsing chromData: " + this.displayName + ", " + this.rowCount);
+		Logger.getLogger(AffySingleChromData.class.getName()).log(
+				Level.FINE, "Parsing chromData: {0}, {1}", new Object[]{this.displayName, this.rowCount});
 		for (int row=0; row < rowCount; row++) {
 			for (AffyChpColumnData col : columns) {
 				col.addData(dis);
@@ -167,7 +169,9 @@ final class AffySingleChromData {
 				GraphSym gsym = new GraphSym(positions.elements(), y, graphId, seq);
 				results.add(gsym);
 			} else {
-				GenometryModel.logError("Don't know how to make a graph for data of type: " + colData.type);
+				Logger.getLogger(
+						AffySingleChromData.class.getName()).log(
+						Level.SEVERE, "Don''t know how to make a graph for data of type: {0}", colData.type);
 			}
 		}
 

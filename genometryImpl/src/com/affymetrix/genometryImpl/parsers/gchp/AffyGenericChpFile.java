@@ -17,6 +17,8 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /** A parser for the Affymetrix Generic CHP format. */
 public final class AffyGenericChpFile {
@@ -66,9 +68,11 @@ public final class AffyGenericChpFile {
 
 		if (file != null) {
 			if (headerOnly) {
-				GenometryModel.logDebug("Parsing header of file: " + file.getName());
+				Logger.getLogger(AffyGenericChpFile.class.getName()).log(
+							Level.INFO, "Parsing header of file: {0}", file.getName());
 			} else {
-				GenometryModel.logDebug("Parsing file: " + file.getName());
+				Logger.getLogger(AffyGenericChpFile.class.getName()).log(
+							Level.INFO, "Parsing file: {0}", file.getName());
 			}
 		}
 

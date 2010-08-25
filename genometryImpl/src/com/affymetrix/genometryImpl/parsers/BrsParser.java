@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.UcscGeneSym;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
@@ -204,12 +203,13 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 			}
 		}
 		if (DEBUG) {
-			GenometryModel.logInfo("load time: " + tim.read() / 1000f);
-			GenometryModel.logInfo("transcript count = " + count);
-			GenometryModel.logInfo("exon count = " + total_exon_count);
+			Logger.getLogger(BrsParser.class.getName()).log(
+							Level.FINE, "transcript count = {0}", count);
+			Logger.getLogger(BrsParser.class.getName()).log(
+							Level.FINE, "exon count = {0}", total_exon_count);
 			if (count > 0) {
-				GenometryModel.logInfo("average exons / transcript = " +
-						((double) total_exon_count / (double) count));
+				Logger.getLogger(BrsParser.class.getName()).log(
+							Level.FINE, "average exons / transcript = {0}", ((double) total_exon_count / (double) count));
 			}
 		}
 		return results;
@@ -241,7 +241,8 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	}
 
 	private void convertTextToBinary(String file_name, String bin_file) {
-		GenometryModel.logInfo("loading file: " + file_name);
+		Logger.getLogger(BrsParser.class.getName()).log(
+							Level.FINE, "loading file: {0}", file_name);
 		int count = 0;
 		long flength = 0;
 		int max_tlength = Integer.MIN_VALUE;

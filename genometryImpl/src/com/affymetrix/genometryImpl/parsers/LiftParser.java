@@ -26,6 +26,8 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class LiftParser {
 
@@ -38,20 +40,12 @@ public final class LiftParser {
 	private static final int CHROM_LENGTH = 4;
 	private static final int CONTIG_NAME_SUBFIELD = 1;
 
-	//static BioSeq default_seq_template = new BioSeq();
-	//BioSeq template_seq = default_seq_template;
-
 	private static final boolean SET_COMPOSITION = true;
 
-	//public LiftParser()  {  }
-
-	//public LiftParser(BioSeq template) {
-	//template_seq = template;
-	//}
-
-	public static final AnnotatedSeqGroup loadChroms(String file_name, GenometryModel gmodel, String genome_version)
+	public static AnnotatedSeqGroup loadChroms(String file_name, GenometryModel gmodel, String genome_version)
 		throws IOException {
-		GenometryModel.logInfo("trying to load lift file: " + file_name);
+		Logger.getLogger(LiftParser.class.getName()).log(
+							Level.FINE, "trying to load lift file: {0}", file_name);
 		FileInputStream fistr = null;
 		AnnotatedSeqGroup result = null;
 		try {
@@ -71,7 +65,7 @@ public final class LiftParser {
 	 *  @return  A Map with chromosome ids as keys, and SmartAnnotBioSeqs representing
 	 *     chromosomes in the lift file as values.
 	 */
-	public static final AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version) throws IOException {
+	public static AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version) throws IOException {
 		return parse(istr, gmodel, genome_version, true);
 	}
 
@@ -81,9 +75,10 @@ public final class LiftParser {
 	 *  @return an AnnotatedSeqGroup containing SmartAnnotBioSeqs representing
 	 *     chromosomes in the lift file.
 	 */
-	public static final AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version, boolean annotate_seq)
+	public static AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version, boolean annotate_seq)
 		throws IOException {
-		GenometryModel.logInfo("parsing in lift file");
+		Logger.getLogger(LiftParser.class.getName()).log(
+							Level.FINE,"parsing in lift file");
 		Timer tim = new Timer();
 		tim.start();
 		int contig_count = 0;
@@ -141,7 +136,8 @@ public final class LiftParser {
 				comp.addChild(csym);
 			}
 		} catch (EOFException ex) {
-			GenometryModel.logDebug("reached end of lift file");
+			Logger.getLogger(LiftParser.class.getName()).log(
+							Level.FINE,"reached end of lift file");
 		}
 
 		for (BioSeq chrom : seq_group.getSeqList()) {
@@ -152,9 +148,12 @@ public final class LiftParser {
 				comp.addSpan(chromspan);
 			}
 		}
-		GenometryModel.logInfo("chroms loaded, load time = " + tim.read() / 1000f);
-		GenometryModel.logInfo("contig count: " + contig_count);
-		GenometryModel.logInfo("chrom count: " + chrom_count);
+		Logger.getLogger(LiftParser.class.getName()).log(
+							Level.INFO, "chroms loaded, load time = {0}", tim.read() / 1000f);
+		Logger.getLogger(LiftParser.class.getName()).log(
+							Level.INFO, "contig count: {0}", contig_count);
+		Logger.getLogger(LiftParser.class.getName()).log(
+							Level.INFO, "chrom count: {0}", chrom_count);
 		return seq_group;
 	}
 

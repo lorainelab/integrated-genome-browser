@@ -341,7 +341,7 @@ public abstract class BookmarkController {
         System.out.println("graph sym, points = " + graph.getPointCount() + ": " + graph);
       }
       String source_url = (String)graph.getProperty("source_url");
-      bookmark.add(graph);
+      bookmark.addGraph(graph);
       source_url = bookmark.getSource();
       if (source_url == null)  {
         String label = gr.getLabel();

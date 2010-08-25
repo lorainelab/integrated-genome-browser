@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.FormatPriorities;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -26,33 +25,11 @@ final public class Bookmarks {
     
     private final List<SymBookmark> syms = new ArrayList<SymBookmark>();
 
-	public void add(GenericFeature feature){
+	public boolean add(GenericFeature feature){
 		if(feature == null)
-			return;
+			return false;
 
-		GenericVersion version = feature.gVersion;
-
-		if(version.gServer.serverType == ServerType.DAS2){
-			Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
-			String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
-
-			Das2Type type = (Das2Type) feature.typeObj;
-
-			String file_name = type.getID();
-			String extension =  FormatPriorities.getFormat(type);
-
-			syms.add(new SymBookmark(server_str, version.versionID, file_name, extension, version.gServer.serverType));
-		}else if (version.gServer.serverType == ServerType.QuickLoad){
-			SymLoader sym = feature.symL;
-
-			if(sym == null)
-				return;
-
-			String extension = sym.extension;
-			extension = extension.substring(extension.indexOf(".") + 1);
-
-			syms.add(new SymBookmark(version.gServer.URL, version.versionID, sym.uri.toString(), extension, version.gServer.serverType));
-		}
+		return addToSyms(feature);
 	}
 	
     /**
@@ -63,7 +40,7 @@ final public class Bookmarks {
 	 *
      * @param id the id of the graph
      */
-    void add(GraphSym graph){
+    void addGraph(GraphSym graph){
 		if(!checkServerMatch(graph)){
 			syms.add(new SymBookmark());
 		}
@@ -76,21 +53,46 @@ final public class Bookmarks {
 		for(GenericVersion version : as.getEnabledVersions()){
 			for( GenericFeature feature : version.getFeatures()){
 				if(gid.endsWith(feature.featureName)){
-					GenericServer server = version.gServer;
-					if(server.serverType == ServerType.DAS2){
-						// Need to get server url form Das2VersionedSource only.
-						// It should match to key in Das2Capability.getCapabilityMap().
-						Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
-						String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
-						syms.add(new SymBookmark(server_str, version.versionID, feature.featureName, "bar", version.gServer.serverType));
-						return true;
-					}
+					return addToSyms(feature);
 				}
 			}
 		}
 		return false;
 	}
-    
+
+	private boolean addToSyms(GenericFeature feature){
+		GenericVersion version = feature.gVersion;
+
+		if(version.gServer.serverType == ServerType.DAS2){
+
+			Das2Type type = (Das2Type) feature.typeObj;
+
+			String file_name = type.getID();
+			String format =  FormatPriorities.getFormat(type);
+
+			Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
+			String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
+
+			syms.add(new SymBookmark(server_str, version.versionID, file_name, format, version.gServer.serverType));
+
+			return true;
+		}else if (version.gServer.serverType == ServerType.QuickLoad){
+			SymLoader sym = feature.symL;
+
+			if(sym == null)
+				return false;
+
+			String format = sym.extension;
+			format = format.substring(format.indexOf(".") + 1);
+
+			syms.add(new SymBookmark(version.gServer.URL, version.versionID, sym.uri.toString(), format, version.gServer.serverType));
+
+			return true;
+		}
+
+		return false;
+	}
+
     /**
     * returns the current/last parser
     *

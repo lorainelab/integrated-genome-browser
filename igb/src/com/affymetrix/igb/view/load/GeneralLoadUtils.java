@@ -89,9 +89,6 @@ public final class GeneralLoadUtils {
 	 */
 	private static final String SPECIES_SYNONYM_FILE = "/species.txt";
 
-	/** Unused list of chromosomes that may be used in a future chromosome lookup */
-	private static final String CHROM_SYNONYM_FILE = "/chromosomes.txt";
-
 	private static final double MAGIC_SPACER_NUMBER = 10.0;	// spacer factor used to keep genome spacing reasonable
 	
 	private final static SeqMapView gviewer = Application.getSingleton().getMapView();
@@ -618,31 +615,28 @@ public final class GeneralLoadUtils {
 			return false;
 		}
 
-
-		ServerType serverType = gFeature.gVersion.gServer.serverType;
-
-		if (serverType == ServerType.DAS2) {
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			return loadFeatures(overlap, gFeature);
-		}
-		if (serverType == ServerType.DAS) {
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			return DasFeatureLoader.loadFeatures(overlap, gFeature);
-		}
-		if (serverType == ServerType.QuickLoad) {
-			QuickLoad symL = (QuickLoad) gFeature.symL;
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + symL.featureName);
-			return symL.loadFeatures(overlap, gFeature);
-		}
-		if (serverType == ServerType.LocalFiles) {
-			QuickLoad symL = (QuickLoad) gFeature.symL;
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + symL.featureName);
-			return symL.loadFeatures(overlap, gFeature);
-		}
-		System.out.println("class " + serverType + " is not implemented.");
-		return false;
+		return loadAndDisplaySpan(overlap, gFeature);
 	}
 
+	public static boolean loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
+		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+		if (optimized_sym == null) {
+			Logger.getLogger(DasFeatureLoader.class.getName()).log(
+					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
+			return true;
+		}
+		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
+		switch (feature.gVersion.gServer.serverType) {
+			case DAS2:
+				return loadFeatures(span, feature);
+			case DAS:
+				return DasFeatureLoader.loadFeatures(span, feature);
+			case QuickLoad:
+			case LocalFiles:
+				return ((QuickLoad) feature.symL).loadFeatures(span, feature);
+		}
+		return false;
+	}
 	
 
 	/**

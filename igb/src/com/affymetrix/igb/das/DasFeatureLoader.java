@@ -44,6 +44,7 @@ public final class DasFeatureLoader {
 	 * @return true if data was loaded
 	 */
 	public static boolean loadFeatures( SeqSpan query_span, GenericFeature gFeature) {
+		SeqSymmetry optimized_sym = gFeature.optimizeRequest(query_span);
 		DasType feature = (DasType)gFeature.typeObj;
 		URL serverURL = feature.getServerURL();
 		BioSeq current_seq = query_span.getBioSeq();
@@ -55,14 +56,6 @@ public final class DasFeatureLoader {
 			QueryBuilder builder = new QueryBuilder(new URL(serverURL, feature.getSource() + "/features"));
 			builder.add("segment", segment);
 			builder.add("type", feature.getID());
-
-			SeqSymmetry optimized_sym = gFeature.optimizeRequest(query_span);
-			if (optimized_sym == null) {
-				Logger.getLogger(DasFeatureLoader.class.getName()).log(
-						Level.INFO,"All of new query covered by previous queries for feature {0}", gFeature.featureName);
-				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
-				return true;
-			}
 			loadOptimizedSym(optimized_sym, builder, segment, urls, gFeature);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

@@ -152,14 +152,6 @@ public final class QuickLoad extends SymLoader {
 			return loadResiduesThread(feature.loadStrategy, overlapSpan, seq, gviewer, vexec);
 		}
 
-		SeqSymmetry optimized_sym = feature.optimizeRequest(overlapSpan);
-		if (optimized_sym == null) {
-			Logger.getLogger(QuickLoad.class.getName()).log(
-					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
-			return true;
-		}
-
 		return loadSymmetriesThread(feature, overlapSpan, gviewer, vexec);
 
 	}

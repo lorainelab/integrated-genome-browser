@@ -339,10 +339,8 @@ public final class UnibrowControlServlet {
 					view.tableChanged();
 					BioSeq seq = feature.gVersion.group.getSeq(chromosome);
 					if(seq != null){
-						QuickLoad symL = (QuickLoad) feature.symL;
-						Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 						SeqSpan overlap = new SimpleSeqSpan(min, max, seq);
-						symL.loadFeatures(overlap, feature);
+						GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
 					}
 				} else {
 					Logger.getLogger(GeneralUtils.class.getName()).log(
@@ -409,9 +407,8 @@ public final class UnibrowControlServlet {
 					view.tableChanged();
 					BioSeq seq = feature.gVersion.group.getSeq(chromosome);
 					if(seq != null){
-						Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 						SeqSpan overlap = new SimpleSeqSpan(min, max, seq);
-						DasFeatureLoader.loadFeatures(overlap, feature);
+						GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
 					}
 				} else {
 					Logger.getLogger(GeneralUtils.class.getName()).log(

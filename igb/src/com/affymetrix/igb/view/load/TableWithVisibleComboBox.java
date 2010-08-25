@@ -49,29 +49,13 @@ public final class TableWithVisibleComboBox {
 		// tell the JTableX which RowEditorModel we are using
 		table.setRowEditorModel(rm);
 
-		JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
-		DAScb.setRenderer(comboRenderer);
-		DAScb.setEnabled(true);
-		DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
-
 		for (int row = 0; row < featureSize; row++) {
 			GenericFeature gFeature = ftm.getFeature(row);
-			SymLoader symL = gFeature.symL;
-			if (symL != null) {
-				JComboBox featureCB = new JComboBox(symL.getLoadChoices().toArray());
-				featureCB.setRenderer(comboRenderer);
-				featureCB.setEnabled(true);
-				DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
-				rm.addEditorForRow(row, featureEditor);
-				continue;
-			}
-
-			ServerType serverType = gFeature.gVersion.gServer.serverType;
-			if (serverType == ServerType.DAS || serverType == ServerType.DAS2) {
-				rm.addEditorForRow(row, DASeditor);
-			} else {
-				System.out.println("ERROR: Unexpected class " + serverType);
-			}
+			JComboBox featureCB = new JComboBox(gFeature.getLoadChoices().toArray());
+			featureCB.setRenderer(comboRenderer);
+			featureCB.setEnabled(true);
+			DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
+			rm.addEditorForRow(row, featureEditor);
 		}
 
 		TableColumn c = table.getColumnModel().getColumn(column);

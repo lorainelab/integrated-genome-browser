@@ -20,8 +20,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public final class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
 	private static final String[] columnNames = { "Choose Load Mode", "Data Set","Data Source"};
-	static final String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
-
+	
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int LOAD_STRATEGY_COLUMN = 0;
 	static final int FEATURE_NAME_COLUMN = 1;

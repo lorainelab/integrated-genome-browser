@@ -19,7 +19,6 @@ import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.MapRangeBox;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.io.BufferedReader;
@@ -371,21 +370,11 @@ public class ScriptFileLoader {
 		}
 		GenericFeature feature = GeneralUtils.findFeatureWithURI(features, featureURI);
 		if (feature != null) {
-			feature.loadStrategy = getFeatureLoadStrategy(feature.symL.getLoadChoices(), s);
+			GenericFeature.setPreferredLoadStrategy(feature, s);
 		} else {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "Couldn''t find feature :{0}", featureURIStr);
 		}
-	}
-
-	private static LoadStrategy getFeatureLoadStrategy(List<LoadStrategy> choices, LoadStrategy s){
-		if (choices.contains(s))
-			return s;
-
-		Logger.getLogger(ScriptFileLoader.class.getName()).log(Level.WARNING,
-					"Given {0} strategy is not permitted instead using {1} "
-					+ "strategy.", new Object[]{s, choices.get(0)});
-		return choices.get(0);
 	}
 	
 	/**

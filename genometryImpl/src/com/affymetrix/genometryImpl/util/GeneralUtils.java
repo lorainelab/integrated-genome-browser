@@ -313,6 +313,16 @@ public final class GeneralUtils {
 		return null;	// couldn't find it
 	}
 
+	public static GenericFeature findFeatureInDas(List<GenericFeature> features, String source, String name){
+		for (GenericFeature feature : features) {
+			if (feature.typeObj instanceof DasType) {
+				DasType type = (DasType)feature.typeObj;
+				if(type.getSource().equals(source) && type.getName().equals(name))
+					return feature;
+			}
+		}
+		return null;	// couldn't find it
+	}
 
 	/**
 	 * Moves mapping to the given path and renames it to filename.

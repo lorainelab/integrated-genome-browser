@@ -19,7 +19,6 @@ import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
-import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import java.net.URL;
@@ -32,6 +31,10 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import javax.swing.SwingWorker;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class FeatureLoading {
 
 	private static final boolean DEBUG = false;

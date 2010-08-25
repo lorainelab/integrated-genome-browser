@@ -45,7 +45,8 @@ public final class QuickLoadServerModel {
 	private final String root_url;
 	private final List<String> genome_names = new ArrayList<String>();
 	private final Map<String, String> genome_dir = new HashMap<String, String>();
-	private final Map<String, Boolean> genome2init = new HashMap<String, Boolean>();
+	/** A set containing initialized genomes */
+	private final Set<String> initialized = new HashSet<String>();
 	// A map from String genome name to a Map of (typeName,fileName) on the server for that group
 	private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
 	private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
@@ -137,7 +138,7 @@ public final class QuickLoadServerModel {
 	 */
 	public List<String> getTypes(String genome_name) {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
-		if (genome2init.get(genome_name) != Boolean.TRUE) {
+		if (!initialized.contains(genome_name)) {
 			initGenome(genome_name);
 		}
 		if (getAnnotsMap(genome_name) == null) {
@@ -167,7 +168,7 @@ public final class QuickLoadServerModel {
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(
 				Level.FINE, "initializing data for genome: {0}", genome_name);
 		if (loadSeqInfo(genome_name) && loadAnnotationNames(genome_name)) {
-			genome2init.put(genome_name, Boolean.TRUE);
+			initialized.add(genome_name);
 			return;
 		}
 

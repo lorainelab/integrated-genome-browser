@@ -34,6 +34,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class QuickLoadServerModel {
 
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
@@ -65,6 +69,8 @@ public final class QuickLoadServerModel {
 		root_url = url;
 		primary_url = pri_url;
 		primaryServer = priServer;
+
+		Logger.getLogger(QuickLoadServerModel.class.getName()).log(Level.FINE, "( {0}, {1} )", new Object[] { root_url, primary_url });
 		
 		loadGenomeNames();
 	}
@@ -181,7 +187,6 @@ public final class QuickLoadServerModel {
 	 */
 	private boolean loadAnnotationNames(String genome_name) {
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
-		String genome_root = getOrganismDir(genome_name) + "/" + genome_name + "/" ;
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(
 				Level.FINE, "loading list of available annotations for genome: {0}", genome_name);
 
@@ -193,7 +198,7 @@ public final class QuickLoadServerModel {
 		InputStream istr = null;
 		String filename = null;
 		try{
-			filename = genome_root + Constants.annotsXml;
+			filename = getPath(genome_name, Constants.annotsXml);
 			istr = getInputStream(filename, false, true);
 			boolean annots_found = processAnnotsXml(istr, annotList);
 
@@ -202,7 +207,7 @@ public final class QuickLoadServerModel {
 
 			Logger.getLogger(QuickLoadServerModel.class.getName()).log(
 					Level.FINE, "Couldn''t found annots.xml for {0}. Looking for annots.txt now.", genome_name);
-			filename = genome_root + Constants.annotsTxt;
+			filename = getPath(genome_name, Constants.annotsTxt);
 			istr = getInputStream(filename, getCacheAnnots(), false);
 
 			return processAnnotsTxt(istr, annotList);
@@ -276,11 +281,10 @@ public final class QuickLoadServerModel {
 		String modChromInfo = Constants.modChromInfoTxt;
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
-		String genome_root = getOrganismDir(genome_name) + "/" + genome_name + "/" ;
 		InputStream lift_stream = null;
 		InputStream cinfo_stream = null;
 		try {
-			String lift_path = genome_root + liftAll;
+			String lift_path = getPath(genome_name, liftAll);
 			try {
 				// don't warn about this file, since we'll look for modChromInfo file
 				lift_stream = getInputStream(lift_path, getCacheAnnots(), true);
@@ -291,7 +295,7 @@ public final class QuickLoadServerModel {
 				lift_stream = null;
 			}
 			if (lift_stream == null) {
-				String cinfo_path = genome_root + modChromInfo;
+				String cinfo_path = getPath(genome_name, modChromInfo);
 				try {
 					cinfo_stream = getInputStream(cinfo_path, getCacheAnnots(), false);
 				} catch (Exception ex) {
@@ -392,7 +396,26 @@ public final class QuickLoadServerModel {
 		return genome_dir.get(version);
 	}
 
-	public InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist) throws IOException{
+	public String getPath(String genome_name, String file) {
+		StringBuilder builder = new StringBuilder();
+		String organism = getOrganismDir(genome_name);
+
+		if (organism != null && !organism.isEmpty()) {
+			builder.append(organism);
+			builder.append("/");
+		}
+
+		builder.append(LOOKUP.findMatchingSynonym(genome_names, genome_name));
+		builder.append("/");
+
+		if (file != null && !file.isEmpty()) {
+			builder.append(file);
+		}
+
+		return builder.toString();
+	}
+
+	private InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist) throws IOException{
 		String load_url = getLoadURL() + append_url;
 		InputStream istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist);
 
@@ -408,7 +431,7 @@ public final class QuickLoadServerModel {
 		}
 
 		Logger.getLogger(QuickLoadServerModel.class.getName()).log(
-				Level.FINE, "Load URL :{0}", load_url);
+				Level.FINE, "Load URL: {0}", load_url);
 		return istr;
 	}
 

@@ -219,10 +219,8 @@ public final class TierLabelManager {
 			return;
 		}
 
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-
-		List<SeqSymmetry> symmetries = new ArrayList<SeqSymmetry>();
-		symmetries.addAll(gmodel.getSelectedSymmetriesOnCurrentSeq());
+		Set<SeqSymmetry> symmetries = new HashSet<SeqSymmetry>();
+		symmetries.addAll(GenometryModel.getGenometryModel().getSelectedSymmetries(GenometryModel.getGenometryModel().getSelectedSeq()));
 
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
 			TierGlyph tg = tierlabel.getReferenceTier();
@@ -249,23 +247,19 @@ public final class TierLabelManager {
 					SeqSymmetry sym = (SeqSymmetry) child.getInfo();
 					// sym will be a GraphSym, but we don't need to cast it
 					if (tierlabel.isSelected()) {
-						if (!symmetries.contains(sym)) {
-							symmetries.add(sym);
-						}
+						symmetries.add(sym);
 					} else if (symmetries.contains(sym)) {
 						symmetries.remove(sym);
 					}
 				}
 			}else if(seqsym != null){
 				if (tierlabel.isSelected()) {
-					if (!symmetries.contains(seqsym)) {
-						symmetries.add(seqsym);
-					}
+					symmetries.add(seqsym);
 				}
 			}
 		}
 
-		gmodel.setSelectedSymmetries(symmetries, this);
+		GenometryModel.getGenometryModel().setSelectedSymmetries(new ArrayList<SeqSymmetry>(symmetries), this);
 	}
 
 	/** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */

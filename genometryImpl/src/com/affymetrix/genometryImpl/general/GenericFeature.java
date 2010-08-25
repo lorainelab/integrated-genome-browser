@@ -9,6 +9,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +34,13 @@ public final class GenericFeature {
 	public URL friendlyURL = null;			// friendly URL that users may look at.
 	public final Object typeObj;    // Das2Type, DasType, ...?
 	public final SymLoader symL;
+	private static final List<LoadStrategy> standardLoadChoices = new ArrayList<LoadStrategy>();
+
+	static {
+		standardLoadChoices.add(LoadStrategy.NO_LOAD);
+		standardLoadChoices.add(LoadStrategy.VISIBLE);
+		standardLoadChoices.add(LoadStrategy.CHROMOSOME);
+	}
 	
 	// Requests that have been made for this feature (to avoid overlaps)
 	private final MutableSeqSymmetry requestSym = new SimpleMutableSeqSymmetry();
@@ -141,6 +150,13 @@ public final class GenericFeature {
 		return null;
 	}
 
+	public List<LoadStrategy> getLoadChoices(){
+		if(symL != null)
+			return symL.getLoadChoices();
+
+		return standardLoadChoices;
+	}
+	
 	@Override
 	public String toString() {
 		// remove all but the last "/", since these will be represented in a friendly tree view.

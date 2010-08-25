@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -25,7 +26,7 @@ public class CachingInputStream extends FilterInputStream {
 	public CachingInputStream(InputStream is, File cacheFile, String url) {
 		super(is);
 		try {
-			this.outputStream = new FileOutputStream(cacheFile);
+			this.outputStream = new BufferedOutputStream(new FileOutputStream(cacheFile));
 			this.url = url;
 		} catch (FileNotFoundException e) {
 			this.fail(e);

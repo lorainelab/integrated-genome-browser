@@ -48,12 +48,11 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.das.DasFeatureLoader;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.symloader.QuickLoad;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -131,7 +130,13 @@ public final class UnibrowControlServlet {
 		String[] graph_files = parameters.get("graph_file");
 		boolean has_graph_source_urls = (parameters.get("graph_source_url_0") != null);
 
-		boolean ok = goToBookmark(uni, seqid, version, start_param, end_param, select_start_param, select_end_param, graph_files);
+		int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
+		int start = values[0],
+			end   = values[1],
+			selstart = values[2],
+			selend   = values[3];
+
+		boolean ok = goToBookmark(uni, seqid, version, start, end, selstart, selend, graph_files);
 		if (!ok) {
 			return; /* user cancelled the change of genome, or something like that */
 		}
@@ -144,13 +149,9 @@ public final class UnibrowControlServlet {
 		String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
 		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
 
-		String[] quick_query_urls = parameters.get(Bookmark.QUICK_QUERY_URL);
-		String[] quick_server_urls = parameters.get(Bookmark.QUICK_SERVER_URL);
-		loadDataFromQuickLoad(quick_server_urls, quick_query_urls, version, seqid, start_param, end_param);
-
-		String[] das_query_urls = parameters.get(Bookmark.DAS_QUERY_URL);
-		String[] das_server_urls = parameters.get(Bookmark.DAS_SERVER_URL);
-		loadDataFromDas(das_server_urls, das_query_urls, version, seqid, start_param, end_param);
+		String[] query_urls = parameters.get(Bookmark.QUERY_URL);
+		String[] server_urls = parameters.get(Bookmark.SERVER_URL);
+		loadData(server_urls, query_urls, version, seqid, start, end);
 
 		//String[] data_urls = parameters.get(Bookmark.DATA_URL);
 		//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
@@ -295,133 +296,74 @@ public final class UnibrowControlServlet {
 		}
 	}
 
-	private static void loadDataFromQuickLoad(final String[] quick_server_urls, final String[] quick_query_urls, String version, String chromosome, String start_param, String end_param) {
-		if (quick_server_urls == null || quick_query_urls == null
-				|| quick_query_urls.length == 0 || quick_server_urls.length != quick_query_urls.length) {
+	private static void loadData(final String[] server_urls, final String[] query_urls, String version, String chromosome, int start, int end){
+		if (server_urls == null || query_urls == null
+				|| query_urls.length == 0 || server_urls.length != query_urls.length) {
 			return;
 		}
-		int min = 0;
-		int max = Integer.MAX_VALUE;
-		if (start_param == null || start_param.equals("")) {
-			System.err.println("No start value found in the bookmark URL");
-		} else {
-			min = Integer.parseInt(start_param);
-		}
-		if (end_param == null || end_param.equals("")) {
-			System.err.println("No end value found in the bookmark URL");
-		} else {
-			max = Integer.parseInt(end_param);
-		}
-		
-		for (int i = 0; i < quick_server_urls.length; i++) {
-			String quick_server_url = quick_server_urls[i];
-			String quick_query_url = quick_query_urls[i];
+
+		for (int i = 0; i < server_urls.length; i++) {
+			String server_url = server_urls[i];
+			String query_url = query_urls[i];
+
 			try {
-				GenericServer gServer = ServerList.getServer(quick_server_url);
+				GenericServer gServer = ServerList.getServer(server_url);
 				if (gServer == null) {
-					gServer = ServerList.addServer(ServerType.DAS2, quick_server_url, quick_server_url, true);
+					//TOD0 - What if server is not found.
 				} else if (!gServer.isEnabled()) {
 					gServer.setEnabled(true);
 					GeneralLoadUtils.discoverServer(gServer);
 					// enable the server.
 					// TODO - this will be saved in preferences as enabled, although it shouldn't.
 				}
-				URL quickloadURL = new URL((String) gServer.serverObj);
-				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-				List<String> typeNames = quickloadServer.getTypes(version);
-				URI uri = URI.create(quick_query_url);
-				GenericFeature feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
+
+				GenericFeature feature = null;
+
+				if(gServer.serverType == ServerType.DAS){
+					String source = null;
+					String type = null;
+					int qindex = query_url.indexOf('?');
+					if (qindex <= -1) {
+						continue;
+					}
+					source = query_url.substring(0, qindex);
+					type = query_url.substring(qindex + 1, query_url.length());
+
+					DasServerInfo dasServerInfo = (DasServerInfo) gServer.serverObj;
+					DasSource dasSource = dasServerInfo.getDataSources().get(source);
+					dasSource.getTypes();
+					feature = GeneralUtils.findFeatureInDas(GeneralLoadUtils.getFeatures(version), source, type);
+
+				} else if (gServer.serverType == ServerType.QuickLoad){
+					
+					URL quickloadURL = new URL((String) gServer.serverObj);
+					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+					quickloadServer.getTypes(version);
+					URI uri = URI.create(query_url);
+					feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
+				}
 
 				if (feature != null) {
 					feature.setVisible();
-					feature.loadStrategy = LoadStrategy.VISIBLE;
-					DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
-					view.tableChanged();
+					GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);
+					GeneralLoadView.getLoadView().createFeaturesTable();
 					BioSeq seq = feature.gVersion.group.getSeq(chromosome);
 					if(seq != null){
-						SeqSpan overlap = new SimpleSeqSpan(min, max, seq);
+						SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
 						GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
 					}
 				} else {
 					Logger.getLogger(GeneralUtils.class.getName()).log(
-							Level.SEVERE, "Couldn't find feature for bookmark URL: {0}", uri);
+							Level.SEVERE, "Couldn't find feature for bookmark url {0}", query_url);
 				}
 
 			} catch (Exception ex) {
-				// something went wrong with deconstructing quickload query URL.
+				// something went wrong with deconstructing quickload/das query URL.
 				ex.printStackTrace();
 			}
 		}
 	}
 
-	private static void loadDataFromDas(final String[] das_server_urls, final String[] das_query_urls, String version, String chromosome, String start_param, String end_param){
-		if (das_server_urls == null || das_query_urls == null
-				|| das_query_urls.length == 0 || das_server_urls.length != das_query_urls.length) {
-			return;
-		}
-		int min = 0;
-		int max = Integer.MAX_VALUE;
-		if (start_param == null || start_param.equals("")) {
-			System.err.println("No start value found in the bookmark URL");
-		} else {
-			min = Integer.parseInt(start_param);
-		}
-		if (end_param == null || end_param.equals("")) {
-			System.err.println("No end value found in the bookmark URL");
-		} else {
-			max = Integer.parseInt(end_param);
-		}
-
-		for (int i = 0; i < das_server_urls.length; i++) {
-			String das_server_url = das_server_urls[i];
-			String das_query_url = das_query_urls[i];
-			String source = null;
-			String type = null;
-			int qindex = das_query_url.indexOf('?');
-			if (qindex <= -1) {
-				continue;
-			}
-			source = das_query_url.substring(0, qindex);
-			type = das_query_url.substring(qindex + 1, das_query_url.length());
-
-			try {
-				GenericServer gServer = ServerList.getServer(das_server_url);
-				if (gServer == null) {
-					gServer = ServerList.addServer(ServerType.DAS2, das_server_url, das_server_url, true);
-				} else if (!gServer.isEnabled()) {
-					gServer.setEnabled(true);
-					GeneralLoadUtils.discoverServer(gServer);
-					// enable the server.
-					// TODO - this will be saved in preferences as enabled, although it shouldn't.
-				}
-				DasServerInfo dasServerInfo = (DasServerInfo) gServer.serverObj;
-				DasSource dasSource = dasServerInfo.getDataSources().get(source);
-				dasSource.getTypes();
-
-				GenericFeature feature = GeneralUtils.findFeatureInDas(GeneralLoadUtils.getFeatures(version), source, type);
-
-				if (feature != null) {
-					feature.setVisible();
-					feature.loadStrategy = LoadStrategy.VISIBLE;
-					DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
-					view.tableChanged();
-					BioSeq seq = feature.gVersion.group.getSeq(chromosome);
-					if(seq != null){
-						SeqSpan overlap = new SimpleSeqSpan(min, max, seq);
-						GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
-					}
-				} else {
-					Logger.getLogger(GeneralUtils.class.getName()).log(
-							Level.SEVERE, "Couldn't find feature for bookmark source {0} and type {1}", new Object[]{source, type});
-				}
-
-			} catch (Exception ex) {
-				// something went wrong with deconstructing quickload query URL.
-				ex.printStackTrace();
-			}
-		}
-	}
-	
 	private static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
 		try {
 			if (data_urls != null && data_urls.length != 0) {
@@ -439,10 +381,9 @@ public final class UnibrowControlServlet {
 		}
 	}
 
-	private static boolean goToBookmark(Application uni, String seqid, String version,
-					String start_param, String end_param,
-					String select_start_param, String select_end_param,
-					final String[] graph_files) throws NumberFormatException {
+	private static int[] parseValues(String start_param, String end_param,
+					String select_start_param, String select_end_param)
+					throws NumberFormatException {
 
 		int start = 0;
 		int end = Integer.MAX_VALUE;
@@ -462,7 +403,7 @@ public final class UnibrowControlServlet {
 			selstart = Integer.parseInt(select_start_param);
 			selend = Integer.parseInt(select_end_param);
 		}
-		return goToBookmark(uni, seqid, version, start, end, selstart, selend, graph_files);
+		return new int[]{start, end, selstart, selend};
 	}
 
 	/** Loads the sequence and goes to the specified location.

@@ -45,11 +45,8 @@ public final class Bookmark implements Serializable {
   public static final String DAS2_QUERY_URL = "das2_query";
   public static final String DAS2_SERVER_URL = "das2_server";
 
-  public static final String QUICK_QUERY_URL = "quick_query";
-  public static final String QUICK_SERVER_URL = "quick_server";
-
-  public static final String DAS_QUERY_URL = "das_query";
-  public static final String DAS_SERVER_URL = "das_server";
+  public static final String QUERY_URL = "query_url";
+  public static final String SERVER_URL = "server_url";
 
   /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark,
       this optional paramater can be used to give the filetype extensions, such as ".gff" of

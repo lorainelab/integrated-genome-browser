@@ -92,8 +92,6 @@ final public class Bookmarks {
 			return true;
 		}else if (version.gServer.serverType == ServerType.DAS){
 
-			DasServerInfo dasServerInfo = (DasServerInfo) version.versionSourceObj;
-
 			DasType type = (DasType)feature.typeObj;
 
 			String source = type.getSource();
@@ -161,11 +159,8 @@ final public class Bookmarks {
         List<String> das2queries = new ArrayList<String>();
         List<String> das2servers = new ArrayList<String>();
 
-		List<String> quickqueries = new ArrayList<String>();
-		List<String> quickservers = new ArrayList<String>();
-
-		List<String> dasqueries = new ArrayList<String>();
-		List<String> dasservers = new ArrayList<String>();
+		List<String> queries = new ArrayList<String>();
+		List<String> servers = new ArrayList<String>();
 
         for(SymBookmark bookmark : this.syms){
             if(bookmark.isValid()){
@@ -177,23 +172,18 @@ final public class Bookmarks {
 					String query = getDas2Query(bookmark, start, end, chr);
 					das2servers.add(server);
 					das2queries.add(query);
-				}else if (bookmark.getServerType() == ServerType.QuickLoad){
-					quickservers.add(bookmark.getServer());
-					quickqueries.add(bookmark.getPath());
-				}else if (bookmark.getServerType() == ServerType.DAS){
-					dasservers.add(bookmark.getServer());
-					dasqueries.add(bookmark.getPath());
+				}else if (bookmark.getServerType() == ServerType.QuickLoad
+						||bookmark.getServerType() == ServerType.DAS){
+					servers.add(bookmark.getServer());
+					queries.add(bookmark.getPath());
 				}
 			}
         }
         mark_sym.setProperty(Bookmark.DAS2_QUERY_URL, das2queries.toArray(new String[das2queries.size()]));
         mark_sym.setProperty(Bookmark.DAS2_SERVER_URL, das2servers.toArray(new String[das2servers.size()]));
 
-		mark_sym.setProperty(Bookmark.QUICK_QUERY_URL, quickqueries.toArray(new String[quickqueries.size()]));
-	    mark_sym.setProperty(Bookmark.QUICK_SERVER_URL, quickservers.toArray(new String[quickservers.size()]));
-
-		mark_sym.setProperty(Bookmark.DAS_QUERY_URL, dasqueries.toArray(new String[dasqueries.size()]));
-	    mark_sym.setProperty(Bookmark.DAS_SERVER_URL, dasservers.toArray(new String[dasservers.size()]));
+		mark_sym.setProperty(Bookmark.QUERY_URL, queries.toArray(new String[queries.size()]));
+	    mark_sym.setProperty(Bookmark.SERVER_URL, servers.toArray(new String[servers.size()]));
 
     }
 

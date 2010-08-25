@@ -396,6 +396,15 @@ public final class QuickLoadServerModel {
 		return genome_dir.get(version);
 	}
 
+	/**
+	 * Translate a file in a genome to a relative path under this
+	 * QuickLoad directory.  If file is null or an empty string, this
+	 * will return the path to the version directory.
+	 *
+	 * @param genome_name name of this genome version
+	 * @param file the file in question.  Can be null
+	 * @return path to the file or version directory if file is null
+	 */
 	public String getPath(String genome_name, String file) {
 		StringBuilder builder = new StringBuilder();
 		String organism = getOrganismDir(genome_name);

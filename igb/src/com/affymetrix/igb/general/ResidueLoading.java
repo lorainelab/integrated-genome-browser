@@ -161,7 +161,7 @@ public final class ResidueLoading {
 				try {
 					URL quickloadURL = new URL((String) server.serverObj);
 					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-					path += quickloadServer.getPath(version.versionName, seq_name);
+					path = quickloadServer.getPath(version.versionName, seq_name);
 				} catch (MalformedURLException ex) {
 					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -319,7 +319,7 @@ public final class ResidueLoading {
 	/**
 	 * Get the partial residues from the specified QuickLoad server.
 	 * @param seq_group
-	 * @param seq_name
+	 * @param path
 	 * @param root_url
 	 * @param span
 	 * @return residue String.
@@ -383,7 +383,7 @@ public final class ResidueLoading {
 	/**
 	 * Get the residues from the specified QuickLoad server.
 	 * @param seq_group
-	 * @param seq_name
+	 * @param path
 	 * @param root_url
 	 * @return true or false
 	 */

@@ -111,7 +111,7 @@ public final class QuickLoad extends SymLoader {
 			}
 		} else {
 			uri = URI.create(
-					version.gServer.URL + "/"
+					version.gServer.URL
 					+ organims_dir + "/" 
 					+ version.versionID + "/"
 					+ determineFileName(version, featureName));

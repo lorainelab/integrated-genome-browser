@@ -625,19 +625,39 @@ public final class GeneralLoadUtils {
 					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 			return true;
 		}
+		List<SeqSpan> spans = new ArrayList<SeqSpan>();
+		convertSymToSpanList(optimized_sym,spans);
 		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 		switch (feature.gVersion.gServer.serverType) {
 			case DAS2:
 				return loadFeatures(span, feature);
 			case DAS:
-				return DasFeatureLoader.loadFeatures(span, feature);
+				return DasFeatureLoader.loadFeatures(spans, feature);
 			case QuickLoad:
 			case LocalFiles:
 				return ((QuickLoad) feature.symL).loadFeatures(span, feature);
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Walk the SeqSymmetry, converting all of its children into spans.
+	 * @param sym the SeqSymmetry to walk.
+	 */
+	private static void convertSymToSpanList(SeqSymmetry sym, List<SeqSpan> spans) {
+		int childCount = sym.getChildCount();
+		if (childCount > 0) {
+			for (int i = 0; i < childCount; i++) {
+				convertSymToSpanList(sym.getChild(i), spans);
+			}
+		} else {
+			int spanCount = sym.getSpanCount();
+			for (int i = 0; i < spanCount; i++) {
+				spans.add(sym.getSpan(i));
+			}
+		}
+	}
+
 
 	/**
 	 * Loads (and displays) DAS/2 annotations.
@@ -649,32 +669,13 @@ public final class GeneralLoadUtils {
 	 * @return true or false
 	 */
 	private static boolean loadFeatures(SeqSpan overlap, GenericFeature gFeature) {
-		SeqSymmetry optimized_sym = gFeature.optimizeRequest(overlap);
-		if (optimized_sym == null) {
-			Logger.getLogger(QuickLoad.class.getName()).log(
-					Level.INFO, "All of new query covered by previous queries for feature {0}", gFeature.featureName);
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
-			return true;
-		}
-		final String feature_name = gFeature.featureName;
-		final BioSeq selected_seq = overlap.getBioSeq();
-		if (selected_seq == null) {
-			ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
-			return false;
-		}
-		if (DEBUG) {
-			System.out.println("seq = " + selected_seq.getID() + ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
-		}
 		Das2VersionedSource version = (Das2VersionedSource)gFeature.gVersion.versionSourceObj;
+		List<Das2Type> type_list = version.getTypesByName(gFeature.featureName);
+		Das2Region region = version.getSegment(overlap.getBioSeq());
+
 		List<Das2FeatureRequestSym> requests = new ArrayList<Das2FeatureRequestSym>();
-
-		List<Das2Type> type_list = version.getTypesByName(feature_name);
-
-		Das2Region region = version.getSegment(selected_seq);
 		for (Das2Type dtype : type_list) {
 			if (dtype != null && region != null) {
-				// maybe add a fully_loaded flag so know which ones to skip because they're done?
 				Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(dtype, region, overlap);
 				requests.add(request_sym);
 			}

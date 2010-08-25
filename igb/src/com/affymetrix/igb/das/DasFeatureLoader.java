@@ -20,8 +20,6 @@ import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -40,14 +38,13 @@ public final class DasFeatureLoader {
 	 * Load annotations from a DAS server.
 	 * 
 	 * @param gFeature the generic feature that is to be loaded from the server.
-	 * @param query_span SeqSpan containing the range for which you want annotations.
+	 * @param spans List of spans containing the ranges for which you want annotations.
 	 * @return true if data was loaded
 	 */
-	public static boolean loadFeatures( SeqSpan query_span, GenericFeature gFeature) {
-		SeqSymmetry optimized_sym = gFeature.optimizeRequest(query_span);
+	public static boolean loadFeatures(List<SeqSpan> spans, GenericFeature gFeature) {
 		DasType feature = (DasType)gFeature.typeObj;
 		URL serverURL = feature.getServerURL();
-		BioSeq current_seq = query_span.getBioSeq();
+		BioSeq current_seq = spans.get(0).getBioSeq();
 		List<URL> urls = new ArrayList<URL>();
 		Set<String> segments = ((DasSource)gFeature.gVersion.versionSourceObj).getEntryPoints();
 		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
@@ -56,7 +53,11 @@ public final class DasFeatureLoader {
 			QueryBuilder builder = new QueryBuilder(new URL(serverURL, feature.getSource() + "/features"));
 			builder.add("segment", segment);
 			builder.add("type", feature.getID());
-			loadOptimizedSym(optimized_sym, builder, segment, urls, gFeature);
+			for(SeqSpan span : spans) {
+				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
+				urls.add(builder.build());
+			}
+			loadOptimizedSym(urls, gFeature);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return false;
@@ -68,8 +69,7 @@ public final class DasFeatureLoader {
 	}
 
 
-	private static void loadOptimizedSym(SeqSymmetry optimized_sym, QueryBuilder builder, String segment, List<URL> urls, GenericFeature gFeature) throws MalformedURLException, UnsupportedEncodingException {
-		convertSymToDasURLs(optimized_sym, builder, segment, urls);
+	private static void loadOptimizedSym(List<URL> urls, GenericFeature gFeature) throws MalformedURLException, UnsupportedEncodingException {
 		// initialize styles
 		for (int i = 0; i < urls.size(); i++) {
 			// TODO: temp hack.  The style should be determined by the URI, not the feature name.
@@ -84,30 +84,4 @@ public final class DasFeatureLoader {
 		loader.runEventually();
 	}
 
-	/**
-	 * Walk the SeqSymmetry, converting all of its children into DAS URLs.
-	 * @param sym the SeqSymmetry to walk.
-	 * @param query_root the base URL used to build all URLs.
-	 * @param encoded_type the type fragment which will be appended to all URLs.
-	 * @param urls the List which complete DAS URLs will be added to.
-	 * @throws java.io.UnsupportedEncodingException
-	 * @throws java.net.MalformedURLException
-	 */
-	private static void convertSymToDasURLs(SeqSymmetry sym, QueryBuilder builder, String segment, List<URL> urls)
-			throws UnsupportedEncodingException, MalformedURLException {
-		int childCount = sym.getChildCount();
-		if (childCount > 0) {
-			for (int i = 0; i < childCount; i++) {
-				convertSymToDasURLs(sym.getChild(i), builder, segment, urls);
-			}
-		} else {
-			SeqSpan span;
-			int spanCount = sym.getSpanCount();
-			for (int i = 0; i < spanCount; i++) {
-				span = sym.getSpan(i);
-				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
-				urls.add(builder.build());
-			}
-		}
-	}
 }

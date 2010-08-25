@@ -276,7 +276,7 @@ public final class LoadFileAction extends AbstractAction {
 				Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
 
 				gFeature.loadStrategy = LoadStrategy.GENOME;
-				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, null);
+				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 
 				return null;
 			}

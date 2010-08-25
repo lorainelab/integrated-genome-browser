@@ -527,7 +527,7 @@ public final class GeneralLoadView extends JComponent
 			if (DEBUG_EVENTS) {
 				System.out.println("Selected : " + gFeature.featureName);
 			}
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, feature_model);
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}
 
 	}
@@ -893,7 +893,7 @@ public final class GeneralLoadView extends JComponent
 			if (DEBUG_EVENTS) {
 				System.out.println("Selected : " + gFeature.featureName);
 			}
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, feature_model);
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}
 	}
 

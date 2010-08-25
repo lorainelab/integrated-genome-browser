@@ -11,16 +11,15 @@ import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.das.DasLoader;
-import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.BNIB;
-import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -28,12 +27,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class ResidueLoading {
 
 	enum FORMAT {
@@ -155,16 +157,16 @@ public final class ResidueLoading {
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
 			if (server.serverType == ServerType.QuickLoad) {
-				String organism_dir = "";
+				String path = "";
 				try {
 					URL quickloadURL = new URL((String) server.serverObj);
 					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-					organism_dir = quickloadServer.getOrganismDir(version.versionName);
+					path += quickloadServer.getPath(version.versionName, seq_name);
 				} catch (MalformedURLException ex) {
 					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
 				}
 
-				String residues = GetQuickLoadResidues(seq_group, organism_dir, seq_name, server.URL, span);
+				String residues = GetQuickLoadResidues(seq_group, path, server.URL, span);
 				if (residues != null) {
 					BioSeq.addResiduesToComposition(aseq, residues, span);
 					gviewer.setAnnotatedSeq(aseq, true, true, true);
@@ -255,16 +257,16 @@ public final class ResidueLoading {
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
 			if (server.serverType == ServerType.QuickLoad) {
-				String organism_dir = "";
+				String path = "";
 				try {
 					URL quickloadURL = new URL((String) server.serverObj);
 					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-					organism_dir = quickloadServer.getOrganismDir(version.versionName);
+					path = quickloadServer.getPath(version.versionName, seq_name);
 				} catch (MalformedURLException ex) {
 					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
 				}
 
-				if (GetQuickLoadResidues(seq_group, organism_dir, seq_name, server.URL)) {
+				if (GetQuickLoadResidues(seq_group, path, server.URL)) {
 					BioSeq.addResiduesToComposition(aseq);
 					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
@@ -323,11 +325,9 @@ public final class ResidueLoading {
 	 * @return residue String.
 	 */
 
-	private static String GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String organism_dir, String seq_name, String root_url, SeqSpan span){
-		String genome_name = seq_group.getID();
-		String common_url = root_url + "/" + organism_dir + "/" + genome_name + "/" + seq_name + ".";
-		
-		
+	private static String GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String path, String root_url, SeqSpan span){
+		String common_url = root_url + path + ".";
+
 		SymLoader symloader = determineLoader(common_url, seq_group);
 
 		if(symloader != null )
@@ -387,9 +387,9 @@ public final class ResidueLoading {
 	 * @param root_url
 	 * @return true or false
 	 */
-	private static boolean GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String organism_dir, String seq_name, String root_url) {
-		String genome_name = seq_group.getID();
-		String url_path = root_url + "/" + organism_dir + "/" + genome_name + "/" + seq_name + ".bnib";
+	private static boolean GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String path, String root_url) {
+		String url_path = root_url + path + ".bnib";
+
 		if (DEBUG) {
 			Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, 
 					"  Quickload location of bnib file: {0}", url_path);
@@ -403,9 +403,8 @@ public final class ResidueLoading {
 			// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
 			NibbleResiduesParser.parse(istr, seq_group);
 			return true;
-		} catch (Exception ex) {
-			System.out.println("Error -- cannot access sequence:\n" + "seq = '" + seq_name + "'\n" + "version = '" + genome_name + "'\n" + "server = " + root_url);
-			ex.printStackTrace();
+		} catch (IOException ex) {
+			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, "Can not access sequence: " + url_path, ex);
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}

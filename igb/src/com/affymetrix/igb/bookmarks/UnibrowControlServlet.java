@@ -33,6 +33,8 @@ import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -46,6 +48,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.das.DasFeatureLoader;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
@@ -139,14 +142,19 @@ public final class UnibrowControlServlet {
 
 		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
 		String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
+
 		String[] quick_query_urls = parameters.get(Bookmark.QUICK_QUERY_URL);
 		String[] quick_server_urls = parameters.get(Bookmark.QUICK_SERVER_URL);
-		String[] data_urls = parameters.get(Bookmark.DATA_URL);
-		String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
-		loadDataFromURLs(uni, data_urls, url_file_extensions, null);
-		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
 		loadDataFromQuickLoad(quick_server_urls, quick_query_urls, version, seqid, start_param, end_param);
-		
+
+		String[] das_query_urls = parameters.get(Bookmark.DAS_QUERY_URL);
+		String[] das_server_urls = parameters.get(Bookmark.DAS_SERVER_URL);
+		loadDataFromDas(das_server_urls, das_query_urls, version, seqid, start_param, end_param);
+
+		//String[] data_urls = parameters.get(Bookmark.DATA_URL);
+		//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
+		//loadDataFromURLs(uni, data_urls, url_file_extensions, null);
 		String selectParam = getStringParameter(parameters, "select");
 		if (selectParam != null) {
 			performSelection(selectParam);
@@ -348,6 +356,75 @@ public final class UnibrowControlServlet {
 		}
 	}
 
+	private static void loadDataFromDas(final String[] das_server_urls, final String[] das_query_urls, String version, String chromosome, String start_param, String end_param){
+		if (das_server_urls == null || das_query_urls == null
+				|| das_query_urls.length == 0 || das_server_urls.length != das_query_urls.length) {
+			return;
+		}
+		int min = 0;
+		int max = Integer.MAX_VALUE;
+		if (start_param == null || start_param.equals("")) {
+			System.err.println("No start value found in the bookmark URL");
+		} else {
+			min = Integer.parseInt(start_param);
+		}
+		if (end_param == null || end_param.equals("")) {
+			System.err.println("No end value found in the bookmark URL");
+		} else {
+			max = Integer.parseInt(end_param);
+		}
+
+		for (int i = 0; i < das_server_urls.length; i++) {
+			String das_server_url = das_server_urls[i];
+			String das_query_url = das_query_urls[i];
+			String source = null;
+			String type = null;
+			int qindex = das_query_url.indexOf('?');
+			if (qindex <= -1) {
+				continue;
+			}
+			source = das_query_url.substring(0, qindex);
+			type = das_query_url.substring(qindex + 1, das_query_url.length());
+
+			try {
+				GenericServer gServer = ServerList.getServer(das_server_url);
+				if (gServer == null) {
+					gServer = ServerList.addServer(ServerType.DAS2, das_server_url, das_server_url, true);
+				} else if (!gServer.isEnabled()) {
+					gServer.setEnabled(true);
+					GeneralLoadUtils.discoverServer(gServer);
+					// enable the server.
+					// TODO - this will be saved in preferences as enabled, although it shouldn't.
+				}
+				DasServerInfo dasServerInfo = (DasServerInfo) gServer.serverObj;
+				DasSource dasSource = dasServerInfo.getDataSources().get(source);
+				dasSource.getTypes();
+
+				GenericFeature feature = GeneralUtils.findFeatureInDas(GeneralLoadUtils.getFeatures(version), source, type);
+
+				if (feature != null) {
+					feature.setVisible();
+					feature.loadStrategy = LoadStrategy.VISIBLE;
+					DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
+					view.tableChanged();
+					BioSeq seq = feature.gVersion.group.getSeq(chromosome);
+					if(seq != null){
+						Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
+						SeqSpan overlap = new SimpleSeqSpan(min, max, seq);
+						DasFeatureLoader.loadFeatures(overlap, feature);
+					}
+				} else {
+					Logger.getLogger(GeneralUtils.class.getName()).log(
+							Level.SEVERE, "Couldn't find feature for bookmark source {0} and type {1}", new Object[]{source, type});
+				}
+
+			} catch (Exception ex) {
+				// something went wrong with deconstructing quickload query URL.
+				ex.printStackTrace();
+			}
+		}
+	}
+	
 	private static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
 		try {
 			if (data_urls != null && data_urls.length != 0) {

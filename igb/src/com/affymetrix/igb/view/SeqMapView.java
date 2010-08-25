@@ -1008,7 +1008,7 @@ public class SeqMapView extends JPanel
 		select(symlist, false, true, true);
 	}
 
-	void select(List<SeqSymmetry> sym_list) {
+	final void select(List<SeqSymmetry> sym_list) {
 		select(sym_list, false, false, true);
 	}
 

@@ -272,8 +272,8 @@ public abstract class NeoAbstractWidget extends Container
 	protected List<GlyphI> selected = new ArrayList<GlyphI>();
 
 	/**
-	 * Places the a comonent in the widget.
-	 * Different widgets may want to restrict the placement possiblities.
+	 * Places the component in the widget.
+	 * Different widgets may want to restrict the placement possibilities.
 	 *
 	 * @param component the component to be placed.
 	 * @param placement where to place it.
@@ -427,10 +427,10 @@ public abstract class NeoAbstractWidget extends Container
 	public abstract void setExpansionBehavior(int axisid, int behavior);
 
 	/**
-	 * Gets the behvior set by setExpansionBehavior.
+	 * Gets the behavior set by setExpansionBehavior.
 	 *
 	 * @param axisid the axis (NeoAbstractWidget.X or NeoAbstractWidget.Y) whose expansion
-	 *                   behvior is to be retrieved
+	 *                   behavior is to be retrieved
 	 *
 	 * @see #setExpansionBehavior
 	 */
@@ -445,7 +445,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @param col  the <code>Color</code> to be associated with
 	 *   <code>name</code>.
 	 */
-	public static final void addColor(String name, Color col) {
+	public static void addColor(String name, Color col) {
 		if (null == name) {
 			throw new IllegalArgumentException("can't addColor without a name.");
 		}
@@ -480,7 +480,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @return the <code>Color</code> corresponding to <code>name</code>.
 	 * @see #addColor
 	 */
-	public static final Color getColor(String name) {
+	public static Color getColor(String name) {
 		if (null == name) {
 			throw new IllegalArgumentException("can't getColor without a name.");
 		}
@@ -494,7 +494,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @return a <code>String</code> label associated with a color.
 	 * @see #addColor
 	 */
-	public static final String getColorName(Color theColor) {
+	public static String getColorName(Color theColor) {
 		if (null == theColor) {
 			throw new IllegalArgumentException("can't get a name for a null color.");
 		}
@@ -515,7 +515,7 @@ public abstract class NeoAbstractWidget extends Container
 	 *   set by <code>addColor</code>
 	 * @see #addColor
 	 */
-	public static final Enumeration<String> getColorNames() {
+	public static Enumeration<String> getColorNames() {
 		return colormap.keys();
 	}
 
@@ -545,7 +545,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * but may be more efficient.
 	 * updateWidget(false) should be equivalent to updateWidget().
 	 *
-	 * @param full_update indicates wether or not the entire widget
+	 * @param full_update indicates whether or not the entire widget
 	 *                    should be redrawn.
 	 */
 	public abstract void updateWidget(boolean full_update);
@@ -573,7 +573,7 @@ public abstract class NeoAbstractWidget extends Container
 	 *
 	 * @param glyph the GlyphI whose visibility is queried
 	 */
-	public static final boolean getVisibility(GlyphI glyph) {
+	public static boolean getVisibility(GlyphI glyph) {
 		return glyph.isVisible();
 	}
 
@@ -713,8 +713,8 @@ public abstract class NeoAbstractWidget extends Container
 		if (glyphs == null) {
 			return;
 		}
-		for (int i=0; i<glyphs.size(); i++) {
-			select(glyphs.get(i));
+		for (GlyphI glyph : glyphs) {
+			select(glyph);
 		}
 	}
 

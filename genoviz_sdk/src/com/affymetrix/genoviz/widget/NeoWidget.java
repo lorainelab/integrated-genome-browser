@@ -802,10 +802,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	/**
 	 * @see com.affymetrix.genoviz.widget.NeoMap#select
 	 */
-	public void select(Vector vec, double x, double y,
+	public void select(List<GlyphI> glyphs, double x, double y,
 			double width, double height) {
-		for (int i=0; i<vec.size(); i++) {
-			select((GlyphI)vec.get(i), x, y, width, height);
+		for (GlyphI glyph : glyphs) {
+			select(glyph, x, y, width, height);
 		}
 	}
 
@@ -1160,7 +1160,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		Rectangle2D.Double cbox = gl.getCoordBox();
 		List<GlyphI> pickvect = new ArrayList<GlyphI>();
 		getScene().pickTraversal(cbox, pickvect, getView());
-		if (pickvect.size() == 0) {
+		if (pickvect.isEmpty()) {
 			// something very strange is going on if pickvect doesn't at
 			//    least pick up the glyph itself...
 			return false;

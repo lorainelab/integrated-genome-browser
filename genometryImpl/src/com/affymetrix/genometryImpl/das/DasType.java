@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.das;
 
+import java.net.URI;
 import java.net.URL;
 
 public final class DasType {
@@ -22,4 +23,8 @@ public final class DasType {
 	public String getSource() { return this.source; }
 
 	public String getName() { return name == null ? type_id : name; }
+
+	public URI getURI(){
+		return URI.create(serverURL.toExternalForm() + "/" + source + "/" + type_id);
+	}
 }

@@ -147,6 +147,10 @@ public final class UnibrowControlServlet {
 			BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
 		}
 
+		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
+	    String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
+
 		String[] query_urls = parameters.get(Bookmark.QUERY_URL);
 		String[] server_urls = parameters.get(Bookmark.SERVER_URL);
 		loadData(server_urls, query_urls, start, end);
@@ -169,13 +173,15 @@ public final class UnibrowControlServlet {
 	 *  call processFeatureRequests(request_syms, update_display, thread_requests)
 	 *       (which in turn call Das2ClientOptimizer.loadFeatures(request_sym))
 	 */
+	//Only for reverse compatibilty of old bookmarks.	- hiralv - 08/26/10
+	@Deprecated	
 	private static void loadDataFromDas2(final Application uni, final String[] das2_server_urls, final String[] das2_query_urls) {
 		if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
 			return;
 		}
 		List<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
 		List<String> opaque_requests = new ArrayList<String>();
-		//createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
+		createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
 		for (Das2FeatureRequestSym frs : das2_requests) {
 			URI uri = frs.getDas2Type().getURI();
 			String version = frs.getDas2Type().getVersionedSource().getName();
@@ -202,6 +208,8 @@ public final class UnibrowControlServlet {
 		}
 	}
 
+	//Only for reverse compatibilty of old bookmarks.	- hiralv - 08/26/10
+	@Deprecated
 	private static void createDAS2andOpaqueRequests(
 			final String[] das2_server_urls, final String[] das2_query_urls, List<Das2FeatureRequestSym> das2_requests, List<String> opaque_requests) {
 		for (int i = 0; i < das2_server_urls.length; i++) {

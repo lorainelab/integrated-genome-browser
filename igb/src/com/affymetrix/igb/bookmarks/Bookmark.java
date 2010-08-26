@@ -41,7 +41,10 @@ public final class Bookmark implements Serializable {
   /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark,
       this one can occur 0,1, or more times in the URL of a UnibrowControlServlet bookmark. */
   public static final String DATA_URL = "data_url";
-  
+
+  public static final String DAS2_QUERY_URL = "das2_query";
+  public static final String DAS2_SERVER_URL = "das2_server";
+
   public static final String QUERY_URL = "query_url";
   public static final String SERVER_URL = "server_url";
 

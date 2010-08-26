@@ -75,7 +75,7 @@ final public class Bookmarks {
 			Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
 			String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
 
-			syms.add(new SymBookmark(server_str, version.versionID, path, format, version.gServer.serverType));
+			syms.add(new SymBookmark(version.gServer.URL, version.versionID, path, format, version.gServer.serverType));
 
 			return true;
 		}else if (version.gServer.serverType == ServerType.QuickLoad){
@@ -156,32 +156,18 @@ final public class Bookmarks {
     * sets the das2 and quickload properties of the bookmark and deletes source_url.
     */ 
    public void set(SymWithProps mark_sym) {
-        List<String> das2queries = new ArrayList<String>();
-        List<String> das2servers = new ArrayList<String>();
-
 		List<String> queries = new ArrayList<String>();
 		List<String> servers = new ArrayList<String>();
 
         for(SymBookmark bookmark : this.syms){
             if(bookmark.isValid()){
-				if(bookmark.getServerType() == ServerType.DAS2){
-					String server = bookmark.getServer();
-					int start = (Integer) mark_sym.getProperty("start");
-					int end = (Integer) mark_sym.getProperty("end");
-					String chr = (String) mark_sym.getProperty("seqid");
-					String query = getDas2Query(bookmark, start, end, chr);
-					das2servers.add(server);
-					das2queries.add(query);
-				}else if (bookmark.getServerType() == ServerType.QuickLoad
-						||bookmark.getServerType() == ServerType.DAS){
+				if(bookmark.getServerType() != ServerType.LocalFiles){
 					servers.add(bookmark.getServer());
 					queries.add(bookmark.getPath());
 				}
 			}
         }
-        mark_sym.setProperty(Bookmark.DAS2_QUERY_URL, das2queries.toArray(new String[das2queries.size()]));
-        mark_sym.setProperty(Bookmark.DAS2_SERVER_URL, das2servers.toArray(new String[das2servers.size()]));
-
+		
 		mark_sym.setProperty(Bookmark.QUERY_URL, queries.toArray(new String[queries.size()]));
 	    mark_sym.setProperty(Bookmark.SERVER_URL, servers.toArray(new String[servers.size()]));
 

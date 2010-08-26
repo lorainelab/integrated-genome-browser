@@ -42,6 +42,7 @@ import com.affymetrix.genometryImpl.das2.Das2Capability;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
+import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
@@ -141,18 +142,14 @@ public final class UnibrowControlServlet {
 		if (!ok) {
 			return; /* user cancelled the change of genome, or something like that */
 		}
-
+	
 		if (has_graph_source_urls) {
 			BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
 		}
 
-		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
-		String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
-		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
-
 		String[] query_urls = parameters.get(Bookmark.QUERY_URL);
 		String[] server_urls = parameters.get(Bookmark.SERVER_URL);
-		loadData(server_urls, query_urls, version, seqid, start, end);
+		loadData(server_urls, query_urls, start, end);
 
 		//String[] data_urls = parameters.get(Bookmark.DATA_URL);
 		//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
@@ -178,7 +175,7 @@ public final class UnibrowControlServlet {
 		}
 		List<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
 		List<String> opaque_requests = new ArrayList<String>();
-		createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
+		//createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
 		for (Das2FeatureRequestSym frs : das2_requests) {
 			URI uri = frs.getDas2Type().getURI();
 			String version = frs.getDas2Type().getVersionedSource().getName();
@@ -297,11 +294,15 @@ public final class UnibrowControlServlet {
 		}
 	}
 
-	private static void loadData(final String[] server_urls, final String[] query_urls, String version, String chromosome, int start, int end){
+	private static void loadData(final String[] server_urls, final String[] query_urls, int start, int end){
 		if (server_urls == null || query_urls == null
 				|| query_urls.length == 0 || server_urls.length != query_urls.length) {
 			return;
 		}
+
+		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		String version = seqGroup.getID();
 
 		for (int i = 0; i < server_urls.length; i++) {
 			String server_url = server_urls[i];
@@ -320,7 +321,26 @@ public final class UnibrowControlServlet {
 
 				GenericFeature feature = null;
 				URI uri = null;
-				if(gServer.serverType == ServerType.DAS){
+
+				if(gServer.serverType == ServerType.DAS2){
+					
+					Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+					server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
+
+					Das2VersionedSource das2version = server.getVersionedSource(seqGroup);
+					if (version == null) {
+						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find version : {0}", version);
+						continue;
+					}
+
+					Das2Type dtype = das2version.getTypes().get(query_url);
+					if (dtype == null) {
+						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find type: {0} in server: {1}", new Object[]{query_url, server_url});
+						continue;
+					}
+					uri = dtype.getURI();
+
+				} else if(gServer.serverType == ServerType.DAS){
 					String source = null;
 					String type = null;
 					int qindex = query_url.indexOf('?');
@@ -332,6 +352,12 @@ public final class UnibrowControlServlet {
 
 					DasServerInfo dasServerInfo = (DasServerInfo) gServer.serverObj;
 					DasSource dasSource = dasServerInfo.getDataSources().get(source);
+
+					if (dasSource == null) {
+						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find dasSource with id {0}", source);
+						continue;
+					}
+
 					dasSource.getTypes();
 					uri = URI.create(server_url + "/" + source  + "/" + type);
 	
@@ -339,7 +365,12 @@ public final class UnibrowControlServlet {
 					
 					URL quickloadURL = new URL((String) gServer.serverObj);
 					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-					quickloadServer.getTypes(version);
+					
+					if(quickloadServer.getTypes(version).isEmpty()){
+						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find type with version {0}", version);
+						continue;
+					}
+
 					uri = URI.create(query_url);
 	
 				}
@@ -349,7 +380,6 @@ public final class UnibrowControlServlet {
 					feature.setVisible();
 					GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);
 					GeneralLoadView.getLoadView().createFeaturesTable();
-					BioSeq seq = feature.gVersion.group.getSeq(chromosome);
 					if(seq != null){
 						SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
 						GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);

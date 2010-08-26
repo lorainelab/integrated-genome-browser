@@ -70,7 +70,8 @@ public abstract class DasLoader {
 
 		try {
 			request = new URL(version.gServer.URL);
-			QueryBuilder builder = new QueryBuilder(new URL(request, version.versionID  + "/dna"));
+			URL url = new URL(request, version.versionID + "/dna?");
+			QueryBuilder builder = new QueryBuilder(url.toExternalForm());
 
 			builder.add("segment", segment + ":" + (min + 1) + "," + max);
 			request = builder.build();

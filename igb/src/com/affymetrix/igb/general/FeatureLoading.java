@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.das.DasSource;
-import com.affymetrix.genometryImpl.das.DasType;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -13,6 +12,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -59,13 +59,13 @@ public final class FeatureLoading {
 				System.out.println("Discovering DAS1 features for " + gVersion.versionName);
 			}
 			DasSource version = (DasSource) gVersion.versionSourceObj;
-			for (DasType type : version.getTypes()) {
-				String type_name = type.getName();
+			for (Entry<String,String> type : version.getTypes().entrySet()) {
+				String type_name = type.getKey();
 				if (type_name == null || type_name.length() == 0) {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type, autoload));
+				gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type.getValue(), autoload));
 			}
 			return;
 		}

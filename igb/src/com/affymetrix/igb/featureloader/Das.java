@@ -41,17 +41,16 @@ public final class Das {
 	 * @return true if data was loaded
 	 */
 	public static boolean loadFeatures(List<SeqSpan> spans, GenericFeature gFeature) {
-		DasType feature = (DasType)gFeature.typeObj;
-		URL serverURL = feature.getServerURL();
+		//DasType feature = (DasType)gFeature.typeObj;
+		//URL serverURL = feature.getServerURL();
 		BioSeq current_seq = spans.get(0).getBioSeq();
 		List<URL> urls = new ArrayList<URL>();
 		Set<String> segments = ((DasSource)gFeature.gVersion.versionSourceObj).getEntryPoints();
 		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
 
 		try {
-			QueryBuilder builder = new QueryBuilder(new URL(serverURL, feature.getSource() + "/features"));
+			QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
 			builder.add("segment", segment);
-			builder.add("type", feature.getID());
 			for(SeqSpan span : spans) {
 				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
 				urls.add(builder.build());

@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class QueryBuilder {
 	private final Map<String, String> parameters = new LinkedHashMap<String, String>();
-	private final URL u;
+	private final String u;
 
-	public QueryBuilder(URL u) {
+	public QueryBuilder(String u) {
 		this.u = u;
 	}
 
@@ -26,8 +26,8 @@ public class QueryBuilder {
 	public URL build() throws MalformedURLException {
 		StringBuilder query = new StringBuilder();
 
-		query.append(u.getPath());
-		query.append("?");
+		query.append(u);
+		//query.append("?");
 		for (Map.Entry<String, String> parameter : parameters.entrySet()) {
 			query.append(parameter.getKey());
 			query.append("=");
@@ -35,6 +35,6 @@ public class QueryBuilder {
 			query.append(";");
 		}
 
-		return new URL(u, query.toString());
+		return new URL(query.toString());
 	}
 }

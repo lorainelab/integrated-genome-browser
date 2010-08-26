@@ -50,7 +50,7 @@ public final class DasSource {
 	private final String id;
 	private final Set<String> sources = new HashSet<String>();
 	private final Set<String> entry_points = new LinkedHashSet<String>();
-	private final Set<DasType> types = new LinkedHashSet<DasType>();
+	private final Map<String, String> types = new LinkedHashMap<String, String>();
 	private boolean entries_initialized = false;
 	private boolean types_initialized = false;
 	private AnnotatedSeqGroup genome = null;	// lazily instantiate
@@ -101,7 +101,7 @@ public final class DasSource {
 		return entry_points;
 	}
 
-	public Set<DasType> getTypes() {
+	public Map<String, String> getTypes() {
 		if (!types_initialized) {
 			initTypes();
 		}
@@ -200,9 +200,11 @@ public final class DasSource {
 
 				/* URL.equals() does DNS lookups! */
 				String name = URLEquals(typesURL, testMasterURL) ? null : source + "/" + typeid;
-				DasType type = new DasType(server, typeid, source, name);
+				URL url = new URL(server, source + "/features?type=" + typeid + ";");
+				//DasType type = new DasType(server, typeid, source, name);
+				name = name == null ? typeid : name;
 				synchronized(this) {
-					types.add(type);
+					types.put(name,url.toExternalForm());
 				}
 			}
 		} catch (MalformedURLException ex) {

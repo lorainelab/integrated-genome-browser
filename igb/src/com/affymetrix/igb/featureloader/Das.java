@@ -1,4 +1,4 @@
-package com.affymetrix.igb.das;
+package com.affymetrix.igb.featureloader;
 
 import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das.DasType;
@@ -12,7 +12,6 @@ import java.util.Set;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -30,13 +29,13 @@ import com.affymetrix.igb.event.UrlLoaderThread;
  *
  * @author sgblanch
  */
-public final class DasFeatureLoader {
+public final class Das {
 	/** Private constructor to prevent instantiation. */
-	private DasFeatureLoader() { }
+	private Das() { }
 
 	/**
 	 * Load annotations from a DAS server.
-	 * 
+	 *
 	 * @param gFeature the generic feature that is to be loaded from the server.
 	 * @param spans List of spans containing the ranges for which you want annotations.
 	 * @return true if data was loaded

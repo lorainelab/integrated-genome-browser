@@ -39,7 +39,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.symloader.QuickLoad;
+import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.DataLoadView;

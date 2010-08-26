@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.symloader.QuickLoad;
+import com.affymetrix.igb.featureloader.QuickLoad;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 

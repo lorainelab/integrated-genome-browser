@@ -23,21 +23,19 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.das.DasFeatureLoader;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
 import com.affymetrix.genometryImpl.das.DasSource;
-import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
-import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Source;
-import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.symloader.QuickLoad;
+import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.igb.featureloader.Das;
+import com.affymetrix.igb.featureloader.Das2;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -621,7 +619,7 @@ public final class GeneralLoadUtils {
 	public static boolean loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
 		if (optimized_sym == null) {
-			Logger.getLogger(DasFeatureLoader.class.getName()).log(
+			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 			return true;
 		}
@@ -630,9 +628,9 @@ public final class GeneralLoadUtils {
 		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 		switch (feature.gVersion.gServer.serverType) {
 			case DAS2:
-				return loadFeatures(span, feature);
+				return Das2.loadFeatures(span, feature);
 			case DAS:
-				return DasFeatureLoader.loadFeatures(spans, feature);
+				return Das.loadFeatures(spans, feature);
 			case QuickLoad:
 			case LocalFiles:
 				return ((QuickLoad) feature.symL).loadFeatures(span, feature);
@@ -658,32 +656,6 @@ public final class GeneralLoadUtils {
 		}
 	}
 
-
-	/**
-	 * Loads (and displays) DAS/2 annotations.
-	 * This is done in a multi-threaded fashion so that the UI doesn't lock up.
-	 * @param selected_seq
-	 * @param gFeature
-	 * @param gviewer
-	 * @param overlap
-	 * @return true or false
-	 */
-	private static boolean loadFeatures(SeqSpan overlap, GenericFeature gFeature) {
-		Das2VersionedSource version = (Das2VersionedSource)gFeature.gVersion.versionSourceObj;
-		List<Das2Type> type_list = version.getTypesByName(gFeature.featureName);
-		Das2Region region = version.getSegment(overlap.getBioSeq());
-
-		List<Das2FeatureRequestSym> requests = new ArrayList<Das2FeatureRequestSym>();
-		for (Das2Type dtype : type_list) {
-			if (dtype != null && region != null) {
-				Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(dtype, region, overlap);
-				requests.add(request_sym);
-			}
-		}
-
-		FeatureLoading.processDas2FeatureRequests(requests, gFeature, true);
-		return true;
-	}
 
 	/**
 	 * Load residues on span.

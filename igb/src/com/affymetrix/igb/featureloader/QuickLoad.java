@@ -1,4 +1,4 @@
-package com.affymetrix.igb.symloader;
+package com.affymetrix.igb.featureloader;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;

@@ -51,6 +51,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
+import com.affymetrix.igb.featureloader.Das2;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -189,7 +190,7 @@ public final class UnibrowControlServlet {
 				Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 				List<Das2FeatureRequestSym> frsWrapperList = new ArrayList<Das2FeatureRequestSym>();
 				frsWrapperList.add(frs);
-				FeatureLoading.processDas2FeatureRequests(frsWrapperList, feature, true);
+				Das2.processFeatureRequests(frsWrapperList, feature, true);
 			} else {
 				Logger.getLogger(GeneralUtils.class.getName()).log(
 						Level.SEVERE, "Couldn't find feature for bookmark URL: {0}", uri);

@@ -17,12 +17,7 @@ import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executor;
 import javax.swing.SwingWorker;
 
 /**
@@ -41,19 +36,15 @@ public class Das2 {
 	 * @return true or false
 	 */
 	public static boolean loadFeatures(SeqSpan overlap, GenericFeature gFeature) {
-		Das2VersionedSource version = (Das2VersionedSource)gFeature.gVersion.versionSourceObj;
-		List<Das2Type> type_list = version.getTypesByName(gFeature.featureName);
+		Das2VersionedSource version = (Das2VersionedSource) gFeature.gVersion.versionSourceObj;
+		Das2Type dType = (Das2Type) gFeature.typeObj;
+
 		Das2Region region = version.getSegment(overlap.getBioSeq());
 
-		List<Das2FeatureRequestSym> requests = new ArrayList<Das2FeatureRequestSym>();
-		for (Das2Type dtype : type_list) {
-			if (dtype != null && region != null) {
-				Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(dtype, region, overlap);
-				requests.add(request_sym);
-			}
+		if (dType != null && region != null) {
+			Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(dType, region, overlap);
+			processFeatureRequest(request_sym, gFeature, true);
 		}
-
-		Das2.processFeatureRequests(requests, gFeature, true);
 		return true;
 	}
 
@@ -68,93 +59,63 @@ public class Das2 {
 	 *     and finishing with a gviewer.setAnnotatedSeq() call on the event thread to revise main view to show new annotations
 	 *
 	 *
-	 * @param requests - FeatureRequestSyms on this GenericFeature
+	 * @param request - FeatureRequestSym on this GenericFeature
  	 * @param feature
 	 * @param update_display - whether to update the display or not
 	 */
-	public static void processFeatureRequests(
-					List<Das2FeatureRequestSym> requests,
+	public static void processFeatureRequest(
+					final Das2FeatureRequestSym request,
 					final GenericFeature feature,
 					final boolean update_display) {
-		if ((requests == null) || (requests.isEmpty())) {
+		if (request == null) {
 			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 			return;
 		}
 		final List<FeatureRequestSym> result_syms = new ArrayList<FeatureRequestSym>();
 
-		Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version = splitDAS2RequestsByVersion(requests);
+		Das2Type dtype = request.getDas2Type();
+		Das2VersionedSource version = dtype.getVersionedSource();
 
-		for (Map.Entry<Das2VersionedSource, Set<Das2FeatureRequestSym>> entry : requests_by_version.entrySet()) {
-			Das2VersionedSource version = entry.getKey();
-			Executor vexec = ThreadUtils.getPrimaryExecutor(version);
-			final Set<Das2FeatureRequestSym> request_set = entry.getValue();
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-				public Void doInBackground() {
-					try {
-						createDAS2ResultSyms(feature, request_set, result_syms);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					return null;
+			public Void doInBackground() {
+				try {
+					createDAS2ResultSyms(feature, request, result_syms);
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
-
-				@Override
-				public void done() {
-					final SeqMapView gviewer = Application.getSingleton().getMapView();
-					if (update_display && gviewer != null && !result_syms.isEmpty()) {
-						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-						TrackView.updateDependentData();
-						gviewer.setAnnotatedSeq(aseq, true, true);
-					}
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
-				}
-			};
-
-			vexec.execute(worker);
-		}
-	}
-
-	/**
-	 * split into entries by DAS/2 versioned source
-	 * @param requests
-	 * @return requests_by_version
-	 */
-	private static Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> splitDAS2RequestsByVersion(List<Das2FeatureRequestSym> requests) {
-		Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version =
-						new LinkedHashMap<Das2VersionedSource, Set<Das2FeatureRequestSym>>();
-		for (Das2FeatureRequestSym request : requests) {
-			Das2Type dtype = request.getDas2Type();
-			Das2VersionedSource version = dtype.getVersionedSource();
-			Set<Das2FeatureRequestSym> rset = requests_by_version.get(version);
-			if (rset == null) {
-				// Using Set instead of List here guarantees only one request per type, even if version (and therefore type) shows up
-				//    in multiple branches of DAS/2 server/source/version/type tree.
-				rset = new LinkedHashSet<Das2FeatureRequestSym>();
-				requests_by_version.put(version, rset);
+				return null;
 			}
-			rset.add(request);
-		}
-		return requests_by_version;
+
+			@Override
+			public void done() {
+				final SeqMapView gviewer = Application.getSingleton().getMapView();
+				if (update_display && gviewer != null && !result_syms.isEmpty()) {
+					BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+					TrackView.updateDependentData();
+					gviewer.setAnnotatedSeq(aseq, true, true);
+				}
+				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
+			}
+		};
+
+		ThreadUtils.getPrimaryExecutor(version).execute(worker);
 	}
 
 	private static void createDAS2ResultSyms(
-			final GenericFeature feature, final Set<Das2FeatureRequestSym> request_set, final List<FeatureRequestSym> result_syms) {
-		for (Das2FeatureRequestSym request_sym : request_set) {
-			// Create an AnnotStyle so that we can automatically set the
-			// human-readable name to the DAS2 name, rather than the ID, which is a URI
-			Das2Type type = request_sym.getDas2Type();
-			ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID(), type.getName());
-			ts.setFeature(feature);
+			final GenericFeature feature, final Das2FeatureRequestSym request_sym, final List<FeatureRequestSym> result_syms) {
+		// Create an AnnotStyle so that we can automatically set the
+		// human-readable name to the DAS2 name, rather than the ID, which is a URI
+		Das2Type type = request_sym.getDas2Type();
+		ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID(), type.getName());
+		ts.setFeature(feature);
 
-			try {
-				Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());
-				List<? extends FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
-				result_syms.addAll(feature_list);
-			} finally {
-				Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getShortName());
-			}
+		try {
+			Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());
+			List<? extends FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
+			result_syms.addAll(feature_list);
+		} finally {
+			Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getShortName());
 		}
 	}
 

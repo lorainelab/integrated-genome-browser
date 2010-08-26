@@ -42,14 +42,12 @@ import com.affymetrix.genometryImpl.das2.Das2Capability;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.featureloader.Das2;
@@ -191,9 +189,7 @@ public final class UnibrowControlServlet {
 				DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
 				view.tableChanged();
 				Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
-				List<Das2FeatureRequestSym> frsWrapperList = new ArrayList<Das2FeatureRequestSym>();
-				frsWrapperList.add(frs);
-				Das2.processFeatureRequests(frsWrapperList, feature, true);
+				Das2.processFeatureRequest(frs, feature, true);
 			} else {
 				Logger.getLogger(GeneralUtils.class.getName()).log(
 						Level.SEVERE, "Couldn't find feature for bookmark URL: {0}", uri);
@@ -454,7 +450,7 @@ public final class UnibrowControlServlet {
 	 *  else, then you have to schedule that something else to occur
 	 *  on the AWT event queue.
 	 *  @param graph_files it is ok for this parameter to be null.
-	 *  @return true indicates that the action suceeded
+	 *  @return true indicates that the action succeeded
 	 */
 	private static boolean goToBookmark(final Application uni, final String seqid, final String version,
 					final int start, final int end, final int selstart, final int selend,

@@ -56,8 +56,6 @@ public final class Das2VersionedSource {
     private final Map<String,Das2Region> regions = new LinkedHashMap<String,Das2Region>();
     private AnnotatedSeqGroup genome = null;
     private final Map<String,Das2Type> types = new LinkedHashMap<String,Das2Type>();
-    private final Map<String,List<Das2Type>> name2types = new LinkedHashMap<String,List<Das2Type>>();
-	private final Map<String,Das2Type> residuetypes = new LinkedHashMap<String,Das2Type>();
 	private final Map<String,List<Das2Type>> residue2types = new LinkedHashMap<String,List<Das2Type>>();
     private boolean regions_initialized = false;
     private boolean types_initialized = false;
@@ -176,24 +174,16 @@ public final class Das2VersionedSource {
 		}
 
 		if(isResidueFormat){
-			residuetypes.put(type.getID(), type);
 			prevlist = residue2types.get(tname);
 			if (prevlist == null) {
 				prevlist = new ArrayList<Das2Type>();
 				residue2types.put(tname, prevlist);
 			}
+			prevlist.add(type);
 		}
 		else{
-			types.put(type.getID(), type);
-			prevlist = name2types.get(tname);
-			if (prevlist == null) {
-				prevlist = new ArrayList<Das2Type>();
-				name2types.put(tname, prevlist);
-			}
-			
+			types.put(type.getID(), type);	
 		}
-		
-		prevlist.add(type);
     }
 
     public synchronized Map<String,Das2Type> getTypes() {
@@ -201,27 +191,6 @@ public final class Das2VersionedSource {
             initTypes(null);
         }
         return types;
-    }
-
-    public synchronized List<Das2Type> getTypesByName(String name) {
-        if (!types_initialized || types_filter != null) {
-            initTypes(null);
-        }
-        return name2types.get(name);
-    }
-
-	public synchronized Map<String,Das2Type> getResidueTypes() {
-        if (!types_initialized || types_filter != null) {
-            initTypes(null);
-        }
-        return residuetypes;
-    }
-
-    public synchronized List<Das2Type> getResidueTypesByName(String name) {
-        if (!types_initialized || types_filter != null) {
-            initTypes(null);
-        }
-        return residue2types.get(name);
     }
 
 	public synchronized Set<String> getResidueFormat(String name) {
@@ -267,7 +236,7 @@ public final class Das2VersionedSource {
 	}
 
 
-	public void getRegionList(NodeList regionlist, String region_request) throws NumberFormatException {
+	private void getRegionList(NodeList regionlist, String region_request) throws NumberFormatException {
 		for (int i = 0; i < regionlist.getLength(); i++) {
 			Element reg = (Element) regionlist.item(i);
 			String region_id = reg.getAttribute(URID);
@@ -295,9 +264,6 @@ public final class Das2VersionedSource {
 			//String description = null;
 			int length = Integer.parseInt(lengthstr);
 			Das2Region region = new Das2Region(this, region_uri, region_name, region_info_url, length);
-			if (DEBUG) {
-				System.out.println("segment: " + region_uri.toString() + ", length = " + lengthstr + ", name = " + region_name);
-			}
 			regions.put(region.getID(), region);
 		}
 	}
@@ -317,35 +283,34 @@ public final class Das2VersionedSource {
 		String types_request = segcap.getRootURI().toString();
 		InputStream response = null;
 
-        try {
-					
-					Map<String, String> headers = new LinkedHashMap<String, String>();
-					
-					//set in header a sessionId for types authentication?
-					//Also, if there is a sessionId then should ignore cache so user can get hidden types
-					String sessionId = source.getServerInfo().getSessionId();
-					if (sessionId != null) {
-						headers.put("sessionId", sessionId);
-						//if sessionID then connected so ignore cache
-						response = getInputStream(TYPES_CAP_QUERY, LocalUrlCacher.IGNORE_CACHE, false, headers, "Das2 Types Request");
-					}
-					else {
-						response = getInputStream(TYPES_CAP_QUERY, LocalUrlCacher.getPreferredCacheUsage(), true, headers, "Das2 Types Request");
-					}
-					if (response == null) {
-						Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request {0} was not reachable.", types_request);
-						return;
-					}
-					Document doc = XMLUtils.getDocument(response);
-					NodeList typelist = doc.getElementsByTagName("TYPE");
+		try {
 
-					getTypeList(typelist, types_request);
+			Map<String, String> headers = new LinkedHashMap<String, String>();
 
-					Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Out of Das2 Types Request: {0}", types_request);
-				} catch (Exception ex) {
-					Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-					LocalUrlCacher.invalidateCacheFile(types_request);
-        } finally {
+			//set in header a sessionId for types authentication?
+			//Also, if there is a sessionId then should ignore cache so user can get hidden types
+			String sessionId = source.getServerInfo().getSessionId();
+			if (sessionId != null) {
+				headers.put("sessionId", sessionId);
+				//if sessionID then connected so ignore cache
+				response = getInputStream(TYPES_CAP_QUERY, LocalUrlCacher.IGNORE_CACHE, false, headers, "Das2 Types Request");
+			} else {
+				response = getInputStream(TYPES_CAP_QUERY, LocalUrlCacher.getPreferredCacheUsage(), true, headers, "Das2 Types Request");
+			}
+			if (response == null) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Types request {0} was not reachable.", types_request);
+				return;
+			}
+			Document doc = XMLUtils.getDocument(response);
+			NodeList typelist = doc.getElementsByTagName("TYPE");
+
+			getTypeList(typelist, types_request);
+
+			Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Out of Das2 Types Request: {0}", types_request);
+		} catch (Exception ex) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+			LocalUrlCacher.invalidateCacheFile(types_request);
+		} finally {
 			GeneralUtils.safeClose(response);
 		}
         //TODO should types_initialized be true after an exception?
@@ -353,12 +318,12 @@ public final class Das2VersionedSource {
     }
 
 
-	public void getTypeList(NodeList typelist, String types_request) {
+	private void getTypeList(NodeList typelist, String types_request) {
 		if (DEBUG) {
-		System.out.println("Das2 Type Length: " + typelist.getLength());
-		if (typelist.getLength() == 1) {
-			System.out.println("Das2 Types: " + typelist.item(0));
-		}
+			System.out.println("Das2 Type Length: " + typelist.getLength());
+			if (typelist.getLength() == 1) {
+				System.out.println("Das2 Types: " + typelist.item(0));
+			}
 		}
 		for (int i = 0; i < typelist.getLength(); i++) {
 			Element typenode = (Element) typelist.item(i);
@@ -466,7 +431,7 @@ public final class Das2VersionedSource {
 		return null;
 	}
 
-	public InputStream getInputStream(String query_type, int cache_opt, boolean write_to_cache, Map<String, String> headers, String log_string) throws MalformedURLException, IOException {
+	private InputStream getInputStream(String query_type, int cache_opt, boolean write_to_cache, Map<String, String> headers, String log_string) throws MalformedURLException, IOException {
 		String load_url = getRegionString(query_type);
 		InputStream istr = LocalUrlCacher.getInputStream(load_url, cache_opt, write_to_cache, headers);
 

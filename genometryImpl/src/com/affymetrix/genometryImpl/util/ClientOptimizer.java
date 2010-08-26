@@ -121,4 +121,18 @@ public class ClientOptimizer {
             output_requests.add(new_request);
         }
     }
+
+	public static List<FeatureRequestSym> newSplitQuery(List<SeqSpan> spans, Das2Type type, Das2Region region) {
+		List<FeatureRequestSym> outputRequests = new ArrayList<FeatureRequestSym>();
+		for(SeqSpan span : spans) {
+			FeatureRequestSym new_request = null;
+			if (region == null) {
+				new_request = new FeatureRequestSym(span);
+			} else {
+				new_request = new Das2FeatureRequestSym(type, region, span);
+			}
+            outputRequests.add(new_request);
+		}
+		return outputRequests;
+	}
 }

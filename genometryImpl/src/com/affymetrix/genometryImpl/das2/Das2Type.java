@@ -20,7 +20,6 @@ public final class Das2Type {
   private final Das2VersionedSource versioned_source;
   private final URI type_uri;
   private final String name;
-  private String short_name;
   private final Map<String, String> props;
   private final Map<String,String> formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings
 
@@ -31,16 +30,12 @@ public final class Das2Type {
     this.formats = formats;
     this.props = props;
     this.name = name;
-    int sindex = name.lastIndexOf("/");
-    if (sindex >= 0) { short_name = name.substring(sindex+1); }
-    else { short_name = name; }
   }
 
   public Das2VersionedSource getVersionedSource() { return versioned_source; }
   public String getID() { return type_uri.toString(); }
   public URI getURI() { return type_uri; }
   public String getName() { return name; }
-  public String getShortName() { return short_name; }
 	@Override
   public String toString() {
     if (getName() == null) { return getID(); }

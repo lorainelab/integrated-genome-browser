@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -329,7 +330,6 @@ public final class LazyChpSym extends ScoredContainerSym {
 
 	private static Map<Das2Type, Das2Type> determineMatchedTypes(String chp_array_type, Das2VersionedSource vsource) {
 		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-		Map<String, Das2Type> types = vsource.getTypes();
 		Map<Das2Type, Das2Type> matched_types = new HashMap<Das2Type, Das2Type>();
 		Collection<String> chp_array_syns = lookup.getSynonyms(chp_array_type);
 		if (chp_array_syns == null) {
@@ -338,9 +338,12 @@ public final class LazyChpSym extends ScoredContainerSym {
 		}
 		for (String synonym : chp_array_syns) {
 			String lcsyn = synonym.toLowerCase();
-			for (Das2Type type : types.values()) {
-				//  Switched to type.getShortName() to fix problem with name matching when name has a path prefix...
-				String tname = type.getShortName();
+			for (Das2Type type : vsource.getTypes().values()) {
+				//  fix problem with name matching when name has a path prefix...
+				String name = type.getName();
+				String tname = name;
+				int sindex = name.lastIndexOf("/");
+				if (sindex >= 0) { tname = name.substring(sindex+1); }
 				if ((tname.startsWith(synonym) || tname.startsWith(lcsyn)) && (matched_types.get(type) == null)) {
 					matched_types.put(type, type);
 				}

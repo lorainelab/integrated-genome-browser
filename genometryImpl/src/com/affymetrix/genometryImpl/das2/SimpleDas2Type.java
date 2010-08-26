@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.das2;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleDas2Type {
+public final class SimpleDas2Type {
 	
 	private String             name;
 	private List<String>       formats;

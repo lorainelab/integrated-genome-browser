@@ -54,8 +54,6 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	//   "text/x-das-feature+xml";
 	public static final String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
 	public static final String FEATURES_CONTENT_SUBTYPE = "x-das-features+xml";
-	//private static final String FILENAME_EXTENSION = "das2xml";
-	//private static final String FILENAME_EXTENSION_WITH_DOT = "." + FILENAME_EXTENSION;    //  static String DAS2_NAMESPACE = "http://www.biodas.org/ns/das/2.00";
 	public static final String DAS2_NAMESPACE = "http://biodas.org/documents/das2";
 	/**
 	 *  elements possible in DAS2 feature response
@@ -68,7 +66,6 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private static final String XID = "XID";
 	private static final String PART = "PART";
 	private static final String PARENT = "PARENT";
-	//  public static String ALIGN = "ALIGN";  // no longer have ALIGN elements, these are now also LOC elements
 	private static final String PROP = "PROP";
 	//private static final String WRITEBACK = "WRITEBACK";
 	/**
@@ -86,23 +83,12 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private static final String CREATED = "created";    // FEATURE
 	private static final String MODIFIED = "modified";  // FEATURE
 	private static final String DOC_HREF = "doc_href";  // FEATURE
-	//private static final String MIME_TYPE = "mimetype";  // PROP
 	private static final String RANGE = "range";         // LOC
 	private static final String CIGAR = "gap";             // LOC
 	private static final String KEY = "key";             // PROP
 	private static final String VALUE = "value";         // PROP
 	public static final String SEGMENT = "segment";     // LOC
 
-	// PROP attributes -- leaving out for now, not sure if common.rnc is current for t
-	//  static final String PTYPE = "ptype";  // in <PROP>
-	//  static final String CONTENT_ENCODING = "content_encoding";  // in <PROP>
-	/**
-	 *  built-in ptype attribute values possible for <PROP> element in DAS2 feature response
-	 */
-	//  static final String NOTE_PROP = "das:note";
-	//  static final String ALIAS_PROP = "das:alias";
-	//  static final String PHASE_PROP = "das:phase";
-	//  static final String SCORE_PROP = "das:score";
 	static final Pattern range_splitter = Pattern.compile("/");
 	static final Pattern interval_splitter = Pattern.compile(":");
 	static GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -121,13 +107,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	String feat_created = null;
 	String feat_modified = null;
 	String feat_doc_href = null;
-	//  String feat_prop_content = "";
 	String feat_prop_key = null;
 	String feat_prop_val = null;
 	/**  list of SeqSpans specifying feature locations */
 	List<SeqSpan> feat_locs = new ArrayList<SeqSpan>();
-	//  List feat_aligns = new ArrayList();  // alignments are now merged with locations
-	//List feat_xids = new ArrayList();
+	
 	/**
 	 *  map of child feature id to either:
 	 *      itself  (if child feature not parsed yet), or
@@ -135,14 +119,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 */
 	Map<String, Object> feat_parts = new LinkedHashMap<String, Object>();
 	Map<String, Object> feat_props = null;
-	/**
-	 *  lists for builtin feature properties
-	 *  not using yet (but clearing in clearFeature() just in case)
-	 */
-	//List feat_notes = new ArrayList();
-	//List feat_aliass = new ArrayList();
-	//List feat_phases = new ArrayList();
-	//List feat_scores = new ArrayList();
+
 	/**
 	 *  List of feature jsyms resulting from parse
 	 */
@@ -441,16 +418,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		feat_doc_href = null;
 
 		feat_locs.clear();
-		//feat_xids.clear();
 		// making new feat_parts map because ref to old feat_parts map may be held for parent/child resolution
 		feat_parts = new LinkedHashMap<String, Object>();
 
-		//feat_notes.clear();
-		//feat_aliass.clear();
-		//feat_phases.clear();
-		//feat_scores.clear();
+
 		feat_props = null;
-		//    feat_prop_content = "";
 		feat_prop_key = null;
 		feat_prop_val = null;
 	}
@@ -490,7 +462,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				multivals.add(feat_prop_val);
 				feat_props.put(feat_prop_key, multivals);
 			}
-			//      feat_prop_content = "";
+
 			feat_prop_key = null;
 			feat_prop_val = null;
 			current_elem = elemstack.pop();
@@ -525,7 +497,6 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 			return;
 		}
-		//SimpleDas2Feature featsym = new SimpleDas2Feature(new URI(feat_id), feat_type, feat_name, feat_parent_id,
 
 		SimpleDas2Feature featsym = new SimpleDas2Feature(feat_id, feat_type, feat_name, feat_parent_id,
 						feat_created, feat_modified, feat_doc_href, feat_props);
@@ -901,18 +872,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *         seqid/min:max:strand
 	 *   but _not_ the case where there is no seqid, or no min, or no max
 	 */
-	/*public static SeqSpan getLocationSpan(String seqrng, AnnotatedSeqGroup group) {
-	int sindex = seqrng.lastIndexOf("/");
-	String seqid = seqrng.substring(0, sindex);
-	String rng = seqrng.substring(sindex + 1);
-	return getLocationSpan(seqid, rng, group);
-	}*/
-	/*public static String getLocationSeqId(String seqrng) {
-		int sindex = seqrng.lastIndexOf("/");
-		String seqid = seqrng.substring(0, sindex);
-		return seqid;
-	}*/
-
+	
 	/**
 	 *  A temporary hack.
 	 *  This is a very temporary fix!!!

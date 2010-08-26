@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 
 public final class Das2ClientOptimizer {
     private static final boolean DEBUG = false;
-    private static final boolean DEBUG_HEADERS = false;
 
     /**
      *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
@@ -188,23 +187,6 @@ public final class Das2ClientOptimizer {
                 int response_code = query_con.getResponseCode();
                 String response_message = query_con.getResponseMessage();
 
-                if (DEBUG) {
-                    System.out.println("http response code: " + response_code + ", " + response_message);
-                }
-
-                if (DEBUG_HEADERS) {
-                    int hindex = 0;
-                    while (true) {
-                        String val = query_con.getHeaderField(hindex);
-                        String key = query_con.getHeaderFieldKey(hindex);
-                        if (val == null && key == null) {
-                            break;
-                        }
-                        System.out.println("header:   key = " + key + ", val = " + val);
-                        hindex++;
-                    }
-                }
-
                 if (response_code != 200) {
                     System.out.println("WARNING, HTTP response code not 200/OK: " + response_code + ", " + response_message);
                 }
@@ -232,7 +214,7 @@ public final class Das2ClientOptimizer {
 				}
             }
 
-            AddParsingLogMessage(content_subtype);
+            System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
 			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
 			List<? extends SeqSymmetry> feats = FeatureRequestSym.Parse(extension, type.getURI(), istr, seq_group, type.getName(), overlap_span);
 
@@ -254,9 +236,4 @@ public final class Das2ClientOptimizer {
             GeneralUtils.safeClose(istr);
         }
     }
-
-     private static void AddParsingLogMessage(String content_subtype) {
-        System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
-    }
-
 }

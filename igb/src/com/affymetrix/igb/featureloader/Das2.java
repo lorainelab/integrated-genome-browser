@@ -111,11 +111,11 @@ public class Das2 {
 		ts.setFeature(feature);
 
 		try {
-			Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());
+			Application.getSingleton().addNotLockedUpMsg("Loading " + type.getName());
 			List<? extends FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
 			result_syms.addAll(feature_list);
 		} finally {
-			Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getShortName());
+			Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getName());
 		}
 	}
 

@@ -68,11 +68,8 @@ public final class Das2VersionedSource {
         this.coords_uri = coords_uri;
         version_uri = vers_uri;
 		this.primaryServer = primaryServer;
-		
-		if(pri_uri != null)
-			primary_uri = URI.create(pri_uri.toString() + name + "/");
-		else
-			primary_uri = null;
+
+		primary_uri = (pri_uri == null) ? null : URI.create(pri_uri.toString() + name + "/");
 		
         source = das_source;
         if (init) {
@@ -161,10 +158,6 @@ public final class Das2VersionedSource {
     }
 
     private synchronized void addType(Das2Type type) {
-		
-		String tname = type.getName();
-		List<Das2Type> prevlist = null;
-
 		boolean isResidueFormat = false;
 		for(String format : type.getFormats().keySet()){
 			if(ServerUtils.isResidueFile(format)){
@@ -174,7 +167,8 @@ public final class Das2VersionedSource {
 		}
 
 		if(isResidueFormat){
-			prevlist = residue2types.get(tname);
+			String tname = type.getName();
+			List<Das2Type> prevlist = residue2types.get(tname);
 			if (prevlist == null) {
 				prevlist = new ArrayList<Das2Type>();
 				residue2types.put(tname, prevlist);
@@ -261,7 +255,6 @@ public final class Das2VersionedSource {
 				region_name = reg.getAttribute(TITLE);
 			}
 			String region_info_url = reg.getAttribute("doc_href");
-			//String description = null;
 			int length = Integer.parseInt(lengthstr);
 			Das2Region region = new Das2Region(this, region_uri, region_name, region_info_url, length);
 			regions.put(region.getID(), region);

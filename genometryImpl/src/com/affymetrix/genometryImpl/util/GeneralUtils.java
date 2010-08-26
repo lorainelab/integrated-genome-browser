@@ -302,23 +302,11 @@ public final class GeneralUtils {
 			if (feature.typeObj instanceof Das2Type && ((Das2Type) feature.typeObj).getURI().equals(uri)) {
 				return feature;
 			}
-			if (feature.typeObj instanceof DasType) {
-				// not implemented yet
-				continue;
+			if (feature.typeObj instanceof DasType && ((DasType) feature.typeObj).getURI().equals(uri)) {
+				return feature;
 			}
 			if (feature.symL != null && feature.symL.uri.equals(uri)) {
 				return feature;
-			}
-		}
-		return null;	// couldn't find it
-	}
-
-	public static GenericFeature findFeatureInDas(List<GenericFeature> features, String source, String name){
-		for (GenericFeature feature : features) {
-			if (feature.typeObj instanceof DasType) {
-				DasType type = (DasType)feature.typeObj;
-				if(type.getSource().equals(source) && type.getName().equals(name))
-					return feature;
 			}
 		}
 		return null;	// couldn't find it

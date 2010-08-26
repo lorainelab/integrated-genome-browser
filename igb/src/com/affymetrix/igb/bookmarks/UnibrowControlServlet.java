@@ -318,7 +318,7 @@ public final class UnibrowControlServlet {
 				}
 
 				GenericFeature feature = null;
-
+				URI uri = null;
 				if(gServer.serverType == ServerType.DAS){
 					String source = null;
 					String type = null;
@@ -332,17 +332,18 @@ public final class UnibrowControlServlet {
 					DasServerInfo dasServerInfo = (DasServerInfo) gServer.serverObj;
 					DasSource dasSource = dasServerInfo.getDataSources().get(source);
 					dasSource.getTypes();
-					feature = GeneralUtils.findFeatureInDas(GeneralLoadUtils.getFeatures(version), source, type);
-
+					uri = URI.create(server_url + "/" + source  + "/" + type);
+	
 				} else if (gServer.serverType == ServerType.QuickLoad){
 					
 					URL quickloadURL = new URL((String) gServer.serverObj);
 					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 					quickloadServer.getTypes(version);
-					URI uri = URI.create(query_url);
-					feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
+					uri = URI.create(query_url);
+	
 				}
 
+				feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
 				if (feature != null) {
 					feature.setVisible();
 					GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);

@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.concurrent.CopyOnWriteArraySet;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -78,6 +79,14 @@ public class AnnotatedSeqGroup {
 		return versions;
 	}
 
+	final public GenericVersion getVersionOfServer(GenericServer gServer){
+		for(GenericVersion v : gVersions){
+			if(v.gServer.equals(gServer))
+				return v;
+		}
+		return null; // No Associated version with provided server.
+	}
+	
 	/**
 	 * Return all versions.
 	 * @return

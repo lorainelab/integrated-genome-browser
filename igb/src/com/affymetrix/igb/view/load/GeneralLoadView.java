@@ -757,7 +757,7 @@ public final class GeneralLoadView extends JComponent
 
 		String speciesName = (String) this.speciesCB.getSelectedItem();
 		String versionName = (String) this.versionCB.getSelectedItem();
-		if (speciesName.equals(SELECT_SPECIES) || versionName.equals(SELECT_GENOME)) {
+		if (speciesName == null || versionName == null || speciesName.equals(SELECT_SPECIES) || versionName.equals(SELECT_GENOME)) {
 			return;
 		}
 

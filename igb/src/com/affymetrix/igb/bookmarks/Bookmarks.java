@@ -4,15 +4,8 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.genometryImpl.das.DasType;
-import com.affymetrix.genometryImpl.das2.Das2Type;
-import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.das2.FormatPriorities;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.general.SymLoader;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +15,8 @@ import java.util.List;
  * Stack like storage of urls/graph ids
  * 
  * @author Ido M. Tamir
+ * @author hiralv
+ * @version $Id$
  */
 final public class Bookmarks {
     
@@ -65,42 +60,8 @@ final public class Bookmarks {
 	private boolean addToSyms(GenericFeature feature){
 		GenericVersion version = feature.gVersion;
 
-		if(version.gServer.serverType == ServerType.DAS2){
-
-			Das2Type type = (Das2Type) feature.typeObj;
-
-			String path = type.getID();
-			String format =  FormatPriorities.getFormat(type);
-
-			Das2VersionedSource source = (Das2VersionedSource) version.versionSourceObj;
-			String server_str = source.getID().substring(0, source.getID().indexOf(version.versionID) - 1);
-
-			syms.add(new SymBookmark(version.gServer.URL, version.versionID, path, format, version.gServer.serverType));
-
-			return true;
-		}else if (version.gServer.serverType == ServerType.QuickLoad){
-			SymLoader sym = feature.symL;
-
-			if(sym == null)
-				return false;
-
-			String format = sym.extension;
-			format = format.substring(format.indexOf(".") + 1);
-
-			syms.add(new SymBookmark(version.gServer.URL, version.versionID, sym.uri.toString(), format, version.gServer.serverType));
-
-			return true;
-		}else if (version.gServer.serverType == ServerType.DAS){
-
-			DasType type = (DasType)feature.typeObj;
-
-			String source = type.getSource();
-			String name = type.getName();
-
-			String path = source + "?" + name;
-
-			syms.add(new SymBookmark(version.gServer.URL, version.versionID, path, "", version.gServer.serverType));
-			
+		if(version.gServer.serverType != ServerType.LocalFiles){
+			syms.add(new SymBookmark(version.gServer.URL, feature.getURI().toString(), version.gServer.serverType));
 			return true;
 		}
 
@@ -139,18 +100,6 @@ final public class Bookmarks {
         return getLast().isValid();
     }
     
-    /**
-    * from url + region to das2 query
-    * 
-    *
-    */
-     static String getDas2Query(SymBookmark bookmark, int start, int end, String chr){
-         String cap = bookmark.getCapability() + "?";
-         String seg = "segment=" + bookmark.getServer() + "/" + bookmark.getMapping() + "/" + chr + ";";
-         String over = "overlaps=" + start + ":" + end + ";";
-         String type = "type=" +  bookmark.getPath() + ";" + "format=" + bookmark.getFormat();
-         return GeneralUtils.URLEncode(cap + seg + over + type);
-     }
 	 
     /**
     * sets the das2 and quickload properties of the bookmark and deletes source_url.

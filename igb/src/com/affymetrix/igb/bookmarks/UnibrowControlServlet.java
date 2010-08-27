@@ -33,8 +33,6 @@ import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.das.DasServerInfo;
-import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -44,7 +42,7 @@ import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
@@ -67,6 +65,8 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  *      annotations that can be loaded via QuickLoaderView
  *  If the currently loaded genome doesn't match the one requested, might
  *      ask the user before switching.
+ * 
+ * @version $Id$
  *</pre>
  */
 public final class UnibrowControlServlet {
@@ -306,7 +306,6 @@ public final class UnibrowControlServlet {
 
 		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		String version = seqGroup.getID();
 
 		for (int i = 0; i < server_urls.length; i++) {
 			String server_url = server_urls[i];
@@ -316,6 +315,8 @@ public final class UnibrowControlServlet {
 				GenericServer gServer = ServerList.getServer(server_url);
 				if (gServer == null) {
 					//TOD0 - What if server is not found.
+					Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find server {0}", gServer.serverName);
+					continue;
 				} else if (!gServer.isEnabled()) {
 					gServer.setEnabled(true);
 					GeneralLoadUtils.discoverServer(gServer);
@@ -323,63 +324,16 @@ public final class UnibrowControlServlet {
 					// TODO - this will be saved in preferences as enabled, although it shouldn't.
 				}
 
-				GenericFeature feature = null;
-				URI uri = null;
+				GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
 
-				if(gServer.serverType == ServerType.DAS2){
-					
-					Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-					server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
-
-					Das2VersionedSource das2version = server.getVersionedSource(seqGroup);
-					if (version == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find version : {0}", version);
-						continue;
-					}
-
-					Das2Type dtype = das2version.getTypes().get(query_url);
-					if (dtype == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find type: {0} in server: {1}", new Object[]{query_url, server_url});
-						continue;
-					}
-					uri = dtype.getURI();
-
-				} else if(gServer.serverType == ServerType.DAS){
-					String source = null;
-					String type = null;
-					int qindex = query_url.indexOf('?');
-					if (qindex <= -1) {
-						continue;
-					}
-					source = query_url.substring(0, qindex);
-					type = query_url.substring(qindex + 1, query_url.length());
-
-					DasServerInfo dasServerInfo = (DasServerInfo) gServer.serverObj;
-					DasSource dasSource = dasServerInfo.getDataSources().get(source);
-
-					if (dasSource == null) {
-						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find dasSource with id {0}", source);
-						continue;
-					}
-
-					dasSource.getTypes();
-					uri = URI.create(server_url + "/" + source  + "/" + type);
-	
-				} else if (gServer.serverType == ServerType.QuickLoad){
-					
-					URL quickloadURL = new URL((String) gServer.serverObj);
-					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-					
-					if(quickloadServer.getTypes(version).isEmpty()){
-						Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find type with version {0}", version);
-						continue;
-					}
-
-					uri = URI.create(query_url);
-	
+				if(gVersion == null){
+					Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find version {0} in server {1}", new Object[]{seqGroup.getID(), gServer.serverName});
+					continue;
 				}
 
-				feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
+				URI uri = URI.create(query_url);	
+				GenericFeature feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
+				
 				if (feature != null) {
 					feature.setVisible();
 					GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);
@@ -394,7 +348,7 @@ public final class UnibrowControlServlet {
 				}
 
 			} catch (Exception ex) {
-				// something went wrong with deconstructing quickload/das query URL.
+				// something went wrong with deconstructing query URL.
 				ex.printStackTrace();
 			}
 		}
@@ -464,11 +418,23 @@ public final class UnibrowControlServlet {
 			return false; // cancel
 		}
 
+		final BioSeq book_seq = determineSeq(seqid, book_group);
+		if (book_seq == null) {
+			ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
+			return false;
+		} else {
+			// gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
+			//     gviewer is registered as a SeqSelectionListener on gmodel
+			if (book_seq != gmodel.getSelectedSeq()) {
+				gmodel.setSelectedSeq(book_seq);
+			}
+		}
+		
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
 				try {
-					setSeqAndRegion();
+					selectRegion();
 
 					// Now process "graph_files" url's
 					if (graph_files != null) {
@@ -485,22 +451,14 @@ public final class UnibrowControlServlet {
 				}
 			}
 
-			private void setSeqAndRegion() {
-				BioSeq book_seq = determineSeq(seqid, book_group);
-				if (book_seq == null) {
-					ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
-				} else {
-					// gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
-					//     gviewer is registered as a SeqSelectionListener on gmodel
-					if (book_seq != gmodel.getSelectedSeq()) {
-						gmodel.setSelectedSeq(book_seq);
-					}
-					setRegion(gviewer, start, end, book_seq);
-					if (selstart >= 0 && selend >= 0) {
-						final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-						gviewer.setSelectedRegion(regionsym, true);
-					}
+			private void selectRegion() {
+
+				setRegion(gviewer, start, end, book_seq);
+				if (selstart >= 0 && selend >= 0) {
+					final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
+					gviewer.setSelectedRegion(regionsym, true);
 				}
+
 			}
 
 		});

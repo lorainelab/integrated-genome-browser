@@ -309,7 +309,7 @@ public final class LoadFileAction extends AbstractAction {
 			@Override
 			public void done() {
 				SeqGroupView.refreshTable();
-				if (loadGroup.getSeqCount() > 0) {
+				if (loadGroup.getSeqCount() > 0 && GenometryModel.getGenometryModel().getSelectedSeq() == null) {
 					// select a chromosomes
 					GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
 				}

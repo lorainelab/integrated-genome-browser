@@ -129,12 +129,24 @@ public final class UnibrowControlServlet {
 		//    Can be any URL, not just a file
 		String[] graph_files = parameters.get("graph_file");
 		boolean has_graph_source_urls = (parameters.get("graph_source_url_0") != null);
+		boolean loaddata = true;
 
 		int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
 		int start = values[0],
 			end   = values[1],
 			selstart = values[2],
 			selend   = values[3];
+
+		String[] server_urls = parameters.get(Bookmark.SERVER_URL);
+		String[] query_urls = parameters.get(Bookmark.QUERY_URL);
+		GenericServer[] gServers = null;
+
+		if (server_urls == null || query_urls == null
+				|| query_urls.length == 0 || server_urls.length != query_urls.length) {
+			loaddata = false;
+		} else {
+			gServers = loadServers(server_urls);
+		}
 
 		boolean ok = goToBookmark(uni, seqid, version, start, end, selstart, selend, graph_files);
 		if (!ok) {
@@ -149,9 +161,9 @@ public final class UnibrowControlServlet {
 	    String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
 		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
 
-		String[] query_urls = parameters.get(Bookmark.QUERY_URL);
-		String[] server_urls = parameters.get(Bookmark.SERVER_URL);
-		loadData(server_urls, query_urls, start, end);
+		if(loaddata){
+			loadData(gServers, query_urls, start, end);
+		}
 
 		//String[] data_urls = parameters.get(Bookmark.DATA_URL);
 		//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
@@ -298,50 +310,37 @@ public final class UnibrowControlServlet {
 		}
 	}
 
-	private static void loadData(final String[] server_urls, final String[] query_urls, int start, int end){
-		if (server_urls == null || query_urls == null
-				|| query_urls.length == 0 || server_urls.length != query_urls.length) {
-			return;
-		}
-
+	private static void loadData(final GenericServer[] gServers, final String[] query_urls, int start, int end){
+		
 		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 
-		for (int i = 0; i < server_urls.length; i++) {
-			String server_url = server_urls[i];
+		for (int i = 0; i < query_urls.length; i++) {
+
+			if(gServers[i] == null){
+				continue;
+			}
+
 			String query_url = query_urls[i];
 
 			try {
-				GenericServer gServer = ServerList.getServer(server_url);
-				if (gServer == null) {
-					//TOD0 - What if server is not found.
-					Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find server {0}", gServer.serverName);
-					continue;
-				} else if (!gServer.isEnabled()) {
-					gServer.setEnabled(true);
-					GeneralLoadUtils.discoverServer(gServer);
-					// enable the server.
-					// TODO - this will be saved in preferences as enabled, although it shouldn't.
-				}
+				GenericVersion gVersion = seqGroup.getVersionOfServer(gServers[i]);
 
-				GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-
-				if(gVersion == null){
-					Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, "Couldn''t find version {0} in server {1}", new Object[]{seqGroup.getID(), gServer.serverName});
+				if (gVersion == null) {
+					Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+							Level.SEVERE, "Couldn''t find version {0} in server {1}",
+							new Object[]{seqGroup.getID(), gServers[i].serverName});
 					continue;
 				}
 
-				URI uri = URI.create(query_url);	
+				URI uri = URI.create(query_url);
 				GenericFeature feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
-				
+
 				if (feature != null) {
 					feature.setVisible();
 					GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);
-					GeneralLoadView.getLoadView().createFeaturesTable();
-					if(seq != null){
-						SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-						GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
-					}
+					SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
+					GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
 				} else {
 					Logger.getLogger(GeneralUtils.class.getName()).log(
 							Level.SEVERE, "Couldn't find feature for bookmark url {0}", query_url);
@@ -352,6 +351,39 @@ public final class UnibrowControlServlet {
 				ex.printStackTrace();
 			}
 		}
+		GeneralLoadView.getLoadView().createFeaturesTable();
+	}
+
+	private static GenericServer[] loadServers(String[] server_urls){
+		GenericServer[] gServers = new GenericServer[server_urls.length];
+
+		for (int i = 0; i < server_urls.length; i++) {
+			String server_url = server_urls[i];
+			gServers[i] = loadServer(server_url);
+		}
+		
+		return gServers;
+	}
+
+	/**
+	 * Finds server from server url and enables it, if found disabled.
+	 * @param server_url	Server url string.
+	 * @return	Returns GenericServer if found else null.
+	 */
+	public static GenericServer loadServer(String server_url){
+		GenericServer gServer = ServerList.getServer(server_url);
+		if (gServer == null) {
+			//TOD0 - What if server is not found.
+			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+					Level.SEVERE, "Couldn''t find server {0}", gServer.serverName);
+			return null;
+		} else if (!gServer.isEnabled()) {
+			gServer.setEnabled(true);
+			GeneralLoadUtils.discoverServer(gServer);
+			// enable the server.
+			// TODO - this will be saved in preferences as enabled, although it shouldn't.
+		}
+		return gServer;
 	}
 
 	private static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
@@ -473,14 +505,7 @@ public final class UnibrowControlServlet {
 			group = gmodel.getSeqGroup(version);
 		}
 		if (group != null && !group.equals(gmodel.getSelectedSeqGroup())) {
-			// TODO -- move this code into GeneralLoadView's group change handler
-			Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + version);
-			try {
-				// Make sure this genome versionName's feature names are initialized.
-				GeneralLoadUtils.initVersionAndSeq(version);
-			} finally {
-				Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + version);
-			}
+			GeneralLoadView.initVersion(version);
 			gmodel.setSelectedSeqGroup(group);
 		}
 		return group;

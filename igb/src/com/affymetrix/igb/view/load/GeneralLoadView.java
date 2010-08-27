@@ -450,7 +450,7 @@ public final class GeneralLoadView extends JComponent
 	}
 
 
-	private static void initVersion(String versionName) {
+	public static void initVersion(String versionName) {
 		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + versionName);
 		try {
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.

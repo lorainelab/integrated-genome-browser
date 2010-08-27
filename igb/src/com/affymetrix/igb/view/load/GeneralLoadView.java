@@ -325,7 +325,7 @@ public final class GeneralLoadView extends JComponent
 
 			initVersion(versionName);
 
-			List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+			List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
 			if (features == null || features.isEmpty()) {
 				return;
 			}
@@ -518,8 +518,7 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		// Load any features that have a visible strategy and haven't already been loaded.
-		String genomeVersionName = (String) versionCB.getSelectedItem();
-		for (GenericFeature gFeature : GeneralLoadUtils.getFeatures(genomeVersionName)) {
+		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (gFeature.loadStrategy != LoadStrategy.VISIBLE && gFeature.loadStrategy != LoadStrategy.CHROMOSOME) {
 				continue;
 			}
@@ -770,7 +769,7 @@ public final class GeneralLoadView extends JComponent
 		try {
 			Application.getSingleton().addNotLockedUpMsg("Loading features for " + versionName);
 			createFeaturesTable();
-			loadWholeRangeFeatures(versionName);
+			loadWholeRangeFeatures();
 		} finally {
 			Application.getSingleton().removeNotLockedUpMsg("Loading features for " + versionName);
 		}
@@ -822,8 +821,7 @@ public final class GeneralLoadView extends JComponent
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				String versionName = (String) versionCB.getSelectedItem();
-				final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+				final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
 				if (features == null || features.isEmpty()) {
 					feature_model.clearFeatures();
 				}
@@ -837,7 +835,7 @@ public final class GeneralLoadView extends JComponent
 	 */
 	public List<GenericFeature> createFeaturesTable() {
 		String versionName = (String) this.versionCB.getSelectedItem();
-		final List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+		final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
 		if (DEBUG_EVENTS) {
 			BioSeq curSeq = gmodel.getSelectedSeq();
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
@@ -878,8 +876,8 @@ public final class GeneralLoadView extends JComponent
 	 * Load any features that have a whole strategy and haven't already been loaded.
 	 * @param versionName
 	 */
-	private static void loadWholeRangeFeatures(String versionName) {
-		for (GenericFeature gFeature : GeneralLoadUtils.getFeatures(versionName)) {
+	private static void loadWholeRangeFeatures() {
+		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (gFeature.loadStrategy != LoadStrategy.GENOME) {
 				continue;
 			}

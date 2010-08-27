@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.File;
 import java.io.FileWriter;
@@ -73,8 +74,8 @@ public class CreateSpeciesDir extends AbstractAction {
 		//Create version directory
 		GeneralUtils.makeDir(path + "/" +version);
 
-		
-		List<GenericFeature> features = GeneralLoadUtils.getFeatures(version);
+		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(version);
+		List<GenericFeature> features = GeneralLoadUtils.getFeatures(group);
 		List<String[][]> annots = new ArrayList<String[][]>();
 		Set<BioSeq> chromInfo = new HashSet<BioSeq>();
 

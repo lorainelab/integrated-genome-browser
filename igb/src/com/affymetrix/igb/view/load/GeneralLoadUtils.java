@@ -372,10 +372,9 @@ public final class GeneralLoadUtils {
 	 *  Returns the list of features for the genome with the given version name.
 	 *  The list may (rarely) be empty, but never null.
 	 */
-	public static List<GenericFeature> getFeatures(final String versionName) {
+	public static List<GenericFeature> getFeatures(AnnotatedSeqGroup group) {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
-		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		if (group != null) {
 			Set<GenericVersion> versions = group.getEnabledVersions();
 			if (versions != null) {
@@ -385,6 +384,14 @@ public final class GeneralLoadUtils {
 			}
 		}
 		return featureList;
+	}
+
+	/*
+	 * Returns the list of features for currently selected group.
+	 */
+	public static List<GenericFeature> getSelectedVersionFeatures() {
+		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		return getFeatures(group);
 	}
 
 	/**

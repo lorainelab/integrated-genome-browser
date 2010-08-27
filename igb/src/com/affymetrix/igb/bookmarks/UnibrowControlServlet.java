@@ -193,7 +193,8 @@ public final class UnibrowControlServlet {
 		for (Das2FeatureRequestSym frs : das2_requests) {
 			URI uri = frs.getDas2Type().getURI();
 			String version = frs.getDas2Type().getVersionedSource().getName();
-			GenericFeature feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
+			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(version);
+			GenericFeature feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(group), uri);
 			if (feature != null) {
 				feature.setVisible();
 				GeneralLoadView.getLoadView().createFeaturesTable();

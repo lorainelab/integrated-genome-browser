@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.io.*;
@@ -307,6 +308,7 @@ public final class LoadFileAction extends AbstractAction {
 
 			@Override
 			public void done() {
+				SeqGroupView.refreshTable();
 				if (loadGroup.getSeqCount() > 0) {
 					// select a chromosomes
 					GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));

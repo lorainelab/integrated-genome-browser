@@ -172,28 +172,28 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		}
 	}
 
-	public static List<FeatureRequestSym> determineFeatureRequestSyms(SymLoader symL, URI uri, String featureName, LoadStrategy strategy, SeqSpan overlapSpan) {
+	public static List<FeatureRequestSym> determineFeatureRequestSyms(SymLoader symL, URI uri, GenericFeature feature, SeqSpan overlapSpan) {
 		List<FeatureRequestSym> output_requests = new ArrayList<FeatureRequestSym>();
-		if (strategy == LoadStrategy.GENOME && symL != null) {
-			buildFeatureSymListByChromosome(symL.getChromosomeList(), uri, featureName, output_requests);
+		if (feature.loadStrategy == LoadStrategy.GENOME && symL != null) {
+			buildFeatureSymListByChromosome(symL.getChromosomeList(), uri, feature, output_requests);
 		} else {
 			if (overlapSpan != null) {
 				// Note that if we're loading the whole genome and symL isn't defined, we return one requestSym.  That's okay -- it will be ignored
 				FeatureRequestSym requestSym = new FeatureRequestSym(overlapSpan);
-				ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, featureName, output_requests, requestSym);
+				ClientOptimizer.OptimizeQuery(requestSym.getOverlapSpan().getBioSeq(), uri, null, feature.featureName, output_requests, requestSym);
 			}
 		}
 		return output_requests;
 	}
 
-	public static void buildFeatureSymListByChromosome(List<BioSeq> seqList, URI uri, String featureName, List<FeatureRequestSym> output_requests) {
+	public static void buildFeatureSymListByChromosome(List<BioSeq> seqList, URI uri, GenericFeature feature, List<FeatureRequestSym> output_requests) {
 		for (BioSeq aseq : seqList) {
 			if (aseq.getID().equals(Constants.GENOME_SEQ_ID)) {
 				continue;
 			}
 			SeqSpan overlap = new SimpleSeqSpan(0, aseq.getLength(), aseq);
 			FeatureRequestSym requestSym = new FeatureRequestSym(overlap);
-			ClientOptimizer.OptimizeQuery(aseq, uri, null, featureName, output_requests, requestSym);
+			ClientOptimizer.OptimizeQuery(aseq, uri, null, feature.featureName, output_requests, requestSym);
 		}
 	}
 

@@ -146,18 +146,17 @@ public final class QuickLoad extends SymLoader {
 			throws OutOfMemoryError {
 
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
-		Executor vexec = ThreadUtils.getPrimaryExecutor(this.version.gServer);
 		if (this.symL != null && this.symL.isResidueLoader) {
 			final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-			return loadResiduesThread(feature.loadStrategy, overlapSpan, seq, gviewer, vexec);
+			return loadResiduesThread(feature.loadStrategy, overlapSpan, seq, gviewer);
 		}
 
-		return loadSymmetriesThread(feature, overlapSpan, gviewer, vexec);
+		return loadSymmetriesThread(feature, overlapSpan, gviewer);
 
 	}
 
 	private boolean loadSymmetriesThread(
-			final GenericFeature feature, final SeqSpan overlapSpan, final SeqMapView gviewer, Executor vexec)
+			final GenericFeature feature, final SeqSpan overlapSpan, final SeqMapView gviewer)
 			throws OutOfMemoryError {
 
 		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
@@ -172,8 +171,7 @@ public final class QuickLoad extends SymLoader {
 						return null;
 					}
 					List<FeatureRequestSym> output_requests = FeatureRequestSym.determineFeatureRequestSyms(
-							QuickLoad.this.symL, QuickLoad.this.uri, QuickLoad.this.featureName,
-							feature.loadStrategy, overlapSpan);
+							QuickLoad.this.symL, QuickLoad.this.uri, feature, overlapSpan);
 					List<SeqSymmetry> overallResults = loadAndAddSymmetries(feature, output_requests);
 					return overallResults;
 				} catch (Exception ex) {
@@ -210,7 +208,7 @@ public final class QuickLoad extends SymLoader {
 				}
 			}
 		};
-		vexec.execute(worker);
+		ThreadUtils.getPrimaryExecutor(this.version.gServer).execute(worker);
 		return true;
 	}
 
@@ -238,8 +236,7 @@ public final class QuickLoad extends SymLoader {
 				// Special case.  If chromosome expands during loading, the FeatureRequestSym needs to be rebuilt.
 				if (output_requests.size() == 1) {
 					output_requests = FeatureRequestSym.determineFeatureRequestSyms(
-							this.symL, this.uri, this.featureName,
-							strategy, output_requests.get(0).getOverlapSpan());
+							this.symL, this.uri, feature, output_requests.get(0).getOverlapSpan());
 				}
 			} else if (strategy == LoadStrategy.GENOME) {
 				// Special case.  At this point,
@@ -254,7 +251,7 @@ public final class QuickLoad extends SymLoader {
 
 				// rebuild the feature request list, since the chromosomes may have changed
 				output_requests.clear();
-				FeatureRequestSym.buildFeatureSymListByChromosome(this.version.group.getSeqList(), this.uri, featureName, output_requests);
+				FeatureRequestSym.buildFeatureSymListByChromosome(this.version.group.getSeqList(), this.uri, feature, output_requests);
 
 				List<? extends SeqSymmetry> chromResults = null;
 				// we've already parsed the data.  Special-case so that we don't parse it again.
@@ -262,30 +259,34 @@ public final class QuickLoad extends SymLoader {
 					// only get symmetries for this chromosome
 					chromResults = SymLoader.filterResultsByChromosome(results, request.getOverlapSpan().getBioSeq());
 					
-					filterAndAddAnnotations(request, chromResults, this.uri, overallResults);
+					filterAndAddAnnotations(request.getOverlapSpan(), chromResults, this.uri, overallResults);
 				}
 				return overallResults;
 			}
 		}
+		List<SeqSpan> spans = new ArrayList<SeqSpan>(output_requests.size());
 		for (FeatureRequestSym request : output_requests) {
+			spans.add(request.getOverlapSpan());
+		}
+		for (SeqSpan span : spans) {
 			// short-circuit if there's a failure... which may not even be signaled in the code
-			results = loadFeature(feature, request.getOverlapSpan());
+			results = loadFeature(feature, span);
 			if (results == null) {
 				return overallResults;
 			}
-			filterAndAddAnnotations(request, results, this.uri, overallResults);
+			filterAndAddAnnotations(span, results, this.uri, overallResults);
 		}
 		return overallResults;
 	}
 
 	private static void filterAndAddAnnotations(
-			FeatureRequestSym request, List<? extends SeqSymmetry> results, URI uri, List<SeqSymmetry> overallResults) {
-		results = ServerUtils.filterForOverlappingSymmetries(request.getOverlapSpan(), results);
+			SeqSpan span, List<? extends SeqSymmetry> results, URI uri, List<SeqSymmetry> overallResults) {
+		results = ServerUtils.filterForOverlappingSymmetries(span, results);
 		for (Map.Entry<String, List<SeqSymmetry>> entry : FeatureRequestSym.splitResultsByTracks(results).entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}
-			FeatureRequestSym requestSym = new FeatureRequestSym(request.getOverlapSpan());
+			FeatureRequestSym requestSym = new FeatureRequestSym(span);
 			requestSym.setProperty("method",
 					entry.getKey() != null ? entry.getKey() : uri.toString());
 			ClientOptimizer.uri2type.put(uri, (String)requestSym.getProperty("method"));	// TODO: HACK for 6.3
@@ -328,7 +329,7 @@ public final class QuickLoad extends SymLoader {
 
 
 
-	public boolean loadResiduesThread(final LoadStrategy strategy, final SeqSpan span, final BioSeq seq, final SeqMapView gviewer, Executor vexec) {
+	public boolean loadResiduesThread(final LoadStrategy strategy, final SeqSpan span, final BioSeq seq, final SeqMapView gviewer) {
 		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
 
 			public String doInBackground() {
@@ -356,7 +357,7 @@ public final class QuickLoad extends SymLoader {
 			}
 		};
 
-		vexec.execute(worker);
+		ThreadUtils.getPrimaryExecutor(this.version.gServer).execute(worker);
 		return true;
 	}
 

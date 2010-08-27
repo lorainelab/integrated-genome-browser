@@ -3,11 +3,13 @@ package com.affymetrix.genometryImpl.general;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -188,4 +190,20 @@ public final class GenericFeature {
 					+ "strategy.", new Object[]{s, feature.loadStrategy});
 		}
 	}
+
+	public URI getURI(){
+		if (typeObj instanceof Das2Type) {
+			return ((Das2Type) typeObj).getURI();
+		}
+		if (typeObj instanceof String) {
+			return URI.create(typeObj.toString());
+		}
+
+		if (symL != null) {
+			return symL.uri;
+		}
+		return null;
+	}
+
+
 }

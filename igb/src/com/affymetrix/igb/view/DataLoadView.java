@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 public final class DataLoadView extends JComponent {
-	final GeneralLoadView general_load_view;
 	private final SeqGroupView group_view;
 	public static int TAB_DATALOAD_PREFS = -1;
 
@@ -35,10 +34,9 @@ public final class DataLoadView extends JComponent {
 
 		main_panel.setLayout(new BorderLayout());
 
-		general_load_view = GeneralLoadView.getLoadView();
 		group_view = new SeqGroupView();
 
-		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, general_load_view, group_view);
+		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, GeneralLoadView.getLoadView(), group_view);
 		jPane.setResizeWeight(0.9);
 		main_panel.add("Center", jPane);
 
@@ -47,6 +45,6 @@ public final class DataLoadView extends JComponent {
 	}
 
 	public void tableChanged() {
-		general_load_view.createFeaturesTable();
+		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 }

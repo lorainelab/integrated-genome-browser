@@ -27,9 +27,7 @@ import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -198,8 +196,7 @@ public final class UnibrowControlServlet {
 			GenericFeature feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(version), uri);
 			if (feature != null) {
 				feature.setVisible();
-				DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
-				view.tableChanged();
+				GeneralLoadView.getLoadView().createFeaturesTable();
 				Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 				Das2.processFeatureRequest(frs, feature, true);
 			} else {

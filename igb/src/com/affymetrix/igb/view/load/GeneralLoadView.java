@@ -178,7 +178,7 @@ public final class GeneralLoadView extends JComponent
 //		featurePane.setResizeWeight(0.5);		
 //		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featurePane);
 
-		this.feature_tree_view = new FeatureTreeView(this);
+		this.feature_tree_view = new FeatureTreeView();
 		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featuresPanel);
 		jPane.setResizeWeight(0.5);		
 		this.add("Center", jPane);

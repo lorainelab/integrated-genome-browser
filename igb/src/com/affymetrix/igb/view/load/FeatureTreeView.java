@@ -56,13 +56,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
 	private static final String path_separator = "/";
-	private final GeneralLoadView glv;
 	private final JButton serverPrefsB;
 	private final TreeCellRenderer tcr;
 	private final TreeCellEditor tce;
 
-	public FeatureTreeView(GeneralLoadView glv) {
-		this.glv = glv;	// used to see feature table, which this is linked to.
+	public FeatureTreeView() {
 		this.setLayout(new BorderLayout());
 
 		JLabel featuresLabel = new JLabel("Choose Data Sources and Data Sets:");
@@ -579,7 +577,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 					}
 					if (nodeData instanceof GenericFeature) {
 						((GenericFeature) nodeData).setVisible();
-						glv.createFeaturesTable();
+						GeneralLoadView.getLoadView().createFeaturesTable();
 					}
 					tree.repaint();
 					fireEditingStopped();

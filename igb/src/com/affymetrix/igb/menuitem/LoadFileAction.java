@@ -263,8 +263,7 @@ public final class LoadFileAction extends AbstractAction {
 		//Annotated Seq Group must be selected before feature table change call.
 		GenometryModel.getGenometryModel().setSelectedSeqGroup(loadGroup);
 
-		DataLoadView view = ((IGB) Application.getSingleton()).data_load_view;
-		view.tableChanged();
+		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 
 	private static void loadAllFeatures(final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup){

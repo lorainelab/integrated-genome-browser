@@ -219,12 +219,14 @@ public final class Das2ClientOptimizer {
 			List<? extends SeqSymmetry> feats = FeatureRequestSym.Parse(extension, type.getURI(), istr, seq_group, type.getName(), overlap_span);
 
 			//watch out for useq format, this can contain stranded graph data from a single DAS/2 response, modify the name so it can be caught while making graphs
-			String name = request_sym.getDas2Type().getName();
-			if (request_sym.getFormat().equals(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) name = name + USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
+			String name = type.getName();
+			if (format.equals(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
+				name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
+			}
 			
 			//add data
 			FeatureRequestSym.addToRequestSym(
-					feats, request_sym, request_sym.getDas2Type().getURI(), name, request_sym.getOverlapSpan());
+					feats, request_sym, type.getURI(), name, request_sym.getOverlapSpan());
 			FeatureRequestSym.addAnnotations(feats, request_sym, aseq);
             
             return (feats != null);

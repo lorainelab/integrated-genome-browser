@@ -49,8 +49,6 @@ public final class Das2FeatureRequestSym extends FeatureRequestSym implements Ty
   private MutableSeqSpan sum_child_spans;
   private String format;
 
-  private final Das2RequestLog response = new Das2RequestLog();
-
   //  for now trying to do without container info in constructor
   public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap) {
 	super(overlap);
@@ -130,12 +128,4 @@ public final class Das2FeatureRequestSym extends FeatureRequestSym implements Ty
     }
     super.addChild(child);
   }
-
-  /** Returns a {@link Das2RequestLog} object that can be used to store
-   *  the progress, status, and exceptions of this request.
-   */
-  Das2RequestLog getLog() {
-    return response;
-  }
-
 }

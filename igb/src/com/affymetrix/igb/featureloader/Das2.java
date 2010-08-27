@@ -67,10 +67,6 @@ public class Das2 {
 					final Das2FeatureRequestSym request,
 					final GenericFeature feature,
 					final boolean update_display) {
-		if (request == null) {
-			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
-			return;
-		}
 		final List<FeatureRequestSym> result_syms = new ArrayList<FeatureRequestSym>();
 
 		Das2Type dtype = request.getDas2Type();

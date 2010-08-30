@@ -111,8 +111,8 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 			}
 		}
 
-		
-		addGlyphInfo(propList, seqMap.getSeqMap().getSelected(), selected_syms);
+		if(seqMap != null)
+			addGlyphInfo(propList, seqMap.getSeqMap().getSelected(), selected_syms);
 
 		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
 

@@ -16,6 +16,6 @@ public final class Das2Capability {
 
   public static Map<String,Das2VersionedSource> getCapabilityMap() { return cap2version; }
   String getType() { return type; }
-  URI getRootURI() { return root_uri; }
+  public URI getRootURI() { return root_uri; }
 
 }

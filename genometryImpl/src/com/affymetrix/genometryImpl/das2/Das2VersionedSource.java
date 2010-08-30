@@ -100,7 +100,7 @@ public final class Das2VersionedSource {
 		Das2Capability.getCapabilityMap().put(cap.getRootURI().toString(), this);
     }
 
-    Das2Capability getCapability(String type) {
+    public Das2Capability getCapability(String type) {
         return capabilities.get(type);
     }
 

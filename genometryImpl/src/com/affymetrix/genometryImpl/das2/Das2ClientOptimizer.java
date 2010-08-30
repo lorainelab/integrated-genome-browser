@@ -226,8 +226,8 @@ public final class Das2ClientOptimizer {
 			
 			//add data
 			FeatureRequestSym.addToRequestSym(
-					feats, request_sym, type.getURI(), name, request_sym.getOverlapSpan());
-			FeatureRequestSym.addAnnotations(feats, request_sym, aseq);
+					feats, request_sym, type.getURI(), name, overlap_span);
+			FeatureRequestSym.addAnnotations(feats, aseq);
             
             return (feats != null);
         } catch (Exception ex) {

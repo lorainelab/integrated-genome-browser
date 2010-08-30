@@ -128,6 +128,7 @@ public final class UnibrowControlServlet {
 		String[] graph_files = parameters.get("graph_file");
 		boolean has_graph_source_urls = (parameters.get("graph_source_url_0") != null);
 		boolean loaddata = true;
+		boolean loaddas2data = true;
 
 		int values[] = parseValues(start_param, end_param, select_start_param, select_end_param);
 		int start = values[0],
@@ -146,6 +147,18 @@ public final class UnibrowControlServlet {
 			gServers = loadServers(server_urls);
 		}
 
+		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
+	    String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
+
+		GenericServer[] gServers2 = null;
+
+		if (das2_server_urls == null || das2_query_urls == null
+				|| das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
+			loaddas2data = false;
+		} else {
+			gServers2 = loadServers(das2_server_urls);
+		}
+
 		boolean ok = goToBookmark(uni, seqid, version, start, end, selstart, selend, graph_files);
 		if (!ok) {
 			return; /* user cancelled the change of genome, or something like that */
@@ -155,14 +168,15 @@ public final class UnibrowControlServlet {
 			BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
 		}
 
-		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
-	    String[] das2_server_urls = parameters.get(Bookmark.DAS2_SERVER_URL);
-		loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
-
 		if(loaddata){
 			loadData(gServers, query_urls, start, end);
 		}
 
+		if(loaddas2data){
+			loadOldBookmarks(uni, gServers2, das2_query_urls, start, end);
+		}
+
+		//loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
 		//String[] data_urls = parameters.get(Bookmark.DATA_URL);
 		//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
 		//loadDataFromURLs(uni, data_urls, url_file_extensions, null);
@@ -308,50 +322,108 @@ public final class UnibrowControlServlet {
 		}
 	}
 
-	private static void loadData(final GenericServer[] gServers, final String[] query_urls, int start, int end){
-		
-		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-
-		for (int i = 0; i < query_urls.length; i++) {
-
-			if(gServers[i] == null){
+	private static void loadOldBookmarks(final Application uni, GenericServer[] gServers, String[] das2_query_urls, int start, int end){
+		List<String> opaque_requests = new ArrayList<String>();
+		for (int i = 0; i < das2_query_urls.length; i++) {
+			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);
+			String cap_url = null;
+			String seg_uri = null;
+			String type_uri = null;
+			String overstr = null;
+			String format = null;
+			boolean use_optimizer = true;
+			int qindex = das2_query_url.indexOf('?');
+			if (qindex > -1) {
+				cap_url = das2_query_url.substring(0, qindex);
+				String query = das2_query_url.substring(qindex + 1);
+				String[] query_array = query_splitter.split(query);
+				for (int k = -0; k < query_array.length; k++) {
+					String tagval = query_array[k];
+					int eqindex = tagval.indexOf('=');
+					String tag = tagval.substring(0, eqindex);
+					String val = tagval.substring(eqindex + 1);
+					if (tag.equals("format") && (format == null)) {
+						format = val;
+					} else if (tag.equals("type") && (type_uri == null)) {
+						type_uri = val;
+					} else if (tag.equals("segment") && (seg_uri == null)) {
+						seg_uri = val;
+					} else if (tag.equals("overlaps") && (overstr == null)) {
+						overstr = val;
+					} else {
+						use_optimizer = false;
+						break;
+					}
+				}
+				if (type_uri == null || seg_uri == null || overstr == null) {
+					use_optimizer = false;
+				}
+			} else {
+				use_optimizer = false;
+			}
+			//
+			// only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
+			// otherwise treat like any other opaque data url via loadDataFromURLs call
+			//
+			if (!use_optimizer) {
+				opaque_requests.add(das2_query_url);
 				continue;
 			}
 
-			String query_url = query_urls[i];
-
-			try {
-				GenericVersion gVersion = seqGroup.getVersionOfServer(gServers[i]);
-
-				if (gVersion == null) {
-					Logger.getLogger(UnibrowControlServlet.class.getName()).log(
-							Level.SEVERE, "Couldn''t find version {0} in server {1}",
-							new Object[]{seqGroup.getID(), gServers[i].serverName});
-					continue;
-				}
-
-				URI uri = URI.create(query_url);
-				GenericFeature feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
-
-				if (feature != null) {
-					feature.setVisible();
-					GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);
-					SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-					GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
-				} else {
-					Logger.getLogger(GeneralUtils.class.getName()).log(
-							Level.SEVERE, "Couldn't find feature for bookmark url {0}", query_url);
-				}
-
-			} catch (Exception ex) {
-				// something went wrong with deconstructing query URL.
-				ex.printStackTrace();
-			}
+			loadData(gServers[i], type_uri, start, end);
 		}
+
+		if (!opaque_requests.isEmpty()) {
+			String[] data_urls = new String[opaque_requests.size()];
+			for (int r = 0; r < opaque_requests.size(); r++) {
+				data_urls[r] = opaque_requests.get(r);
+			}
+			loadDataFromURLs(uni, data_urls, null, null);
+		}
+	}
+	
+	private static void loadData(final GenericServer[] gServers, final String[] query_urls, int start, int end){
+		
+		for (int i = 0; i < query_urls.length; i++) {
+			loadData(gServers[i], query_urls[i], start, end);
+		}
+		
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 
+	private static void loadData(final GenericServer gServer, final String query_url, int start, int end){
+		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+
+		if (gServer == null) {
+			return;
+		}
+
+
+		GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
+
+		if (gVersion == null) {
+			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+					Level.SEVERE, "Couldn''t find version {0} in server {1}",
+					new Object[]{seqGroup.getID(), gServer.serverName});
+			return;
+		}
+
+		URI uri = URI.create(query_url);
+		GenericFeature feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
+
+		if (feature != null) {
+			feature.setVisible();
+			GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);
+			SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
+			GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
+		} else {
+			Logger.getLogger(GeneralUtils.class.getName()).log(
+					Level.SEVERE, "Couldn't find feature for bookmark url {0}", query_url);
+		}
+
+	}
+	
 	private static GenericServer[] loadServers(String[] server_urls){
 		GenericServer[] gServers = new GenericServer[server_urls.length];
 

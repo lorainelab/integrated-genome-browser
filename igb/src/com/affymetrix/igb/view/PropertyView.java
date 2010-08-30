@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import java.util.*;
 import java.text.NumberFormat;
@@ -16,7 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
 import java.awt.BorderLayout;
-import java.net.URL;
+import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -108,6 +110,10 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 				props.putAll(tierInfo);
 			}
 		}
+
+		
+		addGlyphInfo(propList, seqMap.getSeqMap().getSelected(), selected_syms);
+
 		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
 
 		this.showProperties(prop_array, prop_order, "");
@@ -121,6 +127,45 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		}
 
 		return props;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void addGlyphInfo(List<Map<String, Object>> propList, List<GlyphI> glyphs, List<SeqSymmetry> selected_syms){
+		for (GlyphI glyph : glyphs) {
+			
+			if (glyph.getInfo() instanceof SeqSymmetry
+					&& selected_syms.contains((SeqSymmetry) glyph.getInfo())) {
+				continue;
+			}
+
+			Map<String, Object> props = null;
+			if(glyph.getInfo() instanceof Map){
+				 props = (Map<String, Object>) glyph.getInfo();
+			} else {
+				props = new HashMap<String, Object>();
+			}
+			
+			boolean direction = true;
+			if(props.containsKey("direction")){
+				if(((String)props.get("direction")).equals("reverse"))
+					direction = false;
+			}
+
+			Rectangle2D.Double boundary = glyph.getSelectedRegion();
+			int start = (int) boundary.getX();
+			int length = (int) boundary.getWidth();
+			int end = start + length;
+			if(!direction){
+				int temp = start;
+				start = end;
+				end = temp;
+			}
+			props.put("start", start);
+			props.put("end", end);
+			props.put("length", length);
+
+			propList.add(props);
+		}
 	}
 	
 	private static Map<String, Object> determineProps(SeqSymmetry sym, SeqMapView seqMap) {

@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonSymWithIntId;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.das2.Das2ClientOptimizer;
 import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
@@ -27,8 +26,9 @@ import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.general.ServerList;
-import java.net.URI;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.util.*;
 
 /**
@@ -274,14 +274,19 @@ public final class LazyChpSym extends ScoredContainerSym {
 			// Set the human name on the tier to the short type name, not the long URL ID
 			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getID()).setHumanName(das_type.getName());
 			SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-			Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span);
+
 			// if already retrieved chp_array_type coord annotations for this whole sequence (for example
 			//   due to a previously loaded CHP file with same "array_type", then optimizer
 			//   will figure this out and not make any queries --
 			//   so if load multiple chps of same array type, actual feature query to DAS/2 server only happens once (per seq)
 			// optimizer should also figure out (based on Das2Type info) an optimized format to load data with
 			//   (for example "bp2" for
-			Das2ClientOptimizer.loadFeatures(request_sym);
+			LoadStrategy ls = das_type.getFeature().loadStrategy;
+			if (ls == LoadStrategy.NO_LOAD || ls == LoadStrategy.VISIBLE) {
+				ls = LoadStrategy.CHROMOSOME;
+			}
+			GeneralLoadUtils.loadAndDisplaySpan(whole_span, das_type.getFeature());
+
 			TypeContainerAnnot container = (TypeContainerAnnot) aseq.getAnnotation(das_type.getID()); // should be a TypeContainerAnnot
 			// TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getName());
 			// collect probeset annotations for given chp type

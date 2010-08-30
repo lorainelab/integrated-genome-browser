@@ -60,6 +60,9 @@ public final class GenericFeature {
 		this.gVersion = gVersion;
 		this.symL = gsr;
 		this.typeObj = typeObj;
+		if (typeObj instanceof Das2Type) {
+			((Das2Type)typeObj).setFeature(this);
+		}
 		this.setFriendlyURL();
 		this.setAutoload(autoload);
 	}

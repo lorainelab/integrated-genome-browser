@@ -1,6 +1,5 @@
 package com.affymetrix.igb.featureloader;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -8,15 +7,12 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.das2.Das2Capability;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.das2.Das2ClientOptimizer;
-import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.FormatPriorities;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -49,26 +45,14 @@ public class Das2 {
 	 * @param overlap
 	 * @return true or false
 	 */
-	public static boolean loadFeatures(SeqSpan overlap, GenericFeature gFeature) {
-		Das2Type dType = (Das2Type) gFeature.typeObj;
-		Das2Region region = ((Das2VersionedSource) gFeature.gVersion.versionSourceObj).getSegment(overlap.getBioSeq());
+	public static boolean loadFeatures(final SeqSpan span, final GenericFeature feature) {
+		final Das2Type dtype = (Das2Type) feature.typeObj;
+		final Das2Region region = ((Das2VersionedSource) feature.gVersion.versionSourceObj).getSegment(span.getBioSeq());
 
-		if (dType != null && region != null) {
-			processFeatureRequest(overlap, dType, region, gFeature, true);
+		if (dtype == null || region == null) {
+			return true;
 		}
-		return true;
-	}
 
-	/**
-	 *  Want to put loading of DAS/2 annotations on separate thread(s) (since processFeatureRequests() call is most
-	 *     likely being run on event thread)
-	 */
-	public static void processFeatureRequest(
-					final SeqSpan span,
-					final Das2Type dtype,
-					final Das2Region region,
-					final GenericFeature feature,
-					final boolean update_display) {
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		Das2VersionedSource version = dtype.getVersionedSource();
 
@@ -86,7 +70,7 @@ public class Das2 {
 			@Override
 			public void done() {
 				try {
-					if (update_display && gviewer != null && get()) {
+					if (gviewer != null && get()) {
 						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 						TrackView.updateDependentData();
 						gviewer.setAnnotatedSeq(aseq, true, true);
@@ -102,6 +86,7 @@ public class Das2 {
 		};
 
 		ThreadUtils.getPrimaryExecutor(version).execute(worker);
+		return true;
 	}
 
 
@@ -222,7 +207,7 @@ public class Das2 {
 
             return (feats != null);
         } catch (Exception ex) {
-			Logger.getLogger(Das2ClientOptimizer.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		} finally {
             GeneralUtils.safeClose(bis);

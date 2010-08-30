@@ -213,7 +213,7 @@ public final class UnibrowControlServlet {
 				feature.setVisible();
 				GeneralLoadView.getLoadView().createFeaturesTable();
 				Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
-				Das2.processFeatureRequest(frs.getOverlapSpan(), frs.getDas2Type(), frs.getRegion(), feature, true);
+				Das2.loadFeatures(frs.getOverlapSpan(), frs.getDas2Type().getFeature());
 			} else {
 				Logger.getLogger(GeneralUtils.class.getName()).log(
 						Level.SEVERE, "Couldn't find feature for bookmark URL: {0}", uri);

@@ -595,7 +595,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
 			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
 			//int end = matcher.end(0) + residue_offset;
+			Map<String, Object> props = new HashMap<String, Object>();
+			props.put("direction", forward ? "forward" : "reverse");
 			GlyphI gl = new FillRectGlyph();
+			gl.setInfo(props);
 			gl.setColor(hitColor);
 			double pos = forward ? 10 : 15;
 				gl.setCoords(start, pos, end - start, 10);

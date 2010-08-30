@@ -234,7 +234,7 @@ public abstract class BookmarkController {
 
 		  List<GraphSym> grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 		  GraphSymUtils.processGraphSyms(grafs, graph_path);
-
+		 
 		  GraphType graph_style_num = null;
 		  if (graph_style != null) {
 			  graph_style_num = GraphState.getStyleNumber(graph_style);
@@ -353,9 +353,13 @@ public abstract class BookmarkController {
         Rectangle2D.Double gbox = gr.getCoordBox();
 
         boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gr);
-        if(!bookmark.isValid()){
-            mark_sym.setProperty(GRAPH.SOURCE_URL.toString() + i, source_url);
-        }
+        if(bookmark.isGraph()){
+            //mark_sym.setProperty(GRAPH.SOURCE_URL.toString() + i, source_url);
+        }else{
+			unfound_labels.add(gr.getLabel());
+			continue;
+		}
+		
         mark_sym.setProperty(GRAPH.YPOS.toString() + i, Integer.toString((int)gbox.y));
         mark_sym.setProperty(GRAPH.YHEIGHT.toString() + i, Integer.toString((int)gbox.height));
         mark_sym.setProperty(GRAPH.COL.toString() + i, sixDigitHex(gr.getGraphState().getTierStyle().getColor()));

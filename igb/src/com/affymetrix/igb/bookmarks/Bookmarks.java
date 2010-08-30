@@ -26,7 +26,7 @@ final public class Bookmarks {
 		if(feature == null)
 			return false;
 
-		return addToSyms(feature);
+		return addToSyms(feature, false);
 	}
 	
     /**
@@ -38,30 +38,24 @@ final public class Bookmarks {
      * @param id the id of the graph
      */
     void addGraph(GraphSym graph){
-		if(!checkServerMatch(graph)){
-			syms.add(new SymBookmark());
-		}
-    }
-
-	private boolean checkServerMatch(GraphSym graph) {
 		BioSeq seq = graph.getGraphSeq();
 	    AnnotatedSeqGroup as = seq.getSeqGroup();
 		String gid = graph.getID();
 		for(GenericVersion version : as.getEnabledVersions()){
 			for( GenericFeature feature : version.getFeatures()){
 				if(gid.endsWith(feature.featureName)){
-					return addToSyms(feature);
+					addToSyms(feature, true);
+					break;
 				}
 			}
 		}
-		return false;
-	}
+    }
 
-	private boolean addToSyms(GenericFeature feature){
+	private boolean addToSyms(GenericFeature feature, boolean isGraph){
 		GenericVersion version = feature.gVersion;
 
 		if(version.gServer.serverType != ServerType.LocalFiles){
-			syms.add(new SymBookmark(version.gServer.URL, feature.getURI().toString(), version.gServer.serverType));
+			syms.add(new SymBookmark(version.gServer.URL, feature.getURI().toString(), version.gServer.serverType, isGraph));
 			return true;
 		}
 
@@ -86,8 +80,8 @@ final public class Bookmarks {
     *
     */
     String getSource() {
-        if(getLast().isValid()){
-            return getLast().getServer();
+        if(getLast().isGraph()){
+            return getLast().getPath();
         }
         return null;
     }
@@ -96,8 +90,8 @@ final public class Bookmarks {
     * returns true if valid url can be constructed
     *
     */
-    boolean isValid(){
-        return getLast().isValid();
+    boolean isGraph(){
+        return getLast().isGraph();
     }
     
 	 
@@ -109,11 +103,9 @@ final public class Bookmarks {
 		List<String> servers = new ArrayList<String>();
 
         for(SymBookmark bookmark : this.syms){
-            if(bookmark.isValid()){
-				if(bookmark.getServerType() != ServerType.LocalFiles){
-					servers.add(bookmark.getServer());
-					queries.add(bookmark.getPath());
-				}
+			if(bookmark.getServerType() != ServerType.LocalFiles){
+				servers.add(bookmark.getServer());
+				queries.add(bookmark.getPath());
 			}
         }
 		

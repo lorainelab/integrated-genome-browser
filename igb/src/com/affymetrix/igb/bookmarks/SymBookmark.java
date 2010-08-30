@@ -10,20 +10,13 @@ final class SymBookmark {
       private final String server;
       private final String path;
 	  private final ServerType serverType;
-      private final boolean valid;
+      private final boolean isgraph;
 
-      SymBookmark(String server, String path, ServerType serverType){
+      SymBookmark(String server, String path, ServerType serverType, boolean isgraph){
 			this.server = server;
 			this.path = path;
 			this.serverType = serverType;
-			this.valid = true;
-      }
-
-	  SymBookmark(){
-			this.server = "";
-			this.path = "";
-			this.serverType = null;
-			this.valid = false;
+			this.isgraph = isgraph;
       }
 
 	  public ServerType getServerType(){
@@ -38,10 +31,8 @@ final class SymBookmark {
           return path;
       }
         
-	  boolean isValid(){
-		  return valid;
+	  boolean isGraph(){
+		  return isgraph;
 	  }
-
-
 }
 

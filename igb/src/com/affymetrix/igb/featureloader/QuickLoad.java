@@ -35,7 +35,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
@@ -163,16 +162,14 @@ public final class QuickLoad extends SymLoader {
 
 			public List<? extends SeqSymmetry> doInBackground() {
 				try {
-					if (QuickLoad.this.extension.endsWith(".chp") && feature.loadStrategy == LoadStrategy.GENOME) {
+					if (QuickLoad.this.extension.endsWith(".chp")) {
 						// special-case chp files, due to their LazyChpSym DAS/2 loading
 						QuickLoad.this.getGenome();
 						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
 						SeqGroupView.refreshTable();
 						return null;
 					}
-					List<FeatureRequestSym> output_requests = FeatureRequestSym.determineFeatureRequestSyms(
-							QuickLoad.this.symL, QuickLoad.this.uri, feature, overlapSpan);
-					List<SeqSymmetry> overallResults = loadAndAddSymmetries(feature, output_requests);
+					List<SeqSymmetry> overallResults = loadAndAddSymmetries(feature, overlapSpan);
 					return overallResults;
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -217,65 +214,19 @@ public final class QuickLoad extends SymLoader {
 	 */
 
 
-	private List<SeqSymmetry> loadAndAddSymmetries(GenericFeature feature, List<FeatureRequestSym> output_requests)
+	private List<SeqSymmetry> loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
 			throws IOException, OutOfMemoryError {
-		LoadStrategy strategy = feature.loadStrategy;
-		
-		if (output_requests.isEmpty()) {
-			// if we're loading the whole genome from a file, the output_requests list will be ignored and rebuilt.
-			if (this.symL != null || strategy != LoadStrategy.GENOME) {
-				return null;
-			}
-		}
-
 
 		List<? extends SeqSymmetry> results;
 		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
-		if (this.symL == null) {
-			if (strategy == LoadStrategy.CHROMOSOME) {
-				// Special case.  If chromosome expands during loading, the FeatureRequestSym needs to be rebuilt.
-				if (output_requests.size() == 1) {
-					output_requests = FeatureRequestSym.determineFeatureRequestSyms(
-							this.symL, this.uri, feature, output_requests.get(0).getOverlapSpan());
-				}
-			} else if (strategy == LoadStrategy.GENOME) {
-				// Special case.  At this point,
-				// we don't know which chromosomes are in the file; they may not correspond with those in the genome.
 
-				// parse data.  A side effect of the older parsers is to add the "missing" chromosomes to the genome
-				results = loadFeature(feature, null);
-				// short-circuit if there's a failure... which may not even be signaled in the code
-				if (results == null) {
-					return overallResults;
-				}
-
-				// rebuild the feature request list, since the chromosomes may have changed
-				output_requests.clear();
-				FeatureRequestSym.buildFeatureSymListByChromosome(this.version.group.getSeqList(), this.uri, feature, output_requests);
-
-				List<? extends SeqSymmetry> chromResults = null;
-				// we've already parsed the data.  Special-case so that we don't parse it again.
-				for (FeatureRequestSym request : output_requests) {
-					// only get symmetries for this chromosome
-					chromResults = SymLoader.filterResultsByChromosome(results, request.getOverlapSpan().getBioSeq());
-					
-					filterAndAddAnnotations(request.getOverlapSpan(), chromResults, this.uri, overallResults);
-				}
-				return overallResults;
-			}
+		// short-circuit if there's a failure... which may not even be signaled in the code
+		results = loadFeature(feature, span);
+		if (results == null) {
+			return overallResults;
 		}
-		List<SeqSpan> spans = new ArrayList<SeqSpan>(output_requests.size());
-		for (FeatureRequestSym request : output_requests) {
-			spans.add(request.getOverlapSpan());
-		}
-		for (SeqSpan span : spans) {
-			// short-circuit if there's a failure... which may not even be signaled in the code
-			results = loadFeature(feature, span);
-			if (results == null) {
-				return overallResults;
-			}
-			filterAndAddAnnotations(span, results, this.uri, overallResults);
-		}
+		filterAndAddAnnotations(span, results, this.uri, overallResults);
+		
 		return overallResults;
 	}
 

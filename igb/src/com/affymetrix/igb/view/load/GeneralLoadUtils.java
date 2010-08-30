@@ -593,6 +593,9 @@ public final class GeneralLoadUtils {
 	 * @return true or false
 	 */
 	static public boolean loadAndDisplayAnnotations(GenericFeature gFeature) {
+		if (gFeature.loadStrategy == LoadStrategy.NO_LOAD) {
+			return false;	// should never happen
+		}
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		BioSeq visible_seq = gviewer.getViewSeq();
 		if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerType.LocalFiles)) {
@@ -615,35 +618,62 @@ public final class GeneralLoadUtils {
 			if (selected_seq != null) {
 				overlap = new SimpleSeqSpan(0, selected_seq.getLength(), selected_seq);
 			}
-		} else {
-			ErrorHandler.errorPanel("ERROR", "Requested load strategy not recognized: " + gFeature.loadStrategy);
-			return false;
 		}
 
 		return loadAndDisplaySpan(overlap, gFeature);
 	}
 
 	public static boolean loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
-		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
-		if (optimized_sym == null) {
+		// special-case chp files, due to their LazyChpSym DAS/2 loading
+		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) && ((QuickLoad) feature.symL).extension.endsWith(".chp")) {
+			feature.loadStrategy = LoadStrategy.GENOME;	// it should be set to this already.  But just in case...
+			return ((QuickLoad) feature.symL).loadFeatures(span, feature);
+		}
+
+		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
+		if (feature.loadStrategy == LoadStrategy.GENOME) {
+			// At this point, we know all of the chromosomes in the file, so just iterate.
+			for (BioSeq seq : span.getBioSeq().getSeqGroup().getSeqList()) {
+				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq));
+				if (optimized_sym != null) {
+					List<SeqSpan> spans = new ArrayList<SeqSpan>();
+					convertSymToSpanList(optimized_sym, spans);
+					optimized_spans.addAll(spans);
+				}
+			}
+		} else {
+			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+			if (optimized_sym != null) {
+				List<SeqSpan> spans = new ArrayList<SeqSpan>();
+				convertSymToSpanList(optimized_sym, spans);
+				optimized_spans.addAll(spans);
+			}
+		}
+
+		if (optimized_spans.isEmpty()) {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 			return true;
 		}
-		List<SeqSpan> spans = new ArrayList<SeqSpan>();
-		convertSymToSpanList(optimized_sym,spans);
 		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 		switch (feature.gVersion.gServer.serverType) {
 			case DAS2:
 				return Das2.loadFeatures(span, feature);
 			case DAS:
-				return Das.loadFeatures(spans, feature);
+				return Das.loadFeatures(optimized_spans, feature);
 			case QuickLoad:
 			case LocalFiles:
-				return ((QuickLoad) feature.symL).loadFeatures(span, feature);
+				boolean result = true;
+				for (SeqSpan optimized_span : optimized_spans) {
+					if (!((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) {
+						result = false;	// don't short-circuit!
+					}
+				}
+				return result;
 		}
 		return false;
 	}
+	
 
 	/**
 	 * Walk the SeqSymmetry, converting all of its children into spans.

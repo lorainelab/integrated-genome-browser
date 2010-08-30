@@ -204,7 +204,7 @@ public final class QuickLoad extends SymLoader {
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
 			}
 		};

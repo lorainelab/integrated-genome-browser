@@ -181,7 +181,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 				quant_comp = new QuantByIntIdComparator();
 			}
 		}
-		Map<Das2Type, Das2Type> matched_types = determineMatchedTypes(chp_array_type,vsource);
+		Set<Das2Type> matched_types = determineMatchedTypes(chp_array_type,vsource);
 
 		if (matched_types.isEmpty()) {
 			// no DAS/2 type found for the CHP!
@@ -195,48 +195,14 @@ public final class LazyChpSym extends ScoredContainerSym {
 		int id_hit_count = 0;
 		int str_hit_count = 0;
 	    int all_digit_not_int = 0;
+		loadTypes(aseq, matched_types, das_segment, symlist);
 
-		for (Das2Type das_type : matched_types.keySet()) {
-			System.out.println("#### found DAS/2 type: " + das_type.getName() + ", for CHP array type: " + chp_array_type);
-
-			// Set the human name on the tier to the short type name, not the long URL ID
-			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getID()).setHumanName(das_type.getName());
-
-			SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-			Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span);
-			System.out.println("request: " + das_type.getName() + ", seq = " + aseq.getID() + ", length = " + aseq);
-
-			// if already retrieved chp_array_type coord annotations for this whole sequence (for example
-			//   due to a previously loaded CHP file with same "array_type", then optimizer
-			//   will figure this out and not make any queries --
-			//   so if load multiple chps of same array type, actual feature query to DAS/2 server only happens once (per seq)
-			// optimizer should also figure out (based on Das2Type info) an optimized format to load data with
-			//   (for example "bp2" for
-			Das2ClientOptimizer.loadFeatures(request_sym);
-
-			TypeContainerAnnot container = (TypeContainerAnnot) aseq.getAnnotation(das_type.getID()); // should be a TypeContainerAnnot
-			// TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getName());
-
-			// collect probeset annotations for given chp type
-			//     (probesets should be at 3rd level down in annotation hierarchy)
-			for (int i = 0; i < container.getChildCount(); i++) {
-				Das2FeatureRequestSym req = (Das2FeatureRequestSym) container.getChild(i);
-				int pset_count = req.getChildCount();
-				for (int k = 0; k < pset_count; k++) {
-					SeqSymmetry sym = req.getChild(k);
-					addIdSyms(sym, symlist);
-				}
-			}
-		}
-
-		int symcount = symlist.size();
 		// should the syms be sorted here??
 		Collections.sort(symlist, new SeqSymMinComparator(aseq));
 
 		// Iterate through probeset annotations, if possible do integer id binary search,
 		//     otherwise do hash for string ID
-		for (int i = 0; i < symcount; i++) {
-			SeqSymmetry annot = symlist.get(i);
+		for (SeqSymmetry annot : symlist) {
 			Object data = null;
 			if (annot instanceof IntId) {
 				// want to use integer id to avoid lots of String churn
@@ -303,6 +269,34 @@ public final class LazyChpSym extends ScoredContainerSym {
 		System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
 	}
 
+	private static void loadTypes(BioSeq aseq, Set<Das2Type> matched_types, Das2Region das_segment, List<SeqSymmetry> symlist) {
+		for (Das2Type das_type : matched_types) {
+			// Set the human name on the tier to the short type name, not the long URL ID
+			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getID()).setHumanName(das_type.getName());
+			SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+			Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span);
+			// if already retrieved chp_array_type coord annotations for this whole sequence (for example
+			//   due to a previously loaded CHP file with same "array_type", then optimizer
+			//   will figure this out and not make any queries --
+			//   so if load multiple chps of same array type, actual feature query to DAS/2 server only happens once (per seq)
+			// optimizer should also figure out (based on Das2Type info) an optimized format to load data with
+			//   (for example "bp2" for
+			Das2ClientOptimizer.loadFeatures(request_sym);
+			TypeContainerAnnot container = (TypeContainerAnnot) aseq.getAnnotation(das_type.getID()); // should be a TypeContainerAnnot
+			// TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getName());
+			// collect probeset annotations for given chp type
+			//     (probesets should be at 3rd level down in annotation hierarchy)
+			for (int i = 0; i < container.getChildCount(); i++) {
+				Das2FeatureRequestSym req = (Das2FeatureRequestSym) container.getChild(i);
+				int pset_count = req.getChildCount();
+				for (int k = 0; k < pset_count; k++) {
+					SeqSymmetry sym = req.getChild(k);
+					addIdSyms(sym, symlist);
+				}
+			}
+		}
+	}
+
 	private boolean generateDataArrays(int id_hit_count, List id_data_hits, List<SeqSymmetry> id_sym_hits, float[] quants, float[] pvals) {
 		boolean has_pvals = false;
 		for (int i = 0; i < id_hit_count; i++) {
@@ -328,9 +322,9 @@ public final class LazyChpSym extends ScoredContainerSym {
 		return has_pvals;
 	}
 
-	private static Map<Das2Type, Das2Type> determineMatchedTypes(String chp_array_type, Das2VersionedSource vsource) {
+	private static Set<Das2Type> determineMatchedTypes(String chp_array_type, Das2VersionedSource vsource) {
 		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-		Map<Das2Type, Das2Type> matched_types = new HashMap<Das2Type, Das2Type>();
+		Set<Das2Type> matched_types = new HashSet<Das2Type>();
 		Collection<String> chp_array_syns = lookup.getSynonyms(chp_array_type);
 		if (chp_array_syns == null) {
 			chp_array_syns = new ArrayList<String>();
@@ -344,8 +338,8 @@ public final class LazyChpSym extends ScoredContainerSym {
 				String tname = name;
 				int sindex = name.lastIndexOf("/");
 				if (sindex >= 0) { tname = name.substring(sindex+1); }
-				if ((tname.startsWith(synonym) || tname.startsWith(lcsyn)) && (matched_types.get(type) == null)) {
-					matched_types.put(type, type);
+				if (tname.startsWith(synonym) || tname.startsWith(lcsyn)) {
+					matched_types.add(type);
 				}
 			}
 		}

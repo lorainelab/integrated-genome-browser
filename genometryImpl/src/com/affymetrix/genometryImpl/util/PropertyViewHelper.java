@@ -74,6 +74,11 @@ public class PropertyViewHelper extends DefaultTableCellRenderer implements
 		public void mouseReleased(MouseEvent e) {}
 
 		private boolean isURLField(int row, int column){
+
+			if(row > table.getRowCount() || column > table.getColumnCount() ||
+					row < 0 || column < 0)
+				return false;
+			
 			String value = (String) table.getValueAt(row, column);
 
 			if(value.length() <= 0)

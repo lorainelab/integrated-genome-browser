@@ -733,7 +733,7 @@ public final class LocalUrlCacher {
 
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :{0}", uri.toString());
 			}catch(Exception ex){
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :" + uri.getPath(), ex);
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :{0}", uri.toString());
 			}finally{ 
 				GeneralUtils.safeClose(istr);
 			}

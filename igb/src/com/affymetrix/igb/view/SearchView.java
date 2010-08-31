@@ -475,7 +475,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	/**
-	 * Recursively search for symmetries that match regex.
+	 * Recursively search for symmetries that match regex.  
 	 * @param syms
 	 * @param sym
 	 * @param match
@@ -488,10 +488,14 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			// don't add the request sym itself.
 			if (sym.getID() != null && match.reset(sym.getID()).matches()) {
 				syms.add(sym);	// ID matches
+				// If parent matches, then don't list children
+				return;
 			} else if (sym instanceof SymWithProps) {
 				String method = BioSeq.determineMethod(sym);
 				if (method != null && match.reset(method).matches()) {
 					syms.add(sym);	// method matches
+					// If parent matches, then don't list children
+					return;
 				}
 			}
 		}

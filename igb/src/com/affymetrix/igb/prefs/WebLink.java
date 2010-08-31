@@ -155,7 +155,11 @@ public final class WebLink {
 				continue;
 			}
 			if(!link.getSpeciesName().equals("")){
-
+				String current_version = GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
+				String current_species = GeneralLoadUtils.getSpeciesLookup().getSpeciesName(current_version);
+				boolean isSynonym = GeneralLoadUtils.getSpeciesLookup().isSynonym(current_species,link.getSpeciesName());
+				if(!isSynonym)
+					continue;
 			}
 
 			if (link.regexType == RegexType.TYPE && link.matches(method)) {

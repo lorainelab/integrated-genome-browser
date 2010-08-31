@@ -78,11 +78,6 @@ public class FeatureRequestSym extends SimpleSymWithProps {
   public final SeqSpan getOverlapSpan() { return overlap_span; }
 
   /**
-   *  Convenience method for returning overlap span as a SeqSymmetry with 1 span and 0 children.
-   */
-  public final SeqSymmetry getOverlapSym() { return overlap_span; }
-
-  /**
    * Add the specified symmetries to the FeatureRequestSym.  It is assumed these correspond to the same chromosome.
    * @param feats - list of symmetries
    * @param request_sym - FeatureRequestSym

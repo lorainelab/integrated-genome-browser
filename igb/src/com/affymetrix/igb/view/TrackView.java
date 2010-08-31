@@ -6,16 +6,11 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
@@ -199,7 +194,8 @@ public class TrackView {
 			}
 			if (annotSym instanceof SymWithProps) {
 				addAnnotationGlyphs(smv, (SymWithProps)annotSym);
-				doMiddlegroundShading((SymWithProps)annotSym);
+				// TODO: reimplement middleground shading in a generic fashion
+				//doMiddlegroundShading((SymWithProps)annotSym);
 			}
 		}
 	}
@@ -218,7 +214,7 @@ public class TrackView {
 		factory.createGlyph(annotSym, smv);
 	}
 
-	private static void doMiddlegroundShading(SymWithProps annotSym) {
+	/*private static void doMiddlegroundShading(SymWithProps annotSym) {
 		String meth = BioSeq.determineMethod(annotSym);
 		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 		// do "middleground" shading for tracks loaded via DAS/2
@@ -248,7 +244,7 @@ public class TrackView {
 			}
 		}
 
-	}
+	}*/
 
 	public static SymWithProps addToDependentList(DependentData dd){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();

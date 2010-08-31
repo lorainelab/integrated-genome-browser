@@ -236,9 +236,6 @@ public final class QuickLoad extends SymLoader {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}
-			FeatureRequestSym requestSym = new FeatureRequestSym(span);
-			requestSym.setProperty("method",
-					entry.getKey() != null ? entry.getKey() : uri.toString());
 			FeatureRequestSym.addAnnotations(entry.getValue(), span.getBioSeq());
 			overallResults.addAll(entry.getValue());
 		}

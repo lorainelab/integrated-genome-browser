@@ -206,14 +206,11 @@ public final class UnibrowControlServlet {
 		createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
 		for (Das2FeatureRequestSym frs : das2_requests) {
 			URI uri = frs.getDas2Type().getURI();
-			String version = frs.getDas2Type().getVersionedSource().getName();
-			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(version);
-			GenericFeature feature = GeneralUtils.findFeatureWithURI(GeneralLoadUtils.getFeatures(group), uri);
+			GenericFeature feature = frs.getDas2Type().getFeature();
 			if (feature != null) {
 				feature.setVisible();
 				GeneralLoadView.getLoadView().createFeaturesTable();
-				Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
-				Das2.loadFeatures(frs.getOverlapSpan(), frs.getDas2Type().getFeature());
+				GeneralLoadUtils.loadAndDisplaySpan(frs.getOverlapSpan(), feature);
 			} else {
 				Logger.getLogger(GeneralUtils.class.getName()).log(
 						Level.SEVERE, "Couldn't find feature for bookmark URL: {0}", uri);
@@ -326,7 +323,6 @@ public final class UnibrowControlServlet {
 		List<String> opaque_requests = new ArrayList<String>();
 		for (int i = 0; i < das2_query_urls.length; i++) {
 			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);
-			String cap_url = null;
 			String seg_uri = null;
 			String type_uri = null;
 			String overstr = null;
@@ -334,7 +330,6 @@ public final class UnibrowControlServlet {
 			boolean use_optimizer = true;
 			int qindex = das2_query_url.indexOf('?');
 			if (qindex > -1) {
-				cap_url = das2_query_url.substring(0, qindex);
 				String query = das2_query_url.substring(qindex + 1);
 				String[] query_array = query_splitter.split(query);
 				for (int k = -0; k < query_array.length; k++) {

@@ -616,7 +616,8 @@ public final class GeneralLoadUtils {
 			overlap = gviewer.getVisibleSpan();
 		} else if (gFeature.loadStrategy == LoadStrategy.GENOME || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
 			if (selected_seq != null) {
-				overlap = new SimpleSeqSpan(0, selected_seq.getLength(), selected_seq);
+				// TODO: Investigate edge case at max
+				overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax()-1, selected_seq);
 			}
 		}
 
@@ -637,7 +638,7 @@ public final class GeneralLoadUtils {
 				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
 					continue;	// don't load into Whole Genome
 				}
-				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq));
+				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax()-1, seq));
 				if (optimized_sym != null) {
 					List<SeqSpan> spans = new ArrayList<SeqSpan>();
 					convertSymToSpanList(optimized_sym, spans);

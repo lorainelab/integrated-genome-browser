@@ -325,12 +325,12 @@ public final class GeneralLoadView extends JComponent
 
 			initVersion(versionName);
 
+			gmodel.setSelectedSeqGroup(group);
+
 			List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
 			if (features == null || features.isEmpty()) {
 				return;
 			}
-
-			gmodel.setSelectedSeqGroup(group);
 
 			BioSeq seq = Persistence.restoreSeqSelection(group);
 			if (seq == null) {

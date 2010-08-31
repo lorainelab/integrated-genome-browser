@@ -15,7 +15,6 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.GFF3Sym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -31,6 +30,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 
   private static final String SYM_TO_STYLE_PROPERTY_KEY = Stylesheet.class.getName();
 
+	@Override
   public Object clone() throws CloneNotSupportedException {
     Stylesheet clone = (Stylesheet) super.clone();
     clone.meth2association = new LinkedHashMap<String, AssociationElement>();
@@ -90,11 +90,14 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 			}
 		}
 		if (drawable == null) {
-			if (sym instanceof Das2FeatureRequestSym) {
+			// TODO: not certain of the purpose in this.  Does removing this have any effect?
+			/*if (sym instanceof Das2FeatureRequestSym) {
 				Das2FeatureRequestSym d2r = (Das2FeatureRequestSym) sym;
 				String type = d2r.getType();
 				drawable = getAssociationForType(type);
-			} else if (sym instanceof GFF3Sym) {
+			} else
+			 */
+			 if (sym instanceof GFF3Sym) {
 				GFF3Sym gff = (GFF3Sym) sym;
 				String type = gff.getFeatureType();
 				drawable = getAssociationForType(type);

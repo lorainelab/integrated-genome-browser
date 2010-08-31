@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonSymWithIntId;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
@@ -195,7 +194,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 		int id_hit_count = 0;
 		int str_hit_count = 0;
 	    int all_digit_not_int = 0;
-		loadTypes(aseq, matched_types, das_segment, symlist);
+		loadTypes(aseq, matched_types, symlist);
 
 		// should the syms be sorted here??
 		Collections.sort(symlist, new SeqSymMinComparator(aseq));
@@ -269,7 +268,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 		System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
 	}
 
-	private static void loadTypes(BioSeq aseq, Set<Das2Type> matched_types, Das2Region das_segment, List<SeqSymmetry> symlist) {
+	private static void loadTypes(BioSeq aseq, Set<Das2Type> matched_types, List<SeqSymmetry> symlist) {
 		for (Das2Type das_type : matched_types) {
 			// Set the human name on the tier to the short type name, not the long URL ID
 			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getID()).setHumanName(das_type.getName());
@@ -290,14 +289,10 @@ public final class LazyChpSym extends ScoredContainerSym {
 			TypeContainerAnnot container = (TypeContainerAnnot) aseq.getAnnotation(das_type.getID()); // should be a TypeContainerAnnot
 			// TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getName());
 			// collect probeset annotations for given chp type
-			//     (probesets should be at 3rd level down in annotation hierarchy)
+			//     (probesets should be at 2rd level down in annotation hierarchy)
 			for (int i = 0; i < container.getChildCount(); i++) {
-				Das2FeatureRequestSym req = (Das2FeatureRequestSym) container.getChild(i);
-				int pset_count = req.getChildCount();
-				for (int k = 0; k < pset_count; k++) {
-					SeqSymmetry sym = req.getChild(k);
-					addIdSyms(sym, symlist);
-				}
+				SeqSymmetry sym = container.getChild(i);
+				addIdSyms(sym, symlist);
 			}
 		}
 	}

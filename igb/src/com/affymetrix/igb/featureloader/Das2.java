@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.FormatPriorities;
-import com.affymetrix.genometryImpl.general.FeatureRequestSym;
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.Constants;
@@ -190,7 +190,7 @@ public class Das2 {
 
             System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
 			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
-			List<? extends SeqSymmetry> feats = FeatureRequestSym.Parse(extension, type.getURI(), istr, aseq.getSeqGroup(), type.getName(), overlap_span);
+			List<? extends SeqSymmetry> feats = SymLoader.Parse(extension, type.getURI(), istr, aseq.getSeqGroup(), type.getName(), overlap_span);
 
 			/*
 			 TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.
@@ -203,7 +203,7 @@ public class Das2 {
 			//add data
 			//FeatureRequestSym.addToRequestSym(
 			//		feats, request_sym, type.getURI(), name, overlap_span);
-			FeatureRequestSym.addAnnotations(feats, aseq);
+			SymLoader.addAnnotations(feats, aseq);
 
             return (feats != null);
         } catch (Exception ex) {

@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
@@ -224,19 +223,19 @@ public final class QuickLoad extends SymLoader {
 		if (results == null) {
 			return overallResults;
 		}
-		filterAndAddAnnotations(span, results, this.uri, overallResults);
+		filterAndAddAnnotations(span, results, overallResults);
 		
 		return overallResults;
 	}
 
 	private static void filterAndAddAnnotations(
-			SeqSpan span, List<? extends SeqSymmetry> results, URI uri, List<SeqSymmetry> overallResults) {
+			SeqSpan span, List<? extends SeqSymmetry> results, List<SeqSymmetry> overallResults) {
 		results = ServerUtils.filterForOverlappingSymmetries(span, results);
-		for (Map.Entry<String, List<SeqSymmetry>> entry : FeatureRequestSym.splitResultsByTracks(results).entrySet()) {
+		for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(results).entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}
-			FeatureRequestSym.addAnnotations(entry.getValue(), span.getBioSeq());
+			SymLoader.addAnnotations(entry.getValue(), span.getBioSeq());
 			overallResults.addAll(entry.getValue());
 		}
 	}
@@ -359,7 +358,7 @@ public final class QuickLoad extends SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				feats = FeatureRequestSym.Parse(this.extension, this.uri, bis, this.version.group, this.featureName, null);
+				feats = SymLoader.Parse(this.extension, this.uri, bis, this.version.group, this.featureName, null);
 				return feats;
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);

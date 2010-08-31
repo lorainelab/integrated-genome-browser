@@ -35,7 +35,6 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.das2.Das2Capability;
-import com.affymetrix.genometryImpl.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
@@ -46,7 +45,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.featureloader.Das2;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -201,21 +199,8 @@ public final class UnibrowControlServlet {
 		if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
 			return;
 		}
-		List<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
 		List<String> opaque_requests = new ArrayList<String>();
-		createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
-		for (Das2FeatureRequestSym frs : das2_requests) {
-			URI uri = frs.getDas2Type().getURI();
-			GenericFeature feature = frs.getDas2Type().getFeature();
-			if (feature != null) {
-				feature.setVisible();
-				GeneralLoadView.getLoadView().createFeaturesTable();
-				GeneralLoadUtils.loadAndDisplaySpan(frs.getOverlapSpan(), feature);
-			} else {
-				Logger.getLogger(GeneralUtils.class.getName()).log(
-						Level.SEVERE, "Couldn't find feature for bookmark URL: {0}", uri);
-			}
-		}
+		createDAS2andOpaqueRequests(das2_server_urls, das2_query_urls, opaque_requests);
 		if (!opaque_requests.isEmpty()) {
 			String[] data_urls = new String[opaque_requests.size()];
 			for (int r = 0; r < opaque_requests.size(); r++) {
@@ -228,7 +213,7 @@ public final class UnibrowControlServlet {
 	//Only for reverse compatibilty of old bookmarks.	- hiralv - 08/26/10
 	@Deprecated
 	private static void createDAS2andOpaqueRequests(
-			final String[] das2_server_urls, final String[] das2_query_urls, List<Das2FeatureRequestSym> das2_requests, List<String> opaque_requests) {
+			final String[] das2_server_urls, final String[] das2_query_urls, List<String> opaque_requests) {
 		for (int i = 0; i < das2_server_urls.length; i++) {
 			String das2_server_url = GeneralUtils.URLDecode(das2_server_urls[i]);
 			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);
@@ -307,9 +292,16 @@ public final class UnibrowControlServlet {
 				int min = Integer.parseInt(minmax[0]);
 				int max = Integer.parseInt(minmax[1]);
 				SeqSpan overlap = new SimpleSeqSpan(min, max, segment.getAnnotatedSeq());
-				Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap);
-				request.setFormat(format);
-				das2_requests.add(request);
+
+				GenericFeature feature = dtype.getFeature();
+				if (feature != null) {
+					feature.setVisible();
+					GeneralLoadView.getLoadView().createFeaturesTable();
+					GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
+				} else {
+					Logger.getLogger(GeneralUtils.class.getName()).log(
+							Level.SEVERE, "Couldn't find feature for bookmark URL: {0}", dtype.getURI());
+				}
 			} catch (Exception ex) {
 				// something went wrong with deconstructing DAS/2 query URL, so just add URL to list of opaque requests
 				ex.printStackTrace();

@@ -130,4 +130,8 @@ public final class SpeciesLookup {
 			return preferred;
 		}
 	}
+
+	public boolean isSynonym(String synonym1, String synonym2){
+		return speciesLookup.isSynonym(synonym1, synonym2);
+	}
 }

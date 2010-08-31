@@ -364,7 +364,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText().trim(), chrfilter);	// note we trim in case the user added spaces, which really shouldn't be on the outside of IDs or names
 			} else if (REGEXRESIDUE.equals(searchMode)) {
-				displayRegexResidues();
+				displayRegexResidues(chrfilter);
 			}
 		}
 	}
@@ -541,8 +541,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	/**
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
 	 */
-	private void displayRegexResidues() {
-		BioSeq vseq = gviewer.getViewSeq();
+	private void displayRegexResidues(BioSeq vseq) {
 		if (vseq == null || !vseq.isComplete()) {
 			ErrorHandler.errorPanel(
 					"Residues for " + this.sequence_CB.getSelectedItem().toString() + " not available.  Please load residues before searching.");

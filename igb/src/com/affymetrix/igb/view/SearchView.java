@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.general.FeatureRequestSym;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -473,7 +474,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	/**
-	 * Recursively search for symmetries that match regex.
+	 * Recursively search for symmetries that match regex.  
 	 * @param syms
 	 * @param sym
 	 * @param match
@@ -482,10 +483,20 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		if (sym == null) {
 			return;
 		}
-		if (sym.getID() != null && match.reset(sym.getID()).matches()) {
-			syms.add(sym);
-		} else if (sym instanceof SymWithProps && match.reset(BioSeq.determineMethod(sym)).matches()) {
-			syms.add(sym);
+		if (!(sym instanceof FeatureRequestSym)) {
+			// don't add the request sym itself.
+			if (sym.getID() != null && match.reset(sym.getID()).matches()) {
+				syms.add(sym);	// ID matches
+				// If parent matches, then don't list children
+				return;
+			} else if (sym instanceof SymWithProps) {
+				String method = BioSeq.determineMethod(sym);
+				if (method != null && match.reset(method).matches()) {
+					syms.add(sym);	// method matches
+					// If parent matches, then don't list children
+					return;
+				}
+			}
 		}
 		int childCount = sym.getChildCount();
 		for (int i=0;i< childCount;i++) {

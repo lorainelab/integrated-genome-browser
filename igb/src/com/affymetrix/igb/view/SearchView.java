@@ -9,7 +9,6 @@ import java.util.regex.*;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.DNAUtils;
@@ -31,11 +30,14 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -364,7 +366,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText().trim(), chrfilter);	// note we trim in case the user added spaces, which really shouldn't be on the outside of IDs or names
 			} else if (REGEXRESIDUE.equals(searchMode)) {
-				displayRegexResidues(chrfilter);
+				displayRegexResidues(chrfilter, evt.getSource());
 			}
 		}
 	}
@@ -541,13 +543,60 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	/**
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
 	 */
-	private void displayRegexResidues(BioSeq vseq) {
-		if (vseq == null || !vseq.isComplete()) {
+	private void displayRegexResidues(final BioSeq vseq, Object src) {
+		if (vseq == null ) {
 			ErrorHandler.errorPanel(
 					"Residues for " + this.sequence_CB.getSelectedItem().toString() + " not available.  Please load residues before searching.");
 			return;
 		}
-		regexTF(vseq);
+
+		if(vseq != gviewer.getAnnotatedSeq()){
+			boolean confirm = Application.confirmPanel("Sequence " + vseq.getID() +
+					" is not same as selected sequence " + gviewer.getAnnotatedSeq().getID() +
+					". \nPlease select the sequence before proceeding." +
+					"\nDo you want to select sequence now ?");
+			if(!confirm)
+				return;
+			SeqSpan viewspan = gviewer.getVisibleSpan();
+			int min = Math.max((viewspan.getMin() > vseq.getMax() ? -1 : viewspan.getMin()), vseq.getMin());
+			int max = Math.min(viewspan.getMax(), vseq.getMax());
+			SeqSpan newspan = new SimpleSeqSpan(min, max, vseq);
+			gmodel.setSelectedSeq(vseq);
+			gviewer.zoomTo(newspan);
+		}
+
+		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
+		
+		if (!vseq.isComplete()) {
+			boolean confirm = Application.confirmPanel("Residues for " + this.sequence_CB.getSelectedItem().toString()
+					+ " not available.  \nDo you want to load residues ?");
+			if (!confirm) {
+				return;
+			}
+
+			String genomeVersionName = gmodel.getSelectedSeqGroup().getID();
+
+			final SwingWorker<Void, Void> worker = GeneralLoadView.getResidueWorker(genomeVersionName, vseq, gviewer.getVisibleSpan(), true, true);
+
+			vexec.execute(worker);
+
+			vexec.execute(new Runnable() {
+
+				public void run() {
+					if (worker != null) {
+						regexTF(vseq);
+					}
+				}
+			});
+
+		} else {
+			vexec.execute(new Runnable() {
+				public void run() {
+					regexTF(vseq);
+				}
+			});
+		}
+
 	}
 
 	private void regexTF(BioSeq vseq) {

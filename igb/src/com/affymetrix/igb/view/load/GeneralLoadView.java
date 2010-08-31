@@ -469,27 +469,41 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		Application.getSingleton().addNotLockedUpMsg("Loading residues");
-
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
-
 
 		final BioSeq curSeq = gmodel.getSelectedSeq();
 		// Use a SwingWorker to avoid locking up the GUI.
 		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
 
+		SwingWorker<Void, Void> worker = getResidueWorker(genomeVersionName, curSeq, gviewer.getVisibleSpan(), src == partial_residuesB, false);
+		
+		vexec.execute(worker);
+	}
+
+	public static SwingWorker<Void, Void> getResidueWorker(final String genomeVersionName, final BioSeq seq,
+			final SeqSpan viewspan, final boolean partial, final boolean tryFull) {
+
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 			public Void doInBackground() {
 				try {
-					if (src == partial_residuesB) {
-						SeqSpan viewspan = gviewer.getVisibleSpan();
-						if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
-							ErrorHandler.errorPanel("Couldn't load partial sequence",
-									"Couldn't locate the partial sequence.  Try loading the full sequence.");
+					Application.getSingleton().addNotLockedUpMsg("Loading residues for "+seq.getID());
+
+					if (partial) {
+
+						if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
+							if (!tryFull) {
+								ErrorHandler.errorPanel("Couldn't load partial sequence",
+										"Couldn't locate the partial sequence.  Try loading the full sequence.");
+							} else {
+								if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
+									ErrorHandler.errorPanel("Couldn't load partial or full sequence",
+											"Couldn't locate the sequence.");
+								}
+							}
 						}
 					} else {
-						if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, 0, curSeq.getLength(), null)) {
+						if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
 							ErrorHandler.errorPanel("Couldn't load full sequence",
 									"Couldn't locate the sequence.");
 						}
@@ -499,13 +513,14 @@ public final class GeneralLoadView extends JComponent
 				}
 				return null;
 			}
+
 			@Override
 			public void done() {
-				Application.getSingleton().removeNotLockedUpMsg("Loading residues");
+				Application.getSingleton().removeNotLockedUpMsg("Loading residues for "+seq.getID());
 			}
 		};
 
-		vexec.execute(worker);
+		return worker;
 	}
 
 	/**

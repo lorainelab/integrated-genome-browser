@@ -771,6 +771,10 @@ public final class GeneralLoadUtils {
 		return SPECIES_LOOKUP.getCommonSpeciesName(speciesName);
 	}
 
+	public static SpeciesLookup getSpeciesLookup(){
+		return SPECIES_LOOKUP;
+	}
+	
 	/**
 	 * Method to load server directory mapping.
 	 */

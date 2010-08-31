@@ -634,6 +634,9 @@ public final class GeneralLoadUtils {
 		if (feature.loadStrategy == LoadStrategy.GENOME) {
 			// At this point, we know all of the chromosomes in the file, so just iterate.
 			for (BioSeq seq : span.getBioSeq().getSeqGroup().getSeqList()) {
+				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
+					continue;	// don't load into Whole Genome
+				}
 				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq));
 				if (optimized_sym != null) {
 					List<SeqSpan> spans = new ArrayList<SeqSpan>();

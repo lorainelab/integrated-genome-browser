@@ -209,11 +209,13 @@ public final class XmlPrefsParser {
 		}
 
 		String name = attmap.get("name");
+		String species = attmap.get("species");
 		try {
 			WebLink link = new WebLink();
 			link.setRegexType(type_regex);
 			link.setName(name);
 			link.setUrl(url);
+			link.setSpeciesName(species);
 			if ("false".equalsIgnoreCase(attmap.get("match_case"))) {
 				link.setRegex("(?-i)" + annot_regex_string);
 			} else {

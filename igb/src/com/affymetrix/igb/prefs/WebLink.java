@@ -1,5 +1,7 @@
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -31,6 +33,7 @@ public final class WebLink {
 	private static final boolean DEBUG = false;
 	private String url = null;
 	private String name = "";
+	private String species = "";
 	private static final String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
 	private String original_regex = null;
 	private RegexType regexType = RegexType.TYPE;	// matching on type or id
@@ -151,6 +154,10 @@ public final class WebLink {
 			if (link.url == null) {
 				continue;
 			}
+			if(!link.getSpeciesName().equals("")){
+
+			}
+
 			if (link.regexType == RegexType.TYPE && link.matches(method)) {
 				if (DEBUG) {
 					System.out.println("link " + link + " matches method.");
@@ -181,6 +188,18 @@ public final class WebLink {
 			this.name = "";
 		} else {
 			this.name = name;
+		}
+	}
+
+	public String getSpeciesName(){
+		return this.species;
+	}
+
+	public void setSpeciesName(String name){
+		if (name == null || "null".equals(name)) {
+			this.species = "";
+		} else {
+			this.species = name;
 		}
 	}
 
@@ -382,7 +401,7 @@ public final class WebLink {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<annotation_url ").append(separator);
 		sb.append(" " + annotRegexString+"=\"").append(escapeXML(getRegex() == null ? ".*" : getRegex())).append("\"").append(separator);
-		sb.append(" name=\"").append(escapeXML(name)).append("\"").append(separator).append(" url=\"").append(escapeXML(url)).append("\"").append(separator).append("/>");
+		sb.append(" name=\"").append(escapeXML(name)).append("\"").append(separator).append(" species=\"").append(escapeXML(species)).append("\"").append(separator).append(" url=\"").append(escapeXML(url)).append("\"").append(separator).append("/>");
 		return sb.toString();
 	}
 

@@ -62,7 +62,12 @@ public class AnnotatedSeqGroup {
 		if(organism != null && "".equals(organism))
 			return organism;
 
-		return SpeciesLookup.getSpeciesName(id);
+		String org = SpeciesLookup.getSpeciesName(id);
+
+		if(org != null && "".equals(org))
+			this.organism = org;
+
+		return org;
 	}
 
 	final public void addVersion(GenericVersion gVersion) {

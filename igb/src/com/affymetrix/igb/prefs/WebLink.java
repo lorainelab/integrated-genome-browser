@@ -1,5 +1,6 @@
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -156,8 +157,8 @@ public final class WebLink {
 			}
 			if(!link.getSpeciesName().equals("")){
 				String current_version = GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
-				String current_species = GeneralLoadUtils.getSpeciesLookup().getSpeciesName(current_version);
-				boolean isSynonym = GeneralLoadUtils.getSpeciesLookup().isSynonym(current_species,link.getSpeciesName());
+				String current_species = SpeciesLookup.getSpeciesName(current_version);
+				boolean isSynonym = SpeciesLookup.isSynonym(current_species,link.getSpeciesName());
 				if(!isSynonym)
 					continue;
 			}

@@ -103,12 +103,9 @@ public final class GeneralLoadUtils {
 	 */
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	
-	/** Private synonym lookup for correlating versions to species. */
-	private static final SpeciesLookup SPECIES_LOOKUP = new SpeciesLookup();
-	
 	static {
 		try {
-			SPECIES_LOOKUP.load(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
+			SpeciesLookup.load(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
 		} catch (IOException ex) {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -212,7 +209,7 @@ public final class GeneralLoadUtils {
 			return false;
 		}
 		for (DasSource source : sources.values()) {
-			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getID());
+			String speciesName = SpeciesLookup.getSpeciesName(source.getID());
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
 			String versionID = source.getID();
 			discoverVersion(versionID, versionName, gServer, source, speciesName);
@@ -236,7 +233,7 @@ public final class GeneralLoadUtils {
 			return false;
 		}
 		for (Das2Source source : sources.values()) {
-			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getName());
+			String speciesName = SpeciesLookup.getSpeciesName(source.getName());
 			
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
@@ -294,7 +291,7 @@ public final class GeneralLoadUtils {
 					System.out.println("Unknown quickload genome:" + genomeName);
 				}
 				versionName = genomeName;
-				speciesName = SPECIES_LOOKUP.getSpeciesName(genomeName);
+				speciesName = SpeciesLookup.getSpeciesName(genomeName);
 			}
 			discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
 		}
@@ -769,11 +766,7 @@ public final class GeneralLoadUtils {
 	}
 
 	static String getSpeciesCommonName(String speciesName) {
-		return SPECIES_LOOKUP.getCommonSpeciesName(speciesName);
-	}
-
-	public static SpeciesLookup getSpeciesLookup(){
-		return SPECIES_LOOKUP;
+		return SpeciesLookup.getCommonSpeciesName(speciesName);
 	}
 	
 	/**

@@ -28,12 +28,12 @@ public final class SpeciesLookup {
 
 
 	/** lookup of generic species names */
-	private final SynonymLookup speciesLookup;
+	private static final SynonymLookup speciesLookup = new SynonymLookup();
 
-	
-	/** Standard Constructor. */
-	public SpeciesLookup() {
-		this.speciesLookup = new SynonymLookup();
+	private static final SpeciesLookup singleton = new SpeciesLookup();
+
+	public static SpeciesLookup getSpeciesLookup(){
+		return singleton;
 	}
 
 	/**
@@ -42,8 +42,8 @@ public final class SpeciesLookup {
 	 * @param genericSpecies InputStream of the species file.
 	 * @throws IOException if one of the files can not be read in.
 	 */
-	public void load(InputStream genericSpecies) throws IOException {
-		this.speciesLookup.loadSynonyms(genericSpecies, true);
+	public static void load(InputStream genericSpecies) throws IOException {
+		speciesLookup.loadSynonyms(genericSpecies, true);
 	}
 
 	/**
@@ -53,8 +53,8 @@ public final class SpeciesLookup {
 	 * @param version the version to find the species name of.
 	 * @return the user-friendly name of the species.
 	 */
-	public String getCommonSpeciesName(String species) {
-		return this.speciesLookup.findSecondSynonym(species);
+	public static String getCommonSpeciesName(String species) {
+		return speciesLookup.findSecondSynonym(species);
 	}
 
 
@@ -65,8 +65,8 @@ public final class SpeciesLookup {
 	 * @param version the version to find the species name of.
 	 * @return the user-friendly name of the species.
 	 */
-	public String getSpeciesName(String version) {
-		return this.getSpeciesName(version, DEFAULT_CS);
+	public static String getSpeciesName(String version) {
+		return getSpeciesName(version, DEFAULT_CS);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public final class SpeciesLookup {
 	 * @param cs true if this search should be case sensitive, false otherwise.
 	 * @return the user-friendly name of the species or the version if not found.
 	 */
-	public String getSpeciesName(String version, boolean cs) {
+	public static String getSpeciesName(String version, boolean cs) {
 		String species = null;
 
 		/* check to see if the synonym exists in the lookup */
@@ -111,7 +111,7 @@ public final class SpeciesLookup {
 	 * @param cs true if this search should be case sensitive, false otherwise.
 	 * @return the user-friendly name of the species or null.
 	 */
-	private String getSpeciesName(String version, Pattern regex, boolean cs) {
+	private static String getSpeciesName(String version, Pattern regex, boolean cs) {
 		Matcher matcher = regex.matcher(version);
 		String matched = null;
 		if (matcher.matches()) {
@@ -131,7 +131,7 @@ public final class SpeciesLookup {
 		}
 	}
 
-	public boolean isSynonym(String synonym1, String synonym2){
+	public static boolean isSynonym(String synonym1, String synonym2){
 		return speciesLookup.isSynonym(synonym1, synonym2);
 	}
 }

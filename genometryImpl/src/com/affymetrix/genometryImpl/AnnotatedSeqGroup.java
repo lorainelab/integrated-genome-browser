@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 /**
  *
@@ -58,7 +59,10 @@ public class AnnotatedSeqGroup {
 	}
 
 	final public String getOrganism() {
-		return organism;
+		if(organism != null && "".equals(organism))
+			return organism;
+
+		return SpeciesLookup.getSpeciesName(id);
 	}
 
 	final public void addVersion(GenericVersion gVersion) {

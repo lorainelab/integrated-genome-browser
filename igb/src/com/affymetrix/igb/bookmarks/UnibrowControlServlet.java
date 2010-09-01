@@ -48,7 +48,6 @@ import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import java.io.File;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -381,34 +380,13 @@ public final class UnibrowControlServlet {
 	}
 
 	private static void loadData(final GenericServer gServer, final String query_url, int start, int end){
-		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 
 		if (gServer == null) {
 			return;
 		}
 
-		GenericFeature feature = null;
-
-		URI uri = URI.create(query_url);
-
-		if(gServer.serverType == ServerType.LocalFiles){
-			
-			String fileName = query_url.substring(query_url.lastIndexOf('/') + 1, query_url.length());
-			feature = LoadFileAction.getFeature(uri, fileName, seqGroup.getOrganism(), seqGroup);
-
-		}else{
-
-			GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-			if (gVersion == null) {
-				Logger.getLogger(UnibrowControlServlet.class.getName()).log(
-					Level.SEVERE, "Couldn''t find version {0} in server {1}",
-					new Object[]{seqGroup.getID(), gServer.serverName});
-				return;
-			}
-
-			feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
-		}
+		GenericFeature feature = getFeature(gServer, query_url);
 
 		if (feature != null) {
 			feature.setVisible();
@@ -433,6 +411,33 @@ public final class UnibrowControlServlet {
 		return gServers;
 	}
 
+	public static GenericFeature getFeature(GenericServer gServer, String feature_url){
+		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		GenericFeature feature = null;
+
+		URI uri = URI.create(feature_url);
+
+		if(gServer.serverType == ServerType.LocalFiles){
+
+			String fileName = feature_url.substring(feature_url.lastIndexOf('/') + 1, feature_url.length());
+			feature = LoadFileAction.getFeature(uri, fileName, seqGroup.getOrganism(), seqGroup);
+
+		}else{
+
+			GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
+			if (gVersion == null) {
+				Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+					Level.SEVERE, "Couldn''t find version {0} in server {1}",
+					new Object[]{seqGroup.getID(), gServer.serverName});
+				return null;
+			}
+
+			feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
+		}
+
+
+		return feature;
+	}
 	/**
 	 * Finds server from server url and enables it, if found disabled.
 	 * @param server_url	Server url string.

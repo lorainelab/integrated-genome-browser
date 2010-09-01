@@ -189,8 +189,8 @@ public class ScriptFileLoader {
 			return;
 		}
 		if (action.equals("loadfromserver")) {
-			if (fields.length >= 4) {
-				loadData(fields[1], fields[2], join(fields,3));
+			if (fields.length >= 2) {
+				loadData(fields[1], join(fields,2));
 				return;
 			}
 		}
@@ -320,26 +320,16 @@ public class ScriptFileLoader {
 		MapRangeBox.setRange(Application.getSingleton().getMapView(), region);
 	}
 
-	private static void loadData(String serverType, String serverURIorName, String feature) {
-		/*ServerType sType = ServerType.LocalFiles;
-		if (serverType.equalsIgnoreCase("quickload")) {
-			sType = ServerType.QuickLoad;
-			//loadQuickLoad(URIorFeature);
-		} else if (serverType.equalsIgnoreCase("das")) {
-			sType = ServerType.DAS;
-			//loadDAS(URIorFeature):
-		} else if (serverType.equalsIgnoreCase("das2")) {
-			sType = ServerType.DAS2;
-			//loadDAS(URIorFeature):
-		}*/
-		GenericServer server = ServerList.getServer(serverURIorName);
-		if (server != null) {
-			
-		} else {
-			Logger.getLogger(ScriptFileLoader.class.getName()).log(
-					Level.SEVERE, "Couldn''t find server :{0}", serverURIorName);
+	private static void loadData(String serverURIorName, String feature_url) {
+		GenericServer server = UnibrowControlServlet.loadServer(serverURIorName);
+		GenericFeature feature = UnibrowControlServlet.getFeature(server, feature_url);
+
+		if (feature != null) {
+			feature.setVisible();
+			GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);
 		}
 
+		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 
 	private static void loadFile(String fileName) {

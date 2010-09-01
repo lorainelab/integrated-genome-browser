@@ -199,7 +199,7 @@ public final class XmlStylesheetParser {
           if (isBlank(type) || isBlank(style)) {
             throw new IOException("ERROR in stylesheet: missing method or style in METHOD_ASSOCIATION");
           }
-          associationElement = AssociationElement.getTypeAssocation(stylesheet, type, style);
+          associationElement = AssociationElement.getTypeAssocation(type, style);
           stylesheet.type2association.put(type, associationElement);
         }
         else if (name.equalsIgnoreCase(AssociationElement.METHOD_ASSOCIATION)) {
@@ -208,7 +208,7 @@ public final class XmlStylesheetParser {
           if (isBlank(method) || isBlank(style)) {
             throw new IOException("ERROR in stylesheet: missing method or style in METHOD_ASSOCIATION");
           }
-          associationElement = AssociationElement.getMethodAssocation(stylesheet, method, style);
+          associationElement = AssociationElement.getMethodAssocation(method, style);
           stylesheet.meth2association.put(method, associationElement);
         }
         else if (name.equalsIgnoreCase(AssociationElement.METHOD_REGEX_ASSOCIATION)) {
@@ -219,7 +219,7 @@ public final class XmlStylesheetParser {
           }
           try {
             Pattern pattern = Pattern.compile(regex);
-            associationElement = AssociationElement.getMethodRegexAssocation(stylesheet, regex, style);
+            associationElement = AssociationElement.getMethodRegexAssocation(regex, style);
             stylesheet.regex2association.put(pattern, associationElement);
           } catch (PatternSyntaxException pse) {
             IOException ioe = new IOException("ERROR in stylesheet: Regular Expression not valid: '" +

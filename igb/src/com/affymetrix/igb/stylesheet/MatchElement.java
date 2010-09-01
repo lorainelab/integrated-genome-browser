@@ -57,6 +57,7 @@ class MatchElement implements DrawableElement {
   String match_param = null;
   Pattern match_regex = null;
     
+	@Override
   public Object clone() throws CloneNotSupportedException {
     MatchElement clone = (MatchElement) super.clone();
     clone.styleElement = (StyleElement) styleElement.clone();

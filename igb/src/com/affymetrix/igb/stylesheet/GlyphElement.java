@@ -158,12 +158,8 @@ final class GlyphElement implements Cloneable, XmlAppender {
     enclosedGlyphElements.add(ge);
   }
   
-  public void setChildrenElement(ChildrenElement c) {
+  void setChildrenElement(ChildrenElement c) {
     this.childrenElement = c;
-  }
-  
-  public ChildrenElement getChildrenElement() {
-    return this.childrenElement;
   }
   
 	static boolean knownGlyphType(String type) {

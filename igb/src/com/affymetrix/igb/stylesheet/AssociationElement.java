@@ -30,24 +30,21 @@ public final class AssociationElement implements DrawableElement {
   >
   */
 
-  public static final String ATT_STYLE="style";
+  static final String ATT_STYLE="style";
 
-  String elementName;
+  private String elementName;
   PropertyMap propertyMap;
-  Stylesheet stylesheet;
-  String styleName;
-  String paramName;  // method, type, or regex
-  String paramValue;
+  private String styleName;
+  private String paramName;  // method, type, or regex
+  private String paramValue;
 
   // If the styleName starts with "com.", then try to instantiate an old-fashioned factory
-  MapViewGlyphFactoryI factory = null;
+  private MapViewGlyphFactoryI factory = null;
 
-  protected AssociationElement(Stylesheet stylesheet, String elementName,
+  private AssociationElement(String elementName,
     String paramName, String paramValue, String styleName) {
 
     this.propertyMap = new PropertyMap();
-
-    this.stylesheet = stylesheet;
     this.elementName = elementName;
     this.paramName = paramName;
     this.paramValue = paramValue;
@@ -61,29 +58,27 @@ public final class AssociationElement implements DrawableElement {
 
   }
 
-  public static final String METHOD_ASSOCIATION = "METHOD_ASSOCIATION";
-  public static final String ATT_METHOD = "method";
-  public static final String METHOD_REGEX_ASSOCIATION = "METHOD_REGEX_ASSOCIATION";
-  public static final String ATT_REGEX = "regex";
-  public static final String TYPE_ASSOCIATION = "TYPE_ASSOCIATION";
-  public static final String ATT_TYPE = "type";
+  static final String METHOD_ASSOCIATION = "METHOD_ASSOCIATION";
+  static final String ATT_METHOD = "method";
+  static final String METHOD_REGEX_ASSOCIATION = "METHOD_REGEX_ASSOCIATION";
+  static final String ATT_REGEX = "regex";
+  static final String TYPE_ASSOCIATION = "TYPE_ASSOCIATION";
+  static final String ATT_TYPE = "type";
 
-  public static AssociationElement getMethodAssocation(Stylesheet stylesheet,
-    String method, String styleName) {
-    return new AssociationElement(stylesheet, METHOD_ASSOCIATION,
+  static AssociationElement getMethodAssocation(String method, String styleName) {
+    return new AssociationElement(METHOD_ASSOCIATION,
       ATT_METHOD, method, styleName);
   }
-  public static AssociationElement getMethodRegexAssocation(Stylesheet stylesheet,
-    String method, String styleName) {
-    return new AssociationElement(stylesheet, METHOD_REGEX_ASSOCIATION,
+  static AssociationElement getMethodRegexAssocation(String method, String styleName) {
+    return new AssociationElement(METHOD_REGEX_ASSOCIATION,
       ATT_REGEX, method, styleName);
   }
-  public static AssociationElement getTypeAssocation(Stylesheet stylesheet,
-    String method, String styleName) {
-    return new AssociationElement(stylesheet, TYPE_ASSOCIATION,
+  static AssociationElement getTypeAssocation(String method, String styleName) {
+    return new AssociationElement(TYPE_ASSOCIATION,
       ATT_TYPE, method, styleName);
   }
 
+	@Override
   public Object clone() throws CloneNotSupportedException {
     StyleElement clone = (StyleElement) super.clone();
     if (propertyMap != null) {
@@ -151,6 +146,6 @@ public final class AssociationElement implements DrawableElement {
     return sb;
   }
 
-  public MapViewGlyphFactoryI getGlyphFactory() { return factory; }
+  MapViewGlyphFactoryI getGlyphFactory() { return factory; }
   public PropertyMap getPropertyMap() { return propertyMap; }
 }

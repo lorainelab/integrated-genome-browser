@@ -44,9 +44,11 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.io.File;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -386,18 +388,27 @@ public final class UnibrowControlServlet {
 			return;
 		}
 
-
-		GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-
-		if (gVersion == null) {
-			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
-					Level.SEVERE, "Couldn''t find version {0} in server {1}",
-					new Object[]{seqGroup.getID(), gServer.serverName});
-			return;
-		}
+		GenericFeature feature = null;
 
 		URI uri = URI.create(query_url);
-		GenericFeature feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
+
+		if(gServer.serverType == ServerType.LocalFiles){
+			
+			String fileName = query_url.substring(query_url.lastIndexOf('/') + 1, query_url.length());
+			feature = LoadFileAction.getFeature(uri, fileName, seqGroup.getOrganism(), seqGroup);
+
+		}else{
+
+			GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
+			if (gVersion == null) {
+				Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+					Level.SEVERE, "Couldn''t find version {0} in server {1}",
+					new Object[]{seqGroup.getID(), gServer.serverName});
+				return;
+			}
+
+			feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
+		}
 
 		if (feature != null) {
 			feature.setVisible();
@@ -430,15 +441,15 @@ public final class UnibrowControlServlet {
 	public static GenericServer loadServer(String server_url){
 		GenericServer gServer = ServerList.getServer(server_url);
 		if (gServer == null) {
-			//TOD0 - What if server is not found.
 			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
-					Level.SEVERE, "Couldn''t find server {0}", gServer.serverName);
-			return null;
+					Level.SEVERE, "Couldn''t find server {0}. Creating a local server.", server_url);
+
+			gServer = ServerList.getLocalFilesServer();
+			
 		} else if (!gServer.isEnabled()) {
-			gServer.setEnabled(true);
+			// enable the server for this session only
+			gServer.enableForSession();
 			GeneralLoadUtils.discoverServer(gServer);
-			// enable the server.
-			// TODO - this will be saved in preferences as enabled, although it shouldn't.
 		}
 		return gServer;
 	}

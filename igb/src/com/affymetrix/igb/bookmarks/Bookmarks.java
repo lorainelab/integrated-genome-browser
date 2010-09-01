@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,9 @@ final public class Bookmarks {
 		if(feature == null)
 			return false;
 
-		return addToSyms(feature, false);
+		addToSyms(feature, false);
+
+		return true;
 	}
 	
     /**
@@ -51,15 +52,9 @@ final public class Bookmarks {
 		}
     }
 
-	private boolean addToSyms(GenericFeature feature, boolean isGraph){
+	private void addToSyms(GenericFeature feature, boolean isGraph){
 		GenericVersion version = feature.gVersion;
-
-		if(version.gServer.serverType != ServerType.LocalFiles){
-			syms.add(new SymBookmark(version.gServer.URL, feature.getURI().toString(), version.gServer.serverType, isGraph));
-			return true;
-		}
-
-		return false;
+		syms.add(new SymBookmark(version.gServer.URL, feature.getURI().toString(), isGraph));
 	}
 
     /**
@@ -103,10 +98,8 @@ final public class Bookmarks {
 		List<String> servers = new ArrayList<String>();
 
         for(SymBookmark bookmark : this.syms){
-			if(bookmark.getServerType() != ServerType.LocalFiles){
-				servers.add(bookmark.getServer());
-				queries.add(bookmark.getPath());
-			}
+			servers.add(bookmark.getServer());
+			queries.add(bookmark.getPath());
         }
 		
 		mark_sym.setProperty(Bookmark.QUERY_URL, queries.toArray(new String[queries.size()]));

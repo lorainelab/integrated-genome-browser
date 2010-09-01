@@ -142,6 +142,10 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.enabled = enabled;
 	}
 
+	public void enableForSession(){
+		this.enabled = true;
+	}
+	
 	public boolean isEnabled() {
 		return this.enabled;
 	}

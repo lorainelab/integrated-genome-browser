@@ -38,12 +38,10 @@ import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genoviz.util.FileDropHandler;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.view.DataLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -200,10 +198,6 @@ public final class LoadFileAction extends AbstractAction {
 			openURI(uri, file.getName(), mergeSelected, loadGroup, (String)fileChooser.speciesCB.getSelectedItem());
 		}
 
-		if(!mergeSelected){
-			unknown_group_count++;
-//			gmodel.setSelectedSeqGroup(loadGroup);
-		}
 	}
 
 	public static void openURI(URI uri, String fileName){
@@ -219,6 +213,31 @@ public final class LoadFileAction extends AbstractAction {
 			return;
 		}
 
+		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
+
+		if(gFeature == null)
+			return;
+		
+		if (((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+			loadAllFeatures(gFeature, loadGroup);
+		} else if (gFeature.symL != null){
+			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
+		}
+
+		// force a refresh of this server
+		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true, true);
+
+		//Annotated Seq Group must be selected before feature table change call.
+		GenometryModel.getGenometryModel().setSelectedSeqGroup(loadGroup);
+
+		GeneralLoadView.getLoadView().createFeaturesTable();
+
+		if(!mergeSelected){
+			unknown_group_count++;
+		}
+	}
+
+	public static GenericFeature getFeature(URI uri, String fileName, String speciesName, AnnotatedSeqGroup loadGroup){
 		// Make sure this URI is not already used within the selectedGroup.  Otherwise there could be collisions in BioSeq.addAnnotations(type)
 		boolean uniqueURI = true;
 		for (GenericVersion version : loadGroup.getAllVersions()) {
@@ -235,7 +254,7 @@ public final class LoadFileAction extends AbstractAction {
 		if (!uniqueURI) {
 			ErrorHandler.errorPanel("Cannot add same feature",
 					"The feature " + uri + " has already been added.");
-			return;
+			return null;
 		}
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
@@ -249,26 +268,13 @@ public final class LoadFileAction extends AbstractAction {
 			uriString = GeneralUtils.convertStreamNameToValidURLName(uriString);
 			uri = URI.create(uriString);
 		}
-		boolean autoload = PreferenceUtils.getBooleanParam(
-						PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+		boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
 		GenericFeature gFeature = new GenericFeature(fileName, null, version, new QuickLoad(version, uri), File.class, autoload);
-		
+
 		version.addFeature(gFeature);
 		gFeature.setVisible(); // this should be automatically checked in the feature tree
 
-		if (((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
-			loadAllFeatures(gFeature, loadGroup);
-		} else if (gFeature.symL != null){
-			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
-		}
-
-		// force a refresh of this server
-		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true, true);
-
-		//Annotated Seq Group must be selected before feature table change call.
-		GenometryModel.getGenometryModel().setSelectedSeqGroup(loadGroup);
-
-		GeneralLoadView.getLoadView().createFeaturesTable();
+		return gFeature;
 	}
 
 	private static void loadAllFeatures(final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup){
@@ -366,11 +372,6 @@ public final class LoadFileAction extends AbstractAction {
 			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
 		}
 		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);
-
-		if(!mergeSelected){
-			unknown_group_count++;
-//			gmodel.setSelectedSeqGroup(loadGroup);
-		}
 		
 		return true;
 	}

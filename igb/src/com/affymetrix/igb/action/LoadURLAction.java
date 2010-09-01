@@ -77,11 +77,6 @@ public final class LoadURLAction extends AbstractAction {
 
 		LoadFileAction.openURI(uri, getFriendlyName(urlStr), mergeSelected, loadGroup, (String)chooser.speciesCB.getSelectedItem());
 		
-		if (!mergeSelected) {
-			LoadFileAction.unknown_group_count++;
-//			gmodel.setSelectedSeqGroup(loadGroup);
-		}
-
 	}
 
 	private static String getFriendlyName(String urlStr) {

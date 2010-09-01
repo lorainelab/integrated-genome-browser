@@ -206,6 +206,11 @@ public final class LoadFileAction extends AbstractAction {
 		}
 	}
 
+	public static void openURI(URI uri, String fileName){
+		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		openURI(uri, fileName, true, group, group.getOrganism());
+	}
+	
 	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup, String speciesName) {
 		if (uri.toString().toLowerCase().endsWith(".igb")) {
 			// response file.  Do its actions and return.

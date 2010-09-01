@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -338,7 +339,8 @@ public class ScriptFileLoader {
 	}
 
 	private static void loadMode(String loadMode, String featureURIStr) {
-		List<GenericFeature> features = GeneralLoadView.getLoadView().createFeaturesTable();
+		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		
 		URI featureURI = null;
 		File featureFile = new File(featureURIStr.trim());
 		if (featureFile.exists()) {
@@ -356,7 +358,15 @@ public class ScriptFileLoader {
 		} else if (loadMode.equalsIgnoreCase("genome")) {
 			s = LoadStrategy.GENOME;
 		}
-		GenericFeature feature = GeneralUtils.findFeatureWithURI(features, featureURI);
+
+		GenericFeature feature = null;
+		
+		for(GenericVersion version : seqGroup.getEnabledVersions()){
+			feature = GeneralUtils.findFeatureWithURI(version.getFeatures(), featureURI);
+			if(feature != null)
+				break;
+		}
+
 		if (feature != null) {
 			GenericFeature.setPreferredLoadStrategy(feature, s);
 		} else {

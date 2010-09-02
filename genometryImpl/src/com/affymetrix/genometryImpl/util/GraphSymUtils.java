@@ -197,7 +197,7 @@ public final class GraphSymUtils {
 	 *   do not specify a BioSeq, use this parameter to specify it.  If null
 	 *   then GenometryModel.getSelectedSeq() will be used.
 	 */
-	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq)
+	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, BioSeq seq)
 			throws IOException  {
 		List<GraphSym> grafs = null;
 		StringBuffer stripped_name = new StringBuffer();
@@ -205,15 +205,15 @@ public final class GraphSymUtils {
 		String sname = stripped_name.toString().toLowerCase();
 
 		if (sname.endsWith(".bar"))  {
-			grafs = BarParser.parse(newstr, gmodel, seq_group, null, 0, Integer.MAX_VALUE, stream_name, true);
+			grafs = BarParser.parse(newstr, GenometryModel.getGenometryModel(), seq_group, null, 0, Integer.MAX_VALUE, stream_name, true);
 		}
 		else if (sname.endsWith(".useq")) {
 			USeqGraphParser up = new USeqGraphParser();
-			grafs = up.parseGraphSyms(istr, gmodel, stream_name, null);
+			grafs = up.parseGraphSyms(istr, GenometryModel.getGenometryModel(), stream_name, null);
 		}
 		else if (sname.endsWith(".gr")) {
 			if (seq == null) {
-				seq = gmodel.getSelectedSeq();
+				seq = GenometryModel.getGenometryModel().getSelectedSeq();
 			}
 			// If this is a newly-created seq group, then go ahead and add a new 
 			// unnamed seq to it if necessary.
@@ -534,7 +534,7 @@ public final class GraphSymUtils {
 	}
 
 
-	private final static boolean hasWidth(GraphSym graf) {
+	private static boolean hasWidth(GraphSym graf) {
 		return graf instanceof GraphIntervalSym;
 	}
 

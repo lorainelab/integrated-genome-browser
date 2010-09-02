@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 public final class ParserController {
     
 	static List parse(
-			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String type_prefix) {
+			InputStream instr, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		InputStream str = null;
 		List<? extends SeqSymmetry> results = null;
 		try {
@@ -80,7 +80,7 @@ public final class ParserController {
 				//    specify _which_ seq to annotate (format to be upgraded soon to allow this)
 
 				// parsing a graph
-				List<GraphSym> graphs = GraphSymUtils.readGraphs(str, stream_name, gmodel, seq_group, null);
+				List<GraphSym> graphs = GraphSymUtils.readGraphs(str, stream_name, seq_group, null);
 				GraphSymUtils.processGraphSyms(graphs, stream_name);
 				return graphs;
 			}

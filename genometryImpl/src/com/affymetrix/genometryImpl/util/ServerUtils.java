@@ -533,7 +533,7 @@ public abstract class ServerUtils {
 		try {
 			istr = GeneralUtils.getInputStream(current_file, new StringBuffer());
 			if (!isIndexed) {
-				return ParserController.parse(istr, annotList, stream_name, gmodel, genome, type_name);
+				return ParserController.parse(istr, annotList, stream_name, genome, type_name);
 			}
 			return ParserController.parseIndexed(istr, annotList, stream_name, genome, type_name);
 		} finally {

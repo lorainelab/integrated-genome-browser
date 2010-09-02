@@ -232,7 +232,7 @@ public abstract class BookmarkController {
 
 		  istr = LocalUrlCacher.getInputStream(graph_path);
 
-		  List<GraphSym> grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+		  List<GraphSym> grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 		  GraphSymUtils.processGraphSyms(grafs, graph_path);
 		 
 		  GraphType graph_style_num = null;

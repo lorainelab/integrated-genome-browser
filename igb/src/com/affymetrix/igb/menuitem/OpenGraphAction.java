@@ -92,7 +92,7 @@ public final class OpenGraphAction {
 			String graph_url = furl.toExternalForm();
 			fis = LocalUrlCacher.getInputStream(graph_url);
 			String graph_name = GraphSymUtils.getGraphNameForURL(furl);
-			List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, graph_url, gmodel, seq_group, null);
+			List<GraphSym> graphs = GraphSymUtils.readGraphs(fis, graph_url, seq_group, null);
 			GraphSymUtils.processGraphSyms(graphs, graph_url);
 			GraphSymUtils.setName(graphs, graph_name);
 			return graphs;

@@ -144,7 +144,7 @@ public abstract class SymLoader {
 			try {
 				GenometryModel gmodel = GenometryModel.getGenometryModel();
 				bis = LocalUrlCacher.convertURIToBufferedStream(this.uri);
-				List<GraphSym> graphs = GraphSymUtils.readGraphs(bis, this.uri.toString(), gmodel, gmodel.getSelectedSeqGroup(), null);
+				List<GraphSym> graphs = GraphSymUtils.readGraphs(bis, this.uri.toString(), gmodel.getSelectedSeqGroup(), null);
 				GraphSymUtils.setName(graphs, GraphSymUtils.getGraphNameForURL(this.uri.toURL()));
 				return graphs;
 			} catch (Exception ex) {

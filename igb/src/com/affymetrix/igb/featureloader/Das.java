@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -14,9 +15,8 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.TrackView;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Set;
 import java.io.BufferedInputStream;
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 import javax.xml.stream.XMLStreamException;
 
 
@@ -48,24 +49,42 @@ public final class Das {
 	 * @param spans List of spans containing the ranges for which you want annotations.
 	 * @return true if data was loaded
 	 */
-	public static boolean loadFeatures(List<SeqSpan> spans, GenericFeature gFeature) {
-		BioSeq current_seq = spans.get(0).getBioSeq();
-		Set<String> segments = ((DasSource) gFeature.gVersion.versionSourceObj).getEntryPoints();
-		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
+	public static boolean loadFeatures(final List<SeqSpan> spans, final GenericFeature gFeature) {
 
-		QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
-		builder.add("segment", segment);
-		for (SeqSpan span : spans) {
-			builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
-			URI uri = builder.build();
-			// initialize styles
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
-			style.setFeature(gFeature);
+		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
 
-			parseData(uri);
-			TrackView.updateDependentData();
-			Application.getSingleton().getMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
-		}
+			public List<? extends SeqSymmetry> doInBackground() {
+				BioSeq current_seq = spans.get(0).getBioSeq();
+				Set<String> segments = ((DasSource) gFeature.gVersion.versionSourceObj).getEntryPoints();
+				String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
+
+				QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
+				builder.add("segment", segment);
+				for (SeqSpan span : spans) {
+					builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
+				}
+
+				URI uri = builder.build();
+				// initialize styles
+				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
+				style.setFeature(gFeature);
+
+				parseData(uri);
+				TrackView.updateDependentData();
+				return null;
+			}
+
+			@Override
+			public void done() {
+				try {
+					Application.getSingleton().getMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
+				} finally {
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
+				}
+			}
+		};
+		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
+
 		return true;
 	}
 

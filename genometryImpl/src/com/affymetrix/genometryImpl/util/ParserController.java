@@ -81,7 +81,7 @@ public final class ParserController {
 
 				// parsing a graph
 				List<GraphSym> graphs = GraphSymUtils.readGraphs(str, stream_name, seq_group, null);
-				GraphSymUtils.processGraphSyms(graphs, stream_name);
+				GraphSymUtils.processGraphSyms(graphs, stream_name, null);
 				return graphs;
 			}
 			else {

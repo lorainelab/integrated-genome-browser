@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.CompositeGraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
@@ -270,11 +271,12 @@ public final class GraphSymUtils {
 	 *  For each GraphSym in the list,
 	 *  Adds it as an annotation of the BioSeq it refers to.
 	 *  Sets the "source_url" to the given stream name.
+	 *  Set the GenericFeature in its style.
 	 *  Calls setGraphName() with the given name;
 	 *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
 	 *  @param grafs  a List, empty or null is OK.
 	 */
-	public static void processGraphSyms(List<GraphSym> grafs, String original_stream_name) {
+	public static void processGraphSyms(List<GraphSym> grafs, String original_stream_name, GenericFeature feature) {
 		if (grafs == null) {
 			return;
 		}
@@ -294,6 +296,8 @@ public final class GraphSymUtils {
 			}
 
 			gsym.setProperty("source_url", original_stream_name);
+
+			gsym.getGraphState().getTierStyle().setFeature(feature);
 
 			if ((gsym.getGraphName() != null) && (gsym.getGraphName().indexOf("TransFrag") >= 0)) {
 				gsym = GraphSymUtils.convertTransFragGraph(gsym);

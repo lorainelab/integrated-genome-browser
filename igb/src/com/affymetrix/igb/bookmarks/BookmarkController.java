@@ -60,7 +60,6 @@ import javax.swing.SwingUtilities;
  * @version $Id$
  */
 public abstract class BookmarkController {
-  private final static boolean DEBUG= false;
 
   /** Causes a bookmark to be executed.  If this is a Unibrow bookmark,
    *  it will be opened in the viewer using
@@ -69,7 +68,6 @@ public abstract class BookmarkController {
    */
   public static void viewBookmark(Application app, Bookmark bm) {
     if (bm.isUnibrowControl()) {
-      if (DEBUG) System.out.println("****** Viewing internal control bookmark: "+bm.getURL().toExternalForm());
       try {
         Map<String, String[]> props = Bookmark.parseParameters(bm.getURL());
         UnibrowControlServlet.goToBookmark(app, props);
@@ -78,7 +76,6 @@ public abstract class BookmarkController {
         ErrorHandler.errorPanel("Error opening bookmark.\n" + message);
       }
     } else {
-      if (DEBUG) System.out.println("****** Viewing external bookmark: "+bm.getURL().toExternalForm());
       GeneralUtils.browse(bm.getURL().toExternalForm());
     }
   }
@@ -116,10 +113,8 @@ public abstract class BookmarkController {
     if (gviewer != null) {
       loaded_graphs = gviewer.collectGraphs();
     }
-    Iterator<GlyphI> iter = loaded_graphs.iterator();
     List<String> loaded_graph_paths = new ArrayList<String>(loaded_graphs.size());
-    while (iter.hasNext()) {
-      GraphGlyph gr = (GraphGlyph) iter.next();
+	for (GlyphI gr : loaded_graphs) {
       GraphSym graf_info = (GraphSym) gr.getInfo();
       String source_url = (String) graf_info.getProperty("source_url");
       loaded_graph_paths.add(source_url);
@@ -139,9 +134,7 @@ public abstract class BookmarkController {
         // for some parameters, testing more than one parameter name because how some params used to have
         //    slightly different names, and we need to support legacy bookmarks
         String graph_name = UnibrowControlServlet.getStringParameter(map, GRAPH.NAME.toString() + i);
-        if (DEBUG) {
-          System.out.println("loading from bookmark, graph name: " + graph_name + ", url: " + graph_path);
-        }
+       
         String graph_ypos = UnibrowControlServlet.getStringParameter(map, GRAPH.YPOS.toString() + i);
         if (graph_ypos == null)  { graph_ypos = UnibrowControlServlet.getStringParameter(map, "graphypos" + i); }
 
@@ -212,20 +205,6 @@ public abstract class BookmarkController {
         int thresh_direction =
             (thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
 
-        if (DEBUG) {
-          System.out.println("graph path: " + graph_path);
-          System.out.println("red = " + col.getRed() +
-              ", green = " + col.getGreen() + ", blue = " + col.getBlue());
-          System.out.println("ypos = " + ypos);
-          System.out.println(gmodel.getSelectedSeq());
-          if (gviewer != null) System.out.println(gviewer.getSeqMap());
-          System.out.println(col+", "+ypos+", "+ yheight
-              +", "+use_floating_graphs+", "+show_label+", "+ show_axis
-              +", "+minvis+", "+maxvis+", "
-              + score_thresh+", "+maxgap_thresh+", "
-              + show_thresh + ", " + thresh_direction);
-        }
-
         if (graph_name == null || graph_name.trim().length()==0) {
           graph_name = graph_path;
         }
@@ -233,7 +212,7 @@ public abstract class BookmarkController {
 		  istr = LocalUrlCacher.getInputStream(graph_path);
 
 		  List<GraphSym> grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-		  GraphSymUtils.processGraphSyms(grafs, graph_path);
+		  GraphSymUtils.processGraphSyms(grafs, graph_path, null);
 		 
 		  GraphType graph_style_num = null;
 		  if (graph_style != null) {
@@ -315,9 +294,6 @@ public abstract class BookmarkController {
   }
 
   public static void addGraphProperties(SymWithProps mark_sym, List<GlyphI> graphs, Bookmarks bookmark) {
-    if (DEBUG) {
-      System.out.println("in addGraphProperties, graph count = " + graphs.size());
-    }
     int max = graphs.size();
     Map<ITrackStyle,Integer> combo_styles = new HashMap<ITrackStyle,Integer>();
 
@@ -336,10 +312,6 @@ public abstract class BookmarkController {
       }
       GraphGlyph gr = (GraphGlyph) graph_object;
       GraphSym graph = (GraphSym)gr.getInfo();
-      
-      if (DEBUG) {
-        System.out.println("graph sym, points = " + graph.getPointCount() + ": " + graph);
-      }
       String source_url = (String)graph.getProperty("source_url");
       bookmark.addGraph(graph);
       source_url = bookmark.getSource();
@@ -366,9 +338,6 @@ public abstract class BookmarkController {
         mark_sym.setProperty(GRAPH.BG.toString() + i, sixDigitHex(gr.getGraphState().getTierStyle().getBackground()));
         if (is_floating) { mark_sym.setProperty(GRAPH.FLOAT.toString() + i, "true"); } else  {mark_sym.setProperty(GRAPH.FLOAT.toString() + i, "false"); }
 
-        if (DEBUG) {
-          System.out.println("setting bookmark prop graph_name_" + i + ": " + graph.getGraphName());
-        }
         mark_sym.setProperty(GRAPH.NAME.toString() + i, graph.getGraphName());
         mark_sym.setProperty(GRAPH.SHOW_LABEL.toString() + i, (gr.getShowLabel()?"true":"false"));
         mark_sym.setProperty(GRAPH.SHOW_AXIS.toString() + i, (gr.getShowAxis()?"true":"false"));
@@ -446,7 +415,7 @@ public abstract class BookmarkController {
   }
 
 
-  /** Returns a hexidecimal representation of the color with
+  /** Returns a hexadecimal representation of the color with
    *  "0x" plus exactly 6 digits.  Example  Color.BLUE -> "0x0000FF".
    */
   private static String sixDigitHex(Color c) {

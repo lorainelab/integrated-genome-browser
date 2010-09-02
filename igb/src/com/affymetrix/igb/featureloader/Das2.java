@@ -201,7 +201,7 @@ public class Das2 {
 			}*/
 
 			if (feats != null) {
-				SymLoader.addAnnotations(feats, overlap_span, feature.getURI());
+				SymLoader.addAnnotations(feats, overlap_span, feature.getURI(), feature);
 			}
 
             return (feats != null);

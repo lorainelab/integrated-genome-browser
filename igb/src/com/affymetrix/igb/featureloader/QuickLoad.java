@@ -230,7 +230,7 @@ public final class QuickLoad extends SymLoader {
 				if (entry.getValue().isEmpty()) {
 					continue;
 				}
-				SymLoader.addAnnotations(entry.getValue(), span, feature.getURI());
+				SymLoader.addAnnotations(entry.getValue(), span, feature.getURI(), feature);
 				overallResults.addAll(entry.getValue());
 			}
 		}

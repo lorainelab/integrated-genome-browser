@@ -275,7 +275,7 @@ public abstract class SymLoader {
   }
 
 	public static void addAnnotations(
-			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri) {
+			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri, GenericFeature feature) {
 		if (feats == null || feats.isEmpty()) {
 			return;
 		}
@@ -285,7 +285,7 @@ public abstract class SymLoader {
 			for(SeqSymmetry feat : feats) {
 				grafs.add((GraphSym)feat);
 			}
-			GraphSymUtils.processGraphSyms(grafs, uri.toString());
+			GraphSymUtils.processGraphSyms(grafs, uri.toString(), feature);
 			return;
 		}
 

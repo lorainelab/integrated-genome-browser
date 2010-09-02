@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,13 +65,13 @@ public abstract class DasLoader {
 	public static String getDasResidues(GenericVersion version, String seqid, int min, int max) {
 		Set<String> segments = ((DasSource)version.versionSourceObj).getEntryPoints();
 		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, seqid);
-		URL request;
+		URI request;
 		InputStream result_stream = null;
 		String residues = null;
 
 		try {
-			request = new URL(version.gServer.URL);
-			URL url = new URL(request, version.versionID + "/dna?");
+			request = URI.create(version.gServer.URL);
+			URL url = new URL(request.toURL(), version.versionID + "/dna?");
 			QueryBuilder builder = new QueryBuilder(url.toExternalForm());
 
 			builder.add("segment", segment + ":" + (min + 1) + "," + max);

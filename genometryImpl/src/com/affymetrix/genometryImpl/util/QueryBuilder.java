@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -23,11 +22,9 @@ public class QueryBuilder {
 		parameters.put(GeneralUtils.URLEncode(key), GeneralUtils.URLEncode(value));
 	}
 
-	public URL build() throws MalformedURLException {
-		StringBuilder query = new StringBuilder();
+	public URI build() {
+		StringBuilder query = new StringBuilder(u);
 
-		query.append(u);
-		//query.append("?");
 		for (Map.Entry<String, String> parameter : parameters.entrySet()) {
 			query.append(parameter.getKey());
 			query.append("=");
@@ -35,6 +32,6 @@ public class QueryBuilder {
 			query.append(";");
 		}
 
-		return new URL(query.toString());
+		return URI.create(query.toString());
 	}
 }

@@ -1,24 +1,32 @@
 package com.affymetrix.igb.featureloader;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.das.DasSource;
-import com.affymetrix.genometryImpl.das.DasType;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.event.UrlLoaderThread;
+import com.affymetrix.igb.view.TrackView;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.util.List;
+import java.util.Set;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.stream.XMLStreamException;
 
 
 /**
@@ -41,45 +49,82 @@ public final class Das {
 	 * @return true if data was loaded
 	 */
 	public static boolean loadFeatures(List<SeqSpan> spans, GenericFeature gFeature) {
-		//DasType feature = (DasType)gFeature.typeObj;
-		//URL serverURL = feature.getServerURL();
 		BioSeq current_seq = spans.get(0).getBioSeq();
-		List<URL> urls = new ArrayList<URL>();
-		Set<String> segments = ((DasSource)gFeature.gVersion.versionSourceObj).getEntryPoints();
+		Set<String> segments = ((DasSource) gFeature.gVersion.versionSourceObj).getEntryPoints();
 		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
 
-		try {
-			QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
-			builder.add("segment", segment);
-			for(SeqSpan span : spans) {
-				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
-				urls.add(builder.build());
-			}
-			loadOptimizedSym(urls, gFeature);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return false;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return false;
+		QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
+		builder.add("segment", segment);
+		for (SeqSpan span : spans) {
+			builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
+			URI uri = builder.build();
+			// initialize styles
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
+			style.setFeature(gFeature);
+
+			parseData(uri);
+			TrackView.updateDependentData();
+			Application.getSingleton().getMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
 		}
 		return true;
 	}
 
+	/**
+	 *  Opens a binary data stream from the given uri and adds the resulting
+	 *  data.
+	 */
+	private static void parseData(URI uri) {
+		Map<String, List<String>> respHeaders = new HashMap<String, List<String>>();
+		InputStream stream = null;
+		List<String> list;
+		String content_type = "content/unknown";
+		int content_length = -1;
 
-	private static void loadOptimizedSym(List<URL> urls, GenericFeature gFeature) throws MalformedURLException, UnsupportedEncodingException {
-		// initialize styles
-		for (int i = 0; i < urls.size(); i++) {
-			// TODO: temp hack.  The style should be determined by the URI, not the feature name.
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
-			//ITrackStyleExtended style =
-			//	DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(urls.get(i).toString(), gFeature.featureName);
-			style.setFeature(gFeature);
+		try {
+			stream = LocalUrlCacher.getInputStream(uri.toURL(), true, null, respHeaders);
+			list = respHeaders.get("Content-Type");
+			if (list != null && !list.isEmpty()) {
+				content_type = list.get(0);
+			}
+
+			list = respHeaders.get("Content-Length");
+			if (list != null && !list.isEmpty()) {
+				try {
+					content_length = Integer.parseInt(list.get(0));
+				} catch (NumberFormatException ex) {
+					content_length = -1;
+				}
+			}
+
+			if (content_length == 0) { // Note: length == -1 means "length unknown"
+				Logger.getLogger(Das.class.getName()).log(Level.WARNING, "{0} returned no data.", uri);
+				return;
+			}
+
+			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+			if (content_type.startsWith("text/plain")
+					|| content_type.startsWith("text/html")
+					|| content_type.startsWith("text/xml")) {
+				// Note that some http servers will return "text/html" even when that is untrue.
+				// we could try testing whether the filename extension is a recognized extension, like ".psl"
+				// and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
+				BufferedInputStream bis = null;
+				try {
+					bis = new BufferedInputStream(stream);
+					DASFeatureParser das_parser = new DASFeatureParser();
+					das_parser.parse(bis, group);
+				} catch (XMLStreamException ex) {
+					Logger.getLogger(Das.class.getName()).log(Level.SEVERE, "Unable to parse DAS response", ex);
+				} finally {
+					GeneralUtils.safeClose(bis);
+				}
+			} else {
+				Logger.getLogger(Das.class.getName()).log(Level.WARNING, "Declared data type {0} cannot be processed", content_type);
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(Das.class.getName()).log(Level.SEVERE, "Exception encountered: no data returned for url " + uri, ex);
+		} finally {
+			GeneralUtils.safeClose(stream);
 		}
-		String[] tier_names = new String[urls.size()];
-		Arrays.fill(tier_names, gFeature.featureName);
-		UrlLoaderThread loader = new UrlLoaderThread(Application.getSingleton().getMapView(), urls.toArray(new URL[urls.size()]), null, tier_names);
-		loader.runEventually();
 	}
-
 }

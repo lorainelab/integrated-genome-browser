@@ -181,8 +181,9 @@ public final class QuickLoad extends SymLoader {
 					final List<? extends SeqSymmetry> results = get();
 					if (results != null && !results.isEmpty()) {
 						TrackView.updateDependentData();
-						if (overlapSpan != null && overlapSpan.getBioSeq() != null) {
-							gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
+						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+						if (overlapSpan != null && aseq != null) {
+							gviewer.setAnnotatedSeq(aseq, true, true);
 						} else {
 							// This can happen when loading a brand-new genome
 							if (QuickLoad.this.version.group != null) {

@@ -52,53 +52,52 @@ public class SpeciesLookupTest {
 	 */
 	@Test
 	public void testGetSpeciesName() throws IOException {
-		SpeciesLookup instance = new SpeciesLookup();
 		String filename = "test/data/speciesLookup/species.txt";
 		assertTrue(new File(filename).exists());
 
 		InputStream istr = new FileInputStream(filename); 
 		assertNotNull(istr);
 
-		instance.load(istr);
+		SpeciesLookup.load(istr);
 
 		String version = "C_brenneri_Aug_2009";
-		String result = instance.getSpeciesName(version, true);
+		String result = SpeciesLookup.getSpeciesName(version, true);
 		assertEquals(c_brenneri, result);
 
 		version = "caePb9";
-		result = instance.getSpeciesName(version, true);
+		result = SpeciesLookup.getSpeciesName(version, true);
 		assertEquals(c_brenneri, result);
 
 		version = "c_Brenneri_Aug_2009";
-		result = instance.getSpeciesName(version, true);
+		result = SpeciesLookup.getSpeciesName(version, true);
 		assertEquals(version, result);
-		result = instance.getSpeciesName(version, false);
+		result = SpeciesLookup.getSpeciesName(version, false);
 		assertEquals(c_brenneri, result);
 
 		version = "caepb9";
-		result = instance.getSpeciesName(version, true);
+		result = SpeciesLookup.getSpeciesName(version, true);
 		assertEquals(version, result);
-		result = instance.getSpeciesName(version, false);
+		result = SpeciesLookup.getSpeciesName(version, false);
 		assertEquals(c_brenneri, result);
 
 		version = "mm9";
-		result = instance.getSpeciesName(version, true);
+		result = SpeciesLookup.getSpeciesName(version, true);
 		assertEquals(m_musculus, result);
 
 		version = "MM9";
-		result = instance.getSpeciesName(version, true);
+		result = SpeciesLookup.getSpeciesName(version, true);
 		assertEquals(version, result);
-		result = instance.getSpeciesName(version, false);
+		result = SpeciesLookup.getSpeciesName(version, false);
 		assertEquals(m_musculus, result);
 
 		version = "ponAbe9";
-		result = instance.getSpeciesName(version, true);
+		result = SpeciesLookup.getSpeciesName(version, true);
 		assertEquals(p_pygmaeus_abelii, result);
 
 		version = "ponabe9";
-		result = instance.getSpeciesName(version, true);
+		result = SpeciesLookup.getSpeciesName(version, true);
 		assertEquals(version, result);
-		result = instance.getSpeciesName(version, false);
+		result = SpeciesLookup.getSpeciesName(version, false);
 		assertEquals(p_pygmaeus_abelii, result);
 	}
 

@@ -100,6 +100,11 @@ public final class GenericFeature {
 		}
 	}
 
+	public void setInvisible(){
+		this.visible = false;
+		this.loadStrategy = LoadStrategy.NO_LOAD;
+	}
+	
 	public boolean isVisible() {
 		return this.visible;
 	}
@@ -163,6 +168,10 @@ public final class GenericFeature {
 
 	public void addLoadedSymRequest(SeqSymmetry optimized_sym) {
 		requestSym.addChild(optimized_sym);
+	}
+
+	public MutableSeqSymmetry getRequestSym(){
+		return requestSym;
 	}
 
 	public List<LoadStrategy> getLoadChoices(){

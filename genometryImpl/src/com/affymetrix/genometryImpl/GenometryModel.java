@@ -69,12 +69,12 @@ public final class GenometryModel {
 
 
 	/** Returns a Map of String names to AnnotatedSeqGroup objects. */
-	private Map<String,AnnotatedSeqGroup> getSeqGroups() {
-		return seq_groups;
+	public Map<String,AnnotatedSeqGroup> getSeqGroups() {
+		return Collections.unmodifiableMap(seq_groups);
 	}
 
 	public synchronized List<String> getSeqGroupNames() {
-		List<String> list = new ArrayList<String>(getSeqGroups().keySet());
+		List<String> list = new ArrayList<String>(seq_groups.keySet());
 		Collections.sort(list);
 		return Collections.unmodifiableList(list);
 	}

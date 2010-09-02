@@ -339,7 +339,6 @@ public class ScriptFileLoader {
 	}
 
 	private static void loadMode(String loadMode, String featureURIStr) {
-		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		
 		URI featureURI = null;
 		File featureFile = new File(featureURIStr.trim());
@@ -359,14 +358,22 @@ public class ScriptFileLoader {
 			s = LoadStrategy.GENOME;
 		}
 
+		// First try to look up for feature in current group.
+		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		GenericFeature feature = null;
-		
-		for(GenericVersion version : seqGroup.getEnabledVersions()){
-			feature = GeneralUtils.findFeatureWithURI(version.getFeatures(), featureURI);
-			if(feature != null)
-				break;
-		}
 
+		// If feature is not found in current group then look up all groups.
+		if(seqGroup != null)
+			feature = findFeatureInGroup(seqGroup, featureURI);
+
+		if(feature == null){
+			for(AnnotatedSeqGroup group : GenometryModel.getGenometryModel().getSeqGroups().values()){
+				feature = findFeatureInGroup(group, featureURI);
+				if(feature != null)
+					break;
+			}
+		}
+		
 		if (feature != null) {
 			GenericFeature.setPreferredLoadStrategy(feature, s);
 		} else {
@@ -374,7 +381,18 @@ public class ScriptFileLoader {
 					Level.SEVERE, "Couldn''t find feature :{0}", featureURIStr);
 		}
 	}
-	
+
+	private static GenericFeature findFeatureInGroup(AnnotatedSeqGroup seqGroup, URI featureURI){
+		GenericFeature feature = null;
+		for(GenericVersion version : seqGroup.getEnabledVersions()){
+			feature = GeneralUtils.findFeatureWithURI(version.getFeatures(), featureURI);
+			if(feature != null)
+				break;
+		}
+
+		return feature;
+	}
+
 	/**
 	 * Join fields from startField to end of fields.
 	 * @param fields

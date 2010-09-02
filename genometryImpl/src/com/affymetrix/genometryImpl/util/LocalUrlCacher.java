@@ -166,10 +166,10 @@ public final class LocalUrlCacher {
 		File header_cache_file = getCacheFile(cache_header_root, url);
 		long local_timestamp = -1;
 		
-		// special-case when one cache file exists, but not the other.  Shouldn't happen, really.
-		if (cache_file.exists() && !header_cache_file.exists()) {
+		// special-case when one cache file exists, but the other doesn't or is zero-length. Shouldn't happen, really.
+		if (cache_file.exists() && (!header_cache_file.exists() || header_cache_file.length() == 0)) {
 			cache_file.delete();
-		} else if (!cache_file.exists() && header_cache_file.exists()) {
+		} else if ((!cache_file.exists() || cache_file.length() == 0) && header_cache_file.exists()) {
 			header_cache_file.delete();
 		}
 		

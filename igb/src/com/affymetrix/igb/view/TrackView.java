@@ -135,10 +135,6 @@ public class TrackView {
 	 *  Generally called by a Graph Glyph Factory.
 	 */
 	public static TierGlyph getGraphTrack(AffyTieredMap seqmap, ITrackStyle style, TierGlyph.Direction tier_direction) {
-		if (style == null) {
-			throw new NullPointerException();
-		}
-
 		TierGlyph tier = gstyle2track.get(style);
 		if (tier == null) {
 			tier = new TierGlyph(style);

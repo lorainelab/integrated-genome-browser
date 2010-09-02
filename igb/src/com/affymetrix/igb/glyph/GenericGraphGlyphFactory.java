@@ -122,13 +122,14 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 * @return graph glyph
 	 */
 	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, SeqMapView smv, boolean isGenome) {
-		AffyTieredMap map = smv.getSeqMap();
-		Rectangle2D.Double cbox = map.getCoordBounds();
 		GraphState gstate = graf.getGraphState();
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, gstate);
-		gstate.getTierStyle().setHumanName(newgraf.getGraphName());
-		ITrackStyle tier_style = gstate.getTierStyle();//getGenomeViewStyle(gstate.getTierStyle().getHumanName());
+		ITrackStyle tier_style = gstate.getTierStyle();
+		tier_style.setHumanName(newgraf.getGraphName());
 		tier_style.setCollapsed(isGenome);
+
+		AffyTieredMap map = smv.getSeqMap();
+		Rectangle2D.Double cbox = map.getCoordBounds();
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.

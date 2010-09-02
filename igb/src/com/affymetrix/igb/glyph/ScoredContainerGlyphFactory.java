@@ -77,20 +77,17 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 
 	private static void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map) {
 		BioSeq aseq = smv.getAnnotatedSeq();
-		if (DEBUG) {
-			System.out.println("   creating graphs on seq: " + aseq.getID());
-		}
 		if (original_container.getSpan(aseq) == null) {
 			return;
 		}
 		GraphIntervalSym[] the_graph_syms = determineGraphSyms(smv, aseq, original_container);
 
-		AffyTieredMap map = smv.getSeqMap();
 		for (GraphIntervalSym gis : the_graph_syms) {
-			displayGraphSym(gis, map, smv);
+			displayGraphSym(gis, smv);
 		}
 
 		if (update_map) {
+			AffyTieredMap map = smv.getSeqMap();
 			map.packTiers(false, true, false);
 			map.stretchToFit(false, false);
 			map.updateWidget();
@@ -190,7 +187,6 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 			return null;
 		}
 
-		//int score_count = original_scores.length;
 		int derived_child_count = derived_parent.getChildCount();
 		IntArrayList xcoords = new IntArrayList(derived_child_count);
 		IntArrayList wcoords = new IntArrayList(derived_child_count);
@@ -234,11 +230,13 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 		return gsym;
 	}
 
-	private static void displayGraphSym(GraphIntervalSym graf, AffyTieredMap map, SeqMapView smv) {
+	private static void displayGraphSym(GraphIntervalSym graf, SeqMapView smv) {
 		GraphGlyph graph_glyph = new GraphGlyph(graf, graf.getGraphState());
-		graph_glyph.getGraphState().getTierStyle().setHumanName(graf.getGraphName());
 		GraphState gstate = graph_glyph.getGraphState();
-		ITrackStyle tier_style = gstate.getTierStyle(); // individual style: combo comes later
+		ITrackStyle tier_style = gstate.getTierStyle();
+		tier_style.setHumanName(graf.getGraphName());
+
+		AffyTieredMap map = smv.getSeqMap();
 		Rectangle2D.Double cbox = map.getCoordBounds();
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)

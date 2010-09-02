@@ -217,17 +217,17 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	// this score will map to this same graph ID for all other
 	// ScoredContainerSym's that have the same ID, even if they
 	// are on other BioSeq's.
-	public String getGraphID(AnnotatedSeqGroup seq_group, String score_name, char strand) {
+	public final String getGraphID(AnnotatedSeqGroup seq_group, String score_name, char strand) {
 		// I'm just assuming that this combination will be unique
 		String id = getID() + ":" + strand + ":" + score_name;
 		if (id2gstate.get(id) == null) {
-			GraphState gs = initializeGraphState(id, seq_group, score_name, strand);
+			GraphState gs = initializeGraphState(id, score_name, strand);
 			id2gstate.put(id, gs);
 		}
 		return id;
 	}
 
-	private GraphState initializeGraphState(String id, AnnotatedSeqGroup seq_group, String score_name, char strand) {
+	private GraphState initializeGraphState(String id, String score_name, char strand) {
 		GraphState gs = AnnotatedSeqGroup.getStateProvider().getGraphState(id);
 		gs.setFloatGraph(false);
 		gs.setGraphStyle(GraphType.HEAT_MAP);

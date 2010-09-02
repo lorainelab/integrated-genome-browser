@@ -136,9 +136,6 @@ public final class GraphGlyph extends Glyph {
 	public GraphGlyph(GraphSym graf, GraphState gstate) {
 		super();
 		state = gstate;
-		if (state == null) {
-			throw new NullPointerException();
-		}
 
 		setCoords(coordbox.x, state.getTierStyle().getY(), coordbox.width, state.getTierStyle().getHeight());
 

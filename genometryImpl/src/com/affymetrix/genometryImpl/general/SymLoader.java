@@ -138,30 +138,12 @@ public abstract class SymLoader {
      * @return List of symmetries in genome
      */
     public List<? extends SeqSymmetry> getGenome() {
-
-		if (GraphSymUtils.isAGraphFilename(this.extension)) {
-			BufferedInputStream bis = null;
-			try {
-				GenometryModel gmodel = GenometryModel.getGenometryModel();
-				bis = LocalUrlCacher.convertURIToBufferedStream(this.uri);
-				List<GraphSym> graphs = GraphSymUtils.readGraphs(bis, this.uri.toString(), gmodel.getSelectedSeqGroup(), null);
-				GraphSymUtils.setName(graphs, GraphSymUtils.getGraphNameForURL(this.uri.toURL()));
-				return graphs;
-			} catch (Exception ex) {
-				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
-			} finally {
-				GeneralUtils.safeClose(bis);
-			}
-		}
-		
-		List<? extends SeqSymmetry> feats = null;
 		try {
 			BufferedInputStream bis = null;
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				feats = Parse(this.extension, this.uri, bis, group, this.featureName, null);
-				return feats;
+				return Parse(this.extension, this.uri, bis, group, this.featureName, null);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {

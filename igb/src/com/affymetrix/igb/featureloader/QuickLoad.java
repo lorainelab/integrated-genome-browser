@@ -301,21 +301,6 @@ public final class QuickLoad extends SymLoader {
 	 */
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
-		if (GraphSymUtils.isAGraphFilename(this.extension)) {
-			BufferedInputStream bis = null;
-			try {
-				GenometryModel gmodel = GenometryModel.getGenometryModel();
-				bis = LocalUrlCacher.convertURIToBufferedStream(this.uri);
-				List<GraphSym> graphs = GraphSymUtils.readGraphs(bis, this.uri.toString(), gmodel.getSelectedSeqGroup(), null);
-				GraphSymUtils.setName(graphs, GraphSymUtils.getGraphNameForURL(this.uri.toURL()));
-				return graphs;
-			} catch (Exception ex) {
-				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
-			} finally {
-				GeneralUtils.safeClose(bis);
-			}
-		}
-
 		try {
 			if (this.extension.endsWith(".chp")) {
 				// special-case CHP files. ChpParser only has

@@ -141,15 +141,11 @@ public final class QuickLoad extends SymLoader {
 
 	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError {
-
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		if (this.symL != null && this.symL.isResidueLoader) {
-			final BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-			return loadResiduesThread(feature.loadStrategy, overlapSpan, seq, gviewer);
+			return loadResiduesThread(feature.loadStrategy, overlapSpan, gviewer);
 		}
-
 		return loadSymmetriesThread(feature, overlapSpan, gviewer);
-
 	}
 
 	private boolean loadSymmetriesThread(
@@ -167,8 +163,7 @@ public final class QuickLoad extends SymLoader {
 						SeqGroupView.refreshTable();
 						return null;
 					}
-					List<SeqSymmetry> overallResults = loadAndAddSymmetries(feature, overlapSpan);
-					return overallResults;
+					return loadAndAddSymmetries(feature, overlapSpan);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -220,61 +215,41 @@ public final class QuickLoad extends SymLoader {
 		List<SeqSymmetry> overallResults = new ArrayList<SeqSymmetry>();
 
 		// short-circuit if there's a failure... which may not even be signaled in the code
-		results = loadFeature(feature, span);
-		if (results == null) {
+		if (!this.isInitialized) {
+			this.init();
+		}
+		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) {
+			// Chromosome is not in file
 			return overallResults;
 		}
-		filterAndAddAnnotations(span, results, overallResults);
+
+		results = this.getRegion(span);
+		if (results != null) {
+			results = ServerUtils.filterForOverlappingSymmetries(span, results);
+			for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(results).entrySet()) {
+				if (entry.getValue().isEmpty()) {
+					continue;
+				}
+				SymLoader.addAnnotations(entry.getValue(), span, feature.getURI());
+				overallResults.addAll(entry.getValue());
+			}
+		}
+		
+		if (!overallResults.isEmpty()) {
+			// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
+			style.setFeature(feature);
+
+			// TODO - probably not necessary
+			style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName);
+			style.setFeature(feature);
+		}
 		
 		return overallResults;
 	}
 
-	private static void filterAndAddAnnotations(
-			SeqSpan span, List<? extends SeqSymmetry> results, List<SeqSymmetry> overallResults) {
-		results = ServerUtils.filterForOverlappingSymmetries(span, results);
-		for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(results).entrySet()) {
-			if (entry.getValue().isEmpty()) {
-				continue;
-			}
-			SymLoader.addAnnotations(entry.getValue(), span.getBioSeq());
-			overallResults.addAll(entry.getValue());
-		}
-	}
 
-
-	private List<? extends SeqSymmetry> loadFeature(GenericFeature feature, SeqSpan overlapSpan)
-			throws IOException, OutOfMemoryError {
-
-		final LoadStrategy strategy = feature.loadStrategy;
-		if (!this.isInitialized) {
-			this.init();
-		}
-
-		// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
-		style.setFeature(feature);
-
-		// TODO - probably not necessary
-		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName);
-		style.setFeature(feature);
-
-		// TODO - no need to check if symL is null.
-		if (strategy == LoadStrategy.GENOME && symL == null) {
-			// no symloader... only option is whole genome.
-			return this.getGenome();
-		}
-		if (strategy == LoadStrategy.GENOME || strategy == LoadStrategy.CHROMOSOME) {
-			return this.getChromosome(overlapSpan.getBioSeq());
-		}
-		if (strategy == LoadStrategy.VISIBLE) {
-			return this.getRegion(overlapSpan);
-		}
-		return null;
-	}
-
-
-
-	public boolean loadResiduesThread(final LoadStrategy strategy, final SeqSpan span, final BioSeq seq, final SeqMapView gviewer) {
+	public boolean loadResiduesThread(final LoadStrategy strategy, final SeqSpan span, final SeqMapView gviewer) {
 		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
 
 			public String doInBackground() {
@@ -291,8 +266,8 @@ public final class QuickLoad extends SymLoader {
 				try {
 					final String results = get();
 					if (results != null && !results.isEmpty()) {
-						BioSeq.addResiduesToComposition(seq, results, span);
-						gviewer.setAnnotatedSeq(seq, true, true);
+						BioSeq.addResiduesToComposition(span.getBioSeq(), results, span);
+						gviewer.setAnnotatedSeq(span.getBioSeq(), true, true);
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
@@ -326,11 +301,6 @@ public final class QuickLoad extends SymLoader {
 	 */
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
-		if (this.symL != null) {
-			Logger.getLogger(QuickLoad.class.getName()).severe("Should not get genome here");
-			return this.symL.getGenome();
-		}
-
 		if (GraphSymUtils.isAGraphFilename(this.extension)) {
 			BufferedInputStream bis = null;
 			try {
@@ -346,7 +316,6 @@ public final class QuickLoad extends SymLoader {
 			}
 		}
 
-		List<? extends SeqSymmetry> feats = null;
 		try {
 			if (this.extension.endsWith(".chp")) {
 				// special-case CHP files. ChpParser only has
@@ -359,8 +328,7 @@ public final class QuickLoad extends SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				feats = SymLoader.Parse(this.extension, this.uri, bis, this.version.group, this.featureName, null);
-				return feats;
+				return SymLoader.Parse(this.extension, this.uri, bis, this.version.group, this.featureName, null);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
@@ -371,15 +339,6 @@ public final class QuickLoad extends SymLoader {
 			ex.printStackTrace();
 			return null;
 		}
-	}
-
-
-	@Override
-	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
-		if (this.symL != null) {
-			return this.symL.getChromosome(seq);
-		}
-		return super.getChromosome(seq);
 	}
 
 	@Override

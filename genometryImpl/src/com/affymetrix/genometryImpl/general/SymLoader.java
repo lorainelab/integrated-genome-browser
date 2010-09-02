@@ -293,13 +293,23 @@ public abstract class SymLoader {
   }
 
 	public static void addAnnotations(
-			List<? extends SeqSymmetry> feats, BioSeq aseq) {
-		for (SeqSymmetry feat : feats) {
-			if (feat instanceof GraphSym) {
-				// if graphs, then adding to annotation BioSeq is handled by addChildGraph() method
-				return;
+			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri) {
+		if (feats == null || feats.isEmpty()) {
+			return;
+		}
+		if (feats.get(0) instanceof GraphSym) {
+			// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
+			List<GraphSym> grafs = new ArrayList<GraphSym>(feats.size());
+			for(SeqSymmetry feat : feats) {
+				grafs.add((GraphSym)feat);
 			}
-			aseq.addAnnotation(feat);
+			GraphSymUtils.processGraphSyms(grafs, uri.toString());
+			return;
+		}
+
+		BioSeq seq = span.getBioSeq();
+		for (SeqSymmetry feat : feats) {
+			seq.addAnnotation(feat);
 		}
 	}
 

@@ -109,7 +109,7 @@ public class Das2 {
         try {
             String query_part = DetermineQueryPart(region, overlap_filter, type, format);
             String feature_query = request_root + "?" + query_part;
-			LoadFeaturesFromQuery(overlap_span, feature_query, format, type);
+			LoadFeaturesFromQuery(feature, overlap_span, feature_query, format, type);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -135,7 +135,7 @@ public class Das2 {
 	}
 
     private static boolean LoadFeaturesFromQuery(
-            SeqSpan overlap_span, String feature_query, String format, Das2Type type) {
+            GenericFeature feature, SeqSpan overlap_span, String feature_query, String format, Das2Type type) {
 
         /**
          *  Need to look at content-type of server response
@@ -200,10 +200,9 @@ public class Das2 {
 				name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
 			}*/
 
-			//add data
-			//FeatureRequestSym.addToRequestSym(
-			//		feats, request_sym, type.getURI(), name, overlap_span);
-			SymLoader.addAnnotations(feats, aseq);
+			if (feats != null) {
+				SymLoader.addAnnotations(feats, overlap_span, feature.getURI());
+			}
 
             return (feats != null);
         } catch (Exception ex) {

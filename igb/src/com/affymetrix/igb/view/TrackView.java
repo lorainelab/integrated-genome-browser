@@ -5,12 +5,16 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.PackerI;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
@@ -266,19 +270,54 @@ public class TrackView {
 
 	public static void deleteTrack(TierGlyph tg) {
 		String method = tg.getAnnotStyle().getMethodName();
+		GenericFeature feature = tg.getAnnotStyle().getFeature();
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+
+		// If genome is selected then delete all syms on the all seqs.
+		if(IGBConstants.GENOME_SEQ_ID.equals(seq.getID())){
+			removeFeature(method, feature);
+			return;
+		}
+		
+		deleteSymsOnSeq(method, seq, feature);
+	}
+
+	public static void removeFeature(String method, GenericFeature feature){
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
-		if (group != null) {
-			for (BioSeq seq : group.getSeqList()) {
-				SeqSymmetry sym = seq.getAnnotation(method);
-				if (sym != null) {
-					seq.removeAnnotation(sym);
-				}
+		feature.getRequestSym().removeChildren();
+
+		for(BioSeq bioseq : group.getSeqList()){
+			deleteSymsOnSeq(method, bioseq, null);
+		}
+
+		feature.setInvisible();
+	}
+
+	public static void deleteSymsOnSeq(String method, BioSeq seq, GenericFeature feature){
+		if (seq != null) {
+			SeqSymmetry sym = seq.getAnnotation(method);
+			if (sym != null) {
+				seq.removeAnnotation(sym);
 			}
 		}
 
-		for (DependentData dd : dependent_list) {
-			if (method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod()))
+		if(feature != null){
+			MutableSeqSymmetry requestSym = feature.getRequestSym();
+			for(int i=0; i < requestSym.getChildCount(); i++){
+				SeqSymmetry sym = requestSym.getChild(i);
+				if(sym.getSpan(seq) != null)
+					requestSym.removeChild(sym);
+			}
+		}
+
+
+		DependentData dd = null;
+		for (int i=0; i < dependent_list.size(); i++) {
+			dd = dependent_list.get(i);
+			if (method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod())){
 				dependent_list.remove(dd);
+				seq.removeAnnotation(dd.getSym());
+			}
 		}
 	}
 }

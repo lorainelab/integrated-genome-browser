@@ -211,8 +211,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   
   private final Action delete_action = new AbstractAction("Delete selected tracks") {
     public void actionPerformed(ActionEvent e) {
+		BioSeq seq = gmodel.getSelectedSeq();
+
       if (IGB.confirmPanel("Really remove selected tracks?\n"+
-          "Data will be removed from all chromosomes on this genome.")) {
+          "Data will be removed from "+ seq.getID() +" on this genome.")) {
         removeTiers(handler.getSelectedTierLabels());
       }
     }

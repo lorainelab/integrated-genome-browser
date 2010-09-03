@@ -30,7 +30,6 @@ import org.xml.sax.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
@@ -91,48 +90,49 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 	static final Pattern range_splitter = Pattern.compile("/");
 	static final Pattern interval_splitter = Pattern.compile(":");
-	static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	AnnotatedSeqGroup seqgroup = null;
-	boolean add_annots_to_seq = false;
-	boolean add_to_sym_hash = true;
-	String current_elem = null;  // current element
-	StringBuffer current_chars = null;
-	Stack<String> elemstack = new Stack<String>();
-	Stack<URI> base_uri_stack = new Stack<URI>();
-	URI current_base_uri = null;
-	String feat_id = null;
-	String feat_type = null;
-	String feat_name = null;
-	String feat_parent_id = null;
-	String feat_created = null;
-	String feat_modified = null;
-	String feat_doc_href = null;
-	String feat_prop_key = null;
-	String feat_prop_val = null;
+	private AnnotatedSeqGroup seqgroup = null;
+	private boolean add_annots_to_seq = false;
+	private static final boolean add_to_sym_hash = true;
+	private String current_elem = null;  // current element
+	private final Stack<String> elemstack = new Stack<String>();
+	private final Stack<URI> base_uri_stack = new Stack<URI>();
+	private URI current_base_uri = null;
+	private String feat_id = null;
+	private String feat_type = null;
+	private String feat_name = null;
+	private String feat_parent_id = null;
+	private String feat_created = null;
+	private String feat_modified = null;
+	private String feat_doc_href = null;
+	private String feat_prop_key = null;
+	private String feat_prop_val = null;
 	/**  list of SeqSpans specifying feature locations */
-	List<SeqSpan> feat_locs = new ArrayList<SeqSpan>();
+	private final List<SeqSpan> feat_locs = new ArrayList<SeqSpan>();
 	
 	/**
 	 *  map of child feature id to either:
 	 *      itself  (if child feature not parsed yet), or
 	 *      child feature object (if child feature already parsed)
 	 */
-	Map<String, Object> feat_parts = new LinkedHashMap<String, Object>();
-	Map<String, Object> feat_props = null;
+	private Map<String, Object> feat_parts = new LinkedHashMap<String, Object>();
+	private Map<String, Object> feat_props = null;
 
 	/**
-	 *  List of feature jsyms resulting from parse
+	 *  List of feature syms resulting from parse
 	 */
-	List<SeqSymmetry> result_syms = null;
+	private List<SeqSymmetry> result_syms = null;
 	/**
 	 *  Need mapping so can connect parents and children after sym has already been created
 	 */
-	Map<String,MutableSeqSymmetry> id2sym = new HashMap<String,MutableSeqSymmetry>();
+	private final Map<String,MutableSeqSymmetry> id2sym = new HashMap<String,MutableSeqSymmetry>();
 	/**
 	 *  Mapping of parent sym to map of child ids to connect parents and children.
 	 */
-	Map<SeqSymmetry,Map<String, Object>> parent2parts = new HashMap<SeqSymmetry,Map<String, Object>>();
+	private final Map<SeqSymmetry,Map<String, Object>> parent2parts = new HashMap<SeqSymmetry,Map<String, Object>>();
 
+	private int dup_count = 0;
+	private int feature_constructor_calls = 0;
+	
 	/*
 	 *  need mapping of parent id to child count for efficiently figuring out when
 	 *    symmetry is fully populated with children
@@ -231,6 +231,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  implementing sax content handler interface.
 	 */
+	@Override
 	public void startDocument() {
 		System.out.println("Das2FeaturesSaxParser.startDocument() called");
 	}
@@ -238,6 +239,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  implementing sax content handler interface.
 	 */
+	@Override
 	public void endDocument() {
 		//    System.out.println("Das2FeaturesSaxParser.endDocument() called");
 	}
@@ -245,6 +247,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  implementing sax content handler interface.
 	 */
+	@Override
 	public void startElement(String uri, String localName, String qname, Attributes atts)
 					throws SAXException {
 		// to be fully compliant with DAS/2 spec, should comply with XML namespaces, and therefore
@@ -431,6 +434,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  implementing sax content handler interface.
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public void endElement(String uri, String name, String qname) {
 		if (DEBUG) {
 			System.out.println("end element: " + name);
@@ -477,6 +481,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  implementing sax handler interface.
 	 */
+	@Override
 	public void characters(char[] ch, int start, int length) {
 		// used to need to collect characters for property CDATA
 		// but PROP now has data in attributes instead of content, so not needed anymore
@@ -484,8 +489,6 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		//      feat_prop_content += new String(ch, start, length);
 		//    }
 	}
-	int dup_count = 0;
-	int feature_constructor_calls = 0;
 
 	public void addFeature() {
 		// checking to make sure feature with same id doesn't already exist
@@ -568,7 +571,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 	}
 
-	protected boolean childrenReady(SeqSymmetry parent_sym) {
+	private boolean childrenReady(SeqSymmetry parent_sym) {
 		Map<String, Object> parts = parent2parts.get(parent_sym);
 		Iterator<Object> citer = parts.values().iterator();
 		boolean all_child_syms = true;
@@ -582,7 +585,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		return all_child_syms;
 	}
 
-	protected void addChildren(MutableSeqSymmetry parent_sym) {
+	private void addChildren(MutableSeqSymmetry parent_sym) {
 		// get parts
 		Map<String, Object> parts = parent2parts.get(parent_sym);
 		Iterator<Map.Entry<String, Object>> citer = parts.entrySet().iterator();
@@ -936,7 +939,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		if (span == null) {
 			return null;
 		}
-		StringBuffer buf = new StringBuffer(100);
+		StringBuilder buf = new StringBuilder(100);
 		buf.append(Integer.toString(span.getMin()));
 		buf.append(":");
 		buf.append(Integer.toString(span.getMax()));
@@ -949,37 +952,4 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 		return buf.toString();
 	}
-	/*
-	public static void main(String[] args) {
-	boolean test_result_list = true;
-	Das2FeatureSaxParser test = new Das2FeatureSaxParser();
-	try {
-	//	String test_file_name = "c:/data/das2_responses/codesprint/feature_query3.xml";
-	//	String test_file_name = "c:/data/das2_responses/codesprint/genometry/features3.xml";
-	String test_file_name = System.getProperty("user.dir") + 
-	"/igb/test/test_files/das2_sample_features.das2xml";
-
-	File test_file = new File(test_file_name);
-	FileInputStream fistr = new FileInputStream(test_file);
-	BufferedInputStream bis = new BufferedInputStream(fistr);
-	boolean prev_add_seqs_to_group = ADD_NEW_SEQS_TO_GROUP;
-	ADD_NEW_SEQS_TO_GROUP = true;
-	List annots = test.parse(new InputSource(bis), test_file_name, gmodel.addSeqGroup("test_group"), true);
-	ADD_NEW_SEQS_TO_GROUP = prev_add_seqs_to_group;
-	bis.close();
-	System.out.println("annot count: " + annots.size());
-	SeqSymmetry first_annot = (SeqSymmetry)annots.get(0);
-	//      SeqUtils.printSymmetry(first_annot);
-	AnnotatedSeqGroup group = gmodel.getSeqGroup("test_group");
-	AnnotatedBioSeq aseq = group.getSeq(first_annot);
-	System.out.println("seq id: " + aseq.getID());
-	GenometryViewer viewer = GenometryViewer.displaySeq(aseq, false);
-	viewer.setAnnotatedSeq(aseq);
-	}
-	catch (Exception ex) {
-	ex.printStackTrace();
-	}
-	}
-
-	 */
 }

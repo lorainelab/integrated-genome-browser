@@ -143,7 +143,7 @@ public abstract class SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				return Parse(this.extension, this.uri, bis, group, this.featureName, null);
+				return parse(this.extension, this.uri, bis, group, this.featureName, null);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
@@ -305,7 +305,7 @@ public abstract class SymLoader {
 	 * @return list of symmetries
 	 * @throws Exception
 	 */
-	public static List<? extends SeqSymmetry> Parse(
+	public static List<? extends SeqSymmetry> parse(
 			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName, SeqSpan overlap_span)
 			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);

@@ -190,7 +190,7 @@ public class Das2 {
 
             System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
 			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
-			List<? extends SeqSymmetry> feats = SymLoader.Parse(extension, type.getURI(), istr, aseq.getSeqGroup(), type.getName(), overlap_span);
+			List<? extends SeqSymmetry> feats = SymLoader.parse(extension, type.getURI(), istr, aseq.getSeqGroup(), type.getName(), overlap_span);
 
 			/*
 			 TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.

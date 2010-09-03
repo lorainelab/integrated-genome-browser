@@ -158,19 +158,21 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		List<UcscPslSym> results = null;
 		FileInputStream fis = null;
 		DataInputStream dis = null;
+		BufferedInputStream bis = null;
 		try {
 			File fil = new File(file_name);
 			long flength = fil.length();
 			fis = new FileInputStream(fil);
-			BufferedInputStream bis = new BufferedInputStream(fis);
+			bis = new BufferedInputStream(fis);
 
 			byte[] bytebuf = new byte[(int) flength];
 			bis.read(bytebuf);
-			//        fis.read(bytebuf);
+
 			ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
 			dis = new DataInputStream(bytestream);
 			results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
 		} finally {
+			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(fis);
 		}

@@ -126,11 +126,12 @@ public class CacheScript extends Thread {
 	 */
 	public void writeServerMapping(){
 		FileOutputStream fos = null;
+		PrintStream out = null;
 		try {
 			File mapping = new File(path + "/" + Constants.serverMapping);
 			mapping.createNewFile();
 			fos = new FileOutputStream(mapping);
-			final PrintStream out = new PrintStream(fos);
+			out = new PrintStream(fos);
 			for (final GenericServer gServer : server_list) {
 				out.println(gServer.URL + "\t" + gServer.serverName);
 			}
@@ -138,6 +139,7 @@ public class CacheScript extends Thread {
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
 			GeneralUtils.safeClose(fos);
+			GeneralUtils.safeClose(out);
 		}
 	}
 

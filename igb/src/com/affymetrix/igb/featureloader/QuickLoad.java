@@ -311,7 +311,7 @@ public final class QuickLoad extends SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				return SymLoader.Parse(this.extension, this.uri, bis, this.version.group, this.featureName, null);
+				return SymLoader.parse(this.extension, this.uri, bis, this.version.group, this.featureName, null);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {

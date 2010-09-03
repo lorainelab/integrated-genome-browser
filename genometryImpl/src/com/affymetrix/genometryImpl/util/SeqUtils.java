@@ -1127,10 +1127,13 @@ public static boolean areResiduesComplete(String residues) {
 	 * Synchronized to keep aseq non-null
 	 */
 	public static SeqSpan getAnnotationBounds(BioSeq aseq) {
+		if (aseq == null) {
+			return null;
+		}
 		int min = Integer.MAX_VALUE;
 		int max = Integer.MIN_VALUE;
 		synchronized (aseq) {
-			int annotCount = aseq == null ? 0 : aseq.getAnnotationCount();
+			int annotCount = aseq.getAnnotationCount();
 			for (int i = 0; i < annotCount; i++) {
 				// all_gene_searches, all_repeat_searches, etc.
 				SeqSymmetry annotSym = aseq.getAnnotation(i);

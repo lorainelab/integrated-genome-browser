@@ -22,7 +22,6 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.UcscGeneSym;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.Timer;
 
 import java.io.*;
 import java.util.*;
@@ -100,8 +99,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 
 	public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
 		throws IOException {
-		Timer tim = new Timer();
-		tim.start();
 
 		// annots is list of top-level parent syms (max 1 per seq in seq_group) that get
 		//    added as annotations to the annotated BioSeqs -- their children
@@ -250,17 +247,16 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		int total_exon_count = 0;
 		int big_spliced = 0;
 
-		Timer tim = new Timer();
-		tim.start();
-
 		DataOutputStream dos = null;
 		FileInputStream fis = null;
 		BufferedReader br = null;
+		BufferedInputStream bis = null;
 		try {
 			File fil = new File(file_name);
 			flength = fil.length();
 			fis = new FileInputStream(fil);
-			BufferedInputStream bis = new BufferedInputStream(fis);
+			bis = new BufferedInputStream(fis);
+
 			byte[] bytebuf = new byte[(int) flength];
 			bis.read(bytebuf);
 			ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
@@ -338,11 +334,11 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(fis);
 			GeneralUtils.safeClose(dos);
 		}
 
-		System.out.println("load time: " + tim.read()/1000f);
 		System.out.println("line count = " + count);
 		System.out.println("file length = " + flength);
 		System.out.println("max genomic transcript length: " + max_tlength);

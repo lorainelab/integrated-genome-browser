@@ -15,16 +15,14 @@ package com.affymetrix.genometryImpl.style;
 
 import java.util.*;
 
-public final class DefaultStateProvider implements StateProvider {
+public class DefaultStateProvider implements StateProvider {
 
 	private static final Map<String,ITrackStyleExtended> id2annotState = new HashMap<String,ITrackStyleExtended>();
 	private static final Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
 	private static StateProvider globalStateProvider = new DefaultStateProvider();
-	public static final String DEFAULT_INSTANCE_NAME = "* default *";
-	private final SimpleTrackStyle default_instance = new SimpleTrackStyle(DEFAULT_INSTANCE_NAME, false);
 
 	/** Creates a new instance of DefaultIAnnotStyleProvider */
-	private DefaultStateProvider() {
+	protected DefaultStateProvider() {
 	}
 
 	public static StateProvider getGlobalStateProvider() {
@@ -50,13 +48,6 @@ public final class DefaultStateProvider implements StateProvider {
 			id2annotState.put(name.toLowerCase(), style);
 		}
 		return style;
-	}
-
-	public ITrackStyleExtended getDefaultAnnotStyle() {
-		if (id2annotState.get(DEFAULT_INSTANCE_NAME) == null) {
-			id2annotState.put(DEFAULT_INSTANCE_NAME, default_instance);
-		}
-		return default_instance;
 	}
 
 	public GraphState getGraphState(String id) {

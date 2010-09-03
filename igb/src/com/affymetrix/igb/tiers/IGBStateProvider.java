@@ -1,29 +1,17 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.util.*;
-
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 
-public final class IGBStateProvider implements StateProvider {
+public final class IGBStateProvider extends DefaultStateProvider {
 
-  private final Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
-
+	@Override
   public ITrackStyleExtended getAnnotStyle(String name) {
     return TrackStyle.getInstance(name,true);
   }
 
-  public GraphState getGraphState(String id) {
-      GraphState state = id2graphState.get(id);
-      if (state == null) {
-          state = new GraphState(id);
-          id2graphState.put(id, state);
-      }
-      return state;
-  }
-
+	@Override
   public ITrackStyleExtended getAnnotStyle(String name, String human_name) {
 	 return TrackStyle.getInstance(name,human_name);
   }

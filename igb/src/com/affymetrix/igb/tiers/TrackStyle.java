@@ -515,12 +515,12 @@ public class TrackStyle implements ITrackStyleExtended {
 		}
 	}
 
-	/** Currently not used, but could be used to remember tier positions. */
+	/** could be used to remember tier positions. */
 	public void setY(double y) {
 		this.y = y;
 	}
 
-	/** Currently not used, but could be used to remember tier positions. */
+	/** could be used to remember tier positions. */
 	public double getY() {
 		return y;
 	}
@@ -586,22 +586,6 @@ public class TrackStyle implements ITrackStyleExtended {
 	}
 
 	/**
-	 *  Returns a HeatMap that interpolates between colors based on
-	 *  getColor() and getBackgroundColor().  The color at the low
-	 *  end of the HeatMap will be slightly different from the background
-	 *  color so that it can be distinguished from it.
-	 *  This will return a HeatMap even if getColorByScore() is false.
-	 */
-	private final HeatMap getCustomHeatMap() {
-		if (custom_heatmap == null) {
-			// Bottom color is not quite same as background, so it remains visible
-			Color bottom_color = HeatMap.interpolateColor(getBackground(), getColor(), 0.20f);
-			custom_heatmap = HeatMap.makeLinearHeatmap("Custom", bottom_color, getColor());
-		}
-		return custom_heatmap;
-	}
-
-	/**
 	 *  Returns a color that can be used to indicate a score between 1 and 1000.
 	 *  This will return a color even if getColorByScore() is false.
 	 */
@@ -621,6 +605,22 @@ public class TrackStyle implements ITrackStyleExtended {
 		return getCustomHeatMap().getColors()[index];
 	}
 
+	/**
+	 *  Returns a HeatMap that interpolates between colors based on
+	 *  getColor() and getBackgroundColor().  The color at the low
+	 *  end of the HeatMap will be slightly different from the background
+	 *  color so that it can be distinguished from it.
+	 *  This will return a HeatMap even if getColorByScore() is false.
+	 */
+	private HeatMap getCustomHeatMap() {
+		if (custom_heatmap == null) {
+			// Bottom color is not quite same as background, so it remains visible
+			Color bottom_color = HeatMap.interpolateColor(getBackground(), getColor(), 0.20f);
+			custom_heatmap = HeatMap.makeLinearHeatmap("Custom", bottom_color, getColor());
+		}
+		return custom_heatmap;
+	}
+
 	public void copyPropertiesFrom(ITrackStyle g) {
 		setColor(g.getColor());
 		setShow(g.getShow());
@@ -631,6 +631,7 @@ public class TrackStyle implements ITrackStyleExtended {
 		setHeight(g.getHeight());
 		setY(g.getY());
 		setExpandable(g.getExpandable());
+		setFeature(g.getFeature());
 
 		if (g instanceof ITrackStyleExtended) {
 			ITrackStyleExtended as = (ITrackStyleExtended) g;

@@ -13,12 +13,11 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.StateProvider;
 import java.awt.Color;
 
 import java.util.*;
@@ -166,8 +165,7 @@ public final class TrackLineParser {
 			track_hash.put(NAME, default_track_name);
 			name = default_track_name;
 		}
-		StateProvider provider = AnnotatedSeqGroup.getStateProvider();
-		ITrackStyle style = provider.getAnnotStyle(name);
+		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name);
 		applyTrackProperties(track_hash, style);
 		return style;
 	}

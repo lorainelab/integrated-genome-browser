@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.Iterator;
@@ -300,7 +301,7 @@ public final class WiggleParser {
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
 
-		GraphState gstate = AnnotatedSeqGroup.getStateProvider().getGraphState(graph_id);
+		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id);
 		TrackLineParser.applyTrackProperties(track_hash, gstate);
 
 		// Need iterator because we're removing data on the fly

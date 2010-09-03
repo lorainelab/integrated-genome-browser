@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
 import java.util.concurrent.CopyOnWriteArraySet;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 /**
@@ -121,13 +119,6 @@ public class AnnotatedSeqGroup {
 		return type_id2annot_id.get(type);
 	}
 	
-	/** By default, simply returns the global StateProvider, but subclasses
-	 *  can implement a different one for each seq group.
-	 */
-	public static StateProvider getStateProvider() {
-		return DefaultStateProvider.getGlobalStateProvider();
-	}
-
 	/**
 	 *  Returns a List of BioSeq objects.
 	 *  Will not return null.  The list is in the same order as in

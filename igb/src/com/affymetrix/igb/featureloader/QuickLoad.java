@@ -158,7 +158,6 @@ public final class QuickLoad extends SymLoader {
 						// special-case chp files, due to their LazyChpSym DAS/2 loading
 						QuickLoad.this.getGenome();
 						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
-						SeqGroupView.refreshTable();
 						return null;
 					}
 					return loadAndAddSymmetries(feature, overlapSpan);
@@ -183,8 +182,7 @@ public final class QuickLoad extends SymLoader {
 								GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 							}
 						}
-					} else 							
-					if (GenometryModel.getGenometryModel().getSelectedSeq() == null && QuickLoad.this.version.group != null) {
+					} else if (GenometryModel.getGenometryModel().getSelectedSeq() == null && QuickLoad.this.version.group != null) {
 						// This can happen when loading a brand-new genome
 						GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 					}

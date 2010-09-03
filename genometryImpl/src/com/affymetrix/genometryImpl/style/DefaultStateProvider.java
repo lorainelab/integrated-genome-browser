@@ -19,9 +19,9 @@ public final class DefaultStateProvider implements StateProvider {
 
 	private static final Map<String,ITrackStyleExtended> id2annotState = new HashMap<String,ITrackStyleExtended>();
 	private static final Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
-	static StateProvider globalStateProvider = new DefaultStateProvider();
+	private static StateProvider globalStateProvider = new DefaultStateProvider();
 	public static final String DEFAULT_INSTANCE_NAME = "* default *";
-	SimpleTrackStyle default_instance = new SimpleTrackStyle(DEFAULT_INSTANCE_NAME, false);
+	private final SimpleTrackStyle default_instance = new SimpleTrackStyle(DEFAULT_INSTANCE_NAME, false);
 
 	/** Creates a new instance of DefaultIAnnotStyleProvider */
 	private DefaultStateProvider() {

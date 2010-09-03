@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleData;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -383,7 +384,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
 
-		GraphState gstate = AnnotatedSeqGroup.getStateProvider().getGraphState(graph_id);
+		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id);
 		TrackLineParser.applyTrackProperties(track_hash, gstate);
 
 		// Need iterator because we're removing data on the fly

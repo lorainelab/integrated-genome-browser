@@ -276,7 +276,7 @@ public final class GraphSymUtils {
 	 *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
 	 *  @param grafs  a List, empty or null is OK.
 	 */
-	@Deprecated
+	//@Deprecated
 	public static void processGraphSyms(List<GraphSym> grafs, String original_stream_name, GenericFeature feature) {
 		if (grafs == null) {
 			return;

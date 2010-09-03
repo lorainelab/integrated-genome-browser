@@ -9,11 +9,13 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -148,7 +150,7 @@ public class BpsParserTest {
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 			
 			List<UcscPslSym> syms = null;
-			syms = BpsParser.parse(filename, "stream_test", group);
+			syms = bpsParse(filename, "stream_test", group);
 
 			BioSeq seq = group.getSeq("chr1");
 		
@@ -175,6 +177,35 @@ public class BpsParserTest {
 			Logger.getLogger(BpsParserTest.class.getName()).log(Level.SEVERE, null, ex);
 			fail();
 		}
+	}
+
+
+	public static List<UcscPslSym> bpsParse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+			throws IOException {
+		Logger.getLogger(BpsParser.class.getName()).log(
+							Level.INFO, "loading file: {0}", file_name);
+		List<UcscPslSym> results = null;
+		FileInputStream fis = null;
+		DataInputStream dis = null;
+		BufferedInputStream bis = null;
+		try {
+			File fil = new File(file_name);
+			long flength = fil.length();
+			fis = new FileInputStream(fil);
+			bis = new BufferedInputStream(fis);
+
+			byte[] bytebuf = new byte[(int) flength];
+			bis.read(bytebuf);
+
+			ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+			dis = new DataInputStream(bytestream);
+			results = BpsParser.parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
+		} finally {
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(fis);
+		}
+		return results;
 	}
 
 

@@ -1,5 +1,8 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.parsers.BpsParserTest;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -130,7 +133,7 @@ public class ServerUtilsTest {
 
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 
-			List<UcscPslSym> syms = BpsParser.parse(filename, query_type, group);
+			List<UcscPslSym> syms = BpsParserTest.bpsParse(filename, query_type, group);
 
 			BioSeq seq = group.getSeq(seqid);
 
@@ -163,6 +166,7 @@ public class ServerUtilsTest {
 			fail();
 		}
 	}
+
 
 	private void testIndexing1(String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
 		String overlap;

@@ -612,10 +612,8 @@ public final class GeneralLoadUtils {
 		if (gFeature.loadStrategy == LoadStrategy.VISIBLE) {
 			overlap = gviewer.getVisibleSpan();
 		} else if (gFeature.loadStrategy == LoadStrategy.GENOME || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
-			if (selected_seq != null) {
-				// TODO: Investigate edge case at max
-				overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax()-1, selected_seq);
-			}
+			// TODO: Investigate edge case at max
+			overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax()-1, selected_seq);
 		}
 
 		return loadAndDisplaySpan(overlap, gFeature);
@@ -629,7 +627,8 @@ public final class GeneralLoadUtils {
 		}
 
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
-		if (feature.loadStrategy == LoadStrategy.GENOME) {
+		if (feature.loadStrategy == LoadStrategy.GENOME && feature.gVersion.gServer.serverType != ServerType.DAS2) {
+			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 			// At this point, we know all of the chromosomes in the file, so just iterate.
 			for (BioSeq seq : span.getBioSeq().getSeqGroup().getSeqList()) {
 				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {

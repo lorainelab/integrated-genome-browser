@@ -281,11 +281,12 @@ public abstract class SymLoader {
 		}
 		if (feats.get(0) instanceof GraphSym) {
 			// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-			List<GraphSym> grafs = new ArrayList<GraphSym>(feats.size());
 			for(SeqSymmetry feat : feats) {
-				grafs.add((GraphSym)feat);
+				//grafs.add((GraphSym)feat);
+				if (feat instanceof GraphSym) {
+					GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getID(), span);
+				}
 			}
-			GraphSymUtils.processGraphSyms(grafs, uri.toString(), feature);
 			return;
 		}
 

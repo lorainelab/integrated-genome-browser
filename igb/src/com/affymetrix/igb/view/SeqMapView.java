@@ -1248,6 +1248,8 @@ public class SeqMapView extends JPanel
 							seqmap.getMaxZoom(NeoAbstractWidget.X)));
 			seqmap.scroll(NeoAbstractWidget.X, -(seqmap.getVisibleRange()[0]));
 			seqmap.scroll(NeoAbstractWidget.X, (rect.x - rect.width * 0.05));
+			double map_center = rect.x + rect.width / 2 - seqmap.getViewBounds().width / 2;
+			seqmap.scroll(NeoAbstractWidget.X, map_center);	// Center at hairline
 			seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
 			seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
 			seqmap.updateWidget();

@@ -92,7 +92,7 @@ public final class TierLabelManager {
 				}
 				List<GlyphI> selected = nevt.getItems();
 				labelmap.select(selected);
-				doGraphSelections();
+				doGraphSelections(preserve_selections);
 
 				tiermap.updateWidget(); // make sure selections becomes visible
 				if (isOurPopupTrigger(evt)) {
@@ -201,7 +201,7 @@ public final class TierLabelManager {
 				labelmap.select(tierlabel);
 			}
 		}
-		doGraphSelections();
+		doGraphSelections(false);
 		//labelmap.updateWidget();
 		tiermap.updateWidget(); // make sure selections becomes visible
 	}
@@ -214,13 +214,16 @@ public final class TierLabelManager {
 		do_graph_selections = b;
 	}
 
-	private void doGraphSelections() {
+	private void doGraphSelections(boolean preserve_selection) {
 		if (!do_graph_selections) {
 			return;
 		}
 
 		Set<SeqSymmetry> symmetries = new HashSet<SeqSymmetry>();
-		symmetries.addAll(GenometryModel.getGenometryModel().getSelectedSymmetries(GenometryModel.getGenometryModel().getSelectedSeq()));
+
+		if(preserve_selection)
+			symmetries.addAll(GenometryModel.getGenometryModel().getSelectedSymmetries(
+					GenometryModel.getGenometryModel().getSelectedSeq()));
 
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
 			TierGlyph tg = tierlabel.getReferenceTier();

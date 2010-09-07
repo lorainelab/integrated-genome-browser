@@ -219,7 +219,7 @@ public final class TierLabelManager {
 			return;
 		}
 
-		Set<SeqSymmetry> symmetries = new HashSet<SeqSymmetry>();
+		Set<SeqSymmetry> symmetries = new LinkedHashSet<SeqSymmetry>();
 
 		if(preserve_selection)
 			symmetries.addAll(GenometryModel.getGenometryModel().getSelectedSymmetries(

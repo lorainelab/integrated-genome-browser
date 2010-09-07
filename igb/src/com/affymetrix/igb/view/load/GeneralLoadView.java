@@ -831,7 +831,7 @@ public final class GeneralLoadView extends JComponent
 		addListeners();
 	}
 
-	private void refreshTreeView() {
+	public void refreshTreeView() {
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
 

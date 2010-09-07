@@ -25,6 +25,7 @@ import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.FasterExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -291,6 +292,9 @@ public class TrackView {
 		}
 
 		feature.setInvisible();
+		
+		GeneralLoadView.getLoadView().refreshTreeView();
+		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 
 	public static void deleteSymsOnSeq(String method, BioSeq seq, GenericFeature feature){

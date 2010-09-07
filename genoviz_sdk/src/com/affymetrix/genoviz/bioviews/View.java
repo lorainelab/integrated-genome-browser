@@ -53,7 +53,7 @@ public class View implements ViewI, NeoPaintListener,
 	// View may actually be a "subview" (for example when trying to farm single NeoMap out to multiple
 	//    NeoMap children, or during scroll optimizations), in which case glyphs may want
 	//    to know bounds, etc. of full virtual "parent" view.
-	// If this is not a subviwe, then full_view = this view
+	// If this is not a subview, then full_view = this view
 	protected ViewI full_view = null;
 
 	// View currently requires specific Scene implementation to
@@ -63,7 +63,6 @@ public class View implements ViewI, NeoPaintListener,
 	protected NeoCanvas component;
 	protected Rectangle2D.Double coordbox;
 	protected Graphics2D graphics;
-	private final com.affymetrix.genoviz.util.Timer timecheck;
 	protected final Set<MouseListener> mouse_listeners = new CopyOnWriteArraySet<MouseListener>();
 	protected final Set<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArraySet<MouseMotionListener>();
 	protected final Set<KeyListener> key_listeners = new CopyOnWriteArraySet<KeyListener>();
@@ -114,7 +113,6 @@ public class View implements ViewI, NeoPaintListener,
 		full_view = this;
 		// transforms initialized to Identity transform
 		transform = new LinearTransform();
-		timecheck = new com.affymetrix.genoviz.util.Timer();
 		pixelbox = new Rectangle();
 
 		setCoordBox(new Rectangle2D.Double());
@@ -726,30 +724,30 @@ public class View implements ViewI, NeoPaintListener,
 
 	public void setComponent(NeoCanvas c) {
 		component_size = c.getSize();
-		if ((component == c) && (bufferImage != null) &&
-				(bufferSize.width == component_size.width) &&
-				(bufferSize.height == component_size.height)) {
+		if ((component == c) && (bufferImage != null)
+				&& (bufferSize.width == component_size.width)
+				&& (bufferSize.height == component_size.height)) {
 			return;
-		} else {
-			bufferSize = component_size;
-			component = c;
-			firstBufferOptimizedDraw = true;
-			if (bufferSize.width <= 0 || bufferSize.height <= 0) {
-				return;
-			}
-
-			// GAH 12-3-98
-			//  trying to minimize damage caused by JVM image memory leak
-			//  see Java Developer's Connection, Bug ID = 4014323
-			if (bufferImage != null) {
-				bufferImage.flush();
-			}
-			if (bufferGraphics != null) {
-				bufferGraphics.dispose();
-			}
-
-			bufferImage = component.createImage(bufferSize.width, bufferSize.height);
 		}
+
+		bufferSize = component_size;
+		component = c;
+		firstBufferOptimizedDraw = true;
+		if (bufferSize.width <= 0 || bufferSize.height <= 0) {
+			return;
+		}
+
+		// GAH 12-3-98
+		//  trying to minimize damage caused by JVM image memory leak
+		//  see Java Developer's Connection, Bug ID = 4014323
+		if (bufferImage != null) {
+			bufferImage.flush();
+		}
+		if (bufferGraphics != null) {
+			bufferGraphics.dispose();
+		}
+
+		bufferImage = component.createImage(bufferSize.width, bufferSize.height);
 	}
 
 	public NeoCanvas getComponent() {

@@ -28,7 +28,7 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
  * See SceneI for better documentation of methods.
  */
 public class Scene implements SceneI  {
-	private static final boolean debug = false;
+	private static final boolean DEBUG = false;
 
 	protected GlyphI eveGlyph;
 	protected List<ViewI> views;
@@ -215,11 +215,11 @@ public class Scene implements SceneI  {
 
 	// should really move data adapters out to widgets...
 	public GlyphI addData(Object obj) {
-		NeoDataAdapterI da;
-		GlyphI glyph;
 		if (adapters == null) {
 			return null;
 		}
+		NeoDataAdapterI da;
+		GlyphI glyph;
 		for (int i=0; i<adapters.size(); i++) {
 			da = adapters.get(i);
 			if (da.accepts(obj)) {
@@ -279,13 +279,13 @@ public class Scene implements SceneI  {
 			return;
 		}
 
-		if (debug) {
+		if (DEBUG) {
 			System.out.println("supports sub selection, expanding damage: " +
 					x + ", " + y + ", " + width + ", " + height);
 		}
 		Rectangle2D.Double prev_selbox = gl.getSelectedRegion();
 		if (prev_selbox == null)  {
-			if (debug) {
+			if (DEBUG) {
 				System.out.println("in Scene.select(), prev_selbox is null");
 			}
 			gl.select(x, y, width, height);
@@ -294,7 +294,7 @@ public class Scene implements SceneI  {
 		else {
 			scratchCoordBox.setRect(prev_selbox.x, prev_selbox.y,
 					prev_selbox.width, prev_selbox.height);
-			if (debug) {
+			if (DEBUG) {
 				System.out.println("in Scene.select(), prev_selbox NOT null, " +
 						"calling select(x,y,w,h) on " + obj);
 			}
@@ -308,7 +308,7 @@ public class Scene implements SceneI  {
 				new Rectangle2D.Double(union_selbox.getX(), union_selbox.getY(),
 						union_selbox.getWidth(), union_selbox.getHeight());
 
-			if (debug) {
+			if (DEBUG) {
 				System.out.println("PrevBox:   " + prev_selbox);
 				System.out.println("CurrBox:   " + curr_selbox);
 				System.out.println("UnionBox:  " + union_selbox);
@@ -325,7 +325,7 @@ public class Scene implements SceneI  {
 				// therefore don't need to expand damage at all?
 				if (union_selbox.getX() == common_selbox.getX() &&
 						union_selbox.getWidth() == common_selbox.getWidth()) {
-					if (debug) {
+					if (DEBUG) {
 						System.out.println("***** selection not changed, no damage *****");
 					}
 					return;
@@ -333,7 +333,7 @@ public class Scene implements SceneI  {
 
 				// x-start of selection hasn't moved
 				else if (union_selbox.getX() == common_selbox.getX()) {
-					if (debug) {
+					if (DEBUG) {
 						System.out.println("***** x-start of selection hasn't moved ****");
 					}
 					damage_selbox.x = common_selbox.getX() + common_selbox.getWidth();
@@ -346,7 +346,7 @@ public class Scene implements SceneI  {
 						(common_selbox.getX() + common_selbox.getWidth())) {
 					damage_selbox.x = union_selbox.getX();
 					damage_selbox.width = common_selbox.getX() - union_selbox.getX();
-					if (debug) {
+					if (DEBUG) {
 						System.out.println("***** x-end of selection hasn't moved ****");
 						System.out.println("Union:  " + union_selbox);
 						System.out.println("Inter:  " + common_selbox);
@@ -355,7 +355,7 @@ public class Scene implements SceneI  {
 
 						}
 					}
-			if (debug) {
+			if (DEBUG) {
 				System.out.println("DamageBox: " + damage_selbox);
 			}
 			expandDamage(gl, damage_selbox.x, damage_selbox.y,

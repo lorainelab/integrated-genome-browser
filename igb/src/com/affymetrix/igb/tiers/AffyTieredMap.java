@@ -205,9 +205,6 @@ public class AffyTieredMap extends NeoMap {
 		}
 
 		if (stretch_map) {
-			if (tiers.isEmpty()) {
-				return;
-			}
 			Rectangle2D.Double pbox = getCoordBounds();
 			Rectangle2D.Double newbox = null;
 			for (TierGlyph mtg : tiers) {
@@ -241,10 +238,10 @@ public class AffyTieredMap extends NeoMap {
 	@Override
 	public void setBounds(int axis, int start, int end) {
 		super.setBounds(axis, start, end);
-		Rectangle2D.Double mbox = getScene().getGlyph().getCoordBox();
-		if ((axis != X) || (tiers == null)) {
+		if (axis != X) {
 			return;
 		}
+		Rectangle2D.Double mbox = getScene().getGlyph().getCoordBox();
 		for (TierGlyph tier : tiers) {
 			Rectangle2D.Double tbox = tier.getCoordBox();
 			tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);

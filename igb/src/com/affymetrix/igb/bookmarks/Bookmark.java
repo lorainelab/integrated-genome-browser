@@ -38,6 +38,8 @@ public final class Bookmark implements Serializable {
   public static final String SELECTSTART = "selectstart";
   /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
   public static final String SELECTEND = "selectend";
+  /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
+  public static final String LOADRESIDUES  = "loadresidues";
   /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark,
       this one can occur 0,1, or more times in the URL of a UnibrowControlServlet bookmark. */
   public static final String DATA_URL = "data_url";

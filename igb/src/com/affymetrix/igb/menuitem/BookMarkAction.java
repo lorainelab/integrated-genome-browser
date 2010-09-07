@@ -406,7 +406,8 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
 		mark_sym.setProperty(Bookmark.START, new Integer(mark_span.getMin()));
 		mark_sym.setProperty(Bookmark.END, new Integer(mark_span.getMax()));
-
+		mark_sym.setProperty(Bookmark.LOADRESIDUES, new String[] {Boolean.toString(aseq.isComplete())});
+		
 		Bookmarks bookmark = new Bookmarks();
 
 		BookmarkController.addSymmetries(bookmark);

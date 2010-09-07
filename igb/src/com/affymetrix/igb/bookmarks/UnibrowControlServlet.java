@@ -20,10 +20,8 @@ import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
 import java.util.regex.*;
 
-import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.Application;
@@ -45,7 +43,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -158,8 +155,7 @@ public final class UnibrowControlServlet {
 			gServers2 = loadServers(das2_server_urls);
 		}
 
-		boolean ok = goToBookmark(uni, seqid, version, start, end, selstart, selend, graph_files);
-		if (!ok) {
+		if (!goToBookmark(seqid, version)) {
 			return; /* user cancelled the change of genome, or something like that */
 		}
 	
@@ -511,11 +507,7 @@ public final class UnibrowControlServlet {
 	 *  @param graph_files it is ok for this parameter to be null.
 	 *  @return true indicates that the action succeeded
 	 */
-	private static boolean goToBookmark(final Application uni, final String seqid, final String version,
-					final int start, final int end, final int selstart, final int selend,
-					final String[] graph_files) {
-
-		final SeqMapView gviewer = uni.getMapView();
+	private static boolean goToBookmark(final String seqid, final String version) {
 		final AnnotatedSeqGroup book_group = determineAndSetGroup(version);
 		if (book_group == null) {
 			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n" +
@@ -535,38 +527,6 @@ public final class UnibrowControlServlet {
 			}
 		}
 		
-		SwingUtilities.invokeLater(new Runnable() {
-
-			public void run() {
-				try {
-					selectRegion();
-
-					// Now process "graph_files" url's
-					if (graph_files != null) {
-						URL[] graph_urls = new URL[graph_files.length];
-						for (int i = 0; i < graph_files.length; i++) {
-							graph_urls[i] = new URL(graph_files[i]);
-						}
-						Thread t = OpenGraphAction.loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
-						t.start();
-					}
-
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-
-			private void selectRegion() {
-
-				setRegion(gviewer, start, end, book_seq);
-				if (selstart >= 0 && selend >= 0) {
-					final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-					gviewer.setSelectedRegion(regionsym, true);
-				}
-
-			}
-
-		});
 		return true; // was not cancelled, was successful
 	}
 

@@ -22,7 +22,6 @@ import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 
 public final class GraphSymUtils {
 
@@ -305,36 +304,6 @@ public final class GraphSymUtils {
 			}
 		}
 	}
-
-
-	public static void setName(List<GraphSym> graphs, String graph_name) {
-		int graphSize = graphs.size();
-		// Now set the graph names (either the URL or the filename, possibly with an integer appended)
-		for (int i = 0; i < graphSize; i++) {
-			GraphSym gg = graphs.get(i);
-			ITrackStyle style = gg.getGraphState().getTierStyle();
-			String name = graph_name;
-			if (graphSize > 1) {
-				name = name + " " + (i + 1);
-			}
-			if (style.getHumanName().equals(gg.getID())) {
-				//Only apply a new graph name if current name is the same as the ID.
-				//(Because the ID is mainly for internal use and if a different name
-				// has already been set by the parser, it is probably a good one.)
-				style.setHumanName(name);
-			}
-		}
-		//Here's a hack to set the same human name for the xxx.useq type graphs, still can't figure out, after an hour of looking, where the hell this is being set?!!!
-		if (graph_name.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
-			graph_name = graph_name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-			for (int i = 0; i < graphSize; i++) {
-				GraphSym gg = graphs.get(i);
-				ITrackStyle style = gg.getGraphState().getTierStyle();
-				style.setHumanName(graph_name);
-			}
-		}
-	}
-
 
 
 	/** Writes out in a variety of possible formats depending

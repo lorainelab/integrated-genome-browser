@@ -48,7 +48,6 @@ import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.genometry.LazyChpSym;
-import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.genometryImpl.comparator.QuantByIntIdComparator;
 import com.affymetrix.genometryImpl.comparator.QuantDetectByIntIdComparator;
 

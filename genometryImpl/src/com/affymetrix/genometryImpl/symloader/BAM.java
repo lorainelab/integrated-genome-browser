@@ -19,7 +19,9 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,7 +57,7 @@ public final class BAM extends SymLoader {
 	private static final boolean DEBUG = false;
 	private SAMFileReader reader;
     private SAMFileHeader header;
-	private final List<BioSeq> seqs = new ArrayList<BioSeq>();
+	private final Set<BioSeq> seqs = new HashSet<BioSeq>();
 	private File indexFile = null;
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -145,14 +147,15 @@ public final class BAM extends SymLoader {
 						break;
 					}
 					String seqID = ssr.getSequenceName();
-					if (group.getSeq(seqID) == null) {
+					BioSeq seq = group.getSeq(seqID);
+					if (seq == null) {
 						int seqLength = ssr.getSequenceLength();
-						BioSeq seq = new BioSeq(seqID, group.getID(), seqLength);
-						seqs.add(seq);
+						seq = new BioSeq(seqID, group.getID(), seqLength);
 						Logger.getLogger(BAM.class.getName()).log(
-								Level.INFO, "Adding chromosome {0} to group {1}", new Object[]{seqID, group.getID()});
+								Level.FINE, "Adding chromosome {0} to group {1}", new Object[]{seqID, group.getID()});
 						group.addSeq(seq);
 					}
+					seqs.add(seq);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -165,7 +168,7 @@ public final class BAM extends SymLoader {
 	@Override
 	public List<BioSeq> getChromosomeList() {
 		init();
-		return seqs;
+		return new ArrayList<BioSeq>(seqs);
 	}
 
 	@Override

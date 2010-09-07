@@ -34,7 +34,7 @@ public final class GenericFeature {
 	private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
-	public final Object typeObj;    // Das2Type, DasType, ...?
+	public final Object typeObj;    // Das2Type, ...?
 	public final SymLoader symL;
 	private static final List<LoadStrategy> standardLoadChoices = new ArrayList<LoadStrategy>();
 

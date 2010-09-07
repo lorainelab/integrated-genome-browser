@@ -21,7 +21,7 @@ final public class FormatPriorities {
 	/**
 	 *  Different format types, prioritized
 	 */
-	static String[] ordered_formats = {
+	private static final String[] ordered_formats = {
 		"link.psl",
 		"ead",
 		"bp2",

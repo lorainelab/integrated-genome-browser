@@ -62,11 +62,10 @@ public abstract class ServerUtils {
 	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
 	private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
 	private static final Pattern interval_splitter = Pattern.compile(":");
-	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";
-	public static final ArrayList<String> BAR_FORMATS = new ArrayList<String>();
+	public static final List<String> BAR_FORMATS = new ArrayList<String>();
 
 	static {
 		BAR_FORMATS.add("bar");
@@ -77,8 +76,11 @@ public abstract class ServerUtils {
 		if (chrom_info_file.exists()) {
 			System.out.println("parsing " + modChromInfo + " for: " + genome_version);
 			InputStream chromstream = new FileInputStream(chrom_info_file);
-			ChromInfoParser.parse(chromstream, gmodel, genome_version);
-			GeneralUtils.safeClose(chromstream);
+			try {
+				ChromInfoParser.parse(chromstream, GenometryModel.getGenometryModel(), genome_version);
+			} finally {
+				GeneralUtils.safeClose(chromstream);
+			}
 		} else {
 			System.out.println("couldn't find " + modChromInfo + "  for genome: " + genome_version);
 			System.out.println("looking for " + liftAll + " instead");
@@ -87,7 +89,7 @@ public abstract class ServerUtils {
 				System.out.println("parsing " + liftAll + " for: " + genome_version);
 				InputStream liftstream = new FileInputStream(lift_file);
 				try {
-					LiftParser.parse(liftstream, gmodel, genome_version);
+					LiftParser.parse(liftstream, GenometryModel.getGenometryModel(), genome_version);
 				} finally {
 					GeneralUtils.safeClose(liftstream);
 				}
@@ -693,7 +695,7 @@ public abstract class ServerUtils {
 	}
 
 	// if an inside_span specified, then filter out intersected symmetries based on this:
-	//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
+	//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)
 	public static <SymExtended extends SeqSymmetry> List<SymExtended> specifiedInsideSpan(
 			SeqSpan inside_span, List<SymExtended> result) {
 		int inside_min = inside_span.getMin();
@@ -701,8 +703,7 @@ public abstract class ServerUtils {
 		BioSeq iseq = inside_span.getBioSeq();
 		MutableSeqSpan testspan = new SimpleMutableSeqSpan();
 		List<SymExtended> orig_result = result;
-		int rcount = orig_result.size();
-		result = new ArrayList<SymExtended>(rcount);
+		result = new ArrayList<SymExtended>(orig_result.size());
 		for (SymExtended sym : orig_result) {
 			// fill in testspan with span values for sym (on aseq)
 			sym.getSpan(iseq, testspan);

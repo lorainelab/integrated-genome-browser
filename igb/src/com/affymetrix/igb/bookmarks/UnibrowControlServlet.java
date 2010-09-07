@@ -38,6 +38,7 @@ import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
@@ -45,6 +46,9 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javax.swing.SwingWorker;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -109,7 +113,7 @@ public final class UnibrowControlServlet {
 		String end_param = getStringParameter(parameters, Bookmark.END);
 		String select_start_param = getStringParameter(parameters, Bookmark.SELECTSTART);
 		String select_end_param = getStringParameter(parameters, Bookmark.SELECTEND);
-
+		boolean loadResidue = Boolean.valueOf(getStringParameter(parameters, Bookmark.LOADRESIDUES));
 		// For historical reasons, there are two ways of specifying graphs in a bookmark
 		// Eventually, they should be treated more similarly, but for now some
 		// differences remain
@@ -155,7 +159,7 @@ public final class UnibrowControlServlet {
 			gServers2 = loadServers(das2_server_urls);
 		}
 
-		if (!goToBookmark(seqid, version)) {
+		if (!goToBookmark(uni, seqid, version, start, end)) {
 			return; /* user cancelled the change of genome, or something like that */
 		}
 	
@@ -180,6 +184,23 @@ public final class UnibrowControlServlet {
 			performSelection(selectParam);
 		}
 
+		if(loadResidue){
+			loadResidues(start, end);
+		}
+
+	}
+
+	private static void loadResidues(int start, int end){
+		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
+		String genomeVersionName = seqGroup.getID();
+
+		SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
+		final SwingWorker<Void, Void> worker = GeneralLoadView.getResidueWorker(genomeVersionName, vseq, span, true, true);
+
+		ExecutorService vexec = Executors.newSingleThreadExecutor();
+		vexec.execute(worker);
+		vexec.shutdown();
 	}
 
 	/**
@@ -507,7 +528,7 @@ public final class UnibrowControlServlet {
 	 *  @param graph_files it is ok for this parameter to be null.
 	 *  @return true indicates that the action succeeded
 	 */
-	private static boolean goToBookmark(final String seqid, final String version) {
+	private static boolean goToBookmark(final Application uni, final String seqid, final String version, int start, int end) {
 		final AnnotatedSeqGroup book_group = determineAndSetGroup(version);
 		if (book_group == null) {
 			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n" +
@@ -526,6 +547,7 @@ public final class UnibrowControlServlet {
 				gmodel.setSelectedSeq(book_seq);
 			}
 		}
+		setRegion(uni.getMapView(), start, end, book_seq);
 		
 		return true; // was not cancelled, was successful
 	}

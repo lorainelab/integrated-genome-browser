@@ -21,6 +21,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
@@ -106,11 +107,11 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     axis_box.setLayout(new GridLayout(3,2));
     axis_box.setBorder(new javax.swing.border.TitledBorder("Axis"));
 
-    JButton axis_color_button2 = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), SeqMapView.PREF_AXIS_COLOR, Color.BLACK);
+    JButton axis_color_button2 = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), AxisStyle.PREF_AXIS_COLOR, Color.BLACK);
     axis_box.add(new JLabel("Foreground: "));
     axis_box.add(axis_color_button2);
 
-    JButton axis_back_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), SeqMapView.PREF_AXIS_BACKGROUND, Color.WHITE);
+    JButton axis_back_color = ColorUtils.createColorButton(PreferenceUtils.getTopNode(), AxisStyle.PREF_AXIS_BACKGROUND, Color.WHITE);
     axis_box.add(new JLabel("Background: "));
     axis_box.add(axis_back_color);
 

@@ -18,13 +18,11 @@ import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -42,11 +40,9 @@ import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.genometryImpl.util.MenuUtil;
-import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.tiers.TierArithmetic;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -59,6 +55,7 @@ import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.glyph.CytobandGlyph;
+import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -130,11 +127,6 @@ public class SeqMapView extends JPanel
 	public static final String VALUE_AXIS_LABEL_FORMAT_ABBREV = "ABBREV";
 	/** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
 	public static final String VALUE_AXIS_LABEL_FORMAT_NO_LABELS = "NO_LABELS";
-	public static final String PREF_AXIS_COLOR = "Axis color";
-	public static final String PREF_AXIS_BACKGROUND = "Axis background";
-	public static final String PREF_AXIS_NAME = "Axis name";
-	public static final String PREF_DEFAULT_ANNOT_COLOR = "Default annotation color";
-	public static final String PREF_DEFAULT_BACKGROUND_COLOR = "Default background color";
 	public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
 	public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
 	/** Name of a boolean preference for whether the hairline lable should be on. */
@@ -143,9 +135,6 @@ public class SeqMapView extends JPanel
 	private static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
 	/** Name of a boolean preference for whether the vertical zoom slider is left of the map. */
 	private static final String PREF_Y_ZOOMER_LEFT = "Vertical Zoomer Left of Map";
-	public static final Color default_axis_color = Color.BLACK;
-	public static final Color default_axis_background = Color.WHITE;
-	public static final String default_axis_label_format = VALUE_AXIS_LABEL_FORMAT_COMMA;
 
 	public static final Color default_edge_match_color = Color.WHITE;
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
@@ -235,49 +224,6 @@ public class SeqMapView extends JPanel
 	};
 
 	protected TransformTierGlyph axis_tier;
-
-		/** An un-collapsible instance.  It is hideable, though. */
-	private static final TrackStyle axis_annot_style = new TrackStyle() {
-
-		{ // a non-static initializer block
-			setHumanName("Coordinates");
-		}
-
-		@Override
-		public boolean getSeparate() {
-			return false;
-		}
-
-		@Override
-		public boolean getCollapsed() {
-			return false;
-		}
-
-		@Override
-		public boolean getExpandable() {
-			return false;
-		}
-
-		@Override
-		public void setColor(Color c) {
-			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_AXIS_COLOR, c);
-		}
-
-		@Override
-		public Color getColor() {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
-		}
-
-		@Override
-		public void setBackground(Color c) {
-			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_AXIS_BACKGROUND, c);
-		}
-
-		@Override
-		public Color getBackground() {
-			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
-		}
-	};
 
 	public SeqMapView(boolean add_popups) {
 		super();
@@ -654,7 +600,9 @@ public class SeqMapView extends JPanel
 			doEdgeMatching(seqmap.getSelected(), false);
 		}
 
-		shrinkWrap();
+		if (shrinkWrapMapBounds) {
+			shrinkWrap();
+		}
 		
 		seqmap.toFront(axis_tier);
 
@@ -761,15 +709,15 @@ public class SeqMapView extends JPanel
 
 	/** Set up a tier with fixed pixel height and place axis in it. */
 	private TransformTierGlyph addAxisTier(int tier_index) {
-		TransformTierGlyph resultAxisTier = new TransformTierGlyph(axis_annot_style);
+		TransformTierGlyph resultAxisTier = new TransformTierGlyph(AxisStyle.axis_annot_style);
 		resultAxisTier.setFixedPixHeight(45);
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
 		AxisGlyph axis = seqmap.addAxis(0);
 		axis.setHitable(false);
 		axis.setFont(axisFont);
 
-		Color axis_bg = axis_annot_style.getBackground();
-		Color axis_fg = axis_annot_style.getColor();
+		Color axis_bg = AxisStyle.axis_annot_style.getBackground();
+		Color axis_fg = AxisStyle.axis_annot_style.getColor();
 
 		axis.setBackgroundColor(axis_bg);
 		resultAxisTier.setBackgroundColor(axis_bg);
@@ -801,28 +749,25 @@ public class SeqMapView extends JPanel
 		return resultAxisTier;
 	}
 
-
 	private void shrinkWrap() {
-		if (shrinkWrapMapBounds) {
-			/*
-			 *  Shrink wrapping is a little more complicated than one might expect, but it
-			 *   needs to take into account the mapping of the annotated sequence to the
-			 *   view (although currently assumes this mapping doesn't do any rearrangements, etc.)
-			 *   (alternative, to ensure that _arbitrary_ genometry mapping can be accounted for,
-			 *    is to base annotation bounds on map glyphs, but then have to go into tiers to
-			 *    get children bounds, and filter out stuff like axis and DNA glyphs, etc...)
-			 */
-			SeqSpan annot_bounds = SeqUtils.getAnnotationBounds(aseq);
-			if (annot_bounds != null) {
-				// transform to view
-				MutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
-				sym.addSpan(annot_bounds);
-				if (aseq != viewseq) {
-					SeqUtils.transformSymmetry(sym, transform_path);
-				}
-				SeqSpan view_bounds = sym.getSpan(viewseq);
-				seqmap.setMapRange(view_bounds.getMin(), view_bounds.getMax());
+		/*
+		 *  Shrink wrapping is a little more complicated than one might expect, but it
+		 *   needs to take into account the mapping of the annotated sequence to the
+		 *   view (although currently assumes this mapping doesn't do any rearrangements, etc.)
+		 *   (alternative, to ensure that _arbitrary_ genometry mapping can be accounted for,
+		 *    is to base annotation bounds on map glyphs, but then have to go into tiers to
+		 *    get children bounds, and filter out stuff like axis and DNA glyphs, etc...)
+		 */
+		SeqSpan annot_bounds = SeqUtils.getAnnotationBounds(aseq);
+		if (annot_bounds != null) {
+			// transform to view
+			MutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
+			sym.addSpan(annot_bounds);
+			if (aseq != viewseq) {
+				SeqUtils.transformSymmetry(sym, transform_path);
 			}
+			SeqSpan view_bounds = sym.getSpan(viewseq);
+			seqmap.setMapRange(view_bounds.getMin(), view_bounds.getMax());
 		}
 	}
 

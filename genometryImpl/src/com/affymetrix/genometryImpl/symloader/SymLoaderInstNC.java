@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class SymLoaderInstNC extends SymLoaderInst{
 	
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.GENOME);

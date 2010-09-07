@@ -21,7 +21,7 @@ public final class Bar extends SymLoader {
 
 	private File f = null;
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);

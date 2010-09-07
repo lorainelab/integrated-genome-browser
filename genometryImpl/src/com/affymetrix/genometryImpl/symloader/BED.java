@@ -32,7 +32,7 @@ import java.util.Map.Entry;
 public class BED extends SymLoader{
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
-	private static List<String> pref_list = new ArrayList<String>();
+	private static final List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bed");
 	}
@@ -41,15 +41,15 @@ public class BED extends SymLoader{
 	private static final Pattern line_regex = Pattern.compile("\\s+");
 	private static final Pattern comma_regex = Pattern.compile(",");
 
-	private List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-	private Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
+	private final List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
+	private final Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
 	private boolean annotate_seq = true;
 	private boolean create_container_annot = false;
 	private String default_type = null;
 
 	private final TrackLineParser track_line_parser = new TrackLineParser();
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
@@ -143,8 +143,8 @@ public class BED extends SymLoader{
 		 *    Map type2csym = (Map)seq2types.get(seq);
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
 		 */
-		seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
-		symlist = new ArrayList<SeqSymmetry>();
+		seq2types.clear();
+		symlist.clear();
 		annotate_seq = annot_seq;
 		this.create_container_annot = create_container;
 		default_type = stream_name;

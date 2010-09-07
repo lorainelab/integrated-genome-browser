@@ -34,7 +34,7 @@ public class USeq extends SymLoader {
 	private ArchiveInfo archiveInfo = null;
 	private File f = null;
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.GENOME);

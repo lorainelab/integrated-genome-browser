@@ -21,15 +21,15 @@ import net.sf.samtools.util.SeekableStream;
  * @author jnicol
  */
 public class BNIB extends SymLoader {
-	private static List<String> pref_list = new ArrayList<String>();
+	private static final List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("raw");
 		pref_list.add("bnib");
 	}
 
-	private List<BioSeq> chrList = null;
+	private List<BioSeq> chrList = null;	// at most one element here, so it can be an ArrayList
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);

@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.URI;
 import java.io.*;
 import java.util.*;
@@ -24,7 +23,7 @@ import java.util.logging.Logger;
 public final class Sgr extends SymLoader implements AnnotationWriter {
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);

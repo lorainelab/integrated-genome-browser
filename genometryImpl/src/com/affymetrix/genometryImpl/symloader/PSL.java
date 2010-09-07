@@ -32,20 +32,20 @@ import java.util.logging.Logger;
 public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 
 	private static final UcscPslComparator comp = new UcscPslComparator();
-	static List<String> psl_pref_list = Arrays.asList("psl");
-	static List<String> link_psl_pref_list = Arrays.asList("link.psl", "bps", "psl");
-	static List<String> psl3_pref_list = Arrays.asList("psl3", "bps", "psl");
+	static final List<String> psl_pref_list = Arrays.asList("psl");
+	static final List<String> link_psl_pref_list = Arrays.asList("link.psl", "bps", "psl");
+	static final List<String> psl3_pref_list = Arrays.asList("psl3", "bps", "psl");
 	boolean look_for_targets_in_query_group = false;
 	boolean create_container_annot = false;
 	boolean is_link_psl = false;
-	public boolean DEBUG = false;
-	static Pattern line_regex = Pattern.compile("\t");
-	static Pattern comma_regex = Pattern.compile(",");
-	static Pattern tagval_regex = Pattern.compile("=");
-	static Pattern non_digit = Pattern.compile("[^0-9-]");
-	TrackLineParser track_line_parser = new TrackLineParser();
+	public static final boolean DEBUG = false;
+	final static Pattern line_regex = Pattern.compile("\t");
+	final static Pattern comma_regex = Pattern.compile(",");
+	final static Pattern tagval_regex = Pattern.compile("=");
+	final static Pattern non_digit = Pattern.compile("[^0-9-]");
+	final TrackLineParser track_line_parser = new TrackLineParser();
 	String track_name_prefix = null;
-	private static String newLine = System.getProperty("line.separator");	// system-independent newline
+	private static final String newLine = System.getProperty("line.separator");	// system-independent newline
 
 	private final AnnotatedSeqGroup query_group;
 	private final AnnotatedSeqGroup target_group;
@@ -54,7 +54,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	private final boolean annotate_target;
 	private final boolean annotate_other;
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);

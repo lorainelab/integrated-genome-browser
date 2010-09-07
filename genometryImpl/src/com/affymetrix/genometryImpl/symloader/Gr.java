@@ -47,7 +47,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	private boolean isSorted = false;
 	private File tempFile = null;
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);

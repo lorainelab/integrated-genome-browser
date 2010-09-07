@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * @author jnicol
  */
 public class Fasta extends SymLoader {
-	private static List<String> pref_list = new ArrayList<String>();
+	private static final List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("fa");
 	}
@@ -32,7 +32,7 @@ public class Fasta extends SymLoader {
 			Pattern.compile("^\\s*>\\s*(.+)");
 	private final Set<BioSeq> chrSet = new HashSet<BioSeq>();
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);

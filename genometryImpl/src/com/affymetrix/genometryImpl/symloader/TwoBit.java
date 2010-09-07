@@ -20,13 +20,13 @@ import java.util.logging.Logger;
  */
 public class TwoBit extends SymLoader {
 
-	private static List<String> pref_list = new ArrayList<String>();
+	private static final List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("raw");
 		pref_list.add("2bit");
 	}
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		// BAM files are generally large, so only allow loading visible data.
 		strategyList.add(LoadStrategy.NO_LOAD);

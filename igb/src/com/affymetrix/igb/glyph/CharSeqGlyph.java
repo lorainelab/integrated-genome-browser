@@ -16,10 +16,12 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
+import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -154,7 +156,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 				}
 				if (Math.abs((long) seq_end_index - (long) seq_beg_index) > 100000) {
 					// something's gone wrong.  Ignore.
-					Logger.getLogger(CharSeqGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
+					Logger.getLogger(CharSeqGlyph.class.getName()).log(Level.FINE, "Invalid string: {0},{1}", new Object[]{seq_beg_index, seq_end_index});
 					return;
 				}
 				int seq_pixel_offset = pixelbox.x;
@@ -287,18 +289,18 @@ public final class CharSeqGlyph extends SequenceGlyph
 				if (viewSeq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
 					// hide axis numbering
 					axis.setLabelFormat(AxisGlyph.NO_LABELS);
-					cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-					String label = ospan.getBioSeq().getID();
-					if (label.toLowerCase().startsWith("chr")) {
-						label = label.substring(3);
+					cgl = new LabelledRectGlyph();
+					String text = ospan.getBioSeq().getID();
+					if (text.toLowerCase().startsWith("chr")) {
+						text = text.substring(3);
 					}
-					((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
+					((LabelledRectGlyph) cgl).setText(text);
 					cgl.setColor(axis.getForegroundColor());
 				} else if (viewSeq.getID().equals(IGBConstants.ENCODE_REGIONS_ID)) {
-					cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-					String label = childsym.getID();
-					if (label != null) {
-						((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
+					cgl = new LabelledRectGlyph();
+					String text = childsym.getID();
+					if (text != null) {
+						((LabelledRectGlyph) cgl).setText(text);
 					}
 					cgl.setColor(axis.getForegroundColor());
 				} else {

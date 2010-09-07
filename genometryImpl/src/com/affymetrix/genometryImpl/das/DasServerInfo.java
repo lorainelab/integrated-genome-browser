@@ -54,15 +54,6 @@ public final class DasServerInfo {
 
 	}
 
-	/**
-	 * Returns the URL of the server.
-	 *
-	 * @return the URL of the server
-	 */
-	public URL getURL() {
-		return serverURL;
-	}
-
 	public Map<String, DasSource> getDataSources(URL primaryURL, GenericServer primaryServer) {
 
 		if(this.primaryURL == null){

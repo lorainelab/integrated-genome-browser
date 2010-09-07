@@ -63,10 +63,6 @@ public final class DasSource {
 		this.primaryServer = primaryServer;
 	}
 
-	DasSource(URL server, URL master) {
-		this(server,master,null,null);
-	}
-
 	static String getID(URL master) {
 		String path = master.getPath();
 		return path.substring(1 + path.lastIndexOf('/'), path.length());
@@ -246,7 +242,7 @@ public final class DasSource {
 				&& url1.getFile().equals(url2.getFile());
 	}
 
-	public InputStream getInputStream(URL server, String query, String pri_default, String log_string) throws MalformedURLException, IOException {
+	private InputStream getInputStream(URL server, String query, String pri_default, String log_string) throws MalformedURLException, IOException {
 		URL load_url = getLoadURL(server, query, pri_default);
 		InputStream istr = LocalUrlCacher.getInputStream(load_url);
 

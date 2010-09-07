@@ -120,17 +120,18 @@ public final class Das {
 				return;
 			}
 
-			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 			if (content_type.startsWith("text/plain")
 					|| content_type.startsWith("text/html")
 					|| content_type.startsWith("text/xml")) {
 				// Note that some http servers will return "text/html" even when that is untrue.
 				// we could try testing whether the filename extension is a recognized extension, like ".psl"
 				// and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
+				AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+				DASFeatureParser das_parser = new DASFeatureParser();
+
 				BufferedInputStream bis = null;
 				try {
 					bis = new BufferedInputStream(stream);
-					DASFeatureParser das_parser = new DASFeatureParser();
 					das_parser.parse(bis, group);
 				} catch (XMLStreamException ex) {
 					Logger.getLogger(Das.class.getName()).log(Level.SEVERE, "Unable to parse DAS response", ex);

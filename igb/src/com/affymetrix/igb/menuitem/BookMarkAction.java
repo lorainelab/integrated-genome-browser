@@ -56,7 +56,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 
   private final JMenu bookmark_menu;
   private final JMenuItem add_pos_markMI;
-  private final JMenuItem add_graph_markMI;
+  //private final JMenuItem add_graph_markMI;
   private final JMenuItem exportMI;
   private final JMenuItem importMI;
   private final JMenuItem clearMI;
@@ -79,7 +79,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     bookmark_menu.addMenuListener(this);
     add_pos_markMI = new JMenuItem(BUNDLE.getString("addPositionBookmark"), KeyEvent.VK_P);
     add_pos_markMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif"));
-    add_graph_markMI = new JMenuItem(BUNDLE.getString("addPosition&GraphsBookmark"), KeyEvent.VK_G);
+    //add_graph_markMI = new JMenuItem(BUNDLE.getString("addPosition&GraphsBookmark"), KeyEvent.VK_G);
     exportMI = new JMenuItem(BUNDLE.getString("exportBookmarks"), KeyEvent.VK_E);
     exportMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
     importMI = new JMenuItem(BUNDLE.getString("importBookmarks"), KeyEvent.VK_I);
@@ -88,13 +88,13 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     manage_bookmarksMI = new JMenuItem(BUNDLE.getString("manageBookmarks"), KeyEvent.VK_M);
 
     add_pos_markMI.addActionListener(this);
-    add_graph_markMI.addActionListener(this);
+    //add_graph_markMI.addActionListener(this);
     importMI.addActionListener(this);
     exportMI.addActionListener(this);
     clearMI.addActionListener(this);
     manage_bookmarksMI.addActionListener(this);
     MenuUtil.addToMenu(bm_menu, add_pos_markMI);
-    MenuUtil.addToMenu(bm_menu, add_graph_markMI);
+    //MenuUtil.addToMenu(bm_menu, add_graph_markMI);
     bm_menu.addSeparator();
     MenuUtil.addToMenu(bm_menu, manage_bookmarksMI);
     // export/import/clear are better done with the bookmark manager
@@ -200,9 +200,9 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     if (src == add_pos_markMI) {
       bookmarkCurrentPosition(false);
     }
-    else if (src == add_graph_markMI) {
-      bookmarkCurrentPosition(true);
-    }
+    //else if (src == add_graph_markMI) {
+    //  bookmarkCurrentPosition(true);
+    //}
     else if (src == exportMI) {
       exportBookmarks(main_bookmark_list, gviewer.getFrame());
     }

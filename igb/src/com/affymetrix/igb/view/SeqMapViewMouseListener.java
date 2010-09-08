@@ -34,7 +34,7 @@ import java.util.*;
  *  For Windows users, this is the normal behavior anyway.  For Mac and Linux
  *  users, it is not standard, but should be fine.
  */
-final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListener {
+final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListener, PropertyView.PropertyListener {
 
 	// This flag determines whether selection events are processed on
 	//  mousePressed() or mouseReleased().
@@ -58,7 +58,8 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
 	private final AffyTieredMap map;
 	private transient MouseEvent rubber_band_start = null;
 	private int num_last_selections = 0;
-
+	private int no_of_prop_being_displayed = 0;
+	
 	SeqMapViewMouseListener(SeqMapView smv) {
 		this.smv = smv;
 		this.map = smv.seqmap;
@@ -393,7 +394,8 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
 			}
 			map.select(glyphs);
 		} else {
-			if (glyphs.isEmpty() && num_last_selections == 0) {
+			if (glyphs.isEmpty() && num_last_selections == 0
+					&& no_of_prop_being_displayed == 0) {
 				something_changed = false;
 			} else {
 				something_changed = true;
@@ -441,5 +443,9 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
 				map.select(g);
 			}
 		}
+	}
+
+	public void propertyDisplayed(int prop_displayed) {
+		no_of_prop_being_displayed = prop_displayed;
 	}
 }

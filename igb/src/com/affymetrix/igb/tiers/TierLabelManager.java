@@ -162,31 +162,33 @@ public final class TierLabelManager {
 		return tlg;
 	}
 
-	public Map<String, Object> getTierProperties(SeqSymmetry seq){
-		Map<String, Object> props = null;
+	public List<Map<String, Object>> getTierProperties() {
 
-		for(TierGlyph glyph : getSelectedTiers()){
-			if(glyph.getInfo() == seq ){
-				GenericFeature feature = glyph.getAnnotStyle().getFeature();
+		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 
-				if(feature == null)
-					continue;
+		for (TierGlyph glyph : getSelectedTiers()) {
 
-				props = new HashMap<String, Object>();
-				props.put("id", feature.featureName);
-				props.put("description", feature.description());
-				if(feature.friendlyURL != null){
-					props.put("feature url", feature.friendlyURL);
-				}
-				props.put("loadmode", feature.loadStrategy.toString());
-				String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
-				props.put("server", server);
-				props.put("server url", feature.gVersion.gServer.friendlyURL);
-		
+			GenericFeature feature = glyph.getAnnotStyle().getFeature();
+
+			if (feature == null) {
+				continue;
 			}
+
+			Map<String, Object> props = new HashMap<String, Object>();
+			props.put("id", feature.featureName);
+			props.put("description", feature.description());
+			if (feature.friendlyURL != null) {
+				props.put("feature url", feature.friendlyURL);
+			}
+			props.put("loadmode", feature.loadStrategy.toString());
+			String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
+			props.put("server", server);
+			props.put("server url", feature.gVersion.gServer.friendlyURL);
+
+			propList.add(props);
 		}
-	
-		return props;
+
+		return propList;
 	}
 
 	/** Returns a list of all TierLabelGlyph items. */
@@ -254,10 +256,6 @@ public final class TierLabelManager {
 					} else if (symmetries.contains(sym)) {
 						symmetries.remove(sym);
 					}
-				}
-			}else if(seqsym != null){
-				if (tierlabel.isSelected()) {
-					symmetries.add(seqsym);
 				}
 			}
 		}

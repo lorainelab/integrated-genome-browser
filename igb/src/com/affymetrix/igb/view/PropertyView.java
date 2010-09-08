@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import java.util.*;
 import java.text.NumberFormat;
@@ -33,7 +34,8 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	public static final String DEFAULT_TITLE = "Property Sheet";
 	private static final List<String> prop_order = determineOrder();
 	private final PropertyViewHelper helper;
-	
+	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
+
 	public PropertyView() {
 		super();
 		determineOrder();
@@ -44,6 +46,8 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 		helper = new PropertyViewHelper(table);
+		SeqMapViewMouseListener mouse_listener = Application.getSingleton().getMapView().getMouseListener();
+		propertyListeners.add(mouse_listener);
 	}
 
 
@@ -105,29 +109,27 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 				propList.add(props);
 			}
 			
-			Map<String, Object> tierInfo = determineTierInfo(sym, tlm);
-			if(tierInfo != null){
-				props.putAll(tierInfo);
-			}
 		}
 
 		if(seqMap != null)
 			addGlyphInfo(propList, seqMap.getSeqMap().getSelected(), selected_syms);
 
+		if(tlm != null)
+			addTierInfo(propList, tlm);
+		
 		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
 
 		this.showProperties(prop_array, prop_order, "");
 	}
 
-	private static Map<String, Object> determineTierInfo(SeqSymmetry sym, TierLabelManager tlm){
-		Map<String, Object> props = null;
+	public static void addTierInfo(List<Map<String, Object>> propList, TierLabelManager handler){
+		List<Map<String, Object>> tierProp = handler.getTierProperties();
 
-		if(tlm != null){
-			props = tlm.getTierProperties(sym);
+		if(!tierProp.isEmpty()){
+			propList.addAll(tierProp);
 		}
-
-		return props;
 	}
+
 
 	@SuppressWarnings("unchecked")
 	private static void addGlyphInfo(List<Map<String, Object>> propList, List<GlyphI> glyphs, List<SeqSymmetry> selected_syms){
@@ -289,6 +291,8 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		String[][] rows = buildRows(name_values, props);
 		String[] col_headings = getColumnHeadings(props);
 
+		propertyChanged(col_headings.length);
+		
 		TableModel model = new DefaultTableModel(rows, col_headings) {
 
 			public static final long serialVersionUID = 1l;
@@ -365,7 +369,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
    * @param noData  the String value to use to represent cases where
    *   there is no value of the property for a given key
    */
-  private static List<String[]> getNameValues(Map<String, Object>[] props, String noData) {
+    private static List<String[]> getNameValues(Map<String, Object>[] props, String noData) {
 		List<String[]> result = new ArrayList<String[]>();
 		// collect all possible names from the given Properties
 		int num_props = props.length;
@@ -392,6 +396,16 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		result.addAll(rows_thus_far.values());
 		
 		return result;
+	}
+
+	private void propertyChanged(int prop_displayed){
+		for(PropertyListener pl : propertyListeners){
+			pl.propertyDisplayed(prop_displayed);
+		}
+	}
+
+	public interface PropertyListener{
+		public void propertyDisplayed(int prop_displayed);
 	}
 }
 

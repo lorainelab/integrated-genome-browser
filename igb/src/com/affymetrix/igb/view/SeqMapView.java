@@ -154,6 +154,7 @@ public class SeqMapView extends JPanel
 	JMenuItem slicendiceMI = empty_menu_item;
 	// for right-click on background
 	private final SeqMapViewActionListener action_listener;
+	private final SeqMapViewMouseListener mouse_listener;
 	private CharSeqGlyph seq_glyph = null;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
@@ -242,7 +243,7 @@ public class SeqMapView extends JPanel
 		edge_matcher = GlyphEdgeMatcher.getSingleton();
 
 		action_listener = new SeqMapViewActionListener(this);
-		SeqMapViewMouseListener mouse_listener = new SeqMapViewMouseListener(this);
+		mouse_listener = new SeqMapViewMouseListener(this);
 
 		seqmap.getNeoCanvas().setDoubleBuffered(false);
 
@@ -1374,6 +1375,10 @@ public class SeqMapView extends JPanel
 		return setUpMenuItem((Container) menu, action_command, action_listener);
 	}
 
+	public SeqMapViewMouseListener getMouseListener(){
+		return mouse_listener;
+	}
+	
 	/**
 	 *  Adds a new menu item and sets-up an accelerator key based
 	 *  on user prefs.  The accelerator key is registered directly

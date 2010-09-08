@@ -37,13 +37,13 @@ final public class FormatPriorities {
 		"bam"};
 
 	public static String getFormat(Das2Type type) {
-		if (type.getID().endsWith(".bar")) {  // temporary way to recognize graph "types"...
+		if (type.getURI().toString().endsWith(".bar")) {  // temporary way to recognize graph "types"...
 			return "bar";
 		}
-		if (type.getID().endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
+		if (type.getURI().toString().endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
 			return USeqUtilities.USEQ_EXTENSION_NO_PERIOD;
 		}
-		if (type.getID().endsWith(".bed")) {
+		if (type.getURI().toString().endsWith(".bed")) {
 			return "bed";
 		}
 		Map<String,String> type_formats = type.getFormats();

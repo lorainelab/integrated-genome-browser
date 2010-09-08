@@ -38,10 +38,6 @@ public final class Das2Type {
 		return versioned_source;
 	}
 
-	public String getID() {
-		return type_uri.toString();
-	}
-
 	public URI getURI() {
 		return type_uri;
 	}
@@ -53,7 +49,7 @@ public final class Das2Type {
 	@Override
 	public String toString() {
 		if (getName() == null) {
-			return getID();
+			return getURI().toString();
 		} else {
 			return getName();
 		}

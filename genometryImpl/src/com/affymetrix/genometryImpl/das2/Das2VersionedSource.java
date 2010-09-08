@@ -176,7 +176,7 @@ public final class Das2VersionedSource {
 			prevlist.add(type);
 		}
 		else{
-			types.put(type.getID(), type);	
+			types.put(type.getURI().toString(), type);
 		}
     }
 

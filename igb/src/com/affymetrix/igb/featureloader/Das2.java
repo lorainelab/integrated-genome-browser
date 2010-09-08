@@ -93,7 +93,7 @@ public class Das2 {
     private static boolean loadSpan(GenericFeature feature, SeqSpan overlap_span, Das2Region region, Das2Type type) {
 		// Create an AnnotStyle so that we can automatically set the
 		// human-readable name to the DAS2 name, rather than the ID, which is a URI
-		ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID(), type.getName());
+		ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getURI().toString(), type.getName());
 		ts.setFeature(feature);
         String overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
 
@@ -107,16 +107,16 @@ public class Das2 {
         String request_root = featcap.getRootURI().toString();
 
         try {
-            String query_part = DetermineQueryPart(region, overlap_filter, type, format);
+            String query_part = DetermineQueryPart(region, overlap_filter, type.getURI(), format);
             String feature_query = request_root + "?" + query_part;
-			LoadFeaturesFromQuery(feature, overlap_span, feature_query, format, type);
+			LoadFeaturesFromQuery(feature, overlap_span, feature_query, format, type.getURI(), type.getName());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return true;
     }
 
-   private static String DetermineQueryPart(Das2Region region, String overlap_filter, Das2Type type, String format) throws UnsupportedEncodingException {
+   private static String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {
 		StringBuilder buf = new StringBuilder(200);
 		buf.append("segment=");
 		buf.append(URLEncoder.encode(region.getID(), Constants.UTF8));
@@ -125,7 +125,7 @@ public class Das2 {
 		buf.append(URLEncoder.encode(overlap_filter, Constants.UTF8));
 		buf.append(";");
 		buf.append("type=");
-		buf.append(URLEncoder.encode(type.getID(), Constants.UTF8));
+		buf.append(URLEncoder.encode(typeURI.toString(), Constants.UTF8));
 		if (format != null) {
 			buf.append(";");
 			buf.append("format=");
@@ -135,7 +135,7 @@ public class Das2 {
 	}
 
     private static boolean LoadFeaturesFromQuery(
-            GenericFeature feature, SeqSpan overlap_span, String feature_query, String format, Das2Type type) {
+            GenericFeature feature, SeqSpan overlap_span, String feature_query, String format, URI typeURI, String typeName) {
 
         /**
          *  Need to look at content-type of server response
@@ -190,7 +190,7 @@ public class Das2 {
 
             System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
 			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
-			List<? extends SeqSymmetry> feats = SymLoader.parse(extension, type.getURI(), istr, aseq.getSeqGroup(), type.getName(), overlap_span);
+			List<? extends SeqSymmetry> feats = SymLoader.parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, overlap_span);
 
 			/*
 			 TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.

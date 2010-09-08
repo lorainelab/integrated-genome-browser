@@ -69,7 +69,7 @@ public abstract class SymLoader {
 	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
 	protected volatile boolean isInitialized = false;
 	protected final Map<BioSeq,File> chrList = new HashMap<BioSeq,File>();
-	private final Map<String,Boolean> chrSort = new HashMap<String,Boolean>();
+	protected final Map<BioSeq,Boolean> chrSort = new HashMap<BioSeq,Boolean>();
 	protected final AnnotatedSeqGroup group;
 	public final String featureName;
 
@@ -115,7 +115,7 @@ public abstract class SymLoader {
 	protected void sortCreatedFiles(){
 		//Now Sort all files
 		for (Entry<BioSeq, File> file : chrList.entrySet()) {
-			chrSort.put(file.getKey().getID(), SortTabFile.sort(file.getValue()));
+			chrSort.put(file.getKey(), SortTabFile.sort(file.getValue()));
 		}
 	}
 	/**

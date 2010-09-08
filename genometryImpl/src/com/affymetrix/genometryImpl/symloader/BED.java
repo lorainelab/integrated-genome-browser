@@ -113,12 +113,13 @@ public class BED extends SymLoader{
 		InputStream istr = null;
 		try {
 			File file = chrList.get(seq);
+			boolean isSorted = chrSort.get(seq) == true;
 			if (file == null) {
 				Logger.getLogger(BED.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parse(istr, GenometryModel.getGenometryModel(), this.group, false, this.featureName, false, min, max);
+			return parse(istr, GenometryModel.getGenometryModel(), this.group, false, this.featureName, false, isSorted, min, max);
 		}catch (Exception ex) {
 			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -129,7 +130,7 @@ public class BED extends SymLoader{
 
 	private List<SeqSymmetry> parse(InputStream istr,  GenometryModel gmodel,
 			AnnotatedSeqGroup group, boolean annot_seq,
-			String stream_name, boolean create_container, int min, int max)
+			String stream_name, boolean create_container, boolean isSorted, int min, int max)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("BED parser called, annotate seq: " + annot_seq +
@@ -160,12 +161,12 @@ public class BED extends SymLoader{
 			bis = new BufferedInputStream(istr);
 		}
 		DataInputStream dis = new DataInputStream(bis);
-		parse(dis, gmodel, group, default_type, min, max);
+		parse(dis, gmodel, group, default_type, isSorted, min, max);
 		System.out.println("BED annot count: " + symlist.size());
 		return symlist;
 	}
 
-	private void parse(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type, int min, int max)
+	private void parse(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type, boolean isSorted, int min, int max)
 		throws IOException  {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
@@ -199,18 +200,20 @@ public class BED extends SymLoader{
 				if (DEBUG) {
 					System.out.println(line);
 				}
-				parseLine(line, seq_group, gmodel, type, use_item_rgb, min, max);
+				if(!parseLine(line, seq_group, gmodel, type, use_item_rgb, min, max) && isSorted){
+					break;
+				}
 			}
 		}
 	}
 
 
-	private void parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum)
+	private boolean parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum)
 			throws NumberFormatException, IOException {
 		String[] fields = line_regex.split(line);
 		int field_count = fields.length;
 		if (field_count < 3) {
-			return;
+			return true;
 		}
 
 		String seq_name = null;
@@ -250,7 +253,10 @@ public class BED extends SymLoader{
 		max = Math.max(beg, end);
 
 		if(!checkRange(min,max,minimum,maximum)){
-			return;
+			if(max > maximum) 
+				return false;
+			
+			return true;
 		}
 		
 		BioSeq seq = seq_group.getSeq(seq_name);
@@ -297,12 +303,12 @@ public class BED extends SymLoader{
 			blockSizes = parseIntArray(fields[findex++]); // blockSizes field
 			if (blockCount != blockSizes.length) {
 				System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + seq_name);
-				return;
+				return true;
 			}
 			blockStarts = parseIntArray(fields[findex++]); // blockStarts field
 			if (blockCount != blockStarts.length) {
 				System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + seq_name);
-				return;
+				return true;
 			}
 			blockMins = makeBlockMins(min, blockStarts);
 			blockMaxs = makeBlockMaxs(blockSizes, blockMins);
@@ -354,6 +360,8 @@ public class BED extends SymLoader{
 		if (annot_name != null) {
 			seq_group.addToIndex(annot_name, bedline_sym);
 		}
+
+		return true;
 	}
 
 

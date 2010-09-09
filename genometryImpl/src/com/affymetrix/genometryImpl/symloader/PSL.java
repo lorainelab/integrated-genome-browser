@@ -607,6 +607,27 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			sym = new Psl3Sym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, other_same_orientation, qseq, qmin, qmax, tseq, tmin, tmax, oseq, omin, omax, blockcount, blocksizes, qmins, tmins, omins);
 			annotate(annotate_other, create_container_annot, is_link_psl, other2types, oseq, type, sym, is_psl3, other_group);
 		} else {
+			boolean is_pslx = false;
+			String[] query_res_arr;
+			String[] target_res_arr;
+			if (fields.length >= findex+2) {
+				// see if there are two extra fields with residues for each block
+				query_res_arr = comma_regex.split(fields[findex++]);
+				target_res_arr = comma_regex.split(fields[findex++]);
+				is_pslx = (query_res_arr != null && (query_res_arr.length == 0 || query_res_arr.length == blockcount)) &&
+						(target_res_arr != null && (target_res_arr.length== blockcount));
+				if (is_pslx) {
+					System.out.print("Query Res (ignore):");
+					for(int i=0;i<blockcount;i++) {
+						System.out.print(query_res_arr[i] + " ");
+					}
+					System.out.println();
+					System.out.print("Target Res:");
+					for(int i=0;i<blockcount;i++) {
+						System.out.print(target_res_arr[i] + " ");
+					}
+				}
+			}
 			sym = new UcscPslSym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qseq, qmin, qmax, tseq, tmin, tmax, blockcount, blocksizes, qmins, tmins);
 		}
 

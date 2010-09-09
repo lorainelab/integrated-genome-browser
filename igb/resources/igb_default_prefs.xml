@@ -39,7 +39,7 @@
     url="http://www.dictybase.org/db/cgi-bin/search/search.pl?query=$$"
    />
 
-  <annotation_url annot_id_regex="^gb\|"
+  <annotation_url annot_id_regex="^gb\|.*$"
     name="Genbank"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />

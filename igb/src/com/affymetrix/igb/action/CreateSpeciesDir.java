@@ -1,5 +1,7 @@
 package com.affymetrix.igb.action;
 
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.File;
@@ -27,6 +29,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.featureloader.QuickLoad;
+import com.affymetrix.igb.menuitem.FileTracker;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -37,11 +40,14 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class CreateSpeciesDir extends AbstractAction {
 
-	static final String path = "/";
+	private final FileTracker genome_dir_tracker;
+	private final JFrame gviewerFrame;
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 	
-	public CreateSpeciesDir(){
+	public CreateSpeciesDir(JFrame gviewerFrame, FileTracker genome_dir_tracker){
 		super(BUNDLE.getString("createGenome"));
+		this.genome_dir_tracker = genome_dir_tracker;
+		this.gviewerFrame = gviewerFrame;
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -51,11 +57,33 @@ public class CreateSpeciesDir extends AbstractAction {
 			ErrorHandler.errorPanel("Please select a species first");
 			return;
 		}
-
-		createDirForSpecies(speciesName);
+		createDirForSpecies(genome_dir_tracker, gviewerFrame, speciesName);
 	}
 
-	private static void createDirForSpecies(String speciesName){
+	private static void createDirForSpecies(FileTracker genome_dir_tracker, JFrame gviewerFrame, String speciesName){
+		File currDir = genome_dir_tracker.getFile();
+		if (currDir == null) {
+			currDir = new File(System.getProperty("user.home"));
+		}
+
+		JFileChooser fc = new JFileChooser();
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.setMultiSelectionEnabled(false);
+		fc.setCurrentDirectory(currDir);
+		fc.rescanCurrentDirectory();
+		int option = fc.showDialog(gviewerFrame, "Select");
+		final File location = fc.getSelectedFile();
+
+		if (option != JFileChooser.APPROVE_OPTION || location == null) {
+			return;
+		}
+
+		genome_dir_tracker.setFile(fc.getCurrentDirectory());
+
+		createDirForSpecies(location.getAbsolutePath() + "/", speciesName);
+	}
+	
+	private static void createDirForSpecies(String path, String speciesName){
 		File speciesDir = GeneralUtils.makeDir(path+speciesName);
 
 		List<String> gVersions = GeneralLoadUtils.getGenericVersions(speciesName);

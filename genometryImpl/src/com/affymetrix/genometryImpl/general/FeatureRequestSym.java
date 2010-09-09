@@ -321,7 +321,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			parser.enableSharedQueryTarget(true);
 			// annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
 			// why is annotate_target parameter below set to false?
-			return parser.parse(bis, featureName, null, group, null, false, false, false); // do not annotate.  This is done later
+			return parser.parse(bis, featureName, null, group, null, false, true, false);
 		}
 		if (extension.equals("psl") || extension.equals("psl3")) {
 			// reference to LoadFileAction.ParsePSL

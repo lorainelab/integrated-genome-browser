@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.view.SeqGroupView;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -287,6 +288,7 @@ public final class LoadFileAction extends AbstractAction {
 
 			@Override
 			public void done() {
+			SeqGroupView.refreshTable();
 			if (loadGroup.getSeqCount() > 0) {
 				GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
 			}

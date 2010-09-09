@@ -56,7 +56,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 	public static final Color default_T_color = new Color(102, 211, 255);
 	public static final Color default_G_color = new Color(255, 210, 0);
 	public static final Color default_C_color = new Color(255, 176, 102);
-	public static final Color default_other_color = Color.BLACK;
+	public static final Color default_other_color = Color.LIGHT_GRAY;
 
 	private static final ColorHelper helper = new ColorHelper();
 	private static final class ColorHelper implements PreferenceChangeListener {

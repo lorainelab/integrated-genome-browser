@@ -103,6 +103,7 @@ public final class IGB extends Application
 	private final List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
 	private final List<Object> plugins = new ArrayList<Object>(16);
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
+	private FileTracker genome_directory = FileTracker.GENOME_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
 	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
@@ -488,6 +489,8 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportMainViewAction()));
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportLabelledMainViewAction()));
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportWholeFrameAction()));
+		file_menu.addSeparator();
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new CreateSpeciesDir(map_view.getFrame(), genome_directory)));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PreferencesAction()));
 		file_menu.addSeparator();

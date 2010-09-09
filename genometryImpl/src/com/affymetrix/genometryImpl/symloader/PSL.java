@@ -444,8 +444,10 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				int tsize = Integer.parseInt(fields[findex++]);
 				int tmin = Integer.parseInt(fields[findex++]);
 				int tmax = Integer.parseInt(fields[findex++]);
+				int maximum = Math.max(tmin, tmax);
+				int minimum = Math.min(tmin, tmax);
 
-				if(tmin < min || tmax > max)
+				if((maximum < min || minimum > max) && !is_link_psl)
 					continue;
 				
 				int blockcount = Integer.parseInt(fields[findex++]);

@@ -414,7 +414,7 @@ public abstract class SymLoader {
 			// why is annotate_target parameter below set to false?
 			return parser.parse(bis, featureName, null, group, null, false, false, false); // do not annotate.  This is done later
 		}
-		if (extension.equals("psl") || extension.equals("psl3")) {
+		if (extension.equals("psl") || extension.equals("psl3") || extension.equals("pslx")) {
 			// reference to LoadFileAction.ParsePSL
 			PSLParser parser = new PSLParser();
 			parser.enableSharedQueryTarget(true);

@@ -121,7 +121,7 @@ public final class LoadFileAction extends AbstractAction {
 						new String[]{"fa", "fasta", "fas"},
 						"FASTA Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"psl", "psl3"},
+						new String[]{"psl", "psl3", "pslx"},
 						"PSL Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"das", "dasxml", "das2xml"},

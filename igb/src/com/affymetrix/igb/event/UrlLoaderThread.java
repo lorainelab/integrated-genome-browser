@@ -544,7 +544,7 @@ public final class UrlLoaderThread extends Thread {
 			parser.parse(str, stream_name, input_seq, group);
 			return;
 		}
-		if (lcname.endsWith(".psl") || lcname.endsWith(".psl3")) {
+		if (lcname.endsWith(".psl") || lcname.endsWith(".psl3") || lcname.endsWith(".pslx")) {
 			PSLParser parser = new PSLParser();
 			parser.enableSharedQueryTarget(true);
 

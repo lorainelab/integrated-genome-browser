@@ -1121,7 +1121,7 @@ public abstract class ServerUtils {
 			psl.enableSharedQueryTarget(true);
 			return psl;
 		}
-		if(extension.equals("psl")) {
+		if(extension.equals("psl") || extension.equals("psl3") || extension.equals("pslx")) {
 			PSL psl = new PSL(uri, featureName, group, null, null,
 				false, false, false);
 			psl.enableSharedQueryTarget(true);

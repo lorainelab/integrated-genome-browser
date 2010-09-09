@@ -39,8 +39,8 @@
     url="http://www.dictybase.org/db/cgi-bin/search/search.pl?query=$$"
    />
 
-  <annotation_url annot_id_regex="^gb\|.+\.\d+$"
-    name="Genbank Nucleotide"
+  <annotation_url annot_id_regex="^gb\|.*$"
+    name="Genbank"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
 
@@ -138,6 +138,12 @@
   <annotation_url annot_type_regex="(?i).*TAIR._.*$" 
     name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
+  />
+
+  <!-- Match insertion lines -->
+  <annotation_url annot_type_regex="^insert$" 
+    name="arabidopsis.org"
+    url="http://www.arabidopsis.org/servlets/SeedSearcher?action=detail&amp;stock_number=$$"
   />
 
   <!-- Match TAIRvx -->

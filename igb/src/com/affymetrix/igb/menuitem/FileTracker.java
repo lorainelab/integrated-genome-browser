@@ -16,6 +16,7 @@ public final class FileTracker {
 	public static final String CONTROL_GRAPH_DIRECTORY = "control graph directory";
 	public static final String DATA_DIRECTORY = "data directory";
 	public static final String OUTPUT_DIRECTORY = "output directory";
+	public static final String GENOME_DIRECTORY = "genome directory";
 
 	private static List<String> FILENAMES;
 	static {
@@ -23,6 +24,7 @@ public final class FileTracker {
 		filenames.add(CONTROL_GRAPH_DIRECTORY);
 		filenames.add(DATA_DIRECTORY);
 		filenames.add(OUTPUT_DIRECTORY);
+		filenames.add(GENOME_DIRECTORY);
 		FILENAMES = Collections.<String>unmodifiableList(filenames);
 	}
 
@@ -35,6 +37,10 @@ public final class FileTracker {
   /** The singleton FileTracker used to remember the user's most recent output directory. */
   public final static FileTracker OUTPUT_DIR_TRACKER
     = new FileTracker(OUTPUT_DIRECTORY);
+
+  /** The singleton FileTracker used to remember the user's most recent genome directory. */
+  public final static FileTracker GENOME_DIR_TRACKER
+	= new FileTracker(GENOME_DIRECTORY);
   
   private FileTracker(String name) {
     this.name = name;

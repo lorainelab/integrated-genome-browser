@@ -5,7 +5,6 @@ import java.awt.geom.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import java.util.BitSet;
@@ -36,16 +35,6 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 
 	// default to true for backward compatability
 	private boolean hitable = true;
-	public static final String PREF_A_COLOR = "Adenine color";
-	public static final String PREF_T_COLOR = "Thymine color";
-	public static final String PREF_G_COLOR = "Guanine color";
-	public static final String PREF_C_COLOR = "Cytosine color";
-	public static final String PREF_OTHER_COLOR = "Other color";
-	public static final Color default_A_color = Color.GREEN;
-	public static final Color default_T_color = Color.PINK;
-	public static final Color default_G_color = Color.YELLOW;
-	public static final Color default_C_color = Color.BLUE;
-	public static final Color default_other_color = Color.GRAY;
 	public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
 
 	private static final ColorHelper helper = new ColorHelper();
@@ -72,11 +61,11 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 		static {
 			Map<String, Color> defaultColors = new LinkedHashMap<String, Color>();
 
-			defaultColors.put(PREF_A_COLOR, default_A_color);
-			defaultColors.put(PREF_T_COLOR, default_T_color);
-			defaultColors.put(PREF_G_COLOR, default_G_color);
-			defaultColors.put(PREF_C_COLOR, default_C_color);
-			defaultColors.put(PREF_OTHER_COLOR, default_other_color);
+			defaultColors.put(CharSeqGlyph.PREF_A_COLOR, CharSeqGlyph.default_A_color);
+			defaultColors.put(CharSeqGlyph.PREF_T_COLOR, CharSeqGlyph.default_T_color);
+			defaultColors.put(CharSeqGlyph.PREF_G_COLOR, CharSeqGlyph.default_G_color);
+			defaultColors.put(CharSeqGlyph.PREF_C_COLOR, CharSeqGlyph.default_C_color);
+			defaultColors.put(CharSeqGlyph.PREF_OTHER_COLOR, CharSeqGlyph.default_other_color);
 
 			DEFAULT_COLORS = Collections.<String, Color>unmodifiableMap(defaultColors);
 		}

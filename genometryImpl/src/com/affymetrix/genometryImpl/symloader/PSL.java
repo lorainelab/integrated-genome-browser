@@ -474,7 +474,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				// Main method to determine the symmetry
 				UcscPslSym sym = determineSym(
 						query_group, qname, qsize, target_group, tname, in_bottom_of_link_psl, tsize, qforward, tforward, block_size_array, q_start_array, t_start_array, annot_type, fields, findex, childcount, other_group, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qmin, qmax, tmin, tmax, blockcount, annotate_other, other2types, annotate_query, query2types, annotate_target, target2types);
-
+		
 				total_annot_count++;
 				total_child_count += sym.getChildCount();
 				results.add(sym);
@@ -608,8 +608,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			annotate(annotate_other, create_container_annot, is_link_psl, other2types, oseq, type, sym, is_psl3, other_group);
 		} else {
 			boolean is_pslx = false;
-			String[] query_res_arr;
-			String[] target_res_arr;
+			String[] query_res_arr = null;
+			String[] target_res_arr = null;
 			if (fields.length >= findex+2) {
 				// see if there are two extra fields with residues for each block
 				query_res_arr = comma_regex.split(fields[findex++]);
@@ -628,7 +628,11 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 					}
 				}
 			}
-			sym = new UcscPslSym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qseq, qmin, qmax, tseq, tmin, tmax, blockcount, blocksizes, qmins, tmins);
+			sym = new UcscPslSym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases,
+					t_gap_count, t_gap_bases, same_orientation,
+					qseq, qmin, qmax,
+					tseq, tmin, tmax, target_res_arr,
+					blockcount, blocksizes, qmins, tmins);
 		}
 
 		findExtraTagValues(fields, findex, sym);

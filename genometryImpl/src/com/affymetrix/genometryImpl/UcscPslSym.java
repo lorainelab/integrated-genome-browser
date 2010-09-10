@@ -49,11 +49,38 @@ public class UcscPslSym
 	protected BioSeq targetseq;
 	private int tmin;
 	private int tmax;
+	private String[] target_res_arr;
 	protected int[] blockSizes;
 	protected int[] qmins;
 	protected int[] tmins;
 	private Map<String,Object> props;
 
+	public UcscPslSym(String type,
+			int matches,
+			int mismatches,
+			int repmatches,
+			int ncount,
+			int qNumInsert,
+			int qBaseInsert,
+			int tNumInsert,
+			int tBaseInsert,
+			boolean same_orientation,
+			BioSeq queryseq,
+			int qmin,
+			int qmax,
+			BioSeq targetseq,
+			int tmin,
+			int tmax,
+			int blockcount,  // now ignored, uses blockSizes.length
+			int[] blockSizes,
+			int[] qmins,
+			int[] tmins
+			) {
+		this(type, matches, mismatches, repmatches, ncount, 
+				qNumInsert, qBaseInsert, tNumInsert, tBaseInsert,
+				same_orientation, queryseq, qmin, qmax,
+				targetseq, tmin, tmax, null, blockcount, blockSizes, qmins, tmins);
+	}
 	/**
 	 *  @param blockcount  ignored, uses blockSizes.length
 	 */
@@ -73,6 +100,7 @@ public class UcscPslSym
 			BioSeq targetseq,
 			int tmin,
 			int tmax,
+			String[] target_res_arr,
 			int blockcount,  // now ignored, uses blockSizes.length
 			int[] blockSizes,
 			int[] qmins,
@@ -95,6 +123,7 @@ public class UcscPslSym
 		this.targetseq = targetseq;
 		this.tmin = tmin;
 		this.tmax = tmax;
+		this.target_res_arr = target_res_arr;
 		this.blockSizes = blockSizes;
 		this.qmins = qmins;
 		this.tmins = tmins;
@@ -110,8 +139,23 @@ public class UcscPslSym
 			}
 			prevmin = qmins[i];
 		}
-			}
 
+		this.setProperty("residues", setResidue(target_res_arr));
+	}
+
+	private String setResidue(String[] target_res_arr){
+		if(target_res_arr == null)
+			return "";
+
+		StringBuilder builder = new StringBuilder(2000);
+
+		for(int i=0; i<target_res_arr.length; i++){
+			builder.append(target_res_arr[i]);
+		}
+
+		return builder.toString();
+	}
+	
 	public String getType() { return type; }
 
 	/**
@@ -180,12 +224,21 @@ public class UcscPslSym
 	public SeqSymmetry getChild(int i) {
 		if (same_orientation) {
 			return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
-					tmins[i], tmins[i]+blockSizes[i], targetseq);
+						tmins[i], tmins[i]+blockSizes[i], targetseq, getChildResidue(i));
 		}
 		else {
-			return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
-					tmins[i] + blockSizes[i], tmins[i], targetseq);
+			return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq, 
+					tmins[i]+blockSizes[i], tmins[i], targetseq, getChildResidue(i));
 		}
+	}
+
+	private String getChildResidue(int i){
+
+		if(target_res_arr != null && target_res_arr.length > i){
+			return target_res_arr[i];
+		}
+
+		return "";
 	}
 
 	// SearchableSeqSymmetry interface

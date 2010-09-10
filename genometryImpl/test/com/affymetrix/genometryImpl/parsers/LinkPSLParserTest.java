@@ -207,7 +207,7 @@ public class LinkPSLParserTest {
 			indexing(result, psl.getComparator(seq), psl, seq, group, seqid);
 
 		} catch (Exception ex) {
-			Logger.getLogger(BgnParserTest.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(LinkPSLParserTest.class.getName()).log(Level.SEVERE, null, ex);
 			fail();
 		}
 

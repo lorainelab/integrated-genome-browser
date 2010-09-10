@@ -140,10 +140,12 @@ public class UcscPslSym
 			prevmin = qmins[i];
 		}
 
-		//this.setProperty("residues", setResidue(target_res_arr));
+		if (target_res_arr != null) {
+			setProperty("residues", setResidue(target_res_arr));
+		}
 	}
 
-	private String setResidue(String[] target_res_arr){
+	private static String setResidue(String[] target_res_arr){
 		if(target_res_arr == null)
 			return "";
 

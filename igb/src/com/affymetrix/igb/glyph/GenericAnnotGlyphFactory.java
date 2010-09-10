@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -368,12 +369,14 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			return;
 		}
 
+		boolean handleCigar = sym instanceof UcscBedSym;
+
 		// We are in an aligned residue glyph.
 		int childCount = sym.getChildCount();
 		if (childCount > 0) {
 			int startPos = 0;
 			for (int i = 0; i < childCount; i++) {
-				startPos = setResidues(sym.getChild(i), annotseq, pglyph, startPos, true, true);
+				startPos = setResidues(sym.getChild(i), annotseq, pglyph, startPos, handleCigar, true);
 			}
 		} else {
 			setResidues(sym, annotseq, pglyph, 0, false, false);

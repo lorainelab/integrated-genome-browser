@@ -365,7 +365,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	}
 
 	private static void handleAlignedResidueGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph) {
-		if (!(sym instanceof SymWithProps) || ((SymWithProps) sym).getProperty("residues") == null) {
+		if (!(sym instanceof SymWithProps)) {
 			return;
 		}
 
@@ -395,15 +395,18 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 * @return
 	 */
 	private static int setResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, int startPos, boolean handleCigar, boolean isChild) {
-		if (!(sym instanceof SymWithProps)) {
-			return startPos;
-		}
 		SeqSpan span = sym.getSpan(annotseq);
 		if (span == null) {
 			return startPos;
 		}
-		AlignedResidueGlyph csg = null;
+
 		Object residues = ((SymWithProps) sym).getProperty(BAM.RESIDUESPROP);
+
+		if (!(sym instanceof SymWithProps) || residues == null) {
+			return startPos;
+		}
+		
+		AlignedResidueGlyph csg = null;
 		if (residues != null) {
 			String residueStr = residues.toString();
 			if (handleCigar) {

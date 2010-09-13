@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,9 +73,34 @@ public class PSLParserTest {
 
 	}
 
+	/**
+	 * Test of writeAnnotations method, of class com.affymetrix.genometryImpl.symloader.PSL
+	 */
+	public void testPslxFile() throws Exception {
+		String pslxString = "117	2	0	0	1	2	1	1	+	query	121	0	121	target	120	0	120	3	57,36,26,	0,57,95,	0,58,94,		"
+				+ "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,CCCCCCCCCCCCCCCCCCCCCCCCCC,";
+		String stream_name = "test_file";
+		String type = "test_type";
+
+		File file = createFileFromString(pslxString);
+		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+		PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
+				true, false, false);
+		List<UcscPslSym> syms = psl.getGenome();
+		BioSeq seq = group.getSeq("target");
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		boolean result = psl.writeAnnotations(syms, seq, type, outstream);
+		assertEquals(true, result);
+		System.out.println(outstream.toString());
+		assertEquals(pslxString, outstream.toString());
+	}
+
 	@Test
 	public void testFiles() throws FileNotFoundException, IOException {
 		File file = new File("test/data/psl/test1.psl");
+		testFile(file);
+
+		file = new File("test/data/pslx/test.pslx");
 		testFile(file);
 	}
 

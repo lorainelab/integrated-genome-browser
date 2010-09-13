@@ -400,9 +400,13 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			return startPos;
 		}
 
+		if (!(sym instanceof SymWithProps)) {
+			return startPos;
+		}
+
 		Object residues = ((SymWithProps) sym).getProperty(BAM.RESIDUESPROP);
 
-		if (!(sym instanceof SymWithProps) || residues == null) {
+		if (residues == null) {
 			return startPos;
 		}
 		

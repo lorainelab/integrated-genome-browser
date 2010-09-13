@@ -140,12 +140,9 @@ public class UcscPslSym
 			prevmin = qmins[i];
 		}
 
-		if (target_res_arr != null) {
-			setProperty("residues", setResidue(target_res_arr));
-		}
 	}
 
-	private static String setResidue(String[] target_res_arr){
+	private static String getResidue(String[] target_res_arr){
 		if(target_res_arr == null)
 			return "";
 
@@ -336,6 +333,11 @@ public class UcscPslSym
 		if (props != null) {
 			tprops.putAll(props);
 		}
+
+		if(target_res_arr != null){
+			tprops.put("residues", getResidue(target_res_arr));
+		}
+		
 		return tprops;
 	}
 
@@ -350,7 +352,7 @@ public class UcscPslSym
 		else if (key.equals("# query bases inserted")) { return Integer.toString(getQueryBaseInserts()); }
 		else if (key.equals("# target inserts")) { return Integer.toString(getTargetNumInserts()); }
 		else if (key.equals("# target bases inserted")) { return Integer.toString(getTargetBaseInserts()); }
-
+		else if (key.equals("residues") && target_res_arr != null) { return getResidue(target_res_arr); }
 		//else if (key.equals("query seq")) { return getQuerySeq().getID(); }
 		//else if (key.equals("target seq")) { return  getTargetSeq().getID(); }
 
@@ -443,7 +445,17 @@ public class UcscPslSym
 			out.write(Integer.toString(tmins[i]).getBytes());
 			out.write(',');
 		}
-		//out.write('\t');	Unnecessary tab.
+
+		if (target_res_arr != null) {
+			out.write('\t');	//Tab for source residue array. No need to write it ???
+			out.write('\t');
+
+			for (int i=0; i<target_res_arr.length; i++) {
+				out.write(target_res_arr[i].getBytes());
+				out.write(',');
+			}
+		}
+		
 		if (include_newline) {
 			out.write('\n');
 		}

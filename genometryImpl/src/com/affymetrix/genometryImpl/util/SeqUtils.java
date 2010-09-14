@@ -170,7 +170,7 @@ public abstract class SeqUtils {
 	/**
 	 *  "Logical" NOT of SeqSymmetry (relative to a particular BioSeq).
 	 */
-	private static SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq) {
+	public static SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq) {
 		// put leaf syms in list
 		List<SeqSpan> spans = SeqUtils.getLeafSpans(symA, seq);
 

@@ -7,13 +7,18 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
@@ -26,6 +31,7 @@ import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.FasterExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -196,7 +202,7 @@ public class TrackView {
 			if (annotSym instanceof SymWithProps) {
 				addAnnotationGlyphs(smv, (SymWithProps)annotSym);
 				// TODO: reimplement middleground shading in a generic fashion
-				//doMiddlegroundShading((SymWithProps)annotSym);
+				//doMiddlegroundShading((SymWithProps)annotSym, seq);
 			}
 		}
 	}
@@ -215,29 +221,31 @@ public class TrackView {
 		factory.createGlyph(annotSym, smv);
 	}
 
-	/*private static void doMiddlegroundShading(SymWithProps annotSym) {
+	private static void doMiddlegroundShading(SymWithProps annotSym, BioSeq seq) {
 		String meth = BioSeq.determineMethod(annotSym);
 		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-		// do "middleground" shading for tracks loaded via DAS/2
-		if ((meth != null) &&
-						(annotSym instanceof TypeContainerAnnot) &&
-						(annotSym.getChildCount() > 0) &&
-						(annotSym.getChild(0) instanceof Das2FeatureRequestSym)) {
-			int child_count = annotSym.getChildCount();
+		GenericFeature feature = style.getFeature();
+		if ((meth != null)
+				&& (annotSym instanceof TypeContainerAnnot)
+				&& (annotSym.getChildCount() > 0)
+				&& (feature != null)) {
 			TierGlyph forwardTrack = style2forwardTierGlyph.get(style);
 			TierGlyph reverseTrack = style2reverseTierGlyph.get(style);
+			SeqSymmetry inverse = SeqUtils.inverse(feature.getRequestSym(), seq);
+			int child_count = inverse.getChildCount();
 			for (int i = 0; i < child_count; i++) {
-				SeqSymmetry csym = annotSym.getChild(i);
-				if (csym instanceof Das2FeatureRequestSym) {
-					Das2FeatureRequestSym dsym = (Das2FeatureRequestSym) csym;
-					SeqSpan ospan = dsym.getOverlapSpan();
+				SeqSymmetry child = inverse.getChild(i);
+				for (int j = 0; j < child.getSpanCount(); j++) {
+					SeqSpan ospan = child.getSpan(j);
 					if (forwardTrack != null) {
 						GlyphI mglyph = new FillRectGlyph();
+						mglyph.setBackgroundColor(Color.lightGray);
 						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
 						forwardTrack.addMiddleGlyph(mglyph);
 					}
 					if (reverseTrack != null) {
 						GlyphI mglyph = new FillRectGlyph();
+						mglyph.setBackgroundColor(Color.lightGray);
 						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
 						reverseTrack.addMiddleGlyph(mglyph);
 					}
@@ -245,7 +253,7 @@ public class TrackView {
 			}
 		}
 
-	}*/
+	}
 
 	public static SymWithProps addToDependentList(DependentData dd){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();

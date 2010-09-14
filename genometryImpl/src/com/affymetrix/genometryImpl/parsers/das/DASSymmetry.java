@@ -28,10 +28,10 @@ public class DASSymmetry extends SimpleSymWithProps implements Scored, SupportsC
 		score = Scored.UNKNOWN_SCORE;
 		if (!group.getType().isEmpty()) {
 			type = group.getType();
-		} else if (!feature.getTypeID().isEmpty()) {
-			type = feature.getTypeID();
-		} else {
+		} else if (!feature.getTypeLabel().isEmpty()) {
 			type = feature.getTypeLabel();
+		} else {
+			type = feature.getTypeID();
 		}
 
 		this.addSpan(new SimpleMutableSeqSpan(new SimpleMutableSeqSpan(

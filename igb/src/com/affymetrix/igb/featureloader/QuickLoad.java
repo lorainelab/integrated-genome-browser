@@ -141,7 +141,7 @@ public final class QuickLoad extends SymLoader {
 			throws OutOfMemoryError {
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		if (this.symL != null && this.symL.isResidueLoader) {
-			return loadResiduesThread(feature.loadStrategy, overlapSpan, gviewer);
+			return loadResiduesThread(feature, overlapSpan, gviewer);
 		}
 		return loadSymmetriesThread(feature, overlapSpan, gviewer);
 	}
@@ -245,7 +245,7 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
-	public boolean loadResiduesThread(final LoadStrategy strategy, final SeqSpan span, final SeqMapView gviewer) {
+	public boolean loadResiduesThread(final GenericFeature feature, final SeqSpan span, final SeqMapView gviewer) {
 		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
 
 			public String doInBackground() {
@@ -268,7 +268,7 @@ public final class QuickLoad extends SymLoader {
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + QuickLoad.this.featureName);
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
 			}
 		};

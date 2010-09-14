@@ -184,7 +184,7 @@ public final class TrackLineParser {
 			// version of the name used in AnnotStyle.getInstance().
 			// Explicitly setting the name keeps the case intact.
 			String name = track_hash.get(NAME);
-			if (name != null) {
+			if (name != null && (style.getHumanName() == null || style.getHumanName().isEmpty())) {
 				style.setHumanName(name);
 			}
 		}

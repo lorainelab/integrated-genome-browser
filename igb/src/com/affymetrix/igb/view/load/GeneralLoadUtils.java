@@ -626,6 +626,7 @@ public final class GeneralLoadUtils {
 			return ((QuickLoad) feature.symL).loadFeatures(span, feature);
 		}
 
+		List<SeqSymmetry> optimized_syms = new ArrayList<SeqSymmetry>();
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		if (feature.loadStrategy == LoadStrategy.GENOME && feature.gVersion.gServer.serverType != ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
@@ -636,25 +637,27 @@ public final class GeneralLoadUtils {
 				}
 				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax()-1, seq));
 				if (optimized_sym != null) {
-					List<SeqSpan> spans = new ArrayList<SeqSpan>();
-					convertSymToSpanList(optimized_sym, spans);
-					optimized_spans.addAll(spans);
+					optimized_syms.add(optimized_sym);
 				}
 			}
 		} else {
 			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
 			if (optimized_sym != null) {
-				List<SeqSpan> spans = new ArrayList<SeqSpan>();
-				convertSymToSpanList(optimized_sym, spans);
-				optimized_spans.addAll(spans);
+				optimized_syms.add(optimized_sym);
 			}
 		}
-
-		if (optimized_spans.isEmpty()) {
+		if (optimized_syms.isEmpty()) {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 			return true;
 		}
+
+		for (SeqSymmetry sym : optimized_syms) {
+			List<SeqSpan> spans = new ArrayList<SeqSpan>();
+			convertSymToSpanList(sym, spans);
+			optimized_spans.addAll(spans);
+		}
+		
 		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 		switch (feature.gVersion.gServer.serverType) {
 			case DAS2:

@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -168,6 +169,19 @@ public final class GenericFeature {
 
 	public void addLoadedSymRequest(SeqSymmetry optimized_sym) {
 		requestSym.addChild(optimized_sym);
+	}
+
+	public List<SeqSymmetry> filterOutExistingSymmetries(List<SeqSymmetry> syms, BioSeq seq) {
+		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
+		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
+		for (SeqSymmetry sym : syms) {
+			if (SeqUtils.intersection(sym, requestSym, dummySym, seq)) {
+				// There is an intersection with previous requests.  Ignore this symmetry
+				continue;
+			}
+			newSyms.add(sym);
+		}
+		return newSyms;
 	}
 
 	public MutableSeqSymmetry getRequestSym(){

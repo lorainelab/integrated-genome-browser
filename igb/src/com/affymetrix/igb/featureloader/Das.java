@@ -69,6 +69,10 @@ public final class Das {
 				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
 				style.setFeature(gFeature);
 
+				// TODO - probably not necessary
+				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
+				style.setFeature(gFeature);
+
 				parseData(uri);
 				TrackView.updateDependentData();
 				return null;

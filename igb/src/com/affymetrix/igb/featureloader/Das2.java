@@ -95,6 +95,11 @@ public class Das2 {
 		// human-readable name to the DAS2 name, rather than the ID, which is a URI
 		ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getURI().toString(), type.getName());
 		ts.setFeature(feature);
+
+		//TODO: Probably not necessary. 
+		ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
+		ts.setFeature(feature);
+
         String overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
 
 		String format = FormatPriorities.getFormat(type);

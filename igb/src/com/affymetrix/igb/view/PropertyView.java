@@ -33,7 +33,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	public static final String PROPERTY = "property";
 	public static final String DEFAULT_TITLE = "Property Sheet";
 	private static final List<String> prop_order = determineOrder();
-	private final PropertyViewHelper helper;
+	private static final PropertyViewHelper helper = new PropertyViewHelper(table);
 	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
 
 	public PropertyView() {
@@ -42,12 +42,10 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		JViewport jvp = new JViewport();
 		scroll_pane.setColumnHeaderView(jvp);
 		new JTableCutPasteAdapter(table, true);
-		setPreferredSize(new java.awt.Dimension(100, 250));
-		setMinimumSize(new java.awt.Dimension(100, 250));
+		this.setPreferredSize(new java.awt.Dimension(100, 250));
+		this.setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
-		helper = new PropertyViewHelper(table);
-		SeqMapViewMouseListener mouse_listener = Application.getSingleton().getMapView().getMouseListener();
-		propertyListeners.add(mouse_listener);
+		propertyListeners.add(Application.getSingleton().getMapView().getMouseListener());
 	}
 
 
@@ -268,9 +266,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		for (int i = 0; i < num_vals; i++) {
 			String[] vals = name_values.get(i);
 			rows[i][0] = vals[0];
-			for (int j = 1; j < vals.length; j++) {
-				rows[i][j] = vals[j];
-			}
+			System.arraycopy(vals, 1, rows[i], 1, vals.length - 1);
 		}
 		return rows;
 	}

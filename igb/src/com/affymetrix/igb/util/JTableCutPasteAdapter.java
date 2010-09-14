@@ -39,7 +39,7 @@ import javax.swing.event.*;
 
 public final class JTableCutPasteAdapter {
 
-  JTable jTable1;
+  private final JTable jTable1;
 
   /**
    * An object that enables Copy-Paste on the given JTable.

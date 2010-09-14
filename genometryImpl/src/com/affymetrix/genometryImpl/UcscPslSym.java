@@ -446,15 +446,15 @@ public class UcscPslSym
 			out.write(',');
 		}
 
-		if (target_res_arr != null) {
-			out.write('\t');	//Tab for source residue array. No need to write it ???
-			out.write('\t');
-
-			for (int i=0; i<target_res_arr.length; i++) {
-				out.write(target_res_arr[i].getBytes());
-				out.write(',');
-			}
-		}
+//		if (target_res_arr != null) {
+//			out.write('\t');	//Tab for source residue array. No need to write it ???
+//			out.write('\t');
+//
+//			for (int i=0; i<target_res_arr.length; i++) {
+//				out.write(target_res_arr[i].getBytes());
+//				out.write(',');
+//			}
+//		}
 		
 		if (include_newline) {
 			out.write('\n');

@@ -81,26 +81,22 @@ public class TierGlyph extends SolidGlyph {
 		setStyle(style);
 	}
 
-	public void setStyle(ITrackStyle style) {
+	public final void setStyle(ITrackStyle style) {
 		this.style = style;
 
-		if (style != null) {
-			// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
-			// the fg color to the TierLabel glyph, which does pay attention to that color.
-			setForegroundColor(style.getColor());
-			setFillColor(style.getBackground());
+		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
+		// the fg color to the TierLabel glyph, which does pay attention to that color.
+		setForegroundColor(style.getColor());
+		setFillColor(style.getBackground());
 
-			if (style.getCollapsed()) {
-				setPacker(collapse_packer);
-			} else {
-				setPacker(expand_packer);
-			}
-			setVisibility(!style.getShow());
-			setMaxExpandDepth(style.getMaxDepth());
-			setLabel(style.getHumanName());
+		if (style.getCollapsed()) {
+			setPacker(collapse_packer);
 		} else {
-			throw new NullPointerException();
+			setPacker(expand_packer);
 		}
+		setVisibility(!style.getShow());
+		setMaxExpandDepth(style.getMaxDepth());
+		setLabel(style.getHumanName());
 	}
 
 	public ITrackStyle getAnnotStyle() {
@@ -251,16 +247,6 @@ public class TierGlyph extends SolidGlyph {
 		return label;
 	}
 
-	private boolean shouldDrawLabel() {
-		if (!style.isGraphTier()) {
-			// graph tiers take care of drawing their own handles and labels.
-			if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	// overriding pack to ensure that tier is always the full width of the scene
 	@Override
 	public void pack(ViewI view) {
@@ -335,6 +321,12 @@ public class TierGlyph extends SolidGlyph {
 
 		super.draw(view);
 	}
+	
+	private boolean shouldDrawLabel() {
+		// graph tiers take care of drawing their own handles and labels.
+		return (!style.isGraphTier() && Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY)));
+	}
+
 
 	private void drawLabelLeft(ViewI view) {
 		if (getLabel() == null) {

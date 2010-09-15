@@ -161,27 +161,19 @@ public final class GenericFeature {
 
 		SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, requestSym, span.getBioSeq());
 		if (SeqUtils.hasSpan(optimized_sym)) {
-			addLoadedSymRequest(optimized_sym);	// later this will be done *after* the sym is loaded
 			return optimized_sym;
 		}
 		return null;
 	}
 
-	public void addLoadedSymRequest(SeqSymmetry optimized_sym) {
-		requestSym.addChild(optimized_sym);
-	}
-
-	public List<SeqSymmetry> filterOutExistingSymmetries(List<SeqSymmetry> syms, BioSeq seq) {
-		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
-		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
-		for (SeqSymmetry sym : syms) {
-			if (SeqUtils.intersection(sym, requestSym, dummySym, seq)) {
-				// There is an intersection with previous requests.  Ignore this symmetry
-				continue;
-			}
-			newSyms.add(sym);
-		}
-		return newSyms;
+	/**
+	 * This span is now considered loaded.
+	 * @param span
+	 */
+	public void addLoadedSpanRequest(SeqSpan span) {
+		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
+		query_sym.addSpan(span);
+		requestSym.addChild(query_sym);
 	}
 
 	public MutableSeqSymmetry getRequestSym(){

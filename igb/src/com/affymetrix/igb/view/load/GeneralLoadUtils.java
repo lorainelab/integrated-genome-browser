@@ -33,6 +33,7 @@ import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
 import com.affymetrix.igb.view.SeqMapView;
@@ -595,50 +596,56 @@ public final class GeneralLoadUtils {
 			return ((QuickLoad) feature.symL).loadFeatures(span, feature);
 		}
 
-		List<SeqSymmetry> optimized_syms = new ArrayList<SeqSymmetry>();
-		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
-		if (feature.loadStrategy == LoadStrategy.GENOME && feature.gVersion.gServer.serverType != ServerType.DAS2) {
+		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
+			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+			if (optimized_sym != null) {
+				return loadFeaturesForSym(feature, optimized_sym);
+			}
+		} else {
 			// At this point, we know all of the chromosomes in the file, so just iterate.
+			boolean result = true;
 			for (BioSeq seq : span.getBioSeq().getSeqGroup().getSeqList()) {
 				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
 					continue;	// don't load into Whole Genome
 				}
 				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax()-1, seq));
 				if (optimized_sym != null) {
-					optimized_syms.add(optimized_sym);
+					if (!loadFeaturesForSym(feature, optimized_sym)) {
+						result = false;	// don't short-circuit
+					}
 				}
 			}
-		} else {
-			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
-			if (optimized_sym != null) {
-				optimized_syms.add(optimized_sym);
-			}
-		}
-		if (optimized_syms.isEmpty()) {
-			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
-			return true;
-		}
-
-		for (SeqSymmetry sym : optimized_syms) {
-			List<SeqSpan> spans = new ArrayList<SeqSpan>();
-			convertSymToSpanList(sym, spans);
-			optimized_spans.addAll(spans);
+			return result;
 		}
 		
+		Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+				Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
+		return true;
+	}
+
+	private static boolean loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError {
+		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
+		List<SeqSpan> spans = new ArrayList<SeqSpan>();
+		convertSymToSpanList(optimized_sym, spans);
+		optimized_spans.addAll(spans);
 		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
+		boolean result = true;
 		switch (feature.gVersion.gServer.serverType) {
 			case DAS2:
-				return Das2.loadFeatures(span, feature);
+				for (SeqSpan optimized_span : optimized_spans) {
+					if (!Das2.loadFeatures(optimized_span, feature)) {
+						result = false; // don't short-circuit!
+					}
+				}
+				return result;
 			case DAS:
 				return Das.loadFeatures(optimized_spans, feature);
 			case QuickLoad:
 			case LocalFiles:
-				boolean result = true;
 				for (SeqSpan optimized_span : optimized_spans) {
 					if (!((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) {
-						result = false;	// don't short-circuit!
+						result = false; // don't short-circuit!
 					}
 				}
 				return result;

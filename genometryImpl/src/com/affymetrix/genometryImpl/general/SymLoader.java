@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -32,11 +33,13 @@ import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ParserController;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.io.InputStream;
 import com.affymetrix.genometryImpl.util.SortTabFile;
 import java.io.BufferedInputStream;
@@ -274,26 +277,46 @@ public abstract class SymLoader {
 	  return track2Results;
   }
 
-	public static void addAnnotations(
+	public static void filterAndAddAnnotations(
 			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri, GenericFeature feature) {
 		if (feats == null || feats.isEmpty()) {
 			return;
 		}
-		if (feats.get(0) instanceof GraphSym) {
+		SeqSymmetry originalRequestSym = feature.getRequestSym();
+		List<SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, feats, span.getBioSeq());
+		if (filteredFeats.isEmpty()) {
+			return;
+		}
+		if (filteredFeats.get(0) instanceof GraphSym) {
 			// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-			for(SeqSymmetry feat : feats) {
+			for(SeqSymmetry feat : filteredFeats) {
 				//grafs.add((GraphSym)feat);
 				if (feat instanceof GraphSym) {
 					GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), feature.featureName, span);
 				}
 			}
+
 			return;
 		}
 
 		BioSeq seq = span.getBioSeq();
-		for (SeqSymmetry feat : feats) {
+		for (SeqSymmetry feat : filteredFeats) {
 			seq.addAnnotation(feat);
 		}
+	}
+
+
+	private static List<SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
+		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
+		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
+		for (SeqSymmetry sym : syms) {
+			if (SeqUtils.intersection(sym, original_sym, dummySym, seq)) {
+				// There is an intersection with previous requests.  Ignore this symmetry
+				continue;
+			}
+			newSyms.add(sym);
+		}
+		return newSyms;
 	}
 
 	/**

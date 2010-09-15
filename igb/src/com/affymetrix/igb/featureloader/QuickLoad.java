@@ -226,10 +226,11 @@ public final class QuickLoad extends SymLoader {
 				if (entry.getValue().isEmpty()) {
 					continue;
 				}
-				SymLoader.addAnnotations(entry.getValue(), span, feature.getURI(), feature);
+				SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 				overallResults.addAll(entry.getValue());
 			}
 		}
+		feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
 		
 		if (!overallResults.isEmpty()) {
 			// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms

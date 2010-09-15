@@ -90,7 +90,7 @@ public class Das2 {
 	}
 
 
-    private static boolean loadSpan(GenericFeature feature, SeqSpan overlap_span, Das2Region region, Das2Type type) {
+    private static boolean loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
 		// Create an AnnotStyle so that we can automatically set the
 		// human-readable name to the DAS2 name, rather than the ID, which is a URI
 		ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getURI().toString(), type.getName());
@@ -100,7 +100,7 @@ public class Das2 {
 		ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
 		ts.setFeature(feature);
 
-        String overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
+        String overlap_filter = Das2FeatureSaxParser.getRangeString(span, false);
 
 		String format = FormatPriorities.getFormat(type);
 		if (format == null) {
@@ -114,7 +114,7 @@ public class Das2 {
         try {
             String query_part = DetermineQueryPart(region, overlap_filter, type.getURI(), format);
             String feature_query = request_root + "?" + query_part;
-			LoadFeaturesFromQuery(feature, overlap_span, feature_query, format, type.getURI(), type.getName());
+			LoadFeaturesFromQuery(feature, span, feature_query, format, type.getURI(), type.getName());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -140,7 +140,7 @@ public class Das2 {
 	}
 
     private static boolean LoadFeaturesFromQuery(
-            GenericFeature feature, SeqSpan overlap_span, String feature_query, String format, URI typeURI, String typeName) {
+            GenericFeature feature, SeqSpan span, String feature_query, String format, URI typeURI, String typeName) {
 
         /**
          *  Need to look at content-type of server response
@@ -150,9 +150,9 @@ public class Das2 {
         String content_subtype = null;
 
         try {
-			BioSeq aseq = overlap_span.getBioSeq();
+			BioSeq aseq = span.getBioSeq();
             // if overlap_span is entire length of sequence, then check for caching
-            if ((overlap_span.getMin() == 0) && (overlap_span.getMax() == aseq.getLength())) {
+            if ((span.getMin() == 0) && (span.getMax() == aseq.getLength())) {
                 istr = LocalUrlCacher.getInputStream(feature_query);
                 if (istr == null) {
                     System.out.println("Server couldn't be accessed with query " + feature_query);
@@ -193,9 +193,10 @@ public class Das2 {
 				}
             }
 
-            System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
+            Logger.getLogger(Das2.class.getName()).log(Level.INFO,
+					"Parsing {0} format for DAS2 feature response", content_subtype.toUpperCase());
 			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
-			List<? extends SeqSymmetry> feats = SymLoader.parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, overlap_span);
+			List<? extends SeqSymmetry> feats = SymLoader.parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, span);
 
 			/*
 			 TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.
@@ -206,8 +207,9 @@ public class Das2 {
 			}*/
 
 			if (feats != null) {
-				SymLoader.addAnnotations(feats, overlap_span, feature.getURI(), feature);
+				SymLoader.filterAndAddAnnotations(feats, span, feature.getURI(), feature);
 			}
+			feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
 
             return (feats != null);
         } catch (Exception ex) {

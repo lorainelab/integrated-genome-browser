@@ -68,13 +68,15 @@ public final class Das {
 
 				URI uri = builder.build();
 				
-				ITrackStyleExtended style;
+				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
+				style.setFeature(gFeature);
 
 				// TODO - probably not necessary
-				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
+				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
 				style.setFeature(gFeature);
 
 				Collection<DASSymmetry> dassyms = parseData(uri);
+				// Special case : When a feature make more than one Track, set feature for each track.
 				if(dassyms != null){
 					for(DASSymmetry sym : dassyms){
 						style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(sym.getType());

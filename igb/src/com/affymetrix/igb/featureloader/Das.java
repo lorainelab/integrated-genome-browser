@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
+import com.affymetrix.genometryImpl.parsers.das.DASSymmetry;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -65,15 +67,20 @@ public final class Das {
 				}
 
 				URI uri = builder.build();
-				// initialize styles
-				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
-				style.setFeature(gFeature);
+				
+				ITrackStyleExtended style;
 
 				// TODO - probably not necessary
-				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
+				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
 				style.setFeature(gFeature);
 
-				parseData(uri);
+				Collection<DASSymmetry> dassyms = parseData(uri);
+				if(dassyms != null){
+					for(DASSymmetry sym : dassyms){
+						style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(sym.getType());
+						style.setFeature(gFeature);
+					}
+				}
 				TrackView.updateDependentData();
 				return null;
 			}
@@ -96,7 +103,7 @@ public final class Das {
 	 *  Opens a binary data stream from the given uri and adds the resulting
 	 *  data.
 	 */
-	private static void parseData(URI uri) {
+	private static Collection<DASSymmetry> parseData(URI uri) {
 		Map<String, List<String>> respHeaders = new HashMap<String, List<String>>();
 		InputStream stream = null;
 		List<String> list;
@@ -121,7 +128,7 @@ public final class Das {
 
 			if (content_length == 0) { // Note: length == -1 means "length unknown"
 				Logger.getLogger(Das.class.getName()).log(Level.WARNING, "{0} returned no data.", uri);
-				return;
+				return null;
 			}
 
 			if (content_type.startsWith("text/plain")
@@ -136,7 +143,7 @@ public final class Das {
 				BufferedInputStream bis = null;
 				try {
 					bis = new BufferedInputStream(stream);
-					das_parser.parse(bis, group);
+					return das_parser.parse(bis, group);
 				} catch (XMLStreamException ex) {
 					Logger.getLogger(Das.class.getName()).log(Level.SEVERE, "Unable to parse DAS response", ex);
 				} finally {
@@ -150,5 +157,7 @@ public final class Das {
 		} finally {
 			GeneralUtils.safeClose(stream);
 		}
+
+		return null;
 	}
 }

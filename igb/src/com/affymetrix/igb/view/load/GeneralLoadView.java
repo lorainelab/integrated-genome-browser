@@ -43,6 +43,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.Persistence;
@@ -378,7 +379,7 @@ public final class GeneralLoadView extends JComponent
 				speciesCB.removeAllItems();
 				speciesCB.addItem(SELECT_SPECIES);
 				for (String speciesName : speciesList) {
-					speciesCBRenderer.setToolTipEntry(speciesName, GeneralLoadUtils.getSpeciesCommonName(speciesName));
+					speciesCBRenderer.setToolTipEntry(speciesName, SpeciesLookup.getCommonSpeciesName(speciesName));
 					speciesCB.addItem(speciesName);
 				}
 				if (oldSpecies == null) {

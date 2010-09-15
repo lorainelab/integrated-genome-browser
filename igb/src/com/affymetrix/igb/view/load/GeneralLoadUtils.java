@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
-import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -62,8 +61,6 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 public final class GeneralLoadUtils {
-	private static final boolean DEBUG = false;
-	private static final boolean DEBUG_VIRTUAL_GENOME = false;
 
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	/**
@@ -287,9 +284,7 @@ public final class GeneralLoadUtils {
 				speciesName = versionName2species.get(versionName);
 			} else {
 				// Unknown genome.  We'll add the name as if it's a species and a version.
-				if (DEBUG) {
-					System.out.println("Unknown quickload genome:" + genomeName);
-				}
+				Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.FINE, "Unknown quickload genome:{0}", genomeName);
 				versionName = genomeName;
 				speciesName = SpeciesLookup.getSpeciesName(genomeName);
 			}
@@ -342,9 +337,7 @@ public final class GeneralLoadUtils {
 			gVersionList.add(gVersion);
 		}
 		group.addVersion(gVersion);
-		if (DEBUG) {
-			System.out.println("Added " + gVersion.gServer.serverType + " genome: " + speciesName + " version: " + preferredVersionName);
-		}
+		Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.FINE, "Added {0} genome: {1} version: {2}", new Object[]{gVersion.gServer.serverType, speciesName, preferredVersionName});
 		return gVersion;
 	}
 
@@ -424,9 +417,6 @@ public final class GeneralLoadUtils {
 				gVersion.setInitialized();
 			}
 		}
-		if (DEBUG) {
-			System.out.println("Seq count: " + group.getSeqCount());
-		}
 		if (group.getSeqCount() == 0) {
 			loadChromInfo(group);
 		}
@@ -446,9 +436,6 @@ public final class GeneralLoadUtils {
 			if (gVersion.gServer.serverType != ServerType.DAS2) {
 				continue;
 			}
-			if (DEBUG) {
-					System.out.println("Discovering " + gVersion.gServer.serverType + " chromosomes");
-				}
 			// Discover chromosomes from DAS/2
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 
@@ -462,9 +449,6 @@ public final class GeneralLoadUtils {
 		for (GenericVersion gVersion : group.getEnabledVersions()) {
 			if (gVersion.gServer.serverType != ServerType.DAS) {
 				continue;
-			}
-			if (DEBUG) {
-				System.out.println("Discovering " + gVersion.gServer.serverType + " chromosomes");
 			}
 			// Discover chromosomes from DAS
 			DasSource version = (DasSource) gVersion.versionSourceObj;
@@ -482,9 +466,6 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		if (DEBUG) {
-			System.out.println("$$$$$ adding virtual genome seq to seq group");
-		}
 		int spacer = determineSpacer(group, chrom_count);
 		double seqBounds = determineSeqBounds(group, spacer, chrom_count);
 		if (seqBounds > Integer.MAX_VALUE) {
@@ -500,9 +481,7 @@ public final class GeneralLoadUtils {
 		} catch (IllegalStateException ex) {
 			// due to multithreading, it's possible that this sequence has been created by another thread while doing this test.
 			// we can safely return in this case.
-			if (DEBUG) {
-				System.out.println("Ignoring illegal state exception.");
-			}
+			Logger.getLogger(GeneralLoadUtils.class.getName()).fine("Ignoring multithreading illegal state exception.");
 			return;
 		}
 
@@ -545,9 +524,6 @@ public final class GeneralLoadUtils {
 			int clength = chrom_seq.getLength();
 			seq_bounds += clength + spacer;
 		}
-		if (DEBUG_VIRTUAL_GENOME) {
-			System.out.println("seq_bounds:" + seq_bounds);
-		}
 		return seq_bounds;
 	}
 
@@ -557,10 +533,6 @@ public final class GeneralLoadUtils {
 		double new_glength = glength + clength + spacer;
 
 		genome_seq.setBoundsDouble(genome_min, genome_min + new_glength);
-		
-		if (DEBUG_VIRTUAL_GENOME) {
-			System.out.println("added seq: " + chrom.getID() + ", new genome bounds: min = " + genome_seq.getMin() + ", max = " + genome_seq.getMax() + ", length = " + genome_seq.getLengthDouble());
-		}
 		
 		MutableSeqSymmetry mapping = (MutableSeqSymmetry) genome_seq.getComposition();
 		if (mapping == null) {
@@ -576,10 +548,7 @@ public final class GeneralLoadUtils {
 		// using doubles for coords, because may end up with coords > MAX_INT
 		child.addSpan(new MutableDoubleSeqSpan(glength + genome_min, glength + genome_min + clength, genome_seq));
 		child.addSpan(new MutableDoubleSeqSpan(0, clength, chrom));
-		if (DEBUG_VIRTUAL_GENOME) {
-			SeqUtils.printSpan(child.getSpan(0));
-			SeqUtils.printSpan(child.getSpan(1));
-		}
+
 		mapping.addChild(child);
 	}
 
@@ -708,9 +677,6 @@ public final class GeneralLoadUtils {
 	 */
 	static boolean loadResidues(String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
-		if (DEBUG) {
-			System.out.println("processing request to load residues for sequence: " + seq_name);
-		}
 
 		/*
 		 * This test does not work properly, so it's being commented out for now.
@@ -730,9 +696,6 @@ public final class GeneralLoadUtils {
 		versionsWithChrom.addAll(aseq.getSeqGroup().getEnabledVersions());
 
 		if ((min <= 0) && (max >= aseq.getLength())) {
-			if (DEBUG) {
-				System.out.println("loading all residues");
-			}
 			min = 0;
 			max = aseq.getLength();
 		}
@@ -766,56 +729,53 @@ public final class GeneralLoadUtils {
 		synonymBuilder.append("</html>");
 		return synonymBuilder.toString();
 	}
-
-	static String getSpeciesCommonName(String speciesName) {
-		return SpeciesLookup.getCommonSpeciesName(speciesName);
-	}
 	
 	/**
 	 * Method to load server directory mapping.
 	 */
 	public static void loadServerMapping() {
+		GenericServer primaryServer = ServerList.getPrimaryServer();
+		if (primaryServer == null) {
+			return;
+		}
 		InputStream istr = null;
 		InputStreamReader ireader = null;
 		BufferedReader br = null;
-		GenericServer primaryServer = ServerList.getPrimaryServer();
 
-		if (primaryServer != null) {
+		try {
 			try {
-				try {
-					istr = LocalUrlCacher.getInputStream(primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
-				} catch (Exception e) {
-					Logger.getLogger(GeneralLoadUtils.class.getName()).severe(
-							"Couldn't open '" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING + "\n:  " + e.toString());
-					istr = null; // dealt with below
-				}
-				if (istr == null) {
-					Logger.getLogger(GeneralLoadUtils.class.getName()).info(
-							"Could not load server mapping contents from\n" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
-					return;
-				}
-				ireader = new InputStreamReader(istr);
-				br = new BufferedReader(ireader);
-				String line;
-				while ((line = br.readLine()) != null) {
-					if ((line.length() == 0) || line.startsWith("#")) {
-						continue;
-					}
-
-					String[] fields = tab_regex.split(line);
-					if(fields.length >= 2){
-						String serverURL = fields[0];
-						String dirURL = primaryServer.URL + fields[1];
-						servermapping.put(serverURL, dirURL);
-					}
-				}
-			} catch (Exception ex) {
-				ErrorHandler.errorPanel("ERROR", "Error loading server mapping", ex);
-			} finally {
-				GeneralUtils.safeClose(istr);
-				GeneralUtils.safeClose(ireader);
-				GeneralUtils.safeClose(br);
+				istr = LocalUrlCacher.getInputStream(primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
+			} catch (Exception e) {
+				Logger.getLogger(GeneralLoadUtils.class.getName()).severe(
+						"Couldn't open '" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING + "\n:  " + e.toString());
+				istr = null; // dealt with below
 			}
+			if (istr == null) {
+				Logger.getLogger(GeneralLoadUtils.class.getName()).info(
+						"Could not load server mapping contents from\n" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
+				return;
+			}
+			ireader = new InputStreamReader(istr);
+			br = new BufferedReader(ireader);
+			String line;
+			while ((line = br.readLine()) != null) {
+				if ((line.length() == 0) || line.startsWith("#")) {
+					continue;
+				}
+
+				String[] fields = tab_regex.split(line);
+				if (fields.length >= 2) {
+					String serverURL = fields[0];
+					String dirURL = primaryServer.URL + fields[1];
+					servermapping.put(serverURL, dirURL);
+				}
+			}
+		} catch (Exception ex) {
+			ErrorHandler.errorPanel("ERROR", "Error loading server mapping", ex);
+		} finally {
+			GeneralUtils.safeClose(istr);
+			GeneralUtils.safeClose(ireader);
+			GeneralUtils.safeClose(br);
 		}
 	}
 
@@ -825,10 +785,9 @@ public final class GeneralLoadUtils {
 	 * @return	Returns a directory if exists else null.
 	 */
 	public static URL getServerDirectory(String url){
-		GenericServer primaryServer = ServerList.getPrimaryServer();
-
-		if(primaryServer == null)
+		if(ServerList.getPrimaryServer() == null) {
 			return null;
+		}
 		
 		for(Entry<String, String> primary : servermapping.entrySet()){
 			if(url.equals(primary.getKey())){

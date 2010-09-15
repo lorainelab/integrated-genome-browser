@@ -771,9 +771,9 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 					}
 
 					if (printcount < 1 && tcluster.getChildCount() > 1) {
-						SeqUtils.printSymmetry(tcluster, "   ", true);   // print symmetry with props
+						SeqUtils.printSymmetry(tcluster);
 						System.out.println("###########################");
-						SeqUtils.printSymmetry(new_tcluster, "   ", true);
+						SeqUtils.printSymmetry(new_tcluster);
 						printcount++;
 					}
 				}  // end transcript_cluster loop

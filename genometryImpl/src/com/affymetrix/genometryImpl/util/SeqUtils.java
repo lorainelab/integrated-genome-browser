@@ -24,14 +24,6 @@ import java.util.*;
  *
  */
 public abstract class SeqUtils {
-
-	/** Controls the format used for printing spans in {@link #spanToString(SeqSpan)}. */
-	private static final boolean USE_SHORT_FORMAT_FOR_SPANS= true;
-
-
-	// This DecimalFormat is used to insert commas between every three characters.
-	private static final java.text.DecimalFormat span_format = new java.text.DecimalFormat("#,###.###");
-
 	/**
 	 * Get depth of the symmetry. (Longest number of recursive calls to getChild()
 	 *  required to reach deepest descendant)
@@ -48,8 +40,7 @@ public abstract class SeqUtils {
 		// descend down into children to find max depth
 		int next_depth = current_depth + 1;
 		for (int i=child_count-1; i>=0; i--) {
-			SeqSymmetry child = sym.getChild(i);
-			int current_child_depth = getDepth(child, next_depth);
+			int current_child_depth = getDepth(sym.getChild(i), next_depth);
 			max_child_depth = Math.max(max_child_depth, current_child_depth);
 		}
 		return max_child_depth;
@@ -70,7 +61,12 @@ public abstract class SeqUtils {
 	}
 
 
-
+	/**
+	 * Get spans that are contained as leaves in the symmetry (on the BioSeq).
+	 * @param sym
+	 * @param seq
+	 * @return
+	 */
 	public static List<SeqSpan> getLeafSpans(SeqSymmetry sym, BioSeq seq) {
 		List<SeqSpan> leafSpans = new ArrayList<SeqSpan>();
 		collectLeafSpans(sym, seq, leafSpans);
@@ -107,12 +103,22 @@ public abstract class SeqUtils {
 		}
 	}
 
+	/**
+	 * Get symmetries that are leaves of the given symmetry.
+	 * @param sym
+	 * @return leaves.
+	 */
 	public static List<SeqSymmetry> getLeafSyms(SeqSymmetry sym) {
 		List<SeqSymmetry> leafSyms = new ArrayList<SeqSymmetry>();
 		collectLeafSyms(sym, leafSyms);
 		return leafSyms;
 	}
 
+	/**
+	 * Get symmetries that are leaves of the given symmetry.
+	 * @param sym
+	 * @param leafs
+	 */
 	private static void collectLeafSyms(SeqSymmetry sym, Collection<SeqSymmetry> leafs) {
 		int childCount = sym.getChildCount();
 		if (childCount == 0) {
@@ -122,26 +128,6 @@ public abstract class SeqUtils {
 			for (int i=0; i<childCount; i++) {
 				collectLeafSyms(sym.getChild(i), leafs);
 			}
-		}
-	}
-
-
-	private static void addInvertChildren(List<SeqSpan> mergedSpans, BioSeq seq, MutableSeqSymmetry invertedSym, int spanCount) {
-		SeqSpan firstSpan = mergedSpans.get(0);
-		if (firstSpan.getMin() > 0) {
-			SeqSymmetry beforeSym = new MutableSingletonSeqSymmetry(0, firstSpan.getMin(), seq);
-			invertedSym.addChild(beforeSym);
-		}
-		for (int i = 0; i < spanCount - 1; i++) {
-			SeqSpan preSpan = mergedSpans.get(i);
-			SeqSpan postSpan = mergedSpans.get(i + 1);
-			SeqSymmetry gapSym = new MutableSingletonSeqSymmetry(preSpan.getMax(), postSpan.getMin(), seq);
-			invertedSym.addChild(gapSym);
-		}
-		SeqSpan lastSpan = mergedSpans.get(spanCount - 1);
-		if (lastSpan.getMax() < seq.getLength()) {
-			SeqSymmetry afterSym = new MutableSingletonSeqSymmetry(lastSpan.getMax(), seq.getLength(), seq);
-			invertedSym.addChild(afterSym);
 		}
 	}
 
@@ -195,6 +181,25 @@ public abstract class SeqUtils {
 		return invertedSym;
 	}
 
+
+	private static void addInvertChildren(List<SeqSpan> mergedSpans, BioSeq seq, MutableSeqSymmetry invertedSym, int spanCount) {
+		SeqSpan firstSpan = mergedSpans.get(0);
+		if (firstSpan.getMin() > 0) {
+			SeqSymmetry beforeSym = new MutableSingletonSeqSymmetry(0, firstSpan.getMin(), seq);
+			invertedSym.addChild(beforeSym);
+		}
+		for (int i = 0; i < spanCount - 1; i++) {
+			SeqSpan preSpan = mergedSpans.get(i);
+			SeqSpan postSpan = mergedSpans.get(i + 1);
+			SeqSymmetry gapSym = new MutableSingletonSeqSymmetry(preSpan.getMax(), postSpan.getMin(), seq);
+			invertedSym.addChild(gapSym);
+		}
+		SeqSpan lastSpan = mergedSpans.get(spanCount - 1);
+		if (lastSpan.getMax() < seq.getLength()) {
+			SeqSymmetry afterSym = new MutableSingletonSeqSymmetry(lastSpan.getMax(), seq.getLength(), seq);
+			invertedSym.addChild(afterSym);
+		}
+	}
 
 
 	/**
@@ -627,8 +632,8 @@ public abstract class SeqUtils {
 	}
 
 
-// breaking out STEP 2
-	protected static void addParentSpans(MutableSeqSymmetry resultSym, SeqSymmetry mapSym) {
+	// breaking out STEP 2
+	private static void addParentSpans(MutableSeqSymmetry resultSym, SeqSymmetry mapSym) {
 		int resultChildCount = resultSym.getChildCount();
 		// possibly want to add another branch here if resultSym has only one child --
 		//      could "collapse up" by moving any spans in child that aren't in
@@ -777,17 +782,11 @@ public static boolean looseOverlap(SeqSpan spanA, SeqSpan spanB) {
 	// should (overlap() should also check to make sure they are the same seq?)
 	double AMin = spanA.getMinDouble();
 	double BMin = spanB.getMinDouble();
-	if (AMin >= BMin) {
-		return AMin <= spanB.getMaxDouble();
-	}
-	return BMin <= spanA.getMaxDouble();
+	return (AMin >= BMin) ? (AMin <= spanB.getMaxDouble()) : (BMin <= spanA.getMaxDouble());
 }
 
 private static boolean looseOverlap(double AMin, double AMax, double BMin, double BMax) {
-	if (AMin >= BMin) {
-		return AMin <= BMax;
-	}
-	return BMin <= AMax;
+	return (AMin >= BMin) ? (AMin <= BMax) : (BMin <= AMax);
 }
 
 /**
@@ -797,17 +796,11 @@ private static boolean looseOverlap(double AMin, double AMax, double BMin, doubl
 private static boolean strictOverlap(SeqSpan spanA, SeqSpan spanB) {
 	double AMin = spanA.getMinDouble();
 	double BMin = spanB.getMinDouble();
-	if (AMin >= BMin) {
-		return AMin < spanB.getMaxDouble();
-	}
-	return BMin < spanA.getMaxDouble();
+	return (AMin >= BMin) ? (AMin < spanB.getMaxDouble()) : (BMin < spanA.getMaxDouble());
 }
 
 private static boolean strictOverlap(double AMin, double AMax, double BMin, double BMax) {
-	if (AMin >= BMin) {
-		return AMin < BMax;
-	}
-	return BMin < AMax;
+	return (AMin >= BMin) ? (AMin < BMax) : (BMin < AMax);
 }
 
 /**
@@ -1198,6 +1191,11 @@ public static boolean areResiduesComplete(String residues) {
 	}
 
 
+	/**
+	 * Determine if there any spans in this symmetry
+	 * @param sym - non-null symmetry
+	 * @return true if there are spans in this symmetry
+	 */
 	public static boolean hasSpan(SeqSymmetry sym) {
 		if (sym.getSpanCount() > 0) {
 			return true;
@@ -1211,75 +1209,65 @@ public static boolean areResiduesComplete(String residues) {
 		return false;
 	}
 
-public static void printSpan(SeqSpan span) {
-	System.out.println(spanToString(span));
-}
+	public static void printSymmetry(SeqSymmetry sym) {
+		printSymmetry("", sym, "  ");
+	}
 
-public static void printSymmetry(SeqSymmetry sym) {
-	printSymmetry("", sym, "  ", false);
-}
+	public static void printSymmetry(SeqSymmetry sym, String spacer) {
+		printSymmetry("", sym, spacer);
+	}
 
-public static void printSymmetry(SeqSymmetry sym, String spacer, boolean print_props) {
-	printSymmetry("", sym, spacer, print_props);
-}
-
-// not public.  Used for recursion
-private static void printSymmetry(String indent, SeqSymmetry sym, String spacer, boolean print_props) {
-	System.out.println(indent + symToString(sym));
-	if (print_props && sym instanceof SymWithProps) {
-		SymWithProps pp = (SymWithProps) sym;
-		Map<String,Object> props = pp.getProperties();
-		if (props != null) {
-			for (Map.Entry<String,Object> entry : props.entrySet()) {
-				String key = entry.getKey();
-				Object value = entry.getValue();
-				System.out.println(indent + spacer + key + " --> " + value);
+	// not public.  Used for recursion
+	private static void printSymmetry(String indent, SeqSymmetry sym, String spacer) {
+		System.out.println(indent + symToString(sym));
+		if (sym instanceof SymWithProps) {
+			SymWithProps pp = (SymWithProps) sym;
+			Map<String, Object> props = pp.getProperties();
+			if (props != null) {
+				for (Map.Entry<String, Object> entry : props.entrySet()) {
+					String key = entry.getKey();
+					Object value = entry.getValue();
+					System.out.println(indent + spacer + key + " --> " + value);
+				}
+			} else {
+				System.out.println(indent + spacer + " no properties");
 			}
 		}
-		else { System.out.println(indent + spacer + " no properties"); }
+		for (int i = 0; i < sym.getSpanCount(); i++) {
+			SeqSpan span = sym.getSpan(i);
+			System.out.println(indent + spacer + spanToString(span));
+		}
+		for (int j = 0; j < sym.getChildCount(); j++) {
+			SeqSymmetry child_sym = sym.getChild(j);
+			printSymmetry(indent + spacer, child_sym, spacer);
+		}
 	}
-	for (int i=0; i<sym.getSpanCount(); i++) {
-		SeqSpan span = sym.getSpan(i);
-		System.out.println(indent + spacer  + spanToString(span));
-	}
-	for (int j=0; j<sym.getChildCount(); j++) {
-		SeqSymmetry child_sym = sym.getChild(j);
-		printSymmetry(indent + spacer, child_sym, spacer, print_props);
-	}
-}
 
 
-/** Provides a string representation of a SeqSpan.
- *  @see #USE_SHORT_FORMAT_FOR_SPANS
- */
+	/** Provides a string representation of a SeqSpan.
+	 */
 	public static String spanToString(SeqSpan span) {
 		if (span == null) {
 			return "Span: null";
 		}
-		if (USE_SHORT_FORMAT_FOR_SPANS) {
-			BioSeq seq = span.getBioSeq();
-			return ((seq == null ? "nullseq" : seq.getID()) + ": ["
-					+ span_format.format(span.getMin()) + " - " + span_format.format(span.getMax())
-					+ "] ("
-					+ (span.isForward() ? "+" : "-") + span_format.format(span.getLength()) + ")");
+		BioSeq seq = span.getBioSeq();
+
+		// This DecimalFormat is used to insert commas between every three characters.
+		java.text.DecimalFormat span_format = new java.text.DecimalFormat("#,###.###");
+
+		return ((seq == null ? "nullseq" : seq.getID()) + ": ["
+				+ span_format.format(span.getMin()) + " - " + span_format.format(span.getMax())
+				+ "] ("
+				+ (span.isForward() ? "+" : "-") + span_format.format(span.getLength()) + ")");
+	}
+
+	/** Provides a string representation of a SeqSpan.
+	 */
+	public static String symToString(SeqSymmetry sym) {
+		if (sym == null) {
+			return "SeqSymmetry == null";
 		}
-		return ("Span: "
-				+ "min = " + span_format.format(span.getMin())
-				+ ", max = " + span_format.format(span.getMax())
-				+ ", length = " + span_format.format(span.getLength())
-				+ ", forward = " + span.isForward()
-				+ ", seq = " + span.getBioSeq().getID() + " " + span.getBioSeq());
+		return "sym.getID() is not implemented.";
 	}
-
-/** Provides a string representation of a SeqSpan.
- */
-public static String symToString(SeqSymmetry sym) {
-	if (sym == null) {
-		return "SeqSymmetry == null";
-	}
-
-	return "sym.getID() is not implemented.";
-
-}
 
 }

@@ -36,5 +36,8 @@ public enum GraphType {
 		return GraphType.LINE_GRAPH;
 	}
 
-
+	@Override
+	public String toString(){
+		return humanReadable;
+	}
 }

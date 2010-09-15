@@ -14,7 +14,6 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
@@ -202,7 +201,7 @@ public class TrackView {
 			if (annotSym instanceof SymWithProps) {
 				addAnnotationGlyphs(smv, (SymWithProps)annotSym);
 				// TODO: reimplement middleground shading in a generic fashion
-				//doMiddlegroundShading((SymWithProps)annotSym, seq);
+				doMiddlegroundShading((SymWithProps)annotSym, seq);
 			}
 		}
 	}
@@ -239,13 +238,11 @@ public class TrackView {
 					SeqSpan ospan = child.getSpan(j);
 					if (forwardTrack != null) {
 						GlyphI mglyph = new FillRectGlyph();
-						mglyph.setBackgroundColor(Color.lightGray);
 						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
 						forwardTrack.addMiddleGlyph(mglyph);
 					}
 					if (reverseTrack != null) {
 						GlyphI mglyph = new FillRectGlyph();
-						mglyph.setBackgroundColor(Color.lightGray);
 						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
 						reverseTrack.addMiddleGlyph(mglyph);
 					}

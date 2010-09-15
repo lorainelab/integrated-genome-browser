@@ -163,10 +163,6 @@ public final class UnibrowControlServlet {
 			return; /* user cancelled the change of genome, or something like that */
 		}
 	
-		if (has_graph_source_urls) {
-			BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
-		}
-
 		if(loaddata){
 			loadData(gServers, query_urls, start, end);
 		}
@@ -175,6 +171,15 @@ public final class UnibrowControlServlet {
 			loadOldBookmarks(uni, gServers2, das2_query_urls, start, end);
 		}
 
+		if (has_graph_source_urls) {
+			try {
+				Thread.sleep(query_urls.length * 1000);
+			} catch (InterruptedException ex) {
+				Logger.getLogger(UnibrowControlServlet.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			BookmarkController.applyGraphProperties(uni.getMapView(), parameters);
+		}
+		
 		//loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
 		//String[] data_urls = parameters.get(Bookmark.DATA_URL);
 		//String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);

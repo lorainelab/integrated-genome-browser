@@ -1,8 +1,5 @@
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -21,37 +18,15 @@ final public class Bookmarks {
     
     private final List<SymBookmark> syms = new ArrayList<SymBookmark>();
 
-	public boolean add(GenericFeature feature){
+	public boolean add(GenericFeature feature, boolean isGraph){
 		if(feature == null)
 			return false;
 
-		addToSyms(feature, false);
+		addToSyms(feature, isGraph);
 
 		return true;
 	}
 	
-    /**
-     * adds one id
-     *
-	 * this is a very complicated way to go from a graph to its server
-	 * I am sure a simpler way exists, but I could not find it.
-	 *
-     * @param id the id of the graph
-     */
-    void addGraph(GraphSym graph){
-		BioSeq seq = graph.getGraphSeq();
-	    AnnotatedSeqGroup as = seq.getSeqGroup();
-		String gid = graph.getID();
-		for(GenericVersion version : as.getEnabledVersions()){
-			for( GenericFeature feature : version.getFeatures()){
-				if(gid.endsWith(feature.featureName)){
-					addToSyms(feature, true);
-					break;
-				}
-			}
-		}
-    }
-
 	private void addToSyms(GenericFeature feature, boolean isGraph){
 		GenericVersion version = feature.gVersion;
 		syms.add(new SymBookmark(version.gServer.URL, feature.getURI().toString(), isGraph));
@@ -98,8 +73,10 @@ final public class Bookmarks {
 		List<String> servers = new ArrayList<String>();
 
         for(SymBookmark bookmark : this.syms){
-			servers.add(bookmark.getServer());
-			queries.add(bookmark.getPath());
+			if(!bookmark.isGraph()){
+				servers.add(bookmark.getServer());
+				queries.add(bookmark.getPath());
+			}
         }
 		
 		mark_sym.setProperty(Bookmark.QUERY_URL, queries.toArray(new String[queries.size()]));

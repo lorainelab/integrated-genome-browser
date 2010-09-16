@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import java.awt.Color;
-import java.util.List;
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -31,14 +30,10 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
-import java.awt.geom.Rectangle2D;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -288,8 +283,9 @@ public abstract class BookmarkController {
 		}
   }
 
-  public static void addGraphProperties(SymWithProps mark_sym, List<GlyphI> graphs, Bookmarks bookmark) {
-    int max = graphs.size();
+  public static void addGraphProperties(SymWithProps mark_sym) {
+	BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+
     Map<ITrackStyle,Integer> combo_styles = new HashMap<ITrackStyle,Integer>();
 
     // Holds a list of labels of graphs for which no url could be found.
@@ -299,29 +295,25 @@ public abstract class BookmarkController {
     // that are actually book-markable (thus i <= j)
     int i = -1;
 
-   for (int j = 0; j < max; j++) {
+   for (int j = 0; j < seq.getAnnotationCount(); j++) {
 
-		  GlyphI graph_object = graphs.get(j);
-		  if (!(graph_object instanceof GraphGlyph)) {
-			  System.out.println("Cannot bookmark graphs that do not implement GraphGlyph.");
+		  SeqSymmetry sym = seq.getAnnotation(j);
+
+		  if(!(sym instanceof GraphSym))
 			  continue;
-		  }
-		  GraphGlyph gr = (GraphGlyph) graph_object;
-		  GraphSym graph = (GraphSym) gr.getInfo();
+
+		  i++;
+		  
+		  GraphSym graph = (GraphSym) sym;
 		  GraphState gstate = graph.getGraphState();
 		  ITrackStyleExtended style = (ITrackStyleExtended) gstate.getTierStyle();
 		  GenericFeature feature = style.getFeature();
 
-		  if (!bookmark.add(feature, true)) {
-			  String label = gr.getLabel();
-			  if (label != null && label.length() > 0) {
-				  unfound_labels.add(gr.getLabel());
-			  }
+		  if(feature == null){
+			  unfound_labels.add(sym.getID());
 			  continue;
 		  }
-
-		  i++;
-
+		  
 		  mark_sym.setProperty(GRAPH.SOURCE_URL.toString() + i, feature.getURI());
 		  mark_sym.setProperty(GRAPH.YPOS.toString() + i, Integer.toString((int) style.getY()));
 		  mark_sym.setProperty(GRAPH.YHEIGHT.toString() + i, Integer.toString((int) style.getHeight()));
@@ -358,13 +350,8 @@ public abstract class BookmarkController {
 			  mark_sym.setProperty(GRAPH.COMBO.toString() + i, combo_style_num.toString());
 		  }
 
-
-		  // if graphs are in tiers, need to deal with tier ordering in here somewhere!
-		  // (the graph_ypos variable can be used for this)
-
 	  }
 
-	  // bookmark.set(mark_sym);
 	  // TODO: Now save the colors and such of the combo graphs!
 
 	  if (!unfound_labels.isEmpty()) {

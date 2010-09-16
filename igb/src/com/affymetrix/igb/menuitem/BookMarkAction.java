@@ -32,7 +32,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.BookmarkManagerView;
@@ -408,8 +407,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		BookmarkController.addSymmetries(bookmark);
 		
 		if (include_graphs) {
-			List<GlyphI> graphs = gviewer.collectGraphs();
-			BookmarkController.addGraphProperties(mark_sym, graphs, bookmark);
+			BookmarkController.addGraphProperties(mark_sym);
 		}
 
 		if(bookmark.getSyms().isEmpty()){

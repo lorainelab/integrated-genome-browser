@@ -338,7 +338,6 @@ public final class GeneralLoadUtils {
 			gVersionList.add(gVersion);
 		}
 		group.addVersion(gVersion);
-		Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.FINE, "Added {0} genome: {1} version: {2}", new Object[]{gVersion.gServer.serverType, speciesName, preferredVersionName});
 		return gVersion;
 	}
 
@@ -694,9 +693,6 @@ public final class GeneralLoadUtils {
 			}
 			return false;
 		}*/
-
-		// TODO: Synonyms will be an issue soon!
-		// We'll need to know what the appropriate synonym is, for the given server.
 
 		// Determine list of servers that might have this chromosome sequence.
 		Set<GenericVersion> versionsWithChrom = new HashSet<GenericVersion>();

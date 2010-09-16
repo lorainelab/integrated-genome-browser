@@ -38,19 +38,13 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
-import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 
 /**
  *  Allows creation of bookmarks based on a SeqSymmetry, and viewing of
@@ -328,36 +322,33 @@ public abstract class BookmarkController {
 
 		  i++;
 
-		  Rectangle2D.Double gbox = gr.getCoordBox();
-		  boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gr);
-
 		  mark_sym.setProperty(GRAPH.SOURCE_URL.toString() + i, feature.getURI());
-		  mark_sym.setProperty(GRAPH.YPOS.toString() + i, Integer.toString((int) gbox.y));
-		  mark_sym.setProperty(GRAPH.YHEIGHT.toString() + i, Integer.toString((int) gbox.height));
-		  mark_sym.setProperty(GRAPH.COL.toString() + i, sixDigitHex(gr.getGraphState().getTierStyle().getColor()));
-		  mark_sym.setProperty(GRAPH.BG.toString() + i, sixDigitHex(gr.getGraphState().getTierStyle().getBackground()));
-		  if (is_floating) {
+		  mark_sym.setProperty(GRAPH.YPOS.toString() + i, Integer.toString((int) style.getY()));
+		  mark_sym.setProperty(GRAPH.YHEIGHT.toString() + i, Integer.toString((int) style.getHeight()));
+		  mark_sym.setProperty(GRAPH.COL.toString() + i, sixDigitHex(gstate.getTierStyle().getColor()));
+		  mark_sym.setProperty(GRAPH.BG.toString() + i, sixDigitHex(gstate.getTierStyle().getBackground()));
+		  if (gstate.getFloatGraph()) {
 			  mark_sym.setProperty(GRAPH.FLOAT.toString() + i, "true");
 		  } else {
 			  mark_sym.setProperty(GRAPH.FLOAT.toString() + i, "false");
 		  }
 
 		  mark_sym.setProperty(GRAPH.NAME.toString() + i, graph.getGraphName());
-		  mark_sym.setProperty(GRAPH.SHOW_LABEL.toString() + i, (gr.getShowLabel() ? "true" : "false"));
-		  mark_sym.setProperty(GRAPH.SHOW_AXIS.toString() + i, (gr.getShowAxis() ? "true" : "false"));
-		  mark_sym.setProperty(GRAPH.MINVIS.toString() + i, Double.toString(gr.getVisibleMinY()));
-		  mark_sym.setProperty(GRAPH.MAXVIS.toString() + i, Double.toString(gr.getVisibleMaxY()));
-		  mark_sym.setProperty(GRAPH.SCORE_THRESH.toString() + i, Double.toString(gr.getMinScoreThreshold()));
-		  mark_sym.setProperty(GRAPH.MAXGAP_THRESH.toString() + i, Integer.toString((int) gr.getMaxGapThreshold()));
-		  mark_sym.setProperty(GRAPH.MINRUN_THRESH.toString() + i, Integer.toString((int) gr.getMinRunThreshold()));
-		  mark_sym.setProperty(GRAPH.SHOW_THRESH.toString() + i, (gr.getShowThreshold() ? "true" : "false"));
-		  mark_sym.setProperty(GRAPH.STYLE.toString() + i, gr.getGraphStyle().toString());
-		  mark_sym.setProperty(GRAPH.THRESH_DIRECTION.toString() + i, Integer.toString(gr.getThresholdDirection()));
-		  if (gr.getGraphStyle() == GraphType.HEAT_MAP && gr.getGraphState().getHeatMap() != null) {
-			  mark_sym.setProperty(GRAPH.HEATMAP.toString() + i, gr.getGraphState().getHeatMap().getName());
+		  mark_sym.setProperty(GRAPH.SHOW_LABEL.toString() + i, (gstate.getShowLabel() ? "true" : "false"));
+		  mark_sym.setProperty(GRAPH.SHOW_AXIS.toString() + i, (gstate.getShowAxis() ? "true" : "false"));
+		  mark_sym.setProperty(GRAPH.MINVIS.toString() + i, Double.toString(gstate.getVisibleMinY()));
+		  mark_sym.setProperty(GRAPH.MAXVIS.toString() + i, Double.toString(gstate.getVisibleMaxY()));
+		  mark_sym.setProperty(GRAPH.SCORE_THRESH.toString() + i, Double.toString(gstate.getMinScoreThreshold()));
+		  mark_sym.setProperty(GRAPH.MAXGAP_THRESH.toString() + i, Integer.toString(gstate.getMaxGapThreshold()));
+		  mark_sym.setProperty(GRAPH.MINRUN_THRESH.toString() + i, Integer.toString(gstate.getMinRunThreshold()));
+		  mark_sym.setProperty(GRAPH.SHOW_THRESH.toString() + i, (gstate.getShowThreshold() ? "true" : "false"));
+		  mark_sym.setProperty(GRAPH.STYLE.toString() + i, gstate.getGraphStyle().toString());
+		  mark_sym.setProperty(GRAPH.THRESH_DIRECTION.toString() + i, Integer.toString(gstate.getThresholdDirection()));
+		  if (gstate.getGraphStyle() == GraphType.HEAT_MAP && gstate.getHeatMap() != null) {
+			  mark_sym.setProperty(GRAPH.HEATMAP.toString() + i, gstate.getHeatMap().getName());
 		  }
 
-		  ITrackStyle combo_style = gr.getGraphState().getComboStyle();
+		  ITrackStyle combo_style = gstate.getComboStyle();
 		  if (combo_style != null) {
 			  Integer combo_style_num = combo_styles.get(combo_style);
 			  if (combo_style_num == null) {

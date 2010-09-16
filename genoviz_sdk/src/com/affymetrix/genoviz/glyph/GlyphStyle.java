@@ -13,7 +13,8 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 
 /**
  * A Glyph Style is associated with each glyph,
@@ -30,9 +31,9 @@ import java.awt.*;
  */
 public class GlyphStyle {
 
-	private Color background_color = null;
-	private  Color foreground_color = null;
-	private Font fnt = null;
+	private final Color background_color;
+	private final Color foreground_color;
+	private final Font fnt;
 
 	public GlyphStyle( Color fg, Color gb, Font fnt ) {
 		this.background_color = gb;
@@ -54,6 +55,7 @@ public class GlyphStyle {
 		return this.fnt;
 	}
 
+	@Override
 	public boolean equals( Object obj ) {
 		if( obj instanceof GlyphStyle ) {
 			return equals( (GlyphStyle) obj );
@@ -71,6 +73,7 @@ public class GlyphStyle {
 				this.getBackgroundColor().equals( theStyle.getBackgroundColor() ) );
 	}
 
+	@Override
 	public int hashCode() {
 		return getForegroundColor().hashCode() + getBackgroundColor().hashCode() + getFont().hashCode();
 	}

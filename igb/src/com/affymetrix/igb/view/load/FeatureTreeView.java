@@ -46,6 +46,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 /**
@@ -177,11 +178,53 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 			public void run() {
 				tree.setModel(tmodel);
+
+				if(tree.getRowCount() > 0){
+					for(int i=0; i<tree.getRowCount(); i++)
+						expand(tree, tree.getPathForRow(i));
+				}
+				
 				tree_scroller.invalidate();
 			}
 		});
 	}
 
+	private void expand(JTree tree, TreePath path) {
+		if(path == null)
+			return;
+		
+        TreeNode node = (TreeNode)path.getLastPathComponent();
+
+        if (node.getChildCount() > 0) {
+            Enumeration e = node.children();
+            while(e.hasMoreElements()) {
+                TreeNode n = (TreeNode)e.nextElement();
+                expand(tree, path.pathByAddingChild(n));
+            }
+        }
+
+		if(node == null || !(node instanceof DefaultMutableTreeNode))
+			return;
+
+		Object obj = ((DefaultMutableTreeNode)node).getUserObject();
+
+		if(obj == null || !(obj instanceof TreeNodeUserInfo))
+			return;
+
+		if(!((TreeNodeUserInfo)obj).checked)
+			return;
+		
+        expand(path);
+    }
+
+	private void expand(TreePath path){
+		TreePath parentPath = path.getParentPath();
+
+		if(parentPath != null)
+			expand(parentPath);
+
+		tree.expandPath(path);
+	}
 	/**
 	 * Convert list of features into a tree.
 	 * If a feature name has a slash (e.g. "a/b/c"), then it is to be represented as a series of nodes.

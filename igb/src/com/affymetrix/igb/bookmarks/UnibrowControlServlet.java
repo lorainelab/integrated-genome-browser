@@ -416,6 +416,7 @@ public final class UnibrowControlServlet {
 			gFeatures[i] = loadData(gServers[i], query_urls[i], start, end);
 		}
 		
+		GeneralLoadView.getLoadView().refreshTreeView();
 		GeneralLoadView.getLoadView().createFeaturesTable();
 
 		return gFeatures;

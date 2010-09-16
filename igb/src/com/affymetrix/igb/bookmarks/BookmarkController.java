@@ -79,19 +79,7 @@ public abstract class BookmarkController {
     }
   }
 
-  public static void applyGraphProperties(final SeqMapView gviewer, final Map props) {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        try {
-          setGraphProperties(gviewer, props);
-        } catch (Exception e) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error while loading graphs", e);
-        }
-      }
-    });
-  }
-
-  private static void setGraphProperties(SeqMapView gviewer, Map map) {
+  public static void applyGraphProperties(final BioSeq seq, final Map map, final GenericFeature gFeature) {
     double default_ypos = 30;
     double default_yheight = 60;
     Color default_col = Color.lightGray;
@@ -107,19 +95,12 @@ public abstract class BookmarkController {
     int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
     Map<String,ITrackStyle> combos = new HashMap<String,ITrackStyle>();
 
-    List<GlyphI> loaded_graphs = Collections.<GlyphI>emptyList();
-    if (gviewer != null) {
-      loaded_graphs = gviewer.collectGraphs();
-    }
-    List<String> loaded_graph_paths = new ArrayList<String>(loaded_graphs.size());
-
     try {
 		  for (int i = 0; map.get(GRAPH.SOURCE_URL.toString() + i) != null; i++) {
 			  String graph_path = UnibrowControlServlet.getStringParameter(map, GRAPH.SOURCE_URL.toString() + i);
 
-			  // Don't load any graph we already have loaded
-			  if (loaded_graph_paths.contains(graph_path)) {
-				  continue;
+			  if (gFeature == null || !graph_path.equals(gFeature.getURI().toString())) {
+				 continue;
 			  }
 
 			  // for some parameters, testing more than one parameter name because how some params used to have
@@ -212,35 +193,30 @@ public abstract class BookmarkController {
 				  graph_name = graph_path;
 			  }
 
-			  for (GlyphI glyphI : loaded_graphs) {
+			  for (int j =0; j < seq.getAnnotationCount(); j++) {
 
-				  if (!(glyphI instanceof GraphGlyph)) {
-					  Logger.getLogger(BookmarkController.class.getName())
-							  .log(Level.WARNING,"Glyph is not a instance of GraphGlyph.");
+				  if(!(seq.getAnnotation(j) instanceof GraphSym))
 					  continue;
-				  }
-				  GraphGlyph gr = (GraphGlyph) glyphI;
-				  GraphSym graph = (GraphSym) gr.getInfo();
+
+				  GraphSym graph = (GraphSym) seq.getAnnotation(j);
 				  GraphState gstate = graph.getGraphState();
 				  ITrackStyleExtended style = (ITrackStyleExtended) gstate.getTierStyle();
 				  GenericFeature feature = style.getFeature();
 
-				  if (feature == null || !graph_path.equals(feature.getURI().toString())) {
+				  if(!gFeature.equals(feature))
 					  continue;
-				  }
 
 				  GraphType graph_style_num = null;
 				  if (graph_style != null) {
 					  graph_style_num = GraphState.getStyleNumber(graph_style);
 				  }
-				  
-				  applyProperties(graph, graph_name, graph_style_num, heatmap_name, col, bg_col, ypos, yheight, 
+
+				  applyProperties(graph, graph_name, graph_style_num, heatmap_name, col, bg_col, ypos, yheight,
 						  use_floating_graphs, show_label, show_axis, minvis, maxvis, score_thresh, minrun_thresh,
 						  maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
-				  
+
 			  }
 
-			  loaded_graph_paths.add(graph_path);
 
 		  }
 
@@ -252,19 +228,19 @@ public abstract class BookmarkController {
 		  //if (gviewer != null) {
 		  //  gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, false);
 		  //}
-		  
+
 	  } catch (Exception ex) {
 		  ErrorHandler.errorPanel("ERROR", "Error while loading graphs", ex);
 	  } catch (Error er) {
 		  ErrorHandler.errorPanel("ERROR", "Error while loading graphs", er);
-	  } 
+	  }
   }
 
  private static void applyProperties(GraphSym graf, String graph_name, GraphType graph_style_num, String heatmap_name,
 		 Color col, Color bg_col, double ypos, double yheight, boolean use_floating_graphs, boolean show_label,
 		 boolean show_axis, double minvis, double maxvis, double score_thresh, int minrun_thresh, int maxgap_thresh,
 		 boolean show_thresh, int thresh_direction, String combo_name, Map<String, ITrackStyle> combos) {
-	 
+
 		GraphState gstate = graf.getGraphState();
 		graf.setGraphName(graph_name);
 		if (graph_style_num != null) {
@@ -328,9 +304,9 @@ public abstract class BookmarkController {
     // "j" loops throug all graphs, while "i" counts only the ones
     // that are actually book-markable (thus i <= j)
     int i = -1;
-    
+
    for (int j = 0; j < max; j++) {
-	   
+
 		  GlyphI graph_object = graphs.get(j);
 		  if (!(graph_object instanceof GraphGlyph)) {
 			  System.out.println("Cannot bookmark graphs that do not implement GraphGlyph.");
@@ -351,7 +327,7 @@ public abstract class BookmarkController {
 		  }
 
 		  i++;
-		  
+
 		  Rectangle2D.Double gbox = gr.getCoordBox();
 		  boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gr);
 
@@ -396,7 +372,7 @@ public abstract class BookmarkController {
 		  // (the graph_ypos variable can be used for this)
 
 	  }
-	
+
 	  // bookmark.set(mark_sym);
 	  // TODO: Now save the colors and such of the combo graphs!
 

@@ -195,7 +195,7 @@ public final class QuickLoad extends SymLoader {
 				}
 			}
 		};
-		ThreadUtils.getPrimaryExecutor(this.version.gServer).execute(worker);
+		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
 		return true;
 	}
 

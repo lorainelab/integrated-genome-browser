@@ -85,7 +85,7 @@ public class Das2 {
 			}
 		};
 
-		ThreadUtils.getPrimaryExecutor(version).execute(worker);
+		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
 		return true;
 	}
 

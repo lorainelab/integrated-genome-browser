@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -278,7 +279,6 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 	private static void loadAllFeatures(final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup){
-		ExecutorService vexec = Executors.newSingleThreadExecutor();
 		final String notLockedUpMsg = "Loading whole genome for " + gFeature.featureName;
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
@@ -297,12 +297,11 @@ public final class LoadFileAction extends AbstractAction {
 				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
 			}
 		};
-		vexec.execute(worker);
-		vexec.shutdown();
+
+		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}
 
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {
-		ExecutorService vexec = Executors.newSingleThreadExecutor();
 		final String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
@@ -326,8 +325,7 @@ public final class LoadFileAction extends AbstractAction {
 				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
 			}
 		};
-		vexec.execute(worker);
-		vexec.shutdown();
+		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}
 
 

@@ -74,8 +74,6 @@ public final class ChpParser {
 			return null;
 		}
 
-		System.out.println("CHP file type guid: " + chp.getFileTypeIdentifier().getGuid());
-
 		// The following function will determine if the CHP file read contains "legacy" format data. This
 		// can be either a GCOS/XDA file or a Command Console file. The "legacy" format data is that
 		// which contains a signal, detection call, detection p-value, probe pairs, probe pairs used and

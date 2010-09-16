@@ -11,7 +11,7 @@ public final class AxisStyle {
 	public static final Color default_axis_background = Color.WHITE;
 
 	/** An un-collapsible, but hideable, instance. */
-	public static TrackStyle axis_annot_style = new TrackStyle() {
+	public static final TrackStyle axis_annot_style = new TrackStyle() {
 
 		{ // a non-static initializer block
 			setHumanName("Coordinates");

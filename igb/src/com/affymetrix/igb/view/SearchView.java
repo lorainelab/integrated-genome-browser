@@ -425,7 +425,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
 		}
 
-		if ((localSymList == null || localSymList.isEmpty()) && (remoteSymList == null || remoteSymList.isEmpty())) {
+		if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
 			setStatus(friendlySearchStr + ": No matches");
 			return;
 		}

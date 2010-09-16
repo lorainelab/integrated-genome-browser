@@ -226,6 +226,7 @@ public final class RestrictionControlView extends JComponent
 						regex = Pattern.compile(site_residues, Pattern.CASE_INSENSITIVE);
 					} catch (Exception ex) {
 						ex.printStackTrace();
+						continue;
 					}
 
 					System.out.println("searching for occurrences of \"" + site_residues + "\" in sequence");

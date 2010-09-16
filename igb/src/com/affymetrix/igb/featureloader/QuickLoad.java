@@ -220,6 +220,7 @@ public final class QuickLoad extends SymLoader {
 		}
 
 		results = this.getRegion(span);
+		ITrackStyleExtended style;
 		if (results != null) {
 			results = ServerUtils.filterForOverlappingSymmetries(span, results);
 			for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(results).entrySet()) {
@@ -228,13 +229,17 @@ public final class QuickLoad extends SymLoader {
 				}
 				SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 				overallResults.addAll(entry.getValue());
+			
+				// Special case : When a feature make more than one Track, set feature for each track.
+				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(entry.getKey());
+				style.setFeature(feature);
 			}
 		}
 		feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
 		
 		if (!overallResults.isEmpty()) {
 			// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
+			style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
 			style.setFeature(feature);
 
 			// TODO - probably not necessary

@@ -281,44 +281,30 @@ public class TrackView {
 
 		// If genome is selected then delete all syms on the all seqs.
 		if(IGBConstants.GENOME_SEQ_ID.equals(seq.getID())){
-			removeFeature(method, feature);
+			removeFeature(feature);
 			return;
 		}
 		
 		deleteSymsOnSeq(method, seq, feature);
 	}
 
-	public static void removeFeature(String method, GenericFeature feature){
+	public static void removeFeature(GenericFeature feature){
+		if(feature == null)
+			return;
+
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
-		feature.getRequestSym().removeChildren();
 
-		for(BioSeq bioseq : group.getSeqList()){
-			deleteSymsOnSeq(method, bioseq, null);
-		}
-
-		feature.setInvisible();
+		feature.removeAllSyms(group);
 		
 		GeneralLoadView.getLoadView().refreshTreeView();
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 
 	public static void deleteSymsOnSeq(String method, BioSeq seq, GenericFeature feature){
-		if (seq != null) {
-			SeqSymmetry sym = seq.getAnnotation(method);
-			if (sym != null) {
-				seq.removeAnnotation(sym);
-			}
-		}
-
+		
 		if(feature != null){
-			MutableSeqSymmetry requestSym = feature.getRequestSym();
-			for(int i=0; i < requestSym.getChildCount(); i++){
-				SeqSymmetry sym = requestSym.getChild(i);
-				if(sym.getSpan(seq) != null)
-					requestSym.removeChild(sym);
-			}
+			feature.deleteSymsOnSeq(method, seq);
 		}
-
 
 		DependentData dd = null;
 		for (int i=0; i < dependent_list.size(); i++) {

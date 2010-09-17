@@ -1507,7 +1507,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			List<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class<? extends AnnotationWriter> writerclass,
 			HttpServletResponse response, String xbase) {
 		String name = names.get(0);
-		List<SeqSymmetry> result = ServerUtils.findNameInGenome(name, genome);
+		Set<SeqSymmetry> result = ServerUtils.findNameInGenome(name, genome);
 		OutputStream outstream = null;
 		try {
 			AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();

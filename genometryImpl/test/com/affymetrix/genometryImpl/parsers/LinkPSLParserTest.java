@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
@@ -68,7 +69,7 @@ public class LinkPSLParserTest {
 	private void writeAnnotation(List result, AnnotatedSeqGroup group, BioSeq seq, String consensusType) throws IOException {
 		assertNotNull(result);
 		assertEquals(2103, result.size()); // all types of symmetries
-		List<SeqSymmetry> consensusSyms = group.findSyms(Pattern.compile(".*"));
+		Set<SeqSymmetry> consensusSyms = group.findSyms(Pattern.compile(".*"));
 		assertEquals(1131, consensusSyms.size()); // only the consensus symmetries
 		ByteArrayOutputStream outstream = null;
 		ProbeSetDisplayPlugin parser2 = null;

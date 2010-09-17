@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -559,14 +560,14 @@ public abstract class ServerUtils {
 
 
 
-	public static List<SeqSymmetry> findNameInGenome(String name, AnnotatedSeqGroup genome) {
+	public static Set<SeqSymmetry> findNameInGenome(String name, AnnotatedSeqGroup genome) {
 		//int resultLimit = 1000000;
 
 		boolean glob_start = name.startsWith("*");
 		boolean glob_end = name.endsWith("*");
 
-		List<SeqSymmetry> result = null;
-		List<SeqSymmetry> indexedResult = null;
+		Set<SeqSymmetry> result = null;
+		Set<SeqSymmetry> indexedResult = null;
 		Pattern name_pattern = null;
 		String name_regex = name;
 		if (glob_start || glob_end) {

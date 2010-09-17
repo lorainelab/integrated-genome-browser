@@ -245,10 +245,10 @@ public class AnnotatedSeqGroup {
 	}
 
 	/**
-	 * @return list of SeqSymmetries matching the pattern.
+	 * @return set of SeqSymmetries matching the pattern.
 	 */
-	final public List<SeqSymmetry> findSyms(Pattern regex) {
-		final HashSet<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
+	final public Set<SeqSymmetry> findSyms(Pattern regex) {
+		final Set<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
 		final Matcher matcher = regex.matcher("");
 
 		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
@@ -261,7 +261,7 @@ public class AnnotatedSeqGroup {
 				}
 			}
 		}
-		return new ArrayList<SeqSymmetry>(symset);
+		return symset;
 	}
 
 	/** Finds all symmetries with the given case-insensitive ID.

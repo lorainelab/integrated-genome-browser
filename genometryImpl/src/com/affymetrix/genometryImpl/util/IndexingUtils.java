@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -198,9 +199,9 @@ public final class IndexingUtils {
 	 * @param regex
 	 * @return list of Seq symmetries
 	 */
-	public static List<SeqSymmetry> findSymsByName(AnnotatedSeqGroup genome, Pattern regex) {
+	public static Set<SeqSymmetry> findSymsByName(AnnotatedSeqGroup genome, Pattern regex) {
 		final Matcher matcher = regex.matcher("");
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(100000);
+		Set<SeqSymmetry> results = new HashSet<SeqSymmetry>(100000);
 
 		int resultCount = 0;
 
@@ -222,7 +223,7 @@ public final class IndexingUtils {
 	}
 
 	private static boolean findSymByName(
-			IndexedSyms iSyms, final Matcher matcher, BioSeq seq, String type, List<SeqSymmetry> results, int resultCount) {
+			IndexedSyms iSyms, final Matcher matcher, BioSeq seq, String type, Set<SeqSymmetry> results, int resultCount) {
 		int symSize = iSyms.min.length;
 		for (int i = 0; i < symSize; i++) {
 			// test against various IDs

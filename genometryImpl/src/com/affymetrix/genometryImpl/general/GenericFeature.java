@@ -193,12 +193,12 @@ public final class GenericFeature {
 	 * Remove all methods and set feature invisible.
 	 * @param group
 	 */
-	public void removeAllSyms(AnnotatedSeqGroup group){
+	public void removeAllSyms(){
 
 		// Remove all childred from request
 		requestSym.removeChildren();
 
-		for(BioSeq bioseq : group.getSeqList()){
+		for(BioSeq bioseq : gVersion.group.getSeqList()){
 			for(String method : methods){
 				deleteSymsOnSeq(method, bioseq);
 			}

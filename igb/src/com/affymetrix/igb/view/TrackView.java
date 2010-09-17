@@ -1,11 +1,9 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -30,7 +28,6 @@ import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.FasterExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -275,41 +272,40 @@ public class TrackView {
 	}
 
 	public static void deleteTrack(TierGlyph tg) {
-		String method = tg.getAnnotStyle().getMethodName();
-		GenericFeature feature = tg.getAnnotStyle().getFeature();
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-
+		GenericFeature feature = tg.getAnnotStyle().getFeature();
+		
 		// If genome is selected then delete all syms on the all seqs.
 		if(IGBConstants.GENOME_SEQ_ID.equals(seq.getID())){
 			removeFeature(feature);
 			return;
 		}
-		
-		deleteSymsOnSeq(method, seq, feature);
+
+		String method = tg.getAnnotStyle().getMethodName();
+
+		if(feature != null){
+			feature.deleteSymsOnSeq(method, seq);
+		}
+
+		deleteFromDependentData(method, seq);
 	}
 
 	public static void removeFeature(GenericFeature feature){
 		if(feature == null)
 			return;
 
-		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		feature.removeAllSyms();
 
-		feature.removeAllSyms(group);
-		
+		// Refresh
 		GeneralLoadView.getLoadView().refreshTreeView();
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 
-	public static void deleteSymsOnSeq(String method, BioSeq seq, GenericFeature feature){
-		
-		if(feature != null){
-			feature.deleteSymsOnSeq(method, seq);
-		}
-
+	private static void deleteFromDependentData(String method, BioSeq seq) {
 		DependentData dd = null;
-		for (int i=0; i < dependent_list.size(); i++) {
+		for (int i = 0; i < dependent_list.size(); i++) {
 			dd = dependent_list.get(i);
-			if (method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod())){
+			if (method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod())) {
 				dependent_list.remove(dd);
 				seq.removeAnnotation(dd.getSym());
 			}

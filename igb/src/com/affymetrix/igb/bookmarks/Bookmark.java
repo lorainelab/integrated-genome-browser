@@ -60,14 +60,30 @@ public final class Bookmark implements Serializable {
    */
   public static final String DATA_URL_FILE_EXTENSIONS = "data_url_file_extension";
 
+  public static enum SYM{
+	  FEATURE_URL	("feature_url_"),
+	  METHOD		("sym_method_"),
+	  YPOS			("sym_ypos_"),
+	  YHEIGHT		("sym_yheight_"),
+	  COL			("sym_col_"),
+	  BG			("sym_bg_"),
+	  NAME			("sym_name_"),
+	  IS_GRAPH		("sym_is_graph_");
+
+	  private String name;
+
+	  SYM(String name){
+			this.name = name;
+		}
+
+		@Override
+		public String toString(){
+			return name;
+		}
+	};
+
   public static enum GRAPH{
-		SOURCE_URL		("graph_source_url_"),
-		YPOS			("graph_ypos_"),
-		YHEIGHT			("graph_yheight_"),
-		COL				("graph_col_"),
-		BG				("graph_bg_"),
 		FLOAT			("graph_float_"),
-		NAME			("graph_name_"),
 		SHOW_LABEL		("graph_show_label_"),
 		SHOW_AXIS		("graph_show_axis_"),
 		MINVIS			("graph_minvis_"),

@@ -43,6 +43,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
+import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.util.ScriptFileLoader;
@@ -128,7 +129,7 @@ public final class UnibrowControlServlet {
 		//    Loading can freeze the GUI
 		//    Can be any URL, not just a file
 		String[] graph_files = parameters.get("graph_file");
-		boolean has_graph_source_urls = (parameters.get("graph_source_url_0") != null);
+		boolean has_graph_source_urls = (parameters.get(SYM.FEATURE_URL+"0") != null);
 		boolean loaddata = true;
 		boolean loaddas2data = true;
 
@@ -209,8 +210,8 @@ public final class UnibrowControlServlet {
 
 	 public static List<String> getGraphUrls(Map map){
 		List<String> graph_paths = new ArrayList<String>();
-		for (int i = 0; map.get(GRAPH.SOURCE_URL.toString() + i) != null; i++) {
-			graph_paths.add(getStringParameter(map, GRAPH.SOURCE_URL.toString() + i));
+		for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
+			graph_paths.add(getStringParameter(map, SYM.FEATURE_URL.toString() + i));
 		}
 		return graph_paths;
 	 }

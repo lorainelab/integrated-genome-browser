@@ -614,19 +614,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				// see if there are two extra fields with residues for each block
 				query_res_arr = comma_regex.split(fields[findex++]);
 				target_res_arr = comma_regex.split(fields[findex++]);
-				is_pslx = (query_res_arr != null && (query_res_arr.length == 0 || query_res_arr.length == blockcount)) &&
-						(target_res_arr != null && (target_res_arr.length== blockcount));
-				if (is_pslx) {
-					System.out.print("Query Res (ignore):");
-					for(int i=0;i<blockcount;i++) {
-						System.out.print(query_res_arr[i] + " ");
-					}
-					System.out.println();
-					System.out.print("Target Res:");
-					for(int i=0;i<blockcount;i++) {
-						System.out.print(target_res_arr[i] + " ");
-					}
-				}
 			}
 			sym = new UcscPslSym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases,
 					t_gap_count, t_gap_bases, same_orientation,

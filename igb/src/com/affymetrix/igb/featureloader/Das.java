@@ -79,8 +79,7 @@ public final class Das {
 				// Special case : When a feature make more than one Track, set feature for each track.
 				if(dassyms != null){
 					for(DASSymmetry sym : dassyms){
-						style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(sym.getType());
-						style.setFeature(gFeature);
+						gFeature.addMethod(sym.getType());
 					}
 				}
 				TrackView.updateDependentData();

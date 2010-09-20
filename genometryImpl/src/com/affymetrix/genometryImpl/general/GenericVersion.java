@@ -43,6 +43,10 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 		features.add(f);
 	}
 
+	public void removeFeature(GenericFeature f){
+		features.remove(f);
+	}
+
 	public void setInitialized() {
 		this.isInitialized = true;
 	}

@@ -9,9 +9,11 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
@@ -295,6 +297,11 @@ public class TrackView {
 			return;
 
 		feature.removeAllSyms();
+
+		// If feature is local then remove it from server.
+		GenericVersion version = feature.gVersion;
+		if(version.gServer.serverType.equals(ServerType.LocalFiles))
+			version.removeFeature(feature);
 
 		// Refresh
 		GeneralLoadView.getLoadView().refreshTreeView();

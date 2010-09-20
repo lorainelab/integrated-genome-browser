@@ -67,9 +67,8 @@ public final class Bookmark implements Serializable {
 	  YHEIGHT		("sym_yheight_"),
 	  COL			("sym_col_"),
 	  BG			("sym_bg_"),
-	  NAME			("sym_name_"),
-	  IS_GRAPH		("sym_is_graph_");
-
+	  NAME			("sym_name_");
+	  
 	  private String name;
 
 	  SYM(String name){

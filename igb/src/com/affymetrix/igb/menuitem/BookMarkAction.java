@@ -407,7 +407,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		BookmarkController.addSymmetries(bookmark);
 		
 		if (include_graphs) {
-			BookmarkController.addGraphProperties(mark_sym);
+			BookmarkController.addProperties(mark_sym);
 		}
 
 		if(bookmark.getSyms().isEmpty()){

@@ -71,7 +71,7 @@ public abstract class BookmarkController {
     }
   }
 
-  public static void applyGraphProperties(final BioSeq seq, final Map map, final GenericFeature gFeature) {
+ public static void applyProperties(final BioSeq seq, final Map map, final GenericFeature gFeature) {
     double default_ypos = 30;
     double default_yheight = 60;
     Color default_col = Color.lightGray;
@@ -89,23 +89,23 @@ public abstract class BookmarkController {
 
     try {
 		for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
-			String graph_path = UnibrowControlServlet.getStringParameter(map, SYM.FEATURE_URL.toString() + i);
+			String feature_path = UnibrowControlServlet.getStringParameter(map, SYM.FEATURE_URL.toString() + i);
 
-			if (gFeature == null || !graph_path.equals(gFeature.getURI().toString())) {
+			if (gFeature == null || !feature_path.equals(gFeature.getURI().toString())) {
 				continue;
 			}
 
 			String method = UnibrowControlServlet.getStringParameter(map, SYM.METHOD.toString() + i);
 			// for some parameters, testing more than one parameter name because how some params used to have
 			//    slightly different names, and we need to support legacy bookmarks
-			String graph_name = UnibrowControlServlet.getStringParameter(map, SYM.NAME.toString() + i);
-			String graph_ypos = UnibrowControlServlet.getStringParameter(map, SYM.YPOS.toString() + i);
-			String graph_height = UnibrowControlServlet.getStringParameter(map, SYM.YHEIGHT.toString() + i);
+			String sym_name = UnibrowControlServlet.getStringParameter(map, SYM.NAME.toString() + i);
+			String sym_ypos = UnibrowControlServlet.getStringParameter(map, SYM.YPOS.toString() + i);
+			String sym_height = UnibrowControlServlet.getStringParameter(map, SYM.YHEIGHT.toString() + i);
 		
-			// graph_col is String rep of RGB integer
-			String graph_col = UnibrowControlServlet.getStringParameter(map, SYM.COL.toString() + i);
-			String graph_bg_col = UnibrowControlServlet.getStringParameter(map, SYM.BG.toString() + i);
-			// graph_bg_col will often be null
+			// sym_col is String rep of RGB integer
+			String sym_col = UnibrowControlServlet.getStringParameter(map, SYM.COL.toString() + i);
+			String sym_bg_col = UnibrowControlServlet.getStringParameter(map, SYM.BG.toString() + i);
+			// sym_bg_col will often be null
 
 			String graph_float = UnibrowControlServlet.getStringParameter(map, GRAPH.FLOAT.toString() + i);
 			String show_labelstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_LABEL.toString() + i);
@@ -124,26 +124,26 @@ public abstract class BookmarkController {
 
 			String combo_name = UnibrowControlServlet.getStringParameter(map, GRAPH.COMBO.toString() + i);
 
-			double ypos = (graph_ypos == null) ? default_ypos : Double.parseDouble(graph_ypos);
-			double yheight = (graph_height == null) ? default_yheight : Double.parseDouble(graph_height);
+			double ypos = (sym_ypos == null) ? default_ypos : Double.parseDouble(sym_ypos);
+			double yheight = (sym_height == null) ? default_yheight : Double.parseDouble(sym_height);
 			Color col = default_col;
 			Color bg_col = Color.BLACK;
-			if (graph_col != null) {
+			if (sym_col != null) {
 				try {
 					// Color.decode() can handle colors in plain integer format
 					// as well as hex format: "-20561" == "#FFAFAF" == "0xFFAFAF" == "16756655"
 					// We now write in the hex format, but can still read the older int format.
-					col = Color.decode(graph_col);
+					col = Color.decode(sym_col);
 				} catch (NumberFormatException nfe) {
-					ErrorHandler.errorPanel("Couldn't parse graph color from '" + graph_col + "'\n"
+					ErrorHandler.errorPanel("Couldn't parse graph color from '" + sym_col + "'\n"
 							+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
 				}
 			}
-			if (graph_bg_col != null) {
+			if (sym_bg_col != null) {
 				try {
-					bg_col = Color.decode(graph_bg_col);
+					bg_col = Color.decode(sym_bg_col);
 				} catch (NumberFormatException nfe) {
-					ErrorHandler.errorPanel("Couldn't parse graph background color from '" + graph_bg_col + "'\n"
+					ErrorHandler.errorPanel("Couldn't parse graph background color from '" + sym_bg_col + "'\n"
 							+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
 				}
 			}
@@ -167,53 +167,60 @@ public abstract class BookmarkController {
 			int thresh_direction =
 					(thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
 
-			if (graph_name == null || graph_name.trim().length() == 0) {
-				graph_name = graph_path;
+			if (sym_name == null || sym_name.trim().length() == 0) {
+				sym_name = feature_path;
 			}
 
-			SeqSymmetry graph;
-			for (int j = 0; j < seq.getAnnotationCount(); j++) {
-				graph = seq.getAnnotation(j);
+			SeqSymmetry sym = seq.getAnnotation(method);
 
-				if (!(graph instanceof GraphSym)) {
-					continue;
-				}
+			if (sym == null) {
+				continue;
+			}
 
-				GraphState gstate = ((GraphSym)graph).getGraphState();
-				ITrackStyleExtended style = (ITrackStyleExtended) gstate.getTierStyle();
+			if (!(sym instanceof GraphSym) && !(sym instanceof TypeContainerAnnot)) {
+				continue;
+			}
+
+			ITrackStyleExtended style = null;
+
+			if (sym instanceof GraphSym) {
+				GraphState gstate = ((GraphSym) sym).getGraphState();
+				style = (ITrackStyleExtended) gstate.getTierStyle();
 				GenericFeature feature = style.getFeature();
 
-				if (!gFeature.equals(feature) || !method.equals(style.getMethodName())) {
+				if (!gFeature.equals(feature)) {
 					continue;
 				}
-
-				((GraphSym)graph).setGraphName(graph_name);
 
 				GraphType graph_style_num = null;
 				if (graph_style != null) {
 					graph_style_num = GraphState.getStyleNumber(graph_style);
 				}
 
-				applyStyleProperties(style, col, bg_col, ypos, yheight);
+				((GraphSym) sym).setGraphName(sym_name);
 
 				applyGraphProperties(gstate, graph_style_num, heatmap_name, use_floating_graphs,
 						show_label, show_axis, minvis, maxvis, score_thresh, minrun_thresh,
 						maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
 
+			} else {
+				TypeContainerAnnot tca = (TypeContainerAnnot) sym;
+				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(tca.getType());
+				GenericFeature feature = style.getFeature();
+
+				if (!gFeature.equals(feature)) {
+					continue;
+				}
 			}
 
+			applyStyleProperties(style, col, bg_col, ypos, yheight);
 
 		}
 
-		// Because of combo graphs, have to completely re-draw the display
-		// Don't bother trying to preserve_view in y-direction.  It usually doesn't work well,
-		// especially if the graphs are attached graphs.
-
-
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("ERROR", "Error while loading graphs", ex);
+			ErrorHandler.errorPanel("ERROR", "Error while applying graph properties", ex);
 		} catch (Error er) {
-			ErrorHandler.errorPanel("ERROR", "Error while loading graphs", er);
+			ErrorHandler.errorPanel("ERROR", "Error while applying graph properties", er);
 		}
 	}
 
@@ -304,7 +311,7 @@ public abstract class BookmarkController {
 			  continue;
 		  }
 
-		  addStyleProps(style, mark_sym, feature.getURI().toString(), style.getHumanName(), i);
+//		  addStyleProps(style, mark_sym, feature.getURI().toString(), style.getHumanName(), i);
 
 	  }
 
@@ -315,7 +322,7 @@ public abstract class BookmarkController {
 	  }
   }
   
-  public static void addGraphProperties(SymWithProps mark_sym) {
+  public static void addProperties(SymWithProps mark_sym) {
 	BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 
     Map<ITrackStyle,Integer> combo_styles = new HashMap<ITrackStyle,Integer>();
@@ -331,10 +338,24 @@ public abstract class BookmarkController {
 
 		  SeqSymmetry sym = seq.getAnnotation(j);
 
-		  if(!(sym instanceof GraphSym))
-			  continue;
-
+		  if (!(sym instanceof GraphSym) && !(sym instanceof TypeContainerAnnot))
+			continue;
+	
 		  i++;
+
+		  if (sym instanceof TypeContainerAnnot) {
+			   TypeContainerAnnot tca = (TypeContainerAnnot) sym;
+			   ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(tca.getType());
+			   GenericFeature feature = style.getFeature();
+
+			   if (feature == null) {
+				   unfound_labels.add(tca.getType());
+				   continue;
+			   }
+
+			   addStyleProps(style, mark_sym, feature.getURI().toString(), style.getHumanName(), tca.getType(), i);
+			   continue;
+	      }
 		  
 		  GraphSym graph = (GraphSym) sym;
 		  GraphState gstate = graph.getGraphState();
@@ -346,7 +367,7 @@ public abstract class BookmarkController {
 			  continue;
 		  }
 
-		  addStyleProps(style, mark_sym, feature.getURI().toString(), graph.getGraphName(), i);
+		  addStyleProps(style, mark_sym, feature.getURI().toString(), graph.getGraphName(), graph.getID(), i);
 
 		  mark_sym.setProperty(GRAPH.FLOAT.toString() + i, Boolean.toString(gstate.getFloatGraph()));
 		  mark_sym.setProperty(GRAPH.SHOW_LABEL.toString() + i, (Boolean.toString(gstate.getShowLabel())));
@@ -386,11 +407,10 @@ public abstract class BookmarkController {
   }
 
   private static void addStyleProps(ITrackStyleExtended style, SymWithProps mark_sym,
-		  String featureURI, String name, int i) {
+		  String featureURI, String name, String method, int i) {
 
-	    mark_sym.setProperty(SYM.IS_GRAPH.toString() + i, Boolean.toString(style.isGraphTier()));
 		mark_sym.setProperty(SYM.FEATURE_URL.toString() + i, featureURI);
-		mark_sym.setProperty(SYM.METHOD.toString() + i, style.getUniqueName());
+		mark_sym.setProperty(SYM.METHOD.toString() + i, method);
 		mark_sym.setProperty(SYM.YPOS.toString() + i, Integer.toString((int) style.getY()));
 		mark_sym.setProperty(SYM.YHEIGHT.toString() + i, Integer.toString((int) style.getHeight()));
 		mark_sym.setProperty(SYM.COL.toString() + i, sixDigitHex(style.getColor()));

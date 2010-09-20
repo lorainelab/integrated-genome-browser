@@ -181,7 +181,7 @@ public final class UnibrowControlServlet {
 						ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
 							public void run() {
-								BookmarkController.applyGraphProperties(seq, parameters, feature);
+								BookmarkController.applyProperties(seq, parameters, feature);
 							}
 						});
 					}

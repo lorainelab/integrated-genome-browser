@@ -4,6 +4,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,14 +20,13 @@ import javax.swing.table.AbstractTableModel;
 /**
  * Model for table of features.
  */
-public final class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
-	private static final String[] columnNames = { "Choose Load Mode", "Data Set","Data Source"};
-	
+public final class FeaturesTableModel extends AbstractTableModel implements ChangeListener, ActionListener {
+	private static final String[] columnNames = { "Choose Load Mode", "Data Set","Data Source", "x"};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int LOAD_STRATEGY_COLUMN = 0;
 	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
-	//private static final int SERVER_TYPE_COLUMN = 3;
+	static final int DELETE_FEATURE_COLUMN = 3;
 	private List<GenericFeature> features;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
@@ -138,10 +139,9 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 			case SERVER_NAME_COLUMN:
 				// return the friendly server name
 				return gFeature.gVersion.gServer.serverName + " (" + gFeature.gVersion.gServer.serverType + ")";
-			/*case SERVER_TYPE_COLUMN:
-				// return the server type
-				serverType = gFeature.gVersion.gServer.serverType;
-				return serverType.toString();*/
+			case DELETE_FEATURE_COLUMN:
+				return "x";
+				
 			default:
 				System.out.println("Shouldn't reach here: " + row + " " + col);
 				return null;
@@ -158,6 +158,9 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
+		if (col == DELETE_FEATURE_COLUMN)
+			return true;
+		
 		if (col != LOAD_STRATEGY_COLUMN) {
 			return false;
 		}
@@ -215,6 +218,16 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 			if (row >= 0) {  // if typestate is present in table, then send notification of row change
 				fireTableRowsUpdated(row, row);
 			}
+		}
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		Object src = e.getSource();
+		if(src instanceof GenericFeature){
+			GenericFeature feature = (GenericFeature)src;
+			glv.removeFeature(feature);
+			int row = getRow(feature);
+			fireTableCellUpdated(row, DELETE_FEATURE_COLUMN);
 		}
 	}
 }

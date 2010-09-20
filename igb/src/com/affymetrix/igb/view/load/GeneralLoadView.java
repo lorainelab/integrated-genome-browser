@@ -55,6 +55,7 @@ import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.view.TrackView;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -159,7 +160,7 @@ public final class GeneralLoadView extends JComponent
 		feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 		// Handle sizing of the columns
 		feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
-
+		
 		featuresTableScrollPane = new JScrollPane(GeneralLoadView.feature_table);
 		featuresTableScrollPane.setViewportView(feature_table);
 
@@ -877,9 +878,7 @@ public final class GeneralLoadView extends JComponent
 
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
-				TableWithVisibleComboBox.setComboBoxEditors(
-						feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN,
-						!GeneralLoadView.IsGenomeSequence());
+				TableWithVisibleComboBox.setComboBoxEditors(feature_table, !GeneralLoadView.IsGenomeSequence());
 			}
 		});
 
@@ -975,6 +974,11 @@ public final class GeneralLoadView extends JComponent
 
 	public String getSelectedSpecies(){
 		return (String) speciesCB.getSelectedItem();
+	}
+
+	public void removeFeature(GenericFeature feature){
+		TrackView.removeFeature(feature);
+		gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());
 	}
 }
 

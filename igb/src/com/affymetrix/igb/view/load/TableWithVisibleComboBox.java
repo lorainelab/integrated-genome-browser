@@ -1,9 +1,9 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
+import com.affymetrix.genoviz.swing.ButtonTableCellRenderer;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import java.awt.Component;
@@ -35,7 +35,7 @@ public final class TableWithVisibleComboBox {
 	 * @param column
 	 * @param enabled
 	 */
-	static void setComboBoxEditors(JTableX table, int column, boolean enabled) {
+	static void setComboBoxEditors(JTableX table, boolean enabled) {
 		comboRenderer.setToolTipEntry(LoadStrategy.NO_LOAD.toString(), IGBConstants.BUNDLE.getString("noLoadCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.VISIBLE.toString(), IGBConstants.BUNDLE.getString("visibleCBToolTip"));
 		comboRenderer.setToolTipEntry(LoadStrategy.CHROMOSOME.toString(), IGBConstants.BUNDLE.getString("chromosomeCBToolTip"));
@@ -45,9 +45,11 @@ public final class TableWithVisibleComboBox {
 		table.setRowSorter(sorter);
 
 		int featureSize = ftm.getRowCount();
-		RowEditorModel rm = new RowEditorModel(featureSize);
+		RowEditorModel choices = new RowEditorModel(featureSize);
+		RowEditorModel delete = new RowEditorModel(featureSize);
 		// tell the JTableX which RowEditorModel we are using
-		table.setRowEditorModel(rm);
+		table.setRowEditorModel(FeaturesTableModel.LOAD_STRATEGY_COLUMN, choices);
+		table.setRowEditorModel(FeaturesTableModel.DELETE_FEATURE_COLUMN, delete);
 
 		for (int row = 0; row < featureSize; row++) {
 			GenericFeature gFeature = ftm.getFeature(row);
@@ -55,15 +57,19 @@ public final class TableWithVisibleComboBox {
 			featureCB.setRenderer(comboRenderer);
 			featureCB.setEnabled(true);
 			DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
-			rm.addEditorForRow(row, featureEditor);
+			choices.addEditorForRow(row, featureEditor);
+
+			ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(gFeature);
+			delete.addEditorForRow(row, buttonEditor);
+			buttonEditor.addActionListener(ftm);
 		}
 
-		TableColumn c = table.getColumnModel().getColumn(column);
+		TableColumn c = table.getColumnModel().getColumn(FeaturesTableModel.LOAD_STRATEGY_COLUMN);
 		c.setCellRenderer(new ColumnRenderer());
 		((JComponent) c.getCellRenderer()).setEnabled(enabled);
 	}
 
-  private static final class ColumnRenderer extends JComponent implements TableCellRenderer {
+  static final class ColumnRenderer extends JComponent implements TableCellRenderer {
 
     private final JComboBox comboBox;
     private final JTextField textField;	// If an entire genome is loaded in, change the combo box to a text field.
@@ -118,25 +124,36 @@ class RowEditorModel {
  */
 class JTableX extends JTable {
 
-  private RowEditorModel rm;
+  private final Map<Integer, RowEditorModel> rmMap;
 
   public JTableX(TableModel tm) {
     super(tm);
-    rm = null;
+    rmMap = new HashMap<Integer, RowEditorModel>();
   }
 
-  void setRowEditorModel(RowEditorModel rm) {
-    this.rm = rm;
+  void setRowEditorModel(int column, RowEditorModel rm) {
+    this.rmMap.put(column, rm);
   }
 
   @Override
   public TableCellEditor getCellEditor(int row, int col) {
-    if (rm != null) {
-      TableCellEditor tmpEditor = rm.getEditor(row);
+    if (rmMap != null) {
+      TableCellEditor tmpEditor = rmMap.get(col).getEditor(row);
 	  if (tmpEditor != null) {
 		  return tmpEditor;
 	  }
     }
     return super.getCellEditor(row, col);
   }
+
+   @Override
+   public TableCellRenderer getCellRenderer(int row, int column) {
+	   if(column == FeaturesTableModel.LOAD_STRATEGY_COLUMN){
+		   return new TableWithVisibleComboBox.ColumnRenderer();
+	   }else if(column == FeaturesTableModel.DELETE_FEATURE_COLUMN){
+		   return new ButtonTableCellRenderer();
+	   }
+
+	   return super.getCellRenderer(row,column);
+   }
 }

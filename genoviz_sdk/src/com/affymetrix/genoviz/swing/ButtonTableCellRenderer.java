@@ -10,7 +10,7 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author hiralv
  */
-public class ButtonTableCellRenderer extends JComponent implements TableCellRenderer {
+public final class ButtonTableCellRenderer extends JComponent implements TableCellRenderer {
 
 	private final JButton button;
 	

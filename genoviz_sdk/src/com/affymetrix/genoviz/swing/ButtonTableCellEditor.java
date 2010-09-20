@@ -19,7 +19,7 @@ import javax.swing.table.TableCellEditor;
  *
  * @author hiralv
  */
-public class ButtonTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener{
+public final class ButtonTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener{
 
 	private final Object userObject;
     private final JButton button;

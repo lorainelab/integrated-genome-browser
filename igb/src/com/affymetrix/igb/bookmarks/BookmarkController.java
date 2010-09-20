@@ -95,6 +95,7 @@ public abstract class BookmarkController {
 				continue;
 			}
 
+			String method = UnibrowControlServlet.getStringParameter(map, SYM.METHOD.toString() + i);
 			// for some parameters, testing more than one parameter name because how some params used to have
 			//    slightly different names, and we need to support legacy bookmarks
 			String graph_name = UnibrowControlServlet.getStringParameter(map, SYM.NAME.toString() + i);
@@ -170,28 +171,33 @@ public abstract class BookmarkController {
 				graph_name = graph_path;
 			}
 
+			SeqSymmetry graph;
 			for (int j = 0; j < seq.getAnnotationCount(); j++) {
+				graph = seq.getAnnotation(j);
 
-				if (!(seq.getAnnotation(j) instanceof GraphSym)) {
+				if (!(graph instanceof GraphSym)) {
 					continue;
 				}
 
-				GraphSym graph = (GraphSym) seq.getAnnotation(j);
-				GraphState gstate = graph.getGraphState();
+				GraphState gstate = ((GraphSym)graph).getGraphState();
 				ITrackStyleExtended style = (ITrackStyleExtended) gstate.getTierStyle();
 				GenericFeature feature = style.getFeature();
 
-				if (!gFeature.equals(feature)) {
+				if (!gFeature.equals(feature) || !method.equals(style.getMethodName())) {
 					continue;
 				}
+
+				((GraphSym)graph).setGraphName(graph_name);
 
 				GraphType graph_style_num = null;
 				if (graph_style != null) {
 					graph_style_num = GraphState.getStyleNumber(graph_style);
 				}
 
-				applyProperties(graph, graph_name, graph_style_num, heatmap_name, col, bg_col, ypos, yheight,
-						use_floating_graphs, show_label, show_axis, minvis, maxvis, score_thresh, minrun_thresh,
+				applyStyleProperties(style, col, bg_col, ypos, yheight);
+
+				applyGraphProperties(gstate, graph_style_num, heatmap_name, use_floating_graphs,
+						show_label, show_axis, minvis, maxvis, score_thresh, minrun_thresh,
 						maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
 
 			}
@@ -203,10 +209,6 @@ public abstract class BookmarkController {
 		// Don't bother trying to preserve_view in y-direction.  It usually doesn't work well,
 		// especially if the graphs are attached graphs.
 
-		//No need to set seq while applying properties.
-		//if (gviewer != null) {
-		//  gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, false);
-		//}
 
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("ERROR", "Error while loading graphs", ex);
@@ -215,13 +217,18 @@ public abstract class BookmarkController {
 		}
 	}
 
- private static void applyProperties(GraphSym graf, String graph_name, GraphType graph_style_num, String heatmap_name,
-		 Color col, Color bg_col, double ypos, double yheight, boolean use_floating_graphs, boolean show_label,
-		 boolean show_axis, double minvis, double maxvis, double score_thresh, int minrun_thresh, int maxgap_thresh,
-		 boolean show_thresh, int thresh_direction, String combo_name, Map<String, ITrackStyle> combos) {
+ private static void applyStyleProperties(ITrackStyle tier_style, Color col, Color bg_col, double ypos, double yheight){
+	tier_style.setColor(col);
+	tier_style.setBackground(bg_col);
+	tier_style.setY(ypos);
+	tier_style.setHeight(yheight);
+ }
 
-		GraphState gstate = graf.getGraphState();
-		graf.setGraphName(graph_name);
+ private static void applyGraphProperties(GraphState gstate, GraphType graph_style_num, String heatmap_name,
+			boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis,
+			double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction,
+			String combo_name, Map<String, ITrackStyle> combos) {
+
 		if (graph_style_num != null) {
 			gstate.setGraphStyle(graph_style_num);
 		}
@@ -231,11 +238,7 @@ public abstract class BookmarkController {
 				gstate.setHeatMap(heat_map);
 			}
 		}
-		ITrackStyle tier_style = gstate.getTierStyle();
-		tier_style.setColor(col);
-		tier_style.setBackground(bg_col);
-		tier_style.setY(ypos);
-		tier_style.setHeight(yheight);
+		
 		gstate.setFloatGraph(use_floating_graphs);
 		gstate.setShowLabel(show_label);
 		gstate.setShowAxis(show_axis);

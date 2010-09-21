@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -393,7 +394,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		String friendlySearchStr = friendlyString(text, this.sequence_CB.getSelectedItem().toString());
 		status_bar.setText(friendlySearchStr + ": Searching locally...");
-		List <SeqSymmetry> localSymList = findLocalSyms(group, chrFilter, regex);
+		List <SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex);
 		remoteSymList = null;
 
 		// Make sure this search is reasonable to do on a remote server.
@@ -447,62 +448,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	}
 
-	/**
-	 * Due to disagreements between group ID search and BioSeq ID search, do both and combine their results
-	 * @param group
-	 * @param chrFilter
-	 * @param regex
-	 * @return
-	 */
-	private static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex) {
-		Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>(group.findSyms(regex));
-		List<BioSeq> chrs;
-		if (chrFilter != null) {
-			chrs = new ArrayList<BioSeq>();
-			chrs.add(chrFilter);
-		} else {
-			chrs = group.getSeqList();
-		}
-		Matcher match = regex.matcher("");
-		SymWithProps sym = null;
-		for (BioSeq chr : chrs) {
-			int annotCount = chr.getAnnotationCount();
-			for (int i=0;i<annotCount;i++) {
-				sym = (SymWithProps)chr.getAnnotation(i);
-				findIDsInSym(syms, sym, match);
-			}
-		}
-		return new ArrayList<SeqSymmetry>(syms);
-	}
-
-	/**
-	 * Recursively search for symmetries that match regex.  
-	 * @param syms
-	 * @param sym
-	 * @param match
-	 */
-	private static void findIDsInSym(Set<SeqSymmetry> syms, SeqSymmetry sym, Matcher match) {
-		if (sym == null) {
-			return;
-		}
-		if (sym.getID() != null && match.reset(sym.getID()).matches()) {
-			syms.add(sym);	// ID matches
-			// If parent matches, then don't list children
-			return;
-		} else if (sym instanceof SymWithProps) {
-			String method = BioSeq.determineMethod(sym);
-			if (method != null && match.reset(method).matches()) {
-				syms.add(sym);	// method matches
-				// If parent matches, then don't list children
-				return;
-			}
-		}
-		int childCount = sym.getChildCount();
-		for (int i = 0; i < childCount; i++) {
-			findIDsInSym(syms, sym.getChild(i), match);
-		}
-	}
-
+	
 
 	private static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
 

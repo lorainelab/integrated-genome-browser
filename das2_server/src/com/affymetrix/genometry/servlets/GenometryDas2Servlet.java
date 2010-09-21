@@ -41,11 +41,11 @@ import org.hibernate.Transaction;
 
 
 import com.affymetrix.genometry.genopub.*;
-import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.util.SearchUtils;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -1507,7 +1507,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			List<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class<? extends AnnotationWriter> writerclass,
 			HttpServletResponse response, String xbase) {
 		String name = names.get(0);
-		Set<SeqSymmetry> result = ServerUtils.findNameInGenome(name, genome);
+		Set<SeqSymmetry> result = SearchUtils.findNameInGenome(name, genome);
 		OutputStream outstream = null;
 		try {
 			AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();

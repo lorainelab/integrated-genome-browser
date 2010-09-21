@@ -28,25 +28,22 @@ public class SortTabFile {
 		
 		BufferedReader br = null;
 		String line = null;
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<String>(1000);
+		List<String> templist = new ArrayList<String>(1000);
 		String fileName = file.getName();
 		String ext = fileName.substring(fileName.indexOf('.'), fileName.length());
 		Comparator<String> comparator = new LineComparator(ext);
 		try {
-			
-			List<String> templist = new ArrayList<String>();
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
 			Thread thread = Thread.currentThread();
 
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-
 				if(line.startsWith("track")){
 					Collections.sort(templist, comparator);
 					list.addAll(templist);
-					templist = new ArrayList<String>();
+					templist.clear();
 				}
-				
 				templist.add(line);
 			}
 			Collections.sort(templist, comparator);
@@ -94,7 +91,7 @@ public class SortTabFile {
 		return true;
 	}
 
-	static class LineComparator implements Comparator<String>{
+	private static final class LineComparator implements Comparator<String>{
 
 		private final int column;
 		private final int or_column;

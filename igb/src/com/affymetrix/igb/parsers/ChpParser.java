@@ -375,7 +375,7 @@ public final class ChpParser {
 					System.out.println("full id: " + id + ", probeset id: " + nid + ", val: " + val);
 				}
 				// assumes no ".n" postfix (exon chip ids are truly unique and thus should none should get postfixed by duplication)...
-				group.findSyms(id, syms, false);
+				findSyms(group, id, syms, false);
 				if (syms.size() > 0) {
 					// for exon chips, assume at most a single pre-existing sym for each probeset in CHP file
 					match_count++;
@@ -406,11 +406,11 @@ public final class ChpParser {
 				}
 				// try to match up id to one previously seen
 				// must deal with possibility that sym ids used ".n" postfixing to uniquify
-				group.findSyms(id, syms, true); // not sure if should allow match to name, or always require full id match
+				findSyms(group, id, syms, true); // not sure if should allow match to name, or always require full id match
 				if (syms.size() == 0) {
 					// couldn't find match with just name, so trying full id
 					id = array_type + ":" + id;
-					group.findSyms(id, syms, true);
+					findSyms(group, id, syms, true);
 				}
 				int scount = syms.size();
 				if (scount > 0) {
@@ -623,7 +623,44 @@ public final class ChpParser {
 		gmodel.setSelectedSeq(aseq);
 		return results;
 	}
+
+	/** Finds all symmetries with the given case-insensitive ID and add them to
+	 *  the given list.
+	 *  @param id  a case-insensitive id.
+	 *  @param results  the list to which entries will be appended. It is responsibility of
+	 *   calling code to clear out results list before calling this, if desired.
+	 *  @param try_appended_id whether to also search for ids of the form
+	 *   id + ".1", id + ".2", etc.
+	 *  @return true if any symmetries were added to the list.
+	 */
+	//TODO: does this routine do what is expected?  What if id does not exist, but id + ".1" does?
+	// What if id + ".1" does not exist, but id + ".2" does?
+	// Does this list need to be in order?
+	private static void findSyms(AnnotatedSeqGroup group, String id, List<SeqSymmetry> results, boolean try_appended_id) {
+		if (id == null) {
+			return;
+		}
+
+		Set<SeqSymmetry> seqsym_list = group.findSyms(id);
+		if (!seqsym_list.isEmpty()) {
+			results.addAll(seqsym_list);
+			return;
+		}
+
+		if (!try_appended_id) {
+			return;
+		}
+
+		// try id appended with ".n" where n is 0, 1, etc. till there is no match
+		int postfix = 0;
+		for(Set<SeqSymmetry> seq_sym_list = group.findSyms(id + "." + postfix++);!seq_sym_list.isEmpty();seq_sym_list = group.findSyms(id + "." + postfix++)) {
+			results.addAll(seq_sym_list);
+		}
+	}
+
 }
+
+
 
 /** For sorting single-score probeset entries */
 abstract class ScoreEntry {

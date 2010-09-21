@@ -278,51 +278,6 @@ public class AnnotatedSeqGroup {
 		return Collections.<SeqSymmetry>unmodifiableSet(sym_list);
 	}
 
-	/** Finds all symmetries with the given case-insensitive ID and add them to
-	 *  the given list.
-	 *  @param id  a case-insensitive id.
-	 *  @param results  the list to which entries will be appended. It is responsibility of
-	 *   calling code to clear out results list before calling this, if desired.
-	 *  @param try_appended_id whether to also search for ids of the form
-	 *   id + ".1", id + ".2", etc.
-	 *  @return true if any symmetries were added to the list.
-	 */
-	//TODO: does this routine do what is expected?  What if id does not exist, but id + ".1" does?
-	// What if id + ".1" does not exist, but id + ".2" does?
-	// Does this list need to be in order?
-	//TODO: This method is used only by ChpParser.  Move there.
-	final public boolean findSyms(String id, List<SeqSymmetry> results, boolean try_appended_id) {
-		if (id == null) {
-			return false;
-		}
-
-		final String lid = id.toLowerCase();
-		final Set<SeqSymmetry> seqsym_list = id2sym_hash.get(lid);
-		if (seqsym_list != null) {
-			results.addAll(seqsym_list);
-			return true;
-		}
-
-		if (!try_appended_id) {
-			return false;
-		}
-
-		return lookForAppendedIDs(lid, results);
-	}
-
-	// try id appended with ".n" where n is 0, 1, etc. till there is no match
-	private boolean lookForAppendedIDs(String lid, List<SeqSymmetry> results) {
-		boolean success = false;
-		int postfix = 0;
-		Set<SeqSymmetry> seq_sym_list;
-		while ((seq_sym_list = id2sym_hash.get(lid + "." + postfix)) != null) {
-			results.addAll(seq_sym_list);
-			success = true;
-			postfix++;
-		}
-		return success;
-	}
-
 	/**
 	 *  Associates a symmetry with a case-insensitive ID.  You can later retrieve the
 	 *  list of all matching symmetries for a given ID by calling findSyms(String).

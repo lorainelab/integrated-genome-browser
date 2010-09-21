@@ -421,9 +421,17 @@ public class AnnotatedSeqGroup {
 	 * @param sym
 	 */
 	final public void removeSymmetry(SeqSymmetry sym) {
-		if (sym == null || sym.getID() == null) {
+		if (sym == null) {
 			return;
 		}
+
+		for(int i=0; i<sym.getChildCount(); i++){
+			removeSymmetry(sym.getChild(i));
+		}
+		
+		if(sym.getID() == null)
+			return;
+
 		String lcSymID = sym.getID().toLowerCase();
 		Set<SeqSymmetry> symList = id2sym_hash.get(lcSymID);
 		if (symList != null && symList.contains(sym)) {

@@ -177,6 +177,7 @@ public final class GenericFeature {
 			SeqSymmetry sym = seq.getAnnotation(method);
 			if (sym != null) {
 				seq.removeAnnotation(sym);
+				seq.getSeqGroup().removeSymmetry(sym);
 			}
 		}
 		

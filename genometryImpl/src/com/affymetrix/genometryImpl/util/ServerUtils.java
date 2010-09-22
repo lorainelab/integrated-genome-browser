@@ -74,7 +74,7 @@ public abstract class ServerUtils {
 		File chrom_info_file = new File(genome_directory, modChromInfo);
 		if (chrom_info_file.exists()) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-					"parsing " + modChromInfo + " for: " + genome_version);
+					"parsing {0} for: {1}", new Object[]{modChromInfo,genome_version});
 			InputStream chromstream = new FileInputStream(chrom_info_file);
 			try {
 				ChromInfoParser.parse(chromstream, GenometryModel.getGenometryModel(), genome_version);
@@ -83,13 +83,13 @@ public abstract class ServerUtils {
 			}
 		} else {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-					"couldn't find " + modChromInfo + "  for genome: " + genome_version);
+					"couldn't find {0} for: {1}", new Object[]{modChromInfo,genome_version});
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-					"looking for " + liftAll + " instead");
+					"looking for {0} instead", liftAll);
 			File lift_file = new File(genome_directory, "liftAll.lft");
 			if (lift_file.exists()) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-						"parsing " + liftAll + " for: " + genome_version);
+						"parsing {0} for: {1}", new Object[]{liftAll,genome_version});
 				InputStream liftstream = new FileInputStream(lift_file);
 				try {
 					LiftParser.parse(liftstream, GenometryModel.getGenometryModel(), genome_version);
@@ -98,7 +98,7 @@ public abstract class ServerUtils {
 				}
 			} else {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE,
-						"couldn't find " + modChromInfo + " or " + liftAll + " for genome!!! " + genome_version);
+						"couldn't find {0} or {1} for genome!!! {2}", new Object[]{modChromInfo, liftAll, genome_version});
 			}
 		}
 	}
@@ -136,7 +136,7 @@ public abstract class ServerUtils {
 		File synfile = new File(synonym_file);
 		if (synfile.exists()) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-					"Synonym file " + synonym_file + " found, loading synonyms");
+					"Synonym file {0} found, loading synonyms", synonym_file);
 			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 			FileInputStream fis = null;
 			try {
@@ -149,7 +149,7 @@ public abstract class ServerUtils {
 			}
 		} else {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-					"Synonym file " + synonym_file + " not found, therefore not using synonyms");
+					"Synonym file {0} not found, therefore not using synonyms", synonym_file);
 		}
 	}
 
@@ -200,8 +200,8 @@ public abstract class ServerUtils {
 			ServerUtils.loadAnnotsFromDir(
 					genomeDir.getName(), genome, genomeDir, "", annots_map, graph_name2dir, graph_name2file, dataRoot);
 		} else {
-			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
-					genomeDir.getAbsolutePath() + " is not a directory.  Skipping.");
+			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING, ""
+					+ "{0} is not a directory.  Skipping.", genomeDir.getAbsolutePath());
 		}
 	}
 
@@ -250,7 +250,7 @@ public abstract class ServerUtils {
 			// assuming bar files for now, each with starting with originalSeq id?
 			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE,
-					"@@@ adding graph directory to types: " + graph_name + ", path: " + current_file.getPath());
+					"@@@ adding graph directory to types: {0}, path: {1}", new Object[]{graph_name, current_file.getPath()});
 			graph_name2dir.put(graph_name, current_file.getPath());
 			genome.addType(graph_name, null);
 		} else {
@@ -311,7 +311,7 @@ public abstract class ServerUtils {
 			if (AnnotMapElt.findFileNameElt(file_name, annots_map.get(genome)) == null) {
 				// we have loaded in an annots.xml originalFile, but yet this originalFile is not in it and should be ignored.
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-						"Ignoring file " + file_name + " which was not found in annots.xml");
+						"Ignoring file {0} which was not found in annots.xml", file_name);
 				return;
 			}
 		}
@@ -342,7 +342,7 @@ public abstract class ServerUtils {
 			//    (because using graph slicing so don't have to pull all bar originalFile graphs into memory)
 			String file_path = current_file.getPath();
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE,
-					"@@@ adding graph file to types: " + type_name + ", path: " + file_path);
+					"@@@ adding graph file to types: {0}, path: {1}", new Object[]{type_name, file_path});
 			graph_name2file.put(type_name, file_path);
 			genome.addType(type_name, null);
 			return true;
@@ -393,7 +393,7 @@ public abstract class ServerUtils {
 		// assuming bar files for now, each with starting with seq id?
 		//  String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
 		Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE,
-				"@@@ adding graph directory to types: " + type_name + ", path: " + file_path);
+				"@@@ adding graph directory to types: {0}, path: {1}", new Object[]{type_name, file_path});
 		graph_name2dir.put(type_name, file_path);
 		genome.addType(type_name, annot_id);
 
@@ -406,12 +406,12 @@ public abstract class ServerUtils {
 		
 		if (graph_name2dir.containsKey(type_name)) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE,
-					"@@@ removing graph directory to types: " + type_name);
+					"@@@ removing graph directory to types: {0}", type_name);
 			graph_name2dir.remove(type_name);
 			
 		}  else {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE,
-					"@@@ removing annotation " + type_name);
+					"@@@ removing annotation {0}", type_name);
 			List<BioSeq> seqList = genome.getSeqList();
 			for (BioSeq aseq : seqList) {
 				SymWithProps tannot = aseq.getAnnotation(type_name);			
@@ -679,7 +679,7 @@ public abstract class ServerUtils {
 			}
 		}
 		Logger.getLogger(ServerUtils.class.getName()).log(Level.FINE,
-				"  overlapping annotations that passed inside_span constraints: " + result.size());
+				"  overlapping annotations that passed inside_span constraints: {0}", result.size());
 		return result;
 	}
 
@@ -808,9 +808,11 @@ public abstract class ServerUtils {
 	public static void printGenomes(Map<String, List<AnnotatedSeqGroup>> organisms) {
 		for (Map.Entry<String, List<AnnotatedSeqGroup>> ent : organisms.entrySet()) {
 			String org = ent.getKey();
-			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,"Organism: " + org);
+			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO, "Organism: {0}", org);
 			for (AnnotatedSeqGroup version : ent.getValue()) {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,"    Genome version: " + version.getID() + ", organism: " + version.getOrganism() + ", seq count: " + version.getSeqCount());
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO, 
+						"    Genome version: {0}, organism: {1}, seq count: {2}",
+						new Object[]{version.getID(), version.getOrganism(), version.getSeqCount()});
 			}
 		}
 	}
@@ -925,8 +927,8 @@ public abstract class ServerUtils {
 
 	private static boolean isAuthorized(AnnotatedSeqGroup group, AnnotSecurity annotSecurity, String type) {
 		boolean isAuthorized = annotSecurity == null || annotSecurity.isAuthorized(group.getID(), type, group.getAnnotationId(type));
-		Logger.getLogger(AnnotatedSeqGroup.class.getName()).fine((isAuthorized ?
-			"Showing  " : "Blocking ") + " Annotation " + type + " ID=" + group.getAnnotationId(type));
+		Logger.getLogger(AnnotatedSeqGroup.class.getName()).log(Level.FINE,
+				"{0} Annotation {1} ID={2}", new Object[]{isAuthorized ? "Showing  " : "Blocking ", type, group.getAnnotationId(type)});
 		return isAuthorized;
 	}
 
@@ -940,7 +942,8 @@ public abstract class ServerUtils {
 		}
 
 		Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
-				"found " + newGenome.getSeqCount() + " chromosomes instead of " + oldGenome.getSeqCount());
+				"found {0} chromosomes instead of {1}",
+				new Object[]{newGenome.getSeqCount(), oldGenome.getSeqCount()});
 		if (isIgnored) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
 					"Due to indexing, this was ignored.");
@@ -973,7 +976,7 @@ public abstract class ServerUtils {
 
 		if (alteredChromStrings.size() > 0) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
-					"altered chromosomes found for genome " + oldGenome.getID() + ". ");
+					"altered chromosomes found for genome {0}. ", oldGenome.getID());
 			if (isIgnored) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
 						"Indexing; this may cause problems.");
@@ -1011,7 +1014,7 @@ public abstract class ServerUtils {
 			}
 		} catch (URISyntaxException e) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
-					"Could not initialize " + serverType + " server with address: " + url);
+					"Could not initialize {0} server with address: {1}", new Object[]{serverType, url});
 			e.printStackTrace(System.out);
 		}
 		return info;
@@ -1107,8 +1110,6 @@ public abstract class ServerUtils {
 		}
 		if((extension.equals("sin") || extension.equals("egr") ||
 				extension.equals("bgr")) ){
-				// Remvoing gff and gff3 to prevent autoloading.
-				//|| extension.endsWith("gff") || extension.endsWith("gff3")){
 			return new SymLoaderInstNC(uri, featureName, group);
 		}if((extension.equals("gff3")) || extension.endsWith("gff")){
 			//Determine if a file with extension gff is actually gff3

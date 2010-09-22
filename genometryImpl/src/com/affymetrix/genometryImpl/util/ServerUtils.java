@@ -1110,6 +1110,12 @@ public abstract class ServerUtils {
 				// Remvoing gff and gff3 to prevent autoloading.
 				//|| extension.endsWith("gff") || extension.endsWith("gff3")){
 			return new SymLoaderInstNC(uri, featureName, group);
+		}if((extension.equals("gff3")) || extension.endsWith("gff")){
+			//Determine if a file with extension gff is actually gff3
+			if(GFF3.isGFF3(uri))
+				return new GFF3(uri, featureName, group);
+			
+			return null;
 		}
 
 		return null;

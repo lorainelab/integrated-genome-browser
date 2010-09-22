@@ -13,6 +13,7 @@ import static org.junit.Assert.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GFF3Sym;
+import com.affymetrix.genometryImpl.symloader.GFF3;
 import java.io.*;
 import java.util.*;
 
@@ -55,38 +56,11 @@ public class GFF3ParserTest {
 			List expResult = null;
 			List result = instance.parse(istr, seq_group, true);
 
-			// Making result size 2, since now we are counting
-			// "TF_binding_site" too. : hiralv 08-16-10
-			assertEquals(2, result.size());
+			testResults(result);
 
-
-			SeqSymmetry gene = (SeqSymmetry) result.get(0);
-			assertEquals(999, gene.getSpan(0).getStart());
-			assertEquals(9000, gene.getSpan(0).getEnd());
-
-			assertEquals(4, gene.getChildCount());
-			// TODO: test child 0
-
-			for(int i=0; i<gene.getChildCount(); i++){
-				GFF3Sym mRNA = (GFF3Sym) gene.getChild(i);
-
-				if("EDEN.1".equals(mRNA.getProperty(GFF3Parser.GFF3_NAME))){
-					assertEquals(4+1, mRNA.getChildCount()); // 4 exons, 1 CDS
-					
-					GFF3Sym exon1 = (GFF3Sym) mRNA.getChild(0);
-					assertEquals(GFF3Sym.FEATURE_TYPE_EXON, exon1.getFeatureType());
-
-					GFF3Sym cds_group1 = (GFF3Sym) mRNA.getChild(4);
-					assertEquals(GFF3Sym.FEATURE_TYPE_CDS, cds_group1.getFeatureType());
-					assertEquals(cds_group1.getSpanCount(), 4);
-					
-				}else if ("EDEN.2".equals(mRNA.getProperty(GFF3Parser.GFF3_NAME))) {
-					assertEquals(3+1, mRNA.getChildCount()); // 3 exons, 1 CDS
-				}else if ("EDEN.3".equals(mRNA.getProperty(GFF3Parser.GFF3_NAME))) {
-					assertEquals(4+1, mRNA.getChildCount()); // 4 exons, 1 CDS
-				}
-			}
-
+			GFF3 gff3 = new GFF3(new File(filename).toURI(),new File(filename).getName(),seq_group);
+			testResults(gff3.getGenome());
+			
 			// Replacing test with above test. hiralv 08-16-10
 			
 //			GFF3Sym mRNA1 = (GFF3Sym) gene.getChild(1);
@@ -109,6 +83,42 @@ public class GFF3ParserTest {
 			istr.close();
 		}
 
+	public void testResults(List result){
+
+
+			// Making result size 2, since now we are counting
+			// "TF_binding_site" too. : hiralv 08-16-10
+			assertEquals(2, result.size());
+
+
+			SeqSymmetry gene = (SeqSymmetry) result.get(0);
+			assertEquals(999, gene.getSpan(0).getStart());
+			assertEquals(9000, gene.getSpan(0).getEnd());
+
+			assertEquals(4, gene.getChildCount());
+			// TODO: test child 0
+
+			for(int i=0; i<gene.getChildCount(); i++){
+				GFF3Sym mRNA = (GFF3Sym) gene.getChild(i);
+
+				if("EDEN.1".equals(mRNA.getProperty(GFF3Parser.GFF3_NAME))){
+					assertEquals(4+1, mRNA.getChildCount()); // 4 exons, 1 CDS
+
+					GFF3Sym exon1 = (GFF3Sym) mRNA.getChild(0);
+					assertEquals(GFF3Sym.FEATURE_TYPE_EXON, exon1.getFeatureType());
+
+					GFF3Sym cds_group1 = (GFF3Sym) mRNA.getChild(4);
+					assertEquals(GFF3Sym.FEATURE_TYPE_CDS, cds_group1.getFeatureType());
+					assertEquals(cds_group1.getSpanCount(), 4);
+
+				}else if ("EDEN.2".equals(mRNA.getProperty(GFF3Parser.GFF3_NAME))) {
+					assertEquals(3+1, mRNA.getChildCount()); // 3 exons, 1 CDS
+				}else if ("EDEN.3".equals(mRNA.getProperty(GFF3Parser.GFF3_NAME))) {
+					assertEquals(4+1, mRNA.getChildCount()); // 4 exons, 1 CDS
+				}
+			}
+
+	}
 	@Test
 		public void testParseErrors() throws IOException {
 			//System.out.println("parse");

@@ -251,12 +251,15 @@ public final class GFF3Parser {
 			if (parent_ids.length == 0 || sym.getFeatureType().equals("TF_binding_site")) {
 				// If no parents, then it is top-level
 				results.add(sym);
-				/* Do we really need to do for every span? */ if (annot_seq) {
-					for (int i = 0; i < sym.getSpanCount(); i++) {
-						BioSeq seq = sym.getSpanSeq(i);
-						seq.addAnnotation(sym);
-					}
-				}
+//				/* Do we really need to do for every span? */ 
+				// If span are on same sequence then,
+				// it is probably safe not to do it
+//				if (annot_seq) {
+//					for (int i = 0; i < sym.getSpanCount(); i++) {
+//						BioSeq seq = sym.getSpanSeq(i);
+//						seq.addAnnotation(sym);
+//					}
+//				}
 			} else {
 				// Else, add this as a child to *each* parent in its parent list.
 				// It is an error if the parent doesn't exist.

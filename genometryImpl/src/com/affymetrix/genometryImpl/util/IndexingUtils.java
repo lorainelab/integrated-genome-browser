@@ -151,11 +151,9 @@ public final class IndexingUtils {
 	 * @param returnTypeName
 	 * @throws java.io.IOException
 	 */
-	static void determineIndexes(
+	public static void determineIndexes(
 			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome,
 			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName) throws IOException {
-
-		ServerUtils.createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, originalGenome));
 
 		for (BioSeq originalSeq : originalGenome.getSeqList()) {
 			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
@@ -163,15 +161,15 @@ public final class IndexingUtils {
 				continue;	// ignore; this is a seq that was added during parsing.
 			}
 
-			if (DEBUG) {
-				System.out.println("Determining indexes for " + tempGenome.getID() + ", " + tempSeq.getID());
-			}
+			Logger.getLogger(IndexingUtils.class.getName()).log(Level.INFO,
+					"Determining indexes for {0}, {1}", new Object[]{tempGenome.getID(), tempSeq.getID()});
 
 			// Sort symmetries for this specific chromosome.
 			List<SeqSymmetry> sortedSyms =
 					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
 			if (sortedSyms.isEmpty()) {
-				Logger.getLogger(IndexingUtils.class.getName()).warning("No annotations found for file: " + file.getName() + " on chromosome:" + tempSeq.getID());
+				Logger.getLogger(IndexingUtils.class.getName()).log(Level.WARNING,
+						"No annotations found for file: {0} on chromosome:{1}", new Object[]{file.getName(), tempSeq.getID()});
 				continue;
 			}
 

@@ -510,6 +510,9 @@ public abstract class ServerUtils {
 			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
 			returnTypeName = annotTypeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
 		}
+
+		ServerUtils.createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, genome));
+
 		IndexingUtils.determineIndexes(genome,
 				tempGenome, dataRoot, file, loadedSyms, iWriter, annotTypeName, returnTypeName);
 	}	
@@ -542,7 +545,7 @@ public abstract class ServerUtils {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private static List loadAnnotFile(File current_file, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException, IOException {
+	public static List loadAnnotFile(File current_file, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException, IOException {
 		String stream_name = GeneralUtils.getUnzippedName(current_file.getName());
 		InputStream istr = null;
 		try {

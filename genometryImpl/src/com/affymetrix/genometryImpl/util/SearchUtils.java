@@ -82,7 +82,6 @@ public final class SearchUtils {
 		boolean glob_end = name.endsWith("*");
 
 		Set<SeqSymmetry> result = null;
-		Set<SeqSymmetry> indexedResult = null;
 		Pattern name_pattern = null;
 		String name_regex = name;
 		if (glob_start || glob_end) {
@@ -110,10 +109,8 @@ public final class SearchUtils {
 		Logger.getLogger(SearchUtils.class.getName()).log(Level.FINE,
 				"non-indexed regex matches: {0}", result.size());
 
-		indexedResult = IndexingUtils.findSymsByName(genome, name_pattern);
-		if (indexedResult != null) {
-			result.addAll(indexedResult);
-		}
+		result.addAll(IndexingUtils.findSymsByName(genome, name_pattern));
+
 		Logger.getLogger(SearchUtils.class.getName()).log(Level.FINE,
 				"total regex matches: {0}", result.size());
 

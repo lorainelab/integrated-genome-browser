@@ -236,6 +236,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchTF = new JTextField(10);
 		searchTF.setVisible(true);
 		searchTF.setEnabled(true);
+		searchTF.setMinimumSize(new Dimension(125,50));
 		
 		initRemoteServerCheckBox(null);
 

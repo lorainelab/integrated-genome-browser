@@ -161,7 +161,7 @@ public class ScriptFileLoader {
 		}
 	}
 
-	private static void doSingleAction(String line) {
+	public static void doSingleAction(String line) {
 		String[] fields = line.split(splitter);
 		String action = fields[0].toLowerCase();
 		if (action.equals("genome") && fields.length >= 2) {

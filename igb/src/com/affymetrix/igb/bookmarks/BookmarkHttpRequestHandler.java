@@ -13,7 +13,9 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.util.ScriptFileLoader;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -40,39 +42,48 @@ class BookmarkHttpRequestHandler implements Runnable {
     }
   }
 
-  private void processRequest() throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    OutputStream output = socket.getOutputStream();
-    
-    String line;
-    while ((line = reader.readLine()) != null) {
-      // we need to process only the GET header line of the input, which will
-      // look something like this:
-      // 'GET /IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310 HTTP/1.1'
+ private void processRequest() throws IOException {
+		BufferedReader reader = null;
+		OutputStream output = null;
+		
+		String line;
+		try {
+			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			output = socket.getOutputStream();
+			while ((line = reader.readLine()) != null) {
+				// we need to process only the GET header line of the input, which will
+				// look something like this:
+				// 'GET /IGBControl?version=hg18&seqid=chr17&start=43966897&end=44063310 HTTP/1.1'
 
-      String command = null;
-      if (line.length() >= 4 && line.substring(0,4).toUpperCase().equals("GET ")) {
-        String[] getCommand = line.substring(4).split(" ");
-        if (getCommand.length > 0) {
-          command = getCommand[0];
-        }
-      }
+				String command = null;
+				if (line.length() >= 4 && line.substring(0, 4).toUpperCase().equals("GET ")) {
+					String[] getCommand = line.substring(4).split(" ");
+					if (getCommand.length > 0) {
+						command = getCommand[0];
+					}
+				}
 
 
-      if (command != null) {
-		parseAndGoToBookmark(command);
-        output.write(NO_CONTENT.getBytes());
-      }
-    }
+				if (command != null) {
+					parseAndGoToBookmark(command);
+				} else {
+					ScriptFileLoader.doSingleAction(line);
+				}
 
-    try {
-      output.close();
-      reader.close();
-      socket.close();
-    } catch (Exception e) {
-      // do nothing
-    }
-  }
+				output.write(SimpleBookmarkServer.prompt);
+			}
+		} finally {
+
+			GeneralUtils.safeClose(output);
+			GeneralUtils.safeClose(reader);
+			try {
+				socket.close();
+			} catch (Exception e) {
+				// do nothing
+			}
+		}
+
+	}
 
 	private void parseAndGoToBookmark(String command) throws NumberFormatException {
 		Logger.getLogger(BookmarkHttpRequestHandler.class.getName()).log(Level.FINE,

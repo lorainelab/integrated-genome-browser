@@ -876,6 +876,7 @@ public final class GeneralLoadView extends JComponent
 				TableColumn col = feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
 				col.setPreferredWidth(finalMaxFeatureNameLength);
 
+				setDeleteButtonSize();
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
 				TableWithVisibleComboBox.setComboBoxEditors(feature_table, !GeneralLoadView.IsGenomeSequence());
@@ -976,9 +977,15 @@ public final class GeneralLoadView extends JComponent
 		return (String) speciesCB.getSelectedItem();
 	}
 
-	public void removeFeature(GenericFeature feature){
+	public static void removeFeature(GenericFeature feature){
 		TrackView.removeFeature(feature);
 		gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());
+	}
+
+	public static void setDeleteButtonSize(){
+		TableColumn col = feature_table.getColumnModel().getColumn(FeaturesTableModel.DELETE_FEATURE_COLUMN);
+		col.setResizable(false);
+		col.setMaxWidth(10);
 	}
 }
 

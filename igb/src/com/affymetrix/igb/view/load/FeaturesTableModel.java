@@ -225,9 +225,10 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		Object src = e.getSource();
 		if(src instanceof GenericFeature){
 			GenericFeature feature = (GenericFeature)src;
-			glv.removeFeature(feature);
+			GeneralLoadView.removeFeature(feature);
 			int row = getRow(feature);
 			fireTableCellUpdated(row, DELETE_FEATURE_COLUMN);
+			GeneralLoadView.setDeleteButtonSize();
 		}
 	}
 }

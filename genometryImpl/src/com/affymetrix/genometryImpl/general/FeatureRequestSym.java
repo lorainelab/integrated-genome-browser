@@ -216,7 +216,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 	 * @throws Exception
 	 */
 	public static List<? extends SeqSymmetry> Parse(
-			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName)
+			String extension, URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName, boolean annotate_target)
 			throws Exception {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
@@ -321,7 +321,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 			parser.enableSharedQueryTarget(true);
 			// annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
 			// why is annotate_target parameter below set to false?
-			return parser.parse(bis, featureName, null, group, null, false, true, false);
+			return parser.parse(bis, featureName, null, group, null, false, annotate_target, false); // do not annotate.  This is done later
 		}
 		if (extension.equals("psl") || extension.equals("psl3")) {
 			// reference to LoadFileAction.ParsePSL

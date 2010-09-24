@@ -16,28 +16,12 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.zip.ZipInputStream;
-import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.FeatureRequestSym;
-import com.affymetrix.genometryImpl.general.SymLoader;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.parsers.BgnParser;
-import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
-import com.affymetrix.genometryImpl.parsers.BpsParser;
-import com.affymetrix.genometryImpl.parsers.BrsParser;
-import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
-import com.affymetrix.genometryImpl.parsers.GFFParser;
-import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.util.ClientOptimizer;
 import com.affymetrix.genometryImpl.util.Constants;
@@ -56,8 +40,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
  */
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.util.logging.Logger;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public final class Das2ClientOptimizer {
     private static final boolean DEBUG = false;
@@ -257,7 +239,8 @@ public final class Das2ClientOptimizer {
 
             AddParsingLogMessage(content_subtype);
 			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
-			List<? extends SeqSymmetry> feats = FeatureRequestSym.Parse(extension, type.getURI(), istr, seq_group, type.getName());
+			// If it's das2 then do not annotate target in link.psl
+			List<? extends SeqSymmetry> feats = FeatureRequestSym.Parse(extension, type.getURI(), istr, seq_group, type.getName(), false);
 
 			//watch out for useq format, this can contain stranded graph data from a single DAS/2 response, modify the name so it can be caught while making graphs
 			String name = request_sym.getDas2Type().getName();

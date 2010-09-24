@@ -48,7 +48,9 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	private final String featureName;
 	private boolean isSorted = false;
 	private File tempFile = null;
-
+	private static final String UNNAMED = "unnamed";
+	private BioSeq unnamed;
+	
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
@@ -69,6 +71,49 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 		}
 		super.init();
 		this.f = LocalUrlCacher.convertURIToFile(uri);
+		sort();
+	}
+
+	private void sort(){
+		unnamed = group.getSeq(UNNAMED);
+
+		if(unnamed == null)
+			unnamed = new BioSeq(UNNAMED, null, 0);
+
+		GraphSym sym = parse(unnamed, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+
+		if (!isSorted) {
+			FileOutputStream fos = null;
+			try {
+				tempFile = File.createTempFile(f.getName(), ".gr");
+				tempFile.deleteOnExit();
+				fos = new FileOutputStream(tempFile);
+				writeGrFormat(sym, fos);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} finally {
+				GeneralUtils.safeClose(fos);
+			}
+		}
+		isSorted = true;
+
+		if(unnamed.getLength() < sym.getMaxXCoord())
+			unnamed.setLength(sym.getMaxXCoord());
+
+	}
+	
+	@Override
+	public List<BioSeq> getChromosomeList(){
+		init();
+		List<BioSeq> seqs = group.getSeqList();
+		if(!seqs.isEmpty()){
+			return seqs;
+		}
+
+		seqs = new ArrayList<BioSeq>();
+		seqs.add(unnamed);
+
+		return seqs;
 	}
 
 	@Override
@@ -126,24 +171,7 @@ public final class Gr extends SymLoader implements AnnotationWriter{
 	}
 
 	private GraphSym parse(BioSeq aseq, int min, int max){
-		GraphSym sym = parse(aseq, min, max, true);
-
-		if (!isSorted) {
-			FileOutputStream fos = null;
-			try {
-				tempFile = File.createTempFile(f.getName(), ".gr");
-				tempFile.deleteOnExit();
-				fos = new FileOutputStream(tempFile);
-				writeGrFormat(sym, fos);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				GeneralUtils.safeClose(fos);
-			}
-		}
-		isSorted = true;
-		
-		return sym;
+		return parse(aseq, min, max, true);
 	}
 	
 	private GraphSym parse(BioSeq aseq, int min, int max, boolean ensure_unique_id){

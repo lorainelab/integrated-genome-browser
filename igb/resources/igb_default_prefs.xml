@@ -39,15 +39,26 @@
     url="http://www.dictybase.org/db/cgi-bin/search/search.pl?query=$$"
    />
 
-  <annotation_url annot_id_regex="^gb\|.*$"
-    name="Genbank"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  <annotation_url annot_id_regex="^NM_\d+.*$"
+    name="RefSeq"
+    url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
+  />
+
+  <annotation_url annot_id_regex="^XM_\d+.*$"
+    name="NCBI Gene"
+    url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
   />
 
   <annotation_url annot_type_regex="(?i).*RefSeq$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
+
+  <annotation_url annot_id_regex="^gb\|.*$"
+    name="Genbank"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+
 
 <!--
   <annotation_url annot_type_regex="(?i).*EnsGene$"

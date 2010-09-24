@@ -3,6 +3,7 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -396,6 +397,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 * @return hyperlink of the server name
 	 */
 	private static URL serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
+		if (gServer.serverType == ServerType.DAS) {
+			return null;	// TODO - hack to ignore server hyperlinks for DAS/1.
+		}
 		if (gServer.friendlyURL != null) {
 			Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
 			bounds.width = (int) linkBound.getWidth();
@@ -516,7 +520,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 		private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 			String serverNameString = "";
-			if (gServer.friendlyURL != null) {
+			if (gServer.friendlyURL != null && gServer.serverType != ServerType.DAS) {
+				// TODO - hack to ignore server hyperlinks for DAS/1.
 				serverNameString = "<a href='" + gServer.friendlyURL + "'><b>" + gServer.serverName + "</b></a>";
 			} else {
 				serverNameString = "<b>" + gServer.serverName + "</b>";

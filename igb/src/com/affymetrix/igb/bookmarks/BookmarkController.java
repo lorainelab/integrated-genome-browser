@@ -282,45 +282,6 @@ public abstract class BookmarkController {
 			}
 		}
   }
-
-  public static void addSymProperties(SymWithProps mark_sym){
-	  BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-
-	  // Holds a list of labels of graphs for which no url could be found.
-	  Set<String> unfound_labels = new LinkedHashSet<String>();
-
-	  // "j" loops throug all graphs, while "i" counts only the ones
-	  // that are actually book-markable (thus i <= j)
-	  int i = -1;
-
-	  for (int j = 0; j < seq.getAnnotationCount(); j++) {
-
-		  SeqSymmetry sym = seq.getAnnotation(j);
-
-		  if (!(sym instanceof TypeContainerAnnot)) {
-			  continue;
-		  }
-
-		  i++;
-		  TypeContainerAnnot tca = (TypeContainerAnnot)sym;
-		  ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(tca.getType());
-		  GenericFeature feature = style.getFeature();
-
-		  if (feature == null) {
-			  unfound_labels.add(tca.getType());
-			  continue;
-		  }
-
-//		  addStyleProps(style, mark_sym, feature.getURI().toString(), style.getHumanName(), i);
-
-	  }
-
-	  if (!unfound_labels.isEmpty()) {
-		  ErrorHandler.errorPanel("WARNING: Cannot bookmark some symmtries",
-				  "Warning: could not bookmark some symmtries.\n"
-				  + "No feature was available for: " + unfound_labels.toString());
-	  }
-  }
   
   public static void addProperties(SymWithProps mark_sym) {
 	BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();

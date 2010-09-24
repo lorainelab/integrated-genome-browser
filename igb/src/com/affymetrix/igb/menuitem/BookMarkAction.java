@@ -377,7 +377,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     }
   }
 
-	private void bookmarkCurrentPosition(boolean include_graphs) {
+	private void bookmarkCurrentPosition(boolean include_sym_and_props) {
 		BioSeq aseq = gmodel.getSelectedSeq();
 		if (aseq == null) {
 			ErrorHandler.errorPanel("Error", "Nothing to bookmark");
@@ -403,14 +403,13 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		mark_sym.setProperty(Bookmark.LOADRESIDUES, new String[] {Boolean.toString(aseq.isComplete())});
 		
 		Bookmarks bookmark = new Bookmarks();
-
-		BookmarkController.addSymmetries(bookmark);
 		
-		if (include_graphs) {
+		if (include_sym_and_props) {
+			BookmarkController.addSymmetries(bookmark);
 			BookmarkController.addProperties(mark_sym);
 		}
 
-		if(bookmark.getSyms().isEmpty()){
+		if(include_sym_and_props && bookmark.getSyms().isEmpty()){
 			ErrorHandler.errorPanel("Error: No Symmtries or graphs to bookmark.");
 			return;
 		}

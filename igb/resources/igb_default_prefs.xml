@@ -20,7 +20,7 @@
 <!-- servers disabled by default -->
 <server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" />
 
-  <!-- <annotation_url> associates a "method" or "id" regular expression with a URL.
+  <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression (case insensitive by default)
          annot_id_regex:  a regular expression (case insensitive by default)
@@ -39,13 +39,18 @@
     url="http://www.dictybase.org/db/cgi-bin/search/search.pl?query=$$"
    />
 
-  <annotation_url annot_id_regex="^NM_\d+.*$"
-    name="RefSeq"
+  <annotation_url annot_type_regex="^NCBI EST$"
+    name="NCBI EST"
     url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
   />
 
-  <annotation_url annot_id_regex="^XM_\d+.*$"
-    name="NCBI Gene"
+  <annotation_url annot_type_regex="^NCBI Gene$"
+    name="NCBI Gene2"
+    url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
+  />
+
+  <annotation_url annot_type_regex="^NCBI Transcript$"
+    name="NCBI Transcript"
     url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
   />
 
@@ -56,7 +61,7 @@
 
   <annotation_url annot_id_regex="^gb\|.*$"
     name="Genbank"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+    url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
   />
 
 
@@ -129,6 +134,11 @@
     url="http://www.genedb.org/genedb/Search?name=$$&amp;organism=pombe&amp;desc=yes&amp;wildcard=yes&amp;searchId=Search"
   />
 
+  <annotation_url annot_type_regex="^NCBI mRNA$"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+ 
   <!-- Add an NCBI link for mRNA methods that do not have the word "TAIR" -->
   <!-- This is a 0-length negative lookahead regular expression for TAIR -->
   <annotation_url annot_type_regex="(?i)^(?!TAIR).*mRNA"

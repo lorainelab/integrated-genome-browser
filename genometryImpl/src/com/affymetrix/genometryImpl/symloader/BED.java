@@ -148,7 +148,7 @@ public class BED extends SymLoader{
 		symlist.clear();
 		annotate_seq = annot_seq;
 		this.create_container_annot = create_container;
-		default_type = stream_name;
+		default_type = this.featureName;
 
 		if (stream_name.endsWith(".bed")) {
 			default_type = stream_name.substring(0, stream_name.lastIndexOf(".bed"));

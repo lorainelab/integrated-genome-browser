@@ -227,7 +227,7 @@ public class FeatureRequestSym extends SimpleSymWithProps {
 		}
 		if (extension.equals("bed")) {
 			BedParser parser = new BedParser();
-			return parser.parse(bis, GenometryModel.getGenometryModel(), group, false, uri.toString(), false);
+			return parser.parse(bis, GenometryModel.getGenometryModel(), group, false, featureName, false);
 		}
 		if (extension.equals("useq")) {
 			//find out what kind of data it is, graph or region, from the ArchiveInfo object

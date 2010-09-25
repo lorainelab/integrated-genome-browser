@@ -45,7 +45,7 @@
   />
 
   <annotation_url annot_type_regex="^NCBI Gene$"
-    name="NCBI Gene2"
+    name="NCBI Gene"
     url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
   />
 

@@ -1004,7 +1004,7 @@ public class SeqMapView extends JPanel
 	 *  glyphs represent.
 	 */
 	private static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
-		Set<SeqSymmetry> symSet = new HashSet<SeqSymmetry>(glyphs.size());
+		Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
 		for (GlyphI gl : glyphs) {
 			SeqSymmetry sym = glyphToSym(gl);
 			if (sym != null) {

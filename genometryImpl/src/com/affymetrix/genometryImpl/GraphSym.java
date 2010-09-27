@@ -117,7 +117,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 *  @param y must be an array of float of same length as x.
 	 *  @param w must be an array of float of same length as x and y, or null
 	 */
-	protected final void setCoords(int[] x, float[] y, int[] w) {
+	protected final synchronized void setCoords(int[] x, float[] y, int[] w) {
 		if (x.length != y.length) {
 			throw new IllegalArgumentException("X-coords and y-coords must have the same length.");
 		}
@@ -137,7 +137,7 @@ public class GraphSym extends SimpleSymWithProps {
 		bufFile = index(this.getGraphName() + this.getGraphSeq().getID(), x,y,w);
 	}
 
-	protected final void nullCoords() {
+	protected final synchronized void nullCoords() {
 		// null out for garbage collection and cleanup
 		yBuf = null;
 		wBuf = null;
@@ -154,7 +154,7 @@ public class GraphSym extends SimpleSymWithProps {
 		return pointCount;
 	}
 
-	public final int[] getGraphXCoords() {
+	public final synchronized int[] getGraphXCoords() {
 		int[] tempCoords = new int[this.pointCount];
 		for (int i=0;i<this.pointCount;i++) {
 			tempCoords[i] = getGraphXCoord(i);
@@ -202,7 +202,6 @@ public class GraphSym extends SimpleSymWithProps {
 			return 0;	// out of range
 		}
 		if (i < bufStart || i >= bufStart + BUFSIZE) {
-			this.bufStart = i;
 			readIntoBuffers(i);
 		}
 		return yBuf[i - bufStart];
@@ -215,7 +214,7 @@ public class GraphSym extends SimpleSymWithProps {
 	/** Returns a copy of the graph Y coordinates as a float[], even if the Y coordinates
 	 *  were originally specified as non-floats.
 	 */
-	public final float[] copyGraphYCoords() {
+	public final synchronized float[] copyGraphYCoords() {
 		float[] tempCoords = new float[this.pointCount];
 		for (int i=0;i<this.pointCount;i++) {
 			tempCoords[i] = getGraphYCoord(i);
@@ -246,7 +245,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 * This is expensive, and should only happen when we're copying the coords.
 	 * @return tempCoords
 	 */
-	public final int[] getGraphWidthCoords() {
+	public final synchronized int[] getGraphWidthCoords() {
 		if (!this.hasWidth) {
 			return null;
 		}
@@ -265,7 +264,6 @@ public class GraphSym extends SimpleSymWithProps {
 			return 0;	// out of range
 		}
 		if (i < bufStart || i >= bufStart + BUFSIZE) {
-			this.bufStart = i;
 			readIntoBuffers(i);
 		}
 		return wBuf[i - bufStart];
@@ -364,11 +362,13 @@ public class GraphSym extends SimpleSymWithProps {
 	 * Read into buffers
 	 * @param start
 	 */
-	private void readIntoBuffers(int start) {
+	private synchronized void readIntoBuffers(int start) {
 		DataInputStream dis = null;
 		try {
 			// open stream
 			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(bufFile)));
+
+			this.bufStart = start;
 
 			// skip to proper location
 			int bytesToSkip = (start*3*4);	// 3 coords (x,y,w) -- 4 bytes each

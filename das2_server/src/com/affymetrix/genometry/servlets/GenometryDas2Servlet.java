@@ -46,6 +46,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.util.SearchUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -271,7 +272,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final boolean DEFAULT_USE_TYPES_XSLT = true;
 	private boolean use_types_xslt;
 
-	private static String synonym_file;
+	private static File synonym_file;
+	private static File chr_synonym_file;
 	private static String org_order_filename;
 
 	@Override
@@ -301,7 +303,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			initFormats(output_registry);
 
-			ServerUtils.loadSynonyms(synonym_file);
+
+			ServerUtils.loadSynonyms(synonym_file, SynonymLookup.getDefaultLookup());
+			ServerUtils.loadSynonyms(chr_synonym_file, SynonymLookup.getChromosomeLookup());
 
 			if (is_genometry_genopub_mode) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
@@ -426,7 +430,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		data_root = genometry_server_dir + "/";			
 
 		//set various files as Strings
-		synonym_file = data_root + "synonyms.txt";
+		synonym_file = new File(data_root + "synonyms.txt");
+		chr_synonym_file = new File(data_root + "synonyms.txt");
 		types_xslt_file = data_root + "types.xslt";
 		org_order_filename = data_root + "organism_order.txt";
 

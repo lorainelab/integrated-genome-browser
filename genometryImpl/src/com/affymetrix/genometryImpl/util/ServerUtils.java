@@ -132,12 +132,15 @@ public abstract class ServerUtils {
 		return names;
 	}
 
-	public static void loadSynonyms(String synonym_file) {
-		File synfile = new File(synonym_file);
+	/**
+	 * Load synonyms from file into lookup.
+	 * @param symfile
+	 * @param lookup
+	 */
+	public static void loadSynonyms(File synfile, SynonymLookup lookup) {
 		if (synfile.exists()) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-					"Synonym file {0} found, loading synonyms", synonym_file);
-			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+					"Synonym file {0} found, loading synonyms", synfile.getName());
 			FileInputStream fis = null;
 			try {
 				fis = new FileInputStream(synfile);
@@ -149,7 +152,7 @@ public abstract class ServerUtils {
 			}
 		} else {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO,
-					"Synonym file {0} not found, therefore not using synonyms", synonym_file);
+					"Synonym file {0} not found, therefore not using synonyms", synfile.getName());
 		}
 	}
 

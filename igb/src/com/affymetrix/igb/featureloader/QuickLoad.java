@@ -195,7 +195,7 @@ public final class QuickLoad extends SymLoader {
 				}
 			}
 		};
-		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
+		ThreadUtils.getPrimaryExecutor(feature).execute(worker);		
 		return true;
 	}
 
@@ -229,7 +229,9 @@ public final class QuickLoad extends SymLoader {
 				SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 				overallResults.addAll(entry.getValue());
 			
-				feature.addMethod(entry.getKey());
+				// Some format do not annotate. So it might not have method name. e.g bgn
+				if(entry.getKey() != null)
+					feature.addMethod(entry.getKey());
 			}
 		}
 		feature.addLoadedSpanRequest(span);	// this span is now considered loaded.

@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonSymWithIntId;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *
@@ -167,14 +168,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			//      tagvals.put(("preferred_formats", pref_list);
 
 			int seq_count = dis.readInt();
-			if (DEBUG) {
-				System.out.println("format: " + format + ", format_version: " + format_version);
-				System.out.println("seq_group_name: " + seq_group_name + ", seq_group_version: " + seq_group_version);
-				System.out.println("type: " + specified_type);
-				System.out.println("probe_length: " + probe_length);
-				System.out.println("id_prefix: " + id_prefix);
-				System.out.println("seq_count: " + seq_count);
-			}
+
 			int total_tcluster_count = 0;
 			int total_ecluster_count = 0;
 			int total_psr_count = 0;
@@ -186,9 +180,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				String seqid = dis.readUTF();
 				int seq_length = dis.readInt();
 				int transcript_cluster_count = dis.readInt();
-				if (DEBUG)  {
-					System.out.println("seq: " + seqid + ", transcript_cluster_count: " + transcript_cluster_count);
-				}
 				total_tcluster_count += transcript_cluster_count;
 
 				BioSeq aseq = group.getSeq(seqid);
@@ -304,16 +295,15 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			System.out.println("probeset count: " + total_probeset_count);
 			System.out.println("probe count: " + total_probe_count);
 			System.out.println("finished parsing exon array design file");
-			dis.close();
 		}
 		finally {
-			if (dis != null) {try { dis.close(); } catch (Exception e) {}}
+			GeneralUtils.safeClose(dis);
 		}
 		return results;
 	}
 
 	/**
-	 *  Implememts AnnotationWriter interface
+	 *  Implements AnnotationWriter interface
 	 *  Assumes rigid structure for annotations:
 	 *  Standard top-level setup: TypeContainerSym with type = {@literal <annot_type> } annotating each seq in group
 	 *  Within type container sym:
@@ -359,72 +349,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 
 
 	/**
-	 *  For writing out all annotations of a particular type for a whole genome in .ead format
-	 *  Assumes rigid structure for annotations:
-	 *  Standard top-level setup: TypeContainerSym with type = {@literal <annot_type> } annotating each seq in group
-	 *  Within type container sym:
-	 *    Level 0: Transcript-cluster annots (SingletonSymWithIntId objects)
-	 *    Level 1: Exon-cluster (and intron-cluster?) annots (SingletonSymWithIntId objects)
-	 *    Level 2: PSR annots (SingletonSymWithIntId objects)
-	 *    Level 3: probeset annots (EfficieentProbesetSymA)
-	 *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
-	 *
-	 */
-	public boolean writeAnnotations(String annot_type, AnnotatedSeqGroup group, OutputStream outstream)
-		throws IOException {
-		boolean success = false;
-		try {
-			DataOutputStream dos;
-			if (outstream instanceof DataOutputStream) { dos = (DataOutputStream)outstream; }
-			else if (outstream instanceof BufferedOutputStream) { dos = new DataOutputStream(outstream); }
-			else { dos = new DataOutputStream(new BufferedOutputStream(outstream)); }
-
-			int scount = group.getSeqCount();
-			List<BioSeq> seqs = group.getSeqList();
-
-			SeqSymmetry tcluster_exemplar = null;
-			if (seqs.size() > 0) {
-				BioSeq aseq = group.getSeq(0);
-				SymWithProps typesym = aseq.getAnnotation(annot_type);
-				SeqSymmetry container = typesym.getChild(0);
-				tcluster_exemplar = container.getChild(0);
-			}
-
-			writeEadHeader(tcluster_exemplar, annot_type, seqs, dos);
-
-			for (int i=0; i<scount; i++) {
-				BioSeq aseq = group.getSeq(i);
-				SymWithProps typesym = aseq.getAnnotation(annot_type);
-				// transcript clusters should be third level down in hierarchy:
-				//    1) type container
-				//    2) intermediate container
-				//    3) transcript cluster
-				List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-				int container_count = typesym.getChildCount();
-				for (int k=0; k<container_count; k++) {
-					SeqSymmetry csym = typesym.getChild(k);
-					int tcount = csym.getChildCount();
-					for (int m=0; m<tcount; m++) {
-						SeqSymmetry tcluster = csym.getChild(m);
-						syms.add(tcluster);
-					}
-				}
-				// collect all transcript cluster syms
-				writeSeqWithAnnots(syms, aseq, dos);
-			}
-			dos.flush();
-			success = true;
-		}
-		catch (Exception ex) {
-			IOException ioe = new IOException(ex.getLocalizedMessage());
-			ioe.initCause(ex);
-			throw ioe;
-		}
-		return success;
-	}
-
-
-	/**
 	 *  assumes seqs are SmartAnnotBioSeqs, and belong to same AnnotatedSeqGroup
 	 */
 	private static void writeEadHeader(SeqSymmetry tcluster_exemplar, String annot_type, List<BioSeq> seqs, DataOutputStream dos) throws IOException {
@@ -461,7 +385,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *  write out a seq data section
 	 *  assumes syms in collection contain span on aseq
 	 */
-	private static void writeSeqWithAnnots(java.util.Collection syms, BioSeq aseq, DataOutputStream dos) throws IOException {
+	private static void writeSeqWithAnnots(Collection<? extends SeqSymmetry> syms, BioSeq aseq, DataOutputStream dos) throws IOException {
 		String seqid = aseq.getID();
 		System.out.println("seqid: " + seqid + ", annot count: " + syms.size() );
 		dos.writeUTF(seqid);
@@ -596,15 +520,14 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			id_prefix = args[2];
 			annot_type = args[3];
 			genomeid = args[4];
-			if (args.length == 6) { versionid = args[5]; }
+			if (args.length == 6) {
+				versionid = args[5];
+			}
+		} else {
+			System.out.println("Usage:  java ... ExonArrayDesignParser <GFF infile> <EAD outfile> <id_prefix> <annot type> <genomeid> [<version>]");
+			System.out.println("Example:  java ... ExonArrayDesignParser foo.gff foo.ead 'HuEx-1_0-st-v2:' HuEx-1_0-st-v2 H_sapiens_Mar_2006");
+			System.exit(1);
 		}
-		/*
-		   else {
-		   System.out.println("Usage:  java ... ExonArrayDesignParser <GFF infile> <EAD outfile> <id_prefix> <annot type> <genomeid> [<version>]");
-		   System.out.println("Example:  java ... ExonArrayDesignParser foo.gff foo.ead 'HuEx-1_0-st-v2:' HuEx-1_0-st-v2 H_sapiens_Mar_2006");
-		   System.exit(1);
-		   }
-		   */
 
 		if (WRITE) {
 			System.out.println("Creating a '.ead' format file: ");
@@ -621,9 +544,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeid + versionid);
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
 				List results = parser.parse(bis, group, true, annot_type);
-				System.gc();
 				System.out.println("Finished reading ead file, transcript_clusters: " + results.size());
-
 			}
 			catch (Exception ex)  {
 				ex.printStackTrace();
@@ -638,7 +559,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *     All annotations in GFF file are genome-based probes (contiguous intervals on genome);
 	 *     25-mer probes (for now)
 	 */
-	private void convertGff(String in_file, String out_file, String genome_id,
+	private static void convertGff(String in_file, String out_file, String genome_id,
 			String annot_type, String id_prefix)  {
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
 		int probe_length = 25;
@@ -661,8 +582,8 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				gfiles.add(gff_file);
 			}
 			int printcount = 0;
-			HashMap<BioSeq,SimpleSymWithProps> seq2container = new HashMap<BioSeq,SimpleSymWithProps>();
-			HashMap<BioSeq,SharedProbesetInfo> seq2info = new HashMap<BioSeq,SharedProbesetInfo>();
+			Map<BioSeq,SimpleSymWithProps> seq2container = new HashMap<BioSeq,SimpleSymWithProps>();
+			Map<BioSeq,SharedProbesetInfo> seq2info = new HashMap<BioSeq,SharedProbesetInfo>();
 
 			for (File gfile : gfiles) {
 
@@ -793,6 +714,73 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 		catch (Exception ex) { ex.printStackTrace(); }
 
 	}
+
+
+	/**
+	 *  For writing out all annotations of a particular type for a whole genome in .ead format
+	 *  Assumes rigid structure for annotations:
+	 *  Standard top-level setup: TypeContainerSym with type = {@literal <annot_type> } annotating each seq in group
+	 *  Within type container sym:
+	 *    Level 0: Transcript-cluster annots (SingletonSymWithIntId objects)
+	 *    Level 1: Exon-cluster (and intron-cluster?) annots (SingletonSymWithIntId objects)
+	 *    Level 2: PSR annots (SingletonSymWithIntId objects)
+	 *    Level 3: probeset annots (EfficieentProbesetSymA)
+	 *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
+	 *
+	 */
+	private static boolean writeAnnotations(String annot_type, AnnotatedSeqGroup group, OutputStream outstream)
+		throws IOException {
+		boolean success = false;
+		try {
+			DataOutputStream dos;
+			if (outstream instanceof DataOutputStream) { dos = (DataOutputStream)outstream; }
+			else if (outstream instanceof BufferedOutputStream) { dos = new DataOutputStream(outstream); }
+			else { dos = new DataOutputStream(new BufferedOutputStream(outstream)); }
+
+			int scount = group.getSeqCount();
+			List<BioSeq> seqs = group.getSeqList();
+
+			SeqSymmetry tcluster_exemplar = null;
+			if (seqs.size() > 0) {
+				BioSeq aseq = group.getSeq(0);
+				SymWithProps typesym = aseq.getAnnotation(annot_type);
+				SeqSymmetry container = typesym.getChild(0);
+				tcluster_exemplar = container.getChild(0);
+			}
+
+			writeEadHeader(tcluster_exemplar, annot_type, seqs, dos);
+
+			for (int i=0; i<scount; i++) {
+				BioSeq aseq = group.getSeq(i);
+				SymWithProps typesym = aseq.getAnnotation(annot_type);
+				// transcript clusters should be third level down in hierarchy:
+				//    1) type container
+				//    2) intermediate container
+				//    3) transcript cluster
+				List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+				int container_count = typesym.getChildCount();
+				for (int k=0; k<container_count; k++) {
+					SeqSymmetry csym = typesym.getChild(k);
+					int tcount = csym.getChildCount();
+					for (int m=0; m<tcount; m++) {
+						SeqSymmetry tcluster = csym.getChild(m);
+						syms.add(tcluster);
+					}
+				}
+				// collect all transcript cluster syms
+				writeSeqWithAnnots(syms, aseq, dos);
+			}
+			dos.flush();
+			success = true;
+		}
+		catch (Exception ex) {
+			IOException ioe = new IOException(ex.getLocalizedMessage());
+			ioe.initCause(ex);
+			throw ioe;
+		}
+		return success;
+	}
+
 
 
 }

@@ -108,9 +108,6 @@ public final class FastaParser {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(istr);
 		}
-		if (DEBUG) {
-		System.out.println("done loading fasta file");
-		}
 		return seqlist;
 	}
 
@@ -273,7 +270,6 @@ public final class FastaParser {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(istr);
 		}
-		System.gc();
 
 		// GAH 6-26-2002
 		// contortions to try and minimize length of String's internal char array, because:
@@ -288,11 +284,8 @@ public final class FastaParser {
 		//     copy buffer's characters to char array, and then the String(char[]) constructor will
 		//     copy the charray's characters to its own internal array.  BUT, will decrease
 		//     long-term memory usage
-		//   trying to force garbage collection via System.gc() to minimize memory spike while
-		//      doing the double-copy
 		String residues = null;
 		if (use_buffer_directly) {
-			System.gc();
 			residues = new String(buf);
 		}
 		else {
@@ -305,11 +298,9 @@ public final class FastaParser {
 			residues = new String(temp_residues);
 			temp_residues = null;
 		
-			System.gc();
 			System.out.println("done constructing residues via array");
 			buf = null;
 		}
-		System.gc();
 		
 		System.out.println("id: " + seqid);
 		if (seq == null) {

@@ -86,8 +86,7 @@ public final class BAM extends SymLoader {
 		if (this.isInitialized) {
 			return;
 		}
-		super.init();
-
+		
 		try {
 			String scheme = uri.getScheme().toLowerCase();
 			if (scheme.length() == 0 || scheme.equals("file")) {
@@ -121,7 +120,9 @@ public final class BAM extends SymLoader {
 				return;
 			}
 
-			initTheSeqs();
+			if(initTheSeqs()){
+				super.init();
+			}
 		} catch (SAMFormatException ex) {
 			ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n" +
 					"Please validate your BAM files and contact the Picard project at http://picard.sourceforge.net." +
@@ -134,16 +135,17 @@ public final class BAM extends SymLoader {
 
 
 
-	private void initTheSeqs() {
+	private boolean initTheSeqs() {
 		try {
 			header = reader.getFileHeader();
 			if (header == null || header.getSequenceDictionary() == null || header.getSequenceDictionary().getSequences() == null) {
 				Logger.getLogger(BAM.class.getName()).log(Level.WARNING, "Couldn't find sequences in file");
-				return;
+				return false;
 			}
+			Thread thread = Thread.currentThread();
 			for (SAMSequenceRecord ssr : header.getSequenceDictionary().getSequences()) {
 				try {
-					if (Thread.currentThread().isInterrupted()) {
+					if (thread.isInterrupted()) {
 						break;
 					}
 					String seqID = ssr.getSequenceName();
@@ -160,9 +162,12 @@ public final class BAM extends SymLoader {
 					ex.printStackTrace();
 				}
 			}
+
+			return !thread.isInterrupted();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		return false;
 	}
 
 	@Override

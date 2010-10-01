@@ -49,8 +49,8 @@ public class Fasta extends SymLoader {
 		if (this.isInitialized) {
 			return;
 		}
-		super.init();
-		initChromosomes();
+		if(initChromosomes())
+			super.init();
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class Fasta extends SymLoader {
 	/**
 	 * Get seqids and lengths for all chromosomes.
 	 */
-	private void initChromosomes() {
+	private boolean initChromosomes() {
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
 		Matcher matcher = header_regex.matcher("");
@@ -117,12 +117,15 @@ public class Fasta extends SymLoader {
 				}
 			}
 
+			return !Thread.currentThread().isInterrupted();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bis);
 		}
+
+		return false;
 	}
 
 	@Override

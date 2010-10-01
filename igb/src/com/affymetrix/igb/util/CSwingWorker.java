@@ -34,6 +34,7 @@ public abstract class CSwingWorker<T,V> extends SwingWorker<T,V> implements Acti
 	public void cancel(){
 		this.cancel(true);
 		setStatusMessage("Cancelling " + statusMessage);
+		Application.getSingleton().updatePopup();
 	}
 
 	public void actionPerformed(ActionEvent e){

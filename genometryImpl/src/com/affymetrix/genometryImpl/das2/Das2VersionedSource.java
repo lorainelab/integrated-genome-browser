@@ -25,13 +25,12 @@ import com.affymetrix.genometryImpl.util.XMLUtils;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.parsers.BedParser;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static com.affymetrix.genometryImpl.util.Constants.UTF8;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-
-import org.xml.sax.InputSource;
 
 public final class Das2VersionedSource {
     private static final boolean URL_ENCODE_QUERY = true;
@@ -39,7 +38,6 @@ public final class Das2VersionedSource {
     public static final String TYPES_CAP_QUERY = "types";
     public static final String FEATURES_CAP_QUERY = "features";
 	private static final String XML = ".xml";
-    private static final boolean DEBUG = false;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
@@ -202,22 +200,20 @@ public final class Das2VersionedSource {
 		return formats;
 	}
 
-    /** Get regions from das server. */
+    /**
+	 * Get regions from server.
+	 */
 	private synchronized void initSegments() {
 		Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
 		String region_request = segcap.getRootURI().toString();
 		try {
-			if (DEBUG) {
-				System.out.println("Das2 Segments Request: " + region_request);
-			}
+			Logger.getLogger(Das2ServerInfo.class.getName()).log(
+				Level.FINE, "Das2 Segments Request: {0}", region_request);
 			// don't cache this!  If the file is corrupted, this can hose the IGB instance until the cache and preferences are cleared.
 			InputStream response = getInputStream(SEGMENTS_CAP_QUERY, LocalUrlCacher.getPreferredCacheUsage(), false, null, "Das2 Segments Request");
 
 			Document doc = XMLUtils.getDocument(response);
 			NodeList regionlist = doc.getElementsByTagName("SEGMENT");
-			if (DEBUG) {
-				System.out.println("segments: " + regionlist.getLength());
-			}
 			getRegionList(regionlist, region_request);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -231,7 +227,10 @@ public final class Das2VersionedSource {
 
 
 	private void getRegionList(NodeList regionlist, String region_request) throws NumberFormatException {
-		for (int i = 0; i < regionlist.getLength(); i++) {
+		Logger.getLogger(Das2ServerInfo.class.getName()).log(
+					Level.FINE, "segments: {0}", regionlist.getLength());
+		int regionLength = regionlist.getLength();
+		for (int i = 0; i < regionLength; i++) {
 			Element reg = (Element) regionlist.item(i);
 			String region_id = reg.getAttribute(URID);
 			if (region_id.length() == 0) {
@@ -240,7 +239,8 @@ public final class Das2VersionedSource {
 			// GAH 10-24-2007  temporary hack to weed out bad seqs that are somehow
 			//   getting added to segments response from Affy DAS/2 server
 			if ((region_id.indexOf("|") >= 0) || (region_id.charAt(region_id.length() - 1) == '.')) {
-				System.out.println("@@@@@@@@@@@@@ caught bad seq id: " + region_id);
+				Logger.getLogger(Das2ServerInfo.class.getName()).log(
+					Level.WARNING, "@@@@@@@@@@@@@ caught bad seq id: {0}", region_id);
 				continue;
 			}
 			URI region_uri = Das2ServerInfo.getBaseURI(region_request, reg).resolve(region_id);
@@ -262,8 +262,8 @@ public final class Das2VersionedSource {
 	}
 
 
-    // get annotation types from das2 server
     /**
+	 * get annotation types from das2 server
      *  loading of parents disabled, getParents currently does nothing
      */
     private synchronized void initTypes(String filter) {
@@ -296,10 +296,8 @@ public final class Das2VersionedSource {
 			}
 			Document doc = XMLUtils.getDocument(response);
 			NodeList typelist = doc.getElementsByTagName("TYPE");
-
 			getTypeList(typelist, types_request);
 
-			Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Out of Das2 Types Request: {0}", types_request);
 		} catch (Exception ex) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 			LocalUrlCacher.invalidateCacheFile(types_request);
@@ -312,12 +310,6 @@ public final class Das2VersionedSource {
 
 
 	private void getTypeList(NodeList typelist, String types_request) {
-		if (DEBUG) {
-			System.out.println("Das2 Type Length: " + typelist.getLength());
-			if (typelist.getLength() == 1) {
-				System.out.println("Das2 Types: " + typelist.item(0));
-			}
-		}
 		for (int i = 0; i < typelist.getLength(); i++) {
 			Element typenode = (Element) typelist.item(i);
 			String typeid = typenode.getAttribute(URID); // Gets the ID value
@@ -369,7 +361,8 @@ public final class Das2VersionedSource {
 			try {
 				type_uri = Das2ServerInfo.getBaseURI(types_request, typenode).resolve(typeid);
 			} catch (Exception e) {
-				System.out.println("Error in typeid, skipping: " + typeid + "\nUsually caused by an improper character in the URI.");
+				Logger.getLogger(Das2ServerInfo.class.getName()).log(
+					Level.WARNING, "Error in typeid, skipping: {0}\nUsually caused by an improper character in the URI.", typeid);
 			}
 			if (type_uri != null) {
 				Das2Type type = new Das2Type(this, type_uri, type_name, formats, props);
@@ -385,43 +378,42 @@ public final class Das2VersionedSource {
      */
     public synchronized List<SeqSymmetry> getFeaturesByName(String name, AnnotatedSeqGroup group, BioSeq chrFilter) {
 		InputStream istr = null;
-		BufferedInputStream bis = null;
+		DataInputStream dis = null;
 		try {
-			Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
-			String request_root = featcap.getRootURI().toString();
-			String nameglob = name;
-			if (URL_ENCODE_QUERY) {
-				nameglob = URLEncoder.encode(nameglob, UTF8);
-			}
-			String chrFilterStr = (chrFilter == null ? "?" : "?segment=" + URLEncoder.encode(chrFilter.getID(), UTF8) + ";");
-			String feature_query = request_root +
-					chrFilterStr + "name=" + nameglob +";format=das2xml";
-			if (DEBUG) {
-				System.out.println("feature query: " + feature_query);
-			}
-			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+			String feature_query = determineFeatureQuery(getCapability(FEATURES_CAP_QUERY),name, chrFilter);
 			URL query_url = new URL(feature_query);
 			URLConnection query_con = query_url.openConnection();
 			query_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 			query_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 			istr = query_con.getInputStream();
-			bis = new BufferedInputStream(istr);
+			dis = new DataInputStream(istr);
 
 			// temporary group needed to avoid side effects (remote SeqSymmetries added to the genome)
 			AnnotatedSeqGroup tempGroup = AnnotatedSeqGroup.tempGenome(group);
-			List<SeqSymmetry> feats = parser.parse(new InputSource(bis), feature_query, tempGroup, false);
-			if (DEBUG) {
-				int feat_count = feats.size();
-				System.out.println("parsed query results, annot count = " + feat_count);
-			}
+			BedParser parser = new BedParser();
+			List<SeqSymmetry> feats = parser.parse(dis, feature_query, tempGroup);
+			Logger.getLogger(Das2VersionedSource.class.getName()).log(
+					Level.FINE, "parsed query results, annot count = {0}", feats.size());
 			return feats;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(istr);
 		}
 		return null;
+	}
+
+	private static String determineFeatureQuery(Das2Capability featcap, String name, BioSeq chrFilter) throws UnsupportedEncodingException {
+		String request_root = featcap.getRootURI().toString();
+		String nameglob = name;
+		if (URL_ENCODE_QUERY) {
+			nameglob = URLEncoder.encode(nameglob, UTF8);
+		}
+		String chrFilterStr = chrFilter == null ? "?" : "?segment=" + URLEncoder.encode(chrFilter.getID(), UTF8) + ";";
+		String feature_query = request_root + chrFilterStr + "name=" + nameglob + ";format=bed";
+		Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.FINE, "feature query: {0}", feature_query);
+		return feature_query;
 	}
 
 	private InputStream getInputStream(String query_type, int cache_opt, boolean write_to_cache, Map<String, String> headers, String log_string) throws MalformedURLException, IOException {

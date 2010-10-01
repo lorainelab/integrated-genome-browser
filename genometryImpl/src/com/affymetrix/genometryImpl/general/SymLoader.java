@@ -98,21 +98,23 @@ public abstract class SymLoader {
 		this.isInitialized = true;
 	}
 
-	protected void buildIndex(){
+	protected boolean buildIndex(){
 		BufferedInputStream bis = null;
 		Map<String, Integer> chrLength = new HashMap<String, Integer>();
 		Map<String, File> chrFiles = new HashMap<String, File>();
 
 		try {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			parseLines(bis, chrLength, chrFiles);
-			createResults(chrLength, chrFiles);
+			if(parseLines(bis, chrLength, chrFiles)){
+				createResults(chrLength, chrFiles);
+				return true;
+			}
 		} catch (Exception ex) {
 			Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
 			GeneralUtils.safeClose(bis);
 		}
-
+		return false;
 	}
 
 	protected void sortCreatedFiles(){
@@ -226,9 +228,10 @@ public abstract class SymLoader {
 		return "";
     }
 
-	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
 		Logger.getLogger(this.getClass().getName()).log(
 					Level.SEVERE, "parseLines is not defined");
+		return false;
 	}
 	
 	protected static void addToLists(
@@ -309,7 +312,7 @@ public abstract class SymLoader {
 	private static List<SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
 		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
 		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
-		for (SeqSymmetry sym : syms) {
+		for (SeqSymmetry sym : syms) {			
 			if (SeqUtils.intersection(sym, original_sym, dummySym, seq)) {
 				// There is an intersection with previous requests.  Ignore this symmetry
 				continue;

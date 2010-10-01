@@ -71,9 +71,13 @@ public class BED extends SymLoader{
 		if (this.isInitialized) {
 			return;
 		}
-		super.init();
-		buildIndex();
-		sortCreatedFiles();
+		
+		if(buildIndex()){
+			sortCreatedFiles();
+			super.init();
+			Logger.getLogger(BED.class.getName()).severe("Indexing successful");
+		}
+		
 	}
 
 	@Override
@@ -115,7 +119,7 @@ public class BED extends SymLoader{
 			File file = chrList.get(seq);
 			boolean isSorted = chrSort.get(seq) == true;
 			if (file == null) {
-				Logger.getLogger(BED.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
+				Logger.getLogger(BED.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
@@ -633,7 +637,7 @@ public class BED extends SymLoader{
 	}
 	
 	@Override
-	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -661,7 +665,8 @@ public class BED extends SymLoader{
 					fields = line_regex.split(line);
 
 					if (fields.length < 3) {
-						return;
+						Logger.getLogger(BED.class.getName()).severe("Invalid BED file");
+						return false;
 					}
 
 					boolean includes_bin_field = fields.length > 6 && (fields[6].startsWith("+") || fields[6].startsWith("-") || fields[6].startsWith("."));
@@ -693,6 +698,8 @@ public class BED extends SymLoader{
 				}
 			}
 
+			return !thread.isInterrupted();
+
 		} catch (IOException ex) {
 			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
 		}finally{
@@ -702,6 +709,8 @@ public class BED extends SymLoader{
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
+		
+		return false;
 	}
 
 

@@ -61,8 +61,8 @@ public class GFF3 extends SymLoader{
 		if (this.isInitialized) {
 			return;
 		}
-		super.init();
-		buildIndex();
+		if(buildIndex())
+			super.init();
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class GFF3 extends SymLoader{
 
 
 	@Override
-	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -145,7 +145,8 @@ public class GFF3 extends SymLoader{
 					fields = line_regex.split(line);
 
 					if (fields.length < 5) {
-						return;
+						Logger.getLogger(GFF3.class.getName()).severe("Invalid GFF file");
+						return false;
 					}
 
 					seq_name = fields[0]; // seq id field
@@ -171,6 +172,7 @@ public class GFF3 extends SymLoader{
 				}
 			}
 
+			return !thread.isInterrupted();
 		} catch (IOException ex) {
 			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -180,7 +182,7 @@ public class GFF3 extends SymLoader{
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
-
+		return false;
 	}
 
 

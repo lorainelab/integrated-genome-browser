@@ -81,8 +81,9 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		if (this.isInitialized) {
 			return;
 		}
-		super.init();
-		buildIndex();
+		if(buildIndex()){
+			super.init();
+		}
 	}
 
 	@Override
@@ -457,7 +458,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		return "text/wig";
 	}
 
-	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
@@ -475,7 +476,8 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		try {
 
 			br = new BufferedReader(new InputStreamReader(istr));
-			while ((line = br.readLine()) != null && !Thread.currentThread().isInterrupted()) {
+			Thread thread = Thread.currentThread();
+			while ((line = br.readLine()) != null && !thread.isInterrupted()) {
 				if (line.length() == 0) {
 					continue;
 				}
@@ -565,6 +567,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 				}
 			}
 
+			return !thread.isInterrupted();
 		} catch (IOException ex) {
 			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
 		}finally{
@@ -579,6 +582,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
+		return false;
 	}
 
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {

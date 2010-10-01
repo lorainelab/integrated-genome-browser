@@ -85,9 +85,12 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		if (this.isInitialized) {
 			return;
 		}
-		super.init();
-		buildIndex();
-		sortCreatedFiles();
+		
+		if(buildIndex()){
+			sortCreatedFiles();
+			super.init();
+		}
+		
 	}
 
 	@Override
@@ -124,7 +127,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	}
 
 	@Override
-	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles){
 
 		BufferedWriter bw = null;
 		BufferedReader br = null;
@@ -235,6 +238,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 					chrLength.put(target_seq_id, length);
 				}
 			}
+
+			return !thread.isInterrupted();
 		} catch (Exception e) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Error parsing PSL file\n");
@@ -251,6 +256,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			GeneralUtils.safeClose(br);
 			GeneralUtils.safeClose(bw);
 		}
+		return false;
 	}
 
 	private static void addToQueryTarget(Map<String, Set<String>> queryTarget, String query_seq_id, String target_seq_id){

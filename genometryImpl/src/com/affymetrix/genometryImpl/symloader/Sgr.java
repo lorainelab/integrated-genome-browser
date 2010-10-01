@@ -40,8 +40,9 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 		if (this.isInitialized) {
 			return;
 		}
-		super.init();
-		buildIndex();
+		if(buildIndex()){
+			super.init();
+		}
 	}
 
 	@Override
@@ -242,7 +243,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 	 * @param chrFiles
 	 */
 	@Override
-	protected void parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles)  {
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String,File> chrFiles)  {
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		BufferedReader br = null;
 		BufferedWriter bw = null;
@@ -252,7 +253,8 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 		
 		try {
 			br = new BufferedReader(new InputStreamReader(istr));
-			while ((line = br.readLine()) != null) {
+			Thread thread = Thread.currentThread();
+			while ((line = br.readLine()) != null && !thread.isInterrupted()) {
 				if (line.length() == 0 || line.charAt(0) == '#' || line.charAt(0) == '%') {
 					continue;
 				}
@@ -272,6 +274,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 				bw = chrs.get(seqid);
 				bw.write(line + "\n");
 			}
+			return !thread.isInterrupted();
 		} catch (IOException ex) {
 			Logger.getLogger(Sgr.class.getName()).log(Level.SEVERE, null, ex);
 		}finally{
@@ -286,6 +289,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 			GeneralUtils.safeClose(bw);
 			GeneralUtils.safeClose(br);
 		}
+		return false;
 	}
 
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream ostr) throws IOException {

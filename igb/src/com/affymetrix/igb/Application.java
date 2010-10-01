@@ -1,6 +1,7 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.prefs.IPlugin;
+import com.affymetrix.igb.util.CSwingWorker;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
@@ -43,12 +44,15 @@ public abstract class Application {
 
 	abstract public SeqMapView getMapView();
 
+	public final void updatePopup(){
+		status_bar.setCancelPopup(CSwingWorker.getWorkers());
+	}
+
 	public final void addNotLockedUpMsg(final String s) {
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				progressStringList.add(s);
-				//status_bar.setCancelPopup(progressStringList);
 				if (status_bar.getStatus().trim().length() == 0) {
 					setNotLockedUpStatus(s, true);
 				}
@@ -64,7 +68,6 @@ public abstract class Application {
 					Logger.getLogger(Application.class.getName()).log(
 							Level.FINE, "Didn''t find progress message: {0}", s);
 				}
-				//status_bar.setCancelPopup(progressStringList);
 				if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
 					// Time to change status message.
 					if (progressStringList.isEmpty()) {

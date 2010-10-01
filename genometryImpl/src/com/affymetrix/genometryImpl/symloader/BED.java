@@ -649,13 +649,18 @@ public class BED extends SymLoader{
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-				if (line.startsWith("#") || line.length() == 0) {  // skip comment lines
+
+				if (line.length() == 0) {
 					continue;
-				} else if (line.startsWith("track")) {
+				}
+				char firstChar = line.charAt(0);
+				if (firstChar == '#') {  // skip comment lines
+					continue;
+				} else if (firstChar == 't' && line.startsWith("track")) {
 					chrTrack = new HashMap<String, Boolean>();
 					trackLine = line;
 					continue;
-				} else if (line.startsWith("browser")) {
+				} else if (firstChar == 'b' && line.startsWith("browser")) {
 					// currently take no action for browser lines
 				} else {
 					if (DEBUG) {
@@ -668,7 +673,13 @@ public class BED extends SymLoader{
 						return false;
 					}
 
-					boolean includes_bin_field = fields.length > 6 && (fields[6].startsWith("+") || fields[6].startsWith("-") || fields[6].startsWith("."));
+					boolean includes_bin_field = false;
+
+					if(fields.length > 6){
+						firstChar = fields[6].charAt(0);
+						includes_bin_field = (firstChar == '+' || firstChar == '-' || firstChar == '.');
+					}
+
 					int findex = 0;
 					if (includes_bin_field) {
 						findex++;

@@ -152,12 +152,17 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				line_count++;
 				// Ignore psl header lines
-				if (line.trim().length() == 0 || line.startsWith("#") ||
-						line.startsWith("match\t") || line.startsWith("-------")) {
+				if(line.trim().length() == 0)
+					continue;
+				char firstchar = line.charAt(0);
+
+				if (firstchar == '#' ||
+						(firstchar == 'm' && line.startsWith("match\t")) ||
+						(firstchar == '-' && line.startsWith("-------"))) {
 					continue;
 				}
 
-				if (line.startsWith("track")) {
+				if (firstchar == 't' && line.startsWith("track")) {
 					if (is_link_psl) {
 						Map<String,String> track_props = track_line_parser.parseTrackLine(line, track_name_prefix);
 						String track_name = track_props.get(TrackLineParser.NAME);
@@ -378,11 +383,17 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
 				line_count++;
 				// Ignore psl header lines
-				if (line.trim().length() == 0 || line.startsWith("#") ||
-						line.startsWith("match\t") || line.startsWith("-------")) {
+				if(line.trim().length() == 0)
+					continue;
+				char firstchar = line.charAt(0);
+
+				if (firstchar == '#' ||
+						(firstchar == 'm' && line.startsWith("match\t")) ||
+						(firstchar == '-' && line.startsWith("-------"))) {
 					continue;
 				}
-				if (line.startsWith("track")) {
+
+				if (firstchar == 't' && line.startsWith("track")) {
 					// Always parse the track line, but
 					// only set the AnnotStyle properties from it
 					// if this is NOT a ".link.psl" file.
@@ -520,10 +531,14 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		//        if (line_count < 3) { System.out.println("# of fields: " + fields.length); }
 		// trying to determine if there's an extra bin field at beginning of PSL line...
 		//   for normal PSL, orientation field is
-		boolean includes_bin_field = fields[9].startsWith("+") || fields[9].startsWith("-");
-		if (includes_bin_field) {
-			findex++;
-		} // skip bin field at beginning if present
+		
+		if(fields.length > 9){
+			char firstchar = fields[9].charAt(0);
+			if (firstchar == '+' || firstchar == '-') {
+				findex++;
+			} // skip bin field at beginning if present
+		}
+		
 		return findex;
 	}
 

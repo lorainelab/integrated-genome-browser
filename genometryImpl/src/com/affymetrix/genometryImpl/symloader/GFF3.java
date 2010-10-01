@@ -132,11 +132,15 @@ public class GFF3 extends SymLoader{
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-				if (line.startsWith("##track name")) {
-					chrTrack = new HashMap<String, Boolean>();
-					trackLine = line;
+				if(line.length() == 0)
 					continue;
-				}else if (line.startsWith("#") || line.length() == 0) {  // skip comment lines
+
+				char firstchar = line.charAt(0);
+				if(firstchar == '#'){
+					if (line.startsWith("##track name")) {
+						chrTrack = new HashMap<String, Boolean>();
+						trackLine = line;
+					}
 					continue;
 				} else {
 					if (DEBUG) {

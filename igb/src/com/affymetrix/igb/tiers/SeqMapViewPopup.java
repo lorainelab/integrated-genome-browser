@@ -327,7 +327,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	  }
 	  showMenu.removeAll();
 	  handler.sortTiers();
-	  refreshMap(true,true); // when re-showing all tier, do strech_to_fit in the y-direction
+	  refreshMap(false,true); // when re-showing all tier, do strech_to_fit in the y-direction
 	}
 
   /** Hides one tier and creates a JMenuItem that can be used to show it again.

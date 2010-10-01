@@ -36,9 +36,7 @@ public class SortTabFile {
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
-			Thread thread = Thread.currentThread();
-
-			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
+			while ((line = br.readLine()) != null) {
 				if(line.startsWith("track")){
 					Collections.sort(templist, comparator);
 					list.addAll(templist);

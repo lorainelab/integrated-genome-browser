@@ -29,7 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -161,35 +160,36 @@ public final class QuickLoad extends SymLoader {
 						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
 						return null;
 					}
-					
-					List<? extends SeqSymmetry> results = loadAndAddSymmetries(feature, overlapSpan);
 
-					if (results != null && !results.isEmpty()) {
-						TrackView.updateDependentData();
-						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-						if (overlapSpan != null && aseq != null) {
-							gviewer.setAnnotatedSeq(aseq, true, true);
-						} else {
-							// This can happen when loading a brand-new genome
-							if (QuickLoad.this.version.group != null) {
-								GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
-							}
-						}
+					loadAndAddSymmetries(feature, overlapSpan);
+
+					TrackView.updateDependentData();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			public void done() {
+				try {
+					BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+					if (overlapSpan != null && aseq != null) {
+						gviewer.setAnnotatedSeq(aseq, true, true);
 					} else if (GenometryModel.getGenometryModel().getSelectedSeq() == null && QuickLoad.this.version.group != null) {
 						// This can happen when loading a brand-new genome
 						GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 					}
 
 					SeqGroupView.refreshTable();
-				}catch (Exception ex) {
+				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
 					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
-				return null;
 			}
 		};
-		ThreadUtils.getPrimaryExecutor(feature).execute(worker);		
+		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
 		return true;
 	}
 
@@ -213,10 +213,6 @@ public final class QuickLoad extends SymLoader {
 			return overallResults;
 		}
 
-		if(Thread.currentThread().isInterrupted()){
-			return Collections.<SeqSymmetry>emptyList();
-		}
-		
 		results = this.getRegion(span);
 		if (results != null) {
 			results = ServerUtils.filterForOverlappingSymmetries(span, results);
@@ -226,14 +222,14 @@ public final class QuickLoad extends SymLoader {
 				}
 				SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 				overallResults.addAll(entry.getValue());
-			
+
 				// Some format do not annotate. So it might not have method name. e.g bgn
 				if(entry.getKey() != null)
 					feature.addMethod(entry.getKey());
 			}
 		}
 		feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
-		
+
 		if (!overallResults.isEmpty()) {
 			// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
@@ -243,7 +239,7 @@ public final class QuickLoad extends SymLoader {
 			style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName);
 			style.setFeature(feature);
 		}
-		
+
 		return overallResults;
 	}
 

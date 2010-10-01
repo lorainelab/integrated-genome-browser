@@ -24,7 +24,6 @@ import com.affymetrix.igb.view.TrackView;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
@@ -35,7 +34,7 @@ import javax.swing.SwingWorker;
  */
 public class Das2 {
     private static final String default_format = "das2feature";
-	
+
 	/**
 	 * Loads (and displays) DAS/2 annotations.
 	 * This is done in a multi-threaded fashion so that the UI doesn't lock up.
@@ -59,17 +58,23 @@ public class Das2 {
 
 			public Void doInBackground() {
 				try {
-					if(gviewer != null && loadSpan(feature, span, region, dtype)){
-						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-						TrackView.updateDependentData();
-						gviewer.setAnnotatedSeq(aseq, true, true);
-					}
+					loadSpan(feature, span, region, dtype);
+					TrackView.updateDependentData();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			public void done() {
+				try {
+					gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
 				} catch (Exception ex) {
 					Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
 					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
-				return null;
 			}
 		};
 
@@ -78,13 +83,13 @@ public class Das2 {
 	}
 
 
-    private static boolean loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
+    private static void loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
 		// Create an AnnotStyle so that we can automatically set the
 		// human-readable name to the DAS2 name, rather than the ID, which is a URI
 		ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getURI().toString(), type.getName());
 		ts.setFeature(feature);
 
-		//TODO: Probably not necessary. 
+		//TODO: Probably not necessary.
 		ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
 		ts.setFeature(feature);
 
@@ -94,7 +99,7 @@ public class Das2 {
 		if (format == null) {
 			format = default_format;
 		}
-        
+
         Das2VersionedSource versioned_source = region.getVersionedSource();
         Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
         String request_root = featcap.getRootURI().toString();
@@ -106,7 +111,6 @@ public class Das2 {
 		} catch (Exception ex) {
 			Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		return true;
     }
 
    private static String DetermineQueryPart(Das2Region region, String overlap_filter, URI typeURI, String format) throws UnsupportedEncodingException {

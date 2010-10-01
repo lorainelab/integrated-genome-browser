@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.parsers.das.DASSymmetry;
@@ -53,48 +52,47 @@ public final class Das {
 	 */
 	public static boolean loadFeatures(final List<SeqSpan> spans, final GenericFeature gFeature) {
 
-		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-			public List<? extends SeqSymmetry> doInBackground() {
-				BioSeq current_seq = spans.get(0).getBioSeq();
-				Set<String> segments = ((DasSource) gFeature.gVersion.versionSourceObj).getEntryPoints();
-				String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
-
-				QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
-				builder.add("segment", segment);
-				for (SeqSpan span : spans) {
-					builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
-				}
-
-				URI uri = builder.build();
-				
-				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
-				style.setFeature(gFeature);
-
-				// TODO - probably not necessary
-				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
-				style.setFeature(gFeature);
-
-				Collection<DASSymmetry> dassyms = parseData(uri);
-				// Special case : When a feature make more than one Track, set feature for each track.
-				if(dassyms != null){
-					for(DASSymmetry sym : dassyms){
-						gFeature.addMethod(sym.getType());
-					}
-				}
-				TrackView.updateDependentData();
-				return null;
-			}
-
-			@Override
-			public void done() {
+			public Void doInBackground() {
 				try {
+					BioSeq current_seq = spans.get(0).getBioSeq();
+					Set<String> segments = ((DasSource) gFeature.gVersion.versionSourceObj).getEntryPoints();
+					String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
+
+					QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
+					builder.add("segment", segment);
+					for (SeqSpan span : spans) {
+						builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
+					}
+
+					URI uri = builder.build();
+
+					ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
+					style.setFeature(gFeature);
+
+					// TODO - probably not necessary
+					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
+					style.setFeature(gFeature);
+
+					Collection<DASSymmetry> dassyms = parseData(uri);
+					// Special case : When a feature make more than one Track, set feature for each track.
+					if (dassyms != null) {
+						for (DASSymmetry sym : dassyms) {
+							gFeature.addMethod(sym.getType());
+						}
+					}
+					TrackView.updateDependentData();
 					Application.getSingleton().getMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
+				} catch (Exception ex) {
+					Logger.getLogger(Das.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
 					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
 				}
+				return null;
 			}
 		};
+		
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 
 		return true;

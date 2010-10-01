@@ -54,34 +54,22 @@ public class Das2 {
 		}
 
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
-		Das2VersionedSource version = dtype.getVersionedSource();
+	
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
-
-			public Boolean doInBackground() {
+			public Void doInBackground() {
 				try {
-					return loadSpan(feature, span, region, dtype);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return null;
-			}
-
-			@Override
-			public void done() {
-				try {
-					if (gviewer != null && get()) {
+					if(gviewer != null && loadSpan(feature, span, region, dtype)){
 						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 						TrackView.updateDependentData();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
-				} catch (InterruptedException ex) {
-					Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
-				} catch (ExecutionException ex) {
+				} catch (Exception ex) {
 					Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
 					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
+				return null;
 			}
 		};
 
@@ -116,7 +104,7 @@ public class Das2 {
             String feature_query = request_root + "?" + query_part;
 			LoadFeaturesFromQuery(feature, span, feature_query, format, type.getURI(), type.getName());
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return true;
     }

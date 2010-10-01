@@ -29,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -150,9 +151,9 @@ public final class QuickLoad extends SymLoader {
 			final GenericFeature feature, final SeqSpan overlapSpan, final SeqMapView gviewer)
 			throws OutOfMemoryError {
 
-		SwingWorker<List<? extends SeqSymmetry>, Void> worker = new SwingWorker<List<? extends SeqSymmetry>, Void>() {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-			public List<? extends SeqSymmetry> doInBackground() {
+			public Void doInBackground() {
 				try {
 					if (QuickLoad.this.extension.endsWith(".chp")) {
 						// special-case chp files, due to their LazyChpSym DAS/2 loading
@@ -160,17 +161,9 @@ public final class QuickLoad extends SymLoader {
 						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
 						return null;
 					}
-					return loadAndAddSymmetries(feature, overlapSpan);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return null;
-			}
-			
-			@Override
-			public void done() {
-				try {
-					final List<? extends SeqSymmetry> results = get();
+					
+					List<? extends SeqSymmetry> results = loadAndAddSymmetries(feature, overlapSpan);
+
 					if (results != null && !results.isEmpty()) {
 						TrackView.updateDependentData();
 						BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
@@ -188,11 +181,12 @@ public final class QuickLoad extends SymLoader {
 					}
 
 					SeqGroupView.refreshTable();
-				} catch (Exception ex) {
+				}catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
 					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
+				return null;
 			}
 		};
 		ThreadUtils.getPrimaryExecutor(feature).execute(worker);		
@@ -219,6 +213,10 @@ public final class QuickLoad extends SymLoader {
 			return overallResults;
 		}
 
+		if(Thread.currentThread().isInterrupted()){
+			return Collections.<SeqSymmetry>emptyList();
+		}
+		
 		results = this.getRegion(span);
 		if (results != null) {
 			results = ServerUtils.filterForOverlappingSymmetries(span, results);

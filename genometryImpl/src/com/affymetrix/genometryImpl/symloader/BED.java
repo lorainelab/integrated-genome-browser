@@ -75,7 +75,6 @@ public class BED extends SymLoader{
 		if(buildIndex()){
 			sortCreatedFiles();
 			super.init();
-			Logger.getLogger(BED.class.getName()).severe("Indexing successful");
 		}
 		
 	}

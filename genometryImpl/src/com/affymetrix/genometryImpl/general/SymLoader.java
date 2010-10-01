@@ -107,6 +107,7 @@ public abstract class SymLoader {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			if(parseLines(bis, chrLength, chrFiles)){
 				createResults(chrLength, chrFiles);
+				Logger.getLogger(SymLoader.class.getName()).fine("Indexing successful");
 				return true;
 			}
 		} catch (Exception ex) {

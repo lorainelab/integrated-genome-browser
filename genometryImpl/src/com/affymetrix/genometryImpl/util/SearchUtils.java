@@ -100,19 +100,20 @@ public final class SearchUtils {
 			name_regex = "^" + name.toLowerCase() + "$";
 			//result = genome.findSyms(name);
 		}
-		Logger.getLogger(SearchUtils.class.getName()).log(Level.FINE,
+		Logger.getLogger(SearchUtils.class.getName()).log(Level.INFO,
 				"name arg: {0},  regex to use for pattern-matching: {1}", new Object[]{name, name_regex});
 
 		name_pattern = Pattern.compile(name_regex, Pattern.CASE_INSENSITIVE);
 		result = genome.findSyms(name_pattern);
 
-		Logger.getLogger(SearchUtils.class.getName()).log(Level.FINE,
+		Logger.getLogger(SearchUtils.class.getName()).log(Level.INFO,
 				"non-indexed regex matches: {0}", result.size());
 
-		result.addAll(IndexingUtils.findSymsByName(genome, name_pattern));
+		Set<SeqSymmetry> result2 = IndexingUtils.findSymsByName(genome, name_pattern);
+		Logger.getLogger(SearchUtils.class.getName()).log(Level.INFO,
+				"indexed regex matches: {0}", result2.size());
 
-		Logger.getLogger(SearchUtils.class.getName()).log(Level.FINE,
-				"total regex matches: {0}", result.size());
+		result.addAll(result2);
 
 		return result;
 	}

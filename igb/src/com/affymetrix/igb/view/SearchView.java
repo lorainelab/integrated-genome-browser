@@ -95,8 +95,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private List<SeqSymmetry> remoteSymList;
 
-	private static final boolean DEBUG = true;
-
 	public SearchView() {
 		super();
 		gviewer = Application.getSingleton().getMapView();
@@ -261,7 +259,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	/** This is called when the user selects a row of the table. */
-	ListSelectionListener list_selection_listener = new ListSelectionListener() {
+	private final ListSelectionListener list_selection_listener = new ListSelectionListener() {
 
 		public void valueChanged(ListSelectionEvent evt) {
 			if (evt.getSource() == lsm && !evt.getValueIsAdjusting() && model.getRowCount() > 0) {
@@ -309,15 +307,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 	};
 
-	private void displayInTable(List<SeqSymmetry> rows) {
-		model.fireTableDataChanged();
-	}
-
-	private void clearTable() {
-		tableRows.clear();
-		model.fireTableDataChanged();
-	}
-
 	// remove the previous search results from the map.
 	private void clearResults() {
 		if (!glyphs.isEmpty()) {
@@ -326,6 +315,11 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		glyphs.clear();
 
 		clearTable();
+	}
+
+	private void clearTable() {
+		tableRows.clear();
+		model.fireTableDataChanged();
 	}
 
 	public void actionPerformed(ActionEvent evt) {
@@ -449,6 +443,9 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	}
 
+	private void displayInTable(List<SeqSymmetry> rows) {
+		model.fireTableDataChanged();
+	}
 	
 
 	private static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
@@ -639,10 +636,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 					}
 				}
 			}
-		}
-
-		if (DEBUG) {
-			System.out.println("features found: " + features.size());
 		}
 
 		return features;

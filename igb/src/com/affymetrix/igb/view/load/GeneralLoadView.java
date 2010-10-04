@@ -236,6 +236,12 @@ public final class GeneralLoadView extends JComponent
 	public void genericServerInit(GenericServerInitEvent evt) {
 		boolean areAllServersInited = ServerList.areAllServersInited();	// do this first to avoid race condition
 		GenericServer gServer = (GenericServer)evt.getSource();
+
+		if (gServer.getServerStatus() == ServerStatus.NotResponding){
+			refreshTreeView();
+			return;
+		}
+		
 		if (gServer.getServerStatus() != ServerStatus.Initialized) {
 			return;	// ignore uninitialized servers
 		}

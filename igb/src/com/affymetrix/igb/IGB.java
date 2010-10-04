@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb;
 
+import com.affymetrix.genoviz.swing.ButtonTabComponent;
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.BorderLayout;
@@ -461,8 +462,9 @@ public final class IGB extends Application
 			ThreadUtils.runOnEventQueue(new Runnable() {
 
 				public void run() {
+					int i =0;
 					for (PluginInfo pi : plugins_info) {
-						Object plugin = setUpPlugIn(pi);
+						Object plugin = setUpPlugIn(i++, pi);
 						plugins.add(plugin);
 					}
 				}
@@ -523,7 +525,7 @@ public final class IGB extends Application
 	 *  Puts the given component either in the tab pane or in its own window,
 	 *  depending on saved user preferences.
 	 */
-	private Object setUpPlugIn(PluginInfo pi) {
+	private Object setUpPlugIn(int i, PluginInfo pi) {
 		if (!pi.shouldLoad()) {
 			return null;
 		}
@@ -585,6 +587,7 @@ public final class IGB extends Application
 				openCompInWindow(comp, tab_pane);
 			} else {
 				tab_pane.addTab(title, icon, comp, tool_tip);
+		        tab_pane.setTabComponentAt(i, new ButtonTabComponent(tab_pane));
 			}
 		}
 		return plugin;

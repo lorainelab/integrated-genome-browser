@@ -266,7 +266,14 @@ public final class GeneralUtils {
 
 	public static void browse(String s) {
 		try {
-			Desktop.getDesktop().browse(new URI(s));
+			URI u = new URI(s);
+		
+			if("file".equalsIgnoreCase(u.getScheme())){
+				Desktop.getDesktop().open(new File(u));
+				return;
+			}
+			
+			Desktop.getDesktop().browse(u);
 		} catch (IOException ex) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (URISyntaxException ex) {

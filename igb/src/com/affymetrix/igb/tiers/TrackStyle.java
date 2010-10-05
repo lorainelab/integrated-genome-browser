@@ -86,15 +86,19 @@ public class TrackStyle implements ITrackStyleExtended {
 	private boolean customizable = true;
 	private GenericFeature feature = null;
 
+	public static TrackStyle getInstance(String name, String human_name, Map<String, String> props) {
+		return getInstance(name, human_name, true, true, props);
+	}
+
 	public static TrackStyle getInstance(String name, String human_name) {
-		return getInstance(name, human_name, true, true);
+		return getInstance(name, human_name, true, true, null);
 	}
 
 	public static TrackStyle getInstance(String unique_name, boolean persistent) {
-		return getInstance(unique_name, null, persistent, false);
+		return getInstance(unique_name, null, persistent, false, null);
 	}
 
-	private static TrackStyle getInstance(String unique_name, String human_name, boolean persistent, boolean force_human_name){
+	private static TrackStyle getInstance(String unique_name, String human_name, boolean persistent, boolean force_human_name, Map<String, String> props){
 		TrackStyle style = static_map.get(unique_name.toLowerCase());
 		if (style == null) {
 			if (DEBUG) {
@@ -104,7 +108,7 @@ public class TrackStyle implements ITrackStyleExtended {
 			TrackStyle template = getDefaultInstance();
 			// at this point template should already have all modifications to default applied from stylesheets and preferences nodes (A & B)
 			// apply any stylesheet stuff...
-			style = new TrackStyle(unique_name, persistent, template);
+			style = new TrackStyle(unique_name, persistent, template, props);
 			static_map.put(unique_name.toLowerCase(), style);
 
 			if(force_human_name) {
@@ -146,7 +150,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	 *
 	 *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
 	 */
-	protected TrackStyle(String name, boolean is_persistent, TrackStyle template) {
+	private TrackStyle(String name, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
 		this.method_name = name;
 		this.human_name = name; // this is the default human name, and is not lower case
 		this.unique_name = name.toLowerCase();
@@ -181,6 +185,10 @@ public class TrackStyle implements ITrackStyleExtended {
 				initFromPropertyMap(props);
 			}
 		}
+		if(properties != null){
+			initFromPropertyMap(properties);
+		}
+		
 		if (is_persistent) {
 			try {
 				node = PreferenceUtils.getSubnode(tiers_root_node, this.unique_name);
@@ -294,6 +302,13 @@ public class TrackStyle implements ITrackStyleExtended {
 		// height???
 	}
 
+	private void initFromPropertyMap(Map<String,String> props){
+		String labfield = props.get("label_field");
+		if (labfield != null && !"".equals(labfield)) {
+			label_field = labfield;
+		}
+	}
+
 	// Copies properties from the template into this object, but does NOT persist
 	// these copied values.
 	// human_name and factory_instance are not modified
@@ -321,7 +336,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	public static TrackStyle getDefaultInstance() {
 		if (default_instance == null) {
 			// Use a temporary variable here to avoid possible synchronization problems.
-			TrackStyle instance = new TrackStyle(NAME_OF_DEFAULT_INSTANCE, true, null);
+			TrackStyle instance = new TrackStyle(NAME_OF_DEFAULT_INSTANCE, true, null, null);
 			instance.setHumanName("");
 			instance.setShow(true);
 			default_instance = instance;

@@ -3,6 +3,7 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import java.util.Map;
 
 public final class IGBStateProvider extends DefaultStateProvider {
 
@@ -16,4 +17,8 @@ public final class IGBStateProvider extends DefaultStateProvider {
 	 return TrackStyle.getInstance(name,human_name);
   }
 
+	@Override
+  public ITrackStyleExtended getAnnotStyle(String name, String human_name, Map<String, String> props) {
+	 return TrackStyle.getInstance(name,human_name, props);
+  }
 }

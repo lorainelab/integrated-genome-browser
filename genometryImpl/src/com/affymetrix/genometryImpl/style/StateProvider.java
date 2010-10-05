@@ -12,9 +12,11 @@
  */
 
 package com.affymetrix.genometryImpl.style;
+import java.util.Map;
 
 public interface StateProvider {
 	public ITrackStyleExtended getAnnotStyle(String name);
 	public GraphState getGraphState(String name);
 	public ITrackStyleExtended getAnnotStyle(String name, String human_name);
+	public ITrackStyleExtended getAnnotStyle(String name, String human_name, Map<String,String> props);
 }

@@ -232,11 +232,11 @@ public final class QuickLoad extends SymLoader {
 
 		if (!overallResults.isEmpty()) {
 			// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
-			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName);
+			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, feature.featureProps);
 			style.setFeature(feature);
 
 			// TODO - probably not necessary
-			style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName);
+			style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName, feature.featureProps);
 			style.setFeature(feature);
 		}
 

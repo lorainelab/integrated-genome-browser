@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.igb.IGB;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -223,7 +224,8 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
-		if(src instanceof GenericFeature){
+		if(src instanceof GenericFeature &&
+				IGB.confirmPanel("Really remove entire " + ((GenericFeature)src).featureName + " feature ?")){
 			GenericFeature feature = (GenericFeature)src;
 			GeneralLoadView.removeFeature(feature);
 			int row = getRow(feature);

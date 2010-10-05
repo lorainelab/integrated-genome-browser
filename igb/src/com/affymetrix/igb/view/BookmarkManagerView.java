@@ -459,16 +459,31 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     MouseAdapter mouse_adapter = new MouseAdapter() {
 			@Override
       public void mousePressed(MouseEvent e) {
+		if(processDoubleClick(e))
+			return;
+		
         if (popup.isPopupTrigger(e)) {
           popup.show(tree, e.getX(), e.getY());
         }
       }
 			@Override
       public void mouseReleased(MouseEvent e) {
+		if(processDoubleClick(e))
+			return;
+
         if (popup.isPopupTrigger(e)) {
           popup.show(tree, e.getX(), e.getY());
         }
       }
+
+	  private boolean processDoubleClick(MouseEvent e) {
+		  if(e.getClickCount() != 2)
+			return false;
+
+		  thing.getGoToAction().actionPerformed(null);
+		  
+		  return true;
+	  }
     };
     tree.addMouseListener(mouse_adapter);
   }

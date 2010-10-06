@@ -484,7 +484,6 @@ public class AffyTieredMap extends NeoMap {
 	 */
 	public void print(int pageFormat, boolean noDialog) throws PrinterException {
  		ComponentPagePrinter cpp = new ComponentPagePrinter(this);
-		cpp.print();
 		if (noDialog) {
 			cpp.print(pageFormat, noDialog);
 		} else {

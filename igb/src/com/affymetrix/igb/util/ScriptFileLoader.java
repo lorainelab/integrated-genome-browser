@@ -214,7 +214,7 @@ public class ScriptFileLoader {
 			RefreshDataAction.getAction().actionPerformed(null);
 		}
 		if (action.equals("select") && fields.length>=2) {
-			UnibrowControlServlet.performSelection(join(fields,2));
+			UnibrowControlServlet.performSelection(join(fields,1));
 		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {

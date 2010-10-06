@@ -629,14 +629,14 @@ public final class UnibrowControlServlet {
 	 */
 	public static void performSelection(String selectParam) {
 
-		if (selectParam == null) {
+		if (selectParam == null || selectParam.length() == 0) {
 			return;
 		}
 
 		// split the parameter by commas
 		String[] ids = selectParam.split(",");
 
-		if (selectParam.length() == 0) {
+		if (ids.length == 0) {
 			return;
 		}
 

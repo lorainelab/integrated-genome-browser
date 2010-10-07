@@ -92,7 +92,7 @@ public final class TierLabelManager {
 				}
 				List<GlyphI> selected = nevt.getItems();
 				labelmap.select(selected);
-				doGraphSelections(preserve_selections);
+				doGraphSelections();
 
 				tiermap.updateWidget(); // make sure selections becomes visible
 				if (isOurPopupTrigger(evt)) {
@@ -203,7 +203,7 @@ public final class TierLabelManager {
 				labelmap.select(tierlabel);
 			}
 		}
-		doGraphSelections(false);
+		doGraphSelections();
 		//labelmap.updateWidget();
 		tiermap.updateWidget(); // make sure selections becomes visible
 	}
@@ -216,21 +216,18 @@ public final class TierLabelManager {
 		do_graph_selections = b;
 	}
 
-	private void doGraphSelections(boolean preserve_selection) {
+	private void doGraphSelections() {
 		if (!do_graph_selections) {
 			return;
 		}
 
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Set<SeqSymmetry> symmetries = new LinkedHashSet<SeqSymmetry>();
-
-		if(preserve_selection)
-			symmetries.addAll(GenometryModel.getGenometryModel().getSelectedSymmetries(
-					GenometryModel.getGenometryModel().getSelectedSeq()));
+		symmetries.addAll(gmodel.getSelectedSymmetries(gmodel.getSelectedSeq()));
 
 		for (TierLabelGlyph tierlabel : getAllTierLabels()) {
 			TierGlyph tg = tierlabel.getReferenceTier();
 			int child_count = tg.getChildCount();
-			SeqSymmetry seqsym = (SeqSymmetry) tg.getInfo();
 			if (child_count > 0 && tg.getChild(0) instanceof GraphGlyph) {
 				// It would be nice if we could assume that a tier contains only
 				// GraphGlyph's or only non-GraphGlyph's, but that is not true.
@@ -248,8 +245,7 @@ public final class TierLabelManager {
 						// ignore the glyphs that are not GraphGlyph's
 						continue;
 					}
-					GraphGlyph child = (GraphGlyph) ob;
-					SeqSymmetry sym = (SeqSymmetry) child.getInfo();
+					SeqSymmetry sym = (SeqSymmetry) ob.getInfo();
 					// sym will be a GraphSym, but we don't need to cast it
 					if (tierlabel.isSelected()) {
 						symmetries.add(sym);
@@ -260,7 +256,7 @@ public final class TierLabelManager {
 			}
 		}
 
-		GenometryModel.getGenometryModel().setSelectedSymmetries(new ArrayList<SeqSymmetry>(symmetries), this);
+		gmodel.setSelectedSymmetries(new ArrayList<SeqSymmetry>(symmetries), this);
 	}
 
 	/** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */

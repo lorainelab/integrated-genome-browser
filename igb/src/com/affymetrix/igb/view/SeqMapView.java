@@ -1326,7 +1326,7 @@ public class SeqMapView extends JPanel
 			select(symlist, false, true, false);
 			// Zoom to selections, unless the selection was caused by the TierLabelManager
 			// (which sets the selection source as the AffyTieredMap, i.e. getSeqMap())
-			if (src != getSeqMap()) {
+			if (src != getSeqMap() && src != getTierManager()) {
 				zoomToSelections();
 			}
 			String title = getSelectionTitle(seqmap.getSelected());

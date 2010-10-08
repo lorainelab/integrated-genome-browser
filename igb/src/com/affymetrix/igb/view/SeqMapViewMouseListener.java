@@ -17,6 +17,7 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *  A MouseListener for the SeqMapView.
@@ -34,7 +35,7 @@ import java.util.*;
  *  For Windows users, this is the normal behavior anyway.  For Mac and Linux
  *  users, it is not standard, but should be fine.
  */
-final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListener, PropertyView.PropertyListener {
+final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener, NeoRubberBandListener, PropertyView.PropertyListener {
 
 	// This flag determines whether selection events are processed on
 	//  mousePressed() or mouseReleased().
@@ -113,6 +114,19 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
 		// then there needs to be code here to prevent both this and that from
 		// trying to do a popup at the same time.  But it is tricky.  So for
 		// now we let ONLY this class trigger the pop-up.
+	}
+
+	public void mouseDragged(MouseEvent evt) {
+
+	}
+
+	public void mouseMoved(MouseEvent evt) {
+		if (!(evt instanceof NeoMouseEvent)) {
+			return;
+		}
+		NeoMouseEvent nevt = (NeoMouseEvent) evt;
+		List<GlyphI> glyphs = nevt.getItems();
+		smv.setToolTip(glyphs);
 	}
 
 	private void processSelections(MouseEvent evt, boolean post_selections) {

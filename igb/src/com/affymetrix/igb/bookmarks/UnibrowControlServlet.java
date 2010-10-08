@@ -461,25 +461,24 @@ public final class UnibrowControlServlet {
 		GenericFeature feature = null;
 
 		URI uri = URI.create(feature_url);
+		GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
+		if (gVersion == null) {
+			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
+				Level.SEVERE, "Couldn''t find version {0} in server {1}",
+				new Object[]{seqGroup.getID(), gServer.serverName});
+			return null;
+		}
 
-		if(gServer.serverType == ServerType.LocalFiles){
+		feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
 
+		if(feature == null && gServer.serverType == ServerType.LocalFiles){
+			// For local file check if feature already exists.
+
+			// If feature doesn't not exist then add it.
 			String fileName = feature_url.substring(feature_url.lastIndexOf('/') + 1, feature_url.length());
 			feature = LoadFileAction.getFeature(uri, fileName, seqGroup.getOrganism(), seqGroup);
 
-		}else{
-
-			GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-			if (gVersion == null) {
-				Logger.getLogger(UnibrowControlServlet.class.getName()).log(
-					Level.SEVERE, "Couldn''t find version {0} in server {1}",
-					new Object[]{seqGroup.getID(), gServer.serverName});
-				return null;
-			}
-
-			feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
 		}
-
 
 		return feature;
 	}

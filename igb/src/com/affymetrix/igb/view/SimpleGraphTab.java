@@ -42,6 +42,7 @@ import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
+import com.affymetrix.igb.util.ThreadUtils;
 
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -88,6 +89,7 @@ public final class SimpleGraphTab extends JPanel
 	private static final String INVERSE_LOG_10 = "Inverse Log10";
 	private static final String INVERSE_LOG_2 = "Inverse Log2";
 	private static final String INVERSE_LOG_NATURAL = "Inverse Natural Log";
+	private static final String select2graphs= "Select exactly two graphs";
 
 	static {
 		name2transform = new LinkedHashMap<String,FloatTransformer>();
@@ -413,8 +415,59 @@ public final class SimpleGraphTab extends JPanel
 		subB.setEnabled(grafs.size() == 2);
 		mulB.setEnabled(grafs.size() == 2);
 		divB.setEnabled(grafs.size() == 2);
-
+		
 		is_listening = true; // turn back on GUI events
+	}
+
+	private class HoverEffect implements MouseListener {
+		private String A = null;
+		private String B = null;
+
+		public void mouseClicked(MouseEvent e) {}
+
+		public void mousePressed(MouseEvent e) {}
+
+		public void mouseReleased(MouseEvent e) {}
+
+		public void mouseEntered(MouseEvent e) {
+			JButton comp = (JButton) e.getComponent();
+
+			if(grafs.size() == 2){
+				A = grafs.get(0).getGraphName();
+				B = grafs.get(1).getGraphName();
+
+				grafs.get(0).setGraphName("A");
+				grafs.get(1).setGraphName("B");
+
+				comp.setToolTipText(null);
+				ThreadUtils.runOnEventQueue(new Runnable() {
+
+					public void run() {
+						Application.getSingleton().getMapView().getSeqMap().repaint();
+					}
+				});
+
+			}else{
+				comp.setToolTipText(select2graphs);
+			}
+		}
+
+		public void mouseExited(MouseEvent e) {
+			if(A != null && B != null){
+				grafs.get(0).setGraphName(A);
+				grafs.get(1).setGraphName(B);
+
+				ThreadUtils.runOnEventQueue(new Runnable() {
+
+					public void run() {
+						Application.getSingleton().getMapView().getSeqMap().repaint();
+					}
+				});
+
+
+			}
+		}
+
 	}
 
 	private void collectGraphsAndGlyphs(List selected_syms, int symcount) {
@@ -613,6 +666,7 @@ public final class SimpleGraphTab extends JPanel
 		public AdvancedGraphPanel() {
 
 			JPanel advanced_panel = this;
+			HoverEffect hovereffect = new HoverEffect();
 
 			advanced_panel.setLayout(new BoxLayout(advanced_panel, BoxLayout.Y_AXIS));
 
@@ -667,6 +721,12 @@ public final class SimpleGraphTab extends JPanel
 			subB = new JButton("A - B");
 			mulB = new JButton("A * B");
 			divB = new JButton("A / B");
+
+			addB.addMouseListener(hovereffect);
+			subB.addMouseListener(hovereffect);
+			mulB.addMouseListener(hovereffect);
+			divB.addMouseListener(hovereffect);
+			
 			addB.setMargin(new Insets(2, 2, 2, 2));
 			subB.setMargin(new Insets(2, 2, 2, 2));
 			mulB.setMargin(new Insets(2, 2, 2, 2));

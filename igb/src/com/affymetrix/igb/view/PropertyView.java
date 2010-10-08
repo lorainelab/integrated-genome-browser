@@ -280,11 +280,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	 * @param noData the value to use when a property value is null
 	 */
 	private void showProperties(Map<String, Object>[] props, List<String> preferred_prop_order, String noData) {
-		List<String[]> name_values = getNameValues(props, noData);
-		if (preferred_prop_order != null) {
-			name_values = reorderNames(name_values, preferred_prop_order);
-		}
-		String[][] rows = buildRows(name_values, props);
+		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData);
 		String[] col_headings = getColumnHeadings(props);
 
 		propertyChanged(col_headings.length);
@@ -318,6 +314,22 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		table.getColumnModel().getColumn(0).setMaxWidth(200);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static String[][] getPropertiesRow(SeqSymmetry sym, SeqMapView seqMap){
+		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+		Map<String, Object> props = determineProps(sym, seqMap);
+		propList.add(props);
+
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]),prop_order,"");
+	}
+
+	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData){
+		List<String[]> name_values = getNameValues(props, noData);
+		if (preferred_prop_order != null) {
+			name_values = reorderNames(name_values, preferred_prop_order);
+		}
+		return buildRows(name_values, props);
+	}
 
 	/**
 	 * take name_values and return a new ArrayList that

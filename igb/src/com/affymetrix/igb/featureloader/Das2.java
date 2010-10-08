@@ -198,9 +198,17 @@ public class Das2 {
 				name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
 			}*/
 
-			if (feats != null) {
-				SymLoader.filterAndAddAnnotations(feats, span, feature.getURI(), feature);
+			for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(feats).entrySet()) {
+				if (entry.getValue().isEmpty()) {
+					continue;
+				}
+				SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
+
+				// Some format do not annotate. So it might not have method name. e.g bgn
+				if(entry.getKey() != null)
+					feature.addMethod(entry.getKey());
 			}
+			
 			feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
 
             return (feats != null);

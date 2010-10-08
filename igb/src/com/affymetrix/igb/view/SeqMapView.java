@@ -287,6 +287,7 @@ public class SeqMapView extends JPanel
 		seqmap.setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		seqmap.addMouseListener(mouse_listener);
 		seqmap.addMouseListener(msc);
+		seqmap.addMouseMotionListener(mouse_listener);
 		//((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(msc); //Enable mouse short cut here.
 
 		tier_manager.setDoGraphSelections(true);
@@ -1003,7 +1004,7 @@ public class SeqMapView extends JPanel
 	 * Given a list of glyphs, returns a list of syms that those
 	 *  glyphs represent.
 	 */
-	private static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
+	public static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
 		Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
 		for (GlyphI gl : glyphs) {
 			SeqSymmetry sym = glyphToSym(gl);
@@ -1720,5 +1721,46 @@ public class SeqMapView extends JPanel
 	/** Get the span of the symmetry that is on the seq being viewed. */
 	public final SeqSpan getViewSeqSpan(SeqSymmetry sym) {
 		return sym.getSpan(viewseq);
+	}
+
+	/**
+	 * Sets tool tip from given glyphs.
+	 * @param glyphs
+	 */
+	public void setToolTip(List<GlyphI> glyphs){
+		((AffyLabelledTierMap)seqmap).setToolTip(null);
+
+		if(glyphs.isEmpty())
+			return;
+		
+		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
+
+		if (!sym.isEmpty()) {
+			String[][] properties = PropertyView.getPropertiesRow(sym.get(0), this);
+			String tooltip = convertPropsToString(properties);
+			((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+		}
+	}
+
+	/**
+	 * Converts given properties into string.
+	 * @param properties
+	 * @return
+	 */
+	private static String convertPropsToString(String[][] properties){
+		StringBuilder props = new StringBuilder();
+
+		props.append("<html>");
+		for(int i=0; i<properties.length; i++){
+			props.append("<b>");
+			props.append(properties[i][0]);
+			props.append(" : ");
+			props.append("</b>");
+			props.append(properties[i][1]);
+			props.append("<br>");
+		}
+		props.append("</html>");
+
+		return props.toString();
 	}
 }

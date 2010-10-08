@@ -36,7 +36,8 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   private JSplitPane mapsplitter;
   private final List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
   private JPanel can_panel;
-
+  private NeoCanvas ncan;
+  
   public AffyLabelledTierMap(boolean hscroll_show, boolean vscroll_show) {
     super(hscroll_show, vscroll_show, NeoConstants.HORIZONTAL);
   }
@@ -56,7 +57,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     mapsplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     mapsplitter.setDividerSize(8);
     mapsplitter.setDividerLocation(100);
-    NeoCanvas ncan = this.getNeoCanvas();
+    ncan = this.getNeoCanvas();
     mapsplitter.setLeftComponent(labelmap);
     
     can_panel = new JPanel();
@@ -239,4 +240,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 		}
 	}
 
+	public void setToolTip(String text){
+		ncan.setToolTipText(text);
+	}
 }

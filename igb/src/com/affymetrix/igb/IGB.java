@@ -517,6 +517,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new UnclampViewAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ShrinkWrapAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleHairlineLabelAction.getAction()));
+		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleToolTip.getAction()));
 		MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
 		MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
 	}

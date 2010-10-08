@@ -87,6 +87,7 @@ public class SeqMapView extends JPanel
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
 	private boolean hairline_is_labeled = true;
+	private boolean show_prop_tooltip = true;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	/**
 	 *  maximum number of query glyphs for edge matcher.
@@ -135,6 +136,8 @@ public class SeqMapView extends JPanel
 	private static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
 	/** Name of a boolean preference for whether the vertical zoom slider is left of the map. */
 	private static final String PREF_Y_ZOOMER_LEFT = "Vertical Zoomer Left of Map";
+	/** Name of a boolean preference for whether to show properties in tooltip. */
+	public static final String PREF_SHOW_TOOLTIP = "Show properties in tooltip";
 
 	public static final Color default_edge_match_color = Color.WHITE;
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
@@ -1728,6 +1731,9 @@ public class SeqMapView extends JPanel
 	 * @param glyphs
 	 */
 	public void setToolTip(List<GlyphI> glyphs){
+		if(!show_prop_tooltip)
+			return;
+
 		((AffyLabelledTierMap)seqmap).setToolTip(null);
 
 		if(glyphs.isEmpty())
@@ -1762,5 +1768,15 @@ public class SeqMapView extends JPanel
 		props.append("</html>");
 
 		return props.toString();
+	}
+
+	public boolean togglePropertiesTooltip(){
+		show_prop_tooltip =  !show_prop_tooltip;
+		((AffyLabelledTierMap)seqmap).setToolTip(null);
+		return show_prop_tooltip;
+	}
+
+	public final boolean shouldShowPropTooltip(){
+		return show_prop_tooltip;
 	}
 }

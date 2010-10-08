@@ -287,9 +287,10 @@ public class TrackView {
 
 		if(feature != null){
 			feature.deleteSymsOnSeq(method, seq);
+			deleteDependentData(method, seq);
+		}else{
+			seq.removeAnnotation(seq.getAnnotation(method));
 		}
-
-		deleteFromDependentData(method, seq);
 	}
 
 	public static void removeFeature(GenericFeature feature){
@@ -308,7 +309,7 @@ public class TrackView {
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 
-	private static void deleteFromDependentData(String method, BioSeq seq) {
+	private static void deleteDependentData(String method, BioSeq seq) {
 		DependentData dd = null;
 		for (int i = 0; i < dependent_list.size(); i++) {
 			dd = dependent_list.get(i);

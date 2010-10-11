@@ -126,6 +126,7 @@ public final class ServerList {
 					url2server.put(url, server);
 				}
 			}
+			addServerToPrefs(server);
 		}
 		
 		return server;

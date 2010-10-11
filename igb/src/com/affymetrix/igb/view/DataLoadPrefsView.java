@@ -446,7 +446,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 			return;
 		}
 
-		ServerList.addServerToPrefs(server);
+		//ServerList.addServerToPrefs(server);
 	}
 
 	private static void removeDataSource(String url) {

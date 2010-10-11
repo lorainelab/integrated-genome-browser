@@ -130,7 +130,8 @@ public final class GeneralLoadUtils {
 			return null;
 		}
 		if (!discoverServer(gServer)) {
-			ServerList.removeServer(serverURL);
+			gServer.setEnabled(false);
+			//ServerList.removeServer(serverURL);
 			return null;
 		}
 
@@ -158,6 +159,7 @@ public final class GeneralLoadUtils {
 				entryIterator.remove();
 			}
 		}
+		server.setEnabled(false);
 	}
 
 	

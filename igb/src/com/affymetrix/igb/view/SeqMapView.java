@@ -172,6 +172,7 @@ public class SeqMapView extends JPanel
 
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
+	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -641,6 +642,11 @@ public class SeqMapView extends JPanel
 			int[] range = seqmap.getVisibleRange();
 			setZoomSpotX(0.5 * (range[0] + range[1]));
 		}
+
+		for(SeqMapRefreshed smr : seqmap_refresh_list){
+			smr.refresh();
+		}
+		
 		seqmap.updateWidget();
 
 		//A Temporary hack to solve problem when a 'genome' is selected
@@ -1782,5 +1788,13 @@ public class SeqMapView extends JPanel
 
 	public final boolean shouldShowPropTooltip(){
 		return show_prop_tooltip;
+	}
+
+	void addToRefreshList(SeqMapRefreshed smr){
+		seqmap_refresh_list.add(smr);
+	}
+	
+	public static interface SeqMapRefreshed{
+		public void refresh();
 	}
 }

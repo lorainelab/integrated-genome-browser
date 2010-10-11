@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
+import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -44,7 +45,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
-public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener {
+public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed {
 	private static final long serialVersionUID = 0;
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
@@ -98,6 +99,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	public SearchView() {
 		super();
 		gviewer = Application.getSingleton().getMapView();
+		gviewer.addToRefreshList(this);
+		
 		group = gmodel.getSelectedSeqGroup();
 
 		this.setLayout(new BorderLayout());
@@ -310,10 +313,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	// remove the previous search results from the map.
 	private void clearResults() {
 		if (!glyphs.isEmpty()) {
+			glyphs.clear();
 			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
 		}
-		glyphs.clear();
-
+		
 		clearTable();
 	}
 
@@ -676,6 +679,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 				status_bar.setText(text);
 			}
 		});
+	}
+
+	public void refresh() {
+		TransformTierGlyph axis_tier = gviewer.getAxisTier();
+		for(GlyphI glyph : glyphs){
+			axis_tier.addChild(glyph);
+		}
 	}
 
 	private class SearchResultsTableModel extends AbstractTableModel {

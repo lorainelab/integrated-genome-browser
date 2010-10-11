@@ -96,6 +96,17 @@ public abstract class BookmarkController {
 			}
 
 			String method = UnibrowControlServlet.getStringParameter(map, SYM.METHOD.toString() + i);
+
+			SeqSymmetry sym = seq.getAnnotation(method);
+
+			if (sym == null) {
+				continue;
+			}
+
+			if (!(sym instanceof GraphSym) && !(sym instanceof TypeContainerAnnot)) {
+				continue;
+			}
+			
 			// for some parameters, testing more than one parameter name because how some params used to have
 			//    slightly different names, and we need to support legacy bookmarks
 			String sym_name = UnibrowControlServlet.getStringParameter(map, SYM.NAME.toString() + i);
@@ -106,17 +117,6 @@ public abstract class BookmarkController {
 			String sym_col = UnibrowControlServlet.getStringParameter(map, SYM.COL.toString() + i);
 			String sym_bg_col = UnibrowControlServlet.getStringParameter(map, SYM.BG.toString() + i);
 			// sym_bg_col will often be null
-
-			String graph_float = UnibrowControlServlet.getStringParameter(map, GRAPH.FLOAT.toString() + i);
-			String show_labelstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_LABEL.toString() + i);
-			String show_axisstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_AXIS.toString() + i);
-			String minvis_str = UnibrowControlServlet.getStringParameter(map, GRAPH.MINVIS.toString() + i);
-			String maxvis_str = UnibrowControlServlet.getStringParameter(map, GRAPH.MAXVIS.toString() + i);
-			String score_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SCORE_THRESH.toString() + i);
-			String maxgap_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.MAXGAP_THRESH.toString() + i);
-			String minrun_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.MINRUN_THRESH.toString() + i);
-			String show_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_THRESH.toString() + i);
-			String thresh_directionstr = UnibrowControlServlet.getStringParameter(map, GRAPH.THRESH_DIRECTION.toString() + i);
 
 			//        int graph_min = (graph_visible_min == null) ?
 			String graph_style = UnibrowControlServlet.getStringParameter(map, GRAPH.STYLE.toString() + i);
@@ -147,43 +147,45 @@ public abstract class BookmarkController {
 							+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
 				}
 			}
-			boolean use_floating_graphs =
-					(graph_float == null) ? default_float : (graph_float.equals("true"));
-			boolean show_label =
-					(show_labelstr == null) ? default_show_label : (show_labelstr.equals("true"));
-			boolean show_axis =
-					(show_axisstr == null) ? default_show_axis : (show_axisstr.equals("true"));
-			double minvis = (minvis_str == null) ? default_minvis : Double.parseDouble(minvis_str);
-			double maxvis = (maxvis_str == null) ? default_maxvis : Double.parseDouble(maxvis_str);
-			double score_thresh =
-					(score_threshstr == null) ? default_score_thresh : Double.parseDouble(score_threshstr);
-			int maxgap_thresh =
-					(maxgap_threshstr == null) ? default_maxgap_thresh : Integer.parseInt(maxgap_threshstr);
-
-			int minrun_thresh =
-					(minrun_threshstr == null) ? default_minrun_thresh : Integer.parseInt(minrun_threshstr);
-			boolean show_thresh =
-					(show_threshstr == null) ? default_show_thresh : (show_threshstr.equals("true"));
-			int thresh_direction =
-					(thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
-
-			if (sym_name == null || sym_name.trim().length() == 0) {
-				sym_name = feature_path;
-			}
-
-			SeqSymmetry sym = seq.getAnnotation(method);
-
-			if (sym == null) {
-				continue;
-			}
-
-			if (!(sym instanceof GraphSym) && !(sym instanceof TypeContainerAnnot)) {
-				continue;
-			}
 
 			ITrackStyleExtended style = null;
 
 			if (sym instanceof GraphSym) {
+				String graph_float = UnibrowControlServlet.getStringParameter(map, GRAPH.FLOAT.toString() + i);
+				String show_labelstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_LABEL.toString() + i);
+				String show_axisstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_AXIS.toString() + i);
+				String minvis_str = UnibrowControlServlet.getStringParameter(map, GRAPH.MINVIS.toString() + i);
+				String maxvis_str = UnibrowControlServlet.getStringParameter(map, GRAPH.MAXVIS.toString() + i);
+				String score_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SCORE_THRESH.toString() + i);
+				String maxgap_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.MAXGAP_THRESH.toString() + i);
+				String minrun_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.MINRUN_THRESH.toString() + i);
+				String show_threshstr = UnibrowControlServlet.getStringParameter(map, GRAPH.SHOW_THRESH.toString() + i);
+				String thresh_directionstr = UnibrowControlServlet.getStringParameter(map, GRAPH.THRESH_DIRECTION.toString() + i);
+
+				boolean use_floating_graphs =
+						(graph_float == null) ? default_float : (graph_float.equals("true"));
+				boolean show_label =
+						(show_labelstr == null) ? default_show_label : (show_labelstr.equals("true"));
+				boolean show_axis =
+						(show_axisstr == null) ? default_show_axis : (show_axisstr.equals("true"));
+				double minvis = (minvis_str == null) ? default_minvis : Double.parseDouble(minvis_str);
+				double maxvis = (maxvis_str == null) ? default_maxvis : Double.parseDouble(maxvis_str);
+				double score_thresh =
+						(score_threshstr == null) ? default_score_thresh : Double.parseDouble(score_threshstr);
+				int maxgap_thresh =
+						(maxgap_threshstr == null) ? default_maxgap_thresh : Integer.parseInt(maxgap_threshstr);
+
+				int minrun_thresh =
+						(minrun_threshstr == null) ? default_minrun_thresh : Integer.parseInt(minrun_threshstr);
+				boolean show_thresh =
+						(show_threshstr == null) ? default_show_thresh : (show_threshstr.equals("true"));
+				int thresh_direction =
+						(thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
+
+				if (sym_name == null || sym_name.trim().length() == 0) {
+					sym_name = feature_path;
+				}
+
 				GraphState gstate = ((GraphSym) sym).getGraphState();
 				style = (ITrackStyleExtended) gstate.getTierStyle();
 				GenericFeature feature = style.getFeature();

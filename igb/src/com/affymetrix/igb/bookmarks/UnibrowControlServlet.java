@@ -42,7 +42,6 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.LoadFileAction;
@@ -128,8 +127,7 @@ public final class UnibrowControlServlet {
 		//    Checks to avoid double-loading of files
 		//    Loading can freeze the GUI
 		//    Can be any URL, not just a file
-		String[] graph_files = parameters.get("graph_file");
-		boolean has_graph_source_urls = (parameters.get(SYM.FEATURE_URL+"0") != null);
+		boolean has_properties = (parameters.get(SYM.FEATURE_URL+"0") != null);
 		boolean loaddata = true;
 		boolean loaddas2data = true;
 
@@ -171,7 +169,7 @@ public final class UnibrowControlServlet {
 		if (loaddata) {
 			GenericFeature[] gFeatures = loadData(gServers, query_urls, start, end);
 
-			if (has_graph_source_urls) {
+			if (has_properties) {
 				List<String> graph_urls = getGraphUrls(parameters);
 
 				for (int i = 0; i < gFeatures.length; i++) {
@@ -462,14 +460,15 @@ public final class UnibrowControlServlet {
 
 		URI uri = URI.create(feature_url);
 		GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-		if (gVersion == null) {
+		if (gVersion == null && gServer.serverType != ServerType.LocalFiles) {
 			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
 				Level.SEVERE, "Couldn''t find version {0} in server {1}",
 				new Object[]{seqGroup.getID(), gServer.serverName});
 			return null;
 		}
 
-		feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
+		if(gVersion != null)
+			feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
 
 		if(feature == null && gServer.serverType == ServerType.LocalFiles){
 			// For local file check if feature already exists.

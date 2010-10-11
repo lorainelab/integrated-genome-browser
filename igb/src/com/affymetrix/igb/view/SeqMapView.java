@@ -1762,7 +1762,11 @@ public class SeqMapView extends JPanel
 			props.append(properties[i][0]);
 			props.append(" : ");
 			props.append("</b>");
-			props.append(properties[i][1]);
+			String value = properties[i][1];
+			int vallen = value.length();
+			props.append(value.substring(0, Math.min(25, vallen)));
+			if(vallen > 30)
+				props.append(" ...");
 			props.append("<br>");
 		}
 		props.append("</html>");

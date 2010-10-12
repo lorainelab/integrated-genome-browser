@@ -10,6 +10,7 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 
 /**
  *
@@ -17,6 +18,8 @@ import javax.swing.JColorChooser;
  */
 public class ColorUtils {
 
+	private static JColorChooser singleton = new JColorChooser();
+	
 	/**
 	 *  Creates a JButton associated with a Color preference.
 	 *  Will initialize itself with the value of the given
@@ -35,16 +38,28 @@ public class ColorUtils {
 		final ColorIcon icon = new ColorIcon(11, initial_color);
 		final String panel_title = "Choose a color";
 
-		final JButton button = new JButton(icon);
-		button.addActionListener(new ActionListener() {
+		final ActionListener ok = new ActionListener() {
 
-			public void actionPerformed(ActionEvent ae) {
-				Color c = JColorChooser.showDialog(button, panel_title, PreferenceUtils.getColor(node, pref_name, default_val));
+			public void actionPerformed(ActionEvent e) {
+				Color c = singleton.getColor();
 				if (c != null) {
 					PreferenceUtils.putColor(node, pref_name, c);
 				}
 			}
+		};
+		
+		final JButton button = new JButton(icon);
+		button.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent ae) {
+
+				JDialog dialog = JColorChooser.createDialog(button, panel_title, true, singleton, ok, null);
+				singleton.setColor(PreferenceUtils.getColor(node, pref_name, default_val));
+
+				dialog.setVisible(true);
+			}
 		});
+
 		node.addPreferenceChangeListener(new PreferenceChangeListener() {
 
 			public void preferenceChange(PreferenceChangeEvent evt) {

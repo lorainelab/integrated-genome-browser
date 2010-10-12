@@ -98,7 +98,7 @@ public class NeoMap extends NeoWidget implements
 	public static final int MAP = 400;
 	protected int orient;
 	protected MapGlyphFactory default_factory;
-	int stretchCount, reshapeCount;
+	private int stretchCount, reshapeCount;
 	protected boolean fit_check = true;
 	protected boolean use_border_layout = false;
 	private static final boolean DEBUG_STRETCH = false;
@@ -113,22 +113,20 @@ public class NeoMap extends NeoWidget implements
 	// this is maintained in order to stretch them
 	// when the range coords of the map change.
 	private List<AxisGlyph> axes = new ArrayList<AxisGlyph>();
-	// fields to keep track of whether ranges have been explicitly set or not
-	boolean axis_range_set = false;
-	boolean offset_range_set = false;
+
 	// fields for optimizations
 	boolean optimize_scrolling = false;
 	boolean optimize_damage = false;
 	boolean optimize_transients = false;
 	// fields for dealing with sequence residue font
 	// (only one residue font should be allowed per map)
-	Font font_for_max_zoom = NeoConstants.default_bold_font;
-	FontMetrics seqmetrics;
-	DragMonitor canvas_drag_monitor;
+	private Font font_for_max_zoom = NeoConstants.default_bold_font;
+	private FontMetrics seqmetrics;
+	private DragMonitor canvas_drag_monitor;
 	boolean drag_scrolling_enabled = false;
 	protected int selectionMethod = NO_SELECTION;
-	protected Set<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArraySet<NeoViewBoxListener>();
-	protected Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
+	protected final Set<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArraySet<NeoViewBoxListener>();
+	protected final Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 	private NeoWidgetListener listeners = null;
 
 	/**
@@ -598,16 +596,14 @@ public class NeoMap extends NeoWidget implements
 		// scene.setCoords() is now handled in setBounds()
 
 		if (orient == NeoConstants.VERTICAL) {
-			//      this.setBounds(Y,start,end);
 			this.setFloatBounds(Y, (double) start, (double) end);
 		} else {
-			//      this.setBounds(X,start,end);
 			this.setFloatBounds(X, (double) start, (double) end);
 		}
 
 		if (axes != null) {
-			for (int i = 0; i < axes.size(); i++) {
-				axes.get(i).rangeChanged(); // notify the axis of the range change.
+			for (AxisGlyph axis : axes) {
+				axis.rangeChanged(); // notify the axis of the range change.
 			}
 		}
 
@@ -899,9 +895,7 @@ public class NeoMap extends NeoWidget implements
 	}
 
 	public MapGlyphFactory addFactory(String config_string) {
-		Hashtable<String, Object> config_hash = null;
-		config_hash = GeneralUtils.parseOptions(config_string);
-		return addFactory(config_hash);
+		return addFactory(GeneralUtils.parseOptions(config_string));
 	}
 
 	public MapGlyphFactory addFactory(Hashtable<String, Object> config_hash) {
@@ -948,22 +942,17 @@ public class NeoMap extends NeoWidget implements
 	}
 
 	public GlyphI addItem(int start, int end) {
-
-		GlyphI g = null;
 		if (start <= end) {
-			g = default_factory.makeItem(start, end + 1);
-		} else {
-			g = default_factory.makeItem(start + 1, end);
+			return default_factory.makeItem(start, end + 1);
 		}
-		return g;
+		return default_factory.makeItem(start + 1, end);
 	}
 
 	public GlyphI addItem(int start, int end, String options) {
 		if (start <= end) {
 			return default_factory.makeItem(start, end + 1, options);
-		} else {
-			return default_factory.makeItem(start + 1, end, options);
 		}
+		return default_factory.makeItem(start + 1, end, options);
 	}
 
 	//
@@ -1007,7 +996,6 @@ public class NeoMap extends NeoWidget implements
 	}
 
 	public JScrollBar getScroller(int id) {
-		//  public NeoAdjustable getScroller(int id) {
 		return scroller[id];
 	}
 
@@ -1061,7 +1049,7 @@ public class NeoMap extends NeoWidget implements
 
 	/**
 	 * Removes all glyphs.
-	 * However, factories, dataadapters, coord bounds, etc. remain.
+	 * However, factories, data adapters, coord bounds, etc. remain.
 	 */
 	@Override
 	public void clearWidget() {
@@ -1146,7 +1134,7 @@ public class NeoMap extends NeoWidget implements
 
 	public void setOptimizations() {
 
-		/* Ajusting canvas and view to enable glyph optimizations!
+		/* Adjusting canvas and view to enable glyph optimizations!
 		for View-controlled glyph optimizations to work, need to turn turn off
 		both double buffering and opacity of NeoCanvas, and turn on
 		double buffering in View.
@@ -1227,8 +1215,6 @@ public class NeoMap extends NeoWidget implements
 			System.out.println("NeoMap.repaint() called");
 		}
 		super.repaint();
-		if (NM_DEBUG_PAINT) {
-		}
 	}
 
 	@Override
@@ -1237,8 +1223,6 @@ public class NeoMap extends NeoWidget implements
 			System.out.println("NeoMap.paint() called");
 		}
 		super.paint(g);
-		if (NM_DEBUG_PAINT) {
-		}
 	}
 
 	public void setMapColor(Color col) {
@@ -1462,7 +1446,7 @@ public class NeoMap extends NeoWidget implements
 					&& ON_MOUSE_DOWN == selectionMethod)
 					|| (id == NeoMouseEvent.MOUSE_RELEASED
 					&& ON_MOUSE_UP == selectionMethod)) {
-				List prev_items = this.getSelected();
+				List<GlyphI> prev_items = this.getSelected();
 				int prev_items_size = prev_items.size();
 				if (prev_items_size > 0 && !(shiftDown || controlDown || metaDown)) {
 					this.deselect(prev_items);

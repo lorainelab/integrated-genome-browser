@@ -604,8 +604,8 @@ public abstract class NeoAbstractWidget extends Container
 	 * @see NeoMap#addItem
 	 */
 	public void moveAbsolute(List<GlyphI> glyphs, double x, double y) {
-		for (int i=0; i<glyphs.size(); i++) {
-			moveAbsolute(glyphs.get(i), x, y);
+		for (GlyphI glyph : glyphs) {
+			moveAbsolute(glyph, x, y);
 		}
 	}
 
@@ -628,7 +628,7 @@ public abstract class NeoAbstractWidget extends Container
 	}
 
 	/**
-	 * update the position of alls <code>glyphs</code> in List by
+	 * update the position of all <code>glyphs</code> in List by
 	 * <code>diffx</code> and <code>diffy</code> in the X and Y axes respectively,
 	 * relative to the current position of <code>glyphs</code>, where
 	 * the current position of a <code>glyph</code> is the coordinate of the
@@ -642,8 +642,8 @@ public abstract class NeoAbstractWidget extends Container
 	 *
 	 */
 	public void moveRelative(List<GlyphI> glyphs, double x, double y) {
-		for (int i=0; i<glyphs.size(); i++) {
-			moveRelative(glyphs.get(i), x, y);
+		for (GlyphI glyph : glyphs) {
+			moveRelative(glyph, x, y);
 		}
 	}
 
@@ -751,18 +751,18 @@ public abstract class NeoAbstractWidget extends Container
 	 * @see #select
 	 * @see #getSelected
 	 */
-	public void deselect(List vec) {
-		// need to special case if vec argument is ref to same List as selected,
+	public void deselect(List<GlyphI> glyphs) {
+		// need to special case if glyphs argument is ref to same List as selected,
 		//   since the deselect(Object) will cause shrinking of vec size as
 		//   it is being looped through
-		if (vec == null) {
+		if (glyphs == null) {
 			return;
 		}
-		if (vec == selected) {
+		if (glyphs == selected) {
 			clearSelected();
 		}
-		for (int i=0; i<vec.size(); i++) {
-			deselect((GlyphI)vec.get(i));
+		for (int i=0; i<glyphs.size(); i++) {
+			deselect(glyphs.get(i));
 		}
 	}
 
@@ -780,7 +780,7 @@ public abstract class NeoAbstractWidget extends Container
 	/** Clears all graphs from the widget.
 	 *  This default implementation simply removes all elements from the
 	 *  list of selections.  (It does this without calling clearSelected(),
-	 *  because it is faster to skip an explict call to deselect(GlyphI)
+	 *  because it is faster to skip an explicit call to deselect(GlyphI)
 	 *  for each Glyph.)
 	 *  Subclasses should call this method during their own implementation.
 	 *  Subclasses may choose to call clearSelected() before calling this
@@ -918,9 +918,8 @@ public abstract class NeoAbstractWidget extends Container
 
 	@Override
 	public void setCursor(Cursor cur) {
-		Component comp[] = this.getComponents();
-		for (int i=0; i<comp.length; i++) {
-			comp[i].setCursor(cur);
+		for (Component comp : this.getComponents()) {
+			comp.setCursor(cur);
 		}
 		super.setCursor(cur);
 	}
@@ -1042,7 +1041,7 @@ public abstract class NeoAbstractWidget extends Container
 	/**
 	 * scrolls this widget along the specified axis.
 	 *
-	 * @param id    indentifies which axis to scroll.
+	 * @param id    identifies which axis to scroll.
 	 *     valid values are NeoAbstractWidget.X or NeoAbstractWidget.Y.
 	 * @param value  the double distance in coordinate space
 	 *               to scroll.
@@ -1061,7 +1060,7 @@ public abstract class NeoAbstractWidget extends Container
 	public abstract NeoAbstractWidget getWidget(GlyphI gl);
 
 	/**
-	 * constrains zooming along the given axis to the given contraint.
+	 * constrains zooming along the given axis to the given constraint.
 	 * You can focus horizontal zooming at the left edge, center or right edge.
 	 * You can focus vertical zooming at the top, center, or bottom.
 	 *
@@ -1161,17 +1160,17 @@ public abstract class NeoAbstractWidget extends Container
 	public abstract Color getSelectionColor();
 
 	/**
-	 * determines whether or not subselection of glyphs is allowed.
+	 * determines whether or not sub-selection of glyphs is allowed.
 	 *
-	 * @param allowed <code>true</code> indicates that subselections
+	 * @param allowed <code>true</code> indicates that sub-selections
 	 *   of glyphs are allowed.
 	 */
 	public abstract void setSubSelectionAllowed(boolean allowed);
 
 	/**
-	 * returns the current setting for subselection.
+	 * returns the current setting for sub-selection.
 	 *
-	 * @return <code>true</code> if subselection is currently allowed.
+	 * @return <code>true</code> if sub-selection is currently allowed.
 	 * @see #setSubSelectionAllowed
 	 */
 	public abstract boolean isSubSelectionAllowed();
@@ -1231,7 +1230,7 @@ public abstract class NeoAbstractWidget extends Container
 	public abstract void toBackOfSiblings(GlyphI glyph);
 
 	/**
-	 * Determines automatic seelction behavior.
+	 * Determines automatic selection behavior.
 	 * If <code>theEvent == ON_MOUSE_UP</code>
 	 * then automatic selection occurs on the mouse up event.  Similarly,
 	 * if <code>theEvent == ON_MOUSE_DOWN</code> then a automatic selection

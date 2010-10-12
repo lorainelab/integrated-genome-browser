@@ -11,6 +11,8 @@ import com.affymetrix.igb.tiers.TierGlyph.Direction;
  * A glyph used to display a label for a TierGlyph.
  */
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
+	private int position;
+
 	@Override
 	public String toString() {
 		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + coordbox);
@@ -21,10 +23,19 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 *  @param reference_tier the tier in the main part of the AffyLabelledTierMap,
 	 *    must not be null
 	 */
-	TierLabelGlyph(TierGlyph reference_tier) {
+	TierLabelGlyph(TierGlyph reference_tier, int position) {
 		this.setInfo(reference_tier);
+		setPosition(position);
 	}
 
+	void setPosition(int position){
+		this.position = position;
+	}
+
+	int getPosition(){
+		return position;
+	}
+	
 	/** Overridden such that the info must be of type TierGlyph.  It is used
 	 *  to store the reference tier that will be returned by getReferenceTier().
 	 */

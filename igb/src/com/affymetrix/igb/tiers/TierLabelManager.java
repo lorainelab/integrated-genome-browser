@@ -371,9 +371,17 @@ public final class TierLabelManager {
 			tiers.add(tier);
 		}
 
+		updatePositions();
 		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
 		tiermap.packTiers(false, true, false);
 		tiermap.updateWidget();
+	}
+
+	private void updatePositions(){
+		List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
+		for(int i=0; i<label_glyphs.size(); i++){
+			label_glyphs.get(i).setPosition(i);
+		}
 	}
 
 	/**
@@ -381,17 +389,12 @@ public final class TierLabelManager {
 	 */
 	void sortTiers() {
 		List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
-		Collections.sort(label_glyphs, tier_sorter);
+		Collections.sort(label_glyphs, new Comparator<TierLabelGlyph>(){
 
-		// Commenting out below code to resolve for bug 2926882 (formerly hidden minus strand
-		// tracks re-appear above the axis)
-		
-//		List<TierGlyph> tiers = tiermap.getTiers();
-//		tiers.clear();
-//		for (TierLabelGlyph label : label_glyphs) {
-//			TierGlyph tier = (TierGlyph) label.getInfo();
-//			tiers.add(tier);
-//		}
+			public int compare(TierLabelGlyph g1, TierLabelGlyph g2) {
+				return Double.compare(g1.getPosition(), g2.getPosition());
+			}
+		});
 		
 		// then repack of course (tiermap repack also redoes labelmap glyph coords...)
 		tiermap.packTiers(false, true, false);

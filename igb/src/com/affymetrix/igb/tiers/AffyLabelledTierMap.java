@@ -121,15 +121,15 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 	@Override
   public void addTier(TierGlyph mtg, int tier_index) {
     super.addTier(mtg, tier_index);
-    createTierLabel(mtg);    
+    createTierLabel(mtg, tier_index);
   }
   
   /** Creates a TierLabelGlyph for the given TierGlyph.  
    *  Called by addTier() methods.  Override this to 
    *  add additional settings to the glyph.
    */
-  private void createTierLabel(TierGlyph mtg) {
-    TierLabelGlyph label_glyph = new TierLabelGlyph(mtg);
+  private void createTierLabel(TierGlyph mtg, int tier_index) {
+    TierLabelGlyph label_glyph = new TierLabelGlyph(mtg, tier_index);
     // No need to set the TierLabelGlyph colors or label:
     // it reads that information dynamically from the given TierGlyph
     

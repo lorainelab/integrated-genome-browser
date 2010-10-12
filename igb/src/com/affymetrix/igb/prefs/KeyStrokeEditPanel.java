@@ -188,7 +188,7 @@ public final class KeyStrokeEditPanel extends JPanel {
    *  Modified, originally from the Java Developer's Almanac 1.4.
    *  http://javaalmanac.com/egs/javax.swing/Key2Str.html
    */
-  private static String keyStroke2String(KeyStroke key) {
+  public static String keyStroke2String(KeyStroke key) {
     StringBuffer s = new StringBuffer(50);
     int m = key.getModifiers();
     

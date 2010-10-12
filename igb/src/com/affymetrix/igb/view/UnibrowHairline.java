@@ -120,7 +120,7 @@ public final class UnibrowHairline {
     //visible_range.setSpot(focus);
     // instead of using the visible_range, directly call hairline.setRange()
     hairline.setRange((int) focus, (int) focus + 1);
-    map.setZoomBehavior(map.X, map.CONSTRAIN_COORD, focus);
+    map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, focus);
     //map.updateWidget();
   }
 

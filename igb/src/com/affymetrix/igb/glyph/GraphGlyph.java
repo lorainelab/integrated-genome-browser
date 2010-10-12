@@ -632,7 +632,7 @@ public final class GraphGlyph extends Glyph {
 
 	/**
 	 *  getGraphMaxY() returns max ycoord (in graph coords) of all points in graph.
-	 *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
+	 *  This number is calculated in setPointCoords() directly from ycoords, and cannot
 	 *     be modified (except for resetting the points by calling setPointCoords() again)
 	 */
 	float getGraphMinY() {
@@ -646,7 +646,7 @@ public final class GraphGlyph extends Glyph {
 	/**
 	 *  getVisibleMaxY() returns max ycoord (in graph coords) that is visible (rendered).
 	 *  This number can be modified via calls to setVisibleMaxY, and the visual effect is
-	 *     to threhsold the graph drawing so that any points above max_ycoord render as max_ycoord
+	 *     to threshold the graph drawing so that any points above max_ycoord render as max_ycoord
 	 */
 	public float getVisibleMaxY() {
 		return state.getVisibleMaxY();

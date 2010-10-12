@@ -146,7 +146,7 @@ public class SeqMapView extends JPanel
 
 	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 	private final GlyphEdgeMatcher edge_matcher;
-	private JPopupMenu sym_popup;
+	private final JPopupMenu sym_popup = new JPopupMenu();
 	private JLabel sym_info;
 	// A fake menu item, prevents null pointer exceptions in actionPerformed()
 	// for menu items whose real definitions are commented-out in the code
@@ -356,7 +356,7 @@ public class SeqMapView extends JPanel
 			SwingUtilities.invokeLater(new Runnable() {
 
 				public void run() {
-					List graphs = collectGraphs();
+					List<GlyphI> graphs = collectGraphs();
 					for (int i = 0; i < graphs.size(); i++) {
 						GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
 					}
@@ -393,7 +393,6 @@ public class SeqMapView extends JPanel
 	}
 
 	private void setupPopups() {
-		sym_popup = new JPopupMenu();
 		sym_info = new JLabel("");
 		sym_info.setEnabled(false); // makes the text look different (usually lighter)
 
@@ -403,10 +402,6 @@ public class SeqMapView extends JPanel
 		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
-	}
-
-	public JPopupMenu getSelectionPopup() {
-		return sym_popup;
 	}
 
 	public final TransformTierGlyph getAxisTier() {
@@ -936,13 +931,12 @@ public class SeqMapView extends JPanel
 	}
 
 	public final SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
-		SeqSymmetry result_sym = insym;
 		if (seq_to_compare != getViewSeq()) {
 			MutableSeqSymmetry tempsym = SeqUtils.copyToDerived(insym);
 			SeqUtils.transformSymmetry(tempsym, getTransformPath());
-			result_sym = tempsym;
+			return tempsym;
 		}
-		return result_sym;
+		return insym;
 	}
 
 	public final AffyTieredMap getSeqMap() {
@@ -958,10 +952,7 @@ public class SeqMapView extends JPanel
 			GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, getSeqMap());
 		}
 
-		List<SeqSymmetry> symlist = glyphsToSyms(glyphlist);
-		//    System.out.println("called SeqMapView.selectAllGraphs(), select count: " + symlist.size());
-		// call select(list) on list of graph syms
-		select(symlist, false, true, true);
+		select(glyphsToSyms(glyphlist), false, true, true);
 	}
 
 	final void select(List<SeqSymmetry> sym_list) {
@@ -1006,22 +997,6 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = glyphsToSyms(selected_glyphs);
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		GenometryModel.getGenometryModel().setSelectedSymmetries(selected_syms, this);
-	}
-
-
-	/**
-	 * Given a list of glyphs, returns a list of syms that those
-	 *  glyphs represent.
-	 */
-	public static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
-		Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
-		for (GlyphI gl : glyphs) {
-			SeqSymmetry sym = glyphToSym(gl);
-			if (sym != null) {
-				symSet.add(sym);
-			}
-		}
-		return new ArrayList<SeqSymmetry>(symSet);
 	}
 
 
@@ -1116,8 +1091,22 @@ public class SeqMapView extends JPanel
 	 *  @return a List of SeqSymmetry objects, possibly empty.
 	 */
 	private List<SeqSymmetry> getSelectedSyms() {
-		List<GlyphI> glyphs = seqmap.getSelected();
-		return glyphsToSyms(glyphs);
+		return glyphsToSyms(seqmap.getSelected());
+	}
+
+	/**
+	 * Given a list of glyphs, returns a list of syms that those
+	 *  glyphs represent.
+	 */
+	public static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
+		Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
+		for (GlyphI gl : glyphs) {
+			SeqSymmetry sym = glyphToSym(gl);
+			if (sym != null) {
+				symSet.add(sym);
+			}
+		}
+		return new ArrayList<SeqSymmetry>(symSet);
 	}
 
 	private static SeqSymmetry glyphToSym(GlyphI gl) {
@@ -1385,7 +1374,7 @@ public class SeqMapView extends JPanel
 		return setUpMenuItem((Container) menu, action_command, action_listener);
 	}
 
-	public SeqMapViewMouseListener getMouseListener(){
+	final SeqMapViewMouseListener getMouseListener(){
 		return mouse_listener;
 	}
 	
@@ -1449,12 +1438,11 @@ public class SeqMapView extends JPanel
 	 *  has a parent, or else the child itself is included in the list
 	 */
 	static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
-		boolean top_level = true;
 		// linked hash set keeps parents in same order as child list so that comparison
 		// like childList.equals(parentList) can be used.
 		Set<GlyphI> results = new LinkedHashSet<GlyphI>(childGlyphs.size());
 		for (GlyphI child : childGlyphs) {
-			GlyphI pglyph = getParent(child, top_level);
+			GlyphI pglyph = getParent(child, true);
 			results.add(pglyph);
 		}
 		return new ArrayList<GlyphI>(results);
@@ -1467,7 +1455,6 @@ public class SeqMapView extends JPanel
 	 *  certain restrictions: recursion will stop before reaching a TierGlyph
 	 */
 	private static GlyphI getParent(GlyphI g, boolean top_level) {
-		GlyphI result = g;
 		GlyphI pglyph = g.getParent();
 		// the test for isHitable will automatically exclude seq_glyph
 		if (pglyph != null && pglyph.isHitable() && !(pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
@@ -1478,25 +1465,9 @@ public class SeqMapView extends JPanel
 					t = t.getParent();
 				}
 			}
-			result = pglyph;
+			return pglyph;
 		}
-		return result;
-	}
-
-	// sets the text on the JLabel based on the current selection
-	private void setPopupMenuTitle(JLabel label, List<GlyphI> selected_glyphs) {
-		String title = "";
-		if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof GraphGlyph) {
-			GraphGlyph gg = (GraphGlyph) selected_glyphs.get(0);
-			title = gg.getLabel();
-		} else {
-			title = getSelectionTitle(selected_glyphs);
-		}
-		// limit the popup title to 30 characters because big popup-menus don't work well
-		if (title != null && title.length() > 30) {
-			title = title.substring(0, 30) + " ...";
-		}
-		label.setText(title);
+		return g;
 	}
 
 	private void setStatus(String title) {
@@ -1573,30 +1544,6 @@ public class SeqMapView extends JPanel
 		return id;
 	}
 
-	/** Prepares the given popup menu to be shown.  The popup menu should have
-	 *  items added to it by this method.  Display of the popup menu will be
-	 *  handled by showPopup(), which calls this method.
-	 */
-	private void preparePopup(JPopupMenu popup) {
-		List<GlyphI> selected_glyphs = seqmap.getSelected();
-
-		setPopupMenuTitle(sym_info, selected_glyphs);
-
-		popup.add(sym_info);
-		if (!selected_glyphs.isEmpty()) {
-			popup.add(zoomtoMI);
-		}
-		popup.add(centerMI);
-		List<SeqSymmetry> selected_syms = getSelectedSyms();
-		if (!selected_syms.isEmpty()) {
-			popup.add(selectParentMI);
-		}
-
-		for (ContextualPopupListener listener : popup_listeners) {
-			listener.popupNotify(popup, selected_syms, sym_used_for_title);
-		}
-	}
-
 	final void showPopup(NeoMouseEvent nevt) {
 		sym_popup.setVisible(false); // in case already showing
 		sym_popup.removeAll();
@@ -1641,12 +1588,54 @@ public class SeqMapView extends JPanel
 		sym_popup.repaint();
 	}
 
+
+	/** Prepares the given popup menu to be shown.  The popup menu should have
+	 *  items added to it by this method.  Display of the popup menu will be
+	 *  handled by showPopup(), which calls this method.
+	 */
+	private void preparePopup(JPopupMenu popup) {
+		List<GlyphI> selected_glyphs = seqmap.getSelected();
+
+		setPopupMenuTitle(sym_info, selected_glyphs);
+
+		popup.add(sym_info);
+		if (!selected_glyphs.isEmpty()) {
+			popup.add(zoomtoMI);
+		}
+		popup.add(centerMI);
+		List<SeqSymmetry> selected_syms = getSelectedSyms();
+		if (!selected_syms.isEmpty()) {
+			popup.add(selectParentMI);
+		}
+
+		for (ContextualPopupListener listener : popup_listeners) {
+			listener.popupNotify(popup, selected_syms, sym_used_for_title);
+		}
+	}
+
+
+	// sets the text on the JLabel based on the current selection
+	private void setPopupMenuTitle(JLabel label, List<GlyphI> selected_glyphs) {
+		String title = "";
+		if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof GraphGlyph) {
+			GraphGlyph gg = (GraphGlyph) selected_glyphs.get(0);
+			title = gg.getLabel();
+		} else {
+			title = getSelectionTitle(selected_glyphs);
+		}
+		// limit the popup title to 30 characters because big popup-menus don't work well
+		if (title != null && title.length() > 30) {
+			title = title.substring(0, 30) + " ...";
+		}
+		label.setText(title);
+	}
+
 	private void addPopupListener(ContextualPopupListener listener) {
 		popup_listeners.add(listener);
 	}
 
-	/** Recurse through glyphs and collect those that are instanceof GraphGlyph. */
-	public final List<GlyphI> collectGraphs() {
+	/** Recurse through glyphs and collect those that are instances of GraphGlyph. */
+	final List<GlyphI> collectGraphs() {
 		List<GlyphI> graphs = new ArrayList<GlyphI>();
 		GlyphI root = seqmap.getScene().getGlyph();
 		collectGraphs(root, graphs);
@@ -1736,14 +1725,11 @@ public class SeqMapView extends JPanel
 	 * Sets tool tip from given glyphs.
 	 * @param glyphs
 	 */
-	public void setToolTip(List<GlyphI> glyphs){
+	public final void setToolTip(List<GlyphI> glyphs){
 		if(!show_prop_tooltip)
 			return;
 
 		((AffyLabelledTierMap)seqmap).setToolTip(null);
-
-		if(glyphs.isEmpty())
-			return;
 		
 		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
@@ -1790,7 +1776,7 @@ public class SeqMapView extends JPanel
 		return show_prop_tooltip;
 	}
 
-	void addToRefreshList(SeqMapRefreshed smr){
+	final void addToRefreshList(SeqMapRefreshed smr){
 		seqmap_refresh_list.add(smr);
 	}
 	

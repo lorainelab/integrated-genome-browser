@@ -136,6 +136,26 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
 		List<GlyphI> glyphs = nevt.getItems();
+		if(!glyphs.isEmpty()) {
+			smv.setToolTip(glyphs);
+			return;
+		}
+		
+		// Do we intersect any graph glyphs?
+		/*List<GlyphI> glyphlist = smv.collectGraphs();
+		Point2D pbox = evt.getPoint();
+		for (GlyphI glyph : glyphlist) {
+			GraphGlyph graf = (GraphGlyph) glyph;
+			if (graf.getPixelBox().contains(pbox)) {
+				// Are we in the box?
+				Rectangle r = graf.getPixelBox();
+
+				Point2D cbox = new Point2D.Double();
+				map.getView().transformToCoords(pbox, cbox);
+				//System.out.println("Hairline: " + cbox.getX() + "," + cbox.getY());
+				//System.out.println("(ignoring width) Graph(x,y):" + graf.getXCoord((int)cbox.getX()) + "," + graf.getYCoord((int)cbox.getX()));
+			}
+		}*/
 		smv.setToolTip(glyphs);
 	}
 
@@ -235,57 +255,6 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 	}
 
-	/**
-	 *  Tries to determine the glyph you really wanted to choose based on the
-	 *  one you clicked on.  Usually this will be the glyph you clicked on,
-	 *  but when the zoom level is such that the glyph is very small, this
-	 *  assumes you probably wanted to pick the parent glyph rather than
-	 *  one of its children.
-	 *
-	 *  @param topgl a Glyph
-	 *  @param zoom_point  the location where you clicked; if the returned glyph
-	 *   is different from the given glyph, the returned zoom_point will be
-	 *   at the center of that returned glyph, otherwise it will be unmodified.
-	 *   This parameter should not be supplied as null.
-	 *  @return a Glyph, and also modifies the value of zoom_point
-	 */
-	private GlyphI zoomCorrectedGlyphChoice(GlyphI topgl, Point2D.Double zoom_point) {
-		if (topgl == null) {
-			return null;
-		}
-		// trying to do smarter selection of parent (for example, transcript)
-		//     versus child (for example, exon)
-		// calculate pixel width of topgl, if <= 2, and it has no children,
-		//   and parent glyphs has pixel width <= 10, then select parent instead of child..
-		Rectangle pbox = new Rectangle();
-		Rectangle2D.Double cbox = topgl.getCoordBox();
-		map.getView().transformToPixels(cbox, pbox);
-
-		if (pbox.width <= 2) {
-			// if the selection is very small, move the x_coord to the center
-			// of the selection so we can zoom-in on it.
-			zoom_point.x = cbox.x + cbox.width / 2;
-			zoom_point.y = cbox.y + cbox.height / 2;
-
-			if ((topgl.getChildCount() == 0) && (topgl.getParent() != null)) {
-				// Watch for null parents:
-				// The reified Glyphs of the FlyweightPointGlyph made by OrfAnalyzer2 can have no parent
-				cbox = topgl.getParent().getCoordBox();
-				map.getView().transformToPixels(cbox, pbox);
-				if (pbox.width <= 10) {
-					topgl = topgl.getParent();
-					if (pbox.width <= 2) { // Note: this pbox has new values than those tested above
-						// if the selection is very small, move the x_coord to the center
-						// of the selection so we can zoom-in on it.
-						zoom_point.x = cbox.x + cbox.width / 2;
-						zoom_point.y = cbox.y + cbox.height / 2;
-					}
-				}
-			}
-		}
-
-		return topgl;
-	}
 
 	/** Checks whether the mouse event is something that we consider to be
 	 *  a pop-up trigger.  (This has nothing to do with MouseEvent.isPopupTrigger()).
@@ -438,6 +407,57 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 	}
 
+	/**
+	 *  Tries to determine the glyph you really wanted to choose based on the
+	 *  one you clicked on.  Usually this will be the glyph you clicked on,
+	 *  but when the zoom level is such that the glyph is very small, this
+	 *  assumes you probably wanted to pick the parent glyph rather than
+	 *  one of its children.
+	 *
+	 *  @param topgl a Glyph
+	 *  @param zoom_point  the location where you clicked; if the returned glyph
+	 *   is different from the given glyph, the returned zoom_point will be
+	 *   at the center of that returned glyph, otherwise it will be unmodified.
+	 *   This parameter should not be supplied as null.
+	 *  @return a Glyph, and also modifies the value of zoom_point
+	 */
+	private GlyphI zoomCorrectedGlyphChoice(GlyphI topgl, Point2D.Double zoom_point) {
+		if (topgl == null) {
+			return null;
+		}
+		// trying to do smarter selection of parent (for example, transcript)
+		//     versus child (for example, exon)
+		// calculate pixel width of topgl, if <= 2, and it has no children,
+		//   and parent glyphs has pixel width <= 10, then select parent instead of child..
+		Rectangle pbox = new Rectangle();
+		Rectangle2D.Double cbox = topgl.getCoordBox();
+		map.getView().transformToPixels(cbox, pbox);
+
+		if (pbox.width <= 2) {
+			// if the selection is very small, move the x_coord to the center
+			// of the selection so we can zoom-in on it.
+			zoom_point.x = cbox.x + cbox.width / 2;
+			zoom_point.y = cbox.y + cbox.height / 2;
+
+			if ((topgl.getChildCount() == 0) && (topgl.getParent() != null)) {
+				// Watch for null parents:
+				// The reified Glyphs of the FlyweightPointGlyph made by OrfAnalyzer2 can have no parent
+				cbox = topgl.getParent().getCoordBox();
+				map.getView().transformToPixels(cbox, pbox);
+				if (pbox.width <= 10) {
+					topgl = topgl.getParent();
+					if (pbox.width <= 2) { // Note: this pbox has new values than those tested above
+						// if the selection is very small, move the x_coord to the center
+						// of the selection so we can zoom-in on it.
+						zoom_point.x = cbox.x + cbox.width / 2;
+						zoom_point.y = cbox.y + cbox.height / 2;
+					}
+				}
+			}
+		}
+
+		return topgl;
+	}
 
 	private boolean isInAxisTier(GlyphI g) {
 		TierGlyph axis_tier = smv.getAxisTier();

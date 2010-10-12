@@ -110,7 +110,7 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
 	}
 
 	/**
-	 * @return a Vector of GlyphIs
+	 * @return a List of GlyphIs
 	 * whose coord bounds contain the coord location of the event.
 	 */
 	public List<GlyphI> getItems() {
@@ -125,9 +125,9 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
 	/**
 	 * for debugging.
 	 */
+	@Override
 	public String toString() {
-		String s = "NeoMouseEvent:";
-		s += " at ( " + xcoord + ", " + ycoord + " )";
+		String s = "NeoMouseEvent: at ( " + xcoord + ", " + ycoord + " )";
 		if ( UNKNOWN != this.location ) {
 			s += " in location " + this.location;
 		}

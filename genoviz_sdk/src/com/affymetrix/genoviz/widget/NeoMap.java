@@ -103,7 +103,6 @@ public class NeoMap extends NeoWidget implements
 	protected boolean use_border_layout = false;
 	private static final boolean DEBUG_STRETCH = false;
 	private static final boolean DEBUG_RESHAPE = false;
-	private static final boolean debug = false;
 	private static final boolean NM_DEBUG_PAINT = false;
 	private static final Color default_map_background = new Color(180, 250, 250);
 	private static final Color default_panel_background = Color.lightGray;
@@ -513,14 +512,14 @@ public class NeoMap extends NeoWidget implements
 	@Deprecated
 	@Override
 	public void reshape(int x, int y, int width, int height) {
-		reshapeCount++;
 		if (width < 1) {
 			width = 1;
 		}
 		if (height < 1) {
 			height = 1;
 		}
-		if (debug || DEBUG_RESHAPE) {
+		if (DEBUG_RESHAPE) {
+			reshapeCount++;
 			System.out.println("NeoMap being reshaped " + reshapeCount
 					+ ": " + x + " " + y
 					+ " " + width + " " + height);
@@ -548,7 +547,7 @@ public class NeoMap extends NeoWidget implements
 		and scroller reshape() and repaint(), but that seems more acceptable
 		than the problems it fixes, since resizing is a fairly rare event
 		 */
-		if (debug || DEBUG_RESHAPE) {
+		if (DEBUG_RESHAPE) {
 			System.out.println("done with NeoMap.reshape()" + reshapeCount + ",  "
 					+ x + " " + y + " " + width + " " + height);
 		}
@@ -684,8 +683,8 @@ public class NeoMap extends NeoWidget implements
 	 */
 	@Override
 	public void stretchToFit(boolean xfit, boolean yfit) {
-		stretchCount++;
 		if (DEBUG_STRETCH) {
+			stretchCount++;
 			System.out.println("in NeoMap.stretchToFit(" + xfit + ", " + yfit + ")");
 			System.out.println(canvas.isVisible() + ", " + canvas.isShowing()
 					+ ", " + canvas);
@@ -1177,9 +1176,9 @@ public class NeoMap extends NeoWidget implements
 		}
 	}
 
-	public void select(List glyphs, int start, int end) {
-		for (int i = 0; i < glyphs.size(); i++) {
-			select((GlyphI) glyphs.get(i), start, end);
+	public void select(List<GlyphI> glyphs, int start, int end) {
+		for (GlyphI glyph : glyphs) {
+			select(glyph, start, end);
 		}
 	}
 

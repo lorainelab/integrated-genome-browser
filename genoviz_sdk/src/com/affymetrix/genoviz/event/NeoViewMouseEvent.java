@@ -38,6 +38,7 @@ public class NeoViewMouseEvent extends NeoMouseEvent {
 	 * This contortion is needed because NeoMouseEvent and MouseEvent
 	 * constructors require a Component, but View is not a component.
 	 */
+	@Override
 	public Object getSource() {
 		return view;
 	}
@@ -46,6 +47,7 @@ public class NeoViewMouseEvent extends NeoMouseEvent {
 		return view;
 	}
 
+	@Override
 	public List<GlyphI> getItems() {
 		return null;
 	}

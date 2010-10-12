@@ -463,7 +463,8 @@ public final class SimpleGraphTab extends JPanel
 						Application.getSingleton().getMapView().getSeqMap().repaint();
 					}
 				});
-
+				A = null;
+				B = null;
 
 			}
 		}

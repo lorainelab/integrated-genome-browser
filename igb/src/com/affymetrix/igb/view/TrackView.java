@@ -29,6 +29,7 @@ import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.FasterExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -293,20 +294,26 @@ public class TrackView {
 		}
 	}
 
-	public static void removeFeature(GenericFeature feature){
+	public static void removeFeature(final GenericFeature feature){
 		if(feature == null)
 			return;
 
-		feature.removeAllSyms();
+		ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
+			public void run() {
+				feature.removeAllSyms();
 
-		// If feature is local then remove it from server.
-		GenericVersion version = feature.gVersion;
-		if(version.gServer.serverType.equals(ServerType.LocalFiles))
-			version.removeFeature(feature);
+				// If feature is local then remove it from server.
+				GenericVersion version = feature.gVersion;
+				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
+					version.removeFeature(feature);
+				}
 
-		// Refresh
-		GeneralLoadView.getLoadView().refreshTreeView();
-		GeneralLoadView.getLoadView().createFeaturesTable();
+				// Refresh
+				GeneralLoadView.getLoadView().refreshTreeView();
+				GeneralLoadView.getLoadView().createFeaturesTable();
+			}
+		});
+		
 	}
 
 	private static void deleteDependentData(String method, BioSeq seq) {

@@ -314,16 +314,22 @@ public final class GeneralLoadUtils {
 	/**
 	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
 	 * Update GeneralLoadUtils state.
-	 * @param aseq
+	 * @param seqgroup
 	 * @return genome version
 	 */
-	public static GenericVersion getLocalFilesVersion(AnnotatedSeqGroup aseq, String speciesName) {
-		String versionName = aseq.getID();
+	public static GenericVersion getLocalFilesVersion(AnnotatedSeqGroup group, String speciesName) {
+		String versionName = group.getID();
 		if (speciesName == null) {
 			 speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list
 		}
 		GenericServer server = ServerList.getLocalFilesServer();
-	
+
+		for(GenericVersion gVersion : group.getEnabledVersions()){
+			if(gVersion.gServer.serverType == ServerType.LocalFiles){
+				return gVersion;
+			}
+		}
+		
 		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
 

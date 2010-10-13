@@ -168,11 +168,13 @@ public class SeqMapView extends JPanel
 	public static final Font axisFont = NeoConstants.default_bold_font;
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
-	protected SeqSymmetry sym_used_for_title = null;
+	private SeqSymmetry sym_used_for_title = null;
 
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
+	
+	private TransformTierGlyph axis_tier;
 
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -227,8 +229,6 @@ public class SeqMapView extends JPanel
 			}
 		}
 	};
-
-	protected TransformTierGlyph axis_tier;
 
 	public SeqMapView(boolean add_popups) {
 		super();
@@ -433,17 +433,6 @@ public class SeqMapView extends JPanel
 		seqmap.updateWidget();
 	}
 
-	/* //TODO
-	 *  GAH 3-20-2003
-	 *  WARNING
-	 *  really need to fix some underlying GenoViz issues for this to be effective in
-	 *    actually reclaiming memory from graphs:
-	 *  Specifically, NeoMap.removeItem(GlyphI gl) need to recursively remove child glyphs from
-	 *     objects such as the map in NeoMap that maps data models to glyphs
-	 *  Also, should really be removing not just GraphGlyphs (and their parent
-	 *     PixelFloaterGlyphs and TierGlyphs)
-
-	 */
 	/**
 	 *  Clears the graphs, and reclaims some memory.
 	 */
@@ -477,12 +466,8 @@ public class SeqMapView extends JPanel
 
 	/** Sets the sequence; if null, has the same effect as calling clear(). */
 	public final void setAnnotatedSeq(BioSeq seq) {
-		if ((seq == this.aseq) && (seq != null)) {
-			// if the seq is not changing, try to preserve current view
-			setAnnotatedSeq(seq, false, true);
-		} else {
-			setAnnotatedSeq(seq, false, false);
-		}
+		setAnnotatedSeq(seq, false, (seq == this.aseq) && (seq != null));
+		// if the seq is not changing, try to preserve current view
 	}
 
 	/**
@@ -496,24 +481,23 @@ public class SeqMapView extends JPanel
 		setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
 	}
 
+	//   want to optimize for several situations:
+	//       a) merging newly loaded data with existing data (adding more annotations to
+	//           existing BioSeq) -- would like to avoid recreation and repacking
+	//           of already glyphified annotations
+	//       b) reverse complementing existing BioSeq
+	//       c) coord shifting existing BioSeq
+	//   in all these cases:
+	//       "new" BioSeq == old BioSeq
+	//       existing glyphs could be reused (in (b) they'd have to be "flipped")
+	//       should preserve selection
+	//       should preserve view (x/y scale/offset) (in (b) would preserve "flipped" view)
+	//   only some of the above optimization/preservation are implemented yet
+	//   WARNING: currently graphs are not properly displayed when reverse complementing,
+	//               need to "genometrize" them
+	//            currently sequence is not properly displayed when reverse complementing
+	//
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
-		//   want to optimize for several situations:
-		//       a) merging newly loaded data with existing data (adding more annotations to
-		//           existing BioSeq) -- would like to avoid recreation and repacking
-		//           of already glyphified annotations
-		//       b) reverse complementing existing BioSeq
-		//       c) coord shifting existing BioSeq
-		//   in all these cases:
-		//       "new" BioSeq == old BioSeq
-		//       existing glyphs could be reused (in (b) they'd have to be "flipped")
-		//       should preserve selection
-		//       should preserve view (x/y scale/offset) (in (b) would preserve "flipped" view)
-		//   only some of the above optimization/preservation are implemented yet
-		//   WARNING: currently graphs are not properly displayed when reverse complementing,
-		//               need to "genometrize" them
-		//            currently sequence is not properly displayed when reverse complementing
-		//
-
 		if (frm != null) {
 			frm.setTitle(getTitleBar(seq));
 		}
@@ -542,7 +526,7 @@ public class SeqMapView extends JPanel
 		// stash annotation tiers for proper state restoration after resetting for same seq
 		//    (but presumably added / deleted / modified annotations...)
 		List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
-		int axis_index = determineAxisIndex(cur_tiers, axis_tier);
+		int axis_index = Math.max(0, cur_tiers.indexOf(axis_tier));	// if not found, set to 0
 		List<TierGlyph> temp_tiers = copyMapTierGlyphs(cur_tiers, axis_index);
 
 		seqmap.clearWidget();
@@ -650,15 +634,6 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	private static int determineAxisIndex(List<TierGlyph> cur_tiers, TierGlyph axis_tier) {
-		for (int i = 0; i < cur_tiers.size(); i++) {
-			TierGlyph tg = cur_tiers.get(i);
-			if (tg == axis_tier) {
-				return i;
-			}
-		}
-		return 0;
-	}
 
 	// copying map tiers to separate list to avoid problems when removing tiers
 	//   (and thus modifying map.getTiers() list -- could probably deal with this

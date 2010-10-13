@@ -126,7 +126,8 @@ public final class DasServerInfo {
 
 			NodeList dsns = doc.getElementsByTagName("DSN");
 			int dsnLength = dsns.getLength();
-			System.out.println("dsn count: " + dsnLength);
+			Logger.getLogger(this.getClass().getName()).log(
+						Level.FINE, "dsn count: {0}", dsnLength);
 			for (int i = 0; i < dsnLength; i++) {
 				Element dsn = (Element) dsns.item(i);
 				try {

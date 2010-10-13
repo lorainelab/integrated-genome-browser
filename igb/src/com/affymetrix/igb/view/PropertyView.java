@@ -323,6 +323,21 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		return getPropertiesRow(propList.toArray(new Map[propList.size()]),prop_order,"");
 	}
 
+	@SuppressWarnings("unchecked")
+	public static String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, SeqMapView seqMap){
+		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+		Map<String, Object> props = determineProps(sym, seqMap);
+		props.put("x coord", x);
+		float y = sym.getYCoordFromX(x);
+		if (y < 0) {
+			props.put("y coord", "no point");
+		} else {
+			props.put("y coord", y);
+		}
+		propList.add(props);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]),prop_order,"");
+	}
+
 	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData){
 		List<String[]> name_values = getNameValues(props, noData);
 		if (preferred_prop_order != null) {

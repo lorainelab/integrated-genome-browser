@@ -1726,8 +1726,9 @@ public class SeqMapView extends JPanel
 	 * @param glyphs
 	 */
 	public final void setToolTip(List<GlyphI> glyphs){
-		if(!show_prop_tooltip)
+		if(!show_prop_tooltip) {
 			return;
+		}
 
 		((AffyLabelledTierMap)seqmap).setToolTip(null);
 		
@@ -1735,6 +1736,28 @@ public class SeqMapView extends JPanel
 
 		if (!sym.isEmpty()) {
 			String[][] properties = PropertyView.getPropertiesRow(sym.get(0), this);
+			String tooltip = convertPropsToString(properties);
+			((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+		}
+	}
+
+	/**
+	 * Sets tool tip from graph glyph.
+	 * @param glyph
+	 */
+	public final void setToolTip(int x, GraphGlyph glyph){
+		if(!show_prop_tooltip) {
+			return;
+		}
+
+		((AffyLabelledTierMap)seqmap).setToolTip(null);
+
+		List<GlyphI> glyphs = new ArrayList<GlyphI>();
+		glyphs.add(glyph);
+		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
+
+		if (!sym.isEmpty()) {
+			String[][] properties = PropertyView.getGraphPropertiesRowColumn((GraphSym)sym.get(0), x, this);
 			String tooltip = convertPropsToString(properties);
 			((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
 		}
@@ -1752,13 +1775,13 @@ public class SeqMapView extends JPanel
 		for(int i=0; i<properties.length; i++){
 			props.append("<b>");
 			props.append(properties[i][0]);
-			props.append(" : ");
-			props.append("</b>");
+			props.append(" : </b>");
 			String value = properties[i][1];
 			int vallen = value.length();
 			props.append(value.substring(0, Math.min(25, vallen)));
-			if(vallen > 30)
+			if(vallen > 30) {
 				props.append(" ...");
+			}
 			props.append("<br>");
 		}
 		props.append("</html>");

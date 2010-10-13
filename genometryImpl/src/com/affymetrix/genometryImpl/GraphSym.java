@@ -343,6 +343,21 @@ public class GraphSym extends SimpleSymWithProps {
 		 */
 	}
 
+	/**
+	 * Determine the y coordinate, given x.
+	 * @param x
+	 * @return y coord. -1 indicates not found.
+	 */
+	public float getYCoordFromX(int x) {
+		int leftBound = this.determineBegIndex(x);
+		if (this.getGraphXCoord(leftBound) == x || (this.hasWidth && this.getGraphXCoord(leftBound) + this.getGraphWidthCoord(leftBound) >= x)) {
+			// Right on the point or in a region bound by its width
+			return this.getGraphYCoord(leftBound);
+		}
+		// Couldn't find point
+		return -1f;
+	}
+
 
 	private File index(String graphName, int[] x, float[] y, int[] w) {
 		if (pointCount == 0) {

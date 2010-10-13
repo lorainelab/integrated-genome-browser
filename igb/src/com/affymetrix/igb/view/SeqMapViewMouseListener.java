@@ -90,7 +90,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			((AffyLabelledTierMap) map).getLabelMap().clearSelected();
 		}
 
-		// turn OFF autoscrol in mousePressed()
+		// turn OFF autoscroll in mousePressed()
 		if (AutoScrollAction.getAction().map_auto_scroller != null) {
 			AutoScrollAction.getAction().toggleAutoScroll();
 		}
@@ -142,21 +142,21 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 		
 		// Do we intersect any graph glyphs?
-		/*List<GlyphI> glyphlist = smv.collectGraphs();
+		List<GlyphI> glyphlist = smv.collectGraphs();
 		Point2D pbox = evt.getPoint();
 		for (GlyphI glyph : glyphlist) {
 			GraphGlyph graf = (GraphGlyph) glyph;
 			if (graf.getPixelBox().contains(pbox)) {
-				// Are we in the box?
-				Rectangle r = graf.getPixelBox();
-
 				Point2D cbox = new Point2D.Double();
 				map.getView().transformToCoords(pbox, cbox);
-				//System.out.println("Hairline: " + cbox.getX() + "," + cbox.getY());
-				//System.out.println("(ignoring width) Graph(x,y):" + graf.getXCoord((int)cbox.getX()) + "," + graf.getYCoord((int)cbox.getX()));
+
+				// Now we have the hairline (cbox.getX()).
+				smv.setToolTip((int)cbox.getX(), graf);
+				return;
 			}
-		}*/
-		smv.setToolTip(glyphs);
+		}
+		
+		smv.setToolTip(glyphs);	// empty tooltip
 	}
 
 	private void processSelections(MouseEvent evt, boolean post_selections) {

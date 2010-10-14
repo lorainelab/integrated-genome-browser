@@ -59,7 +59,7 @@ public class SearchUtilsTest {
 
 	@Test
 	public void testLocalSearch() {
-		List<SeqSymmetry> foundSyms = SearchUtils.findLocalSyms(group, null, regex);
+		List<SeqSymmetry> foundSyms = SearchUtils.findLocalSyms(group, null, regex, false);
 		assertEquals(46, foundSyms.size());
 	}
 

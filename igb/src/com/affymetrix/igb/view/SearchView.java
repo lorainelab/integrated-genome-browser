@@ -61,6 +61,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String REGEXIDTF = IGBConstants.BUNDLE.getString("searchRegexIDOrNameTF");
 	private static final String REGEXRESIDUE = IGBConstants.BUNDLE.getString("searchRegexResidue");
 	private static final String REGEXRESIDUETF = IGBConstants.BUNDLE.getString("searchRegexResidueTF");
+	private static final String REGEXPROPS = IGBConstants.BUNDLE.getString("searchRegexProps");
+	private static final String REGEXPROPSTF = IGBConstants.BUNDLE.getString("searchRegexPropsTF");
 	private static final String CHOOSESEARCH = IGBConstants.BUNDLE.getString("searchChooseSearch");
 	private static final String FINDANNOTS = "Find Annotations For ";
 	private static final String FINDANNOTSNULL = IGBConstants.BUNDLE.getString("pleaseSelectGenome");
@@ -230,6 +232,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchCB.removeAllItems();
 		searchCB.addItem(REGEXID);
 		searchCB.addItem(REGEXRESIDUE);
+		searchCB.addItem(REGEXPROPS);
 		searchCB.setToolTipText(CHOOSESEARCH);
 	}
 
@@ -350,6 +353,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 			if (REGEXID.equals(searchMode)) {
 				this.searchTF.setToolTipText(REGEXIDTF);
+			}if (REGEXPROPS.equals(searchMode)) {
+				this.searchTF.setToolTipText(REGEXPROPSTF);
 			} else if (REGEXRESIDUE.equals(searchMode)) {
 				this.searchTF.setToolTipText(REGEXRESIDUETF);
 			} else {
@@ -363,14 +368,16 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			String chrStr = (String) this.sequence_CB.getSelectedItem();
 			BioSeq chrfilter = IGBConstants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
 			if (REGEXID.equals(searchMode)) {
-				displayRegexIDs(this.searchTF.getText().trim(), chrfilter);	// note we trim in case the user added spaces, which really shouldn't be on the outside of IDs or names
-			} else if (REGEXRESIDUE.equals(searchMode)) {
+				displayRegexIDs(this.searchTF.getText().trim(), chrfilter, false);	// note we trim in case the user added spaces, which really shouldn't be on the outside of IDs or names
+			} else if (REGEXPROPS.equals(searchMode)){
+				displayRegexIDs(this.searchTF.getText().trim(), chrfilter, true);
+			}else if (REGEXRESIDUE.equals(searchMode)) {
 				displayRegexResidues(chrfilter, evt.getSource());
-			}
+			} 
 		}
 	}
 
-	private void displayRegexIDs(String text, BioSeq chrFilter) {
+	private void displayRegexIDs(String text, BioSeq chrFilter, boolean search_props) {
 		Pattern regex = null;
 		try {
 			String regexText = text;
@@ -392,7 +399,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		String friendlySearchStr = friendlyString(text, this.sequence_CB.getSelectedItem().toString());
 		status_bar.setText(friendlySearchStr + ": Searching locally...");
-		List <SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex);
+		List <SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex, search_props);
 		remoteSymList = null;
 
 		// Make sure this search is reasonable to do on a remote server.

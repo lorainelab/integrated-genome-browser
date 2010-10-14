@@ -24,8 +24,14 @@ public final class SearchUtils {
 	 * @param regex
 	 * @return
 	 */
-	public static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex) {
-		Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>(group.findSyms(regex));
+	public static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex, boolean search_props) {
+
+		Set<SeqSymmetry> syms = null;
+		if(search_props)
+			syms = new HashSet<SeqSymmetry>(group.findInSymProp(regex));
+		else
+			syms = new HashSet<SeqSymmetry>(group.findSyms(regex));
+
 		List<BioSeq> chrs;
 		if (chrFilter != null) {
 			chrs = new ArrayList<BioSeq>();

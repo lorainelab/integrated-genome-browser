@@ -244,6 +244,34 @@ public class AnnotatedSeqGroup {
 		}
 	}
 
+	final public Set<SeqSymmetry> findInSymProp(Pattern regex) {
+		final Set<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
+		final Matcher matcher = regex.matcher("");
+		SymWithProps swp;
+		String match;
+		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
+			
+			for (SeqSymmetry seq : ent.getValue()) {
+				if (seq instanceof SymWithProps) {
+					swp = (SymWithProps) seq;
+
+					// Iterate through each properties.
+					for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
+						if (prop.getValue() != null) {
+							match = prop.getValue().toString();
+							matcher.reset(match);
+							if (matcher.matches()) {
+								symset.add(seq);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return symset;
+	}
+
 	/**
 	 * @return set of SeqSymmetries matching the pattern.
 	 */

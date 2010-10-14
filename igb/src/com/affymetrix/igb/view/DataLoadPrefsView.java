@@ -336,6 +336,30 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		return table;
 	}
 
+	private static void showAddSourceDialog() {
+		JTextField name = new JTextField("Your server name");
+		JTextField url = new JTextField("http://");
+
+		JComboBox  type = new JComboBox(LoadUtils.ServerType.values());
+
+		type.removeItem(LoadUtils.ServerType.LocalFiles);
+		type.setSelectedItem(LoadUtils.ServerType.QuickLoad);	// common default
+
+		int result = JOptionPane.showOptionDialog(
+				null,
+				createAddSourceDialog(name, url, type),
+				"Add Data Source",
+				OK_CANCEL_OPTION,
+				PLAIN_MESSAGE,
+				null,
+				OPTIONS,
+				OPTIONS[0]);
+
+		if (result == OK_OPTION) {
+			addDataSource((ServerType)type.getSelectedItem(), name.getText(), url.getText());
+		}
+	}
+
 	private static JPanel createAddSourceDialog(final JTextField name, final JTextField url, final JComboBox  type) {
 		final JPanel messageContainer = new JPanel();
 		final JPanel addServerPanel = new JPanel();
@@ -345,13 +369,14 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		final JButton openDir = new JButton("\u2026");
 		final GroupLayout layout = new GroupLayout(addServerPanel);
 
+		openDir.setToolTipText("Open Local Directory");
+		openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
+
 		type.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
 			}
 		});
-		openDir.setToolTipText("Open Local Directory");
-		openDir.setEnabled(false);
 
 		addServerPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
@@ -403,27 +428,6 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		});
 
 		return addServerPanel;
-	}
-
-	private static void showAddSourceDialog() {
-		JTextField name = new JTextField();
-		JTextField url = new JTextField();
-		JComboBox  type = new JComboBox(LoadUtils.ServerType.values());
-
-		type.removeItem(LoadUtils.ServerType.LocalFiles);
-		int result = JOptionPane.showOptionDialog(
-				null,
-				createAddSourceDialog(name, url, type),
-				"Add Data Source",
-				OK_CANCEL_OPTION,
-				PLAIN_MESSAGE,
-				null,
-				OPTIONS,
-				OPTIONS[0]);
-
-		if (result == OK_OPTION) {
-			addDataSource((ServerType)type.getSelectedItem(), name.getText(), url.getText());
-		}
 	}
 
 	/**

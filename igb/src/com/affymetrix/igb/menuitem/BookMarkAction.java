@@ -198,10 +198,10 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       bookmarkCurrentPosition(true);
     }
     else if (src == exportMI) {
-      exportBookmarks(main_bookmark_list, gviewer.getFrame());
+      exportBookmarks(main_bookmark_list, Application.getSingleton().getFrame());
     }
     else if (src == importMI) {
-      importBookmarks(main_bookmark_list, gviewer.getFrame());
+      importBookmarks(main_bookmark_list, Application.getSingleton().getFrame());
       updateBookmarkManager();
       //rebuildMenus(); // menus get rebuilt when the menu item is opened
     }

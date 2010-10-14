@@ -102,7 +102,6 @@ public class SeqMapView extends JPanel
 	AnnotatedBioSeq's annotations */
 	private boolean shrinkWrapMapBounds = false;
 
-	private JFrame frm;
 	protected AffyTieredMap seqmap;
 	private UnibrowHairline hairline = null;
 	protected BioSeq aseq;
@@ -380,16 +379,8 @@ public class SeqMapView extends JPanel
 		return resultSeqMap;
 	}
 
-	public final void setFrame(JFrame frm) {
-		this.frm = frm;
-	}
-
 	public final TierLabelManager getTierManager() {
 		return tier_manager;
-	}
-
-	public final JFrame getFrame() {
-		return frm;
 	}
 
 	private void setupPopups() {
@@ -498,9 +489,7 @@ public class SeqMapView extends JPanel
 	//            currently sequence is not properly displayed when reverse complementing
 	//
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
-		if (frm != null) {
-			frm.setTitle(getTitleBar(seq));
-		}
+		Application.getSingleton().getFrame().setTitle(getTitleBar(seq));
 
 		if (seq == null) {
 			clear();

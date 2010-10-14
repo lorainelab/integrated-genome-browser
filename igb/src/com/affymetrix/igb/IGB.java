@@ -329,7 +329,6 @@ public final class IGB extends Application
 		//    otherwise assumptions for persisting group / seq / span prefs are not valid!
 
 		map_view = new SeqMapView(true);
-		map_view.setFrame(frm);
 		gmodel.addSeqSelectionListener(map_view);
 		gmodel.addGroupSelectionListener(map_view);
 		gmodel.addSymSelectionListener(map_view);
@@ -480,8 +479,8 @@ public final class IGB extends Application
 	}
 
 	private void fileMenu() {
-		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadFileAction(map_view.getFrame(), load_directory)));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadURLAction(map_view.getFrame())));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadFileAction(frm, load_directory)));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadURLAction(frm)));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new ClearAllAction()));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new ClearGraphsAction()));
 		file_menu.addSeparator();
@@ -492,7 +491,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportLabelledMainViewAction()));
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportWholeFrameAction()));
 		file_menu.addSeparator();
-		MenuUtil.addToMenu(file_menu, new JMenuItem(new CreateSpeciesDir(map_view.getFrame(), genome_directory)));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new CreateSpeciesDir(frm, genome_directory)));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PreferencesAction()));
 		file_menu.addSeparator();

@@ -33,6 +33,7 @@ import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.GraphSaverFileChooser;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -138,17 +139,17 @@ public final class GraphAdjusterView {
 		}
 	}
 
-	public static void saveGraphs(SeqMapView gviewer, GenometryModel gmodel, List grafs) {
+	static void saveGraphs(SeqMapView gviewer, GenometryModel gmodel, List<GraphSym> grafs) {
 		int gcount = grafs.size();
 		if (gcount > 1) {
 			// actually shouldn't get here, since save button is disabled if more than one graph
 			ErrorHandler.errorPanel("Can only save one graph at a time");
 		} else if (gcount == 1) {
-			GraphSym gsym = (GraphSym) grafs.get(0);
+			GraphSym gsym = grafs.get(0);
 			try {
 				GraphSaverFileChooser chooser = new GraphSaverFileChooser(gsym);
 				chooser.setCurrentDirectory(load_dir_tracker.getFile());
-				int option = chooser.showSaveDialog(gviewer.getFrame());
+				int option = chooser.showSaveDialog(Application.getSingleton().getFrame());
 				if (option == JFileChooser.APPROVE_OPTION) {
 					load_dir_tracker.setFile(chooser.getCurrentDirectory());
 					File fil = chooser.getSelectedFile();

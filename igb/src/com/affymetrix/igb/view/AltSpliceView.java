@@ -46,7 +46,6 @@ public class AltSpliceView extends JComponent
 	private boolean slice_by_selection_on = true;
 
 	public AltSpliceView() {
-		SeqMapView original_view = Application.getSingleton().getMapView();
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;
@@ -75,7 +74,6 @@ public class AltSpliceView extends JComponent
 		this.add("Center", splitpane);
 
 		this.addComponentListener(this);
-		spliced_view.setFrame(original_view.getFrame());
 		buffer_sizeTF.addActionListener(this);
 		slice_by_selectionCB.addItemListener(this);
 

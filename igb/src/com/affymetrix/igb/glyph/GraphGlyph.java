@@ -196,10 +196,18 @@ public final class GraphGlyph extends Glyph {
 		setColor(state.getTierStyle().getColor());
 	}
 
-	private boolean isUninitialized() {
+	private boolean isUninitialized(){
+		return isUninitializedMinY() ||
+				isUninitializedMaxY();
+	}
+
+	private boolean isUninitializedMinY() {
 		return getVisibleMinY() == Float.POSITIVE_INFINITY ||
-				getVisibleMinY() == Float.NEGATIVE_INFINITY ||
-				getVisibleMaxY() == Float.POSITIVE_INFINITY ||
+				getVisibleMinY() == Float.NEGATIVE_INFINITY;
+	}
+
+	private boolean isUninitializedMaxY(){
+		return getVisibleMaxY() == Float.POSITIVE_INFINITY ||
 				getVisibleMaxY() == Float.NEGATIVE_INFINITY;
 	}
 
@@ -230,10 +238,15 @@ public final class GraphGlyph extends Glyph {
 		if (point_max_ycoord <= point_min_ycoord) {
 			point_min_ycoord = point_max_ycoord - 1;
 		}
-		if (toInitialize) {
-			setVisibleMaxY(point_max_ycoord);
+
+		if(isUninitializedMinY()){
 			setVisibleMinY(point_min_ycoord);
 		}
+
+		if(isUninitializedMaxY() && point_max_ycoord > 0){
+			setVisibleMaxY(point_max_ycoord);
+		}
+		
 	}
 
 

@@ -228,9 +228,6 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 				IGB.confirmPanel("Really remove entire " + ((GenericFeature)src).featureName + " feature ?")){
 			GenericFeature feature = (GenericFeature)src;
 			GeneralLoadView.removeFeature(feature);
-			int row = getRow(feature);
-			fireTableCellUpdated(row, DELETE_FEATURE_COLUMN);
-			GeneralLoadView.setDeleteButtonSize();
 		}
 	}
 }

@@ -67,6 +67,9 @@ public final class TableWithVisibleComboBox {
 		TableColumn c = table.getColumnModel().getColumn(FeaturesTableModel.LOAD_STRATEGY_COLUMN);
 		c.setCellRenderer(new ColumnRenderer());
 		((JComponent) c.getCellRenderer()).setEnabled(enabled);
+
+		c = table.getColumnModel().getColumn(FeaturesTableModel.DELETE_FEATURE_COLUMN);
+		c.setCellRenderer(new ButtonTableCellRenderer());
 	}
 
   static final class ColumnRenderer extends JComponent implements TableCellRenderer {

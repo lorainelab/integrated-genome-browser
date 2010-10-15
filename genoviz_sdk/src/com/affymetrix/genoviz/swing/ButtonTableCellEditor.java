@@ -8,8 +8,8 @@ package com.affymetrix.genoviz.swing;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JTable;
@@ -23,7 +23,7 @@ public final class ButtonTableCellEditor extends AbstractCellEditor implements T
 
 	private final Object userObject;
     private final JButton button;
-	private final List<ActionListener> listeners = new CopyOnWriteArrayList<ActionListener>();
+	private final Set<ActionListener> listeners = new CopyOnWriteArraySet<ActionListener>();
 	
 	public ButtonTableCellEditor(Object userObject) {
         // Set up the editor (from the table's point of view),
@@ -51,12 +51,13 @@ public final class ButtonTableCellEditor extends AbstractCellEditor implements T
 	public void addActionListener(ActionListener al){
 		listeners.add(al);
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		ActionEvent event = new ActionEvent(userObject, e.getID(), e.getActionCommand());
 
 		for(ActionListener al : listeners){
 			al.actionPerformed(event);
 		}
+		fireEditingStopped();
 	}
 }

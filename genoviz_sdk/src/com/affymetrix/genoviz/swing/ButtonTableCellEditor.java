@@ -44,7 +44,7 @@ public final class ButtonTableCellEditor extends AbstractCellEditor implements T
                                                  boolean isSelected,
                                                  int row,
                                                  int column) {
-		
+		button.setActionCommand((String)value);
         return button;
     }
 

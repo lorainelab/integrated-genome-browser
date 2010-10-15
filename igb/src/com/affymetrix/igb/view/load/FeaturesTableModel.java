@@ -22,15 +22,18 @@ import javax.swing.table.AbstractTableModel;
  * Model for table of features.
  */
 public final class FeaturesTableModel extends AbstractTableModel implements ChangeListener, ActionListener {
-	private static final String[] columnNames = { "Choose Load Mode", "Data Set","Data Source", "x"};
+	private static final String[] columnNames = {"","Choose Load Mode", "Data Set","Data Source", "x"};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
-	static final int LOAD_STRATEGY_COLUMN = 0;
-	static final int FEATURE_NAME_COLUMN = 1;
-	private static final int SERVER_NAME_COLUMN = 2;
-	static final int DELETE_FEATURE_COLUMN = 3;
+	static final int REFRESH_FEATURE_COLUMN = 0;
+	static final int LOAD_STRATEGY_COLUMN = 1;
+	static final int FEATURE_NAME_COLUMN = 2;
+	private static final int SERVER_NAME_COLUMN = 3;
+	static final int DELETE_FEATURE_COLUMN = 4;
 	private List<GenericFeature> features;
 	private final GeneralLoadView glv;
 	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
+	static final String DELETE_COMMAND = "delete";
+	static final String REFRESH_COMMAND = "refresh";
 
 	FeaturesTableModel(GeneralLoadView glv) {
 		this.glv = glv;
@@ -128,6 +131,8 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 		GenericFeature gFeature = features.get(row);
 		switch (col) {
+			case REFRESH_FEATURE_COLUMN:
+				return REFRESH_COMMAND;
 			case LOAD_STRATEGY_COLUMN:
 				// return the load strategy
 				return gFeature.loadStrategy.toString();
@@ -141,7 +146,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 				// return the friendly server name
 				return gFeature.gVersion.gServer.serverName + " (" + gFeature.gVersion.gServer.serverType + ")";
 			case DELETE_FEATURE_COLUMN:
-				return "x";
+				return DELETE_COMMAND;
 				
 			default:
 				System.out.println("Shouldn't reach here: " + row + " " + col);
@@ -159,7 +164,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
-		if (col == DELETE_FEATURE_COLUMN)
+		if (col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
 			return true;
 		
 		if (col != LOAD_STRATEGY_COLUMN) {
@@ -224,10 +229,14 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
-		if(src instanceof GenericFeature &&
-				IGB.confirmPanel("Really remove entire " + ((GenericFeature)src).featureName + " feature ?")){
+		if(src instanceof GenericFeature){
 			GenericFeature feature = (GenericFeature)src;
-			GeneralLoadView.removeFeature(feature);
+			if(FeaturesTableModel.DELETE_COMMAND.equals(e.getActionCommand()) &&
+					IGB.confirmPanel("Really remove entire " + ((GenericFeature)src).featureName + " feature ?")){
+				GeneralLoadView.removeFeature(feature);
+			}else if(FeaturesTableModel.REFRESH_COMMAND.equals(e.getActionCommand())){
+				GeneralLoadUtils.loadAndDisplayAnnotations(feature);
+			}
 		}
 	}
 }

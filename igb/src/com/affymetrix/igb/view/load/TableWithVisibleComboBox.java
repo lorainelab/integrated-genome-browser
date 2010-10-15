@@ -30,7 +30,8 @@ import javax.swing.table.TableRowSorter;
 public final class TableWithVisibleComboBox {
 	private static TableRowSorter<FeaturesTableModel> sorter;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
-
+	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
+	static final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
 	/**
 	 * Set the columns to use the ComboBox DAScb and renderer (which also depends on the row/server type)
 	 * @param table
@@ -48,10 +49,12 @@ public final class TableWithVisibleComboBox {
 
 		int featureSize = ftm.getRowCount();
 		RowEditorModel choices = new RowEditorModel(featureSize);
-		RowEditorModel delete = new RowEditorModel(featureSize);
+		RowEditorModel action = new RowEditorModel(featureSize);
+
 		// tell the JTableX which RowEditorModel we are using
 		table.setRowEditorModel(FeaturesTableModel.LOAD_STRATEGY_COLUMN, choices);
-		table.setRowEditorModel(FeaturesTableModel.DELETE_FEATURE_COLUMN, delete);
+		table.setRowEditorModel(FeaturesTableModel.DELETE_FEATURE_COLUMN, action);
+		table.setRowEditorModel(FeaturesTableModel.REFRESH_FEATURE_COLUMN, action);
 
 		for (int row = 0; row < featureSize; row++) {
 			GenericFeature gFeature = ftm.getFeature(row);
@@ -62,7 +65,7 @@ public final class TableWithVisibleComboBox {
 			choices.addEditorForRow(row, featureEditor);
 
 			ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(gFeature);
-			delete.addEditorForRow(row, buttonEditor);
+			action.addEditorForRow(row, buttonEditor);
 			buttonEditor.addActionListener(ftm);
 		}
 
@@ -71,7 +74,10 @@ public final class TableWithVisibleComboBox {
 		((JComponent) c.getCellRenderer()).setEnabled(enabled);
 
 		c = table.getColumnModel().getColumn(FeaturesTableModel.DELETE_FEATURE_COLUMN);
-		c.setCellRenderer(new ButtonTableCellRenderer());
+		c.setCellRenderer(new ButtonTableCellRenderer(delete_icon));
+
+		c = table.getColumnModel().getColumn(FeaturesTableModel.REFRESH_FEATURE_COLUMN);
+		c.setCellRenderer(new ButtonTableCellRenderer(refresh_icon));
 	}
 
   static final class ColumnRenderer extends JComponent implements TableCellRenderer {
@@ -130,8 +136,7 @@ class RowEditorModel {
 class JTableX extends JTable {
 
   private final Map<Integer, RowEditorModel> rmMap;
-  private final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
-
+  
   public JTableX(TableModel tm) {
     super(tm);
     rmMap = new HashMap<Integer, RowEditorModel>();
@@ -154,10 +159,12 @@ class JTableX extends JTable {
 
    @Override
    public TableCellRenderer getCellRenderer(int row, int column) {
-	   if(column == FeaturesTableModel.LOAD_STRATEGY_COLUMN){
+	   if(column == FeaturesTableModel.REFRESH_FEATURE_COLUMN){
+		   return new ButtonTableCellRenderer(TableWithVisibleComboBox.refresh_icon);
+	   }else if(column == FeaturesTableModel.LOAD_STRATEGY_COLUMN){
 		   return new TableWithVisibleComboBox.ColumnRenderer();
 	   }else if(column == FeaturesTableModel.DELETE_FEATURE_COLUMN){
-		   return new ButtonTableCellRenderer(delete_icon);
+		   return new ButtonTableCellRenderer(TableWithVisibleComboBox.delete_icon);
 	   }
 
 	   return super.getCellRenderer(row,column);

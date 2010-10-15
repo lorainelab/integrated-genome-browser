@@ -886,6 +886,10 @@ public final class GeneralLoadView extends JComponent
 				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.DELETE_FEATURE_COLUMN);
 				col.setResizable(false);
 				col.setMaxWidth(10);
+
+				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.REFRESH_FEATURE_COLUMN);
+				col.setResizable(false);
+				col.setMaxWidth(10);
 				
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()

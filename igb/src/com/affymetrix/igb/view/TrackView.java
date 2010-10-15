@@ -9,11 +9,9 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.PackerI;
@@ -29,7 +27,6 @@ import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.FasterExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -280,7 +277,7 @@ public class TrackView {
 		
 		// If genome is selected then delete all syms on the all seqs.
 		if(IGBConstants.GENOME_SEQ_ID.equals(seq.getID())){
-			removeFeature(feature);
+			GeneralLoadView.removeFeature(feature);
 			return;
 		}
 
@@ -292,28 +289,6 @@ public class TrackView {
 		}else{
 			seq.removeAnnotation(seq.getAnnotation(method));
 		}
-	}
-
-	public static void removeFeature(final GenericFeature feature){
-		if(feature == null)
-			return;
-
-		ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
-			public void run() {
-				feature.removeAllSyms();
-
-				// If feature is local then remove it from server.
-				GenericVersion version = feature.gVersion;
-				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
-					version.removeFeature(feature);
-				}
-
-				// Refresh
-				GeneralLoadView.getLoadView().refreshTreeView();
-				GeneralLoadView.getLoadView().createFeaturesTable();
-			}
-		});
-		
 	}
 
 	private static void deleteDependentData(String method, BioSeq seq) {

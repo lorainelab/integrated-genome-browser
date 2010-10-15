@@ -55,7 +55,6 @@ import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.view.TrackView;
 import java.text.MessageFormat;
 
 import java.util.ArrayList;
@@ -991,9 +990,38 @@ public final class GeneralLoadView extends JComponent
 		return (String) speciesCB.getSelectedItem();
 	}
 
-	public static void removeFeature(GenericFeature feature){
-		TrackView.removeFeature(feature);
-		gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());
+	public static void removeFeature(final GenericFeature feature){
+		if(feature == null)
+			return;
+
+		SwingWorker<Void, Void> delete = new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground(){
+				Application.getSingleton().addNotLockedUpMsg("Removing feature  "+feature.featureName);
+				
+				feature.removeAllSyms();
+
+				// If feature is local then remove it from server.
+				GenericVersion version = feature.gVersion;
+				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
+					version.removeFeature(feature);
+				}
+				
+				return null;
+			}
+
+			@Override
+			protected void done() {
+				// Refresh
+				GeneralLoadView.getLoadView().refreshTreeView();
+				GeneralLoadView.getLoadView().createFeaturesTable();
+				gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());
+				Application.getSingleton().removeNotLockedUpMsg("Removing feature  "+feature.featureName);
+			}
+		};
+
+		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
 	}
 }
 

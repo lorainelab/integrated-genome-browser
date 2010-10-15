@@ -87,7 +87,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 			SeqSymmetry tsym = sym;
 			// transform symmetry to coordseq if annotseq != coordseq, like in the slice viewer
 			if (annotseq != coordseq) {
-				tsym = gviewer.transformForViewSeq(sym);
+				tsym = gviewer.transformForViewSeq(sym, gviewer.getAnnotatedSeq());
 			}
 
 			int child_count = tsym.getChildCount();

@@ -145,7 +145,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		BioSeq annotseq = gviewer.getAnnotatedSeq();
 		BioSeq coordseq = gviewer.getViewSeq();
 
-		SeqSymmetry transformed_consensus_sym = gviewer.transformForViewSeq(consensus_sym);
+		SeqSymmetry transformed_consensus_sym = gviewer.transformForViewSeq(consensus_sym, gviewer.getAnnotatedSeq());
 
 		SeqSpan pspan = transformed_consensus_sym.getSpan(gviewer.getViewSeq());
 		if (pspan == null) {
@@ -343,7 +343,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	private void drawPolyA(DerivedSeqSymmetry poly_A_sym, GlyphI consensus_glyph,
 			double consensus_exon_y, double consensus_exon_height, Color color) {
 		// The depth coming in should be 3
-		SeqSymmetry transformed_sym = gviewer.transformForViewSeq(poly_A_sym);
+		SeqSymmetry transformed_sym = gviewer.transformForViewSeq(poly_A_sym, gviewer.getAnnotatedSeq());
 		// After transformation, the depth is arbitrary, but we only deal with the top 3 levels
 
 		SeqSpan span = transformed_sym.getSpan(gviewer.getViewSeq());
@@ -382,7 +382,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	private void drawProbeSetGlyph(DerivedSeqSymmetry probeset_sym, GlyphI parent_glyph,
 			double consensus_exon_y, double consensus_exon_height) {
 		// The depth coming in should be 3
-		SeqSymmetry transformed_probeset_sym = gviewer.transformForViewSeq(probeset_sym);
+		SeqSymmetry transformed_probeset_sym = gviewer.transformForViewSeq(probeset_sym, gviewer.getAnnotatedSeq());
 		// After transformation, the depth is arbitrary, but we only deal with the top 3 levels
 
 		SeqSpan span = transformed_probeset_sym.getSpan(gviewer.getViewSeq());

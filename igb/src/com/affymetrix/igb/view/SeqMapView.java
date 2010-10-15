@@ -890,9 +890,6 @@ public class SeqMapView extends JPanel
 	 *  {@link #getTransformPath()}.  If no transform is necessary, simply
 	 *  returns the original symmetry.
 	 */
-	public final SeqSymmetry transformForViewSeq(SeqSymmetry insym) {
-		return transformForViewSeq(insym, getAnnotatedSeq());
-	}
 
 	public final SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
 		if (seq_to_compare != getViewSeq()) {
@@ -956,11 +953,8 @@ public class SeqMapView extends JPanel
 	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
 	 */
 	final void postSelections() {
-		List<GlyphI> selected_glyphs = seqmap.getSelected();
-
-		List<SeqSymmetry> selected_syms = glyphsToSyms(selected_glyphs);
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
-		GenometryModel.getGenometryModel().setSelectedSymmetries(selected_syms, this);
+		GenometryModel.getGenometryModel().setSelectedSymmetries(getSelectedSyms(), this);
 	}
 
 
@@ -1065,25 +1059,16 @@ public class SeqMapView extends JPanel
 	public static List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
 		Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
 		for (GlyphI gl : glyphs) {
-			SeqSymmetry sym = glyphToSym(gl);
-			if (sym != null) {
-				symSet.add(sym);
+			if (gl.getInfo() instanceof SeqSymmetry) {
+				symSet.add((SeqSymmetry)gl.getInfo());
 			}
 		}
 		return new ArrayList<SeqSymmetry>(symSet);
 	}
 
-	private static SeqSymmetry glyphToSym(GlyphI gl) {
-		if (gl.getInfo() instanceof SeqSymmetry) {
-			return (SeqSymmetry) gl.getInfo();
-		}
-		return null;
-	}
-
 	public final void zoomTo(SeqSpan span) {
 		BioSeq zseq = span.getBioSeq();
-		if ((zseq != null) &&
-						(zseq != this.getAnnotatedSeq())) {
+		if (zseq != null && zseq != this.getAnnotatedSeq()) {
 			GenometryModel.getGenometryModel().setSelectedSeq(zseq);
 		}
 		zoomTo(span.getMin(), span.getMax());

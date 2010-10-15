@@ -37,15 +37,10 @@ import java.util.logging.Logger;
 public class GlyphDragger
 	implements MouseListener, MouseMotionListener, NeoConstants {
 
-	// internal mapping of HORIZONTAL to HORIZ
-	int HORIZ = 0;
-	// internal mapping of VERTICAL to VERT
-	int VERT = 1;
-
 	// flags for whether to contrain dragging in the horizontal
 	// or vertical directions -- if a constraint is true, that means
 	// the glyph cannot be dragged in that direction
-	boolean constrained[] = new boolean[2];
+	final boolean constrained[] = new boolean[2];
 
 	// flag for whether to drag "actual" glyph, or a copy of it
 	// Doesn't really work right now -- assuming that the glyph
@@ -62,7 +57,7 @@ public class GlyphDragger
 
 	GlyphI dragged_glyph;
 	NeoAbstractWidget widget;
-	Set<NeoGlyphDragListener> drag_listeners = new CopyOnWriteArraySet<NeoGlyphDragListener>();
+	private final Set<NeoGlyphDragListener> drag_listeners = new CopyOnWriteArraySet<NeoGlyphDragListener>();
 	boolean force_within_parent = false;
 
 	// a transform to use when mapping mouse drags to glyph coords
@@ -73,8 +68,8 @@ public class GlyphDragger
 	//  public GlyphDragger(NeoAbstractWidget widg, GlyphI gl, NeoMouseEvent nevt) {
 	public GlyphDragger(NeoAbstractWidget widg) {
 		this.widget = widg;
-		constrained[HORIZ] = false;
-		constrained[VERT] = false;
+		constrained[HORIZONTAL] = false;
+		constrained[VERTICAL] = false;
 	}
 
 	public LinearTransform getTransform(NeoMouseEvent nevt) {
@@ -153,10 +148,10 @@ public class GlyphDragger
 			Logger.getLogger(GlyphDragger.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-		if (constrained[HORIZ]) {
+		if (constrained[HORIZONTAL]) {
 			cur_point.x = prev_point.x;
 		}
-		if (constrained[VERT]) {
+		if (constrained[VERTICAL]) {
 			cur_point.y = prev_point.y;
 		}
 		if (force_within_parent) {
@@ -253,21 +248,21 @@ public class GlyphDragger
 
 	public void setConstraint(int axis, boolean is_constrained) {
 		if (axis == VERTICAL) {
-			constrained[VERT] = is_constrained;
+			constrained[VERTICAL] = is_constrained;
 		}
 		else if (axis == HORIZONTAL) {
-			constrained[HORIZ] = is_constrained;
+			constrained[HORIZONTAL] = is_constrained;
 		}
 	}
 
 	public boolean getConstraint(int axis) {
 		if (axis == VERTICAL) {
-			return constrained[VERT];
+			return constrained[VERTICAL];
 		}
-		else if (axis == HORIZONTAL) {
-			return constrained[HORIZ];
+		if (axis == HORIZONTAL) {
+			return constrained[HORIZONTAL];
 		}
-		else return false;
+		return false;
 	}
 
 	public void setUseCopy(boolean b) {
@@ -285,9 +280,7 @@ public class GlyphDragger
 	 *     NeoGlyphDragEvent...).
 	 */
 	public void addGlyphDragListener(NeoGlyphDragListener listener) {
-		if (!drag_listeners.contains(listener)) {
-			drag_listeners.add(listener);
-		}
+		drag_listeners.add(listener);
 	}
 
 	public void removeGlyphDragListener(NeoGlyphDragListener listener) {

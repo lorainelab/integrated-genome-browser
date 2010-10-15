@@ -785,12 +785,7 @@ public class AxisGlyph extends Glyph {
 			subtick_scaled_increment = scratchcoords.height;
 		} else {
 			//horizontal map
-			if (!reversed) {
-				scratchcoords.x = subtick_loc;
-			} else {
-				//reversed map
-				scratchcoords.x = rev_subtick_loc;
-			}
+			scratchcoords.x = (reversed ? rev_subtick_loc : subtick_loc);
 			scratchcoords.width = subtick_increment;
 			LinearTransform.transform(cumulative, scratchcoords, scratchcoords);
 			subtick_scaled_loc = scratchcoords.x;

@@ -41,6 +41,7 @@ public final class ConstrainLinearTrnsfm extends LinearTransform {
 		return out;
 	}
 
+	@Override
 	public boolean equals(LinearTransform Tx) {
 		return (Tx instanceof ConstrainLinearTrnsfm) &&
 				super.equals(Tx) &&

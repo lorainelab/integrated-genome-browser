@@ -406,8 +406,7 @@ public class View implements ViewI, NeoPaintListener,
 		 *      if it will work in such situations
 		 */
 		if (scene.hasTransients()) {
-			List<TransientGlyph> transients = scene.getTransients();
-			for (TransientGlyph transglyph : transients) {
+			for (TransientGlyph transglyph : scene.getTransients()) {
 				transglyph.drawTraversal(this);
 			}
 		}

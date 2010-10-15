@@ -31,9 +31,9 @@ public class LinearTransform extends AffineTransform  {
 	 * Transforms the source rectangle.
 	 * @param src the Rectangle2D.Double to be transformed.
 	 * @param dst ignored
-	 * @return the Souce rectangle transformed.
+	 * @return the Source rectangle transformed.
 	 */
-	public static final Rectangle2D.Double transform(AffineTransform at, Rectangle2D.Double src, Rectangle2D.Double dst) {
+	public static Rectangle2D.Double transform(AffineTransform at, Rectangle2D.Double src, Rectangle2D.Double dst) {
 		dst.x = src.x * at.getScaleX() + at.getTranslateX();
 		dst.y = src.y * at.getScaleY() + at.getTranslateY();
 		dst.width = src.width * at.getScaleX();
@@ -53,9 +53,9 @@ public class LinearTransform extends AffineTransform  {
 	 * Transforms the source rectangle inversely.
 	 * @param src the Rectangle2D.Double to be transformed.
 	 * @param dst ignored
-	 * @return the souce rectangle transformed.
+	 * @return the source rectangle transformed.
 	 */
-	public static final Rectangle2D.Double inverseTransform(AffineTransform t, Rectangle2D.Double src, Rectangle2D.Double dst) {
+	public static Rectangle2D.Double inverseTransform(AffineTransform t, Rectangle2D.Double src, Rectangle2D.Double dst) {
 		dst.x = (src.x - t.getTranslateX()) / t.getScaleX();
 		dst.y = (src.y - t.getTranslateY()) / t.getScaleY();
 		dst.width = src.width / t.getScaleX();
@@ -71,22 +71,6 @@ public class LinearTransform extends AffineTransform  {
 		}
 		return dst;
 	}
-
-	/*public static final void setScaleX(AffineTransform t, double scale) {
-		t.setTransform(scale,0,0,t.getScaleY(),t.getTranslateX(),t.getTranslateY());
-	}
-
-	public static final void setScaleY(AffineTransform t, double scale) {
-		t.setTransform(t.getScaleX(),0,0,scale,t.getTranslateX(),t.getTranslateY());
-	}
-
-	public static final void setTranslateX(AffineTransform t, double offset) {
-		t.setTransform(t.getScaleX(), 0, 0, t.getScaleY(), offset, t.getTranslateY());
-	}
-
-	public static final void setTranslateY(AffineTransform t, double offset) {
-		t.setTransform(t.getScaleX(), 0, 0, t.getScaleY(), t.getTranslateX(), offset);
-	}*/
 
 	public boolean equals(LinearTransform lint) {
 		if (lint == null) {

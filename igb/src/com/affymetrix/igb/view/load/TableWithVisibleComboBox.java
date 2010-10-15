@@ -2,6 +2,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ButtonTableCellRenderer;
 import com.affymetrix.igb.IGBConstants;
@@ -14,6 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.Icon;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -28,7 +30,7 @@ import javax.swing.table.TableRowSorter;
 public final class TableWithVisibleComboBox {
 	private static TableRowSorter<FeaturesTableModel> sorter;
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
-  
+
 	/**
 	 * Set the columns to use the ComboBox DAScb and renderer (which also depends on the row/server type)
 	 * @param table
@@ -128,6 +130,7 @@ class RowEditorModel {
 class JTableX extends JTable {
 
   private final Map<Integer, RowEditorModel> rmMap;
+  private final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
 
   public JTableX(TableModel tm) {
     super(tm);
@@ -154,7 +157,7 @@ class JTableX extends JTable {
 	   if(column == FeaturesTableModel.LOAD_STRATEGY_COLUMN){
 		   return new TableWithVisibleComboBox.ColumnRenderer();
 	   }else if(column == FeaturesTableModel.DELETE_FEATURE_COLUMN){
-		   return new ButtonTableCellRenderer();
+		   return new ButtonTableCellRenderer(delete_icon);
 	   }
 
 	   return super.getCellRenderer(row,column);

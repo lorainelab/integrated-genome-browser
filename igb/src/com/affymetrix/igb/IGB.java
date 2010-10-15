@@ -393,6 +393,7 @@ public final class IGB extends Application
 
 		cpane.setLayout(new BorderLayout());
 		splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		splitpane.setOneTouchExpandable(true);
 		splitpane.setDividerSize(8);
 		splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
 		splitpane.setTopComponent(map_view);

@@ -149,6 +149,7 @@ public final class GeneralLoadView extends JComponent
 		buttonPanel.add(partial_residuesB);
 		this.refreshDataAction = RefreshDataAction.getAction();
 		JButton refresh_dataB = new JButton(refreshDataAction);
+		refresh_dataB.setIcon(null);
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);
 		buttonPanel.add(refresh_dataB);

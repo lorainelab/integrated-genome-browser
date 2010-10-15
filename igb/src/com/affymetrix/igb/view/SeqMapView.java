@@ -316,7 +316,9 @@ public class SeqMapView extends JPanel
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		xzoombox.add((Component) xzoomer);
 
-		xzoombox.add(new JButton(RefreshDataAction.getAction()));
+		JButton refresh_button = new JButton(RefreshDataAction.getAction());
+		refresh_button.setText("");
+		xzoombox.add(refresh_button);
 
 		boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
 		JPanel pan = new JPanel(new BorderLayout());

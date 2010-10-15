@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import javax.swing.KeyStroke;
 import com.affymetrix.igb.prefs.KeyStrokeEditPanel;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -21,7 +22,7 @@ public class RefreshDataAction extends AbstractAction {
 	
 	
 	private RefreshDataAction() {
-		super(BUNDLE.getString("refreshDataButton"));
+		super(BUNDLE.getString("refreshDataButton"), MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
 		String defStr = KeyStrokeEditPanel.keyStroke2String(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_MASK));
 		this.putValue(MNEMONIC_KEY, PreferenceUtils.getAccelerator(BUNDLE.getString("refreshDataButton"), 
 				KeyEvent.VK_R, defStr));

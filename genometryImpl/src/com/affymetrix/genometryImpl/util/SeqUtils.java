@@ -1213,10 +1213,6 @@ public static boolean areResiduesComplete(String residues) {
 		printSymmetry("", sym, "  ");
 	}
 
-	public static void printSymmetry(SeqSymmetry sym, String spacer) {
-		printSymmetry("", sym, spacer);
-	}
-
 	// not public.  Used for recursion
 	private static void printSymmetry(String indent, SeqSymmetry sym, String spacer) {
 		System.out.println(indent + symToString(sym));

@@ -313,7 +313,8 @@ public abstract class SymLoader {
 	private static List<SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
 		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
 		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
-		for (SeqSymmetry sym : syms) {			
+		for (SeqSymmetry sym : syms) {
+			dummySym.clear();
 			if (SeqUtils.intersection(sym, original_sym, dummySym, seq)) {
 				// There is an intersection with previous requests.  Ignore this symmetry
 				continue;

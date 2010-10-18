@@ -4,10 +4,13 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
-import com.affymetrix.genoviz.swing.ButtonTableCellRenderer;
+import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import java.awt.Component;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +37,7 @@ public final class TableWithVisibleComboBox {
 	private static final JComboBoxToolTipRenderer comboRenderer = new JComboBoxToolTipRenderer();
 	static final Icon refresh_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif");
 	static final Icon delete_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif");
+	
 	/**
 	 * Set the columns to use the ComboBox DAScb and renderer (which also depends on the row/server type)
 	 * @param table
@@ -76,10 +80,12 @@ public final class TableWithVisibleComboBox {
 		((JComponent) c.getCellRenderer()).setEnabled(enabled);
 
 		c = table.getColumnModel().getColumn(FeaturesTableModel.DELETE_FEATURE_COLUMN);
-		c.setCellRenderer(new ButtonTableCellRenderer(delete_icon, true));
+		c.setCellRenderer(new LabelTableCellRenderer(delete_icon, true));
+		c.setHeaderRenderer(new LabelTableCellRenderer(delete_icon, true));
 
 		c = table.getColumnModel().getColumn(FeaturesTableModel.REFRESH_FEATURE_COLUMN);
-		c.setCellRenderer(new ButtonTableCellRenderer(refresh_icon, true));
+		c.setCellRenderer(new LabelTableCellRenderer(refresh_icon, true));
+		c.setHeaderRenderer(new LabelTableCellRenderer(refresh_icon, true));
 	}
 
   static final class ColumnRenderer extends JComponent implements TableCellRenderer {
@@ -135,17 +141,18 @@ class RowEditorModel {
 /**
  * A JTable with a RowEditorModel.
  */
-class JTableX extends JTable {
-  protected String[] columnToolTips = {"Refresh",
+class JTableX extends JTable implements MouseListener {
+  protected String[] columnToolTips = {"Refresh All",
                                        "Load Strategy",
                                        "Feature Name",
                                        "Feature Location",
-                                       "Delete"};
+                                       "Delete All"};
 
   private final Map<Integer, RowEditorModel> rmMap;
 
   public JTableX(TableModel tm) {
     super(tm);
+	getTableHeader().addMouseListener(this);
     rmMap = new HashMap<Integer, RowEditorModel>();
   }
 
@@ -170,11 +177,11 @@ class JTableX extends JTable {
 		   FeaturesTableModel ftm = (FeaturesTableModel) getModel();
 		   GenericFeature feature = ftm.getFeature(row);
 		   boolean enabled = (feature.loadStrategy != LoadStrategy.NO_LOAD && feature.loadStrategy != LoadStrategy.GENOME);
-		   return new ButtonTableCellRenderer(TableWithVisibleComboBox.refresh_icon, enabled);
+		   return new LabelTableCellRenderer(TableWithVisibleComboBox.refresh_icon, enabled);
 	   }else if(column == FeaturesTableModel.LOAD_STRATEGY_COLUMN){
 		   return new TableWithVisibleComboBox.ColumnRenderer();
 	   }else if(column == FeaturesTableModel.DELETE_FEATURE_COLUMN){
-		   return new ButtonTableCellRenderer(TableWithVisibleComboBox.delete_icon, true);
+		   return new LabelTableCellRenderer(TableWithVisibleComboBox.delete_icon, true);
 	   }
 
 	   return super.getCellRenderer(row,column);
@@ -229,4 +236,31 @@ class JTableX extends JTable {
 			}
 		};
 	}
+
+	public void mouseReleased(MouseEvent e) {
+		java.awt.Point p = e.getPoint();
+		int index = columnModel.getColumnIndexAtX(p.x);
+		int realIndex = columnModel.getColumn(index).getModelIndex();
+
+		if (FeaturesTableModel.REFRESH_FEATURE_COLUMN == realIndex
+				&& GeneralLoadView.getIsDisableNecessary()) {
+
+			RefreshDataAction.getAction().actionPerformed(null);
+
+		} else if (FeaturesTableModel.DELETE_FEATURE_COLUMN == realIndex) {
+			FeaturesTableModel ftm = (FeaturesTableModel) getModel();
+			int featureSize = ftm.getRowCount();
+			
+			if (featureSize > 0 && IGB.confirmPanel("Really remove all features ?")) {
+				for (int row = 0; row < featureSize; row++) {
+					GeneralLoadView.removeFeature(ftm.getFeature(row));
+				}
+			}
+		}
+	}
+
+	public void mouseClicked(MouseEvent e) { }
+	public void mousePressed(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { }
 }

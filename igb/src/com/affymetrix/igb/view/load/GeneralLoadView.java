@@ -925,10 +925,10 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	/**
-	 * Don't allow buttons to be used if they're not valid.
+	 * Check if it is necessary to disable buttons.
+	 * @return
 	 */
-	private void disableButtonsIfNecessary() {
-		// Don't allow buttons for a full genome sequence
+	public static boolean getIsDisableNecessary(){
 		boolean enabled = !IsGenomeSequence();
 		if (enabled) {
 			BioSeq curSeq = gmodel.getSelectedSeq();
@@ -938,8 +938,15 @@ public final class GeneralLoadView extends JComponent
 				enabled = (!gVersions.isEmpty());
 			}
 		}
+		return enabled;
+	}
 
-		setAllButtons(enabled);
+	/**
+	 * Don't allow buttons to be used if they're not valid.
+	 */
+	private void disableButtonsIfNecessary() {
+		// Don't allow buttons for a full genome sequence
+		setAllButtons(getIsDisableNecessary());
 	}
 
 	private void disableAllButtons() {

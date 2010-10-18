@@ -15,8 +15,9 @@ public final class ButtonTableCellRenderer extends JComponent implements TableCe
 
 	private final JButton button;
 
-	public ButtonTableCellRenderer(Icon icon){
+	public ButtonTableCellRenderer(Icon icon, boolean enabled){
 		button = new JButton(icon);
+		button.setEnabled(enabled);
 		button.setBorderPainted(false);
 	}
 

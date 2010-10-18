@@ -74,10 +74,10 @@ public final class TableWithVisibleComboBox {
 		((JComponent) c.getCellRenderer()).setEnabled(enabled);
 
 		c = table.getColumnModel().getColumn(FeaturesTableModel.DELETE_FEATURE_COLUMN);
-		c.setCellRenderer(new ButtonTableCellRenderer(delete_icon));
+		c.setCellRenderer(new ButtonTableCellRenderer(delete_icon, true));
 
 		c = table.getColumnModel().getColumn(FeaturesTableModel.REFRESH_FEATURE_COLUMN);
-		c.setCellRenderer(new ButtonTableCellRenderer(refresh_icon));
+		c.setCellRenderer(new ButtonTableCellRenderer(refresh_icon, true));
 	}
 
   static final class ColumnRenderer extends JComponent implements TableCellRenderer {
@@ -160,11 +160,14 @@ class JTableX extends JTable {
    @Override
    public TableCellRenderer getCellRenderer(int row, int column) {
 	   if(column == FeaturesTableModel.REFRESH_FEATURE_COLUMN){
-		   return new ButtonTableCellRenderer(TableWithVisibleComboBox.refresh_icon);
+		   FeaturesTableModel ftm = (FeaturesTableModel) getModel();
+		   GenericFeature feature = ftm.getFeature(row);
+		   boolean enabled = (feature.loadStrategy != LoadStrategy.NO_LOAD && feature.loadStrategy != LoadStrategy.GENOME);
+		   return new ButtonTableCellRenderer(TableWithVisibleComboBox.refresh_icon, enabled);
 	   }else if(column == FeaturesTableModel.LOAD_STRATEGY_COLUMN){
 		   return new TableWithVisibleComboBox.ColumnRenderer();
 	   }else if(column == FeaturesTableModel.DELETE_FEATURE_COLUMN){
-		   return new ButtonTableCellRenderer(TableWithVisibleComboBox.delete_icon);
+		   return new ButtonTableCellRenderer(TableWithVisibleComboBox.delete_icon, true);
 	   }
 
 	   return super.getCellRenderer(row,column);

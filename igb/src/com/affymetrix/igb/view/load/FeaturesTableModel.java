@@ -235,7 +235,8 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 					IGB.confirmPanel("Really remove entire " + ((GenericFeature)src).featureName + " feature ?")){
 				GeneralLoadView.removeFeature(feature);
 			}else if(FeaturesTableModel.REFRESH_COMMAND.equals(e.getActionCommand())){
-				GeneralLoadUtils.loadAndDisplayAnnotations(feature);
+				if(feature.loadStrategy != LoadStrategy.NO_LOAD && feature.loadStrategy != LoadStrategy.GENOME)
+					GeneralLoadUtils.loadAndDisplayAnnotations(feature);
 			}
 		}
 	}

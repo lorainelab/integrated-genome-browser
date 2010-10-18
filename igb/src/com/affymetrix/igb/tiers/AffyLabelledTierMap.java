@@ -240,7 +240,4 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 		}
 	}
 
-	public void setToolTip(String text){
-		ncan.setToolTipText(text);
-	}
 }

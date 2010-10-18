@@ -57,6 +57,7 @@ import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -69,6 +70,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.prefs.*;
 import java.util.regex.Pattern;
@@ -291,6 +293,7 @@ public class SeqMapView extends JPanel
 		seqmap.addMouseListener(mouse_listener);
 		seqmap.addMouseListener(msc);
 		seqmap.addMouseMotionListener(mouse_listener);
+		((AffyLabelledTierMap)seqmap).getLabelMap().addMouseMotionListener(mouse_listener);
 		//((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(msc); //Enable mouse short cut here.
 
 		tier_manager.setDoGraphSelections(true);
@@ -1682,13 +1685,20 @@ public class SeqMapView extends JPanel
 		}
 
 		((AffyLabelledTierMap)seqmap).setToolTip(null);
-		
+
+		if(glyphs.isEmpty())
+			return;
+
 		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
 		if (!sym.isEmpty()) {
 			String[][] properties = PropertyView.getPropertiesRow(sym.get(0), this);
 			String tooltip = convertPropsToString(properties);
 			((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+		} else if(glyphs.get(0) instanceof TierLabelGlyph){
+			Map<String, Object> properties = TierLabelManager.getTierProperties(((TierLabelGlyph) glyphs.get(0)).getReferenceTier());
+			String tooltip = convertPropsToString(properties);
+			((AffyLabelledTierMap) seqmap).getLabelMap().setToolTip(tooltip);
 		}
 	}
 
@@ -1712,6 +1722,30 @@ public class SeqMapView extends JPanel
 			String tooltip = convertPropsToString(properties);
 			((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
 		}
+	}
+
+	private static String convertPropsToString(Map<String, Object> properties){
+		if(properties == null)
+			return null;
+
+		StringBuilder props = new StringBuilder();
+
+		props.append("<html>");
+		for(Entry<String, Object> prop : properties.entrySet()){
+			props.append("<b>");
+			props.append(prop.getKey());
+			props.append(" : </b>");
+			String value = prop.getValue().toString();
+			int vallen = value.length();
+			props.append(value.substring(0, Math.min(40, vallen)));
+			if(vallen > 40) {
+				props.append(" ...");
+			}
+			props.append("<br>");
+		}
+		props.append("</html>");
+
+		return props.toString();
 	}
 
 	/**

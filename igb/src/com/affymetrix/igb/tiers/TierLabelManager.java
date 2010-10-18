@@ -167,28 +167,34 @@ public final class TierLabelManager {
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 
 		for (TierGlyph glyph : getSelectedTiers()) {
+			Map<String, Object> props = getTierProperties(glyph);
 
-			GenericFeature feature = glyph.getAnnotStyle().getFeature();
-
-			if (feature == null) {
-				continue;
-			}
-
-			Map<String, Object> props = new HashMap<String, Object>();
-			props.put("id", feature.featureName);
-			props.put("description", feature.description());
-			if (feature.friendlyURL != null) {
-				props.put("feature url", feature.friendlyURL);
-			}
-			props.put("loadmode", feature.loadStrategy.toString());
-			String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
-			props.put("server", server);
-			props.put("server url", feature.gVersion.gServer.friendlyURL);
-
-			propList.add(props);
+			if(props != null)
+				propList.add(props);
 		}
 
 		return propList;
+	}
+
+	public static Map<String, Object> getTierProperties(TierGlyph glyph) {
+		GenericFeature feature = glyph.getAnnotStyle().getFeature();
+
+		if (feature == null) {
+			return null;
+		}
+
+		Map<String, Object> props = new HashMap<String, Object>();
+		props.put("id", feature.featureName);
+		props.put("description", feature.description());
+		if (feature.friendlyURL != null) {
+			props.put("feature url", feature.friendlyURL);
+		}
+		props.put("loadmode", feature.loadStrategy.toString());
+		String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.name() + ")";
+		props.put("server", server);
+		props.put("server url", feature.gVersion.gServer.friendlyURL);
+
+		return props;
 	}
 
 	/** Returns a list of all TierLabelGlyph items. */

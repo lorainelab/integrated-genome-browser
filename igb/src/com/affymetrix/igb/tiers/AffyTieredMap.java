@@ -523,6 +523,10 @@ public class AffyTieredMap extends NeoMap {
 			}
 		}
 	}
+
+	public void setToolTip(String text){
+		getNeoCanvas().setToolTipText(text);
+	}
 }
 
 

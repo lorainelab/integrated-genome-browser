@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -16,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -96,7 +94,7 @@ public final class GenericFeature {
 				this.loadStrategy = LoadStrategy.VISIBLE;
 			} else {
 				// Local File or QuickLoad
-				/*if (this.symL != null) {
+				if (this.symL != null) {
 					if (this.symL.getLoadChoices().contains(LoadStrategy.VISIBLE)) {
 						this.loadStrategy = LoadStrategy.VISIBLE;
 					} else if (this.symL.getLoadChoices().contains(LoadStrategy.CHROMOSOME)) {
@@ -104,7 +102,7 @@ public final class GenericFeature {
 					} else {
 						this.loadStrategy = LoadStrategy.GENOME;
 					}
-				}*/
+				}
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import com.affymetrix.genoviz.swing.ButtonTableCellRenderer;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultCellEditor;
@@ -16,6 +17,7 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.Icon;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -134,9 +136,14 @@ class RowEditorModel {
  * A JTable with a RowEditorModel.
  */
 class JTableX extends JTable {
+  protected String[] columnToolTips = {"Refresh",
+                                       "Load Strategy",
+                                       "Feature Name",
+                                       "Feature Location",
+                                       "Delete"};
 
   private final Map<Integer, RowEditorModel> rmMap;
-  
+
   public JTableX(TableModel tm) {
     super(tm);
     rmMap = new HashMap<Integer, RowEditorModel>();
@@ -172,4 +179,54 @@ class JTableX extends JTable {
 
 	   return super.getCellRenderer(row,column);
    }
+
+   @Override
+   public String getToolTipText(MouseEvent e) {
+	   String tip = null;
+	   java.awt.Point p = e.getPoint();
+       int rowIndex = rowAtPoint(p);
+       int colIndex = columnAtPoint(p);
+       int realColumnIndex = convertColumnIndexToModel(colIndex);
+	   FeaturesTableModel ftm = (FeaturesTableModel) getModel();
+	   GenericFeature feature = ftm.getFeature(rowIndex);
+	   String featureName = feature.featureName;
+
+	   switch(realColumnIndex){
+		   case FeaturesTableModel.REFRESH_FEATURE_COLUMN:
+			   if(feature.loadStrategy != LoadStrategy.NO_LOAD)
+				   tip = "Refresh " + featureName;
+			   else
+				   tip = "Change load strategy to refresh " + featureName;
+			   break;
+			   
+		   case FeaturesTableModel.LOAD_STRATEGY_COLUMN:
+			   if(feature.loadStrategy != LoadStrategy.GENOME)
+				   tip = "Change load strategy for " + featureName;
+			   else
+				   tip = "Cannot change load strategy for " + featureName;
+			   break;
+			   
+		   case FeaturesTableModel.DELETE_FEATURE_COLUMN:
+			   tip = "Delete " + featureName;
+			   break;
+			   
+		   default:				   
+	   }
+
+	   return tip;
+   }
+
+	@Override
+	protected JTableHeader createDefaultTableHeader() {
+		return new JTableHeader(columnModel) {
+
+			@Override
+			public String getToolTipText(MouseEvent e) {
+				java.awt.Point p = e.getPoint();
+				int index = columnModel.getColumnIndexAtX(p.x);
+				int realIndex = columnModel.getColumn(index).getModelIndex();
+				return columnToolTips[realIndex];
+			}
+		};
+	}
 }

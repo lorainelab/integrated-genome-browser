@@ -161,8 +161,9 @@ T_nigroviridis_Feb_2004	tetNig1
 T_nigroviridis_Mar_2007	tetNig2
 T_rubripes_Aug_2002	fr1
 T_rubripes_Oct_2004	fr2
-T_belangeri_Dec_2006	Tupaia_belangeri.TREESHREW.reference
+T_belangeri_Dec_2006	tupBel1	Tupaia_belangeri.TREESHREW.reference
 T_truncatus_Feb_2008	turTru1	Tursiops_truncatus.turTru1.reference
 T_syrichta_Aug_2008	tarSyr1	Tarsius_syrichta.tarSyr1.reference
+V_pacos_Jul_2008	vicPac1	Vicugna_pacos.vicPac1.reference
 X_tropicalis_Aug_2005	xenTro2	Xenopus_tropicalis.JGI4.1.reference
 X_tropicalis_Oct_2004	xenTro1	Xenopus_tropicalis.JGI3.0.reference

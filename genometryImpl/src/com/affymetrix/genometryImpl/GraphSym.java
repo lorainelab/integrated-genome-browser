@@ -458,10 +458,10 @@ public class GraphSym extends SimpleSymWithProps {
 	 */
 	@Override
 	public Object getProperty(String key) {
-		if (key.equals("method")) {
-			return getGraphName();
-		}
-		if (key.equals("id")) {
+//		if (key.equals("method")) {
+//			return getGraphName();
+//		}
+		if (key.equals("id") || key.equals("method")) {
 			return this.getID();
 		}
 		return super.getProperty(key);

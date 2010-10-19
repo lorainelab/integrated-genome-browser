@@ -72,6 +72,7 @@ D_yakuba_Nov_2005	droYak2
 E_caballus_Jan_2007	equCab1
 E_caballus_Sep_2007	equCab2	Equus_caballus.EquCab2.reference
 F_catus_Mar_2006	felCat3
+F_catus_Dec_2008	felCat4
 G_aculeatus_Feb_2006	gasAcu1	Gasterosteus_aculeatus.BROADS1.reference
 G_gallus_Feb_2004	galGal2
 G_gallus_May_2006	galGal3	Chicken_May_2006	Gallus_gallus.WASHUC2.reference

@@ -287,7 +287,7 @@ public abstract class SymLoader {
 			return;
 		}
 		SeqSymmetry originalRequestSym = feature.getRequestSym();
-		List<SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, feats, span.getBioSeq());
+		List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, feats, span.getBioSeq());
 		if (filteredFeats.isEmpty()) {
 			return;
 		}
@@ -310,10 +310,22 @@ public abstract class SymLoader {
 	}
 
 
-	private static List<SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
+	private static List<? extends SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
 		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
 		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
 		for (SeqSymmetry sym : syms) {
+
+			/**
+			 * Since GraphSym is only SeqSymmetry containing all points.
+			 * The intersection may find some points intersecting and
+			 * thus not add whole GraphSym at all. So if GraphSym is encountered
+			 * the it's not checked if it is intersecting. 
+			 */
+			if (sym instanceof GraphSym) {
+				// if graphs, then adding to annotation BioSeq is handled by addChildGraph() method
+				return syms;
+			}
+
 			dummySym.clear();
 			if (SeqUtils.intersection(sym, original_sym, dummySym, seq)) {
 				// There is an intersection with previous requests.  Ignore this symmetry

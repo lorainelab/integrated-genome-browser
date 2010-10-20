@@ -296,7 +296,7 @@ public abstract class SymLoader {
 			for(SeqSymmetry feat : filteredFeats) {
 				//grafs.add((GraphSym)feat);
 				if (feat instanceof GraphSym) {
-					GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), feature.featureName, span);
+					GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getGraphName(), span);
 				}
 			}
 

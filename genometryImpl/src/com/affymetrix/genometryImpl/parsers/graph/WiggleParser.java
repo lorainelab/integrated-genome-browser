@@ -296,12 +296,16 @@ public final class WiggleParser {
 		if (graph_id == null) {
 			graph_id = stream_name;
 		}
+
+		String graph_name = new String(graph_id);
+
 		if (ensure_unique_id) {
 			graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq_group);
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
 
 		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id);
+		gstate.getTierStyle().setHumanName(graph_name);
 		TrackLineParser.applyTrackProperties(track_hash, gstate);
 
 		// Need iterator because we're removing data on the fly

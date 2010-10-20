@@ -462,9 +462,8 @@ public final class IGB extends Application
 			ThreadUtils.runOnEventQueue(new Runnable() {
 
 				public void run() {
-					int i =0;
 					for (PluginInfo pi : plugins_info) {
-						Object plugin = setUpPlugIn(i++, pi);
+						Object plugin = setUpPlugIn(pi);
 						plugins.add(plugin);
 					}
 				}
@@ -526,7 +525,7 @@ public final class IGB extends Application
 	 *  Puts the given component either in the tab pane or in its own window,
 	 *  depending on saved user preferences.
 	 */
-	private Object setUpPlugIn(int i, PluginInfo pi) {
+	private Object setUpPlugIn(PluginInfo pi) {
 		if (!pi.shouldLoad()) {
 			return null;
 		}
@@ -588,7 +587,6 @@ public final class IGB extends Application
 				openCompInWindow(comp, tab_pane);
 			} else {
 				tab_pane.addTab(title, icon, comp, tool_tip);
-		        tab_pane.setTabComponentAt(i, new ButtonTabComponent(tab_pane));
 			}
 		}
 		return plugin;

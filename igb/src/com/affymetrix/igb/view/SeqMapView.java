@@ -1729,17 +1729,19 @@ public class SeqMapView extends JPanel
 			return null;
 
 		StringBuilder props = new StringBuilder();
-
+		String value = null;
 		props.append("<html>");
 		for(Entry<String, Object> prop : properties.entrySet()){
 			props.append("<b>");
 			props.append(prop.getKey());
 			props.append(" : </b>");
-			String value = prop.getValue().toString();
-			int vallen = value.length();
-			props.append(value.substring(0, Math.min(40, vallen)));
-			if(vallen > 40) {
-				props.append(" ...");
+			if(prop.getValue() != null){
+				value = prop.getValue().toString();
+				int vallen = value.length();
+				props.append(value.substring(0, Math.min(40, vallen)));
+				if(vallen > 40) {
+					props.append(" ...");
+				}
 			}
 			props.append("<br>");
 		}
@@ -1755,17 +1757,18 @@ public class SeqMapView extends JPanel
 	 */
 	private static String convertPropsToString(String[][] properties){
 		StringBuilder props = new StringBuilder();
-
+		String value = null;
 		props.append("<html>");
 		for(int i=0; i<properties.length; i++){
 			props.append("<b>");
 			props.append(properties[i][0]);
 			props.append(" : </b>");
-			String value = properties[i][1];
-			int vallen = value.length();
-			props.append(value.substring(0, Math.min(25, vallen)));
-			if(vallen > 30) {
-				props.append(" ...");
+			if((value = properties[i][1]) != null){
+				int vallen = value.length();
+				props.append(value.substring(0, Math.min(25, vallen)));
+				if(vallen > 30) {
+					props.append(" ...");
+				}
 			}
 			props.append("<br>");
 		}

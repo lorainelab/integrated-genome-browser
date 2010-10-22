@@ -216,7 +216,9 @@ public final class BAM extends SymLoader {
 			if (reader != null) {
 				iter = reader.query(seq.getID(), min, max, contained);
 				if (iter != null && iter.hasNext()) {
-					for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
+					SAMRecord sr = null;
+					while(iter.hasNext() && (!Thread.currentThread().isInterrupted())){
+						sr = iter.next();
 						symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
 					}
 				}
@@ -299,11 +301,13 @@ public final class BAM extends SymLoader {
 			try {
 				celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
-					// skip over deletion
+					currentChildStart = currentChildEnd + celLength;
+					currentChildEnd = currentChildStart;
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					// TODO -- allow possibility that INSERTION is terminator, not M
 					// print insertion
-					currentChildEnd += celLength;
+					currentChildStart = currentChildEnd;
+					currentChildEnd = currentChildStart;
 				} else if (cel.getOperator() == CigarOperator.M) {
 					// print matches
 					currentChildEnd += celLength;
@@ -385,11 +389,8 @@ public final class BAM extends SymLoader {
 			try {
 				int celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
-					currentPos += celLength;	// skip over deletion
+					//currentPos += celLength;	// skip over deletion
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
-					if (currentPos >= startPos) {
-						sb.append(residues.substring(currentPos, currentPos + celLength));
-					}
 					currentPos += celLength;	// print insertion
 				} else if (cel.getOperator() == CigarOperator.M) {
 					if (currentPos >= startPos) {

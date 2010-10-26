@@ -35,7 +35,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
@@ -160,6 +159,8 @@ public final class LoadFileAction extends AbstractAction {
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"igb"},
 						"IGB Script File"));
+		chooser.addChoosableFileFilter(new UniFileFilter(
+						new String[]{"sam"}, "SAM Files"));
 
 		Set<String> all_known_endings = new HashSet<String>();
 		for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {

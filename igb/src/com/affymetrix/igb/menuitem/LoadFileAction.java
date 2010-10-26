@@ -211,7 +211,7 @@ public final class LoadFileAction extends AbstractAction {
 		openURI(uri, fileName, true, group, group.getOrganism());
 	}
 	
-	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, AnnotatedSeqGroup loadGroup, String speciesName) {
+	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup, final String speciesName) {
 		if (uri.toString().toLowerCase().endsWith(".igb")) {
 			// response file.  Do its actions and return.
 			// Potential for an infinite loop here, of course.
@@ -223,6 +223,8 @@ public final class LoadFileAction extends AbstractAction {
 	
 		if(gFeature == null)
 			return;
+
+		GeneralLoadView.initVersion(gFeature.gVersion.group.getID());
 
 		if (gFeature.symL != null){
 			addChromosomesForUnknownGroup(fileName, gFeature);

@@ -37,7 +37,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
-import com.affymetrix.genometryImpl.symloader.GFF;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -221,29 +220,19 @@ public final class LoadFileAction extends AbstractAction {
 		}
 
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
-
-		//Load group might have changed in case of useq file.
-		loadGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
-		
+	
 		if(gFeature == null)
 			return;
 
-		if(((QuickLoad)gFeature.symL).getSymLoader() instanceof GFF) {
-			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
-		} else if (((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
-			if(loadGroup == null || loadGroup.getSeqList().isEmpty()){
-				addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
-			}
-			loadAllFeatures(gFeature, loadGroup);
-		} else if (gFeature.symL != null){
-			addChromosomesForUnknownGroup(fileName, gFeature, loadGroup);
+		if (gFeature.symL != null){
+			addChromosomesForUnknownGroup(fileName, gFeature);
 		}
 
 		// force a refresh of this server
 		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 		//Annotated Seq Group must be selected before feature table change call.
-		GenometryModel.getGenometryModel().setSelectedSeqGroup(loadGroup);
+		GenometryModel.getGenometryModel().setSelectedSeqGroup(gFeature.gVersion.group);
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
 
@@ -278,7 +267,7 @@ public final class LoadFileAction extends AbstractAction {
 		String extension = ParserController.getExtension(unzippedStreamName);
 
 		if(extension.equals(".useq")){
-			loadGroup =handleUseq(uri, loadGroup);
+			loadGroup = handleUseq(uri, loadGroup);
 			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
 		}
 
@@ -320,7 +309,7 @@ public final class LoadFileAction extends AbstractAction {
 		return group;
 	}
 
-	private static void loadAllFeatures(final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup){
+	private static void loadAllFeatures(final GenericFeature gFeature){
 		final String notLockedUpMsg = "Loading whole genome for " + gFeature.featureName;
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
@@ -343,7 +332,8 @@ public final class LoadFileAction extends AbstractAction {
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}
 
-	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature, final AnnotatedSeqGroup loadGroup) {
+	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
+		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
@@ -364,6 +354,12 @@ public final class LoadFileAction extends AbstractAction {
 					// select a chromosomes
 					GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
 				}
+
+				if(GenometryModel.getGenometryModel().getSelectedSeq() != null &&
+						((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+					GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+				}
+				
 				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
 			}
 		};

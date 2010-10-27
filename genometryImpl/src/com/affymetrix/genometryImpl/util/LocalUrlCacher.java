@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import sun.net.www.protocol.ftp.FtpURLConnection;
+//import sun.net.www.protocol.ftp.FtpURLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -215,9 +215,9 @@ public final class LocalUrlCacher {
 				//  So only consider URL reachable if 2xx or 3xx (not quite sure what to do yet with redirection)
 				url_reachable = ((http_status >= 200) && (http_status < 400));
 
-				if (conn instanceof FtpURLConnection) {
-					url_reachable = true;
-				}
+//				if (conn instanceof FtpURLConnection) {
+//					url_reachable = true;
+//				}
 
 			} catch (IOException ioe) {
 				url_reachable = false;

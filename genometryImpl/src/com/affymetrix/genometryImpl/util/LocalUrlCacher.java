@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import cern.colt.list.IntArrayList;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -205,15 +204,21 @@ public final class LocalUrlCacher {
 				if (conn instanceof HttpURLConnection) {
 					HttpURLConnection hcon = (HttpURLConnection) conn;
 					http_status = hcon.getResponseCode();
+					
+					// Status codes:
+					//     1xx Informational
+					//     2xx Success
+					//     3xx Redirection
+					//     4xx Client Error
+					//     5xx Server Error
+					//  So only consider URL reachable if 2xx or 3xx (not quite sure what to do yet with redirection)
+					url_reachable = ((http_status >= 200) && (http_status < 400));
+				}else {
+					// Assuming it to be FtpURLConnection.
+					url_reachable = true;
+					remote_timestamp = conn.getIfModifiedSince();
 				}
-				// Status codes:
-				//     1xx Informational
-				//     2xx Success
-				//     3xx Redirection
-				//     4xx Client Error
-				//     5xx Server Error
-				//  So only consider URL reachable if 2xx or 3xx (not quite sure what to do yet with redirection)
-				url_reachable = ((http_status >= 200) && (http_status < 400));
+
 			} catch (IOException ioe) {
 				url_reachable = false;
 			} catch (Exception e) {
@@ -606,7 +611,7 @@ public final class LocalUrlCacher {
 			return f;
 		}
 		String scheme = uri.getScheme().toLowerCase();
-		if (scheme.startsWith("http")) {
+		if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
 			InputStream istr = null;
 			try {
 				String uriStr = uri.toString();
@@ -646,7 +651,7 @@ public final class LocalUrlCacher {
 		try {
 			if (scheme.length() == 0 || scheme.equals("file")) {
 				is = new FileInputStream(new File(uri));
-			} else if (scheme.startsWith("http")) {
+			} else if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
 				is = LocalUrlCacher.getInputStream(uri.toString());
 			} else {
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
@@ -677,7 +682,7 @@ public final class LocalUrlCacher {
 		try {
 			if (scheme.length() == 0 || scheme.equals("file")) {
 				is = new FileInputStream(new File(uri));
-			} else if (scheme.startsWith("http")) {
+			} else if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
 				is = LocalUrlCacher.getInputStream(uri.toString());
 			} else {
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
@@ -718,7 +723,7 @@ public final class LocalUrlCacher {
 			}
 		}
 
-		if (scheme.startsWith("http")) {
+		if (scheme.startsWith("http") || scheme.startsWith("ftp")) {
 			InputStream istr = null;
 			URLConnection conn = null;
 			try {

@@ -51,6 +51,7 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.action.NeoSeqDemo;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
@@ -235,7 +236,7 @@ public class SeqMapView extends JPanel
 		super();
 
 		seqmap = createAffyTieredMap();
-		
+
 		seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
 		seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
 
@@ -266,7 +267,7 @@ public class SeqMapView extends JPanel
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
 		SeqMapViewPopup popup = new SeqMapViewPopup(tier_manager,this);
 		MouseShortCut msc = new MouseShortCut(popup);
-		
+
 		tier_manager.setDoGraphSelections(true);
 		if (add_popups) {
 			//NOTE: popup listeners are called in reverse of the order that they are added
@@ -582,7 +583,7 @@ public class SeqMapView extends JPanel
 		if (shrinkWrapMapBounds) {
 			shrinkWrap();
 		}
-		
+
 		seqmap.toFront(axis_tier);
 
 		// restore floating layers to front of map
@@ -599,11 +600,11 @@ public class SeqMapView extends JPanel
 			**/
 			// NOTE: Below call to stretchToFit is not redundancy. It is there
 			//       to solve above mentioned bug.
-			
+
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 		} else {
 			seqmap.stretchToFit(true, true);
-			
+
 			/** Possible bug : Below both ranges are different
 			*	System.out.println("SeqMapRange "+seqmap.getMapRange()[1]);
 			*	System.out.println("VisibleRange "+seqmap.getVisibleRange()[1]);
@@ -819,7 +820,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	
+
 	private void addAnnotationTracks() {
 		TrackView.addTracks(this, aseq);
 
@@ -987,9 +988,10 @@ public class SeqMapView extends JPanel
 	 * If a region of sequence is selected, should copy genomic residues
 	 * If an annotation is selected, should the residues of the leaf nodes of the annotation, spliced together
 	 */
-	public final boolean copySelectedResidues() {
+	public final SeqSpan[] copySelectedResidues(Boolean allResidues) {
 		boolean success = false;
 		SeqSymmetry residues_sym = null;
+		SeqSpan[] seqSpans=null;
 		Clipboard clipboard = this.getToolkit().getSystemClipboard();
 		String from = "";
 
@@ -1001,14 +1003,36 @@ public class SeqMapView extends JPanel
 			if (syms.size() == 1) {
 				residues_sym = syms.get(0);
 				from = " from selected item";
+				int numberOfChild = residues_sym.getChildCount();
+				if(numberOfChild > 0){
+				int i=0;
+				seqSpans = new SeqSpan[numberOfChild];
+				while(i < numberOfChild){
+					seqSpans[i] = residues_sym.getChild(i).getSpan(0);
+					i++;
+				}
+				}
+				else{
+					seqSpans = new SeqSpan[1];
+					seqSpans[0] =  residues_sym.getSpan(0);
+					}
+
+
 			}
+
 		}
 
 		if (residues_sym == null) {
 			ErrorHandler.errorPanel("Can't copy to clipboard",
 							"No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
 		} else {
-			String residues = SeqUtils.determineSelectedResidues(residues_sym, aseq);
+			String residues=null;
+			if(allResidues){
+				residues = SeqUtils.selectedAllResidues(residues_sym, aseq);
+			}
+			else{
+			residues = SeqUtils.determineSelectedResidues(residues_sym, aseq);
+			}
 			if (residues != null) {
 				if (SeqUtils.areResiduesComplete(residues)) {
 					/*
@@ -1043,7 +1067,7 @@ public class SeqMapView extends JPanel
 			//   have to put in at least one character -- just putting in a space for now
 			clipboard.setContents(new StringSelection(" "), null);
 		}
-		return success;
+		return seqSpans;
 	}
 
 
@@ -1331,7 +1355,7 @@ public class SeqMapView extends JPanel
 	final SeqMapViewMouseListener getMouseListener(){
 		return mouse_listener;
 	}
-	
+
 	/**
 	 *  Adds a new menu item and sets-up an accelerator key based
 	 *  on user prefs.  The accelerator key is registered directly
@@ -1623,7 +1647,7 @@ public class SeqMapView extends JPanel
 	 *  already exist.
 	 *  Generally called by the Glyph Factory.
 	 *  Note that this can create empty tiers.  But if the tiers are not filled with
-	 *  something, they will later be removed automatically. 
+	 *  something, they will later be removed automatically.
 	 *  @param meth  The tier annot; it will be treated as case-insensitive.
 	 *  @param next_to_axis Do you want the Tier as close to the axis as possible?
 	 *  @param style  a non-null instance of IAnnotStyle; tier label and other properties

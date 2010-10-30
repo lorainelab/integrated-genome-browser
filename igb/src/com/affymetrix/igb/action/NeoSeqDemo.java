@@ -191,8 +191,7 @@ public class NeoSeqDemo extends Applet
 
 		annotations = new Vector<GlyphI>();
 
-		String[] seqArray = new String[spans1.length];
-		String[] intronArray = new String[spans1.length - 1];
+		
 
 		// need a Sequence data model since using FastaSequenceParser,
 		// which parses from fasta file into a Sequence
@@ -200,9 +199,16 @@ public class NeoSeqDemo extends Applet
 			seq = seqmodel.getResidues();
 			seqview.setSequence(seqmodel);
 		} else {
+			
 //			seq = fake_seq;
 			seq = getClipboard();
 //			System.out.println(spans1[0] + "" + seq);
+			if(null == spans1){
+				seqview.setResidues(seq);
+			}
+			else{
+				String[] seqArray = new String[spans1.length];
+		String[] intronArray = new String[spans1.length - 1];
 			customFormatting(seqArray, intronArray, spans1, seq);
 //			seqview.setResidues(seq);
 			int count =0;
@@ -228,6 +234,7 @@ public class NeoSeqDemo extends Applet
 				System.out.println("count"+count+ "j "+j+"k "+k+"l "+l+" spans length"+spans1.length+"extron length "+seqArray.length+"intron length "+intronArray.length);
 			}
 		}
+		}
 
 		seqview.setShow(NeoSeq.COMPLEMENT, showComp);
 
@@ -237,7 +244,7 @@ public class NeoSeqDemo extends Applet
 			Color.black,};
 		seqview.setStripeColors(okayColors);
 		seqview.setFont(new Font("Courier", Font.BOLD, 14));
-//		seqview.setResidueFontColor(Color.yellow);
+		seqview.setResidueFontColor(Color.yellow);
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
 //		for(int j=0;j<spans1.length;j++){
@@ -1102,10 +1109,10 @@ public class NeoSeqDemo extends Applet
 		parameters.put("seq_file", "data/test.fst");
 		int i = 0;
 //		this.spans=spans1;
-		while (spans.length > i) {
-			System.out.println("start " + spans[i].getStart() + " end   " + spans[i].getEnd());
-			i++;
-		}
+//		while (spans.length > i) {
+//			System.out.println("start " + spans[i].getStart() + " end   " + spans[i].getEnd());
+//			i++;
+//		}
 
 		me.init(spans);
 		me.start(spans);

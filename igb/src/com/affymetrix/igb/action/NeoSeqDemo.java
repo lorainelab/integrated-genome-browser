@@ -13,6 +13,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.applet.Applet;
 import java.awt.event.*;
 import java.io.*;
@@ -43,7 +44,9 @@ import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -569,35 +572,65 @@ public class NeoSeqDemo extends Applet
 			}
 		}
 	}
-	public void exporthtml() {
-		FileDialog fd = new FileDialog(mapframe, "Save As", FileDialog.SAVE);
-		fd.setVisible(true);
-		String fileName = fd.getFile();
-
-		if (null != fileName) {
-			try {
-				FileWriter fw = new FileWriter(fileName);
-				String r = seqview.getResidues();
-				System.out.println(seqview.getResidueColor());
-				fw.write("<html><head><title>Sequence Viewer</title></head><body>");
-
-
-				int i;
-				for (i = 0; i < r.length() - 50; i += 50) {
-					fw.write(r, i, 60);
-					fw.write("<br>");
-				}
-				if (i < r.length()) {
-					fw.write(r.substring(i) + "<br></body></html>");
-				}
-				fw.flush();
-				fw.close();
-			} catch (IOException ex) {
-				System.out.println(ex.getMessage());
-				ex.printStackTrace();
-			}
-		}
-	}
+//	public void exporthtml() {
+//		FileDialog fd = new FileDialog(mapframe, "Save As", FileDialog.SAVE);
+//		fd.setVisible(true);
+//		String fileName = fd.getFile();
+//
+//		if (null != fileName) {
+//			try {
+//				FileWriter fw = new FileWriter(fileName);
+//				String r = seqview.getResidues();
+//				Color c1, c2 = null;
+//				c1 =
+//				System.out.println(seqview.getResidueColor());
+//				fw.write("<html><head><title>Sequence Viewer</title></head><body>");
+//				List<GlyphI> overlappers = seqview.getAnnotationItems(0,
+//				seq.length()-1);
+//
+//		AnnotationGlyph gl;
+//		if (overlappers.size() > 0) {
+//			System.out.print("Annotations overlapping selection");
+//			for (int i = 0; i < overlappers.size(); i++) {
+//				gl = (AnnotationGlyph) overlappers.get(i);
+//				System.out.print("   from " + gl.getStart() + " to " + gl.getEnd()+"color "+gl.getColor());
+//			}
+//		} else {
+//			System.out.println("No annotations overlapping selection");
+//		}
+//
+//
+//				int i;
+//				for (i = 0; i < r.length(); i ++) {
+//						for(int j=overlappers.size()-1; j>=0;j--){
+//							gl = (AnnotationGlyph) overlappers.get(j);
+//							if(gl.getStart()<=i && gl.getEnd()>=i){
+//								c2 = gl.getColor();
+//								break;
+//							}
+//						}
+//							if(c1.equals(c2)){
+//								fw.write(r.charAt(i));
+//							}
+//							else{
+//							c1=c2;
+//							fw.write("<color = "+c1+">"+r.charAt(i));
+//					}
+//						if((i%50) == 0){
+//					fw.write("<br>");
+//						}
+//				}
+//				if (i < r.length()) {
+//					fw.write(r.substring(i) + "<br></body></html>");
+//				}
+//				fw.flush();
+//				fw.close();
+//			} catch (IOException ex) {
+//				System.out.println(ex.getMessage());
+//				ex.printStackTrace();
+//			}
+//		}
+//	}
 
 	@Override
 	public void paint(Graphics g) {
@@ -616,26 +649,29 @@ public class NeoSeqDemo extends Applet
 	MenuItem greenMenuItem = new MenuItem("green");
 	MenuItem magentaMenuItem = new MenuItem("magenta");
 	MenuItem whiteMenuItem = new MenuItem("white");
+	
 
 	/* Edit Menu */
 	Menu editMenu = new Menu("Edit");
-	MenuItem seqToggleMenuItem = new MenuItem("Change Sequence");
-	MenuItem clearWidgetMenuItem = new MenuItem("Clear Sequence");
-	MenuItem undoMenuItem = new MenuItem("Undo Annotation");
-	MenuItem selectMenuItem = new MenuItem("Select Last Annotation");
-	//  MenuItem annotMenuItem = new MenuItem("Add Residue Annotation");
-	MenuItem fontAnnotMenuItem = new MenuItem("Add Residue Annotation");
-	MenuItem backAnnotMenuItem = new MenuItem("Add Background Annotation");
-	MenuItem outAnnotMenuItem = new MenuItem("Add Outline Annotation");
-	// these are slight misnomers, since the annotation glyphs that
-	//   are affected aren't actually selected, rather they overlap
-	//   the highlight glyph
-	MenuItem printAnnotMenuItem = new MenuItem("Print Selected Annots");
-	MenuItem toFrontMenuItem = new MenuItem("Selected Annots to Front");
-	MenuItem visTestMenuItem = new MenuItem("Test Selected Annot Visibility");
-	MenuItem showSelectedEndsMenuItem = new MenuItem("Show Ends of Selection");
-	MenuItem showVisibleEndsMenuItem = new MenuItem("Show Ends of Visible Portion");
-	MenuItem propertiesMenuItem = new MenuItem("Properties...");
+//	MenuItem seqToggleMenuItem = new MenuItem("Change Sequence");
+//	MenuItem clearWidgetMenuItem = new MenuItem("Clear Sequence");
+//	MenuItem undoMenuItem = new MenuItem("Undo Annotation");
+//	MenuItem selectMenuItem = new MenuItem("Select Last Annotation");
+//	//  MenuItem annotMenuItem = new MenuItem("Add Residue Annotation");
+//	MenuItem fontAnnotMenuItem = new MenuItem("Add Residue Annotation");
+//	MenuItem backAnnotMenuItem = new MenuItem("Add Background Annotation");
+//	MenuItem outAnnotMenuItem = new MenuItem("Add Outline Annotation");
+//	// these are slight misnomers, since the annotation glyphs that
+//	//   are affected aren't actually selected, rather they overlap
+//	//   the highlight glyph
+//	MenuItem printAnnotMenuItem = new MenuItem("Print Selected Annots");
+//	MenuItem toFrontMenuItem = new MenuItem("Selected Annots to Front");
+//	MenuItem visTestMenuItem = new MenuItem("Test Selected Annot Visibility");
+//	MenuItem showSelectedEndsMenuItem = new MenuItem("Show Ends of Selection");
+//	MenuItem showVisibleEndsMenuItem = new MenuItem("Show Ends of Visible Portion");
+//	MenuItem propertiesMenuItem = new MenuItem("Properties...");
+	MenuItem copyMenuItem = new MenuItem("Copy selected sequence to clipboard",
+			new MenuShortcut(KeyEvent.VK_C));
 
 	/* Show Menu */
 	Menu showMenu = new Menu("Show");
@@ -708,31 +744,31 @@ public class NeoSeqDemo extends Applet
 
 		/* Edit Menu */
 
-		editMenu.add(seqToggleMenuItem);
-		editMenu.add(clearWidgetMenuItem);
-		editMenu.addSeparator();
-		editMenu.add(undoMenuItem);
-		editMenu.add(selectMenuItem);
-		editMenu.add(backAnnotMenuItem);
-		editMenu.add(fontAnnotMenuItem);
-		editMenu.add(outAnnotMenuItem);
-		editMenu.add(colorMenu);
-		editMenu.addSeparator();
-		editMenu.add(showSelectedEndsMenuItem);
-		editMenu.add(showVisibleEndsMenuItem);
-		editMenu.addSeparator();
-		editMenu.add(propertiesMenuItem);
+		editMenu.add(copyMenuItem);
+//		editMenu.add(clearWidgetMenuItem);
+//		editMenu.addSeparator();
+//		editMenu.add(undoMenuItem);
+//		editMenu.add(selectMenuItem);
+//		editMenu.add(backAnnotMenuItem);
+//		editMenu.add(fontAnnotMenuItem);
+//		editMenu.add(outAnnotMenuItem);
+//		editMenu.add(colorMenu);
+//		editMenu.addSeparator();
+//		editMenu.add(showSelectedEndsMenuItem);
+//		editMenu.add(showVisibleEndsMenuItem);
+//		editMenu.addSeparator();
+//		editMenu.add(propertiesMenuItem);
 
-		seqToggleMenuItem.addActionListener(this);
-		clearWidgetMenuItem.addActionListener(this);
-		undoMenuItem.addActionListener(this);
-		selectMenuItem.addActionListener(this);
-		backAnnotMenuItem.addActionListener(this);
-		fontAnnotMenuItem.addActionListener(this);
-		outAnnotMenuItem.addActionListener(this);
-		showSelectedEndsMenuItem.addActionListener(this);
-		showVisibleEndsMenuItem.addActionListener(this);
-		propertiesMenuItem.addActionListener(this);
+		copyMenuItem.addActionListener(this);
+//		clearWidgetMenuItem.addActionListener(this);
+//		undoMenuItem.addActionListener(this);
+//		selectMenuItem.addActionListener(this);
+//		backAnnotMenuItem.addActionListener(this);
+//		fontAnnotMenuItem.addActionListener(this);
+//		outAnnotMenuItem.addActionListener(this);
+//		showSelectedEndsMenuItem.addActionListener(this);
+//		showVisibleEndsMenuItem.addActionListener(this);
+//		propertiesMenuItem.addActionListener(this);
 
 
 		/* Show Menu */
@@ -889,54 +925,40 @@ public class NeoSeqDemo extends Applet
 	/** ActionListener Implementation */
 	public void actionPerformed(ActionEvent e) {
 		Object theItem = e.getSource();
-		if (theItem == backAnnotMenuItem) {
-			addBackgroundAnnotation();
-		} else if (theItem == fontAnnotMenuItem) {
-			addTextAnnotation();
-		} else if (theItem == outAnnotMenuItem) {
-			addOutlineAnnotation();
-		} else if (theItem == undoMenuItem) {
-			removeAnnotation();
-		} else if (theItem == selectMenuItem) {
-			selectAnnotation();
-		} else if (theItem == seqToggleMenuItem) {
-			changeSequence();
-		} else if (theItem == clearWidgetMenuItem) {
-			seqview.clearWidget();
-			seqview.updateWidget();
-		} else if (theItem == showVisibleEndsMenuItem) {
-			String str = seqview.getVisibleResidues();
-			showEnds(str);
-		} else if (theItem == propertiesMenuItem) {
-			if (null == propframe) {
-				propframe = new Frame("NeoSeq Properties");
-				customizer = new NeoSeqCustomizer();
-				customizer.setObject(this.seqview);
-				propframe.add("Center", customizer);
-				propframe.pack();
-				propframe.addWindowListener(this);
-			}
-			propframe.setBounds(200, 200, 500, 300);
-			propframe.setVisible(true);
-		} else if (theItem == showSelectedEndsMenuItem) {
-			String str = seqview.getSelectedResidues();
-			showEnds(str);
-		} else if (theItem == blueMenuItem) {
-			setAnnotColors(Color.blue);
-		} else if (theItem == greenMenuItem) {
-			setAnnotColors(Color.green);
-		} else if (theItem == magentaMenuItem) {
-			setAnnotColors(Color.magenta);
-		} else if (theItem == whiteMenuItem) {
-			setAnnotColors(Color.white);
-		} else if (theItem == printAnnotMenuItem) {
-			printSelectionOverlappers();
-		} else if (theItem == toFrontMenuItem) {
-			toFrontSelectionOverlappers();
-		} else if (theItem == visTestMenuItem) {
-			testSelectedVisibility();
+//		if (theItem == backAnnotMenuItem) {
+//			addBackgroundAnnotation();
+//		} else if (theItem == fontAnnotMenuItem) {
+//			addTextAnnotation();
+//		} else if (theItem == outAnnotMenuItem) {
+//			addOutlineAnnotation();
+//		} else if (theItem == undoMenuItem) {
+//			removeAnnotation();
+//		} else if (theItem == selectMenuItem) {
+//			selectAnnotation();
+//		} else if (theItem == seqToggleMenuItem) {
+//			changeSequence();
+//		} else if (theItem == clearWidgetMenuItem) {
+//			seqview.clearWidget();
+//			seqview.updateWidget();
+//		} else if (theItem == showVisibleEndsMenuItem) {
+//			String str = seqview.getVisibleResidues();
+//			showEnds(str);
+		if (theItem == copyMenuItem) {
+			String selectedSeq = seqview.getSelectedResidues();
+			if (selectedSeq != null) {
+					Clipboard clipboard = this.getToolkit().getSystemClipboard();
+					StringBuffer hackbuf = new StringBuffer(selectedSeq);
+					String hackstr = new String(hackbuf);
+					StringSelection data = new StringSelection(hackstr);
+					clipboard.setContents(data, null);
+				} else {
+					ErrorHandler.errorPanel("Missing Sequence Residues",
+							"Don't have all the needed residues, can't copy to clipboard.\n"
+							+ "Please load sequence residues for this region.");
+				}
+
 		} else if (theItem == saveAsMenuItem) {
-			exporthtml();
+			exportSequenceFasta();
 		} else if (theItem == exitMenuItem) {
 			mapframe.dispose();
 			this.destroy();

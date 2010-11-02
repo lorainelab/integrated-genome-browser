@@ -141,11 +141,6 @@ public class NeoSeqDemo extends Applet
 
 	private void customFormatting(String[] seqArray, String[] intronArray, SeqSpan[] spans, String seq) {
 		int i = 1;
-		System.out.println(seq);
-//		System.out.println(0 + " " +spans[0].getLength());
-//		System.out.println(" " + seq.substring(0, spans[0].getLength()));
-//		String[] seqArray = new String[spans.length];
-//		String[] intronArray = new String[spans.length - 1];
 		seqArray[0] = seq.substring(0, spans[0].getLength());
 		if (spans.length > 1) {
 			if (spans[0].getStart() < spans[0].getEnd()) {
@@ -154,42 +149,27 @@ public class NeoSeqDemo extends Applet
 				intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
 			}
 		}
-//		System.out.println(" " + intronArray[0]);
-//		System.out.println(0 + "  length " + spans[0].getLength() + " " + 0 + " " + spans[0].getLength());
 		while (i < spans.length) {
 			if (spans[i].getStart() < spans[i].getEnd()) {
-//			System.out.println(i + "  length " +spans[i].getLength() +" "+ (spans[i].getStart()-spans[0].getStart()) +" "+ (spans[i].getStart()-spans[0].getStart()+spans[i].getLength()));
-//				System.out.println("Extron " + i + "  length " + spans[i].getLength() + " " + (Math.abs(spans[i].getStart() - spans[0].getStart())) + " " + (Math.abs(spans[i].getStart() - spans[0].getStart() + spans[i].getLength())));
-
 				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
 				if (i < spans.length - 1) {
 					intronArray[i] = seq.substring(spans[i].getEnd() - spans[0].getStart(), spans[i + 1].getStart() - spans[0].getStart());
-//					System.out.println("Intron" + i + "  length " + spans[i].getLength() + " " + (spans[i].getEnd() - spans[0].getStart() + 1) + " " + (spans[i + 1].getStart() - spans[0].getStart() - 1));
 				}
 			} else {
-//				System.out.println(i + "  length " + spans[i].getLength() + " " + (Math.abs(spans[i].getStart() - spans[0].getStart())) + " " + (Math.abs(spans[i].getStart() - spans[0].getStart() - spans[i].getLength())));
 				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
 				if (i < spans.length - 1) {
 					intronArray[i] = seq.substring(Math.abs(spans[i].getEnd() - spans[0].getStart()), Math.abs(spans[i + 1].getStart() - spans[0].getStart()));
 				}
 			}
 			i++;
-//		System.out.println(i);
 		}
 
 		i = 0;
 
-		while (spans.length > i) {
-			System.out.println("Exon" + i + " length " + seqArray[i].length()+" "+seqArray[i]);
-			if (i < spans.length - 1) {
-				System.out.println("Intron" + i+ " length " + intronArray[i].length()+ " "+ intronArray[i]);
-			}
-			i++;
-		}
 		return;
 	}
 
-		protected void getGoing(SeqSpan[] spans1) {
+	protected void getGoing(SeqSpan[] spans1) {
 
 		going = true;
 
@@ -197,50 +177,33 @@ public class NeoSeqDemo extends Applet
 
 		annotations = new Vector<GlyphI>();
 
-
-
-		// need a Sequence data model since using FastaSequenceParser,
-		// which parses from fasta file into a Sequence
-		if (false) {
-			seq = seqmodel.getResidues();
-			seqview.setSequence(seqmodel);
+		seq = getClipboard();
+		if (null == spans1) {
+			seqview.setResidues(seq);
+			seqview.setResidueFontColor(Color.LIGHT_GRAY);
 		} else {
-
-//			seq = fake_seq;
-			seq = getClipboard();
-//			System.out.println(spans1[0] + "" + seq);
-			if(null == spans1){
-				seqview.setResidues(seq);
-				seqview.setResidueFontColor(Color.LIGHT_GRAY);
-			}
-			else{
-				String[] seqArray = new String[spans1.length];
-		String[] intronArray = new String[spans1.length - 1];
+			String[] seqArray = new String[spans1.length];
+			String[] intronArray = new String[spans1.length - 1];
 			customFormatting(seqArray, intronArray, spans1, seq);
-//			seqview.setResidues(seq);
-			int count =0;
-			for(int j=0,k=0,l=0;j<(2*spans1.length)-1;j++){
-				if((j%2) == 0){
+			//Below is done because NeoSeq has first character as white space
+			seqview.setResidues("");
+			int count = 0;
+			for (int j = 0, k = 0, l = 0; j < (2 * spans1.length) - 1; j++) {
+				if ((j % 2) == 0) {
 					seqview.appendResidues(seqArray[k]);
-					seqview.addTextColorAnnotation(count, (count+seqArray[k].length())-1, Color.LIGHT_GRAY);
-//					System.out.println(seqArray[k]);
-//					System.out.println(seqview.toString().substring(count, (count+seqArray[k].length())-1));
-//					System.out.println("extron "+seqArray[k].length());
-					count += seqArray[k].length();k++;
+					seqview.addTextColorAnnotation(count, (count + seqArray[k].length()) - 1, Color.LIGHT_GRAY);
+					count += seqArray[k].length();
+					k++;
 
-				}
-				else{
+				} else {
 					seqview.appendResidues(intronArray[l]);
-					seqview.addTextColorAnnotation(count, (count+intronArray[l].length())-1, Color.DARK_GRAY);
-//					System.out.println(intronArray[l]);
-//					System.out.println(seqview.toString().substring(count, (count+intronArray[l].length())-1));
-//					System.out.println("intron" +intronArray[l].length());
-					count += intronArray[l].length();l++;
+					seqview.addTextColorAnnotation(count, (count + intronArray[l].length()) - 1, Color.DARK_GRAY);
+					count += intronArray[l].length();
+					l++;
 
 				}
-//				System.out.println("count"+count+ "j "+j+"k "+k+"l "+l+" spans length"+spans1.length+"extron length "+seqArray.length+"intron length "+intronArray.length);
 			}
-		}
+
 		}
 
 		seqview.setShow(NeoSeq.COMPLEMENT, showComp);
@@ -373,7 +336,6 @@ public class NeoSeqDemo extends Applet
 			try {
 				FileWriter fw = new FileWriter(fileName);
 				String r = seqview.getResidues();
-				System.out.println(seqview.getResidueColor());
 				fw.write(">" + fileName);
 				fw.write('\n');
 				int i;
@@ -431,9 +393,6 @@ public class NeoSeqDemo extends Applet
 		bar.add(editMenu);
 	}
 
-
-
-
 	/* EVENT HANDLING */
 	/** ActionListener Implementation */
 	public void actionPerformed(ActionEvent e) {
@@ -442,16 +401,16 @@ public class NeoSeqDemo extends Applet
 		if (theItem == copyMenuItem) {
 			String selectedSeq = seqview.getSelectedResidues();
 			if (selectedSeq != null) {
-					Clipboard clipboard = this.getToolkit().getSystemClipboard();
-					StringBuffer hackbuf = new StringBuffer(selectedSeq);
-					String hackstr = new String(hackbuf);
-					StringSelection data = new StringSelection(hackstr);
-					clipboard.setContents(data, null);
-				} else {
-					ErrorHandler.errorPanel("Missing Sequence Residues",
-							"Don't have all the needed residues, can't copy to clipboard.\n"
-							+ "Please load sequence residues for this region.");
-				}
+				Clipboard clipboard = this.getToolkit().getSystemClipboard();
+				StringBuffer hackbuf = new StringBuffer(selectedSeq);
+				String hackstr = new String(hackbuf);
+				StringSelection data = new StringSelection(hackstr);
+				clipboard.setContents(data, null);
+			} else {
+				ErrorHandler.errorPanel("Missing Sequence Residues",
+						"Don't have all the needed residues, can't copy to clipboard.\n"
+						+ "Please load sequence residues for this region.");
+			}
 
 		} else if (theItem == saveAsMenuItem) {
 			exportSequenceFasta();

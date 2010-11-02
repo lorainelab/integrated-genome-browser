@@ -186,7 +186,7 @@ public class NeoSeqDemo extends Applet
 		return;
 	}
 
-	protected void getGoing(SeqSpan[] spans1) {
+		protected void getGoing(SeqSpan[] spans1) {
 
 		going = true;
 
@@ -194,7 +194,7 @@ public class NeoSeqDemo extends Applet
 
 		annotations = new Vector<GlyphI>();
 
-		
+
 
 		// need a Sequence data model since using FastaSequenceParser,
 		// which parses from fasta file into a Sequence
@@ -202,12 +202,13 @@ public class NeoSeqDemo extends Applet
 			seq = seqmodel.getResidues();
 			seqview.setSequence(seqmodel);
 		} else {
-			
+
 //			seq = fake_seq;
 			seq = getClipboard();
 //			System.out.println(spans1[0] + "" + seq);
 			if(null == spans1){
 				seqview.setResidues(seq);
+				seqview.setResidueFontColor(Color.LIGHT_GRAY);
 			}
 			else{
 				String[] seqArray = new String[spans1.length];
@@ -223,7 +224,7 @@ public class NeoSeqDemo extends Applet
 //					System.out.println(seqview.toString().substring(count, (count+seqArray[k].length())-1));
 //					System.out.println("extron "+seqArray[k].length());
 					count += seqArray[k].length();k++;
-					
+
 				}
 				else{
 					seqview.appendResidues(intronArray[l]);
@@ -232,7 +233,7 @@ public class NeoSeqDemo extends Applet
 //					System.out.println(seqview.toString().substring(count, (count+intronArray[l].length())-1));
 //					System.out.println("intron" +intronArray[l].length());
 					count += intronArray[l].length();l++;
-					
+
 				}
 				System.out.println("count"+count+ "j "+j+"k "+k+"l "+l+" spans length"+spans1.length+"extron length "+seqArray.length+"intron length "+intronArray.length);
 			}
@@ -246,8 +247,8 @@ public class NeoSeqDemo extends Applet
 			Color.black,
 			Color.black,};
 		seqview.setStripeColors(okayColors);
-		seqview.setFont(new Font("Courier", Font.BOLD, 14));
-		seqview.setResidueFontColor(Color.LIGHT_GRAY);
+		seqview.setFont(new Font("Arial", Font.BOLD, 14));
+
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
 
@@ -279,7 +280,9 @@ public class NeoSeqDemo extends Applet
 		//    Dimension prefsize = seqview.getPreferredSize(50, 15);
 		//    seqview.resize(prefsize.width, prefsize.height);
 		//    mapframe.pack();  pack and menus don't mix well on some platforms...
-		mapframe.setSize(pixel_width, pixel_height);
+		Dimension prefsize = seqview.getPreferredSize(50, 15);
+		mapframe.setMinimumSize(prefsize);
+//		mapframe.setSize(pixel_width+230, pixel_height);
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width - pixel_width) / 2,
 				(screen_size.height - pixel_height) / 2);

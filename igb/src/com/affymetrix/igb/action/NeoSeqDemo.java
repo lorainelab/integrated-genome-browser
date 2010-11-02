@@ -141,33 +141,36 @@ public class NeoSeqDemo extends Applet
 
 	private void customFormatting(String[] seqArray, String[] intronArray, SeqSpan[] spans, String seq) {
 		int i = 1;
-//		System.out.println(" " + seq + "  " + seq.length() + " " + spans.length);
+		System.out.println(seq);
+//		System.out.println(0 + " " +spans[0].getLength());
+//		System.out.println(" " + seq.substring(0, spans[0].getLength()));
 //		String[] seqArray = new String[spans.length];
 //		String[] intronArray = new String[spans.length - 1];
 		seqArray[0] = seq.substring(0, spans[0].getLength());
 		if (spans.length > 1) {
 			if (spans[0].getStart() < spans[0].getEnd()) {
-				intronArray[0] = seq.substring(spans[0].getLength() + 1, spans[i].getStart() - spans[0].getStart() - 1);
+				intronArray[0] = seq.substring(spans[0].getLength(), spans[i].getStart() - spans[0].getStart());
 			} else {
-				intronArray[0] = seq.substring(spans[0].getLength() + 1, Math.abs(spans[i].getStart() - spans[0].getStart() + 1));
+				intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
 			}
 		}
-		System.out.println(0 + "  length " + spans[0].getLength() + " " + 0 + " " + spans[0].getLength());
+//		System.out.println(" " + intronArray[0]);
+//		System.out.println(0 + "  length " + spans[0].getLength() + " " + 0 + " " + spans[0].getLength());
 		while (i < spans.length) {
 			if (spans[i].getStart() < spans[i].getEnd()) {
 //			System.out.println(i + "  length " +spans[i].getLength() +" "+ (spans[i].getStart()-spans[0].getStart()) +" "+ (spans[i].getStart()-spans[0].getStart()+spans[i].getLength()));
 //				System.out.println("Extron " + i + "  length " + spans[i].getLength() + " " + (Math.abs(spans[i].getStart() - spans[0].getStart())) + " " + (Math.abs(spans[i].getStart() - spans[0].getStart() + spans[i].getLength())));
 
-				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getStart() - spans[0].getStart() + spans[i].getLength()));
+				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
 				if (i < spans.length - 1) {
-					intronArray[i] = seq.substring(spans[i].getEnd() - spans[0].getStart() + 1, spans[i + 1].getStart() - spans[0].getStart() - 1);
+					intronArray[i] = seq.substring(spans[i].getEnd() - spans[0].getStart(), spans[i + 1].getStart() - spans[0].getStart());
 //					System.out.println("Intron" + i + "  length " + spans[i].getLength() + " " + (spans[i].getEnd() - spans[0].getStart() + 1) + " " + (spans[i + 1].getStart() - spans[0].getStart() - 1));
 				}
 			} else {
 //				System.out.println(i + "  length " + spans[i].getLength() + " " + (Math.abs(spans[i].getStart() - spans[0].getStart())) + " " + (Math.abs(spans[i].getStart() - spans[0].getStart() - spans[i].getLength())));
-				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getStart() - spans[0].getStart() - spans[i].getLength()));
+				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
 				if (i < spans.length - 1) {
-					intronArray[i] = seq.substring(Math.abs(spans[i].getEnd() - spans[0].getStart() - 1), Math.abs(spans[i + 1].getStart() - spans[0].getStart() + 1));
+					intronArray[i] = seq.substring(Math.abs(spans[i].getEnd() - spans[0].getStart()), Math.abs(spans[i + 1].getStart() - spans[0].getStart()));
 				}
 			}
 			i++;
@@ -176,13 +179,13 @@ public class NeoSeqDemo extends Applet
 
 		i = 0;
 
-//		while (spans.length > i) {
-//			System.out.println(seqArray[i] + " length " + seqArray[i].length());
-//			if (i < spans.length - 1) {
-//				System.out.println(intronArray[i] + " length " + intronArray[i].length());
-//			}
-//			i++;
-//		}
+		while (spans.length > i) {
+			System.out.println("Exon" + i + " length " + seqArray[i].length()+" "+seqArray[i]);
+			if (i < spans.length - 1) {
+				System.out.println("Intron" + i+ " length " + intronArray[i].length()+ " "+ intronArray[i]);
+			}
+			i++;
+		}
 		return;
 	}
 
@@ -235,7 +238,7 @@ public class NeoSeqDemo extends Applet
 					count += intronArray[l].length();l++;
 
 				}
-				System.out.println("count"+count+ "j "+j+"k "+k+"l "+l+" spans length"+spans1.length+"extron length "+seqArray.length+"intron length "+intronArray.length);
+//				System.out.println("count"+count+ "j "+j+"k "+k+"l "+l+" spans length"+spans1.length+"extron length "+seqArray.length+"intron length "+intronArray.length);
 			}
 		}
 		}
@@ -374,8 +377,8 @@ public class NeoSeqDemo extends Applet
 				fw.write(">" + fileName);
 				fw.write('\n');
 				int i;
-				for (i = 0; i < r.length() - 60; i += 60) {
-					fw.write(r, i, 60);
+				for (i = 0; i < r.length() - 50; i += 50) {
+					fw.write(r, i, 50);
 					fw.write('\n');
 				}
 				if (i < r.length()) {

@@ -78,6 +78,7 @@ public class NeoSeqDemo extends Applet
 	private boolean framesShowing = true;
 	private boolean going = false;
 	private Color nicePaleBlue = new Color(180, 250, 250);
+	NeoPanel widg_pan = new NeoPanel();
 
 	public void init(final SeqSpan[] spans1) {
 
@@ -233,7 +234,7 @@ public class NeoSeqDemo extends Applet
 		 *  (such as Swing), you should _not_ wrap them with a NeoPanel
 		 *  (since the NeoPanel is a heavyweight component).
 		 */
-		NeoPanel widg_pan = new NeoPanel();
+		
 		widg_pan.setLayout(new BorderLayout());
 		widg_pan.add("Center", seqview);
 
@@ -366,6 +367,14 @@ public class NeoSeqDemo extends Applet
 			new MenuShortcut(KeyEvent.VK_A));
 	MenuItem exitMenuItem = new MenuItem("eXit",
 			new MenuShortcut(KeyEvent.VK_X));
+	Menu showMenu = new Menu("Show");
+	CheckboxMenuItem compCBMenuItem = new CheckboxMenuItem("Reverse Complement");
+	CheckboxMenuItem transOneCBMenuItem = new CheckboxMenuItem(" +1 Translation");
+	CheckboxMenuItem transTwoCBMenuItem = new CheckboxMenuItem(" +2 Translation");
+	CheckboxMenuItem transThreeCBMenuItem = new CheckboxMenuItem(" +3 Translation");
+	CheckboxMenuItem transNegOneCBMenuItem = new CheckboxMenuItem(" -1 Translation");
+	CheckboxMenuItem transNegTwoCBMenuItem = new CheckboxMenuItem(" -2 Translation");
+	CheckboxMenuItem transNegThreeCBMenuItem = new CheckboxMenuItem(" -3 Translation");
 
 	public void setupMenus(Frame dock) {
 
@@ -381,6 +390,21 @@ public class NeoSeqDemo extends Applet
 		fileMenu.add(exitMenuItem);
 		saveAsMenuItem.addActionListener(this);
 		exitMenuItem.addActionListener(this);
+		showMenu.add(compCBMenuItem);
+		showMenu.add(transOneCBMenuItem);
+		showMenu.add(transTwoCBMenuItem);
+		showMenu.add(transThreeCBMenuItem);
+		showMenu.add(transNegOneCBMenuItem);
+		showMenu.add(transNegTwoCBMenuItem);
+		showMenu.add(transNegThreeCBMenuItem);
+
+		compCBMenuItem.addItemListener(this);
+		transOneCBMenuItem.addItemListener(this);
+		transTwoCBMenuItem.addItemListener(this);
+		transThreeCBMenuItem.addItemListener(this);
+		transNegOneCBMenuItem.addItemListener(this);
+		transNegTwoCBMenuItem.addItemListener(this);
+		transNegThreeCBMenuItem.addItemListener(this);
 
 		// add the menus to the menubar
 		MenuBar bar = dock.getMenuBar();
@@ -391,6 +415,7 @@ public class NeoSeqDemo extends Applet
 
 		bar.add(fileMenu);
 		bar.add(editMenu);
+		bar.add(showMenu);
 	}
 
 	/* EVENT HANDLING */
@@ -421,107 +446,53 @@ public class NeoSeqDemo extends Applet
 
 	}
 
-//	private void setMenuItemState(Menu theMenu, CheckboxMenuItem theItem) {
-//		for (int i = theMenu.getItemCount() - 1; 0 <= i; i--) {
-//			MenuItem item = theMenu.getItem(i);
-//			if (item instanceof CheckboxMenuItem) {
-//				((CheckboxMenuItem) item).setState(item == theItem);
-//			}
-//		}
-//	}
-//
-//	/** ItemListener Implementation */
-//	public void itemStateChanged(ItemEvent e) {
-//		Object theItem = e.getSource();
-//
-//		if (theItem == oneLetterCBMenuItem) {
-//			seqview.setTranslationStyle(NeoSeq.ONE_LETTER_CODE);
-//			setMenuItemState(transFormatMenu, (CheckboxMenuItem) theItem);
-//			seqview.updateWidget();
-//		} else if (theItem == threeLetterCBMenuItem) {
-//			seqview.setTranslationStyle(NeoSeq.THREE_LETTER_CODE);
-//			setMenuItemState(transFormatMenu, (CheckboxMenuItem) theItem);
-//			seqview.updateWidget();
-//		} else if (theItem == compCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			boolean showComp = mi.getState();
-//			seqview.setShow(NeoSeq.COMPLEMENT, showComp);
-//			seqview.updateWidget();
-//		} else if (theItem == transOneCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_ONE, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transTwoCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_TWO, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transThreeCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_THREE, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transNegOneCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_NEG_ONE, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transNegTwoCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_NEG_TWO, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transNegThreeCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == dialogFontCBMenuItem
-//				|| theItem == dialogInputFontCBMenuItem
-//				|| theItem == monospacedFontCBMenuItem
-//				|| theItem == serifFontCBMenuItem
-//				|| theItem == sansSerifFontCBMenuItem) {
-//			seqview.setFontName(((MenuItem) theItem).getLabel());
-//			setMenuItemState(fontMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == defaultFontCBMenuItem) {
-//			seqview.setFontName(""); // NeoSeq will use the Java default font.
-//			seqview.setFontName("Courier"); // This is the NeoSeq default font.
-//			setMenuItemState(fontMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == smallFontCBMenuItem) {
-//			seqview.setFontSize(12);
-//			setMenuItemState(fontSizesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == mediumFontCBMenuItem) {
-//			seqview.setFontSize(14);
-//			setMenuItemState(fontSizesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == largeFontCBMenuItem) {
-//			seqview.setFontSize(16);
-//			setMenuItemState(fontSizesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == vertStripesCBMenuItem) {
-//			seqview.setStripeOrientation(NeoSeq.VERTICAL_STRIPES);
-//			setMenuItemState(stripesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == horizStripesCBMenuItem) {
-//			seqview.setStripeOrientation(NeoSeq.HORIZONTAL_STRIPES);
-//			setMenuItemState(stripesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == noStripesCBMenuItem) {
-//			seqview.setStripeOrientation(NeoSeq.NO_STRIPES);
-//			setMenuItemState(stripesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == smallStripesCBMenuItem) {
-//			seqview.setStripeWidth(5);
-//			setMenuItemState(stripeSizesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == mediumStripesCBMenuItem) {
-//			seqview.setStripeWidth(10);
-//			setMenuItemState(stripeSizesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == largeStripesCBMenuItem) {
-//			seqview.setStripeWidth(20);
-//			setMenuItemState(stripeSizesMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == smallLineSpacingCBMenuItem) {
-//			seqview.setSpacing(0);
-//			setMenuItemState(lineSpacingMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == mediumLineSpacingCBMenuItem) {
-//			seqview.setSpacing(10);
-//			setMenuItemState(lineSpacingMenu, (CheckboxMenuItem) theItem);
-//		} else if (theItem == largeLineSpacingCBMenuItem) {
-//			seqview.setSpacing(20);
-//			setMenuItemState(lineSpacingMenu, (CheckboxMenuItem) theItem);
-//		}
-//
-//	}
-//
+	private void setMenuItemState(Menu theMenu, CheckboxMenuItem theItem) {
+		for (int i = theMenu.getItemCount() - 1; 0 <= i; i--) {
+			MenuItem item = theMenu.getItem(i);
+			if (item instanceof CheckboxMenuItem) {
+				((CheckboxMenuItem) item).setState(item == theItem);
+			}
+		}
+	}
+
+	/** ItemListener Implementation */
+	public void itemStateChanged(ItemEvent e) {
+		Object theItem = e.getSource();
+
+		if (theItem == compCBMenuItem) {
+			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
+			boolean showRevComp = mi.getState();
+			seqview.setRevShow(NeoSeq.COMPLEMENT, showRevComp);
+			seqview.setRevShow(NeoSeq.NUCLEOTIDES, !showRevComp);
+			seqview.updateWidget();
+		} else if (theItem == transOneCBMenuItem) {
+			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_ONE, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transTwoCBMenuItem) {
+			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_TWO, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transThreeCBMenuItem) {
+			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_THREE, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transNegOneCBMenuItem) {
+			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_NEG_ONE, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transNegTwoCBMenuItem) {
+			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_NEG_TWO, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transNegThreeCBMenuItem) {
+			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
+			seqview.updateWidget();
+		} 
+
+	}
+
 	/** WindowListener Implementation */
 	public void windowActivated(WindowEvent e) {
 	}
@@ -588,7 +559,5 @@ public class NeoSeqDemo extends Applet
 		me.start(spans);
 	}
 
-	public void itemStateChanged(ItemEvent e) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+
 }

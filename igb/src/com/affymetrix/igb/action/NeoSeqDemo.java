@@ -180,7 +180,7 @@ public class NeoSeqDemo extends Applet
 		seq = getClipboard();
 		if (null == spans1) {
 			seqview.setResidues(seq);
-			seqview.setResidueFontColor(Color.WHITE);
+			seqview.setResidueFontColor(Color.YELLOW);
 		} else {
 			String[] seqArray = new String[spans1.length];
 			String[] intronArray = new String[spans1.length - 1];
@@ -191,13 +191,13 @@ public class NeoSeqDemo extends Applet
 			for (int j = 0, k = 0, l = 0; j < (2 * spans1.length) - 1; j++) {
 				if ((j % 2) == 0) {
 					seqview.appendResidues(seqArray[k]);
-					seqview.addTextColorAnnotation(count, (count + seqArray[k].length()) - 1, Color.WHITE);
+					seqview.addTextColorAnnotation(count, (count + seqArray[k].length()) - 1, Color.YELLOW);
 					count += seqArray[k].length();
 					k++;
 
 				} else {
 					seqview.appendResidues(intronArray[l]);
-					seqview.addTextColorAnnotation(count, (count + intronArray[l].length()) - 1, Color.YELLOW);
+					seqview.addTextColorAnnotation(count, (count + intronArray[l].length()) - 1, Color.WHITE);
 					count += intronArray[l].length();
 					l++;
 

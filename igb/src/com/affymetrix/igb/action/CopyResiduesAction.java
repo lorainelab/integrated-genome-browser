@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.igb.view.SequenceViewer;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.util.MenuUtil;

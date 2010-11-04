@@ -1,7 +1,6 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.prefs.IPlugin;
-import com.affymetrix.igb.util.CSwingWorker;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
@@ -43,10 +42,6 @@ public abstract class Application {
 	abstract public JFrame getFrame();
 
 	abstract public SeqMapView getMapView();
-
-	public final void updatePopup(){
-		status_bar.setCancelPopup(CSwingWorker.getWorkers());
-	}
 
 	public final void addNotLockedUpMsg(final String s) {
 		ThreadUtils.runOnEventQueue(new Runnable() {

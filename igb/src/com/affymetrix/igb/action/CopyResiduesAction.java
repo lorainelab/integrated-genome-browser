@@ -25,7 +25,7 @@ public class CopyResiduesAction extends AbstractAction {
 
 	public void actionPerformed(ActionEvent e) {
 		SeqSpan[] seqSpans = IGB.getSingleton().getMapView().copySelectedResidues(true);
-		NeoSeqDemo neoSeqDemo = new NeoSeqDemo();
+		SequenceViewer neoSeqDemo = new SequenceViewer();
 		neoSeqDemo.tempChange(seqSpans);
 	}
 

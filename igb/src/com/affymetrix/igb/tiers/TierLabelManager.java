@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
@@ -15,13 +16,11 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.view.ContextualPopupListener;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.geom.Rectangle2D;
-import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -131,25 +130,6 @@ public final class TierLabelManager {
 			dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 		}
 	}; // end of mouse listener class
-
-	private final ContextualPopupListener cpopupListener = new ContextualPopupListener(){
-
-		public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_items, SeqSymmetry primary_sym, TierGlyph tglpyh) {
-			if(tglpyh != null){
-				GenericFeature feature = tglpyh.getAnnotStyle().getFeature();
-				if(feature == null){
-					//Check if clicked on axis.
-					if(tglpyh instanceof TransformTierGlyph){
-						popup.add(new JMenuItem(GeneralLoadView.getLoadView().getLoadResidueAction()));
-					}
-					return;
-				}
-				
-				popup.add(new JMenuItem(new RefreshAFeature(feature)));
-			}
-		}
-
-	};
 
 	public TierLabelManager(AffyLabelledTierMap map) {
 		tiermap = map;
@@ -487,10 +467,6 @@ public final class TierLabelManager {
 			label_name.setEnabled(false); // makes the text look different (usually lighter)
 			popup.add(label_name);
 		}
-	}
-
-	public ContextualPopupListener getContextualPopupListener(){
-		return cpopupListener;
 	}
 	
 	public TierGlyph getTierGlyph(NeoMouseEvent nevt){

@@ -29,7 +29,9 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -51,6 +53,7 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
@@ -58,6 +61,7 @@ import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -152,7 +156,7 @@ public class SeqMapView extends JPanel
 	// A fake menu item, prevents null pointer exceptions in actionPerformed()
 	// for menu items whose real definitions are commented-out in the code
 	private static final JMenuItem empty_menu_item = new JMenuItem("");
-	JMenuItem zoomtoMI = empty_menu_item;
+	//JMenuItem zoomtoMI = empty_menu_item;
 	JMenuItem centerMI = empty_menu_item;
 	JMenuItem selectParentMI = empty_menu_item;
 	JMenuItem slicendiceMI = empty_menu_item;
@@ -347,7 +351,6 @@ public class SeqMapView extends JPanel
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 
-		this.addPopupListener(tier_manager.getContextualPopupListener());
 		
 		TrackView.getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getUserStylesheet());
 
@@ -396,8 +399,8 @@ public class SeqMapView extends JPanel
 
 		centerMI = setUpMenuItem(sym_popup, "Center at zoom stripe");
 
-		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
-		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
+//		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
+//		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
 	}
@@ -1555,19 +1558,35 @@ public class SeqMapView extends JPanel
 		setPopupMenuTitle(sym_info, selected_glyphs);
 
 		popup.add(sym_info);
-		if (!selected_glyphs.isEmpty()) {
-			popup.add(zoomtoMI);
-		}
+//		if (!selected_glyphs.isEmpty()) {
+//			popup.add(zoomtoMI);
+//		}
 		popup.add(centerMI);
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty()) {
 			popup.add(selectParentMI);
 		}
 
-		TierGlyph tglyph = tier_manager.getTierGlyph(nevt);
-		
+				
 		for (ContextualPopupListener listener : popup_listeners) {
-			listener.popupNotify(popup, selected_syms, sym_used_for_title, tglyph);
+			listener.popupNotify(popup, selected_syms, sym_used_for_title);
+		}
+
+		TierGlyph tglyph = tier_manager.getTierGlyph(nevt);
+
+		if (tglyph != null) {
+			GenericFeature feature = tglyph.getAnnotStyle().getFeature();
+			if (feature == null) {
+				//Check if clicked on axis.
+				if (tglyph instanceof TransformTierGlyph) {
+					popup.add(new JMenuItem(GeneralLoadView.getLoadView().getLoadResidueAction()));
+				}
+				return;
+			}
+
+			if (feature.loadStrategy != LoadStrategy.NO_LOAD && feature.loadStrategy != LoadStrategy.GENOME) {
+				popup.add(new JMenuItem(new RefreshAFeature(feature)));
+			}
 		}
 	}
 

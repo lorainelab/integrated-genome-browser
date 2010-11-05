@@ -53,6 +53,7 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.action.LoadSequence;
 import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
@@ -153,7 +154,7 @@ public class SeqMapView extends JPanel
 	private final GlyphEdgeMatcher edge_matcher;
 	private final JPopupMenu sym_popup = new JPopupMenu();
 	private JLabel sym_info;
-	// A fake menu item, prevents null pointer exceptions in actionPerformed()
+	// A fake menu item, prevents null pointer exceptions in loadResidues()
 	// for menu items whose real definitions are commented-out in the code
 	private static final JMenuItem empty_menu_item = new JMenuItem("");
 	//JMenuItem zoomtoMI = empty_menu_item;
@@ -1602,7 +1603,7 @@ public class SeqMapView extends JPanel
 			if (feature == null) {
 				//Check if clicked on axis.
 				if (tglyph instanceof TransformTierGlyph) {
-					popup.add(new JMenuItem(GeneralLoadView.getLoadView().getLoadResidueAction()));
+					popup.add(new JMenuItem(LoadSequence.getPartialAction()));
 				}
 				return;
 			}

@@ -84,16 +84,18 @@ public class SequenceViewer extends Applet
 	private SeqSpan[] seqSpans = null;
 	NeoPanel widg_pan = new NeoPanel();
 
-	public Applet customFormatting(SeqSymmetry residues_sym) throws HeadlessException, NumberFormatException {
+	public Applet customFormatting(SeqSymmetry residues_sym, String seq) throws HeadlessException, NumberFormatException {
 		Color[] okayColors = {Color.black, Color.black};
 		seqview.setStripeColors(okayColors);
 		seqview.setFont(new Font("Arial", Font.BOLD, 14));
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
-		if(residues_sym.getID() != null)
-		addCdsStartEnd(residues_sym);
-		else
+		if (residues_sym.getID() != null) {
+			addCdsStartEnd(residues_sym);
+		} else {
 			mapframe = new Frame("Genomic Sequence");
+			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
+		}
 		mapframe.setLayout(new BorderLayout());
 		setupMenus(mapframe);
 		widg_pan.setLayout(new BorderLayout());
@@ -194,7 +196,6 @@ public class SequenceViewer extends Applet
 			} else if (key.equals("cds min")) {
 				cdsMin = Integer.parseInt(value);
 			}
-			System.out.println(key + "   " + value);
 		}
 		if (seqSpans[0].getStart() < seqSpans[0].getEnd()) {
 			seqview.addOutlineAnnotation(cdsMin - seqSpans[0].getStart(), cdsMin - seqSpans[0].getStart() + 2, Color.blue);
@@ -288,8 +289,8 @@ public class SequenceViewer extends Applet
 
 		}
 
+		final Applet app = customFormatting(residues_sym, seq);
 		seqview.setShow(NeoSeq.COMPLEMENT, showComp);
-		final Applet app = customFormatting(residues_sym);
 		mapframe.addWindowListener(new WindowAdapter() {
 
 			@Override

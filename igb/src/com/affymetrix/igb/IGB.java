@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb;
 
-import com.affymetrix.genoviz.swing.ButtonTabComponent;
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.BorderLayout;
@@ -108,7 +107,7 @@ public final class IGB extends Application
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
 	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
-	
+
 	/**
 	 * Start the program.
 	 */
@@ -120,6 +119,10 @@ public final class IGB extends Application
 
 			// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
 			System.setProperty("swing.aatext", "true");
+
+			// Verify jidesoft license.
+			com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
+				"Integrated Genome Browser", "234awTFNC:1itaJx9pRly1TjmmPuxBT2");
 
 			// Letting the look-and-feel determine the window decorations would
 			// allow exporting the whole frame, including decorations, to an eps file.

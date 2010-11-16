@@ -51,8 +51,8 @@ public class CreateSpeciesDir extends AbstractAction {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
-	
+		String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies().trim();
+
 		if(SELECT_SPECIES.equals(speciesName)){
 			ErrorHandler.errorPanel("Please select a species first");
 			return;

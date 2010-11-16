@@ -92,7 +92,7 @@ public class CreateSpeciesDir extends AbstractAction {
 		//FormatWriter(ContentWriter.class,speciesDir.getAbsolutePath(),gVersions.toArray());
 		
 		for(String gVersion : gVersions){
-			getAllVisbileFeatures(speciesDir.getAbsolutePath(), gVersion);
+			getAllVisbileFeatures(speciesDir.getAbsolutePath(), gVersion.trim());
 		}
 		
 	}

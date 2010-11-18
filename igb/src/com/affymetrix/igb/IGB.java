@@ -122,7 +122,7 @@ public final class IGB extends Application
 
 			// Verify jidesoft license.
 			com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
-				"Integrated Genome Browser", "234awTFNC:1itaJx9pRly1TjmmPuxBT2");
+					"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
 
 			// Letting the look-and-feel determine the window decorations would
 			// allow exporting the whole frame, including decorations, to an eps file.

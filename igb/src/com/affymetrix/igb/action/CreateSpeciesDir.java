@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -87,7 +88,7 @@ public class CreateSpeciesDir extends AbstractAction {
 
 		List<String> gVersions = GeneralLoadUtils.getGenericVersions(speciesName);
 
-		speciesName = speciesName.trim().replaceAll("\\s+", "_");
+		speciesName = SpeciesLookup.getStandardName(speciesName);
 		File speciesDir = GeneralUtils.makeDir(path+speciesName);
 		
 		//Write Contents.txt
@@ -102,13 +103,17 @@ public class CreateSpeciesDir extends AbstractAction {
 	private static void getAllVisbileFeatures(String path, String version){
 
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(version);
+		List<GenericFeature> features = GeneralLoadUtils.getFeatures(group);
+
+		//Don't output empty version
+		if(features.isEmpty())
+			return;
 
 		version = version.trim().replaceAll("\\s+", "_");
 
 		//Create version directory
 		GeneralUtils.makeDir(path + "/" +version);
 
-		List<GenericFeature> features = GeneralLoadUtils.getFeatures(group);
 		List<String[][]> annots = new ArrayList<String[][]>();
 		Set<BioSeq> chromInfo = new HashSet<BioSeq>();
 

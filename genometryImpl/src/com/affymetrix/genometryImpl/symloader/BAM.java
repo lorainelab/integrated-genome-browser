@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import java.io.*;
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,10 +92,7 @@ public final class BAM extends SymLoader {
 				// BAM is file.
 				//indexFile = new File(uri.)
 				File f = new File(uri);
-
-				if(!findIndexFile(uri))
-					createIndexFile(f);
-				
+				if(!findIndexFile(uri)) createIndexFile(f);
 				reader = new SAMFileReader(f);
 				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else if (scheme.startsWith("http")) {
@@ -231,6 +227,26 @@ public final class BAM extends SymLoader {
 
 		return symList;
 	}
+	
+	/**
+	 * Returns a list of symmetries for the entire file, good for loading DAS/2 derived data slices, skips building an index
+	 * @param seq
+	 * @return
+	 */
+	public List<SeqSymmetry> parseAll(BioSeq seq) {		
+		reader = new SAMFileReader(new File(uri));
+		reader.setValidationStringency(ValidationStringency.SILENT);
+		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
+		if (reader != null) {
+			for (final SAMRecord sr: reader){
+				symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
+			}
+		}
+		return symList;
+	}
+	
+	
+	
 
 	/**
 	 * Convert SAMRecord to SymWithProps.
@@ -502,18 +518,26 @@ public final class BAM extends SymLoader {
 			return;
 		}
 		indexfile.deleteOnExit();
-
 		String input = "INPUT=" + bamfile.getAbsolutePath();
 		String output = "OUTPUT=" + indexfile.getAbsolutePath();
 		String overwrite = "OVERWRITE=true";
 		String quiet = "QUIET="+!DEBUG;
+		if (DEBUG) System.out.println("Creating new index file -> "+indexfile);
 		BuildBamIndex buildIndex = new BuildBamIndex();
 		buildIndex.instanceMain(new String[]{input, output, overwrite, quiet});
 	}
 
+	/**Modified to look for both xxx.bai and xxx.bam.bai files in parent directory.*/
 	static private boolean findIndexFile(URI uri) {
-		File f = new File(uri + ".bai");
-		return f.exists();
+		//look for xxx.bam.bai
+		String path = uri.getPath();
+		File f = new File(uri.getPath()+".bai");
+		if (f.exists()) return true;
+		//look for xxx.bai
+		path = path.substring(0, path.length()-3)+"bai";
+		f = new File(path);		
+		if (f.exists()) return true;
+		return false;
 	}
 
 	public String getMimeType() {

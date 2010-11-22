@@ -1115,7 +1115,8 @@ public abstract class ServerUtils {
 			return new SymLoaderInst(uri, featureName, group);
 		}
 		if((extension.equals("sin") || extension.equals("egr")) ||
-				extension.equals("bgr") || extension.equals("useq")){
+				extension.equals("bgr") || extension.equals("useq")
+				|| extension.equals("bar")){
 			return new SymLoaderInstNC(uri, featureName, group);
 		}if((extension.equals("gff3")) || extension.endsWith("gff") ||
 				extension.equals("gtf")){

@@ -738,6 +738,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			System.out.println("GenometryDas2Servlet received GET request: ");
 			System.out.println("   path: " + path_info);
 			System.out.println("   query: " + query);
+			if (query != null) System.out.println("   decoded: "+GeneralUtils.URLDecode(query));
 		}
 		if (path_info == null || path_info.trim().length() == 0 || path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash)) {
 			handleSourcesRequest(request, response, date_init_string);
@@ -745,7 +746,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			handleLoginRequest(request, response);
 		} else if (path_info.endsWith(refresh_query)) {
 			handleRefreshRequest(request, response);
-		} else {
+		} else {		
 			AnnotatedSeqGroup genome = getGenome(path_info);
 			if (genome == null) {
 				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
@@ -1280,7 +1281,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			boolean known_query =
 				splitFeaturesQuery(GeneralUtils.URLDecode(query), formats, types, segments, overlaps, insides, excludes, names, coordinates, links, notes, props);
-
+			
 			if (formats.size() == 1) {
 				output_format = formats.get(0);
 			}			
@@ -1316,8 +1317,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 				handleNameQuery(names, genome, seq, writerclass, response, xbase);
 				return;
-			}
-
+			}		
 
 			// handling one type, one segment, one overlaps, optionally one inside
 			if (types.size() == 1 && // one and only one type
@@ -1345,10 +1345,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				//    which is same as an overlap filter with range = [0, seq.length]
 				//    (therefore any annotation on the seq passes overlap filter)
 				//     then want all getLocationSpan will return bounds of seq as overlap
-
+				
 				overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
 				if (overlap_span != null) {
-
 					Map<String, String> graph_name2dir = genome2graphdirs.get(genome);
 					Map<String, String> graph_name2file = genome2graphfiles.get(genome);
 
@@ -1360,28 +1359,29 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						else {
 							result = null;
 							System.out.println("  ***** Call for a useq file that doesn't exist? Aborting. *****  ");
-						}
+						}						
 						return;
-					}
+					}					
+					
 					//default graph formats, eg bar
 					if ((graph_name2dir.get(query_type) != null) ||
 							(graph_name2file.get(query_type) != null) ||
 							(query_type.endsWith(".bar"))) {
 						handleGraphRequest(output_registry, xbase, response, query_type, overlap_span);
 						return;
-					}
+					}				
 
 					if (insides.size() == 1) {
 						String inside = insides.get(0);
-						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);
+						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);						
 					}
-
 					outseq = overlap_span.getBioSeq();
 
-					if(formats.contains("bam")){
+					if(formats.contains("bam")){					
 						handleBamRequest(query_type, outseq, overlap_span, inside_span, response);
 						return;
 					}
+					
 					/** this is the main call to retrieve symmetries meeting query constraints */
 					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
 				}
@@ -1725,7 +1725,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			BAM bamfile = (BAM) seq.getSymLoader(query_type);
 			response.setContentType(bamfile.getMimeType());
 			bos = new BufferedOutputStream(response.getOutputStream());
-			dos = new DataOutputStream(bos);
+			dos = new DataOutputStream(bos);			
 			bamfile.writeAnnotations(seq, overlap_span.getMin(), overlap_span.getMax(), dos, true);
 			//BedParser bed = new BedParser();
 			//response.setContentType(bamfile.getMimeType());

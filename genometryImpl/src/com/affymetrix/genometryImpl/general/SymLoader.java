@@ -513,6 +513,8 @@ public abstract class SymLoader {
 			File bamfile = GeneralUtils.convertStreamToFile(istr, featureName);
 			bamfile.deleteOnExit();
 			BAM bam = new BAM(bamfile.toURI(),featureName,group);
+			//for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
+			if (uri.getScheme().equals("http")) return bam.parseAll(overlap_span.getBioSeq());
 			return bam.getRegion(overlap_span);
 		}
 

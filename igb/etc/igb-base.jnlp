@@ -17,13 +17,13 @@
 		<jar href="jlfgr-1_0.jar" />
 		<jar href="image4j.jar" />
 		<jar href="commons-codec-1.4.jar" />
-		<jar href="colt.jar"          download="lazy" part="colt" />
-		<jar href="freehep-2.1.1.jar" download="lazy" part="freehep" />
-		<jar href="sam.jar"      download="lazy" part="sam"/>
-		<jar href="picard.jar"      download="lazy" part="picard"/>
-		<jar href="jide-common.jar"      download="lazy" part="jide"/>
-		<jar href="jide-components.jar"      download="lazy" part="jide"/>
-
+		<jar href="colt.jar"				download="lazy" part="colt"		/>
+		<jar href="freehep-2.1.1.jar"		download="lazy" part="freehep"	/>
+		<jar href="sam.jar"					download="lazy" part="sam"		/>
+		<jar href="picard.jar"				download="lazy" part="picard"	/>
+		<jar href="jide-common.jar"			download="lazy" part="jide"		/>
+		<jar href="jide-components.jar"     download="lazy" part="jide"		/>
+		<jar href="jide-grids.jar"			download="lazy" part="jide"		/>
 
 		<property name="apple.laf.useScreenMenuBar" value="true" />
 

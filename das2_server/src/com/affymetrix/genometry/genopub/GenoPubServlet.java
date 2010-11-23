@@ -950,6 +950,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			String chromosomeInfo = request.getParameter("chromosomeInfo");
+
 			String line;
 			int count = 1;
 			if (chromosomeInfo != null && !chromosomeInfo.equals("")) {
@@ -960,7 +961,9 @@ public class GenoPubServlet extends HttpServlet {
 				if (!this.genoPubSecurity.canWrite(genomeVersion)) {
 					throw new InsufficientPermissionException("Insufficient permision to update the genome version.");
 				}
-
+				
+				//This doesn't work on a Mac/Safari because the incoming data has been stripped of it's return character
+				/*
 				BufferedReader reader = new BufferedReader(new StringReader(chromosomeInfo));
 				while ((line = reader.readLine()) != null) {	
 					if ( (line.length() == 0) || line.equals("") || line.startsWith("#"))  { 
@@ -970,7 +973,7 @@ public class GenoPubServlet extends HttpServlet {
 					String name = null;
 					String len = null;
 					try {
-						String[] tokens = line.split("\\s+", 2);
+						String[] tokens = line.split("\\s+");
 						name = tokens[0];
 						len = tokens[1];					  
 					} catch (Exception e) {
@@ -978,18 +981,35 @@ public class GenoPubServlet extends HttpServlet {
 						reportError(res, message);
 						return;
 					}
-
+					
 					Segment s = new Segment();		
 
 					s.setName(name);
 					s.setLength(len != null && !len.equals("") ? new Integer(len.replaceAll("[^0-9]", "")) : null);
 					s.setSortOrder(Integer.valueOf(count));
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
-
 					sess.save(s);
-
+					count++;
+				} */
+				 
+				//work around, need to test on PC with IE and Firefox!
+				
+				//first split on "chr"
+				String[] chrSplit = chromosomeInfo.split("chr");
+				//for each pair split on white space
+				for (int i=0; i<chrSplit.length; i++){
+					String[] nameLength = chrSplit[i].split("\\s+");
+					if (nameLength.length != 2) continue;
+					Segment s = new Segment();
+					s.setName("chr"+nameLength[0]);
+					s.setLength(new Integer (nameLength[1]));
+					s.setSortOrder(Integer.valueOf(count));
+					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
+					sess.save(s);
 					count++;
 				}
+				
+				//upload the data
 				sess.flush();
 			}
 
@@ -2511,7 +2531,6 @@ public class GenoPubServlet extends HttpServlet {
 
 
 	private void handleAnnotationUploadRequest(HttpServletRequest req, HttpServletResponse res) {
-
 		Session sess = null;
 		Integer idAnnotation = null;
 
@@ -2549,6 +2568,7 @@ public class GenoPubServlet extends HttpServlet {
 			Part part;
 			while ((part = mp.readNextPart()) != null) {
 				String name = part.getName();
+System.out.println("\tPartName "+name);				
 				if (part.isParam()) {
 					// it's a parameter part
 					ParamPart paramPart = (ParamPart) part;
@@ -2612,13 +2632,13 @@ public class GenoPubServlet extends HttpServlet {
 							throw new Exception("Unable to create directory " + annotationFileDir);      
 						}      
 					}
-
+System.out.println("\tAnnotation directory "+annotationFileDir);
 					while ((part = mp.readNextPart()) != null) {        
 						if (part.isFile()) {
 							// it's a file part
 							FilePart filePart = (FilePart) part;
 							fileName = filePart.getFileName();
-							
+System.out.println("\tFilePart "+fileName);							
 							//is it a bulk upload? 
 							if (fileName.endsWith("bulkUpload")) {
 								//write temp file

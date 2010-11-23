@@ -148,6 +148,8 @@
 				<include name="hibernate3.jar"/>
 				<include name="image4.jar" /> 		
 				<include name="org.mortbay.jetty.jar"/>
+				<include name="sam.jar" />
+				<include name="picard.jar" />
 			</fileset>
 			<fileset dir="${dist.dir}">
 				<include name="das2server.jar" />

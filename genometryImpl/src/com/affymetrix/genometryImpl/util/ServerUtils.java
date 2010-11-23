@@ -380,6 +380,21 @@ public abstract class ServerUtils {
 				|| isGenoPubGraph(current_file, type_prefix, graph_name2file, genome, annot_id)) {
 			return;
 		}
+		
+		//for bam files
+		String currentFileName = current_file.getName();
+		if(currentFileName.endsWith("bam")){		
+			//String type_name = type_prefix + currentFileName;
+			String type_name = type_prefix;
+			List<AnnotMapElt> annotList = annots_map.get(genome);
+			String annotTypeName = ParserController.getAnnotType(annotList, currentFileName, "bam", type_name);	
+			genome.addType(annotTypeName, annot_id);
+			for (BioSeq originalSeq : genome.getSeqList()) {
+				SymLoader symloader = determineLoader("bam", current_file.toURI(), type_name, genome);				
+				originalSeq.addSymLoader(annotTypeName, symloader);
+			}
+			return;
+		}
 
 		// current originalFile is not a directory, so try and recognize as annotation file
 		indexOrLoadFile(dataroot, current_file, type_prefix, annots_map, genome, annot_id);
@@ -834,7 +849,7 @@ public abstract class ServerUtils {
 					AnnotatedSeqGroup genome,
 					AnnotSecurity annotSecurity) {
 		List<BioSeq> seqList = genome.getSeqList();
-		Map<String,SimpleDas2Type> genome_types = new LinkedHashMap<String,SimpleDas2Type>();
+		Map<String,SimpleDas2Type> genome_types = new LinkedHashMap<String,SimpleDas2Type>();		
 		for (BioSeq aseq : seqList) {
 			for (String type : aseq.getTypeList()) {
 				if (genome_types.get(type) != null) {
@@ -879,9 +894,9 @@ public abstract class ServerUtils {
 	 * @param genome
 	 * @param types_hash
 	 */
-	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
+	public static void getSymloaderTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {		
 		for(BioSeq aseq : genome.getSeqList()){
-			for(String type: aseq.getSymloaderList()){
+			for(String type: aseq.getSymloaderList()){				
 				SymLoader sym = aseq.getSymLoader(type);
 				if(genome_types.containsKey(type))
 					return;
@@ -902,7 +917,7 @@ public abstract class ServerUtils {
 	 */
 	public static void getGraphTypes(
 		String data_root, AnnotatedSeqGroup genome, AnnotSecurity annotSecurity, Map<String, SimpleDas2Type> genome_types) {
-		for (String type : genome.getTypeList()) {
+		for (String type : genome.getTypeList()) {			
 			if (genome_types.containsKey(type) || !isAuthorized(genome, annotSecurity, type)) {
 				continue;
 			}
@@ -912,6 +927,7 @@ public abstract class ServerUtils {
 				if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()) {
 					genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
 				} else {
+					//TODO: need to skip adding xxx.bam.bai files!
 					genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, getProperties(genome, annotSecurity, type)));
 				}
 				continue;
@@ -921,6 +937,8 @@ public abstract class ServerUtils {
 				genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, getProperties(genome, annotSecurity, type)));
 			} else if (annotSecurity.isUseqGraphData(data_root, genome.getID(), type, genome.getAnnotationId(type))) {
 				genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, getProperties(genome, annotSecurity, type)));
+			} else if (annotSecurity.isBamData(data_root, genome.getID(), type, genome.getAnnotationId(type))) {
+				genome_types.put(type, new SimpleDas2Type(genome.getID(), BAM.pref_list, getProperties(genome, annotSecurity, type)));
 			} else {
 				Logger.getLogger(ServerUtils.class.getName()).log(
 						Level.WARNING, "Non-graph annotation {0} encountered, but does not match known entry.  This annotation will not show in the types request.", type);

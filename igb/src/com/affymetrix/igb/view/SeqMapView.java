@@ -163,7 +163,9 @@ public class SeqMapView extends JPanel
 	JMenuItem centerMI = empty_menu_item;
 	JMenuItem selectParentMI = empty_menu_item;
 	JMenuItem slicendiceMI = empty_menu_item;
-	JMenuItem viewinSequenceViewer = empty_menu_item;
+	JMenu seqViewerOptions = new JMenu("view sequence");
+	JMenuItem viewFeatureinSequenceViewer = empty_menu_item;
+	JMenuItem viewParentinSequenceViewer = empty_menu_item;
 	// for right-click on background
 	private final SeqMapViewActionListener action_listener;
 	private final SeqMapViewMouseListener mouse_listener;
@@ -407,7 +409,10 @@ public class SeqMapView extends JPanel
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
-		viewinSequenceViewer = setUpMenuItem(sym_popup, "View Sequence in Sequence Viewer");
+		viewFeatureinSequenceViewer = new JMenuItem("View selected feature in Sequence Viewer");
+		viewParentinSequenceViewer = new JMenuItem("View sequence for parent in sequence Viewer");
+		seqViewerOptions.add(viewFeatureinSequenceViewer);
+		seqViewerOptions.add(viewParentinSequenceViewer);
 	}
 
 	public final TransformTierGlyph getAxisTier() {
@@ -1419,7 +1424,7 @@ public class SeqMapView extends JPanel
 		seqmap.updateWidget();
 		postSelections();
 	}
-	void openSequenceViewer(){
+	void openSeqViewer(){
 		SeqSymmetry residues_sym = IGB.getSingleton().getMapView().copySelectedResidues(true);
 		if (residues_sym != null) {
 			SequenceViewer neoSeqDemo = new SequenceViewer();
@@ -1601,7 +1606,9 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty()) {
 			popup.add(selectParentMI);
-			popup.add(viewinSequenceViewer);
+			popup.add(seqViewerOptions);
+			seqViewerOptions.add(viewFeatureinSequenceViewer);
+			seqViewerOptions.add(viewParentinSequenceViewer);
 		}
 				
 		for (ContextualPopupListener listener : popup_listeners) {

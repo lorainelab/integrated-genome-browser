@@ -16,6 +16,8 @@ public class Constants {
 	static final String[] ANNOTATION_FILE_EXTENSIONS = new String[] 
 	                                                               {
 		".bar",
+		".bam",
+		".bai",
 		".bed",
 		".bgn",
 		".bgr",

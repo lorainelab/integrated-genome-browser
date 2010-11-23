@@ -51,6 +51,16 @@ public interface AnnotSecurity {
 	public boolean isUseqGraphData(String data_root, String genomeVersionName, String annotationName, Object annotationId);
 	
 	/**
+	 * Determine if an annotation is bam data
+	 * 
+	 * @param data_root
+	 * @param genomeVersionName The name of the name version
+	 * @param annotationId The id of the annotation
+	 * @return true if this annotation is bam data
+	 */
+	public boolean isBamData(String data_root, String genomeVersionName, String annotationName, Object annotationId);
+	
+	/**
 	 * Returns the sequence directory for a given genome version
 	 * 
 	 * @param data_root

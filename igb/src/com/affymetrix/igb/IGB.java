@@ -95,7 +95,6 @@ public final class IGB extends Application
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JCheckBoxMenuItem toggle_edge_matching_item;
 	private JMenuItem move_tab_to_window_item;
 	private JMenuItem move_tabbed_panel_to_window_item;
 	private SeqMapView map_view;
@@ -359,9 +358,6 @@ public final class IGB extends Application
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 
-		toggle_edge_matching_item = new JCheckBoxMenuItem(BUNDLE.getString("toggleEdgeMatching"));
-		toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
-		toggle_edge_matching_item.setState(map_view.getEdgeMatching());
 		move_tab_to_window_item = new JMenuItem(BUNDLE.getString("openCurrentTabInNewWindow"), KeyEvent.VK_O);
 		move_tabbed_panel_to_window_item = new JMenuItem(BUNDLE.getString("openTabbedPanesInNewWindow"), KeyEvent.VK_P);
 
@@ -379,7 +375,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new DocumentationAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
 
-		toggle_edge_matching_item.addActionListener(this);
 
 		move_tab_to_window_item.addActionListener(this);
 		move_tabbed_panel_to_window_item.addActionListener(this);
@@ -511,13 +506,17 @@ public final class IGB extends Application
 		view_menu.add(strands_menu);
 		MenuUtil.addToMenu(view_menu, new JMenuItem(AutoScrollAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new UCSCViewAction()));
-		MenuUtil.addToMenu(view_menu, toggle_edge_matching_item);
+		view_menu.addSeparator();
+		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleEdgeMatchingAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new AdjustEdgeMatchAction()));
+		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new ClampViewAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new UnclampViewAction()));
+		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ShrinkWrapAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleToolTip.getAction()));
+		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
 		MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
 	}
@@ -603,10 +602,7 @@ public final class IGB extends Application
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		if (src == toggle_edge_matching_item) {
-			map_view.setEdgeMatching(!map_view.getEdgeMatching());
-			toggle_edge_matching_item.setState(map_view.getEdgeMatching());
-		} else if (src == move_tab_to_window_item) {
+		if (src == move_tab_to_window_item) {
 			openTabInNewWindow(tab_pane);
 		} else if (src == move_tabbed_panel_to_window_item) {
 			openTabbedPanelInNewWindow(tab_pane);

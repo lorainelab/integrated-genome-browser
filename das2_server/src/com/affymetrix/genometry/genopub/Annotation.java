@@ -334,6 +334,26 @@ public class Annotation implements Serializable, Owned {
 	    }
 	    return isExtension;
 	}
+	
+	public boolean isBamData(String data_root) throws IOException {
+		boolean isExtension = false;
+		String filePath = getDirectory(data_root);
+	    File dir = new File(filePath);
+	    
+	    if (dir.exists()) {
+		    String[] childFileNames = dir.list();
+		    if (childFileNames != null) {
+				for (int x = 0; x < childFileNames.length; x++) {
+					if (childFileNames[x].endsWith("bam")) {
+						isExtension = true;
+						break;
+					}
+				}
+		    	
+		    }
+	    }
+	    return isExtension;
+	}
 
 	public boolean isUseqGraphData(String data_root) throws IOException {
 		boolean isExtension = false;
@@ -378,12 +398,22 @@ public class Annotation implements Serializable, Owned {
 		String filePath =  data_root + this.getFileName();
 		File file = new File(filePath);
 		
-		// If there is only one annotation file in the directory, append the file name to the file path.
-		if (file != null && file.list() != null && file.list().length == 1) {
+		File[] files = file.listFiles();
+		
+		//one file return file
+		if (files.length == 1){
 			String[] childFileNames = file.list();
 			filePath += "/" + childFileNames[0];
 		}
-		
+		//two file possibly bam
+		else if (files.length == 2){
+			for (int i=0; i< files.length; i++){
+				if (files[i].getName().endsWith("bam")) {
+					filePath += "/" + files[i].getName();
+					break;
+				}
+			}
+		}
 		return filePath;
 		
 	}

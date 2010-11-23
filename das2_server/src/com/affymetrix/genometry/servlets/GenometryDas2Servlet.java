@@ -303,7 +303,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			initFormats(output_registry);
 
-
 			ServerUtils.loadSynonyms(synonym_file, SynonymLookup.getDefaultLookup());
 			ServerUtils.loadSynonyms(chr_synonym_file, SynonymLookup.getChromosomeLookup());
 
@@ -553,7 +552,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					for (QualifiedAnnotation qa : qualifiedAnnotations) {
 
 						String fileName = qa.getAnnotation().getQualifiedFileName(genometry_server_dir);    
-						String typePrefix = qa.getTypePrefix();     
+						String typePrefix = qa.getTypePrefix(); 
+						
 						File file = new File(fileName);
 						if (file.exists()) {
 							Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
@@ -573,12 +573,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 											Level.WARNING, "Bypassing annotation {0}.  No files associated with this annotation.", typePrefix);
 								} else {
 									Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
-											Level.WARNING, "Bypassing annotation {0} for file {1}. Only the bar and useq format permit multiple annotation files.", new Object[]{typePrefix, fileName});
+											Level.WARNING, "Bypassing annotation {0} for file {1}. Only the bar format permits multiple annotation files.", new Object[]{typePrefix, fileName});
 								}
 
 
 							} else {
-
 								ServerUtils.loadGenoPubAnnotsFromFile(genometry_server_dir,
 										file, 
 										genomeVersion, 
@@ -629,7 +628,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String[] childFileNames = dir.list();
 			if (childFileNames != null) {
 				for (int x = 0; x < childFileNames.length; x++) {
-					if (childFileNames[x].endsWith("bar") || USeqUtilities.USEQ_ARCHIVE.matcher(childFileNames[x]).matches()) {
+					if (childFileNames[x].endsWith("bar")) {
 						return true;
 					}
 				}
@@ -999,21 +998,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		response.setContentType(TYPES_CONTENT_TYPE);
 
-		Map<String, SimpleDas2Type> types_hash =
-				ServerUtils.getAnnotationTypes(
-				data_root,
-				genome,
-				this.getGenoPubSecurity(request));
-
-		ServerUtils.getSymloaderTypes(genome,
-				this.getGenoPubSecurity(request),
-				types_hash);
-
-		ServerUtils.getGraphTypes(
-				data_root,
-				genome,
-				this.getGenoPubSecurity(request),
-				types_hash);
+		Map<String, SimpleDas2Type> types_hash = ServerUtils.getAnnotationTypes(data_root,genome,this.getGenoPubSecurity(request));
+		ServerUtils.getSymloaderTypes(genome, this.getGenoPubSecurity(request), types_hash);
+		ServerUtils.getGraphTypes(data_root, genome, this.getGenoPubSecurity(request), types_hash);
 
 		ByteArrayOutputStream buf = null;
 		ByteArrayInputStream bais = null;
@@ -1334,7 +1321,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					seqid = seqid.substring(sindex + 1);
 				}
 				String type_full_uri = types.get(0);
-				query_type = getInternalType(type_full_uri, genome);
+				query_type = getInternalType(type_full_uri, genome);				
 
 				String overlap = null;
 				if (overlaps.size() == 1) {
@@ -1361,7 +1348,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 							System.out.println("  ***** Call for a useq file that doesn't exist? Aborting. *****  ");
 						}						
 						return;
-					}					
+					}
+					
+					if (insides.size() == 1) {
+						String inside = insides.get(0);
+						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);						
+					}
+					outseq = overlap_span.getBioSeq();
+
+					//bam files
+					if(formats.contains("bam")){					
+						handleBamRequest(query_type, outseq, overlap_span, inside_span, response);
+						return;
+					}
 					
 					//default graph formats, eg bar
 					if ((graph_name2dir.get(query_type) != null) ||
@@ -1371,17 +1370,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						return;
 					}				
 
-					if (insides.size() == 1) {
-						String inside = insides.get(0);
-						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);						
-					}
-					outseq = overlap_span.getBioSeq();
-
-					if(formats.contains("bam")){					
-						handleBamRequest(query_type, outseq, overlap_span, inside_span, response);
-						return;
-					}
-					
 					/** this is the main call to retrieve symmetries meeting query constraints */
 					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
 				}

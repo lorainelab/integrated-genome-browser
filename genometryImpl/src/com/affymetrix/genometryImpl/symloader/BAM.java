@@ -48,7 +48,7 @@ import net.sf.samtools.util.SequenceUtil;
  */
 public final class BAM extends SymLoader {
 
-	private static List<String> pref_list = new ArrayList<String>();
+	public static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bam");
 	}
@@ -459,6 +459,13 @@ public final class BAM extends SymLoader {
 		File tempBAMFile = null;
 		try {
 			iter = reader.query(seq.getID(), min, max, false);
+			//check for any records
+			if (iter.hasNext() == false) {
+				Logger.getLogger(BAM.class.getName()).log(Level.INFO, "No overlapping bam alignments.", "Min-Max: "+min+"-"+max);
+				return;
+			}
+			//write out records to file
+			//TODO: is this hack necessary with updated picard.jar?
 			reader.getFileHeader().setSortOrder(net.sf.samtools.SAMFileHeader.SortOrder.coordinate); // A hack to prevent error caused by picard tool.
 			if (iter != null) {
 				net.sf.samtools.SAMFileWriterFactory sfwf = new net.sf.samtools.SAMFileWriterFactory();
@@ -522,7 +529,7 @@ public final class BAM extends SymLoader {
 		String output = "OUTPUT=" + indexfile.getAbsolutePath();
 		String overwrite = "OVERWRITE=true";
 		String quiet = "QUIET="+!DEBUG;
-		if (DEBUG) System.out.println("Creating new index file -> "+indexfile);
+		if (DEBUG) System.out.println("Creating new bam index file -> "+indexfile);
 		BuildBamIndex buildIndex = new BuildBamIndex();
 		buildIndex.instanceMain(new String[]{input, output, overwrite, quiet});
 	}

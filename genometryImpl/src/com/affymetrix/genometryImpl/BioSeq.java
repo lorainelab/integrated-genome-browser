@@ -389,7 +389,7 @@ public final class BioSeq implements SearchableCharIterator {
 	public final SymLoader getSymLoader(String type){
 		if(type_id2symloader == null) {
 			return null;
-		}
+		}		
 		return type_id2symloader.get(type);
 	}
 

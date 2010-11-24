@@ -998,6 +998,29 @@ public class SeqMapView extends JPanel
 			}
 		}
 	}
+	public void openSequenceViewer(Boolean isGenomicRequest){
+			SeqSymmetry residues_sym = this.copySelectedResidues(true);
+		if (residues_sym == null) {
+			return;
+		}
+		else if(isGenomicRequest && residues_sym.getID() == null){
+			SequenceViewer neoSeqDemo = new SequenceViewer();
+			neoSeqDemo.tempChange(residues_sym);
+			return;
+		}
+		else if(isGenomicRequest && residues_sym.getID() != null){
+
+				ErrorHandler.errorPanel("Can't copy to clipboard",
+							"Please select the genomic sequence");
+				return;
+		}
+		else if(!isGenomicRequest){
+			SequenceViewer neoSeqDemo = new SequenceViewer();
+			neoSeqDemo.tempChange(residues_sym);
+			return;
+		}
+
+	}
 
 	/**
 	 * Copies residues of selection to clipboard
@@ -1429,13 +1452,6 @@ public class SeqMapView extends JPanel
 		}
 		seqmap.updateWidget();
 		postSelections();
-	}
-	void openSeqViewer(){
-		SeqSymmetry residues_sym = IGB.getSingleton().getMapView().copySelectedResidues(true);
-		if (residues_sym != null) {
-			SequenceViewer neoSeqDemo = new SequenceViewer();
-			neoSeqDemo.tempChange(residues_sym);
-		}
 	}
 
 	/** Find the top-most parent glyphs of the given glyphs.

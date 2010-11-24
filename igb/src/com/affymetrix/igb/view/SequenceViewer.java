@@ -89,6 +89,7 @@ public class SequenceViewer extends Applet
 	private boolean going = false;
 	private Color nicePaleBlue = new Color(180, 250, 250);
 	private SeqSpan[] seqSpans = null;
+	private Boolean isGenomic = false;
 
 	public Applet customFormatting(SeqSymmetry residues_sym, String seq) throws HeadlessException, NumberFormatException {
 		Color[] okayColors = {Color.black, Color.black};
@@ -97,6 +98,7 @@ public class SequenceViewer extends Applet
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
 		if (residues_sym.getID() != null) {
+			isGenomic = true;
 			addCdsStartEnd(residues_sym);
 		} else {
 			mapframe = new JFrame("Genomic Sequence");

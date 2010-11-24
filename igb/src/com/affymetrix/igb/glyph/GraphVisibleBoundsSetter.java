@@ -176,6 +176,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		//perP.setBorder(new TitledBorder("By Percentile"));
 
 		JPanel textP2 = new JPanel(new BorderLayout());
+		textP2.setMaximumSize(new Dimension(1500,tf_max_ypix));
 		JPanel slideP2 = new JPanel();
 		slideP2.setLayout(new BoxLayout(slideP2, BoxLayout.X_AXIS));
 		textP2.add(min_valT,BorderLayout.LINE_START);
@@ -188,6 +189,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		valP.add(textP2);
 
 		JPanel textP = new JPanel(new BorderLayout());
+		textP.setMaximumSize(new Dimension(1500,tf_max_ypix));
 		JPanel slideP = new JPanel();
 		slideP.setLayout(new BoxLayout(slideP, BoxLayout.X_AXIS));
 		textP.add(min_perT,BorderLayout.LINE_START);

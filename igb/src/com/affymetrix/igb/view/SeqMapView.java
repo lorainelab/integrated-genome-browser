@@ -409,10 +409,12 @@ public class SeqMapView extends JPanel
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
-		viewFeatureinSequenceViewer = new JMenuItem("View selected feature in Sequence Viewer");
-		viewParentinSequenceViewer = new JMenuItem("View sequence for parent in sequence Viewer");
-		seqViewerOptions.add(viewFeatureinSequenceViewer);
-		seqViewerOptions.add(viewParentinSequenceViewer);
+		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "View selected feature in Sequence Viewer");
+		viewParentinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "View sequence for parent in sequence Viewer");
+//		viewFeatureinSequenceViewer = new JMenuItem("View selected feature in Sequence Viewer");
+//		viewParentinSequenceViewer = new JMenuItem("View sequence for parent in sequence Viewer");
+//		seqViewerOptions.add(viewFeatureinSequenceViewer);
+//		seqViewerOptions.add(viewParentinSequenceViewer);
 	}
 
 	public final TransformTierGlyph getAxisTier() {
@@ -1364,6 +1366,10 @@ public class SeqMapView extends JPanel
 	}
 
 	private JMenuItem setUpMenuItem(JPopupMenu menu, String action_command) {
+		return setUpMenuItem((Container) menu, action_command, action_listener);
+	}
+
+	private JMenuItem setUpMenuItemDuplicate(JMenu menu, String action_command){
 		return setUpMenuItem((Container) menu, action_command, action_listener);
 	}
 

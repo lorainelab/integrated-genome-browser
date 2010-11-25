@@ -550,11 +550,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 					// Load annotations for the genome version
 					for (QualifiedAnnotation qa : qualifiedAnnotations) {
-
+						
 						String fileName = qa.getAnnotation().getQualifiedFileName(genometry_server_dir);    
 						String typePrefix = qa.getTypePrefix(); 
 						
-						File file = new File(fileName);
+						File file = new File(fileName);					
+						
 						if (file.exists()) {
 							Logger.getLogger(GenometryDas2Servlet.class.getName()).log(
 									Level.FINE, "Annotation type = {0}\t{1}", new Object[]{typePrefix != null ? typePrefix : "", fileName != null ? fileName : ""});
@@ -1357,7 +1358,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					outseq = overlap_span.getBioSeq();
 
 					//bam files
-					if(formats.contains("bam")){					
+					if(formats.contains("bam")){	
 						handleBamRequest(query_type, outseq, overlap_span, inside_span, response);
 						return;
 					}

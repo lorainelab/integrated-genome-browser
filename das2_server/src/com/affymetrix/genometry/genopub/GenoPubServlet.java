@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+//import net.sf.samtools.*;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.dom4j.Document;
@@ -62,7 +64,8 @@ public class GenoPubServlet extends HttpServlet {
 	private static final int ERROR_CODE_INCORRECT_FILENAME        = 903;
 	private static final int ERROR_CODE_INSUFFICIENT_PERMISSIONS  = 904;
 	private static final int ERROR_CODE_FILE_TOO_BIG              = 905;
-	
+	private static final int ERROR_CODE_MALFORMED_BAM_FILE        = 906;
+
 	private static final String SESSION_DOWNLOAD_KEYS              = "genopubDownloadKeys";
 
 	public static final String SECURITY_REQUEST                   = "security";
@@ -116,7 +119,7 @@ public class GenoPubServlet extends HttpServlet {
 			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() GenoPubServlet, aborting!");
 			throw new ServletException("FAILED " + this.getClass().getName() + ".init(), aborting!");
 		}
-		
+
 	}
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -589,7 +592,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	
+
 	private void handleGenomeVersionRequest(HttpServletRequest request, HttpServletResponse res) {
 		Session sess = null;
 
@@ -656,7 +659,7 @@ public class GenoPubServlet extends HttpServlet {
 			GenomeVersion genomeVersion = new GenomeVersion();
 
 			Integer idOrganism = Util.getIntegerParameter(request, "idOrganism");
-			
+
 			genomeVersion.setIdOrganism(idOrganism);
 			genomeVersion.setName(request.getParameter("name"));
 			genomeVersion.setBuildDate(Util.getDateParameter(request, "buildDate"));
@@ -961,7 +964,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (!this.genoPubSecurity.canWrite(genomeVersion)) {
 					throw new InsufficientPermissionException("Insufficient permision to update the genome version.");
 				}
-				
+
 				//This doesn't work on a Mac/Safari because the incoming data has been stripped of it's return character
 				/*
 				BufferedReader reader = new BufferedReader(new StringReader(chromosomeInfo));
@@ -981,7 +984,7 @@ public class GenoPubServlet extends HttpServlet {
 						reportError(res, message);
 						return;
 					}
-					
+
 					Segment s = new Segment();		
 
 					s.setName(name);
@@ -991,9 +994,9 @@ public class GenoPubServlet extends HttpServlet {
 					sess.save(s);
 					count++;
 				} */
-				 
+
 				//work around, need to test on PC with IE and Firefox!
-				
+
 				//first split on "chr"
 				String[] chrSplit = chromosomeInfo.split("chr");
 				//for each pair split on white space
@@ -1008,7 +1011,7 @@ public class GenoPubServlet extends HttpServlet {
 					sess.save(s);
 					count++;
 				}
-				
+
 				//upload the data
 				sess.flush();
 			}
@@ -1124,7 +1127,7 @@ public class GenoPubServlet extends HttpServlet {
 			} 
 			if (genomeVersion != null) {
 				if (this.genoPubSecurity.canWrite(genomeVersion)) {
-					
+
 					// Make sure that the data root dir exists
 					if (!new File(genometry_genopub_dir).exists()) {
 						boolean success = (new File(genometry_genopub_dir)).mkdir();
@@ -1249,7 +1252,7 @@ public class GenoPubServlet extends HttpServlet {
 			} 
 
 
-			
+
 			// Make sure that name doesn't have forward slashes (/).
 			String name = request.getParameter("name");
 			if (name.contains("/")) {
@@ -1334,8 +1337,8 @@ public class GenoPubServlet extends HttpServlet {
 							DictionaryHelper.getInstance(sess).getUserGroupName(annotationGrouping.getParentAnnotationGrouping().getIdUserGroup()) + "'");
 				}
 			} 
-			
-			
+
+
 			// Make sure that name doesn't have forward slashes (/).
 			String name = request.getParameter("name");
 			if (name.contains("/")) {
@@ -1637,13 +1640,13 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			String name = request.getParameter("name");
-			
+
 			// Make sure that name doesn't have forward slashes (/).
 			if (name.contains("/")) {
 				throw new InvalidNameException("The annotation name cannnot contain any / characters.");
 			}
-			
-			
+
+
 			String codeVisibility = request.getParameter("codeVisibility");
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
@@ -1793,8 +1796,8 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("For private annotations, the group must be specified.");
 				}
 			}
-			
-			
+
+
 			// Make sure that name doesn't have forward slashes (/).
 			String name = request.getParameter("name");
 			if (name.contains("/")) {
@@ -1982,7 +1985,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 	@SuppressWarnings("unchecked")
-    private void handleAnnotationDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	private void handleAnnotationDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
 
@@ -2008,24 +2011,24 @@ public class GenoPubServlet extends HttpServlet {
 					path += "/";
 				}
 				String typeName = path + annotation.getName();
-		
+
 				UnloadAnnotation unload = new UnloadAnnotation();
 				unload.setTypeName(typeName);
 				unload.setIdUser(this.genoPubSecurity.getIdUser());
 				unload.setIdGenomeVersion(annotation.getIdGenomeVersion());
-				
+
 				sess.save(unload);
 			}
-		
+
 
 			// remove annotation files
 			annotation.removeFiles(genometry_genopub_dir);
 
 			// delete database object
 			sess.delete(annotation);
-			
+
 			sess.flush();
-			
+
 
 			tx.commit();
 
@@ -2094,14 +2097,14 @@ public class GenoPubServlet extends HttpServlet {
 				// Otherwise, find the annotation grouping passed in as a request parameter.
 				annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
 			}
-			
+
 			// Create a pending unload of the annotation
 			String typeName = annotationGrouping.getQualifiedTypeName() + "/" + annotation.getName();
 			UnloadAnnotation unload = new UnloadAnnotation();
 			unload.setTypeName(typeName);
 			unload.setIdUser(this.genoPubSecurity.getIdUser());
 			sess.save(unload);
-			
+
 
 			// Remove the annotation grouping the annotation was in
 			// by adding back the annotations to the annotation grouping, 
@@ -2568,7 +2571,7 @@ public class GenoPubServlet extends HttpServlet {
 			Part part;
 			while ((part = mp.readNextPart()) != null) {
 				String name = part.getName();
-System.out.println("\tPartName "+name);				
+				System.out.println("\tPartName "+name);				
 				if (part.isParam()) {
 					// it's a parameter part
 					ParamPart paramPart = (ParamPart) part;
@@ -2600,7 +2603,7 @@ System.out.println("\tPartName "+name);
 
 			}
 
-			
+
 
 			if (idAnnotation != null) {				
 				annotation = (Annotation)sess.get(Annotation.class, idAnnotation);
@@ -2632,13 +2635,13 @@ System.out.println("\tPartName "+name);
 							throw new Exception("Unable to create directory " + annotationFileDir);      
 						}      
 					}
-System.out.println("\tAnnotation directory "+annotationFileDir);
+					System.out.println("\tAnnotation directory "+annotationFileDir);
 					while ((part = mp.readNextPart()) != null) {        
 						if (part.isFile()) {
 							// it's a file part
 							FilePart filePart = (FilePart) part;
 							fileName = filePart.getFileName();
-System.out.println("\tFilePart "+fileName);							
+							System.out.println("\tFilePart "+fileName);							
 							//is it a bulk upload? 
 							if (fileName.endsWith("bulkUpload")) {
 								//write temp file
@@ -2669,7 +2672,7 @@ System.out.println("\tFilePart "+fileName);
 									throw new IncorrectFileNameException(message);
 								}
 							}
-							
+
 							if (fileName != null) {
 								// the part actually contained a file
 								File file = new File (annotationFileDir, fileName);
@@ -2680,7 +2683,13 @@ System.out.println("\tFilePart "+fileName);
 										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + " during bulk upload.");
 									}
 									throw new FileTooBigException("Aborting upload, text formatted annotation file '" + annotation.getName() + " exceeds the maximum allowed size ("+
-											Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES+" lines). Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form.");
+											Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES+" lines). Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form (xxx.bar).");
+								}
+								// bam file? check if it is sorted and can be read
+								if (fileName.toUpperCase().endsWith(".BAM")) {
+									//TODO: Need Tony's help to get this to build and recognize the sam.jar and picard.jar 's
+									//String error = checkBamFile(file);
+									//if (error != null ) throw new MalformedBamFileException(error);
 								}
 							}
 
@@ -2697,13 +2706,18 @@ System.out.println("\tFilePart "+fileName);
 
 			this.reportSuccess(res, "idAnnotation", annotation.getIdAnnotation());
 
-
+		} catch (MalformedBamFileException e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+			if (tx != null) {
+				tx.rollback();
+			}
+			this.reportError(res, e.getMessage(), ERROR_CODE_MALFORMED_BAM_FILE);
 		} catch (InsufficientPermissionException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			if (tx != null) {
 				tx.rollback();
 			}
-			this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
+			this.reportError(res, e.getMessage(), ERROR_CODE_INSUFFICIENT_PERMISSIONS);
 		}  catch (IncorrectFileNameException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			if (tx != null) {
@@ -2738,23 +2752,48 @@ System.out.println("\tFilePart "+fileName);
 
 
 	}
+	
+	/**Does some minimal error checking on a bam alignment file.
+	 * @return null if no problems, otherwise an error.*/
+	//TODO: need to get Tony's help here, won't build with ant
+	/*public static String checkBamFile(File bamFile) {
+		String message = null;
+		SAMFileReader reader = null;
+		try {
+			reader = new SAMFileReader(bamFile);
+			//check sort order
+			SAMFileHeader h = reader.getFileHeader();
+			if (h.getSortOrder().compareTo(SAMFileHeader.SortOrder.coordinate) !=0) throw new Exception("Your bam file doesn't appear to be sorted by coordinate."); 
+			//read an alignment
+			SAMRecordIterator it = reader.iterator();
+			if (it.hasNext()) it.next();
+			//clean up
+			reader.close();
+		} catch (Exception e){
+			message = "Aborting bam file upload for '"+bamFile.getName() +"'. Use the Picard tools " +
+			"(http://picard.sourceforge.net) to sort by coordinate, generate bam index files (xxx.bam.bai), and validate both before uploading. "+e.getMessage();
+		} finally {
+			if (reader != null) reader.close();
+		}
+		return message;
+	}*/
 
 	/**Reads in a tab delimited file (name, fullPathFileName, summary, description) describing new Annotations to be created using a sourceAnnotation as a template.
 	 * @author davidnix*/
 	private void uploadBulkAnnotations(Session sess, File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping defaultAnnotationGrouping, HttpServletResponse res) 
-	   throws IOException, InsufficientPermissionException {
+	throws IOException, InsufficientPermissionException {
 
 		BufferedReader in = new BufferedReader (new FileReader(spreadSheet));
 		String line;
 		Pattern tab = Pattern.compile("([^\\t]+)\\t([^\\t]+)\\t([^\\t]+)\\t(.+)", Pattern.DOTALL);
-		
+
 		//for each line create a new annotation
 		while ((line = in.readLine()) != null){
 			line = line.trim();
 			if (line.length() == 0 || line.startsWith("#") || line.startsWith("Name")) {
 				continue;
 			}
-			
+
 			//parse name, fileName, summary, description
 			Matcher mat = tab.matcher(line);
 			if (mat.matches() == false) { 
@@ -2770,7 +2809,7 @@ System.out.println("\tFilePart "+fileName);
 			}
 			String summary = mat.group(3).trim();
 			String description = mat.group(4).trim();
-			
+
 			// If the annotation name is preceded by a directory structure, parse
 			// out actual name and create/find the annotation groupings represented
 			// the the directory structure embedded in the name;
@@ -2783,16 +2822,16 @@ System.out.println("\tFilePart "+fileName);
 				annotationName = name;
 				ag = defaultAnnotationGrouping;
 			}
-			
-			
+
+
 			//make new annotation cloning current annotation
 			addNewAnnotation(sess, sourceAnnotation, annotationName, summary, description, dataFile, ag, res);
-			
+
 		}
 		in.close();
-		
+
 	}
-	
+
 	/**Fetches the AnnotationGrouping from a particular request. For bulk uploading.
 	 * @author davidnix*/
 	private AnnotationGrouping getDefaultAnnotationGrouping(Annotation sourceAnnot, Session sess, Integer idAnnotationGrouping) throws Exception{		
@@ -2819,7 +2858,7 @@ System.out.println("\tFilePart "+fileName);
 	 */
 	private AnnotationGrouping getSpecifiedAnnotationGrouping(Session sess, AnnotationGrouping annotationGroupingBase, String name){
 		AnnotationGrouping agNext = annotationGroupingBase;
-		
+
 		String[] tokens = name.split("/");
 		AnnotationGrouping agCurrent = annotationGroupingBase;
 		for (int x = 0; x < tokens.length; x++) {
@@ -2832,7 +2871,7 @@ System.out.println("\tFilePart "+fileName);
 					break;
 				}
 			}
-			
+
 			if (agNext == null) {
 				agNext = new AnnotationGrouping();
 				agNext.setName(agName);
@@ -2845,18 +2884,18 @@ System.out.println("\tFilePart "+fileName);
 				sess.refresh(agCurrent);
 			}
 			agCurrent = agNext;
-			
-			
+
+
 		}
-		
+
 		return agNext;		
 	}
-	
-	
+
+
 	/**Adds an new Annotation cloning in part the source annotation. For bulk uploading.
 	 * @author davidnix*/
 	private void addNewAnnotation(Session sess, Annotation sourceAnnot, String name, String summary, String description, File dataFile, AnnotationGrouping ag, HttpServletResponse res) 
-	    throws IOException, InsufficientPermissionException {		
+	throws IOException, InsufficientPermissionException {		
 
 
 		// Make sure the user can write this annotation 
@@ -2913,33 +2952,33 @@ System.out.println("\tFilePart "+fileName);
 		if (dataFile.renameTo(moved) == false) {
 			throw new IOException("Failed to move the dataFile '" +dataFile + "' to its archive location  '" + moved +"' . Aborting bulk uploading.");
 		}
-			
-		
+
+
 	}
 
-	
+
 
 	private void handleAnnotationEstimateDownloadSizeRequest(HttpServletRequest req, HttpServletResponse res) {
 		Session sess = null;
 
 		// Get the request parameter with the keys;
 		String keys = req.getParameter("keys");
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
-	        long estimatedDownloadSize = 0;
-			
+			long estimatedDownloadSize = 0;
+
 			String[] keyTokens = keys.split(":");
 			for(int x = 0; x < keyTokens.length; x++) {
 				String key = keyTokens[x];
-				
+
 				String[] idTokens = key.split(",");
 				if (idTokens.length != 2) {
 					throw new Exception("Invalid parameter format " + key + " encountered. Expected 99,99 for idAnnotation and idAnnotationGrouping");
 				}
 				Integer idAnnotation = new Integer(idTokens[0]);
-				
+
 				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
 				for (File file : annotation.getFiles(this.genometry_genopub_dir)) {
 					double compressionRatio = 1;
@@ -2979,7 +3018,7 @@ System.out.println("\tFilePart "+fileName);
 			// Store download keys in session b/c Flex FileReference cannnot
 			// handle long request parameter
 			req.getSession().setAttribute(SESSION_DOWNLOAD_KEYS, keys);
-			
+
 			this.reportSuccess(res, "size", Long.valueOf(estimatedDownloadSize).toString());
 		} catch (Exception e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.toString());
@@ -2991,7 +3030,7 @@ System.out.println("\tFilePart "+fileName);
 			}
 		}
 	}
-	
+
 
 
 	private void handleAnnotationDownloadRequest(HttpServletRequest req, HttpServletResponse res) {
@@ -3001,55 +3040,55 @@ System.out.println("\tFilePart "+fileName);
 		// Can't use request parameter here do to Flex FileReference url properties
 		// size restriction.
 		String keys = (String)req.getSession().getAttribute(SESSION_DOWNLOAD_KEYS);
-		
+
 		// Now empty out the session attribute
 		req.getSession().setAttribute(SESSION_DOWNLOAD_KEYS, "");
-	    
-	    // Get the parameter that tells us if we are handling a large download.
+
+		// Get the parameter that tells us if we are handling a large download.
 		ArchiveHelper archiveHelper = new ArchiveHelper();
 		if (req.getParameter("mode") != null && !req.getParameter("mode").equals("")) {
-	      archiveHelper.setMode(req.getParameter("mode"));
-	    }
-		
+			archiveHelper.setMode(req.getParameter("mode"));
+		}
+
 		try {
 			if (keys == null || keys.equals("")) {
 				throw new Exception("Cannot perform download due to empty keys parameter.");
 			}
 			sess = HibernateUtil.getSessionFactory().openSession();
-		        
+
 			res.setContentType("application/x-download");
-		    res.setHeader("Content-Disposition", "attachment;filename=genopub_annotations.zip");
-		    res.setHeader("Cache-Control", "max-age=0, must-revalidate");
-		    
-	        // Open the archive output stream
-	        archiveHelper.setTempDir("./");
-	        TarArchiveOutputStream tarOut = null;
-	        ZipOutputStream zipOut = null;
-	        if (archiveHelper.isZipMode()) {
-	          zipOut = new ZipOutputStream(res.getOutputStream());
-	        } else {
-	          tarOut = new TarArchiveOutputStream(res.getOutputStream());
-	        }
-	        
-	        long totalArchiveSize = 0;
-			
+			res.setHeader("Content-Disposition", "attachment;filename=genopub_annotations.zip");
+			res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+
+			// Open the archive output stream
+			archiveHelper.setTempDir("./");
+			TarArchiveOutputStream tarOut = null;
+			ZipOutputStream zipOut = null;
+			if (archiveHelper.isZipMode()) {
+				zipOut = new ZipOutputStream(res.getOutputStream());
+			} else {
+				tarOut = new TarArchiveOutputStream(res.getOutputStream());
+			}
+
+			long totalArchiveSize = 0;
+
 			String[] keyTokens = keys.split(":");
 			for(int x = 0; x < keyTokens.length; x++) {
 				String key = keyTokens[x];
-				
+
 				String[] idTokens = key.split(",");
 				if (idTokens.length != 2) {
 					throw new Exception("Invalid parameter format " + key + " encountered. Expected 99,99 for idAnnotation and idAnnotationGrouping");
 				}
 				Integer idAnnotation = new Integer(idTokens[0]);
 				Integer idAnnotationGrouping = new Integer(idTokens[1]);
-				
+
 				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
-				
+
 				if (!this.genoPubSecurity.canRead(annotation)) {
 					throw new InsufficientPermissionException("Insufficient permission to read/download annotation.");
 				}
-				
+
 				AnnotationGrouping annotationGrouping = null;
 				if (idAnnotationGrouping.intValue() == -99) {
 					DictionaryHelper dh = DictionaryHelper.getInstance(sess);
@@ -3061,79 +3100,79 @@ System.out.println("\tFilePart "+fileName);
 						if (ag.getIdAnnotationGrouping().equals(idAnnotationGrouping)) {
 							annotationGrouping = ag;
 							break;
-							
+
 						}
 					}
-					
+
 				}
 				if (annotationGrouping == null) {
 					throw new Exception("Unable to find annotation grouping " + idAnnotationGrouping);
 				}
-				
+
 				String path = annotationGrouping.getQualifiedName() + "/" + annotation.getName() + "/";
-				
-				
+
+
 				for (File file : annotation.getFiles(this.genometry_genopub_dir)) {
 					String zipEntryName = path + file.getName();
 					archiveHelper.setArchiveEntryName(zipEntryName);
-		            
-		            // If we are using tar, compress the file first using
-		            // zip.  If we are zipping the file, just open
-		            // it to read.            
-		            InputStream in = archiveHelper.getInputStreamToArchive(file.getAbsolutePath(), zipEntryName);
-		            
 
-		            // Add an entry to the archive 
-		            // (The file name starts after the year subdirectory)
-		            ZipEntry zipEntry = null;
-		            if (archiveHelper.isZipMode()) {
-		              // Add ZIP entry 
-		              zipEntry = new ZipEntry(archiveHelper.getArchiveEntryName());
-		              zipOut.putNextEntry(zipEntry);              
-		            } else {
-		              // Add a TAR archive entry
-		              TarArchiveEntry entry = new TarArchiveEntry(archiveHelper.getArchiveEntryName());
-		              entry.setSize(archiveHelper.getArchiveFileSize());
-		              tarOut.putArchiveEntry(entry);
-		            }
-		            
+					// If we are using tar, compress the file first using
+					// zip.  If we are zipping the file, just open
+					// it to read.            
+					InputStream in = archiveHelper.getInputStreamToArchive(file.getAbsolutePath(), zipEntryName);
 
-		            // Transfer bytes from the file to the archive file
-		            OutputStream out = null;
-		            if (archiveHelper.isZipMode()) {
-		              out = zipOut;
-		            } else {
-		              out = tarOut;
-		            }
-		            int size = archiveHelper.transferBytes(in, out);
-		            totalArchiveSize += size;
 
-		            if (archiveHelper.isZipMode()) {
-		              zipOut.closeEntry();              
-		              totalArchiveSize += zipEntry.getCompressedSize();
-		            } else {
-		              tarOut.closeArchiveEntry();
-		              totalArchiveSize += archiveHelper.getArchiveFileSize();
-		            }
-		            
-		            // Remove temporary files
-		            archiveHelper.removeTemporaryFile();
-				
+					// Add an entry to the archive 
+					// (The file name starts after the year subdirectory)
+					ZipEntry zipEntry = null;
+					if (archiveHelper.isZipMode()) {
+						// Add ZIP entry 
+						zipEntry = new ZipEntry(archiveHelper.getArchiveEntryName());
+						zipOut.putNextEntry(zipEntry);              
+					} else {
+						// Add a TAR archive entry
+						TarArchiveEntry entry = new TarArchiveEntry(archiveHelper.getArchiveEntryName());
+						entry.setSize(archiveHelper.getArchiveFileSize());
+						tarOut.putArchiveEntry(entry);
+					}
+
+
+					// Transfer bytes from the file to the archive file
+					OutputStream out = null;
+					if (archiveHelper.isZipMode()) {
+						out = zipOut;
+					} else {
+						out = tarOut;
+					}
+					int size = archiveHelper.transferBytes(in, out);
+					totalArchiveSize += size;
+
+					if (archiveHelper.isZipMode()) {
+						zipOut.closeEntry();              
+						totalArchiveSize += zipEntry.getCompressedSize();
+					} else {
+						tarOut.closeArchiveEntry();
+						totalArchiveSize += archiveHelper.getArchiveFileSize();
+					}
+
+					// Remove temporary files
+					archiveHelper.removeTemporaryFile();
+
 				}
-				
 
-				
+
+
 			}
-	        
-	        if (archiveHelper.isZipMode()) {
-	          zipOut.finish();
-	          zipOut.flush();          
-	        } else {
-	          tarOut.close();
-	          tarOut.flush();
-	        }
 
-			
+			if (archiveHelper.isZipMode()) {
+				zipOut.finish();
+				zipOut.flush();          
+			} else {
+				tarOut.close();
+				tarOut.flush();
+			}
+
+
 		} catch (InsufficientPermissionException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
@@ -3225,7 +3264,7 @@ System.out.println("\tFilePart "+fileName);
 			rows = sess.createQuery(query.toString()).list();
 			for (Iterator<?> i = rows.iterator(); i.hasNext();) {
 				Object[] row = Object[].class.cast(i.next());
-				
+
 				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
 
@@ -3258,7 +3297,7 @@ System.out.println("\tFilePart "+fileName);
 			rows = sess.createQuery(query.toString()).list();
 			for (Iterator<?> i = rows.iterator(); i.hasNext();) {
 				Object[] row = Object[].class.cast(i.next());
-				
+
 				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
 				groupNode = groupNodeMap.get(group.getIdUserGroup());
@@ -3581,7 +3620,7 @@ System.out.println("\tFilePart "+fileName);
 			if (user.getRoles() != null && !userNameChanged) {
 				for (Iterator<?> i = user.getRoles().iterator(); i.hasNext();) {
 					UserRole role = UserRole.class.cast(i.next());
-					
+
 					role.setRoleName(request.getParameter("role"));
 					role.setUserName(user.getUserName());
 				}
@@ -4154,7 +4193,7 @@ System.out.println("\tFilePart "+fileName);
 					// Keep track of how many annotations have missing files
 					for(Iterator i = annotationQuery.getQualifiedAnnotations(organism, genomeVersionName).iterator(); i.hasNext();) {
 						QualifiedAnnotation qa = (QualifiedAnnotation)i.next();
-						
+
 						if (qa.getAnnotation().getFileCount(this.genometry_genopub_dir) == 0) {
 							if (emptyAnnotations.length() > 0) {
 								emptyAnnotations.append("\n");
@@ -4184,8 +4223,8 @@ System.out.println("\tFilePart "+fileName);
 
 				}
 			}
-			
-			
+
+
 			StringBuffer confirmMessage = new StringBuffer();
 
 			if (loadCount > 0 || unloadCount > 0) {
@@ -4199,10 +4238,10 @@ System.out.println("\tFilePart "+fileName);
 			} else {
 				confirmMessage.append("No annotations are queued for reload.  Do you wish to continue?\n\n");
 			}
-			
+
 			StringBuffer message = new StringBuffer();
 			if (invalidGenomeVersions.length() > 0 || emptyAnnotations.length() > 0) {
-			
+
 				if (invalidGenomeVersions.length() > 0) {
 					message.append("Annotations and sequence for the following genome versions will be bypassed due to missing segment information:\n" + 
 							invalidGenomeVersions.toString() +  
@@ -4398,8 +4437,8 @@ System.out.println("\tFilePart "+fileName);
 	private void reportSuccess(HttpServletResponse response) {
 		this.reportSuccess(response, null, null);
 	}
-	
-	
+
+
 	private void reportSuccess(HttpServletResponse response, String message) {
 		try {
 			Document doc = DocumentHelper.createDocument();
@@ -4413,7 +4452,7 @@ System.out.println("\tFilePart "+fileName);
 			e.printStackTrace();
 
 		}
-		
+
 	}
 
 

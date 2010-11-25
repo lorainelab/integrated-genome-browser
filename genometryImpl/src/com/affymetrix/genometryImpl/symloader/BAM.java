@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
 import net.sf.picard.util.BuildBamIndex;
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
@@ -58,6 +60,7 @@ public final class BAM extends SymLoader {
     private SAMFileHeader header;
 	private final Set<BioSeq> seqs = new HashSet<BioSeq>();
 	private File indexFile = null;
+	private static final Pattern CLEAN = Pattern.compile("[/\\s+]");
 
 	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 
@@ -121,7 +124,7 @@ public final class BAM extends SymLoader {
 			}
 		} catch (SAMFormatException ex) {
 			ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n" +
-					"Please validate your BAM files and contact the Picard project at http://picard.sourceforge.net." +
+					"Please validate your BAM files (see http://picard.sourceforge.net/command-line-overview.shtml#ValidateSamFile). " +
 					"See console for the details of the exception.\n");
 			ex.printStackTrace();
 		} catch (Exception ex) {
@@ -473,7 +476,7 @@ public final class BAM extends SymLoader {
 					// BAM files cannot be written to the stream one line at a time.
 					// Rather, a tempfile is created, and later read into the stream.
 					try {
-						tempBAMFile = File.createTempFile(featureName, ".bam");
+						tempBAMFile = File.createTempFile(CLEAN.matcher(featureName).replaceAll("_"), ".bam");						
 						tempBAMFile.deleteOnExit();
 					} catch (IOException ex) {
 						Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);

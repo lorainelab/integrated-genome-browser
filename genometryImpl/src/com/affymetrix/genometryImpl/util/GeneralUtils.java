@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
@@ -31,6 +32,7 @@ import net.sf.image4j.codec.ico.ICOImage;
 
 public final class GeneralUtils {
 	public static final String UTF8 = "UTF-8";
+	private static final Pattern CLEAN = Pattern.compile("[/\\s+]");
 
 	/**
 	 * Safely close a Closeable object.  If it doesn't exist, return.
@@ -161,8 +163,8 @@ public final class GeneralUtils {
 		try {
 			String unzippedStreamName = stripEndings(streamName);
 			String extension = ParserController.getExtension(unzippedStreamName);
-			File f = File.createTempFile(
-					unzippedStreamName,extension);
+			//watch out for spaces and / in the stream name
+			File f = File.createTempFile(CLEAN.matcher(unzippedStreamName).replaceAll("_"), extension);
 			f.deleteOnExit();	// This is only a temporary file!  Delete when the app exits.
 			out = new FileOutputStream(f);
 			int read = 0;

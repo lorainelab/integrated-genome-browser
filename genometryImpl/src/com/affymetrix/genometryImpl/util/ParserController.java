@@ -205,8 +205,10 @@ public final class ParserController {
 		
 		// Check if this was in the annots mapping.
 		if (annotsList != null) {
+System.out.println("\tChecking annots mapping!");
 			AnnotMapElt annotMapElt = AnnotMapElt.findFileNameElt(stream_name, annotsList);
 			if (annotMapElt != null) {
+System.out.println("\t\tTitle "+annotMapElt.title);
 				return annotMapElt.title;
 			}
 		}

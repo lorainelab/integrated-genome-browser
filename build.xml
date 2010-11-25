@@ -91,12 +91,12 @@
 		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"         signedjar="${webstart.dir}/jlfgr-1_0.jar" />
 		<my.signjar jar="${lib.dir}/image4j.jar"           signedjar="${webstart.dir}/image4j.jar" />
 		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
-		<my.signjar jar="${lib.dir}/sam.jar" signedjar="${webstart.dir}/sam.jar" />
-		<my.signjar jar="${lib.dir}/picard.jar" signedjar="${webstart.dir}/picard.jar" />
-		<my.signjar jar="${lib.dir}/colt.jar" signedjar="${webstart.dir}/colt.jar" />
-		<my.signjar jar="${lib.dir}/jide-common.jar" signedjar="${webstart.dir}/jide-common.jar" />
-		<my.signjar jar="${lib.dir}/jide-components.jar" signedjar="${webstart.dir}/jide-components.jar" />
-		<my.signjar jar="${lib.dir}/jide-grids.jar" signedjar="${webstart.dir}/jide-grids.jar" />
+		<my.signjar jar="${lib.dir}/sam.jar"               signedjar="${webstart.dir}/sam.jar" />
+		<my.signjar jar="${lib.dir}/picard.jar"            signedjar="${webstart.dir}/picard.jar" />
+		<my.signjar jar="${lib.dir}/colt.jar"              signedjar="${webstart.dir}/colt.jar" />
+		<my.signjar jar="${lib.dir}/jide-common.jar"       signedjar="${webstart.dir}/jide-common.jar" />
+		<my.signjar jar="${lib.dir}/jide-components.jar"   signedjar="${webstart.dir}/jide-components.jar" />
+		<my.signjar jar="${lib.dir}/jide-grids.jar"        signedjar="${webstart.dir}/jide-grids.jar" />
 
 		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
 		<jar destfile="${webstart.dir}/igb.jar">
@@ -186,6 +186,8 @@
 				<include name="dom4j-1.6.1.jar"/>
 				<include name="jta.jar" /> 	
 				<include name="log4j-1.2.11.jar"/>
+				<include name="sam.jar" />
+				<include name="picard.jar" />
 			</fileset>
     </copy>
 	</target>

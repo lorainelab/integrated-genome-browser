@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-Name: genometry
+Bundle-Description: genometry
+Bundle-Vendor: Affymetrix, Inc.
+Bundle-Version: 1.0.0
+Bundle-SymbolicName: genometry
+Export-Package: com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.util
+
+

@@ -365,8 +365,7 @@ public final class IGB extends Application
 
 		editMenu();
 		viewMenu();
-
-		MenuUtil.addToMenu(tools_menu, new JMenuItem(WebLinksManagerView.getShowFrameAction()));
+		toolsMenu();
 
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new AboutIGBAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ForumHelpAction()));
@@ -464,6 +463,9 @@ public final class IGB extends Application
 						Object plugin = setUpPlugIn(pi);
 						plugins.add(plugin);
 					}
+					if (PreferenceUtils.getTopNode().getBoolean(TogglePluginsAction.USE_PLUGINS, true)) {
+						IGBServiceImpl.startOSGi();
+					}
 				}
 			});
 		}
@@ -522,11 +524,24 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
 	}
 
+	private void toolsMenu() {
+		MenuUtil.addToMenu(tools_menu, new JMenuItem(WebLinksManagerView.getShowFrameAction()));
+		MenuUtil.addToMenu(tools_menu, new JCheckBoxMenuItem(TogglePluginsAction.getAction()));
+	}
+
 	/**
 	 *  Puts the given component either in the tab pane or in its own window,
 	 *  depending on saved user preferences.
 	 */
 	private Object setUpPlugIn(PluginInfo pi) {
+		Object plugin = createPlugin(pi);
+		if (plugin != null) {
+			loadPlugIn(pi, plugin);
+		}
+		return plugin;
+	}
+
+	private Object createPlugin(PluginInfo pi) {
 		if (!pi.shouldLoad()) {
 			return null;
 		}
@@ -556,7 +571,10 @@ public final class IGB extends Application
 			PluginInfo.getNodeForName(pi.getPluginName()).putBoolean("load", false);
 			return null;
 		}
+		return plugin;
+	}
 
+	void loadPlugIn(PluginInfo pi, Object plugin) {
 		ImageIcon icon = null;
 
 		if (plugin instanceof IPlugin) {
@@ -590,7 +608,6 @@ public final class IGB extends Application
 				tab_pane.addTab(title, icon, comp, tool_tip);
 			}
 		}
-		return plugin;
 	}
 
 	@Override
@@ -867,5 +884,13 @@ public final class IGB extends Application
 
 	public List<Object> getPlugins() {
 		return Collections.<Object>unmodifiableList(plugins);
+	}
+
+	JTabbedPane getTabPane() {
+		return tab_pane;
+	}
+
+	Map<Component, Frame> getComp2Window() {
+		return comp2window;
 	}
 }

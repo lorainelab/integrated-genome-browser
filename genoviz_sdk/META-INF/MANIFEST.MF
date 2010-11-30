@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-Name: genoviz
+Bundle-Description: genoviz
+Bundle-Vendor: Affymetrix, Inc.
+Bundle-Version: 1.0.0
+Bundle-SymbolicName: genoviz
+Export-Package: com.affymetrix.genoviz.bioviews,
+ com.affymetrix.genoviz.glyph,
+ com.affymetrix.genoviz.util,
+ com.affymetrix.genoviz.widget
+

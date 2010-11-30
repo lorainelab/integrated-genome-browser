@@ -9,6 +9,8 @@
 		<property name="igb"           value="${basedir}/../igb" />
 		<property name="das2server"    value="${basedir}/../das2_server" />
 		<property name="protannot"    value="${basedir}/../protannot" />
+		<property name="igb_service"    value="${basedir}/../igb_service" />
+		<property name="igb_plugins"    value="${basedir}/../igb_plugins" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"     value="${basedir}/../ext" />
@@ -87,10 +89,10 @@
 	</target>
 
   <target name="jar" depends="compile">
-		<mkdir dir="${dist.dir}" />
-		<jar jarfile="${dist.dir}/${jarfile}" update="false">
-			<fileset dir="${build.dir}" />
-    </jar>
+	<mkdir dir="${dist.dir}" />
+	<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
+		<fileset dir="${build.dir}" />
+	</jar>
   </target>
 
 	<target name="webstart" depends="jar">

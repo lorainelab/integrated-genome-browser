@@ -18,7 +18,9 @@
 		<property name="igb"           value="${basedir}/igb" />
 		<property name="igb-18n"       value="${basedir}/igb-i18n" />
 		<property name="das2server"    value="${basedir}/das2_server" />
-		<property name="protannot"    value="${basedir}/protannot" />
+		<property name="protannot"     value="${basedir}/protannot" />
+		<property name="igb_service"   value="${basedir}/igb_service" />
+		<property name="igb_plugins"   value="${basedir}/igb_plugins" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"    value="${basedir}/ext" />
@@ -27,7 +29,7 @@
 		<property name="docs.dir"   value="${basedir}/doc/api" />
 		<property name="report.dir" value="${basedir}/reports" />
 
-		 <property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src" />
+		 <property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${igb_plugins}/src" />
 	</target>
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
@@ -97,6 +99,8 @@
 		<my.signjar jar="${lib.dir}/jide-common.jar"       signedjar="${webstart.dir}/jide-common.jar" />
 		<my.signjar jar="${lib.dir}/jide-components.jar"   signedjar="${webstart.dir}/jide-components.jar" />
 		<my.signjar jar="${lib.dir}/jide-grids.jar"        signedjar="${webstart.dir}/jide-grids.jar" />
+		<my.signjar jar="${lib.dir}/felix.jar" signedjar="${webstart.dir}/felix.jar" />
+		<my.signjar jar="${lib.dir}/IGBService_1.0.0.jar" signedjar="${webstart.dir}/IGBService_1.0.0.jar" />
 
 		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
 		<jar destfile="${webstart.dir}/igb.jar">
@@ -267,6 +271,8 @@
 				<include name="jide-common.jar" />
 				<include name="jide-components.jar" />
 				<include name="jide-grids.jar" />
+				<include name="felix.jar" />
+				<include name="IGBService_1.0.0.jar" />
 			</zipgroupfileset>
 		</jar>
 		<jar jarfile="protannot_exe.jar" update="false">
@@ -489,11 +495,13 @@
 					<include name="genoviz_sdk" />
 					<include name="genometryImpl" />
 					<include name="igb-i18n" unless="findbugs" />
+					<include name="igb_service" />
 				</dirset>
 				<dirset dir="${basedir}">
 					<include name="igb" />
 					<include name="protannot" />
 					<include name="das2_server" />
+					<include name="igb_plugins" />
 				</dirset>
 			</subant>
 		</sequential>

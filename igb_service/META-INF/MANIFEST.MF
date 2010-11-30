@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IGBService
+Bundle-SymbolicName: IGBService
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: javax.swing,
+ org.osgi.framework
+Export-Package: com.affymetrix.igb.osgi.service
+Require-Bundle: genometry;bundle-version="1.0.0",
+ genoviz;bundle-version="1.0.0"
+

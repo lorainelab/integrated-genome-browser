@@ -996,16 +996,14 @@ public class GenoPubServlet extends HttpServlet {
 				} */
 
 				//work around, need to test on PC with IE and Firefox!
-
-				//first split on "chr"
-				String[] chrSplit = chromosomeInfo.split("chr");
-				//for each pair split on white space
-				for (int i=0; i<chrSplit.length; i++){
-					String[] nameLength = chrSplit[i].split("\\s+");
-					if (nameLength.length != 2) continue;
+				Pattern pat = Pattern.compile("(\\w+)\\s+(\\d+)");
+				Pattern ret = Pattern.compile("\\r");
+				chromosomeInfo = ret.matcher(chromosomeInfo).replaceAll(""); //just to be safe
+				Matcher mat = pat.matcher(chromosomeInfo);
+				while (mat.find()){
 					Segment s = new Segment();
-					s.setName("chr"+nameLength[0]);
-					s.setLength(new Integer (nameLength[1]));
+					s.setName(mat.group(1));
+					s.setLength(new Integer (mat.group(2)));
 					s.setSortOrder(Integer.valueOf(count));
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
 					sess.save(s);

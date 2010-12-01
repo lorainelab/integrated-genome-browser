@@ -40,6 +40,30 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>igb_plugins/src</label>
+                    <type>java</type>
+                    <location>igb_plugins/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>igb_service/src</label>
+                    <type>java</type>
+                    <location>igb_service/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>igb_server/src</label>
+                    <type>java</type>
+                    <location>igb_server/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>igb_server/web</label>
+                    <type>java</type>
+                    <location>igb_server/web</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>genoviz_sdk/demo/src</label>
                     <type>java</type>
                     <location>genoviz_sdk/demo/src</location>
@@ -152,6 +176,16 @@
                 <location>genoviz_sdk/demo</location>
                 <build-target>compile</build-target>
             </export>
+            <export>
+                <type>folder</type>
+                <location>igb_plugins/build</location>
+                <build-target>compile</build-target>
+            </export>
+            <export>
+                <type>folder</type>
+                <location>igb_service/build</location>
+                <build-target>compile</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -169,6 +203,22 @@
                     <source-folder style="packages">
                         <label>igb/src</label>
                         <location>igb/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>igb_plugins/src</label>
+                        <location>igb_plugins/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>igb_service/src</label>
+                        <location>igb_service/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>igb_server/src</label>
+                        <location>igb_server/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>igb_server/web</label>
+                        <location>igb_server/web</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>genoviz_sdk/demo/src</label>
@@ -234,12 +284,18 @@
                 <package-root>genoviz_sdk/test</package-root>
                 <package-root>igb/test</package-root>
                 <package-root>protannot/src</package-root>
-                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometryImpl/src:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:genoviz_sdk/src:ext/commons-compress-1.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar</classpath>
+                <package-root>igb_plugins/src</package-root>
+                <package-root>igb_service/src</package-root>
+                <package-root>igb_server/src</package-root>
+                <package-root>igb_server/web</package-root>
+                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometryImpl/src:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:genoviz_sdk/src:ext/commons-compress-1.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:igb_plugins/lib/org.apache.felix.bundlerepository-1.6.4.jar:igb_plugins/lib/org.osgi.service.obr-1.0.2.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>genometryImpl/build</built-to>
                 <built-to>genoviz_sdk/build</built-to>
                 <built-to>igb/build</built-to>
                 <built-to>genoviz_sdk/demo</built-to>
+                <built-to>igb_plugins/build</built-to>
+                <built-to>igb_service/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
@@ -269,6 +325,7 @@
                     <property name="usedProfile" value="project"/>
                 </node>
             </module>
+            <module name="org-netbeans-modules-projectimport-eclipse-core"/>
         </preferences>
     </configuration>
 </project>

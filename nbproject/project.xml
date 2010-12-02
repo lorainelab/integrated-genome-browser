@@ -40,15 +40,15 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>igb_plugins/src</label>
+                    <label>plugins/plugins_page/src</label>
                     <type>java</type>
-                    <location>igb_plugins/src</location>
+                    <location>plugins/plugins_page/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>igb_service/src</label>
+                    <label>plugins/igb_service/src</label>
                     <type>java</type>
-                    <location>igb_service/src</location>
+                    <location>plugins/igb_service/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>

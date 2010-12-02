@@ -3,24 +3,24 @@
 
   <target name="init">
 		<!-- Locations of subprojects -->
-		<property name="genoviz"       value="${basedir}/../genoviz_sdk" />
-		<property name="genometry"     value="${basedir}/../genometry" />
-		<property name="genometryImpl" value="${basedir}/../genometryImpl" />
-		<property name="igb"           value="${basedir}/../igb" />
-		<property name="das2server"    value="${basedir}/../das2_server" />
-		<property name="protannot"    value="${basedir}/../protannot" />
-		<property name="igb_service"    value="${basedir}/../igb_service" />
-		<property name="igb_plugins"    value="${basedir}/../igb_plugins" />
+		<property name="genoviz"            value="${basedir}/../genoviz_sdk" />
+		<property name="genometry"          value="${basedir}/../genometry" />
+		<property name="genometryImpl"      value="${basedir}/../genometryImpl" />
+		<property name="igb"                value="${basedir}/../igb" />
+		<property name="das2server"         value="${basedir}/../das2_server" />
+		<property name="protannot"          value="${basedir}/../protannot" />
+		<property name="igb_service"        value="${basedir}/../plugins/igb_service" />
+		<property name="plugins_page"       value="${basedir}/../plugins/plugins_page" />
 
 		<!-- directory paths -->
-		<property name="lib.dir"     value="${basedir}/../ext" />
-		<property name="etc.dir"     value="${basedir}/../etc" />
-		<property name="src.dir"     value="${basedir}/src "/>
-		<property name="rsrc.dir"    value="${basedir}/resources" />
-		<property name="build.dir"   value="${basedir}/build" />
-		<property name="docs.dir"    value="${basedir}/docs" />
-		<property name="reports.dir" value="${basedir}/reports" />
-		<property name="proj.lib.dir"  value="${basedir}/lib" />
+		<property name="lib.dir"            value="${basedir}/../ext" />
+		<property name="etc.dir"            value="${basedir}/../etc" />
+		<property name="src.dir"            value="${basedir}/src "/>
+		<property name="rsrc.dir"           value="${basedir}/resources" />
+		<property name="build.dir"          value="${basedir}/build" />
+		<property name="docs.dir"           value="${basedir}/docs" />
+		<property name="reports.dir"        value="${basedir}/reports" />
+		<property name="proj.lib.dir"       value="${basedir}/lib" />
 
 		<!-- JUnit test configuration -->
 		<property name="test.src.dir"    value="${basedir}/test" />

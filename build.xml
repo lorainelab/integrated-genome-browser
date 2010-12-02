@@ -13,14 +13,14 @@
 		<property name="name" value="Integrated Genome Browser" />
 
 		<!-- Locations of subprojets -->
-		<property name="genoviz"       value="${basedir}/genoviz_sdk" />
-		<property name="genometry"     value="${basedir}/genometryImpl" />
-		<property name="igb"           value="${basedir}/igb" />
-		<property name="igb-18n"       value="${basedir}/igb-i18n" />
-		<property name="das2server"    value="${basedir}/das2_server" />
-		<property name="protannot"     value="${basedir}/protannot" />
-		<property name="igb_service"   value="${basedir}/igb_service" />
-		<property name="igb_plugins"   value="${basedir}/igb_plugins" />
+		<property name="genoviz"            value="${basedir}/genoviz_sdk" />
+		<property name="genometry"          value="${basedir}/genometryImpl" />
+		<property name="igb"                value="${basedir}/igb" />
+		<property name="igb-18n"            value="${basedir}/igb-i18n" />
+		<property name="das2server"         value="${basedir}/das2_server" />
+		<property name="protannot"          value="${basedir}/protannot" />
+		<property name="igb_service"        value="${basedir}/plugins/igb_service" />
+		<property name="plugins_page"       value="${basedir}/plugins/plugins_page" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"    value="${basedir}/ext" />
@@ -29,7 +29,7 @@
 		<property name="docs.dir"   value="${basedir}/doc/api" />
 		<property name="report.dir" value="${basedir}/reports" />
 
-		 <property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${igb_plugins}/src" />
+		 <property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${plugins_page}/src" />
 	</target>
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
@@ -495,13 +495,17 @@
 					<include name="genoviz_sdk" />
 					<include name="genometryImpl" />
 					<include name="igb-i18n" unless="findbugs" />
+				</dirset>
+				<dirset dir="${basedir}/plugins">
 					<include name="igb_service" />
 				</dirset>
 				<dirset dir="${basedir}">
 					<include name="igb" />
 					<include name="protannot" />
 					<include name="das2_server" />
-					<include name="igb_plugins" />
+				</dirset>
+				<dirset dir="${basedir}/plugins">
+					<include name="plugins_page" />
 				</dirset>
 			</subant>
 		</sequential>

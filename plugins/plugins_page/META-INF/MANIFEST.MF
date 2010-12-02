@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IGBPluginsPage
-Bundle-SymbolicName: IGBPluginsPage
+Bundle-Name: PluginsPage
+Bundle-SymbolicName: PluginsPage
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.plugins.Activator
 Import-Package: com.affymetrix.igb.osgi.service,
@@ -16,5 +16,5 @@ Bundle-ClassPath: .,
  lib/org.apache.felix.bundlerepository-1.6.4.jar,
  lib/org.osgi.service.obr-1.0.2.jar
 Bundle-ActivationPolicy: lazy
-Bundle-Description: IGB plugins page
+Bundle-Description: IGB plugins page for managing plugins
 

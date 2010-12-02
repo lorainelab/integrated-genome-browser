@@ -20,6 +20,7 @@
 		<property name="build.dir"   value="${basedir}/build" />
 		<property name="docs.dir"    value="${basedir}/docs" />
 		<property name="reports.dir" value="${basedir}/reports" />
+		<property name="proj.lib.dir"  value="${basedir}/lib" />
 
 		<!-- JUnit test configuration -->
 		<property name="test.src.dir"    value="${basedir}/test" />
@@ -33,7 +34,17 @@
 		<property name="report.prefix" value="${project}." />
   </target>
 
-  <target name="compile" depends="common-init">
+  <target name="proj-lib-exists">
+		<available file="${proj.lib.dir}" property="lib.present"/>
+  </target>
+
+  <target name="do-if-proj-lib" depends="proj-lib-exists" if="lib.present">
+		<copy todir="${build.dir}/lib" filtering="false">
+			<fileset dir="${proj.lib.dir}" /> 
+		</copy>
+  </target> 
+
+  <target name="compile" depends="common-init,do-if-proj-lib">
 		<mkdir dir="${build.dir}" />
 		<my.javac destdir="${build.dir}" />
 		<copy todir="${build.dir}" filtering="true">

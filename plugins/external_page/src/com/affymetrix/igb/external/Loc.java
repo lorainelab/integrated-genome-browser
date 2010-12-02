@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view.external;
+package com.affymetrix.igb.external;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

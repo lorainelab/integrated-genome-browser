@@ -1,4 +1,4 @@
-package com.affymetrix.igb.restrictions;
+package com.affymetrix.igb.external;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -15,12 +15,12 @@ public class Activator implements BundleActivator {
 		return bundleContext;
 	}
 
-	private void loadRestrictionPage(ServiceReference igbServiceReference) {
+	private void loadExternalPage(ServiceReference igbServiceReference) {
         try
         {
             IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
-            RestrictionControlView restrictionControlView = new RestrictionControlView(igbService);
-            igbService.addPlugIn(restrictionControlView, RestrictionControlView.BUNDLE.getString("restrictionSitesTab"));
+            ExternalViewer externalViewer = new ExternalViewer(igbService);
+            igbService.addPlugIn(externalViewer, ExternalViewer.BUNDLE.getString("externalViewTab"));
             bundleContext.ungetService(igbServiceReference);
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.start() -> " + ex.getMessage());
@@ -34,13 +34,13 @@ public class Activator implements BundleActivator {
 
         if (igbServiceReference != null)
         {
-        	loadRestrictionPage(igbServiceReference);
+        	loadExternalPage(igbServiceReference);
         }
         else
         {
         	ServiceTracker serviceTracker = new ServiceTracker(bundleContext, IGBService.class.getName(), null) {
         	    public Object addingService(ServiceReference igbServiceReference) {
-        	    	loadRestrictionPage(igbServiceReference);
+        	    	loadExternalPage(igbServiceReference);
         	        return super.addingService(igbServiceReference);
         	    }
         	};
@@ -57,13 +57,12 @@ public class Activator implements BundleActivator {
             try
             {
                 IGBService igbService = (IGBService) bundleContext.getService(igbRef);
-                igbService.removePlugIn(RestrictionControlView.BUNDLE.getString("restrictionSitesTab"));
+                igbService.removePlugIn(ExternalViewer.BUNDLE.getString("externalViewTab"));
                 bundleContext.ungetService(igbRef);
             }
             catch (Exception ex) {
             	ex.printStackTrace(System.out);
-
-            }
+			}
         }
         else
         {

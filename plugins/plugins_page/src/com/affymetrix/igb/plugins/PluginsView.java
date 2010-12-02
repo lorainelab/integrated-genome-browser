@@ -177,6 +177,10 @@ public class PluginsView extends JPanel implements Constants {
 	}
 
 	private void filterUninstalledResources() {
+		if (allResourceArray == null) {
+			loadAllBundlesInfo();
+			filterUninstalledResources();
+		}
 		uninstalledResources = new ArrayList<Resource>();
 		for (Resource resource : allResourceArray) {
 			@SuppressWarnings("unchecked")
@@ -335,8 +339,14 @@ public class PluginsView extends JPanel implements Constants {
 						{
 							StringBuffer sb = new StringBuffer(BUNDLE.getString("pluginsBundleLoadError"));
 						    sb.append(" -> ");
-							Requirement[] reqs = resolver.getUnsatisfiedRequirements();
-						    sb.append(reqs.toString());
+							boolean started = false;
+							for (Requirement req : resolver.getUnsatisfiedRequirements()) {
+								if (started) {
+								    sb.append(", ");
+								}
+								started = true;
+							    sb.append(req.getComment());
+							}
 							displayError(sb.toString());
 						}
 					}

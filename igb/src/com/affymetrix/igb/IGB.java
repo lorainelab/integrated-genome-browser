@@ -62,7 +62,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.view.external.ExternalViewer;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
@@ -447,7 +446,6 @@ public final class IGB extends Application
 		plugins_info.add(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true));
 		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true));
 		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true));
-		plugins_info.add(new PluginInfo(ExternalViewer.class.getName(), BUNDLE.getString("externalViewTab"), true));
 
 
 		plugins_info.addAll(XmlPrefsParser.getPlugins());

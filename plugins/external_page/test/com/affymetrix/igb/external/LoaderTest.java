@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view.external;
+package com.affymetrix.igb.external;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.junit.Test;
+
+import com.affymetrix.igb.external.EnsemblView;
 
 
 public class LoaderTest extends junit.framework.TestCase {

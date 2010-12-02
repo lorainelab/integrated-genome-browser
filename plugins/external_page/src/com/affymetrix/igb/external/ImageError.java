@@ -1,6 +1,5 @@
-package com.affymetrix.igb.view.external;
+package com.affymetrix.igb.external;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 /**

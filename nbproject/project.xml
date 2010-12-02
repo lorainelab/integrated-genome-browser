@@ -52,6 +52,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>plugins/external_page/src</label>
+                    <type>java</type>
+                    <location>plugins/external_page/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>plugins/igb_service/src</label>
                     <type>java</type>
                     <location>plugins/igb_service/src</location>

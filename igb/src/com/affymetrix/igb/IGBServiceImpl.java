@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.view.SearchView;
@@ -231,5 +232,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	public void removeGlyphs(List<GlyphI> glyphs) {
 		Application.getSingleton().getMapView().getSeqMap().removeItem(glyphs);
+	}
+
+	public String getUCSCQuery() {
+		return UCSCViewAction.getUCSCQuery();
 	}
 }

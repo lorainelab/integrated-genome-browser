@@ -4,7 +4,11 @@ Bundle-Description: genometry
 Bundle-Vendor: Affymetrix, Inc.
 Bundle-Version: 1.0.0
 Bundle-SymbolicName: genometry
+Import-Package: javax.swing
 Export-Package: com.affymetrix.genometryImpl,
- com.affymetrix.genometryImpl.util
+ com.affymetrix.genometryImpl.util,
+ com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.event,
+ com.affymetrix.genometryImpl.das
 
 

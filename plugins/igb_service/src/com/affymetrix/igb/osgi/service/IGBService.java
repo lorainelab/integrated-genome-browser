@@ -28,4 +28,6 @@ public interface IGBService {
 	public String getSeqResidues();
 	public void updateMap();
 	public void removeGlyphs(List<GlyphI> glyphs);
+	// for external page
+	public String getUCSCQuery();
 }

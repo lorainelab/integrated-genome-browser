@@ -12,6 +12,7 @@
 		<property name="igb_service"        value="${basedir}/../plugins/igb_service" />
 		<property name="plugins_page"       value="${basedir}/../plugins/plugins_page" />
 		<property name="restrictions_page"  value="${basedir}/../plugins/restrictions_page" />
+		<property name="external_page"      value="${basedir}/../plugins/external_page" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"            value="${basedir}/../ext" />

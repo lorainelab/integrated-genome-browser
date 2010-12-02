@@ -616,7 +616,7 @@ public final class SearchView extends JComponent implements
 		map.updateWidget();
 	}
 
-	static int searchForRegexInResidues(
+	public static int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, TransformTierGlyph axis_tier, List<GlyphI> glyphs, Color hitColor) {
 		int hit_count = 0;
 		Matcher matcher = regex.matcher(residues);

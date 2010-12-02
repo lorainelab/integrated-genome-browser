@@ -21,6 +21,7 @@
 		<property name="protannot"          value="${basedir}/protannot" />
 		<property name="igb_service"        value="${basedir}/plugins/igb_service" />
 		<property name="plugins_page"       value="${basedir}/plugins/plugins_page" />
+		<property name="restrictions_page"  value="${basedir}/plugins/restrictions_page" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"    value="${basedir}/ext" />
@@ -506,6 +507,7 @@
 				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="plugins_page" />
+					<include name="restrictions_page" />
 				</dirset>
 			</subant>
 		</sequential>

@@ -46,6 +46,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>plugins/restrictions_page/src</label>
+                    <type>java</type>
+                    <location>plugins/restrictions_page/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>plugins/igb_service/src</label>
                     <type>java</type>
                     <location>plugins/igb_service/src</location>

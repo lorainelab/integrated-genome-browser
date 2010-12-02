@@ -2,6 +2,7 @@ package com.affymetrix.igb;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -24,11 +26,14 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.view.PluginInfo;
+import com.affymetrix.igb.view.SearchView;
 
 public class IGBServiceImpl implements IGBService, BundleActivator {
 
@@ -183,5 +188,48 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	public void displayError(String errorText) {
 		ErrorHandler.errorPanel(errorText);
+	}
+
+	public void addNotLockedUpMsg(String message) {
+		Application.getSingleton().addNotLockedUpMsg(message);
+	}
+
+	public void removeNotLockedUpMsg(String message) {
+		Application.getSingleton().removeNotLockedUpMsg(message);
+	}
+
+	public int searchForRegexInResidues(
+			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
+		return SearchView.searchForRegexInResidues(
+				forward, regex, residues, residue_offset, Application.getSingleton().getMapView().getAxisTier(), glyphs, hitColor);
+	}
+
+	private BioSeq getViewSeq() {
+		return Application.getSingleton().getMapView().getViewSeq();
+	}
+
+	public boolean isSeqResiduesAvailable() {
+		BioSeq vseq = getViewSeq();
+		return vseq != null && vseq.isComplete();
+	}
+
+	public int getSeqResiduesMin() {
+		return getViewSeq().getMin();
+	}
+
+	public int getSeqResiduesMax() {
+		return getViewSeq().getMax();
+	}
+
+	public String getSeqResidues() {
+		return getViewSeq().getResidues();
+	}
+
+	public void updateMap() {
+		Application.getSingleton().getMapView().getSeqMap().updateWidget();
+	}
+
+	public void removeGlyphs(List<GlyphI> glyphs) {
+		Application.getSingleton().getMapView().getSeqMap().removeItem(glyphs);
 	}
 }

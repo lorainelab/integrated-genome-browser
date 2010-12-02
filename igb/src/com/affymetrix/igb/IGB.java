@@ -447,7 +447,6 @@ public final class IGB extends Application
 		plugins_info.add(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true));
 		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true));
 		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true));
-		plugins_info.add(new PluginInfo(RestrictionControlView.class.getName(), BUNDLE.getString("restrictionSitesTab"), true));
 		plugins_info.add(new PluginInfo(ExternalViewer.class.getName(), BUNDLE.getString("externalViewTab"), true));
 
 

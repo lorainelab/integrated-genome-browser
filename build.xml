@@ -311,6 +311,9 @@
 				<dirset dir="${basedir}">
 					<include name="*/build" />
 				</dirset>
+				<dirset dir="${basedir}/plugins">
+					<include name="*/build" />
+				</dirset>
 			</classpath>
 		</java>
 	</target>

@@ -53,6 +53,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static final void loadFelix() {
 		Map configMap = new StringMap(false);
+		configMap.put("org.osgi.framework.storage", PreferenceUtils.getAppDataDirectory() + "cache/felix-cache");
 		for (String key : BUNDLE.getString("pluginsConfigList").split(",")) {
 			configMap.put(key, BUNDLE.getString(key));
 		}

@@ -357,6 +357,7 @@ public class SeqMapView extends JPanel
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 
+		this.addPopupListener(new ReadAlignmentView());
 		
 		TrackView.getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getUserStylesheet());
 

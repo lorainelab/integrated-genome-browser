@@ -2,11 +2,6 @@ package com.affymetrix.igb.glyph;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
-import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -14,6 +9,17 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+
+import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
+import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.symloader.BAM;
+
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
+
+import com.affymetrix.igb.view.ReadAlignmentView;
 
 /**
  *
@@ -32,7 +38,7 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 	private int residue_length = 0;
 	private final BitSet residueMask = new BitSet();
 	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
-
+	
 	// default to true for backward compatability
 	private boolean hitable = true;
 	public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
@@ -107,6 +113,18 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 		return null;
 	}
 
+	private boolean getShowMask(){
+		Object mod = this.getInfo();
+		if (mod instanceof SymWithProps) {
+			SymWithProps swp = (SymWithProps)mod;
+			Object show_mask = swp.getProperty(BAM.SHOWMASK);
+			if(show_mask != null){
+				return Boolean.parseBoolean(show_mask.toString());
+			}
+		}
+		return ReadAlignmentView.DEFAULT_SHOWMASK;
+	}
+
 	/**
 	 * If this is set, we will only display residues that disagree with the residue mask.
 	 * This is useful for BAM visualization.
@@ -117,16 +135,16 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 			int minResLen = Math.min(residues.length(), residue_length);
 			char[] residuesArr = residues.toLowerCase().toCharArray();
 			char[] displayResArr = chariter.substring(0, minResLen).toLowerCase().toCharArray();
-			
+
 			// determine which residues disagree with the reference sequence
 			for(int i=0;i<minResLen;i++) {
 				residueMask.set(i, displayResArr[i] != residuesArr[i]);
 			}
-			if (residueMask.isEmpty()) {
-				// Save space and time if all residues match the reference sequence.
-				residue_length = 0;
-				chariter = null;
-			}
+//			if (residueMask.isEmpty()) {
+//				// Save space and time if all residues match the reference sequence.
+//				residue_length = 0;
+//				chariter = null;
+//			}
 		}
 	}
 
@@ -138,11 +156,11 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 			setRes = (SEQ[i] != '=') && (displayResArr[i] != seqArr[i]);
 			residueMask.set(i, setRes);
 		}
-		if (residueMask.isEmpty()) {
-			// Save space and time if all residues match the reference sequence.
-			residue_length = 0;
-			chariter = null;
-		}
+//		if (residueMask.isEmpty()) {
+//			// Save space and time if all residues match the reference sequence.
+//			residue_length = 0;
+//			chariter = null;
+//		}
 	}
 
 	public void setResiduesProvider(SearchableCharIterator iter, int seqlength) {
@@ -157,7 +175,7 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 	// Essentially the same as SequenceGlyph.drawHorizontal
 	@Override
 	public void draw(ViewI view) {
-		if (packerClip || chariter == null) {
+		if (packerClip || (residueMask.isEmpty() && getShowMask())) {
 			return;	// don't draw residues
 		}
 		Rectangle2D.Double coordclipbox = view.getCoordBox();
@@ -171,7 +189,7 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 		if (seq_beg_index > residue_length) {
 			return;	// no residues to draw
 		}
-		
+
 		double pixel_width_per_base = (view.getTransform()).getScaleX();
 		if (residueMask.isEmpty() && pixel_width_per_base < 1) {
 			return;	// If we're drawing all the residues, return if there's less than one pixel per base
@@ -179,7 +197,7 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 		if (pixel_width_per_base < 0.2) {
 			return;	// If we're masking the residues, draw up to 5 residues at one pixel.
 		}
-		
+
 		int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
 		// adding 1 to visible ref_end to make sure base is drawn if only
 		// part of it is visible
@@ -219,15 +237,16 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 			int seqEndIndex,
 			int pixelStart) {
 		char[] charArray = residueStr.toCharArray();
-		drawResidueRectangles(g, pixelsPerBase, charArray, residueMask.get(seqBegIndex,seqEndIndex), pixelbox.x, pixelbox.y, pixelbox.height);
-		drawResidueStrings(g, pixelsPerBase, charArray, residueMask.get(seqBegIndex,seqEndIndex), pixelStart);
+		drawResidueRectangles(g, pixelsPerBase, charArray, residueMask.get(seqBegIndex,seqEndIndex), pixelbox.x, pixelbox.y, pixelbox.height, getShowMask());
+		drawResidueStrings(g, pixelsPerBase, charArray, residueMask.get(seqBegIndex,seqEndIndex), pixelStart, getShowMask());
 	}
 
 	private static void drawResidueRectangles(
-			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int x, int y, int height) {
+			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int x, int y, int height, boolean show_mask) {
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		for (int j = 0; j < charArray.length; j++) {
-			if (!residueMask.get(j)) {
+
+			if(show_mask && !residueMask.get(j)) {
 				continue;	// skip drawing of this residue
 			}
 			g.setColor(determineResidueColor(charArray[j]));
@@ -260,14 +279,14 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 	}
 
 	private void drawResidueStrings(
-			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int pixelStart) {
+			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int pixelStart, boolean show_mask) {
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
 			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 			for (int i = 0; i < charArray.length; i++) {
-				if (!residueMask.get(i)) {
+				if(show_mask && !residueMask.get(i)) {
 					continue;	// skip drawing of this residue
 				}
 				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase), baseline);

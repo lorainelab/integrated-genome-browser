@@ -67,6 +67,7 @@ public final class BAM extends SymLoader {
 	public static final String CIGARPROP = "cigar";
 	public static final String RESIDUESPROP = "residues";
 	public static final String BASEQUALITYPROP = "baseQuality";
+	public static final String SHOWMASK = "showMask";
 
 	static {
 		// BAM files are generally large, so only allow loading visible data.
@@ -293,6 +294,7 @@ public final class BAM extends SymLoader {
 		}
 		sym.setProperty(CIGARPROP, sr.getCigar());
 		sym.setProperty(RESIDUESPROP, sr.getReadString());
+		sym.setProperty(SHOWMASK, true);
 		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
 			//sym.setProperty("residues", sr.getReadString());
 		} else {

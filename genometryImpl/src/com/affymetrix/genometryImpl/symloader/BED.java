@@ -647,12 +647,14 @@ public class BED extends SymLoader{
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		String line, trackLine = null, seq_name = null;
 		String[] fields;
+		int counter = 0;
 
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-
+				counter++;
+				
 				if (line.length() == 0) {
 					continue;
 				}
@@ -672,8 +674,8 @@ public class BED extends SymLoader{
 					fields = line_regex.split(line);
 
 					if (fields.length < 3) {
-						Logger.getLogger(BED.class.getName()).severe("Invalid BED file");
-						return false;
+						Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid line at {0} in BED file", counter);
+						continue;
 					}
 
 					boolean includes_bin_field = false;

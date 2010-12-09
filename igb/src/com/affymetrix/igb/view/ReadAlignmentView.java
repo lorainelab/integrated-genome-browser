@@ -24,9 +24,15 @@ public class ReadAlignmentView implements ContextualPopupListener{
 			SymWithProps swp = (SymWithProps) selected_items.get(0);
 			Object prop = swp.getProperty(BAM.SHOWMASK);
 			if (prop != null) {
-				if(Boolean.parseBoolean(prop.toString())){
+				if (selected_items.size() == 1) {
+					if (Boolean.parseBoolean(prop.toString())) {
+						popup.add(new JMenuItem(ViewReadAlignmentAction.getShowAligmentAction(selected_items)));
+
+					} else {
+						popup.add(new JMenuItem(ViewReadAlignmentAction.getMismatchAligmentAction(selected_items)));
+					}
+				} else {
 					popup.add(new JMenuItem(ViewReadAlignmentAction.getShowAligmentAction(selected_items)));
-				}else{
 					popup.add(new JMenuItem(ViewReadAlignmentAction.getMismatchAligmentAction(selected_items)));
 				}
 			}

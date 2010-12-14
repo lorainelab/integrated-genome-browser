@@ -1,6 +1,7 @@
 package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BAMSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -266,7 +267,8 @@ public final class BAM extends SymLoader {
 			span = new SimpleSeqSpan(end, start, seq);
 		}
 
-		List<SimpleSymWithProps> childs = getChildren(sr, seq, sr.getCigar(), sr.getReadString(), span.getLength());
+		List<SimpleSymWithProps> insertChilds = new ArrayList<SimpleSymWithProps>();
+		List<SimpleSymWithProps> childs = getChildren(sr, seq, sr.getCigar(), insertChilds);
 
 		int blockMins[] = new int[childs.size()];
 		int blockMaxs[] = new int[childs.size()];
@@ -276,6 +278,14 @@ public final class BAM extends SymLoader {
 			blockMaxs[i] =  blockMins[i] + child.getSpan(0).getLength();
 		}
 
+		int iblockMins[] = new int[insertChilds.size()];
+		int iblockMaxs[] = new int[insertChilds.size()];
+		for (int i=0;i<insertChilds.size();i++) {
+			SymWithProps child = childs.get(i);
+			iblockMins[i] =  child.getSpan(0).getMin() + span.getMin();
+			iblockMaxs[i] =  iblockMins[i] + child.getSpan(0).getLength();
+		}
+
 		if(childs.isEmpty()) {
 			blockMins = new int[1];
 			blockMins[0] = span.getStart();
@@ -283,7 +293,8 @@ public final class BAM extends SymLoader {
 			blockMaxs[0] = span.getEnd();
 		}
 
-		SymWithProps sym = new UcscBedSym(featureName, seq, start, end, sr.getReadName(), 0.0f, span.isForward(), 0, 0, blockMins, blockMaxs);
+		SymWithProps sym = new BAMSym(featureName, seq, start, end, sr.getReadName(),
+				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs);
 		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
 		sym.setProperty("id",sr.getReadName());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
@@ -305,8 +316,8 @@ public final class BAM extends SymLoader {
 
 		return sym;
 	}
-	
-	private static List<SimpleSymWithProps> getChildren(SAMRecord sr, BioSeq seq, Cigar cigar, String residues, int spanLength) {
+
+	private static List<SimpleSymWithProps> getChildren(SAMRecord sr, BioSeq seq, Cigar cigar, List<SimpleSymWithProps> insertChilds) {
 		List<SimpleSymWithProps> results = new ArrayList<SimpleSymWithProps>();
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return results;
@@ -314,7 +325,7 @@ public final class BAM extends SymLoader {
 		int currentChildStart = 0;
 		int currentChildEnd = 0;
 		int celLength = 0;
-		
+
 		for (CigarElement cel : cigar.getCigarElements()) {
 			try {
 				celLength = cel.getLength();
@@ -326,6 +337,14 @@ public final class BAM extends SymLoader {
 					// print insertion
 					currentChildStart = currentChildEnd;
 					currentChildEnd = currentChildStart;
+					SimpleSymWithProps ss = new SimpleSymWithProps();
+					if (!sr.getReadNegativeStrandFlag()) {
+						ss.addSpan(new SimpleSeqSpan(currentChildStart, currentChildStart + celLength, seq));
+					}
+					else {
+						ss.addSpan(new SimpleSeqSpan(currentChildStart + celLength, currentChildStart, seq));
+					}
+					insertChilds.add(ss);
 				} else if (cel.getOperator() == CigarOperator.M) {
 					// print matches
 					currentChildEnd += celLength;

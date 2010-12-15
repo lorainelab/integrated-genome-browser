@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -330,8 +329,8 @@ public final class BAM extends SymLoader {
 			try {
 				celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
-					currentChildStart = currentChildEnd + celLength;
-					currentChildEnd = currentChildStart;
+					currentChildStart = currentChildEnd;
+					currentChildEnd = currentChildStart  + celLength;
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					// TODO -- allow possibility that INSERTION is terminator, not M
 					// print insertion
@@ -426,7 +425,11 @@ public final class BAM extends SymLoader {
 			try {
 				int celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
-					//currentPos += celLength;	// skip over deletion
+					if (currentPos >= startPos) {
+						char[] tempArr = new char[celLength];
+						Arrays.fill(tempArr, 'D');		// print deletion as 'D'
+						sb.append(tempArr);
+					}
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					currentPos += celLength;	// print insertion
 				} else if (cel.getOperator() == CigarOperator.M) {
@@ -446,7 +449,7 @@ public final class BAM extends SymLoader {
 				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
 					continue;				// hard clip can be ignored
 				}
-				if (currentPos - startPos >= spanLength) {
+				if (sb.length() >= spanLength) {
 					break;
 				}
 			} catch (Exception ex) {

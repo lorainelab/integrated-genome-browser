@@ -280,7 +280,7 @@ public final class BAM extends SymLoader {
 		int iblockMins[] = new int[insertChilds.size()];
 		int iblockMaxs[] = new int[insertChilds.size()];
 		for (int i=0;i<insertChilds.size();i++) {
-			SymWithProps child = childs.get(i);
+			SymWithProps child = insertChilds.get(i);
 			iblockMins[i] =  child.getSpan(0).getMin() + span.getMin();
 			iblockMaxs[i] =  iblockMins[i] + child.getSpan(0).getLength();
 		}
@@ -427,7 +427,7 @@ public final class BAM extends SymLoader {
 				if (cel.getOperator() == CigarOperator.DELETION) {
 					if (currentPos >= startPos) {
 						char[] tempArr = new char[celLength];
-						Arrays.fill(tempArr, 'D');		// print deletion as 'D'
+						Arrays.fill(tempArr, '_');		// print deletion as 'D'
 						sb.append(tempArr);
 					}
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {

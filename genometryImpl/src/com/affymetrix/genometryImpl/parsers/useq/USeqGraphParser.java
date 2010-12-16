@@ -145,8 +145,11 @@ public class USeqGraphParser {
 		checkSeqLength(chromosomeBS, xcoords);
 		//get strand
 		String strand = sliceInfo.getStrand();
-		//make GraphSym
-		GraphSym graf = new GraphSym(xcoords, ycoords, stream_name, chromosomeBS);
+		//make GraphSym changing stream name if needed for strand
+		String id = stream_name;
+		if (strand.equals(".") == false) id = id+strand;
+		GraphSym graf = new GraphSym(xcoords, ycoords, id, chromosomeBS);
+		
 		//add properties
 		copyProps(graf, archiveInfo.getKeyValues());
 		//set strand

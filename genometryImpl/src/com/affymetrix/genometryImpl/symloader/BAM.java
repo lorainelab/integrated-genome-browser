@@ -48,7 +48,7 @@ import net.sf.samtools.util.SequenceUtil;
  */
 public final class BAM extends SymLoader {
 
-	private static List<String> pref_list = new ArrayList<String>();
+	public final static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bam");
 	}
@@ -59,7 +59,7 @@ public final class BAM extends SymLoader {
 	private final Set<BioSeq> seqs = new HashSet<BioSeq>();
 	private File indexFile = null;
 
-	private static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private final static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 
 	public static final String CIGARPROP = "cigar";
 	public static final String RESIDUESPROP = "residues";
@@ -145,13 +145,10 @@ public final class BAM extends SymLoader {
 						break;
 					}
 					String seqID = ssr.getSequenceName();
-					BioSeq seq = group.getSeq(seqID);
-					if (seq == null) {
-						int seqLength = ssr.getSequenceLength();
-						seq = new BioSeq(seqID, group.getID(), seqLength);
-						Logger.getLogger(BAM.class.getName()).log(
-								Level.FINE, "Adding chromosome {0} to group {1}", new Object[]{seqID, group.getID()});
-						group.addSeq(seq);
+					int seqLength = ssr.getSequenceLength();
+					BioSeq seq = group.addSeq(seqID, seqLength);
+					if(seq.getVersion() != null){
+						seq.setVersion(group.getID());
 					}
 					seqs.add(seq);
 				} catch (Exception ex) {

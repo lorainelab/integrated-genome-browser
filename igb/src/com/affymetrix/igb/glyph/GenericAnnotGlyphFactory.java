@@ -428,7 +428,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				}
 			}
 			csg.setHitable(false);
-			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), pglyph.getCoordBox().height);
+			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), DEFAULT_THICK_HEIGHT);
 			if (isChild) {
 				pglyph.addChild(csg);
 			} else {

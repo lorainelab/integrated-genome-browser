@@ -134,7 +134,7 @@ public final class LoadFileAction extends AbstractAction {
 						new String[]{"das", "dasxml", "das2xml"},
 						"DAS Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"gr", "bgr", "sgr", "bar", "chp", "wig"},
+						new String[]{"gr", "bgr", "sgr", "bar", "chp", "wig", "bedgraph"},
 						"Graph Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"sin", "egr", "egr.txt"},

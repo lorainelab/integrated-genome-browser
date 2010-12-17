@@ -1111,7 +1111,7 @@ public abstract class ServerUtils {
 //		if (extension.equals("useq")) {
 //			return new USeq(uri, featureName, group);
 //		}
-		if (extension.equals("wig")) {
+		if (extension.equals("wig") || extension.equals("bedgraph")) {
 			return new Wiggle(uri, featureName, group);
 		}
 		if(extension.equals("link.psl")) {

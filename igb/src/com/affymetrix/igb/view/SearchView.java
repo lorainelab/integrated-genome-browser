@@ -1,12 +1,20 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
+
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -19,11 +27,9 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.tiers.TransformTierGlyph;
-import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
-
+import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
@@ -34,18 +40,21 @@ import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.tiers.TransformTierGlyph;
+import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.concurrent.Executor;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableRowSorter;
 
-public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed {
+
+
+public final class SearchView extends JComponent implements 
+		ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener {
+	
 	private static final long serialVersionUID = 0;
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
@@ -190,6 +199,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchTF.addActionListener(this);
 		searchButton.addActionListener(this);
 		clear_button.addActionListener(this);
+		ServerList.addServerInitListener(this);
 	}
 
 	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
@@ -377,79 +387,96 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 	}
 
-	private void displayRegexIDs(String text, BioSeq chrFilter, boolean search_props) {
-		Pattern regex = null;
-		try {
-			String regexText = text;
-			// Make sure this search is reasonable to do on a remote server.
-			if (!(regexText.contains("*") || regexText.contains("^") || regexText.contains("$"))) {
-				// Not much of a regular expression.  Assume the user wants to match at the start and end
-				regexText = ".*" + regexText + ".*";
+	private void enableComp(boolean enabled){
+		searchTF.setEnabled(enabled);
+		sequence_CB.setEnabled(enabled);
+		searchCB.setEnabled(enabled);
+		searchButton.setEnabled(enabled);
+		clear_button.setEnabled(enabled);
+	}
+
+	private void displayRegexIDs(final String search_text, final BioSeq chrFilter, final boolean search_props) {
+		ThreadUtils.getPrimaryExecutor(this).execute(new Runnable() {
+
+			public void run() {
+				String text = search_text;
+				Pattern regex = null;
+				try {
+					String regexText = search_text;
+					// Make sure this search is reasonable to do on a remote server.
+					if (!(regexText.contains("*") || regexText.contains("^") || regexText.contains("$"))) {
+						// Not much of a regular expression.  Assume the user wants to match at the start and end
+						regexText = ".*" + regexText + ".*";
+					}
+					regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
+				} catch (PatternSyntaxException pse) {
+					ErrorHandler.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
+					return;
+				} catch (Exception ex) {
+					ErrorHandler.errorPanel("Problem with regular expression...", ex);
+					return;
+				}
+				enableComp(false);
+				clearResults();
+
+				String friendlySearchStr = friendlyString(text, sequence_CB.getSelectedItem().toString());
+				status_bar.setText(friendlySearchStr + ": Searching locally...");
+				List<SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex, search_props);
+				remoteSymList = null;
+
+				// Make sure this search is reasonable to do on a remote server.
+				if (!(text.contains("*") || text.contains("^") || text.contains("$"))) {
+					// Not much of a regular expression.  Assume the user wants to match at the start and end
+					text = "*" + text + "*";
+				}
+				friendlySearchStr = friendlyString(text, sequence_CB.getSelectedItem().toString());
+				int actualChars = text.length();
+				if (text.startsWith(".*")) {
+					actualChars -= 2;
+				} else if (text.startsWith("*")) {
+					actualChars -= 1;
+				}
+				if (text.endsWith(".*")) {
+					text = text.substring(0, text.length() - 2) + "*";	// hack for bug in DAS/2 server
+					actualChars -= 2;
+				} else if (text.endsWith("*")) {
+					actualChars -= 1;
+				}
+
+				if (remoteSearchCheckBox.isSelected()) {
+					if (actualChars < 3) {
+						ErrorHandler.errorPanel(friendlySearchStr + ": Text is too short to allow remote search.");
+						enableComp(true);
+						return;
+					}
+
+					status_bar.setText(friendlySearchStr + ": Searching remotely...");
+					remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
+				}
+
+				if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
+					setStatus(friendlySearchStr + ": No matches");
+					enableComp(true);
+					return;
+				}
+
+				String statusStr = friendlySearchStr + ": " + (localSymList == null ? 0 : localSymList.size()) + " local matches";
+				if (remoteSearchCheckBox.isSelected() && actualChars >= 3) {
+					statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
+				}
+				setStatus(statusStr);
+				if (selectInMapCheckBox.isSelected()) {
+					gmodel.setSelectedSymmetriesAndSeq(localSymList, this);
+				}
+				if (remoteSymList != null) {
+					localSymList.addAll(remoteSymList);
+				}
+
+				tableRows = filterBySeq(localSymList, chrFilter);
+				displayInTable(tableRows);
+				enableComp(true);
 			}
-			regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
-		} catch (PatternSyntaxException pse) {
-			ErrorHandler.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
-			return;
-		} catch (Exception ex) {
-			ErrorHandler.errorPanel("Problem with regular expression...", ex);
-			return;
-		}
-
-		clearResults();
-
-		String friendlySearchStr = friendlyString(text, this.sequence_CB.getSelectedItem().toString());
-		status_bar.setText(friendlySearchStr + ": Searching locally...");
-		List <SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex, search_props);
-		remoteSymList = null;
-
-		// Make sure this search is reasonable to do on a remote server.
-			if (!(text.contains("*") || text.contains("^") || text.contains("$"))) {
-			// Not much of a regular expression.  Assume the user wants to match at the start and end
-			text = "*" + text + "*";
-		}
-		friendlySearchStr = friendlyString(text, this.sequence_CB.getSelectedItem().toString());
-		int actualChars = text.length();
-		if (text.startsWith(".*")) {
-			actualChars -= 2;
-		} else if (text.startsWith("*")) {
-			actualChars -= 1;
-		}
-		if (text.endsWith(".*")) {
-			text = text.substring(0,text.length()-2) + "*";	// hack for bug in DAS/2 server
-			actualChars -= 2;
-		} else if (text.endsWith("*")) {
-			actualChars -= 1;
-		}
-
-		if (this.remoteSearchCheckBox.isSelected()) {
-			if (actualChars < 3) {
-				ErrorHandler.errorPanel(friendlySearchStr + ": Text is too short to allow remote search.");
-				return;
-			}
-
-			status_bar.setText(friendlySearchStr + ": Searching remotely...");
-			remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
-		}
-
-		if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
-			setStatus(friendlySearchStr + ": No matches");
-			return;
-		}
-
-		String statusStr = friendlySearchStr + ": " + (localSymList == null ? 0 : localSymList.size()) + " local matches";
-		if (this.remoteSearchCheckBox.isSelected() && actualChars >= 3) {
-				statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
-		}
-		setStatus(statusStr);
-		if (this.selectInMapCheckBox.isSelected()) {
-			gmodel.setSelectedSymmetriesAndSeq(localSymList, this);
-		}
-		if (remoteSymList != null) {
-			localSymList.addAll(remoteSymList);
-		}
-
-		tableRows = filterBySeq(localSymList, chrFilter);
-		displayInTable(tableRows);
+		});
 
 	}
 
@@ -651,6 +678,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		return features;
 	}
 
+	public void genericServerInit(GenericServerInitEvent evt) {
+		initRemoteServerCheckBox(group);
+	}
+	
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		groupOrSeqChange();
 	}

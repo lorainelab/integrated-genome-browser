@@ -127,11 +127,13 @@ public class GFF3 extends SymLoader{
 		Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
 		String line, trackLine = null, seq_name = null;
 		String[] fields;
-
+		int counter = 0;
 		try {
 			Thread thread = Thread.currentThread();
 			br = new BufferedReader(new InputStreamReader(istr));
 			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
+				counter++;
+
 				if(line.length() == 0)
 					continue;
 
@@ -149,8 +151,8 @@ public class GFF3 extends SymLoader{
 					fields = line_regex.split(line);
 
 					if (fields.length < 5) {
-						Logger.getLogger(GFF3.class.getName()).severe("Invalid GFF file");
-						return false;
+						Logger.getLogger(GFF3.class.getName()).log(Level.WARNING, "Invalid line at {0} in GFF3 file", counter);
+						continue;
 					}
 
 					seq_name = fields[0]; // seq id field

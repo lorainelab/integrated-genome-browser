@@ -1032,6 +1032,8 @@ public abstract class ServerUtils {
 				info = new DasServerInfo(url);
 			} else if (serverType == ServerType.DAS2) {
 				info = new Das2ServerInfo(url, name, false);
+			} else if (serverType == null) {
+				info = ServerUtils.formatURL(url, serverType);
 			}
 		} catch (URISyntaxException e) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
@@ -1056,6 +1058,9 @@ public abstract class ServerUtils {
 			String message = "Unable to parse URL: '" + url + "'";
 			Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, message, ex);
 			throw new IllegalArgumentException(message, ex);
+		}
+		if (type == null) {
+			return url;
 		}
 		switch (type) {
 			case DAS:

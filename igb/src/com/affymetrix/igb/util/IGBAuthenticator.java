@@ -162,7 +162,7 @@ public class IGBAuthenticator extends Authenticator {
 		GenericServer serverObject = null;
 
 		try {
-			serverObject = ServerList.getServer(this.getRequestingURL());
+			serverObject = ServerList.getServerInstance().getServer(this.getRequestingURL());
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.SEVERE, "Problem translating URL '" + this.getRequestingURL().toString() + "' to server", ex);
 		} catch (IllegalArgumentException ex) {

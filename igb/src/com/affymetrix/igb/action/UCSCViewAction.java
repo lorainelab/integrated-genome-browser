@@ -82,7 +82,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 				// This is done to avoid additional slow DAS queries.
 				DasServerInfo ucsc = null;
 				GenericServer server = null;
-				if ((server = ServerList.getServer(UCSC_DAS_URL)) != null) {
+				if ((server = ServerList.getServerInstance().getServer(UCSC_DAS_URL)) != null) {
 					// UCSC server already exists!
 					ucsc = (DasServerInfo)server.serverObj;
 				} else {

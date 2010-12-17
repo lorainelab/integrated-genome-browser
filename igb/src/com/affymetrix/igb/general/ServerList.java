@@ -30,11 +30,32 @@ import java.util.prefs.Preferences;
  * @version $Id$
  */
 public final class ServerList {
-	private final static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
-	private final static Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
-	private final static GenericServer localFilesServer = new GenericServer("Local Files","",ServerType.LocalFiles,true,null);
+	private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
+	private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
+	private final GenericServer localFilesServer = new GenericServer("Local Files","",ServerType.LocalFiles,true,null);
 
-	public static Set<GenericServer> getEnabledServers() {
+	private static ServerList serverInstance = new ServerList("server");
+	private static ServerList repositoryInstance = new ServerList("repository");
+	private final String textName;
+	private ServerList(String textName) {
+		this.textName = textName;
+	}
+	public static final ServerList getServerInstance() {
+		return serverInstance;
+	}
+	public static final ServerList getRepositoryInstance() {
+		return repositoryInstance;
+	}
+
+	public String getTextName() {
+		return textName;
+	}
+
+	public boolean hasTypes() {
+		return this == serverInstance;
+	}
+
+	public Set<GenericServer> getEnabledServers() {
 		Set<GenericServer> serverList = new HashSet<GenericServer>();
 		for (GenericServer gServer : getAllServers()) {
 			if (gServer.isEnabled() && gServer.getServerStatus() != ServerStatus.NotResponding) {
@@ -44,9 +65,9 @@ public final class ServerList {
 		return serverList;
 	}
 
-	public static Set<GenericServer> getInitializedServers() {
+	public Set<GenericServer> getInitializedServers() {
 		Set<GenericServer> serverList = new HashSet<GenericServer>();
-		for (GenericServer gServer : ServerList.getEnabledServers()) {
+		for (GenericServer gServer : getEnabledServers()) {
 			if (gServer.getServerStatus() == ServerStatus.Initialized) {
 				serverList.add(gServer);
 			}
@@ -54,12 +75,12 @@ public final class ServerList {
 		return serverList;
 	}
 
-	public static GenericServer getLocalFilesServer() {
+	public GenericServer getLocalFilesServer() {
 		return localFilesServer;
 	}
 
-	public static boolean areAllServersInited() {
-		for (GenericServer gServer : ServerList.getAllServers()) {
+	public boolean areAllServersInited() {
+		for (GenericServer gServer : getAllServers()) {
 			if (!gServer.isEnabled()) {
 				continue;
 			}
@@ -70,11 +91,11 @@ public final class ServerList {
 		return true;
 	}
 
-	public static synchronized Collection<GenericServer> getAllServers() {
+	public synchronized Collection<GenericServer> getAllServers() {
 		return url2server.values();
 	}
 
-	public static synchronized Collection<GenericServer> getAllServersExceptCached(){
+	public synchronized Collection<GenericServer> getAllServersExceptCached(){
 		Collection<GenericServer> servers = getAllServers();
 		GenericServer server = getPrimaryServer();
 		if(server != null)
@@ -90,7 +111,7 @@ public final class ServerList {
 	 * @param URLorName
 	 * @return gserver or server
 	 */
-	public static GenericServer getServer(String URLorName) {
+	public GenericServer getServer(String URLorName) {
 		GenericServer server = url2server.get(URLorName);
 		if (server == null) {
 			for (GenericServer gServer : getAllServers()) {
@@ -111,7 +132,7 @@ public final class ServerList {
 	 * @param isPrimary
 	 * @return GenericServer
 	 */
-	public static GenericServer addServer(ServerType serverType, String name, String url, boolean enabled, boolean primary) {
+	public GenericServer addServer(ServerType serverType, String name, String url, boolean enabled, boolean primary) {
 		url = ServerUtils.formatURL(url, serverType);
 		GenericServer server = url2server.get(url);
 		Object info;
@@ -140,11 +161,11 @@ public final class ServerList {
 	 * @param enabled
 	 * @return GenericServer
 	 */
-	public static GenericServer addServer(ServerType serverType, String name, String url, boolean enabled) {
+	public GenericServer addServer(ServerType serverType, String name, String url, boolean enabled) {
 		return addServer(serverType, name, url, enabled, false);
 	}
 
-	public static GenericServer addServer(Preferences node) {
+	public GenericServer addServer(Preferences node) {
 		GenericServer server = url2server.get(GeneralUtils.URLDecode(node.name()));
 		String url;
 		String name;
@@ -154,12 +175,13 @@ public final class ServerList {
 		if (server == null) {
 			url = GeneralUtils.URLDecode(node.name());
 			name = node.get("name", "Unknown");
-			serverType = ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
+			String type = node.get("type", hasTypes() ? ServerType.LocalFiles.name() : null);
+			serverType = type == null ? null : ServerType.valueOf(type);
 			url = ServerUtils.formatURL(url, serverType);
 			info = ServerUtils.getServerInfo(serverType, url, name);
 
 			if (info != null) {
-				server = new GenericServer(node, info);
+				server = new GenericServer(node, info, serverType);
 
 				if (server != null) {
 					url2server.put(url, server);
@@ -175,7 +197,7 @@ public final class ServerList {
 	 *
 	 * @param url
 	 */
-	public static void removeServer(String url) {
+	public void removeServer(String url) {
 		GenericServer server = url2server.get(url);
 		url2server.remove(url);
 		server.setEnabled(false);
@@ -185,14 +207,17 @@ public final class ServerList {
 	/**
 	 * Load server preferences from the Java preferences subsystem.
 	 */
-	public static void loadServerPrefs() {
+	public void loadServerPrefs() {
 		ServerType serverType;
 		Preferences node;
 
 		try {
-			for (String serverURL : PreferenceUtils.getServersNode().childrenNames()) {
-				node = PreferenceUtils.getServersNode().node(serverURL);
-				serverType = ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
+			for (String serverURL : getPreferencesNode().childrenNames()) {
+				node = getPreferencesNode().node(serverURL);
+				serverType = null;
+				if (node.get("type", null) != null) {
+					serverType = ServerType.valueOf(node.get("type", ServerType.LocalFiles.name()));
+				}
 
 				if (serverType == ServerType.LocalFiles) {
 					continue;
@@ -209,13 +234,13 @@ public final class ServerList {
 	 * Update the old-style preference nodes to the newer format.  This is now
 	 * called by the PrefsLoader when checking/updating the preferences version.
 	 */
-	public static void updateServerPrefs() {
+	public void updateServerPrefs() {
 		GenericServer server;
 
 		for (ServerType type : ServerType.values()) {
 			try {
-				if (PreferenceUtils.getServersNode().nodeExists(type.toString())) {
-					Preferences prefServers = PreferenceUtils.getServersNode().node(type.toString());
+				if (getPreferencesNode().nodeExists(type.toString())) {
+					Preferences prefServers = getPreferencesNode().node(type.toString());
 					String name, login, password;
 					boolean enabled;
 					for (String url : prefServers.keys()) {
@@ -238,8 +263,12 @@ public final class ServerList {
 		}
 	}
 
-	public static void updateServerURLsInPrefs() {
-		Preferences servers = PreferenceUtils.getServersNode();
+	private Preferences getPreferencesNode() {
+		return hasTypes() ? PreferenceUtils.getServersNode() : PreferenceUtils.getRepositoriesNode();
+	}
+
+	public void updateServerURLsInPrefs() {
+		Preferences servers = getPreferencesNode();
 		Preferences currentServer;
 		String normalizedURL;
 		String decodedURL;
@@ -259,7 +288,7 @@ public final class ServerList {
 				normalizedURL = ServerUtils.formatURL(decodedURL, ServerType.valueOf(serverType));
 
 				if (!decodedURL.equals(normalizedURL)) {
-					Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading server URL: ''{0}'' in preferences", decodedURL);
+					Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading " + textName + " URL: ''{0}'' in preferences", decodedURL);
 					Preferences normalizedServer = servers.node(GeneralUtils.URLEncode(normalizedURL));
 					for (String key : currentServer.keys()) {
 						normalizedServer.put(key, currentServer.get(key, ""));
@@ -286,14 +315,30 @@ public final class ServerList {
 	 * @param type type of this server.
 	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
 	 */
-	private static GenericServer addServerToPrefs(String url, String name, ServerType type) {
+	private GenericServer addServerToPrefs(String url, String name, ServerType type) {
 		url = ServerUtils.formatURL(url, type);
-		Preferences node = PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(ServerUtils.formatURL(url, type)));
+		Preferences node = getPreferencesNode().node(GeneralUtils.URLEncode(ServerUtils.formatURL(url, type)));
 
 		node.put("name",  name);
 		node.put("type", type.toString());
 
-		return new GenericServer(node, null);
+		return new GenericServer(node, null, ServerType.valueOf(node.get("type", ServerType.LocalFiles.name())));
+	}
+
+	/**
+	 * Add or update a repository in the preferences subsystem.  This only modifies
+	 * the preferences nodes, it does not affect any other part of the application.
+	 *
+	 * @param url URL of this server.
+	 * @param name name of this server.
+	 * @return an anemic GenericServer object whose sole purpose is to aid in setting of additional preferences
+	 */
+	private GenericServer addRepositoryToPrefs(String url, String name) {
+		Preferences node = PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(url));
+
+		node.put("name",  name);
+
+		return new GenericServer(node, null, null);
 	}
 
 	/**
@@ -302,8 +347,13 @@ public final class ServerList {
 	 *
 	 * @param server GenericServer object of the server to add or update.
 	 */
-	public static void addServerToPrefs(GenericServer server) {
-		addServerToPrefs(server.URL, server.serverName, server.serverType);
+	public void addServerToPrefs(GenericServer server) {
+		if (server.serverType == null) {
+			addRepositoryToPrefs(server.URL, server.serverName);
+		}
+		else {
+			addServerToPrefs(server.URL, server.serverName, server.serverType);
+		}
 	}
 
 	/**
@@ -312,9 +362,9 @@ public final class ServerList {
 	 *
 	 * @param url  URL of the server to remove
 	 */
-	public static void removeServerFromPrefs(String url) {
+	public void removeServerFromPrefs(String url) {
 		try {
-			PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(url)).removeNode();
+			getPreferencesNode().node(GeneralUtils.URLEncode(url)).removeNode();
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -327,7 +377,7 @@ public final class ServerList {
 	 * @return server
 	 * @throws URISyntaxException
 	 */
-	public static GenericServer getServer(URL u) throws URISyntaxException {
+	public GenericServer getServer(URL u) throws URISyntaxException {
 		URI a = u.toURI();
 		URI b;
 		for (String url : url2server.keySet()) {
@@ -340,30 +390,35 @@ public final class ServerList {
 				Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-		throw new IllegalArgumentException("URL " + u.toString() + " is not a valid server.");
+		throw new IllegalArgumentException("URL " + u.toString() + " is not a valid " + textName + ".");
 	}
 
-	public static void addServerInitListener(GenericServerInitListener listener) {
+	public void addServerInitListener(GenericServerInitListener listener) {
 		server_init_listeners.add(listener);
 	}
 
-	public static void fireServerInitEvent(GenericServer server, ServerStatus status) {
+	public void fireServerInitEvent(GenericServer server, ServerStatus status) {
 		fireServerInitEvent(server, status, false, true);
 	}
 
-	public static void fireServerInitEvent(GenericServer server, ServerStatus status, boolean removedManually) {
+	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean removedManually) {
 		fireServerInitEvent(server, status, false, removedManually);
 	}
 
-	public static void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {
+	public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean forceUpdate, boolean removedManually) {
 		if (status == ServerStatus.NotResponding) {
 			GeneralLoadUtils.removeServer(server);
 
 			if(!removedManually)
-				ErrorHandler.errorPanel(server.serverName, "Server " + server.serverName + " is not responding. Disabling it for this session.");
+				ErrorHandler.errorPanel(server.serverName, textName.substring(0, 1).toUpperCase() + textName.substring(2) + " " + server.serverName + " is not responding. Disabling it for this session.");
 			
 			if (server.serverType != ServerType.LocalFiles) {
-				Application.getSingleton().removeNotLockedUpMsg("Loading server " + server + " (" + server.serverType.toString() + ")");
+				if (server.serverType == null) {
+					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
+				}
+				else {
+					Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
+				}
 			}
 		}
 
@@ -380,7 +435,7 @@ public final class ServerList {
 	 * Gets the primary server if present else returns null.
 	 * @return
 	 */
-	public static GenericServer getPrimaryServer(){
+	public  GenericServer getPrimaryServer(){
 		for(GenericServer server : getEnabledServers()){
 			if(server.isPrimary())
 				return server;

@@ -47,7 +47,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverType,
 				enabled,
 				false,
-				PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
+				serverType == null ? PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(URL)) :
+									 PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
 				serverObj, primary);
 	}
 
@@ -58,15 +59,16 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 				serverType,
 				enabled,
 				false,
-				PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
+				serverType == null ? PreferenceUtils.getRepositoriesNode().node(GeneralUtils.URLEncode(URL)) :
+					 				 PreferenceUtils.getServersNode().node(GeneralUtils.URLEncode(URL)),
 				serverObj, false);
 	}
 
-	public GenericServer(Preferences node, Object serverObj) {
+	public GenericServer(Preferences node, Object serverObj, ServerType serverType) {
 		this(
 				node.get("name", "Unknown"),
 				GeneralUtils.URLDecode(node.name()),
-				ServerType.valueOf(node.get("type", ServerType.LocalFiles.name())),
+				serverType,
 				true,
 				false,
 				node,
@@ -112,11 +114,11 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		if (tempURL.endsWith("/")) {
 			tempURL = tempURL.substring(0, tempURL.length() - 1);
 		}
-		if (serverType.equals(ServerType.DAS)) {
+		if (ServerType.DAS.equals(serverType)) {
 			if (tempURL.endsWith("/dsn")) {
 				tempURL = tempURL.substring(0, tempURL.length() - 4);
 			}
-		} else if (serverType.equals(ServerType.DAS2)) {
+		} else if (ServerType.DAS2.equals(serverType)) {
 			if (tempURL.endsWith("/genome")) {
 				tempURL = tempURL.substring(0, tempURL.length() - 7);
 			} 

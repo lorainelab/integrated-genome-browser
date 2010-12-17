@@ -1,6 +1,16 @@
+/**
+ *   Copyright (c) 2010 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 package com.affymetrix.igb;
-
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -9,9 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
@@ -19,28 +27,37 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JTabbedPane;
 
-import org.apache.felix.framework.Felix;
-import org.apache.felix.framework.util.FelixConstants;
-import org.apache.felix.framework.util.StringMap;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.UCSCViewAction;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.view.SearchView;
+import com.affymetrix.igb.view.SeqMapView;
 
-public class IGBServiceImpl implements IGBService, BundleActivator {
+public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryChangeListener {
 
-	private static Felix felix;
-	private static IGBService service;
-	private IGBServiceImpl() {}
+	private static IGBServiceImpl instance = new IGBServiceImpl();
+	public static IGBServiceImpl getInstance() {
+		return instance;
+	}
+	private List<RepositoryChangeListener> repositoryChangeListeners;
+	private Set<String> tier1Bundles; // required bundles
+	private Set<String> tier2Bundles; // optional bundles
+
+	private IGBServiceImpl() {
+		super();
+		repositoryChangeListeners = new ArrayList<RepositoryChangeListener>();
+	}
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
@@ -48,58 +65,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static final void loadFelix() {
-		Map configMap = new StringMap(false);
-		configMap.put("org.osgi.framework.storage", PreferenceUtils.getAppDataDirectory() + "cache/felix-cache");
-		for (String key : BUNDLE.getString("pluginsConfigList").split(",")) {
-			configMap.put(key, BUNDLE.getString(key));
-		}
-        List list = new ArrayList();
-        service = new IGBServiceImpl();
-        list.add(service);
-        configMap.put(FelixConstants.SYSTEMBUNDLE_ACTIVATORS_PROP, list);
-        felix = new Felix(configMap);
-	}
-
-	public static void startOSGi() {
-		loadFelix();
-
-        try
-        {
-            felix.start();
-            BundleContext bundleContext = felix.getBundleContext();
-			bundleContext.registerService(IGBService.class.getName(), service, new Properties());
-			String pluginsIGBServerURL = BUNDLE.getString("pluginsIGBServerURL");
-			for (String pluginName : service.getRequiredBundles()) {
-				Bundle bundle = bundleContext.installBundle(pluginsIGBServerURL + "/required/" + pluginName);
-				bundle.start();
-			}
-        }
-        catch (Exception ex)
-        {
-			Logger.getLogger(service.getClass().getName()).log(
-					Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
-        }
-    }
-
-	public static void stopOSGi() {
-        try
-        {
-        	felix.stop();
-        	felix = null;
-        }
-        catch (Exception ex)
-        {
-			Logger.getLogger(service.getClass().getName()).log(
-					Level.WARNING, "Could not stop framework, plugins disabled: {0}", ex.getMessage());
-        }
-	}
-
-	public String[] getRequiredBundles() {
-		return BUNDLE.getString("pluginsRequiredList").split(",");
 	}
 
 	public boolean addMenu(JMenu new_menu) {
@@ -200,14 +165,73 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 		Application.getSingleton().removeNotLockedUpMsg(message);
 	}
 
+	public Set<String> getTier1Bundles() {
+		return tier1Bundles;
+	}
+
+	public Set<String> getTier2Bundles() {
+		return tier2Bundles;
+	}
+
+	public List<String> getRepositories() {
+		List<String> repositories = new ArrayList<String>();
+		for (GenericServer repositoryServer : ServerList.getRepositoryInstance().getAllServers()) {
+			if (repositoryServer.isEnabled()) {
+				repositories.add(repositoryServer.URL);
+			}
+		}
+		return repositories;
+	}
+
+	void setTier1Bundles(Set<String> _tier1Bundles) {
+		tier1Bundles = _tier1Bundles;
+	}
+
+	void setTier2Bundles(Set<String> _tier2Bundles) {
+		tier2Bundles = _tier2Bundles;
+	}
+
+	public void failRepository(String url) {
+		ServerList.getRepositoryInstance().removeServer(url);
+	}
+
+	public void addRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener) {
+		repositoryChangeListeners.add(repositoryChangeListener);
+	}
+
+	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener) {
+		repositoryChangeListeners.remove(repositoryChangeListener);
+	}
+
+
+	@Override
+	public boolean repositoryAdded(String url) {
+		boolean addedOK = true;
+		for (RepositoryChangeListener repositoryChangeListener : repositoryChangeListeners) {
+			addedOK &= repositoryChangeListener.repositoryAdded(url);
+		}
+		return addedOK;
+	}
+
+	@Override
+	public void repositoryRemoved(String url) {
+		for (RepositoryChangeListener repositoryChangeListener : repositoryChangeListeners) {
+			repositoryChangeListener.repositoryRemoved(url);
+		}
+	}
+
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
 		return SearchView.searchForRegexInResidues(
 				forward, regex, residues, residue_offset, Application.getSingleton().getMapView().getAxisTier(), glyphs, hitColor);
 	}
 
+	private SeqMapView getMapView() {
+		return Application.getSingleton().getMapView();
+	}
+
 	private BioSeq getViewSeq() {
-		return Application.getSingleton().getMapView().getViewSeq();
+		return getMapView().getViewSeq();
 	}
 
 	public boolean isSeqResiduesAvailable() {

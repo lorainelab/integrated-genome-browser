@@ -90,19 +90,21 @@
 
 		<delete file="${webstart.dir}/das2server.jar" />
 
-		<my.signjar jar="${lib.dir}/affx_fusion.jar"       signedjar="${webstart.dir}/affx_fusion.jar" />
-		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar"     signedjar="${webstart.dir}/freehep-2.1.1.jar" />
-		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"         signedjar="${webstart.dir}/jlfgr-1_0.jar" />
-		<my.signjar jar="${lib.dir}/image4j.jar"           signedjar="${webstart.dir}/image4j.jar" />
-		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
-		<my.signjar jar="${lib.dir}/sam.jar"               signedjar="${webstart.dir}/sam.jar" />
-		<my.signjar jar="${lib.dir}/picard.jar"            signedjar="${webstart.dir}/picard.jar" />
-		<my.signjar jar="${lib.dir}/colt.jar"              signedjar="${webstart.dir}/colt.jar" />
-		<my.signjar jar="${lib.dir}/jide-common.jar"       signedjar="${webstart.dir}/jide-common.jar" />
-		<my.signjar jar="${lib.dir}/jide-components.jar"   signedjar="${webstart.dir}/jide-components.jar" />
-		<my.signjar jar="${lib.dir}/jide-grids.jar"        signedjar="${webstart.dir}/jide-grids.jar" />
-		<my.signjar jar="${lib.dir}/felix.jar" signedjar="${webstart.dir}/felix.jar" />
-		<my.signjar jar="${lib.dir}/igb_service.jar" signedjar="${webstart.dir}/igb_service.jar" />
+		<my.signjar jar="${lib.dir}/affx_fusion.jar"        signedjar="${webstart.dir}/affx_fusion.jar" />
+		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar"      signedjar="${webstart.dir}/freehep-2.1.1.jar" />
+		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"          signedjar="${webstart.dir}/jlfgr-1_0.jar" />
+		<my.signjar jar="${lib.dir}/image4j.jar"            signedjar="${webstart.dir}/image4j.jar" />
+		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar"  signedjar="${webstart.dir}/commons-codec-1.4.jar" />
+		<my.signjar jar="${lib.dir}/sam.jar"                signedjar="${webstart.dir}/sam.jar" />
+		<my.signjar jar="${lib.dir}/picard.jar"             signedjar="${webstart.dir}/picard.jar" />
+		<my.signjar jar="${lib.dir}/colt.jar"               signedjar="${webstart.dir}/colt.jar" />
+		<my.signjar jar="${lib.dir}/jide-common.jar"        signedjar="${webstart.dir}/jide-common.jar" />
+		<my.signjar jar="${lib.dir}/jide-components.jar"    signedjar="${webstart.dir}/jide-components.jar" />
+		<my.signjar jar="${lib.dir}/jide-grids.jar"         signedjar="${webstart.dir}/jide-grids.jar" />
+		<my.signjar jar="${lib.dir}/felix.jar"              signedjar="${webstart.dir}/felix.jar" />
+		<my.signjar jar="${dist.dir}/igb_service.jar"       signedjar="${webstart.dir}/igb_service.jar" />
+		<my.signjar jar="${dist.dir}/restrictions_page.jar" signedjar="${webstart.dir}/restrictions_page.jar" />
+		<my.signjar jar="${dist.dir}/external_page.jar"     signedjar="${webstart.dir}/external_page.jar" />
 
 		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
 		<jar destfile="${webstart.dir}/igb.jar">

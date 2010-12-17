@@ -236,7 +236,7 @@ public final class LoadFileAction extends AbstractAction {
 		}
 
 		// force a refresh of this server
-		ServerList.fireServerInitEvent(ServerList.getLocalFilesServer(), ServerStatus.Initialized, true, true);
+		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 		//Annotated Seq Group must be selected before feature table change call.
 		GenometryModel.getGenometryModel().setSelectedSeqGroup(gFeature.gVersion.group);

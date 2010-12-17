@@ -29,6 +29,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	public static final List<SortKey> SORT_KEYS;
 
+	private ServerList serverList;
+	private ArrayList<SourceColumn> tableColumns;
 	static {
 		List<SortKey> sortKeys = new ArrayList<SortKey>(2);
 		sortKeys.add(new SortKey(SourceColumn.Name.ordinal(), SortOrder.ASCENDING));
@@ -37,23 +39,35 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		SORT_KEYS = Collections.<SortKey>unmodifiableList(sortKeys);
 	}
 
-	public SourceTableModel() {
+	public SourceTableModel(ServerList serverList) {
+		super();
+		this.serverList = serverList;
 		init();
 	}
 
 	public void init() {
+		tableColumns = new ArrayList<SourceColumn>();
+		for (SourceColumn sourceColumn : SourceColumn.values()) {
+			if (sourceColumn != SourceColumn.Type || serverList.hasTypes()) {
+				tableColumns.add(sourceColumn);
+			}
+		}
 		this.servers.clear();
-		this.servers.addAll(ServerList.getAllServers());
+		this.servers.addAll(serverList.getAllServers());
 		this.fireTableDataChanged();
 	}
 
 	public int getRowCount() {
 		return servers.size();
 	}
-	
+
+	public int getColumnIndex(SourceColumn sourceColumn) {
+		return tableColumns.indexOf(sourceColumn);
+	}
+
 	@Override
-    public Class<?> getColumnClass(int c) {
-		switch (SourceColumn.valueOf(this.getColumnName(c))) {
+    public Class<?> getColumnClass(int col) {
+		switch (tableColumns.get(col)) {
 			case Enabled:
 				return Boolean.class;
 			case Type:
@@ -64,13 +78,17 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
     }
 
 
-	public int getColumnCount() { return SourceColumn.values().length; }
+	public int getColumnCount() { return tableColumns.size(); }
 
 	@Override
-	public String getColumnName(int col) { return SourceColumn.values()[col].toString(); }
+	public String getColumnName(int col) { return tableColumns.get(col).toString(); }
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch (SourceColumn.valueOf(this.getColumnName(columnIndex))) {
+		if (columnIndex >= tableColumns.size()) {
+			System.out.println("row " + rowIndex + ", columnIndex " + columnIndex + " is out of range");
+			return null;
+		}
+		switch (tableColumns.get(columnIndex)) {
 			case Enabled:
 				return servers.get(rowIndex).isEnabled();
 			case Name:
@@ -86,22 +104,21 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	@Override
     public boolean isCellEditable(int row, int col) {
-		SourceColumn c = SourceColumn.valueOf(this.getColumnName(col));
-		return c == SourceColumn.Enabled;
+		return tableColumns.get(col) == SourceColumn.Enabled;
     }
 
 
 	@Override
     public void setValueAt(Object value, int row, int col) {
         GenericServer server = servers.get(row);
-        
-        switch (SourceColumn.valueOf(this.getColumnName(col))) {
+
+        switch (tableColumns.get(col)) {
         case Enabled:
 			server.setEnabled((Boolean)value);
 			if (((Boolean)value).booleanValue()) {
 				GeneralLoadUtils.discoverServer(server);
 			} else {
-				ServerList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding);
+				serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding);
 			}
 			break;
 		default:

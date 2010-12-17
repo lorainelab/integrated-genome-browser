@@ -199,7 +199,7 @@ public final class SearchView extends JComponent implements
 		searchTF.addActionListener(this);
 		searchButton.addActionListener(this);
 		clear_button.addActionListener(this);
-		ServerList.addServerInitListener(this);
+		ServerList.getServerInstance().addServerInitListener(this);
 	}
 
 	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {

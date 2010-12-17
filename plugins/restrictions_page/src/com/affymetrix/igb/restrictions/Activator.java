@@ -67,7 +67,7 @@ public class Activator implements BundleActivator {
         }
         else
         {
-            System.out.println(this.getClass().getName() + " - Couldn't find any igb service...");
+            //System.out.println(this.getClass().getName() + " - Couldn't find any igb service...");
         }
 		Activator.bundleContext = null;
 	}

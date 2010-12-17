@@ -149,7 +149,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 		 *  DAS/2 query is run through Das2ClientOptimizer, so only regions that haven't been retrieved yet are queried for
 		 *  If features have already been retrieved for entire seq, then optimizer won't make any feature query calls
 		 */
-		GenericServer gServer = ServerList.getServer(PROBESET_SERVER_NAME);
+		GenericServer gServer = ServerList.getServerInstance().getServer(PROBESET_SERVER_NAME);
 		// server and vsource should already be checked before making this LazyChpSym, but checking again
 		//     in case connection can no longer be established
 		if (gServer == null) {

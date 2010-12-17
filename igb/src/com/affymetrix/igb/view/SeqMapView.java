@@ -1876,7 +1876,7 @@ public class SeqMapView extends JPanel
 		return show_prop_tooltip;
 	}
 
-	final void addToRefreshList(SeqMapRefreshed smr){
+	public final void addToRefreshList(SeqMapRefreshed smr){
 		seqmap_refresh_list.add(smr);
 	}
 	

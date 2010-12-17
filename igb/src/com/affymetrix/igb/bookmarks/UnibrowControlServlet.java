@@ -302,9 +302,9 @@ public final class UnibrowControlServlet {
 			}
 
 			try {
-				GenericServer gServer = ServerList.getServer(das2_server_url);
+				GenericServer gServer = ServerList.getServerInstance().getServer(das2_server_url);
 				if (gServer == null) {
-					gServer = ServerList.addServer(ServerType.DAS2, das2_server_url, das2_server_url, true);
+					gServer = ServerList.getServerInstance().addServer(ServerType.DAS2, das2_server_url, das2_server_url, true);
 				} else if (!gServer.isEnabled()) {
 					gServer.setEnabled(true);
 					GeneralLoadUtils.discoverServer(gServer);
@@ -489,12 +489,12 @@ public final class UnibrowControlServlet {
 	 * @return	Returns GenericServer if found else null.
 	 */
 	public static GenericServer loadServer(String server_url){
-		GenericServer gServer = ServerList.getServer(server_url);
+		GenericServer gServer = ServerList.getServerInstance().getServer(server_url);
 		if (gServer == null) {
 			Logger.getLogger(UnibrowControlServlet.class.getName()).log(
 					Level.SEVERE, "Couldn''t find server {0}. Creating a local server.", server_url);
 
-			gServer = ServerList.getLocalFilesServer();
+			gServer = ServerList.getServerInstance().getLocalFilesServer();
 			
 		} else if (!gServer.isEnabled()) {
 			// enable the server for this session only

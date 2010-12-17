@@ -80,7 +80,7 @@ Example:
 parent_glyph="com.affymetrix.igb.glyph.EfficientOutlineContGlyph"
 child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
  *</pre>
- * 
+ *
  * @version $Id$
  */
 public final class XmlPrefsParser {
@@ -132,14 +132,15 @@ public final class XmlPrefsParser {
 				} else if (name.equalsIgnoreCase("plugin")) {
 					processPlugin(el);
 				} else if (name.equalsIgnoreCase("server")) {
-					processServer(el);
+					processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
+				} else if (name.equalsIgnoreCase("repository")) {
+					processServer(el, ServerList.getRepositoryInstance(), null);
 				}
 			}
 		}
 	}
 
-	private static void processServer(Element el) {
-		ServerType server_type = getServerType(el.getAttribute("type"));
+	private static void processServer(Element el, ServerList serverList, ServerType server_type) {
 		String server_name = el.getAttribute("name");
 		String server_url = el.getAttribute("url");
 		String en = el.getAttribute("enabled");
@@ -149,9 +150,9 @@ public final class XmlPrefsParser {
 		if (IGBConstants.DEBUG) {
 			System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url + ", enabled: " + enabled);
 		}
-		ServerList.addServer(server_type, server_name, server_url, enabled, primary);
+		serverList.addServer(server_type, server_name, server_url, enabled, primary);
 	}
-	
+
 	private static ServerType getServerType(String type) {
 		for (ServerType t : ServerType.values()) {
 			if (type.equalsIgnoreCase(t.toString())) {

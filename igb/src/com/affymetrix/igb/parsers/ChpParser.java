@@ -280,7 +280,7 @@ public final class ChpParser {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
-		GenericServer gServer = ServerList.getServer(LazyChpSym.PROBESET_SERVER_NAME);
+		GenericServer gServer = ServerList.getServerInstance().getServer(LazyChpSym.PROBESET_SERVER_NAME);
 		// Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
 		if (gServer == null) {
 			ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);

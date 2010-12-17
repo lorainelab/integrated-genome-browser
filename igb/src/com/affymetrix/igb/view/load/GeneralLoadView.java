@@ -185,7 +185,7 @@ public final class GeneralLoadView extends JComponent
 
 		this.setBorder(BorderFactory.createEtchedBorder());
 
-		ServerList.addServerInitListener(this);
+		ServerList.getServerInstance().addServerInitListener(this);
 
 		GeneralLoadUtils.loadServerMapping();
 		populateSpeciesData();
@@ -217,11 +217,16 @@ public final class GeneralLoadView extends JComponent
 	 * actual server or not.
 	 */
 	private void populateSpeciesData() {
-		for (final GenericServer gServer : ServerList.getEnabledServers()) {
+		for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
 			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 				protected Void doInBackground() throws Exception {
-					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+					if (gServer.serverType == null) {
+						Application.getSingleton().addNotLockedUpMsg("Loading repository " + gServer);
+					}
+					else {
+						Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+					}
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
 				}
@@ -232,7 +237,7 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {
-		boolean areAllServersInited = ServerList.areAllServersInited();	// do this first to avoid race condition
+		boolean areAllServersInited = ServerList.getServerInstance().areAllServersInited();	// do this first to avoid race condition
 		GenericServer gServer = (GenericServer)evt.getSource();
 
 		if (gServer.getServerStatus() == ServerStatus.NotResponding){
@@ -245,7 +250,12 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		if (gServer.serverType != ServerType.LocalFiles) {
-			Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+			if (gServer.serverType == null) {
+				Application.getSingleton().removeNotLockedUpMsg("Loading repository " + gServer);
+			}
+			else {
+				Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+			}
 		}
 
 		// Need to refresh species names

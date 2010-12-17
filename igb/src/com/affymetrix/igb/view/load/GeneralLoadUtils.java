@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
 import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
@@ -122,11 +123,11 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	public static GenericServer addServer(ServerType serverType, String serverName, String serverURL) {
+	public static GenericServer addServer(ServerList serverList, ServerType serverType, String serverName, String serverURL) {
 		/* should never happen */
 		if (serverType == ServerType.LocalFiles) { return null; }
 		
-		GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL, true);
+		GenericServer gServer = serverList.addServer(serverType, serverName, serverURL, true);
 		if (gServer == null) {
 			return null;
 		}
@@ -165,6 +166,9 @@ public final class GeneralLoadUtils {
 
 	
 	public static boolean discoverServer(GenericServer gServer) {
+		if (gServer.serverType == null) {
+			return IGBServiceImpl.getInstance().repositoryAdded(gServer.URL);
+		}
 		try {
 			if (gServer == null || gServer.serverType == ServerType.LocalFiles) {
 				// should never happen
@@ -172,21 +176,21 @@ public final class GeneralLoadUtils {
 			}
 			if (gServer.serverType == ServerType.QuickLoad) {
 				if (!getQuickLoadSpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS) {
 				if (!getDAS1SpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			} else if (gServer.serverType == ServerType.DAS2) {
 				if (!getDAS2SpeciesAndVersions(gServer)) {
-					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+					ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
 					return false;
 				}
 			}
-			ServerList.fireServerInitEvent(gServer, ServerStatus.Initialized);
+			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -201,7 +205,7 @@ public final class GeneralLoadUtils {
 	 */
 	private static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
-		GenericServer primaryServer = ServerList.getPrimaryServer();
+		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 		URL primaryURL = getServerDirectory(gServer.URL);
 		Map<String,DasSource> sources = server.getDataSources(primaryURL,primaryServer);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
@@ -226,7 +230,7 @@ public final class GeneralLoadUtils {
 	private static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		URL primaryURL = getServerDirectory(gServer.URL);
-		GenericServer primaryServer = ServerList.getPrimaryServer();
+		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 		Map<String,Das2Source> sources = server.getSources(primaryURL, primaryServer);
 		if (sources == null || sources.values() == null || sources.values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer);
@@ -262,7 +266,7 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
 		}
-		GenericServer primaryServer = ServerList.getPrimaryServer();
+		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 		URL primaryURL = getServerDirectory(gServer.URL);
 		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL, primaryServer);
 		
@@ -307,7 +311,7 @@ public final class GeneralLoadUtils {
 		String versionName = aseq.getID();
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 
-		GenericServer server = ServerList.getLocalFilesServer();
+		GenericServer server = ServerList.getServerInstance().getLocalFilesServer();
 		
 		return discoverVersion(versionName, versionName, server, null, speciesName);
 	}
@@ -323,7 +327,7 @@ public final class GeneralLoadUtils {
 		if (speciesName == null) {
 			 speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list
 		}
-		GenericServer server = ServerList.getLocalFilesServer();
+		GenericServer server = ServerList.getServerInstance().getLocalFilesServer();
 
 		for(GenericVersion gVersion : group.getEnabledVersions()){
 			if(gVersion.gServer.serverType == ServerType.LocalFiles){
@@ -751,7 +755,7 @@ public final class GeneralLoadUtils {
 	 * Method to load server directory mapping.
 	 */
 	public static void loadServerMapping() {
-		GenericServer primaryServer = ServerList.getPrimaryServer();
+		GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
 		if (primaryServer == null) {
 			return;
 		}
@@ -802,7 +806,7 @@ public final class GeneralLoadUtils {
 	 * @return	Returns a directory if exists else null.
 	 */
 	public static URL getServerDirectory(String url){
-		if(ServerList.getPrimaryServer() == null) {
+		if (ServerList.getServerInstance().getPrimaryServer() == null) {
 			return null;
 		}
 		

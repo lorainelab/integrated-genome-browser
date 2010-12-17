@@ -95,6 +95,10 @@ public abstract class PreferenceUtils {
 		return PreferenceUtils.getTopNode().node("servers");
 	}
 
+	public static Preferences getRepositoriesNode() {
+		return PreferenceUtils.getTopNode().node("repositories");
+	}
+
 	public static Preferences getGraphPrefsNode() {
 		return PreferenceUtils.getTopNode().node("graphs");
 	}

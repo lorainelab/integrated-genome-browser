@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 public final class DataLoadView extends JComponent {
+	private static final long serialVersionUID = 1L;
 	private final SeqGroupView group_view;
 	public static int TAB_DATALOAD_PREFS = -1;
 

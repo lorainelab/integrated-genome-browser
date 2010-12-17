@@ -65,7 +65,8 @@ public abstract class PrefsLoader {
 		LoadDefaultAPIPrefsFromJar();
 		LoadWebPrefs(def_prefs_url);
 		LoadFileOrURLPrefs(prefs_list);
-		ServerList.loadServerPrefs();
+		ServerList.getServerInstance().loadServerPrefs();
+		ServerList.getRepositoryInstance().loadServerPrefs();
 
 		prefsLoaded = true;
 	}
@@ -219,12 +220,12 @@ public abstract class PrefsLoader {
 		switch (version) {
 			case 0:
 				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading unversioned preferences to version 1");
-				ServerList.updateServerPrefs();
+				ServerList.getServerInstance().updateServerPrefs();
 			/* continue */
 			case 1:
 				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading preferences version 1 to version 2");
 
-				ServerList.updateServerURLsInPrefs();
+				ServerList.getServerInstance().updateServerURLsInPrefs();
 
 				/* continue */
 

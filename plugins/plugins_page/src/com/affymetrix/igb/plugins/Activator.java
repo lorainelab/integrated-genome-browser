@@ -19,11 +19,10 @@ public class Activator implements BundleActivator {
 	private void loadPluginsPage(ServiceReference igbServiceReference) {
         try
         {
-            pluginsView = new PluginsView();
-            pluginsView.setBundleContext(bundleContext);
             IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
+            pluginsView = new PluginsView(igbService);
+            pluginsView.setBundleContext(bundleContext);
             igbService.addPlugIn(pluginsView, PluginsView.BUNDLE.getString("pluginsViewTab"));
-            pluginsView.setRequiredBundles(igbService.getRequiredBundles());
             bundleContext.ungetService(igbServiceReference);
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.start() -> " + ex.getMessage());
@@ -73,7 +72,7 @@ public class Activator implements BundleActivator {
         }
         else
         {
-            System.out.println(this.getClass().getName() + " - Couldn't find any igb service...");
+            // System.out.println(this.getClass().getName() + " - Couldn't find any igb service...");
         }
 		Activator.bundleContext = null;
     }

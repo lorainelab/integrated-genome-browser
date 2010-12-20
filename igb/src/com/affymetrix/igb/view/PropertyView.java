@@ -48,6 +48,28 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		propertyListeners.add(Application.getSingleton().getMapView().getMouseListener());
 	}
 
+	private static List<String> graphToolTipOrder(){
+		List<String> orderList = new ArrayList<String>(20);
+		orderList.add("id");
+		orderList.add("x coord");
+		orderList.add("y coord");
+		orderList.add("min score");
+		orderList.add("max score");
+		orderList.add("strand");
+
+		return orderList;
+	}
+
+	private static List<String> toolTipOrder(){
+		List<String> orderList = new ArrayList<String>(20);
+		orderList.add("id");
+		orderList.add("start");
+		orderList.add("end");
+		orderList.add("length");
+		orderList.add("strand");
+
+		return orderList;
+	}
 
 	// The general order these fields should show up in.
 	private static List<String> determineOrder() {
@@ -59,6 +81,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		orderList.add("start");
 		orderList.add("end");
 		orderList.add("length");
+		orderList.add("strand");
 		orderList.add("min score");
 		orderList.add("max score");
 		orderList.add("type");
@@ -191,23 +214,25 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 			props.put("id", symid);
 		}
 		if (seqMap != null) {
-			SeqSpan span = seqMap.getViewSeqSpan(sym);
-			if (span != null) {
-				String chromID = span.getBioSeq().getID();
-				props.put("chromosome", chromID);
+		SeqSpan span = seqMap.getViewSeqSpan(sym);
+		if (span != null) {
+			String chromID = span.getBioSeq().getID();
+			props.put("chromosome", chromID);
 				props.put("start",
 						NumberFormat.getIntegerInstance().format(span.getStart()));
 				props.put("end",
 						NumberFormat.getIntegerInstance().format(span.getEnd()));
 				props.put("length",
 						NumberFormat.getIntegerInstance().format(span.getLength()));
-				props.remove("seq id"); // this is redundant if "chromosome" property is set
-				if (props.containsKey("method") && !props.containsKey("type")) {
-					props.put("type", props.get("method"));
-					props.remove("method");
-				}
+				props.put("strand",
+						span.isForward() ? "+" : "-");
+			props.remove("seq id"); // this is redundant if "chromosome" property is set
+			if (props.containsKey("method") && !props.containsKey("type")) {
+				props.put("type", props.get("method"));
+				props.remove("method");
 			}
 		}
+	}
 		if (sym instanceof GraphSym) {
 			float[] range = ((GraphSym) sym).getVisibleYRange();
 			props.put("min score", range[0]);
@@ -320,7 +345,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		Map<String, Object> props = determineProps(sym, seqMap);
 		propList.add(props);
 
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]),prop_order,"");
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]),toolTipOrder(),"", true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -335,13 +360,17 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 			props.put("y coord", y);
 		}
 		propList.add(props);
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]),prop_order,"");
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]),graphToolTipOrder(),"",true);
 	}
 
 	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData){
+		return getPropertiesRow(props, preferred_prop_order, noData, false);
+	}
+	
+	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData, boolean limited){
 		List<String[]> name_values = getNameValues(props, noData);
 		if (preferred_prop_order != null) {
-			name_values = reorderNames(name_values, preferred_prop_order);
+			name_values = reorderNames(name_values, preferred_prop_order, limited);
 		}
 		return buildRows(name_values, props);
 	}
@@ -358,7 +387,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	 * @param preferred_ordering a List of Strings with the preferred order of column names
 	 * @return String array of re-ordered names
 	 */
-	private static List<String[]> reorderNames(List<String[]> name_values, List<String> preferred_ordering) {
+	private static List<String[]> reorderNames(List<String[]> name_values, List<String> preferred_ordering, boolean limited) {
 		List<String[]> reordered = new ArrayList<String[]>(name_values.size());
 		for (String request : preferred_ordering) {
 			for (int k = 0; k < name_values.size(); k++) {
@@ -373,9 +402,12 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 				}
 			}
 		}
-		for (String[] name_value : name_values) {
-			if (name_value != null) {
-				reordered.add(name_value);
+
+		if (!limited) {
+			for (String[] name_value : name_values) {
+				if (name_value != null) {
+					reordered.add(name_value);
+				}
 			}
 		}
 

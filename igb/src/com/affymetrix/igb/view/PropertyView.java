@@ -48,15 +48,26 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		propertyListeners.add(Application.getSingleton().getMapView().getMouseListener());
 	}
 
+	private static List<String> graphToolTipOrder(){
+		List<String> orderList = new ArrayList<String>(20);
+		orderList.add("id");
+		orderList.add("x coord");
+		orderList.add("y coord");
+		orderList.add("min score");
+		orderList.add("max score");
+		orderList.add("strand");
+
+		return orderList;
+	}
+
 	private static List<String> toolTipOrder(){
 		List<String> orderList = new ArrayList<String>(20);
 		orderList.add("id");
 		orderList.add("start");
 		orderList.add("end");
 		orderList.add("length");
-		orderList.add("min score");
-		orderList.add("max score");
-	
+		orderList.add("strand");
+
 		return orderList;
 	}
 
@@ -70,6 +81,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		orderList.add("start");
 		orderList.add("end");
 		orderList.add("length");
+		orderList.add("strand");
 		orderList.add("min score");
 		orderList.add("max score");
 		orderList.add("type");
@@ -212,6 +224,8 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 						NumberFormat.getIntegerInstance().format(span.getEnd()));
 				props.put("length",
 						NumberFormat.getIntegerInstance().format(span.getLength()));
+				props.put("strand",
+						span.isForward() ? "+" : "-");
 			props.remove("seq id"); // this is redundant if "chromosome" property is set
 			if (props.containsKey("method") && !props.containsKey("type")) {
 				props.put("type", props.get("method"));
@@ -346,7 +360,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 			props.put("y coord", y);
 		}
 		propList.add(props);
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]),prop_order,"");
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]),graphToolTipOrder(),"",true);
 	}
 
 	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData){

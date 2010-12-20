@@ -300,7 +300,7 @@ public final class BAM extends SymLoader {
 			sym.setProperty(tv.tag, tv.value);
 		}
 		sym.setProperty(CIGARPROP, sr.getCigar());
-		sym.setProperty(RESIDUESPROP, sr.getReadString());
+		sym.setProperty(RESIDUESPROP, interpretCigar(sr.getCigar(), sr.getReadString(), end - start));
 		sym.setProperty(SHOWMASK, true);
 		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
 			//sym.setProperty("residues", sr.getReadString());
@@ -414,8 +414,7 @@ public final class BAM extends SymLoader {
 	 * @param spanLength
 	 * @return
 	 */
-	public static String interpretCigar(Object cigarObj, String residues, int startPos, int spanLength) {
-		Cigar cigar = (Cigar)cigarObj;
+	private static String interpretCigar(Cigar cigar, String residues, int spanLength) {
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return residues;
 		}
@@ -425,20 +424,18 @@ public final class BAM extends SymLoader {
 			try {
 				int celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
-					if (currentPos >= startPos) {
-						char[] tempArr = new char[celLength];
-						Arrays.fill(tempArr, '_');		// print deletion as 'D'
-						sb.append(tempArr);
-					}
+					char[] tempArr = new char[celLength];
+					Arrays.fill(tempArr, '_');		// print deletion as 'D'
+					sb.append(tempArr);
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					currentPos += celLength;	// print insertion
 				} else if (cel.getOperator() == CigarOperator.M) {
-					if (currentPos >= startPos) {
-						sb.append(residues.substring(currentPos, currentPos + celLength));
-					}
+					sb.append(residues.substring(currentPos, currentPos + celLength));
 					currentPos += celLength;	// print matches
 				} else if (cel.getOperator() == CigarOperator.N) {
-					// ignore skips
+					char[] tempArr = new char[celLength];
+					Arrays.fill(tempArr, 'N');
+					sb.append(tempArr);
 				} else if (cel.getOperator() == CigarOperator.PADDING) {
 					char[] tempArr = new char[celLength];
 					Arrays.fill(tempArr, '*');		// print padding as '*'
@@ -449,13 +446,10 @@ public final class BAM extends SymLoader {
 				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
 					continue;				// hard clip can be ignored
 				}
-				if (sb.length() >= spanLength) {
-					break;
-				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				if (spanLength - currentPos - startPos > 0) {
-					char[] tempArr = new char[spanLength - currentPos - startPos];
+				if (spanLength - currentPos > 0) {
+					char[] tempArr = new char[spanLength - currentPos];
 					Arrays.fill(tempArr, '.');
 					sb.append(tempArr);
 				}

@@ -372,13 +372,13 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		}
 
 		boolean handleCigar = sym instanceof UcscBedSym;
+		SeqSpan parentSpan = sym.getSpan(annotseq);
 
 		// We are in an aligned residue glyph.
 		int childCount = sym.getChildCount();
 		if (childCount > 0) {
-			int startPos = 0;
 			for (int i = 0; i < childCount; i++) {
-				startPos = setResidues(sym.getChild(i), annotseq, pglyph, startPos, handleCigar, true);
+				setResidues(sym.getChild(i), annotseq, pglyph, parentSpan.getMin(), handleCigar, true);
 			}
 		} else {
 			setResidues(sym, annotseq, pglyph, 0, false, false);
@@ -418,33 +418,31 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param sym
 	 * @param annotseq
 	 * @param pglyph
-	 * @param startPos - starting position of the current child in the residues string
+	 * @param parentStart - starting position of the current child in the residues string
 	 * @param handleCigar - indicates whether we need to process the cigar element.
 	 * @return
 	 */
-	private static int setResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, int startPos, boolean handleCigar, boolean isChild) {
+	private static void setResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, int parentStart, boolean handleCigar, boolean isChild) {
 		SeqSpan span = sym.getSpan(annotseq);
 		if (span == null) {
-			return startPos;
+			return ;
 		}
 
 		if (!(sym instanceof SymWithProps)) {
-			return startPos;
+			return ;
 		}
 
 		Object residues = ((SymWithProps) sym).getProperty(BAM.RESIDUESPROP);
 
 		if (residues == null) {
-			return startPos;
+			return ;
 		}
 		
 		AlignedResidueGlyph csg = null;
 		if (residues != null) {
 			String residueStr = residues.toString();
 			if (handleCigar) {
-				Object cigar = ((SymWithProps) sym).getProperty(BAM.CIGARPROP);
-				residueStr = BAM.interpretCigar(cigar, residueStr, startPos, span.getLength());
-				startPos += residueStr.length();
+				residueStr = residueStr.substring(span.getMin() - parentStart, span.getMax() - parentStart);
 			}
 			csg = new AlignedResidueGlyph();
 			csg.setResidues(residueStr);
@@ -475,6 +473,5 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}*/
 		}
 
-		return startPos;
 	}
 }

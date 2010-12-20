@@ -79,7 +79,36 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 
     g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
 
+	drawInfoChildGlyph(view);
+
     super.draw(view);
+  }
+
+  private void drawInfoChildGlyph(ViewI view){
+	Rectangle pixelbox = view.getScratchPixBox();
+    view.transformToPixels(this.getCoordBox(), pixelbox);
+	pixelbox = fixAWTBigRectBug(view, pixelbox);
+
+	// If parent pixel width is less than number of childerns then do no draw children.
+	if(pixelbox.width < getChildCount())
+		return;
+	
+	Graphics g = view.getGraphics();
+	for(int i=0; i<getChildCount(); i++){
+		GlyphI child = getChild(i);
+		if(child instanceof EfficientSolidGlyph &&  ((EfficientSolidGlyph)child).is_Compulsary){
+			pixelbox = view.getScratchPixBox();
+			view.transformToPixels(child.getCoordBox(), pixelbox);
+			pixelbox = fixAWTBigRectBug(view, pixelbox);
+
+			g.setColor(child.getBackgroundColor());
+
+			pixelbox.width = Math.max(1, pixelbox.width);
+			pixelbox.height = Math.max(1, pixelbox.height);
+			
+			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+		}
+	}  
   }
 
   @Override

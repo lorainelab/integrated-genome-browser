@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.BAMSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -196,6 +197,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			//    original annotation are completely outside the view
 			addChildren(insym, sym, the_style, annotseq, pglyph, map, coordseq);
 			handleAlignedResidueGlyphs(insym, annotseq, pglyph);
+			handleInsertionGlyphs(insym, annotseq, pglyph, map);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
@@ -382,6 +384,32 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			setResidues(sym, annotseq, pglyph, 0, false, false);
 			// Note that pglyph is replaced here.
 			// don't need to process cigar, since entire residue string is used
+		}
+	}
+
+	private void handleInsertionGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, AffyTieredMap map)
+			throws IllegalAccessException, InstantiationException {
+
+		if (!(sym instanceof BAMSym)) {
+			return;
+		}
+
+		BAMSym inssym = (BAMSym)sym;
+		if(inssym.getInsChildCount() == 0)
+			return;
+
+		Color color = Color.RED;
+
+		for(int i=0; i<inssym.getInsChildCount(); i++){
+
+			SeqSpan ispan = inssym.getInsChild(i);
+			EfficientOutlinedRectGlyph glyph = new EfficientOutlinedRectGlyph();
+			glyph.setCompulsary(true);
+			glyph.setCoords(ispan.getMin()-1, 0, 2, DEFAULT_THICK_HEIGHT);
+			glyph.setColor(color);
+
+			pglyph.addChild(glyph);
+			map.setDataModelFromOriginalSym(glyph, sym);
 		}
 	}
 

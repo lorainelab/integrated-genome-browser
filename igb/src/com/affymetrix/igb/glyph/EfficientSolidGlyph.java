@@ -25,6 +25,9 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *       methods if they are willing to stick with simple hits.
  */
 public class EfficientSolidGlyph extends Glyph  {
+
+   public boolean is_Compulsary = false;
+
   /**
    * @return whether or not this glyph is hitable
    * @see #setHitable
@@ -39,4 +42,15 @@ public class EfficientSolidGlyph extends Glyph  {
     return isVisible() && coord_hitbox.intersects(this.coordbox);
   }
 
+  /**
+   * @return  whether or not this glyph show useful information
+   * @return
+   */
+  public boolean isCompulsary(){
+	  return is_Compulsary;
+  }
+
+  public void setCompulsary(boolean isComp){
+	  is_Compulsary = isComp;
+  }
 }

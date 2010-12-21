@@ -68,6 +68,7 @@ public final class BAM extends SymLoader {
 	public static final String RESIDUESPROP = "residues";
 	public static final String BASEQUALITYPROP = "baseQuality";
 	public static final String SHOWMASK = "showMask";
+	public static final String INSRESIDUESPROP = "insResidues";
 
 	static {
 		// BAM files are generally large, so only allow loading visible data.
@@ -292,6 +293,7 @@ public final class BAM extends SymLoader {
 			blockMaxs[0] = span.getEnd();
 		}
 
+		StringBuffer insResidue = new StringBuffer(200);
 		SymWithProps sym = new BAMSym(featureName, seq, start, end, sr.getReadName(),
 				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs);
 		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
@@ -300,7 +302,8 @@ public final class BAM extends SymLoader {
 			sym.setProperty(tv.tag, tv.value);
 		}
 		sym.setProperty(CIGARPROP, sr.getCigar());
-		sym.setProperty(RESIDUESPROP, interpretCigar(sr.getCigar(), sr.getReadString(), end - start));
+		sym.setProperty(RESIDUESPROP, interpretCigar(sr.getCigar(), sr.getReadString(), end - start, insResidue));
+		sym.setProperty(INSRESIDUESPROP, insResidue.toString());
 		sym.setProperty(SHOWMASK, true);
 		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
 			//sym.setProperty("residues", sr.getReadString());
@@ -412,9 +415,10 @@ public final class BAM extends SymLoader {
 	 * @param cigarObj
 	 * @param residues
 	 * @param spanLength
+	 * @param insResidues
 	 * @return
 	 */
-	private static String interpretCigar(Cigar cigar, String residues, int spanLength) {
+	private static String interpretCigar(Cigar cigar, String residues, int spanLength, StringBuffer insResidues) {
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return residues;
 		}
@@ -424,22 +428,23 @@ public final class BAM extends SymLoader {
 			try {
 				int celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
-					char[] tempArr = new char[celLength];
-					Arrays.fill(tempArr, '_');		// print deletion as 'D'
-					sb.append(tempArr);
+						char[] tempArr = new char[celLength];
+						Arrays.fill(tempArr, '_');		// print deletion as 'D'
+						sb.append(tempArr);
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
+					insResidues.append(residues.substring(currentPos, currentPos + celLength));
 					currentPos += celLength;	// print insertion
 				} else if (cel.getOperator() == CigarOperator.M) {
-					sb.append(residues.substring(currentPos, currentPos + celLength));
+						sb.append(residues.substring(currentPos, currentPos + celLength));
 					currentPos += celLength;	// print matches
 				} else if (cel.getOperator() == CigarOperator.N) {
-					char[] tempArr = new char[celLength];
-					Arrays.fill(tempArr, 'N');
-					sb.append(tempArr);
+						char[] tempArr = new char[celLength];
+						Arrays.fill(tempArr, 'N');
+						sb.append(tempArr);
 				} else if (cel.getOperator() == CigarOperator.PADDING) {
-					char[] tempArr = new char[celLength];
-					Arrays.fill(tempArr, '*');		// print padding as '*'
-					sb.append(tempArr);
+						char[] tempArr = new char[celLength];
+						Arrays.fill(tempArr, '*');		// print padding as '*'
+						sb.append(tempArr);
 					currentPos += celLength;
 				} else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
 					currentPos += celLength;	// skip over soft clip

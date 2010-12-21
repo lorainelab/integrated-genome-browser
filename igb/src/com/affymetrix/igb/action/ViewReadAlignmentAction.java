@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.igb.view.SeqMapView;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 /**
  *
  * @author hiralv
@@ -19,10 +20,10 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public class ViewReadAlignmentAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
 
-	private static final String SHOWALIGNMENT = BUNDLE.getString("showAlignment");
+	private static final String RESTOREREAD = BUNDLE.getString("restoreAlignment");
 	private static final String SHOWMISMATCH = BUNDLE.getString("showMismatch");
 
-	private static final ViewReadAlignmentAction showAlignment = new ViewReadAlignmentAction(SHOWALIGNMENT);
+	private static final ViewReadAlignmentAction restoreRead = new ViewReadAlignmentAction(RESTOREREAD);
 	private static final ViewReadAlignmentAction showMismatch = new ViewReadAlignmentAction(SHOWMISMATCH);
 
 	private final List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
@@ -33,8 +34,8 @@ public class ViewReadAlignmentAction extends AbstractAction {
 		super(str);
 	}
 
-	public static ViewReadAlignmentAction getShowAligmentAction(List<SeqSymmetry> syms){
-		return getAction(showAlignment, syms);
+	public static ViewReadAlignmentAction getReadRestoreAction(List<SeqSymmetry> syms){
+		return getAction(restoreRead, syms);
 	}
 
 	public static ViewReadAlignmentAction getMismatchAligmentAction(List<SeqSymmetry> syms){
@@ -51,7 +52,7 @@ public class ViewReadAlignmentAction extends AbstractAction {
 
 		boolean set = true;
 		
-		if(SHOWALIGNMENT.equals(e.getActionCommand())){
+		if(RESTOREREAD.equals(e.getActionCommand())){
 			set = false;
 		}
 

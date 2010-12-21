@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 
-import com.affymetrix.igb.view.ReadAlignmentView;
 
 /**
  *
@@ -34,6 +33,9 @@ import com.affymetrix.igb.view.ReadAlignmentView;
  */
 public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 		 {
+	//By default mask the residues.
+	public static final boolean DEFAULT_SHOWMASK = true;
+
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
 	private final BitSet residueMask = new BitSet();
@@ -122,7 +124,7 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 				return Boolean.parseBoolean(show_mask.toString());
 			}
 		}
-		return ReadAlignmentView.DEFAULT_SHOWMASK;
+		return DEFAULT_SHOWMASK;
 	}
 
 	/**

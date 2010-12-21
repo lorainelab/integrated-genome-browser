@@ -381,7 +381,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				setResidues(sym.getChild(i), annotseq, pglyph, parentSpan.getMin(), map, handleCigar, true);
 			}
 		} else {
-			setResidues(sym, annotseq, pglyph, 0, map, false, false);
+			setResidues(sym, annotseq, pglyph, parentSpan.getMin(), map, false, false);
 			// Note that pglyph is replaced here.
 			// don't need to process cigar, since entire residue string is used
 		}

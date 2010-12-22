@@ -35,7 +35,10 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		@Override
 		public String getTitle() { return BUNDLE_DESCRIPTION; }
 		@Override
-		public Object getValue(Bundle bundle) { return bundle.getHeaders().get(BUNDLE_DESCRIPTION).toString(); }
+		public Object getValue(Bundle bundle) {
+			Object description = bundle.getHeaders().get(BUNDLE_DESCRIPTION);
+			return description == null ? "" : description.toString();
+		}
 	});
 	columns.add(new BundleColumn() { // location
 		@Override

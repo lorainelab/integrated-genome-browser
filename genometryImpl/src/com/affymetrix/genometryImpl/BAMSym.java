@@ -1,12 +1,11 @@
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 /**
  *
  * @author hiralv
  */
-public class BAMSym extends UcscBedSym{
+public class BAMSym extends UcscBedSym {
 
 	private final int[] iblockMins, iblockMaxs;
 
@@ -23,13 +22,13 @@ public class BAMSym extends UcscBedSym{
 		else  { return iblockMins.length; }
 	}
 
-	public SeqSpan getInsChild(int index) {
+	public SeqSymmetry getInsChild(int index) {
 		if (iblockMins == null || (iblockMins.length <= index)) { return null; }
 		if (forward) {
-			return new SimpleSeqSpan(iblockMins[index], iblockMaxs[index], seq);
+			return new BedChildSingletonSeqSym(iblockMins[index], iblockMaxs[index], seq);
 		}
 		else {
-			return new SimpleSeqSpan(iblockMaxs[index], iblockMins[index], seq);
+			return new BedChildSingletonSeqSym(iblockMaxs[index], iblockMins[index], seq);
 		}
 	}
 }

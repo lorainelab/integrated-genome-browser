@@ -187,7 +187,7 @@ public class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, SymWithPr
 		}
 	}
 
-	class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
+	protected class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
 		public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
 			super(start, end, seq);
 		}

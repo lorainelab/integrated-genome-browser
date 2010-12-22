@@ -1,6 +1,8 @@
 package com.affymetrix.genometryImpl;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  *
@@ -112,5 +114,23 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 		int end = start + (iblockMaxs[childNo] - iblockMins[childNo]);
 
 		return insResidues.substring(start, end);
+	}
+
+	@Override
+	public Map<String,Object> cloneProperties() {
+		if(props == null){
+			props = new HashMap<String, Object>();
+		}
+		props.put("residues", getResidues());
+
+		return super.cloneProperties();
+	}
+
+	@Override
+	public Object getProperty(String key){
+		if("residues".equalsIgnoreCase(key)){
+			return getResidues();
+		}
+		return super.getProperty(key);
 	}
 }

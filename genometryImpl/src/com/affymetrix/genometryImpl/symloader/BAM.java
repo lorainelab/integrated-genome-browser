@@ -294,7 +294,7 @@ public final class BAM extends SymLoader {
 		}
 
 		StringBuffer insResidue = new StringBuffer(200);
-		SymWithProps sym = new BAMSym(featureName, seq, start, end, sr.getReadName(),
+		BAMSym sym = new BAMSym(featureName, seq, start, end, sr.getReadName(),
 				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs);
 		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
 		sym.setProperty("id",sr.getReadName());
@@ -302,9 +302,11 @@ public final class BAM extends SymLoader {
 			sym.setProperty(tv.tag, tv.value);
 		}
 		sym.setProperty(CIGARPROP, sr.getCigar());
-		sym.setProperty(RESIDUESPROP, interpretCigar(sr.getCigar(), sr.getReadString(), end - start, insResidue));
-		sym.setProperty(INSRESIDUESPROP, insResidue.toString());
 		sym.setProperty(SHOWMASK, true);
+
+		sym.setResidues(interpretCigar(sr.getCigar(), sr.getReadString(), end - start, insResidue));
+		sym.setInsResidues(insResidue.toString());
+		
 		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
 			//sym.setProperty("residues", sr.getReadString());
 		} else {

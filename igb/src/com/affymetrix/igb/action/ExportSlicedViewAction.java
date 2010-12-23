@@ -41,13 +41,7 @@ public class ExportSlicedViewAction extends AbstractAction {
 	}
 
 	public static Component determineSlicedComponent() {
-		AltSpliceView slice_view = null;
-		for (Object plugin : ((IGB) IGB.getSingleton()).getPlugins()) {
-			if (plugin instanceof AltSpliceView) {
-				slice_view = (AltSpliceView) plugin;
-				break;
-			}
-		}
+		AltSpliceView slice_view = (AltSpliceView)((IGB)IGB.getSingleton()).getView(AltSpliceView.class.getName());
 		if (slice_view == null) {
 			return null;
 		}

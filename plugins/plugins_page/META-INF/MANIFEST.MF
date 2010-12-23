@@ -5,6 +5,7 @@ Bundle-SymbolicName: PluginsPage
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.plugins.Activator
 Import-Package: com.affymetrix.igb.osgi.service,
+ com.affymetrix.igb.window.service,
  javax.swing,
  javax.swing.table,
  org.osgi.framework;version="1.3.0",

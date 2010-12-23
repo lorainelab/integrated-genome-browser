@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.swing.JComponent;
 import javax.swing.JMenu;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -14,8 +13,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 public interface IGBService {
 	public boolean addMenu(JMenu menu);
 	public boolean removeMenu(String menuName);
-	public void addPlugIn(JComponent plugin, String name);
-	public boolean removePlugIn(String name);
 	public void displayError(String title, String errorText);
 	public void displayError(String errorText);
 	public void addNotLockedUpMsg(String message);

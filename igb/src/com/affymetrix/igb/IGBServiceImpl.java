@@ -13,19 +13,14 @@
 package com.affymetrix.igb;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Frame;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JTabbedPane;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -33,14 +28,12 @@ import org.osgi.framework.BundleContext;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
-import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.view.SearchView;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -67,6 +60,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public void stop(BundleContext bundleContext) throws Exception {
 	}
 
+	@Override
 	public boolean addMenu(JMenu new_menu) {
 		String menuName = new_menu.getName();
 		JMenuBar main_menu_bar = MenuUtil.getMainMenuBar();
@@ -89,6 +83,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	    return true;
 	}
 
+	@Override
 	public boolean removeMenu(String menuName) {
 		JMenuBar main_menu_bar = MenuUtil.getMainMenuBar();
 		int num_menus = main_menu_bar.getMenuCount();
@@ -102,53 +97,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	    return false; // not found
 	}
 
-	private HashMap<String, JComponent> addedPlugins = new HashMap<String, JComponent>();
-	public void addPlugIn(JComponent plugIn, String tabName) {
-		IGB.singleton_igb.loadPlugIn(new PluginInfo(plugIn.getClass().getName(), tabName, true), plugIn);
-		addedPlugins.put(tabName, plugIn);
-	}
-
-	public boolean removePlugIn(String name) {
-		if (name == null) {
-			return false;
-		}
-		JTabbedPane tab_pane = IGB.singleton_igb.getTabPane() ;
-		Map<Component, Frame> comp2window = IGB.singleton_igb.getComp2Window();
-		JComponent plugIn = addedPlugins.get(name);
-		Frame frame = comp2window.get(plugIn);
-		if (frame == null) {
-			for (int i = 0; i < tab_pane.getTabCount(); i++) {
-				if (name.equals(tab_pane.getTitleAt(i))) {
-					tab_pane.remove(i);
-					return true;
-				}
-			}
-		}
-		else {
-			frame.dispose();
-			comp2window.remove(plugIn);
-		}
-		PreferenceUtils.saveComponentState(name, PreferenceUtils.COMPONENT_STATE_TAB); // default - can't delete state
-		return false;
-	}
-/*
-	private JComponent getView(String viewName) {
-		Class<?> viewClass;
-		try {
-			viewClass = Class.forName(viewName);
-		}
-		catch (ClassNotFoundException x) {
-			System.out.println("IGBServiceImpl.getView() failed for " + viewName);
-			return null;
-		}
-		for (Object plugin : IGB.singleton_igb.getPlugins()) {
-			if (viewClass.isAssignableFrom(plugin.getClass())) {
-				return (JComponent)plugin;
-			}
-		}
-		return null;
-	}
-*/
 	public void displayError(String title, String errorText) {
 		ErrorHandler.errorPanel(title, errorText);
 	}
@@ -173,6 +121,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		return tier2Bundles;
 	}
 
+	@Override
 	public List<String> getRepositories() {
 		List<String> repositories = new ArrayList<String>();
 		for (GenericServer repositoryServer : ServerList.getRepositoryInstance().getAllServers()) {
@@ -191,18 +140,20 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		tier2Bundles = _tier2Bundles;
 	}
 
+	@Override
 	public void failRepository(String url) {
 		ServerList.getRepositoryInstance().removeServer(url);
 	}
 
+	@Override
 	public void addRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener) {
 		repositoryChangeListeners.add(repositoryChangeListener);
 	}
 
+	@Override
 	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener) {
 		repositoryChangeListeners.remove(repositoryChangeListener);
 	}
-
 
 	@Override
 	public boolean repositoryAdded(String url) {

@@ -21,7 +21,7 @@
 		<property name="protannot"           value="${basedir}/protannot" />
 		<property name="igb_service"         value="${basedir}/plugins/igb_service" />
 		<property name="window_service"      value="${basedir}/plugins/window_service" />
-		<property name="window_service_impl" value="${basedir}/plugins/window_service_impl" />
+		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
 		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
 		<property name="restrictions_page"   value="${basedir}/plugins/restrictions_page" />
 		<property name="external_page"       value="${basedir}/plugins/external_page" />
@@ -106,7 +106,7 @@
 		<my.signjar jar="${lib.dir}/felix.jar"                signedjar="${webstart.dir}/felix.jar" />
 		<my.signjar jar="${dist.dir}/igb_service.jar"         signedjar="${webstart.dir}/igb_service.jar" />
 		<my.signjar jar="${dist.dir}/window_service.jar"      signedjar="${webstart.dir}/window_service.jar" />
-		<my.signjar jar="${dist.dir}/window_service_impl.jar" signedjar="${webstart.dir}/window_service_impl.jar" />
+		<my.signjar jar="${dist.dir}/window_service_def.jar"  signedjar="${webstart.dir}/window_service_def.jar" />
 		<my.signjar jar="${dist.dir}/restrictions_page.jar"   signedjar="${webstart.dir}/restrictions_page.jar" />
 		<my.signjar jar="${dist.dir}/external_page.jar"       signedjar="${webstart.dir}/external_page.jar" />
 

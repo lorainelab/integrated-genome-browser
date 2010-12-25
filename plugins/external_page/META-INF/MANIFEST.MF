@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.external.Activator
 Bundle-ActivationPolicy: lazy
 Import-Package: com.affymetrix.igb.osgi.service,
- com.affymetrix.igb.window.service,
  javax.imageio,
  javax.swing,
  javax.swing.event,

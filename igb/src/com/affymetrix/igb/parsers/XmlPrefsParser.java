@@ -23,7 +23,7 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.window.service.PluginInfo;
+import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import javax.xml.parsers.ParserConfigurationException;
@@ -171,7 +171,7 @@ public final class XmlPrefsParser {
 		boolean load = (loadstr == null ? true : (!loadstr.equalsIgnoreCase("false")));
 		if (plugin_name != null && class_name != null) {
 			System.out.println("plugin, name = " + plugin_name + ", class = " + class_name);
-			PluginInfo pinfo = new PluginInfo(class_name, plugin_name, load, -1);
+			PluginInfo pinfo = new PluginInfo(class_name, plugin_name, load);
 			plugins.add(pinfo);
 		}
 	}

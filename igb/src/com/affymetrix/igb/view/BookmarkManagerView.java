@@ -15,8 +15,8 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.BookMarkAction;
-import com.affymetrix.igb.window.service.IPlugin;
 import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.DragDropTree;
 import com.affymetrix.igb.bookmarks.Bookmark;

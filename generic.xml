@@ -3,19 +3,16 @@
 
   <target name="init">
 		<!-- Locations of subprojects -->
-		<property name="genoviz"             value="${basedir}/../genoviz_sdk" />
-		<property name="genometry"           value="${basedir}/../genometry" />
-		<property name="genometryImpl"       value="${basedir}/../genometryImpl" />
-		<property name="igb"                 value="${basedir}/../igb" />
-		<property name="das2server"          value="${basedir}/../das2_server" />
-		<property name="protannot"           value="${basedir}/../protannot" />
-		<property name="plugins_common"      value="${basedir}/../plugins/common" />
-		<property name="igb_service"         value="${basedir}/../plugins/igb_service" />
-		<property name="window_service"      value="${basedir}/../plugins/window_service" />
-		<property name="window_service_def"  value="${basedir}/../plugins/window_service_def" />
-		<property name="plugins_page"        value="${basedir}/../plugins/plugins_page" />
-		<property name="restrictions_page"   value="${basedir}/../plugins/restrictions_page" />
-		<property name="external_page"       value="${basedir}/../plugins/external_page" />
+		<property name="genoviz"            value="${basedir}/../genoviz_sdk" />
+		<property name="genometry"          value="${basedir}/../genometry" />
+		<property name="genometryImpl"      value="${basedir}/../genometryImpl" />
+		<property name="igb"                value="${basedir}/../igb" />
+		<property name="das2server"         value="${basedir}/../das2_server" />
+		<property name="protannot"          value="${basedir}/../protannot" />
+		<property name="igb_service"        value="${basedir}/../plugins/igb_service" />
+		<property name="plugins_page"       value="${basedir}/../plugins/plugins_page" />
+		<property name="restrictions_page"  value="${basedir}/../plugins/restrictions_page" />
+		<property name="external_page"      value="${basedir}/../plugins/external_page" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"            value="${basedir}/../ext" />

@@ -28,14 +28,11 @@ import org.apache.felix.framework.util.FelixConstants;
 import org.apache.felix.framework.util.StringMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.BundleRepositoryPrefsView;
-import com.affymetrix.igb.window.service.IWindowService;
-import com.affymetrix.igb.window.service.WindowServiceListener;
 
 public class OSGiHandler {
 	public static int TAB_PLUGIN_PREFS = -1;
@@ -43,24 +40,13 @@ public class OSGiHandler {
 
 	private static Felix felix;
 	private static IGBService service;
-	private final List<WindowServiceListener> windowServiceListeners;
 
 	private static OSGiHandler instance = new OSGiHandler();
 	public static OSGiHandler getInstance() {
 		return instance;
 	}
 
-	private OSGiHandler() {
-		windowServiceListeners = new ArrayList<WindowServiceListener>();
-	}
-
-	public void addWindowListener(WindowServiceListener windowServiceListener) {
-		windowServiceListeners.add(windowServiceListener);
-	}
-
-	public void removeWindowListener(WindowServiceListener windowServiceListener) {
-		windowServiceListeners.remove(windowServiceListener);
-	}
+	private OSGiHandler() {}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final void loadFelix() {
@@ -87,23 +73,13 @@ public class OSGiHandler {
         felix = new Felix(configMap);
 	}
 
-	private void notifyWindowService(IWindowService windowService) {
-        try {
-            for (WindowServiceListener windowServiceListener : windowServiceListeners) {
-            	windowServiceListener.addWindowService(windowService);
-            }
-        }
-        catch (Exception ex) {
-            System.out.println(this.getClass().getName() + " - Exception in Activator.start() -> " + ex.getMessage());
-        }
-	}
-
 	public void startOSGi() {
         HashSet<String> tier1Bundles = new HashSet<String>(); // bundle symbolic names
         HashSet<String> tier2Bundles = new HashSet<String>(); // bundle symbolic names
 		loadFelix();
 
-        try {
+        try
+        {
             felix.start();
             tier1Bundles.add(felix.getSymbolicName());
             BundleContext bundleContext = felix.getBundleContext();
@@ -143,18 +119,9 @@ public class OSGiHandler {
 			((IGBServiceImpl)service).setTier2Bundles(tier2Bundles);
 			// register IGB service
 			bundleContext.registerService(IGBService.class.getName(), service, new Properties());
-
-			ServiceReference serviceReference = bundleContext.getServiceReference(IWindowService.class.getName());
-			if (serviceReference == null) {
-				Logger.getLogger(service.getClass().getName()).log(
-						Level.SEVERE, "Could not find window service");
-				System.exit(100);
-			}
-			else {
-	           	notifyWindowService((IWindowService) bundleContext.getService(serviceReference));
-			}
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
 			Logger.getLogger(service.getClass().getName()).log(
 					Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
@@ -164,14 +131,17 @@ public class OSGiHandler {
     }
 
 	private void stopOSGi() {
-        try {
-            if (felix != null) {
+        try
+        {
+            if (felix != null)
+            {
             	felix.stop();
 //            	felix.waitForStop(0);
             	felix = null;
             }
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
 			Logger.getLogger(service.getClass().getName()).log(
 					Level.WARNING, "Could not stop framework, plugins disabled: {0}", ex.getMessage());
         }

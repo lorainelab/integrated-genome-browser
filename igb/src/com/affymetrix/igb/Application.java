@@ -1,10 +1,9 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
-import com.affymetrix.igb.window.service.IPlugin;
-
 import java.awt.Image;
 import java.util.*;
 import java.util.logging.Level;

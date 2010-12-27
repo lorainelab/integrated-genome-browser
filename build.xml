@@ -258,19 +258,13 @@
 			</manifest>
 			<metainf file="LICENSE.html"/>
 			<metainf file="NOTICES.txt"/>
-			<fileset dir="${dist.dir}">
+			<zipgroupfileset dir="${dist.dir}">
 				<exclude name="das2server.jar" />
 				<exclude name="protannot.jar" />
-				<exclude name="igb.jar"/>
-				<exclude name="igb-i18n.jar"/>
+				<exclude name="plugins_page.jar"/>
+				<exclude name="restrictions_page.jar"/>
+				<exclude name="external_page.jar"/>
 				<include name="*.jar"/>
-			</fileset>
-			<zipgroupfileset dir="${dist.dir}">
-				<include name="genometry.jar"/>
-				<include name="genoviz.jar"/>
-				<include name="igb.jar"/>
-				<include name="igb-i18n.jar"/>
-				<include name="igb_service.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="affx_fusion.jar"/>
@@ -514,15 +508,15 @@
 				<dirset dir="${basedir}/plugins">
 					<include name="igb_service" />
 				</dirset>
-				<dirset dir="${basedir}">
-					<include name="igb" />
-					<include name="protannot" />
-					<include name="das2_server" />
-				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="plugins_page" />
 					<include name="restrictions_page" />
 					<include name="external_page" />
+				</dirset>
+				<dirset dir="${basedir}">
+					<include name="igb" />
+					<include name="protannot" />
+					<include name="das2_server" />
 				</dirset>
 			</subant>
 		</sequential>

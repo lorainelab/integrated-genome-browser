@@ -101,12 +101,22 @@
 		<fail if="junit.failure" />
 	</target>
 
-  <target name="jar" depends="compile">
-	<mkdir dir="${dist.dir}" />
-	<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
-		<fileset dir="${build.dir}" />
-	</jar>
-  </target>
+	<target name="jar" depends="compile">
+		<mkdir dir="${dist.dir}" />
+		<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
+			<fileset dir="${build.dir}" />
+		</jar>
+	</target>
+
+	<target name="create-and-copy-jar" depends="init" >
+	  <jar jarfile="${build.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
+			<fileset dir="${build.dir}" excludes="${jarfile}" />
+	  </jar>
+
+	  <copy todir="${igb}/build" filtering="false">
+	    <fileset file="${build.dir}/${jarfile}" />
+	  </copy>
+	</target>
 
 	<target name="webstart" depends="jar">
 		<mkdir dir="${webstart.dir}" />

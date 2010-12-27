@@ -36,6 +36,7 @@
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
 		<iterate target="compile" />
+		<include-jar />
 	</target>
 
 	<target name="flex" if="should_compile_flex" depends="common-init" description="Compile Flex GenoPub application">
@@ -527,4 +528,25 @@
 			</subant>
 		</sequential>
 	</macrodef>
+
+	<macrodef name="include-jar" description="Create jar files for plugins and its dependencies">
+		<sequential>
+			<subant target="create-and-copy-jar" genericantfile="generic.xml" inheritall="true">
+				<!-- Create jar for dependencies" -->
+				<dirset dir="${basedir}">
+					<include name="genoviz_sdk" />
+					<include name="genometryImpl" />
+				</dirset>
+
+				<!-- Create jar for plugins" -->
+				<dirset dir="${basedir}/plugins">
+					<include name="plugins_page" />
+					<include name="restrictions_page" />
+					<include name="external_page" />
+				</dirset>
+				
+			</subant>
+		</sequential>
+	</macrodef>
+
 </project>

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +29,7 @@ import org.apache.felix.framework.util.FelixConstants;
 import org.apache.felix.framework.util.StringMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -77,6 +79,13 @@ public class OSGiHandler {
         HashSet<String> tier1Bundles = new HashSet<String>(); // bundle symbolic names
         HashSet<String> tier2Bundles = new HashSet<String>(); // bundle symbolic names
 		loadFelix();
+		String[] pluginUrls;
+		try {
+			pluginUrls = BUNDLE.getString("pluginUrls").split(",");
+		}
+		catch (MissingResourceException x) {
+			pluginUrls = new String[]{LOCAL_PLUGINS_URL};
+		}
 
         try
         {
@@ -87,9 +96,8 @@ public class OSGiHandler {
             List<String> optionalJars = new ArrayList<String>(Arrays.asList(BUNDLE.getString("pluginsOptionalList").split(",")));
             // update cached local jars
            	for (Bundle bundle : bundleContext.getBundles()) {
-           		String location = bundle.getLocation();
-           		if (location.startsWith(LOCAL_PLUGINS_URL)) {
-           			String jarName = location.substring(LOCAL_PLUGINS_URL.length());
+           		String jarName = getLocalJarName(pluginUrls, bundle.getLocation());
+           		if (jarName != null) {
            			if (requiredJars.contains(jarName)) {
            				bundle.update();
                     	tier1Bundles.add(bundle.getSymbolicName());
@@ -104,17 +112,14 @@ public class OSGiHandler {
            	}
            	// load uncached required jars
 			for (String jarName : requiredJars) {
-				String location = LOCAL_PLUGINS_URL + jarName;
-				Bundle bundle = bundleContext.installBundle(location);
-				bundle.start();
-            	tier1Bundles.add(bundle.getSymbolicName());
+				String bundleName = loadBundleRetry(bundleContext, pluginUrls, jarName);
+            	tier1Bundles.add(bundleName);
 			}
 			((IGBServiceImpl)service).setTier1Bundles(tier1Bundles);
            	// load uncached optional jars
 			for (String jarName : optionalJars) {
-				Bundle bundle = bundleContext.installBundle(LOCAL_PLUGINS_URL + jarName);
-				bundle.start();
-            	tier2Bundles.add(bundle.getSymbolicName());
+				String bundleName = loadBundleRetry(bundleContext, pluginUrls, jarName);
+            	tier2Bundles.add(bundleName);
 			}
 			((IGBServiceImpl)service).setTier2Bundles(tier2Bundles);
 			// register IGB service
@@ -123,12 +128,45 @@ public class OSGiHandler {
         catch (Exception ex)
         {
 			Logger.getLogger(service.getClass().getName()).log(
-					Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
+					Level.SEVERE, "Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
 
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		TAB_PLUGIN_PREFS = pp.addPrefEditorComponent(new BundleRepositoryPrefsView());
     }
+
+	private String loadBundleRetry(BundleContext bundleContext, String[] pluginUrls, String jarName) {
+    	Bundle bundle = null;
+    	for (int i = 0; i < pluginUrls.length && bundle == null; i++) {
+    		try {
+    			bundle = bundleContext.installBundle(pluginUrls[i] + jarName);
+    		}
+    		catch (Exception x) {
+    			bundle = null;
+    		}
+    	}
+    	if (bundle == null) {
+			Logger.getLogger(service.getClass().getName()).log(Level.SEVERE, "Could not load plugin " + jarName);
+			return null;
+    	}
+   		try {
+			bundle.start();
+   		}
+   		catch (BundleException x) {
+   			Logger.getLogger(service.getClass().getName()).log(Level.SEVERE, "Could not start plugin " + jarName, x);
+   		}
+		return bundle.getSymbolicName();
+	}
+
+	private String getLocalJarName(String[] pluginUrls, String location) {
+		String localJarName = null;
+    	for (int i = 0; i < pluginUrls.length && localJarName == null; i++) {
+       		if (location.startsWith(pluginUrls[i])) {
+       			localJarName = location.substring(pluginUrls[i].length());
+    		}
+    	}
+		return localJarName;
+	}
 
 	private void stopOSGi() {
         try

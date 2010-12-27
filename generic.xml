@@ -34,6 +34,21 @@
 
 		<property name="jarfile"       value="${project}.jar" />
 		<property name="report.prefix" value="${project}." />
+
+		<condition property="plugin-jar" value="true" else="false" >
+			<or>
+				<equals arg1="${basedir}" arg2="${genoviz}" />
+				<equals arg1="${basedir}" arg2="${genometry}" />
+
+				<equals arg1="${basedir}" arg2="${plugins_page}" />
+				<equals arg1="${basedir}" arg2="${restrictions_page}" />
+				<equals arg1="${basedir}" arg2="${external_page}" />
+			</or>
+		</condition>
+
+		<condition property="not-plugin-jar" value="true" else="false" >
+			<equals arg1="${plugin-jar}" arg2="false" />
+		</condition>
   </target>
 
   <target name="proj-lib-exists">
@@ -58,6 +73,8 @@
 			<include name="**/*.gif"/>
 			</fileset>
 		</copy>
+
+		<antcall target="create-and-copy-jar" />
   </target>
 
   <target name="compile-tests" depends="compile">
@@ -101,20 +118,23 @@
 		<fail if="junit.failure" />
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="jar" depends="compile" if="not-plugin-jar">
+		<antcall target="create-jar" />
+	</target>
+
+	<target name="create-jar" >
 		<mkdir dir="${dist.dir}" />
 		<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
 			<fileset dir="${build.dir}" />
 		</jar>
 	</target>
 
-	<target name="create-and-copy-jar" depends="init" >
-	  <jar jarfile="${build.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
-			<fileset dir="${build.dir}" excludes="${jarfile}" />
-	  </jar>
-
+	<target name="create-and-copy-jar" if="${plugin-jar}">
+	  <antcall target="create-jar" />
+	  
+	  <mkdir dir="${igb}/build" />
 	  <copy todir="${igb}/build" filtering="false">
-	    <fileset file="${build.dir}/${jarfile}" />
+	    <fileset file="${dist.dir}/${jarfile}" />
 	  </copy>
 	</target>
 

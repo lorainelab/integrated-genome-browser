@@ -130,11 +130,13 @@
 	</target>
 
 	<target name="create-and-copy-jar" if="${plugin-jar}">
-	  <antcall target="create-jar" />
+	  <antcall target="create-jar" >
+		  <param name="dist.dir" value="${igb}/build" />
+	  </antcall>
 	  
-	  <mkdir dir="${igb}/build" />
-	  <copy todir="${igb}/build" filtering="false">
-	    <fileset file="${dist.dir}/${jarfile}" />
+	  <mkdir dir="${dist.dir}" />
+	  <copy todir="${dist.dir}" filtering="false">
+	    <fileset file="${igb}/build/${jarfile}" />
 	  </copy>
 	</target>
 

@@ -8,6 +8,9 @@
                 <dirset dir="${basedir}">
                     <include name="*/build" />
                 </dirset>
+				<dirset dir="${basedir}/plugins">
+					<include name="*/build" />
+				</dirset>
             </classpath>
         </nbjpdastart>
         <java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.igb.IGB" >
@@ -38,6 +41,9 @@
                 <dirset dir="${basedir}">
                     <include name="*/build" />
                 </dirset>
+				<dirset dir="${basedir}/plugins">
+					<include name="*/build" />
+				</dirset>
             </classpath>
             <rootspath>
                 <dirset dir="${basedir}">
@@ -56,6 +62,9 @@
                 <dirset dir="${basedir}">
                     <include name="*/build" />
                 </dirset>
+				<dirset dir="${basedir}/plugins">
+					<include name="*/build" />
+				</dirset>
             </classpath>
         </java>
     </target>
@@ -67,6 +76,9 @@
                 <dirset dir="${basedir}">
                     <include name="*/build" />
                 </dirset>
+				<dirset dir="${basedir}/plugins">
+					<include name="*/build" />
+				</dirset>
             </classpath>
             <rootspath>
                 <dirset dir="${basedir}">
@@ -85,6 +97,9 @@
                 <dirset dir="${basedir}">
                     <include name="*/build" />
                 </dirset>
+				<dirset dir="${basedir}/plugins">
+					<include name="*/build" />
+				</dirset>
             </classpath>
         </java>
     </target>

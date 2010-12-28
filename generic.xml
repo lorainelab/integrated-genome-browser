@@ -35,20 +35,6 @@
 		<property name="jarfile"       value="${project}.jar" />
 		<property name="report.prefix" value="${project}." />
 
-		<condition property="plugin-jar" value="true" else="false" >
-			<or>
-				<equals arg1="${basedir}" arg2="${genoviz}" />
-				<equals arg1="${basedir}" arg2="${genometry}" />
-
-				<equals arg1="${basedir}" arg2="${plugins_page}" />
-				<equals arg1="${basedir}" arg2="${restrictions_page}" />
-				<equals arg1="${basedir}" arg2="${external_page}" />
-			</or>
-		</condition>
-
-		<condition property="not-plugin-jar" value="true" else="false" >
-			<equals arg1="${plugin-jar}" arg2="false" />
-		</condition>
   </target>
 
   <target name="proj-lib-exists">
@@ -60,6 +46,29 @@
 			<fileset dir="${proj.lib.dir}" /> 
 		</copy>
   </target> 
+
+  <target name="check-if-plugin" >
+	<condition property="plugin-jar">
+		<or>
+			<equals arg1="${basedir}" arg2="${genoviz}" />
+			<equals arg1="${basedir}" arg2="${genometry}" />
+
+			<equals arg1="${basedir}" arg2="${plugins_page}" />
+			<equals arg1="${basedir}" arg2="${restrictions_page}" />
+			<equals arg1="${basedir}" arg2="${external_page}" />
+		</or>
+	</condition>
+  </target>
+
+  <target name="check-not-plugin" depends="check-if-plugin" if="${plugin-jar}">
+	<mkdir dir="${dist.dir}" />
+
+	<copy todir="${dist.dir}" filtering="false">
+		<fileset file="${igb}/build/${jarfile}" />
+	</copy>
+
+	<available file="${igb}/build/${jarfile}" property="not-plugin-jar"/>
+  </target>
 
   <target name="compile" depends="common-init,do-if-proj-lib">
 		<mkdir dir="${build.dir}" />
@@ -74,7 +83,7 @@
 			</fileset>
 		</copy>
 
-		<antcall target="create-and-copy-jar" />
+		<antcall target="check-create-jar" />
   </target>
 
   <target name="compile-tests" depends="compile">
@@ -118,7 +127,7 @@
 		<fail if="junit.failure" />
 	</target>
 
-	<target name="jar" depends="compile" if="not-plugin-jar">
+	<target name="jar" depends="compile, check-not-plugin" unless="not-plugin-jar">
 		<antcall target="create-jar" />
 	</target>
 
@@ -129,15 +138,10 @@
 		</jar>
 	</target>
 
-	<target name="create-and-copy-jar" if="${plugin-jar}">
+	<target name="check-create-jar" depends="check-if-plugin" if="${plugin-jar}">
 	  <antcall target="create-jar" >
 		  <param name="dist.dir" value="${igb}/build" />
-	  </antcall>
-	  
-	  <mkdir dir="${dist.dir}" />
-	  <copy todir="${dist.dir}" filtering="false">
-	    <fileset file="${igb}/build/${jarfile}" />
-	  </copy>
+	  </antcall>  
 	</target>
 
 	<target name="webstart" depends="jar">

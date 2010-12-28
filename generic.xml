@@ -47,15 +47,16 @@
 		</copy>
   </target> 
 
+  <!-- To create plugin jars add projects names here -->
   <target name="check-if-plugin" >
-	<condition property="plugin-jar">
+	<condition property="plugin-jar" value="true" else="false">
 		<or>
-			<equals arg1="${basedir}" arg2="${genoviz}" />
-			<equals arg1="${basedir}" arg2="${genometry}" />
+			<equals arg1="${project}" arg2="genoviz" />
+			<equals arg1="${project}" arg2="genometry" />
 
-			<equals arg1="${basedir}" arg2="${plugins_page}" />
-			<equals arg1="${basedir}" arg2="${restrictions_page}" />
-			<equals arg1="${basedir}" arg2="${external_page}" />
+			<equals arg1="${project}" arg2="plugins_page" />
+			<equals arg1="${project}" arg2="restrictions_page" />
+			<equals arg1="${project}" arg2="external_page" />
 		</or>
 	</condition>
   </target>

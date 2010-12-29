@@ -187,6 +187,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       addSymCoverageTier(current_tier);
     }
   };
+
+  private final Action mismatch_action = new AbstractAction("Make Mismatch Graph") {
+    public void actionPerformed(ActionEvent e) {
+      List current_tiers = handler.getSelectedTiers();
+      if (current_tiers.size() > 1) {
+        ErrorHandler.errorPanel("Must select only one track");
+      }
+      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      addMisMatchTier(current_tier);
+    }
+  };
+
   private final Action save_bed_action = new AbstractAction("Save track as BED file") {
     public void actionPerformed(ActionEvent e) {
       List<TierGlyph> current_tiers = handler.getSelectedTiers();
@@ -519,6 +531,33 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
+  private void addMisMatchTier(TierGlyph atier) {
+	BioSeq aseq = gmodel.getSelectedSeq();
+	String human_name = "mismatch: " + atier.getLabel();
+	String unique_name = TrackStyle.getUniqueName(human_name);
+	String method = atier.getAnnotStyle().getMethodName();
+	DependentData dd = new DependentData(unique_name,DependentType.MISMATCH,method);
+	SymWithProps wrapperSym = TrackView.addToDependentList(dd);
+
+	if (wrapperSym == null) {
+		ErrorHandler.errorPanel("Empty Track",
+			"The selected track is empty.  Can not make a coverage track for an empty track.");
+		return;
+    }
+
+    // Generate a non-persistent style.
+    // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
+
+    TrackStyle style = TrackStyle.getInstance(unique_name, false);
+    style.setHumanName(human_name);
+    style.setGlyphDepth(1);
+    style.setSeparate(false); // there are not separate (+) and (-) strands
+    style.setExpandable(false); // cannot expand and collapse
+    style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+
+    gviewer.setAnnotatedSeq(aseq, true, true);
+  }
+
   private void addSymCoverageTier(TierGlyph atier) {
     BioSeq aseq = gmodel.getSelectedSeq();
     //int child_count = atier.getChildCount();
@@ -734,6 +773,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	
     popup.add(summaryMenu);
     popup.add(coverage_action);
+	popup.add(mismatch_action);
 
 	if (num_selections == 1) {
       // Check whether this selection is a graph or an annotation

@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,8 @@ public class DependentData {
 	static public enum DependentType {
 
 		SUMMARY,
-		COVERAGE
+		COVERAGE,
+		MISMATCH
 	}
 
 	final private String id;
@@ -40,7 +42,12 @@ public class DependentData {
 	}
 
 	public SymWithProps createTier(BioSeq aseq) {
-		
+
+		if (type == DependentType.MISMATCH){
+			sym = createMisMatchGraph(aseq);
+			return sym;
+		}
+
 		//Check if type is summary.
 		if (type == DependentType.SUMMARY) {
 			sym = createSummaryGraph(aseq);
@@ -50,6 +57,20 @@ public class DependentData {
 		//If type is not summary then it should be coverage.
 		sym = createCoverageTier(aseq);
 		return sym;
+	}
+
+	private GraphSym createMisMatchGraph(BioSeq aseq){
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		syms.add(aseq.getAnnotation(parent_method));
+		SeqMapView gviewer = Application.getSingleton().getMapView();
+		 int start = gviewer.getVisibleSpan().getMin();
+		 int end = gviewer.getVisibleSpan().getMax();
+
+		GraphSym gsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, start, end);
+		
+		gsym.setID(id);
+		aseq.addAnnotation(gsym);
+		return gsym;
 	}
 
 	private GraphSym createSummaryGraph(BioSeq aseq){

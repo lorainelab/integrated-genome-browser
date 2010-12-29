@@ -23,6 +23,79 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 
 public final class SeqSymSummarizer {
 
+	public static GraphIntervalSym getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end)  {
+
+		if(syms.isEmpty())
+			return null;
+
+		int range = end - start;
+		int[] x = new int[range];
+		int[] width = new int[range];
+		float[] y = new float[range];
+
+		SeqSymmetry sym = syms.get(0);
+		SeqSpan span;
+		
+		int[] seq_residues = getResiduesIntArray(seq.getResidues(start, end));
+		int[][] residues = new int[5][range];
+		int[] cur_residues;
+		int offset, cur_start, cur_end, length;
+		
+		for(int i =0; i<sym.getChildCount(); i++){
+			SeqSymmetry childSeqSym = sym.getChild(i);
+			
+			if(!(childSeqSym instanceof SymWithResidues))
+				continue;
+
+			span = childSeqSym.getSpan(seq);
+			offset = span.getMin() > start ? span.getMin() - start : 0;
+
+			// Boundary Check
+			cur_start = Math.max(start, span.getMin());
+			cur_end = Math.min(end, span.getMax());
+			length = cur_end - cur_start;
+
+			cur_residues = getResiduesIntArray(((SymWithResidues)childSeqSym).getResidues(cur_start, cur_end));
+
+			for(int j=0; j<length; j++){
+				residues[cur_residues[j]][j+offset] += 1;
+			}
+		}
+
+		for(int j=0; j<range; j++){
+			x[j] = start + j;
+			width[j] = 1;
+			y[j] += residues[seq_residues[j]][j];
+		}
+
+		 return new GraphIntervalSym(x,width,y,AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+	}
+
+	private static int[] getResiduesIntArray(String residues){
+		
+		int length = residues.length();
+		int[] residuesInt = new int[length];
+		int ch;
+
+		for(int i=0; i < length; i++){
+			ch = residues.charAt(i);
+
+			if(SymWithResidues.A == ch || SymWithResidues.a == ch){
+				residuesInt[i] = SymWithResidues.A_pos;
+			}else if(SymWithResidues.T == ch || SymWithResidues.t == ch){
+				residuesInt[i] = SymWithResidues.T_pos;
+			}else if(SymWithResidues.G == ch || SymWithResidues.g == ch){
+				residuesInt[i] = SymWithResidues.G_pos;
+			}else if(SymWithResidues.C == ch || SymWithResidues.c == ch){
+				residuesInt[i] = SymWithResidues.C_pos;
+			}else{
+				residuesInt[i] = SymWithResidues.N_pos;
+			}
+		}
+
+		return residuesInt;
+	}
+
 	public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, Boolean isForward)  {
 		int symcount = syms.size();
 		List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
@@ -35,7 +108,7 @@ public final class SeqSymSummarizer {
 			return getSpanSummary(leaf_spans, binary_depth, id);
 		}
 	}
-
+	
 	/**
 	 *  Makes a summary graph of a set the spans of some SeqSymmetries on a given BioSeq.
 	 *  Descends into parent's descendants, collecting all leaf symmetries and

@@ -49,7 +49,7 @@
 
   <!-- To create plugin jars add projects names here -->
   <target name="check-if-plugin" >
-	<condition property="plugin-jar" value="true" else="false">
+	<condition property="plugin-jar">
 		<or>
 			<equals arg1="${project}" arg2="genoviz" />
 			<equals arg1="${project}" arg2="genometry" />
@@ -61,7 +61,7 @@
 	</condition>
   </target>
 
-  <target name="check-not-plugin" depends="check-if-plugin" if="${plugin-jar}">
+  <target name="check-not-plugin" depends="check-if-plugin" if="plugin-jar">
 	<mkdir dir="${dist.dir}" />
 
 	<copy todir="${dist.dir}" filtering="false">
@@ -139,7 +139,7 @@
 		</jar>
 	</target>
 
-	<target name="check-create-jar" depends="check-if-plugin" if="${plugin-jar}">
+	<target name="check-create-jar" depends="check-if-plugin" if="plugin-jar">
 	  <antcall target="create-jar" >
 		  <param name="dist.dir" value="${igb}/build" />
 	  </antcall>  

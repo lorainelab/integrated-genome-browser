@@ -1,30 +1,31 @@
 package com.affymetrix.igb.glyph;
 
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import com.affymetrix.genoviz.glyph.SequenceGlyph;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+
+import com.affymetrix.genoviz.glyph.SequenceGlyph;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
+
 import com.affymetrix.igb.IGBConstants;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 
 
 /**
@@ -47,55 +48,8 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 	// default to true for backward compatability
 	private boolean hitable = true;
-	public static final String PREF_A_COLOR = "Adenine color";
-	public static final String PREF_T_COLOR = "Thymine color";
-	public static final String PREF_G_COLOR = "Guanine color";
-	public static final String PREF_C_COLOR = "Cytosine color";
-	public static final String PREF_OTHER_COLOR = "Other color";
-	public static final Color default_A_color = new Color(151, 255, 179);
-	public static final Color default_T_color = new Color(102, 211, 255);
-	public static final Color default_G_color = new Color(255, 210, 0);
-	public static final Color default_C_color = new Color(255, 176, 102);
-	public static final Color default_other_color = Color.LIGHT_GRAY;
 
-	private static final ColorHelper helper = new ColorHelper();
-	private static final class ColorHelper implements PreferenceChangeListener {
-		private static final Map<String, Color> DEFAULT_COLORS;
-		private final Color[] colors;
-
-		static {
-			Map<String, Color> defaultColors = new LinkedHashMap<String, Color>();
-
-			defaultColors.put(PREF_A_COLOR, default_A_color);
-			defaultColors.put(PREF_T_COLOR, default_T_color);
-			defaultColors.put(PREF_G_COLOR, default_G_color);
-			defaultColors.put(PREF_C_COLOR, default_C_color);
-			defaultColors.put(PREF_OTHER_COLOR, default_other_color);
-
-			DEFAULT_COLORS = Collections.<String, Color>unmodifiableMap(defaultColors);
-		}
-
-		ColorHelper() {
-			int i = 0;
-			colors = new Color[5];
-			PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
-			for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
-				colors[i] = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), entry.getKey(), entry.getValue());
-				i++;
-			}
-		}
-
-		public void preferenceChange(PreferenceChangeEvent evt) {
-			int i = 0;
-			for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
-				if (entry.getKey().equals(evt.getKey())) {
-					colors[i] = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), entry.getKey(), entry.getValue());
-					break;
-				}
-				i++;
-			}
-		}
-	}
+	private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
 
 	public CharSeqGlyph() {
 		super();
@@ -188,7 +142,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 	private static void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, int x, int y, int height) {
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		for (int j = 0; j < charArray.length; j++) {
-			g.setColor(determineResidueColor(charArray[j]));
+			g.setColor(helper.determineResidueColor(charArray[j]));
 
 			//Create a colored rectangle.
 			//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
@@ -198,24 +152,6 @@ public final class CharSeqGlyph extends SequenceGlyph
 		}
 	}
 
-	private static Color determineResidueColor(char charAt) {
-		switch (charAt) {
-			case 'A':
-			case 'a':
-				return helper.colors[0];
-			case 'T':
-			case 't':
-				return helper.colors[1];
-			case 'G':
-			case 'g':
-				return helper.colors[2];
-			case 'C':
-			case 'c':
-				return helper.colors[3];
-			default:
-				return helper.colors[4];
-		}
-	}
 
 	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart) {
 		if (this.font_width <= pixelsPerBase) {

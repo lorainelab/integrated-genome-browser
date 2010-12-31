@@ -13,18 +13,18 @@
 
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.glyph.CharSeqGlyph;
-import com.affymetrix.igb.util.ColorUtils;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.glyph.ResidueColorHelper;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
+import com.affymetrix.igb.util.ColorUtils;
 
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
@@ -81,11 +81,11 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     base_box.setLayout(new GridLayout(5,0));
     base_box.setBorder(new javax.swing.border.TitledBorder("Change Residue Colors"));
 
-	base_box.add(addColorChooser("A", CharSeqGlyph.PREF_A_COLOR, CharSeqGlyph.default_A_color));
-	base_box.add(addColorChooser("T", CharSeqGlyph.PREF_T_COLOR, CharSeqGlyph.default_T_color));
-	base_box.add(addColorChooser("G", CharSeqGlyph.PREF_G_COLOR, CharSeqGlyph.default_G_color));
-	base_box.add(addColorChooser("C", CharSeqGlyph.PREF_C_COLOR, CharSeqGlyph.default_C_color));
-	base_box.add(addColorChooser("Other", CharSeqGlyph.PREF_OTHER_COLOR, CharSeqGlyph.default_other_color));
+	base_box.add(addColorChooser("A", ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color));
+	base_box.add(addColorChooser("T", ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color));
+	base_box.add(addColorChooser("G", ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color));
+	base_box.add(addColorChooser("C", ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color));
+	base_box.add(addColorChooser("Other", ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color));
 
 
 	String default_label_format = SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA;

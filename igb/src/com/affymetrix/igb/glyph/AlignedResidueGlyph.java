@@ -1,18 +1,14 @@
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.logging.Logger;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.symloader.BAM;
 
@@ -45,7 +41,7 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 	private boolean hitable = true;
 	public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
 
-	private static final ColorHelper helper = new ColorHelper();
+	private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
 
 	public void setParentSeqStart(int beg) {
 		throw new UnsupportedOperationException("Not supported yet.");
@@ -61,43 +57,6 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 
 	public int getParentSeqEnd() {
 		throw new UnsupportedOperationException("Not supported yet.");
-	}
-	private static final class ColorHelper implements PreferenceChangeListener {
-		private static final Map<String, Color> DEFAULT_COLORS;
-		private final Color[] colors;
-
-		static {
-			Map<String, Color> defaultColors = new LinkedHashMap<String, Color>();
-
-			defaultColors.put(CharSeqGlyph.PREF_A_COLOR, CharSeqGlyph.default_A_color);
-			defaultColors.put(CharSeqGlyph.PREF_T_COLOR, CharSeqGlyph.default_T_color);
-			defaultColors.put(CharSeqGlyph.PREF_G_COLOR, CharSeqGlyph.default_G_color);
-			defaultColors.put(CharSeqGlyph.PREF_C_COLOR, CharSeqGlyph.default_C_color);
-			defaultColors.put(CharSeqGlyph.PREF_OTHER_COLOR, CharSeqGlyph.default_other_color);
-
-			DEFAULT_COLORS = Collections.<String, Color>unmodifiableMap(defaultColors);
-		}
-
-		ColorHelper() {
-			int i = 0;
-			colors = new Color[5];
-			PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
-			for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
-				colors[i] = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), entry.getKey(), entry.getValue());
-				i++;
-			}
-		}
-
-		public void preferenceChange(PreferenceChangeEvent evt) {
-			int i = 0;
-			for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
-				if (entry.getKey().equals(evt.getKey())) {
-					colors[i] = PreferenceUtils.getColor(PreferenceUtils.getTopNode(), entry.getKey(), entry.getValue());
-					break;
-				}
-				i++;
-			}
-		}
 	}
 
 	public AlignedResidueGlyph() {
@@ -251,32 +210,13 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 			if(show_mask && !residueMask.get(j)) {
 				continue;	// skip drawing of this residue
 			}
-			g.setColor(determineResidueColor(charArray[j]));
+			g.setColor(helper.determineResidueColor(charArray[j]));
 
 			//Create a colored rectangle.
 			//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
 			int offset = (int) (j * pixelsPerBase);
 			//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
 			g.fillRect(x + offset, y, intPixelsPerBase, height);
-		}
-	}
-
-	private static Color determineResidueColor(char charAt) {
-		switch (charAt) {
-			case 'A':
-			case 'a':
-				return helper.colors[0];
-			case 'T':
-			case 't':
-				return helper.colors[1];
-			case 'G':
-			case 'g':
-				return helper.colors[2];
-			case 'C':
-			case 'c':
-				return helper.colors[3];
-			default:
-				return helper.colors[4];
 		}
 	}
 

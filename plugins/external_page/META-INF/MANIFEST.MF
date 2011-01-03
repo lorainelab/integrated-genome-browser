@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ExternalPage
-Bundle-SymbolicName: ExternalPage
+Bundle-Name: ExternalView
+Bundle-SymbolicName: ExternalView
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.external.Activator
 Bundle-ActivationPolicy: lazy
@@ -14,6 +14,6 @@ Import-Package: com.affymetrix.igb.osgi.service,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
-Bundle-Description: IGB external viewer page for showing data on an outside site
+Bundle-Description: View the current scene in another genome browser, such as the UCSC and/or Ensembl genome browsers, if the current genome is supported.
 Require-Bundle: genometry;bundle-version="1.0.0",
  genoviz;bundle-version="1.0.0"

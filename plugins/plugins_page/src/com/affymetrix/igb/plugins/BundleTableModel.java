@@ -13,42 +13,78 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	private static final long serialVersionUID = 1L;
 	private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
 	static {
+		columns.add(new BundleColumn() { // active
+			@Override
+			public String getTitle() { return PluginsView.BUNDLE.getString("activeColumn"); }
+			@Override
+			public boolean isEditable() { return true; }
+			@Override
+			public Object getValue(Bundle bundle) { return bundle.getState() == Bundle.ACTIVE; }
+			@Override
+			public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {
+				if (bundle.getState() == Bundle.ACTIVE) {
+					try {
+						pluginsHandler.clearError();
+						bundle.stop();
+					}
+					catch (BundleException bex) {
+						pluginsHandler.displayError(bex.getMessage());
+					}
+				}
+				else if (bundle.getState() == Bundle.INSTALLED || bundle.getState() == Bundle.RESOLVED)  {
+					try {
+						pluginsHandler.clearError();
+						bundle.start();
+					}
+					catch (BundleException bex) {
+						pluginsHandler.displayError(bex.getMessage());
+//						Throwable cause = bex;
+//						int preventLoop = 0;
+//						while (cause.getCause() != null && !cause.equals(cause.getCause()) && preventLoop < 16) {
+//							cause = bex.getCause();
+//							preventLoop++;
+//						}
+//						displayError(cause.getMessage());
+					}
+				}
+			}
+		});
 	columns.add(new BundleColumn() { // symbolic name
 		@Override
-		public String getTitle() { return BUNDLE_SYMBOLICNAME; }
+		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_SYMBOLICNAME); }
 		@Override
 		public Object getValue(Bundle bundle) { return bundle.getSymbolicName(); }
 	});
-	columns.add(new BundleColumn() { // version
-		@Override
-		public String getTitle() { return BUNDLE_VERSION; }
-		@Override
-		public Object getValue(Bundle bundle) { return bundle.getVersion().toString(); }
-	});
-	columns.add(new BundleColumn() { // latest version
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("pluginsLatestVersionColumn"); }
-		@Override
-		public Object getValue(Bundle bundle) { return (pluginsHandler.isUpdatable(bundle) ? "<html><b><u>" : "") + pluginsHandler.getLatestVersion(bundle) + (pluginsHandler.isUpdatable(bundle) ? "</u></b></html>" : "");}
-	});
 	columns.add(new BundleColumn() { // description
 		@Override
-		public String getTitle() { return BUNDLE_DESCRIPTION; }
+		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_DESCRIPTION); }
 		@Override
 		public Object getValue(Bundle bundle) {
 			Object description = bundle.getHeaders().get(BUNDLE_DESCRIPTION);
 			return description == null ? "" : description.toString();
 		}
 	});
+	columns.add(new BundleColumn() { // version
+		@Override
+		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_VERSION); }
+		@Override
+		public Object getValue(Bundle bundle) { return bundle.getVersion().toString(); }
+	});
+	columns.add(new BundleColumn() { // latest version
+		@Override
+		public String getTitle() { return PluginsView.BUNDLE.getString("latestVersionColumn"); }
+		@Override
+		public Object getValue(Bundle bundle) { return (pluginsHandler.isUpdatable(bundle) ? "<html><b><u>" : "") + pluginsHandler.getLatestVersion(bundle) + (pluginsHandler.isUpdatable(bundle) ? "</u></b></html>" : "");}
+	});
 	columns.add(new BundleColumn() { // location
 		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("pluginsLocationColumn"); }
+		public String getTitle() { return PluginsView.BUNDLE.getString("locationColumn"); }
 		@Override
-		public Object getValue(Bundle bundle) { return pluginsHandler.isTier2Bundle(bundle) ? "" : bundle.getLocation(); }
+		public Object getValue(Bundle bundle) { return pluginsHandler.isTier2Bundle(bundle) ? PluginsView.BUNDLE.getString("preinstalled") : bundle.getLocation(); }
 	});
 	columns.add(new BundleColumn() { // install
 		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("pluginsInstallColumn"); }
+		public String getTitle() { return PluginsView.BUNDLE.getString("installColumn"); }
 		@Override
 		public boolean isEditable() { return true; }
 		@Override
@@ -68,42 +104,6 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			}
 		}
 		public boolean tier2OK() { return false; }
-	});
-	columns.add(new BundleColumn() { // active
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("pluginsActiveColumn"); }
-		@Override
-		public boolean isEditable() { return true; }
-		@Override
-		public Object getValue(Bundle bundle) { return bundle.getState() == Bundle.ACTIVE; }
-		@Override
-		public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {
-			if (bundle.getState() == Bundle.ACTIVE) {
-				try {
-					pluginsHandler.clearError();
-					bundle.stop();
-				}
-				catch (BundleException bex) {
-					pluginsHandler.displayError(bex.getMessage());
-				}
-			}
-			else if (bundle.getState() == Bundle.INSTALLED || bundle.getState() == Bundle.RESOLVED)  {
-				try {
-					pluginsHandler.clearError();
-					bundle.start();
-				}
-				catch (BundleException bex) {
-					pluginsHandler.displayError(bex.getMessage());
-//					Throwable cause = bex;
-//					int preventLoop = 0;
-//					while (cause.getCause() != null && !cause.equals(cause.getCause()) && preventLoop < 16) {
-//						cause = bex.getCause();
-//						preventLoop++;
-//					}
-//					displayError(cause.getMessage());
-				}
-			}
-		}
 	});
 	}
 	private static IPluginsHandler pluginsHandler;
@@ -168,7 +168,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 	public int getLatestColumnIndex() {
 		for (int i = 0; i < columns.size(); i++) {
-			if (columns.get(i).getTitle().equals(PluginsView.BUNDLE.getString("pluginsLatestVersionColumn"))) {
+			if (columns.get(i).getTitle().equals(PluginsView.BUNDLE.getString("latestVersionColumn"))) {
 				return i;
 			}
 		}

@@ -114,8 +114,8 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
-		installedBundlesCheckbox = new JCheckBox(BUNDLE.getString("pluginsInstalledBundles"));
-		installedBundlesCheckbox.setToolTipText(BUNDLE.getString("pluginsInstalledBundlesTooltip"));
+		installedBundlesCheckbox = new JCheckBox(BUNDLE.getString("installedBundles"));
+		installedBundlesCheckbox.setToolTipText(BUNDLE.getString("installedBundlesTooltip"));
 		installedBundlesCheckbox.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
@@ -129,8 +129,8 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		installedBundlesCheckbox.setSelected(true);
 		buttonPanel.add(installedBundlesCheckbox);
 
-		uninstalledBundlesCheckbox = new JCheckBox(BUNDLE.getString("pluginsUninstalledBundles"));
-		uninstalledBundlesCheckbox.setToolTipText(BUNDLE.getString("pluginsUninstalledBundlesTooltip"));
+		uninstalledBundlesCheckbox = new JCheckBox(BUNDLE.getString("uninstalledBundles"));
+		uninstalledBundlesCheckbox.setToolTipText(BUNDLE.getString("uninstalledBundlesTooltip"));
 		uninstalledBundlesCheckbox.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
@@ -143,8 +143,8 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		);
 		buttonPanel.add(uninstalledBundlesCheckbox);
 
-		updateAllBundlesButton = new JButton(BUNDLE.getString("pluginsUpdateAllBundles"));
-		updateAllBundlesButton.setToolTipText(BUNDLE.getString("pluginsUpdateAllBundlesTooltip"));
+		updateAllBundlesButton = new JButton(BUNDLE.getString("updateAllBundles"));
+		updateAllBundlesButton.setToolTipText(BUNDLE.getString("updateAllBundlesTooltip"));
 		updateAllBundlesButton.addActionListener(
 			new ActionListener() {
 				@Override
@@ -157,7 +157,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		buttonPanel.add(updateAllBundlesButton);
 
 		buttonPanel.add(new JLabel("      "));
-		errors = new JLabel(BUNDLE.getString("pluginsOSGiNotLoaded"));
+		errors = new JLabel(BUNDLE.getString("OSGiNotLoaded"));
 		errors.setForeground(Color.RED);
 		buttonPanel.add(errors);
 		BundleTableModel.setPluginsHandler(this); // is there a better way ?
@@ -388,7 +388,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		}
 		else
 		{
-			StringBuffer sb = new StringBuffer(PluginsView.BUNDLE.getString("pluginsBundleLoadError"));
+			StringBuffer sb = new StringBuffer(PluginsView.BUNDLE.getString("bundleLoadError"));
 		    sb.append(" -> ");
 			boolean started = false;
 			for (Requirement req : resolver.getUnsatisfiedRequirements()) {

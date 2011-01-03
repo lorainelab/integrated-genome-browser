@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: RestrictionPage
-Bundle-SymbolicName: RestrictionsPage
+Bundle-Name: RestrictionSites
+Bundle-SymbolicName: RestrictionsSites
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.restrictions.Activator
 Bundle-ActivationPolicy: lazy
@@ -13,7 +13,7 @@ Import-Package: com.affymetrix.igb.osgi.service,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
-Bundle-Description: IGB restrictions control page
+Bundle-Description: Search for restriction enzyme sites in genomic DNA.
 Require-Bundle: genometry;bundle-version="1.0.0",
  genoviz;bundle-version="1.0.0"
 

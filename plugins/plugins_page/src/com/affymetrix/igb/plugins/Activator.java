@@ -22,7 +22,7 @@ public class Activator implements BundleActivator {
             IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
             pluginsView = new PluginsView(igbService);
             pluginsView.setBundleContext(bundleContext);
-            igbService.addPlugIn(pluginsView, PluginsView.BUNDLE.getString("pluginsViewTab"));
+            igbService.addPlugIn(pluginsView, PluginsView.BUNDLE.getString("viewTab"));
             bundleContext.ungetService(igbServiceReference);
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.start() -> " + ex.getMessage());
@@ -62,7 +62,7 @@ public class Activator implements BundleActivator {
             try
             {
                 IGBService igbService = (IGBService) bundleContext.getService(igbRef);
-                igbService.removePlugIn(PluginsView.BUNDLE.getString("pluginsViewTab"));
+                igbService.removePlugIn(PluginsView.BUNDLE.getString("viewTab"));
                 bundleContext.ungetService(igbRef);
                 pluginsView = null;
             }

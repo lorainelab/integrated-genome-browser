@@ -10,6 +10,8 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -474,5 +476,19 @@ public class GraphSym extends SimpleSymWithProps {
 			return false;
 		}
 		return super.setProperty(name, val);
+	}
+
+	public Map<String, Object> getLocationProperties(int x){
+		Map<String, Object> locprops = new HashMap<String, Object>();
+
+		locprops.put("x coord", x);
+		float y = getYCoordFromX(x);
+		if (y < 0) {
+			locprops.put("y coord", "no point");
+		} else {
+			locprops.put("y coord", y);
+		}
+
+		return locprops;
 	}
 }

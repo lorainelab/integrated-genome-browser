@@ -12,17 +12,24 @@ import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import java.util.*;
+import com.affymetrix.igb.util.JTableCutPasteAdapter;
+
 import java.text.NumberFormat;
 import javax.swing.JPanel;
-import javax.swing.table.*;
-import com.affymetrix.igb.util.JTableCutPasteAdapter;
 import java.awt.BorderLayout;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public final class PropertyView extends JPanel implements SymSelectionListener {
 
@@ -207,7 +214,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		}
 		if (props == null) {
 			// make an empty hashtable if sym has no properties...
-			props = new Hashtable<String, Object>();
+			props = new HashMap<String, Object>();
 		}
 		String symid = sym.getID();
 		if (symid != null) {
@@ -352,13 +359,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	public static String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, SeqMapView seqMap){
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> props = determineProps(sym, seqMap);
-		props.put("x coord", x);
-		float y = sym.getYCoordFromX(x);
-		if (y < 0) {
-			props.put("y coord", "no point");
-		} else {
-			props.put("y coord", y);
-		}
+		props.putAll(sym.getLocationProperties(x));
 		propList.add(props);
 		return getPropertiesRow(propList.toArray(new Map[propList.size()]),graphToolTipOrder(),"",true);
 	}

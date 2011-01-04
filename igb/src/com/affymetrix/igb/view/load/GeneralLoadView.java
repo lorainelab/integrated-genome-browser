@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -509,31 +508,8 @@ public final class GeneralLoadView extends JComponent
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 			public Void doInBackground() {
-				try {
-					Application.getSingleton().addNotLockedUpMsg("Loading residues for "+seq.getID());
-
-					if (partial) {
-
-						if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
-							if (!tryFull) {
-								ErrorHandler.errorPanel("Couldn't load partial sequence",
-										"Couldn't locate the partial sequence.  Try loading the full sequence.");
-							} else {
-								if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
-									ErrorHandler.errorPanel("Couldn't load partial or full sequence",
-											"Couldn't locate the sequence.");
-								}
-							}
-						}
-					} else {
-						if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
-							ErrorHandler.errorPanel("Couldn't load full sequence",
-									"Couldn't locate the sequence.");
-						}
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+				Application.getSingleton().addNotLockedUpMsg("Loading residues for "+seq.getID());
+				loadResidues(genomeVersionName, seq, viewspan, partial, tryFull);
 				return null;
 			}
 
@@ -544,6 +520,35 @@ public final class GeneralLoadView extends JComponent
 		};
 
 		return worker;
+	}
+
+	public static boolean loadResidues(final String genomeVersionName, final BioSeq seq,
+			final SeqSpan viewspan, final boolean partial, final boolean tryFull) {
+		try {
+			if (partial) {
+				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
+					if (!tryFull) {
+						ErrorHandler.errorPanel("Couldn't load partial sequence", "Couldn't locate the partial sequence.  Try loading the full sequence.");
+						return false;
+					} else {
+						if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
+							ErrorHandler.errorPanel("Couldn't load partial or full sequence", "Couldn't locate the sequence.");
+							return false;
+						}
+					}
+				}
+			} else {
+				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
+					ErrorHandler.errorPanel("Couldn't load full sequence", "Couldn't locate the sequence.");
+					return false;
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

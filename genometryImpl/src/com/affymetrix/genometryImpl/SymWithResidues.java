@@ -6,26 +6,60 @@ package com.affymetrix.genometryImpl;
  */
 public interface SymWithResidues {
 
-	public final static int A = 'A';
-	public final static int a = 'a';
-	public final static int A_pos = 0;
+	public enum ResiduesChars {
+		A(new char[]{'A','a'},0),
+		T(new char[]{'T','t'},1),
+		G(new char[]{'G','g'},2),
+		C(new char[]{'C','c'},3),
+		N(new char[]{'N','n'},4),
+		D(new char[]{'_'},4);
 
-	public final static int T = 'T';
-	public final static int t = 't';
-	public final static int T_pos = 1;
+		char[] chars;
+		int value;
+		
+		private ResiduesChars(char[] chars, int value){
+			this.chars = chars;
+			this.value = value;
+		}
 
-	public final static int G = 'G';
-	public final static int g = 'g';
-	public final static int G_pos = 2;
+		public int getValue(){
+			return value;
+		}
 
-	public final static int C = 'C';
-	public final static int c = 'c';
-	public final static int C_pos = 3;
+		@Override
+		public String toString(){
+			return String.valueOf(chars[0]);
+		}
 
-	public final static int N = 'N';
-	public final static int n = 'n';
-	public final static int N_pos = 4;
+		public boolean equal(char ch){
+			for(char c : chars){
+				if(c == ch){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public static ResiduesChars valueOf(int i){
+			for(ResiduesChars ch : ResiduesChars.values()){
+				if(ch.value == i){
+					return ch;
+				}
+			}
 
+			return null;
+		}
+
+		public static int valueOf(char c){
+			for(ResiduesChars ch : ResiduesChars.values()){
+				if(ch.chars[0] == c || ch.chars[1] == c){
+					return ch.getValue();
+				}
+			}
+
+			return -1;
+		}
+	};
 
 	public void setResidues(String residues);
 

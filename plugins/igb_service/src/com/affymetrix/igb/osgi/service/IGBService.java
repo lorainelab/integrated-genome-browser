@@ -25,6 +25,7 @@ public interface IGBService {
 	public Set<String> getTier2Bundles();
 	public List<String> getRepositories();
 	public void failRepository(String url);
+	public void displayRepositoryPreferences();
 	public void addRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
 	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
 	// for restrictions page

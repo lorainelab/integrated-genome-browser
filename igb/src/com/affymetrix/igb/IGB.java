@@ -59,10 +59,8 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.util.ConfigurableStreamHandlerFactory;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.util.classpath.Handler;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
@@ -122,11 +120,6 @@ public final class IGB extends Application
 			// Verify jidesoft license.
 			com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
 					"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-
-			// allow classpath:xxx URLs
-			URL.setURLStreamHandlerFactory(
-				new ConfigurableStreamHandlerFactory("classpath", new Handler(ClassLoader.getSystemClassLoader()))
-			);
 
 			// Letting the look-and-feel determine the window decorations would
 			// allow exporting the whole frame, including decorations, to an eps file.

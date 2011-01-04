@@ -108,9 +108,6 @@ public class OSGiHandler {
 						optionalJars.remove(jarName);
 					}
 					GeneralUtils.safeClose(istr);
-				}else{
-					//If it is not local the update it with original plugin.
-					bundle.update();
 				}
 			}
            	// load uncached required jars

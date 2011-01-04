@@ -1,9 +1,12 @@
 package com.affymetrix.igb.plugins;
 
+import java.awt.Component;
 import java.util.ArrayList;
-import java.util.List;
 
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
@@ -11,6 +14,9 @@ import org.osgi.framework.Constants;
 
 public class BundleTableModel extends DefaultTableModel implements Constants {
 	private static final long serialVersionUID = 1L;
+	private static final int WIDE_COLUMN_MULTIPLIER = 5;
+	private static final int NARROW_COLUMN = 60;
+
 	private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
 	static {
 		columns.add(new BundleColumn() { // active
@@ -48,6 +54,13 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 					}
 				}
 			}
+			public void formatColumn(JTable jTable, TableColumn tc) {
+				tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
+				tc.setCellRenderer(jTable.getDefaultRenderer(Boolean.class));
+				tc.setMinWidth(NARROW_COLUMN);
+				tc.setMaxWidth(NARROW_COLUMN);
+				tc.setPreferredWidth(NARROW_COLUMN);
+			}
 		});
 	columns.add(new BundleColumn() { // symbolic name
 		@Override
@@ -63,24 +76,18 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			Object description = bundle.getHeaders().get(BUNDLE_DESCRIPTION);
 			return description == null ? "" : description.toString();
 		}
+		public void formatColumn(JTable jTable, TableColumn tc) {
+			tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
+		}
 	});
 	columns.add(new BundleColumn() { // version
 		@Override
 		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_VERSION); }
 		@Override
-		public Object getValue(Bundle bundle) { return bundle.getVersion().toString(); }
-	});
-	columns.add(new BundleColumn() { // latest version
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("latestVersionColumn"); }
-		@Override
-		public Object getValue(Bundle bundle) { return (pluginsHandler.isUpdatable(bundle) ? "<html><b><u>" : "") + pluginsHandler.getLatestVersion(bundle) + (pluginsHandler.isUpdatable(bundle) ? "</u></b></html>" : "");}
-	});
-	columns.add(new BundleColumn() { // location
-		@Override
-		public String getTitle() { return PluginsView.BUNDLE.getString("locationColumn"); }
-		@Override
-		public Object getValue(Bundle bundle) { return pluginsHandler.isTier2Bundle(bundle) ? PluginsView.BUNDLE.getString("preinstalled") : bundle.getLocation(); }
+		public Object getValue(Bundle bundle) { return pluginsHandler.isUpdatable(bundle) ?
+			"<html>" + bundle.getVersion().toString() + " (<b><u><span style=\"color:blue\">" + pluginsHandler.getLatestVersion(bundle) + "</span></u></b>)</html>)" :
+			bundle.getVersion().toString();
+		}
 	});
 	columns.add(new BundleColumn() { // install
 		@Override
@@ -104,6 +111,22 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			}
 		}
 		public boolean tier2OK() { return false; }
+		public void formatColumn(JTable jTable, TableColumn tc) {
+			tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
+			tc.setCellRenderer(
+					new TableCellRenderer() {
+						@Override
+						public Component getTableCellRendererComponent(JTable jTable, Object value,
+								boolean isSelected, boolean hasFocus, int row, int column) {
+							return pluginsHandler.isTier2Bundle(pluginsHandler.getFilteredBundles().get(row)) ? null : 
+								jTable.getDefaultRenderer(Boolean.class).getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, column);
+						}
+					}
+			);
+			tc.setMinWidth(NARROW_COLUMN);
+			tc.setMaxWidth(NARROW_COLUMN);
+			tc.setPreferredWidth(NARROW_COLUMN);
+		}
 	});
 	}
 	private static IPluginsHandler pluginsHandler;
@@ -156,22 +179,20 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		columns.get(columnIndex).setValue(pluginsHandler.getFilteredBundles().get(rowIndex), aValue, pluginsHandler);
 	}
 
-	public List<Integer> getCheckboxColumnIndexes() {
-		ArrayList<Integer> checkboxColumns = new ArrayList<Integer>();
+	public int getColumnIndex(String key) {
 		for (int i = 0; i < columns.size(); i++) {
-			if (columns.get(i).isEditable()) {
-				checkboxColumns.add(i);
-			}
-		}
-		return checkboxColumns;
-	}
-
-	public int getLatestColumnIndex() {
-		for (int i = 0; i < columns.size(); i++) {
-			if (columns.get(i).getTitle().equals(PluginsView.BUNDLE.getString("latestVersionColumn"))) {
+			if (columns.get(i).getTitle().equals(PluginsView.BUNDLE.getString(key))) {
 				return i;
 			}
 		}
 		return -1;
+	}
+
+	public void setJTable(JTable jTable) {
+		for (int i = 0; i < columns.size(); i++) {
+			BundleColumn bundleColumn = columns.get(i);
+			TableColumn checkboxColumn = jTable.getColumnModel().getColumn(i);
+			bundleColumn.formatColumn(jTable, checkboxColumn);
+		}
 	}
 }

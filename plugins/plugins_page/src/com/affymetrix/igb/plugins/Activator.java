@@ -25,7 +25,7 @@ public class Activator implements BundleActivator {
             igbService.addPlugIn(pluginsView, PluginsView.BUNDLE.getString("viewTab"));
             bundleContext.ungetService(igbServiceReference);
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName() + " - Exception in Activator.start() -> " + ex.getMessage());
+            System.out.println(this.getClass().getName() + " - Exception in Activator.loadPluginsPage() -> " + ex.getMessage());
         }
 	}
 

@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JTabbedPane;
@@ -40,6 +41,7 @@ import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.view.SearchView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -193,6 +195,17 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	public void failRepository(String url) {
 		ServerList.getRepositoryInstance().removeServer(url);
+	}
+
+	public void displayRepositoryPreferences() {
+		if (OSGiHandler.TAB_PLUGIN_PREFS != -1) {
+			PreferencesPanel pv = PreferencesPanel.getSingleton();
+			pv.setTab(OSGiHandler.TAB_PLUGIN_PREFS);	// Repository preferences tab
+			JFrame f = pv.getFrame();
+			f.setVisible(true);
+		} else {
+			System.out.println("Plugin Repository Preferences not instantiated");
+		}
 	}
 
 	public void addRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener) {

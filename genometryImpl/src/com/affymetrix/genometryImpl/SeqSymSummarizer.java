@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 
 public final class SeqSymSummarizer {
 
-	public static List<GraphSym> getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end)  {
+	public static MisMatchGraphSym getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end)  {
 
 		if(syms.isEmpty())
 			return null;
@@ -74,17 +74,13 @@ public final class SeqSymSummarizer {
 			}
 		}
 
-		List<GraphSym> graphs = new ArrayList<GraphSym>();
 		MisMatchGraphSym summary = new MisMatchGraphSym(x, width, y, AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
-		graphs.add(summary);
-		
+
 		for(int i=0; i<4; i++){
-			GraphSym gsym = new GraphSym(x, width, yR[i], AnnotatedSeqGroup.getUniqueGraphID(id+i, seq),seq);
-			graphs.add(gsym);
-			summary.addReference(SymWithResidues.ResiduesChars.valueOf(i), gsym);
+			summary.addReference(SymWithResidues.ResiduesChars.valueOf(i), new GraphSym(x, width, yR[i], AnnotatedSeqGroup.getUniqueGraphID(id+i, seq),seq));
 		}
 		 
-		return graphs;
+		return summary;
 	}
 
 	private static int[] getResiduesIntArray(String residues){

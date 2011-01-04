@@ -20,6 +20,10 @@ public class MisMatchGraphSym extends GraphSym {
 		reference.put(ch, gsym);
 	}
 
+	public Map<SymWithResidues.ResiduesChars, GraphSym> getReference(){
+		return reference;
+	}
+	
 	@Override
 	public Map<String, Object> getLocationProperties(int x){
 		char ch = this.getGraphSeq().getResidues(x, x+1).charAt(0);

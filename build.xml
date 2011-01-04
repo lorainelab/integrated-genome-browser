@@ -21,8 +21,8 @@
 		<property name="protannot"          value="${basedir}/protannot" />
 		<property name="igb_service"        value="${basedir}/plugins/igb_service" />
 		<property name="plugins_page"       value="${basedir}/plugins/plugins_page" />
-		<property name="restrictions_page"  value="${basedir}/plugins/restrictions_page" />
-		<property name="external_page"      value="${basedir}/plugins/external_page" />
+		<property name="RestrictionsSites"  value="${basedir}/plugins/RestrictionsSites" />
+		<property name="ExternalView"       value="${basedir}/plugins/ExternalView" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"    value="${basedir}/ext" />
@@ -103,8 +103,8 @@
 		<my.signjar jar="${lib.dir}/jide-grids.jar"         signedjar="${webstart.dir}/jide-grids.jar" />
 		<my.signjar jar="${lib.dir}/felix.jar"              signedjar="${webstart.dir}/felix.jar" />
 		<my.signjar jar="${dist.dir}/igb_service.jar"       signedjar="${webstart.dir}/igb_service.jar" />
-		<my.signjar jar="${dist.dir}/restrictions_page.jar" signedjar="${webstart.dir}/restrictions_page.jar" />
-		<my.signjar jar="${dist.dir}/external_page.jar"     signedjar="${webstart.dir}/external_page.jar" />
+		<my.signjar jar="${dist.dir}/RestrictionsSites.jar" signedjar="${webstart.dir}/RestrictionsSites.jar" />
+		<my.signjar jar="${dist.dir}/ExternalView.jar"      signedjar="${webstart.dir}/ExternalView.jar" />
 
 		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
 		<jar destfile="${webstart.dir}/igb.jar">
@@ -262,8 +262,8 @@
 				<exclude name="das2server.jar" />
 				<exclude name="protannot.jar" />
 				<exclude name="plugins_page.jar"/>
-				<exclude name="restrictions_page.jar"/>
-				<exclude name="external_page.jar"/>
+				<exclude name="RestrictionsSites.jar"/>
+				<exclude name="ExternalView.jar"/>
 				<include name="*.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">
@@ -510,8 +510,8 @@
 				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="plugins_page" />
-					<include name="restrictions_page" />
-					<include name="external_page" />
+					<include name="RestrictionsSites" />
+					<include name="ExternalView" />
 				</dirset>
 				<dirset dir="${basedir}">
 					<include name="igb" />

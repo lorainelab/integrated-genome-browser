@@ -11,8 +11,8 @@
 		<property name="protannot"          value="${basedir}/../protannot" />
 		<property name="igb_service"        value="${basedir}/../plugins/igb_service" />
 		<property name="plugins_page"       value="${basedir}/../plugins/plugins_page" />
-		<property name="restrictions_page"  value="${basedir}/../plugins/restrictions_page" />
-		<property name="external_page"      value="${basedir}/../plugins/external_page" />
+		<property name="RestrictionsSites"  value="${basedir}/../plugins/RestrictionsSites" />
+		<property name="ExternalView"       value="${basedir}/../plugins/ExternalView" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"            value="${basedir}/../ext" />
@@ -55,8 +55,8 @@
 			<equals arg1="${project}" arg2="genometry" />
 
 			<equals arg1="${project}" arg2="plugins_page" />
-			<equals arg1="${project}" arg2="restrictions_page" />
-			<equals arg1="${project}" arg2="external_page" />
+			<equals arg1="${project}" arg2="RestrictionsSites" />
+			<equals arg1="${project}" arg2="ExternalView" />
 		</or>
 	</condition>
   </target>

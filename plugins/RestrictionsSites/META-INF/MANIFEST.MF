@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: RestrictionSites
+Bundle-Name: RestrictionsSites
 Bundle-SymbolicName: RestrictionsSites
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.restrictions.Activator

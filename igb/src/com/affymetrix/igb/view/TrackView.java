@@ -262,11 +262,7 @@ public class TrackView {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		if (seq != null) {
 			for (DependentData dd : dependent_list) {
-				SeqSymmetry sym = seq.getAnnotation(dd.getSym().getID());
-				if(sym != null){
-					seq.removeAnnotation(sym);
-					dd.createTier(seq);
-				}
+				dd.createTier(seq);
 			}
 		}
 	}

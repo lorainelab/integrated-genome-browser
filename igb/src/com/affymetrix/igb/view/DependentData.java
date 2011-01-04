@@ -3,6 +3,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -47,19 +48,21 @@ public class DependentData {
 
 	public SymWithProps createTier(BioSeq aseq) {
 
+		SymWithProps temp = sym;
+
 		if (type == DependentType.MISMATCH){
 			sym = createMisMatchGraph(aseq);
-			return sym;
-		}
-
-		//Check if type is summary.
-		if (type == DependentType.SUMMARY) {
+		}else if (type == DependentType.SUMMARY) { //Check if type is summary.
 			sym = createSummaryGraph(aseq);
-			return sym;
+		} else {	//If type is not summary then it should be coverage.
+			sym = createCoverageTier(aseq);
 		}
 
-		//If type is not summary then it should be coverage.
-		sym = createCoverageTier(aseq);
+		if(temp != null){
+			aseq.removeAnnotation(temp);
+		}
+
+		aseq.addAnnotation(sym);
 		return sym;
 	}
 
@@ -74,14 +77,9 @@ public class DependentData {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		GeneralLoadView.loadResidues(gmodel.getSelectedSeqGroup().getID(), aseq, gviewer.getVisibleSpan(), true, true);
 		
-		List<GraphSym> gsyms = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, start, end);
+		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, start, end);
 
-		for(GraphSym gsym : gsyms){
-			gsym.setID(id);
-			aseq.addAnnotation(gsym);
-		}
-
-		return gsyms.get(0);
+		return mgsym;
 	}
 
 	private GraphSym createSummaryGraph(BioSeq aseq){
@@ -96,7 +94,7 @@ public class DependentData {
 		}
 
 		gsym.setID(id);
-		aseq.addAnnotation(gsym);
+		
 		return gsym;
 	}
 
@@ -116,7 +114,7 @@ public class DependentData {
 		}
 		wrapperSym.setProperty("method", id);
 		wrapperSym.setProperty("id", id);
-		aseq.addAnnotation(wrapperSym);
+		
 		return wrapperSym;
 	}
 

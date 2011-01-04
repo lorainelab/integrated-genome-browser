@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 
 public final class SeqSymSummarizer {
 
-	public static GraphIntervalSym getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end)  {
+	public static List<GraphSym> getMismatchGraph(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end)  {
 
 		if(syms.isEmpty())
 			return null;
@@ -32,6 +32,7 @@ public final class SeqSymSummarizer {
 		int[] x = new int[range];
 		int[] width = new int[range];
 		float[] y = new float[range];
+		float[][] yR = new float[5][range];
 
 		SeqSymmetry sym = syms.get(0);
 		SeqSpan span;
@@ -52,7 +53,7 @@ public final class SeqSymSummarizer {
 
 			// Boundary Check
 			cur_start = Math.max(start, span.getMin());
-			cur_end = Math.min(end, span.getMax());
+			cur_end = Math.min(end, span.getMax()-1);
 			length = cur_end - cur_start;
 
 			cur_residues = getResiduesIntArray(((SymWithResidues)childSeqSym).getResidues(cur_start, cur_end));
@@ -65,10 +66,25 @@ public final class SeqSymSummarizer {
 		for(int j=0; j<range; j++){
 			x[j] = start + j;
 			width[j] = 1;
-			y[j] += residues[seq_residues[j]][j];
+			y[j] = residues[seq_residues[j]][j];
+			for(int k=0; k<4; k++){
+				if(k != seq_residues[j]){
+					yR[k][j] = residues[k][j];
+				}
+			}
 		}
 
-		 return new GraphIntervalSym(x,width,y,AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+		List<GraphSym> graphs = new ArrayList<GraphSym>();
+		MisMatchGraphSym summary = new MisMatchGraphSym(x, width, y, AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+		graphs.add(summary);
+		
+		for(int i=0; i<4; i++){
+			GraphSym gsym = new GraphSym(x, width, yR[i], AnnotatedSeqGroup.getUniqueGraphID(id+i, seq),seq);
+			graphs.add(gsym);
+			summary.addReference(SymWithResidues.ResiduesChars.valueOf(i), gsym);
+		}
+		 
+		return graphs;
 	}
 
 	private static int[] getResiduesIntArray(String residues){
@@ -78,19 +94,7 @@ public final class SeqSymSummarizer {
 		int ch;
 
 		for(int i=0; i < length; i++){
-			ch = residues.charAt(i);
-
-			if(SymWithResidues.A == ch || SymWithResidues.a == ch){
-				residuesInt[i] = SymWithResidues.A_pos;
-			}else if(SymWithResidues.T == ch || SymWithResidues.t == ch){
-				residuesInt[i] = SymWithResidues.T_pos;
-			}else if(SymWithResidues.G == ch || SymWithResidues.g == ch){
-				residuesInt[i] = SymWithResidues.G_pos;
-			}else if(SymWithResidues.C == ch || SymWithResidues.c == ch){
-				residuesInt[i] = SymWithResidues.C_pos;
-			}else{
-				residuesInt[i] = SymWithResidues.N_pos;
-			}
+			residuesInt[i] = SymWithResidues.ResiduesChars.valueOf(residues.charAt(i));
 		}
 
 		return residuesInt;

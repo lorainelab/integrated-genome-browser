@@ -1,13 +1,17 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
+
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
+import com.affymetrix.igb.view.load.GeneralLoadView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,14 +67,21 @@ public class DependentData {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		syms.add(aseq.getAnnotation(parent_method));
 		SeqMapView gviewer = Application.getSingleton().getMapView();
-		 int start = gviewer.getVisibleSpan().getMin();
-		 int end = gviewer.getVisibleSpan().getMax();
+		int start = gviewer.getVisibleSpan().getMin();
+		int end = gviewer.getVisibleSpan().getMax();
 
-		GraphSym gsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, start, end);
+		//Load Residues
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GeneralLoadView.loadResidues(gmodel.getSelectedSeqGroup().getID(), aseq, gviewer.getVisibleSpan(), true, true);
 		
-		gsym.setID(id);
-		aseq.addAnnotation(gsym);
-		return gsym;
+		List<GraphSym> gsyms = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, start, end);
+
+		for(GraphSym gsym : gsyms){
+			gsym.setID(id);
+			aseq.addAnnotation(gsym);
+		}
+
+		return gsyms.get(0);
 	}
 
 	private GraphSym createSummaryGraph(BioSeq aseq){

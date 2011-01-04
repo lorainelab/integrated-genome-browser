@@ -63,7 +63,11 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		orderList.add("min score");
 		orderList.add("max score");
 		orderList.add("strand");
-
+		orderList.add("A");
+		orderList.add("T");
+		orderList.add("G");
+		orderList.add("C");
+		orderList.add("N");
 		return orderList;
 	}
 

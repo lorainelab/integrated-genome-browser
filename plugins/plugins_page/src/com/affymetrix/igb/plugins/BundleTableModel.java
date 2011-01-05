@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.util.ArrayList;
 
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -66,7 +67,11 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		@Override
 		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_SYMBOLICNAME); }
 		@Override
-		public Object getValue(Bundle bundle) { return bundle.getSymbolicName(); }
+		public Object getValue(Bundle bundle) {
+//			Dictionary headers = bundle.getHeaders();
+//			String bundleDocURL = (String)headers.get(BUNDLE_DOCURL);
+			return bundle.getSymbolicName();
+		}
 	});
 	columns.add(new BundleColumn() { // description
 		@Override
@@ -84,9 +89,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		@Override
 		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_VERSION); }
 		@Override
-		public Object getValue(Bundle bundle) { return pluginsHandler.isUpdatable(bundle) ?
-			"<html>" + bundle.getVersion().toString() + " (<b><u><span style=\"color:blue\">" + pluginsHandler.getLatestVersion(bundle) + "</span></u></b>)</html>)" :
-			bundle.getVersion().toString();
+		public Object getValue(Bundle bundle) { return new VersionInfo(bundle, pluginsHandler);
 		}
 	});
 	columns.add(new BundleColumn() { // install
@@ -113,13 +116,22 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		public boolean tier2OK() { return false; }
 		public void formatColumn(JTable jTable, TableColumn tc) {
 			tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
+			tc.setCellRenderer(jTable.getDefaultRenderer(Boolean.class));
 			tc.setCellRenderer(
 					new TableCellRenderer() {
 						@Override
 						public Component getTableCellRendererComponent(JTable jTable, Object value,
 								boolean isSelected, boolean hasFocus, int row, int column) {
-							return pluginsHandler.isTier2Bundle(pluginsHandler.getFilteredBundles().get(row)) ? null : 
-								jTable.getDefaultRenderer(Boolean.class).getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, column);
+							TableCellRenderer tableCellRenderer = pluginsHandler.isTier2Bundle(pluginsHandler.getBundleAtRow(row)) ?
+								new DefaultTableCellRenderer.UIResource() {
+									private static final long serialVersionUID = 1L;
+									public void setValue(Object value) {
+										super.setValue(value);
+										setText(PluginsView.BUNDLE.getString("builtIn"));
+									}
+								} : 
+								jTable.getDefaultRenderer(Boolean.class);
+							return tableCellRenderer.getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, column);
 						}
 					}
 			);
@@ -156,27 +168,24 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 	@Override
 	public int getRowCount() {
-		if (pluginsHandler.getFilteredBundles() == null) {
-			return 0;
-		}
-		return pluginsHandler.getFilteredBundles().size();
+		return pluginsHandler.getFilteredBundleCount();
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		return columns.get(columnIndex).getValue(pluginsHandler.getFilteredBundles().get(rowIndex));
+		return columns.get(columnIndex).getValue(pluginsHandler.getFilteredBundle(rowIndex));
 	}
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		Bundle bundle = pluginsHandler.getFilteredBundles().get(rowIndex);
+		Bundle bundle = pluginsHandler.getFilteredBundle(rowIndex);
 		return columns.get(columnIndex).isEditable() &&
 			(columns.get(columnIndex).tier2OK() || !pluginsHandler.isTier2Bundle(bundle));
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		columns.get(columnIndex).setValue(pluginsHandler.getFilteredBundles().get(rowIndex), aValue, pluginsHandler);
+		columns.get(columnIndex).setValue(pluginsHandler.getFilteredBundle(rowIndex), aValue, pluginsHandler);
 	}
 
 	public int getColumnIndex(String key) {

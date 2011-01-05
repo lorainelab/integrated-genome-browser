@@ -2,12 +2,8 @@ package com.affymetrix.igb.plugins;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +14,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -25,6 +22,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.apache.felix.bundlerepository.impl.RepositoryAdminImpl;
 import org.apache.felix.bundlerepository.impl.wrapper.RepositoryAdminWrapper;
@@ -32,6 +32,7 @@ import org.apache.felix.utils.log.Logger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -45,6 +46,7 @@ import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 
 public class PluginsView extends JPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
+//	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
 	private static final BundleFilter BOTH_BUNDLE_FILTER = new BundleFilter() {
 		@Override
@@ -55,13 +57,13 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private static final BundleFilter INSTALLED_BUNDLE_FILTER = new BundleFilter() {
 		@Override
 		public boolean filterBundle(Bundle bundle) {
-			return bundle.getState() != Bundle.UNINSTALLED;
+			return isInstalled(bundle);
 		}
 	};
 	private static final BundleFilter UNINSTALLED_BUNDLE_FILTER = new BundleFilter() {
 		@Override
 		public boolean filterBundle(Bundle bundle) {
-			return bundle.getState() == Bundle.UNINSTALLED;
+			return !isInstalled(bundle);
 		}
 	};
 	private static final BundleFilter NEITHER_BUNDLE_FILTER = new BundleFilter() {
@@ -82,11 +84,12 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private JScrollPane jScrollPane;
 	private final BundleTableModel bundleTableModel;
 	private final JTable bundleTable;
-	private final JCheckBox installedBundlesCheckbox;
-	private final JCheckBox uninstalledBundlesCheckbox;
-	private final JButton updateAllBundlesButton;
-	private final JButton repositoryPrefsButton;
-	private final JLabel errors;
+	private JCheckBox installedBundlesCheckbox;
+	private JCheckBox uninstalledBundlesCheckbox;
+	private JButton updateAllBundlesButton;
+	private JButton updateSelectedBundlesButton;
+	private JButton repositoryPrefsButton;
+	private JLabel errors;
 	private boolean isShowInstalledBundles = true;
 	private boolean isShowUninstalledBundles = false;
 	private RepositoryAdmin repoAdmin;
@@ -98,17 +101,58 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private List<Bundle> filteredBundles;
 	private HashMap<String, Bundle> latest;
 	private BundleFilter bundleFilter;
-	private Cursor defaultCursor;
+//	private Cursor defaultCursor;
 
 	public PluginsView(IGBService _igbService) {
 		super();
-		this.igbService = _igbService;
+		igbService = _igbService;
+//		defaultCursor = getCursor();
 		latest = new HashMap<String, Bundle>();
-		this.tier1Bundles = igbService.getTier1Bundles();
-		this.tier2Bundles = igbService.getTier2Bundles();
+		tier1Bundles = igbService.getTier1Bundles();
+		tier2Bundles = igbService.getTier2Bundles();
 
 		igbService.addRepositoryChangeListener(this);
-		this.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
+		BundleTableModel.setPluginsHandler(this); // is there a better way ?
+		bundleTableModel = new BundleTableModel();
+		bundleTable = new JTable(bundleTableModel) {
+			private static final long serialVersionUID = 1L;
+			public void valueChanged(ListSelectionEvent e) {
+				super.valueChanged(e);
+				updateSelectedBundlesButton.setEnabled(isUpdateSelectedBundlesExist());
+			}
+		};
+		bundleTable.setRowSorter(
+			new TableRowSorter<TableModel>(bundleTableModel) {
+				public boolean isSortable(int column) {
+					return column == bundleTableModel.getColumnIndex(BUNDLE_SYMBOLICNAME);
+				}
+			}
+		);
+
+//		MouseAdapter mouseAdapter = getMouseAdapter();
+//		bundleTable.addMouseListener(mouseAdapter);
+//		bundleTable.addMouseMotionListener(mouseAdapter);
+
+		bundleTableModel.setJTable(bundleTable);
+
+		jScrollPane = new JScrollPane(bundleTable);
+		add("Center", jScrollPane);
+		add("South", getButtonPanel());
+		setBundleFilter(getBundleFilter());
+
+		bundleListener = 
+	    	new BundleListener() {
+				public void bundleChanged(BundleEvent arg0) {
+					if (bundleContext != null) {
+						setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
+						reloadBundleTable();
+					}
+				}
+			};
+	}
+
+	private JPanel getButtonPanel() {
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
@@ -154,13 +198,33 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		updateAllBundlesButton.setEnabled(false);
 		buttonPanel.add(updateAllBundlesButton);
 
+		updateSelectedBundlesButton = new JButton(BUNDLE.getString("updateSelectedBundles"));
+		updateSelectedBundlesButton.setToolTipText(BUNDLE.getString("updateSelectedBundlesTooltip"));
+		updateSelectedBundlesButton.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateSelectedBundles();
+				}
+			}
+		);
+		updateSelectedBundlesButton.setEnabled(false);
+		buttonPanel.add(updateSelectedBundlesButton);
+
+		buttonPanel.add(new JLabel("      "));
+		errors = new JLabel(BUNDLE.getString("OSGiNotLoaded"));
+		errors.setForeground(Color.RED);
+		buttonPanel.add(errors);
+
+		buttonPanel.add(Box.createHorizontalGlue());
+
 		repositoryPrefsButton = new JButton(BUNDLE.getString("repositoryButton"));
 		repositoryPrefsButton.addActionListener(
 			new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent evt) {
 					final Object src = evt.getSource();
-					
+
 					if (src == PluginsView.this.repositoryPrefsButton) {
 						// Go to repository prefs tab.
 						igbService.displayRepositoryPreferences();
@@ -171,120 +235,74 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		repositoryPrefsButton.setToolTipText(BUNDLE.getString("repositoryTooltip"));
 		buttonPanel.add(repositoryPrefsButton);
 
-		buttonPanel.add(new JLabel("      "));
-		errors = new JLabel(BUNDLE.getString("OSGiNotLoaded"));
-		errors.setForeground(Color.RED);
-		buttonPanel.add(errors);
-		BundleTableModel.setPluginsHandler(this); // is there a better way ?
-		bundleTableModel = new BundleTableModel();
-		bundleTable = new JTable(bundleTableModel);
-/*
-		bundleTable.setRowSorter(
-			new TableRowSorter<TableModel>(bundleTableModel) {
-				public boolean isSortable(int column) {
-					return column == bundleTableModel.getColumnIndex(BUNDLE_SYMBOLICNAME);
+		return buttonPanel;
+	}
+
+	public Bundle getBundleAtRow(int row) {
+		int modelRow = bundleTable.convertRowIndexToModel(row);
+		return getFilteredBundle(modelRow);
+	}
+
+	private static boolean isInstalled(Bundle bundle) {
+		return bundle.getState() != Bundle.UNINSTALLED;
+	}
+
+	private void installBundleIfNecessary(Bundle bundle) {
+		if (isInstalled(bundle)) {
+			Bundle latestBundle = latest.get(bundle.getSymbolicName());
+			if (!bundle.equals(latestBundle) && !isInstalled(latestBundle)) {
+				try {
+					bundle.uninstall();
 				}
+				catch (BundleException x) {
+					x.printStackTrace(System.err);
+				}
+				installBundle(latestBundle);
 			}
-		);
-*/
-		defaultCursor = getCursor();
-
-		MouseAdapter mouseAdapter = new MouseAdapter() {
-		    public void mouseClicked(MouseEvent e) {
-	    		Bundle bundle = getBundle(e);
-		    	if (isVersionColumn(e) && isUpdatable(bundle)) {
-	    			installBundle(latest.get(bundle.getSymbolicName()));
-		    	}
-		    }
-		    public void mouseEntered(MouseEvent e) {
-		    	any(e);
-		    }
-		    public void mouseDragged(MouseEvent e) {
-		    	any(e);
-		    }
-		    public void mouseMoved(MouseEvent e) {
-		    	any(e);
-		    }
-		    private void any(MouseEvent e) {
-	    		Bundle bundle = getBundle(e);
-		    	if (isVersionColumn(e) && isUpdatable(bundle)) {
-		    		setCursor(new Cursor(Cursor.HAND_CURSOR));
-		    	}
-		    	else {
-			    	setCursor(defaultCursor);
-		    	}
-		    }
-		    public void mouseExited(MouseEvent e) {
-		    	setCursor(defaultCursor);
-		    }
-		};
-		bundleTable.addMouseListener(mouseAdapter);
-		bundleTable.addMouseMotionListener(mouseAdapter);
-
-		bundleTableModel.setJTable(bundleTable);
-
-		jScrollPane = new JScrollPane(bundleTable);
-		this.add("Center", jScrollPane);
-		this.add("South", buttonPanel);
-		setBundleFilter(getBundleFilter());
-
-		bundleListener = 
-	    	new BundleListener() {
-				public void bundleChanged(BundleEvent arg0) {
-					if (bundleContext != null) {
-						setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
-						reloadBundleTable();
-					}
-				}
-			};
-	}
-
-	private Bundle getBundle(MouseEvent e) {
-        Bundle bundle = null;
-        if (e.getComponent().isEnabled())
-        {
-            Point p = e.getPoint();
-            int row = bundleTable.rowAtPoint(p);
-            if (row >= 0 && row < filteredBundles.size()) {
-            	bundle = filteredBundles.get(row);
-            }
-        }
-        return bundle;
-	}
-
-	private boolean isVersionColumn(MouseEvent e) {
-        boolean latestColumn = false;
-        if (e.getComponent().isEnabled())
-        {
-            Point p = e.getPoint();
-            int column = bundleTable.columnAtPoint(p);
-            if (column == bundleTableModel.getColumnIndex(BUNDLE_VERSION)) {
-            	latestColumn = true;
-            }
-        }
-        return latestColumn;
+		}
 	}
 
 	private void updateAllBundles() {
-		if (installedBundles != null) {
-			for (Bundle bundle : installedBundles) {
-				if (!latest.get(bundle.getSymbolicName()).equals(bundle)) {
-	    			installBundle(latest.get(bundle.getSymbolicName()));
-				}
+		if (filteredBundles != null) {
+			for (Bundle bundle : filteredBundles) {
+				installBundleIfNecessary(bundle);
 			}
+		}
+	}
+
+	private void updateSelectedBundles() {
+		int[] rowIndices = bundleTable.getSelectedRows();
+		for (int i = 0; i < rowIndices.length; i++) {
+			Bundle bundle = getBundleAtRow(rowIndices[i]);
+			installBundleIfNecessary(bundle);
 		}
 	}
 
 	private boolean isUpdateBundlesExist() {
 		boolean updateBundlesExist = false;
-		if (installedBundles != null) {
-			for (Bundle bundle : installedBundles) {
-				if (!latest.get(bundle.getSymbolicName()).equals(bundle)) {
-					updateBundlesExist = true;;
+		if (filteredBundles != null) {
+			for (Bundle bundle : filteredBundles) {
+				if (isInstalled(bundle) && !bundle.equals(latest.get(bundle.getSymbolicName()))) {
+					updateBundlesExist = true;
 				}
 			}
 		}
 		return updateBundlesExist;
+	}
+
+	private boolean isUpdateSelectedBundlesExist() {
+		boolean updateSelectedBundlesExist = false;
+		int[] rowIndices = bundleTable.getSelectedRows();
+		for (int i = 0; i < rowIndices.length; i++) {
+			Bundle bundle = getBundleAtRow(rowIndices[i]);
+			if (latest.get(bundle.getSymbolicName()) == null) {
+				System.out.println("isUpdateSelectedBundlesExist - no latest for " + bundle.getSymbolicName());
+			}
+			if (isInstalled(bundle) && !bundle.equals(latest.get(bundle.getSymbolicName()))) {
+				updateSelectedBundlesExist = true;
+			}
+		}
+		return updateSelectedBundlesExist;
 	}
 
 	public Version getLatestVersion(Bundle bundle) {
@@ -296,11 +314,21 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	}
 
 	public boolean isUpdatable(Bundle bundle) {
-		return bundle != null && bundle.getState() != Bundle.UNINSTALLED && !isLatest(bundle);
+		return bundle != null && isInstalled(bundle) && !isLatest(bundle);
 	}
 
-	public List<Bundle> getFilteredBundles() {
-		return filteredBundles;
+	public Bundle getFilteredBundle(int index) {
+		if (index < 0 || index >= filteredBundles.size()) {
+			return null;
+		}
+		return filteredBundles.get(index);
+	}
+
+	public int getFilteredBundleCount() {
+		if (filteredBundles == null) {
+			return 0;
+		}
+		return filteredBundles.size();
 	}
 
 	public boolean isTier2Bundle(Bundle bundle) {
@@ -352,7 +380,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 
 	private void reloadBundleTable() {
 		filterBundles();
-		bundleTableModel.setRowCount(0);
+		bundleTableModel.fireTableDataChanged();
 		bundleTable.invalidate();
 		bundleTable.repaint();
 	}
@@ -435,7 +463,6 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 				addBundle(bundle);
 			}
 		}
-		updateAllBundlesButton.setEnabled(isUpdateBundlesExist());
 	}
 
 	private void filterBundles() {
@@ -445,6 +472,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 				filteredBundles.add(bundle);
 			}
 		}
+		updateAllBundlesButton.setEnabled(isUpdateBundlesExist());
 	}
 
 	public void setBundleFilter(BundleFilter bundleFilter) {

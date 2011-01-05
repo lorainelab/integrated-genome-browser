@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.das.DasLoader;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.general.SymLoader;
@@ -17,7 +16,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.igb.view.SeqMapView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,13 +65,11 @@ public final class ResidueLoading {
 
 		boolean partial_load = (min > 0 || max < (aseq.getLength()-1));	// Are we only asking for part of the sequence?
 
-		final SeqMapView gviewer = Application.getSingleton().getMapView();
-
 		if (partial_load) {
-			return loadPartial(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span, gviewer);
+			return loadPartial(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
 		}
 
-		return loadFull(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, gviewer);
+		return loadFull(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq);
 	}
 
 
@@ -88,7 +85,7 @@ public final class ResidueLoading {
 	 * @param gviewer
 	 * @return
 	 */
-	private static boolean loadPartial(Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span, final SeqMapView gviewer) {
+	private static boolean loadPartial(Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
 		//Try to check if format data is available from Das2
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
@@ -110,7 +107,6 @@ public final class ResidueLoading {
 				if (residues != null) {
 					// span is non-null, here
 					BioSeq.addResiduesToComposition(aseq, residues, span);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 
@@ -129,7 +125,6 @@ public final class ResidueLoading {
 				if (residues != null) {
 					// span is non-null, here
 					BioSeq.addResiduesToComposition(aseq, residues, span);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}
@@ -144,7 +139,6 @@ public final class ResidueLoading {
 				if (residues != null) {
 					// span is non-null, here
 					BioSeq.addResiduesToComposition(aseq, residues, span);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}
@@ -167,7 +161,6 @@ public final class ResidueLoading {
 				String residues = GetQuickLoadResidues(seq_group, path, server.URL, span);
 				if (residues != null) {
 					BioSeq.addResiduesToComposition(aseq, residues, span);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}
@@ -181,7 +174,6 @@ public final class ResidueLoading {
 					// Add to composition if we're doing a partial sequence
 					// span is non-null, here
 					BioSeq.addResiduesToComposition(aseq, residues, span);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}
@@ -205,7 +197,7 @@ public final class ResidueLoading {
 	 * @return
 	 */
 	private static boolean loadFull(
-			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, final SeqMapView gviewer) {
+			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq) {
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
 		//Try to check if format data is available from Das2
@@ -229,7 +221,6 @@ public final class ResidueLoading {
 
 				if (LoadResiduesFromDAS2(seq_group, uri)) {
 					BioSeq.addResiduesToComposition(aseq);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 
@@ -246,7 +237,6 @@ public final class ResidueLoading {
 				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.BNIB);
 				if (LoadResiduesFromDAS2(seq_group, uri)) {
 					BioSeq.addResiduesToComposition(aseq);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}
@@ -266,7 +256,6 @@ public final class ResidueLoading {
 
 				if (GetQuickLoadResidues(seq_group, path, server.URL)) {
 					BioSeq.addResiduesToComposition(aseq);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}
@@ -281,7 +270,6 @@ public final class ResidueLoading {
 				if (residues != null) {
 					aseq.setResidues(residues);
 					BioSeq.addResiduesToComposition(aseq);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}
@@ -293,7 +281,6 @@ public final class ResidueLoading {
 				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
 				if (LoadResiduesFromDAS2(seq_group, uri)) {
 					BioSeq.addResiduesToComposition(aseq);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}
@@ -306,7 +293,6 @@ public final class ResidueLoading {
 				if (residues != null) {
 					aseq.setResidues(residues);
 					BioSeq.addResiduesToComposition(aseq);
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
 				}
 			}

@@ -220,7 +220,7 @@ public final class UnibrowControlServlet {
 		String genomeVersionName = seqGroup.getID();
 
 		SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
-		final SwingWorker<Void, Void> worker = GeneralLoadView.getResidueWorker(genomeVersionName, vseq, span, true, true);
+		final SwingWorker<Boolean, Void> worker = GeneralLoadView.getResidueWorker(genomeVersionName, vseq, span, true, true);
 
 		ExecutorService vexec = Executors.newSingleThreadExecutor();
 		vexec.execute(worker);

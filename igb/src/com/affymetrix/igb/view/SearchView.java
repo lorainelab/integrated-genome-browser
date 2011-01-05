@@ -557,7 +557,7 @@ public final class SearchView extends JComponent implements
 
 			String genomeVersionName = gmodel.getSelectedSeqGroup().getID();
 
-			final SwingWorker<Void, Void> worker = GeneralLoadView.getResidueWorker(genomeVersionName, vseq, gviewer.getVisibleSpan(), true, true);
+			final SwingWorker<Boolean, Void> worker = GeneralLoadView.getResidueWorker(genomeVersionName, vseq, gviewer.getVisibleSpan(), true, true);
 
 			vexec.execute(worker);
 

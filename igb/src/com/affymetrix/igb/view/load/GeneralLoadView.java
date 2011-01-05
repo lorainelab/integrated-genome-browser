@@ -497,25 +497,32 @@ public final class GeneralLoadView extends JComponent
 		// Use a SwingWorker to avoid locking up the GUI.
 		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
 
-		SwingWorker<Void, Void> worker = getResidueWorker(genomeVersionName, curSeq, gviewer.getVisibleSpan(), src == partial_residuesB, false);
+		SwingWorker<Boolean, Void> worker = getResidueWorker(genomeVersionName, curSeq, gviewer.getVisibleSpan(), src == partial_residuesB, false);
 
 		vexec.execute(worker);
 	}
 
-	public static SwingWorker<Void, Void> getResidueWorker(final String genomeVersionName, final BioSeq seq,
+	public static SwingWorker<Boolean, Void> getResidueWorker(final String genomeVersionName, final BioSeq seq,
 			final SeqSpan viewspan, final boolean partial, final boolean tryFull) {
 
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
-			public Void doInBackground() {
+			public Boolean doInBackground() {
 				Application.getSingleton().addNotLockedUpMsg("Loading residues for "+seq.getID());
-				loadResidues(genomeVersionName, seq, viewspan, partial, tryFull);
-				return null;
+				return loadResidues(genomeVersionName, seq, viewspan, partial, tryFull);
 			}
 
 			@Override
 			public void done() {
-				Application.getSingleton().removeNotLockedUpMsg("Loading residues for "+seq.getID());
+				try {
+					if (get()) {
+						gviewer.setAnnotatedSeq(seq, true, true, true);
+					}
+				} catch (Exception ex) {
+					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
+				} finally{
+					Application.getSingleton().removeNotLockedUpMsg("Loading residues for " + seq.getID());
+				}
 			}
 		};
 

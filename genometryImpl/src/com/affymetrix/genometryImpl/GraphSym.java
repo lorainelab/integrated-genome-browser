@@ -37,7 +37,7 @@ public class GraphSym extends SimpleSymWithProps {
 	private final BioSeq graph_original_seq;
 	private String gid;
 
-	private static final int BUFSIZE = 100000;	// buffer size
+	public static final int BUFSIZE = 100000;	// buffer size
 	private int bufStart = 0;	// current buffer start
 	//private int xBuf[];
 	private float yBuf[];
@@ -58,6 +58,38 @@ public class GraphSym extends SimpleSymWithProps {
 	 *    needs to modify this after construction, but before adding as annotation to graph_original_seq
 	 */
 	private boolean id_locked = false;
+
+	public GraphSym(File f, int xMin, int xMax, float yMin, float yMax, String id, BioSeq seq){
+		super();
+
+		this.gid = id;
+		this.graph_original_seq = seq;
+		this.hasWidth = true;
+
+		this.xMin = xMin;
+		this.xMax = xMax;
+
+		yFirst = 0;
+		pointCount = this.xMax - this.xMin;
+
+		this.min_ycoord = yMin;
+		this.max_ycoord = yMax;
+
+		bufFile = f;
+
+		int[] xtemp = new int[pointCount];
+		for(int i=0; i<xtemp.length; i++){
+			xtemp[i] = xMin + i;
+		}
+		// initialize xCoords
+		xCoords = new int[this.pointCount];
+		yBuf = new float[BUFSIZE];
+		wBuf = new int[BUFSIZE];
+		System.arraycopy(xtemp, 0, this.xCoords, 0, this.pointCount);
+		
+		SeqSpan span = new SimpleSeqSpan(this.xMin, this.xMax, seq);
+		this.addSpan(span);
+	}
 
 	public GraphSym(int[] x, float[] y, String id, BioSeq seq) {
 		this(x,null,y,id, seq);

@@ -2,8 +2,13 @@ package com.affymetrix.igb.plugins;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,6 +21,7 @@ import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -41,12 +47,15 @@ import org.osgi.service.obr.Requirement;
 import org.osgi.service.obr.Resolver;
 import org.osgi.service.obr.Resource;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
+import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 
 public class PluginsView extends JPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
-//	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+	private final Cursor defaultCursor = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
 	private static final BundleFilter BOTH_BUNDLE_FILTER = new BundleFilter() {
 		@Override
@@ -101,12 +110,10 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private List<Bundle> filteredBundles;
 	private HashMap<String, Bundle> latest;
 	private BundleFilter bundleFilter;
-//	private Cursor defaultCursor;
 
 	public PluginsView(IGBService _igbService) {
 		super();
 		igbService = _igbService;
-//		defaultCursor = getCursor();
 		latest = new HashMap<String, Bundle>();
 		tier1Bundles = igbService.getTier1Bundles();
 		tier2Bundles = igbService.getTier2Bundles();
@@ -129,10 +136,49 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 				}
 			}
 		);
+		bundleTable.addMouseListener(
+			new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+		            Bundle bundle = getNameInfoBundle(e.getPoint());
+		            if (bundle != null) {
+			            String bundleDocURL = (String)bundle.getHeaders().get(Constants.BUNDLE_DOCURL);
+			            if (bundleDocURL != null) {
+				            GeneralUtils.browse(bundleDocURL);
+			            }
+		            }
+				}
+				@Override
+				public void mouseEntered(MouseEvent e) {
+		            Bundle bundle = getNameInfoBundle(e.getPoint());
+		            if (bundle == null) {
+						setCursor(defaultCursor);
+		            }
+		            else {
+						setCursor(handCursor);
+		            }
+				}
+				@Override
+				public void mouseExited(MouseEvent e) {
+					setCursor(defaultCursor);
+				}
+			}
+		);
 
-//		MouseAdapter mouseAdapter = getMouseAdapter();
-//		bundleTable.addMouseListener(mouseAdapter);
-//		bundleTable.addMouseMotionListener(mouseAdapter);
+		bundleTable.addMouseMotionListener(
+			new MouseAdapter() {
+				@Override
+				public void mouseMoved(MouseEvent e) {
+		            Bundle bundle = getNameInfoBundle(e.getPoint());
+		            if (bundle == null) {
+						setCursor(defaultCursor);
+		            }
+		            else {
+						setCursor(handCursor);
+		            }
+				}
+			}
+		);
 
 		bundleTableModel.setJTable(bundleTable);
 
@@ -150,6 +196,20 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 					}
 				}
 			};
+	}
+
+	private Bundle getNameInfoBundle(Point p) {
+        int row = bundleTable.rowAtPoint(p);
+        int column = bundleTable.columnAtPoint(p);
+		if (column == bundleTableModel.getColumnIndex(BUNDLE_SYMBOLICNAME)) {
+            Bundle bundle = getBundleAtRow(row);
+            Rectangle r = bundleTable.getCellRect(row, column, false);
+            NameInfoPanel nameInfoPanel = NameInfoPanel.getPanel(bundle); // kludge
+            if (nameInfoPanel.isOnInfoIcon(p.x - r.x, p.y - r.y)) {
+            	return bundle;
+            }
+		}
+		return null;
 	}
 
 	private JPanel getButtonPanel() {
@@ -236,6 +296,10 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		buttonPanel.add(repositoryPrefsButton);
 
 		return buttonPanel;
+	}
+
+	public ImageIcon getIcon(String name) {
+		return igbService.getIcon(name);
 	}
 
 	public Bundle getBundleAtRow(int row) {

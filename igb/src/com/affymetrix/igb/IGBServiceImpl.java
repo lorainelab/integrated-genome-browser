@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -167,6 +168,15 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		Application.getSingleton().removeNotLockedUpMsg(message);
 	}
 
+	public ImageIcon getIcon(String name) {
+		ImageIcon icon = null;
+		java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource(name + "_icon.gif");
+		if (imgURL != null) {
+			icon = new ImageIcon(imgURL);
+		}
+		return icon;
+	}
+		
 	public Set<String> getTier1Bundles() {
 		return tier1Bundles;
 	}

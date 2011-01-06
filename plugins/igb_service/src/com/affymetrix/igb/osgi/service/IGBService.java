@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 
@@ -20,6 +21,7 @@ public interface IGBService {
 	public void displayError(String errorText);
 	public void addNotLockedUpMsg(String message);
 	public void removeNotLockedUpMsg(String message);
+	public ImageIcon getIcon(String name);
 	// for plugins page
 	public Set<String> getTier1Bundles();
 	public Set<String> getTier2Bundles();

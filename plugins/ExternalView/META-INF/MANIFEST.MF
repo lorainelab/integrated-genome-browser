@@ -5,6 +5,7 @@ Bundle-SymbolicName: ExternalView
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.external.Activator
 Bundle-ActivationPolicy: lazy
+Bundle-DocURL: http://www.bioviz.org/documentation/ExternalView.html
 Import-Package: com.affymetrix.igb.osgi.service,
  javax.imageio,
  javax.swing,

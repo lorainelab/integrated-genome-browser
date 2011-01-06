@@ -5,6 +5,7 @@ Bundle-SymbolicName: RestrictionsSites
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.restrictions.Activator
 Bundle-ActivationPolicy: lazy
+Bundle-DocURL: http://www.bioviz.org/documentation/RestrictionsSites.html
 Import-Package: com.affymetrix.igb.osgi.service,
  javax.swing,
  javax.swing.event,

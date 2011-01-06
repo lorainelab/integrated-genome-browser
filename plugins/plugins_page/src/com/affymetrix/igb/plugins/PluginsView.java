@@ -307,7 +307,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		return getFilteredBundle(modelRow);
 	}
 
-	private static boolean isInstalled(Bundle bundle) {
+	public static boolean isInstalled(Bundle bundle) {
 		return bundle.getState() != Bundle.UNINSTALLED;
 	}
 

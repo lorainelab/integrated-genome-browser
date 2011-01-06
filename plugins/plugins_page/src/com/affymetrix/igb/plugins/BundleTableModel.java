@@ -169,7 +169,25 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			@Override
 			public void formatColumn(JTable jTable, TableColumn tc) {
 				tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
-				tc.setCellRenderer(jTable.getDefaultRenderer(Boolean.class));
+				tc.setCellRenderer(
+						new TableCellRenderer() {
+							@Override
+							public Component getTableCellRendererComponent(JTable jTable, Object value,
+									boolean isSelected, boolean hasFocus, int row, int column) {
+								TableCellRenderer tableCellRenderer = PluginsView.isInstalled(pluginsHandler.getBundleAtRow(row)) ?
+									jTable.getDefaultRenderer(Boolean.class)
+								 : 
+									new DefaultTableCellRenderer.UIResource() {
+										private static final long serialVersionUID = 1L;
+										public void setValue(Object value) {
+											super.setValue(value);
+											setText("");
+										}
+									};
+								return tableCellRenderer.getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, column);
+							}
+						}
+				);
 				tc.setMinWidth(NARROW_COLUMN);
 				tc.setMaxWidth(NARROW_COLUMN);
 				tc.setPreferredWidth(NARROW_COLUMN);
@@ -198,6 +216,17 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		@Override
 		public void formatColumn(JTable jTable, TableColumn tc) {
 			tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
+			tc.setCellRenderer(
+					new TableCellRenderer() {
+						@Override
+						public Component getTableCellRendererComponent(JTable table, Object value,
+								boolean isSelected, boolean hasFocus, int row, int column) {
+							Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+							((JLabel)component).setToolTipText((String)value);
+							return component;
+						}
+					}
+			);
 		}
 	});
 	columns.add(new BundleColumn() { // version

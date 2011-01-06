@@ -17,9 +17,11 @@ import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import java.util.*;
-
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+
+import java.util.*;
+import java.io.File;
 
 public final class SeqSymSummarizer {
 
@@ -29,19 +31,22 @@ public final class SeqSymSummarizer {
 			return null;
 
 		int range = end - start;
-		int[] x = new int[range];
-		int[] width = new int[range];
-		float[] y = new float[range];
-		float[][] yR = new float[5][range];
-
+		float[] y = null;
+		final int BUFFSIZE = GraphSym.BUFSIZE;
+		float[] minmax = new float[2];
 		SeqSymmetry sym = syms.get(0);
 		SeqSpan span;
-		
-		int[] seq_residues = getResiduesIntArray(seq.getResidues(start, end));
-		int[][] residues = new int[5][range];
-		int[] cur_residues;
+
+		byte[] seq_residues = seq.getResidues(start, end).getBytes();
+		byte[] cur_residues;
 		int offset, cur_start, cur_end, length;
+
+		File index = MisMatchGraphSym.createEmptyIndexFile(id, range, start);
 		
+		if(range <= BUFFSIZE){
+			y = new float[range];
+		}
+
 		for(int i =0; i<sym.getChildCount(); i++){
 			SeqSymmetry childSeqSym = sym.getChild(i);
 			
@@ -56,30 +61,43 @@ public final class SeqSymSummarizer {
 			cur_end = Math.min(end, span.getMax()-1);
 			length = cur_end - cur_start;
 
-			cur_residues = getResiduesIntArray(((SymWithResidues)childSeqSym).getResidues(cur_start, cur_end));
+			cur_residues = ((SymWithResidues)childSeqSym).getResidues(cur_start, cur_end).getBytes();
 
-			for(int j=0; j<length; j++){
-				residues[cur_residues[j]][j+offset] += 1;
-			}
-		}
-
-		for(int j=0; j<range; j++){
-			x[j] = start + j;
-			width[j] = 1;
-			y[j] = residues[seq_residues[j]][j];
-			for(int k=0; k<4; k++){
-				if(k != seq_residues[j]){
-					yR[k][j] = residues[k][j];
+			if(range <= BUFFSIZE){
+				for(int j=0; j<length; j++){
+					if(seq_residues[offset+j] == cur_residues[j]){
+						y[offset+j] += 1;
+					}
 				}
+			}else{
+				y = new float[length];
+
+				for(int j=0; j<length; j++){
+					if(seq_residues[offset+j] == cur_residues[j]){
+						y[j] = 1;
+					}
+				}
+
+				minmax = MisMatchGraphSym.updateY(index, offset, y);
 			}
 		}
 
-		MisMatchGraphSym summary = new MisMatchGraphSym(x, width, y, AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+		MisMatchGraphSym summary;
 
-		for(int i=0; i<4; i++){
-			summary.addReference(SymWithResidues.ResiduesChars.valueOf(i), new GraphSym(x, width, yR[i], AnnotatedSeqGroup.getUniqueGraphID(id+i, seq),seq));
+		if(range <= BUFFSIZE){
+			int[] x = new int[range];
+			int[] w = new int[range];
+			for(int i=0; i<range; i++){
+				x[i] = start + i;
+				w[i] = 1;
+			}
+			summary = new MisMatchGraphSym(x, w, y, AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+		}else{
+			summary = new MisMatchGraphSym(index, start, end, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
 		}
-		 
+
+
+		summary.getGraphState().setGraphStyle(GraphType.FILL_BAR_GRAPH);
 		return summary;
 	}
 

@@ -11,8 +11,7 @@ public interface SymWithResidues {
 		T(new char[]{'T','t'},1),
 		G(new char[]{'G','g'},2),
 		C(new char[]{'C','c'},3),
-		N(new char[]{'N','n'},4),
-		D(new char[]{'_'},4);
+		N(new char[]{'N','n', 'D', 'd'},4);
 
 		char[] chars;
 		int value;
@@ -52,8 +51,10 @@ public interface SymWithResidues {
 
 		public static int valueOf(char c){
 			for(ResiduesChars ch : ResiduesChars.values()){
-				if(ch.chars[0] == c || ch.chars[1] == c){
-					return ch.getValue();
+				for(char cc : ch.chars){
+					if(cc == c){
+						return ch.value;
+					}
 				}
 			}
 

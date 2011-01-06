@@ -10,7 +10,9 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import java.awt.Dimension;
+import java.text.NumberFormat;
 import java.util.Comparator;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -38,7 +40,7 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 	private final ListSelectionModel lsm;
 	private TableRowSorter<SeqGroupTableModel> sorter;
 	private String most_recent_seq_id = null;
-
+	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 
   SeqGroupView() {
 		seqtable.setToolTipText(CHOOSESEQ);
@@ -79,7 +81,7 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 	TableColumnModel model = headers.getColumnModel();
 
 	TableColumn col1 = model.getColumn(0);
-	col1.setHeaderValue("("+ seqtable.getRowCount() +") Sequence(s)");
+	col1.setHeaderValue("("+ nformat.format(seqtable.getRowCount()) +") Sequence(s)");
   }
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {

@@ -3,11 +3,14 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.IGBConstants;
+import java.text.NumberFormat;
+import java.util.Locale;
 import javax.swing.table.AbstractTableModel;
 
 final class SeqGroupTableModel extends AbstractTableModel {
 
 	private final AnnotatedSeqGroup group;
+	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 
 	public SeqGroupTableModel(AnnotatedSeqGroup seq_group) {
 		group = seq_group;
@@ -30,7 +33,7 @@ final class SeqGroupTableModel extends AbstractTableModel {
 				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
 					return "";	// don't show the "whole genome" size, because it disagrees with the chromosome total
 				}
-				return Long.toString((long) seq.getLengthDouble());
+				return nformat.format(seq.getLengthDouble());
 			}
 		}
 		return null;
@@ -39,7 +42,7 @@ final class SeqGroupTableModel extends AbstractTableModel {
 	@Override
 	public String getColumnName(int col) {
 		if (col == 0) {
-			return "("+ getRowCount() +") Sequence(s)";
+			return "("+ nformat.format(getRowCount()) +") Sequence(s)";
 		} else if (col == 1) {
 			return "Length";
 		} else {

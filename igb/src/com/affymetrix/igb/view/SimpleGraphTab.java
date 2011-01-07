@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -397,7 +398,15 @@ public final class SimpleGraphTab extends JPanel
 		boolean b = !(grafs.isEmpty());
 		height_slider.setEnabled(b);
 		graph_threshold_action.setEnabled(b);
-		enableButtons(stylegroup, b);
+		boolean type = b;
+		for(GraphSym graf : grafs){
+			type = !(graf instanceof MisMatchGraphSym);
+			if(type){
+				break;
+			}
+		}
+		
+		enableButtons(stylegroup, type);
 		
 		floatCB.setEnabled(b);
 		yaxisCB.setEnabled(b);

@@ -14,6 +14,7 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -100,7 +101,8 @@ public final class GraphGlyph extends Glyph {
 	private ThreshGlyph thresh_glyph = new ThreshGlyph();
 	private final Rectangle thresh_pix_box = new Rectangle();
 	private static final double transition_scale = 500;
-
+	byte residues[] = null;
+	ResidueColorHelper helper = null;
 
 	private Color lighter;
 	private Color darker;
@@ -165,6 +167,12 @@ public final class GraphGlyph extends Glyph {
 		if (Float.isInfinite(getMinScoreThreshold()) && Float.isInfinite(getMaxScoreThreshold())) {
 			setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
 		}
+
+		if(graf instanceof MisMatchGraphSym){
+			helper = ResidueColorHelper.getColorHelper();
+			residues = graf.getGraphSeq().getResidues(graf.getMinXCoord(), graf.getMaxXCoord()).getBytes();
+		}
+		
 		resetThreshLabel();
 	}
 
@@ -354,7 +362,7 @@ public final class GraphGlyph extends Glyph {
 			float ytemp = graf.getGraphYCoord(i);
 			if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
 				return;
-			}
+			}			
 			// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 			ytemp = Math.min(ytemp, getVisibleMaxY());
 			ytemp = Math.max(ytemp, getVisibleMinY());
@@ -392,9 +400,23 @@ public final class GraphGlyph extends Glyph {
 					g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
 				} else {
 					final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
-					g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
+						g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
+					}
+			} else if (graph_style == GraphType.FILL_BAR_GRAPH) {
+				if(helper != null){
+					g.setColor(helper.determineResidueColor((char)residues[i]));
 				}
-			} else if (graph_style == GraphType.DOT_GRAPH) {
+
+				int ymin_pixel = Math.min(curr_point.y, zero_point.y);
+				int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
+				yheight_pixel = Math.max(1, yheight_pixel);
+				if (!graf.hasWidth()) {
+					g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
+				} else {
+					final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
+					g.fillRect(curr_point.x, ymin_pixel, width, yheight_pixel);
+				}
+			}else if (graph_style == GraphType.DOT_GRAPH) {
 				if (!graf.hasWidth()) {
 					g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
 				} else {
@@ -763,6 +785,9 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	public void setGraphStyle(GraphType type) {
+		if(graf instanceof MisMatchGraphSym)
+			return;
+		
 		state.setGraphStyle(type);
 		if (type == GraphType.HEAT_MAP) {
 			setHeatMap(state.getHeatMap());

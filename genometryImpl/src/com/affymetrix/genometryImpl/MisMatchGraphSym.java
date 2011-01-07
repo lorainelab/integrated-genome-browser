@@ -55,7 +55,7 @@ public class MisMatchGraphSym extends GraphSym {
 			for (int i = 0; i < pointCount; i++) {
 				dos.writeInt(start++);
 				dos.writeFloat(0);
-				dos.writeInt(0); // width of 1 is a single point.
+				dos.writeInt(1); // width of 1 is a single point.
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -49,32 +49,6 @@
 		</copy>
   </target> 
 
-  <!-- To create plugin jars add projects names here -->
-  <target name="check-if-plugin" >
-	<condition property="plugin-jar">
-		<or>
-			<equals arg1="${project}" arg2="genoviz" />
-			<equals arg1="${project}" arg2="genometry" />
-
-			<equals arg1="${project}" arg2="window_service" />
-			<equals arg1="${project}" arg2="window_service_def" />
-			<equals arg1="${project}" arg2="plugins_page" />
-			<equals arg1="${project}" arg2="RestrictionsSites" />
-			<equals arg1="${project}" arg2="ExternalView" />
-		</or>
-	</condition>
-  </target>
-
-  <target name="check-not-plugin" depends="check-if-plugin" if="plugin-jar">
-	<mkdir dir="${dist.dir}" />
-
-	<copy todir="${dist.dir}" filtering="false">
-		<fileset file="${igb}/build/${jarfile}" />
-	</copy>
-
-	<available file="${igb}/build/${jarfile}" property="not-plugin-jar"/>
-  </target>
-
   <target name="compile" depends="common-init,do-if-proj-lib">
 		<mkdir dir="${build.dir}" />
 		<my.javac destdir="${build.dir}" />
@@ -89,6 +63,12 @@
 		</copy>
 
 		<antcall target="check-create-jar" />
+  </target>
+
+  <target name="check-create-jar" if="plugin-jar">
+	  <antcall target="create-jar" >
+		  <param name="dist.dir" value="${igb}/build" />
+	  </antcall>
   </target>
 
   <target name="compile-tests" depends="compile">
@@ -132,7 +112,17 @@
 		<fail if="junit.failure" />
 	</target>
 
-	<target name="jar" depends="compile, check-not-plugin" unless="not-plugin-jar">
+  <target name="copy-jar" if="plugin-jar">
+	<mkdir dir="${dist.dir}" />
+
+	<copy todir="${dist.dir}" filtering="false">
+		<fileset file="${igb}/build/${jarfile}" />
+	</copy>
+
+	<available file="${igb}/build/${jarfile}" property="unavailable-jar"/>
+  </target>
+  
+	<target name="jar" depends="compile, copy-jar" unless="unavailable-jar">
 		<antcall target="create-jar" />
 	</target>
 
@@ -141,12 +131,6 @@
 		<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
 			<fileset dir="${build.dir}" />
 		</jar>
-	</target>
-
-	<target name="check-create-jar" depends="check-if-plugin" if="plugin-jar">
-	  <antcall target="create-jar" >
-		  <param name="dist.dir" value="${igb}/build" />
-	  </antcall>  
 	</target>
 
 	<target name="webstart" depends="jar">

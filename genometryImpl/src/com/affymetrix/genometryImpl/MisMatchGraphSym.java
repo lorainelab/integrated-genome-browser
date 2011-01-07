@@ -36,13 +36,7 @@ public class MisMatchGraphSym extends GraphSym {
 	
 	@Override
 	public Map<String, Object> getLocationProperties(int x){
-		char ch = this.getGraphSeq().getResidues(x, x+1).charAt(0);
-		float y, ytotal = 0;
-		String yStr;
-
-		Map<String, Object> locprops = new HashMap<String, Object>();
-
-		return locprops;
+		return super.getLocationProperties(x);
 	}
 
 	public static File createEmptyIndexFile(String graphName, int pointCount, int start) {
@@ -71,7 +65,7 @@ public class MisMatchGraphSym extends GraphSym {
 		return bufVal;
 	}
 
-	static float[] updateY(File index, int offset, float[] tempy) {
+	static float[] updateY(File index, int offset, int end, float[] tempy) {
 		RandomAccessFile raf = null;
 		float ymin = Float.POSITIVE_INFINITY, ymax = Float.NEGATIVE_INFINITY;
 		try {
@@ -80,18 +74,14 @@ public class MisMatchGraphSym extends GraphSym {
 
 			// skip to proper location
 			int bytesToSkip = (offset*3*4);	// 3 coords (x,y,w) -- 4 bytes each
-			int bytesSkipped = raf.skipBytes(bytesToSkip);
-			if (bytesSkipped < bytesToSkip) {
-				System.out.println("ERROR: skipped " + bytesSkipped + " out of " + bytesToSkip + " bytes when indexing");
-				return new float[]{ymin,ymax};
-			}
-
+			raf.seek(bytesToSkip);
+			
 			float y, newy;
 			long pos;
 			int x;
-			
+			int len = offset + tempy.length > end ? end - offset :tempy.length;
 
-			for(int i=0; i < tempy.length; i++){
+			for(int i=0; i < len; i++){
 				x = raf.readInt();
 
 				pos = raf.getFilePointer();

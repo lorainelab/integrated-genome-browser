@@ -31,7 +31,7 @@ public final class SeqSymSummarizer {
 			return null;
 
 		int range = end - start;
-		float[] y = null;
+		float[] y = null;		
 		final int BUFFSIZE = GraphSym.BUFSIZE;
 		float[] minmax = new float[2];
 		SeqSymmetry sym = syms.get(0);
@@ -39,12 +39,14 @@ public final class SeqSymSummarizer {
 
 		byte[] seq_residues = seq.getResidues(start, end).getBytes();
 		byte[] cur_residues;
-		int offset, cur_start, cur_end, length;
+		int offset, cur_start, cur_end, length, y_offset = 0;
 
 		File index = MisMatchGraphSym.createEmptyIndexFile(id, range, start);
 		
 		if(range <= BUFFSIZE){
 			y = new float[range];
+		}else{
+			y = new float[BUFFSIZE];
 		}
 
 		for(int i =0; i<sym.getChildCount(); i++){
@@ -70,15 +72,18 @@ public final class SeqSymSummarizer {
 					}
 				}
 			}else{
-				y = new float[length];
+				if((offset - y_offset + length >= BUFFSIZE) || (offset - y_offset < 0)){
+					minmax = MisMatchGraphSym.updateY(index, y_offset, end, y);
+					y = new float[BUFFSIZE];
+					y_offset = offset;
+				}
 
 				for(int j=0; j<length; j++){
 					if(seq_residues[offset+j] == cur_residues[j]){
-						y[j] = 1;
+						y[offset - y_offset + j] += 1;
 					}
 				}
-
-				minmax = MisMatchGraphSym.updateY(index, offset, y);
+		
 			}
 		}
 
@@ -93,6 +98,7 @@ public final class SeqSymSummarizer {
 			}
 			summary = new MisMatchGraphSym(x, w, y, AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
 		}else{
+			minmax = MisMatchGraphSym.updateY(index, y_offset, end, y);
 			summary = new MisMatchGraphSym(index, start, end, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
 		}
 

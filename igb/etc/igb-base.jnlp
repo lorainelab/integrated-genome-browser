@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="6.0+" version="7314" codebase="http://localhost:8080/IGBServer/webstart" href="igb.jnlp">
+<jnlp spec="6.0+" version="@jnlp.version@" codebase="@jnlp.codebase@" href="igb.jnlp">
 	<information>
-		<title>IGB 7314</title>
+		<title>IGB @jnlp.version@</title>
 		<vendor>Genoviz Project</vendor>
 		<offline-allowed/>
 	</information>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="6.0+" version="@jnlp.version@" codebase="@jnlp.codebase@" href="igb.jnlp">
+<jnlp spec="6.0+" version="7314" codebase="http://localhost:8080/IGBServer/webstart" href="igb.jnlp">
 	<information>
-		<title>IGB @jnlp.version@</title>
+		<title>IGB 7314</title>
 		<vendor>Genoviz Project</vendor>
 		<offline-allowed/>
 	</information>
@@ -19,9 +19,7 @@
 		<jar href="commons-codec-1.4.jar" />
 		<jar href="felix.jar" />
 		<jar href="igb_service.jar" />
-		<jar href="plugins_page.jar" />
-		<jar href="restrictions_page.jar" />
-		<jar href="external_page.jar" />
+		<jar href="window_service.jar" />
 		<jar href="colt.jar"				download="lazy" part="colt"		/>
 		<jar href="freehep-2.1.1.jar"		download="lazy" part="freehep"	/>
 		<jar href="sam.jar"					download="lazy" part="sam"		/>

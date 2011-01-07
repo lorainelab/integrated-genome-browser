@@ -13,16 +13,18 @@
 		<property name="name" value="Integrated Genome Browser" />
 
 		<!-- Locations of subprojets -->
-		<property name="genoviz"            value="${basedir}/genoviz_sdk" />
-		<property name="genometry"          value="${basedir}/genometryImpl" />
-		<property name="igb"                value="${basedir}/igb" />
-		<property name="igb-18n"            value="${basedir}/igb-i18n" />
-		<property name="das2server"         value="${basedir}/das2_server" />
-		<property name="protannot"          value="${basedir}/protannot" />
-		<property name="igb_service"        value="${basedir}/plugins/igb_service" />
-		<property name="plugins_page"       value="${basedir}/plugins/plugins_page" />
-		<property name="RestrictionsSites"  value="${basedir}/plugins/RestrictionsSites" />
-		<property name="ExternalView"       value="${basedir}/plugins/ExternalView" />
+		<property name="genoviz"             value="${basedir}/genoviz_sdk" />
+		<property name="genometry"           value="${basedir}/genometryImpl" />
+		<property name="igb"                 value="${basedir}/igb" />
+		<property name="igb-18n"             value="${basedir}/igb-i18n" />
+		<property name="das2server"          value="${basedir}/das2_server" />
+		<property name="protannot"           value="${basedir}/protannot" />
+		<property name="igb_service"         value="${basedir}/plugins/igb_service" />
+		<property name="window_service"      value="${basedir}/plugins/window_service" />
+		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
+		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
+		<property name="RestrictionsSites"   value="${basedir}/plugins/RestrictionsSites" />
+		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"    value="${basedir}/ext" />
@@ -31,7 +33,7 @@
 		<property name="docs.dir"   value="${basedir}/doc/api" />
 		<property name="report.dir" value="${basedir}/reports" />
 
-		 <property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${plugins_page}/src" />
+		 <property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src:${plugins_page}/src" />
 	</target>
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
@@ -90,21 +92,23 @@
 
 		<delete file="${webstart.dir}/das2server.jar" />
 
-		<my.signjar jar="${lib.dir}/affx_fusion.jar"        signedjar="${webstart.dir}/affx_fusion.jar" />
-		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar"      signedjar="${webstart.dir}/freehep-2.1.1.jar" />
-		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"          signedjar="${webstart.dir}/jlfgr-1_0.jar" />
-		<my.signjar jar="${lib.dir}/image4j.jar"            signedjar="${webstart.dir}/image4j.jar" />
-		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar"  signedjar="${webstart.dir}/commons-codec-1.4.jar" />
-		<my.signjar jar="${lib.dir}/sam.jar"                signedjar="${webstart.dir}/sam.jar" />
-		<my.signjar jar="${lib.dir}/picard.jar"             signedjar="${webstart.dir}/picard.jar" />
-		<my.signjar jar="${lib.dir}/colt.jar"               signedjar="${webstart.dir}/colt.jar" />
-		<my.signjar jar="${lib.dir}/jide-common.jar"        signedjar="${webstart.dir}/jide-common.jar" />
-		<my.signjar jar="${lib.dir}/jide-components.jar"    signedjar="${webstart.dir}/jide-components.jar" />
-		<my.signjar jar="${lib.dir}/jide-grids.jar"         signedjar="${webstart.dir}/jide-grids.jar" />
-		<my.signjar jar="${lib.dir}/felix.jar"              signedjar="${webstart.dir}/felix.jar" />
-		<my.signjar jar="${dist.dir}/igb_service.jar"       signedjar="${webstart.dir}/igb_service.jar" />
-		<my.signjar jar="${dist.dir}/RestrictionsSites.jar" signedjar="${webstart.dir}/RestrictionsSites.jar" />
-		<my.signjar jar="${dist.dir}/ExternalView.jar"      signedjar="${webstart.dir}/ExternalView.jar" />
+		<my.signjar jar="${lib.dir}/affx_fusion.jar"          signedjar="${webstart.dir}/affx_fusion.jar" />
+		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar"        signedjar="${webstart.dir}/freehep-2.1.1.jar" />
+		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"            signedjar="${webstart.dir}/jlfgr-1_0.jar" />
+		<my.signjar jar="${lib.dir}/image4j.jar"              signedjar="${webstart.dir}/image4j.jar" />
+		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar"    signedjar="${webstart.dir}/commons-codec-1.4.jar" />
+		<my.signjar jar="${lib.dir}/sam.jar"                  signedjar="${webstart.dir}/sam.jar" />
+		<my.signjar jar="${lib.dir}/picard.jar"               signedjar="${webstart.dir}/picard.jar" />
+		<my.signjar jar="${lib.dir}/colt.jar"                 signedjar="${webstart.dir}/colt.jar" />
+		<my.signjar jar="${lib.dir}/jide-common.jar"          signedjar="${webstart.dir}/jide-common.jar" />
+		<my.signjar jar="${lib.dir}/jide-components.jar"      signedjar="${webstart.dir}/jide-components.jar" />
+		<my.signjar jar="${lib.dir}/jide-grids.jar"           signedjar="${webstart.dir}/jide-grids.jar" />
+		<my.signjar jar="${lib.dir}/felix.jar"                signedjar="${webstart.dir}/felix.jar" />
+		<my.signjar jar="${dist.dir}/igb_service.jar"         signedjar="${webstart.dir}/igb_service.jar" />
+		<my.signjar jar="${dist.dir}/window_service.jar"      signedjar="${webstart.dir}/window_service.jar" />
+		<my.signjar jar="${dist.dir}/window_service_def.jar"  signedjar="${webstart.dir}/window_service_def.jar" />
+		<my.signjar jar="${dist.dir}/RestrictionsSites.jar"   signedjar="${webstart.dir}/RestrictionsSites.jar" />
+		<my.signjar jar="${dist.dir}/ExternalView.jar"        signedjar="${webstart.dir}/ExternalView.jar" />
 
 		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
 		<jar destfile="${webstart.dir}/igb.jar">
@@ -264,6 +268,8 @@
 				<exclude name="plugins_page.jar"/>
 				<exclude name="RestrictionsSites.jar"/>
 				<exclude name="ExternalView.jar"/>
+				<exclude name="plugins_page.jar"/>
+				<exclude name="window_service_def.jar"/>
 				<include name="*.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">
@@ -507,6 +513,8 @@
 				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="igb_service" />
+					<include name="window_service" />
+					<include name="window_service_def" />
 				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="plugins_page" />

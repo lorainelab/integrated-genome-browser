@@ -14,24 +14,21 @@ package com.affymetrix.igb;
 
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
+
 import javax.swing.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.DisplayUtils;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -49,6 +46,10 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.window.service.IPlugin;
+import com.affymetrix.igb.window.service.PluginInfo;
+import com.affymetrix.igb.window.service.IWindowService;
+import com.affymetrix.igb.window.service.WindowServiceListener;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
@@ -74,13 +75,10 @@ import static com.affymetrix.igb.IGBConstants.USER_AGENT;
  * @version $Id$
  */
 public final class IGB extends Application
-				implements ActionListener, GroupSelectionListener, SeqSelectionListener {
+				implements GroupSelectionListener, SeqSelectionListener, WindowServiceListener {
 
 	static IGB singleton_igb;
-	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
-	private static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
-	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
-	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
+	public static final String NODE_PLUGINS = "plugins";
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JMenu file_menu;
@@ -90,20 +88,14 @@ public final class IGB extends Application
 	private JMenu bookmark_menu;
 	private JMenu tools_menu;
 	private JMenu help_menu;
-	private JTabbedPane tab_pane;
-	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	private JMenuItem move_tab_to_window_item;
-	private JMenuItem move_tabbed_panel_to_window_item;
 	private SeqMapView map_view;
-	public DataLoadView data_load_view = null;
 	private final List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
-	private final List<Object> plugins = new ArrayList<Object>(16);
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
-	private FileTracker genome_directory = FileTracker.GENOME_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
 	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
+	private IWindowService windowService;
 
 	/**
 	 * Start the program.
@@ -146,7 +138,7 @@ public final class IGB extends Application
 					}
 				}
 			}
-			
+
 
 
 			// Initialize the ConsoleView right off, so that ALL output will
@@ -300,8 +292,8 @@ public final class IGB extends Application
 		// when HTTP authentication is needed, getPasswordAuthentication will
 		//    be called on the authenticator set as the default
 		Authenticator.setDefault(new IGBAuthenticator(frm));
-		
-		
+
+
 		// force loading of prefs if hasn't happened yet
 		// usually since IGB.main() is called first, prefs will have already been loaded
 		//   via loadIGBPrefs() call in main().  But if for some reason an IGB instance
@@ -311,16 +303,12 @@ public final class IGB extends Application
 		StateProvider stateProvider = new IGBStateProvider();
 		DefaultStateProvider.setGlobalStateProvider(stateProvider);
 
-
 		frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		Image icon = getIcon();
 		if (icon != null) {
 			frm.setIconImage(icon);
 		}
-
-		mbar = MenuUtil.getMainMenuBar();
-		frm.setJMenuBar(mbar);
 
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		gmodel.addGroupSelectionListener(this);
@@ -332,6 +320,69 @@ public final class IGB extends Application
 		gmodel.addSeqSelectionListener(map_view);
 		gmodel.addGroupSelectionListener(map_view);
 		gmodel.addSymSelectionListener(map_view);
+
+		loadMenu();
+
+		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
+						new Rectangle(0, 0, 950, 600)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
+		PreferenceUtils.setWindowSize(frm, frame_bounds);
+
+		// Show the frame before loading the plugins.  Thus any error panel
+		// that is created by an exception during plugin set-up will appear
+		// on top of the main frame, not hidden by it.
+
+		frm.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent evt) {
+				JFrame frame = (JFrame) evt.getComponent();
+				boolean ask_before_exit = PreferenceUtils.getBooleanParam(PreferenceUtils.ASK_BEFORE_EXITING,
+						PreferenceUtils.default_ask_before_exiting);
+				String message = "Do you really want to exit?";
+
+				if ((!ask_before_exit) || confirmPanel(message)) {
+					if (bmark_action != null) {
+						bmark_action.autoSaveBookmarks();
+					}
+					WebLink.autoSave();
+					if (windowService != null) {
+						windowService.shutdown();
+					}
+					Persistence.saveCurrentView(map_view);
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				} else {
+					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				}
+			}
+		});
+
+		plugins_info.add(new PluginInfo(DataLoadView.class.getName(), BUNDLE.getString("dataAccessTab"), true, 0));
+		plugins_info.add(new PluginInfo(PropertyView.class.getName(), BUNDLE.getString("selectionInfoTab"), true, 1));
+		plugins_info.add(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true, 2));
+		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true, 3));
+		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true, 4));
+
+
+		plugins_info.addAll(XmlPrefsParser.getPlugins());
+
+		if (plugins_info == null || plugins_info.isEmpty()) {
+			System.out.println("There are no plugins specified in preferences.");
+		} else {
+			OSGiHandler.getInstance().addWindowListener(this);
+			OSGiHandler.getInstance().startOSGi();
+		}
+
+		WebLink.autoLoad();
+
+		// Need to let the QuickLoad system get started-up before starting
+		//   the control server that listens to ping requests?
+		// Therefore start listening for http requests only after all set-up is done.
+		startControlServer();
+	}
+
+	public void loadMenu() {
+		mbar = MenuUtil.getMainMenuBar();
+		frm.setJMenuBar(mbar);
 
 		file_menu = MenuUtil.getMenu(BUNDLE.getString("fileMenu"));
 		file_menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
@@ -356,9 +407,6 @@ public final class IGB extends Application
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
 
-		move_tab_to_window_item = new JMenuItem(BUNDLE.getString("openCurrentTabInNewWindow"), KeyEvent.VK_O);
-		move_tabbed_panel_to_window_item = new JMenuItem(BUNDLE.getString("openTabbedPanesInNewWindow"), KeyEvent.VK_P);
-
 		fileMenu();
 
 		editMenu();
@@ -373,104 +421,23 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new DocumentationAction()));
 		MenuUtil.addToMenu(help_menu, new JMenuItem(new ShowConsoleAction()));
 
+	}
 
-		move_tab_to_window_item.addActionListener(this);
-		move_tabbed_panel_to_window_item.addActionListener(this);
+	public void addWindowService(IWindowService windowService) {
+		this.windowService = windowService;
+		windowService.setMainFrame(frm);
+		windowService.setSeqMapView(getMapView());
+		windowService.setStatusBar(new StatusBar());
+		windowService.setViewMenu(view_menu);
+		ThreadUtils.runOnEventQueue(new Runnable() {
 
-		Container cpane = frm.getContentPane();
-		int table_height = 250;
-		int fudge = 55;
-
-		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
-						new Rectangle(0, 0, 950, 600)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
-		PreferenceUtils.setWindowSize(frm, frame_bounds);
-
-		tab_pane = new JTabbedPane();
-
-		cpane.setLayout(new BorderLayout());
-		splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		splitpane.setOneTouchExpandable(true);
-		splitpane.setDividerSize(8);
-		splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
-		splitpane.setTopComponent(map_view);
-
-		boolean tab_panel_in_a_window = (PreferenceUtils.getComponentState(TABBED_PANES_TITLE).equals(PreferenceUtils.COMPONENT_STATE_WINDOW));
-		if (tab_panel_in_a_window) {
-			openTabbedPanelInNewWindow(tab_pane);
-		} else {
-			splitpane.setBottomComponent(tab_pane);
-		}
-
-		cpane.add("Center", splitpane);
-
-		// Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
-		// pop-up menu (or any other mouse listener) on the tab handles.
-		// (A pop-up with "Open tab in a new window" would be nice.)
-		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4465870
-		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4499556
-		tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		tab_pane.setMinimumSize(new Dimension(0, 0));
-
-		cpane.add(status_bar, BorderLayout.SOUTH);
-
-		// Show the frame before loading the plugins.  Thus any error panel
-		// that is created by an exception during plugin set-up will appear
-		// on top of the main frame, not hidden by it.
-
-		frm.addWindowListener(new WindowAdapter() {
-
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				JFrame frame = (JFrame) evt.getComponent();
-				boolean ask_before_exit = PreferenceUtils.getBooleanParam(PreferenceUtils.ASK_BEFORE_EXITING,
-						PreferenceUtils.default_ask_before_exiting);
-				String message = "Do you really want to exit?";
-
-				if ((!ask_before_exit) || confirmPanel(message)) {
-					if (bmark_action != null) {
-						bmark_action.autoSaveBookmarks();
-					}
-					WebLink.autoSave();
-					saveWindowLocations();
-					Persistence.saveCurrentView(map_view);
-					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				} else {
-					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			public void run() {
+				for (PluginInfo pi : plugins_info) {
+					setUpPlugIn(pi);
 				}
+				frm.setVisible(true);
 			}
 		});
-		frm.setVisible(true);
-
-		plugins_info.add(new PluginInfo(DataLoadView.class.getName(), BUNDLE.getString("dataAccessTab"), true));
-		plugins_info.add(new PluginInfo(PropertyView.class.getName(), BUNDLE.getString("selectionInfoTab"), true));
-		plugins_info.add(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true));
-		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true));
-		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true));
-
-
-		plugins_info.addAll(XmlPrefsParser.getPlugins());
-
-		if (plugins_info == null || plugins_info.isEmpty()) {
-			System.out.println("There are no plugins specified in preferences.");
-		} else {
-			ThreadUtils.runOnEventQueue(new Runnable() {
-
-				public void run() {
-					for (PluginInfo pi : plugins_info) {
-						Object plugin = setUpPlugIn(pi);
-						plugins.add(plugin);
-					}
-					OSGiHandler.getInstance().startOSGi();
-				}
-			});
-		}
-
-		WebLink.autoLoad();
-
-		// Need to let the QuickLoad system get started-up before starting
-		//   the control server that listens to ping requests?
-		// Therefore start listening for http requests only after all set-up is done.
-		startControlServer();
 	}
 
 	private void fileMenu() {
@@ -514,21 +481,21 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ShrinkWrapAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleToolTip.getAction()));
-		view_menu.addSeparator();
-		MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
-		MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
 	}
 
 	/**
 	 *  Puts the given component either in the tab pane or in its own window,
 	 *  depending on saved user preferences.
 	 */
-	private Object setUpPlugIn(PluginInfo pi) {
+	private void setUpPlugIn(PluginInfo pi) {
 		Object plugin = createPlugin(pi);
 		if (plugin != null) {
 			loadPlugIn(pi, plugin);
 		}
-		return plugin;
+	}
+
+	private Preferences getNodeForName(String name) {
+		return PreferenceUtils.getTopNode().node(NODE_PLUGINS).node(name);
 	}
 
 	private Object createPlugin(PluginInfo pi) {
@@ -541,7 +508,7 @@ public final class IGB extends Application
 			ErrorHandler.errorPanel("Bad Plugin",
 							"Cannot create plugin '" + pi.getPluginName() + "' because it has no class name.",
 							this.frm);
-			PluginInfo.getNodeForName(pi.getPluginName()).putBoolean("load", false);
+			getNodeForName(pi.getPluginName()).putBoolean("load", false);
 			return null;
 		}
 
@@ -558,63 +525,28 @@ public final class IGB extends Application
 			ErrorHandler.errorPanel("Bad Plugin",
 							"Could not create plugin '" + pi.getPluginName() + "'.",
 							this.frm, t);
-			PluginInfo.getNodeForName(pi.getPluginName()).putBoolean("load", false);
+			getNodeForName(pi.getPluginName()).putBoolean("load", false);
 			return null;
 		}
 		return plugin;
 	}
 
 	void loadPlugIn(PluginInfo pi, Object plugin) {
-		ImageIcon icon = null;
-
 		if (plugin instanceof IPlugin) {
 			IPlugin plugin_view = (IPlugin) plugin;
-			this.setPluginInstance(plugin_view.getClass(), plugin_view);
-			icon = (ImageIcon) plugin_view.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+			if (plugin_view.getClass().equals(BookmarkManagerView.class)) {
+				bmark_action.setBookmarkManager((BookmarkManagerView) plugin);
+			}
 		}
 
 		if (plugin instanceof JComponent) {
-			if (plugin instanceof DataLoadView) {
-				data_load_view = (DataLoadView) plugin;
-			}
 			if (plugin instanceof AltSpliceView) {
 				MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()));
 			}
-
-			comp2plugin.put((Component) plugin, pi);
-			String title = pi.getDisplayName();
-			String tool_tip = ((JComponent) plugin).getToolTipText();
-			if (tool_tip == null) {
-				tool_tip = title;
-			}
-			JComponent comp = (JComponent) plugin;
-			boolean in_a_window = (PreferenceUtils.getComponentState(title).equals(PreferenceUtils.COMPONENT_STATE_WINDOW));
-			addToPopupWindows(comp, title);
-			JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
-			menu_item.setSelected(in_a_window);
-			if (in_a_window) {
-				openCompInWindow(comp, tab_pane);
-			} else {
-				tab_pane.addTab(title, icon, comp, tool_tip);
-			}
 		}
-	}
-
-	@Override
-	public void setPluginInstance(Class<?> c, IPlugin plugin) {
-		super.setPluginInstance(c, plugin);
-		if (c.equals(BookmarkManagerView.class)) {
-			bmark_action.setBookmarkManager((BookmarkManagerView) plugin);
-		}
-	}
-
-	public void actionPerformed(ActionEvent evt) {
-		Object src = evt.getSource();
-		if (src == move_tab_to_window_item) {
-			openTabInNewWindow(tab_pane);
-		} else if (src == move_tabbed_panel_to_window_item) {
-			openTabbedPanelInNewWindow(tab_pane);
-		}
+		int position = PreferenceUtils.getIntParam(pi.getPluginName() + ".position", pi.getDefaultPosition());
+		String title = pi.getDisplayName();
+		windowService.addPlugIn((JComponent)plugin, pi.getPluginName(), title, position);
 	}
 
 	/** Returns the icon stored in the jar file.
@@ -635,226 +567,6 @@ public final class IGB extends Application
 		return icon;
 	}
 
-	/**
-	 * Saves information about which plugins are in separate windows and
-	 * what their preferred sizes are.
-	 */
-	private void saveWindowLocations() {
-		// Save the main window location
-		PreferenceUtils.saveWindowLocation(frm, "main window");
-
-		for (Component comp : comp2plugin.keySet()) {
-			Frame f = comp2window.get(comp);
-			if (f != null) {
-				PluginInfo pi = comp2plugin.get(comp);
-				PreferenceUtils.saveWindowLocation(f, pi.getPluginName());
-			}
-		}
-		Frame f = comp2window.get(tab_pane);
-		if (f != null) {
-			PreferenceUtils.saveWindowLocation(f, TABBED_PANES_TITLE);
-		}
-	}
-
-	private void openTabInNewWindow(final JTabbedPane tab_pane) {
-		Runnable r = new Runnable() {
-
-			public void run() {
-				int index = tab_pane.getSelectedIndex();
-				if (index < 0) {
-					ErrorHandler.errorPanel("No more panes!");
-					return;
-				}
-				final JComponent comp = (JComponent) tab_pane.getComponentAt(index);
-				openCompInWindow(comp, tab_pane);
-			}
-		};
-		SwingUtilities.invokeLater(r);
-	}
-
-	private void openCompInWindow(final JComponent comp, final JTabbedPane tab_pane) {
-		final String title;
-		final String display_name;
-		final String tool_tip = comp.getToolTipText();
-
-		if (comp2plugin.get(comp) instanceof PluginInfo) {
-			PluginInfo pi = comp2plugin.get(comp);
-			title = pi.getPluginName();
-			display_name = pi.getDisplayName();
-		} else {
-			title = comp.getName();
-			display_name = comp.getName();
-		}
-
-		Image temp_icon = null;
-		if (comp instanceof IPlugin) {
-			IPlugin pv = (IPlugin) comp;
-			ImageIcon image_icon = (ImageIcon) pv.getPluginProperty(IPlugin.TEXT_KEY_ICON);
-			if (image_icon != null) {
-				temp_icon = image_icon.getImage();
-			}
-		}
-		if (temp_icon == null) {
-			temp_icon = getIcon();
-		}
-
-		// If not already open in a new window, make a new window
-		if (comp2window.get(comp) == null) {
-			tab_pane.remove(comp);
-			tab_pane.validate();
-
-			final JFrame frame = new JFrame(display_name);
-			final Image icon = temp_icon;
-			if (icon != null) {
-				frame.setIconImage(icon);
-			}
-			final Container cont = frame.getContentPane();
-			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-			cont.add(comp);
-			comp.setVisible(true);
-			comp2window.put(comp, frame);
-			frame.pack(); // pack() to set frame to its preferred size
-
-			Rectangle pos = PreferenceUtils.retrieveWindowLocation(title, frame.getBounds());
-			if (pos != null) {
-				PreferenceUtils.setWindowSize(frame, pos);
-			}
-			frame.setVisible(true);
-			frame.addWindowListener(new WindowAdapter() {
-
-				@Override
-				public void windowClosing(WindowEvent evt) {
-					// save the current size into the preferences, so the window
-					// will re-open with this size next time
-					PreferenceUtils.saveWindowLocation(frame, title);
-					comp2window.remove(comp);
-					cont.remove(comp);
-					cont.validate();
-					frame.dispose();
-					tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
-					PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_TAB);
-					JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
-					if (menu_item != null) {
-						menu_item.setSelected(false);
-					}
-				}
-			});
-		} // extra window already exists, but may not be visible
-		else {
-			DisplayUtils.bringFrameToFront(comp2window.get(comp));
-		}
-		PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_WINDOW);
-	}
-
-	private void openTabbedPanelInNewWindow(final JComponent comp) {
-
-		final String title = TABBED_PANES_TITLE;
-		final String display_name = title;
-
-		// If not already open in a new window, make a new window
-		if (comp2window.get(comp) == null) {
-			splitpane.remove(comp);
-			splitpane.validate();
-
-			final JFrame frame = new JFrame(display_name);
-			final Image icon = getIcon();
-			if (icon != null) {
-				frame.setIconImage(icon);
-			}
-			final Container cont = frame.getContentPane();
-			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-			cont.add(comp);
-			comp.setVisible(true);
-			comp2window.put(comp, frame);
-			frame.pack(); // pack() to set frame to its preferred size
-
-			Rectangle pos = PreferenceUtils.retrieveWindowLocation(title, frame.getBounds());
-			if (pos != null) {
-				//check that it's not too small, problems with using two screens
-				int posW = (int) pos.getWidth();
-				if (posW < 650) {
-					posW = 650;
-				}
-				int posH = (int) pos.getHeight();
-				if (posH < 300) {
-					posH = 300;
-				}
-				pos.setSize(posW, posH);
-				PreferenceUtils.setWindowSize(frame, pos);
-			}
-			frame.setVisible(true);
-
-			final Runnable return_panes_to_main_window = new Runnable() {
-
-				public void run() {
-					// save the current size into the preferences, so the window
-					// will re-open with this size next time
-					PreferenceUtils.saveWindowLocation(frame, title);
-					comp2window.remove(comp);
-					cont.remove(comp);
-					cont.validate();
-					frame.dispose();
-					splitpane.setBottomComponent(comp);
-					splitpane.setDividerLocation(0.70);
-					PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_TAB);
-					JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
-					if (menu_item != null) {
-						menu_item.setSelected(false);
-					}
-				}
-			};
-
-			frame.addWindowListener(new WindowAdapter() {
-
-				@Override
-				public void windowClosing(WindowEvent evt) {
-					SwingUtilities.invokeLater(return_panes_to_main_window);
-				}
-			});
-
-			JMenuBar mBar = new JMenuBar();
-			frame.setJMenuBar(mBar);
-			JMenu menu1 = new JMenu("Windows");
-			menu1.setMnemonic('W');
-			mBar.add(menu1);
-
-			menu1.add(new AbstractAction("Return Tabbed Panes to Main Window") {
-
-				public void actionPerformed(ActionEvent evt) {
-					SwingUtilities.invokeLater(return_panes_to_main_window);
-				}
-			});
-			menu1.add(new AbstractAction("Open Current Tab in New Window") {
-
-				public void actionPerformed(ActionEvent evt) {
-					openTabInNewWindow(tab_pane);
-				}
-			});
-		} // extra window already exists, but may not be visible
-		else {
-			DisplayUtils.bringFrameToFront(comp2window.get(comp));
-		}
-		PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_WINDOW);
-	}
-
-	private void addToPopupWindows(final JComponent comp, final String title) {
-		JCheckBoxMenuItem popupMI = new JCheckBoxMenuItem(title);
-		popupMI.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent evt) {
-				JCheckBoxMenuItem src = (JCheckBoxMenuItem) evt.getSource();
-				Frame frame = comp2window.get(comp);
-				if (frame == null) {
-					openCompInWindow(comp, tab_pane);
-					src.setSelected(true);
-				}
-			}
-		});
-		comp2menu_item.put(comp, popupMI);
-	}
-
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
 		if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
@@ -872,15 +584,7 @@ public final class IGB extends Application
 		prev_selected_seq = selected_seq;
 	}
 
-	public List<Object> getPlugins() {
-		return Collections.<Object>unmodifiableList(plugins);
-	}
-
-	JTabbedPane getTabPane() {
-		return tab_pane;
-	}
-
-	Map<Component, Frame> getComp2Window() {
-		return comp2window;
+	public JComponent getView(String viewName) {
+		return windowService.getView(viewName);
 	}
 }

@@ -10,6 +10,8 @@
 		<property name="das2server"         value="${basedir}/../das2_server" />
 		<property name="protannot"          value="${basedir}/../protannot" />
 		<property name="igb_service"        value="${basedir}/../plugins/igb_service" />
+		<property name="window_service"      value="${basedir}/../plugins/window_service" />
+		<property name="window_service_def"  value="${basedir}/../plugins/window_service_def" />
 		<property name="plugins_page"       value="${basedir}/../plugins/plugins_page" />
 		<property name="RestrictionsSites"  value="${basedir}/../plugins/RestrictionsSites" />
 		<property name="ExternalView"       value="${basedir}/../plugins/ExternalView" />
@@ -54,6 +56,8 @@
 			<equals arg1="${project}" arg2="genoviz" />
 			<equals arg1="${project}" arg2="genometry" />
 
+			<equals arg1="${project}" arg2="window_service" />
+			<equals arg1="${project}" arg2="window_service_def" />
 			<equals arg1="${project}" arg2="plugins_page" />
 			<equals arg1="${project}" arg2="RestrictionsSites" />
 			<equals arg1="${project}" arg2="ExternalView" />

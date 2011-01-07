@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="plugins/plugins_page/src"/>
+	<classpathentry kind="src" path="plugins/window_service_mydoggy/test"/>
+	<classpathentry kind="src" path="plugins/window_service_mydoggy/src"/>
+	<classpathentry kind="src" path="plugins/window_service/src"/>
+	<classpathentry kind="src" path="plugins/window_service/test"/>
+	<classpathentry kind="src" path="plugins/window_service_def/test"/>
+	<classpathentry kind="src" path="plugins/window_service_def/src"/>
 	<classpathentry kind="src" path="plugins/ExternalView/src"/>
 	<classpathentry kind="src" path="plugins/ExternalView/test"/>
 	<classpathentry kind="src" path="plugins/RestrictionsSites/test"/>

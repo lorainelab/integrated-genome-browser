@@ -402,14 +402,15 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 		for(int i=0; i<inssym.getInsChildCount(); i++){
 
-			SeqSpan ispan = inssym.getInsChild(i).getSpan(annotseq);
+			SeqSymmetry childsym = inssym.getInsChild(i);
+			SeqSpan ispan = childsym.getSpan(annotseq);
 			EfficientOutlinedRectGlyph glyph = new EfficientOutlinedRectGlyph();
 			glyph.setCompulsary(true);
 			glyph.setCoords(ispan.getMin()-1, 0, 2, DEFAULT_THICK_HEIGHT);
 			glyph.setColor(color);
 
 			pglyph.addChild(glyph);
-			map.setDataModelFromOriginalSym(glyph, sym);
+			map.setDataModelFromOriginalSym(glyph, childsym);
 		}
 	}
 

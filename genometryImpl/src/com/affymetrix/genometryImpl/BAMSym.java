@@ -30,10 +30,10 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 	public SeqSymmetry getInsChild(int index) {
 		if (iblockMins == null || (iblockMins.length <= index)) { return null; }
 		if (forward) {
-			return new BedChildSingletonSeqSym(iblockMins[index], iblockMaxs[index], seq);
+			return new BamInsChildSingletonSeqSym(iblockMins[index], iblockMaxs[index], index, seq);
 		}
 		else {
-			return new BedChildSingletonSeqSym(iblockMaxs[index], iblockMins[index], seq);
+			return new BamInsChildSingletonSeqSym(iblockMaxs[index], iblockMins[index], index, seq);
 		}
 	}
 
@@ -66,6 +66,39 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 			return BAMSym.this.getResidues(start, end);
 		}
 
+	}
+
+	class BamInsChildSingletonSeqSym extends BedChildSingletonSeqSym implements SymWithResidues {
+		final int index;
+		public BamInsChildSingletonSeqSym(int start, int end, int index, BioSeq seq) {
+			super(start, end, seq);
+			this.index = index;
+		}
+
+		public void setResidues(String residues) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		public String getResidues(int start, int end) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+		
+		public String getResidues() {
+			return BAMSym.this.getInsResidue(index);
+		}
+
+		@Override
+		public Map<String,Object> getProperties() {
+			return cloneProperties();
+		}
+
+		@Override
+		public Map<String,Object> cloneProperties() {
+			HashMap<String,Object> tprops = new HashMap<String,Object>();
+			tprops.put("id", name);
+			tprops.put("residues", getResidues());
+			return tprops;
+		}
 	}
 
 	public void setResidues(String residuesStr){

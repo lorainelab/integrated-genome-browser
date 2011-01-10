@@ -101,6 +101,7 @@ public final class GraphGlyph extends Glyph {
 	private ThreshGlyph thresh_glyph = new ThreshGlyph();
 	private final Rectangle thresh_pix_box = new Rectangle();
 	private static final double transition_scale = 500;
+	private static final double mismatch_transition_scale = 30;
 	byte residues[] = null;
 	ResidueColorHelper helper = null;
 
@@ -876,7 +877,7 @@ public final class GraphGlyph extends Glyph {
 
 
 	private void drawSmart(ViewI view) {
-		if (getGraphStyle() == GraphType.MINMAXAVG) {
+		if (getGraphStyle() == GraphType.MINMAXAVG || getGraphStyle() == GraphType.FILL_BAR_GRAPH) {
 			// could size cache to just the view's pixelbox, but then may end up creating a
 			//   new int array every time the pixelbox changes (which with view damage or
 			//   scrolling optimizations turned on could be often)
@@ -956,12 +957,12 @@ public final class GraphGlyph extends Glyph {
 		float yzero = determineYZero();
 		coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, zero_point);
-		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
+		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH || graph_style == GraphType.FILL_BAR_GRAPH) {
 			if (yzero == 0) {
 				g.setColor(Color.gray);
 				g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
 			}
-			if (graph_style == GraphType.MINMAXAVG) {
+			if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.FILL_BAR_GRAPH) {
 				g.setColor(darker);
 			} else {
 				g.setColor(getBackgroundColor());
@@ -1045,14 +1046,14 @@ public final class GraphGlyph extends Glyph {
 			return;
 		}
 
-		if (graph_style == GraphType.MINMAXAVG) {
+		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.FILL_BAR_GRAPH) {
 			// cache for drawing later
 			if (prev_point.x > 0 && prev_point.x < pixel_avg_cache.length) {
 				int yavg_pixel = ysum / points_in_pixel;
 				pixel_avg_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 			}
 		}
-
+		
 		drawRectOrLine(g, prev_point.x, ystart, 1, yend - ystart);
 
 		if (graph_style == GraphType.LINE_GRAPH && i > 0) {
@@ -1390,6 +1391,18 @@ public final class GraphGlyph extends Glyph {
 			System.out.println("called GraphGlyph.draw(), coords = " + coordbox);
 		}
 		GraphType graph_style = getGraphStyle();
+
+		if (graph_style == GraphType.FILL_BAR_GRAPH) {
+			double xpixels_per_coord = ( view.getTransform()).getScaleX();
+			double xcoords_per_pixel = 1 / xpixels_per_coord;
+			if ((xcoords_per_pixel < mismatch_transition_scale)) {
+				this.oldDraw(view, graph_style);
+			} else {
+				drawSmart(view);
+			}
+			return;
+		}
+		
 		// GAH 9-13-2002
 		// hack to get thresholding to work -- thresh line child glyph keeps getting removed
 		//   as a child of graph... (must be something in SeqMapView.setAnnotatedSeq()...
@@ -1401,7 +1414,7 @@ public final class GraphGlyph extends Glyph {
 			}
 			this.addChild(thresh_glyph);
 		}
-		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH || graph_style == GraphType.HEAT_MAP) {
+		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH || graph_style == GraphType.HEAT_MAP || graph_style == GraphType.FILL_BAR_GRAPH) {
 			double xpixels_per_coord = ( view.getTransform()).getScaleX();
 			double xcoords_per_pixel = 1 / xpixels_per_coord;
 			if ((xcoords_per_pixel < transition_scale)) {

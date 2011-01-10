@@ -93,13 +93,17 @@ public final class SeqSymSummarizer {
 			int[] x = new int[range];
 			int[] w = new int[range];
 			for(int i=0; i<range; i++){
-				x[i] = start + i;
-				w[i] = 1;
+				if(y[i] > 0){
+					x[i] = start + i;
+					w[i] = 1;
+				}
 			}
 			summary = new MisMatchGraphSym(x, w, y, AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
 		}else{
 			minmax = MisMatchGraphSym.updateY(index, y_offset, end, y);
-			summary = new MisMatchGraphSym(index, start, end, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+			File finalIndex = MisMatchGraphSym.createEmptyIndexFile(id, 0, 0);
+			int [] x = MisMatchGraphSym.getXCoords(index, finalIndex, range);
+			summary = new MisMatchGraphSym(finalIndex, x, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
 		}
 
 

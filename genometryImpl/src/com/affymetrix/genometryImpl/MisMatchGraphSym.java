@@ -1,9 +1,13 @@
 package com.affymetrix.genometryImpl;
 
+import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.net.URLEncoder;
@@ -22,8 +26,8 @@ public class MisMatchGraphSym extends GraphSym {
 		super(x,w,y,id,seq);
 	}
 
-	public MisMatchGraphSym(File index, int start, int end, float ymin, float ymax, String uniqueGraphID, BioSeq seq) {
-		super(index, start, end, ymin, ymax, uniqueGraphID, seq);
+	public MisMatchGraphSym(File index, int[] x, float ymin, float ymax, String uniqueGraphID, BioSeq seq) {
+		super(index, x, ymin, ymax, uniqueGraphID, seq);
 	}
 
 	public void addReference(SymWithResidues.ResiduesChars ch, GraphSym gsym){
@@ -55,7 +59,6 @@ public class MisMatchGraphSym extends GraphSym {
 			for (int i = 0; i < pointCount; i++) {
 				dos.writeInt(start++);
 				dos.writeFloat(0);
-				dos.writeInt(1); // width of 1 is a single point.
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -73,16 +76,15 @@ public class MisMatchGraphSym extends GraphSym {
 			raf = new RandomAccessFile(index, "rw");
 
 			// skip to proper location
-			int bytesToSkip = (offset*3*4);	// 3 coords (x,y,w) -- 4 bytes each
+			int bytesToSkip = (offset*2*4);	// 3 coords (x,y,w) -- 4 bytes each
 			raf.seek(bytesToSkip);
 			
 			float y, newy;
 			long pos;
-			int x;
 			int len = offset + tempy.length > end ? end - offset :tempy.length;
 
 			for(int i=0; i < len; i++){
-				x = raf.readInt();
+				raf.readInt();
 
 				pos = raf.getFilePointer();
 				y = raf.readFloat();
@@ -97,8 +99,6 @@ public class MisMatchGraphSym extends GraphSym {
 				
 				raf.seek(pos);
 				raf.writeFloat(newy);
-				
-				x = raf.readInt();
 			}
 			
 		} catch (Exception ex) {
@@ -108,5 +108,37 @@ public class MisMatchGraphSym extends GraphSym {
 		}
 
 		return new float[]{ymin, ymax};
+	}
+
+	static int[] getXCoords(File index, File finalIndex, int len) {
+		DataOutputStream dos = null;
+		DataInputStream dis = null;
+		IntArrayList xpos = new IntArrayList(len);
+		int x;
+		float y;
+		try {
+			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(finalIndex)));
+			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(index)));
+
+			for (int i = 0; i < len; i++) {
+				x = dis.readInt();
+				y = dis.readFloat();
+	
+				if(y > 0){
+					xpos.add(x);
+					dos.writeInt(x);
+					dos.writeFloat(y);
+					dos.writeInt(1); // width of 1 is a single point.
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(dos);
+			GeneralUtils.safeClose(dis);
+		}
+		xpos.trimToSize();
+
+		return xpos.elements();
 	}
 }

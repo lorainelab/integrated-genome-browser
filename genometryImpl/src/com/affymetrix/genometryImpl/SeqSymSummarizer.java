@@ -31,7 +31,7 @@ public final class SeqSymSummarizer {
 			return null;
 
 		int range = end - start;
-		float[] y = null;		
+		float[] y = null;
 		final int BUFFSIZE = GraphSym.BUFSIZE;
 		float[] minmax = new float[2];
 		SeqSymmetry sym = syms.get(0);
@@ -65,40 +65,39 @@ public final class SeqSymSummarizer {
 
 			cur_residues = ((SymWithResidues)childSeqSym).getResidues(cur_start, cur_end).getBytes();
 
-			if(range <= BUFFSIZE){
-				for(int j=0; j<length; j++){
-					if(seq_residues[offset+j] == cur_residues[j]){
-						y[offset+j] += 1;
-					}
-				}
-			}else{
-				if((offset - y_offset + length >= BUFFSIZE) || (offset - y_offset < 0)){
+			if (range > BUFFSIZE) {
+				if ((offset - y_offset + length >= BUFFSIZE) || (offset - y_offset < 0)) {
 					minmax = MisMatchGraphSym.updateY(index, y_offset, end, y);
 					y = new float[BUFFSIZE];
 					y_offset = offset;
 				}
-
-				for(int j=0; j<length; j++){
-					if(seq_residues[offset+j] == cur_residues[j]){
-						y[offset - y_offset + j] += 1;
-					}
-				}
-		
 			}
+
+			for (int j = 0; j < length; j++) {
+				if (seq_residues[offset + j] == cur_residues[j]) {
+					y[offset - y_offset + j] += 1;
+				}
+			}
+		
 		}
 
 		MisMatchGraphSym summary;
 
 		if(range <= BUFFSIZE){
-			int[] x = new int[range];
-			int[] w = new int[range];
+			IntArrayList _x = new IntArrayList(range);
+			FloatArrayList _y = new FloatArrayList(range);
+			IntArrayList _w = new IntArrayList(range);
 			for(int i=0; i<range; i++){
 				if(y[i] > 0){
-					x[i] = start + i;
-					w[i] = 1;
+					_x.add(start + i);
+					_y.add(y[i]);
+					_w.add(1);
 				}
 			}
-			summary = new MisMatchGraphSym(x, w, y, AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+			_x.trimToSize();
+			_y.trimToSize();
+			_w.trimToSize();
+			summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
 		}else{
 			minmax = MisMatchGraphSym.updateY(index, y_offset, end, y);
 			File finalIndex = MisMatchGraphSym.createEmptyIndexFile(id, 0, 0);

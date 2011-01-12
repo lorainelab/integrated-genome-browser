@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="plugins/plugins_page/src"/>
+	<classpathentry kind="src" path="plugins/window_service_dockingframes/test"/>
+	<classpathentry kind="src" path="plugins/window_service_dockingframes/src"/>
 	<classpathentry kind="src" path="plugins/window_service/src"/>
 	<classpathentry kind="src" path="plugins/window_service/test"/>
 	<classpathentry kind="src" path="plugins/window_service_def/test"/>
@@ -60,5 +62,7 @@
 	<classpathentry kind="lib" path="igb/resources"/>
 	<classpathentry kind="lib" path="dist/igb_service.jar"/>
 	<classpathentry kind="lib" path="dist"/>
+	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCommon.jar" sourcepath="C:/dock/dock/src/dockingFramesCommon"/>
+	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCore.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

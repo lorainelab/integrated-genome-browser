@@ -102,6 +102,26 @@ public class OSGiHandler {
         }
 	}
 
+	private void loadUncachedJars(BundleContext bundleContext, HashSet<String> tierBundles, List<String> jars)
+		throws Exception {
+		for (String jarSpec : jars) {
+			String[] parts = jarSpec.split(";");
+			String jarName = parts[0];
+			boolean startBundle = true;
+			if (parts.length > 1 && parts[1].toLowerCase().startsWith("start=n")) {
+				startBundle = false;
+			}
+			String location = OSGiHandler.class.getResource(jarName).toString();
+			if (location != null){
+				Bundle bundle = bundleContext.installBundle(location);
+				if (startBundle) {
+					bundle.start();
+				}
+				tierBundles.add(bundle.getSymbolicName());
+			}
+		}
+	}
+
 	public void startOSGi() {
         HashSet<String> tier1Bundles = new HashSet<String>(); // bundle symbolic names
         HashSet<String> tier2Bundles = new HashSet<String>(); // bundle symbolic names
@@ -138,24 +158,10 @@ public class OSGiHandler {
 				}
 			}
            	// load uncached required jars
-			for (String jarName : requiredJars) {
-				String location = OSGiHandler.class.getResource(jarName).toString();
-				if (location != null){
-					Bundle bundle = bundleContext.installBundle(location);
-					bundle.start();
-					tier1Bundles.add(bundle.getSymbolicName());
-				}
-			}
+           	loadUncachedJars(bundleContext, tier1Bundles, requiredJars);
 			((IGBServiceImpl)service).setTier1Bundles(tier1Bundles);
            	// load uncached optional jars
-			for (String jarName : optionalJars) {
-				String location = OSGiHandler.class.getResource(jarName).toString();
-				if(location != null){
-					Bundle bundle = bundleContext.installBundle(location);
-					bundle.start();
-					tier2Bundles.add(bundle.getSymbolicName());
-				}
-			}
+          	loadUncachedJars(bundleContext, tier2Bundles, optionalJars);
 			((IGBServiceImpl)service).setTier2Bundles(tier2Bundles);
 			// register IGB service
 			bundleContext.registerService(IGBService.class.getName(), service, new Properties());

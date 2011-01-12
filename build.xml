@@ -22,6 +22,7 @@
 		<property name="igb_service"         value="${basedir}/plugins/igb_service" />
 		<property name="window_service"      value="${basedir}/plugins/window_service" />
 		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
+		<property name="window_service_dockingframes"  value="${basedir}/plugins/window_service_dockingframes" />
 		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
 		<property name="RestrictionsSites"   value="${basedir}/plugins/RestrictionsSites" />
 		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
@@ -107,6 +108,7 @@
 		<my.signjar jar="${dist.dir}/igb_service.jar"         signedjar="${webstart.dir}/igb_service.jar" />
 		<my.signjar jar="${dist.dir}/window_service.jar"      signedjar="${webstart.dir}/window_service.jar" />
 		<my.signjar jar="${dist.dir}/window_service_def.jar"  signedjar="${webstart.dir}/window_service_def.jar" />
+		<my.signjar jar="${dist.dir}/window_service_dockingframes.jar"  signedjar="${webstart.dir}/window_service_dockingframes.jar" />
 		<my.signjar jar="${dist.dir}/RestrictionsSites.jar"   signedjar="${webstart.dir}/RestrictionsSites.jar" />
 		<my.signjar jar="${dist.dir}/ExternalView.jar"        signedjar="${webstart.dir}/ExternalView.jar" />
 
@@ -270,6 +272,7 @@
 				<exclude name="ExternalView.jar"/>
 				<exclude name="plugins_page.jar"/>
 				<exclude name="window_service_def.jar"/>
+				<exclude name="window_service_dockingframes.jar"/>
 				<include name="*.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">
@@ -520,6 +523,7 @@
 					<include name="plugins_page" />
 					<include name="RestrictionsSites" />
 					<include name="ExternalView" />
+					<include name="window_service_dockingframes" />
 				</dirset>
 				<dirset dir="${basedir}">
 					<include name="igb" />

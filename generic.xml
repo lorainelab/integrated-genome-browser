@@ -12,6 +12,7 @@
 		<property name="igb_service"        value="${basedir}/../plugins/igb_service" />
 		<property name="window_service"      value="${basedir}/../plugins/window_service" />
 		<property name="window_service_def"  value="${basedir}/../plugins/window_service_def" />
+		<property name="window_service_dockingframes"  value="${basedir}/../plugins/window_service_dockingframes" />
 		<property name="plugins_page"       value="${basedir}/../plugins/plugins_page" />
 		<property name="RestrictionsSites"  value="${basedir}/../plugins/RestrictionsSites" />
 		<property name="ExternalView"       value="${basedir}/../plugins/ExternalView" />

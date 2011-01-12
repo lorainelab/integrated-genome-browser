@@ -31,7 +31,8 @@ public final class SeqSymSummarizer {
 			return null;
 
 		int range = end - start;
-		float[] y = null;
+		int[] y = null;
+		int[][] yR = null;
 		final int BUFFSIZE = GraphSym.BUFSIZE;
 		float[] minmax = new float[2];
 		SeqSymmetry sym = syms.get(0);
@@ -39,74 +40,123 @@ public final class SeqSymSummarizer {
 
 		byte[] seq_residues = seq.getResidues(start, end).getBytes();
 		byte[] cur_residues;
+		byte ch;
 		int offset, cur_start, cur_end, length, y_offset = 0;
 
 		File index = MisMatchGraphSym.createEmptyIndexFile(id, range, start);
-		
+
 		if(range <= BUFFSIZE){
-			y = new float[range];
+			y = new int[range];
+			yR = new int[5][range];
 		}else{
-			y = new float[BUFFSIZE];
+			y = new int[BUFFSIZE];
+			yR = new int[5][BUFFSIZE];
 		}
 
-		for(int i =0; i<sym.getChildCount(); i++){
+		for (int i = 0; i < sym.getChildCount(); i++) {
 			SeqSymmetry childSeqSym = sym.getChild(i);
-			
-			if(!(childSeqSym instanceof SymWithResidues))
+
+			if (!(childSeqSym instanceof SymWithResidues)) {
 				continue;
+			}
 
 			span = childSeqSym.getSpan(seq);
 			offset = span.getMin() > start ? span.getMin() - start : 0;
 
 			// Boundary Check
 			cur_start = Math.max(start, span.getMin());
-			cur_end = Math.min(end, span.getMax()-1);
+			cur_end = Math.min(end, span.getMax() - 1);
 			length = cur_end - cur_start;
 
-			cur_residues = ((SymWithResidues)childSeqSym).getResidues(cur_start, cur_end).getBytes();
+			cur_residues = ((SymWithResidues) childSeqSym).getResidues(cur_start, cur_end).getBytes();
 
 			if (range > BUFFSIZE) {
 				if ((offset - y_offset + length >= BUFFSIZE) || (offset - y_offset < 0)) {
-					minmax = MisMatchGraphSym.updateY(index, y_offset, end, y);
-					y = new float[BUFFSIZE];
+					minmax = MisMatchGraphSym.updateY(index, y_offset, end, y, yR);
+					y = new int[BUFFSIZE];
 					y_offset = offset;
 				}
 			}
 
 			for (int j = 0; j < length; j++) {
-				if (seq_residues[offset + j] == cur_residues[j]) {
+				ch = cur_residues[j];
+				if (seq_residues[offset + j] == ch) {
 					y[offset - y_offset + j] += 1;
 				}
+
+				if (ch == 'A' || ch == 'a') {
+					yR[0][offset - y_offset + j] += 1;
+				} else if (ch == 'T' || ch == 't') {
+					yR[1][offset - y_offset + j] += 1;
+				} else if (ch == 'G' || ch == 'g') {
+					yR[2][offset - y_offset + j] += 1;
+				} else if (ch == 'C' || ch == 'c') {
+					yR[3][offset - y_offset + j] += 1;
+				} else if (ch != '-'){
+					yR[4][offset - y_offset + j] += 1;
+				}
 			}
-		
+
 		}
 
 		MisMatchGraphSym summary;
 
 		if(range <= BUFFSIZE){
-			IntArrayList _x = new IntArrayList(range);
-			FloatArrayList _y = new FloatArrayList(range);
-			IntArrayList _w = new IntArrayList(range);
-			for(int i=0; i<range; i++){
-				if(y[i] > 0){
-					_x.add(start + i);
-					_y.add(y[i]);
-					_w.add(1);
-				}
-			}
-			_x.trimToSize();
-			_y.trimToSize();
-			_w.trimToSize();
-			summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+			summary = createMisMatchGraph(range, yR, start, y, id, seq);
 		}else{
-			minmax = MisMatchGraphSym.updateY(index, y_offset, end, y);
-			File finalIndex = MisMatchGraphSym.createEmptyIndexFile(id, 0, 0);
-			int [] x = MisMatchGraphSym.getXCoords(index, finalIndex, range);
-			summary = new MisMatchGraphSym(finalIndex, x, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq),seq);
+			summary = createMisMatchGraph(index, y_offset, end, y, yR, id, range, minmax, seq);
 		}
 
 
 		summary.getGraphState().setGraphStyle(GraphType.FILL_BAR_GRAPH);
+		return summary;
+	}
+
+	private static MisMatchGraphSym createMisMatchGraph(File index, int y_offset, int end, int[] y, int[][] yR, String id, int range, float[] minmax, BioSeq seq) {
+		MisMatchGraphSym summary;
+		minmax = MisMatchGraphSym.updateY(index, y_offset, end, y, yR);
+		File finalIndex = MisMatchGraphSym.createEmptyIndexFile(id, 0, 0);
+		File finalHelper = MisMatchGraphSym.createEmptyIndexFile(id + "helper", 0, 0);
+		int[] x = MisMatchGraphSym.getXCoords(index, finalIndex, finalHelper, range);
+		summary = new MisMatchGraphSym(finalIndex, finalHelper, x, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
+		return summary;
+	}
+
+	private static MisMatchGraphSym createMisMatchGraph(int range, int[][] yR, int start, int[] y, String id, BioSeq seq) {
+		MisMatchGraphSym summary;
+		IntArrayList _x = new IntArrayList(range);
+		FloatArrayList _y = new FloatArrayList(range);
+		IntArrayList _w = new IntArrayList(range);
+		IntArrayList _yA = new IntArrayList(range);
+		IntArrayList _yT = new IntArrayList(range);
+		IntArrayList _yG = new IntArrayList(range);
+		IntArrayList _yC = new IntArrayList(range);
+		IntArrayList _yN = new IntArrayList(range);
+		
+		for (int i = 0; i < range; i++) {
+			if (yR[0][i] > 0 || yR[1][i] > 0 || yR[2][i] > 0 || yR[3][i] > 0 || yR[4][i] > 0) {
+				_x.add(start + i);
+				_y.add(y[i]);
+				_w.add(1);
+
+				_yA.add(yR[0][i]);
+				_yT.add(yR[1][i]);
+				_yG.add(yR[2][i]);
+				_yC.add(yR[3][i]);
+				_yN.add(yR[4][i]);
+			}
+		}
+		_x.trimToSize();
+		_y.trimToSize();
+		_w.trimToSize();
+		_yA.trimToSize();
+		_yT.trimToSize();
+		_yG.trimToSize();
+		_yC.trimToSize();
+		_yN.trimToSize();
+
+		summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
+		summary.setAllResidues(_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements());
 		return summary;
 	}
 

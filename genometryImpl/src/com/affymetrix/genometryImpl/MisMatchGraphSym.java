@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,13 +22,19 @@ import java.util.Map;
 public class MisMatchGraphSym extends GraphSym {
 
 	Map<SymWithResidues.ResiduesChars, GraphSym> reference = new HashMap<SymWithResidues.ResiduesChars, GraphSym>();
+	int[][] residuesTot = null;
+	private final File helperIndex;
 
 	public MisMatchGraphSym(int[] x, int[] w, float[] y, String id, BioSeq seq){
 		super(x,w,y,id,seq);
+		helperIndex = null;
 	}
 
-	public MisMatchGraphSym(File index, int[] x, float ymin, float ymax, String uniqueGraphID, BioSeq seq) {
+	public MisMatchGraphSym(File index, File helperIndex, int[] x, float ymin, float ymax, String uniqueGraphID, BioSeq seq) {
 		super(index, x, ymin, ymax, uniqueGraphID, seq);
+		this.helperIndex = helperIndex;
+		residuesTot = new int[5][BUFSIZE];
+		readIntoBuffers(0);
 	}
 
 	public void addReference(SymWithResidues.ResiduesChars ch, GraphSym gsym){
@@ -41,6 +48,40 @@ public class MisMatchGraphSym extends GraphSym {
 	@Override
 	public Map<String, Object> getLocationProperties(int x){
 		return super.getLocationProperties(x);
+	}
+
+	void setAllResidues(int[] a, int[] t, int[] g, int[] c, int[] n) {
+
+		if(a.length != t.length || t.length != g.length || g.length != c.length || c.length != n.length){
+			throw new IllegalArgumentException("All arrays should have same length.");
+		}
+
+		residuesTot = new int[5][a.length];
+
+		System.arraycopy(a, 0, residuesTot[0], 0, a.length);
+		System.arraycopy(t, 0, residuesTot[1], 0, t.length);
+		System.arraycopy(g, 0, residuesTot[2], 0, g.length);
+		System.arraycopy(c, 0, residuesTot[3], 0, c.length);
+		System.arraycopy(n, 0, residuesTot[4], 0, n.length);
+	}
+
+	public final float getGraphTotalY(int i) {
+		if (i >= this.getPointCount()) {
+			return 0;	// out of range
+		}
+		if (i == 0) {
+			return getFirstYCoord();
+		}
+		if (i < getBufStart() || i >= getBufStart() + BUFSIZE) {
+			readIntoBuffers(i);
+		}
+
+		float tot = 0;
+		for(int j =0; j<residuesTot.length; j++){
+			tot += residuesTot[j][i - getBufStart()];
+		}
+		
+		return tot;
 	}
 
 	public static File createEmptyIndexFile(String graphName, int pointCount, int start) {
@@ -58,7 +99,15 @@ public class MisMatchGraphSym extends GraphSym {
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
 			for (int i = 0; i < pointCount; i++) {
 				dos.writeInt(start++);
-				dos.writeFloat(0);
+				dos.writeInt(0);
+
+				//Write other residues.
+				dos.writeInt(0);
+				dos.writeInt(0);
+				dos.writeInt(0);
+				dos.writeInt(0);
+				dos.writeInt(0);
+
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -67,8 +116,8 @@ public class MisMatchGraphSym extends GraphSym {
 		}
 		return bufVal;
 	}
-
-	static float[] updateY(File index, int offset, int end, float[] tempy) {
+	
+	static float[] updateY(File index, int offset, int end, int[] tempy, int[][] yR) {
 		RandomAccessFile raf = null;
 		float ymin = Float.POSITIVE_INFINITY, ymax = Float.NEGATIVE_INFINITY;
 		try {
@@ -76,10 +125,11 @@ public class MisMatchGraphSym extends GraphSym {
 			raf = new RandomAccessFile(index, "rw");
 
 			// skip to proper location
-			int bytesToSkip = (offset*2*4);	// 3 coords (x,y,w) -- 4 bytes each
+			int bytesToSkip = (offset*7*4);	// 3 coords (x,y,w) -- 4 bytes each
 			raf.seek(bytesToSkip);
 			
-			float y, newy;
+			int y;
+			int[] newy = new int[yR.length];
 			long pos;
 			int len = offset + tempy.length > end ? end - offset :tempy.length;
 
@@ -87,18 +137,25 @@ public class MisMatchGraphSym extends GraphSym {
 				raf.readInt();
 
 				pos = raf.getFilePointer();
-				y = raf.readFloat();
-				newy = y + tempy[i];
-				if(newy < ymin){
-					ymin = newy;
-				}
+				y = raf.readInt() + tempy[i];
 
-				if(newy > ymax){
-					ymax = newy;
+				if(y < ymin)
+					ymin = y;
+				
+				if(y > ymax)
+					ymax = y;
+				
+
+				for(int j=0; j<yR.length; j++){
+					newy[j] = raf.readInt() + yR[j][i];
 				}
 				
 				raf.seek(pos);
-				raf.writeFloat(newy);
+
+				raf.writeInt(y);
+				for(int j=0; j<yR.length; j++){
+					raf.writeInt(newy[j]);
+				}
 			}
 			
 		} catch (Exception ex) {
@@ -110,25 +167,40 @@ public class MisMatchGraphSym extends GraphSym {
 		return new float[]{ymin, ymax};
 	}
 
-	static int[] getXCoords(File index, File finalIndex, int len) {
+	static int[] getXCoords(File index, File finalIndex, File finalHelper, int len) {
 		DataOutputStream dos = null;
 		DataInputStream dis = null;
+		DataOutputStream hdos = null;
 		IntArrayList xpos = new IntArrayList(len);
 		int x;
-		float y;
+		int y;
+		int[] yR = new int[5];
 		try {
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(finalIndex)));
 			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(index)));
+			hdos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(finalHelper)));
 
 			for (int i = 0; i < len; i++) {
 				x = dis.readInt();
-				y = dis.readFloat();
-	
-				if(y > 0){
+				y = dis.readInt();
+
+				for(int j=0; j<yR.length; j++){
+					yR[j] = dis.readInt();
+				}
+
+				if(yR[0] > 0 || yR[1] > 0 || yR[2] > 0 || yR[3] > 0 || yR[4] > 0){
 					xpos.add(x);
+
+					//Write regular index file
 					dos.writeInt(x);
 					dos.writeFloat(y);
 					dos.writeInt(1); // width of 1 is a single point.
+
+					//Write helper index file
+					hdos.writeInt(x);
+					for(int j=0; j<yR.length; j++){
+						hdos.writeInt(yR[j]);
+					}
 				}
 			}
 		} catch (Exception ex) {
@@ -136,9 +208,61 @@ public class MisMatchGraphSym extends GraphSym {
 		} finally {
 			GeneralUtils.safeClose(dos);
 			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(hdos);
 		}
 		xpos.trimToSize();
 
 		return xpos.elements();
+	}
+
+	@Override
+	protected synchronized void readIntoBuffers(int start) {
+		super.readIntoBuffers(start);
+
+		if(helperIndex == null){
+			return;
+		}
+		
+		DataInputStream dis = null;
+		try {
+			// open stream
+			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(helperIndex)));
+
+			// skip to proper location
+			int bytesToSkip = (start*6*4);	// 6 coords (x,yA,yT,yG,yC,yN) -- 4 bytes each
+			int bytesSkipped = dis.skipBytes(bytesToSkip);
+			if (bytesSkipped < bytesToSkip) {
+				System.out.println("ERROR: skipped " + bytesSkipped + " out of " + bytesToSkip + " bytes when indexing");
+
+				for(int i=0; i<5; i++){
+					Arrays.fill(residuesTot[i], 0);
+				}
+				return;
+			}
+
+			int maxPoints = Math.min(BUFSIZE, getPointCount() - start);
+			// read in bytes
+			for (int i=0;i<maxPoints;i++) {
+				//xBuf[i] = dis.readInt();	// x
+				dis.readInt();	//x
+
+				for(int j=0; j<5; j++){
+					residuesTot[j][i] = dis.readInt();
+				}
+			}
+			// zero out remainder of buffer, if necessary
+			for(int i=0; i<5; i++){
+				Arrays.fill(residuesTot[i], maxPoints,BUFSIZE,0);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			//Arrays.fill(xBuf, 0);
+			for(int i=0; i<5; i++){
+				Arrays.fill(residuesTot[i], 0);
+			}
+		} finally {
+			GeneralUtils.safeClose(dis);
+		}
 	}
 }

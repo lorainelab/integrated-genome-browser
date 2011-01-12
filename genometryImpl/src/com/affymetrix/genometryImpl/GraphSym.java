@@ -82,7 +82,6 @@ public class GraphSym extends SimpleSymWithProps {
 		yBuf = new float[BUFSIZE];
 		wBuf = new int[BUFSIZE];
 		System.arraycopy(x, 0, this.xCoords, 0, this.pointCount);
-		readIntoBuffers(0);
 		
 		SeqSpan span = new SimpleSeqSpan(this.xMin, this.xMax, seq);
 		this.addSpan(span);
@@ -420,7 +419,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 * Read into buffers
 	 * @param start
 	 */
-	private synchronized void readIntoBuffers(int start) {
+	protected synchronized void readIntoBuffers(int start) {
 		DataInputStream dis = null;
 		try {
 			// open stream
@@ -469,6 +468,9 @@ public class GraphSym extends SimpleSymWithProps {
 		}
 	}
 
+	protected int getBufStart(){
+		return bufStart;
+	}
 
 	/**
 	 *  Get the seq that the graph's xcoords are specified in

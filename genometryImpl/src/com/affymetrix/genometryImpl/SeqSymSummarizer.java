@@ -41,7 +41,7 @@ public final class SeqSymSummarizer {
 		byte[] seq_residues = seq.getResidues(start, end).getBytes();
 		byte[] cur_residues;
 		byte ch;
-		int offset, cur_start, cur_end, length, y_offset = 0;
+		int k, offset, cur_start, cur_end, length, y_offset = 0;
 
 		File index = MisMatchGraphSym.createEmptyIndexFile(id, range, start);
 
@@ -84,16 +84,9 @@ public final class SeqSymSummarizer {
 					y[offset - y_offset + j] += 1;
 				}
 
-				if (ch == 'A' || ch == 'a') {
-					yR[0][offset - y_offset + j] += 1;
-				} else if (ch == 'T' || ch == 't') {
-					yR[1][offset - y_offset + j] += 1;
-				} else if (ch == 'G' || ch == 'g') {
-					yR[2][offset - y_offset + j] += 1;
-				} else if (ch == 'C' || ch == 'c') {
-					yR[3][offset - y_offset + j] += 1;
-				} else if (ch != '-'){
-					yR[4][offset - y_offset + j] += 1;
+				k = ResiduesChars.getValue((char)ch);
+				if(k > -1){
+					yR[k][offset - y_offset + j] += 1;
 				}
 			}
 
@@ -158,19 +151,6 @@ public final class SeqSymSummarizer {
 		summary = new MisMatchGraphSym(_x.elements(), _w.elements(), _y.elements(), AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
 		summary.setAllResidues(_yA.elements(), _yT.elements(), _yG.elements(), _yC.elements(), _yN.elements());
 		return summary;
-	}
-
-	private static int[] getResiduesIntArray(String residues){
-		
-		int length = residues.length();
-		int[] residuesInt = new int[length];
-		int ch;
-
-		for(int i=0; i < length; i++){
-			residuesInt[i] = SymWithResidues.ResiduesChars.valueOf(residues.charAt(i));
-		}
-
-		return residuesInt;
 	}
 
 	public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, Boolean isForward)  {

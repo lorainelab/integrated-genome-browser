@@ -21,7 +21,6 @@ import java.util.Map;
  */
 public class MisMatchGraphSym extends GraphSym {
 
-	Map<SymWithResidues.ResiduesChars, GraphSym> reference = new HashMap<SymWithResidues.ResiduesChars, GraphSym>();
 	int[][] residuesTot = null;
 	private final File helperIndex;
 
@@ -35,14 +34,6 @@ public class MisMatchGraphSym extends GraphSym {
 		this.helperIndex = helperIndex;
 		residuesTot = new int[5][BUFSIZE];
 		readIntoBuffers(0);
-	}
-
-	public void addReference(SymWithResidues.ResiduesChars ch, GraphSym gsym){
-		reference.put(ch, gsym);
-	}
-
-	public Map<SymWithResidues.ResiduesChars, GraphSym> getReference(){
-		return reference;
 	}
 	
 	@Override

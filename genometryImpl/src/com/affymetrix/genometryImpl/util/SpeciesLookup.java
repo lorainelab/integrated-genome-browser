@@ -97,7 +97,7 @@ public final class SpeciesLookup {
 
 		/* I believe that this will always return version, but... */
 		if (species == null) {
-			species = getStandardName(version);
+			species = speciesLookup.getPreferredName(version, cs);
 		}
 		
 		 return species;
@@ -138,7 +138,7 @@ public final class SpeciesLookup {
 	}
 
 	public static String getStandardName(String version){
-		String prefName = speciesLookup.getPreferredName(version, DEFAULT_CS);
+		String prefName = getSpeciesName(version);
 		Set<Pattern> patterns = new HashSet<Pattern>();
 		patterns.add(STANDARD_REGEX);
 		patterns.add(UCSC_REGEX);

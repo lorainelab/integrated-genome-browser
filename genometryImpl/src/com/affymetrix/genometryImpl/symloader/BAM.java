@@ -431,7 +431,7 @@ public final class BAM extends SymLoader {
 				int celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
 						char[] tempArr = new char[celLength];
-						Arrays.fill(tempArr, '_');		// print deletion as 'D'
+						Arrays.fill(tempArr, '_');		// print deletion as '_'
 						sb.append(tempArr);
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					insResidues.append(residues.substring(currentPos, currentPos + celLength));
@@ -441,7 +441,7 @@ public final class BAM extends SymLoader {
 					currentPos += celLength;	// print matches
 				} else if (cel.getOperator() == CigarOperator.N) {
 						char[] tempArr = new char[celLength];
-						Arrays.fill(tempArr, 'N');
+						Arrays.fill(tempArr, '-');
 						sb.append(tempArr);
 				} else if (cel.getOperator() == CigarOperator.PADDING) {
 						char[] tempArr = new char[celLength];

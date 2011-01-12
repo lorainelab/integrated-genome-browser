@@ -19,7 +19,7 @@ Callithrix jacchus	Common marmoset	C_jacchus	calJac	Callithrix_jacchus
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
 Carica papaya	Papaya	C_papaya
 Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus
-Chlamydomanas reinhardtii	motile single-celled green alga C_reinhardtii
+Chlamydomanas reinhardtii	motile single-celled green alga	C_reinhardtii
 Choloepus hoffmanni	Two-toed sloth	C_hoffmanni	choHof	Choloepus_hoffmanni
 Ciona intestinalis	vase tunicate (sea squirt)	C_intestinalis	ci	Ciona_intestinalis
 Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi

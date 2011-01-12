@@ -36,6 +36,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.BundleRepositoryPrefsView;
+import com.affymetrix.igb.window.service.IGetDefaultWindowService;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.WindowServiceListener;
 
@@ -138,7 +139,6 @@ public class OSGiHandler {
 			}
            	// load uncached required jars
 			for (String jarName : requiredJars) {
-				System.out.println("loading " + jarName);
 				String location = OSGiHandler.class.getResource(jarName).toString();
 				if (location != null){
 					Bundle bundle = bundleContext.installBundle(location);
@@ -160,15 +160,22 @@ public class OSGiHandler {
 			// register IGB service
 			bundleContext.registerService(IGBService.class.getName(), service, new Properties());
 
+			IWindowService windowService;
 			ServiceReference serviceReference = bundleContext.getServiceReference(IWindowService.class.getName());
-			if (serviceReference == null) {
-				Logger.getLogger(service.getClass().getName()).log(
-						Level.SEVERE, "Could not find window service");
-				System.exit(100);
+			if (serviceReference == null) { // no window service registered, use default
+				ServiceReference defaultServiceReference = bundleContext.getServiceReference(IGetDefaultWindowService.class.getName());
+				if (defaultServiceReference == null) {
+					Logger.getLogger(service.getClass().getName()).log(Level.SEVERE, "Could not find window service");
+					System.exit(100);
+				}
+				IGetDefaultWindowService getDefaultWindowService = (IGetDefaultWindowService) bundleContext.getService(defaultServiceReference);
+				windowService = getDefaultWindowService.getWindowService();
+				bundleContext.registerService(IWindowService.class.getName(), windowService, new Properties());
 			}
 			else {
-	           	notifyWindowService((IWindowService) bundleContext.getService(serviceReference));
+				windowService = (IWindowService) bundleContext.getService(serviceReference);
 			}
+           	notifyWindowService(windowService);
         }
         catch (Exception ex)
         {

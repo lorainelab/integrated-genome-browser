@@ -31,7 +31,8 @@ public abstract class WindowActivator implements BundleActivator {
             bundleContext.ungetService(igbServiceReference);
             processLoadPage();
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName() + " - Exception in Activator.start() -> " + ex.getMessage());
+            System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
+            ex.printStackTrace(System.out);
         }
 	}
 
@@ -43,7 +44,8 @@ public abstract class WindowActivator implements BundleActivator {
             windowService.addPlugIn(page, getName(), getTitle(), -1);
             bundleContext.ungetService(windowServiceReference);
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName() + " - Exception in Activator.start() -> " + ex.getMessage());
+            System.out.println(this.getClass().getName() + " - Exception in Activator.loadPage() -> " + ex.getMessage());
+            ex.printStackTrace(System.out);
         }
 	}
 

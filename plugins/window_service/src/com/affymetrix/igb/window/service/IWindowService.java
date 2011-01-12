@@ -1,5 +1,7 @@
 package com.affymetrix.igb.window.service;
 
+import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -14,5 +16,5 @@ public interface IWindowService {
 	public void addPlugIn(JComponent plugin, String name, String title, int position);
 	public boolean removePlugIn(String name);
 	public void setStatusBar(JComponent status_bar);
-	public JComponent getView(String viewName);
+	public List<JComponent> getPlugins();
 }

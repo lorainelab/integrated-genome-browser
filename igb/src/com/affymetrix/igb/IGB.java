@@ -585,6 +585,19 @@ public final class IGB extends Application
 	}
 
 	public JComponent getView(String viewName) {
-		return windowService.getView(viewName);
+		Class<?> viewClass;
+		try {
+			viewClass = Class.forName(viewName);
+		}
+		catch (ClassNotFoundException x) {
+			System.out.println(getClass().getName() + ".getView() failed for " + viewName);
+			return null;
+		}
+		for (JComponent plugin : windowService.getPlugins()) {
+			if (viewClass.isAssignableFrom(plugin.getClass())) {
+				return plugin;
+			}
+		}
+		return null;
 	}
 }

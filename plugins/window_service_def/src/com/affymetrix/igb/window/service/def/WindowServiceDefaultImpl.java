@@ -49,7 +49,7 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
 	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
 	private HashMap<String, JComponent> addedPlugins = new HashMap<String, JComponent>();
-	private final List<Object> plugins = new ArrayList<Object>(16);
+	private final List<JComponent> plugins = new ArrayList<JComponent>();
 	private JMenuItem move_tab_to_window_item;
 	private JMenuItem move_tabbed_panel_to_window_item;
 	private JFrame frm;
@@ -446,21 +446,8 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 	}
 
 	@Override
-	public JComponent getView(String viewName) {
-		Class<?> viewClass;
-		try {
-			viewClass = Class.forName(viewName);
-		}
-		catch (ClassNotFoundException x) {
-			System.out.println("IGBServiceImpl.getView() failed for " + viewName);
-			return null;
-		}
-		for (Object plugin : plugins) {
-			if (viewClass.isAssignableFrom(plugin.getClass())) {
-				return (JComponent)plugin;
-			}
-		}
-		return null;
+	public List<JComponent> getPlugins() {
+		return plugins;
 	}
 
 	public void actionPerformed(ActionEvent evt) {

@@ -1,2 +1,26 @@
 Manifest-Version: 1.0
-
+Bundle-ManifestVersion: 2
+Bundle-Name: IGB
+Bundle-SymbolicName: IGB
+Bundle-Version: 1.0.0
+Bundle-ActivationPolicy: lazy
+Export-Package: org.osgi.framework.system.packages.extra=org.osgi.service.obr;uses:="org.osgi.framework";version="1.0",
+ org.osgi.util.tracker,org.apache.felix.bundlerepository;uses:="org.osgi.framework";version="2.0",
+ com.affymetrix.igb.osgi.service,
+ com.affymetrix.igb.window.service,
+ com.affymetrix.igb,
+ javax.swing,
+ javax.swing.table,
+ javax.swing.event,
+ javax.swing.plaf,
+ javax.swing.plaf.basic,
+ javax.swing.border,
+ javax.imageio,
+ javax.xml.parsers,
+ javax.io,
+ javax.accessibility,
+ org.xml.sax,
+ org.xml.sax.helpers,
+ com.sun.java.swing.plaf.windows
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Description: IGB

@@ -97,7 +97,7 @@ public final class SpeciesLookup {
 
 		/* I believe that this will always return version, but... */
 		if (species == null) {
-			species = speciesLookup.getPreferredName(version, cs);
+			species = getStandardName(version);
 		}
 		
 		 return species;
@@ -137,26 +137,22 @@ public final class SpeciesLookup {
 		return speciesLookup.isSynonym(synonym1, synonym2);
 	}
 
-	public static String getStandardName(String species){
-		Set<String> syms = speciesLookup.getSynonyms(species);
+	public static String getStandardName(String version){
+		String prefName = speciesLookup.getPreferredName(version, DEFAULT_CS);
 		Set<Pattern> patterns = new HashSet<Pattern>();
 		patterns.add(STANDARD_REGEX);
 		patterns.add(UCSC_REGEX);
 
-		if(!syms.isEmpty()){
-			Matcher matcher;
-			for (Pattern pattern : patterns) {
-				for (String sym : syms) {
-					matcher = pattern.matcher(sym);
-					if (matcher.matches()) {
-						return matcher.group(0);
-					}
-				}
+		Matcher matcher;
+		for (Pattern pattern : patterns) {
+			matcher = pattern.matcher(prefName);
+			if (matcher.matches()) {
+				return matcher.group(1);
 			}
 		}
 
-		species = species.trim().replaceAll("\\s+", "_");
-		
-		return species;
+		prefName = prefName.trim().replaceAll("\\s+", "_");
+
+		return prefName;
 	}
 }

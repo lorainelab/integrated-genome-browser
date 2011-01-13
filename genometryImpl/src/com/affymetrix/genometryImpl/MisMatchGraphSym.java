@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -56,23 +55,24 @@ public class MisMatchGraphSym extends GraphSym {
 		System.arraycopy(n, 0, residuesTot[4], 0, n.length);
 	}
 
-	public final float getGraphTotalY(int i) {
+	public final float[] getAllResiduesY(int i) {
+
+		float[] ret = new float[residuesTot.length];
+
 		if (i >= this.getPointCount()) {
-			return 0;	// out of range
+			Arrays.fill(ret, 0);
+			return ret;	// out of range
 		}
-		if (i == 0) {
-			return getFirstYCoord();
-		}
+		
 		if (i < getBufStart() || i >= getBufStart() + BUFSIZE) {
 			readIntoBuffers(i);
 		}
 
-		float tot = 0;
 		for(int j =0; j<residuesTot.length; j++){
-			tot += residuesTot[j][i - getBufStart()];
+			ret[j] = residuesTot[j][i - getBufStart()];
 		}
 		
-		return tot;
+		return ret;
 	}
 
 	public static File createEmptyIndexFile(String graphName, int pointCount, int start) {

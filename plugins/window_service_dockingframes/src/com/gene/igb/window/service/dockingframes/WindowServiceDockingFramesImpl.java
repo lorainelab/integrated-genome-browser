@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 
+import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
 import bibliothek.gui.dock.common.CWorkingArea;
@@ -29,6 +30,8 @@ public class WindowServiceDockingFramesImpl implements IWindowService {
 	private JPanel map_view;
 	private CControl cControl;
     private CWorkingArea workingArea;
+    private int focusIndex = -1;
+    private DefaultSingleCDockable focusCDockable;
     private List<DefaultSingleCDockable> saveCDockables = new ArrayList<DefaultSingleCDockable>();
 
 	public WindowServiceDockingFramesImpl() {
@@ -46,8 +49,7 @@ public class WindowServiceDockingFramesImpl implements IWindowService {
         workingArea.setLocation( CLocation.base().normalRectangle( 0, 0, 1, 1 ) );
         workingArea.setVisible( true );
 		for (DefaultSingleCDockable cDockable : saveCDockables) {
-			workingArea.add(cDockable);
-			cDockable.setVisible( true );
+			addDockable(cDockable, cDockable == focusCDockable);
 		}
 		saveCDockables.clear();
 	}
@@ -77,6 +79,21 @@ public class WindowServiceDockingFramesImpl implements IWindowService {
 		plugin.putPluginProperty(IPlugin.TEXT_KEY_SEQ_MAP_VIEW, map_view);
 	}
 
+	private void addDockable(DefaultSingleCDockable page, boolean focus) {
+		workingArea.add( page );
+        page.setVisible( true );
+        System.out.println("count = " + workingArea.getStation().getDockableCount());
+        if (workingArea.getStation().getDockableCount() >= 1 && workingArea.getStation().getDockable(0) instanceof StackDockStation) {
+    		StackDockStation stackDockStation = (StackDockStation)workingArea.getStation().getDockable(0);
+        	if (focus) {
+				focusIndex = stackDockStation.getDockableCount() - 1;
+        	}
+        	if (focusIndex != -1) {
+				stackDockStation.getStackComponent().setSelectedIndex(focusIndex);
+        	}
+        }
+	}
+
 	private void loadPlugIn(PluginInfo pi, Object plugin) {
 		if (plugin instanceof IPlugin) {
 			IPlugin plugin_view = (IPlugin) plugin;
@@ -93,13 +110,16 @@ public class WindowServiceDockingFramesImpl implements IWindowService {
 		}
 		JComponent comp = (JComponent) plugin;
 		DefaultSingleCDockable page = new DefaultSingleCDockable(title, title, comp);
+		boolean focus = pi.getDefaultPosition() == 0;
 //		page.setTitleShown(false);
 		if (workingArea == null) {
 			saveCDockables.add(page);
+			if (focus) {
+				focusCDockable = page;
+			}
 		}
 		else {
-			workingArea.add( page );
-	        page.setVisible( true );
+			addDockable(page, focus);
 		}
 	}
 

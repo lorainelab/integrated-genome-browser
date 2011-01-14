@@ -29,8 +29,8 @@ public class MisMatchGraphSym extends GraphSym {
 		helperIndex = null;
 	}
 
-	public MisMatchGraphSym(File index, File helperIndex, int[] x, float ymin, float ymax, String uniqueGraphID, BioSeq seq) {
-		super(index, x, ymin, ymax, uniqueGraphID, seq);
+	public MisMatchGraphSym(File index, File helperIndex, int[] x, float yFirst, float ymin, float ymax, String uniqueGraphID, BioSeq seq) {
+		super(index, x, yFirst, ymin, ymax, uniqueGraphID, seq);
 		this.helperIndex = helperIndex;
 		residuesTot = new int[5][BUFSIZE];
 		readIntoBuffers(0);
@@ -217,6 +217,23 @@ public class MisMatchGraphSym extends GraphSym {
 		return xpos.elements();
 	}
 
+	static float getFirstY(File index){
+		DataInputStream dis = null;
+		float y = 0;
+
+		try {
+			dis = new DataInputStream(new BufferedInputStream(new FileInputStream(index)));
+			dis.readInt();
+			y = dis.readFloat();
+		}catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(dis);
+		}
+
+		return y;
+	}
+	
 	@Override
 	protected synchronized void readIntoBuffers(int start) {
 		super.readIntoBuffers(start);

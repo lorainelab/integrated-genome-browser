@@ -59,7 +59,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 */
 	private boolean id_locked = false;
 
-	public GraphSym(File f, int[] x, float yMin, float yMax, String id, BioSeq seq){
+	public GraphSym(File f, int[] x, float yFirst, float yMin, float yMax, String id, BioSeq seq){
 		super();
 
 		this.gid = id;
@@ -69,7 +69,7 @@ public class GraphSym extends SimpleSymWithProps {
 		this.xMin = x[0];
 		this.xMax = x[x.length-1];
 
-		yFirst = 0;
+		this.yFirst = yFirst;
 		pointCount = x.length;
 
 		this.min_ycoord = yMin;

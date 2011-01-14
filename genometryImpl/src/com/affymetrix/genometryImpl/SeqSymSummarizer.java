@@ -111,7 +111,8 @@ public final class SeqSymSummarizer {
 		File finalIndex = MisMatchGraphSym.createEmptyIndexFile(id, 0, 0);
 		File finalHelper = MisMatchGraphSym.createEmptyIndexFile(id + "helper", 0, 0);
 		int[] x = MisMatchGraphSym.getXCoords(index, finalIndex, finalHelper, range);
-		summary = new MisMatchGraphSym(finalIndex, finalHelper, x, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
+		float yFirst = MisMatchGraphSym.getFirstY(finalIndex);
+		summary = new MisMatchGraphSym(finalIndex, finalHelper, x, yFirst, minmax[0], minmax[1], AnnotatedSeqGroup.getUniqueGraphID(id, seq), seq);
 		return summary;
 	}
 

@@ -77,6 +77,8 @@ public final class LoadFileAction extends AbstractAction {
 		}
 	};
 	private static MergeOptionChooser chooser = null;
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+
 	/**
 	 *  Constructor.
 	 *  @param ft  a FileTracker used to keep track of directory to load from
@@ -181,7 +183,6 @@ public final class LoadFileAction extends AbstractAction {
 	/** Load a file into the global singleton genometry model. */
 	private static void loadFile(final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
 
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		MergeOptionChooser fileChooser = getFileChooser();
 		File currDir = load_dir_tracker.getFile();
 		if (currDir == null) {
@@ -212,7 +213,7 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 	public static void openURI(URI uri, String fileName){
-		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		openURI(uri, fileName, true, group, group.getOrganism());
 	}
 	
@@ -239,7 +240,7 @@ public final class LoadFileAction extends AbstractAction {
 		ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 		//Annotated Seq Group must be selected before feature table change call.
-		GenometryModel.getGenometryModel().setSelectedSeqGroup(gFeature.gVersion.group);
+		gmodel.setSelectedSeqGroup(gFeature.gVersion.group);
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
 
@@ -310,9 +311,9 @@ public final class LoadFileAction extends AbstractAction {
 			zis = new ZipInputStream(istr);
 			zis.getNextEntry();
 			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
-			AnnotatedSeqGroup gr = GenometryModel.getGenometryModel().getSeqGroup(archiveInfo.getVersionedGenome());
+			AnnotatedSeqGroup gr = gmodel.getSeqGroup(archiveInfo.getVersionedGenome());
 			if (gr != null) {
-				GenometryModel.getGenometryModel().setSelectedSeqGroup(gr);
+				gmodel.setSelectedSeqGroup(gr);
 				return gr;
 			}
 		} catch (Exception ex) {
@@ -347,12 +348,12 @@ public final class LoadFileAction extends AbstractAction {
 			@Override
 			public void done() {
 				SeqGroupView.refreshTable();
-				if (loadGroup.getSeqCount() > 0 && GenometryModel.getGenometryModel().getSelectedSeq() == null) {
+				if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
 					// select a chromosomes
-					GenometryModel.getGenometryModel().setSelectedSeq(loadGroup.getSeq(0));
+					gmodel.setSelectedSeq(loadGroup.getSeq(0));
 				}
 
-				if(GenometryModel.getGenometryModel().getSelectedSeq() != null &&
+				if(gmodel.getSelectedSeq() != null &&
 						((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 					GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 				}
@@ -392,7 +393,6 @@ public final class LoadFileAction extends AbstractAction {
 			return false;
 		}
 
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
 		boolean mergeSelected = loadGroup == null ? false :true;
 		if (loadGroup == null) {

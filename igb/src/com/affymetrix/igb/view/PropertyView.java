@@ -363,7 +363,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	public static String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, SeqMapView seqMap){
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> props = determineProps(sym, seqMap);
-		props.putAll(sym.getLocationProperties(x));
+		props.putAll(sym.getLocationProperties(x, seqMap.getVisibleSpan()));
 		propList.add(props);
 		return getPropertiesRow(propList.toArray(new Map[propList.size()]),graphToolTipOrder(),"",true);
 	}

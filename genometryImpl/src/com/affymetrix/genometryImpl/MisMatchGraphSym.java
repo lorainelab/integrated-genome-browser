@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,8 +37,18 @@ public class MisMatchGraphSym extends GraphSym {
 	}
 	
 	@Override
-	public Map<String, Object> getLocationProperties(int x){
-		return super.getLocationProperties(x);
+	public Map<String, Object> getLocationProperties(int x, SeqSpan span){
+		int leftBound = this.determineBegIndex(x);
+		if(span.getMax() - span.getMin() > BUFSIZE || leftBound < 0)
+			return super.getLocationProperties(x, span);
+
+		Map<String, Object> locprops = new HashMap<String, Object>();
+
+		for(int i=0; i<residuesTot.length; i++){
+			locprops.put(String.valueOf(ResiduesChars.getCharFor(i)), residuesTot[i][leftBound]);
+		}
+
+		return locprops;
 	}
 
 	void setAllResidues(int[] a, int[] t, int[] g, int[] c, int[] n) {

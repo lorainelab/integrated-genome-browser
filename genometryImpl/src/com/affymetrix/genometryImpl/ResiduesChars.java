@@ -12,14 +12,20 @@ public enum ResiduesChars {
 	N(new char[]{'N','n', 'D', 'd', '_'},4);
 
 	final static Map<Character,Integer> rcMap;
-
+	final static Map<Integer, Character> reverseRcMap;
 	static{
-		rcMap = new HashMap<Character, Integer>(5);
+		rcMap = new HashMap<Character, Integer>(10);
+		reverseRcMap = new HashMap<Integer, Character>(5);
 		for(ResiduesChars rc : values()){
 			for(char ch : rc.chars){
 				rcMap.put(ch, rc.value);
 			}
+			reverseRcMap.put(rc.value, rc.chars[0]);
 		}
+	}
+
+	public static char getCharFor(int j) {
+		return reverseRcMap.get(j);
 	}
 
 	char[] chars;

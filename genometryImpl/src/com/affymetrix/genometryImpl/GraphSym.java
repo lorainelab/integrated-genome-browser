@@ -509,7 +509,7 @@ public class GraphSym extends SimpleSymWithProps {
 		return super.setProperty(name, val);
 	}
 
-	public Map<String, Object> getLocationProperties(int x){
+	public Map<String, Object> getLocationProperties(int x, SeqSpan span){
 		Map<String, Object> locprops = new HashMap<String, Object>();
 
 		locprops.put("x coord", x);

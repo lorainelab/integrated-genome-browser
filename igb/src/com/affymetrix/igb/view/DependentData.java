@@ -80,8 +80,10 @@ public class DependentData {
 		SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
 
 		//Load Residues
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		GeneralLoadView.loadResidues(gmodel.getSelectedSeqGroup().getID(), aseq, loadSpan, true, true);
+		if(!aseq.isAvailable(startEnd[0], startEnd[1])){
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
+			GeneralLoadView.loadResidues(gmodel.getSelectedSeqGroup().getID(), aseq, loadSpan, true, true);
+		}
 		
 		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, startEnd[0], startEnd[1]);
 

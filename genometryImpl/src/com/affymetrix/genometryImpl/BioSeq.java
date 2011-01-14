@@ -641,6 +641,20 @@ public final class BioSeq implements SearchableCharIterator {
 		return true;
 	}
 
+	//Same as isComplete but faster and effective.
+	public boolean isAvailable(){
+		return isAvailable(start, end);
+	}
+
+	public boolean isAvailable(int start, int end){
+		SeqSymmetry rootsym = this.getComposition();
+		if (rootsym == null) {
+			return false;
+		}
+
+		return SeqUtils.contains(rootsym.getSpan(this), new SimpleSeqSpan(start, end, this));
+	}
+	
 	public String substring(int start, int end) {
 		if (residues_provider == null) {
 			return this.getResidues(start, end);

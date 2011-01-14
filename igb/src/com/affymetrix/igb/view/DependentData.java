@@ -4,10 +4,12 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
@@ -68,20 +70,42 @@ public class DependentData {
 
 	private GraphSym createMisMatchGraph(BioSeq aseq){
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		syms.add(aseq.getAnnotation(parent_method));
-		SeqMapView gviewer = Application.getSingleton().getMapView();
-		int start = gviewer.getVisibleSpan().getMin();
-		int end = gviewer.getVisibleSpan().getMax();
+		SeqSymmetry tsym = aseq.getAnnotation(parent_method);
+		if(tsym == null || tsym.getChildCount() == 0){
+			return null;
+		}
+		syms.add(tsym);
+		
+		int[] startEnd = getStartEnd(tsym, aseq);
+		SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
 
 		//Load Residues
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		GeneralLoadView.loadResidues(gmodel.getSelectedSeqGroup().getID(), aseq, gviewer.getVisibleSpan(), true, true);
+		GeneralLoadView.loadResidues(gmodel.getSelectedSeqGroup().getID(), aseq, loadSpan, true, true);
 		
-		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, start, end);
+		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, startEnd[0], startEnd[1]);
 
 		return mgsym;
 	}
 
+	static int[] getStartEnd(SeqSymmetry tsym, BioSeq aseq){
+		int start = Integer.MAX_VALUE, end = Integer.MIN_VALUE;
+
+		for(int i=0; i<tsym.getChildCount(); i++){
+			SeqSymmetry childSym = tsym.getChild(i);
+			SeqSpan span = childSym.getSpan(aseq);
+			if(span.getMax() > end){
+				end = span.getMax();
+			}
+
+			if(span.getMin() < start){
+				start = span.getMin();
+			}
+		}
+
+		return new int[]{start, end};
+	}
+	
 	private GraphSym createSummaryGraph(BioSeq aseq){
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		syms.add(aseq.getAnnotation(parent_method));

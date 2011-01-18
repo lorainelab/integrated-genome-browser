@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.File;
 import java.io.InputStream;
 
 import org.apache.felix.framework.Felix;
@@ -65,11 +66,32 @@ public class OSGiHandler {
 		windowServiceListeners.remove(windowServiceListener);
 	}
 
+	private String getCacheDir() {
+		return PreferenceUtils.getAppDataDirectory() + "cache/felix-cache";
+	}
+
+	public void clearCache() {
+		deleteDirectory(new File(getCacheDir()));
+	}
+
+	private boolean deleteDirectory(File path) {
+		if (path.exists()) {
+			File[] files = path.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					deleteDirectory(files[i]);
+				} else {
+					files[i].delete();
+				}
+			}
+		}
+		return (path.delete());
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final void loadFelix() {
 		Map configMap = new StringMap(false);
-		configMap.put("org.osgi.framework.storage", PreferenceUtils.getAppDataDirectory() + "cache/felix-cache");
+		configMap.put("org.osgi.framework.storage", getCacheDir());
 		for (String key : BUNDLE.getString("pluginsConfigList").split(",")) {
 			configMap.put(key, BUNDLE.getString(key));
 		}
@@ -194,7 +216,7 @@ public class OSGiHandler {
 		TAB_PLUGIN_PREFS = pp.addPrefEditorComponent(new BundleRepositoryPrefsView());
     }
 
-	private void stopOSGi() {
+	public void stopOSGi() {
         try
         {
             if (felix != null)

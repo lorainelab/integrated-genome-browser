@@ -166,6 +166,11 @@ public final class IGB extends Application
 				LocalUrlCacher.setOffLine("true".equals(offline));
 			}
 
+			String resetOSGi = get_arg("-resetOSGi", args);
+			if (resetOSGi != null) {
+				OSGiHandler.getInstance().clearCache();
+			}
+
 			singleton_igb = new IGB();
 
 			PrefsLoader.loadIGBPrefs(args); // force loading of prefs

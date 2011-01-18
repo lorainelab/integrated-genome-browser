@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 
+import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 //import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 
@@ -40,4 +41,7 @@ public interface IGBService {
 //	public void addToRefreshList(SeqMapRefreshed smr);
 	// for external page
 	public String getUCSCQuery();
+	// for transforms
+	public void addTransform(FloatTransformer transformer);
+	public void removeTransform(String name);
 }

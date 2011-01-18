@@ -24,15 +24,16 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
-import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
-import com.affymetrix.genometryImpl.util.FloatTransformer.InverseLogTransform;
-import com.affymetrix.genometryImpl.util.FloatTransformer.LogTransform;
+import com.affymetrix.genometryImpl.util.IdentityTransform;
+import com.affymetrix.genometryImpl.util.InverseTransform;
+import com.affymetrix.genometryImpl.util.LogTransform;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -56,7 +57,7 @@ import javax.swing.event.*;
 
 public final class SimpleGraphTab extends JPanel
 				implements SeqSelectionListener, SymSelectionListener {
-
+	private static final long serialVersionUID = 1L;
 	SeqMapView gviewer = null;
 	BioSeq current_seq;
 	GenometryModel gmodel;
@@ -83,24 +84,19 @@ public final class SimpleGraphTab extends JPanel
 	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
 	private static Map<String,FloatTransformer> name2transform;
-	private static final String IDENTITY_TRANSFORM = "Copy";
-	private static final String LOG_10 = "Log10";
-	private static final String LOG_2 = "Log2";
-	private static final String LOG_NATURAL = "Natural Log";
-	private static final String INVERSE_LOG_10 = "Inverse Log10";
-	private static final String INVERSE_LOG_2 = "Inverse Log2";
-	private static final String INVERSE_LOG_NATURAL = "Inverse Natural Log";
 	private static final String select2graphs= "Select exactly two graphs";
+
+	private static void includeTransform(FloatTransformer floatTransformer) {
+		name2transform.put(floatTransformer.getName(), floatTransformer);
+	}
 
 	static {
 		name2transform = new LinkedHashMap<String,FloatTransformer>();
-		name2transform.put(IDENTITY_TRANSFORM, new IdentityTransform());
-		name2transform.put(LOG_10, new LogTransform(10));
-		name2transform.put(LOG_2, new LogTransform(2));
-		name2transform.put(LOG_NATURAL, new LogTransform(Math.E));
-		name2transform.put(INVERSE_LOG_10, new InverseLogTransform(10));
-		name2transform.put(INVERSE_LOG_2, new InverseLogTransform(2));
-		name2transform.put(INVERSE_LOG_NATURAL, new InverseLogTransform(Math.E));
+		includeTransform(new IdentityTransform());
+		includeTransform(new LogTransform(2.0));
+		includeTransform(new LogTransform(10.0));
+		includeTransform(new LogTransform(Math.E));
+		includeTransform(new LogTransform());
 	}
 	private final JButton cloneB = new JButton(IGBConstants.BUNDLE.getString("goButton"));
 	private final JLabel scale_type_label = new JLabel(IGBConstants.BUNDLE.getString("transformationLabel"));
@@ -108,9 +104,10 @@ public final class SimpleGraphTab extends JPanel
 	private final JCheckBox labelCB = new JCheckBox(IGBConstants.BUNDLE.getString("labelCheckBox"));
 	private final JCheckBox yaxisCB = new JCheckBox(IGBConstants.BUNDLE.getString("yAxisCheckBox"));
 	private final JCheckBox floatCB = new JCheckBox(IGBConstants.BUNDLE.getString("floatingCheckBox"));
-
+	private final JCheckBox inverseCB = new JCheckBox(IGBConstants.BUNDLE.getString("inverseLabel"));
 
 	private final Action select_all_graphs_action = new AbstractAction(IGBConstants.BUNDLE.getString("selectAllGraphs")) {
+		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			if (gviewer != null) {
@@ -119,12 +116,14 @@ public final class SimpleGraphTab extends JPanel
 		}
 	};
 	private final Action delete_selected_graphs_action = new AbstractAction(IGBConstants.BUNDLE.getString("deleteSelectedGraphs")) {
+		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			GraphAdjusterView.deleteGraphs(gmodel, gviewer, grafs);
 		}
 	};
 	private final Action save_selected_graphs_action = new AbstractAction(IGBConstants.BUNDLE.getString("saveSelectedGraphs") + "...") {
+		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			GraphAdjusterView.saveGraphs(gviewer, gmodel, grafs);
@@ -132,6 +131,7 @@ public final class SimpleGraphTab extends JPanel
 	};
 	private final Action graph_threshold_action = new AbstractAction(
 			IGBConstants.BUNDLE.getString("graphThresholding") + "...") {
+		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			showGraphScoreThreshSetter();
@@ -141,6 +141,8 @@ public final class SimpleGraphTab extends JPanel
 	private final JButton saveB = new JButton(save_selected_graphs_action);
 	private final JButton deleteB = new JButton(delete_selected_graphs_action);
 	private final JButton threshB = new JButton(graph_threshold_action);
+	private final JLabel param_label = new JLabel();
+	private final JTextField paramT = new JTextField("", 2);
 	private final JButton combineB = new JButton(IGBConstants.BUNDLE.getString("combineButton"));
 	private final JButton splitB = new JButton(IGBConstants.BUNDLE.getString("splitButton"));
 	private JButton addB;
@@ -293,7 +295,7 @@ public final class SimpleGraphTab extends JPanel
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		List selected_syms = evt.getSelectedSyms();
+		List<SeqSymmetry> selected_syms = evt.getSelectedSyms();
 		// Only pay attention to selections from the main SeqMapView or its map.
 		// Ignore the splice view as well as events coming from this class itself.
 
@@ -417,6 +419,7 @@ public final class SimpleGraphTab extends JPanel
 		delete_selected_graphs_action.setEnabled(b);
 		cloneB.setEnabled(b);
 		scaleCB.setEnabled(cloneB.isEnabled());
+		paramT.setEnabled(cloneB.isEnabled());
 
 		combineB.setEnabled(!all_are_combined && grafs.size() >= 2);
 		splitB.setEnabled(any_are_combined);
@@ -540,11 +543,20 @@ public final class SimpleGraphTab extends JPanel
 	}
 
 	private static void enableButtons(ButtonGroup g, boolean b) {
-		Enumeration e = g.getElements();
+		Enumeration<AbstractButton> e = g.getElements();
 		while (e.hasMoreElements()) {
-			AbstractButton but = (AbstractButton) e.nextElement();
-			but.setEnabled(b);
+			e.nextElement().setEnabled(b);
 		}
+	}
+
+	public void addTransform(FloatTransformer transformer) {
+		includeTransform(transformer);
+		((AdvancedGraphPanel)advanced_panel).loadTransforms();
+	}
+
+	public void removeTransform(String name) {
+		name2transform.remove(name);
+		((AdvancedGraphPanel)advanced_panel).loadTransforms();
 	}
 
 	private final class GraphStyleSetter implements ActionListener {
@@ -672,6 +684,8 @@ public final class SimpleGraphTab extends JPanel
 	}
 	
 	private final class AdvancedGraphPanel extends JPanel {
+		private static final long serialVersionUID = 1L;
+		private static final int PARAM_TEXT_WIDTH = 60;
 
 		public AdvancedGraphPanel() {
 
@@ -680,17 +694,23 @@ public final class SimpleGraphTab extends JPanel
 
 			advanced_panel.setLayout(new BoxLayout(advanced_panel, BoxLayout.Y_AXIS));
 
-			Iterator iter = name2transform.keySet().iterator();
-			while (iter.hasNext()) {
-				String name = (String) iter.next();
-				scaleCB.addItem(name);
-			}
+			loadTransforms();
 
+			paramT.setText("");
+			paramT.setVisible(false);
 			Box grouping_box = Box.createHorizontalBox();
 			grouping_box.add(Box.createRigidArea(new Dimension(6, 0)));
 			grouping_box.add(combineB);
 			grouping_box.add(Box.createRigidArea(new Dimension(5, 0)));
 			grouping_box.add(splitB);
+			grouping_box.add(Box.createRigidArea(new Dimension(5, 0)));
+
+			Box param_box = Box.createHorizontalBox();
+			param_box.setAlignmentX(0.0f);
+			param_box.add(param_label);
+			param_box.add(paramT);
+			paramT.setMaximumSize(new Dimension((int)Math.round(paramT.getPreferredSize().getWidth()), PARAM_TEXT_WIDTH));
+			grouping_box.add(param_box);
 			grouping_box.add(Box.createRigidArea(new Dimension(5, 0)));
 
 			Box decoration_row = Box.createHorizontalBox();
@@ -700,6 +720,22 @@ public final class SimpleGraphTab extends JPanel
 			decoration_row.add(yaxisCB);
 			decoration_row.add(floatCB);
 
+			scaleCB.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String selection = (String) scaleCB.getSelectedItem();
+					FloatTransformer trans = name2transform.get(selection);
+					String paramPrompt = trans.getParamPrompt();
+					if (paramPrompt == null) {
+						param_label.setText("");
+						paramT.setVisible(false);
+					}
+					else {
+						param_label.setText(paramPrompt + " ");
+						paramT.setVisible(true);
+					}
+				}
+			});
 			// A box to contain the scaleCB JComboBox, to help get the alignment right
 			Box scaleCB_box = Box.createHorizontalBox();
 			scaleCB_box.setAlignmentX(0.0f);
@@ -707,6 +743,8 @@ public final class SimpleGraphTab extends JPanel
 			scaleCB_box.add(scaleCB);
 			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
 			scaleCB_box.add(cloneB);
+			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
+			scaleCB_box.add(inverseCB);
 			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
 
 			scaleCB_box.setMaximumSize(scaleCB_box.getPreferredSize());
@@ -717,11 +755,14 @@ public final class SimpleGraphTab extends JPanel
 			advanced_panel.add(decoration_row);
 			advanced_panel.add(Box.createRigidArea(new Dimension(5, 12)));
 
-
 			advanced_panel.add(scale_type_label);
 			scaleCB_box.setAlignmentX(0.0f);
 
 			advanced_panel.add(scaleCB_box);
+
+			param_box.setAlignmentX(0.0f);
+			advanced_panel.add(Box.createRigidArea(new Dimension(5, 12)));
+			advanced_panel.add(param_box);
 
 			grouping_box.setAlignmentX(0.0f);
 			advanced_panel.add(Box.createRigidArea(new Dimension(5, 12)));
@@ -822,6 +863,13 @@ public final class SimpleGraphTab extends JPanel
 			});
 		}
 
+		public void loadTransforms() {
+			scaleCB.removeAll();
+			for (String name : name2transform.keySet()) {
+				scaleCB.addItem(name);
+			}
+		}
+
 		/**
 		 *  Puts all selected graphs in the same tier.
 		 *  Current glyph factories do not support floating the combined graphs.
@@ -913,9 +961,17 @@ public final class SimpleGraphTab extends JPanel
 		private void scaleGraphs() {
 			String selection = (String) scaleCB.getSelectedItem();
 			FloatTransformer trans = name2transform.get(selection);
-			List<GraphSym> newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);
-			if (!newgrafs.isEmpty()) {
-				updateViewer();
+			if (inverseCB.isSelected()) {
+				trans = new InverseTransform(trans);
+			}
+			if (trans.setParameter(paramT.getText())) {
+				List<GraphSym> newgrafs = GraphAdjusterView.transformGraphs(grafs, trans.getDisplay(), trans);
+				if (!newgrafs.isEmpty()) {
+					updateViewer();
+				}
+			}
+			else {
+				ErrorHandler.errorPanel(IGBConstants.BUNDLE.getString("invalidParam") + " \"" + paramT.getText() + "\" for " + trans.getParamPrompt());
 			}
 		}
 

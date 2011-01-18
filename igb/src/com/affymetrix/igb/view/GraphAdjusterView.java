@@ -29,7 +29,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
-import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
+import com.affymetrix.genometryImpl.util.IdentityTransform;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;

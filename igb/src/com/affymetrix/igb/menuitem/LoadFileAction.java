@@ -12,18 +12,17 @@
  */
 package com.affymetrix.igb.menuitem;
 
-import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.view.SeqGroupView;
-import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.zip.ZipInputStream;
 import java.awt.event.*;
 import javax.swing.*;
 import java.net.URI;
 import java.text.MessageFormat;
+
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -38,11 +37,18 @@ import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.MenuUtil;
+
 import com.affymetrix.genoviz.util.FileDropHandler;
 import com.affymetrix.genoviz.util.ErrorHandler;
+
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.view.SeqGroupView;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.util.ScriptFileLoader;
@@ -258,13 +264,7 @@ public final class LoadFileAction extends AbstractAction {
 
 		GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, speciesName);
 
-		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
-		String extension = ParserController.getExtension(unzippedStreamName);
-
-		if(extension.equals(".useq")){
-			loadGroup = handleUseq(uri, loadGroup);
-			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
-		}
+		version = setVersion(uri, loadGroup, version);
 
 		// handle URL case.
 		String uriString = uri.toString();
@@ -295,7 +295,7 @@ public final class LoadFileAction extends AbstractAction {
 		for (GenericVersion version : loadGroup.getAllVersions()) {
 			// See if symloader feature was created with the same uri.
 			for (GenericFeature feature : version.getFeatures()) {
-				if (feature.symL != null && feature.symL.uri.equals(uri)) {
+				if (uri.equals(feature.getURI())) {
 					return false;
 				}
 			}
@@ -303,6 +303,66 @@ public final class LoadFileAction extends AbstractAction {
 		return true;
 	}
 
+	/**
+	 * Handle file formats that has SeqGroup info.
+	 * @param uri
+	 * @param loadGroup
+	 * @param version
+	 * @return
+	 */
+	private static GenericVersion setVersion(URI uri, AnnotatedSeqGroup loadGroup, GenericVersion version){
+		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
+		String extension = ParserController.getExtension(unzippedStreamName);
+		
+		if(extension.equals(".useq")){
+			loadGroup = handleUseq(uri, loadGroup);
+			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+		}
+
+		if(extension.equals(".bar")){
+			loadGroup = handleBar(uri, loadGroup);
+			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+		}
+
+		return version;
+	}
+
+	/**
+	 * Get AnnotatedSeqGroup for BAR file format.
+	 * @param uri
+	 * @param group
+	 * @return
+	 */
+	private static AnnotatedSeqGroup handleBar(URI uri, AnnotatedSeqGroup group){
+		InputStream istr = null;
+		try {
+			istr =  LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			List<AnnotatedSeqGroup> groups = BarParser.getSeqGroups(istr, group, gmodel);
+			if(groups.isEmpty())
+				return group;
+
+			//TODO: What if there are more than one seq group ?
+			if(groups.size() > 1){
+				Logger.getLogger(BarParser.class.getName()).log(
+						Level.WARNING, "File {0} has more than one group", new Object[]{uri.toString()});
+			}
+
+			return groups.get(0);
+		}catch (Exception ex) {
+			ex.printStackTrace();
+		}finally{
+			GeneralUtils.safeClose(istr);
+		}
+
+		return group;
+	}
+
+	/**
+	 * Get AnnotatedSeqGroup for USEQ file format.
+	 * @param uri
+	 * @param group
+	 * @return
+	 */
 	private static AnnotatedSeqGroup handleUseq(URI uri, AnnotatedSeqGroup group){
 		InputStream istr = null;
 		ZipInputStream zis = null;
@@ -318,10 +378,11 @@ public final class LoadFileAction extends AbstractAction {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			// Note these are *not* closed in the finally block.  They are hopefully closed later by USeq
+		}finally{
 			GeneralUtils.safeClose(istr);
 			GeneralUtils.safeClose(zis);
 		}
+		
 		return group;
 	}
 

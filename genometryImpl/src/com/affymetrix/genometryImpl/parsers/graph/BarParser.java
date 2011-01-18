@@ -441,6 +441,51 @@ public final class BarParser implements AnnotationWriter {
 		return graphs;
 	}
 
+	public static List<AnnotatedSeqGroup> getSeqGroups(InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel)
+			throws IOException {
+
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		List<AnnotatedSeqGroup> groups = new ArrayList<AnnotatedSeqGroup>(4);
+
+		try {
+			if (istr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream) istr;
+			} else {
+				bis = new BufferedInputStream(istr);
+			}
+			dis = new DataInputStream(bis);
+
+			BarFileHeader bar_header = parseBarHeader(dis);
+			int total_seqs = bar_header.seq_count;
+			int vals_per_point = bar_header.vals_per_point;
+			
+			for (int k = 0; k < total_seqs; k++) {
+				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
+				AnnotatedSeqGroup group = seq_header.aseq.getSeqGroup();
+				if(!groups.contains(group))
+					groups.add(group);
+				
+				skipRest(seq_header, vals_per_point, dis);
+			}
+			
+		} finally {
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(dis);
+		}
+
+		return groups;
+	}
+
+	private static void skipRest(BarSeqHeader seq_header, int vals_per_point, DataInputStream dis) throws IOException {
+		int total_points = seq_header.data_point_count;
+
+		if (vals_per_point == 1) {
+			throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
+		}
+		skipBytes(total_points * vals_per_point * 4, dis);
+	}
+
 	private static void handle2ValPerPoint(
 			int total_points, DataInputStream dis, BioSeq seq, int min, int max, String graph_id, boolean ensure_unique_id,
 			Map<String, String> file_tagvals, boolean bar2, Map<String, String> seq_tagvals, List<GraphSym> graphs)
@@ -745,7 +790,7 @@ public final class BarParser implements AnnotationWriter {
 		// This is necessary to make sure new groups get added to the DataLoadView.
 		// maybe need a SeqGroupModifiedEvent class instead.
 		Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Switching to group {0}", group.getID());
-		gmodel.setSelectedSeqGroup(group);
+		
 		return group;
 	}
 

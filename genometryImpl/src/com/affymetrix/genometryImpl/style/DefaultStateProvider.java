@@ -51,9 +51,17 @@ public class DefaultStateProvider implements StateProvider {
 	}
 
 	public GraphState getGraphState(String id) {
+		return getGraphState(id, null);
+	}
+
+	public GraphState getGraphState(String id, String human_name) {
 		GraphState state = id2graphState.get(id);
 		if (state == null) {
 			state = new GraphState(id);
+
+			if(human_name != null)
+				state.getTierStyle().setHumanName(human_name);
+			
 			id2graphState.put(id, state);
 		}
 		return state;

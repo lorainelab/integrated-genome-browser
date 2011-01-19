@@ -285,6 +285,14 @@ public final class QuickLoad extends SymLoader {
 		}
 
 		List<? extends SeqSymmetry> results = this.getGenome();
+
+		//For a file format that adds SeqSymmetries from
+		//within the parser handle them here.
+		if (extension.endsWith(".chp")) {
+			// special-case chp files, due to their LazyChpSym DAS/2 loading
+			return true;
+		}
+
 		Map<BioSeq, List<SeqSymmetry>> seq_syms = SymLoader.splitResultsBySeqs(results);
 		SeqSpan span = null;
 		BioSeq seq = null;

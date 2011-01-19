@@ -403,6 +403,11 @@ public final class LoadFileAction extends AbstractAction {
 						addedSeq.setLength(seq.getLength());
 					}
 				}
+
+				if(((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+					((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
+				}
+				
 				return null;
 			}
 
@@ -414,11 +419,6 @@ public final class LoadFileAction extends AbstractAction {
 					gmodel.setSelectedSeq(loadGroup.getSeq(0));
 				}
 
-				if(gmodel.getSelectedSeq() != null &&
-						((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
-					GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-				}
-				
 				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
 			}
 		};

@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -371,7 +372,7 @@ public final class LoadFileAction extends AbstractAction {
 			zis = new ZipInputStream(istr);
 			zis.getNextEntry();
 			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
-			AnnotatedSeqGroup gr = gmodel.getSeqGroup(archiveInfo.getVersionedGenome());
+			AnnotatedSeqGroup gr = USeqGraphParser.getSeqGroup(archiveInfo.getVersionedGenome(), gmodel);
 			if (gr != null) {
 				gmodel.setSelectedSeqGroup(gr);
 				return gr;

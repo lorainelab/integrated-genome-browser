@@ -208,11 +208,7 @@ public class USeqGraphParser {
 		// if no group found, create a new one using versionedGenome
 		if (group == null)   group = gmodel.addSeqGroup(versionedGenome);
 		//add group
-		if (gmodel.getSelectedSeqGroup() != group) {
-			// This is necessary to make sure new groups get added to the DataLoadView.
-			// maybe need a SeqGroupModifiedEvent class instead.
-			gmodel.setSelectedSeqGroup(group);
-		}
+
 		return group;
 	}
 }

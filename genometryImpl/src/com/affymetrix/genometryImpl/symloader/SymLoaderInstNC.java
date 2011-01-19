@@ -1,10 +1,13 @@
 package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.util.List;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  *
@@ -27,4 +30,13 @@ public class SymLoaderInstNC extends SymLoaderInst{
 		return strategyList;
 	}
 
+	@Override
+	public List<BioSeq> getChromosomeList(){
+		return Collections.<BioSeq>emptyList();
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> getGenome() {
+		return super.getGenome();
+	}
 }

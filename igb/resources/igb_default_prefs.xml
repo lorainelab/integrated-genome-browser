@@ -20,6 +20,14 @@
 <!-- servers disabled by default -->
 <server type="das2" name="UofUtahBioinfoCore" url="http://bioserver.hci.utah.edu:8080/DAS2DB/genome" enabled="false" />
 
+<!-- Specify plugin repositories here with name, and url -->
+
+  <repository name="local" url="http://localhost:8080/IGBServer" enabled="true" />
+
+  <repository name="Bioviz" url="http://bioviz.org/IGBServer" enabled="false" />
+
+  <repository name="Genentech" url="http://gene.com/IGBServer" enabled="false" />
+
   <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression (case insensitive by default)
@@ -211,10 +219,10 @@
     name="PlantGDB: AtGDB"
     url="http://www.plantgdb.org/AtGDB/cgi-bin/findRecord.pl?gi=$$"
   />
-
+ 
   <!-- db_xref linkouts -->
-  <!-- see http://www.ncbi.nlm.nih.gov/projects/collab/db_xref.html to support more -->
-  <annotation_url annot_id_regex="^FLYBASE:.*$" id_field="db_xref"
+  <!-- see http://www.ncbi.nlm.nih.gov/projects/collab/db_xref.html to support more --> 
+  <annotation_url annot_id_regex="^FLYBASE:.*$" id_field="db_xref" 
     name="Flybase db_xref"
     url="http://flybase.org/.bin/fbidq.html?$$"
   />
@@ -227,5 +235,49 @@
     url="http://www.ncbi.nlm.nih.gov/gene/$$"
   />
 
+  <!-- Match Phytozome entries -->
+  <annotation_url annot_type_regex="^Brachypodium\ distachyon.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2127&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Carica\ papaya.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2126&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Chlamydomonas\ reinhardtii.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2135&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Glycine\ max.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2125&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Oryza\ sativa\ japonica.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2132&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Physcomitrella\ patens\ patens\ Grandsen.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2121&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Populus\ trichocarpa.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2145&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Sorghum\ bicolor.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2122&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Volvox\ carteri.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2141&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Vitis\ vinifera.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2120&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
+  <annotation_url annot_type_regex="^Zea\ mays.*Phytozome$" 
+    name="phytozome.org"
+    url="http://www.phytozome.net/genePage.php?crown&amp;method=2142&amp;search=1&amp;searchText=$$&amp;detail=1"
+  />
 </prefs>
-

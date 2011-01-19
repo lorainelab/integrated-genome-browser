@@ -304,8 +304,7 @@ public final class WiggleParser {
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
 
-		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id);
-		gstate.getTierStyle().setHumanName(graph_name);
+		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, graph_name);
 		TrackLineParser.applyTrackProperties(track_hash, gstate);
 
 		// Need iterator because we're removing data on the fly

@@ -465,9 +465,9 @@ public final class GraphSymUtils {
      *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
      *  Uses unique graph ID (generally stream URI plus track info), type name as graph name
      */
-   public static void addChildGraph(GraphSym cgraf, String id, String name, SeqSpan overlapSpan) {
+   public static void addChildGraph(GraphSym cgraf, String id, String name, String stream_name, SeqSpan overlapSpan) {
 		BioSeq aseq = cgraf.getGraphSeq();
-		GraphSym pgraf = getParentGraph(id, name, aseq, cgraf);
+		GraphSym pgraf = getParentGraph(id, name, stream_name, aseq, cgraf);
 
 		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
 		//    remove that span, then add overlap span from FeatureRequestSym
@@ -481,7 +481,7 @@ public final class GraphSymUtils {
 	}
 
 
-	private static GraphSym getParentGraph(String id, String name, BioSeq aseq, GraphSym cgraf) {
+	private static GraphSym getParentGraph(String id, String name, String stream_name, BioSeq aseq, GraphSym cgraf) {
 		//is it a useq graph? modify name and id for strandedness? must uniquify with strand info since no concept of stranded data from same graph file
 		if (id.endsWith(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD) || name.endsWith(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)){
 			Object obj = cgraf.getProperty(GraphSym.PROP_GRAPH_STRAND);
@@ -503,6 +503,11 @@ public final class GraphSymUtils {
 			pgraf = new CompositeGraphSym(id, aseq);
 			pgraf.setGraphName(name);
 			aseq.addAnnotation(pgraf);
+			
+			if(PreferenceUtils.getGraphPrefsNode().getBoolean(PREF_USE_URL_AS_NAME,
+					default_use_url_as_name)){
+				pgraf.setGraphName(stream_name + " : " + name);
+			}
 		}
 		return pgraf;
 	}

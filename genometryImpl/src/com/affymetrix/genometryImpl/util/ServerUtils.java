@@ -1139,7 +1139,7 @@ public abstract class ServerUtils {
 		}
 		if((extension.equals("sin") || extension.equals("egr")) ||
 				extension.equals("bgr") || extension.equals("useq")
-				|| extension.equals("bar")){
+				|| extension.equals("bar") || extension.equals("chp")){
 			return new SymLoaderInstNC(uri, featureName, group);
 		}if((extension.equals("gff3")) || extension.endsWith("gff") ||
 				extension.equals("gtf")){
@@ -1150,7 +1150,9 @@ public abstract class ServerUtils {
 			return new SymLoaderInstNC(uri, featureName, group);
 		}
 
-		return null;
+		Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
+				"Couldn't find any Symloader for {0} format. Opening whole file.", new Object[]{extension});
+		return new SymLoaderInstNC(uri, featureName, group);
 	}
 
 }

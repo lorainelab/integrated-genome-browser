@@ -56,6 +56,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -63,7 +64,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 public class SequenceViewer extends Applet
-		implements WindowListener{
+		implements WindowListener, ItemListener{
 
 	private NeoSeq seqview;
 	private NeoSeq seqview1;
@@ -408,7 +409,14 @@ public class SequenceViewer extends Applet
 			}
 		}
 	}
-
+		JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
+		JCheckBoxMenuItem transOneCBMenuItem = new JCheckBoxMenuItem(" +1 Translation");
+		JCheckBoxMenuItem transTwoCBMenuItem = new JCheckBoxMenuItem(" +2 Translation");
+		JCheckBoxMenuItem transThreeCBMenuItem = new JCheckBoxMenuItem(" +3 Translation");
+		JCheckBoxMenuItem transNegOneCBMenuItem = new JCheckBoxMenuItem(" -1 Translation");
+		JCheckBoxMenuItem transNegTwoCBMenuItem = new JCheckBoxMenuItem(" -2 Translation");
+		JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(" -3 Translation");
+		
 	public JFrame setupMenus(JFrame dock) {
 
 		/* Edit Menu */
@@ -421,14 +429,7 @@ public class SequenceViewer extends Applet
 //		JMenu fileMenu = new JMenu("File");
 //		JMenuItem saveAsMenuItem = new JMenuItem("save As", KeyEvent.VK_A);
 //		JMenuItem exitMenuItem = new JMenuItem("eXit", KeyEvent.VK_X);
-//		JMenu showMenu = new JMenu("Show");
-//		CheckboxMenuItem compCBMenuItem = new CheckboxMenuItem("Reverse Complement");
-//		CheckboxMenuItem transOneCBMenuItem = new CheckboxMenuItem(" +1 Translation");
-//		CheckboxMenuItem transTwoCBMenuItem = new CheckboxMenuItem(" +2 Translation");
-//		CheckboxMenuItem transThreeCBMenuItem = new CheckboxMenuItem(" +3 Translation");
-//		CheckboxMenuItem transNegOneCBMenuItem = new CheckboxMenuItem(" -1 Translation");
-//		CheckboxMenuItem transNegTwoCBMenuItem = new CheckboxMenuItem(" -2 Translation");
-//		CheckboxMenuItem transNegThreeCBMenuItem = new CheckboxMenuItem(" -3 Translation");
+		JMenu showMenu = new JMenu("Show");
 		JMenu fileMenu = new JMenu("File");
 		JMenu editMenu = new JMenu("Edit");
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
@@ -441,21 +442,21 @@ public class SequenceViewer extends Applet
 //		fileMenu.add(exitMenuItem);
 //		saveAsMenuItem.addActionListener(this);
 //		exitMenuItem.addActionListener(this);
-////		showMenu.add(compCBMenuItem);
-////		showMenu.add(transOneCBMenuItem);
-////		showMenu.add(transTwoCBMenuItem);
-////		showMenu.add(transThreeCBMenuItem);
-////		showMenu.add(transNegOneCBMenuItem);
-////		showMenu.add(transNegTwoCBMenuItem);
-////		showMenu.add(transNegThreeCBMenuItem);
+		showMenu.add(compCBMenuItem);
+		showMenu.add(transOneCBMenuItem);
+		showMenu.add(transTwoCBMenuItem);
+		showMenu.add(transThreeCBMenuItem);
+		showMenu.add(transNegOneCBMenuItem);
+		showMenu.add(transNegTwoCBMenuItem);
+		showMenu.add(transNegThreeCBMenuItem);
 //
-//		compCBMenuItem.addItemListener(this);
-//		transOneCBMenuItem.addItemListener(this);
-//		transTwoCBMenuItem.addItemListener(this);
-//		transThreeCBMenuItem.addItemListener(this);
-//		transNegOneCBMenuItem.addItemListener(this);
-//		transNegTwoCBMenuItem.addItemListener(this);
-//		transNegThreeCBMenuItem.addItemListener(this);
+		compCBMenuItem.addItemListener(this);
+		transOneCBMenuItem.addItemListener(this);
+		transTwoCBMenuItem.addItemListener(this);
+		transThreeCBMenuItem.addItemListener(this);
+		transNegOneCBMenuItem.addItemListener(this);
+		transNegTwoCBMenuItem.addItemListener(this);
+		transNegThreeCBMenuItem.addItemListener(this);
 
 		// add the menus to the menubar
 		JMenuBar bar = new JMenuBar();
@@ -466,7 +467,7 @@ public class SequenceViewer extends Applet
 
 		bar.add(fileMenu);
 		bar.add(editMenu);
-//		bar.add(showMenu);
+		bar.add(showMenu);
 		dock.setJMenuBar(bar);
 		return dock;
 	}
@@ -513,52 +514,52 @@ public class SequenceViewer extends Applet
 //
 //	}
 
-	private void setMenuItemState(Menu theMenu, CheckboxMenuItem theItem) {
-		for (int i = theMenu.getItemCount() - 1; 0 <= i; i--) {
-			MenuItem item = theMenu.getItem(i);
-			if (item instanceof CheckboxMenuItem) {
-				((CheckboxMenuItem) item).setState(item == theItem);
-			}
-		}
-	}
+//	private void setMenuItemState(Menu theMenu, JJCheckBoxMenuItem theItem) {
+//		for (int i = theMenu.getItemCount() - 1; 0 <= i; i--) {
+//			MenuItem item = theMenu.getItem(i);
+//			if (item instanceof JJCheckBoxMenuItem) {
+//				((JCheckBoxMenuItem) item).setState(item == theItem);
+//			}
+//		}
+//	}
 
 	/** ItemListener Implementation */
-//	public void itemStateChanged(ItemEvent e) {
-//		Object theItem = e.getSource();
-//
-//		if (theItem == compCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			boolean showRevComp = mi.getState();
-//			seqview.setRevShow(NeoSeq.COMPLEMENT, showRevComp);
-//			seqview.setRevShow(NeoSeq.NUCLEOTIDES, !showRevComp);
-//			seqview.updateWidget();
-//		} else if (theItem == transOneCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_ONE, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transTwoCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_TWO, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transThreeCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_THREE, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transNegOneCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_NEG_ONE, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transNegTwoCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_NEG_TWO, mi.getState());
-//			seqview.updateWidget();
-//		} else if (theItem == transNegThreeCBMenuItem) {
-//			CheckboxMenuItem mi = (CheckboxMenuItem) theItem;
-//			seqview.setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
-//			seqview.updateWidget();
-//		}
-//
-//	}
+	public void itemStateChanged(ItemEvent e) {
+		Object theItem = e.getSource();
+
+		if (theItem == compCBMenuItem) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			boolean showRevComp = mi.getState();
+			seqview.setRevShow(NeoSeq.COMPLEMENT, showRevComp);
+			seqview.setRevShow(NeoSeq.NUCLEOTIDES, !showRevComp);
+			seqview.updateWidget();
+		} else if (theItem == transOneCBMenuItem) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_ONE, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transTwoCBMenuItem) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_TWO, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transThreeCBMenuItem) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_THREE, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transNegOneCBMenuItem) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_NEG_ONE, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transNegTwoCBMenuItem) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_NEG_TWO, mi.getState());
+			seqview.updateWidget();
+		} else if (theItem == transNegThreeCBMenuItem) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			seqview.setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
+			seqview.updateWidget();
+		}
+
+	}
 
 	/** WindowListener Implementation */
 	public void windowActivated(WindowEvent e) {

@@ -219,23 +219,22 @@ public class SequenceViewer extends Applet
 		int i = 1;
 		seqArray[0] = seq.substring(0, spans[0].getLength());
 		if (spans.length > 1) {
-			if (spans[0].getStart() < spans[0].getEnd()) {
-				intronArray[0] = seq.substring(spans[0].getLength(), spans[i].getStart() - spans[0].getStart());
-			} else {
+			if (spans[0].getStart() > spans[0].getEnd()) {
+				SeqSpan[] spans_duplicate = new SeqSpan[spans.length];
+				for(int k=0;k<spans.length;k++){
+					spans_duplicate[spans.length-1-k]=spans[k];
+				}
+				spans = spans_duplicate;
+			} 
 				intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
-			}
+			
 		}
 		while (i < spans.length) {
-			if (spans[i].getStart() < spans[i].getEnd()) {
-				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
-				if (i < spans.length - 1) {
-					intronArray[i] = seq.substring(spans[i].getEnd() - spans[0].getStart(), spans[i + 1].getStart() - spans[0].getStart());
-				}
-			} else {
+			
 				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
 				if (i < spans.length - 1) {
 					intronArray[i] = seq.substring(Math.abs(spans[i].getEnd() - spans[0].getStart()), Math.abs(spans[i + 1].getStart() - spans[0].getStart()));
-				}
+				
 			}
 			i++;
 		}
@@ -514,14 +513,14 @@ public class SequenceViewer extends Applet
 //
 //	}
 
-//	private void setMenuItemState(Menu theMenu, JJCheckBoxMenuItem theItem) {
-//		for (int i = theMenu.getItemCount() - 1; 0 <= i; i--) {
-//			MenuItem item = theMenu.getItem(i);
-//			if (item instanceof JJCheckBoxMenuItem) {
-//				((JCheckBoxMenuItem) item).setState(item == theItem);
-//			}
-//		}
-//	}
+	private void setMenuItemState(JMenu theMenu, JCheckBoxMenuItem theItem) {
+		for (int i = theMenu.getItemCount() - 1; 0 <= i; i--) {
+			JMenuItem item = theMenu.getItem(i);
+			if (item instanceof JCheckBoxMenuItem) {
+				((JCheckBoxMenuItem) item).setState(item == theItem);
+			}
+		}
+	}
 
 	/** ItemListener Implementation */
 	public void itemStateChanged(ItemEvent e) {

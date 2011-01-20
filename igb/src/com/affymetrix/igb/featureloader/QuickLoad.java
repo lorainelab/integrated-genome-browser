@@ -45,7 +45,8 @@ import javax.swing.SwingWorker;
 public final class QuickLoad extends SymLoader {
 	private final GenericVersion version;
 	private SymLoader symL;	// parser factory
-
+	GenometryModel gmodel = GenometryModel.getGenometryModel();
+	
 	public QuickLoad(GenericVersion version, String featureName, String organism_dir) {
 		super(determineURI(version, featureName, organism_dir), featureName, null);
 		this.version = version;
@@ -142,7 +143,7 @@ public final class QuickLoad extends SymLoader {
 	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError {
 
-		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName + " on sequence " + overlapSpan.getBioSeq().getID());
+		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		if (this.symL != null && this.symL.isResidueLoader) {
 			return loadResiduesThread(feature, overlapSpan, gviewer);
@@ -154,6 +155,7 @@ public final class QuickLoad extends SymLoader {
 			final GenericFeature feature, final SeqSpan overlapSpan, final SeqMapView gviewer)
 			throws OutOfMemoryError {
 
+		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 			public Void doInBackground() {
@@ -161,7 +163,6 @@ public final class QuickLoad extends SymLoader {
 					if (QuickLoad.this.extension.endsWith(".chp")) {
 						// special-case chp files, due to their LazyChpSym DAS/2 loading
 						QuickLoad.this.getGenome();
-						gviewer.setAnnotatedSeq(overlapSpan.getBioSeq(), true, true);
 						return null;
 					}
 
@@ -177,19 +178,23 @@ public final class QuickLoad extends SymLoader {
 			@Override
 			public void done() {
 				try {
-					BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
-					if (overlapSpan != null && aseq != null) {
+					BioSeq aseq = gmodel.getSelectedSeq();
+					//Only refresh if currently selected sequence and loaded data are on same sequence.
+					if (overlapSpan != null && aseq != null && overlapSpan.getBioSeq() == aseq) {
 						gviewer.setAnnotatedSeq(aseq, true, true);
-					} else if (GenometryModel.getGenometryModel().getSelectedSeq() == null && QuickLoad.this.version.group != null) {
+					} else if (gmodel.getSelectedSeq() == null && QuickLoad.this.version.group != null) {
 						// This can happen when loading a brand-new genome
-						GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
+						gmodel.setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 					}
 
-					SeqGroupView.refreshTable();
+					//Since sequence are never removed so if no. of sequence increases then refresh sequence table.
+					if(gmodel.getSelectedSeqGroup().getSeqCount() > seq_count){
+						SeqGroupView.refreshTable();
+					}
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName + " on sequence " + overlapSpan.getBioSeq().getID());
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
 			}
 		};

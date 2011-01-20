@@ -37,6 +37,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,6 +58,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -620,25 +622,35 @@ public final class GeneralLoadUtils {
 			if(((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
 				return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 			}
-			
-			// At this point, we know all of the chromosomes in the file, so just iterate.
-			boolean result = true;
-			for (BioSeq seq : span.getBioSeq().getSeqGroup().getSeqList()) {
-				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
-					continue;	// don't load into Whole Genome
-				}
-				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax()-1, seq));
-				if (optimized_sym != null) {
-					if (!loadFeaturesForSym(feature, optimized_sym)) {
-						result = false;	// don't short-circuit
-					}
-				}
-			}
-			return result;
+
+			return loadWholeGenome(span, feature);
 		}
 		
 		Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 				Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
+		return true;
+	}
+
+	private static boolean loadWholeGenome(final SeqSpan span, final GenericFeature feature) {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				for (BioSeq seq : span.getBioSeq().getSeqGroup().getSeqList()) {
+					if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
+						continue; // don't load into Whole Genome
+					}
+					SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
+					if (optimized_sym != null) {
+						loadFeaturesForSym(feature, optimized_sym);
+					}
+				}
+				return null;
+			}
+		};
+
+		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
+		
 		return true;
 	}
 

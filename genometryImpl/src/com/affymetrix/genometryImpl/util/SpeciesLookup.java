@@ -138,21 +138,28 @@ public final class SpeciesLookup {
 	}
 
 	public static String getStandardName(String version){
-		String prefName = getSpeciesName(version);
 		Set<Pattern> patterns = new HashSet<Pattern>();
 		patterns.add(STANDARD_REGEX);
 		patterns.add(UCSC_REGEX);
 
 		Matcher matcher;
 		for (Pattern pattern : patterns) {
-			matcher = pattern.matcher(prefName);
+			matcher = pattern.matcher(version);
 			if (matcher.matches()) {
-				return matcher.group(1);
+				return formatSpeciesName(pattern, matcher.group(1));
 			}
 		}
 
-		prefName = prefName.trim().replaceAll("\\s+", "_");
+		version = version.trim().replaceAll("\\s+", "_");
 
-		return prefName;
+		return version;
+	}
+
+	private static String formatSpeciesName(Pattern pattern, String species){
+		if(STANDARD_REGEX.equals(pattern)){
+			return species.substring(0, 1).toUpperCase() + species.substring(1, species.length()).toLowerCase();
+		}
+
+		return species.toLowerCase();
 	}
 }

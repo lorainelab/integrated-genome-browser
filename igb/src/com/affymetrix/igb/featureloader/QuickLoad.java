@@ -340,9 +340,9 @@ public final class QuickLoad extends SymLoader {
 	}
 	
 	private boolean loadResiduesThread(final GenericFeature feature, final SeqSpan span, final SeqMapView gviewer) {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-			public String doInBackground() {
+			public Void doInBackground() {
 				try {
 					String results = QuickLoad.this.getRegionResidues(span);
 					if (results != null && !results.isEmpty()) {
@@ -351,8 +351,8 @@ public final class QuickLoad extends SymLoader {
 						if (span.getMin() <= span.getBioSeq().getMin() && span.getMax() >= span.getBioSeq().getMax()) {
 							feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
 						}
+						BioSeq.addResiduesToComposition(span.getBioSeq(), results, span);
 					}
-					return results;
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -361,11 +361,7 @@ public final class QuickLoad extends SymLoader {
 			@Override
 			public void done() {
 				try {
-					final String results = get();
-					if (results != null && !results.isEmpty()) {
-						BioSeq.addResiduesToComposition(span.getBioSeq(), results, span);
-						gviewer.setAnnotatedSeq(span.getBioSeq(), true, true);
-					}
+					gviewer.setAnnotatedSeq(span.getBioSeq(), true, true);
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {

@@ -371,13 +371,14 @@ public class SequenceViewer extends Applet
 	}
 
 	public void exportSequenceFasta() {
-		FileDialog fd = new FileDialog(mapframe, "Save As", FileDialog.SAVE);
+		FileDialog fd = new FileDialog(mapframe, "Save As", FileDialog.SAVE);	
 		fd.setVisible(true);
 		String fileName = fd.getFile();
 
 		if (null != fileName) {
 			try {
-				FileWriter fw = new FileWriter(fileName);
+
+				FileWriter fw = new FileWriter(fd.getDirectory()+fileName);
 				String r = seqview.getResidues();
 //				String header =
 //				">" +
@@ -430,9 +431,9 @@ public class SequenceViewer extends Applet
 //		CheckboxMenuItem transNegThreeCBMenuItem = new CheckboxMenuItem(" -3 Translation");
 		JMenu fileMenu = new JMenu("File");
 		JMenu editMenu = new JMenu("Edit");
+		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, new JMenuItem(new CopyFromSeqViewerAction(this)));
-		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
 //		copyMenuItem.addActionListener(this);
 //
 //		// file menu

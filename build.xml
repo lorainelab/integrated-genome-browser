@@ -509,14 +509,16 @@
 			</condition>
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
+				<dirset dir="${basedir}">
+					<include name="genoviz_sdk" />
+					<include name="genometryImpl" />
+				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="igb_service" />
 					<include name="window_service" />
 				</dirset>
 				<dirset dir="${basedir}">
 					<include name="main" />
-					<include name="genoviz_sdk" />
-					<include name="genometryImpl" />
 					<include name="igb-i18n" unless="findbugs" />
 				</dirset>
 				<dirset dir="${basedir}/plugins">

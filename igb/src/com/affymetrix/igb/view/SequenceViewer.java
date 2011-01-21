@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -104,6 +106,8 @@ public class SequenceViewer extends Applet
 		} else {
 			mapframe = new JFrame("Genomic Sequence");
 			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
+			isGenomic=true;
+//			seqview.forSequenceViewer = true;
 		}
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
@@ -187,6 +191,8 @@ public class SequenceViewer extends Applet
 		//		((SymWithProps) residues_sym).getProperty(seq)
 		Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
 		Iterator iterator = sym.keySet().iterator();
+		GenometryModel gm = GenometryModel.getGenometryModel();
+		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 		while (iterator.hasNext()) {
 			String key = iterator.next().toString();
 			String value = sym.get(key).toString();
@@ -204,12 +210,13 @@ public class SequenceViewer extends Applet
 				cdsMin = Integer.parseInt(value);
 			}
 		}
+//		System.out.println("cds min  "+ cdsMin +"  cds max "+cdsMax+"  end "+ seqSpans[seqSpans.length-1].getStart());
 		if (seqSpans[0].getStart() < seqSpans[0].getEnd()) {
 			seqview.addOutlineAnnotation(cdsMin - seqSpans[0].getStart(), cdsMin - seqSpans[0].getStart() + 2, Color.green);
 			seqview.addOutlineAnnotation(cdsMax - seqSpans[0].getStart() - 3, cdsMax - seqSpans[0].getStart() - 1, Color.red);
 		} else {
-			seqview.addOutlineAnnotation(Math.abs(cdsMax - seqSpans[0].getStart()), Math.abs(cdsMax - seqSpans[0].getStart()) + 2, Color.green);
-			seqview.addOutlineAnnotation(Math.abs(cdsMin - seqSpans[0].getStart()) - 3, Math.abs(cdsMin - seqSpans[0].getStart()) - 1, Color.red);
+			seqview.addOutlineAnnotation(Math.abs(cdsMax - seqSpans[seqSpans.length-1].getStart()), Math.abs(cdsMax - seqSpans[seqSpans.length-1].getStart()) + 2, Color.green);
+			seqview.addOutlineAnnotation(Math.abs(cdsMin - seqSpans[seqSpans.length-1].getStart()) - 3, Math.abs(cdsMin - seqSpans[seqSpans.length-1].getStart()) - 1, Color.red);
 		}
 		//		String str = (((SymWithProps) residues_sym).getProperty("id")).toString()+" "+(((SymWithProps) residues_sym).getProperty("chromosome")).toString();
 		mapframe = new JFrame(id + " " + chromosome + " " + type);
@@ -217,7 +224,12 @@ public class SequenceViewer extends Applet
 
 	private void convertSpansForSequenceViewer(String[] seqArray, String[] intronArray, SeqSpan[] spans, String seq) {
 		int i = 1;
+		if (spans[0].getStart() < spans[0].getEnd()){
 		seqArray[0] = seq.substring(0, spans[0].getLength());
+		}
+		else{
+			seqArray[0] = seq.substring(0, spans[spans.length-1].getLength());
+		}
 		if (spans.length > 1) {
 			if (spans[0].getStart() > spans[0].getEnd()) {
 				SeqSpan[] spans_duplicate = new SeqSpan[spans.length];
@@ -227,6 +239,7 @@ public class SequenceViewer extends Applet
 				spans = spans_duplicate;
 			} 
 				intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
+//				System.out.println("intron array[0] "+intronArray[0]);
 			
 		}
 		while (i < spans.length) {

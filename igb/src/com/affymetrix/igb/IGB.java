@@ -432,7 +432,7 @@ public final class IGB extends Application
 		this.windowService = windowService;
 		windowService.setMainFrame(frm);
 		windowService.setSeqMapView(getMapView());
-		windowService.setStatusBar(new StatusBar());
+		windowService.setStatusBar(singleton_igb.status_bar);
 		windowService.setViewMenu(view_menu);
 		ThreadUtils.runOnEventQueue(new Runnable() {
 

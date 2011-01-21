@@ -13,7 +13,7 @@ public abstract class Application {
 
 	public final static boolean DEBUG_EVENTS = false;
 	protected final StatusBar status_bar;
-	private final Set<String> progressStringList = new LinkedHashSet<String>(); // list of progress bar messages.
+	private final Set<String> progressStringList = Collections.synchronizedSet(new LinkedHashSet<String>()); // list of progress bar messages.
 	static Application singleton = null;
 	private final Map<Class<?>, IPlugin> plugin_hash = new HashMap<Class<?>, IPlugin>();
 
@@ -55,29 +55,28 @@ public abstract class Application {
 	}
 
 	public final void removeNotLockedUpMsg(final String s) {
-		if (progressStringList.remove(s)) {
-			
-			ThreadUtils.runOnEventQueue(new Runnable() {
 
-				public void run() {
-					if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
-						// Time to change status message.
-						if (progressStringList.isEmpty()) {
-							setNotLockedUpStatus(null, false);
-						} else {
-							setNotLockedUpStatus(progressStringList.iterator().next(), true);
-						}
+		ThreadUtils.runOnEventQueue(new Runnable() {
+
+			public void run() {
+				progressStringList.remove(s);
+				if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
+					// Time to change status message.
+					if (progressStringList.isEmpty()) {
+						setNotLockedUpStatus(null, false);
+					} else {
+						setNotLockedUpStatus(progressStringList.iterator().next(), true);
 					}
 				}
-			});
-		}
+			}
+		});
 	}
 
 	/**
 	 * Set the status, and show a little progress bar so that the app doesn't look locked up.
 	 * @param s
 	 */
-	private void setNotLockedUpStatus(String s, boolean visible) {
+	private synchronized void setNotLockedUpStatus(String s, boolean visible) {
 		status_bar.setStatus(s);
 		status_bar.progressBar.setVisible(visible);
 	}

@@ -292,8 +292,6 @@ public final class GeneralLoadUtils {
 				versionName = getPreferredVersionName(gVersions);
 				speciesName = versionName2species.get(versionName);
 			} else {
-				// Unknown genome.  We'll add the name as if it's a species and a version.
-				Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.FINE, "Unknown quickload genome:{0}", genomeName);
 				versionName = genomeName;
 				speciesName = SpeciesLookup.getSpeciesName(genomeName);
 			}
@@ -609,25 +607,22 @@ public final class GeneralLoadUtils {
 			return ((QuickLoad) feature.symL).loadFeatures(span, feature);
 		}
 
-		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
-			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
-			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
-			if (optimized_sym != null) {
-				return loadFeaturesForSym(feature, optimized_sym);
-			}
-		} else {
-
-			// For for formats that are not optimized do not iterate through BioSeq
+		// For for formats that are not optimized do not iterate through BioSeq
 			// instead add them all at one.
-			if(((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
-				return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
-			}
+		if(((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
+			return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
+		}
 
-			return loadWholeGenome(span, feature);
+		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+		if (optimized_sym != null) {
+			return loadFeaturesForSym(feature, optimized_sym);
+		}
+
+		if(feature.loadStrategy != LoadStrategy.GENOME){
+			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 		}
 		
-		Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-				Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 		return true;
 	}
 

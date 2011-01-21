@@ -816,13 +816,8 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		try {
-			Application.getSingleton().addNotLockedUpMsg("Loading features for " + versionName);
-			createFeaturesTable();
-			loadWholeRangeFeatures();
-		} finally {
-			Application.getSingleton().removeNotLockedUpMsg("Loading features for " + versionName);
-		}
+		createFeaturesTable();
+		loadWholeRangeFeatures();
 	}
 
 
@@ -935,11 +930,6 @@ public final class GeneralLoadView extends JComponent
 	static void loadWholeRangeFeatures() {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (gFeature.loadStrategy != LoadStrategy.GENOME) {
-				continue;
-			}
-
-			if (gFeature.gVersion.gServer.serverType == ServerType.LocalFiles) {
-				// These have already been loaded(currently loaded for the entire genome at once)
 				continue;
 			}
 

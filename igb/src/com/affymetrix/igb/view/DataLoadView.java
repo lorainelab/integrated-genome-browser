@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.BorderLayout;
@@ -25,7 +26,7 @@ public final class DataLoadView extends JComponent {
 	private final SeqGroupView group_view;
 	public static int TAB_DATALOAD_PREFS = -1;
 
-	public DataLoadView() {
+	public DataLoadView(IGBService igbService) {
 		this.setLayout(new BorderLayout());
 
 		JPanel main_panel = new JPanel();

@@ -1,14 +1,48 @@
 Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
 Bundle-Name: genometry
+Bundle-SymbolicName: genometry
 Bundle-Description: genometry
 Bundle-Vendor: Affymetrix, Inc.
 Bundle-Version: 1.0.0
-Bundle-SymbolicName: genometry
-Import-Package: javax.swing
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+IGB-Tier: 1
+Import-Package: affymetrix.calvin.data,
+ cern.colt.function,
+ cern.colt.list,
+ cern.colt,
+ javax.crypto.spec,
+ javax.crypto,
+ javax.swing.filechooser,
+ javax.swing.table,
+ javax.swing,
+ javax.xml.namespace,
+ javax.xml.parsers,
+ javax.xml.stream.events,
+ javax.xml.stream,
+ net.sf.image4j.codec.ico,
+ net.sf.picard.util,
+ net.sf.samtools.util,
+ net.sf.samtools,
+ org.apache.commons.codec.binary,
+ org.w3c.dom,
+ org.xml.sax
 Export-Package: com.affymetrix.genometryImpl,
- com.affymetrix.genometryImpl.util,
- com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.comparator,
+ com.affymetrix.genometryImpl.das,
+ com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.event,
- com.affymetrix.genometryImpl.das
-
+ com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.parsers,
+ com.affymetrix.genometryImpl.parsers.das,
+ com.affymetrix.genometryImpl.parsers.gchp,
+ com.affymetrix.genometryImpl.parsers.graph,
+ com.affymetrix.genometryImpl.parsers.useq,
+ com.affymetrix.genometryImpl.quickload,
+ com.affymetrix.genometryImpl.span,
+ com.affymetrix.genometryImpl.style,
+ com.affymetrix.genometryImpl.symloader,
+ com.affymetrix.genometryImpl.symmetry,
+ com.affymetrix.genometryImpl.util
 

@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -37,6 +38,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.SearchView;
@@ -123,6 +125,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		Application.getSingleton().removeNotLockedUpMsg(message);
 	}
 
+	@Override
+	public boolean confirmPanel(String text) {
+		return Application.confirmPanel(text);
+	}
+
 	public ImageIcon getIcon(String name) {
 		ImageIcon icon = null;
 		java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource(name + "_icon.gif");
@@ -131,7 +138,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		}
 		return icon;
 	}
-		
+
+	public void addStopRoutine(IStopRoutine routine) {
+		IGB igb = (IGB)IGB.getSingleton();
+		igb.addStopRoutine(routine);
+	}
+
 	public Set<String> getTier1Bundles() {
 		return tier1Bundles;
 	}
@@ -165,9 +177,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	public void displayRepositoryPreferences() {
-		if (OSGiHandler.TAB_PLUGIN_PREFS != -1) {
+		if (IGB.TAB_PLUGIN_PREFS != -1) {
 			PreferencesPanel pv = PreferencesPanel.getSingleton();
-			pv.setTab(OSGiHandler.TAB_PLUGIN_PREFS);	// Repository preferences tab
+			pv.setTab(IGB.TAB_PLUGIN_PREFS);	// Repository preferences tab
 			JFrame f = pv.getFrame();
 			f.setVisible(true);
 		} else {
@@ -208,12 +220,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 				forward, regex, residues, residue_offset, Application.getSingleton().getMapView().getAxisTier(), glyphs, hitColor);
 	}
 
-	private SeqMapView getMapView() {
+	public JComponent getMapView() {
 		return Application.getSingleton().getMapView();
 	}
 
 	private BioSeq getViewSeq() {
-		return getMapView().getViewSeq();
+		return ((SeqMapView)getMapView()).getViewSeq();
 	}
 
 	public boolean isSeqResiduesAvailable() {
@@ -243,6 +255,14 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	public String getUCSCQuery() {
 		return UCSCViewAction.getUCSCQuery();
+	}
+
+	public String getCommandLineBatchFileStr() {
+		return IGB.commandLineBatchFileStr;
+	}
+
+	public void setCommandLineBatchFileStr(String str) {
+		IGB.commandLineBatchFileStr = str;
 	}
 
 	public void addTransform(FloatTransformer transformer) {

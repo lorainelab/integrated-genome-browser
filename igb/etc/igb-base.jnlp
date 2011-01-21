@@ -9,11 +9,13 @@
 		<all-permissions/>
 	</security>
 	<resources>
-		<jar href="igb.jar" main="true" />
+		<jar href="main.jar" main="true" />
+		<jar href="igb.jar" />
 		<jar href="igb-i18n.jar" />
 		<jar href="affx_fusion.jar" />
 		<jar href="genometry.jar" />
 		<jar href="genoviz.jar" />
+		<jar href="igb.jar" />
 		<jar href="jlfgr-1_0.jar" />
 		<jar href="image4j.jar" />
 		<jar href="commons-codec-1.4.jar" />

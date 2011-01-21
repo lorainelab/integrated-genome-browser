@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
 
@@ -32,7 +32,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 public final class PropertyView extends JPanel implements SymSelectionListener {
-
+	private static final long serialVersionUID = 1L;
 	// the table showing name-value pairs
 	private static final JTable table = new JTable();
 	private final JScrollPane scroll_pane = new JScrollPane();
@@ -43,7 +43,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	private static final PropertyViewHelper helper = new PropertyViewHelper(table);
 	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
 
-	public PropertyView() {
+	public PropertyView(IGBService igbService) {
 		super();
 		determineOrder();
 		JViewport jvp = new JViewport();
@@ -52,7 +52,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 		this.setPreferredSize(new java.awt.Dimension(100, 250));
 		this.setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
-		propertyListeners.add(Application.getSingleton().getMapView().getMouseListener());
+		propertyListeners.add(((SeqMapView)igbService.getMapView()).getMouseListener());
 	}
 
 	private static List<String> graphToolTipOrder(){
@@ -263,7 +263,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener {
 	 *   one or more Properties
 	 * @param props - the list of Properties
 	 */
-	private static String[] getColumnHeadings(Map[] props) {
+	private static String[] getColumnHeadings(Map<String, Object>[] props) {
 		// will contain number of Properties + 1 if by_rows is false
 		// will contain number of values if by_rows is true
 		String[] col_headings = null;

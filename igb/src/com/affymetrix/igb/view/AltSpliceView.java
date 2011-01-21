@@ -27,7 +27,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TierLabelManager;
 
 public class AltSpliceView extends JComponent
@@ -45,7 +45,7 @@ public class AltSpliceView extends JComponent
 	private boolean pending_selection_change = false;
 	private boolean slice_by_selection_on = true;
 
-	public AltSpliceView() {
+	public AltSpliceView(IGBService igbService) {
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;
@@ -95,7 +95,7 @@ public class AltSpliceView extends JComponent
 	 *  use too much memory).
 	 */
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		if (Application.DEBUG_EVENTS) {
+		if (IGBService.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received selection changed event");
 		}
 		Object src = evt.getSource();
@@ -136,7 +136,7 @@ public class AltSpliceView extends JComponent
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		if (Application.DEBUG_EVENTS) {
+		if (IGBService.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
 		}
 		BioSeq newseq = GenometryModel.getGenometryModel().getSelectedSeq();

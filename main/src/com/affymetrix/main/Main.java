@@ -1,0 +1,53 @@
+package com.affymetrix.main;
+/**
+ *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
+
+import java.util.Arrays;
+
+/**
+ *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
+ *
+ * @version $Id: IGB.java 7344 2011-01-18 21:14:56Z lfrohman $
+ */
+public final class Main {
+	/**
+	 * Start the program.
+	 */
+	public static void main(final String[] args) {
+		try {
+
+			// Verify jidesoft license.
+			com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
+					"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
+
+			if (isArgSet(args, "-resetOSGi")) {
+				OSGiHandler.getInstance().clearCache();
+			}
+			if (isArgSet(args, "-DF")) {
+				OSGiHandler.getInstance().addRequiredPlugin("window_service_dockingframes");
+			}
+			else {
+				OSGiHandler.getInstance().addRequiredPlugin("window_service_def");
+			}
+			OSGiHandler.getInstance().startOSGi(args);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+
+	private static boolean isArgSet(String[] args, String arg) {
+		return Arrays.asList(args).contains(arg);
+	}
+}

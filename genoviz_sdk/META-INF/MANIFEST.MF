@@ -2,13 +2,28 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: genoviz
 Bundle-SymbolicName: genoviz
-Bundle-Version: 1.0.0
 Bundle-Description: genoviz
 Bundle-Vendor: Affymetrix, Inc.
+Bundle-Version: 1.0.0
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: com.affymetrix.genoviz.bioviews,
+IGB-Tier: 1
+Import-Package: javax.swing.border,
+ javax.swing.event,
+ javax.swing.plaf.basic,
+ javax.swing.table,
+ javax.swing.tree,
+ javax.swing
+Export-Package: com.affymetrix.genoviz.awt,
+ com.affymetrix.genoviz.bioviews,
+ com.affymetrix.genoviz.comparator,
+ com.affymetrix.genoviz.datamodel,
+ com.affymetrix.genoviz.event,
  com.affymetrix.genoviz.glyph,
+ com.affymetrix.genoviz.parser,
+ com.affymetrix.genoviz.swing,
  com.affymetrix.genoviz.util,
- com.affymetrix.genoviz.widget
+ com.affymetrix.genoviz.widget,
+ com.affymetrix.genoviz.widget.neoseq,
+ com.affymetrix.genoviz.widget.tieredmap
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="plugins/plugins_page/src"/>
+	<classpathentry kind="src" path="main/src"/>
 	<classpathentry kind="src" path="plugins/window_service_dockingframes/src"/>
 	<classpathentry kind="src" path="plugins/window_service/src"/>
 	<classpathentry kind="src" path="plugins/window_service_def/src"/>
@@ -51,5 +52,7 @@
 	<classpathentry kind="lib" path="dist"/>
 	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCommon.jar"/>
 	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCore.jar"/>
+	<classpathentry kind="lib" path="dist/ExternalView.jar"/>
+	<classpathentry kind="lib" path="ext/org.apache.felix.log-1.0.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

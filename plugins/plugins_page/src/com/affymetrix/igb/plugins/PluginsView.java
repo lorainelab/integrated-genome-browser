@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -54,6 +53,7 @@ import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 
 public class PluginsView extends JPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
+	private static final String IGB_TIER_HEADER = "IGB-Tier";
 	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 	private final Cursor defaultCursor = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
@@ -84,11 +84,9 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private final BundleFilter SYSTEM_BUNDLE_FILTER = new BundleFilter() {
 		@Override
 		public boolean filterBundle(Bundle bundle) {
-			return !tier1Bundles.contains(bundle.getSymbolicName());
+			return getTier(bundle) > 1;
 		}
 	};
-	private final Set<String> tier1Bundles;
-	private final Set<String> tier2Bundles;
 	private BundleContext bundleContext;
 	private JScrollPane jScrollPane;
 	private final BundleTableModel bundleTableModel;
@@ -115,8 +113,6 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		super();
 		igbService = _igbService;
 		latest = new HashMap<String, Bundle>();
-		tier1Bundles = igbService.getTier1Bundles();
-		tier2Bundles = igbService.getTier2Bundles();
 
 		igbService.addRepositoryChangeListener(this);
 		setLayout(new BorderLayout());
@@ -395,8 +391,23 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		return filteredBundles.size();
 	}
 
+	public int getTier(Bundle bundle) {
+		if (bundle.getBundleId() == 0) { // system bundle
+			return 0;
+		}
+		int tier = 3;
+		String tierString = ((String)bundle.getHeaders().get(IGB_TIER_HEADER));
+		if (tierString != null) {
+			try {
+				tier = Integer.parseInt(tierString.trim());
+			}
+			catch (Exception x) {}
+		}
+		return tier;
+	}
+
 	public boolean isTier2Bundle(Bundle bundle) {
-		return tier2Bundles.contains(bundle.getSymbolicName());
+		return getTier(bundle) == 2;
 	}
 
 	private BundleFilter getBundleFilter() {

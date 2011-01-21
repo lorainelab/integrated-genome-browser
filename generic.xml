@@ -3,6 +3,7 @@
 
   <target name="init">
 		<!-- Locations of subprojects -->
+		<property name="main"               value="${basedir}/../main" />
 		<property name="genoviz"            value="${basedir}/../genoviz_sdk" />
 		<property name="genometry"          value="${basedir}/../genometry" />
 		<property name="genometryImpl"      value="${basedir}/../genometryImpl" />
@@ -10,8 +11,8 @@
 		<property name="das2server"         value="${basedir}/../das2_server" />
 		<property name="protannot"          value="${basedir}/../protannot" />
 		<property name="igb_service"        value="${basedir}/../plugins/igb_service" />
-		<property name="window_service"      value="${basedir}/../plugins/window_service" />
-		<property name="window_service_def"  value="${basedir}/../plugins/window_service_def" />
+		<property name="window_service"     value="${basedir}/../plugins/window_service" />
+		<property name="window_service_def" value="${basedir}/../plugins/window_service_def" />
 		<property name="window_service_dockingframes"  value="${basedir}/../plugins/window_service_dockingframes" />
 		<property name="plugins_page"       value="${basedir}/../plugins/plugins_page" />
 		<property name="RestrictionsSites"  value="${basedir}/../plugins/RestrictionsSites" />
@@ -68,7 +69,7 @@
 
   <target name="check-create-jar" if="plugin-jar">
 	  <antcall target="create-jar" >
-		  <param name="dist.dir" value="${igb}/build" />
+		  <param name="dist.dir" value="${main}/build" />
 	  </antcall>
   </target>
 
@@ -117,7 +118,7 @@
 	<mkdir dir="${dist.dir}" />
 
 	<copy todir="${dist.dir}" filtering="false">
-		<fileset file="${igb}/build/${jarfile}" />
+		<fileset file="${main}/build/${jarfile}" />
 	</copy>
 
 	<available file="${igb}/build/${jarfile}" property="unavailable-jar"/>

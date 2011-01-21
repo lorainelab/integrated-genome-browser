@@ -35,11 +35,11 @@ import com.affymetrix.genometryImpl.util.IdentityTransform;
 import com.affymetrix.genometryImpl.util.InverseTransform;
 import com.affymetrix.genometryImpl.util.LogTransform;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -152,12 +152,8 @@ public final class SimpleGraphTab extends JPanel
 	private JComboBox heat_mapCB;
 	private JPanel advanced_panel;
 
-	public SimpleGraphTab() {
-		this(Application.getSingleton());
-	}
-
-	public SimpleGraphTab(Application app) {
-		this.gviewer = app.getMapView();
+	public SimpleGraphTab(IGBService igbService) {
+		this.gviewer = (SeqMapView)igbService.getMapView();
 
 		heat_mapCB = new JComboBox(HeatMap.getStandardNames());
 		heat_mapCB.addItemListener(new HeatMapItemListener());
@@ -455,7 +451,7 @@ public final class SimpleGraphTab extends JPanel
 				ThreadUtils.runOnEventQueue(new Runnable() {
 
 					public void run() {
-						Application.getSingleton().getMapView().getSeqMap().repaint();
+						gviewer.getSeqMap().repaint();
 					}
 				});
 
@@ -472,7 +468,7 @@ public final class SimpleGraphTab extends JPanel
 				ThreadUtils.runOnEventQueue(new Runnable() {
 
 					public void run() {
-						Application.getSingleton().getMapView().getSeqMap().repaint();
+						gviewer.getSeqMap().repaint();
 					}
 				});
 				A = null;

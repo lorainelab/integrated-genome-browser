@@ -42,10 +42,9 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
@@ -67,13 +66,14 @@ import javax.swing.table.TableColumn;
 
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
-
+	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
 	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
 	private static final String CHOOSE = "Choose";
 	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
+	private static IGBService igbService;
 	private AnnotatedSeqGroup curGroup = null;
 	private final JComboBox versionCB;
 	private final JComboBoxToolTipRenderer versionCBRenderer;
@@ -82,7 +82,7 @@ public final class GeneralLoadView extends JComponent
 	private final JButton all_residuesB;
 	private final JButton partial_residuesB;
 	private final RefreshDataAction refreshDataAction;
-	private static final SeqMapView gviewer = Application.getSingleton().getMapView();
+	private static SeqMapView gviewer;
 	private static JTableX feature_table;
 	public static FeaturesTableModel feature_model;
 	JScrollPane featuresTableScrollPane;
@@ -202,11 +202,13 @@ public final class GeneralLoadView extends JComponent
 
 	}
 
-	public static synchronized GeneralLoadView getLoadView() {
-		if (singleton == null) {
-			singleton = new GeneralLoadView();
-		}
+	public static void setIGBService(IGBService _igbService) {
+		singleton = new GeneralLoadView();
+		igbService = _igbService;
+		gviewer = (SeqMapView)igbService.getMapView();
+	}
 
+	public static synchronized GeneralLoadView getLoadView() {
 		return singleton;
 	}
 
@@ -221,10 +223,10 @@ public final class GeneralLoadView extends JComponent
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 				protected Void doInBackground() throws Exception {
 					if (gServer.serverType == null) {
-						Application.getSingleton().addNotLockedUpMsg("Loading repository " + gServer);
+						igbService.addNotLockedUpMsg("Loading repository " + gServer);
 					}
 					else {
-						Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+						igbService.addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 					}
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
@@ -250,10 +252,10 @@ public final class GeneralLoadView extends JComponent
 
 		if (gServer.serverType != ServerType.LocalFiles) {
 			if (gServer.serverType == null) {
-				Application.getSingleton().removeNotLockedUpMsg("Loading repository " + gServer);
+				igbService.removeNotLockedUpMsg("Loading repository " + gServer);
 			}
 			else {
-				Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+				igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
 			}
 		}
 
@@ -291,9 +293,9 @@ public final class GeneralLoadView extends JComponent
 	private void runBatchOrRestore() {
 		try {
 			// Only run batch script or restore persistent genome once all the server responses have come back.
-			String batchFile = IGB.commandLineBatchFileStr;
+			String batchFile = igbService.getCommandLineBatchFileStr();
 			if (batchFile != null) {
-				IGB.commandLineBatchFileStr = null;	// we're not using this again!
+				igbService.setCommandLineBatchFileStr(null);	// we're not using this again!
 				lookForPersistentGenome = false;
 				Thread.sleep(1000);	// hack so event queue finishes
 				ScriptFileLoader.doActions(batchFile);
@@ -334,7 +336,7 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		try {
-			Application.getSingleton().addNotLockedUpMsg("Loading previous genome " + versionName +" ...");
+			igbService.addNotLockedUpMsg("Loading previous genome " + versionName +" ...");
 
 			gmodel.addGroupSelectionListener(this);
 
@@ -365,7 +367,7 @@ public final class GeneralLoadView extends JComponent
 				e.printStackTrace();
 			}
 		} finally {
-			Application.getSingleton().removeNotLockedUpMsg("Loading previous genome " + versionName +" ...");
+			igbService.removeNotLockedUpMsg("Loading previous genome " + versionName +" ...");
 		}
 	}
 
@@ -466,11 +468,11 @@ public final class GeneralLoadView extends JComponent
 
 
 	public static void initVersion(String versionName) {
-		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + versionName);
+		igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
 		try {
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 		} finally {
-			Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + versionName);
+			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 		}
 	}
 	
@@ -508,7 +510,7 @@ public final class GeneralLoadView extends JComponent
 		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
 			public Boolean doInBackground() {
-				Application.getSingleton().addNotLockedUpMsg("Loading residues for "+seq.getID());
+				igbService.addNotLockedUpMsg("Loading residues for "+seq.getID());
 				return loadResidues(genomeVersionName, seq, viewspan, partial, tryFull);
 			}
 
@@ -521,7 +523,7 @@ public final class GeneralLoadView extends JComponent
 				} catch (Exception ex) {
 					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
 				} finally{
-					Application.getSingleton().removeNotLockedUpMsg("Loading residues for " + seq.getID());
+					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getID());
 				}
 			}
 		};
@@ -675,14 +677,14 @@ public final class GeneralLoadView extends JComponent
 
 		@Override
 		public Void doInBackground() {
-			Application.getSingleton().addNotLockedUpMsg("Loading chromosomes for " + versionName);
+			igbService.addNotLockedUpMsg("Loading chromosomes for " + versionName);
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 			return null;
 		}
 
 		@Override
 		protected void done() {
-			Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes for " + versionName);
+			igbService.removeNotLockedUpMsg("Loading chromosomes for " + versionName);
 			speciesCB.setEnabled(true);
 			versionCB.setEnabled(true);
 			if (curGroup != null || group != null) {
@@ -1021,7 +1023,7 @@ public final class GeneralLoadView extends JComponent
 
 			@Override
 			protected Void doInBackground(){
-				Application.getSingleton().addNotLockedUpMsg("Removing feature  "+feature.featureName);
+				igbService.addNotLockedUpMsg("Removing feature  "+feature.featureName);
 				
 				feature.removeAllSyms();
 
@@ -1040,7 +1042,7 @@ public final class GeneralLoadView extends JComponent
 				GeneralLoadView.getLoadView().refreshTreeView();
 				GeneralLoadView.getLoadView().createFeaturesTable();
 				gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());
-				Application.getSingleton().removeNotLockedUpMsg("Removing feature  "+feature.featureName);
+				igbService.removeNotLockedUpMsg("Removing feature  "+feature.featureName);
 			}
 		};
 

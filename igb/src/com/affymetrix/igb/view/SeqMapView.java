@@ -42,6 +42,7 @@ import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -53,8 +54,6 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.action.CopyResiduesAction;
 import com.affymetrix.igb.action.LoadSequence;
 import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
@@ -64,7 +63,6 @@ import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -89,6 +87,7 @@ import javax.swing.*;
  */
 public class SeqMapView extends JPanel
 				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
+	private static final long serialVersionUID = 1L;
 
 	private static final boolean DEBUG_TIERS = false;
 
@@ -1031,7 +1030,6 @@ public class SeqMapView extends JPanel
 	public final SeqSymmetry copySelectedResidues(Boolean allResidues) {
 		boolean success = false;
 		SeqSymmetry residues_sym = null;
-		SeqSpan[] seqSpans=null;
 		Clipboard clipboard = this.getToolkit().getSystemClipboard();
 		String from = "";
 
@@ -1734,7 +1732,7 @@ public class SeqMapView extends JPanel
 			current_group = aseq.getSeqGroup();
 		}
 
-		if (Application.DEBUG_EVENTS) {
+		if (IGBService.DEBUG_EVENTS) {
 			System.out.println("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
 		}
 
@@ -1744,7 +1742,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		if (Application.DEBUG_EVENTS) {
+		if (IGBService.DEBUG_EVENTS) {
 			System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
 		}
 		final BioSeq newseq = evt.getSelectedSeq();

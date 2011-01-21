@@ -9,6 +9,10 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 
+/**
+ * bundle activator that waits for the IGBService to be available
+ *
+ */
 public abstract class IGBActivator implements BundleActivator {
 
 	protected BundleContext bundleContext;

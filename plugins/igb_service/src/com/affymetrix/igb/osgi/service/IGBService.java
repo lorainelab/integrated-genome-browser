@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 
 import com.affymetrix.genometryImpl.util.FloatTransformer;
@@ -13,13 +14,16 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 //import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 
 public interface IGBService {
+	public final static boolean DEBUG_EVENTS = false;
 	public boolean addMenu(JMenu menu);
 	public boolean removeMenu(String menuName);
 	public void displayError(String title, String errorText);
 	public void displayError(String errorText);
 	public void addNotLockedUpMsg(String message);
 	public void removeNotLockedUpMsg(String message);
+	public boolean confirmPanel(String text);
 	public ImageIcon getIcon(String name);
+	public void addStopRoutine(IStopRoutine routine);
 	// for plugins page
 	public Set<String> getTier1Bundles();
 	public Set<String> getTier2Bundles();
@@ -31,6 +35,7 @@ public interface IGBService {
 	// for restrictions page
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
+	public JComponent getMapView();
 	public boolean isSeqResiduesAvailable();
 	public int getSeqResiduesMin();
 	public int getSeqResiduesMax();
@@ -41,6 +46,9 @@ public interface IGBService {
 //	public void addToRefreshList(SeqMapRefreshed smr);
 	// for external page
 	public String getUCSCQuery();
+	// for GeneralLoadView
+	public String getCommandLineBatchFileStr();
+	public void setCommandLineBatchFileStr(String str);
 	// for transforms
 	public void addTransform(FloatTransformer transformer);
 	public void removeTransform(String name);

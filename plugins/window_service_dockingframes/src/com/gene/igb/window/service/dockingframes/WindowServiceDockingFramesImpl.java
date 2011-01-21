@@ -1,6 +1,7 @@
 package com.gene.igb.window.service.dockingframes;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 
+import bibliothek.gui.dock.FlapDockStation;
 import bibliothek.gui.dock.StackDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
@@ -42,8 +44,10 @@ public class WindowServiceDockingFramesImpl implements IWindowService {
 	@Override
 	public void setMainFrame(JFrame frame) {
 		cControl = new CControl(frame);
+		cControl.putProperty( FlapDockStation.MINIMUM_SIZE, new Dimension( 1, 1 ) );
         frame.getContentPane().add( cControl.getContentArea() );
-		frame.add(cControl.getContentArea()) ;
+		frame.add(cControl.getContentArea());
+		cControl.getContentArea().getCenter().setDividerSize(0);
 		frame.setVisible(true) ;
         workingArea = cControl.createWorkingArea( "plugins" );
         workingArea.setLocation( CLocation.base().normalRectangle( 0, 0, 1, 1 ) );
@@ -82,7 +86,6 @@ public class WindowServiceDockingFramesImpl implements IWindowService {
 	private void addDockable(DefaultSingleCDockable page, boolean focus) {
 		workingArea.add( page );
         page.setVisible( true );
-        System.out.println("count = " + workingArea.getStation().getDockableCount());
         if (workingArea.getStation().getDockableCount() >= 1 && workingArea.getStation().getDockable(0) instanceof StackDockStation) {
     		StackDockStation stackDockStation = (StackDockStation)workingArea.getStation().getDockable(0);
         	if (focus) {

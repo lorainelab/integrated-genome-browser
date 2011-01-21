@@ -6,8 +6,10 @@ Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.external.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://www.bioviz.org/documentation/ExternalView.html
+IGB-Tier: 2
 Import-Package: com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
+ com.affymetrix.genometryImpl.util,
  javax.imageio,
  javax.swing,
  javax.swing.event,
@@ -17,5 +19,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: View the current scene in another genome browser, such as the UCSC and/or Ensembl genome browsers, if the current genome is supported.
-Require-Bundle: genometry;bundle-version="1.0.0",
- genoviz;bundle-version="1.0.0"
+

@@ -13,6 +13,7 @@
 		<property name="name" value="Integrated Genome Browser" />
 
 		<!-- Locations of subprojets -->
+		<property name="main"                value="${basedir}/main" />
 		<property name="genoviz"             value="${basedir}/genoviz_sdk" />
 		<property name="genometry"           value="${basedir}/genometryImpl" />
 		<property name="igb"                 value="${basedir}/igb" />
@@ -259,7 +260,7 @@
 	<target name="exe" depends="jar" description="Create a single-jar IGB application">
 		<jar jarfile="igb_exe.jar" update="false">
 			<manifest>
-				<attribute name="Main-Class" value="com.affymetrix.igb.IGB"/>
+				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
 <!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
 			<metainf file="LICENSE.html"/>
@@ -267,7 +268,6 @@
 			<zipgroupfileset dir="${dist.dir}">
 				<exclude name="das2server.jar" />
 				<exclude name="protannot.jar" />
-				<exclude name="plugins_page.jar"/>
 				<exclude name="RestrictionsSites.jar"/>
 				<exclude name="ExternalView.jar"/>
 				<exclude name="plugins_page.jar"/>
@@ -509,20 +509,21 @@
 			</condition>
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
+				<dirset dir="${basedir}/plugins">
+					<include name="igb_service" />
+					<include name="window_service" />
+				</dirset>
 				<dirset dir="${basedir}">
+					<include name="main" />
 					<include name="genoviz_sdk" />
 					<include name="genometryImpl" />
 					<include name="igb-i18n" unless="findbugs" />
 				</dirset>
 				<dirset dir="${basedir}/plugins">
-					<include name="igb_service" />
-					<include name="window_service" />
-					<include name="window_service_def" />
-				</dirset>
-				<dirset dir="${basedir}/plugins">
 					<include name="plugins_page" />
 					<include name="RestrictionsSites" />
 					<include name="ExternalView" />
+					<include name="window_service_def" />
 					<include name="window_service_dockingframes" />
 				</dirset>
 				<dirset dir="${basedir}">

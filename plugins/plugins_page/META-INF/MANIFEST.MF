@@ -4,6 +4,7 @@ Bundle-Name: PluginsPage
 Bundle-SymbolicName: PluginsPage
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.plugins.Activator
+IGB-Tier: 1
 Import-Package: com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
  javax.swing,
@@ -13,6 +14,7 @@ Import-Package: com.affymetrix.igb.osgi.service,
  com.affymetrix.genometryImpl.util,
  org.osgi.framework;version="1.3.0",
  org.osgi.framework.launch;version="1.0.0",
+ org.osgi.service.log,
  org.osgi.util.tracker;version="1.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,

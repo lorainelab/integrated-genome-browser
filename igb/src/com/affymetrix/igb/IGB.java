@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb;
 
-import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -20,15 +19,12 @@ import java.awt.Toolkit;
 import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
-import com.affymetrix.genoviz.util.ErrorHandler;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -40,33 +36,35 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 
+import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.bookmarks.Bookmark;
-import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IPlugin;
 import com.affymetrix.igb.window.service.PluginInfo;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.WindowServiceListener;
-import com.affymetrix.igb.parsers.XmlPrefsParser;
+import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.*;
+import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
+import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
 
+import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
-import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 
 /**
@@ -77,8 +75,8 @@ import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 public final class IGB extends Application
 				implements GroupSelectionListener, SeqSelectionListener, WindowServiceListener {
 
-	static IGB singleton_igb;
 	public static final String NODE_PLUGINS = "plugins";
+	public static int TAB_PLUGIN_PREFS = -1;
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JMenu file_menu;
@@ -90,127 +88,17 @@ public final class IGB extends Application
 	private JMenu help_menu;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
 	private SeqMapView map_view;
-	private final List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
 	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
 	private IWindowService windowService;
+	private HashSet<IStopRoutine> stopRoutines;
 
-	/**
-	 * Start the program.
-	 */
-	public static void main(String[] args) {
-		try {
-
-			// Configure HTTP User agent
-			System.setProperty("http.agent", USER_AGENT);
-
-			// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
-			System.setProperty("swing.aatext", "true");
-
-			// Verify jidesoft license.
-			com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
-					"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-
-			// Letting the look-and-feel determine the window decorations would
-			// allow exporting the whole frame, including decorations, to an eps file.
-			// But it also may take away some things, like resizing buttons, that the
-			// user is used to in their operating system, so leave as false.
-			JFrame.setDefaultLookAndFeelDecorated(false);
-
-
-			// if this is != null, then the user-requested l-and-f has already been applied
-			if (System.getProperty("swing.defaultlaf") == null) {
-				String os = System.getProperty("os.name");
-				if (os != null && os.toLowerCase().contains("windows")) {
-					try {
-						// It this is Windows, then use the Windows look and feel.
-						Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-						LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-
-						if (look_and_feel.isSupportedLookAndFeel()) {
-							UIManager.setLookAndFeel(look_and_feel);
-						}
-					} catch (Exception ulfe) {
-						// Windows look and feel is only supported on Windows, and only in
-						// some version of the jre.  That is perfectly ok.
-					}
-				}
-			}
-
-
-
-			// Initialize the ConsoleView right off, so that ALL output will
-			// be captured there.
-			ConsoleView.init(APP_NAME);
-
-			System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
-			System.out.println("UserAgent: " + USER_AGENT);
-			System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
-			Runtime runtime = Runtime.getRuntime();
-			System.out.println("Locale: " + Locale.getDefault());
-			System.out.println("System memory: " + runtime.maxMemory() / 1024);
-			if (args != null) {
-				System.out.print("arguments: ");
-				for (String arg : args) {
-					System.out.print(" " + arg);
-				}
-				System.out.println();
-			}
-
-			System.out.println();
-
-			String offline = get_arg("-offline", args);
-			if (offline != null) {
-				LocalUrlCacher.setOffLine("true".equals(offline));
-			}
-
-			String resetOSGi = get_arg("-resetOSGi", args);
-			if (resetOSGi != null) {
-				OSGiHandler.getInstance().clearCache();
-			}
-
-			singleton_igb = new IGB();
-
-			PrefsLoader.loadIGBPrefs(args); // force loading of prefs
-
-			singleton_igb.init(args);
-
-			commandLineBatchFileStr = ScriptFileLoader.getScriptFileStr(args);	// potentially used in GeneralLoadView
-
-			goToBookmark(args);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+	public IGB() {
+		super();
+		stopRoutines = new HashSet<IStopRoutine>();
 	}
-
-	private static void goToBookmark(String[] args) {
-		// If the command line contains a parameter "-href http://..." where
-		// the URL is a valid IGB control bookmark, then go to that bookmark.
-		final String url = get_arg("-href", args);
-		if (url != null && url.length() > 0) {
-			try {
-				final Bookmark bm = new Bookmark(null, url);
-				if (bm.isUnibrowControl()) {
-					SwingUtilities.invokeLater(new Runnable() {
-
-						public void run() {
-							System.out.println("Loading bookmark: " + url);
-							BookmarkController.viewBookmark(singleton_igb, bm);
-						}
-					});
-				} else {
-					System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
-				}
-			} catch (MalformedURLException mue) {
-				mue.printStackTrace(System.err);
-			}
-		}
-	}
-
 	public SeqMapView getMapView() {
 		return map_view;
 	}
@@ -269,6 +157,30 @@ public final class IGB extends Application
 		return to_return;
 	}
 
+	private void goToBookmark(String[] args) {
+		// If the command line contains a parameter "-href http://..." where
+		// the URL is a valid IGB control bookmark, then go to that bookmark.
+		final String url = get_arg("-href", args);
+		if (url != null && url.length() > 0) {
+			try {
+				final Bookmark bm = new Bookmark(null, url);
+				if (bm.isUnibrowControl()) {
+					SwingUtilities.invokeLater(new Runnable() {
+
+						public void run() {
+							System.out.println("Loading bookmark: " + url);
+							BookmarkController.viewBookmark(IGB.this, bm);
+						}
+					});
+				} else {
+					System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
+				}
+			} catch (MalformedURLException mue) {
+				mue.printStackTrace(System.err);
+			}
+		}
+	}
+
 	private static void loadSynonyms(String file, SynonymLookup lookup) {
 		InputStream istr = null;
 		try {
@@ -281,7 +193,74 @@ public final class IGB extends Application
 		}
 	}
 
-	private void init(String[] args) {
+	private void setLaf() {
+
+		// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
+		System.setProperty("swing.aatext", "true");
+
+		// Letting the look-and-feel determine the window decorations would
+		// allow exporting the whole frame, including decorations, to an eps file.
+		// But it also may take away some things, like resizing buttons, that the
+		// user is used to in their operating system, so leave as false.
+		JFrame.setDefaultLookAndFeelDecorated(false);
+
+
+		// if this is != null, then the user-requested l-and-f has already been applied
+		if (System.getProperty("swing.defaultlaf") == null) {
+			String os = System.getProperty("os.name");
+			if (os != null && os.toLowerCase().contains("windows")) {
+				try {
+					// It this is Windows, then use the Windows look and feel.
+					Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+
+					if (look_and_feel.isSupportedLookAndFeel()) {
+						UIManager.setLookAndFeel(look_and_feel);
+					}
+				} catch (Exception ulfe) {
+					ulfe.printStackTrace(System.out);
+					// Windows look and feel is only supported on Windows, and only in
+					// some version of the jre.  That is perfectly ok.
+				}
+			}
+		}
+	}
+
+	private void printDetails(String[] args) {
+		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
+		System.out.println("UserAgent: " + USER_AGENT);
+		System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+		Runtime runtime = Runtime.getRuntime();
+		System.out.println("Locale: " + Locale.getDefault());
+		System.out.println("System memory: " + runtime.maxMemory() / 1024);
+		if (args != null) {
+			System.out.print("arguments: ");
+			for (String arg : args) {
+				System.out.print(" " + arg);
+			}
+			System.out.println();
+		}
+
+		System.out.println();
+	}
+
+	public void init(String[] args) {
+		setLaf();
+
+		// Configure HTTP User agent
+		System.setProperty("http.agent", USER_AGENT);
+
+		// Initialize the ConsoleView right off, so that ALL output will
+		// be captured there.
+		ConsoleView.init(APP_NAME);
+
+		printDetails(args);
+
+		String offline = get_arg("-offline", args);
+		if (offline != null) {
+			LocalUrlCacher.setOffLine("true".equals(offline));
+		}
+
 		loadSynonyms("/synonyms.txt", SynonymLookup.getDefaultLookup());
 		loadSynonyms("/chromosomes.txt", SynonymLookup.getChromosomeLookup());
 
@@ -350,32 +329,19 @@ public final class IGB extends Application
 						bmark_action.autoSaveBookmarks();
 					}
 					WebLink.autoSave();
+					Persistence.saveCurrentView(map_view);
 					if (windowService != null) {
 						windowService.shutdown();
 					}
-					Persistence.saveCurrentView(map_view);
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} else {
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				}
+				for (IStopRoutine stopRoutine : stopRoutines) {
+					stopRoutine.stop();
+				}
 			}
 		});
-
-		plugins_info.add(new PluginInfo(DataLoadView.class.getName(), BUNDLE.getString("dataAccessTab"), true, 0));
-		plugins_info.add(new PluginInfo(PropertyView.class.getName(), BUNDLE.getString("selectionInfoTab"), true, 1));
-		plugins_info.add(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true, 2));
-		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true, 3));
-		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true, 4));
-
-
-		plugins_info.addAll(XmlPrefsParser.getPlugins());
-
-		if (plugins_info == null || plugins_info.isEmpty()) {
-			System.out.println("There are no plugins specified in preferences.");
-		} else {
-			OSGiHandler.getInstance().addWindowListener(this);
-			OSGiHandler.getInstance().startOSGi();
-		}
 
 		WebLink.autoLoad();
 
@@ -383,6 +349,13 @@ public final class IGB extends Application
 		//   the control server that listens to ping requests?
 		// Therefore start listening for http requests only after all set-up is done.
 		startControlServer();
+
+		commandLineBatchFileStr = ScriptFileLoader.getScriptFileStr(args);	// potentially used in GeneralLoadView
+
+		goToBookmark(args);
+		final PreferencesPanel pp = PreferencesPanel.getSingleton();
+		TAB_PLUGIN_PREFS = pp.addPrefEditorComponent(new BundleRepositoryPrefsView());
+		GeneralLoadView.setIGBService(IGBServiceImpl.getInstance());
 	}
 
 	public void loadMenu() {
@@ -428,18 +401,20 @@ public final class IGB extends Application
 
 	}
 
-	public void addWindowService(IWindowService windowService) {
+	public void setWindowService(IWindowService windowService) {
 		this.windowService = windowService;
 		windowService.setMainFrame(frm);
 		windowService.setSeqMapView(getMapView());
-		windowService.setStatusBar(singleton_igb.status_bar);
+		windowService.setStatusBar(status_bar);
 		windowService.setViewMenu(view_menu);
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				for (PluginInfo pi : plugins_info) {
-					setUpPlugIn(pi);
-				}
+				loadPlugIn(new PluginInfo(DataLoadView.class.getName(), BUNDLE.getString("dataAccessTab"), true, 0), new DataLoadView(IGBServiceImpl.getInstance()));
+				loadPlugIn(new PluginInfo(PropertyView.class.getName(), BUNDLE.getString("selectionInfoTab"), true, 1), new PropertyView(IGBServiceImpl.getInstance()));
+				loadPlugIn(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true, 2), new SearchView(IGBServiceImpl.getInstance()));
+				loadPlugIn(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true, 3), new AltSpliceView(IGBServiceImpl.getInstance()));
+				loadPlugIn(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true, 4), new SimpleGraphTab(IGBServiceImpl.getInstance()));
 				frm.setVisible(true);
 			}
 		});
@@ -486,54 +461,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ShrinkWrapAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleToolTip.getAction()));
-	}
-
-	/**
-	 *  Puts the given component either in the tab pane or in its own window,
-	 *  depending on saved user preferences.
-	 */
-	private void setUpPlugIn(PluginInfo pi) {
-		Object plugin = createPlugin(pi);
-		if (plugin != null) {
-			loadPlugIn(pi, plugin);
-		}
-	}
-
-	private Preferences getNodeForName(String name) {
-		return PreferenceUtils.getTopNode().node(NODE_PLUGINS).node(name);
-	}
-
-	private Object createPlugin(PluginInfo pi) {
-		if (!pi.shouldLoad()) {
-			return null;
-		}
-
-		String class_name = pi.getClassName();
-		if (class_name == null || class_name.trim().length() == 0) {
-			ErrorHandler.errorPanel("Bad Plugin",
-							"Cannot create plugin '" + pi.getPluginName() + "' because it has no class name.",
-							this.frm);
-			getNodeForName(pi.getPluginName()).putBoolean("load", false);
-			return null;
-		}
-
-		Object plugin = null;
-		Throwable t = null;
-		try {
-			plugin = PluginInfo.instantiatePlugin(class_name);
-		} catch (InstantiationException e) {
-			plugin = null;
-			t = e;
-		}
-
-		if (plugin == null) {
-			ErrorHandler.errorPanel("Bad Plugin",
-							"Could not create plugin '" + pi.getPluginName() + "'.",
-							this.frm, t);
-			getNodeForName(pi.getPluginName()).putBoolean("load", false);
-			return null;
-		}
-		return plugin;
 	}
 
 	void loadPlugIn(PluginInfo pi, Object plugin) {
@@ -587,6 +514,9 @@ public final class IGB extends Application
 			Persistence.saveSeqVisibleSpan(map_view);
 		}
 		prev_selected_seq = selected_seq;
+	}
+	public void addStopRoutine(IStopRoutine routine) {
+		stopRoutines.add(routine);
 	}
 
 	public JComponent getView(String viewName) {

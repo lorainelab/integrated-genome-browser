@@ -41,9 +41,9 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
@@ -102,14 +102,16 @@ public final class SearchView extends JComponent implements
 	private SearchResultsTableModel model;
 	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;
+	private IGBService igbService;
 
 	private List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 
 	private List<SeqSymmetry> remoteSymList;
 
-	public SearchView() {
+	public SearchView(IGBService igbService) {
 		super();
-		gviewer = Application.getSingleton().getMapView();
+		this.igbService = igbService;
+		gviewer = (SeqMapView)igbService.getMapView();
 		gviewer.addToRefreshList(this);
 		
 		group = gmodel.getSelectedSeqGroup();
@@ -293,7 +295,7 @@ public final class SearchView extends JComponent implements
 						return;
 					}
 
-					if (Application.getSingleton().getMapView().getSeqMap().<GlyphI>getItem(sym) == null) {
+					if (gviewer.getSeqMap().<GlyphI>getItem(sym) == null) {
 						if (group == null) {
 							return;
 						}
@@ -532,7 +534,7 @@ public final class SearchView extends JComponent implements
 		}
 
 		if(vseq != gviewer.getAnnotatedSeq()){
-			boolean confirm = Application.confirmPanel("Sequence " + vseq.getID() +
+			boolean confirm = igbService.confirmPanel("Sequence " + vseq.getID() +
 					" is not same as selected sequence " + gviewer.getAnnotatedSeq().getID() +
 					". \nPlease select the sequence before proceeding." +
 					"\nDo you want to select sequence now ?");
@@ -549,7 +551,7 @@ public final class SearchView extends JComponent implements
 		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
 		
 		if (!vseq.isComplete()) {
-			boolean confirm = Application.confirmPanel("Residues for " + this.sequence_CB.getSelectedItem().toString()
+			boolean confirm = igbService.confirmPanel("Residues for " + this.sequence_CB.getSelectedItem().toString()
 					+ " not available.  \nDo you want to load residues ?");
 			if (!confirm) {
 				return;

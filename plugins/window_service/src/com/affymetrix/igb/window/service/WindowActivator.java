@@ -36,7 +36,6 @@ public abstract class WindowActivator implements BundleActivator {
         }
 	}
 
-
 	private void loadPage(ServiceReference windowServiceReference) {
         try
         {

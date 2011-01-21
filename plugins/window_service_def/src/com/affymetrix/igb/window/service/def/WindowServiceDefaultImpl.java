@@ -369,11 +369,15 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 			menu_item.setSelected(in_a_window);
 			if (in_a_window) {
 				openCompInWindow(comp, tab_pane);
-			} else if (position == -1) {
-				tab_pane.addTab(title, icon, comp, tool_tip);
-			} else {
-				tab_pane.insertTab(title, icon, comp, tool_tip, position);
 			}
+			else {
+				tab_pane.addTab(title, icon, comp, tool_tip);
+			}
+//			} else if (position == -1) {
+//				tab_pane.addTab(title, icon, comp, tool_tip);
+//			} else {
+//				tab_pane.insertTab(title, icon, comp, tool_tip, position);
+//			}
 			if (position == 0) {
 				tab_pane.setSelectedIndex(0);
 			}

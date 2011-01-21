@@ -608,8 +608,9 @@ public final class GeneralLoadUtils {
 		}
 
 		// For for formats that are not optimized do not iterate through BioSeq
-			// instead add them all at one.
-		if(((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
+		// instead add them all at one.
+		if((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
+				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
 			return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 		}
 

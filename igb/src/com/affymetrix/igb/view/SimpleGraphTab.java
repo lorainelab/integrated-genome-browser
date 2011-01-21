@@ -712,7 +712,7 @@ public final class SimpleGraphTab extends JPanel
 			paramT.setMaximumSize(new Dimension((int)Math.round(paramT.getPreferredSize().getWidth()), PARAM_TEXT_WIDTH));
 			grouping_box.add(param_box);
 			grouping_box.add(Box.createRigidArea(new Dimension(5, 0)));
-
+			
 			Box decoration_row = Box.createHorizontalBox();
 
 			decoration_row.add(Box.createRigidArea(new Dimension(6, 5)));
@@ -864,7 +864,7 @@ public final class SimpleGraphTab extends JPanel
 		}
 
 		public void loadTransforms() {
-			scaleCB.removeAll();
+			scaleCB.removeAllItems();
 			for (String name : name2transform.keySet()) {
 				scaleCB.addItem(name);
 			}

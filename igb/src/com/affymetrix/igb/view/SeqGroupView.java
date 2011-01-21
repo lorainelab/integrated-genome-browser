@@ -27,6 +27,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.Component;
 
 public final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
@@ -121,7 +123,9 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 		selected_seq = null;
 		seqtable.setModel(mod);
 		seqtable.setRowSorter(sorter);
-
+		
+		TableColumn c = seqtable.getColumnModel().getColumn(1);
+		c.setCellRenderer(new ColumnRenderer());
 
 		refreshTable();
 
@@ -219,6 +223,25 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 
 			// use valueOf to get a Long object versus a long primitive.
 			return Long.valueOf(o1).compareTo(Long.parseLong(o2));
+		}
+	}
+
+	static final class ColumnRenderer extends DefaultTableCellRenderer {
+
+		public ColumnRenderer(){
+			setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+		}
+		
+		@Override
+		public Component getTableCellRendererComponent(
+				JTable table, Object value, boolean isSelected,
+				boolean hasFocus, int row, int column) {
+
+			if(value.toString().length() == 0)
+				return super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
+
+			return super.getTableCellRendererComponent(table, nformat.format(Double.valueOf(value.toString())),
+					isSelected, hasFocus, row, column);
 		}
 	}
 }

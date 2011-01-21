@@ -33,7 +33,7 @@ final class SeqGroupTableModel extends AbstractTableModel {
 				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
 					return "";	// don't show the "whole genome" size, because it disagrees with the chromosome total
 				}
-				return nformat.format(seq.getLengthDouble());
+				return Long.toString((long) seq.getLengthDouble());
 			}
 		}
 		return null;
@@ -58,5 +58,5 @@ final class SeqGroupTableModel extends AbstractTableModel {
 			default:
 				return super.getColumnClass(c);
 		}
-	} 
+	}
 }

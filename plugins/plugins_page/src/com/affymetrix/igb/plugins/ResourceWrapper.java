@@ -50,7 +50,7 @@ public class ResourceWrapper implements Bundle {
 
 	@Override
 	public long getBundleId() {
-		return 0;
+		return Long.MAX_VALUE;
 	}
 
 	@Override

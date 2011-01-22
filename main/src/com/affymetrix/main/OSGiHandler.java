@@ -14,7 +14,10 @@ import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.StringMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 
 public class OSGiHandler implements IStopRoutine {
@@ -118,7 +121,8 @@ public class OSGiHandler implements IStopRoutine {
            	loadUncachedJars(bundleContext, tier1Bundles, requiredJars);
            	// load uncached optional jars
           	loadUncachedJars(bundleContext, tier2Bundles, optionalJars);
-			Logger.getLogger(getClass().getName()).log(Level.INFO, "OSGi is started");
+          	stopAtExit(bundleContext);
+          	Logger.getLogger(getClass().getName()).log(Level.INFO, "OSGi is started");
         }
         catch (Exception ex)
         {
@@ -126,6 +130,37 @@ public class OSGiHandler implements IStopRoutine {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
     }
+
+	private void setStop(BundleContext bundleContext, ServiceReference igbServiceReference) {
+        try {
+            IGBService igbService = (IGBService) bundleContext.getService(igbServiceReference);
+            igbService.addStopRoutine(this);
+            bundleContext.ungetService(igbServiceReference);
+        } catch (Exception ex) {
+            System.out.println(this.getClass().getName() + " - Exception in Activator.createPage() -> " + ex.getMessage());
+            ex.printStackTrace(System.out);
+        }
+	}
+
+	private void stopAtExit(final BundleContext bundleContext) {
+    	ServiceReference igbServiceReference = bundleContext.getServiceReference(IGBService.class.getName());
+
+        if (igbServiceReference != null)
+        {
+        	setStop(bundleContext, igbServiceReference);
+        }
+        else
+        {
+        	ServiceTracker serviceTracker = new ServiceTracker(bundleContext, IGBService.class.getName(), null) {
+        	    public Object addingService(ServiceReference igbServiceReference) {
+        	    	setStop(bundleContext, igbServiceReference);
+        	        return super.addingService(igbServiceReference);
+        	    }
+        	};
+        	serviceTracker.open();
+        }
+		
+	}
 
 	public int getTier(Bundle bundle) {
 		if (bundle.getBundleId() == 0) { // system bundle

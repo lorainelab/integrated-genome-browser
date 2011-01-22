@@ -218,7 +218,6 @@ public final class IGB extends Application
 						UIManager.setLookAndFeel(look_and_feel);
 					}
 				} catch (Exception ulfe) {
-					ulfe.printStackTrace(System.out);
 					// Windows look and feel is only supported on Windows, and only in
 					// some version of the jre.  That is perfectly ok.
 				}

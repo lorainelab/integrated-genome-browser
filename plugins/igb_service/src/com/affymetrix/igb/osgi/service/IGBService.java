@@ -2,7 +2,6 @@ package com.affymetrix.igb.osgi.service;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
@@ -25,8 +24,6 @@ public interface IGBService {
 	public ImageIcon getIcon(String name);
 	public void addStopRoutine(IStopRoutine routine);
 	// for plugins page
-	public Set<String> getTier1Bundles();
-	public Set<String> getTier2Bundles();
 	public List<String> getRepositories();
 	public void failRepository(String url);
 	public void displayRepositoryPreferences();

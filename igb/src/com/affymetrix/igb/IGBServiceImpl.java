@@ -17,7 +17,6 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
@@ -52,8 +51,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		return instance;
 	}
 	private List<RepositoryChangeListener> repositoryChangeListeners;
-	private Set<String> tier1Bundles; // required bundles
-	private Set<String> tier2Bundles; // optional bundles
 
 	private IGBServiceImpl() {
 		super();
@@ -144,14 +141,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		igb.addStopRoutine(routine);
 	}
 
-	public Set<String> getTier1Bundles() {
-		return tier1Bundles;
-	}
-
-	public Set<String> getTier2Bundles() {
-		return tier2Bundles;
-	}
-
 	@Override
 	public List<String> getRepositories() {
 		List<String> repositories = new ArrayList<String>();
@@ -161,14 +150,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 			}
 		}
 		return repositories;
-	}
-
-	void setTier1Bundles(Set<String> _tier1Bundles) {
-		tier1Bundles = _tier1Bundles;
-	}
-
-	void setTier2Bundles(Set<String> _tier2Bundles) {
-		tier2Bundles = _tier2Bundles;
 	}
 
 	@Override

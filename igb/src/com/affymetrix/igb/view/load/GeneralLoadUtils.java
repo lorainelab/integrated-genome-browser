@@ -574,6 +574,13 @@ public final class GeneralLoadUtils {
 		if (gFeature.loadStrategy == LoadStrategy.NO_LOAD) {
 			return false;	// should never happen
 		}
+		
+		//Already loaded the data.
+		if(gFeature.gVersion.gServer.serverType == ServerType.LocalFiles
+				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInst){
+			return false;
+		}
+
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		BioSeq visible_seq = gviewer.getViewSeq();
 		if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerType.LocalFiles)) {
@@ -609,7 +616,7 @@ public final class GeneralLoadUtils {
 
 		// For for formats that are not optimized do not iterate through BioSeq
 		// instead add them all at one.
-		if((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
+		if(feature.gVersion.gServer.serverType == ServerType.QuickLoad
 				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
 			return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 		}

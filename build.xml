@@ -312,7 +312,7 @@
 		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
 			<os family="mac" />
 		</condition>
-		<java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.igb.IGB">
+		<java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.main.Main">
 			<jvmarg line="${igb.jvmargs}" />
 			<jvmarg value="-Xms32m" />
 <!--			<jvmarg value="-splash:${jnlp.splashicon.path}" />-->
@@ -517,10 +517,6 @@
 					<include name="igb_service" />
 					<include name="window_service" />
 				</dirset>
-				<dirset dir="${basedir}">
-					<include name="main" />
-					<include name="igb-i18n" unless="findbugs" />
-				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="plugins_page" />
 					<include name="RestrictionsSites" />
@@ -532,6 +528,10 @@
 					<include name="igb" />
 					<include name="protannot" />
 					<include name="das2_server" />
+				</dirset>
+				<dirset dir="${basedir}">
+					<include name="main" />
+					<include name="igb-i18n" unless="findbugs" />
 				</dirset>
 			</subant>
 		</sequential>

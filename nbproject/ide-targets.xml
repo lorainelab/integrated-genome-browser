@@ -13,7 +13,7 @@
 				</dirset>
             </classpath>
         </nbjpdastart>
-        <java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.igb.IGB" >
+        <java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.main.Main" >
             <jvmarg line="${igb.jvmargs}" />
 			<jvmarg value="-Xms32m" />
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
@@ -51,7 +51,7 @@
                 </dirset>
             </rootspath>
         </nbprofiledirect>
-        <java fork="true" classname="com.affymetrix.igb.IGB" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
+        <java fork="true" classname="com.affymetrix.main.Main" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
             <jvmarg line="${igb.jvmargs}" />
             <jvmarg value="${profiler.info.jvmargs.agent}" />
             <jvmarg line="${profiler.info.jvmargs}"/>

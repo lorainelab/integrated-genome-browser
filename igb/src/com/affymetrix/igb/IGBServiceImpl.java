@@ -36,6 +36,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.osgi.service.ExtensionFactory;
+import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
@@ -139,6 +141,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public void addStopRoutine(IStopRoutine routine) {
 		IGB igb = (IGB)IGB.getSingleton();
 		igb.addStopRoutine(routine);
+	}
+
+	public ExtensionPointRegistry getExtensionPointRegistry() {
+		return ExtensionPointRegistry.getInstance();
 	}
 
 	@Override
@@ -246,10 +252,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		IGB.commandLineBatchFileStr = str;
 	}
 
-	public void addTransform(FloatTransformer transformer) {
+	public void addTransform(ExtensionFactory<FloatTransformer> transformerFactory) {
 		IGB igb = (IGB)IGB.getSingleton();
 		SimpleGraphTab graphTab = (SimpleGraphTab)igb.getView(BUNDLE.getString("graphAdjusterTab"));
-		graphTab.addTransform(transformer);
+		graphTab.addTransform(transformerFactory);
 	}
 
 	public void removeTransform(String name) {

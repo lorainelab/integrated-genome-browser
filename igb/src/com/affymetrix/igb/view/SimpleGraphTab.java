@@ -36,9 +36,14 @@ import com.affymetrix.genometryImpl.util.InverseTransform;
 import com.affymetrix.genometryImpl.util.LogTransform;
 
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
+import com.affymetrix.igb.osgi.service.ExtensionFactory;
+import com.affymetrix.igb.osgi.service.ExtensionPoint;
+import com.affymetrix.igb.osgi.service.ExtensionPointRegisterListener;
+import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -56,8 +61,12 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public final class SimpleGraphTab extends JPanel
-				implements SeqSelectionListener, SymSelectionListener {
+				implements SeqSelectionListener, SymSelectionListener, ExtensionPointRegisterListener {
 	private static final long serialVersionUID = 1L;
+	static {
+		ExtensionPointRegistry.getInstance().registerExtensionPoint(IGBService.GRAPH_TRANSFORMS, new ExtensionPoint<FloatTransformer>());
+	}
+
 	SeqMapView gviewer = null;
 	BioSeq current_seq;
 	GenometryModel gmodel;
@@ -83,21 +92,9 @@ public final class SimpleGraphTab extends JPanel
 	private final	List<GraphSym> grafs = new ArrayList<GraphSym>();
 	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
-	private static Map<String,FloatTransformer> name2transform;
 	private static final String select2graphs= "Select exactly two graphs";
+	private ExtensionPoint<FloatTransformer> graphTransformExtensionPoint;
 
-	private static void includeTransform(FloatTransformer floatTransformer) {
-		name2transform.put(floatTransformer.getName(), floatTransformer);
-	}
-
-	static {
-		name2transform = new LinkedHashMap<String,FloatTransformer>();
-		includeTransform(new IdentityTransform());
-		includeTransform(new LogTransform(2.0));
-		includeTransform(new LogTransform(10.0));
-		includeTransform(new LogTransform(Math.E));
-		includeTransform(new LogTransform());
-	}
 	private final JButton cloneB = new JButton(IGBConstants.BUNDLE.getString("goButton"));
 	private final JLabel scale_type_label = new JLabel(IGBConstants.BUNDLE.getString("transformationLabel"));
 	private final JComboBox scaleCB = new JComboBoxWithSingleListener();
@@ -150,9 +147,11 @@ public final class SimpleGraphTab extends JPanel
 	private JButton mulB;
 	private JButton divB;
 	private JComboBox heat_mapCB;
-	private JPanel advanced_panel;
+	private AdvancedGraphPanel advanced_panel;
 
 	public SimpleGraphTab(IGBService igbService) {
+		super();
+		initTransformers();
 		this.gviewer = (SeqMapView)igbService.getMapView();
 
 		heat_mapCB = new JComboBox(HeatMap.getStandardNames());
@@ -288,6 +287,53 @@ public final class SimpleGraphTab extends JPanel
 
 	private void setSeqMapView(SeqMapView smv) {
 		this.gviewer = smv;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void initTransformers() {
+	    ExtensionPointRegistry registry = IGBServiceImpl.getInstance().getExtensionPointRegistry();
+		graphTransformExtensionPoint = (ExtensionPoint<FloatTransformer>)registry.getExtensionPoint(IGBService.GRAPH_TRANSFORMS);
+        graphTransformExtensionPoint.registerExtension(
+        	new ExtensionFactory<FloatTransformer>() {
+				@Override
+				public FloatTransformer createInstance() {
+					return new IdentityTransform();
+				}
+        	}
+        );
+        graphTransformExtensionPoint.registerExtension(
+        	new ExtensionFactory<FloatTransformer>() {
+				@Override
+				public FloatTransformer createInstance() {
+					return new LogTransform(2.0);
+				}
+        	}
+        );
+        graphTransformExtensionPoint.registerExtension(
+        	new ExtensionFactory<FloatTransformer>() {
+				@Override
+				public FloatTransformer createInstance() {
+					return new LogTransform(10.0);
+				}
+        	}
+        );
+        graphTransformExtensionPoint.registerExtension(
+        	new ExtensionFactory<FloatTransformer>() {
+				@Override
+				public FloatTransformer createInstance() {
+					return new LogTransform(Math.E);
+				}
+        	}
+        );
+        graphTransformExtensionPoint.registerExtension(
+        	new ExtensionFactory<FloatTransformer>() {
+				@Override
+				public FloatTransformer createInstance() {
+					return new LogTransform();
+				}
+        	}
+        );
+        graphTransformExtensionPoint.addExtensionPointRegisterListener(this);
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
@@ -545,14 +591,12 @@ public final class SimpleGraphTab extends JPanel
 		}
 	}
 
-	public void addTransform(FloatTransformer transformer) {
-		includeTransform(transformer);
-		((AdvancedGraphPanel)advanced_panel).loadTransforms();
+	public void addTransform(ExtensionFactory<FloatTransformer> floatTransformerFactory) {
+		advanced_panel.loadTransforms();
 	}
 
 	public void removeTransform(String name) {
-		name2transform.remove(name);
-		((AdvancedGraphPanel)advanced_panel).loadTransforms();
+		advanced_panel.loadTransforms();
 	}
 
 	private final class GraphStyleSetter implements ActionListener {
@@ -682,9 +726,10 @@ public final class SimpleGraphTab extends JPanel
 	private final class AdvancedGraphPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private static final int PARAM_TEXT_WIDTH = 60;
+		private Map<String, FloatTransformer> name2transform;
 
 		public AdvancedGraphPanel() {
-
+			name2transform = new HashMap<String, FloatTransformer>();
 			JPanel advanced_panel = this;
 			HoverEffect hovereffect = new HoverEffect();
 
@@ -720,15 +765,21 @@ public final class SimpleGraphTab extends JPanel
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String selection = (String) scaleCB.getSelectedItem();
-					FloatTransformer trans = name2transform.get(selection);
-					String paramPrompt = trans.getParamPrompt();
-					if (paramPrompt == null) {
+					if (selection == null) {
 						param_label.setText("");
 						paramT.setVisible(false);
 					}
 					else {
-						param_label.setText(paramPrompt + " ");
-						paramT.setVisible(true);
+						FloatTransformer trans = name2transform.get(selection);
+						String paramPrompt = trans.getParamPrompt();
+						if (paramPrompt == null) {
+							param_label.setText("");
+							paramT.setVisible(false);
+						}
+						else {
+							param_label.setText(paramPrompt + " ");
+							paramT.setVisible(true);
+						}
 					}
 				}
 			});
@@ -861,6 +912,10 @@ public final class SimpleGraphTab extends JPanel
 
 		public void loadTransforms() {
 			scaleCB.removeAllItems();
+			name2transform.clear();
+			for (FloatTransformer transformer : graphTransformExtensionPoint.getExtensions()) {
+				name2transform.put(transformer.getName(), transformer);
+			}
 			for (String name : name2transform.keySet()) {
 				scaleCB.addItem(name);
 			}
@@ -1012,4 +1067,12 @@ public final class SimpleGraphTab extends JPanel
 			}
 		}
 	}
+
+	@Override
+	public void extensionPointAdded() {
+		advanced_panel.loadTransforms();
+	}
+
+	@Override
+	public void extensionPointRemoved() {}
 }

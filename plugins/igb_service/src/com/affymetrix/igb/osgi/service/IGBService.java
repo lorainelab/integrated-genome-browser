@@ -13,6 +13,9 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 //import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 
 public interface IGBService {
+	// extension point names
+	public static final String GRAPH_TRANSFORMS = "igb.graph.transform";
+
 	public final static boolean DEBUG_EVENTS = false;
 	public boolean addMenu(JMenu menu);
 	public boolean removeMenu(String menuName);
@@ -23,6 +26,7 @@ public interface IGBService {
 	public boolean confirmPanel(String text);
 	public ImageIcon getIcon(String name);
 	public void addStopRoutine(IStopRoutine routine);
+	public ExtensionPointRegistry getExtensionPointRegistry();
 	// for plugins page
 	public List<String> getRepositories();
 	public void failRepository(String url);
@@ -47,6 +51,6 @@ public interface IGBService {
 	public String getCommandLineBatchFileStr();
 	public void setCommandLineBatchFileStr(String str);
 	// for transforms
-	public void addTransform(FloatTransformer transformer);
+	public void addTransform(ExtensionFactory<FloatTransformer> transformerFactory);
 	public void removeTransform(String name);
 }

@@ -39,11 +39,9 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 public final class GraphAdjusterView {
-
 	public static final NumberFormat numberParser = NumberFormat.getNumberInstance();
 
 	private static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
-
 	public static List<GraphSym> transformGraphs(List<GraphSym> grafs, String trans_name, FloatTransformer transformer) {
 		List<GraphSym> newgrafs = new ArrayList<GraphSym>(grafs.size());
 		for (GraphSym graf : grafs) {

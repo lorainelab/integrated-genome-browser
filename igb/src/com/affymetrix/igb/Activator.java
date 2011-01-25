@@ -43,5 +43,6 @@ public class Activator implements BundleActivator {
         igb.init(bundleContext.getProperty("args").split(","));
         igb.setWindowService(windowService);
 		bundleContext.registerService(IGBService.class.getName(), IGBServiceImpl.getInstance(), new Properties());
+		igb.addStopRoutine(new BundleCleaner(bundleContext, IGBServiceImpl.getInstance()));
 	}
 }

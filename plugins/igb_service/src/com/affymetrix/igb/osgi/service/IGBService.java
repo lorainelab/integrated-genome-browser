@@ -8,10 +8,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 
+import org.osgi.framework.Bundle;
+
 import com.affymetrix.genoviz.bioviews.GlyphI;
 //import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 
 public interface IGBService {
+	public static final String IGB_TIER_HEADER = "IGB-Tier";
 	// extension point names
 	public static final String GRAPH_TRANSFORMS = "igb.graph.transform";
 
@@ -25,6 +28,7 @@ public interface IGBService {
 	public boolean confirmPanel(String text);
 	public ImageIcon getIcon(String name);
 	public void addStopRoutine(IStopRoutine routine);
+	public int getTier(Bundle bundle);
 	public ExtensionPointRegistry getExtensionPointRegistry();
 	// for plugins page
 	public List<String> getRepositories();

@@ -53,7 +53,6 @@ import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 
 public class PluginsView extends JPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
-	private static final String IGB_TIER_HEADER = "IGB-Tier";
 	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 	private final Cursor defaultCursor = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
@@ -84,7 +83,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private final BundleFilter SYSTEM_BUNDLE_FILTER = new BundleFilter() {
 		@Override
 		public boolean filterBundle(Bundle bundle) {
-			return getTier(bundle) > 1;
+			return igbService.getTier(bundle) > 1;
 		}
 	};
 	private BundleContext bundleContext;
@@ -391,23 +390,8 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		return filteredBundles.size();
 	}
 
-	public int getTier(Bundle bundle) {
-		if (bundle.getBundleId() == 0) { // system bundle
-			return 0;
-		}
-		int tier = 3;
-		String tierString = ((String)bundle.getHeaders().get(IGB_TIER_HEADER));
-		if (tierString != null) {
-			try {
-				tier = Integer.parseInt(tierString.trim());
-			}
-			catch (Exception x) {}
-		}
-		return tier;
-	}
-
 	public boolean isTier2Bundle(Bundle bundle) {
-		return getTier(bundle) == 2;
+		return igbService.getTier(bundle) == 2;
 	}
 
 	private BundleFilter getBundleFilter() {

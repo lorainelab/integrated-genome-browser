@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="plugins/plugins_page/src"/>
 	<classpathentry kind="src" path="main/src"/>
-	<classpathentry kind="src" path="plugins/window_service_dockingframes/src"/>
-	<classpathentry kind="src" path="plugins/window_service/src"/>
-	<classpathentry kind="src" path="plugins/window_service_def/src"/>
-	<classpathentry kind="src" path="plugins/ExternalView/src"/>
-	<classpathentry kind="src" path="plugins/RestrictionsSites/src"/>
-	<classpathentry kind="src" path="plugins/igb_service/src"/>
-	<classpathentry kind="src" path="igb/src"/>
-	<classpathentry kind="src" path="genoviz_sdk/src"/>
-	<classpathentry kind="src" path="genometryImpl/src"/>
-	<classpathentry kind="src" path="igb-i18n/src"/>
-	<classpathentry kind="src" path="das2_server/src"/>
-	<classpathentry kind="src" path="protannot/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="ext/affx_fusion.jar"/>
 	<classpathentry kind="lib" path="ext/antlr-2.7.6rc1.jar"/>
@@ -30,7 +17,7 @@
 	<classpathentry kind="lib" path="ext/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="ext/emma_ant.jar"/>
 	<classpathentry kind="lib" path="ext/emma.jar"/>
-	<classpathentry kind="lib" path="ext/felix.jar"/>
+	<classpathentry kind="lib" path="ext/felix.jar" sourcepath="/felix/src/main/java"/>
 	<classpathentry kind="lib" path="ext/freehep-2.1.1.jar"/>
 	<classpathentry kind="lib" path="ext/hibernate3.jar"/>
 	<classpathentry kind="lib" path="ext/image4j.jar"/>
@@ -48,11 +35,9 @@
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>
 	<classpathentry kind="lib" path="igb/resources"/>
-	<classpathentry kind="lib" path="dist/igb_service.jar"/>
-	<classpathentry kind="lib" path="dist"/>
 	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCommon.jar"/>
 	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCore.jar"/>
-	<classpathentry kind="lib" path="dist/ExternalView.jar"/>
 	<classpathentry kind="lib" path="ext/org.apache.felix.log-1.0.0.jar"/>
+	<classpathentry kind="lib" path="dist"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

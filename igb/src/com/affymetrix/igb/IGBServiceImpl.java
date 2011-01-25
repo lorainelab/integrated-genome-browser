@@ -23,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -136,6 +137,21 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public void addStopRoutine(IStopRoutine routine) {
 		IGB igb = (IGB)IGB.getSingleton();
 		igb.addStopRoutine(routine);
+	}
+
+	public int getTier(Bundle bundle) {
+		if (bundle.getBundleId() == 0) { // system bundle
+			return 0;
+		}
+		int tier = 3;
+		String tierString = ((String)bundle.getHeaders().get(IGBService.IGB_TIER_HEADER));
+		if (tierString != null) {
+			try {
+				tier = Integer.parseInt(tierString.trim());
+			}
+			catch (Exception x) {}
+		}
+		return tier;
 	}
 
 	public ExtensionPointRegistry getExtensionPointRegistry() {

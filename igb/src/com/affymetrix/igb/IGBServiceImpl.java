@@ -12,8 +12,6 @@
  */
 package com.affymetrix.igb;
 
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +28,11 @@ import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.osgi.service.ExtensionFactory;
 import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -44,7 +40,6 @@ import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.SearchView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.SimpleGraphTab;
 
 public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryChangeListener {
 
@@ -250,17 +245,5 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	public void setCommandLineBatchFileStr(String str) {
 		IGB.commandLineBatchFileStr = str;
-	}
-
-	public void addTransform(ExtensionFactory<FloatTransformer> transformerFactory) {
-		IGB igb = (IGB)IGB.getSingleton();
-		SimpleGraphTab graphTab = (SimpleGraphTab)igb.getView(BUNDLE.getString("graphAdjusterTab"));
-		graphTab.addTransform(transformerFactory);
-	}
-
-	public void removeTransform(String name) {
-		IGB igb = (IGB)IGB.getSingleton();
-		SimpleGraphTab graphTab = (SimpleGraphTab)igb.getView(BUNDLE.getString("graphAdjusterTab"));
-		graphTab.removeTransform(name);
 	}
 }

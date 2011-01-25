@@ -8,7 +8,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 
-import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 //import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 
@@ -50,7 +49,4 @@ public interface IGBService {
 	// for GeneralLoadView
 	public String getCommandLineBatchFileStr();
 	public void setCommandLineBatchFileStr(String str);
-	// for transforms
-	public void addTransform(ExtensionFactory<FloatTransformer> transformerFactory);
-	public void removeTransform(String name);
 }

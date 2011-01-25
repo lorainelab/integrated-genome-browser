@@ -591,14 +591,6 @@ public final class SimpleGraphTab extends JPanel
 		}
 	}
 
-	public void addTransform(ExtensionFactory<FloatTransformer> floatTransformerFactory) {
-		advanced_panel.loadTransforms();
-	}
-
-	public void removeTransform(String name) {
-		advanced_panel.loadTransforms();
-	}
-
 	private final class GraphStyleSetter implements ActionListener {
 
 		GraphType style = GraphType.LINE_GRAPH;

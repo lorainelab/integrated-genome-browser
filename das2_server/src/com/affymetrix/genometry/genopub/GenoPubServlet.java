@@ -65,6 +65,7 @@ public class GenoPubServlet extends HttpServlet {
 	private static final int ERROR_CODE_INSUFFICIENT_PERMISSIONS  = 904;
 	private static final int ERROR_CODE_FILE_TOO_BIG              = 905;
 	private static final int ERROR_CODE_MALFORMED_BAM_FILE        = 906;
+  private static final int ERROR_CODE_INVALID_NAME              = 907;
 
 	private static final String SESSION_DOWNLOAD_KEYS              = "genopubDownloadKeys";
 
@@ -1253,8 +1254,8 @@ public class GenoPubServlet extends HttpServlet {
 
 			// Make sure that name doesn't have forward slashes (/).
 			String name = request.getParameter("name");
-			if (name.contains("/")) {
-				throw new InvalidNameException("The folder name cannnot contain any / characters.");
+			if (name.contains("/") || name.contains("&")) {
+				throw new InvalidNameException("The folder name cannnot contain characters / or &.");
 			}
 
 			annotationGrouping.setName(name);
@@ -1339,8 +1340,8 @@ public class GenoPubServlet extends HttpServlet {
 
 			// Make sure that name doesn't have forward slashes (/).
 			String name = request.getParameter("name");
-			if (name.contains("/")) {
-				throw new InvalidNameException("The folder name cannnot contain any / characters.");
+			if (name.contains("/") || name.contains("&")) {
+				throw new InvalidNameException("The folder name cannnot contain any characters / or &.");
 			}
 
 			annotationGrouping.setName(name);
@@ -1639,9 +1640,9 @@ public class GenoPubServlet extends HttpServlet {
 
 			String name = request.getParameter("name");
 
-			// Make sure that name doesn't have forward slashes (/).
-			if (name.contains("/")) {
-				throw new InvalidNameException("The annotation name cannnot contain any / characters.");
+			// Make sure that name doesn't have forward slashes (/) or &.
+			if (name.contains("/") || name.contains("&")) {
+				throw new InvalidNameException("The annotation name cannnot contain characters / or &.");
 			}
 
 
@@ -1798,8 +1799,8 @@ public class GenoPubServlet extends HttpServlet {
 
 			// Make sure that name doesn't have forward slashes (/).
 			String name = request.getParameter("name");
-			if (name.contains("/")) {
-				throw new InvalidNameException("The annotation name cannnot contain any / characters.");
+			if (name.contains("/") || name.contains("&")) {
+				throw new InvalidNameException("The annotation name cannnot contain characters / or &.");
 			}
 
 			annotation.setName(name);
@@ -2601,7 +2602,10 @@ public class GenoPubServlet extends HttpServlet {
 
 			}
 
-
+      // Make sure that name doesn't have forward slashes (/) or &.
+      if (annotationName.contains("/") || annotationName.contains("&")) {
+        throw new InvalidNameException("The annotation name cannnot contain characters / or &.");
+      }
 
 			if (idAnnotation != null) {				
 				annotation = (Annotation)sess.get(Annotation.class, idAnnotation);
@@ -2704,7 +2708,13 @@ public class GenoPubServlet extends HttpServlet {
 
 			this.reportSuccess(res, "idAnnotation", annotation.getIdAnnotation());
 
-		} catch (MalformedBamFileException e) {
+		} catch (InvalidNameException e) {
+      Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+      if (tx != null) {
+        tx.rollback();
+      }
+      this.reportError(res, e.getMessage(), this.ERROR_CODE_INVALID_NAME);
+    } catch (MalformedBamFileException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			if (tx != null) {
 				tx.rollback();

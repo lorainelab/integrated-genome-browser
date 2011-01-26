@@ -479,7 +479,10 @@ package util
             	} else if (event.status == 905) {
             		message = "File '" + event.target.name + "' did not upload.\nThe text formatted file exceeds the maximum allowed size (10,000 lines).\nConvert to xxx.useq\n(see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form.";
             		title =  "Text File exceeds max allowed size";            		
-            	} else {
+            	} else if (event.status == 907) {
+					message = "File '" + event.target.name + "' did not upload.\nThe annotation name is invalid. Characters / and & are not allowed.";
+					title =  "Invalid annotation name";            		
+				} else {
             		message = "File '" + event.target.name + "' did not upload.\nStatus code " + event.status + " returned.";
             		title = "Upload Error";
             	}

@@ -9,6 +9,9 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
+import javax.swing.JFrame;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
 
 import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.StringMap;
@@ -99,6 +102,8 @@ public class OSGiHandler {
 	}
 
 	public void startOSGi(String[] args) {
+		setLaf();
+
 		loadFelix(Arrays.toString(args));
 
         try
@@ -123,4 +128,35 @@ public class OSGiHandler {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
     }
+
+	private static void setLaf() {
+
+		// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
+		System.setProperty("swing.aatext", "true");
+
+		// Letting the look-and-feel determine the window decorations would
+		// allow exporting the whole frame, including decorations, to an eps file.
+		// But it also may take away some things, like resizing buttons, that the
+		// user is used to in their operating system, so leave as false.
+		JFrame.setDefaultLookAndFeelDecorated(false);
+
+		// if this is != null, then the user-requested l-and-f has already been applied
+		if (System.getProperty("swing.defaultlaf") == null) {
+			String os = System.getProperty("os.name");
+			if (os != null && os.toLowerCase().contains("windows")) {
+				try {
+					// It this is Windows, then use the Windows look and feel.
+					Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+
+					if (look_and_feel.isSupportedLookAndFeel()) {
+						UIManager.setLookAndFeel(look_and_feel);
+					}
+				} catch (Exception ulfe) {
+					// Windows look and feel is only supported on Windows, and only in
+					// some version of the jre.  That is perfectly ok.
+				}
+			}
+		}
+	}
 }

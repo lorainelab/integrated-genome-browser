@@ -66,5 +66,6 @@ Import-Package: affymetrix.calvin.data,
  org.osgi.framework,
  org.osgi.util.tracker,
  org.w3c.dom,
- org.xml.sax
+ org.xml.sax,
+ com.apple.eawt
 

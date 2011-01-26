@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="ext/affx_fusion.jar"/>
 	<classpathentry kind="lib" path="ext/antlr-2.7.6rc1.jar"/>
 	<classpathentry kind="lib" path="ext/asm-attrs.jar"/>
@@ -38,6 +37,19 @@
 	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCommon.jar"/>
 	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCore.jar"/>
 	<classpathentry kind="lib" path="ext/org.apache.felix.log-1.0.0.jar"/>
+	<classpathentry kind="lib" path="dist/das2server.jar"/>
+	<classpathentry kind="lib" path="dist/genometry.jar"/>
+	<classpathentry kind="lib" path="dist/genoviz.jar"/>
+	<classpathentry kind="lib" path="dist/igb-i18n.jar"/>
+	<classpathentry kind="lib" path="dist/igb.jar"/>
+	<classpathentry kind="lib" path="dist/main.jar"/>
+	<classpathentry kind="lib" path="dist/plugins_page.jar"/>
+	<classpathentry kind="lib" path="dist/protannot.jar"/>
+	<classpathentry kind="lib" path="dist/RestrictionsSites.jar"/>
+	<classpathentry kind="lib" path="dist/window_service_def.jar"/>
+	<classpathentry kind="lib" path="dist/window_service_dockingframes.jar"/>
+	<classpathentry kind="lib" path="dist/window_service.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="dist"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

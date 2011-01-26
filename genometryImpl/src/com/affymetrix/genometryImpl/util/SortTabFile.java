@@ -30,9 +30,9 @@ public class SortTabFile {
 		String line = null;
 		List<String> list = new ArrayList<String>(1000);
 		List<String> templist = new ArrayList<String>(1000);
-		String fileName = file.getName();
-		String ext = fileName.substring(fileName.indexOf('.'), fileName.length());
-		Comparator<String> comparator = new LineComparator(ext);
+		String unzippedStreamName = GeneralUtils.stripEndings(file.getName());
+		String extension = ParserController.getExtension(unzippedStreamName);
+		Comparator<String> comparator = new LineComparator(extension);
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
@@ -163,6 +163,7 @@ public class SortTabFile {
 				return new int[]{2, 3};
 			}
 
+			Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, "Unsupported file {0}", new Object[]{ext});
 			return new int[]{-1, -1};
 		}
 

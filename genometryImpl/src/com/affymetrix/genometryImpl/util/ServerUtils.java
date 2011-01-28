@@ -1090,7 +1090,7 @@ public abstract class ServerUtils {
 			return new Fasta(uri, group);
 		}
 		if (extension.equals("2bit")) {
-			return new TwoBit(uri);
+			return new TwoBit(uri, group);
 		}
 
 		// symmetry loaders

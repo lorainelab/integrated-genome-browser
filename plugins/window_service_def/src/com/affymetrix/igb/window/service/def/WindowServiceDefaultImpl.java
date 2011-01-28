@@ -57,6 +57,7 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 	private JSplitPane splitpane;
 	private JPanel map_view;
 	private Container cpane;
+    private int focusIndex = -1;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -379,7 +380,10 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 //				tab_pane.insertTab(title, icon, comp, tool_tip, position);
 //			}
 			if (position == 0) {
-				tab_pane.setSelectedIndex(0);
+			    focusIndex = tab_pane.getTabCount() - 1;
+			}
+			if (focusIndex > -1) {
+				tab_pane.setSelectedIndex(focusIndex);
 			}
 		}
 	}

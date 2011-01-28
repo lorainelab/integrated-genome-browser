@@ -203,9 +203,9 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	public static void setIGBService(IGBService _igbService) {
-		singleton = new GeneralLoadView();
 		igbService = _igbService;
 		gviewer = (SeqMapView)igbService.getMapView();
+		singleton = new GeneralLoadView();
 	}
 
 	public static synchronized GeneralLoadView getLoadView() {

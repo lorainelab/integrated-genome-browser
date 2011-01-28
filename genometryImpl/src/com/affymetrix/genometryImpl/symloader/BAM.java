@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import net.sf.picard.util.BuildBamIndex;
+import net.sf.picard.sam.BuildBamIndex;
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
@@ -396,18 +396,15 @@ public final class BAM extends SymLoader {
 		}
 		//Read Group
 		for (SAMReadGroupRecord srgr : hr.getReadGroups()) {
-			for (Entry<String, Object> en : srgr.getAttributes()) {
-				if (en.getValue() instanceof String) {
-					sym.setProperty(en.getKey(), en.getValue());
-				}
+			for (Entry<String, String> en : srgr.getAttributes()) {
+				sym.setProperty(en.getKey(), en.getValue());
 			}
 		}
+
 		//Program
 		for (SAMProgramRecord spr : hr.getProgramRecords()) {
-			for (Entry<String, Object> en : spr.getAttributes()) {
-				if (en.getValue() instanceof String) {
-					sym.setProperty(en.getKey(), en.getValue());
-				}
+			for (Entry<String, String> en : spr.getAttributes()) {
+				sym.setProperty(en.getKey(), en.getValue());
 			}
 		}
 	}

@@ -338,7 +338,7 @@ public final class ResidueLoading {
 				return new BNIB(uri, seq_group);
 
 			case TWOBIT:
-				return new TwoBit(uri);
+				return new TwoBit(uri, seq_group);
 
 //			case FA:
 //				return new Fasta(uri, seq_group);

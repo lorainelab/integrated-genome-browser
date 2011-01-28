@@ -230,12 +230,12 @@ public final class IGB extends Application
 		loadSynonyms("/synonyms.txt", SynonymLookup.getDefaultLookup());
 		loadSynonyms("/chromosomes.txt", SynonymLookup.getChromosomeLookup());
 
-		if ("Mac OS X".equals(System.getProperty("os.name"))) {
-			MacIntegration mi = MacIntegration.getInstance();
-			if (this.getIcon() != null) {
-				mi.setDockIconImage(this.getIcon());
-			}
-		}
+//		if ("Mac OS X".equals(System.getProperty("os.name"))) {
+//			MacIntegration mi = MacIntegration.getInstance();
+//			if (this.getIcon() != null) {
+//				mi.setDockIconImage(this.getIcon());
+//			}
+//		}
 
 		frm = new JFrame(APP_NAME + " " + APP_VERSION);
 
@@ -380,7 +380,7 @@ public final class IGB extends Application
 				loadPlugIn(new PluginInfo(PropertyView.class.getName(), BUNDLE.getString("selectionInfoTab"), true, 1), new PropertyView(IGBServiceImpl.getInstance()));
 				loadPlugIn(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true, 2), new SearchView(IGBServiceImpl.getInstance()));
 				loadPlugIn(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true, 3), new AltSpliceView(IGBServiceImpl.getInstance()));
-				loadPlugIn(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true, 4), new SimpleGraphTab(IGBServiceImpl.getInstance()));
+				//loadPlugIn(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true, 4), new SimpleGraphTab(IGBServiceImpl.getInstance()));
 				frm.setVisible(true);
 			}
 		});

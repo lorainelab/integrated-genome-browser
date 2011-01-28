@@ -102,16 +102,13 @@
 		<my.signjar jar="${lib.dir}/sam.jar"                  signedjar="${webstart.dir}/sam.jar" />
 		<my.signjar jar="${lib.dir}/picard.jar"               signedjar="${webstart.dir}/picard.jar" />
 		<my.signjar jar="${lib.dir}/colt.jar"                 signedjar="${webstart.dir}/colt.jar" />
-		<my.signjar jar="${lib.dir}/jide-common.jar"          signedjar="${webstart.dir}/jide-common.jar" />
-		<my.signjar jar="${lib.dir}/jide-components.jar"      signedjar="${webstart.dir}/jide-components.jar" />
-		<my.signjar jar="${lib.dir}/jide-grids.jar"           signedjar="${webstart.dir}/jide-grids.jar" />
-		<my.signjar jar="${lib.dir}/felix.jar"                signedjar="${webstart.dir}/felix.jar" />
-		<my.signjar jar="${dist.dir}/igb_service.jar"         signedjar="${webstart.dir}/igb_service.jar" />
-		<my.signjar jar="${dist.dir}/window_service.jar"      signedjar="${webstart.dir}/window_service.jar" />
-		<my.signjar jar="${dist.dir}/window_service_def.jar"  signedjar="${webstart.dir}/window_service_def.jar" />
+		<my.signjar jar="${lib.dir}/felix.jar"                    signedjar="${webstart.dir}/felix.jar" />
+		<my.signjar jar="${dist.dir}/igb_service.jar"             signedjar="${webstart.dir}/igb_service.jar" />
+		<my.signjar jar="${dist.dir}/window_service.jar"          signedjar="${webstart.dir}/window_service.jar" />
+		<my.signjar jar="${dist.dir}/window_service_def.jar"      signedjar="${webstart.dir}/window_service_def.jar" />
 		<my.signjar jar="${dist.dir}/window_service_dockingframes.jar"  signedjar="${webstart.dir}/window_service_dockingframes.jar" />
-		<my.signjar jar="${dist.dir}/RestrictionsSites.jar"   signedjar="${webstart.dir}/RestrictionsSites.jar" />
-		<my.signjar jar="${dist.dir}/ExternalView.jar"        signedjar="${webstart.dir}/ExternalView.jar" />
+		<my.signjar jar="${dist.dir}/RestrictionsSites.jar"       signedjar="${webstart.dir}/RestrictionsSites.jar" />
+		<my.signjar jar="${dist.dir}/ExternalView.jar"            signedjar="${webstart.dir}/ExternalView.jar" />
 
 		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
 		<jar destfile="${webstart.dir}/igb.jar">
@@ -266,16 +263,14 @@
 			<metainf file="LICENSE.html"/>
 			<metainf file="NOTICES.txt"/>
 			<zipgroupfileset dir="${dist.dir}">
-				<exclude name="das2server.jar" />
-				<exclude name="protannot.jar" />
-				<exclude name="RestrictionsSites.jar"/>
-				<exclude name="ExternalView.jar"/>
-				<exclude name="plugins_page.jar"/>
-				<exclude name="window_service_def.jar"/>
-				<exclude name="window_service_dockingframes.jar"/>
-				<include name="*.jar"/>
+				<include name="window_service.jar" />
+				<include name="igb_service.jar" />
+				<include name="main.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">
+				<include name="felix.jar" />
+			</zipgroupfileset>
+			<fileset dir="${lib.dir}">
 				<include name="affx_fusion.jar"/>
 				<include name="freehep-2.1.1.jar"/>
 				<include name="jlfgr-1_0.jar"/>
@@ -284,11 +279,8 @@
 				<include name="sam.jar" />
 				<include name="picard.jar" />
 				<include name="colt.jar" />
-				<include name="jide-common.jar" />
-				<include name="jide-components.jar" />
-				<include name="jide-grids.jar" />
 				<include name="felix.jar" />
-			</zipgroupfileset>
+			</fileset>
 		</jar>
 		<jar jarfile="protannot_exe.jar" update="false">
 			<manifest>

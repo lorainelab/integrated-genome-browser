@@ -25,11 +25,6 @@ public final class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-
-			// Verify jidesoft license.
-//			com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
-//					"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-
 			if (isArgSet(args, "-resetOSGi")) {
 				OSGiHandler.getInstance().clearCache();
 			}

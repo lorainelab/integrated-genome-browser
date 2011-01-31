@@ -81,7 +81,7 @@ public class OSGiHandler {
 	}
 
 	public void startOSGi(String[] args) {
-//		setLaf();
+		setLaf();
 
 		loadFelix(Arrays.toString(args));
 

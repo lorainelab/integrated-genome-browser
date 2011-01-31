@@ -193,6 +193,38 @@ public final class IGB extends Application
 		}
 	}
 
+	//TODO: Remove this redundant call to set LAF. For now it fixes bug introduced by OSGi.
+	private static void setLaf() {
+
+		// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
+		System.setProperty("swing.aatext", "true");
+
+		// Letting the look-and-feel determine the window decorations would
+		// allow exporting the whole frame, including decorations, to an eps file.
+		// But it also may take away some things, like resizing buttons, that the
+		// user is used to in their operating system, so leave as false.
+		JFrame.setDefaultLookAndFeelDecorated(false);
+
+		// if this is != null, then the user-requested l-and-f has already been applied
+		if (System.getProperty("swing.defaultlaf") == null) {
+			String os = System.getProperty("os.name");
+			if (os != null && os.toLowerCase().contains("windows")) {
+				try {
+					// It this is Windows, then use the Windows look and feel.
+					Class<?> cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+
+					if (look_and_feel.isSupportedLookAndFeel()) {
+						UIManager.setLookAndFeel(look_and_feel);
+					}
+				} catch (Exception ulfe) {
+					// Windows look and feel is only supported on Windows, and only in
+					// some version of the jre.  That is perfectly ok.
+				}
+			}
+		}
+	}
+	
 	private void printDetails(String[] args) {
 		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
 		System.out.println("UserAgent: " + USER_AGENT);
@@ -212,7 +244,8 @@ public final class IGB extends Application
 	}
 
 	public void init(String[] args) {
-
+		setLaf();
+		
 		// Configure HTTP User agent
 		System.setProperty("http.agent", USER_AGENT);
 

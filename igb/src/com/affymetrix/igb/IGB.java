@@ -230,12 +230,12 @@ public final class IGB extends Application
 		loadSynonyms("/synonyms.txt", SynonymLookup.getDefaultLookup());
 		loadSynonyms("/chromosomes.txt", SynonymLookup.getChromosomeLookup());
 
-//		if ("Mac OS X".equals(System.getProperty("os.name"))) {
-//			MacIntegration mi = MacIntegration.getInstance();
-//			if (this.getIcon() != null) {
-//				mi.setDockIconImage(this.getIcon());
-//			}
-//		}
+		if ("Mac OS X".equals(System.getProperty("os.name"))) {
+			MacIntegration mi = MacIntegration.getInstance();
+			if (this.getIcon() != null) {
+				mi.setDockIconImage(this.getIcon());
+			}
+		}
 
 		frm = new JFrame(APP_NAME + " " + APP_VERSION);
 

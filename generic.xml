@@ -135,11 +135,6 @@
 		</jar>
 	</target>
 
-	<target name="webstart" depends="jar">
-		<mkdir dir="${webstart.dir}" />
-		<my.signjar jar="${dist.dir}/${jarfile}" signedjar="${webstart.dir}/${jarfile}" />
-	</target>
-
 	<target name="webapp" depends="jar">
 		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
 		<copy file="${dist.dir}/${jarfile}" todir="${webapp.dir}/WEB-INF/lib" />

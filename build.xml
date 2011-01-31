@@ -106,42 +106,14 @@
 	</target>
 
 	<target name="webstart" depends="common-init" description="Create webstart-compatible IGB jars">
-		<iterate target="webstart" />
+		<mkdir dir="${webstart.dir}" />
 
 		<delete file="${webstart.dir}/das2server.jar" />
 
-		<my.signjar jar="${lib.dir}/affx_fusion.jar"          signedjar="${webstart.dir}/affx_fusion.jar" />
-		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar"        signedjar="${webstart.dir}/freehep-2.1.1.jar" />
-		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"            signedjar="${webstart.dir}/jlfgr-1_0.jar" />
-		<my.signjar jar="${lib.dir}/image4j.jar"              signedjar="${webstart.dir}/image4j.jar" />
-		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar"    signedjar="${webstart.dir}/commons-codec-1.4.jar" />
-		<my.signjar jar="${lib.dir}/sam.jar"                  signedjar="${webstart.dir}/sam.jar" />
-		<my.signjar jar="${lib.dir}/picard.jar"               signedjar="${webstart.dir}/picard.jar" />
-		<my.signjar jar="${lib.dir}/colt.jar"                 signedjar="${webstart.dir}/colt.jar" />
-		<my.signjar jar="${lib.dir}/felix.jar"                    signedjar="${webstart.dir}/felix.jar" />
-		<my.signjar jar="${dist.dir}/igb_service.jar"             signedjar="${webstart.dir}/igb_service.jar" />
-		<my.signjar jar="${dist.dir}/window_service.jar"          signedjar="${webstart.dir}/window_service.jar" />
-		<my.signjar jar="${dist.dir}/window_service_def.jar"      signedjar="${webstart.dir}/window_service_def.jar" />
-		<my.signjar jar="${dist.dir}/window_service_dockingframes.jar"  signedjar="${webstart.dir}/window_service_dockingframes.jar" />
-		<my.signjar jar="${dist.dir}/RestrictionsSites.jar"       signedjar="${webstart.dir}/RestrictionsSites.jar" />
-		<my.signjar jar="${dist.dir}/ExternalView.jar"            signedjar="${webstart.dir}/ExternalView.jar" />
+		<my.signjar jar="${lib.dir}/felix.jar" signedjar="${webstart.dir}/felix.jar" />
 
-		<!-- <jar jarfile="${webstart.dir}/igb.jar" index="true" indexMetaInf="true"> -->
-		<jar destfile="${webstart.dir}/igb.jar">
-			<zipfileset src="${dist.dir}/igb.jar">
-				<exclude name="igb_default_prefs.xml" />
-			</zipfileset>
-			<!--
-			<indexjars>
-				<fileset dir="${webstart.dir}">
-					<exclude name="igb.jar" />
-					<include name="*.jar" />
-				</fileset>
-			</indexjars>
-			-->
-		</jar>
-
-		<my.signjar jar="${webstart.dir}/igb.jar" />
+		<my.signjar jar="${dist.dir}/main.jar" signedjar="${webstart.dir}/main.jar" />
+		<my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" />
 
 		<copy file="${igb}/resources/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
 		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" overwrite="true" />
@@ -279,8 +251,6 @@
 			<metainf file="LICENSE.html"/>
 			<metainf file="NOTICES.txt"/>
 			<zipgroupfileset dir="${dist.dir}">
-				<include name="window_service.jar" />
-				<include name="igb_service.jar" />
 				<include name="main.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">

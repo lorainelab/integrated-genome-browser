@@ -10,34 +10,10 @@
 	</security>
 	<resources>
 		<jar href="main.jar" main="true" />
-		<jar href="igb.jar" />
 		<jar href="igb-i18n.jar" />
-		<jar href="affx_fusion.jar" />
-		<jar href="genometry.jar" />
-		<jar href="genoviz.jar" />
-		<jar href="igb.jar" />
-		<jar href="jlfgr-1_0.jar" />
-		<jar href="image4j.jar" />
-		<jar href="commons-codec-1.4.jar" />
 		<jar href="felix.jar" />
-		<jar href="igb_service.jar" />
-		<jar href="window_service.jar" />
-		<jar href="colt.jar"				download="lazy" part="colt"		/>
-		<jar href="freehep-2.1.1.jar"		download="lazy" part="freehep"	/>
-		<jar href="sam.jar"					download="lazy" part="sam"		/>
-		<jar href="picard.jar"				download="lazy" part="picard"	/>
-		<jar href="jide-common.jar"			download="lazy" part="jide"		/>
-		<jar href="jide-components.jar"     download="lazy" part="jide"		/>
-		<jar href="jide-grids.jar"			download="lazy" part="jide"		/>
 
 		<property name="apple.laf.useScreenMenuBar" value="true" />
-
-		<package part="colt"    name="cern.colt.*"       recursive="true" />
-		<package part="freehep" name="org.jdom.*"        recursive="true" />
-		<package part="freehep" name="org.freehep.*"     recursive="true" />
-		<package part="freehep" name="org.openide.*"     recursive="true" />
-		<package part="sam"     name="net.sf.samtools.*" recursive="true" />
-		<package part="jide"    name="com.jidesoft.*" recursive="true" />
 	</resources>
 	<component-desc />
 </jnlp>

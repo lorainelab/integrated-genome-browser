@@ -8,6 +8,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -99,14 +101,16 @@ public class OSGiHandler {
     			if (parts.length > 1 && parts[1].toLowerCase().startsWith("start=n")) {
     				startBundle = false;
     			}
-    			System.out.println("loading " + jarName);
-    			String location = OSGiHandler.class.getResource(jarName).toString();
-    			if (location != null){
-    				Bundle bundle = bundleContext.installBundle(location);
+    			URL locationURL = OSGiHandler.class.getResource(jarName);
+    			if (locationURL != null){
+					Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{jarName});
+    				Bundle bundle = bundleContext.installBundle(locationURL.toString());
     				if (startBundle) {
     					bundle.start();
     				}
-    			}
+    			}else{
+					Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find {0}",new Object[]{jarName});
+				}
     		}
           	Logger.getLogger(getClass().getName()).log(Level.INFO, "OSGi is started");
         }
@@ -116,7 +120,7 @@ public class OSGiHandler {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
     }
-
+	
 	private static void setLaf() {
 
 		// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)

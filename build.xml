@@ -85,7 +85,23 @@
 		<iterate target="test" />
 	</target>
 
-	<target name="jar" depends="common-init" description="Create jar files for all genoviz subprojects">
+	<target name="copy-bundles" depends="common-init" description="copy bundles to main/build dir">
+		<copy todir="${main}/build" filtering="false">
+			<fileset dir="${lib.dir}">
+				<include name="affx_fusion.jar"/>
+				<include name="freehep-2.1.1.jar"/>
+				<include name="jlfgr-1_0.jar"/>
+				<include name="image4j.jar" />
+				<include name="commons-codec-1.4.jar"/>
+				<include name="sam.jar" />
+				<include name="picard.jar" />
+				<include name="colt.jar" />
+				<include name="felix.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">
 		<iterate target="jar" />
 	</target>
 
@@ -270,17 +286,6 @@
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="felix.jar" />
 			</zipgroupfileset>
-			<fileset dir="${lib.dir}">
-				<include name="affx_fusion.jar"/>
-				<include name="freehep-2.1.1.jar"/>
-				<include name="jlfgr-1_0.jar"/>
-				<include name="image4j.jar" />
-				<include name="commons-codec-1.4.jar"/>
-				<include name="sam.jar" />
-				<include name="picard.jar" />
-				<include name="colt.jar" />
-				<include name="felix.jar" />
-			</fileset>
 		</jar>
 		<jar jarfile="protannot_exe.jar" update="false">
 			<manifest>

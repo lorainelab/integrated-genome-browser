@@ -287,12 +287,17 @@
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
 			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
 			<classpath>
-				<fileset dir="${lib.dir}" includes="*.jar" />
+				<fileset dir="${lib.dir}" >
+					<include name="felix.jar" />
+				</fileset>
+				<dirset dir="${lib.dir}" />
 				<dirset dir="${basedir}">
 					<include name="*/build" />
+					<include name="*/lib" />
 				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="*/build" />
+					<include name="*/lib" />
 				</dirset>
 			</classpath>
 		</java>

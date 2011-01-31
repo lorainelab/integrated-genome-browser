@@ -4,14 +4,19 @@
     <target depends="compile" description="debug IGB" name="debug-nb">
         <nbjpdastart addressproperty="jpda.address" name="IGB" transport="dt_socket">
             <classpath>
-                <fileset dir="${lib.dir}" includes="*.jar" />
-                <dirset dir="${basedir}">
-                    <include name="*/build" />
-                </dirset>
+				<fileset dir="${lib.dir}" >
+					<include name="felix.jar" />
+				</fileset>
+				<dirset dir="${lib.dir}" />
+				<dirset dir="${basedir}">
+					<include name="*/build" />
+					<include name="*/lib" />
+				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="*/build" />
+					<include name="*/lib" />
 				</dirset>
-            </classpath>
+			</classpath>
         </nbjpdastart>
         <java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.main.Main" >
             <jvmarg line="${igb.jvmargs}" />
@@ -21,14 +26,19 @@
             <arg value="-prefs"/>
             <arg value="${igb}/etc/igb_prefs.xml"/>
             <classpath>
-                <fileset dir="${lib.dir}" includes="*.jar" />
-                <dirset dir="${basedir}">
-                    <include name="*/build" />
-                </dirset>
+				<fileset dir="${lib.dir}" >
+					<include name="felix.jar" />
+				</fileset>
+				<dirset dir="${lib.dir}" />
+				<dirset dir="${basedir}">
+					<include name="*/build" />
+					<include name="*/lib" />
+				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="*/build" />
+					<include name="*/lib" />
 				</dirset>
-            </classpath>
+			</classpath>
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
         </java>
@@ -37,14 +47,19 @@
     <target name="profile-nb" depends="compile" description="profile IGB in NetBeans">
         <nbprofiledirect>
             <classpath>
-                <fileset dir="${lib.dir}" includes="*.jar" />
-                <dirset dir="${basedir}">
-                    <include name="*/build" />
-                </dirset>
+				<fileset dir="${lib.dir}" >
+					<include name="felix.jar" />
+				</fileset>
+				<dirset dir="${lib.dir}" />
+				<dirset dir="${basedir}">
+					<include name="*/build" />
+					<include name="*/lib" />
+				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="*/build" />
+					<include name="*/lib" />
 				</dirset>
-            </classpath>
+			</classpath>
             <rootspath>
                 <dirset dir="${basedir}">
                     <include name="*/build" />
@@ -58,28 +73,38 @@
             <arg value="-prefs" />
             <arg value="${igb}/etc/igb_prefs.xml" />
             <classpath>
-                <fileset dir="${lib.dir}" includes="*.jar" />
-                <dirset dir="${basedir}">
-                    <include name="*/build" />
-                </dirset>
+				<fileset dir="${lib.dir}" >
+					<include name="felix.jar" />
+				</fileset>
+				<dirset dir="${lib.dir}" />
+				<dirset dir="${basedir}">
+					<include name="*/build" />
+					<include name="*/lib" />
+				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="*/build" />
+					<include name="*/lib" />
 				</dirset>
-            </classpath>
+			</classpath>
         </java>
     </target>
 
     <target name="profile-single-nb" depends="compile" description="profile single file in NetBeans">
         <nbprofiledirect>
             <classpath>
-                <fileset dir="${lib.dir}" includes="*.jar" />
-                <dirset dir="${basedir}">
-                    <include name="*/build" />
-                </dirset>
+				<fileset dir="${lib.dir}" >
+					<include name="felix.jar" />
+				</fileset>
+				<dirset dir="${lib.dir}" />
+				<dirset dir="${basedir}">
+					<include name="*/build" />
+					<include name="*/lib" />
+				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="*/build" />
+					<include name="*/lib" />
 				</dirset>
-            </classpath>
+			</classpath>
             <rootspath>
                 <dirset dir="${basedir}">
                     <include name="*/build" />
@@ -93,14 +118,19 @@
             <arg value="-prefs" />
             <arg value="${igb}/etc/igb_prefs.xml" />
             <classpath>
-                <fileset dir="${lib.dir}" includes="*.jar" />
-                <dirset dir="${basedir}">
-                    <include name="*/build" />
-                </dirset>
+				<fileset dir="${lib.dir}" >
+					<include name="felix.jar" />
+				</fileset>
+				<dirset dir="${lib.dir}" />
+				<dirset dir="${basedir}">
+					<include name="*/build" />
+					<include name="*/lib" />
+				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="*/build" />
+					<include name="*/lib" />
 				</dirset>
-            </classpath>
+			</classpath>
         </java>
     </target>
 </project>

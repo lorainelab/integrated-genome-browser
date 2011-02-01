@@ -25,7 +25,7 @@
 		<property name="window_service_def"  value="${basedir}/plugins/window_service_def" />
 		<property name="window_service_dockingframes"  value="${basedir}/plugins/window_service_dockingframes" />
 		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
-		<property name="RestrictionsSites"   value="${basedir}/plugins/RestrictionsSites" />
+		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />
 		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
 
 		<!-- directory paths -->
@@ -491,7 +491,7 @@
 				</dirset>
 				<dirset dir="${basedir}/plugins">
 					<include name="plugins_page" />
-					<include name="RestrictionsSites" />
+					<include name="RestrictionSites" />
 					<include name="ExternalView" />
 					<include name="window_service_def" />
 					<include name="window_service_dockingframes" />

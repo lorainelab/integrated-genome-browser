@@ -228,6 +228,7 @@
 		<delete dir="${webapp.dir}" />
 		<delete dir="${demos.dir}/genoviz" />
 		<delete dir="${report.dir}" />
+		<delete dir="${basedir}/build" />
 
 		<iterate target="clean" />
 	</target>

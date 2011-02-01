@@ -85,19 +85,42 @@
 		<iterate target="test" />
 	</target>
 
+	<target name="copy-bundle" description="copy a bundle to main/build dir">
+		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="${lib.dir}" >
+			<arg value="wrap"/>
+			<arg value="-properties"/>
+			<arg value="IGB_tier.mf"/>
+			<arg value="${jar_name}.jar"/>
+		</java>
+		<move file="${lib.dir}/${jar_name}.bar" tofile="${main}/build/${jar_name}.bnd.jar" filtering="false" />
+	</target>
+
 	<target name="copy-bundles" depends="common-init" description="copy bundles to main/build dir">
-		<copy todir="${main}/build" filtering="false">
-			<fileset dir="${lib.dir}">
-				<include name="affx_fusion.jar"/>
-				<include name="colt.jar" />
-				<include name="commons-codec-1.4.jar"/>
-				<include name="freehep-2.1.1.jar"/>
-				<include name="image4j.jar" />
-				<include name="jlfgr-1_0.jar"/>
-				<include name="picard.jar" />
-				<include name="sam.jar" />
-			</fileset>
-		</copy>
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="affx_fusion"/>
+		</antcall>
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="colt"/>
+		</antcall>
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="commons-codec-1.4"/>
+		</antcall>
+		<copy file="${lib.dir}/commons-codec-1.4.jar" tofile="${main}/build/commons-codec-1.4.jar" filtering="false" />
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="freehep-2.1.1"/>
+		</antcall>
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="image4j"/>
+		</antcall>
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="jlfgr-1_0"/>
+		</antcall>
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="picard"/>
+		</antcall>
+		<antcall target="copy-bundle">
+    			<param name="jar_name" value="sam"/>
+		</antcall>
 	</target>
 
 	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">
@@ -228,6 +251,7 @@
 		<delete dir="${demos.dir}/genoviz" />
 		<delete dir="${report.dir}" />
 		<delete dir="${basedir}/build" />
+		<delete dir="${work.dir}" />
 
 		<iterate target="clean" />
 	</target>

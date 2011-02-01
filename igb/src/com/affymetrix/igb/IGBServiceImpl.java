@@ -26,6 +26,7 @@ import javax.swing.JMenuBar;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -48,6 +49,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public static IGBServiceImpl getInstance() {
 		return instance;
 	}
+	private static final String APACHE_BUNDLE_VENDOR = "The Apache Software Foundation";
 	private List<RepositoryChangeListener> repositoryChangeListeners;
 
 	private IGBServiceImpl() {
@@ -144,12 +146,18 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 			return 0;
 		}
 		int tier = 3;
-		String tierString = ((String)bundle.getHeaders().get(IGBService.IGB_TIER_HEADER));
-		if (tierString != null) {
-			try {
-				tier = Integer.parseInt(tierString.trim());
+		String vendorString = ((String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR));
+		if (vendorString != null && vendorString.equals(APACHE_BUNDLE_VENDOR)) {
+			tier = 1;
+		}
+		else {
+			String tierString = ((String)bundle.getHeaders().get(IGBService.IGB_TIER_HEADER));
+			if (tierString != null) {
+				try {
+					tier = Integer.parseInt(tierString.trim());
+				}
+				catch (Exception x) {}
 			}
-			catch (Exception x) {}
 		}
 		return tier;
 	}

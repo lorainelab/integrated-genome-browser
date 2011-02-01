@@ -20,6 +20,13 @@ public class ExtensionPoint<T> {
 		}
 	}
 
+	public void removeExtension(ExtensionFactory<T> extensionFactory) {
+		extensionSet.remove(extensionFactory);
+		for (ExtensionPointRegisterListener extensionPointRegisterListener : extensionPointRegisterListeners) {
+			extensionPointRegisterListener.extensionPointRemoved();
+		}
+	}
+
 	public Set<T> getExtensions() {
 		Set<T> extensions = new HashSet<T>();
 		for (ExtensionFactory<T> extensionFactory : extensionSet) {

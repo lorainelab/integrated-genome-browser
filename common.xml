@@ -13,6 +13,7 @@
 		<property name="flex.dir"     value="${basedir}/flex" />
 		<property name="webapp.dir"   value="${dist.dir}/webapp" />
 		<property name="release.dir"  value="${dist.dir}/release" />
+		<property name="root.dir"     value="${basedir}" />
 
 		<property name="server.deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_HERE" />
 

@@ -16,7 +16,6 @@
 	<classpathentry kind="lib" path="ext/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="ext/emma_ant.jar"/>
 	<classpathentry kind="lib" path="ext/emma.jar"/>
-	<classpathentry kind="lib" path="ext/felix.jar" sourcepath="/felix/src/main/java"/>
 	<classpathentry kind="lib" path="ext/freehep-2.1.1.jar"/>
 	<classpathentry kind="lib" path="ext/hibernate3.jar"/>
 	<classpathentry kind="lib" path="ext/image4j.jar"/>
@@ -53,5 +52,6 @@
 	<classpathentry kind="lib" path="dist"/>
 	<classpathentry kind="lib" path="dist/RestrictionSites.jar"/>
 	<classpathentry kind="lib" path="dist/igb_service.jar"/>
+	<classpathentry kind="lib" path="felix.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

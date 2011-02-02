@@ -132,7 +132,7 @@
 
 		<delete file="${webstart.dir}/das2server.jar" />
 
-		<my.signjar jar="${basedir}/felix.jar" signedjar="${webstart.dir}/felix.jar" />
+		<my.signjar jar="${lib.dir}/felix.jar" signedjar="${webstart.dir}/felix.jar" />
 
 		<my.signjar jar="${dist.dir}/main.jar" signedjar="${webstart.dir}/main.jar" />
 		<my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" />
@@ -270,13 +270,15 @@
 		<jar jarfile="igb_exe.jar" update="false">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.main.Main"/>
-				<attribute name="Class-Path" value="felix.jar"/>
 <!--				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>-->
 			</manifest>
 			<metainf file="LICENSE.html"/>
 			<metainf file="NOTICES.txt"/>
 			<zipgroupfileset dir="${dist.dir}">
 				<include name="main.jar"/>
+			</zipgroupfileset>
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="felix.jar" />
 			</zipgroupfileset>
 		</jar>
 		<jar jarfile="protannot_exe.jar" update="false">
@@ -309,7 +311,7 @@
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
 			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
 			<classpath>
-				<fileset dir="${basedir}" >
+				<fileset dir="${lib.dir}" >
 					<include name="felix.jar" />
 				</fileset>
 				<dirset dir="${lib.dir}" />

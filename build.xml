@@ -102,9 +102,6 @@
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="colt"/>
 		</antcall>
-		<antcall target="copy-bundle">
-    			<param name="jar_name" value="commons-codec-1.4"/>
-		</antcall>
 		<copy file="${lib.dir}/commons-codec-1.4.jar" tofile="${main}/build/commons-codec-1.4.jar" filtering="false" />
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="freehep-2.1.1"/>

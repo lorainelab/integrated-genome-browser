@@ -28,7 +28,8 @@ Import-Package: affymetrix.calvin.data,
  org.apache.commons.codec.binary,
  org.w3c.dom,
  org.xml.sax,
- org.xml.sax.helpers
+ org.xml.sax.helpers,
+ toolbarButtonGraphics.general
 Export-Package: com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.comparator,
  com.affymetrix.genometryImpl.das,

@@ -73,7 +73,6 @@ Import-Package: affymetrix.calvin.data,
  org.osgi.util.tracker,
  org.w3c.dom,
  org.xml.sax,
- toolbarButtonGraphics.general,
  sun.reflect;resolution:=optional,
  com.apple.eawt;resolution:=optional
 

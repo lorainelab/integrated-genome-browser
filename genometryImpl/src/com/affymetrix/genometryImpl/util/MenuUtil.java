@@ -105,7 +105,7 @@ public abstract class MenuUtil {
       // Both of these work locally and with WebStart:
       //  MenuUtil.class.getClassLoader().getResource(resource_name)
       //  Thread.currentThread().getContextClassLoader().getResource(resource_name)
-      java.net.URL url = Thread.currentThread().getContextClassLoader().getResource(resource_name);      
+      java.net.URL url = MenuUtil.class.getClassLoader().getResource(resource_name);
       if (url != null) {
         icon = new ImageIcon(url);
       }

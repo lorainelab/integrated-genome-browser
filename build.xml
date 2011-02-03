@@ -124,7 +124,7 @@
 		<iterate target="jar" />
 	</target>
 
-	<target name="webstart" depends="common-init" description="Create webstart-compatible IGB jars">
+	<target name="webstart" depends="jar" description="Create webstart-compatible IGB jars">
 		<mkdir dir="${webstart.dir}" />
 
 		<delete file="${webstart.dir}/das2server.jar" />

@@ -28,12 +28,6 @@ public final class Main {
 			if (isArgSet(args, "-resetOSGi")) {
 				OSGiHandler.getInstance().clearCache();
 			}
-			if (isArgSet(args, "-DF")) {
-				OSGiHandler.getInstance().addRequiredPlugin("window_service_dockingframes");
-			}
-			else {
-				OSGiHandler.getInstance().addRequiredPlugin("window_service_def");
-			}
 			OSGiHandler.getInstance().startOSGi(args);
 		}
 		catch (Exception e) {

@@ -22,7 +22,6 @@ public class OSGiHandler {
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("main");
 	private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
 	private static final String FORWARD_SLASH = "/";
-	private List<String> addedRequiredPlugins;
 	private static Felix felix;
 
 	private static OSGiHandler instance = new OSGiHandler();
@@ -30,10 +29,6 @@ public class OSGiHandler {
 		return instance;
 	}
 
-	private OSGiHandler() {
-		addedRequiredPlugins = new ArrayList<String>();
-	}
-		 
 	private String getAppDir() {
 		// return PreferenceUtils.getAppDataDirectory();
 		return "";
@@ -77,10 +72,6 @@ public class OSGiHandler {
         felix = new Felix(configMap);
 	}
 
-	public void addRequiredPlugin(String plugin) {
-		addedRequiredPlugins.add(FORWARD_SLASH + plugin + ".jar");
-	}
-
 	public void startOSGi(String[] args) {
 		setLaf();
 
@@ -91,7 +82,6 @@ public class OSGiHandler {
             felix.start();
             BundleContext bundleContext = felix.getBundleContext();
             List<String> jars = new ArrayList<String>(Arrays.asList(BUNDLE.getString("pluginsList").split(",")));
-            jars.addAll(addedRequiredPlugins);
            	// load uncached jars
     		for (String jarSpec : jars) {
     			String[] parts = jarSpec.split(";");
@@ -119,7 +109,7 @@ public class OSGiHandler {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
     }
-	
+
 	private static void setLaf() {
 
 		// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)

@@ -33,8 +33,6 @@
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>
 	<classpathentry kind="lib" path="igb/resources"/>
-	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCommon.jar"/>
-	<classpathentry kind="lib" path="plugins/window_service_dockingframes/lib/dockingFramesCore.jar"/>
 	<classpathentry kind="lib" path="ext/org.apache.felix.log-1.0.0.jar"/>
 	<classpathentry kind="lib" path="dist/das2server.jar"/>
 	<classpathentry kind="lib" path="dist/genometry.jar"/>

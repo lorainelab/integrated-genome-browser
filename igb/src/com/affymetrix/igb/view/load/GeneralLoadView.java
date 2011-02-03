@@ -947,7 +947,7 @@ public final class GeneralLoadView extends JComponent
 	 */
 	public static void loadVisibleFeatures() {
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (gFeature.loadStrategy != LoadStrategy.VISIBLE) {
+			if (gFeature.loadStrategy != LoadStrategy.AUTOLOAD) {
 				continue;
 			}
 

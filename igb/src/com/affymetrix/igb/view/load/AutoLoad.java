@@ -3,6 +3,8 @@ package com.affymetrix.igb.view.load;
 import java.awt.Adjustable;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JScrollBar;
 
 /**
@@ -56,6 +58,7 @@ public class AutoLoad implements AdjustmentListener {
 
 		}
 
+		Logger.getLogger(AutoLoad.class.getName()).log(Level.INFO,"Zoom level {0}",new Object[]{zoomer_value});
 		GeneralLoadView.loadVisibleFeatures();
 	}
 

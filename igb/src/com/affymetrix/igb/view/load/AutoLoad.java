@@ -14,7 +14,7 @@ public class AutoLoad implements AdjustmentListener {
 	private final Adjustable zoomer;
 	private final JScrollBar scroller;
 
-	private final int threshold = 175;
+	private final int threshold = 85;
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
 
@@ -35,7 +35,7 @@ public class AutoLoad implements AdjustmentListener {
 		
 		if (source == zoomer) {
 
-			zoomer_value = source.getValue();
+			zoomer_value = (source.getValue() * 100/ source.getMaximum());
 			if (zoomer_value == prev_zoomer_value ||
 					zoomer_value < threshold){
 				return;

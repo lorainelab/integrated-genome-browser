@@ -35,21 +35,21 @@
 		<property name="docs.dir"   value="${basedir}/doc/api" />
 		<property name="report.dir" value="${basedir}/reports" />
 
-		 <property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src:${plugins_page}/src" />
+		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src:${plugins_page}/src" />
 	</target>
 
-	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
+	<target name="compile" depends="common-init, copy-bundles" description="Compile all genoviz subprojects">
 		<iterate target="compile" />
 	</target>
 
 	<target name="flex" if="should_compile_flex" depends="common-init" description="Compile Flex GenoPub application">
-		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/> 
+		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/>
 		<mxmlc fork="true" maxmemory="128m" file="${das2server}/flex/GenoPub.mxml" output="${webapp.dir}/GenoPub.swf">
 	        <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>
 	        <source-path path-element="${FLEX_HOME}/frameworks"/>
-			    <compiler.debug>true</compiler.debug>			
+			    <compiler.debug>true</compiler.debug>
 		</mxmlc>
-		<html-wrapper 
+		<html-wrapper
 		      title="GenoPub"
 		      file="GenoPub.html"
 		      width="100%"
@@ -62,7 +62,7 @@
 		      history="false"
 		      template="express-installation"
 		      output="${webapp.dir}"/>
-	</target>	
+	</target>
 
 	<target name="demos" depends="jar" description="Compile genoviz demos">
 		<!--<ant antfile="${basedir}/generic.xml" dir="${basedir}/genoviz_sdk" target="docs">
@@ -154,18 +154,18 @@
 				<include name="*.png" />
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${webapp.dir}/WEB-INF/classes">
 			<fileset dir="${das2.resources}">
 				<include name="das2Registry.xml" />
 				<include name="logging.properties" />
 			</fileset>
-		</copy> 
+		</copy>
 
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${lib.dir}">
 				<include name="hibernate3.jar"/>
-				<include name="image4.jar" /> 		
+				<include name="image4.jar" />
 				<include name="org.mortbay.jetty.jar"/>
 				<include name="sam.jar" />
 				<include name="picard.jar" />
@@ -176,7 +176,7 @@
 				<include name="protannot.jar" />
 			</fileset>
 		</copy>
-		
+
 		<antcall target="webapp-copy-genopub-files"/>
 
 		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
@@ -190,27 +190,27 @@
 				<include name="genopub.hbm.xml" />
 				<include name="log4j.properties" />
 			</fileset>
-		</copy> 
+		</copy>
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${lib.dir}">
 				<include name="antlr-2.7.6rc1.jar"/>
-				<include name="asm.jar" /> 
-				<include name="asm-attrs.jar" /> 
-				<include name="cglib-2.1.3.jar" /> 
+				<include name="asm.jar" />
+				<include name="asm-attrs.jar" />
+				<include name="cglib-2.1.3.jar" />
 				<include name="commons-collections-2.1.1.jar"/>
 				<include name="commons-codec-1.4.jar"/>
 				<include name="commons-compress-1.0.jar"/>
 				<include name="commons-logging-1.0.4.jar"/>
 				<include name="cos.jar"/>
 				<include name="dom4j-1.6.1.jar"/>
-				<include name="jta.jar" /> 	
+				<include name="jta.jar" />
 				<include name="log4j-1.2.11.jar"/>
 				<include name="sam.jar" />
 				<include name="picard.jar" />
 			</fileset>
     </copy>
 	</target>
-	
+
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
 		<iterate target="all" />
 	</target>
@@ -261,7 +261,7 @@
 				<pathelement path="${junit.jar}" />
 			</classpath>
 		</my.javadoc>
-	</target> 
+	</target>
 
 	<target name="exe" depends="jar" description="Create a single-jar IGB application">
 		<jar jarfile="igb_exe.jar" update="false">
@@ -340,7 +340,7 @@
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />
 					<include name="protannot/build" />
-				</dirset> 
+				</dirset>
 			</classpath>
 		</java>
 	</target>
@@ -374,7 +374,7 @@
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
 		</java>
     </target>
-	
+
 	<target name="release" depends="release-igb, release-das2server, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
 
 	<target name="release-igb" depends="exe">
@@ -405,7 +405,7 @@
 		<antcall target="webapp">
 			<param name="webapp.dir" value="${release.dir}/${das2_release}/${das2_webapp}" />
 		</antcall>
-		
+
 		<copy todir="${release.dir}/${das2_release}">
 			<fileset dir="${basedir}">
 				<include name="NOTICES.txt" />
@@ -413,21 +413,21 @@
 				<include name="LICENSE.html" />
 			</fileset>
 			<fileset file="${lib.dir}/APACHE_LICENSE_2.txt" />
-		</copy>	
+		</copy>
 
 		<copy  file="${das2server}/${das2_install_notes}" tofile="${release.dir}/${das2_release}/INSTALL.txt" overwrite="true"/>
 
 	  <antcall target="release-copy-genopub-sql"/>
-		
+
 		<zip destfile="${release.dir}/${das2_release}.zip" basedir="${release.dir}">
 			<include name="${das2_release}/**" />
 		</zip>
 	</target>
-	
+
 	<target name="release-copy-genopub-sql" if="das2genopub">
 		<copy todir="${release.dir}/${das2_release}">
 			<fileset file="${das2server}/genopub.sql" />
-		</copy>	
+		</copy>
 	</target>
 
 	<target name="deploy-das2server" depends="release-das2server" description="Copy das2 web application to apache tomcat">
@@ -435,7 +435,7 @@
 			<fileset dir="${release.dir}/${das2_release}/${das2_webapp}">
 				<include name="**/*" />
 			</fileset>
-		</copy> 
+		</copy>
 	</target>
 
 	<target name="release-igb-webstart" depends="common-init">
@@ -483,11 +483,11 @@
 	</target>
 
 	<target name="profile-nb" if="netbeans.home">
-		<ant target="profile-nb" antfile="nbproject/ide-targets.xml" /> 
+		<ant target="profile-nb" antfile="nbproject/ide-targets.xml" />
 	</target>
 
 	<target name="profile-single-nb" if="netbeans.home">
-		<ant target="profile-single-nb" antfile="nbproject/ide-targets.xml" /> 
+		<ant target="profile-single-nb" antfile="nbproject/ide-targets.xml" />
 	</target>
 
 	<!--                                                                 -->

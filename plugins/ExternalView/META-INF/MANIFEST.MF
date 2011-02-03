@@ -5,7 +5,7 @@ Bundle-SymbolicName: ExternalView
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.external.Activator
 Bundle-ActivationPolicy: lazy
-Bundle-DocURL: http://www.bioviz.org/documentation/ExternalView.html
+Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-ExternalViewPanel
 IGB-Tier: 2
 Import-Package: com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,

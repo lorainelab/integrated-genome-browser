@@ -597,7 +597,7 @@ public final class GeneralLoadUtils {
 		}
 
 		SeqSpan overlap = null;
-		if (gFeature.loadStrategy == LoadStrategy.VISIBLE) {
+		if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.AUTOLOAD) {
 			overlap = gviewer.getVisibleSpan();
 		} else if (gFeature.loadStrategy == LoadStrategy.GENOME || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
 			// TODO: Investigate edge case at max

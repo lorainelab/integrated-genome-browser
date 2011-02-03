@@ -89,7 +89,7 @@ public final class GeneralLoadView extends JComponent
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
-
+	
 	private static GeneralLoadView singleton;
 
 	private GeneralLoadView() {
@@ -942,6 +942,22 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
+	/**
+	 * Load any features that have a autoload strategy and haven't already been loaded.
+	 */
+	public static void loadVisibleFeatures() {
+		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
+			if (gFeature.loadStrategy != LoadStrategy.VISIBLE) {
+				continue;
+			}
+
+			if (DEBUG_EVENTS) {
+				System.out.println("Selected : " + gFeature.featureName);
+			}
+
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+		}
+	}
 	/**
 	 * Check if it is necessary to disable buttons.
 	 * @return

@@ -73,6 +73,7 @@ public final class BAM extends SymLoader {
 	static {
 		// BAM files are generally large, so only allow loading visible data.
 		strategyList.add(LoadStrategy.NO_LOAD);
+		strategyList.add(LoadStrategy.AUTOLOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
 	}
 

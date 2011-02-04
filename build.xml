@@ -33,6 +33,7 @@
 		<property name="demos.dir"  value="${genoviz}/demo" />
 		<property name="docs.dir"   value="${basedir}/doc/api" />
 		<property name="report.dir" value="${basedir}/reports" />
+		<property name="bundle.dir" value="${basedir}/bundles" />
 
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src:${plugins_page}/src" />
 	</target>
@@ -84,24 +85,25 @@
 		<iterate target="test" />
 	</target>
 
-	<target name="copy-bundle" description="copy a bundle to main/build dir">
+	<target name="copy-bundle" description="copy a bundle to bundle dir">
 		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="${lib.dir}" >
 			<arg value="wrap"/>
 			<arg value="-properties"/>
 			<arg value="IGB_tier.mf"/>
 			<arg value="${jar_name}.jar"/>
 		</java>
-		<move file="${lib.dir}/${jar_name}.bar" tofile="${main}/build/${jar_name}.bnd.jar" filtering="false" />
+		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.bnd.jar" filtering="false" />
 	</target>
 
-	<target name="copy-bundles" depends="common-init" description="copy bundles to main/build dir">
+	<target name="copy-bundles" depends="common-init" description="copy bundles to bundle dir">
+		<mkdir dir="${bundle.dir}" />
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="affx_fusion"/>
 		</antcall>
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="colt"/>
 		</antcall>
-		<copy file="${lib.dir}/commons-codec-1.4.jar" tofile="${main}/build/commons-codec-1.4.jar" filtering="false" />
+		<copy file="${lib.dir}/commons-codec-1.4.jar" tofile="${bundle.dir}/commons-codec-1.4.jar" filtering="false" />
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="freehep-2.1.1"/>
 		</antcall>
@@ -123,14 +125,12 @@
 		<iterate target="jar" />
 	</target>
 
-	<target name="webstart" depends="jar" description="Create webstart-compatible IGB jars">
+	<target name="webstart" depends="exe" description="Create webstart-compatible IGB jars">
 		<mkdir dir="${webstart.dir}" />
 
 		<delete file="${webstart.dir}/das2server.jar" />
 
-		<my.signjar jar="${lib.dir}/felix.jar" signedjar="${webstart.dir}/felix.jar" />
-
-		<my.signjar jar="${dist.dir}/main.jar" signedjar="${webstart.dir}/main.jar" />
+		<my.signjar jar="${basedir}/igb_exe.jar" signedjar="${webstart.dir}/igb_exe.jar" />
 		<my.signjar jar="${dist.dir}/igb-i18n.jar" signedjar="${webstart.dir}/igb-i18n.jar" />
 
 		<copy file="${igb}/resources/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
@@ -248,6 +248,7 @@
 		<delete dir="${report.dir}" />
 		<delete dir="${basedir}/build" />
 		<delete dir="${work.dir}" />
+		<delete dir="${bundle.dir}" />
 
 		<iterate target="clean" />
 	</target>
@@ -276,6 +277,9 @@
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="felix.jar" />
 			</zipgroupfileset>
+			<fileset dir="${bundle.dir}">
+				<include name="*.jar"/>
+			</fileset>
 		</jar>
 		<jar jarfile="protannot_exe.jar" update="false">
 			<manifest>
@@ -307,6 +311,7 @@
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
 			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
 			<classpath>
+				<dirset dir="${bundle.dir}/" />
 				<dirset dir="${main}/build/" />
 				<fileset dir="${lib.dir}" >
 					<include name="felix.jar" />

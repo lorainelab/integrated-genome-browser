@@ -9,9 +9,8 @@
 		<all-permissions/>
 	</security>
 	<resources>
-		<jar href="main.jar" main="true" />
+		<jar href="igb_exe.jar" main="true" />
 		<jar href="igb-i18n.jar" />
-		<jar href="felix.jar" />
 
 		<property name="apple.laf.useScreenMenuBar" value="true" />
 	</resources>

@@ -68,7 +68,7 @@
 
   <target name="check-create-jar" if="plugin-jar">
 	  <antcall target="create-jar" >
-		  <param name="dist.dir" value="${main}/build" />
+		  <param name="dist.dir" value="${bundle.dir}" />
 	  </antcall>
   </target>
 
@@ -117,7 +117,7 @@
 	<mkdir dir="${dist.dir}" />
 
 	<copy todir="${dist.dir}" filtering="false">
-		<fileset file="${main}/build/${jarfile}" />
+		<fileset file="${bundle.dir}/${jarfile}" />
 	</copy>
 
 	<available file="${igb}/build/${jarfile}" property="unavailable-jar"/>

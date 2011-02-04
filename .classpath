@@ -44,7 +44,6 @@
 	<classpathentry kind="lib" path="dist/protannot.jar"/>
 	<classpathentry kind="lib" path="dist/ExternalView.jar" sourcepath="plugins/ExternalView/src"/>
 	<classpathentry kind="lib" path="dist/window_service_def.jar" sourcepath="plugins/window_service_def/src"/>
-	<classpathentry kind="lib" path="dist/window_service_dockingframes.jar" sourcepath="plugins/window_service_dockingframes/src"/>
 	<classpathentry kind="lib" path="dist/window_service.jar" sourcepath="plugins/window_service/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="dist"/>

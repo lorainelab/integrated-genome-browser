@@ -30,6 +30,7 @@ public interface IGBService {
 	public void addStopRoutine(IStopRoutine routine);
 	public int getTier(Bundle bundle);
 	public ExtensionPointRegistry getExtensionPointRegistry();
+	public JMenu getViewMenu();
 	// for plugins page
 	public List<String> getRepositories();
 	public void failRepository(String url);
@@ -40,8 +41,6 @@ public interface IGBService {
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
 	public JComponent getMapView();
-	// for external page
-	public String getUCSCQuery();
 	// for GeneralLoadView
 	public String getCommandLineBatchFileStr();
 	public void setCommandLineBatchFileStr(String str);

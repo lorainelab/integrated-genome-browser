@@ -448,7 +448,6 @@ public final class IGB extends Application
 		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
 		view_menu.add(strands_menu);
 		MenuUtil.addToMenu(view_menu, new JMenuItem(AutoScrollAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JMenuItem(new UCSCViewAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new ViewGenomicSequenceInSeqViewerAction()));
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleEdgeMatchingAction.getAction()));
@@ -516,6 +515,10 @@ public final class IGB extends Application
 	}
 	public void addStopRoutine(IStopRoutine routine) {
 		stopRoutines.add(routine);
+	}
+
+	public JMenu getViewMenu() {
+		return view_menu;
 	}
 
 	public JComponent getView(String viewName) {

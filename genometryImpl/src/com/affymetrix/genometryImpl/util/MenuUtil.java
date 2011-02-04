@@ -87,6 +87,16 @@ public abstract class MenuUtil {
     return menu.add(item);
   }
 
+  public static final JMenuItem insertIntoMenu(JMenu menu, JMenuItem item, int position) {
+    String command = item.getText();
+    if (command != null) { addAccelerator(item, command); }
+    return menu.insert(item, position);
+  }
+
+  public static final void removeFromMenu(JMenu menu, JMenuItem item) {
+    menu.remove(item);
+  }
+
   /**
    *  Loads an ImageIcon from the specified system resource.
    *  The system resource should be in the classpath, for example,

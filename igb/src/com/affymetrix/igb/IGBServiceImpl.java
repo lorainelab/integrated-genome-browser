@@ -32,7 +32,6 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.action.UCSCViewAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -160,8 +159,15 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		return tier;
 	}
 
+	@Override
 	public ExtensionPointRegistry getExtensionPointRegistry() {
 		return ExtensionPointRegistry.getInstance();
+	}
+
+	@Override
+	public JMenu getViewMenu() {
+		IGB igb = (IGB)IGB.getSingleton();
+		return igb.getViewMenu();
 	}
 
 	@Override
@@ -226,10 +232,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	public JComponent getMapView() {
 		return Application.getSingleton().getMapView();
-	}
-
-	public String getUCSCQuery() {
-		return UCSCViewAction.getUCSCQuery();
 	}
 
 	public String getCommandLineBatchFileStr() {

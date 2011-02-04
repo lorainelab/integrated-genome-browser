@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: IGB
 Bundle-SymbolicName: IGB
 Bundle-Description: IGB
-Bundle-Vendor: Affymetrix, Inc.
+Bundle-Vendor: Affymetrix
 Bundle-Version: 1.0.0
 Bundle-Activator: com.affymetrix.igb.Activator
 Bundle-ActivationPolicy: lazy
@@ -14,29 +14,30 @@ Bundle-ClassPath: .,
  lib/jide-common.jar,
  lib/jide-components.jar,
  lib/jide-grids.jar
-Export-Package: com.affymetrix.igb.tiers,
+Export-Package: com.affymetrix.igb.general,
+ com.affymetrix.igb.tiers,
  com.affymetrix.igb.view
 Import-Package: affymetrix.calvin.data,
  affymetrix.calvin.parameter,
  affymetrix.fusion.chp,
  cern.colt.list,
+ com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.comparator,
- com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.das,
+ com.affymetrix.genometryImpl.das2,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.parsers,
  com.affymetrix.genometryImpl.parsers.das,
  com.affymetrix.genometryImpl.parsers.gchp,
  com.affymetrix.genometryImpl.parsers.graph,
  com.affymetrix.genometryImpl.parsers.useq,
- com.affymetrix.genometryImpl.parsers,
  com.affymetrix.genometryImpl.quickload,
  com.affymetrix.genometryImpl.span,
  com.affymetrix.genometryImpl.style,
  com.affymetrix.genometryImpl.symloader,
  com.affymetrix.genometryImpl.symmetry,
  com.affymetrix.genometryImpl.util,
- com.affymetrix.genometryImpl,
  com.affymetrix.genoviz.awt,
  com.affymetrix.genoviz.bioviews,
  com.affymetrix.genoviz.comparator,
@@ -46,11 +47,12 @@ Import-Package: affymetrix.calvin.data,
  com.affymetrix.genoviz.parser,
  com.affymetrix.genoviz.swing,
  com.affymetrix.genoviz.util,
+ com.affymetrix.genoviz.widget,
  com.affymetrix.genoviz.widget.neoseq,
  com.affymetrix.genoviz.widget.tieredmap,
- com.affymetrix.genoviz.widget,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.igb.window.service,
+ com.apple.eawt;resolution:=optional,
  com.sun.java.swing.plaf.windows;resolution:=optional,
  javax.accessibility,
  javax.imageio,
@@ -73,6 +75,5 @@ Import-Package: affymetrix.calvin.data,
  org.osgi.util.tracker,
  org.w3c.dom,
  org.xml.sax,
- sun.reflect;resolution:=optional,
- com.apple.eawt;resolution:=optional
+ sun.reflect;resolution:=optional
 

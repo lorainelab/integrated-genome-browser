@@ -19,6 +19,7 @@ public abstract class WindowActivator implements BundleActivator {
 		return bundleContext;
 	}
 
+	protected void useWindowService(IWindowService windowService) {}
 	protected abstract JComponent getPage(IGBService igbService);
 	protected abstract String getName();
 	protected abstract String getTitle();
@@ -41,6 +42,7 @@ public abstract class WindowActivator implements BundleActivator {
         {
             IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);
             windowService.addPlugIn(page, getName(), getTitle(), -1);
+            useWindowService(windowService);
             bundleContext.ungetService(windowServiceReference);
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + " - Exception in Activator.loadPage() -> " + ex.getMessage());

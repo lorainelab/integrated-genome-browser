@@ -39,7 +39,7 @@ public abstract class BrowserView extends JPanel {
 	private BrowserImage browserImage = new BrowserImage();
 	private final JScrollPane scroll = new JScrollPane();
 	private final IGBService igbService;
-
+	private final UCSCViewAction ucscViewAction;
 
 	public abstract JDialog getViewHelper(Window window);
 
@@ -61,9 +61,10 @@ public abstract class BrowserView extends JPanel {
 		cookieMap.put(key, value);
 	}
 
-	public BrowserView(JComboBox selector, IGBService _igbService) {
+	public BrowserView(JComboBox selector, IGBService _igbService, UCSCViewAction ucscViewAction_) {
 		super();
 		this.igbService = _igbService;
+		this.ucscViewAction = ucscViewAction_;
 		initializeCookies();
 		this.setLayout(new BorderLayout());
 		final JPanel buttonPanel = new JPanel();
@@ -97,7 +98,7 @@ public abstract class BrowserView extends JPanel {
 
 					@Override
 					public Image doInBackground() {
-						String ucscQuery = igbService.getUCSCQuery();
+						String ucscQuery = ucscViewAction.getUCSCQuery();
 						Loc loc = Loc.fromUCSCQuery(ucscQuery);
 						if(ucscQuery.equals("") || loc.db.equals("")){
 							return BrowserLoader.createErrorImage("could not resolve url for genome", pixWidth);

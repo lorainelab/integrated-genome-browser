@@ -38,8 +38,8 @@ public class EnsemblView extends BrowserView {
 	 *
 	 * @param selector selects foreground
 	 */
-	public EnsemblView(JComboBox selector, IGBService igbService) {
-		super(selector, igbService);
+	public EnsemblView(JComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction_) {
+		super(selector, igbService, ucscViewAction_);
 	}
 
 	@Override

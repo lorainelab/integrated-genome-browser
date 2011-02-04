@@ -7,9 +7,18 @@ Bundle-Activator: com.affymetrix.igb.external.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-ExternalViewPanel
 IGB-Tier: 2
-Import-Package: com.affymetrix.igb.osgi.service,
- com.affymetrix.igb.window.service,
+Import-Package: com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.das,
+ com.affymetrix.genometryImpl.event,
+ com.affymetrix.genometryImpl.general,
  com.affymetrix.genometryImpl.util,
+ com.affymetrix.genoviz.bioviews,
+ com.affymetrix.genoviz.util,
+ com.affymetrix.igb.osgi.service,
+ com.affymetrix.igb.general,
+ com.affymetrix.igb.tiers,
+ com.affymetrix.igb.view,
+ com.affymetrix.igb.window.service,
  javax.imageio,
  javax.swing,
  javax.swing.event,

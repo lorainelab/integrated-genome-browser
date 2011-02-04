@@ -49,6 +49,7 @@ import org.osgi.service.obr.Resource;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
+import com.affymetrix.igb.plugins.BundleTableModel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 
 public class PluginsView extends JPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
@@ -298,7 +299,15 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	}
 
 	public Bundle getBundleAtRow(int row) {
-		int modelRow = bundleTable.convertRowIndexToModel(row);
+		int modelRow = 0;
+		try {
+			modelRow = bundleTable.convertRowIndexToModel(row);
+		}
+		catch (IndexOutOfBoundsException x)
+		{
+			System.out.println("invalid row = " + row + " count = " + bundleTableModel.getRowCount());
+			throw(x);
+		}
 		return getFilteredBundle(modelRow);
 	}
 

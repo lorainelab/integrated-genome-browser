@@ -299,7 +299,7 @@
 		</jar>
 	</target>
 
-	<target name="run" depends="compile,copy-bundles" description="run IGB">
+	<target name="run" depends="compile" description="run IGB">
 		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
 			<os family="mac" />
 		</condition>
@@ -316,15 +316,6 @@
 				<fileset dir="${lib.dir}" >
 					<include name="felix.jar" />
 				</fileset>
-				<dirset dir="${basedir}">
-					<include name="*/build" />
-					<include name="*/lib" />
-				</dirset>
-				<dirset dir="${basedir}/plugins">
-					<include name="*/build" />
-					<include name="*/lib" />
-				</dirset>
-				<dirset dir="${lib.dir}" />
 			</classpath>
 		</java>
 	</target>

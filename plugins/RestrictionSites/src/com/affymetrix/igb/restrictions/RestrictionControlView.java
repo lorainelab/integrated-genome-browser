@@ -15,13 +15,18 @@ package com.affymetrix.igb.restrictions;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-
 import javax.swing.*;
 import javax.swing.event.*;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,13 +35,12 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.regex.Pattern;
 
-import com.affymetrix.igb.osgi.service.IGBService;
-
 public final class RestrictionControlView extends JComponent
 				implements ListSelectionListener, ActionListener {
 	private static final long serialVersionUID = 0;
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
+	private final SeqMapView gviewer;
 	private final Map<String,String> site_hash = new HashMap<String,String>();
 	private JList siteList;
 	private JPanel labelP;
@@ -63,6 +67,7 @@ public final class RestrictionControlView extends JComponent
 	public RestrictionControlView(IGBService igbService) {
 		super();
 		this.igbService = igbService;
+		this.gviewer = (SeqMapView)igbService.getMapView();
 		boolean load_success = true;
 
 		String rest_file = "/rest_enzymes";
@@ -70,7 +75,7 @@ public final class RestrictionControlView extends JComponent
 						RestrictionControlView.class.getResourceAsStream(rest_file);
 		
 		if (file_input_str == null) {
-			igbService.displayError("Cannot open restriction enzyme file",
+			ErrorHandler.errorPanel("Cannot open restriction enzyme file",
 							"Cannot find restriction enzyme file '" + rest_file + "'.\n" +
 							"Restriction mapping will not be available.");
 		}
@@ -99,7 +104,7 @@ public final class RestrictionControlView extends JComponent
 				}
 			} catch (Exception ex) {
 				load_success = false;
-				igbService.displayError("Problem loading restriction site file, aborting load\n" +
+				ErrorHandler.errorPanel("Problem loading restriction site file, aborting load\n" +
 								ex.toString());
 			} finally {
 				GeneralUtils.safeClose(d);
@@ -168,7 +173,8 @@ public final class RestrictionControlView extends JComponent
 	}
 
 	private void clearGlyphs() {
-		igbService.removeGlyphs(glyphs);
+		AffyTieredMap map = gviewer.getSeqMap();
+		map.removeItem(glyphs);
 		glyphs.clear();
 	}
 
@@ -180,8 +186,9 @@ public final class RestrictionControlView extends JComponent
 
 		clearGlyphs();
 
-		if (!igbService.isSeqResiduesAvailable()) {
-			igbService.displayError("Residues for seq not available, search aborted.");
+		BioSeq vseq = gviewer.getViewSeq();
+		if (vseq == null || !vseq.isComplete()) {
+			ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 			return;
 		}
 		
@@ -196,12 +203,14 @@ public final class RestrictionControlView extends JComponent
 		{
 			igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
 			try{
-				if (!igbService.isSeqResiduesAvailable()) {
-					igbService.displayError("Residues for seq not available, search aborted.");
+				BioSeq vseq = gviewer.getViewSeq();
+				if (vseq == null || !vseq.isComplete()) {
+					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 					return;
 				}
-				int residue_offset = igbService.getSeqResiduesMin();
-				String residues = igbService.getSeqResidues();
+				NeoMap map = gviewer.getSeqMap();
+				int residue_offset = vseq.getMin();
+				String residues = vseq.getResidues();
 				// Search for reverse complement of query string
 				String rev_searchstring = DNAUtils.reverseComplement(residues);
 
@@ -225,21 +234,20 @@ public final class RestrictionControlView extends JComponent
 
 					System.out.println("searching for occurrences of \"" + site_residues + "\" in sequence");
 
-					residue_offset = igbService.getSeqResiduesMin();
+					residue_offset = vseq.getMin();
 					int hit_count1 = igbService.searchForRegexInResidues(
 							true, regex, residues, residue_offset, glyphs, colors[i % colors.length]);
 
 					// Search for reverse complement of query string
 					//   flip searchstring around, and redo nibseq search...
-					residue_offset = igbService.getSeqResiduesMax();
+					residue_offset = vseq.getMax();
 					int hit_count2 = igbService.searchForRegexInResidues(
 							false, regex, rev_searchstring, residue_offset, glyphs, colors[i % colors.length]);
 
 					System.out.println(site_residues + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
-					igbService.updateMap();
+					map.updateWidget();
 				}
-			}
-			finally{
+			}finally{
 				igbService.removeNotLockedUpMsg("Finding Restriction Sites... ");
 			}
 		}

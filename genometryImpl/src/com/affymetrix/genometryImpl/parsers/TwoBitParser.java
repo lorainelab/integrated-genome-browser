@@ -20,6 +20,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author sgblanch
@@ -50,46 +52,38 @@ public final class TwoBitParser {
 
 	private static final boolean DEBUG = false;
 
-	//TODO: Remove redundancy
-	public static BioSeq getSeq(URI uri, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
-		SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
-		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-		loadBuffer(bistr, buffer);
-        int seq_count = readFileHeader(buffer);
-        return readSequences(uri, bistr, buffer, seq_count, seq_group);
-	}
 
-    public static BioSeq parse(URI uri, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
+    public static List<BioSeq> parse(URI uri, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
 		SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		loadBuffer(bistr, buffer);
         int seq_count = readFileHeader(buffer);
-        BioSeq seq = readSequenceIndex(uri, bistr, buffer, seq_count, seq_group);
+        List<BioSeq> seqs = readSequenceIndex(uri, bistr, buffer, seq_count, seq_group);
 		GeneralUtils.safeClose(bistr);
-		return seq;
+		return seqs;
     }
 
 	public static BioSeq parse(URI uri) throws FileNotFoundException, IOException {
-		return parse(uri,new AnnotatedSeqGroup("No_Data"));
+		return parse(uri,new AnnotatedSeqGroup("No_Data")).get(0);
 	}
 
 	public static boolean parse(URI uri, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data"));
+		BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data")).get(0);
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
 	public static boolean parse(URI uri, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data"));
+		BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data")).get(0);
 		return writeAnnotations(seq,start,end,out);
 	}
 
 	public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(uri, seq_group);
+		BioSeq seq = parse(uri, seq_group).get(0);
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
 	public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
-		BioSeq seq = parse(uri, seq_group);
+		BioSeq seq = parse(uri, seq_group).get(0);
 		return writeAnnotations(seq,start,end,out);
 	}
 
@@ -161,80 +155,44 @@ public final class TwoBitParser {
 
         for (int i = 0; i < block_count; i++) {
 			//xBlockSize, where x = n OR mask
+			if (buffer.remaining() < INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
+			
 			sym.addSpan(new SimpleSeqSpan(blockStarts[i], blockStarts[i] + buffer.getInt(), seq));
         }
 
     }
 
-    private static BioSeq readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
+    private static List<BioSeq> readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
         String name;
         int name_length;
 		long offset, position;
-
+		List<BioSeq> seqs = new ArrayList<BioSeq>();
 		position = bistr.position();
-		//for (int i = 0; i < seq_count; i++) {
-		if (buffer.remaining() < INT_SIZE) {
-			position = updateBuffer(bistr, buffer, position);
+		for (int i = 0; i < seq_count; i++) {
+
+			if (buffer.remaining() < INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
+
+			name_length = buffer.get() & BYTE_MASK;
+
+			if (buffer.remaining() < name_length + INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
+
+			name = getString(buffer, name_length);
+			offset = buffer.getInt() & INT_MASK;
+
+			if (DEBUG) {
+				System.out.println("Sequence '" + name + "', offset " + offset);
+			}
+
+			seqs.add(readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name));
 		}
-
-		name_length = buffer.get() & BYTE_MASK;
-
-		if (buffer.remaining() < name_length + INT_SIZE) {
-			position = updateBuffer(bistr, buffer, position);
-		}
-
-		name = getString(buffer, name_length);
-		offset = buffer.getInt() & INT_MASK;
-
-		if(DEBUG){
-			System.out.println("Sequence '" + name + "', offset " + offset);
-		}
-		
-		return readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name);
-		//}
+		return seqs;
     }
-
-	private static BioSeq readSequences(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
-		String name;
-        int name_length;
-		long offset, position;
-
-		position = bistr.position();
-		//for (int i = 0; i < seq_count; i++) {
-		if (buffer.remaining() < INT_SIZE) {
-			position = updateBuffer(bistr, buffer, position);
-		}
-
-		name_length = buffer.get() & BYTE_MASK;
-
-		if (buffer.remaining() < name_length + INT_SIZE) {
-			position = updateBuffer(bistr, buffer, position);
-		}
-
-		name = getString(buffer, name_length);
-		offset = buffer.getInt() & INT_MASK;
-
-		if(DEBUG){
-			System.out.println("Sequence '" + name + "', offset " + offset);
-		}
-
-        bistr.position(offset);
-        loadBuffer(bistr, buffer);
-
-		//dnaSize
-        long size = buffer.getInt() & INT_MASK;
-
-		if(DEBUG){
-			System.out.println("size is " + size + " bases");
-		}
-
-
-		if (size > Integer.MAX_VALUE) {
-			throw new IOException("IGB can not handle sequences larger than " + Integer.MAX_VALUE + ".  Offending sequence length: " + size);
-		}
-
-		return seq_group.addSeq(name, (int) size);
-	}
 
     private static BioSeq readSequenceHeader(URI uri, SeekableBufferedStream bistr, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);

@@ -171,7 +171,8 @@ public final class TwoBitParser {
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
 		position = bistr.position();
 		for (int i = 0; i < seq_count; i++) {
-
+			bistr.position(position);
+			
 			if (buffer.remaining() < INT_SIZE) {
 				position = updateBuffer(bistr, buffer, position);
 			}
@@ -189,6 +190,7 @@ public final class TwoBitParser {
 				System.out.println("Sequence '" + name + "', offset " + offset);
 			}
 
+			position = bistr.position();
 			seqs.add(readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name));
 		}
 		return seqs;

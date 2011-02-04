@@ -1066,5 +1066,7 @@ public final class SimpleGraphTab extends JPanel
 	}
 
 	@Override
-	public void extensionPointRemoved() {}
+	public void extensionPointRemoved() {
+		advanced_panel.loadTransforms();
+	}
 }

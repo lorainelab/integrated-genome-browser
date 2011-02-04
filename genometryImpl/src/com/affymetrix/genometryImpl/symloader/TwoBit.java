@@ -47,9 +47,9 @@ public class TwoBit extends SymLoader {
 			return;
 		}
 		try {
-			BioSeq seq = TwoBitParser.getSeq(uri, group);
-			if(seq != null){
-				chrSet.add(seq);
+			List<BioSeq> seqs = TwoBitParser.parse(uri, group);
+			if(seqs != null){
+				chrSet.addAll(seqs);
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);

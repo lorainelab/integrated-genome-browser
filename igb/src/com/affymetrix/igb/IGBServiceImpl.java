@@ -28,7 +28,6 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -41,7 +40,6 @@ import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.SearchView;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryChangeListener {
 
@@ -228,35 +226,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	public JComponent getMapView() {
 		return Application.getSingleton().getMapView();
-	}
-
-	private BioSeq getViewSeq() {
-		return ((SeqMapView)getMapView()).getViewSeq();
-	}
-
-	public boolean isSeqResiduesAvailable() {
-		BioSeq vseq = getViewSeq();
-		return vseq != null && vseq.isComplete();
-	}
-
-	public int getSeqResiduesMin() {
-		return getViewSeq().getMin();
-	}
-
-	public int getSeqResiduesMax() {
-		return getViewSeq().getMax();
-	}
-
-	public String getSeqResidues() {
-		return getViewSeq().getResidues();
-	}
-
-	public void updateMap() {
-		Application.getSingleton().getMapView().getSeqMap().updateWidget();
-	}
-
-	public void removeGlyphs(List<GlyphI> glyphs) {
-		Application.getSingleton().getMapView().getSeqMap().removeItem(glyphs);
 	}
 
 	public String getUCSCQuery() {

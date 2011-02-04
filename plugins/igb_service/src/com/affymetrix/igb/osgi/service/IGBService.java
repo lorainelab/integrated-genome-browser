@@ -40,14 +40,6 @@ public interface IGBService {
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
 	public JComponent getMapView();
-	public boolean isSeqResiduesAvailable();
-	public int getSeqResiduesMin();
-	public int getSeqResiduesMax();
-	public String getSeqResidues();
-	public void updateMap();
-	public void removeGlyphs(List<GlyphI> glyphs);
-	// for search page
-//	public void addToRefreshList(SeqMapRefreshed smr);
 	// for external page
 	public String getUCSCQuery();
 	// for GeneralLoadView

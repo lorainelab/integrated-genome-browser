@@ -1,14 +1,28 @@
 package com.affymetrix.main;
 
-import java.util.ArrayList;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
+
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -19,7 +33,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 public class OSGiHandler {
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("main");
 	private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
 	private static final String FORWARD_SLASH = "/";
 	private static Felix felix;
@@ -81,25 +94,29 @@ public class OSGiHandler {
         {
             felix.start();
             BundleContext bundleContext = felix.getBundleContext();
-            List<String> jars = new ArrayList<String>(Arrays.asList(BUNDLE.getString("pluginsList").split(",")));
-           	// load uncached jars
-    		for (String jarSpec : jars) {
-    			String[] parts = jarSpec.split(";");
-    			String jarName = parts[0];
-    			boolean startBundle = true;
-    			if (parts.length > 1 && parts[1].toLowerCase().startsWith("start=n")) {
-    				startBundle = false;
+           	// load embedded bundles
+            String[] jarNames = getResourceListing(OSGiHandler.class, "");
+    		for (String fileName : jarNames) {
+    			if (fileName.endsWith(".jar")) {
+	     			URL locationURL = OSGiHandler.class.getResource(FORWARD_SLASH + fileName);
+	    			if (locationURL != null){
+						Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{fileName});
+						try {
+							bundleContext.installBundle(locationURL.toString());
+						}
+		    	        catch (Exception ex)
+		    	        {
+		    	        	ex.printStackTrace(System.err);
+							Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not install {0}",new Object[]{fileName});
+		    	        }
+	    			}
+	    			else{
+						Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find {0}",new Object[]{fileName});
+					}
     			}
-    			URL locationURL = OSGiHandler.class.getResource(jarName);
-    			if (locationURL != null){
-					Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{jarName});
-    				Bundle bundle = bundleContext.installBundle(locationURL.toString());
-    				if (startBundle) {
-    					bundle.start();
-    				}
-    			}else{
-					Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find {0}",new Object[]{jarName});
-				}
+    		}
+    		for (Bundle bundle : felix.getBundleContext().getBundles()) {
+    			bundle.start();
     		}
           	Logger.getLogger(getClass().getName()).log(Level.INFO, "OSGi is started");
         }
@@ -109,6 +126,99 @@ public class OSGiHandler {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
     }
+
+	private static final String FILE_PROTOCOL = "file";
+	private static final String WEB_PROTOCOL = "http";
+	private static final String SECURE_WEB_PROTOCOL = "https";
+
+	/**
+	 * List directory contents for a resource folder. Not recursive. This is
+	 * basically a brute-force implementation. Works for regular files and also
+	 * JARs.
+	 * 
+	 * @author Greg Briggs - modified 02/02/2011
+	 * @param clazz
+	 *            Any java class that lives in the same place as the resources
+	 *            you want.
+	 * @param path
+	 *            Should end with "/", but not start with one.
+	 * @return Just the name of each member item, not the full paths.
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	private String[] getResourceListing(Class<?> clazz, String path)
+			throws URISyntaxException, IOException {
+		URL dirURL = clazz.getClassLoader().getResource(path);
+		System.out.println("path = " + path);
+		System.out.println("dirURL = " + dirURL);
+		if (dirURL != null && dirURL.getProtocol().equals("file")) {
+			/* A file path: easy enough */
+			return new File(dirURL.toURI()).list();
+		}
+
+		if (dirURL == null) {
+			/*
+			 * In case of a jar file, we can't actually find a directory. Have
+			 * to assume the same jar as clazz.
+			 */
+			String me = clazz.getName().replace(".", "/") + ".class";
+			dirURL = clazz.getClassLoader().getResource(me);
+		}
+
+		if (dirURL.getProtocol().equals("jar")) {
+			/* A JAR path */
+			String protocol = dirURL.getPath().substring(0,
+					dirURL.getPath().indexOf(":"));
+			Set<String> result = new HashSet<String>(); // avoid duplicates in
+														// case it is a
+														// subdirectory
+			if (FILE_PROTOCOL.equals(protocol)) {
+				String jarPath = dirURL.getPath().substring(5,
+						dirURL.getPath().indexOf("!")); // strip out only the
+														// JAR
+														// file
+				JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+				Enumeration<JarEntry> entries = jar.entries(); // gives ALL
+																// entries
+																// in jar
+				while (entries.hasMoreElements()) {
+					String name = entries.nextElement().getName();
+					if (name.startsWith(path)) { // filter according to the path
+						String entry = name.substring(path.length());
+						int checkSubdir = entry.indexOf("/");
+						if (checkSubdir >= 0) {
+							// if it is a subdirectory, we just return the
+							// directory
+							// name
+							entry = entry.substring(0, checkSubdir);
+						}
+						result.add(entry);
+					}
+				}
+			}
+			if (WEB_PROTOCOL.equals(protocol) || SECURE_WEB_PROTOCOL.equals(protocol)) {
+				final ProtectionDomain domain = OSGiHandler.class.getProtectionDomain();
+				final CodeSource source = domain.getCodeSource();
+				URL url = source.getLocation();
+				if (url.toExternalForm().endsWith(".jar")) {
+					try {
+						JarInputStream jarStream = new JarInputStream(url.openStream(), false);
+						for (String entry : jarStream.getManifest().getEntries().keySet()) {
+							result.add(entry);
+						}
+					}
+					catch (IOException e) {
+						Logger.getLogger(getClass().getName()).log(Level.WARNING, "error reading manifest", e.getMessage());
+					}
+				}
+			}
+			if (result.size() > 0) {
+				return result.toArray(new String[result.size()]);
+			}
+		}
+
+		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+	}
 
 	private static void setLaf() {
 

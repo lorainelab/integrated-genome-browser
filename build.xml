@@ -299,7 +299,7 @@
 		</jar>
 	</target>
 
-	<target name="run" depends="compile" description="run IGB">
+	<target name="run" depends="compile, classpath" description="run IGB">
 		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
 			<os family="mac" />
 		</condition>
@@ -310,16 +310,20 @@
 			<jvmarg line="${apple.jvmargs}" />
 			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
 			<sysproperty key="apple.laf.useScreenMenuBar" value="true" />
-			<classpath>
-				<dirset dir="${bundle.dir}/" />
-				<dirset dir="${main}/build/" />
-				<fileset dir="${lib.dir}" >
-					<include name="felix.jar" />
-				</fileset>
-			</classpath>
+			<classpath refid="igb.classpath"/>
 		</java>
 	</target>
 
+	<target name="classpath">
+		<path id="igb.classpath">
+			<dirset dir="${bundle.dir}/" />
+			<dirset dir="${main}/build/" />
+			<fileset dir="${lib.dir}" >
+				<include name="felix.jar" />
+			</fileset>
+		</path>
+	</target>
+	
 	<target name="run_Protannot" depends="compile" description="run Protannot">
 		<condition property="apple.jvmargs" value="-Xdock:name=Protannot " else="" >
 			<os family="mac" />

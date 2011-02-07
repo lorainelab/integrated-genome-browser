@@ -5,10 +5,8 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TwoBitParser;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,19 +73,13 @@ public class TwoBit extends SymLoader {
 	@Override
 	public String getRegionResidues(SeqSpan span) {
 		init();
-
-		ByteArrayOutputStream outStream = null;
-		try {
-			outStream = new ByteArrayOutputStream();
-			TwoBitParser.parse(uri, span.getStart(), span.getEnd(), outStream);
-			byte[] bytes = outStream.toByteArray();
-			return new String(bytes);
-		} catch (Exception ex) {
-			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
-			return null;
-		} finally {
-			GeneralUtils.safeClose(outStream);
+		BioSeq seq = span.getBioSeq();
+		if(chrMap.containsKey(seq)){
+			return chrMap.get(seq).substring(span.getMin(), span.getMax());
 		}
+
+		Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING,"Seq {0} not present {1}",new Object[]{seq.getID(), uri.toString()});
+		return "";
 	}
 
 	@Override

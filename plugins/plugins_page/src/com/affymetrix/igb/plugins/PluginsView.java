@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -28,12 +30,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import org.apache.felix.bundlerepository.impl.RepositoryAdminImpl;
 import org.apache.felix.bundlerepository.impl.wrapper.RepositoryAdminWrapper;
-import org.apache.felix.utils.log.Logger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -104,8 +103,8 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private final IGBService igbService;
 	private List<Bundle> installedBundles;
 	private List<Bundle> repositoryBundles;
-	private List<Bundle> unfilteredBundles;
-	private List<Bundle> filteredBundles;
+	private List<Bundle> unfilteredBundles; // all methods that access filteredBundles should be synchronized
+	private List<Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
 	private HashMap<String, Bundle> latest;
 	private BundleFilter bundleFilter;
 
@@ -125,13 +124,8 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 				updateSelectedBundlesButton.setEnabled(isUpdateSelectedBundlesExist());
 			}
 		};
-		bundleTable.setRowSorter(
-			new TableRowSorter<TableModel>(bundleTableModel) {
-				public boolean isSortable(int column) {
-					return column == bundleTableModel.getColumnIndex(BUNDLE_SYMBOLICNAME);
-				}
-			}
-		);
+		bundleTable.setAutoCreateRowSorter(true);
+		bundleTable.getRowSorter().setSortKeys(BundleTableModel.SORT_KEYS);
 		bundleTable.addMouseListener(
 			new MouseAdapter() {
 				@Override
@@ -299,15 +293,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	}
 
 	public Bundle getBundleAtRow(int row) {
-		int modelRow = 0;
-		try {
-			modelRow = bundleTable.convertRowIndexToModel(row);
-		}
-		catch (IndexOutOfBoundsException x)
-		{
-			System.out.println("invalid row = " + row + " count = " + bundleTableModel.getRowCount());
-			throw(x);
-		}
+		int modelRow = bundleTable.convertRowIndexToModel(row);
 		return getFilteredBundle(modelRow);
 	}
 
@@ -330,7 +316,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		}
 	}
 
-	private void updateAllBundles() {
+	private synchronized void updateAllBundles() {
 		if (filteredBundles != null) {
 			for (Bundle bundle : filteredBundles) {
 				installBundleIfNecessary(bundle);
@@ -346,7 +332,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		}
 	}
 
-	private boolean isUpdateBundlesExist() {
+	private synchronized boolean isUpdateBundlesExist() {
 		boolean updateBundlesExist = false;
 		if (filteredBundles != null) {
 			for (Bundle bundle : filteredBundles) {
@@ -365,6 +351,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 			Bundle bundle = getBundleAtRow(rowIndices[i]);
 			if (latest.get(bundle.getSymbolicName()) == null) {
 				System.out.println("isUpdateSelectedBundlesExist - no latest for " + bundle.getSymbolicName());
+				Logger.getLogger(getClass().getName()).log(Level.WARNING, "isUpdateSelectedBundlesExist - no latest for " + bundle.getSymbolicName());
 			}
 			if (isInstalled(bundle) && !bundle.equals(latest.get(bundle.getSymbolicName()))) {
 				updateSelectedBundlesExist = true;
@@ -385,14 +372,15 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		return bundle != null && isInstalled(bundle) && !isLatest(bundle);
 	}
 
-	public Bundle getFilteredBundle(int index) {
+	public synchronized Bundle getFilteredBundle(int index) {
 		if (index < 0 || index >= filteredBundles.size()) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "getFilteredBundle() error at index=" + index + ", filteredBundles.size()=" + filteredBundles.size());
 			return null;
 		}
 		return filteredBundles.get(index);
 	}
 
-	public int getFilteredBundleCount() {
+	public synchronized int getFilteredBundleCount() {
 		if (filteredBundles == null) {
 			return 0;
 		}
@@ -436,7 +424,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
 //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
 //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
-		repoAdmin = new RepositoryAdminWrapper((org.apache.felix.bundlerepository.RepositoryAdmin) new RepositoryAdminImpl(bundleContext, new Logger(bundleContext)));
+		repoAdmin = new RepositoryAdminWrapper((org.apache.felix.bundlerepository.RepositoryAdmin) new RepositoryAdminImpl(bundleContext, new org.apache.felix.utils.log.Logger(bundleContext)));
 		for (String url : igbService.getRepositories()) {
 			repositoryAdded(url);
 		}
@@ -502,7 +490,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		setUnfilteredBundles();
 	}
 
-	private void addBundle(Bundle bundle) {
+	private synchronized void addBundle(Bundle bundle) {
 		String symbolicName = bundle.getSymbolicName();
 		Version version = bundle.getVersion();
 		for (Bundle unfilteredBundle : unfilteredBundles) {
@@ -518,7 +506,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		}
 	}
 
-	private void setUnfilteredBundles() {
+	private synchronized void setUnfilteredBundles() {
 		unfilteredBundles = new ArrayList<Bundle>();
 		latest.clear();
 		if (installedBundles != null) {
@@ -533,7 +521,7 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 		}
 	}
 
-	private void filterBundles() {
+	private synchronized void filterBundles() {
 		filteredBundles = new ArrayList<Bundle>();
 		for (Bundle bundle : unfilteredBundles) {
 			if (SYSTEM_BUNDLE_FILTER.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {

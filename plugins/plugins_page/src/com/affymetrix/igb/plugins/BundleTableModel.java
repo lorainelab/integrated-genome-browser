@@ -3,13 +3,17 @@ package com.affymetrix.igb.plugins;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.SortOrder;
 import javax.swing.UIManager;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.UIResource;
@@ -290,6 +294,15 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 	public static void setPluginsHandler(IPluginsHandler _pluginsHandler) {
 		pluginsHandler = _pluginsHandler;
+	}
+
+	public static final List<SortKey> SORT_KEYS;
+
+	static {
+		List<SortKey> sortKeys = new ArrayList<SortKey>(1);
+		sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
+
+		SORT_KEYS = Collections.<SortKey>unmodifiableList(sortKeys);
 	}
 
 	public BundleTableModel() {

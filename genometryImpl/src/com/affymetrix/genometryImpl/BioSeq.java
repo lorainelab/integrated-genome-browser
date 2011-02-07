@@ -447,6 +447,10 @@ public final class BioSeq implements SearchableCharIterator {
 		residues_provider = chariter;
 	}
 
+	public void removeResidueProvider(){
+		residues_provider = null;
+	}
+	
 	/**
 	 * Returns all residues on the sequence.
 	 *

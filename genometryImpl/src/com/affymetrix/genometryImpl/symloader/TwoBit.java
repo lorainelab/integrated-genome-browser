@@ -7,11 +7,12 @@ import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TwoBitParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +28,7 @@ public class TwoBit extends SymLoader {
 		pref_list.add("raw");
 		pref_list.add("2bit");
 	}
-	private final Set<BioSeq> chrSet = new HashSet<BioSeq>();
+	private final Map<BioSeq, SearchableCharIterator> chrMap = new HashMap<BioSeq, SearchableCharIterator>();
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
 		// BAM files are generally large, so only allow loading visible data.
@@ -49,7 +50,10 @@ public class TwoBit extends SymLoader {
 		try {
 			List<BioSeq> seqs = TwoBitParser.parse(uri, group);
 			if(seqs != null){
-				chrSet.addAll(seqs);
+				for(BioSeq seq : seqs){
+					chrMap.put(seq, seq.getResiduesProvider());
+					seq.removeResidueProvider();
+				}
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
@@ -65,7 +69,7 @@ public class TwoBit extends SymLoader {
 	@Override
 	public List<BioSeq> getChromosomeList(){
 		init();
-		return new ArrayList<BioSeq>(chrSet);
+		return new ArrayList<BioSeq>(chrMap.keySet());
 	}
 
 	@Override

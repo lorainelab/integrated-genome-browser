@@ -210,6 +210,10 @@
     </copy>
 	</target>
 
+	<target name="cbc" depends="compile" description="clear bundle cache">
+		<java fork="true" classname="com.affymetrix.main.ClearBundleCache" classpath="${main}/build"/>
+	</target>
+
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
 		<iterate target="all" />
 	</target>

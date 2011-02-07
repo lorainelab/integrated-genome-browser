@@ -12,8 +12,6 @@ package com.affymetrix.main;
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-import java.util.Arrays;
-
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
  *
@@ -25,18 +23,11 @@ public final class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			if (isArgSet(args, "-resetOSGi")) {
-				OSGiHandler.getInstance().clearCache();
-			}
 			OSGiHandler.getInstance().startOSGi(args);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-	}
-
-	private static boolean isArgSet(String[] args, String arg) {
-		return Arrays.asList(args).contains(arg);
 	}
 }

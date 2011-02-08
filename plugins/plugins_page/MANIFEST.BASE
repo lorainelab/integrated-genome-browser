@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PluginsPage
-Bundle-SymbolicName: PluginsPage
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: com.affymetrix.igb.PluginsPage
+Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.plugins.Activator
 IGB-Tier: 1
 Import-Package: com.affymetrix.igb.osgi.service,

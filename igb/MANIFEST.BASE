@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IGB
-Bundle-SymbolicName: IGB
+Bundle-SymbolicName: com.affymetrix.igb.IGB
 Bundle-Description: IGB
 Bundle-Vendor: Affymetrix
-Bundle-Version: 1.0.0
+Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

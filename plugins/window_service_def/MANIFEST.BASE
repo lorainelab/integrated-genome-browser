@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: WindowServiceDefaultImpl
-Bundle-SymbolicName: WindowServiceDefaultImpl
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: com.affymetrix.igb.WindowServiceDefaultImpl
+Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.window.service.def.Activator
 Bundle-ActivationPolicy: lazy
 IGB-Tier: 1

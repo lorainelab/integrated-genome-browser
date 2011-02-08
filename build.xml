@@ -36,9 +36,14 @@
 		<property name="bundle.dir" value="${basedir}/bundles" />
 
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src:${plugins_page}/src" />
+		<property file="${igb}/resources/igb.properties"/>
 	</target>
 
-	<target name="compile" depends="common-init, copy-bundles" description="Compile all genoviz subprojects">
+	<target name="mani-vers" depends="init" description="update the version number in the manifest file">
+		<iterate target="mani-vers" />
+	</target>
+
+	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
 		<iterate target="compile" />
 	</target>
 
@@ -121,7 +126,7 @@
 		</antcall>
 	</target>
 
-	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">
+	<target name="jar" depends="common-init,copy-bundles,mani-vers" description="Create jar files for all genoviz subprojects">
 		<iterate target="jar" />
 	</target>
 

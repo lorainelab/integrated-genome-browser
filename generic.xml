@@ -44,6 +44,20 @@
 		<available file="${proj.lib.dir}" property="lib.present"/>
   </target>
 
+  <target name="manifest-exists">
+		<available file="${basedir}/MANIFEST.BASE" property="manifest.present"/>
+  </target>
+
+  <target name="mani-vers" depends="manifest-exists" if="manifest.present">
+		<copy file="${basedir}/MANIFEST.BASE" tofile="${basedir}/META-INF/MANIFEST.MF" overwrite="true" >
+			<filterchain>
+				<replacetokens>
+					<token key="appVersion" value="${appVersion}"/>
+				</replacetokens>
+			</filterchain>
+		</copy>
+  </target>
+
   <target name="do-if-proj-lib" depends="proj-lib-exists" if="lib.present">
 		<copy todir="${build.dir}/lib" filtering="false">
 			<fileset dir="${proj.lib.dir}" /> 
@@ -170,7 +184,7 @@
 	</target>
 
 	<target name="clean" depends="common-init">
-    <delete file="${component}.jar"/>
+    	<delete file="${component}.jar"/>
 		<delete dir="${docs.dir}"/>
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />

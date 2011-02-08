@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IGBService
-Bundle-SymbolicName: IGBService
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: com.affymetrix.igb.IGBService
+Bundle-Version: @appVersion@
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 IGB-Tier: 1
 Import-Package: javax.swing,

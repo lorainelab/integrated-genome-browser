@@ -39,11 +39,7 @@
 		<property file="${igb}/resources/igb.properties"/>
 	</target>
 
-	<target name="mani-vers" depends="init" description="update the version number in the manifest file">
-		<iterate target="mani-vers" />
-	</target>
-
-	<target name="compile" depends="common-init,mani-vers" description="Compile all genoviz subprojects">
+	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
 		<iterate target="compile" />
 	</target>
 
@@ -86,7 +82,7 @@
 		<iterate target="check-nullness" />
 	</target>
 
-	<target name="test" depends="common-init,mani-vers" description="Run unit tests for all genoviz subprojects">
+	<target name="test" depends="common-init" description="Run unit tests for all genoviz subprojects">
 		<iterate target="test" />
 	</target>
 
@@ -137,7 +133,7 @@
 		</antcall>
 	</target>
 
-	<target name="jar" depends="common-init,copy-bundles,mani-vers" description="Create jar files for all genoviz subprojects">
+	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">
 		<iterate target="jar" />
 	</target>
 
@@ -234,7 +230,7 @@
 		<iterate target="all" />
 	</target>
 
-	<target name="report" depends="test,docs,pmd,cpd,findbugs,mani-vers" description="Generate reports about the project" />
+	<target name="report" depends="test,docs,pmd,cpd,findbugs" description="Generate reports about the project" />
 
 	<target name="pmd" depends="common-init,pmd-init" if="have.pmd" description="run pmd static analysis program">
 		<iterate target="pmd" />

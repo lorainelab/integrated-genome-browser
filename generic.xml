@@ -141,7 +141,7 @@
 		<antcall target="create-jar" />
 	</target>
 
-	<target name="create-jar" >
+	<target name="create-jar" depends="mani-vers">
 		<mkdir dir="${dist.dir}" />
 		<jar jarfile="${dist.dir}/${jarfile}" update="false" manifest="./META-INF/MANIFEST.MF">
 			<fileset dir="${build.dir}" />

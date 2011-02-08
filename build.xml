@@ -90,6 +90,10 @@
 		<iterate target="test" />
 	</target>
 
+	<target name="manifest-exists">
+		<available file="${basedir}/MANIFEST.BASE" property="manifest.present"/>
+	</target>
+
 	<target name="copy-bundle" description="copy a bundle to bundle dir">
 		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="${lib.dir}" >
 			<arg value="wrap"/>
@@ -258,6 +262,7 @@
 		<delete dir="${basedir}/build" />
 		<delete dir="${work.dir}" />
 		<delete dir="${bundle.dir}" />
+		<delete dir="gogo" />
 
 		<iterate target="clean" />
 	</target>
@@ -497,6 +502,26 @@
 
 	<target name="profile-single-nb" if="netbeans.home">
 		<ant target="profile-single-nb" antfile="nbproject/ide-targets.xml" />
+	</target>
+
+	<target name="gogo" depends="jar" description="run IGB using felix gogo">
+		<mkdir dir="gogo" />
+		<mkdir dir="gogo/bin" />
+		<copy file="${lib.dir}/felix.jar" tofile="gogo/bin/felix.jar" />
+		<mkdir dir="gogo/bundle" />
+		<copy todir="gogo/bundle" overwrite="true">
+			<fileset dir="${lib.dir}">
+				<include name="org.apache.felix.gogo.*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="gogo/bundle" overwrite="true">
+			<fileset dir="${bundle.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<mkdir dir="gogo/conf" />
+		<copy file="${main}/resources/config.properties" tofile="gogo/conf/config.properties" />
+		<java jar="gogo/bin/felix.jar" fork="true" dir="gogo" />
 	</target>
 
 	<!--                                                                 -->

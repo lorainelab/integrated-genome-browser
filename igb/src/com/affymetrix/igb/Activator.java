@@ -43,7 +43,11 @@ public class Activator implements BundleActivator {
 	protected void run(ServiceReference windowServiceReference) {
         IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);
         IGB igb = new IGB();
-        igb.init(bundleContext.getProperty("args").split(","));
+        String[] args = new String[]{};
+        if (bundleContext.getProperty("args") != null) {
+        	args = bundleContext.getProperty("args").split(",");
+        }
+        igb.init(args);
         igb.setWindowService(windowService);
 		bundleContext.registerService(IGBService.class.getName(), IGBServiceImpl.getInstance(), new Properties());
 	}

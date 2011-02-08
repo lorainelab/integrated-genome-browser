@@ -35,7 +35,7 @@
 		<property name="report.dir" value="${basedir}/reports" />
 		<property name="bundle.dir" value="${basedir}/bundles" />
 
-		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src:${plugins_page}/src" />
+		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
 		<property file="${igb}/resources/igb.properties"/>
 	</target>
 

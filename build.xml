@@ -94,7 +94,7 @@
 		<available file="${basedir}/MANIFEST.BASE" property="manifest.present"/>
 	</target>
 
-	<target name="copy-bundle" description="copy a bundle to bundle dir">
+	<target name="copy-bundle-if" description="copy a bundle to bundle dir" unless="${jar_name}.present">
 		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="${lib.dir}" >
 			<arg value="wrap"/>
 			<arg value="-properties"/>
@@ -102,6 +102,13 @@
 			<arg value="${jar_name}.jar"/>
 		</java>
 		<move file="${lib.dir}/${jar_name}.bar" tofile="${bundle.dir}/${jar_name}.bnd.jar" filtering="false" />
+	</target>
+
+	<target name="copy-bundle" depends="common-init" description="copy bundles to bundle dir">
+		<available file="${bundle.dir}/${jar_name}.bnd.jar" property="${jar_name}.present"/>
+		<antcall target="copy-bundle-if">
+    			<param name="jar_name" value="${jar_name}"/>
+		</antcall>
 	</target>
 
 	<target name="copy-bundles" depends="common-init" description="copy bundles to bundle dir">

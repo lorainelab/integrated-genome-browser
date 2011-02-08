@@ -4,6 +4,7 @@
   <target name="init">
 		<!-- Locations of subprojects -->
 		<property name="main"               value="${basedir}/../main" />
+		<property name="common"             value="${basedir}/../common" />
 		<property name="genoviz"            value="${basedir}/../genoviz_sdk" />
 		<property name="genometry"          value="${basedir}/../genometry" />
 		<property name="genometryImpl"      value="${basedir}/../genometryImpl" />

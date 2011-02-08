@@ -42,6 +42,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.affymetrix.common.CommonUtils;
+
 
 /**
  * Helps to save and load preferences such as locations of windows.
@@ -345,20 +347,7 @@ public abstract class PreferenceUtils {
 	 * @return 
 	 */
 	public static String getAppDataDirectory() {
-		if (app_dir == null) {
-			String home = System.getProperty("user.home");
-			String app_data = home + "/Application Data";
-			File app_data_dir = new File(app_data);
-			if (app_data_dir.exists() && app_data_dir.isDirectory()) {
-				app_dir = app_data + "/IGB/";
-			} else {
-				app_dir = home + "/.igb/";
-			}
-		}
-		if (!app_dir.endsWith("/")) {
-			app_dir = app_dir + "/";
-		}
-		return app_dir;
+		return CommonUtils.getInstance().getAppDataDirectory();
 	}
 
 	/**

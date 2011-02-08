@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: common
+Bundle-SymbolicName: com.affymetrix.igb.common
+Bundle-Description: common utilities for IGB
+Bundle-Vendor: Affymetrix, Inc.
+Bundle-Version: @appVersion@
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+IGB-Tier: 1
+Export-Package: com.affymetrix.common
+

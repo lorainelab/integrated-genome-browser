@@ -28,6 +28,8 @@ import org.apache.felix.framework.util.StringMap;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import com.affymetrix.common.CommonUtils;
+
 public class OSGiHandler {
 	private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
 	private static final String FORWARD_SLASH = "/";
@@ -38,13 +40,8 @@ public class OSGiHandler {
 		return instance;
 	}
 
-	private String getAppDir() {
-		// return PreferenceUtils.getAppDataDirectory();
-		return "";
-	}
-
 	private String getCacheDir() {
-		return getAppDir() + "cache/felix-cache";
+		return CommonUtils.getInstance().getAppDataDirectory() + "cache/v" + CommonUtils.getInstance().getAppVersion() + "-bundle-cache";
 	}
 
 	public void clearCache() {

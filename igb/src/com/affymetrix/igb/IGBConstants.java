@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.Constants;
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -26,10 +27,8 @@ public interface IGBConstants {
 
 	public static final String APP_NAME         = BUNDLE.getString("appName");
 	public static final String APP_NAME_SHORT   = BUNDLE.getString("appNameShort");
-	public static final String APP_VERSION      = BUNDLE.getString("appVersion");
-	public static final String APP_VERSION_FULL = MessageFormat.format(
-			BUNDLE.getString("appVersionFull"),
-			APP_VERSION);
+	public static final String APP_VERSION      = CommonUtils.getInstance().getAppVersion();
+	public static final String APP_VERSION_FULL = CommonUtils.getInstance().getAppVersionFull();
 
 	public static final String USER_AGENT = MessageFormat.format(
 			BUNDLE.getString("userAgent"),

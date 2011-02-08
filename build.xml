@@ -14,6 +14,7 @@
 
 		<!-- Locations of subprojets -->
 		<property name="main"                value="${basedir}/main" />
+		<property name="common"              value="${basedir}/common" />
 		<property name="genoviz"             value="${basedir}/genoviz_sdk" />
 		<property name="genometry"           value="${basedir}/genometryImpl" />
 		<property name="igb"                 value="${basedir}/igb" />
@@ -36,7 +37,7 @@
 		<property name="bundle.dir" value="${basedir}/bundles" />
 
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src:${igb_service}/src:${window_service}/src" />
-		<property file="${igb}/resources/igb.properties"/>
+		<property file="${common}/resources/common.properties"/>
 	</target>
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
@@ -183,6 +184,7 @@
 			</fileset>
 			<fileset dir="${dist.dir}">
 				<include name="das2server.jar" />
+				<include name="common.jar" />
 				<include name="genometry.jar" />
 				<include name="protannot.jar" />
 			</fileset>
@@ -223,7 +225,7 @@
 	</target>
 
 	<target name="cbc" depends="compile" description="clear bundle cache">
-		<java fork="true" classname="com.affymetrix.main.ClearBundleCache" classpath="${main}/build"/>
+		<java fork="true" classname="com.affymetrix.main.ClearBundleCache" classpath="${main}/build:${common}/build"/>
 	</target>
 
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
@@ -290,6 +292,7 @@
 			<metainf file="NOTICES.txt"/>
 			<zipgroupfileset dir="${dist.dir}">
 				<include name="main.jar"/>
+				<include name="common.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="felix.jar" />
@@ -303,6 +306,7 @@
 				<attribute name="Main-Class" value="org.bioviz.protannot.ProtAnnotMain"/>
 			</manifest>
 			<zipgroupfileset dir="${dist.dir}">
+				<include name="common.jar"/>
 				<include name="genometry.jar"/>
 				<include name="genoviz.jar"/>
 				<include name="protannot.jar"/>
@@ -354,6 +358,7 @@
 				<fileset dir="${lib.dir}" includes="colt.jar" />
 				<fileset dir="${lib.dir}" includes="sam.jar" />
 				<dirset dir="${basedir}">
+					<include name="common/build" />
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />
 					<include name="protannot/build" />
@@ -370,6 +375,7 @@
 				<fileset dir="${lib.dir}" includes="colt.jar" />
 				<fileset dir="${lib.dir}" includes="sam.jar" />
 				<dirset dir="${basedir}">
+					<include name="common/build" />
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />
 					<include name="protannot/build" />
@@ -382,6 +388,7 @@
 				<fileset dir="${lib.dir}" includes="colt.jar" />
 				<fileset dir="${lib.dir}" includes="sam.jar" />
 				<dirset dir="${basedir}">
+					<include name="common/build" />
 					<include name="genometryImpl/build" />
 					<include name="genoviz_sdk/build" />
 					<include name="protannot/build" />
@@ -540,6 +547,7 @@
 			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}">
+					<include name="common" />
 					<include name="genoviz_sdk" />
 					<include name="genometryImpl" />
 				</dirset>

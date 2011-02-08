@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="lib" path="ext/affx_fusion.jar"/>
 	<classpathentry kind="lib" path="ext/antlr-2.7.6rc1.jar"/>
 	<classpathentry kind="lib" path="ext/asm-attrs.jar"/>

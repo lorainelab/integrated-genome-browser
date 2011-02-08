@@ -86,7 +86,7 @@
 		<iterate target="check-nullness" />
 	</target>
 
-	<target name="test" depends="common-init" description="Run unit tests for all genoviz subprojects">
+	<target name="test" depends="common-init,mani-vers" description="Run unit tests for all genoviz subprojects">
 		<iterate target="test" />
 	</target>
 
@@ -234,7 +234,7 @@
 		<iterate target="all" />
 	</target>
 
-	<target name="report" depends="test,docs,pmd,cpd,findbugs" description="Generate reports about the project" />
+	<target name="report" depends="test,docs,pmd,cpd,findbugs,mani-vers" description="Generate reports about the project" />
 
 	<target name="pmd" depends="common-init,pmd-init" if="have.pmd" description="run pmd static analysis program">
 		<iterate target="pmd" />

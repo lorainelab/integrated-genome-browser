@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,9 +40,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	private static final Set<String> UCSCSources = Collections.<String>synchronizedSet(new HashSet<String>());
 
 	public UCSCViewAction(SeqMapView seqMapView) {
-		super(MessageFormat.format(
-					BUNDLE.getString("menuItemHasDialog"),
-					BUNDLE.getString("viewRegionInUCSCBrowser")),
+		super(BUNDLE.getString("viewRegionInUCSCBrowser"),
 				MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
 		SEQ_MAP = seqMapView;
 		GenometryModel model = GenometryModel.getGenometryModel();
@@ -62,7 +59,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		boolean enableThis = evt.getSelectedSeq() != null;	
+		boolean enableThis = evt.getSelectedSeq() != null;
 		// don't do the enabling tests, because it will contact the UCSC server when it's not truly necessary.
 		this.setEnabled(enableThis);
 	}

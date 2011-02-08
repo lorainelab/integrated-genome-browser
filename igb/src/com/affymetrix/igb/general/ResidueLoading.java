@@ -1,6 +1,7 @@
 package com.affymetrix.igb.general;
 
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -157,7 +158,7 @@ public final class ResidueLoading {
 				} catch (MalformedURLException ex) {
 					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
 				}
-
+				
 				String residues = GetQuickLoadResidues(seq_group, path, server.URL, span);
 				if (residues != null) {
 					BioSeq.addResiduesToComposition(aseq, residues, span);
@@ -241,11 +242,13 @@ public final class ResidueLoading {
 				}
 			}
 		}
+		
 		//Try to load from Quickload server.
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
 			if (server.serverType == ServerType.QuickLoad) {
 				String path = "";
+				SeqSpan span = new SimpleSeqSpan(min, max, aseq);
 				try {
 					URL quickloadURL = new URL((String) server.serverObj);
 					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
@@ -253,9 +256,10 @@ public final class ResidueLoading {
 				} catch (MalformedURLException ex) {
 					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
 				}
-
-				if (GetQuickLoadResidues(seq_group, path, server.URL)) {
-					BioSeq.addResiduesToComposition(aseq);
+	
+				String residues = GetQuickLoadResidues(seq_group, path, server.URL, span);
+				if (residues != null) {
+					BioSeq.addResiduesToComposition(aseq, residues, span);
 					return true;
 				}
 			}
@@ -381,6 +385,38 @@ public final class ResidueLoading {
 			}
 			// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
 			NibbleResiduesParser.parse(istr, seq_group);
+			return true;
+		} catch (IOException ex) {
+			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, "Can not access sequence: " + url_path, ex);
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * Get the residues from the specified QuickLoad server.
+	 * @param seq_group
+	 * @param path
+	 * @param root_url
+	 * @return true or false
+	 */
+	private static boolean GetQuickLoadResidues2(AnnotatedSeqGroup seq_group, String path, String root_url) {
+		String url_path = root_url + path + ".2bit";
+
+		Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE,
+					"  Quickload location of bnib file: {0}", url_path);
+		InputStream istr = null;
+		try {
+			istr = LocalUrlCacher.getInputStream(url_path, true);
+			if (istr == null) {
+				//System.out.println("++++++in GetQuickLoadResidues, istr is null");
+				return false;
+			}
+			// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
+			NibbleResiduesParser.parse(istr, seq_group);
+			//System.out.println("++++++in GetQuickLoadResidues, will return true");
 			return true;
 		} catch (IOException ex) {
 			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, "Can not access sequence: " + url_path, ex);

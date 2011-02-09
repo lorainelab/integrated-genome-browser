@@ -125,6 +125,12 @@ public final class SpeciesLookup {
 				species = species.replaceAll("[\\d]+", "");
 			}
 		}
+		
+		pattern = Pattern.compile("([a-zA-Z]+)((_[a-zA-Z]+)+)");
+		m = pattern.matcher(species);
+		if(m.find( )) {
+			species = m.group(1).toUpperCase() + m.group(2).toLowerCase();
+		}
 		//end of adding
 		
 		return species;

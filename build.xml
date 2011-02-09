@@ -340,6 +340,7 @@
 		<path id="igb.classpath">
 			<dirset dir="${bundle.dir}/" />
 			<dirset dir="${main}/build/" />
+			<dirset dir="${common}/build/" />
 			<fileset dir="${lib.dir}" >
 				<include name="felix.jar" />
 			</fileset>

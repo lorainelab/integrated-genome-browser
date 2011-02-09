@@ -36,9 +36,11 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
+import com.affymetrix.igb.osgi.service.PropertyHandler;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.SearchView;
+import com.affymetrix.igb.view.SeqMapView;
 
 public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryChangeListener {
 
@@ -240,5 +242,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	public void setCommandLineBatchFileStr(String str) {
 		IGB.commandLineBatchFileStr = str;
+	}
+
+	@Override
+	public void setPropertyHandler(PropertyHandler propertyHandler) {
+		((SeqMapView)getMapView()).setPropertyHandler(propertyHandler);
 	}
 }

@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PropertyView
+Bundle-SymbolicName: com.affymetrix.igb.PropertyView
+Bundle-Version: @appVersion@
+Bundle-Activator: com.affymetrix.igb.property.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-SelectionInfoPanel
+IGB-Tier: 2
+Import-Package: com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.event,
+ com.affymetrix.genometryImpl.general,
+ com.affymetrix.genometryImpl.span,
+ com.affymetrix.genometryImpl.symmetry,
+ com.affymetrix.genometryImpl.util,
+ com.affymetrix.genoviz.bioviews,
+ com.affymetrix.igb.osgi.service,
+ com.affymetrix.igb.tiers,
+ com.affymetrix.igb.util,
+ com.affymetrix.igb.view,
+ com.affymetrix.igb.window.service,
+ javax.swing,
+ javax.swing.table,
+ org.osgi.framework;version="1.5.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .,
+ resources/
+Bundle-Description: List information about items selected in the display
+

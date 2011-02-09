@@ -27,6 +27,7 @@
 		<property name="plugins_page"        value="${basedir}/plugins/plugins_page" />
 		<property name="RestrictionSites"    value="${basedir}/plugins/RestrictionSites" />
 		<property name="ExternalView"        value="${basedir}/plugins/ExternalView" />
+		<property name="PropertyView"        value="${basedir}/plugins/PropertyView" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"    value="${basedir}/ext" />
@@ -562,6 +563,7 @@
 					<include name="plugins_page" />
 					<include name="RestrictionSites" />
 					<include name="ExternalView" />
+					<include name="PropertyView" />
 					<include name="window_service_def" />
 				</dirset>
 				<dirset dir="${basedir}">

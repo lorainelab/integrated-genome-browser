@@ -17,6 +17,7 @@ public interface IGBService {
 	public static final String IGB_TIER_HEADER = "IGB-Tier";
 	// extension point names
 	public static final String GRAPH_TRANSFORMS = "igb.graph.transform";
+	public static final String TAB_PANELS = "igb.tab_panels";
 
 	public final static boolean DEBUG_EVENTS = false;
 	public boolean addMenu(JMenu menu);
@@ -44,4 +45,6 @@ public interface IGBService {
 	// for GeneralLoadView
 	public String getCommandLineBatchFileStr();
 	public void setCommandLineBatchFileStr(String str);
+	// for PropertyView
+	public void setPropertyHandler(PropertyHandler propertyHandler);
 }

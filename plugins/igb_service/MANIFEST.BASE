@@ -6,6 +6,7 @@ Bundle-Version: @appVersion@
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 IGB-Tier: 1
 Import-Package: javax.swing,
+ com.affymetrix.genometryImpl,
  com.affymetrix.genoviz.bioviews,
  org.osgi.framework
 Export-Package: com.affymetrix.igb.osgi.service

@@ -37,6 +37,7 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 
 import com.affymetrix.genometryImpl.util.ConsoleView;
+import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -47,6 +48,9 @@ import com.affymetrix.igb.window.service.IPlugin;
 import com.affymetrix.igb.window.service.PluginInfo;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.WindowServiceListener;
+import com.affymetrix.igb.osgi.service.ExtensionPoint;
+import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.bookmarks.Bookmark;
@@ -270,6 +274,9 @@ public final class IGB extends Application
 			}
 		}
 
+		ExtensionPointRegistry.getInstance().registerExtensionPoint(IGBService.GRAPH_TRANSFORMS, new ExtensionPoint<FloatTransformer>());
+		ExtensionPointRegistry.getInstance().registerExtensionPoint(IGBService.TAB_PANELS, new ExtensionPoint<FloatTransformer>());
+
 		frm = new JFrame(APP_NAME + " " + APP_VERSION);
 
 		// when HTTP authentication is needed, getPasswordAuthentication will
@@ -410,7 +417,6 @@ public final class IGB extends Application
 
 			public void run() {
 				loadPlugIn(new PluginInfo(DataLoadView.class.getName(), BUNDLE.getString("dataAccessTab"), true, 0), new DataLoadView(IGBServiceImpl.getInstance()));
-				loadPlugIn(new PluginInfo(PropertyView.class.getName(), BUNDLE.getString("selectionInfoTab"), true, 1), new PropertyView(IGBServiceImpl.getInstance()));
 				loadPlugIn(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true, 2), new SearchView(IGBServiceImpl.getInstance()));
 				loadPlugIn(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true, 3), new AltSpliceView(IGBServiceImpl.getInstance()));
 				loadPlugIn(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true, 4), new SimpleGraphTab(IGBServiceImpl.getInstance()));

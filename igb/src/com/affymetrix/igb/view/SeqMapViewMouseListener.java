@@ -9,6 +9,7 @@ import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.AutoScrollAction;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.osgi.service.PropertyListener;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -34,7 +35,7 @@ import java.util.*;
  *  For Windows users, this is the normal behavior anyway.  For Mac and Linux
  *  users, it is not standard, but should be fine.
  */
-final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener, NeoRubberBandListener, PropertyView.PropertyListener {
+final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener, NeoRubberBandListener, PropertyListener {
 
 	// This flag determines whether selection events are processed on
 	//  mousePressed() or mouseReleased().

@@ -43,6 +43,7 @@ import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.PropertyHandler;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -180,6 +181,7 @@ public class SeqMapView extends JPanel
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
 	private SeqSymmetry sym_used_for_title = null;
+	private PropertyHandler propertyHandler;
 
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
@@ -1397,7 +1399,7 @@ public class SeqMapView extends JPanel
 		return setUpMenuItem((Container) menu, action_command, action_listener);
 	}
 
-	final SeqMapViewMouseListener getMouseListener(){
+	public final SeqMapViewMouseListener getMouseListener(){
 		return mouse_listener;
 	}
 
@@ -1781,9 +1783,11 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
 		if (!sym.isEmpty()) {
-			String[][] properties = PropertyView.getPropertiesRow(sym.get(0), this);
-			String tooltip = convertPropsToString(properties);
-			((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+			if (propertyHandler != null) {
+				String[][] properties = propertyHandler.getPropertiesRow(sym.get(0), this);
+				String tooltip = convertPropsToString(properties);
+				((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+			}
 		} else if(glyphs.get(0) instanceof TierLabelGlyph){
 			Map<String, Object> properties = TierLabelManager.getTierProperties(((TierLabelGlyph) glyphs.get(0)).getReferenceTier());
 			String tooltip = convertPropsToString(properties);
@@ -1807,9 +1811,11 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
 		if (!sym.isEmpty()) {
-			String[][] properties = PropertyView.getGraphPropertiesRowColumn((GraphSym)sym.get(0), x, this);
-			String tooltip = convertPropsToString(properties);
-			((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+			if (propertyHandler != null) {
+				String[][] properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym)sym.get(0), x, this);
+				String tooltip = convertPropsToString(properties);
+				((AffyLabelledTierMap) seqmap).setToolTip(tooltip);
+			}
 		}
 	}
 
@@ -1882,5 +1888,9 @@ public class SeqMapView extends JPanel
 	
 	public static interface SeqMapRefreshed{
 		public void refresh();
+	}
+
+	public void setPropertyHandler(PropertyHandler propertyHandler) {
+		this.propertyHandler = propertyHandler;
 	}
 }

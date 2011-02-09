@@ -63,9 +63,6 @@ import javax.swing.event.*;
 public final class SimpleGraphTab extends JPanel
 				implements SeqSelectionListener, SymSelectionListener, ExtensionPointRegisterListener {
 	private static final long serialVersionUID = 1L;
-	static {
-		ExtensionPointRegistry.getInstance().registerExtensionPoint(IGBService.GRAPH_TRANSFORMS, new ExtensionPoint<FloatTransformer>());
-	}
 
 	SeqMapView gviewer = null;
 	BioSeq current_seq;

@@ -100,7 +100,34 @@ public final class SpeciesLookup {
 			species = speciesLookup.getPreferredName(version, cs);
 		}
 		
-		 return species;
+		//Added by Max
+		/*
+		String[] nameParts = species.split("_");
+		if(nameParts.length == 5) {
+			StringBuilder sb = new StringBuilder( nameParts[0]);
+			species = sb.append("_").append(nameParts[1]).append("_").append(nameParts[2]).toString();
+		} else if(nameParts.length == 1) {
+			species = species.substring(0, (species.length() - 1));
+		} else {
+			StringBuilder sb = new StringBuilder( nameParts[0]);
+			species = sb.append("_").append(nameParts[1]).toString();
+		}
+		*/
+		
+		Pattern pattern = Pattern.compile("(\\S+)(?>_(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)_\\d{4})");
+		Matcher m = pattern.matcher(species);
+		if (m.find( )) {
+			species = m.group(1);
+		} else {
+			pattern = Pattern.compile("^([a-zA-Z]{2,6})[\\d]+$");
+			m = pattern.matcher(species);
+			if (m.find( )) {
+				species = species.replaceAll("[\\d]+", "");
+			}
+		}
+		//end of adding
+		
+		return species;
 	}
 
 	/**

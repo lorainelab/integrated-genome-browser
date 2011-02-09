@@ -225,7 +225,14 @@
     </copy>
 	</target>
 
-	<target name="cbc" depends="compile" description="clear bundle cache">
+	<target name="cbc" depends="common-init" description="clear bundle cache">
+		<mkdir dir="${bundle.dir}" />
+		<subant target="compile" genericantfile="generic.xml" inheritall="true">
+			<dirset dir="${basedir}">
+				<include name="common" />
+				<include name="main" />
+			</dirset>
+		</subant>
 		<java fork="true" classname="com.affymetrix.main.ClearBundleCache" classpath="${main}/build:${common}/build"/>
 	</target>
 

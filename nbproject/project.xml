@@ -76,6 +76,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>plugins/PropertyView/src</label>
+                    <type>java</type>
+                    <location>plugins/PropertyView/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>plugins/RestrictionsSites/src</label>
                     <type>java</type>
                     <location>plugins/RestrictionsSites/src</location>
@@ -252,6 +258,11 @@
                 <location>plugins/window_service_def/build</location>
                 <build-target>compile</build-target>
             </export>
+            <export>
+                <type>folder</type>
+                <location>plugins/PropertyView/build</location>
+                <build-target>compile</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -293,6 +304,10 @@
                     <source-folder style="packages">
                         <label>plugins/window_service_def/src</label>
                         <location>plugins/window_service_def/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>plugins/PropertyView/src</label>
+                        <location>plugins/PropertyView/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>plugins/RestrictionsSites/src</label>
@@ -384,6 +399,7 @@
                 <package-root>plugins/window_service_def/src</package-root>
                 <package-root>main/src</package-root>
                 <package-root>common/src</package-root>
+                <package-root>plugins/PropertyView/src</package-root>
                 <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometryImpl/src:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:genoviz_sdk/src:ext/commons-compress-1.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>genometryImpl/build</built-to>
@@ -398,6 +414,7 @@
                 <built-to>plugins/RestrictionSites/build</built-to>
                 <built-to>plugins/window_service/build</built-to>
                 <built-to>plugins/window_service_def/build</built-to>
+                <built-to>plugins/PropertyView/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

@@ -114,7 +114,10 @@ public class TrackStyle implements ITrackStyleExtended {
 			if(force_human_name) {
 				style.human_name = human_name;
 			}
+		}else if(props != null){
+			style.initFromPropertyMap(props);
 		}
+		
 		return style;
 	}
 
@@ -304,7 +307,7 @@ public class TrackStyle implements ITrackStyleExtended {
 
 	private void initFromPropertyMap(Map<String,String> props){
 		String labfield = props.get("label_field");
-		if (labfield != null && !"".equals(labfield)) {
+		if (labfield != null && !"".equals(labfield) && label_field != null) {
 			label_field = labfield;
 		}
 	}

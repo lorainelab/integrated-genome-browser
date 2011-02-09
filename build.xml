@@ -321,7 +321,7 @@
 		</jar>
 	</target>
 
-	<target name="run" depends="compile, classpath" description="run IGB">
+	<target name="run" depends="compile, classpath, copy-bundles" description="run IGB">
 		<condition property="apple.jvmargs" value="-Xdock:name=IGB -Xdock:icon=${jnlp.icon.path}" else="" >
 			<os family="mac" />
 		</condition>

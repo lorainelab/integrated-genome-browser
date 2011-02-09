@@ -52,8 +52,8 @@ public class SpeciesLookupTest {
 	 */
 	@Test
 	public void testGetSpeciesName() throws IOException {
-		String filename = "C:/Projects/IGB7/genometryImpl/test/data/speciesLookup/species.txt";
-		//assertTrue(new File(filename).exists());
+		String filename = "test/data/speciesLookup/species.txt";
+		assertTrue(new File(filename).exists());
 
 		InputStream istr = new FileInputStream(filename); 
 		assertNotNull(istr);

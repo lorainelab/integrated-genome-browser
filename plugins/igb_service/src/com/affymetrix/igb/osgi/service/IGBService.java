@@ -50,8 +50,7 @@ public interface IGBService {
 	public void setCommandLineBatchFileStr(String str);
 	// for SearchView
 	public String getGenomeSeqId();
-	public SwingWorker<Boolean, Void> getResidueWorker(final String genomeVersionName, final BioSeq seq,
-			final SeqSpan viewspan, final boolean partial, final boolean tryFull);
+	public boolean loadResidues(final SeqSpan viewspan, final boolean partial);
 	// for PropertyView
 	public void setPropertyHandler(PropertyHandler propertyHandler);
 }

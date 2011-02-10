@@ -558,19 +558,13 @@ public final class SearchView extends JComponent implements
 			if (!confirm) {
 				return;
 			}
-
-			String genomeVersionName = gmodel.getSelectedSeqGroup().getID();
-
-			final SwingWorker<Boolean, Void> worker = igbService.getResidueWorker(genomeVersionName, vseq, gviewer.getVisibleSpan(), true, true);
-
-			vexec.execute(worker);
-
+			
 			vexec.execute(new Runnable() {
 
 				public void run() {
-					if (worker != null) {
-						regexTF(vseq);
-					}
+					igbService.loadResidues(gviewer.getVisibleSpan(), true);
+					gviewer.setAnnotatedSeq(vseq, true, true, true);
+					regexTF(vseq);
 				}
 			});
 

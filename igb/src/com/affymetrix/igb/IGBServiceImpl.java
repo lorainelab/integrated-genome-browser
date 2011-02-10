@@ -22,14 +22,12 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.SwingWorker;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -253,9 +251,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public SwingWorker<Boolean, Void> getResidueWorker(final String genomeVersionName, final BioSeq seq,
-			final SeqSpan viewspan, final boolean partial, final boolean tryFull) {
-		return GeneralLoadView.getResidueWorker(genomeVersionName, seq,	viewspan, partial, tryFull);
+	public boolean loadResidues(final SeqSpan viewspan, final boolean partial) {
+		return GeneralLoadView.getLoadView().loadResidues(viewspan, partial);
 	}
 
 	@Override

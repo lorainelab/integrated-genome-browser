@@ -327,6 +327,22 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData);
 		String[] col_headings = getColumnHeadings(props);
 
+		//start
+		int length = rows.length;
+		int heigth = rows[1].length - 1;
+		String[][] tempRows = new String[heigth][length];
+		String[] tempColHeadings = new String[length];
+		for(int index1=0; index1<rows.length; index1++) {
+			for(int index2=1; index2<rows[index1].length; index2++) {
+				tempRows[index2-1][index1] = rows[index1][index2];
+			}
+			tempColHeadings[index1] = rows[index1][0];
+		}
+		
+		rows = tempRows;
+		col_headings = tempColHeadings;
+		//end
+		
 		propertyChanged(col_headings.length);
 		
 		TableModel model = new DefaultTableModel(rows, col_headings) {

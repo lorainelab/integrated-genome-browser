@@ -126,8 +126,14 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 		
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
-		List<GlyphI> glyphs = nevt.getItems();
-		if(!glyphs.isEmpty()) {
+		Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
+
+		List<GlyphI> glyphs = new ArrayList<GlyphI>();
+		GlyphI topgl = null;
+		if (!nevt.getItems().isEmpty()) {
+			topgl = nevt.getItems().get(nevt.getItems().size() - 1);
+			topgl = zoomCorrectedGlyphChoice(topgl, zoom_point);
+			glyphs.add(topgl);
 			smv.setToolTip(glyphs);
 			return;
 		}

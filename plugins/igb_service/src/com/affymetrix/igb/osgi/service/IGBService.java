@@ -7,9 +7,12 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.SwingWorker;
 
 import org.osgi.framework.Bundle;
 
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 //import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 
@@ -38,13 +41,17 @@ public interface IGBService {
 	public void displayRepositoryPreferences();
 	public void addRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
 	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
-	// for restrictions page
+	// for RestrictionSites/SearchView
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
 	public JComponent getMapView();
 	// for GeneralLoadView
 	public String getCommandLineBatchFileStr();
 	public void setCommandLineBatchFileStr(String str);
+	// for SearchView
+	public String getGenomeSeqId();
+	public SwingWorker<Boolean, Void> getResidueWorker(final String genomeVersionName, final BioSeq seq,
+			final SeqSpan viewspan, final boolean partial, final boolean tryFull);
 	// for PropertyView
 	public void setPropertyHandler(PropertyHandler propertyHandler);
 }

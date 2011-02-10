@@ -22,12 +22,15 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.SwingWorker;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -39,8 +42,8 @@ import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.PropertyHandler;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.view.SearchView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryChangeListener {
 
@@ -228,7 +231,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
-		return SearchView.searchForRegexInResidues(
+		return ((IGB)IGB.getSingleton()).searchForRegexInResidues(
 				forward, regex, residues, residue_offset, Application.getSingleton().getMapView().getAxisTier(), glyphs, hitColor);
 	}
 
@@ -242,6 +245,17 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	public void setCommandLineBatchFileStr(String str) {
 		IGB.commandLineBatchFileStr = str;
+	}
+
+	@Override
+	public String getGenomeSeqId() {
+		return IGBConstants.GENOME_SEQ_ID;
+	}
+
+	@Override
+	public SwingWorker<Boolean, Void> getResidueWorker(final String genomeVersionName, final BioSeq seq,
+			final SeqSpan viewspan, final boolean partial, final boolean tryFull) {
+		return GeneralLoadView.getResidueWorker(genomeVersionName, seq,	viewspan, partial, tryFull);
 	}
 
 	@Override

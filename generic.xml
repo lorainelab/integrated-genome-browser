@@ -18,6 +18,7 @@
 		<property name="RestrictionSites"   value="${basedir}/../plugins/RestrictionSites" />
 		<property name="ExternalView"       value="${basedir}/../plugins/ExternalView" />
 		<property name="PropertyView"       value="${basedir}/../plugins/PropertyView" />
+		<property name="SearchView"         value="${basedir}/../plugins/SearchView" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"            value="${basedir}/../ext" />

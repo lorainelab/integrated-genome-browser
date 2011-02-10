@@ -13,12 +13,16 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.genometryImpl.util.MenuUtil;
+
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 
@@ -59,9 +63,12 @@ import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.tiers.IGBStateProvider;
+import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.action.*;
 import com.affymetrix.igb.util.ThreadUtils;
 
@@ -417,7 +424,6 @@ public final class IGB extends Application
 
 			public void run() {
 				loadPlugIn(new PluginInfo(DataLoadView.class.getName(), BUNDLE.getString("dataAccessTab"), true, 0), new DataLoadView(IGBServiceImpl.getInstance()));
-				loadPlugIn(new PluginInfo(SearchView.class.getName(), BUNDLE.getString("searchTab"), true, 2), new SearchView(IGBServiceImpl.getInstance()));
 				loadPlugIn(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true, 3), new AltSpliceView(IGBServiceImpl.getInstance()));
 				loadPlugIn(new PluginInfo(SimpleGraphTab.class.getName(), BUNDLE.getString("graphAdjusterTab"), true, 4), new SimpleGraphTab(IGBServiceImpl.getInstance()));
 				frm.setVisible(true);
@@ -521,6 +527,28 @@ public final class IGB extends Application
 	}
 	public void addStopRoutine(IStopRoutine routine) {
 		stopRoutines.add(routine);
+	}
+
+	public int searchForRegexInResidues(
+			boolean forward, Pattern regex, String residues, int residue_offset, TransformTierGlyph axis_tier, List<GlyphI> glyphs, Color hitColor) {
+		int hit_count = 0;
+		Matcher matcher = regex.matcher(residues);
+		while (matcher.find()) {
+			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
+			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
+			//int end = matcher.end(0) + residue_offset;
+			Map<String, Object> props = new HashMap<String, Object>();
+			props.put("direction", forward ? "forward" : "reverse");
+			GlyphI gl = new FillRectGlyph();
+			gl.setInfo(props);
+			gl.setColor(hitColor);
+			double pos = forward ? 10 : 15;
+				gl.setCoords(start, pos, end - start, 10);
+				axis_tier.addChild(gl);
+			glyphs.add(gl);
+			hit_count++;
+		}
+		return hit_count;
 	}
 
 	public JMenu getViewMenu() {

@@ -194,7 +194,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		return seq == null ? "" : seq.getID();
 	}
 
-	static void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {
+	public static void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {
 		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		if (group == null) {
 			Logger.getLogger(MapRangeBox.class.getName()).severe("Group wasn't set");

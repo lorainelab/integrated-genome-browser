@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.search;
 
 
 import java.awt.BorderLayout;
@@ -17,7 +17,6 @@ import javax.swing.table.TableRowSorter;
 
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -41,14 +40,15 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
+import com.affymetrix.igb.view.MapRangeBox;
+import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.view.load.GeneralLoadView;
+//import com.affymetrix.igb.view.load.GeneralLoadView;
 
 
 
@@ -56,6 +56,9 @@ public final class SearchView extends JComponent implements
 		ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener {
 	
 	private static final long serialVersionUID = 0;
+
+	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
+
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
 	private final static int MAX_HITS = 100000;
@@ -66,23 +69,23 @@ public final class SearchView extends JComponent implements
 	private static final String SEARCHLABELTEXT = "Search ";
 	private static final String INLABELTEXT = "in ";
 	private static final String FORLABELTEXT = "for ";
-	private static final String REGEXID = IGBConstants.BUNDLE.getString("searchRegexIDOrName");
-	private static final String REGEXIDTF = IGBConstants.BUNDLE.getString("searchRegexIDOrNameTF");
-	private static final String REGEXRESIDUE = IGBConstants.BUNDLE.getString("searchRegexResidue");
-	private static final String REGEXRESIDUETF = IGBConstants.BUNDLE.getString("searchRegexResidueTF");
-	private static final String REGEXPROPS = IGBConstants.BUNDLE.getString("searchRegexProps");
-	private static final String REGEXPROPSTF = IGBConstants.BUNDLE.getString("searchRegexPropsTF");
-	private static final String CHOOSESEARCH = IGBConstants.BUNDLE.getString("searchChooseSearch");
+	private static final String REGEXID = BUNDLE.getString("searchRegexIDOrName");
+	private static final String REGEXIDTF = BUNDLE.getString("searchRegexIDOrNameTF");
+	private static final String REGEXRESIDUE = BUNDLE.getString("searchRegexResidue");
+	private static final String REGEXRESIDUETF = BUNDLE.getString("searchRegexResidueTF");
+	private static final String REGEXPROPS = BUNDLE.getString("searchRegexProps");
+	private static final String REGEXPROPSTF = BUNDLE.getString("searchRegexPropsTF");
+	private static final String CHOOSESEARCH = BUNDLE.getString("searchChooseSearch");
 	private static final String FINDANNOTS = "Find Annotations For ";
-	private static final String FINDANNOTSNULL = IGBConstants.BUNDLE.getString("pleaseSelectGenome");
-	private static final String SEQUENCETOSEARCH = IGBConstants.BUNDLE.getString("searchSequenceToSearch");
+	private static final String FINDANNOTSNULL = BUNDLE.getString("pleaseSelectGenome");
+	private static final String SEQUENCETOSEARCH = BUNDLE.getString("searchSequenceToSearch");
 	private static final String REMOTESERVERSEARCH1 = "also search remotely (";
 	private static final String REMOTESERVERSEARCH2 = " server)";
 	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
 
-	private static final String SELECTINMAP_TEXT = IGBConstants.BUNDLE.getString("searchSelectInMapText");
-	private static final String SELECTINMAP_TIP = IGBConstants.BUNDLE.getString("searchSelectInMapTip");
+	private static final String SELECTINMAP_TEXT = BUNDLE.getString("searchSelectInMapText");
+	private static final String SELECTINMAP_TIP = BUNDLE.getString("searchSelectInMapTip");
 
 	private JTextField searchTF;
 	private final JPanel pan1 = new JPanel();
@@ -97,7 +100,6 @@ public final class SearchView extends JComponent implements
 	private final static Color hitcolor = new Color(150, 150, 255);
 
 	private  JTable table = new JTable();
-	private  JTextField filterText = new JTextField();
 	private  JLabel status_bar = new JLabel("0 results");
 	private SearchResultsTableModel model;
 	private TableRowSorter<SearchResultsTableModel> sorter;
@@ -220,10 +222,10 @@ public final class SearchView extends JComponent implements
 				sequence_CB.removeAllItems();
 				if (group != null) {
 					if (!((String) searchCB.getSelectedItem()).equals(REGEXRESIDUE)) {
-						sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID); // put this at top of list
+						sequence_CB.addItem(igbService.getGenomeSeqId()); // put this at top of list
 					}
 					for (BioSeq seq : group.getSeqList()) {
-						if (seq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
+						if (seq.getID().equals(igbService.getGenomeSeqId())) {
 							continue;
 						}
 						sequence_CB.addItem(seq.getID());
@@ -235,7 +237,7 @@ public final class SearchView extends JComponent implements
 					sequence_CB.setEnabled(false);
 				}
 
-				sequence_CB.setSelectedItem(IGBConstants.GENOME_SEQ_ID);
+				sequence_CB.setSelectedItem(igbService.getGenomeSeqId());
 			}
 		});
 	}
@@ -378,7 +380,7 @@ public final class SearchView extends JComponent implements
 		if (src == this.searchTF || src == this.searchButton) {
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			String chrStr = (String) this.sequence_CB.getSelectedItem();
-			BioSeq chrfilter = IGBConstants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
+			BioSeq chrfilter = igbService.getGenomeSeqId().equals(chrStr) ? null : group.getSeq(chrStr);
 			if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText().trim(), chrfilter, false);	// note we trim in case the user added spaces, which really shouldn't be on the outside of IDs or names
 			} else if (REGEXPROPS.equals(searchMode)){
@@ -559,7 +561,7 @@ public final class SearchView extends JComponent implements
 
 			String genomeVersionName = gmodel.getSelectedSeqGroup().getID();
 
-			final SwingWorker<Boolean, Void> worker = GeneralLoadView.getResidueWorker(genomeVersionName, vseq, gviewer.getVisibleSpan(), true, true);
+			final SwingWorker<Boolean, Void> worker = igbService.getResidueWorker(genomeVersionName, vseq, gviewer.getVisibleSpan(), true, true);
 
 			vexec.execute(worker);
 
@@ -603,41 +605,18 @@ public final class SearchView extends JComponent implements
 		status_bar.setText(friendlySearchStr + ": Working...");
 
 		String residues = vseq.getResidues();
-		TransformTierGlyph axis_tier = gviewer.getAxisTier();
 		int residue_offset = vseq.getMin();
-		int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, axis_tier, glyphs, hitcolor);
+		int hit_count1 = igbService.searchForRegexInResidues(true, regex, residues, residue_offset, glyphs, hitcolor);
 
 		// Search for reverse complement of query string
 		//   flip searchstring around, and redo nibseq search...
 		String rev_searchstring = DNAUtils.reverseComplement(residues);
 		residue_offset = vseq.getMax();
-		int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, axis_tier, glyphs, hitcolor);
+		int hit_count2 = igbService.searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, glyphs, hitcolor);
 
 		setStatus(friendlySearchStr + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
 		NeoMap map = gviewer.getSeqMap();
 		map.updateWidget();
-	}
-
-	public static int searchForRegexInResidues(
-			boolean forward, Pattern regex, String residues, int residue_offset, TransformTierGlyph axis_tier, List<GlyphI> glyphs, Color hitColor) {
-		int hit_count = 0;
-		Matcher matcher = regex.matcher(residues);
-		while (matcher.find()) {
-			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
-			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
-			//int end = matcher.end(0) + residue_offset;
-			Map<String, Object> props = new HashMap<String, Object>();
-			props.put("direction", forward ? "forward" : "reverse");
-			GlyphI gl = new FillRectGlyph();
-			gl.setInfo(props);
-			gl.setColor(hitColor);
-			double pos = forward ? 10 : 15;
-				gl.setCoords(start, pos, end - start, 10);
-				axis_tier.addChild(gl);
-			glyphs.add(gl);
-			hit_count++;
-		}
-		return hit_count;
 	}
 
 	private static String friendlyString(String text, String chr) {
@@ -729,15 +708,16 @@ public final class SearchView extends JComponent implements
 	}
 
 	private class SearchResultsTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 1L;
 
 		private final String[] column_names = {
-			IGBConstants.BUNDLE.getString("searchTableID"),
-			IGBConstants.BUNDLE.getString("searchTableTier"),
-			IGBConstants.BUNDLE.getString("searchTableGeneName"),
-			IGBConstants.BUNDLE.getString("searchTableStart"),
-			IGBConstants.BUNDLE.getString("searchTableEnd"),
-			IGBConstants.BUNDLE.getString("searchTableChromosome"),
-			IGBConstants.BUNDLE.getString("searchTableStrand")
+			BUNDLE.getString("searchTableID"),
+			BUNDLE.getString("searchTableTier"),
+			BUNDLE.getString("searchTableGeneName"),
+			BUNDLE.getString("searchTableStart"),
+			BUNDLE.getString("searchTableEnd"),
+			BUNDLE.getString("searchTableChromosome"),
+			BUNDLE.getString("searchTableStrand")
 		};
 		private static  final int ID_COLUMN = 0;
 		private static final int TIER_COLUMN = 1;

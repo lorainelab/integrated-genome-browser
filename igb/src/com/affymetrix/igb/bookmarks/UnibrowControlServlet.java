@@ -215,16 +215,9 @@ public final class UnibrowControlServlet {
 	 }
 
 	private static void loadResidues(int start, int end){
-		AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		BioSeq vseq = GenometryModel.getGenometryModel().getSelectedSeq();
-		String genomeVersionName = seqGroup.getID();
-
 		SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
-		final SwingWorker<Boolean, Void> worker = GeneralLoadView.getResidueWorker(genomeVersionName, vseq, span, true, true);
-
-		ExecutorService vexec = Executors.newSingleThreadExecutor();
-		vexec.execute(worker);
-		vexec.shutdown();
+		GeneralLoadView.getLoadView().loadResidues(span, true);
 	}
 
 	/**

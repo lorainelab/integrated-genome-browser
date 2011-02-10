@@ -531,6 +531,11 @@ public final class GeneralLoadView extends JComponent
 		return worker;
 	}
 
+	public boolean loadResidues(SeqSpan span, boolean tryFull){
+		final String genomeVersionName = (String) versionCB.getSelectedItem();
+		return loadResidues(genomeVersionName, span.getBioSeq(), span, true, tryFull);
+	}
+
 	public static boolean loadResidues(final String genomeVersionName, final BioSeq seq,
 			final SeqSpan viewspan, final boolean partial, final boolean tryFull) {
 		try {

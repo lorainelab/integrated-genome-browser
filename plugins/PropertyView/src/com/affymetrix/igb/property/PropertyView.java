@@ -316,7 +316,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 	}
 
 	@SuppressWarnings("unchecked")
-	private List swapRowsAndColumns(String[][] rows, String[] col_headings) {
+	private List<Object> swapRowsAndColumns(String[][] rows, String[] col_headings) {
 		//start
 		int length = rows.length;
 		int heigth = rows[1].length - 1;
@@ -329,7 +329,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 			tempColHeadings[index1] = rows[index1][0];
 		}
 		
-		List resultList = new ArrayList();
+		List<Object> resultList = new ArrayList<Object>();
 		resultList.add(tempRows);
 		resultList.add(tempColHeadings);
 
@@ -350,9 +350,13 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 		String[] col_headings = getColumnHeadings(props);
 
 		//start
-		List resultList = swapRowsAndColumns(rows, col_headings);
-		rows = (String[][])resultList.get(0);
-		col_headings = (String[])resultList.get(1);
+		//System.out.println("#############rows length: " + rows.length);
+		//System.out.println("#############col_headings length: " + col_headings.length);
+		if(rows.length > 0) {
+			List<Object> resultList = swapRowsAndColumns(rows, col_headings);
+			rows = (String[][])resultList.get(0);
+			col_headings = (String[])resultList.get(1);
+		}
 		//end
 		
 		propertyChanged(col_headings.length);

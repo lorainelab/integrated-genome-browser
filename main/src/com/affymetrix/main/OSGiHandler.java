@@ -128,8 +128,9 @@ public class OSGiHandler {
 	 * List directory contents for a resource folder. Not recursive. This is
 	 * basically a brute-force implementation. Works for regular files and also
 	 * JARs.
-	 * 
-	 * @author Greg Briggs - modified 02/02/2011
+	 *
+	 * @author Greg Briggs
+	 *    modified LF 02/02/2011 to support java web start
 	 * @param clazz
 	 *            Any java class that lives in the same place as the resources
 	 *            you want.
@@ -142,8 +143,6 @@ public class OSGiHandler {
 	private String[] getResourceListing(Class<?> clazz, String path)
 			throws URISyntaxException, IOException {
 		URL dirURL = clazz.getClassLoader().getResource(path);
-		System.out.println("path = " + path);
-		System.out.println("dirURL = " + dirURL);
 		if (dirURL != null && dirURL.getProtocol().equals("file")) {
 			/* A file path: easy enough */
 			return new File(dirURL.toURI()).list();

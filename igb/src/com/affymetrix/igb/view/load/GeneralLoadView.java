@@ -494,24 +494,14 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
-
-		final BioSeq curSeq = gmodel.getSelectedSeq();
-		// Use a SwingWorker to avoid locking up the GUI.
-		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
-
-		SwingWorker<Boolean, Void> worker = getResidueWorker(genomeVersionName, curSeq, gviewer.getVisibleSpan(), src == partial_residuesB, false);
-
-		vexec.execute(worker);
-	}
-
-	public static SwingWorker<Boolean, Void> getResidueWorker(final String genomeVersionName, final BioSeq seq,
-			final SeqSpan viewspan, final boolean partial, final boolean tryFull) {
-
+		final BioSeq seq = gmodel.getSelectedSeq();
+		final boolean partial = src == partial_residuesB;
+		
 		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
 			public Boolean doInBackground() {
 				igbService.addNotLockedUpMsg("Loading residues for "+seq.getID());
-				return loadResidues(genomeVersionName, seq, viewspan, partial, tryFull);
+				return loadResidues(genomeVersionName, seq, gviewer.getVisibleSpan(), partial, false, true);
 			}
 
 			@Override
@@ -528,32 +518,41 @@ public final class GeneralLoadView extends JComponent
 			}
 		};
 
-		return worker;
+		// Use a SwingWorker to avoid locking up the GUI.
+		ThreadUtils.getPrimaryExecutor(src).execute(worker);
 	}
 
 	public boolean loadResidues(SeqSpan span, boolean tryFull){
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
-		return loadResidues(genomeVersionName, span.getBioSeq(), span, true, tryFull);
+		return loadResidues(genomeVersionName, span.getBioSeq(), span, true, tryFull, false);
 	}
 
 	public static boolean loadResidues(final String genomeVersionName, final BioSeq seq,
-			final SeqSpan viewspan, final boolean partial, final boolean tryFull) {
+			final SeqSpan viewspan, final boolean partial, final boolean tryFull, final boolean show_error_panel) {
 		try {
 			if (partial) {
 				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
 					if (!tryFull) {
-						ErrorHandler.errorPanel("Couldn't load partial sequence", "Couldn't locate the partial sequence.  Try loading the full sequence.");
+						if(show_error_panel)
+							ErrorHandler.errorPanel("Couldn't load partial sequence", "Couldn't locate the partial sequence.  Try loading the full sequence.");
+						Logger.getLogger(GeneralLoadView.class.getName()).log(Level.WARNING,"Unable to load partial sequence");
 						return false;
 					} else {
 						if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
-							ErrorHandler.errorPanel("Couldn't load partial or full sequence", "Couldn't locate the sequence.");
+							if(show_error_panel)
+								ErrorHandler.errorPanel("Couldn't load partial or full sequence", "Couldn't locate the sequence.");
+							Logger.getLogger(GeneralLoadView.class.getName()).log(Level.WARNING,
+									"Couldn't load partial or full sequence. Couldn't locate the sequence.");
 							return false;
 						}
 					}
 				}
 			} else {
 				if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
-					ErrorHandler.errorPanel("Couldn't load full sequence", "Couldn't locate the sequence.");
+					if(show_error_panel)
+						ErrorHandler.errorPanel("Couldn't load full sequence", "Couldn't locate the sequence.");
+					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.WARNING,
+									"Couldn't load full sequence. Couldn't locate the sequence.");
 					return false;
 				}
 			}

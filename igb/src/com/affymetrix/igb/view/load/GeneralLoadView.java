@@ -571,7 +571,7 @@ public final class GeneralLoadView extends JComponent
 
 		// Load any features that have a visible strategy and haven't already been loaded.
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (gFeature.loadStrategy != LoadStrategy.VISIBLE && gFeature.loadStrategy != LoadStrategy.CHROMOSOME) {
+			if (gFeature.loadStrategy == LoadStrategy.NO_LOAD || gFeature.loadStrategy == LoadStrategy.GENOME) {
 				continue;
 			}
 
@@ -1010,7 +1010,7 @@ public final class GeneralLoadView extends JComponent
 		}
 		boolean enabled = false;
 		for (GenericFeature gFeature : features) {
-			if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
+			if (gFeature.loadStrategy != LoadStrategy.NO_LOAD && gFeature.loadStrategy != LoadStrategy.CHROMOSOME) {
 				enabled = true;
 				break;
 			}

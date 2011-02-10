@@ -66,6 +66,14 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 			return BAMSym.this.getResidues(start, end);
 		}
 
+		@Override
+		public Map<String,Object> cloneProperties() {
+			HashMap<String,Object> tprops = new HashMap<String,Object>();
+			tprops.put("id", name);
+			tprops.put("residues", getResidues());
+			tprops.put("forward", this.isForward());
+			return tprops;
+		}
 	}
 
 	class BamInsChildSingletonSeqSym extends BedChildSingletonSeqSym implements SymWithResidues {
@@ -97,6 +105,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 			HashMap<String,Object> tprops = new HashMap<String,Object>();
 			tprops.put("id", name);
 			tprops.put("residues", getResidues());
+			tprops.put("forward", this.isForward());
 			return tprops;
 		}
 	}

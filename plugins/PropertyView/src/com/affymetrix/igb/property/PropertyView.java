@@ -314,7 +314,8 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 		}
 		return rows;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	private List swapRowsAndColumns(String[][] rows, String[] col_headings) {
 		//start
 		int length = rows.length;

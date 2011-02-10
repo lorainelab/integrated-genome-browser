@@ -98,8 +98,8 @@ public final class BAM extends SymLoader {
 				// BAM is file.
 				//indexFile = new File(uri.)
 				File f = new File(uri);
-				if(!findIndexFile(uri)) createIndexFile(f);
-				reader = new SAMFileReader(f);
+				indexFile = findOrCreateIndexFile(f);
+				reader = new SAMFileReader(f, indexFile, false);
 				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else if (scheme.startsWith("http")) {
 				// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
@@ -542,32 +542,41 @@ public final class BAM extends SymLoader {
 		}
 	}
 
-	static private void createIndexFile(File bamfile) throws IOException{
-		File indexfile = new File(bamfile.getAbsolutePath() + ".bai");
-		if (!indexfile.createNewFile()) {
-			return;
+	static private File createIndexFile(File bamfile) throws IOException{
+		File indexfile = File.createTempFile(bamfile.getName(), ".bai");
+
+		if(!indexfile.exists()){
+			ErrorHandler.errorPanel("Unable to create file.");
+			return null;
 		}
-		indexfile.deleteOnExit();
+
+		if (DEBUG) 
+			System.out.println("Creating new bam index file -> "+indexfile);
+
 		String input = "INPUT=" + bamfile.getAbsolutePath();
 		String output = "OUTPUT=" + indexfile.getAbsolutePath();
 		String overwrite = "OVERWRITE=true";
 		String quiet = "QUIET="+!DEBUG;
-		if (DEBUG) System.out.println("Creating new bam index file -> "+indexfile);
 		BuildBamIndex buildIndex = new BuildBamIndex();
 		buildIndex.instanceMain(new String[]{input, output, overwrite, quiet});
+
+		return indexfile;
 	}
 
 	/**Modified to look for both xxx.bai and xxx.bam.bai files in parent directory.*/
-	static private boolean findIndexFile(URI uri) {
+	static private File findOrCreateIndexFile(File bamfile) throws IOException {
 		//look for xxx.bam.bai
-		String path = uri.getPath();
-		File f = new File(uri.getPath()+".bai");
-		if (f.exists()) return true;
+		String path = bamfile.getPath();
+		File f = new File(path+".bai");
+		if (f.exists()) 
+			return f;
 		//look for xxx.bai
 		path = path.substring(0, path.length()-3)+"bai";
 		f = new File(path);		
-		if (f.exists()) return true;
-		return false;
+		if (f.exists()) 
+			return f;
+		
+		return createIndexFile(bamfile);
 	}
 
 	public String getMimeType() {

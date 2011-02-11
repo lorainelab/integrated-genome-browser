@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PropertyView
-Bundle-SymbolicName: com.affymetrix.igb.PropertyView
+Bundle-SymbolicName: com.affymetrix.igb.SelectionInfo
 Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.property.Activator
 Bundle-ActivationPolicy: lazy

@@ -48,7 +48,6 @@ import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
-import com.affymetrix.igb.window.service.WindowServiceListener;
 import com.affymetrix.igb.osgi.service.ExtensionFactory;
 import com.affymetrix.igb.osgi.service.ExtensionPoint;
 import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
@@ -82,7 +81,7 @@ import static com.affymetrix.igb.IGBConstants.USER_AGENT;
  * @version $Id$
  */
 public final class IGB extends Application
-				implements GroupSelectionListener, SeqSelectionListener, WindowServiceListener {
+				implements GroupSelectionListener, SeqSelectionListener {
 
 	public static final String NODE_PLUGINS = "plugins";
 	public static int TAB_PLUGIN_PREFS = -1;

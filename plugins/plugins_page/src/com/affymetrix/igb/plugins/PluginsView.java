@@ -47,11 +47,12 @@ import org.osgi.service.obr.Resource;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.plugins.BundleTableModel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 
-public class PluginsView extends JPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
+public class PluginsView extends IGBTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
 	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 	private final Cursor defaultCursor = null;
@@ -100,7 +101,6 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private boolean isShowUninstalledBundles = false;
 	private RepositoryAdmin repoAdmin;
 	private BundleListener bundleListener;
-	private final IGBService igbService;
 	private List<Bundle> installedBundles;
 	private List<Bundle> repositoryBundles;
 	private List<Bundle> unfilteredBundles; // all methods that access filteredBundles should be synchronized
@@ -108,9 +108,8 @@ public class PluginsView extends JPanel implements IPluginsHandler, RepositoryCh
 	private HashMap<String, Bundle> latest;
 	private BundleFilter bundleFilter;
 
-	public PluginsView(IGBService _igbService) {
-		super();
-		igbService = _igbService;
+	public PluginsView(IGBService igbService) {
+		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false);
 		latest = new HashMap<String, Bundle>();
 
 		igbService.addRepositoryChangeListener(this);

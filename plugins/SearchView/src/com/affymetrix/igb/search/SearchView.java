@@ -42,17 +42,15 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
-//import com.affymetrix.igb.view.load.GeneralLoadView;
 
-
-
-public final class SearchView extends JComponent implements 
+public final class SearchView extends IGBTabPanel implements 
 		ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener {
 	
 	private static final long serialVersionUID = 0;
@@ -104,15 +102,13 @@ public final class SearchView extends JComponent implements
 	private SearchResultsTableModel model;
 	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;
-	private IGBService igbService;
 
 	private List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 
 	private List<SeqSymmetry> remoteSymList;
 
 	public SearchView(IGBService igbService) {
-		super();
-		this.igbService = igbService;
+		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false);
 		gviewer = (SeqMapView)igbService.getMapView();
 		gviewer.addToRefreshList(this);
 		

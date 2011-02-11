@@ -12,6 +12,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.PropertyHandler;
 import com.affymetrix.igb.osgi.service.PropertyListener;
 import com.affymetrix.igb.tiers.TierLabelManager;
@@ -19,7 +20,6 @@ import com.affymetrix.igb.util.JTableCutPasteAdapter;
 import com.affymetrix.igb.view.SeqMapView;
 
 import java.text.NumberFormat;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
@@ -41,7 +41,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-public final class PropertyView extends JPanel implements SymSelectionListener, PropertyHandler {
+public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
 
@@ -56,7 +56,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
 
 	public PropertyView(IGBService igbService) {
-		super();
+		super(igbService, BUNDLE.getString("selectionInfoTab"), BUNDLE.getString("selectionInfoTab"), false);
 		determineOrder();
 		JViewport jvp = new JViewport();
 		scroll_pane.setColumnHeaderView(jvp);

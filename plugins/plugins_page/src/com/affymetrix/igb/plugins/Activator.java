@@ -1,31 +1,20 @@
 package com.affymetrix.igb.plugins;
 
-import javax.swing.JComponent;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.WindowActivator;
 
 public class Activator extends WindowActivator implements BundleActivator {
 	private PluginsView pluginsView;
 
 	@Override
-	protected JComponent getPage(IGBService igbService) {
+	protected IGBTabPanel getPage(IGBService igbService) {
         pluginsView = new PluginsView(igbService);
         pluginsView.setBundleContext(bundleContext);
 		return pluginsView;
-	}
-
-	@Override
-	protected String getName() {
-        return PluginsView.BUNDLE.getString("viewTab");
-	}
-
-	@Override
-	protected String getTitle() {
-        return PluginsView.BUNDLE.getString("viewTab");
 	}
 
     public void stop(BundleContext bundleContext) throws Exception

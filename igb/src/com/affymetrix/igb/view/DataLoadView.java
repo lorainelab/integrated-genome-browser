@@ -12,21 +12,25 @@
  */
 package com.affymetrix.igb.view;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+
 import java.awt.BorderLayout;
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-public final class DataLoadView extends JComponent {
+public final class DataLoadView extends IGBTabPanel {
 	private static final long serialVersionUID = 1L;
 	private final SeqGroupView group_view;
 	public static int TAB_DATALOAD_PREFS = -1;
 
 	public DataLoadView(IGBService igbService) {
+		super(igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), true);
 		this.setLayout(new BorderLayout());
 
 		JPanel main_panel = new JPanel();

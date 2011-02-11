@@ -14,11 +14,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -36,28 +36,28 @@ import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.window.service.IPlugin;
-import com.affymetrix.igb.window.service.PluginInfo;
+import com.affymetrix.igb.osgi.service.ExtensionFactory;
+import com.affymetrix.igb.osgi.service.ExtensionPoint;
+import com.affymetrix.igb.osgi.service.ExtensionPointRegisterListener;
+import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
+import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.IWindowService;
 
-public class WindowServiceDefaultImpl implements IWindowService, ActionListener {
+public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointRegisterListener<IGBTabPanel> {
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
 	private static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
-	private final Map<Class<?>, IPlugin> plugin_hash = new HashMap<Class<?>, IPlugin>();
-	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
-	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
-	private HashMap<String, JComponent> addedPlugins = new HashMap<String, JComponent>();
-	private final List<JComponent> plugins = new ArrayList<JComponent>();
+	private Set<IGBTabPanel> addedPlugins = new HashSet<IGBTabPanel>();
+	private ExtensionPoint<IGBTabPanel> tabPanelExtensionPoint;
 	private JMenuItem move_tab_to_window_item;
 	private JMenuItem move_tabbed_panel_to_window_item;
+	private JMenu tabs_menu;
 	private JFrame frm;
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
-	private JPanel map_view;
 	private Container cpane;
-    private int focusIndex = -1;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -103,7 +103,6 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 
 	@Override
 	public void setSeqMapView(JPanel map_view) {
-		this.map_view = map_view;
 		splitpane.setTopComponent(map_view);
 	}
 
@@ -111,11 +110,27 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 	public void setViewMenu(JMenu view_menu) {
 		move_tab_to_window_item = new JMenuItem(BUNDLE.getString("openCurrentTabInNewWindow"), KeyEvent.VK_O);
 		move_tabbed_panel_to_window_item = new JMenuItem(BUNDLE.getString("openTabbedPanesInNewWindow"), KeyEvent.VK_P);
-		move_tab_to_window_item.addActionListener(this);
-		move_tabbed_panel_to_window_item.addActionListener(this);
+		tabs_menu = new JMenu(BUNDLE.getString("showTabs"));
+		move_tab_to_window_item.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					movePaneToWindow();
+				}
+			}
+		);
+		move_tabbed_panel_to_window_item.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					moveTabbedPanelToWindow();
+				}
+			}
+		);
 		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
 		MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
+		view_menu.add(tabs_menu);
 	}
 
 	private void openTabInNewWindow(final JTabbedPane tab_pane) {
@@ -127,35 +142,19 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 					ErrorHandler.errorPanel("No more panes!");
 					return;
 				}
-				final JComponent comp = (JComponent) tab_pane.getComponentAt(index);
+				final IGBTabPanel comp = (IGBTabPanel) tab_pane.getComponentAt(index);
 				openCompInWindow(comp, tab_pane);
 			}
 		};
 		SwingUtilities.invokeLater(r);
 	}
 
-	private void openCompInWindow(final JComponent comp, final JTabbedPane tab_pane) {
-		final String title;
-		final String display_name;
+	private void openCompInWindow(final IGBTabPanel comp, final JTabbedPane tab_pane) {
+		final String name = comp.getName();
+		final String display_name = comp.getDisplayName();
 		final String tool_tip = comp.getToolTipText();
 
-		if (comp2plugin.get(comp) instanceof PluginInfo) {
-			PluginInfo pi = comp2plugin.get(comp);
-			title = pi.getPluginName();
-			display_name = pi.getDisplayName();
-		} else {
-			title = comp.getName();
-			display_name = comp.getName();
-		}
-
 		Image temp_icon = null;
-		if (comp instanceof IPlugin) {
-			IPlugin pv = (IPlugin) comp;
-			ImageIcon image_icon = (ImageIcon) pv.getPluginProperty(IPlugin.TEXT_KEY_ICON);
-			if (image_icon != null) {
-				temp_icon = image_icon.getImage();
-			}
-		}
 		if (temp_icon == null) {
 			temp_icon = getIcon();
 		}
@@ -178,7 +177,7 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 			comp2window.put(comp, frame);
 			frame.pack(); // pack() to set frame to its preferred size
 
-			Rectangle pos = PreferenceUtils.retrieveWindowLocation(title, frame.getBounds());
+			Rectangle pos = PreferenceUtils.retrieveWindowLocation(name, frame.getBounds());
 			if (pos != null) {
 				PreferenceUtils.setWindowSize(frame, pos);
 			}
@@ -189,24 +188,20 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 				public void windowClosing(WindowEvent evt) {
 					// save the current size into the preferences, so the window
 					// will re-open with this size next time
-					PreferenceUtils.saveWindowLocation(frame, title);
+					PreferenceUtils.saveWindowLocation(frame, name);
 					comp2window.remove(comp);
 					cont.remove(comp);
 					cont.validate();
 					frame.dispose();
 					tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
-					PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_TAB);
-					JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
-					if (menu_item != null) {
-						menu_item.setSelected(false);
-					}
+					PreferenceUtils.saveComponentState(name, PreferenceUtils.COMPONENT_STATE_TAB);
 				}
 			});
 		} // extra window already exists, but may not be visible
 		else {
 			DisplayUtils.bringFrameToFront(comp2window.get(comp));
 		}
-		PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_WINDOW);
+		PreferenceUtils.saveComponentState(name, PreferenceUtils.COMPONENT_STATE_WINDOW);
 	}
 
 	private void openTabbedPanelInNewWindow(final JComponent comp) {
@@ -261,10 +256,6 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 					splitpane.setBottomComponent(comp);
 					splitpane.setDividerLocation(0.70);
 					PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_TAB);
-					JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
-					if (menu_item != null) {
-						menu_item.setSelected(false);
-					}
 				}
 			};
 
@@ -303,22 +294,6 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 		PreferenceUtils.saveComponentState(title, PreferenceUtils.COMPONENT_STATE_WINDOW);
 	}
 
-	private void addToPopupWindows(final JComponent comp, final String title) {
-		JCheckBoxMenuItem popupMI = new JCheckBoxMenuItem(title);
-		popupMI.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent evt) {
-				JCheckBoxMenuItem src = (JCheckBoxMenuItem) evt.getSource();
-				Frame frame = comp2window.get(comp);
-				if (frame == null) {
-					openCompInWindow(comp, tab_pane);
-					src.setSelected(true);
-				}
-			}
-		});
-		comp2menu_item.put(comp, popupMI);
-	}
-
 	/**
 	 * Saves information about which plugins are in separate windows and
 	 * what their preferred sizes are.
@@ -327,11 +302,10 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 		// Save the main window location
 		PreferenceUtils.saveWindowLocation(frm, "main window");
 
-		for (Component comp : comp2plugin.keySet()) {
+		for (IGBTabPanel comp : addedPlugins) {
 			Frame f = comp2window.get(comp);
 			if (f != null) {
-				PluginInfo pi = comp2plugin.get(comp);
-				PreferenceUtils.saveWindowLocation(f, pi.getPluginName());
+				PreferenceUtils.saveWindowLocation(f, comp.getName());
 			}
 		}
 		Frame f = comp2window.get(tab_pane);
@@ -340,52 +314,72 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 		}
 	}
 
-	private void setPluginInstance(Class<?> c, IPlugin plugin) {
-		plugin_hash.put(c, plugin);
-		plugin.putPluginProperty(IPlugin.TEXT_KEY_APP, this);
-		plugin.putPluginProperty(IPlugin.TEXT_KEY_SEQ_MAP_VIEW, map_view);
+	private void showTab(final IGBTabPanel plugin) { // always show a hidden plugin in tab panel (not separate window)
+		tab_pane.addTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText());
+		PreferenceUtils.saveComponentState(plugin.getName(), PreferenceUtils.COMPONENT_STATE_TAB);
 	}
 
-	private void loadPlugIn(PluginInfo pi, Object plugin, int position) {
+	private void hideTab(IGBTabPanel tabPanel) {
+		if (tabPanel == null) {
+			return;
+		}
+		Frame f = comp2window.get(tabPanel);
+		if (f == null) {
+			String name = tabPanel.getName();
+			for (int i = 0; i < tab_pane.getTabCount(); i++) {
+				if (name.equals(((IGBTabPanel)tab_pane.getComponentAt(i)).getName())) {
+					tab_pane.remove(i);
+				}
+			}
+		}
+		else {
+			f.dispose();
+		}
+		PreferenceUtils.saveComponentState(tabPanel.getName(), PreferenceUtils.COMPONENT_STATE_HIDDEN);
+	}
+
+	private void addTab(final IGBTabPanel plugin) {
+		addedPlugins.add(plugin);
 		ImageIcon icon = null;
 
-		if (plugin instanceof IPlugin) {
-			IPlugin plugin_view = (IPlugin) plugin;
-			this.setPluginInstance(plugin_view.getClass(), plugin_view);
-			icon = (ImageIcon) plugin_view.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+		String title = plugin.getTitle();
+		String tool_tip = plugin.getToolTipText();
+		if (tool_tip == null) {
+			tool_tip = title;
 		}
-
-		if (plugin instanceof JComponent) {
-
-			comp2plugin.put((Component) plugin, pi);
-			String title = pi.getDisplayName();
-			String tool_tip = ((JComponent) plugin).getToolTipText();
-			if (tool_tip == null) {
-				tool_tip = title;
-			}
-			JComponent comp = (JComponent) plugin;
-			boolean in_a_window = (PreferenceUtils.getComponentState(title).equals(PreferenceUtils.COMPONENT_STATE_WINDOW));
-			addToPopupWindows(comp, title);
-			JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
-			menu_item.setSelected(in_a_window);
-			if (in_a_window) {
-				openCompInWindow(comp, tab_pane);
-			}
-			else {
-				tab_pane.addTab(title, icon, comp, tool_tip);
-			}
-//			} else if (position == -1) {
-//				tab_pane.addTab(title, icon, comp, tool_tip);
-//			} else {
-//				tab_pane.insertTab(title, icon, comp, tool_tip, position);
-//			}
-			if (position == 0) {
-			    focusIndex = tab_pane.getTabCount() - 1;
-			}
-			if (focusIndex > -1) {
-				tab_pane.setSelectedIndex(focusIndex);
-			}
+		boolean in_a_window = (PreferenceUtils.getComponentState(plugin.getName()).equals(PreferenceUtils.COMPONENT_STATE_WINDOW));
+		boolean in_a_tab = (PreferenceUtils.getComponentState(plugin.getName()).equals(PreferenceUtils.COMPONENT_STATE_TAB));
+		if (plugin.isMain() && !(in_a_window || in_a_tab)) { // this should never happen, but ...
+			PreferenceUtils.saveComponentState(plugin.getName(), PreferenceUtils.COMPONENT_STATE_TAB);
+			in_a_tab = true;
 		}
+		if (in_a_window) {
+			openCompInWindow(plugin, tab_pane);
+		}
+		else if (in_a_tab) {
+			tab_pane.addTab(title, icon, plugin, tool_tip);
+		}
+		final JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(plugin.getDisplayName());
+		jCheckBoxMenuItem.setSelected(in_a_window || in_a_tab);
+		if (plugin.isMain()) {
+			jCheckBoxMenuItem.setEnabled(false);
+		}
+		else {
+			jCheckBoxMenuItem.addActionListener(
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (jCheckBoxMenuItem.isSelected()) {
+							showTab(plugin);
+						}
+						else {
+							hideTab(plugin);
+						}
+					}
+				}
+			);
+		}
+		tabs_menu.add(jCheckBoxMenuItem);
 	}
 
 	/** Returns the icon stored in the jar file.
@@ -415,36 +409,6 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 	}
 
 	@Override
-	public void addPlugIn(JComponent plugIn, String name, String title, int position) {
-		loadPlugIn(new PluginInfo(plugIn.getClass().getName(), name, true, position), plugIn, position);
-		addedPlugins.put(name, plugIn);
-		plugins.add(plugIn);
-	}
-
-	@Override
-	public boolean removePlugIn(String name) {
-		if (name == null) {
-			return false;
-		}
-		JComponent plugIn = addedPlugins.get(name);
-		Frame frame = comp2window.get(plugIn);
-		if (frame == null) {
-			for (int i = 0; i < tab_pane.getTabCount(); i++) {
-				if (name.equals(tab_pane.getTitleAt(i))) {
-					tab_pane.remove(i);
-					return true;
-				}
-			}
-		}
-		else {
-			frame.dispose();
-			comp2window.remove(plugIn);
-		}
-		PreferenceUtils.saveComponentState(name, PreferenceUtils.COMPONENT_STATE_TAB); // default - can't delete state
-		return false;
-	}
-
-	@Override
 	public void startup() {
 	}
 
@@ -453,17 +417,48 @@ public class WindowServiceDefaultImpl implements IWindowService, ActionListener 
 		saveWindowLocations();
 	}
 
-	@Override
-	public List<JComponent> getPlugins() {
-		return plugins;
+	public ExtensionPoint<IGBTabPanel> setExtensionPointRegistry(ExtensionPointRegistry registry) {
+	    tabPanelExtensionPoint = new ExtensionPoint<IGBTabPanel>();
+	    registry.registerExtensionPoint(IGBService.TAB_PANELS, tabPanelExtensionPoint);
+		tabPanelExtensionPoint.addExtensionPointRegisterListener(this);
+		return tabPanelExtensionPoint;
 	}
 
-	public void actionPerformed(ActionEvent evt) {
-		Object src = evt.getSource();
-		if (src == move_tab_to_window_item) {
-			movePaneToWindow();
-		} else if (src == move_tabbed_panel_to_window_item) {
-			moveTabbedPanelToWindow();
+	@Override
+	public Set<IGBTabPanel> getPlugins() {
+		return addedPlugins;
+	}
+
+	@Override
+	public void extensionPointAdded(ExtensionFactory<IGBTabPanel> extensionFactory) {
+		Set<IGBTabPanel> extensionTabs = tabPanelExtensionPoint.getExtensions();
+		for (IGBTabPanel tab : extensionTabs) {
+			boolean found = false;
+			for (IGBTabPanel plugin : new HashSet<IGBTabPanel>(addedPlugins)) {
+				if (tab.getName().equals(plugin.getName())) {
+					found = true;
+				}
+			}
+			if (!found) {
+				addTab(tab);
+			}
+		}
+ 	}
+
+	@Override
+	public void extensionPointRemoved(ExtensionFactory<IGBTabPanel> extensionFactory) {
+		Set<IGBTabPanel> extensionTabs = tabPanelExtensionPoint.getExtensions();
+		for (IGBTabPanel plugin : new HashSet<IGBTabPanel>(addedPlugins)) {
+			boolean found = false;
+			for (IGBTabPanel tab : extensionTabs) {
+				if (tab.getName().equals(plugin.getName())) {
+					found = true;
+				}
+			}
+			if (!found) {
+				hideTab(plugin);
+				addedPlugins.remove(plugin);
+			}
 		}
 	}
 }

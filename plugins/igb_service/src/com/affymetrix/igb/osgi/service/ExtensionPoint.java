@@ -5,41 +5,48 @@ import java.util.Set;
 
 public class ExtensionPoint<T> {
 	private final Set<ExtensionFactory<T>> extensionSet;
-	private final Set<ExtensionPointRegisterListener> extensionPointRegisterListeners;
+	private final Set<ExtensionPointRegisterListener<T>> extensionPointRegisterListeners;
+	private Set<T> extensions;
 
 	public ExtensionPoint() {
 		super();
 		extensionSet = new HashSet<ExtensionFactory<T>>();
-		extensionPointRegisterListeners = new HashSet<ExtensionPointRegisterListener>();
+		extensionPointRegisterListeners = new HashSet<ExtensionPointRegisterListener<T>>();
+		extensions = new HashSet<T>();
 	}
 
-	public void registerExtension(ExtensionFactory<T> extensionFactory) {
-		extensionSet.add(extensionFactory);
-		for (ExtensionPointRegisterListener extensionPointRegisterListener : extensionPointRegisterListeners) {
-			extensionPointRegisterListener.extensionPointAdded();
+	private synchronized void reloadExtensions() {
+		extensions = new HashSet<T>();
+		for (ExtensionFactory<T> extensionFactory : extensionSet) {
+			extensions.add(extensionFactory.createInstance());
 		}
 	}
 
-	public void removeExtension(ExtensionFactory<T> extensionFactory) {
+	public synchronized void registerExtension(ExtensionFactory<T> extensionFactory) {
+		extensionSet.add(extensionFactory);
+		extensions.add(extensionFactory.createInstance());
+		for (ExtensionPointRegisterListener<T> extensionPointRegisterListener : extensionPointRegisterListeners) {
+			extensionPointRegisterListener.extensionPointAdded(extensionFactory);
+		}
+	}
+
+	public synchronized void removeExtension(ExtensionFactory<T> extensionFactory) {
 		extensionSet.remove(extensionFactory);
-		for (ExtensionPointRegisterListener extensionPointRegisterListener : extensionPointRegisterListeners) {
-			extensionPointRegisterListener.extensionPointRemoved();
+		reloadExtensions();
+		for (ExtensionPointRegisterListener<T> extensionPointRegisterListener : extensionPointRegisterListeners) {
+			extensionPointRegisterListener.extensionPointRemoved(extensionFactory);
 		}
 	}
 
 	public Set<T> getExtensions() {
-		Set<T> extensions = new HashSet<T>();
-		for (ExtensionFactory<T> extensionFactory : extensionSet) {
-			extensions.add(extensionFactory.createInstance());
-		}
 		return extensions;
 	}
 
-	public void addExtensionPointRegisterListener(ExtensionPointRegisterListener extensionPointRegisterListener) {
+	public void addExtensionPointRegisterListener(ExtensionPointRegisterListener<T> extensionPointRegisterListener) {
 		extensionPointRegisterListeners.add(extensionPointRegisterListener);
 	}
 
-	public void removeExtensionPointRegisterListener(ExtensionPointRegisterListener extensionPointRegisterListener) {
+	public void removeExtensionPointRegisterListener(ExtensionPointRegisterListener<T> extensionPointRegisterListener) {
 		extensionPointRegisterListeners.remove(extensionPointRegisterListener);
 	}
 }

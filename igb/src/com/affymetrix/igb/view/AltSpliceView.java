@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.view;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -28,12 +30,14 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
 
-public class AltSpliceView extends JComponent
+public class AltSpliceView extends IGBTabPanel
 				implements ActionListener, ComponentListener, ItemListener,
 				SymSelectionListener, SeqSelectionListener,
 				TierLabelManager.PopupListener {
+	private static final long serialVersionUID = 1L;
 
 	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
@@ -46,6 +50,7 @@ public class AltSpliceView extends JComponent
 	private boolean slice_by_selection_on = true;
 
 	public AltSpliceView(IGBService igbService) {
+		super(igbService, BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"), true);
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;
@@ -216,6 +221,7 @@ public class AltSpliceView extends JComponent
 		}
 
 		Action hide_action = new AbstractAction("Hide Tier") {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				spliced_view.doEdgeMatching(Collections.<GlyphI>emptyList(), false);
@@ -224,6 +230,7 @@ public class AltSpliceView extends JComponent
 		};
 
 		Action restore_all_action = new AbstractAction("Show All") {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				// undo all edge-matching, because packing will behave badly otherwise.

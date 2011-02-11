@@ -57,6 +57,7 @@ public abstract class PreferenceUtils {
 
 	public static final String COMPONENT_STATE_TAB = "TAB";
 	public static final String COMPONENT_STATE_WINDOW = "WINDOW";
+	public static final String COMPONENT_STATE_HIDDEN = "HIDDEN";
 	public static final String SLASH_STANDIN = "%";
 	/** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
 	public static final String ASK_BEFORE_EXITING = "Ask before exiting";
@@ -205,7 +206,7 @@ public abstract class PreferenceUtils {
 	 *         of the acceptable values
 	 */
 	public static void saveComponentState(String name, String state) {
-		if (state.equals(COMPONENT_STATE_TAB) || state.equals(COMPONENT_STATE_WINDOW)) {
+		if (state.equals(COMPONENT_STATE_TAB) || state.equals(COMPONENT_STATE_WINDOW) || state.equals(COMPONENT_STATE_HIDDEN)) {
 			getTopNode().put(name + " state", state);
 		} else {
 			throw new IllegalArgumentException();

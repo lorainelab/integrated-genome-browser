@@ -46,6 +46,7 @@ import com.affymetrix.igb.osgi.service.ExtensionPoint;
 import com.affymetrix.igb.osgi.service.ExtensionPointRegisterListener;
 import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -67,8 +68,8 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-public final class SimpleGraphTab extends JPanel
-				implements SeqSelectionListener, SymSelectionListener, ExtensionPointRegisterListener {
+public final class SimpleGraphTab extends IGBTabPanel
+				implements SeqSelectionListener, SymSelectionListener {
 	private static final long serialVersionUID = 1L;
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
@@ -140,7 +141,6 @@ public final class SimpleGraphTab extends JPanel
 			showGraphScoreThreshSetter();
 		}
 	};
-	private final IGBService igbService;
 	private final JButton selectAllB = new JButton(select_all_graphs_action);
 	private final JButton saveB = new JButton(save_selected_graphs_action);
 	private final JButton deleteB = new JButton(delete_selected_graphs_action);
@@ -157,9 +157,14 @@ public final class SimpleGraphTab extends JPanel
 	private AdvancedGraphPanel advanced_panel;
 
 	public SimpleGraphTab(IGBService igbService) {
-		super();
-		this.igbService = igbService;
+		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), true);
+	    ExtensionPointRegistry registry = igbService.getExtensionPointRegistry();
+	    graphTransformExtensionPoint = new ExtensionPoint<FloatTransformer>();
+	    registry.registerExtensionPoint(IGBService.GRAPH_TRANSFORMS, graphTransformExtensionPoint);
+		advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
 		initTransformers();
+		advanced_panel.loadTransforms();
+        graphTransformExtensionPoint.addExtensionPointRegisterListener(advanced_panel);
 		this.gviewer = (SeqMapView)igbService.getMapView();
 
 		heat_mapCB = new JComboBox(HeatMap.getStandardNames());
@@ -258,7 +263,6 @@ public final class SimpleGraphTab extends JPanel
 
 		megabox.setAlignmentY(0.0f);
 		row1.add(megabox);
-		advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
 		advanced_panel.setAlignmentY(0.0f);
 		row1.add(advanced_panel);
 
@@ -297,10 +301,7 @@ public final class SimpleGraphTab extends JPanel
 		this.gviewer = smv;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initTransformers() {
-	    ExtensionPointRegistry registry = igbService.getExtensionPointRegistry();
-		graphTransformExtensionPoint = (ExtensionPoint<FloatTransformer>)registry.getExtensionPoint(IGBService.GRAPH_TRANSFORMS);
         graphTransformExtensionPoint.registerExtension(
         	new ExtensionFactory<FloatTransformer>() {
 				@Override
@@ -341,7 +342,6 @@ public final class SimpleGraphTab extends JPanel
 				}
         	}
         );
-        graphTransformExtensionPoint.addExtensionPointRegisterListener(this);
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
@@ -723,7 +723,7 @@ public final class SimpleGraphTab extends JPanel
 		}
 	}
 	
-	private final class AdvancedGraphPanel extends JPanel {
+	private final class AdvancedGraphPanel extends JPanel implements ExtensionPointRegisterListener<FloatTransformer> {
 		private static final long serialVersionUID = 1L;
 		private static final int PARAM_TEXT_WIDTH = 60;
 		private Map<String, FloatTransformer> name2transform;
@@ -1066,16 +1066,16 @@ public final class SimpleGraphTab extends JPanel
 				updateViewer();
 			}
 		}
-	}
 
-	@Override
-	public void extensionPointAdded() {
-		advanced_panel.loadTransforms();
-	}
+		@Override
+		public void extensionPointAdded(ExtensionFactory<FloatTransformer> extensionFactory) {
+			advanced_panel.loadTransforms();
+		}
 
-	@Override
-	public void extensionPointRemoved() {
-		advanced_panel.loadTransforms();
+		@Override
+		public void extensionPointRemoved(ExtensionFactory<FloatTransformer> extensionFactory) {
+			advanced_panel.loadTransforms();
+		}
 	}
 
 	// from GraphAdjusterView

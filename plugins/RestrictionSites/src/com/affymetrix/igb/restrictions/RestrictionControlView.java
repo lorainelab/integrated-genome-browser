@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -35,7 +36,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.regex.Pattern;
 
-public final class RestrictionControlView extends JComponent
+public final class RestrictionControlView extends IGBTabPanel
 				implements ListSelectionListener, ActionListener {
 	private static final long serialVersionUID = 0;
 
@@ -57,7 +58,6 @@ public final class RestrictionControlView extends JComponent
 	private JLabel labels[];
 	private JButton actionB;
 	private JButton clearB;
-	private IGBService igbService;
 
 	/**
 	 *  keep track of added glyphs
@@ -65,8 +65,7 @@ public final class RestrictionControlView extends JComponent
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 
 	public RestrictionControlView(IGBService igbService) {
-		super();
-		this.igbService = igbService;
+		super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), false);
 		this.gviewer = (SeqMapView)igbService.getMapView();
 		boolean load_success = true;
 

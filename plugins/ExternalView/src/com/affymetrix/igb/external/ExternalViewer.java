@@ -4,11 +4,11 @@ import java.awt.CardLayout;
 import java.util.ResourceBundle;
 
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
@@ -18,7 +18,7 @@ import com.affymetrix.igb.view.SeqMapView;
  *
  * @author Ido M. Tamir
  */
-public class ExternalViewer extends JComponent {
+public class ExternalViewer extends IGBTabPanel {
 	private static final long serialVersionUID = 1L;
 	private static final int VIEW_MENU_POS = 2;
 
@@ -26,12 +26,11 @@ public class ExternalViewer extends JComponent {
 	private static final String[] names = {UCSCView.viewName};
 	final JComboBox ucscBox;
 	private final UCSCViewAction ucscViewAction;
-	private final IGBService igbService;
 	private final JMenuItem menuItem;
 
 	public ExternalViewer(IGBService igbService_) {
+		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false);
 		this.setLayout(new CardLayout());
-		this.igbService = igbService_;
 		ucscBox = createBox();
 		ucscViewAction = new UCSCViewAction((SeqMapView)igbService.getMapView());
 		menuItem = new JMenuItem(ucscViewAction);

@@ -41,20 +41,18 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 
 import com.affymetrix.genometryImpl.util.ConsoleView;
-import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.affymetrix.igb.window.service.IPlugin;
-import com.affymetrix.igb.window.service.PluginInfo;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.WindowServiceListener;
+import com.affymetrix.igb.osgi.service.ExtensionFactory;
 import com.affymetrix.igb.osgi.service.ExtensionPoint;
 import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.bookmarks.Bookmark;
@@ -66,11 +64,11 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.action.*;
-import com.affymetrix.igb.util.ThreadUtils;
 
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -235,7 +233,7 @@ public final class IGB extends Application
 			}
 		}
 	}
-	
+
 	private void printDetails(String[] args) {
 		System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
 		System.out.println("UserAgent: " + USER_AGENT);
@@ -256,7 +254,7 @@ public final class IGB extends Application
 
 	public void init(String[] args) {
 		setLaf();
-		
+
 		// Configure HTTP User agent
 		System.setProperty("http.agent", USER_AGENT);
 
@@ -280,9 +278,6 @@ public final class IGB extends Application
 				mi.setDockIconImage(this.getIcon());
 			}
 		}
-
-		ExtensionPointRegistry.getInstance().registerExtensionPoint(IGBService.GRAPH_TRANSFORMS, new ExtensionPoint<FloatTransformer>());
-		ExtensionPointRegistry.getInstance().registerExtensionPoint(IGBService.TAB_PANELS, new ExtensionPoint<FloatTransformer>());
 
 		frm = new JFrame(APP_NAME + " " + APP_VERSION);
 
@@ -416,18 +411,38 @@ public final class IGB extends Application
 
 	public void setWindowService(IWindowService windowService) {
 		this.windowService = windowService;
+		final ExtensionPoint<IGBTabPanel> tabPanelExtensionPoint = windowService.setExtensionPointRegistry(ExtensionPointRegistry.getInstance());
 		windowService.setMainFrame(frm);
 		windowService.setSeqMapView(getMapView());
 		windowService.setStatusBar(status_bar);
 		windowService.setViewMenu(view_menu);
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		frm.setVisible(true);
+		final DataLoadView dataLoadView = new DataLoadView(IGBServiceImpl.getInstance());
+        if (tabPanelExtensionPoint != null) {
+    		ThreadUtils.runOnEventQueue(new Runnable() {
+    			public void run() {
+		            tabPanelExtensionPoint.registerExtension(
+		            	new ExtensionFactory<IGBTabPanel>() {
+							@Override
+							public IGBTabPanel createInstance() {
+								return dataLoadView;
+							}
 
-			public void run() {
-				loadPlugIn(new PluginInfo(DataLoadView.class.getName(), BUNDLE.getString("dataAccessTab"), true, 0), new DataLoadView(IGBServiceImpl.getInstance()));
-				loadPlugIn(new PluginInfo(AltSpliceView.class.getName(), BUNDLE.getString("slicedViewTab"), true, 3), new AltSpliceView(IGBServiceImpl.getInstance()));
-				frm.setVisible(true);
-			}
-		});
+		            	}
+		            );
+		            tabPanelExtensionPoint.registerExtension(
+		            	new ExtensionFactory<IGBTabPanel>() {
+							@Override
+							public IGBTabPanel createInstance() {
+								return new AltSpliceView(IGBServiceImpl.getInstance());
+							}
+
+		            	}
+		            );
+					MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()));
+		        }
+    		});
+        }
 	}
 
 	private void fileMenu() {
@@ -470,24 +485,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ShrinkWrapAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleHairlineLabelAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleToolTip.getAction()));
-	}
-
-	void loadPlugIn(PluginInfo pi, Object plugin) {
-		if (plugin instanceof IPlugin) {
-			IPlugin plugin_view = (IPlugin) plugin;
-			if (plugin_view.getClass().equals(BookmarkManagerView.class)) {
-				bmark_action.setBookmarkManager((BookmarkManagerView) plugin);
-			}
-		}
-
-		if (plugin instanceof JComponent) {
-			if (plugin instanceof AltSpliceView) {
-				MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()));
-			}
-		}
-		int position = PreferenceUtils.getIntParam(pi.getPluginName() + ".position", pi.getDefaultPosition());
-		String title = pi.getDisplayName();
-		windowService.addPlugIn((JComponent)plugin, pi.getPluginName(), title, position);
 	}
 
 	/** Returns the icon stored in the jar file.

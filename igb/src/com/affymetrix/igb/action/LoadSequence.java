@@ -36,6 +36,6 @@ public class LoadSequence extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		GeneralLoadView.getLoadView().loadResidues(e.getActionCommand());
+		GeneralLoadView.getLoadView().loadResidues(this);
 	}
 }

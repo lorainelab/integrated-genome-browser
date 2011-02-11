@@ -63,6 +63,7 @@ import java.util.logging.Logger;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;
+import javax.swing.AbstractAction;
 
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
@@ -480,12 +481,12 @@ public final class GeneralLoadView extends JComponent
 	 * Handles clicking of partial residue, all residue, and refresh data buttons.
 	 * @param evt
 	 */
-	public void loadResidues(String command) {
+	public void loadResidues(AbstractAction action) {
 		Object src = null;
 
-		if(command.equals(partial_residuesB.getActionCommand())){
+		if(action.equals(partial_residuesB.getAction())){
 			src = partial_residuesB;
-		}else if (command.equals(all_residuesB.getActionCommand())){
+		}else if (action.equals(all_residuesB.getAction())){
 			src = all_residuesB;
 		}
 

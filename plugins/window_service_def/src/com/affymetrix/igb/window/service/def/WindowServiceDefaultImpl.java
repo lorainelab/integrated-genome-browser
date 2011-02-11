@@ -58,10 +58,12 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 	private JTabbedPane tab_pane;
 	private JSplitPane splitpane;
 	private Container cpane;
+	private boolean focusSet;
 
 	public WindowServiceDefaultImpl() {
 		super();
 		tab_pane = new JTabbedPane();
+		focusSet = false;
 	}
 
 	@Override
@@ -319,6 +321,10 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 			index++;
 		}
 		tab_pane.insertTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText(), index);
+		if (plugin.isFocus() && !focusSet) {
+			tab_pane.setSelectedIndex(index);
+			focusSet = true;
+		}
 		PreferenceUtils.saveComponentState(plugin.getName(), PreferenceUtils.COMPONENT_STATE_TAB);
 	}
 

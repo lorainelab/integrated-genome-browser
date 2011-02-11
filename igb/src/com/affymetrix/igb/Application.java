@@ -1,5 +1,6 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
@@ -115,7 +116,20 @@ public abstract class Application {
 	public static boolean confirmPanel(String message) {
 		Application app = getSingleton();
 		JFrame frame = (app == null) ? null : app.getFrame();
+		/* 
+		 * original 
 		return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
 				frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
+		*/
+		//start
+		JCheckBox checkbox = new JCheckBox("Do not show this message again.");  
+		Object[] params = {message, checkbox};   
+		int n = JOptionPane.showConfirmDialog(frame, params, "Confirm", JOptionPane.YES_NO_OPTION);   
+		boolean dontShow = checkbox.isSelected();
+		
+		if(dontShow) PreferenceUtils.userConfirmed = n;
+		
+		return JOptionPane.YES_OPTION == n;
+		//end 
 	}
 }

@@ -59,6 +59,8 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
     misc_box.add(PreferenceUtils.createCheckBox("Show properties in columns", PreferenceUtils.getTopNode(),
     	PreferenceUtils.SHOW_PROPERTIES_IN_COLUMNS, PreferenceUtils.default_show_properties_in_column));
+    misc_box.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
+        PreferenceUtils.RESET_CONFIRM_BOX_OPTION, PreferenceUtils.default_show_properties_in_column));
     
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));

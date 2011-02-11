@@ -3,6 +3,7 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.igb.IGB;
 import java.util.ArrayList;
@@ -190,10 +191,22 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 
 		if (col == DELETE_FEATURE_COLUMN){
+			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before delete", false);
+			if(PreferenceUtils.userConfirmed == 2 || resetConfirmOption) {
+				if(IGB.confirmPanel("Really remove entire " + gFeature.featureName + " data set ?")){
+					GeneralLoadView.removeFeature(gFeature);
+				}
+			} else if(PreferenceUtils.userConfirmed == 0) {
+				GeneralLoadView.removeFeature(gFeature);
+			}
+			
+			return;
+			/* original
 			if(IGB.confirmPanel("Really remove entire " + gFeature.featureName + " data set ?")){
 				GeneralLoadView.removeFeature(gFeature);
 			}
 			return;
+			*/
 		}
 
 		if (col == REFRESH_FEATURE_COLUMN) {

@@ -3,6 +3,7 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.IGB;
@@ -251,11 +252,26 @@ class JTableX extends JTable implements MouseListener {
 			FeaturesTableModel ftm = (FeaturesTableModel) getModel();
 			int featureSize = ftm.getRowCount();
 			
+			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before delete", false);
+			if(PreferenceUtils.userConfirmed == 2 || resetConfirmOption) {
+				if (featureSize > 0 && IGB.confirmPanel("Really remove all data sets ?")) {
+					for (int row = 0; row < featureSize; row++) {
+						GeneralLoadView.removeFeature(ftm.getFeature(row));
+					}
+				}
+			} else if(PreferenceUtils.userConfirmed == 0) {
+				for (int row = 0; row < featureSize; row++) {
+					GeneralLoadView.removeFeature(ftm.getFeature(row));
+				}
+			}
+			
+			/*
 			if (featureSize > 0 && IGB.confirmPanel("Really remove all data sets ?")) {
 				for (int row = 0; row < featureSize; row++) {
 					GeneralLoadView.removeFeature(ftm.getFeature(row));
 				}
 			}
+			*/
 		}
 	}
 

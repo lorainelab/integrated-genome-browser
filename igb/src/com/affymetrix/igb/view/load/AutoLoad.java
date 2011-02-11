@@ -2,7 +2,6 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.LoadSequence;
-import com.affymetrix.igb.action.RefreshDataAction;
 import java.awt.Adjustable;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -26,9 +25,9 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
 
-	public AutoLoad(Adjustable zoomer, NeoMap map){
+	public AutoLoad(NeoMap map){
 		this.map = map;
-		this.zoomer = zoomer;
+		this.zoomer = map.getZoomer(NeoMap.X);
 		this.scroller = map.getScroller(NeoMap.X);
 		
 		this.zoomer.addAdjustmentListener(this);
@@ -72,6 +71,7 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 
 	public void loadData(){
 		GeneralLoadView.loadAutoLoadFeatures();
+		GeneralLoadView.getLoadView().loadResidues(LoadSequence.getPartialAction());
 	}
 	
 	public void mouseClicked(MouseEvent e) {}

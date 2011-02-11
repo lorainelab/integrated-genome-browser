@@ -235,7 +235,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	private void updatedStrategy(int row, int col, GenericFeature gFeature) {
 		fireTableCellUpdated(row, col);
 
-		if (gFeature.loadStrategy == LoadStrategy.GENOME) {
+		if (gFeature.loadStrategy == LoadStrategy.GENOME || gFeature.loadStrategy == LoadStrategy.AUTOLOAD) {
 			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}
 

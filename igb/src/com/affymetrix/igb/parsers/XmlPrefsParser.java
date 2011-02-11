@@ -23,7 +23,6 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.window.service.PluginInfo;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import javax.xml.parsers.ParserConfigurationException;
@@ -87,7 +86,6 @@ public final class XmlPrefsParser {
 
 	private static final Class<?> default_factory_class =
 			com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
-	private static final Set<PluginInfo> plugins = new LinkedHashSet<PluginInfo>();
 
 	private XmlPrefsParser() {
 	}
@@ -103,10 +101,6 @@ public final class XmlPrefsParser {
 		} catch (SAXException ex) {
 			throw new IOException(ex);
 		}
-	}
-
-	public static Set<PluginInfo> getPlugins() {
-		return Collections.<PluginInfo>unmodifiableSet(plugins);
 	}
 
 	private static void processDocument(Document prefsdoc) {
@@ -129,8 +123,6 @@ public final class XmlPrefsParser {
 					processAnnotStyle(el);
 				} else if (name.equalsIgnoreCase("annotation_url")) {
 					processLinkUrl(el);
-				} else if (name.equalsIgnoreCase("plugin")) {
-					processPlugin(el);
 				} else if (name.equalsIgnoreCase("server")) {
 					processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
 				} else if (name.equalsIgnoreCase("repository")) {
@@ -160,20 +152,6 @@ public final class XmlPrefsParser {
 			}
 		}
 		return ServerType.LocalFiles;
-	}
-
-	private static void processPlugin(Element el) {
-		String loadstr = el.getAttribute("load");
-		String plugin_name = el.getAttribute("name");
-		String class_name = el.getAttribute("class");
-		//String description = el.getAttribute("description");
-		//String info_url = el.getAttribute("info_url");
-		boolean load = (loadstr == null ? true : (!loadstr.equalsIgnoreCase("false")));
-		if (plugin_name != null && class_name != null) {
-			System.out.println("plugin, name = " + plugin_name + ", class = " + class_name);
-			PluginInfo pinfo = new PluginInfo(class_name, plugin_name, load, -1);
-			plugins.add(pinfo);
-		}
 	}
 
 	/**

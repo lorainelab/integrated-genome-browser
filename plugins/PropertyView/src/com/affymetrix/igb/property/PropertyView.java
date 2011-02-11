@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -20,6 +21,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.text.NumberFormat;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +31,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -327,6 +331,7 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 				tempRows[index2-1][index1] = rows[index1][index2];
 			}
 			tempColHeadings[index1] = rows[index1][0];
+			//System.out.println("+++++++++++++title " + index1 + ": " + rows[index1][0]);
 		}
 		
 		List<Object> resultList = new ArrayList<Object>();
@@ -352,11 +357,15 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 		//start
 		//System.out.println("#############rows length: " + rows.length);
 		//System.out.println("#############col_headings length: " + col_headings.length);
-		if(rows.length > 0) {
+		boolean propertiesInColumns = PreferenceUtils.getBooleanParam("Show properties in columns", false);
+		//System.out.println("#############propertiesInColumns: " + propertiesInColumns);
+		if(rows.length > 0 && propertiesInColumns) {
 			List<Object> resultList = swapRowsAndColumns(rows, col_headings);
 			rows = (String[][])resultList.get(0);
 			col_headings = (String[])resultList.get(1);
 		}
+		//System.out.println("#############rows length: " + rows.length);
+		//System.out.println("#############col_headings length: " + col_headings.length);
 		//end
 		
 		propertyChanged(col_headings.length);
@@ -378,9 +387,13 @@ public final class PropertyView extends JPanel implements SymSelectionListener, 
 
 		table.setEnabled(true);  // to allow selection, etc.
 		table.setFillsViewportHeight(true);
+		table.setMinimumSize(new Dimension(80000, 500));	//added by Max
+		//table.setPreferredScrollableViewportSize(new Dimension(80000, 500));  //added by Max
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		scroll_pane.setViewportView(table);
+		scroll_pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		//scroll_pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.add(scroll_pane, BorderLayout.CENTER);
 		table.setCellSelectionEnabled(true);
 

@@ -57,7 +57,8 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
       PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting));
     misc_box.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
-
+    misc_box.add(PreferenceUtils.createCheckBox("Show properties in columns", PreferenceUtils.getTopNode(),
+    	PreferenceUtils.SHOW_PROPERTIES_IN_COLUMNS, PreferenceUtils.default_show_properties_in_column));
     
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));

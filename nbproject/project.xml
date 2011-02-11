@@ -52,12 +52,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>plugins/plugins_page/src</label>
-                    <type>java</type>
-                    <location>plugins/plugins_page/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>plugins/igb_service/src</label>
                     <type>java</type>
                     <location>plugins/igb_service/src</location>
@@ -88,6 +82,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>plugins/GraphAdjuster/src</label>
+                    <type>java</type>
+                    <location>plugins/GraphAdjuster/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>plugins/RestrictionsSites/src</label>
                     <type>java</type>
                     <location>plugins/RestrictionsSites/src</location>
@@ -97,6 +97,12 @@
                     <label>plugins/ExternalView/src</label>
                     <type>java</type>
                     <location>plugins/ExternalView/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>plugins/plugins_page/src</label>
+                    <type>java</type>
+                    <location>plugins/plugins_page/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -274,6 +280,16 @@
                 <location>plugins/SearchView/build</location>
                 <build-target>compile</build-target>
             </export>
+            <export>
+                <type>folder</type>
+                <location>plugins/GraphAdjuster/build</location>
+                <build-target>compile</build-target>
+            </export>
+            <export>
+                <type>folder</type>
+                <location>bundles</location>
+                <build-target>compile</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -301,10 +317,6 @@
                         <location>igb/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>plugins/plugins_page/src</label>
-                        <location>plugins/plugins_page/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>plugins/igb_service/src</label>
                         <location>plugins/igb_service/src</location>
                     </source-folder>
@@ -325,12 +337,20 @@
                         <location>plugins/SearchView/src</location>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>plugins/GraphAdjuster/src</label>
+                        <location>plugins/GraphAdjuster/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>plugins/RestrictionsSites/src</label>
                         <location>plugins/RestrictionsSites/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>plugins/ExternalView/src</label>
                         <location>plugins/ExternalView/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>plugins/plugins_page/src</label>
+                        <location>plugins/plugins_page/src</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>igb_server/src</label>
@@ -416,6 +436,7 @@
                 <package-root>common/src</package-root>
                 <package-root>plugins/PropertyView/src</package-root>
                 <package-root>plugins/SearchView/src</package-root>
+                <package-root>plugins/GraphAdjuster/src</package-root>
                 <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometryImpl/src:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:genoviz_sdk/src:ext/commons-compress-1.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>genometryImpl/build</built-to>
@@ -432,6 +453,8 @@
                 <built-to>plugins/window_service_def/build</built-to>
                 <built-to>plugins/PropertyView/build</built-to>
                 <built-to>plugins/SearchView/build</built-to>
+                <built-to>plugins/GraphAdjuster/build</built-to>
+                <built-to>bundles</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

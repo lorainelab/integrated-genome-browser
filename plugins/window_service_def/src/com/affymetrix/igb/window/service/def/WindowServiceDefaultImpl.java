@@ -21,7 +21,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -32,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -152,7 +152,6 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 	private void openCompInWindow(final IGBTabPanel comp, final JTabbedPane tab_pane) {
 		final String name = comp.getName();
 		final String display_name = comp.getDisplayName();
-		final String tool_tip = comp.getToolTipText();
 
 		Image temp_icon = null;
 		if (temp_icon == null) {
@@ -193,7 +192,7 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 					cont.remove(comp);
 					cont.validate();
 					frame.dispose();
-					tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
+					showTab(comp);
 					PreferenceUtils.saveComponentState(name, PreferenceUtils.COMPONENT_STATE_TAB);
 				}
 			});
@@ -315,7 +314,11 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 	}
 
 	private void showTab(final IGBTabPanel plugin) { // always show a hidden plugin in tab panel (not separate window)
-		tab_pane.addTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText());
+		int index = 0;
+		while (index < tab_pane.getTabCount() && plugin.compareTo((IGBTabPanel)tab_pane.getComponentAt(index)) > 0) {
+			index++;
+		}
+		tab_pane.insertTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText(), index);
 		PreferenceUtils.saveComponentState(plugin.getName(), PreferenceUtils.COMPONENT_STATE_TAB);
 	}
 
@@ -340,7 +343,6 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 
 	private void addTab(final IGBTabPanel plugin) {
 		addedPlugins.add(plugin);
-		ImageIcon icon = null;
 
 		String title = plugin.getTitle();
 		String tool_tip = plugin.getToolTipText();
@@ -357,7 +359,7 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 			openCompInWindow(plugin, tab_pane);
 		}
 		else if (in_a_tab) {
-			tab_pane.addTab(title, icon, plugin, tool_tip);
+			showTab(plugin);
 		}
 		final JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(plugin.getDisplayName());
 		jCheckBoxMenuItem.setSelected(in_a_window || in_a_tab);

@@ -53,4 +53,9 @@ public final class DataLoadView extends IGBTabPanel {
 	public void tableChanged() {
 		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
+
+	@Override
+	public boolean isFocus() {
+		return true;
+	}
 }

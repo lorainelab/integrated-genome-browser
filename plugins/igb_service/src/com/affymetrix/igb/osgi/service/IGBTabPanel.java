@@ -5,8 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-
-public abstract class IGBTabPanel extends JPanel {
+public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel> {
 	private static final long serialVersionUID = 1L;
 
 	protected final IGBService igbService;
@@ -41,6 +40,10 @@ public abstract class IGBTabPanel extends JPanel {
 		return main;
 	}
 
+	public boolean isFocus() {
+		return false;
+	}
+
 	public String getState() {
 		return state;
 	}
@@ -59,7 +62,11 @@ public abstract class IGBTabPanel extends JPanel {
 
 	@Override
 	public String toString() {
-		return "IGB PluginInfo: " +
-						"displayName = " + displayName + ", class = " + this.getClass().getName();
+		return "IGBTabPanel: " + "displayName = " + displayName + ", class = " + this.getClass().getName();
+	}
+
+	@Override
+	public int compareTo(IGBTabPanel o) {
+		return this.getDisplayName().compareTo(o.getDisplayName());
 	}
 }

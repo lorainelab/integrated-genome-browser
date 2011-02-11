@@ -90,10 +90,6 @@
 		<iterate target="test" />
 	</target>
 
-	<target name="manifest-exists">
-		<available file="${basedir}/MANIFEST.BASE" property="manifest.present"/>
-	</target>
-
 	<target name="copy-bundle-if" description="copy a bundle to bundle dir" unless="${jar_name}.present">
 		<java jar="${lib.dir}/biz.aQute.bnd.jar" fork="true" dir="${lib.dir}" >
 			<arg value="wrap"/>

@@ -19,6 +19,7 @@
 		<property name="ExternalView"       value="${basedir}/../plugins/ExternalView" />
 		<property name="PropertyView"       value="${basedir}/../plugins/PropertyView" />
 		<property name="SearchView"         value="${basedir}/../plugins/SearchView" />
+		<property name="GraphAdjuster"      value="${basedir}/../plugins/GraphAdjuster" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"            value="${basedir}/../ext" />

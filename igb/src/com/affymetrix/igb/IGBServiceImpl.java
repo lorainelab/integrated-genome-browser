@@ -13,6 +13,7 @@
 package com.affymetrix.igb;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -34,6 +35,7 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -49,6 +51,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public static IGBServiceImpl getInstance() {
 		return instance;
 	}
+	private FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 	private static final String APACHE_BUNDLE_VENDOR = "The Apache Software Foundation";
 	private List<RepositoryChangeListener> repositoryChangeListeners;
 
@@ -259,4 +262,20 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public void setPropertyHandler(PropertyHandler propertyHandler) {
 		((SeqMapView)getMapView()).setPropertyHandler(propertyHandler);
 	}
+
+	@Override
+	public JFrame getFrame() {
+		return Application.getSingleton().getFrame();
+	}
+
+	@Override
+	public File getLoadDirectory() {
+		return load_dir_tracker.getFile();
+	}
+
+	@Override
+	public void setLoadDirectory(File file) {
+		load_dir_tracker.setFile(file);
+	}
+
 }

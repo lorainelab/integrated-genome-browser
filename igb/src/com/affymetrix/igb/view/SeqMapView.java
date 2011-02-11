@@ -942,7 +942,7 @@ public class SeqMapView extends JPanel
 		select(glyphsToSyms(glyphlist), false, true, true);
 	}
 
-	final void select(List<SeqSymmetry> sym_list) {
+	public final void select(List<SeqSymmetry> sym_list) {
 		select(sym_list, false, false, true);
 	}
 

@@ -1,20 +1,19 @@
 package com.affymetrix.igb.osgi.service;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
-import javax.swing.SwingWorker;
 
 import org.osgi.framework.Bundle;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-//import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
 
 public interface IGBService {
 	public static final String IGB_TIER_HEADER = "IGB-Tier";
@@ -53,4 +52,8 @@ public interface IGBService {
 	public boolean loadResidues(final SeqSpan viewspan, final boolean partial);
 	// for PropertyView
 	public void setPropertyHandler(PropertyHandler propertyHandler);
+	// for graph adjuster
+	public JFrame getFrame();
+	public File getLoadDirectory();
+	public void setLoadDirectory(File file);
 }

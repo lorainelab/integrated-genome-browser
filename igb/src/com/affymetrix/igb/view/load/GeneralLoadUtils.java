@@ -736,6 +736,14 @@ public final class GeneralLoadUtils {
 			max = aseq.getLength();
 		}
 
+		if(aseq.isAvailable(min, max)){
+			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO,
+					"All residues in range are already loaded on sequence {0}",new Object[]{aseq});
+			return true;
+		}
+
+		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
+		
 		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
 	}
 

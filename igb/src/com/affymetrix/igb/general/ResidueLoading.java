@@ -26,8 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -69,19 +67,7 @@ public final class ResidueLoading {
 		boolean partial_load = (min > 0 || max < (aseq.getLength()-1));	// Are we only asking for part of the sequence?
 
 		if (partial_load) {
-			if(aseq.isAvailable(min, max)){
-				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO,
-						"All residues in range are already loaded on sequence {0}",new Object[]{aseq});
-				return true;
-			}
-
 			return loadPartial(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
-		}
-
-		if(aseq.isAvailable()){
-			Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO,
-					"All residues are already loaded on sequence {0}",new Object[]{aseq});
-			return true;
 		}
 
 		return loadFull(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq);

@@ -501,7 +501,6 @@ public final class GeneralLoadView extends JComponent
 		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
 
 			public Boolean doInBackground() {
-				igbService.addNotLockedUpMsg("Loading residues for "+seq.getID());
 				return loadResidues(genomeVersionName, seq, gviewer.getVisibleSpan(), partial, false, true);
 			}
 

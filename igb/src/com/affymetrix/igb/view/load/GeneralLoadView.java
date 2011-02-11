@@ -567,15 +567,40 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * Load any data that's marked for visible range.
 	 */
-	public void loadVisibleData() {
+	public void loadVisibleFeatures() {
 		if (DEBUG_EVENTS) {
 			SeqSpan request_span = gviewer.getVisibleSpan();
 			System.out.println("Visible load request span: " + request_span.getBioSeq() + ":" + request_span.getStart() + "-" + request_span.getEnd());
 		}
+		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+		loadStrategies.add(LoadStrategy.AUTOLOAD);
+		loadStrategies.add(LoadStrategy.VISIBLE);
+		loadStrategies.add(LoadStrategy.CHROMOSOME);
+		loadFeatures(loadStrategies);
+	}
 
-		// Load any features that have a visible strategy and haven't already been loaded.
+	/**
+	 * Load any features that have a autoload strategy and haven't already been loaded.
+	 */
+	public static void loadAutoLoadFeatures() {
+		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+		loadStrategies.add(LoadStrategy.AUTOLOAD);
+		loadFeatures(loadStrategies);
+	}
+
+	/**
+	 * Load any features that have a whole strategy and haven't already been loaded.
+	 * @param versionName
+	 */
+	static void loadWholeRangeFeatures() {
+		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+		loadStrategies.add(LoadStrategy.GENOME);
+		loadFeatures(loadStrategies);
+	}
+
+	private static void loadFeatures(List<LoadStrategy> loadStrategies){
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (gFeature.loadStrategy == LoadStrategy.NO_LOAD || gFeature.loadStrategy == LoadStrategy.GENOME) {
+			if (!loadStrategies.contains(gFeature.loadStrategy)) {
 				continue;
 			}
 
@@ -584,7 +609,6 @@ public final class GeneralLoadView extends JComponent
 			}
 			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}
-
 	}
 
 	/**
@@ -929,39 +953,6 @@ public final class GeneralLoadView extends JComponent
 		return features;
 	}
 
-	/**
-	 * Load any features that have a whole strategy and haven't already been loaded.
-	 * @param versionName
-	 */
-	static void loadWholeRangeFeatures() {
-		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (gFeature.loadStrategy != LoadStrategy.GENOME) {
-				continue;
-			}
-
-			if (DEBUG_EVENTS) {
-				System.out.println("Selected : " + gFeature.featureName);
-			}
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-		}
-	}
-
-	/**
-	 * Load any features that have a autoload strategy and haven't already been loaded.
-	 */
-	public static void loadVisibleFeatures() {
-		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (gFeature.loadStrategy != LoadStrategy.AUTOLOAD) {
-				continue;
-			}
-
-			if (DEBUG_EVENTS) {
-				System.out.println("Selected : " + gFeature.featureName);
-			}
-
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-		}
-	}
 	/**
 	 * Check if it is necessary to disable buttons.
 	 * @return

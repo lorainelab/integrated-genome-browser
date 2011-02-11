@@ -1,6 +1,8 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.action.LoadSequence;
+import com.affymetrix.igb.action.RefreshDataAction;
 import java.awt.Adjustable;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -69,7 +71,7 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 	}
 
 	public void loadData(){
-			GeneralLoadView.loadVisibleFeatures();
+		GeneralLoadView.loadAutoLoadFeatures();
 	}
 	
 	public void mouseClicked(MouseEvent e) {}

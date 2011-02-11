@@ -34,6 +34,6 @@ public class RefreshDataAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent ae) {
-		GeneralLoadView.getLoadView().loadVisibleData();
+		GeneralLoadView.getLoadView().loadVisibleFeatures();
 	}
 }

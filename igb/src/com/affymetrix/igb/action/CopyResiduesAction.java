@@ -24,7 +24,7 @@ public class CopyResiduesAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		IGB.getSingleton().getMapView().copySelectedResidues(true);
+		IGB.getSingleton().getMapView().copySelectedResidues(false);
 
 	}
 }

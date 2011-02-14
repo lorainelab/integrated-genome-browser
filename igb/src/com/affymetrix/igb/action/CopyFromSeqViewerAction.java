@@ -8,11 +8,6 @@ import javax.swing.AbstractAction;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
-/**
- *
- * @author sgblanch
- * @version $Id: CopyResiduesAction.java 7155 2010-11-10 20:54:57Z vbishnoi $
- */
 public class CopyFromSeqViewerAction extends AbstractAction {
 
 	private static final long serialVersionUID = 1l;

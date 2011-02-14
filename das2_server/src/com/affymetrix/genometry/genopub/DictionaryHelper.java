@@ -524,13 +524,6 @@ public class DictionaryHelper {
 			return null;
 		}
 	}
-	public String getUserGroupInstitute(Integer idUserGroup) {
-		UserGroup group = groupMap.get(idUserGroup);
-		if (group != null) {
-			return group.getInstitute();
-		} else {
-			return null;
-		}
-	}
+	
 
 }

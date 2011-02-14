@@ -38,6 +38,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 	
 	private final HashMap<Integer, UserGroup>   groupsMemCollabVisibility = new HashMap<Integer, UserGroup>();
 	private final HashMap<Integer, UserGroup>   groupsMemVisibility = new HashMap<Integer, UserGroup>();
+  private final HashMap<Integer, Institute>   institutesVisibility = new HashMap<Integer, Institute>();
 	
 	
 	private final HashMap<String, HashMap<Integer, QualifiedAnnotation>> versionToAuthorizedAnnotationMap = new HashMap<String, HashMap<Integer, QualifiedAnnotation>>();
@@ -77,14 +78,25 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 			this.isAdminRole = isAdminRole;
 			this.isGuestRole = isGuestRole;
 			
+			// Hash groups that user is member of
 			for (UserGroup sc : (Set<UserGroup>)user.getMemberUserGroups()) {
 				groupsMemCollabVisibility.put(sc.getIdUserGroup(), sc);
 				groupsMemVisibility.put(sc.getIdUserGroup(), sc);
+				// Hash institutes of group that user is member of
+				for(Institute i : (Set<Institute>)sc.getInstitutes()) {
+				  institutesVisibility.put(i.getIdInstitute(), i);
+				}
 			}
+			// Hash groups that user is manager of
 			for (UserGroup sc : (Set<UserGroup>)user.getManagingUserGroups()) {
 				groupsMemCollabVisibility.put(sc.getIdUserGroup(), sc);
 				groupsMemVisibility.put(sc.getIdUserGroup(), sc);
+				// Hash institutes of group that user is manager of
+        for(Institute i : (Set<Institute>)sc.getInstitutes()) {
+          institutesVisibility.put(i.getIdInstitute(), i);
+        }
 			}
+			// Hash groups that user is collaborator of
 			for (UserGroup sc : (Set<UserGroup>)user.getCollaboratingUserGroups()) {
 				groupsMemCollabVisibility.put(sc.getIdUserGroup(), sc);
 			}
@@ -120,6 +132,16 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 	public boolean isMember(UserGroup group) {
 		return isMember(group.getIdUserGroup());
 	}
+	
+	public boolean belongsToInstitute(Integer idInstitute) {
+    boolean isMyInstitute = false;
+  
+    if (idInstitute != null) {
+      isMyInstitute = this.institutesVisibility.containsKey(idInstitute);
+    }
+
+    return isMyInstitute;
+  }
 	
 	@SuppressWarnings("unchecked")
 	public boolean isMember(Integer idUserGroup) {
@@ -208,55 +230,106 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 			canRead = true;
 		} else if (object instanceof Annotation) {
 			Annotation a = Annotation.class.cast(object);
-			if (a.getCodeVisibility().equals(Visibility.PUBLIC)) {
-				// Public annotations can be read by anyone
-				canRead = true;
-				
-			} else if (a.getCodeVisibility().equals(Visibility.MEMBERS)) {
-				// Annotations with Members visibility can be read by members
-				// or managers of the annotation's security group.				
-				if (this.isMember(a.getIdUserGroup()) || this.isManager(a.getIdUserGroup())) {
-					canRead = true;
-				}
-			} else if (a.getCodeVisibility().equals(Visibility.MEMBERS_AND_COLLABORATORS)) {
-				// Annotations with Members & Collaborators visibility can be read by 
-				// members, collaborators, or managers of the annotation's security group.				
-				if (this.belongsToGroup(a.getIdUserGroup())) {
-					canRead = true;
-				}
-			} else if (a.getIdUser().equals(user.getIdUser())) {
-				// Owner of annotation can read it
-				canRead = true;
-			}
+			
+      // First, check to see if the user is a specified as a collaborator
+      // on this request.
+      for (Iterator i = a.getCollaborators().iterator(); i.hasNext();) {
+        User collaborator = (User)i.next();
+        if (user.getIdUser().equals(collaborator.getIdUser())) {
+          canRead = true;
+          break;
+        }
+      }     
+      
+      if (!canRead) {
+        if (a.getCodeVisibility().equals(Visibility.PUBLIC)) {
+          // Public annotations can be read by anyone
+          canRead = true;
+          
+        } else if (a.getCodeVisibility().equals(Visibility.MEMBERS)) {
+          // Annotations with Members visibility can be read by members
+          // or managers of the annotation's security group.        
+          if (this.isMember(a.getIdUserGroup()) || this.isManager(a.getIdUserGroup())) {
+            canRead = true;
+          }
+        } else if (a.getCodeVisibility().equals(Visibility.MEMBERS_AND_COLLABORATORS)) {
+          // Annotations with Members & Collaborators visibility can be read by 
+          // members, collaborators, or managers of the annotation's security group.        
+          if (this.belongsToGroup(a.getIdUserGroup())) {
+            canRead = true;
+          }
+        } else if (a.getCodeVisibility().equals(Visibility.INSTITUTE)) {
+          // Annotations with Institution visibility can be read by members
+          // or managers of the annotation's institution.        
+          if (this.belongsToInstitute(a.getIdInstitute())) {
+            canRead = true;
+          }
+        } else if (a.getIdUser() != null && a.getIdUser().equals(user.getIdUser())) {
+          // Regardless of visibility, owner can read annotation
+          canRead = true;
+        } else if (this.isManager(a.getIdUserGroup())) {
+          // Regardless of visibility, group manager can read annotation
+          canRead = true;
+        }
+        
+      }
 		} else if (object instanceof AnnotationGrouping) {
 			AnnotationGrouping ag = AnnotationGrouping.class.cast(object);
-			if (ag.hasVisibility(Visibility.PUBLIC)) {
-				// Annotation groups for public annotations can be read by anyone
-				canRead = true;
-				
-			} else if (ag.hasVisibility(Visibility.MEMBERS)) {
-				// Annotation groups for Annotations with Members visibility can be 
-				// read by members or managers of the annotation's security group.	
-				for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
-					if (this.isMember(a.getIdUserGroup()) || this.isManager(a.getIdUserGroup())) {
-						canRead = true;
-						break;
-					}					
-				}
-			} else if (ag.hasVisibility(Visibility.MEMBERS_AND_COLLABORATORS)) {
-				// Annotation groups for Annotations with Members & Collaborators 
-				// visibility can be read by members, collaborators, or managers 
-				// of the annotation's security group.				
-				for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
-					if (this.belongsToGroup(a.getIdUserGroup())) {
-						canRead = true;
-						break;
-					}
-				}
-			} else if (this.belongsToGroup(ag.getIdUserGroup())) {
-				// If user is part of group that owns annotation grouping, user
-				// can read it.
-			}	canRead = true;
+			
+			
+			// First see if the user is collaborator on 
+			// any annotations of the annotation grouping
+			for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
+			  for (Iterator i = a.getCollaborators().iterator(); i.hasNext();) {
+	        User collaborator = (User)i.next();
+	        if (user.getIdUser().equals(collaborator.getIdUser())) {
+	          canRead = true;
+	          break;
+	        }
+	      }  
+			}
+			
+			if (!canRead) {
+        if (ag.hasVisibility(Visibility.PUBLIC)) {
+          // Annotation groups for public annotations can be read by anyone
+          canRead = true;
+          
+        } else if (ag.hasVisibility(Visibility.MEMBERS)) {
+          // Annotation groups for Annotations with Members visibility can be 
+          // read by members or managers of the annotation's security group.  
+          for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
+            if (this.isMember(a.getIdUserGroup()) || this.isManager(a.getIdUserGroup())) {
+              canRead = true;
+              break;
+            }         
+          }
+        } else if (ag.hasVisibility(Visibility.MEMBERS_AND_COLLABORATORS)) {
+          // Annotation groups for Annotations with Members & Collaborators 
+          // visibility can be read by members, collaborators, or managers 
+          // of the annotation's security group.        
+          for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
+            if (this.belongsToGroup(a.getIdUserGroup())) {
+              canRead = true;
+              break;
+            }
+          }
+        }  else if (ag.hasVisibility(Visibility.INSTITUTE)) {
+          // Annotation groups for Annotations with Institution
+          // visibility can be read by users belonging to
+          // the annotation's institute        
+          for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
+            if (this.belongsToInstitute(a.getIdInstitute())) {
+              canRead = true;
+              break;
+            }
+          }
+        } else if (this.belongsToGroup(ag.getIdUserGroup())) {
+          // If user is part of group that owns annotation grouping, user
+          // can read it.
+          canRead = true;
+        }
+        
+      }
 			
 		} else {
 			canRead = true;
@@ -314,6 +387,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 			                                     StringBuffer queryBuf, 
 			                                     String annotationAlias, 
 			                                     String annotationGroupingAlias, 
+			                                     String collaboratorAlias,
 			                                     boolean addWhere)
 	  throws Exception {
 		if (!scrutinizeAccess) {
@@ -367,7 +441,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 					queryBuf.append(annotationAlias + ".codeVisibility in ('" + Visibility.MEMBERS + "', '" + Visibility.PUBLIC + "')");
 					addWhere = AND(addWhere, queryBuf);
 					queryBuf.append(annotationAlias + ".idUserGroup ");
-					appendMemberInStatement(queryBuf, this.groupsMemVisibility);
+					appendIdInStatement(queryBuf, this.groupsMemVisibility);
 					queryBuf.append(")");
 					
 					hasSecurityCriteria = true;
@@ -379,22 +453,44 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 				// in which user is collaborator, member, (or manager)
 				if (!this.groupsMemCollabVisibility.isEmpty()) {
 					
-					addWhere = OR(addWhere, queryBuf);
+				  if (hasSecurityCriteria) {
+	          addWhere = OR(addWhere, queryBuf);				    
+				  }
 					
 					queryBuf.append("(");
 					queryBuf.append(annotationAlias + ".codeVisibility = '" + Visibility.MEMBERS_AND_COLLABORATORS + "'");
 					addWhere = AND(addWhere, queryBuf);
 					queryBuf.append(annotationAlias + ".idUserGroup ");
-					appendMemberInStatement(queryBuf, this.groupsMemCollabVisibility);
+					appendIdInStatement(queryBuf, this.groupsMemCollabVisibility);
 					queryBuf.append(")");
 
 					hasSecurityCriteria = true;
 				}
 				
+				if (!this.institutesVisibility.isEmpty()) {
+				  
+				  if (hasSecurityCriteria) {
+	          addWhere = OR(addWhere, queryBuf);
+				  }
+          
+          // For annotations with INSTITUTION visibility, limit to the 
+				  // annotations with an institute that the user's group belongs to.  
+          queryBuf.append("(");
+          queryBuf.append(annotationAlias + ".codeVisibility in ('" + Visibility.INSTITUTE + "')");
+          addWhere = AND(addWhere, queryBuf);
+          queryBuf.append(annotationAlias + ".idInstitute ");
+          appendIdInStatement(queryBuf, this.institutesVisibility);
+          queryBuf.append(")");
+          
+          hasSecurityCriteria = true;
+        }
+				
 
 				// Also pick up empty folders belonging to group
 				if (annotationGroupingAlias != null && !this.groupsMemCollabVisibility.isEmpty()) {
-					addWhere = OR(addWhere, queryBuf);
+				  if (hasSecurityCriteria) {
+	          addWhere = OR(addWhere, queryBuf);				    
+				  }
 					appendEmptyAnnotationGroupingHQLSecurity(queryBuf, annotationAlias, annotationGroupingAlias, addWhere);
 					hasSecurityCriteria = true;
 				}
@@ -407,6 +503,15 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 				appendUserOwnedHQLSecurity(queryBuf, annotationAlias, annotationGroupingAlias, addWhere);
 				hasSecurityCriteria = true;
 				
+				
+				// Get all annotations where user is a collaborator
+				if (hasSecurityCriteria) {
+          addWhere = OR(addWhere, queryBuf);
+        }
+		    queryBuf.append("(");
+		    queryBuf.append(collaboratorAlias + ".idUser = " + user.getIdUser());
+		    queryBuf.append(")");   
+        hasSecurityCriteria = true;
 				
 				// Include all public annotations if scope = ALL	
 				if (scopeLevel.equals(this.ALL_SCOPE_LEVEL)) {
@@ -429,39 +534,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 	}
 
 
-	public boolean appendAnnotationGroupingHQLSecurity(String scopeLevel,
-			                                             StringBuffer queryBuf, 
-			                                             String annotationGroupingAlias, 
-			                                             boolean addWhere)
-	  throws Exception {
-		/*
-		if (!scrutinizeAccess) {
-			return addWhere;
-		}
-		
-		if (isAdminRole) {
-			
-			// Admins don't have any restrictions
-			return addWhere;
-			
-		} else if (isGuestRole) {
-			
-			// For guests, don't get any extra annotation groupings. 
-			addWhere = AND(addWhere, queryBuf);
-			queryBuf.append("(");
-			queryBuf.append(annotationGroupingAlias + ".idAnnotationGrouping = -999");	
-			queryBuf.append(")");
-			
-		} else  {
-			addWhere = AND(addWhere, queryBuf);
-			
-			// Pick up public folders and folders belonging to the group
-			appendAnnotationGroupingHQLSecurity(queryBuf, annotationGroupingAlias, addWhere);
-			
-		} 
-		*/	
-		return addWhere;
-	}
+
 
 	@SuppressWarnings("unchecked")
 	private void appendUserOwnedHQLSecurity(StringBuffer queryBuf, 
@@ -471,10 +544,28 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 		queryBuf.append("(");
 		
 		queryBuf.append(annotationAlias + ".idUser = " + user.getIdUser());
-		
+
+		if (user.getManagingUserGroups().size() > 0) {
+		  addWhere = OR(addWhere, queryBuf);  
+		  
+	    queryBuf.append(annotationAlias + ".idUserGroup in (");
+	    boolean firstTime = true;
+	    for (UserGroup group : (Set<UserGroup>)user.getManagingUserGroups()) {
+	      if (!firstTime) {
+	        queryBuf.append(",");
+	      }
+	      queryBuf.append(group.getIdUserGroup());
+	      firstTime = false;
+	    }
+	    queryBuf.append(")");  
+		}
+    
 		queryBuf.append(")");		
 	}
+
+ 
 	
+
 	@SuppressWarnings("unchecked")
 	private boolean appendEmptyAnnotationGroupingHQLSecurity(StringBuffer queryBuf, 
             								                String annotationAlias,
@@ -491,37 +582,21 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 		if (this.groupsMemCollabVisibility.size() > 0) {
 			addWhere = OR(addWhere, queryBuf);
 			queryBuf.append(annotationGroupingAlias + ".idUserGroup");
-			appendMemberInStatement(queryBuf, this.groupsMemCollabVisibility);			
+			appendIdInStatement(queryBuf, this.groupsMemCollabVisibility);			
 		}
 		queryBuf.append(")");
 
 		queryBuf.append(")");
 		return addWhere;
 	}
-	
-	@SuppressWarnings("unchecked")
-	private boolean appendAnnotationGroupingHQLSecurity(StringBuffer queryBuf, 
-            								           String annotationGroupingAlias,
-            								           boolean addWhere) throws Exception {
 
-		queryBuf.append("(");					
-		queryBuf.append(annotationGroupingAlias + ".idUserGroup is NULL");
-		if (this.groupsMemCollabVisibility.size() > 0) {
-			addWhere = OR(addWhere, queryBuf);
-			queryBuf.append(annotationGroupingAlias + ".idUserGroup");
-			appendMemberInStatement(queryBuf, this.groupsMemCollabVisibility);			
-		}
-		queryBuf.append(")");
-		return addWhere;
-	}
-	
 	
 	@SuppressWarnings("unchecked")
-	private void appendMemberInStatement(StringBuffer queryBuf, HashMap userGroupMap) {
+	private void appendIdInStatement(StringBuffer queryBuf, HashMap idMap) {
 		queryBuf.append(" in (");
-		for(Iterator i = userGroupMap.keySet().iterator(); i.hasNext();) { 
-			Integer idUserGroup = (Integer)i.next();
-			queryBuf.append(idUserGroup);				
+		for(Iterator i = idMap.keySet().iterator(); i.hasNext();) { 
+			Integer id = (Integer)i.next();
+			queryBuf.append(id);				
 			if (i.hasNext()) {
 				queryBuf.append(",");
 			}

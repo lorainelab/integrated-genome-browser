@@ -2,8 +2,10 @@ package com.affymetrix.genometry.genopub;
 
 public class Visibility {
 
+  public static final String    OWNER = "OWNER";
 	public static final String		MEMBERS = "MEM";
 	public static final String		MEMBERS_AND_COLLABORATORS = "MEMCOL";
+	public static final String    INSTITUTE = "INST";
 	public static final String		PUBLIC = "PUBLIC";
 	
 	private String codeVisibility;

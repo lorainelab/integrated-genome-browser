@@ -8,11 +8,11 @@ public class UserGroup implements Serializable {
 	private String     name;
 	private String     contact;
 	private String     email;
-	private String     institute;	
-    private Set        members;
-    private Set        collaborators;
-    private Set        managers;
-	
+	private Set        members;
+	private Set        collaborators;
+	private Set        managers;
+	private Set        institutes;
+
 	public Integer getIdUserGroup() {
     	return idUserGroup;
     }
@@ -43,17 +43,17 @@ public class UserGroup implements Serializable {
 	public void setManagers(Set managers) {
     	this.managers = managers;
     }
+	public Set getInstitutes() {
+	    return institutes;
+	}
+	public void setInstitutes(Set institutes) {
+	    this.institutes = institutes;
+	}
 	public String getEmail() {
     	return email;
     }
 	public void setEmail(String email) {
     	this.email = email;
-    }
-	public String getInstitute() {
-    	return institute;
-    }
-	public void setInstitute(String institute) {
-    	this.institute = institute;
     }
 	public String getContact() {
     	return contact;

@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import net.sf.samtools.*;
+import net.sf.samtools.*;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -50,6 +50,7 @@ import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
+
 
 
 public class GenoPubServlet extends HttpServlet {
@@ -109,6 +110,8 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String DICTIONARY_ADD_REQUEST             = "dictionaryAdd";
 	public static final String DICTIONARY_UPDATE_REQUEST          = "dictionaryUpdate"; 
 	public static final String DICTIONARY_DELETE_REQUEST          = "dictionaryDelete"; 
+  public static final String INSTITUTES_REQUEST                 = "institutes";
+  public static final String INSTITUTES_SAVE_REQUEST            = "institutesSave";
 	public static final String VERIFY_RELOAD_REQUEST              = "verifyReload";
 
 	private GenoPubSecurity genoPubSecurity = null;
@@ -235,8 +238,12 @@ public class GenoPubServlet extends HttpServlet {
 			} else if (req.getPathInfo().endsWith(this.DICTIONARY_DELETE_REQUEST)) {
 				this.handleDictionaryDeleteRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.VERIFY_RELOAD_REQUEST)) {
-				this.handleVerifyReloadRequest(req, res);
-			} else {
+        this.handleVerifyReloadRequest(req, res);
+      } else if (req.getPathInfo().endsWith(this.INSTITUTES_REQUEST)) {
+        this.handleInstitutesRequest(req, res);
+      } else if (req.getPathInfo().endsWith(this.INSTITUTES_SAVE_REQUEST)) {
+        this.handleInstitutesSaveRequest(req, res);
+      } else {
 				throw new Exception("Unknown GenoPub request " + req.getPathInfo());
 			}
 
@@ -1810,22 +1817,41 @@ public class GenoPubServlet extends HttpServlet {
 			annotation.setIdExperimentPlatform(Util.getIntegerParameter(request, "idExperimentPlatform"));
 			annotation.setIdExperimentMethod(Util.getIntegerParameter(request, "idExperimentMethod"));
 			annotation.setCodeVisibility(request.getParameter("codeVisibility"));
+			if (annotation.getCodeVisibility() != null && annotation.getCodeVisibility().equals(Visibility.INSTITUTE)) {
+			  annotation.setIdInstitute(Util.getIntegerParameter(request, "idInstitute"));
+			} else {
+			  annotation.setIdInstitute(null);
+			}
 			annotation.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));
 			annotation.setIdUser(Util.getIntegerParameter(request, "idUser"));
 
-			// Remove annotation files
-			StringReader reader = new StringReader(request.getParameter("filesToRemoveXML"));
+	    // Set collaborators
+			StringReader reader = new StringReader(request.getParameter("collaboratorsXML"));
 			SAXReader sax = new SAXReader();
-			Document filesDoc = sax.read(reader);
-			for(Iterator<?> i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
-				Element fileNode = (Element)i.next();
-				File file = new File(fileNode.attributeValue("url"));
-				if (!file.delete()) {
-					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable remove annotation file " + file.getName() + " for annotation " + annotation.getName());
-				}
-			}            
+      Document collaboratorsDoc = sax.read(reader);
+      TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
+      for(Iterator<?> i = collaboratorsDoc.getRootElement().elementIterator(); i.hasNext();) {
+        Element userNode = (Element)i.next();
+        Integer idUser = Integer.parseInt(userNode.attributeValue("idUser"));
+        User user = User.class.cast(sess.load(User.class, idUser));
+        collaborators.add(user);
+      }
+      annotation.setCollaborators(collaborators);
+      
+      sess.flush();
 
-			sess.save(annotation);
+      // Remove annotation files
+      reader = new StringReader(request.getParameter("filesToRemoveXML"));
+      sax = new SAXReader();
+      Document filesDoc = sax.read(reader);
+      for(Iterator<?> i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
+        Element fileNode = (Element)i.next();
+        File file = new File(fileNode.attributeValue("url"));
+        if (!file.delete()) {
+          Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable remove annotation file " + file.getName() + " for annotation " + annotation.getName());
+        }
+      }       
+          
 
 			tx.commit();
 
@@ -2425,10 +2451,10 @@ public class GenoPubServlet extends HttpServlet {
 			String groupEmail = dh.getUserGroupEmail(annotation.getIdUserGroup());
 			row.addElement("TD").addCDATA(groupEmail != null ? groupEmail : "&nbsp;");
 
-			row   = table.addElement("TR");			
-			row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
-			String groupInstitute = dh.getUserGroupInstitute(annotation.getIdUserGroup());
-			row.addElement("TD").addCDATA(groupInstitute != null ? groupInstitute : "&nbsp;");
+			//row   = table.addElement("TR");			
+			//row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
+			//String groupInstitute = dh.getUserGroupInstitute(annotation.getIdUserGroup());
+			//row.addElement("TD").addCDATA(groupInstitute != null ? groupInstitute : "&nbsp;");
 
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Visibility").addAttribute("CLASS", "label");
@@ -2602,16 +2628,17 @@ public class GenoPubServlet extends HttpServlet {
 
 			}
 
-      // Make sure that name doesn't have forward slashes (/) or &.
-      if (annotationName.contains("/") || annotationName.contains("&")) {
-        throw new InvalidNameException("The annotation name cannnot contain characters / or &.");
-      }
 
 			if (idAnnotation != null) {				
 				annotation = (Annotation)sess.get(Annotation.class, idAnnotation);
 			} else {
 				// If idAnnotation wasn't sent in as parameter, we are adding
 				// annotation as part of the upload
+
+			  // Make sure that name doesn't have forward slashes (/) or &.
+	      if (annotationName.contains("/") || annotationName.contains("&")) {
+	        throw new InvalidNameException("The annotation name cannnot contain characters / or &.");
+	      }
 				annotation = createNewAnnotation(sess, annotationName, codeVisibility, idGenomeVersion, idAnnotationGrouping.intValue() == -99 ? null : idAnnotationGrouping, idUserGroup.intValue() == -99 ? null : idUserGroup);
 				sess.flush();				
 			}
@@ -2682,7 +2709,7 @@ public class GenoPubServlet extends HttpServlet {
 								//check size of text files
 								if (Util.tooManyLines(file)){
 									if (!file.delete()) {
-										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + " during bulk upload.");
+										Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + ".");
 									}
 									throw new FileTooBigException("Aborting upload, text formatted annotation file '" + annotation.getName() + " exceeds the maximum allowed size ("+
 											Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES+" lines). Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form (xxx.bar).");
@@ -2690,8 +2717,13 @@ public class GenoPubServlet extends HttpServlet {
 								// bam file? check if it is sorted and can be read
 								if (fileName.toUpperCase().endsWith(".BAM")) {
 									//TODO: Need Tony's help to get this to build and recognize the sam.jar and picard.jar 's
-									//String error = checkBamFile(file);
-									//if (error != null ) throw new MalformedBamFileException(error);
+									String error = checkBamFile(file);
+									if (error != null ) {
+									  if (!file.delete()) {
+	                    Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable to delete file " + file.getName() + ".");
+	                  }
+									  throw new MalformedBamFileException(error);
+									}
 								}
 							}
 
@@ -2764,7 +2796,7 @@ public class GenoPubServlet extends HttpServlet {
 	/**Does some minimal error checking on a bam alignment file.
 	 * @return null if no problems, otherwise an error.*/
 	//TODO: need to get Tony's help here, won't build with ant
-	/*public static String checkBamFile(File bamFile) {
+	public static String checkBamFile(File bamFile) {
 		String message = null;
 		SAMFileReader reader = null;
 		try {
@@ -2784,7 +2816,7 @@ public class GenoPubServlet extends HttpServlet {
 			if (reader != null) reader.close();
 		}
 		return message;
-	}*/
+	}
 
 	/**Reads in a tab delimited file (name, fullPathFileName, summary, description) describing new Annotations to be created using a sourceAnnotation as a template.
 	 * @author davidnix*/
@@ -3221,6 +3253,8 @@ public class GenoPubServlet extends HttpServlet {
 			Element collabsNode = null;
 			Element managersNode = null;
 			Element userNode = null;
+      Element institutesNode = null;
+      Element instituteNode = null;
 			HashMap<Integer, Element> groupNodeMap = new HashMap<Integer, Element>();
 
 			for (Iterator<?> i = rows.iterator(); i.hasNext();) {
@@ -3239,7 +3273,6 @@ public class GenoPubServlet extends HttpServlet {
 					groupNode.addAttribute("name", group.getName());					
 					groupNode.addAttribute("contact", group.getContact() != null ? group.getContact() : "");					
 					groupNode.addAttribute("email", group.getEmail() != null ? group.getEmail() : "");					
-					groupNode.addAttribute("institute", group.getInstitute() != null ? group.getInstitute() : "");					
 					groupNode.addAttribute("idUserGroup", group.getIdUserGroup().toString());
 					groupNode.addAttribute("canWrite", this.genoPubSecurity.canWrite(group) ? "Y" : "N");
 					groupNodeMap.put(group.getIdUserGroup(), groupNode);					
@@ -3326,6 +3359,39 @@ public class GenoPubServlet extends HttpServlet {
 				userNode.addAttribute("idUser", user.getIdUser().toString());
 				userNode.addAttribute("type", "Manager");					
 			}
+			
+
+      // Get institutes
+      query = new StringBuffer();
+      query.append("SELECT      gr, ");
+      query.append("            inst   ");
+      query.append("FROM        UserGroup as gr   ");
+      query.append("JOIN   gr.institutes as inst ");
+      query.append("ORDER BY    inst.name ");
+
+      rows = sess.createQuery(query.toString()).list();
+      for (Iterator<?> i = rows.iterator(); i.hasNext();) {
+        Object[] row = Object[].class.cast(i.next());
+
+        UserGroup group = (UserGroup)row[0];
+        Institute institute = (Institute)row[1];
+        groupNode = groupNodeMap.get(group.getIdUserGroup());
+
+        // Only show groups this user managers
+        if (!this.genoPubSecurity.isManager(group)) {
+          continue;
+        }
+
+        institutesNode = groupNode.element("institutes");       
+        if (institutesNode == null) {
+          institutesNode = groupNode.addElement("institutes");
+        }
+
+        instituteNode = institutesNode.addElement("Institute");
+        instituteNode.addAttribute("label", institute.getName());
+        instituteNode.addAttribute("name",  institute.getName());
+        instituteNode.addAttribute("idInstitute", institute.getIdInstitute().toString());
+      }
 
 			// Get All Users
 			query = new StringBuffer();
@@ -3736,7 +3802,6 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-
 	private void handleGroupAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3873,7 +3938,7 @@ public class GenoPubServlet extends HttpServlet {
 			group.setName(request.getParameter("name"));
 			group.setContact(request.getParameter("contact"));
 			group.setEmail(request.getParameter("email"));
-			group.setInstitute(request.getParameter("institute"));
+			
 
 
 			// Add members
@@ -3914,6 +3979,20 @@ public class GenoPubServlet extends HttpServlet {
 				managers.add(mgr);
 			}    
 			group.setManagers(managers);
+			
+  		// Add institutes
+      reader = new StringReader(request.getParameter("institutesXML"));
+      sax = new SAXReader();
+      Document institutesDoc = sax.read(reader);
+      TreeSet<Institute> institutes = new TreeSet<Institute>(new InstituteComparator());
+      for(Iterator<?> i = institutesDoc.getRootElement().elementIterator(); i.hasNext();) {
+        Element instituteNode = (Element)i.next();
+        Integer idInstitute = new Integer(instituteNode.attributeValue("idInstitute"));
+        Institute institute = Institute.class.cast(sess.get(Institute.class, idInstitute));
+        institutes.add(institute);
+      }    
+      group.setInstitutes(institutes);
+
 
 
 			sess.flush();
@@ -4168,6 +4247,124 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		}
 
+	}
+
+	private void handleInstitutesRequest(HttpServletRequest request, HttpServletResponse res) {
+		Session sess = null;
+
+		Document doc = DocumentHelper.createDocument();
+		Element root = doc.addElement("Institutes");
+
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+
+			// Get institutes
+			StringBuffer query = new StringBuffer();
+			query.append("SELECT      i ");
+			query.append("FROM        Institute as i   ");
+			query.append("ORDER BY    i.name ");
+
+			List<?> rows = sess.createQuery(query.toString()).list();
+
+			for (Iterator<?> i = rows.iterator(); i.hasNext();) {
+				Institute in = Institute.class.cast(i.next());
+
+				Element node = root.addElement("Institute");
+				node.addAttribute("idInstitute", in.getIdInstitute().toString());
+				node.addAttribute("label", in.getName());
+				node.addAttribute("name", in.getName());          
+				node.addAttribute("description", in.getDescription() != null ? in.getDescription() : "");          
+				node.addAttribute("isActive", in.getIsActive() != null ? in.getIsActive() : "Y");          
+				node.addAttribute("canWrite", this.genoPubSecurity.canWrite(in) ? "Y" : "N");
+			}  
+
+			XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
+			writer.write(doc);
+
+		} catch (Exception e) {
+		  
+			e.printStackTrace();
+			this.reportError(res, e.toString());
+
+		} finally {
+
+			if (sess != null) {
+				sess.close();
+			}
+		}
+
+	}
+   
+	private void handleInstitutesSaveRequest(HttpServletRequest request, HttpServletResponse res) {
+    Session sess = null;
+    Transaction tx = null;
+
+
+    
+    try {
+        
+        sess = HibernateUtil.getSessionFactory().openSession();
+        tx = sess.beginTransaction();
+  
+
+        StringReader reader = new StringReader(request.getParameter("institutesXML"));
+        SAXReader sax = new SAXReader();
+        Document institutesDoc = sax.read(reader);
+
+        // Save institutions
+        for(Iterator<?> i = institutesDoc.getRootElement().elementIterator(); i.hasNext();) {
+          Element node = (Element)i.next();
+
+          String idInstitute = node.attributeValue("idInstitute");
+          Institute institute = null;
+          if (idInstitute.startsWith("Institute")) {
+            institute = new Institute();
+          } else {
+            institute = Institute.class.cast(sess.load(Institute.class, Integer.parseInt(idInstitute))); 
+          }
+          
+          if (!this.genoPubSecurity.canWrite(institute)) {
+            throw new InsufficientPermissionException("Insufficient permissions to write institute.");
+          }
+
+          institute.setName(node.attributeValue("name"));
+          institute.setDescription(node.attributeValue("description"));
+          institute.setIsActive(node.attributeValue("isActive"));
+          
+          sess.save(institute);
+        }
+        
+        // Delete institutions
+        reader = new StringReader(request.getParameter("institutesToRemoveXML"));
+        sax = new SAXReader();
+        Document institutesToRemoveDoc = sax.read(reader);
+        for(Iterator<?> i = institutesToRemoveDoc.getRootElement().elementIterator(); i.hasNext();) {
+          Element node = (Element)i.next();
+
+          String idInstitute = node.attributeValue("idInstitute");
+          Institute institute = institute = Institute.class.cast(sess.load(Institute.class, Integer.parseInt(idInstitute))); 
+          sess.delete(institute);
+        }
+        
+        sess.flush();
+        tx.commit();
+        
+        this.reportSuccess(res);
+        
+    } catch (Exception e) {
+        if (tx != null) {
+          tx.rollback();              
+        }
+        
+        e.printStackTrace();
+        this.reportError(res, e.toString());
+
+    } finally {
+
+        if (sess != null) {
+            sess.close();
+        }
+    }
 	}
 
 	private void handleVerifyReloadRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
@@ -4431,6 +4628,7 @@ public class GenoPubServlet extends HttpServlet {
 		try {
 			if (statusCode != null) {
 				response.setStatus(statusCode.intValue());
+				response.addHeader("message", message);
 			}
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("Error");

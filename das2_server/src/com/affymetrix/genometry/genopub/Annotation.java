@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,10 +20,12 @@ import com.affymetrix.genometry.genopub.AnnotationGrouping;
 import com.affymetrix.genometry.genopub.DictionaryHelper;
 import com.affymetrix.genometry.genopub.GenoPubSecurity;
 import com.affymetrix.genometry.genopub.GenomeVersion;
+import com.affymetrix.genometry.genopub.Institute;
 import com.affymetrix.genometry.genopub.Owned;
+import com.affymetrix.genometry.genopub.User;
+import com.affymetrix.genometry.genopub.UserGroup;
 import com.affymetrix.genometry.genopub.Util;
 import com.affymetrix.genometry.genopub.Visibility;
-import com.affymetrix.genometry.servlets.GenometryDas2Servlet;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 
@@ -60,9 +62,12 @@ public class Annotation implements Serializable, Owned {
 	private Set                 annotationGroupings;
 	private Integer             idUser;
 	private Integer             idUserGroup;
+	private UserGroup           userGroup;
+  private Integer             idInstitute;
 	private String              createdBy;
 	private java.sql.Date       createDate;
 	private String              isLoaded;
+	private Set                 collaborators;
 
 
 	private Map<String, Object> props;  // tag/value representation of annotation properties
@@ -187,6 +192,7 @@ public class Annotation implements Serializable, Owned {
 		root.addAttribute("idExperimentPlatform", this.getIdExperimentPlatform() != null ? this.getIdExperimentPlatform().toString() : "");
 		root.addAttribute("idUser", this.getIdUser() != null ? this.getIdUser().toString() : "");
 		root.addAttribute("idUserGroup", this.getIdUserGroup() != null ? this.getIdUserGroup().toString() : "");
+    root.addAttribute("idInstitute", this.getIdInstitute() != null ? this.getIdInstitute().toString() : "");
 		root.addAttribute("owner", dh.getUserFullName(this.getIdUser()));
 		root.addAttribute("genomeVersion", genomeVersion != null ? genomeVersion.getName() : "");
 		root.addAttribute("organism", dh.getOrganismName(genomeVersion.getIdOrganism()));
@@ -216,6 +222,77 @@ public class Annotation implements Serializable, Owned {
 				appendFileXML(filePath, fileNode, null);	    	
 			}			
 		}
+		
+		// Show list of collaborators.  Only show for
+		// annotation detail (when data_root is provided)
+    if (data_root != null) {
+      if (getCollaborators() != null) {
+        Element collaboratorsNode = root.addElement("Collaborators");
+        for(Iterator i = getCollaborators().iterator(); i.hasNext();) {
+          User u = (User)i.next();
+          Element userNode = collaboratorsNode.addElement("User");
+          userNode.addAttribute("idUser", u.getIdUser().toString());  
+          userNode.addAttribute("name", u.getName());
+          userNode.addAttribute("userDisplayName", u.getUserDisplayName());
+        }
+      }
+    }
+		
+		// Show list of possible collaborators.  Only show
+    // for annotation detail (when data_root is provided).
+    if (data_root != null) {
+      if (getUserGroup() != null) {
+        TreeMap<String, User> possibleCollaboratorMap = new TreeMap<String, User>();
+
+        Element possibleCollaboratorsNode = root.addElement("PossibleCollaborators");
+
+        for(Iterator i = getUserGroup().getMembers().iterator(); i.hasNext();) {
+          User user = (User)i.next();
+          possibleCollaboratorMap.put(user.getName(), user);
+        }
+        for(Iterator i = getUserGroup().getCollaborators().iterator(); i.hasNext();) {
+          User user = (User)i.next();
+          possibleCollaboratorMap.put(user.getName(), user);
+        }
+        for(Iterator i = getUserGroup().getManagers().iterator(); i.hasNext();) {
+          User user = (User)i.next();
+          possibleCollaboratorMap.put(user.getName(), user);
+        }
+
+        for(Iterator i = possibleCollaboratorMap.keySet().iterator(); i.hasNext();) {
+          String name = (String)i.next();
+          User user = possibleCollaboratorMap.get(name);
+          Element userNode = possibleCollaboratorsNode.addElement("User");
+          userNode.addAttribute("idUser", user.getIdUser().toString());  
+          userNode.addAttribute("name", user.getName());
+          userNode.addAttribute("userDisplayName", user.getUserDisplayName());
+        }
+
+      }
+
+    }
+		
+		// Show list of possible institutes.  Only show for
+    // annotation detail (when data_root is provided).
+    if (data_root != null) {
+      if (getUserGroup() != null) {
+        Element institutesNode = root.addElement("PossibleInstitutes");
+
+        Element emptyNode = institutesNode.addElement("Institute");
+        emptyNode.addAttribute("idInstitute", "");  
+        emptyNode.addAttribute("name", "");
+
+        for(Iterator i = userGroup.getInstitutes().iterator(); i.hasNext();) {
+          Institute institute = (Institute)i.next();
+          Element userNode = institutesNode.addElement("Institute");
+          userNode.addAttribute("idInstitute", institute.getIdInstitute().toString());  
+          userNode.addAttribute("name", institute.getName());
+        }
+
+      }
+      
+    }
+
 
 		root.addAttribute("canRead", genoPubSecurity.canRead(this) ? "Y" : "N");
 		root.addAttribute("canWrite", genoPubSecurity.canWrite(this) ? "Y" : "N");
@@ -439,7 +516,7 @@ System.out.println("\nNix GetQualifiedFileName null files "+filePath + " "+this.
 		props.put(PROP_GROUP, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupName(this.getIdUserGroup()) : "");
 		props.put(PROP_GROUP_CONTACT, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupContact(this.getIdUserGroup()) : "");
 		props.put(PROP_GROUP_EMAIL, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupEmail(this.getIdUserGroup()) : "");
-		props.put(PROP_GROUP_INSTITUTE, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupInstitute(this.getIdUserGroup()) : "");
+		//props.put(PROP_GROUP_INSTITUTE, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupInstitute(this.getIdUserGroup()) : "");
 		props.put(PROP_ANALYSIS_TYPE, dictionaryHelper.getAnalysisType(this.getIdAnalysisType()));
 		props.put(PROP_EXPERIMENT_METHOD, dictionaryHelper.getExperimentMethod(this.getIdExperimentMethod()));
 		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));
@@ -487,6 +564,24 @@ System.out.println("\nNix GetQualifiedFileName null files "+filePath + " "+this.
 	}
 	public void setIsLoaded(String isLoaded) {
 		this.isLoaded = isLoaded;
+	}	 
+	public UserGroup getUserGroup() {
+	  return this.userGroup;
 	}
+	public void setUserGroup(UserGroup userGroup) {
+	  this.userGroup = userGroup;
+	}
+  public Set getCollaborators() {
+    return collaborators;
+  }
+  public void setCollaborators(Set collaborators) {
+    this.collaborators = collaborators;
+  }
+  public Integer getIdInstitute() {
+    return idInstitute;
+  }
+  public void setIdInstitute(Integer idInstitute) {
+    this.idInstitute = idInstitute;
+  }
 
 }

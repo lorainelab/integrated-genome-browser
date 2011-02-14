@@ -25,8 +25,9 @@ public class AnnotationQuery {
 	private Integer            idOrganism;
 	private Integer            idGenomeVersion;
 	private String             isVisibilityPublic = "Y";
+  private String             isVisibilityOwner = "Y";
 	private String             isVisibilityMembers = "Y";
-	private String             isVisibilityMembersAndCollabs = "Y";
+	private String             isVisibilityInstitute = "Y";
 	private String             isServerRefreshMode = "N";
 
     
@@ -80,8 +81,9 @@ public class AnnotationQuery {
 		idUserGroup        = Util.getIntegerParameter(req, "idUserGroup");
 		idOrganism         = Util.getIntegerParameter(req, "idOrganism");
 		idGenomeVersion    = Util.getIntegerParameter(req, "idGenomeVersion");
+    this.isVisibilityOwner = Util.getFlagParameter(req, "isVisibilityOwner");
 		this.isVisibilityMembers = Util.getFlagParameter(req, "isVisibilityMembers");
-		this.isVisibilityMembersAndCollabs = Util.getFlagParameter(req, "isVisibilityMembersAndCollabs");
+		this.isVisibilityInstitute = Util.getFlagParameter(req, "isVisibilityInstitute");
 		this.isVisibilityPublic = Util.getFlagParameter(req, "isVisibilityPublic");
 		
 		if (scopeLevel == null || scopeLevel.equals("")) {
@@ -163,10 +165,6 @@ public class AnnotationQuery {
 
 		addCriteria(ANNOTATION_GROUPING_LEVEL);
 		
-		if (genoPubSecurity != null) {
-			genoPubSecurity.appendAnnotationGroupingHQLSecurity(scopeLevel, queryBuf, "ag", addWhere);			
-		}
-		
 		queryBuf.append(" ORDER BY org.name asc, ver.buildDate desc, ag.name asc ");
 
 		return queryBuf;
@@ -188,6 +186,7 @@ public class AnnotationQuery {
 		queryBuf.append(" JOIN       ver.annotationGroupings as ag ");
 		queryBuf.append(" LEFT JOIN  ag.parentAnnotationGrouping as pag ");
 		queryBuf.append(" LEFT JOIN  ag.annotations as a ");
+		queryBuf.append(" LEFT JOIN  a.collaborators as collab ");
 		
 
 		addWhere = true;
@@ -195,7 +194,7 @@ public class AnnotationQuery {
 		addCriteria(ANNOTATION_LEVEL);
 		
 		if (genoPubSecurity != null) {
-			addWhere = genoPubSecurity.appendAnnotationHQLSecurity(scopeLevel, queryBuf, "a", "ag", addWhere);			
+			addWhere = genoPubSecurity.appendAnnotationHQLSecurity(scopeLevel, queryBuf, "a", "ag", "collab", addWhere);			
 		}
 		
 		
@@ -798,9 +797,9 @@ public class AnnotationQuery {
     
     
     private boolean hasVisibilityCriteria() {
-    	if (this.isVisibilityMembers.equals("Y") && this.isVisibilityMembersAndCollabs.equals("Y") && this.isVisibilityPublic.equals("Y")) {
+    	if (this.isVisibilityOwner.equals("Y") && this.isVisibilityMembers.equals("Y") && this.isVisibilityInstitute.equals("Y") && this.isVisibilityPublic.equals("Y")) {
     		return false;
-    	} else if (this.isVisibilityMembers.equals("N") && this.isVisibilityMembersAndCollabs.equals("N") && this.isVisibilityPublic.equals("N")) {
+    	} else if (this.isVisibilityOwner.equals("N") && this.isVisibilityMembers.equals("N") && this.isVisibilityInstitute.equals("N") && this.isVisibilityPublic.equals("N")) {
     		return false;
     	} else {
     		return true;
@@ -841,15 +840,22 @@ public class AnnotationQuery {
 				this.AND();
 				int count = 0;
 				queryBuf.append(" a.codeVisibility in (");
-				if (this.isVisibilityMembers.equals("Y")) {
-					queryBuf.append("'" + Visibility.MEMBERS + "'");
+				if (this.isVisibilityOwner.equals("Y")) {
+					queryBuf.append("'" + Visibility.OWNER + "'");
 					count++;
 				}
-				if (this.isVisibilityMembersAndCollabs.equals("Y")) {
+				if (this.isVisibilityMembers.equals("Y")) {
+          if (count > 0) {
+            queryBuf.append(", ");
+          }
+          queryBuf.append("'" + Visibility.MEMBERS + "'");
+          count++;
+        }
+				if (this.isVisibilityInstitute.equals("Y")) {
 					if (count > 0) {
 						queryBuf.append(", ");
 					}
-					queryBuf.append("'" + Visibility.MEMBERS_AND_COLLABORATORS + "'");
+					queryBuf.append("'" + Visibility.INSTITUTE + "'");
 					count++;
 				}
 				if (this.isVisibilityPublic.equals("Y")) {
@@ -898,14 +904,19 @@ public class AnnotationQuery {
     	this.isVisibilityMembers = isVisibilityMembers;
     }
 
-	public String getIsVisibilityMembersAndCollabs() {
-    	return isVisibilityMembersAndCollabs;
+	public String getIsVisibilityInstitute() {
+    	return isVisibilityInstitute;
     }
 
-	public void setIsVisibilityMembersAndCollabs(
-            String isVisibilityMembersAndCollabs) {
-    	this.isVisibilityMembersAndCollabs = isVisibilityMembersAndCollabs;
-    }
+	public void setIsVisibilityInstitute(String isVisibilityInstitute) {
+    	this.isVisibilityInstitute = isVisibilityInstitute;
+   }
 
-  
+	public String getIsVisibilityOwner() {
+    return isVisibilityOwner;
+  }
+
+	public void setIsVisibilityOwner(String isVisibilityOwner) {
+    this.isVisibilityOwner = isVisibilityOwner;
+  }  
 }

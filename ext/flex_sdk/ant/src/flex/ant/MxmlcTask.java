@@ -82,16 +82,18 @@ public final class MxmlcTask extends FlexTask implements DynamicConfigurator
      */
     public MxmlcTask()
     {
-        super("mxmlc", "flex2.tools.Compiler", "mxmlc.jar", new ConfigVariable[] {
+        super("mxmlc", "flex2.tools.Mxmlc", "mxmlc.jar", new ConfigVariable[] {
             //Basic Booleans
             new ConfigBoolean(new OptionSpec("benchmark")),
             new ConfigBoolean(new OptionSpec("compiler", "accessible")),
             new ConfigBoolean(new OptionSpec("compiler", "debug")),
             new ConfigBoolean(new OptionSpec("compiler", "incremental")),
             new ConfigBoolean(new OptionSpec("compiler", "optimize")),
+            new ConfigBoolean(new OptionSpec("compiler", "report-invalid-styles-as-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "show-actionscript-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "show-binding-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "show-deprecation-warnings")),
+            new ConfigBoolean(new OptionSpec("compiler", "show-invalid-css-property-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "show-unused-type-selector-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "strict")),
             new ConfigBoolean(new OptionSpec("compiler", "use-resource-bundle-metadata")),
@@ -102,7 +104,9 @@ public final class MxmlcTask extends FlexTask implements DynamicConfigurator
             new ConfigBoolean(new OptionSpec("compiler", "as3")),
             new ConfigBoolean(new OptionSpec("compiler", "doc")),
             new ConfigBoolean(new OptionSpec("compiler", "es")),
+            new ConfigBoolean(new OptionSpec("compiler", "generate-abstract-syntax-tree")),
             new ConfigBoolean(new OptionSpec("compiler", "headless-server")),
+            new ConfigBoolean(new OptionSpec("compiler", "isolate-styles")),
             new ConfigBoolean(new OptionSpec("compiler", "keep-all-type-selectors")),
             new ConfigBoolean(new OptionSpec("compiler", "keep-generated-actionscript", "keep")),
             new ConfigBoolean(new OptionSpec("compiler", "verbose-stacktraces")),
@@ -142,7 +146,9 @@ public final class MxmlcTask extends FlexTask implements DynamicConfigurator
             new ConfigBoolean(new OptionSpec("compiler", "warn-slow-text-field-addition")),
             new ConfigBoolean(new OptionSpec("compiler", "warn-unlikely-function-value")),
             new ConfigBoolean(new OptionSpec("compiler", "warn-xml-class-has-changed")),
+            new ConfigBoolean(new OptionSpec("compiler", "generate-abstract-syntax-tree")),
             new ConfigBoolean(new OptionSpec(null, "static-link-runtime-shared-libraries", "static-rsls")),
+            new ConfigBoolean(new OptionSpec(null, "verify-digests")),
             //String Variables
             new ConfigString(new OptionSpec("compiler", "actionscript-file-encoding")),
             new ConfigString(new OptionSpec("compiler", "mxml.compatibility-version", "compatibility-version")),
@@ -158,6 +164,7 @@ public final class MxmlcTask extends FlexTask implements DynamicConfigurator
             new ConfigString(new OptionSpec("raw-metadata")),
             new ConfigString(new OptionSpec("resource-bundle-list")),
             new ConfigString(new OptionSpec("target-player")),
+            new ConfigString(new OptionSpec("tools-locale")),
             new ConfigAppendString(new OptionSpec("configname")),
             //Int Variables
             new ConfigInt(new OptionSpec("default-background-color")),

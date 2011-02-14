@@ -68,7 +68,7 @@ public final class CompcTask extends FlexTask implements DynamicConfigurator
      *
      *=======================================================================*/
 
-    private final ArrayList nestedFileSets;
+    private final ArrayList<OptionSource> nestedFileSets;
 
     private final ConfigString outString; 
     private final RepeatableConfigString icStrings;
@@ -90,9 +90,11 @@ public final class CompcTask extends FlexTask implements DynamicConfigurator
             new ConfigBoolean(new OptionSpec("compiler", "debug")),
             new ConfigBoolean(new OptionSpec("compiler", "incremental")), 
             new ConfigBoolean(new OptionSpec("compiler", "optimize")),
+            new ConfigBoolean(new OptionSpec("compiler", "report-invalid-styles-as-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "show-actionscript-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "show-binding-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "show-deprecation-warnings")),
+            new ConfigBoolean(new OptionSpec("compiler", "show-invalid-css-property-warnings")),
             new ConfigBoolean(new OptionSpec("compiler", "strict")),
             new ConfigBoolean(new OptionSpec("compiler", "use-resource-bundle-metadata")),
             new ConfigBoolean(new OptionSpec("directory")),
@@ -103,7 +105,9 @@ public final class CompcTask extends FlexTask implements DynamicConfigurator
             new ConfigBoolean(new OptionSpec("compiler", "as3")),
             new ConfigBoolean(new OptionSpec("compiler", "doc")),
             new ConfigBoolean(new OptionSpec("compiler", "es")),
+            new ConfigBoolean(new OptionSpec("compiler", "generate-abstract-syntax-tree")),
             new ConfigBoolean(new OptionSpec("compiler", "headless-server")),
+            new ConfigBoolean(new OptionSpec("compiler", "isolate-styles")),
             new ConfigBoolean(new OptionSpec("compiler", "keep-all-type-selectors")),
             new ConfigBoolean(new OptionSpec("compiler", "keep-generated-actionscript", "keep")),
             new ConfigBoolean(new OptionSpec("compiler", "verbose-stacktraces")),
@@ -143,6 +147,7 @@ public final class CompcTask extends FlexTask implements DynamicConfigurator
             new ConfigBoolean(new OptionSpec("compiler", "warn-slow-text-field-addition")),
             new ConfigBoolean(new OptionSpec("compiler", "warn-unlikely-function-value")),
             new ConfigBoolean(new OptionSpec("compiler", "warn-xml-class-has-changed")),
+            new ConfigBoolean(new OptionSpec("compiler", "generate-abstract-syntax-tree")),
             new ConfigBoolean(new OptionSpec("include-lookup-only")),
             new ConfigBoolean(new OptionSpec("compute-digest")),
             new ConfigBoolean(new OptionSpec(null, "static-link-runtime-shared-libraries", "static-rsls")),
@@ -159,13 +164,17 @@ public final class CompcTask extends FlexTask implements DynamicConfigurator
             new ConfigString(new OptionSpec("raw-metadata")),
             new ConfigString(new OptionSpec("resource-bundle-list")),
             new ConfigString(new OptionSpec("target-player")),
+            new ConfigString(new OptionSpec("compiler", "minimum-supported-version", "msv")),
+            new ConfigString(new OptionSpec("compiler", "enable-swc-version-filtering", "esvf")),
+            new ConfigString(new OptionSpec("tools-locale")),
+
             //Int Variables
             new ConfigInt(new OptionSpec("default-background-color")),
             new ConfigInt(new OptionSpec("default-frame-rate"))
         });
 
-        nestedAttribs = new ArrayList();
-        nestedFileSets = new ArrayList();
+        nestedAttribs = new ArrayList<OptionSource>();
+        nestedFileSets = new ArrayList<OptionSource>();
 
         outString = new ConfigString(new OptionSpec(null, "output", "o"));
         icStrings = new RepeatableConfigString(new OptionSpec(null, "include-classes", "ic"));
@@ -262,7 +271,7 @@ public final class CompcTask extends FlexTask implements DynamicConfigurator
         }
         else if (spSpec.matches(name)) {
             return createElem("path-element", spSpec);
-        } 
+        }        
         else if (DefaultScriptLimits.spec.matches(name)) {
             if (dLimits == null)
                 return dLimits = new DefaultScriptLimits();
@@ -344,15 +353,15 @@ public final class CompcTask extends FlexTask implements DynamicConfigurator
 
         icStrings.addToCommandline(cmdl);
 
-        Iterator it = nestedAttribs.iterator();
+        Iterator<OptionSource> it = nestedAttribs.iterator();
 
         while (it.hasNext())
-            ((OptionSource) it.next()).addToCommandline(cmdl);
+            it.next().addToCommandline(cmdl);
 
         it = nestedFileSets.iterator();
 
         while (it.hasNext())
-            ((OptionSource) it.next()).addToCommandline(cmdl);
+            it.next().addToCommandline(cmdl);
 
         if (outString.isSet())
             outString.addToCommandline(cmdl);

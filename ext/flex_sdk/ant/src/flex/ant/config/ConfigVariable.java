@@ -11,6 +11,7 @@
 
 package flex.ant.config;
 
+
 /**
  * Provides a base class for Configuration Variables that can be set with a
  * String value.

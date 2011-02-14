@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas 
-	xmlns:mx="http://www.adobe.com/2006/mxml" 
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
 	width="100%" height="100%"
 	xmlns:util="util.*"  
-	creationComplete="init();">
+	show="init();">
 
-
+<fx:Declarations>
+	
 	<mx:HTTPService             
     id="getUsersAndGroups" 
     url="genopub/usersAndGroups"
@@ -73,10 +75,17 @@
     </mx:request>
    </mx:HTTPService> 
     
+	
+	<mx:XMLListCollection id="members" source="{groupGrid.selectedItem.members.User}"/>
+	<mx:XMLListCollection id="collaborators" source="{groupGrid.selectedItem.collaborators.User}"/>
+	<mx:XMLListCollection id="managers" source="{groupGrid.selectedItem.managers.User}"/>
+	<mx:XMLListCollection id="groupInstitutes" source="{groupGrid.selectedItem.institutes.Institute}"/>
+
     
-     
+</fx:Declarations>
     
-	<mx:Script>
+    
+	<fx:Script>
         <![CDATA[
         import util.UIEvent;
         import mx.events.CollectionEvent;
@@ -117,6 +126,9 @@
         }
         
         public function refreshUsersAndGroups():void {
+			this.instituteComboCheck.initialValues = null;
+			this.instituteComboCheck.checkedItems = null;
+			this.instituteComboCheck.data = "";
         	getUsersAndGroups.send();
         }
                     
@@ -150,9 +162,16 @@
 				if (itemToSelect.name() == "UserGroup") {
 					item = getUsersAndGroups.lastResult.UserGroup.(@idUserGroup == itemToSelect.@idUserGroup);
 					if (item != null) {
+						this.instituteComboCheck.initialValues = null;
+						this.instituteComboCheck.checkedItems = null;
+						this.instituteComboCheck.data = "";
+						
 						this.groupGrid.selectedItem = item[0];
+						
+						this.onGroupClick();
 						groupGrid.scrollToIndex(groupGrid.selectedIndex);
-			  			this.mainViewStack.selectedChild = this.groupView;  
+			  			this.mainViewStack.selectedChild = this.groupView;
+						
 
 						this.userGrid.selectedItem = null;
 					}
@@ -177,10 +196,11 @@
 		
 		private function onGroupClick():void {
 			this.itemToSelect = this.groupGrid.selectedItem;
+  			this.mainViewStack.selectedChild = this.groupView;
+			this.instituteComboCheck.initialValues = this.groupInstitutes;
 			if (this.dirtyGroup != null) {
 				this.dirtyGroup.resetDirty();
 			} 
-  			this.mainViewStack.selectedChild = this.groupView;
   			userGrid.selectedItem = null;  
   		}
 		
@@ -244,12 +264,15 @@
         	params.name              = groupName.text;
         	params.contact           = this.groupContact.text;
         	params.email             = this.groupEmail.text;
-        	params.institute         = this.groupInstitute.text;
+        	//params.institute         = this.groupInstitute.text;
         	
         	params.membersXML        = "<members>"       + this.groupMemberGrid.dataProvider.toXMLString()       + "</members>";
         	params.collaboratorsXML  = "<collaborators>" + this.groupCollaboratorGrid.dataProvider.toXMLString() + "</collaborators>";
         	params.managersXML       = "<managers>"      + this.groupManagerGrid.dataProvider.toXMLString()      + "</managers>";
-
+			params.institutesXML     = "<institutes>"    + 
+				(instituteComboCheck != null && instituteComboCheck.checkedItems != null ? XMLListCollection(this.instituteComboCheck.checkedItems).toXMLString() : "") + 
+				"</institutes>";
+			
         	updateUserGroup.send(params);
 		}
 		
@@ -365,16 +388,23 @@
 		
 
 
-        ]]>
-        
+
         
 
-    </mx:Script>
+		/**
+		 *
+		 * INSTITUTE
+		 *  
+		 */
+		private function showInstituteEditWindow():void {
+			var instituteEditWindow:InstituteEditWindow = InstituteEditWindow(PopUpManager.createPopUp(parentApplication.mainArea, InstituteEditWindow, true));
+			PopUpManager.centerPopUp(instituteEditWindow);
+		}	
+		  
+		]]>
 
-    
-    <mx:XMLListCollection id="members" source="{groupGrid.selectedItem.members.User}"/>
-    <mx:XMLListCollection id="collaborators" source="{groupGrid.selectedItem.collaborators.User}"/>
-    <mx:XMLListCollection id="managers" source="{groupGrid.selectedItem.managers.User}"/>
+    </fx:Script>
+
 
 	<mx:VBox width="100%" height="100%" 
 		paddingBottom="2" 
@@ -387,13 +417,13 @@
 				<mx:VBox width="100%" height="100%" verticalGap="2">
 			        <mx:HBox horizontalGap="2"  width="100%" horizontalAlign="left">	
 			            <mx:Label text="Groups" width="60" styleName="headerLabel" />	           
-			    		<mx:LinkButton   
+			    		<mx:LinkButton   excludeFrom="LabManagerState"
 			    			icon="@Embed(source='assets/group_new.png')" 
 			    			styleName="linkMenuButton"   
 			    			click="newGroup()" 
 			    			toolTip="Add group"   
 			    			id="addGroupButton" label="New group"/>
-			           	<mx:LinkButton   
+			           	<mx:LinkButton   excludeFrom="LabManagerState"
 			           		icon="@Embed(source='assets/group_remove.png')" 
 			           		disabledIcon="@Embed(source='assets/group_remove_disable.png')"
 			           		enabled="{groupGrid.selectedItem != null}"
@@ -420,11 +450,11 @@
 			    
 					<mx:HBox  horizontalGap="2"  width="100%" horizontalAlign="left" paddingTop="4" >	
 			            <mx:Label text="Users" width="60" styleName="headerLabel"/>	           
-			    		<mx:LinkButton   
+			    		<mx:LinkButton   excludeFrom="LabManagerState"
 			    			icon="@Embed(source='assets/vcard_new.png')" 
 			    			styleName="linkMenuButton"  
 			    			click="newUser()" toolTip="Add user"   id="addUserButton" label="New user"/>
-  					    <mx:LinkButton   
+  					    <mx:LinkButton   excludeFrom="LabManagerState"
   					    	icon="@Embed(source='assets/vcard_remove.png')" 
   							disabledIcon="@Embed(source='assets/vcard_remove_disable.png')"
 			           		enabled="{userGrid.selectedItem != null}"
@@ -460,13 +490,13 @@
 				  <mx:VBox styleName="panelBody" width="100%" height="100%" verticalGap="8">
 					<mx:HBox width="100%" horizontalGap="0" verticalAlign="middle">
 						<mx:Label text="First name:" width="140"/>
-						<mx:TextInput id="firstName" width="200" text="{userGrid.selectedItem.@firstName}" change="dirtyUser.setDirty()" maxChars="200"/>
+						<mx:TextInput id="firstName" width="200" text="{userGrid.selectedItem.@firstName}" change="dirtyUser.setDirty()" maxChars="200" editable.AdminState="true" editable.LabManagerState="false"/>
 						<mx:Label text="Middle:"/>
-						<mx:TextInput id="middleName"  width="50" text="{userGrid.selectedItem.@middleName}" change="dirtyUser.setDirty()" maxChars="100"/>
+						<mx:TextInput id="middleName"  width="50" text="{userGrid.selectedItem.@middleName}" change="dirtyUser.setDirty()" maxChars="100" editable.AdminState="true" editable.LabManagerState="false"/>
 					</mx:HBox>
 					<mx:HBox width="100%" horizontalGap="0" verticalAlign="middle">
 						<mx:Label text="Last name:" width="140"/>
-						<mx:TextInput id="lastName"  width="200" text="{userGrid.selectedItem.@lastName}" change="dirtyUser.setDirty()" maxChars="200"/>
+						<mx:TextInput id="lastName"  width="200" text="{userGrid.selectedItem.@lastName}" change="dirtyUser.setDirty()" maxChars="200" editable.AdminState="true" editable.LabManagerState="false"/>
 					</mx:HBox>
 					<mx:HBox width="100%" horizontalGap="0">
 						<mx:Label text="Email:" width="140"/>
@@ -479,34 +509,33 @@
 					
 					<mx:HBox width="100%"  horizontalGap="0" verticalAlign="middle">
 						<mx:Label text="User name:" width="140"/>
-						<mx:TextInput text="{userGrid.selectedItem.@userName}" id="userName" width="200" change="dirtyUser.setDirty()" maxChars="30"/>
+						<mx:TextInput text="{userGrid.selectedItem.@userName}" id="userName" width="200" change="dirtyUser.setDirty()" maxChars="30" editable.AdminState="true" editable.LabManagerState="false"/>
 					</mx:HBox>
-					<mx:HBox width="100%" id="hbox1" horizontalGap="0" verticalAlign="middle">
+					<mx:HBox width="100%" id="hbox1" horizontalGap="0" verticalAlign="middle" excludeFrom="LabManagerState" >
 						<mx:Label text="Password:" width="140"/>
 						<mx:TextInput displayAsPassword="true"  text="{userGrid.selectedItem.@passwordDisplay}" id="password"  width="200" change="dirtyUser.setDirty()" maxChars="30"/>
 					</mx:HBox>
-					<mx:HBox width="100%"  id="hbox2" verticalAlign="middle">
+					<mx:HBox width="100%"  id="hbox2" verticalAlign="middle" excludeFrom="LabManagerState">
 						<mx:Label text="Role:" width="140"/>
 						<mx:RadioButtonGroup id="userRoleRadioGroup"/>
 						<mx:RadioButton label="User" groupName="userRoleRadioGroup"  value="user" change="dirtyUser.setDirty()"  id="radioUserRole" click="dirtyUser.setDirty()"/>
 						<mx:RadioButton label="Admin" groupName="userRoleRadioGroup" value="admin"  change="dirtyUser.setDirty()"  id="radioAdminRole" click="dirtyUser.setDirty()"/>
 						<mx:RadioButton label="Guest" groupName="userRoleRadioGroup" value="guest"  change="dirtyUser.setDirty()"  id="radioGuestRole" click="dirtyUser.setDirty()"/>
 					</mx:HBox>
-					<mx:HBox horizontalGap="0" width="100%" id="hbox3">
+					<mx:HBox horizontalGap="0" width="100%" id="hbox3" excludeFrom="LabManagerState">
 						<mx:Label text="Member of Groups:" width="140"/>
 						<mx:Text width="100%"  text="{userGrid.selectedItem.@memberGroups}" id="text1"/>
 					</mx:HBox>
-					<mx:HBox horizontalGap="0" width="100%" id="hbox5">
+					<mx:HBox horizontalGap="0" width="100%" id="hbox5" excludeFrom="LabManagerState">
 						<mx:Label text="Collaborator in Groups:" width="140"/>
 						<mx:Text width="100%"  text="{userGrid.selectedItem.@collaboratorGroups}"/>
 					</mx:HBox>
-					<mx:HBox horizontalGap="0" width="100%" id="hbox4">
+					<mx:HBox horizontalGap="0" width="100%" id="hbox4" excludeFrom="LabManagerState">
 						<mx:Label text="Manager of Groups:" width="140"/>
 						<mx:Text width="100%"  text="{userGrid.selectedItem.@managerGroups}"/>
 					</mx:HBox>
 						
-				  	
-				  	
+
 				  </mx:VBox>
 				    
 					
@@ -525,7 +554,7 @@
 				    <mx:VBox styleName="panelBody" width="100%" height="100%" verticalGap="0">			
 						<mx:HBox width="100%"  paddingBottom="8" horizontalGap="0">
 							<mx:Label text="User Group name:"  width="140"/>
-							<mx:TextInput id="groupName" width="100%" text="{groupGrid.selectedItem.@name}" change="dirtyGroup.setDirty()" maxChars="200"/>
+							<mx:TextInput id="groupName" width="100%" text="{groupGrid.selectedItem.@name}" change="dirtyGroup.setDirty()" maxChars="200" editable.LabManagerState="false"/>
 						</mx:HBox>
 						<mx:HBox width="100%" horizontalGap="0" paddingBottom="8">
 							<mx:Label text="Contact name:" width="140"/>
@@ -536,11 +565,22 @@
 							<mx:Label text="Contact email:" width="140"/>
 							<mx:TextInput id="groupEmail"  width="100%" text="{groupGrid.selectedItem.@email}" change="dirtyGroup.setDirty()" maxChars="500"/>
 						</mx:HBox>
+
 						<mx:HBox width="100%" horizontalGap="0" paddingBottom="8">
-							<mx:Label text="Contact institute:" width="140"/>
-							<mx:TextInput id="groupInstitute"  width="100%" text="{groupGrid.selectedItem.@institute}" change="dirtyGroup.setDirty()" maxChars="200"/>
+							<mx:Label text="Institution:" width="140" text.AdminState="Institutions:"/>
+							<util:ComboCheck width="300"  displayMultipleItems="true" 
+										 dataProvider="{parentApplication.institutes}" 
+										 dataField="@idInstitute"  valueField="@idInstitute"  
+										 valueSelectAll="false"
+										 displayField="@name" 
+										 value="@name" id="instituteComboCheck">	
+							</util:ComboCheck>
+							<mx:LinkButton
+								icon="@Embed(source='assets/chart_organisation_add.png')" 
+								styleName="linkMenuButton"  
+								 toolTip="Edit list of institutes"   id="addEditInstitute" label="Edit institution list" includeIn="AdminState" click="showInstituteEditWindow()"/>
 						</mx:HBox>
-					
+
 						<mx:HBox horizontalGap="0">
 							<mx:Label text="Drag users from bottom left onto list" fontWeight="bold" fontStyle="italic"/>
 						</mx:HBox>
@@ -624,7 +664,8 @@
 					    	id="saveGroupButton"  
 					    	click="saveUserGroup()" 
 					    	enabled="{groupGrid.selectedItem.@canWrite == 'Y' ? true : false}"
-					    	icon="@Embed(source='assets/save.png')"  
+							enabled.LabManagerState="false"
+							icon="@Embed(source='assets/save.png')"  
 					    	disabledIcon="@Embed(source='assets/save_disable.png')"/>
 					</mx:ControlBar>
 				</mx:Panel>
@@ -636,25 +677,8 @@
 	</mx:VBox>
 	
 	<mx:states>
-		<mx:State name="AdminState"/>
-		<mx:State name="LabManagerState">
-			<mx:SetProperty target="{groupName}" name="editable" value="false"/>
-			<mx:SetProperty target="{saveUserButton}" name="enabled" value="false"/>
-			<mx:RemoveChild target="{addGroupButton}"/>
-			<mx:RemoveChild target="{deleteGroupButton}"/>
-			<mx:RemoveChild target="{addUserButton}"/>
-			<mx:RemoveChild target="{deleteUserButton}"/>
-			<mx:RemoveChild target="{hbox1}"/>
-			<mx:SetProperty target="{firstName}" name="editable" value="false"/>
-			<mx:SetProperty target="{lastName}" name="editable" value="false"/>
-			<mx:SetProperty target="{userName}" name="editable" value="false"/>
-			<mx:SetProperty target="{middleName}" name="editable" value="false"/>
-			<mx:RemoveChild target="{hbox2}"/>
-			<mx:RemoveChild target="{text1}"/>
-			<mx:RemoveChild target="{hbox3}"/>
-			<mx:RemoveChild target="{hbox4}"/>
-			<mx:RemoveChild target="{hbox5}"/>
-		</mx:State>
+		<s:State name="AdminState"/>
+		<s:State name="LabManagerState"/>
 	</mx:states>
 
 </mx:Canvas>

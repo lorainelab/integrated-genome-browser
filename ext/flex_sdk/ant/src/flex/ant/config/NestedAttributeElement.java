@@ -21,7 +21,7 @@ import org.apache.tools.ant.types.Commandline;
 public class NestedAttributeElement implements DynamicAttribute, OptionSource
 {
     private final static String COMMA = ",";
-
+    
     private String[] attribs;
     private String[] values;
     private OptionSpec spec;
@@ -92,7 +92,7 @@ public class NestedAttributeElement implements DynamicAttribute, OptionSource
         }
         else
         {
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
 
             for (int i = 0; i < attribs.length; i++)
             {

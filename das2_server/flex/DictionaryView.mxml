@@ -2,7 +2,7 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:util="util.*"
 	width="100%" height="100%"
-	creationComplete="init();"> 
+	show="init();"> 
 	
    <mx:HTTPService             
     id="deleteDictionary" 

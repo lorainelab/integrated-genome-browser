@@ -474,12 +474,18 @@ package util
             		title = "Unsupported file extension";
             	} else if (event.status == 903) {
             		message = "File '" + event.target.name + "' did not upload.\nThe file name does not match any of the segment names for the genome version.";
-            		title =  "Incorrect File Name";
-            		
-            	} else if (event.status == 905) {
+            		title =  "Incorrect File Name";            		
+            	} else if (event.status == 904) {
+					message = "File '" + event.target.name + "' did not upload.\nInsufficient permissions to perform this operation.";
+					title =  "Insufficient permissiosn";            		
+				} else if (event.status == 905) {
             		message = "File '" + event.target.name + "' did not upload.\nThe text formatted file exceeds the maximum allowed size (10,000 lines).\nConvert to xxx.useq\n(see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form.";
             		title =  "Text File exceeds max allowed size";            		
-            	} else if (event.status == 907) {
+            	} else if (event.status == 906) {
+					message = "File '" + event.target.name + "' did not upload.\BAM  file does not appear to be sorted by coordinate. Use the Picard tools " +
+	                           "(http://picard.sourceforge.net) to sort by coordinate, generate bam index files (xxx.bam.bai), and validate both before uploading.";
+					title =  "Malformed BAM file";            		
+				} else if (event.status == 907) {
 					message = "File '" + event.target.name + "' did not upload.\nThe annotation name is invalid. Characters / and & are not allowed.";
 					title =  "Invalid annotation name";            		
 				} else {

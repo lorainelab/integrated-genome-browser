@@ -235,11 +235,8 @@ public abstract class FlexTask extends Java
         try
         {
             Class toolClass = resolveClass(toolClassName);
-            URL url = toolClass.getProtectionDomain().getCodeSource().getLocation();
-            String fileName = url.getFile();
 
             super.setClassname(toolClassName);
-            super.setClasspath(new Path(getProject(), fileName));
 
             // convert arguments into a string for use by executeJava()
             // also auto-quotes arguments with spaces
@@ -248,7 +245,7 @@ public abstract class FlexTask extends Java
 
             int err = super.executeJava();
             //check error code
-            if(err > 0)
+            if (err > 0)
             {
                 throw new BuildException(toolName + " task failed.");
             }
@@ -336,6 +333,11 @@ public abstract class FlexTask extends Java
                             result = Class.forName(className, true, urlClassLoader);
                             originalContextClassLoader = Thread.currentThread().getContextClassLoader();
                             Thread.currentThread().setContextClassLoader(urlClassLoader);
+                            
+							if (fork)
+							{
+								super.setClasspath(new Path(getProject(), jarFile.getAbsolutePath()));
+							}                            
                         }
                         catch (MalformedURLException malformedURLException)
                         {

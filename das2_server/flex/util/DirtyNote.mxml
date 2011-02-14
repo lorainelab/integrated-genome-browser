@@ -44,7 +44,7 @@
 				} else if (this.parent.parent is Panel) {
 					p = Panel(parent.parent);
 				}
-				if (p != null) {
+				if (p != null && p.title != null) {
 					if (p.title.indexOf("*") == 0) {
 						p.title = p.title.substring(1);
 					}

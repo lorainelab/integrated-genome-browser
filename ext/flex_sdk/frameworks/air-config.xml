@@ -13,13 +13,12 @@
 
 <flex-config>
     <!-- Specifies the minimum player version that will run the compiled SWF. -->
-    <!-- 9.0.124 is the April 2008 security release -->
-    <target-player>10</target-player>
+     <target-player>10</target-player>
 
    <compiler>
 
       <!-- Turn on generation of accessible SWFs. -->
-      <accessible>false</accessible>
+      <accessible>true</accessible>
       
       <!-- Specifies the locales for internationalization. -->
       <locale>
@@ -75,6 +74,18 @@
       <namespaces>
       <!-- Specify a URI to associate with a manifest of components for use as MXML -->
       <!-- elements.                                                                -->
+         <namespace>
+            <uri>http://ns.adobe.com/mxml/2009</uri>
+            <manifest>mxml-2009-manifest.xml</manifest>
+         </namespace>
+         <namespace>
+            <uri>library://ns.adobe.com/flex/spark</uri>
+            <manifest>spark-manifest.xml</manifest>
+         </namespace>
+         <namespace>
+            <uri>library://ns.adobe.com/flex/mx</uri>
+            <manifest>mx-manifest.xml</manifest>
+         </namespace>
          <namespace>
             <uri>http://www.adobe.com/2006/mxml</uri>
             <manifest>mxml-manifest.xml</manifest>
@@ -171,6 +182,7 @@
               <manager-class>flash.fonts.JREFontManager</manager-class>
               <manager-class>flash.fonts.AFEFontManager</manager-class>
               <manager-class>flash.fonts.BatikFontManager</manager-class>
+              <manager-class>flash.fonts.CFFFontManager</manager-class> 
           </managers>
 
           <!-- File containing cached system font licensing information produced via 
@@ -313,16 +325,54 @@
    </runtime-shared-libraries>
    -->
    
-   <!-- runtime-shared-library-path: specifies a SWC or directory to link against and an RSL URL to load with optional failover URLs -->
-   <runtime-shared-library-path>
-      <path-element>libs/framework.swc</path-element>
-      <rsl-url>framework_${build.number}.swz</rsl-url>
-      <policy-file-url></policy-file-url>
-      <rsl-url>framework_${build.number}.swf</rsl-url>
-      <policy-file-url></policy-file-url>
-   </runtime-shared-library-path>
-   <!-- static-link-runtime-shared-libraries: statically link the libraries specified by the -runtime-shared-libraries-path option.-->
-   <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
+ 	<!-- runtime-shared-library-path: specifies a SWC or directory to link against and an RSL URL to load with optional failover URLs -->
+	<!-- TextLayout SWC -->
+    <runtime-shared-library-path>
+		<path-element>libs/textLayout.swc</path-element>
+		<rsl-url>textLayout_1.1.0.604.swf</rsl-url>
+		<policy-file-url></policy-file-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.1.0.16032/textLayout_1.1.0.604.swf</rsl-url>
+		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+	</runtime-shared-library-path>
+      
+    <!-- OSMF SWC -->
+    <runtime-shared-library-path>
+		<path-element>libs/osmf.swc</path-element>
+		<rsl-url>osmf_flex.4.0.0.13495.swf</rsl-url>
+		<policy-file-url></policy-file-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.1.0.16032/osmf_flex.4.0.0.13495.swf</rsl-url>
+		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+	</runtime-shared-library-path>
+	
+    <!-- Framework SWC -->
+	<runtime-shared-library-path>
+		<path-element>libs/framework.swc</path-element>
+		<rsl-url>framework_4.1.0.16032.swf</rsl-url>
+		<policy-file-url></policy-file-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.1.0.16032/framework_4.1.0.16032.swf</rsl-url>
+		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+	</runtime-shared-library-path>
+   
+   <!-- Spark SWC-->
+   	<runtime-shared-library-path>
+		<path-element>libs/spark.swc</path-element>
+		<rsl-url>spark_4.1.0.16032.swf</rsl-url>
+		<policy-file-url></policy-file-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.1.0.16032/spark_4.1.0.16032.swf</rsl-url>
+		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+	</runtime-shared-library-path>
+	 
+	<!-- RPC SWC -->
+	<runtime-shared-library-path>
+		<path-element>libs/rpc.swc</path-element>
+		<rsl-url>rpc_4.1.0.16032.swf</rsl-url>
+		<policy-file-url></policy-file-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.1.0.16032/rpc_4.1.0.16032.swf</rsl-url>
+		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+	</runtime-shared-library-path>
+	
+	<!-- static-link-runtime-shared-libraries: statically link the libraries specified by the -runtime-shared-libraries-path option.-->
+	<static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
    
    <!-- target-player: specifies the version of the player the application is targeting. 
 	               Features requiring a later version will not be compiled into the application. 
@@ -336,7 +386,7 @@
    
    <!-- Metadata added to SWFs via the SWF Metadata tag. -->
    <metadata>
-      <title>Adobe Flex 3 Application</title>
+      <title>Adobe Flex 4 Application</title>
       <description>http://www.adobe.com/products/flex</description>
       <publisher>unknown</publisher>
       <creator>unknown</creator>

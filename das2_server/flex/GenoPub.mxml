@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+<mx:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:default="*"	
 	layout="vertical" 
-	xmlns:views="*" 
 	paddingBottom="1" 
 	paddingLeft="3" 
 	paddingRight="3" 
@@ -9,8 +11,9 @@
 	creationComplete="init()" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#96979D, #96979D]">
   
 
-  <mx:Style source="GenoPub.css" />  
+  <fx:Style source="GenoPub.css" />  
   
+<fx:Declarations>
   <mx:HTTPService             
     id="getSecurity" 
     url="genopub/security"
@@ -34,20 +37,37 @@
     <mx:request>
     </mx:request>
   </mx:HTTPService>
-   
-  <mx:Script>
-	<![CDATA[
-	import mx.controls.ComboBox;
-	import mx.collections.XMLListCollection;
 	
-	import mx.rpc.events.FaultEvent;
-	import mx.rpc.events.ResultEvent;
-	import mx.controls.Alert;
-	import mx.managers.PopUpManager;
+  <mx:HTTPService             
+		id="getInstitutes" 
+		url="genopub/institutes"
+		resultFormat="e4x"
+		result="onGetInstitutes(event)"
+		fault="onFailHttpRequest('Failed to get institutes', event)"
+		method="POST"
+		useProxy="false">
+		<mx:request>
+		</mx:request>
+  </mx:HTTPService>
+	
+	
+</fx:Declarations>
+	
+   
+  <fx:Script>
+	<![CDATA[
+		import mx.collections.XMLListCollection;
+		import mx.controls.Alert;
+		import mx.controls.ComboBox;
+		import mx.core.FlexGlobals;
+		import mx.managers.PopUpManager;
+		import mx.rpc.events.FaultEvent;
+		import mx.rpc.events.ResultEvent;
 	
 	
 	private var launchAnnotation:Object = null;
 	
+	private var isInitialized:Boolean = false;
 	
 	[Bindable]
 	public var dictionaries:XMLListCollection;
@@ -78,6 +98,9 @@
 	
 	[Bindable]
 	public var dictionaryUser:XMLListCollection;
+		
+	[Bindable]
+	public var institutes:XMLListCollection;
 	
 	public var textStyleSheet:StyleSheet = null;
 
@@ -117,18 +140,34 @@
     [Embed(source="assets/organism_faded.png")]
     public var iconOrganismFaded:Class;
     
-    [Bindable]
-    [Embed(source="assets/comment.png")]
-    public var iconAnnotation:Class;
+	[Bindable]
+	[Embed(source="assets/page_white_new.png")]
+	public var iconAnnotationNew:Class;
 
 	[Bindable]
-    [Embed(source="assets/comment_key.png")]
+	[Embed(source="assets/page_white.png")]
+	public var iconAnnotation:Class;
+
+    [Bindable]
+    [Embed(source="assets/page_white_world.png")]
+    public var iconAnnotationPublic:Class;
+
+	[Bindable]
+    [Embed(source="assets/page_white_member.png")]
     public var iconAnnotationMember:Class;
 
 	[Bindable]
-    [Embed(source="assets/comment_key_twice.png")]
+    [Embed(source="assets/page_white.png")]
     public var iconAnnotationMemberCollab:Class;
+		
+	[Bindable]
+	[Embed(source="assets/page_white_institution.png")]
+	public var iconAnnotationInstitution:Class;
     
+	[Bindable]
+	[Embed(source="assets/page_white_owner.png")]
+	public var iconAnnotationOwner:Class;
+		
     [Bindable]
     [Embed(source="assets/save.png")]
     public var iconSave:Class;
@@ -170,13 +209,17 @@
     [Embed(source="assets/paste_plain.png")]
     public var iconPaste:Class;
     
-    
+		
+	[Bindable]
+	[Embed(source="assets/chart_organisation.png")]
+	public var iconInstitute:Class;
+
     private function init():void {
     	initTextStyleSheet();
-    	if (Application.application.parameters.idAnnotation != null &&
-    	    Application.application.parameters.idAnnotation != '') {
+    	if (mx.core.FlexGlobals.topLevelApplication.parameters.idAnnotation != null &&
+			mx.core.FlexGlobals.topLevelApplication.parameters.idAnnotation != '') {
     		launchAnnotation = new XML("<LaunchAnnotation " +
-    		    	"idAnnotation='" + Application.application.parameters.idAnnotation + "'" +
+    		    	"idAnnotation='" + mx.core.FlexGlobals.topLevelApplication.parameters.idAnnotation + "'" +
     		    	"/>");
     	}
     	getSecurity.send();
@@ -240,20 +283,7 @@
 
 	private function onGetDictionaries(event:ResultEvent):void {
 		if (getDictionaries.lastResult.name() == "Dictionaries") {
-			if (isAdmin()) {
-    			this.currentState = "AdminAllState";
-    		} else if (canManageUsers()) {
-    			this.currentState = "AdminUserState";
-    		} else if (isGuest()) {
-    			this.currentState = "GuestState";
-    		} else {
-    			this.currentState = "UserState";
-    		} 
-    		
-    		if (launchAnnotation != null) {
-    			this.annotationsView.treeItemToSelect = launchAnnotation;
-    		}
-
+			
 			dictionaries = new XMLListCollection(getDictionaries.lastResult.Dictionary);
 
 			dictionaryOrganism      = new XMLListCollection(getDictionaries.lastResult.Organisms.Organism); 
@@ -270,12 +300,48 @@
 			}
 			dictionaryUser = new XMLListCollection(getDictionaries.lastResult.Users.User.(@name != 'guest'));
 			
-			callLater(this.dictionaryView.expandAllTreeNodes);	
-			callLater(this.annotationsView.selectAnnotationFilter);
+			getInstitutes.send();
 			 
 		} else {
 			Alert.show("An error occurred while getting dictionaries.");
 		}			
+	}
+		
+	private function onGetInstitutes(event:ResultEvent):void {
+		institutes = new XMLListCollection(getInstitutes.lastResult.Institute);
+
+		if (!isInitialized) {
+			enableApp();			
+		}
+	}
+			
+		
+	private function enableApp():void {
+		if (isAdmin()) {
+			this.currentState = "AdminAllState";
+		} else if (canManageUsers()) {
+			this.currentState = "AdminUserState";
+		} else if (isGuest()) {
+			this.currentState = "GuestState";
+		} else {
+			this.currentState = "UserState";
+		} 
+		
+		// TODO:  Figure out way to defer init() calls on AnnotationView, etc.
+		// until after parent app fully instantiated, dictionaries loaded, etc.
+		//if (this.mainViewStack.getChildIndex(emptyView)>= 0) {
+		//	mainViewStack.removeChild(emptyView);
+		//}
+		
+		if (launchAnnotation != null) {
+			this.annotationsView.treeItemToSelect = launchAnnotation;
+		}
+		
+		callLater(this.dictionaryView.expandAllTreeNodes);	
+		callLater(this.annotationsView.selectAnnotationFilter);
+		
+		isInitialized = true;
+		
 	}
     
     public function onFailHttpRequest(title:String, event:FaultEvent):void {
@@ -314,7 +380,7 @@
 
 
 	]]>
-  </mx:Script>
+  </fx:Script>
 
 
 
@@ -332,6 +398,8 @@
 				<mx:Label text="{getSecurity.lastResult.@userDisplayName}" styleName="menuLabel" id="loggedInUserName"/>
 			</mx:HBox>
 			<mx:HBox horizontalAlign="right" verticalAlign="top" horizontalGap="3" width="100%" id="hbox2">
+				<mx:LinkButton label="Change password" includeIn="UserState, AdminUserState" id="changePasswordButton" styleName="menuLabel" click="showChangePasswordWindow()" paddingTop="0" paddingBottom="0"/>
+				<mx:Spacer width="10"/>
 				<mx:LinkButton label="Help"  id="linkbutton1" styleName="menuLabel" paddingBottom="0" paddingTop="0"/>
 				<mx:LinkButton label="About"  id="linkbutton2" styleName="menuLabel" paddingTop="0" paddingBottom="0" click="showAboutWindow()"/>
 			</mx:HBox>
@@ -345,7 +413,7 @@
  			     horizontalAlign="left" 
  			     horizontalGap="30"  
  			     height="24"
- 			     paddingTop="0" 
+ 			     paddingTop="0"  
  			     paddingBottom="0">
  			</mx:LinkBar>
 
@@ -353,46 +421,33 @@
       </mx:VBox>
     </mx:ApplicationControlBar>
     
-    <mx:VBox id="mainArea" width="100%" 
+    <mx:VBox id="mainArea" width="100%"  
 	    	height="100%" paddingTop="0" paddingBottom="0" paddingLeft="0" 
 	    	paddingRight="0" >	
-      <mx:ViewStack id="mainViewStack" width="100%" height="100%" creationPolicy="auto">
+      <mx:ViewStack id="mainViewStack"  width="100%" height="100%" creationPolicy="auto">
+          <mx:VBox id="emptyView" width="100%" height="100%" />
+		  
+		  <default:AnnotationView id="annotationsView" label="Annotations"     icon="{iconAnnotation}" width="100%" height="100%">
+		  </default:AnnotationView>
 
-
+		  <default:UserGroupView id="userGroupView" includeIn="AdminUserState, AdminAllState" label="Users and Groups"      icon="@Embed(source='assets/group.png')" width="100%" height="100%">
+		  </default:UserGroupView>
+		  
+		  <default:DictionaryView id="dictionaryView"  includeIn="UserState, AdminUserState, AdminAllState" label="Dictionaries"      icon="@Embed(source='assets/book.png')" width="100%" height="100%">
+		  </default:DictionaryView>
+		  
       </mx:ViewStack>
     </mx:VBox>	
       
   </mx:VBox>
+	
+	<mx:states>
+		<mx:State name="UserState"/>
+		<mx:State name="AdminUserState"/>
+		<mx:State name="AdminAllState"/>
+		<mx:State name="GuestState"/>
+	</mx:states>
   
-  <mx:states>
-  
-   <mx:State name="UserState">
-    	<mx:AddChild relativeTo="{mainViewStack}" position="firstChild">
-	  	    <views:AnnotationView id="annotationsView" label="Annotations"      icon="@Embed(source='assets/comment.png')" width="100%" height="100%">
-  		    </views:AnnotationView>
-    	</mx:AddChild>
-    	<mx:AddChild relativeTo="{mainViewStack}" position="lastChild">
-    		<views:DictionaryView id="dictionaryView" label="Dictionaries"      icon="@Embed(source='assets/book.png')" width="100%" height="100%">
-  		    </views:DictionaryView>
-    	</mx:AddChild>    
-    	<mx:AddChild relativeTo="{hbox2}" position="lastChild">
-    	 	<mx:Spacer width="10"/>
-    	</mx:AddChild>
-    	<mx:AddChild relativeTo="{linkbutton1}" position="before">
-    	 	<mx:LinkButton label="Change password"  id="changePasswordButton" styleName="menuLabel" click="showChangePasswordWindow()" paddingTop="0" paddingBottom="0"/>
-    	</mx:AddChild>
-	</mx:State>
-    <mx:State name="AdminUserState" basedOn="UserState">
-    	<mx:AddChild relativeTo="{annotationsView}" position="after">
-    		<views:UserGroupView id="userGroupView" label="Users and Groups"      icon="@Embed(source='assets/group.png')" width="100%" height="100%">
-  		    </views:UserGroupView>
-    	</mx:AddChild>
-	</mx:State>
-    <mx:State name="AdminAllState" basedOn="AdminUserState">
-    </mx:State>
-    <mx:State name="GuestState" basedOn="UserState">
-      <mx:RemoveChild target="{dictionaryView}"/>
-      <mx:RemoveChild target="{changePasswordButton}"/>
-    </mx:State>
-  </mx:states>
+
+
 </mx:Application>

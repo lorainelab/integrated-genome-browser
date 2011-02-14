@@ -81,7 +81,7 @@ public class FlexFileSet extends FileSet implements OptionSource
 
     private void addFiles(File base, String[] files, Commandline cmdl)
     {
-        FileUtils utils = FileUtils.newFileUtils();
+        FileUtils utils = FileUtils.getFileUtils();
 
         if (spec == null)
         {

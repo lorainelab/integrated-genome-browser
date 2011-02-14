@@ -64,6 +64,7 @@ CREATE TABLE `Annotation` (
   `codeVisibility` varchar(10) NOT NULL,
   `idUser` int(10) unsigned default NULL,
   `idUserGroup` int(10) unsigned default NULL,
+  `idInstitute` int(10) unsigned default NULL,
   `summary` varchar(5000) default NULL,
   `createdBy` varchar(200) default NULL,
   `createDate` datetime default NULL,  
@@ -76,12 +77,14 @@ CREATE TABLE `Annotation` (
   KEY `FK_Annotation_Visibility` (`codeVisibility`),
   KEY `FK_Annotation_group` USING BTREE (`idUserGroup`),
   KEY `FK_Annotation_QuantificationType` USING BTREE (`idAnalysisType`),
+  KEY `FK_Annotation_Institute` USING BTREE (`idInstitute`),
   CONSTRAINT `FK_Annotation_AnalysisType` FOREIGN KEY (`idAnalysisType`) REFERENCES `AnalysisType` (`idAnalysisType`),
   CONSTRAINT `FK_Annotation_ExperimentMethod` FOREIGN KEY (`idExperimentMethod`) REFERENCES `ExperimentMethod` (`idExperimentMethod`),
   CONSTRAINT `FK_Annotation_ExperimentPlatform` FOREIGN KEY (`idExperimentPlatform`) REFERENCES `ExperimentPlatform` (`idExperimentPlatform`),
   CONSTRAINT `FK_Annotation_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`),
   CONSTRAINT `FK_Annotation_UserGroup` FOREIGN KEY (`idUserGroup`) REFERENCES `UserGroup` (`idUserGroup`),
   CONSTRAINT `FK_Annotation_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
+  CONSTRAINT FK_Annotation_Institute FOREIGN KEY FK_Annotation_Institute (idInstitute) REFERENCES genopub.Institute (idInstitute),
   CONSTRAINT `FK_Annotation_Visibility` FOREIGN KEY (`codeVisibility`) REFERENCES `Visibility` (`codeVisibility`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -91,6 +94,24 @@ CREATE TABLE `Annotation` (
 
 /*!40000 ALTER TABLE `Annotation` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Annotation` ENABLE KEYS */;
+
+--
+-- AnnotationCollaborator
+--
+DROP TABLE IF EXISTS genopub.AnnotationCollaborator;
+CREATE TABLE genopub.AnnotationCollaborator (
+  idAnnotation INT(10) unsigned  NOT NULL,
+  idUser INT(10) unsigned  NOT NULL,
+  PRIMARY KEY (idAnnotation, idUser),
+  CONSTRAINT FK_AnnotationCollaborator_User FOREIGN KEY FK_AnnotationCollaborator_User (idUser)
+    REFERENCES genopub.User (idUser)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT FK_AnnotationCollaborator_Annotation FOREIGN KEY FK_AnnotationCollaborator_Annotation (idAnnotation)
+    REFERENCES genopub.Annotation (idAnnotation)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 --
@@ -573,6 +594,32 @@ CREATE TABLE `UserGroupMember` (
 /*!40000 ALTER TABLE `UserGroupMember` ENABLE KEYS */;
 
 
+-- Add new Table Institute
+DROP TABLE IF EXISTS `genopub`.`Institute`;
+CREATE  TABLE `genopub`.`Institute` (
+  `idInstitute` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(200) NOT NULL ,
+  `description` VARCHAR(500) NULL ,
+  `isActive` CHAR(1) NULL DEFAULT 'Y' ,
+  PRIMARY KEY (`idInstitute`) ) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
+
+    
+    
+-- Add new Table to link UserGroup to multiple Institutes
+DROP TABLE IF EXISTS `genopub`.`InstituteUserGroup`;
+CREATE TABLE `genopub`.`InstituteUserGroup` ( 
+    `idInstitute`	 INT(10) unsigned,
+    `idUserGroup`            INT(10) unsigned,
+    PRIMARY KEY (`idInstitute`, `idUserGroup`),
+CONSTRAINT `FK_InstituteUserGroup_Institute` FOREIGN KEY `FK_InstituteUserGroup_Institute` (idInstitute)
+    REFERENCES genopub.Institute (`idInstitute`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+CONSTRAINT `FK_InstituteUserGroup_UserGroup` FOREIGN KEY `FK_InstituteUserGroup_UserGroup` (idUserGroup)
+    REFERENCES genopub.UserGroup (`idUserGroup`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
+
 --
 -- Definition of table `Segment`
 --
@@ -774,8 +821,9 @@ CREATE TABLE `Visibility` (
 
 /*!40000 ALTER TABLE `Visibility` DISABLE KEYS */;
 INSERT INTO `Visibility` (`codeVisibility`,`name`) VALUES 
+ ('OWNER','Owner'),
  ('MEM','Members'),
- ('MEMCOL','Members and Collaborators'),
+ ('INST','Institute'),
  ('PUBLIC','Public');
 /*!40000 ALTER TABLE `Visibility` ENABLE KEYS */;
 

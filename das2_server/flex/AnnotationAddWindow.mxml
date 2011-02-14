@@ -5,7 +5,7 @@
 	width="518" 
 	height="446" 
 	close="closeWindow()"
-	titleIcon="{parentApplication.iconAnnotation}"
+	titleIcon="{parentApplication.iconAnnotationNew}"
 	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
 
  	

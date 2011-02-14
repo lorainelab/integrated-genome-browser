@@ -82,7 +82,7 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 	
 	public void mouseReleased(MouseEvent e) {
 		is_dragging = false;
-		if(was_dragging && zoomer_value > threshold){
+		if(was_dragging && zoomer_value > threshold && scroller_value != prev_scroller_value){
 			loadData();
 		}
 		was_dragging = false;

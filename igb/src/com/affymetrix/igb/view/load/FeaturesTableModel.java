@@ -6,6 +6,8 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.prefs.OptionsView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -191,16 +193,20 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 
 		if (col == DELETE_FEATURE_COLUMN){
+			//start
 			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before delete", false);
-			if(PreferenceUtils.userConfirmed == 2 || resetConfirmOption) {
+			if(PreferenceUtils.userConfirmed != 0 || resetConfirmOption) {
 				if(IGB.confirmPanel("Really remove entire " + gFeature.featureName + " data set ?")){
 					GeneralLoadView.removeFeature(gFeature);
 				}
+				if(resetConfirmOption) OptionsView.resetConfirmBeforeDeleteCheckbox();
 			} else if(PreferenceUtils.userConfirmed == 0) {
 				GeneralLoadView.removeFeature(gFeature);
 			}
 			
 			return;
+			//end
+			
 			/* original
 			if(IGB.confirmPanel("Really remove entire " + gFeature.featureName + " data set ?")){
 				GeneralLoadView.removeFeature(gFeature);

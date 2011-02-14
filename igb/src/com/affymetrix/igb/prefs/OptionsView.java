@@ -33,6 +33,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
   JButton clear_prefsB = new JButton("Reset all preferences to defaults");
+  static JCheckBox cbdCheckbox;
 
   public OptionsView() {
     super();
@@ -59,8 +60,9 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
     misc_box.add(PreferenceUtils.createCheckBox("Show properties in columns", PreferenceUtils.getTopNode(),
     	PreferenceUtils.SHOW_PROPERTIES_IN_COLUMNS, PreferenceUtils.default_show_properties_in_column));
-    misc_box.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
-        PreferenceUtils.RESET_CONFIRM_BOX_OPTION, PreferenceUtils.default_show_properties_in_column));
+    cbdCheckbox = PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
+        PreferenceUtils.RESET_CONFIRM_BOX_OPTION, PreferenceUtils.default_show_properties_in_column);
+    misc_box.add(cbdCheckbox);
     
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
@@ -164,4 +166,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
   public void refresh() {
   }
 
+  public static void resetConfirmBeforeDeleteCheckbox() {
+	  cbdCheckbox.setSelected(false);
+  }
 }

@@ -9,6 +9,7 @@ import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.RefreshDataAction;
+import com.affymetrix.igb.prefs.OptionsView;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import java.awt.Component;
 import java.awt.event.MouseListener;
@@ -252,18 +253,21 @@ class JTableX extends JTable implements MouseListener {
 			FeaturesTableModel ftm = (FeaturesTableModel) getModel();
 			int featureSize = ftm.getRowCount();
 			
+			//start
 			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before delete", false);
-			if(PreferenceUtils.userConfirmed == 2 || resetConfirmOption) {
+			if(PreferenceUtils.userConfirmed != 0 || resetConfirmOption) {
 				if (featureSize > 0 && IGB.confirmPanel("Really remove all data sets ?")) {
 					for (int row = 0; row < featureSize; row++) {
 						GeneralLoadView.removeFeature(ftm.getFeature(row));
 					}
 				}
+				if(resetConfirmOption) OptionsView.resetConfirmBeforeDeleteCheckbox();
 			} else if(PreferenceUtils.userConfirmed == 0) {
 				for (int row = 0; row < featureSize; row++) {
 					GeneralLoadView.removeFeature(ftm.getFeature(row));
 				}
 			}
+			//end
 			
 			/*
 			if (featureSize > 0 && IGB.confirmPanel("Really remove all data sets ?")) {

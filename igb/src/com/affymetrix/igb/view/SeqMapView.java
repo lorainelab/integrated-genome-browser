@@ -60,6 +60,7 @@ import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
+import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.view.load.AutoLoad;
 import com.affymetrix.igb.tiers.AxisStyle;
@@ -1001,37 +1002,15 @@ public class SeqMapView extends JPanel
 				seqmap.updateWidget();
 			}
 		}
+
+		ViewGenomicSequenceInSeqViewerAction.getAction().setEnabled(seq_selected_sym != null);
 	}
-	public void openSequenceViewer(Boolean isGenomicRequest){
-			SeqSymmetry residues_sym = this.copySelectedResidues(true);
-		if (residues_sym == null) {
-			return;
-		}
-		else if(isGenomicRequest && residues_sym.getID() == null){
-			SequenceViewer neoSeqDemo = new SequenceViewer();
-			neoSeqDemo.tempChange(residues_sym);
-			return;
-		}
-		else if(isGenomicRequest && residues_sym.getID() != null){
-
-				ErrorHandler.errorPanel("Can't copy to clipboard",
-							"Please select the genomic sequence");
-				return;
-		}
-		else if(!isGenomicRequest){
-			SequenceViewer neoSeqDemo = new SequenceViewer();
-			neoSeqDemo.tempChange(residues_sym);
-			return;
-		}
-
-	}
-
-	/**
+		/**
 	 * Copies residues of selection to clipboard
 	 * If a region of sequence is selected, should copy genomic residues
 	 * If an annotation is selected, should the residues of the leaf nodes of the annotation, spliced together
 	 */
-	public final SeqSymmetry copySelectedResidues(Boolean allResidues) {
+	public final void copySelectedResidues(Boolean allResidues) {
 		boolean success = false;
 		SeqSymmetry residues_sym = null;
 		Clipboard clipboard = this.getToolkit().getSystemClipboard();
@@ -1045,21 +1024,6 @@ public class SeqMapView extends JPanel
 			if (syms.size() == 1) {
 				residues_sym = syms.get(0);
 				from = " from selected item";
-//				int numberOfChild = residues_sym.getChildCount();
-//				if(numberOfChild > 0){
-//				int i=0;
-//				seqSpans = new SeqSpan[numberOfChild];
-//				while(i < numberOfChild){
-//					seqSpans[i] = residues_sym.getChild(i).getSpan(0);
-//					i++;
-//				}
-//				}
-//				else{
-//					seqSpans = new SeqSpan[1];
-//					seqSpans[0] =  residues_sym.getSpan(0);
-//					}
-
-
 			}
 
 		}
@@ -1108,9 +1072,9 @@ public class SeqMapView extends JPanel
 			// for some reason, can't null out clipboard with [null] or [new StringSelection("")],
 			//   have to put in at least one character -- just putting in a space for now
 			clipboard.setContents(new StringSelection(" "), null);
-			return null;
+			
 		}
-		return residues_sym;
+		
 	}
 
 
@@ -1888,6 +1852,10 @@ public class SeqMapView extends JPanel
 	
 	public static interface SeqMapRefreshed{
 		public void refresh();
+	}
+
+	public SeqSymmetry getSeqSymmetry(){
+		return seq_selected_sym;
 	}
 
 	public void setPropertyHandler(PropertyHandler propertyHandler) {

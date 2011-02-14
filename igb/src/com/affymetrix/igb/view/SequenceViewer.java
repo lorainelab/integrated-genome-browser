@@ -13,12 +13,15 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import java.applet.Applet;
 import java.awt.HeadlessException;
 import java.awt.event.*;
@@ -33,10 +36,14 @@ import com.affymetrix.genoviz.parser.FastaSequenceParser;
 import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.genoviz.widget.NeoSeqCustomizer;
 import com.affymetrix.genoviz.widget.neoseq.AnnotationGlyph;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.CopyFromSeqViewerAction;
 import com.affymetrix.igb.action.ExitAction;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportFastaSequenceAction;
+import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.applet.AppletContext;
 import java.awt.BorderLayout;
 import java.awt.CheckboxMenuItem;
@@ -58,16 +65,19 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.util.concurrent.Executor;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.SwingWorker;
 
 public class SequenceViewer extends Applet
-		implements WindowListener, ItemListener{
+		implements WindowListener, ItemListener {
 
+	protected SeqMapView seqmapview;
 	private NeoSeq seqview;
 	private NeoSeq seqview1;
 	private JFrame mapframe;
@@ -93,6 +103,17 @@ public class SequenceViewer extends Applet
 	private Color nicePaleBlue = new Color(180, 250, 250);
 	private SeqSpan[] seqSpans = null;
 	private Boolean isGenomic = false;
+	private GenometryModel gm = GenometryModel.getGenometryModel();
+	private String version = "";
+	SeqSymmetry residues_sym;
+	BioSeq aseq;
+	boolean isGenomicRequest;
+	SequenceViewer sv;
+
+	public SequenceViewer() {
+		seqmapview = IGB.getSingleton().getMapView();
+
+	}
 
 	public Applet customFormatting(SeqSymmetry residues_sym, String seq) throws HeadlessException, NumberFormatException {
 		Color[] okayColors = {Color.black, Color.black};
@@ -104,9 +125,10 @@ public class SequenceViewer extends Applet
 			isGenomic = true;
 			addCdsStartEnd(residues_sym);
 		} else {
-			mapframe = new JFrame("Genomic Sequence");
+			AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
+			mapframe = new JFrame("Genomic Sequence - " + ag.getID());
 			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
-			isGenomic=true;
+			isGenomic = true;
 //			seqview.forSequenceViewer = true;
 		}
 		mapframe.setLayout(new BorderLayout());
@@ -120,6 +142,74 @@ public class SequenceViewer extends Applet
 		mapframe.setVisible(true);
 		final Applet app = this;
 		return app;
+	}
+
+	private void selectResidues(SeqSymmetry residues_sym, BioSeq aseq, boolean isGenomicRequest) {
+		seq = SeqUtils.selectedAllResidues(residues_sym, aseq);
+		if (seq != null) {
+			if (SeqUtils.areResiduesComplete(seq)) {
+				if (residues_sym == null) {
+					return;
+				} else if (isGenomicRequest && residues_sym.getID() == null) {
+					this.tempChange(residues_sym);
+					return;
+				} else if (isGenomicRequest && residues_sym.getID() != null) {
+					ErrorHandler.errorPanel("Can't Open the sequence viewer", "Please select the genomic sequence");
+					return;
+				} else if (!isGenomicRequest) {
+					this.tempChange(residues_sym);
+					return;
+				}
+			} else {
+				ErrorHandler.errorPanel("Can't open sequence viewer", "Residues are not loaded properly");
+			}
+		} else {
+			ErrorHandler.errorPanel("Can't open sequence viewer", "No residues found");
+		}
+
+	}
+
+	public void loadResidues(boolean isGenomic) {
+		sv = new SequenceViewer();
+		this.isGenomicRequest = isGenomic;
+		if(isGenomic){
+			this.residues_sym = seqmapview.getSeqSymmetry();
+		}
+		else{
+		List<SeqSymmetry> syms = seqmapview.glyphsToSyms(seqmapview.getSeqMap().getSelected());
+		if(syms.size()==1){
+		this.residues_sym = syms.get(0);
+		}
+		else{
+			ErrorHandler.errorPanel("Missing Sequence Residues",
+							"Don't have all the needed residues, can't copy to clipboard.\n"
+							+ "Please load sequence residues for this region.");
+			return;
+		}
+				}
+		this.aseq = seqmapview.getAnnotatedSeq();
+		
+		if(!isGenomic){
+			Executor vexec = ThreadUtils.getPrimaryExecutor(new Object());
+		try {
+    			vexec.execute(new Runnable() {
+
+				public void run() {
+					GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
+					seqmapview.setAnnotatedSeq(aseq, true, true, true);
+					sv.selectResidues(residues_sym, aseq, isGenomicRequest);
+				}
+			});
+
+
+		} catch (Exception e) {
+			ErrorHandler.errorPanel("Can't open sequence viewer",
+					"Error loading residues");
+		}
+		}
+		else{
+			sv.selectResidues(residues_sym, aseq, isGenomicRequest);
+		}
 	}
 
 	public void init(final SeqSymmetry residues_sym) {
@@ -191,7 +281,6 @@ public class SequenceViewer extends Applet
 		//		((SymWithProps) residues_sym).getProperty(seq)
 		Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
 		Iterator iterator = sym.keySet().iterator();
-		GenometryModel gm = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 		while (iterator.hasNext()) {
 			String key = iterator.next().toString();
@@ -202,52 +291,59 @@ public class SequenceViewer extends Applet
 				forward = value;
 			} else if (key.equals("type")) {
 				type = value;
+				if (type == null) {
+					type = "";
+				}
 			} else if (key.equals("seq id")) {
 				chromosome = value;
+				if (chromosome == null) {
+					chromosome = "";
+				}
 			} else if (key.equals("cds max")) {
 				cdsMax = Integer.parseInt(value);
 			} else if (key.equals("cds min")) {
 				cdsMin = Integer.parseInt(value);
 			}
 		}
+		version = ag.getID();
 //		System.out.println("cds min  "+ cdsMin +"  cds max "+cdsMax+"  end "+ seqSpans[seqSpans.length-1].getStart());
 		if (seqSpans[0].getStart() < seqSpans[0].getEnd()) {
 			seqview.addOutlineAnnotation(cdsMin - seqSpans[0].getStart(), cdsMin - seqSpans[0].getStart() + 2, Color.green);
 			seqview.addOutlineAnnotation(cdsMax - seqSpans[0].getStart() - 3, cdsMax - seqSpans[0].getStart() - 1, Color.red);
 		} else {
-			seqview.addOutlineAnnotation(Math.abs(cdsMax - seqSpans[seqSpans.length-1].getStart()), Math.abs(cdsMax - seqSpans[seqSpans.length-1].getStart()) + 2, Color.green);
-			seqview.addOutlineAnnotation(Math.abs(cdsMin - seqSpans[seqSpans.length-1].getStart()) - 3, Math.abs(cdsMin - seqSpans[seqSpans.length-1].getStart()) - 1, Color.red);
+			seqview.addOutlineAnnotation(Math.abs(cdsMax - seqSpans[seqSpans.length - 1].getStart()), Math.abs(cdsMax - seqSpans[seqSpans.length - 1].getStart()) + 2, Color.green);
+			seqview.addOutlineAnnotation(Math.abs(cdsMin - seqSpans[seqSpans.length - 1].getStart()) - 3, Math.abs(cdsMin - seqSpans[seqSpans.length - 1].getStart()) - 1, Color.red);
 		}
 		//		String str = (((SymWithProps) residues_sym).getProperty("id")).toString()+" "+(((SymWithProps) residues_sym).getProperty("chromosome")).toString();
-		mapframe = new JFrame(id + " " + chromosome + " " + type);
+		mapframe = new JFrame();
+		mapframe.setTitle(version + " " + id + " " + chromosome + " " + type);
 	}
 
 	private void convertSpansForSequenceViewer(String[] seqArray, String[] intronArray, SeqSpan[] spans, String seq) {
 		int i = 1;
-		if (spans[0].getStart() < spans[0].getEnd()){
-		seqArray[0] = seq.substring(0, spans[0].getLength());
-		}
-		else{
-			seqArray[0] = seq.substring(0, spans[spans.length-1].getLength());
+		if (spans[0].getStart() < spans[0].getEnd()) {
+			seqArray[0] = seq.substring(0, spans[0].getLength());
+		} else {
+			seqArray[0] = seq.substring(0, spans[spans.length - 1].getLength());
 		}
 		if (spans.length > 1) {
 			if (spans[0].getStart() > spans[0].getEnd()) {
 				SeqSpan[] spans_duplicate = new SeqSpan[spans.length];
-				for(int k=0;k<spans.length;k++){
-					spans_duplicate[spans.length-1-k]=spans[k];
+				for (int k = 0; k < spans.length; k++) {
+					spans_duplicate[spans.length - 1 - k] = spans[k];
 				}
 				spans = spans_duplicate;
-			} 
-				intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
+			}
+			intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
 //				System.out.println("intron array[0] "+intronArray[0]);
-			
+
 		}
 		while (i < spans.length) {
-			
-				seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
-				if (i < spans.length - 1) {
-					intronArray[i] = seq.substring(Math.abs(spans[i].getEnd() - spans[0].getStart()), Math.abs(spans[i + 1].getStart() - spans[0].getStart()));
-				
+
+			seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
+			if (i < spans.length - 1) {
+				intronArray[i] = seq.substring(Math.abs(spans[i].getEnd() - spans[0].getStart()), Math.abs(spans[i + 1].getStart() - spans[0].getStart()));
+
 			}
 			i++;
 		}
@@ -264,8 +360,6 @@ public class SequenceViewer extends Applet
 		seqview.enableDragScrolling(true);
 
 		annotations = new Vector<GlyphI>();
-
-		seq = getClipboard();
 		if (residues_sym != null) {
 			int numberOfChild = residues_sym.getChildCount();
 			if (numberOfChild > 0) {
@@ -384,14 +478,14 @@ public class SequenceViewer extends Applet
 	}
 
 	public void exportSequenceFasta() {
-		FileDialog fd = new FileDialog(mapframe, "Save As", FileDialog.SAVE);	
+		FileDialog fd = new FileDialog(mapframe, "Save As", FileDialog.SAVE);
 		fd.setVisible(true);
 		String fileName = fd.getFile();
 
 		if (null != fileName) {
 			try {
 
-				FileWriter fw = new FileWriter(fd.getDirectory()+fileName);
+				FileWriter fw = new FileWriter(fd.getDirectory() + fileName);
 				String r = seqview.getResidues();
 //				String header =
 //				">" +
@@ -421,18 +515,18 @@ public class SequenceViewer extends Applet
 			}
 		}
 	}
-		JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
-		JCheckBoxMenuItem transOneCBMenuItem = new JCheckBoxMenuItem(" +1 Translation");
-		JCheckBoxMenuItem transTwoCBMenuItem = new JCheckBoxMenuItem(" +2 Translation");
-		JCheckBoxMenuItem transThreeCBMenuItem = new JCheckBoxMenuItem(" +3 Translation");
-		JCheckBoxMenuItem transNegOneCBMenuItem = new JCheckBoxMenuItem(" -1 Translation");
-		JCheckBoxMenuItem transNegTwoCBMenuItem = new JCheckBoxMenuItem(" -2 Translation");
-		JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(" -3 Translation");
-		
+	JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
+	JCheckBoxMenuItem transOneCBMenuItem = new JCheckBoxMenuItem(" +1 Translation");
+	JCheckBoxMenuItem transTwoCBMenuItem = new JCheckBoxMenuItem(" +2 Translation");
+	JCheckBoxMenuItem transThreeCBMenuItem = new JCheckBoxMenuItem(" +3 Translation");
+	JCheckBoxMenuItem transNegOneCBMenuItem = new JCheckBoxMenuItem(" -1 Translation");
+	JCheckBoxMenuItem transNegTwoCBMenuItem = new JCheckBoxMenuItem(" -2 Translation");
+	JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(" -3 Translation");
+
 	public JFrame setupMenus(JFrame dock) {
 
 		/* Edit Menu */
-		
+
 
 //		JMenuItem copyMenuItem = new JMenuItem("Copy selected sequence to clipboard");
 //		//copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -486,19 +580,19 @@ public class SequenceViewer extends Applet
 
 	/* EVENT HANDLING */
 	/** ActionListener Implementation */
-	public void copyAction(){
+	public void copyAction() {
 		String selectedSeq = seqview.getSelectedResidues();
-			if (selectedSeq != null) {
-				Clipboard clipboard = this.getToolkit().getSystemClipboard();
-				StringBuffer hackbuf = new StringBuffer(selectedSeq);
-				String hackstr = new String(hackbuf);
-				StringSelection data = new StringSelection(hackstr);
-				clipboard.setContents(data, null);
-			} else {
-				ErrorHandler.errorPanel("Missing Sequence Residues",
-						"Don't have all the needed residues, can't copy to clipboard.\n"
-						+ "Please load sequence residues for this region.");
-			}
+		if (selectedSeq != null) {
+			Clipboard clipboard = this.getToolkit().getSystemClipboard();
+			StringBuffer hackbuf = new StringBuffer(selectedSeq);
+			String hackstr = new String(hackbuf);
+			StringSelection data = new StringSelection(hackstr);
+			clipboard.setContents(data, null);
+		} else {
+			ErrorHandler.errorPanel("Missing Sequence Residues",
+					"Don't have all the needed residues, can't copy to clipboard.\n"
+					+ "Please load sequence residues for this region.");
+		}
 	}
 //	public void actionPerformed(ActionEvent e) {
 //		Object theItem = e.getSource();
@@ -526,15 +620,14 @@ public class SequenceViewer extends Applet
 //
 //	}
 
-	private void setMenuItemState(JMenu theMenu, JCheckBoxMenuItem theItem) {
-		for (int i = theMenu.getItemCount() - 1; 0 <= i; i--) {
-			JMenuItem item = theMenu.getItem(i);
-			if (item instanceof JCheckBoxMenuItem) {
-				((JCheckBoxMenuItem) item).setState(item == theItem);
-			}
-		}
-	}
-
+//	private void setMenuItemState(JMenu theMenu, JCheckBoxMenuItem theItem) {
+//		for (int i = theMenu.getItemCount() - 1; 0 <= i; i--) {
+//			JMenuItem item = theMenu.getItem(i);
+//			if (item instanceof JCheckBoxMenuItem) {
+//				((JCheckBoxMenuItem) item).setState(item == theItem);
+//			}
+//		}
+//	}
 	/** ItemListener Implementation */
 	public void itemStateChanged(ItemEvent e) {
 		Object theItem = e.getSource();
@@ -632,12 +725,11 @@ public class SequenceViewer extends Applet
 
 	public void tempChange(SeqSymmetry residues_sym) {
 		isApplication = true;
-		SequenceViewer me = new SequenceViewer();
 		parameters = new Hashtable<String, String>();
 		parameters.put("seq_file", "data/test.fst");
 		System.setProperty("apple.laf.useScreenMenuBar", "false");
-		me.init(residues_sym);
-		me.start(residues_sym);
+		init(residues_sym);
+		start(residues_sym);
 
 	}
 }

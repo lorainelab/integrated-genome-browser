@@ -5,8 +5,11 @@
 
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genoviz.event.NeoRubberBandEvent;
+import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.view.SequenceViewer;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -15,16 +18,22 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *
  * @author auser
  */
-public class ViewGenomicSequenceInSeqViewerAction  extends AbstractAction {
+public class ViewGenomicSequenceInSeqViewerAction  extends AbstractAction{
 	private static final long serialVersionUID = 1l;
+	public static ViewGenomicSequenceInSeqViewerAction singleton = new ViewGenomicSequenceInSeqViewerAction();
 
-	public ViewGenomicSequenceInSeqViewerAction() {
+	private ViewGenomicSequenceInSeqViewerAction() {
 		super(BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
+	}
+
+	public static ViewGenomicSequenceInSeqViewerAction getAction(){
+		return singleton;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		try {
-			IGB.getSingleton().getMapView().openSequenceViewer(true);
+			SequenceViewer sv = new SequenceViewer();
+			sv.loadResidues(true);
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex);
 		}

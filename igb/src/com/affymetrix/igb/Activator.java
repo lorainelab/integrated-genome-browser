@@ -8,6 +8,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.window.service.IWindowService;
 
 public class Activator implements BundleActivator {
@@ -48,7 +50,15 @@ public class Activator implements BundleActivator {
         	args = bundleContext.getProperty("args").split(",");
         }
         igb.init(args);
-        igb.setWindowService(windowService);
+        final IGBTabPanel[] tabs = igb.setWindowService(windowService);
 		bundleContext.registerService(IGBService.class.getName(), IGBServiceImpl.getInstance(), new Properties());
+		ThreadUtils.runOnEventQueue(new Runnable() {
+			@Override
+			public void run() {
+				for (IGBTabPanel tab : tabs) {
+					bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
+				}
+			}
+		});
 	}
 }

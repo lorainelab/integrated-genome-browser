@@ -206,7 +206,9 @@ public abstract class PreferenceUtils {
 	 *         of the acceptable values
 	 */
 	public static void saveComponentState(String name, String state) {
-		if (state.equals(COMPONENT_STATE_TAB) || state.equals(COMPONENT_STATE_WINDOW) || state.equals(COMPONENT_STATE_HIDDEN)) {
+		if (state == null) {
+			getTopNode().remove(name + " state");
+		} else if (state.equals(COMPONENT_STATE_TAB) || state.equals(COMPONENT_STATE_WINDOW) || state.equals(COMPONENT_STATE_HIDDEN)) {
 			getTopNode().put(name + " state", state);
 		} else {
 			throw new IllegalArgumentException();

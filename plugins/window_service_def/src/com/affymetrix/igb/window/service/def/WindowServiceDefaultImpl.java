@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,21 +37,15 @@ import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.osgi.service.ExtensionFactory;
-import com.affymetrix.igb.osgi.service.ExtensionPoint;
-import com.affymetrix.igb.osgi.service.ExtensionPointRegisterListener;
-import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
-import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.IWindowService;
 
-public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointRegisterListener<IGBTabPanel> {
+public class WindowServiceDefaultImpl implements IWindowService {
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
 	private static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
 	private Set<IGBTabPanel> addedPlugins = new HashSet<IGBTabPanel>();
-	private ExtensionPoint<IGBTabPanel> tabPanelExtensionPoint;
 	private JMenuItem move_tab_to_window_item;
 	private JMenuItem move_tabbed_panel_to_window_item;
 	private JMenu tabs_menu;
@@ -347,7 +342,7 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 		PreferenceUtils.saveComponentState(tabPanel.getName(), PreferenceUtils.COMPONENT_STATE_HIDDEN);
 	}
 
-	private void addTab(final IGBTabPanel plugin) {
+	public void addTab(final IGBTabPanel plugin) {
 		addedPlugins.add(plugin);
 
 		String title = plugin.getTitle();
@@ -357,7 +352,12 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 		}
 		boolean in_a_window = (PreferenceUtils.getComponentState(plugin.getName()).equals(PreferenceUtils.COMPONENT_STATE_WINDOW));
 		boolean in_a_tab = (PreferenceUtils.getComponentState(plugin.getName()).equals(PreferenceUtils.COMPONENT_STATE_TAB));
-		if (plugin.isMain() && !(in_a_window || in_a_tab)) { // this should never happen, but ...
+		boolean hidden = (PreferenceUtils.getComponentState(plugin.getName()).equals(PreferenceUtils.COMPONENT_STATE_HIDDEN));
+		if (!(in_a_window || in_a_tab || hidden)) {
+			PreferenceUtils.saveComponentState(plugin.getName(), PreferenceUtils.COMPONENT_STATE_TAB);
+			in_a_tab = true;
+		}
+		if (plugin.isMain() && hidden) { // this should never happen, but ...
 			PreferenceUtils.saveComponentState(plugin.getName(), PreferenceUtils.COMPONENT_STATE_TAB);
 			in_a_tab = true;
 		}
@@ -388,6 +388,17 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 			);
 		}
 		tabs_menu.add(jCheckBoxMenuItem);
+	}
+
+	public void removeTab(final IGBTabPanel plugin) {
+		addedPlugins.remove(plugin);
+		hideTab(plugin);
+		for (Component item : Arrays.asList(tabs_menu.getMenuComponents())) {
+			if (((JMenuItem)item).getText().equals(plugin.getDisplayName())) {
+				tabs_menu.remove(item);
+			}
+		}
+		PreferenceUtils.saveComponentState(plugin.getName(), null);
 	}
 
 	/** Returns the icon stored in the jar file.
@@ -425,48 +436,8 @@ public class WindowServiceDefaultImpl implements IWindowService, ExtensionPointR
 		saveWindowLocations();
 	}
 
-	public ExtensionPoint<IGBTabPanel> setExtensionPointRegistry(ExtensionPointRegistry registry) {
-	    tabPanelExtensionPoint = new ExtensionPoint<IGBTabPanel>();
-	    registry.registerExtensionPoint(IGBService.TAB_PANELS, tabPanelExtensionPoint);
-		tabPanelExtensionPoint.addExtensionPointRegisterListener(this);
-		return tabPanelExtensionPoint;
-	}
-
 	@Override
 	public Set<IGBTabPanel> getPlugins() {
 		return addedPlugins;
-	}
-
-	@Override
-	public void extensionPointAdded(ExtensionFactory<IGBTabPanel> extensionFactory) {
-		Set<IGBTabPanel> extensionTabs = tabPanelExtensionPoint.getExtensions();
-		for (IGBTabPanel tab : extensionTabs) {
-			boolean found = false;
-			for (IGBTabPanel plugin : new HashSet<IGBTabPanel>(addedPlugins)) {
-				if (tab.getName().equals(plugin.getName())) {
-					found = true;
-				}
-			}
-			if (!found) {
-				addTab(tab);
-			}
-		}
- 	}
-
-	@Override
-	public void extensionPointRemoved(ExtensionFactory<IGBTabPanel> extensionFactory) {
-		Set<IGBTabPanel> extensionTabs = tabPanelExtensionPoint.getExtensions();
-		for (IGBTabPanel plugin : new HashSet<IGBTabPanel>(addedPlugins)) {
-			boolean found = false;
-			for (IGBTabPanel tab : extensionTabs) {
-				if (tab.getName().equals(plugin.getName())) {
-					found = true;
-				}
-			}
-			if (!found) {
-				hideTab(plugin);
-				addedPlugins.remove(plugin);
-			}
-		}
 	}
 }

@@ -7,8 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 
-import com.affymetrix.igb.osgi.service.ExtensionPoint;
-import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
 public interface IWindowService {
@@ -19,5 +17,4 @@ public interface IWindowService {
 	public void setViewMenu(JMenu view_menu);
 	public void setStatusBar(JComponent status_bar);
 	public Set<IGBTabPanel> getPlugins();
-	public ExtensionPoint<IGBTabPanel> setExtensionPointRegistry(ExtensionPointRegistry registry);
 }

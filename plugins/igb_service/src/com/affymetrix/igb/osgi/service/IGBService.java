@@ -32,7 +32,6 @@ public interface IGBService {
 	public ImageIcon getIcon(String name);
 	public void addStopRoutine(IStopRoutine routine);
 	public int getTier(Bundle bundle);
-	public ExtensionPointRegistry getExtensionPointRegistry();
 	public JMenu getViewMenu();
 	// for plugins page
 	public List<String> getRepositories();

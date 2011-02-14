@@ -36,7 +36,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.PropertyHandler;
@@ -163,11 +162,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 			}
 		}
 		return tier;
-	}
-
-	@Override
-	public ExtensionPointRegistry getExtensionPointRegistry() {
-		return ExtensionPointRegistry.getInstance();
 	}
 
 	@Override

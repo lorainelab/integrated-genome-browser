@@ -36,15 +36,10 @@ import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.IdentityTransform;
 import com.affymetrix.genometryImpl.util.InverseTransform;
-import com.affymetrix.genometryImpl.util.LogTransform;
 
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
-import com.affymetrix.igb.osgi.service.ExtensionFactory;
-import com.affymetrix.igb.osgi.service.ExtensionPoint;
-import com.affymetrix.igb.osgi.service.ExtensionPointRegisterListener;
-import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -100,7 +95,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
 	private static final String select2graphs= "Select exactly two graphs";
-	private ExtensionPoint<FloatTransformer> graphTransformExtensionPoint;
 
 	private final JButton cloneB = new JButton(BUNDLE.getString("goButton"));
 	private final JLabel scale_type_label = new JLabel(BUNDLE.getString("transformationLabel"));
@@ -158,13 +152,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 	public SimpleGraphTab(IGBService igbService) {
 		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), true);
-	    ExtensionPointRegistry registry = igbService.getExtensionPointRegistry();
-	    graphTransformExtensionPoint = new ExtensionPoint<FloatTransformer>();
-	    registry.registerExtensionPoint(IGBService.GRAPH_TRANSFORMS, graphTransformExtensionPoint);
 		advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
-		initTransformers();
-		advanced_panel.loadTransforms();
-        graphTransformExtensionPoint.addExtensionPointRegisterListener(advanced_panel);
 		this.gviewer = (SeqMapView)igbService.getMapView();
 
 		heat_mapCB = new JComboBox(HeatMap.getStandardNames());
@@ -299,49 +287,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 	private void setSeqMapView(SeqMapView smv) {
 		this.gviewer = smv;
-	}
-
-	private void initTransformers() {
-        graphTransformExtensionPoint.registerExtension(
-        	new ExtensionFactory<FloatTransformer>() {
-				@Override
-				public FloatTransformer createInstance() {
-					return new IdentityTransform();
-				}
-        	}
-        );
-        graphTransformExtensionPoint.registerExtension(
-        	new ExtensionFactory<FloatTransformer>() {
-				@Override
-				public FloatTransformer createInstance() {
-					return new LogTransform(2.0);
-				}
-        	}
-        );
-        graphTransformExtensionPoint.registerExtension(
-        	new ExtensionFactory<FloatTransformer>() {
-				@Override
-				public FloatTransformer createInstance() {
-					return new LogTransform(10.0);
-				}
-        	}
-        );
-        graphTransformExtensionPoint.registerExtension(
-        	new ExtensionFactory<FloatTransformer>() {
-				@Override
-				public FloatTransformer createInstance() {
-					return new LogTransform(Math.E);
-				}
-        	}
-        );
-        graphTransformExtensionPoint.registerExtension(
-        	new ExtensionFactory<FloatTransformer>() {
-				@Override
-				public FloatTransformer createInstance() {
-					return new LogTransform();
-				}
-        	}
-        );
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
@@ -583,7 +528,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 	}
 
-
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		if (DEBUG_EVENTS) {
 			System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
@@ -597,6 +541,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 		while (e.hasMoreElements()) {
 			e.nextElement().setEnabled(b);
 		}
+	}
+
+	public AdvancedGraphPanel getAdvancedPanel() {
+		return advanced_panel;
 	}
 
 	private final class GraphStyleSetter implements ActionListener {
@@ -723,7 +671,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 	}
 	
-	private final class AdvancedGraphPanel extends JPanel implements ExtensionPointRegisterListener<FloatTransformer> {
+	final class AdvancedGraphPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private static final int PARAM_TEXT_WIDTH = 60;
 		private Map<String, FloatTransformer> name2transform;
@@ -734,8 +682,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 			HoverEffect hovereffect = new HoverEffect();
 
 			advanced_panel.setLayout(new BoxLayout(advanced_panel, BoxLayout.Y_AXIS));
-
-			loadTransforms();
 
 			paramT.setText("");
 			paramT.setVisible(false);
@@ -910,10 +856,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 			});
 		}
 
-		public void loadTransforms() {
+		public void loadTransforms(Set<FloatTransformer> floatTransformers) {
 			scaleCB.removeAllItems();
 			name2transform.clear();
-			for (FloatTransformer transformer : graphTransformExtensionPoint.getExtensions()) {
+			for (FloatTransformer transformer : floatTransformers) {
 				name2transform.put(transformer.getName(), transformer);
 			}
 			for (String name : name2transform.keySet()) {
@@ -1065,16 +1011,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 			if (something_changed) {
 				updateViewer();
 			}
-		}
-
-		@Override
-		public void extensionPointAdded(ExtensionFactory<FloatTransformer> extensionFactory) {
-			advanced_panel.loadTransforms();
-		}
-
-		@Override
-		public void extensionPointRemoved(ExtensionFactory<FloatTransformer> extensionFactory) {
-			advanced_panel.loadTransforms();
 		}
 	}
 

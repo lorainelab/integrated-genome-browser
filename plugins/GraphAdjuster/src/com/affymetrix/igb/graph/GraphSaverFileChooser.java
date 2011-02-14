@@ -26,6 +26,7 @@ import javax.swing.filechooser.FileFilter;
  *  the few graph file types that can also be written out.
  */
 public final class GraphSaverFileChooser extends UniFileChooser {
+  private static final long serialVersionUID = 1L;
 
   static public final UniFileFilter wig_filter = new UniFileFilter(new String[] {"wig"}, "Wiggle Graph");
   static public final UniFileFilter egr_filter = new UniFileFilter(new String[] {"egr"}, "Scored Interval Graph");

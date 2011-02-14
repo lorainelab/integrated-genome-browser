@@ -48,9 +48,6 @@ import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
-import com.affymetrix.igb.osgi.service.ExtensionFactory;
-import com.affymetrix.igb.osgi.service.ExtensionPoint;
-import com.affymetrix.igb.osgi.service.ExtensionPointRegistry;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.prefs.*;
@@ -63,7 +60,6 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -408,40 +404,15 @@ public final class IGB extends Application
 
 	}
 
-	public void setWindowService(IWindowService windowService) {
+	public IGBTabPanel[] setWindowService(IWindowService windowService) {
 		this.windowService = windowService;
-		final ExtensionPoint<IGBTabPanel> tabPanelExtensionPoint = windowService.setExtensionPointRegistry(ExtensionPointRegistry.getInstance());
 		windowService.setMainFrame(frm);
 		windowService.setSeqMapView(getMapView());
 		windowService.setStatusBar(status_bar);
 		windowService.setViewMenu(view_menu);
 		frm.setVisible(true);
-		final DataLoadView dataLoadView = new DataLoadView(IGBServiceImpl.getInstance());
-        if (tabPanelExtensionPoint != null) {
-    		ThreadUtils.runOnEventQueue(new Runnable() {
-    			public void run() {
-		            tabPanelExtensionPoint.registerExtension(
-		            	new ExtensionFactory<IGBTabPanel>() {
-							@Override
-							public IGBTabPanel createInstance() {
-								return dataLoadView;
-							}
-
-		            	}
-		            );
-		            tabPanelExtensionPoint.registerExtension(
-		            	new ExtensionFactory<IGBTabPanel>() {
-							@Override
-							public IGBTabPanel createInstance() {
-								return new AltSpliceView(IGBServiceImpl.getInstance());
-							}
-
-		            	}
-		            );
-					MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()));
-		        }
-    		});
-        }
+		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()));
+		return new IGBTabPanel[]{new DataLoadView(IGBServiceImpl.getInstance()), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}
 
 	private void fileMenu() {
@@ -559,7 +530,7 @@ public final class IGB extends Application
 			System.out.println(getClass().getName() + ".getView() failed for " + viewName);
 			return null;
 		}
-		for (JComponent plugin : windowService.getPlugins()) {
+		for (IGBTabPanel plugin : windowService.getPlugins()) {
 			if (viewClass.isAssignableFrom(plugin.getClass())) {
 				return plugin;
 			}

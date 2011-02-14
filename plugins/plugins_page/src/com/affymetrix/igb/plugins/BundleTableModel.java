@@ -135,68 +135,6 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 	private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
 	static {
-		columns.add(new BundleColumn() { // active
-			@Override
-			public String getTitle() { return PluginsView.BUNDLE.getString("activeColumn"); }
-			@Override
-			public boolean isEditable() { return true; }
-			@Override
-			public Object getValue(Bundle bundle) { return bundle.getState() == Bundle.ACTIVE; }
-			@Override
-			public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {
-				if (bundle.getState() == Bundle.ACTIVE) {
-					try {
-						pluginsHandler.clearError();
-						bundle.stop();
-					}
-					catch (BundleException bex) {
-						pluginsHandler.displayError(bex.getMessage());
-					}
-				}
-				else if (bundle.getState() == Bundle.INSTALLED || bundle.getState() == Bundle.RESOLVED)  {
-					try {
-						pluginsHandler.clearError();
-						bundle.start();
-					}
-					catch (BundleException bex) {
-						pluginsHandler.displayError(bex.getMessage());
-//						Throwable cause = bex;
-//						int preventLoop = 0;
-//						while (cause.getCause() != null && !cause.equals(cause.getCause()) && preventLoop < 16) {
-//							cause = bex.getCause();
-//							preventLoop++;
-//						}
-//						displayError(cause.getMessage());
-					}
-				}
-			}
-			@Override
-			public void formatColumn(JTable jTable, TableColumn tc) {
-				tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
-				tc.setCellRenderer(
-						new TableCellRenderer() {
-							@Override
-							public Component getTableCellRendererComponent(JTable jTable, Object value,
-									boolean isSelected, boolean hasFocus, int row, int column) {
-								TableCellRenderer tableCellRenderer = PluginsView.isInstalled(pluginsHandler.getBundleAtRow(row)) ?
-									jTable.getDefaultRenderer(Boolean.class)
-								 : 
-									new DefaultTableCellRenderer.UIResource() {
-										private static final long serialVersionUID = 1L;
-										public void setValue(Object value) {
-											super.setValue(value);
-											setText("");
-										}
-									};
-								return tableCellRenderer.getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, column);
-							}
-						}
-				);
-				tc.setMinWidth(NARROW_COLUMN);
-				tc.setMaxWidth(NARROW_COLUMN);
-				tc.setPreferredWidth(NARROW_COLUMN);
-			}
-		});
 	columns.add(new BundleColumn() { // symbolic name
 		@Override
 		public String getTitle() { return PluginsView.BUNDLE.getString(BUNDLE_SYMBOLICNAME); }

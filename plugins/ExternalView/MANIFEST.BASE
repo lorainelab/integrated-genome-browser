@@ -6,7 +6,7 @@ Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.external.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-ExternalViewPanel
-IGB-Tier: 2
+IGB-Tier: 1
 Import-Package: com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.das,
  com.affymetrix.genometryImpl.event,

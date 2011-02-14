@@ -98,7 +98,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private JButton repositoryPrefsButton;
 	private JLabel errors;
 	private boolean isShowInstalledBundles = true;
-	private boolean isShowUninstalledBundles = false;
+	private boolean isShowUninstalledBundles = true;
 	private RepositoryAdmin repoAdmin;
 	private BundleListener bundleListener;
 	private List<Bundle> installedBundles;
@@ -232,6 +232,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				}
 			}
 		);
+		uninstalledBundlesCheckbox.setSelected(true);
 		buttonPanel.add(uninstalledBundlesCheckbox);
 
 		updateAllBundlesButton = new JButton(BUNDLE.getString("updateAllBundles"));

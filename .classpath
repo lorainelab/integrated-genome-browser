@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="das2_server/src"/>
+	<classpathentry kind="src" path="protannot/src"/>
+	<classpathentry kind="src" path="genoviz_sdk/src"/>
+	<classpathentry kind="src" path="genometryImpl/src"/>
 	<classpathentry kind="src" path="main/src"/>
-	<classpathentry kind="src" path="common/src"/>
+	<classpathentry kind="src" path="igb_server/src"/>
+	<classpathentry kind="src" path="igb/src"/>
+	<classpathentry kind="src" path="igb-i18n/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="ext/affx_fusion.jar"/>
 	<classpathentry kind="lib" path="ext/antlr-2.7.6rc1.jar"/>
 	<classpathentry kind="lib" path="ext/asm-attrs.jar"/>
@@ -29,25 +36,16 @@
 	<classpathentry kind="lib" path="ext/junit.jar"/>
 	<classpathentry kind="lib" path="ext/log4j-1.2.11.jar"/>
 	<classpathentry kind="lib" path="ext/org.mortbay.jetty.jar"/>
-	<classpathentry kind="lib" path="ext/picard.jar"/>
-	<classpathentry kind="lib" path="ext/sam.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>
-	<classpathentry kind="lib" path="igb/resources"/>
 	<classpathentry kind="lib" path="ext/org.apache.felix.log-1.0.0.jar"/>
-	<classpathentry kind="lib" path="dist/das2server.jar"/>
+	<classpathentry kind="lib" path="dist/das2server.jar" sourcepath="das2_server/src"/>
 	<classpathentry kind="lib" path="dist/genometry.jar"/>
 	<classpathentry kind="lib" path="dist/genoviz.jar"/>
-	<classpathentry kind="lib" path="dist/igb-i18n.jar"/>
-	<classpathentry kind="lib" path="dist/igb.jar"/>
-	<classpathentry kind="lib" path="dist/main.jar"/>
 	<classpathentry kind="lib" path="dist/plugins_page.jar" sourcepath="plugins/window_service_def/src"/>
-	<classpathentry kind="lib" path="dist/protannot.jar"/>
-	<classpathentry kind="lib" path="dist/ExternalView.jar" sourcepath="plugins/ExternalView/src"/>
-	<classpathentry kind="lib" path="dist/window_service_def.jar" sourcepath="plugins/window_service_def/src"/>
-	<classpathentry kind="lib" path="dist/window_service.jar" sourcepath="plugins/window_service/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="dist"/>
+	<classpathentry kind="lib" path="ext/picard.jar"/>
+	<classpathentry kind="lib" path="ext/sam.jar"/>
+	<classpathentry kind="lib" path="das2_server/build"/>
 	<classpathentry kind="lib" path="dist/RestrictionSites.jar"/>
 	<classpathentry kind="lib" path="dist/igb_service.jar"/>
 	<classpathentry kind="lib" path="ext/felix.jar"/>

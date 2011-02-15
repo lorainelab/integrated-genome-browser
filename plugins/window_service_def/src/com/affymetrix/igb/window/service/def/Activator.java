@@ -11,7 +11,6 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.IWindowService;
 
@@ -29,7 +28,7 @@ public class Activator implements BundleActivator {
 		Activator.bundleContext = _bundleContext;
 		final WindowServiceDefaultImpl windowServiceDefaultImpl = new WindowServiceDefaultImpl();
 		bundleContext.registerService(IWindowService.class.getName(), windowServiceDefaultImpl, new Properties());
-		ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(FloatTransformer.class.getName(), null);
+		ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(IGBTabPanel.class.getName(), null);
 		if (serviceReferences != null) {
 			for (ServiceReference serviceReference : serviceReferences) {
 				windowServiceDefaultImpl.addTab((IGBTabPanel)bundleContext.getService(serviceReference));

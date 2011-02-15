@@ -165,6 +165,7 @@
                     <target>compile</target>
                 </action>
                 <action name="clean">
+					<target>cbc</target>
                     <target>clean</target>
                 </action>
                 <action name="javadoc">

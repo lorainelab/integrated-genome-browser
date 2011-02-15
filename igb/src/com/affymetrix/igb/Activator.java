@@ -9,7 +9,6 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.window.service.IWindowService;
 
 public class Activator implements BundleActivator {

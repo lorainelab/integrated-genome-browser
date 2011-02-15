@@ -18,6 +18,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		this.bundleContext = _bundleContext;
+//		String[] args = bundleContext.getProperty("args").split(",");
 		// Verify jidesoft license.
 		com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
 			"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");

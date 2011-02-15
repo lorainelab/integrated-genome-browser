@@ -53,13 +53,8 @@ public class Activator implements BundleActivator {
         igb.init(args);
         final IGBTabPanel[] tabs = igb.setWindowService(windowService);
 		bundleContext.registerService(IGBService.class.getName(), IGBServiceImpl.getInstance(), new Properties());
-		ThreadUtils.runOnEventQueue(new Runnable() {
-			@Override
-			public void run() {
-				for (IGBTabPanel tab : tabs) {
-					bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
-				}
-			}
-		});
+		for (IGBTabPanel tab : tabs) {
+			bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
+		}
 	}
 }

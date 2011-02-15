@@ -165,9 +165,10 @@ public class SeqMapView extends JPanel
 	JMenuItem centerMI = empty_menu_item;
 	JMenuItem selectParentMI = empty_menu_item;
 	JMenuItem slicendiceMI = empty_menu_item;
-	JMenu seqViewerOptions = new JMenu("Show genomic sequence for ..");
-	JMenuItem viewFeatureinSequenceViewer = empty_menu_item;
-	JMenuItem viewParentinSequenceViewer = empty_menu_item;
+//	JMenu seqViewerOptions = new JMenu("Show genomic sequence for ..");
+	JMenuItem seqViewerOptions = empty_menu_item;
+//	JMenuItem viewFeatureinSequenceViewer = empty_menu_item;
+//	JMenuItem viewParentinSequenceViewer = empty_menu_item;
 	// for right-click on background
 	private final SeqMapViewActionListener action_listener;
 	private final SeqMapViewMouseListener mouse_listener;
@@ -414,8 +415,9 @@ public class SeqMapView extends JPanel
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
-		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Just selected span using genomic coordinates");
-		viewParentinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Linked spans using transcript coordinates");
+		seqViewerOptions = setUpMenuItem(sym_popup, "Show genomic sequence");
+//		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Just selected span using genomic coordinates");
+//		viewParentinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Linked spans using transcript coordinates");
 //		viewFeatureinSequenceViewer = new JMenuItem("View selected feature in Sequence Viewer");
 //		viewParentinSequenceViewer = new JMenuItem("View sequence for parent in sequence Viewer");
 //		seqViewerOptions.add(viewFeatureinSequenceViewer);
@@ -1596,8 +1598,8 @@ public class SeqMapView extends JPanel
 		if (!selected_syms.isEmpty()) {
 			popup.add(selectParentMI);
 			popup.add(seqViewerOptions);
-			seqViewerOptions.add(viewFeatureinSequenceViewer);
-			seqViewerOptions.add(viewParentinSequenceViewer);
+//			seqViewerOptions.add(viewFeatureinSequenceViewer);
+//			seqViewerOptions.add(viewParentinSequenceViewer);
 		}
 				
 		for (ContextualPopupListener listener : popup_listeners) {

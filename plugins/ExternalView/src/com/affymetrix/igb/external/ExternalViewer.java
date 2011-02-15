@@ -29,7 +29,7 @@ public class ExternalViewer extends IGBTabPanel {
 	private final JMenuItem menuItem;
 
 	public ExternalViewer(IGBService igbService_) {
-		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false);
+		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, 6);
 		this.setLayout(new CardLayout());
 		ucscBox = createBox();
 		ucscViewAction = new UCSCViewAction((SeqMapView)igbService.getMapView());

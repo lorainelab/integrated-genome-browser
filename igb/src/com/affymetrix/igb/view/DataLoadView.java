@@ -30,7 +30,7 @@ public final class DataLoadView extends IGBTabPanel {
 	public static int TAB_DATALOAD_PREFS = -1;
 
 	public DataLoadView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), true);
+		super(igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), true, Integer.MIN_VALUE);
 		this.setLayout(new BorderLayout());
 
 		JPanel main_panel = new JPanel();

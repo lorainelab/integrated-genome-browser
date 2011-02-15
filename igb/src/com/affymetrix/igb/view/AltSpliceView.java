@@ -50,7 +50,7 @@ public class AltSpliceView extends IGBTabPanel
 	private boolean slice_by_selection_on = true;
 
 	public AltSpliceView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"), true);
+		super(igbService, BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"), true, 5);
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;

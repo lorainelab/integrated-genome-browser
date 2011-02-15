@@ -109,7 +109,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private BundleFilter bundleFilter;
 
 	public PluginsView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false);
+		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false, Integer.MAX_VALUE);
 		latest = new HashMap<String, Bundle>();
 
 		igbService.addRepositoryChangeListener(this);

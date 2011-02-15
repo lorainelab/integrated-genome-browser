@@ -108,7 +108,7 @@ public final class SearchView extends IGBTabPanel implements
 	private List<SeqSymmetry> remoteSymList;
 
 	public SearchView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false);
+		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, 3);
 		gviewer = (SeqMapView)igbService.getMapView();
 		gviewer.addToRefreshList(this);
 		

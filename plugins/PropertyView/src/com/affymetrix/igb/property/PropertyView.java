@@ -56,7 +56,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
 
 	public PropertyView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("selectionInfoTab"), BUNDLE.getString("selectionInfoTab"), false);
+		super(igbService, BUNDLE.getString("selectionInfoTab"), BUNDLE.getString("selectionInfoTab"), false, 2);
 		determineOrder();
 		JViewport jvp = new JViewport();
 		scroll_pane.setColumnHeaderView(jvp);

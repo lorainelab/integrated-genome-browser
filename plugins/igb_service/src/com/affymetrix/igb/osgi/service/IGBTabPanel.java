@@ -13,15 +13,21 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	private final String title;
 	private final boolean main;
 	private String state;
+	private final int position;
 	private JTabbedPane tab_pane;
 	private JFrame frame;
 
 	public IGBTabPanel(IGBService igbService, String displayName, String title, boolean main) {
+		this(igbService, displayName, title, main, Integer.MAX_VALUE - 1);
+	}
+	
+	protected IGBTabPanel(IGBService igbService, String displayName, String title, boolean main, int position) {
 		super();
 		this.igbService = igbService;
 		this.displayName = displayName;
 		this.title = title;
 		this.main = main;
+		this.position = position;
 	}
 
 	public String getName() {
@@ -67,6 +73,11 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 
 	@Override
 	public int compareTo(IGBTabPanel o) {
+		int ret = Integer.valueOf(position).compareTo(o.position);
+
+		if(ret != 0)
+			return ret;
+
 		return this.getDisplayName().compareTo(o.getDisplayName());
 	}
 }

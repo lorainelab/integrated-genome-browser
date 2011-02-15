@@ -65,7 +65,7 @@ public final class RestrictionControlView extends IGBTabPanel
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 
 	public RestrictionControlView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), false);
+		super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), false, 7);
 		this.gviewer = (SeqMapView)igbService.getMapView();
 		boolean load_success = true;
 

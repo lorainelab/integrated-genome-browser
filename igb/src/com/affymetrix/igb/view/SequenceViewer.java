@@ -18,47 +18,30 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import java.applet.Applet;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
-import java.lang.Math;
-import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.datamodel.Sequence;
-import com.affymetrix.genoviz.parser.FastaSequenceParser;
 import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.genoviz.widget.NeoSeqCustomizer;
-import com.affymetrix.genoviz.widget.neoseq.AnnotationGlyph;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.CopyFromSeqViewerAction;
-import com.affymetrix.igb.action.ExitAction;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportFastaSequenceAction;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import java.applet.AppletContext;
 import java.awt.BorderLayout;
-import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Label;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
-import java.awt.MenuShortcut;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
@@ -71,15 +54,13 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-import javax.swing.SwingWorker;
+import javax.swing.JPanel;
 
-public class SequenceViewer extends Applet
+public class SequenceViewer extends JPanel
 		implements WindowListener, ItemListener {
 
 	protected SeqMapView seqmapview;
 	private NeoSeq seqview;
-	private NeoSeq seqview1;
 	private JFrame mapframe;
 	private Frame propframe;
 	private Sequence seqmodel;
@@ -105,17 +86,18 @@ public class SequenceViewer extends Applet
 	private Boolean isGenomic = false;
 	private GenometryModel gm = GenometryModel.getGenometryModel();
 	private String version = "";
-	SeqSymmetry residues_sym;
+	private SeqSymmetry residues_sym;
 	BioSeq aseq;
 	boolean isGenomicRequest;
 	SequenceViewer sv;
+	String errorMessage = null;
 
 	public SequenceViewer() {
 		seqmapview = IGB.getSingleton().getMapView();
 
 	}
 
-	public Applet customFormatting(SeqSymmetry residues_sym, String seq) throws HeadlessException, NumberFormatException {
+	public void customFormatting(SeqSymmetry residues_sym, String seq) throws HeadlessException, NumberFormatException {
 		Color[] okayColors = {Color.black, Color.black};
 		seqview.setStripeColors(okayColors);
 		seqview.setFont(new Font("Arial", Font.BOLD, 14));
@@ -140,102 +122,74 @@ public class SequenceViewer extends Applet
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width - pixel_width) / 2, (screen_size.height - pixel_height) / 2);
 		mapframe.setVisible(true);
-		final Applet app = this;
-		return app;
 	}
 
-	private void selectResidues(SeqSymmetry residues_sym, BioSeq aseq, boolean isGenomicRequest) {
+	private void areResiduesFine(SeqSymmetry residues_sym, BioSeq aseq, boolean isGenomic){
 		seq = SeqUtils.selectedAllResidues(residues_sym, aseq);
+		SeqSpan span = residues_sym.getSpan(aseq);
 		if (seq != null) {
-			if (SeqUtils.areResiduesComplete(seq)) {
-				if (residues_sym == null) {
-					return;
-				} else if (isGenomicRequest && residues_sym.getID() == null) {
-					this.tempChange(residues_sym);
-					return;
+			if (aseq.isAvailable(span.getMin(), span.getMax())) {
+				if (isGenomicRequest && residues_sym.getID() == null) {
+					this.initSequenceViewer(residues_sym);
 				} else if (isGenomicRequest && residues_sym.getID() != null) {
-					ErrorHandler.errorPanel("Can't Open the sequence viewer", "Please select the genomic sequence");
-					return;
+					this.errorMessage = "Please select the genomic sequence";
 				} else if (!isGenomicRequest) {
-					this.tempChange(residues_sym);
-					return;
-				}
+					this.initSequenceViewer(residues_sym);
+									}
 			} else {
-				ErrorHandler.errorPanel("Can't open sequence viewer", "Residues are not loaded properly");
+				this.errorMessage = "Residues are not loaded properly";
 			}
 		} else {
-			ErrorHandler.errorPanel("Can't open sequence viewer", "No residues found");
+			this.errorMessage = "No residues found";
 		}
+		if (errorMessage != null) {
+				ErrorHandler.errorPanel("Can not open sequence viewer", "" + this.errorMessage);
+
+			}
 
 	}
 
-	public void loadResidues(boolean isGenomic) {
+	public void startSequenceViewer(final boolean isGenomic) {
 		sv = new SequenceViewer();
 		this.isGenomicRequest = isGenomic;
-		if(isGenomic){
-			this.residues_sym = seqmapview.getSeqSymmetry();
-		}
-		else{
-		List<SeqSymmetry> syms = seqmapview.glyphsToSyms(seqmapview.getSeqMap().getSelected());
-		if(syms.size()==1){
-		this.residues_sym = syms.get(0);
-		}
-		else{
-			ErrorHandler.errorPanel("Missing Sequence Residues",
-							"Don't have all the needed residues, can't copy to clipboard.\n"
-							+ "Please load sequence residues for this region.");
-			return;
-		}
-				}
-		this.aseq = seqmapview.getAnnotatedSeq();
-		
-		if(!isGenomic){
-			Executor vexec = ThreadUtils.getPrimaryExecutor(new Object());
 		try {
-    			vexec.execute(new Runnable() {
-
-				public void run() {
-					GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
-					seqmapview.setAnnotatedSeq(aseq, true, true, true);
-					sv.selectResidues(residues_sym, aseq, isGenomicRequest);
+			this.aseq = seqmapview.getAnnotatedSeq();
+			if (!isGenomic) {
+				List<SeqSymmetry> syms = seqmapview.glyphsToSyms(seqmapview.getSeqMap().getSelected());
+				if (syms.size() == 1) {
+					this.residues_sym = syms.get(0);
+				} else {
+					this.errorMessage = "Multiple selections, please select one feature or a parent";
+					return;
 				}
-			});
+				Executor vexec = ThreadUtils.getPrimaryExecutor(new Object());
+
+				vexec.execute(new Runnable() {
+
+					public void run() {
+						GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
+						seqmapview.setAnnotatedSeq(aseq, true, true, true);
+						sv.areResiduesFine(residues_sym, aseq, isGenomic);
+					}
+				});
 
 
+			} else {
+				this.residues_sym = seqmapview.getSeqSymmetry();
+				sv.areResiduesFine(residues_sym, aseq, isGenomic);
+
+			}
 		} catch (Exception e) {
-			ErrorHandler.errorPanel("Can't open sequence viewer",
-					"Error loading residues");
-		}
-		}
-		else{
-			sv.selectResidues(residues_sym, aseq, isGenomicRequest);
+			this.errorMessage = "Error loading residues";
+		} finally {
+			if (errorMessage != null) {
+				ErrorHandler.errorPanel("Can not open sequence viewer", "" + this.errorMessage);
+				
+			}
 		}
 	}
 
 	public void init(final SeqSymmetry residues_sym) {
-
-		String param;
-
-		param = getParameter("background");
-		if (null != param) {
-			backgroundImage = this.getImage(this.getDocumentBase(), param);
-		}
-
-		if (null == backgroundImage) {
-			Label placeholder =
-					new Label("Running genoviz NeoSeq Demo", Label.CENTER);
-			this.setLayout(new BorderLayout());
-			this.add("Center", placeholder);
-			placeholder.setBackground(nicePaleBlue);
-		}
-
-		param = getParameter("show");
-		if (null != param) {
-			if (param.equalsIgnoreCase("onclick")) {
-				clicking = true;
-				framesShowing = false;
-			}
-		}
 
 		/** Using an inner class to catch mouseReleased (nee mouseUp) */
 		this.addMouseListener(new MouseAdapter() {
@@ -402,24 +356,19 @@ public class SequenceViewer extends Applet
 
 		}
 
-		final Applet app = customFormatting(residues_sym, seq);
+		customFormatting(residues_sym, seq);
 		seqview.setShow(NeoSeq.COMPLEMENT, showComp);
 		mapframe.addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
 				if (e.getSource() == mapframe) {
-					app.stop();
+					mapframe.dispose();
 				} else {
 					((Window) e.getSource()).setVisible(false);
 				}
 			}
 		});
-	}
-
-	@Override
-	public String getAppletInfo() {
-		return ("Demonstration of genoviz Software's Sequence Viewing Widget");
 	}
 
 	private void showFrames(SeqSymmetry residues_sym) {
@@ -442,26 +391,6 @@ public class SequenceViewer extends Applet
 		if (framesShowing) {
 			showFrames(residues_sym);
 		}
-	}
-
-	@Override
-	public void stop() {
-		hideFrames();
-	}
-
-	@Override
-	public void destroy() {
-		if (this.mapframe != null) {
-			this.mapframe.setVisible(false);
-			this.mapframe.dispose();
-			this.mapframe = null;
-		}
-		if (this.propframe != null) {
-			this.propframe.setVisible(false);
-			this.propframe.dispose();
-			this.propframe = null;
-		}
-		super.destroy();
 	}
 
 	public static String getClipboard() {
@@ -689,44 +618,7 @@ public class SequenceViewer extends Applet
 		((Window) e.getSource()).setVisible(false);
 	}
 
-	@Override
-	public URL getCodeBase() {
-		if (isApplication) {
-			return this.getClass().getResource("/");
-		}
-		return super.getCodeBase();
-	}
-
-	@Override
-	public AppletContext getAppletContext() {
-		if (isApplication) {
-			return null;
-		}
-		return super.getAppletContext();
-	}
-
-	@Override
-	public URL getDocumentBase() {
-		if (isApplication) {
-			return getCodeBase();
-		}
-		return super.getDocumentBase();
-	}
-
-	@Override
-	public String getParameter(String name) {
-		if (isApplication) {
-			return parameters.get(name);
-		}
-		return super.getParameter(name);
-	}
-	static Boolean isApplication = false;
-	static Hashtable<String, String> parameters;
-
-	public void tempChange(SeqSymmetry residues_sym) {
-		isApplication = true;
-		parameters = new Hashtable<String, String>();
-		parameters.put("seq_file", "data/test.fst");
+	public void initSequenceViewer(SeqSymmetry residues_sym) {
 		System.setProperty("apple.laf.useScreenMenuBar", "false");
 		init(residues_sym);
 		start(residues_sym);

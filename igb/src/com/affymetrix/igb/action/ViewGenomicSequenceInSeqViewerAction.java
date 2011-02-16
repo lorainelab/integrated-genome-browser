@@ -33,7 +33,7 @@ public class ViewGenomicSequenceInSeqViewerAction  extends AbstractAction{
 	public void actionPerformed(ActionEvent e) {
 		try {
 			SequenceViewer sv = new SequenceViewer();
-			sv.loadResidues(true);
+			sv.startSequenceViewer(true);
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex);
 		}

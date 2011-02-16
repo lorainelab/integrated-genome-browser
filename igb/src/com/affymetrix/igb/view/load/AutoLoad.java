@@ -31,40 +31,25 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 		this.scroller = map.getScroller(NeoMap.X);
 		
 		this.zoomer.addAdjustmentListener(this);
-		this.scroller.addAdjustmentListener(this);
+		this.scroller.addMouseListener(this);
 		this.map.addMouseListener(this);
 		this.map.addMouseMotionListener(this);
 	}
 
 	public void adjustmentValueChanged(AdjustmentEvent evt) {
-		//    System.out.println("adjustmentValueChanged to: " + evt.getValue());
 		Adjustable source = evt.getAdjustable();
-		//    System.out.println(source);
-		if((source != zoomer && source != scroller) || is_dragging)
+
+		if (source != zoomer) {
 			return;
-		
-		if (source == zoomer) {
-
-			zoomer_value = (source.getValue() * 100/ source.getMaximum());
-			if (zoomer_value == prev_zoomer_value ||
-					zoomer_value < threshold){
-				return;
-			}
-
-			prev_zoomer_value = zoomer_value;
 		}
-		else if (source == scroller) {
-			
-			scroller_value = source.getValue();
-			if (scroller_value == prev_scroller_value ||
-					zoomer_value < threshold ||
-					scroller.getValueIsAdjusting()){
-				return;
-			}
-			
-			prev_scroller_value = scroller_value;
 
+		zoomer_value = (source.getValue() * 100 / source.getMaximum());
+		if (zoomer_value == prev_zoomer_value
+				|| zoomer_value < threshold) {
+			return;
 		}
+
+		prev_zoomer_value = zoomer_value;
 
 		loadData();
 	}
@@ -81,11 +66,26 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 	public void mousePressed(MouseEvent e) {}
 	
 	public void mouseReleased(MouseEvent e) {
-		is_dragging = false;
-		if(was_dragging && zoomer_value > threshold && scroller_value != prev_scroller_value){
+
+		if(e.getSource() == map){
+			is_dragging = false;
+			scroller_value = scroller.getValue();
+			if(was_dragging && zoomer_value > threshold && scroller_value != prev_scroller_value){
+				loadData();
+			}
+			was_dragging = false;
+			prev_scroller_value = scroller_value;
+			return;
+		}else if (e.getSource() == scroller){
+			scroller_value = scroller.getValue();
+			if (scroller_value == prev_scroller_value ||
+					zoomer_value < threshold ){
+				return;
+			}
+
+			prev_scroller_value = scroller_value;
 			loadData();
 		}
-		was_dragging = false;
 	}
 
 	public void mouseDragged(MouseEvent e) {

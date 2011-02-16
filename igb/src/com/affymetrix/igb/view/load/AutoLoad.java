@@ -67,29 +67,22 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 	
 	public void mouseReleased(MouseEvent e) {
 
-		if(e.getSource() == map){
-			is_dragging = false;
-			scroller_value = scroller.getValue();
-			if(was_dragging && zoomer_value > threshold && scroller_value != prev_scroller_value){
-				loadData();
-			}
+		if (e.getSource() == map && !was_dragging) {
 			was_dragging = false;
-			prev_scroller_value = scroller_value;
 			return;
-		}else if (e.getSource() == scroller){
-			scroller_value = scroller.getValue();
-			if (scroller_value == prev_scroller_value ||
-					zoomer_value < threshold ){
-				return;
-			}
-
-			prev_scroller_value = scroller_value;
-			loadData();
 		}
+		
+		scroller_value = scroller.getValue();
+		if (zoomer_value < threshold
+				|| scroller_value == prev_scroller_value) {
+			return;
+		}
+		
+		prev_scroller_value = scroller_value;
+		loadData();
 	}
 
 	public void mouseDragged(MouseEvent e) {
-		is_dragging = true;
 		was_dragging = true;
 	}
 }

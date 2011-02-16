@@ -132,4 +132,12 @@ public abstract class Application {
 		return JOptionPane.YES_OPTION == n;
 		//end 
 	}
+	
+	public static boolean confirmPanelForExit(String message) {
+		Application app = getSingleton();
+		JFrame frame = (app == null) ? null : app.getFrame();
+		
+		return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
+				frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
+	}
 }

@@ -327,7 +327,7 @@ public final class IGB extends Application
 						PreferenceUtils.default_ask_before_exiting);
 				String message = "Do you really want to exit?";
 
-				if ((!ask_before_exit) || confirmPanel(message)) {
+				if ((!ask_before_exit) || confirmPanelForExit(message)) {
 					if (bmark_action != null) {
 						bmark_action.autoSaveBookmarks();
 					}

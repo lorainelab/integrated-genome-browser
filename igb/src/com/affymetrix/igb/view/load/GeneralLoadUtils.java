@@ -564,17 +564,32 @@ public final class GeneralLoadUtils {
 		mapping.addChild(child);
 	}
 
-	/**
-	 * Load and display annotations (requested for the specific feature).
-	 * Adjust the load status accordingly.
-	 * @param gFeature
-	 * @return true or false
-	 */
-	static public boolean loadAndDisplayAnnotations(GenericFeature gFeature) {
+	protected static void bufferDataForAutoload(){
+		SeqSpan visible = gviewer.getVisibleSpan();
+		BioSeq seq = visible.getBioSeq();
+		int length = visible.getLength();
+		int min = visible.getMin();
+		int max = visible.getMax();
+		SeqSpan leftSpan = new SimpleSeqSpan(Math.max(0, min - length), min, seq);
+		SeqSpan rightSpan = new SimpleSeqSpan(max, Math.min(seq.getLength(), max + length), seq);
+
+		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
+			if (gFeature.loadStrategy != LoadStrategy.AUTOLOAD) {
+				continue;
+			}
+
+			if(checkBeforeLoading(gFeature)){
+				loadAndDisplaySpan(leftSpan, gFeature);
+				loadAndDisplaySpan(rightSpan, gFeature);
+			}
+		}
+	}
+
+	private static boolean checkBeforeLoading(GenericFeature gFeature){
 		if (gFeature.loadStrategy == LoadStrategy.NO_LOAD) {
 			return false;	// should never happen
 		}
-		
+
 		//Already loaded the data.
 		if(gFeature.gVersion.gServer.serverType == ServerType.LocalFiles
 				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInst){
@@ -596,6 +611,20 @@ public final class GeneralLoadUtils {
 			return false;
 		}
 
+		return true;
+	}
+	
+	/**
+	 * Load and display annotations (requested for the specific feature).
+	 * Adjust the load status accordingly.
+	 * @param gFeature
+	 * @return true or false
+	 */
+	static public boolean loadAndDisplayAnnotations(GenericFeature gFeature) {
+		if(!checkBeforeLoading(gFeature))
+			return false;
+
+		BioSeq selected_seq = gmodel.getSelectedSeq();
 		SeqSpan overlap = null;
 		if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.AUTOLOAD) {
 			overlap = gviewer.getVisibleSpan();

@@ -522,6 +522,12 @@ public final class GeneralLoadView extends JComponent
 		ThreadUtils.getPrimaryExecutor(src).execute(worker);
 	}
 
+	public boolean loadResiduesInView(boolean tryFull){
+		final String genomeVersionName = (String) versionCB.getSelectedItem();
+		SeqSpan visibleSpan = gviewer.getVisibleSpan();
+		return loadResidues(genomeVersionName, visibleSpan.getBioSeq(), visibleSpan, true, tryFull, false);
+	}
+	
 	public boolean loadResidues(SeqSpan span, boolean tryFull){
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
 		return loadResidues(genomeVersionName, span.getBioSeq(), span, true, tryFull, false);

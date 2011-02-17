@@ -555,10 +555,9 @@ public final class BAM extends SymLoader {
 
 		String input = "INPUT=" + bamfile.getAbsolutePath();
 		String output = "OUTPUT=" + indexfile.getAbsolutePath();
-		String overwrite = "OVERWRITE=true";
 		String quiet = "QUIET="+!DEBUG;
 		BuildBamIndex buildIndex = new BuildBamIndex();
-		buildIndex.instanceMain(new String[]{input, output, overwrite, quiet});
+		buildIndex.instanceMain(new String[]{input, output, quiet});
 
 		return indexfile;
 	}

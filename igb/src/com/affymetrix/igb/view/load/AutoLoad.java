@@ -56,7 +56,7 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 
 	public void loadData(){
 		GeneralLoadView.loadAutoLoadFeatures();
-		GeneralLoadView.getLoadView().loadResidues(LoadSequence.getPartialAction());
+		//GeneralLoadView.getLoadView().loadResidues(LoadSequence.getPartialAction());
 	}
 	
 	public void mouseClicked(MouseEvent e) {}

@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
@@ -16,10 +15,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.view.ContextualPopupListener;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -69,10 +65,10 @@ public final class TierLabelManager {
 		public void mousePressed(MouseEvent evt) {
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
-				List selected_glyphs = nevt.getItems();
+				List<GlyphI> selected_glyphs = nevt.getItems();
 				GlyphI topgl = null;
 				if (!selected_glyphs.isEmpty()) {
-					topgl = (GlyphI) selected_glyphs.get(selected_glyphs.size() - 1);
+					topgl = selected_glyphs.get(selected_glyphs.size() - 1);
 				}
 
 				// Dispatch track selection event
@@ -155,7 +151,6 @@ public final class TierLabelManager {
 	}
 
 	/** Returns a list of selected TierLabelGlyph items. */
-	@SuppressWarnings("unchecked")
 	public List<TierLabelGlyph> getSelectedTierLabels() {
 		// The below loop is unnecessary, but is done to fix generics compiler warnings.
 		List<TierLabelGlyph> tlg = new ArrayList<TierLabelGlyph>(labelmap.getSelected().size());

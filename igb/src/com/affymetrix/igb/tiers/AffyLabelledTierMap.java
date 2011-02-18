@@ -22,7 +22,6 @@ import javax.swing.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
-import java.awt.Adjustable;
 import java.awt.Component;
 import java.awt.geom.Rectangle2D;
 
@@ -31,7 +30,8 @@ import java.awt.geom.Rectangle2D;
  *    track changes in tiers (size, placement) of AffyTieredMap.
  */
 public final class AffyLabelledTierMap extends AffyTieredMap  {
-  
+  private static final long serialVersionUID = 1L;
+
   private AffyTieredMap labelmap;
   private JSplitPane mapsplitter;
   private final List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();

@@ -35,14 +35,4 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
         UIManager.put("TabbedPane.tabInsets", tabInsets);
         return tabPane;
 	}
-
-	protected JTabbedPane createTabbedPane2(int tabPlacement) {
-        final JTabbedPane tabPane = new JTabbedPane(tabPlacement) {
-			private static final long serialVersionUID = 1L;
-		    public void insertTab(String title, Icon icon, Component component, String tip, int index) {
-		    	super.insertTab(null, new VTextIcon(this, title, tabPlacement==JTabbedPane.RIGHT ? VTextIcon.ROTATE_RIGHT : VTextIcon.ROTATE_LEFT), component, tip, index);
-		    }
-        };
-        return tabPane;
-	}
 }

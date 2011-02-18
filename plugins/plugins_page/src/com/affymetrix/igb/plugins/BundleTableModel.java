@@ -29,10 +29,11 @@ import org.osgi.framework.Version;
 
 public class BundleTableModel extends DefaultTableModel implements Constants {
 	private static final long serialVersionUID = 1L;
+
 	private static final int WIDE_COLUMN_MULTIPLIER = 5;
 	private static final int NARROW_COLUMN = 60;
 
-	public static class NameInfoPanel extends JPanel {
+	public static class NameInfoPanel extends JPanel implements Comparable<NameInfoPanel> {
 		private static final long serialVersionUID = 1L;
 		private static final HashMap<Bundle, NameInfoPanel> PANEL_MAP = new HashMap<Bundle, NameInfoPanel>(); // kludge
 		private final JLabel text;
@@ -70,21 +71,21 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
         public String toString() {
         	return text.getText() + " " + (icon != null);
         }
+
+		@Override
+		public int compareTo(NameInfoPanel o) {
+			return toString().toLowerCase().compareTo(o.toString().toLowerCase());
+		}
 	}
 
 	public static class NameInfoRenderer implements TableCellRenderer, UIResource {
 		private static final long serialVersionUID = 1L;
-		private static final HashMap<Bundle, NameInfoPanel> PANEL_MAP = new HashMap<Bundle, NameInfoPanel>(); // kludge
 		private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
-
-		public static NameInfoPanel getPanel(Bundle bundle) {
-			return PANEL_MAP.get(bundle);
-		}
 
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
-			NameInfoPanel nameInfoPanel = new NameInfoPanel((Bundle)value);
+			NameInfoPanel nameInfoPanel = (NameInfoPanel)value;
 			if (isSelected) {
 				nameInfoPanel.setForeground(table.getSelectionForeground());
 				nameInfoPanel.setBackground(table.getSelectionBackground());
@@ -141,7 +142,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		@Override
 		public Class<?> getCellClass() { return NameInfoPanel.class; }
 		@Override
-		public Object getValue(Bundle bundle) { return bundle; }
+		public Object getValue(Bundle bundle) { return new NameInfoPanel(bundle); }
 		@Override
 		public void formatColumn(JTable jTable, TableColumn tc) {
 			tc.setCellRenderer(new NameInfoRenderer());
@@ -237,7 +238,8 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 	public static final List<SortKey> SORT_KEYS;
 
 	static {
-		List<SortKey> sortKeys = new ArrayList<SortKey>(1);
+		List<SortKey> sortKeys = new ArrayList<SortKey>(2);
+		sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
 		sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
 
 		SORT_KEYS = Collections.<SortKey>unmodifiableList(sortKeys);

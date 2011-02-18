@@ -87,28 +87,30 @@ public class OSGiHandler {
         {
             felix.start();
             BundleContext bundleContext = felix.getBundleContext();
-           	// load embedded bundles
-            String[] jarNames = getResourceListing(OSGiHandler.class, "");
-    		for (String fileName : jarNames) {
-    			if (fileName.endsWith(".jar")) {
-	     			URL locationURL = OSGiHandler.class.getResource(FORWARD_SLASH + fileName);
-	    			if (locationURL != null){
-						Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{fileName});
-						try {
-							bundleContext.installBundle(locationURL.toString());
+            if (bundleContext.getBundles().length <= 1) {
+	           	// load embedded bundles
+	            String[] jarNames = getResourceListing(OSGiHandler.class, "");
+	    		for (String fileName : jarNames) {
+	    			if (fileName.endsWith(".jar")) {
+		     			URL locationURL = OSGiHandler.class.getResource(FORWARD_SLASH + fileName);
+		    			if (locationURL != null){
+							Logger.getLogger(getClass().getName()).log(Level.INFO, "loading {0}",new Object[]{fileName});
+							try {
+								bundleContext.installBundle(locationURL.toString());
+							}
+			    	        catch (Exception ex)
+			    	        {
+			    	        	ex.printStackTrace(System.err);
+								Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not install {0}",new Object[]{fileName});
+			    	        }
+		    			}
+		    			else{
+							Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find {0}",new Object[]{fileName});
 						}
-		    	        catch (Exception ex)
-		    	        {
-		    	        	ex.printStackTrace(System.err);
-							Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not install {0}",new Object[]{fileName});
-		    	        }
 	    			}
-	    			else{
-						Logger.getLogger(getClass().getName()).log(Level.WARNING, "Could not find {0}",new Object[]{fileName});
-					}
-    			}
-    		}
-    		for (Bundle bundle : felix.getBundleContext().getBundles()) {
+	    		}
+            }
+    		for (Bundle bundle : bundleContext.getBundles()) {
     			bundle.start();
     		}
           	Logger.getLogger(getClass().getName()).log(Level.INFO, "OSGi is started");

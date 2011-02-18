@@ -1,25 +1,21 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.action.LoadSequence;
-import java.awt.Adjustable;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JScrollBar;
+import javax.swing.JSlider;
 
 /**
  *
  * @author hiralv
  */
-public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionListener {
+public class AutoLoad implements MouseListener, MouseMotionListener {
 
-	private final Adjustable zoomer;
+	private final JSlider zoomer;
 	private final JScrollBar scroller;
 	private final NeoMap map;
-	private boolean is_dragging = false;
 	private boolean was_dragging = false;
 	private final int threshold = 85;
 
@@ -27,36 +23,18 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 
 	public AutoLoad(NeoMap map){
 		this.map = map;
-		this.zoomer = map.getZoomer(NeoMap.X);
+		this.zoomer = (JSlider)map.getZoomer(NeoMap.X);
 		this.scroller = map.getScroller(NeoMap.X);
 		
-		this.zoomer.addAdjustmentListener(this);
+		this.zoomer.addMouseListener(this);
 		this.scroller.addMouseListener(this);
 		this.map.addMouseListener(this);
 		this.map.addMouseMotionListener(this);
 	}
 
-	public void adjustmentValueChanged(AdjustmentEvent evt) {
-		Adjustable source = evt.getAdjustable();
-
-		if (source != zoomer) {
-			return;
-		}
-
-		zoomer_value = (source.getValue() * 100 / source.getMaximum());
-		if (zoomer_value == prev_zoomer_value
-				|| zoomer_value < threshold) {
-			return;
-		}
-
-		prev_zoomer_value = zoomer_value;
-
-		loadData();
-	}
-
 	public void loadData(){
 		GeneralLoadView.loadAutoLoadFeatures();
-		//GeneralLoadView.getLoadView().loadResidues(LoadSequence.getPartialAction());
+		GeneralLoadView.getLoadView().loadResiduesInView(false);
 	}
 	
 	public void mouseClicked(MouseEvent e) {}
@@ -66,19 +44,33 @@ public class AutoLoad implements AdjustmentListener, MouseListener, MouseMotionL
 	public void mousePressed(MouseEvent e) {}
 	
 	public void mouseReleased(MouseEvent e) {
+		Object src = e.getSource();
 
-		if (e.getSource() == map && !was_dragging) {
+		if (src != map && src != scroller && src != zoomer) {
+			return;
+		}
+
+		if (src == map && !was_dragging) {
 			was_dragging = false;
 			return;
 		}
-		
-		scroller_value = scroller.getValue();
-		if (zoomer_value < threshold
-				|| scroller_value == prev_scroller_value) {
-			return;
+
+		if (src == scroller) {
+			scroller_value = scroller.getValue();
+			if (zoomer_value < threshold
+					|| scroller_value == prev_scroller_value) {
+				return;
+			}
+			prev_scroller_value = scroller_value;
+		} else if (src == zoomer){
+			zoomer_value = (zoomer.getValue() * 100 / zoomer.getMaximum());
+			if (zoomer_value == prev_zoomer_value
+					|| zoomer_value < threshold) {
+				return;
+			}
+			prev_zoomer_value = zoomer_value;
 		}
 		
-		prev_scroller_value = scroller_value;
 		loadData();
 	}
 

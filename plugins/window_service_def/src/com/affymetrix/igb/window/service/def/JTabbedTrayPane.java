@@ -36,6 +36,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
 	public JTabbedTrayPane(JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
 		super(splitOrientation);
+		trayState = TrayState.HIDDEN;
 		saveDividerProportionalLocation = _saveDividerProportionalLocation;
 		tab_pane = createTabbedPane(orientation);
 		setOneTouchExpandable(true);

@@ -1,9 +1,12 @@
 package com.affymetrix.igb.osgi.service;
 
+import java.net.URL;
+
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+//import javax.swing.JTabbedPane;
 
 public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel> {
 	private static final long serialVersionUID = 1L;
@@ -12,9 +15,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	private final String displayName;
 	private final String title;
 	private final boolean main;
-	private String state;
 	private final int position;
-	private JTabbedPane tab_pane;
 	private JFrame frame;
 
 	public IGBTabPanel(IGBService igbService, String displayName, String title, boolean main) {
@@ -50,25 +51,39 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		return false;
 	}
 
-	public String getState() {
-		return state;
+	public TabState getDefaultState() {
+		return TabState.COMPONENT_STATE_BOTTOM_TAB;
 	}
 
-	public Icon getIcon() {
-		return null;
+	public JFrame getFrame() {
+		return frame;
 	}
 
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public void setTabPane(JTabbedPane tab_pane) {
-		this.tab_pane = tab_pane;
+	public void setFrame(JFrame frame) {
+		this.frame = frame;
 	}
 
 	@Override
 	public String toString() {
 		return "IGBTabPanel: " + "displayName = " + displayName + ", class = " + this.getClass().getName();
+	}
+
+	/** Returns the icon stored in the jar file.
+	 *  It is expected to be at com.affymetrix.igb.igb.gif.
+	 *  @return null if the image file is not found or can't be opened.
+	 */
+	public Icon getIcon() {
+		ImageIcon icon = null;
+		try {
+			URL url = IGBTabPanel.class.getResource("igb.gif");
+			if (url != null) {
+				icon = new ImageIcon(url);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// It isn't a big deal if we can't find the icon, just return null
+		}
+		return icon;
 	}
 
 	@Override

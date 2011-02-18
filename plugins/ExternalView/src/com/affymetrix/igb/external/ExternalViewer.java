@@ -52,5 +52,4 @@ public class ExternalViewer extends IGBTabPanel {
 	public void removeViewer() {
 		MenuUtil.removeFromMenu(igbService.getViewMenu(), menuItem);
 	}
-	
 }

@@ -55,9 +55,6 @@ import com.affymetrix.common.CommonUtils;
  */
 public abstract class PreferenceUtils {
 
-	public static final String COMPONENT_STATE_TAB = "TAB";
-	public static final String COMPONENT_STATE_WINDOW = "WINDOW";
-	public static final String COMPONENT_STATE_HIDDEN = "HIDDEN";
 	public static final String SLASH_STANDIN = "%";
 	/** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
 	public static final String ASK_BEFORE_EXITING = "Ask before exiting";
@@ -200,18 +197,14 @@ public abstract class PreferenceUtils {
 	 * Saves the state of a component.
 	 *
 	 * @param name 
-	 * @param state must be either {@link #COMPONENT_STATE_TAB}
-	 *        or {@link #COMPONENT_STATE_WINDOW}.
-	 * @throws IllegalArgumentException if the given value of state is not one
-	 *         of the acceptable values
+	 * @param state must be one of enum TabState
 	 */
 	public static void saveComponentState(String name, String state) {
 		if (state == null) {
 			getTopNode().remove(name + " state");
-		} else if (state.equals(COMPONENT_STATE_TAB) || state.equals(COMPONENT_STATE_WINDOW) || state.equals(COMPONENT_STATE_HIDDEN)) {
+		}
+		else {
 			getTopNode().put(name + " state", state);
-		} else {
-			throw new IllegalArgumentException();
 		}
 	}
 
@@ -219,11 +212,10 @@ public abstract class PreferenceUtils {
 	 * Returns the previously-stored state of a component.
 	 *
 	 * @param name
-	 * @return one of {@link #COMPONENT_STATE_TAB}
-	 *         or {@link #COMPONENT_STATE_WINDOW}
+	 * @return one of enum TabState
 	 */
 	public static String getComponentState(String name) {
-		return getTopNode().get(name + " state", COMPONENT_STATE_TAB);
+		return getTopNode().get(name + " state", null);
 	}
 
 	/**

@@ -21,6 +21,12 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	 *
 	 */
 	protected JTabbedPane createTabbedPane(int tabPlacement) {
+		if(!isWindows()){
+			 JTabbedPane tabPane = new JTabbedPane();
+			 tabPane.setTabPlacement(tabPlacement);
+			 return tabPane;
+		}
+		
         Object textIconGap = UIManager.get("TabbedPane.textIconGap");
         Insets tabInsets = UIManager.getInsets("TabbedPane.tabInsets");
         UIManager.put("TabbedPane.textIconGap", new Integer(1));
@@ -34,5 +40,13 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
         UIManager.put("TabbedPane.textIconGap", textIconGap);
         UIManager.put("TabbedPane.tabInsets", tabInsets);
         return tabPane;
+	}
+
+	private static boolean isWindows(){
+		String os = System.getProperty("os.name");
+		if (os != null && os.toLowerCase().contains("windows")) {
+			return true;
+		}
+		return false;
 	}
 }

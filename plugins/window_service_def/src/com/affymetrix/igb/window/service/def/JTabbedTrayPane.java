@@ -38,8 +38,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		super(splitOrientation);
 		trayState = TrayState.HIDDEN;
 		saveDividerProportionalLocation = _saveDividerProportionalLocation;
-		tab_pane = createTabbedPane();
-		tab_pane.setTabPlacement(orientation);
+		tab_pane = createTabbedPane(orientation);
 		setOneTouchExpandable(true);
 		setDividerSize(0);
 
@@ -201,10 +200,23 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		return plugins;
 	}
 
-	protected JTabbedPane createTabbedPane() {
-		return new JTabbedPane();
+	protected JTabbedPane createTabbedPane(int orientation) {
+		if (isWindows()) {
+			return new JTabbedPane(orientation);
+		}
+		JTabbedPane tabbedpane = new JTabbedPane();
+		tabbedpane.setTabPlacement(orientation);
+		return tabbedpane;
 	}
 
+	private static boolean isWindows(){
+		String os = System.getProperty("os.name");
+		if (os != null && os.toLowerCase().contains("windows")) {
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void resize() {
 		switch (trayState) {

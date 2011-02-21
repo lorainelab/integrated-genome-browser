@@ -150,35 +150,7 @@ public final class ResidueLoading {
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
 			if (server.serverType == ServerType.QuickLoad) {
-				String path = "";
-				try {
-					URL quickloadURL = new URL((String) server.serverObj);
-					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-					path = quickloadServer.getPath(version.versionName, seq_name);
-					
-					//start
-					String bitPath = quickloadServer.getPath(version.versionName, "allChromosome");
-					//String bitPath = path.substring(0, (path.lastIndexOf("/") + 1)) + "allChromosome";   //need to check whether it exists?
-					boolean validFile = false;
-					URI uri = new URI(server.URL + bitPath + ".2bit");
-					if(LocalUrlCacher.isValidURI(uri))
-						validFile = true;
-					
-					if(validFile) {
-						SymLoader symloader = new TwoBit(uri, seq_group);
-						BioSeq.addResiduesToComposition(aseq, symloader.getRegionResidues(span), span);
-						return true;
-					} else {
-						System.out.println("url problem, not process");
-					}
-					//end
-				} catch (MalformedURLException ex) {
-					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
-				} catch (URISyntaxException use) {
-					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, use);
-				}
-				
-				String residues = GetQuickLoadResidues(seq_group, path, server.URL, span);
+				String residues = GetQuickLoadResidues(server, version, seq_group, seq_name, server.URL, span, aseq);
 				if (residues != null) {
 					BioSeq.addResiduesToComposition(aseq, residues, span);
 					return true;
@@ -265,39 +237,9 @@ public final class ResidueLoading {
 		//Try to load from Quickload server.
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
-			if (server.serverType == ServerType.QuickLoad) {
-				String path = "";
+			if (server.serverType == ServerType.QuickLoad) {				
 				SeqSpan span = new SimpleSeqSpan(min, max, aseq);
-				try {
-					URL quickloadURL = new URL((String) server.serverObj);
-					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-					path = quickloadServer.getPath(version.versionName, seq_name);
-					
-					//start
-					try {
-						//String bitPath = path.substring(0, (path.lastIndexOf("/") + 1)) + "allChromosome";   //need to check whether it exists?
-						String bitPath = quickloadServer.getPath(version.versionName, "allChromosome");
-						boolean validFile = false;
-						URI uri = new URI(server.URL + bitPath + ".2bit");
-						if(LocalUrlCacher.isValidURI(uri))
-							validFile = true;
-							
-						if(validFile) {
-							SymLoader symloader = new TwoBit(uri, seq_group);
-							BioSeq.addResiduesToComposition(aseq, symloader.getRegionResidues(span), span);
-							return true;
-						} else {
-							System.out.println("url problem, not process");
-						}
-					} catch (URISyntaxException ex) {
-						Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
-					}
-					//end
-				} catch (MalformedURLException ex) {
-					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
-				}
-	
-				String residues = GetQuickLoadResidues(seq_group, path, server.URL, span);
+				String residues = GetQuickLoadResidues(server, version, seq_group, seq_name, server.URL, span, aseq);
 				if (residues != null) {
 					BioSeq.addResiduesToComposition(aseq, residues, span);
 					return true;
@@ -353,14 +295,38 @@ public final class ResidueLoading {
 	 * @return residue String.
 	 */
 
-	private static String GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String path, String root_url, SeqSpan span){
-		String common_url = root_url + path + ".";
+	private static String GetQuickLoadResidues(
+			GenericServer server, GenericVersion version, AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span, BioSeq aseq){
+		String common_url = "";
+		String path = "";
+		SymLoader symloader;
+				try {
+					URL quickloadURL = new URL((String) server.serverObj);
+					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+					path = quickloadServer.getPath(version.versionName, seq_name);
 
-		SymLoader symloader = determineLoader(common_url, seq_group);
-
-		if(symloader != null )
-			return symloader.getRegionResidues(span);
-		
+					//start
+					try {
+						//String bitPath = path.substring(0, (path.lastIndexOf("/") + 1)) + "allChromosome";   //need to check whether it exists?
+						URI uri = new URI(server.URL + quickloadServer.getPath(version.versionName, version.versionName) + ".2bit");
+						if(LocalUrlCacher.isValidURI(uri))
+						{
+							symloader = new TwoBit(uri, seq_group);
+						}
+						else{
+							common_url = root_url + path + ".";
+							symloader = determineLoader(common_url, seq_group);
+						}
+						if(symloader != null ){
+							return symloader.getRegionResidues(span);
+						}
+					} catch (URISyntaxException ex) {
+						Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
+					}
+					//end
+				} catch (MalformedURLException ex) {
+					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
+				}
 		return null;
 	}
 

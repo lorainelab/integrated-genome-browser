@@ -237,47 +237,47 @@
 
 
   <!-- Match Phytozome entries -->
-  <annotation_url annot_type_regex="^Brachypodium\ distachyon.*Phytozome$" 
+  <annotation_url annot_type_regex="^Brachypodium distachyon gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2127&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Carica\ papaya.*Phytozome$" 
+  <annotation_url annot_type_regex="^Carica papaya gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2126&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Chlamydomonas\ reinhardtii.*Phytozome$" 
+  <annotation_url annot_type_regex="^Chlamydomonas reinhardtii gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2135&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Glycine\ max.*Phytozome$" 
+  <annotation_url annot_type_regex="^Glycine max gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2125&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Oryza\ sativa\ japonica.*Phytozome$" 
+  <annotation_url annot_type_regex="^Oryza sativa japonica gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2132&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Physcomitrella\ patens\ patens\ Grandsen.*Phytozome$" 
+  <annotation_url annot_type_regex="^Physcomitrella patens patens Grandsen gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2121&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Populus\ trichocarpa.*Phytozome$" 
+  <annotation_url annot_type_regex="^Populus trichocarpa gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2145&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Sorghum\ bicolor.*Phytozome$" 
+  <annotation_url annot_type_regex="^Sorghum bicolor gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2122&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Volvox\ carteri.*Phytozome$" 
+  <annotation_url annot_type_regex="^Volvox carteri gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2141&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Vitis\ vinifera.*Phytozome$" 
+  <annotation_url annot_type_regex="^Vitis vinifera gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2120&amp;search=1&amp;searchText=$$&amp;detail=1"
   />
-  <annotation_url annot_type_regex="^Zea\ mays.*Phytozome$" 
+  <annotation_url annot_type_regex="^Zea mays B73 gene models from Phytozome$" 
     name="phytozome.org"
     url="http://www.phytozome.net/genePage.php?crown&amp;method=2142&amp;search=1&amp;searchText=$$&amp;detail=1"
   />

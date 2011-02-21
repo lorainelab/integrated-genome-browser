@@ -208,6 +208,11 @@ public final class IGB extends Application
 		// But it also may take away some things, like resizing buttons, that the
 		// user is used to in their operating system, so leave as false.
 		JFrame.setDefaultLookAndFeelDecorated(false);
+		try {
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		// if this is != null, then the user-requested l-and-f has already been applied
 		if (System.getProperty("swing.defaultlaf") == null) {

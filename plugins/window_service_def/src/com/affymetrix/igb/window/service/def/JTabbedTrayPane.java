@@ -1,17 +1,25 @@
 package com.affymetrix.igb.window.service.def;
 
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabState;
 
@@ -29,7 +37,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private final TabState tabState;
 	private final List<TrayStateChangeListener> trayStateChangeListeners;
 	protected TrayState trayState;
-	
+	private final String title;
+
+	protected abstract void setTabComponent();
 	protected abstract int getFullSize();
 	private int getExtendDividerLocation() {
 		return (int)Math.round(getFullSize() * saveDividerProportionalLocation);
@@ -47,6 +57,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		trayState = TrayState.HIDDEN;
 		saveDividerProportionalLocation = _saveDividerProportionalLocation;
 		tab_pane = createTabbedPane(orientation);
+		title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.getName()));
 		
 		setOneTouchExpandable(true);
 		setDividerSize(0);
@@ -58,6 +69,14 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4499556
 		tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		tab_pane.setMinimumSize(new Dimension(0, 0));
+		boolean tab_panel_in_a_window = PreferenceUtils.getComponentState(title) != null && PreferenceUtils.getComponentState(title).equals(TabState.COMPONENT_STATE_WINDOW.toString());
+		if (tab_panel_in_a_window) {
+			windowTray();
+		} else {
+			setTabComponent();
+		}
+
+		setTabComponent();
 		MouseListener[] mouseListeners = tab_pane.getMouseListeners();
 		if (mouseListeners == null || mouseListeners.length != 1) {
 			System.out.println("Internal error in " + this.getClass().getName() + " constructor, mouseListeners");
@@ -71,7 +90,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 					@Override
 					public void mouseReleased(MouseEvent e) {
 						originalMouseListener.mouseReleased(e);
-//						if (getBottomComponent() != null) { // tabbed pane not in a separate window
 						if (trayState == TrayState.EXTENDED) {
 			               	int afterIndex = tab_pane.getSelectedIndex();
 			               	if (beforeIndex == afterIndex) {
@@ -81,7 +99,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 						else if (trayState == TrayState.RETRACTED) {
 			               	extendTray();
 						}
-//					}
 					}
 					@Override
 					public void mousePressed(MouseEvent e) {
@@ -140,7 +157,69 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		notifyTrayStateChangeListeners();
 	}
 
-	private void invokeTrayState(TrayState newState) {
+	public void windowTray() {
+		if (trayState == TrayState.EXTENDED) {
+			saveDividerLocation();
+		}
+		setDividerLocation(getHideDividerLocation());
+		setDividerSize(0);
+
+		remove(tab_pane);
+		validate();
+
+		final JFrame frame = new JFrame(title);
+		final Container cont = frame.getContentPane();
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		cont.add(tab_pane);
+		tab_pane.setVisible(true);
+		frame.pack(); // pack() to set frame to its preferred size
+
+		Rectangle pos = PreferenceUtils.retrieveWindowLocation(title, frame.getBounds());
+		if (pos != null) {
+			//check that it's not too small, problems with using two screens
+			int posW = (int) pos.getWidth();
+			if (posW < 650) {
+				posW = 650;
+			}
+			int posH = (int) pos.getHeight();
+			if (posH < 300) {
+				posH = 300;
+			}
+			pos.setSize(posW, posH);
+			PreferenceUtils.setWindowSize(frame, pos);
+		}
+		frame.setVisible(true);
+
+		final Runnable return_panes_to_main_window = new Runnable() {
+
+			public void run() {
+				// save the current size into the preferences, so the window
+				// will re-open with this size next time
+				PreferenceUtils.saveWindowLocation(frame, title);
+				cont.remove(tab_pane);
+				cont.validate();
+				frame.dispose();
+				setTabComponent();
+				setDividerLocation(saveDividerProportionalLocation);
+				extendTray();
+				PreferenceUtils.saveComponentState(title, tabState.toString());
+			}
+		};
+
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent evt) {
+				SwingUtilities.invokeLater(return_panes_to_main_window);
+			}
+		});
+
+		PreferenceUtils.saveComponentState(title, TabState.COMPONENT_STATE_WINDOW.toString());
+		trayState = TrayState.WINDOW;
+		notifyTrayStateChangeListeners();
+	}
+
+	public void invokeTrayState(TrayState newState) {
 		switch (newState) {
 		case HIDDEN:
 			hideTray();
@@ -151,25 +230,12 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		case EXTENDED:
 			extendTray();
 			break;
+		case WINDOW:
+			windowTray();
+			break;
 		}
 	}
-/*
-	public JComponent cutTabs() {
-		JComponent baseComponent = (JComponent)getBottomComponent();
-		remove(baseComponent);
-		validate();
-		return baseComponent;
-	}
 
-	public void restoreTabs() {
-		setBottomComponent(tab_pane);
-		setDividerLocation(defaultDividerProportionalLocation);
-	}
-
-	public JTabbedPane getTabbedPane() {
-		return tab_pane;
-	}
-*/
 	@Override
 	public void addTab(final IGBTabPanel plugin, boolean setFocus) {
 		int index = 0;

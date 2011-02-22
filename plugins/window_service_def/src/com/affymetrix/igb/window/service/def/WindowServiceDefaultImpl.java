@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,8 +53,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	}
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
-	private HashMap<TabState, JMenuItem> move_tab_to_window_items;
-//	private JMenuItem move_tabbed_panel_to_window_item;
+	private final HashMap<TabState, JMenuItem> move_tab_to_window_items;
+	private final HashMap<TabState, JMenuItem> move_tabbed_panel_to_window_items;
 	private JMenu tabs_menu;
 	private JFrame frm;
 	private Map<TabState, TabHolder> tabHolders;
@@ -68,7 +67,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		super();
 		initialized = false;
 		move_tab_to_window_items = new HashMap<TabState, JMenuItem>();
-
+		move_tabbed_panel_to_window_items = new HashMap<TabState, JMenuItem>();
 		tabHolders = new HashMap<TabState, TabHolder>();
 		tabHolders.put(TabState.COMPONENT_STATE_WINDOW, new WindowTabs(this));
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
@@ -125,7 +124,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabs_menu = new JMenu(BUNDLE.getString("showTabs"));
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
-				JMenuItem move_tab_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.getName())), KeyEvent.VK_O);
+				JMenuItem move_tab_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.getName())));
 				move_tab_to_window_item.addActionListener(
 					new ActionListener() {
 						@Override
@@ -137,21 +136,25 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 				move_tab_to_window_item.setEnabled(false);
 				tabs_menu.add(move_tab_to_window_item);
 				move_tab_to_window_items.put(tabState, move_tab_to_window_item);
+			}
+		}
+		for (final TabState tabState : TabState.values()) {
+			if (tabState.isTab()) {
+				JMenuItem move_tabbed_panel_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.getName())));
+				move_tabbed_panel_to_window_item.addActionListener(
+					new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							((JTabbedTrayPane)tabHolders.get(tabState)).invokeTrayState(TrayState.WINDOW);
+						}
+					}
+				);
+				move_tabbed_panel_to_window_item.setEnabled(false);
+				tabs_menu.add(move_tabbed_panel_to_window_item);
+				move_tabbed_panel_to_window_items.put(tabState, move_tabbed_panel_to_window_item);
 				trayStateChanged((JTabbedTrayPane)tabHolders.get(tabState), ((JTabbedTrayPane)tabHolders.get(tabState)).getTrayState());
 			}
 		}
-/*
-		move_tabbed_panel_to_window_item = new JMenuItem(BUNDLE.getString("openTabbedPanesInNewWindow"), KeyEvent.VK_P);
-		move_tabbed_panel_to_window_item.addActionListener(
-			new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					moveTabbedPanelToWindow();
-				}
-			}
-		);
-		view_menu.add(move_tabbed_panel_to_window_item);
-*/
 		tabs_menu.addSeparator();
 		view_menu.add(tabs_menu);
 	}
@@ -277,5 +280,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	@Override
 	public void trayStateChanged(JTabbedTrayPane trayPane, TrayState trayState) {
 		move_tab_to_window_items.get(trayPane.getTabState()).setEnabled(trayState != TrayState.HIDDEN && trayState != TrayState.WINDOW);
+		move_tabbed_panel_to_window_items.get(trayPane.getTabState()).setEnabled(trayState != TrayState.HIDDEN && trayState != TrayState.WINDOW);
 	}
 }

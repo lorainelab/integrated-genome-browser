@@ -12,7 +12,6 @@ public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
 
 	public JTabbedTrayRightPane(JComponent _baseComponent) {
 		super(TabState.COMPONENT_STATE_RIGHT_TAB, _baseComponent, JTabbedPane.RIGHT, JSplitPane.HORIZONTAL_SPLIT, 1.0 - RIGHT_DIVIDER_PROPORTIONAL_LOCATION);
-		setRightComponent(tab_pane);
 		setLeftComponent(_baseComponent);
 	}
 
@@ -29,5 +28,10 @@ public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
 	@Override
 	protected int getHideDividerLocation() {
 		return getWidth();
+	}
+
+	@Override
+	protected void setTabComponent() {
+		setRightComponent(tab_pane);
 	}
 }

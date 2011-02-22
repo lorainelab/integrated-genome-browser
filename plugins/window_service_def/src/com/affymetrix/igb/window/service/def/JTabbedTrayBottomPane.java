@@ -12,7 +12,6 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 
 	public JTabbedTrayBottomPane(JComponent _baseComponent) {
 		super(TabState.COMPONENT_STATE_BOTTOM_TAB, _baseComponent, JTabbedPane.BOTTOM,  JSplitPane.VERTICAL_SPLIT, 1.0 - BOTTOM_DIVIDER_PROPORTIONAL_LOCATION);
-		setBottomComponent(tab_pane);
 		setTopComponent(_baseComponent);
 	}
 
@@ -29,5 +28,10 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	@Override
 	protected int getHideDividerLocation() {
 		return getHeight();
+	}
+
+	@Override
+	protected void setTabComponent() {
+		setBottomComponent(tab_pane);
 	}
 }

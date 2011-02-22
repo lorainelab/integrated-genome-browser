@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,8 +28,9 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabState;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 
-public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler {
+public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 
 	private class TabStateMenuItem extends JRadioButtonMenuItem {
 		private static final long serialVersionUID = 1L;
@@ -51,6 +54,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	}
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
+	private HashMap<TabState, JMenuItem> move_tab_to_window_items;
+//	private JMenuItem move_tabbed_panel_to_window_item;
 	private JMenu tabs_menu;
 	private JFrame frm;
 	private Map<TabState, TabHolder> tabHolders;
@@ -62,6 +67,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	public WindowServiceDefaultImpl() {
 		super();
 		initialized = false;
+		move_tab_to_window_items = new HashMap<TabState, JMenuItem>();
+
 		tabHolders = new HashMap<TabState, TabHolder>();
 		tabHolders.put(TabState.COMPONENT_STATE_WINDOW, new WindowTabs(this));
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
@@ -101,18 +108,51 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	@Override
 	public void setSeqMapView(JPanel map_view) {
 		JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(map_view);
+		left_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_LEFT_TAB, left_pane);
 		JTabbedTrayPane right_pane = new JTabbedTrayRightPane(left_pane);
+		right_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_RIGHT_TAB, right_pane);
 		JTabbedTrayPane bottom_pane = new JTabbedTrayBottomPane(right_pane);
+		bottom_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottom_pane);
 		cpane.add("Center", bottom_pane);
 	}
 
 	@Override
 	public void setViewMenu(JMenu view_menu) {
-		tabs_menu = new JMenu(BUNDLE.getString("showTabs"));
 		view_menu.addSeparator();
+		tabs_menu = new JMenu(BUNDLE.getString("showTabs"));
+		for (final TabState tabState : TabState.values()) {
+			if (tabState.isTab()) {
+				JMenuItem move_tab_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.getName())), KeyEvent.VK_O);
+				move_tab_to_window_item.addActionListener(
+					new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							setTabState(tabHolders.get(tabState).getSelectedIGBTabPanel(), TabState.COMPONENT_STATE_WINDOW);
+						}
+					}
+				);
+				move_tab_to_window_item.setEnabled(false);
+				tabs_menu.add(move_tab_to_window_item);
+				move_tab_to_window_items.put(tabState, move_tab_to_window_item);
+				trayStateChanged((JTabbedTrayPane)tabHolders.get(tabState), ((JTabbedTrayPane)tabHolders.get(tabState)).getTrayState());
+			}
+		}
+/*
+		move_tabbed_panel_to_window_item = new JMenuItem(BUNDLE.getString("openTabbedPanesInNewWindow"), KeyEvent.VK_P);
+		move_tabbed_panel_to_window_item.addActionListener(
+			new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					moveTabbedPanelToWindow();
+				}
+			}
+		);
+		view_menu.add(move_tabbed_panel_to_window_item);
+*/
+		tabs_menu.addSeparator();
 		view_menu.add(tabs_menu);
 	}
 
@@ -180,6 +220,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	}
 
 	private void setTabState(IGBTabPanel panel, TabState tabState) {
+		if (panel == null) {
+			return;
+		}
 		TabState oldTabState = getTabState(panel);
 		if (oldTabState != null) {
 			tabHolders.get(oldTabState).removeTab(panel);
@@ -229,5 +272,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			plugins.addAll(tabHolders.get(tabState).getPlugins());
 		}
 		return plugins;
+	}
+
+	@Override
+	public void trayStateChanged(JTabbedTrayPane trayPane, TrayState trayState) {
+		move_tab_to_window_items.get(trayPane.getTabState()).setEnabled(trayState != TrayState.HIDDEN && trayState != TrayState.WINDOW);
 	}
 }

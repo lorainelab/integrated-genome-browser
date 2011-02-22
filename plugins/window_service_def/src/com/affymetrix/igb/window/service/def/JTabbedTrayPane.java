@@ -3,7 +3,9 @@ package com.affymetrix.igb.window.service.def;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -11,6 +13,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.TabState;
 
 public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private static final long serialVersionUID = 1L;
@@ -18,10 +21,13 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	protected enum TrayState {
 		HIDDEN,
 		RETRACTED,
-		EXTENDED;
+		EXTENDED,
+		WINDOW;
 	}
 	protected double saveDividerProportionalLocation; // saved as percent, but implemented as pixels, due to problems with Swing
 	protected final JTabbedPane tab_pane;
+	private final TabState tabState;
+	private final List<TrayStateChangeListener> trayStateChangeListeners;
 	protected TrayState trayState;
 	
 	protected abstract int getFullSize();
@@ -34,8 +40,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		saveDividerProportionalLocation = (double)getDividerLocation() / (double)getFullSize();
 	}
 
-	public JTabbedTrayPane(JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
+	public JTabbedTrayPane(TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
 		super(splitOrientation);
+		this.tabState = tabState;
+		trayStateChangeListeners = new ArrayList<TrayStateChangeListener>();
 		trayState = TrayState.HIDDEN;
 		saveDividerProportionalLocation = _saveDividerProportionalLocation;
 		tab_pane = createTabbedPane(orientation);
@@ -104,6 +112,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		setDividerLocation(getHideDividerLocation());
 		setDividerSize(0);
 		trayState = TrayState.HIDDEN;
+		notifyTrayStateChangeListeners();
 	}
 
 	private void extendTray() {
@@ -114,6 +123,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		setDividerLocation(getExtendDividerLocation());
 		setDividerSize(DIVIDER_SIZE);
 		trayState = TrayState.EXTENDED;
+		notifyTrayStateChangeListeners();
 	}
 
 	private void retractTray() {
@@ -127,6 +137,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		setDividerLocation(getRetractDividerLocation());
 		setDividerSize(0);
 		trayState = TrayState.RETRACTED;
+		notifyTrayStateChangeListeners();
 	}
 
 	private void invokeTrayState(TrayState newState) {
@@ -202,10 +213,36 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		return plugins;
 	}
 
+	public IGBTabPanel getSelectedIGBTabPanel() {
+		return (IGBTabPanel)tab_pane.getSelectedComponent();
+	}
+
 	protected JTabbedPane createTabbedPane(int tabPlacement){
 		return new JTabbedPane(tabPlacement);
 	}
-	
+
+	public TabState getTabState() {
+		return tabState;
+	}
+
+	public TrayState getTrayState() {
+		return trayState;
+	}
+
+	private void notifyTrayStateChangeListeners() {
+		for (TrayStateChangeListener trayStateChangeListener : trayStateChangeListeners) {
+			trayStateChangeListener.trayStateChanged(this, trayState);
+		}
+	}
+
+	public void addTrayStateChangeListener(TrayStateChangeListener trayStateChangeListener) {
+		trayStateChangeListeners.add(trayStateChangeListener);
+	}
+
+	public void removeTrayStateChangeListener(TrayStateChangeListener trayStateChangeListener) {
+		trayStateChangeListeners.remove(trayStateChangeListener);
+	}
+
 	@Override
 	public void resize() {
 		switch (trayState) {

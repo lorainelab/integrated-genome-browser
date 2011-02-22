@@ -8,11 +8,13 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
+import com.affymetrix.igb.osgi.service.TabState;
+
 public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
 
-	public JTabbedTrayHorizontalPane(JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
-		super(_baseComponent, orientation, splitOrientation, _saveDividerProportionalLocation);
+	public JTabbedTrayHorizontalPane(TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
+		super(tabState, _baseComponent, orientation, splitOrientation, _saveDividerProportionalLocation);
 	}
 
 	/**

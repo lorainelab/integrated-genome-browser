@@ -34,7 +34,7 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 
 	public void loadData(){
 		GeneralLoadView.loadAutoLoadFeatures();
-		GeneralLoadView.getLoadView().loadResiduesInView(false);
+		//GeneralLoadView.getLoadView().loadResiduesInView(false);
 	}
 	
 	public void mouseClicked(MouseEvent e) {}

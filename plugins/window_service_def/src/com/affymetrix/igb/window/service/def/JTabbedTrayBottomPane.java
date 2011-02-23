@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabState;
 
 public class JTabbedTrayBottomPane extends JTabbedTrayPane {
@@ -22,7 +23,8 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 
 	@Override
 	protected int getRetractDividerLocation() {
-		return getHeight() - (tab_pane.getHeight() - tab_pane.getComponentAt(tab_pane.getSelectedIndex()).getHeight());
+		int index = tab_pane.getSelectedIndex() < 0 ? 0 : tab_pane.getSelectedIndex();
+		return getHeight() - (tab_pane.getHeight() - tab_pane.getComponentAt(index).getHeight());
 	}
 
 	@Override
@@ -33,5 +35,11 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	@Override
 	protected void setTabComponent() {
 		setBottomComponent(tab_pane);
+	}
+
+	@Override
+	public void addTab(final IGBTabPanel plugin, boolean setFocus) {
+		plugin.setPortrait(false);
+		super.addTab(plugin, setFocus);
 	}
 }

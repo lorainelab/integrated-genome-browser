@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class PropertyViewHelper extends DefaultTableCellRenderer implements
 			MouseListener, MouseMotionListener {
+		private static final long serialVersionUID = 1L;
 
 		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private final Cursor defaultCursor = null;

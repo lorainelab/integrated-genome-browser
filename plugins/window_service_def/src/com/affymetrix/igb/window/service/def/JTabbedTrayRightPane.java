@@ -22,7 +22,8 @@ public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
 
 	@Override
 	protected int getRetractDividerLocation() {
-		return getWidth() - (tab_pane.getWidth() - tab_pane.getComponentAt(tab_pane.getSelectedIndex()).getWidth());
+		int index = tab_pane.getSelectedIndex() < 0 ? 0 : tab_pane.getSelectedIndex();
+		return getWidth() - (tab_pane.getWidth() - tab_pane.getComponentAt(index).getWidth());
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		private static final long serialVersionUID = 1L;
 		private final TabState tabState;
 		private TabStateMenuItem(final IGBTabPanel igbTabPanel, TabState _tabState) {
-			super(BUNDLE.getString(_tabState.getName()));
+			super(BUNDLE.getString(_tabState.name()));
 			tabState = _tabState;
 		    addActionListener(
 				new ActionListener() {
@@ -109,12 +109,24 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(map_view);
 		left_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_LEFT_TAB, left_pane);
+		try {
+			left_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(left_pane.getTitle())));
+		}
+		catch (Exception x) {}
 		JTabbedTrayPane right_pane = new JTabbedTrayRightPane(left_pane);
 		right_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_RIGHT_TAB, right_pane);
+		try {
+			right_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(right_pane.getTitle())));
+		}
+		catch (Exception x) {}
 		JTabbedTrayPane bottom_pane = new JTabbedTrayBottomPane(right_pane);
 		bottom_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottom_pane);
+		try {
+			bottom_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(bottom_pane.getTitle())));
+		}
+		catch (Exception x) {}
 		cpane.add("Center", bottom_pane);
 	}
 
@@ -124,7 +136,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabs_menu = new JMenu(BUNDLE.getString("showTabs"));
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
-				JMenuItem move_tab_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.getName())));
+				JMenuItem move_tab_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name())));
 				move_tab_to_window_item.addActionListener(
 					new ActionListener() {
 						@Override
@@ -140,7 +152,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 		for (final TabState tabState : TabState.values()) {
 			if (tabState.isTab()) {
-				JMenuItem move_tabbed_panel_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.getName())));
+				JMenuItem move_tabbed_panel_to_window_item = new JMenuItem(MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name())));
 				move_tabbed_panel_to_window_item.addActionListener(
 					new ActionListener() {
 						@Override
@@ -169,6 +181,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 		for (IGBTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getPlugins()) {
 			PreferenceUtils.saveWindowLocation(comp.getFrame(), comp.getName());
+			if (comp.isOrientable()) {
+				PreferenceUtils.saveComponentOrientation(comp.getName(), comp.isPortrait());
+			}
 		}
 	}
 
@@ -179,14 +194,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			}
 			initialized = true;
 		}
-		TabState tabState = TabState.getDefaultTabState();
-		String tabStateString = PreferenceUtils.getComponentState(plugin.getName());
-		if (tabStateString == null) {
-			tabState = plugin.getDefaultState();
+		TabState tabState = plugin.getDefaultState();
+		try {
+			tabState = TabState.valueOf(PreferenceUtils.getComponentState(plugin.getName()));
 		}
-		else {
-			tabState = TabState.getTabStateByName(tabStateString);
-		}
+		catch (Exception x) {}
 		setTabState(plugin, tabState);
 		JMenu pluginMenu = new JMenu(plugin.getDisplayName());
 		tabMenus.put(plugin, pluginMenu);
@@ -205,8 +217,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		JMenu menu = tabMenus.get(plugin);
 		TabState tabState = getTabState(plugin);
 		for (int i = 0; i < menu.getItemCount(); i++) {
-			TabStateMenuItem menuItem = (TabStateMenuItem)menu.getItem(i);
-		    menuItem.setSelected(menuItem.getTabState() == tabState);
+			JMenuItem menuItem = menu.getItem(i);
+			if (menuItem != null && menuItem instanceof TabStateMenuItem) {
+		    	menuItem.setSelected(((TabStateMenuItem)menuItem).getTabState() == tabState);
+			}
 		}
 	}
 
@@ -241,12 +255,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			}
 			tabHolders.get(tabState).addTab(panel, setFocus);
 		}
-		PreferenceUtils.saveComponentState(panel.getName(), tabState.getName());
+		PreferenceUtils.saveComponentState(panel.getName(), tabState.name());
 	}
 
 	@Override
-	public void startup() {
-	}
+	public void startup() {}
 
 	@Override
 	public void shutdown() {
@@ -279,7 +292,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	@Override
 	public void trayStateChanged(JTabbedTrayPane trayPane, TrayState trayState) {
-		move_tab_to_window_items.get(trayPane.getTabState()).setEnabled(trayState != TrayState.HIDDEN && trayState != TrayState.WINDOW);
-		move_tabbed_panel_to_window_items.get(trayPane.getTabState()).setEnabled(trayState != TrayState.HIDDEN && trayState != TrayState.WINDOW);
+		for (JMenuItem menuItem : new JMenuItem[]{move_tab_to_window_items.get(trayPane.getTabState()), move_tabbed_panel_to_window_items.get(trayPane.getTabState())}) {
+			if (menuItem != null) {
+				menuItem.setEnabled(trayState != TrayState.HIDDEN && trayState != TrayState.WINDOW);
+			}
+		}
 	}
 }

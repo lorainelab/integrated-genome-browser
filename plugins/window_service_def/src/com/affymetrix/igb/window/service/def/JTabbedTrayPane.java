@@ -57,7 +57,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		trayState = TrayState.HIDDEN;
 		saveDividerProportionalLocation = _saveDividerProportionalLocation;
 		tab_pane = createTabbedPane(orientation);
-		title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.getName()));
+		title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.name()));
 		
 		setOneTouchExpandable(true);
 		setDividerSize(0);
@@ -129,22 +129,24 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		setDividerLocation(getHideDividerLocation());
 		setDividerSize(0);
 		trayState = TrayState.HIDDEN;
+		PreferenceUtils.saveComponentState(title, TrayState.HIDDEN.toString());
 		notifyTrayStateChangeListeners();
 	}
 
 	private void extendTray() {
-		if (tab_pane.getComponentCount() == 0) {
+		if (tab_pane.getTabCount() == 0) {
 			hideTray();
 			return;
 		}
 		setDividerLocation(getExtendDividerLocation());
 		setDividerSize(DIVIDER_SIZE);
 		trayState = TrayState.EXTENDED;
+		PreferenceUtils.saveComponentState(title, TrayState.EXTENDED.toString());
 		notifyTrayStateChangeListeners();
 	}
 
 	private void retractTray() {
-		if (tab_pane.getComponentCount() == 0) {
+		if (tab_pane.getTabCount() == 0) {
 			hideTray();
 			return;
 		}
@@ -154,6 +156,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		setDividerLocation(getRetractDividerLocation());
 		setDividerSize(0);
 		trayState = TrayState.RETRACTED;
+		PreferenceUtils.saveComponentState(title, TrayState.RETRACTED.toString());
 		notifyTrayStateChangeListeners();
 	}
 
@@ -203,7 +206,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 				setTabComponent();
 				setDividerLocation(saveDividerProportionalLocation);
 				extendTray();
-				PreferenceUtils.saveComponentState(title, tabState.toString());
 			}
 		};
 
@@ -214,8 +216,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			}
 		});
 
-		PreferenceUtils.saveComponentState(title, TabState.COMPONENT_STATE_WINDOW.toString());
 		trayState = TrayState.WINDOW;
+		PreferenceUtils.saveComponentState(title, TrayState.WINDOW.toString());
 		notifyTrayStateChangeListeners();
 	}
 
@@ -307,6 +309,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
 	public void removeTrayStateChangeListener(TrayStateChangeListener trayStateChangeListener) {
 		trayStateChangeListeners.remove(trayStateChangeListener);
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	@Override

@@ -218,6 +218,28 @@ public abstract class PreferenceUtils {
 		return getTopNode().get(name + " state", null);
 	}
 
+	private static final String PORTRAIT_ORIENTATION = "PORTRAIT";
+	private static final String LANDSCAPE_ORIENTATION = "LANDSCAPE";
+	/**
+	 * Saves the orientation of a component.
+	 *
+	 * @param name 
+	 * @param orientation true = portrait, false = landscape
+	 */
+	public static void saveComponentOrientation(String name, boolean portrait) {
+		getTopNode().put(name + " orientation", portrait ? PORTRAIT_ORIENTATION : LANDSCAPE_ORIENTATION);
+	}
+
+	/**
+	 * Returns the previously-stored orientation of a component.
+	 *
+	 * @param name
+	 * @param orientation true = portrait, false = landscape
+	 */
+	public static boolean getComponentOrientation(String name) {
+		return PORTRAIT_ORIENTATION.equals(getTopNode().get(name + " orientation", null));
+	}
+
 	/**
 	 * Gets a static re-usable file chooser that prefers "xml" files.
 	 *

@@ -30,6 +30,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import org.apache.felix.bundlerepository.impl.RepositoryAdminImpl;
 import org.apache.felix.bundlerepository.impl.wrapper.RepositoryAdminWrapper;
@@ -48,12 +50,14 @@ import org.osgi.service.obr.Resource;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.OrientableTableModel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.plugins.BundleTableModel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 
 public class PluginsView extends IGBTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
+
 	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 	private final Cursor defaultCursor = null;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
@@ -89,7 +93,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	};
 	private BundleContext bundleContext;
 	private JScrollPane jScrollPane;
-	private final BundleTableModel bundleTableModel;
+	private final OrientableTableModel bundleTableModelWrapper;
 	private final JTable bundleTable;
 	private JCheckBox installedBundlesCheckbox;
 	private JCheckBox uninstalledBundlesCheckbox;
@@ -115,16 +119,44 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		igbService.addRepositoryChangeListener(this);
 		setLayout(new BorderLayout());
 		BundleTableModel.setPluginsHandler(this); // is there a better way ?
-		bundleTableModel = new BundleTableModel();
-		bundleTable = new JTable(bundleTableModel) {
+		final BundleTableModel bundleTableModel = new BundleTableModel();
+		bundleTableModelWrapper = new OrientableTableModel(bundleTableModel);
+		bundleTable = new JTable(bundleTableModelWrapper) {
 			private static final long serialVersionUID = 1L;
 			public void valueChanged(ListSelectionEvent e) {
 				super.valueChanged(e);
 				updateSelectedBundlesButton.setEnabled(isUpdateSelectedBundlesExist());
 			}
+			public TableCellRenderer getCellRenderer(int row, int column) {
+				if (portrait) {
+					if (column == 0) {
+						return super.getCellRenderer(row, column);
+					}
+					else {
+						return BundleTableModel.getTableCellRenderer(row);
+					}
+				}
+				else {
+					return BundleTableModel.getTableCellRenderer(column);
+				}
+		    }
+			public TableCellEditor getCellEditor(int row, int column) {
+				if (portrait) {
+					if (column == 0) {
+						return super.getCellEditor(row, column);
+					}
+					else {
+						return BundleTableModel.getTableCellEditor(row);
+					}
+				}
+				else {
+					return BundleTableModel.getTableCellEditor(column);
+				}
+		    }
 		};
-		bundleTable.setAutoCreateRowSorter(true);
-		bundleTable.getRowSorter().setSortKeys(BundleTableModel.SORT_KEYS);
+		bundleTableModel.setJTable(bundleTable);
+
+		bundleTable.setAutoCreateColumnsFromModel(true);
 		bundleTable.addMouseListener(
 			new MouseAdapter() {
 				@Override
@@ -169,14 +201,12 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			}
 		);
 
-		bundleTableModel.setJTable(bundleTable);
-
 		jScrollPane = new JScrollPane(bundleTable);
 		add("Center", jScrollPane);
 		add("South", getButtonPanel());
 		setBundleFilter(getBundleFilter());
 
-		bundleListener = 
+		bundleListener =
 	    	new BundleListener() {
 				public void bundleChanged(BundleEvent arg0) {
 					if (bundleContext != null) {
@@ -187,11 +217,16 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			};
 	}
 
+	@Override
+	public boolean isOrientable() {
+		return true;
+	}
+
 	private Bundle getNameInfoBundle(Point p) {
         int row = bundleTable.rowAtPoint(p);
         int column = bundleTable.columnAtPoint(p);
-		if (column == bundleTableModel.getColumnIndex(BUNDLE_SYMBOLICNAME)) {
-            Bundle bundle = getBundleAtRow(row);
+		if ((portrait ? row : column) == ((BundleTableModel)bundleTableModelWrapper.getBaseTableModel()).getColumnIndex(BUNDLE_SYMBOLICNAME)) {
+            Bundle bundle = getBundleAtRowColumn((portrait ? column - 1 : row));
             Rectangle r = bundleTable.getCellRect(row, column, false);
             NameInfoPanel nameInfoPanel = NameInfoPanel.getPanel(bundle); // kludge
             if (nameInfoPanel.isOnInfoIcon(p.x - r.x, p.y - r.y)) {
@@ -292,9 +327,30 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return igbService.getIcon(name);
 	}
 
-	public Bundle getBundleAtRow(int row) {
-		int modelRow = bundleTable.convertRowIndexToModel(row);
-		return getFilteredBundle(modelRow);
+	public Bundle getBundleAtRowColumn(int rowCol) {
+		int modelIndex = portrait ? bundleTable.convertColumnIndexToModel(rowCol) : bundleTable.convertRowIndexToModel(rowCol);
+		return getFilteredBundle(modelIndex);
+	}
+
+	private int[] getSelectedIndices() {
+		int[] selectedIndices;
+		if (portrait) {
+			int[] selectedColumnIndices = bundleTable.getSelectedColumns();
+			List<Integer> intList = new ArrayList<Integer>();
+		    for (int index = 0; index < selectedColumnIndices.length; index++) {
+		    	if (selectedColumnIndices[index] > 0) {
+		    		intList.add(selectedColumnIndices[index] - 1);
+		    	}
+		    }
+		    selectedIndices = new int[intList.size()];
+		    for (int index = 0; index < intList.size(); index++) {
+		    	selectedIndices[index] = intList.get(index);
+		    }
+		}
+		else {
+			selectedIndices = bundleTable.getSelectedRows();
+		}
+		return selectedIndices;
 	}
 
 	public static boolean isInstalled(Bundle bundle) {
@@ -325,9 +381,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	}
 
 	private void updateSelectedBundles() {
-		int[] rowIndices = bundleTable.getSelectedRows();
-		for (int i = 0; i < rowIndices.length; i++) {
-			Bundle bundle = getBundleAtRow(rowIndices[i]);
+		int[] indices = getSelectedIndices();
+		for (int i = 0; i < indices.length; i++) {
+			Bundle bundle = getBundleAtRowColumn(indices[i]);
 			installBundleIfNecessary(bundle);
 		}
 	}
@@ -346,9 +402,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
 	private boolean isUpdateSelectedBundlesExist() {
 		boolean updateSelectedBundlesExist = false;
-		int[] rowIndices = bundleTable.getSelectedRows();
-		for (int i = 0; i < rowIndices.length; i++) {
-			Bundle bundle = getBundleAtRow(rowIndices[i]);
+		int[] selectIndices = getSelectedIndices();
+		for (int i = 0; i < selectIndices.length; i++) {
+			Bundle bundle = getBundleAtRowColumn(selectIndices[i]);
 			if (latest.get(bundle.getSymbolicName()) == null) {
 				System.out.println("isUpdateSelectedBundlesExist - no latest for " + bundle.getSymbolicName());
 				Logger.getLogger(getClass().getName()).log(Level.WARNING, "isUpdateSelectedBundlesExist - no latest for " + bundle.getSymbolicName());
@@ -385,10 +441,6 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			return 0;
 		}
 		return filteredBundles.size();
-	}
-
-	public boolean isTier2Bundle(Bundle bundle) {
-		return igbService.getTier(bundle) == 2;
 	}
 
 	private BundleFilter getBundleFilter() {
@@ -436,7 +488,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
 	private void reloadBundleTable() {
 		filterBundles();
-		bundleTableModel.fireTableDataChanged();
+		bundleTableModelWrapper.fireTableDataChanged();
 		bundleTable.invalidate();
 		bundleTable.repaint();
 	}
@@ -565,5 +617,24 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		}
 		catch (MalformedURLException x) {}
 		setRepositoryBundles();
+	}
+
+	@Override
+	public void setPortrait(boolean portrait) {
+		if (this.portrait == portrait) {
+			return;
+		}
+		super.setPortrait(portrait);
+		bundleTable.setRowSelectionAllowed(!portrait);
+		bundleTable.setColumnSelectionAllowed(portrait);
+		bundleTableModelWrapper.setReverse(portrait);
+		if (portrait) {
+			bundleTable.setAutoCreateRowSorter(false);
+		}
+		else {
+			bundleTable.setAutoCreateRowSorter(true);
+			bundleTable.getRowSorter().setSortKeys(BundleTableModel.SORT_KEYS);
+		}
+
 	}
 }

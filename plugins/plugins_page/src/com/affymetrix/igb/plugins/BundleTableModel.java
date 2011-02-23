@@ -19,8 +19,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.UIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
@@ -30,8 +30,8 @@ import org.osgi.framework.Version;
 public class BundleTableModel extends DefaultTableModel implements Constants {
 	private static final long serialVersionUID = 1L;
 
-	private static final int WIDE_COLUMN_MULTIPLIER = 5;
-	private static final int NARROW_COLUMN = 60;
+//	private static final int WIDE_COLUMN_MULTIPLIER = 5;
+//	private static final int NARROW_COLUMN = 60;
 
 	public static class NameInfoPanel extends JPanel implements Comparable<NameInfoPanel> {
 		private static final long serialVersionUID = 1L;
@@ -109,8 +109,8 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		public boolean isEditable() { return false; }
 		public abstract Object getValue(Bundle bundle);
 		public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {}
-		public boolean tier2OK() { return true; }
-		public void formatColumn(JTable jTable, TableColumn tc) {}
+		public TableCellRenderer getTableCellRenderer() { return new DefaultTableCellRenderer(); }
+		public TableCellEditor getTableCellEditor() { return null; }
 	}
 
 	private static class VersionInfo {
@@ -134,6 +134,8 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		}
 	}
 
+	private static JTable jTable;
+
 	private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
 	static {
 	columns.add(new BundleColumn() { // symbolic name
@@ -144,9 +146,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		@Override
 		public Object getValue(Bundle bundle) { return new NameInfoPanel(bundle); }
 		@Override
-		public void formatColumn(JTable jTable, TableColumn tc) {
-			tc.setCellRenderer(new NameInfoRenderer());
-		}
+		public TableCellRenderer getTableCellRenderer() { return new NameInfoRenderer(); }
 	});
 	columns.add(new BundleColumn() { // description
 		@Override
@@ -157,19 +157,17 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			return description == null ? "" : description.toString();
 		}
 		@Override
-		public void formatColumn(JTable jTable, TableColumn tc) {
-			tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
-			tc.setCellRenderer(
-					new TableCellRenderer() {
-						@Override
-						public Component getTableCellRendererComponent(JTable table, Object value,
-								boolean isSelected, boolean hasFocus, int row, int column) {
-							Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-							((JLabel)component).setToolTipText((String)value);
-							return component;
-						}
-					}
-			);
+		public TableCellRenderer getTableCellRenderer() {
+			return
+			new TableCellRenderer() {
+				@Override
+				public Component getTableCellRendererComponent(JTable table, Object value,
+						boolean isSelected, boolean hasFocus, int row, int column) {
+					Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+					((JLabel)component).setToolTipText((String)value);
+					return component;
+				}
+			};
 		}
 	});
 	columns.add(new BundleColumn() { // version
@@ -201,32 +199,9 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			}
 		}
 		@Override
-		public boolean tier2OK() { return false; }
+		public TableCellRenderer getTableCellRenderer() { return jTable.getDefaultRenderer(Boolean.class); }
 		@Override
-		public void formatColumn(JTable jTable, TableColumn tc) {
-			tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
-			tc.setCellRenderer(
-					new TableCellRenderer() {
-						@Override
-						public Component getTableCellRendererComponent(JTable jTable, Object value,
-								boolean isSelected, boolean hasFocus, int row, int column) {
-							TableCellRenderer tableCellRenderer = pluginsHandler.isTier2Bundle(pluginsHandler.getBundleAtRow(row)) ?
-								new DefaultTableCellRenderer.UIResource() {
-									private static final long serialVersionUID = 1L;
-									public void setValue(Object value) {
-										super.setValue(value);
-										setText(PluginsView.BUNDLE.getString("builtIn"));
-									}
-								} : 
-								jTable.getDefaultRenderer(Boolean.class);
-							return tableCellRenderer.getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, column);
-						}
-					}
-			);
-			tc.setMinWidth(NARROW_COLUMN);
-			tc.setMaxWidth(NARROW_COLUMN);
-			tc.setPreferredWidth(NARROW_COLUMN);
-		}
+		public TableCellEditor getTableCellEditor() { return jTable.getDefaultEditor(Boolean.class); }
 	});
 	}
 	private static IPluginsHandler pluginsHandler;
@@ -276,9 +251,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		Bundle bundle = pluginsHandler.getFilteredBundle(rowIndex);
-		return columns.get(columnIndex).isEditable() &&
-			(columns.get(columnIndex).tier2OK() || !pluginsHandler.isTier2Bundle(bundle));
+		return columns.get(columnIndex).isEditable();
 	}
 
 	@Override
@@ -295,11 +268,15 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		return -1;
 	}
 
-	public void setJTable(JTable jTable) {
-		for (int i = 0; i < columns.size(); i++) {
-			BundleColumn bundleColumn = columns.get(i);
-			TableColumn checkboxColumn = jTable.getColumnModel().getColumn(i);
-			bundleColumn.formatColumn(jTable, checkboxColumn);
-		}
+	public static TableCellRenderer getTableCellRenderer(int columnIndex) {
+		return columns.get(columnIndex).getTableCellRenderer();
+	}
+
+	public static TableCellEditor getTableCellEditor(int columnIndex) {
+		return columns.get(columnIndex).getTableCellEditor();
+	}
+
+	public void setJTable(JTable _jTable) {
+		jTable = _jTable;
 	}
 }

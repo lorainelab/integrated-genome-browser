@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabState;
 
 public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
@@ -28,7 +29,7 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 			 tabPane.setTabPlacement(tabPlacement);
 			 return tabPane;
 		}
-		
+
         Object textIconGap = UIManager.get("TabbedPane.textIconGap");
         Insets tabInsets = UIManager.getInsets("TabbedPane.tabInsets");
         UIManager.put("TabbedPane.textIconGap", new Integer(1));
@@ -50,5 +51,11 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void addTab(final IGBTabPanel plugin, boolean setFocus) {
+		plugin.setPortrait(true);
+		super.addTab(plugin, setFocus);
 	}
 }

@@ -51,6 +51,10 @@ public class WindowTabs implements TabHolder {
 		if (pos != null) {
 			PreferenceUtils.setWindowSize(frame, pos);
 		}
+		if (comp.isOrientable()) {
+			boolean portrait = PreferenceUtils.getComponentOrientation(name);
+			comp.setPortrait(portrait);
+		}
 		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -58,7 +62,7 @@ public class WindowTabs implements TabHolder {
 				tabStateHandler.setDefaultState(comp);
 			}
 		});
-		PreferenceUtils.saveComponentState(name, TabState.COMPONENT_STATE_WINDOW.getName());
+		PreferenceUtils.saveComponentState(name, TabState.COMPONENT_STATE_WINDOW.name());
 	}
 
 	@Override
@@ -84,11 +88,14 @@ public class WindowTabs implements TabHolder {
 		JFrame frame = plugin.getFrame();
 		final Container cont = frame.getContentPane();
 		PreferenceUtils.saveWindowLocation(frame, plugin.getName());
+		if (plugin.isOrientable()) {
+			PreferenceUtils.saveComponentOrientation(plugin.getName(), plugin.isPortrait());
+		}
 		cont.remove(plugin);
 		cont.validate();
 		frame.dispose();
 		plugin.setFrame(null);
-		PreferenceUtils.saveComponentState(plugin.getName(), TabState.COMPONENT_STATE_WINDOW.getName());
+		PreferenceUtils.saveComponentState(plugin.getName(), TabState.COMPONENT_STATE_WINDOW.name());
 	}
 
 	@Override

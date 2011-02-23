@@ -6,7 +6,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-//import javax.swing.JTabbedPane;
 
 public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel> {
 	private static final long serialVersionUID = 1L;
@@ -16,6 +15,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	private final String title;
 	private final boolean main;
 	private final int position;
+	protected boolean portrait;
 	private JFrame frame;
 
 	public IGBTabPanel(IGBService igbService, String displayName, String title, boolean main) {
@@ -29,6 +29,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		this.title = title;
 		this.main = main;
 		this.position = position;
+		this.portrait = false;
 	}
 
 	public String getName() {
@@ -49,6 +50,14 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 
 	public boolean isFocus() {
 		return false;
+	}
+
+	public boolean isOrientable() {
+		return false;
+	}
+
+	public void flip() {
+		setPortrait(!portrait);
 	}
 
 	public TabState getDefaultState() {
@@ -94,5 +103,13 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 			return ret;
 
 		return this.getDisplayName().compareTo(o.getDisplayName());
+	}
+
+	public boolean isPortrait() {
+		return portrait;
+	}
+
+	public void setPortrait(boolean portrait) {
+		this.portrait = portrait;
 	}
 }

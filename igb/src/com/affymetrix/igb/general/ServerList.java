@@ -410,7 +410,7 @@ public final class ServerList {
 			GeneralLoadUtils.removeServer(server);
 
 			if(!removedManually)
-				ErrorHandler.errorPanel(server.serverName, textName.substring(0, 1).toUpperCase() + textName.substring(2) + " " + server.serverName + " is not responding. Disabling it for this session.");
+				ErrorHandler.errorPanel(server.serverName, textName.substring(0, 1).toUpperCase() + textName.substring(1) + " " + server.serverName + " is not responding. Disabling it for this session.");
 			
 			if (server.serverType != ServerType.LocalFiles) {
 				if (server.serverType == null) {

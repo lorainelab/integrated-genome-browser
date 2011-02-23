@@ -3,7 +3,9 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.jidesoft.utils.SwingWorker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -110,23 +112,31 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	@Override
     public void setValueAt(Object value, int row, int col) {
-        GenericServer server = servers.get(row);
+		final GenericServer server = servers.get(row);
+		switch (tableColumns.get(col)) {
+			case Enabled:
+				server.setEnabled((Boolean) value);
+				if (((Boolean) value).booleanValue()) {
+					SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-        switch (tableColumns.get(col)) {
-        case Enabled:
-			server.setEnabled((Boolean)value);
-			if (((Boolean)value).booleanValue()) {
-				GeneralLoadUtils.discoverServer(server);
-			} else {
-				serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding);
-			}
-			break;
-		default:
-			throw new IllegalArgumentException("columnIndex " + col + " not editable");
-        }
+						@Override
+						protected Void doInBackground() throws Exception {
+							GeneralLoadUtils.discoverServer(server);
+							return null;
+						}
+					};
+					ThreadUtils.getPrimaryExecutor(server).execute(worker);
+					
+				} else {
+					serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding);
+				}
+				break;
+			default:
+				throw new IllegalArgumentException("columnIndex " + col + " not editable");
+		}
 
 		this.fireTableDataChanged();
-    }
+	}
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		/* It is easier to rebuild than try and find out what changed */

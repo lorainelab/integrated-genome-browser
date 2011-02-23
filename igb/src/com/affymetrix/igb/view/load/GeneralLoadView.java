@@ -223,12 +223,6 @@ public final class GeneralLoadView extends JComponent
 			Executor vexec = Executors.newSingleThreadExecutor();
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 				protected Void doInBackground() throws Exception {
-					if (gServer.serverType == null) {
-						igbService.addNotLockedUpMsg("Loading repository " + gServer);
-					}
-					else {
-						igbService.addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
-					}
 					GeneralLoadUtils.discoverServer(gServer);
 					return null;
 				}

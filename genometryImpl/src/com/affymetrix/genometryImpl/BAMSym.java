@@ -163,7 +163,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 		if(props == null){
 			props = new HashMap<String, Object>();
 		}
-		props.put("residues", getResidues());
+		props.put("residues", getResidues().replaceAll("-", ""));
 
 		return super.cloneProperties();
 	}

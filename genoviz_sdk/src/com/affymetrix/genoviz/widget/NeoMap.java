@@ -111,7 +111,7 @@ public class NeoMap extends NeoWidget implements
 	// a list of axes added to the map
 	// this is maintained in order to stretch them
 	// when the range coords of the map change.
-	private List<AxisGlyph> axes = new ArrayList<AxisGlyph>();
+	protected List<AxisGlyph> axes = new ArrayList<AxisGlyph>();
 
 	// fields for optimizations
 	boolean optimize_scrolling = false;

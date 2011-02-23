@@ -55,12 +55,15 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	// the rubber band simply looks odd sometimes (particularly with a fast drag)
 	// if this flag is true.
 	private static final boolean SELECT_ON_MOUSE_PRESSED = false;
+	private boolean PROCESS_SUB_SELECTION = true;
 	private final SeqMapView smv;
 	private final AffyTieredMap map;
 	private transient MouseEvent rubber_band_start = null;
 	private int num_last_selections = 0;
 	private int no_of_prop_being_displayed = 0;
-
+	int select_start, select_end;
+	private GlyphI sub_sel_glyph;
+	
 	SeqMapViewMouseListener(SeqMapView smv) {
 		this.smv = smv;
 		this.map = smv.seqmap;
@@ -86,6 +89,10 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			AutoScrollAction.getAction().toggleAutoScroll();
 		}
 
+		if(PROCESS_SUB_SELECTION){
+			processSubSelection(evt);
+		}
+
 		// process selections in mousePressed() or mouseReleased()
 		if (SELECT_ON_MOUSE_PRESSED) {
 			processSelections(evt, true);
@@ -95,13 +102,18 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	public void mouseReleased(MouseEvent evt) {
 		num_last_selections = map.getSelected().size();
 
+		if(PROCESS_SUB_SELECTION){
+			processSubSelection(evt);
+		}
+
 		// process selections in mousePressed() or mouseReleased()
 		if (!SELECT_ON_MOUSE_PRESSED) {
 			// if rubber-banding is going on, don't post selections now,
 			// because that will be handled in rubberBandChanged().
 			// Still need to call processSelections, though, to set
 			// the zoom point and to select the items under the current mouse point.
-			processSelections(evt, rubber_band_start == null);
+			if(sub_sel_glyph == null)
+				processSelections(evt, rubber_band_start == null);
 		}
 
 		//  do popup in mouseReleased(), never in mousePressed(),
@@ -110,6 +122,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			smv.showPopup((NeoMouseEvent) evt);
 		}
 
+		sub_sel_glyph = null;
 		// if the GraphSelectionManager is also trying to control popup menus,
 		// then there needs to be code here to prevent both this and that from
 		// trying to do a popup at the same time.  But it is tricky.  So for
@@ -117,7 +130,9 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mouseDragged(MouseEvent evt) {
-
+		if(PROCESS_SUB_SELECTION){
+			processSubSelection(evt);
+		}
 	}
 
 	public void mouseMoved(MouseEvent evt) {
@@ -221,9 +236,9 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			//      if (toggle_event && map.getSelected().contains(topgl)) {
 			if (toggle_event && topgl.isSelected()) {
 				map.deselect(topgl);
-			} else {
-				map.select(topgl);
-			}
+			} else if(topgl != smv.getAxisGlyph() && topgl != smv.getSequnceGlyph()){
+					map.select(topgl);
+				}
 			for (int i = 0; i < gcount; i++) {
 				GraphGlyph gl = graphs.get(i);
 				if (gl != topgl) {  // if gl == topgl, already handled above...
@@ -244,7 +259,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 		smv.setZoomSpotX(zoom_point.getX());
 		smv.setZoomSpotY(zoom_point.getY());
-
+		
 		map.updateWidget();
 
 		if (selections_changed && post_selections) {
@@ -252,7 +267,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 	}
 
-
+	
 	/** Checks whether the mouse event is something that we consider to be
 	 *  a pop-up trigger.  (This has nothing to do with MouseEvent.isPopupTrigger()).
 	 *  Checks for isMetaDown() and isControlDown() to try and
@@ -488,5 +503,59 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 	public void propertyDisplayed(int prop_displayed) {
 		no_of_prop_being_displayed = prop_displayed;
+	}
+
+	private void processSubSelection(MouseEvent evt) {
+		if (!(evt instanceof NeoMouseEvent)) {
+			return;
+		}
+
+		int id = evt.getID();
+		NeoMouseEvent nevt = (NeoMouseEvent) evt;
+
+		if (id == MouseEvent.MOUSE_DRAGGED) {
+			if (sub_sel_glyph == null) {
+				GlyphI topgl = null;
+				if (!nevt.getItems().isEmpty()) {
+					topgl = nevt.getItems().get(0);
+				}
+				if (topgl != null && topgl.supportsSubSelection()) {
+					smv.clearSelection();
+					sub_sel_glyph = topgl;
+					select_start = (int) nevt.getCoordX();
+					select_end = select_start;
+					map.select(sub_sel_glyph, select_start, select_end);
+				}
+			} else {
+				updateSubSelection(nevt);
+			}
+		} else if (sub_sel_glyph != null && id == MouseEvent.MOUSE_RELEASED) {
+			updateSubSelection(nevt);
+			subSelectionEnd();
+		}
+		map.updateWidget();
+	}
+
+	private void updateSubSelection(NeoMouseEvent nevt){
+		if(select_end != (int) nevt.getCoordX()){
+			select_end = (int) nevt.getCoordX();
+			map.select(sub_sel_glyph, select_start, select_end);
+		}
+	}
+
+	private void subSelectionEnd(){
+		int min = Math.min(select_start, select_end);
+		int max = Math.max(select_start, select_end);
+
+		if(sub_sel_glyph == smv.getSequnceGlyph()){
+			//Add one for interbase ???
+			SeqSymmetry new_region = new SingletonSeqSymmetry(min, max + 1, smv.getAnnotatedSeq());
+			smv.setSelectedRegion(new_region, true);
+		}else if(sub_sel_glyph == smv.getAxisGlyph()){
+			map.deselect(sub_sel_glyph);
+			if(max > min){
+				smv.zoomTo(min, max);
+			}
+		}
 	}
 }

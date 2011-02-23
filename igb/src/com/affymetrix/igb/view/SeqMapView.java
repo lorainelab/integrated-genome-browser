@@ -206,15 +206,8 @@ public class SeqMapView extends JPanel
 				return;
 			}
 
-			TransformTierGlyph axis_tier = getAxisTier();
-
 			if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
-				AxisGlyph ag = null;
-				for (GlyphI child : axis_tier.getChildren()) {
-					if (child instanceof AxisGlyph) {
-						ag = (AxisGlyph) child;
-					}
-				}
+				AxisGlyph ag = getAxisGlyph();
 				if (ag != null) {
 					setAxisFormatFromPrefs(ag);
 				}
@@ -712,7 +705,7 @@ public class SeqMapView extends JPanel
 		resultAxisTier.setFixedPixHeight(45);
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
 		AxisGlyph axis = seqmap.addAxis(0);
-		axis.setHitable(false);
+		axis.setHitable(true);
 		axis.setFont(axisFont);
 
 		Color axis_bg = AxisStyle.axis_annot_style.getBackground();
@@ -1846,6 +1839,20 @@ public class SeqMapView extends JPanel
 
 	public final boolean shouldShowPropTooltip(){
 		return show_prop_tooltip;
+	}
+
+	public final GlyphI getSequnceGlyph(){
+		return seq_glyph;
+	}
+
+	public final AxisGlyph getAxisGlyph(){
+		AxisGlyph ag = null;
+		for (GlyphI child : axis_tier.getChildren()) {
+			if (child instanceof AxisGlyph) {
+		 		ag = (AxisGlyph) child;
+			}
+		}
+		return ag;
 	}
 
 	public final void addToRefreshList(SeqMapRefreshed smr){

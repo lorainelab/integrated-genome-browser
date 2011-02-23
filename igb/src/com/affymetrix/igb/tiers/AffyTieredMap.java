@@ -16,9 +16,12 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.glyph.AxisGlyphWithSelection;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
@@ -526,6 +529,24 @@ public class AffyTieredMap extends NeoMap {
 
 	public void setToolTip(String text){
 		getNeoCanvas().setToolTipText(text);
+	}
+
+	@Override
+	public AxisGlyph addAxis(int offset) {
+		AxisGlyph axis = null;
+		if (orient == NeoConstants.VERTICAL) {
+			axis = new AxisGlyphWithSelection(NeoConstants.VERTICAL);
+			axis.setCoords(offset - 10, scene.getCoordBox().y, 20,
+					scene.getCoordBox().height);
+		} else {
+			axis = new AxisGlyphWithSelection();
+			axis.setCoords(scene.getCoordBox().x, offset - 10,
+					scene.getCoordBox().width, 20);
+		}
+		axis.setForegroundColor(Color.black);
+		scene.getGlyph().addChild(axis);
+		axes.add(axis);
+		return axis;
 	}
 }
 

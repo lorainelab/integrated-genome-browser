@@ -83,10 +83,10 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
       else {
         // draw the line
         if (label_loc == NORTH) { // label occupies upper half, so center line in lower half
-          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, this.arrowDirection);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
         }
         else if (label_loc == SOUTH)  {  // label occupies lower half, so center line in upper half
-          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, this.arrowDirection);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
         }
       }
 
@@ -134,7 +134,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
                 pixelbox.width,Math.max(1, pixelbox.height / 2));
       } else {
         // if there are children, draw a line.
-        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, this.arrowDirection);
+        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, EfficientLabelledLineGlyph.arrowDirection);
       }
     }
   }
@@ -224,11 +224,11 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
   protected void adjustChildren() {
     double max_height = 0.0;
     if (isMoveChildren()) {
-      List childlist = this.getChildren();
+      List<GlyphI> childlist = this.getChildren();
       if (childlist != null) {
         int child_count = this.getChildCount();
         for (int i=0; i<child_count; i++) {
-          GlyphI child = (GlyphI)childlist.get(i);
+          GlyphI child = childlist.get(i);
           double child_height = adjustChild(child);
           max_height = Math.max(max_height, child_height);
         }

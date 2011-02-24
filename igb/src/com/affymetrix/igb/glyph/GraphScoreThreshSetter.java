@@ -691,10 +691,10 @@ public final class GraphScoreThreshSetter extends JPanel
 	/**
 	 *  Sets the ThreshStartShift on a collection of SmartGraphGlyphs.
 	 */
-	private void adjustThreshStartShift(Collection glyphs, int shift) {
-		Iterator iter = glyphs.iterator();
+	private void adjustThreshStartShift(Collection<GraphGlyph> glyphs, int shift) {
+		Iterator<GraphGlyph> iter = glyphs.iterator();
 		while (iter.hasNext()) {
-			GraphGlyph sggl = (GraphGlyph) iter.next();
+			GraphGlyph sggl = iter.next();
 			sggl.setThreshStartShift(shift);
 		}
 		widg.updateWidget();
@@ -703,10 +703,10 @@ public final class GraphScoreThreshSetter extends JPanel
 	/**
 	 *  Sets the ThreshEndShift on a collection of SmartGraphGlyphs.
 	 */
-	private void adjustThreshEndShift(Collection glyphs, int shift) {
-		Iterator iter = glyphs.iterator();
+	private void adjustThreshEndShift(Collection<GraphGlyph> glyphs, int shift) {
+		Iterator<GraphGlyph> iter = glyphs.iterator();
 		while (iter.hasNext()) {
-			GraphGlyph sggl = (GraphGlyph) iter.next();
+			GraphGlyph sggl = iter.next();
 			sggl.setThreshEndShift(shift);
 		}
 		widg.updateWidget();

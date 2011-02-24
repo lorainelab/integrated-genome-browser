@@ -265,12 +265,12 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	/**
 	 *  Set the set of graphs to the given List of GraphGlyph objects.
 	 */
-	public void setGraphs(List newgraphs) {
+	public void setGraphs(List<GraphGlyph> newgraphs) {
 		turnOffListening();
 		graphs.clear();
 		int gcount = newgraphs.size();
 		for (int i = 0; i < gcount; i++) {
-			GraphGlyph gl = (GraphGlyph) newgraphs.get(i);
+			GraphGlyph gl = newgraphs.get(i);
 			graphs.add(gl);
 		}
 

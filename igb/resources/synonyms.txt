@@ -1,7 +1,7 @@
 A_californica_Sep_2008	aplCal1
 A_carolinensis_Feb_2007	anoCar1	Anolis_carolinensis.AnoCar1.0.reference
 A_gambiae_Jul_2003	anoGam1	Anopheles_Jul_2003	Ag	ag	ag:Jul_2003	Ag:Jul_2003
-A_melanoleuca_Apr_2010	ailMel1
+A_melanoleuca_Dec_2009	ailMel1	Ailuropoda_melanoleuca.ailMel1.reference
 A_mellifera_Jan_2005	apiMel2
 A_mellifera_Jul_2004	apiMel1
 A_thaliana_Apr_2008	TAIR8	tair8	Tair8	A_thaliana_TAIR8

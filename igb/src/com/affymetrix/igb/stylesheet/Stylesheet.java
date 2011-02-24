@@ -169,7 +169,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 
     sb.append("\n");
     sb.append(indent).append("<STYLES>");
-    Iterator iter = this.stylename2styleElement.values().iterator();
+    Iterator<StyleElement> iter = this.stylename2styleElement.values().iterator();
     while (iter.hasNext()) {
       sb.append("\n");
       StyleElement styleElement = (StyleElement) iter.next();
@@ -185,7 +185,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     associations.addAll(regex2association.values());
     associations.addAll(type2association.values());
 
-    Iterator a_iter = associations.iterator();
+    Iterator<AssociationElement> a_iter = associations.iterator();
     while (a_iter.hasNext()) {
       AssociationElement ae = (AssociationElement) a_iter.next();
       ae.appendXML(indent+"  ",sb);

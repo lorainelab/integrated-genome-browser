@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.swing.table.AbstractTableModel;
 
 final class SeqGroupTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
 
 	private final AnnotatedSeqGroup group;
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);

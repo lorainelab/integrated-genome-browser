@@ -20,6 +20,8 @@ import javax.swing.event.*;
  *  A panel for viewing and editing weblinks.
  */
 public final class WebLinksManagerView extends JPanel {
+  private static final long serialVersionUID = 1L;
+
   private JList webLinks;
   private JScrollPane scroll_pane;
 
@@ -70,6 +72,7 @@ public final class WebLinksManagerView extends JPanel {
 
 
   private final ListCellRenderer list_renderer = new DefaultListCellRenderer() {
+	private static final long serialVersionUID = 1L;
     @Override
     public Component getListCellRendererComponent(JList list,
         Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -144,6 +147,7 @@ public final class WebLinksManagerView extends JPanel {
   private void setUpMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu links_menu = new JMenu("Web Links") {      
+      private static final long serialVersionUID = 1L;
       @Override
       public JMenuItem add(Action a) {
         JMenuItem menu_item = super.add(a);
@@ -166,6 +170,7 @@ public final class WebLinksManagerView extends JPanel {
 
   private void setUpPopupMenu() {
     final JPopupMenu popup = new JPopupMenu() {      
+      private static final long serialVersionUID = 1L;
       @Override
       public JMenuItem add(Action a) {
         JMenuItem menu_item = super.add(a);
@@ -210,6 +215,7 @@ public final class WebLinksManagerView extends JPanel {
 
   private Action makeImportAction() {
     Action a = new AbstractAction("Import ...") {
+      private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         importWebLinks();
       }
@@ -223,6 +229,7 @@ public final class WebLinksManagerView extends JPanel {
 
   private Action makeExportAction() {
     Action a = new AbstractAction("Export ...") {
+      private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         exportWebLinks();
       }
@@ -237,6 +244,7 @@ public final class WebLinksManagerView extends JPanel {
 
   private Action makeDeleteAction() {
     Action a = new AbstractAction("Delete ...") {
+      private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         if (localDelete()) {
 			return;
@@ -268,6 +276,7 @@ public final class WebLinksManagerView extends JPanel {
 
   private Action makeAddAction() {
     Action a = new AbstractAction("Add...") {
+      private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
 				localAdd();
       }
@@ -291,6 +300,7 @@ public final class WebLinksManagerView extends JPanel {
   
   private Action makeEditAction() {
     Action a = new AbstractAction("Edit...") {
+      private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         WebLink link = (WebLink) webLinks.getSelectedValue();
         edit_panel.setWebLink(link);

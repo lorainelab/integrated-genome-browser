@@ -26,9 +26,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.datamodel.Sequence;
 import com.affymetrix.genoviz.widget.NeoSeq;
-import com.affymetrix.genoviz.widget.NeoSeqCustomizer;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.CopyFromSeqViewerAction;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
@@ -41,7 +39,6 @@ import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
@@ -58,32 +55,20 @@ import javax.swing.JPanel;
 
 public class SequenceViewer extends JPanel
 		implements WindowListener, ItemListener {
+	private static final long serialVersionUID = 1L;
 
 	protected SeqMapView seqmapview;
 	private NeoSeq seqview;
 	private JFrame mapframe;
 	private Frame propframe;
-	private Sequence seqmodel;
-	private Vector<GlyphI> annotations;
 	private String seq;
-	// Fake Sequences for Testing
-	private boolean use_real_seq = false;
-	// All the Standard Nucleotide Code Letters
-	private String fake_seq = "ACGT UMRWSYK VHDBXN."; // The two gaps make it 0 mod 10 long.
 	private boolean showComp = false; // show complementary strand?
 	private int pixel_width = 500;
 	private int pixel_height = 400;
-	private Color text_annot_color = Color.blue;
-	private Color back_annot_color = Color.green;
-	private Color out_annot_color = Color.white;
-	private Image backgroundImage = null;
 	private boolean clicking = false;
-	private NeoSeqCustomizer customizer;
 	private boolean framesShowing = true;
 	private boolean going = false;
-	private Color nicePaleBlue = new Color(180, 250, 250);
 	private SeqSpan[] seqSpans = null;
-	private Boolean isGenomic = false;
 	private GenometryModel gm = GenometryModel.getGenometryModel();
 	private String version = "";
 	private SeqSymmetry residues_sym;
@@ -104,14 +89,11 @@ public class SequenceViewer extends JPanel
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
 		if (residues_sym.getID() != null) {
-			isGenomic = true;
 			addCdsStartEnd(residues_sym);
 		} else {
 			AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 			mapframe = new JFrame("Genomic Sequence - " + ag.getID());
 			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
-			isGenomic = true;
-//			seqview.forSequenceViewer = true;
 		}
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
@@ -155,7 +137,7 @@ public class SequenceViewer extends JPanel
 		try {
 			this.aseq = seqmapview.getAnnotatedSeq();
 			if (!isGenomic) {
-				List<SeqSymmetry> syms = seqmapview.glyphsToSyms(seqmapview.getSeqMap().getSelected());
+				List<SeqSymmetry> syms = SeqMapView.glyphsToSyms(seqmapview.getSeqMap().getSelected());
 				if (syms.size() == 1) {
 					this.residues_sym = syms.get(0);
 				} else {
@@ -229,12 +211,11 @@ public class SequenceViewer extends JPanel
 	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
 		String id = null, type = null;
 		String chromosome = null;
-		String forward = null;
 		int cdsMax = 0;
 		int cdsMin = 0;
 		//		((SymWithProps) residues_sym).getProperty(seq)
 		Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
-		Iterator iterator = sym.keySet().iterator();
+		Iterator<String> iterator = sym.keySet().iterator();
 		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 		while (iterator.hasNext()) {
 			String key = iterator.next().toString();
@@ -242,7 +223,6 @@ public class SequenceViewer extends JPanel
 			if (key.equals("id")) {
 				id = value;
 			} else if (key.equals("forward")) {
-				forward = value;
 			} else if (key.equals("type")) {
 				type = value;
 				if (type == null) {
@@ -313,7 +293,7 @@ public class SequenceViewer extends JPanel
 
 		seqview.enableDragScrolling(true);
 
-		annotations = new Vector<GlyphI>();
+		new Vector<GlyphI>();
 		if (residues_sym != null) {
 			int numberOfChild = residues_sym.getChildCount();
 			if (numberOfChild > 0) {

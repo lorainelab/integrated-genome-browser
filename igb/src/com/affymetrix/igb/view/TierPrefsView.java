@@ -184,6 +184,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     table.setEnabled( true ); // doesn't do anything ?
 
 	ColorCellEditor cellEditor = new ColorCellEditor() {
+		  private static final long serialVersionUID = 1L;
 
 		  @Override
 		  protected ColorComboBox createColorComboBox() {

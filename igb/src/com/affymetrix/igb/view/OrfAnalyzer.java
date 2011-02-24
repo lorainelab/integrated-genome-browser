@@ -38,6 +38,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
  */
 public final class OrfAnalyzer extends JComponent
 		implements ChangeListener, ActionListener {
+	private static final long serialVersionUID = 1L;
 
 	public static final String PREF_STOP_CODON_COLOR = "stop codon";
 	public static final String PREF_DYNAMIC_ORF_COLOR = "dynamic orf";

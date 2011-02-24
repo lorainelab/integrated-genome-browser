@@ -1,7 +1,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -11,7 +10,6 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 

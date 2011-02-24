@@ -1354,10 +1354,6 @@ public class SeqMapView extends JPanel
 		return setUpMenuItem((Container) menu, action_command, action_listener);
 	}
 
-	private JMenuItem setUpMenuItemDuplicate(JMenu menu, String action_command){
-		return setUpMenuItem((Container) menu, action_command, action_listener);
-	}
-
 	public final SeqMapViewMouseListener getMouseListener(){
 		return mouse_listener;
 	}
@@ -1520,10 +1516,6 @@ public class SeqMapView extends JPanel
 				sym_used_for_title = null;
 				id = "" + selected_glyphs.size() + " Selections";
 			}
-		}
-		if (id == null) {
-			id = "";
-			sym_used_for_title = null;
 		}
 		return id;
 	}

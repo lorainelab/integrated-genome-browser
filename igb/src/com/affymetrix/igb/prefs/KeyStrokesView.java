@@ -87,7 +87,7 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
 		int num_rows = keys.size();
 		int num_cols = 2;
 		rows = new Object[num_rows][num_cols];
-		Iterator iter = keys.iterator();
+		Iterator<String> iter = keys.iterator();
 		for (int i=0; iter.hasNext(); i++) {
 			String key = (String) iter.next();
 			rows[i][0] = key;

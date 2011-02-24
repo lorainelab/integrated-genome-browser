@@ -75,7 +75,7 @@ class StyleElement implements DrawableElement {
     this.propertyMap.setContext(context);
     
     if (matchElements != null && ! matchElements.isEmpty()) {
-      Iterator iter = matchElements.iterator();
+      Iterator<MatchElement> iter = matchElements.iterator();
       while (iter.hasNext() && glyph == null) {
         MatchElement matchElement = (MatchElement) iter.next();
         
@@ -135,7 +135,7 @@ class StyleElement implements DrawableElement {
     sb.append(">\n");
     this.propertyMap.appendXML(indent + "  ", sb);
     if (matchElements != null) {
-      Iterator iter = matchElements.iterator();
+      Iterator<MatchElement> iter = matchElements.iterator();
       while (iter.hasNext()) {
        MatchElement kid = (MatchElement) iter.next();
        kid.appendXML(indent + "  ", sb);

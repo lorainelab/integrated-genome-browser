@@ -91,6 +91,7 @@ public final class TableWithVisibleComboBox {
 	}
 
   static final class ColumnRenderer extends JComponent implements TableCellRenderer {
+  private static final long serialVersionUID = 1L;
 
     private final JComboBox comboBox;
     private final JTextField textField;	// If an entire genome is loaded in, change the combo box to a text field.
@@ -144,6 +145,7 @@ class RowEditorModel {
  * A JTable with a RowEditorModel.
  */
 class JTableX extends JTable implements MouseListener {
+  private static final long serialVersionUID = 1L;
   protected String[] columnToolTips = {"Refresh All",
                                        "Load Strategy",
                                        "Feature Name",
@@ -228,6 +230,7 @@ class JTableX extends JTable implements MouseListener {
 	@Override
 	protected JTableHeader createDefaultTableHeader() {
 		return new JTableHeader(columnModel) {
+			private static final long serialVersionUID = 1L;
 
 			@Override
 			public String getToolTipText(MouseEvent e) {

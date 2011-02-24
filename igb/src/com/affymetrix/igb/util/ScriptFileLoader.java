@@ -262,6 +262,7 @@ public class ScriptFileLoader {
 			return;
 		}
 		extension = extension.substring(1, extension.length());
+		@SuppressWarnings("rawtypes")
 		List efts = ExportFileType.getExportFileTypes(extension);
 		if (efts.isEmpty()) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(

@@ -233,7 +233,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   }
 
   void removeAllBookmarkMenuItems() {
-    Iterator iter = component_hash.values().iterator();
+    Iterator<Component> iter = component_hash.values().iterator();
     while (iter.hasNext()) {
       Component comp = (Component) iter.next();
       if (comp == main_bm_menu) {

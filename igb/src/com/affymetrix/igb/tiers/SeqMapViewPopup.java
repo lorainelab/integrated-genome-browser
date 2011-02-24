@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 
 import com.affymetrix.genometryImpl.util.UniFileChooser;
@@ -71,7 +72,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final Action rename_action = new AbstractAction("Change Display Name") {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTiers();
+      List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() != 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
@@ -174,7 +175,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final Action sym_summarize_single_action = new AbstractAction("") {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTiers();
+      List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
@@ -186,7 +187,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final Action sym_summarize_both_action = new AbstractAction("") {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTiers();
+      List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
@@ -198,7 +199,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTiers();
+      List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
@@ -210,7 +211,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final Action mismatch_action = new AbstractAction("Make Mismatch Graph") {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTiers();
+      List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }

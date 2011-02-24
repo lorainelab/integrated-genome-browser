@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 final class WebLinkEditorPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 
 	private WebLink selected_link = null;
 	private JTextField name_tf = new JTextField("");

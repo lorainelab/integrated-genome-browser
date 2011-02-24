@@ -41,6 +41,7 @@ import javax.swing.tree.*;
  *  A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
 public final class BookmarkManagerView extends JPanel implements TreeSelectionListener, IPlugin {
+  private static final long serialVersionUID = 1L;
   private JTree tree;
   private BottomThing thing;
 
@@ -182,6 +183,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
    *  the name(s) of the selected item(s), and may allow you to edit them.
    */
   private static class BottomThing extends JPanel implements TreeSelectionListener, ActionListener, FocusListener {
+	private static final long serialVersionUID = 1L;
     JLabel type_label = new JLabel("Type:");
     JLabel type_label_2 = new JLabel("");
     JLabel name_label = new JLabel("Name:");
@@ -343,6 +345,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     
     private Action makePropertiesAction() {
       Action a = new AbstractAction("Properties ...") {
+    	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
           if (selected_bl == null || selected_bl.getUserObject() instanceof Separator) {
             setEnabled(false);
@@ -381,6 +384,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
 
     private Action makeGoToAction() {
       Action a = new AbstractAction("Go To") {
+    	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
           if (app==null || selected_bl == null || !(selected_bl.getUserObject() instanceof Bookmark)) {
             setEnabled(false);
@@ -411,7 +415,8 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
   private void setUpMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu bookmarks_menu = new JMenu("Bookmarks") {      
-			@Override
+  	  private static final long serialVersionUID = 1L;
+    	@Override
       public JMenuItem add(Action a) {
         JMenuItem menu_item = super.add(a);
         menu_item.setToolTipText(null);
@@ -438,6 +443,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
 
   private void setUpPopupMenu() {
     final JPopupMenu popup = new JPopupMenu() {      
+  	  private static final long serialVersionUID = 1L;
 			@Override
       public JMenuItem add(Action a) {
         JMenuItem menu_item = super.add(a);
@@ -507,6 +513,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
 
   Action makeRefreshAction() {
     Action a = new AbstractAction("Refresh") {
+  	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         tree_model.reload();
       }
@@ -520,6 +527,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
 
   Action makeImportAction() {
     Action a = new AbstractAction("Import ...") {
+  	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         BookmarkList bl = (BookmarkList) tree_model.getRoot();
         BookMarkAction.importBookmarks(bl, null);
@@ -535,6 +543,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
 
   Action makeExportAction() {
     Action a = new AbstractAction("Export ...") {
+  	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         BookmarkList bl = (BookmarkList) tree_model.getRoot();
         BookMarkAction.exportBookmarks(bl, null); // already contains a null check on bookmark list
@@ -549,6 +558,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
 
   Action makeDeleteAction() {
     Action a = new AbstractAction("Delete ...") {
+  	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         TreePath[] paths = tree.getSelectionPaths();
         if (paths==null) {
@@ -604,6 +614,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     }
 
     Action a = new AbstractAction(title) {
+  	  private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent ae) {
         TreePath path = tree.getSelectionModel().getSelectionPath();
         if (path==null) {

@@ -42,7 +42,6 @@ final class SeqMapViewActionListener implements ActionListener {
 	private final Action zoom_in_x_action;
 	private final Action zoom_out_y_action;
 	private final Action zoom_in_y_action;
-	private final Action zoom_to_selected_action;
 	private final AffyTieredMap seqmap;
 	private final SeqMapView gviewer;
 	private SequenceViewer sequenceViewer;
@@ -56,30 +55,35 @@ final class SeqMapViewActionListener implements ActionListener {
 			MenuUtil.addAccelerator((JComponent) gviewer, this, command);
 		}
 		zoom_out_x_action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_X);
 			}
 		};
 		zoom_in_x_action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_IN_X);
 			}
 		};
 		zoom_out_y_action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_Y);
 			}
 		};
 		zoom_in_y_action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_IN_Y);
 			}
 		};
 		zoom_out_fully_action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_OUT_FULLY);
@@ -87,7 +91,8 @@ final class SeqMapViewActionListener implements ActionListener {
 		};
 
 		Icon icon0 = MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif");
-		zoom_to_selected_action = new AbstractAction(ZOOM_TO_SELECTED, icon0) {
+		new AbstractAction(ZOOM_TO_SELECTED, icon0) {
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				doAction(ZOOM_TO_SELECTED);

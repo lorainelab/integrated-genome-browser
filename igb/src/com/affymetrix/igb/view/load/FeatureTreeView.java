@@ -54,6 +54,7 @@ import javax.swing.tree.TreePath;
  * View of genome features as a tree.
  */
 public final class FeatureTreeView extends JComponent implements ActionListener {
+	private static final long serialVersionUID = 1L;
 
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
@@ -197,7 +198,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         TreeNode node = (TreeNode)path.getLastPathComponent();
 
         if (node.getChildCount() > 0) {
-            Enumeration e = node.children();
+            @SuppressWarnings("unchecked")
+			Enumeration<TreeNode> e = node.children();
             while(e.hasMoreElements()) {
                 TreeNode n = (TreeNode)e.nextElement();
                 expand(tree, path.pathByAddingChild(n));
@@ -464,6 +466,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 *
 	 */
 	private final static class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
+		private static final long serialVersionUID = 1L;
 
 		private final JCheckBox leafCheckBox = new JCheckBox();
 		private final Color selectionBorderColor, selectionForeground;
@@ -577,6 +580,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	}
 
 	private final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+		private static final long serialVersionUID = 1L;
 
 		FeatureTreeCellRenderer renderer = new FeatureTreeCellRenderer();
 		DefaultMutableTreeNode editedNode;
@@ -673,12 +677,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 				checked = newValue;
 			}
 		}
-
-		public boolean isChecked() {
-			return checked;
-		}
-
-
 	}
 }
 

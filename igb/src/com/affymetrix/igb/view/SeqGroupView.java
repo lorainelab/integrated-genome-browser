@@ -31,10 +31,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
 
 public final class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
+	private static final long serialVersionUID = 1L;
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
 	private final static boolean DEBUG_EVENTS = false;
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static final String NO_GENOME = "No Genome Selected";
 	private static final JTable seqtable = new JTable();
 	private BioSeq selected_seq = null;
 	private AnnotatedSeqGroup previousGroup = null;
@@ -227,6 +227,7 @@ public final class SeqGroupView extends JComponent implements ListSelectionListe
 	}
 
 	static final class ColumnRenderer extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 1L;
 
 		public ColumnRenderer(){
 			setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);

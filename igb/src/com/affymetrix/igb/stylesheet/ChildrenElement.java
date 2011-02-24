@@ -107,7 +107,7 @@ static String ATT_POSITIONS = "child_positions";
     this.propertyMap.setContext(context);
 
     if (matchElements != null && ! matchElements.isEmpty()) {
-      Iterator iter = matchElements.iterator();
+      Iterator<MatchElement> iter = matchElements.iterator();
       while (iter.hasNext() && result == null) {
         MatchElement matchElement = (MatchElement) iter.next();
         
@@ -197,7 +197,7 @@ static String ATT_POSITIONS = "child_positions";
     }
     
     if (matchElements != null) {
-      Iterator iter = matchElements.iterator();
+      Iterator<MatchElement> iter = matchElements.iterator();
       while (iter.hasNext()) {
        MatchElement kid = (MatchElement) iter.next();
        kid.appendXML(indent + "  ", sb);

@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 
 final class LinkControl implements ContextualPopupListener {
-	public void popupNotify(JPopupMenu popup, List selected_syms, SeqSymmetry primary_sym) {
+	public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {
 		if (primary_sym == null || selected_syms.size() != 1) {
 			return;
 		}

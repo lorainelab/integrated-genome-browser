@@ -23,6 +23,7 @@ import javax.swing.table.AbstractTableModel;
  * Model for table of features.
  */
 public final class FeaturesTableModel extends AbstractTableModel implements ChangeListener{
+	private static final long serialVersionUID = 1L;
 	private static final String[] columnNames = {"","Choose Load Mode", "Data Set","Data Source", "x"};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	static final int REFRESH_FEATURE_COLUMN = 0;

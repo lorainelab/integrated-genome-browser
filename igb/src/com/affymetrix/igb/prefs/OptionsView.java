@@ -30,6 +30,7 @@ import com.affymetrix.igb.util.ColorUtils;
  *  A panel that shows the preferences for particular special URLs and file locations.
  */
 public final class OptionsView extends IPrefEditorComponent implements ActionListener  {
+  private static final long serialVersionUID = 1L;
 
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
   JButton clear_prefsB = new JButton("Reset all preferences to defaults");
@@ -58,10 +59,8 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
       PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting));
     misc_box.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
-    misc_box.add(PreferenceUtils.createCheckBox("Show properties in columns", PreferenceUtils.getTopNode(),
-    	PreferenceUtils.SHOW_PROPERTIES_IN_COLUMNS, PreferenceUtils.default_show_properties_in_column));
     cbdCheckbox = PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
-        PreferenceUtils.RESET_CONFIRM_BOX_OPTION, PreferenceUtils.default_show_properties_in_column);
+        PreferenceUtils.RESET_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete);
     misc_box.add(cbdCheckbox);
     
 

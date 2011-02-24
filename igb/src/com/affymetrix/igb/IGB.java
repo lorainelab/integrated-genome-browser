@@ -76,7 +76,7 @@ import static com.affymetrix.igb.IGBConstants.USER_AGENT;
  *
  * @version $Id$
  */
-public final class IGB extends Application // worker
+public final class IGB extends Application
 				implements GroupSelectionListener, SeqSelectionListener {
 
 	public static final String NODE_PLUGINS = "plugins";

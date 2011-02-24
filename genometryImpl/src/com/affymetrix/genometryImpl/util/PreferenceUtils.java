@@ -58,10 +58,9 @@ public abstract class PreferenceUtils {
 	public static final String SLASH_STANDIN = "%";
 	/** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
 	public static final String ASK_BEFORE_EXITING = "Ask before exiting";
-	public static final String SHOW_PROPERTIES_IN_COLUMNS = "Show properties in columns";
 	public static final String RESET_CONFIRM_BOX_OPTION = "Confirm before delete";
 	public static final boolean default_ask_before_exiting = true;
-	public static final boolean default_show_properties_in_column = false;
+	public static final boolean default_confirm_before_delete = false;
 	public static final String AUTO_LOAD = "Auto Load Data";
 	public static final boolean default_auto_load = true;
 	public static int userConfirmed = 2;	//0-yes, 1-no, 2-not set yet

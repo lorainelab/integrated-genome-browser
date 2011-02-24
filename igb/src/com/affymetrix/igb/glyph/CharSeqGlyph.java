@@ -19,11 +19,11 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
+import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.igb.IGBConstants;
 
@@ -217,7 +217,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 			SeqSymmetry childsym = compsym.getChild(i);
 			SeqSpan childspan = childsym.getSpan(viewSeq);
 			SeqSpan ospan = SeqUtils.getOtherSpan(childsym, childspan);
-			GlyphI cgl;
+			SolidGlyph cgl;
 			if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
 				cgl = new FillRectGlyph();
 				cgl.setColor(c3);
@@ -244,6 +244,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 					cgl.setColor(axis.getForegroundColor());
 				}
 			}
+			cgl.setHitable(false);
 			cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);
 			// also note that "Load residues in view" produces additional
 			// contig-like glyphs that can partially hide these glyphs.

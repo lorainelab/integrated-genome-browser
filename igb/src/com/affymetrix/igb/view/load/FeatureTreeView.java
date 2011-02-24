@@ -201,7 +201,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             @SuppressWarnings("unchecked")
 			Enumeration<TreeNode> e = node.children();
             while(e.hasMoreElements()) {
-                TreeNode n = (TreeNode)e.nextElement();
+                TreeNode n = e.nextElement();
                 expand(tree, path.pathByAddingChild(n));
             }
         }

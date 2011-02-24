@@ -76,7 +76,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       if (current_tiers.size() != 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
-      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      TierGlyph current_tier = current_tiers.get(0);
       renameTier(current_tier);
     }
   };
@@ -179,7 +179,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
-      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      TierGlyph current_tier = current_tiers.get(0);
       addSymSummaryTier(current_tier,false);
     }
   };
@@ -191,7 +191,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
-      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      TierGlyph current_tier = current_tiers.get(0);
       addSymSummaryTier(current_tier,true);
     }
   };
@@ -203,7 +203,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
-      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      TierGlyph current_tier = current_tiers.get(0);
       addSymCoverageTier(current_tier);
     }
   };
@@ -215,7 +215,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one track");
       }
-      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      TierGlyph current_tier = current_tiers.get(0);
       addMisMatchTier(current_tier);
     }
   };

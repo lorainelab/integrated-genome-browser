@@ -235,7 +235,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   void removeAllBookmarkMenuItems() {
     Iterator<Component> iter = component_hash.values().iterator();
     while (iter.hasNext()) {
-      Component comp = (Component) iter.next();
+      Component comp = iter.next();
       if (comp == main_bm_menu) {
         // component_hash contains a mapping of main_bookmark_list to main_bm_menu.
         // That is the only JMenu we do not want to remove from its parent.

@@ -77,7 +77,7 @@ class StyleElement implements DrawableElement {
     if (matchElements != null && ! matchElements.isEmpty()) {
       Iterator<MatchElement> iter = matchElements.iterator();
       while (iter.hasNext() && glyph == null) {
-        MatchElement matchElement = (MatchElement) iter.next();
+        MatchElement matchElement = iter.next();
         
         // If the match element matches, it will return a glyph, otherwise will return null
         GlyphI match_glyph = matchElement.symToGlyph(gviewer, sym,
@@ -137,7 +137,7 @@ class StyleElement implements DrawableElement {
     if (matchElements != null) {
       Iterator<MatchElement> iter = matchElements.iterator();
       while (iter.hasNext()) {
-       MatchElement kid = (MatchElement) iter.next();
+       MatchElement kid = iter.next();
        kid.appendXML(indent + "  ", sb);
       }
     }

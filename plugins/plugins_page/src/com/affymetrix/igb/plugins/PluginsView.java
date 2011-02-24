@@ -225,6 +225,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private Bundle getNameInfoBundle(Point p) {
         int row = bundleTable.rowAtPoint(p);
         int column = bundleTable.columnAtPoint(p);
+        if (portrait && row == 0) {
+        	return null;
+        }
 		if ((portrait ? row : column) == ((BundleTableModel)bundleTableModelWrapper.getBaseTableModel()).getColumnIndex(BUNDLE_SYMBOLICNAME)) {
             Bundle bundle = getBundleAtRowColumn((portrait ? column - 1 : row));
             Rectangle r = bundleTable.getCellRect(row, column, false);

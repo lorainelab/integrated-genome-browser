@@ -533,7 +533,10 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 			updateSubSelection(nevt);
 			subSelectionEnd();
 		}
-		map.updateWidget();
+		
+		if(sub_sel_glyph != null){
+			map.updateWidget();
+		}
 	}
 
 	private void updateSubSelection(NeoMouseEvent nevt){

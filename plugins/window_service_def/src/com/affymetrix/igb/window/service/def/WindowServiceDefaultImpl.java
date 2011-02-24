@@ -60,12 +60,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<TabState, TabHolder> tabHolders;
 	private Map<IGBTabPanel, JMenu> tabMenus;
 	private Container cpane;
-	private boolean initialized;
 	private boolean focusSet;
 
 	public WindowServiceDefaultImpl() {
 		super();
-		initialized = false;
 		move_tab_to_window_items = new HashMap<TabState, JMenuItem>();
 		move_tabbed_panel_to_window_items = new HashMap<TabState, JMenuItem>();
 		tabHolders = new HashMap<TabState, TabHolder>();
@@ -112,21 +110,27 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		try {
 			left_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(left_pane.getTitle())));
 		}
-		catch (Exception x) {}
+		catch (Exception x) {
+			left_pane.invokeTrayState(TrayState.getDefaultTrayState());
+		}
 		JTabbedTrayPane right_pane = new JTabbedTrayRightPane(left_pane);
 		right_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_RIGHT_TAB, right_pane);
 		try {
 			right_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(right_pane.getTitle())));
 		}
-		catch (Exception x) {}
+		catch (Exception x) {
+			right_pane.invokeTrayState(TrayState.getDefaultTrayState());
+		}
 		JTabbedTrayPane bottom_pane = new JTabbedTrayBottomPane(right_pane);
 		bottom_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottom_pane);
 		try {
 			bottom_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(bottom_pane.getTitle())));
 		}
-		catch (Exception x) {}
+		catch (Exception x) {
+			bottom_pane.invokeTrayState(TrayState.getDefaultTrayState());
+		}
 		cpane.add("Center", bottom_pane);
 	}
 
@@ -188,12 +192,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	}
 
 	public void addTab(final IGBTabPanel plugin) {
-		if (!initialized) {
-			for (TabHolder tabHolder : tabHolders.values()) {
-				tabHolder.init();
-			}
-			initialized = true;
-		}
 		TabState tabState = plugin.getDefaultState();
 		try {
 			tabState = TabState.valueOf(PreferenceUtils.getComponentState(plugin.getName()));

@@ -66,9 +66,6 @@ public class WindowTabs implements TabHolder {
 	}
 
 	@Override
-	public void init() {}
-
-	@Override
 	public void addTab(final IGBTabPanel plugin, boolean setFocus) {
 		addedPlugins.add(plugin);
 		Runnable r = new Runnable() {

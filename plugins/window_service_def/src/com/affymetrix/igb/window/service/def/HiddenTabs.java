@@ -19,9 +19,6 @@ public class HiddenTabs implements TabHolder {
 	}
 
 	@Override
-	public void init() {}
-
-	@Override
 	public void addTab(IGBTabPanel plugin, boolean setFocus) {
 		addedPlugins.add(plugin);
 	}

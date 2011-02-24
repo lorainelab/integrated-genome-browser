@@ -1,5 +1,7 @@
 package com.affymetrix.igb.window.service.def;
 
+import java.awt.Component;
+
 import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -21,9 +23,8 @@ public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
 	}
 
 	@Override
-	protected int getRetractDividerLocation() {
-		int index = tab_pane.getSelectedIndex() < 0 ? 0 : tab_pane.getSelectedIndex();
-		return getWidth() - (tab_pane.getWidth() - tab_pane.getComponentAt(index).getWidth());
+	protected int getTabWidth(Component tabComponent) {
+		return getWidth() - (tab_pane.getWidth() - tabComponent.getWidth());
 	}
 
 	@Override

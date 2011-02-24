@@ -7,7 +7,6 @@ import java.awt.event.ItemListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -20,8 +19,6 @@ import com.jidesoft.combobox.ColorComboBox;
  */
 public class ColorUtils {
 
-	private static JColorChooser singleton = new JColorChooser();
-	
 	/**
 	 *  Creates a Color chooser combo box associated with a Color preference.
 	 *  Will initialize itself with the value of the given

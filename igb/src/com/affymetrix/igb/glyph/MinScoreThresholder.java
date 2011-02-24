@@ -29,6 +29,7 @@ import java.util.*;
 
 public final class MinScoreThresholder extends JPanel
   implements ChangeListener, ActionListener  {
+  private static final long serialVersionUID = 1L;
 
   private static final NumberFormat nformat = new DecimalFormat();
   private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();

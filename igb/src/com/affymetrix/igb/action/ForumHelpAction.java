@@ -14,6 +14,7 @@ import static com.affymetrix.igb.IGBConstants.APP_NAME;
  * @author hiralv
  */
 public class ForumHelpAction extends AbstractAction{
+	private static final long serialVersionUID = 1L;
 
 	public ForumHelpAction(){
 		super(MessageFormat.format(

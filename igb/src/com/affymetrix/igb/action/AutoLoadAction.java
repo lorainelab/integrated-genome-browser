@@ -11,6 +11,7 @@ import javax.swing.JCheckBox;
  * @author hiralv
  */
 public class AutoLoadAction extends AbstractAction {
+	private static final long serialVersionUID = 1L;
 
 	private static final AutoLoadAction singleton = new AutoLoadAction();
 	private final JCheckBox autoload;

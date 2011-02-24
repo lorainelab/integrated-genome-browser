@@ -30,6 +30,8 @@ import javax.swing.JPanel;
  *  java.util.prefs package, but that is what is generally expected.
  */
 public abstract class IPrefEditorComponent extends JPanel {
+  private static final long serialVersionUID = 1L;
+
   /**
    *  Gives help text explaining the function of this preferences editor component.
    *  If no help is available, should return null rather than an empty String.

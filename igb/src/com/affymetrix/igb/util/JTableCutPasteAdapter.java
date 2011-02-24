@@ -96,12 +96,14 @@ public final class JTableCutPasteAdapter {
   }
   
   public Action copyAction = new AbstractAction("Copy") {
+	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
       doCopy();
     }
   };
   
   public Action pasteAction = new AbstractAction("Paste") {
+	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
       try {
         doPaste();

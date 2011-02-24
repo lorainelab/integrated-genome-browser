@@ -5,14 +5,14 @@ import javax.swing.*;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 /**
  *  A panel that shows the preferences for graph properties.
  */
 public final class GraphsView extends IPrefEditorComponent  {
-    
+  private static final long serialVersionUID = 1L;
+
   public GraphsView() {
     super();
     this.setName("Graphs");

@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.parsers.das.DASSymmetry;

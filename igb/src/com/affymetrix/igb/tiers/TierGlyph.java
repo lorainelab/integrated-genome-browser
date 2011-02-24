@@ -4,7 +4,6 @@ import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import java.awt.Color;

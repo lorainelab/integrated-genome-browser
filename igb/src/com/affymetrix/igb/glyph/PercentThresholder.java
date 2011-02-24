@@ -27,6 +27,7 @@ import javax.swing.event.ChangeEvent;
 
 public final class PercentThresholder extends JPanel
   implements ChangeListener, ActionListener  {
+  private static final long serialVersionUID = 1L;
 
   private final NeoAbstractWidget widg;
   private final JSlider min_percent_slider;

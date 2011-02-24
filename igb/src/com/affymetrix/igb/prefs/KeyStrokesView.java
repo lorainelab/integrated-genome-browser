@@ -28,6 +28,7 @@ import java.awt.BorderLayout;
  */
 public final class KeyStrokesView extends IPrefEditorComponent implements ListSelectionListener,
   PreferenceChangeListener {
+  private static final long serialVersionUID = 1L;
 
   private final JTable table = new JTable();
   private final static String[] col_headings = {"Action", "Key Stroke"};
@@ -46,6 +47,7 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
     this.add(scroll_pane, BorderLayout.CENTER);
 
     model = new DefaultTableModel() {
+    	  private static final long serialVersionUID = 1L;
 			@Override
       public boolean isCellEditable(int row, int column) {return false;}
             @Override

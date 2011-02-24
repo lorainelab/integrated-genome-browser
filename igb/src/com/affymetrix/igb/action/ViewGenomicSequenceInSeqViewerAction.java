@@ -5,10 +5,7 @@
 
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genoviz.event.NeoRubberBandEvent;
-import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SequenceViewer;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;

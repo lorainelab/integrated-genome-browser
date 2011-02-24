@@ -9,6 +9,7 @@ import javax.swing.JComboBox;
  * Only allow one listener to be added to the combo box.  Otherwise potentially many events can be fired with one change.
  */
 public class JComboBoxWithSingleListener extends JComboBox {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Default implementation of addListener permits the same class

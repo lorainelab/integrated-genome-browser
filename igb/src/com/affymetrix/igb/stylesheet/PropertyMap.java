@@ -24,6 +24,7 @@ import java.util.*;
  *  All keys and values must be String's.
  */
 public final class PropertyMap extends HashMap<String, Object> implements Map<String, Object>, Cloneable, XmlAppender {
+  private static final long serialVersionUID = 1L;
 
   private PropertyMap parentProperties;
 

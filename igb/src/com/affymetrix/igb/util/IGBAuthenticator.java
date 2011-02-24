@@ -304,7 +304,7 @@ public class IGBAuthenticator extends Authenticator {
 		AuthType authType = anon ? AuthType.ANONYMOUS : AuthType.AUTHENTICATE;
 		serverNode.put(PREF_AUTH_TYPE, authType.toString());
 		serverNode.parent().putBoolean(PREF_REMEMBER, remember);
-		if (authType == authType.AUTHENTICATE) {
+		if (authType == AuthType.AUTHENTICATE) {
 			serverObject.setLogin(username);
 			serverObject.setPassword(new String(password));
 		}

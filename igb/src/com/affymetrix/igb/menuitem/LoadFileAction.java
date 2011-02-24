@@ -61,6 +61,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @version $Id$
  */
 public final class LoadFileAction extends AbstractAction {
+	private static final long serialVersionUID = 1L;
 
 	private final JFrame gviewerFrame;
 	private final FileTracker load_dir_tracker;
@@ -68,10 +69,8 @@ public final class LoadFileAction extends AbstractAction {
 	public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("unknownSpecies");
 	public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("unknownGenome");
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
-	private static final String MERGE_MESSAGE = 
-			"Must select a genome before loading a graph.  "
-			+ "Graph data must be merged with already loaded genomic data.";
 	private final TransferHandler fdh = new FileDropHandler(){
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void openFileAction(File f) {

@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -371,67 +370,7 @@ public final class ResidueLoading {
 		
 		return null;
 	}
-	/**
-	 * Get the residues from the specified QuickLoad server.
-	 * @param seq_group
-	 * @param path
-	 * @param root_url
-	 * @return true or false
-	 */
-	private static boolean GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String path, String root_url) {
-		String url_path = root_url + path + ".bnib";
-
-		Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE,
-					"  Quickload location of bnib file: {0}", url_path);
-		InputStream istr = null;
-		try {
-			istr = LocalUrlCacher.getInputStream(url_path, true);
-			if (istr == null) {
-				return false;
-			}
-			// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
-			NibbleResiduesParser.parse(istr, seq_group);
-			return true;
-		} catch (IOException ex) {
-			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, "Can not access sequence: " + url_path, ex);
-		} finally {
-			GeneralUtils.safeClose(istr);
-		}
-		return false;
-	}
 	
-	
-	/**
-	 * Get the residues from the specified QuickLoad server.
-	 * @param seq_group
-	 * @param path
-	 * @param root_url
-	 * @return true or false
-	 */
-	private static boolean GetQuickLoadResidues2(AnnotatedSeqGroup seq_group, String path, String root_url) {
-		String url_path = root_url + path + ".2bit";
-
-		Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE,
-					"  Quickload location of bnib file: {0}", url_path);
-		InputStream istr = null;
-		try {
-			istr = LocalUrlCacher.getInputStream(url_path, true);
-			if (istr == null) {
-				//System.out.println("++++++in GetQuickLoadResidues, istr is null");
-				return false;
-			}
-			// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
-			NibbleResiduesParser.parse(istr, seq_group);
-			//System.out.println("++++++in GetQuickLoadResidues, will return true");
-			return true;
-		} catch (IOException ex) {
-			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, "Can not access sequence: " + url_path, ex);
-		} finally {
-			GeneralUtils.safeClose(istr);
-		}
-		return false;
-	}
-
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?range=0:1000")
 	private static String generateDas2URI(String URL, String genomeVersionName,
 			String segmentName, int min, int max, FORMAT Format) {

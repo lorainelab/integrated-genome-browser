@@ -37,6 +37,7 @@ import javax.swing.*;
  * @version $Id$
  */
 public class AffyTieredMap extends NeoMap {
+   	private static final long serialVersionUID = 1L;
 
 	private final List<TierGlyph> tiers = new ArrayList<TierGlyph>();
 
@@ -61,6 +62,7 @@ public class AffyTieredMap extends NeoMap {
 	public static final String SELECTED_KEY = "Selected (AffyTieredMap)";
 	// public static final String SELECTED_KEY = Action.SELECTED_KEY;
 	public Action show_plus_action = new AbstractAction("Show (+) tiers") {
+	   	private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			show_plus = !show_plus;
@@ -69,6 +71,7 @@ public class AffyTieredMap extends NeoMap {
 		}
 	};
 	public Action show_minus_action = new AbstractAction("Show (-) tiers") {
+	   	private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			show_minus = !show_minus;
@@ -77,6 +80,7 @@ public class AffyTieredMap extends NeoMap {
 		}
 	};
 	public Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
+	   	private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
 			show_mixed = !show_mixed;
@@ -512,6 +516,7 @@ public class AffyTieredMap extends NeoMap {
 	 *  the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
 	 */
 	public static final class ActionToggler extends JCheckBoxMenuItem implements PropertyChangeListener {
+	   	private static final long serialVersionUID = 1L;
 
 		public ActionToggler(Action action) {
 			super(action);

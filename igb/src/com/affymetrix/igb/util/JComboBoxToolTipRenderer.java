@@ -16,6 +16,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
  * @author jnicol
  */
 public final class JComboBoxToolTipRenderer extends BasicComboBoxRenderer {
+	private static final long serialVersionUID = 1L;
 
 	private final Map<Object,String> toolTipMap = new HashMap<Object,String>();
 

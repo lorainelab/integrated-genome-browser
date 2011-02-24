@@ -23,6 +23,7 @@ import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 public final class EdgeMatchAdjuster extends JPanel implements ChangeListener {
+	private static final long serialVersionUID = 1L;
 
 	private SeqMapView gviewer;
 	private final JSlider tslider;
@@ -81,7 +82,7 @@ public final class EdgeMatchAdjuster extends JPanel implements ChangeListener {
 		sliderP.setLayout((new BoxLayout(sliderP, BoxLayout.Y_AXIS)));
 //		adjustFuzziness.setLayout((new GridLayout(1, 2)));
 		text = new JTextField(3);
-		text.setAlignmentY(text.CENTER);
+		text.setAlignmentY(SwingConstants.CENTER);
 		text.setMinimumSize(new Dimension(min_xpix, min_ypix));
 		text.setMaximumSize(new Dimension(max_xpix, max_ypix));
 		text.addKeyListener(new KeyAdapter() {

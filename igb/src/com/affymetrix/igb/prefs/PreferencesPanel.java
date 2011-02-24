@@ -27,6 +27,7 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 
 public final class PreferencesPanel extends JPanel {
+  private static final long serialVersionUID = 1L;
 
   private static final String WINDOW_NAME = "Preferences Window";
   private static final String HELP_WINDOW_NAME = "Preferences Help Window";
@@ -204,6 +205,7 @@ public final class PreferencesPanel extends JPanel {
     final JDialog dialog = new JDialog(frameAncestor, HELP, true);
     dialog.getContentPane().add(scroller, "Center");
     Action close_action = new AbstractAction("OK") {
+      private static final long serialVersionUID = 1L;
       public void actionPerformed(ActionEvent e) {
         dialog.dispose();
       }
@@ -280,6 +282,7 @@ public final class PreferencesPanel extends JPanel {
   private Action getExportAction() {
     if (export_action == null) {
       export_action = new AbstractAction("Export Preferences ...") {
+    	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
 			  JFileChooser chooser = PreferenceUtils.getJFileChooser();
 			  int option = chooser.showSaveDialog(PreferencesPanel.this);
@@ -306,6 +309,7 @@ public final class PreferencesPanel extends JPanel {
   private Action getImportAction() {
     if (import_action == null) {
       import_action = new AbstractAction("Import Preferences ...") {
+    	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
 			  JFileChooser chooser = PreferenceUtils.getJFileChooser();
 			  int option = chooser.showOpenDialog(PreferencesPanel.this);
@@ -340,6 +344,7 @@ public final class PreferencesPanel extends JPanel {
   private Action getHelpAction() {
     if (help_action == null) {
       help_action = new AbstractAction("General Help") {
+    	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
           showHelp(getHelpTextHTML());
         }
@@ -356,6 +361,7 @@ public final class PreferencesPanel extends JPanel {
   private Action getHelpTabAction() {
     if (help_for_tab_action == null) {
       help_for_tab_action = new AbstractAction(BUNDLE.getString("HelpForCurrentTab")) {
+    	private static final long serialVersionUID = 1L;
         public void actionPerformed(ActionEvent ae) {
           showHelpForTab();
         }

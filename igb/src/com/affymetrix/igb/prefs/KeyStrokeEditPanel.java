@@ -20,6 +20,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public final class KeyStrokeEditPanel extends JPanel {
+  private static final long serialVersionUID = 1L;
+
   private static final boolean DEBUG = false;
   
   private final JTextField key_field = new JTextField(20);

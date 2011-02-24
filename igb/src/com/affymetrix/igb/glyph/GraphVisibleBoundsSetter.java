@@ -31,6 +31,7 @@ import java.text.ParseException;
 
 public final class GraphVisibleBoundsSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
+	private static final long serialVersionUID = 1L;
 
 	private final static DecimalFormat val_format;
 	private final static DecimalFormat per_format;

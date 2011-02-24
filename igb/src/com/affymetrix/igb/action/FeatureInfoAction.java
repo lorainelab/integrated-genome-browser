@@ -11,6 +11,8 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @author hiralv
  */
 public class FeatureInfoAction extends AbstractAction {
+	private static final long serialVersionUID = 1L;
+
 	final String url ;
 
 	public FeatureInfoAction(String url){

@@ -27,6 +27,7 @@ import javax.swing.event.ChangeEvent;
 
 public final class MinRunThresholder extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {
+  private static final long serialVersionUID = 1L;
 
   private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
   private final NeoAbstractWidget widg;

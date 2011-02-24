@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import javax.swing.*;
@@ -20,6 +19,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  *  dialog.
  */
 public final class MergeOptionChooser extends JFileChooser implements ActionListener{
+	private static final long serialVersionUID = 1L;
 
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 	private static final String CHOOSE = "Choose";

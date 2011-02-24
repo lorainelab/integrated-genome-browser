@@ -12,6 +12,8 @@ import javax.swing.AbstractAction;
  * @author hiralv
  */
 public class RefreshAFeature extends AbstractAction {
+	private static final long serialVersionUID = 1L;
+
 	final GenericFeature feature;
 
 	public RefreshAFeature(GenericFeature feature){

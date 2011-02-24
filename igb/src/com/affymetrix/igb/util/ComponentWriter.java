@@ -35,6 +35,7 @@ public final class ComponentWriter {
 	}
 
 	private final static class ExportNoDialog extends ExportDialog {
+		private static final long serialVersionUID = 1L;
 		File f = null;
 		Properties props = new Properties();
 		ExportNoDialog(File f) {

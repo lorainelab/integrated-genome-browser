@@ -44,6 +44,7 @@ import java.util.*;
 
 public final class GraphScoreThreshSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
+	private static final long serialVersionUID = 1L;
 
 	private SeqMapView gviewer = null;
 	//private static Object placeholder_object = new Object();

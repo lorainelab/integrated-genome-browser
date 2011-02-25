@@ -262,8 +262,7 @@ public class ScriptFileLoader {
 			return;
 		}
 		extension = extension.substring(1, extension.length());
-		@SuppressWarnings("rawtypes")
-		List efts = ExportFileType.getExportFileTypes(extension);
+		List<ExportFileType> efts = ComponentWriter.getExportFileTypes(extension);
 		if (efts.isEmpty()) {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "image file extension {0} is not supported", extension);
@@ -271,7 +270,7 @@ public class ScriptFileLoader {
 		}
 
 		try {
-			ExportFileType eft = (ExportFileType) efts.get(0);
+			ExportFileType eft = efts.get(0);
 			Component c = null;
 			switch(exportMode) {
 				case WHOLEFRAME:

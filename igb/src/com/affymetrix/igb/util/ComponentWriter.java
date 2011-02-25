@@ -3,6 +3,8 @@ package com.affymetrix.igb.util;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,11 +20,29 @@ import org.freehep.util.export.ExportFileType;
  */
 public final class ComponentWriter {
 
+	static final List<ExportFileType> fileTypes;
+
+	static {
+		fileTypes = new ArrayList<ExportFileType>();
+		fileTypes.add(new org.freehep.graphicsio.emf.EMFExportFileType());
+		fileTypes.add(new org.freehep.graphicsio.gif.GIFExportFileType());
+		fileTypes.add(new org.freehep.graphicsio.raw.RawExportFileType());
+		fileTypes.add(new org.freehep.graphicsio.ppm.PPMExportFileType());
+		fileTypes.add(new org.freehep.graphicsio.pdf.PDFExportFileType());
+		fileTypes.add(new org.freehep.graphicsio.ps.EPSExportFileType());
+		fileTypes.add(new org.freehep.graphicsio.ps.PSExportFileType());
+		fileTypes.add(new org.freehep.graphicsio.svg.SVGExportFileType());
+		fileTypes.add(new org.freehep.graphicsio.swf.SWFExportFileType());
+	}
+	
 	/** Show the export dialog that allows exporting in a variety of graphics
 	 *  formats using the FreeHep libraries.
 	 */
 	public static void showExportDialog(Component c) {
-		ExportDialog  export = new ExportDialog();
+		ExportDialog  export = new ExportDialog(c.getName(),false);
+		for(ExportFileType type : fileTypes){
+			export.addExportFileType(type);
+		}
 		export.showExportDialog(c, "Export view as ...", c, "export");
 	}
 
@@ -34,6 +54,20 @@ public final class ComponentWriter {
 		return exportNoDialog.exportIt(f, c, eft);
 	}
 
+	public static List<ExportFileType> getExportFileTypes(String extension){
+		List<ExportFileType> ret = new ArrayList<ExportFileType>();
+
+		for(ExportFileType type: fileTypes){
+			for(String ext : type.getExtensions()){
+				if(ext.equalsIgnoreCase(extension)){
+					ret.add(type);
+					return ret;
+				}
+			}
+		}
+		return ret;
+	}
+	
 	private final static class ExportNoDialog extends ExportDialog {
 		private static final long serialVersionUID = 1L;
 		File f = null;

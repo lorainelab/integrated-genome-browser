@@ -716,10 +716,7 @@ public final class SearchView extends IGBTabPanel implements
 		private static final int END_COLUMN = 4;
 		private static final int CHROM_COLUMN = 5;
 		private static final int STRAND_COLUMN = 6;
-		private final List<SeqSymmetry> search_results;
-
 		public SearchResultsTableModel(List<SeqSymmetry> results) {
-			search_results = results;
 		}
 
 		public Object getValueAt(int row, int col) {

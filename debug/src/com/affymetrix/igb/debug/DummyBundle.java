@@ -13,6 +13,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
+@SuppressWarnings("rawtypes")
 public class DummyBundle implements Bundle {
 private static final Dictionary DummyDictionary = new Dictionary() {
 

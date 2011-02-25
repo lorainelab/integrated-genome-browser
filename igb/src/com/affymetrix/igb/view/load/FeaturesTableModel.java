@@ -198,11 +198,11 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before delete", false);
 			if(PreferenceUtils.userConfirmed != 0 || resetConfirmOption) {
 				if(IGB.confirmPanel("Really remove entire " + gFeature.featureName + " data set ?")){
-					GeneralLoadView.removeFeature(gFeature);
+					GeneralLoadView.getLoadView().removeFeature(gFeature);
 				}
 				if(resetConfirmOption) OptionsView.resetConfirmBeforeDeleteCheckbox();
 			} else if(PreferenceUtils.userConfirmed == 0) {
-				GeneralLoadView.removeFeature(gFeature);
+				GeneralLoadView.getLoadView().removeFeature(gFeature);
 			}
 			
 			return;

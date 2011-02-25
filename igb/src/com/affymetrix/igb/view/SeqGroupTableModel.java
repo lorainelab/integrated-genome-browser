@@ -3,6 +3,8 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.IGBConstants;
+
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 import javax.swing.table.AbstractTableModel;
@@ -43,9 +45,9 @@ final class SeqGroupTableModel extends AbstractTableModel {
 	@Override
 	public String getColumnName(int col) {
 		if (col == 0) {
-			return "("+ nformat.format(getRowCount()) +") Sequence(s)";
+			return MessageFormat.format(IGBConstants.BUNDLE.getString("sequenceColumnHeader"), nformat.format(getRowCount()));
 		} else if (col == 1) {
-			return "Length";
+			return IGBConstants.BUNDLE.getString("lengthColumnHeader");
 		} else {
 			return null;
 		}

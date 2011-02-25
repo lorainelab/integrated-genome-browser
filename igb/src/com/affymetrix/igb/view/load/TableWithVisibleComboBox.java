@@ -261,13 +261,13 @@ class JTableX extends JTable implements MouseListener {
 			if(PreferenceUtils.userConfirmed != 0 || resetConfirmOption) {
 				if (featureSize > 0 && IGB.confirmPanel("Really remove all data sets ?")) {
 					for (int row = 0; row < featureSize; row++) {
-						GeneralLoadView.removeFeature(ftm.getFeature(row));
+						GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row));
 					}
 				}
 				if(resetConfirmOption) OptionsView.resetConfirmBeforeDeleteCheckbox();
 			} else if(PreferenceUtils.userConfirmed == 0) {
 				for (int row = 0; row < featureSize; row++) {
-					GeneralLoadView.removeFeature(ftm.getFeature(row));
+					GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row));
 				}
 			}
 			//end

@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.view.DataLoadView;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -156,9 +155,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		if (src == this.serverPrefsB) {
 			// Go to server prefs tab.
 
-			if (DataLoadView.TAB_DATALOAD_PREFS != -1) {
+			if (GeneralLoadView.TAB_DATALOAD_PREFS != -1) {
 				PreferencesPanel pv = PreferencesPanel.getSingleton();
-				pv.setTab(DataLoadView.TAB_DATALOAD_PREFS);	// Server preferences tab
+				pv.setTab(GeneralLoadView.TAB_DATALOAD_PREFS);	// Server preferences tab
 				JFrame f = pv.getFrame();
 				f.setVisible(true);
 			} else {

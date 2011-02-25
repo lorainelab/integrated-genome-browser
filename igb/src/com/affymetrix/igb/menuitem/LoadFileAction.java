@@ -236,7 +236,7 @@ public final class LoadFileAction extends AbstractAction {
 		if(gFeature == null)
 			return;
 
-		GeneralLoadView.initVersion(gFeature.gVersion.group.getID());
+		GeneralLoadView.getLoadView().initVersion(gFeature.gVersion.group.getID());
 
 		if (gFeature.symL != null){
 			addChromosomesForUnknownGroup(fileName, gFeature);
@@ -408,7 +408,7 @@ public final class LoadFileAction extends AbstractAction {
 
 			@Override
 			public void done() {
-				SeqGroupView.refreshTable();
+				SeqGroupView.getInstance().refreshTable();
 				if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
 					// select a chromosomes
 					gmodel.setSelectedSeq(loadGroup.getSeq(0));

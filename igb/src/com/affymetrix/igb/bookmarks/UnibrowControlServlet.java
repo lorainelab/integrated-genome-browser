@@ -581,7 +581,7 @@ public final class UnibrowControlServlet {
 			group = gmodel.getSeqGroup(version);
 		}
 		if (group != null && !group.equals(gmodel.getSelectedSeqGroup())) {
-			GeneralLoadView.initVersion(version);
+			GeneralLoadView.getLoadView().initVersion(version);
 			gmodel.setSelectedSeqGroup(group);
 		}
 		return group;

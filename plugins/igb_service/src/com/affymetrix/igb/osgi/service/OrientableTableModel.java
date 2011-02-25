@@ -125,6 +125,7 @@ public class OrientableTableModel extends AbstractTableModel implements TableMod
 		if (this.reverse != reverse) {
 			this.reverse = reverse;
 			baseTableModel.fireTableStructureChanged();
+	    	baseTableModel.fireTableDataChanged();
 		}
 	}
 }

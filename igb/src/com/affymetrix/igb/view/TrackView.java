@@ -273,7 +273,7 @@ public class TrackView {
 		
 		// If genome is selected then delete all syms on the all seqs.
 		if(IGBConstants.GENOME_SEQ_ID.equals(seq.getID())){
-			GeneralLoadView.removeFeature(feature);
+			GeneralLoadView.getLoadView().removeFeature(feature);
 			return;
 		}
 

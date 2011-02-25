@@ -103,6 +103,7 @@ public final class IGB extends Application
 		super();
 		stopRoutines = new HashSet<IStopRoutine>();
 	}
+
 	public SeqMapView getMapView() {
 		return map_view;
 	}
@@ -358,7 +359,8 @@ public final class IGB extends Application
 		goToBookmark(args);
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		TAB_PLUGIN_PREFS = pp.addPrefEditorComponent(new BundleRepositoryPrefsView());
-		GeneralLoadView.setIGBService(IGBServiceImpl.getInstance());
+		GeneralLoadView.init(IGBServiceImpl.getInstance());
+		SeqGroupView.init(IGBServiceImpl.getInstance());
 	}
 
 	public void loadMenu() {
@@ -412,7 +414,7 @@ public final class IGB extends Application
 		windowService.setViewMenu(view_menu);
 		frm.setVisible(true);
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()));
-		return new IGBTabPanel[]{new DataLoadView(IGBServiceImpl.getInstance()), new AltSpliceView(IGBServiceImpl.getInstance())};
+		return new IGBTabPanel[]{GeneralLoadView.getLoadView(), SeqGroupView.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}
 
 	private void fileMenu() {

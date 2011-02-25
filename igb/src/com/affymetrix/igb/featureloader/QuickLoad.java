@@ -189,7 +189,7 @@ public final class QuickLoad extends SymLoader {
 
 					//Since sequence are never removed so if no. of sequence increases then refresh sequence table.
 					if(gmodel.getSelectedSeqGroup().getSeqCount() > seq_count){
-						SeqGroupView.refreshTable();
+						SeqGroupView.getInstance().refreshTable();
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
@@ -235,7 +235,7 @@ public final class QuickLoad extends SymLoader {
 						GenometryModel.getGenometryModel().setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
 					}
 
-					SeqGroupView.refreshTable();
+					SeqGroupView.getInstance().refreshTable();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 				} finally {

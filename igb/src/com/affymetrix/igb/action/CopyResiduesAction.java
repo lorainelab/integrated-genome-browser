@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
@@ -18,8 +19,15 @@ public class CopyResiduesAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
 
 	public CopyResiduesAction() {
-		super(BUNDLE.getString("copySelectedResiduesToClipboard"),
-				MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
+		this(BUNDLE.getString("copySelectedResiduesToClipboard"));
+	}
+
+	public CopyResiduesAction(String text) {
+		this(text, MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
+	}
+
+	public CopyResiduesAction(String text, Icon icon){
+		super(text, icon);
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_C);
 	}
 

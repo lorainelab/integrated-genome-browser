@@ -55,6 +55,7 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.action.CopyResiduesAction;
 import com.affymetrix.igb.action.LoadSequence;
 import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
@@ -190,6 +191,7 @@ public class SeqMapView extends JPanel
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	
 	private TransformTierGlyph axis_tier;
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -463,7 +465,7 @@ public class SeqMapView extends JPanel
 		}
 
 		//Make sure the graph is un-selected in the genometry model, to allow GC
-		GenometryModel.getGenometryModel().clearSelectedSymmetries(this);
+		gmodel.clearSelectedSymmetries(this);
 		setAnnotatedSeq(aseq, false, true);
 	}
 
@@ -586,7 +588,7 @@ public class SeqMapView extends JPanel
 			setZoomSpotY(old_zoom_spot_y);
 		} else {
 			// do selection based on what the genometry model thinks is selected
-			List<SeqSymmetry> symlist = GenometryModel.getGenometryModel().getSelectedSymmetries(seq);
+			List<SeqSymmetry> symlist = gmodel.getSelectedSymmetries(seq);
 			select(symlist, false, false, false);
 
 			setStatus(getSelectionTitle(seqmap.getSelected()));
@@ -976,7 +978,7 @@ public class SeqMapView extends JPanel
 	 */
 	final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
-		GenometryModel.getGenometryModel().setSelectedSymmetries(getSelectedSyms(), this);
+		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
 	}
 
 
@@ -1100,7 +1102,7 @@ public class SeqMapView extends JPanel
 	public final void zoomTo(SeqSpan span) {
 		BioSeq zseq = span.getBioSeq();
 		if (zseq != null && zseq != this.getAnnotatedSeq()) {
-			GenometryModel.getGenometryModel().setSelectedSeq(zseq);
+			gmodel.setSelectedSeq(zseq);
 		}
 		zoomTo(span.getMin(), span.getMax());
 	}
@@ -1598,7 +1600,15 @@ public class SeqMapView extends JPanel
 			if (feature == null) {
 				//Check if clicked on axis.
 				if (tglyph instanceof TransformTierGlyph) {
-					popup.add(new JMenuItem(LoadSequence.getPartialAction()));
+					SeqSpan visible = getVisibleSpan();
+					if(!gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())){
+						popup.add(new JMenuItem(LoadSequence.getPartialAction()));
+					}else{
+						if(seq_glyph.isSelected()){
+							popup.add(new JMenuItem(new CopyResiduesAction("Copy")));
+							popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
+						}
+					}
 				}
 				return;
 			}

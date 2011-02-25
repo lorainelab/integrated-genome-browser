@@ -44,6 +44,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	protected TrayState trayState;
 	private final String title;
 	private boolean retractDividerSet;
+	private JFrame frame;
 
 	protected abstract void setTabComponent();
 	protected abstract int getFullSize();
@@ -174,7 +175,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		remove(tab_pane);
 		validate();
 
-		final JFrame frame = new JFrame(title);
+		frame = new JFrame(title);
 		final Container cont = frame.getContentPane();
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -207,6 +208,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 				cont.remove(tab_pane);
 				cont.validate();
 				frame.dispose();
+				frame = null;
 				setTabComponent();
 				setDividerLocation(saveDividerProportionalLocation);
 				extendTray();
@@ -334,6 +336,13 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		case EXTENDED:
 			setDividerLocation(getExtendDividerLocation());
 			break;
+		}
+	}
+
+	@Override
+	public void close() {
+		if (trayState == TrayState.WINDOW) {
+			PreferenceUtils.saveWindowLocation(frame, title);
 		}
 	}
 }

@@ -10,4 +10,5 @@ public interface TabHolder {
 	public void removeTab(final IGBTabPanel plugin);
 	public void resize();
 	public IGBTabPanel getSelectedIGBTabPanel();
+	public void close();
 }

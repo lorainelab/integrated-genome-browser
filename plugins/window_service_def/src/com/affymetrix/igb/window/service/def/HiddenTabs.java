@@ -33,4 +33,7 @@ public class HiddenTabs implements TabHolder {
 
 	@Override
 	public IGBTabPanel getSelectedIGBTabPanel() { return null; }
+
+	@Override
+	public void close() {}
 }

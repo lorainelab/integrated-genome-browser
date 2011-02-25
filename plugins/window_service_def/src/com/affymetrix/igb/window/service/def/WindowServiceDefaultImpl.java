@@ -183,6 +183,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		// Save the main window location
 		PreferenceUtils.saveWindowLocation(frm, "main window");
 
+		for (TabHolder tabHolder : tabHolders.values()) {
+			tabHolder.close();
+		}
 		for (IGBTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getPlugins()) {
 			PreferenceUtils.saveWindowLocation(comp.getFrame(), comp.getName());
 			if (comp.isOrientable()) {

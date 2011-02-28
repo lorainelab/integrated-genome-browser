@@ -319,13 +319,14 @@ public final class BAM extends SymLoader {
 		sym.setInsResidues(insResidue.toString());
 
 //		Not using "SEQ" anywhere. So commenting out for now.
-		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
-			//sym.setProperty("residues", sr.getReadString());
-		} else {
-			// If both the MD and Cigar properties are set, don't need to specify residues.
-			byte[] SEQ = SequenceUtil.makeReferenceFromAlignment(sr, false);
-			sym.setProperty("SEQ", SEQ);
-		}
+//		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
+//			//sym.setProperty("residues", sr.getReadString());
+//		} else {
+//			// If both the MD and Cigar properties are set, don't need to specify residues.
+//			byte[] SEQ = SequenceUtil.makeReferenceFromAlignment(sr, false);
+//			sym.setProperty("SEQ", SEQ);
+//		}
+		
 		sym.setProperty("method", meth);
 
 		getFileHeaderProperties(sr.getHeader(), sym);

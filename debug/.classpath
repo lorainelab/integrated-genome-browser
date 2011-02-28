@@ -24,5 +24,6 @@
 	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/image4j.bnd.jar"/>
 	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/jlfgr-1_0.bnd.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/picard"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SelectionInfo"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

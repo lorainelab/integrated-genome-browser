@@ -30,6 +30,7 @@
 		<property name="PropertyView"        value="${basedir}/plugins/PropertyView" />
 		<property name="SearchView"          value="${basedir}/plugins/SearchView" />
 		<property name="GraphAdjuster"       value="${basedir}/plugins/GraphAdjuster" />
+		<property name="SelectionInfo"       value="${basedir}/plugins/SelectionInfo" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"    value="${basedir}/ext" />
@@ -575,6 +576,7 @@
 					<include name="PropertyView" />
 					<include name="SearchView" />
 					<include name="GraphAdjuster" />
+					<include name="SelectionInfo" />
 					<include name="window_service_def" />
 				</dirset>
 				<dirset dir="${basedir}">

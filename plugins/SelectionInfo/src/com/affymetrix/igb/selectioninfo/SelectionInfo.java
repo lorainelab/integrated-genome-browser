@@ -1,4 +1,4 @@
-package com.affymetrix.igb.property;
+package com.affymetrix.igb.selectioninfo;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.util.PropertyViewHelper;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -20,9 +20,18 @@ import com.affymetrix.igb.view.SeqMapView;
 
 import java.text.NumberFormat;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,105 +41,190 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
-public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler {
+public final class SelectionInfo extends IGBTabPanel implements SymSelectionListener, PropertyHandler {
 	private static final long serialVersionUID = 1L;
-	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
+	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("selectioninfo");
+	private static final List<String> GRAPH_TOOL_TIP_ORDER = new ArrayList<String>();
+	static {
+		GRAPH_TOOL_TIP_ORDER.add("id");
+		GRAPH_TOOL_TIP_ORDER.add("x coord");
+		GRAPH_TOOL_TIP_ORDER.add("y coord");
+		GRAPH_TOOL_TIP_ORDER.add("min score");
+		GRAPH_TOOL_TIP_ORDER.add("max score");
+		GRAPH_TOOL_TIP_ORDER.add("strand");
+		GRAPH_TOOL_TIP_ORDER.add("A");
+		GRAPH_TOOL_TIP_ORDER.add("T");
+		GRAPH_TOOL_TIP_ORDER.add("G");
+		GRAPH_TOOL_TIP_ORDER.add("C");
+		GRAPH_TOOL_TIP_ORDER.add("N");
+	}
 
+	private static List<String> TOOL_TIP_ORDER = new ArrayList<String>();
+	static {
+		TOOL_TIP_ORDER.add("id");
+		TOOL_TIP_ORDER.add("start");
+		TOOL_TIP_ORDER.add("end");
+		TOOL_TIP_ORDER.add("length");
+		TOOL_TIP_ORDER.add("strand");
+	}
+
+	// The general order these fields should show up in.
+	private static List<String> PROP_ORDER = new ArrayList<String>(20);
+	static {
+		PROP_ORDER.add("gene name");
+		PROP_ORDER.add("name");
+		PROP_ORDER.add("id");
+		PROP_ORDER.add("chromosome");
+		PROP_ORDER.add("start");
+		PROP_ORDER.add("end");
+		PROP_ORDER.add("length");
+		PROP_ORDER.add("strand");
+		PROP_ORDER.add("min score");
+		PROP_ORDER.add("max score");
+		PROP_ORDER.add("type");
+		PROP_ORDER.add("same orientation");
+		PROP_ORDER.add("query length");
+		PROP_ORDER.add("# matches");
+		PROP_ORDER.add("# target inserts");
+		PROP_ORDER.add("# target bases inserted");
+		PROP_ORDER.add("# query bases inserted");
+		PROP_ORDER.add("# query inserts");
+		PROP_ORDER.add("seq id");
+		PROP_ORDER.add("cds min");
+		PROP_ORDER.add("cds max");
+		PROP_ORDER.add("description");
+		PROP_ORDER.add("loadmode");
+		PROP_ORDER.add("feature url");
+	}
+
+	/**
+	 *
+	 * @author hiralv
+	 */
+	public static class PropertyViewHelper extends DefaultTableCellRenderer implements
+				MouseListener, MouseMotionListener {
+			private static final long serialVersionUID = 1L;
+			private static final Border selectedBorder = BorderFactory.createMatteBorder(2,2,2,2,
+                    Color.black);
+
+			private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+			private final Cursor defaultCursor = null;
+			private final JTable table;
+
+			public PropertyViewHelper(JTable table){
+				this.table = table;
+				table.addMouseListener(this);
+				table.addMouseMotionListener(this);
+			}
+			
+			@Override
+			public Component getTableCellRendererComponent (JTable table,
+					Object obj, boolean isSelected, boolean hasFocus, int row, int column){
+				JLabel tableCellRendererComponent;
+				if(isURLField(row,column)){
+
+					String url = "<html> <a href='" + (String)obj + "'>" +
+							(String)obj + "</a> </html>)";
+
+					tableCellRendererComponent = (JLabel)super.getTableCellRendererComponent (table, url,
+							isSelected, hasFocus, row, column);
+				}
+
+				tableCellRendererComponent = (JLabel)super.getTableCellRendererComponent (table, obj, isSelected,
+						hasFocus, row, column);
+				if (row % 2 == 0) {
+					tableCellRendererComponent.setBackground(Color.LIGHT_GRAY);
+				}
+				else {
+					tableCellRendererComponent.setBackground(Color.WHITE);
+//					tableCellRendererComponent.setBorder(BorderFactory.createCompoundBorder(
+//						tableCellRendererComponent.getBorder(), // outside border, your Label Border
+//						BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+				}
+				tableCellRendererComponent.setHorizontalAlignment(SwingConstants.CENTER);
+				tableCellRendererComponent.setVerticalAlignment(SwingConstants.TOP);
+				setBorder(selectedBorder);
+				return tableCellRendererComponent;
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e){
+
+				Point p = e.getPoint();
+				int row = table.rowAtPoint(p);
+				int column = table.columnAtPoint(p);
+
+				if (isURLField(row,column)) {
+					GeneralUtils.browse((String) table.getValueAt(row, column));
+				}
+
+			}
+			public void mouseMoved(MouseEvent e) {
+				Point p = e.getPoint();
+				int row = table.rowAtPoint(p);
+				int column = table.columnAtPoint(p);
+
+				if(isURLField(row,column)){
+					table.setCursor(handCursor);
+				}else if(table.getCursor() != defaultCursor) {
+					table.setCursor(defaultCursor);
+				}
+			}
+
+			public void mouseDragged(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {}
+
+			private boolean isURLField(int row, int column){
+
+				if(row > table.getRowCount() || column > table.getColumnCount() ||
+						row < 0 || column < 0)
+					return false;
+				
+				String value = (String) table.getValueAt(row, column);
+
+				if(value.length() <= 0)
+					return false;
+
+				if(value.startsWith("http://") || value.startsWith("https://"))
+					return true;
+
+				return false;
+			};
+	}
 	// the table showing name-value pairs
-	private static final JTable table = new JTable();
-	private final JScrollPane scroll_pane = new JScrollPane();
-	private TableRowSorter<TableModel> sorter;
+	private final JTable table;
+	private final JScrollPane scroll_pane;
 	public static final String PROPERTY = "property";
 	public static final String DEFAULT_TITLE = "Property Sheet";
-	private static final List<String> prop_order = determineOrder();
-	private static final PropertyViewHelper helper = new PropertyViewHelper(table);
+	private final PropertyViewHelper helper;
 	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
 
-	// save values for orientation flip
-	private Map<String, Object>[] save_props;
-	private List<String> save_preferred_prop_order;
-	private String save_noData;
-
-	public PropertyView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, 2);
-		determineOrder();
+	public SelectionInfo(IGBService igbService) {
+		super(igbService, BUNDLE.getString("selectionInfoTab"), BUNDLE.getString("selectionInfoTab"), false, 2);
+		table = new JTable();
+		scroll_pane = new JScrollPane();
 		JViewport jvp = new JViewport();
 		scroll_pane.setColumnHeaderView(jvp);
+		helper = new PropertyViewHelper(table);
 		new JTableCutPasteAdapter(table, true);
 		this.setPreferredSize(new java.awt.Dimension(100, 250));
 		this.setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 		propertyListeners.add(((SeqMapView)igbService.getMapView()).getMouseListener());
-	}
-
-	@Override
-	public boolean isOrientable() {
-		return true;
-	}
-
-	private static List<String> graphToolTipOrder(){
-		List<String> orderList = new ArrayList<String>(20);
-		orderList.add("id");
-		orderList.add("x coord");
-		orderList.add("y coord");
-		orderList.add("min score");
-		orderList.add("max score");
-		orderList.add("strand");
-		orderList.add("A");
-		orderList.add("T");
-		orderList.add("G");
-		orderList.add("C");
-		orderList.add("N");
-		return orderList;
-	}
-
-	private static List<String> toolTipOrder(){
-		List<String> orderList = new ArrayList<String>(20);
-		orderList.add("id");
-		orderList.add("start");
-		orderList.add("end");
-		orderList.add("length");
-		orderList.add("strand");
-
-		return orderList;
-	}
-
-	// The general order these fields should show up in.
-	private static List<String> determineOrder() {
-		List<String> orderList = new ArrayList<String>(20);
-		orderList.add("gene name");
-		orderList.add("name");
-		orderList.add("id");
-		orderList.add("chromosome");
-		orderList.add("start");
-		orderList.add("end");
-		orderList.add("length");
-		orderList.add("strand");
-		orderList.add("min score");
-		orderList.add("max score");
-		orderList.add("type");
-		orderList.add("same orientation");
-		orderList.add("query length");
-		orderList.add("# matches");
-		orderList.add("# target inserts");
-		orderList.add("# target bases inserted");
-		orderList.add("# query bases inserted");
-		orderList.add("# query inserts");
-		orderList.add("seq id");
-		orderList.add("cds min");
-		orderList.add("cds max");
-		orderList.add("description");
-		orderList.add("loadmode");
-		orderList.add("feature url");
-
-		return orderList;
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
@@ -171,7 +265,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 
 		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
 
-		this.showProperties(prop_array, prop_order, "");
+		this.showProperties(prop_array, PROP_ORDER, "");
 	}
 
 	public static void addTierInfo(List<Map<String, Object>> propList, TierLabelManager handler){
@@ -245,66 +339,34 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			props.put("id", symid);
 		}
 		if (seqMap != null) {
-		SeqSpan span = seqMap.getViewSeqSpan(sym);
-		if (span != null) {
-			String chromID = span.getBioSeq().getID();
-			props.put("chromosome", chromID);
-				props.put("start",
-						NumberFormat.getIntegerInstance().format(span.getStart()));
-				props.put("end",
-						NumberFormat.getIntegerInstance().format(span.getEnd()));
-				props.put("length",
-						NumberFormat.getIntegerInstance().format(span.getLength()));
-				props.put("strand",
-						span.isForward() ? "+" : "-");
-			props.remove("seq id"); // this is redundant if "chromosome" property is set
-			if (props.containsKey("method") && !props.containsKey("type")) {
-				props.put("type", props.get("method"));
-				props.remove("method");
+			SeqSpan span = seqMap.getViewSeqSpan(sym);
+			if (span != null) {
+				String chromID = span.getBioSeq().getID();
+				props.put("chromosome", chromID);
+					props.put("start",
+							NumberFormat.getIntegerInstance().format(span.getStart()));
+					props.put("end",
+							NumberFormat.getIntegerInstance().format(span.getEnd()));
+					props.put("length",
+							NumberFormat.getIntegerInstance().format(span.getLength()));
+					props.put("strand",
+							span.isForward() ? "+" : "-");
+				props.remove("seq id"); // this is redundant if "chromosome" property is set
+				if (props.containsKey("method") && !props.containsKey("type")) {
+					props.put("type", props.get("method"));
+					props.remove("method");
+				}
 			}
 		}
-	}
 		if (sym instanceof GraphSym) {
 			float[] range = ((GraphSym) sym).getVisibleYRange();
 			props.put("min score", range[0]);
 			props.put("max score", range[1]);
 		}
+		// for debugging only - if that wasn't obvious
+		props.put("property", "something goes in here and the text wraps to fit the available space so that users don't have to change the width of the side panel");
+		//
 		return props;
-	}
-
-	/**
-	 * Return headings for columns.  If we're laying out
-	 * values in a row, then column headings will be the
-	 * names associated with each value.  If we're laying
-	 * out values in a column, then column headings will
-	 * be PROPERTY and then labels for the item whose
-	 * values are being presented.
-	 * @param name_values - a List containing name-values for a
-	 *   one or more Properties
-	 * @param props - the list of Properties
-	 */
-	private static String[] getColumnHeadings(Map<String, Object>[] props) {
-		// will contain number of Properties + 1 if by_rows is false
-		// will contain number of values if by_rows is true
-		String[] col_headings = null;
-
-		// the number of items being described
-		int num_items = props.length;
-		// columns represent set of properties for a particular entity
-		col_headings = new String[num_items + 1];
-		col_headings[0] = PROPERTY;
-		for (int i = 0; i < num_items; i++) {
-			Object id_obj = props[i].get("id");
-			String id;
-			if (id_obj == null) {
-				id = "no ID";
-			} else {
-				id = id_obj.toString();
-			} // in most cases the id already is a String
-			col_headings[i + 1] = id;
-		}
-
-		return col_headings;
 	}
 
 	/**
@@ -327,27 +389,37 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		return rows;
 	}
 
-	private List<Object> swapRowsAndColumns(String[][] rows, String[] col_headings) {
-		//start
-		int length = rows.length;
-		int heigth = rows[1].length - 1;
-		String[][] tempRows = new String[heigth][length];
-		String[] tempColHeadings = new String[length];
-		for(int index1=0; index1<rows.length; index1++) {
-			for(int index2=1; index2<rows[index1].length; index2++) {
-				tempRows[index2-1][index1] = rows[index1][index2];
+	private static String[][] getPropertiesRow(Map<String, Object>[] props, final List<String> preferred_prop_order, String noData){
+		ArrayList<String> rowList = new ArrayList<String>();
+		for (int row = 0; row < props.length; row++) {
+			Map<String, Object> thisProps = props[row];
+			rowList.add("<html><span width=\"100%\" align=\"center\" style=\"text-align:center;\">" + thisProps.get("id").toString() + "</span></html>");
+			List<String> listProps = new ArrayList<String>(thisProps.keySet());
+			Collections.sort(listProps, new Comparator<String>() {
+			    public int compare(String o1, String o2) {
+			    	int i1 = preferred_prop_order.indexOf(o1);
+			    	if (i1 == -1) {
+			    		i1 = Integer.MAX_VALUE;
+			    	}
+			    	int i2 = preferred_prop_order.indexOf(o2);
+			    	if (i2 == -1) {
+			    		i2 = Integer.MAX_VALUE;
+			    	}
+			    	return i1 - i2;
+			    }
 			}
-			tempColHeadings[index1] = rows[index1][0];
-			//System.out.println("+++++++++++++title " + index1 + ": " + rows[index1][0]);
+			);
+			rowList.add(convertPropsToString(props[row], preferred_prop_order, false));
+//			for (String prop : listProps) {
+//				rowList.add("<html><span style=\"word-wrap: break-word;\"><b>" + prop + " : </b>" + ("link".equals(prop) ? "<a href=\"" + thisProps.get(prop) + "\">" : "") + thisProps.get(prop) + ("link".equals(prop) ? "<\\a>" : "") + "</code></span></html>");
+//			}
 		}
-
-		List<Object> resultList = new ArrayList<Object>();
-		resultList.add(tempRows);
-		resultList.add(tempColHeadings);
-
-		return resultList;
+		String[][] propertiesRow = new String[rowList.size()][1];
+		for (int i = 0; i < rowList.size(); i++) {
+			propertiesRow[i][0] = rowList.get(i);
+		}
+		return propertiesRow;
 	}
-
 
 	/**
 	 * Show data associated with the given properties.
@@ -358,30 +430,12 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	 * @param noData the value to use when a property value is null
 	 */
 	private void showProperties(Map<String, Object>[] props, List<String> preferred_prop_order, String noData) {
-		save_props = props;
-		save_preferred_prop_order = preferred_prop_order;
-		save_noData = noData;
 
-		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData);
-		String[] col_headings = getColumnHeadings(props);
+		String[][] table_data = getPropertiesRow(props,preferred_prop_order, noData);
+		String[] col_headings = new String[]{BUNDLE.getString("selectionInfoTab") + " (" + props.length + ")"};
+		propertyChanged(props.length + 1);
 
-		//start
-		//System.out.println("#############rows length: " + rows.length);
-		//System.out.println("#############col_headings length: " + col_headings.length);
-		//System.out.println("#############propertiesInColumns: " + propertiesInColumns);
-		if(rows.length > 0 && !portrait) {
-			List<Object> resultList = swapRowsAndColumns(rows, col_headings);
-			rows = (String[][])resultList.get(0);
-			col_headings = (String[])resultList.get(1);
-		}
-		//System.out.println("#############rows length: " + rows.length);
-		//System.out.println("#############col_headings length: " + col_headings.length);
-		//end
-
-		propertyChanged(col_headings.length);
-
-		TableModel model = new DefaultTableModel(rows, col_headings) {
-
+		TableModel model = new DefaultTableModel(table_data, col_headings) {
 			public static final long serialVersionUID = 1l;
 
 			@Override
@@ -390,27 +444,30 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			}
 		};
 		table.setModel(model);
-//		table.setDefaultRenderer(Object.class, helper);
-
-		sorter = new TableRowSorter<TableModel>(model);
-		table.setRowSorter(sorter);
+		table.setDefaultRenderer(Object.class, helper);
 
 		table.setEnabled(true);  // to allow selection, etc.
 		table.setFillsViewportHeight(true);
 		table.setMinimumSize(new Dimension(80000, 500));	//added by Max
-		//table.setPreferredScrollableViewportSize(new Dimension(80000, 500));  //added by Max
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		scroll_pane.setViewportView(table);
 		scroll_pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		//scroll_pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.add(scroll_pane, BorderLayout.CENTER);
-		table.setCellSelectionEnabled(true);
+		table.setCellSelectionEnabled(false);
 
 		validate();
 		table.getColumnModel().getColumn(0).setMinWidth(100);
 		table.getColumnModel().getColumn(0).setPreferredWidth(150);
 		table.getColumnModel().getColumn(0).setMaxWidth(200);
+	    int height = table.getRowHeight();
+		for (int rowIndex = 1; rowIndex < table.getRowCount(); rowIndex += 2) {
+			TableCellRenderer renderer = table.getCellRenderer(rowIndex, 0);
+        	Component comp = table.prepareRenderer(renderer, rowIndex, 0);
+        	int h = comp.getMaximumSize().height;
+//        	System.out.println("row = " + rowIndex + ", h = " + h + ", height = " + height);
+        	table.setRowHeight(rowIndex, Math.max(height, h));
+        }
 	}
 
 	@SuppressWarnings("unchecked")
@@ -419,7 +476,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		Map<String, Object> props = determineProps(sym, (SeqMapView)seqMap);
 		propList.add(props);
 
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]),toolTipOrder(),"", true);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]),TOOL_TIP_ORDER,"", true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -428,11 +485,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		Map<String, Object> props = determineProps(sym, (SeqMapView)seqMap);
 		props.putAll(sym.getLocationProperties(x, ((SeqMapView)seqMap).getVisibleSpan()));
 		propList.add(props);
-		return getPropertiesRow(propList.toArray(new Map[propList.size()]),graphToolTipOrder(),"",true);
-	}
-
-	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData){
-		return getPropertiesRow(props, preferred_prop_order, noData, false);
+		return getPropertiesRow(propList.toArray(new Map[propList.size()]),GRAPH_TOOL_TIP_ORDER,"",true);
 	}
 
 	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData, boolean limited){
@@ -521,20 +574,68 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		return result;
 	}
 
+    private static final String LINK = "link";
+	private static String convertPropsToString(Map<String, Object> properties, final List<String> preferred_prop_order, boolean shorten){
+		if(properties == null)
+			return null;
+
+		StringBuilder props = new StringBuilder();
+		String value = null;
+		props.append("<html>");
+		List<String> keys = new ArrayList<String>(properties.keySet());
+		Collections.sort(keys,
+			new Comparator<String>() {
+				@Override
+				public int compare(String o1, String o2) {
+					int index1 = preferred_prop_order.indexOf(o1);
+					if (index1 == -1) {
+						index1 = Integer.MAX_VALUE;
+					}
+					int index2 = preferred_prop_order.indexOf(o2);
+					if (index2 == -1) {
+						index2 = Integer.MAX_VALUE;
+					}
+					return index1 - index2;
+				}
+			}
+		);
+		for (String key : keys){
+			props.append("<b>");
+			props.append(key);
+			props.append(" : </b>");
+			Object obj = properties.get(key);
+			if (obj != null){
+				value = obj.toString();
+				if (shorten) {
+					int vallen = value.length();
+					props.append(value.substring(0, Math.min(40, vallen)));
+					if(vallen > 40) {
+						props.append(" ...");
+					}
+				}
+				else {
+					if (LINK.equals(key)) {
+						props.append("<a href=\"" + value + "\">");
+					}
+					props.append(value);
+					if (LINK.equals(key)) {
+						props.append("</a>");
+					}
+				}
+			}
+			props.append("<br>");
+			if (!shorten) {
+				props.append("<hr size=\"1\" style=\"height:1px\" />");
+			}
+		}
+		props.append("</html>");
+
+		return props.toString();
+	}
+
 	private void propertyChanged(int prop_displayed){
 		for(PropertyListener pl : propertyListeners){
 			pl.propertyDisplayed(prop_displayed);
-		}
-	}
-
-	@Override
-	public void setPortrait(boolean portrait) {
-		if (this.portrait == portrait) {
-			return;
-		}
-		super.setPortrait(portrait);
-		if (save_props != null) {
-			showProperties(save_props, save_preferred_prop_order, save_noData);
 		}
 	}
 }

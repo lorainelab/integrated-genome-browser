@@ -448,9 +448,9 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(view_menu, new JMenuItem(AutoScrollAction.getAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
 		view_menu.addSeparator();
-		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleEdgeMatchingAction.getAction()));
-		MenuUtil.addToMenu(view_menu, new JMenuItem(new AdjustEdgeMatchAction()));
-		view_menu.addSeparator();
+//		MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(ToggleEdgeMatchingAction.getAction()));
+//		MenuUtil.addToMenu(view_menu, new JMenuItem(new AdjustEdgeMatchAction()));
+//		view_menu.addSeparator();
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new ClampViewAction()));
 		MenuUtil.addToMenu(view_menu, new JMenuItem(new UnclampViewAction()));
 		view_menu.addSeparator();

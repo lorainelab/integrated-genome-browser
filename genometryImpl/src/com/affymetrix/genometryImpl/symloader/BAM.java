@@ -98,7 +98,7 @@ public final class BAM extends SymLoader {
 				// BAM is file.
 				//indexFile = new File(uri.)
 				File f = new File(uri);
-				indexFile = findOrCreateIndexFile(f);
+				indexFile = findIndexFile(f);
 				reader = new SAMFileReader(f, indexFile, false);
 				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else if (scheme.startsWith("http")) {
@@ -542,28 +542,8 @@ public final class BAM extends SymLoader {
 		}
 	}
 
-	static private File createIndexFile(File bamfile) throws IOException{
-		File indexfile = File.createTempFile(bamfile.getName(), ".bai");
-
-		if(!indexfile.exists()){
-			ErrorHandler.errorPanel("Unable to create file.");
-			return null;
-		}
-
-		if (DEBUG) 
-			System.out.println("Creating new bam index file -> "+indexfile);
-
-		String input = "INPUT=" + bamfile.getAbsolutePath();
-		String output = "OUTPUT=" + indexfile.getAbsolutePath();
-		String quiet = "QUIET="+!DEBUG;
-		BuildBamIndex buildIndex = new BuildBamIndex();
-		buildIndex.instanceMain(new String[]{input, output, quiet});
-
-		return indexfile;
-	}
-
 	/**Modified to look for both xxx.bai and xxx.bam.bai files in parent directory.*/
-	static private File findOrCreateIndexFile(File bamfile) throws IOException {
+	static public File findIndexFile(File bamfile) throws IOException {
 		//look for xxx.bam.bai
 		String path = bamfile.getPath();
 		File f = new File(path+".bai");
@@ -574,13 +554,33 @@ public final class BAM extends SymLoader {
 		f = new File(path);		
 		if (f.exists()) 
 			return f;
-		
-		return createIndexFile(bamfile);
+
+		return null;
 	}
 
+	//Can be used later. Do not remove.
+	static private File createIndexFile(File bamfile) throws IOException{
+		File indexfile = File.createTempFile(bamfile.getName(), ".bai");
+
+		if(!indexfile.exists()){
+			ErrorHandler.errorPanel("Unable to create file.");
+			return null;
+		}
+
+		if (DEBUG)
+			System.out.println("Creating new bam index file -> "+indexfile);
+
+		String input = "INPUT=" + bamfile.getAbsolutePath();
+		String output = "OUTPUT=" + indexfile.getAbsolutePath();
+		String quiet = "QUIET="+!DEBUG;
+		BuildBamIndex buildIndex = new BuildBamIndex();
+		buildIndex.instanceMain(new String[]{input, output, quiet});
+
+		return indexfile;
+	}
+	
 	public String getMimeType() {
 		return "binary/BAM";
 	}
-
 
 }

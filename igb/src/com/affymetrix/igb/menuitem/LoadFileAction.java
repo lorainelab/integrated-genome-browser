@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import java.io.*;
 import java.net.URISyntaxException;
@@ -266,6 +267,11 @@ public final class LoadFileAction extends AbstractAction {
 
 		version = setVersion(uri, loadGroup, version);
 
+		//In case of BAM
+		if(version == null){
+			return null;
+		}
+
 		// handle URL case.
 		String uriString = uri.toString();
 		int httpIndex = uriString.toLowerCase().indexOf("http:");
@@ -313,18 +319,30 @@ public final class LoadFileAction extends AbstractAction {
 	private static GenericVersion setVersion(URI uri, AnnotatedSeqGroup loadGroup, GenericVersion version){
 		String unzippedStreamName = GeneralUtils.stripEndings(uri.toString());
 		String extension = ParserController.getExtension(unzippedStreamName);
-		
-		if(extension.equals(".useq")){
+
+		if(extension.equals(".bam")){
+			if(handleBam(uri)){
+				ErrorHandler.errorPanel("Cannot open file","Could not find index file");
+				version = null;
+			}
+		}else if(extension.equals(".useq")){
 			loadGroup = handleUseq(uri, loadGroup);
 			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
-		}
-
-		if(extension.equals(".bar")){
+		}else if(extension.equals(".bar")){
 			loadGroup = handleBar(uri, loadGroup);
 			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
 		}
 
 		return version;
+	}
+
+	private static boolean handleBam(URI uri){
+		try {
+			return BAM.findIndexFile(new File(uri)) == null;
+		} catch (IOException ex) {
+			Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return false;
 	}
 
 	/**

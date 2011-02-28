@@ -1603,13 +1603,14 @@ public class SeqMapView extends JPanel
 					SeqSpan visible = getVisibleSpan();
 					if(!gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())){
 						popup.add(new JMenuItem(LoadSequence.getPartialAction()));
-					}else{
-						if(seq_glyph.isSelected()){
-							popup.add(new JMenuItem(new CopyResiduesAction("Copy")));
-							popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
-						}
 					}
+					
+					if(seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))){
+						popup.add(new JMenuItem(new CopyResiduesAction("Copy")));
+						popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
+					}			
 				}
+				
 				return;
 			}
 

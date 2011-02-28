@@ -651,19 +651,23 @@ public final class BioSeq implements SearchableCharIterator {
 	}
 
 	public boolean isAvailable(int start, int end){
+		return isAvailable(new SimpleSeqSpan(start, end, this));
+	}
+
+	public boolean isAvailable(SeqSpan span){
 		SeqSymmetry rootsym = this.getComposition();
-		if (rootsym == null) {
+		if (rootsym == null || span == null) {
 			return false;
 		}
 
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
-		query_sym.addSpan(new SimpleSeqSpan(start, end, this));
-		
+		query_sym.addSpan(span);
+
 		SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, rootsym, this);
-		
+
 		return !SeqUtils.hasSpan(optimized_sym);
 	}
-	
+
 	public String substring(int start, int end) {
 		if (residues_provider == null) {
 			return this.getResidues(start, end);

@@ -57,7 +57,7 @@ public class SequenceViewer extends JPanel
 		implements WindowListener, ItemListener {
 	private static final long serialVersionUID = 1L;
 
-	protected SeqMapView seqmapview;
+	private SeqMapView seqmapview;
 	private NeoSeq seqview;
 	private JFrame mapframe;
 	private Frame propframe;
@@ -76,6 +76,13 @@ public class SequenceViewer extends JPanel
 	boolean isGenomicRequest;
 	SequenceViewer sv;
 	String errorMessage = null;
+	private String direction = "-";
+	private int seqStart=0;
+	private int seqEnd=0;
+	private	String id = null, type = null;
+	private	String chromosome = null;
+	private String forward = null;
+	private String title = null;
 
 	public SequenceViewer() {
 		seqmapview = IGB.getSingleton().getMapView();
@@ -90,16 +97,20 @@ public class SequenceViewer extends JPanel
 		seqview.setSpacing(20);
 		if (residues_sym.getID() != null) {
 			addCdsStartEnd(residues_sym);
+			isGenomicRequest = false;
 		} else {
+			isGenomicRequest = true;
 			AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
-			mapframe = new JFrame("Genomic Sequence - " + ag.getID());
-			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
+			title = "Genomic Sequence : " + ag.getID() + " : "+residues_sym.getSpan(0).getStart()+" - "+(residues_sym.getSpan(0).getEnd()-1);
+//			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
 		}
+		mapframe = new JFrame();
+		mapframe.setTitle(title);
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
-		mapframe.setLayout(new BorderLayout());
 		mapframe.add("Center", seqview);
 		Dimension prefsize = seqview.getPreferredSize(50, 15);
+		prefsize = new Dimension(prefsize.width+50, prefsize.height);
 		mapframe.setMinimumSize(prefsize);
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width - pixel_width) / 2, (screen_size.height - pixel_height) / 2);
@@ -209,10 +220,9 @@ public class SequenceViewer extends JPanel
 	}
 
 	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
-		String id = null, type = null;
-		String chromosome = null;
 		int cdsMax = 0;
 		int cdsMin = 0;
+//		aseq.getAnnotation(BioSeq.determineMethod(residues_sym)).;
 		//		((SymWithProps) residues_sym).getProperty(seq)
 		Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
 		Iterator<String> iterator = sym.keySet().iterator();
@@ -223,6 +233,9 @@ public class SequenceViewer extends JPanel
 			if (key.equals("id")) {
 				id = value;
 			} else if (key.equals("forward")) {
+				String forward = value;
+				if(forward.equals("true"))
+					direction = "+";
 			} else if (key.equals("type")) {
 				type = value;
 				if (type == null) {
@@ -249,16 +262,19 @@ public class SequenceViewer extends JPanel
 			seqview.addOutlineAnnotation(Math.abs(cdsMin - seqSpans[seqSpans.length - 1].getStart()) - 3, Math.abs(cdsMin - seqSpans[seqSpans.length - 1].getStart()) - 1, Color.red);
 		}
 		//		String str = (((SymWithProps) residues_sym).getProperty("id")).toString()+" "+(((SymWithProps) residues_sym).getProperty("chromosome")).toString();
-		mapframe = new JFrame();
-		mapframe.setTitle(version + " " + id + " " + chromosome + " " + type);
+		title = version + " : " + type  + " : " + chromosome + " : " + id + " : "+ direction;
 	}
 
 	private void convertSpansForSequenceViewer(String[] seqArray, String[] intronArray, SeqSpan[] spans, String seq) {
 		int i = 1;
 		if (spans[0].getStart() < spans[0].getEnd()) {
 			seqArray[0] = seq.substring(0, spans[0].getLength());
+			seqStart = spans[0].getMin();
+			seqEnd = spans[spans.length - 1].getMax();
 		} else {
 			seqArray[0] = seq.substring(0, spans[spans.length - 1].getLength());
+			seqStart = spans[spans.length - 1].getMin();
+			seqEnd = spans[0].getMax();
 		}
 		if (spans.length > 1) {
 			if (spans[0].getStart() > spans[0].getEnd()) {
@@ -283,7 +299,6 @@ public class SequenceViewer extends JPanel
 		}
 
 		i = 0;
-
 		return;
 	}
 
@@ -388,6 +403,12 @@ public class SequenceViewer extends JPanel
 
 	public void exportSequenceFasta() {
 		FileDialog fd = new FileDialog(mapframe, "Save As", FileDialog.SAVE);
+		fd.setFilenameFilter((new FilenameFilter() {
+
+			public boolean accept(File dir, String name) {
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+		}));
 		fd.setVisible(true);
 		String fileName = fd.getFile();
 
@@ -395,18 +416,12 @@ public class SequenceViewer extends JPanel
 			try {
 
 				FileWriter fw = new FileWriter(fd.getDirectory() + fileName);
+				String firstLine = title;
 				String r = seqview.getResidues();
-//				String header =
-//				">" +
-//				chrom_name +
-//				" range:" +
-//				NumberFormat.getIntegerInstance().format(start) +
-//				"-" +
-//				NumberFormat.getIntegerInstance().format(end) +
-//				" interbase genome:" +
-//				genome_name +
-//				"\n";
-				fw.write(">" + fileName);
+				if(!isGenomicRequest){
+					firstLine = title + " : "+seqStart +" - "+seqEnd;
+				}
+				fw.write(">"+ firstLine);
 				fw.write('\n');
 				int i;
 				for (i = 0; i < r.length() - 50; i += 50) {
@@ -424,6 +439,8 @@ public class SequenceViewer extends JPanel
 			}
 		}
 	}
+
+	
 	JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
 	JCheckBoxMenuItem transOneCBMenuItem = new JCheckBoxMenuItem(" +1 Translation");
 	JCheckBoxMenuItem transTwoCBMenuItem = new JCheckBoxMenuItem(" +2 Translation");

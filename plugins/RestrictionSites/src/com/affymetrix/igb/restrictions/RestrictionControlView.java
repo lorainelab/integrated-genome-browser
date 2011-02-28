@@ -131,8 +131,8 @@ public final class RestrictionControlView extends IGBTabPanel
 			scrollPane.setPreferredSize(new Dimension(100, 100));
 
 			this.add("West", scrollPane);
-			actionB = new JButton("Map Selected Restriction Sites");
-			clearB = new JButton("Clear");
+			actionB = new JButton(BUNDLE.getString("action"));
+			clearB = new JButton(BUNDLE.getString("clear"));
 			this.add("Center", new JScrollPane(labelP));
 
 			JPanel buttonPanel = new JPanel();
@@ -146,7 +146,7 @@ public final class RestrictionControlView extends IGBTabPanel
 			clearB.addActionListener(this);
 		} else {
 			this.setLayout(new BorderLayout());
-			JLabel lab = new JLabel("Restriction site mapping not available.");
+			JLabel lab = new JLabel(BUNDLE.getString("notAvailable"));
 			this.add("North", lab);
 		}
 	}

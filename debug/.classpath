@@ -25,5 +25,11 @@
 	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/jlfgr-1_0.bnd.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/picard"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SelectionInfo"/>
+	<classpathentry kind="lib" path="/window_service_def/resources"/>
+	<classpathentry kind="lib" path="/Common/resources"/>
+	<classpathentry kind="lib" path="/ExternalView/resources"/>
+	<classpathentry kind="lib" path="/RestrictionSites/resources"/>
+	<classpathentry kind="lib" path="/GraphAdjuster/resources"/>
+	<classpathentry kind="lib" path="/PropertyView/resources"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

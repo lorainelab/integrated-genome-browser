@@ -136,11 +136,11 @@ public final class RestrictionControlView extends IGBTabPanel
 			clearB = new JButton("Clear");
 			this.add("Center", new JScrollPane(labelP));
 
-			Container button_container = new JPanel();
-			button_container.setLayout(new GridLayout(5, 1));
-			button_container.add(actionB);
-			button_container.add(clearB);
-			this.add("East", button_container);
+			JPanel buttonPanel = new JPanel();
+			buttonPanel.setLayout(new GridLayout(1, 2));
+			buttonPanel.add(actionB);
+			buttonPanel.add(clearB);
+			this.add("South", buttonPanel);
 
 			siteList.addListSelectionListener(this);
 			actionB.addActionListener(this);

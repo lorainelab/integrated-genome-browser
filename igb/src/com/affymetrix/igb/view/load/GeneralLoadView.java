@@ -89,6 +89,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	private final FeatureTreeView feature_tree_view;
 	//private TrackInfoView track_info_view;
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
+	private final JSplitPane jSplitPane;
 	
 	private static GeneralLoadView singleton;
 
@@ -143,14 +144,16 @@ public final class GeneralLoadView extends IGBTabPanel
 
 
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(1, 1));
+		buttonPanel.setLayout(new GridLayout(1, 3));
 
 		this.refreshDataAction = RefreshDataAction.getAction();
 		JButton refresh_dataB = new JButton(refreshDataAction);
 		refresh_dataB.setIcon(null);
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);
+		buttonPanel.add(new JLabel());
 		buttonPanel.add(refresh_dataB);
+		buttonPanel.add(new JLabel());
 		this.add("South", buttonPanel);
 
 		feature_model = new FeaturesTableModel(this);
@@ -180,9 +183,9 @@ public final class GeneralLoadView extends IGBTabPanel
 //		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featurePane);
 
 		this.feature_tree_view = new FeatureTreeView();
-		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featuresPanel);
-		jPane.setResizeWeight(0.5);		
-		this.add("Center", jPane);
+		jSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featuresPanel);
+		jSplitPane.setResizeWeight(0.5);		
+		this.add("Center", jSplitPane);
 
 		this.setBorder(BorderFactory.createEtchedBorder());
 
@@ -193,6 +196,20 @@ public final class GeneralLoadView extends IGBTabPanel
 		addListeners();
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		TAB_DATALOAD_PREFS = pp.addPrefEditorComponent(new DataLoadPrefsView());
+	}
+
+	@Override
+	public boolean isOrientable() {
+		return true;
+	}
+
+	@Override
+	public void setPortrait(boolean portrait) {
+		if (this.portrait == portrait) {
+			return;
+		}
+		super.setPortrait(portrait);
+		jSplitPane.setOrientation(portrait ? JSplitPane.VERTICAL_SPLIT : JSplitPane.HORIZONTAL_SPLIT);
 	}
 
 	private void addListeners() {

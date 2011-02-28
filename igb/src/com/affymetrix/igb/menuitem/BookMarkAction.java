@@ -351,7 +351,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 
   public static void exportBookmarks(BookmarkList main_bookmark_list, JFrame frame) {
     if (main_bookmark_list == null || main_bookmark_list.getChildCount()==0) {
-      ErrorHandler.errorPanel(frame, "Error", "No bookmarks to save", null);
+      ErrorHandler.errorPanel(frame, "Error", "No bookmarks to save", (Exception)null);
       return;
     }
     JFileChooser chooser = getJFileChooser();

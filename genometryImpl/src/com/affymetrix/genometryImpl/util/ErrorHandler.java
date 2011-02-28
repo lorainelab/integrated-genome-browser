@@ -16,6 +16,8 @@ package com.affymetrix.genometryImpl.util;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 
 /**
@@ -47,12 +49,24 @@ public abstract class ErrorHandler {
 		errorPanel(frame, title, message, e);
 	}
 
+	public static void errorPanel(final String title, String message, final List<Throwable> errs) {
+		errorPanel((JFrame) null, title, message, errs);
+	}
+
 	public static void errorPanel(String title, String message, Component c) {
 		errorPanel(title, message, c, (Throwable) null);
 	}
 
 	public static void errorPanel(String title, String message, Throwable e) {
 		errorPanel((JFrame) null, title, message, e);
+	}
+
+	public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e) {
+		List<Throwable> errs = new ArrayList<Throwable>();
+		if(e != null){
+			errs.add(e);
+		}
+		errorPanel((JFrame) null, title, message, errs);
 	}
 
 	/** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame
@@ -66,7 +80,7 @@ public abstract class ErrorHandler {
 	 *  the exception text will be appended to the message and
 	 *  a stack trace might be printed on standard error.
 	 */
-	public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e) {
+	public static void errorPanel(final JFrame frame, final String title, String message, final List<Throwable> errs) {
 		// logging the error to standard out is redundant, but preserves
 		// the past behavior.  The flush() methods make sure that
 		// messages from system.out and system.err don't get out-of-synch
@@ -74,23 +88,29 @@ public abstract class ErrorHandler {
 		System.err.flush();
 		System.err.println();
 		System.err.println("-------------------------------------------------------");
-		if (e != null) {
-			String error_message = e.toString();
-			message = message + "\n" + error_message;
-			Throwable cause = e.getCause();
-			while (cause != null) {
-				message += "\n\nCaused by:\n" + cause.toString();
-				cause = cause.getCause();
+		
+		if (!errs.isEmpty()) {
+			for (Throwable e : errs) {
+				String error_message = e.toString();
+				message = message + "\n" + error_message;
+				Throwable cause = e.getCause();
+				while (cause != null) {
+					message += "\n\nCaused by:\n" + cause.toString();
+					cause = cause.getCause();
+				}
 			}
 		}
+
 		System.err.println(title + ": " + message);
-		if (e != null) {
-			if (e instanceof FileNotFoundException) {
-				// do nothing.  Error already printed above, stack trace not usually useful
-				//System.err.println("FileNotFoundException: " + e.getMessage());
-			} else {
-				message += "\nSee console output for more details about this error.";
-				e.printStackTrace(System.err);
+		if (!errs.isEmpty()) {
+			for (Throwable e : errs) {
+				if (e instanceof FileNotFoundException) {
+					// do nothing.  Error already printed above, stack trace not usually useful
+					//System.err.println("FileNotFoundException: " + e.getMessage());
+				} else {
+					message += "\nSee console output for more details about this error.";
+					e.printStackTrace(System.err);
+				}
 			}
 		}
 

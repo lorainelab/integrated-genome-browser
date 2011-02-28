@@ -30,6 +30,7 @@ import net.sf.picard.sam.BuildBamIndex;
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
+import net.sf.samtools.SAMException;
 
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileHeader;
@@ -210,6 +211,7 @@ public final class BAM extends SymLoader {
 	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) {
 		init();
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
+		List<Throwable> errList = new ArrayList<Throwable>(10);
 		CloseableIterator<SAMRecord> iter = null;
 		try {
 			if (reader != null) {
@@ -217,14 +219,22 @@ public final class BAM extends SymLoader {
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
 					while(iter.hasNext() && (!Thread.currentThread().isInterrupted())){
-						sr = iter.next();
-						symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
+						try{
+							sr = iter.next();
+							symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
+						}catch(SAMException e){
+							errList.add(e);
+						}
 					}
 				}
 			}
 		} finally {
 			if (iter != null) {
 				iter.close();
+			}
+
+			if(!errList.isEmpty()){
+				ErrorHandler.errorPanel("SAM exception", "Ignoring "+errList.size()+" records",  errList);
 			}
 		}
 
@@ -258,7 +268,7 @@ public final class BAM extends SymLoader {
 	 * @param meth - method name
 	 * @return SimpleSymWithProps
 	 */
-	private static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String featureName, String meth){
+	private static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String featureName, String meth) {
 		SimpleSeqSpan span = null;
 		int start = sr.getAlignmentStart() - 1; // convert to interbase
 		int end = sr.getAlignmentEnd();
@@ -273,21 +283,21 @@ public final class BAM extends SymLoader {
 
 		int blockMins[] = new int[childs.size()];
 		int blockMaxs[] = new int[childs.size()];
-		for (int i=0;i<childs.size();i++) {
+		for (int i = 0; i < childs.size(); i++) {
 			SymWithProps child = childs.get(i);
-			blockMins[i] =  child.getSpan(0).getMin() + span.getMin();
-			blockMaxs[i] =  blockMins[i] + child.getSpan(0).getLength();
+			blockMins[i] = child.getSpan(0).getMin() + span.getMin();
+			blockMaxs[i] = blockMins[i] + child.getSpan(0).getLength();
 		}
 
 		int iblockMins[] = new int[insertChilds.size()];
 		int iblockMaxs[] = new int[insertChilds.size()];
-		for (int i=0;i<insertChilds.size();i++) {
+		for (int i = 0; i < insertChilds.size(); i++) {
 			SymWithProps child = insertChilds.get(i);
-			iblockMins[i] =  child.getSpan(0).getMin() + span.getMin();
-			iblockMaxs[i] =  iblockMins[i] + child.getSpan(0).getLength();
+			iblockMins[i] = child.getSpan(0).getMin() + span.getMin();
+			iblockMaxs[i] = iblockMins[i] + child.getSpan(0).getLength();
 		}
 
-		if(childs.isEmpty()) {
+		if (childs.isEmpty()) {
 			blockMins = new int[1];
 			blockMins[0] = span.getStart();
 			blockMaxs = new int[1];
@@ -298,7 +308,7 @@ public final class BAM extends SymLoader {
 		BAMSym sym = new BAMSym(featureName, seq, start, end, sr.getReadName(),
 				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs);
 		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
-		sym.setProperty("id",sr.getReadName());
+		sym.setProperty("id", sr.getReadName());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
 			sym.setProperty(tv.tag, tv.value);
 		}
@@ -307,7 +317,8 @@ public final class BAM extends SymLoader {
 
 		sym.setResidues(interpretCigar(sr.getCigar(), sr.getReadString(), end - start, insResidue));
 		sym.setInsResidues(insResidue.toString());
-		
+
+//		Not using "SEQ" anywhere. So commenting out for now.
 		if (sr.getCigar() == null || sym.getProperty("MD") == null) {
 			//sym.setProperty("residues", sr.getReadString());
 		} else {

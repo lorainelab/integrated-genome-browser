@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.das2.Das2Type;
+import com.affymetrix.genometryImpl.das2.FormatPriorities;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
@@ -283,5 +284,19 @@ public final class GenericFeature {
 		return null;
 	}
 
+	public String getExtension(){
+		if (typeObj instanceof Das2Type) {
+			return FormatPriorities.getFormat((Das2Type) typeObj);
+		}
+
+		if (typeObj == null && symL != null) {
+			String ext = symL.extension;
+			if(ext.length() > 0){
+				return ext.substring(1);
+			}
+		}
+
+		return null;
+	}
 
 }

@@ -182,6 +182,10 @@ public abstract class SymLoader {
 	public List<String> getFormatPrefList(){
 		return Collections.<String>emptyList();
 	}
+
+	public String getExtension(){
+		return extension;
+	}
 	
 	/**
 	 * Return the symmetries that match the given chromosome.

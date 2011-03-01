@@ -76,6 +76,12 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>plugins/SelectionInfo/src</label>
+                    <type>java</type>
+                    <location>plugins/SelectionInfo/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>plugins/SearchView/src</label>
                     <type>java</type>
                     <location>plugins/SearchView/src</location>
@@ -165,7 +171,7 @@
                     <target>compile</target>
                 </action>
                 <action name="clean">
-					<target>cbc</target>
+                    <target>cbc</target>
                     <target>clean</target>
                 </action>
                 <action name="javadoc">
@@ -340,6 +346,10 @@
                         <location>plugins/PropertyView/src</location>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>plugins/SelectionInfo/src</label>
+                        <location>plugins/SelectionInfo/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>plugins/SearchView/src</label>
                         <location>plugins/SearchView/src</location>
                     </source-folder>
@@ -449,6 +459,7 @@
                 <package-root>plugins/SearchView/src</package-root>
                 <package-root>plugins/GraphAdjuster/src</package-root>
                 <package-root>plugins/RestrictionSites/src</package-root>
+                <package-root>plugins/SelectionInfo/src</package-root>
                 <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometryImpl/src:ext/image4j.jar:ext/affx_fusion.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:genoviz_sdk/src:ext/commons-compress-1.0.jar:ext/sam.jar:ext/picard.jar:ext/colt.jar:ext/junit.jar:ext/jide-common.jar:ext/jide-components.jar:ext/jide-grids.jar:ext/felix.jar:plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar:plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar:igb_server/lib/bindex.jar:igb_server/lib/commons-fileupload-1.2.2.jar:igb_server/lib/commons-io-2.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>genometryImpl/build</built-to>

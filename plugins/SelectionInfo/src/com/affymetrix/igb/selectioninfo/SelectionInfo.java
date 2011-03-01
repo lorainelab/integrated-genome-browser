@@ -70,7 +70,7 @@ public final class SelectionInfo extends IGBTabPanel implements SymSelectionList
 		GRAPH_TOOL_TIP_ORDER.add("N");
 	}
 
-	private static List<String> TOOL_TIP_ORDER = new ArrayList<String>();
+	private static final List<String> TOOL_TIP_ORDER = new ArrayList<String>();
 	static {
 		TOOL_TIP_ORDER.add("id");
 		TOOL_TIP_ORDER.add("start");
@@ -80,7 +80,7 @@ public final class SelectionInfo extends IGBTabPanel implements SymSelectionList
 	}
 
 	// The general order these fields should show up in.
-	private static List<String> PROP_ORDER = new ArrayList<String>(20);
+	private static final List<String> PROP_ORDER = new ArrayList<String>(20);
 	static {
 		PROP_ORDER.add("gene name");
 		PROP_ORDER.add("name");
@@ -393,7 +393,10 @@ public final class SelectionInfo extends IGBTabPanel implements SymSelectionList
 		ArrayList<String> rowList = new ArrayList<String>();
 		for (int row = 0; row < props.length; row++) {
 			Map<String, Object> thisProps = props[row];
-			rowList.add("<html><span width=\"100%\" align=\"center\" style=\"text-align:center;\">" + thisProps.get("id").toString() + "</span></html>");
+			Object id = thisProps.get("id");
+			if(id != null){
+				rowList.add("<html><span width=\"100%\" align=\"center\" style=\"text-align:center;\">" + id.toString() + "</span></html>");
+			}
 			List<String> listProps = new ArrayList<String>(thisProps.keySet());
 			Collections.sort(listProps, new Comparator<String>() {
 			    public int compare(String o1, String o2) {

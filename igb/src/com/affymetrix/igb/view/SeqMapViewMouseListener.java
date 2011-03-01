@@ -413,7 +413,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		}
 
 		map.updateWidget();
-
+		
 		if (something_changed) {
 			smv.postSelections();
 		}
@@ -506,7 +506,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	private void processSubSelection(MouseEvent evt) {
-		if (!(evt instanceof NeoMouseEvent)) {
+		if (!(evt instanceof NeoMouseEvent) || rubber_band_start != null) {
 			return;
 		}
 

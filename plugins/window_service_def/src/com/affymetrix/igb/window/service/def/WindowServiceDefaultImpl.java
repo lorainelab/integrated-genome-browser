@@ -28,6 +28,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.TabState;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
+import com.affymetrix.igb.window.service.def.TabHolder;
 
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 
@@ -61,6 +62,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<IGBTabPanel, JMenu> tabMenus;
 	private Container cpane;
 	private boolean focusSet;
+	private boolean initResize;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -71,6 +73,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
 		tabMenus = new HashMap<IGBTabPanel, JMenu>();
 		focusSet = false;
+		initResize = false;
 	}
 
 	@Override
@@ -78,8 +81,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		frm = jFrame;
 		cpane = frm.getContentPane();
 		cpane.setLayout(new BorderLayout());
-		frm.addComponentListener(new ComponentListener() 
-		{  
+		frm.addComponentListener(new ComponentListener()
+		{
 		        public void componentResized(ComponentEvent evt) {
 		    		for (TabState tabState : tabHolders.keySet()) {
 		    			tabHolders.get(tabState).resize();
@@ -212,6 +215,12 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 		setTabMenu(plugin);
 		tabs_menu.add(pluginMenu);
+		if (!initResize) {
+    		for (TabState tabStateLoop : tabHolders.keySet()) {
+    			tabHolders.get(tabStateLoop).resize();
+    		}
+    		initResize = true;
+		}
 	}
 
 	private void setTabMenu(final IGBTabPanel plugin) {

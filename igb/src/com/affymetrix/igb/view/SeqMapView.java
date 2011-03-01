@@ -1493,6 +1493,11 @@ public class SeqMapView extends JPanel
 						sym_used_for_title = original;
 					}
 				}
+				if (id == null && topgl instanceof CharSeqGlyph && seq_selected_sym != null) {
+					SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
+					id = SeqUtils.spanToString(seq_region);
+					sym_used_for_title = seq_selected_sym;
+				}
 				if (id == null && topgl instanceof GraphGlyph) {
 					GraphGlyph gg = (GraphGlyph) topgl;
 					if (gg.getLabel() != null) {

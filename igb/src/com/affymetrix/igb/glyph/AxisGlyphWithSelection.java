@@ -4,7 +4,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.TransientGlyph;
 
 import java.awt.geom.Rectangle2D;
 
@@ -13,7 +12,6 @@ import java.awt.geom.Rectangle2D;
  * @author hiralv
  */
 public class AxisGlyphWithSelection extends AxisGlyph {
-	private TransientGlyph tg;
 	private GlyphI sel_glyph;
 
 	public AxisGlyphWithSelection(){
@@ -60,7 +58,6 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 		if (sel_glyph != null) {
 			Rectangle2D.Double selbox = sel_glyph.getCoordBox();
 			sel_glyph.setCoords(selbox.x, Math.max(0, y + labelThickness), selbox.width, height + labelThickness);
-			tg.setCoords(selbox.x, Math.max(0, y + labelThickness), selbox.width, height + labelThickness);
 		}
 	}
 
@@ -103,10 +100,7 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 		if (end >= start) { end += 1; }
 		else { start += 1; }
 		if (sel_glyph == null) {
-			tg = new TransientGlyph();
-			tg.setUseXOR(true);
-			sel_glyph = new FillRectGlyph();
-			tg.addChild(sel_glyph);
+			sel_glyph = new TransientFillRectGlyph();
 		}
 		if (orient == HORIZONTAL) {
 			if (start <= end) {
@@ -122,7 +116,6 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 					start = (int)(coordbox.x + coordbox.width); }
 			}
 			sel_glyph.setCoords(start, Math.max(0, coordbox.y - labelThickness), end-start, coordbox.height + labelThickness);
-			tg.setCoords(start, Math.max(0, coordbox.y - labelThickness), end-start, coordbox.height + labelThickness);
 		} else if (orient == VERTICAL) {
 			if (start <= end) {
 				if (start < coordbox.y) {
@@ -137,7 +130,6 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 					start = (int)(coordbox.y + coordbox.height); }
 			}
 			sel_glyph.setCoords(Math.max(0, coordbox.x - labelThickness), start, coordbox.width + labelThickness, end-start);
-			tg.setCoords(Math.max(0, coordbox.x - labelThickness), start, coordbox.width + labelThickness, end-start);
 		}
 	}
 
@@ -146,7 +138,6 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 		super.setSelected(selected);
 		if (!isSelected()) {
 			sel_glyph = null;
-			tg = null;
 		}
 	}
 
@@ -155,11 +146,19 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 		if (sel_glyph != null)  {
 			draw(view);
 			sel_glyph.setBackgroundColor(view.getScene().getSelectionColor());
-			tg.drawTraversal(view);
+			sel_glyph.drawTraversal(view);
 		}
 		else {
 			super.drawSelectedOutline(view);
 		}
 	}
 
+	private static class TransientFillRectGlyph extends FillRectGlyph {
+
+		public void drawTraversal(ViewI view) {
+			view.getGraphics().setXORMode(view.getComponent().getBackground());
+			super.drawTraversal(view);
+			view.getGraphics().setPaintMode();
+		}
+	}
 }

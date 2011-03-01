@@ -90,7 +90,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	//private TrackInfoView track_info_view;
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 	private final JSplitPane jSplitPane;
-	
+
 	private static GeneralLoadView singleton;
 
 	public static void init(IGBService _igbService) {
@@ -123,7 +123,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		speciesCBRenderer = new JComboBoxToolTipRenderer();
 		speciesCB.setRenderer(speciesCBRenderer);
 		speciesCBRenderer.setToolTipEntry(SELECT_SPECIES, CHOOSE + " " + SELECT_SPECIES);
-		
+
 		choicePanel.add(new JLabel(CHOOSE + ":"));
 		choicePanel.add(Box.createHorizontalStrut(5));
 		choicePanel.add(speciesCB);
@@ -162,7 +162,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 		// Handle sizing of the columns
 		feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
-		
+
 		featuresTableScrollPane = new JScrollPane(GeneralLoadView.feature_table);
 		featuresTableScrollPane.setViewportView(feature_table);
 
@@ -177,14 +177,14 @@ public final class GeneralLoadView extends IGBTabPanel
 		/* COMMENTED OUT.  The Track Info table makes the data load view
 		 *                 too busy, so for now, the code is commented out
 		 */
-//		track_info_view = new TrackInfoView();		
-//		JSplitPane featurePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, featuresPanel, track_info_view);		
-//		featurePane.setResizeWeight(0.5);		
+//		track_info_view = new TrackInfoView();
+//		JSplitPane featurePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, featuresPanel, track_info_view);
+//		featurePane.setResizeWeight(0.5);
 //		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featurePane);
 
 		this.feature_tree_view = new FeatureTreeView();
 		jSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featuresPanel);
-		jSplitPane.setResizeWeight(0.5);		
+		jSplitPane.setResizeWeight(0.5);
 		this.add("Center", jSplitPane);
 
 		this.setBorder(BorderFactory.createEtchedBorder());
@@ -250,7 +250,7 @@ public final class GeneralLoadView extends IGBTabPanel
 			refreshTreeView();
 			return;
 		}
-		
+
 		if (gServer.getServerStatus() != ServerStatus.Initialized) {
 			return;	// ignore uninitialized servers
 		}
@@ -268,7 +268,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;
 		String speciesName = (String)this.speciesCB.getSelectedItem();
 		refreshSpeciesCB();
-		
+
 		if (speciesName != null && !speciesName.equals(SELECT_SPECIES)) {
 			lookForPersistentGenome = false;
 			String versionName = (String)this.versionCB.getSelectedItem();
@@ -437,7 +437,7 @@ public final class GeneralLoadView extends IGBTabPanel
 			}
 			Collections.sort(versionNames, new StringVersionDateComparator());
 		}
-		
+
 		// Sort the versions (by date)
 
 		ThreadUtils.runOnEventQueue(new Runnable() {
@@ -635,7 +635,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 
 		if (versionName.equals(SELECT_GENOME)) {
-			// Select the null group (and the null seq), if it's not already selected.	
+			// Select the null group (and the null seq), if it's not already selected.
 			return;
 		}
 
@@ -651,7 +651,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		speciesCB.setEnabled(false);
 		versionCB.setEnabled(false);
 
-		(new InitVersionWorker(versionName, group)).execute();	
+		(new InitVersionWorker(versionName, group)).execute();
 	}
 
 	/**
@@ -904,7 +904,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				col = feature_table.getColumnModel().getColumn(FeaturesTableModel.REFRESH_FEATURE_COLUMN);
 				col.setResizable(false);
 				col.setMaxWidth(10);
-				
+
 				// Don't enable combo box for full genome sequence
 				// Enabling of combo box for local files with unknown chromosomes happens in setComboBoxEditors()
 				TableWithVisibleComboBox.setComboBoxEditors(feature_table, !GeneralLoadView.IsGenomeSequence());
@@ -997,7 +997,7 @@ public final class GeneralLoadView extends IGBTabPanel
 			@Override
 			protected Void doInBackground(){
 				igbService.addNotLockedUpMsg("Removing feature  "+feature.featureName);
-				
+
 				feature.removeAllSyms();
 
 				// If feature is local then remove it from server.
@@ -1005,7 +1005,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				if (version.gServer.serverType.equals(ServerType.LocalFiles)) {
 					version.removeFeature(feature);
 				}
-				
+
 				return null;
 			}
 
@@ -1020,6 +1020,11 @@ public final class GeneralLoadView extends IGBTabPanel
 		};
 
 		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
+	}
+
+	@Override
+	public boolean isFocus() {
+		return true;
 	}
 }
 

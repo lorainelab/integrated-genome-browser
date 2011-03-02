@@ -296,7 +296,7 @@ public final class GenericFeature {
 			}
 		}
 
-		return null;
+		return "";
 	}
 
 }

@@ -107,7 +107,16 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	@Override
 	public void setSeqMapView(JPanel map_view) {
-		JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(map_view);
+		JTabbedTrayPane bottom_pane = new JTabbedTrayBottomPane(map_view);
+		bottom_pane.addTrayStateChangeListener(this);
+		tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottom_pane);
+		try {
+			bottom_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(bottom_pane.getTitle())));
+		}
+		catch (Exception x) {
+			bottom_pane.invokeTrayState(TrayState.getDefaultTrayState());
+		}
+		JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(bottom_pane);
 		left_pane.addTrayStateChangeListener(this);
 		tabHolders.put(TabState.COMPONENT_STATE_LEFT_TAB, left_pane);
 		try {
@@ -125,16 +134,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		catch (Exception x) {
 			right_pane.invokeTrayState(TrayState.getDefaultTrayState());
 		}
-		JTabbedTrayPane bottom_pane = new JTabbedTrayBottomPane(right_pane);
-		bottom_pane.addTrayStateChangeListener(this);
-		tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottom_pane);
-		try {
-			bottom_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(bottom_pane.getTitle())));
-		}
-		catch (Exception x) {
-			bottom_pane.invokeTrayState(TrayState.getDefaultTrayState());
-		}
-		cpane.add("Center", bottom_pane);
+		cpane.add("Center", right_pane);
 	}
 
 	@Override

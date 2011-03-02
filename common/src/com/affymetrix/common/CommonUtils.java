@@ -4,6 +4,11 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+/**
+ * utilities used by both the main, starting class, and the
+ * bundles. Singleton pattern.
+ *
+ */
 public class CommonUtils {
 	private static final CommonUtils instance = new CommonUtils();
 	private String app_dir = null;
@@ -22,10 +27,18 @@ public class CommonUtils {
 		return instance;
 	}
 
+	/**
+	 * get the current version of IGB
+	 * @return the IGB version
+	 */
 	public String getAppVersion() {
 		return APP_VERSION;
 	}
 
+	/**
+	 * get the current full (detailed) version of IGB
+	 * @return the full IGB version
+	 */
 	public String getAppVersionFull() {
 		return APP_VERSION_FULL;
 	}
@@ -34,7 +47,7 @@ public class CommonUtils {
 	 * Returns the location of the application data directory.
 	 * The String will always end with "/".
 	 *
-	 * @return 
+	 * @return the application directory
 	 */
 	public String getAppDataDirectory() {
 		if (app_dir == null) {

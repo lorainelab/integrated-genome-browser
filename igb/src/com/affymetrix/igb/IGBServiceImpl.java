@@ -44,6 +44,12 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
+/**
+ * implementation of the IGBService, using the IGB instance for
+ * all of the methods. This is the way for bundles to access
+ * IGB functionality that is not public.
+ *
+ */
 public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryChangeListener {
 
 	private static IGBServiceImpl instance = new IGBServiceImpl();
@@ -129,6 +135,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		return Application.confirmPanel(text);
 	}
 
+	@Override
 	public ImageIcon getIcon(String name) {
 		ImageIcon icon = null;
 		java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource(name + "_icon.gif");
@@ -138,11 +145,13 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		return icon;
 	}
 
+	@Override
 	public void addStopRoutine(IStopRoutine routine) {
 		IGB igb = (IGB)IGB.getSingleton();
 		igb.addStopRoutine(routine);
 	}
 
+	@Override
 	public int getTier(Bundle bundle) {
 		if (bundle.getBundleId() == 0) { // system bundle
 			return 0;
@@ -186,6 +195,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		ServerList.getRepositoryInstance().removeServer(url);
 	}
 
+	@Override
 	public void displayRepositoryPreferences() {
 		if (IGB.TAB_PLUGIN_PREFS != -1) {
 			PreferencesPanel pv = PreferencesPanel.getSingleton();
@@ -224,20 +234,24 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		}
 	}
 
+	@Override
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
 		return ((IGB)IGB.getSingleton()).searchForRegexInResidues(
 				forward, regex, residues, residue_offset, Application.getSingleton().getMapView().getAxisTier(), glyphs, hitColor);
 	}
 
+	@Override
 	public JComponent getMapView() {
 		return Application.getSingleton().getMapView();
 	}
 
+	@Override
 	public String getCommandLineBatchFileStr() {
 		return IGB.commandLineBatchFileStr;
 	}
 
+	@Override
 	public void setCommandLineBatchFileStr(String str) {
 		IGB.commandLineBatchFileStr = str;
 	}

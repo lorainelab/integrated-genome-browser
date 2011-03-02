@@ -30,6 +30,9 @@ import org.osgi.framework.BundleContext;
 
 import com.affymetrix.common.CommonUtils;
 
+/**
+ * all OSGi functionality is handled here. Singleton pattern.
+ */
 public class OSGiHandler {
 	private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
 	private static final String FORWARD_SLASH = "/";
@@ -40,14 +43,26 @@ public class OSGiHandler {
 		return instance;
 	}
 
+	/**
+	 * get the OSGi cache directory
+	 * @return the OSGi cache directory
+	 */
 	private String getCacheDir() {
 		return CommonUtils.getInstance().getAppDataDirectory() + "cache/v" + CommonUtils.getInstance().getAppVersion() + "-bundle-cache";
 	}
 
+	/**
+	 * clear the OSGi cache
+	 */
 	public void clearCache() {
 		deleteDirectory(new File(getCacheDir()));
 	}
 
+	/**
+	 * delete the specified directory, and all its contents
+	 * @param path the path of the directory to delete
+	 * @return true if and only if the file or directory is successfully deleted; false otherwise
+	 */
 	private boolean deleteDirectory(File path) {
 		if (path.exists()) {
 			File[] files = path.listFiles();
@@ -62,6 +77,10 @@ public class OSGiHandler {
 		return (path.delete());
 	}
 
+	/**
+	 * load the OSGi implementation - Apache felix.
+	 * @param argArray the command line arguments joined into a String
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private final void loadFelix(String argArray) {
 		Map configMap = new StringMap(false);
@@ -78,6 +97,11 @@ public class OSGiHandler {
         felix = new Felix(configMap);
 	}
 
+	/**
+	 * start OSGi, load and start the OSGi implementation
+	 * load the embedded bundles, if not cached, and start all bundles
+	 * @param args the command line arguments
+	 */
 	public void startOSGi(String[] args) {
 		setLaf();
 
@@ -214,6 +238,9 @@ public class OSGiHandler {
 		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
 	}
 
+	/**
+	 * set the Swing look and feel
+	 */
 	private static void setLaf() {
 
 		// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)

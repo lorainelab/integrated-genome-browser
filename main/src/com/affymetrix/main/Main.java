@@ -19,7 +19,8 @@ package com.affymetrix.main;
  */
 public final class Main {
 	/**
-	 * Start the program.
+	 * Start the program. Nothing to it, just start OSGi and
+	 * all the bundles.
 	 */
 	public static void main(final String[] args) {
 		try {

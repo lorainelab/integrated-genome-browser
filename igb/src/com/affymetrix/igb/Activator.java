@@ -11,13 +11,15 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.IWindowService;
 
+/**
+ * OSGi Activator for igb bundle
+ */
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;
 
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		this.bundleContext = _bundleContext;
-//		String[] args = bundleContext.getProperty("args").split(",");
 		// Verify jidesoft license.
 		com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
 			"Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
@@ -38,11 +40,16 @@ public class Activator implements BundleActivator {
         	serviceTracker.open();
         }
 	}
-	@Override
-	public void stop(BundleContext _bundleContext) throws Exception {
-	}
 
-	protected void run(ServiceReference windowServiceReference) {
+	@Override
+	public void stop(BundleContext _bundleContext) throws Exception {}
+
+	/**
+	 * method to start IGB, called when the window service is available,
+	 * creates and initializes IGB and registers the IGBService
+	 * @param windowServiceReference - the OSGi ServiceReference for the window service
+	 */
+	private void run(ServiceReference windowServiceReference) {
         IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);
         IGB igb = new IGB();
         String[] args = new String[]{};

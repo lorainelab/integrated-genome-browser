@@ -1924,7 +1924,7 @@ public class NeoSeq extends NeoContainerWidget
 			if (seqchild instanceof WrapAnnot) {
 				wrap_annot = (WrapAnnot)seqchild;
 				annotchildren = wrap_annot.getChildren();
-				for (int j=0; j<annotchildren.size(); j++) {
+				for (int j=0; annotchildren!=null && j<annotchildren.size(); j++) {
 					annotchild = annotchildren.get(j);
 					if (annotchild instanceof AnnotationGlyph) {
 						if (annotchild == sel_glyph) { continue; }

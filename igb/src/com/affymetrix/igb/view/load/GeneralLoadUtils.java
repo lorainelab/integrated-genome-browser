@@ -645,7 +645,7 @@ public final class GeneralLoadUtils {
 
 	public static boolean loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		//start max
-		if (feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().showLoadingConfirm) {
+		if ((feature.getExtension() != null) && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().showLoadingConfirm) {
 			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
 			int spanWidth = span.getMax() - span.getMin();
 			spanWidth = spanWidth - GeneralLoadView.getLoadView().previousSpanWidth;
@@ -687,16 +687,6 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 		}
-		
-		//start max
-		if(GeneralLoadView.getLoadView().stoploading) {
-			System.out.println("before return, stoploading: " + GeneralLoadView.getLoadView().stoploading);
-			boolean rlt = GeneralLoadView.getLoadView().checkToInterrupt();
-			GeneralLoadView.getLoadView().stoploading = false;
-			System.gc();
-			if(!rlt) return false;
-		}
-		//end max
 		
 		return true;
 	}

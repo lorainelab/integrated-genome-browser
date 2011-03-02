@@ -26,7 +26,6 @@ public final class StatusBar extends JPanel {
 		memory_item = new MemoryStatusBarItem();
 		memory_item.setShowMaxMemory(true);
 		stopBtn = new JButton("x");
-		stopBtn.addActionListener(new ButtonListener());
 		
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
@@ -47,14 +46,12 @@ public final class StatusBar extends JPanel {
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
-				.addComponent(stopBtn)
 				.addComponent(memory_item, 1, 200, 200));
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
-				.addComponent(stopBtn)
 				.addComponent(memory_item));
 
 	}
@@ -74,23 +71,5 @@ public final class StatusBar extends JPanel {
 
 	public String getStatus() {
 		return status_ta.getText();
-	}
-
-	class ButtonListener implements ActionListener {
-		ButtonListener() {}
-
-		public void actionPerformed(ActionEvent e) {
-			GeneralLoadView.getLoadView().stoploading = true;
-			if (e.getActionCommand().equals("x")) {
-				GeneralLoadView.getLoadView().stoploading = true;
-				System.out.println("stop button clicked");
-				progressBar.setValue(progressBar.getMinimum());
-				//progressBar.setVisible(false);
-				status_ta.setText("");
-				memory_item.stop();
-		    	
-				System.gc();
-			}
-		}
 	}
 }

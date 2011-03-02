@@ -90,7 +90,6 @@ public final class GeneralLoadView extends IGBTabPanel
 	//private TrackInfoView track_info_view;
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 	private final JSplitPane jSplitPane;
-	public boolean stoploading = false;
 	public boolean showLoadingConfirm = false;
 	public int previousSpanWidth = 0;
 
@@ -1027,20 +1026,6 @@ public final class GeneralLoadView extends IGBTabPanel
 
 	@Override
 	public boolean isFocus() {
-		return true;
-	}
-	
-	public boolean checkToInterrupt() {
-		try {
-			if(stoploading) {
-				System.gc();
-				return false;
-			}
-		} catch(Exception ie) {
-			System.out.println("Interrupted");
-			return false;
-		}
-		
 		return true;
 	}
 }

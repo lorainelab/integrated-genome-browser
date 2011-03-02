@@ -64,6 +64,7 @@ import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.view.load.AutoLoad;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -351,7 +352,6 @@ public class SeqMapView extends JPanel
 			this.add(BorderLayout.EAST, yzoombox);
 		}
 
-
 		this.add(BorderLayout.CENTER, seqmap);
 
 		LinkControl link_control = new LinkControl();
@@ -568,7 +568,7 @@ public class SeqMapView extends JPanel
 			seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
 			addGlyphs(temp_tiers, axis_index);
 		}
-
+		
 		seqmap.repack();
 
 		if (same_seq && preserve_selection) {

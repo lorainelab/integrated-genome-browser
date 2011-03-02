@@ -321,7 +321,7 @@ public final class LoadFileAction extends AbstractAction {
 		String extension = ParserController.getExtension(unzippedStreamName);
 
 		if(extension.equals(".bam")){
-			if(handleBam(uri)){
+			if(!handleBam(uri)){
 				ErrorHandler.errorPanel("Cannot open file","Could not find index file");
 				version = null;
 			}
@@ -338,7 +338,7 @@ public final class LoadFileAction extends AbstractAction {
 
 	private static boolean handleBam(URI uri){
 		try {
-			return BAM.findIndexFile(new File(uri)) == null;
+			return BAM.hasIndex(uri);
 		} catch (IOException ex) {
 			Logger.getLogger(LoadFileAction.class.getName()).log(Level.SEVERE, null, ex);
 		}

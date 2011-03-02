@@ -44,7 +44,6 @@ import net.sf.samtools.SAMRecord.SAMTagAndValue;
 import net.sf.samtools.SAMSequenceDictionary;
 import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.util.CloseableIterator;
-import net.sf.samtools.util.SequenceUtil;
 
 /**
  * @author jnicol
@@ -559,15 +558,30 @@ public final class BAM extends SymLoader {
 		//look for xxx.bam.bai
 		String path = bamfile.getPath();
 		File f = new File(path+".bai");
-		if (f.exists()) 
-			return f;
-		//look for xxx.bai
+		if (f.exists())
+				return f;
+			//look for xxx.bai
 		path = path.substring(0, path.length()-3)+"bai";
-		f = new File(path);		
-		if (f.exists()) 
-			return f;
+			f = new File(path);
+		if (f.exists())
+				return f;
 
 		return null;
+	}
+
+	public static boolean hasIndex(URI uri) throws IOException{
+		String scheme = uri.getScheme().toLowerCase();
+		if (scheme.length() == 0 || scheme.equals("file")) {
+			File f = findIndexFile(new File(uri));
+			return f != null;
+		}else if(scheme.startsWith("http")) {
+			String uriStr = uri.toString();
+			// Guess at the location of the .bai URL as BAM URL + ".bai"
+			String baiUriStr = uriStr + ".bai";
+			return LocalUrlCacher.isValidURL(baiUriStr);
+		}
+
+		return false;
 	}
 
 	//Can be used later. Do not remove.

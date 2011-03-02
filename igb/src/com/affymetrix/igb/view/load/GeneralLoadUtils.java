@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -37,7 +38,9 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
+import com.affymetrix.igb.prefs.OptionsView;
 import com.affymetrix.igb.view.SeqMapView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -636,11 +639,32 @@ public final class GeneralLoadUtils {
 			// TODO: Investigate edge case at max
 			overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax()-1, selected_seq);
 		}
-
+		
 		return loadAndDisplaySpan(overlap, gFeature);
 	}
 
 	public static boolean loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
+		//start max
+		if (feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().showLoadingConfirm) {
+			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
+			int spanWidth = span.getMax() - span.getMin();
+			spanWidth = spanWidth - GeneralLoadView.getLoadView().previousSpanWidth;
+			GeneralLoadView.getLoadView().previousSpanWidth = span.getMax() - span.getMin();
+			System.out.println("1---spanWidth: " + spanWidth);
+			System.out.println("1PreferenceUtils.userSpanLoadingConfirmed: " + PreferenceUtils.userSpanLoadingConfirmed);
+			System.out.println("1resetConfirmOption: " + resetConfirmOption);
+			if(((spanWidth > 100024) && PreferenceUtils.userSpanLoadingConfirmed != 0) || resetConfirmOption) {
+				boolean loadBig = Application.confirmPanelForSpanloading("Region in view is big (> 100k), do you want to continue?");
+				if(!loadBig) {
+					return false;
+				} 
+				
+				if(resetConfirmOption) PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, false);
+			}
+			GeneralLoadView.getLoadView().showLoadingConfirm = false;
+		}
+		//end max
+		
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) && ((QuickLoad) feature.symL).extension.endsWith(".chp")) {
 			feature.loadStrategy = LoadStrategy.GENOME;	// it should be set to this already.  But just in case...
@@ -663,6 +687,16 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
 					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 		}
+		
+		//start max
+		if(GeneralLoadView.getLoadView().stoploading) {
+			System.out.println("before return, stoploading: " + GeneralLoadView.getLoadView().stoploading);
+			boolean rlt = GeneralLoadView.getLoadView().checkToInterrupt();
+			GeneralLoadView.getLoadView().stoploading = false;
+			System.gc();
+			if(!rlt) return false;
+		}
+		//end max
 		
 		return true;
 	}

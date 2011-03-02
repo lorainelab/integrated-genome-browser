@@ -289,7 +289,7 @@ public final class GenericFeature {
 			return FormatPriorities.getFormat((Das2Type) typeObj);
 		}
 
-		if (typeObj == null && symL != null) {
+		if (symL != null) {
 			String ext = symL.extension;
 			if(ext.length() > 0){
 				return ext.substring(1);

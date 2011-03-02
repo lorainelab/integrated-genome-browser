@@ -34,7 +34,6 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
   JButton clear_prefsB = new JButton("Reset all preferences to defaults");
-  static JCheckBox cbdCheckbox;
 
   public OptionsView() {
     super();
@@ -59,9 +58,10 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
       PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting));
     misc_box.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
-    cbdCheckbox = PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
-        PreferenceUtils.RESET_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete);
-    misc_box.add(cbdCheckbox);
+    misc_box.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
+      PreferenceUtils.RESET_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete));
+    misc_box.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
+      PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete));
     
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
@@ -163,9 +163,5 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 	}
 
   public void refresh() {
-  }
-
-  public static void resetConfirmBeforeDeleteCheckbox() {
-	  cbdCheckbox.setSelected(false);
   }
 }

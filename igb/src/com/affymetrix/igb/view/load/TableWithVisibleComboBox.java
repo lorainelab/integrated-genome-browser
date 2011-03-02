@@ -264,7 +264,7 @@ class JTableX extends JTable implements MouseListener {
 						GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row));
 					}
 				}
-				if(resetConfirmOption) OptionsView.resetConfirmBeforeDeleteCheckbox();
+				if(resetConfirmOption) PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_CONFIRM_BOX_OPTION, false);
 			} else if(PreferenceUtils.userConfirmed == 0) {
 				for (int row = 0; row < featureSize; row++) {
 					GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row));

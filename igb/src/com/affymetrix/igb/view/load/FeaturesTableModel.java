@@ -200,7 +200,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 				if(IGB.confirmPanel("Really remove entire " + gFeature.featureName + " data set ?")){
 					GeneralLoadView.getLoadView().removeFeature(gFeature);
 				}
-				if(resetConfirmOption) OptionsView.resetConfirmBeforeDeleteCheckbox();
+				if(resetConfirmOption) PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_CONFIRM_BOX_OPTION, false);
 			} else if(PreferenceUtils.userConfirmed == 0) {
 				GeneralLoadView.getLoadView().removeFeature(gFeature);
 			}

@@ -1,9 +1,13 @@
 package com.affymetrix.igb.view;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.jidesoft.status.MemoryStatusBarItem;
 
 public final class StatusBar extends JPanel {
@@ -12,6 +16,7 @@ public final class StatusBar extends JPanel {
 	private final JLabel status_ta;
 	public final JProgressBar progressBar;
 	MemoryStatusBarItem memory_item;
+	private JButton stopBtn;
 
 	public StatusBar() {
 		String tt_status = "Shows Selected Item, or other Message";
@@ -20,6 +25,8 @@ public final class StatusBar extends JPanel {
 		progressBar = new JProgressBar();
 		memory_item = new MemoryStatusBarItem();
 		memory_item.setShowMaxMemory(true);
+		stopBtn = new JButton("x");
+		stopBtn.addActionListener(new ButtonListener());
 		
 		status_ta.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 		progressBar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
@@ -40,12 +47,14 @@ public final class StatusBar extends JPanel {
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
+				.addComponent(stopBtn)
 				.addComponent(memory_item, 1, 200, 200));
 
 		layout.setVerticalGroup(layout.createParallelGroup(Alignment.CENTER)
 				.addComponent(status_ta)
 				.addGap(1, 1, Short.MAX_VALUE)
 				.addComponent(progressBar)
+				.addComponent(stopBtn)
 				.addComponent(memory_item));
 
 	}
@@ -67,4 +76,21 @@ public final class StatusBar extends JPanel {
 		return status_ta.getText();
 	}
 
+	class ButtonListener implements ActionListener {
+		ButtonListener() {}
+
+		public void actionPerformed(ActionEvent e) {
+			GeneralLoadView.getLoadView().stoploading = true;
+			if (e.getActionCommand().equals("x")) {
+				GeneralLoadView.getLoadView().stoploading = true;
+				System.out.println("stop button clicked");
+				progressBar.setValue(progressBar.getMinimum());
+				//progressBar.setVisible(false);
+				status_ta.setText("");
+				memory_item.stop();
+		    	
+				System.gc();
+			}
+		}
+	}
 }

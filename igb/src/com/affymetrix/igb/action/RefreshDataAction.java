@@ -1,7 +1,10 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import javax.swing.KeyStroke;
+
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.KeyStrokeEditPanel;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -34,6 +37,10 @@ public class RefreshDataAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent ae) {
+		if(ae != null) {
+			System.out.println("----command got: " + ae.getActionCommand());
+			GeneralLoadView.getLoadView().showLoadingConfirm = true;
+		}
 		GeneralLoadView.getLoadView().loadVisibleFeatures();
 	}
 }

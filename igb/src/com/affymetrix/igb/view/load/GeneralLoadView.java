@@ -92,6 +92,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	private final JSplitPane jSplitPane;
 	public boolean showLoadingConfirm = false;
 	public int previousSpanWidth = 0;
+	public String previousBamFile = "";
 
 	private static GeneralLoadView singleton;
 

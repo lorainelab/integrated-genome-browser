@@ -647,12 +647,10 @@ public final class GeneralLoadUtils {
 		//start max
 		if ((feature.getExtension() != null) && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().showLoadingConfirm) {
 			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
+			
 			int spanWidth = span.getMax() - span.getMin();
 			spanWidth = spanWidth - GeneralLoadView.getLoadView().previousSpanWidth;
 			GeneralLoadView.getLoadView().previousSpanWidth = span.getMax() - span.getMin();
-			System.out.println("1---spanWidth: " + spanWidth);
-			System.out.println("1PreferenceUtils.userSpanLoadingConfirmed: " + PreferenceUtils.userSpanLoadingConfirmed);
-			System.out.println("1resetConfirmOption: " + resetConfirmOption);
 			if(((spanWidth > 100024) && PreferenceUtils.userSpanLoadingConfirmed != 0) || resetConfirmOption) {
 				boolean loadBig = Application.confirmPanelForSpanloading("Region in view is big (> 100k), do you want to continue?");
 				if(!loadBig) {

@@ -493,6 +493,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     if (bmv == null) {
       bmv = new BookmarkManagerView();
       bmv.setApplication(uni);
+	  setBookmarkManager(bmv);
     }
     
     // If not already open in a new window, make a new window

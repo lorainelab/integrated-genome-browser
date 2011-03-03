@@ -552,6 +552,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			x.printStackTrace();
 		}
 		setRepositoryBundles();
+		reloadBundleTable();
 		return addedOK;
 	}
 
@@ -562,5 +563,6 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		}
 		catch (MalformedURLException x) {}
 		setRepositoryBundles();
+		reloadBundleTable();
 	}
 }

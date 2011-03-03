@@ -38,7 +38,6 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
-import com.affymetrix.igb.prefs.OptionsView;
 import com.affymetrix.igb.view.SeqMapView;
 
 import java.io.BufferedReader;
@@ -165,6 +164,9 @@ public final class GeneralLoadUtils {
 			}
 		}
 		server.setEnabled(false);
+		if (server.serverType == null) {
+			IGBServiceImpl.getInstance().repositoryRemoved(server.URL);
+		}
 	}
 
 	

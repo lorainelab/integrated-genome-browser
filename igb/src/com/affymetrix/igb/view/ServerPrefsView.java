@@ -225,7 +225,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		}
 
 		if (serverList.getServer(url).serverType == null) {
-			IGBServiceImpl.getInstance().repositoryAdded(serverList.getServer(url).URL);
+			IGBServiceImpl.getInstance().repositoryRemoved(serverList.getServer(url).URL);
 		}
 		serverList.removeServer(url);
 		serverList.removeServerFromPrefs(url);	// this is done last; other methods can depend upon the preference node

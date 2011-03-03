@@ -19,8 +19,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.UIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
@@ -30,8 +30,8 @@ import org.osgi.framework.Version;
 public class BundleTableModel extends DefaultTableModel implements Constants {
 	private static final long serialVersionUID = 1L;
 
-//	private static final int WIDE_COLUMN_MULTIPLIER = 5;
-//	private static final int NARROW_COLUMN = 60;
+	private static final int WIDE_COLUMN_MULTIPLIER = 5;
+	private static final int NARROW_COLUMN = 60;
 
 	public static class NameInfoPanel extends JPanel implements Comparable<NameInfoPanel> {
 		private static final long serialVersionUID = 1L;
@@ -109,8 +109,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		public boolean isEditable() { return false; }
 		public abstract Object getValue(Bundle bundle);
 		public void setValue(Bundle bundle, Object aValue, IPluginsHandler pluginsHandler) {}
-		public TableCellRenderer getTableCellRenderer() { return new DefaultTableCellRenderer(); }
-		public TableCellEditor getTableCellEditor() { return null; }
+		public void formatColumn(JTable jTable, TableColumn tc) {}
 	}
 
 	private static class VersionInfo {
@@ -134,8 +133,6 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		}
 	}
 
-	private static JTable jTable;
-
 	private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
 	static {
 	columns.add(new BundleColumn() { // symbolic name
@@ -146,7 +143,9 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		@Override
 		public Object getValue(Bundle bundle) { return new NameInfoPanel(bundle); }
 		@Override
-		public TableCellRenderer getTableCellRenderer() { return new NameInfoRenderer(); }
+		public void formatColumn(JTable jTable, TableColumn tc) {
+			tc.setCellRenderer(new NameInfoRenderer());
+		}
 	});
 	columns.add(new BundleColumn() { // description
 		@Override
@@ -157,17 +156,19 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			return description == null ? "" : description.toString();
 		}
 		@Override
-		public TableCellRenderer getTableCellRenderer() {
-			return
-			new TableCellRenderer() {
-				@Override
-				public Component getTableCellRendererComponent(JTable table, Object value,
-						boolean isSelected, boolean hasFocus, int row, int column) {
-					Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-					((JLabel)component).setToolTipText((String)value);
-					return component;
-				}
-			};
+		public void formatColumn(JTable jTable, TableColumn tc) {
+			tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
+			tc.setCellRenderer(
+					new TableCellRenderer() {
+						@Override
+						public Component getTableCellRendererComponent(JTable table, Object value,
+								boolean isSelected, boolean hasFocus, int row, int column) {
+							Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+							((JLabel)component).setToolTipText((String)value);
+							return component;
+						}
+					}
+			);
 		}
 	});
 	columns.add(new BundleColumn() { // version
@@ -199,9 +200,13 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			}
 		}
 		@Override
-		public TableCellRenderer getTableCellRenderer() { return jTable.getDefaultRenderer(Boolean.class); }
-		@Override
-		public TableCellEditor getTableCellEditor() { return jTable.getDefaultEditor(Boolean.class); }
+		public void formatColumn(JTable jTable, TableColumn tc) {
+			tc.setCellEditor(jTable.getDefaultEditor(Boolean.class)); 
+			tc.setCellRenderer(jTable.getDefaultRenderer(Boolean.class));
+			tc.setMinWidth(NARROW_COLUMN);
+			tc.setMaxWidth(NARROW_COLUMN);
+			tc.setPreferredWidth(NARROW_COLUMN);
+		}
 	});
 	}
 	private static IPluginsHandler pluginsHandler;
@@ -268,15 +273,11 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		return -1;
 	}
 
-	public static TableCellRenderer getTableCellRenderer(int columnIndex) {
-		return columns.get(columnIndex).getTableCellRenderer();
-	}
-
-	public static TableCellEditor getTableCellEditor(int columnIndex) {
-		return columns.get(columnIndex).getTableCellEditor();
-	}
-
-	public void setJTable(JTable _jTable) {
-		jTable = _jTable;
+	public void setJTable(JTable jTable) {
+		for (int i = 0; i < columns.size(); i++) {
+			BundleColumn bundleColumn = columns.get(i);
+			TableColumn checkboxColumn = jTable.getColumnModel().getColumn(i);
+			bundleColumn.formatColumn(jTable, checkboxColumn);
+		}
 	}
 }

@@ -151,6 +151,11 @@ public final class RestrictionControlView extends IGBTabPanel
 		}
 	}
 
+	@Override
+	public TabState getDefaultState() {
+		return TabState.COMPONENT_STATE_LEFT_TAB;
+	}
+
 	public void valueChanged(ListSelectionEvent evt) {
 		Object src = evt.getSource();
 		if (src == siteList) {

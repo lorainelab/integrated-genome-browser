@@ -9,10 +9,12 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -50,9 +52,9 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.DataLoadPrefsView;
-import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.action.LoadSequence;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
@@ -76,9 +78,12 @@ public final class GeneralLoadView extends IGBTabPanel
 	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
 	private static final String CHOOSE = "Choose";
 	public static int TAB_DATALOAD_PREFS = -1;
+	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
 	private AnnotatedSeqGroup curGroup = null;
 	private final JComboBox versionCB;
 	private final JComboBoxToolTipRenderer versionCBRenderer;
+	private final JButton all_residuesB;
+	private final JButton partial_residuesB;
 	private final JComboBox speciesCB;
 	private final JComboBoxToolTipRenderer speciesCBRenderer;
 	private final RefreshDataAction refreshDataAction;
@@ -149,14 +154,22 @@ public final class GeneralLoadView extends IGBTabPanel
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 3));
 
+		all_residuesB = new JButton(LoadSequence.getWholeAction());
+		all_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("nucleotideSequence")));
+		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
+		all_residuesB.setEnabled(false);
+		buttonPanel.add(all_residuesB);
+		partial_residuesB = new JButton(LoadSequence.getPartialAction());
+		partial_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
+		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
+		partial_residuesB.setEnabled(false);
+		buttonPanel.add(partial_residuesB);
 		this.refreshDataAction = RefreshDataAction.getAction();
 		JButton refresh_dataB = new JButton(refreshDataAction);
 		refresh_dataB.setIcon(null);
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);
-		buttonPanel.add(new JLabel());
 		buttonPanel.add(refresh_dataB);
-		buttonPanel.add(new JLabel());
 		this.add("South", buttonPanel);
 
 		feature_model = new FeaturesTableModel(this);
@@ -199,20 +212,6 @@ public final class GeneralLoadView extends IGBTabPanel
 		addListeners();
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		TAB_DATALOAD_PREFS = pp.addPrefEditorComponent(new DataLoadPrefsView());
-	}
-
-	@Override
-	public boolean isOrientable() {
-		return true;
-	}
-
-	@Override
-	public void setPortrait(boolean portrait) {
-		if (this.portrait == portrait) {
-			return;
-		}
-		super.setPortrait(portrait);
-		jSplitPane.setOrientation(portrait ? JSplitPane.VERTICAL_SPLIT : JSplitPane.HORIZONTAL_SPLIT);
 	}
 
 	private void addListeners() {
@@ -484,15 +483,60 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 	}
 
+	/**
+	 * Handles clicking of partial residue, all residue, and refresh data buttons.
+	 * @param evt
+	 */
+	public void loadResidues(AbstractAction action) {
+		Object src = null;
+
+		if(action.equals(partial_residuesB.getAction())){
+			src = partial_residuesB;
+		}else if (action.equals(all_residuesB.getAction())){
+			src = all_residuesB;
+		}
+
+		if (src != partial_residuesB && src != all_residuesB) {
+			return;
+		}
+
+		final String genomeVersionName = (String) versionCB.getSelectedItem();
+		final BioSeq seq = gmodel.getSelectedSeq();
+		final boolean partial = src == partial_residuesB;
+		
+		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+
+			public Boolean doInBackground() {
+				return loadResidues(genomeVersionName, seq, gviewer.getVisibleSpan(), partial, false, true);
+			}
+
+			@Override
+			public void done() {
+				try {
+					if (get()) {
+						gviewer.setAnnotatedSeq(seq, true, true, true);
+					}
+				} catch (Exception ex) {
+					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
+				} finally{
+					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getID());
+				}
+			}
+		};
+
+		// Use a SwingWorker to avoid locking up the GUI.
+		ThreadUtils.getPrimaryExecutor(src).execute(worker);
+	}
+
+	public boolean loadResiduesInView(boolean tryFull){
+		final String genomeVersionName = (String) versionCB.getSelectedItem();
+		SeqSpan visibleSpan = gviewer.getVisibleSpan();
+		return loadResidues(genomeVersionName, visibleSpan.getBioSeq(), visibleSpan, true, tryFull, false);
+	}
+	
 	public boolean loadResidues(SeqSpan span, boolean tryFull){
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
 		return loadResidues(genomeVersionName, span.getBioSeq(), span, true, tryFull, false);
-	}
-
-	public boolean loadResidues(final BioSeq seq,
-			final SeqSpan viewspan, final boolean partial, final boolean tryFull, final boolean show_error_panel) {
-		return loadResidues((String) versionCB.getSelectedItem(), seq,
-				viewspan, partial, tryFull, show_error_panel);
 	}
 
 	public boolean loadResidues(final String genomeVersionName, final BioSeq seq,
@@ -853,6 +897,8 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		versionCB.setSelectedItem(gVersion.versionName);
 		versionCB.setEnabled(true);
+		all_residuesB.setEnabled(false);
+		partial_residuesB.setEnabled(false);
 		refreshDataAction.setEnabled(false);
 		addListeners();
 	}
@@ -952,7 +998,8 @@ public final class GeneralLoadView extends IGBTabPanel
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				SeqGroupView.getInstance().enableButtons(enabled);
+				all_residuesB.setEnabled(enabled);
+				partial_residuesB.setEnabled(enabled);
 				refreshDataAction.setEnabled(enabled);
 			}
 		});

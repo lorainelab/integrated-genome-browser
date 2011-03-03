@@ -8,8 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.TabState;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
@@ -51,11 +50,5 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public void addTab(final IGBTabPanel plugin, boolean setFocus) {
-		plugin.setPortrait(true);
-		super.addTab(plugin, setFocus);
 	}
 }

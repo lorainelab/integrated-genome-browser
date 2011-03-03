@@ -8,7 +8,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -50,13 +49,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	public static final String PROPERTY = "property";
 	public static final String DEFAULT_TITLE = "Property Sheet";
 	private static final List<String> prop_order = determineOrder();
-	private static final PropertyViewHelper helper = new PropertyViewHelper(table);
 	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
-
-	// save values for orientation flip
-	private Map<String, Object>[] save_props;
-	private List<String> save_preferred_prop_order;
-	private String save_noData;
 
 	public PropertyView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, 2);
@@ -68,11 +61,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		this.setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 		propertyListeners.add(((SeqMapView)igbService.getMapView()).getMouseListener());
-	}
-
-	@Override
-	public boolean isOrientable() {
-		return true;
 	}
 
 	private static List<String> graphToolTipOrder(){
@@ -327,28 +315,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		return rows;
 	}
 
-	private List<Object> swapRowsAndColumns(String[][] rows, String[] col_headings) {
-		//start
-		int length = rows.length;
-		int heigth = rows[1].length - 1;
-		String[][] tempRows = new String[heigth][length];
-		String[] tempColHeadings = new String[length];
-		for(int index1=0; index1<rows.length; index1++) {
-			for(int index2=1; index2<rows[index1].length; index2++) {
-				tempRows[index2-1][index1] = rows[index1][index2];
-			}
-			tempColHeadings[index1] = rows[index1][0];
-			//System.out.println("+++++++++++++title " + index1 + ": " + rows[index1][0]);
-		}
-
-		List<Object> resultList = new ArrayList<Object>();
-		resultList.add(tempRows);
-		resultList.add(tempColHeadings);
-
-		return resultList;
-	}
-
-
 	/**
 	 * Show data associated with the given properties.
 	 * Uses buildRows() to retrieve ordered
@@ -358,9 +324,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	 * @param noData the value to use when a property value is null
 	 */
 	private void showProperties(Map<String, Object>[] props, List<String> preferred_prop_order, String noData) {
-		save_props = props;
-		save_preferred_prop_order = preferred_prop_order;
-		save_noData = noData;
 
 		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData);
 		String[] col_headings = getColumnHeadings(props);
@@ -369,11 +332,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		//System.out.println("#############rows length: " + rows.length);
 		//System.out.println("#############col_headings length: " + col_headings.length);
 		//System.out.println("#############propertiesInColumns: " + propertiesInColumns);
-		if(rows.length > 0 && !portrait) {
-			List<Object> resultList = swapRowsAndColumns(rows, col_headings);
-			rows = (String[][])resultList.get(0);
-			col_headings = (String[])resultList.get(1);
-		}
 		//System.out.println("#############rows length: " + rows.length);
 		//System.out.println("#############col_headings length: " + col_headings.length);
 		//end
@@ -524,17 +482,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private void propertyChanged(int prop_displayed){
 		for(PropertyListener pl : propertyListeners){
 			pl.propertyDisplayed(prop_displayed);
-		}
-	}
-
-	@Override
-	public void setPortrait(boolean portrait) {
-		if (this.portrait == portrait) {
-			return;
-		}
-		super.setPortrait(portrait);
-		if (save_props != null) {
-			showProperties(save_props, save_preferred_prop_order, save_noData);
 		}
 	}
 }

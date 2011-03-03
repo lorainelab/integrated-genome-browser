@@ -25,7 +25,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.TabState;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 import com.affymetrix.igb.window.service.def.TabHolder;
@@ -191,9 +191,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 		for (IGBTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getPlugins()) {
 			PreferenceUtils.saveWindowLocation(comp.getFrame(), comp.getName());
-			if (comp.isOrientable()) {
-				PreferenceUtils.saveComponentOrientation(comp.getName(), comp.isPortrait());
-			}
 		}
 	}
 
@@ -208,7 +205,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabMenus.put(plugin, pluginMenu);
 		ButtonGroup group = new ButtonGroup();
 
-		for (TabState tabStateLoop : TabState.values()) {
+		for (TabState tabStateLoop : tabState.getCompatibleTabStates()) {
 		    JRadioButtonMenuItem menuItem = new TabStateMenuItem(plugin, tabStateLoop);
 		    group.add(menuItem);
 		    pluginMenu.add(menuItem);

@@ -22,11 +22,11 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.TabState;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private static final long serialVersionUID = 1L;
-	private static final int DIVIDER_SIZE = 8;
+
 	protected enum TrayState {
 		HIDDEN,
 		RETRACTED,
@@ -37,6 +37,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			return HIDDEN;
 		}
 	}
+
+	private static final int DIVIDER_SIZE = 8;
 	protected double saveDividerProportionalLocation; // saved as percent, but implemented as pixels, due to problems with Swing
 	protected final JTabbedPane tab_pane;
 	private final TabState tabState;

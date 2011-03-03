@@ -1,6 +1,8 @@
 package com.affymetrix.igb.osgi.service;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -10,12 +12,45 @@ import javax.swing.JPanel;
 public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel> {
 	private static final long serialVersionUID = 1L;
 
+	public enum TabState {
+		COMPONENT_STATE_LEFT_TAB(true, true),
+		COMPONENT_STATE_RIGHT_TAB(true, true),
+		COMPONENT_STATE_BOTTOM_TAB(true, false),
+		COMPONENT_STATE_WINDOW(false, false),
+		COMPONENT_STATE_HIDDEN(false, false);
+
+		private final boolean tab;
+		private final boolean portrait;
+
+		TabState(boolean tab, boolean portrait) {
+			this.tab = tab;
+			this.portrait = portrait;
+		}
+
+		public boolean isTab() {
+			return tab;
+		}
+
+		public static TabState getDefaultTabState() {
+			return COMPONENT_STATE_BOTTOM_TAB;
+		}
+
+		public List<TabState> getCompatibleTabStates() {
+			List<TabState> compatibleTabStates = new ArrayList<TabState>();
+			for (TabState tabState : TabState.values()) {
+				if (portrait == tabState.portrait || !tabState.isTab()) {
+					compatibleTabStates.add(tabState);
+				}
+			}
+			return compatibleTabStates;
+		}
+	}
+
 	protected final IGBService igbService;
 	private final String displayName;
 	private final String title;
 	private final boolean main;
 	private final int position;
-	protected boolean portrait;
 	private JFrame frame;
 
 	public IGBTabPanel(IGBService igbService, String displayName, String title, boolean main) {
@@ -29,7 +64,6 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		this.title = title;
 		this.main = main;
 		this.position = position;
-		this.portrait = false;
 	}
 
 	public String getName() {
@@ -50,14 +84,6 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 
 	public boolean isFocus() {
 		return false;
-	}
-
-	public boolean isOrientable() {
-		return false;
-	}
-
-	public void flip() {
-		setPortrait(!portrait);
 	}
 
 	public TabState getDefaultState() {
@@ -103,13 +129,5 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 			return ret;
 
 		return this.getDisplayName().compareTo(o.getDisplayName());
-	}
-
-	public boolean isPortrait() {
-		return portrait;
-	}
-
-	public void setPortrait(boolean portrait) {
-		this.portrait = portrait;
 	}
 }

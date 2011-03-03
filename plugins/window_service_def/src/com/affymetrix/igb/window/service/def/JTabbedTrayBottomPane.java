@@ -6,8 +6,7 @@ import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.TabState;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
@@ -36,11 +35,5 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	@Override
 	protected void setTabComponent() {
 		setBottomComponent(tab_pane);
-	}
-
-	@Override
-	public void addTab(final IGBTabPanel plugin, boolean setFocus) {
-		plugin.setPortrait(false);
-		super.addTab(plugin, setFocus);
 	}
 }

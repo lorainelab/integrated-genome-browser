@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.TabState;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 public class WindowTabs implements TabHolder {
 	private Set<IGBTabPanel> addedPlugins;
@@ -51,10 +51,6 @@ public class WindowTabs implements TabHolder {
 		if (pos != null) {
 			PreferenceUtils.setWindowSize(frame, pos);
 		}
-		if (comp.isOrientable()) {
-			boolean portrait = PreferenceUtils.getComponentOrientation(name);
-			comp.setPortrait(portrait);
-		}
 		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -85,9 +81,6 @@ public class WindowTabs implements TabHolder {
 		JFrame frame = plugin.getFrame();
 		final Container cont = frame.getContentPane();
 		PreferenceUtils.saveWindowLocation(frame, plugin.getName());
-		if (plugin.isOrientable()) {
-			PreferenceUtils.saveComponentOrientation(plugin.getName(), plugin.isPortrait());
-		}
 		cont.remove(plugin);
 		cont.validate();
 		frame.dispose();

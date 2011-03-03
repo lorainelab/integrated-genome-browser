@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
-import com.affymetrix.igb.osgi.service.TabState;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
 	private static final long serialVersionUID = 1L;

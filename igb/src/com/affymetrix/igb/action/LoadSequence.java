@@ -1,7 +1,7 @@
 
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.view.SeqGroupView;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import java.text.MessageFormat;
 import java.awt.event.ActionEvent;
@@ -36,6 +36,6 @@ public class LoadSequence extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		SeqGroupView.getInstance().loadResidues(this);
+		GeneralLoadView.getLoadView().loadResidues(this);
 	}
 }

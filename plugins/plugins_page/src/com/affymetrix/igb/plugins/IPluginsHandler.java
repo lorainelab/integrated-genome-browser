@@ -12,7 +12,7 @@ public interface IPluginsHandler {
 	public Bundle getFilteredBundle(int index);
 	public int getFilteredBundleCount();
 	public ImageIcon getIcon(String name);
-	public Bundle getBundleAtRowColumn(int row);
+	public Bundle getBundleAtRow(int row);
 	public boolean isUpdatable(Bundle bundle);
 	public Version getLatestVersion(Bundle bundle);
 }

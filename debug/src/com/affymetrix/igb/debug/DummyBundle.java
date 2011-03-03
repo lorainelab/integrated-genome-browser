@@ -15,7 +15,13 @@ import org.osgi.framework.Version;
 
 @SuppressWarnings("rawtypes")
 public class DummyBundle implements Bundle {
-private static final Dictionary DummyDictionary = new Dictionary() {
+	private final BundleContext bundleContext;
+	public DummyBundle(BundleContext bundleContext) {
+		super();
+		this.bundleContext = bundleContext;
+	}
+
+	private static final Dictionary DummyDictionary = new Dictionary() {
 
 	@Override
 	public int size() {
@@ -199,8 +205,7 @@ private static final Dictionary DummyDictionary = new Dictionary() {
 
 	@Override
 	public BundleContext getBundleContext() {
-		// TODO Auto-generated method stub
-		return null;
+		return bundleContext;
 	}
 
 	@Override

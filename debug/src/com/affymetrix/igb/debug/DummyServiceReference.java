@@ -1,14 +1,17 @@
 package com.affymetrix.igb.debug;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 public class DummyServiceReference implements ServiceReference {
 	private final Object service;
+	private final BundleContext bundleContext;
 
-	public DummyServiceReference(Object service) {
+	public DummyServiceReference(BundleContext bundleContext, Object service) {
 		super();
 		this.service = service;
+		this.bundleContext = bundleContext;
 	}
 
 	@Override
@@ -25,8 +28,8 @@ public class DummyServiceReference implements ServiceReference {
 
 	@Override
 	public Bundle getBundle() {
-		throw new RuntimeException("not implemented");
-//		return null;
+//		throw new RuntimeException("not implemented");
+		return new DummyBundle(bundleContext);
 	}
 
 	@Override

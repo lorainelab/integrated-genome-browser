@@ -27,6 +27,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
 public class DummyContext implements BundleContext {
 	private Map<String, List<Object>> servicesMap = new HashMap<String, List<Object>>();
+	private Set<BundleListener> bundleListeners = new HashSet<BundleListener>();
 	private Set<ServiceListener> serviceListeners = new HashSet<ServiceListener>();
 	private Map<String, Set<ServiceListener>> filteredServiceListeners = new HashMap<String, Set<ServiceListener>>();
 	private static final String TAB_SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
@@ -59,7 +60,7 @@ public class DummyContext implements BundleContext {
 
 	@Override
 	public Bundle getBundle(long id) {
-		return new DummyBundle();
+		return new DummyBundle(this);
 	}
 
 	@Override
@@ -91,12 +92,12 @@ public class DummyContext implements BundleContext {
 
 	@Override
 	public void addBundleListener(BundleListener listener) {
-		throw new RuntimeException("not implemented");
+		bundleListeners.add(listener);
 	}
 
 	@Override
 	public void removeBundleListener(BundleListener listener) {
-		throw new RuntimeException("not implemented");
+		bundleListeners.remove(listener);
 	}
 
 	@Override
@@ -133,7 +134,7 @@ public class DummyContext implements BundleContext {
 			}
 			services.add(service);
 		}
-		ServiceEvent event = new ServiceEvent(ServiceEvent.REGISTERED, new DummyServiceReference(service));
+		ServiceEvent event = new ServiceEvent(ServiceEvent.REGISTERED, new DummyServiceReference(this, service));
 		for (ServiceListener serviceListener : serviceListeners) {
 			serviceListener.serviceChanged(event);
 		}
@@ -178,14 +179,14 @@ public class DummyContext implements BundleContext {
 		}
 		ServiceReference[] serviceReferenceArray = new ServiceReference[filteredServices.size()];
 		for (int i = 0; i < filteredServices.size(); i++) {
-			serviceReferenceArray[i] = new DummyServiceReference(filteredServices.get(i));
+			serviceReferenceArray[i] = new DummyServiceReference(this, filteredServices.get(i));
 		}
 		return serviceReferenceArray;
 	}
 
 	@Override
 	public ServiceReference getServiceReference(String clazz) {
-		return new DummyServiceReference(servicesMap.get(clazz).get(0));
+		return new DummyServiceReference(this, servicesMap.get(clazz).get(0));
 	}
 
 	@Override

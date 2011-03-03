@@ -9,11 +9,11 @@ public class Debug {
 	static {
 		activators.add(new com.affymetrix.igb.window.service.def.Activator());
 		activators.add(new com.affymetrix.igb.Activator());
+		activators.add(new com.affymetrix.igb.bookmarks.Activator());
 		activators.add(new com.affymetrix.igb.external.Activator());
 		activators.add(new com.affymetrix.igb.graph.Activator());
 		activators.add(new com.affymetrix.igb.plugins.Activator());
 		activators.add(new com.affymetrix.igb.property.Activator());
-		activators.add(new com.affymetrix.igb.selectioninfo.Activator());
 		activators.add(new com.affymetrix.igb.restrictions.Activator());
 		activators.add(new com.affymetrix.igb.search.Activator());
 	}

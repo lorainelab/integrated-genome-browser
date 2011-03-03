@@ -8,6 +8,7 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 public interface IWindowService {
 	public void startup();
@@ -17,4 +18,5 @@ public interface IWindowService {
 	public void setViewMenu(JMenu view_menu);
 	public void setStatusBar(JComponent status_bar);
 	public Set<IGBTabPanel> getPlugins();
+	public void setTabState(IGBTabPanel panel, TabState tabState);
 }

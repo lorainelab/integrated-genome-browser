@@ -14,16 +14,19 @@ import org.osgi.framework.Bundle;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 /**
  * OSGi Service to allow bundles indirect access to IGB internals.
  * 
  */
 public interface IGBService {
+	public static final String UTF8 = "UTF-8";
 	public static final String IGB_TIER_HEADER = "IGB-Tier";
 	// service extension point names
 	public static final String GRAPH_TRANSFORMS = "igb.graph.transform";
 	public static final String TAB_PANELS = "igb.tab_panels";
+	public static final String SYM_FEATURE_URL = "feature_url_";
 
 	public final static boolean DEBUG_EVENTS = false;
 	/**
@@ -112,6 +115,12 @@ public interface IGBService {
 	 * @param repositoryChangeListener the listener
 	 */
 	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
+	public String get_arg(String label, String[] args);
+
+	// for BookMark
+	public String getAppName();
+	public String getAppVersion();
+	public void setTabState(IGBTabPanel igbTabPanel, TabState tabState);
 	// for RestrictionSites/SearchView
 	/**
 	 * get a count of the number of hits that match the specified regular

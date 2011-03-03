@@ -18,7 +18,8 @@ Export-Package: com.affymetrix.igb.general,
  com.affymetrix.igb.glyph,
  com.affymetrix.igb.tiers,
  com.affymetrix.igb.util,
- com.affymetrix.igb.view
+ com.affymetrix.igb.view,
+ com.affymetrix.igb.view.load
 Import-Package: affymetrix.calvin.data,
  affymetrix.calvin.parameter,
  affymetrix.fusion.chp,

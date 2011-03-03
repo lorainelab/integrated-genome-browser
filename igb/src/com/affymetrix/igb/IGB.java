@@ -50,10 +50,8 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.*;
-import com.affymetrix.igb.bookmarks.Bookmark;
-import com.affymetrix.igb.bookmarks.BookmarkController;
-import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -87,10 +85,8 @@ public final class IGB extends Application
 	private JMenu export_to_file_menu;
 	private JMenu view_menu;
 	private JMenu edit_menu;
-	private JMenu bookmark_menu;
 	private JMenu tools_menu;
 	private JMenu help_menu;
-	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
 	private SeqMapView map_view;
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
@@ -103,7 +99,6 @@ public final class IGB extends Application
 		super();
 		stopRoutines = new HashSet<IStopRoutine>();
 	}
-
 	public SeqMapView getMapView() {
 		return map_view;
 	}
@@ -111,30 +106,6 @@ public final class IGB extends Application
 	public JFrame getFrame() {
 		return frm;
 	}
-
-	private void startControlServer() {
-		// Use the Swing Thread to start a non-Swing thread
-		// that will start the control server.
-		// Thus the control server will be started only after current GUI stuff is finished,
-		// but starting it won't cause the GUI to hang.
-
-		Runnable r = new Runnable() {
-
-			public void run() {
-				new SimpleBookmarkServer(IGB.this);
-			}
-		};
-
-		final Thread t = new Thread(r);
-
-		SwingUtilities.invokeLater(new Runnable() {
-
-			public void run() {
-				t.start();
-			}
-		});
-	}
-
 	/**
 	 * Returns the value of the argument indicated by label.
 	 * If arguments are
@@ -161,31 +132,6 @@ public final class IGB extends Application
 		}
 		return to_return;
 	}
-
-	private void goToBookmark(String[] args) {
-		// If the command line contains a parameter "-href http://..." where
-		// the URL is a valid IGB control bookmark, then go to that bookmark.
-		final String url = get_arg("-href", args);
-		if (url != null && url.length() > 0) {
-			try {
-				final Bookmark bm = new Bookmark(null, url);
-				if (bm.isUnibrowControl()) {
-					SwingUtilities.invokeLater(new Runnable() {
-
-						public void run() {
-							System.out.println("Loading bookmark: " + url);
-							BookmarkController.viewBookmark(IGB.this, bm);
-						}
-					});
-				} else {
-					System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
-				}
-			} catch (MalformedURLException mue) {
-				mue.printStackTrace(System.err);
-			}
-		}
-	}
-
 	private static void loadSynonyms(String file, SynonymLookup lookup) {
 		InputStream istr = null;
 		try {
@@ -329,9 +275,6 @@ public final class IGB extends Application
 				String message = "Do you really want to exit?";
 
 				if ((!ask_before_exit) || confirmPanelForExit(message)) {
-					if (bmark_action != null) {
-						bmark_action.autoSaveBookmarks();
-					}
 					WebLink.autoSave();
 					Persistence.saveCurrentView(map_view);
 					if (windowService != null) {
@@ -341,6 +284,9 @@ public final class IGB extends Application
 						stopRoutine.stop();
 					}
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					for (IStopRoutine stopRoutine : stopRoutines) {
+						stopRoutine.stop();
+					}
 				} else {
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				}
@@ -349,14 +295,8 @@ public final class IGB extends Application
 
 		WebLink.autoLoad();
 
-		// Need to let the QuickLoad system get started-up before starting
-		//   the control server that listens to ping requests?
-		// Therefore start listening for http requests only after all set-up is done.
-		startControlServer();
-
 		commandLineBatchFileStr = ScriptFileLoader.getScriptFileStr(args);	// potentially used in GeneralLoadView
 
-		goToBookmark(args);
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		TAB_PLUGIN_PREFS = pp.addPrefEditorComponent(new BundleRepositoryPrefsView());
 		GeneralLoadView.init(IGBServiceImpl.getInstance());
@@ -376,16 +316,11 @@ public final class IGB extends Application
 		view_menu = MenuUtil.getMenu(BUNDLE.getString("viewMenu"));
 		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
 
-		bookmark_menu = MenuUtil.getMenu(BUNDLE.getString("bookmarksMenu"));
-		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
-
 		tools_menu = MenuUtil.getMenu(BUNDLE.getString("toolsMenu"));
 		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
 
 		help_menu = MenuUtil.getMenu(BUNDLE.getString("helpMenu"));
 		help_menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
-
-		bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
 		export_to_file_menu = new JMenu(BUNDLE.getString("export"));
 		export_to_file_menu.setMnemonic('T');
@@ -521,6 +456,10 @@ public final class IGB extends Application
 
 	public JMenu getViewMenu() {
 		return view_menu;
+	}
+
+	public void setTabState(IGBTabPanel igbTabPanel, TabState tabState) {
+		windowService.setTabState(igbTabPanel, tabState);
 	}
 
 	public JComponent getView(String viewName) {

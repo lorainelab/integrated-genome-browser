@@ -36,9 +36,11 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
 import com.affymetrix.igb.osgi.service.PropertyHandler;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
+import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -221,6 +223,26 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		for (RepositoryChangeListener repositoryChangeListener : repositoryChangeListeners) {
 			repositoryChangeListener.repositoryRemoved(url);
 		}
+	}
+
+	@Override
+	public String get_arg(String label, String[] args) {
+		return IGB.get_arg(label, args);
+	}
+
+	@Override
+	public String getAppName() {
+		return IGBConstants.APP_NAME;
+	}
+
+	@Override
+	public String getAppVersion() {
+		return IGBConstants.APP_VERSION;
+	}
+
+	@Override
+	public void setTabState(IGBTabPanel igbTabPanel, TabState tabState) {
+		((IGB)IGB.getSingleton()).setTabState(igbTabPanel, tabState);
 	}
 
 	@Override

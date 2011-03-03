@@ -21,8 +21,7 @@ import javax.swing.DefaultListModel;
 
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
-import static com.affymetrix.igb.IGBConstants.UTF8;
-
+import static com.affymetrix.igb.osgi.service.IGBService.UTF8;
 /**
  *
  * @version $Id$

@@ -15,7 +15,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.ExportSlicedViewAction;
 import com.affymetrix.igb.action.RefreshDataAction;
-import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -212,7 +211,7 @@ public class ScriptFileLoader {
 			RefreshDataAction.getAction().actionPerformed(null);
 		}
 		if (action.equals("select") && fields.length>=2) {
-			UnibrowControlServlet.performSelection(join(fields,1));
+			UnibrowControlServlet.getInstance().performSelection(join(fields,1));
 		}
 		if (action.equals("sleep") && fields.length == 2) {
 			try {
@@ -296,7 +295,7 @@ public class ScriptFileLoader {
 	}
 
 	private static void goToGenome(String genomeVersion) {
-		AnnotatedSeqGroup group = UnibrowControlServlet.determineAndSetGroup(genomeVersion);
+		AnnotatedSeqGroup group = UnibrowControlServlet.getInstance().determineAndSetGroup(genomeVersion);
 		if (group == null) {
 			return;
 		}
@@ -320,8 +319,8 @@ public class ScriptFileLoader {
 	}
 
 	private static void loadData(String serverURIorName, String feature_url) {
-		GenericServer server = UnibrowControlServlet.loadServer(serverURIorName);
-		GenericFeature feature = UnibrowControlServlet.getFeature(server, feature_url);
+		GenericServer server = UnibrowControlServlet.getInstance().loadServer(serverURIorName);
+		GenericFeature feature = UnibrowControlServlet.getInstance().getFeature(server, feature_url);
 
 		if (feature != null) {
 			feature.setVisible();
@@ -337,7 +336,7 @@ public class ScriptFileLoader {
 	}
 
 	private static void loadMode(String loadMode, String featureURIStr) {
-		
+
 		URI featureURI = null;
 		File featureFile = new File(featureURIStr.trim());
 		if (featureFile.exists()) {
@@ -371,7 +370,7 @@ public class ScriptFileLoader {
 					break;
 			}
 		}
-		
+
 		if (feature != null) {
 			GenericFeature.setPreferredLoadStrategy(feature, s);
 		} else {

@@ -44,8 +44,6 @@ public interface IGBConstants {
 	public static final String DEFAULT_PREFS_API_RESOURCE = "/igb_default_APIprefs.xml";
 	public static final String default_prefs_resource = "/igb_default_prefs.xml";
 
-	public static final String UTF8 = "UTF-8";
-
 	public final static String GENOME_SEQ_ID = Constants.GENOME_SEQ_ID;
 	public final static String ENCODE_REGIONS_ID = "encode_regions";
 	/**

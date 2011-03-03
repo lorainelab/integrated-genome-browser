@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
-import com.affymetrix.igb.window.service.IPlugin;
 
 import java.awt.Image;
 import java.util.*;
@@ -16,21 +15,10 @@ public abstract class Application {
 	protected final StatusBar status_bar;
 	private final Set<String> progressStringList = Collections.synchronizedSet(new LinkedHashSet<String>()); // list of progress bar messages.
 	static Application singleton = null;
-	private final Map<Class<?>, IPlugin> plugin_hash = new HashMap<Class<?>, IPlugin>();
 
 	public Application() {
 		singleton = this;
 		status_bar = new StatusBar();
-	}
-
-	public void setPluginInstance(Class<?> c, IPlugin plugin) {
-		plugin_hash.put(c, plugin);
-		plugin.putPluginProperty(IPlugin.TEXT_KEY_APP, this);
-		plugin.putPluginProperty(IPlugin.TEXT_KEY_SEQ_MAP_VIEW, this.getMapView());
-	}
-
-	public IPlugin getPluginInstance(Class<?> c) {
-		return plugin_hash.get(c);
 	}
 
 	public static Application getSingleton() {

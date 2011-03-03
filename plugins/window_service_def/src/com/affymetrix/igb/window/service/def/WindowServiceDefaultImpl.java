@@ -205,7 +205,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabMenus.put(plugin, pluginMenu);
 		ButtonGroup group = new ButtonGroup();
 
-		for (TabState tabStateLoop : tabState.getCompatibleTabStates()) {
+		for (TabState tabStateLoop : plugin.getDefaultState().getCompatibleTabStates()) {
 		    JRadioButtonMenuItem menuItem = new TabStateMenuItem(plugin, tabStateLoop);
 		    group.add(menuItem);
 		    pluginMenu.add(menuItem);
@@ -243,7 +243,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		PreferenceUtils.saveComponentState(plugin.getName(), null);
 	}
 
-	private void setTabState(IGBTabPanel panel, TabState tabState) {
+	public void setTabState(IGBTabPanel panel, TabState tabState) {
 		if (panel == null) {
 			return;
 		}
@@ -275,7 +275,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	@Override
 	public void setDefaultState(IGBTabPanel panel) {
-		setTabState(panel, TabState.getDefaultTabState());
+		setTabState(panel, panel.getDefaultState());
 		setTabMenu(panel);
 	}
 

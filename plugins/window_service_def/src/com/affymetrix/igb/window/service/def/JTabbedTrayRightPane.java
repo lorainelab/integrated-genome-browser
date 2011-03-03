@@ -10,7 +10,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
 	private static final long serialVersionUID = 1L;
-	private static final double RIGHT_DIVIDER_PROPORTIONAL_LOCATION = 0.30;
+	private static final double RIGHT_DIVIDER_PROPORTIONAL_LOCATION = 0.20;
 
 	public JTabbedTrayRightPane(JComponent _baseComponent) {
 		super(TabState.COMPONENT_STATE_RIGHT_TAB, _baseComponent, JTabbedPane.RIGHT, JSplitPane.HORIZONTAL_SPLIT, 1.0 - RIGHT_DIVIDER_PROPORTIONAL_LOCATION);

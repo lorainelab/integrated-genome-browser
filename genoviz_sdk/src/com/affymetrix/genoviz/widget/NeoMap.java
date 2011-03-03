@@ -388,6 +388,7 @@ public class NeoMap extends NeoWidget implements
 		// Set up and activate a default rubber band.
 		DragScrollMonitor defaultDragScroll = new DragScrollMonitor();
 		setDragScrollMonitor(defaultDragScroll);
+		enableCanvasDragging(drag_canvas_scrolling_enabled);
 
 		// view listens to canvas for repaint and AWT events
 		canvas.addNeoPaintListener(view);

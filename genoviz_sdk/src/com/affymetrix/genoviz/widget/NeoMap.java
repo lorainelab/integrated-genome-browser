@@ -26,8 +26,11 @@ import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.DragMonitor;
+import com.affymetrix.genoviz.bioviews.DragScrollMonitor;
 import com.affymetrix.genoviz.event.NeoDragEvent;
 import com.affymetrix.genoviz.event.NeoDragListener;
+import com.affymetrix.genoviz.event.NeoCanvasDragListener;
+import com.affymetrix.genoviz.event.NeoCanvasDragEvent;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
@@ -88,7 +91,7 @@ import javax.swing.JScrollBar;
  * @version $Id$
  */
 public class NeoMap extends NeoWidget implements
-		NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
+		NeoDragListener, NeoCanvasDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
 	/**
 	 * For methods inherited from NeoAbstractWidget that require a sub-component id.
@@ -122,7 +125,9 @@ public class NeoMap extends NeoWidget implements
 	private Font font_for_max_zoom = NeoConstants.default_bold_font;
 	private FontMetrics seqmetrics;
 	private DragMonitor canvas_drag_monitor;
+	private DragScrollMonitor canvas_drag_scroll_monitor;
 	boolean drag_scrolling_enabled = false;
+	boolean drag_canvas_scrolling_enabled = false;
 	protected int selectionMethod = NO_SELECTION;
 	protected final Set<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArraySet<NeoViewBoxListener>();
 	protected final Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
@@ -379,6 +384,10 @@ public class NeoMap extends NeoWidget implements
 		RubberBand defaultBand = new RubberBand(canvas);
 		defaultBand.setColor(Color.blue);
 		setRubberBand(defaultBand);
+
+		// Set up and activate a default rubber band.
+		DragScrollMonitor defaultDragScroll = new DragScrollMonitor();
+		setDragScrollMonitor(defaultDragScroll);
 
 		// view listens to canvas for repaint and AWT events
 		canvas.addNeoPaintListener(view);
@@ -1366,29 +1375,7 @@ public class NeoMap extends NeoWidget implements
 		Object src = evt.getSource();
 		int direction = evt.getDirection();
 		if (src == canvas_drag_monitor) {
-			double scroll_to_coord;
-			int pixels_per_scroll = 10;
-			if (direction == NeoConstants.NORTH) {
-				scroll_to_coord =
-						(-pixels_per_scroll - trans.getTranslateY()) / trans.getScaleY();
-				scroll(Y, scroll_to_coord);
-				updateWidget();
-			} else if (direction == NeoConstants.SOUTH) {
-				scroll_to_coord =
-						(pixels_per_scroll - trans.getTranslateY()) / trans.getScaleY();
-				scroll(Y, scroll_to_coord);
-				updateWidget();
-			} else if (direction == NeoConstants.EAST) {
-				scroll_to_coord =
-						(pixels_per_scroll - trans.getTranslateX()) / trans.getScaleX();
-				scroll(X, scroll_to_coord);
-				updateWidget();
-			} else if (direction == NeoConstants.WEST) {
-				scroll_to_coord =
-						(-pixels_per_scroll - trans.getTranslateX()) / trans.getScaleX();
-				scroll(X, scroll_to_coord);
-				updateWidget();
-			}
+			drag(direction, 10);
 		}
 	}
 
@@ -1418,6 +1405,76 @@ public class NeoMap extends NeoWidget implements
 		}
 	}
 
+	public void canvasDragEvent(NeoCanvasDragEvent evt) {
+		if (!drag_canvas_scrolling_enabled) {
+			return;
+		}
+		Object src = evt.getSource();
+		int xdirection = evt.getXDirection();
+		int ydirection = evt.getYDirection();
+		if (src == canvas_drag_scroll_monitor) {
+			drag(xdirection, evt.getWidth());
+			drag(ydirection, evt.getHeight());
+		}
+	}
+
+	public void setDragScrollMonitor(DragScrollMonitor dragScroll) {
+		if (null != this.canvas_drag_scroll_monitor) {
+			this.canvas_drag_scroll_monitor.removeDragListener(this);
+			enableCanvasDragging(false);
+		}
+		this.canvas_drag_scroll_monitor = dragScroll;
+		if (null != this.canvas_drag_scroll_monitor) {
+			enableCanvasDragging(true);
+		}
+	}
+
+	public void enableCanvasDragging(boolean enable){
+		drag_canvas_scrolling_enabled = enable;
+		if (drag_canvas_scrolling_enabled) { // drag scrolling turned on
+			if (canvas_drag_scroll_monitor != null) {
+				this.removeMouseListener(canvas_drag_scroll_monitor);
+				this.removeMouseMotionListener(canvas_drag_scroll_monitor);
+				canvas_drag_scroll_monitor.removeDragListener(this);
+
+				this.addMouseListener(canvas_drag_scroll_monitor);
+				this.addMouseMotionListener(canvas_drag_scroll_monitor);
+				canvas_drag_scroll_monitor.addDragListener(this);
+			}
+		} else {  // drag scrolling turned off
+			if (canvas_drag_scroll_monitor != null) {
+				this.removeMouseListener(canvas_drag_scroll_monitor);
+				this.removeMouseMotionListener(canvas_drag_scroll_monitor);
+				canvas_drag_scroll_monitor.removeDragListener(this);
+			}
+		}
+	}
+
+	private void drag(int direction, int pixels_per_scroll) {
+		double scroll_to_coord;
+		if (direction == NeoConstants.NORTH) {
+			scroll_to_coord =
+					(-pixels_per_scroll - trans.getTranslateY()) / trans.getScaleY();
+			scroll(Y, scroll_to_coord);
+			updateWidget();
+		} else if (direction == NeoConstants.SOUTH) {
+			scroll_to_coord =
+					(pixels_per_scroll - trans.getTranslateY()) / trans.getScaleY();
+			scroll(Y, scroll_to_coord);
+			updateWidget();
+		} else if (direction == NeoConstants.EAST) {
+			scroll_to_coord =
+					(pixels_per_scroll - trans.getTranslateX()) / trans.getScaleX();
+			scroll(X, scroll_to_coord);
+			updateWidget();
+		} else if (direction == NeoConstants.WEST) {
+			scroll_to_coord =
+					(-pixels_per_scroll - trans.getTranslateX()) / trans.getScaleX();
+			scroll(X, scroll_to_coord);
+			updateWidget();
+		}
+	}
+		
 	/**
 	 * Handles internal selection when
 	 * selection event has been set to ON_MOUSE_DOWN or ON_MOUSE_UP.

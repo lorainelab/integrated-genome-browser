@@ -52,7 +52,7 @@ public class DragScrollMonitor
 
 		if (yorigin < y) {
 			ydirection = NORTH;
-		} else if (y > yorigin) {
+		} else if (yorigin > y) {
 			ydirection = SOUTH;
 		} else {
 			ydirection = NONE;

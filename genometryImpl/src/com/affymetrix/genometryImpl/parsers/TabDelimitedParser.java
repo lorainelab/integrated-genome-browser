@@ -188,6 +188,10 @@ public class TabDelimitedParser {
 						SimpleMutableSeqSpan span = new SimpleMutableSeqSpan(start, end, seq);
 						parent.addSpan(span);
 						parent.setProperty("method", type);
+						if (id == null) {
+							id = type + " " + span.getBioSeq().getID() + ":" + span.getStart() + "-" + span.getEnd();
+						}
+
 						parent.setProperty("id", id);
 						group_hash.put(group, parent);
 						// or maybe should add all parents to a grandparent, and add _grandparent_ to aseq???

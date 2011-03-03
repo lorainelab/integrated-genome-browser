@@ -116,6 +116,10 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			String seq_group_version = dis.readUTF(); // genome version
 			// combining genome and version to get seq group id
 			String seq_group_id = seq_group_name + seq_group_version;
+			if (seq_group_id == null) {
+				System.err.println("bprobe1 file does not specify a genome name or version, these are required!");
+				return null;
+			}
 			if (! group.isSynonymous(seq_group_id)) {
 				System.err.println("In Bprobe1Parser, mismatch between AnnotatedSeqGroup argument: " + group.getID() +
 						" and group name+version in bprobe1 file: " + seq_group_id);

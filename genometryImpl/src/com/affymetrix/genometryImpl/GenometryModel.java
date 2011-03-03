@@ -241,12 +241,12 @@ public final class GenometryModel {
 	 *  @param src The object responsible for selecting the sequences.
 	 */
 	public void setSelectedSymmetriesAndSeq(List<SeqSymmetry> syms, Object src) {
-		List<BioSeq> seqs_with_selections = setSelectedSymmetries(syms);
+		List seqs_with_selections = setSelectedSymmetries(syms);
 		if (! seqs_with_selections.contains(getSelectedSeq())) {
 			if (getSelectedSymmetries(getSelectedSeq()).isEmpty()) {
 				BioSeq seq = null;
 				if (! seqs_with_selections.isEmpty()) {
-					seq = seqs_with_selections.get(0);
+					seq = (BioSeq) seqs_with_selections.get(0);
 				}
 				setSelectedSeq(seq, src);
 			}

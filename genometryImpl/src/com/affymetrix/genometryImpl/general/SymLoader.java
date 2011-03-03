@@ -366,7 +366,7 @@ public abstract class SymLoader {
 	public static List<BioSeq> getChromosomes(URI uri, String extension, String featureName){
 		AnnotatedSeqGroup temp_group = new AnnotatedSeqGroup("temp_group");
 		SymLoader temp = new SymLoader(uri, featureName, temp_group) {};
-		List<? extends SeqSymmetry> syms = temp.getGenome();
+		List syms = temp.getGenome();
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
 		seqs.addAll(temp_group.getSeqList());
 		

@@ -113,6 +113,7 @@ public final class GFF3Parser {
 			try {
 				Thread thread = Thread.currentThread();
 				while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
+					if (line == null) { continue; }
 					if ("###".equals(line)) {
 						// This directive signals that we can process all parent-child relationships up to this point.
 						// But there is not much benefit in doing so.

@@ -311,6 +311,7 @@ public final class GFFParser implements AnnotationWriter  {
 		try {
 			Thread thread = Thread.currentThread();
 			while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
+				if (line == null) { continue; }
 				if (line.startsWith("##")) {
 					processDirective(line);
 					if (gff_version == 3) {

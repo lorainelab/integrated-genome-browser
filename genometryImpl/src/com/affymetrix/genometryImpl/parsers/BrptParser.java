@@ -79,6 +79,8 @@ public final class BrptParser {
 
 	//  static Pattern line_regex = Pattern.compile("\t");
 	static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
+	Map source_hash = new HashMap();
+	Map type_hash = new HashMap();
 
 	private static void outputBrptFormat(List<SeqSymmetry> parents, String genome_version, DataOutputStream dos)
 			throws IOException {

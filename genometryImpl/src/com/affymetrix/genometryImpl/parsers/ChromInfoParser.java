@@ -18,6 +18,7 @@ import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.BioSeq;
 
 public final class ChromInfoParser {
 	private static final Pattern tab_regex = Pattern.compile("\t");

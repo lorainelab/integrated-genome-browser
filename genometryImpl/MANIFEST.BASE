@@ -31,7 +31,9 @@ Import-Package: affymetrix.calvin.data,
  org.w3c.dom,
  org.xml.sax,
  org.xml.sax.helpers,
- toolbarButtonGraphics.general
+ toolbarButtonGraphics.general,
+ toolbarButtonGraphics.table,
+ toolbarButtonGraphics.media
 Export-Package: com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.comparator,
  com.affymetrix.genometryImpl.das,

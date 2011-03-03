@@ -111,16 +111,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public void displayError(String title, String errorText) {
-		ErrorHandler.errorPanel(title, errorText);
-	}
-
-	@Override
-	public void displayError(String errorText) {
-		ErrorHandler.errorPanel(errorText);
-	}
-
-	@Override
 	public void addNotLockedUpMsg(String message) {
 		Application.getSingleton().addNotLockedUpMsg(message);
 	}

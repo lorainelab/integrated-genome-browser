@@ -46,6 +46,7 @@ import org.osgi.service.obr.Resolver;
 import org.osgi.service.obr.Resource;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
@@ -542,7 +543,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			displayError("some plugin repositories have failed");
 		}
 		catch (MalformedURLException x) {
-			igbService.displayError("Invalid plugin repository URL: " + url);
+			ErrorHandler.errorPanel("Invalid plugin repository URL: " + url);
 			x.printStackTrace();
 		}
 		catch (Exception x) {

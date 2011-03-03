@@ -38,8 +38,6 @@ public interface IGBService {
 	 * @return true if the menu was removed, false otherwise
 	 */
 	public boolean removeMenu(String menuName);
-	public void displayError(String title, String errorText);
-	public void displayError(String errorText);
 	/**
 	 * Add a lockedUp message to the list of locked messages and display with
 	 * a little progress bar so that the app doesn't look locked up.

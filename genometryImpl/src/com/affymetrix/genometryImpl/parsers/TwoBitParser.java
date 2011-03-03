@@ -12,7 +12,6 @@ import com.affymetrix.genometryImpl.util.TwoBitIterator;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -281,7 +280,6 @@ public final class TwoBitParser {
 	public static void main(String[] args){
 		//String residues = "ACTGGGTCTCAGTACTAGGAATTCCGTCATAGCTAAA";
 		String residues = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
-		File f = new File("genometryImpl/test/data/2bit/nblocks.2bit");
 		ByteArrayOutputStream outStream = null;
 		//File f = new File("genometryImpl/test/data/2bit/at.2bit");
 		try {

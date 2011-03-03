@@ -62,7 +62,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		return scorenames.get(index);
 	}
 
-	public float[] getChildScores(IndexedSym child, List scorelist) {
+	public float[] getChildScores(IndexedSym child, List<Object> scorelist) {
 		float[] result = null;
 		if (child.getParent() == this) {
 			int score_index = child.getIndex();  // position in each score array for score for this child

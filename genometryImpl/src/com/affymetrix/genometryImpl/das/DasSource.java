@@ -41,7 +41,6 @@ public final class DasSource {
 
 	public final static String ENTRY_POINTS = "entry_points";
 	public final static String TYPES = "types";
-	private final static String XML = ".xml";
 	
 	private final URL server;
 	private final URL master;

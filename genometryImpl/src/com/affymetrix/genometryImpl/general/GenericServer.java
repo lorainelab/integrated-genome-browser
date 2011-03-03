@@ -7,9 +7,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.StringEncrypter.EncryptionException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
@@ -31,7 +28,6 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 	private String login = "";							// to be used by DAS/2 authentication
 	private String password = "";						// to be used by DAS/2 authentication
 	private boolean enabled = true;						// Is this server enabled?
-	private final boolean referenceOnly;				// Is this only a reference (no annotations) server?
 	public final Object serverObj;						// Das2ServerInfo, DasServerInfo, ..., QuickLoad?
 	public final URL friendlyURL;						// friendly URL that users may look at.
 	private ImageIcon friendlyIcon = null;				// friendly icon that users may look at.
@@ -84,7 +80,6 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
 		this.node = node;
 		this.serverObj = serverObj;
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
-		this.referenceOnly = referenceOnly;
 
 		this.setEnabled(this.node.getBoolean("enabled", enabled));
 		this.setLogin(this.node.get("login", ""));

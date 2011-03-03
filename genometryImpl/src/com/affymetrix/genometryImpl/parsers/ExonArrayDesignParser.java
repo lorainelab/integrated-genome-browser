@@ -133,8 +133,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				bis = new BufferedInputStream(istr);
 			}
 			dis = new DataInputStream(bis);
-			String format = dis.readUTF();
-			int format_version = dis.readInt();
 			String seq_group_name = dis.readUTF(); // genome name
 			String seq_group_version = dis.readUTF(); // genome version
 			// combining genome and version to get seq group id

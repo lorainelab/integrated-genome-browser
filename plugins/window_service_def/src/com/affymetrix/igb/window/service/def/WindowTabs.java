@@ -94,10 +94,10 @@ public class WindowTabs implements TabHolder {
 	}
 
 	@Override
-	public void resize() {}
+	public IGBTabPanel getSelectedIGBTabPanel() { return null; }
 
 	@Override
-	public IGBTabPanel getSelectedIGBTabPanel() { return null; }
+	public void resize() {}
 
 	@Override
 	public void close() {}

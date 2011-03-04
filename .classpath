@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="das2_server/src"/>
+	<classpathentry kind="src" path="debug/src"/>
+	<classpathentry kind="src" path="plugins/window_service_def/src"/>
+	<classpathentry kind="src" path="common/resources"/>
+	<classpathentry kind="src" path="main/resources"/>
+	<classpathentry kind="src" path="plugins/window_service/src"/>
+	<classpathentry kind="src" path="common/src"/>
 	<classpathentry kind="src" path="protannot/src"/>
 	<classpathentry kind="src" path="genoviz_sdk/src"/>
 	<classpathentry kind="src" path="genometryImpl/src"/>
 	<classpathentry kind="src" path="main/src"/>
-	<classpathentry kind="src" path="igb_server/src"/>
 	<classpathentry kind="src" path="igb/src"/>
 	<classpathentry kind="src" path="igb-i18n/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -49,5 +54,6 @@
 	<classpathentry kind="lib" path="dist/RestrictionSites.jar"/>
 	<classpathentry kind="lib" path="dist/igb_service.jar"/>
 	<classpathentry kind="lib" path="ext/felix.jar"/>
+	<classpathentry kind="lib" path="debug/lib/org.osgi.core-4.2.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

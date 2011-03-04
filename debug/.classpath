@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/org.osgi.core-4.2.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/igb_service"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ExternalView"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/genoviz"/>
@@ -12,24 +11,26 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/igb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PropertyView"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/RestrictionSites"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/window_service"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/window_service_def"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/plugins_page"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SearchView"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/affx_fusion.bnd.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/colt.bnd.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/commons-codec-1.4.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/freehep-2.1.1.bnd.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/image4j.bnd.jar"/>
-	<classpathentry kind="lib" path="/Integrated Genome Browser/bundles/jlfgr-1_0.bnd.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/picard"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SelectionInfo"/>
 	<classpathentry kind="lib" path="/window_service_def/resources"/>
-	<classpathentry kind="lib" path="/Common/resources"/>
 	<classpathentry kind="lib" path="/ExternalView/resources"/>
 	<classpathentry kind="lib" path="/RestrictionSites/resources"/>
 	<classpathentry kind="lib" path="/GraphAdjuster/resources"/>
 	<classpathentry kind="lib" path="/PropertyView/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="lib" path="/common/resources"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/affx_fusion.bnd.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/colt.bnd.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/freehep-2.1.1.bnd.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/image4j.bnd.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/jlfgr-1_0.bnd.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/picard.bnd.jar"/>
+	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/sam.bnd.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Bookmark"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

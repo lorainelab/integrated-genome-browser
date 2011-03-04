@@ -119,11 +119,36 @@ public interface IGBService {
 	 * @param repositoryChangeListener the listener
 	 */
 	public void removeRepositoryChangeListener(RepositoryChangeListener repositoryChangeListener);
+	/**
+	 * Returns the value of the argument indicated by label.
+	 * If arguments are
+	 *   "-flag_2 -foo bar", then get_arg("foo", args)
+	 * returns "bar", get_arg("flag_2") returns a non-null string,
+	 * and get_arg("flag_5") returns null.
+	 * @param label label to search for
+	 * @param args the args to search
+	 * @return the value found, or "true" if found with no value, or
+	 * null if not found
+	 */
 	public String get_arg(String label, String[] args);
 
 	// for BookMark
+	/**
+	 * get the constant value for AppName
+	 * @return the constant value for the AppName
+	 */
 	public String getAppName();
+	/**
+	 * get the constant value for AppVersion
+	 * @return the constant value for the AppVersion
+	 */
 	public String getAppVersion();
+	/**
+	 * set the state of the given tab to the given state and update
+	 * the view menu to the new value
+	 * @param igbTabPanel the tab to change
+	 * @param tabState the new state
+	 */
 	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState);
 	// for RestrictionSites/SearchView
 	/**
@@ -156,12 +181,36 @@ public interface IGBService {
 	 */
 	public void setCommandLineBatchFileStr(String str);
 	// for SearchView
+	/**
+	 * get the constant value for GenomeSeqId
+	 * @return the constant value for the GenomeSeqId
+	 */
 	public String getGenomeSeqId();
 	public boolean loadResidues(final SeqSpan viewspan, final boolean partial);
 	// for PropertyView
+	/**
+	 * set a PropertyHandler to handle display of the properties of the
+	 * SeqMapView (main view) selection
+	 * @param propertyHandler the implementation of the PropertyHandler
+	 * the will process the property display for the SeqMapView selection
+	 */
 	public void setPropertyHandler(PropertyHandler propertyHandler);
 	// for graph adjuster
+	/**
+	 * get the main JFrame for the application
+	 * @return the main JFrame for the IGB instance
+	 */
 	public JFrame getFrame();
+	/**
+	 * get the load directory, where to find local files to
+	 * be loaded
+	 * @return the load directory
+	 */
 	public File getLoadDirectory();
+	/**
+	 * set the load directory, where to find local files to
+	 * be loaded
+	 * @param file the load directory
+	 */
 	public void setLoadDirectory(File file);
 }

@@ -220,12 +220,12 @@ public class DummyContext implements BundleContext {
 		return new Filter() {
 			
 			@Override
-			public boolean matchCase(Dictionary dictionary) {
+			public boolean matchCase(@SuppressWarnings("rawtypes") Dictionary dictionary) {
 				return false;
 			}
 			
 			@Override
-			public boolean match(Dictionary dictionary) {
+			public boolean match(@SuppressWarnings("rawtypes") Dictionary dictionary) {
 				return false;
 			}
 			

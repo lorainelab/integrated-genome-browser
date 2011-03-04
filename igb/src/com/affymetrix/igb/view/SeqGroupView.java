@@ -39,7 +39,7 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
 	private final static boolean DEBUG_EVENTS = false;
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static final JTable seqtable = new JTable();
+	private final JTable seqtable = new JTable();
 	private BioSeq selected_seq = null;
 	private AnnotatedSeqGroup previousGroup = null;
 	private int previousSeqCount = 0;
@@ -91,14 +91,14 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 	/**
    * Refresh seqtable if more chromosomes are added, for example.
    */
-  public static void refreshTable() {
+  public void refreshTable() {
 	  seqtable.validate();
 	  seqtable.updateUI();
 	  seqtable.repaint();
 	  updateTableHeader();
   }
 
-  public static void updateTableHeader(){
+  public void updateTableHeader(){
 	JTableHeader headers = seqtable.getTableHeader();
 	TableColumnModel model = headers.getColumnModel();
 
@@ -158,7 +158,7 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 		}
 	}
 
-	private static void warnAboutNewlyAddedChromosomes(int previousSeqCount, AnnotatedSeqGroup group) {
+	private void warnAboutNewlyAddedChromosomes(int previousSeqCount, AnnotatedSeqGroup group) {
 		if (previousSeqCount > group.getSeqCount()) {
 			System.out.println("WARNING: chromosomes have been added");
 			if (previousSeqCount < group.getSeqCount()) {

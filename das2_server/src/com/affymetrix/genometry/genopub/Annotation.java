@@ -68,7 +68,8 @@ public class Annotation implements Serializable, Owned {
 	private java.sql.Date       createDate;
 	private String              isLoaded;
 	private Set                 collaborators;
-
+  private Set                 annotationProperties;
+	
 
 	private Map<String, Object> props;  // tag/value representation of annotation properties
 
@@ -291,6 +292,43 @@ public class Annotation implements Serializable, Owned {
 
       }
       
+    }
+
+    // Show list annotation properties.
+    // Only show for annotation detail (when data_root is provided).
+    if (data_root != null) {
+      if (getAnnotationProperties() != null) {
+        Element propertiesNode = root.addElement("AnnotationProperties");
+
+        for(Iterator i = getAnnotationProperties().iterator(); i.hasNext();) {
+          AnnotationProperty ap = (AnnotationProperty)i.next();
+          Element propNode = propertiesNode.addElement("AnnotationProperty");
+          propNode.addAttribute("idAnnotationProperty", ap.getIdAnnotationProperty().toString());  
+          propNode.addAttribute("name", ap.getName());
+          propNode.addAttribute("value", ap.getValue() != null ? ap.getValue() : "");
+          propNode.addAttribute("codePropertyType", ap.getProperty().getCodePropertyType());
+          propNode.addAttribute("idProperty", ap.getIdProperty().toString());
+
+          if (ap.getProperty().getOptions() != null && ap.getProperty().getOptions().size() > 0) {
+            Element propOptionsNode = propNode.addElement("PropertyOptions");
+            for (Iterator i1 = ap.getProperty().getOptions().iterator(); i1.hasNext();) {
+              PropertyOption option = (PropertyOption)i1.next();
+              Element optionNode = propOptionsNode.addElement("PropertyOption");
+              optionNode.addAttribute("idPropertyOption", option.getIdPropertyOption().toString());
+              optionNode.addAttribute("name", option.getName());
+              boolean isSelected = false;
+              for (Iterator i2 = ap.getOptions().iterator(); i2.hasNext();) {
+                PropertyOption optionSelected = (PropertyOption)i2.next();
+                if (optionSelected.getIdPropertyOption().equals(option.getIdPropertyOption())) {
+                  isSelected = true;
+                  break;
+                }
+              }
+              optionNode.addAttribute("selected", isSelected ? "Y" : "N");
+            }
+          }
+        }
+      }      
     }
 
 
@@ -582,6 +620,12 @@ System.out.println("\nNix GetQualifiedFileName null files "+filePath + " "+this.
   }
   public void setIdInstitute(Integer idInstitute) {
     this.idInstitute = idInstitute;
+  }
+  public Set getAnnotationProperties() {
+    return annotationProperties;
+  }
+  public void setAnnotationProperties(Set annotationProperties) {
+    this.annotationProperties = annotationProperties;
   }
 
 }

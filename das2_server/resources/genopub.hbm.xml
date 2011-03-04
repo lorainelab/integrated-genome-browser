@@ -39,6 +39,13 @@
 		   <key column="idAnnotation"/>
 		   <many-to-many column="idUser" class="com.affymetrix.genometry.genopub.User"/>
 		</set>			
+		 
+		
+		<set name="annotationProperties" table="AnnotationProperty" lazy="true" cascade="none" order-by="name">
+		   <key column="idAnnotation"/>
+		   <one-to-many class="com.affymetrix.genometry.genopub.AnnotationProperty" />
+		</set>
+	      
       
     </class>
 
@@ -67,7 +74,24 @@
 		    </set>
     </class>
 
-    
+    <!--  AnnotationProperty -->
+    <class name="com.affymetrix.genometry.genopub.AnnotationProperty" table="AnnotationProperty">
+        <id name="idAnnotationProperty"  column="idAnnotationProperty"    type="integer">
+            <generator class="native"/>
+        </id>
+        <property name="name"                   column="name"                       type="string"/>
+        <property name="value"                  column="value"                      type="string"/>
+        <property name="idAnnotation"           column="idAnnotation"               type="integer"/>
+        <property name="idProperty"             column="idProperty"               type="integer"/>
+        <many-to-one name="property" column="idProperty" class="com.affymetrix.genometry.genopub.Property" cascade="none" insert="false" update="false" />
+         
+		<set name="options" table="AnnotationPropertyOption" lazy="true" cascade="none">
+		    <key column="idAnnotationProperty"/>
+			<many-to-many column="idPropertyOption" class="com.affymetrix.genometry.genopub.PropertyOption"/>
+		</set>
+    </class>
+	
+	    
     <!--  GenomeVersion -->
     <class name="com.affymetrix.genometry.genopub.GenomeVersion" table="GenomeVersion">
         <id name="idGenomeVersion"       column="idGenomeVersion"   type="integer">
@@ -264,6 +288,42 @@
         <property name="isActive"           column="isActive"           type="string"/>
         <property name="idUser"             column="idUser"             type="integer"/>
     </class>     
+    
+    <!-- Property -->
+    <class name="com.affymetrix.genometry.genopub.Property" table="Property">
+        <id name="idProperty"  column="idProperty"   type="integer">
+            <generator class="native"/>
+        </id>
+        <property name="name"               column="name"               type="string"/>
+        <property name="isActive"           column="isActive"           type="string"/>
+        <property name="idUser"             column="idUser"             type="integer"/>
+        <property name="codePropertyType"   column="codePropertyType"    type="string"/>
+
+        <set name="options" table="PropertyOption" lazy="true" cascade="none" order-by="sortOrder">
+			    <key column="idProperty"/>
+			    <one-to-many class="com.affymetrix.genometry.genopub.PropertyOption" />
+		</set>
+    </class> 
+
+    <!-- PropertyOption -->
+    <class name="com.affymetrix.genometry.genopub.PropertyOption" table="PropertyOption">
+        <id name="idPropertyOption"  column="idPropertyOption"   type="integer">
+            <generator class="native"/>
+        </id>
+        <property name="name"               column="name"               type="string"/>
+        <property name="isActive"           column="isActive"           type="string"/>
+        <property name="sortOrder"          column="sortOrder"          type="integer"/>
+        <property name="idProperty"         column="idProperty"         type="integer"/>
+        
+    </class> 
+    
+    <!-- PropertyType -->
+    <class name="com.affymetrix.genometry.genopub.PropertyType" table="PropertyType">
+        <id name="codePropertyType"  column="codePropertyType"   type="string">
+            <generator class="native"/>
+        </id>
+        <property name="name"               column="name"               type="string"/>
+    </class> 
     
     <!-- Visibility -->
     <class name="com.affymetrix.genometry.genopub.Visibility" table="Visibility">

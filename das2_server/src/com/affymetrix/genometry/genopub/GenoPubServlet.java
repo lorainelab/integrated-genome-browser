@@ -1851,6 +1851,72 @@ public class GenoPubServlet extends HttpServlet {
           Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Unable remove annotation file " + file.getName() + " for annotation " + annotation.getName());
         }
       }       
+      
+      // Delete annotation properties  
+      reader = new StringReader(request.getParameter("propertiesXML"));
+      sax = new SAXReader();
+      Document propsDoc = sax.read(reader);
+      for(Iterator<?> i = annotation.getAnnotationProperties().iterator(); i.hasNext();) {
+        AnnotationProperty ap = AnnotationProperty.class.cast(i.next());
+        boolean found = false;
+        for(Iterator<?> i1 = propsDoc.getRootElement().elementIterator(); i1.hasNext();) {
+          Element propNode = (Element)i1.next();
+          String idAnnotationProperty = propNode.attributeValue("idAnnotationProperty");
+          if (idAnnotationProperty != null && !idAnnotationProperty.equals("")) {
+            if (ap.getIdAnnotationProperty().equals(new Integer(idAnnotationProperty))) {
+              found = true;
+              break;
+            }
+          }                   
+        }
+        if (!found) {
+          sess.delete(ap);
+        }
+      } 
+      sess.flush();
+      
+      // Add annotation properties
+      for(Iterator<?> i = propsDoc.getRootElement().elementIterator(); i.hasNext();) {
+        Element node = (Element)i.next();
+        
+        String idAnnotationProperty = node.attributeValue("idAnnotationProperty");
+        
+        AnnotationProperty ap = null;
+        if (idAnnotationProperty == null || idAnnotationProperty.equals("")) {
+          ap = new AnnotationProperty();
+          ap.setIdProperty(Integer.valueOf(node.attributeValue("idProperty")));
+        } else {
+          ap  = AnnotationProperty.class.cast(sess.get(AnnotationProperty.class, Integer.valueOf(idAnnotationProperty))); 
+        }
+        ap.setName(node.attributeValue("name"));
+        ap.setValue(node.attributeValue("value"));
+        ap.setIdAnnotation(annotation.getIdAnnotation());
+        
+        if (idAnnotationProperty == null || idAnnotationProperty.equals("")) {
+          sess.save(ap);
+          sess.flush();
+        }
+        
+        TreeSet<PropertyOption> options = new TreeSet<PropertyOption>(new PropertyOptionComparator());
+        for(Iterator<?> i1 = node.elementIterator(); i1.hasNext();) {
+          Element n = (Element)i1.next();
+          if (n.getName().equals("PropertyOptions")) {
+            for(Iterator<?> i2 = n.elementIterator(); i2.hasNext();) {
+              Element n2 = (Element)i2.next();
+              if (n2.getName().equals("PropertyOption")) {
+                Integer idPropertyOption = Integer.parseInt(n2.attributeValue("idPropertyOption"));
+                String selected = n2.attributeValue("selected");
+                if (selected != null && selected.equals("Y")) {
+                  PropertyOption option = PropertyOption.class.cast(sess.load(PropertyOption.class, idPropertyOption));
+                  options.add(option);                  
+                }
+              }
+            }            
+          }
+        }
+        ap.setOptions(options);
+        sess.flush();
+      }
           
 
 			tx.commit();
@@ -4063,7 +4129,16 @@ public class GenoPubServlet extends HttpServlet {
 				dict.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
 				sess.save(dict);
 				id = dict.getIdExperimentPlatform();
-			} 
+			} else if (dictionaryName.equals("Property")) {
+        Property prop = new Property();
+        prop.setName(request.getParameter("name"));
+        prop.setCodePropertyType(PropertyType.TEXT);
+        prop.setIsActive(Util.getFlagParameter(request, "isActive"));
+        prop.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
+        sess.save(prop);
+        id = prop.getIdProperty();
+        
+      } 
 
 			sess.flush();
 
@@ -4134,7 +4209,23 @@ public class GenoPubServlet extends HttpServlet {
 				}
 				sess.delete(dict);
 
-			} 
+			}  else if (dictionaryName.equals("Property")) {
+			  Property prop = Property.class.cast(sess.load(Property.class, id));
+        // Check write permissions
+        if (!this.genoPubSecurity.canWrite(prop)) {
+          throw new Exception("Insufficient permissions to delete property.");
+        }
+        
+        // Delete options
+        for (Iterator<?> i = prop.getOptions().iterator(); i.hasNext();) {
+          PropertyOption option = PropertyOption.class.cast(i.next());
+          sess.delete(option);
+        }
+        sess.flush();
+
+        sess.delete(prop);
+
+      } 
 
 			sess.flush();
 
@@ -4214,7 +4305,67 @@ public class GenoPubServlet extends HttpServlet {
 				if (this.genoPubSecurity.isAdminRole()) {
 					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
 				}
-			} 
+			} else if (dictionaryName.equals("Property")) {
+        Property property = Property.class.cast(sess.load(Property.class, id));
+        // Check write permissions
+        if (!this.genoPubSecurity.canWrite(property)) {
+          throw new InsufficientPermissionException("Insufficient permissions to write property.");
+        }
+
+        property.setName(request.getParameter("name"));
+        property.setIsActive(Util.getFlagParameter(request, "isActive"));       
+        if (this.genoPubSecurity.isAdminRole()) {
+          property.setIdUser(Util.getIntegerParameter(request, "idUser"));
+        }
+        property.setCodePropertyType(request.getParameter("codePropertyType"));
+        
+        // Delete Property options  
+        StringReader reader = new StringReader(request.getParameter("propertyOptionsXML"));
+        SAXReader sax = new SAXReader();
+        Document optionsDoc = sax.read(reader);
+        for(Iterator<?> i = property.getOptions().iterator(); i.hasNext();) {
+          PropertyOption option = PropertyOption.class.cast(i.next());
+          boolean found = false;
+          for(Iterator<?> i1 = optionsDoc.getRootElement().elementIterator(); i1.hasNext();) {
+            Element optionNode = (Element)i1.next();
+            String idPropertyOption = optionNode.attributeValue("idPropertyOption");
+            if (idPropertyOption != null && !idPropertyOption.equals("")) {
+              if (option.getIdPropertyOption().equals(new Integer(idPropertyOption))) {
+                found = true;
+                break;
+              }
+            }                   
+          }
+          if (!found) {
+            sess.delete(option);
+          }
+        } 
+        sess.flush();
+        
+        // Add Property options
+        for(Iterator<?> i = optionsDoc.getRootElement().elementIterator(); i.hasNext();) {
+          Element node = (Element)i.next();
+          
+          String idPropertyOption = node.attributeValue("idPropertyOption");
+          
+          PropertyOption propertyOption = null;
+          if (idPropertyOption.startsWith("PropertyOption")) {
+            propertyOption = new PropertyOption();
+          } else {
+            propertyOption  = PropertyOption.class.cast(sess.get(PropertyOption.class, Integer.valueOf(idPropertyOption))); 
+          }
+          propertyOption.setName(node.attributeValue("name"));
+          propertyOption.setIsActive(node.attributeValue("isActive"));
+          propertyOption.setSortOrder(Integer.valueOf(node.attributeValue("sortOrder")));
+          propertyOption.setIdProperty(property.getIdProperty());
+          
+          if (idPropertyOption.startsWith("PropertyOption")) {
+            sess.save(propertyOption);
+            sess.flush();
+          }
+          
+        }    
+      } 
 
 			sess.flush();
 

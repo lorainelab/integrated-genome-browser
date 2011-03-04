@@ -95,8 +95,8 @@ public class SeqMapView extends JPanel
 	private static final long serialVersionUID = 1L;
 
 	public enum MapMode {
-		MapScrollMode(true, false),
-		MapSelectMode(false, true),
+		MapSelectMode(true, false),
+		MapScrollMode(false, true),
 		MapZoomMode(false, false);
 
 		public final boolean rubber_band, drag_scroll;
@@ -1924,10 +1924,9 @@ public class SeqMapView extends JPanel
 	public void setMapMode(MapMode mapMode) {
 		this.mapMode = mapMode;
 
-		//seqmap.setCursor(new Cursor(Cursor.DROP));
 		seqmap.setRubberBandBehavior(mapMode.rubber_band);
-		seqmap.enableDragScrolling(mapMode.drag_scroll);
-		seqmap.enableCanvasDragging(!mapMode.drag_scroll);
+		seqmap.enableCanvasDragging(mapMode.drag_scroll);
+		seqmap.enableDragScrolling(!mapMode.drag_scroll);
 	}
 	
 }

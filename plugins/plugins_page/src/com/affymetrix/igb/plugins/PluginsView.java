@@ -53,6 +53,9 @@ import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.plugins.BundleTableModel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 
+/**
+ * Tab Panel for managing plugins / bundles.
+ */
 public class PluginsView extends IGBTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
 	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
@@ -188,6 +191,11 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			};
 	}
 
+	/**
+	 * get the Bundle on the line where the cursor is
+	 * @param p the point where the cursor is
+	 * @return the bundle on the line where the cursor is
+	 */
 	private Bundle getNameInfoBundle(Point p) {
         int row = bundleTable.rowAtPoint(p);
         int column = bundleTable.columnAtPoint(p);
@@ -202,6 +210,10 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return null;
 	}
 
+	/**
+	 * Create the button panel for the Plugin View
+	 * @return the JPanel with all the buttons
+	 */
 	private JPanel getButtonPanel() {
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
@@ -289,16 +301,23 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return buttonPanel;
 	}
 
+	@Override
 	public ImageIcon getIcon(String name) {
 		return igbService.getIcon(name);
 	}
 
+	@Override
 	public Bundle getBundleAtRow(int row) {
 		int modelRow = bundleTable.convertRowIndexToModel(row);
 		return getFilteredBundle(modelRow);
 	}
 
-	public static boolean isInstalled(Bundle bundle) {
+	/**
+	 * determins if a given bundle is installed
+	 * @param bundle the bundle to check
+	 * @return true if the bundle is installed, false otherwise
+	 */
+	private static boolean isInstalled(Bundle bundle) {
 		return bundle.getState() != Bundle.UNINSTALLED;
 	}
 
@@ -361,18 +380,28 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return updateSelectedBundlesExist;
 	}
 
+	@Override
 	public Version getLatestVersion(Bundle bundle) {
 		return latest.get(bundle.getSymbolicName()).getVersion();
 	}
 
+	/**
+	 * determines whether the bundle is the latest version
+	 * checks all the bundles with the same Symbolic name for
+	 * the highest version number
+	 * @param bundle the bundle to check
+	 * @return true if the bundle is the latest version, false otherwise
+	 */
 	private boolean isLatest(Bundle bundle) {
 		return bundle.getVersion().equals(getLatestVersion(bundle));
 	}
 
+	@Override
 	public boolean isUpdatable(Bundle bundle) {
 		return bundle != null && isInstalled(bundle) && !isLatest(bundle);
 	}
 
+	@Override
 	public synchronized Bundle getFilteredBundle(int index) {
 		if (index < 0 || index >= filteredBundles.size()) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "getFilteredBundle() error at index=" + index + ", filteredBundles.size()=" + filteredBundles.size());
@@ -381,6 +410,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return filteredBundles.get(index);
 	}
 
+	@Override
 	public synchronized int getFilteredBundleCount() {
 		if (filteredBundles == null) {
 			return 0;
@@ -388,6 +418,10 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return filteredBundles.size();
 	}
 
+	/**
+	 * get the bundle filter for the given user settings
+	 * @return the bundle filter
+	 */
 	private BundleFilter getBundleFilter() {
 		BundleFilter bundleFilter = null;
 		if (isShowInstalledBundles && isShowUninstalledBundles) {
@@ -405,7 +439,11 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		return bundleFilter;
 	}
 
-	public void setRepositoryBundles() {
+	/**
+	 * gets the full set of all bundles in all the bundle repositories
+	 * in the Preferences tab
+	 */
+	private void setRepositoryBundles() {
 		Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
 		List<Bundle> repositoryBundles = new ArrayList<Bundle>();
 		for (Resource resource : allResourceArray) {
@@ -414,6 +452,10 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		setRepositoryBundles(repositoryBundles);
 	}
 
+	/**
+	 * save the OSGi BundleContext
+	 * @param bundleContext the bundle context from the OSGi implementation
+	 */
 	public void setBundleContext(BundleContext bundleContext) {
 		this.bundleContext = bundleContext;
 		setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
@@ -431,6 +473,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		clearError();
 	}
 
+	/**
+	 * reload the table data due to any changes
+	 */
 	private void reloadBundleTable() {
 		filterBundles();
 		bundleTableModel.fireTableDataChanged();
@@ -438,6 +483,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		bundleTable.repaint();
 	}
 
+	/**
+	 * called before the page is closed
+	 */
 	public void deactivate() {
 		isShowInstalledBundles = false;
 		isShowUninstalledBundles = false;
@@ -445,14 +493,17 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		bundleContext = null;
 	}
 
+	@Override
 	public void clearError() {
 		errors.setText("");
 	}
 
+	@Override
 	public void displayError(String errorText) {
 		errors.setText(errorText);
 	}
 
+	@Override
 	public void installBundle(Bundle bundle) {
 		Resource resource = ((ResourceWrapper)bundle).getResource();
 		Resolver resolver = repoAdmin.resolver();
@@ -477,16 +528,28 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		}
 	}
 
+	/**
+	 * saves the currently installed bundles
+	 * @param installedBundles the currently installed bundles
+	 */
 	public void setInstalledBundles(List<Bundle> installedBundles) {
 		this.installedBundles = installedBundles;
 		setUnfilteredBundles();
 	}
 
+	/**
+	 * saves the current set of bundles in all repositories
+	 * @param repositoryBundles the bundles in all repositories
+	 */
 	public void setRepositoryBundles(List<Bundle> repositoryBundles) {
 		this.repositoryBundles = repositoryBundles;
 		setUnfilteredBundles();
 	}
 
+	/**
+	 * add a new bundle (installed or repository)
+	 * @param bundle the bundle to add
+	 */
 	private synchronized void addBundle(Bundle bundle) {
 		String symbolicName = bundle.getSymbolicName();
 		Version version = bundle.getVersion();
@@ -503,6 +566,10 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		}
 	}
 
+	/**
+	 * update the set of all bundles (unfiltered) due to
+	 * a change
+	 */
 	private synchronized void setUnfilteredBundles() {
 		unfilteredBundles = new ArrayList<Bundle>();
 		latest.clear();
@@ -518,6 +585,10 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		}
 	}
 
+	/**
+	 * filter the unfiltered bundles using the current
+	 * bundle filter
+	 */
 	private synchronized void filterBundles() {
 		filteredBundles = new ArrayList<Bundle>();
 		for (Bundle bundle : unfilteredBundles) {
@@ -528,6 +599,10 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		updateAllBundlesButton.setEnabled(isUpdateBundlesExist());
 	}
 
+	/**
+	 * set the bundle filter to use
+	 * @param bundleFilter the bundle filter
+	 */
 	public void setBundleFilter(BundleFilter bundleFilter) {
 		this.bundleFilter = bundleFilter;
 	}

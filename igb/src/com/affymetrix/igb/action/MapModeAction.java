@@ -1,6 +1,8 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.util.MenuUtil;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import com.affymetrix.igb.util.IGBUtils;
 
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.MapMode;
@@ -19,15 +21,19 @@ public class MapModeAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
 	private static final HashMap<MapMode, String> ICONS = new HashMap<MapMode, String>();
 	static {
-		ICONS.put(MapMode.MapScrollMode, "Replace");
-		ICONS.put(MapMode.MapSelectMode, "AlignJustifyHorizontal");
-		ICONS.put(MapMode.MapZoomMode, "Zoom");
+		ICONS.put(MapMode.MapSelectMode, "arrow.gif");
+		ICONS.put(MapMode.MapScrollMode, "open_hand.gif");
+		ICONS.put(MapMode.MapZoomMode, "close_hand.gif");
 	}
 	private SeqMapView seqMapView;
 	private MapMode mapMode;
 
 	public MapModeAction(SeqMapView seqMapView, MapMode mapMode) {
-		super(BUNDLE.getString(mapMode.name() + "Button"), MenuUtil.getIcon("toolbarButtonGraphics/general/" + ICONS.get(mapMode) + "16.gif"));
+		super(BUNDLE.getString(mapMode.name() + "Button"));
+		Image icon = IGBUtils.getIcon(ICONS.get(mapMode));
+		if(icon != null){
+			this.putValue(AbstractAction.SMALL_ICON, new ImageIcon(icon));
+		}
 		this.seqMapView = seqMapView;
 		this.mapMode = mapMode;
 		this.putValue(SHORT_DESCRIPTION, BUNDLE.getString(mapMode.name() + "Tip"));

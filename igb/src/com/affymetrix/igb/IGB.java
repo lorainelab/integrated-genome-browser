@@ -12,12 +12,9 @@
  */
 package com.affymetrix.igb;
 
-import com.affymetrix.genometryImpl.util.MenuUtil;
-
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +36,11 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -58,9 +60,7 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.action.*;
 
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
@@ -399,17 +399,7 @@ public final class IGB extends Application
 	 *  @return null if the image file is not found or can't be opened.
 	 */
 	public Image getIcon() {
-		Image icon = null;
-		try {
-			URL url = IGB.class.getResource("igb.gif");
-			if (url != null) {
-				icon = Toolkit.getDefaultToolkit().getImage(url);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			// It isn't a big deal if we can't find the icon, just return null
-		}
-		return icon;
+		return IGBUtils.getIcon("igb.gif");
 	}
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {

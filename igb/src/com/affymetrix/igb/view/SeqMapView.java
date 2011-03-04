@@ -95,9 +95,16 @@ public class SeqMapView extends JPanel
 	private static final long serialVersionUID = 1L;
 
 	public enum MapMode {
-		MapScrollMode(),
-		MapSelectMode(),
-		MapZoomMode();
+		MapScrollMode(true, false),
+		MapSelectMode(false, true),
+		MapZoomMode(false, false);
+
+		public final boolean rubber_band, drag_scroll;
+
+		private MapMode(boolean rubber_band, boolean drag_scroll){
+			this.rubber_band = rubber_band;
+			this.drag_scroll = drag_scroll;
+		}
 	}
 	
 	private static final boolean DEBUG_TIERS = false;
@@ -323,6 +330,9 @@ public class SeqMapView extends JPanel
 		seqmap.addRubberBandListener(mouse_listener);
 		srb.setColor(new Color(100, 100, 255));
 
+		SmartDragScrollMonitor sdsm = new SmartDragScrollMonitor(this);
+		seqmap.setDragScrollMonitor(sdsm);
+
 		GraphSelectionManager graph_manager = new GraphSelectionManager(this);
 		seqmap.addMouseListener(graph_manager);
 		this.addPopupListener(graph_manager);
@@ -388,6 +398,8 @@ public class SeqMapView extends JPanel
 		TrackView.getAnnotationGlyphFactory().setStylesheet(XmlStylesheetParser.getUserStylesheet());
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
+
+		setMapMode(MapMode.MapSelectMode);
 	}
 
 	public final class SeqMapViewComponentListener extends ComponentAdapter {
@@ -1911,6 +1923,11 @@ public class SeqMapView extends JPanel
 
 	public void setMapMode(MapMode mapMode) {
 		this.mapMode = mapMode;
+
+		//seqmap.setCursor(new Cursor(Cursor.DROP));
+		seqmap.setRubberBandBehavior(mapMode.rubber_band);
+		seqmap.enableDragScrolling(mapMode.drag_scroll);
+		seqmap.enableCanvasDragging(!mapMode.drag_scroll);
 	}
 	
 }

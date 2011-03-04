@@ -105,7 +105,8 @@ public class OSGiHandler {
 	public void startOSGi(String[] args) {
 		setLaf();
 
-		loadFelix(Arrays.toString(args));
+		String argArray = Arrays.toString(args);
+		loadFelix(argArray.substring(1, argArray.length() - 1));
 
         try
         {

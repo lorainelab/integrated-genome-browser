@@ -1,6 +1,9 @@
 package com.affymetrix.igb.debug;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Properties;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -16,12 +19,16 @@ public class Debug {
 		activators.add(new com.affymetrix.igb.property.Activator());
 		activators.add(new com.affymetrix.igb.restrictions.Activator());
 		activators.add(new com.affymetrix.igb.search.Activator());
+		activators.add(new com.affymetrix.genometryImpl.Activator());
 	}
 	/**
 	 * Start the program.
 	 */
 	public static void main(final String[] args) {
-		BundleContext context = new DummyContext();
+		Properties properties = new Properties();
+		String argArray = Arrays.toString(args);
+		properties.put("args", argArray.substring(1, argArray.length() - 1));
+		BundleContext context = new DummyContext(properties);
 		try {
 			for (BundleActivator activator : activators) {
 				activator.start(context);

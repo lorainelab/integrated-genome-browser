@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -32,11 +33,17 @@ public class DummyContext implements BundleContext {
 	private Map<String, Set<ServiceListener>> filteredServiceListeners = new HashMap<String, Set<ServiceListener>>();
 	private static final String TAB_SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
-	
+
+	private final Properties properties;
+
+	public DummyContext(Properties properties) {
+		super();
+		this.properties = properties;
+	}
+
 	@Override
 	public String getProperty(String key) {
-//		throw new RuntimeException("not implemented");
-		return null;
+		return properties.getProperty(key);
 	}
 
 	@Override
@@ -160,8 +167,7 @@ public class DummyContext implements BundleContext {
 	@Override
 	public ServiceReference[] getServiceReferences(String clazz, String filter)
 			throws InvalidSyntaxException {
-		throw new RuntimeException("not implemented");
-//		return null;
+		return getAllServiceReferences(clazz, filter);
 	}
 
 	@Override
@@ -186,6 +192,9 @@ public class DummyContext implements BundleContext {
 
 	@Override
 	public ServiceReference getServiceReference(String clazz) {
+		if (servicesMap.get(clazz) == null) {
+			return null;
+		}
 		return new DummyServiceReference(this, servicesMap.get(clazz).get(0));
 	}
 
@@ -207,8 +216,24 @@ public class DummyContext implements BundleContext {
 
 	@Override
 	public Filter createFilter(String filter) throws InvalidSyntaxException {
-		throw new RuntimeException("not implemented");
-//		return null;
+//		throw new RuntimeException("not implemented");
+		return new Filter() {
+			
+			@Override
+			public boolean matchCase(Dictionary dictionary) {
+				return false;
+			}
+			
+			@Override
+			public boolean match(Dictionary dictionary) {
+				return false;
+			}
+			
+			@Override
+			public boolean match(ServiceReference reference) {
+				return false;
+			}
+		};
 	}
 
 }

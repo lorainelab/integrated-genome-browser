@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.affymetrix.igb.genometry
 Bundle-Description: genometry
 Bundle-Vendor: Affymetrix, Inc.
 Bundle-Version: @appVersion@
+Bundle-Activator: com.affymetrix.genometryImpl.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 IGB-Tier: 1
@@ -28,6 +29,7 @@ Import-Package: affymetrix.calvin.data,
  net.sf.samtools.util,
  net.sf.samtools,
  org.apache.commons.codec.binary,
+ org.osgi.framework,
  org.w3c.dom,
  org.xml.sax,
  org.xml.sax.helpers,

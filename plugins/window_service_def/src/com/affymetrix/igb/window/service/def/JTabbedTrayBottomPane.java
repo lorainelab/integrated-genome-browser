@@ -13,7 +13,7 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	private static final double BOTTOM_DIVIDER_PROPORTIONAL_LOCATION = 0.30;
 
 	public JTabbedTrayBottomPane(JComponent _baseComponent) {
-		super(TabState.COMPONENT_STATE_BOTTOM_TAB, _baseComponent, JTabbedPane.BOTTOM,  JSplitPane.VERTICAL_SPLIT, 1.0 - BOTTOM_DIVIDER_PROPORTIONAL_LOCATION);
+		super(TabState.COMPONENT_STATE_BOTTOM_TAB, _baseComponent, JTabbedPane.TOP,  JSplitPane.VERTICAL_SPLIT, 1.0 - BOTTOM_DIVIDER_PROPORTIONAL_LOCATION);
 		setTopComponent(_baseComponent);
 	}
 

@@ -76,7 +76,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		tab_pane = createTabbedPane(orientation);
 		title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.name()));
 		
-		setOneTouchExpandable(true);
+		setOneTouchExpandable(false);
 		setDividerSize(0);
 
 		// Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a

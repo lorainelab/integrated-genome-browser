@@ -27,18 +27,30 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
+/**
+ * the TableModel for the table in the plugins view
+ */
 public class BundleTableModel extends DefaultTableModel implements Constants {
 	private static final long serialVersionUID = 1L;
 
 	private static final int WIDE_COLUMN_MULTIPLIER = 5;
 	private static final int NARROW_COLUMN = 60;
 
+	/**
+	 * this panel has the Bundle Symbolic Name along with an (optional)
+	 * info icon that links to the documntation web page of the bundle.
+	 */
 	public static class NameInfoPanel extends JPanel implements Comparable<NameInfoPanel> {
 		private static final long serialVersionUID = 1L;
 		private static final HashMap<Bundle, NameInfoPanel> PANEL_MAP = new HashMap<Bundle, NameInfoPanel>(); // kludge
 		private final JLabel text;
 		private final JLabel icon;
 
+		/**
+		 * get the NameInfoPanel for the given bundle
+		 * @param bundle
+		 * @return the NameInfoPanel for the specified bundle
+		 */
 		public static NameInfoPanel getPanel(Bundle bundle) {
 			return PANEL_MAP.get(bundle);
 		}
@@ -58,6 +70,11 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 			PANEL_MAP.put(bundle, this);
 		}
 
+        /**
+         * @param x x position of cursor on window
+         * @param y y position of cursor on window
+         * @return if the specified position is over the info icon
+         */
         public boolean isOnInfoIcon(int x, int y) {
         	if (icon == null) {
         		return false;
@@ -68,6 +85,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
         		y >= iconBounds.getY() && y <= iconBounds.getY() + icon.getHeight();
         }
 
+		@Override
         public String toString() {
         	return text.getText() + " " + (icon != null);
         }
@@ -78,10 +96,14 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		}
 	}
 
+	/**
+	 * Swing Renderer class for the NameInfoPanel
+	 */
 	public static class NameInfoRenderer implements TableCellRenderer, UIResource {
 		private static final long serialVersionUID = 1L;
 		private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
+		@Override
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
@@ -103,6 +125,9 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		}
 	}
 
+	/**
+	 * parent class for all the columns in the table
+	 */
 	private static abstract class BundleColumn {
 		public abstract String getTitle();
 		public Class<?> getCellClass() { return JLabel.class; }
@@ -112,6 +137,10 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		public void formatColumn(JTable jTable, TableColumn tc) {}
 	}
 
+	/**
+	 * helper class for bundle versions - they need to display the
+	 * latest version in parenthesis if necessary.
+	 */
 	private static class VersionInfo {
 		private final Bundle bundle;
 		private final IPluginsHandler pluginsHandler;
@@ -264,6 +293,11 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		columns.get(columnIndex).setValue(pluginsHandler.getFilteredBundle(rowIndex), aValue, pluginsHandler);
 	}
 
+	/**
+	 * get the index of the column in the table, given the column name
+	 * @param key the name of the column
+	 * @return the index of the column in the table
+	 */
 	public int getColumnIndex(String key) {
 		for (int i = 0; i < columns.size(); i++) {
 			if (columns.get(i).getTitle().equals(PluginsView.BUNDLE.getString(key))) {
@@ -273,6 +307,10 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 		return -1;
 	}
 
+	/**
+	 * set the parent table
+	 * @param jTable the parent table that uses this TableModel
+	 */
 	public void setJTable(JTable jTable) {
 		for (int i = 0; i < columns.size(); i++) {
 			BundleColumn bundleColumn = columns.get(i);

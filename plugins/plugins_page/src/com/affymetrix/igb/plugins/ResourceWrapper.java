@@ -17,6 +17,11 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 import org.osgi.service.obr.Resource;
 
+/**
+ * this class implements the Bundle interface for Resource instances
+ * loaded by OBR - uninstalled bundles. This is a wrapper for the Resource
+ * - the Decorator pattern.
+ */
 @SuppressWarnings("rawtypes")
 public class ResourceWrapper implements Bundle {
 	private static final HashMap<String, String> KEY_CONVERTER = new HashMap<String, String>();
@@ -34,6 +39,9 @@ public class ResourceWrapper implements Bundle {
 		this.resource = resource;
 	}
 
+	/**
+	 * @return the wrapped Resource
+	 */
 	public Resource getResource() {
 		return resource;
 	}

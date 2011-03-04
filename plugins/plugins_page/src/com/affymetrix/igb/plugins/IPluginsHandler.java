@@ -5,6 +5,10 @@ import javax.swing.ImageIcon;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
+/**
+ * interface to give the TableModel access to the data
+ * in the plugins view
+ */
 public interface IPluginsHandler {
 	public void displayError(String errorText);
 	public void clearError();

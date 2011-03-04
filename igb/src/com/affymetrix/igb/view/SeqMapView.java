@@ -57,6 +57,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.CopyResiduesAction;
 import com.affymetrix.igb.action.LoadSequence;
+import com.affymetrix.igb.action.MapModeAction;
 import com.affymetrix.igb.action.RefreshAFeature;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.action.ShrinkWrapAction;
@@ -64,7 +65,6 @@ import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.view.load.AutoLoad;
-import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -94,6 +94,12 @@ public class SeqMapView extends JPanel
 				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
 
+	public enum MapMode {
+		MapScrollMode(),
+		MapSelectMode(),
+		MapZoomMode();
+	}
+	
 	private static final boolean DEBUG_TIERS = false;
 
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
@@ -101,6 +107,7 @@ public class SeqMapView extends JPanel
 	protected boolean coord_shift = false;
 	private boolean hairline_is_labeled = true;
 	private boolean show_prop_tooltip = true;
+	private MapMode mapMode;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	/**
 	 *  maximum number of query glyphs for edge matcher.
@@ -330,6 +337,25 @@ public class SeqMapView extends JPanel
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		xzoombox.add((Component) xzoomer);
 
+		JToggleButton select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode));
+		select_mode_button.setText("");
+		xzoombox.add(select_mode_button);
+
+		JToggleButton scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode));
+		scroll_mode_button.setText("");
+		xzoombox.add(scroll_mode_button);
+
+//		JToggleButton zoom_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapZoomMode));
+//		zoom_mode_button.setText("");
+//		xzoombox.add(zoom_mode_button);
+
+		ButtonGroup group = new ButtonGroup();
+		group.add(select_mode_button);
+		group.add(scroll_mode_button);
+//		group.add(zoom_mode_button);
+		select_mode_button.doClick(); // default
+
+		xzoombox.add(new JLabel("  "));
 		JButton refresh_button = new JButton(RefreshDataAction.getAction());
 		refresh_button.setText("");
 		xzoombox.add(refresh_button);
@@ -1878,4 +1904,13 @@ public class SeqMapView extends JPanel
 	public void setPropertyHandler(PropertyHandler propertyHandler) {
 		this.propertyHandler = propertyHandler;
 	}
+
+	public MapMode getMapMode() {
+		return mapMode;
+	}
+
+	public void setMapMode(MapMode mapMode) {
+		this.mapMode = mapMode;
+	}
+	
 }

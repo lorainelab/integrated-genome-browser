@@ -14,7 +14,9 @@ import org.osgi.framework.ServiceReference;
 
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.IdentityTransform;
+import com.affymetrix.genometryImpl.util.InverseTransformer;
 import com.affymetrix.genometryImpl.util.LogTransform;
+import com.affymetrix.genometryImpl.util.PowerTransformer;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.WindowActivator;
@@ -58,6 +60,9 @@ public class Activator extends WindowActivator implements BundleActivator {
 		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(10.0), new Properties());
 		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(Math.E), new Properties());
 		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(), new Properties());
+    	bundleContext.registerService(FloatTransformer.class.getName(), new InverseTransformer(), new Properties());
+    	bundleContext.registerService(FloatTransformer.class.getName(), new PowerTransformer(), new Properties());
+    	bundleContext.registerService(FloatTransformer.class.getName(), new PowerTransformer(0.5), new Properties());
 	}
 }
 

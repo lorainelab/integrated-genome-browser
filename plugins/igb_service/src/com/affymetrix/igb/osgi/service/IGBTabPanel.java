@@ -38,10 +38,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		public List<TabState> getCompatibleTabStates() {
 			List<TabState> compatibleTabStates = new ArrayList<TabState>();
 			for (TabState tabState : TabState.values()) {
-				if (isTab() && (portrait == tabState.portrait || !tabState.isTab())) {
-					compatibleTabStates.add(tabState);
-				}
-				else if (!isTab() && !tabState.isTab()) {
+				if (portrait == tabState.portrait || !isTab() || !tabState.isTab()) {
 					compatibleTabStates.add(tabState);
 				}
 			}

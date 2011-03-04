@@ -287,7 +287,7 @@
 		
 		<mx:XMLListCollection id="sequenceFilesToRemove"/> 
 
-
+		<mx:XMLListCollection id="annotationProperties" source="{getAnnotation.lastResult..AnnotationProperty}"/>
 	
 </fx:Declarations>
    
@@ -1709,7 +1709,9 @@
    
    			params.filesToRemoveXML  = "<filesToRemove>" + annotationFilesToRemove.toXMLString() + "</filesToRemove>";
 
-   
+			this.initializePropertiesFromComponents();
+			params.propertiesXML = "<annotationProperties>" + annotationProperties.toXMLString() + "</annotationProperties>";
+			
         	updateAnnotation.send(params);
 		}
 		
@@ -1751,6 +1753,111 @@
 				annotationFiles.removeItemAt(annotationFiles.getItemIndex(item));
 			}
 		}
+			
+			
+			
+			
+	    /**
+	    *
+	    *  ANNOTATION PROPERTY FUNCTIONS
+	    *  
+	    */
+		private function onCreatePropertyLabel(annotationProperty:XML, index:int):void {
+			if (annotationProperty.@codePropertyType == 'TEXT') {
+				propertyValueViewStack[index].selectedIndex = 0;
+				propertyText[index].text = annotationProperty.@value;
+			} else if (annotationProperty.@codePropertyType == 'URL') {
+				propertyValueViewStack[index].selectedIndex = 1;
+				var url:String = !annotationProperty.hasOwnProperty("@value") ||  annotationProperty.@value  == null || annotationProperty.@value == '' ? "http://" : annotationProperty.@value;
+				propertyURL[index].htmlText =  "<a href='event:" + url + "'><u><font color='Blue'>" +  url + "</font></u></a>";
+			} else  if (annotationProperty.@codePropertyType == 'OPTION') {
+				propertyValueViewStack[index].selectedIndex = 2;
+				propertyCombo[index].dataProvider =  annotationProperty..PropertyOption;
+				for each(var theOption:XML in annotationProperty..PropertyOption) {
+					if (theOption.@selected == 'Y') { 
+						propertyCombo[index].selectedItem =  theOption;
+						break;   // just expecting a single option					
+					}
+				}
+			} else  if (annotationProperty.@codePropertyType == 'MOPTION') { 
+				propertyValueViewStack[index].selectedIndex = 4; 
+				var allOptions:XMLListCollection = new XMLListCollection();
+				var selectedOptions:XMLListCollection = new XMLListCollection();
+				for each(var option:XML in annotationProperty..PropertyOption) {
+					allOptions.addItem(option.copy());
+					if (option.@selected == 'Y') { 
+						selectedOptions.addItem(option.copy());	
+					}
+				}
+				propertyComboCheck[index].dataProvider = allOptions;
+				propertyComboCheck[index].initialValues = selectedOptions;
+			} else if (annotationProperty.@codePropertyType == 'CHECK') {
+				propertyValueViewStack[index].selectedIndex = 3;
+				propertyCheck[index].selected = annotationProperty.@value == 'Y' ? true : false;
+			}
+		}
+			
+		private function initializePropertiesFromComponents():void {
+			for (var i:int = 0; i < annotationProperties.length; i++) {
+				var property:XML = XML(annotationProperties.getItemAt(i));
+				if (propertyValueViewStack[i].selectedIndex == 0) {
+					// text
+					property.@value = propertyText[i].text;
+				} else if (propertyValueViewStack[i].selectedIndex == 1) {
+					// url
+					property.@value = propertyURL[i].text;
+				} else if (propertyValueViewStack[i].selectedIndex == 2) {
+					// combo
+					property.@value = "";
+					for each (var option:XML in  property..PropertyOption) {
+						if (propertyCombo[i].selectedItem != null &&
+							option.@idPropertyOption == propertyCombo[i].selectedItem.@idPropertyOption) {
+							option.@selected = 'Y';
+						} else {
+							option.@selected = 'N';
+						}
+					}
+				} else if (propertyValueViewStack[i].selectedIndex == 3) {
+					// check
+					property.@value = propertyCheck[i].selected ? 'Y' : 'N';
+				} else if (propertyValueViewStack[i].selectedIndex == 4) {
+					// combocheck
+					property.@value = "";
+					for each (var theOption:XML in  property..PropertyOption) {
+						var checked:Boolean = false;
+						for each (var checkedOption:XML in  propertyComboCheck[i].checkedItems) {
+							if (theOption.@idPropertyOption == checkedOption.@idPropertyOption) {
+								checked = true;
+								break;
+							}
+						}
+						theOption.@selected = checked ? 'Y' : 'N';
+					}
+				}
+			}
+		}
+			
+		private function onPropertyURLClick(event:TextEvent):void {
+			var url:URLRequest = new URLRequest(event.target.text);
+			navigateToURL( url, '_blank' );
+		}
+			
+		private function removeProperty(annotationProperty:XML):void {
+			this.initializePropertiesFromComponents();
+			annotationProperties.removeItemAt(annotationProperties.getItemIndex(annotationProperty));
+		}
+			
+		private function addProperty():void {
+			this.initializePropertiesFromComponents();
+			if (newPropertyCombo.selectedItem != null && newPropertyCombo.selectedItem.@name != '' && newPropertyCombo.selectedItem.@name != 'New property...') {
+				annotationProperties.addItem(newPropertyCombo.selectedItem.copy());				
+				newPropertyCombo.selectedIndex = 0;
+			}
+		}
+			
+			
+			
+			
 		private function initNewButtonMenuForOrganisms():void {
         	newButtonMenuForOrganisms = new Menu();
         	newButtonMenuForOrganisms.setStyle("textAlign", "left");
@@ -2462,6 +2569,54 @@
 								<mx:Label text="Analysis Type:" width="126"/>
 								<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryAnalysisType}" labelField="@name" id="analysisTypeCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
 							</mx:HBox>
+							<mx:VBox width="100%" height="100%" verticalGap="2" >
+								<mx:Repeater  id="propertyRepeater" 
+											  dataProvider="{annotationProperties}">
+									<mx:HBox verticalAlign="middle" width="100%"  horizontalGap="0" >
+										<mx:HBox width="126" horizontalGap="0" paddingLeft="0" paddingRight="0">
+											<mx:Image source="{parentApplication.iconSmallDelete}" click="removeProperty(event.currentTarget.getRepeaterItem())" scaleContent="false"/>
+											<mx:Text text="{propertyRepeater.currentItem.@name}" width="100%" 
+													 creationComplete="onCreatePropertyLabel(event.currentTarget.getRepeaterItem(), event.target.instanceIndices[0])"/>
+											
+										</mx:HBox>
+										<mx:ViewStack id="propertyValueViewStack" creationPolicy="all" height="24" width="100%" >
+											<mx:HBox >
+												<mx:TextInput id="propertyText" text="{propertyRepeater.currentItem.@value}" width="100%">
+												</mx:TextInput> 
+											</mx:HBox>
+											
+											<mx:HBox >
+												<mx:TextArea id="propertyURL" selectable="true"  height="22"  link="onPropertyURLClick(event)"   width="100%">
+												</mx:TextArea>
+											</mx:HBox>
+											
+											<mx:HBox >
+												<mx:ComboBox id="propertyCombo" width="100%" labelField="@name">
+												</mx:ComboBox>						
+											</mx:HBox>
+											
+											<mx:HBox width="100%" >
+												<mx:CheckBox id="propertyCheck">
+												</mx:CheckBox>
+											</mx:HBox>
+											
+											<mx:HBox >
+												<util:ComboCheck id="propertyComboCheck" width="100%" 
+																 displayMultipleItems="true"  
+																 dataField="@idPropertyOption"  valueField="@idPropertyOption"  
+																 valueSelectAll="false"
+																 displayField="@name" 
+																 value="@name" >						
+												</util:ComboCheck>						
+											</mx:HBox>
+										</mx:ViewStack>
+									</mx:HBox>
+								</mx:Repeater>
+								<mx:HBox >
+									<mx:ComboBox id="newPropertyCombo" dataProvider="{parentApplication.dictionayProperty}" labelField="@name" width="126"  change="addProperty()" dataProvider.AdminState="{parentApplication.dictionaryProperty}">			
+									</mx:ComboBox>
+								</mx:HBox>
+							</mx:VBox>
 					    </mx:VBox>
 					   	<mx:VRule height="100%"/>
 					    <mx:VBox width="50%" id="vbox7" paddingTop="8">

@@ -63,6 +63,8 @@
 		import mx.managers.PopUpManager;
 		import mx.rpc.events.FaultEvent;
 		import mx.rpc.events.ResultEvent;
+		
+		import util.DictionaryRefreshEvent;
 	
 	
 	private var launchAnnotation:Object = null;
@@ -96,6 +98,9 @@
 	[Bindable]
 	public var dictionaryVisibility:XMLListCollection;
 	
+	[Bindable]
+	public var dictionaryProperty:XMLListCollection;
+
 	[Bindable]
 	public var dictionaryUser:XMLListCollection;
 		
@@ -213,6 +218,11 @@
 	[Bindable]
 	[Embed(source="assets/chart_organisation.png")]
 	public var iconInstitute:Class;
+		
+	[Bindable]
+	[Embed(source="assets/bullet_delete.png")]
+	public var iconSmallDelete:Class;
+
 
     private function init():void {
     	initTextStyleSheet();
@@ -300,6 +310,11 @@
 			}
 			dictionaryUser = new XMLListCollection(getDictionaries.lastResult.Users.User.(@name != 'guest'));
 			
+			dictionaryProperty = new XMLListCollection(getDictionaries.lastResult.Properties.Property);
+			
+			if (this.mainViewStack != null && this.mainViewStack.selectedChild != null && this.mainViewStack.selectedChild == this.dictionaryView) {
+				callLater(this.dictionaryView.expandAllTreeNodes);
+			}
 			getInstitutes.send();
 			 
 		} else {
@@ -326,12 +341,6 @@
 		} else {
 			this.currentState = "UserState";
 		} 
-		
-		// TODO:  Figure out way to defer init() calls on AnnotationView, etc.
-		// until after parent app fully instantiated, dictionaries loaded, etc.
-		//if (this.mainViewStack.getChildIndex(emptyView)>= 0) {
-		//	mainViewStack.removeChild(emptyView);
-		//}
 		
 		if (launchAnnotation != null) {
 			this.annotationsView.treeItemToSelect = launchAnnotation;
@@ -425,7 +434,10 @@
 	    	height="100%" paddingTop="0" paddingBottom="0" paddingLeft="0" 
 	    	paddingRight="0" >	
       <mx:ViewStack id="mainViewStack"  width="100%" height="100%" creationPolicy="auto">
-          <mx:VBox id="emptyView" width="100%" height="100%" />
+          <mx:VBox label="Home" id="emptyView" width="100%" height="100%" verticalAlign="top" horizontalAlign="center" paddingTop="50" paddingBottom="30"  creationComplete="{mainViewStack.selectedIndex = 1}">
+			  <mx:Text text="Welcome to GenoPub" color="#FFFFFF" fontSize="14" fontFamily="Verdana" fontWeight="normal"/>
+			  <mx:Text text="A tool for annotating and programmatically distributing genomic data to DAS/2" color="#FFFFFF"  fontFamily="Verdana" fontSize="11"/>
+	      </mx:VBox>
 		  
 		  <default:AnnotationView id="annotationsView" label="Annotations"     icon="{iconAnnotation}" width="100%" height="100%">
 		  </default:AnnotationView>

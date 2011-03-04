@@ -1897,6 +1897,7 @@ public class GenoPubServlet extends HttpServlet {
           sess.flush();
         }
         
+        String optionValue = "";
         TreeSet<PropertyOption> options = new TreeSet<PropertyOption>(new PropertyOptionComparator());
         for(Iterator<?> i1 = node.elementIterator(); i1.hasNext();) {
           Element n = (Element)i1.next();
@@ -1908,13 +1909,20 @@ public class GenoPubServlet extends HttpServlet {
                 String selected = n2.attributeValue("selected");
                 if (selected != null && selected.equals("Y")) {
                   PropertyOption option = PropertyOption.class.cast(sess.load(PropertyOption.class, idPropertyOption));
-                  options.add(option);                  
+                  options.add(option);
+                  if (optionValue.length() > 0) {
+                    optionValue += ",";
+                  }
+                  optionValue += option.getName();
                 }
               }
             }            
           }
         }
         ap.setOptions(options);
+        if (options.size() > 0) {
+          ap.setValue(optionValue);
+        }
         sess.flush();
       }
           
@@ -2413,7 +2421,8 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	private void handleAnnotationInfoRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	@SuppressWarnings("unchecked")
+  private void handleAnnotationInfoRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		org.dom4j.io.OutputFormat format = org.dom4j.io.OutputFormat.createPrettyPrint();
 		org.dom4j.io.HTMLWriter writer = null;
@@ -2517,15 +2526,21 @@ public class GenoPubServlet extends HttpServlet {
 			String groupEmail = dh.getUserGroupEmail(annotation.getIdUserGroup());
 			row.addElement("TD").addCDATA(groupEmail != null ? groupEmail : "&nbsp;");
 
-			//row   = table.addElement("TR");			
-			//row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
-			//String groupInstitute = dh.getUserGroupInstitute(annotation.getIdUserGroup());
-			//row.addElement("TD").addCDATA(groupInstitute != null ? groupInstitute : "&nbsp;");
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
+			String instituteName = dh.getInstituteName(annotation.getIdInstitute());
+			row.addElement("TD").addCDATA(instituteName != null && !instituteName.equals("" )? instituteName : "&nbsp;");
 
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Visibility").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getCodeVisibility() != null && !annotation.getCodeVisibility().equals("") ? Visibility.getDisplay(annotation.getCodeVisibility()) : "&nbsp;");
 
+			for(AnnotationProperty ap : (Set<AnnotationProperty>)annotation.getAnnotationProperties()) {
+	      row   = table.addElement("TR");     
+	      row.addElement("TD").addText(ap.getName()).addAttribute("CLASS", "label");
+	      row.addElement("TD").addCDATA(ap.getValue() != null && !ap.getValue().equals("") ? ap.getValue() : "&nbsp;");
+			  
+			}
 
 			String publishedBy = "&nbsp;";
 			if (annotation.getCreatedBy() != null && !annotation.getCreatedBy().equals("")) {
@@ -4643,22 +4658,19 @@ public class GenoPubServlet extends HttpServlet {
 				String line = null;
 				String flashVarsLine = null;
 				while ((line = input.readLine()) != null) {
-					// If we encounter the Flash invocation line,
-					// add in the FlashVars if the request parameter idAnnotation
-					// was provided.  This will allow us to launch GenoPub
+					// When we encounter the flashvars line, add flashvars.idAnnotation = ...
+				  // This will allow us to launch GenoPub
 					// and bring up a particular annotation.
-					if (line.contains("src") && line.contains("GenoPub")) {
-						if (request.getParameter("idAnnotation") != null) {
-							flashVarsLine =   "\"FlashVars\", \"idAnnotation=" + request.getParameter("idAnnotation") + "\",";
-						}
-					}
+				  // NOTE: This syntax changed from Flex 3 to Flex 
+				  if (line.contains("var flashvars = {}")) {
+				    if (request.getParameter("idAnnotation") != null) {
+				      line+=  "    " + "flashvars.idAnnotation = \"" + request.getParameter("idAnnotation") + "\";";
+				    }
+ 				  }
+					
 					buf.append(line);
 					buf.append(System.getProperty("line.separator"));
-					if (flashVarsLine != null) {
-						buf.append(flashVarsLine);
-						buf.append(System.getProperty("line.separator"));
-						flashVarsLine = null;
-					}
+					
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -4670,6 +4682,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 		}
+		
 		return buf.toString();
 	}
 

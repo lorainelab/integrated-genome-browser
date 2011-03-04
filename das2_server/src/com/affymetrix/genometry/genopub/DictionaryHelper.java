@@ -45,6 +45,10 @@ public class DictionaryHelper {
 
   private final List<Visibility>                      visibilityList = new ArrayList<Visibility>();
 
+  private final HashMap<Integer, Institute>           instituteMap  = new HashMap<Integer, Institute>();
+  private final  List<Institute>                      instituteList = new ArrayList<Institute>();
+
+
   public static DictionaryHelper getInstance(Session sess) {
     if (!theDictionaryHelper.isLoaded) {
       theDictionaryHelper.load(sess);
@@ -71,6 +75,8 @@ public class DictionaryHelper {
     theDictionaryHelper.userMap.clear();
     theDictionaryHelper.userList.clear();
     theDictionaryHelper.visibilityList.clear();
+    theDictionaryHelper.instituteMap.clear();
+    theDictionaryHelper.instituteList.clear();
 
     theDictionaryHelper.load(sess);
     return theDictionaryHelper;
@@ -140,6 +146,16 @@ public class DictionaryHelper {
       }
       versions.add(d);
     }
+    
+    List<Institute> institutes = (List<Institute>) sess
+    .createQuery(
+    "SELECT i from Institute i order by i.name")
+    .list();
+    for (Institute i : institutes) {
+      instituteMap.put(i.getIdInstitute(), i);
+      instituteList.add(i);
+    }
+
 
     List<UserGroup> groups = (List<UserGroup>) sess
     .createQuery(
@@ -556,6 +572,15 @@ public class DictionaryHelper {
     GenomeVersion genomeVersion = genomeVersionMap.get(idGenomeVersion);
     return genomeVersion;
   }	
+
+  public String getInstituteName(Integer idInstitute) {
+    Institute institute = instituteMap.get(idInstitute);
+    if (institute != null) {
+      return institute.getName();
+    } else {
+      return "";
+    }
+  }
 
   public String getUserGroupName(Integer idUserGroup) {
     UserGroup group = groupMap.get(idUserGroup);

@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.genopub;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -532,7 +533,7 @@ public class Annotation implements Serializable, Owned {
 			}
 		}
 		else {
-System.out.println("\nNix GetQualifiedFileName null files "+filePath + " "+this.idGenomeVersion);
+		  System.out.println("\nNix GetQualifiedFileName null files "+filePath + " "+this.idGenomeVersion);
 		}
 		return filePath;
 
@@ -542,7 +543,9 @@ System.out.println("\nNix GetQualifiedFileName null files "+filePath + " "+this.
 		return data_root  + this.getFileName();
 	}
 
-	public Map<String, Object> loadProps(DictionaryHelper dictionaryHelper) {
+
+	@SuppressWarnings("unchecked")
+  public Map<String, Object> loadProps(DictionaryHelper dictionaryHelper) {
 		props = new TreeMap<String, Object>();
 		props.put(PROP_NAME, this.getName());
 		props.put(PROP_DESCRIPTION, this.getDescription() != null ? Util.removeHTMLTags(this.getDescription()) : "");
@@ -554,11 +557,15 @@ System.out.println("\nNix GetQualifiedFileName null files "+filePath + " "+this.
 		props.put(PROP_GROUP, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupName(this.getIdUserGroup()) : "");
 		props.put(PROP_GROUP_CONTACT, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupContact(this.getIdUserGroup()) : "");
 		props.put(PROP_GROUP_EMAIL, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupEmail(this.getIdUserGroup()) : "");
-		//props.put(PROP_GROUP_INSTITUTE, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupInstitute(this.getIdUserGroup()) : "");
+		props.put(PROP_GROUP_INSTITUTE, this.getIdInstitute() != null ? dictionaryHelper.getInstituteName(this.getIdInstitute()) : "");
 		props.put(PROP_ANALYSIS_TYPE, dictionaryHelper.getAnalysisType(this.getIdAnalysisType()));
 		props.put(PROP_EXPERIMENT_METHOD, dictionaryHelper.getExperimentMethod(this.getIdExperimentMethod()));
 		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));
 		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));
+		
+		for (AnnotationProperty ap : (Set<AnnotationProperty>)this.getAnnotationProperties()) {
+	    props.put(ap.getName(), ap.getValue() != null ? ap.getValue() : "");
+		}
 		return props;
 	}
 

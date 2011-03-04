@@ -241,8 +241,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public void setTabState(IGBTabPanel igbTabPanel, TabState tabState) {
-		((IGB)IGB.getSingleton()).setTabState(igbTabPanel, tabState);
+	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {
+		((IGB)IGB.getSingleton()).setTabStateAndMenu(igbTabPanel, tabState);
 	}
 
 	@Override

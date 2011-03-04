@@ -243,7 +243,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		PreferenceUtils.saveComponentState(plugin.getName(), null);
 	}
 
-	public void setTabState(IGBTabPanel panel, TabState tabState) {
+	private void setTabState(IGBTabPanel panel, TabState tabState) {
 		if (panel == null) {
 			return;
 		}
@@ -263,6 +263,12 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			tabHolders.get(tabState).addTab(panel, setFocus);
 		}
 		PreferenceUtils.saveComponentState(panel.getName(), tabState.name());
+	}
+
+	@Override
+	public void setTabStateAndMenu(IGBTabPanel panel, TabState tabState) {
+		setTabState(panel, tabState);
+		setTabMenu(panel);
 	}
 
 	@Override

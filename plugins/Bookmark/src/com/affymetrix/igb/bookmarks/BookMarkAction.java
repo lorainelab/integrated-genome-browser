@@ -194,7 +194,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       removeAllBookmarks();
     }
     else if (src == manage_bookmarksMI) {
-      igbService.setTabState(bmv, TabState.COMPONENT_STATE_WINDOW);
+      igbService.setTabStateAndMenu(bmv, TabState.COMPONENT_STATE_WINDOW);
     }
     else if (src instanceof BookmarkJMenuItem) {
       BookmarkJMenuItem item = (BookmarkJMenuItem) src;

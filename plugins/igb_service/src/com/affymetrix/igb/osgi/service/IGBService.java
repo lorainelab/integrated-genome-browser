@@ -120,7 +120,7 @@ public interface IGBService {
 	// for BookMark
 	public String getAppName();
 	public String getAppVersion();
-	public void setTabState(IGBTabPanel igbTabPanel, TabState tabState);
+	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState);
 	// for RestrictionSites/SearchView
 	/**
 	 * get a count of the number of hits that match the specified regular

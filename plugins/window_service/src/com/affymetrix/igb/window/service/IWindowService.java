@@ -18,5 +18,5 @@ public interface IWindowService {
 	public void setViewMenu(JMenu view_menu);
 	public void setStatusBar(JComponent status_bar);
 	public Set<IGBTabPanel> getPlugins();
-	public void setTabState(IGBTabPanel panel, TabState tabState);
+	public void setTabStateAndMenu(IGBTabPanel panel, TabState tabState);
 }

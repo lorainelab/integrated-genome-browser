@@ -115,7 +115,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 
   @Override
   public TabState getDefaultState() {
-    return TabState.COMPONENT_STATE_LEFT_TAB;
+    return TabState.COMPONENT_STATE_HIDDEN;
   }
 
   private boolean insert(JTree tree, TreePath tree_path, DefaultMutableTreeNode[] nodes) {

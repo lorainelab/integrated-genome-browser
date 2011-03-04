@@ -458,8 +458,8 @@ public final class IGB extends Application
 		return view_menu;
 	}
 
-	public void setTabState(IGBTabPanel igbTabPanel, TabState tabState) {
-		windowService.setTabState(igbTabPanel, tabState);
+	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {
+		windowService.setTabStateAndMenu(igbTabPanel, tabState);
 	}
 
 	public JComponent getView(String viewName) {

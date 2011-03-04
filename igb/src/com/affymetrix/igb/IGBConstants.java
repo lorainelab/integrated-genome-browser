@@ -46,8 +46,4 @@ public interface IGBConstants {
 
 	public final static String GENOME_SEQ_ID = Constants.GENOME_SEQ_ID;
 	public final static String ENCODE_REGIONS_ID = "encode_regions";
-	/**
-	 * A potential parameter in either the URL of a bookmark, or a command-line option.  This allows a response file to be loaded, instead of anything else.
-	 */
-	public final static String SCRIPTFILETAG = "scriptfile";
 }

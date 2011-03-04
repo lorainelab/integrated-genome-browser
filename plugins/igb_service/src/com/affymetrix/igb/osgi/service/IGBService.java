@@ -22,6 +22,10 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  */
 public interface IGBService {
 	public static final String UTF8 = "UTF-8";
+	/**
+	 * A potential parameter in either the URL of a bookmark, or a command-line option.  This allows a response file to be loaded, instead of anything else.
+	 */
+	public final static String SCRIPTFILETAG = "scriptfile";
 	public static final String IGB_TIER_HEADER = "IGB-Tier";
 	// service extension point names
 	public static final String GRAPH_TRANSFORMS = "igb.graph.transform";

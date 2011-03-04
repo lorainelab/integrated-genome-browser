@@ -12,10 +12,10 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.ExportSlicedViewAction;
 import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.menuitem.LoadFileAction;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
@@ -64,7 +64,7 @@ public class ScriptFileLoader {
 			return null;
 		}
 		for (int i=0;i<args.length;i++) {
-			if (args[i].equalsIgnoreCase("-" + IGBConstants.SCRIPTFILETAG)) {
+			if (args[i].equalsIgnoreCase("-" + IGBService.SCRIPTFILETAG)) {
 				if (i+1 < args.length) {
 					return args[i+1];
 				} else {

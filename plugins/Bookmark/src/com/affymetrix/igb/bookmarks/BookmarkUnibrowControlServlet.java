@@ -31,7 +31,6 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.util.ScriptFileLoader;
@@ -100,7 +99,7 @@ public final class BookmarkUnibrowControlServlet {
 	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
 	public void goToBookmark(final IGBService uni, final Map<String, String[]> parameters) throws NumberFormatException {
-		String batchFileStr = getStringParameter(parameters, IGBConstants.SCRIPTFILETAG);
+		String batchFileStr = getStringParameter(parameters, IGBService.SCRIPTFILETAG);
 		if (batchFileStr != null && batchFileStr.length() > 0) {
 			ScriptFileLoader.doActions(batchFileStr);
 			return;

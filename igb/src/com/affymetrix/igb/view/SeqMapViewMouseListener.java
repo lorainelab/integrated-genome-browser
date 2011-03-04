@@ -80,6 +80,8 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mousePressed(MouseEvent evt) {
+		map.setCursor(smv.getMapMode().pressedCursor);
+
 		if (map instanceof AffyLabelledTierMap) {
 			((AffyLabelledTierMap) map).getLabelMap().clearSelected();
 		}
@@ -100,6 +102,8 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mouseReleased(MouseEvent evt) {
+		map.setCursor(smv.getMapMode().defCursor);
+		
 		num_last_selections = map.getSelected().size();
 
 		if(PROCESS_SUB_SELECTION){
@@ -173,7 +177,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 
 	private void processSelections(MouseEvent evt, boolean post_selections) {
 
-		if (!(evt instanceof NeoMouseEvent)) {
+		if (!(evt instanceof NeoMouseEvent) || (smv.getMapMode() != SeqMapView.MapMode.MapSelectMode)) {
 			return;
 		}
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
@@ -506,7 +510,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	private void processSubSelection(MouseEvent evt) {
-		if (!(evt instanceof NeoMouseEvent) || rubber_band_start != null) {
+		if (!(evt instanceof NeoMouseEvent) || rubber_band_start != null || (smv.getMapMode() != SeqMapView.MapMode.MapSelectMode)) {
 			return;
 		}
 

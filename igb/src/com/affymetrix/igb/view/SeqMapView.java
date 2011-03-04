@@ -68,11 +68,13 @@ import com.affymetrix.igb.view.load.AutoLoad;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.util.IGBUtils;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.datatransfer.Clipboard;
@@ -94,16 +96,26 @@ public class SeqMapView extends JPanel
 				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
 
-	public enum MapMode {
-		MapSelectMode(true, false),
-		MapScrollMode(false, true),
-		MapZoomMode(false, false);
+	private static final Cursor defaultCursor, openHandCursor, closedHandCursor;
+	static{
+		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		openHandCursor = IGBUtils.createCursor("open_hand.png", defaultCursor);
+		closedHandCursor = IGBUtils.createCursor("closed_hand.png", defaultCursor);
+	}
+
+	public static enum MapMode {
+		MapSelectMode(true, false, defaultCursor, defaultCursor),
+		MapScrollMode(false, true, openHandCursor, closedHandCursor),
+		MapZoomMode(false, false, defaultCursor, defaultCursor);
 
 		public final boolean rubber_band, drag_scroll;
+		public final Cursor defCursor, pressedCursor;
 
-		private MapMode(boolean rubber_band, boolean drag_scroll){
+		private MapMode(boolean rubber_band, boolean drag_scroll, Cursor defaultCursor, Cursor pressedCursor){
 			this.rubber_band = rubber_band;
 			this.drag_scroll = drag_scroll;
+			this.defCursor = defaultCursor;
+			this.pressedCursor = pressedCursor;
 		}
 	}
 	
@@ -344,14 +356,11 @@ public class SeqMapView extends JPanel
 		xzoombox = Box.createHorizontalBox();
 		xzoombox.add(map_range_box.range_box);
 
-		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
-		xzoombox.add((Component) xzoomer);
-
-		JToggleButton select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode));
+		JToggleButton select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode, "arrow.png"));
 		select_mode_button.setText("");
 		xzoombox.add(select_mode_button);
 
-		JToggleButton scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode));
+		JToggleButton scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode, "open_hand.png"));
 		scroll_mode_button.setText("");
 		xzoombox.add(scroll_mode_button);
 
@@ -365,7 +374,9 @@ public class SeqMapView extends JPanel
 //		group.add(zoom_mode_button);
 		select_mode_button.doClick(); // default
 
-		xzoombox.add(new JLabel("  "));
+		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
+		xzoombox.add((Component) xzoomer);
+
 		JButton refresh_button = new JButton(RefreshDataAction.getAction());
 		refresh_button.setText("");
 		xzoombox.add(refresh_button);
@@ -399,7 +410,6 @@ public class SeqMapView extends JPanel
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 
-		setMapMode(MapMode.MapSelectMode);
 	}
 
 	public final class SeqMapViewComponentListener extends ComponentAdapter {
@@ -1927,6 +1937,7 @@ public class SeqMapView extends JPanel
 		seqmap.setRubberBandBehavior(mapMode.rubber_band);
 		seqmap.enableCanvasDragging(mapMode.drag_scroll);
 		seqmap.enableDragScrolling(!mapMode.drag_scroll);
+		seqmap.setCursor(mapMode.defCursor);
 	}
 	
 }

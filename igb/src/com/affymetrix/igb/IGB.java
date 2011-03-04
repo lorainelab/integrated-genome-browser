@@ -399,7 +399,10 @@ public final class IGB extends Application
 	 *  @return null if the image file is not found or can't be opened.
 	 */
 	public Image getIcon() {
-		return IGBUtils.getIcon("igb.gif");
+		ImageIcon imageIcon = IGBUtils.getIcon("igb.gif");
+		if(imageIcon != null)
+			return imageIcon.getImage();
+		return null;
 	}
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {

@@ -10,6 +10,9 @@ import javax.swing.UIManager;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
+/**
+ * JTabbedTrayPane that is on the left or right
+ */
 public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
 
@@ -44,6 +47,10 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
         return tabPane;
 	}
 
+	/**
+	 * determines if the OS is windows
+	 * @return true if the OS is windows, false for MacOS, Linux, etc.
+	 */
 	private static boolean isWindows(){
 		String os = System.getProperty("os.name");
 		if (os != null && os.toLowerCase().contains("windows")) {

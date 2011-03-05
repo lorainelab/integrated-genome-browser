@@ -197,6 +197,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 	}
 
+	/**
+	 * add a new tab pane to the window service
+	 * @param plugin the tab pane
+	 */
 	public void addTab(final IGBTabPanel plugin) {
 		TabState tabState = plugin.getDefaultState();
 		try {
@@ -217,6 +221,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabs_menu.add(pluginMenu);
 	}
 
+	/**
+	 * set the tab menu for a tab pane
+	 * @param plugin the tab pane
+	 */
 	private void setTabMenu(final IGBTabPanel plugin) {
 		JMenu menu = tabMenus.get(plugin);
 		TabState tabState = getTabState(plugin);
@@ -228,6 +236,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 	}
 
+	/**
+	 * remove a tab pane from the window service
+	 * @param plugin the tab pane
+	 */
 	public void removeTab(final IGBTabPanel plugin) {
 		for (TabState tabState : tabHolders.keySet()) {
 			tabHolders.get(tabState).removeTab(plugin);
@@ -240,6 +252,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		PreferenceUtils.saveComponentState(plugin.getName(), null);
 	}
 
+	/**
+	 * set a given tab pane to a given tab state
+	 * @param panel the tab pane
+	 * @param tabState the new tab state
+	 */
 	private void setTabState(IGBTabPanel panel, TabState tabState) {
 		if (panel == null) {
 			return;
@@ -282,6 +299,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		setTabMenu(panel);
 	}
 
+	/**
+	 * get the tab state of a given tab pane
+	 * @param panel the tab pane
+	 * @return the tab state of the give pane
+	 */
 	private TabState getTabState(IGBTabPanel panel) {
 		for (TabState tabState : tabHolders.keySet()) {
 			if (tabHolders.get(tabState).getPlugins().contains(panel)) {

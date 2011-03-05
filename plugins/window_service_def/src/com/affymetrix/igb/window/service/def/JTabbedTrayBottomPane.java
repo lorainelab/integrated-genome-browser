@@ -8,6 +8,9 @@ import javax.swing.JTabbedPane;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
+/**
+ * JTabbedTrayPane that is on the bottom
+ */
 public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
 	private static final double BOTTOM_DIVIDER_PROPORTIONAL_LOCATION = 0.30;

@@ -14,6 +14,10 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
+/**
+ * TabHolder implementation for all tabs that are in separate
+ * popup windows
+ */
 public class WindowTabs implements TabHolder {
 	private Set<IGBTabPanel> addedPlugins;
 	private final TabStateHandler tabStateHandler;
@@ -24,6 +28,11 @@ public class WindowTabs implements TabHolder {
 		addedPlugins = new HashSet<IGBTabPanel>();
 	}
 
+	/**
+	 * open a tab panel in a new popup window, and set its close
+	 * operation to put it into the default state
+	 * @param comp the tab panel
+	 */
 	private void openCompInWindow(final IGBTabPanel comp) {
 		final String name = comp.getName();
 		final String display_name = comp.getDisplayName();

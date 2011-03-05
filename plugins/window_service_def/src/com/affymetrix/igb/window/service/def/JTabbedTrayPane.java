@@ -24,6 +24,12 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
+/**
+ * TabHolder implementation for all tabs that are in a tab panel.
+ * This consists of a split pane that has a JTabbedPane on one
+ * side and the actual view on the other side. These may be
+ * stacked.
+ */
 public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private static final long serialVersionUID = 1L;
 
@@ -33,6 +39,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		EXTENDED,
 		WINDOW;
 
+		/**
+		 * get the default state of all trays
+		 * @return the default tray state
+		 */
 		public static TrayState getDefaultTrayState() {
 			return HIDDEN;
 		}
@@ -48,12 +58,34 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private boolean retractDividerSet;
 	private JFrame frame;
 
+	/**
+	 * set the JTabbedPane in the JSplitPane - different for
+	 * different orientations
+	 */
 	protected abstract void setTabComponent();
+	/**
+	 * get the full size (width or height) of the tray
+	 * @return the full size of the tray
+	 */
 	protected abstract int getFullSize();
+	/**
+	 * return the width (or height) of the given tab panel
+	 * @param tabComponent the tab panel
+	 * @return the width or height of the tab panel
+	 */
+	protected abstract int getTabWidth(Component tabComponent);
+	/**
+	 * get the int / pixel value of the divider location for the EXTEND tray state
+	 * (it is saved as a percentage)
+	 * @return the extend state divider location
+	 */
 	private int getExtendDividerLocation() {
 		return (int)Math.round(getFullSize() * saveDividerProportionalLocation);
 	}
-	protected abstract int getTabWidth(Component tabComponent);
+	/**
+	 * get the int / pixel value of the divider location for the RETRACT tray state
+	 * @return the retract state divider location
+	 */
 	protected int getRetractDividerLocation() {
 		if (tab_pane.getTabCount() == 0) {
 			return -1;
@@ -61,7 +93,14 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		int index = tab_pane.getSelectedIndex() < 0 ? 0 : tab_pane.getSelectedIndex();
 		return getTabWidth(tab_pane.getComponentAt(index));
 	}
+	/**
+	 * get the int / pixel value of the divider location for the HIDDEN tray state
+	 * @return the hidden state divider location
+	 */
 	protected abstract int getHideDividerLocation();
+	/**
+	 * save the divider location for the RETRACT tray state - as a percentage
+	 */
 	private void saveDividerLocation() {
 		saveDividerProportionalLocation = (double)getDividerLocation() / (double)getFullSize();
 	}
@@ -133,6 +172,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 	}
 
+	/**
+	 * put the tray in the HIDDEN tray state
+	 * this happens when there are not tabs in the tray
+	 */
 	private void hideTray() {
 		if (trayState == TrayState.EXTENDED) {
 			saveDividerLocation();
@@ -144,6 +187,12 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		notifyTrayStateChangeListeners();
 	}
 
+	/**
+	 * put the tray in the EXTEND tray state
+	 * this happens when the user clicks on a tab from the RETRACTED
+	 * tray state, or clicks on a different tab in the EXTENDED tray
+	 * state
+	 */
 	private void extendTray() {
 		setDividerLocation(getExtendDividerLocation());
 		setDividerSize(DIVIDER_SIZE);
@@ -152,6 +201,11 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		notifyTrayStateChangeListeners();
 	}
 
+	/**
+	 * put the tray in the RETRACT tray state
+	 * this happens when the user clicks on the already selected tab
+	 * from the EXTENDED tray state
+	 */
 	private void retractTray() {
 		if (trayState == TrayState.EXTENDED) {
 			saveDividerLocation();
@@ -167,6 +221,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		notifyTrayStateChangeListeners();
 	}
 
+	/**
+	 * put the tray in the WINDOW tray state (a separate popup window)
+	 * this happens when the user selects the appropriate menu item
+	 */
 	public void windowTray() {
 		if (trayState == TrayState.EXTENDED) {
 			saveDividerLocation();
@@ -229,6 +287,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		notifyTrayStateChangeListeners();
 	}
 
+	/**
+	 * puts the tray into the given tray state
+	 * @param newState the new state for the tray
+	 */
 	public void invokeTrayState(TrayState newState) {
 		switch (newState) {
 		case HIDDEN:
@@ -280,6 +342,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 	}
 
+	@Override
 	public Set<IGBTabPanel> getPlugins() {
 		Set<IGBTabPanel> plugins = new HashSet<IGBTabPanel>();
 		for (int i = 0; i < tab_pane.getTabCount(); i++) {
@@ -288,36 +351,69 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		return plugins;
 	}
 
+	@Override
 	public IGBTabPanel getSelectedIGBTabPanel() {
 		return (IGBTabPanel)tab_pane.getSelectedComponent();
 	}
 
+	/**
+	 * create the JTabbedPane for the Tray
+	 * @param tabPlacement the tabPlacement (orientation) for
+	 * the JTabbedPane
+	 * @return the JTabbedPane
+	 */
 	protected JTabbedPane createTabbedPane(int tabPlacement){
 		return new JTabbedPane(tabPlacement);
 	}
 
+	/**
+	 * standard getter
+	 * @return the tabState
+	 */
 	public TabState getTabState() {
 		return tabState;
 	}
 
+	/**
+	 * standard getter
+	 * @return the trayState
+	 */
 	public TrayState getTrayState() {
 		return trayState;
 	}
 
+	/**
+	 * call all the TrayStateChangeListeners, notifying them
+	 * of a change in the tray state of this tray
+	 */
 	private void notifyTrayStateChangeListeners() {
 		for (TrayStateChangeListener trayStateChangeListener : trayStateChangeListeners) {
 			trayStateChangeListener.trayStateChanged(this, trayState);
 		}
 	}
 
+	/**
+	 * add a new listener for tray state changes
+	 * @param trayStateChangeListener the new listener
+	 */
 	public void addTrayStateChangeListener(TrayStateChangeListener trayStateChangeListener) {
 		trayStateChangeListeners.add(trayStateChangeListener);
 	}
 
+	/**
+	 * remove an existing listener for tray state changes
+	 * it will no longer be notified of changes
+	 * @param trayStateChangeListener the listener to remove
+	 */
 	public void removeTrayStateChangeListener(TrayStateChangeListener trayStateChangeListener) {
 		trayStateChangeListeners.remove(trayStateChangeListener);
 	}
 
+	/**
+	 * get the text title of the tray - displayed in the
+	 * caption bar if the tray is put into a separate popup
+	 * @return the title of the tray
+	 */
 	public String getTitle() {
 		return title;
 	}

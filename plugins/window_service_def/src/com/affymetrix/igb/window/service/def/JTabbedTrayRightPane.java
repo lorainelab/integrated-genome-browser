@@ -8,6 +8,9 @@ import javax.swing.JTabbedPane;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
+/**
+ * JTabbedTrayPane that is on the right
+ */
 public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
 	private static final long serialVersionUID = 1L;
 	private static final double RIGHT_DIVIDER_PROPORTIONAL_LOCATION = 0.20;

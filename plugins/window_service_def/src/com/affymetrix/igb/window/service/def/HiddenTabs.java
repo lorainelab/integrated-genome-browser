@@ -5,6 +5,10 @@ import java.util.Set;
 
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
+/**
+ * TabHolder implementation for all tabs that are hidden
+ *
+ */
 public class HiddenTabs implements TabHolder {
 	private Set<IGBTabPanel> addedPlugins;
 

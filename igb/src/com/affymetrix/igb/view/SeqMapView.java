@@ -356,7 +356,7 @@ public class SeqMapView extends JPanel
 		xzoombox = Box.createHorizontalBox();
 		xzoombox.add(map_range_box.range_box);
 
-		JToggleButton select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode, "arrow.png"));
+		JToggleButton select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode, "arrow.gif"));
 		select_mode_button.setText("");
 		xzoombox.add(select_mode_button);
 

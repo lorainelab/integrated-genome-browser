@@ -96,7 +96,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 	Graphics g = view.getGraphics();
 	for(int i=0; i<getChildCount(); i++){
 		GlyphI child = getChild(i);
-		if(child instanceof EfficientSolidGlyph &&  ((EfficientSolidGlyph)child).is_Compulsary){
+		if(child instanceof InsertionSeqGlyph){
 			pixelbox = view.getScratchPixBox();
 			view.transformToPixels(child.getCoordBox(), pixelbox);
 			pixelbox = fixAWTBigRectBug(view, pixelbox);

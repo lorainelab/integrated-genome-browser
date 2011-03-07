@@ -5,6 +5,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.glyph.AlignedResidueGlyph;
+import com.affymetrix.igb.glyph.InsertionSeqGlyph;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -261,7 +262,10 @@ public final class FasterExpandPacker extends ExpandPacker {
 	private static void recurseSetPackerClipping(GlyphI glyph) {
 		if (glyph instanceof AlignedResidueGlyph) {
 			((AlignedResidueGlyph)glyph).packerClip = true;
+		}else if(glyph instanceof InsertionSeqGlyph){
+			((InsertionSeqGlyph)glyph).packerClip = true;
 		}
+		
 		int count = glyph.getChildCount();
 		for (int i=0;i<count;i++) {
 			recurseSetPackerClipping(glyph.getChild(i));

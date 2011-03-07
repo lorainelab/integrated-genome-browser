@@ -32,7 +32,10 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.SequenceGlyph;
+import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -404,13 +407,15 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 			SeqSymmetry childsym = inssym.getInsChild(i);
 			SeqSpan ispan = childsym.getSpan(annotseq);
-			EfficientOutlinedRectGlyph glyph = new EfficientOutlinedRectGlyph();
-			glyph.setCompulsary(true);
-			glyph.setCoords(ispan.getMin()-1, 0, 2, DEFAULT_THICK_HEIGHT);
-			glyph.setColor(color);
 
-			pglyph.addChild(glyph);
-			map.setDataModelFromOriginalSym(glyph, childsym);
+			InsertionSeqGlyph isg = new InsertionSeqGlyph();
+			isg.setSelectable(true);
+			isg.setResidues(inssym.getResidues(ispan.getMin()-1, ispan.getMin()+1));
+			isg.setCoords(ispan.getMin()-1, 0, 2, DEFAULT_THICK_HEIGHT);
+			isg.setColor(color);
+			
+			pglyph.addChild(isg);
+			map.setDataModelFromOriginalSym(isg, childsym);
 		}
 	}
 
@@ -471,7 +476,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			System.out.print((char) seqArr[i]);
 			}
 			System.out.println();
-			csg.setResidueMask(seqArr);
+			isg.setResidueMask(seqArr);
 			}*/
 		}
 

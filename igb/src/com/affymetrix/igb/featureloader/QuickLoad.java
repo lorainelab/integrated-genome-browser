@@ -76,7 +76,7 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();
 		}
-		if (extension.endsWith(".bar") || extension.endsWith(".useq") || extension.endsWith(".bgr")
+		if (extension.endsWith(".bar") || extension.endsWith(".bgr")
 				||extension.endsWith(".chp")
 				|| (extension.endsWith(".sin") || extension.endsWith(".egr") || extension.endsWith(".txt") || extension.endsWith("link.psl"))
 				|| (extension.endsWith(".gff") || extension.endsWith(".gff3"))) {
@@ -258,9 +258,7 @@ public final class QuickLoad extends SymLoader {
 	private void loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
 			throws IOException, OutOfMemoryError {
 
-		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) {
-			return;
-		}
+		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) return;
 
 		List<? extends SeqSymmetry> results;
 		boolean setStyle = false;

@@ -3,8 +3,11 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
 import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
+import com.affymetrix.genometryImpl.parsers.useq.data.USeqData;
+
 import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -20,7 +23,7 @@ public class USeqGraphParser {
 	private String stream_name;
 	private static final float defaultFloatValue = 1f;
 	private ArchiveInfo archiveInfo;
-	
+
 	/** Parse a USeq zip archive stream returning a List of graphs for IGB. Returns null if something goes wrong.
 	 * Only works with Position or PositionScore data, others should use the USeqRegionParser. 
 	 * @param archiveInfo can be null, include if already read from the stream.*/
@@ -50,7 +53,7 @@ public class USeqGraphParser {
 				this.archiveInfo = new ArchiveInfo(zis, false);
 				archiveInfo = this.archiveInfo;
 			}
-			
+
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
 			AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
@@ -137,19 +140,73 @@ public class USeqGraphParser {
 		return graphs;
 	}
 
+	/** Makes graphs from a USeqData[].  Get this from the USeqArchive.fetch() method.*/
+	@SuppressWarnings("unchecked")
+	public List<GraphSym> parseGraphSyms(USeqArchive useqArchive, USeqData[] useqData, GenometryModel gmodel, String stream_name) {		
+		this.gmodel = gmodel;
+		this.stream_name = stream_name;
+		this.archiveInfo = useqArchive.getArchiveInfo();
+		List<GraphSym> graphs = new ArrayList<GraphSym>();
+		try {
+			//check that they are loading the data into the correct genome build
+			String genomeVersion = archiveInfo.getVersionedGenome();
+			AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
+			if (asg!= null && asg.isSynonymous(genomeVersion) == false){
+				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
+			}
+			//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
+			if (USeqUtilities.POSITION.matcher(useqArchive.getBinaryDataType()).matches()) {
+				for (int i=0; i< useqData.length; i++){
+					if (useqData[i] != null){
+						//fetch data
+						PositionData p = (PositionData) useqData[i];
+						int xcoords[] = p.getBasePositions();
+						float ycoords[] = new float[xcoords.length];
+						//make GraphSym and add to List
+						GraphSym graf = makeGraph(p.getSliceInfo().getChromosome(), p.getSliceInfo().getStrand(), xcoords, ycoords);
+						graphs.add(graf);
+					}	
+				}
+			}
+			else if (USeqUtilities.POSITION_SCORE.matcher(useqArchive.getBinaryDataType()).matches()) {
+				for (int i=0; i< useqData.length; i++){
+					if (useqData[i] != null){
+						//fetch data
+						PositionScoreData p = (PositionScoreData) useqData[i];
+						int xcoords[] = p.getBasePositions();
+						float ycoords[] = p.getBaseScores();
+						//make GraphSym and add to List
+						GraphSym graf = makeGraph(p.getSliceInfo().getChromosome(), p.getSliceInfo().getStrand(), xcoords, ycoords);
+						graphs.add(graf);
+					}	
+				}
+			}
+			else {
+				throw new IOException ("USeq graph parsing for "+useqArchive.getBinaryDataType()+" is not implemented.");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return graphs;
+	}
+
 	private GraphSym makeGraph(SliceInfo sliceInfo, int[] xcoords, float[] ycoords){
+		String chrom = sliceInfo.getChromosome();
+		String strand = sliceInfo.getStrand();
+		return makeGraph(chrom, strand, xcoords, ycoords);
+	}
+
+	private GraphSym makeGraph(String chrom, String strand, int[] xcoords, float[] ycoords){
 		//get versionedGenome
 		AnnotatedSeqGroup versionGenomeASG = getSeqGroup(archiveInfo.getVersionedGenome(), gmodel);
 		//get chromosome
-		BioSeq chromosomeBS = determineSeq(versionGenomeASG, sliceInfo.getChromosome(), archiveInfo.getVersionedGenome());
+		BioSeq chromosomeBS = determineSeq(versionGenomeASG, chrom, archiveInfo.getVersionedGenome());
 		checkSeqLength(chromosomeBS, xcoords);
-		//get strand
-		String strand = sliceInfo.getStrand();
 		//make GraphSym changing stream name if needed for strand
 		String id = stream_name;
 		if (strand.equals(".") == false) id = id+strand;
 		GraphSym graf = new GraphSym(xcoords, ycoords, id, chromosomeBS);
-		
 		//add properties
 		copyProps(graf, archiveInfo.getKeyValues());
 		//set strand

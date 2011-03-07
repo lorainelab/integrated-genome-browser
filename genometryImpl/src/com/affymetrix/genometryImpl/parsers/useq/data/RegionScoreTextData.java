@@ -190,6 +190,38 @@ public class RegionScoreTextData extends USeqData{
 		}
 		return binaryFile;
 	}
+	
+	/**Assumes all are of the same chromosome and strand!*/
+	public static RegionScoreTextData merge (ArrayList<RegionScoreTextData> pdAL){
+		//convert to arrays and sort
+		RegionScoreTextData[] pdArray = new RegionScoreTextData[pdAL.size()];
+		pdAL.toArray(pdArray);
+		Arrays.sort(pdArray);
+		//fetch total size of RegionScoreText[]
+		int num = 0;
+		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedRegionScoreTexts.length;
+		//concatinate
+		RegionScoreText[] concatinate = new RegionScoreText[num];
+		int index = 0;
+		for (int i=0; i< pdArray.length; i++){
+			RegionScoreText[] slice = pdArray[i].sortedRegionScoreTexts;
+			System.arraycopy(slice, 0, concatinate, index, slice.length);
+			index += slice.length;
+		}
+		//get and modify header
+		SliceInfo sliceInfo = pdArray[0].sliceInfo;
+		RegionScoreTextData.updateSliceInfo(concatinate, sliceInfo);
+		//return new RegionScoreTextData
+		return new RegionScoreTextData(concatinate, sliceInfo);
+	}
+	
+	public static RegionScoreTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
+		int num = useqDataAL.size();
+		//convert ArrayList
+		ArrayList<RegionScoreTextData> a = new ArrayList<RegionScoreTextData>(num);
+		for (int i=0; i< num; i++) a.add((RegionScoreTextData) useqDataAL.get(i));
+		return merge (a);
+	}
 
 	/**Writes the RegionScoreTextData[] to a ZipOutputStream.
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed

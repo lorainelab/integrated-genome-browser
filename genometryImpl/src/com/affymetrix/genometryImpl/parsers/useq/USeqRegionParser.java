@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreText;
 import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
 import com.affymetrix.genometryImpl.parsers.useq.data.RegionText;
 import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.USeqData;
 
 /**For parsing binary USeq region data into GenViz display objects.
  * @author david.nix@hci.utah.edu*/
@@ -38,9 +39,62 @@ public final class USeqRegionParser  {
 	private AnnotatedSeqGroup group;
 	private boolean addAnnotationsToSeq;
 	private ArchiveInfo archiveInfo;
-	private SliceInfo sliceInfo;
 	public static final Pattern TAB = Pattern.compile("\\t");
+	private boolean forwardStrand;
+	private BioSeq bioSeq;
 
+	/*chrom, useqArchive, useqData, group, featureName) */
+	public List<SeqSymmetry> parse(USeqArchive useqArchive, USeqData[] useqData, AnnotatedSeqGroup group, String stream_name) {		
+		this.group = group;
+		symlist = new ArrayList<SeqSymmetry>();
+		nameOfTrack = stream_name;
+		archiveInfo = useqArchive.getArchiveInfo();
+
+		try {
+			//check that they are loading the data into the correct genome build
+			String genomeVersion = archiveInfo.getVersionedGenome();
+			if (group.getAllVersions().size() != 0 && group.isSynonymous(genomeVersion) == false){
+				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
+			}
+
+			String dataType = useqArchive.getBinaryDataType();
+
+			//for each USeqData set, +/-/.
+			for (int i=0; i< useqData.length; i++){
+				//any data?
+				if (useqData[i] == null) continue;
+				SliceInfo sliceInfo = useqData[i].getSliceInfo();
+				//set strand orientation
+				if (sliceInfo.getStrand().equals("-")) forwardStrand = false;
+				else forwardStrand = true;
+				//set the BioSeq
+				setBioSeq(sliceInfo.getChromosome());
+				//Region
+				if (USeqUtilities.REGION.matcher(dataType).matches()) parseRegionData((RegionData) useqData[i]);
+				//RegionScore
+				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) parseRegionScoreData((RegionScoreData) useqData[i]);
+				//RegionText
+				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) parseRegionTextData((RegionTextData) useqData[i]);
+				//RegionScoreText
+				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) parseRegionScoreTextData((RegionScoreTextData) useqData[i]);
+				//Position
+				else if(USeqUtilities.POSITION.matcher(dataType).matches()) parsePositionData((PositionData) useqData[i]);
+				//PositionScore
+				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) parsePositionScoreData((PositionScoreData) useqData[i]);
+				//PositionText
+				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) parsePositionTextData((PositionTextData) useqData[i]);
+				//PositionScoreText
+				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) parsePositionScoreTextData((PositionScoreTextData) useqData[i]);
+				//unknown!
+				else {
+					throw new IOException ("Unknown USeq data type, '"+dataType+"', for parsing region data from "+nameOfTrack +"\n");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		return symlist;
+	}
 
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group, String stream_name, boolean addAnnotationsToSeq, ArchiveInfo ai) {		
 		this.group = group;
@@ -76,35 +130,40 @@ public final class USeqRegionParser  {
 				zis.getNextEntry();
 				this.archiveInfo = new ArchiveInfo(zis, false);
 			}
-			
+
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
 			if (group.getAllVersions().size() != 0 && group.isSynonymous(genomeVersion) == false){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
-			
+
 			//for each entry parse, will contain all of the same kind of data so just parse first to find out data type 
 			ZipEntry ze;
 			while ((ze = zis.getNextEntry()) != null){
 				//set SliceInfo
-				sliceInfo = new SliceInfo (ze.getName());
+				SliceInfo sliceInfo = new SliceInfo (ze.getName());
 				String dataType = sliceInfo.getBinaryType();
+				//set strand orientation
+				if (sliceInfo.getStrand().equals("-")) forwardStrand = false;
+				else forwardStrand = true;
+				//set the BioSeq
+				setBioSeq(sliceInfo.getChromosome());
 				//Region
-				if (USeqUtilities.REGION.matcher(dataType).matches()) parseRegionData(dis);
+				if (USeqUtilities.REGION.matcher(dataType).matches()) parseRegionData(new RegionData (dis, sliceInfo));
 				//RegionScore
-				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) parseRegionScoreData(dis);
+				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) parseRegionScoreData(new RegionScoreData (dis, sliceInfo));
 				//RegionText
-				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) parseRegionTextData(dis);
+				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) parseRegionTextData(new RegionTextData (dis, sliceInfo));
 				//RegionScoreText
-				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) parseRegionScoreTextData(dis);
+				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) parseRegionScoreTextData(new RegionScoreTextData (dis, sliceInfo));
 				//Position
-				else if(USeqUtilities.POSITION.matcher(dataType).matches()) parsePositionData(dis);
+				else if(USeqUtilities.POSITION.matcher(dataType).matches()) parsePositionData(new PositionData (dis, sliceInfo));
 				//PositionScore
-				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) parsePositionScoreData(dis);
+				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) parsePositionScoreData(new PositionScoreData (dis, sliceInfo));
 				//PositionText
-				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) parsePositionTextData(dis);
+				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) parsePositionTextData(new PositionTextData (dis, sliceInfo));
 				//PositionScoreText
-				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) parsePositionScoreTextData(dis);
+				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) parsePositionScoreTextData(new PositionScoreTextData (dis, sliceInfo));
 				//unknown!
 				else {
 					throw new IOException ("Unknown USeq data type, '"+dataType+"', for parsing region data from  -> '"+ze.getName()+"' in "+nameOfTrack +"\n");
@@ -118,121 +177,91 @@ public final class USeqRegionParser  {
 		}
 	}
 
-	private void parsePositionData(DataInputStream dis){
-		boolean forward = forward();
-		BioSeq seq = getBioSeq();
-		//make data
-		PositionData pd = new PositionData (dis, sliceInfo);
-		//add syms
+	private void parsePositionData(PositionData pd){
 		Position[] r = pd.getPositions();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
 		for (int i=0; i< r.length; i++){
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
 			int start = r[i].getPosition();
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, seq, start, start+1, null, score, forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, null, score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
-			//if (indexNames) seq_group.addToIndex(nameText, bedline_sym);
+			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
 		}
 		//set max
-		if (r[r.length-1].getPosition()+1 > seq.getLength()) seq.setLength(r[r.length-1].getPosition()+1);
+		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getPosition()+1);
 	}
 
-	private void parsePositionScoreData(DataInputStream dis){
-		PositionScoreData pd = new PositionScoreData (dis, sliceInfo);
-		boolean forward = forward();
-		BioSeq seq = getBioSeq();
+	private void parsePositionScoreData(PositionScoreData pd){
 		//add syms
 		PositionScore[] r = pd.getPositionScores();
 		for (int i=0; i< r.length; i++){
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
 			int start = r[i].getPosition();
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, seq, start, start+1, null, r[i].getScore(), forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, null, r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
-			//if (indexNames) seq_group.addToIndex(nameText, bedline_sym);
+			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
 		}
 		//set max
-		if (r[r.length-1].getPosition()+1 > seq.getLength()) seq.setLength(r[r.length-1].getPosition()+1);
+		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getPosition()+1);
 	}
 
-	private void parsePositionTextData(DataInputStream dis) {
-		PositionTextData pd = new PositionTextData (dis, sliceInfo);
-		boolean forward = forward();
-		BioSeq seq = getBioSeq();
+	private void parsePositionTextData(PositionTextData pd) {
 		//add syms
 		PositionText[] r = pd.getPositionTexts();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
 		for (int i=0; i< r.length; i++){
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
 			int start = r[i].getPosition();
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, seq, start, start+1, r[i].getText(), score, forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, r[i].getText(), score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
-			//if (indexNames) seq_group.addToIndex(nameText, bedline_sym);
+			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
 		}
 		//set max
-		if (r[r.length-1].getPosition()+1 > seq.getLength()) seq.setLength(r[r.length-1].getPosition()+1);
+		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getPosition()+1);
 	}
 
-	private void parsePositionScoreTextData(DataInputStream dis) {
-		PositionScoreTextData pd = new PositionScoreTextData (dis, sliceInfo);
-		boolean forward = forward();
-		BioSeq seq = getBioSeq();
+	private void parsePositionScoreTextData(PositionScoreTextData pd) {
 		//add syms
 		PositionScoreText[] r = pd.getPositionScoreTexts();
 		for (int i=0; i< r.length; i++){
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
 			int start = r[i].getPosition();
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, seq, start, start+1, r[i].getText(), r[i].getScore(), forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, r[i].getText(), r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
-			//if (indexNames) seq_group.addToIndex(nameScoreText, bedline_sym);
+			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
 		}
 		//set max
-		if (r[r.length-1].getPosition()+1 > seq.getLength()) seq.setLength(r[r.length-1].getPosition()+1);
+		if (r[r.length-1].getPosition()+1 > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getPosition()+1);
 	}
 
-	private void parseRegionData(DataInputStream dis) {
-		boolean forward = forward();
-		BioSeq seq = getBioSeq();
-		//make data
-		RegionData pd = new RegionData (dis, sliceInfo);
+	private void parseRegionData(RegionData pd) {
 		//add syms
 		Region[] r = pd.getRegions();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
 		for (int i=0; i< r.length; i++){
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, seq, r[i].getStart(), r[i].getStop(), null, score, forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), null, score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
-			//if (indexNames) seq_group.addToIndex(nameText, bedline_sym);
+			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
 		}
 		//set max
-		if (r[r.length-1].getStop() > seq.getLength()) seq.setLength(r[r.length-1].getStop());
+		if (r[r.length-1].getStop() > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getStop());
 	}
 
-	private void parseRegionScoreData(DataInputStream dis) {
-		RegionScoreData pd = new RegionScoreData (dis, sliceInfo);
-		boolean forward = forward();
-		BioSeq seq = getBioSeq();
+	private void parseRegionScoreData(RegionScoreData pd) {
 		//add syms
 		RegionScore[] r = pd.getRegionScores();
 		for (int i=0; i< r.length; i++){
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, seq, r[i].getStart(), r[i].getStop(), null, r[i].getScore(), forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), null, r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
-			//if (indexNames) seq_group.addToIndex(nameText, bedline_sym);
+			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
 		}
 		//set max
-		if (r[r.length-1].getStop() > seq.getLength()) seq.setLength(r[r.length-1].getStop());
+		if (r[r.length-1].getStop() > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getStop());
 	}
 
-	private void parseRegionTextData(DataInputStream dis) {
-		RegionTextData pd = new RegionTextData (dis, sliceInfo);
-		boolean forward = forward();
-		BioSeq seq = getBioSeq();
+	private void parseRegionTextData(RegionTextData pd) {
 		//add syms
 		RegionText[] r = pd.getRegionTexts();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
@@ -256,35 +285,31 @@ public final class USeqRegionParser  {
 				// blockSizes
 				int[] blockSizes = BedParser.parseIntArray(tokens[5]);
 				if (blockCount != blockSizes.length) {
-					System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + seq);
+					System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + bioSeq);
 					return;
 				}
 				// blockStarts
 				int[] blockStarts = BedParser.parseIntArray(tokens[6]); 
 				if (blockCount != blockStarts.length) {
-					System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + seq);
+					System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + bioSeq);
 					return;
 				}
 				int[] blockMins = BedParser.makeBlockMins(min, blockStarts);
 				int[] blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
-				bedline_sym = new UcscBedSym(nameOfTrack, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
+				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, min, max, annot_name, score, forwardStrand, thick_min, thick_max, blockMins, blockMaxs);
 			}
 			//no
 			else {
-				bedline_sym = new UcscBedSym(nameOfTrack, seq, r[i].getStart(), r[i].getStop(), r[i].getText(), score, forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), r[i].getText(), score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
 			}
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
-			//if (indexNames) seq_group.addToIndex(nameText, bedline_sym);
+			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
 		}
 		//set max
-		if (r[r.length-1].getStop() > seq.getLength()) seq.setLength(r[r.length-1].getStop());
+		if (r[r.length-1].getStop() > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getStop());
 	}
 
-	private void parseRegionScoreTextData(DataInputStream dis) {
-		RegionScoreTextData pd = new RegionScoreTextData (dis, sliceInfo);
-		boolean forward = forward();
-		BioSeq seq = getBioSeq();
+	private void parseRegionScoreTextData(RegionScoreTextData pd) {
 		//add syms
 		RegionScoreText[] r = pd.getRegionScoreTexts();
 		for (int i=0; i< r.length; i++){
@@ -306,44 +331,36 @@ public final class USeqRegionParser  {
 				// blockSizes
 				int[] blockSizes = BedParser.parseIntArray(tokens[5]);
 				if (blockCount != blockSizes.length) {
-					System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + seq);
+					System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + bioSeq);
 					return;
 				}
 				// blockStarts
 				int[] blockStarts = BedParser.parseIntArray(tokens[6]); 
 				if (blockCount != blockStarts.length) {
-					System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + seq);
+					System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + bioSeq);
 					return;
 				}
 				int[] blockMins = BedParser.makeBlockMins(min, blockStarts);
 				int[] blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
-				bedline_sym = new UcscBedSym(nameOfTrack, seq, min, max, annot_name, r[i].getScore(), forward, thick_min, thick_max, blockMins, blockMaxs);
+				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, min, max, annot_name, r[i].getScore(), forwardStrand, thick_min, thick_max, blockMins, blockMaxs);
 			}
 			//no
 			else {
-				bedline_sym = new UcscBedSym(nameOfTrack, seq, r[i].getStart(), r[i].getStop(), r[i].getText(), r[i].getScore(), forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), r[i].getText(), r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
 			}
 			symlist.add(bedline_sym);
-			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
-			//if (indexNames) seq_group.addToIndex(nameScoreText, bedline_sym);
+			if (addAnnotationsToSeq) bioSeq.addAnnotation(bedline_sym);
 		}
 		//set max
-		if (r[r.length-1].getStop() > seq.getLength()) seq.setLength(r[r.length-1].getStop());
+		if (r[r.length-1].getStop() > bioSeq.getLength()) bioSeq.setLength(r[r.length-1].getStop());
 	}
 
 	/*find BioSeq or make a new one*/
-	private BioSeq getBioSeq(){
-		String chromosome = sliceInfo.getChromosome();
-		BioSeq seq = group.getSeq(chromosome);
-		if (seq == null)  {
-			seq = group.addSeq(chromosome, 0);
+	private void setBioSeq(String chromosome){
+		bioSeq = group.getSeq(chromosome);
+		if (bioSeq == null)  {
+			bioSeq = group.addSeq(chromosome, 0);
 		}
-		return seq;
-	}
-	/*Returns true if strand is + or .*/
-	private boolean forward(){
-		String strand = sliceInfo.getStrand();
-		return strand.equals("+") || strand.equals(".");
 	}
 
 

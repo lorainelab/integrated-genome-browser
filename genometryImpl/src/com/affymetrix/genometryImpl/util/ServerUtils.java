@@ -1080,9 +1080,10 @@ public abstract class ServerUtils {
 	 * Determine the appropriate loader.
 	 * @return
 	 */
-	public static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {
+	public static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {		
 		// residue loaders
-		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
+		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .		
+		
 		if (extension.equals("bnib")) {
 			return new BNIB(uri, group);
 		}
@@ -1113,9 +1114,9 @@ public abstract class ServerUtils {
 			return new Sgr(uri, featureName, group);
 		}
 		// commented out until the USeq class is updated
-//		if (extension.equals("useq")) {
-//			return new USeq(uri, featureName, group);
-//		}
+		if (extension.equals("useq")) {
+			return new USeq(uri, featureName, group);
+		}
 		if (extension.equals("wig") || extension.equals("bedgraph")) {
 			return new Wiggle(uri, featureName, group);
 		}
@@ -1138,7 +1139,7 @@ public abstract class ServerUtils {
 			return new SymLoaderInst(uri, featureName, group);
 		}
 		if((extension.equals("sin") || extension.equals("egr")) ||
-				extension.equals("bgr") || extension.equals("useq")
+				extension.equals("bgr")
 				|| extension.equals("bar") || extension.equals("chp")){
 			return new SymLoaderInstNC(uri, featureName, group);
 		}if((extension.equals("gff3")) || extension.endsWith("gff") ||

@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.parsers.useq.data;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import com.affymetrix.genometryImpl.parsers.useq.*;
@@ -168,6 +169,38 @@ public class RegionData extends USeqData{
 			USeqUtilities.safeClose(workingFOS);
 		}
 		return binaryFile;
+	}
+	
+	/**Assumes all are of the same chromosome and strand!*/
+	public static RegionData merge (ArrayList<RegionData> pdAL){
+		//convert to arrays and sort
+		RegionData[] pdArray = new RegionData[pdAL.size()];
+		pdAL.toArray(pdArray);
+		Arrays.sort(pdArray);
+		//fetch total size of Region[]
+		int num = 0;
+		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedRegions.length;
+		//concatinate
+		Region[] concatinate = new Region[num];
+		int index = 0;
+		for (int i=0; i< pdArray.length; i++){
+			Region[] slice = pdArray[i].sortedRegions;
+			System.arraycopy(slice, 0, concatinate, index, slice.length);
+			index += slice.length;
+		}
+		//get and modify header
+		SliceInfo sliceInfo = pdArray[0].sliceInfo;
+		RegionData.updateSliceInfo(concatinate, sliceInfo);
+		//return new RegionData
+		return new RegionData(concatinate, sliceInfo);
+	}
+	
+	public static RegionData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
+		int num = useqDataAL.size();
+		//convert ArrayList
+		ArrayList<RegionData> a = new ArrayList<RegionData>(num);
+		for (int i=0; i< num; i++) a.add((RegionData) useqDataAL.get(i));
+		return merge (a);
 	}
 
 	/**Writes the Region[] to a ZipOutputStream.

@@ -123,15 +123,23 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		PositionScore[] concatinate = new PositionScore[num];
 		int index = 0;
 		for (int i=0; i< pdArray.length; i++){
-			Position[] slice = pdArray[i].sortedPositionScores;
+			PositionScore[] slice = pdArray[i].sortedPositionScores;
 			System.arraycopy(slice, 0, concatinate, index, slice.length);
 			index += slice.length;
 		}
 		//get and modify header
 		SliceInfo sliceInfo = pdArray[0].sliceInfo;
 		PositionScoreData.updateSliceInfo(concatinate, sliceInfo);
-		//return new PositionData
+		//return new PositionScoreData
 		return new PositionScoreData(concatinate, sliceInfo);
+	}
+	
+	public static PositionScoreData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
+		int num = useqDataAL.size();
+		//convert ArrayList
+		ArrayList<PositionScoreData> a = new ArrayList<PositionScoreData>(num);
+		for (int i=0; i< num; i++) a.add((PositionScoreData) useqDataAL.get(i));
+		return merge (a);
 	}
 
 	/**Writes six column xxx.bed formatted lines to the PrintWriter*/

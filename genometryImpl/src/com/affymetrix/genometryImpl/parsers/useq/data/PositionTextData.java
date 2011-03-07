@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.parsers.useq.data;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import com.affymetrix.genometryImpl.parsers.useq.*;
@@ -124,6 +125,38 @@ public class PositionTextData extends USeqData{
 			USeqUtilities.safeClose(workingFOS);
 		}
 		return binaryFile;
+	}
+	
+	/**Assumes all are of the same chromosome and strand! Sorts PositionTextData prior to merging*/
+	public static PositionTextData merge (ArrayList<PositionTextData> pdAL){
+		//convert to arrays and sort
+		PositionTextData[] pdArray = new PositionTextData[pdAL.size()];
+		pdAL.toArray(pdArray);
+		Arrays.sort(pdArray);
+		//fetch total size of PositionText[]
+		int num = 0;
+		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositionTexts.length;
+		//concatinate
+		PositionText[] concatinate = new PositionText[num];
+		int index = 0;
+		for (int i=0; i< pdArray.length; i++){
+			PositionText[] slice = pdArray[i].sortedPositionTexts;
+			System.arraycopy(slice, 0, concatinate, index, slice.length);
+			index += slice.length;
+		}
+		//get and modify header
+		SliceInfo sliceInfo = pdArray[0].sliceInfo;
+		PositionTextData.updateSliceInfo(concatinate, sliceInfo);
+		//return new PositionTextData
+		return new PositionTextData(concatinate, sliceInfo);
+	}
+	
+	public static PositionTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
+		int num = useqDataAL.size();
+		//convert ArrayList
+		ArrayList<PositionTextData> a = new ArrayList<PositionTextData>(num);
+		for (int i=0; i< num; i++) a.add((PositionTextData) useqDataAL.get(i));
+		return merge (a);
 	}
 
 	/**Writes the PositionText[] to a ZipOutputStream.

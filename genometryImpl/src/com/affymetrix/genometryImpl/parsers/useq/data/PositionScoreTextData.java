@@ -3,6 +3,7 @@ import com.affymetrix.genometryImpl.parsers.useq.*;
 import com.affymetrix.genometryImpl.parsers.useq.apps.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -207,6 +208,38 @@ public class PositionScoreTextData extends USeqData{
 			USeqUtilities.safeClose(out);
 			USeqUtilities.safeClose(dos);
 		} 
+	}
+	
+	/**Assumes all are of the same chromosome and strand! Sorts PositionScoreTextData prior to merging*/
+	public static PositionScoreTextData merge (ArrayList<PositionScoreTextData> pdAL){
+		//convert to arrays and sort
+		PositionScoreTextData[] pdArray = new PositionScoreTextData[pdAL.size()];
+		pdAL.toArray(pdArray);
+		Arrays.sort(pdArray);
+		//fetch total size of PositionScore[]
+		int num = 0;
+		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedPositionScoreTexts.length;
+		//concatinate
+		PositionScoreText[] concatinate = new PositionScoreText[num];
+		int index = 0;
+		for (int i=0; i< pdArray.length; i++){
+			PositionScoreText[] slice = pdArray[i].sortedPositionScoreTexts;
+			System.arraycopy(slice, 0, concatinate, index, slice.length);
+			index += slice.length;
+		}
+		//get and modify header
+		SliceInfo sliceInfo = pdArray[0].sliceInfo;
+		PositionScoreTextData.updateSliceInfo(concatinate, sliceInfo);
+		//return new PositionData
+		return new PositionScoreTextData(concatinate, sliceInfo);
+	}
+	
+	public static PositionScoreTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
+		int num = useqDataAL.size();
+		//convert ArrayList
+		ArrayList<PositionScoreTextData> a = new ArrayList<PositionScoreTextData>(num);
+		for (int i=0; i< num; i++) a.add((PositionScoreTextData) useqDataAL.get(i));
+		return merge (a);
 	}
 
 	/**Reads a DataInputStream into this PositionScoreData.*/

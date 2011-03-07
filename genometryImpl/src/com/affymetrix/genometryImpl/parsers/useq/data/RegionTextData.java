@@ -179,6 +179,38 @@ public class RegionTextData extends USeqData{
 		}
 		return binaryFile;
 	}
+	
+	/**Assumes all are of the same chromosome and strand!*/
+	public static RegionTextData merge (ArrayList<RegionTextData> pdAL){
+		//convert to arrays and sort
+		RegionTextData[] pdArray = new RegionTextData[pdAL.size()];
+		pdAL.toArray(pdArray);
+		Arrays.sort(pdArray);
+		//fetch total size of RegionText[]
+		int num = 0;
+		for (int i=0; i< pdArray.length; i++) num += pdArray[i].sortedRegionTexts.length;
+		//concatinate
+		RegionText[] concatinate = new RegionText[num];
+		int index = 0;
+		for (int i=0; i< pdArray.length; i++){
+			RegionText[] slice = pdArray[i].sortedRegionTexts;
+			System.arraycopy(slice, 0, concatinate, index, slice.length);
+			index += slice.length;
+		}
+		//get and modify header
+		SliceInfo sliceInfo = pdArray[0].sliceInfo;
+		RegionTextData.updateSliceInfo(concatinate, sliceInfo);
+		//return new RegionTextData
+		return new RegionTextData(concatinate, sliceInfo);
+	}
+	
+	public static RegionTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
+		int num = useqDataAL.size();
+		//convert ArrayList
+		ArrayList<RegionTextData> a = new ArrayList<RegionTextData>(num);
+		for (int i=0; i< num; i++) a.add((RegionTextData) useqDataAL.get(i));
+		return merge (a);
+	}
 
 	/**Writes the Region[] to a ZipOutputStream.
 	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed

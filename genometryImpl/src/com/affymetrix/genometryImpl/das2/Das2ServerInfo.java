@@ -232,7 +232,6 @@ public final class Das2ServerInfo  {
 			// to the servlet.  If authentication succeeds, a session will
 			// be established.
 			String das_query = server_uri + "/login";
-			System.out.println("\tDas2 Authentication Request: " + das_query);
 
 			Map<String,String> headers = new LinkedHashMap<String,String>();
 
@@ -246,10 +245,7 @@ public final class Das2ServerInfo  {
 			String cookie = headers.get("set-cookie");
 			if (cookie != null) {
 				sessionId = cookie.substring(0, cookie.indexOf(";"));
-				System.out.println("\tSessionId: " + sessionId);
-			} else {
-				System.out.println("\tNo sessionId found in header. No authentication.");
-			}
+			} 
 		} catch (IOException ex) {
 			System.out.println("Failed server login test:");
 			ex.printStackTrace();

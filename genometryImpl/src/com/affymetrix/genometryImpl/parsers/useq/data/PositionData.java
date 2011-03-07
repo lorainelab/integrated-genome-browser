@@ -69,6 +69,14 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		//return new PositionData
 		return new PositionData(concatinate, sliceInfo);
 	}
+	
+	public static PositionData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
+		int num = useqDataAL.size();
+		//convert ArrayList
+		ArrayList<PositionData> a = new ArrayList<PositionData>(num);
+		for (int i=0; i< num; i++) a.add((PositionData) useqDataAL.get(i));
+		return merge (a);
+	}
 
 	/**By position, smallest to largest, assumes same chromosome strand.*/
 	public int compareTo (PositionData other){
@@ -287,4 +295,6 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 		updateSliceInfo(sortedPositions, sliceInfo);
 		return true;
 	}
+
+
 }

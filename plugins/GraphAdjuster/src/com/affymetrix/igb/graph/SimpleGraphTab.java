@@ -66,8 +66,8 @@ import javax.swing.event.*;
 public final class SimpleGraphTab extends IGBTabPanel
 				implements SeqSelectionListener, SymSelectionListener {
 	private static final long serialVersionUID = 1L;
-
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
+	private static final int TAB_POSITION = 4;
 
 	SeqMapView gviewer = null;
 	BioSeq current_seq;
@@ -151,7 +151,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private AdvancedGraphPanel advanced_panel;
 
 	public SimpleGraphTab(IGBService igbService) {
-		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), true, 4);
+		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), true, TAB_POSITION);
 		advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
 		this.gviewer = (SeqMapView)igbService.getMapView();
 

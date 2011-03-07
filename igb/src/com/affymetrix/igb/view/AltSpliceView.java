@@ -38,6 +38,7 @@ public class AltSpliceView extends IGBTabPanel
 				SymSelectionListener, SeqSelectionListener,
 				TierLabelManager.PopupListener {
 	private static final long serialVersionUID = 1L;
+	private static final int TAB_POSITION = 3;
 
 	private final AltSpliceSeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;
@@ -50,7 +51,7 @@ public class AltSpliceView extends IGBTabPanel
 	private boolean slice_by_selection_on = true;
 
 	public AltSpliceView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"), true, 5);
+		super(igbService, BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"), true, TAB_POSITION);
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;

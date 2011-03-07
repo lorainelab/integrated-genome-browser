@@ -41,6 +41,7 @@ import javax.swing.table.TableRowSorter;
 public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
+	private static final int TAB_POSITION = 1;
 
 	// the table showing name-value pairs
 	private static final JTable table = new JTable();
@@ -52,7 +53,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
 
 	public PropertyView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, 2);
+		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, TAB_POSITION);
 		determineOrder();
 		JViewport jvp = new JViewport();
 		scroll_pane.setColumnHeaderView(jvp);

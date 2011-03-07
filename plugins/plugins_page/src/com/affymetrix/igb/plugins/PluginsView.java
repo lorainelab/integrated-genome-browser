@@ -58,9 +58,11 @@ import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
  */
 public class PluginsView extends IGBTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 	private static final long serialVersionUID = 1L;
+	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
+	private static final int TAB_POSITION = 5;
+
 	private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 	private final Cursor defaultCursor = null;
-	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
 	private static final BundleFilter BOTH_BUNDLE_FILTER = new BundleFilter() {
 		@Override
 		public boolean filterBundle(Bundle bundle) {
@@ -113,7 +115,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	private BundleFilter bundleFilter;
 
 	public PluginsView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false, Integer.MAX_VALUE);
+		super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), false, TAB_POSITION);
 		latest = new HashMap<String, Bundle>();
 
 		igbService.addRepositoryChangeListener(this);

@@ -40,6 +40,7 @@ public final class RestrictionControlView extends IGBTabPanel
 	private static final long serialVersionUID = 0;
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
+	private static final int TAB_POSITION = 1;
 	private final SeqMapView gviewer;
 	private final Map<String,String> site_hash = new HashMap<String,String>();
 	private JList siteList;
@@ -64,7 +65,7 @@ public final class RestrictionControlView extends IGBTabPanel
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 
 	public RestrictionControlView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), false, 7);
+		super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), false, TAB_POSITION);
 		this.gviewer = (SeqMapView)igbService.getMapView();
 		boolean load_success = true;
 
@@ -153,7 +154,7 @@ public final class RestrictionControlView extends IGBTabPanel
 
 	@Override
 	public TabState getDefaultState() {
-		return TabState.COMPONENT_STATE_LEFT_TAB;
+		return TabState.COMPONENT_STATE_RIGHT_TAB;
 	}
 
 	public void valueChanged(ListSelectionEvent evt) {

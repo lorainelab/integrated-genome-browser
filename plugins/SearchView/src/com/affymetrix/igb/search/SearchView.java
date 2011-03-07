@@ -54,8 +54,8 @@ public final class SearchView extends IGBTabPanel implements
 		ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener {
 	
 	private static final long serialVersionUID = 0;
-
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
+	private static final int TAB_POSITION = 2;
 
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
@@ -108,7 +108,7 @@ public final class SearchView extends IGBTabPanel implements
 	private List<SeqSymmetry> remoteSymList;
 
 	public SearchView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, 3);
+		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, TAB_POSITION);
 		gviewer = (SeqMapView)igbService.getMapView();
 		gviewer.addToRefreshList(this);
 		

@@ -36,6 +36,7 @@ import java.awt.Component;
 
 public final class SeqGroupView extends IGBTabPanel implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final long serialVersionUID = 1L;
+	private static final int TAB_POSITION = 0;
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
 	private final static boolean DEBUG_EVENTS = false;
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -59,7 +60,7 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 	}
 
 	private SeqGroupView(IGBService _igbService) {
-		super(_igbService, BUNDLE.getString("sequenceTab"), BUNDLE.getString("sequenceTab"), false, 1);
+		super(_igbService, BUNDLE.getString("sequenceTab"), BUNDLE.getString("sequenceTab"), true, TAB_POSITION);
 		seqtable.setToolTipText(CHOOSESEQ);
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);
@@ -85,7 +86,7 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 
 	@Override
 	public TabState getDefaultState() {
-		return TabState.COMPONENT_STATE_LEFT_TAB;
+		return TabState.COMPONENT_STATE_RIGHT_TAB;
 	}
 
 	/**

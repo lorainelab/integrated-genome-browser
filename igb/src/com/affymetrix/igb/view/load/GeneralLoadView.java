@@ -72,6 +72,7 @@ import javax.swing.table.TableColumn;
 public final class GeneralLoadView extends IGBTabPanel
 				implements ItemListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
 	private static final long serialVersionUID = 1L;
+	private static final int TAB_POSITION = Integer.MIN_VALUE;
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
@@ -113,7 +114,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	}
 
 	private GeneralLoadView(IGBService _igbService) {
-		super(_igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), true, Integer.MIN_VALUE);
+		super(_igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), true, TAB_POSITION);
 		gviewer = (SeqMapView)igbService.getMapView();
 		this.setLayout(new BorderLayout());
 

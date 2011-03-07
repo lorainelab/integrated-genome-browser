@@ -20,16 +20,17 @@ import com.affymetrix.igb.view.SeqMapView;
  */
 public class ExternalViewer extends IGBTabPanel {
 	private static final long serialVersionUID = 1L;
+	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
+	private static final int TAB_POSITION = 5;
 	private static final int VIEW_MENU_POS = 2;
 
-	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
 	private static final String[] names = {UCSCView.viewName};
 	final JComboBox ucscBox;
 	private final UCSCViewAction ucscViewAction;
 	private final JMenuItem menuItem;
 
 	public ExternalViewer(IGBService igbService_) {
-		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, 6);
+		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, TAB_POSITION);
 		this.setLayout(new CardLayout());
 		ucscBox = createBox();
 		ucscViewAction = new UCSCViewAction((SeqMapView)igbService.getMapView());

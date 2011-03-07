@@ -41,6 +41,7 @@ public class USeq extends SymLoader {
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
+		strategyList.add(LoadStrategy.AUTOLOAD);
 		strategyList.add(LoadStrategy.GENOME);
 	}
 

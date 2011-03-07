@@ -3,6 +3,7 @@ package com.affymetrix.igb.window.service.def;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -57,6 +58,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private final String title;
 	private boolean retractDividerSet;
 	private JFrame frame;
+	private boolean initialized = false;
 
 	/**
 	 * set the JTabbedPane in the JSplitPane - different for
@@ -443,4 +445,13 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			PreferenceUtils.saveWindowLocation(frame, title);
 		}
 	}
+
+	@Override
+    public void paint(Graphics g) {
+    	super.paint(g);
+    	if (!initialized) {
+    		resize();
+    		initialized = true;
+    	}
+    }
 }

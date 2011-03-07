@@ -12,6 +12,9 @@ import javax.swing.JPanel;
 public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel> {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * the current state of the tab
+	 */
 	public enum TabState {
 		COMPONENT_STATE_LEFT_TAB(true, true),
 		COMPONENT_STATE_RIGHT_TAB(true, true),
@@ -27,14 +30,28 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 			this.portrait = portrait;
 		}
 
+		/**
+		 * this state is a tab (left, right or botton)
+		 * @return true if this state is a tab, false for hidden or
+		 * windowed
+		 */
 		public boolean isTab() {
 			return tab;
 		}
 
+		/**
+		 * get the default tab state
+		 * @return the default tab state
+		 */
 		public static TabState getDefaultTabState() {
 			return COMPONENT_STATE_BOTTOM_TAB;
 		}
 
+		/**
+		 * get the list of all tab states that the user can change
+		 * the tab - depends on the initial tab state of the tab.
+		 * @return a list of all compatible tab states
+		 */
 		public List<TabState> getCompatibleTabStates() {
 			List<TabState> compatibleTabStates = new ArrayList<TabState>();
 			for (TabState tabState : TabState.values()) {
@@ -49,7 +66,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	protected final IGBService igbService;
 	private final String displayName;
 	private final String title;
-	private final boolean main;
+	private final boolean focus;
 	private final int position;
 	private JFrame frame;
 
@@ -57,43 +74,67 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		this(igbService, displayName, title, main, Integer.MAX_VALUE - 1);
 	}
 	
-	protected IGBTabPanel(IGBService igbService, String displayName, String title, boolean main, int position) {
+	protected IGBTabPanel(IGBService igbService, String displayName, String title, boolean focus, int position) {
 		super();
 		this.igbService = igbService;
 		this.displayName = displayName;
 		this.title = title;
-		this.main = main;
+		this.focus = focus;
 		this.position = position;
 	}
 
+	@Override
 	public String getName() {
 		return getClass().getName();
 	}
 
+	/**
+	 * get the name to display to the user
+	 * @return the name to display to the user (on the tab)
+	 */
 	public String getDisplayName() {
 		return displayName;
 	}
 
+	/**
+	 * get the title of the tab panel
+	 * @return the title
+	 */
 	public String getTitle() {
 		return title;
 	}
 
-	public boolean isMain() {
-		return main;
-	}
-
+	/**
+	 * if this tab should be the tab selected when IGB starts
+	 * @return true if this tab panel should get initial
+	 * selection/focus, false otherwise
+	 */
 	public boolean isFocus() {
-		return false;
+		return focus;
 	}
 
+	/**
+	 * get the default / initial state of this tab panel
+	 * @return the default state of this tab
+	 */
 	public TabState getDefaultState() {
 		return TabState.COMPONENT_STATE_BOTTOM_TAB;
 	}
 
+	/**
+	 * get the main Frame for this panel (only applies when
+	 * a separate window - tab state WINDOW)
+	 * @return the JFrame of this tab panel
+	 */
 	public JFrame getFrame() {
 		return frame;
 	}
 
+	/**
+	 * set the main Frame for this panel (only applies when
+	 * a separate window - tab state WINDOW)
+	 * @param the JFrame of this tab panel
+	 */
 	public void setFrame(JFrame frame) {
 		this.frame = frame;
 	}

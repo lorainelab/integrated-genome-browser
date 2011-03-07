@@ -1072,10 +1072,5 @@ public final class GeneralLoadView extends IGBTabPanel
 
 		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
 	}
-
-	@Override
-	public boolean isFocus() {
-		return true;
-	}
 }
 

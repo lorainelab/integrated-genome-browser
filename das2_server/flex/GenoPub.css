@@ -72,6 +72,18 @@ mx|LinkBar {
 	separatorWidth: 1;
 }
 
+.navLinkButton {
+	color: #463B40;
+	disabledColor: #FFFFFF; 
+	rollOverColor: #FFFFFF; 
+	selectionColor: #FFFFFF;
+	useHandCursor: true;
+	fontSize: 11;
+	fontWeight: normal;
+	separatorColor: #FFFFFF;
+	separatorWidth: 1;
+}
+
 .linkBarButtonText
 {
 	fontWeight: bold;
@@ -187,6 +199,16 @@ mx|TitleWindow {
 	color: #463B40;
 	fontSize: 9;
 	textDecoration: normal;
+	horizontalGap: 0;
+	fontWeight: normal;
+	textRollOverColor: #463B40;
+	textSelectedColor: #463B40;
+}
+.linkMenuButtonSmall
+{
+	color: #463B40;
+	textDecoration: underline;
+	fontSize: 9;
 	horizontalGap: 0;
 	fontWeight: normal;
 	textRollOverColor: #463B40;

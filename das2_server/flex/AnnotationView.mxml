@@ -1850,7 +1850,7 @@
 		private function addProperty():void {
 			this.initializePropertiesFromComponents();
 			if (newPropertyCombo.selectedItem != null && newPropertyCombo.selectedItem.@name != '' && newPropertyCombo.selectedItem.@name != 'New property...') {
-				annotationProperties.addItem(newPropertyCombo.selectedItem.copy());				
+				annotationProperties.addItemAt(newPropertyCombo.selectedItem.copy(), 0);				
 				newPropertyCombo.selectedIndex = 0;
 			}
 		}
@@ -2502,43 +2502,18 @@
 						  titleIcon="{getAnnotation.lastResult.@codeVisibility == 'INST' ? parentApplication.iconAnnotationInstitution : (getAnnotation.lastResult.@codeVisibility == 'MEM' ? parentApplication.iconAnnotationMember : (getAnnotation.lastResult.@codeVisibility == 'MEMCOL' ? parentApplication.iconAnnotationMemberCollab : (getAnnotation.lastResult.@codeVisibility == 'OWNER' ? parentApplication.iconAnnotationOwner : parentApplication.iconAnnotationPublic)))}">
 				 <mx:TabNavigator width="100%" height="100%" tabWidth="130">
 					 
-				  <mx:VBox width="100%" height="100%" styleName="panelBody" verticalGap="0" label="Details">
-				   <mx:VBox width="100%" height="100%" verticalGap="4">
-			  			<mx:HBox width="100%" horizontalGap="0">
-							<mx:Label text="Name:" width="126"/>
-							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@name}" id="annotationName" change="dirtyAnnotation.setDirty()" maxChars="2000"/>					    	
-							<mx:HBox horizontalGap="0" id="userGroupBox">
-								<mx:Label text="User Group:" width="126"/>
-								<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="170" labelField="@name" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
-							</mx:HBox>
+				  <mx:HBox width="100%" height="100%" styleName="panelBody" verticalGap="0" label="Details">
+				   <mx:VBox width="70%" height="100%" verticalGap="4">
+			  			<mx:HBox width="100%" verticalAlign="middle" horizontalGap="2">
+							<mx:Label text="Name"/>
+							<mx:TextInput width="100%" maxChars="2000" text="{getAnnotation.lastResult.@name}" id="annotationName" change="dirtyAnnotation.setDirty()"/>					    	
 						</mx:HBox>
-						<mx:HBox width="100%" horizontalGap="0">
-							<mx:Label text="Summary:" width="126"/>
-							<mx:TextInput width="100%" height="100%" text="{getAnnotation.lastResult.@summary}" id="annotationSummary" change="dirtyAnnotation.setDirty()" maxChars="5000"/>
-							<mx:HBox horizontalGap="0" >
-								  <mx:VBox>
-									  <mx:HBox horizontalGap="0" id="annotationOwnerBox">
-										  <mx:Label text="Owner:" width="126" id="label2"/>
-										  <mx:ViewStack id="annotationOwnerStack"  width="170">
-											  <mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" width="100%">
-												  <mx:ComboBox width="100%" id="annotationOwnerCombo" labelField="@name" dataProvider="{parentApplication.dictionaryUser}" change="dirtyAnnotation.setDirty()"></mx:ComboBox>							         			
-											  </mx:HBox>
-											  <mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0">
-												  <mx:Label text="{getAnnotation.lastResult.@owner}"/>							         			
-											  </mx:HBox>
-										  </mx:ViewStack>
-										  
-									  </mx:HBox>
-									  <mx:HBox  horizontalGap="0"  id="hbox14" >
-										  <mx:Label text="Created by:" width="126"/>
-										  <mx:Label width="170" text="{getAnnotation.lastResult.@createdBy + ' ' + getAnnotation.lastResult.@createDate}"/>
-									  </mx:HBox>
-									  
-								  </mx:VBox>
-							</mx:HBox>
-						</mx:HBox>
-						<mx:HBox width="100%" id="hbox3" horizontalGap="0" height="100%">
-							<mx:Label text="Description:" width="126"/>
+						<mx:VBox width="100%" verticalGap="0">
+							<mx:Label text="Summary" width="70"/>
+							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@summary}" id="annotationSummary" change="dirtyAnnotation.setDirty()" maxChars="5000"  height="40"/>
+						</mx:VBox>
+						<mx:VBox width="100%" id="hbox3" verticalGap="0" height="100%">
+							<mx:Label text="Description" width="126"/>
 							<mx:RichTextEditor  borderStyle="none"  headerHeight="0"  
 								id="annotationDescriptionRichText" width="100%" 
 								htmlText="{getAnnotation.lastResult.@description}" 
@@ -2549,109 +2524,113 @@
 								roundedBottomCorners="false" paddingBottom="0" 
 								borderThicknessRight="0" borderThicknessLeft="0" 
 								borderThicknessBottom="0" borderThickness="0" 
-								borderThicknessTop="0" height="100%" minHeight="50"/>
-						</mx:HBox>
+								borderThicknessTop="0" height="100%" minHeight="80" />
+						</mx:VBox>
 
 				   </mx:VBox>
-				   <mx:Spacer height="8"/>
-				   <mx:HRule width="100%"/>
-				   <mx:HBox width="100%">
-					   	<mx:VBox width="50%" id="vbox8" paddingTop="8" verticalGap="4">
+				   <mx:VBox width="30%" height="100%" verticalGap="0">
+					   	<mx:VBox  id="vbox8"  verticalGap="4">
 							<mx:HBox horizontalGap="0" id="hbox11" width="100%">
-							    		<mx:Label text="Experiment Platform:" width="126"/>
+							    		<mx:Label text="Experiment Platform" width="126"/>
 							    		<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentPlatform}" labelField="@name" id="experimentPlatformCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>					    
 							  	</mx:HBox>
 							<mx:HBox width="100%" horizontalGap="0" id="hbox12">
-								<mx:Label text="Experiment Method:" width="126"/>
+								<mx:Label text="Experiment Method" width="126"/>
 								<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentMethod}" labelField="@name" id="experimentMethodCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
 							</mx:HBox>
 							<mx:HBox width="100%" horizontalGap="0">
-								<mx:Label text="Analysis Type:" width="126"/>
+								<mx:Label text="Analysis Type" width="126"/>
 								<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryAnalysisType}" labelField="@name" id="analysisTypeCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
 							</mx:HBox>
-							<mx:VBox width="100%" height="100%" verticalGap="2" >
-								<mx:Repeater  id="propertyRepeater" 
-											  dataProvider="{annotationProperties}">
-									<mx:HBox verticalAlign="middle" width="100%"  horizontalGap="0" >
-										<mx:HBox width="126" horizontalGap="0" paddingLeft="0" paddingRight="0">
-											<mx:Image source="{parentApplication.iconSmallDelete}" click="removeProperty(event.currentTarget.getRepeaterItem())" scaleContent="false"/>
-											<mx:Text text="{propertyRepeater.currentItem.@name}" width="100%" 
-													 creationComplete="onCreatePropertyLabel(event.currentTarget.getRepeaterItem(), event.target.instanceIndices[0])"/>
-											
-										</mx:HBox>
-										<mx:ViewStack id="propertyValueViewStack" creationPolicy="all" height="24" width="100%" >
-											<mx:HBox >
-												<mx:TextInput id="propertyText" text="{propertyRepeater.currentItem.@value}" width="100%">
-												</mx:TextInput> 
-											</mx:HBox>
-											
-											<mx:HBox >
-												<mx:TextArea id="propertyURL" selectable="true"  height="22"  link="onPropertyURLClick(event)"   width="100%">
-												</mx:TextArea>
-											</mx:HBox>
-											
-											<mx:HBox >
-												<mx:ComboBox id="propertyCombo" width="100%" labelField="@name">
-												</mx:ComboBox>						
-											</mx:HBox>
-											
-											<mx:HBox width="100%" >
-												<mx:CheckBox id="propertyCheck">
-												</mx:CheckBox>
-											</mx:HBox>
-											
-											<mx:HBox >
-												<util:ComboCheck id="propertyComboCheck" width="100%" 
-																 displayMultipleItems="true"  
-																 dataField="@idPropertyOption"  valueField="@idPropertyOption"  
-																 valueSelectAll="false"
-																 displayField="@name" 
-																 value="@name" >						
-												</util:ComboCheck>						
-											</mx:HBox>
-										</mx:ViewStack>
-									</mx:HBox>
-								</mx:Repeater>
-								<mx:HBox >
-									<mx:ComboBox id="newPropertyCombo" dataProvider="{parentApplication.dictionayProperty}" labelField="@name" width="126"  change="addProperty()" dataProvider.AdminState="{parentApplication.dictionaryProperty}">			
-									</mx:ComboBox>
-								</mx:HBox>
-							</mx:VBox>
 					    </mx:VBox>
-					   	<mx:VRule height="100%"/>
-					    <mx:VBox width="50%" id="vbox7" paddingTop="8">
-							    <mx:VBox width="100%" height="100%" verticalGap="0" id="vbox9">
-							        <mx:Label text="{'Files (' + annotationFiles.length + '):'}"/>
-							        <mx:HBox horizontalGap="2" width="100%">
-							        <mx:LinkButton icon="@Embed(source='assets/page_new.png')" 
-							        	disabledIcon="@Embed(source='assets/page_new_disable.png')" 
-							        	click="showAnnotationUploadWindow()" 
-							        	styleName="linkMenuButton"  label="Upload file(s)">
-							        	<mx:enabled>{getAnnotation.lastResult.@canWrite == 'Y' ? true : false}</mx:enabled>
-							        </mx:LinkButton>
-							        <mx:LinkButton icon="@Embed(source='assets/page_remove.png')"
-							        	disabledIcon="@Embed(source='assets/page_remove_disable.png')"
-							        	enabled="{annotationFileGrid.selectedItem != null &amp;&amp; getAnnotation.lastResult.@canWrite == 'Y' ? true : false}"  
-							        	styleName="linkMenuButton"
-							        	click="removeAnnotationFile()"  label="Remove file(s)"/>
-							        </mx:HBox>
-							    	<mx:DataGrid  id="annotationFileGrid"
-							    		dataProvider="{annotationFiles}"
-							    		showHeaders="true"
-							    		width="100%"  						    		 
-							    		allowMultipleSelection="true" height="134">
-							    		<mx:columns>
-							    			<mx:DataGridColumn  dataField="@name" headerText="Name" width="10"/>  
-							    			<mx:DataGridColumn  dataField="@lastModified" headerText="Date" width="10"/>  
-							    			<mx:DataGridColumn  dataField="@size"  headerText="Size" width="5" />  
-							    		</mx:columns>							
-							    	</mx:DataGrid>
-							    </mx:VBox>
-					    	
-					    </mx:VBox>
-				   </mx:HBox>
+					   	<mx:VBox width="100%" height="100%" verticalGap="2" >
+							<mx:HBox paddingTop="6">
+								<mx:ComboBox id="newPropertyCombo" dataProvider="{parentApplication.dictionayProperty}" labelField="@name" width="126"  change="addProperty()" dataProvider.AdminState="{parentApplication.dictionaryProperty}">			
+								</mx:ComboBox>
+								<mx:LinkButton label="Define property ..." click="parentApplication.showDictionaryWindow()" styleName="linkMenuButtonSmall" />
+								
+							</mx:HBox>							
+					   		<mx:Repeater  id="propertyRepeater" 
+					   					  dataProvider="{annotationProperties}">
+					   			<mx:HBox verticalAlign="middle" width="100%"  horizontalGap="0" >
+					   				<mx:HBox width="126" horizontalGap="0" paddingLeft="0" paddingRight="0">
+					   					<mx:Text text="{propertyRepeater.currentItem.@name}" width="100%" 
+					   							 creationComplete="onCreatePropertyLabel(event.currentTarget.getRepeaterItem(), event.target.instanceIndices[0])"/>
+					   					
+					   				</mx:HBox>
+					   				<mx:ViewStack id="propertyValueViewStack" creationPolicy="all" height="24" width="100%" >
+					   					<mx:HBox >
+					   						<mx:TextInput id="propertyText" text="{propertyRepeater.currentItem.@value}" width="100%">
+					   						</mx:TextInput> 
+					   					</mx:HBox>
+					   					
+					   					<mx:HBox >
+					   						<mx:TextArea id="propertyURL" selectable="true"  height="22"  link="onPropertyURLClick(event)"   width="100%">
+					   						</mx:TextArea>
+					   					</mx:HBox>
+					   					
+					   					<mx:HBox >
+					   						<mx:ComboBox id="propertyCombo" width="100%" labelField="@name">
+					   						</mx:ComboBox>						
+					   					</mx:HBox>
+					   					
+					   					<mx:HBox width="100%" >
+					   						<mx:CheckBox id="propertyCheck">
+					   						</mx:CheckBox>
+					   					</mx:HBox>
+					   					
+					   					<mx:HBox >
+					   						<util:ComboCheck id="propertyComboCheck" width="100%" 
+					   										 displayMultipleItems="true"  
+					   										 dataField="@idPropertyOption"  valueField="@idPropertyOption"  
+					   										 valueSelectAll="false"
+					   										 displayField="@name" 
+					   										 value="@name" >						
+					   						</util:ComboCheck>						
+					   					</mx:HBox>
+					   				</mx:ViewStack>
+									<mx:Image source="{parentApplication.iconSmallDelete}" click="removeProperty(event.currentTarget.getRepeaterItem())" scaleContent="false"/>
+					   			</mx:HBox>
+					   		</mx:Repeater>
+					   	</mx:VBox>
+				   </mx:VBox>
 				  	
-				  </mx:VBox>
+				  </mx:HBox>
+					 
+					 <mx:VBox width="100%" height="100%" label="Files" id="vbox7" paddingTop="8">
+						 <mx:VBox width="100%" height="100%" verticalGap="0" id="vbox9">
+							 <mx:HBox horizontalGap="2" width="100%">
+								 <mx:LinkButton icon="@Embed(source='assets/page_new.png')" 
+												disabledIcon="@Embed(source='assets/page_new_disable.png')" 
+												click="showAnnotationUploadWindow()" 
+												styleName="linkMenuButton"  label="Upload file(s)">
+									 <mx:enabled>{getAnnotation.lastResult.@canWrite == 'Y' ? true : false}</mx:enabled>
+								 </mx:LinkButton>
+								 <mx:LinkButton icon="@Embed(source='assets/page_remove.png')"
+												disabledIcon="@Embed(source='assets/page_remove_disable.png')"
+												enabled="{annotationFileGrid.selectedItem != null &amp;&amp; getAnnotation.lastResult.@canWrite == 'Y' ? true : false}"  
+												styleName="linkMenuButton"
+												click="removeAnnotationFile()"  label="Remove file(s)"/>
+								 <mx:Spacer width="100%"/>
+								 <mx:Label text="{'(' + annotationFiles.length + ' files)'}"/>
+							 </mx:HBox>
+							 <mx:DataGrid  id="annotationFileGrid"
+										   dataProvider="{annotationFiles}"
+										   showHeaders="true"
+										   width="100%"  height="100%"						    		 
+										   allowMultipleSelection="true" >
+								 <mx:columns>
+									 <mx:DataGridColumn  dataField="@name" headerText="Name" width="10"/>  
+									 <mx:DataGridColumn  dataField="@lastModified" headerText="Date" width="10"/>  
+									 <mx:DataGridColumn  dataField="@size"  headerText="Size" width="5" />  
+								 </mx:columns>							
+							 </mx:DataGrid>
+						 </mx:VBox>
+						 
+					 </mx:VBox>
+	 
+					 
+					 
 				  <mx:VBox width="100%" height="100%" label="Visibility" paddingLeft="4" paddingRight="4" paddingBottom="4">
 					  <mx:HBox width="100%" horizontalGap="0" id="hbox1">
 						  <mx:Text id="labelApplication" text="The level of visibility for this annotation:&#xd;"/>
@@ -2696,6 +2675,27 @@
 							  </util:ComboCheck>
 						  </mx:HBox>
 					  </mx:VBox>					  
+					  <mx:Spacer height="20"/>
+					  <mx:HBox horizontalGap="0" id="userGroupBox">
+						  <mx:Label text="User Group" width="126"/>
+						  <mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="170" labelField="@name" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
+					  </mx:HBox>
+					  <mx:HBox horizontalGap="0" id="annotationOwnerBox">
+					   <mx:Label text="Owner" width="126" id="label2"/>
+					   <mx:ViewStack id="annotationOwnerStack"  width="170">
+					    <mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" width="100%">
+					     <mx:ComboBox width="100%" id="annotationOwnerCombo" labelField="@name" dataProvider="{parentApplication.dictionaryUser}" change="dirtyAnnotation.setDirty()"></mx:ComboBox>							         			
+					    </mx:HBox>
+					    <mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0">
+					     <mx:Label text="{getAnnotation.lastResult.@owner}"/>							         			
+					    </mx:HBox>
+					   </mx:ViewStack>
+					   
+					  </mx:HBox>
+					  <mx:HBox  horizontalGap="0"  id="hbox14" >
+					   <mx:Label text="Created by" width="126"/>
+					   <mx:Label width="170" text="{getAnnotation.lastResult.@createdBy + ' ' + getAnnotation.lastResult.@createDate}"/>
+					  </mx:HBox>
 				  </mx:VBox>
 				 </mx:TabNavigator>
 			     <mx:ControlBar horizontalAlign="right">				  

@@ -1901,22 +1901,17 @@ public class GenoPubServlet extends HttpServlet {
         TreeSet<PropertyOption> options = new TreeSet<PropertyOption>(new PropertyOptionComparator());
         for(Iterator<?> i1 = node.elementIterator(); i1.hasNext();) {
           Element n = (Element)i1.next();
-          if (n.getName().equals("PropertyOptions")) {
-            for(Iterator<?> i2 = n.elementIterator(); i2.hasNext();) {
-              Element n2 = (Element)i2.next();
-              if (n2.getName().equals("PropertyOption")) {
-                Integer idPropertyOption = Integer.parseInt(n2.attributeValue("idPropertyOption"));
-                String selected = n2.attributeValue("selected");
-                if (selected != null && selected.equals("Y")) {
-                  PropertyOption option = PropertyOption.class.cast(sess.load(PropertyOption.class, idPropertyOption));
-                  options.add(option);
-                  if (optionValue.length() > 0) {
-                    optionValue += ",";
-                  }
-                  optionValue += option.getName();
-                }
+          if (n.getName().equals("PropertyOption")) {
+            Integer idPropertyOption = Integer.parseInt(n.attributeValue("idPropertyOption"));
+            String selected = n.attributeValue("selected");
+            if (selected != null && selected.equals("Y")) {
+              PropertyOption option = PropertyOption.class.cast(sess.load(PropertyOption.class, idPropertyOption));
+              options.add(option);
+              if (optionValue.length() > 0) {
+                optionValue += ",";
               }
-            }            
+              optionValue += option.getName();
+            }
           }
         }
         ap.setOptions(options);

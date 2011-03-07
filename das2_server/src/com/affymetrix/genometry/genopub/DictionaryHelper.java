@@ -313,9 +313,8 @@ public class DictionaryHelper {
       dictEntry.addAttribute("owner",    this.getUserFullName(p.getIdUser()));
       
       if (p.getOptions() != null && p.getOptions().size() > 0) {
-        Element options = dictEntry.addElement("PropertyOptions");        
         for(PropertyOption o: (Set<PropertyOption>)p.getOptions()) {
-          Element option = options.addElement("PropertyOption");
+          Element option = dictEntry.addElement("PropertyOption");
           option.addAttribute("idPropertyOption", o.getIdPropertyOption().toString());
           option.addAttribute("name", o.getName());
           option.addAttribute("isActive", o.getIsActive());

@@ -311,10 +311,9 @@ public class Annotation implements Serializable, Owned {
           propNode.addAttribute("idProperty", ap.getIdProperty().toString());
 
           if (ap.getProperty().getOptions() != null && ap.getProperty().getOptions().size() > 0) {
-            Element propOptionsNode = propNode.addElement("PropertyOptions");
             for (Iterator i1 = ap.getProperty().getOptions().iterator(); i1.hasNext();) {
               PropertyOption option = (PropertyOption)i1.next();
-              Element optionNode = propOptionsNode.addElement("PropertyOption");
+              Element optionNode = propNode.addElement("PropertyOption");
               optionNode.addAttribute("idPropertyOption", option.getIdPropertyOption().toString());
               optionNode.addAttribute("name", option.getName());
               boolean isSelected = false;

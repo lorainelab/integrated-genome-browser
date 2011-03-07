@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
-	xmlns:util="util.*"
-	width="100%" height="100%"	
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:util="util.*" showCloseButton="true"
+	close="{PopUpManager.removePopUp(this)}"
+	width="800" height="460" title="Dictionaries"	
 	show="init();"> 
 	
    <mx:HTTPService             
@@ -43,6 +44,8 @@
 		import util.DictionaryRefreshEvent;
 		
 		private var treeItemToSelect:Object = null;
+		
+		public var dictionaryNameToSelect:String = "Property";
 		
 		public function init():void
         {
@@ -113,13 +116,20 @@
 						}
 					}
 				} else {
-					this.theViews.selectedChild = blankView;
+					selectDefaultDictionary();
 				}
 			} else {
-				this.theViews.selectedChild = blankView;
+				selectDefaultDictionary();
 			}
 		}
 		
+		private function selectDefaultDictionary():void {
+			this.theViews.selectedChild = blankView;
+			var item:Object = parentApplication.getDictionaries.lastResult.Dictionary.(@dictionaryName == dictionaryNameToSelect);
+			dictionaryTree.selectedItem = item[0];
+			dictionaryTree.scrollToIndex(dictionaryTree.selectedIndex);
+			
+		}
 		
 		public function onTreeClick():void {
 			if (dictionaryTree.selectedItem != null) {
@@ -264,9 +274,7 @@
 	<mx:HDividedBox width="100%"  height="100%" paddingTop="0" >
 
 	    <mx:VBox  styleName="headerBar" height="100%" width="300"   >
-	
-            <mx:Label text="Dictionaries" width="80" styleName="headerLabel"/>
-            <mx:HBox  horizontalGap="2"  width="100%" horizontalAlign="left">		 
+	        <mx:HBox  horizontalGap="2"  width="100%" horizontalAlign="left">		 
              <mx:LinkButton 
              	icon="@Embed(source='assets/page_new.png')" 
              	disabledIcon="@Embed(source='assets/page_new_disable.png')" 
@@ -396,4 +404,4 @@
       </mx:State>
    </mx:states>
 
-</mx:Canvas>
+</mx:TitleWindow>

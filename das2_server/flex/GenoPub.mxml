@@ -66,7 +66,8 @@
 		
 		import util.DictionaryRefreshEvent;
 	
-	
+    public var dictionaryView:DictionaryView;
+		
 	private var launchAnnotation:Object = null;
 	
 	private var isInitialized:Boolean = false;
@@ -112,6 +113,11 @@
 	[Bindable]
 	[Embed(source="assets/book.png")]
     public var iconDictionary:Class;
+
+		
+	[Bindable]
+	[Embed(source="assets/house.png")]
+	public var iconHome:Class;
 
     [Bindable]
     [Embed(source="assets/page.png")]
@@ -312,10 +318,12 @@
 			
 			dictionaryProperty = new XMLListCollection(getDictionaries.lastResult.Properties.Property);
 			
-			if (this.mainViewStack != null && this.mainViewStack.selectedChild != null && this.mainViewStack.selectedChild == this.dictionaryView) {
-				callLater(this.dictionaryView.expandAllTreeNodes);
-			}
+
 			getInstitutes.send();
+			
+			if (dictionaryView != null) {
+				callLater(dictionaryView.expandAllTreeNodes);
+			}
 			 
 		} else {
 			Alert.show("An error occurred while getting dictionaries.");
@@ -346,7 +354,6 @@
 			this.annotationsView.treeItemToSelect = launchAnnotation;
 		}
 		
-		callLater(this.dictionaryView.expandAllTreeNodes);	
 		callLater(this.annotationsView.selectAnnotationFilter);
 		
 		isInitialized = true;
@@ -386,6 +393,12 @@
     	var aboutWindow:AboutWindow = AboutWindow(PopUpManager.createPopUp(mainArea, AboutWindow, true));
         PopUpManager.centerPopUp(aboutWindow);
     }
+		
+    public function showDictionaryWindow():void {
+		dictionaryView = DictionaryView(PopUpManager.createPopUp(mainArea, DictionaryView, true));
+		PopUpManager.centerPopUp(dictionaryView);
+		callLater(dictionaryView.expandAllTreeNodes);
+	}
 
 
 	]]>
@@ -416,7 +429,6 @@
 		<mx:HBox width="100%">
 	    	<mx:LinkBar id="linkButtonBar"
  				 dataProvider="{mainViewStack}" 
- 				 width="100%"
  			     enabled="true"  
  			     visible="true"   
  			     horizontalAlign="left" 
@@ -425,7 +437,7 @@
  			     paddingTop="0"  
  			     paddingBottom="0">
  			</mx:LinkBar>
-
+			<mx:LinkButton label="Dictionaries" includeIn="UserState, AdminUserState, AdminAllState" icon="@Embed(source='assets/book.png')" click="showDictionaryWindow()" styleName="navLinkButton"/>
 		</mx:HBox>
       </mx:VBox>
     </mx:ApplicationControlBar>
@@ -434,7 +446,7 @@
 	    	height="100%" paddingTop="0" paddingBottom="0" paddingLeft="0" 
 	    	paddingRight="0" >	
       <mx:ViewStack id="mainViewStack"  width="100%" height="100%" creationPolicy="auto">
-          <mx:VBox label="Home" id="emptyView" width="100%" height="100%" verticalAlign="top" horizontalAlign="center" paddingTop="50" paddingBottom="30"  creationComplete="{mainViewStack.selectedIndex = 1}">
+          <mx:VBox label="Home"  icon="{iconHome}" id="emptyView" width="100%" height="100%" verticalAlign="top" horizontalAlign="center" paddingTop="50" paddingBottom="30"  creationComplete="{mainViewStack.selectedIndex = 1}">
 			  <mx:Text text="Welcome to GenoPub" color="#FFFFFF" fontSize="14" fontFamily="Verdana" fontWeight="normal"/>
 			  <mx:Text text="A tool for annotating and programmatically distributing genomic data to DAS/2" color="#FFFFFF"  fontFamily="Verdana" fontSize="11"/>
 	      </mx:VBox>
@@ -445,8 +457,6 @@
 		  <default:UserGroupView id="userGroupView" includeIn="AdminUserState, AdminAllState" label="Users and Groups"      icon="@Embed(source='assets/group.png')" width="100%" height="100%">
 		  </default:UserGroupView>
 		  
-		  <default:DictionaryView id="dictionaryView"  includeIn="UserState, AdminUserState, AdminAllState" label="Dictionaries"      icon="@Embed(source='assets/book.png')" width="100%" height="100%">
-		  </default:DictionaryView>
 		  
       </mx:ViewStack>
     </mx:VBox>	

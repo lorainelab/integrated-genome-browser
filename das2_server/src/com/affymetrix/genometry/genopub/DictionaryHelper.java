@@ -317,6 +317,7 @@ public class DictionaryHelper {
           Element option = dictEntry.addElement("PropertyOption");
           option.addAttribute("idPropertyOption", o.getIdPropertyOption().toString());
           option.addAttribute("name", o.getName());
+          option.addAttribute("label", o.getName());
           option.addAttribute("isActive", o.getIsActive());
           option.addAttribute("sortOrder", o.getSortOrder() != null ?  o.getSortOrder().toString() : "");
         }

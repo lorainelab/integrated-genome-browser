@@ -139,6 +139,7 @@ mx|TitleWindow {
 	paddingTop: 0;
 	paddingBottom: 0;
 	paddingRight: 0;	
+	borderColor: #D2D2C1;
 	
 }
 .titleWindowTitle

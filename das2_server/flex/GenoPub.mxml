@@ -437,6 +437,7 @@
  			     paddingTop="0"  
  			     paddingBottom="0">
  			</mx:LinkBar>
+	    	<mx:VRule includeIn="UserState, AdminUserState, AdminAllState"  height="20" strokeColor="#FFFFFF"/>
 			<mx:LinkButton label="Dictionaries" includeIn="UserState, AdminUserState, AdminAllState" icon="@Embed(source='assets/book.png')" click="showDictionaryWindow()" styleName="navLinkButton"/>
 		</mx:HBox>
       </mx:VBox>

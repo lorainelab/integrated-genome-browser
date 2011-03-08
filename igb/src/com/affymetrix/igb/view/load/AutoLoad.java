@@ -1,9 +1,12 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genoviz.widget.NeoMap;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Hashtable;
+import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
@@ -17,7 +20,7 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 	private final JScrollBar scroller;
 	private final NeoMap map;
 	private boolean was_dragging = false;
-	private final int threshold = 85;
+	public static final int threshold = 85;
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
 
@@ -30,6 +33,27 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 		this.scroller.addMouseListener(this);
 		this.map.addMouseListener(this);
 		this.map.addMouseMotionListener(this);
+
+		showAutoLoadRegion();
+	}
+
+	private void showAutoLoadRegion(){
+		String text = "Autoload Region";
+		int threshValue = (AutoLoad.threshold * zoomer.getMaximum()/100);
+		Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel>();
+		JLabel startStop = new JLabel("|");
+		startStop.setForeground(Color.RED);
+		JLabel def = new JLabel("-");
+		def.setForeground(Color.RED);
+
+		table.put(threshValue, startStop);
+		for(int i=threshValue+1; i<zoomer.getMaximum(); i++){
+			table.put(i, def);
+		}
+		table.put(zoomer.getMaximum(), startStop);
+		
+		zoomer.setLabelTable(table);
+		zoomer.setPaintLabels(true);
 	}
 
 	public void loadData(){

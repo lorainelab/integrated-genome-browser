@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS AnnotationPropertyOption;
 CREATE TABLE genopub.AnnotationPropertyOption (
   idAnnotationProperty INT(10) unsigned  NOT NULL,
   idPropertyOption INT(10) unsigned  NOT NULL,
-  PRIMARY KEY (idAnnotation, idPropertyOption),
+  PRIMARY KEY (idAnnotationProperty, idPropertyOption),
   CONSTRAINT FK_AnnotationPropertyOption_AnnotationProperty FOREIGN KEY FK_AnnotationPropertyOption_AnnotationProperty (idAnnotationProperty)
     REFERENCES genopub.AnnotationProperty (idAnnotationProperty)
     ON DELETE NO ACTION

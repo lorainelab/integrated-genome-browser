@@ -80,7 +80,6 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mousePressed(MouseEvent evt) {
-		map.setCursor(smv.getMapMode().pressedCursor);
 
 		if (map instanceof AffyLabelledTierMap) {
 			((AffyLabelledTierMap) map).getLabelMap().clearSelected();
@@ -102,7 +101,6 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mouseReleased(MouseEvent evt) {
-		map.setCursor(smv.getMapMode().defCursor);
 		
 		num_last_selections = map.getSelected().size();
 

@@ -68,7 +68,6 @@ import com.affymetrix.igb.view.load.AutoLoad;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.affymetrix.igb.util.IGBUtils;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -99,8 +98,8 @@ public class SeqMapView extends JPanel
 	private static final Cursor defaultCursor, openHandCursor, closedHandCursor;
 	static{
 		defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-		openHandCursor = IGBUtils.createCursor("open_hand.png", defaultCursor);
-		closedHandCursor = IGBUtils.createCursor("closed_hand.png", defaultCursor);
+		openHandCursor = new Cursor(Cursor.HAND_CURSOR);
+		closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
 	}
 
 	public static enum MapMode {
@@ -297,7 +296,7 @@ public class SeqMapView extends JPanel
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
-
+		
 		new AutoLoad(seqmap);
 		
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
@@ -360,7 +359,7 @@ public class SeqMapView extends JPanel
 		select_mode_button.setText("");
 		xzoombox.add(select_mode_button);
 
-		JToggleButton scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode, "open_hand.png"));
+		JToggleButton scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode, "open_hand.gif"));
 		scroll_mode_button.setText("");
 		xzoombox.add(scroll_mode_button);
 

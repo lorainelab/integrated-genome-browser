@@ -52,16 +52,16 @@ public class ColorUtils {
 			}
 		});
 
-		node.addPreferenceChangeListener(new PreferenceChangeListener() {
-
-			public void preferenceChange(PreferenceChangeEvent evt) {
-				if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
-					Color c = PreferenceUtils.getColor(node, pref_name, default_val);
-					combobox.setSelectedColor(c);
-					combobox.repaint();
-				}
-			}
-		});
+//		node.addPreferenceChangeListener(new PreferenceChangeListener() {
+//
+//			public void preferenceChange(PreferenceChangeEvent evt) {
+//				if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
+//					Color c = PreferenceUtils.getColor(node, pref_name, default_val);
+//					combobox.setSelectedColor(c);
+//					combobox.repaint();
+//				}
+//			}
+//		});
 		
 
 		return combobox;

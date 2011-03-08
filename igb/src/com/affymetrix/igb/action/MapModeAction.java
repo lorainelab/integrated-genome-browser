@@ -12,8 +12,7 @@ import javax.swing.AbstractAction;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
- *
- * @author lfrohman
+ * button action for SeqMapView modes
  */
 public class MapModeAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;

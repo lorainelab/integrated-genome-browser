@@ -220,6 +220,33 @@ public abstract class PreferenceUtils {
 	}
 
 	/**
+	 * Saves the divider location of a tray as a percentage.
+	 *
+	 * @param title name of the tray 
+	 * @param dividerProportionalLocation the location of the divider in extended state
+	 * as a percentage
+	 */
+	public static void saveDividerLocation(String title, double dividerProportionalLocation) {
+		getTopNode().put(title + " dvdrloc", String.valueOf(dividerProportionalLocation));
+	}
+
+	/**
+	 * Returns the previously-stored divider location of a tray.
+	 *
+	 * @param name
+	 * @return one of enum TabState
+	 */
+	public static double getDividerLocation(String title) {
+		String locString = getTopNode().get(title + " dvdrloc", null);
+		double dividerLocation = -1;
+		try {
+			dividerLocation = Double.parseDouble(locString);
+		}
+		catch (Exception x) {}
+		return dividerLocation;
+	}
+
+	/**
 	 * Gets a static re-usable file chooser that prefers "xml" files.
 	 *
 	 * @return

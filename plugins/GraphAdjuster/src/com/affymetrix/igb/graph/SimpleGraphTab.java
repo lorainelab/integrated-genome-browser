@@ -414,6 +414,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		delete_selected_graphs_action.setEnabled(b);
 		cloneB.setEnabled(b);
 		scaleCB.setEnabled(cloneB.isEnabled());
+		inverseCB.setEnabled(cloneB.isEnabled());
 		paramT.setEnabled(cloneB.isEnabled());
 
 		combineB.setEnabled(!all_are_combined && grafs.size() >= 2);
@@ -740,7 +741,9 @@ public final class SimpleGraphTab extends IGBTabPanel
 			scaleCB_box.add(inverseCB);
 			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
 
-			scaleCB_box.setMaximumSize(scaleCB_box.getPreferredSize());
+//			scaleCB_box.setMaximumSize(scaleCB_box.getPreferredSize());
+			scaleCB_box.setMaximumSize(new Dimension((int)scaleCB_box.getMaximumSize().getWidth(), (int)scaleCB_box.getPreferredSize().getHeight()));
+//			scaleCB.setMaximumSize(new Dimension((int)scaleCB.getMaximumSize().getWidth(), (int)scaleCB.getMaximumSize().getHeight()));
 
 			advanced_panel.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("advancedPanel")));
 
@@ -923,7 +926,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 
 		private void graphArithmetic(String operation) {
-			if (glyphs.size() == 2) {
+			if (glyphs.size() == 2 && glyphs.get(0) != null && glyphs.get(1) != null) {
 				GraphGlyph graphA = glyphs.get(0);
 				GraphGlyph graphB = glyphs.get(1);
 				GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);

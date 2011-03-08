@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -88,7 +89,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * get the int / pixel value of the divider location for the RETRACT tray state
 	 * @return the retract state divider location
 	 */
-	protected int getRetractDividerLocation() {
+	private int getRetractDividerLocation() {
 		if (tab_pane.getTabCount() == 0) {
 			return -1;
 		}
@@ -100,6 +101,12 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * @return the hidden state divider location
 	 */
 	protected abstract int getHideDividerLocation();
+	/**
+	 * determines if the point is on the tab of a tabbed pane
+	 * @param p the point to check
+	 * @return true if the point is on the tab, false otherwise
+	 */
+	protected abstract boolean isOnTab(Point p);
 	/**
 	 * save the divider location for the RETRACT tray state - as a percentage
 	 */
@@ -145,7 +152,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 					@Override
 					public void mouseReleased(MouseEvent e) {
 						originalMouseListener.mouseReleased(e);
-						if (trayState == TrayState.EXTENDED) {
+						if (trayState == TrayState.EXTENDED && isOnTab(e.getPoint())) {
 			               	int afterIndex = tab_pane.getSelectedIndex();
 			               	if (beforeIndex == afterIndex) {
 								retractTray();

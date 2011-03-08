@@ -1,6 +1,7 @@
 package com.affymetrix.igb.window.service.def;
 
 import java.awt.Component;
+import java.awt.Point;
 
 import javax.swing.JComponent;
 import javax.swing.JSplitPane;
@@ -25,14 +26,27 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 		return getHeight();
 	}
 
+	private int getTabKnobHeight(Component tabComponent) {
+		return tab_pane.getHeight() - tabComponent.getHeight();
+	}
+
 	@Override
 	protected int getTabWidth(Component tabComponent) {
-		return getHeight() - (tab_pane.getHeight() - tabComponent.getHeight());
+		return getHeight() - getTabKnobHeight(tabComponent);
 	}
 
 	@Override
 	protected int getHideDividerLocation() {
 		return getHeight();
+	}
+
+	@Override
+	protected boolean isOnTab(Point p) {
+		if (tab_pane.getTabCount() == 0) {
+			return false;
+		}
+		int index = tab_pane.getSelectedIndex() < 0 ? 0 : tab_pane.getSelectedIndex();
+		return p.getY() < getTabKnobHeight(tab_pane.getComponentAt(index));
 	}
 
 	@Override

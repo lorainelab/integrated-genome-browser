@@ -48,6 +48,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   private final JMenuItem importMI;
   private final JMenuItem clearMI;
   private final JMenuItem manage_bookmarksMI;
+  private final JMenuItem open_bookmark_tabMI;
   private final SeqMapView gviewer;
   private final Map<Object,Component> component_hash = new HashMap<Object,Component>();
   private final BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
@@ -72,6 +73,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     importMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     clearMI = new JMenuItem(BUNDLE.getString("clearBookmarks"), KeyEvent.VK_C);
     manage_bookmarksMI = new JMenuItem(BUNDLE.getString("manageBookmarks"), KeyEvent.VK_M);
+    open_bookmark_tabMI = new JMenuItem(BUNDLE.getString("openBookmarkTab"), KeyEvent.VK_O);
 
     add_pos_markMI.addActionListener(this);
     add_data_markMI.addActionListener(this);
@@ -79,10 +81,12 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     exportMI.addActionListener(this);
     clearMI.addActionListener(this);
     manage_bookmarksMI.addActionListener(this);
+    open_bookmark_tabMI.addActionListener(this);
     MenuUtil.addToMenu(bm_menu, add_pos_markMI);
     MenuUtil.addToMenu(bm_menu, add_data_markMI);
     bm_menu.addSeparator();
     MenuUtil.addToMenu(bm_menu, manage_bookmarksMI);
+    MenuUtil.addToMenu(bm_menu, open_bookmark_tabMI);
     // export/import/clear are better done with the bookmark manager
     //MenuUtil.addToMenu(bm_menu, exportMI);
     //MenuUtil.addToMenu(bm_menu, importMI);
@@ -194,8 +198,11 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       removeAllBookmarks();
     }
     else if (src == manage_bookmarksMI) {
-      igbService.setTabStateAndMenu(bmv, TabState.COMPONENT_STATE_WINDOW);
-    }
+        igbService.setTabStateAndMenu(bmv, TabState.COMPONENT_STATE_WINDOW);
+      }
+    else if (src == open_bookmark_tabMI) {
+        igbService.setTabStateAndMenu(bmv, TabState.COMPONENT_STATE_RIGHT_TAB);
+      }
     else if (src instanceof BookmarkJMenuItem) {
       BookmarkJMenuItem item = (BookmarkJMenuItem) src;
       Bookmark bm = item.getBookmark();

@@ -1018,7 +1018,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 		boolean enabled = false;
 		for (GenericFeature gFeature : features) {
-			if (gFeature.loadStrategy != LoadStrategy.NO_LOAD && gFeature.loadStrategy != LoadStrategy.CHROMOSOME) {
+			if (gFeature.loadStrategy != LoadStrategy.NO_LOAD && gFeature.loadStrategy != LoadStrategy.GENOME) {
 				enabled = true;
 				break;
 			}

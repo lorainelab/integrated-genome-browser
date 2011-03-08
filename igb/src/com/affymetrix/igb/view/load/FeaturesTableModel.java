@@ -217,8 +217,10 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 
 		if (col == REFRESH_FEATURE_COLUMN) {
-			if(gFeature.loadStrategy != LoadStrategy.NO_LOAD && gFeature.loadStrategy != LoadStrategy.GENOME)
+			if(gFeature.loadStrategy != LoadStrategy.NO_LOAD && gFeature.loadStrategy != LoadStrategy.GENOME) {
+				GeneralLoadView.getLoadView().setShowLoadingConfirm(true);;
 				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+			}
 			return;
 		}
 

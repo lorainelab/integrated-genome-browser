@@ -96,7 +96,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	//private TrackInfoView track_info_view;
 	private volatile boolean lookForPersistentGenome = true;	// Once this is set to false, don't invoke persistent genome code
 	private final JSplitPane jSplitPane;
-	public boolean showLoadingConfirm = false;
+	private boolean showLoadingConfirm = false;
 	public int previousSpanWidth = 0;
 	public String previousBamFile = "";
 
@@ -1071,6 +1071,14 @@ public final class GeneralLoadView extends IGBTabPanel
 		};
 
 		ThreadUtils.getPrimaryExecutor(feature).execute(delete);
+	}
+	
+	public void setShowLoadingConfirm(boolean showLoadingConfirm) {
+		this.showLoadingConfirm = showLoadingConfirm;
+	}
+	
+	public boolean isLoadingConfirm() {
+		return showLoadingConfirm;
 	}
 }
 

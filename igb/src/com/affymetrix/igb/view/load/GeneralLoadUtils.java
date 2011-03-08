@@ -646,25 +646,6 @@ public final class GeneralLoadUtils {
 	}
 
 	public static boolean loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
-		//start max
-		if ((feature.getExtension() != null) && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().showLoadingConfirm) {
-			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
-			
-			int spanWidth = span.getMax() - span.getMin();
-			spanWidth = spanWidth - GeneralLoadView.getLoadView().previousSpanWidth;
-			GeneralLoadView.getLoadView().previousSpanWidth = span.getMax() - span.getMin();
-			if(((spanWidth > 100024) && PreferenceUtils.userSpanLoadingConfirmed != 0) || resetConfirmOption) {
-				boolean loadBig = Application.confirmPanelForSpanloading("Region in view is big (> 100k), do you want to continue?");
-				if(!loadBig) {
-					return false;
-				} 
-				
-				if(resetConfirmOption) PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, false);
-			}
-			GeneralLoadView.getLoadView().showLoadingConfirm = false;
-		}
-		//end max
-		
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) && ((QuickLoad) feature.symL).extension.endsWith(".chp")) {
 			feature.loadStrategy = LoadStrategy.GENOME;	// it should be set to this already.  But just in case...
@@ -679,6 +660,30 @@ public final class GeneralLoadUtils {
 		}
 
 		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+		//start max
+		if ((feature.getExtension() != null) && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().isLoadingConfirm()) {
+			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
+		
+			int childrenCount = optimized_sym.getChildCount();
+			int spanWidth = 0;
+			for(int childIndex = 0; childIndex < childrenCount; childIndex++) {
+				SeqSymmetry child = optimized_sym.getChild(childIndex);
+				for(int spanIndex = 0; spanIndex< child.getSpanCount(); spanIndex++) {
+					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
+				}
+			}
+			
+			if(((spanWidth > 100024) && PreferenceUtils.userSpanLoadingConfirmed != 0) || resetConfirmOption) {
+				boolean loadBig = Application.confirmPanelForSpanloading("Region in view is big (> 100k), do you want to continue?");
+				if(!loadBig) {
+					return false;
+				} 
+				
+				if(resetConfirmOption) PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, false);
+			}
+			GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
+		}
+		//end max
 		if (optimized_sym != null) {
 			return loadFeaturesForSym(feature, optimized_sym);
 		}

@@ -12,6 +12,7 @@ import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.prefs.OptionsView;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -250,7 +251,8 @@ class JTableX extends JTable implements MouseListener {
 		if (FeaturesTableModel.REFRESH_FEATURE_COLUMN == realIndex
 				&& GeneralLoadView.getIsDisableNecessary()) {
 
-			RefreshDataAction.getAction().actionPerformed(null);
+			//RefreshDataAction.getAction().actionPerformed(null);
+			RefreshDataAction.getAction().actionPerformed(new ActionEvent(this, 1, "refresh icon"));
 
 		} else if (FeaturesTableModel.DELETE_FEATURE_COLUMN == realIndex) {
 			FeaturesTableModel ftm = (FeaturesTableModel) getModel();

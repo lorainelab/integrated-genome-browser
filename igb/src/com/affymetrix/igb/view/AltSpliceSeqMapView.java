@@ -39,6 +39,11 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	}
 
 	@Override
+	protected void addAutoLoad(){
+		//Do Nothing for alt splice view.
+	}
+
+	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
 		if (coord_shift) {
 			// ignore the preserve_view parameter, always pretend it is false in the splice view

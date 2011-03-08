@@ -296,8 +296,8 @@ public class SeqMapView extends JPanel
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
-		
-		new AutoLoad(seqmap);
+
+		addAutoLoad();
 		
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
 		SeqMapViewPopup popup = new SeqMapViewPopup(tier_manager,this);
@@ -409,6 +409,10 @@ public class SeqMapView extends JPanel
 
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 
+	}
+
+	protected void addAutoLoad(){
+		new AutoLoad(seqmap);
 	}
 
 	public final class SeqMapViewComponentListener extends ComponentAdapter {

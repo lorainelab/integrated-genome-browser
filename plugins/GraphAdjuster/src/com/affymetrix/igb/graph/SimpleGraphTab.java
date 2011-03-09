@@ -734,9 +734,9 @@ public final class SimpleGraphTab extends IGBTabPanel
 			scaleCB_box.add(scaleCB);
 			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
 			scaleCB_box.add(cloneB);
-			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
+			scaleCB_box.add(Box.createRigidArea(new Dimension(20, 5))); // kludge to get width correct
 
-			scaleCB_box.setMaximumSize(new Dimension((int)scaleCB_box.getMaximumSize().getWidth(), (int)scaleCB_box.getPreferredSize().getHeight()));
+			scaleCB.setMaximumSize(scaleCB_box.getPreferredSize()); // kludge to get width correct
 
 			advanced_panel.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("advancedPanel")));
 

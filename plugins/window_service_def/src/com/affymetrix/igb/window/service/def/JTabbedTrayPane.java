@@ -152,14 +152,16 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 					@Override
 					public void mouseReleased(MouseEvent e) {
 						originalMouseListener.mouseReleased(e);
-						if (trayState == TrayState.EXTENDED && isOnTab(e.getPoint())) {
-			               	int afterIndex = tab_pane.getSelectedIndex();
-			               	if (beforeIndex == afterIndex) {
-								retractTray();
-			               	}
-						}
-						else if (trayState == TrayState.RETRACTED) {
-			               	extendTray();
+						if (tab_pane.indexAtLocation(e.getX(), e.getY()) > -1) {
+							if (trayState == TrayState.EXTENDED && isOnTab(e.getPoint())) {
+				               	int afterIndex = tab_pane.getSelectedIndex();
+				               	if (beforeIndex == afterIndex) {
+									retractTray();
+				               	}
+							}
+							else if (trayState == TrayState.RETRACTED) {
+				               	extendTray();
+							}
 						}
 					}
 					@Override

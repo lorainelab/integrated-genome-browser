@@ -35,7 +35,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.IdentityTransform;
-import com.affymetrix.genometryImpl.util.InverseTransform;
 
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
@@ -102,7 +101,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final JCheckBox labelCB = new JCheckBox(BUNDLE.getString("labelCheckBox"));
 	private final JCheckBox yaxisCB = new JCheckBox(BUNDLE.getString("yAxisCheckBox"));
 	private final JCheckBox floatCB = new JCheckBox(BUNDLE.getString("floatingCheckBox"));
-	private final JCheckBox inverseCB = new JCheckBox(BUNDLE.getString("inverseLabel"));
 
 	private final Action select_all_graphs_action = new AbstractAction(BUNDLE.getString("selectAllGraphs")) {
 		private static final long serialVersionUID = 1L;
@@ -414,7 +412,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 		delete_selected_graphs_action.setEnabled(b);
 		cloneB.setEnabled(b);
 		scaleCB.setEnabled(cloneB.isEnabled());
-		inverseCB.setEnabled(cloneB.isEnabled());
 		paramT.setEnabled(cloneB.isEnabled());
 
 		combineB.setEnabled(!all_are_combined && grafs.size() >= 2);
@@ -738,12 +735,8 @@ public final class SimpleGraphTab extends IGBTabPanel
 			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
 			scaleCB_box.add(cloneB);
 			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
-			scaleCB_box.add(inverseCB);
-			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
 
-//			scaleCB_box.setMaximumSize(scaleCB_box.getPreferredSize());
 			scaleCB_box.setMaximumSize(new Dimension((int)scaleCB_box.getMaximumSize().getWidth(), (int)scaleCB_box.getPreferredSize().getHeight()));
-//			scaleCB.setMaximumSize(new Dimension((int)scaleCB.getMaximumSize().getWidth(), (int)scaleCB.getMaximumSize().getHeight()));
 
 			advanced_panel.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("advancedPanel")));
 
@@ -865,8 +858,21 @@ public final class SimpleGraphTab extends IGBTabPanel
 			for (FloatTransformer transformer : floatTransformers) {
 				name2transform.put(transformer.getName(), transformer);
 			}
-			for (String name : name2transform.keySet()) {
-				scaleCB.addItem(name);
+			ArrayList<FloatTransformer> transformerList = new ArrayList<FloatTransformer>(floatTransformers);
+			Collections.sort(transformerList,
+				new Comparator<FloatTransformer>() {
+					@Override
+					public int compare(FloatTransformer o1, FloatTransformer o2) {
+						int value = o1.getClass().getName().compareTo(o2.getClass().getName());
+						if (value == 0) {
+							value = o1.getName().compareTo(o2.getName());
+						}
+						return value;
+					}
+			}
+			);
+			for (FloatTransformer transformer : transformerList) {
+				scaleCB.addItem(transformer.getName());
 			}
 		}
 
@@ -961,9 +967,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private void scaleGraphs() {
 			String selection = (String) scaleCB.getSelectedItem();
 			FloatTransformer trans = name2transform.get(selection);
-			if (inverseCB.isSelected()) {
-				trans = new InverseTransform(trans);
-			}
 			if (trans.setParameter(paramT.getText())) {
 				List<GraphSym> newgrafs = transformGraphs(grafs, trans.getDisplay(), trans);
 				if (!newgrafs.isEmpty()) {

@@ -22,17 +22,10 @@ package com.affymetrix.genometryImpl.util;
  *     then untransformed via inverseTransform() calls
  *
  */
-public interface FloatTransformer  {
+public interface FloatTransformer {
 	public String getParamPrompt();
 	public String getName();
 	public String getDisplay();
 	public boolean setParameter(String s);
 	public float transform(float x);
-
-	/**
-	 *  inverseTranform() should be optional
-	 * if isInvertible() == false, inverseTransform() should throw runtime exception?
-	 */
-	public float inverseTransform(float x);
-	public boolean isInvertible();
 }

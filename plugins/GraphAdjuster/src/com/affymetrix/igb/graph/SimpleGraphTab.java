@@ -458,7 +458,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 
 		public void mouseExited(MouseEvent e) {
-			if(A != null && B != null){
+			if(A != null && B != null && grafs.size() > 1){
 				grafs.get(0).setGraphName(A);
 				grafs.get(1).setGraphName(B);
 

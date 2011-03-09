@@ -411,9 +411,12 @@ public class GraphSym extends SimpleSymWithProps {
 			// no need to index.  Array is too small.
 			return null;
 		}
-		return IndexingUtils.createIndexedFile(graphName, this.pointCount, x, y, w);
+		return IndexingUtils.createIndexedFile(cleanFileName(graphName), this.pointCount, x, y, w);
 	}
 
+	private String cleanFileName(String fileName) {
+		return fileName.replaceAll("\\(", "_").replaceAll("\\)", "_").replaceAll("\\*", "_").replaceAll("\\.", "_");
+	}
 	
 	/**
 	 * Read into buffers

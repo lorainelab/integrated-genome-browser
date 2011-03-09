@@ -23,6 +23,9 @@ import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public final class GraphGlyphUtils {
 
@@ -97,6 +100,138 @@ public final class GraphGlyphUtils {
 	public static final String MATH_PRODUCT = "product";
 	public static final String MATH_RATIO = "ratio";
 
+	private static float operate(float a, float b, String operation) {
+		if (MATH_SUM.equals(operation)) {
+			return a + b;
+		} else if (MATH_DIFFERENCE.equals(operation)) {
+			return a - b;
+		} else if (MATH_PRODUCT.equals(operation)) {
+			return a * b;
+		} else if (MATH_RATIO.equals(operation)) {
+			float y;
+			if (b == 0) {
+				return 0; // hack to avoid infinities
+			} else {
+				y = a / b;
+			}
+			if (Float.isInfinite(y) || Float.isNaN(y)) {
+				y = 0.0f;
+			}
+			return y;
+		}
+		return 0;
+	}
+
+	private static GraphSym graphRegionArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
+		int[] xA = graphA.getXCoords();
+		int[] xB = graphB.getXCoords();
+		int[] wA = graphA.getWCoords();
+		int[] wB = graphB.getWCoords();
+		float[] yA = graphA.copyYCoords();
+		float[] yB = graphB.copyYCoords();
+		String symbol = ",";
+		if (MATH_SUM.equals(operation)) {
+			symbol = "+";
+		} else if (MATH_DIFFERENCE.equals(operation)) {
+			symbol = "-";
+		} else if (MATH_PRODUCT.equals(operation)) {
+			symbol = "*";
+		} else if (MATH_RATIO.equals(operation)) {
+			symbol = "/";
+		}
+		List<Integer> xList = new ArrayList<Integer>();
+		List<Integer> wList = new ArrayList<Integer>();
+		List<Float> yList = new ArrayList<Float>();
+		int currentX = Integer.MIN_VALUE;
+		int nextX = 0;
+		int aIndex = 0;
+		int bIndex = 0;
+		float aValue = 0;
+		float bValue = 0;
+		while (aIndex < xA.length || bIndex < xB.length) {
+			nextX = Integer.MAX_VALUE;
+			if (aIndex < xA.length && xA[aIndex] > currentX && xA[aIndex] < nextX) {
+				nextX = xA[aIndex];
+			}
+			else if (aIndex < xA.length && xA[aIndex] + wA[aIndex] > currentX && xA[aIndex] + wA[aIndex] < nextX) {
+				nextX = xA[aIndex] + wA[aIndex];
+			}
+			if (bIndex < xB.length && xB[bIndex] > currentX && xB[bIndex] < nextX) {
+				nextX = xB[bIndex];
+			}
+			else if (bIndex < xB.length && xB[bIndex] + wB[bIndex] > currentX && xB[bIndex] + wB[bIndex] < nextX) {
+				nextX = xB[bIndex] + wB[bIndex];
+			}
+			if (aIndex < xA.length && currentX >= xA[aIndex] && nextX <= xA[aIndex] + wA[aIndex]) {
+				aValue = yA[aIndex];
+			}
+			else {
+				aValue = 0;
+			}
+			if (bIndex < xB.length && currentX >= xB[bIndex] && nextX <= xB[bIndex] + wB[bIndex]) {
+				bValue = yB[bIndex];
+			}
+			else {
+				bValue = 0;
+			}
+			float currentY = operate(aValue, bValue, operation);
+			if (currentY > 0) {
+				xList.add(currentX);
+				wList.add(nextX - currentX);
+				yList.add(currentY);
+			}
+			if (aIndex < xA.length && xA[aIndex] + wA[aIndex] <= nextX) {
+				aIndex++;
+			}
+			if (bIndex < xB.length && xB[bIndex] + wB[bIndex] <= nextX) {
+				bIndex++;
+			}
+			currentX = nextX;
+		}
+		String newname = operation + ": (" + graphA.getLabel() + ") " +
+		symbol + " (" + graphB.getLabel() + ")";
+		BioSeq aseq =
+			((GraphSym) graphA.getInfo()).getGraphSeq();
+		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
+		int[] x = new int[xList.size()];
+		for (int index = 0; index < xList.size(); index++) {
+			x[index] = xList.get(index);
+		}
+		int[] w = new int[wList.size()];
+		for (int index = 0; index < wList.size(); index++) {
+			w[index] = wList.get(index);
+		}
+		float[] y = new float[yList.size()];
+		for (int index = 0; index < yList.size(); index++) {
+			y[index] = yList.get(index);
+		}
+		printInt("xA", xA);
+		printInt("wA", wA);
+		printFloat("yA", yA);
+		printInt("xB", xB);
+		printInt("wB", wB);
+		printFloat("yB", yB);
+		printInt("x", x);
+		printInt("w", w);
+		printFloat("y", y);
+		return new GraphSym(x, w, y, newname, aseq);
+	}
+
+	private static void printInt(String name, int[] a) {
+		int[] begin = new int[20];
+		int[] end = new int[20];
+		System.arraycopy(a, 0, begin, 0, 20); 
+		System.arraycopy(a, a.length - 20, end, 0, 20); 
+		System.out.println(name + " = " + Arrays.toString(begin) + "," + Arrays.toString(end));
+	}
+
+	private static void printFloat(String name, float[] a) {
+		float[] begin = new float[20];
+		float[] end = new float[20];
+		System.arraycopy(a, 0, begin, 0, 20); 
+		System.arraycopy(a, a.length - 20, end, 0, 20); 
+		System.out.println(name + " = " + Arrays.toString(begin) + "," + Arrays.toString(end));
+	}
 	/**
 	 *  Combines two graphs by the given arithmetical operation.
 	 *  Returns null if the two graphs are not comparable via {@link #graphsAreComparable(GraphGlyph,GraphGlyph)}.
@@ -105,6 +240,9 @@ public final class GraphGlyphUtils {
 	public static GraphSym graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
 		String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
 
+		if ("Graphs must have the same X points".equals(error) && graphA.hasWidth() && graphB.hasWidth()) {
+			return GraphGlyphUtils.graphRegionArithmetic(graphA, graphB, operation);
+		}
 		if (error != null) {
 			ErrorHandler.errorPanel("ERROR", error);
 			return null;

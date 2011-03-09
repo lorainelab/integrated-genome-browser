@@ -52,9 +52,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 public class SequenceViewer extends JPanel
-		implements ActionListener, WindowListener, ItemListener {
+		implements ActionListener, WindowListener, ItemListener, MenuListener {
 
 	private static final long serialVersionUID = 1L;
 	private SeqMapView seqmapview;
@@ -90,7 +92,7 @@ public class SequenceViewer extends JPanel
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
 	Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
-	Color[] reverseColors = {Color.WHITE, Color.CYAN, Color.BLACK};
+	Color[] reverseColors = {Color.WHITE, Color.BLUE, Color.BLACK};
 	Color[] okayColors = {Color.black, Color.black};
 	Color[] reverted = {Color.white, Color.white};
 
@@ -100,7 +102,6 @@ public class SequenceViewer extends JPanel
 
 	public void customFormatting(SeqSymmetry residues_sym) throws HeadlessException, NumberFormatException {
 
-		seqview.enableDragScrolling(true);
 		seqview.setFont(new Font("Arial", Font.BOLD, 14));
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
@@ -353,6 +354,7 @@ public class SequenceViewer extends JPanel
 
 	private void getNeoSeqInstance() {
 		seqview = new NeoSeq();
+		seqview.enableDragScrolling(true);
 		seqview.addKeyListener(new KeyAdapter() {
 
 			// Why is this not getting called?
@@ -478,9 +480,11 @@ public class SequenceViewer extends JPanel
 		JMenu showMenu = new JMenu("Show");
 		JMenu fileMenu = new JMenu("File");
 		JMenu editMenu = new JMenu("Edit");
+		JMenuItem copyText = new JMenuItem(new CopyFromSeqViewerAction(this));
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExitSeqViewerAction(this.mapframe)));
-		MenuUtil.addToMenu(editMenu, new JMenuItem(new CopyFromSeqViewerAction(this)));
+		MenuUtil.addToMenu(editMenu, copyText);
+		editMenu.addMenuListener(this);
 //		copyMenuItem.addActionListener(this);
 //
 //		// file menu
@@ -610,22 +614,22 @@ public class SequenceViewer extends JPanel
 
 	public void actionPerformed(ActionEvent e) {
 		Object evtSource = e.getSource();
+		String seq1 = null;
+		seq1 = SeqUtils.determineSelectedResidues(this.residues_sym, this.aseq);
 		if (evtSource == showcDNAButton) {
-			String seq1 = null;
 			String text = e.getActionCommand();
 			if (text.equals("Show cDNA only")) {
 				seqview.clearWidget();
-				seq1 = SeqUtils.determineSelectedResidues(this.residues_sym, this.aseq);
 				seqview.setResidues(seq1);
 				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
-				customFormatting(residues_sym);
+//				customFormatting(residues_sym);
 				seqview.updateWidget();
 				showcDNAButton.setText("Show complete");
 				showcDNASwitch = true;
 			} else {
 				seqview.clearWidget();
 				addFormattedResidues();
-				customFormatting(residues_sym);
+//				customFormatting(residues_sym);
 				showcDNAButton.setText("Show cDNA only");
 				showcDNASwitch = false;
 			}
@@ -642,8 +646,24 @@ public class SequenceViewer extends JPanel
 			if (!showcDNASwitch) {
 				addFormattedResidues();
 			}
-			customFormatting(residues_sym);
+			else{
+				seqview.setResidues(seq1);
+				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
+			}
+//			customFormatting(residues_sym);
 
 		}
+	}
+
+	public void menuSelected(MenuEvent me) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void menuDeselected(MenuEvent me) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void menuCanceled(MenuEvent me) {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

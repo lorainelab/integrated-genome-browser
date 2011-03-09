@@ -20,6 +20,8 @@ public final class LogTransform implements FloatTransformer {
 	public LogTransform(Double base) {
 		super();
 		this.base = base;
+		LN_BASE = Math.log(base);
+		LOG_1 = (float)(Math.log(1)/LN_BASE);
 		paramPrompt = null;
 		name = getBaseName();
 		parameterized = false;

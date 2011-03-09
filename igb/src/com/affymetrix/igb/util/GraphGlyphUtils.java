@@ -204,7 +204,12 @@ public final class GraphGlyphUtils {
 		for (int index = 0; index < yList.size(); index++) {
 			y[index] = yList.get(index);
 		}
-		return new GraphSym(x, w, y, newname, aseq);
+		GraphSym newsym = new GraphSym(x, w, y, newname, aseq);
+
+		newsym.setGraphName(newname);
+		newsym.getGraphState().setGraphStyle(graphA.getGraphState().getGraphStyle());
+		newsym.getGraphState().setHeatMap(graphA.getGraphState().getHeatMap());
+		return newsym;
 	}
 
 	/**

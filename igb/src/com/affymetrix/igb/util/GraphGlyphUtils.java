@@ -24,7 +24,6 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public final class GraphGlyphUtils {
@@ -205,33 +204,9 @@ public final class GraphGlyphUtils {
 		for (int index = 0; index < yList.size(); index++) {
 			y[index] = yList.get(index);
 		}
-		printInt("xA", xA);
-		printInt("wA", wA);
-		printFloat("yA", yA);
-		printInt("xB", xB);
-		printInt("wB", wB);
-		printFloat("yB", yB);
-		printInt("x", x);
-		printInt("w", w);
-		printFloat("y", y);
 		return new GraphSym(x, w, y, newname, aseq);
 	}
 
-	private static void printInt(String name, int[] a) {
-		int[] begin = new int[20];
-		int[] end = new int[20];
-		System.arraycopy(a, 0, begin, 0, 20); 
-		System.arraycopy(a, a.length - 20, end, 0, 20); 
-		System.out.println(name + " = " + Arrays.toString(begin) + "," + Arrays.toString(end));
-	}
-
-	private static void printFloat(String name, float[] a) {
-		float[] begin = new float[20];
-		float[] end = new float[20];
-		System.arraycopy(a, 0, begin, 0, 20); 
-		System.arraycopy(a, a.length - 20, end, 0, 20); 
-		System.out.println(name + " = " + Arrays.toString(begin) + "," + Arrays.toString(end));
-	}
 	/**
 	 *  Combines two graphs by the given arithmetical operation.
 	 *  Returns null if the two graphs are not comparable via {@link #graphsAreComparable(GraphGlyph,GraphGlyph)}.

@@ -26,10 +26,8 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	 *
 	 */
 	protected JTabbedPane createTabbedPane(int tabPlacement) {
-		if(!isWindows()){
-			 JTabbedPane tabPane = new JTabbedPane();
-			 tabPane.setTabPlacement(tabPlacement);
-			 return tabPane;
+		if(isMac()){
+			 return new JTabbedPane(tabPlacement);
 		}
 
         Object textIconGap = UIManager.get("TabbedPane.textIconGap");
@@ -51,9 +49,9 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 	 * determines if the OS is windows
 	 * @return true if the OS is windows, false for MacOS, Linux, etc.
 	 */
-	private static boolean isWindows(){
+	private static boolean isMac(){
 		String os = System.getProperty("os.name");
-		if (os != null && os.toLowerCase().contains("windows")) {
+		if (os != null && "Mac OS X".equals(os)) {
 			return true;
 		}
 		return false;

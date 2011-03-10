@@ -61,7 +61,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<TabState, TabHolder> tabHolders;
 	private Map<IGBTabPanel, JMenu> tabMenus;
 	private Container cpane;
-	private boolean focusSet;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -71,7 +70,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabHolders.put(TabState.COMPONENT_STATE_WINDOW, new WindowTabs(this));
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
 		tabMenus = new HashMap<IGBTabPanel, JMenu>();
-		focusSet = false;
 	}
 
 	@Override
@@ -269,12 +267,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			removeTab(panel);
 		}
 		else {
-			boolean setFocus = false;
-			if (panel.isFocus() && !focusSet) {
-				setFocus = true;
-				focusSet = true;
-			}
-			tabHolders.get(tabState).addTab(panel, setFocus);
+			tabHolders.get(tabState).addTab(panel, panel.isFocus());
 		}
 		PreferenceUtils.saveComponentState(panel.getName(), tabState.name());
 	}

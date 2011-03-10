@@ -60,6 +60,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private boolean retractDividerSet;
 	private JFrame frame;
 	private boolean initialized = false;
+	private boolean focusSet;
 
 	/**
 	 * set the JTabbedPane in the JSplitPane - different for
@@ -118,6 +119,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		super(splitOrientation);
 		this.tabState = tabState;
 		retractDividerSet = false;
+		focusSet = false;
 		trayStateChangeListeners = new ArrayList<TrayStateChangeListener>();
 		trayState = TrayState.HIDDEN;
 		title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.name()));
@@ -330,8 +332,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 		tab_pane.insertTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText(), index);
 		tab_pane.validate();
-		if (setFocus) {
+		if (setFocus && !focusSet) {
 			tab_pane.setSelectedIndex(index);
+			focusSet = true;
 		}
 		if (trayState == TrayState.HIDDEN) {
 			invokeTrayState(TrayState.EXTENDED);

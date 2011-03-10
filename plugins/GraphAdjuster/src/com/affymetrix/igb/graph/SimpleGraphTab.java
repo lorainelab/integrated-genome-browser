@@ -149,7 +149,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private AdvancedGraphPanel advanced_panel;
 
 	public SimpleGraphTab(IGBService igbService) {
-		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), true, TAB_POSITION);
+		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), false, TAB_POSITION);
 		advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
 		this.gviewer = (SeqMapView)igbService.getMapView();
 

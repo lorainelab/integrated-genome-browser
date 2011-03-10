@@ -395,7 +395,7 @@ public final class IGB extends Application
 		windowService.setStatusBar(status_bar);
 		windowService.setViewMenu(view_menu);
 		frm.setVisible(true);
-		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()));
+		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()), export_to_file_menu.getText());
 		return new IGBTabPanel[]{GeneralLoadView.getLoadView(), SeqGroupView.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}
 
@@ -408,9 +408,9 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PrintAction()));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PrintFrameAction()));
 		file_menu.add(export_to_file_menu);
-		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportMainViewAction()));
-		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportLabelledMainViewAction()));
-		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportWholeFrameAction()));
+		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportMainViewAction()), export_to_file_menu.getText());
+		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportLabelledMainViewAction()), export_to_file_menu.getText());
+		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportWholeFrameAction()), export_to_file_menu.getText());
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PreferencesAction()));
 		file_menu.addSeparator();

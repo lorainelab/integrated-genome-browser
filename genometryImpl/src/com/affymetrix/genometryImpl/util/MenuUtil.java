@@ -82,8 +82,17 @@ public abstract class MenuUtil {
    *  with command set to null.
    */
   public static final JMenuItem addToMenu(JMenu menu, JMenuItem item) {
-    String command = item.getText();
-    if (command != null) { addAccelerator(item, command); }
+    return addToMenu(menu, item, "");
+  }
+
+  public static final JMenuItem addToMenu(JMenu menu, JMenuItem item, String prefix){
+	String command = item.getText();
+	if (command != null) {
+		if(prefix != null && prefix.length() > 0){
+			command = prefix + " / " + command;
+		}
+		addAccelerator(item, command);
+	}
     return menu.add(item);
   }
 

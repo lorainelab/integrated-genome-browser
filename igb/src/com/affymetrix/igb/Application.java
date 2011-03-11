@@ -103,31 +103,24 @@ public abstract class Application {
 	 * @return true if the user confirms, else false.
 	 */
 	public static boolean confirmPanel(String message) {
-		Application app = getSingleton();
-		JFrame frame = (app == null) ? null : app.getFrame();
-		/* 
-		 * original 
-		return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
-				frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
-		*/
-		//start
-		JCheckBox checkbox = new JCheckBox("Do not show this message again.");  
-		Object[] params = {message, checkbox};   
-		int n = JOptionPane.showConfirmDialog(frame, params, "Confirm", JOptionPane.YES_NO_OPTION);   
-		boolean dontShow = checkbox.isSelected();
-		
-		if(dontShow) PreferenceUtils.userConfirmed = n;
-		
-		return JOptionPane.YES_OPTION == n;
-		//end 
+		return confirmPanel(message, null);
 	}
 	
-	public static boolean confirmPanelForExit(String message) {
+	public static boolean confirmPanel(String message, String check) {
 		Application app = getSingleton();
 		JFrame frame = (app == null) ? null : app.getFrame();
-		
+
+		Object[] params = null;
+		if(check == null){
+			params = new Object[]{message};
+		}else{
+			JCheckBox checkbox = new JCheckBox("Do not show this message again.");
+			params = new Object[]{message, checkbox};
+		}
+
 		return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
-				frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
+				frame, params, "Confirm", JOptionPane.YES_NO_OPTION));
+
 	}
 	
 	public static boolean confirmPanelForSpanloading(String message) {

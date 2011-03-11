@@ -59,7 +59,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     misc_box.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
     misc_box.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
-      PreferenceUtils.RESET_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete));
+      PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete));
     misc_box.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
       PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete));
     

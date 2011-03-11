@@ -194,26 +194,12 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 
 		if (col == DELETE_FEATURE_COLUMN){
-			//start
-			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before delete", false);
-			if(PreferenceUtils.userConfirmed != 0 || resetConfirmOption) {
-				if(IGB.confirmPanel("Really remove entire " + gFeature.featureName + " data set ?")){
-					GeneralLoadView.getLoadView().removeFeature(gFeature);
-				}
-				if(resetConfirmOption) PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_CONFIRM_BOX_OPTION, false);
-			} else if(PreferenceUtils.userConfirmed == 0) {
+			String message = "Really remove entire " + gFeature.featureName + " data set ?";
+			if (IGB.confirmPanel(message, PreferenceUtils.getTopNode(),
+					PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 				GeneralLoadView.getLoadView().removeFeature(gFeature);
 			}
-			
-			return;
-			//end
-			
-			/* original
-			if(IGB.confirmPanel("Really remove entire " + gFeature.featureName + " data set ?")){
-				GeneralLoadView.removeFeature(gFeature);
-			}
-			return;
-			*/
+			return;		
 		}
 
 		if (col == REFRESH_FEATURE_COLUMN) {

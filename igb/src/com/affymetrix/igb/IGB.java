@@ -284,7 +284,7 @@ public final class IGB extends Application
 						PreferenceUtils.default_ask_before_exiting);
 				String message = "Do you really want to exit?";
 
-				if ((!ask_before_exit) || confirmPanel(message)) {
+				if (confirmPanel(message, PreferenceUtils.getTopNode(), PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
 					WebLink.autoSave();
 					Persistence.saveCurrentView(map_view);
 					if (windowService != null) {

@@ -257,30 +257,13 @@ class JTableX extends JTable implements MouseListener {
 		} else if (FeaturesTableModel.DELETE_FEATURE_COLUMN == realIndex) {
 			FeaturesTableModel ftm = (FeaturesTableModel) getModel();
 			int featureSize = ftm.getRowCount();
-			
-			//start
-			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before delete", false);
-			if(PreferenceUtils.userConfirmed != 0 || resetConfirmOption) {
-				if (featureSize > 0 && IGB.confirmPanel("Really remove all data sets ?")) {
-					for (int row = 0; row < featureSize; row++) {
-						GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row));
-					}
-				}
-				if(resetConfirmOption) PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_CONFIRM_BOX_OPTION, false);
-			} else if(PreferenceUtils.userConfirmed == 0) {
+			String message = "Really remove all data sets ?";
+			if (featureSize > 0 && IGB.confirmPanel(message, PreferenceUtils.getTopNode(),
+					PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 				for (int row = 0; row < featureSize; row++) {
 					GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row));
 				}
 			}
-			//end
-			
-			/*
-			if (featureSize > 0 && IGB.confirmPanel("Really remove all data sets ?")) {
-				for (int row = 0; row < featureSize; row++) {
-					GeneralLoadView.removeFeature(ftm.getFeature(row));
-				}
-			}
-			*/
 		}
 	}
 

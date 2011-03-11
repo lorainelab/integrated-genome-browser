@@ -7,6 +7,7 @@ import com.affymetrix.igb.view.StatusBar;
 
 import java.awt.Image;
 import java.util.*;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 
 public abstract class Application {
@@ -103,24 +104,45 @@ public abstract class Application {
 	 * @return true if the user confirms, else false.
 	 */
 	public static boolean confirmPanel(String message) {
-		return confirmPanel(message, null);
+		return confirmPanel(message, null, null, false);
 	}
 	
-	public static boolean confirmPanel(String message, String check) {
+	public static boolean confirmPanel(final String message, final Preferences node,
+			final String check, final boolean def_val) {
 		Application app = getSingleton();
 		JFrame frame = (app == null) ? null : app.getFrame();
 
 		Object[] params = null;
-		if(check == null){
-			params = new Object[]{message};
-		}else{
-			JCheckBox checkbox = new JCheckBox("Do not show this message again.");
-			params = new Object[]{message, checkbox};
+
+		//If no node is provided then show default message
+		if (node == null) {
+			return JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
+					frame, message, "Confirm", JOptionPane.YES_NO_OPTION);
 		}
 
-		return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
-				frame, params, "Confirm", JOptionPane.YES_NO_OPTION));
+		//If all parameters are provided then look up for boolean value from preference.
+		final boolean b = node.getBoolean(check, def_val);
 
+		//If user has already set preference then return true.
+		if (b != def_val) {
+			return true;
+		}
+
+		//If preference is not set then show message with option to disable it.
+		final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
+		params = new Object[]{message, checkbox};
+
+		int ret = JOptionPane.showConfirmDialog(
+				frame, params, "Confirm", JOptionPane.YES_NO_OPTION);
+
+		if (JOptionPane.YES_OPTION == ret) {
+			if(checkbox.isSelected()){
+				node.putBoolean(check, checkbox.isSelected() != b);
+			}
+			return true;
+		}
+
+		return false;
 	}
 	
 	public static boolean confirmPanelForSpanloading(String message) {

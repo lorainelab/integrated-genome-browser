@@ -208,7 +208,7 @@ public class ScriptFileLoader {
 			}
 		}
 		if (action.equals("refresh")) {
-			RefreshDataAction.getAction().actionPerformed(null);
+			GeneralLoadView.getLoadView().loadVisibleFeatures();
 		}
 		if (action.equals("select") && fields.length>=2) {
 			UnibrowControlServlet.getInstance().performSelection(join(fields,1));

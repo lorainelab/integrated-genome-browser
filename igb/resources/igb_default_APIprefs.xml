@@ -29,7 +29,7 @@
                             <entry key="Open Current Tab in New Window" value="ctrl N"/>
                             <entry key="SCROLL_RIGHT" value=""/>
                             <entry key="ZOOM_IN_Y" value=""/>
-														<entry key="Center at selected" value=""/>
+							<entry key="Center at selected" value=""/>
                             <entry key="Select parent" value="ctrl A"/>
                             <entry key="ZOOM_OUT_X" value=""/>
                             <entry key="Web Links Manager / Edit..." value=""/>
@@ -54,12 +54,13 @@
                             <entry key="Toggle Edge Matching" value="ctrl M"/>
                             <entry key="Preferences Window / Help" value=""/>
                             <entry key="Main View" value=""/>
-                            <entry key="View Region in UCSC Browser" value="alt R"/>
+                            <entry key="View Region in UCSC Browser" value="ctrl U"/>
                             <entry key="ZOOM_IN_X" value=""/>
                             <entry key="Web Links Manager / Delete ..." value=""/>
                             <entry key="Add Position &amp; Graphs Bookmark" value=""/>
                             <entry key="Clear Graphs" value=""/>
                             <entry key="Preferences Window / Import" value=""/>
+							<entry key="Refresh Data" value="ctrl R"/>
                         </map>
                     </node>
                 </node>

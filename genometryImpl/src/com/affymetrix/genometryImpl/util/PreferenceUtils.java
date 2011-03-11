@@ -356,17 +356,6 @@ public abstract class PreferenceUtils {
 		return ks;
 	}
 
-	public static int getAccelerator(String action_command, int def, String defStr) {
-		KeyStroke ks = getAccelerator(action_command);
-
-		if(ks == null){
-			getKeystrokesNode().put(action_command, String.valueOf(defStr));
-			return def;
-		}
-		
-		return ks.getKeyCode();
-	}
-
 	/**
 	 * Returns the location of the application data directory.
 	 * The String will always end with "/".

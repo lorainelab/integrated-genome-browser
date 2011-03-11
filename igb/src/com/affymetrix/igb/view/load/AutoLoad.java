@@ -88,8 +88,8 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 			prev_scroller_value = scroller_value;
 		} else if (src == zoomer){
 			zoomer_value = (zoomer.getValue() * 100 / zoomer.getMaximum());
-			if (zoomer_value == prev_zoomer_value
-					|| zoomer_value < threshold) {
+			//TODO: Check if prev_zoomer_value == zoomer_value ??
+			if (zoomer_value < threshold) {
 				return;
 			}
 			prev_zoomer_value = zoomer_value;

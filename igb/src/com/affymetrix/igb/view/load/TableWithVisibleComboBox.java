@@ -252,7 +252,7 @@ class JTableX extends JTable implements MouseListener {
 				&& GeneralLoadView.getIsDisableNecessary()) {
 
 			//RefreshDataAction.getAction().actionPerformed(null);
-			RefreshDataAction.getAction().actionPerformed(new ActionEvent(this, 1, "refresh icon"));
+			GeneralLoadView.getInstance().getRefreshDataAction().actionPerformed(new ActionEvent(this, 1, "refresh icon"));
 
 		} else if (FeaturesTableModel.DELETE_FEATURE_COLUMN == realIndex) {
 			FeaturesTableModel ftm = (FeaturesTableModel) getModel();

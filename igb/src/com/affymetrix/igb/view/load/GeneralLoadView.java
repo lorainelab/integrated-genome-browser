@@ -87,7 +87,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	private final JButton partial_residuesB;
 	private final JComboBox speciesCB;
 	private final JComboBoxToolTipRenderer speciesCBRenderer;
-	private final RefreshDataAction refreshDataAction;
+	private final AbstractAction refreshDataAction;
 	private static SeqMapView gviewer;
 	private static JTableX feature_table;
 	public static FeaturesTableModel feature_model;
@@ -165,7 +165,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
 		buttonPanel.add(partial_residuesB);
-		this.refreshDataAction = RefreshDataAction.getAction();
+		this.refreshDataAction = gviewer.getRefreshDataAction();
 		JButton refresh_dataB = new JButton(refreshDataAction);
 		refresh_dataB.setIcon(null);
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
@@ -1079,6 +1079,10 @@ public final class GeneralLoadView extends IGBTabPanel
 	
 	public boolean isLoadingConfirm() {
 		return showLoadingConfirm;
+	}
+
+	protected AbstractAction getRefreshDataAction() {
+		return refreshDataAction;
 	}
 }
 

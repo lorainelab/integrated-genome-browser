@@ -211,7 +211,8 @@ public class SeqMapView extends JPanel
 	boolean report_status_in_status_bar = true;
 	private SeqSymmetry sym_used_for_title = null;
 	private PropertyHandler propertyHandler;
-
+	private final AbstractAction refreshDataAction;
+	
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
@@ -376,7 +377,8 @@ public class SeqMapView extends JPanel
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		xzoombox.add((Component) xzoomer);
 
-		JButton refresh_button = new JButton(RefreshDataAction.getAction());
+		refreshDataAction = new RefreshDataAction(this);
+		JButton refresh_button = new JButton(refreshDataAction);
 		refresh_button.setText("");
 		xzoombox.add(refresh_button);
 
@@ -1924,6 +1926,10 @@ public class SeqMapView extends JPanel
 
 	public SeqSymmetry getSeqSymmetry(){
 		return seq_selected_sym;
+	}
+
+	public AbstractAction getRefreshDataAction() {
+		return refreshDataAction;
 	}
 
 	public void setPropertyHandler(PropertyHandler propertyHandler) {

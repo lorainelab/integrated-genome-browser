@@ -13,6 +13,8 @@
 
 package com.affymetrix.genometryImpl.style;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
+
 /**
  *  Encapsulates information needed to restore the visual appearance of
  *    a graph stored at a URL.
@@ -135,7 +137,8 @@ public final class GraphState {
 	public final GraphType getGraphStyle() { return graph_style; }
 	public HeatMap getHeatMap() {
 		if (heat_map == null) {
-			heat_map = HeatMap.StandardHeatMap.BLACK_WHITE.getHeatMap();
+			String preferredHeatMap = PreferenceUtils.getTopNode().get(HeatMap.PREF_HEATMAP_NAME, HeatMap.def_heatmap_name.name());
+			heat_map = HeatMap.getStandardHeatMap(preferredHeatMap);
 		}
 		return heat_map;
 	}

@@ -464,7 +464,6 @@ public abstract class PreferenceUtils {
 		// actually one of the given options.  The combo_box will ignore
 		// an attempt to set itself to a value that isn't in its option list.
 		String current_stored_value = node.get(pref_name, default_value).intern();
-		combo_box.setSelectedItem(current_stored_value);
 
 		combo_box.addActionListener(new ActionListener() {
 
@@ -476,6 +475,7 @@ public abstract class PreferenceUtils {
 			}
 		});
 
+		combo_box.setSelectedItem(current_stored_value);
 		node.addPreferenceChangeListener(new PreferenceChangeListener() {
 
 			public void preferenceChange(PreferenceChangeEvent evt) {

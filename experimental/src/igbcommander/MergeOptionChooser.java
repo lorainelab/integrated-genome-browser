@@ -7,7 +7,11 @@ import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.Frame;
+import java.awt.Dialog;
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +26,8 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 	public final Box box, outerBox;
 	public final JComboBox speciesCB = new JComboBox();
 	public final JComboBox versionCB = new JComboBox();
-	private JFrame frame = null;
+	private JPanel content = new JPanel();
+	private JTextArea tipArea = null;
 
 	public MergeOptionChooser() {
 		super();
@@ -67,18 +72,32 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 		emptyText2.setForeground(Color.blue);
 		box0.add(emptyText2);
 		
+		
+		content.setLayout(new BorderLayout());
+		
+		tipArea = new JTextArea(7, 100);
+		content.add(tipArea, BorderLayout.CENTER);
+
+		content.setVisible(false);
+		
+		
 		outerBox = new Box(BoxLayout.Y_AXIS);
 		outerBox.add(box0);
 		outerBox.add(box);
+		outerBox.add(content);
 		//end max
 	}
 
 	@Override
 	protected JDialog createDialog(Component parent) throws HeadlessException {
-		JDialog dialog = super.createDialog(parent);
+		JDialog dialog = super.createDialog(null);
+		//JDialog dialog = new JDialog((Frame)null, "tip", false);
+		//dialog.setModalityType(Dialog.ModalityType.MODELESS);
 
 		refreshSpeciesList();
 		dialog.getContentPane().add(outerBox, BorderLayout.SOUTH);
+		
+		
 		return dialog;
 	}
 
@@ -112,7 +131,13 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 	
 	private class IconListener implements MouseListener {
 		public void mouseClicked(MouseEvent e) {
-			displayTip();
+			//displayTip();
+			if(content.isVisible()) {
+				displayTip3();
+			} else {
+				displayTip2();
+			}
+			
 			/*
 			JOptionPane.showMessageDialog(parent,
 				    "IGB's data sources already provide IGB with information about many species\n " +
@@ -128,7 +153,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 		public void mouseExited(MouseEvent e) {}
 		public void mousePressed(MouseEvent e) {}
 		public void mouseReleased(MouseEvent e) {}
-		
+		/*
 		public void displayTip() {
 			frame = new JFrame("Show Tip");
 
@@ -150,12 +175,31 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 			frame.setVisible(true);
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		}
+		*/
+		public void displayTip2() {
+			tipArea.setText("IGB's data sources already provide IGB with information about many species\n " +
+					"and their various genome assemblies, also called \"versions\". If you want\n " +
+					"to open a local file containing annotations and other data for one of these\n " +
+					"genme versions, select it using the species and genome version chooser menus\n\n" +
+					"If you are working with something new that isn't listed, then type in the \n" +
+					"species and genome version, select the file you want, and click \"Open\"");
+			content.setVisible(true);
+			//content.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		}
+		
+		public void displayTip3() {
+			tipArea.setText("");
+			content.setVisible(false);
+			//content.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		}
 	}
 	
 	public void closeFrame() {
+		/*
 		if(frame != null) {
 			frame.setVisible(false);
 			frame.dispose();
 		}
+		*/
 	}
 }

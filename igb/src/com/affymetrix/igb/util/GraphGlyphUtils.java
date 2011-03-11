@@ -204,6 +204,11 @@ public final class GraphGlyphUtils {
 		for (int index = 0; index < yList.size(); index++) {
 			y[index] = yList.get(index);
 		}
+		if (x.length == 0) { // if no data, just create a dummy zero span
+			x = new int[]{Math.min(xA[0], xB[0])};
+			y = new float[]{0};
+			w = new int[]{1};
+		}
 		GraphSym newsym = new GraphSym(x, w, y, newname, aseq);
 
 		newsym.setGraphName(newname);

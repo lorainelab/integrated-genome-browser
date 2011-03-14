@@ -18,8 +18,6 @@ import java.awt.Dimension;
 import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.Locale;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -37,17 +35,17 @@ import java.awt.Component;
 public final class SeqGroupView extends IGBTabPanel implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = 0;
-	private static final String CHOOSESEQ = "Select a chromosome sequence";
-	private final static boolean DEBUG_EVENTS = false;
-	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private final JTable seqtable = new JTable();
+	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
+	private static final boolean DEBUG_EVENTS = false;
+
+	private final GenometryModel gmodel;
+	private final JTable seqtable;
+	private final ListSelectionModel lsm;
 	private BioSeq selected_seq = null;
 	private AnnotatedSeqGroup previousGroup = null;
 	private int previousSeqCount = 0;
-	private final ListSelectionModel lsm;
 	private TableRowSorter<SeqGroupTableModel> sorter;
 	private String most_recent_seq_id = null;
-	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 
 	private static SeqGroupView singleton;
 
@@ -61,7 +59,9 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 
 	private SeqGroupView(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("sequenceTab"), BUNDLE.getString("sequenceTab"), true, TAB_POSITION);
-		seqtable.setToolTipText(CHOOSESEQ);
+		gmodel = GenometryModel.getGenometryModel();
+		seqtable = new JTable();
+		seqtable.setToolTipText(BUNDLE.getString("chooseSeq"));
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);
 		
@@ -69,15 +69,10 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 		seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
 
 		JScrollPane scroller = new JScrollPane(seqtable);
-		scroller.setBorder(BorderFactory.createCompoundBorder(
-				scroller.getBorder(),
-				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		this.add(Box.createRigidArea(new Dimension(0, 5)));
 		this.add(scroller);
 
-		this.setBorder(BorderFactory.createTitledBorder("Current Sequence"));
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
 		lsm = seqtable.getSelectionModel();

@@ -59,7 +59,7 @@ public interface NeoConstants {
 
 	public static int UNKNOWN = VERTICAL+6;
 
-	public static Font default_bold_font = new Font("Courier", Font.BOLD, 12);
-	public static Font default_plain_font = new Font("Courier", Font.PLAIN, 12);
+	public static Font default_bold_font = new Font(Font.MONOSPACED, Font.BOLD, 12);
+	public static Font default_plain_font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
 }

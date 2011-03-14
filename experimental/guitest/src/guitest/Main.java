@@ -4,12 +4,11 @@
  */
 package guitest;
 
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.JFrame;
+import java.awt.Dimension;
+import java.io.File;
 
 /**
- *
+ * Very simple class for testing JFileChooser layouts.
  * @author aloraine
  */
 public class Main {
@@ -18,23 +17,13 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // why do we need this?
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                UIManager.put("swing.boldMetal", Boolean.FALSE);
-                createAndShowGUI();
-            }
-        });
-    }
-
-    private static void createAndShowGUI() {
-        JFrame frame = new JFrame("FileChooserDemo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        frame.add(new FileChooserDemo());
-
-        frame.pack();
-        frame.setVisible(true);
+        MergeOptionChooser m = new MergeOptionChooser();
+        File currDir = new File(System.getProperty("user.home"));
+        m.setCurrentDirectory(currDir);
+        m.rescanCurrentDirectory();
+        m.setPreferredSize(new Dimension(450, 500));
+        int option = m.showOpenDialog(null);
+        m.closeFrame();
+        System.exit(0);
     }
 }

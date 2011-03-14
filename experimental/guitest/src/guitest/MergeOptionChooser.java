@@ -23,7 +23,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
     private static final long serialVersionUID = 1L;
     private static final String SELECT_SPECIES = "Species";
     private static final String CHOOSE = "Choose";
-    public final Box box, outerBox;
+    public final Box box/**, outerBox*/;
     public final JComboBox speciesCB = new JComboBox();
     public final JComboBox versionCB = new JComboBox();
     private JPanel content = new JPanel();
@@ -35,10 +35,37 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         speciesCB.addActionListener(this);
         versionCB.addActionListener(this);
 
+        // Create the combo box with labels
         box = new Box(BoxLayout.X_AXIS);
         // why these arguments?
         box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
 
+        Box box1 = new Box(BoxLayout.Y_AXIS);
+        JLabel species_label_line1 = new JLabel("Choose an existing species");
+        JLabel species_label_line2 = new JLabel("or enter a new one.");
+        box1.add(species_label_line1);
+        box1.add(species_label_line2);
+        species_label_line1.setAlignmentX(CENTER_ALIGNMENT);
+        species_label_line2.setAlignmentX(CENTER_ALIGNMENT);
+        box1.add(Box.createVerticalStrut(5));
+        box1.add(speciesCB);
+        speciesCB.setAlignmentX(CENTER_ALIGNMENT);
+
+        Box box2 = new Box(BoxLayout.Y_AXIS);
+        JLabel version_label_line1 = new JLabel("Choose an existing genome");
+        JLabel version_label_line2 = new JLabel("or enter a new one.");
+        box2.add(version_label_line1);
+        box2.add(version_label_line2);
+        version_label_line1.setAlignmentX(CENTER_ALIGNMENT);
+        version_label_line2.setAlignmentX(CENTER_ALIGNMENT);
+        box2.add(Box.createVerticalStrut(5));
+        box2.add(versionCB);
+
+        box.add(box1);
+        box.add(Box.createHorizontalStrut(10));
+        box.add(box2);
+
+   /**
         box.add(new JLabel("Choose or enter new species:"));
         // enforces a gap between
         box.add(Box.createHorizontalStrut(5)); 
@@ -73,21 +100,23 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         emptyText2.setFont(new Font("Serif", Font.PLAIN, 12));
         emptyText2.setForeground(Color.blue);
         box0.add(emptyText2);
+*/
 
-
-        content.setLayout(new BorderLayout());
-
+        //content.setLayout(new BorderLayout());
+/**
         tipArea = new JTextArea(7, 100);
         content.add(tipArea, BorderLayout.CENTER);
 
         content.setVisible(false);
-
-
+*/
+/*
         outerBox = new Box(BoxLayout.Y_AXIS);
         outerBox.add(box0);
         outerBox.add(box);
         outerBox.add(content);
         //end max
+ *
+ */
     }
 
     @Override
@@ -97,9 +126,10 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         //dialog.setModalityType(Dialog.ModalityType.MODELESS);
 
         refreshSpeciesList();
-        dialog.getContentPane().add(outerBox, BorderLayout.SOUTH);
+//        dialog.getContentPane().add(outerBox, BorderLayout.SOUTH);
 
-
+        //dialog.getContentPane().add(outerBox, BorderLayout.SOUTH);
+        dialog.getContentPane().add(box,BorderLayout.SOUTH);
         return dialog;
     }
 

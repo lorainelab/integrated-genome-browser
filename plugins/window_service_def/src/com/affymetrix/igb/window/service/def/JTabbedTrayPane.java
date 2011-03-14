@@ -138,7 +138,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 				public void ancestorRemoved(AncestorEvent event) {}
 				@Override
 				public void ancestorMoved(AncestorEvent event) {
-					if (trayState == TrayState.EXTENDED) {
+					if (trayState == TrayState.EXTENDED && initialized) {
 						saveDividerLocation();
 					}
 				}

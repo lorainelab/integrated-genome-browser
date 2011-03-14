@@ -32,23 +32,19 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 
     public MergeOptionChooser() {
         super();
-        // current delay
-
         speciesCB.addActionListener(this);
         versionCB.addActionListener(this);
-
-        // Create the combo box with labels
+        // note that box is an instance variable, used in overridden
+        // JFileChooser method below
         box = new Box(BoxLayout.X_AXIS);
         // why these arguments?
         box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
-
+        // box1 is the JLabel and JComboBox on the left
         Box box1 = new Box(BoxLayout.Y_AXIS);
-        JLabel species_label_line1 = new JLabel("Choose an existing species.");
-        JLabel species_label_line2 = new JLabel("or enter a new one.");
-        box1.add(species_label_line1);
-        box1.add(species_label_line2);
-        species_label_line1.setAlignmentX(CENTER_ALIGNMENT);
-        species_label_line2.setAlignmentX(CENTER_ALIGNMENT);
+        Box box1_up = new Box(BoxLayout.X_AXIS);
+        JLabel species_label_line1 = new JLabel("Choose or enter species.");
+        box1_up.add(species_label_line1);
+        box1_up.add(Box.createHorizontalStrut(5));
         JLabel iconLabel;
         BufferedImage image = null;
         try {
@@ -59,14 +55,16 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
             e.printStackTrace();
             iconLabel = new JLabel("HELP");
         }
-        box1.add(iconLabel);
+        box1_up.add(iconLabel);
+        box1.add(box1_up);
         iconLabel.setToolTipText("<html>I taunt you with my <a href=\"http://www.transvar.org\">unclickable link</a>. Hah!!</html>");
         box1.add(Box.createVerticalStrut(5));
         box1.add(speciesCB);
         speciesCB.setAlignmentX(CENTER_ALIGNMENT);
-
+        // box2 is the JLabel and ComboBox on the right
         Box box2 = new Box(BoxLayout.Y_AXIS);
-        JLabel version_label_line1 = new JLabel("Choose an existing genome") {
+        Box box2_up = new Box(BoxLayout.X_AXIS);
+        JLabel version_label_line1 = new JLabel("Choose or enter genome.") {
             public JToolTip createToolTip()
             {
                 return new IgbToolTip();
@@ -83,12 +81,10 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         }
         iconLabel2.setToolTipText("<html>I, too, taunt you with my <a href=\"http://www.transvar.org\">unclickable link</a>. Hah!!</html>");
         version_label_line1.setToolTipText("I am a custom IgbToolTip but I don't do anything useful yet.");
-        JLabel version_label_line2 = new JLabel("or enter a new one.");
-        box2.add(version_label_line1);
-        box2.add(version_label_line2);
-        box2.add(iconLabel2);
-        version_label_line1.setAlignmentX(CENTER_ALIGNMENT);
-        version_label_line2.setAlignmentX(CENTER_ALIGNMENT);
+        box2_up.add(version_label_line1);
+        box2_up.add(Box.createHorizontalStrut(5));
+        box2_up.add(iconLabel2);
+        box2.add(box2_up);
         box2.add(Box.createVerticalStrut(5));
         box2.add(versionCB);
 

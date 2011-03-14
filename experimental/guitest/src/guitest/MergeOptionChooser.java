@@ -16,7 +16,8 @@ import javax.swing.*;
 
 /**
  * A demo showing how we can help IGB users understand that they can create a new species
- * and genome version by opening a file in IGB.
+ * and genome version by opening a file in IGB. Written by Max Li and then modified by
+ * Ann Loraine.
  */
 public final class MergeOptionChooser extends JFileChooser implements ActionListener {
 

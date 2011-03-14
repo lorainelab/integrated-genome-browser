@@ -14,7 +14,11 @@ import java.io.File;
 public class Main {
 
     /**
-     * @param args the command line arguments
+     * A very simple main method that shows the JFileChooser right away.
+     * When the user clicks the Cancel or Open button, the JFileChooser
+     * goes away and the program exits. This behavior is designed for
+     * testing and programmer convenience. 
+     * @author Ann Loraine
      */
     public static void main(String[] args) {
         MergeOptionChooser m = new MergeOptionChooser();

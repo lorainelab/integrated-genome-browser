@@ -22,8 +22,10 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.glyph.AxisGlyphWithSelection;
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.beans.PropertyChangeEvent;
@@ -553,10 +555,59 @@ public class AffyTieredMap extends NeoMap {
 		axes.add(axis);
 		return axis;
 	}
+
+	/**
+	 *  Tries to determine the glyph you really wanted to choose based on the
+	 *  one you clicked on.  Usually this will be the glyph you clicked on,
+	 *  but when the zoom level is such that the glyph is very small, this
+	 *  assumes you probably wanted to pick the parent glyph rather than
+	 *  one of its children.
+	 *
+	 *  @param topgl a Glyph
+	 *  @param zoom_point  the location where you clicked; if the returned glyph
+	 *   is different from the given glyph, the returned zoom_point will be
+	 *   at the center of that returned glyph, otherwise it will be unmodified.
+	 *   This parameter should not be supplied as null.
+	 *  @return a Glyph, and also modifies the value of zoom_point
+	 */
+	public GlyphI zoomCorrectedGlyphChoice(GlyphI topgl, Point2D.Double zoom_point) {
+		if (topgl == null) {
+			return null;
+		}
+		// trying to do smarter selection of parent (for example, transcript)
+		//     versus child (for example, exon)
+		// calculate pixel width of topgl, if <= 2, and it has no children,
+		//   and parent glyphs has pixel width <= 10, then select parent instead of child..
+		Rectangle pbox = new Rectangle();
+		Rectangle2D.Double cbox = topgl.getCoordBox();
+		this.getView().transformToPixels(cbox, pbox);
+
+		if (pbox.width <= 2) {
+			// if the selection is very small, move the x_coord to the center
+			// of the selection so we can zoom-in on it.
+			zoom_point.x = cbox.x + cbox.width / 2;
+			zoom_point.y = cbox.y + cbox.height / 2;
+
+			if ((topgl.getChildCount() == 0) && (topgl.getParent() != null)) {
+				// Watch for null parents:
+				// The reified Glyphs of the FlyweightPointGlyph made by OrfAnalyzer2 can have no parent
+				cbox = topgl.getParent().getCoordBox();
+				this.getView().transformToPixels(cbox, pbox);
+				if (pbox.width <= 10) {
+					topgl = topgl.getParent();
+					if (pbox.width <= 2) { // Note: this pbox has new values than those tested above
+						// if the selection is very small, move the x_coord to the center
+						// of the selection so we can zoom-in on it.
+						zoom_point.x = cbox.x + cbox.width / 2;
+						zoom_point.y = cbox.y + cbox.height / 2;
+					}
+				}
+			}
+		}
+
+		return topgl;
+	}
 }
-
-
-
 
 
 

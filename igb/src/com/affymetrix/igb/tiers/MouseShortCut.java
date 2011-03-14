@@ -1,10 +1,14 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.SeqMapView.MapMode;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,11 +62,26 @@ final public class MouseShortCut implements MouseListener{
 				smv.centerAtHairline();
 			}
 
-			List<GlyphI> glyphs = smv.getSeqMap().getSelected();
-			if(glyphs.size() != 0 && glyphs.get(0) instanceof GraphGlyph)
+			List<GlyphI> glyphs = new ArrayList<GlyphI>();
+			glyphs.addAll(smv.getSeqMap().getSelected());
+
+			if(glyphs.isEmpty() && smv.getMapMode() == MapMode.MapScrollMode && e instanceof NeoMouseEvent){
+				NeoMouseEvent nevt = (NeoMouseEvent)e;
+				Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
+				
+				GlyphI topgl = null;
+				if (!nevt.getItems().isEmpty()) {
+					topgl = nevt.getItems().get(nevt.getItems().size() - 1);
+					topgl = smv.getSeqMap().zoomCorrectedGlyphChoice(topgl, zoom_point);
+				}
+				glyphs.add(topgl);
+			}
+
+			if(glyphs.isEmpty() || (!glyphs.isEmpty() && glyphs.get(0) instanceof GraphGlyph))
 				return;
-			//Zoom to selection.
-			smv.zoomToSelections();
+			
+			//Zoom to glyphs.
+			smv.zoomToGlyphs(glyphs);
 			return;
 		}
 		

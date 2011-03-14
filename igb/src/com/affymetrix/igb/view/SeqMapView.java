@@ -1175,7 +1175,7 @@ public class SeqMapView extends JPanel
 	public final void zoomToSelections() {
 		List<GlyphI> selections = seqmap.getSelected();
 		if (selections.size() > 0) {
-			zoomToRectangle(getRegionForGlyphs(selections));
+			zoomToGlyphs(selections);
 		} else if (seq_selected_sym != null) {
 			SeqSpan span = getViewSeqSpan(seq_selected_sym);
 			zoomTo(span);
@@ -1199,6 +1199,10 @@ public class SeqMapView extends JPanel
 		this.getSeqMap().scroll(NeoMap.X, map_start);
 		this.setZoomSpotX(pos);
 		this.getSeqMap().updateWidget();
+	}
+
+	public void zoomToGlyphs(List<GlyphI> glyphs){
+		zoomToRectangle(getRegionForGlyphs(glyphs));
 	}
 
 	/** Returns a rectangle containing all the current selections.

@@ -44,7 +44,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         Box box1 = new Box(BoxLayout.Y_AXIS);
         JLabel species_label_line1 = new JLabel("Choose an existing species");
         JLabel species_label_line2 = new JLabel("or enter a new one.");
-        species_label_line2.setToolTipText("<html>You can't <a href=\"http://www.transvar.org\">click this link</a> because I am the world's worst tooltip. Hah!!</html>");
+        species_label_line2.setToolTipText("<html>I taunt you with my <a href=\"http://www.transvar.org\">unclickable link</a>. Hah!!</html>");
         box1.add(species_label_line1);
         box1.add(species_label_line2);
         species_label_line1.setAlignmentX(CENTER_ALIGNMENT);
@@ -60,7 +60,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
                 return new IgbToolTip();
             }
         };
-        version_label_line1.setToolTipText("I am some text you can mouse over!");
+        version_label_line1.setToolTipText("I am a custom IgbToolTip but I don't do anything useful yet.");
         JLabel version_label_line2 = new JLabel("or enter a new one.");
         box2.add(version_label_line1);
         box2.add(version_label_line2);
@@ -130,7 +130,8 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
     @Override
     protected JDialog createDialog(Component parent) throws HeadlessException {
         JDialog dialog = super.createDialog(null);
-        int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
+        int original_dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
+        int original_initialDelay = ToolTipManager.sharedInstance().getInitialDelay();
         //JDialog dialog = new JDialog((Frame)null, "tip", false);
         //dialog.setModalityType(Dialog.ModalityType.MODELESS);
 
@@ -139,8 +140,8 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 
         //dialog.getContentPane().add(outerBox, BorderLayout.SOUTH);
         dialog.getContentPane().add(box,BorderLayout.SOUTH);
-        dismissDelay = Integer.MAX_VALUE;
-        ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+        ToolTipManager.sharedInstance().setInitialDelay(0);
         return dialog;
     }
 

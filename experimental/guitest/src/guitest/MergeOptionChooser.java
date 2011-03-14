@@ -16,7 +16,7 @@ import javax.swing.*;
 
 /**
  * A demo showing how we can help IGB users understand that they can create a new species
- * and genome version by opening a file in IGB. Written by Max Li and then modified by
+ * and genome version by opening a file in IGB. Created by Max Li and then modified by
  * Ann Loraine.
  */
 public final class MergeOptionChooser extends JFileChooser implements ActionListener {
@@ -43,13 +43,24 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
 
         Box box1 = new Box(BoxLayout.Y_AXIS);
-        JLabel species_label_line1 = new JLabel("Choose an existing species");
+        JLabel species_label_line1 = new JLabel("Choose an existing species.");
         JLabel species_label_line2 = new JLabel("or enter a new one.");
-        species_label_line2.setToolTipText("<html>I taunt you with my <a href=\"http://www.transvar.org\">unclickable link</a>. Hah!!</html>");
         box1.add(species_label_line1);
         box1.add(species_label_line2);
         species_label_line1.setAlignmentX(CENTER_ALIGNMENT);
         species_label_line2.setAlignmentX(CENTER_ALIGNMENT);
+        JLabel iconLabel;
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(this.getClass().getResource("info_icon.gif"));
+            ImageIcon infoIcon = new ImageIcon(image);
+            iconLabel = new JLabel(infoIcon);
+        } catch (IOException e) {
+            e.printStackTrace();
+            iconLabel = new JLabel("HELP");
+        }
+        box1.add(iconLabel);
+        iconLabel.setToolTipText("<html>I taunt you with my <a href=\"http://www.transvar.org\">unclickable link</a>. Hah!!</html>");
         box1.add(Box.createVerticalStrut(5));
         box1.add(speciesCB);
         speciesCB.setAlignmentX(CENTER_ALIGNMENT);
@@ -61,10 +72,21 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
                 return new IgbToolTip();
             }
         };
+        JLabel iconLabel2;
+        try {
+            image = ImageIO.read(this.getClass().getResource("info_icon.gif"));
+            ImageIcon infoIcon = new ImageIcon(image);
+            iconLabel2 = new JLabel(infoIcon);
+        } catch (IOException e) {
+            e.printStackTrace();
+            iconLabel2 = new JLabel("HELP");
+        }
+        iconLabel2.setToolTipText("<html>I, too, taunt you with my <a href=\"http://www.transvar.org\">unclickable link</a>. Hah!!</html>");
         version_label_line1.setToolTipText("I am a custom IgbToolTip but I don't do anything useful yet.");
         JLabel version_label_line2 = new JLabel("or enter a new one.");
         box2.add(version_label_line1);
         box2.add(version_label_line2);
+        box2.add(iconLabel2);
         version_label_line1.setAlignmentX(CENTER_ALIGNMENT);
         version_label_line2.setAlignmentX(CENTER_ALIGNMENT);
         box2.add(Box.createVerticalStrut(5));

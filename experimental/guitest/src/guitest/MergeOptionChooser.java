@@ -31,6 +31,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 
     public MergeOptionChooser() {
         super();
+        // current delay
 
         speciesCB.addActionListener(this);
         versionCB.addActionListener(this);
@@ -53,7 +54,13 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         speciesCB.setAlignmentX(CENTER_ALIGNMENT);
 
         Box box2 = new Box(BoxLayout.Y_AXIS);
-        JLabel version_label_line1 = new JLabel("Choose an existing genome");
+        JLabel version_label_line1 = new JLabel("Choose an existing genome") {
+            public JToolTip createToolTip()
+            {
+                return new IgbToolTip();
+            }
+        };
+        version_label_line1.setToolTipText("I am some text you can mouse over!");
         JLabel version_label_line2 = new JLabel("or enter a new one.");
         box2.add(version_label_line1);
         box2.add(version_label_line2);
@@ -123,6 +130,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
     @Override
     protected JDialog createDialog(Component parent) throws HeadlessException {
         JDialog dialog = super.createDialog(null);
+        int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
         //JDialog dialog = new JDialog((Frame)null, "tip", false);
         //dialog.setModalityType(Dialog.ModalityType.MODELESS);
 
@@ -131,6 +139,8 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 
         //dialog.getContentPane().add(outerBox, BorderLayout.SOUTH);
         dialog.getContentPane().add(box,BorderLayout.SOUTH);
+        dismissDelay = Integer.MAX_VALUE;
+        ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
         return dialog;
     }
 

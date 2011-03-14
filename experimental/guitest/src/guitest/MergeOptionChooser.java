@@ -43,6 +43,7 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
         Box box1 = new Box(BoxLayout.Y_AXIS);
         JLabel species_label_line1 = new JLabel("Choose an existing species");
         JLabel species_label_line2 = new JLabel("or enter a new one.");
+        species_label_line2.setToolTipText("<html>You can't <a href=\"http://www.transvar.org\">click this link</a> because I am the world's worst tooltip. Hah!!</html>");
         box1.add(species_label_line1);
         box1.add(species_label_line2);
         species_label_line1.setAlignmentX(CENTER_ALIGNMENT);

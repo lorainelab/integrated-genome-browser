@@ -21,6 +21,8 @@ import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -128,7 +130,20 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			saveDividerProportionalLocation = _saveDividerProportionalLocation;
 		}
 		tab_pane = createTabbedPane(orientation);
-		
+		tab_pane.addAncestorListener(
+			new AncestorListener() {
+				@Override
+				public void ancestorAdded(AncestorEvent event) {}
+				@Override
+				public void ancestorRemoved(AncestorEvent event) {}
+				@Override
+				public void ancestorMoved(AncestorEvent event) {
+					if (trayState == TrayState.EXTENDED) {
+						saveDividerLocation();
+					}
+				}
+			}
+		);
 		setOneTouchExpandable(false);
 		setDividerSize(0);
 

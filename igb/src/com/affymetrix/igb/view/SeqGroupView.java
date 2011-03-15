@@ -34,7 +34,7 @@ import java.awt.Component;
 
 public final class SeqGroupView extends IGBTabPanel implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static final int TAB_POSITION = 0;
+	private static final int TAB_POSITION = 7;
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 	private static final boolean DEBUG_EVENTS = false;
 

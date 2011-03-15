@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel> {
 	private static final long serialVersionUID = 1L;
+	public static final int DEFAULT_TAB_POSITION = Integer.MAX_VALUE - 1;
 
 	/**
 	 * the current state of the tab
@@ -71,7 +72,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	private JFrame frame;
 
 	public IGBTabPanel(IGBService igbService, String displayName, String title, boolean main) {
-		this(igbService, displayName, title, main, Integer.MAX_VALUE - 1);
+		this(igbService, displayName, title, main, DEFAULT_TAB_POSITION);
 	}
 	
 	protected IGBTabPanel(IGBService igbService, String displayName, String title, boolean focus, int position) {
@@ -111,6 +112,14 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	 */
 	public boolean isFocus() {
 		return focus;
+	}
+
+	/**
+	 * get the position of the tab in the tray
+	 * @return the tab position
+	 */
+	public int getPosition() {
+		return position;
 	}
 
 	/**

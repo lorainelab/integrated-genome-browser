@@ -38,6 +38,7 @@ import javax.swing.tree.*;
 public final class BookmarkManagerView extends IGBTabPanel implements TreeSelectionListener {
 
   private static final long serialVersionUID = 1L;
+	private static final int TAB_POSITION = 9;
   public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
   private JTree tree;
   private BottomThing thing;
@@ -61,7 +62,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 
   /** Creates a new instance of Class */
   public BookmarkManagerView(IGBService igbService, BookMarkAction bmark_action) {
-    super(igbService, BUNDLE.getString("bookmarksTab"), BUNDLE.getString("bookmarksTab"), false);
+    super(igbService, BUNDLE.getString("bookmarksTab"), BUNDLE.getString("bookmarksTab"), false, TAB_POSITION);
     this.bmark_action = bmark_action;
 
     tree = new DragDropTree();

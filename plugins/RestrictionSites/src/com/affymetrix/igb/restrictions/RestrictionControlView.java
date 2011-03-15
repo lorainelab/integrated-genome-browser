@@ -40,7 +40,7 @@ public final class RestrictionControlView extends IGBTabPanel
 	private static final long serialVersionUID = 0;
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
-	private static final int TAB_POSITION = 1;
+	private static final int TAB_POSITION = 8;
 	private final SeqMapView gviewer;
 	private final Map<String,String> site_hash = new HashMap<String,String>();
 	private JList siteList;

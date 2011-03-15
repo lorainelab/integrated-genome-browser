@@ -60,7 +60,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private JFrame frm;
 	private Map<TabState, TabHolder> tabHolders;
 	private Map<IGBTabPanel, JMenu> tabMenus;
+	private Map<JMenu, Integer> tabMenuPositions;
 	private Container cpane;
+	private boolean tabSeparatorSet = false;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -70,6 +72,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		tabHolders.put(TabState.COMPONENT_STATE_WINDOW, new WindowTabs(this));
 		tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
 		tabMenus = new HashMap<IGBTabPanel, JMenu>();
+		tabMenuPositions = new HashMap<JMenu, Integer>();
 	}
 
 	@Override
@@ -208,6 +211,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		setTabState(plugin, tabState);
 		JMenu pluginMenu = new JMenu(plugin.getDisplayName());
 		tabMenus.put(plugin, pluginMenu);
+		tabMenuPositions.put(pluginMenu, plugin.getPosition());
 		ButtonGroup group = new ButtonGroup();
 
 		for (TabState tabStateLoop : plugin.getDefaultState().getCompatibleTabStates()) {
@@ -216,7 +220,22 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		    pluginMenu.add(menuItem);
 		}
 		setTabMenu(plugin);
-		tabs_menu.add(pluginMenu);
+		if (plugin.getPosition() == IGBTabPanel.DEFAULT_TAB_POSITION) {
+			if (!tabSeparatorSet) {
+				tabs_menu.addSeparator();
+				tabSeparatorSet = true;
+			}
+			tabs_menu.add(pluginMenu);
+		}
+		else {
+			int menuPosition = 0;
+			boolean tabItemFound = false;
+			while (menuPosition < tabs_menu.getItemCount() && ((tabMenuPositions.get(tabs_menu.getItem(menuPosition)) == null && !tabItemFound) || plugin.getPosition() > tabMenuPositions.get(tabs_menu.getItem(menuPosition)))) {
+				tabItemFound |= tabMenuPositions.get(tabs_menu.getItem(menuPosition)) != null;
+				menuPosition++;
+			}
+			tabs_menu.insert(pluginMenu, menuPosition);
+		}
 	}
 
 	/**

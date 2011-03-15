@@ -166,11 +166,17 @@ public final class SimpleGraphTab extends IGBTabPanel
 		Box stylebox_radiobox_col1 = Box.createVerticalBox();
 		Box stylebox_radiobox_col2 = Box.createVerticalBox();
 		stylebox_radiobox_col1.add(barB);
+		stylebox_radiobox_col1.add(Box.createRigidArea(new Dimension(0, 3)));
 		stylebox_radiobox_col1.add(dotB);
+		stylebox_radiobox_col1.add(Box.createRigidArea(new Dimension(0, 3)));
 		stylebox_radiobox_col1.add(hmapB);
+		stylebox_radiobox_col1.add(Box.createRigidArea(new Dimension(0, 3)));
 		stylebox_radiobox_col2.add(lineB);
+		stylebox_radiobox_col2.add(Box.createRigidArea(new Dimension(0, 3)));
 		stylebox_radiobox_col2.add(mmavgB);
+		stylebox_radiobox_col2.add(Box.createRigidArea(new Dimension(0, 3)));
 		stylebox_radiobox_col2.add(sstepB);
+		stylebox_radiobox_col2.add(Box.createRigidArea(new Dimension(0, 3)));
 		stylebox_radiobox.add(stylebox_radiobox_col1);
 		stylebox_radiobox.add(stylebox_radiobox_col2);
 
@@ -181,6 +187,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		Box stylebox = Box.createVerticalBox();
 		color_button_box.setAlignmentX(0.0f);
 		stylebox.add(color_button_box);
+		stylebox.add(Box.createRigidArea(new Dimension(0, 9)));
 		stylebox_radiobox.setAlignmentX(0.0f);
 		stylebox.add(stylebox_radiobox);
 		heat_mapCB_box.setAlignmentX(0.0f);
@@ -211,10 +218,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 		Box scalebox = Box.createVerticalBox();
 		vis_bounds_setter.setAlignmentX(0.0f);
-		scalebox.add(vis_bounds_setter);
 		height_slider.setAlignmentX(0.0f);
 		scalebox.add(height_slider);
-
+		scalebox.add(vis_bounds_setter);
+		
 		height_slider.addChangeListener(new GraphHeightSetter());
 
 		Box butbox = Box.createHorizontalBox();
@@ -225,7 +232,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
 		butbox.add(deleteB);
 		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
-		butbox.add(Box.createHorizontalGlue());
+//		butbox.add(Box.createHorizontalGlue());
 		butbox.add(threshB);
 		butbox.add(Box.createRigidArea(new Dimension(5, 5)));
 
@@ -773,16 +780,16 @@ public final class SimpleGraphTab extends IGBTabPanel
 			divB.setMargin(new Insets(2, 2, 2, 2));
 			Box math_box = Box.createHorizontalBox();
 			math_box.add(new JLabel("Combine:"));
-			math_box.add(Box.createRigidArea(new Dimension(6, 0)));
+//			math_box.add(Box.createRigidArea(new Dimension(6, 0)));
 			math_box.add(addB);
-			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
+//			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
 			math_box.add(subB);
-			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
+//			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
 			math_box.add(mulB);
-			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
+//			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
 			math_box.add(divB);
 			math_box.setAlignmentX(0.0f);
-			advanced_panel.add(Box.createRigidArea(new Dimension(5, 12)));
+			advanced_panel.add(Box.createRigidArea(new Dimension(0, 15)));
 			advanced_panel.add(math_box);
 
 			cloneB.addActionListener(new ActionListener() {

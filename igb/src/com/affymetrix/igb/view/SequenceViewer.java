@@ -82,6 +82,8 @@ public class SequenceViewer extends JPanel
 	private String direction = "-";
 	private int seqStart = 0;
 	private int seqEnd = 0;
+	private int cdsMax = 0;
+	private int cdsMin = 0;
 	private String id = null, type = null;
 	private String chromosome = null;
 	private String title = null;
@@ -106,15 +108,7 @@ public class SequenceViewer extends JPanel
 		seqview.setFont(new Font("Arial", Font.BOLD, 14));
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
-		if (residues_sym.getID() != null) {
-			addCdsStartEnd(residues_sym);
-			isGenomicRequest = false;
-		} else {
-			isGenomicRequest = true;
-			AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
-			title = "Genomic Sequence : " + ag.getID() + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);
-//			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
-		}
+		this.getTitle();
 		mapframe.setTitle(title);
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
@@ -192,17 +186,17 @@ public class SequenceViewer extends JPanel
 					this.errorMessage = "Multiple selections, please select one feature or a parent";
 					return;
 				}
-				if(!aseq.isAvailable(residues_sym.getSpan(aseq))){
-				GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
-				ThreadUtils.runOnEventQueue(new Runnable() {
+				if (!aseq.isAvailable(residues_sym.getSpan(aseq))) {
+					GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
+					ThreadUtils.runOnEventQueue(new Runnable() {
 
-					public void run() {
-						seqmapview.setAnnotatedSeq(aseq, true, true, true);
-					}
-				});
+						public void run() {
+							seqmapview.setAnnotatedSeq(aseq, true, true, true);
+						}
+					});
 				}
 				areResiduesFine(residues_sym, aseq, isGenomic);
-				
+
 
 
 			} else {
@@ -220,42 +214,55 @@ public class SequenceViewer extends JPanel
 		}
 	}
 
+	private void getTitle() {
+		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
+		version = ag.getID();
+		if (residues_sym.getID() != null) {
+			Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
+			Iterator<String> iterator = sym.keySet().iterator();
+
+			while (iterator.hasNext()) {
+				String key = iterator.next().toString();
+				String value = sym.get(key).toString();
+				if (key.equals("id")) {
+					id = value;
+				} else if (key.equals("forward")) {
+					String forward = value;
+					if (forward.equals("true")) {
+						direction = "+";
+					}
+				} else if (key.equals("type")) {
+					type = value;
+					if (type == null) {
+						type = "";
+					}
+				} else if (key.equals("seq id")) {
+					chromosome = value;
+					if (chromosome == null) {
+						chromosome = "";
+					}
+				} else if (key.equals("cds max")) {
+					cdsMax = Integer.parseInt(value);
+				} else if (key.equals("cds min")) {
+					cdsMin = Integer.parseInt(value);
+				}
+			}
+			addCdsStartEnd(residues_sym);
+			isGenomicRequest = false;
+			title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
+		} else {
+			isGenomicRequest = true;
+			title = "Genomic Sequence : " + version + " : " + this.aseq + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);
+//			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
+			showcDNAButton.setEnabled(false);
+		}
+
+	}
 
 	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
-		int cdsMax = 0;
-		int cdsMin = 0;
 //		aseq.getAnnotation(BioSeq.determineMethod(residues_sym)).;
 		//		((SymWithProps) residues_sym).getProperty(seq)
-		Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
-		Iterator<String> iterator = sym.keySet().iterator();
-		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
-		while (iterator.hasNext()) {
-			String key = iterator.next().toString();
-			String value = sym.get(key).toString();
-			if (key.equals("id")) {
-				id = value;
-			} else if (key.equals("forward")) {
-				String forward = value;
-				if (forward.equals("true")) {
-					direction = "+";
-				}
-			} else if (key.equals("type")) {
-				type = value;
-				if (type == null) {
-					type = "";
-				}
-			} else if (key.equals("seq id")) {
-				chromosome = value;
-				if (chromosome == null) {
-					chromosome = "";
-				}
-			} else if (key.equals("cds max")) {
-				cdsMax = Integer.parseInt(value);
-			} else if (key.equals("cds min")) {
-				cdsMin = Integer.parseInt(value);
-			}
-		}
-		version = ag.getID();
+
 //		System.out.println("cds min  "+ cdsMin +"  cds max "+cdsMax+"  end "+ seqSpans[seqSpans.length-1].getStart());
 		if (seqSpans[0].getStart() < seqSpans[0].getEnd()) {
 			seqview.addOutlineAnnotation(cdsMin - seqSpans[0].getStart(), cdsMin - seqSpans[0].getStart() + 2, Color.green);
@@ -265,7 +272,6 @@ public class SequenceViewer extends JPanel
 			seqview.addOutlineAnnotation(Math.abs(cdsMin - seqSpans[seqSpans.length - 1].getStart()) - 3, Math.abs(cdsMin - seqSpans[seqSpans.length - 1].getStart()) - 1, Color.red);
 		}
 		//		String str = (((SymWithProps) residues_sym).getProperty("id")).toString()+" "+(((SymWithProps) residues_sym).getProperty("chromosome")).toString();
-		title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
 	}
 
 	private void convertSpansForSequenceViewer(SeqSpan[] spans, String seq) {
@@ -430,7 +436,7 @@ public class SequenceViewer extends JPanel
 	JMenu fileMenu = new JMenu("File");
 	JMenu editMenu = new JMenu("Edit");
 	JMenu colorMenu = new JMenu("Colors");
-	JMenuItem copyText;
+	CopyFromSeqViewerAction copyAction = new CopyFromSeqViewerAction(this);
 
 	public JFrame setupMenus(JFrame dock) {
 
@@ -444,13 +450,11 @@ public class SequenceViewer extends JPanel
 //		JMenu fileMenu = new JMenu("File");
 //		JMenuItem saveAsMenuItem = new JMenuItem("save As", KeyEvent.VK_A);
 //		JMenuItem exitMenuItem = new JMenuItem("eXit", KeyEvent.VK_X);
-
-		copyText = new JMenuItem(new CopyFromSeqViewerAction(this));
+		copyAction.setEnabled(false);
 //		copyText.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-		copyText.setEnabled(false);
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExitSeqViewerAction(this.mapframe)));
-		MenuUtil.addToMenu(editMenu, copyText);
+		MenuUtil.addToMenu(editMenu, new JMenuItem(copyAction));
 		editMenu.addMenuListener(this);
 //		copyMenuItem.addActionListener(this);
 //
@@ -470,10 +474,9 @@ public class SequenceViewer extends JPanel
 		colorMenu.add(colorScheme2);
 		bg.add(colorScheme1);
 		bg.add(colorScheme2);
-		if(colorSwitch){
-		colorScheme2.setState(true);
-		}
-		else{
+		if (colorSwitch) {
+			colorScheme2.setState(true);
+		} else {
 			colorScheme1.setState(true);
 		}
 		colorScheme1.addItemListener(this);
@@ -554,35 +557,32 @@ public class SequenceViewer extends JPanel
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
 			seqview.setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
 			seqview.updateWidget();
-		}
-		else if (theItem == colorScheme1) {
-				JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
-				if(mi.getState()){
+		} else if (theItem == colorScheme1) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			if (mi.getState()) {
 				colorSwitch = false;
 				this.colorSwitching();
-				}
-		}
-		else if(theItem == colorScheme2) {
-				JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
-				if(mi.getState()){
+			}
+		} else if (theItem == colorScheme2) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			if (mi.getState()) {
 				colorSwitch = true;
 				this.colorSwitching();
-				}
-		}else if(theItem == copyText){
-			this.copyAction();
-		}
-
-	}
-	private void colorSwitching(){
-		seqview.clearWidget();
-			if (!showcDNASwitch) {
-				addFormattedResidues();
-			} else {
-				String seq1 = null;
-				seq1 = SeqUtils.determineSelectedResidues(this.residues_sym, this.aseq);
-				seqview.setResidues(seq1);
-				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
 			}
+		}
+	}
+
+	private void colorSwitching() {
+		seqview.clearWidget();
+		if (!showcDNASwitch) {
+			addFormattedResidues();
+		} else {
+			String seq1 = null;
+			seq1 = SeqUtils.determineSelectedResidues(this.residues_sym, this.aseq);
+			seqview.setResidues(seq1);
+			seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
+		}
+		this.addCdsStartEnd(residues_sym);
 	}
 
 	/** WindowListener Implementation */
@@ -624,6 +624,7 @@ public class SequenceViewer extends JPanel
 				seqview.clearWidget();
 				seqview.setResidues(seq1);
 				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
+				this.addCdsStartEnd(residues_sym);
 //				customFormatting(residues_sym);
 				seqview.updateWidget();
 				showcDNAButton.setText("Show complete");
@@ -631,6 +632,7 @@ public class SequenceViewer extends JPanel
 			} else {
 				seqview.clearWidget();
 				addFormattedResidues();
+				this.addCdsStartEnd(residues_sym);
 //				customFormatting(residues_sym);
 				showcDNAButton.setText("Show cDNA only");
 				showcDNASwitch = false;
@@ -654,23 +656,20 @@ public class SequenceViewer extends JPanel
 //			customFormatting(residues_sym);
 
 		}
-		else if(evtSource == copyText){
-			this.copyAction();
-		}
 	}
 
 	public void menuSelected(MenuEvent me) {
 		Object evtSource = me.getSource();
 		if (evtSource == editMenu) {
-			if(!seqview.getSelectedResidues().isEmpty()){
-				copyText.setEnabled(true);
+			if (!seqview.getSelectedResidues().isEmpty()) {
+				copyAction.setEnabled(true);
+			} else {
+				copyAction.setEnabled(false);
 			}
 		}
 	}
 
-
 	public void menuDeselected(MenuEvent me) {
-		copyText.setEnabled(false);
 	}
 
 	public void menuCanceled(MenuEvent me) {

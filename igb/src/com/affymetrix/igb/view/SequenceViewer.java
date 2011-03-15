@@ -45,6 +45,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -140,15 +141,16 @@ public class SequenceViewer extends JPanel
 		//Below is done because NeoSeq has first character as white space
 		seqview.setResidues("");
 		int count = 0;
+		Color[] cols = getColorScheme();
 		for (int j = 0, k = 0, l = 0; j < (2 * seqSpans.length) - 1; j++) {
 			if ((j % 2) == 0) {
 				seqview.appendResidues(seqArray[k]);
-				seqview.addTextColorAnnotation(count, (count + seqArray[k].length()) - 1, getColorScheme()[EXON_COLOR]);
+				seqview.addTextColorAnnotation(count, (count + seqArray[k].length()) - 1, cols[EXON_COLOR]);
 				count += seqArray[k].length();
 				k++;
 			} else {
 				seqview.appendResidues(intronArray[l]);
-				seqview.addTextColorAnnotation(count, (count + intronArray[l].length()) - 1, getColorScheme()[INTRON_COLOR]);
+				seqview.addTextColorAnnotation(count, (count + intronArray[l].length()) - 1, cols[INTRON_COLOR]);
 				count += intronArray[l].length();
 				l++;
 			}
@@ -190,15 +192,17 @@ public class SequenceViewer extends JPanel
 					this.errorMessage = "Multiple selections, please select one feature or a parent";
 					return;
 				}
-
+				if(!aseq.isAvailable(residues_sym.getSpan(aseq))){
 				GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
-				areResiduesFine(residues_sym, aseq, isGenomic);
 				ThreadUtils.runOnEventQueue(new Runnable() {
 
 					public void run() {
 						seqmapview.setAnnotatedSeq(aseq, true, true, true);
 					}
 				});
+				}
+				areResiduesFine(residues_sym, aseq, isGenomic);
+				
 
 
 			} else {
@@ -216,30 +220,6 @@ public class SequenceViewer extends JPanel
 		}
 	}
 
-	public void init(final SeqSymmetry residues_sym) {
-
-		/** Using an inner class to catch mouseReleased (nee mouseUp) */
-		this.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseReleased(MouseEvent evt) {
-				if (clicking) {
-					if (framesShowing) {
-						hideFrames();
-					} else {
-						showFrames(residues_sym);
-					}
-					framesShowing = !framesShowing;
-				}
-			}
-		});
-//		String ref = getParameter("seq_file");
-//		this.use_real_seq = ( null != ref );
-//		if ( this.use_real_seq ) {
-//			seqmodel = loadSequence( ref );
-//		}
-
-	}
 
 	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
 		int cdsMax = 0;
@@ -339,6 +319,7 @@ public class SequenceViewer extends JPanel
 		}
 		customFormatting(residues_sym);
 		mapframe.add("Center", seqview);
+		mapframe.setVisible(true);
 		mapframe.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -379,28 +360,6 @@ public class SequenceViewer extends JPanel
 				seqSpans = new SeqSpan[1];
 				seqSpans[0] = residues_sym.getSpan(0);
 			}
-		}
-	}
-
-	private void showFrames(SeqSymmetry residues_sym) {
-		if (!going) {
-			getGoing(residues_sym);
-		}
-		mapframe.setVisible(true);
-	}
-
-	private void hideFrames() {
-		if (null != this.propframe) {
-			this.propframe.setVisible(false);
-		}
-		if (null != mapframe) {
-			mapframe.setVisible(false);
-		}
-	}
-
-	public void start(SeqSymmetry residues_sym) {
-		if (framesShowing) {
-			showFrames(residues_sym);
 		}
 	}
 
@@ -455,6 +414,7 @@ public class SequenceViewer extends JPanel
 			}
 		}
 	}
+	ButtonGroup bg = new ButtonGroup();
 	JToggleButton showcDNAButton = new JToggleButton("Show cDNA only");
 	JToggleButton reverseColorsButton = new JToggleButton("Change color scheme");
 	JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
@@ -464,6 +424,13 @@ public class SequenceViewer extends JPanel
 	JCheckBoxMenuItem transNegOneCBMenuItem = new JCheckBoxMenuItem(" -1 Translation");
 	JCheckBoxMenuItem transNegTwoCBMenuItem = new JCheckBoxMenuItem(" -2 Translation");
 	JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(" -3 Translation");
+	JCheckBoxMenuItem colorScheme1 = new JCheckBoxMenuItem("Yellow on black");
+	JCheckBoxMenuItem colorScheme2 = new JCheckBoxMenuItem("Blue on white");
+	JMenu showMenu = new JMenu("Show");
+	JMenu fileMenu = new JMenu("File");
+	JMenu editMenu = new JMenu("Edit");
+	JMenu colorMenu = new JMenu("Colors");
+	JMenuItem copyText;
 
 	public JFrame setupMenus(JFrame dock) {
 
@@ -477,10 +444,10 @@ public class SequenceViewer extends JPanel
 //		JMenu fileMenu = new JMenu("File");
 //		JMenuItem saveAsMenuItem = new JMenuItem("save As", KeyEvent.VK_A);
 //		JMenuItem exitMenuItem = new JMenuItem("eXit", KeyEvent.VK_X);
-		JMenu showMenu = new JMenu("Show");
-		JMenu fileMenu = new JMenu("File");
-		JMenu editMenu = new JMenu("Edit");
-		JMenuItem copyText = new JMenuItem(new CopyFromSeqViewerAction(this));
+
+		copyText = new JMenuItem(new CopyFromSeqViewerAction(this));
+//		copyText.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+		copyText.setEnabled(false);
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, copyText);
@@ -499,7 +466,18 @@ public class SequenceViewer extends JPanel
 		showMenu.add(transNegOneCBMenuItem);
 		showMenu.add(transNegTwoCBMenuItem);
 		showMenu.add(transNegThreeCBMenuItem);
-
+		colorMenu.add(colorScheme1);
+		colorMenu.add(colorScheme2);
+		bg.add(colorScheme1);
+		bg.add(colorScheme2);
+		if(colorSwitch){
+		colorScheme2.setState(true);
+		}
+		else{
+			colorScheme1.setState(true);
+		}
+		colorScheme1.addItemListener(this);
+		colorScheme2.addItemListener(this);
 		compCBMenuItem.addItemListener(this);
 		transOneCBMenuItem.addItemListener(this);
 		transTwoCBMenuItem.addItemListener(this);
@@ -507,7 +485,6 @@ public class SequenceViewer extends JPanel
 		transNegOneCBMenuItem.addItemListener(this);
 		transNegTwoCBMenuItem.addItemListener(this);
 		transNegThreeCBMenuItem.addItemListener(this);
-
 		showcDNAButton.addActionListener(this);
 		reverseColorsButton.addActionListener(this);
 		// add the menus to the menubar
@@ -520,9 +497,9 @@ public class SequenceViewer extends JPanel
 		bar.add(fileMenu);
 		bar.add(editMenu);
 		bar.add(showMenu);
-
+		bar.add(colorMenu);
 		bar.add(showcDNAButton);
-		bar.add(reverseColorsButton);
+//		bar.add(reverseColorsButton);
 		dock.setJMenuBar(bar);
 		return dock;
 	}
@@ -578,7 +555,34 @@ public class SequenceViewer extends JPanel
 			seqview.setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
 			seqview.updateWidget();
 		}
+		else if (theItem == colorScheme1) {
+				JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+				if(mi.getState()){
+				colorSwitch = false;
+				this.colorSwitching();
+				}
+		}
+		else if(theItem == colorScheme2) {
+				JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+				if(mi.getState()){
+				colorSwitch = true;
+				this.colorSwitching();
+				}
+		}else if(theItem == copyText){
+			this.copyAction();
+		}
 
+	}
+	private void colorSwitching(){
+		seqview.clearWidget();
+			if (!showcDNASwitch) {
+				addFormattedResidues();
+			} else {
+				String seq1 = null;
+				seq1 = SeqUtils.determineSelectedResidues(this.residues_sym, this.aseq);
+				seqview.setResidues(seq1);
+				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
+			}
 	}
 
 	/** WindowListener Implementation */
@@ -607,9 +611,7 @@ public class SequenceViewer extends JPanel
 	public void initSequenceViewer(SeqSymmetry residues_sym) {
 		mapframe = new JFrame();
 		System.setProperty("apple.laf.useScreenMenuBar", "false");
-		init(residues_sym);
-		start(residues_sym);
-
+		getGoing(residues_sym);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -645,25 +647,32 @@ public class SequenceViewer extends JPanel
 			seqview.clearWidget();
 			if (!showcDNASwitch) {
 				addFormattedResidues();
-			}
-			else{
+			} else {
 				seqview.setResidues(seq1);
 				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
 			}
 //			customFormatting(residues_sym);
 
 		}
+		else if(evtSource == copyText){
+			this.copyAction();
+		}
 	}
 
 	public void menuSelected(MenuEvent me) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		Object evtSource = me.getSource();
+		if (evtSource == editMenu) {
+			if(!seqview.getSelectedResidues().isEmpty()){
+				copyText.setEnabled(true);
+			}
+		}
 	}
 
+
 	public void menuDeselected(MenuEvent me) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		copyText.setEnabled(false);
 	}
 
 	public void menuCanceled(MenuEvent me) {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

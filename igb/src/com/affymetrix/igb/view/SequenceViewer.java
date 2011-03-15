@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SeqUtils;
@@ -25,7 +26,6 @@ import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.CopyFromSeqViewerAction;
@@ -511,6 +511,9 @@ public class SequenceViewer extends JPanel
 	/** ActionListener Implementation */
 	public void copyAction() {
 		String selectedSeq = seqview.getSelectedResidues();
+		if(seqview.getShow(NeoSeq.COMPLEMENT)){
+			selectedSeq = DNAUtils.reverseComplement(selectedSeq);
+		}
 		if (selectedSeq != null) {
 			Clipboard clipboard = this.getToolkit().getSystemClipboard();
 			StringBuffer hackbuf = new StringBuffer(selectedSeq);

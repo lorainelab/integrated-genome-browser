@@ -21,8 +21,10 @@
 	<classpathentry kind="lib" path="/RestrictionSites/resources"/>
 	<classpathentry kind="lib" path="/GraphAdjuster/resources"/>
 	<classpathentry kind="lib" path="/PropertyView/resources"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="lib" path="/Bookmark/resources"/>
+	<classpathentry kind="lib" path="/SearchView/resources"/>
 	<classpathentry kind="lib" path="/common/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/affx_fusion.bnd.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/colt.bnd.jar"/>
 	<classpathentry kind="lib" path="/Integrated_Genome_Browser/bundles/commons-codec-1.4.jar"/>

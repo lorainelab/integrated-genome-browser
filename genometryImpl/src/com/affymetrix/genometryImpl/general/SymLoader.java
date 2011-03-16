@@ -397,7 +397,6 @@ public abstract class SymLoader {
 
 		// These extensions are overloaded by QuickLoad
 		if (extension.equals("bar")) {
-			featureName = uri + " : " + featureName;
 			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, featureName, false);
 		}
 		if (extension.equals("bed")) {

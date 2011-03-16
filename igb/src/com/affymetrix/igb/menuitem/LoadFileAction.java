@@ -233,14 +233,7 @@ public final class LoadFileAction extends AbstractAction {
 		}
 
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
-		
-		//start max
-		if(!GeneralLoadView.getLoadView().previousBamFile.equals(uri.toString())) {
-			GeneralLoadView.getLoadView().previousBamFile = uri.toString();
-			GeneralLoadView.getLoadView().previousSpanWidth  = 0;
-		}
-		//end max
-	
+			
 		if(gFeature == null)
 			return;
 

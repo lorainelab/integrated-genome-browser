@@ -32,6 +32,8 @@ import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -397,7 +399,7 @@ public abstract class SymLoader {
 
 		// These extensions are overloaded by QuickLoad
 		if (extension.equals("bar")) {
-			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, featureName, false);
+			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri.toString(), false);
 		}
 		if (extension.equals("bed")) {
 			BedParser parser = new BedParser();
@@ -505,13 +507,13 @@ public abstract class SymLoader {
 		}
 		if (extension.equals("sin") || extension.equals("egr") || extension.equals("txt")) {
 			ScoredIntervalParser parser = new ScoredIntervalParser();
-			return parser.parse(bis, featureName, group, false);
+			return parser.parse(bis, uri.toString(), group, false);
 		}
 		if (extension.equals("var")) {
 			return VarParser.parse(bis, group);
 		}
 		if (extension.equals("bgr")) {
-			return BgrParser.parse(bis, featureName, group);
+			return BgrParser.parse(bis, uri.toString(), group);
 		}
 		if (extension.equalsIgnoreCase("bam")) {
 			File bamfile = GeneralUtils.convertStreamToFile(istr, featureName);

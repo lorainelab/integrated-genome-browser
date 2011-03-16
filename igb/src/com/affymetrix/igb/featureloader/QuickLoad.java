@@ -260,9 +260,10 @@ public final class QuickLoad extends SymLoader {
 
 		if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) return;
 
-		List<? extends SeqSymmetry> results;
-		boolean setStyle = false;
+		setStyle(feature);
 
+		List<? extends SeqSymmetry> results;
+		
 		// short-circuit if there's a failure... which may not even be signaled in the code
 		if (!this.isInitialized) {
 			this.init();
@@ -270,18 +271,17 @@ public final class QuickLoad extends SymLoader {
 
 		results = this.getRegion(span);
 		if (results != null) {
-			setStyle = addSymmtries(span, results, feature);
+			addSymmtries(span, results, feature);
 		}
 		feature.addLoadedSpanRequest(span); // this span is now considered loaded.
 
-		if(setStyle){
-			setStyle(feature);
-		}
 	}
 
 	private boolean loadAndAddAllSymmetries(final GenericFeature feature)
 			throws OutOfMemoryError {
 
+		setStyle(feature);
+		
 		// short-circuit if there's a failure... which may not even be signaled in the code
 		if (!this.isInitialized) {
 			this.init();
@@ -307,8 +307,6 @@ public final class QuickLoad extends SymLoader {
 			feature.addLoadedSpanRequest(span); // this span is now considered loaded.
 		}
 
-		setStyle(feature);
-
 		return true;
 	}
 
@@ -325,21 +323,18 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
-	private static boolean addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
-		boolean setStyle = false;
+	private static void addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
 		results = ServerUtils.filterForOverlappingSymmetries(span, results);
 		for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(results).entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}
 			SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
-			setStyle = true;
 			// Some format do not annotate. So it might not have method name. e.g bgn
 			if (entry.getKey() != null) {
 				feature.addMethod(entry.getKey());
 			}
 		}
-		return setStyle;
 	}
 	
 	private boolean loadResiduesThread(final GenericFeature feature, final SeqSpan span, final SeqMapView gviewer) {

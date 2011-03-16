@@ -87,16 +87,29 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
 		gviewer = smv;
 		String meth = BioSeq.determineMethod(sym);
+		String human_name = meth;
 		if (meth == null) {
 			meth = "unknown";
-		} else { // strip off the " netaffx consensus" ending
-			int n = meth.lastIndexOf(NETAFFX_CONSENSUS);
+			human_name = meth;
+		} else {
+			// Why to strip off the ending ??
+			// Not stripping off the ending to resolve bug ID: 3213610
+			// http://sourceforge.net/tracker/?func=detail&aid=3213610&group_id=129420&atid=714744
+//			strip off the " netaffx consensus" ending
+//			int n = meth.lastIndexOf(NETAFFX_CONSENSUS);
+//			if (n > 0) {
+//				meth = meth.substring(0, n);
+//			}
+			int n = human_name.lastIndexOf(NETAFFX_CONSENSUS);
 			if (n > 0) {
-				meth = meth.substring(0, n);
+				human_name = human_name.substring(0, n);
 			}
 		}
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+			if(style.getHumanName() != null || style.getHumanName().length() == 0 || style.getHumanName().contains(NETAFFX_CONSENSUS)){
+				style.setHumanName(human_name);
+			}
 			label_field = style.getLabelField();
 
 			TierGlyph[] tiers = gviewer.getTiers(false, style);

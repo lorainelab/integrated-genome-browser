@@ -89,7 +89,8 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	}
 
 	void setRangeText(double start, double end) {
-		range_box.setText(nformat.format(start) + " : " + nformat.format(end));
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		range_box.setText((seq == null ? "" : seq.getID() + " : ") + nformat.format(start) + " : " + nformat.format(end));
 	}
 	ActionListener action_listener = new ActionListener() {
 

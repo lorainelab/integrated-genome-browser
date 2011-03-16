@@ -84,9 +84,12 @@ public class SequenceViewer extends JPanel
 	private int seqEnd = 0;
 	private int cdsMax = 0;
 	private int cdsMin = 0;
+	private int counter = 0;
+	private int countIntrons = 0;
 	private String id = null, type = null;
 	private String chromosome = null;
 	private String title = null;
+	private int cdsMaxDNAonly = 0;
 	private String[] seqArray;
 	private String[] intronArray;
 	private boolean showcDNASwitch = false;
@@ -141,14 +144,21 @@ public class SequenceViewer extends JPanel
 				seqview.appendResidues(seqArray[k]);
 				seqview.addTextColorAnnotation(count, (count + seqArray[k].length()) - 1, cols[EXON_COLOR]);
 				count += seqArray[k].length();
-				k++;
+				counter += seqArray[k].length();
+				k++;			
 			} else {
 				seqview.appendResidues(intronArray[l]);
 				seqview.addTextColorAnnotation(count, (count + intronArray[l].length()) - 1, cols[INTRON_COLOR]);
 				count += intronArray[l].length();
-				l++;
+				if(cdsMax>counter){
+
+					counter += seqArray[l].length();
+					countIntrons++;
+				}
+				l++;				
 			}
 		}
+		calculateNewCdsEnd();
 	}
 
 	private void areResiduesFine(SeqSymmetry residues_sym, BioSeq aseq, boolean isGenomic) {
@@ -247,7 +257,8 @@ public class SequenceViewer extends JPanel
 					cdsMin = Integer.parseInt(value);
 				}
 			}
-			addCdsStartEnd(residues_sym);
+			this.caluclateCdsStartEnd();
+			this.addCdsStartEnd(residues_sym);
 			isGenomicRequest = false;
 			title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
 		} else {
@@ -259,19 +270,34 @@ public class SequenceViewer extends JPanel
 
 	}
 
-	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
-//		aseq.getAnnotation(BioSeq.determineMethod(residues_sym)).;
-		//		((SymWithProps) residues_sym).getProperty(seq)
-
-//		System.out.println("cds min  "+ cdsMin +"  cds max "+cdsMax+"  end "+ seqSpans[seqSpans.length-1].getStart());
+	private void caluclateCdsStartEnd() {
+		int i = 0;
 		if (seqSpans[0].getStart() < seqSpans[0].getEnd()) {
-			seqview.addOutlineAnnotation(cdsMin - seqSpans[0].getStart(), cdsMin - seqSpans[0].getStart() + 2, Color.green);
-			seqview.addOutlineAnnotation(cdsMax - seqSpans[0].getStart() - 3, cdsMax - seqSpans[0].getStart() - 1, Color.red);
+			cdsMin = cdsMin - seqSpans[0].getStart();
+			cdsMax = cdsMax - seqSpans[0].getStart() - 3;
 		} else {
-			seqview.addOutlineAnnotation(Math.abs(cdsMax - seqSpans[seqSpans.length - 1].getStart()), Math.abs(cdsMax - seqSpans[seqSpans.length - 1].getStart()) + 2, Color.green);
-			seqview.addOutlineAnnotation(Math.abs(cdsMin - seqSpans[seqSpans.length - 1].getStart()) - 3, Math.abs(cdsMin - seqSpans[seqSpans.length - 1].getStart()) - 1, Color.red);
+			int temp = cdsMin;
+			cdsMin = Math.abs(cdsMax - seqSpans[seqSpans.length - 1].getStart());
+			cdsMax = Math.abs(temp - seqSpans[seqSpans.length - 1].getStart()) - 3;
 		}
-		//		String str = (((SymWithProps) residues_sym).getProperty("id")).toString()+" "+(((SymWithProps) residues_sym).getProperty("chromosome")).toString();
+	}
+	private void calculateNewCdsEnd(){
+		counter =0;
+	while(countIntrons>0){
+		counter +=intronArray[countIntrons-1].length();
+		countIntrons--;
+	}
+		cdsMaxDNAonly = cdsMax-counter;
+	}
+
+	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
+		if (showcDNASwitch) {
+			seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
+			seqview.addOutlineAnnotation(cdsMaxDNAonly, cdsMaxDNAonly + 2, Color.red);
+		} else {
+			seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
+			seqview.addOutlineAnnotation(cdsMax, cdsMax + 2, Color.red);
+		}
 	}
 
 	private void convertSpansForSequenceViewer(SeqSpan[] spans, String seq) {
@@ -317,13 +343,15 @@ public class SequenceViewer extends JPanel
 		if (null == seqSpans) {
 			seqview.setResidues(seq);
 			seqview.setResidueFontColor(getColorScheme()[EXON_COLOR]);
+			customFormatting(residues_sym);
 		} else {
 			seqArray = new String[seqSpans.length];
 			intronArray = new String[seqSpans.length - 1];
 			convertSpansForSequenceViewer(seqSpans, seq);
+			customFormatting(residues_sym);
 			addFormattedResidues();
 		}
-		customFormatting(residues_sym);
+		
 		mapframe.add("Center", seqview);
 		mapframe.setVisible(true);
 		mapframe.addWindowListener(new WindowAdapter() {
@@ -511,7 +539,7 @@ public class SequenceViewer extends JPanel
 	/** ActionListener Implementation */
 	public void copyAction() {
 		String selectedSeq = seqview.getSelectedResidues();
-		if(seqview.getShow(NeoSeq.COMPLEMENT)){
+		if (seqview.getShow(NeoSeq.COMPLEMENT)) {
 			selectedSeq = DNAUtils.reverseComplement(selectedSeq);
 		}
 		if (selectedSeq != null) {
@@ -624,21 +652,21 @@ public class SequenceViewer extends JPanel
 		if (evtSource == showcDNAButton) {
 			String text = e.getActionCommand();
 			if (text.equals("Show cDNA only")) {
+				showcDNASwitch = true;
 				seqview.clearWidget();
 				seqview.setResidues(seq1);
 				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
 				this.addCdsStartEnd(residues_sym);
 //				customFormatting(residues_sym);
 				seqview.updateWidget();
-				showcDNAButton.setText("Show complete");
-				showcDNASwitch = true;
+				showcDNAButton.setText("Show complete");		
 			} else {
+				showcDNASwitch = false;
 				seqview.clearWidget();
 				addFormattedResidues();
 				this.addCdsStartEnd(residues_sym);
 //				customFormatting(residues_sym);
 				showcDNAButton.setText("Show cDNA only");
-				showcDNASwitch = false;
 			}
 		} else if (evtSource == reverseColorsButton) {
 			String text = e.getActionCommand();

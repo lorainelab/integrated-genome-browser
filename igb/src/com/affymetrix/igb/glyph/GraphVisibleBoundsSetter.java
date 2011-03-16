@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.view.GraphAdjusterView;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import java.text.ParseException;
 
 public final class GraphVisibleBoundsSetter extends JPanel
@@ -512,7 +512,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 		if (src == min_valT) {
 			try {
-				float minval = GraphAdjusterView.numberParser.parse(min_valT.getText()).floatValue();
+				float minval = GraphGlyphUtils.numberParser.parse(min_valT.getText()).floatValue();
 				if (minval > prev_max_val - val_offset) {
 					minval = prev_max_val - val_offset;
 				}
@@ -526,7 +526,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		} else if (src == max_valT) {
 			try {
-				float maxval = GraphAdjusterView.numberParser.parse(max_valT.getText()).floatValue();
+				float maxval = GraphGlyphUtils.numberParser.parse(max_valT.getText()).floatValue();
 				if (maxval < prev_min_val + val_offset) {
 					maxval = prev_min_val + val_offset;
 				}
@@ -539,7 +539,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		} else if (src == min_perT) {
 			try {
-				float min_per = GraphAdjusterView.parsePercent(min_perT.getText());
+				float min_per = GraphGlyphUtils.parsePercent(min_perT.getText());
 				if (min_per < 0) {
 					min_per = 0;
 				} else if (min_per > prev_max_per - per_offset) {
@@ -551,7 +551,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		} else if (src == max_perT) {
 			try {
-				float max_per = GraphAdjusterView.parsePercent(max_perT.getText());
+				float max_per = GraphGlyphUtils.parsePercent(max_perT.getText());
 				if (max_per < prev_min_per + per_offset) {
 					max_per = prev_min_per + per_offset;
 				} else if (max_per > 100) {

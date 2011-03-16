@@ -23,6 +23,8 @@ import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public final class GraphGlyphUtils {
 
 	public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
 	public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
+	public static final NumberFormat numberParser = NumberFormat.getNumberInstance();
 	
 	/**
 	 *  Checks to make sure the the boundaries of a floating glyph are
@@ -283,5 +286,14 @@ public final class GraphGlyphUtils {
 		newsym.getGraphState().setGraphStyle(graphA.getGraphState().getGraphStyle());
 		newsym.getGraphState().setHeatMap(graphA.getGraphState().getHeatMap());
 		return newsym;
+	}
+
+	/** Parse a String floating-point number that may optionally end with a "%" symbol. */
+	public static float parsePercent(String text) throws ParseException {
+		if (text.endsWith("%")) {
+			text = text.substring(0, text.length() - 1);
+		}
+	
+		return numberParser.parse(text).floatValue();
 	}
 }

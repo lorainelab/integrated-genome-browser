@@ -23,9 +23,9 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 
 import java.awt.Color;
@@ -469,7 +469,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		if (src == score_valT) {
 			try {
-				float thresh = GraphAdjusterView.numberParser.parse(score_valT.getText()).floatValue();
+				float thresh = GraphGlyphUtils.numberParser.parse(score_valT.getText()).floatValue();
 				// Do not limit the threshold to just the total range of this graph.
 				// The user may set the thresholds of a set of graphs (on the same or
 				// different chromosomes) to the same value even if the absolute
@@ -483,7 +483,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			}
 		} else if (src == score_perT) {
 			try {
-				float thresh_per = GraphAdjusterView.parsePercent(score_perT.getText());
+				float thresh_per = GraphGlyphUtils.parsePercent(score_perT.getText());
 				if (thresh_per < abs_min_per) {
 					thresh_per = abs_min_per;
 				} else if (thresh_per > abs_max_per) {

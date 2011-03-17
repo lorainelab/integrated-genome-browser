@@ -297,4 +297,12 @@ public class TrackView {
 			}
 		}
 	}
+
+	public static void deleteDependendentDataFor(GenericFeature feature) {
+		for(BioSeq bioseq : feature.gVersion.group.getSeqList()){
+			for(String method : feature.getMethods()){
+				deleteDependentData(method, bioseq);
+			}
+		}
+	}
 }

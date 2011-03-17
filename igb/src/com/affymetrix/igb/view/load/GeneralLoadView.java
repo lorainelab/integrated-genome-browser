@@ -59,6 +59,7 @@ import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.view.TrackView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1049,6 +1050,8 @@ public final class GeneralLoadView extends IGBTabPanel
 			protected Void doInBackground(){
 				igbService.addNotLockedUpMsg("Removing feature  "+feature.featureName);
 
+				TrackView.deleteDependendentDataFor(feature);
+				
 				feature.removeAllSyms();
 
 				// If feature is local then remove it from server.

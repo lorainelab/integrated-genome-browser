@@ -18,6 +18,7 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import javax.swing.ToolTipManager;
 
 /**
  *  A MouseListener for the SeqMapView.
@@ -63,16 +64,19 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	private int no_of_prop_being_displayed = 0;
 	int select_start, select_end;
 	private GlyphI sub_sel_glyph;
-	
+    private final int dismissdelay = ToolTipManager.sharedInstance().getDismissDelay();
+
 	SeqMapViewMouseListener(SeqMapView smv) {
 		this.smv = smv;
 		this.map = smv.seqmap;
 	}
 
 	public void mouseEntered(MouseEvent evt) {
+		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 	}
 
 	public void mouseExited(MouseEvent evt) {
+		ToolTipManager.sharedInstance().setDismissDelay(dismissdelay);
 	}
 
 	public void mouseClicked(MouseEvent evt) {

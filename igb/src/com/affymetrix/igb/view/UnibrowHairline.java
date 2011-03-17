@@ -109,6 +109,7 @@ public final class UnibrowHairline {
    */
   public void setKeepHairlineInView(boolean b) {
     keep_hairline_in_view = b;
+	hairline.setShowHairline(b);
   }
 
   /** Sets the location of the hairline.  This is the only supported

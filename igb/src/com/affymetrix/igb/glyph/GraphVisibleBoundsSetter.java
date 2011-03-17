@@ -45,7 +45,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	private JTextField min_valT;
 	private JTextField max_valT;
 	private final JRadioButton by_valRB = new JRadioButton("By Value");
-	private final JRadioButton by_percentileRB = new JRadioButton("By Percentile)");
+	private final JRadioButton by_percentileRB = new JRadioButton("By Percentile");
 	private final JPanel valP = new JPanel();  // for adjust-by-value controls
 	private final JPanel perP = new JPanel();  // for adjust-by-percent controls
 	private final static int max_chars = 8;

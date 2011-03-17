@@ -60,6 +60,7 @@ import java.io.File;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 
 public final class SimpleGraphTab extends IGBTabPanel
@@ -749,7 +750,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 			decoration_row.setAlignmentX(0.0f);
 			advanced_panel.add(decoration_row);
-			advanced_panel.add(Box.createRigidArea(new Dimension(5, 12)));
+			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
 
 			advanced_panel.add(scale_type_label);
 			scaleCB_box.setAlignmentX(0.0f);
@@ -757,11 +758,11 @@ public final class SimpleGraphTab extends IGBTabPanel
 			advanced_panel.add(scaleCB_box);
 
 			param_box.setAlignmentX(0.0f);
-			advanced_panel.add(Box.createRigidArea(new Dimension(5, 12)));
+			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
 			advanced_panel.add(param_box);
 
 			grouping_box.setAlignmentX(0.0f);
-			advanced_panel.add(Box.createRigidArea(new Dimension(5, 12)));
+			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
 			advanced_panel.add(grouping_box);
 
 			addB = new JButton("A + B");
@@ -779,7 +780,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			mulB.setMargin(new Insets(2, 2, 2, 2));
 			divB.setMargin(new Insets(2, 2, 2, 2));
 			Box math_box = Box.createHorizontalBox();
-			math_box.add(new JLabel("Combine:"));
+			math_box.setBorder(new TitledBorder("Combine"));
 //			math_box.add(Box.createRigidArea(new Dimension(6, 0)));
 			math_box.add(addB);
 //			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
@@ -789,7 +790,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 //			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
 			math_box.add(divB);
 			math_box.setAlignmentX(0.0f);
-			advanced_panel.add(Box.createRigidArea(new Dimension(0, 15)));
+			advanced_panel.add(Box.createRigidArea(new Dimension(0, 6)));
 			advanced_panel.add(math_box);
 
 			cloneB.addActionListener(new ActionListener() {

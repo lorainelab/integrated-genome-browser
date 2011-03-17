@@ -219,6 +219,7 @@ public class SeqMapView extends JPanel
 	
 	private TransformTierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private final AutoLoad autoload;
 
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
@@ -298,7 +299,7 @@ public class SeqMapView extends JPanel
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
 
-		addAutoLoad();
+		autoload = addAutoLoad();
 		
 		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
 		SeqMapViewPopup popup = new SeqMapViewPopup(tier_manager,this);
@@ -413,10 +414,14 @@ public class SeqMapView extends JPanel
 
 	}
 
-	protected void addAutoLoad(){
-		new AutoLoad(seqmap);
+	protected AutoLoad addAutoLoad(){
+		return new AutoLoad(seqmap);
 	}
 
+	public AutoLoad getAutoLoad(){
+		return autoload;
+	}
+	
 	public final class SeqMapViewComponentListener extends ComponentAdapter {
 		// update graphs and annotations when the map is resized.
 

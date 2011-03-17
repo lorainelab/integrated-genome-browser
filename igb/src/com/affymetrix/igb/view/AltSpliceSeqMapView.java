@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.view.load.AutoLoad;
 import java.awt.Component;
 import java.util.List;
 
@@ -39,8 +40,9 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	}
 
 	@Override
-	protected void addAutoLoad(){
+	protected AutoLoad addAutoLoad(){
 		//Do Nothing for alt splice view.
+		return null;
 	}
 
 	@Override

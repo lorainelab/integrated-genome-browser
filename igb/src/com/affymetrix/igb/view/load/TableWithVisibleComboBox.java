@@ -8,11 +8,8 @@ import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.action.RefreshDataAction;
-import com.affymetrix.igb.prefs.OptionsView;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -251,8 +248,7 @@ class JTableX extends JTable implements MouseListener {
 		if (FeaturesTableModel.REFRESH_FEATURE_COLUMN == realIndex
 				&& GeneralLoadView.getIsDisableNecessary()) {
 
-			//RefreshDataAction.getAction().actionPerformed(null);
-			GeneralLoadView.getInstance().getRefreshDataAction().actionPerformed(new ActionEvent(this, 1, "refresh icon"));
+			GeneralLoadView.getLoadView().getRefreshDataAction().actionPerformed(null);
 
 		} else if (FeaturesTableModel.DELETE_FEATURE_COLUMN == realIndex) {
 			FeaturesTableModel ftm = (FeaturesTableModel) getModel();

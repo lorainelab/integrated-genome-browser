@@ -28,9 +28,7 @@ public class RefreshDataAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent ae) {
-		if(ae != null) 
-			GeneralLoadView.getLoadView().setShowLoadingConfirm(true);
-
+		GeneralLoadView.getLoadView().setShowLoadingConfirm(true);
 		GeneralLoadView.getLoadView().loadVisibleFeatures();
 	}
 }

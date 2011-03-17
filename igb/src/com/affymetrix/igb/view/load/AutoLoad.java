@@ -57,6 +57,9 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 	}
 
 	public void loadData(){
+		if(!shouldAutoLoad()){
+			return;
+		}
 		GeneralLoadView.loadAutoLoadFeatures();
 		//GeneralLoadView.getLoadView().loadResiduesInView(false);
 	}
@@ -81,15 +84,14 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 
 		if (src == scroller) {
 			scroller_value = scroller.getValue();
-			if (zoomer_value < threshold
-					|| scroller_value == prev_scroller_value) {
+			if (scroller_value == prev_scroller_value) {
 				return;
 			}
 			prev_scroller_value = scroller_value;
 		} else if (src == zoomer){
 			zoomer_value = (zoomer.getValue() * 100 / zoomer.getMaximum());
-			//TODO: Check if prev_zoomer_value == zoomer_value ??
-			if (zoomer_value < threshold) {
+			
+			if (prev_zoomer_value == zoomer_value) {
 				return;
 			}
 			prev_zoomer_value = zoomer_value;
@@ -100,5 +102,9 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 
 	public void mouseDragged(MouseEvent e) {
 		was_dragging = true;
+	}
+
+	public boolean shouldAutoLoad(){
+		return zoomer_value > threshold;
 	}
 }

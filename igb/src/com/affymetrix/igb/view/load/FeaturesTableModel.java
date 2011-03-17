@@ -6,7 +6,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.prefs.OptionsView;
 
 import java.util.ArrayList;
 import java.util.Collections;

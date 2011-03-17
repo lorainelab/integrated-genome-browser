@@ -55,7 +55,6 @@ import com.affymetrix.igb.view.DataLoadPrefsView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.LoadSequence;
-import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ScriptFileLoader;
@@ -108,9 +107,6 @@ public final class GeneralLoadView extends IGBTabPanel
 	}
 
 	public static synchronized GeneralLoadView getLoadView() {
-		return singleton;
-	}
-	public static synchronized GeneralLoadView getInstance() {
 		return singleton;
 	}
 

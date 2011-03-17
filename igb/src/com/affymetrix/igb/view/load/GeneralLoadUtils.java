@@ -635,6 +635,9 @@ public final class GeneralLoadUtils {
 
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		SeqSpan overlap = null;
+		if(gFeature.loadStrategy == LoadStrategy.AUTOLOAD && !gviewer.getAutoLoad().shouldAutoLoad()){
+			return true;
+		}
 		if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.AUTOLOAD) {
 			overlap = gviewer.getVisibleSpan();
 		} else if (gFeature.loadStrategy == LoadStrategy.GENOME || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {

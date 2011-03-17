@@ -14,7 +14,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
  */
 public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 	private static final long serialVersionUID = 1L;
-	private static final double BOTTOM_DIVIDER_PROPORTIONAL_LOCATION = 0.30;
+	private static final double BOTTOM_DIVIDER_PROPORTIONAL_LOCATION = 0.45;
 
 	public JTabbedTrayBottomPane(JComponent _baseComponent) {
 		super(TabState.COMPONENT_STATE_BOTTOM_TAB, _baseComponent, JTabbedPane.TOP,  JSplitPane.VERTICAL_SPLIT, 1.0 - BOTTOM_DIVIDER_PROPORTIONAL_LOCATION);

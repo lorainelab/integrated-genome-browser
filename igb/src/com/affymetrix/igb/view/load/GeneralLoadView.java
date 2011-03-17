@@ -596,6 +596,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
 		loadStrategies.add(LoadStrategy.AUTOLOAD);
 		loadFeatures(loadStrategies);
+		GeneralLoadUtils.bufferDataForAutoload();
 	}
 
 	/**

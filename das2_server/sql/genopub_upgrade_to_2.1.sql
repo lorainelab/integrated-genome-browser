@@ -67,6 +67,19 @@ CREATE TABLE genopub.AnnotationPropertyOption (
     ON UPDATE NO ACTION
 )ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
 
+-- Add new Table AnnotationPropertyValue
+DROP TABLE IF EXISTS AnnotationPropertyValue;
+CREATE TABLE genopub.AnnotationPropertyValue (
+  idAnnotationPropertyValue INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  value VARCHAR(200) NULL,
+  idAnnotationProperty INT(10) unsigned  NOT NULL,
+  PRIMARY KEY (idAnnotationPropertyValue),
+  CONSTRAINT FK_AnnotationPropertyValue_AnnotationProperty FOREIGN KEY FK_AnnotationPropertyValue_AnnotationProperty (idAnnotationProperty)
+    REFERENCES genopub.AnnotationProperty (idAnnotationProperty)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
+
 
 -- Insert entries into PropertyType
 INSERT INTO genopub.PropertyType (codePropertyType, name) values ('TEXT',        'Text');
@@ -74,4 +87,117 @@ INSERT INTO genopub.PropertyType (codePropertyType, name) values ('URL',        
 INSERT INTO genopub.PropertyType (codePropertyType, name) values ('CHECK',       'Checkbox');
 INSERT INTO genopub.PropertyType (codePropertyType, name) values ('OPTION',      'Option (Single selection)');
 INSERT INTO genopub.PropertyType (codePropertyType, name) values ('MOPTION',     'Option (Multiple selection)');
+
+--
+-- Convert Analysis Type to Property
+--
+
+-- convert dictionary to Property
+insert into Property (name, codePropertyType, isActive) values 
+  ('Analysis Type',  'OPTION', 'Y');
+SELECT @idProperty:=idProperty from Property where name = 'Analysis Type';
+SET @sortOrder=0;
+insert into PropertyOption (name, isActive, sortOrder, idProperty)
+  values ('', 'Y', 0, @idProperty);
+insert into PropertyOption (name, isActive, sortOrder, idProperty) 
+  select name, isActive, @sortOrder:=@sortOrder+1, @idProperty
+  from AnalysisType;  
+
+-- insert AnnotationProperty for all annotations with analysis types filled in
+insert into AnnotationProperty (idAnnotation, name, value, idProperty)
+select distinct a.idAnnotation, p.name, o.name, @idProperty
+from Annotation a
+ join AnalysisType at on a.idAnalysisType = at.idAnalysisType
+ join PropertyOption o on o.name = at.name and o.idProperty = @idProperty
+ join Property p on p.idProperty = @idProperty;
+ 
+-- insert AnnotationPropertyOption for all annotations with analysis types filled in
+insert into AnnotationPropertyOption (idAnnotationProperty, idPropertyOption)
+select distinct ap.idAnnotationProperty, o.idPropertyOption
+from Annotation a
+ join AnnotationProperty ap on ap.idAnnotation = a.idAnnotation and ap.idProperty = @idProperty
+ join AnalysisType at on a.idAnalysisType = at.idAnalysisType
+ join PropertyOption o on o.name = at.name and o.idProperty = @idProperty
+ join Property p on p.idProperty = @idProperty;
+ 
+
+--
+-- Convert Experiment Platform to Property
+--
+
+-- convert dictionary to Property
+insert into Property (name, codePropertyType, isActive) values 
+  ('Experiment Platform',  'OPTION', 'Y');
+SELECT @idProperty:=idProperty from Property where name = 'Experiment Platform';
+SET @sortOrder=0;
+insert into PropertyOption (name, isActive, sortOrder, idProperty)
+  values ('', 'Y', 0, @idProperty);
+insert into PropertyOption (name, isActive, sortOrder, idProperty) 
+  select name, isActive, @sortOrder:=@sortOrder+1, @idProperty
+  from ExperimentPlatform;  
+
+-- insert AnnotationProperty for all annotations with experiment platforms filled in
+insert into AnnotationProperty (idAnnotation, name, value, idProperty)
+select distinct a.idAnnotation, p.name, o.name, @idProperty
+from Annotation a
+ join ExperimentPlatform at on a.idExperimentPlatform = at.idExperimentPlatform
+ join PropertyOption o on o.name = at.name and o.idProperty = @idProperty
+ join Property p on p.idProperty = @idProperty;
+ 
+-- insert AnnotationPropertyOption for all annotations with experiment platforms filled in
+insert into AnnotationPropertyOption (idAnnotationProperty, idPropertyOption)
+select distinct ap.idAnnotationProperty, o.idPropertyOption
+from Annotation a
+ join AnnotationProperty ap on ap.idAnnotation = a.idAnnotation and ap.idProperty = @idProperty
+ join ExperimentPlatform at on a.idExperimentPlatform = at.idExperimentPlatform
+ join PropertyOption o on o.name = at.name and o.idProperty = @idProperty
+ join Property p on p.idProperty = @idProperty;
+ 
+
+--
+-- Convert Experiment Method to Property
+--
+
+-- convert dictionary to Property
+insert into Property (name, codePropertyType, isActive) values 
+  ('Experiment Method',  'OPTION', 'Y');
+SELECT @idProperty:=idProperty from Property where name = 'Experiment Method';
+SET @sortOrder=0;
+insert into PropertyOption (name, isActive, sortOrder, idProperty)
+  values ('', 'Y', 0, @idProperty);
+insert into PropertyOption (name, isActive, sortOrder, idProperty) 
+  select name, isActive, @sortOrder:=@sortOrder+1, @idProperty
+  from ExperimentMethod;  
+
+-- insert AnnotationProperty for all annotations with experiment platforms filled in
+insert into AnnotationProperty (idAnnotation, name, value, idProperty)
+select distinct a.idAnnotation, p.name, o.name, @idProperty
+from Annotation a
+ join ExperimentMethod at on a.idExperimentMethod = at.idExperimentMethod
+ join PropertyOption o on o.name = at.name and o.idProperty = @idProperty
+ join Property p on p.idProperty = @idProperty;
+ 
+-- insert AnnotationPropertyOption for all annotations with experiment platforms filled in
+insert into AnnotationPropertyOption (idAnnotationProperty, idPropertyOption)
+select distinct ap.idAnnotationProperty, o.idPropertyOption
+from Annotation a
+ join AnnotationProperty ap on ap.idAnnotation = a.idAnnotation and ap.idProperty = @idProperty
+ join ExperimentMethod at on a.idExperimentMethod = at.idExperimentMethod
+ join PropertyOption o on o.name = at.name and o.idProperty = @idProperty
+ join Property p on p.idProperty = @idProperty;
+ 
+ 
+ -- Now drop idAnalysisType, idExperimentPlatform, idExperimentMethod from Annotation
+ alter table Annotation drop foreign key FK_Annotation_AnalysisType;
+ alter table Annotation drop column idAnalysisType;
+ alter table Annotation drop foreign key FK_Annotation_ExperimentPlatform;
+ alter table Annotation drop column idExperimentPlatform;
+ alter table Annotation drop foreign key FK_Annotation_ExperimentMethod;
+ alter table Annotation drop column idExperimentMethod;
+ 
+ -- Get rid of AnalysisType, ExperimentPlatform, ExperimentMethod
+ drop table AnalysisType;
+ drop table ExperimentPlatform;
+ drop table ExperimentMethod; 
+ 
 

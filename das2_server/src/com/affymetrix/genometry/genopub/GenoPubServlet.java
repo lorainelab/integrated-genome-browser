@@ -1813,9 +1813,6 @@ public class GenoPubServlet extends HttpServlet {
 			annotation.setName(name);
 			annotation.setDescription(request.getParameter("description"));
 			annotation.setSummary(request.getParameter("summary"));
-			annotation.setIdAnalysisType(Util.getIntegerParameter(request, "idAnalysisType"));
-			annotation.setIdExperimentPlatform(Util.getIntegerParameter(request, "idExperimentPlatform"));
-			annotation.setIdExperimentMethod(Util.getIntegerParameter(request, "idExperimentMethod"));
 			annotation.setCodeVisibility(request.getParameter("codeVisibility"));
 			if (annotation.getCodeVisibility() != null && annotation.getCodeVisibility().equals(Visibility.INSTITUTE)) {
 			  annotation.setIdInstitute(Util.getIntegerParameter(request, "idInstitute"));
@@ -1870,6 +1867,13 @@ public class GenoPubServlet extends HttpServlet {
           }                   
         }
         if (!found) {
+          // delete annotation property values
+          for(Iterator<?> i1 = ap.getValues().iterator(); i1.hasNext();) {
+              AnnotationPropertyValue av = AnnotationPropertyValue.class.cast(i1.next());
+              sess.delete(av);
+          }  
+          sess.flush();
+          // delete annotation property
           sess.delete(ap);
         }
       } 
@@ -1896,6 +1900,56 @@ public class GenoPubServlet extends HttpServlet {
           sess.save(ap);
           sess.flush();
         }
+        
+        // Remove AnnotationPropertyValues
+        if (ap.getValues() != null) {
+          for(Iterator<?> i1 = ap.getValues().iterator(); i1.hasNext();) {
+            AnnotationPropertyValue av = AnnotationPropertyValue.class.cast(i1.next());
+            boolean found = false;
+            for(Iterator<?> i2 = node.elementIterator(); i2.hasNext();) {
+              Element n = (Element)i2.next();
+              if (n.getName().equals("AnnotationPropertyValue")) {
+                String idAnnotationPropertyValue = n.attributeValue("idAnnotationPropertyValue");
+                if (idAnnotationPropertyValue != null && !idAnnotationPropertyValue.equals("")) {
+                  if (av.getIdAnnotationPropertyValue().equals(new Integer(idAnnotationPropertyValue))) {
+                    found = true;
+                    break;
+                  }
+                }                   
+              }
+            }
+            if (!found) {
+              sess.delete(av);
+            }
+          }
+          sess.flush();
+        }
+        
+        // Add and update AnnotationPropertyValues
+        for(Iterator<?> i1 = node.elementIterator(); i1.hasNext();) {
+          Element n = (Element)i1.next();
+          if (n.getName().equals("AnnotationPropertyValue")) {
+            String idAnnotationPropertyValue = n.attributeValue("idAnnotationPropertyValue");
+            String value = n.attributeValue("value");
+            AnnotationPropertyValue av = null;
+            // Ignore 'blank' url value
+            if (value != null && value.equals("Enter URL here...")) {
+              continue;
+            }
+            if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.equals("")) {
+              av = new AnnotationPropertyValue();
+              av.setIdAnnotationProperty(ap.getIdAnnotationProperty());
+            } else {
+              av = AnnotationPropertyValue.class.cast(sess.load(AnnotationPropertyValue.class, Integer.valueOf(idAnnotationPropertyValue)));              
+            }
+            av.setValue(n.attributeValue("value"));
+            
+            if (idAnnotationPropertyValue == null || idAnnotationPropertyValue.equals("")) {
+              sess.save(av);
+            }
+          }
+        }
+        sess.flush();
         
         String optionValue = "";
         TreeSet<PropertyOption> options = new TreeSet<PropertyOption>(new PropertyOptionComparator());
@@ -1990,9 +2044,6 @@ public class GenoPubServlet extends HttpServlet {
 			dup.setName(sourceAnnot.getName() + "_copy");
 			dup.setDescription(sourceAnnot.getDescription());
 			dup.setSummary(sourceAnnot.getSummary());
-			dup.setIdAnalysisType(sourceAnnot.getIdAnalysisType());
-			dup.setIdExperimentPlatform(sourceAnnot.getIdExperimentPlatform());
-			dup.setIdExperimentMethod(sourceAnnot.getIdExperimentMethod());
 			dup.setCodeVisibility(sourceAnnot.getCodeVisibility());
 			dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
 			dup.setIdUser(sourceAnnot.getIdUser());
@@ -2117,6 +2168,25 @@ public class GenoPubServlet extends HttpServlet {
 
 			// remove annotation files
 			annotation.removeFiles(genometry_genopub_dir);
+			
+		  // delete annotation property values
+      for(Iterator<?> i = annotation.getAnnotationProperties().iterator(); i.hasNext();) {
+        AnnotationProperty ap = AnnotationProperty.class.cast(i.next());
+        for(Iterator<?> i1 = ap.getValues().iterator(); i1.hasNext();) {
+          AnnotationPropertyValue av = AnnotationPropertyValue.class.cast(i1.next());
+          sess.delete(av);
+        }  
+      }
+      sess.flush();
+
+			// delete annotation properties
+      for(Iterator<?> i = annotation.getAnnotationProperties().iterator(); i.hasNext();) {
+        AnnotationProperty ap = AnnotationProperty.class.cast(i.next());
+        sess.delete(ap);
+      }
+      sess.flush();
+      
+      
 
 			// delete database object
 			sess.delete(annotation);
@@ -2482,18 +2552,6 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			row   = table.addElement("TR");			
-			row.addElement("TD").addText("Experiment platform").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getIdExperimentPlatform() != null ? dh.getExperimentPlatform(annotation.getIdExperimentPlatform()) : "&nbsp;");
-
-			row   = table.addElement("TR");			
-			row.addElement("TD").addText("Experiment method").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getIdExperimentMethod() != null ? dh.getExperimentMethod(annotation.getIdExperimentMethod()) : "&nbsp;");
-
-			row   = table.addElement("TR");			
-			row.addElement("TD").addText("Analysis type").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getIdAnalysisType() != null ? dh.getAnalysisType(annotation.getIdAnalysisType()) : "&nbsp;");
-
-			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Owner").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdUser() != null ? dh.getUserFullName(annotation.getIdUser()) : "&nbsp;");
 
@@ -2533,7 +2591,20 @@ public class GenoPubServlet extends HttpServlet {
 			for(AnnotationProperty ap : (Set<AnnotationProperty>)annotation.getAnnotationProperties()) {
 	      row   = table.addElement("TR");     
 	      row.addElement("TD").addText(ap.getName()).addAttribute("CLASS", "label");
-	      row.addElement("TD").addCDATA(ap.getValue() != null && !ap.getValue().equals("") ? ap.getValue() : "&nbsp;");
+	      if (ap.getProperty().getCodePropertyType().equals(PropertyType.URL)) {
+	        StringBuffer value = new StringBuffer();
+	        for(AnnotationPropertyValue av : (Set<AnnotationPropertyValue>)ap.getValues()) {
+	          if (value.length() > 0) {
+	            value.append(", ");
+	          }
+	          value.append(av.getValue());
+	        }
+          row.addElement("TD").addCDATA(value.length() > 0 ? value.toString() : "&nbsp;");
+	        
+	      } else {
+	        row.addElement("TD").addCDATA(ap.getValue() != null && !ap.getValue().equals("") ? ap.getValue() : "&nbsp;");
+	        
+	      }
 			  
 			}
 
@@ -3034,10 +3105,6 @@ public class GenoPubServlet extends HttpServlet {
 		else {
 			dup.setSummary(sourceAnnot.getSummary());
 		}
-		dup.setIdAnalysisType(sourceAnnot.getIdAnalysisType());
-		dup.setIdExperimentPlatform(sourceAnnot.getIdExperimentPlatform());
-		dup.setIdExperimentMethod(sourceAnnot.getIdExperimentMethod());
-		dup.setCodeVisibility(sourceAnnot.getCodeVisibility());
 		dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
 		dup.setIdUser(sourceAnnot.getIdUser());
 		dup.setIdGenomeVersion(sourceAnnot.getIdGenomeVersion());
@@ -4118,28 +4185,7 @@ public class GenoPubServlet extends HttpServlet {
 			String dictionaryName = request.getParameter("dictionaryName");
 			Integer id = null;
 
-			if (dictionaryName.equals("AnalysisType")) {
-				AnalysisType dict = new AnalysisType();
-				dict.setName(request.getParameter("name"));
-				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				dict.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
-				sess.save(dict);
-				id = dict.getIdAnalysisType();
-			} else if (dictionaryName.equals("ExperimentMethod")) {
-				ExperimentMethod dict = new ExperimentMethod();
-				dict.setName(request.getParameter("name"));
-				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				dict.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
-				sess.save(dict);
-				id = dict.getIdExperimentMethod();
-			} else if (dictionaryName.equals("ExperimentPlatform")) {
-				ExperimentPlatform dict = new ExperimentPlatform();
-				dict.setName(request.getParameter("name"));
-				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				dict.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
-				sess.save(dict);
-				id = dict.getIdExperimentPlatform();
-			} else if (dictionaryName.equals("Property")) {
+			if (dictionaryName.equals("Property")) {
         Property prop = new Property();
         prop.setName(request.getParameter("name"));
         prop.setCodePropertyType(PropertyType.TEXT);
@@ -4194,32 +4240,7 @@ public class GenoPubServlet extends HttpServlet {
 
 			String dictionaryName = request.getParameter("dictionaryName");
 			Integer id = Util.getIntegerParameter(request, "id");
-
-			if (dictionaryName.equals("AnalysisType")) {
-				AnalysisType dict = AnalysisType.class.cast(sess.load(AnalysisType.class, id));
-				// Check write permissions
-				if (!this.genoPubSecurity.canWrite(dict)) {
-					throw new Exception("Insufficient permissions to delete dictionary entry.");
-				}
-				sess.delete(dict);
-
-			} else if (dictionaryName.equals("ExperimentMethod")) {
-				ExperimentMethod dict = ExperimentMethod.class.cast(sess.load(ExperimentMethod.class, id));
-				// Check write permissions
-				if (!this.genoPubSecurity.canWrite(dict)) {
-					throw new Exception("Insufficient permissions to delete dictionary entry.");
-				}
-				sess.delete(dict);
-
-			} else if (dictionaryName.equals("ExperimentPlatform")) {
-				ExperimentPlatform dict = ExperimentPlatform.class.cast(sess.load(ExperimentPlatform.class, id));
-				// Check write permissions
-				if (!this.genoPubSecurity.canWrite(dict)) {
-					throw new Exception("Insufficient permissions to delete dictionary entry.");
-				}
-				sess.delete(dict);
-
-			}  else if (dictionaryName.equals("Property")) {
+			if (dictionaryName.equals("Property")) {
 			  Property prop = Property.class.cast(sess.load(Property.class, id));
         // Check write permissions
         if (!this.genoPubSecurity.canWrite(prop)) {
@@ -4277,45 +4298,7 @@ public class GenoPubServlet extends HttpServlet {
 			String dictionaryName = request.getParameter("dictionaryName");
 			Integer id = Util.getIntegerParameter(request, "id");
 
-			if (dictionaryName.equals("AnalysisType")) {
-				AnalysisType dict = AnalysisType.class.cast(sess.load(AnalysisType.class, id));
-				// Check write permissions
-				if (!this.genoPubSecurity.canWrite(dict)) {
-					throw new InsufficientPermissionException("Insufficient permissions to write dictionary entry.");
-				}
-
-				dict.setName(request.getParameter("name"));
-				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				if (this.genoPubSecurity.isAdminRole()) {
-					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
-				}
-
-			} else if (dictionaryName.equals("ExperimentMethod")) {
-				ExperimentMethod dict = ExperimentMethod.class.cast(sess.load(ExperimentMethod.class, id));
-				// Check write permissions
-				if (!this.genoPubSecurity.canWrite(dict)) {
-					throw new Exception("Insufficient permissions to write dictionary entry.");
-				}
-
-				dict.setName(request.getParameter("name"));
-				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				if (this.genoPubSecurity.isAdminRole()) {
-					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
-				}
-
-			} else if (dictionaryName.equals("ExperimentPlatform")) {
-				ExperimentPlatform dict = ExperimentPlatform.class.cast(sess.load(ExperimentPlatform.class, id));
-				// Check write permissions
-				if (!this.genoPubSecurity.canWrite(dict)) {
-					throw new InsufficientPermissionException("Insufficient permissions to write dictionary entry.");
-				}
-
-				dict.setName(request.getParameter("name"));
-				dict.setIsActive(Util.getFlagParameter(request, "isActive"));				
-				if (this.genoPubSecurity.isAdminRole()) {
-					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
-				}
-			} else if (dictionaryName.equals("Property")) {
+			if (dictionaryName.equals("Property")) {
         Property property = Property.class.cast(sess.load(Property.class, id));
         // Check write permissions
         if (!this.genoPubSecurity.canWrite(property)) {

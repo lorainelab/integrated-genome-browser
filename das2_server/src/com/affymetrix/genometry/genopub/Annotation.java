@@ -57,9 +57,6 @@ public class Annotation implements Serializable, Owned {
 	private String              codeVisibility;
 	private String              fileName;
 	private Integer             idGenomeVersion;
-	private Integer             idAnalysisType;
-	private Integer             idExperimentMethod;
-	private Integer             idExperimentPlatform;
 	private Set                 annotationGroupings;
 	private Integer             idUser;
 	private Integer             idUserGroup;
@@ -112,24 +109,6 @@ public class Annotation implements Serializable, Owned {
 	public void setIdGenomeVersion(Integer idGenomeVersion) {
 		this.idGenomeVersion = idGenomeVersion;
 	}
-	public Integer getIdAnalysisType() {
-		return idAnalysisType;
-	}
-	public void setIdAnalysisType(Integer idAnalysisType) {
-		this.idAnalysisType = idAnalysisType;
-	}
-	public Integer getIdExperimentMethod() {
-		return idExperimentMethod;
-	}
-	public void setIdExperimentMethod(Integer idExperimentMethod) {
-		this.idExperimentMethod = idExperimentMethod;
-	}
-	public Integer getIdExperimentPlatform() {
-		return idExperimentPlatform;
-	}
-	public void setIdExperimentPlatform(Integer idExperimentPlatform) {
-		this.idExperimentPlatform = idExperimentPlatform;
-	}
 	public Set getAnnotationGroupings() {
 		return annotationGroupings;
 	}
@@ -169,6 +148,14 @@ public class Annotation implements Serializable, Owned {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
+	
+	public String getNumber() {
+	  if (this.getIdAnnotation() != null) {
+	    return "A" + this.getIdAnnotation();
+	  } else {
+	    return "";
+	  }
+	}
 
 
 	@SuppressWarnings("unchecked")
@@ -183,15 +170,13 @@ public class Annotation implements Serializable, Owned {
 		}
 
 		root.addAttribute("idAnnotation", this.getIdAnnotation().toString());
+    root.addAttribute("number", this.getNumber());
 		root.addAttribute("label", this.getName());
 		root.addAttribute("name", this.getName());
 		root.addAttribute("summary", this.getSummary());
 		root.addAttribute("description", this.getDescription());
 		root.addAttribute("codeVisibility", this.getCodeVisibility());
 		root.addAttribute("idGenomeVersion", this.getIdGenomeVersion() != null ? this.getIdGenomeVersion().toString() : "");
-		root.addAttribute("idAnalysisType", this.getIdAnalysisType() != null ? this.getIdAnalysisType().toString() : "");
-		root.addAttribute("idExperimentMethod", this.getIdExperimentMethod() != null ? this.getIdExperimentMethod().toString() : "");
-		root.addAttribute("idExperimentPlatform", this.getIdExperimentPlatform() != null ? this.getIdExperimentPlatform().toString() : "");
 		root.addAttribute("idUser", this.getIdUser() != null ? this.getIdUser().toString() : "");
 		root.addAttribute("idUserGroup", this.getIdUserGroup() != null ? this.getIdUserGroup().toString() : "");
     root.addAttribute("idInstitute", this.getIdInstitute() != null ? this.getIdInstitute().toString() : "");
@@ -298,25 +283,49 @@ public class Annotation implements Serializable, Owned {
     // Show list annotation properties.
     // Only show for annotation detail (when data_root is provided).
     if (data_root != null) {
-      if (getAnnotationProperties() != null) {
-        Element propertiesNode = root.addElement("AnnotationProperties");
+      Element propertiesNode = root.addElement("AnnotationProperties");
+      for (Property property : dh.getPropertyList()) {
 
+        Element propNode = propertiesNode.addElement("AnnotationProperty");
+
+        AnnotationProperty ap = null;
         for(Iterator i = getAnnotationProperties().iterator(); i.hasNext();) {
-          AnnotationProperty ap = (AnnotationProperty)i.next();
-          Element propNode = propertiesNode.addElement("AnnotationProperty");
-          propNode.addAttribute("idAnnotationProperty", ap.getIdAnnotationProperty().toString());  
-          propNode.addAttribute("name", ap.getName());
-          propNode.addAttribute("value", ap.getValue() != null ? ap.getValue() : "");
-          propNode.addAttribute("codePropertyType", ap.getProperty().getCodePropertyType());
-          propNode.addAttribute("idProperty", ap.getIdProperty().toString());
+          AnnotationProperty annotationProperty = (AnnotationProperty)i.next();
+          if (annotationProperty.getProperty().getIdProperty().equals(property.getIdProperty())) {
+            ap = annotationProperty;
+            break;
+          }
+        }
+        
+        propNode.addAttribute("idAnnotationProperty", ap != null ? ap.getIdAnnotationProperty().toString() : "");  
+        propNode.addAttribute("name", property.getName());
+        propNode.addAttribute("value", ap != null && ap.getValue() != null ? ap.getValue() : "");
+        propNode.addAttribute("codePropertyType", property.getCodePropertyType());
+        propNode.addAttribute("idProperty", property.getIdProperty().toString());
 
-          if (ap.getProperty().getOptions() != null && ap.getProperty().getOptions().size() > 0) {
-            for (Iterator i1 = ap.getProperty().getOptions().iterator(); i1.hasNext();) {
-              PropertyOption option = (PropertyOption)i1.next();
-              Element optionNode = propNode.addElement("PropertyOption");
-              optionNode.addAttribute("idPropertyOption", option.getIdPropertyOption().toString());
-              optionNode.addAttribute("name", option.getName());
-              boolean isSelected = false;
+        if (ap != null && ap.getValues() != null && ap.getValues().size() > 0) {
+          for (Iterator i1 = ap.getValues().iterator(); i1.hasNext();) {
+            AnnotationPropertyValue av = (AnnotationPropertyValue)i1.next();
+            Element valueNode = propNode.addElement("AnnotationPropertyValue");
+            valueNode.addAttribute("idAnnotationPropertyValue", av.getIdAnnotationPropertyValue().toString());
+            valueNode.addAttribute("value", av.getValue() != null ? av.getValue() : "");
+          }
+        }
+        if (property.getCodePropertyType().equals(PropertyType.URL)) {
+          // Add an empty value for URL
+          Element emptyNode = propNode.addElement("AnnotationPropertyValue");
+          emptyNode.addAttribute("idAnnotationPropertyValue", "");
+          emptyNode.addAttribute("value", "Enter URL here...");
+        }
+
+        if (property.getOptions() != null && property.getOptions().size() > 0) {
+          for (Iterator i1 = property.getOptions().iterator(); i1.hasNext();) {
+            PropertyOption option = (PropertyOption)i1.next();
+            Element optionNode = propNode.addElement("PropertyOption");
+            optionNode.addAttribute("idPropertyOption", option.getIdPropertyOption().toString());
+            optionNode.addAttribute("name", option.getName());
+            boolean isSelected = false;
+            if (ap != null && ap.getOptions() != null) {
               for (Iterator i2 = ap.getOptions().iterator(); i2.hasNext();) {
                 PropertyOption optionSelected = (PropertyOption)i2.next();
                 if (optionSelected.getIdPropertyOption().equals(option.getIdPropertyOption())) {
@@ -324,8 +333,8 @@ public class Annotation implements Serializable, Owned {
                   break;
                 }
               }
-              optionNode.addAttribute("selected", isSelected ? "Y" : "N");
             }
+            optionNode.addAttribute("selected", isSelected ? "Y" : "N");
           }
         }
       }      
@@ -557,10 +566,6 @@ public class Annotation implements Serializable, Owned {
 		props.put(PROP_GROUP_CONTACT, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupContact(this.getIdUserGroup()) : "");
 		props.put(PROP_GROUP_EMAIL, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupEmail(this.getIdUserGroup()) : "");
 		props.put(PROP_GROUP_INSTITUTE, this.getIdInstitute() != null ? dictionaryHelper.getInstituteName(this.getIdInstitute()) : "");
-		props.put(PROP_ANALYSIS_TYPE, dictionaryHelper.getAnalysisType(this.getIdAnalysisType()));
-		props.put(PROP_EXPERIMENT_METHOD, dictionaryHelper.getExperimentMethod(this.getIdExperimentMethod()));
-		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));
-		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));
 		
 		for (AnnotationProperty ap : (Set<AnnotationProperty>)this.getAnnotationProperties()) {
 	    props.put(ap.getName(), ap.getValue() != null ? ap.getValue() : "");

@@ -18,9 +18,6 @@
         <property name="description"                 column="description"                type="string"/>
         <property name="fileName"                    column="fileName"                   type="string"/>
         <property name="codeVisibility"              column="codeVisibility"             type="string"/>
-        <property name="idAnalysisType"              column="idAnalysisType"             type="integer"/>
-        <property name="idExperimentMethod"          column="idExperimentMethod"         type="integer"/>
-        <property name="idExperimentPlatform"        column="idExperimentPlatform"       type="integer"/>
         <property name="idGenomeVersion"             column="idGenomeVersion"            type="integer"/>
         <property name="idUser"                      column="idUser"                     type="integer"/>
         <property name="idUserGroup"                 column="idUserGroup"                type="integer"/>
@@ -89,6 +86,20 @@
 		    <key column="idAnnotationProperty"/>
 			<many-to-many column="idPropertyOption" class="com.affymetrix.genometry.genopub.PropertyOption"/>
 		</set>
+		
+		<set name="values" table="AnnotationPropertyValue" lazy="true" cascade="none" order-by="idAnnotationPropertyValue">
+		   <key column="idAnnotationProperty"/>
+		   <one-to-many class="com.affymetrix.genometry.genopub.AnnotationPropertyValue" />
+		</set>
+    </class>
+
+    <!--  AnnotationProperty -->
+    <class name="com.affymetrix.genometry.genopub.AnnotationPropertyValue" table="AnnotationPropertyValue">
+        <id name="idAnnotationPropertyValue"  column="idAnnotationPropertyValue"    type="integer">
+            <generator class="native"/>
+        </id>
+        <property name="value"                  column="value"                      type="string"/>
+        <property name="idAnnotationProperty"   column="idAnnotationProperty"       type="integer"/>
     </class>
 	
 	    
@@ -259,35 +270,6 @@
     <!-- DICTIONARIES -->
     <!--              -->
     
-    <!-- AnalysisType -->
-    <class name="com.affymetrix.genometry.genopub.AnalysisType" table="AnalysisType">
-        <id name="idAnalysisType"  column="idAnalysisType"   type="integer">
-            <generator class="native"/>
-        </id>
-        <property name="name"               column="name"               type="string"/>
-        <property name="isActive"           column="isActive"           type="string"/>
-        <property name="idUser"             column="idUser"             type="integer"/>
-    </class> 
-    
-    <!-- ExperimentMethod -->
-    <class name="com.affymetrix.genometry.genopub.ExperimentMethod" table="ExperimentMethod">
-        <id name="idExperimentMethod"  column="idExperimentMethod"   type="integer">
-            <generator class="native"/>
-        </id>
-        <property name="name"               column="name"               type="string"/>
-        <property name="isActive"           column="isActive"           type="string"/>
-        <property name="idUser"             column="idUser"             type="integer"/>
-    </class>   
-    
-    <!-- ExperimentPlatform -->
-    <class name="com.affymetrix.genometry.genopub.ExperimentPlatform" table="ExperimentPlatform">
-        <id name="idExperimentPlatform"  column="idExperimentPlatform"   type="integer">
-            <generator class="native"/>
-        </id>
-        <property name="name"               column="name"               type="string"/>
-        <property name="isActive"           column="isActive"           type="string"/>
-        <property name="idUser"             column="idUser"             type="integer"/>
-    </class>     
     
     <!-- Property -->
     <class name="com.affymetrix.genometry.genopub.Property" table="Property">

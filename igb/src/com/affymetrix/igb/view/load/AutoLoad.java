@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -9,18 +10,23 @@ import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  *
  * @author hiralv
  */
-public class AutoLoad implements MouseListener, MouseMotionListener {
+public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceChangeListener{
 
+	public final static String  PREFS_AUTOLOAD = "Enable Auto load";
+	public final static boolean default_autoload = true;
 	private final JSlider zoomer;
 	private final JScrollBar scroller;
 	private final NeoMap map;
 	private boolean was_dragging = false;
 	public static final int threshold = 85;
+	private boolean autoLoadEnabled;
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;
 
@@ -35,6 +41,8 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 		this.map.addMouseMotionListener(this);
 
 		showAutoLoadRegion();
+		
+		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 	}
 
 	private void showAutoLoadRegion(){
@@ -71,6 +79,10 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 	public void mousePressed(MouseEvent e) {}
 	
 	public void mouseReleased(MouseEvent e) {
+		if(!autoLoadEnabled){
+			return;
+		}
+		
 		Object src = e.getSource();
 
 		if (src != map && src != scroller && src != zoomer) {
@@ -106,5 +118,15 @@ public class AutoLoad implements MouseListener, MouseMotionListener {
 
 	public boolean shouldAutoLoad(){
 		return zoomer_value > threshold;
+	}
+
+	public void preferenceChange(PreferenceChangeEvent pce) {
+		if (! pce.getNode().equals(PreferenceUtils.getTopNode())) {
+          return;
+        }
+
+		if(pce.getKey().equals(PREFS_AUTOLOAD)){
+			autoLoadEnabled = PreferenceUtils.getBooleanParam(PREFS_AUTOLOAD, default_autoload);
+		}
 	}
 }

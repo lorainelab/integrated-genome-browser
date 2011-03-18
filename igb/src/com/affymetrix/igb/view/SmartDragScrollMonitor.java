@@ -30,8 +30,8 @@ public class SmartDragScrollMonitor extends DragScrollMonitor{
 			topgl = nevt.getItems().get(nevt.getItems().size() - 1);
 		}
 
-		if(topgl != smv.getAxisGlyph() && topgl != smv.getSequnceGlyph()){
-			heardEvent(evt);
-		}
+		//if(topgl != smv.getAxisGlyph() && topgl != smv.getSequnceGlyph()){
+		heardEvent(evt);
+		//}
 	}
 }

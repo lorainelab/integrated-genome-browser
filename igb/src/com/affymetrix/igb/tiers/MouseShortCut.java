@@ -62,22 +62,23 @@ final public class MouseShortCut implements MouseListener{
 				smv.centerAtHairline();
 			}
 
-			List<GlyphI> glyphs = new ArrayList<GlyphI>();
-			glyphs.addAll(smv.getSeqMap().getSelected());
-
-			if(glyphs.isEmpty() && smv.getMapMode() == MapMode.MapScrollMode && e instanceof NeoMouseEvent){
+			List<GlyphI> glyphs = smv.getSeqMap().getSelected();
+			
+			if((glyphs == null || glyphs.isEmpty()) && smv.getMapMode() == MapMode.MapScrollMode && e instanceof NeoMouseEvent){
 				NeoMouseEvent nevt = (NeoMouseEvent)e;
+				glyphs = new ArrayList<GlyphI>();
 				Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
 				
 				GlyphI topgl = null;
 				if (!nevt.getItems().isEmpty()) {
 					topgl = nevt.getItems().get(nevt.getItems().size() - 1);
 					topgl = smv.getSeqMap().zoomCorrectedGlyphChoice(topgl, zoom_point);
+					glyphs.add(topgl);
 				}
-				glyphs.add(topgl);
+				
 			}
 
-			if(glyphs.isEmpty() || (!glyphs.isEmpty() && glyphs.get(0) instanceof GraphGlyph))
+			if(glyphs == null || glyphs.isEmpty() || glyphs.get(0) instanceof GraphGlyph)
 				return;
 			
 			//Zoom to glyphs.

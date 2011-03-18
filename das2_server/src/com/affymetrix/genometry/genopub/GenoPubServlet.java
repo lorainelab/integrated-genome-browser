@@ -4190,6 +4190,7 @@ public class GenoPubServlet extends HttpServlet {
         prop.setName(request.getParameter("name"));
         prop.setCodePropertyType(PropertyType.TEXT);
         prop.setIsActive(Util.getFlagParameter(request, "isActive"));
+        prop.setSortOrder(Util.getIntegerParameter(request, "sortOrder"));
         prop.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
         sess.save(prop);
         id = prop.getIdProperty();
@@ -4310,6 +4311,7 @@ public class GenoPubServlet extends HttpServlet {
         if (this.genoPubSecurity.isAdminRole()) {
           property.setIdUser(Util.getIntegerParameter(request, "idUser"));
         }
+        property.setSortOrder(Util.getIntegerParameter(request, "sortOrder"));
         property.setCodePropertyType(request.getParameter("codePropertyType"));
         
         // Delete Property options  

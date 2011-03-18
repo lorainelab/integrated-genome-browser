@@ -72,7 +72,7 @@ public class DictionaryHelper {
   private void load(Session sess) {
     
     List<Property> properties = (List<Property>) sess
-    .createQuery("SELECT p from Property p order by p.name")
+    .createQuery("SELECT p from Property p order by p.sortOrder, p.name")
     .list();
     for (Property p : properties) {
       Hibernate.initialize(p.getOptions());
@@ -173,6 +173,7 @@ public class DictionaryHelper {
       dictEntry.addAttribute("name",     p.getName());
       dictEntry.addAttribute("label",    p.getName());
       dictEntry.addAttribute("isActive", p.getIsActive());
+      dictEntry.addAttribute("sortOrder",p.getSortOrder() != null ? p.getSortOrder().toString() : "");
       dictEntry.addAttribute("codePropertyType", p.getCodePropertyType());
       dictEntry.addAttribute("type",     "DictionaryEntry");
       dictEntry.addAttribute("canWrite", genoPubSecurity.canWrite(p) ? "Y" : "N");

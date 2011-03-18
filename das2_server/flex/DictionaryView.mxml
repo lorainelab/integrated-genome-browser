@@ -223,6 +223,7 @@
 			params.id              = dictionaryTree.selectedItem.@id;
 			params.dictionaryName  = dictionaryTree.selectedItem.@dictionaryName;
 			params.name            = propertyName.text;
+			params.sortOrder       = sortOrder.text;
 			params.isActive        = this.isActivePropertyCheckbox.selected ? 'Y' : 'N';
 			if (currentState == "AdminState") {
 				params.idUser      = this.propertyOwnerCombo.selectedItem != null ? this.propertyOwnerCombo.selectedItem.@id : "";
@@ -369,6 +370,10 @@
 						   <mx:RadioButton label="Dropdown (multiple selection)"  groupName="propertyTypeRadioGroup" value="MOPTION" paddingBottom="0" paddingTop="0" change="dirtyProperty.setDirty()"/>
 					   </mx:VBox>
 				   </mx:HBox> 
+				   <mx:HBox width="100%" verticalGap="0">
+				    <mx:Label text="Order:" width="80"/>
+				    <mx:TextInput text="{dictionaryTree.selectedItem.@sortOrder}" width="100%" id="sortOrder" change="dirtyProperty.setDirty()" maxChars="100"/>
+				   </mx:HBox>
 				   <mx:HBox width="100%"  visible="{propertyTypeRadioGroup.selectedValue == 'OPTION' || propertyTypeRadioGroup.selectedValue == 'MOPTION'}" verticalGap="0" height="100%">
 					   <mx:Label text="Options:" width="80"/>
 					   <mx:VBox verticalGap="0" height="100%" width="100%">
@@ -378,7 +383,7 @@
 						   </mx:HBox>
 						   <mx:DataGrid id="propertyOptionGrid"  editable="true" dataProvider="{propertyOptions}" height="100%" width="100%" showHeaders="true" itemEditEnd="dirtyProperty.setDirty();">
 							   <mx:columns>
-								   <mx:DataGridColumn headerText="Option" width="300" dataField="@name"/>
+								   <mx:DataGridColumn headerText="Option" width="200" dataField="@name"/>
 								   <mx:DataGridColumn headerText="Order"  width="30" dataField="@sortOrder"/>
 								   <mx:DataGridColumn headerText="Active"  width="30" dataField="@isActive"/>
 							   </mx:columns>

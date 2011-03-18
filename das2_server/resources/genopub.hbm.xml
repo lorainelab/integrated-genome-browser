@@ -279,6 +279,7 @@
         <property name="name"               column="name"               type="string"/>
         <property name="isActive"           column="isActive"           type="string"/>
         <property name="idUser"             column="idUser"             type="integer"/>
+        <property name="sortOrder"          column="sortOrder"             type="integer"/>
         <property name="codePropertyType"   column="codePropertyType"    type="string"/>
 
         <set name="options" table="PropertyOption" lazy="true" cascade="none" order-by="sortOrder">

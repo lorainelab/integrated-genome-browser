@@ -767,6 +767,7 @@ CREATE  TABLE genopub.Property (
   isActive CHAR(1) NULL DEFAULT 'Y' ,
   codePropertyType VARCHAR(10) NOT NULL,
   `idUser` int(10) unsigned default NULL,
+  sortOrder INT(10) UNSIGNED NULL,
   PRIMARY KEY (idProperty),
   KEY `FK_Property_User` (`idUser`),
   KEY `FK_Property_PropertyType` (`codePropertyType`),

@@ -426,7 +426,7 @@
 				<mx:LinkButton label="About"  id="linkbutton2" styleName="menuLabel" paddingTop="0" paddingBottom="0" click="showAboutWindow()"/>
 			</mx:HBox>
 		</mx:HBox >
-		<mx:HBox width="100%">
+		<mx:HBox width="100%" verticalAlign="middle">
 	    	<mx:LinkBar id="linkButtonBar"
  				 dataProvider="{mainViewStack}" 
  			     enabled="true"  
@@ -437,7 +437,7 @@
  			     paddingTop="0"  
  			     paddingBottom="0">
  			</mx:LinkBar>
-	    	<mx:VRule includeIn="UserState, AdminUserState, AdminAllState"  height="20" strokeColor="#FFFFFF"/>
+	    	<mx:VRule includeIn="UserState, AdminUserState, AdminAllState"  height="14" strokeColor="#FFFFFF" strokeWidth="1"/>
 			<mx:LinkButton label="Dictionaries" includeIn="UserState, AdminUserState, AdminAllState" icon="@Embed(source='assets/book.png')" click="showDictionaryWindow()" styleName="navLinkButton"/>
 		</mx:HBox>
       </mx:VBox>

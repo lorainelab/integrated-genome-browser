@@ -2,9 +2,12 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.util.StringUtils;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
 
 /**
@@ -177,5 +180,22 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 		g.drawRect(pixelbox.x + 1, pixelbox.y + 1,
 				pixelbox.width - 3, pixelbox.height - 3);
+	}
+
+	public boolean isManuallyResizable()  {
+		return ((getInfo() instanceof TierGlyph) && (((TierGlyph)getInfo()).getChildCount() == 1 && ((TierGlyph)getInfo()).getChild(0) instanceof GraphGlyph));
+	}
+
+	public double getSpacing() {
+		// TODO use packer to get spacing, but it is null
+		return 2.0;
+	}
+
+	public void resizeHeight(double top, double height, ViewI view) {
+		TierGlyph lowerTierGlyph = (TierGlyph)getInfo();
+		GraphGlyph gl = (GraphGlyph)lowerTierGlyph.getChild(0);
+		Rectangle2D.Double cbox = gl.getCoordBox();
+		gl.setCoords(cbox.x, top, cbox.width, height);
+		lowerTierGlyph.pack(view);
 	}
 }

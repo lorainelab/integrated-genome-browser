@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tiers;
 
+import java.awt.Cursor;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -10,12 +11,17 @@ import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.genoviz.widget.NeoWidget;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.view.GlyphResizer;
+
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -28,16 +34,43 @@ public final class TierLabelManager {
 	private final AffyLabelledTierMap tiermap;
 	private final AffyTieredMap labelmap;
 	private final JPopupMenu popup;
+	private static final double RESIZE_THRESHHOLD = 4.0;
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
 	private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
 	private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
 	private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
+	private Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
+
 	/**
 	 *  Determines whether selecting a tier label of a tier that contains only
 	 *  GraphGlyphs should cause the graphs in that tier to become selected.
 	 */
 	private boolean do_graph_selections = false;
+
+	private final MouseMotionListener mouse_motion_listener = new MouseMotionListener() {
+
+		@Override
+		public void mouseDragged(MouseEvent e) {}
+
+		@Override
+		public void mouseMoved(MouseEvent evt) {
+			boolean useResizeCursor = false;
+			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
+				NeoMouseEvent nevt = (NeoMouseEvent) evt;
+				if (atResizeTop(nevt) || atResizeBottom(nevt)) {
+					useResizeCursor = true;
+				}
+			}
+			if (useResizeCursor) {
+				setCurrentCursor(resizeCursor);
+			}
+			else {
+				restoreCursor();
+			}
+		}
+		
+	};
 
 	private final MouseListener mouse_listener = new MouseListener() {
 
@@ -47,6 +80,7 @@ public final class TierLabelManager {
 		}
 
 		public void mouseExited(MouseEvent evt) {
+			restoreCursor();
 		}
 
 		/** Tests whether the mouse event is due to the 3rd button.
@@ -70,7 +104,32 @@ public final class TierLabelManager {
 				if (!selected_glyphs.isEmpty()) {
 					topgl = selected_glyphs.get(selected_glyphs.size() - 1);
 				}
-
+				TierLabelGlyph upperGl = null;
+				TierLabelGlyph lowerGl = null;
+				if (atResizeTop(nevt)) {
+					List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
+					int index = orderedGlyphs.indexOf(topgl);
+					if (orderedGlyphs.get(index - 1).isManuallyResizable()) {
+						upperGl = orderedGlyphs.get(index - 1);
+					}
+					if (((TierLabelGlyph)topgl).isManuallyResizable()) {
+						lowerGl = (TierLabelGlyph)topgl;
+					}
+				}
+				else if (atResizeBottom(nevt)) {
+					List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
+					int index = orderedGlyphs.indexOf(topgl);
+					if (((TierLabelGlyph)topgl).isManuallyResizable()) {
+						upperGl = (TierLabelGlyph)topgl;
+					}
+					if (orderedGlyphs.get(index + 1).isManuallyResizable()) {
+						lowerGl = orderedGlyphs.get(index + 1);
+					}
+				}
+				if (upperGl != null || lowerGl != null) {
+					resizeBorder(upperGl, lowerGl, nevt);
+					return;
+				}
 				// Dispatch track selection event
 				//doTrackSelection(topgl);
 
@@ -118,6 +177,12 @@ public final class TierLabelManager {
 			}
 		}
 
+		private void resizeBorder(TierLabelGlyph upperGl, TierLabelGlyph lowerGl, NeoMouseEvent nevt) {
+			setResizeCursor();
+			GlyphResizer resizer = new GlyphResizer((AffyTieredMap) nevt.getSource(), Application.getSingleton().getMapView());
+			resizer.startDrag(upperGl, lowerGl, nevt);
+		}
+
 		private void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
 			dragging_label = gl;
 			GlyphDragger dragger = new GlyphDragger((NeoAbstractWidget) nevt.getSource());
@@ -125,17 +190,66 @@ public final class TierLabelManager {
 			dragger.startDrag(gl, nevt);
 			dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 		}
+
 	}; // end of mouse listener class
 
+	private boolean atResizeTop(NeoMouseEvent nevt) {
+		if (nevt == null || nevt.getItems().isEmpty()) {
+			return false;
+		}
+		GlyphI topgl = nevt.getItems().get(nevt.getItems().size() - 1);
+		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
+		int index = orderedGlyphs.indexOf(topgl);
+		LinearTransform trans = ((NeoWidget) nevt.getSource()).getView().getTransform();
+		double threshhold = RESIZE_THRESHHOLD / trans.getScaleY();
+		return (index > 0 &&
+			(nevt.getCoordY() - topgl.getCoordBox().getY() < threshhold) &&
+			(((TierLabelGlyph)topgl).isManuallyResizable() || orderedGlyphs.get(index - 1).isManuallyResizable()));
+	}
+
+	private boolean atResizeBottom(NeoMouseEvent nevt) {
+		if (nevt == null || nevt.getItems().isEmpty()) {
+			return false;
+		}
+		GlyphI topgl = nevt.getItems().get(nevt.getItems().size() - 1);
+		List<TierLabelGlyph> orderedGlyphs = tiermap.getOrderedTierLabels();
+		int index = orderedGlyphs.indexOf(topgl);
+		LinearTransform trans = ((NeoWidget) nevt.getSource()).getView().getTransform();
+		double threshhold = RESIZE_THRESHHOLD / trans.getScaleY();
+		return (index < orderedGlyphs.size() - 1 &&
+			(topgl.getCoordBox().getY() + topgl.getCoordBox().getHeight() - nevt.getCoordY() < threshhold) &&
+			(((TierLabelGlyph)topgl).isManuallyResizable() || orderedGlyphs.get(index + 1).isManuallyResizable()));
+	}
+
 	public TierLabelManager(AffyLabelledTierMap map) {
+		super();
 		tiermap = map;
 		popup = new JPopupMenu();
 
 		labelmap = tiermap.getLabelMap();
 		labelmap.addMouseListener(this.mouse_listener);
+		labelmap.addMouseMotionListener(this.mouse_motion_listener);
 
 		labelmap.getScene().setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		labelmap.setPixelFuzziness(0); // there are no gaps between tiers, need no fuzziness
+	}
+
+	private Cursor getCurrentCursor() {
+		return Application.getSingleton().getMapView().getSeqMap().getCursor();
+	}
+
+	private void setCurrentCursor(Cursor cursor) {
+		Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
+	}
+
+	private void setResizeCursor() {
+		if (getCurrentCursor() != resizeCursor) {
+			setCurrentCursor(resizeCursor);
+		}
+	}
+
+	private void restoreCursor() {
+		setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
 	}
 
 	/** Returns a list of TierGlyph items representing the selected tiers. */

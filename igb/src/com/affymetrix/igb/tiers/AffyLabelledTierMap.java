@@ -17,6 +17,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
@@ -35,6 +36,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   private AffyTieredMap labelmap;
   private JSplitPane mapsplitter;
   private final List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
+  private List<TierLabelGlyph> ordered_glyphs = null;
   private JPanel can_panel;
   private NeoCanvas ncan;
   
@@ -93,12 +95,45 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     super.clearWidget();
     labelmap.clearWidget();
     label_glyphs.clear();
+    ordered_glyphs = null;
   }
 
   public List<TierLabelGlyph> getTierLabels() {
     return label_glyphs;
   }
 
+  private static final double FUDGE_FACTOR = 0.2;
+  private List<TierLabelGlyph> getOrderedGlyphs() {
+    List<TierLabelGlyph> orderedGlyphs = new ArrayList<TierLabelGlyph>();
+    for (TierLabelGlyph tierLabelGlyph : label_glyphs) {
+      if (tierLabelGlyph.isVisible()) {
+        orderedGlyphs.add(tierLabelGlyph);
+      }
+    }
+    Collections.sort(orderedGlyphs, new Comparator<TierLabelGlyph>() {
+      @Override
+      public int compare(TierLabelGlyph o1, TierLabelGlyph o2) {
+        if (o1.getCoordBox().getY() + o1.getCoordBox().getHeight() < o2
+            .getCoordBox().getY() + FUDGE_FACTOR) {
+          return -1;
+        }
+        if (o1.getCoordBox().getY() + FUDGE_FACTOR > o2.getCoordBox()
+            .getY() + o2.getCoordBox().getHeight()) {
+          return 1;
+        }
+        return 0;
+      }
+    });
+    return orderedGlyphs;
+  }
+
+  public List<TierLabelGlyph> getOrderedTierLabels() {
+	  if (ordered_glyphs == null) {
+		  ordered_glyphs = getOrderedGlyphs();
+	  }
+	  return ordered_glyphs;
+  }
+ 
   public AffyTieredMap getLabelMap() {
     return labelmap;
   }
@@ -113,6 +148,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
       label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
       label_glyph.setVisibility(tier_glyph.isVisible());
     }
+    ordered_glyphs = null;
   }
 
   /**
@@ -138,6 +174,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     //   (which also sets value returned by label_glyph.getInfo())
     labelmap.setDataModel(label_glyph, mtg);  
     label_glyphs.add(label_glyph);
+    ordered_glyphs = null;
   }
 
 	@Override
@@ -147,6 +184,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     if (label_glyph != null) {
       labelmap.removeItem(label_glyph);
       label_glyphs.remove(label_glyph);
+      ordered_glyphs = null;
     }
   }
 

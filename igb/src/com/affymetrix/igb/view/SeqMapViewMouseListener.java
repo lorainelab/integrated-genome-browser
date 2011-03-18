@@ -65,6 +65,7 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 	int select_start, select_end;
 	private GlyphI sub_sel_glyph;
     private final int dismissdelay = ToolTipManager.sharedInstance().getDismissDelay();
+	private boolean shouldSubSelect = false;
 
 	SeqMapViewMouseListener(SeqMapView smv) {
 		this.smv = smv;
@@ -474,8 +475,16 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 		int id = evt.getID();
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
 
-		if (id == MouseEvent.MOUSE_DRAGGED) {
-			if (sub_sel_glyph == null) {
+		if (id == MouseEvent.MOUSE_PRESSED){
+			GlyphI topgl = null;
+			if (!nevt.getItems().isEmpty()) {
+				topgl = nevt.getItems().get(0);
+			}
+			if (topgl != null && topgl.supportsSubSelection()) {
+				shouldSubSelect = true;
+			}
+		}else if (id == MouseEvent.MOUSE_DRAGGED) {
+			if (sub_sel_glyph == null && shouldSubSelect) {
 				GlyphI topgl = null;
 				if (!nevt.getItems().isEmpty()) {
 					topgl = nevt.getItems().get(0);
@@ -521,5 +530,6 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 				smv.zoomTo(min, max);
 			}
 		}
+		shouldSubSelect = false;
 	}
 }

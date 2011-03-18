@@ -57,7 +57,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 	Box misc_box_col1 = Box.createVerticalBox();
 	Box misc_box_col2 = Box.createVerticalBox();
 
-	misc_box_col1.setAlignmentX(Component.TOP_ALIGNMENT);
+	misc_box_col1.setAlignmentY(Component.TOP_ALIGNMENT);
     misc_box_col1.add(PreferenceUtils.createCheckBox("Ask before exiting", PreferenceUtils.getTopNode(),
       PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting));
     misc_box_col1.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
@@ -65,12 +65,13 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 	misc_box_col1.add(PreferenceUtils.createCheckBox("Enable auto load (Beta)", PreferenceUtils.getTopNode(),
       AutoLoad.PREFS_AUTOLOAD, AutoLoad.default_autoload));
 
-	misc_box_col2.setAlignmentX(Component.TOP_ALIGNMENT);
+	misc_box_col2.setAlignmentY(Component.TOP_ALIGNMENT);
     misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
       PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete));
     misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
       PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete));
 
+	misc_box_cols.setAlignmentY(Component.TOP_ALIGNMENT);
     misc_box_cols.add(misc_box_col1);
 	misc_box_cols.add(Box.createHorizontalGlue());
 	misc_box_cols.add(misc_box_col2);
@@ -78,24 +79,29 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 
 	misc_box.add(misc_box_cols);
     misc_box.add(Box.createRigidArea(new Dimension(0,5))); 
-    misc_box.add(Box.createRigidArea(new Dimension(0,5)));
+    
 	
-
     Box orf_box = Box.createVerticalBox();
     orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
 
 	orf_box.add(addColorChooser("Stop Codon",OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color));
+	orf_box.add(Box.createRigidArea(new Dimension(0,5)));
 	orf_box.add(addColorChooser("Dynamic ORF",OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color));
+	orf_box.add(Box.createRigidArea(new Dimension(0,5)));
 	
 	Box base_box = Box.createVerticalBox();
     base_box.setBorder(new javax.swing.border.TitledBorder("Change Residue Colors"));
 
 	base_box.add(addColorChooser("A", ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color));
+	base_box.add(Box.createRigidArea(new Dimension(0,5)));
 	base_box.add(addColorChooser("T", ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color));
+	base_box.add(Box.createRigidArea(new Dimension(0,5)));
 	base_box.add(addColorChooser("G", ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color));
+	base_box.add(Box.createRigidArea(new Dimension(0,5)));
 	base_box.add(addColorChooser("C", ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color));
+	base_box.add(Box.createRigidArea(new Dimension(0,5)));
 	base_box.add(addColorChooser("Other", ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color));
-
+	base_box.add(Box.createRigidArea(new Dimension(0,5)));
 
 	String default_label_format = SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA;
     String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL,
@@ -107,9 +113,11 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     axis_box.setBorder(new javax.swing.border.TitledBorder("Axis"));
 
 	axis_box.add(addColorChooser("Foreground", AxisStyle.PREF_AXIS_COLOR, Color.BLACK));
+	axis_box.add(Box.createRigidArea(new Dimension(0,5)));
 	axis_box.add(addColorChooser("Background", AxisStyle.PREF_AXIS_BACKGROUND, Color.WHITE));
+	axis_box.add(Box.createRigidArea(new Dimension(0,5))); 
 	axis_box.add(addToPanel("Number format", axis_label_format_CB));
-    
+    axis_box.add(Box.createRigidArea(new Dimension(0,5)));
 
     axis_box.setAlignmentX(0.0f);
     orf_box.setAlignmentX(0.0f);

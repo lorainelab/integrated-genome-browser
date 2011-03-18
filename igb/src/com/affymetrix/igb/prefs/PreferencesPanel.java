@@ -157,7 +157,7 @@ public final class PreferencesPanel extends JPanel {
 
       cont.add(this);
       frame.pack(); // pack() to set frame to its preferred size
-      Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(800, 650));
+      Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(600, 550));
       if (pos != null) {
         PreferenceUtils.setWindowSize(frame, pos);
       }

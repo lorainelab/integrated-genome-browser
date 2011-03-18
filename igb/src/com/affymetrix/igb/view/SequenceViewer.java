@@ -85,11 +85,13 @@ public class SequenceViewer extends JPanel
 	private int cdsMax = 0;
 	private int cdsMin = 0;
 	private int counter = 0;
-	private int countIntrons = 0;
+	private int countIntronsBeforecdsMax = 0;
+	private int countIntronsBeforecdsMin = 0;
 	private String id = null, type = null;
 	private String chromosome = null;
 	private String title = null;
 	private int cdsMaxDNAonly = 0;
+	private int cdsMinDNAonly = 0;
 	private String[] seqArray;
 	private String[] intronArray;
 	private boolean showcDNASwitch = false;
@@ -144,21 +146,21 @@ public class SequenceViewer extends JPanel
 				seqview.appendResidues(seqArray[k]);
 				seqview.addTextColorAnnotation(count, (count + seqArray[k].length()) - 1, cols[EXON_COLOR]);
 				count += seqArray[k].length();
-				counter += seqArray[k].length();
-				k++;			
+				k++;
 			} else {
 				seqview.appendResidues(intronArray[l]);
 				seqview.addTextColorAnnotation(count, (count + intronArray[l].length()) - 1, cols[INTRON_COLOR]);
 				count += intronArray[l].length();
-				if(cdsMax>counter){
-
-					counter += seqArray[l].length();
-					countIntrons++;
+				if (cdsMax >= count) {
+					countIntronsBeforecdsMax++;
 				}
-				l++;				
+				if (cdsMin >= count) {
+					countIntronsBeforecdsMin++;
+				}
+
+				l++;
 			}
 		}
-		calculateNewCdsEnd();
 	}
 
 	private void areResiduesFine(SeqSymmetry residues_sym, BioSeq aseq, boolean isGenomic) {
@@ -281,18 +283,26 @@ public class SequenceViewer extends JPanel
 			cdsMax = Math.abs(temp - seqSpans[seqSpans.length - 1].getStart()) - 3;
 		}
 	}
-	private void calculateNewCdsEnd(){
-		counter =0;
-	while(countIntrons>0){
-		counter +=intronArray[countIntrons-1].length();
-		countIntrons--;
-	}
-		cdsMaxDNAonly = cdsMax-counter;
+
+	private void calculateNewCdsStartEnd() {
+		counter = 0;
+		while (countIntronsBeforecdsMax > 0) {
+			counter += intronArray[countIntronsBeforecdsMax - 1].length();
+			countIntronsBeforecdsMax--;
+		}
+		cdsMaxDNAonly = cdsMax - counter;
+		counter = 0;
+		while (countIntronsBeforecdsMin > 0) {
+			counter += intronArray[countIntronsBeforecdsMin - 1].length();
+			countIntronsBeforecdsMin--;
+		}
+		cdsMinDNAonly = cdsMin - counter;
 	}
 
 	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
 		if (showcDNASwitch) {
-			seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
+
+			seqview.addOutlineAnnotation(cdsMinDNAonly, cdsMinDNAonly + 2, Color.green);
 			seqview.addOutlineAnnotation(cdsMaxDNAonly, cdsMaxDNAonly + 2, Color.red);
 		} else {
 			seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
@@ -351,7 +361,7 @@ public class SequenceViewer extends JPanel
 			customFormatting(residues_sym);
 			addFormattedResidues();
 		}
-		
+		this.calculateNewCdsStartEnd();
 		mapframe.add("Center", seqview);
 		mapframe.setVisible(true);
 		mapframe.addWindowListener(new WindowAdapter() {
@@ -449,7 +459,7 @@ public class SequenceViewer extends JPanel
 		}
 	}
 	ButtonGroup bg = new ButtonGroup();
-	JToggleButton showcDNAButton = new JToggleButton("Show cDNA only");
+	JToggleButton showcDNAButton = new JToggleButton("Show cDNA");
 	JToggleButton reverseColorsButton = new JToggleButton("Change color scheme");
 	JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
 	JCheckBoxMenuItem transOneCBMenuItem = new JCheckBoxMenuItem(" +1 Translation");
@@ -605,6 +615,7 @@ public class SequenceViewer extends JPanel
 
 	private void colorSwitching() {
 		seqview.clearWidget();
+//		this.calculateNewCdsStartEnd();
 		if (!showcDNASwitch) {
 			addFormattedResidues();
 		} else {
@@ -651,7 +662,7 @@ public class SequenceViewer extends JPanel
 		seq1 = SeqUtils.determineSelectedResidues(this.residues_sym, this.aseq);
 		if (evtSource == showcDNAButton) {
 			String text = e.getActionCommand();
-			if (text.equals("Show cDNA only")) {
+			if (text.equals("Show cDNA")) {
 				showcDNASwitch = true;
 				seqview.clearWidget();
 				seqview.setResidues(seq1);
@@ -659,14 +670,14 @@ public class SequenceViewer extends JPanel
 				this.addCdsStartEnd(residues_sym);
 //				customFormatting(residues_sym);
 				seqview.updateWidget();
-				showcDNAButton.setText("Show complete");		
+				showcDNAButton.setText("Show genomic");
 			} else {
 				showcDNASwitch = false;
 				seqview.clearWidget();
 				addFormattedResidues();
 				this.addCdsStartEnd(residues_sym);
 //				customFormatting(residues_sym);
-				showcDNAButton.setText("Show cDNA only");
+				showcDNAButton.setText("Show cDNA");
 			}
 		} else if (evtSource == reverseColorsButton) {
 			String text = e.getActionCommand();

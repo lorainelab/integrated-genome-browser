@@ -6,14 +6,12 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
-import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.useq.*;
 import com.affymetrix.genometryImpl.parsers.useq.data.USeqData;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,8 +129,6 @@ public class USeq extends SymLoader {
 		} 
 		return null;
 	}
-	
-	
 
 	public List<BioSeq> getChromosomeList(){
 		init();

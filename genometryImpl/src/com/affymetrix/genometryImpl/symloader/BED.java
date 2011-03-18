@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
-import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
@@ -766,5 +765,4 @@ public class BED extends SymLoader{
 			chrList.put(seq, chrFiles.get(seq_name));
 		}
 	}
-
 }

@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;

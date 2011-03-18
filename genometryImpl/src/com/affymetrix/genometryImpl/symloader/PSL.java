@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.symloader;
 
-import com.affymetrix.genometryImpl.general.SymLoader;
 import java.net.URI;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -65,6 +64,10 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	@Override
 	public List<LoadStrategy> getLoadChoices() {
 		return strategyList;
+	}
+
+	public PSL(URI uri, String featureName, AnnotatedSeqGroup group) {
+		this(uri, featureName, group, null, null, false, false, false);
 	}
 
 	public PSL(URI uri, String featureName, AnnotatedSeqGroup target_group,
@@ -628,12 +631,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 			sym = new Psl3Sym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, other_same_orientation, qseq, qmin, qmax, tseq, tmin, tmax, oseq, omin, omax, blockcount, blocksizes, qmins, tmins, omins);
 			annotate(annotate_other, create_container_annot, is_link_psl, other2types, oseq, type, sym, is_psl3, other_group);
 		} else {
-			boolean is_pslx = false;
-			String[] query_res_arr = null;
 			String[] target_res_arr = null;
 			if (fields.length >= findex+2) {
 				// see if there are two extra fields with residues for each block
-				query_res_arr = comma_regex.split(fields[findex++]);
 				target_res_arr = comma_regex.split(fields[findex++]);
 			}
 			sym = new UcscPslSym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases,
@@ -903,5 +903,4 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	public String getMimeType() {
 		return "text/plain";
 	}
-
 }

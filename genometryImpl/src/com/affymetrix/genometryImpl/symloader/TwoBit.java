@@ -3,7 +3,6 @@ package com.affymetrix.genometryImpl.symloader;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.TwoBitParser;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
@@ -35,7 +34,7 @@ public class TwoBit extends SymLoader {
 		strategyList.add(LoadStrategy.CHROMOSOME);
 	}
 	
-	public TwoBit(URI uri, AnnotatedSeqGroup group) {
+	public TwoBit(URI uri, String featureName, AnnotatedSeqGroup group) {
 		super(uri, "", group);
 		this.isResidueLoader = true;
 	}

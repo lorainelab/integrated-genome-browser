@@ -7,7 +7,6 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -585,6 +584,7 @@ public final class BAM extends SymLoader {
 	}
 
 	//Can be used later. Do not remove.
+	@SuppressWarnings("unused")
 	static private File createIndexFile(File bamfile) throws IOException{
 		File indexfile = File.createTempFile(bamfile.getName(), ".bai");
 

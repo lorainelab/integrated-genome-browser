@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
-import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
@@ -65,6 +65,7 @@ public abstract class ServerUtils {
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";
 	public static final List<String> BAR_FORMATS = new ArrayList<String>();
+	private static final Map<String, SymLoaderFactory> symLoaderFactoryMap = new HashMap<String, SymLoaderFactory>();
 
 	static {
 		BAR_FORMATS.add("bar");
@@ -100,6 +101,32 @@ public abstract class ServerUtils {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE,
 						"couldn't find {0} or {1} for genome!!! {2}", new Object[]{modChromInfo, liftAll, genome_version});
 			}
+		}
+	}
+
+	/**
+	 * add a new SymLoaderFactory for a given list of extensions
+	 * @param factory the SymLoaderFactory used to get the SymLoader
+	 */
+	public static void addSymLoaderFactory(SymLoaderFactory factory) {
+		for (String extension : factory.getExtensions()) {
+			if (symLoaderFactoryMap.get(extension) != null) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "duplicate SymLoaderFactory for extension {0}!!!", new Object[]{extension});
+			}
+			symLoaderFactoryMap.put(extension, factory);
+		}
+	}
+
+	/**
+	 * remove an existing SymLoaderFactory for a given list of extensions
+	 * @param factory the SymLoaderFactory used to get the SymLoader
+	 */
+	public static void removeSymLoaderFactory(SymLoaderFactory factory) {
+		for (String extension : factory.getExtensions()) {
+			if (symLoaderFactoryMap.get(extension) == null) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "missing removed SymLoaderFactory for extension {0}!!!", new Object[]{extension});
+			}
+			symLoaderFactoryMap.remove(extension);
 		}
 	}
 
@@ -1078,82 +1105,23 @@ public abstract class ServerUtils {
 
 	/**
 	 * Determine the appropriate loader.
-	 * @return
+	 * @return the SymLoader requested
 	 */
 	public static SymLoader determineLoader(String extension, URI uri, String featureName, AnnotatedSeqGroup group) {		
 		// residue loaders
 		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .		
-		
-		if (extension.equals("bnib")) {
-			return new BNIB(uri, group);
-		}
-		if (extension.equals("fa") || extension.equals("fas") || extension.equals("fasta")) {
-			return new Fasta(uri, group);
-		}
-		if (extension.equals("2bit")) {
-			return new TwoBit(uri, group);
-		}
 
-		// symmetry loaders
-		if (extension.equals("bam")) {
-			return new BAM(uri, featureName, group);
+		SymLoaderFactory factory = symLoaderFactoryMap.get(extension);
+		SymLoader symLoader;
+		if (factory == null) {
+			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
+					"Couldn't find any Symloader for {0} format. Opening whole file.", new Object[]{extension});
+			symLoader = new SymLoaderInstNC(uri, featureName, group); // default loader
 		}
-		/*if (extension.equals("bar")) {
-			return new Bar(uri, featureName, group);
-		}*/
-		if (extension.equals("bed")) {
-			return new BED(uri, featureName, group);
+		else {
+			symLoader = factory.createSymLoader(uri, featureName, group);
 		}
-		if (extension.equals("gb")) {
-			return new Genbank(uri, featureName, group);
-		}
-		if (extension.equals("gr")) {
-			return new Gr(uri, featureName, group);
-		}
-		if (extension.equals("sgr")) {
-			return new Sgr(uri, featureName, group);
-		}
-		// commented out until the USeq class is updated
-		if (extension.equals("useq")) {
-			return new USeq(uri, featureName, group);
-		}
-		if (extension.equals("wig") || extension.equals("bedgraph")) {
-			return new Wiggle(uri, featureName, group);
-		}
-		if(extension.equals("link.psl")) {
-			PSL psl = new PSL(uri, featureName, group, null, null,
-				false, false, false);
-			psl.setIsLinkPsl(true);
-			psl.enableSharedQueryTarget(true);
-			return psl;
-		}
-		if(extension.equals("psl") || extension.equals("psl3") || extension.equals("pslx")) {
-			PSL psl = new PSL(uri, featureName, group, null, null,
-				false, false, false);
-			psl.enableSharedQueryTarget(true);
-			return psl;
-		}
-		if(extension.equals("bgn") || extension.equals("bp1") || extension.equals("bp2") ||
-				extension.equals("bps") || extension.equals("brs") ||
-				extension.equals("cnt") || extension.equals("cyt")) {
-			return new SymLoaderInst(uri, featureName, group);
-		}
-		if((extension.equals("sin") || extension.equals("egr")) ||
-				extension.equals("bgr")
-				|| extension.equals("bar") || extension.equals("chp")){
-			return new SymLoaderInstNC(uri, featureName, group);
-		}if((extension.equals("gff3")) || extension.endsWith("gff") ||
-				extension.equals("gtf")){
-			//Determine if a file with extension gff is actually gff3
-			if(extension.equals("gff3") || GFF3.isGFF3(uri))
-				return new GFF3(uri, featureName, group);
-			
-			return new SymLoaderInstNC(uri, featureName, group);
-		}
-
-		Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
-				"Couldn't find any Symloader for {0} format. Opening whole file.", new Object[]{extension});
-		return new SymLoaderInstNC(uri, featureName, group);
+		return symLoader;
 	}
 
 }

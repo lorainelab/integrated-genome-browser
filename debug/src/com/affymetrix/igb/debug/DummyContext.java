@@ -23,6 +23,7 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
+import com.affymetrix.genometryImpl.symloader.SymLoaderFactory;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -33,6 +34,7 @@ public class DummyContext implements BundleContext {
 	private Map<String, Set<ServiceListener>> filteredServiceListeners = new HashMap<String, Set<ServiceListener>>();
 	private static final String TAB_SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
+	private static final String SYMLOADER_FACTORY_SERVICE_FILTER = "(objectClass=" + SymLoaderFactory.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -123,6 +125,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (TRANSFORMER_SERVICE_FILTER.equals(filter)) {
 			return service instanceof FloatTransformer;
+		}
+		if (SYMLOADER_FACTORY_SERVICE_FILTER.equals(filter)) {
+			return service instanceof SymLoaderFactory;
 		}
 		if (filter == null) {
 			return true;

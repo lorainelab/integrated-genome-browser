@@ -6,12 +6,12 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.das2.Das2Capability;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.SymProcessor;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.FormatPriorities;
-import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.Constants;
@@ -189,7 +189,7 @@ public class Das2 {
             Logger.getLogger(Das2.class.getName()).log(Level.INFO,
 					"Parsing {0} format for DAS2 feature response", content_subtype.toUpperCase());
 			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
-			List<? extends SeqSymmetry> feats = SymLoader.parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, span);
+			List<? extends SeqSymmetry> feats = SymProcessor.getInstance().parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, span);
 
 			/*
 			 TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.
@@ -199,11 +199,11 @@ public class Das2 {
 				name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
 			}*/
 
-			for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(feats).entrySet()) {
+			for (Map.Entry<String, List<SeqSymmetry>> entry : SymProcessor.getInstance().splitResultsByTracks(feats).entrySet()) {
 				if (entry.getValue().isEmpty()) {
 					continue;
 				}
-				SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
+				SymProcessor.getInstance().filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 
 				// Some format do not annotate. So it might not have method name. e.g bgn
 				if(entry.getKey() != null)

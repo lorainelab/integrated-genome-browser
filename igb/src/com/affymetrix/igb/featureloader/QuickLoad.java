@@ -5,11 +5,12 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.general.SymProcessor;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -409,7 +410,7 @@ public final class QuickLoad extends SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				return SymLoader.parse(this.extension, this.uri, bis, this.version.group, this.featureName, null);
+				return SymProcessor.getInstance().parse(this.extension, this.uri, bis, this.version.group, this.featureName, null);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {

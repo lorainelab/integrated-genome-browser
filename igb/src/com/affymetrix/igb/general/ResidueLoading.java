@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.das.DasLoader;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.BNIB;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
@@ -310,7 +310,7 @@ public final class ResidueLoading {
 						URI uri = new URI(server.URL + quickloadServer.getPath(version.versionName, version.versionName) + ".2bit");
 						if(LocalUrlCacher.isValidURI(uri))
 						{
-							symloader = new TwoBit(uri, seq_group);
+							symloader = new TwoBit(uri, "", seq_group);
 						}
 						else{
 							common_url = root_url + path + ".";
@@ -344,10 +344,10 @@ public final class ResidueLoading {
 
 		switch(format){
 			case BNIB:
-				return new BNIB(uri, seq_group);
+				return new BNIB(uri, "", seq_group);
 
 			case TWOBIT:
-				return new TwoBit(uri, seq_group);
+				return new TwoBit(uri, "", seq_group);
 
 //			case FA:
 //				return new Fasta(uri, seq_group);

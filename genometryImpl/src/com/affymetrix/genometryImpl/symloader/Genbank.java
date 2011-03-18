@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenbankSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
-import com.affymetrix.genometryImpl.general.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -151,7 +150,6 @@ public final class Genbank extends SymLoader {
 	 *  The tag for EMBL cross-references
 	 **/
 	private final static int REF_KEY = 8;
-	private final static String REF_KEY_STRING = "RK";
 	/**
 	 *  The tag used for unidentified input. Which is kept, but not
 	 *  distinguished

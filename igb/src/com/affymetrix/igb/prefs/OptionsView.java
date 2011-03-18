@@ -25,6 +25,7 @@ import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 import com.affymetrix.igb.util.ColorUtils;
+import com.affymetrix.igb.view.load.AutoLoad;
 
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
@@ -48,41 +49,43 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
   
     JScrollPane scroll_pane = new JScrollPane(main_box);
     this.add(scroll_pane, BorderLayout.CENTER);
-
+	clear_prefsB.addActionListener(this);
     
     Box misc_box = Box.createVerticalBox();
-    
+	
+	Box misc_box_cols = Box.createHorizontalBox();
+	Box misc_box_col1 = Box.createVerticalBox();
+	Box misc_box_col2 = Box.createVerticalBox();
 
-   
-    misc_box.add(PreferenceUtils.createCheckBox("Ask before exiting", PreferenceUtils.getTopNode(),
+	misc_box_col1.setAlignmentX(Component.TOP_ALIGNMENT);
+    misc_box_col1.add(PreferenceUtils.createCheckBox("Ask before exiting", PreferenceUtils.getTopNode(),
       PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting));
-    misc_box.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
+    misc_box_col1.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
-    misc_box.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
+
+	misc_box_col2.setAlignmentX(Component.TOP_ALIGNMENT);
+    misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
       PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete));
-    misc_box.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
+    misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
       PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete));
-    
 
-    misc_box.add(Box.createRigidArea(new Dimension(0,5)));
+    misc_box_cols.add(misc_box_col1);
+	misc_box_cols.add(Box.createHorizontalGlue());
+	misc_box_cols.add(misc_box_col2);
+	misc_box_cols.add(Box.createRigidArea(new Dimension(100,0)));
 
-    misc_box.add(clear_prefsB);
-    clear_prefsB.addActionListener(this);
-
-
-
+	misc_box.add(misc_box_cols);
+    misc_box.add(Box.createRigidArea(new Dimension(0,5))); 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
 	
 
-    JPanel orf_box = new JPanel();
-    orf_box.setLayout(new GridLayout(2,0));
+    Box orf_box = Box.createVerticalBox();
     orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
 
 	orf_box.add(addColorChooser("Stop Codon",OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color));
 	orf_box.add(addColorChooser("Dynamic ORF",OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color));
 	
-	JPanel base_box = new JPanel();
-    base_box.setLayout(new GridLayout(5,0));
+	Box base_box = Box.createVerticalBox();
     base_box.setBorder(new javax.swing.border.TitledBorder("Change Residue Colors"));
 
 	base_box.add(addColorChooser("A", ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color));
@@ -98,8 +101,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
                                                   SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
     JComboBox axis_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(), "Axis label format", label_format_options, default_label_format);
 
-    JPanel axis_box = new JPanel();
-    axis_box.setLayout(new GridLayout(3,0));
+    Box axis_box = Box.createVerticalBox();
     axis_box.setBorder(new javax.swing.border.TitledBorder("Axis"));
 
 	axis_box.add(addColorChooser("Foreground", AxisStyle.PREF_AXIS_COLOR, Color.BLACK));
@@ -108,18 +110,17 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     
 
     axis_box.setAlignmentX(0.0f);
-   
     orf_box.setAlignmentX(0.0f);
     misc_box.setAlignmentX(0.0f);
 	base_box.setAlignmentX(0.0f);
 
    
     main_box.add(axis_box);
-   
     main_box.add(orf_box);
 	main_box.add(base_box);
     main_box.add(Box.createRigidArea(new Dimension(0,5)));
     main_box.add(misc_box);
+	main_box.add(clear_prefsB);
 
     validate();
   }
@@ -151,14 +152,22 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 	}
 
   private static JPanel addToPanel(String label_str, JComponent component) {
+		Dimension size = new Dimension(100, 22);
+        component.setMaximumSize(size);
+        component.setPreferredSize(size);
+        component.setMinimumSize(size);
+		component.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+		JPanel inner_panel = new JPanel();
+		inner_panel.setLayout(new BoxLayout(inner_panel,BoxLayout.PAGE_AXIS));
+		inner_panel.add(Box.createRigidArea(new Dimension(20,0)));
+		inner_panel.add(component);
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
-		JPanel inner_panel = new JPanel();
-
-		inner_panel.add(component);
 		panel.add(new JLabel(label_str + ": "));
 		panel.add(inner_panel);
-
+		
 		return panel;
 	}
 

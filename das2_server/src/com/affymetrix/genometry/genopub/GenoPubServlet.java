@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.genopub;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -27,6 +29,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -99,6 +102,7 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String ANNOTATION_UPLOAD_FILES_REQUEST    = "annotationUploadFiles"; 
 	public static final String ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST  = "annotationEstimateDownloadSize"; 
 	public static final String ANNOTATION_DOWNLOAD_FILES_REQUEST  = "annotationDownloadFiles"; 
+	public static final String ANNOTATION_FDT_UPLOAD_FILES_REQUEST= "annotationFDTUploadFiles"; 
 	public static final String USERS_AND_GROUPS_REQUEST           = "usersAndGroups"; 
 	public static final String USER_ADD_REQUEST                   = "userAdd";
 	public static final String USER_PASSWORD_REQUEST              = "userPassword"; 
@@ -117,6 +121,10 @@ public class GenoPubServlet extends HttpServlet {
 	private GenoPubSecurity genoPubSecurity = null;
 
 	private String genometry_genopub_dir;
+	private String fdt_dir;
+  private String fdt_dir_genopub;
+  private String fdt_client_codebase;
+  private String fdt_server_name;
 
 	public void init() throws ServletException {
 		if (getGenoPubDir() == false) {
@@ -150,7 +158,8 @@ public class GenoPubServlet extends HttpServlet {
 						req.getUserPrincipal().getName(), 
 						true,
 						req.isUserInRole(GenoPubSecurity.ADMIN_ROLE),
-						req.isUserInRole(GenoPubSecurity.GUEST_ROLE));
+						req.isUserInRole(GenoPubSecurity.GUEST_ROLE),
+						isFDTSupported());
 				req.getSession().setAttribute(GenoPubSecurity.SESSION_KEY, genoPubSecurity);
 			}
 
@@ -211,7 +220,9 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleAnnotationFormUploadURLRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_UPLOAD_FILES_REQUEST)) {
 				this.handleAnnotationUploadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_DOWNLOAD_FILES_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(this.ANNOTATION_FDT_UPLOAD_FILES_REQUEST)) {
+        this.handleAnnotationFDTUploadRequest(req, res);
+      } else if (req.getPathInfo().endsWith(this.ANNOTATION_DOWNLOAD_FILES_REQUEST)) {
 				this.handleAnnotationDownloadRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST)) {
 				this.handleAnnotationEstimateDownloadSizeRequest(req, res);
@@ -2811,7 +2822,6 @@ public class GenoPubServlet extends HttpServlet {
 							throw new Exception("Unable to create directory " + annotationFileDir);      
 						}      
 					}
-					System.out.println("\tAnnotation directory "+annotationFileDir);
 					while ((part = mp.readNextPart()) != null) {        
 						if (part.isFile()) {
 							// it's a file part
@@ -3369,6 +3379,110 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		}
 	}
+	
+  private void handleAnnotationFDTUploadRequest(HttpServletRequest request, HttpServletResponse res) {
+    Session sess = null;
+    Transaction tx = null;
+
+    try {
+      sess = HibernateUtil.getSessionFactory().openSession();
+      tx = sess.beginTransaction();
+
+      Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, Util.getIntegerParameter(request, "idAnnotation")));
+
+      // Make sure the user can write this annotation 
+      if (!this.genoPubSecurity.canWrite(annotation)) {
+        throw new InsufficientPermissionException("Insufficient permision to write annotation.");
+      }
+      
+      String targetDir = annotation.getDirectory(genometry_genopub_dir);
+      
+      UUID uuid = UUID.randomUUID();
+      String uuidStr = uuid.toString();
+
+
+      String fdt_dir_genopub = getFDTDirForGenoPub() + uuidStr;       
+      String fdt_dir         = getFDTDir() + uuidStr;       
+
+      File dir = new File(fdt_dir_genopub);
+      boolean isDirCreated = dir.mkdir();  
+      if (!isDirCreated) {
+        throw new Exception("Unable to create " + fdt_dir_genopub + " directory.");    
+      }         
+      
+      // Create annotation directory if it doesn't exist
+      if (!new File(targetDir).exists()) {
+        boolean success = (new File(targetDir)).mkdir();
+        if (!success) {
+          throw new Exception("Unable to create directory " + targetDir);      
+        }      
+      }
+
+      // change ownership to fdt
+      // TODO:  Need to figure out ownership
+      //Process process = Runtime.getRuntime().exec( new String[] { "chown", "-R", "fdt:fdt", fdt_dir_genopub } );          
+      //process.waitFor();
+      //process.destroy();        
+
+      // only fdt user (and root) can read and write to this directory
+      // TODO:  when fdt user and tomcat user belong to same group, change permissions 
+      //        to 770
+      Process process = Runtime.getRuntime().exec( new String[] { "chmod", "777", fdt_dir_genopub } );          
+      process.waitFor();
+      process.destroy();        
+
+      // start daemon
+      process = Runtime.getRuntime().exec( new String[] { "genopub_fdt_daemon", "-sourceDir", fdt_dir_genopub, "-targetDir", targetDir } );          
+      process.waitFor();
+      process.destroy();    
+      
+      // Now stream back JNLP (webapp start) to client
+      res.setHeader("Content-Disposition","attachment;filename=\"genopub_fdt.jnlp\"");
+      res.setContentType("application/jnlp");
+      res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+      ServletOutputStream out = res.getOutputStream();
+
+      String title = "GenoPub FDT - Upload " + annotation.getNumber() + " Annotation files";
+      
+      out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+      out.println("<jnlp spec=\"1.0\"");
+      out.println("codebase=\"" + getFDTClientCodebase() +"\">");
+      out.println("<information>");
+      out.println("<title>" + title + "</title>");
+      out.println("<vendor>Sun Microsystems, Inc.</vendor>");
+      out.println("<offline-allowed/>");
+      out.println("</information>");
+      out.println("<security> ");
+      out.println("<all-permissions/> ");
+      out.println("</security>");
+      out.println("<resources>");
+      out.println("<jar href=\"fdtClient.jar\"/>");
+      out.println("<j2se version=\"1.6+\"/>");
+      out.println("</resources>");
+      out.println("<application-desc main-class=\"gui.FdtMain\">");
+      out.println("<argument>" + getFDTServerName() + "</argument>");
+      out.println("<argument>upload</argument>");         
+      out.println("<argument>" + fdt_dir + "</argument>");
+      out.println("</application-desc>");
+      out.println("</jnlp>");
+      out.close();
+      out.flush();
+            
+      
+    } catch (InsufficientPermissionException e) {
+      Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+      this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
+    }  catch (Exception e) {
+      Logger.getLogger(this.getClass().getName()).warning(e.toString());
+      e.printStackTrace();
+      this.reportError(res, e.toString(), ERROR_CODE_OTHER);
+    } finally {
+      if (sess != null) {
+        sess.close();
+      }
+    }
+  }
+
 
 
 	private void handleUsersAndGroupsRequest(HttpServletRequest request, HttpServletResponse res) {
@@ -4695,6 +4809,53 @@ public class GenoPubServlet extends HttpServlet {
 
 		return true;
 	}
+	
+	private boolean isFDTSupported() {
+	  if (getFDTDir() != null && getFDTClientCodebase() != null && getFDTDirForGenoPub() != null && getFDTServerName() != null) {
+	    return true;
+	  } else {
+	    return false;
+	  }
+	}
+  
+  private final String getFDTDir() {
+    if (fdt_dir == null) {
+      ServletContext context = getServletContext();
+      fdt_dir = context.getInitParameter(Constants.FDT_DIR);     
+      if (fdt_dir != null && !fdt_dir.endsWith("/")) {
+        fdt_dir += "/";     
+      }
+    }
+    return fdt_dir;
+  }
+  private final String getFDTDirForGenoPub() {
+    if (fdt_dir_genopub == null) {
+      ServletContext context = getServletContext();
+      fdt_dir_genopub = context.getInitParameter(Constants.FDT_DIR_FOR_GENOPUB);     
+      if (fdt_dir_genopub != null && !fdt_dir_genopub.endsWith("/")) {
+        fdt_dir_genopub += "/";     
+      }
+    }
+    return fdt_dir_genopub;
+  }
+	
+	private final String getFDTClientCodebase() {
+	  if (fdt_client_codebase == null) {
+	    ServletContext context = getServletContext();
+	    fdt_client_codebase = context.getInitParameter(Constants.FDT_CLIENT_CODEBASE);	    
+	  }
+    
+	  return fdt_client_codebase;
+	}
+	
+  private final String getFDTServerName() {
+    if (fdt_server_name == null) {
+      ServletContext context = getServletContext();
+      fdt_server_name = context.getInitParameter(Constants.FDT_SERVER_NAME);      
+    }
+    
+    return fdt_server_name;
+  }
 
 	/**Loads a file's lines into a hash first column is the key, second the value.
 	 * Skips blank lines and those starting with a '#'

@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+<mx:TitleWindow 
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
 	title="{'Add new annotation to ' + parentName}"	
 	showCloseButton="true" 
 	width="518" 
 	height="446" 
+	height.FDTState="326"
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconAnnotationNew}"
-	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
+	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}" currentState="NormalState">
+	<mx:states>
+		<s:State name="NormalState"/>
+		<s:State name="FDTState"/>
+	</mx:states>
 
- 	
+<fx:Declarations>
     <mx:HTTPService             
       id="addAnnotation" 
       url="genopub/annotationAdd"
@@ -36,9 +44,14 @@
       method="POST"
       useProxy="false">
     </mx:HTTPService>
+	
 
-       
-    <mx:Script>
+</fx:Declarations> 	
+
+<fx:Binding source="trimmedName" destination="annotationName.text"/>
+
+
+<fx:Script>
 	<![CDATA[
 	import mx.collections.XMLListCollection;
 	import mx.managers.PopUpManager;
@@ -139,6 +152,12 @@
 
    	private function onAddAnnotation(event:ResultEvent):void {
 		if (addAnnotation.lastResult.name() == "SUCCESS") {			
+			// If this is an FDT Upload, make the request to download the 
+			// FDT webstart application
+			if (this.currentState == "FDTState") {
+				navigateToURL(new URLRequest('genopub/annotationFDTUploadFiles?idAnnotation=' + addAnnotation.lastResult.@idAnnotation), '_self');	
+			}
+
 			closeWindow();
 			itemToSelect = new XML(
 			   "<Annotation " +
@@ -148,8 +167,6 @@
 			    "/>");
 			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
 			
-			// Open the upload file window
-			//openFileUploadWindow(addAnnotation.lastResult.@idAnnotation, annotationName.text);
 			
 		} else if (addAnnotation.lastResult.name() == "Error") {
 			Alert.show(addAnnotation.lastResult.@message);
@@ -282,10 +299,18 @@
 			    "/>");
 
    }
+		
+   private function pickState():void {
+	   if (this.uploadMethod.selectedValue == 'normal') {
+		   this.currentState = 'NormalState';
+	   } else {
+		   this.currentState = 'FDTState';
+	   }
+   }
 
 	
 	]]>
-    </mx:Script>
+</fx:Script>
     
     <mx:VBox id="mainBody" styleName="panelBody" width="100%" height="100%">
         <mx:VBox width="100%" height="100%" id="vbox1" verticalGap="12">
@@ -300,8 +325,13 @@
 			    </mx:HBox>
 				
 			</mx:VBox>
-			<mx:VBox label="Files" width="100%" height="100%"  id="vbox2" verticalGap="0" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0">
-				<mx:HBox width="100%">
+			<mx:VBox label="Files" width="100%" id="vbox2" verticalGap="0" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" height.NormalState="100%">
+				<mx:HBox width="100%" verticalAlign="middle" visible="{parentApplication.isFDTSupported()}">
+					<mx:RadioButtonGroup id="uploadMethod" selectedValue="normal" />
+					<mx:RadioButton  groupName="uploadMethod" label="Normal upload" value="normal" selected="true" click="pickState()"/>
+					<mx:RadioButton groupName="uploadMethod" label="FDT upload (files > 1GB)" value="fdt" click="pickState()"/>
+				</mx:HBox>
+				<mx:HBox width="100%" verticalAlign="middle" includeIn="NormalState">
 					<mx:LinkButton id="uploadBrowseButton" 
 						label="Choose files"
 						icon="{parentApplication.iconChooseFiles}"  
@@ -309,10 +339,11 @@
 					   	 toolTip="Choose file(s) to upload"  textDecoration="underline" paddingTop="0" paddingLeft="0" fontWeight="bold"/>
 					
 				</mx:HBox>
-				<mx:VBox width="100%" height="100%" verticalGap="2">
-					<mx:DataGrid id="uploadFilesGrid" width="100%" height="100%">				
+				<mx:VBox width="100%" verticalGap="2" height="100%" backgroundColor.FDTState="#FAEBAD">
+					<mx:DataGrid id="uploadFilesGrid" width="100%" height="100%" includeIn="NormalState">				
 					</mx:DataGrid>				
-					<mx:ProgressBar id="uploadProgressBar"  visible="true" width="100%" labelPlacement="center" trackHeight="15" height="20" fontWeight="normal" themeColor="#EAED9A"/>
+					<mx:ProgressBar id="uploadProgressBar" includeIn="NormalState"  visible="true" width="100%" labelPlacement="center" trackHeight="15" height="20" fontWeight="normal" themeColor="#EAED9A"/>
+					<mx:Text includeIn="FDTState" width="100%" text="After pressing 'Save' button, a webstart FDT application will launch. Pick the files to upload from the file chooser and press 'Start Upload'." paddingTop="4" height="40"/> 
 				</mx:VBox>
 			</mx:VBox>
 			
@@ -348,7 +379,6 @@
 		<mx:Button id="cancelButton" label="Cancel" click="closeWindow()"/>
 	</mx:ControlBar>
 	
-	<mx:Binding source="trimmedName" destination="annotationName.text"/>
 
 
 </mx:TitleWindow>

@@ -995,6 +995,12 @@
         	uploadWindow.uploadBrowseButton.setFocus();
         	uploadWindow.init();
         }
+			
+		private function showAnnotationFDTUploadWindow():void {
+			// If this is an FDT Upload, make the request to download the 
+			// FDT webstart application
+			navigateToURL(new URLRequest('genopub/annotationFDTUploadFiles?idAnnotation=' + annotationsTree.selectedItem.@idAnnotation), '_self');	
+		}
 
         private function getAncestors(item:Object, ancestorName:String):Array {
         	var ancestors:Array = new Array();
@@ -2666,6 +2672,12 @@
 												click="showAnnotationUploadWindow()" 
 												styleName="linkMenuButton"  label="Upload file(s)">
 									 <mx:enabled>{getAnnotation.lastResult.@canWrite == 'Y' ? true : false}</mx:enabled>
+								 </mx:LinkButton>
+								 <mx:LinkButton icon="@Embed(source='assets/page_new.png')" 
+												disabledIcon="@Embed(source='assets/page_new_disable.png')" 
+												click="showAnnotationFDTUploadWindow()" 
+												styleName="linkMenuButton"  label="Upload file(s) using FDT">
+									 <mx:enabled>{getAnnotation.lastResult.@canWrite == 'Y' &amp;&amp; parentApplication.isFDTSupported() ? true : false}</mx:enabled>
 								 </mx:LinkButton>
 								 <mx:LinkButton icon="@Embed(source='assets/page_remove.png')"
 												disabledIcon="@Embed(source='assets/page_remove_disable.png')"

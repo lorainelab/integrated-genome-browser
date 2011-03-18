@@ -38,6 +38,7 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 import java.io.BufferedReader;
@@ -59,6 +60,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -444,7 +446,7 @@ public final class GeneralLoadUtils {
 		addGenomeVirtualSeq(group);	// okay to run this multiple times
 	}
 
-
+	
 
 	/**
 	 * Load the sequence info for the given group.
@@ -648,7 +650,7 @@ public final class GeneralLoadUtils {
 		return loadAndDisplaySpan(overlap, gFeature);
 	}
 
-	public static boolean loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
+	public static boolean loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) && ((QuickLoad) feature.symL).extension.endsWith(".chp")) {
 			feature.loadStrategy = LoadStrategy.GENOME;	// it should be set to this already.  But just in case...
@@ -662,33 +664,28 @@ public final class GeneralLoadUtils {
 			return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 		}
 
-		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
-		//start max
-		if ((feature.getExtension() != null) && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().isLoadingConfirm()) {
-			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
-		
-			int childrenCount = optimized_sym.getChildCount();
-			int spanWidth = 0;
-			for(int childIndex = 0; childIndex < childrenCount; childIndex++) {
-				SeqSymmetry child = optimized_sym.getChild(childIndex);
-				for(int spanIndex = 0; spanIndex< child.getSpanCount(); spanIndex++) {
-					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
+		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
+			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
+			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+
+			if (checkBamLoading(feature, optimized_sym)) {
+				return false;
+			}
+
+			if (optimized_sym != null) {
+				return loadFeaturesForSym(feature, optimized_sym);
+			}
+		} else {
+			if (!IGBConstants.GENOME_SEQ_ID.equals(span.getBioSeq().getID())) {
+				SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+				if (optimized_sym != null) {
+					return loadFeaturesForSym(feature, optimized_sym);
 				}
+			} else {
+				iterateSeqList(span, feature);	
+				//TODO: Does it matter what is returned ?
+				return true;
 			}
-			
-			if(((spanWidth > 100024) && PreferenceUtils.userSpanLoadingConfirmed != 0) || resetConfirmOption) {
-				boolean loadBig = Application.confirmPanelForSpanloading("Region in view is big (> 100k), do you want to continue?");
-				if(!loadBig) {
-					return false;
-				} 
-				
-				if(resetConfirmOption) PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, false);
-			}
-			GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
-		}
-		//end max
-		if (optimized_sym != null) {
-			return loadFeaturesForSym(feature, optimized_sym);
 		}
 
 		if(feature.loadStrategy != LoadStrategy.GENOME){
@@ -699,6 +696,35 @@ public final class GeneralLoadUtils {
 		return true;
 	}
 
+	private static void iterateSeqList(final SeqSpan span, final GenericFeature feature) {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				BioSeq seq = null;
+				AnnotatedSeqGroup group = span.getBioSeq().getSeqGroup();
+				for (int i = 0; i < group.getSeqCount(); i++) {
+					seq = group.getSeq(i);
+					if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
+						continue; // don't load into Whole Genome
+					}
+					SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
+					if (optimized_sym != null) {
+						loadFeaturesForSym(feature, optimized_sym);
+					}
+				}
+				//Fire a dummy event to refresh
+				seq = group.getSeq(IGBConstants.GENOME_SEQ_ID);
+				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(0, 1, seq));
+				if (optimized_sym != null) {
+					loadFeaturesForSym(feature, optimized_sym);
+				}
+				return null;
+			}
+		};
+		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
+	}
+	
 	private static boolean loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError {
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
@@ -726,7 +752,33 @@ public final class GeneralLoadUtils {
 		}
 		return false;
 	}
-	
+
+	private static boolean checkBamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
+		//start max
+		if ((feature.getExtension() != null) && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().isLoadingConfirm()) {
+			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
+			int childrenCount = optimized_sym.getChildCount();
+			int spanWidth = 0;
+			for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
+				SeqSymmetry child = optimized_sym.getChild(childIndex);
+				for (int spanIndex = 0; spanIndex < child.getSpanCount(); spanIndex++) {
+					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
+				}
+			}
+			if (((spanWidth > 100024) && PreferenceUtils.userSpanLoadingConfirmed != 0) || resetConfirmOption) {
+				boolean loadBig = Application.confirmPanelForSpanloading("Region in view is big (> 100k), do you want to continue?");
+				if (!loadBig) {
+					return true;
+				}
+				if (resetConfirmOption) {
+					PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, false);
+				}
+			}
+			GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
+		}
+		return false;
+		//end max
+	}
 
 	/**
 	 * Walk the SeqSymmetry, converting all of its children into spans.

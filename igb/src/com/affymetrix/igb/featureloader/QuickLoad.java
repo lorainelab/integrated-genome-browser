@@ -19,6 +19,7 @@ import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
@@ -163,6 +164,10 @@ public final class QuickLoad extends SymLoader {
 					if (QuickLoad.this.extension.endsWith(".chp")) {
 						// special-case chp files, due to their LazyChpSym DAS/2 loading
 						QuickLoad.this.getGenome();
+						return null;
+					}
+					//Do not not anything in case of genome. Just refresh.
+					if(IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())){
 						return null;
 					}
 

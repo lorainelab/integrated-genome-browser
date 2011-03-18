@@ -126,20 +126,20 @@ public final class SearchView extends IGBTabPanel implements
 		pan1.add(new JLabel(SearchView.SEARCHLABELTEXT));
 		pan1.add(searchCB);
 
-		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 		pan1.add(new JLabel(SearchView.INLABELTEXT));
 		sequence_CB.setToolTipText(SEQUENCETOSEARCH);
 		pan1.add(sequence_CB);
 
-		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 		pan1.add(new JLabel(SearchView.FORLABELTEXT));
 		pan1.add(searchTF);
 		
-		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 
 		pan1.add(searchButton);
 		
-		pan1.add(Box.createRigidArea(new Dimension(30, 0)));
+		pan1.add(Box.createRigidArea(new Dimension(2, 0)));
 
 		pan1.add(remoteSearchCheckBox);
 		//pan1.add(selectInMapCheckBox);

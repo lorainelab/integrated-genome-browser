@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
-import com.affymetrix.genometryImpl.general.SymLoader;
+import com.affymetrix.genometryImpl.general.SymProcessor;
 import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedWriter;
@@ -122,7 +122,7 @@ public class PSLParserTest {
 
 		for (int i = 0; i < seqs.size(); i++) {
 			seq = seqs.get(i);
-			syms1 = SymLoader.filterResultsByChromosome(syms, seq);
+			syms1 = SymProcessor.getInstance().filterResultsByChromosome(syms, seq);
 			syms2 = psl.getChromosome(seq);
 			testSeqSymmetry(syms1, syms2);
 		}

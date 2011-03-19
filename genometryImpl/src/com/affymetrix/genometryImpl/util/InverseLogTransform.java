@@ -24,7 +24,7 @@ public final class InverseLogTransform implements FloatTransformer {
 	}
 	private String getBaseName() {
 		if (base == Math.E) {
-			return "Inverse Natural Log";
+			return "Inverse Ln";
 		}
 		else {
 			return "Inverse Log" + DF.format(base);

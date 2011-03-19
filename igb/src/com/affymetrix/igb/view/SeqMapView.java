@@ -381,6 +381,7 @@ public class SeqMapView extends JPanel
 		refreshDataAction = new RefreshDataAction(this);
 		JButton refresh_button = new JButton(refreshDataAction);
 		refresh_button.setText("");
+		refresh_button.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
 		xzoombox.add(refresh_button);
 
 		boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);

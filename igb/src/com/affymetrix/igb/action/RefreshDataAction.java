@@ -19,7 +19,7 @@ public class RefreshDataAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
 
 	public RefreshDataAction(JComponent comp) {
-		super(BUNDLE.getString("refreshDataButton"), MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
+		super(BUNDLE.getString("refreshDataButton"));
 		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("refreshDataButton"));
 		if (ks != null) {
 			this.putValue(MNEMONIC_KEY, ks.getKeyCode());

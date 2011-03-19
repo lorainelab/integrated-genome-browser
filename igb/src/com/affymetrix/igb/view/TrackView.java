@@ -233,15 +233,17 @@ public class TrackView {
 				SeqSymmetry child = inverse.getChild(i);
 				for (int j = 0; j < child.getSpanCount(); j++) {
 					SeqSpan ospan = child.getSpan(j);
-					if (forwardTrack != null) {
-						GlyphI mglyph = new FillRectGlyph();
-						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
-						forwardTrack.addMiddleGlyph(mglyph);
-					}
-					if (reverseTrack != null) {
-						GlyphI mglyph = new FillRectGlyph();
-						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
-						reverseTrack.addMiddleGlyph(mglyph);
+					if (ospan.getLength() > 1) {
+						if (forwardTrack != null) {
+							GlyphI mglyph = new FillRectGlyph();
+							mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
+							forwardTrack.addMiddleGlyph(mglyph);
+						}
+						if (reverseTrack != null) {
+							GlyphI mglyph = new FillRectGlyph();
+							mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
+							reverseTrack.addMiddleGlyph(mglyph);
+						}
 					}
 				}
 			}

@@ -164,7 +164,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		buttonPanel.add(partial_residuesB);
 		this.refreshDataAction = gviewer.getRefreshDataAction();
 		JButton refresh_dataB = new JButton(refreshDataAction);
-		refresh_dataB.setIcon(null);
+		refresh_dataB.setToolTipText(BUNDLE.getString("refreshDataTip"));
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);
 		buttonPanel.add(refresh_dataB);

@@ -394,7 +394,7 @@ public final class IGB extends Application
 		windowService.setSeqMapView(getMapView());
 		windowService.setStatusBar(status_bar);
 		windowService.setViewMenu(view_menu);
-		frm.setVisible(true);
+		//frm.setVisible(true);
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportSlicedViewAction()), export_to_file_menu.getText());
 		return new IGBTabPanel[]{GeneralLoadView.getLoadView(), SeqGroupView.getInstance(), new AltSpliceView(IGBServiceImpl.getInstance())};
 	}

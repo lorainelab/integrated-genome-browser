@@ -19,7 +19,7 @@ import com.affymetrix.genometryImpl.symloader.SymLoaderFactory;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
 /**
- * OSGi Activator for igb bundle
+ * OSGi Activator for genometry bundle
  */
 public class Activator implements BundleActivator {
 	private static final String SERVICE_FILTER = "(objectClass=" + SymLoaderFactory.class.getName() + ")";
@@ -83,7 +83,7 @@ public class Activator implements BundleActivator {
 				}
 				return null;
 			}
-			
+
 		};
 		bundleContext.registerService(
 			SymLoaderFactory.class.getName(),
@@ -91,7 +91,7 @@ public class Activator implements BundleActivator {
 			new Properties()
 		);
 	}
-	
+
 	private void registerSymLoaderFactories() {
 		// residue loaders
 		registerSymLoaderFactory(new String[]{"bnib"}, com.affymetrix.genometryImpl.symloader.BNIB.class);

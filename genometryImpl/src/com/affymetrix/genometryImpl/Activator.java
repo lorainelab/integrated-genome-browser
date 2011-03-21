@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl;
 
 import java.lang.reflect.Constructor;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +13,6 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderFactory;
@@ -30,14 +28,6 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		this.bundleContext = _bundleContext;
-		if (bundleContext.getProperty("args") != null) {
-			String[] args = bundleContext.getProperty("args").split(", ");
-			if (NibbleResiduesParser.FASTA_TO_BNIB.equals(args[0])) {
-				String[] runArgs = Arrays.copyOfRange(args, 1, args.length);
-				NibbleResiduesParser.main(runArgs);
-				System.exit(0);
-			}
-		}
 		try {
 			bundleContext.addServiceListener(
 				new ServiceListener() {

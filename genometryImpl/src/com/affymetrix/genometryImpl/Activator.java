@@ -9,7 +9,7 @@ import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 
 
 /**
- * OSGi Activator for igb bundle
+ * OSGi Activator for genometry bundle
  */
 public class Activator implements BundleActivator {
 	protected BundleContext bundleContext;

@@ -64,7 +64,7 @@ final public class MouseShortCut implements MouseListener{
 
 			List<GlyphI> glyphs = smv.getSeqMap().getSelected();
 			
-			if((glyphs == null || glyphs.isEmpty()) && smv.getMapMode() == MapMode.MapScrollMode && e instanceof NeoMouseEvent){
+			if(smv.getMapMode() == MapMode.MapScrollMode && e instanceof NeoMouseEvent){
 				NeoMouseEvent nevt = (NeoMouseEvent)e;
 				glyphs = new ArrayList<GlyphI>();
 				Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());

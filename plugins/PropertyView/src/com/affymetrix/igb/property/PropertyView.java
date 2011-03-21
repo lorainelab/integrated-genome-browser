@@ -87,7 +87,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		orderList.add("end");
 		orderList.add("length");
 		orderList.add("strand");
-
+		orderList.add("residues");
 		return orderList;
 	}
 

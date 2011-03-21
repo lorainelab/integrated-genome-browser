@@ -703,6 +703,7 @@ public final class GeneralLoadUtils {
 			protected Void doInBackground() throws Exception {
 				BioSeq seq = null;
 				AnnotatedSeqGroup group = span.getBioSeq().getSeqGroup();
+				boolean result = false;
 				for (int i = 0; i < group.getSeqCount(); i++) {
 					seq = group.getSeq(i);
 					if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
@@ -711,12 +712,13 @@ public final class GeneralLoadUtils {
 					SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
 					if (optimized_sym != null) {
 						loadFeaturesForSym(feature, optimized_sym);
+						result = true;
 					}
 				}
 				//Fire a dummy event to refresh
 				seq = group.getSeq(IGBConstants.GENOME_SEQ_ID);
 				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(0, 1, seq));
-				if (optimized_sym != null) {
+				if (optimized_sym != null && result) {
 					loadFeaturesForSym(feature, optimized_sym);
 				}
 				return null;

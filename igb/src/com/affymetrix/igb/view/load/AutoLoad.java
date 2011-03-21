@@ -39,6 +39,8 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 		this.scroller.addMouseListener(this);
 		this.map.addMouseListener(this);
 		this.map.addMouseMotionListener(this);
+		this.zoomer_value = this.zoomer.getValue();
+		autoLoadEnabled = PreferenceUtils.getBooleanParam(PREFS_AUTOLOAD, default_autoload);
 
 		showAutoLoadRegion();
 		

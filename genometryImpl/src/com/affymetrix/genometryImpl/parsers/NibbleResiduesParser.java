@@ -27,7 +27,6 @@ import net.sf.samtools.util.SeekableStream;
 
 public final class NibbleResiduesParser {
 	private static int BUFSIZE = 65536;	// buffer for outputting
-	public static final String FASTA_TO_BNIB = "FASTA_TO_BNIB";
 
 	/**
 	 *  Parses an input stream.

@@ -1,5 +1,6 @@
 package com.affymetrix.igb;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.osgi.framework.BundleActivator;
@@ -24,9 +25,11 @@ public class Activator implements BundleActivator {
 		this.bundleContext = _bundleContext;
         args = new String[]{};
         if (bundleContext.getProperty("args") != null) {
-        	args = bundleContext.getProperty("args").split(",");
-			if (NibbleResiduesParser.FASTA_TO_BNIB.equals(args[0])) {
-				return; // dont do anything, genometry will handle it
+        	args = bundleContext.getProperty("args").split("[ ]*,[ ]*");
+			if ("-convert".equals(args[0])) {
+				String[] runArgs = Arrays.copyOfRange(args, 1, args.length);
+				NibbleResiduesParser.main(runArgs);
+				System.exit(0);
 			}
         }
 		// Verify jidesoft license.

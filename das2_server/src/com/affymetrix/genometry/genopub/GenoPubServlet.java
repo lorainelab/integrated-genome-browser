@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.genopub;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +12,7 @@ import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -102,6 +102,7 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String ANNOTATION_UPLOAD_FILES_REQUEST    = "annotationUploadFiles"; 
 	public static final String ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST  = "annotationEstimateDownloadSize"; 
 	public static final String ANNOTATION_DOWNLOAD_FILES_REQUEST  = "annotationDownloadFiles"; 
+  public static final String ANNOTATION_FDT_DOWNLOAD_FILES_REQUEST  = "annotationFDTDownloadFiles"; 
 	public static final String ANNOTATION_FDT_UPLOAD_FILES_REQUEST= "annotationFDTUploadFiles"; 
 	public static final String USERS_AND_GROUPS_REQUEST           = "usersAndGroups"; 
 	public static final String USER_ADD_REQUEST                   = "userAdd";
@@ -224,7 +225,9 @@ public class GenoPubServlet extends HttpServlet {
         this.handleAnnotationFDTUploadRequest(req, res);
       } else if (req.getPathInfo().endsWith(this.ANNOTATION_DOWNLOAD_FILES_REQUEST)) {
 				this.handleAnnotationDownloadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(this.ANNOTATION_FDT_DOWNLOAD_FILES_REQUEST)) {
+        this.handleAnnotationFDTDownloadRequest(req, res);
+      } else if (req.getPathInfo().endsWith(this.ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST)) {
 				this.handleAnnotationEstimateDownloadSizeRequest(req, res);
 			}  else if (req.getPathInfo().endsWith(this.USERS_AND_GROUPS_REQUEST)) {
 				this.handleUsersAndGroupsRequest(req, res);
@@ -3161,6 +3164,7 @@ public class GenoPubServlet extends HttpServlet {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
 			long estimatedDownloadSize = 0;
+			long uncompressedDownloadSize = 0;
 
 			String[] keyTokens = keys.split(":");
 			for(int x = 0; x < keyTokens.length; x++) {
@@ -3205,6 +3209,7 @@ public class GenoPubServlet extends HttpServlet {
 						compressionRatio = 2;
 					}       
 					estimatedDownloadSize += new BigDecimal(file.length() / compressionRatio).longValue();
+					uncompressedDownloadSize += file.length();
 				}
 			}
 
@@ -3212,7 +3217,7 @@ public class GenoPubServlet extends HttpServlet {
 			// handle long request parameter
 			req.getSession().setAttribute(SESSION_DOWNLOAD_KEYS, keys);
 
-			this.reportSuccess(res, "size", Long.valueOf(estimatedDownloadSize).toString());
+			this.reportSuccess(res, "size", Long.valueOf(estimatedDownloadSize).toString(), "uncompressedSize", Long.valueOf(uncompressedDownloadSize));
 		} catch (Exception e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.toString());
 			e.printStackTrace();
@@ -3379,6 +3384,146 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		}
 	}
+
+	
+	 private void handleAnnotationFDTDownloadRequest(HttpServletRequest req, HttpServletResponse res) {
+	   Session sess = null;
+
+	   // Get the download keys stored in session when download size estimated.  
+	   // Can't use request parameter here do to Flex FileReference url properties
+	   // size restriction.
+	   String keys = (String)req.getSession().getAttribute(SESSION_DOWNLOAD_KEYS);
+
+	   // Now empty out the session attribute
+	   req.getSession().setAttribute(SESSION_DOWNLOAD_KEYS, "");
+
+
+	   try {
+
+	     
+       if (keys == null || keys.equals("")) {
+         throw new Exception("Cannot perform download due to empty keys parameter.");
+       }
+
+       sess = HibernateUtil.getSessionFactory().openSession();
+
+
+       UUID uuid = UUID.randomUUID();
+       String uuidStr = uuid.toString();
+       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+       String download_base =  "genopub_download_" + dateFormat.format(Calendar.getInstance().getTime());       
+       
+       String fdt_dir_genopub = getFDTDirForGenoPub() + uuidStr + "/" + download_base;       
+       String fdt_dir         = getFDTDir() + uuidStr + "/" + download_base;
+       
+       String[] keyTokens = keys.split(":");
+       for(int x = 0; x < keyTokens.length; x++) {
+         String key = keyTokens[x];
+
+         String[] idTokens = key.split(",");
+         if (idTokens.length != 2) {
+           throw new Exception("Invalid parameter format " + key + " encountered. Expected 99,99 for idAnnotation and idAnnotationGrouping");
+         }
+         Integer idAnnotation = new Integer(idTokens[0]);
+         Integer idAnnotationGrouping = new Integer(idTokens[1]);
+
+         Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
+
+         if (!this.genoPubSecurity.canRead(annotation)) {
+           throw new InsufficientPermissionException("Insufficient permission to read/download annotation.");
+         }
+
+         AnnotationGrouping annotationGrouping = null;
+         if (idAnnotationGrouping.intValue() == -99) {
+           DictionaryHelper dh = DictionaryHelper.getInstance(sess);
+           GenomeVersion gv = dh.getGenomeVersion(annotation.getIdGenomeVersion());
+           annotationGrouping = gv.getRootAnnotationGrouping();
+         } else {
+           for(Iterator<?>i = annotation.getAnnotationGroupings().iterator(); i.hasNext();) {
+             AnnotationGrouping ag = AnnotationGrouping.class.cast(i.next());
+             if (ag.getIdAnnotationGrouping().equals(idAnnotationGrouping)) {
+               annotationGrouping = ag;
+               break;
+
+             }
+           }
+
+         }
+         if (annotationGrouping == null) {
+           throw new Exception("Unable to find annotation grouping " + idAnnotationGrouping);
+         }
+
+         String sourcePath = annotationGrouping.getQualifiedName() + "/" + annotation.getName() + "/";
+
+         for (File file : annotation.getFiles(this.genometry_genopub_dir)) {
+
+           // Make intermediate directories if necessary
+           String fdtFullDirName = fdt_dir_genopub +  "/" + sourcePath;
+           File fdtFullDir = new File(fdtFullDirName);
+           if(!fdtFullDir.exists()) {
+             if (!fdtFullDir.mkdirs()) {
+               throw new Exception("unable to create fdt directory " + fdtFullDir);
+             }
+           }
+           String fdtLinkName = fdtFullDirName + file.getName();
+
+           // Create symbolic link from source file to fdt dir
+           Process process = Runtime.getRuntime().exec( new String[] { "ln", "-s", file.getAbsolutePath(), fdtLinkName });         
+           process.waitFor();
+           process.destroy();          
+
+
+         }
+       }        
+
+       // Stream the JNLP (web start app)
+       res.setHeader("Content-Disposition","attachment;filename=\"genopub_fdt_download.jnlp\"");
+       res.setContentType("application/jnlp");
+       res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+       ServletOutputStream out = res.getOutputStream();
+       
+       String title = "FDT Download of GenoPub Files";
+
+       out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+       out.println("<jnlp spec=\"1.0\"");
+       out.println("codebase=\"" + getFDTClientCodebase() + "\">");
+       out.println("<information>");
+       out.println("<title>title</title>");
+       out.println("<vendor>Sun Microsystems, Inc.</vendor>");
+       out.println("<offline-allowed/>");
+       out.println("</information>");
+       out.println("<security> ");
+       out.println("<all-permissions/> ");
+       out.println("</security>");
+       out.println("<resources>");
+       out.println("<jar href=\"fdtClient.jar\"/>");
+       out.println("<j2se version=\"1.6+\"/>");
+       out.println("</resources>");
+       out.println("<application-desc main-class=\"gui.FdtMain\">");
+       out.println("<argument>" + getFDTServerName() + "</argument>");
+       out.println("<argument>download</argument>");
+       out.println("<argument>" + fdt_dir + "</argument>");
+       out.println("</application-desc>");
+       out.println("</jnlp>");
+       out.close();
+       out.flush();
+
+	     
+	     
+	   } catch (InsufficientPermissionException e) {
+	     Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+	     this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
+	   }  catch (Exception e) {
+	     Logger.getLogger(this.getClass().getName()).warning(e.toString());
+	     e.printStackTrace();
+	     this.reportError(res, e.toString(), ERROR_CODE_OTHER);
+	   } finally {
+	     if (sess != null) {
+	       sess.close();
+	     }
+	   }
+	}
+
 	
   private void handleAnnotationFDTUploadRequest(HttpServletRequest request, HttpServletResponse res) {
     Session sess = null;
@@ -3437,7 +3582,7 @@ public class GenoPubServlet extends HttpServlet {
       process.destroy();    
       
       // Now stream back JNLP (webapp start) to client
-      res.setHeader("Content-Disposition","attachment;filename=\"genopub_fdt.jnlp\"");
+      res.setHeader("Content-Disposition","attachment;filename=\"genopub_fdt_upload.jnlp\"");
       res.setContentType("application/jnlp");
       res.setHeader("Cache-Control", "max-age=0, must-revalidate");
       ServletOutputStream out = res.getOutputStream();
@@ -4982,6 +5127,24 @@ public class GenoPubServlet extends HttpServlet {
 
 		}
 	}
+	
+	 private void reportSuccess(HttpServletResponse response, String attributeName1, Object id1, String attributeName2, Object id2) {
+	    try {
+	      Document doc = DocumentHelper.createDocument();
+	      Element root = doc.addElement("SUCCESS");
+	      if (id1 != null && attributeName1 != null) {
+	        root.addAttribute(attributeName1, id1.toString());
+	      }
+        if (id2 != null && attributeName2 != null) {
+          root.addAttribute(attributeName2, id2.toString());
+        }
+	      XMLWriter writer = new XMLWriter(response.getOutputStream(), OutputFormat.createCompactFormat());
+	      writer.write(doc);
+	    } catch (Exception e) {
+	      e.printStackTrace();
+
+	    }
+	  }
 
 }
 

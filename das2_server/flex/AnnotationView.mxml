@@ -330,6 +330,7 @@
     	private const DOWNLOAD_FILES_URL:String       = "genopub/annotationDownloadFiles"; 
 		private const SUGGESTED_LOCAL_FILENAME:String = "genopub-data";  
 
+			
     	[Bindable]
     	private var newButtonMenuForOrganisms:Menu = new Menu();
     	[Bindable]
@@ -358,6 +359,7 @@
 
         private var downloadKeys:String = new String();
         private var estimatedDownloadSize:Number = new Number();
+		private var uncompressedDownloadSize:Number = new Number();
         
         private static var alertButtonWidthDefault:Number = Alert.buttonWidth;
         
@@ -1083,16 +1085,53 @@
     		if (getDownloadEstimatedSize.lastResult.@size == 0) {
     			Alert.show("No data files exist for selected item(s).", "");
     		} else {
-    			estimatedDownloadSize = getDownloadEstimatedSize.lastResult.@size;
-	    	
-    			var call:Object = event.token;
-				Alert.show( "Ready to download approximately " + getFileSizeText(estimatedDownloadSize) + " of data.  Proceed?",
+				estimatedDownloadSize = getDownloadEstimatedSize.lastResult.@size;
+				uncompressedDownloadSize = getDownloadEstimatedSize.lastResult.@uncompressedSize;
+				if (parentApplication.isFDTSupported()) {
+					promptForDownloadMethod();
+				} else {
+					Alert.show( "Ready to download approximately " + getFileSizeText(estimatedDownloadSize) + " of data.  Proceed?",
 						"",
 						(Alert.YES | Alert.NO), this, 
 						downloadFiles); 
-    		
+				}
     		}
     	}
+			
+		private function promptForDownloadMethod():void {
+			var downloadSizeRange:String = getFileSizeText(estimatedDownloadSize);
+			if (downloadSizeRange != getFileSizeText(uncompressedDownloadSize)) {
+				downloadSizeRange += " - " + getFileSizeText(uncompressedDownloadSize);
+			}
+			var recommended:String = "(FDT download is recommended for downloads > 1GB.)";
+				
+			Alert.buttonWidth = 120; 
+			Alert.yesLabel = "Normal download";
+			Alert.noLabel = "FDT download";
+			Alert.show( "Ready to download approximately " + downloadSizeRange + ".\n" +
+						"Which download mechanism do you want to use?\n\n" + recommended,
+						"Choose download method",
+					(Alert.YES | Alert.NO | Alert.CANCEL), this, 
+					onPromptForDownloadMethod);
+				
+		}
+			
+		private function onPromptForDownloadMethod(event:CloseEvent):void {
+			Alert.yesLabel = "Yes";
+			Alert.noLabel = "No";
+			Alert.buttonWidth = alertButtonWidthDefault;
+			if (event.detail==Alert.YES) {
+				// If normal download, prompt about size first.
+				Alert.show( "Ready to download approximately " + getFileSizeText(estimatedDownloadSize) + " of data.  Proceed?",
+					"",
+					(Alert.YES | Alert.NO), this, 
+					downloadFiles);					
+			} else  if (event.detail == Alert.NO){
+				// If this is an FDT download, make the request to download the 
+				// FDT webstart application
+				navigateToURL(new URLRequest('genopub/annotationFDTDownloadFiles'), '_self');	
+			} 
+		}
     	
     	        
         public static function getFileSizeText(theFileSize:Number):String {
@@ -1146,7 +1185,8 @@
 			}
 	
 		}  
-        
+
+
         private function removeSelectedItems():void {
     		if (itemsToRemove.length == 0) {
     			return;

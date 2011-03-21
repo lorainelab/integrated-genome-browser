@@ -786,7 +786,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	
     popup.add(summaryMenu);
     popup.add(coverage_action);
-	popup.add(mismatch_action);
 
 	if (num_selections == 1) {
       // Check whether this selection is a graph or an annotation
@@ -794,9 +793,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       TierGlyph glyph = (TierGlyph) label.getInfo();
       ITrackStyle style = glyph.getAnnotStyle();
 	  GenericFeature feature = style.getFeature();
-	  if(feature != null && feature.friendlyURL != null){
-		  popup.add(new JSeparator());
-		  popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
+	  if(feature != null){
+		  if("bam".equalsIgnoreCase(feature.getExtension())){
+			popup.add(mismatch_action);
+		  }
+		  if(feature.friendlyURL != null){
+			popup.add(new JSeparator());
+			popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));
+		  }
 	  }
 	}
 	

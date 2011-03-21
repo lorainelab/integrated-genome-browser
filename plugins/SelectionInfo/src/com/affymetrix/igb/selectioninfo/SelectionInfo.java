@@ -77,6 +77,7 @@ public final class SelectionInfo extends IGBTabPanel implements SymSelectionList
 		TOOL_TIP_ORDER.add("end");
 		TOOL_TIP_ORDER.add("length");
 		TOOL_TIP_ORDER.add("strand");
+		TOOL_TIP_ORDER.add("residues");
 	}
 
 	// The general order these fields should show up in.

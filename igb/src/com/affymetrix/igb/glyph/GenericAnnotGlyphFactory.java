@@ -249,7 +249,17 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		SeqSymmetry original = getMostOriginalSymmetry(sym);
 
 		if (original instanceof SymWithProps) {
-			return ((SymWithProps) original).getProperty(prop);
+			Object ret = ((SymWithProps) original).getProperty(prop);
+
+			if(ret == null || ret.toString().length() == 0){
+				ret = ((SymWithProps) original).getProperty(prop.toLowerCase());
+			}
+
+			if(ret == null || ret.toString().length() == 0){
+				ret = ((SymWithProps) original).getProperty(prop.toUpperCase());
+			}
+
+			return ret;
 		}
 		return null;
 	}

@@ -193,17 +193,31 @@ public final class RestrictionControlView extends IGBTabPanel
 
 		clearGlyphs();
 
-		BioSeq vseq = gviewer.getViewSeq();
-		if (vseq == null || !vseq.isComplete()) {
-			ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
+		final BioSeq vseq = gviewer.getViewSeq();
+		if (vseq == null) {
+			ErrorHandler.errorPanel("No Sequence selected. Please select a seqeunce.");
 			return;
 		}
+
+		Executor vexec = ThreadUtils.getPrimaryExecutor(this);
+		if(!vseq.isAvailable(gviewer.getVisibleSpan())){
+			boolean confirm = igbService.confirmPanel("Residues for " + vseq.getID()
+					+ " not loaded.  \nDo you want to load residues?");
+			if (!confirm) {
+				return;
+			}
+			vexec.execute(new Runnable() {
+				public void run() {
+					igbService.loadResidues(gviewer.getVisibleSpan(), true);
+					gviewer.setAnnotatedSeq(vseq, true, true, true);
+				}
+			});
+		}
 		
-		new Thread(new GlyphifyMatchesThread()).start();
+		vexec.execute(new Thread(new GlyphifyMatchesThread()));
 	}
 
 	
-
 	private class GlyphifyMatchesThread implements Runnable
 	{
 		public void run()
@@ -211,7 +225,7 @@ public final class RestrictionControlView extends IGBTabPanel
 			igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
 			try{
 				BioSeq vseq = gviewer.getViewSeq();
-				if (vseq == null || !vseq.isComplete()) {
+				if (vseq == null || !vseq.isAvailable(gviewer.getVisibleSpan())) {
 					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 					return;
 				}

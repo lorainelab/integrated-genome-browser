@@ -119,7 +119,7 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 	}
 
 	public boolean shouldAutoLoad(){
-		return zoomer_value > threshold;
+		return zoomer_value >= threshold;
 	}
 
 	public void preferenceChange(PreferenceChangeEvent pce) {

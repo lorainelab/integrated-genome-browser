@@ -27,12 +27,14 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 public final class RestrictionControlView extends IGBTabPanel
@@ -137,7 +139,7 @@ public final class RestrictionControlView extends IGBTabPanel
 			this.add("Center", new JScrollPane(labelP));
 
 			JPanel buttonPanel = new JPanel();
-			buttonPanel.setLayout(new GridLayout(1, 2));
+			buttonPanel.setLayout(new GridLayout(2, 1));
 			buttonPanel.add(actionB);
 			buttonPanel.add(clearB);
 			this.add("South", buttonPanel);
@@ -185,6 +187,7 @@ public final class RestrictionControlView extends IGBTabPanel
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == clearB) {
 			clearAll();
+			gviewer.getSeqMap().updateWidget();
 			return;
 		}
 

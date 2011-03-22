@@ -550,7 +550,7 @@ public final class SearchView extends IGBTabPanel implements
 		
 		if (!vseq.isComplete()) {
 			boolean confirm = igbService.confirmPanel("Residues for " + this.sequence_CB.getSelectedItem().toString()
-					+ " not loaded.  \nDo you want to load residues ?");
+					+ " not loaded.  \nDo you want to load residues?");
 			if (!confirm) {
 				return;
 			}

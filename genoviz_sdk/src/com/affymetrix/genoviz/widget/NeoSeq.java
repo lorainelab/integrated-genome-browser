@@ -1619,8 +1619,13 @@ public class NeoSeq extends NeoContainerWidget
 	 * or an empty string ("") if there is no selection.
 	 */
 	public String getSelectedResidues() {
+		String selectedResidues=null;
 		if (residues_selected && seq != null) {
-			return seq.getResidues(sel_range.getStart(), sel_range.getEnd()+1);
+			selectedResidues = seq.getResidues(sel_range.getStart(), sel_range.getEnd()+1);
+			if(selectedResidues==null){
+				selectedResidues = seq.getResidues(sel_range.getStart(), sel_range.getEnd());
+			}
+			return selectedResidues;
 		}
 		else {
 			return "";

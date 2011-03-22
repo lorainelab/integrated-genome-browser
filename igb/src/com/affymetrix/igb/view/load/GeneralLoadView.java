@@ -45,6 +45,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -569,6 +570,8 @@ public final class GeneralLoadView extends IGBTabPanel
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
+		}finally{
+			Application.getSingleton().removeNotLockedUpMsg("Loading residues for "+seq.getID());
 		}
 
 		return true;

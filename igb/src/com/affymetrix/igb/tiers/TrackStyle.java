@@ -494,7 +494,7 @@ public class TrackStyle implements ITrackStyleExtended {
 		if (l == null || l.trim().length() == 0) {
 			l = "";
 		}
-		label_field = l.toLowerCase();
+		label_field = l;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setLabelField(): " + human_name + ", " + l);

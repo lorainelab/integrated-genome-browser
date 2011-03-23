@@ -69,7 +69,7 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
       PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete));
     misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
-      PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, PreferenceUtils.default_confirm_before_delete));
+      PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 
 	misc_box_cols.setAlignmentY(Component.TOP_ALIGNMENT);
     misc_box_cols.add(misc_box_col1);

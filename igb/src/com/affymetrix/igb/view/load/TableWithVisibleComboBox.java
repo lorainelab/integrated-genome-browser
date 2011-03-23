@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import java.awt.Component;
@@ -254,7 +254,7 @@ class JTableX extends JTable implements MouseListener {
 			FeaturesTableModel ftm = (FeaturesTableModel) getModel();
 			int featureSize = ftm.getRowCount();
 			String message = "Really remove all data sets ?";
-			if (featureSize > 0 && IGB.confirmPanel(message, PreferenceUtils.getTopNode(),
+			if (featureSize > 0 && Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 					PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 				for (int row = 0; row < featureSize; row++) {
 					GeneralLoadView.getLoadView().removeFeature(ftm.getFeature(row));

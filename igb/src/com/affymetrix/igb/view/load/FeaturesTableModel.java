@@ -5,7 +5,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -194,7 +194,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 		if (col == DELETE_FEATURE_COLUMN){
 			String message = "Really remove entire " + gFeature.featureName + " data set ?";
-			if (IGB.confirmPanel(message, PreferenceUtils.getTopNode(),
+			if (Application.confirmPanel(message, PreferenceUtils.getTopNode(),
 					PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 				GeneralLoadView.getLoadView().removeFeature(gFeature);
 			}

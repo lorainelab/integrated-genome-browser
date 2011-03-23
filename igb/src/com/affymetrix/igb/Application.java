@@ -1,6 +1,5 @@
 package com.affymetrix.igb;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
@@ -145,18 +144,4 @@ public abstract class Application {
 		return false;
 	}
 	
-	public static boolean confirmPanelForSpanloading(String message) {
-		Application app = getSingleton();
-		JFrame frame = (app == null) ? null : app.getFrame();
-	
-		JCheckBox checkbox = new JCheckBox("Do not show this message again.");  
-		Object[] params = {message, checkbox};   
-		int n = JOptionPane.showConfirmDialog(frame, params, "Confirm", JOptionPane.YES_NO_OPTION);   
-		boolean dontShow = checkbox.isSelected();
-		
-		if(dontShow) PreferenceUtils.userSpanLoadingConfirmed = n;
-		
-		return JOptionPane.YES_OPTION == n;
-		//end 
-	}
 }

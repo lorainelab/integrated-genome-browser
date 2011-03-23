@@ -16,9 +16,8 @@ public interface TabHolder {
 	/**
 	 * add a new tab pane to this holder
 	 * @param plugin the tab pane to add
-	 * @param setFocus if the tab pane should be selected at first
 	 */
-	public void addTab(final IGBTabPanel plugin, boolean setFocus);
+	public void addTab(final IGBTabPanel plugin);
 	/**
 	 * remove a tab pane from this holder
 	 * @param plugin the tab pane to remove
@@ -29,6 +28,11 @@ public interface TabHolder {
 	 * @return the tab pane that is currently selected
 	 */
 	public IGBTabPanel getSelectedIGBTabPanel();
+	/**
+	 * indicate that the tab with focus for the holder is found
+	 * (the default state for the tab, not the current state)
+	 */
+	public void setFocusFound();
 	/**
 	 * resize the holder (only appropriate for trays)
 	 */

@@ -23,7 +23,7 @@ public class HiddenTabs implements TabHolder {
 	}
 
 	@Override
-	public void addTab(IGBTabPanel plugin, boolean setFocus) {
+	public void addTab(IGBTabPanel plugin) {
 		addedPlugins.add(plugin);
 	}
 
@@ -34,6 +34,9 @@ public class HiddenTabs implements TabHolder {
 
 	@Override
 	public IGBTabPanel getSelectedIGBTabPanel() { return null; }
+
+	@Override
+	public void setFocusFound() {}
 
 	@Override
 	public void resize() {}

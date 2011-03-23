@@ -81,16 +81,20 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 	public void mousePressed(MouseEvent e) {}
 	
 	public void mouseReleased(MouseEvent e) {
-		if(!autoLoadEnabled){
+		if (!autoLoadEnabled) {
 			return;
 		}
-		
+
 		Object src = e.getSource();
 
 		if (src != map && src != scroller && src != zoomer) {
 			return;
 		}
+		
+		update(src);
+	}
 
+	private void update(Object src){
 		if (src == map && !was_dragging) {
 			was_dragging = false;
 			return;
@@ -104,16 +108,20 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 			prev_scroller_value = scroller_value;
 		} else if (src == zoomer){
 			zoomer_value = (zoomer.getValue() * 100 / zoomer.getMaximum());
-			
+
 			if (prev_zoomer_value == zoomer_value) {
 				return;
 			}
 			prev_zoomer_value = zoomer_value;
 		}
-		
+
 		loadData();
 	}
 
+	public void mapZoomed(){
+		update(zoomer);
+	}
+	
 	public void mouseDragged(MouseEvent e) {
 		was_dragging = true;
 	}

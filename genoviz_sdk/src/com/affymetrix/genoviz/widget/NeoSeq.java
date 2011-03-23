@@ -1008,7 +1008,7 @@ public class NeoSeq extends NeoContainerWidget
 	// need to change this so selection doesn't compete with
 	//  annotations -- selection should always be on top???
 	public void highlightResidues(int start, int end) {
-		residues_selected = true;
+		setResiduesSelected(true);
 		getResidueGlyph().highlightResidues(start, end);
 		updateWidget();
 	}
@@ -1017,7 +1017,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * Removes highlighting of selected range of sequence.
 	 */
 	public void deselect() {
-		residues_selected = false;
+		setResiduesSelected(false);
 		WrapSequence wrapseq = getResidueGlyph();
 		if (wrapseq != null) {
 			wrapseq.unhighlight();
@@ -1354,7 +1354,7 @@ public class NeoSeq extends NeoContainerWidget
 	public void clearSelection() {
 		sel_range.clear();
 		sel_range.notifyObservers();
-		residues_selected = false;
+		setResiduesSelected(false);
 	}
 
 	protected void calcNumPixelWidth() {
@@ -1619,7 +1619,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * or an empty string ("") if there is no selection.
 	 */
 	public String getSelectedResidues() {
-		if (residues_selected && seq != null) {
+		if (residuesSelected() && seq != null) {
 			return seq.getResidues(sel_range.getStart(), sel_range.getEnd()+1);
 		}
 		else {
@@ -1632,7 +1632,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * or -1 if there is no selection.
 	 */
 	public int getSelectedStart() {
-		if (residues_selected) {
+		if (residuesSelected()) {
 			return sel_range.getStart();
 		}
 		else {
@@ -1645,7 +1645,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * or -1 if there is no selection.
 	 */
 	public int getSelectedEnd() {
-		if (residues_selected) {
+		if (residuesSelected()) {
 			return sel_range.getEnd();
 		}
 		else {
@@ -1750,6 +1750,10 @@ public class NeoSeq extends NeoContainerWidget
 	 */
 	public boolean residuesSelected() {
 		return residues_selected;
+	}
+
+	protected void setResiduesSelected(boolean bool){
+		residues_selected = bool;
 	}
 
 	public void setBackground(int id, Color col) {
@@ -2051,7 +2055,7 @@ public class NeoSeq extends NeoContainerWidget
 		int end = theSelection.getEnd();
 		if ( theSelection.isEmpty() ) {
 			highlightResidues(-1, -1);
-			residues_selected = false;
+			setResiduesSelected(false);
 		}
 		else
 			highlightResidues(start, end);

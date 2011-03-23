@@ -378,7 +378,23 @@ public class SequenceViewer extends JPanel
 	}
 
 	private void getNeoSeqInstance() {
-		seqview = new NeoSeq();
+		seqview = new NeoSeq(){
+			@Override
+			protected void setResiduesSelected(boolean bool){
+				super.setResiduesSelected(bool);
+				copyAction.setEnabled(bool);
+			}
+
+			@Override
+			public String getSelectedResidues() {
+				String selectedResidues=super.getSelectedResidues();
+				if(selectedResidues==null){
+					selectedResidues = seq.getResidues(sel_range.getStart(), sel_range.getEnd());
+				}
+				return selectedResidues;
+			}
+
+		};
 		seqview.enableDragScrolling(true);
 		seqview.addKeyListener(new KeyAdapter() {
 
@@ -548,7 +564,7 @@ public class SequenceViewer extends JPanel
 	/* EVENT HANDLING */
 	/** ActionListener Implementation */
 	public void copyAction() {
-		String selectedSeq = seqview.getSelectedResidues();
+		String selectedSeq = seqview.getSelectedResidues().trim();
 		if (seqview.getShow(NeoSeq.COMPLEMENT)) {
 			selectedSeq = DNAUtils.reverseComplement(selectedSeq);
 		}
@@ -703,7 +719,7 @@ public class SequenceViewer extends JPanel
 	public void menuSelected(MenuEvent me) {
 		Object evtSource = me.getSource();
 		if (evtSource == editMenu) {
-			if (!seqview.getSelectedResidues().isEmpty()) {
+			if (!seqview.getSelectedResidues().trim().isEmpty()) {
 				copyAction.setEnabled(true);
 			} else {
 				copyAction.setEnabled(false);

@@ -53,6 +53,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		}
 	}
 
+	private static final int EMBEDDED_TAB_COUNT_TOTAL = 10; // hack - this number MUST be updated if an embedded tab is added
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("window_service_def");
 	private final HashMap<TabState, JMenuItem> move_tab_to_window_items;
 	private final HashMap<TabState, JMenuItem> move_tabbed_panel_to_window_items;
@@ -63,6 +64,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private Map<JMenu, Integer> tabMenuPositions;
 	private Container cpane;
 	private boolean tabSeparatorSet = false;
+	private int embeddedTabCount = 0;
 
 	public WindowServiceDefaultImpl() {
 		super();
@@ -236,6 +238,12 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			}
 			tabs_menu.insert(pluginMenu, menuPosition);
 		}
+		embeddedTabCount++;
+		if (embeddedTabCount == EMBEDDED_TAB_COUNT_TOTAL) {
+			for (TabHolder tabHolder : tabHolders.values()) {
+				tabHolder.setFocusFound();
+			}
+		}
 	}
 
 	/**
@@ -286,7 +294,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			removeTab(panel);
 		}
 		else {
-			tabHolders.get(tabState).addTab(panel, panel.isFocus());
+			tabHolders.get(tabState).addTab(panel);
 		}
 		PreferenceUtils.saveComponentState(panel.getName(), tabState.name());
 	}

@@ -71,7 +71,7 @@ public class WindowTabs implements TabHolder {
 	}
 
 	@Override
-	public void addTab(final IGBTabPanel plugin, boolean setFocus) {
+	public void addTab(final IGBTabPanel plugin) {
 		addedPlugins.add(plugin);
 		Runnable r = new Runnable() {
 
@@ -104,6 +104,9 @@ public class WindowTabs implements TabHolder {
 
 	@Override
 	public IGBTabPanel getSelectedIGBTabPanel() { return null; }
+
+	@Override
+	public void setFocusFound() {}
 
 	@Override
 	public void resize() {}

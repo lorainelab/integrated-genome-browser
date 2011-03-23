@@ -7,6 +7,7 @@ import javax.swing.JMenu;
 import javax.swing.SwingUtilities;
 
 import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -96,7 +97,9 @@ public class Activator extends WindowActivator implements BundleActivator {
 		}
 	}
 
-	public void stop() {
+	@Override
+	public void stop(BundleContext _bundleContext) throws Exception {
+		super.stop(_bundleContext);
 		if (bmark_action != null) {
 			bmark_action.autoSaveBookmarks();
 		}

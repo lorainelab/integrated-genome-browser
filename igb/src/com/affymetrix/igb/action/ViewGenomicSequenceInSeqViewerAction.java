@@ -18,7 +18,6 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 public class ViewGenomicSequenceInSeqViewerAction  extends AbstractAction{
 	private static final long serialVersionUID = 1l;
 	public static ViewGenomicSequenceInSeqViewerAction singleton = new ViewGenomicSequenceInSeqViewerAction();
-
 	private ViewGenomicSequenceInSeqViewerAction() {
 		super(BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
 	}
@@ -30,7 +29,7 @@ public class ViewGenomicSequenceInSeqViewerAction  extends AbstractAction{
 	public void actionPerformed(ActionEvent e) {
 		try {
 			SequenceViewer sv = new SequenceViewer();
-			sv.startSequenceViewer(true);
+			sv.startSequenceViewer();
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex);
 		}

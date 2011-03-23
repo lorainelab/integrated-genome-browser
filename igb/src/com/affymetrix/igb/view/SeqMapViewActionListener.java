@@ -139,8 +139,8 @@ final class SeqMapViewActionListener implements ActionListener {
 //			gviewer.selectParents();
 //			sequenceViewer.loadResidues(false);
 		} else if (command.equals(gviewer.seqViewerOptions.getText())) {
-			sequenceViewer = new SequenceViewer();
-			sequenceViewer.startSequenceViewer(false);
+//			sequenceViewer = new SequenceViewer();
+//			sequenceViewer.startSequenceViewer(false);
 		} else if (command.equals(ZOOM_OUT_FULLY)) {
 			Adjustable adj = seqmap.getZoomer(NeoMap.X);
 			adj.setValue(adj.getMinimum());

@@ -757,8 +757,10 @@ public final class GeneralLoadUtils {
 
 	private static boolean checkBamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
 		//start max
-		if (optimized_sym!= null && feature.getExtension() != null && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().isLoadingConfirm()) {
-			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
+		boolean bamCheck = GeneralLoadView.getLoadView().isLoadingConfirm();
+		GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
+		if (optimized_sym!= null && feature.getExtension() != null && feature.getExtension().endsWith("bam") && bamCheck) {
+			String message = "Region in view is big (> 100k), do you want to continue?";
 			int childrenCount = optimized_sym.getChildCount();
 			int spanWidth = 0;
 			for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
@@ -767,16 +769,11 @@ public final class GeneralLoadUtils {
 					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
 				}
 			}
-			if (((spanWidth > 100024) && PreferenceUtils.userSpanLoadingConfirmed != 0) || resetConfirmOption) {
-				boolean loadBig = Application.confirmPanelForSpanloading("Region in view is big (> 100k), do you want to continue?");
-				if (!loadBig) {
-					return true;
-				}
-				if (resetConfirmOption) {
-					PreferenceUtils.getTopNode().putBoolean(PreferenceUtils.RESET_LOAD_CONFIRM_BOX_OPTION, false);
-				}
+			if (spanWidth > 100000){
+				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+					PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}
-			GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
+		
 		}
 		return false;
 		//end max

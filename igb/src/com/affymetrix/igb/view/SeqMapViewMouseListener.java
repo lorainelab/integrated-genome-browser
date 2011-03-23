@@ -484,7 +484,10 @@ final class SeqMapViewMouseListener implements MouseListener, MouseMotionListene
 				shouldSubSelect = true;
 			}
 		}else if (id == MouseEvent.MOUSE_DRAGGED) {
-			if (sub_sel_glyph == null && shouldSubSelect) {
+			if (sub_sel_glyph == null){
+				if(!shouldSubSelect)
+					return;
+
 				GlyphI topgl = null;
 				if (!nevt.getItems().isEmpty()) {
 					topgl = nevt.getItems().get(0);

@@ -1175,7 +1175,9 @@ public class SeqMapView extends JPanel
 		seqmap.scroll(NeoAbstractWidget.X, smin);
 		seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (smin + smax) / 2);
 		seqmap.updateWidget();
-		autoload.mapZoomed();
+		if(autoload != null){
+			autoload.mapZoomed();
+		}
 	}
 
 	/** Zoom to a region including all the currently selected Glyphs. */
@@ -1244,7 +1246,9 @@ public class SeqMapView extends JPanel
 			seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
 			seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
 			seqmap.updateWidget();
-			autoload.mapZoomed();
+			if(autoload != null){
+				autoload.mapZoomed();
+			}
 		}
 	}
 

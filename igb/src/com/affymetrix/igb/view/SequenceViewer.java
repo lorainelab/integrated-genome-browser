@@ -380,10 +380,20 @@ public class SequenceViewer extends JPanel
 	private void getNeoSeqInstance() {
 		seqview = new NeoSeq(){
 			@Override
-			public void heardMouseEvent(MouseEvent evt){
-				copyAction.setEnabled(true);
-				super.heardMouseEvent(evt);
+			protected void setResiduesSelected(boolean bool){
+				super.setResiduesSelected(bool);
+				copyAction.setEnabled(bool);
 			}
+
+			@Override
+			public String getSelectedResidues() {
+				String selectedResidues=super.getSelectedResidues();
+				if(selectedResidues==null){
+					selectedResidues = seq.getResidues(sel_range.getStart(), sel_range.getEnd());
+				}
+				return selectedResidues;
+			}
+
 		};
 		seqview.enableDragScrolling(true);
 		seqview.addKeyListener(new KeyAdapter() {

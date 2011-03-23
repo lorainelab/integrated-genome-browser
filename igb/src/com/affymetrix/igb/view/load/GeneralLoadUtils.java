@@ -757,7 +757,7 @@ public final class GeneralLoadUtils {
 
 	private static boolean checkBamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
 		//start max
-		if ((feature.getExtension() != null) && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().isLoadingConfirm()) {
+		if (optimized_sym!= null && feature.getExtension() != null && feature.getExtension().endsWith("bam") && GeneralLoadView.getLoadView().isLoadingConfirm()) {
 			boolean resetConfirmOption = PreferenceUtils.getBooleanParam("Confirm before load", false);
 			int childrenCount = optimized_sym.getChildCount();
 			int spanWidth = 0;

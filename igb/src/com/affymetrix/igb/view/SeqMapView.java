@@ -469,7 +469,7 @@ public class SeqMapView extends JPanel
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
-		seqViewerOptions = setUpMenuItem(sym_popup, "Show genomic sequence");
+		seqViewerOptions = setUpMenuItem(sym_popup, "View Genomic Sequence in Sequence Viewer");
 //		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Just selected span using genomic coordinates");
 //		viewParentinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Linked spans using transcript coordinates");
 //		viewFeatureinSequenceViewer = new JMenuItem("View selected feature in Sequence Viewer");
@@ -1038,6 +1038,7 @@ public class SeqMapView extends JPanel
 	final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
+		ViewGenomicSequenceInSeqViewerAction.getAction().setEnabled(!getSelectedSyms().isEmpty());
 	}
 
 
@@ -1658,7 +1659,7 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty()) {
 			popup.add(selectParentMI);
-			popup.add(seqViewerOptions);
+			popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
 //			seqViewerOptions.add(viewFeatureinSequenceViewer);
 //			seqViewerOptions.add(viewParentinSequenceViewer);
 		}

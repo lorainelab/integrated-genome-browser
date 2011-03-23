@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
@@ -118,7 +119,7 @@ public class SequenceViewer extends JPanel
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
 		Dimension prefsize = seqview.getPreferredSize(50, 15);
-		prefsize = new Dimension(prefsize.width + 50, prefsize.height);
+		prefsize = new Dimension(prefsize.width + 90, prefsize.height);
 		mapframe.setMinimumSize(prefsize);
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width - pixel_width) / 2, (screen_size.height - pixel_height) / 2);
@@ -186,35 +187,43 @@ public class SequenceViewer extends JPanel
 
 	}
 
-	public void startSequenceViewer(final boolean isGenomic) {
-		this.isGenomicRequest = isGenomic;
-		try {
-			this.aseq = seqmapview.getAnnotatedSeq();
-			if (!isGenomic) {
-				List<SeqSymmetry> syms = SeqMapView.glyphsToSyms(seqmapview.getSeqMap().getSelected());
-				if (syms.size() == 1) {
-					this.residues_sym = syms.get(0);
-				} else {
-					this.errorMessage = "Multiple selections, please select one feature or a parent";
-					return;
-				}
-				if (!aseq.isAvailable(residues_sym.getSpan(aseq))) {
-					GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
-					ThreadUtils.runOnEventQueue(new Runnable() {
+	public void startSequenceViewer() {
 
-						public void run() {
-							seqmapview.setAnnotatedSeq(aseq, true, true, true);
-						}
-					});
-				}
-				areResiduesFine(residues_sym, aseq, isGenomic);
-
-
-
+		List<SeqSymmetry> syms = SeqMapView.glyphsToSyms(seqmapview.getSeqMap().getSelected());
+		if (syms.size() >= 1) {
+			if (syms.size() == 1) {
+				this.residues_sym = syms.get(0);
+				this.isGenomicRequest = false;
 			} else {
-				this.residues_sym = seqmapview.getSeqSymmetry();
-				areResiduesFine(residues_sym, aseq, isGenomic);
+				if (syms.size() > 1 || seqmapview.getSeqSymmetry() != null) {
+					this.errorMessage = "Multiple selections, please select one feature or a parent";
+				}
+			}
+		} else {
+			this.residues_sym = seqmapview.getSeqSymmetry();
+			this.isGenomicRequest = true;
+		}
 
+		try {
+			if (this.errorMessage == null) {
+				this.aseq = seqmapview.getAnnotatedSeq();
+				if (!isGenomicRequest) {
+					if (!aseq.isAvailable(residues_sym.getSpan(aseq))) {
+						GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
+						ThreadUtils.runOnEventQueue(new Runnable() {
+
+							public void run() {
+								seqmapview.setAnnotatedSeq(aseq, true, true, true);
+							}
+						});
+					}
+					areResiduesFine(residues_sym, aseq, isGenomicRequest);
+
+
+
+				} else {
+					areResiduesFine(residues_sym, aseq, isGenomicRequest);
+				}
 			}
 		} catch (Exception e) {
 			this.errorMessage = "Error loading residues";
@@ -378,22 +387,22 @@ public class SequenceViewer extends JPanel
 	}
 
 	private void getNeoSeqInstance() {
-		seqview = new NeoSeq(){
+		seqview = new NeoSeq() {
+
 			@Override
-			protected void setResiduesSelected(boolean bool){
+			protected void setResiduesSelected(boolean bool) {
 				super.setResiduesSelected(bool);
 				copyAction.setEnabled(bool);
 			}
 
 			@Override
 			public String getSelectedResidues() {
-				String selectedResidues=super.getSelectedResidues();
-				if(selectedResidues==null){
+				String selectedResidues = super.getSelectedResidues();
+				if (selectedResidues == null) {
 					selectedResidues = seq.getResidues(sel_range.getStart(), sel_range.getEnd());
 				}
 				return selectedResidues;
 			}
-
 		};
 		seqview.enableDragScrolling(true);
 		seqview.addKeyListener(new KeyAdapter() {
@@ -441,7 +450,7 @@ public class SequenceViewer extends JPanel
 		fd.setFilenameFilter((new FilenameFilter() {
 
 			public boolean accept(File dir, String name) {
-				throw new UnsupportedOperationException("Not supported yet.");
+				return true;
 			}
 		}));
 		fd.setVisible(true);
@@ -640,7 +649,9 @@ public class SequenceViewer extends JPanel
 			seqview.setResidues(seq1);
 			seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
 		}
-		this.addCdsStartEnd(residues_sym);
+		if (!isGenomicRequest) {
+			this.addCdsStartEnd(residues_sym);
+		}
 	}
 
 	/** WindowListener Implementation */

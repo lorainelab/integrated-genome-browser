@@ -70,7 +70,7 @@
 
 		<!-- Java VM configuration -->
 		<property name="igb.jvmargs" value="" />
-		<property name="igb.maxmem" value="5024m" />
+		<property name="igb.maxmem" value="1024m" />
 
 
 		<filter token="build.version"  value="${build.version}" />

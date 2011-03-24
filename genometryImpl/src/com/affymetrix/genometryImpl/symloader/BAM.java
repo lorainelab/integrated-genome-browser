@@ -18,9 +18,9 @@ import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,7 +58,7 @@ public final class BAM extends SymLoader {
 	private static final boolean DEBUG = false;
 	private SAMFileReader reader;
     private SAMFileHeader header;
-	private final Set<BioSeq> seqs = new HashSet<BioSeq>();
+	private final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
 	private File indexFile = null;
 	private static final Pattern CLEAN = Pattern.compile("[/\\s+]");
 
@@ -91,7 +91,7 @@ public final class BAM extends SymLoader {
 		if (this.isInitialized) {
 			return;
 		}
-		
+
 		try {
 			String scheme = uri.getScheme().toLowerCase();
 			if (scheme.length() == 0 || scheme.equals("file")) {
@@ -103,17 +103,15 @@ public final class BAM extends SymLoader {
 				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else if (scheme.startsWith("http")) {
 				// BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
-
-				String uriStr = uri.toString();
+				String baiUriStr = findIndexFile(uri.toString());
 				// Guess at the location of the .bai URL as BAM URL + ".bai"
-				String baiUriStr = uriStr + ".bai";
-				indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
-				if (indexFile == null) {
+				if (baiUriStr == null) {
 					ErrorHandler.errorPanel("No BAM index file",
-							"Could not find URL of BAM index at " + baiUriStr + ". Please be sure this is in the same directory as the BAM file.");
+							"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.");
 					this.isInitialized = false;
 					return;
 				}
+				indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
 				reader = new SAMFileReader(uri.toURL(), indexFile, false);
 				reader.setValidationStringency(ValidationStringency.SILENT);
 			} else {
@@ -156,7 +154,7 @@ public final class BAM extends SymLoader {
 					if(seq.getVersion() != null){
 						seq.setVersion(group.getID());
 					}
-					seqs.add(seq);
+					seqs.put(seq,seqID);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -172,7 +170,7 @@ public final class BAM extends SymLoader {
 	@Override
 	public List<BioSeq> getChromosomeList() {
 		init();
-		return new ArrayList<BioSeq>(seqs);
+		return new ArrayList<BioSeq>(seqs.keySet());
 	}
 
 	@Override
@@ -214,7 +212,7 @@ public final class BAM extends SymLoader {
 		CloseableIterator<SAMRecord> iter = null;
 		try {
 			if (reader != null) {
-				iter = reader.query(seq.getID(), min, max, contained);
+				iter = reader.query(seqs.get(seq), min, max, contained);
 				if (iter != null && iter.hasNext()) {
 					SAMRecord sr = null;
 					while(iter.hasNext() && (!Thread.currentThread().isInterrupted())){
@@ -239,13 +237,13 @@ public final class BAM extends SymLoader {
 
 		return symList;
 	}
-	
+
 	/**
 	 * Returns a list of symmetries for the entire file, good for loading DAS/2 derived data slices, skips building an index
 	 * @param seq
 	 * @return
 	 */
-	public List<SeqSymmetry> parseAll(BioSeq seq) {		
+	public List<SeqSymmetry> parseAll(BioSeq seq) {
 		reader = new SAMFileReader(new File(uri));
 		reader.setValidationStringency(ValidationStringency.SILENT);
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
@@ -256,9 +254,9 @@ public final class BAM extends SymLoader {
 		}
 		return symList;
 	}
-	
-	
-	
+
+
+
 
 	/**
 	 * Convert SAMRecord to SymWithProps.
@@ -325,7 +323,7 @@ public final class BAM extends SymLoader {
 //			byte[] SEQ = SequenceUtil.makeReferenceFromAlignment(sr, false);
 //			sym.setProperty("SEQ", SEQ);
 //		}
-		
+
 		sym.setProperty("method", meth);
 
 		getFileHeaderProperties(sr.getHeader(), sym);
@@ -507,7 +505,7 @@ public final class BAM extends SymLoader {
 					// BAM files cannot be written to the stream one line at a time.
 					// Rather, a tempfile is created, and later read into the stream.
 					try {
-						tempBAMFile = File.createTempFile(CLEAN.matcher(featureName).replaceAll("_"), ".bam");						
+						tempBAMFile = File.createTempFile(CLEAN.matcher(featureName).replaceAll("_"), ".bam");
 						tempBAMFile.deleteOnExit();
 					} catch (IOException ex) {
 						Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
@@ -517,7 +515,7 @@ public final class BAM extends SymLoader {
 				} else {
 					sfw = sfwf.makeSAMWriter(header, true, dos);
 				}
-				
+
 				// read each record, and add to the SAMFileWriter
 				for (SAMRecord sr = iter.next(); iter.hasNext() && (!Thread.currentThread().isInterrupted()); sr = iter.next()) {
 					sfw.addAlignment(sr);
@@ -559,12 +557,31 @@ public final class BAM extends SymLoader {
 		String path = bamfile.getPath();
 		File f = new File(path+".bai");
 		if (f.exists())
-				return f;
-			//look for xxx.bai
+			return f;
+
+		//look for xxx.bai
 		path = path.substring(0, path.length()-3)+"bai";
-			f = new File(path);
+		f = new File(path);
 		if (f.exists())
 				return f;
+
+		return null;
+	}
+
+	static public String findIndexFile(String bamfile) {
+		// Guess at the location of the .bai URL as BAM URL + ".bai"
+		String baiUriStr = bamfile + ".bai";
+
+		if (LocalUrlCacher.isValidURL(baiUriStr)) {
+			return baiUriStr;
+		}
+
+		baiUriStr = bamfile.substring(0, bamfile.length() - 3) + "bai";
+
+		//look for xxx.bai
+		if(LocalUrlCacher.isValidURL(baiUriStr)){
+			return baiUriStr;
+		}
 
 		return null;
 	}
@@ -575,16 +592,15 @@ public final class BAM extends SymLoader {
 			File f = findIndexFile(new File(uri));
 			return f != null;
 		}else if(scheme.startsWith("http")) {
-			String uriStr = uri.toString();
-			// Guess at the location of the .bai URL as BAM URL + ".bai"
-			String baiUriStr = uriStr + ".bai";
-			return LocalUrlCacher.isValidURL(baiUriStr);
+			String uriStr = findIndexFile(uri.toString());
+			return uriStr != null;
 		}
 
 		return false;
 	}
 
 	//Can be used later. Do not remove.
+	@SuppressWarnings("unused")
 	static private File createIndexFile(File bamfile) throws IOException{
 		File indexfile = File.createTempFile(bamfile.getName(), ".bai");
 
@@ -604,7 +620,7 @@ public final class BAM extends SymLoader {
 
 		return indexfile;
 	}
-	
+
 	public String getMimeType() {
 		return "binary/BAM";
 	}

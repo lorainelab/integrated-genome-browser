@@ -72,7 +72,7 @@ public final class SeqSymSummarizer {
 
 			if (range > BUFFSIZE) {
 				if ((offset - y_offset + length >= BUFFSIZE) || (offset - y_offset < 0)) {
-					minmax = MisMatchGraphSym.updateY(index, y_offset, end, y, yR);
+					minmax = MisMatchGraphSym.updateY(index, y_offset, BUFFSIZE, y, yR);
 					y = new int[BUFFSIZE];
 					y_offset = offset;
 				}
@@ -97,7 +97,7 @@ public final class SeqSymSummarizer {
 		if(range <= BUFFSIZE){
 			summary = createMisMatchGraph(range, yR, start, y, id, seq);
 		}else{
-			summary = createMisMatchGraph(index, y_offset, end, y, yR, id, range, minmax, seq);
+			summary = createMisMatchGraph(index, y_offset, range, y, yR, id, range, minmax, seq);
 		}
 
 

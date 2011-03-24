@@ -190,6 +190,7 @@
                     <target>test</target>
                 </action>
                 <action name="rebuild">
+					<target>cbc</target>
                     <target>clean</target>
                     <target>compile</target>
                 </action>

@@ -460,8 +460,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 					tab_pane.setSelectedIndex(tab_pane.getTabCount() - 1);
 				}
 			}
-			tab_pane.validate();
 			initTray();
+			tab_pane.validate();
 			savedPanels.clear();
 		}
 		focusSet = true;

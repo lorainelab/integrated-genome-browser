@@ -275,7 +275,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			tabHolders.get(tabState).removeTab(plugin);
 		}
 		for (Component item : Arrays.asList(tabs_menu.getMenuComponents())) {
-			if (((JMenuItem)item).getText().equals(plugin.getDisplayName())) {
+			if (item instanceof JMenuItem && ((JMenuItem)item).getText().equals(plugin.getDisplayName())) {
 				tabs_menu.remove(item);
 			}
 		}

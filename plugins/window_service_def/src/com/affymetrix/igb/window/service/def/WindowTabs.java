@@ -88,13 +88,15 @@ public class WindowTabs implements TabHolder {
 		// will re-open with this size next time
 		addedPlugins.remove(plugin);
 		JFrame frame = plugin.getFrame();
-		final Container cont = frame.getContentPane();
-		PreferenceUtils.saveWindowLocation(frame, plugin.getName());
-		cont.remove(plugin);
-		cont.validate();
-		frame.dispose();
-		plugin.setFrame(null);
-		PreferenceUtils.saveComponentState(plugin.getName(), TabState.COMPONENT_STATE_WINDOW.name());
+		if (frame != null) {
+			final Container cont = frame.getContentPane();
+			PreferenceUtils.saveWindowLocation(frame, plugin.getName());
+			cont.remove(plugin);
+			cont.validate();
+			frame.dispose();
+			plugin.setFrame(null);
+			PreferenceUtils.saveComponentState(plugin.getName(), TabState.COMPONENT_STATE_WINDOW.name());
+		}
 	}
 
 	@Override

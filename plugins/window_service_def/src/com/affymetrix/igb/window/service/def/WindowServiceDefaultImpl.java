@@ -202,27 +202,27 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	/**
 	 * add a new tab pane to the window service
-	 * @param plugin the tab pane
+	 * @param tabPanel the tab pane
 	 */
-	public void addTab(final IGBTabPanel plugin) {
-		TabState tabState = plugin.getDefaultState();
+	public void addTab(final IGBTabPanel tabPanel) {
+		TabState tabState = tabPanel.getDefaultState();
 		try {
-			tabState = TabState.valueOf(PreferenceUtils.getComponentState(plugin.getName()));
+			tabState = TabState.valueOf(PreferenceUtils.getComponentState(tabPanel.getName()));
 		}
 		catch (Exception x) {}
-		setTabState(plugin, tabState);
-		JMenu pluginMenu = new JMenu(plugin.getDisplayName());
-		tabMenus.put(plugin, pluginMenu);
-		tabMenuPositions.put(pluginMenu, plugin.getPosition());
+		setTabState(tabPanel, tabState);
+		JMenu pluginMenu = new JMenu(tabPanel.getDisplayName());
+		tabMenus.put(tabPanel, pluginMenu);
+		tabMenuPositions.put(pluginMenu, tabPanel.getPosition());
 		ButtonGroup group = new ButtonGroup();
 
-		for (TabState tabStateLoop : plugin.getDefaultState().getCompatibleTabStates()) {
-		    JRadioButtonMenuItem menuItem = new TabStateMenuItem(plugin, tabStateLoop);
+		for (TabState tabStateLoop : tabPanel.getDefaultState().getCompatibleTabStates()) {
+		    JRadioButtonMenuItem menuItem = new TabStateMenuItem(tabPanel, tabStateLoop);
 		    group.add(menuItem);
 		    pluginMenu.add(menuItem);
 		}
-		setTabMenu(plugin);
-		if (plugin.getPosition() == IGBTabPanel.DEFAULT_TAB_POSITION) {
+		setTabMenu(tabPanel);
+		if (tabPanel.getPosition() == IGBTabPanel.DEFAULT_TAB_POSITION) {
 			if (!tabSeparatorSet) {
 				tabs_menu.addSeparator();
 				tabSeparatorSet = true;
@@ -232,13 +232,18 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		else {
 			int menuPosition = 0;
 			boolean tabItemFound = false;
-			while (menuPosition < tabs_menu.getItemCount() && ((tabMenuPositions.get(tabs_menu.getItem(menuPosition)) == null && !tabItemFound) || plugin.getPosition() > tabMenuPositions.get(tabs_menu.getItem(menuPosition)))) {
+			while (menuPosition < tabs_menu.getItemCount() && ((tabMenuPositions.get(tabs_menu.getItem(menuPosition)) == null && !tabItemFound) || tabPanel.getPosition() > tabMenuPositions.get(tabs_menu.getItem(menuPosition)))) {
 				tabItemFound |= tabMenuPositions.get(tabs_menu.getItem(menuPosition)) != null;
 				menuPosition++;
 			}
 			tabs_menu.insert(pluginMenu, menuPosition);
 		}
-		embeddedTabCount++;
+		// here we keep count of the embedded tabs that are added. When
+		// all the embedded tabs have been added, we initialize the tab panes
+		// this is to prevent the flashing of new tabs added
+		if (tabPanel.isEmbedded()) {
+			embeddedTabCount++;
+		}
 		if (embeddedTabCount == EMBEDDED_TAB_COUNT_TOTAL) {
 			for (TabHolder tabHolder : tabHolders.values()) {
 				tabHolder.setFocusFound();

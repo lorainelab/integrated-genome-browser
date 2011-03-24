@@ -642,4 +642,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		setRepositoryBundles();
 		reloadBundleTable();
 	}
+
+	@Override
+	public boolean isEmbedded() {
+		return true;
+	}
 }

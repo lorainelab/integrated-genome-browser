@@ -25,7 +25,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.security.cert.CertificateException;
 import javax.swing.*;
 
 import java.io.*;
@@ -280,8 +279,6 @@ public final class IGB extends Application
 			@Override
 			public void windowClosing(WindowEvent evt) {
 				JFrame frame = (JFrame) evt.getComponent();
-				boolean ask_before_exit = PreferenceUtils.getBooleanParam(PreferenceUtils.ASK_BEFORE_EXITING,
-						PreferenceUtils.default_ask_before_exiting);
 				String message = "Do you really want to exit?";
 
 				if (confirmPanel(message, PreferenceUtils.getTopNode(), PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {

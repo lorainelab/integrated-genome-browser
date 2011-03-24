@@ -171,6 +171,14 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 		return icon;
 	}
 
+	/**
+	 * specify if this is an embedded tab (included in the IGB distribution)
+	 * @return true if this is an embedded tab panel, false otherwise
+	 */
+	public boolean isEmbedded() {
+		return false;
+	}
+
 	@Override
 	public int compareTo(IGBTabPanel o) {
 		int ret = Integer.valueOf(position).compareTo(o.position);

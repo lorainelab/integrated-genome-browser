@@ -1087,5 +1087,10 @@ public final class GeneralLoadView extends IGBTabPanel
 	protected AbstractAction getRefreshDataAction() {
 		return refreshDataAction;
 	}
+
+	@Override
+	public boolean isEmbedded() {
+		return true;
+	}
 }
 

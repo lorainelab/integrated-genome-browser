@@ -261,4 +261,9 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 					isSelected, hasFocus, row, column);
 		}
 	}
+
+	@Override
+	public boolean isEmbedded() {
+		return true;
+	}
 }

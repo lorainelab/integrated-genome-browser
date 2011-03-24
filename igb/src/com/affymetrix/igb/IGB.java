@@ -200,11 +200,11 @@ public final class IGB extends Application
 
 	public void init(String[] args) {
 		setLaf();
-		
+
 		// Set up a custom trust manager so that user is prompted
 		// to accept or reject untrusted (self-signed) certificates
 		// when connecting to server over HTTPS
-	  initCustomTrustManager();		  
+	  initCustomTrustManager();
 
 		// Configure HTTP User agent
 		System.setProperty("http.agent", USER_AGENT);
@@ -291,9 +291,6 @@ public final class IGB extends Application
 						stopRoutine.stop();
 					}
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					for (IStopRoutine stopRoutine : stopRoutines) {
-						stopRoutine.stop();
-					}
 				} else {
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				}
@@ -309,41 +306,41 @@ public final class IGB extends Application
 		GeneralLoadView.init(IGBServiceImpl.getInstance());
 		SeqGroupView.init(IGBServiceImpl.getInstance());
 	}
-	
+
 	/**
 	 * This will instantiate a custom trust manager to handle untrusted
-	 * certificates when connecting to a DAS/2 server over HTTPS.  (In 
+	 * certificates when connecting to a DAS/2 server over HTTPS.  (In
 	 * normal situations where the server has a trusted certificate,
 	 * this code is not invoked.)
 	 */
 	private void initCustomTrustManager() {
-    TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {  
-      public java.security.cert.X509Certificate[] getAcceptedIssuers() {  
-        return null;  
-      }  
+    TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+      public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+        return null;
+      }
 
-      public void checkClientTrusted(  
-          java.security.cert.X509Certificate[] certs, String authType) {  
-      }  
+      public void checkClientTrusted(
+          java.security.cert.X509Certificate[] certs, String authType) {
+      }
 
-      public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {  
+      public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
         for (int i = 0; i < certs.length; i++) {
           int response = JOptionPane.showConfirmDialog(null, "Trust certificate from " + certs[i].getIssuerX500Principal().getName() + "?");
           if (response != JOptionPane.OK_OPTION) {
             throw new RuntimeException("Untrusted certificate.");
           }
-        }  
-      }  
-    } };  
+        }
+      }
+    } };
 
-    try {  
-      SSLContext sc = SSLContext.getInstance("SSL");  
-      sc.init(null, trustAllCerts, new java.security.SecureRandom());  
-      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());  
-    } catch (Exception e) {  
-      e.printStackTrace();  
-      System.exit(1);  
-    }  
+    try {
+      SSLContext sc = SSLContext.getInstance("SSL");
+      sc.init(null, trustAllCerts, new java.security.SecureRandom());
+      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
 
   }
 

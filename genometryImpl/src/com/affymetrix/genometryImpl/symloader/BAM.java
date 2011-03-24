@@ -57,6 +57,7 @@ public final class BAM extends SymLoader {
 	}
 
 	private static final boolean DEBUG = false;
+	private boolean skipUnmapped = true;
 	private SAMFileReader reader;
     private SAMFileHeader header;
 	private final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
@@ -219,6 +220,7 @@ public final class BAM extends SymLoader {
 					while(iter.hasNext() && (!Thread.currentThread().isInterrupted())){
 						try{
 							sr = iter.next();
+							if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
 							symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
 						}catch(SAMException e){
 							errList.add(e);
@@ -250,6 +252,7 @@ public final class BAM extends SymLoader {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		if (reader != null) {
 			for (final SAMRecord sr: reader){
+				if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
 				symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
 			}
 		}

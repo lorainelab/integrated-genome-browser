@@ -485,6 +485,11 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			pl.propertyDisplayed(prop_displayed);
 		}
 	}
+
+	@Override
+	public boolean isEmbedded() {
+		return true;
+	}
 }
 
 

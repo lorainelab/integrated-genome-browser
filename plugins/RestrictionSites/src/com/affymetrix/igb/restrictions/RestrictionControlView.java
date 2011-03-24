@@ -273,4 +273,9 @@ public final class RestrictionControlView extends IGBTabPanel
 			}
 		}
 	}
+
+	@Override
+	public boolean isEmbedded() {
+		return true;
+	}
 }

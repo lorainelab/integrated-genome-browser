@@ -253,4 +253,9 @@ public class AltSpliceView extends IGBTabPanel
 	public SeqMapView getSplicedView() {
 		return spliced_view;
 	}
+
+	@Override
+	public boolean isEmbedded() {
+		return true;
+	}
 }

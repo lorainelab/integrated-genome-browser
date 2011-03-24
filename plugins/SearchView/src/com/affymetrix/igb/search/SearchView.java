@@ -794,4 +794,9 @@ public final class SearchView extends IGBTabPanel implements
 			return String.class;
 		}
 	}
+
+	@Override
+	public boolean isEmbedded() {
+		return true;
+	}
 }

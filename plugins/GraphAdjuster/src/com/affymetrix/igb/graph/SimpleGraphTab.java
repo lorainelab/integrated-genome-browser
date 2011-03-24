@@ -1191,4 +1191,9 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 		gviewer.getSeqMap().updateWidget();
 	}
+
+	@Override
+	public boolean isEmbedded() {
+		return true;
+	}
 }

@@ -677,4 +677,9 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     thing = null;
     tree = null;
   }
+
+  @Override
+  public boolean isEmbedded() {
+    return true;
+  }
 }

@@ -24,6 +24,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.util.FloatTransformer;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
 public class DummyContext implements BundleContext {
@@ -31,6 +32,7 @@ public class DummyContext implements BundleContext {
 	private Set<BundleListener> bundleListeners = new HashSet<BundleListener>();
 	private Set<ServiceListener> serviceListeners = new HashSet<ServiceListener>();
 	private Map<String, Set<ServiceListener>> filteredServiceListeners = new HashMap<String, Set<ServiceListener>>();
+	private static final String IGB_SERVICE_FILTER = "(objectClass=" + IGBService.class.getName() + ")";
 	private static final String TAB_SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
 
@@ -118,6 +120,9 @@ public class DummyContext implements BundleContext {
 	}
 
 	private boolean filterMatches(String filter, Object service) {
+		if (IGB_SERVICE_FILTER.equals(filter)) {
+			return service instanceof IGBService;
+		}
 		if (TAB_SERVICE_FILTER.equals(filter)) {
 			return service instanceof IGBTabPanel;
 		}
@@ -151,7 +156,7 @@ public class DummyContext implements BundleContext {
 					serviceListener.serviceChanged(event);
 				}
 			}
-			
+
 		}
 		// TODO Auto-generated method stub
 		return null;
@@ -173,7 +178,7 @@ public class DummyContext implements BundleContext {
 	@Override
 	public ServiceReference[] getAllServiceReferences(String clazz,
 			String filter) throws InvalidSyntaxException {
-		
+
 		List<Object> servicesList = servicesMap.get(clazz);
 		ArrayList<Object> filteredServices = new ArrayList<Object>();
 		if (servicesList != null) {
@@ -218,17 +223,17 @@ public class DummyContext implements BundleContext {
 	public Filter createFilter(String filter) throws InvalidSyntaxException {
 //		throw new RuntimeException("not implemented");
 		return new Filter() {
-			
+
 			@Override
 			public boolean matchCase(@SuppressWarnings("rawtypes") Dictionary dictionary) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean match(@SuppressWarnings("rawtypes") Dictionary dictionary) {
 				return false;
 			}
-			
+
 			@Override
 			public boolean match(ServiceReference reference) {
 				return false;

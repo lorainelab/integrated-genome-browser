@@ -280,6 +280,7 @@ public final class SearchView extends IGBTabPanel implements
 		public void valueChanged(ListSelectionEvent evt) {
 			if (evt.getSource() == lsm && !evt.getValueIsAdjusting() && model.getRowCount() > 0) {
 				int srow = table.getSelectedRow();
+				srow = table.convertRowIndexToModel(srow);
 				if (srow < 0) {
 					return;
 				}
@@ -473,7 +474,13 @@ public final class SearchView extends IGBTabPanel implements
 				}
 
 				tableRows = filterBySeq(localSymList, chrFilter);
+				Collections.sort(tableRows, new Comparator<SeqSymmetry>() {
+					public int compare(SeqSymmetry s1, SeqSymmetry s2) {
+						return s1.getID().compareTo(s2.getID());
+					}
+				});
 				displayInTable(tableRows);
+
 				enableComp(true);
 			}
 		});

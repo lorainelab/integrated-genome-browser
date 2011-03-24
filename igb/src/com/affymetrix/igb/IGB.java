@@ -291,9 +291,6 @@ public final class IGB extends Application
 						stopRoutine.stop();
 					}
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					for (IStopRoutine stopRoutine : stopRoutines) {
-						stopRoutine.stop();
-					}
 				} else {
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				}

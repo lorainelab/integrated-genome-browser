@@ -108,6 +108,10 @@ public abstract class PreferenceUtils {
 		return PreferenceUtils.getTopNode().node("graphs");
 	}
 	
+	public static Preferences getWindowPrefsNode() {
+		return PreferenceUtils.getTopNode().node("window");
+	}
+	
 	public static void saveIntParam(String param_name, int param) {
 		try {
 			getTopNode().putInt(param_name, param);
@@ -133,7 +137,7 @@ public abstract class PreferenceUtils {
 	public static void saveWindowLocation(Window w, String name) {
 		Rectangle r = w.getBounds();
 		try {
-			Preferences p = getTopNode();
+			Preferences p = getWindowPrefsNode();
 			p.putInt(name + " x", r.x);
 			p.putInt(name + " y", r.y);
 			p.putInt(name + " width", r.width);
@@ -153,7 +157,7 @@ public abstract class PreferenceUtils {
 	 */
 	public static Rectangle retrieveWindowLocation(String name, Rectangle def) {
 		Rectangle r = new Rectangle();
-		Preferences p = getTopNode();
+		Preferences p = getWindowPrefsNode();
 		r.x = p.getInt(name + " x", def.x);
 		r.y = p.getInt(name + " y", def.y);
 		r.width = p.getInt(name + " width", def.width);
@@ -202,10 +206,10 @@ public abstract class PreferenceUtils {
 	 */
 	public static void saveComponentState(String name, String state) {
 		if (state == null) {
-			getTopNode().remove(name + " state");
+			getWindowPrefsNode().remove(name + " state");
 		}
 		else {
-			getTopNode().put(name + " state", state);
+			getWindowPrefsNode().put(name + " state", state);
 		}
 	}
 
@@ -216,7 +220,7 @@ public abstract class PreferenceUtils {
 	 * @return one of enum TabState
 	 */
 	public static String getComponentState(String name) {
-		return getTopNode().get(name + " state", null);
+		return getWindowPrefsNode().get(name + " state", null);
 	}
 
 	/**
@@ -227,7 +231,7 @@ public abstract class PreferenceUtils {
 	 * as a percentage
 	 */
 	public static void saveDividerLocation(String title, double dividerProportionalLocation) {
-		getTopNode().put(title + " dvdrloc", String.valueOf(dividerProportionalLocation));
+		getWindowPrefsNode().put(title + " dvdrloc", String.valueOf(dividerProportionalLocation));
 	}
 
 	/**
@@ -237,7 +241,7 @@ public abstract class PreferenceUtils {
 	 * @return one of enum TabState
 	 */
 	public static double getDividerLocation(String title) {
-		String locString = getTopNode().get(title + " dvdrloc", null);
+		String locString = getWindowPrefsNode().get(title + " dvdrloc", null);
 		double dividerLocation = -1;
 		try {
 			dividerLocation = Double.parseDouble(locString);

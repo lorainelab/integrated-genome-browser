@@ -70,6 +70,5 @@ public class Activator implements BundleActivator {
 		for (IGBTabPanel tab : tabs) {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
 		}
-		igb.getFrame().setVisible(true);
 	}
 }

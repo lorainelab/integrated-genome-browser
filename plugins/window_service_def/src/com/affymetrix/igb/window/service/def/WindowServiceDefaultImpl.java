@@ -248,6 +248,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			for (TabHolder tabHolder : tabHolders.values()) {
 				tabHolder.setFocusFound();
 			}
+			frm.setVisible(true);
 		}
 	}
 

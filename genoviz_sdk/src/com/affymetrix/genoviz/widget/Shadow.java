@@ -425,14 +425,22 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
 	private static final class TranslucentGlyph extends TransientGlyph{
 
+		private static final float default_trans = 0.80f;
+
 		public TranslucentGlyph(){
 			setUseXOR(false);
 		}
 		
 		public void drawTraversal(ViewI view) {
+			double pixel_width_per_base = (view.getTransform()).getScaleX();
+			float trans = default_trans;
+			if (pixel_width_per_base > 5) {
+				trans = 0.50f;
+			}
+			
 			Graphics2D g = view.getGraphics();
 			Composite dac = g.getComposite();
-			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f);
+			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, trans);
 			g.setComposite(ac);
 			super.drawTraversal(view);
 			g.setComposite(dac);	

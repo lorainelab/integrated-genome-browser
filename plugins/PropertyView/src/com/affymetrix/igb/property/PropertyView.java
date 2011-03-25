@@ -6,6 +6,8 @@ import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -38,7 +40,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler {
+public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
 	private static final int TAB_POSITION = 1;
@@ -61,6 +63,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		this.setPreferredSize(new java.awt.Dimension(100, 250));
 		this.setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
+		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
 		propertyListeners.add(((SeqMapView)igbService.getMapView()).getMouseListener());
 	}
 
@@ -139,6 +142,13 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		}
 
 		showSyms(evt.getSelectedSyms(), mapView, tlm);
+	}
+
+	public void groupSelectionChanged(GroupSelectionEvent evt) {
+		if(evt.getSelectedGroup() == null){
+			table.setModel(new DefaultTableModel());
+			propertyChanged(0);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

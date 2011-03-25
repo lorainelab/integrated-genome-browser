@@ -649,7 +649,7 @@ public class SeqMapView extends JPanel
 			// do selection based on what the genometry model thinks is selected
 			List<SeqSymmetry> symlist = gmodel.getSelectedSymmetries(seq);
 			select(symlist, false, false, false);
-
+			
 			setStatus(getSelectionTitle(seqmap.getSelected()));
 		}
 
@@ -690,6 +690,7 @@ public class SeqMapView extends JPanel
 			//       to solve a bug (ID: 2912651 -- tier map and tiers off-kilter)
 			seqmap.stretchToFit(true, true);
 			zoomToSelections();
+			postSelections();
 			int[] range = seqmap.getVisibleRange();
 			setZoomSpotX(0.5 * (range[0] + range[1]));
 		}

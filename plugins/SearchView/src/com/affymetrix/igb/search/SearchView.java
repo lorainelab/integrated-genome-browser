@@ -676,7 +676,9 @@ public final class SearchView extends IGBTabPanel implements
 		this.searchCB.setEnabled(newGroup != null);
 		this.searchButton.setEnabled(newGroup != null);
 		this.searchTF.setEnabled(newGroup != null);
-
+		tableRows.clear();
+		setStatus("");
+		
 		// only re-initialize the combobox if the group or seqs have changed
 		if (newGroup != group || seqCount != newSeqCount) {
 			group = newGroup;

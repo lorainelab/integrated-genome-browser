@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
@@ -23,11 +24,14 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Rectangle;
 import java.awt.FontMetrics;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -39,7 +43,7 @@ import java.awt.geom.Rectangle2D;
  */
 public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
-	private final TransientGlyph tg = new TransientGlyph();
+	private final TransientGlyph tg = new TranslucentGlyph();
 	private final FillRectGlyph vGlyph = new FillRectGlyph();
 
 	private NeoMap map;
@@ -417,5 +421,22 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 				map.getView().removePreDrawViewListener(this);
 			map = null;
 		}
+	}
+
+	private static final class TranslucentGlyph extends TransientGlyph{
+
+		public TranslucentGlyph(){
+			setUseXOR(false);
+		}
+		
+		public void drawTraversal(ViewI view) {
+			Graphics2D g = view.getGraphics();
+			Composite dac = g.getComposite();
+			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f);
+			g.setComposite(ac);
+			super.drawTraversal(view);
+			g.setComposite(dac);	
+		}
+
 	}
 }

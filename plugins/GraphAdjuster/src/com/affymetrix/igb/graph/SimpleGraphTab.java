@@ -444,36 +444,43 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 		public void mouseEntered(MouseEvent e) {
 			JButton comp = (JButton) e.getComponent();
-
+			
 			if(grafs.size() == 2){
-				A = grafs.get(0).getGraphName();
-				B = grafs.get(1).getGraphName();
-
-				grafs.get(0).setGraphName("A");
-				grafs.get(1).setGraphName("B");
-
-				comp.setToolTipText(null);
-				ThreadUtils.runOnEventQueue(new Runnable() {
-
-					public void run() {
-						gviewer.getSeqMap().repaint();
-					}
-				});
-
+				setGraphName(comp);
 			}else{
 				comp.setToolTipText(select2graphs);
 			}
 		}
 
 		public void mouseExited(MouseEvent e) {
-			if(A != null && B != null && grafs.size() > 1){
+			unsetGraphName();
+		}
+
+		public void setGraphName(JButton comp) {
+			A = grafs.get(0).getGraphName();
+			B = grafs.get(1).getGraphName();
+
+			grafs.get(0).setGraphName("A");
+			grafs.get(1).setGraphName("B");
+
+			comp.setToolTipText(null);
+			ThreadUtils.runOnEventQueue(new Runnable() {
+
+				public void run() {
+					gviewer.getSeqMap().updateWidget();
+				}
+			});
+		}
+
+		public void unsetGraphName() {
+			if (A != null && B != null && grafs.size() > 1) {
 				grafs.get(0).setGraphName(A);
 				grafs.get(1).setGraphName(B);
 
 				ThreadUtils.runOnEventQueue(new Runnable() {
 
 					public void run() {
-						gviewer.getSeqMap().repaint();
+						gviewer.getSeqMap().updateWidget();
 					}
 				});
 				A = null;
@@ -481,7 +488,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 			}
 		}
-
 	}
 
 	private void collectGraphsAndGlyphs(List<?> selected_syms, int symcount) {
@@ -681,11 +687,12 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private static final long serialVersionUID = 1L;
 		private static final int PARAM_TEXT_WIDTH = 60;
 		private Map<String, FloatTransformer> name2transform;
+		private final HoverEffect hovereffect;
 
 		public AdvancedGraphPanel() {
 			name2transform = new HashMap<String, FloatTransformer>();
 			JPanel advanced_panel = this;
-			HoverEffect hovereffect = new HoverEffect();
+			hovereffect = new HoverEffect();
 
 			advanced_panel.setLayout(new BoxLayout(advanced_panel, BoxLayout.Y_AXIS));
 
@@ -941,6 +948,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 		private void graphArithmetic(String operation) {
 			if (glyphs.size() == 2 && glyphs.get(0) != null && glyphs.get(1) != null) {
+				hovereffect.unsetGraphName();
 				GraphGlyph graphA = glyphs.get(0);
 				GraphGlyph graphB = glyphs.get(1);
 				GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);

@@ -35,7 +35,7 @@ import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
-import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
+import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -602,8 +602,8 @@ public final class GeneralLoadUtils {
 		}
 
 		//Already loaded the data.
-		if(gFeature.gVersion.gServer.serverType == ServerType.LocalFiles
-				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInst){
+		if((gFeature.gVersion.gServer.serverType == ServerType.QuickLoad || gFeature.gVersion.gServer.serverType == ServerType.LocalFiles)
+				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC){
 			return false;
 		}
 
@@ -659,8 +659,8 @@ public final class GeneralLoadUtils {
 
 		// For for formats that are not optimized do not iterate through BioSeq
 		// instead add them all at one.
-		if(feature.gVersion.gServer.serverType == ServerType.QuickLoad
-				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
+		if((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
+				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 		}
 

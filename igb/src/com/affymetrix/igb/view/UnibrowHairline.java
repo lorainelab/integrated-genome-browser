@@ -79,7 +79,7 @@ public final class UnibrowHairline {
     };
 
     hairline = new Shadow(map);
-    hairline.setUseXOR(true);
+    //hairline.setUseXOR(true);
     hairline.setSelectable(false);
     hairline.setLabeled(false);
     // hairline.setFont(DEFAULT_FONT);

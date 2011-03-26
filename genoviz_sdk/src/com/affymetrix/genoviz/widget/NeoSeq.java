@@ -85,7 +85,7 @@ import javax.swing.JScrollBar;
  *
  * <p> This javadoc explains the implementation specific features
  * of this widget concerning event handling and the java AWT.
- * In paticular, all genoviz implementations of widget interfaces
+ * In particular, all genoviz implementations of widget interfaces
  * are subclassed from <code>Container</code>
  * and use the JDK 1.1 event handling model.
  *

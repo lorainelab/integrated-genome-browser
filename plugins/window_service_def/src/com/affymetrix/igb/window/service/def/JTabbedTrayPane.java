@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -63,8 +62,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	private boolean retractDividerSet;
 	private JFrame frame;
 	private boolean initialized = false;
-	private boolean focusSet;
-	private Set<IGBTabPanel> savedPanels;
 
 	/**
 	 * set the JTabbedPane in the JSplitPane - different for
@@ -123,10 +120,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		super(splitOrientation);
 		this.tabState = tabState;
 		retractDividerSet = false;
-		focusSet = false;
 		trayStateChangeListeners = new ArrayList<TrayStateChangeListener>();
 		trayState = TrayState.HIDDEN;
-		savedPanels = new TreeSet<IGBTabPanel>();
 		title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.name()));
 		saveDividerProportionalLocation = PreferenceUtils.getDividerLocation(title);
 		if (saveDividerProportionalLocation < 0) {
@@ -344,20 +339,17 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
 	@Override
 	public void addTab(final IGBTabPanel plugin) {
-		if (focusSet) {
-			int index = 0;
-			while (index < tab_pane.getTabCount() && plugin.compareTo((IGBTabPanel)tab_pane.getComponentAt(index)) > 0) {
-				index++;
-			}
-			tab_pane.insertTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText(), index);
-			if (tab_pane.getTabCount() == 1) {
-				tab_pane.setSelectedComponent(plugin);
-				initTray();
-			}
-			tab_pane.validate();
+		int index = 0;
+		while (index < tab_pane.getTabCount() && plugin.compareTo((IGBTabPanel)tab_pane.getComponentAt(index)) > 0) {
+			index++;
 		}
-		else {
-			savedPanels.add(plugin);
+		tab_pane.insertTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText(), index);
+		if (tab_pane.getTabCount() == 1) {
+			tab_pane.setSelectedIndex(0);
+			initTray();
+		}
+		if (plugin.isFocus()) {
+			tab_pane.setSelectedIndex(tab_pane.getTabCount() - 1);
 		}
 	}
 
@@ -449,22 +441,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 */
 	public String getTitle() {
 		return title;
-	}
-
-	@Override
-	public void setFocusFound() {
-		if (savedPanels.size() > 0) {
-			for (IGBTabPanel panel : savedPanels) {
-				tab_pane.addTab(panel.getTitle(), panel.getIcon(), panel, panel.getToolTipText());
-				if (panel.isFocus()) {
-					tab_pane.setSelectedIndex(tab_pane.getTabCount() - 1);
-				}
-			}
-			initTray();
-			tab_pane.validate();
-			savedPanels.clear();
-		}
-		focusSet = true;
 	}
 
 	private void initTray() {

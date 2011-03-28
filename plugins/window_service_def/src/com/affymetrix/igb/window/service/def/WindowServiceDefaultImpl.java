@@ -22,6 +22,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -245,9 +246,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			embeddedTabCount++;
 		}
 		if (embeddedTabCount == EMBEDDED_TAB_COUNT_TOTAL) {
-			for (TabHolder tabHolder : tabHolders.values()) {
-				tabHolder.setFocusFound();
-			}
+			SwingUtilities.invokeLater(new Runnable(){
+				public void run(){
+					frm.setVisible(true);
+				}
+			});
 		}
 	}
 

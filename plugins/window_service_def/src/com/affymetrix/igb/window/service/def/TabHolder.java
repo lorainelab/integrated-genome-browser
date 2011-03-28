@@ -29,11 +29,6 @@ public interface TabHolder {
 	 */
 	public IGBTabPanel getSelectedIGBTabPanel();
 	/**
-	 * indicate that the tab with focus for the holder is found
-	 * (the default state for the tab, not the current state)
-	 */
-	public void setFocusFound();
-	/**
 	 * resize the holder (only appropriate for trays)
 	 */
 	public void resize();

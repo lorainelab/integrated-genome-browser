@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="das2_server/src"/>
+	<classpathentry kind="src" path="igb/resources"/>
+	<classpathentry kind="src" path="plugins/GraphAdjuster/resources"/>
+	<classpathentry kind="src" path="plugins/window_service/resources"/>
+	<classpathentry kind="src" path="plugins/window_service_def/resources"/>
+	<classpathentry kind="src" path="plugins/Bookmark/resources"/>
+	<classpathentry kind="src" path="plugins/ExternalView/resources"/>
+	<classpathentry kind="src" path="plugins/plugins_page/resources"/>
+	<classpathentry kind="src" path="plugins/PropertyView/resources"/>
+	<classpathentry kind="src" path="plugins/RestrictionSites/resources"/>
+	<classpathentry kind="src" path="plugins/SelectionInfo/src"/>
+	<classpathentry kind="src" path="plugins/RestrictionSites/src"/>
+	<classpathentry kind="src" path="plugins/SearchView/src"/>
+	<classpathentry kind="src" path="plugins/plugins_page/src"/>
+	<classpathentry kind="src" path="plugins/SelectionInfo/resources"/>
+	<classpathentry kind="src" path="plugins/SearchView/resources"/>
+	<classpathentry kind="src" path="plugins/PropertyView/src"/>
+	<classpathentry kind="src" path="plugins/GraphAdjuster/src"/>
+	<classpathentry kind="src" path="plugins/ExternalView/src"/>
+	<classpathentry kind="src" path="plugins/Bookmark/src"/>
+	<classpathentry kind="src" path="debug/src"/>
 	<classpathentry kind="src" path="plugins/window_service_def/src"/>
 	<classpathentry kind="src" path="common/resources"/>
 	<classpathentry kind="src" path="main/resources"/>

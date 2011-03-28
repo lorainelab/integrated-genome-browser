@@ -43,6 +43,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.igb.Application;
@@ -535,6 +536,9 @@ public final class GeneralLoadView extends IGBTabPanel
 	
 	public boolean loadResidues(SeqSpan span, boolean tryFull){
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
+		if(!span.isForward()){
+			span = new SimpleSeqSpan(span.getMin(), span.getMax(), span.getBioSeq());
+		}
 		return loadResidues(genomeVersionName, span.getBioSeq(), span, true, tryFull, false);
 	}
 

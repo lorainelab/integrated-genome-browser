@@ -45,6 +45,7 @@ public final class ResidueLoading {
 
 	enum QFORMAT{
 		BNIB,
+		VTWOBIT,
 		TWOBIT,
 		FA
 	};
@@ -295,49 +296,37 @@ public final class ResidueLoading {
 	 */
 
 	private static String GetQuickLoadResidues(
-			GenericServer server, GenericVersion version, AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span, BioSeq aseq){
+			GenericServer server, GenericVersion version, AnnotatedSeqGroup seq_group, String seq_name, String root_url, SeqSpan span, BioSeq aseq) {
 		String common_url = "";
 		String path = "";
 		SymLoader symloader;
-				try {
-					URL quickloadURL = new URL((String) server.serverObj);
-					QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-					path = quickloadServer.getPath(version.versionName, seq_name);
+		try {
+			URL quickloadURL = new URL((String) server.serverObj);
+			QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+			path = quickloadServer.getPath(version.versionName, seq_name);
+			common_url = root_url + path + ".";
+			String vPath = root_url + quickloadServer.getPath(version.versionName, version.versionName) + ".2bit";
+			
+			symloader = determineLoader(common_url, vPath, seq_group);
 
-					//start
-					try {
-						//String bitPath = path.substring(0, (path.lastIndexOf("/") + 1)) + "allChromosome";   //need to check whether it exists?
-						URI uri = new URI(server.URL + quickloadServer.getPath(version.versionName, version.versionName) + ".2bit");
-						if(LocalUrlCacher.isValidURI(uri))
-						{
-							symloader = new TwoBit(uri, "", seq_group);
-						}
-						else{
-							common_url = root_url + path + ".";
-							symloader = determineLoader(common_url, seq_group);
-						}
-						if(symloader != null ){
-							return symloader.getRegionResidues(span);
-						}
-					} catch (URISyntaxException ex) {
-						Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
-					}
-					//end
-				} catch (MalformedURLException ex) {
-					Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
-				}
+			if (symloader != null) {
+				return symloader.getRegionResidues(span);
+			}
+		} catch (MalformedURLException ex) {
+			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		return null;
 	}
 
-	private static SymLoader determineLoader(String common_url, AnnotatedSeqGroup seq_group){
-		QFORMAT format = determineFormat(common_url);
+	private static SymLoader determineLoader(String common_url, String vPath, AnnotatedSeqGroup seq_group){
+		QFORMAT format = determineFormat(common_url, vPath);
 
 		if(format == null)
 			return null;
 
 		URI uri = null;
 		try {
-			uri = new URI(generateQuickLoadURI(common_url, format));
+			uri = new URI(generateQuickLoadURI(common_url, vPath, format));
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(ResidueLoading.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -346,6 +335,7 @@ public final class ResidueLoading {
 			case BNIB:
 				return new BNIB(uri, "", seq_group);
 
+			case VTWOBIT:
 			case TWOBIT:
 				return new TwoBit(uri, "", seq_group);
 
@@ -356,10 +346,10 @@ public final class ResidueLoading {
 		return null;
 	}
 
-	private static QFORMAT determineFormat(String common_url){
+	private static QFORMAT determineFormat(String common_url, String vPath){
 
 		for(QFORMAT format : QFORMAT.values()){
-			String url_path = generateQuickLoadURI(common_url,format);
+			String url_path = generateQuickLoadURI(common_url,vPath,format);
 			if(LocalUrlCacher.isValidURL(url_path)){
 				Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE,
 							"  Quickload location of bnib file: {0}", url_path);
@@ -401,7 +391,7 @@ public final class ResidueLoading {
 	}
 	
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
-	private static String generateQuickLoadURI(String common_url, QFORMAT Format) {
+	private static String generateQuickLoadURI(String common_url, String vPath, QFORMAT Format) {
 		Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE, "trying to load residues via Quickload");
 		switch(Format)
 		{
@@ -411,6 +401,10 @@ public final class ResidueLoading {
 
 			case FA:
 				common_url += "fa";
+				break;
+
+			case VTWOBIT:
+				common_url = vPath;
 				break;
 
 			case TWOBIT:

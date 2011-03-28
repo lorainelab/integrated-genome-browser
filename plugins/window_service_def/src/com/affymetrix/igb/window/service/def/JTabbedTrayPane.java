@@ -351,6 +351,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		if (plugin.isFocus()) {
 			tab_pane.setSelectedIndex(tab_pane.getTabCount() - 1);
 		}
+		tab_pane.validate();
 	}
 
 	@Override

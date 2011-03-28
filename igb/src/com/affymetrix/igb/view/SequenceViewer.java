@@ -253,7 +253,6 @@ public class SequenceViewer extends JPanel
 				}
 			}
 			this.caluclateCdsStartEnd();
-			this.addCdsStartEnd(residues_sym);
 			isGenomicRequest = false;
 			//title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
 			title = id + " : " + version + " : " + this.aseq;
@@ -295,11 +294,14 @@ public class SequenceViewer extends JPanel
 
 	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
 		if (showcDNASwitch) {
-
+			if(seqview.getResidues().length() > cdsMinDNAonly)
 			seqview.addOutlineAnnotation(cdsMinDNAonly, cdsMinDNAonly + 2, Color.green);
+			if(seqview.getResidues().length() > cdsMaxDNAonly)
 			seqview.addOutlineAnnotation(cdsMaxDNAonly, cdsMaxDNAonly + 2, Color.red);
 		} else {
+					if(seqview.getResidues().length() > cdsMin)
 			seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
+					if(seqview.getResidues().length() > cdsMax)
 			seqview.addOutlineAnnotation(cdsMax, cdsMax + 2, Color.red);
 		}
 	}
@@ -352,6 +354,7 @@ public class SequenceViewer extends JPanel
 			convertSpansForSequenceViewer(seqSpans, seq);
 			customFormatting(residues_sym);
 			addFormattedResidues();
+			this.addCdsStartEnd(residues_sym);
 		}
 		this.calculateNewCdsStartEnd();
 		mapframe.add("Center", seqview);

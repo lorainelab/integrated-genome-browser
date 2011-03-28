@@ -341,6 +341,7 @@ public class NeoSeq extends NeoContainerWidget
 
 		// added in attempt to fix bug # 157
 		// had to make it one space long, else get range calculation errors...
+		//
 		setResidues(" ");
 
 		setSelection(new Selection());
@@ -1828,17 +1829,17 @@ public class NeoSeq extends NeoContainerWidget
 		// calling stretchToFit to force adjustment of vertical scrollbar
 		stretchToFit(false,false);
 	}
-	public void setRevShow(int type, boolean show) {
-		if (showAs[type] == show)  { return; }
-		showAs[type] = show;
-		residue_glyph.setShow(type, show);
-		if(type == 1){
-		num_glyph.setRevNumbering(show);
-//		num_glyph.setShow(type, show);
-		}
-		// calling stretchToFit to force adjustment of vertical scrollbar
-		stretchToFit(false,false);
-	}
+//	public void setRevShow(int type, boolean show) {
+//		if (showAs[type] == show)  { return; }
+//		showAs[type] = show;
+//		residue_glyph.setShow(type, show);
+//		if(type == 1){
+//		num_glyph.setRevNumbering(show);
+////		num_glyph.setShow(type, show);
+//		}
+//		// calling stretchToFit to force adjustment of vertical scrollbar
+//		stretchToFit(false,false);
+//	}
 
 	/**
 	 * gets the state of a display option.

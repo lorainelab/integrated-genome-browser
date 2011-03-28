@@ -246,9 +246,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 			embeddedTabCount++;
 		}
 		if (embeddedTabCount == EMBEDDED_TAB_COUNT_TOTAL) {
-			for (TabHolder tabHolder : tabHolders.values()) {
-				tabHolder.setFocusFound();
-			}
 			SwingUtilities.invokeLater(new Runnable(){
 				public void run(){
 					frm.setVisible(true);

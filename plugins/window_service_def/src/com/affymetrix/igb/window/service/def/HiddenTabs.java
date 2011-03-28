@@ -36,9 +36,6 @@ public class HiddenTabs implements TabHolder {
 	public IGBTabPanel getSelectedIGBTabPanel() { return null; }
 
 	@Override
-	public void setFocusFound() {}
-
-	@Override
 	public void resize() {}
 
 	@Override

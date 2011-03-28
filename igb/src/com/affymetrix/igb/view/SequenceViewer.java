@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genoviz.event.NeoMouseEvent;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
@@ -32,7 +31,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
@@ -57,14 +55,9 @@ public class SequenceViewer extends JPanel
 	private SeqMapView seqmapview;
 	private NeoSeq seqview;
 	private JFrame mapframe;
-	private Frame propframe;
 	private String seq;
-	private boolean showComp = false; // show complementary strand?
 	private int pixel_width = 500;
 	private int pixel_height = 400;
-	private boolean clicking = false;
-	private boolean framesShowing = true;
-	private boolean going = false;
 	private SeqSpan[] seqSpans = null;
 	private GenometryModel gm = GenometryModel.getGenometryModel();
 	private String version = "";
@@ -73,7 +66,6 @@ public class SequenceViewer extends JPanel
 	boolean isGenomicRequest;
 	SequenceViewer sv;
 	String errorMessage = null;
-	private String direction = "-";
 	private int seqStart = 0;
 	private int seqEnd = 0;
 	private int cdsMax = 0;
@@ -90,7 +82,6 @@ public class SequenceViewer extends JPanel
 	private String[] intronArray;
 	private boolean showcDNASwitch = false;
 	private boolean colorSwitch = false;
-	private final static int BACKGROUND_COLOR = 0;
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
 	Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
@@ -241,10 +232,10 @@ public class SequenceViewer extends JPanel
 				if (key.equals("id")) {
 					id = value;
 				} else if (key.equals("forward")) {
-					String forward = value;
-					if (forward.equals("true")) {
-						direction = "+";
-					}
+//					String forward = value;
+//					if (forward.equals("true")) {
+//						direction = "+";
+//					}
 				} else if (key.equals("type")) {
 					type = value;
 					if (type == null) {
@@ -324,25 +315,15 @@ public class SequenceViewer extends JPanel
 			seqStart = spans[spans.length - 1].getMin();
 			seqEnd = spans[0].getMax();
 		}
-		for(int j=0; j < spans.length;j++){
-			System.out.println("spans "+j+"start "+spans[j].getStart()+"end "+spans[j].getEnd());
-			System.out.println("spans "+j+"min "+spans[j].getMin()+"max "+spans[j].getMax());
-		}
 		if (spans.length > 1) {
-			if (spans[0].getStart() > spans[0].getEnd()) {
+			if ((spans[0].getStart() > spans[0].getEnd()) && (spans[0].getStart() <spans[1].getStart())){
 				SeqSpan[] spans_duplicate = new SeqSpan[spans.length];
 				for (int k = 0; k < spans.length; k++) {
 					spans_duplicate[spans.length - 1 - k] = spans[k];
 				}
 				spans = spans_duplicate;
-			}
-			for(int j=0; j < spans.length;j++){
-			System.out.println("spans "+j+"start "+spans[j].getStart()+"end "+spans[j].getEnd());
-			System.out.println("spans "+j+"min "+spans[j].getMin()+"max "+spans[j].getMax());
-		}
+			}		
 			intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
-//				System.out.println("intron array[0] "+intronArray[0]);
-
 		}
 		while (i < spans.length) {
 
@@ -505,29 +486,11 @@ public class SequenceViewer extends JPanel
 
 	public JFrame setupMenus(JFrame dock) {
 
-		/* Edit Menu */
-
-
-//		JMenuItem copyMenuItem = new JMenuItem("Copy selected sequence to clipboard");
-//		//copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-//
-//		/* File Menu */
-//		JMenu fileMenu = new JMenu("File");
-//		JMenuItem saveAsMenuItem = new JMenuItem("save As", KeyEvent.VK_A);
-//		JMenuItem exitMenuItem = new JMenuItem("eXit", KeyEvent.VK_X);
 		copyAction.setEnabled(false);
-//		copyText.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, new JMenuItem(copyAction));
 		editMenu.addMenuListener(this);
-//		copyMenuItem.addActionListener(this);
-//
-//		// file menu
-//		fileMenu.add(saveAsMenuItem);
-//		fileMenu.add(exitMenuItem);
-//		saveAsMenuItem.addActionListener(this);
-//		exitMenuItem.addActionListener(this);
 		showMenu.add(compCBMenuItem);
 		showMenu.add(transOneCBMenuItem);
 		showMenu.add(transTwoCBMenuItem);
@@ -557,11 +520,6 @@ public class SequenceViewer extends JPanel
 		reverseColorsButton.addActionListener(this);
 		// add the menus to the menubar
 		JMenuBar bar = new JMenuBar();
-//		if (null == bar) {
-//			bar = new MenuBar();
-//			dock.setMenuBar(bar);
-//		}
-
 		bar.add(fileMenu);
 		bar.add(editMenu);
 		bar.add(showMenu);
@@ -597,7 +555,6 @@ public class SequenceViewer extends JPanel
 		Object theItem = e.getSource();
 		if (theItem == compCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
-			boolean showRevComp = mi.getState();
 			seqview.setShow(NeoSeq.COMPLEMENT, mi.getState());
 //			seqview.setRevShow(NeoSeq.COMPLEMENT, showRevComp);
 //			seqview.setRevShow(NeoSeq.NUCLEOTIDES, !showRevComp);
@@ -643,7 +600,6 @@ public class SequenceViewer extends JPanel
 
 	private void colorSwitching() {
 		seqview.clearWidget();
-//		this.calculateNewCdsStartEnd();
 		if (!showcDNASwitch) {
 			addFormattedResidues();
 		} else {
@@ -698,7 +654,6 @@ public class SequenceViewer extends JPanel
 				seqview.setResidues(seq1);
 				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
 				this.addCdsStartEnd(residues_sym);
-//				customFormatting(residues_sym);
 				seqview.updateWidget();
 				showcDNAButton.setText("Show genomic");
 			} else {
@@ -706,7 +661,6 @@ public class SequenceViewer extends JPanel
 				seqview.clearWidget();
 				addFormattedResidues();
 				this.addCdsStartEnd(residues_sym);
-//				customFormatting(residues_sym);
 				showcDNAButton.setText("Show cDNA");
 			}
 		} else if (evtSource == reverseColorsButton) {
@@ -725,8 +679,6 @@ public class SequenceViewer extends JPanel
 				seqview.setResidues(seq1);
 				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
 			}
-//			customFormatting(residues_sym);
-
 		}
 	}
 

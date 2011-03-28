@@ -73,6 +73,7 @@ public class SequenceViewer extends JPanel
 	boolean isGenomicRequest;
 	SequenceViewer sv;
 	String errorMessage = null;
+	private String direction = "-";
 	private int seqStart = 0;
 	private int seqEnd = 0;
 	private int cdsMax = 0;
@@ -231,9 +232,6 @@ public class SequenceViewer extends JPanel
 		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 		version = ag.getID();
 		if (residues_sym.getID() != null) {
-			// This could break if Properties associated with
-			// SymWithProps change.
-			// Is this likely or possible to happen?
 			Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
 			Iterator<String> iterator = sym.keySet().iterator();
 
@@ -242,21 +240,31 @@ public class SequenceViewer extends JPanel
 				String value = sym.get(key).toString();
 				if (key.equals("id")) {
 					id = value;
+				} else if (key.equals("forward")) {
+					String forward = value;
+					if (forward.equals("true")) {
+						direction = "+";
+					}
+				} else if (key.equals("type")) {
+					type = value;
+					if (type == null) {
+						type = "";
+					}
+				} else if (key.equals("seq id")) {
+					chromosome = value;
+					if (chromosome == null) {
+						chromosome = "";
+					}
 				} else if (key.equals("cds max")) {
-					// Note that these two values are used in many places.
-					// It's important to note that this method is not only
-					// getting a title for the Sequence Viewer frame - it is
-					// also setting key values cdsMax and cdsMin that are used
-					// for basic Sequence Viewer functionality.
 					cdsMax = Integer.parseInt(value);
 				} else if (key.equals("cds min")) {
 					cdsMin = Integer.parseInt(value);
 				}
 			}
-			this.calculateCdsStartEnd();
+			this.caluclateCdsStartEnd();
 			this.addCdsStartEnd(residues_sym);
 			isGenomicRequest = false;
-			title = id + " : " + version + " : " + this.aseq;
+			title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
 		} else {
 			isGenomicRequest = true;
 			title = "Genomic Sequence : " + version + " : " + this.aseq + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);
@@ -266,7 +274,7 @@ public class SequenceViewer extends JPanel
 
 	}
 
-	private void calculateCdsStartEnd() {
+	private void caluclateCdsStartEnd() {
 		int i = 0;
 		if (seqSpans[0].getStart() < seqSpans[0].getEnd()) {
 			cdsMin = cdsMin - seqSpans[0].getStart();

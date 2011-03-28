@@ -111,7 +111,11 @@ public abstract class PreferenceUtils {
 	public static Preferences getWindowPrefsNode() {
 		return PreferenceUtils.getTopNode().node("window");
 	}
-	
+
+	public static Preferences getSessionPrefsNode() {
+		return PreferenceUtils.getTopNode().node("session");
+	}
+
 	public static void saveIntParam(String param_name, int param) {
 		try {
 			getTopNode().putInt(param_name, param);

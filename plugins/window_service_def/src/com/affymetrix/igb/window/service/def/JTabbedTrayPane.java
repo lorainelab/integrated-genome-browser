@@ -201,11 +201,23 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		}
 	}
 
+	private void unWindow() {
+		Container cont = frame.getContentPane();
+		cont.remove(tab_pane);
+		cont.validate();
+		frame.dispose();
+		frame = null;
+		setTabComponent();
+	}
+
 	/**
 	 * put the tray in the HIDDEN tray state
 	 * this happens when there are not tabs in the tray
 	 */
 	private void hideTray() {
+		if (trayState == TrayState.WINDOW) {
+			unWindow();
+		}
 		if (trayState == TrayState.EXTENDED) {
 			saveDividerLocation();
 		}
@@ -223,6 +235,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * state
 	 */
 	private void extendTray() {
+		if (trayState == TrayState.WINDOW) {
+			unWindow();
+		}
 		setDividerLocation(getExtendDividerLocation());
 		setDividerSize(DIVIDER_SIZE);
 		trayState = TrayState.EXTENDED;
@@ -236,6 +251,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * from the EXTENDED tray state
 	 */
 	private void retractTray() {
+		if (trayState == TrayState.WINDOW) {
+			unWindow();
+		}
 		if (trayState == TrayState.EXTENDED) {
 			saveDividerLocation();
 		}
@@ -294,11 +312,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 				// save the current size into the preferences, so the window
 				// will re-open with this size next time
 				PreferenceUtils.saveWindowLocation(frame, title);
-				cont.remove(tab_pane);
-				cont.validate();
-				frame.dispose();
-				frame = null;
-				setTabComponent();
 				setDividerLocation(saveDividerProportionalLocation);
 				extendTray();
 			}
@@ -451,6 +464,12 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 			setDividerLocation(getRetractDividerLocation());
 			retractDividerSet = true;
 		}
+	}
+
+	@Override
+	public void restoreState() {
+		saveDividerProportionalLocation = PreferenceUtils.getDividerLocation(title);
+		invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(title)));
 	}
 
 	@Override

@@ -119,6 +119,7 @@ public class SeqMapView extends JPanel
 	}
 	
 	private static final boolean DEBUG_TIERS = false;
+	private final static String SEQ_MODE = "SEQ_MODE";
 
 	protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
@@ -126,6 +127,10 @@ public class SeqMapView extends JPanel
 	private boolean hairline_is_labeled = true;
 	private boolean show_prop_tooltip = true;
 	private MapMode mapMode;
+	private JToggleButton select_mode_button;
+	private JToggleButton scroll_mode_button;
+//	private JToggleButton zoom_mode_button;
+
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	/**
 	 *  maximum number of query glyphs for edge matcher.
@@ -357,15 +362,15 @@ public class SeqMapView extends JPanel
 		xzoombox = Box.createHorizontalBox();
 		xzoombox.add(map_range_box.range_box);
 
-		JToggleButton select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode, "arrow.gif"));
+		select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode, "arrow.gif"));
 		select_mode_button.setText("");
 		xzoombox.add(select_mode_button);
 
-		JToggleButton scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode, "open_hand.gif"));
+		scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode, "open_hand.gif"));
 		scroll_mode_button.setText("");
 		xzoombox.add(scroll_mode_button);
 
-//		JToggleButton zoom_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapZoomMode));
+//		zoom_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapZoomMode));
 //		zoom_mode_button.setText("");
 //		xzoombox.add(zoom_mode_button);
 
@@ -1966,5 +1971,21 @@ public class SeqMapView extends JPanel
 		seqmap.enableDragScrolling(!mapMode.drag_scroll);
 		seqmap.setCursor(mapMode.defCursor);
 	}
-	
+
+	public void saveSession() {
+		PreferenceUtils.getSessionPrefsNode().put(SEQ_MODE, getMapMode().name());
+	}
+
+	public void loadSession() {
+		String mapMode = PreferenceUtils.getSessionPrefsNode().get(SEQ_MODE, SeqMapView.MapMode.MapSelectMode.name());
+		if (MapMode.MapScrollMode.name().equals(mapMode)) {
+			scroll_mode_button.doClick();
+		}
+		if (MapMode.MapSelectMode.name().equals(mapMode)) {
+			select_mode_button.doClick();
+		}
+//		if (MapMode.MapZoomMode.name().equals(mapMode)) {
+//			zoom_mode_button.doClick();
+//		}
+	}
 }

@@ -70,11 +70,17 @@ public class WindowTabs implements TabHolder {
 		PreferenceUtils.saveComponentState(name, TabState.COMPONENT_STATE_WINDOW.name());
 	}
 
+	public void restoreWindowPosition(IGBTabPanel tabPanel) {
+		Rectangle pos = PreferenceUtils.retrieveWindowLocation(tabPanel.getName(), tabPanel.getFrame().getBounds());
+		if (pos != null) {
+			PreferenceUtils.setWindowSize(tabPanel.getFrame(), pos);
+		}
+	}
+
 	@Override
 	public void addTab(final IGBTabPanel plugin) {
 		addedPlugins.add(plugin);
 		Runnable r = new Runnable() {
-
 			public void run() {
 				openCompInWindow(plugin);
 			}
@@ -106,6 +112,18 @@ public class WindowTabs implements TabHolder {
 
 	@Override
 	public IGBTabPanel getSelectedIGBTabPanel() { return null; }
+
+	@Override
+	public void restoreState() {
+		for (final IGBTabPanel tabPanel : addedPlugins) {
+			Runnable r = new Runnable() {
+				public void run() {
+					restoreWindowPosition(tabPanel);
+				}
+			};
+			SwingUtilities.invokeLater(r);
+		}
+	}
 
 	@Override
 	public void resize() {}

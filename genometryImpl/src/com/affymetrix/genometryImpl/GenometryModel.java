@@ -73,6 +73,10 @@ public final class GenometryModel {
 		return Collections.unmodifiableMap(seq_groups);
 	}
 
+	public void clearSeqGroups() {
+		seq_groups.clear();
+	}
+
 	public synchronized List<String> getSeqGroupNames() {
 		List<String> list = new ArrayList<String>(seq_groups.keySet());
 		Collections.sort(list);

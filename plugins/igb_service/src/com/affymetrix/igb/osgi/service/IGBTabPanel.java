@@ -188,4 +188,8 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 
 		return this.getDisplayName().compareTo(o.getDisplayName());
 	}
+
+	public void saveSession() {}
+
+	public void loadSession() {}
 }

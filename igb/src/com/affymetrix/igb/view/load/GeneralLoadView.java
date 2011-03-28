@@ -45,6 +45,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
@@ -67,6 +68,9 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;
@@ -1090,6 +1094,75 @@ public final class GeneralLoadView extends IGBTabPanel
 
 	protected AbstractAction getRefreshDataAction() {
 		return refreshDataAction;
+	}
+
+
+	@Override
+	public void saveSession() {
+		Preferences session_node = PreferenceUtils.getSessionPrefsNode();
+		int index = 1;
+		for (GenericFeature feature : feature_model.getFeatures()) {
+			Preferences feature_node = PreferenceUtils.getSubnode(session_node, "feature_" + index, true);
+			feature_node.put("name", feature.featureName);
+			feature_node.put("load_mode", feature.loadStrategy.name());
+			if (feature.gVersion.gServer.serverType == ServerType.LocalFiles) {
+				feature_node.put("data_source", (feature.symL == null || feature.symL.uri == null) ? "" : feature.symL.uri.toString());
+			}
+			else {
+				feature_node.put("data_source", feature.gVersion.gServer.URL);
+			}
+			index++;
+		}
+		Persistence.saveCurrentView(gviewer);
+	}
+
+	@Override
+	public void loadSession() {
+		gmodel.setSelectedSeqGroup(null);
+		gmodel.setSelectedSeq(null);
+		RestorePersistentGenome();
+		Preferences session_node = PreferenceUtils.getSessionPrefsNode();
+		try {
+			List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
+			for (GenericFeature feature: features) {
+				feature.setInvisible();
+			}
+			boolean modeChanged = false;
+			for (String childName : session_node.childrenNames()) {
+				if (childName.startsWith("feature_")) {
+					Preferences featurePreferences = PreferenceUtils.getSubnode(session_node, childName);
+					String name = featurePreferences.get("name", "");
+					String loadMode = featurePreferences.get("load_mode", "");
+					String dataSource = featurePreferences.get("data_source", "");
+					GenericFeature feature = null;
+					if (dataSource.startsWith("file:")) {
+//						feature = getFeature(dataSource, fileName, speciesName, loadGroup);
+					}
+					else {
+						for (GenericFeature featureLoop : features) {
+							if (name.equals(featureLoop.featureName) && dataSource.equals(featureLoop.gVersion.gServer.URL)) {
+								feature = featureLoop;
+								break;
+							}
+						}
+					}
+					if (feature != null) {
+						feature.setVisible();
+						feature.loadStrategy = LoadStrategy.valueOf(loadMode);
+						modeChanged = true;
+					}
+				}
+			}
+			if (modeChanged) {
+				feature_model.setFeatures(features);
+				GeneralLoadView.getLoadView().createFeaturesTable();
+				GeneralLoadView.loadWholeRangeFeatures();
+				refreshTreeView();
+			}
+		}
+		catch (BackingStoreException x) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "could not load data store session");
+		}
 	}
 
 	@Override

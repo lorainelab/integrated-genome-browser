@@ -3,6 +3,7 @@ package com.affymetrix.igb.window.service.def;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -59,7 +60,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	private final HashMap<TabState, JMenuItem> move_tab_to_window_items;
 	private final HashMap<TabState, JMenuItem> move_tabbed_panel_to_window_items;
 	private JMenu tabs_menu;
-	private JFrame frm;
+	private JFrame frame;
 	private Map<TabState, TabHolder> tabHolders;
 	private Map<IGBTabPanel, JMenu> tabMenus;
 	private Map<JMenu, Integer> tabMenuPositions;
@@ -80,10 +81,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
 	@Override
 	public void setMainFrame(JFrame jFrame) {
-		frm = jFrame;
-		cpane = frm.getContentPane();
+		frame = jFrame;
+		cpane = frame.getContentPane();
 		cpane.setLayout(new BorderLayout());
-		frm.addComponentListener(new ComponentListener()
+		frame.addComponentListener(new ComponentListener()
 		{
 				@Override
 		        public void componentResized(ComponentEvent evt) {
@@ -191,7 +192,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	 */
 	private void saveWindowLocations() {
 		// Save the main window location
-		PreferenceUtils.saveWindowLocation(frm, "main window");
+		PreferenceUtils.saveWindowLocation(frame, "main window");
 
 		for (TabHolder tabHolder : tabHolders.values()) {
 			tabHolder.close();
@@ -248,7 +249,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		if (embeddedTabCount == EMBEDDED_TAB_COUNT_TOTAL) {
 			SwingUtilities.invokeLater(new Runnable(){
 				public void run(){
-					frm.setVisible(true);
+					frame.setVisible(true);
 				}
 			});
 		}
@@ -319,6 +320,26 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 	@Override
 	public void shutdown() {
 		saveWindowLocations();
+	}
+
+	@Override
+	public void saveState() {
+		saveWindowLocations();
+	}
+
+	@Override
+	public void restoreState() {
+		Rectangle pos = PreferenceUtils.retrieveWindowLocation("main window", frame.getBounds());
+		if (pos != null) {
+			PreferenceUtils.setWindowSize(frame, pos);
+		}
+		for (IGBTabPanel tabPanel : new HashSet<IGBTabPanel>(getPlugins())) {
+			setTabState(tabPanel, TabState.valueOf(PreferenceUtils.getComponentState(tabPanel.getName())));
+		}
+		for (TabState tabState : tabHolders.keySet()) {
+			TabHolder tabHolder = tabHolders.get(tabState);
+			tabHolder.restoreState();
+		}
 	}
 
 	@Override

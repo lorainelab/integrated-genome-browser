@@ -103,6 +103,7 @@ public final class IGB extends Application
 		super();
 		stopRoutines = new HashSet<IStopRoutine>();
 	}
+
 	public SeqMapView getMapView() {
 		return map_view;
 	}
@@ -406,6 +407,8 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportWholeFrameAction()), export_to_file_menu.getText());
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PreferencesAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new SaveSessionAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadSessionAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new ExitAction()));
 	}
@@ -487,12 +490,20 @@ public final class IGB extends Application
 		return hit_count;
 	}
 
+	public IWindowService getWindowService() {
+		return windowService;
+	}
+
 	public JMenu getViewMenu() {
 		return view_menu;
 	}
 
 	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {
 		windowService.setTabStateAndMenu(igbTabPanel, tabState);
+	}
+
+	public Set<IGBTabPanel> getTabs() {
+		return windowService.getPlugins();
 	}
 
 	public JComponent getView(String viewName) {

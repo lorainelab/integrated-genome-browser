@@ -29,6 +29,10 @@ public interface TabHolder {
 	 */
 	public IGBTabPanel getSelectedIGBTabPanel();
 	/**
+	 * restore the state from the saved Preferences
+	 */
+	public void restoreState();
+	/**
 	 * resize the holder (only appropriate for trays)
 	 */
 	public void resize();

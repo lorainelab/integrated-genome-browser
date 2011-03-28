@@ -20,6 +20,14 @@ public interface IWindowService {
 	 */
 	public void shutdown();
 	/**
+	 * save the state of the window
+	 */
+	public void saveState();
+	/**
+	 * restore the state of the window
+	 */
+	public void restoreState();
+	/**
 	 * pass in the main frame of the application (JFrame for Swing)
 	 * @param jFrame the main frame of the application
 	 */

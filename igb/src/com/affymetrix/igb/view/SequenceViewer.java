@@ -264,7 +264,8 @@ public class SequenceViewer extends JPanel
 			this.caluclateCdsStartEnd();
 			this.addCdsStartEnd(residues_sym);
 			isGenomicRequest = false;
-			title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
+			//title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
+			title = id + " : " + version + " : " + this.aseq;
 		} else {
 			isGenomicRequest = true;
 			title = "Genomic Sequence : " + version + " : " + this.aseq + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);

@@ -281,11 +281,9 @@ public class TrackView {
 
 		String method = tg.getAnnotStyle().getMethodName();
 
+		deleteDependentData(method, seq);
 		if(feature != null){
 			feature.deleteSymsOnSeq(method, seq);
-			deleteDependentData(method, seq);
-		}else{
-			seq.removeAnnotation(seq.getAnnotation(method));
 		}
 	}
 
@@ -293,7 +291,8 @@ public class TrackView {
 		DependentData dd = null;
 		for (int i = 0; i < dependent_list.size(); i++) {
 			dd = dependent_list.get(i);
-			if (method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod())) {
+			if ((method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod()))
+					|| method.equals(dd.getID())) {
 				dependent_list.remove(dd);
 				seq.removeAnnotation(dd.getSym());
 			}

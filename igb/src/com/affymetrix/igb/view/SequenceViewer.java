@@ -324,6 +324,10 @@ public class SequenceViewer extends JPanel
 			seqStart = spans[spans.length - 1].getMin();
 			seqEnd = spans[0].getMax();
 		}
+		for(int j=0; j < spans.length;j++){
+			System.out.println("spans "+j+"start "+spans[j].getStart()+"end "+spans[j].getEnd());
+			System.out.println("spans "+j+"min "+spans[j].getMin()+"max "+spans[j].getMax());
+		}
 		if (spans.length > 1) {
 			if (spans[0].getStart() > spans[0].getEnd()) {
 				SeqSpan[] spans_duplicate = new SeqSpan[spans.length];
@@ -332,6 +336,10 @@ public class SequenceViewer extends JPanel
 				}
 				spans = spans_duplicate;
 			}
+			for(int j=0; j < spans.length;j++){
+			System.out.println("spans "+j+"start "+spans[j].getStart()+"end "+spans[j].getEnd());
+			System.out.println("spans "+j+"min "+spans[j].getMin()+"max "+spans[j].getMax());
+		}
 			intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
 //				System.out.println("intron array[0] "+intronArray[0]);
 
@@ -416,7 +424,7 @@ public class SequenceViewer extends JPanel
 				int i = 0;
 				seqSpans = new SeqSpan[numberOfChild];
 				while (i < numberOfChild) {
-					seqSpans[i] = residues_sym.getChild(i).getSpan(0);
+					seqSpans[i] = residues_sym.getChild(i).getSpan(aseq);
 					i++;
 				}
 			} else {
@@ -480,7 +488,7 @@ public class SequenceViewer extends JPanel
 	ButtonGroup bg = new ButtonGroup();
 	JToggleButton showcDNAButton = new JToggleButton("Show cDNA");
 	JToggleButton reverseColorsButton = new JToggleButton("Change color scheme");
-	JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
+	JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Complement");
 	JCheckBoxMenuItem transOneCBMenuItem = new JCheckBoxMenuItem(" +1 Translation");
 	JCheckBoxMenuItem transTwoCBMenuItem = new JCheckBoxMenuItem(" +2 Translation");
 	JCheckBoxMenuItem transThreeCBMenuItem = new JCheckBoxMenuItem(" +3 Translation");
@@ -590,8 +598,9 @@ public class SequenceViewer extends JPanel
 		if (theItem == compCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
 			boolean showRevComp = mi.getState();
-			seqview.setRevShow(NeoSeq.COMPLEMENT, showRevComp);
-			seqview.setRevShow(NeoSeq.NUCLEOTIDES, !showRevComp);
+			seqview.setShow(NeoSeq.COMPLEMENT, mi.getState());
+//			seqview.setRevShow(NeoSeq.COMPLEMENT, showRevComp);
+//			seqview.setRevShow(NeoSeq.NUCLEOTIDES, !showRevComp);
 			seqview.updateWidget();
 		} else if (theItem == transOneCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;

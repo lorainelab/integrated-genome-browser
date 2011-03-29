@@ -61,7 +61,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 		Runnable r = new Runnable() {
 
 			public void run() {
-				new SimpleBookmarkServer(null);
+				new SimpleBookmarkServer(igbService);
 			}
 		};
 

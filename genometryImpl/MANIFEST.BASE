@@ -5,7 +5,6 @@ Bundle-SymbolicName: com.affymetrix.igb.genometry
 Bundle-Description: genometry
 Bundle-Vendor: Affymetrix, Inc.
 Bundle-Version: @appVersion@
-Bundle-Activator: com.affymetrix.genometryImpl.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 IGB-Tier: 1

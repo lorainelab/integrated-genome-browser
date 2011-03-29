@@ -15,6 +15,8 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -30,6 +32,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -69,7 +72,9 @@ public final class BookmarkUnibrowControlServlet {
 
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
-
+	private static final String FILE_URL_PREFIX = "file:/";
+	private static final String ENC = "UTF-8";
+	
 	/** Convenience method for retrieving a String parameter from a parameter map
 	 *  of an HttpServletRequest.
 	 *  @param map Should be a Map, such as from {@link javax.servlet.ServletRequest#getParameterMap()},
@@ -91,6 +96,15 @@ public final class BookmarkUnibrowControlServlet {
 			return o.toString();
 		}
 		return null;
+	}
+
+	private boolean hasLocalFile(GenericServer[] gServers) {
+		for (GenericServer gServer : gServers) {
+			if (gServer.serverType == ServerType.LocalFiles) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** Loads a bookmark.
@@ -152,6 +166,17 @@ public final class BookmarkUnibrowControlServlet {
 			loaddas2data = false;
 		} else {
 			gServers2 = loadServers(das2_server_urls);
+		}
+
+		if (hasLocalFile(gServers)) {
+			try {
+			for (String query_url : query_urls) {
+				if (query_url.startsWith(FILE_URL_PREFIX)) {
+					uni.openDataFile(URLDecoder.decode(query_url.substring(FILE_URL_PREFIX.length()), ENC));
+				}
+			}
+			}
+			catch (UnsupportedEncodingException x) {}
 		}
 
 		final BioSeq seq = goToBookmark(uni, seqid, version, start, end);

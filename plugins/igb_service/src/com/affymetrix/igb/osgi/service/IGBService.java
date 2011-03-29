@@ -201,6 +201,12 @@ public interface IGBService {
 	 * @return the main JFrame for the IGB instance
 	 */
 	public JFrame getFrame();
+	// for Bookmark
+	/**
+	 * open a data file on the local hard disk
+	 * @param filePath the full path and file name of the data file
+	 */
+	public void openDataFile(String filePath);
 	/**
 	 * get the load directory, where to find local files to
 	 * be loaded

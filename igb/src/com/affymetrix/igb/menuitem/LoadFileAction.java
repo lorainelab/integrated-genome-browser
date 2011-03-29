@@ -452,7 +452,7 @@ public final class LoadFileAction extends AbstractAction {
 		}
 	}
 
-	private static void openFileAction(JFrame gviewerFrame, File f){
+	public static void openFileAction(JFrame gviewerFrame, File f){
 		URI uri = f.toURI();
 		if(!openURI(uri)){
 			ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName(), null);			

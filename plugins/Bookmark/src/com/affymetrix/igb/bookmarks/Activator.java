@@ -35,13 +35,15 @@ public class Activator extends WindowActivator implements BundleActivator {
 				goToBookmark(url);
 			}
 		}
+		// add to main file menu
 		JMenu file_menu = igbService.getFileMenu();
-		JMenu bookmark_menu = MenuUtil.getMenu(BookmarkManagerView.BUNDLE.getString("bookmarksMenu"));
-		bookmark_menu.setMnemonic(BookmarkManagerView.BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		int count = file_menu.getMenuComponentCount();
 		// assumes last file menu items are separator and close
 		MenuUtil.insertIntoMenu(file_menu, new JMenuItem(new SaveSessionAction(igbService)), count - 2);
 		MenuUtil.insertIntoMenu(file_menu, new JMenuItem(new LoadSessionAction(igbService)), count - 2);
+		// add main bookmark menu
+		JMenu bookmark_menu = MenuUtil.getMenu(BookmarkManagerView.BUNDLE.getString("bookmarksMenu"));
+		bookmark_menu.setMnemonic(BookmarkManagerView.BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		bmark_action = new BookMarkAction(igbService, (SeqMapView)igbService.getMapView(), bookmark_menu);
 		igbService.addStopRoutine(
 			new IStopRoutine() {

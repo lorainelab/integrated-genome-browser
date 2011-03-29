@@ -736,6 +736,7 @@ public final class GeneralLoadUtils {
 		switch (feature.gVersion.gServer.serverType) {
 			case DAS2:
 				for (SeqSpan optimized_span : optimized_spans) {
+					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 					if (!Das2.loadFeatures(optimized_span, feature)) {
 						result = false; // don't short-circuit!
 					}
@@ -746,6 +747,7 @@ public final class GeneralLoadUtils {
 			case QuickLoad:
 			case LocalFiles:
 				for (SeqSpan optimized_span : optimized_spans) {
+					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 					if (!((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) {
 						result = false; // don't short-circuit!
 					}

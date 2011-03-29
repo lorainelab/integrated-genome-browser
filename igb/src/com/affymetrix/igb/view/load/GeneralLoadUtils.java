@@ -577,7 +577,11 @@ public final class GeneralLoadUtils {
 
 	protected static void bufferDataForAutoload(){
 		SeqSpan visible = gviewer.getVisibleSpan();
-		BioSeq seq = visible.getBioSeq();
+		BioSeq seq = gmodel.getSelectedSeq();
+		
+		if(visible == null || seq == null)
+			return;
+		
 		int length = visible.getLength();
 		int min = visible.getMin();
 		int max = visible.getMax();

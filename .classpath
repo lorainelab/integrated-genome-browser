@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="debug/src"/>
 	<classpathentry kind="src" path="das2_server/src"/>
+	<classpathentry kind="src" path="common/src"/>
+	<classpathentry kind="src" path="protannot/src"/>
+	<classpathentry kind="src" path="genoviz_sdk/src"/>
+	<classpathentry kind="src" path="genometryImpl/src"/>
+	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="igb/src"/>
+	<classpathentry kind="src" path="igb-i18n/src"/>
+	<classpathentry kind="src" path="plugins/igb_service/src"/>
+	<classpathentry kind="src" path="plugins/SelectionInfo/src"/>
+	<classpathentry kind="src" path="plugins/RestrictionSites/src"/>
+	<classpathentry kind="src" path="plugins/SearchView/src"/>
+	<classpathentry kind="src" path="plugins/plugins_page/src"/>
+	<classpathentry kind="src" path="plugins/PropertyView/src"/>
+	<classpathentry kind="src" path="plugins/GraphAdjuster/src"/>
+	<classpathentry kind="src" path="plugins/ExternalView/src"/>
+	<classpathentry kind="src" path="plugins/Bookmark/src"/>
+	<classpathentry kind="src" path="plugins/window_service/src"/>
+	<classpathentry kind="src" path="plugins/window_service_def/src"/>
+	<classpathentry kind="src" path="common/resources"/>
+	<classpathentry kind="src" path="main/resources"/>
 	<classpathentry kind="src" path="igb/resources"/>
 	<classpathentry kind="src" path="plugins/GraphAdjuster/resources"/>
 	<classpathentry kind="src" path="plugins/window_service/resources"/>
@@ -10,29 +32,8 @@
 	<classpathentry kind="src" path="plugins/plugins_page/resources"/>
 	<classpathentry kind="src" path="plugins/PropertyView/resources"/>
 	<classpathentry kind="src" path="plugins/RestrictionSites/resources"/>
-	<classpathentry kind="src" path="plugins/SelectionInfo/src"/>
-	<classpathentry kind="src" path="plugins/RestrictionSites/src"/>
-	<classpathentry kind="src" path="plugins/SearchView/src"/>
-	<classpathentry kind="src" path="plugins/plugins_page/src"/>
 	<classpathentry kind="src" path="plugins/SelectionInfo/resources"/>
 	<classpathentry kind="src" path="plugins/SearchView/resources"/>
-	<classpathentry kind="src" path="plugins/PropertyView/src"/>
-	<classpathentry kind="src" path="plugins/GraphAdjuster/src"/>
-	<classpathentry kind="src" path="plugins/ExternalView/src"/>
-	<classpathentry kind="src" path="plugins/Bookmark/src"/>
-	<classpathentry kind="src" path="debug/src"/>
-	<classpathentry kind="src" path="plugins/window_service_def/src"/>
-	<classpathentry kind="src" path="common/resources"/>
-	<classpathentry kind="src" path="main/resources"/>
-	<classpathentry kind="src" path="plugins/window_service/src"/>
-	<classpathentry kind="src" path="common/src"/>
-	<classpathentry kind="src" path="protannot/src"/>
-	<classpathentry kind="src" path="genoviz_sdk/src"/>
-	<classpathentry kind="src" path="genometryImpl/src"/>
-	<classpathentry kind="src" path="main/src"/>
-	<classpathentry kind="src" path="igb/src"/>
-	<classpathentry kind="src" path="igb-i18n/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="ext/affx_fusion.jar"/>
 	<classpathentry kind="lib" path="ext/antlr-2.7.6rc1.jar"/>
 	<classpathentry kind="lib" path="ext/asm-attrs.jar"/>
@@ -66,12 +67,5 @@
 	<classpathentry kind="lib" path="ext/org.apache.felix.log-1.0.0.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>
-	<classpathentry kind="lib" path="das2_server/build"/>
-	<classpathentry kind="lib" path="dist/das2server.jar" sourcepath="das2_server/src"/>
-	<classpathentry kind="lib" path="dist/genometry.jar"/>
-	<classpathentry kind="lib" path="dist/genoviz.jar"/>
-	<classpathentry kind="lib" path="dist/plugins_page.jar"/>
-	<classpathentry kind="lib" path="dist/RestrictionSites.jar"/>
-	<classpathentry kind="lib" path="dist/igb_service.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

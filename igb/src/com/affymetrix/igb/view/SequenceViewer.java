@@ -84,6 +84,7 @@ public class SequenceViewer extends JPanel
 	private boolean colorSwitch = false;
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
+	private boolean cdsFound = false;
 	Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
 	Color[] reverseColors = {Color.WHITE, Color.BLUE, Color.BLACK};
 	Color[] okayColors = {Color.black, Color.black};
@@ -249,6 +250,7 @@ public class SequenceViewer extends JPanel
 				} else if (key.equals("cds max")) {
 					cdsMax = Integer.parseInt(value);
 				} else if (key.equals("cds min")) {
+					cdsFound = true;
 					cdsMin = Integer.parseInt(value);
 				}
 			}
@@ -294,14 +296,14 @@ public class SequenceViewer extends JPanel
 
 	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
 		if (showcDNASwitch) {
-			if(seqview.getResidues().length() > cdsMinDNAonly)
+			if(seqview.getResidues().length() > cdsMinDNAonly && cdsMinDNAonly>=0 && cdsFound)
 			seqview.addOutlineAnnotation(cdsMinDNAonly, cdsMinDNAonly + 2, Color.green);
-			if(seqview.getResidues().length() > cdsMaxDNAonly)
+			if(seqview.getResidues().length() > cdsMaxDNAonly && cdsMaxDNAonly>=0 && cdsFound)
 			seqview.addOutlineAnnotation(cdsMaxDNAonly, cdsMaxDNAonly + 2, Color.red);
 		} else {
-					if(seqview.getResidues().length() > cdsMin)
+					if(seqview.getResidues().length() > cdsMin && cdsMin >= 0 && cdsFound)
 			seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
-					if(seqview.getResidues().length() > cdsMax)
+					if(seqview.getResidues().length() > cdsMax && cdsMax >= 0 && cdsFound)
 			seqview.addOutlineAnnotation(cdsMax, cdsMax + 2, Color.red);
 		}
 	}

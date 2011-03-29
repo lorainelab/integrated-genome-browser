@@ -1044,7 +1044,9 @@ public class SeqMapView extends JPanel
 	final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
+		if(!getSelectedSyms().isEmpty()){
 		ViewGenomicSequenceInSeqViewerAction.getAction().setEnabled(!getSelectedSyms().isEmpty());
+		}
 	}
 
 

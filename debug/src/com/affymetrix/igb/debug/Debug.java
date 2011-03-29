@@ -19,7 +19,6 @@ public class Debug {
 		activators.add(new com.affymetrix.igb.property.Activator());
 		activators.add(new com.affymetrix.igb.restrictions.Activator());
 		activators.add(new com.affymetrix.igb.search.Activator());
-		activators.add(new com.affymetrix.genometryImpl.Activator());
 	}
 	/**
 	 * Start the program.

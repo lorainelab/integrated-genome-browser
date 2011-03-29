@@ -166,6 +166,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public JMenu getFileMenu() {
+		IGB igb = (IGB)IGB.getSingleton();
+		return igb.getFileMenu();
+	}
+
+	@Override
 	public JMenu getViewMenu() {
 		IGB igb = (IGB)IGB.getSingleton();
 		return igb.getViewMenu();
@@ -291,6 +297,25 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public void openDataFile(String filePath) {
 		LoadFileAction.openFileAction(getFrame(), new File(filePath));
+	}
+
+	@Override
+	public void saveState() {
+		((IGB)IGB.getSingleton()).getWindowService().saveState();
+		((SeqMapView)getMapView()).saveSession();
+		for (IGBTabPanel panel : ((IGB)Application.getSingleton()).getTabs()) {
+			panel.saveSession();
+		}
+	}
+
+	@Override
+	public void loadState() {
+		((IGB)IGB.getSingleton()).getWindowService().restoreState();
+		SeqMapView mapView = Application.getSingleton().getMapView();
+		mapView.loadSession();
+		for (IGBTabPanel panel : ((IGB)Application.getSingleton()).getTabs()) {
+			panel.loadSession();
+		}
 	}
 
 	@Override

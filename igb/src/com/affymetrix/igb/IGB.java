@@ -407,8 +407,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportWholeFrameAction()), export_to_file_menu.getText());
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PreferencesAction()));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(new SaveSessionAction()));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadSessionAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new ExitAction()));
 	}
@@ -492,6 +490,10 @@ public final class IGB extends Application
 
 	public IWindowService getWindowService() {
 		return windowService;
+	}
+
+	public JMenu getFileMenu() {
+		return file_menu;
 	}
 
 	public JMenu getViewMenu() {

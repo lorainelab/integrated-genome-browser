@@ -54,10 +54,6 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		this.fireTableDataChanged();
 	}
 
-	List<GenericFeature> getFeatures() {
-		return features;
-	}
-
 	void setFeatures(List<GenericFeature> features) {
 		this.features = features;
 		this.fireTableDataChanged();

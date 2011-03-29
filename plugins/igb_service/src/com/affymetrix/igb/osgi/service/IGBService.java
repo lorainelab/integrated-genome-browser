@@ -84,6 +84,11 @@ public interface IGBService {
 	 */
 	public int getTier(Bundle bundle);
 	/**
+	 * get the file menu of the application
+	 * @return the file menu of the IGB application
+	 */
+	public JMenu getFileMenu();
+	/**
 	 * get the view menu of the application
 	 * @return the view menu of the IGB application
 	 */
@@ -207,6 +212,14 @@ public interface IGBService {
 	 * @param filePath the full path and file name of the data file
 	 */
 	public void openDataFile(String filePath);
+	/**
+	 * save the current state of the application
+	 */
+	public void saveState();
+	/**
+	 * load the current state of the application
+	 */
+	public void loadState();
 	/**
 	 * get the load directory, where to find local files to
 	 * be loaded

@@ -1,9 +1,9 @@
 package com.affymetrix.igb.bookmarks;
 
 import java.net.MalformedURLException;
-import java.util.ResourceBundle;
 
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
 import org.osgi.framework.BundleActivator;
@@ -23,7 +23,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
 		this.igbService = igbService;
-		ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 		// Need to let the QuickLoad system get started-up before starting
 		//   the control server that listens to ping requests?
 		// Therefore start listening for http requests only after all set-up is done.
@@ -36,8 +35,13 @@ public class Activator extends WindowActivator implements BundleActivator {
 				goToBookmark(url);
 			}
 		}
-		JMenu bookmark_menu = MenuUtil.getMenu(BUNDLE.getString("bookmarksMenu"));
-		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
+		JMenu file_menu = igbService.getFileMenu();
+		JMenu bookmark_menu = MenuUtil.getMenu(BookmarkManagerView.BUNDLE.getString("bookmarksMenu"));
+		bookmark_menu.setMnemonic(BookmarkManagerView.BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
+		int count = file_menu.getMenuComponentCount();
+		// assumes last file menu items are separator and close
+		MenuUtil.insertIntoMenu(file_menu, new JMenuItem(new SaveSessionAction(igbService)), count - 2);
+		MenuUtil.insertIntoMenu(file_menu, new JMenuItem(new LoadSessionAction(igbService)), count - 2);
 		bmark_action = new BookMarkAction(igbService, (SeqMapView)igbService.getMapView(), bookmark_menu);
 		igbService.addStopRoutine(
 			new IStopRoutine() {

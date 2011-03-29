@@ -55,6 +55,9 @@ public final class GenericFeature {
 	// Requests that have been made for this feature (to avoid overlaps)
 	private final MutableSeqSymmetry requestSym = new SimpleMutableSeqSymmetry();
 	
+	// Request that are currently going on. (To avoid parsing more than once)
+	private final MutableSeqSymmetry currentRequestSym = new SimpleMutableSeqSymmetry();
+	
 	/**
 	 * @param featureName
 	 * @param featureProps
@@ -224,6 +227,7 @@ public final class GenericFeature {
 		query_sym.addSpan(span);
 
 		SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, requestSym, span.getBioSeq());
+		optimized_sym = SeqUtils.exclusive(optimized_sym, currentRequestSym, span.getBioSeq());
 		if (SeqUtils.hasSpan(optimized_sym)) {
 			return optimized_sym;
 		}
@@ -238,6 +242,22 @@ public final class GenericFeature {
 		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
 		query_sym.addSpan(span);
 		requestSym.addChild(query_sym);
+		removeCurrentRequest(span);
+	}
+
+	private final void removeCurrentRequest(SeqSpan span){
+		for(int i=0; i<currentRequestSym.getChildCount(); i++){
+			SeqSymmetry sym = currentRequestSym.getChild(i);
+			if(span == sym.getSpan(span.getBioSeq())){
+				currentRequestSym.removeChild(sym);
+			}
+		}
+	}
+
+	public void addLoadingSpanRequest(SeqSpan span){
+		MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();
+		query_sym.addSpan(span);
+		currentRequestSym.addChild(query_sym);
 	}
 
 	public MutableSeqSymmetry getRequestSym(){

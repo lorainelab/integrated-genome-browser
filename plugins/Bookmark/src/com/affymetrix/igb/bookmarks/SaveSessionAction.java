@@ -1,6 +1,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -8,6 +9,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 
 import javax.swing.AbstractAction;
@@ -33,6 +35,8 @@ public class SaveSessionAction extends AbstractAction {
 			try {
 				File f = chooser.getSelectedFile();
 				igbService.saveState();
+				Bookmark bookmark = BookmarkController.getCurrentBookmark(true, (SeqMapView)igbService.getMapView());
+				PreferenceUtils.getSessionPrefsNode().put("bookmark", URLEncoder.encode(bookmark.getURL().toString(), Bookmark.ENC));
 				PreferenceUtils.exportPreferences(PreferenceUtils.getTopNode(), f);
 				PreferenceUtils.getSessionPrefsNode().removeNode();
 			}

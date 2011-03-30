@@ -14,8 +14,6 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.MenuUtil;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.*;
@@ -25,9 +23,6 @@ import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.MenuListener;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.view.SeqMapView;
@@ -38,8 +33,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 
 public final class BookMarkAction implements ActionListener, MenuListener {
-  private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-  private final static boolean DEBUG = false;
+   private final static boolean DEBUG = false;
 
   private final JMenu bookmark_menu;
   private final JMenuItem add_pos_markMI;
@@ -371,44 +365,23 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   }
 
 	private void bookmarkCurrentPosition(boolean include_sym_and_props) {
-		BioSeq aseq = gmodel.getSelectedSeq();
-		if (aseq == null) {
+		if (include_sym_and_props && !BookmarkController.hasSymmetriesOrGraphs()){
+			ErrorHandler.errorPanel("Error: No Symmetries or graphs to bookmark.");
+			return;
+		}
+		Bookmark bookmark = null;
+		try {
+			bookmark = BookmarkController.getCurrentBookmark(include_sym_and_props, gviewer);
+		}
+	    catch (MalformedURLException m) {
+	    	ErrorHandler.errorPanel("Couldn't add bookmark", m);
+	    	return;
+	    }
+		if (bookmark == null) {
 			ErrorHandler.errorPanel("Error", "Nothing to bookmark");
 			return;
 		}
-
-		SeqSpan span = gviewer.getVisibleSpan();
-		SeqSpan mark_span = new SimpleSeqSpan(span.getStart(),span.getEnd(),aseq);
-
-		SimpleSymWithProps mark_sym = new BookmarkSymmetry();
-		mark_sym.addSpan(mark_span);
-
-		String version = "unknown";
-		version = aseq.getVersion();
-
-		String default_name =
-				version + ", " + aseq.getID() + ":" + mark_span.getMin() +
-				", " + mark_span.getMax();
-		mark_sym.setProperty(Bookmark.VERSION, version);
-		mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
-		mark_sym.setProperty(Bookmark.START, new Integer(mark_span.getMin()));
-		mark_sym.setProperty(Bookmark.END, new Integer(mark_span.getMax()));
-		mark_sym.setProperty(Bookmark.LOADRESIDUES, new String[] {Boolean.toString(aseq.isComplete())});
-
-		Bookmarks bookmark = new Bookmarks();
-
-		if (include_sym_and_props) {
-			BookmarkController.addSymmetries(bookmark);
-			BookmarkController.addProperties(mark_sym);
-		}
-
-		if(include_sym_and_props && bookmark.getSyms().isEmpty()){
-			ErrorHandler.errorPanel("Error: No Symmtries or graphs to bookmark.");
-			return;
-		}
-
-		bookmark.set(mark_sym);
-
+		String default_name = bookmark.getName();
 		String bookmark_name = (String) JOptionPane.showInputDialog(gviewer,
 				"Enter name for bookmark", "Input",
 				JOptionPane.PLAIN_MESSAGE, null, null, default_name);
@@ -423,33 +396,20 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 			if (DEBUG) {
 				System.out.println("bookmark name: " + bookmark_name);
 			}
-			addBookmark(mark_sym.getProperties(), bookmark_name);
+			bookmark.setName(bookmark_name);
+			addBookmark(bookmark);
 		}
 	}
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  private JMenuItem addBookmark(Map props, String name) {
-    return addBookmark(props, name, main_bookmark_list);
-  }
-
-  private JMenuItem addBookmark(Map<String,String[]> props, String name, BookmarkList bl) {
+  private JMenuItem addBookmark(Bookmark bm) {
     JMenuItem markMI = null;
-    JMenu parent_menu = (JMenu) component_hash.get(bl);
+    JMenu parent_menu = (JMenu) component_hash.get(main_bookmark_list);
     if (parent_menu == null) {
       ErrorHandler.errorPanel("Couldn't add bookmark. Lost reference to menu");
       return null;
     }
-    if (name == null || name.equals("")) {
-      ErrorHandler.errorPanel("A bookmark must have a name.");
-      return null;
-    } else try {
-      String url = Bookmark.constructURL(props);
-      Bookmark bm = new Bookmark(name, url);
-      addBookmarkMI(parent_menu, bm);
-      bl.addBookmark(bm);
-    } catch (MalformedURLException m) {
-      ErrorHandler.errorPanel("Couldn't add bookmark", m);
-    }
+    addBookmarkMI(parent_menu, bm);
+    main_bookmark_list.addBookmark(bm);
 
     updateBookmarkManager();
     return markMI;
@@ -478,16 +438,5 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   private void rebuildMenus() {
     removeAllBookmarkMenuItems();
     buildMenus(main_bm_menu, main_bookmark_list);
-  }
-
-  /** A simple extension of SimpleSymWithProps that uses a LinkedHashMap to
-   *  store the properties.  This ensures the bookmark properties will be
-   *  listed in a predictable order.
-   */
-  private static class BookmarkSymmetry extends SimpleSymWithProps {
-    public BookmarkSymmetry() {
-      super();
-      props = new LinkedHashMap<String,Object>();
-    }
   }
 }

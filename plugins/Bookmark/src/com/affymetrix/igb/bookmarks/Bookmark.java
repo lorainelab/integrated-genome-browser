@@ -26,7 +26,7 @@ import static com.affymetrix.igb.osgi.service.IGBService.UTF8;
  */
 public final class Bookmark implements Serializable {
   private static final long serialVersionUID = 1L;
-/** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
+  /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
   public static final String SEQID = "seqid";
   /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
   public static final String VERSION = "version";
@@ -43,6 +43,8 @@ public final class Bookmark implements Serializable {
   /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark,
       this one can occur 0,1, or more times in the URL of a UnibrowControlServlet bookmark. */
   public static final String DATA_URL = "data_url";
+  /** for URLEncode, URLDecode */
+  public static final String ENC = "UTF-8";
 
   public static final String DAS2_QUERY_URL = "das2_query";
   public static final String DAS2_SERVER_URL = "das2_server";

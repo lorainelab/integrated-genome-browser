@@ -8,6 +8,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.prefs.InvalidPreferencesFormatException;
 
@@ -35,6 +36,10 @@ public class LoadSessionAction extends AbstractAction {
 				File f = chooser.getSelectedFile();
 				PreferenceUtils.importPreferences(f);
 				igbService.loadState();
+				String url = URLDecoder.decode(PreferenceUtils.getSessionPrefsNode().get("bookmark", ""), Bookmark.ENC);
+				if (url != null) {
+			        BookmarkController.viewBookmark(igbService, new Bookmark(null, url));
+				}
 				PreferenceUtils.getSessionPrefsNode().removeNode();
 			}
 			catch (InvalidPreferencesFormatException ipfe) {

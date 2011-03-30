@@ -19,10 +19,12 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.awt.Color;
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
@@ -37,6 +39,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.view.SeqMapView;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -275,15 +278,17 @@ public abstract class BookmarkController {
 
   public static void addSymmetries(Bookmarks bookmark){
 	BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-	AnnotatedSeqGroup  group = seq.getSeqGroup();
-
-	for(GenericVersion version : group.getEnabledVersions()){
+	if (seq != null) {
+		AnnotatedSeqGroup  group = seq.getSeqGroup();
+	
+		for(GenericVersion version : group.getEnabledVersions()){
 			for( GenericFeature feature : version.getFeatures()){
 				if(feature.loadStrategy != LoadStrategy.NO_LOAD){
 					bookmark.add(feature, false);
 				}
 			}
 		}
+	}
   }
   
   public static void addProperties(SymWithProps mark_sym) {
@@ -430,4 +435,61 @@ public abstract class BookmarkController {
     s = "0x"+s;
     return s;
   }
+
+	/** A simple extension of SimpleSymWithProps that uses a LinkedHashMap to
+	 *  store the properties.  This ensures the bookmark properties will be
+	 *  listed in a predictable order.
+	 */
+	private static class BookmarkSymmetry extends SimpleSymWithProps {
+		public BookmarkSymmetry() {
+			super();
+			props = new LinkedHashMap<String,Object>();
+		}
+	}
+
+	public static Bookmark getCurrentBookmark(boolean include_sym_and_props, SeqMapView gviewer)
+		throws MalformedURLException {
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		BioSeq aseq = gmodel.getSelectedSeq();
+		if (aseq == null) {
+			return null;
+		}
+
+		SeqSpan span = gviewer.getVisibleSpan();
+		SeqSpan mark_span = new SimpleSeqSpan(span.getStart(),span.getEnd(),aseq);
+
+		SimpleSymWithProps mark_sym = new BookmarkSymmetry();
+		mark_sym.addSpan(mark_span);
+
+		String version = "unknown";
+		version = aseq.getVersion();
+
+		String default_name =
+				version + ", " + aseq.getID() + ":" + mark_span.getMin() +
+				", " + mark_span.getMax();
+		mark_sym.setProperty(Bookmark.VERSION, version);
+		mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
+		mark_sym.setProperty(Bookmark.START, new Integer(mark_span.getMin()));
+		mark_sym.setProperty(Bookmark.END, new Integer(mark_span.getMax()));
+		mark_sym.setProperty(Bookmark.LOADRESIDUES, new String[] {Boolean.toString(aseq.isComplete())});
+
+		Bookmarks bookmarks = new Bookmarks();
+
+		if (include_sym_and_props) {
+			BookmarkController.addSymmetries(bookmarks);
+			BookmarkController.addProperties(mark_sym);
+		}
+
+		bookmarks.set(mark_sym);
+		Map<?, ?> props = mark_sym.getProperties();
+	    @SuppressWarnings("unchecked")
+		String url = Bookmark.constructURL((Map<String,String[]>)props);
+	    return new Bookmark(default_name, url);
+	}
+
+	public static boolean hasSymmetriesOrGraphs() {
+		Bookmarks bookmarks = new Bookmarks();
+		BookmarkController.addSymmetries(bookmarks);
+		return !bookmarks.getSyms().isEmpty();
+	}
 }

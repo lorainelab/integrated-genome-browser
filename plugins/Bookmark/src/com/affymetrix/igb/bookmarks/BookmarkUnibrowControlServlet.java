@@ -73,7 +73,6 @@ public final class BookmarkUnibrowControlServlet {
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 	private static final String FILE_URL_PREFIX = "file:/";
-	private static final String ENC = "UTF-8";
 
 	/** Convenience method for retrieving a String parameter from a parameter map
 	 *  of an HttpServletRequest.
@@ -172,7 +171,7 @@ public final class BookmarkUnibrowControlServlet {
 			try {
 				for (String query_url : query_urls) {
 					if (query_url.startsWith(FILE_URL_PREFIX)) {
-						uni.openDataFile(URLDecoder.decode(query_url.substring(FILE_URL_PREFIX.length()), ENC));
+						uni.openDataFile(URLDecoder.decode(query_url.substring(FILE_URL_PREFIX.length()), Bookmark.ENC));
 					}
 				}
 			}

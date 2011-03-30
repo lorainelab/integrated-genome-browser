@@ -199,8 +199,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			// call out to handle rendering to indicate if any of the children of the
 			//    original annotation are completely outside the view
 			addChildren(insym, sym, the_style, annotseq, pglyph, map, coordseq);
-			handleAlignedResidueGlyphs(insym, annotseq, pglyph, map);
-			handleInsertionGlyphs(insym, annotseq, pglyph, map);
+			handleAlignedResidueGlyphs(insym, annotseq, pglyph, pspan, map);
+			handleInsertionGlyphs(insym, annotseq, pglyph, pspan, map);
 		} else {
 			// depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
 			pglyph = determineGlyph(child_glyph_class, parent_labelled_glyph_class, the_style, insym, the_tier, pspan, map, sym);
@@ -379,7 +379,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return DEFAULT_THIN_HEIGHT;
 	}
 
-	private static void handleAlignedResidueGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, AffyTieredMap map) {
+	private static void handleAlignedResidueGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, SeqSpan pspan, AffyTieredMap map) {
 		if (!(sym instanceof SymWithProps)) {
 			return;
 		}
@@ -391,16 +391,16 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		int childCount = sym.getChildCount();
 		if (childCount > 0) {
 			for (int i = 0; i < childCount; i++) {
-				setResidues(sym.getChild(i), annotseq, pglyph, parentSpan.getMin(), map, handleCigar, true);
+				setResidues(sym.getChild(i), annotseq, pglyph, parentSpan.getMin(), pspan, map, handleCigar, true);
 			}
 		} else {
-			setResidues(sym, annotseq, pglyph, parentSpan.getMin(), map, false, false);
+			setResidues(sym, annotseq, pglyph, parentSpan.getMin(), pspan, map, false, false);
 			// Note that pglyph is replaced here.
 			// don't need to process cigar, since entire residue string is used
 		}
 	}
 
-	private void handleInsertionGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, AffyTieredMap map)
+	private void handleInsertionGlyphs(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, SeqSpan pspan, AffyTieredMap map)
 			throws IllegalAccessException, InstantiationException {
 
 		if (!(sym instanceof BAMSym)) {
@@ -417,11 +417,11 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 			SeqSymmetry childsym = inssym.getInsChild(i);
 			SeqSpan ispan = childsym.getSpan(annotseq);
-
+	
 			InsertionSeqGlyph isg = new InsertionSeqGlyph();
 			isg.setSelectable(true);
 			isg.setResidues(inssym.getResidues(ispan.getMin()-1, ispan.getMin()+1));
-			isg.setCoords(ispan.getMin()-1, 0, 2, DEFAULT_THICK_HEIGHT);
+			isg.setCoords(pspan.getMin()-1, 0, 2, DEFAULT_THICK_HEIGHT);
 			isg.setColor(color);
 			
 			pglyph.addChild(isg);
@@ -439,7 +439,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param handleCigar - indicates whether we need to process the cigar element.
 	 * @return
 	 */
-	private static void setResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, int parentStart,  AffyTieredMap map, boolean handleCigar, boolean isChild) {
+	private static void setResidues(SeqSymmetry sym, BioSeq annotseq, GlyphI pglyph, int parentStart, SeqSpan pspan, AffyTieredMap map, boolean handleCigar, boolean isChild) {
 		SeqSpan span = sym.getSpan(annotseq);
 		if (span == null) {
 			return ;
@@ -471,7 +471,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				}
 			}
 			csg.setHitable(false);
-			csg.setCoords(span.getMin(), 0, span.getLengthDouble(), DEFAULT_THICK_HEIGHT);
+			csg.setCoords(pspan.getMin(), 0, pspan.getLength(), DEFAULT_THICK_HEIGHT);
 			map.setDataModelFromOriginalSym(csg, sym);
 			if (isChild) {
 				pglyph.addChild(csg);

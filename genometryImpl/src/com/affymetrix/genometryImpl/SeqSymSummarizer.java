@@ -40,7 +40,7 @@ public final class SeqSymSummarizer {
 
 		byte[] seq_residues = seq.getResidues(start, end).getBytes();
 		byte[] cur_residues;
-		byte ch;
+		byte ch, intron = "-".getBytes()[0];
 		int k, offset, cur_start, cur_end, length, y_offset = 0;
 
 		File index = MisMatchGraphSym.createEmptyIndexFile(id, range, start);
@@ -80,7 +80,7 @@ public final class SeqSymSummarizer {
 
 			for (int j = 0; j < length; j++) {
 				ch = cur_residues[j];
-				if (seq_residues[offset + j] == ch) {
+				if (seq_residues[offset + j] != ch && ch != intron) {
 					y[offset - y_offset + j] += 1;
 				}
 

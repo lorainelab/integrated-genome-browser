@@ -38,6 +38,11 @@ public class MisMatchGraphSym extends GraphSym {
 	
 	@Override
 	public Map<String, Object> getLocationProperties(int x, SeqSpan span){
+		float y = getYCoordFromX(x);
+		if (y < 0) {
+			return super.getLocationProperties(x, span);
+		}
+		
 		int leftBound = this.determineBegIndex(x);
 		if(span.getMax() - span.getMin() > BUFSIZE || leftBound < 0)
 			return super.getLocationProperties(x, span);

@@ -103,7 +103,7 @@ public final class GraphGlyph extends Glyph {
 	private static final double transition_scale = 500;
 	private static final double mismatch_transition_scale = 30;
 	byte residues[] = null;
-	ResidueColorHelper helper = null;
+//	ResidueColorHelper helper = null;
 
 	private Color lighter;
 	private Color darker;
@@ -170,7 +170,7 @@ public final class GraphGlyph extends Glyph {
 		}
 
 		if(graf instanceof MisMatchGraphSym){
-			helper = ResidueColorHelper.getColorHelper();
+//			helper = ResidueColorHelper.getColorHelper();
 			residues = graf.getGraphSeq().getResidues(graf.getMinXCoord(), graf.getMaxXCoord()).getBytes();
 		}
 		
@@ -404,9 +404,9 @@ public final class GraphGlyph extends Glyph {
 						g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 					}
 			} else if (graph_style == GraphType.FILL_BAR_GRAPH) {
-				if(helper != null){
-					g.setColor(helper.determineResidueColor((char)residues[i]));
-				}
+//				if(helper != null){
+//					g.setColor(helper.determineResidueColor((char)residues[i]));
+//				}
 
 				int ymin_pixel = Math.min(curr_point.y, zero_point.y);
 				int yheight_pixel = Math.abs(curr_point.y - zero_point.y);

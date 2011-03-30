@@ -54,7 +54,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
  *      annotations that can be loaded via QuickLoaderView
  *  If the currently loaded genome doesn't match the one requested, might
  *      ask the user before switching.
- * 
+ *
  * @version $Id: UnibrowControlServlet.java 7505 2011-02-10 20:27:35Z hiralv $
  *</pre>
  */
@@ -74,7 +74,7 @@ public final class BookmarkUnibrowControlServlet {
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 	private static final String FILE_URL_PREFIX = "file:/";
 	private static final String ENC = "UTF-8";
-	
+
 	/** Convenience method for retrieving a String parameter from a parameter map
 	 *  of an HttpServletRequest.
 	 *  @param map Should be a Map, such as from {@link javax.servlet.ServletRequest#getParameterMap()},
@@ -168,23 +168,23 @@ public final class BookmarkUnibrowControlServlet {
 			gServers2 = loadServers(das2_server_urls);
 		}
 
-		if (hasLocalFile(gServers)) {
+		if (loaddata && hasLocalFile(gServers)) {
 			try {
-			for (String query_url : query_urls) {
-				if (query_url.startsWith(FILE_URL_PREFIX)) {
-					uni.openDataFile(URLDecoder.decode(query_url.substring(FILE_URL_PREFIX.length()), ENC));
+				for (String query_url : query_urls) {
+					if (query_url.startsWith(FILE_URL_PREFIX)) {
+						uni.openDataFile(URLDecoder.decode(query_url.substring(FILE_URL_PREFIX.length()), ENC));
+					}
 				}
-			}
 			}
 			catch (UnsupportedEncodingException x) {}
 		}
 
 		final BioSeq seq = goToBookmark(uni, seqid, version, start, end);
-		
+
 		if (null == seq) {
 			return; /* user cancelled the change of genome, or something like that */
 		}
-	
+
 		if (loaddata) {
 			GenericFeature[] gFeatures = loadData(gServers, query_urls, start, end);
 
@@ -193,7 +193,7 @@ public final class BookmarkUnibrowControlServlet {
 
 				for (int i = 0; i < gFeatures.length; i++) {
 					final GenericFeature feature = gFeatures[i];
-					
+
 					if (graph_urls.contains(feature.getURI().toString())) {
 						ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
@@ -290,13 +290,13 @@ public final class BookmarkUnibrowControlServlet {
 			loadDataFromURLs(uni, data_urls, null, null);
 		}
 	}
-	
+
 	private GenericFeature[] loadData(final GenericServer[] gServers, final String[] query_urls, int start, int end){
 		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
 		for (int i = 0; i < query_urls.length; i++) {
 			gFeatures[i] = loadData(gServers[i], query_urls[i], start, end);
 		}
-		
+
 		GeneralLoadView.getLoadView().refreshTreeView();
 		GeneralLoadView.getLoadView().createFeaturesTable();
 
@@ -326,7 +326,7 @@ public final class BookmarkUnibrowControlServlet {
 
 		return feature;
 	}
-	
+
 	private GenericServer[] loadServers(String[] server_urls){
 		GenericServer[] gServers = new GenericServer[server_urls.length];
 
@@ -334,7 +334,7 @@ public final class BookmarkUnibrowControlServlet {
 			String server_url = server_urls[i];
 			gServers[i] = UnibrowControlServlet.getInstance().loadServer(server_url);
 		}
-		
+
 		return gServers;
 	}
 
@@ -410,7 +410,7 @@ public final class BookmarkUnibrowControlServlet {
 			}
 		}
 		UnibrowControlServlet.getInstance().setRegion((SeqMapView)uni.getMapView(), start, end, book_seq);
-		
+
 		return book_seq;
 	}
 

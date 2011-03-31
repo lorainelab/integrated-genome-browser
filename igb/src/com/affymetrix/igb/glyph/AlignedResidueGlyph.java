@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.symloader.BAM;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 
 
 /**
@@ -35,7 +36,7 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
 	private final BitSet residueMask = new BitSet();
-	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
+	private static final Font mono_default_font = NeoConstants.default_bold_font;
 	
 	// default to true for backward compatability
 	private boolean hitable = true;

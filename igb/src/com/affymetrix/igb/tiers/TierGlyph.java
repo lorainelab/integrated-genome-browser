@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import java.awt.Color;
 import java.awt.Font;
@@ -67,7 +68,7 @@ public class TierGlyph extends SolidGlyph {
 	 */
 	private Color other_fill_color = null;
 	private String label = null;
-	private static final Font default_font = new Font("Monospaced", Font.PLAIN, 12);
+	private static final Font default_font = NeoConstants.default_plain_font;
 	private FasterExpandPacker expand_packer = new FasterExpandPacker();
 	private CollapsePacker collapse_packer = new CollapsePacker();
 	private List<GlyphI> max_child_sofar = null;

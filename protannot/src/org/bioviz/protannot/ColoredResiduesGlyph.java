@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -23,7 +24,7 @@ class ColoredResiduesGlyph extends SequenceGlyph {
     private SearchableCharIterator chariter;
     private boolean residuesSet = false;
     private int residue_length = 0;
-    private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
+    private static final Font mono_default_font = NeoConstants.default_bold_font;
     // default to true for backward compatability
     protected boolean hitable = true;
 	private final boolean drawRect;

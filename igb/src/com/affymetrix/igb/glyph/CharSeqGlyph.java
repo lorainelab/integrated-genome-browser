@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 
 import com.affymetrix.igb.IGBConstants;
 
@@ -44,7 +45,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 		 {
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
-	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
+	private static final Font mono_default_font = NeoConstants.default_bold_font;
 
 	// default to true for backward compatability
 	private boolean hitable = true;

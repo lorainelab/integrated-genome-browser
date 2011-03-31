@@ -20,8 +20,10 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.WindowActivator;
 
+import com.affymetrix.igb.graph.operator.*;
 public class Activator extends WindowActivator implements BundleActivator {
-	private static final String SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
+	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
+	private static final String OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
 
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
@@ -44,12 +46,31 @@ public class Activator extends WindowActivator implements BundleActivator {
 						}
 					}
 				}
-			, SERVICE_FILTER);
+			, TRANSFORMER_SERVICE_FILTER);
+			bundleContext.addServiceListener(
+				new ServiceListener() {
+					@Override
+					public void serviceChanged(ServiceEvent event) {
+						Set<GraphOperator> graphOperators = new HashSet<GraphOperator>();
+						try {
+							ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(GraphOperator.class.getName(), null);
+							for (ServiceReference serviceReference : serviceReferences) {
+								graphOperators.add((GraphOperator)bundleContext.getService(serviceReference));
+							}
+							simpleGraphTab.getAdvancedPanel().loadOperators(graphOperators);
+						}
+						catch (InvalidSyntaxException x) {
+							Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading GraphOperators 1", x.getMessage());
+						}
+					}
+				}
+			, OPERATOR_SERVICE_FILTER);
 		}
 		catch (InvalidSyntaxException x) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading FloatTransforms 2", x.getMessage());
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading 2", x.getMessage());
 		}
 		initTransformers();
+		initOperators();
 		return simpleGraphTab;
 	}
 
@@ -63,6 +84,17 @@ public class Activator extends WindowActivator implements BundleActivator {
 		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(10.0), new Properties());
 		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(Math.E), new Properties());
 		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(), new Properties());
+	}
+
+	private void initOperators() {
+		bundleContext.registerService(GraphOperator.class.getName(), new DiffOperator(), new Properties());
+		bundleContext.registerService(GraphOperator.class.getName(), new ProductOperator(), new Properties());
+		bundleContext.registerService(GraphOperator.class.getName(), new RatioOperator(), new Properties());
+		bundleContext.registerService(GraphOperator.class.getName(), new SumOperator(), new Properties());
+		bundleContext.registerService(GraphOperator.class.getName(), new MinOperator(), new Properties());
+		bundleContext.registerService(GraphOperator.class.getName(), new MaxOperator(), new Properties());
+		bundleContext.registerService(GraphOperator.class.getName(), new MeanOperator(), new Properties());
+		bundleContext.registerService(GraphOperator.class.getName(), new MedianOperator(), new Properties());
 	}
 }
 

@@ -43,24 +43,24 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 
+import com.affymetrix.igb.graph.operator.GraphOperator;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 
 public final class SimpleGraphTab extends IGBTabPanel
@@ -76,8 +76,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 	GraphScoreThreshSetter score_thresh_adjuster;
 	GraphVisibleBoundsSetter vis_bounds_setter;
 
-	// Whether to use this tab or not
-	public static boolean USE_SIMPLE_GRAPH_TAB = true;
 	boolean DEBUG_EVENTS = false;
 	JLabel selected_graphs_label = new JLabel(BUNDLE.getString("selectedGraphsLabel"));
 	JRadioButton mmavgB = new JRadioButton(BUNDLE.getString("minMaxAvgButton"));
@@ -94,11 +92,13 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final	List<GraphSym> grafs = new ArrayList<GraphSym>();
 	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
-	private static final String select2graphs= "Select exactly two graphs";
+	private final JButton transformationGoB = new JButton(BUNDLE.getString("goButton"));
+	private final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
+	private final JComboBox transformationCB = new JComboBoxWithSingleListener();
+	private final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
+	private final JComboBox operationCB = new JComboBoxWithSingleListener();
+	private final JButton operationGoB = new JButton(BUNDLE.getString("goButton"));
 
-	private final JButton cloneB = new JButton(BUNDLE.getString("goButton"));
-	private final JLabel scale_type_label = new JLabel(BUNDLE.getString("transformationLabel"));
-	private final JComboBox scaleCB = new JComboBoxWithSingleListener();
 	private final JCheckBox labelCB = new JCheckBox(BUNDLE.getString("labelCheckBox"));
 	private final JCheckBox yaxisCB = new JCheckBox(BUNDLE.getString("yAxisCheckBox"));
 	private final JCheckBox floatCB = new JCheckBox(BUNDLE.getString("floatingCheckBox"));
@@ -142,10 +142,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final JTextField paramT = new JTextField("", 2);
 	private final JButton combineB = new JButton(BUNDLE.getString("combineButton"));
 	private final JButton splitB = new JButton(BUNDLE.getString("splitButton"));
-	private JButton addB;
-	private JButton subB;
-	private JButton mulB;
-	private JButton divB;
 	private JComboBox heat_mapCB;
 	private AdvancedGraphPanel advanced_panel;
 
@@ -222,7 +218,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		height_slider.setAlignmentX(0.0f);
 		scalebox.add(height_slider);
 		scalebox.add(vis_bounds_setter);
-		
+
 		height_slider.addChangeListener(new GraphHeightSetter());
 
 		Box butbox = Box.createHorizontalBox();
@@ -372,7 +368,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		} else {
 			selected_graphs_label.setText(num_glyphs + " graphs selected");
 		}
-		
+
 		selectButtonBasedOnGraphStyle(graph_style);
 
 		if (graph_style == GraphType.HEAT_MAP) {
@@ -408,9 +404,9 @@ public final class SimpleGraphTab extends IGBTabPanel
 				break;
 			}
 		}
-		
+
 		enableButtons(stylegroup, type);
-		
+
 		floatCB.setEnabled(b);
 		yaxisCB.setEnabled(b);
 		labelCB.setEnabled(b);
@@ -418,76 +414,16 @@ public final class SimpleGraphTab extends IGBTabPanel
 		colorB.setEnabled(b);
 		save_selected_graphs_action.setEnabled(grafs.size() == 1);
 		delete_selected_graphs_action.setEnabled(b);
-		cloneB.setEnabled(b);
-		scaleCB.setEnabled(cloneB.isEnabled());
-		paramT.setEnabled(cloneB.isEnabled());
+		transformationGoB.setEnabled(b);
+		transformationCB.setEnabled(transformationGoB.isEnabled());
+		paramT.setEnabled(transformationGoB.isEnabled());
+		operationGoB.setEnabled(grafs.size() >= 2);
+		operationCB.setEnabled(operationGoB.isEnabled());
 
 		combineB.setEnabled(!all_are_combined && grafs.size() >= 2);
 		splitB.setEnabled(any_are_combined);
-		addB.setEnabled(grafs.size() == 2);
-		subB.setEnabled(grafs.size() == 2);
-		mulB.setEnabled(grafs.size() == 2);
-		divB.setEnabled(grafs.size() == 2);
-		
+
 		is_listening = true; // turn back on GUI events
-	}
-
-	private class HoverEffect implements MouseListener {
-		private String A = null;
-		private String B = null;
-
-		public void mouseClicked(MouseEvent e) {}
-
-		public void mousePressed(MouseEvent e) {}
-
-		public void mouseReleased(MouseEvent e) {}
-
-		public void mouseEntered(MouseEvent e) {
-			JButton comp = (JButton) e.getComponent();
-			
-			if(grafs.size() == 2){
-				setGraphName(comp);
-			}else{
-				comp.setToolTipText(select2graphs);
-			}
-		}
-
-		public void mouseExited(MouseEvent e) {
-			unsetGraphName();
-		}
-
-		public void setGraphName(JButton comp) {
-			A = grafs.get(0).getGraphName();
-			B = grafs.get(1).getGraphName();
-
-			grafs.get(0).setGraphName("A");
-			grafs.get(1).setGraphName("B");
-
-			comp.setToolTipText(null);
-			ThreadUtils.runOnEventQueue(new Runnable() {
-
-				public void run() {
-					gviewer.getSeqMap().updateWidget();
-				}
-			});
-		}
-
-		public void unsetGraphName() {
-			if (A != null && B != null && grafs.size() > 1) {
-				grafs.get(0).setGraphName(A);
-				grafs.get(1).setGraphName(B);
-
-				ThreadUtils.runOnEventQueue(new Runnable() {
-
-					public void run() {
-						gviewer.getSeqMap().updateWidget();
-					}
-				});
-				A = null;
-				B = null;
-
-			}
-		}
 	}
 
 	private void collectGraphsAndGlyphs(List<?> selected_syms, int symcount) {
@@ -682,15 +618,90 @@ public final class SimpleGraphTab extends IGBTabPanel
 			map.updateWidget();
 		}
 	}
-	
+
 	final class AdvancedGraphPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
+
+		private class HoverEffect implements MouseListener {
+			private String A = null;
+			private String B = null;
+
+			public void mouseClicked(MouseEvent e) {}
+
+			public void mousePressed(MouseEvent e) {}
+
+			public void mouseReleased(MouseEvent e) {}
+
+			public void mouseEntered(MouseEvent e) {
+				JComboBoxWithSingleListener comp = (JComboBoxWithSingleListener) e.getComponent();
+				String selection = (String) comp.getSelectedItem();
+				GraphOperator operator = name2operator.get(selection);
+
+				if (grafs.size() >= operator.getOperandCountMin() &&
+					grafs.size() <= operator.getOperandCountMax()) {
+					setGraphName(comp, operator);
+				}
+				else {
+					comp.setToolTipText(getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
+				}
+			}
+
+			public void mouseExited(MouseEvent e) {
+				JComboBoxWithSingleListener comp = (JComboBoxWithSingleListener) e.getComponent();
+				String selection = (String) comp.getSelectedItem();
+				unsetGraphName(name2operator.get(selection));
+			}
+
+			public void setGraphName(JComboBoxWithSingleListener comp, GraphOperator operator) {
+				if (operator.getOperandCountMin() == 2 && operator.getOperandCountMax() == 2) {
+					A = grafs.get(0).getGraphName();
+					B = grafs.get(1).getGraphName();
+	
+					grafs.get(0).setGraphName("A");
+					grafs.get(1).setGraphName("B");
+	
+					comp.setToolTipText(null);
+					ThreadUtils.runOnEventQueue(new Runnable() {
+	
+						public void run() {
+							gviewer.getSeqMap().updateWidget();
+						}
+					});
+				}
+			}
+
+			public void unsetGraphName(GraphOperator operator) {
+				if (operator.getOperandCountMin() == 2 && operator.getOperandCountMax() == 2) {
+					if (A != null && B != null && grafs.size() > 1) {
+						grafs.get(0).setGraphName(A);
+						grafs.get(1).setGraphName(B);
+	
+						ThreadUtils.runOnEventQueue(new Runnable() {
+	
+							public void run() {
+								gviewer.getSeqMap().updateWidget();
+							}
+						});
+						A = null;
+						B = null;
+	
+					}
+				}
+			}
+		}
+
+		private static final String selectExactGraphsMessage = "Select exactly {0} graphs";
+		private static final String selectMinGraphsMessage = "Select at least {0} graphs";
+		private static final String selectRangeGraphsMessage = "Select between {0} and {1} graphs";
+
 		private static final int PARAM_TEXT_WIDTH = 60;
-		private Map<String, FloatTransformer> name2transform;
+		private final Map<String, FloatTransformer> name2transform;
+		private final Map<String, GraphOperator> name2operator;
 		private final HoverEffect hovereffect;
 
 		public AdvancedGraphPanel() {
 			name2transform = new HashMap<String, FloatTransformer>();
+			name2operator = new HashMap<String, GraphOperator>();
 			JPanel advanced_panel = this;
 			hovereffect = new HoverEffect();
 
@@ -712,7 +723,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			paramT.setMaximumSize(new Dimension((int)Math.round(paramT.getPreferredSize().getWidth()), PARAM_TEXT_WIDTH));
 			grouping_box.add(param_box);
 			grouping_box.add(Box.createRigidArea(new Dimension(5, 0)));
-			
+
 			Box decoration_row = Box.createHorizontalBox();
 
 			decoration_row.add(Box.createRigidArea(new Dimension(6, 5)));
@@ -720,10 +731,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 			decoration_row.add(yaxisCB);
 			decoration_row.add(floatCB);
 
-			scaleCB.addActionListener(new ActionListener() {
+			transformationCB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					String selection = (String) scaleCB.getSelectedItem();
+					String selection = (String) transformationCB.getSelectedItem();
 					if (selection == null) {
 						param_label.setText("");
 						paramT.setVisible(false);
@@ -742,16 +753,27 @@ public final class SimpleGraphTab extends IGBTabPanel
 					}
 				}
 			});
-			// A box to contain the scaleCB JComboBox, to help get the alignment right
-			Box scaleCB_box = Box.createHorizontalBox();
-			scaleCB_box.setAlignmentX(0.0f);
-			scaleCB_box.add(Box.createRigidArea(new Dimension(6, 5)));
-			scaleCB_box.add(scaleCB);
-			scaleCB_box.add(Box.createRigidArea(new Dimension(5, 5)));
-			scaleCB_box.add(cloneB);
-			scaleCB_box.add(Box.createRigidArea(new Dimension(20, 5))); // kludge to get width correct
+			// A box to contain the transformationCB JComboBox, to help get the alignment right
+			Box transformation_box = Box.createHorizontalBox();
+			transformation_box.setAlignmentX(0.0f);
+			transformation_box.add(Box.createRigidArea(new Dimension(6, 5)));
+			transformation_box.add(transformationCB);
+			transformation_box.add(Box.createRigidArea(new Dimension(5, 5)));
+			transformation_box.add(transformationGoB);
+			transformation_box.add(Box.createRigidArea(new Dimension(20, 5))); // kludge to get width correct
+			transformationCB.setMaximumSize(transformation_box.getPreferredSize()); // kludge to get width correct
 
-			scaleCB.setMaximumSize(scaleCB_box.getPreferredSize()); // kludge to get width correct
+			// A box to contain the operationCB JComboBox, to help get the alignment right
+			Box operation_box = Box.createHorizontalBox();
+			operation_box.setAlignmentX(0.0f);
+			operation_box.add(Box.createRigidArea(new Dimension(6, 5)));
+			operation_box.add(operationCB);
+			operation_box.add(Box.createRigidArea(new Dimension(5, 5)));
+			operation_box.add(operationGoB);
+			operation_box.add(Box.createRigidArea(new Dimension(20, 5))); // kludge to get width correct
+			operationCB.setMaximumSize(transformation_box.getPreferredSize()); // kludge to get width correct
+
+			operationCB.addMouseListener(hovereffect);
 
 			advanced_panel.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("advancedPanel")));
 
@@ -759,51 +781,33 @@ public final class SimpleGraphTab extends IGBTabPanel
 			advanced_panel.add(decoration_row);
 			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
 
-			advanced_panel.add(scale_type_label);
-			scaleCB_box.setAlignmentX(0.0f);
-
-			advanced_panel.add(scaleCB_box);
+			advanced_panel.add(transformation_label);
+			transformation_box.setAlignmentX(0.0f);
+			advanced_panel.add(transformation_box);
 
 			param_box.setAlignmentX(0.0f);
 			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
 			advanced_panel.add(param_box);
 
+			advanced_panel.add(operation_label);
+			operation_box.setAlignmentX(0.0f);
+			advanced_panel.add(operation_box);
+
 			grouping_box.setAlignmentX(0.0f);
 			advanced_panel.add(Box.createRigidArea(new Dimension(5, 6)));
 			advanced_panel.add(grouping_box);
 
-			addB = new JButton("A + B");
-			subB = new JButton("A - B");
-			mulB = new JButton("A * B");
-			divB = new JButton("A / B");
-
-			addB.addMouseListener(hovereffect);
-			subB.addMouseListener(hovereffect);
-			mulB.addMouseListener(hovereffect);
-			divB.addMouseListener(hovereffect);
-			
-			addB.setMargin(new Insets(2, 2, 2, 2));
-			subB.setMargin(new Insets(2, 2, 2, 2));
-			mulB.setMargin(new Insets(2, 2, 2, 2));
-			divB.setMargin(new Insets(2, 2, 2, 2));
-			Box math_box = Box.createHorizontalBox();
-			math_box.setBorder(new TitledBorder("Combine"));
-//			math_box.add(Box.createRigidArea(new Dimension(6, 0)));
-			math_box.add(addB);
-//			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
-			math_box.add(subB);
-//			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
-			math_box.add(mulB);
-//			math_box.add(Box.createRigidArea(new Dimension(4, 0)));
-			math_box.add(divB);
-			math_box.setAlignmentX(0.0f);
-			advanced_panel.add(Box.createRigidArea(new Dimension(0, 6)));
-			advanced_panel.add(math_box);
-
-			cloneB.addActionListener(new ActionListener() {
+			transformationGoB.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
-					scaleGraphs();
+					doTransformGraphs();
+				}
+			});
+
+			operationGoB.addActionListener(new ActionListener() {
+
+				public void actionPerformed(ActionEvent e) {
+					doOperateGraphs();
 				}
 			});
 
@@ -840,35 +844,10 @@ public final class SimpleGraphTab extends IGBTabPanel
 					splitGraphs();
 				}
 			});
-
-			addB.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					graphArithmetic(GraphGlyphUtils.MATH_SUM);
-				}
-			});
-			subB.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					graphArithmetic(GraphGlyphUtils.MATH_DIFFERENCE);
-				}
-			});
-			mulB.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					graphArithmetic(GraphGlyphUtils.MATH_PRODUCT);
-				}
-			});
-			divB.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent e) {
-					graphArithmetic(GraphGlyphUtils.MATH_RATIO);
-				}
-			});
 		}
 
 		public void loadTransforms(Set<FloatTransformer> floatTransformers) {
-			scaleCB.removeAllItems();
+			transformationCB.removeAllItems();
 			name2transform.clear();
 			for (FloatTransformer transformer : floatTransformers) {
 				name2transform.put(transformer.getName(), transformer);
@@ -887,7 +866,45 @@ public final class SimpleGraphTab extends IGBTabPanel
 			}
 			);
 			for (FloatTransformer transformer : transformerList) {
-				scaleCB.addItem(transformer.getName());
+				transformationCB.addItem(transformer.getName());
+			}
+		}
+
+		private String getOperandMessage(int graphCount, int minCount, int maxCount) {
+			if (minCount == maxCount) {
+				return MessageFormat.format(selectExactGraphsMessage, minCount);
+			}
+			if (maxCount == Integer.MAX_VALUE) {
+				return MessageFormat.format(selectMinGraphsMessage, minCount);
+			}
+			return MessageFormat.format(selectRangeGraphsMessage, minCount, maxCount);
+		}
+
+		public String getCBName(GraphOperator operator) {
+			return (operator.getSymbol() == null) ? operator.getName() : "A" + operator.getSymbol() + "B";
+		}
+
+		public void loadOperators(Set<GraphOperator> graphOperators) {
+			operationCB.removeAllItems();
+			name2operator.clear();
+			for (GraphOperator operator : graphOperators) {
+				name2operator.put(getCBName(operator), operator);
+			}
+			ArrayList<GraphOperator> operatorList = new ArrayList<GraphOperator>(graphOperators);
+			Collections.sort(operatorList,
+				new Comparator<GraphOperator>() {
+					@Override
+					public int compare(GraphOperator o1, GraphOperator o2) {
+						int value = o1.getClass().getName().compareTo(o2.getClass().getName());
+						if (value == 0) {
+							value = o1.getName().compareTo(o2.getName());
+						}
+						return value;
+					}
+			}
+			);
+			for (String name : name2operator.keySet()) {
+				operationCB.addItem(name);
 			}
 		}
 
@@ -946,26 +963,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 			updateViewer();
 		}
 
-		private void graphArithmetic(String operation) {
-			if (glyphs.size() == 2 && glyphs.get(0) != null && glyphs.get(1) != null) {
-				hovereffect.unsetGraphName();
-				GraphGlyph graphA = glyphs.get(0);
-				GraphGlyph graphB = glyphs.get(1);
-				GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);
-
-				if (newsym != null) {
-					BioSeq aseq = newsym.getGraphSeq();
-					aseq.addAnnotation(newsym);
-					gviewer.setAnnotatedSeq(aseq, true, true);
-					//GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-
-					updateViewer();
-				}
-			} else {
-				ErrorHandler.errorPanel("ERROR", "Must choose exactly 2 graphs", this);
-			}
-		}
-
 		private void setShowAxis(boolean b) {
 			for (GraphGlyph gl : glyphs) {
 				gl.setShowAxis(b);
@@ -980,8 +977,8 @@ public final class SimpleGraphTab extends IGBTabPanel
 			gviewer.getSeqMap().updateWidget();
 		}
 
-		private void scaleGraphs() {
-			String selection = (String) scaleCB.getSelectedItem();
+		private void doTransformGraphs() {
+			String selection = (String) transformationCB.getSelectedItem();
 			FloatTransformer trans = name2transform.get(selection);
 			if (trans.setParameter(paramT.getText())) {
 				List<GraphSym> newgrafs = transformGraphs(grafs, trans.getDisplay(), trans);
@@ -991,6 +988,27 @@ public final class SimpleGraphTab extends IGBTabPanel
 			}
 			else {
 				ErrorHandler.errorPanel(BUNDLE.getString("invalidParam") + " \"" + paramT.getText() + "\" for " + trans.getParamPrompt());
+			}
+		}
+
+		private void doOperateGraphs() {
+			String selection = (String) operationCB.getSelectedItem();
+			GraphOperator operator = name2operator.get(selection);
+			hovereffect.unsetGraphName(operator);
+			if (glyphs.size() >= operator.getOperandCountMin() && glyphs.size() <= operator.getOperandCountMax()) {
+				GraphSym newsym = performOperation(glyphs, operator);
+	
+				if (newsym != null) {
+					BioSeq aseq = newsym.getGraphSeq();
+					aseq.addAnnotation(newsym);
+					gviewer.setAnnotatedSeq(aseq, true, true);
+					//GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
+	
+					updateViewer();
+				}
+			}
+			else {
+				ErrorHandler.errorPanel("ERROR", getOperandMessage(glyphs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
 			}
 		}
 
@@ -1072,7 +1090,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		// if this is not a floating graph, then it's in a tier,
 		//    so check tier -- if this graph is only child, then get rid of the tier also
 		if (!gl.getGraphState().getFloatGraph()) {
-			
+
 			GlyphI parentgl = gl.getParent();
 			parentgl.removeChild(gl);
 			if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
@@ -1198,6 +1216,138 @@ public final class SimpleGraphTab extends IGBTabPanel
 			applyColorChange(graf_syms, gviewer, col);
 		}
 		gviewer.getSeqMap().updateWidget();
+	}
+
+	/**
+	 * performs a given graph operation on a given set of graphs and returns the resulting graph
+	 * @param graphs the selected graphs to use as the operands of the operation
+	 * @param operator the GraphOperator to use
+	 * @return the graph result of the operation
+	 */
+	public static GraphSym performOperation(List<GraphGlyph> graphs, GraphOperator operator) {
+		// get the x, y, and w (width) coordinates of the graphs int Lists
+		ArrayList<ArrayList<Integer>> xCoords = new ArrayList<ArrayList<Integer>>();
+		ArrayList<ArrayList<Integer>> wCoords = new ArrayList<ArrayList<Integer>>();
+		ArrayList<ArrayList<Float>> yCoords = new ArrayList<ArrayList<Float>>();
+		int[] index = new int[graphs.size()];
+		ArrayList<String> labels = new ArrayList<String>();
+		for (int i = 0; i < graphs.size(); i++) {
+			GraphGlyph graph = graphs.get(i);
+			index[i] = 0;
+			int[] xArray = graph.getXCoords();
+			ArrayList<Integer> xCoordList = new ArrayList<Integer>();
+			for (int j = 0; j < xArray.length; j++) {
+				xCoordList.add(xArray[j]);
+			}
+			xCoords.add(xCoordList);
+			int[] wArray = graph.getWCoords();
+			ArrayList<Integer> wCoordList = new ArrayList<Integer>();
+			for (int j = 0; j < wArray.length; j++) {
+				wCoordList.add(wArray[j]);
+			}
+			wCoords.add(wCoordList);
+			float[] yArray = graph.copyYCoords();
+			ArrayList<Float> yCoordList = new ArrayList<Float>();
+			for (int j = 0; j < yArray.length; j++) {
+				yCoordList.add(yArray[j]);
+			}
+			yCoords.add(yCoordList);
+			labels.add(graph.getLabel());
+		}
+		List<Integer> xList = new ArrayList<Integer>();
+		List<Integer> wList = new ArrayList<Integer>();
+		List<Float> yList = new ArrayList<Float>();
+		// find the minimum x of all graphs to start with
+		int spanBeginX = Integer.MAX_VALUE;
+		for (int i = 0; i < graphs.size(); i++) {
+			spanBeginX = Math.min(spanBeginX, xCoords.get(i).get(0));
+		}
+		// loop through finding the next x values by searching through all the x coords,
+		// and applying the operation on all the graphs
+		int spanEndX = 0;
+		while (spanBeginX < Integer.MAX_VALUE) {
+			// find the next x value, the minimum of all x, x + w that is greater than the current x
+			spanEndX = Integer.MAX_VALUE;
+			for (int i = 0; i < graphs.size(); i++) {
+				int graphIndex = index[i];
+				if (graphIndex < xCoords.get(i).size()) {
+					int startX = xCoords.get(i).get(graphIndex);
+					int endX = startX + wCoords.get(i).get(graphIndex);
+					if (startX > spanBeginX && startX < spanEndX) {
+						spanEndX = startX;
+					}
+					else if (endX > spanBeginX && endX < spanEndX) {
+						spanEndX = endX;
+					}
+				}
+			}
+			// now that we have currentX and nextX (the start and end of the span)
+			// we get each y coord as an operand
+			List<Float> operands = new ArrayList<Float>();
+			for (int i = 0; i < graphs.size(); i++) {
+				float value = 0;
+				int graphIndex = index[i];
+				if (graphIndex < xCoords.get(i).size()) {
+					int startX = xCoords.get(i).get(graphIndex);
+					int endX = startX + wCoords.get(i).get(graphIndex);
+					if (spanBeginX >= startX && spanEndX <= endX) {
+						value = yCoords.get(i).get(graphIndex);
+					}
+				}
+				operands.add(value);
+			}
+			// now we have the operands, actually perform the operation
+			float currentY = operator.operate(operands);
+			// add the span and result - x, y, w - to the result graph
+			xList.add(spanBeginX);
+			wList.add(spanEndX - spanBeginX);
+			yList.add(currentY);
+			// now go through all graphs, and increment the index if necessary
+			for (int i = 0; i < graphs.size(); i++) {
+				int graphIndex = index[i];
+				if (graphIndex < xCoords.get(i).size()) {
+					int startX = xCoords.get(i).get(graphIndex);
+					int endX = startX + wCoords.get(i).get(graphIndex);
+					if (endX <= spanEndX) {
+						index[i]++;
+					}
+				}
+			}
+			// we are done for this span, move the end of span to the beginning
+			spanBeginX = spanEndX;
+		}
+		// get the display name for the result graph
+		String symbol = operator.getSymbol();
+		String separator = (symbol == null) ? ", " : " " + symbol + " ";
+		String newname = 
+			operator.getName().toLowerCase() + ": " + (graphs.size() == 2 ? "(" + graphs.get(0).getLabel() + ")" + separator + "(" + graphs.get(1).getLabel() + ")" :
+			"(..." + graphs.size() + ")");
+		BioSeq aseq = ((GraphSym) graphs.get(0).getInfo()).getGraphSeq();
+		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
+		// create the new graph from the results
+		int[] x = new int[xList.size()];
+		for (int i = 0; i < xList.size(); i++) {
+			x[i] = xList.get(i);
+		}
+		int[] w = new int[wList.size()];
+		for (int i = 0; i < wList.size(); i++) {
+			w[i] = wList.get(i);
+		}
+		float[] y = new float[yList.size()];
+		for (int i = 0; i < yList.size(); i++) {
+			y[i] = yList.get(i);
+		}
+		if (x.length == 0) { // if no data, just create a dummy zero span
+			x = new int[]{xCoords.get(0).get(0)};
+			y = new float[]{0};
+			w = new int[]{1};
+		}
+		GraphSym newsym = new GraphSym(x, w, y, newname, aseq);
+
+		newsym.setGraphName(newname);
+		newsym.getGraphState().setGraphStyle(graphs.get(0).getGraphState().getGraphStyle());
+		newsym.getGraphState().setHeatMap(graphs.get(0).getGraphState().getHeatMap());
+		return newsym;
 	}
 
 	@Override

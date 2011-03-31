@@ -75,7 +75,7 @@ public abstract class BookmarkController {
     }
   }
 
- public static void applyProperties(final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature) {
+ public static void applyProperties(final SeqMapView gviewer, final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature) {
     double default_ypos = 30;
     double default_yheight = 60;
     Color default_col = Color.lightGray;
@@ -220,7 +220,8 @@ public abstract class BookmarkController {
 			}
 
 			applyStyleProperties(style, col, bg_col, ypos, yheight);
-
+			
+			gviewer.setAnnotatedSeq(seq, true, true, true);
 		}
 
 		} catch (Exception ex) {

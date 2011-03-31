@@ -69,25 +69,16 @@ public class DependentData {
 	private GraphSym createMisMatchGraph(BioSeq aseq){
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 		SeqSymmetry tsym = aseq.getAnnotation(parent_method);
-		if(tsym == null || tsym.getChildCount() == 0){
-			return null;
-		}
 		syms.add(tsym);
 		
 		int[] startEnd = getStartEnd(tsym, aseq);
-		SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
-
-		//Load Residues
-		if(!aseq.isAvailable(startEnd[0], startEnd[1])){
-			GeneralLoadView.getLoadView().loadResidues(loadSpan, true);
-		}
 		
 		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, startEnd[0], startEnd[1]);
 
 		return mgsym;
 	}
 
-	static int[] getStartEnd(SeqSymmetry tsym, BioSeq aseq){
+	public static int[] getStartEnd(SeqSymmetry tsym, BioSeq aseq){
 		int start = Integer.MAX_VALUE, end = Integer.MIN_VALUE;
 
 		for(int i=0; i<tsym.getChildCount(); i++){

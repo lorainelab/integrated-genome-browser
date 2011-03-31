@@ -25,11 +25,13 @@ import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -44,6 +46,7 @@ import com.affymetrix.igb.view.DependentData;
 import com.affymetrix.igb.view.DependentData.DependentType;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -549,6 +552,25 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	String human_name = "mismatch: " + atier.getLabel();
 	String unique_name = TrackStyle.getUniqueName(human_name);
 	String method = atier.getAnnotStyle().getMethodName();
+	SeqSymmetry tsym = aseq.getAnnotation(method);
+	if(tsym == null || tsym.getChildCount() == 0){
+		ErrorHandler.errorPanel("Empty Track",
+			"The selected track is empty.  Can not make a coverage track for an empty track.");
+		return;
+	}
+
+	int[] startEnd = DependentData.getStartEnd(tsym, aseq);
+	SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
+
+	//Load Residues
+	if(!aseq.isAvailable(loadSpan)){
+		if(!GeneralLoadView.getLoadView().loadResidues(loadSpan, true)){
+			ErrorHandler.errorPanel("No Residues Loaded",
+			"Could not load partial or full residues.");
+			return;
+		}
+	}
+
 	DependentData dd = new DependentData(unique_name,DependentType.MISMATCH,method);
 	SymWithProps wrapperSym = TrackView.addToDependentList(dd);
 

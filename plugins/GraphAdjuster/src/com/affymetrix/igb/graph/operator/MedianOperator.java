@@ -7,7 +7,7 @@ import java.util.List;
 public class MedianOperator implements GraphOperator {
 	@Override
 	public String getName() {
-		return "Mean";
+		return "Median";
 	}
 
 	@Override

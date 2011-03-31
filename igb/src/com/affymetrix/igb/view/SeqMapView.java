@@ -1654,7 +1654,7 @@ public class SeqMapView extends JPanel
 	 *  items added to it by this method.  Display of the popup menu will be
 	 *  handled by showPopup(), which calls this method.
 	 */
-	private void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
+	protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
 		List<GlyphI> selected_glyphs = seqmap.getSelected();
 
 		setPopupMenuTitle(sym_info, selected_glyphs);

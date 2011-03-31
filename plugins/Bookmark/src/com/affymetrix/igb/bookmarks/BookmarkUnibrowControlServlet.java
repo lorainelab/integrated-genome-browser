@@ -197,7 +197,7 @@ public final class BookmarkUnibrowControlServlet {
 						ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
 							public void run() {
-								BookmarkController.applyProperties((SeqMapView) uni.getMapView(), seq, parameters, feature);
+								BookmarkController.applyProperties(seq, parameters, feature);
 							}
 						});
 					}

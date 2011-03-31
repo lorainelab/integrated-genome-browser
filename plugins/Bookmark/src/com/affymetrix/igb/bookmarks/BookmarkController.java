@@ -75,159 +75,158 @@ public abstract class BookmarkController {
     }
   }
 
- public static void applyProperties(final SeqMapView gviewer, final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature) {
-    double default_ypos = 30;
-    double default_yheight = 60;
-    Color default_col = Color.lightGray;
-    boolean default_float = true;
-    boolean default_show_label = true;
-    boolean default_show_axis = false;
-    double default_minvis = Double.NEGATIVE_INFINITY;
-    double default_maxvis = Double.POSITIVE_INFINITY;
-    double default_score_thresh = 0;
-    int default_minrun_thresh = 30;
-    int default_maxgap_thresh = 100;
-    boolean default_show_thresh = false;
-    int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
-    Map<String,ITrackStyle> combos = new HashMap<String,ITrackStyle>();
+ public static void applyProperties(final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature) {
+		double default_ypos = 30;
+		double default_yheight = 60;
+		Color default_col = Color.lightGray;
+		boolean default_float = true;
+		boolean default_show_label = true;
+		boolean default_show_axis = false;
+		double default_minvis = Double.NEGATIVE_INFINITY;
+		double default_maxvis = Double.POSITIVE_INFINITY;
+		double default_score_thresh = 0;
+		int default_minrun_thresh = 30;
+		int default_maxgap_thresh = 100;
+		boolean default_show_thresh = false;
+		int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
+		Map<String, ITrackStyle> combos = new HashMap<String, ITrackStyle>();
 
-    try {
-		for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
-			String feature_path = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.FEATURE_URL.toString() + i);
+		try {
+			for (int i = 0; map.get(SYM.FEATURE_URL.toString() + i) != null; i++) {
+				String feature_path = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.FEATURE_URL.toString() + i);
 
-			if (gFeature == null || !feature_path.equals(gFeature.getURI().toString())) {
-				continue;
-			}
-
-			String method = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.METHOD.toString() + i);
-
-			SeqSymmetry sym = seq.getAnnotation(method);
-
-			if (sym == null) {
-				continue;
-			}
-
-			if (!(sym instanceof GraphSym) && !(sym instanceof TypeContainerAnnot)) {
-				continue;
-			}
-			
-			// for some parameters, testing more than one parameter name because how some params used to have
-			//    slightly different names, and we need to support legacy bookmarks
-			String sym_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.NAME.toString() + i);
-			String sym_ypos = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.YPOS.toString() + i);
-			String sym_height = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.YHEIGHT.toString() + i);
-		
-			// sym_col is String rep of RGB integer
-			String sym_col = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.COL.toString() + i);
-			String sym_bg_col = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.BG.toString() + i);
-			// sym_bg_col will often be null
-
-			//        int graph_min = (graph_visible_min == null) ?
-			String graph_style = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.STYLE.toString() + i);
-			String heatmap_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.HEATMAP.toString() + i);
-
-			String combo_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.COMBO.toString() + i);
-
-			double ypos = (sym_ypos == null) ? default_ypos : Double.parseDouble(sym_ypos);
-			double yheight = (sym_height == null) ? default_yheight : Double.parseDouble(sym_height);
-			Color col = default_col;
-			Color bg_col = Color.BLACK;
-			if (sym_col != null) {
-				try {
-					// Color.decode() can handle colors in plain integer format
-					// as well as hex format: "-20561" == "#FFAFAF" == "0xFFAFAF" == "16756655"
-					// We now write in the hex format, but can still read the older int format.
-					col = Color.decode(sym_col);
-				} catch (NumberFormatException nfe) {
-					ErrorHandler.errorPanel("Couldn't parse graph color from '" + sym_col + "'\n"
-							+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
-				}
-			}
-			if (sym_bg_col != null) {
-				try {
-					bg_col = Color.decode(sym_bg_col);
-				} catch (NumberFormatException nfe) {
-					ErrorHandler.errorPanel("Couldn't parse graph background color from '" + sym_bg_col + "'\n"
-							+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
-				}
-			}
-
-			ITrackStyleExtended style = null;
-
-			if (sym instanceof GraphSym) {
-				String graph_float = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.FLOAT.toString() + i);
-				String show_labelstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_LABEL.toString() + i);
-				String show_axisstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_AXIS.toString() + i);
-				String minvis_str = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MINVIS.toString() + i);
-				String maxvis_str = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MAXVIS.toString() + i);
-				String score_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SCORE_THRESH.toString() + i);
-				String maxgap_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MAXGAP_THRESH.toString() + i);
-				String minrun_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MINRUN_THRESH.toString() + i);
-				String show_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_THRESH.toString() + i);
-				String thresh_directionstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.THRESH_DIRECTION.toString() + i);
-
-				boolean use_floating_graphs =
-						(graph_float == null) ? default_float : (graph_float.equals("true"));
-				boolean show_label =
-						(show_labelstr == null) ? default_show_label : (show_labelstr.equals("true"));
-				boolean show_axis =
-						(show_axisstr == null) ? default_show_axis : (show_axisstr.equals("true"));
-				double minvis = (minvis_str == null) ? default_minvis : Double.parseDouble(minvis_str);
-				double maxvis = (maxvis_str == null) ? default_maxvis : Double.parseDouble(maxvis_str);
-				double score_thresh =
-						(score_threshstr == null) ? default_score_thresh : Double.parseDouble(score_threshstr);
-				int maxgap_thresh =
-						(maxgap_threshstr == null) ? default_maxgap_thresh : Integer.parseInt(maxgap_threshstr);
-
-				int minrun_thresh =
-						(minrun_threshstr == null) ? default_minrun_thresh : Integer.parseInt(minrun_threshstr);
-				boolean show_thresh =
-						(show_threshstr == null) ? default_show_thresh : (show_threshstr.equals("true"));
-				int thresh_direction =
-						(thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
-
-				if (sym_name == null || sym_name.trim().length() == 0) {
-					sym_name = feature_path;
-				}
-
-				GraphState gstate = ((GraphSym) sym).getGraphState();
-				style = (ITrackStyleExtended) gstate.getTierStyle();
-				GenericFeature feature = style.getFeature();
-
-				if (!gFeature.equals(feature)) {
+				if (gFeature == null || !feature_path.equals(gFeature.getURI().toString())) {
 					continue;
 				}
 
-				GraphType graph_style_num = null;
-				if (graph_style != null) {
-					graph_style_num = GraphState.getStyleNumber(graph_style);
-				}
+				String method = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.METHOD.toString() + i);
 
-				((GraphSym) sym).setGraphName(sym_name);
+				SeqSymmetry sym = seq.getAnnotation(method);
 
-				applyGraphProperties(gstate, graph_style_num, heatmap_name, use_floating_graphs,
-						show_label, show_axis, minvis, maxvis, score_thresh, minrun_thresh,
-						maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
-
-			} else {
-				TypeContainerAnnot tca = (TypeContainerAnnot) sym;
-				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(tca.getType());
-				GenericFeature feature = style.getFeature();
-
-				if (!gFeature.equals(feature)) {
+				if (sym == null) {
 					continue;
 				}
-			}
 
-			applyStyleProperties(style, col, bg_col, ypos, yheight);
-			
-			gviewer.setAnnotatedSeq(seq, true, true, true);
-		}
+				if (!(sym instanceof GraphSym) && !(sym instanceof TypeContainerAnnot)) {
+					continue;
+				}
+
+				// for some parameters, testing more than one parameter name because how some params used to have
+				//    slightly different names, and we need to support legacy bookmarks
+				String sym_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.NAME.toString() + i);
+				String sym_ypos = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.YPOS.toString() + i);
+				String sym_height = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.YHEIGHT.toString() + i);
+
+				// sym_col is String rep of RGB integer
+				String sym_col = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.COL.toString() + i);
+				String sym_bg_col = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, SYM.BG.toString() + i);
+				// sym_bg_col will often be null
+
+				//        int graph_min = (graph_visible_min == null) ?
+				String graph_style = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.STYLE.toString() + i);
+				String heatmap_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.HEATMAP.toString() + i);
+
+				String combo_name = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.COMBO.toString() + i);
+
+				double ypos = (sym_ypos == null) ? default_ypos : Double.parseDouble(sym_ypos);
+				double yheight = (sym_height == null) ? default_yheight : Double.parseDouble(sym_height);
+				Color col = default_col;
+				Color bg_col = Color.BLACK;
+				if (sym_col != null) {
+					try {
+						// Color.decode() can handle colors in plain integer format
+						// as well as hex format: "-20561" == "#FFAFAF" == "0xFFAFAF" == "16756655"
+						// We now write in the hex format, but can still read the older int format.
+						col = Color.decode(sym_col);
+					} catch (NumberFormatException nfe) {
+						ErrorHandler.errorPanel("Couldn't parse graph color from '" + sym_col + "'\n"
+								+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
+					}
+				}
+				if (sym_bg_col != null) {
+					try {
+						bg_col = Color.decode(sym_bg_col);
+					} catch (NumberFormatException nfe) {
+						ErrorHandler.errorPanel("Couldn't parse graph background color from '" + sym_bg_col + "'\n"
+								+ "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
+					}
+				}
+
+				ITrackStyleExtended style = null;
+
+				if (sym instanceof GraphSym) {
+					String graph_float = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.FLOAT.toString() + i);
+					String show_labelstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_LABEL.toString() + i);
+					String show_axisstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_AXIS.toString() + i);
+					String minvis_str = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MINVIS.toString() + i);
+					String maxvis_str = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MAXVIS.toString() + i);
+					String score_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SCORE_THRESH.toString() + i);
+					String maxgap_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MAXGAP_THRESH.toString() + i);
+					String minrun_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.MINRUN_THRESH.toString() + i);
+					String show_threshstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.SHOW_THRESH.toString() + i);
+					String thresh_directionstr = BookmarkUnibrowControlServlet.getInstance().getStringParameter(map, GRAPH.THRESH_DIRECTION.toString() + i);
+
+					boolean use_floating_graphs =
+							(graph_float == null) ? default_float : (graph_float.equals("true"));
+					boolean show_label =
+							(show_labelstr == null) ? default_show_label : (show_labelstr.equals("true"));
+					boolean show_axis =
+							(show_axisstr == null) ? default_show_axis : (show_axisstr.equals("true"));
+					double minvis = (minvis_str == null) ? default_minvis : Double.parseDouble(minvis_str);
+					double maxvis = (maxvis_str == null) ? default_maxvis : Double.parseDouble(maxvis_str);
+					double score_thresh =
+							(score_threshstr == null) ? default_score_thresh : Double.parseDouble(score_threshstr);
+					int maxgap_thresh =
+							(maxgap_threshstr == null) ? default_maxgap_thresh : Integer.parseInt(maxgap_threshstr);
+
+					int minrun_thresh =
+							(minrun_threshstr == null) ? default_minrun_thresh : Integer.parseInt(minrun_threshstr);
+					boolean show_thresh =
+							(show_threshstr == null) ? default_show_thresh : (show_threshstr.equals("true"));
+					int thresh_direction =
+							(thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
+
+					if (sym_name == null || sym_name.trim().length() == 0) {
+						sym_name = feature_path;
+					}
+
+					GraphState gstate = ((GraphSym) sym).getGraphState();
+					style = (ITrackStyleExtended) gstate.getTierStyle();
+					GenericFeature feature = style.getFeature();
+
+					if (!gFeature.equals(feature)) {
+						continue;
+					}
+
+					GraphType graph_style_num = null;
+					if (graph_style != null) {
+						graph_style_num = GraphState.getStyleNumber(graph_style);
+					}
+
+					((GraphSym) sym).setGraphName(sym_name);
+
+					applyGraphProperties(gstate, graph_style_num, heatmap_name, use_floating_graphs,
+							show_label, show_axis, minvis, maxvis, score_thresh, minrun_thresh,
+							maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
+
+				} else {
+					TypeContainerAnnot tca = (TypeContainerAnnot) sym;
+					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(tca.getType());
+					GenericFeature feature = style.getFeature();
+
+					if (!gFeature.equals(feature)) {
+						continue;
+					}
+				}
+
+				applyStyleProperties(style, col, bg_col, ypos, yheight);
+
+			}
 
 		} catch (Exception ex) {
-			ErrorHandler.errorPanel("ERROR", "Error while applying graph properties", ex);
+			ErrorHandler.errorPanel("ERROR", "Error while applying symmetry properties", ex);
 		} catch (Error er) {
-			ErrorHandler.errorPanel("ERROR", "Error while applying graph properties", er);
+			ErrorHandler.errorPanel("ERROR", "Error while applying symmetry properties", er);
 		}
 	}
 

@@ -1240,10 +1240,13 @@ public final class SimpleGraphTab extends IGBTabPanel
 				xCoordList.add(xArray[j]);
 			}
 			xCoords.add(xCoordList);
+			ArrayList<Integer> wCoordList = null;
 			int[] wArray = graph.getWCoords();
-			ArrayList<Integer> wCoordList = new ArrayList<Integer>();
-			for (int j = 0; j < wArray.length; j++) {
-				wCoordList.add(wArray[j]);
+			if (wArray != null) {
+				wCoordList = new ArrayList<Integer>();
+				for (int j = 0; j < wArray.length; j++) {
+					wCoordList.add(wArray[j]);
+				}
 			}
 			wCoords.add(wCoordList);
 			float[] yArray = graph.copyYCoords();
@@ -1264,6 +1267,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 		// loop through finding the next x values by searching through all the x coords,
 		// and applying the operation on all the graphs
+		boolean lastWidth0 = false;
 		int spanEndX = 0;
 		while (spanBeginX < Integer.MAX_VALUE) {
 			// find the next x value, the minimum of all x, x + w that is greater than the current x
@@ -1272,14 +1276,20 @@ public final class SimpleGraphTab extends IGBTabPanel
 				int graphIndex = index[i];
 				if (graphIndex < xCoords.get(i).size()) {
 					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + wCoords.get(i).get(graphIndex);
-					if (startX > spanBeginX && startX < spanEndX) {
+					int endX = startX + (wCoords.get(i) == null ? 0 : wCoords.get(i).get(graphIndex));
+					if (startX == endX && startX < spanEndX) {
+						spanEndX = startX;
+					}
+					else if (startX > spanBeginX && startX < spanEndX) {
 						spanEndX = startX;
 					}
 					else if (endX > spanBeginX && endX < spanEndX) {
 						spanEndX = endX;
 					}
 				}
+			}
+			if (lastWidth0) {
+				spanBeginX = spanEndX;
 			}
 			// now that we have currentX and nextX (the start and end of the span)
 			// we get each y coord as an operand
@@ -1289,7 +1299,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				int graphIndex = index[i];
 				if (graphIndex < xCoords.get(i).size()) {
 					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + wCoords.get(i).get(graphIndex);
+					int endX = startX + (wCoords.get(i) == null ? 0 : wCoords.get(i).get(graphIndex));
 					if (spanBeginX >= startX && spanEndX <= endX) {
 						value = yCoords.get(i).get(graphIndex);
 					}
@@ -1307,13 +1317,14 @@ public final class SimpleGraphTab extends IGBTabPanel
 				int graphIndex = index[i];
 				if (graphIndex < xCoords.get(i).size()) {
 					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + wCoords.get(i).get(graphIndex);
+					int endX = startX + (wCoords.get(i) == null ? 0 : wCoords.get(i).get(graphIndex));
 					if (endX <= spanEndX) {
 						index[i]++;
 					}
 				}
 			}
 			// we are done for this span, move the end of span to the beginning
+			lastWidth0 = spanEndX == spanBeginX;
 			spanBeginX = spanEndX;
 		}
 		// get the display name for the result graph

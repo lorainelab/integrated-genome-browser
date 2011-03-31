@@ -33,7 +33,7 @@ public final class GraphGlyphUtils {
 	public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
 	public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
 	public static final NumberFormat numberParser = NumberFormat.getNumberInstance();
-	
+
 	/**
 	 *  Checks to make sure the the boundaries of a floating glyph are
 	 *  inside the map view.
@@ -177,11 +177,9 @@ public final class GraphGlyphUtils {
 				bValue = 0;
 			}
 			float currentY = operate(aValue, bValue, operation);
-			if (currentY > 0) {
-				xList.add(currentX);
-				wList.add(nextX - currentX);
-				yList.add(currentY);
-			}
+			xList.add(currentX);
+			wList.add(nextX - currentX);
+			yList.add(currentY);
 			if (aIndex < xA.length && xA[aIndex] + wA[aIndex] <= nextX) {
 				aIndex++;
 			}
@@ -293,7 +291,7 @@ public final class GraphGlyphUtils {
 		if (text.endsWith("%")) {
 			text = text.substring(0, text.length() - 1);
 		}
-	
+
 		return numberParser.parse(text).floatValue();
 	}
 }

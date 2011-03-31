@@ -298,7 +298,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
     handler.setTiersCollapsed(tier_labels, collapsed);
-    refreshMap(true,true);
+    refreshMap(false,true);
   }
 
   public void changeExpandMax(List<TierLabelGlyph> tier_labels) {

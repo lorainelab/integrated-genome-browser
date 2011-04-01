@@ -92,13 +92,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final	List<GraphSym> grafs = new ArrayList<GraphSym>();
 	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
-	private final JButton transformationGoB = new JButton(BUNDLE.getString("goButton"));
-	private final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
-	private final JComboBox transformationCB = new JComboBoxWithSingleListener();
-	private final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
-	private final JComboBox operationCB = new JComboBoxWithSingleListener();
-	private final JButton operationGoB = new JButton(BUNDLE.getString("goButton"));
-
 	private final JCheckBox labelCB = new JCheckBox(BUNDLE.getString("labelCheckBox"));
 	private final JCheckBox yaxisCB = new JCheckBox(BUNDLE.getString("yAxisCheckBox"));
 	private final JCheckBox floatCB = new JCheckBox(BUNDLE.getString("floatingCheckBox"));
@@ -414,11 +407,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		colorB.setEnabled(b);
 		save_selected_graphs_action.setEnabled(grafs.size() == 1);
 		delete_selected_graphs_action.setEnabled(b);
-		transformationGoB.setEnabled(b);
-		transformationCB.setEnabled(transformationGoB.isEnabled());
-		paramT.setEnabled(transformationGoB.isEnabled());
-		operationGoB.setEnabled(grafs.size() >= 2);
-		operationCB.setEnabled(operationGoB.isEnabled());
+		advanced_panel.setPanelEnabled();
 
 		combineB.setEnabled(!all_are_combined && grafs.size() >= 2);
 		splitB.setEnabled(any_are_combined);
@@ -697,8 +686,20 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private static final int PARAM_TEXT_WIDTH = 60;
 		private final Map<String, FloatTransformer> name2transform;
 		private final Map<String, GraphOperator> name2operator;
+		private final JButton transformationGoB = new JButton(BUNDLE.getString("goButton"));
+		private final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
+		private final JComboBox transformationCB = new JComboBoxWithSingleListener();
+		private final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
+		private final JComboBox operationCB = new JComboBoxWithSingleListener();
+		private final JButton operationGoB = new JButton(BUNDLE.getString("goButton"));
 		private final HoverEffect hovereffect;
-
+		private final ItemListener operationListener = new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				setPanelEnabled();
+			}
+		};
+		
 		public AdvancedGraphPanel() {
 			name2transform = new HashMap<String, FloatTransformer>();
 			name2operator = new HashMap<String, GraphOperator>();
@@ -774,6 +775,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			operationCB.setMaximumSize(transformation_box.getPreferredSize()); // kludge to get width correct
 
 			operationCB.addMouseListener(hovereffect);
+			operationCB.addItemListener(operationListener);
 
 			advanced_panel.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("advancedPanel")));
 
@@ -1050,6 +1052,25 @@ public final class SimpleGraphTab extends IGBTabPanel
 			}
 			if (something_changed) {
 				updateViewer();
+			}
+		}
+
+		public void setPanelEnabled() {
+			transformationGoB.setEnabled(!(grafs.isEmpty()));
+			transformationCB.setEnabled(transformationGoB.isEnabled());
+			paramT.setEnabled(transformationGoB.isEnabled());
+			operationCB.setEnabled(grafs.size() >= 2);
+			String selection = (String) operationCB.getSelectedItem();
+			GraphOperator operator = name2operator.get(selection);
+			boolean canGraph = (operator != null &&
+				grafs.size() >= operator.getOperandCountMin() &&
+				grafs.size() <= operator.getOperandCountMax());
+			operationGoB.setEnabled(operationCB.isEnabled() && canGraph);
+			if (canGraph || operator == null) {
+				operationGoB.setToolTipText(null);
+			}
+			else {
+				operationGoB.setToolTipText(getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
 			}
 		}
 	}

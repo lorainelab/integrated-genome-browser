@@ -5,10 +5,13 @@
 
 package com.affymetrix.igb.action;
 
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SequenceViewer;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -17,13 +20,13 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class ViewGenomicSequenceInSeqViewerAction  extends AbstractAction{
 	private static final long serialVersionUID = 1l;
-	public static ViewGenomicSequenceInSeqViewerAction singleton = new ViewGenomicSequenceInSeqViewerAction();
-	private ViewGenomicSequenceInSeqViewerAction() {
-		super(BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
-	}
 
-	public static ViewGenomicSequenceInSeqViewerAction getAction(){
-		return singleton;
+	public ViewGenomicSequenceInSeqViewerAction(JComponent comp) {
+		super(BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
+//		KeyStroke ks = MenuUtil.addAccelerator(comp, this, BUNDLE.getString("ViewGenomicSequenceInSeqViewer"));
+//		if (ks != null) {
+//			this.putValue(MNEMONIC_KEY, ks.getKeyCode());
+//		}
 	}
 
 	public void actionPerformed(ActionEvent e) {

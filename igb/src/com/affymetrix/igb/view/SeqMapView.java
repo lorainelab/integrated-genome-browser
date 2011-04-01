@@ -225,7 +225,7 @@ public class SeqMapView extends JPanel
 	private TransformTierGlyph axis_tier;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final AutoLoad autoload;
-
+	public AbstractAction seqviewer;
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
@@ -319,6 +319,7 @@ public class SeqMapView extends JPanel
 			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
 			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 			tier_manager.addPopupListener(popup);
+			seqviewer = new ViewGenomicSequenceInSeqViewerAction(this);
 		}
 
 		// Listener for track selection events.  We will use this to populate 'Selection Info'
@@ -474,7 +475,7 @@ public class SeqMapView extends JPanel
 //		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
 
 		selectParentMI = setUpMenuItem(sym_popup, "Select parent");
-		seqViewerOptions = setUpMenuItem(sym_popup, "View Genomic Sequence in Sequence Viewer");
+//		seqViewerOptions = setUpMenuItem(sym_popup, "View Genomic Sequence in Sequence Viewer");
 //		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Just selected span using genomic coordinates");
 //		viewParentinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Linked spans using transcript coordinates");
 //		viewFeatureinSequenceViewer = new JMenuItem("View selected feature in Sequence Viewer");
@@ -1044,8 +1045,8 @@ public class SeqMapView extends JPanel
 	final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
-		if(!getSelectedSyms().isEmpty()){
-		ViewGenomicSequenceInSeqViewerAction.getAction().setEnabled(!getSelectedSyms().isEmpty());
+		if(!seqmap.getSelected().isEmpty() && seqviewer != null){
+			seqviewer.setEnabled(!seqmap.getSelected().isEmpty());
 		}
 	}
 
@@ -1067,8 +1068,9 @@ public class SeqMapView extends JPanel
 				seqmap.updateWidget();
 			}
 		}
-
-		ViewGenomicSequenceInSeqViewerAction.getAction().setEnabled(seq_selected_sym != null);
+		if(seqviewer != null){
+			seqviewer.setEnabled(seq_selected_sym != null || !seqmap.getSelected().isEmpty());
+		}
 	}
 		/**
 	 * Copies residues of selection to clipboard
@@ -1667,7 +1669,7 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty()) {
 			popup.add(selectParentMI);
-			popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
+			popup.add(new JMenuItem(seqviewer));
 //			seqViewerOptions.add(viewFeatureinSequenceViewer);
 //			seqViewerOptions.add(viewParentinSequenceViewer);
 		}
@@ -1690,7 +1692,7 @@ public class SeqMapView extends JPanel
 					
 					if(seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))){
 						popup.add(new JMenuItem(new CopyResiduesAction("Copy")));
-						popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
+						popup.add(new JMenuItem(seqviewer));
 					}			
 				}
 				

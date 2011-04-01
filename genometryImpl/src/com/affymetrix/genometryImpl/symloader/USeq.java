@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipInputStream;
@@ -32,7 +33,7 @@ public class USeq extends SymLoader {
 	private ArchiveInfo archiveInfo = null;
 	private ZipInputStream zis = null;
 	private BufferedInputStream bis = null;
-	List<BioSeq> chromosomeList = new ArrayList<BioSeq>();
+	private final Map<BioSeq, String> chromosomeList = new HashMap<BioSeq, String>();
 	
 	//for region parsing
 	private USeqArchive useqArchive = null;
@@ -69,9 +70,9 @@ public class USeq extends SymLoader {
 			HashMap<String,Integer> chromBase = useqArchive.fetchChromosomesAndLastBase();
 			for (String chrom : chromBase.keySet()){
 				//fetch the BioSeq from the AnnotationGroup if it exists
-				chromosomeList.add(group.addSeq(chrom, chromBase.get(chrom)));
+				chromosomeList.put(group.addSeq(chrom, chromBase.get(chrom)),chrom);
 			}
-			Collections.sort(chromosomeList,new BioSeqComparator());
+			Collections.sort(new ArrayList<BioSeq>(chromosomeList.keySet()),new BioSeqComparator());
 			
 		} catch (Exception ex) {
 			Logger.getLogger(USeq.class.getName()).log(Level.SEVERE, null, ex);
@@ -109,9 +110,12 @@ public class USeq extends SymLoader {
 		try {
 			init();
 			//fetch region, this may be stranded
+			if(!chromosomeList.containsKey(span.getBioSeq()))
+				return null;
+
 			int start = span.getStart();
 			int stop = span.getEnd();
-			String chrom = span.getBioSeq().getID();
+			String chrom = chromosomeList.get(span.getBioSeq());
 			USeqData[] useqData = useqArchive.fetch(chrom, start, stop);
 			//any data?
 			if (useqData == null) return null;
@@ -136,6 +140,6 @@ public class USeq extends SymLoader {
 
 	public List<BioSeq> getChromosomeList(){
 		init();
-		return chromosomeList;
+		return new ArrayList<BioSeq>(chromosomeList.keySet());
 	}
 }

@@ -24,7 +24,7 @@
 
   <repository name="local" url="http://localhost:8080/IGBServer" enabled="true" />
 
-  <repository name="Bioviz" url="http://bioviz.org/IGBServer" enabled="false" />
+  <repository name="Bioviz" url="http://transvar.org:8080/igbserver" enabled="false" />
 
   <repository name="Genentech" url="http://gene.com/IGBServer" enabled="false" />
 

@@ -462,13 +462,19 @@ public final class GeneralLoadView extends IGBTabPanel
 					versionCB.addItem(versionName);
 				}
 				versionCB.setEnabled(true);
-				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
-					versionCB.setSelectedItem(oldVersion);
-				} else {
-					versionCB.setSelectedIndex(0);
-				}
 				if (versionCB.getItemCount() > 1) {
 					versionCB.addItemListener(GeneralLoadView.this);
+				}
+				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) &&
+					speciesName.equals(GeneralLoadUtils.versionName2species.get(oldVersion))) {
+					versionCB.setSelectedItem(oldVersion);
+				} else {
+					if (versionCB.getItemCount() > 1) {
+						versionCB.setSelectedIndex(1); // automatically select latest version by default
+					}
+					else {
+						versionCB.setSelectedIndex(0);
+					}
 				}
 			}
 		});

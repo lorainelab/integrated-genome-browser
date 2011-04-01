@@ -121,8 +121,8 @@ public final class UnibrowControlServlet {
 	}
 
 	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
-		AnnotatedSeqGroup group;
-		if (version == null || "unknown".equals(version) || version.startsWith(LoadFileAction.UNKNOWN_GENOME_PREFIX) || version.trim().equals("")) {
+		final AnnotatedSeqGroup group;
+		if (version == null || "unknown".equals(version) || version.trim().equals("")) {
 			group = gmodel.getSelectedSeqGroup();
 		} else {
 			group = gmodel.getSeqGroup(version);

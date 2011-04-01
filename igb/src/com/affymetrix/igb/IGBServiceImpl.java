@@ -35,7 +35,6 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -292,11 +291,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public JFrame getFrame() {
 		return Application.getSingleton().getFrame();
-	}
-
-	@Override
-	public void openDataFile(String filePath) {
-		LoadFileAction.openFileAction(getFrame(), new File(filePath));
 	}
 
 	@Override

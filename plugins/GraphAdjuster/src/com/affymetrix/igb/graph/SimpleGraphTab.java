@@ -1218,17 +1218,34 @@ public final class SimpleGraphTab extends IGBTabPanel
 		gviewer.getSeqMap().updateWidget();
 	}
 
+	private int getWidth(ArrayList<Integer> widths, int index, boolean hasWidthGraphs) {
+		int width = 0;
+		if (widths == null) {
+			if (hasWidthGraphs) {
+				width = 1;
+			}
+		}
+		else {
+			width = widths.get(index);
+		}
+		return width;
+	}
+
 	/**
 	 * performs a given graph operation on a given set of graphs and returns the resulting graph
+	 * note - there can be a mix of widthless (no wCoords) and width graphs, if all input graphs
+	 * are widthless, the result is also widthless, otherwise all widthless graphs will be treated
+	 * as if they have width of 1.
 	 * @param graphs the selected graphs to use as the operands of the operation
 	 * @param operator the GraphOperator to use
 	 * @return the graph result of the operation
 	 */
-	public static GraphSym performOperation(List<GraphGlyph> graphs, GraphOperator operator) {
+	public GraphSym performOperation(List<GraphGlyph> graphs, GraphOperator operator) {
 		// get the x, y, and w (width) coordinates of the graphs int Lists
 		ArrayList<ArrayList<Integer>> xCoords = new ArrayList<ArrayList<Integer>>();
 		ArrayList<ArrayList<Integer>> wCoords = new ArrayList<ArrayList<Integer>>();
 		ArrayList<ArrayList<Float>> yCoords = new ArrayList<ArrayList<Float>>();
+		boolean hasWidthGraphs = false;
 		int[] index = new int[graphs.size()];
 		ArrayList<String> labels = new ArrayList<String>();
 		for (int i = 0; i < graphs.size(); i++) {
@@ -1243,6 +1260,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			ArrayList<Integer> wCoordList = null;
 			int[] wArray = graph.getWCoords();
 			if (wArray != null) {
+				hasWidthGraphs = true;
 				wCoordList = new ArrayList<Integer>();
 				for (int j = 0; j < wArray.length; j++) {
 					wCoordList.add(wArray[j]);
@@ -1276,8 +1294,8 @@ public final class SimpleGraphTab extends IGBTabPanel
 				int graphIndex = index[i];
 				if (graphIndex < xCoords.get(i).size()) {
 					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + (wCoords.get(i) == null ? 0 : wCoords.get(i).get(graphIndex));
-					if (startX == endX && startX < spanEndX) {
+					int endX = startX + getWidth(wCoords.get(i), graphIndex, hasWidthGraphs);
+					if (startX == endX && startX < spanEndX) { // widthless (width == 0) coordinate
 						spanEndX = startX;
 					}
 					else if (startX > spanBeginX && startX < spanEndX) {
@@ -1299,7 +1317,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				int graphIndex = index[i];
 				if (graphIndex < xCoords.get(i).size()) {
 					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + (wCoords.get(i) == null ? 0 : wCoords.get(i).get(graphIndex));
+					int endX = startX + getWidth(wCoords.get(i), graphIndex, hasWidthGraphs);
 					if (spanBeginX >= startX && spanEndX <= endX) {
 						value = yCoords.get(i).get(graphIndex);
 					}
@@ -1317,7 +1335,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				int graphIndex = index[i];
 				if (graphIndex < xCoords.get(i).size()) {
 					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + (wCoords.get(i) == null ? 0 : wCoords.get(i).get(graphIndex));
+					int endX = startX + getWidth(wCoords.get(i), graphIndex, hasWidthGraphs);
 					if (endX <= spanEndX) {
 						index[i]++;
 					}

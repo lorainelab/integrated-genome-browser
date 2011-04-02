@@ -11,6 +11,9 @@
 
 package org.genoviz.gui;
 
+import java.io.File;
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author pi
@@ -68,6 +71,11 @@ public class CountReadsGUI extends javax.swing.JFrame {
         jLabel2.setText("Open:");
 
         jButton1.setText("File");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("URL");
 
@@ -246,6 +254,31 @@ public class CountReadsGUI extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // See:
+        // http://download.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemoProject/src/components/FileChooserDemo.java
+        if (chooser == null) {
+            chooser = new JFileChooser();
+            // so users can pick more than one files
+            chooser.setMultiSelectionEnabled(true);
+        }
+        int returnVal = chooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File[] files = chooser.getSelectedFiles();
+            // add any newly-chosen files to JList jList1
+            // show them as selected in JList jList1
+            // to maintain context, showing user what she
+            // most recently selected
+            // Also, check that each "BAM" files has a corresponding
+            // "BAI" file in the same directory
+            // If not, warn the user and "gray out" the List item (??)
+            for (int i = 0 ; i < files.length; i++) {
+                System.err.println("File selected: " + files[i]);
+            }
+        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -256,6 +289,8 @@ public class CountReadsGUI extends javax.swing.JFrame {
             }
         });
     }
+
+    private JFileChooser chooser = null;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

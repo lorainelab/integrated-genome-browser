@@ -61,8 +61,9 @@ public class CountReadsGUI extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Select BAM file(s) to query"));
 
+        jList1.setFont(new java.awt.Font("Lucida Grande", 2, 12)); // NOI18N
         jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = { "Use File or URL buttons to enter files, which will appear in this list" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -80,6 +81,11 @@ public class CountReadsGUI extends javax.swing.JFrame {
         jButton2.setText("URL");
 
         jButton5.setText("Remove");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -280,6 +286,20 @@ public class CountReadsGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
+     * Method invoked when users clicked the button labeled "Remove"
+     * @param evt
+     */
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // When users click the Remove button, any items shown in the JList
+        // will be removed. At that point, we'll need to check the various
+        // reference seuqences displayed in the JComboBox - if we got rid of
+        // all the BAM files that contained those sequences, then we don't need
+        // them to appear as options. Similarly, if the user has already selected
+        // one of those, then the JComboBox needs to display a "no selection"
+        // option, or something like that.
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    /**
     * @param args the command line arguments
     */
     public static void main(String args[]) {
@@ -290,6 +310,9 @@ public class CountReadsGUI extends javax.swing.JFrame {
         });
     }
 
+    // We keep a reference to this hagnging around so that we can remember
+    // state between file choosings -- so that the user will see the same
+    // view of the file system each time he or she tries to choose a file
     private JFileChooser chooser = null;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

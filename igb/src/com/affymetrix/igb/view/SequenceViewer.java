@@ -235,44 +235,46 @@ public class SequenceViewer extends JPanel
 		version = ag.getID();
 		if (residues_sym.getID() != null) {
 			Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
-			Iterator<String> iterator = sym.keySet().iterator();
+			if (sym != null) {
+				Iterator<String> iterator = sym.keySet().iterator();
 
-			while (iterator.hasNext()) {
-				String key = iterator.next().toString();
-				String value = sym.get(key).toString();
-				if (key.equals("id")) {
-					id = value;
-				} else if (key.equals("forward")) {
+				while (iterator.hasNext()) {
+					String key = iterator.next().toString();
+					String value = sym.get(key).toString();
+					if (key.equals("id")) {
+						id = value;
+					} else if (key.equals("forward")) {
 //					String forward = value;
 //					if (forward.equals("true")) {
 //						direction = "+";
 //					}
-				} else if (key.equals("type")) {
-					type = value;
-					if (type == null) {
-						type = "";
+					} else if (key.equals("type")) {
+						type = value;
+						if (type == null) {
+							type = "";
+						}
+					} else if (key.equals("seq id")) {
+						chromosome = value;
+						if (chromosome == null) {
+							chromosome = "";
+						}
+					} else if (key.equals("cds max")) {
+						cdsMax = Integer.parseInt(value);
+					} else if (key.equals("cds min")) {
+						cdsFound = true;
+						cdsMin = Integer.parseInt(value);
 					}
-				} else if (key.equals("seq id")) {
-					chromosome = value;
-					if (chromosome == null) {
-						chromosome = "";
-					}
-				} else if (key.equals("cds max")) {
-					cdsMax = Integer.parseInt(value);
-				} else if (key.equals("cds min")) {
-					cdsFound = true;
-					cdsMin = Integer.parseInt(value);
 				}
-			}
-			this.caluclateCdsStartEnd();
-			isGenomicRequest = false;
-			//title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
-			title = id + " : " + version + " : " + this.aseq;
-		} else {
-			isGenomicRequest = true;
-			title = "Genomic Sequence : " + version + " : " + this.aseq + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);
+				this.caluclateCdsStartEnd();
+				isGenomicRequest = false;
+				//title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
+				title = id + " : " + version + " : " + this.aseq;
+			} else {
+				isGenomicRequest = true;
+				title = "Genomic Sequence : " + version + " : " + this.aseq + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);
 //			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
-			showcDNAButton.setEnabled(false);
+				showcDNAButton.setEnabled(false);
+			}
 		}
 
 	}
@@ -447,7 +449,7 @@ public class SequenceViewer extends JPanel
 		return "";
 	}
 
-	public void exportSequenceFasta(Boolean isReverse){
+	public void exportSequenceFasta(Boolean isReverse) {
 		JFileChooser chooser = UniFileChooser.getFileChooser("Fasta file", "fasta");
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 		String r = null;
@@ -459,12 +461,11 @@ public class SequenceViewer extends JPanel
 				try {
 					FileWriter fw = new FileWriter(fileName);
 					String firstLine = title;
-					if(isReverse){
+					if (isReverse) {
 						r = DNAUtils.getReverseComplement(seqview.getResidues());
 						firstLine = title + "Reverse Complement";
-					}
-					else{
-					r = seqview.getResidues();
+					} else {
+						r = seqview.getResidues();
 					}
 					if (!isGenomicRequest) {
 						firstLine = title + " : " + seqStart + " - " + seqEnd;
@@ -523,12 +524,12 @@ public class SequenceViewer extends JPanel
 		showMenu.add(transNegThreeCBMenuItem);
 		colorMenu.add(colorScheme1);
 		colorMenu.add(colorScheme2);
-		exportRComplementFasta.addActionListener(new ActionListener(){
+		exportRComplementFasta.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				exportSequenceFasta(true);
-    }
-
+			}
 		});
 		bg.add(colorScheme1);
 		bg.add(colorScheme2);

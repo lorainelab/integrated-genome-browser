@@ -624,11 +624,14 @@ public final class IndexingUtils {
 		try {
 			// create indexed file.
 			
-			if (graphName.length() < 3) {
-				graphName += "___";
+			//if (graphName.length() < 3) {
+				//graphName += "___";
 				// fix for Java error with short names
-			}
-			bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
+			//}
+			
+			bufVal = File.createTempFile((Math.random()+"").substring(2), "idx");
+			//cannot use the graph name since this is sometimes too long and throws a IOException
+			//bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
 			bufVal.deleteOnExit(); // Delete this file when shutting down.
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
 			for (int i = 0; i < pointCount; i++) {

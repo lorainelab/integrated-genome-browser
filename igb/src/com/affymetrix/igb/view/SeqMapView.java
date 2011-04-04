@@ -1664,6 +1664,7 @@ public class SeqMapView extends JPanel
 		List<SeqSymmetry> selected_syms = getSelectedSyms();
 		if (!selected_syms.isEmpty()) {
 			popup.add(selectParentMI);
+			if(!(selected_syms.get(0) instanceof GraphSym))
 			popup.add(new JMenuItem(seqviewer));
 //			seqViewerOptions.add(viewFeatureinSequenceViewer);
 //			seqViewerOptions.add(viewParentinSequenceViewer);

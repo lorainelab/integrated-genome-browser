@@ -90,11 +90,11 @@ public class USeq extends SymLoader {
 			//is it a graph dataset?
 			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
 				USeqGraphParser gp = new USeqGraphParser();
-				return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), featureName, archiveInfo);
+				return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), uri.toString(), archiveInfo);
 			//must be a region dataset
 			} else {
 				USeqRegionParser rp = new USeqRegionParser();
-				return rp.parse(zis, group, featureName, false, archiveInfo);
+				return rp.parse(zis, group, uri.toString(), false, archiveInfo);
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(USeq.class.getName()).log(Level.SEVERE, null, ex);
@@ -122,11 +122,11 @@ public class USeq extends SymLoader {
 			//is it a graph dataset?
 			if (useqArchive.getArchiveInfo().getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
 				USeqGraphParser gp = new USeqGraphParser();
-				return gp.parseGraphSyms(useqArchive, useqData, GenometryModel.getGenometryModel(), featureName);
+				return gp.parseGraphSyms(useqArchive, useqData, GenometryModel.getGenometryModel(), uri.toString());
 			//must be a region dataset
 			} else {				
 				USeqRegionParser rp = new USeqRegionParser();
-				return rp.parse(useqArchive, useqData, group, featureName);
+				return rp.parse(useqArchive, useqData, group, uri.toString());
 			}
 		} catch (Exception ex) {
 			Logger.getLogger(USeq.class.getName()).log(Level.SEVERE, null, ex);

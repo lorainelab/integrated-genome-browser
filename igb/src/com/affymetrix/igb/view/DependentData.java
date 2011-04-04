@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -72,6 +73,14 @@ public class DependentData {
 		syms.add(tsym);
 		
 		int[] startEnd = getStartEnd(tsym, aseq);
+		SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
+
+		//Load Residues
+		if(!aseq.isAvailable(loadSpan)){
+			if(!GeneralLoadView.getLoadView().loadResidues(loadSpan, true)){
+				return (GraphSym) sym;
+			}
+		}
 		
 		MisMatchGraphSym mgsym = SeqSymSummarizer.getMismatchGraph(syms, aseq, false, id, startEnd[0], startEnd[1]);
 

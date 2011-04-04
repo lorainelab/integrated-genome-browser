@@ -564,6 +564,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 	//Load Residues
 	if(!aseq.isAvailable(loadSpan)){
+		boolean confirm = IGB.confirmPanel("Residues for " + aseq.getID()
+							+ " not loaded.  \nDo you want to load residues?");
+		if (!confirm) {
+			return;
+		}
+		
 		if(!GeneralLoadView.getLoadView().loadResidues(loadSpan, true)){
 			ErrorHandler.errorPanel("No Residues Loaded",
 			"Could not load partial or full residues.");

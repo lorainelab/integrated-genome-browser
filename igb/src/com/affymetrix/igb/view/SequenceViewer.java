@@ -194,6 +194,12 @@ public class SequenceViewer extends JPanel
 				this.aseq = seqmapview.getAnnotatedSeq();
 				if (!isGenomicRequest) {
 					if (!aseq.isAvailable(residues_sym.getSpan(aseq))) {
+						boolean confirm = IGB.confirmPanel("Residues for " + aseq.getID()
+											+ " not loaded.  \nDo you want to load residues?");
+						if (!confirm) {
+							return;
+						}
+						
 						GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
 						ThreadUtils.runOnEventQueue(new Runnable() {
 

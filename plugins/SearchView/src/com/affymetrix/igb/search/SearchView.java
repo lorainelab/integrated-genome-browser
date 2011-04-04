@@ -128,6 +128,8 @@ public final class SearchView extends IGBTabPanel implements
 
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 		pan1.add(new JLabel(SearchView.INLABELTEXT));
+		sequence_CB.setMinimumSize(new Dimension(4, 0));
+		sequence_CB.setPreferredSize(new Dimension(searchCB.getPreferredSize().width, searchCB.getPreferredSize().height));
 		sequence_CB.setToolTipText(SEQUENCETOSEARCH);
 		pan1.add(sequence_CB);
 

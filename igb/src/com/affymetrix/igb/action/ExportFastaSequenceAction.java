@@ -23,6 +23,6 @@ public class ExportFastaSequenceAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		sv.exportSequenceFasta();
+		sv.exportSequenceFasta(false);
 	}
 }

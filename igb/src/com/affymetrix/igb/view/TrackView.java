@@ -249,6 +249,27 @@ public class TrackView {
 			}
 		}
 
+		// Middle ground shading for graphsym
+		if ((meth != null)
+				&& (annotSym instanceof GraphSym)
+				&& (feature != null)) {
+			TierGlyph track = gstyle2track.get(style);
+			SeqSymmetry inverse = SeqUtils.inverse(feature.getRequestSym(), seq);
+			int child_count = inverse.getChildCount();
+			for (int i = 0; i < child_count; i++) {
+				SeqSymmetry child = inverse.getChild(i);
+				for (int j = 0; j < child.getSpanCount(); j++) {
+					SeqSpan ospan = child.getSpan(j);
+					if (ospan.getLength() > 1) {
+						if (track != null) {
+							GlyphI mglyph = new FillRectGlyph();
+							mglyph.setCoords(ospan.getMin(), 0, ospan.getLength() - 1, 0);
+							track.addMiddleGlyph(mglyph);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public static SymWithProps addToDependentList(DependentData dd){

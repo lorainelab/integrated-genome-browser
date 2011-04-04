@@ -11,10 +11,12 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.util.DNAUtils;
+import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
@@ -24,6 +26,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.CopyFromSeqViewerAction;
 import com.affymetrix.igb.action.ExitSeqViewerAction;
 import com.affymetrix.igb.action.ExportFastaSequenceAction;
+import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.BorderLayout;
@@ -39,6 +42,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -195,11 +199,11 @@ public class SequenceViewer extends JPanel
 				if (!isGenomicRequest) {
 					if (!aseq.isAvailable(residues_sym.getSpan(aseq))) {
 						boolean confirm = IGB.confirmPanel("Residues for " + aseq.getID()
-											+ " not loaded.  \nDo you want to load residues?");
+								+ " not loaded.  \nDo you want to load residues?");
 						if (!confirm) {
 							return;
 						}
-						
+
 						GeneralLoadView.getLoadView().loadResidues(residues_sym.getSpan(aseq), true);
 						ThreadUtils.runOnEventQueue(new Runnable() {
 
@@ -302,15 +306,19 @@ public class SequenceViewer extends JPanel
 
 	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
 		if (showcDNASwitch) {
-			if(seqview.getResidues().length() > cdsMinDNAonly && cdsMinDNAonly>=0 && cdsFound)
-			seqview.addOutlineAnnotation(cdsMinDNAonly, cdsMinDNAonly + 2, Color.green);
-			if(seqview.getResidues().length() > cdsMaxDNAonly && cdsMaxDNAonly>=0 && cdsFound)
-			seqview.addOutlineAnnotation(cdsMaxDNAonly, cdsMaxDNAonly + 2, Color.red);
+			if (seqview.getResidues().length() > cdsMinDNAonly && cdsMinDNAonly >= 0 && cdsFound) {
+				seqview.addOutlineAnnotation(cdsMinDNAonly, cdsMinDNAonly + 2, Color.green);
+			}
+			if (seqview.getResidues().length() > cdsMaxDNAonly && cdsMaxDNAonly >= 0 && cdsFound) {
+				seqview.addOutlineAnnotation(cdsMaxDNAonly, cdsMaxDNAonly + 2, Color.red);
+			}
 		} else {
-					if(seqview.getResidues().length() > cdsMin && cdsMin >= 0 && cdsFound)
-			seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
-					if(seqview.getResidues().length() > cdsMax && cdsMax >= 0 && cdsFound)
-			seqview.addOutlineAnnotation(cdsMax, cdsMax + 2, Color.red);
+			if (seqview.getResidues().length() > cdsMin && cdsMin >= 0 && cdsFound) {
+				seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
+			}
+			if (seqview.getResidues().length() > cdsMax && cdsMax >= 0 && cdsFound) {
+				seqview.addOutlineAnnotation(cdsMax, cdsMax + 2, Color.red);
+			}
 		}
 	}
 
@@ -326,7 +334,7 @@ public class SequenceViewer extends JPanel
 			seqEnd = spans[0].getMax();
 		}
 		if (spans.length > 1) {
-			if ((spans[0].getStart() > spans[0].getEnd()) && (spans[0].getStart() <spans[1].getStart())){
+			if ((spans[0].getStart() > spans[0].getEnd()) && (spans[0].getStart() < spans[1].getStart())) {
 				SeqSpan[] spans_duplicate = new SeqSpan[spans.length];
 				for (int k = 0; k < spans.length; k++) {
 					spans_duplicate[spans.length - 1 - k] = spans[k];
@@ -439,41 +447,43 @@ public class SequenceViewer extends JPanel
 		return "";
 	}
 
-	public void exportSequenceFasta() {
-		FileDialog fd = new FileDialog(mapframe, "Save As", FileDialog.SAVE);
-		fd.setFilenameFilter((new FilenameFilter() {
-
-			public boolean accept(File dir, String name) {
-				return true;
-			}
-		}));
-		fd.setVisible(true);
-		String fileName = fd.getFile();
-
-		if (null != fileName) {
-			try {
-
-				FileWriter fw = new FileWriter(fd.getDirectory() + fileName);
-				String firstLine = title;
-				String r = seqview.getResidues();
-				if (!isGenomicRequest) {
-					firstLine = title + " : " + seqStart + " - " + seqEnd;
-				}
-				fw.write(">" + firstLine);
-				fw.write('\n');
-				int i;
-				for (i = 0; i < r.length() - 50; i += 50) {
-					fw.write(r, i, 50);
+	public void exportSequenceFasta(Boolean isReverse){
+		JFileChooser chooser = UniFileChooser.getFileChooser("Fasta file", "fasta");
+		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+		String r = null;
+		int option = chooser.showSaveDialog(null);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+			String fileName = chooser.getSelectedFile().toString();
+			if (null != fileName) {
+				try {
+					FileWriter fw = new FileWriter(fileName);
+					String firstLine = title;
+					if(isReverse){
+						r = DNAUtils.getReverseComplement(seqview.getResidues());
+						firstLine = title + "Reverse Complement";
+					}
+					else{
+					r = seqview.getResidues();
+					}
+					if (!isGenomicRequest) {
+						firstLine = title + " : " + seqStart + " - " + seqEnd;
+					}
+					fw.write(">" + firstLine);
 					fw.write('\n');
+					int i;
+					for (i = 0; i < r.length() - 50; i += 50) {
+						fw.write(r, i, 50);
+						fw.write('\n');
+					}
+					if (i < r.length()) {
+						fw.write(r.substring(i) + '\n');
+					}
+					fw.flush();
+					fw.close();
+				} catch (Exception ex) {
+					ErrorHandler.errorPanel("Problem saving file", ex);
 				}
-				if (i < r.length()) {
-					fw.write(r.substring(i) + '\n');
-				}
-				fw.flush();
-				fw.close();
-			} catch (IOException ex) {
-				System.out.println(ex.getMessage());
-				ex.printStackTrace();
 			}
 		}
 	}
@@ -489,6 +499,7 @@ public class SequenceViewer extends JPanel
 	JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(" -3 Translation");
 	JCheckBoxMenuItem colorScheme1 = new JCheckBoxMenuItem("Yellow on black");
 	JCheckBoxMenuItem colorScheme2 = new JCheckBoxMenuItem("Blue on white");
+	JMenuItem exportRComplementFasta = new JMenuItem("Save Reverse Complement");
 	JMenu showMenu = new JMenu("Show");
 	JMenu fileMenu = new JMenu("File");
 	JMenu editMenu = new JMenu("Edit");
@@ -499,6 +510,7 @@ public class SequenceViewer extends JPanel
 
 		copyAction.setEnabled(false);
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
+		MenuUtil.addToMenu(fileMenu, exportRComplementFasta);
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, new JMenuItem(copyAction));
 		editMenu.addMenuListener(this);
@@ -511,6 +523,13 @@ public class SequenceViewer extends JPanel
 		showMenu.add(transNegThreeCBMenuItem);
 		colorMenu.add(colorScheme1);
 		colorMenu.add(colorScheme2);
+		exportRComplementFasta.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				exportSequenceFasta(true);
+    }
+
+		});
 		bg.add(colorScheme1);
 		bg.add(colorScheme2);
 		if (colorSwitch) {
@@ -546,7 +565,7 @@ public class SequenceViewer extends JPanel
 	public void copyAction() {
 		String selectedSeq = seqview.getSelectedResidues().trim();
 		if (seqview.getShow(NeoSeq.COMPLEMENT)) {
-			selectedSeq = DNAUtils.reverseComplement(selectedSeq);
+			selectedSeq = DNAUtils.complement(selectedSeq);
 		}
 		if (selectedSeq != null) {
 			Clipboard clipboard = this.getToolkit().getSystemClipboard();

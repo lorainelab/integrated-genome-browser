@@ -254,7 +254,11 @@ public final class BookmarkUnibrowControlServlet {
 				continue;
 			}
 
-			loadData(gServers[i], type_uri, start, end);
+			GenericFeature feature = getFeature(gServers[i], type_uri);
+			if(feature != null){
+				BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+				loadFeature(feature, seq, start, end);
+			}
 		}
 
 		if (!opaque_requests.isEmpty()) {
@@ -267,9 +271,17 @@ public final class BookmarkUnibrowControlServlet {
 	}
 	
 	private GenericFeature[] loadData(final GenericServer[] gServers, final String[] query_urls, int start, int end){
+		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
 		for (int i = 0; i < query_urls.length; i++) {
-			gFeatures[i] = loadData(gServers[i], query_urls[i], start, end);
+			gFeatures[i] = getFeature(gServers[i], query_urls[i]);
+		}
+		
+		for (int i = 0; i < gFeatures.length; i++) {
+			GenericFeature gFeature = gFeatures[i];
+			if (gFeature != null) {
+				loadFeature(gFeature, seq, start, end);
+			}
 		}
 		
 		GeneralLoadView.getLoadView().refreshTreeView();
@@ -278,8 +290,7 @@ public final class BookmarkUnibrowControlServlet {
 		return gFeatures;
 	}
 
-	private GenericFeature loadData(final GenericServer gServer, final String query_url, int start, int end){
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+	private GenericFeature getFeature(final GenericServer gServer, final String query_url){
 
 		if (gServer == null) {
 			return null;
@@ -287,19 +298,21 @@ public final class BookmarkUnibrowControlServlet {
 
 		GenericFeature feature = UnibrowControlServlet.getInstance().getFeature(gServer, query_url);
 
-		if (feature != null) {
-			feature.setVisible();
-			SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-			if(!GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE)){
-				overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
-			}
-			GeneralLoadUtils.loadAndDisplaySpan(overlap, feature);
-		} else {
+		if (feature == null) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(
 					Level.SEVERE, "Couldn't find feature for bookmark url {0}", query_url);
 		}
 
 		return feature;
+	}
+
+	private void loadFeature(GenericFeature gFeature, BioSeq seq, int start, int end){
+		gFeature.setVisible();
+		SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
+		if (!GenericFeature.setPreferredLoadStrategy(gFeature, LoadStrategy.VISIBLE)) {
+			overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
+		}
+		GeneralLoadUtils.loadAndDisplaySpan(overlap, gFeature);
 	}
 	
 	private GenericServer[] loadServers(String[] server_urls){

@@ -502,6 +502,11 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	public boolean isEmbedded() {
 		return true;
 	}
+
+	@Override
+	public boolean isCheckMinimumWindowSize() {
+		return true;
+	}
 }
 
 

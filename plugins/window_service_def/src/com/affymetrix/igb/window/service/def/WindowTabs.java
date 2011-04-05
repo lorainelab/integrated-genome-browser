@@ -56,7 +56,8 @@ public class WindowTabs implements TabHolder {
 		comp.setVisible(true);
 		frame.pack(); // pack() to set frame to its preferred size
 
-		Rectangle pos = PreferenceUtils.retrieveWindowLocation(name, frame.getBounds());
+		Rectangle defRect = (comp.isCheckMinimumWindowSize() && comp.getTrayRectangle() != null) ? comp.getTrayRectangle() : frame.getBounds();
+		Rectangle pos = PreferenceUtils.retrieveWindowLocation(name, defRect);
 		if (pos != null) {
 			PreferenceUtils.setWindowSize(frame, pos);
 		}

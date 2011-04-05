@@ -1,5 +1,6 @@
 package com.affymetrix.igb.osgi.service;
 
+import java.awt.Rectangle;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +71,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	private final boolean focus;
 	private final int position;
 	private JFrame frame;
+	private Rectangle trayRectangle;
 
 	public IGBTabPanel(IGBService igbService, String displayName, String title, boolean main) {
 		this(igbService, displayName, title, main, DEFAULT_TAB_POSITION);
@@ -172,11 +174,32 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
 	}
 
 	/**
-	 * specify if this is an embedded tab (included in the IGB distribution)
+	 * specify if this is an embedded tab (included in the IGB distribution).
+	 * DO NOT override this value, unless you are creating a tab that
+	 * will be included in the real IGB distribution. If you are not
+	 * sure, then leave as is (false).
 	 * @return true if this is an embedded tab panel, false otherwise
 	 */
 	public boolean isEmbedded() {
 		return false;
+	}
+
+	/**
+	 * there are some tabs that, when they are moved to a separate popup
+	 * window, they are too small. For those tabs, we handle them specially,
+	 * so that the size is OK.
+	 * @return if this tab needs to have the minimum size checked
+	 */
+	public boolean isCheckMinimumWindowSize() {
+		return false;
+	}
+
+	public final Rectangle getTrayRectangle() {
+		return trayRectangle;
+	}
+
+	public final void setTrayRectangle(Rectangle tabRectangle) {
+		this.trayRectangle = tabRectangle;
 	}
 
 	@Override

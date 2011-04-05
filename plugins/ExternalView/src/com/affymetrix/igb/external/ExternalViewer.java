@@ -58,4 +58,9 @@ public class ExternalViewer extends IGBTabPanel {
 	public boolean isEmbedded() {
 		return true;
 	}
+
+	@Override
+	public boolean isCheckMinimumWindowSize() {
+		return true;
+	}
 }

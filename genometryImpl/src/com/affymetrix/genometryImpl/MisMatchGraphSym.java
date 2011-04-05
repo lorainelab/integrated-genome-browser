@@ -48,10 +48,15 @@ public class MisMatchGraphSym extends GraphSym {
 			return super.getLocationProperties(x, span);
 
 		Map<String, Object> locprops = new HashMap<String, Object>();
-
+		
+		locprops.put("x coord", x);
+		float ytot = 0;
 		for(int i=0; i<residuesTot.length; i++){
-			locprops.put(String.valueOf(ResiduesChars.getCharFor(i)), residuesTot[i][leftBound]);
+			y = residuesTot[i][leftBound];
+			locprops.put(String.valueOf(ResiduesChars.getCharFor(i)), y);
+			ytot += y;
 		}
+		locprops.put("y total", ytot);
 
 		return locprops;
 	}

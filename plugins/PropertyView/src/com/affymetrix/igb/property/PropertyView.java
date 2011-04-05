@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -70,11 +71,12 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	private static List<String> graphToolTipOrder(){
 		List<String> orderList = new ArrayList<String>(20);
 		orderList.add("id");
+		orderList.add("strand");
 		orderList.add("x coord");
 		orderList.add("y coord");
+		orderList.add("y total");
 		orderList.add("min score");
 		orderList.add("max score");
-		orderList.add("strand");
 		orderList.add("A");
 		orderList.add("T");
 		orderList.add("G");
@@ -263,7 +265,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			}
 		}
 	}
-		if (sym instanceof GraphSym) {
+		if (sym instanceof GraphSym && !(sym instanceof MisMatchGraphSym)) {
 			float[] range = ((GraphSym) sym).getVisibleYRange();
 			props.put("min score", range[0]);
 			props.put("max score", range[1]);

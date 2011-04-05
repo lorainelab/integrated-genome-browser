@@ -170,7 +170,7 @@ public final class BookmarkUnibrowControlServlet {
 				for (int i = 0; i < gFeatures.length; i++) {
 					final GenericFeature feature = gFeatures[i];
 					
-					if (graph_urls.contains(feature.getURI().toString())) {
+					if (feature != null && graph_urls.contains(feature.getURI().toString())) {
 						ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
 
 							public void run() {

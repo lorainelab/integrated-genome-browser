@@ -30,6 +30,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -293,6 +294,12 @@ public final class BookmarkUnibrowControlServlet {
 	private GenericFeature getFeature(final GenericServer gServer, final String query_url){
 
 		if (gServer == null) {
+			return null;
+		}
+
+		// If server requires authentication then.
+		// If it cannot be authenticated then don't add the feature.
+		if(!LocalUrlCacher.isValidURL(query_url)){
 			return null;
 		}
 

@@ -231,6 +231,12 @@ public final class LoadFileAction extends AbstractAction {
 			ScriptFileLoader.doActions(uri.toString());
 			return;
 		}
+		
+		// If server requires authentication then.
+		// If it cannot be authenticated then don't add the feature.
+		if(!LocalUrlCacher.isValidURI(uri)){
+			return;
+		}
 
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
 			

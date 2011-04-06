@@ -76,6 +76,7 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
@@ -296,7 +297,42 @@ public class SeqMapView extends JPanel
 
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
-		Adjustable xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
+		Adjustable xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL) {
+
+			@Override
+			public void paint(Graphics g) {
+				super.paint(g);
+				
+				if(autoload != null){
+					drawAutoLoadPoint(g);
+				}
+			}
+
+			private void drawAutoLoadPoint(Graphics g) {
+				int threshValue = (AutoLoad.threshold * getMaximum() / 100);
+				Color c = g.getColor();
+				g.setColor(Color.RED);
+				int xp = xPositionForValue(threshValue);
+				int yp = this.getHeight()/2;
+				int x[] = new int[]{xp, xp-5, xp+5};
+				int y[] = new int[]{yp, 0, 0};
+				g.fillPolygon(x,y,3);
+				g.setColor(c);
+
+			}
+
+			private int xPositionForValue(int value) {
+				int min = getMinimum();
+				int max = getMaximum();
+				int trackLength = this.getWidth();
+				double valueRange = (double) max - (double) min;
+				double pixelsPerValue = (double) trackLength / valueRange;
+
+				return (int) Math.round(pixelsPerValue * (value - min) - pixelsPerValue * 2);
+			}
+
+		};
+		
 		((JSlider)xzoomer).setToolTipText("Horizontal zoom");
 		Adjustable yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
 		((JSlider)yzoomer).setToolTipText("Vertical zoom");

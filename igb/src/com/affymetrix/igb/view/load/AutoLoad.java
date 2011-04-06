@@ -2,12 +2,9 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
-import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Hashtable;
-import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 import java.util.prefs.PreferenceChangeEvent;
@@ -41,29 +38,8 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 		this.map.addMouseMotionListener(this);
 		this.zoomer_value = this.zoomer.getValue();
 		autoLoadEnabled = PreferenceUtils.getBooleanParam(PREFS_AUTOLOAD, default_autoload);
-
-		showAutoLoadRegion();
 		
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
-	}
-
-	private void showAutoLoadRegion(){
-		String text = "Autoload Region";
-		int threshValue = (AutoLoad.threshold * zoomer.getMaximum()/100);
-		Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel>();
-		JLabel startStop = new JLabel("|");
-		startStop.setForeground(Color.RED);
-		JLabel def = new JLabel("-");
-		def.setForeground(Color.RED);
-
-		table.put(threshValue, startStop);
-		for(int i=threshValue+1; i<zoomer.getMaximum(); i++){
-			table.put(i, def);
-		}
-		table.put(zoomer.getMaximum(), startStop);
-		
-		zoomer.setLabelTable(table);
-		zoomer.setPaintLabels(true);
 	}
 
 	public void loadData(){

@@ -355,6 +355,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
 	@Override
 	public void removeTab(final IGBTabPanel plugin) {
+		plugin.setTrayRectangle(plugin.getBounds());
 		String name = plugin.getName();
 		for (int i = 0; i < tab_pane.getTabCount(); i++) {
 			if (name.equals(((IGBTabPanel)tab_pane.getComponentAt(i)).getName())) {

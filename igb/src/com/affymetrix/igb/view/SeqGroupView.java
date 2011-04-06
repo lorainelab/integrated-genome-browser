@@ -266,4 +266,9 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 	public boolean isEmbedded() {
 		return true;
 	}
+
+	@Override
+	public boolean isCheckMinimumWindowSize() {
+		return true;
+	}
 }

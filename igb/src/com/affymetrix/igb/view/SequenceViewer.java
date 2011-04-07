@@ -233,7 +233,14 @@ public class SequenceViewer extends JPanel
 	private void getTitle() {
 		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 		version = ag.getID();
+		if(isGenomicRequest){
+			title = "Genomic Sequence : " + version + " : " + this.aseq + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);
+//			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
+			showcDNAButton.setEnabled(false);
+		}
+		else{
 		if (residues_sym.getID() != null) {
+			id = residues_sym.getID();
 			Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
 			if (sym != null) {
 				Iterator<String> iterator = sym.keySet().iterator();
@@ -265,21 +272,23 @@ public class SequenceViewer extends JPanel
 						cdsMin = Integer.parseInt(value);
 					}
 				}
-				this.caluclateCdsStartEnd();
-				isGenomicRequest = false;
-				//title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
-				title = id + " : " + version + " : " + this.aseq;
-			} else {
-				isGenomicRequest = true;
-				title = "Genomic Sequence : " + version + " : " + this.aseq + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);
-//			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
-				showcDNAButton.setEnabled(false);
 			}
+
+			}
+		if(id == null){
+			title = version + " : " + this.aseq;
 		}
+		else{
+			title = id + " : " + version + " : " + this.aseq;
+		}
+				this.calculateCdsStartEnd();
+				//title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
+		}
+
 
 	}
 
-	private void caluclateCdsStartEnd() {
+	private void calculateCdsStartEnd() {
 		int i = 0;
 		if (seqSpans[0].getStart() < seqSpans[0].getEnd()) {
 			cdsMin = cdsMin - seqSpans[0].getStart();
@@ -500,7 +509,7 @@ public class SequenceViewer extends JPanel
 	JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(" -3 Translation");
 	JCheckBoxMenuItem colorScheme1 = new JCheckBoxMenuItem("Yellow on black");
 	JCheckBoxMenuItem colorScheme2 = new JCheckBoxMenuItem("Blue on white");
-	JMenuItem exportRComplementFasta = new JMenuItem("Save Reverse Complement");
+	JMenuItem exportRComplementFasta = new JMenuItem("Save As Fasta(Reverse Complement)");
 	JMenu showMenu = new JMenu("Show");
 	JMenu fileMenu = new JMenu("File");
 	JMenu editMenu = new JMenu("Edit");

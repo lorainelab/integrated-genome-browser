@@ -298,17 +298,17 @@ public class SeqMapView extends JPanel
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
 		Adjustable xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL) {
-
+			
 			@Override
 			public void paint(Graphics g) {
 				super.paint(g);
-				
+
 				if(autoload != null){
 					drawAutoLoadPoint(g);
 				}
 			}
 
-			private void drawAutoLoadPoint(Graphics g) {
+			private void drawAutoLoadPoint(Graphics g) {		
 				int threshValue = (AutoLoad.threshold * getMaximum() / 100);
 				Color c = g.getColor();
 				g.setColor(Color.RED);
@@ -318,7 +318,6 @@ public class SeqMapView extends JPanel
 				int y[] = new int[]{yp, 0, 0};
 				g.fillPolygon(x,y,3);
 				g.setColor(c);
-
 			}
 
 			private int xPositionForValue(int value) {
@@ -331,6 +330,18 @@ public class SeqMapView extends JPanel
 				return (int) Math.round(pixelsPerValue * (value - min) - pixelsPerValue * 2);
 			}
 
+			@Override
+			public String getToolTipText(MouseEvent me){
+				if(me != null && autoload != null){
+					int threshValue = (AutoLoad.threshold * getMaximum() / 100);
+					int xp = xPositionForValue(threshValue);
+					if(me.getX() > xp-5 && me.getX() < xp+5){
+						return "AutoLoad Threshold";
+					}
+					return super.getToolTipText();
+				}
+				return super.getToolTipText();
+			}
 		};
 		
 		((JSlider)xzoomer).setToolTipText("Horizontal zoom");

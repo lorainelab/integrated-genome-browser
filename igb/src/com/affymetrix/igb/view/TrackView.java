@@ -305,6 +305,11 @@ public class TrackView {
 		deleteDependentData(method, seq);
 		if(feature != null){
 			feature.deleteSymsOnSeq(method, seq);
+		}else{ //This could derived from other sym
+			SeqSymmetry sym = seq.getAnnotation(method);
+			if(sym != null){
+				seq.removeAnnotation(sym);
+			}
 		}
 	}
 

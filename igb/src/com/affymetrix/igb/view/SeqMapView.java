@@ -326,6 +326,18 @@ public class SeqMapView extends JPanel
 				return (int) Math.round(pixelsPerValue * (value - min) - pixelsPerValue * 2);
 			}
 
+			@Override
+			public String getToolTipText(MouseEvent me){
+				if(me != null && autoload != null){
+					int threshValue = (AutoLoad.threshold * getMaximum() / 100);
+					int xp = xPositionForValue(threshValue);
+					if(me.getX() > xp-5 && me.getX() < xp+5){
+						return "AutoLoad Threshold";
+					}
+					return super.getToolTipText();
+				}
+				return super.getToolTipText();
+			}
 		};
 		
 		((JSlider)xzoomer).setToolTipText("Horizontal zoom");

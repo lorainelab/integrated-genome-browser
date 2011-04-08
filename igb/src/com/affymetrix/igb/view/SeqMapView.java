@@ -311,7 +311,7 @@ public class SeqMapView extends JPanel
 			private void drawAutoLoadPoint(Graphics g) {		
 				int threshValue = (AutoLoad.threshold * getMaximum() / 100);
 				Color c = g.getColor();
-				g.setColor(this.getBackground().darker());
+				g.setColor(this.getBackground().brighter());
 				int xp = xPositionForValue(threshValue);
 				int yp = this.getHeight()/2;
 				int x[] = new int[]{xp, xp-5, xp-5, xp+5, xp+5};

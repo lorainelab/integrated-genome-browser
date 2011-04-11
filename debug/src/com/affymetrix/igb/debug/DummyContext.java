@@ -23,7 +23,7 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.symloader.SymLoaderFactory;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.igb.graph.operator.GraphOperator;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -38,7 +38,7 @@ public class DummyContext implements BundleContext {
 	private static final String TAB_SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
 	private static final String OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
-	private static final String SYMLOADER_FACTORY_SERVICE_FILTER = "(objectClass=" + SymLoaderFactory.class.getName() + ")";
+	private static final String FILETYPEHANDLER_FACTORY_SERVICE_FILTER = "(objectClass=" + FileTypeHandler.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -136,8 +136,8 @@ public class DummyContext implements BundleContext {
 		if (OPERATOR_SERVICE_FILTER.equals(filter)) {
 			return service instanceof GraphOperator;
 		}
-		if (SYMLOADER_FACTORY_SERVICE_FILTER.equals(filter)) {
-			return service instanceof SymLoaderFactory;
+		if (FILETYPEHANDLER_FACTORY_SERVICE_FILTER.equals(filter)) {
+			return service instanceof FileTypeHandler;
 		}
 		if (filter == null) {
 			return true;

@@ -87,7 +87,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
  *
  * @version $Id$
  */
-public final class GFFParser implements AnnotationWriter  {
+public final class GFFParser implements AnnotationWriter, Parser  {
 	public static final int VERSION_UNKNOWN = 0;
 	public static final int GFF1 = 1;
 	public static final int GFF2 = 2;
@@ -1035,4 +1035,14 @@ public final class GFFParser implements AnnotationWriter  {
 	public void setUseTrackLines(boolean use_track_lines) {
     	this.use_track_lines = use_track_lines;
     }
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+			throws Exception {
+		if (annotate_seq) {
+			setUseStandardFilters(true);
+		}
+		return parse(is, nameType, group, false, annotate_seq);
+	}
 }

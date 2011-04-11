@@ -19,6 +19,7 @@ import java.util.regex.*;
 import java.text.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
@@ -28,7 +29,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
  *  If there are multiple sequences in the file, ignores the rest.
  *  The parseAll() method will load all sequences listed in the file.
  */
-public final class FastaParser {
+public final class FastaParser implements Parser {
 	private static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
 	public static final int LINELENGTH=79;
 	private static final boolean DEBUG=false;
@@ -563,5 +564,14 @@ public final class FastaParser {
 			}
 
 
-			public static String getMimeType()  { return "text/fasta"; } 
+			public static String getMimeType()  { return "text/fasta"; }
+
+			@Override
+			public List<? extends SeqSymmetry> parse(InputStream is,
+					AnnotatedSeqGroup group, String nameType, String uri,
+					boolean annotate_seq) throws Exception {
+				// only annotate_seq = true processed here
+				parseAll(is, group);
+				return null;
+			} 
 		}

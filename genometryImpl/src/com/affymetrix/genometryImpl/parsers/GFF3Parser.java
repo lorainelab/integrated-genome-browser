@@ -41,7 +41,7 @@ import java.util.regex.*;
  *
  * @version $Id$
  */
-public final class GFF3Parser {
+public final class GFF3Parser implements Parser {
 	private static final boolean DEBUG = false;
 	public static final int GFF3 = 3;
 
@@ -387,5 +387,13 @@ public final class GFF3Parser {
 			sym.setProperty("method", source);
 		}
 		return sym;
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+			throws Exception {
+		parse(is, nameType, group, true);
+		return null;
 	}
 }

@@ -32,7 +32,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
  *  For example excel spreadsheets (in tab format).
  *  Which columns to use for start, end, etc. are specified in the constructor.
  */
-public class TabDelimitedParser {
+public class TabDelimitedParser implements Parser {
 	private final int chromosome_col;
 	private final int start_col;
 	private final int end_col;     // should need only end_col or length_col, not both
@@ -40,9 +40,6 @@ public class TabDelimitedParser {
 	private final int strand_col;  // column to use for determining strand
 	private final int group_col;  // column to use for grouping features...
 	private final int type_col;   // column to use for setting feature type
-
-	private final boolean annotateSeq; // whether to add annotation id's to the index on the seq group
-
 	private int id_col;
 
 	// if makeProps, then each column (other than start, end, length, group) will become a
@@ -69,7 +66,7 @@ public class TabDelimitedParser {
 	 *    AnnotatedSeqGroup
 	 */
 	public TabDelimitedParser(int type, int chromosome, int start, int end, int length,
-			int strand, int group, int id, boolean props, boolean header, boolean annotateSeq) {
+			int strand, int group, int id, boolean props, boolean header) {
 
 		if (chromosome < 0) {
 			throw new IllegalArgumentException("Chromosome column number must be 0 or greater.");
@@ -83,7 +80,6 @@ public class TabDelimitedParser {
 		type_col = type;
 		strand_col = strand;
 		id_col = id;
-		this.annotateSeq = annotateSeq;
 
 		has_header = header;
 		use_length = (length >= 0);
@@ -103,7 +99,7 @@ public class TabDelimitedParser {
 	 *    "type" column parameter in the constructor was -1.
 	 *  @param seq_group  The AnnotatedSeqGroup on which to add the data.
 	 */
-	public List<SeqSymmetry> parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
+	public List<SeqSymmetry> parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group, boolean annotateSeq) {
 
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		Map<String,SeqSymmetry> group_hash = new HashMap<String,SeqSymmetry>();
@@ -218,5 +214,12 @@ public class TabDelimitedParser {
 			ex.printStackTrace();
 		}
 		return results;
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+			throws Exception {
+		return parse(is, nameType, group, annotate_seq);
 	}
 }

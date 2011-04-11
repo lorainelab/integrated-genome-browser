@@ -29,7 +29,7 @@ public class SymLoaderInst extends SymLoader{
 		}
 		super.init();
 
-		for(BioSeq seq : SymLoader.getChromosomes(uri, extension, featureName)){
+		for(BioSeq seq : SymLoader.getChromosomes(uri, extension, featureName, group.getID())){
 			chromosomeList.add(group.addSeq(seq.getID(), seq.getLength()));
 		}
 		Collections.sort(chromosomeList,new BioSeqComparator());

@@ -22,7 +22,7 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 	private final JScrollBar scroller;
 	private final NeoMap map;
 	private boolean was_dragging = false;
-	public static final int threshold = 85;
+	public static final int threshold = 70;
 	private boolean autoLoadEnabled;
 
 	protected int zoomer_value, scroller_value,prev_zoomer_value, prev_scroller_value;

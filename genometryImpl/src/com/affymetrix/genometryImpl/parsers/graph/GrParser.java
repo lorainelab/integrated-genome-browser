@@ -19,13 +19,15 @@ import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.*;
 import java.util.*;
 
 
-public final class GrParser {
+public final class GrParser implements GraphParser {
 
 	public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
 		BufferedOutputStream bos = null;
@@ -160,5 +162,47 @@ public final class GrParser {
 			}
 		};
 		GenericSorting.quickSort(0, xList.length, comp, swapper);
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		throw new IllegalStateException("Gr should not be processed here");
+	}
+
+	@Override
+	public List<GraphSym> readGraphs(InputStream istr, String stream_name,
+			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+		StringBuffer stripped_name = new StringBuffer();
+		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
+		if (seq == null) {
+			seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		}
+		// If this is a newly-created seq group, then go ahead and add a new 
+		// unnamed seq to it if necessary.
+		if (seq_group.getSeqCount() == 0) {
+			seq = seq_group.addSeq("unnamed", 1000);
+		}
+		if (seq == null) {
+			throw new IOException("Must select a sequence before loading a graph of type 'gr'");
+		}
+		GraphSym graph = GrParser.parse(newstr, seq, stream_name);
+		int max_x = graph.getMaxXCoord();
+		BioSeq gseq = graph.getGraphSeq();
+		seq_group.addSeq(gseq.getID(), max_x); // this stretches the seq to hold the graph
+		return GraphParserUtil.getInstance().wrapInList(graph);
+	}
+
+	@Override
+	public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+			String file_name) throws IOException {
+		BufferedOutputStream bos = null;
+		try {
+			bos = new BufferedOutputStream(new FileOutputStream(file_name));
+			GrParser.writeGrFormat(gsym, bos);
+		} finally {
+			GeneralUtils.safeClose(bos);
+		}
 	}
 }

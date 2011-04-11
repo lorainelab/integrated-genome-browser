@@ -8,9 +8,10 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
-public final class SgrParser {
+public final class SgrParser implements GraphParser {
 	private static final boolean DEBUG = false;
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
@@ -155,4 +156,30 @@ public final class SgrParser {
 		}
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		throw new IllegalStateException("sgr should not be processed here");
+	}
+
+	@Override
+	public List<GraphSym> readGraphs(InputStream istr, String stream_name,
+			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+		StringBuffer stripped_name = new StringBuffer();
+		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
+		return parse(newstr, stream_name, seq_group, false);
+	}
+
+	@Override
+	public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+			String file_name) throws IOException {
+		BufferedOutputStream bos = null;
+		try {
+			bos = new BufferedOutputStream(new FileOutputStream(file_name));
+			SgrParser.writeSgrFormat(gsym, bos);
+		} finally {
+			GeneralUtils.safeClose(bos);
+		}
+	}
 }

@@ -60,7 +60,7 @@ BAR SEQ/DATA SECTION HEADER
 23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
  *</pre>
  */
-public final class BarParser implements AnnotationWriter {
+public final class BarParser implements AnnotationWriter, GraphParser {
 
 	private static final boolean DEBUG = false;
 
@@ -913,6 +913,28 @@ public final class BarParser implements AnnotationWriter {
 
 	public String getMimeType() {
 		return "binary/bar";
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		// only annotate_seq = false processed here
+		return parse(is, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri, false);
+	}
+
+	@Override
+	public List<GraphSym> readGraphs(InputStream istr, String stream_name,
+			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+		StringBuffer stripped_name = new StringBuffer();
+		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
+		return parse(newstr, GenometryModel.getGenometryModel(), seq_group, null, 0, Integer.MAX_VALUE, stream_name, true);
+	}
+
+	@Override
+	public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+			String file_name) throws IOException {
+		// not processed here
 	}
 }
 

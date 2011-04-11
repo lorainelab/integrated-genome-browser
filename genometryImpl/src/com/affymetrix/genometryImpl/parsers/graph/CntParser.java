@@ -17,6 +17,9 @@ import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.parsers.Parser;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -24,7 +27,7 @@ import java.util.regex.*;
 /**
  *  A parser for textual ".cnt" files from the Affymetrix CNAT program.
  */
-public final class CntParser {
+public final class CntParser implements Parser {
 
 	private static final Pattern tag_val = Pattern.compile("(.*)=(.*)");
 	private static final Pattern line_regex = Pattern.compile("\\t");
@@ -206,5 +209,12 @@ public final class CntParser {
 		}
 
 		return xcoords;
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		return parse(is, group, annotate_seq);
 	}
 }

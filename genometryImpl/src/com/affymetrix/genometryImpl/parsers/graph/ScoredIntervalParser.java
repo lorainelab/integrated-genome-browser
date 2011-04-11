@@ -91,7 +91,7 @@ chr22        14434054        14434140        +        36.2883        40.7145
 
 <pre>
 */
-public final class ScoredIntervalParser {
+public final class ScoredIntervalParser implements GraphParser {
 
 	private static Pattern line_regex  = Pattern.compile("\t");
 	private static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
@@ -487,4 +487,38 @@ public final class ScoredIntervalParser {
 		}
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		// only annotate_seq = false processed here
+		return parse(is, uri, group, annotate_seq);
+	}
+
+	@Override
+	public List<GraphSym> readGraphs(InputStream istr, String stream_name,
+			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+		// not processed here
+		return null;
+	}
+
+	@Override
+	public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+			String file_name) throws IOException {
+		if (gsym instanceof GraphIntervalSym) {
+			BufferedOutputStream bos = null;
+			try {
+				String genome_name = null;
+				if (seq_group != null) {
+					genome_name = seq_group.getID();
+				}
+				bos = new BufferedOutputStream(new FileOutputStream(file_name));
+				writeEgrFormat((GraphIntervalSym) gsym, genome_name, bos);
+			} finally {
+				GeneralUtils.safeClose(bos);
+			}
+		} else {
+			throw new IOException("Not the correct graph type for the '.egr' format.");
+		}
+	}
 }

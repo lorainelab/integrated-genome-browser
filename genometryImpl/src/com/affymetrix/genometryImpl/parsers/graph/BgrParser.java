@@ -19,9 +19,11 @@ import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Timer;
 
-public final class BgrParser {
+public final class BgrParser implements GraphParser {
 
 	/**
 	 * Writes bgr format.
@@ -178,4 +180,31 @@ public final class BgrParser {
 		}
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		// only annotate_seq = false processed here
+		return parse(is, uri, group);
+	}
+
+	@Override
+	public List<GraphSym> readGraphs(InputStream istr, String stream_name,
+			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+		StringBuffer stripped_name = new StringBuffer();
+		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
+		return GraphParserUtil.getInstance().wrapInList(BgrParser.parse(newstr, stream_name, seq_group, true));
+	}
+
+	@Override
+	public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+			String file_name) throws IOException {
+		BufferedOutputStream bos = null;
+		try {
+			bos = new BufferedOutputStream(new FileOutputStream(file_name));
+			BgrParser.writeBgrFormat(gsym, bos);
+		} finally {
+			GeneralUtils.safeClose(bos);
+		}
+	}
 }

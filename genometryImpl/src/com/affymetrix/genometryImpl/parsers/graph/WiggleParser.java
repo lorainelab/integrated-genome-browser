@@ -1,7 +1,9 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +21,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -37,8 +40,7 @@ import java.util.Iterator;
  * (If there is no format line, BED4 format is assumed.)
  *  There can be multiple formats per track.
  */
-public final class WiggleParser {
-
+public final class WiggleParser implements GraphParser {
 	private static enum WigFormat {
 
 		BED4, VARSTEP, FIXEDSTEP
@@ -358,6 +360,42 @@ public final class WiggleParser {
 			int x2 = graf.getGraphXCoord(i) + graf.getGraphWidthCoord(i);
 			bw.write(seq_id + ' ' + graf.getGraphXCoord(i) + ' ' + x2
 					+ ' ' + graf.getGraphYCoord(i) + '\n');
+		}
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		throw new IllegalStateException("wiggle should not be processed here");
+	}
+
+	@Override
+	public List<GraphSym> readGraphs(InputStream istr, String stream_name,
+			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+		StringBuffer stripped_name = new StringBuffer();
+		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
+		return parse(newstr, seq_group, false, stream_name);
+	}
+
+	@Override
+	public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+			String file_name) throws IOException {
+		if (gsym instanceof GraphIntervalSym) {
+			BufferedOutputStream bos = null;
+			try {
+				GraphIntervalSym gisym = (GraphIntervalSym) gsym;
+				String genome_name = null;
+				if (seq_group != null) {
+					genome_name = seq_group.getID();
+				}
+				bos = new BufferedOutputStream(new FileOutputStream(file_name));
+				WiggleParser.writeBedFormat(gisym, genome_name, bos);
+			} finally {
+				GeneralUtils.safeClose(bos);
+			}
+		} else {
+			throw new IOException("Not the correct graph type for the '.wig' format.");
 		}
 	}
 }

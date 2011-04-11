@@ -15,8 +15,10 @@ package com.affymetrix.genometryImpl.parsers.graph;
 
 import cern.colt.list.FloatArrayList;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.parsers.Parser;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -30,7 +32,7 @@ import java.util.regex.Pattern;
  *  This class (and file format) have been replaced by ScoredIntervalParser (and sin file format)
  *  Kept now only to parse in older data files.
  */
-public final class ScoredMapParser {
+public final class ScoredMapParser implements Parser {
 
 	static Pattern line_regex  = Pattern.compile("\t");
 
@@ -84,4 +86,12 @@ public final class ScoredMapParser {
 		catch (Exception ex) { ex.printStackTrace(); }
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		// only annotate_seq = true processed here
+		parse(is, uri, GenometryModel.getGenometryModel().getSelectedSeq(), group);
+		return null;
+	}
 }

@@ -70,7 +70,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
  *                 min genome position (int, zero interbase)
  *</pre>
  */
-public final class Bprobe1Parser implements AnnotationWriter {
+public final class Bprobe1Parser implements AnnotationWriter, Parser {
 
 	private static final boolean DEBUG = false;
 	static List<String> pref_list = new ArrayList<String>();
@@ -513,4 +513,9 @@ public final class Bprobe1Parser implements AnnotationWriter {
 
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group,
+			String nameType, String uri, boolean annotate_seq) throws Exception {
+		return parse(is, group, annotate_seq, nameType, true);
 	}
+}

@@ -80,7 +80,7 @@ import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
  *
  * </pre>
  */
-public final class BedParser implements AnnotationWriter, IndexWriter  {
+public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
 	private static List<String> pref_list = new ArrayList<String>();
@@ -584,5 +584,11 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	/** Returns "text/bed". */
 	public String getMimeType() { return "text/bed"; }
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group, String nameType,
+		String uri, boolean annotate_seq) throws Exception {
+		// really need to switch create_container (last argument) to true soon!
+		return parse(is, GenometryModel.getGenometryModel(), group, annotate_seq, nameType, false);
+	}
 }
 

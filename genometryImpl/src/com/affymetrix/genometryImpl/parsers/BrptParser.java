@@ -19,6 +19,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -73,7 +75,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
  *
  * </pre>
  */
-public final class BrptParser {
+public final class BrptParser implements Parser {
 	//    static String default_text_infile = "c:/data/ucsc/hg17/repeats/rmsk_all.txt";
 	//    static String genome_version = "H_sapiens_Apr_2003";
 
@@ -273,6 +275,15 @@ public final class BrptParser {
 		}
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+			throws Exception {
+		List<SeqSymmetry> alist = parse(is, nameType, group, annotate_seq);
+		Logger.getLogger(BrptParser.class.getName()).log(
+				Level.FINE, "total repeats loaded: {0}", alist.size());
+		return alist;
+	}
 
 	// Annotationwriter implementation
 	//  public boolean writeAnnotations(Collection syms, BioSeq seq,

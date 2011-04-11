@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class BpsParser implements AnnotationWriter, IndexWriter  {
+public final class BpsParser implements AnnotationWriter, IndexWriter, Parser  {
 	private static final UcscPslComparator comp = new UcscPslComparator();
 	private static final List<String> pref_list = new ArrayList<String>();
 	static {
@@ -310,5 +310,11 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		}
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group,
+			String nameType, String uri, boolean annotate_seq) throws Exception {
+		DataInputStream dis = new DataInputStream(is);
+		return parse(dis, nameType, null, group, false, annotate_seq);
+	}
 }
 

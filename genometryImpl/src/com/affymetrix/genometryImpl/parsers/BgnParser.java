@@ -21,7 +21,7 @@ import com.affymetrix.genometryImpl.util.Timer;
 /**
  *  Just like refFlat table format, except no geneName field (just name field).
  */
-public final class BgnParser implements AnnotationWriter, IndexWriter {
+public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
 
 	private static final boolean DEBUG = false;
 	private static List<String> pref_list = new ArrayList<String>();
@@ -432,5 +432,11 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 	 **/
 	public String getMimeType() {
 		return "binary/bgn";
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group,
+			String nameType, String uri, boolean annotate_seq) throws Exception {
+		return parse(is, nameType, group, annotate_seq);
 	}
 }

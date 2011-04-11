@@ -15,7 +15,9 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ import java.util.regex.Pattern;
 /**
  *  A parser designed to parse genomic variants data from http://projects.tcag.ca/variation/
  */
-public final class VarParser {
+public final class VarParser implements Parser {
 
 	private static final String GENOMIC_VARIANTS = "Genomic Variants";
 
@@ -87,5 +89,12 @@ public final class VarParser {
 			results.add(var);
 		}
 		return results;
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		return parse(is, group);
 	}
 }

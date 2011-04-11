@@ -19,13 +19,17 @@ import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SeekableBufferedStream;
+
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.samtools.util.SeekableStream;
 
-public final class NibbleResiduesParser {
+public final class NibbleResiduesParser implements Parser {
 	private static int BUFSIZE = 65536;	// buffer for outputting
 
 	/**
@@ -368,5 +372,18 @@ public final class NibbleResiduesParser {
 		}
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+		AnnotatedSeqGroup group, String nameType, String uri,
+		boolean annotate_seq) throws Exception {
+		// only annotate_seq = true processed here
+		BioSeq aseq = NibbleResiduesParser.parse(is, group);
+		if (aseq != GenometryModel.getGenometryModel().getSelectedSeq()) {
+			//TODO: maybe set the current seq to this seq
+			Logger.getLogger(NibbleResiduesParser.class.getName()).log(Level.WARNING,
+				"This is not the currently-selected sequence.");
+		}
+		return null;
+	}
 }
 

@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SeekableBufferedStream;
@@ -15,6 +16,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -28,7 +30,7 @@ import java.util.List;
  * @author hiralv
  * @version $Id$
  */
-public final class TwoBitParser {
+public final class TwoBitParser implements Parser {
 	/** Magic Number of 2bit files */
     private static final int MAGIC_NUMBER = 0x1A412743;
 
@@ -312,5 +314,12 @@ public final class TwoBitParser {
 		}finally{
 			GeneralUtils.safeClose(outStream);
 		}
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		throw new IllegalStateException("2bit should not be processed here");
 	}
 }

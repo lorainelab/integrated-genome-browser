@@ -69,7 +69,7 @@ public class BNIB extends SymLoader {
 				chrList.add(seq);
 			}
 		} catch (Exception ex) {
-			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(BNIB.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
 			GeneralUtils.safeClose(sis);
 		}
@@ -89,7 +89,7 @@ public class BNIB extends SymLoader {
 			byte[] bytes = outStream.toByteArray();
 			return new String(bytes);
 		} catch (Exception ex) {
-			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(BNIB.class.getName()).log(Level.SEVERE, null, ex);
 			return null;
 		} finally {
 			GeneralUtils.safeClose(outStream);

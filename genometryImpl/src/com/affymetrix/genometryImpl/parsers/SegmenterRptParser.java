@@ -2,8 +2,10 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -15,7 +17,7 @@ import java.util.regex.*;
  *
  *  (This was based on the TabDelimitedParser, but then specialized.)
  */
-public final class SegmenterRptParser {
+public final class SegmenterRptParser implements Parser {
 	public static final String CN_REGION_FILE_EXT = "cn_segments";
 	public static final String LOH_REGION_FILE_EXT = "loh_segments";
 
@@ -248,6 +250,15 @@ public final class SegmenterRptParser {
 		if (map != null) {
 			return map.get(key);
 		}
+		return null;
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		// only annotate_seq = true processed here
+		parse(is, uri, group);
 		return null;
 	}
 }

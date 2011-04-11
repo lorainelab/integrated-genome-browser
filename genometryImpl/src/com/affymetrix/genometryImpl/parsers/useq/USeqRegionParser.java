@@ -6,11 +6,15 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SymWithProps;
 import java.util.regex.*;
 import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.data.Position;
 import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
 import com.affymetrix.genometryImpl.parsers.useq.data.PositionScore;
@@ -31,7 +35,7 @@ import com.affymetrix.genometryImpl.parsers.useq.data.USeqData;
 
 /**For parsing binary USeq region data into GenViz display objects.
  * @author david.nix@hci.utah.edu*/
-public final class USeqRegionParser  {
+public final class USeqRegionParser implements GraphParser {
 
 	private List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
 	private String nameOfTrack = null;
@@ -363,7 +367,36 @@ public final class USeqRegionParser  {
 		}
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		if (annotate_seq) {
+			return parse(is, group, uri, true, null);
+		}
+		else {
+			//find out what kind of data it is, graph or region, from the ArchiveInfo object
+			ZipInputStream zis = new ZipInputStream(is);
+			zis.getNextEntry();
+			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
+			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
+				USeqGraphParser gp = new USeqGraphParser();
+				return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), nameType, archiveInfo);
+			}
+			return parse(zis, group, nameType, false, archiveInfo);
+		}
+	}
 
+	@Override
+	public List<GraphSym> readGraphs(InputStream istr, String stream_name,
+			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+		return new USeqGraphParser().parseGraphSyms(istr, GenometryModel.getGenometryModel(), stream_name, null);
+	}
 
+	@Override
+	public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+			String file_name) throws IOException {
+		// not processed here
+	}
 }
 

@@ -17,12 +17,15 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.parsers.Parser;
+
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class AffyCnChpParser {
+public final class AffyCnChpParser implements Parser {
+
 	public List<SeqSymmetry> parse(
 			File file, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotateSeq)
 			throws IOException {
@@ -70,5 +73,12 @@ public final class AffyCnChpParser {
 			aseq = seq_group.addSeq(seqid, 1);
 		}
 		return aseq;
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		return parse(null, is, annotate_seq ? uri : nameType, group, annotate_seq);
 	} 
 }

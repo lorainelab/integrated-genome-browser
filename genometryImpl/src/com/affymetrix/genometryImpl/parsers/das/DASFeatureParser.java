@@ -3,12 +3,18 @@ package com.affymetrix.genometryImpl.parsers.das;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.parsers.Parser;
+
 import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -24,7 +30,7 @@ import javax.xml.stream.events.XMLEvent;
  * @author sgblanch
  * @version $Id$
  */
-public final class DASFeatureParser {
+public final class DASFeatureParser implements Parser {
 
 	static enum Orientation { UNKNOWN, FORWARD, REVERSE };
 	private static enum Elements {
@@ -247,4 +253,16 @@ public final class DASFeatureParser {
 		return groupSymmetry;
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		setAnnotateSeq(annotate_seq);
+		try {
+			return (List<? extends SeqSymmetry>)parse(is, group);
+		} catch (XMLStreamException ex) {
+			Logger.getLogger(DASFeatureParser.class.getName()).log(Level.SEVERE, null, ex);
+			return null;
+		}
+	}
 }

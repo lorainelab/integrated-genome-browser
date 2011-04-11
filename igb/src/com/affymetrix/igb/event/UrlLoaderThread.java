@@ -14,42 +14,21 @@ package com.affymetrix.igb.event;
 
 import java.net.*;
 import java.io.*;
-import java.awt.HeadlessException;
 import javax.swing.*;
 import java.net.URI;
-import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.parsers.BgnParser;
-import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
-import com.affymetrix.genometryImpl.parsers.BrptParser;
-import com.affymetrix.genometryImpl.parsers.BrsParser;
-import com.affymetrix.genometryImpl.parsers.BsnpParser;
-import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
-import com.affymetrix.genometryImpl.parsers.FastaParser;
-import com.affymetrix.genometryImpl.parsers.FishClonesParser;
-import com.affymetrix.genometryImpl.parsers.GFFParser;
-import com.affymetrix.genometryImpl.parsers.GFF3Parser;
-import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.SegmenterRptParser;
-import com.affymetrix.genometryImpl.parsers.VarParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
-import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
-import com.affymetrix.genometryImpl.parsers.graph.CntParser;
-import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
-import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.TrackView;
 import java.util.HashMap;
@@ -425,12 +404,12 @@ public final class UrlLoaderThread extends Thread {
 	private static void DoParse(
 					InputStream str, AnnotatedSeqGroup group, BioSeq input_seq,
 					String stream_name)
-					throws IOException, InterruptedException, HeadlessException, SAXException {
-		String lcname = stream_name.toLowerCase();
+					throws Exception {
+//		String lcname = stream_name.toLowerCase();
 
 		int dotIndex = stream_name.lastIndexOf('.');
 		String annot_type = dotIndex <= 0 ? stream_name : stream_name.substring(0, dotIndex);
-
+/*
 		// Sequence files
 		if (lcname.endsWith(".bnib")) {
 			BioSeq aseq = NibbleResiduesParser.parse(str, group);
@@ -521,8 +500,8 @@ public final class UrlLoaderThread extends Thread {
 			return;
 		}
 		if (lcname.endsWith("." + FishClonesParser.FILE_EXT)) {
-			FishClonesParser parser = new FishClonesParser(true);
-			parser.parse(str, annot_type, group);
+			FishClonesParser parser = new FishClonesParser();
+			parser.parse(str, annot_type, group, true);
 			return;
 		}
 		if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
@@ -533,7 +512,9 @@ public final class UrlLoaderThread extends Thread {
 			return;
 		}
 		if (lcname.endsWith(".gff3")) {
+*/
 			/* Force parcing as GFF3 */
+/*
 			GFF3Parser parser = new GFF3Parser();
 			parser.parse(str, annot_type, group, true);
 			return;
@@ -576,7 +557,14 @@ public final class UrlLoaderThread extends Thread {
 			VarParser.parse(str, group);
 			return;
 		}
-		Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.WARNING,
+*/
+		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(stream_name);
+		if (fileTypeHandler == null) {
+			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.WARNING,
 				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + stream_name);
+		}
+		else {
+			fileTypeHandler.getParser().parse(str, group, annot_type, stream_name, true);
+		}
 	}
 }

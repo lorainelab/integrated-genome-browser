@@ -28,8 +28,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.parsers.FishClonesParser;
-import com.affymetrix.genometryImpl.parsers.SegmenterRptParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -109,12 +108,9 @@ public final class LoadFileAction extends AbstractAction {
 	
 
 	private static MergeOptionChooser getFileChooser() {
-		if (chooser != null) {
-			return chooser;
-		}
-
 		chooser = new MergeOptionChooser();
 		chooser.setMultiSelectionEnabled(true);
+/*
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"2bit"},
 						".2bit Files"));
@@ -166,6 +162,13 @@ public final class LoadFileAction extends AbstractAction {
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"map"},
 						"Scored Map Files"));
+*/
+		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap();
+		for (String name : nameToExtensionMap.keySet()) {
+			chooser.addChoosableFileFilter(new UniFileFilter(
+				nameToExtensionMap.get(name).toArray(new String[]{}),
+				name + " Files"));
+		}
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"igb"},
 						"IGB Script File"));

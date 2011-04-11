@@ -21,9 +21,12 @@ import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.parsers.Parser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.symloader.*;
@@ -65,7 +68,6 @@ public abstract class ServerUtils {
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";
 	public static final List<String> BAR_FORMATS = new ArrayList<String>();
-	private static final Map<String, SymLoaderFactory> symLoaderFactoryMap = new HashMap<String, SymLoaderFactory>();
 
 	static {
 		BAR_FORMATS.add("bar");
@@ -101,32 +103,6 @@ public abstract class ServerUtils {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE,
 						"couldn't find {0} or {1} for genome!!! {2}", new Object[]{modChromInfo, liftAll, genome_version});
 			}
-		}
-	}
-
-	/**
-	 * add a new SymLoaderFactory for a given list of extensions
-	 * @param factory the SymLoaderFactory used to get the SymLoader
-	 */
-	public static void addSymLoaderFactory(SymLoaderFactory factory) {
-		for (String extension : factory.getExtensions()) {
-			if (symLoaderFactoryMap.get(extension) != null) {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "duplicate SymLoaderFactory for extension {0}!!!", new Object[]{extension});
-			}
-			symLoaderFactoryMap.put(extension, factory);
-		}
-	}
-
-	/**
-	 * remove an existing SymLoaderFactory for a given list of extensions
-	 * @param factory the SymLoaderFactory used to get the SymLoader
-	 */
-	public static void removeSymLoaderFactory(SymLoaderFactory factory) {
-		for (String extension : factory.getExtensions()) {
-			if (symLoaderFactoryMap.get(extension) == null) {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, "missing removed SymLoaderFactory for extension {0}!!!", new Object[]{extension});
-			}
-			symLoaderFactoryMap.remove(extension);
 		}
 	}
 
@@ -1111,15 +1087,15 @@ public abstract class ServerUtils {
 		// residue loaders
 		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .		
 
-		SymLoaderFactory factory = symLoaderFactoryMap.get(extension);
+		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(extension);
 		SymLoader symLoader;
-		if (factory == null) {
+		if (fileTypeHandler == null) {
 			Logger.getLogger(ServerUtils.class.getName()).log(Level.WARNING,
 					"Couldn't find any Symloader for {0} format. Opening whole file.", new Object[]{extension});
 			symLoader = new SymLoaderInstNC(uri, featureName, group); // default loader
 		}
 		else {
-			symLoader = factory.createSymLoader(uri, featureName, group);
+			symLoader = fileTypeHandler.createSymLoader(uri, featureName, group);
 		}
 		return symLoader;
 	}

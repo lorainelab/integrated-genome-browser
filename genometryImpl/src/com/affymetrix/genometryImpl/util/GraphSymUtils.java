@@ -11,16 +11,12 @@ import java.util.*;
 import java.net.URL;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.CompositeGraphSym;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
-import com.affymetrix.genometryImpl.parsers.graph.BarParser;
-import com.affymetrix.genometryImpl.parsers.graph.GrParser;
-import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
-import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.parsers.Parser;
+import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 public final class GraphSymUtils {
@@ -176,14 +172,8 @@ public final class GraphSymUtils {
 	 *  before testing the name.
 	 */
 	public static boolean isAGraphFilename(String name) {
-		String lc = GeneralUtils.stripEndings(name).toLowerCase();
-		return (
-				lc.endsWith(".gr") ||
-				lc.endsWith(".bgr") ||
-				lc.endsWith(".bar") ||
-				lc.endsWith(".sgr") ||
-				lc.endsWith(".wig")
-			   );
+		FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandlerForURI(name);
+		return fth.getParser() instanceof GraphParser;
 	}
 
 	/**
@@ -199,54 +189,22 @@ public final class GraphSymUtils {
 	 */
 	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, BioSeq seq)
 			throws IOException  {
-		List<GraphSym> grafs = null;
 		StringBuffer stripped_name = new StringBuffer();
-		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
+		GeneralUtils.unzipStream(istr, stream_name, stripped_name);
 		String sname = stripped_name.toString().toLowerCase();
 
-		if (sname.endsWith(".bar"))  {
-			grafs = BarParser.parse(newstr, GenometryModel.getGenometryModel(), seq_group, null, 0, Integer.MAX_VALUE, stream_name, true);
-		}
-		else if (sname.endsWith(".useq")) {
-			USeqGraphParser up = new USeqGraphParser();
-			grafs = up.parseGraphSyms(istr, GenometryModel.getGenometryModel(), stream_name, null);
-		}
-		else if (sname.endsWith(".gr")) {
-			if (seq == null) {
-				seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(sname);
+		if (fileTypeHandler != null) {
+			Parser parser = fileTypeHandler.getParser();
+			if (parser instanceof GraphParser) {
+				List<GraphSym> grafs = ((GraphParser)parser).readGraphs(istr, stream_name, seq_group, seq);
+				if (grafs == null) {
+					grafs = Collections.<GraphSym>emptyList();
+				}
+				return grafs;
 			}
-			// If this is a newly-created seq group, then go ahead and add a new 
-			// unnamed seq to it if necessary.
-			if (seq_group.getSeqCount() == 0) {
-				seq = seq_group.addSeq("unnamed", 1000);
-			}
-			if (seq == null) {
-				throw new IOException("Must select a sequence before loading a graph of type 'gr'");
-			}
-			GraphSym graph = GrParser.parse(newstr, seq, stream_name);
-			int max_x = graph.getMaxXCoord();
-			BioSeq gseq = graph.getGraphSeq();
-			seq_group.addSeq(gseq.getID(), max_x); // this stretches the seq to hold the graph
-			grafs = wrapInList(graph);
 		}
-		else if (sname.endsWith(".bgr")) {
-			grafs = wrapInList(BgrParser.parse(newstr, stream_name, seq_group, true));
-		}
-		else if (sname.endsWith(".sgr")) {
-			grafs = SgrParser.parse(newstr, stream_name, seq_group, false);
-		}
-		else if (sname.endsWith(".wig")) {
-			WiggleParser wig_parser = new WiggleParser();
-			grafs = wig_parser.parse(newstr, seq_group, false, stream_name);
-		} else {
-			throw new IOException("Unrecognized filename for a graph file:\n"+stream_name);
-		}
-
-		if (grafs == null) {
-			grafs = Collections.<GraphSym>emptyList();
-		}
-
-		return grafs;
+		throw new IOException("Unrecognized filename for a graph file:\n"+stream_name);
 	}
 	
 	/**
@@ -254,15 +212,6 @@ public final class GraphSymUtils {
 	 */
 	public static String getUniqueGraphID(String id, BioSeq seq) {
 		return AnnotatedSeqGroup.getUniqueGraphID(id, seq);
-	}
-
-	private static List<GraphSym> wrapInList(GraphSym gsym) {
-		List<GraphSym> grafs = null;
-		if (gsym != null) {
-			grafs = new ArrayList<GraphSym>();
-			grafs.add(gsym);
-		}
-		return grafs;
 	}
 
 	/*
@@ -312,46 +261,15 @@ public final class GraphSymUtils {
 	 *  @param seq_group the AnnotatedSeqGroup the graph is on, needed for ".wig", ".egr", and ".sin" formats.
 	 */
 	public static void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group, String file_name) throws IOException {
-		BufferedOutputStream bos = null;
-		try {
-			if (file_name.endsWith(".bgr")) {
-				bos = new BufferedOutputStream(new FileOutputStream(file_name));
-				BgrParser.writeBgrFormat(gsym, bos);
-			} else if (file_name.endsWith(".gr")) {
-				bos = new BufferedOutputStream(new FileOutputStream(file_name));
-				GrParser.writeGrFormat(gsym, bos);
-			} else if (file_name.endsWith(".sgr")) {
-				bos = new BufferedOutputStream(new FileOutputStream(file_name));
-				SgrParser.writeSgrFormat(gsym, bos);
-			} else if (file_name.endsWith(".egr") || file_name.endsWith(".sin")) {
-				if (gsym instanceof GraphIntervalSym) {
-					String genome_name = null;
-					if (seq_group != null) {
-						genome_name = seq_group.getID();
-					}
-					bos = new BufferedOutputStream(new FileOutputStream(file_name));
-					ScoredIntervalParser.writeEgrFormat((GraphIntervalSym) gsym, genome_name, bos);
-				} else {
-					throw new IOException("Not the correct graph type for the '.egr' format.");
-				}
-			} else if (file_name.endsWith(".wig")) {
-				if (gsym instanceof GraphIntervalSym) {
-					GraphIntervalSym gisym = (GraphIntervalSym) gsym;
-					String genome_name = null;
-					if (seq_group != null) {
-						genome_name = seq_group.getID();
-					}
-					bos = new BufferedOutputStream(new FileOutputStream(file_name));
-					WiggleParser.writeBedFormat(gisym, genome_name, bos);
-				} else {
-					throw new IOException("Not the correct graph type for the '.wig' format.");
-				}
-			} else {
-				throw new IOException("Graph file name does not have the correct extension");
+		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(file_name);
+		if (fileTypeHandler != null) {
+			Parser parser = fileTypeHandler.getParser();
+			if (parser instanceof GraphParser) {
+				writeGraphFile(gsym, seq_group, file_name);
+				return;
 			}
-		} finally {
-			GeneralUtils.safeClose(bos);
 		}
+		throw new IOException("Graph file name does not have the correct extension");
 	}
 
 	/**

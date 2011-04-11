@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.BrsParser;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
  */
 public final class ParserController {
     
-	static List parse(
+	static List<? extends SeqSymmetry> parse(
 			InputStream instr, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		InputStream str = null;
 		List<? extends SeqSymmetry> results = null;
@@ -152,42 +153,7 @@ public final class ParserController {
 
 
 	public static IndexWriter getIndexWriter(String stream_name) {
-		int sindex = stream_name.lastIndexOf("/");
-		String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
-
-		if (stream_name.endsWith(".bed")) {
-			return new BedParser();
-		}
-		if (stream_name.endsWith(".bps")) {
-			return new BpsParser();
-		}
-		if (stream_name.endsWith(".psl") && !stream_name.endsWith(".link.psl")) {
-			PSLParser iWriter = new PSLParser();
-			if (type_prefix != null) {
-				iWriter.setTrackNamePrefix(type_prefix);
-			}
-			return iWriter;
-		}
-		if (stream_name.endsWith(".bgn")) {
-			return new BgnParser();
-		}
-		if (stream_name.endsWith(".brs")) {
-			return new BrsParser();
-		}
-		if (stream_name.endsWith(".link.psl")) {
-			PSLParser parser = new PSLParser();
-			if (type_prefix != null) {
-				parser.setTrackNamePrefix(type_prefix);
-			}
-			// assume that want to annotate target seqs, and that these are the seqs
-			//    represented in seq_group
-			parser.setIsLinkPsl(true);
-			parser.enableSharedQueryTarget(true);
-			parser.setCreateContainerAnnot(true);
-			return parser;
-		}
-		return null;
-		
+		return FileTypeHolder.getInstance().getFileTypeHandlerForURI(stream_name).getIndexWriter(stream_name);
 	}
 
 

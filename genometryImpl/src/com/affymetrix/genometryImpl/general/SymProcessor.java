@@ -2,46 +2,21 @@ package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.UcscPslSym;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.parsers.BgnParser;
-import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
-import com.affymetrix.genometryImpl.parsers.BpsParser;
-import com.affymetrix.genometryImpl.parsers.BrptParser;
-import com.affymetrix.genometryImpl.parsers.BrsParser;
-import com.affymetrix.genometryImpl.parsers.BsnpParser;
-import com.affymetrix.genometryImpl.parsers.CytobandParser;
-import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
-import com.affymetrix.genometryImpl.parsers.FishClonesParser;
-import com.affymetrix.genometryImpl.parsers.GFF3Parser;
-import com.affymetrix.genometryImpl.parsers.GFFParser;
-import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.VarParser;
-import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
-import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
-import com.affymetrix.genometryImpl.parsers.graph.BarParser;
-import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
-import com.affymetrix.genometryImpl.parsers.graph.CntParser;
-import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
-import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
-import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.parsers.BAMParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
+import com.affymetrix.genometryImpl.parsers.Parser;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -50,9 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipInputStream;
-
-import org.xml.sax.InputSource;
 
 /**
  *
@@ -224,6 +196,7 @@ public class SymProcessor {
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
 
+/*
 		// These extensions are overloaded by QuickLoad
 		if (extension.equals("bar")) {
 			return BarParser.parse(bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri.toString(), false);
@@ -304,15 +277,17 @@ public class SymProcessor {
 			return parser.parse(bis, group, false, featureName);
 		}
 		if (extension.equals(FishClonesParser.FILE_EXT)) {
-			FishClonesParser parser = new FishClonesParser(false);
-			return parser.parse(bis, featureName, group);
+			FishClonesParser parser = new FishClonesParser();
+			return parser.parse(bis, featureName, group, false);
 		}
 		if (extension.equals("gff") || extension.equals("gtf")) {
 			GFFParser parser = new GFFParser();
 			return parser.parse(bis, featureName, group, false, false);
 		}
 		if (extension.equals("gff3")) {
+*/
 			/* Force parsing as GFF3 */
+/*
 			GFF3Parser parser = new GFF3Parser();
 			parser.parse(bis, featureName, group, true);
 			return null;	// cannot currently annotate with FRS!
@@ -350,9 +325,21 @@ public class SymProcessor {
 			if (uri.getScheme().equals("http")) return bam.parseAll(overlap_span.getBioSeq());
 			return bam.getRegion(overlap_span);
 		}
-
-		Logger.getLogger(SymLoader.class.getName()).log(
+*/
+		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+		if (fileTypeHandler == null) {
+			Logger.getLogger(SymLoader.class.getName()).log(
 				Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", extension);
-		return null;
+			return null;
+		}
+		else {
+			Parser parser = fileTypeHandler.getParser();
+			if (parser instanceof BAMParser) {
+				return ((BAMParser)parser).parse(uri, istr, group, featureName, overlap_span);
+			}
+			else {
+				return parser.parse(bis, group, featureName, uri.toString(), false);
+			}
+		}
 	}
 }

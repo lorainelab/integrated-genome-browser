@@ -100,15 +100,14 @@ public class SequenceViewer extends JPanel
 
 	public void customFormatting(SeqSymmetry residues_sym) throws HeadlessException, NumberFormatException {
 
-		seqview.setFont(new Font("Arial", Font.BOLD, 14));
+		seqview.setFont(new Font("Arial", Font.BOLD, 13));
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
 		this.getTitle();
 		mapframe.setTitle(title);
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
-		Dimension prefsize = seqview.getPreferredSize(50, 15);
-		prefsize = new Dimension(prefsize.width + 90, prefsize.height);
+		Dimension prefsize = seqview.getPreferredSize(60, 15);
 		mapframe.setMinimumSize(prefsize);
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width - pixel_width) / 2, (screen_size.height - pixel_height) / 2);

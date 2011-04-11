@@ -401,7 +401,6 @@ public final class LoadFileAction extends AbstractAction {
 			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
 			AnnotatedSeqGroup gr = USeqGraphParser.getSeqGroup(archiveInfo.getVersionedGenome(), gmodel);
 			if (gr != null) {
-				gmodel.setSelectedSeqGroup(gr);
 				return gr;
 			}
 		} catch (Exception ex) {
@@ -418,9 +417,9 @@ public final class LoadFileAction extends AbstractAction {
 		InputStream istr = null;
 		try {
 			istr =  LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-			group = Bprobe1Parser.getSeqGroup(istr, group, gmodel);
-			if (group != null) {
-				gmodel.setSelectedSeqGroup(group);
+			AnnotatedSeqGroup gr = Bprobe1Parser.getSeqGroup(istr, group, gmodel);
+			if (gr != null) {
+				return gr;
 			}
 		}catch (Exception ex) {
 			ex.printStackTrace();

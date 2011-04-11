@@ -17,6 +17,8 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.UcscGffSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -92,7 +94,7 @@ import com.affymetrix.genometryImpl.util.Timer;
  *
  *</pre>
  */
-public abstract class BsnpParser {
+public class BsnpParser implements Parser {
 
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
@@ -322,6 +324,15 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		}
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+			throws Exception {
+		List<SeqSymmetry> alist = parse(is, nameType, group, annotate_seq);
+		Logger.getLogger(BsnpParser.class.getName()).log(Level.FINE,
+				"total snps loaded: " + alist.size());
+		return alist;
+	}
 
 	// Annotationwriter implementation
 	//  public boolean writeAnnotations(Collection syms, BioSeq seq,

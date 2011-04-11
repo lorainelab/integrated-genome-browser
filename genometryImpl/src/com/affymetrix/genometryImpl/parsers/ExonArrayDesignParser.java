@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import java.io.*;
 import java.util.*;
+
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -113,7 +114,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 *</pre>
 */
-public final class ExonArrayDesignParser implements AnnotationWriter {
+public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 	static boolean USE_FULL_HIERARCHY = false;
 
 	static boolean DEBUG = false;
@@ -781,6 +782,10 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 		return success;
 	}
 
-
-
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+			throws Exception {
+		return parse(is, group, annotate_seq, nameType);
+	}
 }

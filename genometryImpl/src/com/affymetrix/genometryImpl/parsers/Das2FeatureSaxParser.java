@@ -39,7 +39,7 @@ import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
  *   Spec for this format is at http://biodas.org/documents/das2/das2_get.html *   DTD is at http://www.biodas.org/dtd/das2feature.dtd ???
  */
 public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
-				implements AnnotationWriter {
+				implements AnnotationWriter, Parser {
 
 	// DO_SEQID_HACK is a very temporary fix!!!
 // Need to move to using full URI references to identify sequences,
@@ -951,5 +951,12 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 		}
 		return buf.toString();
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri,
+			boolean annotate_seq) throws Exception {
+		return parse(new InputSource(is), uri, group, false);
 	}
 }

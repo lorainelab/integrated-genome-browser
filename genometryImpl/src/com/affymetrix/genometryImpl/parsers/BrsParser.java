@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  * but "refFlat.txt" is preferred.
  * (refFlat contains gene names, while refGene does not.)
  */
-public final class BrsParser implements AnnotationWriter, IndexWriter  {
+public final class BrsParser implements AnnotationWriter, IndexWriter, Parser  {
 
 	private static final List<String> pref_list = new ArrayList<String>();
 	static {
@@ -445,4 +445,10 @@ public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq s
 		return "binary/brs";
 	}
 
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+			throws Exception {
+		return parse(is, nameType, group, annotate_seq);
+	}
 }

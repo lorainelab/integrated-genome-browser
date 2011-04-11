@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 /**
  *  A parser designed to parse data from cytoBand.txt files from UCSC.
  */
-public final class CytobandParser implements AnnotationWriter  {
+public final class CytobandParser implements AnnotationWriter, Parser  {
 
 	static Pattern line_regex = Pattern.compile("\\t");
 
@@ -325,5 +325,12 @@ public final class CytobandParser implements AnnotationWriter  {
 			}
 		}
 		return bands;
+	}
+
+	@Override
+	public List<? extends SeqSymmetry> parse(InputStream is,
+			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+			throws Exception {
+		return parse(is, group, annotate_seq);
 	}
 }

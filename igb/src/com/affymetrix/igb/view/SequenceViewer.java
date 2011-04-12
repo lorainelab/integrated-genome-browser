@@ -233,7 +233,7 @@ public class SequenceViewer extends JPanel
 		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 		version = ag.getID();
 		if(isGenomicRequest){
-			title = "Genomic Sequence : " + version + " : " + this.aseq + " : " + residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1);
+			title = residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1) + " : " + version + " : " + this.aseq ;
 //			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
 			showcDNAButton.setEnabled(false);
 		}

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.bookmarks;
 
-import java.net.MalformedURLException;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -29,10 +28,10 @@ public class Activator extends WindowActivator implements BundleActivator {
 		startControlServer();
 
 		if (bundleContext.getProperty("args") != null) {
-			String[] args = bundleContext.getProperty("args").split(",");
+			String[] args = bundleContext.getProperty("args").split(", ");
 			final String url = igbService.get_arg("-href", args);
 			if (url != null && url.length() > 0) {
-				goToBookmark(url);
+				new BookMarkCommandLine(igbService, url);
 			}
 		}
 		// add to main file menu
@@ -79,28 +78,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 				t.start();
 			}
 		});
-	}
-
-
-	private void goToBookmark(final String url) {
-		// If the command line contains a parameter "-href http://..." where
-		// the URL is a valid IGB control bookmark, then go to that bookmark.
-		try {
-			final Bookmark bm = new Bookmark(null, url);
-			if (bm.isUnibrowControl()) {
-				SwingUtilities.invokeLater(new Runnable() {
-
-					public void run() {
-						System.out.println("Loading bookmark: " + url);
-						BookmarkController.viewBookmark(igbService, bm);
-					}
-				});
-			} else {
-				System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
-			}
-		} catch (MalformedURLException mue) {
-			mue.printStackTrace(System.err);
-		}
 	}
 
 	@Override

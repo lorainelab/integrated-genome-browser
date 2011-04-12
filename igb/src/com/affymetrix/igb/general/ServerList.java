@@ -397,6 +397,10 @@ public final class ServerList {
 		server_init_listeners.add(listener);
 	}
 
+	public void removeServerInitListener(GenericServerInitListener listener) {
+		server_init_listeners.remove(listener);
+	}
+
 	public void fireServerInitEvent(GenericServer server, ServerStatus status) {
 		fireServerInitEvent(server, status, false, true);
 	}

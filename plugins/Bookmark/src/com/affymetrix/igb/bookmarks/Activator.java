@@ -1,8 +1,10 @@
 package com.affymetrix.igb.bookmarks;
 
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
 import org.osgi.framework.BundleActivator;
@@ -22,6 +24,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
 		this.igbService = igbService;
+		ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 		// Need to let the QuickLoad system get started-up before starting
 		//   the control server that listens to ping requests?
 		// Therefore start listening for http requests only after all set-up is done.
@@ -29,20 +32,21 @@ public class Activator extends WindowActivator implements BundleActivator {
 
 		if (bundleContext.getProperty("args") != null) {
 			String[] args = bundleContext.getProperty("args").split(", ");
-			final String url = igbService.get_arg("-href", args);
+			String url = igbService.get_arg("-href", args);
 			if (url != null && url.length() > 0) {
-				new BookMarkCommandLine(igbService, url);
+				Logger.getLogger(Activator.class.getName()).log(Level.INFO,"Loading bookmark {0}",url);
+				new BookMarkCommandLine(igbService, url, true);
+			}else{
+				url = igbService.get_arg("-home", args);
+				if (url != null && url.length() > 0) {
+					Logger.getLogger(Activator.class.getName()).log(Level.INFO,"Loading home {0}",url);
+					new BookMarkCommandLine(igbService, url, false);
+				}
 			}
 		}
-		// add to main file menu
-		JMenu file_menu = igbService.getFileMenu();
-		int count = file_menu.getMenuComponentCount();
-		// assumes last file menu items are separator and close
-		MenuUtil.insertIntoMenu(file_menu, new JMenuItem(new SaveSessionAction(igbService)), count - 2);
-		MenuUtil.insertIntoMenu(file_menu, new JMenuItem(new LoadSessionAction(igbService)), count - 2);
-		// add main bookmark menu
-		JMenu bookmark_menu = MenuUtil.getMenu(BookmarkManagerView.BUNDLE.getString("bookmarksMenu"));
-		bookmark_menu.setMnemonic(BookmarkManagerView.BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
+
+		JMenu bookmark_menu = MenuUtil.getMenu(BUNDLE.getString("bookmarksMenu"));
+		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		bmark_action = new BookMarkAction(igbService, (SeqMapView)igbService.getMapView(), bookmark_menu);
 		igbService.addStopRoutine(
 			new IStopRoutine() {

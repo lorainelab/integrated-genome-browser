@@ -330,6 +330,7 @@
     	private const DOWNLOAD_FILES_URL:String       = "genopub/annotationDownloadFiles"; 
 		private const SUGGESTED_LOCAL_FILENAME:String = "genopub-data";  
 
+			
     	[Bindable]
     	private var newButtonMenuForOrganisms:Menu = new Menu();
     	[Bindable]
@@ -358,6 +359,7 @@
 
         private var downloadKeys:String = new String();
         private var estimatedDownloadSize:Number = new Number();
+		private var uncompressedDownloadSize:Number = new Number();
         
         private static var alertButtonWidthDefault:Number = Alert.buttonWidth;
         
@@ -721,9 +723,6 @@
 				} else if (this.currentState == "UserState") {
 					this.annotationOwnerStack.selectedIndex = 1;
 				}
-				parentApplication.selectDictionaryComboBox(this.experimentPlatformCombo, getAnnotation.lastResult.@idExperimentPlatform, parentApplication.dictionaryExperimentPlatform);
-				parentApplication.selectDictionaryComboBox(this.experimentMethodCombo, getAnnotation.lastResult.@idExperimentMethod, parentApplication.dictionaryExperimentMethod);
-				parentApplication.selectDictionaryComboBox(this.analysisTypeCombo, getAnnotation.lastResult.@idAnalysisType, parentApplication.dictionaryAnalysisType);
 				this.visibilityRadioGroup.selectedValue = getAnnotation.lastResult.@codeVisibility;
 				for each(var institute:Object in possibleInstitutes) {
 					if (institute.@idInstitute == getAnnotation.lastResult.@idInstitute.toString()) {
@@ -998,6 +997,12 @@
         	uploadWindow.uploadBrowseButton.setFocus();
         	uploadWindow.init();
         }
+			
+		private function showAnnotationFDTUploadWindow():void {
+			// If this is an FDT Upload, make the request to download the 
+			// FDT webstart application
+			navigateToURL(new URLRequest('genopub/annotationFDTUploadFiles?idAnnotation=' + annotationsTree.selectedItem.@idAnnotation), '_self');	
+		}
 
         private function getAncestors(item:Object, ancestorName:String):Array {
         	var ancestors:Array = new Array();
@@ -1080,16 +1085,53 @@
     		if (getDownloadEstimatedSize.lastResult.@size == 0) {
     			Alert.show("No data files exist for selected item(s).", "");
     		} else {
-    			estimatedDownloadSize = getDownloadEstimatedSize.lastResult.@size;
-	    	
-    			var call:Object = event.token;
-				Alert.show( "Ready to download approximately " + getFileSizeText(estimatedDownloadSize) + " of data.  Proceed?",
+				estimatedDownloadSize = getDownloadEstimatedSize.lastResult.@size;
+				uncompressedDownloadSize = getDownloadEstimatedSize.lastResult.@uncompressedSize;
+				if (parentApplication.isFDTSupported()) {
+					promptForDownloadMethod();
+				} else {
+					Alert.show( "Ready to download approximately " + getFileSizeText(estimatedDownloadSize) + " of data.  Proceed?",
 						"",
 						(Alert.YES | Alert.NO), this, 
 						downloadFiles); 
-    		
+				}
     		}
     	}
+			
+		private function promptForDownloadMethod():void {
+			var downloadSizeRange:String = getFileSizeText(estimatedDownloadSize);
+			if (downloadSizeRange != getFileSizeText(uncompressedDownloadSize)) {
+				downloadSizeRange += " - " + getFileSizeText(uncompressedDownloadSize);
+			}
+			var recommended:String = "(FDT download is recommended for downloads > 1GB.)";
+				
+			Alert.buttonWidth = 120; 
+			Alert.yesLabel = "Normal download";
+			Alert.noLabel = "FDT download";
+			Alert.show( "Ready to download approximately " + downloadSizeRange + ".\n" +
+						"Which download mechanism do you want to use?\n\n" + recommended,
+						"Choose download method",
+					(Alert.YES | Alert.NO | Alert.CANCEL), this, 
+					onPromptForDownloadMethod);
+				
+		}
+			
+		private function onPromptForDownloadMethod(event:CloseEvent):void {
+			Alert.yesLabel = "Yes";
+			Alert.noLabel = "No";
+			Alert.buttonWidth = alertButtonWidthDefault;
+			if (event.detail==Alert.YES) {
+				// If normal download, prompt about size first.
+				Alert.show( "Ready to download approximately " + getFileSizeText(estimatedDownloadSize) + " of data.  Proceed?",
+					"",
+					(Alert.YES | Alert.NO), this, 
+					downloadFiles);					
+			} else  if (event.detail == Alert.NO){
+				// If this is an FDT download, make the request to download the 
+				// FDT webstart application
+				navigateToURL(new URLRequest('genopub/annotationFDTDownloadFiles'), '_self');	
+			} 
+		}
     	
     	        
         public static function getFileSizeText(theFileSize:Number):String {
@@ -1143,7 +1185,8 @@
 			}
 	
 		}  
-        
+
+
         private function removeSelectedItems():void {
     		if (itemsToRemove.length == 0) {
     			return;
@@ -1689,9 +1732,6 @@
         	params.name                   = this.annotationName.text;
         	params.description            = this.cleanRichTextHTML(this.annotationDescriptionRichText.htmlText);
         	params.summary                = this.annotationSummary.text;
-        	params.idExperimentPlatform   = this.experimentPlatformCombo.selectedItem != null ? this.experimentPlatformCombo.selectedItem.@id : "";
-        	params.idExperimentMethod     = this.experimentMethodCombo.selectedItem != null ? this.experimentMethodCombo.selectedItem.@id : "";
-        	params.idAnalysisType    = this.analysisTypeCombo.selectedItem != null ? this.analysisTypeCombo.selectedItem.@id : "";
         	params.codeVisibility         =  this.visibilityRadioGroup.selectedValue != null ? visibilityRadioGroup.selectedValue : "";
 			if (params.codeVisibility == 'INST') {
 				params.idInstitute = this.instituteCombo.selectedItem != null ? this.instituteCombo.selectedItem.@idInstitute : "";
@@ -1764,12 +1804,12 @@
 	    */
 		private function onCreatePropertyLabel(annotationProperty:XML, index:int):void {
 			if (annotationProperty.@codePropertyType == 'TEXT') {
-				propertyValueViewStack[index].selectedIndex = 0;
+				propertyValueViewStack[index].selectedIndex = 1;
 				propertyText[index].text = annotationProperty.@value;
 			} else if (annotationProperty.@codePropertyType == 'URL') {
-				propertyValueViewStack[index].selectedIndex = 1;
-				var url:String = !annotationProperty.hasOwnProperty("@value") ||  annotationProperty.@value  == null || annotationProperty.@value == '' ? "http://" : annotationProperty.@value;
-				propertyURL[index].htmlText =  "<a href='event:" + url + "'><u><font color='Blue'>" +  url + "</font></u></a>";
+				propertyValueViewStack[index].selectedIndex = 0;
+				//var url:String = !annotationProperty.hasOwnProperty("@value") ||  annotationProperty.@value  == null || annotationProperty.@value == '' ? "http://" : annotationProperty.@value;
+				//propertyURL[index].htmlText =  "<a href='event:" + url + "'><u><font color='Blue'>" +  url + "</font></u></a>";
 			} else  if (annotationProperty.@codePropertyType == 'OPTION') {
 				propertyValueViewStack[index].selectedIndex = 2;
 				propertyCombo[index].dataProvider =  annotationProperty..PropertyOption;
@@ -1801,11 +1841,10 @@
 			for (var i:int = 0; i < annotationProperties.length; i++) {
 				var property:XML = XML(annotationProperties.getItemAt(i));
 				if (propertyValueViewStack[i].selectedIndex == 0) {
+					// url
+				} else if (propertyValueViewStack[i].selectedIndex == 1) {
 					// text
 					property.@value = propertyText[i].text;
-				} else if (propertyValueViewStack[i].selectedIndex == 1) {
-					// url
-					property.@value = propertyURL[i].text;
 				} else if (propertyValueViewStack[i].selectedIndex == 2) {
 					// combo
 					property.@value = "";
@@ -1846,14 +1885,89 @@
 			this.initializePropertiesFromComponents();
 			annotationProperties.removeItemAt(annotationProperties.getItemIndex(annotationProperty));
 		}
-			
-		private function addProperty():void {
-			this.initializePropertiesFromComponents();
-			if (newPropertyCombo.selectedItem != null && newPropertyCombo.selectedItem.@name != '' && newPropertyCombo.selectedItem.@name != 'New property...') {
-				annotationProperties.addItemAt(newPropertyCombo.selectedItem.copy(), 0);				
-				newPropertyCombo.selectedIndex = 0;
-			}
+
+		
+		private function selectURLText(indices:Array):void {
+			if (urlText[indices[0]][indices[1]].text == 'Enter URL here...') {
+				urlText[indices[0]][indices[1]].selectionBeginIndex = 0;
+				urlText[indices[0]][indices[1]].selectionEndIndex = urlText[indices[0]][indices[1]].text.length;
+			} 
 		}
+			
+		private function onChangeURLText(indices:Array):void {
+			var newText:String = urlText[indices[0]][indices[1]].text;
+			var values:XMLListCollection = XMLListCollection(urlRepeater[indices[0]].dataProvider);
+			values.getItemAt(indices[1]).@value = newText;
+		}
+			
+		private function showURLLink(indices:Array):void {
+			if (urlText[indices[0]][indices[1]].text == 'Enter URL here...') {
+				return;
+			}
+			var isNew:Boolean = false;
+			if ( urlLink[indices[0]][indices[1]].label == 'Enter URL here...') {
+				isNew = true;
+			}
+				
+			var newText:String = urlText[indices[0]][indices[1]].text
+			
+			var values:XMLListCollection = XMLListCollection(urlRepeater[indices[0]].dataProvider);
+			values.getItemAt(indices[1]).@value = newText;
+				
+			urlLink[indices[0]][indices[1]].label = newText;
+				
+			urlStack[indices[0]][indices[1]].selectedIndex = 0;
+				
+			if (isNew) {
+				addURL(indices);
+			}
+				
+				
+		}
+		
+		private function navigateToURLLink(indices:Array):void {
+			if (urlLink[indices[0]][indices[1]].label == 'Enter URL here...') {
+				return;
+			}
+			var urlString:String = urlLink[indices[0]][indices[1]].label;
+			if (urlString.indexOf("http") < 0) {
+				urlString = "http://" + urlString;
+			}
+			var url:URLRequest = new URLRequest(urlString);
+			navigateToURL( url, '_blank' );
+		}
+			
+		private function showURLEdit(indices:Array):void {
+			urlStack[indices[0]][indices[1]].selectedIndex = 1;
+		}
+			
+		private function removeURL(indices:Array):void {
+			var values:XMLListCollection = XMLListCollection(urlRepeater[indices[0]].dataProvider);
+			
+			var property:XML = XML(XMLListCollection(propertyRepeater.dataProvider).getItemAt(indices[0]));
+			delete property.AnnotationPropertyValue[indices[1]];
+			
+			values.removeItemAt(indices[1]);
+				
+			this.initializePropertiesFromComponents();
+			
+			propertyMainBox.removeAllChildren();
+			propertyRepeater.initializeRepeater(propertyMainBox, true);
+
+		}
+			
+		private function addURL(indices:Array):void {
+			var values:XMLListCollection = XMLListCollection(urlRepeater[indices[0]].dataProvider);
+			
+			var property:XML = XML(XMLListCollection(propertyRepeater.dataProvider).getItemAt(indices[0]));
+			property.appendChild(new XMLList("<AnnotationPropertyValue idAnnotationPropertyValue='' value='Enter URL here...'/>"));
+			values = new XMLListCollection(property.AnnotationPropertyValue);
+			
+			this.initializePropertiesFromComponents();
+			propertyMainBox.removeAllChildren();
+			propertyRepeater.initializeRepeater(propertyMainBox, true);
+		}
+
 			
 			
 			
@@ -2498,7 +2612,7 @@
 			    <mx:Panel id="blankView" width="100%" height="100%"   borderThicknessBottom="27">			    	
 			    </mx:Panel>
 			
-				<mx:Panel id="annotationView" width="100%" height="100%" verticalGap="2" title="Annotation" 
+				<mx:Panel id="annotationView" width="100%" height="100%" verticalGap="2" title="{'Annotation ' + getAnnotation.lastResult.@number}" 
 						  titleIcon="{getAnnotation.lastResult.@codeVisibility == 'INST' ? parentApplication.iconAnnotationInstitution : (getAnnotation.lastResult.@codeVisibility == 'MEM' ? parentApplication.iconAnnotationMember : (getAnnotation.lastResult.@codeVisibility == 'MEMCOL' ? parentApplication.iconAnnotationMemberCollab : (getAnnotation.lastResult.@codeVisibility == 'OWNER' ? parentApplication.iconAnnotationOwner : parentApplication.iconAnnotationPublic)))}">
 				 <mx:TabNavigator width="100%" height="100%" tabWidth="130">
 					 
@@ -2529,44 +2643,38 @@
 
 				   </mx:VBox>
 				   <mx:VBox width="30%" height="100%" verticalGap="0">
-					   	<mx:VBox  id="vbox8"  verticalGap="4">
-							<mx:HBox horizontalGap="0" id="hbox11" width="100%">
-							    		<mx:Label text="Experiment Platform" width="126"/>
-							    		<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentPlatform}" labelField="@name" id="experimentPlatformCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>					    
-							  	</mx:HBox>
-							<mx:HBox width="100%" horizontalGap="0" id="hbox12">
-								<mx:Label text="Experiment Method" width="126"/>
-								<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentMethod}" labelField="@name" id="experimentMethodCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
-							</mx:HBox>
-							<mx:HBox width="100%" horizontalGap="0">
-								<mx:Label text="Analysis Type" width="126"/>
-								<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryAnalysisType}" labelField="@name" id="analysisTypeCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
-							</mx:HBox>
-					    </mx:VBox>
-					   	<mx:VBox width="100%" height="100%" verticalGap="2" >
-							<mx:HBox paddingTop="6">
-								<mx:ComboBox id="newPropertyCombo" dataProvider="{parentApplication.dictionayProperty}" labelField="@name" width="126"  change="addProperty()" dataProvider.AdminState="{parentApplication.dictionaryProperty}">			
-								</mx:ComboBox>
-								<mx:LinkButton label="Define property ..." click="parentApplication.showDictionaryWindow()" styleName="linkMenuButtonSmall" />
-								
-							</mx:HBox>							
+						 <mx:LinkButton label="Define property ..." click="parentApplication.showDictionaryWindow()" styleName="linkMenuButtonSmall"  textAlign="left" paddingLeft="0"/>					   
+					   	<mx:VBox id="propertyMainBox" width="100%" height="100%" verticalGap="4" paddingTop="2" >
 					   		<mx:Repeater  id="propertyRepeater" 
 					   					  dataProvider="{annotationProperties}">
-					   			<mx:HBox verticalAlign="middle" width="100%"  horizontalGap="0" >
+					   			<mx:HBox verticalAlign="top" width="100%"  horizontalGap="0" >
 					   				<mx:HBox width="126" horizontalGap="0" paddingLeft="0" paddingRight="0">
 					   					<mx:Text text="{propertyRepeater.currentItem.@name}" width="100%" 
 					   							 creationComplete="onCreatePropertyLabel(event.currentTarget.getRepeaterItem(), event.target.instanceIndices[0])"/>
 					   					
 					   				</mx:HBox>
-					   				<mx:ViewStack id="propertyValueViewStack" creationPolicy="all" height="24" width="100%" >
+					   				<mx:ViewStack id="propertyValueViewStack" creationPolicy="all" height="100%" width="100%" >
+										<mx:VBox id="urlOuterBox" width="100%" height="100%" verticalGap="0" >
+											<mx:Repeater id="urlRepeater" dataProvider="{propertyRepeater.currentItem.AnnotationPropertyValue}" >
+												<mx:ViewStack id="urlStack"  selectedIndex="{urlRepeater.currentItem.@value == 'Enter URL here...' ? 1 : 0}" width="100%" creationPolicy="all">
+													<mx:HBox  id="urlBox" verticalAlign="middle" horizontalGap="0" width="100%">
+														<mx:LinkButton id="urlLink" label="{urlRepeater.currentItem.@value}"  click="{navigateToURLLink(event.target.instanceIndices)}" paddingLeft="0" textDecoration="underline" color="#121CE8" width="100%" textAlign="left"/>
+														<mx:LinkButton label="Edit" click="{showURLEdit(event.target.instanceIndices)}" styleName="linkMenuButtonSmall"/>
+														<mx:Image source="{parentApplication.iconSmallDelete}"  click="{removeURL(event.currentTarget.instanceIndices)}" />						
+													</mx:HBox>
+													<mx:HBox width="100%" verticalAlign="middle"  horizontalGap="0" horizontalAlign="left">
+														<mx:TextInput id="urlText" text="{urlRepeater.currentItem.@value}" enter="{showURLLink(event.target.instanceIndices)}" change="{onChangeURLText(event.target.instanceIndices)}" click="{selectURLText(event.currentTarget.instanceIndices)}" width="100%" color="#8D7B7B"/>						
+														<mx:LinkButton label="Show link" click="{showURLLink(event.target.instanceIndices)}" styleName="linkMenuButtonSmall"/>
+													</mx:HBox>
+												</mx:ViewStack>		
+												
+											</mx:Repeater>
+											
+										</mx:VBox>
+										
 					   					<mx:HBox >
 					   						<mx:TextInput id="propertyText" text="{propertyRepeater.currentItem.@value}" width="100%">
 					   						</mx:TextInput> 
-					   					</mx:HBox>
-					   					
-					   					<mx:HBox >
-					   						<mx:TextArea id="propertyURL" selectable="true"  height="22"  link="onPropertyURLClick(event)"   width="100%">
-					   						</mx:TextArea>
 					   					</mx:HBox>
 					   					
 					   					<mx:HBox >
@@ -2589,7 +2697,6 @@
 					   						</util:ComboCheck>						
 					   					</mx:HBox>
 					   				</mx:ViewStack>
-									<mx:Image source="{parentApplication.iconSmallDelete}" click="removeProperty(event.currentTarget.getRepeaterItem())" scaleContent="false"/>
 					   			</mx:HBox>
 					   		</mx:Repeater>
 					   	</mx:VBox>
@@ -2605,6 +2712,12 @@
 												click="showAnnotationUploadWindow()" 
 												styleName="linkMenuButton"  label="Upload file(s)">
 									 <mx:enabled>{getAnnotation.lastResult.@canWrite == 'Y' ? true : false}</mx:enabled>
+								 </mx:LinkButton>
+								 <mx:LinkButton icon="@Embed(source='assets/page_new.png')" 
+												disabledIcon="@Embed(source='assets/page_new_disable.png')" 
+												click="showAnnotationFDTUploadWindow()" 
+												styleName="linkMenuButton"  label="Upload file(s) using FDT">
+									 <mx:enabled>{getAnnotation.lastResult.@canWrite == 'Y' &amp;&amp; parentApplication.isFDTSupported() ? true : false}</mx:enabled>
 								 </mx:LinkButton>
 								 <mx:LinkButton icon="@Embed(source='assets/page_remove.png')"
 												disabledIcon="@Embed(source='assets/page_remove_disable.png')"

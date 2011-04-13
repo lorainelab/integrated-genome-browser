@@ -788,7 +788,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : null, 
 								is_genometry_genopub_mode,
 								request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.ADMIN_ROLE) : false,
-										request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.GUEST_ROLE) : true);
+										request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.GUEST_ROLE) : true,
+										false);
 				genoPubSecurity.setBaseURL(request.getRequestURL().toString(), request.getServletPath(), request.getPathInfo());
 				request.getSession().setAttribute(this.getClass().getName() + GenoPubSecurity.SESSION_KEY, genoPubSecurity);
 

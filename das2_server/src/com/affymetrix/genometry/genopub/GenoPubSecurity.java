@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.genopub;
 
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +36,8 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 	private boolean                isAdminRole = false;
 	private boolean                isGuestRole = true;
 	
+	private boolean                isFDTSupported = false;
+	
 	
 	private final HashMap<Integer, UserGroup>   groupsMemCollabVisibility = new HashMap<Integer, UserGroup>();
 	private final HashMap<Integer, UserGroup>   groupsMemVisibility = new HashMap<Integer, UserGroup>();
@@ -62,8 +65,11 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public GenoPubSecurity(Session sess, String userName, boolean scrutinizeAccess, boolean isAdminRole, boolean isGuestRole) throws Exception {
-		// Are the annotations loaded from the db?  If so, security
+	public GenoPubSecurity(Session sess, String userName, boolean scrutinizeAccess, boolean isAdminRole, boolean isGuestRole, boolean isFDTSupported) throws Exception {
+    
+    this.isFDTSupported = isFDTSupported;
+
+    // Are the annotations loaded from the db?  If so, security
 		// logic is driven from info in db, otherwise, access to all resources
 		// is granted.
 		this.scrutinizeAccess = scrutinizeAccess;
@@ -115,6 +121,7 @@ public class GenoPubSecurity implements AnnotSecurity, Serializable {
 		root.addAttribute("name",            user != null ? user.getName() : "");
 		root.addAttribute("isAdmin",         isAdminRole ? "Y" : "N");
 		root.addAttribute("isGuest",         isGuestRole ? "Y" : "N");
+    root.addAttribute("isFDTSupported",  isFDTSupported ? "Y" : "N");
 		root.addAttribute("canManageUsers",  isAdminRole || (user != null && user.getManagingUserGroups().size() > 0) ? "Y" : "N");
 		
 		

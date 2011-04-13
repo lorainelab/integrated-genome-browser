@@ -10,6 +10,7 @@ import org.dom4j.Element;
 
 
 import org.hibernate.Session;
+import org.hibernate.Hibernate;
 
 
 public class DictionaryHelper {
@@ -17,15 +18,6 @@ public class DictionaryHelper {
   private static DictionaryHelper                     theDictionaryHelper   = new DictionaryHelper();
 
   private boolean                                     isLoaded = false;
-
-  private final HashMap<Integer, AnalysisType>        analysisTypeMap  = new HashMap<Integer, AnalysisType>();
-  private final List<AnalysisType>                    analysisTypeList = new ArrayList<AnalysisType>();
-
-  private final HashMap<Integer, ExperimentMethod>    experimentMethodMap  = new HashMap<Integer, ExperimentMethod>();
-  private final List<ExperimentMethod>                experimentMethodList = new ArrayList<ExperimentMethod>();
-
-  private final HashMap<Integer, ExperimentPlatform>  experimentPlatformMap  = new HashMap<Integer, ExperimentPlatform>();
-  private final List<ExperimentPlatform>              experimentPlatformList = new ArrayList<ExperimentPlatform>();
 
   private final HashMap<Integer, Property>            propertyMap  = new HashMap<Integer, Property>();
   private final List<Property>                        propertyList = new ArrayList<Property>();
@@ -57,12 +49,7 @@ public class DictionaryHelper {
   }
 
   public static DictionaryHelper reload(Session sess) {
-    theDictionaryHelper.analysisTypeMap.clear();
-    theDictionaryHelper.analysisTypeList.clear();
-    theDictionaryHelper.experimentMethodMap.clear();
-    theDictionaryHelper.experimentMethodList.clear();
-    theDictionaryHelper.experimentPlatformMap.clear();
-    theDictionaryHelper.experimentPlatformList.clear();
+
     theDictionaryHelper.propertyMap.clear();
     theDictionaryHelper.propertyList.clear();
     theDictionaryHelper.organismMap.clear();
@@ -83,35 +70,12 @@ public class DictionaryHelper {
   }
   @SuppressWarnings("unchecked")
   private void load(Session sess) {
-    List<AnalysisType> entries = (List<AnalysisType>) sess
-    .createQuery(
-        "SELECT d from AnalysisType d order by d.name")
-        .list();
-    for (AnalysisType d : entries) {
-      analysisTypeMap.put(d.getIdAnalysisType(), d);
-      analysisTypeList.add(d);
-    }
-
-    List<ExperimentMethod> experimentMethods = (List<ExperimentMethod>) sess
-    .createQuery("SELECT d from ExperimentMethod d order by d.name")
-    .list();
-    for (ExperimentMethod d : experimentMethods) {
-      experimentMethodMap.put(d.getIdExperimentMethod(), d);
-      experimentMethodList.add(d);
-    }
-
-    List<ExperimentPlatform> experimentPlatforms = (List<ExperimentPlatform>) sess
-    .createQuery("SELECT d from ExperimentPlatform d order by d.name")
-    .list();
-    for (ExperimentPlatform d : experimentPlatforms) {
-      experimentPlatformMap.put(d.getIdExperimentPlatform(), d);
-      experimentPlatformList.add(d);
-    }
-
+    
     List<Property> properties = (List<Property>) sess
-    .createQuery("SELECT p from Property p order by p.name")
+    .createQuery("SELECT p from Property p order by p.sortOrder, p.name")
     .list();
     for (Property p : properties) {
+      Hibernate.initialize(p.getOptions());
       propertyMap.put(p.getIdProperty(), p);
       propertyList.add(p);
     }
@@ -184,104 +148,7 @@ public class DictionaryHelper {
     Document doc = DocumentHelper.createDocument();
     Element root = doc.addElement("Dictionaries");
 
-    //
-    // AnalysisType
-    //
-    // Create two hierarchies - one for dropdowns 
-    // and another used for dictionary editing.
-    //
-    Element dictEdit = root.addElement("Dictionary");
-    dictEdit.addAttribute("dictionaryName", "AnalysisType");
-    dictEdit.addAttribute("dictionaryDisplayName", "Analysis Type");
-    dictEdit .addAttribute("label", "Analysis Types");
-
-    Element dict = root.addElement("AnalysisTypes");
-    this.makeBlankNode(dict, "AnalysisType");
-
-    for (AnalysisType d : analysisTypeList) {
-      Element dictEntry = dictEdit.addElement("DictionaryEntry");
-      dictEntry.addAttribute("dictionaryName", "AnalysisType");
-      dictEntry.addAttribute("dictionaryDisplayName", "Analysis Type");
-      dictEntry.addAttribute("id",       d.getIdAnalysisType().toString());
-      dictEntry.addAttribute("name",     d.getName());
-      dictEntry.addAttribute("label",    d.getName());
-      dictEntry.addAttribute("isActive", d.getIsActive());
-      dictEntry.addAttribute("type",     "DictionaryEntry");
-      dictEntry.addAttribute("canWrite", genoPubSecurity.canWrite(d) ? "Y" : "N");
-      dictEntry.addAttribute("idUser",   d.getIdUser() != null ? d.getIdUser().toString() : "");
-      dictEntry.addAttribute("owner",    this.getUserFullName(d.getIdUser()));
-
-      Element de = (Element)dictEntry.clone();
-      de.setName("AnalysisType");
-      dict.add(de);
-    }
-
-
-    //
-    // ExperimentMethods
-    //
-    // Create two hierarchies - one for dropdowns 
-    // and another used for dictionary editing.
-    //
-    dictEdit = root.addElement("Dictionary");
-    dictEdit.addAttribute("dictionaryName", "ExperimentMethod");
-    dictEdit.addAttribute("dictionaryDisplayName", "Experiment Method");
-    dictEdit.addAttribute("label", "Experiment Methods");
-
-    dict = root.addElement("ExperimentMethods");
-    this.makeBlankNode(dict, "ExperimentMethod");
-
-    for (ExperimentMethod d : experimentMethodList) {
-      Element dictEntry = dictEdit.addElement("DictionaryEntry");
-      dictEntry.addAttribute("dictionaryName", "ExperimentMethod");
-      dictEntry.addAttribute("dictionaryDisplayName", "Experiment Method");
-      dictEntry.addAttribute("id",       d.getIdExperimentMethod().toString());
-      dictEntry.addAttribute("name",     d.getName());
-      dictEntry.addAttribute("label",    d.getName());
-      dictEntry.addAttribute("isActive", d.getIsActive());
-      dictEntry.addAttribute("type",     "DictionaryEntry");
-      dictEntry.addAttribute("canWrite", genoPubSecurity.canWrite(d) ? "Y" : "N");
-      dictEntry.addAttribute("idUser",   d.getIdUser() != null ? d.getIdUser().toString() : "");
-      dictEntry.addAttribute("owner",    this.getUserFullName(d.getIdUser()));
-
-      Element de = (Element)dictEntry.clone();
-      de.setName("ExperimentMethod");
-      dict.add(de);
-    }
-
-
-    //
-    // ExperimentPlatforms
-    //
-    // Create two hierarchies - one for dropdowns 
-    // and another used for dictionary editing.
-    //
-
-    dictEdit = root.addElement("Dictionary");
-    dictEdit.addAttribute("dictionaryName", "ExperimentPlatform");
-    dictEdit.addAttribute("dictionaryDisplayName", "Experiment Platform");
-    dictEdit.addAttribute("label", "Experiment Platforms");
-
-    dict = root.addElement("ExperimentPlatforms");
-    this.makeBlankNode(dict, "ExperimentPlatform");
-
-    for (ExperimentPlatform d : experimentPlatformList) {
-      Element dictEntry = dictEdit.addElement("DictionaryEntry");
-      dictEntry.addAttribute("dictionaryName", "ExperimentPlatform");
-      dictEntry.addAttribute("dictionaryDisplayName", "Experiment Platform");
-      dictEntry.addAttribute("id",       d.getIdExperimentPlatform().toString());
-      dictEntry.addAttribute("name",     d.getName());
-      dictEntry.addAttribute("label",    d.getName());
-      dictEntry.addAttribute("isActive", d.getIsActive());
-      dictEntry.addAttribute("type",     "DictionaryEntry");
-      dictEntry.addAttribute("canWrite", genoPubSecurity.canWrite(d) ? "Y" : "N");
-      dictEntry.addAttribute("idUser",   d.getIdUser() != null ? d.getIdUser().toString() : "");
-      dictEntry.addAttribute("owner",    this.getUserFullName(d.getIdUser()));
-
-      Element de = (Element)dictEntry.clone();
-      de.setName("ExperimentPlatform");
-      dict.add(de);
-    }
+    
     
     //
     // Properties
@@ -290,12 +157,12 @@ public class DictionaryHelper {
     // and another used for dictionary editing.
     //
 
-    dictEdit = root.addElement("Dictionary");
+    Element dictEdit = root.addElement("Dictionary");
     dictEdit.addAttribute("dictionaryName", "Property");
     dictEdit.addAttribute("dictionaryDisplayName", "Property");
     dictEdit.addAttribute("label", "Properites");
 
-    dict = root.addElement("Properties");
+    Element dict = root.addElement("Properties");
     this.makeBlankNode(dict, "Property", "name", "New property...");
 
     for (Property p : propertyList) {
@@ -306,6 +173,7 @@ public class DictionaryHelper {
       dictEntry.addAttribute("name",     p.getName());
       dictEntry.addAttribute("label",    p.getName());
       dictEntry.addAttribute("isActive", p.getIsActive());
+      dictEntry.addAttribute("sortOrder",p.getSortOrder() != null ? p.getSortOrder().toString() : "");
       dictEntry.addAttribute("codePropertyType", p.getCodePropertyType());
       dictEntry.addAttribute("type",     "DictionaryEntry");
       dictEntry.addAttribute("canWrite", genoPubSecurity.canWrite(p) ? "Y" : "N");
@@ -451,41 +319,7 @@ public class DictionaryHelper {
     return node;
   }
 
-  public String getAnalysisType(Integer id) {
-    if (id == null) {
-      return "";
-    }
-    AnalysisType d = analysisTypeMap.get(id);
-    if (d != null) {
-      return d.getName();
-    } else {
-      return "";
-    }
-  }
-
-  public String getExperimentMethod(Integer id) {
-    if (id == null) {
-      return "";
-    }
-    ExperimentMethod d = experimentMethodMap.get(id);
-    if (d != null) {
-      return d.getName();
-    } else {
-      return "";
-    }
-  }
-
-  public String getExperimentPlatform(Integer id) {
-    if (id == null) {
-      return "";
-    }
-    ExperimentPlatform d = experimentPlatformMap.get(id);
-    if (d != null) {
-      return d.getName();
-    } else {
-      return "";
-    }
-  }
+ 
 
   public List<Organism> getOrganisms() {
     return this.organismList;
@@ -605,6 +439,10 @@ public class DictionaryHelper {
     } else {
       return null;
     }
+  }
+
+  public List<Property> getPropertyList() {
+    return propertyList;
   }
 
 

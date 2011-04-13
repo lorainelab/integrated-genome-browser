@@ -21,30 +21,6 @@
 CREATE DATABASE IF NOT EXISTS genopub;
 USE genopub;
 
---
--- Definition of table `AnalysisType`
---
-
-DROP TABLE IF EXISTS `AnalysisType`;
-CREATE TABLE `AnalysisType` (
-  `idAnalysisType` int(10) unsigned NOT NULL auto_increment,
-  `name` varchar(100) NOT NULL,
-  `isActive` char(1) default NULL,
-  `idUser` int(10) unsigned default NULL,
-  PRIMARY KEY  USING BTREE (`idAnalysisType`),
-  KEY `FK_AnalysisType_User` (`idUser`),
-  CONSTRAINT `FK_AnalysisType_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `AnalysisType`
---
-
-/*!40000 ALTER TABLE `AnalysisType` DISABLE KEYS */;
-INSERT INTO `AnalysisType` (`idAnalysisType`,`name`,`isActive`,`idUser`) VALUES 
- (1,'Dynamic/Differential','Y',NULL),
- (2,'Static','Y',NULL);
-/*!40000 ALTER TABLE `AnalysisType` ENABLE KEYS */;
 
 
 --
@@ -57,9 +33,6 @@ CREATE TABLE `Annotation` (
   `name` varchar(2000) NOT NULL,
   `description` varchar(10000) default NULL,
   `fileName` varchar(2000) default NULL,
-  `idExperimentPlatform` int(10) unsigned default NULL,
-  `idExperimentMethod` int(10) unsigned default NULL,
-  `idAnalysisType` int(10) unsigned default NULL,
   `idGenomeVersion` int(10) unsigned NOT NULL,
   `codeVisibility` varchar(10) NOT NULL,
   `idUser` int(10) unsigned default NULL,
@@ -70,17 +43,11 @@ CREATE TABLE `Annotation` (
   `createDate` datetime default NULL,  
   `isLoaded` char(1) default 'N',  
   PRIMARY KEY  (`idAnnotation`),
-  KEY `FK_Annotation_ExperimentPlatform` (`idExperimentPlatform`),
-  KEY `FK_Annotation_ExperimentMethod` (`idExperimentMethod`),
   KEY `FK_Annotation_GenomeVersion` (`idGenomeVersion`),
   KEY `FK_Annotation_User` (`idUser`),
   KEY `FK_Annotation_Visibility` (`codeVisibility`),
   KEY `FK_Annotation_group` USING BTREE (`idUserGroup`),
-  KEY `FK_Annotation_QuantificationType` USING BTREE (`idAnalysisType`),
   KEY `FK_Annotation_Institute` USING BTREE (`idInstitute`),
-  CONSTRAINT `FK_Annotation_AnalysisType` FOREIGN KEY (`idAnalysisType`) REFERENCES `AnalysisType` (`idAnalysisType`),
-  CONSTRAINT `FK_Annotation_ExperimentMethod` FOREIGN KEY (`idExperimentMethod`) REFERENCES `ExperimentMethod` (`idExperimentMethod`),
-  CONSTRAINT `FK_Annotation_ExperimentPlatform` FOREIGN KEY (`idExperimentPlatform`) REFERENCES `ExperimentPlatform` (`idExperimentPlatform`),
   CONSTRAINT `FK_Annotation_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`),
   CONSTRAINT `FK_Annotation_UserGroup` FOREIGN KEY (`idUserGroup`) REFERENCES `UserGroup` (`idUserGroup`),
   CONSTRAINT `FK_Annotation_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
@@ -222,68 +189,6 @@ CREATE TABLE `AnnotationToAnnotationGrouping` (
 
 /*!40000 ALTER TABLE `AnnotationToAnnotationGrouping` DISABLE KEYS */;
 /*!40000 ALTER TABLE `AnnotationToAnnotationGrouping` ENABLE KEYS */;
-
-
---
--- Definition of table `ExperimentMethod`
---
-
-DROP TABLE IF EXISTS `ExperimentMethod`;
-CREATE TABLE `ExperimentMethod` (
-  `idExperimentMethod` int(10) unsigned NOT NULL auto_increment,
-  `name` varchar(100) NOT NULL,
-  `isActive` char(1) default NULL,
-  `idUser` int(10) unsigned default NULL,
-  PRIMARY KEY  (`idExperimentMethod`),
-  KEY `FK_ExperimentMethod_User` (`idUser`),
-  CONSTRAINT `FK_ExperimentMethod_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `ExperimentMethod`
---
-
-/*!40000 ALTER TABLE `ExperimentMethod` DISABLE KEYS */;
-INSERT INTO `ExperimentMethod` (`idExperimentMethod`,`name`,`isActive`,`idUser`) VALUES 
- (1,'chIP-seq','Y',NULL),
- (2,'chIP-chip','Y',NULL),
- (3,'CGN Microarray','Y',NULL),
- (4,'SNP Microarray','Y',NULL),
- (5,'Transcriptome Microarray','Y',NULL),
- (6,'Gene Expression Microarray','Y',NULL),
- (7,'Quantitative rtPCR','Y',NULL),
- (8,'SAGE','Y',NULL);
-/*!40000 ALTER TABLE `ExperimentMethod` ENABLE KEYS */;
-
-
---
--- Definition of table `ExperimentPlatform`
---
-
-DROP TABLE IF EXISTS `ExperimentPlatform`;
-CREATE TABLE `ExperimentPlatform` (
-  `idExperimentPlatform` int(10) unsigned NOT NULL auto_increment,
-  `name` varchar(100) NOT NULL,
-  `isActive` char(1) default NULL,
-  `idUser` int(10) unsigned default NULL,
-  PRIMARY KEY  (`idExperimentPlatform`),
-  KEY `FK_ExperimentPlatform_User` (`idUser`),
-  CONSTRAINT `FK_ExperimentPlatform_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `ExperimentPlatform`
---
-
-/*!40000 ALTER TABLE `ExperimentPlatform` DISABLE KEYS */;
-INSERT INTO `ExperimentPlatform` (`idExperimentPlatform`,`name`,`isActive`,`idUser`) VALUES 
- (1,'Illumina Genome Analyzer','Y',NULL),
- (2,'Agilent Microarray','Y',NULL),
- (3,'Affymetrix Microarray','Y',NULL),
- (4,'454 Genome Sequencer','Y',NULL),
- (6,'Applied Biosystems SOLiD','Y',NULL),
- (7,'Helicos Genomic Signature Sequencing','Y',NULL);
-/*!40000 ALTER TABLE `ExperimentPlatform` ENABLE KEYS */;
 
 
 --
@@ -827,6 +732,151 @@ INSERT INTO `Visibility` (`codeVisibility`,`name`) VALUES
  ('PUBLIC','Public');
 /*!40000 ALTER TABLE `Visibility` ENABLE KEYS */;
 
+
+-- Add new Table PropertyType
+DROP TABLE IF EXISTS PropertyType;
+CREATE  TABLE genopub.PropertyType (
+  codePropertyType VARCHAR(10) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  isActive CHAR(1) NULL DEFAULT 'Y' ,
+PRIMARY KEY (codePropertyType)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
+
+
+
+
+--
+-- Dumping data for table `propertytype`
+--
+
+/*!40000 ALTER TABLE `PropertyType` DISABLE KEYS */;
+INSERT INTO `PropertyType` VALUES 
+('CHECK','Checkbox','Y'),
+('MOPTION','Option (Multiple selection)','Y'),
+('OPTION','Option (Single selection)','Y'),
+('TEXT','Text','Y'),('URL','URL','Y');
+/*!40000 ALTER TABLE `PropertyType` ENABLE KEYS */;
+
+
+
+-- Add new Table Property
+DROP TABLE IF EXISTS Property;
+CREATE  TABLE genopub.Property (
+  idProperty INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  name VARCHAR(200) NOT NULL ,
+  isActive CHAR(1) NULL DEFAULT 'Y' ,
+  codePropertyType VARCHAR(10) NOT NULL,
+  `idUser` int(10) unsigned default NULL,
+  sortOrder INT(10) UNSIGNED NULL,
+  PRIMARY KEY (idProperty),
+  KEY `FK_Property_User` (`idUser`),
+  KEY `FK_Property_PropertyType` (`codePropertyType`),
+  CONSTRAINT `FK_Property_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
+  CONSTRAINT `FK_Property_PropertyType` FOREIGN KEY (`codePropertyType`) REFERENCES `PropertyType` (`codePropertyType`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
+
+
+
+--
+-- Dumping data for table `property`
+--
+
+
+/*!40000 ALTER TABLE `Property` DISABLE KEYS */;
+INSERT INTO `Property` VALUES 
+(19,'Analysis Type','Y','OPTION',NULL),
+(22,'Experiment Platform','Y','OPTION',NULL),
+(23,'Experiment Method','Y','OPTION',NULL);
+/*!40000 ALTER TABLE `Property` ENABLE KEYS */;
+
+
+
+-- Add new Table PropertyOption
+DROP TABLE IF EXISTS PropertyOption;
+CREATE  TABLE genopub.PropertyOption (
+  idPropertyOption INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  name VARCHAR(200) NOT NULL ,
+  isActive CHAR(1) NULL DEFAULT 'Y' ,
+  idProperty INT(10) UNSIGNED NOT NULL,
+  sortOrder INT(10) UNSIGNED NULL,
+  PRIMARY KEY (idPropertyOption),
+  KEY `FK_PropertyOption_Property` (`idProperty`),
+  CONSTRAINT `FK_PropertyOption_Property` FOREIGN KEY (`idProperty`) REFERENCES `Property` (`idProperty`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
+
+--
+-- Dumping data for table `propertyoption`
+--
+
+
+/*!40000 ALTER TABLE `PropertyOption` DISABLE KEYS */;
+INSERT INTO `PropertyOption` VALUES 
+(32,'','Y',19,0),
+(33,'Dynamic/Differential','Y',19,1),
+(34,'Static','Y',19,2),
+(52,'','Y',22,0),
+(53,'Illumina Genome Analyzer','Y',22,1),
+(54,'Agilent Microarray','Y',22,2),
+(55,'Affymetrix Microarray','Y',22,3),
+(56,'454 Genome Sequencer','Y',22,4),
+(57,'Applied Biosystems SOLiD','Y',22,5),
+(58,'Helicos Genomic Signature Sequencing','Y',22,6),(60,'','Y',23,0),
+(61,'chIP-seq','Y',23,1),
+(62,'chIP-chip','Y',23,2),
+(63,'CGN Microarray','Y',23,3),
+(64,'SNP Microarray','Y',23,4),
+(65,'Transcriptome Microarray','Y',23,5),
+(66,'Gene Expression Microarray','Y',23,6),
+(67,'Quantitative rtPCR','Y',23,7),
+(68,'SAGE','Y',23,8);
+/*!40000 ALTER TABLE `PropertyOption` ENABLE KEYS */;
+
+
+
+-- Add new Table AnnotationProperty
+DROP TABLE IF EXISTS AnnotationProperty;
+CREATE  TABLE genopub.AnnotationProperty (
+  idAnnotationProperty INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  name VARCHAR(200) NOT NULL ,
+  value VARCHAR(200)  NULL ,
+  idProperty INT(10) UNSIGNED NOT NULL,
+  idAnnotation INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (idAnnotationProperty),
+  KEY `FK_AnnotationProperty_Property` (`idProperty`),
+  KEY `FK_AnnotationProperty_Annotation` (`idAnnotation`),
+  CONSTRAINT `FK_AnnotationProperty_Property` FOREIGN KEY (`idProperty`) REFERENCES `Property` (`idProperty`),
+  CONSTRAINT `FK_AnnotationProperty_Annotation` FOREIGN KEY (`idAnnotation`) REFERENCES `Annotation` (`idAnnotation`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
+
+-- Add new Table AnnotationPropertyOption
+DROP TABLE IF EXISTS AnnotationPropertyOption;
+CREATE TABLE genopub.AnnotationPropertyOption (
+  idAnnotationProperty INT(10) unsigned  NOT NULL,
+  idPropertyOption INT(10) unsigned  NOT NULL,
+  PRIMARY KEY (idAnnotationProperty, idPropertyOption),
+  CONSTRAINT FK_AnnotationPropertyOption_AnnotationProperty FOREIGN KEY FK_AnnotationPropertyOption_AnnotationProperty (idAnnotationProperty)
+    REFERENCES genopub.AnnotationProperty (idAnnotationProperty)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+   CONSTRAINT FK_AnnotationPropertyOption_PropertyOption FOREIGN KEY FK_AnnotationPropertyOption_PropertyOption (idPropertyOption)
+    REFERENCES genopub.PropertyOption (idPropertyOption)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
+
+
+-- Add new Table AnnotationPropertyValue
+DROP TABLE IF EXISTS AnnotationPropertyValue;
+CREATE TABLE genopub.AnnotationPropertyValue (
+  idAnnotationPropertyValue INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  value VARCHAR(200) NULL,
+  idAnnotationProperty INT(10) unsigned  NOT NULL,
+  PRIMARY KEY (idAnnotationPropertyValue),
+  CONSTRAINT FK_AnnotationPropertyValue_AnnotationProperty FOREIGN KEY FK_AnnotationPropertyValue_AnnotationProperty (idAnnotationProperty)
+    REFERENCES genopub.AnnotationProperty (idAnnotationProperty)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
 
 
 

@@ -11,6 +11,7 @@ public class Property implements Owned {
     private String  isActive;
     private Integer idUser;
     private String  codePropertyType;
+    private Integer sortOrder;
     private Set     options;
     
     public Integer getIdProperty() {
@@ -58,6 +59,12 @@ public class Property implements Owned {
   }
   public void setOptions(Set options) {
     this.options = options;
+  }
+  public Integer getSortOrder() {
+    return sortOrder;
+  }
+  public void setSortOrder(Integer sortOrder) {
+    this.sortOrder = sortOrder;
   }
 
 }

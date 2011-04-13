@@ -9,11 +9,13 @@ public class AnnotationProperty {
     private Integer      idAnnotationProperty;
     private String       name;
     private String       value;
-    private Set          options;
     private Integer      idAnnotation;
     private Integer      idProperty;
     private Property     property;
+    private Set          options;
+    private Set          values;
     
+
     public Integer getIdAnnotationProperty() {
       return idAnnotationProperty;
     }
@@ -57,6 +59,11 @@ public class AnnotationProperty {
       this.property = property;
     }
     
-
+    public Set getValues() {
+      return values;
+    }
+    public void setValues(Set values) {
+      this.values = values;
+    }
 
 }

@@ -10,6 +10,9 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author hiralv
@@ -18,18 +21,18 @@ public class BookMarkCommandLine implements GenericServerInitListener{
 
 	private final IGBService igbService;
 	private final String url;
+	private final boolean force;
 
-	BookMarkCommandLine(IGBService igbService, String url){
+	BookMarkCommandLine(IGBService igbService, String url, boolean force){
 		this.igbService = igbService;
 		this.url = url;
-		
+		this.force = force;
 		// If all server are not initintialized then add listener else load bookmark.
 		if(!ServerList.getServerInstance().areAllServersInited()){
 			ServerList.getServerInstance().addServerInitListener(this);
 		}else{
 			gotoBookmark();
 		}
-
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {
@@ -46,6 +49,13 @@ public class BookMarkCommandLine implements GenericServerInitListener{
 	// If the command line contains a parameter "-href http://..." where
 	// the URL is a valid IGB control bookmark, then go to that bookmark.
 	private void gotoBookmark(){
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+
+		// If it is -home then do not force to switch unless no species is selected.
+		if(!force && gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeq() != null){
+			Logger.getLogger(BookMarkCommandLine.class.getName()).log(Level.WARNING,"Previous speceis already loaded. Home {0} will be not loaded", url);
+			return;
+		}
 
 		try {
 			final Bookmark bm = new Bookmark(null, url);

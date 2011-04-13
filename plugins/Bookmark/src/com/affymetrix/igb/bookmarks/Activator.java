@@ -1,6 +1,8 @@
 package com.affymetrix.igb.bookmarks;
 
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JMenu;
 import javax.swing.SwingUtilities;
@@ -30,9 +32,16 @@ public class Activator extends WindowActivator implements BundleActivator {
 
 		if (bundleContext.getProperty("args") != null) {
 			String[] args = bundleContext.getProperty("args").split(", ");
-			final String url = igbService.get_arg("-href", args);
+			String url = igbService.get_arg("-href", args);
 			if (url != null && url.length() > 0) {
-				new BookMarkCommandLine(igbService, url);
+				Logger.getLogger(Activator.class.getName()).log(Level.INFO,"Loading bookmark {0}",url);
+				new BookMarkCommandLine(igbService, url, true);
+			}else{
+				url = igbService.get_arg("-home", args);
+				if (url != null && url.length() > 0) {
+					Logger.getLogger(Activator.class.getName()).log(Level.INFO,"Loading home {0}",url);
+					new BookMarkCommandLine(igbService, url, false);
+				}
 			}
 		}
 		JMenu bookmark_menu = MenuUtil.getMenu(BUNDLE.getString("bookmarksMenu"));

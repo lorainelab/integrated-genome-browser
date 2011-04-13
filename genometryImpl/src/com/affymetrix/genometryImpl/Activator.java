@@ -38,7 +38,7 @@ public class Activator implements BundleActivator {
 					public void serviceChanged(ServiceEvent event) {
 						ServiceReference serviceReference = event.getServiceReference();
 						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
-							FileTypeHolder.getInstance().removeParserFactory((FileTypeHandler)bundleContext.getService(serviceReference));
+							FileTypeHolder.getInstance().removeFileTypeHandler((FileTypeHandler)bundleContext.getService(serviceReference));
 						}
 						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
 							FileTypeHolder.getInstance().addFileTypeHandler((FileTypeHandler)bundleContext.getService(serviceReference));

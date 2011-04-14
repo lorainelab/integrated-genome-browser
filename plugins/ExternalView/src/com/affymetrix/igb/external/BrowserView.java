@@ -74,11 +74,10 @@ public abstract class BrowserView extends JPanel {
 		scroll.getVerticalScrollBar().setEnabled(true);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.add("Center", scroll);
-		this.add("North", buttonPanel);
-		
-		buttonPanel.add(Box.createHorizontalGlue());
+		this.add("South", buttonPanel);
+
 		buttonPanel.add(settingsButton);
-		buttonPanel.add(Box.createHorizontalStrut(30));
+		buttonPanel.add(Box.createHorizontalGlue());
 		buttonPanel.add(selector);
 		buttonPanel.add(Box.createHorizontalStrut(15));
 		buttonPanel.add(update_button);

@@ -14,14 +14,20 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class ClampViewAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
+	private static final ClampViewAction ACTION = new ClampViewAction();
 
-	public ClampViewAction() {
+	private ClampViewAction() {
 		super(BUNDLE.getString("clampToView"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_V);
+		this.putValue(SELECTED_KEY, false);
 	}
 
+	public static AbstractAction getAction(){
+		return ACTION;
+	}
+	
 	public void actionPerformed(ActionEvent e) {
-		IGB.getSingleton().getMapView().clampToView();
+		IGB.getSingleton().getMapView().toggleClamp();
 	}
 
 }

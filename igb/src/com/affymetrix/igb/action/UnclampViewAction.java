@@ -21,7 +21,7 @@ public class UnclampViewAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		IGB.getSingleton().getMapView().unclamp();
+		//IGB.getSingleton().getMapView().unclamp();
 	}
 
 }

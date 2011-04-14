@@ -99,11 +99,8 @@ public final class SearchView extends IGBTabPanel implements
 
 	private  JTable table = new JTable();
 	private  JLabel status_bar = new JLabel("0 results");
-	private SearchResultsTableModel model;
 	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;
-
-	private List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 
 	private List<SeqSymmetry> remoteSymList;
 
@@ -262,31 +259,35 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void initTable() {
-		model = new SearchResultsTableModel(tableRows);
 		
 		lsm = table.getSelectionModel();
 		lsm.addListSelectionListener(list_selection_listener);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		sorter = new TableRowSorter<SearchResultsTableModel>(model);
-
-		table.setModel(model);
+		setModel(new SymSearchResultsTableModel(Collections.<SeqSymmetry>emptyList()));
 		table.setRowSelectionAllowed(true);
-		table.setRowSorter(sorter);
 		table.setEnabled(true);
+	}
+
+	private void setModel(SearchResultsTableModel model){
+		sorter = new TableRowSorter<SearchResultsTableModel>(model);
+		table.setModel(model);
+		table.setRowSorter(sorter);
 	}
 
 	/** This is called when the user selects a row of the table. */
 	private final ListSelectionListener list_selection_listener = new ListSelectionListener() {
 
 		public void valueChanged(ListSelectionEvent evt) {
-			if (evt.getSource() == lsm && !evt.getValueIsAdjusting() && model.getRowCount() > 0) {
+			if (evt.getSource() == lsm && !evt.getValueIsAdjusting() && table.getModel().getRowCount() > 0) {
 				int srow = table.getSelectedRow();
 				srow = table.convertRowIndexToModel(srow);
 				if (srow < 0) {
 					return;
 				}
-				SeqSymmetry sym = tableRows.get(srow);
+				Object obj = ((SearchResultsTableModel)table.getModel()).get(srow);
+				SeqSymmetry sym = obj instanceof SeqSymmetry ? (SeqSymmetry)obj : null;
+				
 				if (sym != null) {
 					if (remoteSymList != null && remoteSymList.contains(sym)) {
 						if (group == null) {
@@ -337,8 +338,8 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void clearTable() {
-		tableRows.clear();
-		model.fireTableDataChanged();
+		((SearchResultsTableModel)table.getModel()).clear();
+		((AbstractTableModel)table.getModel()).fireTableDataChanged();
 	}
 
 	public void actionPerformed(ActionEvent evt) {
@@ -475,24 +476,19 @@ public final class SearchView extends IGBTabPanel implements
 					localSymList.addAll(remoteSymList);
 				}
 
-				tableRows = filterBySeq(localSymList, chrFilter);
+				List<SeqSymmetry> tableRows = filterBySeq(localSymList, chrFilter);
 				Collections.sort(tableRows, new Comparator<SeqSymmetry>() {
 					public int compare(SeqSymmetry s1, SeqSymmetry s2) {
 						return s1.getID().compareTo(s2.getID());
 					}
 				});
-				displayInTable(tableRows);
+				setModel(new SymSearchResultsTableModel(tableRows));
 
 				enableComp(true);
 			}
 		});
 
 	}
-
-	private void displayInTable(List<SeqSymmetry> rows) {
-		model.fireTableDataChanged();
-	}
-	
 
 	private static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
 
@@ -678,7 +674,7 @@ public final class SearchView extends IGBTabPanel implements
 		this.searchCB.setEnabled(newGroup != null);
 		this.searchButton.setEnabled(newGroup != null);
 		this.searchTF.setEnabled(newGroup != null);
-		tableRows.clear();
+		((SearchResultsTableModel)table.getModel()).clear();
 		setStatus("");
 		
 		// only re-initialize the combobox if the group or seqs have changed
@@ -708,9 +704,15 @@ public final class SearchView extends IGBTabPanel implements
 		}
 	}
 
-	private class SearchResultsTableModel extends AbstractTableModel {
-		private static final long serialVersionUID = 1L;
+	private abstract class SearchResultsTableModel extends AbstractTableModel{
+		public abstract Object get(int i);
+		public abstract void clear();
+	}
 
+	private class SymSearchResultsTableModel extends SearchResultsTableModel {
+		private static final long serialVersionUID = 1L;
+		private final List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
+		
 		private final String[] column_names = {
 			BUNDLE.getString("searchTableID"),
 			BUNDLE.getString("searchTableTier"),
@@ -727,7 +729,9 @@ public final class SearchView extends IGBTabPanel implements
 		private static final int END_COLUMN = 4;
 		private static final int CHROM_COLUMN = 5;
 		private static final int STRAND_COLUMN = 6;
-		public SearchResultsTableModel(List<SeqSymmetry> results) {
+
+		public SymSearchResultsTableModel(List<SeqSymmetry> results) {
+			tableRows.addAll(results);
 		}
 
 		public Object getValueAt(int row, int col) {
@@ -803,6 +807,16 @@ public final class SearchView extends IGBTabPanel implements
 				return Number.class;
 			}
 			return String.class;
+		}
+
+		@Override
+		public Object get(int i) {
+			return tableRows.get(i);
+		}
+
+		@Override
+		public void clear(){
+			tableRows.clear();
 		}
 	}
 

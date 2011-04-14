@@ -18,8 +18,8 @@ public class ExitSeqViewerAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
 	JFrame mapframe;
 	public ExitSeqViewerAction(JFrame mapframe) {
-		super(BUNDLE.getString("exit"));
-		this.putValue(MNEMONIC_KEY, KeyEvent.VK_X);
+		super(BUNDLE.getString("closeSequenceViewer"));
+		this.putValue(MNEMONIC_KEY, KeyEvent.VK_W);
 		this.mapframe=mapframe;
 	}
 

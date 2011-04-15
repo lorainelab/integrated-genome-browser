@@ -316,10 +316,15 @@ public final class SearchView extends IGBTabPanel implements
 				}else if(table.getModel() instanceof GlyphSearchResultsTableModel){
 					GlyphSearchResultsTableModel model = (GlyphSearchResultsTableModel)table.getModel();
 					GlyphI glyph = model.get(srow);
+					for(GlyphI g : glyphs){
+						gviewer.getSeqMap().deselect(g);
+					}
 					if(glyph != null){
 						int start = (int)glyph.getCoordBox().x;
 						int end = (int)(glyph.getCoordBox().x + glyph.getCoordBox().width);
+						gviewer.getSeqMap().select(glyph);
 						zoomToCoord(model.seq.getID(), start, end);
+						gviewer.centerAtHairline();
 					}
 				}
 				

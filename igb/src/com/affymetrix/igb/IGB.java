@@ -474,8 +474,10 @@ public final class IGB extends Application
 			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
 			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
 			//int end = matcher.end(0) + residue_offset;
-			Map<String, Object> props = new HashMap<String, Object>();
+			Map<String, String> props = new HashMap<String, String>();
 			props.put("direction", forward ? "forward" : "reverse");
+			props.put("match", matcher.group(0));
+
 			GlyphI gl = new FillRectGlyph();
 			gl.setInfo(props);
 			gl.setColor(hitColor);

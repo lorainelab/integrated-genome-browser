@@ -285,32 +285,44 @@ public final class SearchView extends IGBTabPanel implements
 				if (srow < 0) {
 					return;
 				}
-				Object obj = ((SearchResultsTableModel)table.getModel()).get(srow);
-				SeqSymmetry sym = obj instanceof SeqSymmetry ? (SeqSymmetry)obj : null;
-				
-				if (sym != null) {
-					if (remoteSymList != null && remoteSymList.contains(sym)) {
-						if (group == null) {
+			
+				if (table.getModel() instanceof SymSearchResultsTableModel) {
+					SymSearchResultsTableModel model = (SymSearchResultsTableModel)table.getModel();
+					SeqSymmetry sym = model.get(srow);
+
+					if (sym != null) {
+						if (remoteSymList != null && remoteSymList.contains(sym)) {
+							if (group == null) {
+								return;
+							}
+							zoomToCoord(sym);
 							return;
 						}
-						zoomToCoord(sym);
-						return;
-					}
 
-					if (gviewer.getSeqMap().<GlyphI>getItem(sym) == null) {
-						if (group == null) {
+						if (gviewer.getSeqMap().<GlyphI>getItem(sym) == null) {
+							if (group == null) {
+								return;
+							}
+							// Couldn't find sym in map view! Go ahead and zoom to it.
+							zoomToCoord(sym);
 							return;
 						}
-						// Couldn't find sym in map view! Go ahead and zoom to it.
-						zoomToCoord(sym);
-						return;
-					}
 
-					// Set selected symmetry normally
-					List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
-					syms.add(sym);
-					gmodel.setSelectedSymmetriesAndSeq(syms, this);
+						// Set selected symmetry normally
+						List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
+						syms.add(sym);
+						gmodel.setSelectedSymmetriesAndSeq(syms, this);
+					}
+				}else if(table.getModel() instanceof GlyphSearchResultsTableModel){
+					GlyphSearchResultsTableModel model = (GlyphSearchResultsTableModel)table.getModel();
+					GlyphI glyph = model.get(srow);
+					if(glyph != null){
+						int start = (int)glyph.getCoordBox().x;
+						int end = (int)(glyph.getCoordBox().x + glyph.getCoordBox().width);
+						zoomToCoord(model.seq.getID(), start, end);
+					}
 				}
+				
 			}
 		}
 
@@ -321,9 +333,13 @@ public final class SearchView extends IGBTabPanel implements
 				SeqSpan span = sym.getSpan(0);
 				if (span != null) {
 					// zoom to its coordinates
-					MapRangeBox.zoomToSeqAndSpan(gviewer, seqID, span.getStart(), span.getEnd());
+					zoomToCoord(seqID, span.getStart(), span.getEnd());
 				}
 			}
+		}
+
+		private void zoomToCoord(String seqID, int start, int end){
+			MapRangeBox.zoomToSeqAndSpan(gviewer, seqID, start, end);
 		}
 	};
 
@@ -612,6 +628,9 @@ public final class SearchView extends IGBTabPanel implements
 		setStatus(friendlySearchStr + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
 		NeoMap map = gviewer.getSeqMap();
 		map.updateWidget();
+
+		setModel(new GlyphSearchResultsTableModel(glyphs, vseq));
+		enableComp(true);
 	}
 
 	private static String friendlyString(String text, String chr) {
@@ -709,6 +728,103 @@ public final class SearchView extends IGBTabPanel implements
 		public abstract void clear();
 	}
 
+	private class GlyphSearchResultsTableModel extends SearchResultsTableModel {
+		private static final long serialVersionUID = 1L;
+		private final List<GlyphI> tableRows = new ArrayList<GlyphI>(0);
+		protected final BioSeq seq;
+
+		public GlyphSearchResultsTableModel(List<GlyphI> results, BioSeq seq) {
+			tableRows.addAll(results);
+			this.seq = seq;
+		}
+
+		private final String[] column_names = {
+			BUNDLE.getString("searchTableChromosome"),
+			BUNDLE.getString("searchTableStart"),
+			BUNDLE.getString("searchTableEnd"),
+			BUNDLE.getString("searchTableStrand"),
+			BUNDLE.getString("searchTableMatch")
+		};
+
+		private static final int CHROM_COLUMN = 0;
+		private static final int START_COLUMN = 1;
+		private static final int END_COLUMN = 2;
+		private static final int STRAND_COLUMN = 3;
+		private static final int MATCH_COLUMN = 4;
+
+		@Override
+		public GlyphI get(int i) {
+			return tableRows.get(i);
+		}
+
+		@Override
+		public void clear() {
+			tableRows.clear();
+		}
+
+		public int getRowCount() {
+			return tableRows.size();
+		}
+
+		public int getColumnCount() {
+			return column_names.length;
+		}
+
+		public Object getValueAt(int row, int col) {
+			GlyphI glyph = tableRows.get(row);
+			Map map = (Map) glyph.getInfo();
+
+			switch (col) {
+				case CHROM_COLUMN:
+					return seq.getID();
+
+				case START_COLUMN:
+					return glyph.getCoordBox().x;
+
+				case END_COLUMN:
+					return glyph.getCoordBox().x  + glyph.getCoordBox().width;
+
+				case STRAND_COLUMN:
+					Object direction = map.get("direction");
+					if (direction != null) {
+						if (direction.toString().equalsIgnoreCase("forward")) {
+							return "+";
+						} else if (direction.toString().equalsIgnoreCase("reverse")) {
+							return "-";
+						}
+					}
+					return "";
+
+				case MATCH_COLUMN:
+					Object match = map.get("match");
+					if (match != null) {
+						return match.toString();
+					}
+				return "";
+			}
+
+			return "";
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+
+		@Override
+		public String getColumnName(int col) {
+			return column_names[col];
+		}
+		
+		@Override
+		public Class<?> getColumnClass(int column) {
+			if(column == START_COLUMN || column == END_COLUMN) {
+				return Number.class;
+			}
+			return String.class;
+		}
+
+	}
 	private class SymSearchResultsTableModel extends SearchResultsTableModel {
 		private static final long serialVersionUID = 1L;
 		private final List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
@@ -810,7 +926,7 @@ public final class SearchView extends IGBTabPanel implements
 		}
 
 		@Override
-		public Object get(int i) {
+		public SeqSymmetry get(int i) {
 			return tableRows.get(i);
 		}
 

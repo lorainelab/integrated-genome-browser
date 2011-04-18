@@ -88,6 +88,7 @@ import java.util.prefs.*;
 import java.util.regex.Pattern;
 import javax.swing.*;
 
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 /**
  *
  * @version $Id$
@@ -334,7 +335,7 @@ public class SeqMapView extends JPanel
 					int threshValue = (AutoLoad.threshold * getMaximum() / 100);
 					int xp = xPositionForValue(threshValue);
 					if(me.getX() > xp-5 && me.getX() < xp+5){
-						return "AutoLoad Threshold";
+						return BUNDLE.getString("autoloadToolTip");
 					}
 					return super.getToolTipText();
 				}
@@ -342,9 +343,9 @@ public class SeqMapView extends JPanel
 			}
 		};
 		
-		((JSlider)xzoomer).setToolTipText("Horizontal zoom");
+		((JSlider)xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
 		Adjustable yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-		((JSlider)yzoomer).setToolTipText("Vertical zoom");
+		((JSlider)yzoomer).setToolTipText(BUNDLE.getString("verticalZoomToolTip"));
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
@@ -410,10 +411,12 @@ public class SeqMapView extends JPanel
 
 		JToggleButton select_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapSelectMode, "arrow.gif"));
 		select_mode_button.setText("");
+		select_mode_button.setToolTipText(BUNDLE.getString("selectModeToolTip"));
 		xzoombox.add(select_mode_button);
 
 		JToggleButton scroll_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapScrollMode, "open_hand.gif"));
 		scroll_mode_button.setText("");
+		scroll_mode_button.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
 		xzoombox.add(scroll_mode_button);
 
 //		JToggleButton zoom_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapZoomMode));

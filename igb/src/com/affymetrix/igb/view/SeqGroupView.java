@@ -31,13 +31,15 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 
 public final class SeqGroupView extends IGBTabPanel implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private static final int TAB_POSITION = 7;
 	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 	private static final boolean DEBUG_EVENTS = false;
-
+	protected String[] columnToolTips = {null,BUNDLE.getString("sequenceHeaderLengthToolTip")};
+	
 	private final GenometryModel gmodel;
 	private final JTable seqtable;
 	private final ListSelectionModel lsm;
@@ -60,7 +62,20 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 	private SeqGroupView(IGBService _igbService) {
 		super(_igbService, BUNDLE.getString("sequenceTab"), BUNDLE.getString("sequenceTab"), true, TAB_POSITION);
 		gmodel = GenometryModel.getGenometryModel();
-		seqtable = new JTable();
+		seqtable = new JTable(){
+			//Implement table header tool tips.
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        return columnToolTips[realIndex];
+                    }
+                };
+			}
+		};
 		seqtable.setToolTipText(BUNDLE.getString("chooseSeq"));
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		seqtable.setFillsViewportHeight(true);

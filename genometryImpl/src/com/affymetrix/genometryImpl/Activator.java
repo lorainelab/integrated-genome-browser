@@ -23,7 +23,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
-		// add all Parser implementations to ParserHolder
+		// add all FileTypeHandler implementations to FileTypeHolder
 		ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(FileTypeHandler.class.getName(), null);
 		if (serviceReferences != null) {
 			for (ServiceReference serviceReference : serviceReferences) {
@@ -32,7 +32,7 @@ public class Activator implements BundleActivator {
 		}
 		try {
 			bundleContext.addServiceListener(
-				// add / remove any Parser implementations to ParserHolder dynamically
+				// add / remove any FileTypeHandler implementations to FileTypeHolder dynamically
 				new ServiceListener() {
 					@Override
 					public void serviceChanged(ServiceEvent event) {

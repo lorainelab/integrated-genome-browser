@@ -42,8 +42,8 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
 /**
- * all the ParserFactory implementations are saved here, included dynamically
- * added ParserFactorys
+ * all the FileTypeHandler implementations are saved here, included dynamically
+ * added FileTypeHandlers
  */
 public class FileTypeHolder {
 	private static final FileTypeHolder instance = new FileTypeHolder();
@@ -53,7 +53,7 @@ public class FileTypeHolder {
 	}
 	private FileTypeHolder() {
 		fileTypeHandlerMap = new HashMap<String, FileTypeHandler>();
-		// load all built in Parsers
+		// load all built in FileTypeHandlers
 		addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, AffyCnChpParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("BAM", new String[]{"bam"}, BAMParser.class, BAM.class);
 		addFileTypeHandler("Graph", new String[]{"bar"}, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);

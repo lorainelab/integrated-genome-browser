@@ -461,8 +461,9 @@
 	</target>
 
 	<target name="release-copy-genopub-sql" if="das2genopub">
-		<copy todir="${release.dir}/${das2_release}">
+		<copy todir="${release.dir}/${das2_release}/sql">
 			<fileset file="${das2server}/genopub.sql" />
+			<fileset file="${das2server}/sql/*.sql" />
 		</copy>
 	</target>
 

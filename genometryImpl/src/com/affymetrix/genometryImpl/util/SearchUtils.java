@@ -7,6 +7,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -58,7 +59,7 @@ public final class SearchUtils {
 	 * @param match
 	 */
 	private static void findIDsInSym(Set<SeqSymmetry> syms, SeqSymmetry sym, Matcher match) {
-		if (sym == null) {
+		if (sym == null || sym instanceof TypeContainerAnnot) {
 			return;
 		}
 		if (sym.getID() != null && match.reset(sym.getID()).matches()) {

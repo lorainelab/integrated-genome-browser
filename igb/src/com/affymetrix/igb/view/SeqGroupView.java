@@ -114,7 +114,12 @@ public final class SeqGroupView extends IGBTabPanel implements ListSelectionList
 	TableColumnModel model = headers.getColumnModel();
 
 	TableColumn col1 = model.getColumn(0);
-	col1.setHeaderValue("("+ nformat.format(seqtable.getRowCount()) +") Sequence(s)");
+	int n = seqtable.getRowCount();
+	//Exclude 'genome'
+	if(n >= 2){
+		n -= 1;
+	}
+	col1.setHeaderValue("("+ nformat.format(n) +") Sequence(s)");
   }
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {

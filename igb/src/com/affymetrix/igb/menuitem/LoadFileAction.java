@@ -455,6 +455,9 @@ public final class LoadFileAction extends AbstractAction {
 
 			@Override
 			public void done() {
+				// force a refresh of this server. This forces creation of 'genome' sequence.
+				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
+				
 				SeqGroupView.getInstance().refreshTable();
 				if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
 					// select a chromosomes

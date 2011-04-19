@@ -184,7 +184,6 @@ public class SeqMapView extends JPanel
 	/** Name of a boolean preference for whether to show properties in tooltip. */
 	public static final String PREF_SHOW_TOOLTIP = "Show properties in tooltip";
 
-	private boolean isClamped = false;
 	public static final Color default_edge_match_color = Color.WHITE;
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
 	private static final boolean default_x_zoomer_above = true;
@@ -210,6 +209,7 @@ public class SeqMapView extends JPanel
 	private final SeqMapViewMouseListener mouse_listener;
 	private CharSeqGlyph seq_glyph = null;
 	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
+	private SeqSpan clampedRegion = null; //Span representing clamped region
 	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 	protected TierLabelManager tier_manager;
 	protected JComponent xzoombox;
@@ -730,8 +730,8 @@ public class SeqMapView extends JPanel
 
 		// Ignore preserve_view if seq has changed
 		if ((preserve_view_x || preserve_view_y) && same_seq) {
-			if(isClamped){
-				clamp(isClamped);
+			if(clampedRegion != null){
+				seqmap.setMapRange(clampedRegion.getStart(), clampedRegion.getEnd());
 			}
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 
@@ -756,7 +756,9 @@ public class SeqMapView extends JPanel
 			postSelections();
 			int[] range = seqmap.getVisibleRange();
 			setZoomSpotX(0.5 * (range[0] + range[1]));
-			isClamped = false;
+			if(clampedRegion != null){
+				clamp(false);
+			}
 		}
 
 		for(SeqMapRefreshed smr : seqmap_refresh_list){
@@ -770,8 +772,6 @@ public class SeqMapView extends JPanel
 			seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
 		}
 		
-		// Update menu
-		ClampViewAction.getAction().putValue(Action.SELECTED_KEY, isClamped);
 	}
 
 
@@ -1325,24 +1325,25 @@ public class SeqMapView extends JPanel
 	}
 	
 	public final void toggleClamp() {
-		isClamped = !isClamped;
-		clamp(isClamped);
+		clamp(clampedRegion == null);
 		seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
 		seqmap.updateWidget();
-		ClampViewAction.getAction().putValue(Action.SELECTED_KEY, isClamped);
 	}
 
 	public void clamp(boolean clamp) {
 		if (clamp) {
 			Rectangle2D.Double vbox = seqmap.getViewBounds();
 			seqmap.setMapRange((int) (vbox.x), (int) (vbox.x + vbox.width));
+			clampedRegion = new SimpleSeqSpan((int) (vbox.x), (int) (vbox.x + vbox.width), viewseq);
 		} else {
 			if (viewseq != null) {
 				int min = viewseq.getMin();
 				int max = viewseq.getMax();
 				seqmap.setMapRange(min, max);
+				clampedRegion = null;
 			}
 		}
+		ClampViewAction.getAction().putValue(Action.SELECTED_KEY, clampedRegion != null);
 	}
 
 	/**

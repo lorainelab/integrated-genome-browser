@@ -721,7 +721,7 @@ public final class SearchView extends IGBTabPanel implements
 		});
 	}
 
-	public void refresh() {
+	public void mapRefresh() {
 		TransformTierGlyph axis_tier = gviewer.getAxisTier();
 		for(GlyphI glyph : glyphs){
 			axis_tier.addChild(glyph);

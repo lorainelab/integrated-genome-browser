@@ -760,7 +760,7 @@ public class SeqMapView extends JPanel
 		}
 
 		for(SeqMapRefreshed smr : seqmap_refresh_list){
-			smr.refresh();
+			smr.mapRefresh();
 		}
 		
 		seqmap.updateWidget();
@@ -2011,7 +2011,7 @@ public class SeqMapView extends JPanel
 	}
 	
 	public static interface SeqMapRefreshed{
-		public void refresh();
+		public void mapRefresh();
 	}
 
 	public SeqSymmetry getSeqSymmetry(){

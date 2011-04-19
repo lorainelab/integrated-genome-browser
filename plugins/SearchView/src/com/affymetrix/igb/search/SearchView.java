@@ -13,8 +13,9 @@ import java.util.concurrent.Executor;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
-
+import javax.swing.table.TableColumn;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -182,7 +183,7 @@ public final class SearchView extends IGBTabPanel implements
 
 		this.add("North", pan1);
 
-
+		
 		JScrollPane scroll_pane = new JScrollPane(table);
 		this.add(scroll_pane, BorderLayout.CENTER);
 
@@ -273,6 +274,18 @@ public final class SearchView extends IGBTabPanel implements
 		sorter = new TableRowSorter<SearchResultsTableModel>(model);
 		table.setModel(model);
 		table.setRowSorter(sorter);
+
+		for(int i=0; i<model.getColumnWidth().length; i++){
+			int colPer = model.getColumnWidth()[i];
+			int colWidth = table.getWidth() * colPer/100;
+			TableColumn column = table.getColumnModel().getColumn(i);
+			column.setPreferredWidth(colWidth);
+
+			int colAlign = model.getColumnAlign()[i];
+			DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+			dtcr.setHorizontalAlignment(colAlign);
+			column.setCellRenderer(dtcr);
+		}
 	}
 
 	/** This is called when the user selects a row of the table. */
@@ -323,7 +336,7 @@ public final class SearchView extends IGBTabPanel implements
 						int start = (int)glyph.getCoordBox().x;
 						int end = (int)(glyph.getCoordBox().x + glyph.getCoordBox().width);
 						gviewer.getSeqMap().select(glyph);
-						zoomToCoord(model.seq.getID(), start, end);
+						zoomToCoord(model.seq, start, end);
 						gviewer.centerAtHairline();
 					}
 				}
@@ -380,7 +393,15 @@ public final class SearchView extends IGBTabPanel implements
 				this.remoteSearchCheckBox.setSelected(false);
 			}
 
-			boolean displaySelectedEnabled = !REGEXRESIDUE.equals(searchMode);
+			boolean isResidueSearch = REGEXRESIDUE.equals(searchMode);
+
+			if(isResidueSearch){
+				setModel(new GlyphSearchResultsTableModel(Collections.<GlyphI>emptyList(),""));
+			}else{
+				setModel(new SymSearchResultsTableModel(Collections.<SeqSymmetry>emptyList()));
+			}
+
+			boolean displaySelectedEnabled = !isResidueSearch;
 			this.selectInMapCheckBox.setEnabled(displaySelectedEnabled);
 			if (!displaySelectedEnabled) {
 				this.selectInMapCheckBox.setSelected(true);	// we ALWAYS display in map if it's residues.
@@ -639,7 +660,7 @@ public final class SearchView extends IGBTabPanel implements
 				return Integer.valueOf((int)g1.getCoordBox().x).compareTo((int)g2.getCoordBox().x);
 			}
 		});
-		setModel(new GlyphSearchResultsTableModel(glyphs, vseq));
+		setModel(new GlyphSearchResultsTableModel(glyphs, vseq.getID()));
 		enableComp(true);
 	}
 
@@ -736,14 +757,19 @@ public final class SearchView extends IGBTabPanel implements
 	private abstract class SearchResultsTableModel extends AbstractTableModel{
 		public abstract Object get(int i);
 		public abstract void clear();
+		public abstract int[] getColumnWidth();
+		public abstract int[] getColumnAlign();
 	}
 
 	private class GlyphSearchResultsTableModel extends SearchResultsTableModel {
 		private static final long serialVersionUID = 1L;
+		private final int[] colWidth = {10,10,5,10,65};
+		private final int[] colAlign = {SwingConstants.RIGHT,SwingConstants.RIGHT,SwingConstants.CENTER,SwingConstants.CENTER,SwingConstants.LEFT};
+		
 		private final List<GlyphI> tableRows = new ArrayList<GlyphI>(0);
-		protected final BioSeq seq;
+		protected final String seq;
 
-		public GlyphSearchResultsTableModel(List<GlyphI> results, BioSeq seq) {
+		public GlyphSearchResultsTableModel(List<GlyphI> results, String seq) {
 			tableRows.addAll(results);
 			this.seq = seq;
 		}
@@ -804,7 +830,7 @@ public final class SearchView extends IGBTabPanel implements
 					return "";
 
 				case CHROM_COLUMN:
-					return seq.getID();
+					return seq;
 					
 				case MATCH_COLUMN:
 					Object match = map.get("match");
@@ -835,9 +861,22 @@ public final class SearchView extends IGBTabPanel implements
 			return String.class;
 		}
 
+		@Override
+		public int[] getColumnWidth() {
+			return colWidth;
+		}
+
+		@Override
+		public int[] getColumnAlign() {
+			return colAlign;
+		}
+
 	}
 	private class SymSearchResultsTableModel extends SearchResultsTableModel {
 		private static final long serialVersionUID = 1L;
+		private final int[] colWidth = {};
+		private final int[] colAlign = {};
+		
 		private final List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 		
 		private final String[] column_names = {
@@ -944,6 +983,16 @@ public final class SearchView extends IGBTabPanel implements
 		@Override
 		public void clear(){
 			tableRows.clear();
+		}
+
+		@Override
+		public int[] getColumnWidth() {
+			return colWidth;
+		}
+
+		@Override
+		public int[] getColumnAlign() {
+			return colAlign;
 		}
 	}
 

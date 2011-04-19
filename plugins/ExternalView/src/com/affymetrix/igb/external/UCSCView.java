@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import java.awt.Font;
 
 /**
  * Subclass for UCSC view
@@ -76,7 +77,8 @@ public class UCSCView extends BrowserView {
 		private final JButton okButton = new JButton("submit");
 		private final JButton ucscInfo = new JButton("UCSC info");
 		private final JTextField userIdField = new JTextField(getCookie(UCSCUSERID), 15);
-
+		private final Font font = okButton.getFont();
+	
 		public UCSCHelper(Window window, String string) {
 			super(window, string);
 			CookieHandler.setDefault(null);
@@ -87,12 +89,12 @@ public class UCSCView extends BrowserView {
 
 			String text = "<h1>Setting the UCSC user id</h1>";
 			text += "<table><tr><td width='20'/><td>";
-			text += "<p>If you have already customized the USCS view in a web browser, IGB can use those settings. Follow the instructions below to link your settings to IGB.</p>";
+			text += "<font face='"+font.getFontName()+"'><p>If you have already customized the USCS view in a web browser, IGB can use those settings. Follow the instructions below to link your settings to IGB.</p>";
 			text += "<ol><li><p>Obtain your user id by clicking on the \"UCSC info\" button.</p><p>Or open <a href=\"http://genome.ucsc.edu/cgi-bin/cartDump\">http://genome.ucsc.edu/cgi-bin/cartDump</a> in your browser</p></li>";
 			text += "<li>Then scroll down in the opened window and copy the value of hguid into the \"UCSC user id\" field.</li>";
 			text += "<li>Click the submit button.</li>";
 			text += "<li>Your IGB UCSC View is now synchronized with your browser track configuration.</br>";
-			text += "The settings in your browser now change the view.</li></ol>";
+			text += "The settings in your browser now change the view.</li></ol></font>";
 			text += "</td> <td width='20'/></tr> </table>";
 			pane.setText(text);
 			pane.setEditable(false);

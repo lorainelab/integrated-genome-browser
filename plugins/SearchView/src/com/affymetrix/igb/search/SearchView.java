@@ -74,7 +74,7 @@ public final class SearchView extends IGBTabPanel implements
 	private static final String REGEXPROPS = BUNDLE.getString("searchRegexProps");
 	private static final String REGEXPROPSTF = BUNDLE.getString("searchRegexPropsTF");
 	private static final String CHOOSESEARCH = BUNDLE.getString("searchChooseSearch");
-	private static final String FINDANNOTS = "Find Annotations For ";
+	private static final String FINDANNOTS = "Search for annotations or sequence in ";
 	private static final String FINDANNOTSNULL = BUNDLE.getString("pleaseSelectGenome");
 	private static final String SEQUENCETOSEARCH = BUNDLE.getString("searchSequenceToSearch");
 	private static final String REMOTESERVERSEARCH1 = "also search remotely (";
@@ -630,10 +630,15 @@ public final class SearchView extends IGBTabPanel implements
 		residue_offset = vseq.getMax();
 		int hit_count2 = igbService.searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, glyphs, hitcolor);
 
-		setStatus(friendlySearchStr + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
+		setStatus("Found " + ": " + hit_count1 + " forward and " + hit_count2 + " reverse strand hits. Click row to view hit.");
 		NeoMap map = gviewer.getSeqMap();
 		map.updateWidget();
 
+		Collections.sort(glyphs, new Comparator<GlyphI>() {
+			public int compare(GlyphI g1, GlyphI g2) {
+				return Integer.valueOf((int)g1.getCoordBox().x).compareTo((int)g2.getCoordBox().x);
+			}
+		});
 		setModel(new GlyphSearchResultsTableModel(glyphs, vseq));
 		enableComp(true);
 	}
@@ -744,17 +749,17 @@ public final class SearchView extends IGBTabPanel implements
 		}
 
 		private final String[] column_names = {
-			BUNDLE.getString("searchTableChromosome"),
 			BUNDLE.getString("searchTableStart"),
 			BUNDLE.getString("searchTableEnd"),
 			BUNDLE.getString("searchTableStrand"),
+			BUNDLE.getString("searchTableChromosome"),
 			BUNDLE.getString("searchTableMatch")
 		};
 
-		private static final int CHROM_COLUMN = 0;
-		private static final int START_COLUMN = 1;
-		private static final int END_COLUMN = 2;
-		private static final int STRAND_COLUMN = 3;
+		private static final int START_COLUMN = 0;
+		private static final int END_COLUMN = 1;
+		private static final int STRAND_COLUMN = 2;
+		private static final int CHROM_COLUMN = 3;
 		private static final int MATCH_COLUMN = 4;
 
 		@Override
@@ -780,14 +785,12 @@ public final class SearchView extends IGBTabPanel implements
 			Map map = (Map) glyph.getInfo();
 
 			switch (col) {
-				case CHROM_COLUMN:
-					return seq.getID();
-
+			
 				case START_COLUMN:
-					return glyph.getCoordBox().x;
+					return (int)glyph.getCoordBox().x;
 
 				case END_COLUMN:
-					return glyph.getCoordBox().x  + glyph.getCoordBox().width;
+					return (int)(glyph.getCoordBox().x  + glyph.getCoordBox().width);
 
 				case STRAND_COLUMN:
 					Object direction = map.get("direction");
@@ -800,6 +803,9 @@ public final class SearchView extends IGBTabPanel implements
 					}
 					return "";
 
+				case CHROM_COLUMN:
+					return seq.getID();
+					
 				case MATCH_COLUMN:
 					Object match = map.get("match");
 					if (match != null) {

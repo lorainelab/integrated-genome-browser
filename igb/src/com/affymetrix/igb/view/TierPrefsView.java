@@ -26,6 +26,8 @@ import javax.swing.event.ListSelectionListener;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
+
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
@@ -37,7 +39,7 @@ import com.jidesoft.grid.ColorCellEditor;
 /**
  *  A panel for choosing tier properties for the {@link SeqMapView}.
  */
-public final class TierPrefsView extends IPrefEditorComponent implements ListSelectionListener, WindowListener  {
+public final class TierPrefsView extends IPrefEditorComponent implements ListSelectionListener, WindowListener, SeqMapRefreshed  {
 	public static final long serialVersionUID = 1l;
 
   private final JTable table = new JTable();
@@ -120,6 +122,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     Application igb = Application.getSingleton();
     if (igb != null) {
       smv = igb.getMapView();
+	  smv.addToRefreshList(this);
     }
 
     // Add a "refresh map" button, iff there is an instance of IGB
@@ -551,9 +554,15 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
   }*/
 
   // implementation of IPrefEditorComponent
-  public void refresh() {
-    refreshList();
-  }
+	public void refresh() {
+		refreshList();
+	}
+
+	public void mapRefresh() {
+		if(isVisible()){
+			refreshList();
+		}
+	}
 
 	private void stopEditing() {
 		if (table != null && table.getCellEditor() != null) {

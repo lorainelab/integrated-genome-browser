@@ -105,64 +105,11 @@ public final class LoadFileAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		loadFile(load_dir_tracker, gviewerFrame);
 	}
-	
+
 
 	private static MergeOptionChooser getFileChooser() {
 		chooser = new MergeOptionChooser();
 		chooser.setMultiSelectionEnabled(true);
-/*
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"2bit"},
-						".2bit Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"bam"}, "BAM Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"bed"}, "BED Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1", "bp2", "ead","useq"},
-						"Binary Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						"cyt",
-						"Cytobands"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"gb", "gen"},
-						"Genbank Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"gff", "gtf", "gff3"},
-						"GFF Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"fa", "fasta", "fas"},
-						"FASTA Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"psl", "psl3", "pslx"},
-						"PSL Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"das", "dasxml", "das2xml"},
-						"DAS Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"gr", "bgr", "sgr", "bar", "chp", "wig", "bedgraph"},
-						"Graph Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"sin", "egr", "egr.txt"},
-						"Scored Interval Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						"cnt", "Copy Number Files")); // ".cnt" files from CNAT
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"cnchp", "lohchp"},
-						"Copy Number CHP Files"));
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						"var",
-						"Genomic Variation Files")); // ".var" files (Toronto DB of genomic variations)
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{SegmenterRptParser.CN_REGION_FILE_EXT, SegmenterRptParser.LOH_REGION_FILE_EXT},
-						"Regions Files")); // Genotype Console Segmenter
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						FishClonesParser.FILE_EXT,
-						"FishClones")); // ".fsh" files (fishClones.txt from UCSC)
-		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"map"},
-						"Scored Map Files"));
-*/
 		Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap();
 		for (String name : nameToExtensionMap.keySet()) {
 			chooser.addChoosableFileFilter(new UniFileFilter(
@@ -211,7 +158,7 @@ public final class LoadFileAction extends AbstractAction {
 		load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
 
 		final File[] fils = fileChooser.getSelectedFiles();
-		
+
 		final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String)fileChooser.versionCB.getSelectedItem());
 
 		final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
@@ -227,7 +174,7 @@ public final class LoadFileAction extends AbstractAction {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		openURI(uri, fileName, true, group, group.getOrganism());
 	}
-	
+
 	public static void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup, final String speciesName) {
 		if (uri.toString().toLowerCase().endsWith(".igb")) {
 			// response file.  Do its actions and return.
@@ -235,7 +182,7 @@ public final class LoadFileAction extends AbstractAction {
 			ScriptFileLoader.doActions(uri.toString());
 			return;
 		}
-		
+
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if(!LocalUrlCacher.isValidURI(uri)){
@@ -243,7 +190,7 @@ public final class LoadFileAction extends AbstractAction {
 		}
 
 		GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup);
-			
+
 		if(gFeature == null)
 			return;
 
@@ -301,7 +248,7 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 	/**
-	 * Make sure this URI is not already used within the selectedGroup.  
+	 * Make sure this URI is not already used within the selectedGroup.
 	 * Otherwise there could be collisions in BioSeq.addAnnotations(type)
 	 * @param loadGroup
 	 * @param uri
@@ -412,7 +359,7 @@ public final class LoadFileAction extends AbstractAction {
 			GeneralUtils.safeClose(istr);
 			GeneralUtils.safeClose(zis);
 		}
-		
+
 		return group;
 	}
 
@@ -432,7 +379,7 @@ public final class LoadFileAction extends AbstractAction {
 
 		return group;
 	}
-	
+
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
@@ -449,7 +396,7 @@ public final class LoadFileAction extends AbstractAction {
 				if(((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 					((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
 				}
-				
+
 				return null;
 			}
 
@@ -457,7 +404,7 @@ public final class LoadFileAction extends AbstractAction {
 			public void done() {
 				// force a refresh of this server. This forces creation of 'genome' sequence.
 				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
-				
+
 				SeqGroupView.getInstance().refreshTable();
 				if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
 					// select a chromosomes
@@ -487,7 +434,7 @@ public final class LoadFileAction extends AbstractAction {
 	private static void openFileAction(JFrame gviewerFrame, File f){
 		URI uri = f.toURI();
 		if(!openURI(uri)){
-			ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName(), null);			
+			ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName(), null);
 		}
 	}
 
@@ -510,7 +457,7 @@ public final class LoadFileAction extends AbstractAction {
 			speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
 		}
 		openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName);
-		
+
 		return true;
 	}
 }

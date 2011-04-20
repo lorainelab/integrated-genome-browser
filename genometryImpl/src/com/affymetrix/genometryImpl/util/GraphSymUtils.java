@@ -73,7 +73,7 @@ public final class GraphSymUtils {
 		if (hasWidth(original_graf)) {
 			new_wcoords = new IntArrayList(initcap);
 		}
-		
+
 		addCoords(mapsym, fromseq, toseq, original_graf, new_xcoords, new_ycoords, new_wcoords);
 
 		return createGraphSym(new_xcoords, new_ycoords, original_graf, toseq, new_wcoords, new_graf);
@@ -206,7 +206,7 @@ public final class GraphSymUtils {
 		}
 		throw new IOException("Unrecognized filename for a graph file:\n"+stream_name);
 	}
-	
+
 	/**
 	 * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,BioSeq)}.
 	 */
@@ -265,7 +265,7 @@ public final class GraphSymUtils {
 		if (fileTypeHandler != null) {
 			Parser parser = fileTypeHandler.getParser();
 			if (parser instanceof GraphParser) {
-				writeGraphFile(gsym, seq_group, file_name);
+				((GraphParser)parser).writeGraphFile(gsym, seq_group, file_name);
 				return;
 			}
 		}
@@ -421,7 +421,7 @@ public final class GraphSymUtils {
 			pgraf = new CompositeGraphSym(id, aseq);
 			pgraf.setGraphName(name);
 			aseq.addAnnotation(pgraf);
-			
+
 			if(PreferenceUtils.getGraphPrefsNode().getBoolean(PREF_USE_URL_AS_NAME,
 					default_use_url_as_name)){
 				pgraf.setGraphName(stream_name + " : " + name);

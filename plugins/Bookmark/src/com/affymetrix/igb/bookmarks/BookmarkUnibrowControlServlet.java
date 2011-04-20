@@ -23,7 +23,6 @@ import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;

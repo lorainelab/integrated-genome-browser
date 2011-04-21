@@ -337,18 +337,14 @@ public abstract class SymLoader {
 		return newSyms;
 	}
 
-	public static List<BioSeq> getChromosomes(URI uri, String extension, String featureName, String groupID){
-		AnnotatedSeqGroup temp_group = new AnnotatedSeqGroup(groupID);
-		SymLoader temp = new SymLoader(uri, featureName, temp_group) {};
-		List<? extends SeqSymmetry> syms = temp.getGenome();
+	public List<BioSeq> getChromosomes(URI uri, String extension, String featureName, String groupID){
+		List<? extends SeqSymmetry> syms = getGenome();
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
-		seqs.addAll(temp_group.getSeqList());
+		seqs.addAll(group.getSeqList());
 		
 		// Force GC
 		syms.clear();
 		syms = null;
-		temp = null;
-		temp_group = null;
 
 		return seqs;
 	}

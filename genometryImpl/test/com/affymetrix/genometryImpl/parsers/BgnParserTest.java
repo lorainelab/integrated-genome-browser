@@ -4,12 +4,14 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.symloader.Bgn;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,8 +27,8 @@ public class BgnParserTest {
 	String filename = "test/data/bgn/mgcGenes.bgn";
 	String versionString = "genomeVersion";
 	AnnotatedSeqGroup genome = null;
-	private List<SeqSymmetry> results = null;
-	private BgnParser parser = new BgnParser();
+	private List<? extends SeqSymmetry> results = null;
+	private Bgn bgn = null;
 
 	@Before
 	public void setUp() {
@@ -34,7 +36,8 @@ public class BgnParserTest {
 		try {
 			istr = new FileInputStream(filename);
 			genome = new AnnotatedSeqGroup("testGenome");
-			results = parser.parse(istr, filename, genome, true);
+			bgn = (Bgn)FileTypeHolder.getInstance().getFileTypeHandler("bgn").createSymLoader(new URI("file://" + filename), filename, genome);
+			results = bgn.parse(istr, true);//parser.parse(istr, filename, genome, true);
 		} catch (Exception ex) {
 			Logger.getLogger(BgnParserTest.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -61,8 +64,9 @@ public class BgnParserTest {
 			BioSeq seq = genome.getSeq(seqid);
 			assertTrue(seq != null);
 			assertEquals(267693137, seq.getLength());
+			bgn = (Bgn)FileTypeHolder.getInstance().getFileTypeHandler("bgn").createSymLoader(new URI("file://" + testFileName), testFileName, genome);
 			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
-					results, seq, parser.getComparator(seq));
+					results, seq, bgn.getComparator(seq));
 			assertEquals(726, sortedSyms.size());
 			SeqSymmetry firstSym = sortedSyms.get(0);
 			assertEquals(2150626, firstSym.getSpan(seq).getMin());
@@ -72,13 +76,13 @@ public class BgnParserTest {
 			assertEquals(267693137, lastSym.getSpan(seq).getMax());
 
 			File testFile = new File(testFileName);
-			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", (IndexWriter) parser);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", (IndexWriter) bgn);
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, genome, iSyms, testFileName);
 
 			String overlap = "3000000:160000000";
 			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
 
-			List newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",genome);
+			List<SeqSymmetry> newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",genome);
 			assertEquals(337, newResults.size());
 
 			overlap = "115000000:123000000";

@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.BED;
 import com.affymetrix.genometryImpl.symloader.BNIB;
+import com.affymetrix.genometryImpl.symloader.Bgn;
 import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.GFF3;
 import com.affymetrix.genometryImpl.symloader.Genbank;
@@ -58,7 +59,7 @@ public class FileTypeHolder {
 		addFileTypeHandler("BAM", new String[]{"bam"}, BAMParser.class, BAM.class);
 		addFileTypeHandler("Graph", new String[]{"bar"}, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);
 		addFileTypeHandler("BED", new String[]{"bed"}, BedParser.class, BED.class);
-		addFileTypeHandler("Binary", new String[]{"bgn"}, BgnParser.class, SymLoaderInst.class);
+		addFileTypeHandler("Binary", new String[]{"bgn"}, null, Bgn.class);
 		addFileTypeHandler("Graph", new String[] {"bgr"}, BgrParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Binary", new String[]{"bp1", "bp2"}, Bprobe1Parser.class, SymLoaderInst.class);
 		addFileTypeHandler("Binary", new String[] {"bps"}, BpsParser.class, SymLoaderInst.class);
@@ -73,7 +74,7 @@ public class FileTypeHolder {
 		addFileTypeHandler("Binary", new String[]{"ead"}, ExonArrayDesignParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("FASTA", new String[]{"fa", "fas", "fasta"}, FastaParser.class, Fasta.class);
 		addFileTypeHandler("FishClones", new String[]{FishClonesParser.FILE_EXT}, FishClonesParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Genbank", new String[]{"gb", "gen"}, GenbankParser.class, Genbank.class);
+		addFileTypeHandler("Genbank", new String[]{"gb", "gen"}, null, Genbank.class);
 		addFileTypeHandler("GFF", new String[] {"gff3"}, GFF3Parser.class, GFF3.class);
 		addFileTypeHandler(
 			new FileTypeHandler() {

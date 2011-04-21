@@ -546,6 +546,14 @@
 		<java jar="gogo/bin/felix.jar" fork="true" dir="gogo" />
 	</target>
 
+	<target name="debug" depends="common-init" description="compile debug project">
+		<subant target="compile" genericantfile="generic.xml" inheritall="true">
+			<dirset dir="${basedir}">
+				<include name="debug" />
+			</dirset>
+		</subant>
+	</target>
+
 	<!--                                                                 -->
 	<!-- Macro to pass targets to each sub project.  All sub projects    -->
 	<!-- are build using generic.xml.                                    -->

@@ -2,6 +2,8 @@ package com.affymetrix.igb.featureloader;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.das2.Das2Capability;
@@ -14,9 +16,12 @@ import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.FormatPriorities;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
@@ -132,6 +137,84 @@ public class Das2 {
 		return buf.toString();
 	}
 
+ 	/**
+  * Split list of symmetries by track.
+  * @param results - list of symmetries
+  * @return - Map<String trackName,List<SeqSymmetry>>
+  */
+ public static Map<String, List<SeqSymmetry>> splitResultsByTracks(List<? extends SeqSymmetry> results) {
+		Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
+		List<SeqSymmetry> resultList = null;
+		String method = null;
+		for (SeqSymmetry result : results) {
+			method = BioSeq.determineMethod(result);
+			if (track2Results.containsKey(method)) {
+				resultList = track2Results.get(method);
+			} else {
+				resultList = new ArrayList<SeqSymmetry>();
+				track2Results.put(method, resultList);
+			}
+			resultList.add(result);
+		}
+
+	  return track2Results;
+ }
+
+	private static void filterAndAddAnnotations(
+			List<? extends SeqSymmetry> feats, SeqSpan span, URI uri, GenericFeature feature) {
+		if (feats == null || feats.isEmpty()) {
+			return;
+		}
+		SeqSymmetry originalRequestSym = feature.getRequestSym();
+		List<? extends SeqSymmetry> filteredFeats = filterOutExistingSymmetries(originalRequestSym, feats, span.getBioSeq());	
+		if (filteredFeats.isEmpty()) {
+			return;
+		}
+		if (filteredFeats.get(0) instanceof GraphSym) {
+			// We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
+			for(SeqSymmetry feat : filteredFeats) {
+				//grafs.add((GraphSym)feat);
+				if (feat instanceof GraphSym) {
+					GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
+				}
+			}
+
+			return;
+		}
+
+		BioSeq seq = span.getBioSeq();
+		for (SeqSymmetry feat : filteredFeats) {
+			seq.addAnnotation(feat);
+		}
+	}
+
+
+	private static List<? extends SeqSymmetry> filterOutExistingSymmetries(SeqSymmetry original_sym, List<? extends SeqSymmetry> syms, BioSeq seq) {
+		List<SeqSymmetry> newSyms = new ArrayList<SeqSymmetry>(syms.size());	// roughly this size
+		MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
+		for (SeqSymmetry sym : syms) {
+
+			/**
+			 * Since GraphSym is only SeqSymmetry containing all points.
+			 * The intersection may find some points intersecting and
+			 * thus not add whole GraphSym at all. So if GraphSym is encountered
+			 * the it's not checked if it is intersecting. 
+			 */
+			if (sym instanceof GraphSym) {
+				// if graphs, then adding to annotation BioSeq is handled by addChildGraph() method
+				return syms;
+			}
+
+			dummySym.clear();
+			if (SeqUtils.intersection(sym, original_sym, dummySym, seq)) {
+				// There is an intersection with previous requests.  Ignore this symmetry
+				continue;
+			}
+			newSyms.add(sym);
+		}
+		return newSyms;
+	}
+
     private static boolean LoadFeaturesFromQuery(
             GenericFeature feature, SeqSpan span, String feature_query, String format, URI typeURI, String typeName) {
 
@@ -199,11 +282,11 @@ public class Das2 {
 				name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
 			}*/
 
-			for (Map.Entry<String, List<SeqSymmetry>> entry : SymProcessor.getInstance().splitResultsByTracks(feats).entrySet()) {
+			for (Map.Entry<String, List<SeqSymmetry>> entry : splitResultsByTracks(feats).entrySet()) {
 				if (entry.getValue().isEmpty()) {
 					continue;
 				}
-				SymProcessor.getInstance().filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
+				filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 
 				// Some format do not annotate. So it might not have method name. e.g bgn
 				if(entry.getKey() != null)

@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
-import com.affymetrix.genometryImpl.general.SymProcessor;
 import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedWriter;
@@ -20,6 +19,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -104,6 +104,28 @@ public class PSLParserTest {
 		testFile(file);
 	}
 
+	/**
+	 * Return the symmetries that match the given chromosome.
+	 * @param genomeResults
+	 * @param seq
+	 * @return
+	 */
+	public List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		for (SeqSymmetry sym : genomeResults) {
+			BioSeq seq2 = null;
+			if (sym instanceof UcscPslSym) {
+				seq2 = ((UcscPslSym) sym).getTargetSeq();
+			} else {
+				seq2 = sym.getSpanSeq(0);
+			}
+			if (seq.equals(seq2)) {
+				results.add(sym);
+			}
+		}
+		return results;
+	}
+
 	private void testFile(File file) throws FileNotFoundException, IOException {
 		InputStream istr = GeneralUtils.getInputStream(file, new StringBuffer());
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
@@ -122,7 +144,7 @@ public class PSLParserTest {
 
 		for (int i = 0; i < seqs.size(); i++) {
 			seq = seqs.get(i);
-			syms1 = SymProcessor.getInstance().filterResultsByChromosome(syms, seq);
+			syms1 = filterResultsByChromosome(syms, seq);
 			syms2 = psl.getChromosome(seq);
 			testSeqSymmetry(syms1, syms2);
 		}

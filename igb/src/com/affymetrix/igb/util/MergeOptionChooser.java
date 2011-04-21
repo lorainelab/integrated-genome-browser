@@ -22,7 +22,6 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 	private static final long serialVersionUID = 1L;
 
 	private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
-	private static final String CHOOSE = "Choose";
 	public final Box box;
 	public final JComboBox speciesCB = new JComboBox();
 	public final JComboBox versionCB = new JComboBox();
@@ -36,12 +35,11 @@ public final class MergeOptionChooser extends JFileChooser implements ActionList
 		box = new Box(BoxLayout.X_AXIS);
 		box.setBorder(BorderFactory.createEmptyBorder(5, 5, 8, 5));
 
-		box.add(new JLabel(CHOOSE + ":"));
 		box.add(Box.createHorizontalStrut(5));
-		box.add(speciesCB);
-
+		box.add(IGBUtils.setInfoLabel(speciesCB, "Choose or enter species"));
+	
 		box.add(Box.createHorizontalStrut(5));
-		box.add(versionCB);
+		box.add(IGBUtils.setInfoLabel(versionCB, "Choose or enter version"));
 		
 	}
 

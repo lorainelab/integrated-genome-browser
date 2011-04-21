@@ -61,10 +61,15 @@ public abstract class SymLoader {
         this.uri = uri;
 		this.featureName = featureName;
 		this.group = group;
-		
-		String uriString = uri.toASCIIString().toLowerCase();
-		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
-		extension = ParserController.getExtension(unzippedStreamName);
+
+		if (uri == null) {
+			extension = null;
+		}
+		else {
+			String uriString = uri.toASCIIString().toLowerCase();
+			String unzippedStreamName = GeneralUtils.stripEndings(uriString);
+			extension = ParserController.getExtension(unzippedStreamName);
+		}
 
     }
 

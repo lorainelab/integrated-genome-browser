@@ -30,6 +30,10 @@ public final class Bgn extends SymLoaderInst implements AnnotationWriter, IndexW
 		super(uri, featureName, group);
 	}
 
+	public Bgn() {
+		super(null, null, null);
+	}
+
 	private static final boolean DEBUG = true;
 	private static List<String> pref_list = new ArrayList<String>();
 

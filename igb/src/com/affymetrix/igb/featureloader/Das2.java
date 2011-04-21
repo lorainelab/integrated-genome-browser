@@ -8,14 +8,17 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.das2.Das2Capability;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.SymProcessor;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.das2.Das2Region;
 import com.affymetrix.genometryImpl.das2.Das2Type;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.FormatPriorities;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -272,7 +275,32 @@ public class Das2 {
             Logger.getLogger(Das2.class.getName()).log(Level.INFO,
 					"Parsing {0} format for DAS2 feature response", content_subtype.toUpperCase());
 			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
-			List<? extends SeqSymmetry> feats = SymProcessor.getInstance().parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, span);
+			List<? extends SeqSymmetry> feats = null;
+			FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype);
+			if (fileTypeHandler == null) {
+				Logger.getLogger(SymLoader.class.getName()).log(
+					Level.WARNING, "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", content_subtype);
+				return false;
+			}
+			else {
+				SymLoader symL = fileTypeHandler.createSymLoader(new URI(extension), typeName, aseq.getSeqGroup());
+				if (symL instanceof BAM) {
+					File bamfile = GeneralUtils.convertStreamToFile(istr, typeName);
+					bamfile.deleteOnExit();
+					BAM bam = new BAM(bamfile.toURI(),typeName, aseq.getSeqGroup());
+					//for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
+					if (typeURI.getScheme().equals("http")) {
+						feats = bam.parseAll(span.getBioSeq());
+					}
+					else {
+						feats = bam.getRegion(span);
+					}
+				}
+				else {
+					feats = symL.parse(istr, false);
+				}
+//				feats = SymProcessor.getInstance().parse(extension, typeURI, istr, aseq.getSeqGroup(), typeName, span);
+			}
 
 			/*
 			 TODO: This no longer applies.  Whatever this is doing needs to be done somewhere else.

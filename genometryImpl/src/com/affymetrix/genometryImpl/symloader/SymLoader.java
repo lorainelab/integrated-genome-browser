@@ -8,7 +8,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.SymProcessor;
+import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -122,7 +123,7 @@ public abstract class SymLoader {
 			try {
 				// This will also unzip the stream if necessary
 				bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(this.uri);
-				return SymProcessor.getInstance().parse(this.extension, this.uri, bis, group, this.featureName, null);
+				return parse(bis, false);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
@@ -350,5 +351,11 @@ public abstract class SymLoader {
 		temp_group = null;
 
 		return seqs;
+	}
+
+	public List<? extends SeqSymmetry> parse(InputStream is, boolean annotate_seq)
+		throws Exception {
+		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(extension);
+		return fileTypeHandler.getParser().parse(new BufferedInputStream(is), group, featureName, uri.toString(), false);
 	}
 }

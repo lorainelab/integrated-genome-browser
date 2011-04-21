@@ -278,7 +278,7 @@ public class FileTypeHolder {
 		if (position > -1) {
 			extension = lc.substring(position + 1);
 			fileTypeHandler = getFileTypeHandler(extension);
-			String prefix = lc.substring(0, position - 1);
+			String prefix = lc.substring(0, Math.max(0,position - 1));
 			position = prefix.lastIndexOf('.');
 			if (position > -1) {
 				extension = lc.substring(position + 1);

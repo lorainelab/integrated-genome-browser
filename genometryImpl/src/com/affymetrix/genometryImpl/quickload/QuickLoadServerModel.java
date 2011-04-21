@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import java.io.*;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -319,6 +320,11 @@ public final class QuickLoadServerModel {
 		} finally {
 			GeneralUtils.safeClose(lift_stream);
 			GeneralUtils.safeClose(cinfo_stream);
+		}
+		if(!success){
+			ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required sequence metadata "
+					+ "file for requested genome version {1}. "
+					+ "IGB may not be able to display this genome.",new Object[]{root_url,genome_name}));
 		}
 		return success;
 	}

@@ -10,6 +10,7 @@ Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Pan
 IGB-Tier: 1
 Import-Package: com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
+ com.affymetrix.genometryImpl.operator,
  com.affymetrix.genometryImpl.style,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.util,

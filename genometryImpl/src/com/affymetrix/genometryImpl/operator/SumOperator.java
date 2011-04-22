@@ -1,21 +1,25 @@
-package com.affymetrix.igb.graph.operator;
+package com.affymetrix.genometryImpl.operator;
 
 import java.util.List;
 
-public class DiffOperator implements GraphOperator {
+public class SumOperator implements GraphOperator {
 	@Override
 	public String getName() {
-		return "Diff";
+		return "Sum";
 	}
 
 	@Override
 	public String getSymbol() {
-		return "-";
+		return null;
 	}
 
 	@Override
 	public float operate(List<Float> operands) {
-		return operands.get(0).floatValue() - operands.get(1).floatValue();
+		float total = 0;
+		for (Float f : operands) {
+			total += f.floatValue();
+		}
+		return total;
 	}
 
 	@Override
@@ -25,6 +29,7 @@ public class DiffOperator implements GraphOperator {
 
 	@Override
 	public int getOperandCountMax() {
-		return 2;
+		return Integer.MAX_VALUE;
 	}
+
 }

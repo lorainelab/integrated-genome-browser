@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
+import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -47,8 +48,6 @@ import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
-
-import com.affymetrix.igb.graph.operator.GraphOperator;
 
 import java.awt.Color;
 import java.awt.Component;

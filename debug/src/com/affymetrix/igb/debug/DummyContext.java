@@ -25,7 +25,7 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
-import com.affymetrix.igb.graph.operator.GraphOperator;
+import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 

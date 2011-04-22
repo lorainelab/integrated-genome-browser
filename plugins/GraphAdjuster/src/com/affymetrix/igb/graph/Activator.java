@@ -12,6 +12,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
+import com.affymetrix.genometryImpl.operator.*;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.IdentityTransform;
 import com.affymetrix.genometryImpl.util.InverseLogTransform;
@@ -20,7 +21,6 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.WindowActivator;
 
-import com.affymetrix.igb.graph.operator.*;
 public class Activator extends WindowActivator implements BundleActivator {
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
 	private static final String OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";

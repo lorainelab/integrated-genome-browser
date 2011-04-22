@@ -55,7 +55,7 @@ public class FileTypeHolder {
 		fileTypeHandlerMap = new HashMap<String, FileTypeHandler>();
 		// load all built in FileTypeHandlers
 		addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, AffyCnChpParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("BAM", new String[]{"bam"}, BAMParser.class, BAM.class);
+		addFileTypeHandler("BAM", new String[]{"bam"}, null, BAM.class);
 		addFileTypeHandler("Graph", new String[]{"bar"}, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);
 		addFileTypeHandler("BED", new String[]{"bed"}, BedParser.class, BED.class);
 		addFileTypeHandler("Binary", new String[]{"bgn"}, BgnParser.class, SymLoaderInst.class);
@@ -73,7 +73,7 @@ public class FileTypeHolder {
 		addFileTypeHandler("Binary", new String[]{"ead"}, ExonArrayDesignParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("FASTA", new String[]{"fa", "fas", "fasta"}, FastaParser.class, Fasta.class);
 		addFileTypeHandler("FishClones", new String[]{FishClonesParser.FILE_EXT}, FishClonesParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Genbank", new String[]{"gb", "gen"}, GenbankParser.class, Genbank.class);
+		addFileTypeHandler("Genbank", new String[]{"gb", "gen"}, null, Genbank.class);
 		addFileTypeHandler("GFF", new String[] {"gff3"}, GFF3Parser.class, GFF3.class);
 		addFileTypeHandler(
 			new FileTypeHandler() {

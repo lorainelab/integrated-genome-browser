@@ -27,7 +27,6 @@ Import-Package: com.affymetrix.genometryImpl,
  javax.swing.event,
  javax.swing.table,
  org.osgi.framework;version="1.5.0"
-Export-Package: com.affymetrix.igb.graph.operator
 Bundle-ClassPath: .,
  resources/
 Bundle-Description: Adjust the properties of graphs.

@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +49,9 @@ import java.util.regex.Pattern;
  * @author hiralv
  */
 public final class Wiggle extends SymLoader implements AnnotationWriter {
-
+	private static final String TRACK = "track type={0}_{1} name=\"{2}_{3}\"";
+	private int TRACK_COUNTER = 0;
+	
 	private static enum WigFormat {
 
 		BED4, VARSTEP, FIXEDSTEP
@@ -149,7 +152,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		try {
 			File file = chrList.get(seq);
 			if (file == null) {
-				Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome " + seq.getID());
+				Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
 				return Collections.<GraphSym>emptyList();
 			}
 
@@ -462,6 +465,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		return "text/wig";
 	}
 
+	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
@@ -498,7 +502,10 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 				}
 				if ((firstChar == 'v' && line.startsWith("variableStep")) || (firstChar == 'f' && line.startsWith("fixedStep"))) {
 					if (!previous_track_line) {
-						throw new IllegalArgumentException("Wiggle format error: line does not have a previous 'track' line");
+						trackLine = MessageFormat.format(TRACK, new Object[]{uri.toString(), TRACK_COUNTER, featureName, TRACK_COUNTER++}) ;
+						Logger.getLogger(Wiggle.class.getName()) .log(Level.WARNING,"Wiggle format error: line does not have a previous ''track'' line."
+								+ " Creating a dummy track line. {0}", trackLine);
+						//throw new IllegalArgumentException("Wiggle format error: line does not have a previous 'track' line");
 					}
 
 					String[] fields = field_regex.split(line);

@@ -45,7 +45,6 @@ import com.affymetrix.genometryImpl.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symloader.Bgn;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import javax.servlet.ServletContext;
@@ -446,7 +445,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		output_registry.put("psl", PSLParser.class);
 		output_registry.put("bed", BedParser.class);
 		output_registry.put("simplebed", SimpleBedParser.class);
-		output_registry.put("bgn", Bgn.class);
+		output_registry.put("bgn", BgnParser.class);
 		output_registry.put("brs", BrsParser.class);
 		output_registry.put("gff", GFFParser.class);
 		output_registry.put("das2feature", Das2FeatureSaxParser.class);

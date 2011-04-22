@@ -12,8 +12,6 @@
  */
 package com.affymetrix.igb.menuitem;
 
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -42,6 +40,9 @@ import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
+import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 
 import com.affymetrix.genoviz.util.FileDropHandler;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -337,6 +338,9 @@ public final class LoadFileAction extends AbstractAction {
 		}else if(extension.equals(".bar")){
 			loadGroup = handleBar(uri, loadGroup);
 			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
+		}else if(extension.equals(".bp1") || extension.equals(".bp2")){
+			loadGroup = handleBp(uri, loadGroup);
+			version = GeneralLoadUtils.getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
 		}
 
 		return version;
@@ -397,7 +401,6 @@ public final class LoadFileAction extends AbstractAction {
 			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
 			AnnotatedSeqGroup gr = USeqGraphParser.getSeqGroup(archiveInfo.getVersionedGenome(), gmodel);
 			if (gr != null) {
-				gmodel.setSelectedSeqGroup(gr);
 				return gr;
 			}
 		} catch (Exception ex) {
@@ -410,6 +413,23 @@ public final class LoadFileAction extends AbstractAction {
 		return group;
 	}
 
+	private static AnnotatedSeqGroup handleBp(URI uri, AnnotatedSeqGroup group) {
+		InputStream istr = null;
+		try {
+			istr =  LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			AnnotatedSeqGroup gr = Bprobe1Parser.getSeqGroup(istr, group, gmodel);
+			if (gr != null) {
+				return gr;
+			}
+		}catch (Exception ex) {
+			ex.printStackTrace();
+		}finally{
+			GeneralUtils.safeClose(istr);
+		}
+
+		return group;
+	}
+	
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String notLockedUpMsg = "Retrieving chromosomes for " + fileName;

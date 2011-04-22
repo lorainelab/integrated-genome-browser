@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SharedProbesetInfo;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.GenometryModel;
 
 /**
  *
@@ -87,6 +88,52 @@ public final class Bprobe1Parser implements AnnotationWriter {
 		return parse(istr, group, annotate_seq, default_type, false);
 	}
 
+	public static AnnotatedSeqGroup getSeqGroup(InputStream istr, AnnotatedSeqGroup group, GenometryModel gmodel){
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		try  {
+			if (istr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream) istr;
+			}
+			else {
+				bis = new BufferedInputStream(istr);
+			}
+			dis = new DataInputStream(bis);
+			String format = dis.readUTF();
+			int format_version = dis.readInt();
+			boolean version2 = format.equals("bp2");
+
+			if (DEBUG) {
+				System.out.println("is bp2: " + version2);
+			}
+			String seq_group_name = dis.readUTF(); // genome name
+			String seq_group_version = dis.readUTF(); // genome version
+			// combining genome and version to get seq group id
+			String seq_group_id = seq_group_name + seq_group_version;
+			if (seq_group_id == null) {
+				System.err.println("bprobe1 file does not specify a genome name or version, these are required!");
+				return null;
+			}
+
+			if(group.isSynonymous(seq_group_id)){
+				return group;
+			}
+			
+			group = gmodel.getSeqGroup(seq_group_id);
+
+			if(group == null)
+				group = gmodel.addSeqGroup(seq_group_id);
+			
+			return group;
+		}catch(Exception ex){
+			System.err.println("Error parsing file");
+			return null;
+		}finally {
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(bis);
+		}
+	}
+	
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
 			boolean annotate_seq, String default_type, boolean populate_id_hash) throws IOException {
 		System.out.println("in Bprobe1Parser, populating id hash: " + populate_id_hash);

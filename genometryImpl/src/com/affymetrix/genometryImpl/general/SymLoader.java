@@ -32,8 +32,6 @@ import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -365,8 +363,8 @@ public abstract class SymLoader {
 		return newSyms;
 	}
 
-	public static List<BioSeq> getChromosomes(URI uri, String extension, String featureName){
-		AnnotatedSeqGroup temp_group = new AnnotatedSeqGroup("temp_group");
+	public static List<BioSeq> getChromosomes(URI uri, String extension, String featureName, String groupID){
+		AnnotatedSeqGroup temp_group = new AnnotatedSeqGroup(groupID);
 		SymLoader temp = new SymLoader(uri, featureName, temp_group) {};
 		List syms = temp.getGenome();
 		List<BioSeq> seqs = new ArrayList<BioSeq>();

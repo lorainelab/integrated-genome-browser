@@ -606,7 +606,7 @@ public final class GeneralLoadUtils {
 		}
 
 		//Already loaded the data.
-		if((gFeature.gVersion.gServer.serverType == ServerType.QuickLoad || gFeature.gVersion.gServer.serverType == ServerType.LocalFiles)
+		if((gFeature.gVersion.gServer.serverType == ServerType.LocalFiles)
 				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC){
 			return false;
 		}
@@ -663,7 +663,7 @@ public final class GeneralLoadUtils {
 
 		// For for formats that are not optimized do not iterate through BioSeq
 		// instead add them all at one.
-		if((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
+		if(feature.gVersion.gServer.serverType == ServerType.QuickLoad
 				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInstNC) {
 			return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 		}
@@ -889,13 +889,13 @@ public final class GeneralLoadUtils {
 			try {
 				istr = LocalUrlCacher.getInputStream(primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
 			} catch (Exception e) {
-				Logger.getLogger(GeneralLoadUtils.class.getName()).severe(
-						"Couldn't open '" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING + "\n:  " + e.toString());
+				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+						Level.SEVERE,"Couldn''t open ''{0}" + SERVER_MAPPING + "\n:  {1}", new Object[]{primaryServer.friendlyURL.toExternalForm(), e.toString()});
 				istr = null; // dealt with below
 			}
 			if (istr == null) {
-				Logger.getLogger(GeneralLoadUtils.class.getName()).info(
-						"Could not load server mapping contents from\n" + primaryServer.friendlyURL.toExternalForm() + SERVER_MAPPING);
+				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+						Level.INFO,"Could not load server mapping contents from\n{0}" + SERVER_MAPPING, primaryServer.friendlyURL.toExternalForm());
 				return;
 			}
 			ireader = new InputStreamReader(istr);

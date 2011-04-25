@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.tiers.TierLabelManager;
 
 public class DummyContext implements BundleContext {
 	private Map<String, List<Object>> servicesMap = new HashMap<String, List<Object>>();
@@ -39,6 +40,7 @@ public class DummyContext implements BundleContext {
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
 	private static final String OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
 	private static final String FILETYPEHANDLER_FACTORY_SERVICE_FILTER = "(objectClass=" + FileTypeHandler.class.getName() + ")";
+	private static final String POPUP_LISTENER_FILTER = "(objectClass=" + TierLabelManager.PopupListener.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -138,6 +140,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (FILETYPEHANDLER_FACTORY_SERVICE_FILTER.equals(filter)) {
 			return service instanceof FileTypeHandler;
+		}
+		if (POPUP_LISTENER_FILTER.equals(filter)) {
+			return service instanceof TierLabelManager.PopupListener;
 		}
 		if (filter == null) {
 			return true;

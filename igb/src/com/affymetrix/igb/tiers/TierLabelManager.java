@@ -533,6 +533,10 @@ public final class TierLabelManager {
 		popup_listeners.add(p);
 	}
 
+	public void removePopupListener(PopupListener p) {
+		popup_listeners.remove(p);
+	}
+
 	/** Removes all elements from the popup, then notifies all {@link TierLabelManager.PopupListener}
 	 *  objects (which may add items to the menu), then displays the popup
 	 *  (if it isn't empty).

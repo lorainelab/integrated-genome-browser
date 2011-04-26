@@ -90,7 +90,7 @@
 		}
 		// If the parent folder belongs to a user group or this is a non-admin
 		// user, set the annotation
-		// visibility to 'Members and Collaborators' and the user group combo
+		// visibility to 'Members' and the user group combo
 		// to the same user group.
 		// Otherwise; set the visibility to 'PUBLIC'.
 		if (!parentApplication.isAdmin() || 
@@ -121,6 +121,18 @@
 		this.defaultButton = uploadBrowseButton;
 		getUploadURL.send();
 	}
+		
+	private function setDefaultVisibility():void {
+		if (this.annotationUserGroupCombo.selectedItem != null && this.annotationUserGroupCombo.selectedItem.@id != "") {
+			for each(var item:Object in parentApplication.dictionaryVisibility) {
+				if (item.@id == 'MEM') {
+					this.visibilityCombo.selectedItem = item;
+					break;
+				}
+			}
+		}
+	}
+				
 	
 	private function trimName():void {
 		this.trimmedName = annotationName.text;
@@ -350,7 +362,7 @@
 				<mx:VBox width="100%" verticalGap="0">
 					<mx:Label text="User Group:" fontWeight="bold">
 					</mx:Label>
-					<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="{initializeFileUploadParameters()}">
+					<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="{initializeFileUploadParameters();setDefaultVisibility()}">
 					</mx:ComboBox>
 				</mx:VBox>
 					<mx:VBox width="100%" verticalGap="0">

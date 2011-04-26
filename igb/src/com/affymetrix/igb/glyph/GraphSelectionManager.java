@@ -25,6 +25,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -121,21 +122,19 @@ public final class GraphSelectionManager
   private JMenuItem to_front;
   private JMenuItem to_back;
   private JMenuItem toggle_floating;
-  private JMenuItem diff_graphs;
-  private JMenuItem sum_graphs;
-  private JMenuItem ratio_graphs;
-  private JMenuItem product_graphs;
   private JMenuItem save_graph;
 
   private GlyphDragger dragger;
   private SeqMapView gviewer;
   private JFrame frm;
+  private List<GraphOperator> operators;
 
   public GraphSelectionManager(SeqMapView smv) {
     this();
     gviewer = smv;
     current_source = gviewer.getSeqMap();
     frm = Application.getSingleton().getFrame();
+    operators = new ArrayList<GraphOperator>();
   }
   
   private GraphSelectionManager() {
@@ -168,20 +167,12 @@ public final class GraphSelectionManager
     to_front = new JMenuItem("Move To Front");
     to_back = new JMenuItem("Move To Back");
     toggle_floating = new JMenuItem("toggle floating");
-    diff_graphs = new JMenuItem("Create Difference Graph (A-B)");
-    sum_graphs = new JMenuItem("Create Sum Graph (A+B)");
-    ratio_graphs = new JMenuItem("Create Ratio Graph (A/B)");
-    product_graphs = new JMenuItem("Create Product Graph (A*B)");
     save_graph = new JMenuItem("Save Graph to File");
 
     popup.add(graph_info);
     popup.add(graph_info2);
 
     popup.add(combine);
-    combine.add(diff_graphs);
-    combine.add(sum_graphs);
-    combine.add(ratio_graphs);
-    combine.add(product_graphs);
 
     graph_style.add(min_max_graph);
     graph_style.add(line_graph);
@@ -226,10 +217,6 @@ public final class GraphSelectionManager
     to_front.addActionListener(this);
     to_back.addActionListener(this);
     toggle_floating.addActionListener(this);
-    diff_graphs.addActionListener(this);
-    sum_graphs.addActionListener(this);
-    ratio_graphs.addActionListener(this);
-    product_graphs.addActionListener(this);
     save_graph.addActionListener(this);
   }
 
@@ -338,14 +325,6 @@ public final class GraphSelectionManager
 			}
 			//        GraphGlyphUtils.toggleFloating(current_graph, gviewer);
 			// toggle_floating is currently unused, so don't worry that the code is commented out
-		} else if (src == diff_graphs) {
-			graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_DIFFERENCE);
-		} else if (src == sum_graphs) {
-			graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_SUM);
-		} else if (src == ratio_graphs) {
-			graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_RATIO);
-		} else if (src == product_graphs) {
-			graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_PRODUCT);
 		} else if (src == save_graph) {
 			saveGraph(current_graph);
 		}
@@ -449,30 +428,6 @@ public final class GraphSelectionManager
       ErrorHandler.errorPanel("Can't Save", "Graph does not have associated GraphSym data model");
     }
   }
-
-  void graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String function) {
-    if (gviewer == null) {
-      ErrorHandler.errorPanel("This action is invalid at this time");
-    }
-    if (graphA == null || graphB == null) {
-      // This error condition is likely never triggered
-      ErrorHandler.errorPanel("Must select exactly two graphs.");
-    }
-    String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
-    if (error != null) {
-      ErrorHandler.errorPanel("ERROR", error);
-      return;
-    }
-    else {
-      GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, function);
-      
-      BioSeq aseq = newsym.getGraphSeq();
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-    }
-  }
-
-
 
 
   /**
@@ -639,14 +594,14 @@ public final class GraphSelectionManager
       return;
     }
     
-    List<GraphGlyph> selected_graph_glyphs = new ArrayList<GraphGlyph>(0);
+    final List<GraphGlyph> selected_graph_glyphs = new ArrayList<GraphGlyph>(0);
     current_graph = null;
     second_current_graph = null;
 
     // convert the selected syms to a list of selected graph glyphs
     Iterator iter = selected_syms.iterator();
     while (iter.hasNext()) {
-      SeqSymmetry sym = (SeqSymmetry) iter.next();
+      SeqSymmetry sym = (SeqSymmetry)iter.next();
       GlyphI g = current_source.<GlyphI>getItem(sym);
       if (g instanceof GraphGlyph) {
         selected_graph_glyphs.add((GraphGlyph)g);
@@ -665,10 +620,18 @@ public final class GraphSelectionManager
       combine.add(graph_info_A);
       combine.add(graph_info_B);
       combine.add(new JSeparator());
-      combine.add(sum_graphs);
-      combine.add(diff_graphs);
-      combine.add(product_graphs);
-      combine.add(ratio_graphs);
+      for (final GraphOperator graphOperator : operators) {
+    	  JMenuItem menuItem = new JMenuItem(graphOperator.getName());
+    	  menuItem.addActionListener(
+    	      new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					GraphGlyphUtils.doOperateGraphs(graphOperator, selected_graph_glyphs, gviewer);
+				}
+    	      }
+    	  );
+          combine.add(menuItem);
+      }
 	  the_popup.add(combine);
     } 
 
@@ -694,6 +657,14 @@ public final class GraphSelectionManager
 		}
 
       this.popupNotify(popup, graph_syms, primary_sym);
+    }
+
+    public void addGraphOperator(GraphOperator graphOperator) {
+    	operators.add(graphOperator);
+    }
+
+    public void removeGraphOperator(GraphOperator graphOperator) {
+    	operators.remove(graphOperator);
     }
 }
 

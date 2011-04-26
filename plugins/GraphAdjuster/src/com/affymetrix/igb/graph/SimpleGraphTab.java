@@ -44,6 +44,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
@@ -56,7 +57,6 @@ import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.*;
 
 import javax.swing.*;
@@ -630,7 +630,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					setGraphName(comp, operator);
 				}
 				else {
-					comp.setToolTipText(getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
+					comp.setToolTipText(GraphGlyphUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
 				}
 			}
 
@@ -677,10 +677,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 				}
 			}
 		}
-
-		private static final String selectExactGraphsMessage = "Select exactly {0} graphs";
-		private static final String selectMinGraphsMessage = "Select at least {0} graphs";
-		private static final String selectRangeGraphsMessage = "Select between {0} and {1} graphs";
 
 		private static final int PARAM_TEXT_WIDTH = 60;
 		private final Map<String, FloatTransformer> name2transform;
@@ -808,7 +804,12 @@ public final class SimpleGraphTab extends IGBTabPanel
 			operationGoB.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
-					doOperateGraphs();
+					String selection = (String) operationCB.getSelectedItem();
+					GraphOperator operator = name2operator.get(selection);
+					hovereffect.unsetGraphName(operator);
+					if (GraphGlyphUtils.doOperateGraphs(operator, glyphs, gviewer)) {
+						updateViewer();
+					}
 				}
 			});
 
@@ -869,16 +870,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 			for (FloatTransformer transformer : transformerList) {
 				transformationCB.addItem(transformer.getName());
 			}
-		}
-
-		private String getOperandMessage(int graphCount, int minCount, int maxCount) {
-			if (minCount == maxCount) {
-				return MessageFormat.format(selectExactGraphsMessage, minCount);
-			}
-			if (maxCount == Integer.MAX_VALUE) {
-				return MessageFormat.format(selectMinGraphsMessage, minCount);
-			}
-			return MessageFormat.format(selectRangeGraphsMessage, minCount, maxCount);
 		}
 
 		public String getCBName(GraphOperator operator) {
@@ -992,27 +983,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 			}
 		}
 
-		private void doOperateGraphs() {
-			String selection = (String) operationCB.getSelectedItem();
-			GraphOperator operator = name2operator.get(selection);
-			hovereffect.unsetGraphName(operator);
-			if (glyphs.size() >= operator.getOperandCountMin() && glyphs.size() <= operator.getOperandCountMax()) {
-				GraphSym newsym = performOperation(glyphs, operator);
-	
-				if (newsym != null) {
-					BioSeq aseq = newsym.getGraphSeq();
-					aseq.addAnnotation(newsym);
-					gviewer.setAnnotatedSeq(aseq, true, true);
-					//GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-	
-					updateViewer();
-				}
-			}
-			else {
-				ErrorHandler.errorPanel("ERROR", getOperandMessage(glyphs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
-			}
-		}
-
 		private void floatGraphs(boolean do_float) {
 			boolean something_changed = false;
 			for (GraphGlyph gl : glyphs) {
@@ -1069,7 +1039,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				operationGoB.setToolTipText(null);
 			}
 			else {
-				operationGoB.setToolTipText(getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
+				operationGoB.setToolTipText(GraphGlyphUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
 			}
 		}
 	}
@@ -1237,168 +1207,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 		gviewer.getSeqMap().updateWidget();
 	}
-
-	private int getWidth(ArrayList<Integer> widths, int index, boolean hasWidthGraphs) {
-		int width = 0;
-		if (widths == null) {
-			if (hasWidthGraphs) {
-				width = 1;
-			}
-		}
-		else {
-			width = widths.get(index);
-		}
-		return width;
-	}
-
-	/**
-	 * performs a given graph operation on a given set of graphs and returns the resulting graph
-	 * note - there can be a mix of widthless (no wCoords) and width graphs, if all input graphs
-	 * are widthless, the result is also widthless, otherwise all widthless graphs will be treated
-	 * as if they have width of 1.
-	 * @param graphs the selected graphs to use as the operands of the operation
-	 * @param operator the GraphOperator to use
-	 * @return the graph result of the operation
-	 */
-	public GraphSym performOperation(List<GraphGlyph> graphs, GraphOperator operator) {
-		// get the x, y, and w (width) coordinates of the graphs int Lists
-		ArrayList<ArrayList<Integer>> xCoords = new ArrayList<ArrayList<Integer>>();
-		ArrayList<ArrayList<Integer>> wCoords = new ArrayList<ArrayList<Integer>>();
-		ArrayList<ArrayList<Float>> yCoords = new ArrayList<ArrayList<Float>>();
-		boolean hasWidthGraphs = false;
-		int[] index = new int[graphs.size()];
-		ArrayList<String> labels = new ArrayList<String>();
-		for (int i = 0; i < graphs.size(); i++) {
-			GraphGlyph graph = graphs.get(i);
-			index[i] = 0;
-			int[] xArray = graph.getXCoords();
-			ArrayList<Integer> xCoordList = new ArrayList<Integer>();
-			for (int j = 0; j < xArray.length; j++) {
-				xCoordList.add(xArray[j]);
-			}
-			xCoords.add(xCoordList);
-			ArrayList<Integer> wCoordList = null;
-			int[] wArray = graph.getWCoords();
-			if (wArray != null) {
-				hasWidthGraphs = true;
-				wCoordList = new ArrayList<Integer>();
-				for (int j = 0; j < wArray.length; j++) {
-					wCoordList.add(wArray[j]);
-				}
-			}
-			wCoords.add(wCoordList);
-			float[] yArray = graph.copyYCoords();
-			ArrayList<Float> yCoordList = new ArrayList<Float>();
-			for (int j = 0; j < yArray.length; j++) {
-				yCoordList.add(yArray[j]);
-			}
-			yCoords.add(yCoordList);
-			labels.add(graph.getLabel());
-		}
-		List<Integer> xList = new ArrayList<Integer>();
-		List<Integer> wList = new ArrayList<Integer>();
-		List<Float> yList = new ArrayList<Float>();
-		// find the minimum x of all graphs to start with
-		int spanBeginX = Integer.MAX_VALUE;
-		for (int i = 0; i < graphs.size(); i++) {
-			spanBeginX = Math.min(spanBeginX, xCoords.get(i).get(0));
-		}
-		// loop through finding the next x values by searching through all the x coords,
-		// and applying the operation on all the graphs
-		boolean lastWidth0 = false;
-		int spanEndX = 0;
-		while (spanBeginX < Integer.MAX_VALUE) {
-			// find the next x value, the minimum of all x, x + w that is greater than the current x
-			spanEndX = Integer.MAX_VALUE;
-			for (int i = 0; i < graphs.size(); i++) {
-				int graphIndex = index[i];
-				if (graphIndex < xCoords.get(i).size()) {
-					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + getWidth(wCoords.get(i), graphIndex, hasWidthGraphs);
-					if (startX == endX && startX < spanEndX) { // widthless (width == 0) coordinate
-						spanEndX = startX;
-					}
-					else if (startX > spanBeginX && startX < spanEndX) {
-						spanEndX = startX;
-					}
-					else if (endX > spanBeginX && endX < spanEndX) {
-						spanEndX = endX;
-					}
-				}
-			}
-			if (lastWidth0) {
-				spanBeginX = spanEndX;
-			}
-			// now that we have currentX and nextX (the start and end of the span)
-			// we get each y coord as an operand
-			List<Float> operands = new ArrayList<Float>();
-			for (int i = 0; i < graphs.size(); i++) {
-				float value = 0;
-				int graphIndex = index[i];
-				if (graphIndex < xCoords.get(i).size()) {
-					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + getWidth(wCoords.get(i), graphIndex, hasWidthGraphs);
-					if (spanBeginX >= startX && spanEndX <= endX) {
-						value = yCoords.get(i).get(graphIndex);
-					}
-				}
-				operands.add(value);
-			}
-			// now we have the operands, actually perform the operation
-			float currentY = operator.operate(operands);
-			// add the span and result - x, y, w - to the result graph
-			xList.add(spanBeginX);
-			wList.add(spanEndX - spanBeginX);
-			yList.add(currentY);
-			// now go through all graphs, and increment the index if necessary
-			for (int i = 0; i < graphs.size(); i++) {
-				int graphIndex = index[i];
-				if (graphIndex < xCoords.get(i).size()) {
-					int startX = xCoords.get(i).get(graphIndex);
-					int endX = startX + getWidth(wCoords.get(i), graphIndex, hasWidthGraphs);
-					if (endX <= spanEndX) {
-						index[i]++;
-					}
-				}
-			}
-			// we are done for this span, move the end of span to the beginning
-			lastWidth0 = spanEndX == spanBeginX;
-			spanBeginX = spanEndX;
-		}
-		// get the display name for the result graph
-		String symbol = operator.getSymbol();
-		String separator = (symbol == null) ? ", " : " " + symbol + " ";
-		String newname = 
-			operator.getName().toLowerCase() + ": " + (graphs.size() == 2 ? "(" + graphs.get(0).getLabel() + ")" + separator + "(" + graphs.get(1).getLabel() + ")" :
-			"(..." + graphs.size() + ")");
-		BioSeq aseq = ((GraphSym) graphs.get(0).getInfo()).getGraphSeq();
-		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
-		// create the new graph from the results
-		int[] x = new int[xList.size()];
-		for (int i = 0; i < xList.size(); i++) {
-			x[i] = xList.get(i);
-		}
-		int[] w = new int[wList.size()];
-		for (int i = 0; i < wList.size(); i++) {
-			w[i] = wList.get(i);
-		}
-		float[] y = new float[yList.size()];
-		for (int i = 0; i < yList.size(); i++) {
-			y[i] = yList.get(i);
-		}
-		if (x.length == 0) { // if no data, just create a dummy zero span
-			x = new int[]{xCoords.get(0).get(0)};
-			y = new float[]{0};
-			w = new int[]{1};
-		}
-		GraphSym newsym = new GraphSym(x, w, y, newname, aseq);
-
-		newsym.setGraphName(newname);
-		newsym.getGraphState().setGraphStyle(graphs.get(0).getGraphState().getGraphStyle());
-		newsym.getGraphState().setHeatMap(graphs.get(0).getGraphState().getHeatMap());
-		return newsym;
-	}
-
 	@Override
 	public boolean isEmbedded() {
 		return true;

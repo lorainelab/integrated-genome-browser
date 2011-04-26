@@ -13,6 +13,7 @@ import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
+import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
@@ -133,6 +134,7 @@ public class SeqMapView extends JPanel
 	private JToggleButton select_mode_button;
 	private JToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
+	private GraphSelectionManager graph_manager;
 
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	/**
@@ -404,7 +406,7 @@ public class SeqMapView extends JPanel
 		SmartDragScrollMonitor sdsm = new SmartDragScrollMonitor(this);
 		seqmap.setDragScrollMonitor(sdsm);
 
-		GraphSelectionManager graph_manager = new GraphSelectionManager(this);
+		graph_manager = new GraphSelectionManager(this);
 		seqmap.addMouseListener(graph_manager);
 		this.addPopupListener(graph_manager);
 
@@ -2056,4 +2058,12 @@ public class SeqMapView extends JPanel
 //			zoom_mode_button.doClick();
 //		}
 	}
+
+    public void addGraphOperator(GraphOperator graphOperator) {
+    	graph_manager.addGraphOperator(graphOperator);
+    }
+
+    public void removeGraphOperator(GraphOperator graphOperator) {
+    	graph_manager.removeGraphOperator(graphOperator);
+    }
 }

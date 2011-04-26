@@ -2,10 +2,8 @@ package com.affymetrix.genometryImpl.symloader;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -13,6 +11,7 @@ import java.util.List;
 import net.sf.samtools.SAMException;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
+import net.sf.samtools.SAMFormatException;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
 
@@ -22,40 +21,35 @@ import net.sf.samtools.util.CloseableIterator;
  */
 public class SAM extends XAM{
 	
-	private final static List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
-	
-	static {
-		// BAM files are generally large, so only allow loading visible data.
-		strategyList.add(LoadStrategy.NO_LOAD);
-		strategyList.add(LoadStrategy.VISIBLE);
-	}
-	
 	public SAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
 		super(uri, featureName, seq_group);
 	}
 	
 	@Override
 	public void init() {
-		File f = new File(uri);
-		reader = new SAMFileReader(f);
-		reader.setValidationStringency(ValidationStringency.SILENT);
-		
-		if (this.isInitialized) {
-			return;
-		}
-		
-		if(initTheSeqs()){
-			super.init();
-		}
-	}
-	
-	
-	@Override
-	public List<SeqSymmetry> getRegion(SeqSpan span) {
-		init();
-		return parse(span.getBioSeq(), span.getMin(), span.getMax(), true, false);
-	}
+		try {
+			File f = new File(uri);
+			reader = new SAMFileReader(f);
+			reader.setValidationStringency(ValidationStringency.SILENT);
 
+			if (this.isInitialized) {
+				return;
+			}
+
+			if (initTheSeqs()) {
+				super.init();
+			}
+			
+		} catch (SAMFormatException ex) {
+			ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n"
+					+ "Please validate your BAM files (see http://picard.sourceforge.net/command-line-overview.shtml#ValidateSamFile). "
+					+ "See console for the details of the exception.\n");
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	@Override
 	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) {
 		init();

@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.symloader.GFF3;
 import com.affymetrix.genometryImpl.symloader.Genbank;
 import com.affymetrix.genometryImpl.symloader.Gr;
 import com.affymetrix.genometryImpl.symloader.PSL;
+import com.affymetrix.genometryImpl.symloader.SAM;
 import com.affymetrix.genometryImpl.symloader.Sgr;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
@@ -56,6 +57,7 @@ public class FileTypeHolder {
 		// load all built in FileTypeHandlers
 		addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, AffyCnChpParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("BAM", new String[]{"bam"}, null, BAM.class);
+		addFileTypeHandler("SAM", new String[]{"sam"}, null, SAM.class);
 		addFileTypeHandler("Graph", new String[]{"bar"}, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);
 		addFileTypeHandler("BED", new String[]{"bed"}, BedParser.class, BED.class);
 		addFileTypeHandler("Binary", new String[]{"bgn"}, BgnParser.class, SymLoaderInst.class);

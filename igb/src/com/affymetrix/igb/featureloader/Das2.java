@@ -274,7 +274,6 @@ public class Das2 {
 
             Logger.getLogger(Das2.class.getName()).log(Level.INFO,
 					"Parsing {0} format for DAS2 feature response", content_subtype.toUpperCase());
-			String extension = "." + content_subtype;	// We add a ".", since this is expected to be a file extension
 			List<? extends SeqSymmetry> feats = null;
 			FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype);
 			if (fileTypeHandler == null) {
@@ -283,7 +282,8 @@ public class Das2 {
 				return false;
 			}
 			else {
-				SymLoader symL = fileTypeHandler.createSymLoader(new URI(extension), typeName, aseq.getSeqGroup());
+				SymLoader symL = fileTypeHandler.createSymLoader(typeURI, typeName, aseq.getSeqGroup());
+				symL.setExtension(content_subtype);
 				if (symL instanceof BAM) {
 					File bamfile = GeneralUtils.convertStreamToFile(istr, typeName);
 					bamfile.deleteOnExit();

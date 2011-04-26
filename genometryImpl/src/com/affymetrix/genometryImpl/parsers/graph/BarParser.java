@@ -920,7 +920,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			AnnotatedSeqGroup group, String nameType, String uri,
 			boolean annotate_seq) throws Exception {
 		// only annotate_seq = false processed here
-		return parse(is, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, nameType, false);
+		return parse(is, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri, false);
 	}
 
 	@Override

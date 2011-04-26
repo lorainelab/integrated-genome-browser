@@ -277,7 +277,10 @@ public class FileTypeHolder {
 		FileTypeHandler fileTypeHandler = null;
 		String extension = lc;
 		int position = lc.lastIndexOf('.');
-		if (position > -1) {
+		if (position == -1) {
+			fileTypeHandler = getFileTypeHandler(lc);
+		}
+		else {
 			extension = lc.substring(position + 1);
 			fileTypeHandler = getFileTypeHandler(extension);
 			String prefix = lc.substring(0, Math.max(0,position - 1));

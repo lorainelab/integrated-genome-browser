@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader {
-	public final String extension;	// used for ServerUtils call
+	public String extension;	// used for ServerUtils call
 	public final URI uri;
 	public boolean isResidueLoader = false;	// Let other classes know if this is just residues
 	protected volatile boolean isInitialized = false;
@@ -70,6 +70,10 @@ public abstract class SymLoader {
 
 	protected void init() {
 		this.isInitialized = true;
+	}
+
+	public void setExtension(String extension) {
+		this.extension = extension;
 	}
 
 	protected boolean buildIndex(){

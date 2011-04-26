@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -77,15 +76,7 @@ public final class QuickLoad extends SymLoader {
 		if (this.symL != null) {
 			return this.symL.getLoadChoices();
 		}
-		if (extension.endsWith(".bar") || extension.endsWith(".bgr")
-				||extension.endsWith(".chp")
-				|| (extension.endsWith(".sin") || extension.endsWith(".egr") || extension.endsWith(".txt") || extension.endsWith("link.psl"))
-				|| (extension.endsWith(".gff") || extension.endsWith(".gff3"))) {
-			List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
-			strategyList.add(LoadStrategy.NO_LOAD);
-			strategyList.add(LoadStrategy.GENOME);
-			return strategyList;
-		}
+		Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE,"No symloader found.");
 		return super.getLoadChoices();
 	}
 

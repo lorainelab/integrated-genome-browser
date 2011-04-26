@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
@@ -14,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -124,6 +127,7 @@ public class GenoPubServlet extends HttpServlet {
 	private String genometry_genopub_dir;
 	private String fdt_dir;
   private String fdt_dir_genopub;
+  private String fdt_task_dir;
   private String fdt_client_codebase;
   private String fdt_server_name;
 
@@ -3413,6 +3417,16 @@ public class GenoPubServlet extends HttpServlet {
        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
        String download_base =  "genopub_download_" + dateFormat.format(Calendar.getInstance().getTime());       
        
+       String fdt_base_dir_genopub = getFDTDirForGenoPub() + uuidStr;
+       File fdtBaseDir = new File(fdt_base_dir_genopub);
+       if(!fdtBaseDir.exists()) {
+         if (!fdtBaseDir.mkdir()) {
+           throw new Exception("unable to create fdt directory " + fdtBaseDir);
+         }
+       }
+       
+       
+       
        String fdt_dir_genopub = getFDTDirForGenoPub() + uuidStr + "/" + download_base;       
        String fdt_dir         = getFDTDir() + uuidStr + "/" + download_base;
        
@@ -3546,6 +3560,7 @@ public class GenoPubServlet extends HttpServlet {
       String uuidStr = uuid.toString();
 
 
+      String fdt_task_dir    = getFDTTaskDir();
       String fdt_dir_genopub = getFDTDirForGenoPub() + uuidStr;       
       String fdt_dir         = getFDTDir() + uuidStr;       
 
@@ -3577,9 +3592,11 @@ public class GenoPubServlet extends HttpServlet {
       process.destroy();        
 
       // start daemon
-      process = Runtime.getRuntime().exec( new String[] { "genopub_fdt_daemon", "-sourceDir", fdt_dir_genopub, "-targetDir", targetDir } );          
-      process.waitFor();
-      process.destroy();    
+      //process = Runtime.getRuntime().exec( new String[] { "genopub_fdt_daemon", "-sourceDir", fdt_dir_genopub, "-targetDir", targetDir } );          
+      //process.waitFor();
+      //process.destroy();
+      
+      addFDTDaemonTask(fdt_task_dir, fdt_dir_genopub, targetDir);
       
       // Now stream back JNLP (webapp start) to client
       res.setHeader("Content-Disposition","attachment;filename=\"genopub_fdt_upload.jnlp\"");
@@ -3627,6 +3644,56 @@ public class GenoPubServlet extends HttpServlet {
       }
     }
   }
+  
+  
+  private static void addFDTDaemonTask(String taskFileDir, String sourceDir, String targetDir) throws Exception { 
+    
+    if (!new File(taskFileDir).exists()) {
+      File dir = new File(taskFileDir);
+      boolean success = dir.mkdir();
+      if (!success) {
+        throw new Exception("FDT Upload Error: unable to create task file directory.");
+      }
+    }   
+    
+    File taskFile;
+    int numTries = 10;    
+    while(true) {
+      String taskFileName = taskFileDir + Long.toString(System.currentTimeMillis())+".txt";
+      taskFile = new File(taskFileName);
+      if(!taskFile.exists()) {
+        boolean success;
+        try {
+          success = taskFile.createNewFile();
+          if (!success) {
+            throw new Exception("FDT Upload Error: unable to create task file.");
+          } 
+          break;
+        } catch (IOException e) {
+          throw new Exception("FDT Error: unable to create task file.");
+        }
+      }
+      // If the file already exists then try again but don't try forever
+      numTries--;
+      if(numTries == 0) {
+        throw new Exception("FDT Upload `Error: Unable to create task file: " + taskFileName);
+      }      
+    }
+    
+    try {
+      PrintWriter pw = new PrintWriter(new FileWriter(taskFile));
+      SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      pw.println("Started: " + f.format(new Date()));
+      pw.println("LastActivity: 0");
+      pw.println("SourceDirectory: " + sourceDir);
+      pw.println("TargetDirectory: " + targetDir);
+      pw.flush();
+      pw.close();      
+    } catch (IOException e) {
+      throw new Exception("FDT Upload IOException: " + e.getMessage());
+    }    
+  }
+
 
 
 
@@ -4972,6 +5039,16 @@ public class GenoPubServlet extends HttpServlet {
       }
     }
     return fdt_dir;
+  }
+  private final String getFDTTaskDir() {
+    if (fdt_task_dir == null) {
+      ServletContext context = getServletContext();
+      fdt_task_dir = context.getInitParameter(Constants.FDT_TASK_DIR);     
+      if (fdt_task_dir != null && !fdt_task_dir.endsWith("/")) {
+        fdt_task_dir += "/";     
+      }
+    }
+    return fdt_task_dir;
   }
   private final String getFDTDirForGenoPub() {
     if (fdt_dir_genopub == null) {

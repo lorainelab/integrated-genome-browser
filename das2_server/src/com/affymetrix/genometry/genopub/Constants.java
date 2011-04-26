@@ -11,6 +11,7 @@ public class Constants {
 	public static final String FDT_DIR                       = "fdt_dir";
   public static final String FDT_DIR_FOR_GENOPUB           = "fdt_dir_genopub";
   public static final String FDT_CLIENT_CODEBASE           = "fdt_client_codebase";
+  public static final String FDT_TASK_DIR                  = "fdt_task_dir";
   public static final String FDT_SERVER_NAME               = "fdt_server_name";
 
 	public static final String SEQUENCE_DIR_PREFIX    = "SEQ";

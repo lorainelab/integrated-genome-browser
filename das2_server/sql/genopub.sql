@@ -166,7 +166,7 @@ INSERT INTO `AnnotationGrouping` (`idAnnotationGrouping`,`name`,`description`,`i
  (6000,'T_nigroviridis_Feb_2004','T_nigroviridis_Feb_2004',NULL,6000,NULL),
  (6100,'V_vinifera_Apr_2007','V_vinifera_Apr_2007',NULL,6100,NULL),
  (6201,'X_tropicalis_Aug_2005','X_tropicalis_Aug_2005',NULL,6201,NULL),
- (6202,'H_sapiens_Feb_2009','H_sapiens_Feb_2009',NULL,3405,NULL);
+ (6202,'H_sapiens_Feb_2009','H_sapiens_Feb_2009',NULL,6202,NULL);
 /*!40000 ALTER TABLE `AnnotationGrouping` ENABLE KEYS */;
 
 
@@ -272,7 +272,8 @@ INSERT INTO `GenomeVersion` (`idGenomeVersion`,`name`,`idOrganism`,`buildDate`,`
  (5500,'S_glossinidius_Jan_2006',5500,'2006-01-01 00:00:00','ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Sodalis_glossinidius_morsitans/Jan_2006','Jan_2006','Chromosome',NULL,'NCBI'),
  (6000,'T_nigroviridis_Feb_2004',6000,'2004-02-01 00:00:00','','','','',''),
  (6100,'V_vinifera_Apr_2007',6100,'2007-04-01 00:00:00',NULL,NULL,NULL,NULL,NULL),
- (6201,'X_tropicalis_Aug_2005',6200,'2005-08-01 00:00:00','','','','','');
+ (6201,'X_tropicalis_Aug_2005',6200,'2005-08-01 00:00:00','','','','',''),
+ (6202,'H_sapiens_Feb_2009',3400,'2009-02-01 00:00:00','','','','','');
 /*!40000 ALTER TABLE `GenomeVersion` ENABLE KEYS */;
 
 

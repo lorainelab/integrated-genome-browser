@@ -219,7 +219,7 @@ public final class BAM extends SymLoader {
 						try{
 							sr = iter.next();
 							if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
-							symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
+							symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, uri.toString()));
 						}catch(SAMException e){
 							errList.add(e);
 						}
@@ -251,7 +251,7 @@ public final class BAM extends SymLoader {
 		if (reader != null) {
 			for (final SAMRecord sr: reader){
 				if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
-				symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
+				symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, uri.toString()));
 			}
 		}
 		return symList;
@@ -304,7 +304,7 @@ public final class BAM extends SymLoader {
 		}
 
 		StringBuffer insResidue = new StringBuffer(200);
-		BAMSym sym = new BAMSym(featureName, seq, start, end, sr.getReadName(),
+		BAMSym sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
 				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs);
 		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
 		sym.setProperty("id", sr.getReadName());

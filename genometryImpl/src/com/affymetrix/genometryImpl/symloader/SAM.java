@@ -78,7 +78,7 @@ public class SAM extends XAM{
 							if (skipUnmapped && sr.getReadUnmappedFlag()) {
 								continue;
 							}
-							symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, featureName));
+							symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, uri.toString()));
 						}catch(SAMException e){
 							errList.add(e);
 						}

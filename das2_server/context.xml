@@ -1,4 +1,4 @@
-<!-- $Id$ -->
+<!-- $Id: context.xml 5065 2010-01-23 23:08:24Z tdisera $ -->
 <Context path="/das2genopub" docBase="/path/to/das2/servlet/" debug="0" reloadable="true">
 
 	<!-- Optimised Logging routine.  Configured to log in 'combined'

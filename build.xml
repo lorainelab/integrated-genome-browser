@@ -461,10 +461,11 @@
 	</target>
 
 	<target name="release-copy-genopub-sql" if="das2genopub">
-		<copy todir="${release.dir}/${das2_release}">
-			<fileset file="${das2server}/genopub.sql" />
+		<copy todir="${release.dir}/${das2_release}/sql">
+			<fileset file="${das2server}/sql/*.sql" />
 		</copy>
 	</target>
+
 
 	<target name="deploy-das2server" depends="release-das2server" description="Copy das2 web application to apache tomcat">
 		<copy todir="${server.deploy.dir}/${das2_webapp}" overwrite="true">

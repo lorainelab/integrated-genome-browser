@@ -4,7 +4,7 @@ package com.affymetrix.genometryImpl;
  *
  * @author hiralv
  */
-public interface SymWithResidues {
+public interface SymWithResidues extends SymWithProps {
 
 	public void setResidues(String residues);
 

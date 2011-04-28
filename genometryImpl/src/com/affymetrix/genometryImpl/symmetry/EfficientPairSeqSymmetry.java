@@ -3,13 +3,13 @@ package com.affymetrix.genometryImpl.symmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.SymWithResidues;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithProps {
+public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResidues {
 
 	private static final int count = 2;
 	private final int startA, startB, endA, endB;
@@ -120,7 +120,19 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithProps
 		return null;
 	}
 
+	public String getResidues() {
+		return residues;
+	}
+	
 	public boolean setProperty(String key, Object val) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void setResidues(String residues) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	public String getResidues(int start, int end) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

@@ -1073,7 +1073,7 @@ public final class GeneralLoadView extends IGBTabPanel
 				// Refresh
 				GeneralLoadView.getLoadView().refreshTreeView();
 				GeneralLoadView.getLoadView().createFeaturesTable();
-				gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq());
+				gviewer.dataRemoved();
 				igbService.removeNotLockedUpMsg("Removing feature  "+feature.featureName);
 			}
 		};

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -153,7 +154,15 @@ final class AltSpliceSeqMapView extends SeqMapView {
 			enableSeqMap(true);
 		}
 	}
-
+	
+	@Override
+	public void dataRemoved(){
+		if(slicing_in_effect && slice_symmetry != null){
+			sliceAndDiceNow(slice_symmetry);
+		}
+	}
+	
+	
 	/**
 	 *  Performs a genometry-based slice-and-dice.
 	 *  Assumes that symmetry children are ordered by child.getSpan(aseq).getMin().

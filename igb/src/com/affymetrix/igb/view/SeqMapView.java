@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.IGB;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -600,6 +601,14 @@ public class SeqMapView extends JPanel
 		}
 	}
 
+	public void dataRemoved(){
+		setAnnotatedSeq(aseq);
+		AltSpliceView slice_view = (AltSpliceView)((IGB)IGB.getSingleton()).getView(AltSpliceView.class.getName());
+		if (slice_view != null) {
+			slice_view.getSplicedView().dataRemoved();
+		}
+	}
+	
 	/** Sets the sequence; if null, has the same effect as calling clear(). */
 	public final void setAnnotatedSeq(BioSeq seq) {
 		setAnnotatedSeq(seq, false, (seq == this.aseq) && (seq != null));

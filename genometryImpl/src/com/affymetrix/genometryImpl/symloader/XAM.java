@@ -228,15 +228,12 @@ public abstract class XAM extends SymLoader {
 					currentChildEnd = currentChildStart  + celLength;
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					// TODO -- allow possibility that INSERTION is terminator, not M
-					// print insertion
-					currentChildStart = currentChildEnd;
-					currentChildEnd = currentChildStart;
 					SimpleSymWithProps ss = new SimpleSymWithProps();
 					if (!sr.getReadNegativeStrandFlag()) {
-						ss.addSpan(new SimpleSeqSpan(currentChildStart, currentChildStart + celLength, seq));
+						ss.addSpan(new SimpleSeqSpan(currentChildEnd, currentChildEnd + celLength, seq));
 					}
 					else {
-						ss.addSpan(new SimpleSeqSpan(currentChildStart + celLength, currentChildStart, seq));
+						ss.addSpan(new SimpleSeqSpan(currentChildEnd + celLength, currentChildEnd, seq));
 					}
 					insertChilds.add(ss);
 				} else if (cel.getOperator() == CigarOperator.M) {

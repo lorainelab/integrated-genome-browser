@@ -125,9 +125,10 @@ public class WiggleParserTest {
 		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-//		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "Bed Format"), gr0.getID());
-//		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "variableStep"), gr1.getID());
-//		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "fixedStep"), gr2.getID());
+		String filelocation = new File(filename).toURI().toString();
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
 
 		GraphState state = gr1.getGraphState();
 		assertEquals(0.0, state.getVisibleMinY(), 0.00001);
@@ -161,9 +162,9 @@ public class WiggleParserTest {
 		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "Bed Format"), gr0.getID());
-		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "variableStep"), gr1.getID());
-		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "fixedStep"), gr2.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
 
 		List<BioSeq> allSeqs = wiggle.getChromosomeList();
 		assertEquals(allSeqs.size(),1);
@@ -222,9 +223,10 @@ public class WiggleParserTest {
 		assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
 		if(checkId){
-			assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "Bed Format"), gr0.getID());
-		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "variableStep"), gr1.getID());
-		assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filename, "fixedStep"), gr2.getID());
+			String filelocation = new File(filename).toURI().toString();
+			assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+			assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+			assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
 		}
 
 		return true;

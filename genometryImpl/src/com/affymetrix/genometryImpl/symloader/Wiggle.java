@@ -376,7 +376,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 
 		List<GraphSym> grafs = new ArrayList<GraphSym>(current_datamap.size());
 
-		TrackLineParser.createTrackStyle(track_hash, stream_name);
+		//TrackLineParser.createTrackStyle(track_hash, stream_name);
 		String graph_id = track_hash.get(TrackLineParser.NAME);
 
 		if (graph_id == null) {

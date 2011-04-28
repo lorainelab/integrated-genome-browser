@@ -121,7 +121,7 @@ public class BED extends SymLoader{
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parse(istr, GenometryModel.getGenometryModel(), this.group, false, this.featureName, false, isSorted, min, max);
+			return parse(istr, GenometryModel.getGenometryModel(), this.group, false, this.uri.toString(), false, isSorted, min, max);
 		}catch (Exception ex) {
 			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -150,7 +150,7 @@ public class BED extends SymLoader{
 		symlist.clear();
 		annotate_seq = annot_seq;
 		this.create_container_annot = create_container;
-		default_type = this.featureName;
+		default_type = uri.toString();
 
 		if (stream_name.endsWith(".bed")) {
 			default_type = stream_name.substring(0, stream_name.lastIndexOf(".bed"));

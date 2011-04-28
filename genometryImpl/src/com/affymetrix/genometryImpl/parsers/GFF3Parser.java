@@ -393,7 +393,7 @@ public final class GFF3Parser implements Parser {
 	public List<? extends SeqSymmetry> parse(InputStream is,
 			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
 			throws Exception {
-		parse(is, nameType, group, true);
+		parse(is, uri, group, true);
 		return null;
 	}
 }

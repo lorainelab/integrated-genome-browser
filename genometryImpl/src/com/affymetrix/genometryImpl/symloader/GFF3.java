@@ -107,7 +107,7 @@ public class GFF3 extends SymLoader{
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parser.parse(istr, featureName, group, true);
+			return parser.parse(istr, uri.toString(), group, true);
 		}catch (Exception ex) {
 			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {

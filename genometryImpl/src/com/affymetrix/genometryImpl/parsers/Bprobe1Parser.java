@@ -516,6 +516,6 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
 	@Override
 	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group,
 			String nameType, String uri, boolean annotate_seq) throws Exception {
-		return parse(is, group, annotate_seq, nameType, true);
+		return parse(is, group, annotate_seq, uri, true);
 	}
 }

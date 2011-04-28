@@ -381,9 +381,9 @@ public final class USeqRegionParser implements GraphParser {
 			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
 			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
 				USeqGraphParser gp = new USeqGraphParser();
-				return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), nameType, archiveInfo);
+				return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), uri, archiveInfo);
 			}
-			return parse(zis, group, nameType, false, archiveInfo);
+			return parse(zis, group, uri, false, archiveInfo);
 		}
 	}
 

@@ -1043,6 +1043,6 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 		if (annotate_seq) {
 			setUseStandardFilters(true);
 		}
-		return parse(is, nameType, group, false, annotate_seq);
+		return parse(is, uri, group, false, annotate_seq);
 	}
 }

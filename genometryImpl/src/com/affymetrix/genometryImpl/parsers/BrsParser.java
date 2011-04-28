@@ -449,6 +449,6 @@ public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq s
 	public List<? extends SeqSymmetry> parse(InputStream is,
 			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
 			throws Exception {
-		return parse(is, nameType, group, annotate_seq);
+		return parse(is, uri, group, annotate_seq);
 	}
 }

@@ -310,7 +310,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				return Collections.<UcscPslSym>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parse(istr, min, max, featureName, query_group, target_group,
+			return parse(istr, min, max, uri.toString(), query_group, target_group,
 					other_group, annotate_query, annotate_target, annotate_other);
 
 		} catch (FileNotFoundException ex) {

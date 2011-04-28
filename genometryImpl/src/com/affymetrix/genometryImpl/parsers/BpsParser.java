@@ -314,7 +314,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser  {
 	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group,
 			String nameType, String uri, boolean annotate_seq) throws Exception {
 		DataInputStream dis = new DataInputStream(is);
-		return parse(dis, nameType, null, group, false, annotate_seq);
+		return parse(dis, uri, null, group, false, annotate_seq);
 	}
 }
 

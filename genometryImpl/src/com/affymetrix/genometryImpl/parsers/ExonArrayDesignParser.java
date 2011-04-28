@@ -786,6 +786,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 	public List<? extends SeqSymmetry> parse(InputStream is,
 			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
 			throws Exception {
-		return parse(is, group, annotate_seq, nameType);
+		return parse(is, group, annotate_seq, uri);
 	}
 }

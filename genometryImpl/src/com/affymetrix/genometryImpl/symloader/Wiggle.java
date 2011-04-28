@@ -169,7 +169,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 				if (firstChar == 't' && line.startsWith("track")) {
 					if (previous_track_line) {
 						// finish previous graph(s) using previous track properties
-						grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, featureName));
+						grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString()));
 					}
 
 					track_line_parser.parseTrackLine(line);
@@ -214,7 +214,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		}
 
 		grafs.addAll(createGraphSyms(
-				track_line_parser.getCurrentTrackHash(), group, current_datamap, featureName));
+				track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString()));
 		
 		return grafs;
 	}
@@ -376,6 +376,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 
 		List<GraphSym> grafs = new ArrayList<GraphSym>(current_datamap.size());
 
+		TrackLineParser.createTrackStyle(track_hash, stream_name);
 		String graph_id = track_hash.get(TrackLineParser.NAME);
 
 		if (graph_id == null) {

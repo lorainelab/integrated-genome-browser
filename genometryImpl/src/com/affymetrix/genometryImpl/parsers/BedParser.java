@@ -588,7 +588,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group, String nameType,
 		String uri, boolean annotate_seq) throws Exception {
 		// really need to switch create_container (last argument) to true soon!
-		return parse(is, GenometryModel.getGenometryModel(), group, annotate_seq, nameType, false);
+		return parse(is, GenometryModel.getGenometryModel(), group, annotate_seq, uri, false);
 	}
 }
 

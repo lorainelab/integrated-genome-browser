@@ -322,4 +322,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		load_dir_tracker.setFile(file);
 	}
 
+	@Override
+	public IGBTabPanel getView(String viewName) {
+		return ((IGB)IGB.getSingleton()).getView(viewName);
+	}
 }

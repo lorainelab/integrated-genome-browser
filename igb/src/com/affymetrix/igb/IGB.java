@@ -510,7 +510,7 @@ public final class IGB extends Application
 		return windowService.getPlugins();
 	}
 
-	public JComponent getView(String viewName) {
+	public IGBTabPanel getView(String viewName) {
 		Class<?> viewClass;
 		try {
 			viewClass = Class.forName(viewName);

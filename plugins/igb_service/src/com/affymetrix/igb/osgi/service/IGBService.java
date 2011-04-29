@@ -226,4 +226,10 @@ public interface IGBService {
 	 * @param file the load directory
 	 */
 	public void setLoadDirectory(File file);
+	/**
+	 * get the IGBTabPanel with the given class name
+	 * @param className
+	 * @return the IGBTabPanel with the given class name
+	 */
+	public IGBTabPanel getView(String className);
 }

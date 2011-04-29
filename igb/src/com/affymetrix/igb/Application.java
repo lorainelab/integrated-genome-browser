@@ -106,17 +106,25 @@ public abstract class Application {
 		return confirmPanel(message, null, null, false);
 	}
 	
+	public static boolean confirmPanel(final JComponent comp, String message) {
+		return confirmPanel(comp, message, null, null, false);
+	}
+	
 	public static boolean confirmPanel(final String message, final Preferences node,
 			final String check, final boolean def_val) {
 		Application app = getSingleton();
 		JFrame frame = (app == null) ? null : app.getFrame();
-
+		return confirmPanel(frame.getRootPane(), message, node, check, def_val);
+	}
+	
+	public static boolean confirmPanel(final JComponent comp, final String message, final Preferences node,
+			final String check, final boolean def_val) {
 		Object[] params = null;
 
 		//If no node is provided then show default message
 		if (node == null) {
 			return JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
-					frame, message, "Confirm", JOptionPane.YES_NO_OPTION);
+					comp, message, "Confirm", JOptionPane.YES_NO_OPTION);
 		}
 
 		//If all parameters are provided then look up for boolean value from preference.
@@ -132,7 +140,7 @@ public abstract class Application {
 		params = new Object[]{message, checkbox};
 
 		int ret = JOptionPane.showConfirmDialog(
-				frame, params, "Confirm", JOptionPane.YES_NO_OPTION);
+				comp, params, "Confirm", JOptionPane.YES_NO_OPTION);
 
 		if (JOptionPane.YES_OPTION == ret) {
 			if(checkbox.isSelected()){

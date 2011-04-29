@@ -15,6 +15,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.IGB;
 import java.awt.event.*;
 import java.util.prefs.Preferences;
 import javax.swing.*;
@@ -66,8 +67,16 @@ public final class KeyStrokeEditPanel extends JPanel {
         modifiers = evt.getModifiers();
         KeyStroke ks = getStroke();
 		String command = keyStroke2String(ks);
-		if(isCommandInUse(command)){
-			ErrorHandler.errorPanel("ERROR", "Shortcut already in use");
+		String useCommand = isCommandInUse(command);
+		if(useCommand != null){
+			if(!IGB.confirmPanel(KeyStrokeEditPanel.this, "This shortcut is currently in use; \n"
+					+ "reassigning this will remove the shortcut for "+useCommand+".\n"
+					+ "Do you want to proceed?"))
+				return;
+			
+			the_node.put(useCommand, "");
+			key_field.setText(command);
+			applyAction();
 			return;
 		}
         key_field.setText(command);
@@ -99,14 +108,14 @@ public final class KeyStrokeEditPanel extends JPanel {
   }
   
 
- private boolean isCommandInUse(String command) {
+ private String isCommandInUse(String command) {
 	
 	for (String key : PreferenceUtils.getKeystrokesNodeNames()) {
 		if (command.equalsIgnoreCase(the_node.get(key, "")))
-			return true;
+			return key;
 	}
 	
-	return false;
+	return null;
  }
  
   void setPreferenceKey(Preferences node, String key, String def_value) {

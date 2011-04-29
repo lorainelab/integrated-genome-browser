@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.event.*;
 import java.util.prefs.Preferences;
@@ -32,7 +33,7 @@ public final class KeyStrokeEditPanel extends JPanel {
   private int key_code;
   private int modifiers;
 
-	private Preferences the_node = null;
+  private Preferences the_node = null;
   private String the_key = null;
   
   /** Creates a new instance of KeyStrokesView */
@@ -64,7 +65,12 @@ public final class KeyStrokeEditPanel extends JPanel {
         key_code = evt.getKeyCode();
         modifiers = evt.getModifiers();
         KeyStroke ks = getStroke();
-        key_field.setText(keyStroke2String(ks));
+		String command = keyStroke2String(ks);
+		if(isCommandInUse(command)){
+			ErrorHandler.errorPanel("ERROR", "Shortcut already in use");
+			return;
+		}
+        key_field.setText(command);
       }
       public void keyReleased(KeyEvent evt) {
         evt.consume();
@@ -93,7 +99,16 @@ public final class KeyStrokeEditPanel extends JPanel {
   }
   
 
-  
+ private boolean isCommandInUse(String command) {
+	
+	for (String key : PreferenceUtils.getKeystrokesNodeNames()) {
+		if (command.equalsIgnoreCase(the_node.get(key, "")))
+			return true;
+	}
+	
+	return false;
+ }
+ 
   void setPreferenceKey(Preferences node, String key, String def_value) {
     this.the_node = node;
     this.the_key = key;

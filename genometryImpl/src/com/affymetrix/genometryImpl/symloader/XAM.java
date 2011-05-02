@@ -43,14 +43,12 @@ public abstract class XAM extends SymLoader {
 
 	protected final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	
-	private static final boolean DEBUG = false;
+	protected static final boolean DEBUG = false;
 	protected boolean skipUnmapped = true;
 	protected SAMFileReader reader;
     private SAMFileHeader header;
 	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
-	private File indexFile = null;
-	private static final Pattern CLEAN = Pattern.compile("[/\\s+]");
-
+	
 	public static final String CIGARPROP = "cigar";
 	public static final String RESIDUESPROP = "residues";
 	public static final String BASEQUALITYPROP = "baseQuality";

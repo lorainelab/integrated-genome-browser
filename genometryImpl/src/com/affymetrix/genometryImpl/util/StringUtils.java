@@ -74,7 +74,7 @@ public final class StringUtils {
 			remainingWidth -= ellipsisWidth;
 		}
 
-		for (String word : toWrap.split("\\s+")) {
+		for (String word : getWords(toWrap)) {
 			wordWidth = metrics.stringWidth(word);
 
 			if (wordWidth > remainingWidth) {
@@ -113,5 +113,30 @@ public final class StringUtils {
 		}
 
 		return lines.toArray(new String[lines.size()]);
+	}
+	
+	private static String[] getWords(String line){
+		String[] seprators = {"\\s+","/","\\"};
+		
+		for(String seprator : seprators){
+			String[] words = getWords(line, seprator);
+			if(words.length > 1){
+				return words;
+			}
+		}
+		
+		return new String[]{line};
+	}
+	
+	private static String[] getWords(String line, String seprator){
+		String[] words = line.split(seprator);
+		
+		if(!("\\s+".equals(seprator))){
+			for(int i=0; i<words.length-1; i++){
+				words[i] += seprator;
+			}
+		}
+		
+		return words;
 	}
 }

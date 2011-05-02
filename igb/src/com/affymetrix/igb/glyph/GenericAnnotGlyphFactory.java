@@ -408,27 +408,35 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		if(inssym.getInsChildCount() == 0)
 			return;
 
+		BioSeq coordseq = gviewer.getViewSeq();
+		SeqSymmetry psym = inssym;
+		if (annotseq != coordseq) {
+			psym = gviewer.transformForViewSeq(inssym, annotseq);
+		}
+		SeqSpan pspan = gviewer.getViewSeqSpan(psym);
+		
 		Color color = Color.RED;
 
 		for (int i = 0; i < inssym.getInsChildCount(); i++) {
 
 			SeqSymmetry childsym = inssym.getInsChild(i);
-			SeqSymmetry psym = childsym;
-			BioSeq coordseq = gviewer.getViewSeq();
+			SeqSymmetry dsym = childsym;
+			
 			if (annotseq != coordseq) {
-				psym = gviewer.transformForViewSeq(childsym, annotseq);
+				dsym = gviewer.transformForViewSeq(childsym, annotseq);
 			}
-			SeqSpan pspan = gviewer.getViewSeqSpan(psym);
+			SeqSpan dspan = gviewer.getViewSeqSpan(dsym);
 			SeqSpan ispan = childsym.getSpan(annotseq);
 
-			if(ispan == null || pspan == null){
+			if(ispan == null || dspan == null){
 				continue;
 			}
 
 			InsertionSeqGlyph isg = new InsertionSeqGlyph();
 			isg.setSelectable(true);
-			isg.setResidues(inssym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1));
-			isg.setCoords(pspan.getMin() - 1, 0, 2, DEFAULT_THICK_HEIGHT);
+			String residues = inssym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1); 
+			isg.setResidues(residues);
+			isg.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_THICK_HEIGHT);
 			isg.setColor(color);
 
 			pglyph.addChild(isg);

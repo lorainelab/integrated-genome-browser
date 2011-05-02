@@ -128,6 +128,9 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 
 	public String getResidues(int start, int end){
 		if(residues != null){
+			start = Math.max(start, txMin);
+			end = Math.min(txMax, end);
+			
 			return residues.getResidues(start, end);
 		}
 		return getEmptyString(end - start);

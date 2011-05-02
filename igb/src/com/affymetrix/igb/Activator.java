@@ -94,6 +94,36 @@ public class Activator implements BundleActivator {
 		}
 	}
 
+	private void addTierLabelManager_TrackClickListenerService(IGB igb) {
+		// register TierLabelManager TrackClickListeners - an extension point
+		final TierLabelManager tlm = igb.getMapView().getTierManager();
+		try {
+			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(TierLabelManager.TrackClickListener.class.getName(), null);
+			if (serviceReferences != null) {
+				for (ServiceReference serviceReference : serviceReferences) {
+					tlm.addTrackClickListener((TierLabelManager.TrackClickListener)bundleContext.getService(serviceReference));
+				}
+			}
+			bundleContext.addServiceListener(
+				new ServiceListener() {
+					@Override
+					public void serviceChanged(ServiceEvent event) {
+						ServiceReference serviceReference = event.getServiceReference();
+//						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
+//							tlm.removeTrackClickListener((TierLabelManager.TrackClickListener)bundleContext.getService(serviceReference));
+//						}
+						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
+							tlm.addTrackClickListener((TierLabelManager.TrackClickListener)bundleContext.getService(serviceReference));
+						}
+					}
+				}
+			, "(objectClass=" + TierLabelManager.TrackClickListener.class.getName() + ")");
+		}
+		catch (InvalidSyntaxException x) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading/unloading TierLabelManager.TrackClickListeners", x.getMessage());
+		}
+	}
+
 	private void addGraphOperatorService(final SeqMapView seqMapView) {
 		// register GraphOperators - an extension point
 		try {
@@ -119,7 +149,7 @@ public class Activator implements BundleActivator {
 			, "(objectClass=" + GraphOperator.class.getName() + ")");
 		}
 		catch (InvalidSyntaxException x) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading/unloading TierLabelManager.PopupListeners", x.getMessage());
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading/unloading GraphOperators", x.getMessage());
 		}
 	}
 
@@ -141,6 +171,7 @@ public class Activator implements BundleActivator {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
 		}
 		addTierLabelManager_PopupListenerService(igb);
+		addTierLabelManager_TrackClickListenerService(igb);
 		addGraphOperatorService(igb.getMapView());
 	}
 }

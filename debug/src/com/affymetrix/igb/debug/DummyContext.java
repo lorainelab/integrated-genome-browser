@@ -41,6 +41,7 @@ public class DummyContext implements BundleContext {
 	private static final String OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
 	private static final String FILETYPEHANDLER_FACTORY_SERVICE_FILTER = "(objectClass=" + FileTypeHandler.class.getName() + ")";
 	private static final String POPUP_LISTENER_FILTER = "(objectClass=" + TierLabelManager.PopupListener.class.getName() + ")";
+	private static final String TRACK_CLICK_LISTENER_FILTER = "(objectClass=" + TierLabelManager.TrackClickListener.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -143,6 +144,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (POPUP_LISTENER_FILTER.equals(filter)) {
 			return service instanceof TierLabelManager.PopupListener;
+		}
+		if (TRACK_CLICK_LISTENER_FILTER.equals(filter)) {
+			return service instanceof TierLabelManager.TrackClickListener;
 		}
 		if (filter == null) {
 			return true;

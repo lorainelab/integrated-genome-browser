@@ -41,7 +41,6 @@ public final class TierLabelManager {
 	private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
 	private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
 	private Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
-	private TierGlyph lastClickedGlyph;
 
 	/**
 	 *  Determines whether selecting a tier label of a tier that contains only
@@ -100,7 +99,6 @@ public final class TierLabelManager {
 		public void mousePressed(MouseEvent evt) {
 			if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
 				NeoMouseEvent nevt = (NeoMouseEvent) evt;
-				lastClickedGlyph = getTierGlyph(nevt);
 				List<GlyphI> selected_glyphs = nevt.getItems();
 				GlyphI topgl = null;
 				if (!selected_glyphs.isEmpty()) {
@@ -602,10 +600,6 @@ public final class TierLabelManager {
 		return tglyph;
 	}
 
-	public TierGlyph getLastClickedGlyph() {
-		return lastClickedGlyph;
-	}
-	
 	/** An interface that lets listeners modify the popup menu before it is shown. */
 	public interface PopupListener {
 

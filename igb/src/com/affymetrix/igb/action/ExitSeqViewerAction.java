@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -16,8 +17,8 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  */
 public class ExitSeqViewerAction extends AbstractAction {
 	private static final long serialVersionUID = 1l;
-	JFrame mapframe;
-	public ExitSeqViewerAction(JFrame mapframe) {
+	Frame mapframe;
+	public ExitSeqViewerAction(Frame mapframe) {
 		super(BUNDLE.getString("closeSequenceViewer"));
 		this.putValue(MNEMONIC_KEY, KeyEvent.VK_W);
 		this.mapframe=mapframe;

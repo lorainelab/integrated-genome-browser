@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -70,27 +70,24 @@ public class SequenceViewer extends JPanel
 	String errorMessage = null;
 	private int seqStart = 0;
 	private int seqEnd = 0;
-	private int cdsMax = 0;
-	private int cdsMin = 0;
-	private int counter = 0;
-	private int countIntronsBeforecdsMax = 0;
-	private int countIntronsBeforecdsMin = 0;
-	private String id = null, type = null;
-	private String chromosome = null;
+	private int cdsMax = -1;
+	private int cdsMin = -1;
 	private String title = null;
-	private int cdsMaxDNAonly = 0;
-	private int cdsMinDNAonly = 0;
-	private String[] seqArray;
-	private String[] intronArray;
 	private boolean showcDNASwitch = false;
 	private boolean colorSwitch = false;
 	private final static int EXON_COLOR = 1;
 	private final static int INTRON_COLOR = 2;
-	private boolean cdsFound = false;
+	private SeqSymmetry inverted_sym = null;
+	private boolean toggle_Reverse_Complement = false;
+	private int numberOfelements = 0;
+	private SeqSpan span;
+	List<CreateValueSet> bundle, reverse_bundle, reverse_complement, working_list;
 	Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
 	Color[] reverseColors = {Color.WHITE, Color.BLUE, Color.BLACK};
 	Color[] okayColors = {Color.black, Color.black};
 	Color[] reverted = {Color.white, Color.white};
+	private boolean cdsFound=false;
+	private String id;
 
 	public SequenceViewer() {
 		seqmapview = IGB.getSingleton().getMapView();
@@ -122,63 +119,28 @@ public class SequenceViewer extends JPanel
 		}
 	}
 
-	private void addFormattedResidues() {
-
-		//Below is done because NeoSeq has first character as white space
-		seqview.setResidues("");
-		int count = 0;
-		Color[] cols = getColorScheme();
-		for (int j = 0, k = 0, l = 0; j < (2 * seqSpans.length) - 1; j++) {
-			if ((j % 2) == 0) {
-				seqview.appendResidues(seqArray[k]);
-				seqview.addTextColorAnnotation(count, (count + seqArray[k].length()) - 1, cols[EXON_COLOR]);
-				count += seqArray[k].length();
-				k++;
-			} else {
-				seqview.appendResidues(intronArray[l]);
-				seqview.addTextColorAnnotation(count, (count + intronArray[l].length()) - 1, cols[INTRON_COLOR]);
-				count += intronArray[l].length();
-				if (cdsMax >= count) {
-					countIntronsBeforecdsMax++;
-				}
-				if (cdsMin >= count) {
-					countIntronsBeforecdsMin++;
-				}
-
-				l++;
-			}
-		}
-	}
-
-	private void areResiduesFine(SeqSymmetry residues_sym, BioSeq aseq, boolean isGenomic) {
-		this.residues_sym = residues_sym;
-		this.aseq = aseq;
-		seq = SeqUtils.selectedAllResidues(residues_sym, aseq);
-		SeqSpan span = residues_sym.getSpan(aseq);
-		if (seq != null) {
-			if (aseq.isAvailable(span.getMin(), span.getMax())) {
-				if (isGenomicRequest && residues_sym.getID() == null) {
-					this.initSequenceViewer(residues_sym);
-				} else if (isGenomicRequest && residues_sym.getID() != null) {
-					this.errorMessage = "Please select the genomic sequence";
-				} else if (!isGenomicRequest) {
-					this.initSequenceViewer(residues_sym);
-				}
-			} else {
-				this.errorMessage = "Residues are not loaded properly";
-			}
-		} else {
-			this.errorMessage = "No residues found";
-		}
-
-	}
-
 	public void startSequenceViewer() {
 
-		List<SeqSymmetry> syms = SeqMapView.glyphsToSyms(seqmapview.getSeqMap().getSelected());
+		List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
 		if (syms.size() >= 1) {
 			if (syms.size() == 1) {
-				this.residues_sym = syms.get(0);
+				residues_sym = syms.get(0);
+				if (residues_sym.getChildCount() == 0) {
+					SeqSymmetry residues_syms1 = seqmapview.glyphsToSyms(seqmapview.getParents(seqmapview.getSeqMap().getSelected())).get(0);
+					if ((residues_syms1 instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_syms1).hasCdsSpan()) {
+						SeqSpan cdsSpan = ((SupportsCdsSpan) residues_syms1).getCdsSpan();
+						cdsFound = true;
+						cdsMin = cdsSpan.getStart();
+						cdsMax = cdsSpan.getEnd();
+					}
+				} else {
+					if ((residues_sym instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_sym).hasCdsSpan()) {
+						SeqSpan cdsSpan = ((SupportsCdsSpan) residues_sym).getCdsSpan();
+						cdsFound = true;
+						cdsMin = cdsSpan.getStart();
+						cdsMax = cdsSpan.getEnd();
+					}
+				}
 				this.isGenomicRequest = false;
 			} else {
 				if (syms.size() > 1 || seqmapview.getSeqSymmetry() != null) {
@@ -186,7 +148,7 @@ public class SequenceViewer extends JPanel
 				}
 			}
 		} else {
-			this.residues_sym = seqmapview.getSeqSymmetry();
+			residues_sym = seqmapview.getSeqSymmetry();
 			this.isGenomicRequest = true;
 		}
 
@@ -209,14 +171,12 @@ public class SequenceViewer extends JPanel
 							}
 						});
 					}
-					areResiduesFine(residues_sym, aseq, isGenomicRequest);
 
-
-
-				} else {
-					areResiduesFine(residues_sym, aseq, isGenomicRequest);
 				}
 			}
+			mapframe = new JFrame();
+			System.setProperty("apple.laf.useScreenMenuBar", "false");
+			getGoing(residues_sym);
 		} catch (Exception e) {
 			this.errorMessage = "Error loading residues";
 		} finally {
@@ -230,157 +190,183 @@ public class SequenceViewer extends JPanel
 	private void getTitle() {
 		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 		version = ag.getID();
-		if(isGenomicRequest){
-			title = residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1) + " : " + version + " : " + this.aseq ;
+		if (isGenomicRequest) {
+			title = residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1) + " : " + version + " : " + this.aseq;
 //			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());
 			showcDNAButton.setEnabled(false);
+		} else {
+			if (residues_sym.getID() != null) {
+				id = residues_sym.getID();
+			}
+			if (id == null) {
+				title = version + " : " + this.aseq;
+			} else {
+				title = id + " : " + version + " : " + this.aseq;
+			}
+//			this.calculateCdsStartEnd();
+			//title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
 		}
-		else{
-		if (residues_sym.getID() != null) {
-			id = residues_sym.getID();
-			Map<String, Object> sym = ((SymWithProps) residues_sym).getProperties();
-			if (sym != null) {
-				Iterator<String> iterator = sym.keySet().iterator();
 
-				while (iterator.hasNext()) {
-					String key = iterator.next().toString();
-					String value = sym.get(key).toString();
-					if (key.equals("id")) {
-						id = value;
-					} else if (key.equals("forward")) {
-//					String forward = value;
-//					if (forward.equals("true")) {
-//						direction = "+";
-//					}
-					} else if (key.equals("type")) {
-						type = value;
-						if (type == null) {
-							type = "";
+
+	}
+
+	private void createAllLists() {
+		Iterator it = bundle.listIterator();
+		if (it.hasNext()) {
+			CreateValueSet cv = (CreateValueSet) it.next();
+			int start = cv.getSpan().getStart();
+			int end = cv.getSpan().getEnd();
+//			if ((start > end) && it.hasNext() && (start < (((CreateValueSet) it.next()).getSpan().getStart()))) { 
+			//above condition gives some kind of exception, not sure why? so i have to write below two separate if conditions
+			//this handles for the positive and negative strand
+			if (start > end) {
+				if (it.hasNext()) {//we need to jump an item in list here because we need to check with the introns only
+					it.next();
+					if (it.hasNext()) {
+						cv = (CreateValueSet) it.next();
+						if (start < cv.getSpan().getStart()) {
+							reverse_bundle = new ArrayList<CreateValueSet>(bundle);
+							Collections.reverse(reverse_bundle);
+							working_list = new ArrayList<CreateValueSet>(reverse_bundle);
+						} else {
+							working_list = new ArrayList<CreateValueSet>(bundle);
 						}
-					} else if (key.equals("seq id")) {
-						chromosome = value;
-						if (chromosome == null) {
-							chromosome = "";
-						}
-					} else if (key.equals("cds max")) {
-						cdsMax = Integer.parseInt(value);
-					} else if (key.equals("cds min")) {
-						cdsFound = true;
-						cdsMin = Integer.parseInt(value);
 					}
 				}
+				else
+				working_list = new ArrayList<CreateValueSet>(bundle);
+			} else {
+				working_list = new ArrayList<CreateValueSet>(bundle);
 			}
-
-			}
-		if(id == null){
-			title = version + " : " + this.aseq;
+			reverse_complement = new ArrayList<CreateValueSet>(working_list);
+			Collections.reverse(reverse_complement);
 		}
-		else{
-			title = id + " : " + version + " : " + this.aseq;
-		}
-				this.calculateCdsStartEnd();
-				//title = version + " : " + type + " : " + chromosome + " : " + id + " : " + direction;
-		}
-
-
 	}
 
-	private void calculateCdsStartEnd() {
-		int i = 0;
-		if (seqSpans[0].getStart() < seqSpans[0].getEnd()) {
-			cdsMin = cdsMin - seqSpans[0].getStart();
-			cdsMax = cdsMax - seqSpans[0].getStart() - 3;
+	public class CreateValueSet {
+
+		public SeqSpan span;
+		public SequenceViewerItems si;
+
+		public CreateValueSet(SeqSpan span, SequenceViewerItems si) {
+			this.span = span;
+			this.si = si;
+		};
+
+		public SeqSpan getSpan() {
+			return this.span;
+		}
+
+		public SequenceViewerItems getSi() {
+			return this.si;
+		}
+	}
+
+	private void createItemListForSequenceviewer(SeqSymmetry residues_sym, BioSeq aseq) {
+		bundle = new ArrayList<CreateValueSet>();
+		if (isGenomicRequest || (residues_sym.getChildCount() == 0)) {
+			numberOfelements = 1;
 		} else {
-			int temp = cdsMin;
-			cdsMin = Math.abs(cdsMax - seqSpans[seqSpans.length - 1].getStart());
-			cdsMax = Math.abs(temp - seqSpans[seqSpans.length - 1].getStart()) - 3;
+			numberOfelements = (2 * residues_sym.getChildCount()) - 1;
 		}
-	}
-
-	private void calculateNewCdsStartEnd() {
-		counter = 0;
-		while (countIntronsBeforecdsMax > 0) {
-			counter += intronArray[countIntronsBeforecdsMax - 1].length();
-			countIntronsBeforecdsMax--;
-		}
-		cdsMaxDNAonly = cdsMax - counter;
-		counter = 0;
-		while (countIntronsBeforecdsMin > 0) {
-			counter += intronArray[countIntronsBeforecdsMin - 1].length();
-			countIntronsBeforecdsMin--;
-		}
-		cdsMinDNAonly = cdsMin - counter;
-	}
-
-	private void addCdsStartEnd(SeqSymmetry residues_sym) throws NumberFormatException, HeadlessException {
-		if (showcDNASwitch) {
-			if (seqview.getResidues().length() > cdsMinDNAonly && cdsMinDNAonly >= 0 && cdsFound) {
-				seqview.addOutlineAnnotation(cdsMinDNAonly, cdsMinDNAonly + 2, Color.green);
-			}
-			if (seqview.getResidues().length() > cdsMaxDNAonly && cdsMaxDNAonly >= 0 && cdsFound) {
-				seqview.addOutlineAnnotation(cdsMaxDNAonly, cdsMaxDNAonly + 2, Color.red);
-			}
-		} else {
-			if (seqview.getResidues().length() > cdsMin && cdsMin >= 0 && cdsFound) {
-				seqview.addOutlineAnnotation(cdsMin, cdsMin + 2, Color.green);
-			}
-			if (seqview.getResidues().length() > cdsMax && cdsMax >= 0 && cdsFound) {
-				seqview.addOutlineAnnotation(cdsMax, cdsMax + 2, Color.red);
-			}
-		}
-	}
-
-	private void convertSpansForSequenceViewer(SeqSpan[] spans, String seq) {
-		int i = 1;
-		if (spans[0].getStart() < spans[0].getEnd()) {
-			seqArray[0] = seq.substring(0, spans[0].getLength());
-			seqStart = spans[0].getMin();
-			seqEnd = spans[spans.length - 1].getMax();
-		} else {
-			seqArray[0] = seq.substring(0, spans[spans.length - 1].getLength());
-			seqStart = spans[spans.length - 1].getMin();
-			seqEnd = spans[0].getMax();
-		}
-		if (spans.length > 1) {
-			if ((spans[0].getStart() > spans[0].getEnd()) && (spans[0].getStart() < spans[1].getStart())) {
-				SeqSpan[] spans_duplicate = new SeqSpan[spans.length];
-				for (int k = 0; k < spans.length; k++) {
-					spans_duplicate[spans.length - 1 - k] = spans[k];
+		for (int i = 0, j = 0; i < numberOfelements; i++) {
+			SequenceViewerItems sequenceViewerItems = new SequenceViewerItems();
+			if (i % 2 == 0) {
+				if (numberOfelements == 1) {
+					span = residues_sym.getSpan(0);
+					sequenceViewerItems.setResidues(SeqUtils.selectedAllResidues(residues_sym, aseq));
+				} else {
+					sequenceViewerItems.setResidues(SeqUtils.getResidues(residues_sym.getChild(j), aseq));
+					span = residues_sym.getChild(j).getSpan(aseq);
+					sequenceViewerItems.setType(SequenceViewerItems.TYPE.EXON.ordinal());
+					j++;
 				}
-				spans = spans_duplicate;
+			} else {
+				sequenceViewerItems.setResidues(SeqUtils.getResidues(inverted_sym.getChild(j), aseq));
+				span = inverted_sym.getChild(j).getSpan(aseq);
+				sequenceViewerItems.setType(SequenceViewerItems.TYPE.INTRON.ordinal());
 			}
-			intronArray[0] = seq.substring(spans[0].getLength(), Math.abs(spans[i].getStart() - spans[0].getStart()));
+			if (cdsMin >= 0 && cdsMax >= 0) {
+				if ((cdsMin >= span.getStart() && cdsMin <= span.getEnd()) || (cdsMin <= span.getStart() && cdsMin >= span.getEnd())) {
+					sequenceViewerItems.setCdsStart(Math.abs(cdsMin - span.getStart()));
+					sequenceViewerItems.setReverseCdsStart(Math.abs(span.getEnd() - cdsMin));
+					sequenceViewerItems.setIsCDS(true);
+				}
+				if ((cdsMax >= span.getStart() && cdsMax <= span.getEnd()) || (cdsMax <= span.getStart() && cdsMax >= span.getEnd())) {
+					sequenceViewerItems.setCdsEnd(Math.abs(cdsMax - span.getStart()));
+					sequenceViewerItems.setReverseCdsEnd(Math.abs(span.getEnd() - cdsMax));
+					sequenceViewerItems.setIsCDS(true);
+				}
+
+			}
+			sequenceViewerItems.setReverseResidues((DNAUtils.reverseComplement(sequenceViewerItems.getResidues())));
+			bundle.add(new CreateValueSet(span, sequenceViewerItems));
 		}
-		while (i < spans.length) {
+	}
 
-			seqArray[i] = seq.substring(Math.abs(spans[i].getStart() - spans[0].getStart()), Math.abs(spans[i].getEnd() - spans[0].getStart()));
-			if (i < spans.length - 1) {
-				intronArray[i] = seq.substring(Math.abs(spans[i].getEnd() - spans[0].getStart()), Math.abs(spans[i + 1].getStart() - spans[0].getStart()));
-
+	private void addFormattedResidues() {
+		Color[] cols = getColorScheme();
+		int i = 0;
+		int start = 0, end = 0;
+		Iterator it_working = null;
+		seqview.setResidues("");
+		if (toggle_Reverse_Complement) {
+			it_working = reverse_complement.listIterator();
+		} else {
+			it_working = working_list.listIterator();
+		}
+		while (it_working.hasNext()) {
+			CreateValueSet cv = (CreateValueSet) it_working.next();
+			String residues = cv.getSi().getResidues();
+			String reverse_residues = cv.getSi().getReverseResidues();
+			int cdsStart = cv.getSi().getCdsStart();
+			int cdsEnd = cv.getSi().getCdsEnd();
+			int revCdsStart = cv.getSi().getReverseCdsStart();
+			int revCdsEnd = cv.getSi().getReverseCdsEnd();
+			if (toggle_Reverse_Complement) {
+				seqview.appendResidues(reverse_residues);
+			} else {
+				seqview.appendResidues(residues);
 			}
+			end += cv.getSi().getResidues().length();
+			if (cv.getSi().getType() == SequenceViewerItems.TYPE.EXON.ordinal()) {
+				seqview.addTextColorAnnotation(start, end - 1, cols[EXON_COLOR]);
+			} else {
+				seqview.addTextColorAnnotation(start, end - 1, cols[INTRON_COLOR]);
+			}
+			if (cv.getSi().getCdsStart() >= 0) {
+				if (toggle_Reverse_Complement) {
+					seqview.addOutlineAnnotation(start + revCdsStart - 3, start + revCdsStart - 1, Color.red);
+				} else {
+					seqview.addOutlineAnnotation(start + cdsStart, start + cdsStart + 2, Color.green);
+				}
+			}
+
+			if (cv.getSi().getCdsEnd() >= 0) {
+				if (toggle_Reverse_Complement) {
+					seqview.addOutlineAnnotation(start + revCdsEnd, start + revCdsEnd + 2, Color.green);
+				} else {
+					seqview.addOutlineAnnotation(start + cdsEnd - 3, start + cdsEnd - 1, Color.red);
+				}
+			}
+			start += cv.getSi().getResidues().length();
 			i++;
+			if(showcDNASwitch){
+				if(it_working.hasNext())
+					it_working.next();
+			}
 		}
-
-		i = 0;
-		return;
 	}
 
 	protected void getGoing(SeqSymmetry residues_sym) {
 		this.getNeoSeqInstance();
-		generateSpansArray(residues_sym);
-		if (null == seqSpans) {
-			seqview.setResidues(seq);
-			seqview.setResidueFontColor(getColorScheme()[EXON_COLOR]);
-			customFormatting(residues_sym);
-		} else {
-			seqArray = new String[seqSpans.length];
-			intronArray = new String[seqSpans.length - 1];
-			convertSpansForSequenceViewer(seqSpans, seq);
-			customFormatting(residues_sym);
-			addFormattedResidues();
-			this.addCdsStartEnd(residues_sym);
-		}
-		this.calculateNewCdsStartEnd();
+		inverted_sym = SeqUtils.inverse(residues_sym, aseq);
+
+		createItemListForSequenceviewer(residues_sym, aseq);
+		customFormatting(residues_sym);
+		this.createAllLists();
+		addFormattedResidues();
+
 		mapframe.add("Center", seqview);
 		mapframe.setVisible(true);
 		mapframe.addWindowListener(new WindowAdapter() {
@@ -425,23 +411,6 @@ public class SequenceViewer extends JPanel
 		});
 	}
 
-	private void generateSpansArray(SeqSymmetry residues_sym) {
-		if (residues_sym != null) {
-			int numberOfChild = residues_sym.getChildCount();
-			if (numberOfChild > 0) {
-				int i = 0;
-				seqSpans = new SeqSpan[numberOfChild];
-				while (i < numberOfChild) {
-					seqSpans[i] = residues_sym.getChild(i).getSpan(aseq);
-					i++;
-				}
-			} else {
-				seqSpans = new SeqSpan[1];
-				seqSpans[0] = residues_sym.getSpan(0);
-			}
-		}
-	}
-
 	public static String getClipboard() {
 		Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 		try {
@@ -474,7 +443,7 @@ public class SequenceViewer extends JPanel
 						r = seqview.getResidues();
 					}
 					if (!isGenomicRequest) {
-						firstLine = title + " : " + seqStart + " - " + seqEnd;
+						firstLine = title;
 					}
 					fw.write(">" + firstLine);
 					fw.write('\n');
@@ -498,6 +467,7 @@ public class SequenceViewer extends JPanel
 	JToggleButton showcDNAButton = new JToggleButton("Show cDNA");
 	JToggleButton reverseColorsButton = new JToggleButton("Change color scheme");
 	JCheckBoxMenuItem compCBMenuItem = new JCheckBoxMenuItem("Complement");
+	JCheckBoxMenuItem revCompCBMenuItem = new JCheckBoxMenuItem("Reverse Complement");
 	JCheckBoxMenuItem transOneCBMenuItem = new JCheckBoxMenuItem(" +1 Translation");
 	JCheckBoxMenuItem transTwoCBMenuItem = new JCheckBoxMenuItem(" +2 Translation");
 	JCheckBoxMenuItem transThreeCBMenuItem = new JCheckBoxMenuItem(" +3 Translation");
@@ -521,6 +491,7 @@ public class SequenceViewer extends JPanel
 		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExitSeqViewerAction(this.mapframe)));
 		MenuUtil.addToMenu(editMenu, new JMenuItem(copyAction));
 		editMenu.addMenuListener(this);
+		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);
 		showMenu.add(transOneCBMenuItem);
 		showMenu.add(transTwoCBMenuItem);
@@ -546,6 +517,7 @@ public class SequenceViewer extends JPanel
 		}
 		colorScheme1.addItemListener(this);
 		colorScheme2.addItemListener(this);
+		revCompCBMenuItem.addItemListener(this);
 		compCBMenuItem.addItemListener(this);
 		transOneCBMenuItem.addItemListener(this);
 		transTwoCBMenuItem.addItemListener(this);
@@ -596,6 +568,16 @@ public class SequenceViewer extends JPanel
 //			seqview.setRevShow(NeoSeq.COMPLEMENT, showRevComp);
 //			seqview.setRevShow(NeoSeq.NUCLEOTIDES, !showRevComp);
 			seqview.updateWidget();
+		} else if (theItem == revCompCBMenuItem) {
+			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
+			if (mi.getState()) {
+				this.toggle_Reverse_Complement = true;
+			} else {
+				this.toggle_Reverse_Complement = false;
+			}
+			seqview.clearWidget();
+			this.addFormattedResidues();
+			seqview.updateWidget();
 		} else if (theItem == transOneCBMenuItem) {
 			JCheckBoxMenuItem mi = (JCheckBoxMenuItem) theItem;
 			seqview.setShow(NeoSeq.FRAME_ONE, mi.getState());
@@ -637,17 +619,7 @@ public class SequenceViewer extends JPanel
 
 	private void colorSwitching() {
 		seqview.clearWidget();
-		if (!showcDNASwitch) {
 			addFormattedResidues();
-		} else {
-			String seq1 = null;
-			seq1 = SeqUtils.determineSelectedResidues(this.residues_sym, this.aseq);
-			seqview.setResidues(seq1);
-			seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
-		}
-		if (!isGenomicRequest) {
-			this.addCdsStartEnd(residues_sym);
-		}
 	}
 
 	/** WindowListener Implementation */
@@ -681,41 +653,34 @@ public class SequenceViewer extends JPanel
 
 	public void actionPerformed(ActionEvent e) {
 		Object evtSource = e.getSource();
-		String seq1 = null;
-		seq1 = SeqUtils.determineSelectedResidues(this.residues_sym, this.aseq);
 		if (evtSource == showcDNAButton) {
 			String text = e.getActionCommand();
 			if (text.equals("Show cDNA")) {
-				showcDNASwitch = true;
-				seqview.clearWidget();
-				seqview.setResidues(seq1);
-				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
-				this.addCdsStartEnd(residues_sym);
-				seqview.updateWidget();
+				showcDNASwitch = true;	
 				showcDNAButton.setText("Show genomic");
 			} else {
 				showcDNASwitch = false;
-				seqview.clearWidget();
-				addFormattedResidues();
-				this.addCdsStartEnd(residues_sym);
 				showcDNAButton.setText("Show cDNA");
 			}
-		} else if (evtSource == reverseColorsButton) {
-			String text = e.getActionCommand();
-			if (text.equals("Change color scheme")) {
-				reverseColorsButton.setText("Revert color scheme");
-				colorSwitch = true;
-			} else {
-				reverseColorsButton.setText("Change color scheme");
-				colorSwitch = false;
-			}
 			seqview.clearWidget();
-			if (!showcDNASwitch) {
-				addFormattedResidues();
-			} else {
-				seqview.setResidues(seq1);
-				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
-			}
+			addFormattedResidues();
+			seqview.updateWidget();
+//		} else if (evtSource == reverseColorsButton) {
+//			String text = e.getActionCommand();
+//			if (text.equals("Change color scheme")) {
+//				reverseColorsButton.setText("Revert color scheme");
+//				colorSwitch = true;
+//			} else {
+//				reverseColorsButton.setText("Change color scheme");
+//				colorSwitch = false;
+//			}
+//			seqview.clearWidget();
+//			if (!showcDNASwitch) {
+//				addFormattedResidues();
+//			} else {
+//				seqview.setResidues(seq1);
+//				seqview.addTextColorAnnotation(0, seq1.length(), getColorScheme()[EXON_COLOR]);
+//			}
 		}
 	}
 

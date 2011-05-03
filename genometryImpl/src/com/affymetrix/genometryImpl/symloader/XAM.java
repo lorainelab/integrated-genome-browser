@@ -10,7 +10,6 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
-import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
@@ -70,7 +68,8 @@ public abstract class XAM extends SymLoader {
 	protected boolean initTheSeqs() {
 		try {
 			header = reader.getFileHeader();
-			if (header == null || header.getSequenceDictionary() == null || header.getSequenceDictionary().getSequences() == null) {
+			if (header == null || header.getSequenceDictionary() == null || 
+					header.getSequenceDictionary().getSequences() == null || header.getSequenceDictionary().getSequences().isEmpty()) {
 				Logger.getLogger(BAM.class.getName()).log(Level.WARNING, "Couldn't find sequences in file");
 				return false;
 			}

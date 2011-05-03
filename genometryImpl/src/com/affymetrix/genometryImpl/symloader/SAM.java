@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.File;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.samtools.SAMException;
@@ -73,6 +74,7 @@ public class SAM extends XAM{
 							if(!(checkRange(sr.getAlignmentStart(),maximum,min,max))){ 
 								if(max > maximum) 
 									break;
+								continue;
 							}
 							
 							if (skipUnmapped && sr.getReadUnmappedFlag()) {

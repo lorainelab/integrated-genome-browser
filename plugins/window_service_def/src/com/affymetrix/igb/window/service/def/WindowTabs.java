@@ -112,9 +112,6 @@ public class WindowTabs implements TabHolder {
 	}
 
 	@Override
-	public IGBTabPanel getSelectedIGBTabPanel() { return null; }
-
-	@Override
 	public void restoreState() {
 		for (final IGBTabPanel tabPanel : addedPlugins) {
 			Runnable r = new Runnable() {

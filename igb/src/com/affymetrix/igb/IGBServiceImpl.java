@@ -326,4 +326,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public IGBTabPanel getView(String viewName) {
 		return ((IGB)IGB.getSingleton()).getView(viewName);
 	}
+
+	@Override
+	public void selectTab(IGBTabPanel panel) {
+		((IGB)IGB.getSingleton()).getWindowService().selectTab(panel);
+	}
 }

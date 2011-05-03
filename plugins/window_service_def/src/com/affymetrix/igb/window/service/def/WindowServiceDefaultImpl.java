@@ -156,7 +156,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							setTabState(tabHolders.get(tabState).getSelectedIGBTabPanel(), TabState.COMPONENT_STATE_WINDOW);
+							setTabState(((JTabbedTrayPane)tabHolders.get(tabState)).getSelectedIGBTabPanel(), TabState.COMPONENT_STATE_WINDOW);
 						}
 					}
 				);
@@ -376,6 +376,18 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 		for (JMenuItem menuItem : new JMenuItem[]{move_tab_to_window_items.get(trayPane.getTabState()), move_tabbed_panel_to_window_items.get(trayPane.getTabState())}) {
 			if (menuItem != null) {
 				menuItem.setEnabled(trayState != TrayState.HIDDEN && trayState != TrayState.WINDOW);
+			}
+		}
+	}
+
+	@Override
+	public void selectTab(IGBTabPanel panel) {
+		if (panel == null) {
+			return;
+		}
+		for (TabHolder tabHolder : tabHolders.values()) {
+			if (tabHolder.getPlugins().contains(panel)) {
+				((JTabbedTrayPane)tabHolder).selectTab(panel);
 			}
 		}
 	}

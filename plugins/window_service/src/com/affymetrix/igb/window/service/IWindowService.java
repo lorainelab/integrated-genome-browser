@@ -60,4 +60,9 @@ public interface IWindowService {
 	 * @param tabState the new state
 	 */
 	public void setTabStateAndMenu(IGBTabPanel panel, TabState tabState);
+	/**
+	 * select the given tab in the tab panel, bringing it to the front
+	 * @param panel the IGBTabPanel
+	 */
+	public void selectTab(IGBTabPanel panel);
 }

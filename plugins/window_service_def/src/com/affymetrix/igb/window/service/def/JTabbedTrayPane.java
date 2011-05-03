@@ -390,7 +390,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		return plugins;
 	}
 
-	@Override
+	public void selectTab(IGBTabPanel panel) {
+		tab_pane.setSelectedComponent(panel);
+	}
+
 	public IGBTabPanel getSelectedIGBTabPanel() {
 		return (IGBTabPanel)tab_pane.getSelectedComponent();
 	}

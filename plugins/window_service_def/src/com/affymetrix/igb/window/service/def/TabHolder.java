@@ -24,11 +24,6 @@ public interface TabHolder {
 	 */
 	public void removeTab(final IGBTabPanel plugin);
 	/**
-	 * get the selected tab pane (only appropriate for trays)
-	 * @return the tab pane that is currently selected
-	 */
-	public IGBTabPanel getSelectedIGBTabPanel();
-	/**
 	 * restore the state from the saved Preferences
 	 */
 	public void restoreState();

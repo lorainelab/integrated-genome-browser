@@ -232,4 +232,9 @@ public interface IGBService {
 	 * @return the IGBTabPanel with the given class name
 	 */
 	public IGBTabPanel getView(String className);
+	/**
+	 * select the given tab in the tab panel, bringing it to the front
+	 * @param panel the IGBTabPanel
+	 */
+	public void selectTab(IGBTabPanel panel);
 }

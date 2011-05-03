@@ -8,6 +8,7 @@ package com.affymetrix.genometryImpl.symloader;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenbankSym;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -17,6 +18,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -209,21 +211,152 @@ public final class Genbank extends SymLoader {
 		if (this.isInitialized) {
 			return;
 		}
-		super.init();
-
-		// TODO: Hack to get chromosomes, which is currently done by parsing the entire file.
-		List<GenbankSym> results = parse(null, Integer.MIN_VALUE, Integer.MAX_VALUE);
-		for (GenbankSym sym : results) {
-			BioSeq seq = sym.getBioSeq();
-			if (sym.getMax() > seq.getMax()) {
-				seq.setLength(sym.getMax());
-			}
-			if (!chrList.containsKey(seq)) {
-				chrList.put(seq, new File(uri));	// Doesn't matter if the file exists or not.
-			}
+	
+		if(buildIndex()){
+			super.init();
 		}
 	}
 
+	@Override
+	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
+		BufferedInputStream bis = null;
+		BufferedReader br = null;
+		try {
+			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+			br = new BufferedReader(new InputStreamReader(bis));
+			if(!getCurrentData(br))
+				return false;
+
+			readFeature(br,chrLength);
+			
+			createResults(chrLength, chrFiles);
+		} catch (Exception ex) {
+			Logger.getLogger(Genbank.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(br);
+		}
+		return false;
+	}
+	
+	@Override
+	protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
+			String seq_name = bioseq.getKey();
+			BioSeq seq = group.getSeq(seq_name);
+			if ((seq == null) && (seq_name.indexOf(';') > -1)) {
+				// if no seq found, try and split up seq_name by ";", in case it is in format
+				//    "seqid;genome_version"
+				String seqid = seq_name.substring(0, seq_name.indexOf(';'));
+				String version = seq_name.substring(seq_name.indexOf(';') + 1);
+				//            System.out.println("    seq = " + seqid + ", version = " + version);
+				if ((gmodel.getSeqGroup(version) == group) || group.getID().equals(version)) {
+					// for format [chrom_name];[genome_version]
+					seq = group.getSeq(seqid);
+					if (seq != null) {
+						seq_name = seqid;
+					}
+				} else if ((gmodel.getSeqGroup(seqid) == group) || group.getID().equals(seqid)) {
+					// for format [genome_version];[chrom_name]
+					String temp = seqid;
+					seqid = version;
+					version = temp;
+					seq = group.getSeq(seqid);
+					if (seq != null) {
+						seq_name = seqid;
+					}
+				}
+			}
+			if (seq == null) {
+				//System.out.println("seq not recognized, creating new seq: " + seq_name);
+				seq = group.addSeq(seq_name, bioseq.getValue());
+			}
+			
+			chrList.put(seq, chrFiles.get(seq_name));
+		}
+	}
+	
+	private void readFeature(BufferedReader input, Map<String, Integer> chrLength) {
+		boolean done = false;
+	
+		while (current_line != null && !done) {
+			getCurrentInput(input);
+			switch (current_line_type) {
+				case FEATURE_HEADER:
+				case FEATURE:
+					readSingleFeature(input, chrLength);
+			}
+		}
+	}
+	
+	private void readSingleFeature(BufferedReader input, Map<String, Integer> chrLength) {
+		
+		BioSeq seq = null;
+		// first get past the header
+		while (current_line != null && current_line_type != FEATURE) {
+			getCurrentInput(input);
+		}
+		
+		while (current_line != null && current_line_type == FEATURE) {
+			
+			GenbankFeature current_feature = new GenbankFeature();
+			String key = current_feature.getFeatureType(current_line);
+			getCurrentInput(input);
+			
+			while (current_line != null
+					&& current_line_type == FEATURE
+					&& current_feature.addToFeature(current_line)) {
+				getCurrentInput(input);
+			}
+			
+			if (key == null) {
+				Logger.getLogger(Genbank.class.getName()).log(
+						Level.SEVERE, "GenBank read error: no key in line {0}", current_line);
+				continue;
+			}
+			if (key.equals("source")) {
+				Map<String, List<String>> tagValues = current_feature.getTagValues();
+				boolean chrFound = false;
+				for (String tag : tagValues.keySet()) {
+					String value = current_feature.getValue(tag);
+					if (value != null && !value.equals("")) {
+						if (tag.equals("chromosome")) {
+							seq = this.group.getSeq(value);
+							if (seq == null) {
+								seq = new BioSeq(value,"",0);
+								chrLength.put(value, 0);
+							}
+							chrFound = true;
+						} else if (tag.equals("organism")) {
+							//   seq.setOrganism (value);
+						}
+					}
+				}
+				if(!chrFound){
+					Logger.getLogger(Genbank.class.getName()).log(Level.WARNING, "No chromosome name found in sources");
+					seq = new BioSeq(featureName, "", 0);
+					chrLength.put(featureName, 0);
+				}
+			}else if (key.equals("gene")
+					|| // Some GenBank records seem to use locus_tag instead of gene
+					// for the gene name/id
+					key.equals("locus_tag")) {
+				//GenbankSym annotation = buildAnnotation(seq, current_locus, current_feature, id2sym, Integer.MIN_VALUE, Integer.MAX_VALUE);
+				List<int[]> locs = current_feature.getLocation();
+				if(locs == null || locs.isEmpty()){
+					continue;
+				}
+				int loc1 = locs.get(0)[1];
+				if(loc1 > seq.getLength()){
+					seq.setLength(loc1);
+					chrLength.put(seq.getID(), seq.getLength());
+				}
+				
+			}
+		}
+	}
+		
 	@Override
 	public List<BioSeq> getChromosomeList(){
 		init();
@@ -269,11 +402,20 @@ public final class Genbank extends SymLoader {
 	}
 
 	public List<GenbankSym> parse(BufferedReader input, BioSeq seq, int min, int max) {
-		line_number = 0;
-		current_line_type = -1;
-		
 		Map<String,GenbankSym> id2sym = new HashMap<String,GenbankSym>(1000);
 
+		if (!getCurrentData(input)) 
+			return Collections.<GenbankSym>emptyList();
+		
+		//if (beginEntry() != null) {
+		readFeature(input, id2sym, seq, min, max);
+		//}
+		return new ArrayList<GenbankSym>(id2sym.values());
+	}
+
+	private boolean getCurrentData(BufferedReader input) {
+		line_number = 0;
+		current_line_type = -1;
 		String first_line = null;
 		getCurrentInput(input);
 		while (current_line != null && first_line == null) {
@@ -291,19 +433,14 @@ public final class Genbank extends SymLoader {
 				getCurrentInput(input);
 			}
 		}
-
 		if (first_line == null) {
 			Logger.getLogger(Genbank.class.getName()).log(
 					Level.SEVERE, "GenBank read failed");
-			return Collections.<GenbankSym>emptyList();
+			return false;
 		}
-		
-		//if (beginEntry() != null) {
-		readFeature(input, id2sym, seq, min, max);
-		//}
-		return new ArrayList<GenbankSym>(id2sym.values());
+		return true;
 	}
-
+	
 	// loop until there are no more lines in the file or we hit the start of
 	// the next feature or the start of the next line group
 	private void readFeature(BufferedReader input, Map<String,GenbankSym> id2sym, BioSeq seq, int min, int max) {
@@ -499,7 +636,7 @@ public final class Genbank extends SymLoader {
 		}
 		return "";
 	}
-
+	
 	private void readSingleFeature(BufferedReader input, Map<String,GenbankSym> id2sym, BioSeq seq, int min, int max) {
 		// first get past the header
 		while (current_line != null && current_line_type != FEATURE) {
@@ -524,22 +661,22 @@ public final class Genbank extends SymLoader {
 				continue;
 			}
 			if (key.equals("source")) {
-				Map<String, List<String>> tagValues = current_feature.getTagValues();
-				for (String tag : tagValues.keySet()) {
-					String value = current_feature.getValue(tag);
-					if (value != null && !value.equals("")) {
-						if (tag.equals("chromosome")) {
-							BioSeq newSeq = this.group.getSeq(value);
-							if (newSeq == null) {
-								newSeq = new BioSeq(value, "", 1000);
-								this.group.addSeq(newSeq);
-							}
-							currentSeq = newSeq;
-						} else if (tag.equals("organism")) {
-							//   seq.setOrganism (value);
-						}
-					}
-				}
+//				Map<String, List<String>> tagValues = current_feature.getTagValues();
+//				for (String tag : tagValues.keySet()) {
+//					String value = current_feature.getValue(tag);
+//					if (value != null && !value.equals("")) {
+//						if (tag.equals("chromosome")) {
+//							BioSeq newSeq = this.group.getSeq(value);
+//							if (newSeq == null) {
+//								newSeq = new BioSeq(value, "", 1000);
+//								this.group.addSeq(newSeq);
+//							}
+//							currentSeq = newSeq;
+//						} else if (tag.equals("organism")) {
+//							//   seq.setOrganism (value);
+//						}
+//					}
+//				}
 				continue;
 			}
 

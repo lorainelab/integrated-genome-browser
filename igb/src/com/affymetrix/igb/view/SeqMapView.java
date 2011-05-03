@@ -1223,7 +1223,7 @@ public class SeqMapView extends JPanel
 	 *  region, if any.  Use getSelectedRegion() for that.
 	 *  @return a List of SeqSymmetry objects, possibly empty.
 	 */
-	private List<SeqSymmetry> getSelectedSyms() {
+	protected List<SeqSymmetry> getSelectedSyms() {
 		return glyphsToSyms(seqmap.getSelected());
 	}
 

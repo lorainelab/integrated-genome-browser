@@ -44,7 +44,7 @@ public abstract class XAM extends SymLoader {
 	protected static final boolean DEBUG = false;
 	protected boolean skipUnmapped = true;
 	protected SAMFileReader reader;
-    private SAMFileHeader header;
+    protected SAMFileHeader header;
 	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
 	
 	public static final String CIGARPROP = "cigar";

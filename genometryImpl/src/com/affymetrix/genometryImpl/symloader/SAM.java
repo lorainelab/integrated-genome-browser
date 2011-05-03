@@ -9,7 +9,10 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.samtools.SAMException;
+import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.SAMFormatException;
@@ -49,6 +52,19 @@ public class SAM extends XAM{
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	@Override
+	protected boolean initTheSeqs(){
+		boolean ret = super.initTheSeqs();
+		
+		if(ret){
+			if(header.getSortOrder() != SAMFileHeader.SortOrder.coordinate){
+				Logger.getLogger(SAM.class.getName()).log(Level.SEVERE,"Sam file must be sorted by coordinate.");
+				return false;
+			}
+		}
+		return ret;
 	}
 	
 	@Override

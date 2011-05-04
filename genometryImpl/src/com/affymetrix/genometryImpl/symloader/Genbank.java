@@ -242,12 +242,15 @@ public final class Genbank extends SymLoader {
 		try {
 			bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
 			br = new BufferedReader(new InputStreamReader(bis));
-			if(!getCurrentData(br))
+			String first_line = getCurrentData(br);
+			if(first_line == null)
 				return false;
-
-			readFeature(br,chrLength);
 			
-			createResults(chrLength, chrFiles);
+			String[] vals = first_line.split("\\s+");
+			
+			readFeature(br,vals[1],chrLength);
+					
+			return true;
 		} catch (Exception ex) {
 			Logger.getLogger(Genbank.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -269,7 +272,7 @@ public final class Genbank extends SymLoader {
 		}
 	}
 	
-	private void readFeature(BufferedReader input, Map<String, Integer> chrLength) {
+	private void readFeature(BufferedReader input, String seqName, Map<String, Integer> chrLength) {
 		boolean done = false;
 	
 		while (current_line != null && !done) {
@@ -277,12 +280,12 @@ public final class Genbank extends SymLoader {
 			switch (current_line_type) {
 				case FEATURE_HEADER:
 				case FEATURE:
-					readSingleFeature(input, chrLength);
+					readSingleFeature(input, seqName, chrLength);
 			}
 		}
 	}
 	
-	private void readSingleFeature(BufferedReader input, Map<String, Integer> chrLength) {
+	private void readSingleFeature(BufferedReader input, String seqName, Map<String, Integer> chrLength) {
 		
 		BioSeq seq = null;
 		// first get past the header
@@ -327,8 +330,8 @@ public final class Genbank extends SymLoader {
 				}
 				if(!chrFound){
 					Logger.getLogger(Genbank.class.getName()).log(Level.WARNING, "No chromosome name found in sources");
-					seq = new BioSeq(featureName, "", 0);
-					chrLength.put(featureName, 0);
+					seq = new BioSeq(seqName, "", 0);
+					chrLength.put(seqName, 0);
 				}
 			}else if (key.equals("gene")
 					|| // Some GenBank records seem to use locus_tag instead of gene
@@ -372,7 +375,7 @@ public final class Genbank extends SymLoader {
 	public List<GenbankSym> parse(BufferedReader input, BioSeq seq, int min, int max) {
 		Map<String,GenbankSym> id2sym = new HashMap<String,GenbankSym>(1000);
 
-		if (!getCurrentData(input)) 
+		if (getCurrentData(input) == null) 
 			return Collections.<GenbankSym>emptyList();
 		
 		//if (beginEntry() != null) {
@@ -381,7 +384,7 @@ public final class Genbank extends SymLoader {
 		return new ArrayList<GenbankSym>(id2sym.values());
 	}
 
-	private boolean getCurrentData(BufferedReader input) {
+	private String getCurrentData(BufferedReader input) {
 		line_number = 0;
 		current_line_type = -1;
 		String first_line = null;
@@ -404,9 +407,9 @@ public final class Genbank extends SymLoader {
 		if (first_line == null) {
 			Logger.getLogger(Genbank.class.getName()).log(
 					Level.SEVERE, "GenBank read failed");
-			return false;
+			return null;
 		}
-		return true;
+		return first_line;
 	}
 	
 	// loop until there are no more lines in the file or we hit the start of
@@ -639,6 +642,10 @@ public final class Genbank extends SymLoader {
 						} else if (tag.equals("organism")) {
 							//   seq.setOrganism (value);
 						}
+					}
+					//If no sequence name is found. Then locus is used.
+					if(currentSeq == null && seqs.size() == 1){
+						currentSeq = seqs.get(0);
 					}
 				}
 				continue;

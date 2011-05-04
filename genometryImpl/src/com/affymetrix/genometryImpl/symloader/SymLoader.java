@@ -76,6 +76,10 @@ public abstract class SymLoader {
 		this.extension = extension;
 	}
 
+	public String getFeatureName() {
+		return featureName;
+	}
+
 	protected boolean buildIndex(){
 		BufferedInputStream bis = null;
 		Map<String, Integer> chrLength = new HashMap<String, Integer>();

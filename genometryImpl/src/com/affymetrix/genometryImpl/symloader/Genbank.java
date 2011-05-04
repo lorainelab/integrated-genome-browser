@@ -8,9 +8,7 @@ package com.affymetrix.genometryImpl.symloader;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenbankSym;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -179,8 +177,7 @@ public final class Genbank extends SymLoader {
 	private String current_locus = "";
 	private int current_line_type;
 	private BioSeq currentSeq = null;
-
-
+	protected final List<BioSeq> seqs = new ArrayList<BioSeq>();
 
 
 	public Genbank(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
@@ -218,6 +215,27 @@ public final class Genbank extends SymLoader {
 	}
 
 	@Override
+	public List<BioSeq> getChromosomeList(){
+		init();
+		return seqs;
+	}
+
+	@Override
+	public List<GenbankSym> getGenome() {
+		return parse(null, Integer.MIN_VALUE, Integer.MAX_VALUE);
+	}
+
+	@Override
+	public List<GenbankSym> getChromosome(BioSeq seq) {
+		return parse(seq, Integer.MIN_VALUE, Integer.MAX_VALUE);
+	}
+
+	@Override
+	public List<GenbankSym> getRegion(SeqSpan span) {
+		return parse(span.getBioSeq(), span.getMin(), span.getMax());
+	}
+	
+	@Override
 	protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) {
 		BufferedInputStream bis = null;
 		BufferedReader br = null;
@@ -241,39 +259,13 @@ public final class Genbank extends SymLoader {
 	
 	@Override
 	protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles){
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		for(Entry<String, Integer> bioseq : chrLength.entrySet()){
 			String seq_name = bioseq.getKey();
 			BioSeq seq = group.getSeq(seq_name);
-			if ((seq == null) && (seq_name.indexOf(';') > -1)) {
-				// if no seq found, try and split up seq_name by ";", in case it is in format
-				//    "seqid;genome_version"
-				String seqid = seq_name.substring(0, seq_name.indexOf(';'));
-				String version = seq_name.substring(seq_name.indexOf(';') + 1);
-				//            System.out.println("    seq = " + seqid + ", version = " + version);
-				if ((gmodel.getSeqGroup(version) == group) || group.getID().equals(version)) {
-					// for format [chrom_name];[genome_version]
-					seq = group.getSeq(seqid);
-					if (seq != null) {
-						seq_name = seqid;
-					}
-				} else if ((gmodel.getSeqGroup(seqid) == group) || group.getID().equals(seqid)) {
-					// for format [genome_version];[chrom_name]
-					String temp = seqid;
-					seqid = version;
-					version = temp;
-					seq = group.getSeq(seqid);
-					if (seq != null) {
-						seq_name = seqid;
-					}
-				}
-			}
 			if (seq == null) {
-				//System.out.println("seq not recognized, creating new seq: " + seq_name);
 				seq = group.addSeq(seq_name, bioseq.getValue());
 			}
-			
-			chrList.put(seq, chrFiles.get(seq_name));
+			seqs.add(seq);
 		}
 	}
 	
@@ -352,34 +344,10 @@ public final class Genbank extends SymLoader {
 					seq.setLength(loc1);
 					chrLength.put(seq.getID(), seq.getLength());
 				}
-				
 			}
 		}
 	}
 		
-	@Override
-	public List<BioSeq> getChromosomeList(){
-		init();
-		List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
-		Collections.sort(chromosomeList,new BioSeqComparator());
-		return chromosomeList;
-	}
-
-	@Override
-	public List<GenbankSym> getGenome() {
-		return parse(null, Integer.MIN_VALUE, Integer.MAX_VALUE);
-	}
-
-	@Override
-	public List<GenbankSym> getChromosome(BioSeq seq) {
-		return parse(seq, Integer.MIN_VALUE, Integer.MAX_VALUE);
-	}
-
-	@Override
-	public List<GenbankSym> getRegion(SeqSpan span) {
-		return parse(span.getBioSeq(), span.getMin(), span.getMax());
-	}
-	
 	/**
 	 * Return a list of symmetries for the given chromosome range
 	 * @param seq
@@ -660,23 +628,19 @@ public final class Genbank extends SymLoader {
 						Level.SEVERE, "GenBank read error: no key in line {0}", current_line);
 				continue;
 			}
+			
 			if (key.equals("source")) {
-//				Map<String, List<String>> tagValues = current_feature.getTagValues();
-//				for (String tag : tagValues.keySet()) {
-//					String value = current_feature.getValue(tag);
-//					if (value != null && !value.equals("")) {
-//						if (tag.equals("chromosome")) {
-//							BioSeq newSeq = this.group.getSeq(value);
-//							if (newSeq == null) {
-//								newSeq = new BioSeq(value, "", 1000);
-//								this.group.addSeq(newSeq);
-//							}
-//							currentSeq = newSeq;
-//						} else if (tag.equals("organism")) {
-//							//   seq.setOrganism (value);
-//						}
-//					}
-//				}
+				Map<String, List<String>> tagValues = current_feature.getTagValues();
+				for (String tag : tagValues.keySet()) {
+					String value = current_feature.getValue(tag);
+					if (value != null && !value.equals("")) {
+						if (tag.equals("chromosome")) {
+							currentSeq = this.group.getSeq(value);
+						} else if (tag.equals("organism")) {
+							//   seq.setOrganism (value);
+						}
+					}
+				}
 				continue;
 			}
 

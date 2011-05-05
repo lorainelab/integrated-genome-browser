@@ -14,6 +14,8 @@
 package com.affymetrix.igb.bookmarks;
 
 import java.awt.*;
+import java.util.Map;
+
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -62,6 +64,7 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
           // set a longish string to force the component to have a reasonable width
           // (setting an empty or null string will make a zero-size component: not good!)
           setText("                                 ");
+          setToolTipText("Separator");
         } else if (user_object instanceof Bookmark) {
           Bookmark b = (Bookmark) user_object;
           if (b.isUnibrowControl()) {
@@ -71,6 +74,9 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
             setFont(getFont().deriveFont(Font.ITALIC));
           }
           setText(b.getName());
+          setToolTipText(getToolTip(b));
+        } else {
+            setToolTipText(getText());
         }
       } else { // not a leaf, thus must be a folder
         if (user_object instanceof String) {
@@ -82,13 +88,28 @@ public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
 
       is_underline = (row == underlined_row);
       is_outline = (row == outlined_row);
-      
-      if (is_separator) {
-        setToolTipText("Separator");
-      } else {
-        setToolTipText(getText());
-      }
       return this;
+  }
+
+  private String getToolTip(Bookmark bm) {
+    StringBuffer toolTipSB = new StringBuffer();
+    Map<String, String[]> parameters = Bookmark.parseParameters(bm.getURL());
+    BookmarkUnibrowControlServlet bucs = BookmarkUnibrowControlServlet.getInstance();
+	String seqid = bucs.getStringParameter(parameters, Bookmark.SEQID);
+	if (seqid != null) {
+		toolTipSB.append(seqid);
+		String start_param = bucs.getStringParameter(parameters, Bookmark.START);
+		if (start_param != null) {
+			toolTipSB.append(" : ");
+			toolTipSB.append(start_param);
+			String end_param = bucs.getStringParameter(parameters, Bookmark.END);
+			if (end_param != null) {
+				toolTipSB.append(" - ");
+				toolTipSB.append(end_param);
+			}
+		}
+	}
+    return toolTipSB.toString();
   }
 
   // This is a copy of a private method in DefaultTreeCellRenderer.

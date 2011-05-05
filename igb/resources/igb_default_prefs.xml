@@ -45,44 +45,29 @@
     url="http://www.dictybase.org/db/cgi-bin/search/search.pl?query=$$"
    />
 
-  <annotation_url annot_type_regex="^NCBI EST$"
-    name="NCBI EST"
-    url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
+<!-- BioViz DAS data sets -->
+  <annotation_url annot_type_regex="^EST (single map)$"
+    name="GenBank EST"
+    url="http://www.ncbi.nlm.nih.gov/nucest/$$"
   />
 
-  <annotation_url annot_type_regex="^NCBI Gene$"
-    name="NCBI Gene"
-    url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
+  <annotation_url annot_type_regex="^EST (multiple map)$"
+    name="GenBank EST"
+    url="http://www.ncbi.nlm.nih.gov/nucest/$$"
   />
 
-  <annotation_url annot_type_regex="^NCBI Transcript$"
-    name="NCBI Transcript"
-    url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
+  <annotation_url annot_type_regex="^EST (spliced, single map)$"
+    name="GenBank EST"
+    url="http://www.ncbi.nlm.nih.gov/nucest/$$"
   />
 
+<!-- Any RefSeq mRNA alignment -->
   <annotation_url annot_type_regex="(?i).*RefSeq$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
 
-  <annotation_url annot_id_regex="^gb\|.*$"
-    name="Genbank"
-    url="http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&amp;cmd=search&amp;term=$$"
-  />
 
-
-<!--
-  <annotation_url annot_type_regex="(?i).*EnsGene$"
-    name="Ensembl Human ID search"
-    url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$"
-  />
--->
-<!--
-  <annotation_url annot_type_regex="(?i).*EnsGene$" 
-     name="Ensembl Human GeneView"
-     url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
-  />
--->
  <!--Regular expression to identify Ensembl human gene transcript ids that begin with ENS followed by digits-->
 	<annotation_url annot_id_regex="^ENST\d+(\.\d+)?$"
      name="Ensembl GeneView"
@@ -95,14 +80,6 @@
      url="http://www.ensembl.org/Danio_rerio/geneview?gene=$$"
   />
 
-<!--Regular expression to identify Ensembl Mus musculus gene transcript ids -->
-<!--Commented out temporarily-->
-<!--
-	<annotation_url annot_id_regex="^ENSMUST\d+(\.\d+)?$"
-     name="Ensembl GeneView"
-     url="http://www.ensembl.org/Mus_musculus/geneview?gene=$$"
-  />
-  -->
 
   <!--Regular expression to identify Ensembl Rattus norvegicus gene transcript ids -->
 	<annotation_url annot_id_regex="^ENSRNOT\d+(\.\d+)?$"
@@ -117,6 +94,7 @@
      url="http://www.ensembl.org/Gallus_gallus/geneview?gene=$$"
   />
 
+<!-- Affymetrix Link-outs -->
 
   <annotation_url annot_type_regex="(?i).* netaffx consensus"
     name="NetAffx"
@@ -140,84 +118,34 @@
     url="http://www.genedb.org/genedb/Search?name=$$&amp;organism=pombe&amp;desc=yes&amp;wildcard=yes&amp;searchId=Search"
   />
 
-  <annotation_url annot_type_regex="^NCBI mRNA$"
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
- 
-  <!-- Add an NCBI link for mRNA methods that do not have the word "TAIR" -->
-  <!-- This is a 0-length negative lookahead regular expression for TAIR -->
-  <annotation_url annot_type_regex="(?i)^(?!TAIR).*mRNA"
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-
-
-<!--  Bioviz-specific matchings. -->
-  <!-- Match genes with id beginning with AT, no dashes, and a decimal point followed by a number.. -->
-  <annotation_url annot_id_regex="^AT[^-]*\.\d+$"
-    name="arabidopsis.org"
+  <!-- Match AGI gene models names. -->
+  <annotation_url annot_id_regex="^AT[1-5CM]G\d{5,}\.\d+$"
+    name="TAIR"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />
 
-
-  <!-- Match TAIRx_  -->
-  <annotation_url annot_type_regex="(?i).*TAIR._.*$" 
-    name="arabidopsis.org"
-    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
-  />
-
-  <!-- Match insertion lines -->
+  <!-- Match Arabidospis insertion lines, not yet used -->
   <annotation_url annot_type_regex="^insert$" 
     name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/SeedSearcher?action=detail&amp;stock_number=$$"
   />
 
-  <!-- Match TAIRvx -->
-  <annotation_url annot_type_regex="(?i).*TAIRv.*$" 
-    name="arabidopsis.org"
-    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
+  <annotation_url annot_type_regex="^NCBI EST (single map)$"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+
+  <annotation_url annot_type_regex="^NCBI EST (multiple map)$"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+
+  <annotation_url annot_type_regex="^NCBI EST (spliced, single map)$" 
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
 
 
-  <annotation_url annot_type_regex=".*EST.*single.*map.*" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex=".*EST.*multiple.*map.*" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex="^EST_TAIR7.*" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex="^cDNA_TAIR7.*" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex=".*cDNA.*single.*map.*" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex=".*cDNA.*multiple.*map.*" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex="^GenBank\scDNA.*\(.*\)$" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex="^RefSeq\scDNA.*\(.*\)$" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  
-  <annotation_url annot_type_regex="^AtGDB.*$" 
-    name="PlantGDB: AtGDB"
-    url="http://www.plantgdb.org/AtGDB/cgi-bin/findRecord.pl?gi=$$"
-  />
- 
   <!-- db_xref linkouts -->
   <!-- see http://www.ncbi.nlm.nih.gov/projects/collab/db_xref.html to support more --> 
   <annotation_url annot_id_regex="^FLYBASE:.*$" id_field="db_xref" 

@@ -305,46 +305,51 @@ public abstract class XAM extends SymLoader {
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return residues;
 		}
-		StringBuilder sb = new StringBuilder(spanLength);
+		char[] sb = new char[spanLength];
 		int currentPos = 0;
+		int currentEnd = 0;
 		for (CigarElement cel : cigar.getCigarElements()) {
 			try {
 				int celLength = cel.getLength();
 				if (cel.getOperator() == CigarOperator.DELETION) {
-						char[] tempArr = new char[celLength];
-						Arrays.fill(tempArr, '_');		// print deletion as '_'
-						sb.append(tempArr);
+					char[] tempArr = new char[celLength];
+					Arrays.fill(tempArr, '_');		// print deletion as '_'
+					System.arraycopy(tempArr, 0, sb, currentEnd, tempArr.length);
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					insResidues.append(residues.substring(currentPos, currentPos + celLength));
 					currentPos += celLength;	// print insertion
+					continue;
 				} else if (cel.getOperator() == CigarOperator.M) {
-						sb.append(residues.substring(currentPos, currentPos + celLength));
+					char[] tempArr = residues.substring(currentPos, currentPos + celLength).toCharArray();
+					System.arraycopy(tempArr, 0, sb, currentEnd, tempArr.length);
 					currentPos += celLength;	// print matches
 				} else if (cel.getOperator() == CigarOperator.N) {
-						char[] tempArr = new char[celLength];
-						Arrays.fill(tempArr, '-');
-						sb.append(tempArr);
+					char[] tempArr = new char[celLength];
+					Arrays.fill(tempArr, '-');
+					System.arraycopy(tempArr, 0, sb, currentEnd, tempArr.length);
 				} else if (cel.getOperator() == CigarOperator.PADDING) {
-						char[] tempArr = new char[celLength];
-						Arrays.fill(tempArr, '*');		// print padding as '*'
-						sb.append(tempArr);
+					char[] tempArr = new char[celLength];
+					Arrays.fill(tempArr, '*');		// print padding as '*'
+					System.arraycopy(tempArr, 0, sb, currentEnd, tempArr.length);
 					currentPos += celLength;
 				} else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
 					currentPos += celLength;	// skip over soft clip
+					continue;
 				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
 					continue;				// hard clip can be ignored
 				}
+				currentEnd += celLength;
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				if (spanLength - currentPos > 0) {
 					char[] tempArr = new char[spanLength - currentPos];
 					Arrays.fill(tempArr, '.');
-					sb.append(tempArr);
+					System.arraycopy(tempArr, 0, sb, 0, tempArr.length);
 				}
 			}
 		}
 
-		return sb.toString().intern();
+		return String.valueOf(sb);
 	}
 
 }

@@ -511,19 +511,12 @@ public final class IGB extends Application
 	}
 
 	public IGBTabPanel getView(String viewName) {
-		Class<?> viewClass;
-		try {
-			viewClass = Class.forName(viewName);
-		}
-		catch (ClassNotFoundException x) {
-			System.out.println(getClass().getName() + ".getView() failed for " + viewName);
-			return null;
-		}
 		for (IGBTabPanel plugin : windowService.getPlugins()) {
-			if (viewClass.isAssignableFrom(plugin.getClass())) {
+			if (plugin.getClass().getName().equals(viewName)) {
 				return plugin;
 			}
 		}
+		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, getClass().getName() + ".getView() failed for " + viewName);
 		return null;
 	}
 }

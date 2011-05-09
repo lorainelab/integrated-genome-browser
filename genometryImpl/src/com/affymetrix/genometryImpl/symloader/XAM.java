@@ -178,9 +178,8 @@ public abstract class XAM extends SymLoader {
 			blockMaxs[0] = span.getEnd();
 		}
 
-		StringBuffer insResidue = new StringBuffer(200);
 		BAMSym sym = new BAMSym(featureName, seq, start, end, sr.getReadName(),
-				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs);
+				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs, sr.getCigar());
 		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
 		sym.setProperty("id", sr.getReadName());
 		for (SAMTagAndValue tv : sr.getAttributes()) {
@@ -188,9 +187,7 @@ public abstract class XAM extends SymLoader {
 		}
 		sym.setProperty(CIGARPROP, sr.getCigar());
 		sym.setProperty(SHOWMASK, true);
-
-		sym.setResidues(interpretCigar(sr.getCigar(), sr.getReadString(), end - start, insResidue));
-		sym.setInsResidues(insResidue.toString());
+		sym.setResidues(sr.getReadString());
 
 //		Not using "SEQ" anywhere. So commenting out for now.
 //		if (sr.getCigar() == null || sym.getProperty("MD") == null) {

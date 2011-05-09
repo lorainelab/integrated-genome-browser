@@ -3,23 +3,32 @@ package com.affymetrix.genometryImpl;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import net.sf.samtools.Cigar;
+import net.sf.samtools.CigarElement;
+import net.sf.samtools.CigarOperator;
+import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 
 /**
  *
  * @author hiralv
  */
-public class BAMSym extends UcscBedSym implements SymWithResidues{
+public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCharIterator{
 
 	private final int[] iblockMins, iblockMaxs;
-	Residues residues;
+	private final Cigar cigar;
+	private final int min;
+	String residues;
+	//Residues residues;
 	String insResidues;
 
 	public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
 			boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs,
-			int iblockMins[], int[] iblockMaxs){
+			int iblockMins[], int[] iblockMaxs, Cigar cigar){
 		super(type,seq,txMin,txMax,name,score,forward,cdsMin,cdsMax,blockMins,blockMaxs);
 		this.iblockMins = iblockMins;
 		this.iblockMaxs = iblockMaxs;
+		this.cigar = cigar;
+		this.min = Math.min(txMin, txMax);
 	}
 
 	public int getInsChildCount() {
@@ -48,6 +57,14 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 		}
 	}
 
+	public String substring(int start, int end) {
+		return getResidues(start, end);
+	}
+
+	public int indexOf(String searchstring, int offset) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 	class BamChildSingletonSeqSym extends BedChildSingletonSeqSym implements SymWithResidues {
 
 		public BamChildSingletonSeqSym(int start, int end, BioSeq seq) {
@@ -59,11 +76,11 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 		}
 
 		public String getResidues() {
-			return BAMSym.this.getResidues(this.getMin(), this.getMax());
+			return interpretCigar(this.getMin(), this.getMax(), false);
 		}
 
 		public String getResidues(int start, int end) {
-			return BAMSym.this.getResidues(start, end);
+			return interpretCigar(start, end, false);
 		}
 
 		@Override
@@ -92,7 +109,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 		}
 		
 		public String getResidues() {
-			return BAMSym.this.getInsResidue(index);
+			return interpretCigar(this.getMin(), this.getMax(), true);
 		}
 
 		@Override
@@ -111,27 +128,20 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 	}
 
 	public void setResidues(String residuesStr){
-		if(residues == null){
-			residues = new Residues(residuesStr);
-			residues.setStart(txMin);
-		}else{
-			residues.setResidues(residuesStr);
-		}
+		this.residues = residuesStr;
 	}
 
 	public String getResidues(){
 		if(residues != null){
-			return residues.getResidues();
+			return residues;
 		}
 		return getEmptyString(txMax - txMin);
 	}
 
 	public String getResidues(int start, int end){
 		if(residues != null){
-			start = Math.max(start, txMin);
-			end = Math.min(txMax, end);
 			
-			return residues.getResidues(start, end);
+			return interpretCigar(start, end, false);
 		}
 		return getEmptyString(end - start);
 	}
@@ -178,4 +188,83 @@ public class BAMSym extends UcscBedSym implements SymWithResidues{
 		}
 		return super.getProperty(key);
 	}
+	
+	private String interpretCigar(int start, int end, boolean isIns) {
+		if (cigar == null || cigar.numCigarElements() == 0 || residues == null) {
+			return "";
+		}
+		start = Math.max(start, txMin);
+		end = Math.min(txMax, end);
+
+		start = start - min;
+		end = end - min;
+
+		if (start > end) {
+			return "";
+		}
+
+		char[] sb = new char[end - start];
+		int stringPtr = 0;
+		int currentPos = 0;
+		int offset = 0;
+		int celLength;
+		char[] tempArr;
+		for (CigarElement cel : cigar.getCigarElements()) {
+			try {
+				if (offset >= sb.length) {
+					return String.valueOf(sb);
+				}
+
+				celLength = cel.getLength();
+				tempArr= new char[celLength];
+
+				if (cel.getOperator() == CigarOperator.INSERTION) {
+					if (!isIns) {
+						stringPtr += celLength;
+						continue;
+					}
+					tempArr = residues.substring(stringPtr, stringPtr + celLength).toCharArray();
+					stringPtr += celLength;
+				} else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
+					stringPtr += celLength;	// skip over soft clip
+					continue;
+				} else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
+					continue;				// hard clip can be ignored
+				} else if (cel.getOperator() == CigarOperator.DELETION) {
+					Arrays.fill(tempArr, '_');		// print deletion as '_'
+					currentPos += celLength;
+				} else if (cel.getOperator() == CigarOperator.M) {
+					tempArr = residues.substring(stringPtr, stringPtr + celLength).toCharArray();
+					stringPtr += celLength;	// print matches
+					currentPos += celLength;
+				} else if (cel.getOperator() == CigarOperator.N) {
+					Arrays.fill(tempArr, '-');
+					currentPos += celLength;
+				} else if (cel.getOperator() == CigarOperator.PADDING) {
+					Arrays.fill(tempArr, '*');		// print padding as '*'
+					stringPtr += celLength;
+					currentPos += celLength;
+				}
+
+
+				if (currentPos > start) {
+					int tempOffset = Math.max(tempArr.length - (currentPos - start), 0);
+					int len = Math.min(tempArr.length - tempOffset, sb.length - offset);
+					System.arraycopy(tempArr, tempOffset, sb, offset, len);
+					offset += len;
+				}
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				if ((end - start) - stringPtr > 0) {
+					tempArr = new char[(end - start) - stringPtr];
+					Arrays.fill(tempArr, '.');
+					System.arraycopy(tempArr, 0, sb, 0, tempArr.length);
+				}
+			}
+		}
+
+		return String.valueOf(sb);
+	}
+
 }

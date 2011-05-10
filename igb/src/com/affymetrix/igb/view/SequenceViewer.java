@@ -178,7 +178,8 @@ public class SequenceViewer extends JPanel
 			System.setProperty("apple.laf.useScreenMenuBar", "false");
 			getGoing(residues_sym);
 		} catch (Exception e) {
-			this.errorMessage = "Error loading residues";
+			if(this.errorMessage == null)
+			this.errorMessage = "Some error ocurred, Please raise a bug request";
 		} finally {
 			if (errorMessage != null) {
 				ErrorHandler.errorPanel("Can not open sequence viewer", "" + this.errorMessage);

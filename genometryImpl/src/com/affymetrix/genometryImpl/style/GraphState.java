@@ -24,7 +24,7 @@ public final class GraphState {
 		//TODO: Make this an enum
 	public static final int THRESHOLD_DIRECTION_GREATER = 1;
 	public static final int THRESHOLD_DIRECTION_BETWEEN = 0;
-	public static final int THRESHOLD_DIRECTION_LESS = -1;
+	public static final int THRESHOLD_DIRECTION_LESS_EQUAL = -1;
 
 	private GraphType graph_style = GraphType.MINMAXAVG;
 
@@ -190,7 +190,7 @@ public final class GraphState {
 	 *  {@link #THRESHOLD_DIRECTION_LESS} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
 	 */
 	public void setThresholdDirection(int d) {
-		if (d != THRESHOLD_DIRECTION_GREATER && d != THRESHOLD_DIRECTION_LESS
+		if (d != THRESHOLD_DIRECTION_GREATER && d != THRESHOLD_DIRECTION_LESS_EQUAL
 				&& d != THRESHOLD_DIRECTION_BETWEEN) {
 			throw new IllegalArgumentException();
 				}

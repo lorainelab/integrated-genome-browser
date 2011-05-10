@@ -502,9 +502,9 @@ public final class GraphScoreThreshSetter extends JPanel
 			}
 		} else if (src == thresh_belowB) {
 			if (prev_thresh_type == THRESH_TYPE_VALUE) {
-				setScoreThreshold(prev_thresh_val, GraphState.THRESHOLD_DIRECTION_LESS);
+				setScoreThreshold(prev_thresh_val, GraphState.THRESHOLD_DIRECTION_LESS_EQUAL);
 			} else {
-				setScoreThresholdByPercent(prev_thresh_per, GraphState.THRESHOLD_DIRECTION_LESS);
+				setScoreThresholdByPercent(prev_thresh_per, GraphState.THRESHOLD_DIRECTION_LESS_EQUAL);
 			}
 		} else if (src == shift_startTF) {
 			try {
@@ -574,7 +574,7 @@ public final class GraphScoreThreshSetter extends JPanel
 		if (thresh_aboveB.isSelected()) {
 			setScoreThreshold(thresh, GraphState.THRESHOLD_DIRECTION_GREATER);  // also sets prev_thresh_val
 		} else {
-			setScoreThreshold(thresh, GraphState.THRESHOLD_DIRECTION_LESS);  // also sets prev_thresh_val
+			setScoreThreshold(thresh, GraphState.THRESHOLD_DIRECTION_LESS_EQUAL);  // also sets prev_thresh_val
 		}
 	}
 
@@ -596,7 +596,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
 					sgg.setMinScoreThreshold(val);
 					sgg.setMaxScoreThreshold(Float.POSITIVE_INFINITY);
-				} else if (direction == GraphState.THRESHOLD_DIRECTION_LESS) {
+				} else if (direction == GraphState.THRESHOLD_DIRECTION_LESS_EQUAL) {
 					sgg.setMaxScoreThreshold(val);
 					sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
 				} else {
@@ -632,7 +632,7 @@ public final class GraphScoreThreshSetter extends JPanel
 		if (thresh_aboveB.isSelected()) {
 			setScoreThresholdByPercent(thresh, GraphState.THRESHOLD_DIRECTION_GREATER);  // also sets prev_thresh_per
 		} else {
-			setScoreThresholdByPercent(thresh, GraphState.THRESHOLD_DIRECTION_LESS);  // also sets prev_thresh_per
+			setScoreThresholdByPercent(thresh, GraphState.THRESHOLD_DIRECTION_LESS_EQUAL);  // also sets prev_thresh_per
 		}
 	}
 
@@ -655,7 +655,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
 					sgg.setMinScoreThreshold(val);
 					sgg.setMaxScoreThreshold(Float.POSITIVE_INFINITY);
-				} else if (direction == GraphState.THRESHOLD_DIRECTION_LESS) {
+				} else if (direction == GraphState.THRESHOLD_DIRECTION_LESS_EQUAL) {
 					sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
 					sgg.setMaxScoreThreshold(val);
 				} else {

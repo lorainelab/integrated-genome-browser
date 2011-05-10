@@ -338,7 +338,7 @@ public final class Genbank extends SymLoader {
 					// for the gene name/id
 					key.equals("locus_tag")) {
 				//GenbankSym annotation = buildAnnotation(seq, current_locus, current_feature, id2sym, Integer.MIN_VALUE, Integer.MAX_VALUE);
-				List<int[]> locs = current_feature.getLocation();
+				List<int[]> locs = current_feature.initLocations();
 				if(locs == null || locs.isEmpty()){
 					continue;
 				}
@@ -849,6 +849,15 @@ final class GenbankFeature {
   protected GenbankFeature() {
   }
 
+  private void init(){
+	if (initialized)
+		return;
+	  
+    initialized = true;
+    initSynonyms();
+    initLocations();
+  }
+  
   protected String getFeatureType(String current_line) {
     String str = current_line.substring(key_offset);
     int index = str.indexOf(' ');
@@ -881,11 +890,7 @@ final class GenbankFeature {
   }
 
   private List<String> getValues(String tag) {
-    if (!initialized) {
-      initialized = true;
-      initSynonyms();
-      initLocations();
-    }
+	init();
     return tagValues.get(tag);
   }
 
@@ -1025,17 +1030,14 @@ final class GenbankFeature {
   }
 
   protected List<int[]> getLocation() {
-    if (!initialized) {
-      initialized = true;
-      initSynonyms();
-      initLocations();
-    }
+    init();
     return locs;
   }
 
-  protected void initLocations() {
+  protected List<int[]> initLocations() {
     locs = new ArrayList<int[]>();
     parseLocations(this.location.toString(), locs);
+	return locs;
   }
 
   /**

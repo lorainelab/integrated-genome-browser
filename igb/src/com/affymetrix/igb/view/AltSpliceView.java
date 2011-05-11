@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
+import java.util.concurrent.Executor;
 
 public class AltSpliceView extends IGBTabPanel
 				implements ActionListener, ComponentListener, ItemListener,
@@ -162,14 +163,23 @@ public class AltSpliceView extends IGBTabPanel
 	}
 
 	private void setSliceBuffer(int buf_size) {
-		spliced_view.setSliceBuffer(buf_size);
-		orf_analyzer.redoOrfs();
+		Executor exec = spliced_view.setSliceBuffer(buf_size);
+		exec.execute(new Runnable(){
+			public void run() {
+				orf_analyzer.redoOrfs();
+			}
+		});
 	}
 
 	private void sliceAndDice(List<SeqSymmetry> syms) {
 		if (syms.size() > 0) {
-			spliced_view.sliceAndDice(syms);
-			orf_analyzer.redoOrfs();
+			Executor exec = spliced_view.sliceAndDice(syms);
+			
+			exec.execute(new Runnable(){
+				public void run() {
+					orf_analyzer.redoOrfs();
+				}
+			});
 		}
 	}
 

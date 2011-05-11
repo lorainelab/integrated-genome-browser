@@ -57,9 +57,9 @@ public final class GraphState {
 	private int min_run_threshold = 30;
 
 	/**  how much to shift xcoords of span start when painting spans that pass thresholds */
-	private double span_start_shift = 12;  // currently should be 12 for transcriptome graphs
+	private double span_start_shift = 0;  
 	/**  how much to shift xcoords of span end when painting spans that pass thresholds */
-	private double span_end_shift = 13;  // currently should be 13 for transcriptome graphs
+	private double span_end_shift = 1;  
 
 	/**
 	 *  visible_max_ycoord is the max ycoord (in graph coords) that is visible (rendered)

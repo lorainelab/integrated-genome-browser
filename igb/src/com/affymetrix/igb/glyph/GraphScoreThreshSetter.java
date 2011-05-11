@@ -48,9 +48,9 @@ public final class GraphScoreThreshSetter extends JPanel
 
 	private SeqMapView gviewer = null;
 	//private static Object placeholder_object = new Object();
-	private static DecimalFormat val_format;
-	private static DecimalFormat per_format;
-	private static DecimalFormat shift_format;
+	private final static DecimalFormat val_format;
+	private final static DecimalFormat per_format;
+	private final static DecimalFormat shift_format;
 	private static String BLANK = "";
 	private static String ON = "On";
 	private static String OFF = "Off";

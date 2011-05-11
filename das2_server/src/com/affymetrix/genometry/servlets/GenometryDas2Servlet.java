@@ -120,7 +120,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	"     0 or 1 inside filter \n" +
 	"     0 or 1 format parameter \n" +
 	"     0 other filters/parameters \n";*/
-	private static Map<String, Das2Coords> genomeid2coord;
+	private final static Map<String, Das2Coords> genomeid2coord;
 
 	static {
 		// GAH 11-2006
@@ -337,7 +337,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *
 	 * @return true if fields loaded or false if not.
 	 */
-	private final boolean loadAndSetFields() {
+	private boolean loadAndSetFields() {
 		ServletContext context = getServletContext();
 
 		// Indicates if the annotation info comes from the genopub or the file system
@@ -439,7 +439,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return true;
 	}
 
-	private static final void initFormats(Map<String, Class<? extends AnnotationWriter>> output_registry) {
+	private static void initFormats(Map<String, Class<? extends AnnotationWriter>> output_registry) {
 		output_registry.put("link.psl", ProbeSetDisplayPlugin.class);
 		output_registry.put("bps", BpsParser.class);
 		output_registry.put("psl", PSLParser.class);
@@ -470,7 +470,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			AnnotationQuery annotationQuery = new AnnotationQuery();
 			annotationQuery.runAnnotationQuery(sess, genoPubSecurity, isServerRefreshMode);
 			for (Organism organism : annotationQuery.getOrganisms()) {
-				Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Organism = " + organism.getName());
+				Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.FINE, "Organism = {0}", organism.getName());
 
 				// Get genome versions for an organism.  
 				for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {

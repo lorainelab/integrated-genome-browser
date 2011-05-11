@@ -118,21 +118,15 @@ public final class OrfAnalyzer extends JComponent
 			return;
 		}
 		BioSeq vseq = smv.getViewSeq();
-		if (vseq == null) {
+		BioSeq seq = smv.getAnnotatedSeq();
+		if (vseq == null || vseq.getComposition()==null || seq == null) {
 			return;
 		}
 		removeTiersAndCleanup();
 		if (!show_orfs) {
 			return;
 		}
-		
-		if (!(vseq.isComplete())) {
-			ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
-			show_orfs = false;
-			showCB.setSelected(false);
-			return;
-		}
-
+	
 		SeqSpan vspan = smv.getVisibleSpan();
 		int span_start = vspan.getMin();
 		int span_end = vspan.getMax();
@@ -142,7 +136,15 @@ public final class OrfAnalyzer extends JComponent
 			showCB.setSelected(false);
 			return;
 		}
-
+		
+		SeqSpan aspan = vseq.getComposition().getSpan(seq);
+		if (!(seq.isAvailable(aspan))) {
+			ErrorHandler.errorPanel("Cannot perform ORF analysis: must first load residues for sequence");
+			show_orfs = false;
+			showCB.setSelected(false);
+			return;
+		}
+		
 		fortier = new TransformTierGlyph(new DefaultTrackStyle());
 		fortier.setLabel("Stop Codons");
 		fortier.setFixedPixHeight(25);

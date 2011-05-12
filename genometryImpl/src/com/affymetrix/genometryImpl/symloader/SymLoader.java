@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * Could be improved with iterators.  But for now this should be fine.
  */
 public abstract class SymLoader {
-	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1000000000; // for unknown chromosomes when the length is not known
+	public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
 	public String extension;	// used for ServerUtils call
 	public final URI uri;
 	public boolean isResidueLoader = false;	// Let other classes know if this is just residues

@@ -38,6 +38,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
@@ -88,12 +89,12 @@ public final class SearchView extends IGBTabPanel implements
 
 	private JTextField searchTF;
 	private final JPanel pan1 = new JPanel();
-	private final JComboBox sequence_CB = new JComboBoxWithSingleListener();
+	private final JComboBox sequenceCB = new JComboBoxWithSingleListener();
 	private final JComboBox searchCB = new JComboBoxWithSingleListener();
 	private final JCheckBox remoteSearchCheckBox = new JCheckBox("");
 	private final JCheckBox selectInMapCheckBox = new JCheckBox(SELECTINMAP_TEXT);
-	private final JButton searchButton = new JButton("Search");
-	private final JButton clear_button = new JButton("Clear");
+	private final JButton searchButton = new JButton(MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif"));
+	private final JButton clearButton = new JButton(MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
 	private final SeqMapView gviewer;
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private final static Color hitcolor = new Color(150, 150, 255);
@@ -126,10 +127,10 @@ public final class SearchView extends IGBTabPanel implements
 
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 		pan1.add(new JLabel(SearchView.INLABELTEXT));
-		sequence_CB.setMinimumSize(new Dimension(4, 0));
-		sequence_CB.setPreferredSize(new Dimension(searchCB.getPreferredSize().width, searchCB.getPreferredSize().height));
-		sequence_CB.setToolTipText(SEQUENCETOSEARCH);
-		pan1.add(sequence_CB);
+		sequenceCB.setMinimumSize(new Dimension(4, 0));
+		sequenceCB.setPreferredSize(new Dimension(searchCB.getPreferredSize().width, searchCB.getPreferredSize().height));
+		sequenceCB.setToolTipText(SEQUENCETOSEARCH);
+		pan1.add(sequenceCB);
 
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 		pan1.add(new JLabel(SearchView.FORLABELTEXT));
@@ -138,6 +139,7 @@ public final class SearchView extends IGBTabPanel implements
 		pan1.add(Box.createRigidArea(new Dimension(4, 0)));
 
 		pan1.add(searchButton);
+		pan1.add(clearButton);
 		
 		pan1.add(Box.createRigidArea(new Dimension(2, 0)));
 
@@ -198,7 +200,7 @@ public final class SearchView extends IGBTabPanel implements
 		searchCB.addActionListener(this);
 		searchTF.addActionListener(this);
 		searchButton.addActionListener(this);
-		clear_button.addActionListener(this);
+		clearButton.addActionListener(this);
 		ServerList.getServerInstance().addServerInitListener(this);
 	}
 
@@ -215,25 +217,25 @@ public final class SearchView extends IGBTabPanel implements
 		ThreadUtils.runOnEventQueue(new Runnable() {
 			public void run() {
 				// set up the sequence combo_box
-				sequence_CB.removeAllItems();
+				sequenceCB.removeAllItems();
 				if (group != null) {
 					if (!((String) searchCB.getSelectedItem()).equals(REGEXRESIDUE)) {
-						sequence_CB.addItem(igbService.getGenomeSeqId()); // put this at top of list
+						sequenceCB.addItem(igbService.getGenomeSeqId()); // put this at top of list
 					}
 					for (BioSeq seq : group.getSeqList()) {
 						if (seq.getID().equals(igbService.getGenomeSeqId())) {
 							continue;
 						}
-						sequence_CB.addItem(seq.getID());
+						sequenceCB.addItem(seq.getID());
 					}
-					sequence_CB.setToolTipText(SEQUENCETOSEARCH);
-					sequence_CB.setEnabled(true);
+					sequenceCB.setToolTipText(SEQUENCETOSEARCH);
+					sequenceCB.setEnabled(true);
 				} else {
-					sequence_CB.setToolTipText("Genome has not been selected");
-					sequence_CB.setEnabled(false);
+					sequenceCB.setToolTipText("Genome has not been selected");
+					sequenceCB.setEnabled(false);
 				}
 
-				sequence_CB.setSelectedItem(igbService.getGenomeSeqId());
+				sequenceCB.setSelectedItem(igbService.getGenomeSeqId());
 			}
 		});
 	}
@@ -421,7 +423,7 @@ public final class SearchView extends IGBTabPanel implements
 		}
 		if (src == this.searchTF || src == this.searchButton) {
 			String searchMode = (String) this.searchCB.getSelectedItem();
-			String chrStr = (String) this.sequence_CB.getSelectedItem();
+			String chrStr = (String) this.sequenceCB.getSelectedItem();
 			BioSeq chrfilter = igbService.getGenomeSeqId().equals(chrStr) ? null : group.getSeq(chrStr);
 			if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText().trim(), chrfilter, false);	// note we trim in case the user added spaces, which really shouldn't be on the outside of IDs or names
@@ -431,14 +433,18 @@ public final class SearchView extends IGBTabPanel implements
 				displayRegexResidues(chrfilter, evt.getSource());
 			} 
 		}
+		if(src == this.clearButton){
+			clearResults();
+			searchTF.setText("");
+		}
 	}
 
 	private void enableComp(boolean enabled){
 		searchTF.setEnabled(enabled);
-		sequence_CB.setEnabled(enabled);
+		sequenceCB.setEnabled(enabled);
 		searchCB.setEnabled(enabled);
 		searchButton.setEnabled(enabled);
-		clear_button.setEnabled(enabled);
+		clearButton.setEnabled(enabled);
 	}
 
 	private void displayRegexIDs(final String search_text, final BioSeq chrFilter, final boolean search_props) {
@@ -465,7 +471,7 @@ public final class SearchView extends IGBTabPanel implements
 				enableComp(false);
 				clearResults();
 
-				String friendlySearchStr = friendlyString(text, sequence_CB.getSelectedItem().toString());
+				String friendlySearchStr = friendlyString(text, sequenceCB.getSelectedItem().toString());
 				status_bar.setText(friendlySearchStr + ": Searching locally...");
 				List<SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex, search_props);
 				remoteSymList = null;
@@ -475,7 +481,7 @@ public final class SearchView extends IGBTabPanel implements
 					// Not much of a regular expression.  Assume the user wants to match at the start and end
 					text = "*" + text + "*";
 				}
-				friendlySearchStr = friendlyString(text, sequence_CB.getSelectedItem().toString());
+				friendlySearchStr = friendlyString(text, sequenceCB.getSelectedItem().toString());
 				int actualChars = text.length();
 				if (text.startsWith(".*")) {
 					actualChars -= 2;
@@ -574,7 +580,7 @@ public final class SearchView extends IGBTabPanel implements
 	private void displayRegexResidues(final BioSeq vseq, Object src) {
 		if (vseq == null ) {
 			ErrorHandler.errorPanel(
-					"Residues for " + this.sequence_CB.getSelectedItem().toString() + " not available.  Please load residues before searching.");
+					"Residues for " + this.sequenceCB.getSelectedItem().toString() + " not available.  Please load residues before searching.");
 			return;
 		}
 
@@ -596,7 +602,7 @@ public final class SearchView extends IGBTabPanel implements
 		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
 		
 		if (!vseq.isComplete()) {
-			boolean confirm = igbService.confirmPanel("Residues for " + this.sequence_CB.getSelectedItem().toString()
+			boolean confirm = igbService.confirmPanel("Residues for " + this.sequenceCB.getSelectedItem().toString()
 					+ " not loaded.  \nDo you want to load residues?");
 			if (!confirm) {
 				return;

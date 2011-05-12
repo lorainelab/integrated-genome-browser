@@ -13,12 +13,29 @@
 
 package com.affymetrix.igb.prefs;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+
+import javax.swing.JLabel;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.ResidueColorHelper;
 import com.affymetrix.igb.tiers.AxisStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
@@ -30,9 +47,9 @@ import com.affymetrix.igb.view.load.AutoLoad;
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
  */
-public final class OptionsView extends IPrefEditorComponent implements ActionListener  {
+public final class OptionsView extends IPrefEditorComponent implements ActionListener, PreferenceChangeListener  {
   private static final long serialVersionUID = 1L;
-
+  private final SeqMapView smv;
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
   JButton clear_prefsB = new JButton("Reset all preferences to defaults");
 
@@ -42,6 +59,13 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 	this.setToolTipText("Edit Miscellaneous Options");
     this.setLayout(new BorderLayout());
 
+	Application igb = Application.getSingleton();
+    if (igb != null) {
+      smv = igb.getMapView();
+	}else{
+	  smv = null;
+	}
+	
     JPanel main_box = new JPanel();
     main_box.setLayout(new BoxLayout(main_box,BoxLayout.Y_AXIS));
     main_box.setBorder(new javax.swing.border.EmptyBorder(5,5,5,5));
@@ -156,31 +180,38 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
     }
   }
 
-  private static JPanel addColorChooser(String label_str, String pref_name, Color default_color) {
-		JComponent component = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), pref_name, default_color);
+  private JPanel addColorChooser(String label_str, String pref_name, Color default_color) {
+		JComponent component = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), pref_name, default_color, this);
 		return addToPanel(label_str, component);
-	}
-
-  private static JPanel addToPanel(String label_str, JComponent component) {
-		Dimension size = new Dimension(100, 22);
-        component.setMaximumSize(size);
-        component.setPreferredSize(size);
-        component.setMinimumSize(size);
-		component.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-		JPanel inner_panel = new JPanel();
-		inner_panel.setLayout(new BoxLayout(inner_panel,BoxLayout.PAGE_AXIS));
-		inner_panel.add(Box.createRigidArea(new Dimension(20,0)));
-		inner_panel.add(component);
-
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 2));
-		panel.add(new JLabel(label_str + ": "));
-		panel.add(inner_panel);
-		
-		return panel;
 	}
 
   public void refresh() {
   }
+
+  public void preferenceChange(PreferenceChangeEvent pce) {
+	if(smv != null){
+		smv.getSeqMap().updateWidget();
+	}
+  }
+
+  private static JPanel addToPanel(String label_str, JComponent component) {
+	Dimension size = new Dimension(100, 22);
+	component.setMaximumSize(size);
+	component.setPreferredSize(size);
+	component.setMinimumSize(size);
+	component.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+	JPanel inner_panel = new JPanel();
+	inner_panel.setLayout(new BoxLayout(inner_panel,BoxLayout.PAGE_AXIS));
+	inner_panel.add(Box.createRigidArea(new Dimension(20,0)));
+	inner_panel.add(component);
+
+	JPanel panel = new JPanel();
+	panel.setLayout(new GridLayout(1, 2));
+	panel.add(new JLabel(label_str + ": "));
+	panel.add(inner_panel);
+
+	return panel;
+  }
+  
 }

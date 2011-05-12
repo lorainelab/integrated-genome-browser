@@ -134,7 +134,7 @@ public final class EdgeMatchAdjuster extends JPanel implements ChangeListener {
 	}
 
 	private static JPanel addColorChooser(String label_str, String pref_name, Color default_color) {
-		JComponent component = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), pref_name, default_color);
+		JComponent component = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), pref_name, default_color, null);
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));

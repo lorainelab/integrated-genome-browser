@@ -258,7 +258,11 @@ public final class SearchView extends IGBTabPanel implements
 
 		selectInMapCheckBox.setToolTipText(SELECTINMAP_TIP);
 		selectInMapCheckBox.setEnabled(true);
+		
+		searchButton.setToolTipText("Search");
 		searchButton.setEnabled(true);
+		
+		clearButton.setToolTipText("Clear");
 	}
 
 	private void initTable() {

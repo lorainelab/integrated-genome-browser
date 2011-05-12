@@ -396,8 +396,8 @@ public final class IGB extends Application
 	private void fileMenu() {
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadFileAction(frm, load_directory)));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new LoadURLAction(frm)));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(new ClearAllAction()));
-		MenuUtil.addToMenu(file_menu, new JMenuItem(new ClearGraphsAction()));
+//		MenuUtil.addToMenu(file_menu, new JMenuItem(new ClearAllAction()));
+//		MenuUtil.addToMenu(file_menu, new JMenuItem(new ClearGraphsAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PrintAction()));
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PrintFrameAction()));

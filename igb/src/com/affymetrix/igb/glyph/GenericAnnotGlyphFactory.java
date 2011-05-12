@@ -31,7 +31,9 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.PointedGlyph;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -52,12 +54,14 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 */
 	private static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
 	private static Class default_echild_class = (new FillRectGlyph()).getClass();
+	private static Class default_edirected_child_class = (new PointedGlyph()).getClass();
 	private static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 	private static final int DEFAULT_THICK_HEIGHT = 25;
 	private static final int DEFAULT_THIN_HEIGHT = 15;
 	private SeqMapView gviewer;
 	private Class parent_glyph_class;
 	private Class child_glyph_class;
+	private Class directed_child_glyph_class;
 	private final Class parent_labelled_glyph_class;
 
 	public GenericAnnotGlyphFactory() {
@@ -92,6 +96,20 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				System.err.println();
 				child_glyph_class = default_echild_class;
 			}
+		}
+		
+		String directed_child_glyph_name = (String) options.get("directed_child_glyph");
+		if (directed_child_glyph_name != null) {
+			try {
+				directed_child_glyph_class = Class.forName(child_glyph_name);
+			} catch (Exception ex) {
+				System.err.println();
+				System.err.println("WARNING: Class for child glyph not found: " + child_glyph_name);
+				System.err.println();
+				directed_child_glyph_class = default_edirected_child_class;
+			}
+		}else{
+			directed_child_glyph_class = default_edirected_child_class;
 		}
 	}
 
@@ -299,7 +317,11 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				if (cspan.getLength() == 0) {
 					cglyph = new DeletionGlyph();
 				} else {
-					cglyph = (GlyphI) child_glyph_class.newInstance();
+					if(i==0 || i==childCount-1){
+						cglyph =  (GlyphI) directed_child_glyph_class.newInstance();
+					}else{
+						cglyph = (GlyphI) child_glyph_class.newInstance();
+					}
 				}
 
 				Color child_color = getSymColor(child, the_style);
@@ -314,6 +336,10 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 					alignResidueGlyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 					map.setDataModelFromOriginalSym(alignResidueGlyph, child);
 					pglyph.addChild(alignResidueGlyph);
+				}
+				
+				if(cglyph instanceof DirectedGlyph){
+					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}
 			}
 		}

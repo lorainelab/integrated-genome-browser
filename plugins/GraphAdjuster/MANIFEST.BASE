@@ -25,6 +25,7 @@ Import-Package: com.affymetrix.genometryImpl,
  javax.swing.border,
  javax.swing.event,
  javax.swing.table,
+ javax.swing.filechooser,
  org.osgi.framework;version="1.5.0"
 Bundle-ClassPath: .,
  resources/

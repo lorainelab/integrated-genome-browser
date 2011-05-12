@@ -1103,7 +1103,7 @@ public final class GraphGlyph extends Glyph {
 		float max_score_threshold = Float.POSITIVE_INFINITY;
 		if (thresh_direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
 			min_score_threshold = getMinScoreThreshold();
-		} else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_LESS) {
+		} else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_LESS_EQUAL) {
 			max_score_threshold = getMaxScoreThreshold();
 		} else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
 			min_score_threshold = getMinScoreThreshold();
@@ -1343,8 +1343,8 @@ public final class GraphGlyph extends Glyph {
 		if (direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
 			thresh_glyph.setLabel(GraphGlyph.nformat.format(min_thresh) + " -- " + GraphGlyph.nformat.format(max_thresh));
 		} else if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
-			thresh_glyph.setLabel(">= " + GraphGlyph.nformat.format(min_thresh));
-		} else if (direction == GraphState.THRESHOLD_DIRECTION_LESS) {
+			thresh_glyph.setLabel("> " + GraphGlyph.nformat.format(min_thresh));
+		} else if (direction == GraphState.THRESHOLD_DIRECTION_LESS_EQUAL) {
 			thresh_glyph.setLabel("<= " + GraphGlyph.nformat.format(max_thresh));
 		}
 	}

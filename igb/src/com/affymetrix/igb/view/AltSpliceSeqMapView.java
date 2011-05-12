@@ -1,5 +1,9 @@
 package com.affymetrix.igb.view;
 
+import java.awt.Component;
+import java.util.List;
+import java.util.concurrent.Executor;
+import javax.swing.JPopupMenu;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -14,10 +18,8 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.AutoLoad;
-import java.awt.Component;
-import java.util.List;
-import javax.swing.JPopupMenu;
 
 final class AltSpliceSeqMapView extends SeqMapView {
 	private static final long serialVersionUID = 1l;
@@ -85,11 +87,13 @@ final class AltSpliceSeqMapView extends SeqMapView {
 		popup.add(centerMI);
 	}
 
-	protected final void setSliceBuffer(int bases) {
+	protected final Executor setSliceBuffer(int bases) {
+		Executor exec = ThreadUtils.getPrimaryExecutor(this);
 		slice_buffer = bases;
 		if (slicing_in_effect) {
 			stopSlicingThread();
 
+			
 			slice_thread = new Thread() {
 
 				@Override
@@ -99,17 +103,20 @@ final class AltSpliceSeqMapView extends SeqMapView {
 					enableSeqMap(true);
 				}
 			};
-			slice_thread.start();
+			exec.execute(slice_thread);
+			
 		}
+		return exec;
 	}
 
 	final int getSliceBuffer() {
 		return slice_buffer;
 	}
 
-	public final void sliceAndDice(final List<SeqSymmetry> syms) {
+	public final Executor sliceAndDice(final List<SeqSymmetry> syms) {
+		Executor exec = ThreadUtils.getPrimaryExecutor(this);
 		stopSlicingThread();
-
+		
 		slice_thread = new Thread() {
 
 			@Override
@@ -122,7 +129,9 @@ final class AltSpliceSeqMapView extends SeqMapView {
 			}
 		};
 
-		slice_thread.start();
+		exec.execute(slice_thread);
+		
+		return exec;
 	}
 
 	// disables the sliced view while the slicing thread works

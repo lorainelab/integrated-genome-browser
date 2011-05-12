@@ -142,7 +142,7 @@ public abstract class XAM extends SymLoader {
 	 * @param meth - method name
 	 * @return SimpleSymWithProps
 	 */
-	protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String featureName, String meth) {
+	protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth) {
 		SimpleSeqSpan span = null;
 		int start = sr.getAlignmentStart() - 1; // convert to interbase
 		int end = sr.getAlignmentEnd();
@@ -178,7 +178,7 @@ public abstract class XAM extends SymLoader {
 			blockMaxs[0] = span.getEnd();
 		}
 
-		BAMSym sym = new BAMSym(featureName, seq, start, end, sr.getReadName(),
+		BAMSym sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
 				0.0f, span.isForward(), 0, 0, blockMins, blockMaxs, iblockMins, iblockMaxs, sr.getCigar());
 		sym.setProperty(BASEQUALITYPROP, sr.getBaseQualityString());
 		sym.setProperty("id", sr.getReadName());

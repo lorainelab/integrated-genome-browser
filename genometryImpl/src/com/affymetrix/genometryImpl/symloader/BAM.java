@@ -119,7 +119,7 @@ public final class BAM extends XAM {
 						try{
 							sr = iter.next();
 							if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
-							symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, uri.toString()));
+							symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
 						}catch(SAMException e){
 							errList.add(e);
 						}
@@ -151,7 +151,7 @@ public final class BAM extends XAM {
 		if (reader != null) {
 			for (final SAMRecord sr: reader){
 				if (skipUnmapped && sr.getReadUnmappedFlag()) continue;
-				symList.add(convertSAMRecordToSymWithProps(sr, seq, featureName, uri.toString()));
+				symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
 			}
 		}
 		return symList;

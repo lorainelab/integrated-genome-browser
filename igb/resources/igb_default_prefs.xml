@@ -193,6 +193,11 @@
     name="Phytozome"
     url="http://www.phytozome.net/genePage.php?search=1&amp;detail=1&amp;crown=1&amp;method=0&amp;searchText=$$"
   />
+
+  <annotation_url annot_type_regex="^Ricinis communis gene models from Phytozome v7$"
+    name="Phytozome"
+    url="http://www.phytozome.net/genePage.php?search=1&amp;detail=1&amp;crown=1&amp;method=0&amp;searchText=$$"
+  />
   <annotation_url annot_type_regex="^Sorghum bicolor gene models from Phytozome v7$"
     name="Phytozome"
     url="http://www.phytozome.net/genePage.php?search=1&amp;detail=1&amp;crown=1&amp;method=0&amp;searchText=$$"

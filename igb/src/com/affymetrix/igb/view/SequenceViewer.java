@@ -88,13 +88,17 @@ public class SequenceViewer extends JPanel
 	Color[] reverted = {Color.white, Color.white};
 	private boolean cdsFound=false;
 	private String id;
-
+/* default constructor to get the singleton object of SeqMapView
+ * This is required to get the symmetry of the selected glyphs and genomic sequence in IGB
+ */
 	public SequenceViewer() {
 		seqmapview = IGB.getSingleton().getMapView();
 	}
 
+	/*This method provides the properties to diplay of the sequence viewer fonts, background, text spacing, borders
+	 * size and location of sequenceviewer on screen
+	 */
 	public void customFormatting(SeqSymmetry residues_sym) throws HeadlessException, NumberFormatException {
-
 		seqview.setFont(new Font("Arial", Font.BOLD, 13));
 		seqview.setNumberFontColor(Color.black);
 		seqview.setSpacing(20);
@@ -108,7 +112,9 @@ public class SequenceViewer extends JPanel
 		mapframe.setLocation((screen_size.width - pixel_width) / 2, (screen_size.height - pixel_height) / 2);
 		mapframe.setVisible(true);
 	}
-
+/* This method is used for returning the desired coloring scheme, at present there are two color schemes
+ * for the text
+ */
 	private Color[] getColorScheme() {
 		if (colorSwitch) {
 			seqview.setStripeColors(reverted);
@@ -118,7 +124,12 @@ public class SequenceViewer extends JPanel
 			return defaultColors;
 		}
 	}
-
+/*This is the starting point for sequence viewer
+ * syms.size()=1 valid case for sequenceviewer and it is not a genomic request
+ * syms.size()>1 there are multiple selections done in IGB and it would throw an error
+ * syms.size()=0 it is a genomic request
+ * residues_syms1 instanceof SupportsCdsSpan) this is true when the selection in IGB has cds start and end.
+ */
 	public void startSequenceViewer() {
 
 		List<SeqSymmetry> syms = seqmapview.getSelectedSyms();
@@ -151,7 +162,9 @@ public class SequenceViewer extends JPanel
 			residues_sym = seqmapview.getSeqSymmetry();
 			this.isGenomicRequest = true;
 		}
-
+/*This loads the reads for the selection in IGB if they are not already loaded
+ *
+ */
 		try {
 			if (this.errorMessage == null) {
 				this.aseq = seqmapview.getAnnotatedSeq();
@@ -175,8 +188,8 @@ public class SequenceViewer extends JPanel
 				}
 			}
 			mapframe = new JFrame();
-			System.setProperty("apple.laf.useScreenMenuBar", "false");
-			getGoing(residues_sym);
+			System.setProperty("apple.laf.useScreenMenuBar", "false");//this is done to have menu attached with the frame because in mac the default menu bar is different
+			getGoing(residues_sym);//next destination to start the sequence viewer
 		} catch (Exception e) {
 			if(this.errorMessage == null)
 			this.errorMessage = "Some error ocurred, Please raise a bug request";
@@ -187,7 +200,9 @@ public class SequenceViewer extends JPanel
 			}
 		}
 	}
-
+/* This method gets the title for sequence viewer window. The title depends on whether it is
+ * a genomic request or not.
+ */
 	private void getTitle() {
 		AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
 		version = ag.getID();
@@ -210,7 +225,12 @@ public class SequenceViewer extends JPanel
 
 
 	}
-
+/* It creates four array lists containing objects of CreateValueSet
+ * bundle - contains symmetries which comes initially from IGB
+ * reverse_bundle - if the request is from negative strand, this list is copied to working_list and is used to display in sequence viewer
+ * working_list - this is a copy of bundle, reverse_bundle, or a reverse of either of them.
+ * reverse_complement - i am creating reverse complement of the final working list to use for reverse complement
+ */
 	private void createAllLists() {
 		Iterator it = bundle.listIterator();
 		if (it.hasNext()) {
@@ -337,7 +357,7 @@ public class SequenceViewer extends JPanel
 			}
 			if (cv.getSi().getCdsStart() >= 0) {
 				if (toggle_Reverse_Complement) {
-					seqview.addOutlineAnnotation(start + revCdsStart - 3, start + revCdsStart - 1, Color.red);
+					seqview.addOutlineAnnotation(start + revCdsStart - 3, start + revCdsStart - 1, Color.green);
 				} else {
 					seqview.addOutlineAnnotation(start + cdsStart, start + cdsStart + 2, Color.green);
 				}
@@ -345,7 +365,7 @@ public class SequenceViewer extends JPanel
 
 			if (cv.getSi().getCdsEnd() >= 0) {
 				if (toggle_Reverse_Complement) {
-					seqview.addOutlineAnnotation(start + revCdsEnd, start + revCdsEnd + 2, Color.green);
+					seqview.addOutlineAnnotation(start + revCdsEnd, start + revCdsEnd + 2, Color.red);
 				} else {
 					seqview.addOutlineAnnotation(start + cdsEnd - 3, start + cdsEnd - 1, Color.red);
 				}
@@ -358,7 +378,9 @@ public class SequenceViewer extends JPanel
 			}
 		}
 	}
-
+/* This method calls all the important methods to start sequence viewer
+ *
+ */
 	protected void getGoing(SeqSymmetry residues_sym) {
 		this.getNeoSeqInstance();
 		inverted_sym = SeqUtils.inverse(residues_sym, aseq);

@@ -19,6 +19,7 @@ import com.affymetrix.igb.parsers.ChpParser;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -81,9 +82,13 @@ public final class QuickLoad extends SymLoader {
 	}
 
 	private static String detemineFriendlyName(URI uri){
+		String uriString = uri.toASCIIString().toLowerCase();
+		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
+		String ext = ParserController.getExtension(unzippedStreamName);
+		
 		String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
 		String strippedName = unzippedName.substring(unzippedName.lastIndexOf("/") + 1);
-		String friendlyName = strippedName.substring(0, strippedName.indexOf('.'));
+		String friendlyName = strippedName.substring(0, strippedName.indexOf(ext));
 		return friendlyName;
 	}
 

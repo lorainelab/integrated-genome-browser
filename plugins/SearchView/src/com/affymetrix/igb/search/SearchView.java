@@ -372,7 +372,7 @@ public final class SearchView extends IGBTabPanel implements
 	private void clearResults() {
 		if (!glyphs.isEmpty()) {
 			glyphs.clear();
-			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
+			gviewer.getSeqMap().updateWidget();
 		}
 		
 		clearTable();
@@ -728,6 +728,7 @@ public final class SearchView extends IGBTabPanel implements
 	
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		groupOrSeqChange();
+		clearResults();
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
@@ -742,7 +743,6 @@ public final class SearchView extends IGBTabPanel implements
 		this.searchCB.setEnabled(newGroup != null);
 		this.searchButton.setEnabled(newGroup != null);
 		this.searchTF.setEnabled(newGroup != null);
-		((SearchResultsTableModel)table.getModel()).clear();
 		setStatus("");
 		
 		// only re-initialize the combobox if the group or seqs have changed

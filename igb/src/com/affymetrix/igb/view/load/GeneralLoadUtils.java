@@ -35,6 +35,7 @@ import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
+import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
@@ -661,17 +662,20 @@ public final class GeneralLoadUtils {
 			return ((QuickLoad) feature.symL).loadFeatures(span, feature);
 		}
 
+		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+		
 		// For for formats that are not optimized do not iterate through BioSeq
 		// instead add them all at one.
 		if(feature.gVersion.gServer.serverType == ServerType.QuickLoad
 				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+			if (optimized_sym == null) 
+				return true;
 			return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 		}
 
 		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
-			SeqSymmetry optimized_sym = feature.optimizeRequest(span);
-
+			
 			if (checkBamLoading(feature, optimized_sym)) {
 				return false;
 			}
@@ -680,6 +684,16 @@ public final class GeneralLoadUtils {
 				return loadFeaturesForSym(feature, optimized_sym);
 			}
 		} else {
+			//If Loading whole genome for unoptimized file then load everything at once.
+			if((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
+				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
+				
+				if (optimized_sym == null) 
+					return true;
+				
+				return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
+			}
+			
 			iterateSeqList(span, feature);	
 			//TODO: Does it matter what is returned ?
 			return true;

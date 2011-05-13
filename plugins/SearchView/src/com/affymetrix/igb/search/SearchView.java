@@ -65,6 +65,7 @@ public final class SearchView extends IGBTabPanel implements
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static AnnotatedSeqGroup group;
 	private static int seqCount = 0;
+	private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
 
 	private static final String SEARCHLABELTEXT = "Search ";
 	private static final String INLABELTEXT = "in ";
@@ -651,15 +652,22 @@ public final class SearchView extends IGBTabPanel implements
 		clearResults();
 		status_bar.setText(friendlySearchStr + ": Working...");
 
-		String residues = vseq.getResidues();
-		int residue_offset = vseq.getMin();
-		int hit_count1 = igbService.searchForRegexInResidues(true, regex, residues, residue_offset, glyphs, hitcolor);
+		int residuesLength = vseq.getLength();
+		int hit_count1 = 0;
+		int hit_count2 = 0;
+		int residue_offset1 = vseq.getMin();
+		int residue_offset2 = vseq.getMax();
 
-		// Search for reverse complement of query string
-		//   flip searchstring around, and redo nibseq search...
-		String rev_searchstring = DNAUtils.reverseComplement(residues);
-		residue_offset = vseq.getMax();
-		int hit_count2 = igbService.searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, glyphs, hitcolor);
+		for(int start=0; start<residuesLength; start+=MAX_RESIDUE_LEN_SEARCH){
+			int end = Math.min(start+MAX_RESIDUE_LEN_SEARCH, residuesLength);
+			String residues = vseq.getResidues(start, end);
+			hit_count1 += igbService.searchForRegexInResidues(true, regex, residues, Math.max(residue_offset1,start), glyphs, hitcolor);
+
+			// Search for reverse complement of query string
+			// flip searchstring around, and redo nibseq search...
+			String rev_searchstring = DNAUtils.reverseComplement(residues);
+			hit_count2 += igbService.searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2,end), glyphs, hitcolor);
+		}
 
 		setStatus("Found " + ": " + hit_count1 + " forward and " + hit_count2 + " reverse strand hits. Click row to view hit.");
 		NeoMap map = gviewer.getSeqMap();

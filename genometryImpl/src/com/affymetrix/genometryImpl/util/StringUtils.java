@@ -15,6 +15,7 @@ package com.affymetrix.genometryImpl.util;
 import java.awt.FontMetrics;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 public final class StringUtils {
 	private static final String ELLIPSIS = "\u2026";
@@ -129,14 +130,19 @@ public final class StringUtils {
 	}
 	
 	private static String[] getWords(String line, String seprator){
-		String[] words = line.split(seprator);
-		
-		if(!("\\s+".equals(seprator))){
-			for(int i=0; i<words.length-1; i++){
-				words[i] += seprator;
+		try {
+			String[] words = line.split(seprator);
+			
+			if(!("\\s+".equals(seprator))){
+				for(int i=0; i<words.length-1; i++){
+					words[i] += seprator;
+				}
 			}
+			
+			return words;
 		}
-		
-		return words;
+		catch (PatternSyntaxException x) {
+			return new String[]{line};
+		}
 	}
 }

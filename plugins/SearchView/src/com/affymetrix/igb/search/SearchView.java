@@ -372,7 +372,7 @@ public final class SearchView extends IGBTabPanel implements
 	private void clearResults() {
 		if (!glyphs.isEmpty()) {
 			glyphs.clear();
-			gviewer.getSeqMap().updateWidget();
+			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
 		}
 		
 		clearTable();
@@ -658,8 +658,10 @@ public final class SearchView extends IGBTabPanel implements
 		int residue_offset1 = vseq.getMin();
 		int residue_offset2 = vseq.getMax();
 
-		for(int start=0; start<residuesLength; start+=MAX_RESIDUE_LEN_SEARCH){
-			int end = Math.min(start+MAX_RESIDUE_LEN_SEARCH, residuesLength);
+		for(int i=0; i<residuesLength; i+=MAX_RESIDUE_LEN_SEARCH){
+			int start = Math.max(i-searchStr.length(), 0);
+			int end = Math.min(i+MAX_RESIDUE_LEN_SEARCH, residuesLength);
+			
 			String residues = vseq.getResidues(start, end);
 			hit_count1 += igbService.searchForRegexInResidues(true, regex, residues, Math.max(residue_offset1,start), glyphs, hitcolor);
 

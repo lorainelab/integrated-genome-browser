@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleSeqSymmetry;
 import java.util.*;
 
 /**
@@ -132,6 +133,18 @@ public abstract class SeqUtils {
 	}
 
 
+	public static SeqSymmetry getIntronSym(SeqSymmetry sym, BioSeq seq){
+		SeqSpan span = sym.getSpan(seq);
+		if(span == null){
+			return null;
+		}
+		
+		SimpleMutableSeqSymmetry psym = new SimpleMutableSeqSymmetry();
+		psym.addSpan(span);
+		
+		return exclusive(psym,sym,seq);
+	}
+	
 	/**
 	 *  Like a one-sided xor.
 	 *  Creates a SeqSymmetry that contains children for regions covered by symA that

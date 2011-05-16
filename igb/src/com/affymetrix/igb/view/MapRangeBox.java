@@ -52,11 +52,14 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	// accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
 	// (The chromosome name cannot contain any spaces.)
 	private static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
+	// accepts a pattern like: "chr2 :10000"
+	// (The chromosome name cannot contain any spaces.)
+	private static final Pattern chrom_start_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\:\\s*([0-9,]+)\\s*$");
 	// accepts a pattern like: "chr2 : 3,040,000 + 20000"
 	// (The chromosome name cannot contain any spaces.)
 	private static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
-	// accepts a pattern like: "3,040,000 : 4,502,000"  or "10000-20000"
-	private static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
+	// accepts a pattern like: "10000-20000"
+	private static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\-\\s*([0-9,]+)\\s*$");
 	private static final Pattern start_width_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[+]\\s*([0-9,]+)\\s*$");
 	private static final Pattern center_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\s*$");
 
@@ -118,15 +121,19 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		double start, end, width;
 		try {
 			Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range);
+			Matcher chrom_start_matcher = chrom_start_pattern.matcher(range);
 			Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range);
 			Matcher start_end_matcher = start_end_pattern.matcher(range);
 			Matcher start_width_matcher = start_width_pattern.matcher(range);
 			Matcher center_matcher = center_pattern.matcher(range);
-			if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
+			if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches() || chrom_start_matcher.matches()) {
 				Matcher matcher;
 				boolean uses_width;
 				if (chrom_start_width_matcher.matches()) {
 					matcher = chrom_start_width_matcher;
+					uses_width = true;
+				} else if (chrom_start_matcher.matches()) {
+					matcher = chrom_start_matcher;
 					uses_width = true;
 				} else {
 					matcher = chrom_start_end_matcher;
@@ -134,7 +141,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 				}
 				String chrom_text = matcher.group(1);
 				String start_text = matcher.group(2);
-				String end_or_width_text = matcher.group(3);
+				String end_or_width_text = matcher.groupCount() > 2 ? matcher.group(3) : "0";
 				start = nformat.parse(start_text).doubleValue();
 				double end_or_width = nformat.parse(end_or_width_text).doubleValue();
 				if (uses_width) {
@@ -180,11 +187,14 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 
 	public static String determineChr(String range) {
 		Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range);
+		Matcher chrom_start_matcher = chrom_start_pattern.matcher(range);
 		Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range);
-		if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
+		if (chrom_start_end_matcher.matches() || chrom_start_matcher.matches() || chrom_start_width_matcher.matches()) {
 			Matcher matcher;
 			if (chrom_start_width_matcher.matches()) {
 				matcher = chrom_start_width_matcher;
+			} else if (chrom_start_matcher.matches()) {
+				matcher = chrom_start_matcher;
 			} else {
 				matcher = chrom_start_end_matcher;
 			}

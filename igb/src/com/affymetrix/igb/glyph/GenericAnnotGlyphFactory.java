@@ -31,9 +31,9 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genoviz.glyph.ArrowHeadGlyph;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.PointedGlyph;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -54,7 +54,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 */
 	private static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
 	private static Class default_echild_class = (new FillRectGlyph()).getClass();
-	private static Class default_edirected_child_class = (new PointedGlyph()).getClass();
+	private static Class default_edirected_child_class = (new EfficientPointedGlyph()).getClass();
 	private static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 	private static final int DEFAULT_THICK_HEIGHT = 25;
 	private static final int DEFAULT_THIN_HEIGHT = 15;
@@ -343,6 +343,38 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				}
 			}
 		}
+		
+		double cheight = DEFAULT_THIN_HEIGHT;
+		if (cdsSpan == null) {
+			cheight = DEFAULT_THICK_HEIGHT;
+		}
+		
+		SeqSymmetry intronSym = SeqUtils.getIntronSym(sym, annotseq);
+		if (intronSym != null) {
+			childCount = intronSym.getChildCount();
+			for (int i = 0; i < childCount; i++) {
+				SeqSymmetry child = intronSym.getChild(i);
+				SeqSpan cspan = gviewer.getViewSeqSpan(child);
+				if (cspan == null) {
+					continue;
+				} else {
+					GlyphI cglyph;
+					if (cspan.getLength() == 0) {
+						continue;
+					} else {
+						cglyph = new ArrowHeadGlyph();
+					}
+
+					Color child_color = getSymColor(child, the_style);
+					cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
+					cglyph.setColor(child_color);
+					((DirectedGlyph) cglyph).setForward(cspan.isForward());
+					pglyph.addChild(cglyph);
+					map.setDataModelFromOriginalSym(cglyph, child);
+				}
+			}
+		}
+		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
@@ -416,7 +448,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private GlyphI handleAlignedResidues(SeqSymmetry insym, BioSeq annotseq) {
 		SeqSymmetry sym = insym;
 		if (insym instanceof DerivedSeqSymmetry) {
-			sym = (SymWithProps) getMostOriginalSymmetry(insym);
+			sym = getMostOriginalSymmetry(insym);
 		}
 
 		if (!(sym instanceof SymWithResidues)) {

@@ -340,12 +340,11 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 		@Override
     public boolean isCellEditable(int row, int column) {
       if (tier_styles.get(row) == default_annot_style) {
-        if (column == COL_COLOR || column == COL_BACKGROUND || column == COL_SEPARATE
-            || column == COL_COLLAPSED || column == COL_MAX_DEPTH) {
-          return true;
+        if (column == COL_HUMAN_NAME || column == COL_TIER_NAME ) {
+          return false;
         }
         else {
-          return false;
+          return true;
         }
       } else {
         return (column != COL_TIER_NAME);

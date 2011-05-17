@@ -85,7 +85,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
 	private static TrackStyle default_instance = null;
 	private boolean is_graph = false;
-	private float font_size;
+	private float font_size = default_font_size;
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 	private GenericFeature feature = null;
@@ -162,7 +162,6 @@ public class TrackStyle implements ITrackStyleExtended {
 		this.human_name = name; // this is the default human name, and is not lower case
 		this.unique_name = name.toLowerCase();
 		this.is_persistent = is_persistent;
-		this.font_size = default_font_size;
 		
 		if (is_persistent) {
 			if (unique_name.endsWith("/")) {

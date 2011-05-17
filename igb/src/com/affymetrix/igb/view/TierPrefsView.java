@@ -239,7 +239,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 
   void refreshList() {
     boolean only_displayed_tiers = true;
-    boolean include_graph_styles = false;
+    boolean include_graph_styles = true;
     List<TrackStyle> styles;
     // if only_displayed_tiers, then only put AnnotStyles in table that are being used in tiers currently displayed in main view
     if (only_displayed_tiers) {
@@ -342,7 +342,8 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     // fields in the "default" style row.
 		@Override
     public boolean isCellEditable(int row, int column) {
-      if (tier_styles.get(row) == default_annot_style) {
+	  TrackStyle style = tier_styles.get(row);
+      if (style == default_annot_style) {
         if (column == COL_HUMAN_NAME || column == COL_TIER_NAME ) {
           return false;
         }
@@ -350,7 +351,16 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
           return true;
         }
       } else {
-        return (column != COL_TIER_NAME);
+		  if(column == COL_TIER_NAME)
+			  return false;
+		  if(style.isGraphTier()){
+			  if(column == COL_HUMAN_NAME || column == COL_FONT_SIZE ||
+					  column == COL_BACKGROUND || column == COL_COLOR)
+				  return true;
+			  
+			  return false;
+		  }
+		  return true;
       }
     }
 

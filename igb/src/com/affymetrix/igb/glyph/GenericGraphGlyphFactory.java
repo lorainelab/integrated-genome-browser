@@ -144,7 +144,10 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			TierGlyph.Direction direction = TierGlyph.Direction.NONE;
 			if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
 				direction = TierGlyph.Direction.REVERSE;
+			}else if(GraphSym.GRAPH_STRAND_PLUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
+				direction = TierGlyph.Direction.FORWARD;
 			}
+			
 			TierGlyph tglyph = TrackView.getGraphTrack(map, tier_style, direction);
 			if (isGenome && !(tglyph.getPacker() instanceof CollapsePacker)) {
 				CollapsePacker cp = new CollapsePacker();

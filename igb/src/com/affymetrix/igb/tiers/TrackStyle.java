@@ -46,6 +46,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	private static final String PREF_LABEL_FIELD = "Label Field";
 	private static final String PREF_GLYPH_DEPTH = "Glyph Depth";
 	private static final String PREF_HEIGHT = "Height"; // height per glyph? // linear transform value?
+	private static final String PREF_FONT_SIZE = "Font Size";
 	private static final boolean default_show = true;
 	private static final boolean default_separate = true;
 	private static final boolean default_collapsed = false;
@@ -57,6 +58,8 @@ public class TrackStyle implements ITrackStyleExtended {
 	private static final int default_glyph_depth = 2;
 	private static final double default_height = 20.0;
 	private static final double default_y = 0.0;
+	public static final Object[] supported_sizes = {8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f};
+	public static final float default_font_size = 12;
 	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_NODE_PUTS = false;
 	// whether to create and use a java Preferences node object for this instance
@@ -82,6 +85,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
 	private static TrackStyle default_instance = null;
 	private boolean is_graph = false;
+	private float font_size;
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 	private GenericFeature feature = null;
@@ -158,7 +162,8 @@ public class TrackStyle implements ITrackStyleExtended {
 		this.human_name = name; // this is the default human name, and is not lower case
 		this.unique_name = name.toLowerCase();
 		this.is_persistent = is_persistent;
-
+		this.font_size = default_font_size;
+		
 		if (is_persistent) {
 			if (unique_name.endsWith("/")) {
 				unique_name = unique_name.substring(0, unique_name.length() - 1);
@@ -227,6 +232,7 @@ public class TrackStyle implements ITrackStyleExtended {
 
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		glyph_depth = node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth());
+		font_size = node.getFloat(PREF_FONT_SIZE, this.getFontSize());
 	}
 
 	// Copies selected properties from a PropertyMap into this object, but does NOT persist
@@ -324,6 +330,7 @@ public class TrackStyle implements ITrackStyleExtended {
 		background = template.getBackground();
 		label_field = template.getLabelField();
 		glyph_depth = template.getGlyphDepth();  // depth of visible glyph tree
+		font_size = template.getFontSize();
 	}
 
 	// Returns the preferences node, or null if this is a non-persistent instance.
@@ -688,6 +695,20 @@ public class TrackStyle implements ITrackStyleExtended {
 		return s;
 	}
 
+	public float getFontSize(){
+		return font_size;
+	}
+	
+	public void setFontSize(float font_size){
+		this.font_size = font_size;
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setFontSize(): " + human_name + ", " + font_size);
+			}
+			getNode().putFloat(PREF_FONT_SIZE, font_size);
+		}
+	}
+	
 	public void setFeature(GenericFeature f) {
 		this.feature = f;
 	}

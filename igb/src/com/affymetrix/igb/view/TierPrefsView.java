@@ -52,13 +52,14 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
   private static final String BACKGROUND = "Background";
   private static final String GLYPH_DEPTH = "Connected";
   private static final String LABEL_FIELD = "Label Field";
+  private static final String FONT_SIZE = "Font Size";
   private static final String HUMAN_NAME = "Display Name";
 
   private final static String[] col_headings = {
     HUMAN_NAME,
     COLOR, BACKGROUND,
     SEPARATE, COLLAPSED,
-    MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD, TIER_NAME,
+    MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD, FONT_SIZE, TIER_NAME,
     //    GRAPH_TIER,
   };
 
@@ -70,7 +71,8 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
   private static final int COL_MAX_DEPTH = 5;
   private static final int COL_GLYPH_DEPTH = 6;
   private static final int COL_LABEL_FIELD = 7;
-  private static final int COL_TIER_NAME = 8;
+  private static final int COL_FONT_SIZE = 8;
+  private static final int COL_TIER_NAME = 9;
 
   private final TierPrefsTableModel model;
   private final ListSelectionModel lsm;
@@ -202,6 +204,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
     table.setDefaultEditor(Color.class, cellEditor);
     table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
+	table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackStyle.supported_sizes)));
 
     validate();
   }
@@ -398,6 +401,8 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
           return (style.getGlyphDepth()==2 ? Boolean.TRUE : Boolean.FALSE);
         case COL_LABEL_FIELD:
           return style.getLabelField();
+		case COL_FONT_SIZE:
+		  return style.getFontSize();
         case COL_HUMAN_NAME:
           if (style == default_annot_style) { return "* default *"; }
           else { return style.getHumanName(); }
@@ -448,6 +453,9 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
         case COL_LABEL_FIELD:
           style.setLabelField((String) value);
           break;
+		case COL_FONT_SIZE:
+		  style.setFontSize((Float)value);
+		  break;
         case COL_HUMAN_NAME:
 	  if (style != default_annot_style) {
 	    style.setHumanName((String) value);

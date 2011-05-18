@@ -229,7 +229,9 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 				map.setDataModelFromOriginalSym(cglyph, child);
 			}
 		}
-
+		
+		ArrowHeadGlyph.addDirectionGlyphs(map, transformed_consensus_sym, pglyph, annotseq, coordseq,  child_y + child_height / 4, child_height/2);
+		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq,

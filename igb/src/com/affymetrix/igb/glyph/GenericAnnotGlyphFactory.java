@@ -348,7 +348,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			cheight = DEFAULT_THICK_HEIGHT;
 		}
 			
-		ArrowHeadGlyph.addDirectionGlyphs(map, sym, pglyph, annotseq, coordseq, 0.0, cheight);
+		ArrowHeadGlyph.addDirectionGlyphs(map, sym, pglyph, coordseq, coordseq, 0.0, cheight);
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view

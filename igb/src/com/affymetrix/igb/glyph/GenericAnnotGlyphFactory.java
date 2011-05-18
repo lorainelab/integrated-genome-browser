@@ -31,7 +31,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
-import com.affymetrix.genoviz.glyph.ArrowHeadGlyph;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
@@ -348,26 +347,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		if (cdsSpan == null) {
 			cheight = DEFAULT_THICK_HEIGHT;
 		}
-		
-		SeqSymmetry intronSym = SeqUtils.getIntronSym(sym, annotseq);
-		if (intronSym != null) {
-			childCount = intronSym.getChildCount();
-			for (int i = 0; i < childCount; i++) {
-				SeqSymmetry child = intronSym.getChild(i);
-				SeqSpan cspan = gviewer.getViewSeqSpan(child);
-				if (cspan == null || cspan.getLength() == 0) {
-					continue;
-				} else {
-					DirectedGlyph cglyph = new ArrowHeadGlyph();
-					Color child_color = getSymColor(child, the_style);
-					cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-					cglyph.setColor(child_color);
-					cglyph.setForward(cspan.isForward());
-					pglyph.addChild(cglyph);
-					map.setDataModelFromOriginalSym(cglyph, child);
-				}
-			}
-		}
+			
+		ArrowHeadGlyph.addDirectionGlyphs(map, sym, pglyph, annotseq, coordseq, 0.0, cheight);
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view

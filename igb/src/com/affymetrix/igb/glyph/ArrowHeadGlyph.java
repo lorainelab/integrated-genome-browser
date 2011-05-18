@@ -1,10 +1,17 @@
-package com.affymetrix.genoviz.glyph;
+package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 
 /**
  * An arrow glyph.
@@ -134,4 +141,25 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		}
 	}
 
+	public static void addDirectionGlyphs(AffyTieredMap map, SeqSymmetry sym, GlyphI pglyph, BioSeq annotSeq, BioSeq coordSeq, double cy, double cheight){
+		
+		SeqSymmetry intronSym = SeqUtils.getIntronSym(sym, annotSeq);
+		if (intronSym != null) {
+			int childCount = intronSym.getChildCount();
+			for (int i = 0; i < childCount; i++) {
+				SeqSymmetry child = intronSym.getChild(i);
+				SeqSpan cspan = child.getSpan(coordSeq);
+				if (cspan == null || cspan.getLength() == 0) {
+					continue;
+				} else {
+					DirectedGlyph cglyph = new ArrowHeadGlyph();
+					cglyph.setCoords(cspan.getMin(), cy, cspan.getLength(), cheight);
+					cglyph.setForward(cspan.isForward());
+					cglyph.setColor(pglyph.getColor());
+					pglyph.addChild(cglyph);
+					map.setDataModelFromOriginalSym(cglyph, child);
+				}
+			}
+		}
+	}
 }

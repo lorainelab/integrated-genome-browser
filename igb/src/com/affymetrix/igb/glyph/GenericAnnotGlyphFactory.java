@@ -355,20 +355,14 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			for (int i = 0; i < childCount; i++) {
 				SeqSymmetry child = intronSym.getChild(i);
 				SeqSpan cspan = gviewer.getViewSeqSpan(child);
-				if (cspan == null) {
+				if (cspan == null || cspan.getLength() == 0) {
 					continue;
 				} else {
-					GlyphI cglyph;
-					if (cspan.getLength() == 0) {
-						continue;
-					} else {
-						cglyph = new ArrowHeadGlyph();
-					}
-
+					DirectedGlyph cglyph = new ArrowHeadGlyph();
 					Color child_color = getSymColor(child, the_style);
 					cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 					cglyph.setColor(child_color);
-					((DirectedGlyph) cglyph).setForward(cspan.isForward());
+					cglyph.setForward(cspan.isForward());
 					pglyph.addChild(cglyph);
 					map.setDataModelFromOriginalSym(cglyph, child);
 				}

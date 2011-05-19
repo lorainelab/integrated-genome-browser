@@ -1,19 +1,18 @@
 package com.affymetrix.igb.glyph;
 
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import java.awt.Graphics;
-import java.awt.Polygon;
-
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
 /**
  * An arrow glyph.
@@ -24,14 +23,14 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 	private int x[];
 	private int y[];
 	private int headX, headY;
-	private final Polygon poly;
+	final Rectangle bounds;
 
 	protected boolean fillArrowHead = true;
 
 	public ArrowHeadGlyph() {
 		x = new int[6];
 		y = new int[6];
-		poly = new Polygon(x, y, 6);
+		bounds = new Rectangle();
 	}
 
 	private void calHead(){
@@ -73,21 +72,25 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		 */
 		switch ( this.getDirection() ) {
 			case EAST:  // forward strand
+				bounds.setBounds(pixelbox.x + pixelbox.width/2 - headX/2, offset_center, headX, headY);
 				drawArrowHead (g, pixelbox.x + pixelbox.width/2 + headX/2,
 						pixelbox.x + pixelbox.width/2 - headX/2,
 						offset_center, pixelbox.x + pixelbox.width/2);
 				break;
 			case WEST:
+				bounds.setBounds(pixelbox.x + pixelbox.width/2 - headX/2, offset_center, headX, headY);
 				drawArrowHead (g, pixelbox.x + pixelbox.width/2 - headX/2,
 						pixelbox.x + pixelbox.width/2 + headX/2,
 						offset_center, pixelbox.x + pixelbox.width/2);
 				break;
 			case SOUTH:  // forward strand
+				bounds.setBounds(pixelbox.x + pixelbox.width/2 - headY/2, pixelbox.x + pixelbox.width/2, headY, headX);
 				drawArrowHead (g, pixelbox.y + pixelbox.height/2 + headX/2,
 						pixelbox.y + pixelbox.height/2 - headX/2,
 						pixelbox.x + pixelbox.width/2, offset_center);
 				break;
 			case NORTH:  // reverse strand
+				bounds.setBounds(pixelbox.x + pixelbox.width/2 - headY/2, pixelbox.x + pixelbox.width/2, headY, headX);
 				drawArrowHead (g, pixelbox.y + pixelbox.height/2 - headX/2,
 						pixelbox.y + pixelbox.height/2 + headX/2,
 						pixelbox.x + pixelbox.width/2, offset_center);
@@ -103,8 +106,6 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 	 * to a time when arrows did not work on vertical maps.
 	 */
 	private void drawArrowHead(Graphics g, int tip_x, int flat_x, int tip_center, int x_center) {
-		x = poly.xpoints;
-		y = poly.ypoints;
 		switch ( this.getOrientation() ) {
 			case NeoConstants.HORIZONTAL:
 				x[0] = flat_x;
@@ -148,7 +149,7 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		if(isVisible() && coord_hitbox.intersects(coordbox)){
 			Rectangle pixbox = new Rectangle();
 			view.transformToPixels(coord_hitbox,pixbox);
-			return pixbox.intersects(poly.getBounds2D());
+			return pixbox.intersects(bounds);
 		}
 		return false;
 	}

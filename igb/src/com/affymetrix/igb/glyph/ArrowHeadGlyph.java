@@ -54,7 +54,7 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		coordbox.y = hold_y;
 		view.transformToPixels(coordbox, pixelbox);
 		calHead();
-		if(pixelbox.x + pixelbox.width/2 + headX/2 + buffer_pixel> pixelbox.x + pixelbox.width || 
+		if(headY < 8 || pixelbox.x + pixelbox.width/2 + headX/2 + buffer_pixel> pixelbox.x + pixelbox.width || 
 				pixelbox.x + pixelbox.width/2 - headX/2 - buffer_pixel< pixelbox.x)
 			return;
 		

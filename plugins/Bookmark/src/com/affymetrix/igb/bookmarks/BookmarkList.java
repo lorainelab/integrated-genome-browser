@@ -47,8 +47,10 @@ public final class BookmarkList extends DefaultMutableTreeNode {
     super(s, false);
   }
   
-  public void addBookmark(Bookmark bookmark) {
-    add(new BookmarkList(bookmark));
+  public BookmarkList addBookmark(Bookmark bookmark) {
+	BookmarkList bl = new BookmarkList(bookmark);
+    add(bl);
+    return bl;
   }
 
   public void addSeparator() {

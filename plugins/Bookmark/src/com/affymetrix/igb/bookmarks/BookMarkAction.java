@@ -409,9 +409,12 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       return null;
     }
     addBookmarkMI(parent_menu, bm);
-    main_bookmark_list.addBookmark(bm);
+    BookmarkList bl = main_bookmark_list.addBookmark(bm);
 
     updateBookmarkManager();
+    if (bmv != null) {
+    	bmv.addBookmarkToHistory(bl);
+    }
     return markMI;
   }
 

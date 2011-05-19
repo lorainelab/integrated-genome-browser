@@ -38,7 +38,7 @@ import javax.swing.tree.*;
 public final class BookmarkManagerView extends IGBTabPanel implements TreeSelectionListener {
 
   private static final long serialVersionUID = 1L;
-	private static final int TAB_POSITION = 9;
+  private static final int TAB_POSITION = 9;
   public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
   private JTree tree;
   private BottomThing thing;
@@ -53,7 +53,10 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
   private final Action add_folder_action;
   private final Action add_bookmark_action;
   private final BookMarkAction bmark_action;
-
+  private final Action forward_action;
+  private final Action backward_action;
+  private List<TreePath> bookmark_history;
+  private int   history_pointer = -1;
 
   private final BookmarkTreeCellRenderer renderer;
 
@@ -67,6 +70,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 
     tree = new DragDropTree();
     tree.setModel(tree_model);
+    bookmark_history = new ArrayList<TreePath>();
 
     JScrollPane scroll_pane = new JScrollPane(tree);
 
@@ -100,6 +104,10 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     add_separator_action = makeAddAction(tree, 0);
     add_folder_action = makeAddAction(tree, 1);
     add_bookmark_action = makeAddAction(tree, 2);
+    forward_action = makeForwardAction();
+    backward_action = makeBackwardAction();
+    forward_action.setEnabled(false);
+    backward_action.setEnabled(false);
 
     setUpMenuBar();
     ImageIcon test_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Properties16.gif");
@@ -177,7 +185,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
   /** A JPanel that listens for TreeSelectionEvents, displays
    *  the name(s) of the selected item(s), and may allow you to edit them.
    */
-  private static class BottomThing extends JPanel implements TreeSelectionListener, ActionListener, FocusListener {
+  private class BottomThing extends JPanel implements TreeSelectionListener, ActionListener, FocusListener {
 	private static final long serialVersionUID = 1L;
     JLabel type_label = new JLabel("Type:");
     JLabel type_label_2 = new JLabel("");
@@ -385,6 +393,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
             setEnabled(false);
           } else {
             Bookmark bm = (Bookmark) selected_bl.getUserObject();
+            addBookmarkToHistory(tree.getSelectionPath());
             BookmarkController.viewBookmark(igbService, bm);
           }
         }
@@ -431,6 +440,8 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     bookmarks_menu.addSeparator();
     bookmarks_menu.add(import_action);
     bookmarks_menu.add(export_action);
+    bookmarks_menu.add(forward_action);
+    bookmarks_menu.add(backward_action);
 
     menu_bar.add(bookmarks_menu);
     this.add(menu_bar, BorderLayout.NORTH);
@@ -503,6 +514,8 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     tool_bar.addSeparator();
     tool_bar.add(import_action);
     tool_bar.add(export_action);
+    tool_bar.add(backward_action);
+    tool_bar.add(forward_action);
     this.add(tool_bar, BorderLayout.WEST);
   }
 
@@ -569,6 +582,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
             if (node.getParent() != null) {
               tree_model.removeNodeFromParent(node);
+              removeBookmarkFromHistory(path);
             }
           }
         }
@@ -579,6 +593,48 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
     setAccelerator(a);
     return a;
+  }
+
+  public TreePath getPath(TreeNode treeNode) {
+    List<Object> nodes = new ArrayList<Object>();
+    if (treeNode != null) {
+      nodes.add(treeNode);
+      treeNode = treeNode.getParent();
+      while (treeNode != null) {
+        nodes.add(0, treeNode);
+        treeNode = treeNode.getParent();
+      }
+    }
+    return nodes.isEmpty() ? null : new TreePath(nodes.toArray());
+  }
+
+  public void addBookmarkToHistory(BookmarkList bl) {
+	  addBookmarkToHistory(getPath(bl));
+  }
+
+  public void addBookmarkToHistory(TreePath tp) {
+	  if (tp == null) {
+		  return;
+	  }
+      bookmark_history.add(tp);
+      history_pointer = bookmark_history.size() - 1;
+      forward_action.setEnabled(false);
+      backward_action.setEnabled(bookmark_history.size() > 1);
+  }
+
+  public void removeBookmarkFromHistory(TreePath tp) {
+	  if (tp == null) {
+		  return;
+	  }
+	  int remove_pos = bookmark_history.indexOf(tp);
+	  if (remove_pos > -1) {
+		  if (history_pointer >= remove_pos) {
+			  history_pointer--;
+		  }
+	      bookmark_history.remove(remove_pos);
+	      forward_action.setEnabled(history_pointer < bookmark_history.size() - 1);
+	      backward_action.setEnabled(history_pointer > 0);
+	  }
   }
 
   private Action makeAddAction(final JTree tree, final int type) {
@@ -640,6 +696,62 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
     a.putValue(Action.MNEMONIC_KEY, new Integer(mnemonic));
     setAccelerator(a);
+    return a;
+  }
+
+  /**
+   * Action to move forward in the Bookmark History
+   * @return the Action forward
+   */
+  public Action makeForwardAction() {
+     String title = "Forward";
+     ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/media/FastForward16.gif");
+     String tool_tip = "Forward";
+	 Action a = new AbstractAction(title) {
+	     private static final long serialVersionUID = 1L;
+	     public void actionPerformed(ActionEvent ae) {
+	    	 if (history_pointer < bookmark_history.size() - 1) {
+	    		 history_pointer++;
+	             TreePath path = bookmark_history.get(history_pointer);
+	             tree.setSelectionPath(path);
+	             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+	             Bookmark bm = (Bookmark)node.getUserObject();
+	             BookmarkController.viewBookmark(igbService, bm);
+	             forward_action.setEnabled(history_pointer < bookmark_history.size() - 1);
+	             backward_action.setEnabled(true);
+	    	 }
+	     }
+	 };
+    a.putValue(Action.SMALL_ICON, icon);
+    a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
+    return a;
+  }
+
+  /**
+   * Action to move backward in the Bookmark History
+   * @return the Action backward
+   */
+  public Action makeBackwardAction() {
+     String title = "Backward";
+     ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/media/Rewind16.gif");
+     String tool_tip = "Backward";
+	 Action a = new AbstractAction(title) {
+	     private static final long serialVersionUID = 1L;
+	     public void actionPerformed(ActionEvent ae) {
+	    	 if (history_pointer > 0) {
+	    		 history_pointer--;
+	             TreePath path = bookmark_history.get(history_pointer);
+	             tree.setSelectionPath(path);
+	             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+	             Bookmark bm = (Bookmark)node.getUserObject();
+	             BookmarkController.viewBookmark(igbService, bm);
+	             forward_action.setEnabled(true);
+	             backward_action.setEnabled(history_pointer > 0);
+	    	 }
+	     }
+	 };
+    a.putValue(Action.SMALL_ICON, icon);
+    a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
     return a;
   }
 

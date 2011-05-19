@@ -12,6 +12,8 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 /**
  * An arrow glyph.
@@ -141,6 +143,16 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		}
 	}
 
+	@Override
+	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  { 
+		if(isVisible() && coord_hitbox.intersects(coordbox)){
+			Rectangle pixbox = new Rectangle();
+			view.transformToPixels(coord_hitbox,pixbox);
+			return pixbox.intersects(poly.getBounds2D());
+		}
+		return false;
+	}
+	
 	public static void addDirectionGlyphs(AffyTieredMap map, SeqSymmetry sym, GlyphI pglyph, BioSeq annotSeq, BioSeq coordSeq, double cy, double cheight){
 		
 		SeqSymmetry intronSym = SeqUtils.getIntronSym(sym, annotSeq);

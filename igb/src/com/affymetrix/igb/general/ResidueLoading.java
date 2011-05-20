@@ -307,7 +307,7 @@ public final class ResidueLoading {
 			common_url = root_url + path + ".";
 			String vPath = root_url + quickloadServer.getPath(version.versionName, version.versionName) + ".2bit";
 
-			symloader = determineLoader(common_url, vPath, seq_group);
+			symloader = determineLoader(common_url, vPath, seq_group, seq_name);
 
 			if (symloader != null) {
 				return symloader.getRegionResidues(span);
@@ -318,7 +318,7 @@ public final class ResidueLoading {
 		return null;
 	}
 
-	private static SymLoader determineLoader(String common_url, String vPath, AnnotatedSeqGroup seq_group){
+	private static SymLoader determineLoader(String common_url, String vPath, AnnotatedSeqGroup seq_group, String seq_name){
 		QFORMAT format = determineFormat(common_url, vPath);
 
 		if(format == null)
@@ -336,6 +336,8 @@ public final class ResidueLoading {
 				return new BNIB(uri, seq_group);
 
 			case VTWOBIT:
+				return new TwoBit(uri, seq_group, seq_name);
+				
 			case TWOBIT:
 				return new TwoBit(uri, seq_group);
 

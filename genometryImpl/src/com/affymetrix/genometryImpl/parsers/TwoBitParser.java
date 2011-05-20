@@ -21,7 +21,19 @@ import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.SeekableBufferedStream;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.TwoBitIterator;
 
 /**
  * @author sgblanch
@@ -63,6 +75,16 @@ public final class TwoBitParser {
 		return seqs;
     }
 
+	public static BioSeq parse(URI uri, AnnotatedSeqGroup seq_group, String seqName) throws FileNotFoundException, IOException {
+		SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
+		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+		loadBuffer(bistr, buffer);
+        int seq_count = readFileHeader(buffer);
+        BioSeq retseq = readSequenceIndex(uri, bistr, buffer, seq_count, seq_group, seqName);
+		GeneralUtils.safeClose(bistr);
+		return retseq;
+	}
+	
 	public static BioSeq parse(URI uri) throws FileNotFoundException, IOException {
 		return parse(uri,new AnnotatedSeqGroup("No_Data")).get(0);
 	}
@@ -133,45 +155,14 @@ public final class TwoBitParser {
         return seq_count;
     }
 
-    private static void readBlocks(SeekableBufferedStream bistr, ByteBuffer buffer, BioSeq seq, MutableSeqSymmetry sym) throws IOException {
-		//xBlockCount, where x = n OR mask
-		int block_count = buffer.getInt();
-		long position = bistr.position();
-
-		if(DEBUG){
-			System.out.println("I want " + block_count + " blocks");
-		}
-
-        int[] blockStarts = new int[block_count];
-        //ByteBuffer buffer = ByteBuffer.allocate(2 * block_count * INT_SIZE + INT_SIZE);
-        for (int i = 0; i < block_count; i++) {
-			if (buffer.remaining() < INT_SIZE) {
-				position = updateBuffer(bistr, buffer, position);
-			}
-
-			//xBlockStart, where x = n OR mask
-            blockStarts[i] = buffer.getInt();
-        }
-
-        for (int i = 0; i < block_count; i++) {
-			//xBlockSize, where x = n OR mask
-			if (buffer.remaining() < INT_SIZE) {
-				position = updateBuffer(bistr, buffer, position);
-			}
-			
-			sym.addSpan(new SimpleSeqSpan(blockStarts[i], blockStarts[i] + buffer.getInt(), seq));
-        }
-
-    }
-
     private static List<BioSeq> readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
         String name;
         int name_length;
 		long offset, position;
 		List<BioSeq> seqs = new ArrayList<BioSeq>();
+		Map<String,Long> seqOffsets = new HashMap<String,Long>();
 		position = bistr.position();
 		for (int i = 0; i < seq_count; i++) {
-			bistr.position(position);
 			
 			if (buffer.remaining() < INT_SIZE) {
 				position = updateBuffer(bistr, buffer, position);
@@ -186,21 +177,55 @@ public final class TwoBitParser {
 			name = getString(buffer, name_length);
 			offset = buffer.getInt() & INT_MASK;
 
-			if (DEBUG) {
-				System.out.println("Sequence '" + name + "', offset " + offset);
-			}
+//			if (DEBUG) {
+//				System.out.println("Sequence '" + name + "', offset " + offset);
+//			}
 
-			position = bistr.position();
-			seqs.add(readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name));
+			seqOffsets.put(name, offset);
+			//seqs.add(readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name));
 		}
+		
+		for(Entry<String,Long> seqOffset : seqOffsets.entrySet()){
+			seqs.add(readSequenceHeader(uri, bistr, buffer.order(), seqOffset.getValue(), seq_group, seqOffset.getKey()));
+		}
+		
 		return seqs;
     }
+	
+	private static BioSeq readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group, String synonym) throws IOException {
+        String name;
+        int name_length;
+		long offset, position;
+		BioSeq seq = null;
+		SynonymLookup chrLookup = SynonymLookup.getChromosomeLookup();
+		position = bistr.position();
+		for (int i = 0; i < seq_count; i++) {
+			
+			if (buffer.remaining() < INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
 
+			name_length = buffer.get() & BYTE_MASK;
+
+			if (buffer.remaining() < name_length + INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
+
+			name = getString(buffer, name_length);
+			offset = buffer.getInt() & INT_MASK;
+
+			if(name.equals(synonym) || chrLookup.isSynonym(name, synonym)){
+				seq = readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name);
+				break;
+			}
+		}
+			
+		return seq;
+    }
+	
     private static BioSeq readSequenceHeader(URI uri, SeekableBufferedStream bistr, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+		ByteBuffer buffer = ByteBuffer.allocate(INT_SIZE);
 		buffer.order(order);
-		MutableSeqSymmetry nBlocks    = new SimpleMutableSeqSymmetry();
-		MutableSeqSymmetry maskBlocks = new SimpleMutableSeqSymmetry();
 		long residueOffset = offset;
 
         bistr.position(offset);
@@ -221,21 +246,7 @@ public final class TwoBitParser {
 
 		BioSeq seq = seq_group.addSeq(name, (int) size);
 
-		//nBlockCount, nBlockStart, nBlockSize
-        readBlocks(bistr, buffer, seq, nBlocks);
-		residueOffset += INT_SIZE + nBlocks.getSpanCount() * INT_SIZE * 2;
-
-		//maskBlockCount, maskBlockStart, maskBlockSize
-		readBlocks(bistr ,buffer, seq, maskBlocks);
-		residueOffset += INT_SIZE + maskBlocks.getSpanCount() * INT_SIZE * 2;
-
-		//reserved
-        if (buffer.getInt() != 0) {
-            throw new IOException("Unknown 2bit format: sequence's reserved field is non zero");
-        }
-		residueOffset += INT_SIZE;
-
-		seq.setResiduesProvider(new TwoBitIterator(uri,size,residueOffset,buffer.order(),nBlocks,maskBlocks));
+		seq.setResiduesProvider(new TwoBitIterator(uri,size,residueOffset,buffer.order()));
 
 		return seq;
     }

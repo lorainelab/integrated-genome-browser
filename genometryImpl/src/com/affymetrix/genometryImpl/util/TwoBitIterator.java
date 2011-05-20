@@ -2,8 +2,8 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -22,6 +22,9 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	/** Use a 4KB buffer, as that is the block size of most file systems */
 	private static final int BUFFER_SIZE = 4096;
 	
+	/** Size of integer, in bytes */
+	private static final int INT_SIZE = 4;
+	
 	/** Number of residues in each byte */
 	private static final int RESIDUES_PER_BYTE = 4;
 
@@ -33,17 +36,18 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 	private static final char[] BASES = { 'T', 'C', 'A', 'G'};
 
+	private boolean initialized = false;
 	private final URI uri;
-	private final long length, offset;
+	private long length, offset;
 	private final MutableSeqSymmetry nBlocks, maskBlocks;
 	private final ByteOrder byteOrder;
 
-	public TwoBitIterator(URI uri, long length, long offset, ByteOrder byteOrder, MutableSeqSymmetry nBlocks, MutableSeqSymmetry maskBlocks) {
+	public TwoBitIterator(URI uri, long length, long offset, ByteOrder byteOrder) {
 		this.uri	    = uri;
 		this.length     = length;
 		this.offset     = offset;
-		this.nBlocks    = nBlocks;
-		this.maskBlocks = maskBlocks;
+		this.nBlocks    = new SimpleMutableSeqSymmetry();
+		this.maskBlocks = new SimpleMutableSeqSymmetry();
 		this.byteOrder  = byteOrder;
 
 		if (this.length > Integer.MAX_VALUE) {
@@ -51,7 +55,80 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		}
 
 	}
+	
+	private void init(){
+		if(initialized)
+			return;
+		
+		SeekableBufferedStream bistr = null;
+		try{
+			bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
+			bistr.position(offset);
+			ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+			buffer.order(byteOrder) ;
+			loadBuffer(bistr, buffer);
+			
+			//nBlockCount, nBlockStart, nBlockSize
+			readBlocks(bistr, buffer, nBlocks);
+			offset += INT_SIZE + nBlocks.getSpanCount() * INT_SIZE * 2;
 
+			//maskBlockCount, maskBlockStart, maskBlockSize
+			readBlocks(bistr ,buffer, maskBlocks);
+			offset += INT_SIZE + maskBlocks.getSpanCount() * INT_SIZE * 2;
+
+			//reserved
+			if (buffer.getInt() != 0) {
+				throw new IOException("Unknown 2bit format: sequence's reserved field is non zero");
+			}
+			offset += INT_SIZE;
+			
+			this.initialized = true;
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}finally{
+			GeneralUtils.safeClose(bistr);
+		}
+		
+	}
+	
+	private static void readBlocks(SeekableBufferedStream bistr, ByteBuffer buffer, MutableSeqSymmetry sym) throws IOException {
+		//xBlockCount, where x = n OR mask
+		
+		long position = bistr.position();
+		if (buffer.remaining() < INT_SIZE) {
+			position = updateBuffer(bistr, buffer, position);
+		}
+		
+		int block_count = buffer.getInt();
+        int[] blockStarts = new int[block_count];
+        //ByteBuffer buffer = ByteBuffer.allocate(2 * block_count * INT_SIZE + INT_SIZE);
+        for (int i = 0; i < block_count; i++) {
+			if (buffer.remaining() < INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
+
+			//xBlockStart, where x = n OR mask
+            blockStarts[i] = buffer.getInt();
+        }
+
+        for (int i = 0; i < block_count; i++) {
+			//xBlockSize, where x = n OR mask
+			if (buffer.remaining() < INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
+			
+			sym.addSpan(new SimpleSeqSpan(blockStarts[i], blockStarts[i] + buffer.getInt(), null));
+        }
+
+    }
+	
+	private static long updateBuffer(SeekableBufferedStream bistr, ByteBuffer buffer, long position) throws IOException {
+		bistr.position(position - buffer.remaining());
+		loadBuffer(bistr, buffer);
+		return bistr.position();
+	}
+	
 	/**
 	 * Load data of size of buffer into buffer from file istr.
 	 *
@@ -59,7 +136,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	 * @param buffer	Buffer in which data from file istr is read.
 	 * @throws IOException
 	 */
-	private void loadBuffer(SeekableBufferedStream bistr, ByteBuffer buffer) throws IOException {
+	private static void loadBuffer(SeekableBufferedStream bistr, ByteBuffer buffer) throws IOException {
 		buffer.rewind();
 		bistr.read(buffer.array());
 		buffer.rewind();
@@ -72,8 +149,8 @@ public final class TwoBitIterator implements SearchableCharIterator {
 	 * @return			Returns string of residues.
 	 */
 	public String substring(int start, int end) {
+		init();
 		SeekableBufferedStream bistr = null;
-		File file = null;
 		try {
 			//Sanity Check
 			start = Math.max(0, start);
@@ -116,7 +193,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 		MutableSeqSymmetry tempNBlocks = GetBlocks(start, nBlocks);
 		MutableSeqSymmetry tempMaskBlocks = GetBlocks(start, maskBlocks);
-		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+		ByteBuffer buffer = ByteBuffer.allocate(Math.max(requiredLength,BUFFER_SIZE));
 		buffer.order(this.byteOrder);
 
 		loadBuffer(bistr, buffer);
@@ -137,7 +214,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 				}
 			}
 			bistr.position(bistr.position() + BUFFER_SIZE);
-			loadBuffer(bistr, buffer);
+//			loadBuffer(bistr, buffer);
 		}
 
 		return new String(residues);

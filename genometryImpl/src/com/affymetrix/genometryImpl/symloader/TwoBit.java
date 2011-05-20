@@ -35,6 +35,21 @@ public class TwoBit extends SymLoader {
 		strategyList.add(LoadStrategy.CHROMOSOME);
 	}
 	
+	public TwoBit(URI uri, AnnotatedSeqGroup group, String seqName){
+		super(uri, "", group);
+		this.isResidueLoader = true;
+		try {
+			BioSeq retseq = TwoBitParser.parse(uri, group, seqName);
+			if(retseq != null){
+				chrMap.put(retseq, retseq.getResiduesProvider());
+				retseq.removeResidueProvider();
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(TwoBit.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		super.init();
+	}
+	
 	public TwoBit(URI uri, AnnotatedSeqGroup group) {
 		super(uri, "", group);
 		this.isResidueLoader = true;

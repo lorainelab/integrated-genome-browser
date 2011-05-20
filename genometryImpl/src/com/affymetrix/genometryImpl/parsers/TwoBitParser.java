@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SeekableBufferedStream;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.TwoBitIterator;
 
 /**
@@ -66,6 +67,16 @@ public final class TwoBitParser implements Parser {
 		return seqs;
     }
 
+	public static BioSeq parse(URI uri, AnnotatedSeqGroup seq_group, String seqName) throws FileNotFoundException, IOException {
+		SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
+		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+		loadBuffer(bistr, buffer);
+        int seq_count = readFileHeader(buffer);
+        BioSeq retseq = readSequenceIndex(uri, bistr, buffer, seq_count, seq_group, seqName);
+		GeneralUtils.safeClose(bistr);
+		return retseq;
+	}
+	
 	public static BioSeq parse(URI uri) throws FileNotFoundException, IOException {
 		return parse(uri,new AnnotatedSeqGroup("No_Data")).get(0);
 	}
@@ -172,7 +183,38 @@ public final class TwoBitParser implements Parser {
 		
 		return seqs;
     }
+	
+	private static BioSeq readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group, String synonym) throws IOException {
+        String name;
+        int name_length;
+		long offset, position;
+		BioSeq seq = null;
+		SynonymLookup chrLookup = SynonymLookup.getChromosomeLookup();
+		position = bistr.position();
+		for (int i = 0; i < seq_count; i++) {
+			
+			if (buffer.remaining() < INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
 
+			name_length = buffer.get() & BYTE_MASK;
+
+			if (buffer.remaining() < name_length + INT_SIZE) {
+				position = updateBuffer(bistr, buffer, position);
+			}
+
+			name = getString(buffer, name_length);
+			offset = buffer.getInt() & INT_MASK;
+
+			if(name.equals(synonym) || chrLookup.isSynonym(name, synonym)){
+				seq = readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name);
+				break;
+			}
+		}
+			
+		return seq;
+    }
+	
     private static BioSeq readSequenceHeader(URI uri, SeekableBufferedStream bistr, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(INT_SIZE);
 		buffer.order(order);

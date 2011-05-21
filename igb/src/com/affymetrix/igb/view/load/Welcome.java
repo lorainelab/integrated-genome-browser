@@ -11,9 +11,11 @@ import java.awt.event.ComponentListener;
 
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.glyph.StringGlyph;
+import com.affymetrix.igb.glyph.WrappedStringGlyph;
 
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.glyph.WrappedStringGlyph;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.Application;
 
 /**
  *
@@ -23,24 +25,26 @@ public class Welcome implements ItemListener, ComponentListener{
 	
 	private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
 	private static final String MESSAGE = IGBConstants.BUNDLE.getString("welcomeMessage");
-	final private NeoMap map;
-	final private Color color;
-	final StringGlyph sg;
+	private static final SeqMapView smv = Application.getSingleton().getMapView();
+	private static final float FONT_SIZE = 18.0f;
+	private static final Color color = Color.WHITE;
 	
-	public Welcome(NeoMap map){
-		this.map = map;
-		this.color = Color.WHITE;
+	private final NeoMap map;
+	private final StringGlyph sg;
+	
+	public Welcome(){
 		sg = new WrappedStringGlyph(MESSAGE);
-		this.map.addComponentListener(this);
-		init();
+		map = smv.getSeqMap();
+		map.addComponentListener(this);
+		initGlyph();
 	}
 	
-	private void init(){
+	private void initGlyph(){
 		sg.setHitable(false);
 		sg.setForegroundColor(color);
 		sg.setCoordBox(map.getCoordBounds());
 		Font font = sg.getFont();
-		font = font.deriveFont(18.0f);
+		font = font.deriveFont(FONT_SIZE);
 		sg.setFont(font);
 		map.addItem(sg);
 	}
@@ -49,7 +53,7 @@ public class Welcome implements ItemListener, ComponentListener{
 		JComboBox jb = (JComboBox) evt.getSource();
 		if(jb.getSelectedItem() != null &&
 				SELECT_SPECIES.equals(jb.getSelectedItem().toString())){
-			sg.setVisibility(true);				
+			sg.setVisibility(true);
 		}else{
 			sg.setVisibility(false);
 		}
@@ -63,10 +67,8 @@ public class Welcome implements ItemListener, ComponentListener{
 		}
 	}
 
-	public void componentMoved(ComponentEvent ce) {	}
-
-	public void componentShown(ComponentEvent ce) { }
-
-	public void componentHidden(ComponentEvent ce) { }
+	public void componentMoved (ComponentEvent ce){}
+	public void componentShown (ComponentEvent ce){}
+	public void componentHidden(ComponentEvent ce){}
 
 }

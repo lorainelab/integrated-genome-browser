@@ -54,7 +54,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	private static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
 	// accepts a pattern like: "chr2 :10000"
 	// (The chromosome name cannot contain any spaces.)
-	private static final Pattern chrom_start_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\:\\s*([0-9,]+)\\s*$");
+	private static final Pattern chrom_start_pattern = Pattern.compile("^\\s*(\\S+)\\s*\\:\\s*([0-9,]+)\\s*$");
 	// accepts a pattern like: "chr2 : 3,040,000 + 20000"
 	// (The chromosome name cannot contain any spaces.)
 	private static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
@@ -141,7 +141,16 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 				}
 				String chrom_text = matcher.group(1);
 				String start_text = matcher.group(2);
-				String end_or_width_text = matcher.groupCount() > 2 ? matcher.group(3) : "0";
+				String end_or_width_text = "0";
+				if (matcher.groupCount() > 2) {
+					end_or_width_text = matcher.group(3);
+				}
+				else {
+					SeqSpan span = gview.getVisibleSpan();
+					if (span != null) {
+						end_or_width_text = "" + (span.getEnd() - span.getStart());
+					}
+				}
 				start = nformat.parse(start_text).doubleValue();
 				double end_or_width = nformat.parse(end_or_width_text).doubleValue();
 				if (uses_width) {

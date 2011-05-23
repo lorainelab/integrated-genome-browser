@@ -8,14 +8,13 @@ import java.awt.event.ItemListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
-
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.glyph.StringGlyph;
-import com.affymetrix.igb.glyph.WrappedStringGlyph;
 
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.glyph.WrappedStringGlyph;
 
 /**
  *
@@ -50,13 +49,17 @@ public class Welcome implements ItemListener, ComponentListener{
 	}
 	
 	public void itemStateChanged(ItemEvent evt) {
+		map.removeItem(sg);
+		sg.setVisibility(false);
+		
 		JComboBox jb = (JComboBox) evt.getSource();
 		if(jb.getSelectedItem() != null &&
 				SELECT_SPECIES.equals(jb.getSelectedItem().toString())){
+			sg.setCoordBox(map.getCoordBounds());
 			sg.setVisibility(true);
-		}else{
-			sg.setVisibility(false);
+			map.addItem(sg);
 		}
+		
 		map.updateWidget();
 	}
 

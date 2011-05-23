@@ -487,10 +487,15 @@ package util
 					title =  "Malformed BAM file";            		
 				} else if (event.status == 907) {
 					message = "File '" + event.target.name + "' did not upload.\nThe annotation name is invalid. Characters / and & are not allowed.";
-					title =  "Invalid annotation name";            		
+					title =  "Invalid annotation name";      
+				} else if (event.status == 908) {
+					message = "Problems were encountered bulk uploading files described in '" + event.target.name + "' .\nCheck that each full path actually exists and they have the proper permissions so that the web server can read and write to them (chmod -R 777 *).";
+					title =  "Bulk File Upload Problem";        		
 				} else {
-            		message = "File '" + event.target.name + "' did not upload.\nStatus code " + event.status + " returned.";
+            		//message = "File '" + event.target.name + "' did not upload.\nStatus code " + event.status + " returned.";
+            		message = event.toString();
             		title = "Upload Error";
+            		
             	}
             	
             	if (_files.length > 1) {

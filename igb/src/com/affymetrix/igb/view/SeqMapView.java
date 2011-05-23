@@ -191,7 +191,8 @@ public class SeqMapView extends JPanel
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
 	private static final boolean default_x_zoomer_above = true;
 	private static final boolean default_y_zoomer_left = true;
-
+	private static final Font max_zoom_font = NeoConstants.default_bold_font.deriveFont(30.0f);
+	
 	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 	private final GlyphEdgeMatcher edge_matcher;
 	private final JPopupMenu sym_popup = new JPopupMenu();
@@ -514,9 +515,11 @@ public class SeqMapView extends JPanel
 	private static AffyTieredMap createAffyTieredMap() {
 		AffyTieredMap resultSeqMap = new AffyLabelledTierMap(true, true);
 		resultSeqMap.enableDragScrolling(true);
+		resultSeqMap.setMaxZoomToFont(max_zoom_font);
 		NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
 		label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
+		label_map.setMaxZoomToFont(max_zoom_font);
 		return resultSeqMap;
 	}
 

@@ -177,7 +177,7 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 			}
 			if (Math.abs((long) seq_end_index - (long) seq_beg_index) > 100000) {
 				// something's gone wrong.  Ignore.
-				Logger.getLogger(CharSeqGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
+				Logger.getLogger(AlignedResidueGlyph.class.getName()).fine("Invalid string: " + seq_beg_index + "," + seq_end_index);
 				return;
 			}
 			int seq_pixel_offset = pixelbox.x;
@@ -228,11 +228,13 @@ public final class AlignedResidueGlyph extends AbstractResiduesGlyph
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
 			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+			int pixelOffset = (int) (pixelsPerBase - this.font_width);
+			pixelOffset = pixelOffset > 2 ? pixelOffset/2 : pixelOffset;
 			for (int i = 0; i < charArray.length; i++) {
 				if(show_mask && !residueMask.get(i)) {
 					continue;	// skip drawing of this residue
 				}
-				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase), baseline);
+				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);
 			}
 		}
 	}

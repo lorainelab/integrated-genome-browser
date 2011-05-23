@@ -160,8 +160,10 @@ public final class CharSeqGlyph extends SequenceGlyph
 			g.setFont(getResidueFont());
 			g.setColor(getForegroundColor());
 			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+			int pixelOffset = (int) (pixelsPerBase - this.font_width);
+			pixelOffset = pixelOffset > 2 ? pixelOffset/2 : pixelOffset;
 			for (int i = 0; i < charArray.length; i++) {
-				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase), baseline);
+				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);
 			}
 		}
 	}

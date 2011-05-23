@@ -223,7 +223,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		versionCB.setEnabled(true);
 		speciesCB.addItemListener(this);
 		versionCB.addItemListener(this);
-
+		speciesCB.addItemListener(new Welcome());
 	}
 
 	/**

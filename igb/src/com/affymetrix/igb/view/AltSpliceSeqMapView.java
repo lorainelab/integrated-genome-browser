@@ -278,7 +278,7 @@ final class AltSpliceSeqMapView extends SeqMapView {
 	}
 
 	@Override
-	public void clear() {
+	protected void clear() {
 		stopSlicingThread();
 		super.clear();
 	}

@@ -227,6 +227,8 @@ public class SeqMapView extends JPanel
 	
 	private final static int xoffset_pop = 10;
 	private final static int yoffset_pop = 0;
+	private final static int[] default_range  = new int[]{0, 100};
+	private final static int[] default_offset = new int[]{0, 100};
 	private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
 	
 	private TransformTierGlyph axis_tier;
@@ -560,13 +562,16 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public void clear() {
+	protected void clear() {
 		seqmap.clearWidget();
 		aseq = null;
 		this.viewseq = null;
 		clearSelection();
 		TrackView.clear();
 		match_glyphs.clear();
+		seqmap.setMapRange(default_range[0], default_range[1]);
+		seqmap.setMapOffset(default_offset[0], default_offset[1]);
+		seqmap.stretchToFit(true, true);
 		seqmap.updateWidget();
 	}
 

@@ -25,7 +25,7 @@ public class ClearAllAction extends AbstractAction {
 
 	public void actionPerformed(ActionEvent e) {
 		if (IGB.confirmPanel("Really clear entire view?")) {
-			IGB.getSingleton().getMapView().clear();
+			//IGB.getSingleton().getMapView().clear();
 		}
 	}
 }

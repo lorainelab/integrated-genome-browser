@@ -188,11 +188,7 @@ public class BAMSym extends UcscBedSym implements SymWithResidues, SearchableCha
 		}
 		return super.getProperty(key);
 	}
-
-	public Cigar getCigar() {
-		return cigar;
-	}
-
+	
 	private String interpretCigar(int start, int end, boolean isIns) {
 		if (cigar == null || cigar.numCigarElements() == 0 || residues == null) {
 			return "";

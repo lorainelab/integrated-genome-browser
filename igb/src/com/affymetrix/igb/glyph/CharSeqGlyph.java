@@ -24,9 +24,11 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 import com.affymetrix.igb.IGBConstants;
+import java.awt.FontMetrics;
 
 
 /**
@@ -46,7 +48,40 @@ public final class CharSeqGlyph extends SequenceGlyph
 	private SearchableCharIterator chariter;
 	private int residue_length = 0;
 	private static final Font mono_default_font = NeoConstants.default_bold_font;
-
+	static final int max_char_xpix = GeneralUtils.getFontMetrics(default_bold_font).stringWidth("G"); // maximum allowed pixel width of chars
+	static final int min_char_xpix = 5;  // minimum allowed pixel width of chars
+	// xpix2fonts: index is char width in pixels, entry is Font that gives that char width (or smaller)
+	static final Font[] xpix2fonts = new Font[max_char_xpix + 1];
+	
+	static {
+		setBaseFont(mono_default_font);
+	}
+	
+	public static void setBaseFont(Font base_fnt) {
+		int pntcount = 3;
+		while (true) {
+			// converting to float to trigger correct deriveFont() method...
+			Font newfnt = base_fnt.deriveFont((float) (pntcount));
+			FontMetrics fm = GeneralUtils.getFontMetrics(newfnt);
+			int text_width = fm.stringWidth("G");
+		
+			if (text_width > max_char_xpix) {
+				break;
+			}
+			
+			xpix2fonts[text_width] = newfnt;
+			pntcount++;
+		}
+		Font smaller_font = null;
+		for (int i = 0; i < xpix2fonts.length; i++) {
+			if (xpix2fonts[i] != null) {
+				smaller_font = xpix2fonts[i];
+			} else {
+				xpix2fonts[i] = smaller_font;
+			}
+		}
+	}
+		
 	// default to true for backward compatability
 	private boolean hitable = true;
 
@@ -155,16 +190,20 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 
 	private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart) {
-		if (this.font_width <= pixelsPerBase) {
-			// Ample room to draw residue letters.
-			g.setFont(getResidueFont());
-			g.setColor(getForegroundColor());
-			int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
-			int pixelOffset = (int) (pixelsPerBase - this.font_width);
-			pixelOffset = pixelOffset > 2 ? pixelOffset/2 : pixelOffset;
-			for (int i = 0; i < charArray.length; i++) {
-				g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);
-			}
+		if(min_char_xpix > pixelsPerBase)
+			return;
+		
+		int index = (int) (pixelsPerBase > max_char_xpix ? max_char_xpix : pixelsPerBase);
+		Font xmax_font = xpix2fonts[index];
+		setFont(xmax_font);
+		// Ample room to draw residue letters.
+		g.setFont(getResidueFont());
+		g.setColor(getForegroundColor());
+		int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+		int pixelOffset = (int) (pixelsPerBase - this.font_width);
+		pixelOffset = pixelOffset > 2 ? pixelOffset / 2 : pixelOffset;
+		for (int i = 0; i < charArray.length; i++) {
+			g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);
 		}
 	}
 

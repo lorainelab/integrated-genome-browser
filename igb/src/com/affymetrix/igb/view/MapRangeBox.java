@@ -54,7 +54,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	private static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
 	// accepts a pattern like: "chr2 :10000"
 	// (The chromosome name cannot contain any spaces.)
-	private static final Pattern chrom_start_pattern = Pattern.compile("^\\s*(\\S+)\\s*\\:\\s*([0-9,]+)\\s*$");
+	private static final Pattern chrom_position_pattern = Pattern.compile("^\\s*(\\S+)\\s*\\:\\s*([0-9,]+)\\s*$");
 	// accepts a pattern like: "chr2 : 3,040,000 + 20000"
 	// (The chromosome name cannot contain any spaces.)
 	private static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
@@ -121,19 +121,16 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		double start, end, width;
 		try {
 			Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range);
-			Matcher chrom_start_matcher = chrom_start_pattern.matcher(range);
+			Matcher chrom_position_matcher = chrom_position_pattern.matcher(range);
 			Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range);
 			Matcher start_end_matcher = start_end_pattern.matcher(range);
 			Matcher start_width_matcher = start_width_pattern.matcher(range);
 			Matcher center_matcher = center_pattern.matcher(range);
-			if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches() || chrom_start_matcher.matches()) {
+			if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
 				Matcher matcher;
 				boolean uses_width;
 				if (chrom_start_width_matcher.matches()) {
 					matcher = chrom_start_width_matcher;
-					uses_width = true;
-				} else if (chrom_start_matcher.matches()) {
-					matcher = chrom_start_matcher;
 					uses_width = true;
 				} else {
 					matcher = chrom_start_end_matcher;
@@ -141,16 +138,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 				}
 				String chrom_text = matcher.group(1);
 				String start_text = matcher.group(2);
-				String end_or_width_text = "0";
-				if (matcher.groupCount() > 2) {
-					end_or_width_text = matcher.group(3);
-				}
-				else {
-					SeqSpan span = gview.getVisibleSpan();
-					if (span != null) {
-						end_or_width_text = "" + (span.getEnd() - span.getStart());
-					}
-				}
+				String end_or_width_text = matcher.group(3);
 				start = nformat.parse(start_text).doubleValue();
 				double end_or_width = nformat.parse(end_or_width_text).doubleValue();
 				if (uses_width) {
@@ -159,6 +147,23 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 					end = end_or_width;
 				}
 				zoomToSeqAndSpan(gview, chrom_text, (int) start, (int) end);
+			} else if (chrom_position_matcher.matches()) {
+				String chrom_text = chrom_position_matcher.group(1);
+				String position_text = chrom_position_matcher.group(2);
+				SeqSpan span = gview.getVisibleSpan();
+				if (span != null) {
+					double position = nformat.parse(position_text).doubleValue();
+					width = (span.getEnd() - span.getStart());
+					start = Math.max(0, position - width / 2.0);
+					end = start + width;
+					BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+					if (end >= seq.getLength()) {
+						end = seq.getLength() - 1;
+						start = end - width;
+					}
+					zoomToSeqAndSpan(gview, chrom_text, (int) start, (int) end);
+					gview.setZoomSpotX(position);
+				}
 			} else if (start_end_matcher.matches()) {
 				String start_text = start_end_matcher.group(1);
 				String end_text = start_end_matcher.group(2);
@@ -196,7 +201,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 
 	public static String determineChr(String range) {
 		Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range);
-		Matcher chrom_start_matcher = chrom_start_pattern.matcher(range);
+		Matcher chrom_start_matcher = chrom_position_pattern.matcher(range);
 		Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range);
 		if (chrom_start_end_matcher.matches() || chrom_start_matcher.matches() || chrom_start_width_matcher.matches()) {
 			Matcher matcher;

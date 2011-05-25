@@ -27,7 +27,7 @@
                 </dirset>
             </rootspath>
         </nbprofiledirect>
-        <java fork="true" classname="com.affymetrix.main.Main" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
+        <java fork="true" maxmemory="${igb.maxmem}" classname="com.affymetrix.main.Main" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
             <jvmarg line="${igb.jvmargs}" />
             <jvmarg value="${profiler.info.jvmargs.agent}" />
             <jvmarg line="${profiler.info.jvmargs}"/>
@@ -46,7 +46,7 @@
                 </dirset>
             </rootspath>
         </nbprofiledirect>
-				<java fork="true" classname="${profile.class}" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
+		<java fork="true" maxmemory="${igb.maxmem}" classname="${profile.class}" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
             <jvmarg line="${igb.jvmargs}" />
             <jvmarg value="${profiler.info.jvmargs.agent}" />
             <jvmarg line="${profiler.info.jvmargs}"/>

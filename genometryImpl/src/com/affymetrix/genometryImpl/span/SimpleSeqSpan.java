@@ -90,7 +90,36 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
 
 	public boolean isIntegral() { return true; }
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + end;
+		result = prime * result + ((seq == null) ? 0 : seq.hashCode());
+		result = prime * result + start;
+		return result;
+	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SimpleSeqSpan other = (SimpleSeqSpan) obj;
+		if (end != other.end)
+			return false;
+		if (seq == null) {
+			if (other.seq != null)
+				return false;
+		} else if (!seq.equals(other.seq))
+			return false;
+		if (start != other.start)
+			return false;
+		return true;
+	}
 }
 
 

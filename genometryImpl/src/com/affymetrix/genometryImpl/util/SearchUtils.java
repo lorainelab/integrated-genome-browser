@@ -59,19 +59,21 @@ public final class SearchUtils {
 	 * @param match
 	 */
 	private static void findIDsInSym(Set<SeqSymmetry> syms, SeqSymmetry sym, Matcher match) {
-		if (sym == null || sym instanceof TypeContainerAnnot) {
+		if (sym == null) {
 			return;
 		}
-		if (sym.getID() != null && match.reset(sym.getID()).matches()) {
-			syms.add(sym);	// ID matches
-			// If parent matches, then don't list children
-			return;
-		} else if (sym instanceof SymWithProps) {
-			String method = BioSeq.determineMethod(sym);
-			if (method != null && match.reset(method).matches()) {
-				syms.add(sym);	// method matches
+		if (!(sym instanceof TypeContainerAnnot)) {
+			if (sym.getID() != null && match.reset(sym.getID()).matches()) {
+				syms.add(sym);	// ID matches
 				// If parent matches, then don't list children
 				return;
+			} else if (sym instanceof SymWithProps) {
+				String method = BioSeq.determineMethod(sym);
+				if (method != null && match.reset(method).matches()) {
+					syms.add(sym);	// method matches
+					// If parent matches, then don't list children
+					return;
+				}
 			}
 		}
 		int childCount = sym.getChildCount();

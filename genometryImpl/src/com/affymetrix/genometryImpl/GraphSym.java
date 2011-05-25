@@ -525,4 +525,13 @@ public class GraphSym extends SimpleSymWithProps {
 
 		return locprops;
 	}
+	
+	@Override
+	public void clear(){
+		super.clear();
+		yBuf = null;
+		wBuf = null;
+		xCoords = null;
+		bufFile = null;
+	}
 }

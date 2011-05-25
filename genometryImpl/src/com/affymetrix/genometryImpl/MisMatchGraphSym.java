@@ -294,4 +294,10 @@ public class MisMatchGraphSym extends GraphSym {
 			GeneralUtils.safeClose(dis);
 		}
 	}
+	
+	@Override
+	public void clear(){
+		super.clear();
+		residuesTot = null;
+	}
 }

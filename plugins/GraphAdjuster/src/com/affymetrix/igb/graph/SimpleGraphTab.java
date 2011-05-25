@@ -1066,7 +1066,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private void deleteGraph(GenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
 		BioSeq aseq = gsym.getGraphSeq();
 		if (aseq != null) {
-			aseq.removeAnnotation(gsym);
+			aseq.unloadAnnotation(gsym);
 		}
 
 		GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);

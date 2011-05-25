@@ -604,7 +604,7 @@ public class SeqMapView extends JPanel
 		for (int i = acount - 1; i >= 0; i--) {
 			SeqSymmetry annot = mseq.getAnnotation(i);
 			if (annot instanceof GraphSym) {
-				mseq.removeAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
+				mseq.unloadAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
 			}
 		}
 	}

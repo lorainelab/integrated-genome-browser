@@ -308,7 +308,7 @@ public class TrackView {
 		}else{ //This could derived from other sym
 			SeqSymmetry sym = seq.getAnnotation(method);
 			if(sym != null){
-				seq.removeAnnotation(sym);
+				seq.unloadAnnotation(sym);
 			}
 		}
 	}
@@ -320,7 +320,7 @@ public class TrackView {
 			if ((method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod()))
 					|| method.equals(dd.getID())) {
 				dependent_list.remove(dd);
-				seq.removeAnnotation(dd.getSym());
+				seq.unloadAnnotation(dd.getSym());
 			}
 		}
 	}

@@ -60,7 +60,7 @@ public class DependentData {
 		}
 
 		if(temp != null){
-			aseq.removeAnnotation(temp);
+			aseq.unloadAnnotation(temp);
 		}
 
 		aseq.addAnnotation(sym);

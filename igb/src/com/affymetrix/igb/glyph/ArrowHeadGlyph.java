@@ -23,14 +23,14 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 	private int x[];
 	private int y[];
 	private int headX, headY;
-	final Rectangle bounds;
+	//final Rectangle bounds;
 
 	protected boolean fillArrowHead = true;
 
 	public ArrowHeadGlyph() {
 		x = new int[6];
 		y = new int[6];
-		bounds = new Rectangle();
+		//bounds = new Rectangle();
 	}
 
 	private void calHead(){
@@ -72,25 +72,25 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		 */
 		switch ( this.getDirection() ) {
 			case EAST:  // forward strand
-				bounds.setBounds(pixelbox.x + pixelbox.width/2 - headX/2, offset_center, headX, headY);
+				//bounds.setBounds(pixelbox.x + pixelbox.width/2 - headX/2, offset_center, headX, headY);
 				drawArrowHead (g, pixelbox.x + pixelbox.width/2 + headX/2,
 						pixelbox.x + pixelbox.width/2 - headX/2,
 						offset_center, pixelbox.x + pixelbox.width/2);
 				break;
 			case WEST:
-				bounds.setBounds(pixelbox.x + pixelbox.width/2 - headX/2, offset_center, headX, headY);
+				//bounds.setBounds(pixelbox.x + pixelbox.width/2 - headX/2, offset_center, headX, headY);
 				drawArrowHead (g, pixelbox.x + pixelbox.width/2 - headX/2,
 						pixelbox.x + pixelbox.width/2 + headX/2,
 						offset_center, pixelbox.x + pixelbox.width/2);
 				break;
 			case SOUTH:  // forward strand
-				bounds.setBounds(pixelbox.x + pixelbox.width/2 - headY/2, pixelbox.x + pixelbox.width/2, headY, headX);
+				//bounds.setBounds(pixelbox.x + pixelbox.width/2 - headY/2, pixelbox.x + pixelbox.width/2, headY, headX);
 				drawArrowHead (g, pixelbox.y + pixelbox.height/2 + headX/2,
 						pixelbox.y + pixelbox.height/2 - headX/2,
 						pixelbox.x + pixelbox.width/2, offset_center);
 				break;
 			case NORTH:  // reverse strand
-				bounds.setBounds(pixelbox.x + pixelbox.width/2 - headY/2, pixelbox.x + pixelbox.width/2, headY, headX);
+				//bounds.setBounds(pixelbox.x + pixelbox.width/2 - headY/2, pixelbox.x + pixelbox.width/2, headY, headX);
 				drawArrowHead (g, pixelbox.y + pixelbox.height/2 - headX/2,
 						pixelbox.y + pixelbox.height/2 + headX/2,
 						pixelbox.x + pixelbox.width/2, offset_center);
@@ -144,15 +144,15 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 		}
 	}
 
-	@Override
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  { 
-		if(isVisible() && coord_hitbox.intersects(coordbox)){
-			Rectangle pixbox = new Rectangle();
-			view.transformToPixels(coord_hitbox,pixbox);
-			return pixbox.intersects(bounds);
-		}
-		return false;
-	}
+//	@Override
+//	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  { 
+//		if(isVisible() && coord_hitbox.intersects(coordbox)){
+//			Rectangle pixbox = new Rectangle();
+//			view.transformToPixels(coord_hitbox,pixbox);
+//			return pixbox.intersects(bounds);
+//		}
+//		return false;
+//	}
 	
 	public static void addDirectionGlyphs(AffyTieredMap map, SeqSymmetry sym, GlyphI pglyph, BioSeq annotSeq, BioSeq coordSeq, double cy, double cheight){
 		

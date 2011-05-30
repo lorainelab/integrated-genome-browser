@@ -44,8 +44,7 @@ final class SeqMapViewActionListener implements ActionListener {
 	private final Action zoom_in_y_action;
 	private final AffyTieredMap seqmap;
 	private final SeqMapView gviewer;
-	private SequenceViewer sequenceViewer;
-
+	
 	SeqMapViewActionListener(SeqMapView gviewer) {
 
 		this.gviewer = gviewer;
@@ -132,15 +131,6 @@ final class SeqMapViewActionListener implements ActionListener {
 
 		} else if (command.equals(gviewer.centerMI.getText())) {
 			gviewer.centerAtHairline();
-//		} else if (command.equals(gviewer.viewFeatureinSequenceViewer.getText())) {
-//			sequenceViewer = new SequenceViewer();
-//			sequenceViewer.loadResidues(false);
-//		} else if (command.equals(gviewer.viewParentinSequenceViewer.getText())){
-//			gviewer.selectParents();
-//			sequenceViewer.loadResidues(false);
-		} else if (command.equals(gviewer.seqViewerOptions.getText())) {
-//			sequenceViewer = new SequenceViewer();
-//			sequenceViewer.startSequenceViewer(false);
 		} else if (command.equals(ZOOM_OUT_FULLY)) {
 			Adjustable adj = seqmap.getZoomer(NeoMap.X);
 			adj.setValue(adj.getMinimum());

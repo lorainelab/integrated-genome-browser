@@ -245,7 +245,7 @@ public final class GenericFeature {
 		removeCurrentRequest(span);
 	}
 
-	private final void removeCurrentRequest(SeqSpan span){
+	public final void removeCurrentRequest(SeqSpan span){
 		for(int i=0; i<currentRequestSym.getChildCount(); i++){
 			SeqSymmetry sym = currentRequestSym.getChild(i);
 			if(span == sym.getSpan(span.getBioSeq())){

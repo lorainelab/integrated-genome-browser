@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.BNIB;
-import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
@@ -118,36 +117,24 @@ public final class ResidueLoading {
 			}
 		}
 
-
 		// If no format information is available then try all formats.
 		// Try to load in raw format from DAS2 server.
-		for (GenericVersion version : versionsWithChrom) {
-			GenericServer server = version.gServer;
-			if (server.serverType == ServerType.DAS2) {
-				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
-				String residues = GetPartialFASTADas2Residues(uri);
-				if (residues != null) {
-					// span is non-null, here
-					BioSeq.addResiduesToComposition(aseq, residues, span);
-					return true;
+		// Then try to load in fasta format from DAS2 server.
+		for (FORMAT format : new FORMAT[]{FORMAT.RAW, FORMAT.FASTA}) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
+				if (server.serverType == ServerType.DAS2) {
+					String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, format);
+					String residues = GetPartialFASTADas2Residues(uri);
+					if (residues != null) {
+						// span is non-null, here
+						BioSeq.addResiduesToComposition(aseq, residues, span);
+						return true;
+					}
 				}
 			}
 		}
-
-		// Try to load in fasta format from DAS2 server.
-		for (GenericVersion version : versionsWithChrom) {
-			GenericServer server = version.gServer;
-			if (server.serverType == ServerType.DAS2) {
-				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
-				String residues = GetPartialFASTADas2Residues(uri);
-				if (residues != null) {
-					// span is non-null, here
-					BioSeq.addResiduesToComposition(aseq, residues, span);
-					return true;
-				}
-			}
-		}
-
+		
 		//Try to load from Quickload server. Try in order bnib, 2bit and fasta.
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 		for (GenericVersion version : versionsWithChrom) {
@@ -215,7 +202,7 @@ public final class ResidueLoading {
 					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
 				}
 
-				if (LoadResiduesFromDAS2(seq_group, uri)) {
+				if (LoadResiduesFromDAS2(aseq, seq_group, uri)) {
 					BioSeq.addResiduesToComposition(aseq);
 					return true;
 				}
@@ -224,16 +211,15 @@ public final class ResidueLoading {
 			}
 		}
 
-		// If no format information is available then try all formats.
-		// Try to load in bnib format, as this format is more compactly represented internally.
-		// Try loading from DAS/2.
-		for (GenericVersion version : versionsWithChrom) {
-			GenericServer server = version.gServer;
-			if (server.serverType == ServerType.DAS2) {
-				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.BNIB);
-				if (LoadResiduesFromDAS2(seq_group, uri)) {
-					BioSeq.addResiduesToComposition(aseq);
-					return true;
+		for (FORMAT format : FORMAT.values()) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
+				if (server.serverType == ServerType.DAS2) {
+					String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, format);
+					if (LoadResiduesFromDAS2(aseq, seq_group, uri)) {
+						BioSeq.addResiduesToComposition(aseq);
+						return true;
+					}
 				}
 			}
 		}
@@ -251,30 +237,6 @@ public final class ResidueLoading {
 			}
 		}
 
-		// Try to load in RAW format from DAS2 server.
-		for (GenericVersion version : versionsWithChrom) {
-			GenericServer server = version.gServer;
-			if (server.serverType == ServerType.DAS2) {
-				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
-				String residues = LoadResiduesFromDAS2(uri);
-				if (residues != null) {
-					aseq.setResidues(residues);
-					BioSeq.addResiduesToComposition(aseq);
-					return true;
-				}
-			}
-		}
-		// Try to load in fasta format from DAS2 server.
-		for (GenericVersion version : versionsWithChrom) {
-			GenericServer server = version.gServer;
-			if (server.serverType == ServerType.DAS2) {
-				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
-				if (LoadResiduesFromDAS2(seq_group, uri)) {
-					BioSeq.addResiduesToComposition(aseq);
-					return true;
-				}
-			}
-		}
 		
 		// Try to load via DAS/1 server.
 		for (GenericVersion version : versionsWithChrom) {
@@ -423,8 +385,9 @@ public final class ResidueLoading {
 	}
 
 	// try loading via DAS/2 server that genome was originally modeled from
-	private static boolean LoadResiduesFromDAS2(AnnotatedSeqGroup seq_group, String uri) {
+	private static boolean LoadResiduesFromDAS2(BioSeq aseq, AnnotatedSeqGroup seq_group, String uri) {
 		InputStream istr = null;
+		BufferedReader buff = null;
 		Map<String, String> headers = new HashMap<String, String>();
 		try {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
@@ -435,6 +398,14 @@ public final class ResidueLoading {
 				Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE, "  Improper response from DAS/2; aborting DAS/2 residues loading.");
 				return false;
 			}
+			if(content_type.equals("text/raw"))
+			{
+				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is in raw format, parsing...");
+				buff = new BufferedReader(new InputStreamReader(istr));
+				aseq.setResidues(buff.readLine());
+				return true;
+			}
+			
 			if (content_type.equals(NibbleResiduesParser.getMimeType())) {
 				// check for bnib format
 				// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
@@ -458,39 +429,6 @@ public final class ResidueLoading {
 		}
 
 		return false;
-	}
-
-	private static String LoadResiduesFromDAS2(String uri) {
-		InputStream istr = null;
-		BufferedReader buff = null;
-		Map<String, String> headers = new HashMap<String, String>();
-		try {
-			istr = LocalUrlCacher.getInputStream(uri, true, headers);
-			// System.out.println(headers);
-			String content_type = headers.get("content-type");
-			Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE,
-						"    response content-type: {0}", content_type);
-			if (istr == null || content_type == null) {
-				Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE, "  Improper response from DAS/2; aborting DAS/2 residues loading.");
-				return null;
-			}
-			if(content_type.equals("text/raw"))
-			{
-				Logger.getLogger(ResidueLoading.class.getName()).log(Level.INFO, "   response is in raw format, parsing...");
-				buff = new BufferedReader(new InputStreamReader(istr));
-				return buff.readLine();
-			}
-
-			Logger.getLogger(ResidueLoading.class.getName()).log(Level.FINE, "   response is not in accepted format, aborting DAS/2 residues loading");
-			return null;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(buff);
-			GeneralUtils.safeClose(istr);
-		}
-
-		return null;
 	}
 
 	// try loading via DAS/2 server

@@ -38,8 +38,8 @@ import java.util.logging.Logger;
 public final class ResidueLoading {
 
 	enum FORMAT {
-		RAW,
 		BNIB,
+		RAW,
 		FASTA
 	};
 

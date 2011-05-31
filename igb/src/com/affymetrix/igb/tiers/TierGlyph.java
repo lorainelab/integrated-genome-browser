@@ -266,6 +266,10 @@ public class TierGlyph extends SolidGlyph {
 		}
 	}
 
+	public List<GlyphI> getMiddle_glyphs() {
+		return middle_glyphs;
+	}
+
 	/**
 	 *  Overridden to allow background shading by a collection of non-child
 	 *    "middleground" glyphs.  These are rendered after the solid background but before

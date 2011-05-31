@@ -26,7 +26,8 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.thread.CThreadWorker;
+import com.affymetrix.igb.thread.ThreadHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import java.io.*;
@@ -34,7 +35,6 @@ import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingWorker;
 
 /**
  *
@@ -59,13 +59,12 @@ public class Das2 {
 		if (dtype == null || region == null) {
 			return true;
 		}
-		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName + " on sequence " + span.getBioSeq().getID());
-		
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 	
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName + " on sequence " + span.getBioSeq().getID()) {
 
-			public Void doInBackground() {
+			@Override
+			protected Object runInBackground() {
 				try {
 					loadSpan(feature, span, region, dtype);
 					TrackView.updateDependentData();
@@ -76,18 +75,16 @@ public class Das2 {
 			}
 
 			@Override
-			public void done() {
+			protected void finished() {
 				try {
 					gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
 				} catch (Exception ex) {
 					Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
-				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName + " on sequence " + span.getBioSeq().getID());
-				}
+				} 
 			}
 		};
 
-		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
+		ThreadHandler.getThreadHandler().execute(feature, worker);
 		return true;
 	}
 
@@ -228,6 +225,13 @@ public class Das2 {
         InputStream istr = null;
         String content_subtype = null;
 
+		Thread thread = Thread.currentThread();
+		
+		if(thread.isInterrupted()){
+			feature.removeCurrentRequest(span);
+			return true;
+		}
+		
         try {
 			BioSeq aseq = span.getBioSeq();
             // if overlap_span is entire length of sequence, then check for caching
@@ -310,6 +314,12 @@ public class Das2 {
 				name += USeqUtilities.USEQ_EXTENSION_WITH_PERIOD;
 			}*/
 
+			if(thread.isInterrupted()){
+				feature.removeCurrentRequest(span);
+				feats = null;
+				return true;
+			}
+			
 			for (Map.Entry<String, List<SeqSymmetry>> entry : splitResultsByTracks(feats).entrySet()) {
 				if (entry.getValue().isEmpty()) {
 					continue;

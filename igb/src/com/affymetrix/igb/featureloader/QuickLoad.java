@@ -21,6 +21,8 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.thread.CThreadWorker;
+import com.affymetrix.igb.thread.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
@@ -140,9 +142,9 @@ public final class QuickLoad extends SymLoader {
 	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError {
 
-		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		if (this.symL != null && this.symL.isResidueLoader) {
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 			return loadResiduesThread(feature, overlapSpan, gviewer);
 		}
 		return loadSymmetriesThread(feature, overlapSpan, gviewer);
@@ -153,9 +155,10 @@ public final class QuickLoad extends SymLoader {
 			throws OutOfMemoryError {
 
 		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		final CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
 
-			public Void doInBackground() {
+			@Override
+			protected Object runInBackground() {
 				try {
 					if (QuickLoad.this.extension.endsWith(".chp")) {
 						// special-case chp files, due to their LazyChpSym DAS/2 loading
@@ -166,7 +169,7 @@ public final class QuickLoad extends SymLoader {
 					if(IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())){
 						return null;
 					}
-
+					
 					loadAndAddSymmetries(feature, overlapSpan);
 
 					TrackView.updateDependentData();
@@ -177,7 +180,7 @@ public final class QuickLoad extends SymLoader {
 			}
 
 			@Override
-			public void done() {
+			protected void finished() {
 				try {
 					BioSeq aseq = gmodel.getSelectedSeq();
 					//Only refresh if currently selected sequence and loaded data are on same sequence.
@@ -194,15 +197,14 @@ public final class QuickLoad extends SymLoader {
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
-				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
 				}
 			}
 		};
-		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
+		ThreadHandler.getThreadHandler().execute(feature, worker);
+		
 		return true;
 	}
-
+	
 
 	/**
 	 * For unoptimized file formats load symmetries and add them.
@@ -271,6 +273,13 @@ public final class QuickLoad extends SymLoader {
 		}
 
 		results = this.getRegion(span);
+		
+		if(Thread.currentThread().isInterrupted()){
+			feature.removeCurrentRequest(span);
+			results = null;
+			return;
+		}
+		
 		if (results != null) {
 			addSymmtries(span, results, feature);
 		}

@@ -144,7 +144,6 @@ public final class QuickLoad extends SymLoader {
 
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		if (this.symL != null && this.symL.isResidueLoader) {
-			Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 			return loadResiduesThread(feature, overlapSpan, gviewer);
 		}
 		return loadSymmetriesThread(feature, overlapSpan, gviewer);
@@ -348,9 +347,10 @@ public final class QuickLoad extends SymLoader {
 	}
 	
 	private boolean loadResiduesThread(final GenericFeature feature, final SeqSpan span, final SeqMapView gviewer) {
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
 
-			public Void doInBackground() {
+			@Override
+			protected Object runInBackground() {
 				try {
 					String results = QuickLoad.this.getRegionResidues(span);
 					if (results != null && !results.isEmpty()) {
@@ -366,19 +366,18 @@ public final class QuickLoad extends SymLoader {
 				}
 				return null;
 			}
+
 			@Override
-			public void done() {
+			protected void finished() {
 				try {
 					gviewer.setAnnotatedSeq(span.getBioSeq(), true, true);
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
-				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
-				}
+				} 
 			}
 		};
 
-		ThreadUtils.getPrimaryExecutor(this.version.gServer).execute(worker);
+		ThreadHandler.getThreadHandler().execute(this.version.gServer, worker);
 		return true;
 	}
 

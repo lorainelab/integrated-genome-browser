@@ -813,8 +813,7 @@ public final class GeneralLoadUtils {
 	 * @return true if succeeded.
 	 */
 	static boolean loadResidues(String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
-		String seq_name = aseq.getID();
-
+	
 		/*
 		 * This test does not work properly, so it's being commented out for now.
 		 *
@@ -842,7 +841,7 @@ public final class GeneralLoadUtils {
 
 		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
 		
-		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
+		return ResidueLoading.getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
 	}
 
 

@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.BNIB;
+import com.affymetrix.genometryImpl.symloader.Fasta;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 
@@ -62,15 +63,15 @@ public final class ResidueLoading {
 	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
 	// DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
 	public static boolean getResidues(
-			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
+			Set<GenericVersion> versionsWithChrom, String genomeVersionName,  BioSeq aseq, int min, int max, SeqSpan span) {
 
 		boolean partial_load = (min > 0 || max < (aseq.getLength()-1));	// Are we only asking for part of the sequence?
 
 		if (partial_load) {
-			return loadPartial(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
+			return loadPartial(versionsWithChrom, genomeVersionName, aseq, min, max, span);
 		}
 
-		return loadFull(versionsWithChrom, genomeVersionName, seq_name, min, max, aseq);
+		return loadFull(versionsWithChrom, genomeVersionName, aseq, min, max);
 	}
 
 
@@ -86,7 +87,9 @@ public final class ResidueLoading {
 	 * @param gviewer
 	 * @return
 	 */
-	private static boolean loadPartial(Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
+	private static boolean loadPartial(Set<GenericVersion> versionsWithChrom, String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
+		String seq_name = aseq.getID();
+		
 		//Try to check if format data is available from Das2
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;
@@ -174,7 +177,7 @@ public final class ResidueLoading {
 		return false;
 	}
 
-
+	
 	/**
 	 * Full load, supported by DAS2, QuickLoad, and DAS1.
 	 * Try to load in BNIB format before anything else.
@@ -189,9 +192,10 @@ public final class ResidueLoading {
 	 * @return
 	 */
 	private static boolean loadFull(
-			Set<GenericVersion> versionsWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq) {
+			Set<GenericVersion> versionsWithChrom, String genomeVersionName, BioSeq aseq, int min, int max) {
+		String seq_name = aseq.getID();
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
-
+		
 		//Try to check if format data is available from Das2
 		for (GenericVersion version : versionsWithChrom) {
 			GenericServer server = version.gServer;

@@ -17,7 +17,8 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.thread.CThreadWorker;
+import com.affymetrix.igb.thread.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingWorker;
 import javax.xml.stream.XMLStreamException;
 
 
@@ -53,53 +53,58 @@ public final class Das {
 	 * @param spans List of spans containing the ranges for which you want annotations.
 	 * @return true if data was loaded
 	 */
-	public static boolean loadFeatures(final SeqSpan span, final GenericFeature gFeature) {
-		Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
+	public static boolean loadFeatures(final SeqSpan span, final GenericFeature feature) {
 
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
 
-			public Void doInBackground() {
+			@Override
+			protected Object runInBackground() {
 				BioSeq current_seq = span.getBioSeq();
-				Set<String> segments = ((DasSource) gFeature.gVersion.versionSourceObj).getEntryPoints();
+				Set<String> segments = ((DasSource) feature.gVersion.versionSourceObj).getEntryPoints();
 				String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
 
-				QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
+				QueryBuilder builder = new QueryBuilder(feature.typeObj.toString());
 				builder.add("segment", segment);
 				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
 				
 				URI uri = builder.build();
 
-				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
-				style.setFeature(gFeature);
+				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), feature.featureName);
+				style.setFeature(feature);
 
 				// TODO - probably not necessary
-				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(gFeature.featureName, gFeature.featureName);
-				style.setFeature(gFeature);
+				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
+				style.setFeature(feature);
 
 				Collection<DASSymmetry> dassyms = parseData(uri);
 				// Special case : When a feature make more than one Track, set feature for each track.
 				if(dassyms != null){
-					SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, gFeature);
+					if(Thread.currentThread().isInterrupted()){
+						feature.removeCurrentRequest(span);
+						dassyms = null;
+						return null;
+					}
+					SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
 					for(DASSymmetry sym : dassyms){
-						gFeature.addMethod(sym.getType());
+						feature.addMethod(sym.getType());
 					}
 				}
 				//The span is now considered loaded.
-				gFeature.addLoadedSpanRequest(span);
+				feature.addLoadedSpanRequest(span);
 				TrackView.updateDependentData();
 				return null;
 			}
 
 			@Override
-			public void done() {
+			protected void finished() {
 				try {
 					Application.getSingleton().getMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
-				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
+				} catch(Exception ex){
+					ex.printStackTrace();
 				}
 			}
 		};
-		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
+		ThreadHandler.getThreadHandler().execute(feature,worker);
 
 		return true;
 	}

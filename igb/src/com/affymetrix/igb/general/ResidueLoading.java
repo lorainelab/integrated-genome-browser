@@ -211,15 +211,13 @@ public final class ResidueLoading {
 			}
 		}
 
-		for (FORMAT format : FORMAT.values()) {
-			for (GenericVersion version : versionsWithChrom) {
-				GenericServer server = version.gServer;
-				if (server.serverType == ServerType.DAS2) {
-					String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, format);
-					if (LoadResiduesFromDAS2(aseq, seq_group, uri)) {
-						BioSeq.addResiduesToComposition(aseq);
-						return true;
-					}
+		for (GenericVersion version : versionsWithChrom) {
+			GenericServer server = version.gServer;
+			if (server.serverType == ServerType.DAS2) {
+				String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.BNIB);
+				if (LoadResiduesFromDAS2(aseq, seq_group, uri)) {
+					BioSeq.addResiduesToComposition(aseq);
+					return true;
 				}
 			}
 		}
@@ -237,6 +235,18 @@ public final class ResidueLoading {
 			}
 		}
 
+		for (FORMAT format : new FORMAT[]{FORMAT.RAW, FORMAT.FASTA}) {
+			for (GenericVersion version : versionsWithChrom) {
+				GenericServer server = version.gServer;
+				if (server.serverType == ServerType.DAS2) {
+					String uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, format);
+					if (LoadResiduesFromDAS2(aseq, seq_group, uri)) {
+						BioSeq.addResiduesToComposition(aseq);
+						return true;
+					}
+				}
+			}
+		}
 		
 		// Try to load via DAS/1 server.
 		for (GenericVersion version : versionsWithChrom) {

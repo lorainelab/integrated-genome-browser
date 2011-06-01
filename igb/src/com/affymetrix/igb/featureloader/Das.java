@@ -5,11 +5,13 @@ import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.parsers.das.DASSymmetry;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
@@ -22,6 +24,7 @@ import java.util.Set;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,22 +53,20 @@ public final class Das {
 	 * @param spans List of spans containing the ranges for which you want annotations.
 	 * @return true if data was loaded
 	 */
-	public static boolean loadFeatures(final List<SeqSpan> spans, final GenericFeature gFeature) {
+	public static boolean loadFeatures(final SeqSpan span, final GenericFeature gFeature) {
 		Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
 
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 			public Void doInBackground() {
-				BioSeq current_seq = spans.get(0).getBioSeq();
+				BioSeq current_seq = span.getBioSeq();
 				Set<String> segments = ((DasSource) gFeature.gVersion.versionSourceObj).getEntryPoints();
 				String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
 
 				QueryBuilder builder = new QueryBuilder(gFeature.typeObj.toString());
 				builder.add("segment", segment);
-				for (SeqSpan span : spans) {
-					builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
-				}
-
+				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
+				
 				URI uri = builder.build();
 
 				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), gFeature.featureName);
@@ -83,9 +84,7 @@ public final class Das {
 					}
 				}
 				//The span is now considered loaded.
-				for (SeqSpan span : spans) {
-					gFeature.addLoadedSpanRequest(span);
-				}
+				gFeature.addLoadedSpanRequest(span);
 				TrackView.updateDependentData();
 				return null;
 			}
@@ -144,7 +143,7 @@ public final class Das {
 				// and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
 				AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 				DASFeatureParser das_parser = new DASFeatureParser();
-
+				
 				BufferedInputStream bis = null;
 				try {
 					bis = new BufferedInputStream(stream);

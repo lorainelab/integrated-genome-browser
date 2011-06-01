@@ -746,6 +746,9 @@ public final class GeneralLoadUtils {
 				}
 				return result;
 			case DAS:
+				for (SeqSpan optimized_span : optimized_spans) {
+					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
+				}
 				return Das.loadFeatures(optimized_spans, feature);
 			case QuickLoad:
 			case LocalFiles:

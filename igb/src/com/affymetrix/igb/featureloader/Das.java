@@ -82,6 +82,10 @@ public final class Das {
 						gFeature.addMethod(sym.getType());
 					}
 				}
+				//The span is now considered loaded.
+				for (SeqSpan span : spans) {
+					gFeature.addLoadedSpanRequest(span);
+				}
 				TrackView.updateDependentData();
 				return null;
 			}

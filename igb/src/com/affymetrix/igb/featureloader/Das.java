@@ -79,6 +79,7 @@ public final class Das {
 				Collection<DASSymmetry> dassyms = parseData(uri);
 				// Special case : When a feature make more than one Track, set feature for each track.
 				if(dassyms != null){
+					SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, gFeature);
 					for(DASSymmetry sym : dassyms){
 						gFeature.addMethod(sym.getType());
 					}
@@ -143,6 +144,7 @@ public final class Das {
 				// and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
 				AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 				DASFeatureParser das_parser = new DASFeatureParser();
+				das_parser.setAnnotateSeq(false);
 				
 				BufferedInputStream bis = null;
 				try {

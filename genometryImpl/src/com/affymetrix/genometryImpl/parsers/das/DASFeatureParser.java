@@ -186,8 +186,8 @@ public final class DASFeatureParser implements Parser {
 				if (feature.getGroups().isEmpty()) {
 					if (annotateSeq) {
 						sequence.addAnnotation(featureSymmetry);
-						groupMap.put(featureSymmetry.getID(), featureSymmetry);
 					}
+					groupMap.put(featureSymmetry.getID(), featureSymmetry);
 				} else {
 					for (GroupBean groupBean : feature.getGroups()) {
 						groupSymmetry = getGroupSymmetry(groupMap, feature, groupBean, seqGroup);
@@ -246,8 +246,8 @@ public final class DASFeatureParser implements Parser {
 		DASSymmetry groupSymmetry = new DASSymmetry(group, feature, sequence);
 		if (annotateSeq) {
 			sequence.addAnnotation(groupSymmetry);
-			seqGroup.addToIndex(groupSymmetry.getID(), groupSymmetry);
 		}
+		seqGroup.addToIndex(groupSymmetry.getID(), groupSymmetry);
 		groupMap.put(groupSymmetry.getID(), groupSymmetry);
 
 		return groupSymmetry;

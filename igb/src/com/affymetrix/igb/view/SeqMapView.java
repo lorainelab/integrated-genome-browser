@@ -1769,7 +1769,7 @@ public class SeqMapView extends JPanel
 				//Check if clicked on axis.
 				if (tglyph instanceof TransformTierGlyph) {
 					SeqSpan visible = getVisibleSpan();
-					if(!gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())){
+					if(selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())){
 						popup.add(new JMenuItem(LoadSequence.getPartialAction()));
 					}
 					

@@ -59,7 +59,7 @@ public final class DASFeatureParser implements Parser {
 		TargetBean target = new TargetBean();
 		Map<String, DASSymmetry> groupMap = new HashMap<String, DASSymmetry>();
 
-		while(reader.hasNext()) {
+		while(reader.hasNext() && !Thread.currentThread().isInterrupted()) {
 			current = reader.nextEvent();
 			switch(current.getEventType()) {
 				case XMLEvent.START_ELEMENT:

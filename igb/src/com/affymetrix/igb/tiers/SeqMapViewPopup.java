@@ -251,7 +251,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   
   private final Action delete_action = new AbstractAction("Delete selected tracks") {
-	private static final long serialVersionUID = 1L;
+	
     public void actionPerformed(ActionEvent e) {
 		BioSeq seq = gmodel.getSelectedSeq();
 
@@ -262,6 +262,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
+  private final Action change_font_size_action = new AbstractAction("Change Font Size") {
+	  private static final long serialVersionUID = 1L;
+	  public void actionPerformed(ActionEvent ae) {
+		changeFontSize(handler.getSelectedTierLabels());
+	  }
+  };
+  
 	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
 		this.handler = handler;
 		this.gviewer = smv;
@@ -301,6 +308,42 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false,true);
   }
 
+  private void changeFontSize(List<TierLabelGlyph> tier_labels) {
+	if (tier_labels == null || tier_labels.isEmpty()) {
+      ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
+      return;
+    }
+	
+	Object initial_value = TrackStyle.default_font_size;
+    if (tier_labels.size() == 1) {
+      TierLabelGlyph tlg = tier_labels.get(0);
+      TierGlyph tg = (TierGlyph) tlg.getInfo();
+      ITrackStyle style = tg.getAnnotStyle();
+      if (style != null && style instanceof TrackStyle) { 
+		  initial_value =  ((TrackStyle)style).getFontSize();
+	  }
+    }
+	
+	Object input = JOptionPane.showInputDialog(null, "Select font size","Change Selected Track Font Size", JOptionPane.PLAIN_MESSAGE, null, 
+			TrackStyle.supported_sizes, initial_value);
+	
+	if(input == null)
+		return;
+	
+	changeFontSize(tier_labels, (Float)input);
+  }
+  
+  private void changeFontSize(List<TierLabelGlyph> tier_label_glyphs, float size){
+	 for (TierLabelGlyph tlg : tier_label_glyphs) {
+		TierGlyph tier = (TierGlyph) tlg.getInfo();
+		ITrackStyle style = tier.getAnnotStyle();
+		if(style != null && style instanceof TrackStyle){
+			((TrackStyle)style).setFontSize(size);
+		}
+	 }
+	 refreshMap(false, true);
+  }
+  
   public void changeExpandMax(List<TierLabelGlyph> tier_labels) {
     if (tier_labels == null || tier_labels.isEmpty()) {
       ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
@@ -732,6 +775,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     change_color_action.setEnabled(num_selections > 0);
     change_bg_color_action.setEnabled(num_selections > 0);
+	change_font_size_action.setEnabled(num_selections > 0);
     rename_action.setEnabled(num_selections == 1);
 
     color_by_score_on_action.setEnabled(any_are_color_off);
@@ -774,6 +818,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     changeMenu.add(change_color_action);
     changeMenu.add(change_bg_color_action);
     changeMenu.add(rename_action);
+	changeMenu.add(change_font_size_action);
     changeMenu.add(change_expand_max_action);
     changeMenu.add(new JSeparator());
     changeMenu.add(show_two_tiers);

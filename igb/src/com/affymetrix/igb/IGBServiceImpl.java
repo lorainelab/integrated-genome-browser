@@ -122,6 +122,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public void setStatus(String message) {
+		Application.getSingleton().setStatus(message);
+	}
+
+	@Override
 	public boolean confirmPanel(String text) {
 		return Application.confirmPanel(text);
 	}

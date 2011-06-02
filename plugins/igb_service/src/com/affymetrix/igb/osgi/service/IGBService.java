@@ -57,6 +57,13 @@ public interface IGBService {
 	 */
 	public void removeNotLockedUpMsg(String message);
 	/**
+	 *  Sets the text in the status bar.
+	 *  Will optionally echo a copy of the string to System.out.
+	 *  It is safe to call this method even if the status bar is not being displayed.
+	 *  @param echo  Whether to echo a copy to System.out.
+	 */
+	public void setStatus(String message);
+	/**
 	 * Shows a panel asking for the user to confirm something.
 	 *
 	 * @param message the message String to display to the user

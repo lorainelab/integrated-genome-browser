@@ -1964,6 +1964,7 @@ public class GenoPubServlet extends HttpServlet {
 					}
 				}
 				sess.flush();
+				
 
 				String optionValue = "";
 				TreeSet<PropertyOption> options = new TreeSet<PropertyOption>(new PropertyOptionComparator());
@@ -2069,17 +2070,67 @@ public class GenoPubServlet extends HttpServlet {
 			//save Annotation so that it's assigned an ID
 			sess.save(dup);
 			
-			//add annotation properties
-			Set<AnnotationProperty> annoProp = new HashSet<AnnotationProperty>(); 
-			Iterator<?> it = sourceAnnot.getAnnotationProperties().iterator();
-			while (it.hasNext()) {
-				AnnotationProperty prop = (AnnotationProperty)it.next();
-				prop.setIdAnnotation(dup.getIdAnnotation());
-				annoProp.add(prop);
-				sess.save(prop);
+			//add annotation properties			
+			Set<AnnotationProperty> clonedAPSet = new HashSet<AnnotationProperty>(); 
+
+			//for each AnnotationProperty in the source Annotation
+			for(Iterator<?> i = sourceAnnot.getAnnotationProperties().iterator(); i.hasNext();) {
+				
+				//get the AnnotationProperty
+				AnnotationProperty sourceAP = (AnnotationProperty)i.next();
+
+				//make clone and copy over params from source
+				AnnotationProperty clonedAP = new AnnotationProperty();
+				clonedAP.setIdProperty( sourceAP.getIdProperty());
+				clonedAP.setName( sourceAP.getName());
+				clonedAP.setValue( sourceAP.getValue());
+				clonedAP.setIdAnnotation(dup.getIdAnnotation());
+
+				//save it and flush it to assign the DB id
+				sess.save(clonedAP);
+				sess.flush();
+
+				//add to set
+				clonedAPSet.add(clonedAP);
+
+				Set<AnnotationPropertyValue> clonedAPV = new HashSet<AnnotationPropertyValue>();
+
+				//for each AnnotationPropertyValue in the sourceAP
+				for (Iterator iX = sourceAP.getValues().iterator(); iX.hasNext();) {
+
+					AnnotationPropertyValue sourceAV = (AnnotationPropertyValue)iX.next();
+
+					//make clone and copy over params from source
+					AnnotationPropertyValue clonedAV = new AnnotationPropertyValue();
+					clonedAV.setIdAnnotationProperty(clonedAP.getIdAnnotationProperty());
+					clonedAV.setValue(sourceAV.getValue());
+
+					//save it to DB
+					sess.save(clonedAV);
+
+					//add to set
+					clonedAPV.add(clonedAV);
+				}
+
+				//add set to AP
+				clonedAP.setValues(clonedAPV);
+
+				TreeSet<PropertyOption> clonedOptions = new TreeSet<PropertyOption>(new PropertyOptionComparator());
+
+				//for each PropertyOption in the sourceAP
+				//don't understand how this will work!
+				for (Iterator<?> iY = sourceAP.getOptions().iterator(); iY.hasNext();) {
+					PropertyOption sourceOption = (PropertyOption)iY.next();
+					clonedOptions.add(sourceOption);		
+				}
+
+				//add set to AP
+				clonedAP.setOptions(clonedOptions);
 			}
-			dup.setAnnotationProperties(annoProp);
-			
+
+			//add Set of AnnotationPropery to cloned Annotation
+			dup.setAnnotationProperties(clonedAPSet);
+
 			//colaborators?
 			TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
 			Iterator<?> cIt = sourceAnnot.getCollaborators().iterator();
@@ -2782,8 +2833,7 @@ public class GenoPubServlet extends HttpServlet {
 			MultipartParser mp = new MultipartParser(req, Integer.MAX_VALUE); 
 			Part part;
 			while ((part = mp.readNextPart()) != null) {
-				String name = part.getName();
-				System.out.println("\tPartName "+name);				
+				String name = part.getName();			
 				if (part.isParam()) {
 					// it's a parameter part
 					ParamPart paramPart = (ParamPart) part;
@@ -3028,6 +3078,7 @@ public class GenoPubServlet extends HttpServlet {
 		BufferedReader in = new BufferedReader (new FileReader(spreadSheet));
 		String line;
 		Pattern tab = Pattern.compile("([^\\t]+)\\t([^\\t]+)\\t([^\\t]+)\\t(.+)", Pattern.DOTALL);
+		
 		//for each line create a new annotation if it doesn't exist
 		while ((line = in.readLine()) != null){
 			line = line.trim();
@@ -3076,10 +3127,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			//make new annotation cloning current annotation
-			else {
-System.out.println("Making new annotation via cloning");
-				addNewClonedAnnotation(sess, sourceAnnotation, annotationName, summary, description, dataFile, ag, res);
-			}
+			else addNewClonedAnnotation(sess, sourceAnnotation, annotationName, summary, description, dataFile, ag, res);
 
 		}
 		in.close();
@@ -3169,34 +3217,86 @@ System.out.println("Making new annotation via cloning");
 
 		//name
 		dup.setName(name);
+		
+		//description
+		if (description.length()!=0) dup.setDescription(description);
+		else dup.setDescription(sourceAnnot.getDescription());
 
 		//summary
 		if (summary.length()!=0) dup.setSummary(summary);
 		else dup.setSummary(sourceAnnot.getSummary());
-		//description
-		if (description.length()!=0) dup.setDescription(description);
-		else dup.setDescription(sourceAnnot.getDescription());
+
+		dup.setCodeVisibility(sourceAnnot.getCodeVisibility());
 		dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
 		dup.setIdUser(sourceAnnot.getIdUser());
 		dup.setIdGenomeVersion(sourceAnnot.getIdGenomeVersion());
-		dup.setCodeVisibility(sourceAnnot.getCodeVisibility());
 		dup.setIsLoaded("N");
 		dup.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
 		dup.setCreatedBy(this.genoPubSecurity.getUserName());
-
+		
 		//save Annotation so that it's assigned an ID
 		sess.save(dup);
 		
-		//add annotation properties
-		Set<AnnotationProperty> annoProp = new HashSet<AnnotationProperty>(); 
-		Iterator<?> it = sourceAnnot.getAnnotationProperties().iterator();
-		while (it.hasNext()) {
-			AnnotationProperty prop = (AnnotationProperty)it.next();
-			prop.setIdAnnotation(dup.getIdAnnotation());
-			annoProp.add(prop);
-			sess.save(prop);
+		//add annotation properties		
+		Set<AnnotationProperty> clonedAPSet = new HashSet<AnnotationProperty>(); 
+
+		//for each AnnotationProperty in the source Annotation
+		for(Iterator<?> i = sourceAnnot.getAnnotationProperties().iterator(); i.hasNext();) {
+			
+			//get the AnnotationProperty
+			AnnotationProperty sourceAP = (AnnotationProperty)i.next();
+
+			//make clone and copy over params from source
+			AnnotationProperty clonedAP = new AnnotationProperty();
+			clonedAP.setIdProperty( sourceAP.getIdProperty());
+			clonedAP.setName( sourceAP.getName());
+			clonedAP.setValue( sourceAP.getValue());
+			clonedAP.setIdAnnotation(dup.getIdAnnotation());
+
+			//save it and flush it to assign the DB id
+			sess.save(clonedAP);
+			sess.flush();
+
+			//add to set
+			clonedAPSet.add(clonedAP);
+
+			Set<AnnotationPropertyValue> clonedAPV = new HashSet<AnnotationPropertyValue>();
+
+			//for each AnnotationPropertyValue in the sourceAP
+			for (Iterator<?> iX = sourceAP.getValues().iterator(); iX.hasNext();) {
+
+				AnnotationPropertyValue sourceAV = (AnnotationPropertyValue)iX.next();
+
+				//make clone and copy over params from source
+				AnnotationPropertyValue clonedAV = new AnnotationPropertyValue();
+				clonedAV.setIdAnnotationProperty(clonedAP.getIdAnnotationProperty());
+				clonedAV.setValue(sourceAV.getValue());
+
+				//save it to DB
+				sess.save(clonedAV);
+
+				//add to set
+				clonedAPV.add(clonedAV);
+			}
+
+			//add set to AP
+			clonedAP.setValues(clonedAPV);
+
+			TreeSet<PropertyOption> clonedOptions = new TreeSet<PropertyOption>(new PropertyOptionComparator());
+
+			//for each PropertyOption in the sourceAP
+			//don't understand how this will work!
+			for (Iterator<?> iY = sourceAP.getOptions().iterator(); iY.hasNext();) {
+				PropertyOption sourceOption = (PropertyOption)iY.next();
+				clonedOptions.add(sourceOption);		
+			}
+
+			//add set to AP
+			clonedAP.setOptions(clonedOptions);
 		}
-		dup.setAnnotationProperties(annoProp);
+
+		//add Set of AnnotationPropery to cloned Annotation
+		dup.setAnnotationProperties(clonedAPSet);
 		
 		//collaborators?
 		TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
@@ -3235,8 +3335,6 @@ System.out.println("Making new annotation via cloning");
 		if (dataFile.renameTo(moved) == false) {
 			throw new BulkFileUploadException("Failed to move the dataFile '" +dataFile + "' to its archive location  '" + moved +"' . Aborting bulk uploading.");
 		}
-
-
 	}
 
 

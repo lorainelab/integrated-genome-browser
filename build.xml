@@ -135,6 +135,9 @@
 		<antcall target="copy-bundle">
     			<param name="jar_name" value="sam"/>
 		</antcall>
+		<antcall target="copy-bundle">
+    		<param name="jar_name" value="tabix"/>
+		</antcall>
 	</target>
 
 	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">

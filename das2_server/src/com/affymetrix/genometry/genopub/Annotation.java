@@ -29,7 +29,6 @@ import com.affymetrix.genometry.genopub.Util;
 import com.affymetrix.genometry.genopub.Visibility;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
-
 public class Annotation implements Serializable, Owned {
 
 	public static final String PROP_NAME                = "name";
@@ -61,16 +60,15 @@ public class Annotation implements Serializable, Owned {
 	private Integer             idUser;
 	private Integer             idUserGroup;
 	private UserGroup           userGroup;
-  private Integer             idInstitute;
+	private Integer             idInstitute;
 	private String              createdBy;
 	private java.sql.Date       createDate;
 	private String              isLoaded;
 	private Set                 collaborators;
-  private Set                 annotationProperties;
-	
+	private Set                 annotationProperties;
+
 
 	private Map<String, Object> props;  // tag/value representation of annotation properties
-
 
 
 	public Integer getIdAnnotation() {
@@ -148,13 +146,13 @@ public class Annotation implements Serializable, Owned {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
-	
+
 	public String getNumber() {
-	  if (this.getIdAnnotation() != null) {
-	    return "A" + this.getIdAnnotation();
-	  } else {
-	    return "";
-	  }
+		if (this.getIdAnnotation() != null) {
+			return "A" + this.getIdAnnotation();
+		} else {
+			return "";
+		}
 	}
 
 
@@ -170,7 +168,7 @@ public class Annotation implements Serializable, Owned {
 		}
 
 		root.addAttribute("idAnnotation", this.getIdAnnotation().toString());
-    root.addAttribute("number", this.getNumber());
+		root.addAttribute("number", this.getNumber());
 		root.addAttribute("label", this.getName());
 		root.addAttribute("name", this.getName());
 		root.addAttribute("summary", this.getSummary());
@@ -179,7 +177,7 @@ public class Annotation implements Serializable, Owned {
 		root.addAttribute("idGenomeVersion", this.getIdGenomeVersion() != null ? this.getIdGenomeVersion().toString() : "");
 		root.addAttribute("idUser", this.getIdUser() != null ? this.getIdUser().toString() : "");
 		root.addAttribute("idUserGroup", this.getIdUserGroup() != null ? this.getIdUserGroup().toString() : "");
-    root.addAttribute("idInstitute", this.getIdInstitute() != null ? this.getIdInstitute().toString() : "");
+		root.addAttribute("idInstitute", this.getIdInstitute() != null ? this.getIdInstitute().toString() : "");
 		root.addAttribute("owner", dh.getUserFullName(this.getIdUser()));
 		root.addAttribute("genomeVersion", genomeVersion != null ? genomeVersion.getName() : "");
 		root.addAttribute("organism", dh.getOrganismName(genomeVersion.getIdOrganism()));
@@ -209,136 +207,136 @@ public class Annotation implements Serializable, Owned {
 				appendFileXML(filePath, fileNode, null);	    	
 			}			
 		}
-		
+
 		// Show list of collaborators.  Only show for
 		// annotation detail (when data_root is provided)
-    if (data_root != null) {
-      if (getCollaborators() != null) {
-        Element collaboratorsNode = root.addElement("Collaborators");
-        for(Iterator i = getCollaborators().iterator(); i.hasNext();) {
-          User u = (User)i.next();
-          Element userNode = collaboratorsNode.addElement("User");
-          userNode.addAttribute("idUser", u.getIdUser().toString());  
-          userNode.addAttribute("name", u.getName());
-          userNode.addAttribute("userDisplayName", u.getUserDisplayName());
-        }
-      }
-    }
-		
+		if (data_root != null) {
+			if (getCollaborators() != null) {
+				Element collaboratorsNode = root.addElement("Collaborators");
+				for(Iterator i = getCollaborators().iterator(); i.hasNext();) {
+					User u = (User)i.next();
+					Element userNode = collaboratorsNode.addElement("User");
+					userNode.addAttribute("idUser", u.getIdUser().toString());  
+					userNode.addAttribute("name", u.getName());
+					userNode.addAttribute("userDisplayName", u.getUserDisplayName());
+				}
+			}
+		}
+
 		// Show list of possible collaborators.  Only show
-    // for annotation detail (when data_root is provided).
-    if (data_root != null) {
-      if (getUserGroup() != null) {
-        TreeMap<String, User> possibleCollaboratorMap = new TreeMap<String, User>();
+		// for annotation detail (when data_root is provided).
+		if (data_root != null) {
+			if (getUserGroup() != null) {
+				TreeMap<String, User> possibleCollaboratorMap = new TreeMap<String, User>();
 
-        Element possibleCollaboratorsNode = root.addElement("PossibleCollaborators");
+				Element possibleCollaboratorsNode = root.addElement("PossibleCollaborators");
 
-        for(Iterator i = getUserGroup().getMembers().iterator(); i.hasNext();) {
-          User user = (User)i.next();
-          possibleCollaboratorMap.put(user.getName(), user);
-        }
-        for(Iterator i = getUserGroup().getCollaborators().iterator(); i.hasNext();) {
-          User user = (User)i.next();
-          possibleCollaboratorMap.put(user.getName(), user);
-        }
-        for(Iterator i = getUserGroup().getManagers().iterator(); i.hasNext();) {
-          User user = (User)i.next();
-          possibleCollaboratorMap.put(user.getName(), user);
-        }
+				for(Iterator i = getUserGroup().getMembers().iterator(); i.hasNext();) {
+					User user = (User)i.next();
+					possibleCollaboratorMap.put(user.getName(), user);
+				}
+				for(Iterator i = getUserGroup().getCollaborators().iterator(); i.hasNext();) {
+					User user = (User)i.next();
+					possibleCollaboratorMap.put(user.getName(), user);
+				}
+				for(Iterator i = getUserGroup().getManagers().iterator(); i.hasNext();) {
+					User user = (User)i.next();
+					possibleCollaboratorMap.put(user.getName(), user);
+				}
 
-        for(Iterator i = possibleCollaboratorMap.keySet().iterator(); i.hasNext();) {
-          String name = (String)i.next();
-          User user = possibleCollaboratorMap.get(name);
-          Element userNode = possibleCollaboratorsNode.addElement("User");
-          userNode.addAttribute("idUser", user.getIdUser().toString());  
-          userNode.addAttribute("name", user.getName());
-          userNode.addAttribute("userDisplayName", user.getUserDisplayName());
-        }
+				for(Iterator i = possibleCollaboratorMap.keySet().iterator(); i.hasNext();) {
+					String name = (String)i.next();
+					User user = possibleCollaboratorMap.get(name);
+					Element userNode = possibleCollaboratorsNode.addElement("User");
+					userNode.addAttribute("idUser", user.getIdUser().toString());  
+					userNode.addAttribute("name", user.getName());
+					userNode.addAttribute("userDisplayName", user.getUserDisplayName());
+				}
 
-      }
+			}
 
-    }
-		
+		}
+
 		// Show list of possible institutes.  Only show for
-    // annotation detail (when data_root is provided).
-    if (data_root != null) {
-      if (getUserGroup() != null) {
-        Element institutesNode = root.addElement("PossibleInstitutes");
+		// annotation detail (when data_root is provided).
+		if (data_root != null) {
+			if (getUserGroup() != null) {
+				Element institutesNode = root.addElement("PossibleInstitutes");
 
-        Element emptyNode = institutesNode.addElement("Institute");
-        emptyNode.addAttribute("idInstitute", "");  
-        emptyNode.addAttribute("name", "");
+				Element emptyNode = institutesNode.addElement("Institute");
+				emptyNode.addAttribute("idInstitute", "");  
+				emptyNode.addAttribute("name", "");
 
-        for(Iterator i = userGroup.getInstitutes().iterator(); i.hasNext();) {
-          Institute institute = (Institute)i.next();
-          Element userNode = institutesNode.addElement("Institute");
-          userNode.addAttribute("idInstitute", institute.getIdInstitute().toString());  
-          userNode.addAttribute("name", institute.getName());
-        }
+				for(Iterator i = userGroup.getInstitutes().iterator(); i.hasNext();) {
+					Institute institute = (Institute)i.next();
+					Element userNode = institutesNode.addElement("Institute");
+					userNode.addAttribute("idInstitute", institute.getIdInstitute().toString());  
+					userNode.addAttribute("name", institute.getName());
+				}
 
-      }
-      
-    }
+			}
 
-    // Show list annotation properties.
-    // Only show for annotation detail (when data_root is provided).
-    if (data_root != null) {
-      Element propertiesNode = root.addElement("AnnotationProperties");
-      for (Property property : dh.getPropertyList()) {
+		}
 
-        Element propNode = propertiesNode.addElement("AnnotationProperty");
+		// Show list annotation properties.
+		// Only show for annotation detail (when data_root is provided).
+		if (data_root != null) {
+			Element propertiesNode = root.addElement("AnnotationProperties");
+			for (Property property : dh.getPropertyList()) {
 
-        AnnotationProperty ap = null;
-        for(Iterator i = getAnnotationProperties().iterator(); i.hasNext();) {
-          AnnotationProperty annotationProperty = (AnnotationProperty)i.next();
-          if (annotationProperty.getProperty().getIdProperty().equals(property.getIdProperty())) {
-            ap = annotationProperty;
-            break;
-          }
-        }
-        
-        propNode.addAttribute("idAnnotationProperty", ap != null ? ap.getIdAnnotationProperty().toString() : "");  
-        propNode.addAttribute("name", property.getName());
-        propNode.addAttribute("value", ap != null && ap.getValue() != null ? ap.getValue() : "");
-        propNode.addAttribute("codePropertyType", property.getCodePropertyType());
-        propNode.addAttribute("idProperty", property.getIdProperty().toString());
+				Element propNode = propertiesNode.addElement("AnnotationProperty");
 
-        if (ap != null && ap.getValues() != null && ap.getValues().size() > 0) {
-          for (Iterator i1 = ap.getValues().iterator(); i1.hasNext();) {
-            AnnotationPropertyValue av = (AnnotationPropertyValue)i1.next();
-            Element valueNode = propNode.addElement("AnnotationPropertyValue");
-            valueNode.addAttribute("idAnnotationPropertyValue", av.getIdAnnotationPropertyValue().toString());
-            valueNode.addAttribute("value", av.getValue() != null ? av.getValue() : "");
-          }
-        }
-        if (property.getCodePropertyType().equals(PropertyType.URL)) {
-          // Add an empty value for URL
-          Element emptyNode = propNode.addElement("AnnotationPropertyValue");
-          emptyNode.addAttribute("idAnnotationPropertyValue", "");
-          emptyNode.addAttribute("value", "Enter URL here...");
-        }
+				AnnotationProperty ap = null;
+				for(Iterator i = getAnnotationProperties().iterator(); i.hasNext();) {
+					AnnotationProperty annotationProperty = (AnnotationProperty)i.next();
+					if (annotationProperty.getProperty().getIdProperty().equals(property.getIdProperty())) {
+						ap = annotationProperty;
+						break;
+					}
+				}
 
-        if (property.getOptions() != null && property.getOptions().size() > 0) {
-          for (Iterator i1 = property.getOptions().iterator(); i1.hasNext();) {
-            PropertyOption option = (PropertyOption)i1.next();
-            Element optionNode = propNode.addElement("PropertyOption");
-            optionNode.addAttribute("idPropertyOption", option.getIdPropertyOption().toString());
-            optionNode.addAttribute("name", option.getName());
-            boolean isSelected = false;
-            if (ap != null && ap.getOptions() != null) {
-              for (Iterator i2 = ap.getOptions().iterator(); i2.hasNext();) {
-                PropertyOption optionSelected = (PropertyOption)i2.next();
-                if (optionSelected.getIdPropertyOption().equals(option.getIdPropertyOption())) {
-                  isSelected = true;
-                  break;
-                }
-              }
-            }
-            optionNode.addAttribute("selected", isSelected ? "Y" : "N");
-          }
-        }
-      }      
-    }
+				propNode.addAttribute("idAnnotationProperty", ap != null ? ap.getIdAnnotationProperty().toString() : "");  
+				propNode.addAttribute("name", property.getName());
+				propNode.addAttribute("value", ap != null && ap.getValue() != null ? ap.getValue() : "");
+				propNode.addAttribute("codePropertyType", property.getCodePropertyType());
+				propNode.addAttribute("idProperty", property.getIdProperty().toString());
+
+				if (ap != null && ap.getValues() != null && ap.getValues().size() > 0) {
+					for (Iterator i1 = ap.getValues().iterator(); i1.hasNext();) {
+						AnnotationPropertyValue av = (AnnotationPropertyValue)i1.next();
+						Element valueNode = propNode.addElement("AnnotationPropertyValue");
+						valueNode.addAttribute("idAnnotationPropertyValue", av.getIdAnnotationPropertyValue().toString());
+						valueNode.addAttribute("value", av.getValue() != null ? av.getValue() : "");
+					}
+				}
+				if (property.getCodePropertyType().equals(PropertyType.URL)) {
+					// Add an empty value for URL
+					Element emptyNode = propNode.addElement("AnnotationPropertyValue");
+					emptyNode.addAttribute("idAnnotationPropertyValue", "");
+					emptyNode.addAttribute("value", "Enter URL here...");
+				}
+
+				if (property.getOptions() != null && property.getOptions().size() > 0) {
+					for (Iterator i1 = property.getOptions().iterator(); i1.hasNext();) {
+						PropertyOption option = (PropertyOption)i1.next();
+						Element optionNode = propNode.addElement("PropertyOption");
+						optionNode.addAttribute("idPropertyOption", option.getIdPropertyOption().toString());
+						optionNode.addAttribute("name", option.getName());
+						boolean isSelected = false;
+						if (ap != null && ap.getOptions() != null) {
+							for (Iterator i2 = ap.getOptions().iterator(); i2.hasNext();) {
+								PropertyOption optionSelected = (PropertyOption)i2.next();
+								if (optionSelected.getIdPropertyOption().equals(option.getIdPropertyOption())) {
+									isSelected = true;
+									break;
+								}
+							}
+						}
+						optionNode.addAttribute("selected", isSelected ? "Y" : "N");
+					}
+				}
+			}      
+		}
 
 
 		root.addAttribute("canRead", genoPubSecurity.canRead(this) ? "Y" : "N");
@@ -540,11 +538,7 @@ public class Annotation implements Serializable, Owned {
 				}
 			}
 		}
-		else {
-		  System.out.println("\nNix GetQualifiedFileName null files "+filePath + " "+this.idGenomeVersion);
-		}
 		return filePath;
-
 	}
 
 	public String getDirectory(String data_root) {
@@ -553,7 +547,7 @@ public class Annotation implements Serializable, Owned {
 
 
 	@SuppressWarnings("unchecked")
-  public Map<String, Object> loadProps(DictionaryHelper dictionaryHelper) {
+	public Map<String, Object> loadProps(DictionaryHelper dictionaryHelper) {
 		props = new TreeMap<String, Object>();
 		props.put(PROP_NAME, this.getName());
 		props.put(PROP_DESCRIPTION, this.getDescription() != null ? Util.removeHTMLTags(this.getDescription()) : "");
@@ -566,9 +560,9 @@ public class Annotation implements Serializable, Owned {
 		props.put(PROP_GROUP_CONTACT, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupContact(this.getIdUserGroup()) : "");
 		props.put(PROP_GROUP_EMAIL, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupEmail(this.getIdUserGroup()) : "");
 		props.put(PROP_GROUP_INSTITUTE, this.getIdInstitute() != null ? dictionaryHelper.getInstituteName(this.getIdInstitute()) : "");
-		
+
 		for (AnnotationProperty ap : (Set<AnnotationProperty>)this.getAnnotationProperties()) {
-	    props.put(ap.getName(), ap.getValue() != null ? ap.getValue() : "");
+			props.put(ap.getName(), ap.getValue() != null ? ap.getValue() : "");
 		}
 		return props;
 	}
@@ -613,30 +607,30 @@ public class Annotation implements Serializable, Owned {
 	}
 	public void setIsLoaded(String isLoaded) {
 		this.isLoaded = isLoaded;
-	}	 
+	}
 	public UserGroup getUserGroup() {
-	  return this.userGroup;
+		return this.userGroup;
 	}
 	public void setUserGroup(UserGroup userGroup) {
-	  this.userGroup = userGroup;
+		this.userGroup = userGroup;
 	}
-  public Set getCollaborators() {
-    return collaborators;
-  }
-  public void setCollaborators(Set collaborators) {
-    this.collaborators = collaborators;
-  }
-  public Integer getIdInstitute() {
-    return idInstitute;
-  }
-  public void setIdInstitute(Integer idInstitute) {
-    this.idInstitute = idInstitute;
-  }
-  public Set getAnnotationProperties() {
-    return annotationProperties;
-  }
-  public void setAnnotationProperties(Set annotationProperties) {
-    this.annotationProperties = annotationProperties;
-  }
+	public Set getCollaborators() {
+		return collaborators;
+	}
+	public void setCollaborators(Set collaborators) {
+		this.collaborators = collaborators;
+	}
+	public Integer getIdInstitute() {
+		return idInstitute;
+	}
+	public void setIdInstitute(Integer idInstitute) {
+		this.idInstitute = idInstitute;
+	}
+	public Set getAnnotationProperties() {
+		return annotationProperties;
+	}
+	public void setAnnotationProperties(Set annotationProperties) {
+		this.annotationProperties = annotationProperties;
+	}
 
 }

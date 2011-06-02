@@ -6,6 +6,7 @@ import java.io.*;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.Iterator;
 
 public class Util {
@@ -62,6 +63,15 @@ public class Util {
 			}
 		}
 		return isValid;
+	}
+	
+	public static HashSet<String> getChromosmeSegmentNames(GenomeVersion genomeVersion){
+		HashSet<String> chroms = new HashSet<String>();
+		for (Iterator<?> i = genomeVersion.getSegments().iterator(); i.hasNext();) {
+			Segment segment = (Segment)i.next();
+			chroms.add(segment.getName());
+		}
+		return chroms;
 	}
 	
 	public static boolean isValidAnnotationFileType(String fileName) {		

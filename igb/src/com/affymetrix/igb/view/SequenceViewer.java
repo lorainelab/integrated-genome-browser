@@ -45,13 +45,11 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-public class SequenceViewer extends JPanel
-		implements ActionListener, WindowListener, ItemListener, MenuListener {
+public class SequenceViewer implements ActionListener, WindowListener, ItemListener, MenuListener {
 
 	private static final long serialVersionUID = 1L;
 	private SeqMapView seqmapview;
@@ -106,11 +104,12 @@ public class SequenceViewer extends JPanel
 		mapframe.setTitle(title);
 		mapframe.setLayout(new BorderLayout());
 		mapframe = setupMenus(mapframe);
-		Dimension prefsize = seqview.getPreferredSize(60, 15);
-		mapframe.setMinimumSize(prefsize);
+		mapframe.add("Center", seqview);
+		Dimension dim = new Dimension(600,400);
+		seqview.setPreferredSize(dim);
+		mapframe.setPreferredSize(dim);
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width - pixel_width) / 2, (screen_size.height - pixel_height) / 2);
-		mapframe.setVisible(true);
 	}
 /* This method is used for returning the desired coloring scheme, at present there are two color schemes
  * for the text
@@ -137,7 +136,7 @@ public class SequenceViewer extends JPanel
 			if (syms.size() == 1) {
 				residues_sym = syms.get(0);
 				if (residues_sym.getChildCount() == 0) {
-					SeqSymmetry residues_syms1 = seqmapview.glyphsToSyms(seqmapview.getParents(seqmapview.getSeqMap().getSelected())).get(0);
+					SeqSymmetry residues_syms1 = SeqMapView.glyphsToSyms(SeqMapView.getParents(seqmapview.getSeqMap().getSelected())).get(0);
 					if ((residues_syms1 instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_syms1).hasCdsSpan()) {
 						SeqSpan cdsSpan = ((SupportsCdsSpan) residues_syms1).getCdsSpan();
 						cdsFound = true;
@@ -390,7 +389,7 @@ public class SequenceViewer extends JPanel
 		this.createAllLists();
 		addFormattedResidues();
 
-		mapframe.add("Center", seqview);
+		mapframe.pack();
 		mapframe.setVisible(true);
 		mapframe.addWindowListener(new WindowAdapter() {
 
@@ -570,7 +569,7 @@ public class SequenceViewer extends JPanel
 			selectedSeq = DNAUtils.complement(selectedSeq);
 		}
 		if (selectedSeq != null) {
-			Clipboard clipboard = this.getToolkit().getSystemClipboard();
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 			StringBuffer hackbuf = new StringBuffer(selectedSeq);
 			String hackstr = new String(hackbuf);
 			StringSelection data = new StringSelection(hackstr);

@@ -58,6 +58,14 @@ public class BED extends SymLoader{
 
 	public BED(URI uri, String featureName, AnnotatedSeqGroup group){
 		super(uri, featureName, group);
+		
+		default_type = uri.toString();
+		if (default_type.endsWith(".bed")) {
+			default_type = default_type.substring(0, default_type.lastIndexOf(".bed"));
+		}
+			
+		annotate_seq = false;
+		create_container_annot = false;
 	}
 
 	@Override
@@ -121,7 +129,7 @@ public class BED extends SymLoader{
 				return Collections.<SeqSymmetry>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parse(istr, GenometryModel.getGenometryModel(), this.group, false, this.uri.toString(), false, isSorted, min, max);
+			return parse(istr, isSorted, min, max);
 		}catch (Exception ex) {
 			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -130,14 +138,8 @@ public class BED extends SymLoader{
 		return Collections.<SeqSymmetry>emptyList();
 	}
 
-	private List<SeqSymmetry> parse(InputStream istr,  GenometryModel gmodel,
-			AnnotatedSeqGroup group, boolean annot_seq,
-			String stream_name, boolean create_container, boolean isSorted, int min, int max)
+	private List<SeqSymmetry> parse(InputStream istr, boolean isSorted, int min, int max)
 		throws IOException {
-		if (DEBUG) {
-			System.out.println("BED parser called, annotate seq: " + annot_seq +
-					", create_container_annot: " + create_container);
-		}
 		/*
 		 *  seq2types is hash for making container syms (if create_container_annot == true)
 		 *  each entry in hash is: BioSeq ==> type2psym hash
@@ -146,15 +148,7 @@ public class BED extends SymLoader{
 		 *    Map type2csym = (Map)seq2types.get(seq);
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
 		 */
-		seq2types.clear();
-		symlist.clear();
-		annotate_seq = annot_seq;
-		this.create_container_annot = create_container;
-		default_type = uri.toString();
-
-		if (stream_name.endsWith(".bed")) {
-			default_type = stream_name.substring(0, stream_name.lastIndexOf(".bed"));
-		}
+		
 		BufferedInputStream bis;
 		if (istr instanceof BufferedInputStream) {
 			bis = (BufferedInputStream)istr;
@@ -163,23 +157,57 @@ public class BED extends SymLoader{
 			bis = new BufferedInputStream(istr);
 		}
 		DataInputStream dis = new DataInputStream(bis);
-		parse(dis, gmodel, group, default_type, isSorted, min, max);
+		parse(dis, isSorted, min, max);
 		System.out.println("BED annot count: " + symlist.size());
 		return symlist;
 	}
 
-	private void parse(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type, boolean isSorted, int min, int max)
+	private void parse(DataInputStream dis, boolean isSorted, int min, int max)
 		throws IOException  {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
 		}
+
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
+		Iterator<String> it = new Iterator<String>() {
+
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public String next() {
+				String line = null;
+				try {
+					line = reader.readLine();
+				} catch (IOException x) {
+					Logger.getLogger(this.getClass().getName()).log(
+							Level.SEVERE, "error reading bed file", x);
+					line = null;
+				}
+				return line;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
+				
+		parse(it, isSorted, min, max);
+	}
+
+
+	private void parse(Iterator<String> it, boolean isSorted, int min, int max) throws NumberFormatException, IOException{
+		seq2types.clear();
+		symlist.clear();
 		String line;
 		String type = default_type;
 		boolean use_item_rgb = false;
-
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		Thread thread = Thread.currentThread();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
-		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+		while ((line = it.next()) != null && (! thread.isInterrupted())) {
 			if (line.length() == 0) {
 				continue;
 			}
@@ -202,15 +230,14 @@ public class BED extends SymLoader{
 				if (DEBUG) {
 					System.out.println(line);
 				}
-				if(!parseLine(line, seq_group, gmodel, type, use_item_rgb, min, max) && isSorted){
+				if(!parseLine(line, gmodel, type, use_item_rgb, min, max) && isSorted){
 					break;
 				}
 			}
 		}
 	}
-
-
-	private boolean parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum)
+	
+	private boolean parseLine(String line, GenometryModel gmodel, String type, boolean use_item_rgb, int minimum, int maximum)
 			throws NumberFormatException, IOException {
 		String[] fields = line_regex.split(line);
 		int field_count = fields.length;
@@ -243,7 +270,7 @@ public class BED extends SymLoader{
 		if (field_count >= 4) {
 			annot_name = parseName(fields[findex++]);
 			if(annot_name == null || annot_name.length() == 0){
-				annot_name = seq_group.getID();
+				annot_name = group.getID();
 			}
 		}
 		if (field_count >= 5) {
@@ -264,25 +291,25 @@ public class BED extends SymLoader{
 			return true;
 		}
 		
-		BioSeq seq = seq_group.getSeq(seq_name);
+		BioSeq seq = group.getSeq(seq_name);
 		if ((seq == null) && (seq_name.indexOf(';') > -1)) {
 			// if no seq found, try and split up seq_name by ";", in case it is in format
 			//    "seqid;genome_version"
 			String seqid = seq_name.substring(0, seq_name.indexOf(';'));
 			String version = seq_name.substring(seq_name.indexOf(';') + 1);
 			//            System.out.println("    seq = " + seqid + ", version = " + version);
-			if ((gmodel.getSeqGroup(version) == seq_group) || seq_group.getID().equals(version)) {
+			if ((gmodel.getSeqGroup(version) == group) || group.getID().equals(version)) {
 				// for format [chrom_name];[genome_version]
-				seq = seq_group.getSeq(seqid);
+				seq = group.getSeq(seqid);
 				if (seq != null) {
 					seq_name = seqid;
 				}
-			} else if ((gmodel.getSeqGroup(seqid) == seq_group) || seq_group.getID().equals(seqid)) {
+			} else if ((gmodel.getSeqGroup(seqid) == group) || group.getID().equals(seqid)) {
 				// for format [genome_version];[chrom_name]
 				String temp = seqid;
 				seqid = version;
 				version = temp;
-				seq = seq_group.getSeq(seqid);
+				seq = group.getSeq(seqid);
 				if (seq != null) {
 					seq_name = seqid;
 				}
@@ -290,7 +317,7 @@ public class BED extends SymLoader{
 		}
 		if (seq == null) {
 			//System.out.println("seq not recognized, creating new seq: " + seq_name);
-			seq = seq_group.addSeq(seq_name, 0);
+			seq = group.addSeq(seq_name, 0);
 		}
 
 		
@@ -363,7 +390,7 @@ public class BED extends SymLoader{
 			this.annotationParsed(bedline_sym);
 		}
 		if (annot_name != null) {
-			seq_group.addToIndex(annot_name, bedline_sym);
+			group.addToIndex(annot_name, bedline_sym);
 		}
 		
 		return true;

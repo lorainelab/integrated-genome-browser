@@ -82,7 +82,9 @@ public final class BAM extends XAM {
 						Level.SEVERE, "URL scheme: {0} not recognized", scheme);
 				return;
 			}
-
+			//set header
+			header = reader.getFileHeader();
+			
 			if(initTheSeqs()){
 				super.init();
 			}
@@ -193,7 +195,8 @@ public final class BAM extends XAM {
 						tempBAMFile.deleteOnExit();
 					} catch (IOException ex) {
 						Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
-						return; // Can't create the temporary file!
+						System.err.println("Cannot create temporary BAM file! \n"+ex.getStackTrace());
+						return; // Can't create the temporary file! 
 					}
 					sfw = sfwf.makeBAMWriter(header, true, tempBAMFile);
 				} else {
@@ -208,7 +211,7 @@ public final class BAM extends XAM {
 		} catch(Exception ex){
 			Logger.getLogger(BAM.class.getName()).log(Level.SEVERE,"SAM exception A SAMFormatException has been thrown by the Picard tools.\n" +
 					"Please validate your BAM files and contact the Picard project at http://picard.sourceforge.net." +
-					"See console for the details of the exception.\n", ex);
+					"See console and the tomcat catalina.out for the details of the exception.\n", ex);
 		} finally {
 			if (iter != null) {
 				try {

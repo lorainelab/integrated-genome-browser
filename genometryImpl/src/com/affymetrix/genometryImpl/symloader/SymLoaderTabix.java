@@ -163,7 +163,7 @@ public class SymLoaderTabix extends SymLoader {
     }
 	
 	public static SymLoader getSymLoader(SymLoader sym){
-		String uriString = sym.uri.toString();
+		String uriString = sym.uri.getPath();
 		if (uriString.startsWith(FILE_PREFIX)) {
 			uriString = uriString.substring(FILE_PREFIX.length());
 		}

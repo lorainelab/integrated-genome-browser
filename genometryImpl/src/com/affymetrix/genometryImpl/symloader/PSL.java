@@ -293,14 +293,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		is_link_psl = b;
 	}
 
-	public List<UcscPslSym> parse(InputStream istr, String annot_type,
-			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
-			boolean annotate_query, boolean annotate_target) throws IOException {
-		return parse(istr, Integer.MIN_VALUE, Integer.MAX_VALUE, annot_type,
-				query_group, target_group, null, annotate_query, annotate_target,
-				false);
-	}
-
 	private List<UcscPslSym> parse(BioSeq seq, int min, int max){
 		InputStream istr = null;
 		try {
@@ -310,9 +302,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				return Collections.<UcscPslSym>emptyList();
 			}
 			istr = new FileInputStream(file);
-			return parse(istr, min, max, uri.toString(), query_group, target_group,
-					other_group, annotate_query, annotate_target, annotate_other);
-
+			return parse(istr, uri.toString(), min, max, query_group, target_group, other_group);
 		} catch (FileNotFoundException ex) {
 			Logger.getLogger(PSL.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {
@@ -321,6 +311,45 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		return Collections.<UcscPslSym>emptyList();
 	}
 
+	public List<UcscPslSym> parse(InputStream istr, String annot_type,
+			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
+			boolean annotate_query, boolean annotate_target) throws IOException {
+		return parse(istr, annot_type, Integer.MIN_VALUE, Integer.MAX_VALUE, 
+				query_group, target_group, null);
+	}
+		
+	private List<UcscPslSym> parse(InputStream istr, String annot_type, int min, int max,
+			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group) {
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(istr));
+		Iterator<String> it = new Iterator<String>() {
+
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public String next() {
+				String line = null;
+				try {
+					line = reader.readLine();
+				} catch (IOException x) {
+					Logger.getLogger(this.getClass().getName()).log(
+							Level.SEVERE, "error reading bed file", x);
+					line = null;
+				}
+				return line;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
+
+		return parse(it, annot_type, min, max, query_group, target_group, other_group);
+	}
+	
 	/**
 	 *  Parse.
 	 *  The most common parameters are:
@@ -341,9 +370,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	 *  @param annotate_other   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
 	 *
 	 */
-	private List<UcscPslSym> parse(InputStream istr, int min, int max, String annot_type,
-			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group,
-			boolean annotate_query, boolean annotate_target, boolean annotate_other){
+	private List<UcscPslSym> parse(Iterator<String> it, String annot_type, int min, int max, 
+			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group){
 
 		if (DEBUG) {
 			System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
@@ -374,7 +402,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
 
 		int line_count = 0;
-		BufferedReader br = null;
 		String line = null;
 		int childcount = 0;
 		int total_annot_count = 0;
@@ -382,8 +409,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		String[] block_size_array = null;
 		Thread thread = Thread.currentThread();
 		try {
-			br = new BufferedReader(new InputStreamReader(istr));
-			while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
+			while ((line = it.next()) != null && (!thread.isInterrupted())) {
 				line_count++;
 				// Ignore psl header lines
 				if(line.trim().length() == 0)
@@ -513,9 +539,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 				sb.append("block_size first element: **").append(block_size_array[0]).append("**\n");
 			}
 
-		} finally {
-			GeneralUtils.safeClose(br);
-		}
+		} 
 		if (DEBUG) {
 			System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
 					", child count: " + total_child_count);
@@ -885,7 +909,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 	}
 
 	public List<UcscPslSym> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
-		return parse(dis, Integer.MIN_VALUE, Integer.MAX_VALUE, annot_type, null, group, null, false, false, false);
+		return parse(dis, annot_type, Integer.MIN_VALUE, Integer.MAX_VALUE, null, group, null);
 	}
 
 	public void setTrackNamePrefix(String prefix) {

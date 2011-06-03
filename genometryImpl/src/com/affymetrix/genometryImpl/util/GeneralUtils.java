@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -24,11 +23,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
+import net.sf.samtools.util.BlockCompressedInputStream;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 
 public final class GeneralUtils {
 	public static final String UTF8 = "UTF-8";
@@ -100,7 +100,7 @@ public final class GeneralUtils {
 		String lc_stream_name = stream_name.toLowerCase();
 		if (lc_stream_name.endsWith(".gz") || lc_stream_name.endsWith(".gzip") ||
 				lc_stream_name.endsWith(".z")) {
-			GZIPInputStream gzstr = new GZIPInputStream(istr);
+			BlockCompressedInputStream gzstr = new BlockCompressedInputStream(istr);
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			return unzipStream(gzstr, new_name, stripped_name);
 		} else if (stream_name.endsWith(".zip")) {

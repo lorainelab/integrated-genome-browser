@@ -19,16 +19,18 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.symloader.SymLoaderTabix.LineProcessor;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.net.URI;
 import java.util.Map.Entry;
+import org.broad.tribble.readers.TabixReader.TabixLineReader;
 
 /**
  *
  * @author hiralv
  */
-public class BED extends SymLoader{
+public class BED extends SymLoader implements LineProcessor{
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
 	private static final List<String> pref_list = new ArrayList<String>();
@@ -198,6 +200,41 @@ public class BED extends SymLoader{
 		parse(it, isSorted, min, max);
 	}
 
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final TabixLineReader lineReader) {
+		Iterator<String> it = new Iterator<String>() {
+
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public String next() {
+				String line = null;
+				try {
+					line = lineReader.readLine();
+				} catch (IOException x) {
+					Logger.getLogger(this.getClass().getName()).log(
+							Level.SEVERE, "error reading bed file", x);
+					line = null;
+				}
+				return line;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
+		try {
+			parse(it, true, 0, Integer.MAX_VALUE);
+			return symlist;
+		} catch (Exception ex) {
+			Logger.getLogger(BED.class.getName()).log(Level.SEVERE, null, ex);
+		} 
+		
+		return Collections.<SeqSymmetry>emptyList();
+	}
 
 	private void parse(Iterator<String> it, boolean isSorted, int min, int max) throws NumberFormatException, IOException{
 		seq2types.clear();
@@ -792,4 +829,6 @@ public class BED extends SymLoader{
 			chrList.put(seq, chrFiles.get(seq_name));
 		}
 	}
+
+	public void init(URI uri) {	}
 }

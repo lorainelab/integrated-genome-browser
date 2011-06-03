@@ -34,6 +34,7 @@ import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
+import com.affymetrix.igb.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
@@ -339,6 +340,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				
 				if(cglyph instanceof DirectedGlyph){
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
+				}
+				for (GlyphProcessor glyphProcessor : GlyphProcessorHolder.getInstance().getGlyphProcessors()) {
+					glyphProcessor.processGlyph(cglyph);
 				}
 			}
 		}

@@ -26,6 +26,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.operator.GraphOperator;
+import com.affymetrix.igb.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
@@ -42,6 +43,7 @@ public class DummyContext implements BundleContext {
 	private static final String FILETYPEHANDLER_FACTORY_SERVICE_FILTER = "(objectClass=" + FileTypeHandler.class.getName() + ")";
 	private static final String POPUP_LISTENER_FILTER = "(objectClass=" + TierLabelManager.PopupListener.class.getName() + ")";
 	private static final String TRACK_CLICK_LISTENER_FILTER = "(objectClass=" + TierLabelManager.TrackClickListener.class.getName() + ")";
+	private static final String GLYPH_PROCESSOR_FILTER = "(objectClass=" + GlyphProcessor.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -147,6 +149,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (TRACK_CLICK_LISTENER_FILTER.equals(filter)) {
 			return service instanceof TierLabelManager.TrackClickListener;
+		}
+		if (GLYPH_PROCESSOR_FILTER.equals(filter)) {
+			return service instanceof GlyphProcessor;
 		}
 		if (filter == null) {
 			return true;

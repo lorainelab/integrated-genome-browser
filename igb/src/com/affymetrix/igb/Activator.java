@@ -15,10 +15,11 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.igb.glyph.GlyphProcessorHolder;
+import com.affymetrix.igb.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.window.service.IWindowService;
 
 /**
@@ -64,14 +65,13 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext _bundleContext) throws Exception {}
 
-	private void addTierLabelManager_PopupListenerService(IGB igb) {
-		// register TierLabelManager PopupListeners - an extension point
-		final TierLabelManager tlm = igb.getMapView().getTierManager();
+	private void addService(final ServiceHandler serviceHandler) {
+		// register service - an extension point
 		try {
-			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(TierLabelManager.PopupListener.class.getName(), null);
+			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(serviceHandler.getClassName(), null);
 			if (serviceReferences != null) {
 				for (ServiceReference serviceReference : serviceReferences) {
-					tlm.addPopupListener((TierLabelManager.PopupListener)bundleContext.getService(serviceReference));
+					serviceHandler.addService(bundleContext.getService(serviceReference));
 				}
 			}
 			bundleContext.addServiceListener(
@@ -80,77 +80,31 @@ public class Activator implements BundleActivator {
 					public void serviceChanged(ServiceEvent event) {
 						ServiceReference serviceReference = event.getServiceReference();
 						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
-							tlm.removePopupListener((TierLabelManager.PopupListener)bundleContext.getService(serviceReference));
+							serviceHandler.removeService(bundleContext.getService(serviceReference));
 						}
 						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
-							tlm.addPopupListener((TierLabelManager.PopupListener)bundleContext.getService(serviceReference));
+							serviceHandler.addService(bundleContext.getService(serviceReference));
 						}
 					}
 				}
-			, "(objectClass=" + TierLabelManager.PopupListener.class.getName() + ")");
+			, "(objectClass=" + serviceHandler.getClassName() + ")");
 		}
 		catch (InvalidSyntaxException x) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading/unloading TierLabelManager.PopupListeners", x.getMessage());
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading/unloading " + serviceHandler.getClassName(), x.getMessage());
 		}
 	}
 
-	private void addTierLabelManager_TrackClickListenerService(IGB igb) {
-		// register TierLabelManager TrackClickListeners - an extension point
-		final TierLabelManager tlm = igb.getMapView().getTierManager();
-		try {
-			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(TierLabelManager.TrackClickListener.class.getName(), null);
-			if (serviceReferences != null) {
-				for (ServiceReference serviceReference : serviceReferences) {
-					tlm.addTrackClickListener((TierLabelManager.TrackClickListener)bundleContext.getService(serviceReference));
-				}
-			}
-			bundleContext.addServiceListener(
-				new ServiceListener() {
-					@Override
-					public void serviceChanged(ServiceEvent event) {
-						ServiceReference serviceReference = event.getServiceReference();
-//						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
-//							tlm.removeTrackClickListener((TierLabelManager.TrackClickListener)bundleContext.getService(serviceReference));
-//						}
-						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
-							tlm.addTrackClickListener((TierLabelManager.TrackClickListener)bundleContext.getService(serviceReference));
-						}
-					}
-				}
-			, "(objectClass=" + TierLabelManager.TrackClickListener.class.getName() + ")");
+	private abstract class ServiceHandler {
+		private Class<?> clazz;
+		private ServiceHandler(Class<?> clazz) {
+			super();
+			this.clazz = clazz;
 		}
-		catch (InvalidSyntaxException x) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading/unloading TierLabelManager.TrackClickListeners", x.getMessage());
+		public String getClassName() {
+			return clazz.getName();
 		}
-	}
-
-	private void addGraphOperatorService(final SeqMapView seqMapView) {
-		// register GraphOperators - an extension point
-		try {
-			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(GraphOperator.class.getName(), null);
-			if (serviceReferences != null) {
-				for (ServiceReference serviceReference : serviceReferences) {
-					seqMapView.addGraphOperator((GraphOperator)bundleContext.getService(serviceReference));
-				}
-			}
-			bundleContext.addServiceListener(
-				new ServiceListener() {
-					@Override
-					public void serviceChanged(ServiceEvent event) {
-						ServiceReference serviceReference = event.getServiceReference();
-						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
-							seqMapView.removeGraphOperator((GraphOperator)bundleContext.getService(serviceReference));
-						}
-						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
-							seqMapView.addGraphOperator((GraphOperator)bundleContext.getService(serviceReference));
-						}
-					}
-				}
-			, "(objectClass=" + GraphOperator.class.getName() + ")");
-		}
-		catch (InvalidSyntaxException x) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading/unloading GraphOperators", x.getMessage());
-		}
+		public abstract void addService(Object o);
+		public abstract void removeService(Object o);
 	}
 
 	/**
@@ -161,7 +115,7 @@ public class Activator implements BundleActivator {
 	 */
 	private void run(ServiceReference windowServiceReference) {
         IWindowService windowService = (IWindowService) bundleContext.getService(windowServiceReference);
-        IGB igb = new IGB();
+        final IGB igb = new IGB();
         igb.init(args);
         final IGBTabPanel[] tabs = igb.setWindowService(windowService);
         // set IGBService
@@ -170,8 +124,51 @@ public class Activator implements BundleActivator {
 		for (IGBTabPanel tab : tabs) {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
 		}
-		addTierLabelManager_PopupListenerService(igb);
-		addTierLabelManager_TrackClickListenerService(igb);
-		addGraphOperatorService(igb.getMapView());
+		addService(
+			new ServiceHandler(TierLabelManager.PopupListener.class) {
+				@Override
+				public void addService(Object o) {
+					igb.getMapView().getTierManager().addPopupListener((TierLabelManager.PopupListener)o);
+				}
+				@Override
+				public void removeService(Object o) {
+					igb.getMapView().getTierManager().removePopupListener((TierLabelManager.PopupListener)o);
+				}
+			}
+		);
+		addService(
+			new ServiceHandler(TierLabelManager.TrackClickListener.class) {
+				@Override
+				public void addService(Object o) {
+					igb.getMapView().getTierManager().addTrackClickListener((TierLabelManager.TrackClickListener)o);
+				}
+				@Override
+				public void removeService(Object o) {}
+			}
+		);
+		addService(
+			new ServiceHandler(GraphOperator.class) {
+				@Override
+				public void addService(Object o) {
+					igb.getMapView().addGraphOperator((GraphOperator)o);
+				}
+				@Override
+				public void removeService(Object o) {
+					igb.getMapView().removeGraphOperator((GraphOperator)o);
+				}
+			}
+		);
+		addService(
+			new ServiceHandler(GlyphProcessor.class) {
+				@Override
+				public void addService(Object o) {
+					GlyphProcessorHolder.getInstance().addGlyphProcessor((GlyphProcessor)o);
+				}
+				@Override
+				public void removeService(Object o) {
+					GlyphProcessorHolder.getInstance().removeGlyphProcessor((GlyphProcessor)o);
+				}
+			}
+		);
 	}
 }

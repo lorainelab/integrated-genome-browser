@@ -65,6 +65,7 @@
 	<classpathentry kind="lib" path="ext/picard.jar"/>
 	<classpathentry kind="lib" path="ext/sam.jar"/>
 	<classpathentry kind="lib" path="ext/felix.jar"/>
+	<classpathentry kind="lib" path="ext/tabix.jar"/>
 	<classpathentry kind="lib" path="ext/org.apache.felix.log-1.0.0.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.apache.felix.bundlerepository-1.6.4.jar"/>
 	<classpathentry kind="lib" path="plugins/plugins_page/lib/org.osgi.service.obr-1.0.2.jar"/>

@@ -36,6 +36,7 @@ import com.affymetrix.genometryImpl.symloader.Sgr;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
+import com.affymetrix.genometryImpl.symloader.SymLoaderTabix;
 import com.affymetrix.genometryImpl.symloader.TwoBit;
 import com.affymetrix.genometryImpl.symloader.USeq;
 import com.affymetrix.genometryImpl.symloader.Wiggle;
@@ -59,7 +60,26 @@ public class FileTypeHolder {
 		addFileTypeHandler("BAM", new String[]{"bam"}, null, BAM.class);
 		addFileTypeHandler("SAM", new String[]{"sam"}, null, SAM.class);
 		addFileTypeHandler("Graph", new String[]{"bar"}, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);
-		addFileTypeHandler("BED", new String[]{"bed"}, BedParser.class, BED.class);
+//		addFileTypeHandler("BED", new String[]{"bed"}, BedParser.class, BED.class);
+		addFileTypeHandler(
+			new FileTypeHandler() {
+				String[] extensions = new String[]{"bed"};
+				@Override
+				public String getName() { return "BED"; }
+				@Override
+				public String[] getExtensions() { return extensions; }
+				@Override
+				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+					return SymLoaderTabix.getSymLoader(new BED(uri, featureName, group));
+				}
+				@Override
+				public Parser getParser() { return new BedParser(); }
+				@Override
+				public IndexWriter getIndexWriter(String stream_name) {
+					return (IndexWriter) getParser();
+				}
+			}
+		);
 		addFileTypeHandler("Binary", new String[]{"bgn"}, BgnParser.class, SymLoaderInst.class);
 		addFileTypeHandler("Graph", new String[] {"bgr"}, BgrParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("Binary", new String[]{"bp1", "bp2"}, Bprobe1Parser.class, SymLoaderInst.class);

@@ -64,7 +64,7 @@ public class SymLoaderTabix extends SymLoader {
 		public List<String> getFormatPrefList();
 	}
 
-	public static final String FILE_PREFIX = "file:/";
+	public static final String FILE_PREFIX = "file:";
 	public SymLoaderTabix(URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor){
 		super(uri, featureName, group);
 		this.lineProcessor = lineProcessor;
@@ -161,5 +161,16 @@ public class SymLoaderTabix extends SymLoader {
 		}
 		return lineProcessor.processLines(overlapSpan.getBioSeq(), tabixLineReader);
     }
+	
+	public static SymLoader getSymLoader(SymLoader sym){
+		String uriString = sym.uri.toString();
+		if (uriString.startsWith(FILE_PREFIX)) {
+			uriString = uriString.substring(FILE_PREFIX.length());
+		}
+		if (TabixReader.isTabix(uriString)) {
+			return new SymLoaderTabix(sym.uri, sym.featureName, sym.group, (LineProcessor)sym);
+		}
+		return sym;
+	}
 }
 

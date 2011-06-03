@@ -1,12 +1,14 @@
 package com.affymetrix.genometryImpl.symloader;
 
 import java.net.URI;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -21,14 +23,15 @@ import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.symloader.SymLoaderTabix.LineProcessor;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.broad.tribble.readers.TabixReader.TabixLineReader;
+
 /**
  *
  * @author hiralv
  */
-public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
+public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, LineProcessor {
 
 	private static final UcscPslComparator comp = new UcscPslComparator();
 	static final List<String> psl_pref_list = Arrays.asList("psl");
@@ -96,6 +99,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		
 	}
 
+	public void init(URI uri) { }
+	
 	@Override
 	public List<BioSeq> getChromosomeList(){
 		init();
@@ -310,7 +315,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		}
 		return Collections.<UcscPslSym>emptyList();
 	}
-
+	
 	public List<UcscPslSym> parse(InputStream istr, String annot_type,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
 			boolean annotate_query, boolean annotate_target) throws IOException {
@@ -335,7 +340,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 					line = reader.readLine();
 				} catch (IOException x) {
 					Logger.getLogger(this.getClass().getName()).log(
-							Level.SEVERE, "error reading bed file", x);
+							Level.SEVERE, "error reading psl file", x);
 					line = null;
 				}
 				return line;
@@ -348,6 +353,37 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter {
 		};
 
 		return parse(it, annot_type, min, max, query_group, target_group, other_group);
+	}
+	
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final TabixLineReader lineReader) {
+		Iterator<String> it = new Iterator<String>() {
+
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public String next() {
+				String line = null;
+				try {
+					line = lineReader.readLine();
+				} catch (IOException x) {
+					Logger.getLogger(this.getClass().getName()).log(
+							Level.SEVERE, "error reading psl file", x);
+					line = null;
+				}
+				return line;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
+		
+		return parse(it, uri.toString(), 0, Integer.MAX_VALUE, query_group, target_group, other_group);
+				
 	}
 	
 	/**

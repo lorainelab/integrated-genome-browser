@@ -774,8 +774,9 @@ CREATE TABLE `User` (
 
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
 INSERT INTO `User` (`idUser`,`lastName`,`firstName`,`middleName`,`UserName`,`password`) VALUES 
- (1,'','guest','','guest','454326b776dc46d32bb1050efe72df5e'),
- (2,'','admin','','admin','a447a70b58594f44a798d54cb4081fc2');
+ (1,'','Guest','','guest','454326b776dc46d32bb1050efe72df5e'),
+ (2,'','Admin','','admin','a447a70b58594f44a798d54cb4081fc2'),
+ (3,'','Visitor','','','9d9db6877f2837c5e5d5d31102377213');
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 
 
@@ -803,7 +804,8 @@ CREATE TABLE `UserRole` (
 /*!40000 ALTER TABLE `UserRole` DISABLE KEYS */;
 INSERT INTO `UserRole` (`UserName`,`roleName`,`idUser`,`idUserRole`) VALUES 
  ('guest','guest',1,1),
- ('admin','admin',2,2);
+ ('admin','admin',2,2),
+ ('','guest',3,3);
 /*!40000 ALTER TABLE `UserRole` ENABLE KEYS */;
 
 

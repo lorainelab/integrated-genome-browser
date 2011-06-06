@@ -169,7 +169,7 @@ public class FileTypeHolder {
 							AnnotatedSeqGroup group) {
 						PSL psl = new PSL(uri, featureName, group);
 						psl.enableSharedQueryTarget(true);
-						return psl;
+						return SymLoaderTabix.getSymLoader(psl);
 					}
 					@Override
 					public Parser getParser() { return new PSLParser(); }

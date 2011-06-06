@@ -705,7 +705,7 @@ public final class LocalUrlCacher {
 
 		try {
 			uri = new URI(url);
-			return isValidURI(uri);
+			return isValidURI(uri) != null;
 		} catch (URISyntaxException ex) {
 			Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, null, "Invalid url :" + url);
 		}
@@ -713,13 +713,13 @@ public final class LocalUrlCacher {
 		return false;
 	}
 	
-	public static boolean isValidURI(URI uri){
+	public static String isValidURI(URI uri){
 		
 		String scheme = uri.getScheme().toLowerCase();
 		if (scheme.length() == 0 || scheme.equals("file")) {
 			File f = new File(uri);
 			if(f != null && f.exists()){
-				return true;
+				return f.getAbsolutePath();
 			}
 		}
 
@@ -734,7 +734,7 @@ public final class LocalUrlCacher {
 				istr = conn.getInputStream();
 
 				if(istr != null)
-					return true;
+					return uri.toString();
 
 				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :{0}", uri.toString());
 			}catch(Exception ex){
@@ -744,6 +744,6 @@ public final class LocalUrlCacher {
 			}
 		}
 		
-		return false;
+		return null;
 	}
 }

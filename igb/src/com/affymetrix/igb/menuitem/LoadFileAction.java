@@ -185,7 +185,7 @@ public final class LoadFileAction extends AbstractAction {
 
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
-		if(LocalUrlCacher.isValidURI(uri) == null){
+		if(!LocalUrlCacher.isValidURI(uri)){
 			return;
 		}
 

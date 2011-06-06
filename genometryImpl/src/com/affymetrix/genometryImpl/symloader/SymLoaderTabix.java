@@ -2,6 +2,7 @@
 package com.affymetrix.genometryImpl.symloader;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -161,12 +163,19 @@ public class SymLoaderTabix extends SymLoader {
     }
 	
 	public static SymLoader getSymLoader(SymLoader sym){
-		String uriString = sym.uri.getPath();
-		if (uriString.startsWith(FILE_PREFIX)) {
-			uriString = uriString.substring(FILE_PREFIX.length());
-		}
-		if (TabixReader.isTabix(uriString)) {
-			return new SymLoaderTabix(sym.uri, sym.featureName, sym.group, (LineProcessor)sym);
+		try {
+			URI uri = new URI(sym.uri.toString() + ".tbi");
+			if(LocalUrlCacher.isValidURI(uri)){
+				String uriString = sym.uri.toString();
+				if (uriString.startsWith(FILE_PREFIX)) {
+					uriString = sym.uri.getPath();
+				}
+				if (TabixReader.isTabix(uriString)) {
+					return new SymLoaderTabix(sym.uri, sym.featureName, sym.group, (LineProcessor)sym);
+				}
+			}
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return sym;
 	}

@@ -3,17 +3,17 @@ package com.affymetrix.genometryImpl.symloader;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.broad.tribble.readers.TabixReader;
 
@@ -26,7 +26,7 @@ import org.broad.tribble.readers.TabixReader;
  */
 public class SymLoaderTabix extends SymLoader {
 
-	private final List<BioSeq> chromosomeList = new ArrayList<BioSeq>();
+	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
 	private TabixReader tabixReader;
 	private final LineProcessor lineProcessor;
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
@@ -103,21 +103,17 @@ public class SymLoaderTabix extends SymLoader {
 		}
 		super.init();
 		lineProcessor.init(uri);
-		Map<String, BioSeq> seqMap = new HashMap<String, BioSeq>();
-		for (BioSeq seq : group.getSeqList()) {
-			seqMap.put(seq.getID(), seq);
-		}
 		for (String seqID : tabixReader.getSequenceNames()) {
-			BioSeq seq = seqMap.get(seqID);
+			BioSeq seq = group.getSeq(seqID);
 			if (seq == null) {
 				int length = 1000000000;
-				chromosomeList.add(group.addSeq(seqID, length));
+				seq = group.addSeq(seqID, length);
+				Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.INFO,
+						"Sequence not found. Adding {0} with default length {1}",
+						new Object[]{seqID,length});
 			}
-			else {
-				chromosomeList.add(seq);
-			}
+			seqs.put(seq, seqID);
 		}
-		Collections.sort(chromosomeList,new BioSeqComparator());
 	}
 
 	public LineProcessor getLineProcessor() {
@@ -132,7 +128,7 @@ public class SymLoaderTabix extends SymLoader {
 	@Override
 	public List<BioSeq> getChromosomeList(){		
 		init();
-		return chromosomeList;
+		return new ArrayList<BioSeq>(seqs.keySet());
 	}
 
 	@Override
@@ -149,13 +145,15 @@ public class SymLoaderTabix extends SymLoader {
 	@Override
 	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
 		init();
-		return lineProcessor.processLines(seq, tabixReader.query(seq.getID()));
+		String seqID = seqs.get(seq);
+		return lineProcessor.processLines(seq, tabixReader.query(seqID));
 	}
 
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) {
 		init();
-		TabixReader.TabixLineReader tabixLineReader = tabixReader.query(overlapSpan.getBioSeq().getID() + ":" + (overlapSpan.getStart() + 1) + "-" + overlapSpan.getEnd());
+		String seqID = seqs.get(overlapSpan.getBioSeq());
+		TabixReader.TabixLineReader tabixLineReader = tabixReader.query(seqID + ":" + (overlapSpan.getStart() + 1) + "-" + overlapSpan.getEnd());
 		if (tabixLineReader == null) {
 			return new ArrayList<SeqSymmetry>();
 		}

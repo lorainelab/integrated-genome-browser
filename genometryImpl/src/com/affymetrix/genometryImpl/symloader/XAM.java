@@ -153,7 +153,7 @@ public abstract class XAM extends SymLoader {
 		}
 
 		List<SimpleSymWithProps> insertChilds = new ArrayList<SimpleSymWithProps>();
-		List<SimpleSymWithProps> childs = getChildren(sr, seq, sr.getCigar(), insertChilds);
+		List<SimpleSymWithProps> childs = getChildren(seq, sr.getCigar(), sr.getReadNegativeStrandFlag(), insertChilds);
 
 		int blockMins[] = new int[childs.size()];
 		int blockMaxs[] = new int[childs.size()];
@@ -205,7 +205,7 @@ public abstract class XAM extends SymLoader {
 		return sym;
 	}
 
-	private static List<SimpleSymWithProps> getChildren(SAMRecord sr, BioSeq seq, Cigar cigar, List<SimpleSymWithProps> insertChilds) {
+	private static List<SimpleSymWithProps> getChildren(BioSeq seq, Cigar cigar, boolean isNegative, List<SimpleSymWithProps> insertChilds) {
 		List<SimpleSymWithProps> results = new ArrayList<SimpleSymWithProps>();
 		if (cigar == null || cigar.numCigarElements() == 0) {
 			return results;
@@ -223,7 +223,7 @@ public abstract class XAM extends SymLoader {
 				} else if (cel.getOperator() == CigarOperator.INSERTION) {
 					// TODO -- allow possibility that INSERTION is terminator, not M
 					SimpleSymWithProps ss = new SimpleSymWithProps();
-					if (!sr.getReadNegativeStrandFlag()) {
+					if (!isNegative) {
 						ss.addSpan(new SimpleSeqSpan(currentChildEnd, currentChildEnd + celLength, seq));
 					}
 					else {
@@ -234,7 +234,7 @@ public abstract class XAM extends SymLoader {
 					// print matches
 					currentChildEnd += celLength;
 					SimpleSymWithProps ss = new SimpleSymWithProps();
-					if (!sr.getReadNegativeStrandFlag()) {
+					if (!isNegative) {
 						ss.addSpan(new SimpleSeqSpan(currentChildStart, currentChildEnd, seq));
 					}
 					else {

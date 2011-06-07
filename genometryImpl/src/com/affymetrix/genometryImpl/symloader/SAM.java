@@ -1,16 +1,13 @@
 package com.affymetrix.genometryImpl.symloader;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.File;
 import java.net.URI;
-import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.sf.samtools.SAMException;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
@@ -18,6 +15,11 @@ import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.SAMFormatException;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 
 /**
  *
@@ -70,40 +72,49 @@ public class SAM extends XAM{
 	@Override
 	public List<SeqSymmetry> parse(BioSeq seq, int min, int max, boolean containerSym, boolean contained) {
 		init();
+		if (reader != null) {
+			CloseableIterator<SAMRecord> iter = reader.iterator();
+			if (iter != null && iter.hasNext()) {
+				return parse(iter, seq, min, max, containerSym, contained, true);
+			}
+		}
+
+		return Collections.<SeqSymmetry>emptyList();
+	}
+	
+	public List<SeqSymmetry> parse(CloseableIterator<SAMRecord> iter, BioSeq seq, int min, int max, boolean containerSym, boolean contained, boolean checkRange) {
 		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
 		List<Throwable> errList = new ArrayList<Throwable>(10);
-		CloseableIterator<SAMRecord> iter = null;
 		int maximum;
 		String seqId = seqs.get(seq);
+		SAMRecord sr = null;
 		try {
-			if (reader != null) {
-				iter = reader.iterator();
-				if (iter != null && iter.hasNext()) {
-					SAMRecord sr = null;
-					while(iter.hasNext() && (!Thread.currentThread().isInterrupted())){
-						try{
-							sr = iter.next();
-							if(!seqId.equals(sr.getReferenceName()))
-								continue;
-							
-							maximum = sr.getAlignmentEnd();
-							if(!(checkRange(sr.getAlignmentStart(),maximum,min,max))){ 
-								if(max > maximum) 
-									break;
-								continue;
-							}
-							
-							if (skipUnmapped && sr.getReadUnmappedFlag()) {
-								continue;
-							}
-							symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
-						}catch(SAMException e){
-							errList.add(e);
+		while (iter.hasNext() && (!Thread.currentThread().isInterrupted())) {
+			try {
+				sr = iter.next();
+				if (!seqId.equals(sr.getReferenceName())) {
+					continue;
+				}
+
+				maximum = sr.getAlignmentEnd();
+				if (checkRange) {
+					if (!(checkRange(sr.getAlignmentStart(), maximum, min, max))) {
+						if (max > maximum) {
+							break;
 						}
+						continue;
 					}
 				}
+
+				if (skipUnmapped && sr.getReadUnmappedFlag()) {
+					continue;
+				}
+				symList.add(convertSAMRecordToSymWithProps(sr, seq, uri.toString()));
+			} catch (SAMException e) {
+				errList.add(e);
 			}
-		} finally {
+		}	}
+		finally {
 			if (iter != null) {
 				iter.close();
 			}
@@ -112,7 +123,6 @@ public class SAM extends XAM{
 				ErrorHandler.errorPanel("SAM exception", "Ignoring "+errList.size()+" records",  errList);
 			}
 		}
-
 		return symList;
 	}
 	

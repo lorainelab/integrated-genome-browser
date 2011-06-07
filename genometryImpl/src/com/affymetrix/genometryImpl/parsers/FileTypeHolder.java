@@ -58,7 +58,26 @@ public class FileTypeHolder {
 		// load all built in FileTypeHandlers
 		addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, AffyCnChpParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("BAM", new String[]{"bam"}, null, BAM.class);
-		addFileTypeHandler("SAM", new String[]{"sam"}, null, SAM.class);
+//		addFileTypeHandler("SAM", new String[]{"sam"}, null, SAM.class);
+		addFileTypeHandler(
+			new FileTypeHandler() {
+				String[] extensions = new String[]{"sam"};
+				@Override
+				public String getName() { return "SAM"; }
+				@Override
+				public String[] getExtensions() { return extensions; }
+				@Override
+				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+					return SymLoaderTabix.getSymLoader(new SAM(uri, featureName, group));
+				}
+				@Override
+				public Parser getParser() { return null; }
+				@Override
+				public IndexWriter getIndexWriter(String stream_name) {
+					return null;
+				}
+			}
+		);
 		addFileTypeHandler("Graph", new String[]{"bar"}, BarParser.class, /* Bar.class */ SymLoaderInstNC.class);
 //		addFileTypeHandler("BED", new String[]{"bed"}, BedParser.class, BED.class);
 		addFileTypeHandler(

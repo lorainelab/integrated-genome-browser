@@ -413,6 +413,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				cds_glyph.setColor(child_color); // CDS same color as exon
 				pglyph.addChild(cds_glyph);
 				map.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
+				for (GlyphProcessor glyphProcessor : GlyphProcessorHolder.getInstance().getGlyphProcessors()) {
+					glyphProcessor.processGlyph(cds_glyph);
+				}
 			}
 		}
 		return DEFAULT_THIN_HEIGHT;

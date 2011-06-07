@@ -180,15 +180,15 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph
 			int seqEndIndex,
 			int pixelStart) {
 		char[] charArray = residueStr.toCharArray();
-		drawResidueRectangles(g, pixelsPerBase, charArray, residueMask.get(seqBegIndex,seqEndIndex), pixelbox.x, pixelbox.y, pixelbox.height, getShowMask());
-		drawResidueStrings(g, pixelsPerBase, charArray, residueMask.get(seqBegIndex,seqEndIndex), pixelStart, getShowMask());
+		drawResidueRectangles(g, pixelsPerBase, charArray, seqBegIndex, residueMask.get(seqBegIndex,seqEndIndex), pixelbox.x, pixelbox.y, pixelbox.height, getShowMask());
+		drawResidueStrings(g, pixelsPerBase, charArray, seqBegIndex, residueMask.get(seqBegIndex,seqEndIndex), pixelStart, getShowMask());
 	}
 
 	protected abstract void drawResidueRectangles(
-			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int x, int y, int height, boolean show_mask);
+			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask);
 
 	private void drawResidueStrings(
-			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int pixelStart, boolean show_mask) {
+			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int pixelStart, boolean show_mask) {
 		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
 			g.setFont(getResidueFont());

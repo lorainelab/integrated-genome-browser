@@ -39,7 +39,7 @@ public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 
 	@Override
 	protected void drawResidueRectangles(
-			Graphics g, double pixelsPerBase, char[] charArray, BitSet residueMask, int x, int y, int height, boolean show_mask) {
+			Graphics g, double pixelsPerBase, char[] charArray, int seqBegIndex, BitSet residueMask, int x, int y, int height, boolean show_mask) {
 		int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
 		for (int j = 0; j < charArray.length; j++) {
 

@@ -128,12 +128,57 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	 *  The format must be specified on the first line following a track line,
 	 *  otherwise BED4 is assumed.
 	 */
-	private List<GraphSym> parse(BioSeq seq, int min, int max){
+	private List<GraphSym> parse(BioSeq seq, int min, int max) {
 		FileInputStream fis = null;
 		InputStream istr = null;
-		
-		WigFormat current_format = WigFormat.BED4;
 
+		try {
+			File file = chrList.get(seq);
+			if (file == null) {
+				Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+				return Collections.<GraphSym>emptyList();
+			}
+
+			final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+
+			Iterator<String> it = new Iterator<String>() {
+
+				@Override
+				public boolean hasNext() {
+					return true;
+				}
+
+				@Override
+				public String next() {
+					try {
+						return br.readLine();
+					} catch (IOException x) {
+						Logger.getLogger(this.getClass().getName()).log(
+								Level.SEVERE, "error reading wig file", x);
+					}
+					return null;
+				}
+
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException();
+				}
+			};
+
+			return parse(it, seq, min, max);
+
+		} catch (Exception ex) {
+			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(istr);
+			GeneralUtils.safeClose(fis);
+		}
+
+		return Collections.<GraphSym>emptyList();
+	}
+
+	private List<GraphSym> parse(Iterator<String> it, BioSeq seq, int min, int max) {
+		WigFormat current_format = WigFormat.BED4;
 		List<GraphSym> grafs = new ArrayList<GraphSym>();
 		WiggleData current_data = null;
 		Map<String, WiggleData> current_datamap = null; // Map: seq_id -> WiggleData
@@ -143,82 +188,63 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 
 		// these may be used by fixedStep or variableStep
 		String current_seq_id = null;
-		int current_start=0;
-		int current_step=0;
-		int current_span=0;
-
-		BufferedReader br = null;
-		try {
-			File file = chrList.get(seq);
-			if (file == null) {
-				Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
-				return Collections.<GraphSym>emptyList();
+		int current_start = 0;
+		int current_step = 0;
+		int current_span = 0;
+		while ((line = it.next()) != null && !Thread.currentThread().isInterrupted()) {
+			if (line.length() == 0) {
+				continue;
+			}
+			char firstChar = line.charAt(0);
+			if (firstChar == '#' || firstChar == '%' || (firstChar == 'b' && line.startsWith("browser"))) {
+				continue;
 			}
 
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-
-			while ((line = br.readLine()) != null && !Thread.currentThread().isInterrupted()) {
-				if (line.length() == 0) {
-					continue;
-				}
-				char firstChar = line.charAt(0);
-				if (firstChar == '#' || firstChar == '%' || (firstChar == 'b' && line.startsWith("browser"))) {
-					continue;
+			if (firstChar == 't' && line.startsWith("track")) {
+				if (previous_track_line) {
+					// finish previous graph(s) using previous track properties
+					grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString()));
 				}
 
-				if (firstChar == 't' && line.startsWith("track")) {
-					if (previous_track_line) {
-						// finish previous graph(s) using previous track properties
-						grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString()));
-					}
+				track_line_parser.parseTrackLine(line);
+				previous_track_line = true;
 
-					track_line_parser.parseTrackLine(line);
-					previous_track_line = true;
-
-					current_format = WigFormat.BED4; // assume BED4 until changed.
-					current_data = null;
-					current_datamap = new HashMap<String, WiggleData>();
-					continue;
-				}
-
-				if (firstChar == 'v' && line.startsWith("variableStep")) {
-					String[] fields = field_regex.split(line);
-					current_format = WigFormat.VARSTEP;
-					current_seq_id = Wiggle.parseFormatFields(fields, "chrom", "unknown");
-					current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
-					continue;
-				}
-
-				if (firstChar == 'f' && line.startsWith("fixedStep")) {
-					String[] fields = field_regex.split(line);
-					current_format = WigFormat.FIXEDSTEP;
-					current_seq_id = Wiggle.parseFormatFields(fields, "chrom", "unknown");
-					current_start = Integer.parseInt(Wiggle.parseFormatFields(fields, "start", "1"));
-					if (current_start < 1) {
-						throw new IllegalArgumentException("'fixedStep' format with start of " + current_start + ".");
-					}
-					current_step = Integer.parseInt(Wiggle.parseFormatFields(fields, "step", "1"));
-					current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
-					continue;
-				}
-
-				current_start = parseData(
-						previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, seq, min, max);
+				current_format = WigFormat.BED4; // assume BED4 until changed.
+				current_data = null;
+				current_datamap = new HashMap<String, WiggleData>();
+				continue;
 			}
-		} catch (Exception ex) {
-			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(istr);
-			GeneralUtils.safeClose(br);
-			GeneralUtils.safeClose(fis);
+
+			if (firstChar == 'v' && line.startsWith("variableStep")) {
+				String[] fields = field_regex.split(line);
+				current_format = WigFormat.VARSTEP;
+				current_seq_id = Wiggle.parseFormatFields(fields, "chrom", "unknown");
+				current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
+				continue;
+			}
+
+			if (firstChar == 'f' && line.startsWith("fixedStep")) {
+				String[] fields = field_regex.split(line);
+				current_format = WigFormat.FIXEDSTEP;
+				current_seq_id = Wiggle.parseFormatFields(fields, "chrom", "unknown");
+				current_start = Integer.parseInt(Wiggle.parseFormatFields(fields, "start", "1"));
+				if (current_start < 1) {
+					throw new IllegalArgumentException("'fixedStep' format with start of " + current_start + ".");
+				}
+				current_step = Integer.parseInt(Wiggle.parseFormatFields(fields, "step", "1"));
+				current_span = Integer.parseInt(Wiggle.parseFormatFields(fields, "span", "1"));
+				continue;
+			}
+
+			current_start = parseData(
+					previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, seq, min, max);
 		}
-
 		grafs.addAll(createGraphSyms(
 				track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString()));
 		
 		return grafs;
 	}
-
+	
 	private static int parseData(boolean previous_track_line, String line, WigFormat current_format,
 			WiggleData current_data, Map<String, WiggleData> current_datamap, String current_seq_id,
 			int current_span, int current_start, int current_step, BioSeq reqSeq, int min, int max)

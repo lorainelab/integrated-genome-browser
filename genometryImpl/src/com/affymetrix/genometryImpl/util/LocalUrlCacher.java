@@ -735,10 +735,10 @@ public final class LocalUrlCacher {
 
 				if(istr != null)
 					return true;
-
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :{0}", uri.toString());
-			}catch(Exception ex){
-				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Invalid uri :{0}", uri.toString());
+  
+			}catch(MalformedURLException ex){
+				Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Malformed Invalid uri :{0}", uri.toString());
+			}catch(IOException ex){	
 			}finally{ 
 				GeneralUtils.safeClose(istr);
 			}

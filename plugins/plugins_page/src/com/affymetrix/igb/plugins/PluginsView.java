@@ -503,6 +503,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	@Override
 	public void displayError(String errorText) {
 		errors.setText(errorText);
+		Logger.getLogger(PluginsView.class.getName()).log(Level.SEVERE, "displayIsoforms complete, " + errorText);
 	}
 
 	@Override

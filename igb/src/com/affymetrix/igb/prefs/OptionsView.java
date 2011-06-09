@@ -86,14 +86,14 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
       PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting));
     misc_box_col1.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
-	misc_box_col1.add(PreferenceUtils.createCheckBox("Enable auto load (Beta)", PreferenceUtils.getTopNode(),
-      AutoLoad.PREFS_AUTOLOAD, AutoLoad.default_autoload));
 
 	misc_box_col2.setAlignmentY(Component.TOP_ALIGNMENT);
     misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
       PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete));
-    misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
-      PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
+	misc_box_col2.add(PreferenceUtils.createCheckBox("Enable auto load (Beta)", PreferenceUtils.getTopNode(),
+      AutoLoad.PREFS_AUTOLOAD, AutoLoad.default_autoload));
+//    misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
+//      PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 
 	misc_box_cols.setAlignmentY(Component.TOP_ALIGNMENT);
     misc_box_cols.add(misc_box_col1);

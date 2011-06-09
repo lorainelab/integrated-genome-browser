@@ -676,9 +676,9 @@ public final class GeneralLoadUtils {
 		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 			
-			if (checkBamLoading(feature, optimized_sym)) {
-				return false;
-			}
+//			if (checkBamLoading(feature, optimized_sym)) {
+//				return false;
+//			}
 
 			if (optimized_sym != null) {
 				return loadFeaturesForSym(feature, optimized_sym);
@@ -781,8 +781,8 @@ public final class GeneralLoadUtils {
 				}
 			}
 			if (spanWidth > 100000){
-				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
-					PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
+//				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
+//					PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
 			}
 		
 		}

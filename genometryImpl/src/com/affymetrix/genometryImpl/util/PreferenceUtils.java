@@ -59,12 +59,12 @@ public abstract class PreferenceUtils {
 	/** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
 	public static final String ASK_BEFORE_EXITING = "Ask before exiting";
 	public static final String CONFIRM_BEFORE_DELETE = "Confirm before delete";
-	public static final String CONFIRM_BEFORE_LOAD = "Confirm before load";
+//	public static final String CONFIRM_BEFORE_LOAD = "Confirm before load";
 	public static final String AUTO_LOAD = "Auto Load Data";
 	public static final boolean default_ask_before_exiting = true;
 	public static final boolean default_confirm_before_delete = true;
 	public static final boolean default_auto_load = true;
-	public static final boolean default_confirm_before_load = true;
+//	public static final boolean default_confirm_before_load = true;
 	
 	static JFileChooser static_chooser = null;
 	static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());

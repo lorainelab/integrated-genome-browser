@@ -5,21 +5,6 @@
 
 package com.affymetrix.genometryImpl.symloader;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
-import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
-import com.affymetrix.genometryImpl.parsers.TrackLineParser;
-import com.affymetrix.genometryImpl.parsers.graph.BarParser;
-import com.affymetrix.genometryImpl.parsers.graph.WiggleData;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,11 +28,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.comparator.BioSeqComparator;
+import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
+import com.affymetrix.genometryImpl.parsers.graph.WiggleData;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.symloader.SymLoaderTabix.LineProcessor;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import org.broad.tribble.readers.TabixReader.TabixLineReader;
+
 /**
  *
  * @author hiralv
  */
-public final class Wiggle extends SymLoader implements AnnotationWriter {
+public final class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor {
 	private static final String TRACK = "track type={0}_{1} name=\"{2}_{3}\"";
 	private int TRACK_COUNTER = 0;
 	
@@ -77,6 +80,8 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	public List<LoadStrategy> getLoadChoices() {
 		return strategyList;
 	}
+
+	public void init(URI uri) {	}
 	
 	@Override
 	public void init() {
@@ -175,6 +180,41 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		}
 
 		return Collections.<GraphSym>emptyList();
+	}
+
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final TabixLineReader lineReader) {
+		Iterator<String> it = new Iterator<String>() {
+
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public String next() {
+				String line = null;
+				try {
+					line = lineReader.readLine();
+				} catch (IOException x) {
+					Logger.getLogger(this.getClass().getName()).log(
+							Level.SEVERE, "error reading bed file", x);
+					line = null;
+				}
+				return line;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
+		try {
+			return parse(it, seq, seq.getMin(), seq.getMax());
+		} catch (Exception ex) {
+			Logger.getLogger(Wiggle.class.getName()).log(Level.SEVERE, null, ex);
+		} 
+		
+		return Collections.<SeqSymmetry>emptyList();
 	}
 
 	private List<GraphSym> parse(Iterator<String> it, BioSeq seq, int min, int max) {

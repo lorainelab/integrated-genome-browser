@@ -56,15 +56,21 @@ public abstract class BrowserView extends JPanel {
 		}
 		return "";
 	}
+	
+	public Loc getLoc(){
+		String ucscQuery = ucscViewAction.getUCSCQuery();
+		Loc loc = Loc.fromUCSCQuery(ucscQuery);
+		return loc;
+	}
 
 	public void setCookie(String key, String value) {
 		cookieMap.put(key, value);
 	}
 
-	public BrowserView(JComboBox selector, IGBService _igbService, UCSCViewAction ucscViewAction_) {
+	public BrowserView(JComboBox selector,final IGBService igbService,final UCSCViewAction ucscViewAction) {
 		super();
-		this.igbService = _igbService;
-		this.ucscViewAction = ucscViewAction_;
+		this.igbService = igbService;
+		this.ucscViewAction = ucscViewAction;
 		initializeCookies();
 		this.setLayout(new BorderLayout());
 		final JPanel buttonPanel = new JPanel();

@@ -44,45 +44,17 @@ public abstract class BrowserLoader {
 
 	abstract public ImageError getImage(Loc loc, int pixWidth, Map<String, String> cookies);
 
-	/***
-	 * we  check for up to 5 levels of redirection
-	 * @param url
-	 * @param cookie
-	 * @return
-	 */
-	public HttpURLConnection getRedirectedConnection(String url, String cookie) throws IOException {
-		for(int con = 0, max = 5; con < max; con++){
-			HttpURLConnection request_con = getConnection(url, cookie);
-			if(request_con.getResponseCode() >= 300 && request_con.getResponseCode() < 400){
-				url = request_con.getHeaderField("Location");
-				int endredirect = url.indexOf(";"); //ensembl is appending something to the url
-				if(endredirect > 0){
-					url = url.substring(0, endredirect);
-				}
-				request_con.disconnect();
-			}
-			else{
-				return request_con;
-			}
-		}
-		return null;
-	}
-
 
 	public HttpURLConnection getConnection(String url, String cookie) throws IOException {
 		URL request_url = new URL(url);
 		HttpURLConnection request_con = (HttpURLConnection) request_url.openConnection();
-		request_con.setInstanceFollowRedirects(false);
+		request_con.setInstanceFollowRedirects(true);
 		request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 		request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 		request_con.setUseCaches(false);
 		request_con.addRequestProperty("Cookie", cookie);
 		return request_con;
 	}
-
-
-
-
 
 	/**
 	 *
@@ -95,7 +67,7 @@ public abstract class BrowserLoader {
 		InputStream input_stream = null;
 		BufferedReader in = null;
 		try {
-			request_con = getRedirectedConnection(url, cookie);
+			request_con = getConnection(url, cookie);
 			if(request_con == null){
 				return ("Error: could not resolve connection");
 			}

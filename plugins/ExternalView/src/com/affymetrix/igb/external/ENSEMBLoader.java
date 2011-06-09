@@ -2,40 +2,93 @@ package com.affymetrix.igb.external;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genoviz.util.ErrorHandler;
+
+
 /**
  * Helper class for getting genomic images from ENSEMBL
+ * The mappings for ensembl are defined in ensemblURLs tab delimited text file
  *
  * @author Ido M. Tamir
  */
 class ENSEMBLoader extends BrowserLoader {
 
-	private static final Map<String, EnsemblURL> dbmap = new HashMap<String, EnsemblURL>();
+	private final Map<String, EnsemblURL> urlMap;
 	
+	public ENSEMBLoader(){
+		urlMap = loadMap();
+	}
+	
+	public Map<String, EnsemblURL> loadMap(){
+		Map<String,EnsemblURL> urlMap = new HashMap<String, EnsemblURL>();
+		String urlfile = "/ensemblURLs";
+		InputStream file_input_str =
+						ExternalViewer.class.getResourceAsStream(urlfile);
 
-	static {
-		dbmap.put("mm9", new EnsemblURL("http://may2010.archive.ensembl.org/Mus_musculus"));
-		dbmap.put("hg19",new EnsemblURL("http://may2010.archive.ensembl.org/Homo_sapiens"));
-		dbmap.put("dm3", new EnsemblURL("http://may2010.archive.ensembl.org/Drosophila_melanogaster"));
+		if (file_input_str == null) {
+			ErrorHandler.errorPanel("Cannot open ensembl url mapping file",
+							"Cannot find ensembl url mapping file '" + urlfile + "'.\n" +
+							"ENSEMBL view will not be available.");
+		}
+		BufferedReader d = null;
+	    
+		if (file_input_str != null) {
+			try {
+
+				d = new BufferedReader(new InputStreamReader(file_input_str));
+				StringTokenizer string_toks;
+				String ucscName, ensemblURL;
+				String line = "";
+				while ((line = d.readLine()) != null) {
+					if(!line.startsWith("#") && line.trim().length() > 0){
+						string_toks = new StringTokenizer(line);
+						ucscName = string_toks.nextToken();
+						ensemblURL = string_toks.nextToken();
+						urlMap.put(ucscName, new EnsemblURL(ensemblURL));
+					}
+				}
+			} catch (Exception ex) {
+				//log error
+			} finally {
+				GeneralUtils.safeClose(d);
+				GeneralUtils.safeClose(file_input_str);
+			}
+		}
+		return urlMap;
 	}
 
-	public static String getUrlForView(Loc loc, int pixWidth) {
-		if (!dbmap.containsKey(loc.db)) {
+
+	public String url(Loc loc){
+		EnsemblURL url = urlMap.get(loc.db);
+		if(url == null){
+			return "";
+		}else{
+			return url.url;
+		}		
+	}
+	
+	public String getUrlForView(Loc loc, int pixWidth) {
+		if (!urlMap.containsKey(loc.db)) {
 			return "Error: could not transpose the genome " + loc.db + " for ENSEMBL";
 		}
 		if( loc.length() >= 100000){
 			return "Error: the selected region is too large (>100000)";
 		}
 		String chr = loc.chr.replaceAll("chr", "");
-		String url = dbmap.get(loc.db).url + "/Location/View?r=" + chr + ":" + (loc.start+1) + "-" + loc.end; //ensembl = 1 based
+		String url = urlMap.get(loc.db).url + "/Location/View?r=" + chr + ":" + (loc.start+1) + "-" + loc.end; //ensembl = 1 based
 		Logger.getLogger(ENSEMBLoader.class.getName()).log(Level.FINE, "url was : " + url);
 		return url;
 	}

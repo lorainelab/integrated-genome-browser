@@ -1,6 +1,8 @@
 package com.affymetrix.igb.external;
 
 import java.awt.CardLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JComboBox;
@@ -16,16 +18,20 @@ import com.affymetrix.igb.view.SeqMapView;
  * Shows up as tab in IGB
  * Allows selection of subviews with combobox
  *
+ * The mappings for ensembl are defined in ensemblURLs tab delimited text file
+ *
  * @author Ido M. Tamir
  */
-public class ExternalViewer extends IGBTabPanel {
+public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
 	private static final int TAB_POSITION = 5;
 	private static final int VIEW_MENU_POS = 2;
 
-	private static final String[] names = {UCSCView.viewName};
+	private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
 	final JComboBox ucscBox;
+	final JComboBox ensemblBox;
+	
 	private final UCSCViewAction ucscViewAction;
 	private final JMenuItem menuItem;
 
@@ -33,13 +39,16 @@ public class ExternalViewer extends IGBTabPanel {
 		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, TAB_POSITION);
 		this.setLayout(new CardLayout());
 		ucscBox = createBox();
+		ensemblBox = createBox();
+		
 		ucscViewAction = new UCSCViewAction((SeqMapView)igbService.getMapView());
 		menuItem = new JMenuItem(ucscViewAction);
 		MenuUtil.insertIntoMenu(igbService.getViewMenu(), menuItem, VIEW_MENU_POS);
 
 		final UCSCView ucsc = new UCSCView(ucscBox, igbService, ucscViewAction);
-
 		add(ucsc, ucsc.getViewName());
+		final EnsemblView ensembl = new EnsemblView(ensemblBox, igbService, ucscViewAction);
+		add(ensembl, ensembl.getViewName());
 	}
 
 	private JComboBox createBox() {
@@ -47,6 +56,7 @@ public class ExternalViewer extends IGBTabPanel {
 		box.setPrototypeDisplayValue("ENSEMBL");
 		box.setMaximumSize(box.getPreferredSize());
 		box.setEditable(false);
+		box.addItemListener(this);
 		return box;
 	}
 
@@ -63,4 +73,18 @@ public class ExternalViewer extends IGBTabPanel {
 	public boolean isCheckMinimumWindowSize() {
 		return true;
 	}
+	
+	public void itemStateChanged(ItemEvent e){
+		if(e.getID() == ItemEvent.ITEM_STATE_CHANGED){
+			CardLayout cl = (CardLayout) getLayout();
+			if(e.getSource() == ucscBox){
+				ensemblBox.setSelectedItem(EnsemblView.viewName);
+			}
+			if(e.getSource() == ensemblBox){
+				ucscBox.setSelectedItem(UCSCView.viewName);
+			}
+			cl.show(ExternalViewer.this, (String) e.getItem());
+		}
+	}
+
 }

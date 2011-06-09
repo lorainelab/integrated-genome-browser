@@ -33,18 +33,22 @@ public class EnsemblView extends BrowserView {
 	private static final String ENSEMBLSETTINGS = "ensemblSettings";
 	public static final String ENSEMBLSESSION = "ENSEMBL_WWW_SESSION";
 	public static final String ENSEMBLWIDTH = "ENSEMBL_WIDTH";
-
+	private ENSEMBLoader ensemblLoader = new ENSEMBLoader();
+	
 	/**
 	 *
 	 * @param selector selects foreground
 	 */
-	public EnsemblView(JComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction_) {
-		super(selector, igbService, ucscViewAction_);
+	public EnsemblView(JComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction) {
+		super(selector, igbService, ucscViewAction);
 	}
 
 	@Override
 	public JDialog getViewHelper(Window window) {
-		return new ENSEMBLHelper(window, "Customize Ensembl settings");
+		Loc loc = getLoc();
+		String url = ensemblLoader.url(loc);
+		String helper = url != "" ? "<p>For this genome the url is:<a href="+url+">"+url+"</a></p>" : "<p>Unfortunately I could not map the current genome to an ENSEMBL URL</p>";
+		return new ENSEMBLHelper(window, "Customize Ensembl settings", helper);
 	}
 
 	@Override
@@ -59,7 +63,7 @@ public class EnsemblView extends BrowserView {
 		Map<String, String> cookies = new HashMap<String, String>();
 		cookies.put(ENSEMBLSESSION, getCookie(ENSEMBLSESSION));
 		cookies.put(ENSEMBLWIDTH, Integer.toString(pixWidth));
-		return new ENSEMBLoader().getImage(loc, pixWidth, cookies).image;
+		return ensemblLoader.getImage(loc, pixWidth, cookies).image;
 	}
 
 	@Override
@@ -77,7 +81,7 @@ public class EnsemblView extends BrowserView {
 		private final JButton okButton = new JButton("submit");
 		private final JTextField userIdField = new JTextField(getCookie(ENSEMBLSESSION), 50);
 
-		public ENSEMBLHelper(Window window, String string) {
+		public ENSEMBLHelper(Window window, String string, String helper) {
 			super(window, string);
 			CookieHandler.setDefault(null);
 
@@ -87,6 +91,7 @@ public class EnsemblView extends BrowserView {
 
 			String text = "<h1>Setting the ENSEMBL cookie</h1><p>With the ENSEMBL cookie value you can synchronize the Viewer settings with your browser.</p>";
 			text += "<p>ENSEMBL puts a cookie into your browser called ENSEMBL_WWW_SESSION.</p><p>You have to put its value into the textfield.</p>";
+			text += helper;
 			pane.setText(text);
 			pane.setEditable(false);
 			final JPanel panel = new JPanel();

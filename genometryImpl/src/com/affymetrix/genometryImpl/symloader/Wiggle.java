@@ -77,7 +77,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 	public List<LoadStrategy> getLoadChoices() {
 		return strategyList;
 	}
-
+	
 	@Override
 	public void init() {
 		if (this.isInitialized) {
@@ -181,7 +181,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 		WigFormat current_format = WigFormat.BED4;
 		List<GraphSym> grafs = new ArrayList<GraphSym>();
 		WiggleData current_data = null;
-		Map<String, WiggleData> current_datamap = null; // Map: seq_id -> WiggleData
+		Map<String, WiggleData> current_datamap = new HashMap<String, WiggleData>(); // Map: seq_id -> WiggleData
 		boolean previous_track_line = false;
 
 		String line;
@@ -411,7 +411,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 
 		String graph_name = new String(graph_id);
 
-		if (ensure_unique_id) {
+		if (ensure_unique_id && !stream_name.equals(graph_id)) {
 			graph_id = AnnotatedSeqGroup.getUniqueGraphTrackID(stream_name, graph_id);
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
@@ -554,7 +554,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 						addToLists(chrs, current_seq_id, chrFiles, chrLength, ".wig");
 					}
 					bw = chrs.get(current_seq_id);
-					if (!chrTrack.containsKey(current_seq_id)) {
+					if (!chrTrack.containsKey(current_seq_id) && trackLine != null) {
 						chrTrack.put(current_seq_id, true);
 						bw.write(trackLine + "\n");
 					}
@@ -574,7 +574,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter {
 							addToLists(chrs, current_seq_id, chrFiles, chrLength, ".wig");
 						}
 						bw = chrs.get(current_seq_id);
-						if (!chrTrack.containsKey(current_seq_id)) {
+						if (!chrTrack.containsKey(current_seq_id) && trackLine != null) {
 							chrTrack.put(current_seq_id, true);
 							bw.write(trackLine + "\n");
 						}

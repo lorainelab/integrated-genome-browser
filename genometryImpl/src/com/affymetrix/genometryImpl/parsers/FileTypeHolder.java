@@ -211,7 +211,26 @@ public class FileTypeHolder {
 		addFileTypeHandler(".2bit", new String[]{"2bit"}, TwoBitParser.class, TwoBit.class);
 		addFileTypeHandler("Binary", new String[]{"useq"}, USeqRegionParser.class, USeq.class);
 		addFileTypeHandler("Genomic Variation", new String[]{"var"}, VarParser.class, SymLoaderInstNC.class);
-		addFileTypeHandler("Graph", new String[]{"wig", "bedgraph"}, WiggleParser.class, Wiggle.class);
+		addFileTypeHandler("Graph", new String[]{"wig"}, WiggleParser.class, Wiggle.class);
+		addFileTypeHandler(
+			new FileTypeHandler() {
+				String[] extensions = new String[]{"bedgraph"};
+				@Override
+				public String getName() { return "Graph"; }
+				@Override
+				public String[] getExtensions() { return extensions; }
+				@Override
+				public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+					return SymLoaderTabix.getSymLoader(new Wiggle(uri, featureName, group));
+				}
+				@Override
+				public Parser getParser() { return new WiggleParser(); }
+				@Override
+				public IndexWriter getIndexWriter(String stream_name) {
+					return (IndexWriter) getParser();
+				}
+			}
+		);
 	}
 
 	private void addFileTypeHandler(final String name, final String[] extensions, final Class<? extends Parser> parserClass, final Class<? extends SymLoader> symLoaderClass) {

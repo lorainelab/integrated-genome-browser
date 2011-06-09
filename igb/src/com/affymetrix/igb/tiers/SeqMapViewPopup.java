@@ -235,6 +235,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
+  @SuppressWarnings("serial")
+  private final Action focus_track_action = new AbstractAction("FocusTrack") {
+    public void actionPerformed(ActionEvent e) {
+      TierGlyph current_tier = handler.getSelectedTiers().get(0);
+	  gviewer.focusTrack(current_tier);
+    }
+  };
+
   private final Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
@@ -249,7 +257,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-  
+  @SuppressWarnings("serial")
   private final Action delete_action = new AbstractAction("Delete selected tracks") {
 	
     public void actionPerformed(ActionEvent e) {
@@ -863,7 +871,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	if (num_selections == 1) {
       // Check whether this selection is a graph or an annotation
       TierLabelGlyph label = labels.get(0);
-      TierGlyph glyph = (TierGlyph) label.getInfo();
+      final TierGlyph glyph = (TierGlyph) label.getInfo();
+      if (glyph.getDirection() != Direction.AXIS) {
+        popup.add(focus_track_action);
+      }
       ITrackStyle style = glyph.getAnnotStyle();
 	  GenericFeature feature = style.getFeature();
 	  if(feature != null){

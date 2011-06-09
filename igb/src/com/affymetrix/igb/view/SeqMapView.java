@@ -283,6 +283,7 @@ public class SeqMapView extends JPanel
 		}
 	};
 
+	@SuppressWarnings("serial")
 	public SeqMapView(boolean add_popups) {
 		super();
 
@@ -2082,5 +2083,27 @@ public class SeqMapView extends JPanel
 
     public void removeGraphOperator(GraphOperator graphOperator) {
     	graph_manager.removeGraphOperator(graphOperator);
+    }
+
+    public void focusTrack(TierGlyph selectedTier) {
+    	// set zoom to height of selected track
+    	double tierCoordHeight = selectedTier.getCoordBox().getHeight();
+    	int totalHeight = seqmap.getView().getPixelBox().height;
+    	double zoom_scale = totalHeight / tierCoordHeight;
+    	seqmap.zoom(NeoMap.Y, zoom_scale);
+    	// set scroll to top of selected track
+    	double coord_value = 0;
+    	// add up height of all tiers up to selected tier
+    	for (TierGlyph tierGlyph : seqmap.getTiers()) {
+    		if (tierGlyph == selectedTier) {
+    			break;
+    		}
+    		coord_value += tierGlyph.getCoordBox().getHeight();
+    	}
+    	seqmap.scroll(NeoMap.Y, coord_value);
+		seqmap.updateWidget();
+		if(autoload != null){
+			autoload.mapZoomed();
+		}
     }
 }

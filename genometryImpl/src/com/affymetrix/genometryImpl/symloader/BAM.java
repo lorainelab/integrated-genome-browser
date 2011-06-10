@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.SeekableFTPStream;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
@@ -19,7 +20,6 @@ import java.util.regex.Pattern;
 
 import net.sf.picard.sam.BuildBamIndex;
 import net.sf.samtools.SAMException;
-
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
@@ -27,6 +27,7 @@ import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.SAMFileWriter;
 import net.sf.samtools.SAMFormatException;
 import net.sf.samtools.util.CloseableIterator;
+import net.sf.samtools.util.SeekableBufferedStream;
 
 /**
  * @author jnicol
@@ -77,7 +78,19 @@ public final class BAM extends XAM {
 				indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
 				reader = new SAMFileReader(uri.toURL(), indexFile, false);
 				reader.setValidationStringency(ValidationStringency.SILENT);
-			} else {
+			} else if(scheme.startsWith("ftp")){
+				String baiUriStr = findIndexFile(uri.toString());
+				// Guess at the location of the .bai URL as BAM URL + ".bai"	
+				if (baiUriStr == null) {
+					ErrorHandler.errorPanel("No BAM index file",
+							"Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.");
+					this.isInitialized = false;
+					return;
+				}
+				indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
+				reader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);
+				reader.setValidationStringency(ValidationStringency.SILENT);
+			}else {
 				Logger.getLogger(BAM.class.getName()).log(
 						Level.SEVERE, "URL scheme: {0} not recognized", scheme);
 				return;
@@ -278,7 +291,7 @@ public final class BAM extends XAM {
 		if (scheme.length() == 0 || scheme.equals("file")) {
 			File f = findIndexFile(new File(uri));
 			return f != null;
-		}else if(scheme.startsWith("http")) {
+		}else if(scheme.startsWith("http") || scheme.startsWith("ftp")) {
 			String uriStr = findIndexFile(uri.toString());
 			return uriStr != null;
 		}

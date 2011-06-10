@@ -138,6 +138,9 @@
 		<antcall target="copy-bundle">
     		<param name="jar_name" value="tabix"/>
 		</antcall>
+		<antcall target="copy-bundle">
+    		<param name="jar_name" value="commons-net-2.0"/>
+		</antcall>
 	</target>
 
 	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">

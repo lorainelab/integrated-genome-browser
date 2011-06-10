@@ -139,17 +139,18 @@ public final class QuickLoad extends SymLoader {
 	}
 
 
-	public boolean loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
+	public void loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
 			throws OutOfMemoryError {
 
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		if (this.symL != null && this.symL.isResidueLoader) {
-			return loadResiduesThread(feature, overlapSpan, gviewer);
+			loadResiduesThread(feature, overlapSpan, gviewer);
+		}else{
+			loadSymmetriesThread(feature, overlapSpan, gviewer);
 		}
-		return loadSymmetriesThread(feature, overlapSpan, gviewer);
 	}
 
-	private boolean loadSymmetriesThread(
+	private void loadSymmetriesThread(
 			final GenericFeature feature, final SeqSpan overlapSpan, final SeqMapView gviewer)
 			throws OutOfMemoryError {
 
@@ -200,8 +201,7 @@ public final class QuickLoad extends SymLoader {
 			}
 		};
 		ThreadHandler.getThreadHandler().execute(feature, worker);
-		
-		return true;
+
 	}
 	
 
@@ -210,7 +210,7 @@ public final class QuickLoad extends SymLoader {
 	 * @param feature
 	 * @return
 	 */
-	public boolean loadAllSymmetriesThread(final GenericFeature feature){
+	public void loadAllSymmetriesThread(final GenericFeature feature){
 		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 
@@ -247,7 +247,6 @@ public final class QuickLoad extends SymLoader {
 		};
 		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
 
-		return true;
 	}
 
 	/**
@@ -286,7 +285,7 @@ public final class QuickLoad extends SymLoader {
 
 	}
 
-	private boolean loadAndAddAllSymmetries(final GenericFeature feature)
+	private void loadAndAddAllSymmetries(final GenericFeature feature)
 			throws OutOfMemoryError {
 
 		setStyle(feature);
@@ -302,7 +301,7 @@ public final class QuickLoad extends SymLoader {
 		//within the parser handle them here.
 		if (extension.endsWith(".chp")) {
 			// special-case chp files, due to their LazyChpSym DAS/2 loading
-			return true;
+			return;
 		}
 
 		Map<BioSeq, List<SeqSymmetry>> seq_syms = SymLoader.splitResultsBySeqs(results);
@@ -316,7 +315,6 @@ public final class QuickLoad extends SymLoader {
 			feature.addLoadedSpanRequest(span); // this span is now considered loaded.
 		}
 
-		return true;
 	}
 
 	
@@ -346,7 +344,7 @@ public final class QuickLoad extends SymLoader {
 		}
 	}
 	
-	private boolean loadResiduesThread(final GenericFeature feature, final SeqSpan span, final SeqMapView gviewer) {
+	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span, final SeqMapView gviewer) {
 		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
 
 			@Override
@@ -378,7 +376,6 @@ public final class QuickLoad extends SymLoader {
 		};
 
 		ThreadHandler.getThreadHandler().execute(this.version.gServer, worker);
-		return true;
 	}
 
 	/**

@@ -53,7 +53,7 @@ public final class Das {
 	 * @param spans List of spans containing the ranges for which you want annotations.
 	 * @return true if data was loaded
 	 */
-	public static boolean loadFeatures(final SeqSpan span, final GenericFeature feature) {
+	public static void loadFeatures(final SeqSpan span, final GenericFeature feature) {
 
 		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
 
@@ -106,7 +106,6 @@ public final class Das {
 		};
 		ThreadHandler.getThreadHandler().execute(feature,worker);
 
-		return true;
 	}
 
 	/**

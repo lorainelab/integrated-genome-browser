@@ -52,12 +52,12 @@ public class Das2 {
 	 * @param overlap
 	 * @return true or false
 	 */
-	public static boolean loadFeatures(final SeqSpan span, final GenericFeature feature) {
+	public static void loadFeatures(final SeqSpan span, final GenericFeature feature) {
 		final Das2Type dtype = (Das2Type) feature.typeObj;
 		final Das2Region region = ((Das2VersionedSource) feature.gVersion.versionSourceObj).getSegment(span.getBioSeq());
 
 		if (dtype == null || region == null) {
-			return true;
+			return;
 		}
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 	
@@ -85,7 +85,7 @@ public class Das2 {
 		};
 
 		ThreadHandler.getThreadHandler().execute(feature, worker);
-		return true;
+		return;
 	}
 
 

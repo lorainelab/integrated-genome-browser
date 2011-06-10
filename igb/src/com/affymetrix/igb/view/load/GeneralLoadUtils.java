@@ -636,14 +636,14 @@ public final class GeneralLoadUtils {
 	 * @param gFeature
 	 * @return true or false
 	 */
-	static public boolean loadAndDisplayAnnotations(GenericFeature gFeature) {
+	static public void loadAndDisplayAnnotations(GenericFeature gFeature) {
 		if(!checkBeforeLoading(gFeature))
-			return false;
+			return;
 
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		SeqSpan overlap = null;
 		if(gFeature.loadStrategy == LoadStrategy.AUTOLOAD && !gviewer.getAutoLoad().shouldAutoLoad()){
-			return true;
+			return;
 		}
 		if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.AUTOLOAD) {
 			overlap = gviewer.getVisibleSpan();
@@ -652,59 +652,53 @@ public final class GeneralLoadUtils {
 			overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax()-1, selected_seq);
 		}
 		
-		return loadAndDisplaySpan(overlap, gFeature);
+		loadAndDisplaySpan(overlap, gFeature);
 	}
 
-	public static boolean loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
+	public static void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) && ((QuickLoad) feature.symL).extension.endsWith(".chp")) {
 			feature.loadStrategy = LoadStrategy.GENOME;	// it should be set to this already.  But just in case...
-			return ((QuickLoad) feature.symL).loadFeatures(span, feature);
+			((QuickLoad) feature.symL).loadFeatures(span, feature);
+			return;
 		}
 
 		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
-		
+
 		// For for formats that are not optimized do not iterate through BioSeq
 		// instead add them all at one.
-		if(feature.gVersion.gServer.serverType == ServerType.QuickLoad
-				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInstNC) {
-			if (optimized_sym == null) 
-				return true;
-			return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
+		if (feature.gVersion.gServer.serverType == ServerType.QuickLoad
+				&& ((QuickLoad) feature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+			if (optimized_sym != null) {
+				((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
+			}
+			return;
 		}
 
 		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
-			
-//			if (checkBamLoading(feature, optimized_sym)) {
-//				return false;
-//			}
 
 			if (optimized_sym != null) {
-				return loadFeaturesForSym(feature, optimized_sym);
+				loadFeaturesForSym(feature, optimized_sym);
+			} else {
+				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+						Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
 			}
-		} else {
-			//If Loading whole genome for unoptimized file then load everything at once.
-			if((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
-				&& ((QuickLoad)feature.symL).getSymLoader() instanceof SymLoaderInst) {
-				
-				if (optimized_sym == null) 
-					return true;
-				
-				return ((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
-			}
-			
-			iterateSeqList(span, feature);	
-			//TODO: Does it matter what is returned ?
-			return true;
+			return;
 		}
 
-		if(feature.loadStrategy != LoadStrategy.GENOME){
-			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
+		//If Loading whole genome for unoptimized file then load everything at once.
+		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
+				&& ((QuickLoad) feature.symL).getSymLoader() instanceof SymLoaderInst) {
+
+			if (optimized_sym != null) {
+				((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
+			}
+			return;
 		}
-		
-		return true;
+
+		iterateSeqList(span, feature);
+
 	}
 
 	private static void iterateSeqList(final SeqSpan span, final GenericFeature feature) {
@@ -730,40 +724,35 @@ public final class GeneralLoadUtils {
 		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
 	}
 	
-	private static boolean loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError {
+	private static void loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError {
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		convertSymToSpanList(optimized_sym, spans);
 		optimized_spans.addAll(spans);
-		boolean result = true;
+
 		switch (feature.gVersion.gServer.serverType) {
 			case DAS2:
 				for (SeqSpan optimized_span : optimized_spans) {
 					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
-					if (!Das2.loadFeatures(optimized_span, feature)) {
-						result = false; // don't short-circuit!
-					}
+					Das2.loadFeatures(optimized_span, feature);
 				}
-				return result;
+				break;
+
 			case DAS:
 				for (SeqSpan optimized_span : optimized_spans) {
 					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
-					if(Das.loadFeatures(optimized_span, feature)){
-						result = false; // don't short-circuit!
-					}
+					Das.loadFeatures(optimized_span, feature);
 				}
-				return result;
+				break;
+
 			case QuickLoad:
 			case LocalFiles:
 				for (SeqSpan optimized_span : optimized_spans) {
 					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
-					if (!((QuickLoad) feature.symL).loadFeatures(optimized_span, feature)) {
-						result = false; // don't short-circuit!
-					}
+					((QuickLoad) feature.symL).loadFeatures(optimized_span, feature);
 				}
-				return result;
+				break;
 		}
-		return false;
 	}
 
 	private static boolean checkBamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {

@@ -1,5 +1,17 @@
 package com.affymetrix.igb.featureloader;
 
+import java.util.List;
+import java.util.Set;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.stream.XMLStreamException;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -16,23 +28,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.QueryBuilder;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.thread.CThreadWorker;
-import com.affymetrix.igb.thread.ThreadHandler;
-import com.affymetrix.igb.view.TrackView;
-import java.util.List;
-import java.util.Set;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.stream.XMLStreamException;
-
 
 /**
  * Class to aid in loading features from DAS servers.
@@ -55,57 +50,38 @@ public final class Das {
 	 */
 	public static void loadFeatures(final SeqSpan span, final GenericFeature feature) {
 
-		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
+		BioSeq current_seq = span.getBioSeq();
+		Set<String> segments = ((DasSource) feature.gVersion.versionSourceObj).getEntryPoints();
+		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
 
-			@Override
-			protected Object runInBackground() {
-				BioSeq current_seq = span.getBioSeq();
-				Set<String> segments = ((DasSource) feature.gVersion.versionSourceObj).getEntryPoints();
-				String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
+		QueryBuilder builder = new QueryBuilder(feature.typeObj.toString());
+		builder.add("segment", segment);
+		builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
 
-				QueryBuilder builder = new QueryBuilder(feature.typeObj.toString());
-				builder.add("segment", segment);
-				builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
-				
-				URI uri = builder.build();
+		URI uri = builder.build();
 
-				ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), feature.featureName);
-				style.setFeature(feature);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), feature.featureName);
+		style.setFeature(feature);
 
-				// TODO - probably not necessary
-				style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
-				style.setFeature(feature);
+		// TODO - probably not necessary
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
+		style.setFeature(feature);
 
-				Collection<DASSymmetry> dassyms = parseData(uri);
-				// Special case : When a feature make more than one Track, set feature for each track.
-				if(dassyms != null){
-					if(Thread.currentThread().isInterrupted()){
-						feature.removeCurrentRequest(span);
-						dassyms = null;
-						return null;
-					}
-					SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
-					for(DASSymmetry sym : dassyms){
-						feature.addMethod(sym.getType());
-					}
-				}
-				//The span is now considered loaded.
-				feature.addLoadedSpanRequest(span);
-				TrackView.updateDependentData();
-				return null;
+		Collection<DASSymmetry> dassyms = parseData(uri);
+		// Special case : When a feature make more than one Track, set feature for each track.
+		if (dassyms != null) {
+			if (Thread.currentThread().isInterrupted()) {
+				feature.removeCurrentRequest(span);
+				dassyms = null;
+				return;
 			}
-
-			@Override
-			protected void finished() {
-				try {
-					Application.getSingleton().getMapView().setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
-				} catch(Exception ex){
-					ex.printStackTrace();
-				}
+			SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
+			for (DASSymmetry sym : dassyms) {
+				feature.addMethod(sym.getType());
 			}
-		};
-		ThreadHandler.getThreadHandler().execute(feature,worker);
-
+		}
+		//The span is now considered loaded.
+		feature.addLoadedSpanRequest(span);
 	}
 
 	/**

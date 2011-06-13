@@ -1,5 +1,18 @@
 package com.affymetrix.igb.featureloader;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -21,24 +34,9 @@ import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.thread.CThreadWorker;
-import com.affymetrix.igb.thread.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.SwingWorker;
 
 /**
  *
@@ -140,68 +138,30 @@ public final class QuickLoad extends SymLoader {
 
 
 	public void loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
-			throws OutOfMemoryError {
+			throws OutOfMemoryError, IOException {
 
-		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		if (this.symL != null && this.symL.isResidueLoader) {
-			loadResiduesThread(feature, overlapSpan, gviewer);
+			loadResiduesThread(feature, overlapSpan);
 		}else{
-			loadSymmetriesThread(feature, overlapSpan, gviewer);
+			loadSymmetriesThread(feature, overlapSpan);
 		}
 	}
 
-	private void loadSymmetriesThread(
-			final GenericFeature feature, final SeqSpan overlapSpan, final SeqMapView gviewer)
-			throws OutOfMemoryError {
+	private void loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
+			throws OutOfMemoryError, IOException {
 
-		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();
-		final CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
+		if (QuickLoad.this.extension.endsWith(".chp")) {
+			// special-case chp files, due to their LazyChpSym DAS/2 loading
+			QuickLoad.this.getGenome();
+			return;
+		}
+		
+		//Do not not anything in case of genome. Just refresh.
+		if (IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
+			return;
+		}
 
-			@Override
-			protected Object runInBackground() {
-				try {
-					if (QuickLoad.this.extension.endsWith(".chp")) {
-						// special-case chp files, due to their LazyChpSym DAS/2 loading
-						QuickLoad.this.getGenome();
-						return null;
-					}
-					//Do not not anything in case of genome. Just refresh.
-					if(IGBConstants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())){
-						return null;
-					}
-					
-					loadAndAddSymmetries(feature, overlapSpan);
-
-					TrackView.updateDependentData();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return null;
-			}
-
-			@Override
-			protected void finished() {
-				try {
-					BioSeq aseq = gmodel.getSelectedSeq();
-					//Only refresh if currently selected sequence and loaded data are on same sequence.
-					if (overlapSpan != null && aseq != null && overlapSpan.getBioSeq() == aseq) {
-						gviewer.setAnnotatedSeq(aseq, true, true);
-					} else if (gmodel.getSelectedSeq() == null && QuickLoad.this.version.group != null) {
-						// This can happen when loading a brand-new genome
-						gmodel.setSelectedSeq(QuickLoad.this.version.group.getSeq(0));
-					}
-
-					//Since sequence are never removed so if no. of sequence increases then refresh sequence table.
-					if(gmodel.getSelectedSeqGroup().getSeqCount() > seq_count){
-						SeqGroupView.getInstance().refreshTable();
-					}
-				} catch (Exception ex) {
-					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		};
-		ThreadHandler.getThreadHandler().execute(feature, worker);
-
+		loadAndAddSymmetries(feature, overlapSpan);
 	}
 	
 
@@ -344,38 +304,16 @@ public final class QuickLoad extends SymLoader {
 		}
 	}
 	
-	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span, final SeqMapView gviewer) {
-		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
-
-			@Override
-			protected Object runInBackground() {
-				try {
-					String results = QuickLoad.this.getRegionResidues(span);
-					if (results != null && !results.isEmpty()) {
-						// TODO: make this more general.  Since we can't currently optimize all residue requests,
-						// we are simply considering the span loaded if it loads the entire chromosome
-						if (span.getMin() <= span.getBioSeq().getMin() && span.getMax() >= span.getBioSeq().getMax()) {
-							feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
-						}
-						BioSeq.addResiduesToComposition(span.getBioSeq(), results, span);
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return null;
+	private void loadResiduesThread(final GenericFeature feature, final SeqSpan span) {
+		String results = QuickLoad.this.getRegionResidues(span);
+		if (results != null && !results.isEmpty()) {
+			// TODO: make this more general.  Since we can't currently optimize all residue requests,
+			// we are simply considering the span loaded if it loads the entire chromosome
+			if (span.getMin() <= span.getBioSeq().getMin() && span.getMax() >= span.getBioSeq().getMax()) {
+				feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
 			}
-
-			@Override
-			protected void finished() {
-				try {
-					gviewer.setAnnotatedSeq(span.getBioSeq(), true, true);
-				} catch (Exception ex) {
-					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
-				} 
-			}
-		};
-
-		ThreadHandler.getThreadHandler().execute(this.version.gServer, worker);
+			BioSeq.addResiduesToComposition(span.getBioSeq(), results, span);
+		}
 	}
 
 	/**

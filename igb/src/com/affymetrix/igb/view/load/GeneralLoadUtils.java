@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -39,8 +38,12 @@ import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
+import com.affymetrix.igb.thread.CThreadWorker;
+import com.affymetrix.igb.thread.ThreadHandler;
 import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -656,14 +659,17 @@ public final class GeneralLoadUtils {
 	}
 
 	public static void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
+		SeqSymmetry optimized_sym = null;
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) && ((QuickLoad) feature.symL).extension.endsWith(".chp")) {
 			feature.loadStrategy = LoadStrategy.GENOME;	// it should be set to this already.  But just in case...
-			((QuickLoad) feature.symL).loadFeatures(span, feature);
+			optimized_sym = new SimpleMutableSeqSymmetry();
+			((SimpleMutableSeqSymmetry)optimized_sym).addSpan(span);
+			loadFeaturesForSym(optimized_sym, feature);
 			return;
 		}
 
-		SeqSymmetry optimized_sym = feature.optimizeRequest(span);
+		optimized_sym = feature.optimizeRequest(span);
 
 		// For for formats that are not optimized do not iterate through BioSeq
 		// instead add them all at one.
@@ -678,12 +684,7 @@ public final class GeneralLoadUtils {
 		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
-			if (optimized_sym != null) {
-				loadFeaturesForSym(feature, optimized_sym);
-			} else {
-				Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-						Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
-			}
+			loadFeaturesForSym(optimized_sym, feature);
 			return;
 		}
 
@@ -724,17 +725,63 @@ public final class GeneralLoadUtils {
 		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
 	}
 	
-	private static void loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError {
+	private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final GenericFeature feature) throws OutOfMemoryError {
+		if (optimized_sym == null) {
+			Logger.getLogger(GeneralLoadUtils.class.getName()).log(
+					Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
+			return;
+		}
+		
+		final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();
+		final CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
+
+			@Override
+			protected Object runInBackground() {
+				try{
+					loadFeaturesForSym(feature, optimized_sym);
+					TrackView.updateDependentData();
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			protected void finished() {
+				BioSeq aseq = gmodel.getSelectedSeq();
+
+				if (aseq != null) {
+					gviewer.setAnnotatedSeq(aseq, true, true);
+				} else if(gmodel.getSelectedSeqGroup().getSeqCount() > 0){
+					// This can happen when loading a brand-new genome
+					gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+				}
+
+				//Since sequence are never removed so if no. of sequence increases then refresh sequence table.
+				if (gmodel.getSelectedSeqGroup().getSeqCount() > seq_count) {
+					SeqGroupView.getInstance().refreshTable();
+				}
+			}
+		};
+
+		ThreadHandler.getThreadHandler().execute(feature, worker);
+	}
+	
+	private static void loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, IOException {
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		convertSymToSpanList(optimized_sym, spans);
 		optimized_spans.addAll(spans);
-
+		Thread thread = Thread.currentThread();
+		
 		switch (feature.gVersion.gServer.serverType) {
 			case DAS2:
 				for (SeqSpan optimized_span : optimized_spans) {
 					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 					Das2.loadFeatures(optimized_span, feature);
+					if(thread.isInterrupted()){
+						break;
+					}
 				}
 				break;
 
@@ -742,6 +789,9 @@ public final class GeneralLoadUtils {
 				for (SeqSpan optimized_span : optimized_spans) {
 					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 					Das.loadFeatures(optimized_span, feature);
+					if(thread.isInterrupted()){
+						break;
+					}
 				}
 				break;
 
@@ -750,6 +800,9 @@ public final class GeneralLoadUtils {
 				for (SeqSpan optimized_span : optimized_spans) {
 					feature.addLoadingSpanRequest(optimized_span);	// this span is requested to be loaded.
 					((QuickLoad) feature.symL).loadFeatures(optimized_span, feature);
+					if(thread.isInterrupted()){
+						break;
+					}
 				}
 				break;
 		}

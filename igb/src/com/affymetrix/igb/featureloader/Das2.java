@@ -1,7 +1,11 @@
 package com.affymetrix.igb.featureloader;
 
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -25,16 +29,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.thread.CThreadWorker;
-import com.affymetrix.igb.thread.ThreadHandler;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.TrackView;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -59,33 +53,7 @@ public class Das2 {
 		if (dtype == null || region == null) {
 			return;
 		}
-		final SeqMapView gviewer = Application.getSingleton().getMapView();
-	
-		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName + " on sequence " + span.getBioSeq().getID()) {
-
-			@Override
-			protected Object runInBackground() {
-				try {
-					loadSpan(feature, span, region, dtype);
-					TrackView.updateDependentData();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return null;
-			}
-
-			@Override
-			protected void finished() {
-				try {
-					gviewer.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq(), true, true);
-				} catch (Exception ex) {
-					Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);
-				} 
-			}
-		};
-
-		ThreadHandler.getThreadHandler().execute(feature, worker);
-		return;
+		loadSpan(feature, span, region, dtype);
 	}
 
 
@@ -332,7 +300,7 @@ public class Das2 {
 			}
 			
 			feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
-
+			
             return (feats != null);
         } catch (Exception ex) {
 			Logger.getLogger(Das2.class.getName()).log(Level.SEVERE, null, ex);

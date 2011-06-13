@@ -35,6 +35,7 @@ Import-Package: affymetrix.calvin.data,
  org.xml.sax,
  org.xml.sax.helpers,
  org.broad.tribble.readers,
+ org.broad.tribble.util,
  toolbarButtonGraphics.general,
  toolbarButtonGraphics.table,
  toolbarButtonGraphics.media

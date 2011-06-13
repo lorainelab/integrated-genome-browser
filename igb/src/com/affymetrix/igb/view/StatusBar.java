@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
 import com.jidesoft.status.MemoryStatusBarItem;
-import com.affymetrix.igb.thread.ThreadHandler;
+import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.util.IGBUtils;
 
 public final class StatusBar extends JPanel{

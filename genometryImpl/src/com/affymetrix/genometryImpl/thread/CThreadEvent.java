@@ -1,5 +1,5 @@
 
-package com.affymetrix.igb.thread;
+package com.affymetrix.genometryImpl.thread;
 
 import java.util.EventObject;
 

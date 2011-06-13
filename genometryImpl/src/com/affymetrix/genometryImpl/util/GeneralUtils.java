@@ -28,6 +28,7 @@ import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
+import net.sf.samtools.util.BlockCompressedInputStream;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 
 public final class GeneralUtils {
@@ -101,6 +102,7 @@ public final class GeneralUtils {
 		if (lc_stream_name.endsWith(".gz") || lc_stream_name.endsWith(".gzip") ||
 				lc_stream_name.endsWith(".z")) {
 			GZIPInputStream gzstr = new GZIPInputStream(istr);
+			//BlockCompressedInputStream gzstr = new BlockCompressedInputStream(istr);
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			return unzipStream(gzstr, new_name, stripped_name);
 		} else if (stream_name.endsWith(".zip")) {

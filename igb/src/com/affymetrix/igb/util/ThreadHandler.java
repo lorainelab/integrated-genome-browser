@@ -1,5 +1,5 @@
 
-package com.affymetrix.igb.thread;
+package com.affymetrix.igb.util;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -19,8 +19,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JFrame;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.util.IGBUtils;
-import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.genometryImpl.thread.CThreadEvent;
+import com.affymetrix.genometryImpl.thread.CThreadListener;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
 
 /**

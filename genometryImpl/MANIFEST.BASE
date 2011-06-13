@@ -55,5 +55,6 @@ Export-Package: com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.style,
  com.affymetrix.genometryImpl.symloader,
  com.affymetrix.genometryImpl.symmetry,
+ com.affymetrix.genometryImpl.thread,
  com.affymetrix.genometryImpl.util
 

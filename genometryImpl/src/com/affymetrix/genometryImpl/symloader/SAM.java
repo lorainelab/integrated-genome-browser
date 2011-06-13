@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import net.sf.samtools.SAMTextReader;
 import net.sf.samtools.util.AsciiLineReader;
 
-import org.broad.tribble.readers.TabixReader.TabixLineReader;
+import org.broad.tribble.util.LineReader;
 
 /**
  *
@@ -143,7 +143,7 @@ public class SAM extends XAM implements LineProcessor{
 		return true;
 	}
 
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, TabixLineReader lineReader) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) {
 		SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
 		return parse(str.getIterator(), seq,seq.getMin(), seq.getMax(), true, false, false);
 	}
@@ -157,10 +157,10 @@ public class SAM extends XAM implements LineProcessor{
 	
 	private class AsciiTabixLineReader extends AsciiLineReader {
 
-		private final TabixLineReader readerImpl;
+		private final LineReader readerImpl;
 		private int lineNumber;
 		
-		AsciiTabixLineReader(TabixLineReader readerImpl) {
+		AsciiTabixLineReader(LineReader readerImpl) {
 			super(null);
 			this.readerImpl = readerImpl;
 			lineNumber = 0;

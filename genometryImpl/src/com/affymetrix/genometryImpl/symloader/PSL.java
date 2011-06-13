@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symloader.SymLoaderTabix.LineProcessor;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import org.broad.tribble.readers.TabixReader.TabixLineReader;
+import org.broad.tribble.util.LineReader;
 
 /**
  *
@@ -355,7 +355,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 		return parse(it, annot_type, min, max, query_group, target_group, other_group);
 	}
 	
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final TabixLineReader lineReader) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override

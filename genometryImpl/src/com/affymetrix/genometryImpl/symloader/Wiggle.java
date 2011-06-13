@@ -44,7 +44,8 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.symloader.SymLoaderTabix.LineProcessor;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import org.broad.tribble.readers.TabixReader.TabixLineReader;
+
+import org.broad.tribble.util.LineReader;
 
 /**
  *
@@ -182,7 +183,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 		return Collections.<GraphSym>emptyList();
 	}
 
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final TabixLineReader lineReader) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override

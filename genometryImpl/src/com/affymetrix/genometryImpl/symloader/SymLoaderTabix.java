@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.broad.tribble.readers.TabixReader;
+import org.broad.tribble.util.LineReader;
 
 /**
  * This SymLoader is intended to be used for data sources that
@@ -54,7 +55,7 @@ public class SymLoaderTabix extends SymLoader {
 		 * @param lineReader the LineReader from TabixReader
 		 * @return the SeqSymmetry list from the parsing
 		 */
-		public List<? extends SeqSymmetry> processLines(BioSeq seq, TabixReader.TabixLineReader lineReader);
+		public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader);
 		/**
 		 * perform any initialization here
 		 * @param uri the uri of the data source

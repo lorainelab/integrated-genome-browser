@@ -24,7 +24,8 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.net.URI;
 import java.util.Map.Entry;
-import org.broad.tribble.readers.TabixReader.TabixLineReader;
+
+import org.broad.tribble.util.LineReader;
 
 /**
  *
@@ -200,7 +201,7 @@ public class BED extends SymLoader implements LineProcessor{
 		parse(it, isSorted, min, max);
 	}
 
-	public List<? extends SeqSymmetry> processLines(BioSeq seq, final TabixLineReader lineReader) {
+	public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
 		Iterator<String> it = new Iterator<String>() {
 
 			@Override

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.thread;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.SwingWorker;
@@ -28,9 +27,7 @@ public abstract class CThreadWorker extends SwingWorker{
 	
 	@Override
 	public final void done() {
-		if(!isCancelled()){
-			finished();
-		}
+		finished();
 		fireThreadEvent(this, CThreadEvent.ENDED);
 	}
 	

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingWorker;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -29,14 +28,16 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.parsers.ChpParser;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.thread.CThreadWorker;
+import com.affymetrix.igb.thread.ThreadHandler;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
  *
@@ -171,12 +172,13 @@ public final class QuickLoad extends SymLoader {
 	 * @return
 	 */
 	public void loadAllSymmetriesThread(final GenericFeature feature){
-		Application.getSingleton().addNotLockedUpMsg("Loading feature " + feature.featureName);
+		
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		CThreadWorker worker = new CThreadWorker("Loading feature " + feature.featureName) {
 
-			public Void doInBackground() {
+			@Override
+			protected Object runInBackground() {
 				try {
 					loadAndAddAllSymmetries(feature);
 					TrackView.updateDependentData();
@@ -187,7 +189,7 @@ public final class QuickLoad extends SymLoader {
 			}
 
 			@Override
-			public void done() {
+			protected void finished() {
 				try {
 					BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
 					if (aseq != null) {
@@ -200,13 +202,11 @@ public final class QuickLoad extends SymLoader {
 					SeqGroupView.getInstance().refreshTable();
 				} catch (Exception ex) {
 					Logger.getLogger(QuickLoad.class.getName()).log(Level.SEVERE, null, ex);
-				} finally {
-					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature.featureName);
-				}
+				} 
 			}
 		};
-		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
-
+		
+		ThreadHandler.getThreadHandler().execute(feature, worker);
 	}
 
 	/**
@@ -257,6 +257,13 @@ public final class QuickLoad extends SymLoader {
 
 		List<? extends SeqSymmetry> results = this.getGenome();
 
+		if(Thread.currentThread().isInterrupted()){
+			feature.loadStrategy = LoadStrategy.NO_LOAD; //Change the loadStrategy for this type of files.
+			GeneralLoadView.feature_model.fireTableDataChanged();
+			results = null;
+			return;
+		}
+		
 		//For a file format that adds SeqSymmetries from
 		//within the parser handle them here.
 		if (extension.endsWith(".chp")) {

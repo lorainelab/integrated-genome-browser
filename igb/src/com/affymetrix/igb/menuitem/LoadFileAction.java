@@ -381,6 +381,13 @@ public final class LoadFileAction extends AbstractAction {
 	}
 
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
+		if(((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+			((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
+			// force a refresh of this server. This forces creation of 'genome' sequence.
+			ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
+			return;
+		}
+		
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
@@ -391,10 +398,6 @@ public final class LoadFileAction extends AbstractAction {
 				// Here we are reading the whole file in.  We have no choice, since the chromosomes in this file are unknown.
 				for (BioSeq seq : gFeature.symL.getChromosomeList()) {
 					loadGroup.addSeq(seq.getID(), seq.getLength());
-				}
-
-				if(((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
-					((QuickLoad) gFeature.symL).loadAllSymmetriesThread(gFeature);
 				}
 
 				return null;

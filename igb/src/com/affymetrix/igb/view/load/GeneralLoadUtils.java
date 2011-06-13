@@ -35,7 +35,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.genometryImpl.quickload.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.symloader.SymLoaderInst;
-import com.affymetrix.genometryImpl.symloader.SymLoaderInstNC;
 import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
 import com.affymetrix.igb.thread.CThreadWorker;
@@ -607,11 +606,12 @@ public final class GeneralLoadUtils {
 			return false;	// should never happen
 		}
 
-		//Already loaded the data.
-		if((gFeature.gVersion.gServer.serverType == ServerType.LocalFiles)
-				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC){
-			return false;
-		}
+//		Thread may have been cancelled. So removing test for now.
+//		//Already loaded the data.
+//		if((gFeature.gVersion.gServer.serverType == ServerType.LocalFiles)
+//				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC){
+//			return false;
+//		}
 
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		BioSeq visible_seq = gviewer.getViewSeq();
@@ -669,23 +669,13 @@ public final class GeneralLoadUtils {
 
 		optimized_sym = feature.optimizeRequest(span);
 
-		// For for formats that are not optimized do not iterate through BioSeq
-		// instead add them all at one.
-		if (feature.gVersion.gServer.serverType == ServerType.QuickLoad
-				&& ((QuickLoad) feature.symL).getSymLoader() instanceof SymLoaderInstNC) {
-			if (optimized_sym != null) {
-				((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
-			}
-			return;
-		}
-
 		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
 			loadFeaturesForSym(optimized_sym, feature);
 			return;
 		}
-
+		
 		//If Loading whole genome for unoptimized file then load everything at once.
 		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
 				&& ((QuickLoad) feature.symL).getSymLoader() instanceof SymLoaderInst) {

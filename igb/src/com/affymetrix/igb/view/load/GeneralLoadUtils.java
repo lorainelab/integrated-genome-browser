@@ -40,7 +40,6 @@ import com.affymetrix.igb.featureloader.Das;
 import com.affymetrix.igb.featureloader.Das2;
 import com.affymetrix.igb.thread.CThreadWorker;
 import com.affymetrix.igb.thread.ThreadHandler;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
@@ -64,7 +63,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import javax.swing.SwingWorker;
 
 /**
  *
@@ -703,26 +701,66 @@ public final class GeneralLoadUtils {
 	}
 
 	private static void iterateSeqList(final SeqSpan span, final GenericFeature feature) {
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		final BioSeq current_seq = gmodel.getSelectedSeq();
+		CThreadWorker worker = new CThreadWorker("Loading whole feature " + feature.featureName) {
 
 			@Override
-			protected Void doInBackground() throws Exception {
+			protected Object runInBackground() {
+				Thread thread = Thread.currentThread();
+
 				BioSeq seq = null;
+				if (current_seq != null) {
+					loadOnSequence(current_seq);
+				}
+
 				AnnotatedSeqGroup group = span.getBioSeq().getSeqGroup();
 				for (int i = 0; i < group.getSeqCount(); i++) {
 					seq = group.getSeq(i);
-					if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
-						continue; // don't load into Whole Genome
+					
+					if(seq == current_seq){
+						continue;
 					}
+					
+					if (thread.isInterrupted()) {
+						break;
+					}
+					loadOnSequence(seq);
+				}
+				return null;
+			}
+
+			@Override
+			protected void finished() {
+				if(isCancelled()){
+					feature.loadStrategy = LoadStrategy.NO_LOAD;
+					GeneralLoadView.feature_model.fireTableDataChanged();
+				}
+				
+				if (current_seq != null) {
+					gviewer.setAnnotatedSeq(current_seq, true, true);
+				} else if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+					// This can happen when loading a brand-new genome
+					gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));
+				}
+			}
+			
+			private void loadOnSequence(BioSeq seq) {
+				if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
+					return; // don't load into Whole Genome
+				}
+				
+				try {
 					SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
 					if (optimized_sym != null) {
 						loadFeaturesForSym(feature, optimized_sym);
 					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
-				return null;
 			}
 		};
-		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
+
+		ThreadHandler.getThreadHandler().execute(feature, worker);
 	}
 	
 	private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final GenericFeature feature) throws OutOfMemoryError {

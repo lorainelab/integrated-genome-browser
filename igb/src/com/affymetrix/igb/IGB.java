@@ -470,7 +470,7 @@ public final class IGB extends Application
 			boolean forward, Pattern regex, String residues, int residue_offset, TransformTierGlyph axis_tier, List<GlyphI> glyphs, Color hitColor) {
 		int hit_count = 0;
 		Matcher matcher = regex.matcher(residues);
-		while (matcher.find()) {
+		while (matcher.find() && !Thread.currentThread().isInterrupted()) {
 			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
 			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
 			//int end = matcher.end(0) + residue_offset;

@@ -40,13 +40,22 @@ public final class SearchUtils {
 		} else {
 			chrs = group.getSeqList();
 		}
+		
 		Matcher match = regex.matcher("");
 		SymWithProps sym = null;
+		Thread current_thread = Thread.currentThread();
+		
 		for (BioSeq chr : chrs) {
+			if(current_thread.isInterrupted())
+				break;
+			
 			int annotCount = chr.getAnnotationCount();
 			for (int i=0;i<annotCount;i++) {
 				sym = (SymWithProps)chr.getAnnotation(i);
 				findIDsInSym(syms, sym, match);
+				
+				if(current_thread.isInterrupted())
+					break;
 			}
 		}
 		return new ArrayList<SeqSymmetry>(syms);
@@ -77,7 +86,11 @@ public final class SearchUtils {
 			}
 		}
 		int childCount = sym.getChildCount();
+		Thread current_thread = Thread.currentThread();
 		for (int i = 0; i < childCount; i++) {
+			if(current_thread.isInterrupted())
+				break;
+			
 			findIDsInSym(syms, sym.getChild(i), match);
 		}
 	}

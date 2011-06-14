@@ -251,14 +251,23 @@ public class AnnotatedSeqGroup {
 		final Matcher matcher = regex.matcher("");
 		SymWithProps swp;
 		String match;
+		Thread current_thread = Thread.currentThread();
 		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
+			if(current_thread.isInterrupted())
+				break;
 			
 			for (SeqSymmetry seq : ent.getValue()) {
+				if(current_thread.isInterrupted())
+					break;
+				
 				if (seq instanceof SymWithProps) {
 					swp = (SymWithProps) seq;
 
 					// Iterate through each properties.
 					for (Map.Entry<String, Object> prop : swp.getProperties().entrySet()) {
+						if(current_thread.isInterrupted())
+							break;
+						
 						if (prop.getValue() != null) {
 							match = prop.getValue().toString();
 							matcher.reset(match);
@@ -280,8 +289,11 @@ public class AnnotatedSeqGroup {
 	final public Set<SeqSymmetry> findSyms(Pattern regex) {
 		final Set<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
 		final Matcher matcher = regex.matcher("");
-
+		Thread current_thread = Thread.currentThread();
 		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
+			if(current_thread.isInterrupted())
+				break;
+			
 			String seid = ent.getKey();
 			Set<SeqSymmetry> val = ent.getValue();
 			if (seid != null && val != null) {

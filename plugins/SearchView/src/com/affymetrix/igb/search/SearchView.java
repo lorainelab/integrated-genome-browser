@@ -480,7 +480,7 @@ public final class SearchView extends IGBTabPanel implements
 				clearResults();
 
 				String friendlySearchStr = friendlyString(text, sequenceCB.getSelectedItem().toString());
-				status_bar.setText(friendlySearchStr + ": Searching locally...");
+				setStatus(friendlySearchStr + ": Searching locally...");
 				List<SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex, search_props);
 				remoteSymList = null;
 
@@ -510,7 +510,7 @@ public final class SearchView extends IGBTabPanel implements
 						return null;
 					}
 
-					status_bar.setText(friendlySearchStr + ": Searching remotely...");
+					setStatus(friendlySearchStr + ": Searching remotely...");
 					remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
 				}
 
@@ -659,7 +659,7 @@ public final class SearchView extends IGBTabPanel implements
 		}
 
 		clearResults();
-		status_bar.setText(friendlySearchStr + ": Working...");
+		setStatus(friendlySearchStr + ": Working...");
 
 		int residuesLength = vseq.getLength();
 		int hit_count1 = 0;
@@ -768,7 +768,7 @@ public final class SearchView extends IGBTabPanel implements
 
 	/** Set the text in the status bar in a thread-safe way. */
 	void setStatus(final String text) {
-		SwingUtilities.invokeLater(new Runnable() {
+		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				status_bar.setText(text);

@@ -435,7 +435,7 @@ public final class SearchView extends IGBTabPanel implements
 			} else if (REGEXPROPS.equals(searchMode)){
 				displayRegexIDs(this.searchTF.getText().trim(), chrfilter, true);
 			}else if (REGEXRESIDUE.equals(searchMode)) {
-				displayRegexResidues(chrfilter, evt.getSource());
+				displayRegexResidues(chrfilter);
 			} 
 		}
 		if(src == this.clearButton){
@@ -582,7 +582,7 @@ public final class SearchView extends IGBTabPanel implements
 	/**
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
 	 */
-	private void displayRegexResidues(final BioSeq vseq, Object src) {
+	private void displayRegexResidues(final BioSeq vseq) {
 		if (vseq == null ) {
 			ErrorHandler.errorPanel(
 					"Residues for " + this.sequenceCB.getSelectedItem().toString() + " not available.  Please load residues before searching.");
@@ -604,7 +604,7 @@ public final class SearchView extends IGBTabPanel implements
 			gviewer.zoomTo(newspan);
 		}
 
-		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
+		Executor vexec = ThreadUtils.getPrimaryExecutor(this);
 		
 		if (!vseq.isComplete()) {
 			boolean confirm = igbService.confirmPanel("Residues for " + this.sequenceCB.getSelectedItem().toString()

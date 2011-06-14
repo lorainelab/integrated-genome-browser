@@ -2100,6 +2100,7 @@ public class SeqMapView extends JPanel
     		}
     		coord_value += tierGlyph.getCoordBox().getHeight();
     	}
+    	coord_value += 1; // fudge factor
     	seqmap.scroll(NeoMap.Y, coord_value);
 		seqmap.updateWidget();
 		if(autoload != null){

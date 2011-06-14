@@ -1,6 +1,7 @@
 package com.affymetrix.igb.search;
 
 
+import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
@@ -34,6 +35,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.thread.CThreadListener;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -47,6 +49,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
+import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
@@ -97,6 +100,7 @@ public final class SearchView extends IGBTabPanel implements
 	private final JCheckBox selectInMapCheckBox = new JCheckBox(SELECTINMAP_TEXT);
 	private final JButton searchButton = new JButton(MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif"));
 	private final JButton clearButton = new JButton(MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
+	private final CancelButton cancel = new CancelButton(IGBUtils.getIcon("x_icon.gif"));;
 	private final SeqMapView gviewer;
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private final static Color hitcolor = new Color(150, 150, 255);
@@ -105,7 +109,8 @@ public final class SearchView extends IGBTabPanel implements
 	private  JLabel status_bar = new JLabel("0 results");
 	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;
-
+	
+	private CThreadWorker worker;
 	private List<SeqSymmetry> remoteSymList;
 
 	public SearchView(IGBService igbService) {
@@ -194,7 +199,8 @@ public final class SearchView extends IGBTabPanel implements
 		Box bottom_row = Box.createHorizontalBox();
 		this.add(bottom_row, BorderLayout.SOUTH);
 
-		bottom_row.add(status_bar, BorderLayout.CENTER);
+		bottom_row.add(cancel);
+		bottom_row.add(status_bar);
 		validate();
 
 		gmodel.addGroupSelectionListener(this);
@@ -265,6 +271,7 @@ public final class SearchView extends IGBTabPanel implements
 		searchButton.setEnabled(true);
 		
 		clearButton.setToolTipText("Clear");
+		cancel.setEnabled(false);
 	}
 
 	private void initTable() {
@@ -454,7 +461,7 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void displayRegexIDs(final String search_text, final BioSeq chrFilter, final boolean search_props) {
-		CThreadWorker worker = new CThreadWorker(" "){
+		worker = new CThreadWorker(" "){
 
 			@Override
 			protected Object runInBackground() {
@@ -549,6 +556,7 @@ public final class SearchView extends IGBTabPanel implements
 			protected void finished() {	}
 			
 		};
+		worker.addThreadListener(cancel);
 		ThreadUtils.getPrimaryExecutor(this).execute(worker);
 	}
 
@@ -620,7 +628,7 @@ public final class SearchView extends IGBTabPanel implements
 			return;
 		}
 		
-		CThreadWorker worker = new CThreadWorker(" ") {
+		worker = new CThreadWorker(" ") {
 
 			@Override
 			protected Object runInBackground() {
@@ -638,6 +646,7 @@ public final class SearchView extends IGBTabPanel implements
 				}
 			}
 		};
+		worker.addThreadListener(cancel);
 		ThreadUtils.getPrimaryExecutor(this).execute(worker);
 	}
 
@@ -666,8 +675,12 @@ public final class SearchView extends IGBTabPanel implements
 		int hit_count2 = 0;
 		int residue_offset1 = vseq.getMin();
 		int residue_offset2 = vseq.getMax();
-
+		Thread current_thread = Thread.currentThread();
+		
 		for(int i=0; i<residuesLength; i+=MAX_RESIDUE_LEN_SEARCH){
+			if(current_thread.isInterrupted())
+				break;
+			
 			int start = Math.max(i-searchStr.length(), 0);
 			int end = Math.min(i+MAX_RESIDUE_LEN_SEARCH, residuesLength);
 			
@@ -1028,5 +1041,29 @@ public final class SearchView extends IGBTabPanel implements
 	@Override
 	public boolean isEmbedded() {
 		return true;
+	}
+	
+	private class CancelButton extends JButton implements CThreadListener, ActionListener{
+		
+		public CancelButton(ImageIcon icon){
+			super(icon);
+			setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
+			addActionListener(this);
+		}
+		
+		public void heardThreadEvent(CThreadEvent cte) {
+			if(cte.getState() == CThreadEvent.STARTED){
+				setEnabled(true);
+			}else{
+				setEnabled(false);
+			}
+		}
+
+		public void actionPerformed(ActionEvent ae) {
+			if(worker != null && !worker.isCancelled() && !worker.isDone()){
+				worker.cancel(true);
+			}
+		}
+		
 	}
 }

@@ -9,7 +9,6 @@ import java.util.regex.*;
 import javax.swing.*;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -17,9 +16,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.TableColumn;
 
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -38,9 +34,14 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SearchUtils;
-import com.affymetrix.genoviz.util.ErrorHandler;
+
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.genoviz.util.DNAUtils;
 
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -453,9 +454,11 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void displayRegexIDs(final String search_text, final BioSeq chrFilter, final boolean search_props) {
-		ThreadUtils.getPrimaryExecutor(this).execute(new Runnable() {
+		CThreadWorker worker = new CThreadWorker(" "){
 
-			public void run() {
+			@Override
+			protected Object runInBackground() {
+				
 				String text = search_text;
 				Pattern regex = null;
 				try {
@@ -468,10 +471,10 @@ public final class SearchView extends IGBTabPanel implements
 					regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
 				} catch (PatternSyntaxException pse) {
 					ErrorHandler.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
-					return;
+					return null;
 				} catch (Exception ex) {
 					ErrorHandler.errorPanel("Problem with regular expression...", ex);
-					return;
+					return null;
 				}
 				enableComp(false);
 				clearResults();
@@ -504,7 +507,7 @@ public final class SearchView extends IGBTabPanel implements
 					if (actualChars < 3) {
 						ErrorHandler.errorPanel(friendlySearchStr + ": Text is too short to allow remote search.");
 						enableComp(true);
-						return;
+						return null;
 					}
 
 					status_bar.setText(friendlySearchStr + ": Searching remotely...");
@@ -514,7 +517,7 @@ public final class SearchView extends IGBTabPanel implements
 				if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
 					setStatus(friendlySearchStr + ": No matches");
 					enableComp(true);
-					return;
+					return null;
 				}
 
 				String statusStr = friendlySearchStr + ": " + (localSymList == null ? 0 : localSymList.size()) + " local matches";
@@ -538,9 +541,15 @@ public final class SearchView extends IGBTabPanel implements
 				setModel(new SymSearchResultsTableModel(tableRows));
 
 				enableComp(true);
+				
+				return null;
 			}
-		});
 
+			@Override
+			protected void finished() {	}
+			
+		};
+		ThreadUtils.getPrimaryExecutor(this).execute(worker);
 	}
 
 	private static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
@@ -604,32 +613,32 @@ public final class SearchView extends IGBTabPanel implements
 			gviewer.zoomTo(newspan);
 		}
 
-		Executor vexec = ThreadUtils.getPrimaryExecutor(this);
-		
-		if (!vseq.isComplete()) {
-			boolean confirm = igbService.confirmPanel("Residues for " + this.sequenceCB.getSelectedItem().toString()
-					+ " not loaded.  \nDo you want to load residues?");
-			if (!confirm) {
-				return;
-			}
-			
-			vexec.execute(new Runnable() {
-
-				public void run() {
-					igbService.loadResidues(gviewer.getVisibleSpan(), true);
-					gviewer.setAnnotatedSeq(vseq, true, true, true);
-					regexTF(vseq);
-				}
-			});
-
-		} else {
-			vexec.execute(new Runnable() {
-				public void run() {
-					regexTF(vseq);
-				}
-			});
+		final boolean isComplete = vseq.isComplete();
+		final boolean confirm = isComplete ? true : igbService.confirmPanel("Residues for " + sequenceCB.getSelectedItem().toString()
+							+ " not loaded.  \nDo you want to load residues?");
+		if (!confirm) {
+			return;
 		}
+		
+		CThreadWorker worker = new CThreadWorker(" ") {
 
+			@Override
+			protected Object runInBackground() {
+				if (!isComplete && confirm) {
+					igbService.loadResidues(gviewer.getVisibleSpan(), true);
+				}
+				regexTF(vseq);
+				return null;
+			}
+
+			@Override
+			protected void finished() {
+				if (!isComplete && confirm) {
+					gviewer.setAnnotatedSeq(vseq, true, true, true);
+				}
+			}
+		};
+		ThreadUtils.getPrimaryExecutor(this).execute(worker);
 	}
 
 	private void regexTF(BioSeq vseq) {

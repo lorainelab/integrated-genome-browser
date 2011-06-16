@@ -1,4 +1,3 @@
-
 package com.affymetrix.genometryImpl.symloader;
 
 import java.net.URI;
@@ -18,14 +17,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.broad.tribble.readers.TabixReader;
-import org.broad.tribble.util.LineReader;
 
 /**
  * This SymLoader is intended to be used for data sources that
  * are indexed with a tabix file. This SymLoader uses the TabixReader
  * from the Broad Institute
- * 
- * @author lfrohman
  */
 public class SymLoaderTabix extends SymLoader {
 
@@ -40,33 +36,6 @@ public class SymLoaderTabix extends SymLoader {
 		strategyList.add(LoadStrategy.GENOME);
 	}
 	
-	/**
-	 * file types that use tabix must implement this interface
-	 * there should be one LineProcessor for each file type
-	 * that performs the parsing of data lines
-	 */
-	public interface LineProcessor {
-		/**
-		 * this is the main method. The TabixReader will return
-		 * the lines that are in the span (Seq, start, end) requested
-		 * and those lines will be passed in here to be parsed
-		 * into SeqSymmetry
-		 * @param seq the sequence
-		 * @param lineReader the LineReader from TabixReader
-		 * @return the SeqSymmetry list from the parsing
-		 */
-		public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader);
-		/**
-		 * perform any initialization here
-		 * @param uri the uri of the data source
-		 */
-		public void init(URI uri);
-		/**
-		 * @return the pref list (file extensions) 
-		 */
-		public List<String> getFormatPrefList();
-	}
-
 	public static final String FILE_PREFIX = "file:";
 	public SymLoaderTabix(URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor){
 		super(uri, featureName, group);

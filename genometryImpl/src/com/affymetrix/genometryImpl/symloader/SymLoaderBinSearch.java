@@ -1,4 +1,3 @@
-
 package com.affymetrix.genometryImpl.symloader;
 
 import java.net.URI;
@@ -13,7 +12,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symloader.BinSearchReader.SequenceSpanReader;
-import com.affymetrix.genometryImpl.symloader.SymLoaderTabix.LineProcessor;
+import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.util.logging.Level;

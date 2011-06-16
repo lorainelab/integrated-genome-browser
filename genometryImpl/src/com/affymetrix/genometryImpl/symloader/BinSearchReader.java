@@ -481,6 +481,25 @@ public class BinSearchReader implements QueryReader, LineReader {
         return new SequenceDataSpan(chr, startPos, endPos);
     }
 
+    public class BinSearchLineReader implements LineReader {
+    	private final long endOffset;
+		private BinSearchLineReader(long endOffset) {
+			super();
+ 			this.endOffset = endOffset;
+		}
+		@Override
+		public String readLine() throws IOException {
+			if (seekableBufferedStream.position() >= endOffset) {
+				return null;
+			}
+			return readNextLine(seekableBufferedStream);
+		}
+		@Override
+		public void close() throws IOException {
+			seekableBufferedStream.close();
+		}
+    }
+
     @Override
     public LineReader query(final String seq, int startPos, int endPos) {
     	FileDataRange seqFileDataRange = sequenceRanges.get(seq);
@@ -500,18 +519,7 @@ public class BinSearchReader implements QueryReader, LineReader {
     		x.printStackTrace(System.out);
     		return null;
     	}
-        return new LineReader() {
-			@Override
-			public String readLine() throws IOException {
-				if (seekableBufferedStream.position() >= fileDataRangeHigh.getEndOffset()) {
-					return null;
-				}
-				return readNextLine(seekableBufferedStream);
-			}
-			@Override
-			public void close() throws IOException {
-			}
-        };
+        return new BinSearchLineReader(fileDataRangeHigh.getEndOffset());
     }
 
     public LineReader query(final String reg) {

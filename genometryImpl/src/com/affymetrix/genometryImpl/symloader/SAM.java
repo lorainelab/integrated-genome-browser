@@ -20,7 +20,7 @@ import net.sf.samtools.util.CloseableIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symloader.SymLoaderTabix.LineProcessor;
+import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import net.sf.samtools.SAMTextReader;
 import net.sf.samtools.util.AsciiLineReader;

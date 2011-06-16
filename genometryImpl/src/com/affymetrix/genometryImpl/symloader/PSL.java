@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symloader.SymLoaderTabix.LineProcessor;
+import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import org.broad.tribble.util.LineReader;
 

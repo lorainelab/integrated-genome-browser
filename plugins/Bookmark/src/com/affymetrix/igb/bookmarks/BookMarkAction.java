@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.Component;
 import java.awt.Container;
@@ -122,23 +124,23 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 
 		String filename = f.getAbsolutePath();
 		try {
-			System.out.println("Loading bookmarks from file \"" + filename + "\"");
+			Logger.getLogger(BookMarkAction.class.getName()).log(Level.INFO, "Loading bookmarks from file {0}", filename);
 			BookmarksParser.parse(main_bookmark_list, f);
 
 			if (main_bookmark_list != null && main_bookmark_list.getChildCount() != 0) {
 				File f2 = new File(filename + "~");
 				try {
-					System.out.println("Creating backup bookmarks file: \"" + f2 + "\"");
+					Logger.getLogger(BookMarkAction.class.getName()).log(Level.INFO, "Creating backup bookmarks file: {0}", f2);
 					BookmarkList.exportAsHTML(main_bookmark_list, f2, igbService.getAppName(), igbService.getAppVersion());
 				} catch (Exception e) {
-					System.out.println("Error while trying to create backup bookmarks file: \"" + f2 + "\"");
+					Logger.getLogger(BookMarkAction.class.getName()).log(Level.SEVERE, "Error while trying to create backup bookmarks file: {0}", f2);
 				}
 			}
 
 		} catch (FileNotFoundException fnfe) {
-			System.err.println("Could not load bookmarks. File not found or not readable: \"" + filename + "\"");
+			Logger.getLogger(BookMarkAction.class.getName()).log(Level.SEVERE, "Could not load bookmarks. File not found or not readable: {0}", filename);
 		} catch (IOException ioe) {
-			System.err.println("Could not load bookmarks from file \"" + filename + "\"");
+			Logger.getLogger(BookMarkAction.class.getName()).log(Level.SEVERE, "Could not load bookmarks from file {0}", filename);
 		}
 
 	}
@@ -155,7 +157,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     File f = getBookmarksFile();
     String filename = f.getAbsolutePath();
     try {
-      System.out.println("Saving bookmarks to file \""+filename+"\"");
+      Logger.getLogger(BookMarkAction.class.getName()).log(Level.INFO, "Saving bookmarks to file {0}", filename);
       File parent_dir = f.getParentFile();
       if (parent_dir != null) {
         parent_dir.mkdirs();
@@ -163,10 +165,9 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       BookmarkList.exportAsHTML(main_bookmark_list, f, igbService.getAppName(), igbService.getAppVersion());
       saved = true;
     } catch (FileNotFoundException fnfe) {
-      System.err.println("Could not auto-save bookmarks to \""
-        +filename + "\"");
+      Logger.getLogger(BookMarkAction.class.getName()).log(Level.SEVERE, "Could not auto-save bookmarks to {0}", filename);
     } catch (IOException ioe) {
-      System.err.println("Error while saving bookmarks to \"" +filename + "\"");
+      Logger.getLogger(BookMarkAction.class.getName()).log(Level.SEVERE, "Error while saving bookmarks to {0}", filename);
     }
     return saved;
   }

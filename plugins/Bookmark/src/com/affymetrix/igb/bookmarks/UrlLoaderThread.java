@@ -109,7 +109,7 @@ public final class UrlLoaderThread extends Thread {
 					file_extension = file_extensions[i];
 				}
 
-				System.out.println("Attempting to load data from URL: " + url.toExternalForm());
+				Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "Attempting to load data from URL: {0}", url.toExternalForm());
 				try {
 					try {
 						parseDataFromURL(url, file_extension, tier_name);
@@ -265,7 +265,7 @@ public final class UrlLoaderThread extends Thread {
 		BioSeq aseq = gmodel.getSelectedSeq();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		if ("file".equalsIgnoreCase(url.getProtocol()) || "ftp".equalsIgnoreCase(url.getProtocol())) {
-			System.out.println("Attempting to load data from file: " + url.toExternalForm());
+			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "Attempting to load data from file: {0}", url.toExternalForm());
 
 			// Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"
 			// url.getPath() is OK for this purpose, url.getFile() is not because
@@ -276,8 +276,8 @@ public final class UrlLoaderThread extends Thread {
 				|| content_type.startsWith("content/unknown")
 				|| content_type.startsWith("application/zip")
 				|| content_type.startsWith("application/octet-stream")) {
-			System.out.println("Attempting to load data from: " + url.toExternalForm());
-			System.out.println("Using file extension: " + file_extension);
+			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "Attempting to load data from: {0}", url.toExternalForm());
+			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "Using file extension: {0}", file_extension);
 
 			String filename = url.getPath();
 			if (file_extension != null && !"".equals(file_extension.trim())) {
@@ -356,7 +356,7 @@ public final class UrlLoaderThread extends Thread {
 			throw new IOException("Must select a genome before loading a file");
 		}
 
-		Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO,"loading file: " + stream_name);
+		Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.INFO, "loading file: {0}", stream_name);
 
 		Exception the_exception = null;
 		InputStream str = null;
@@ -410,7 +410,7 @@ public final class UrlLoaderThread extends Thread {
 		FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(stream_name);
 		if (fileTypeHandler == null) {
 			Logger.getLogger(UrlLoaderThread.class.getName()).log(Level.WARNING,
-				"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: " + stream_name);
+					"ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", stream_name);
 		}
 		else {
 			fileTypeHandler.getParser().parse(str, group, annot_type, stream_name, true);

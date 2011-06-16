@@ -26,6 +26,8 @@ import java.awt.Image;
 import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -669,7 +671,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
       public void actionPerformed(ActionEvent ae) {
         TreePath path = tree.getSelectionModel().getSelectionPath();
         if (path==null) {
-          System.out.println("No selection");
+          Logger.getLogger(BookmarkManagerView.class.getName()).log(Level.SEVERE, "No selection");
           return;
         }
         BookmarkList bl = null;

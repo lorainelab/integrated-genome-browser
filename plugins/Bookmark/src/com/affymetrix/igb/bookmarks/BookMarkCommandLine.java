@@ -63,12 +63,12 @@ public class BookMarkCommandLine implements GenericServerInitListener{
 				SwingUtilities.invokeLater(new Runnable() {
 
 					public void run() {
-						System.out.println("Loading bookmark: " + url);
+						Logger.getLogger(BookMarkCommandLine.class.getName()).log(Level.INFO, "Loading bookmark: {0}", url);
 						BookmarkController.viewBookmark(igbService, bm);
 					}
 				});
 			} else {
-				System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
+				Logger.getLogger(BookMarkCommandLine.class.getName()).log(Level.SEVERE, "ERROR: URL given with -href argument is not a valid bookmark: \n{0}", url);
 			}
 		} catch (MalformedURLException mue) {
 			mue.printStackTrace(System.err);

@@ -152,6 +152,10 @@ public abstract class BookmarkController {
 					}
 				}
 
+				if (sym_name == null || sym_name.trim().length() == 0) {
+					sym_name = feature_path;
+				}
+				
 				ITrackStyleExtended style = null;
 
 				if (sym instanceof GraphSym) {
@@ -186,10 +190,7 @@ public abstract class BookmarkController {
 					int thresh_direction =
 							(thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
 
-					if (sym_name == null || sym_name.trim().length() == 0) {
-						sym_name = feature_path;
-					}
-
+					
 					GraphState gstate = ((GraphSym) sym).getGraphState();
 					style = (ITrackStyleExtended) gstate.getTierStyle();
 					GenericFeature feature = style.getFeature();
@@ -217,6 +218,7 @@ public abstract class BookmarkController {
 					if (!gFeature.equals(feature)) {
 						continue;
 					}
+					style.setHumanName(sym_name);
 				}
 
 				applyStyleProperties(style, col, bg_col, ypos, yheight);

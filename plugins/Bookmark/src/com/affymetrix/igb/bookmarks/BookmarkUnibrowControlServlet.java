@@ -354,14 +354,17 @@ public final class BookmarkUnibrowControlServlet {
 					throws NumberFormatException {
 
 		int start = 0;
-		int end = Integer.MAX_VALUE;
+		int end = 0;
 		if (start_param == null || start_param.equals("")) {
-			System.err.println("No start value found in the bookmark URL");
+			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING, 
+					"No start value found in the bookmark URL. Setting start={0}",start);
 		} else {
 			start = Integer.parseInt(start_param);
 		}
 		if (end_param == null || end_param.equals("")) {
-			System.err.println("No end value found in the bookmark URL");
+			end = start + 10000;
+			Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.WARNING, 
+					"No end value found in the bookmark URL. Setting end={0}",end);
 		} else {
 			end = Integer.parseInt(end_param);
 		}

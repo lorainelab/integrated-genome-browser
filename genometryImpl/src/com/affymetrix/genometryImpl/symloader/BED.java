@@ -63,9 +63,9 @@ public class BED extends SymLoader implements LineProcessor{
 		super(uri, featureName, group);
 		
 		default_type = uri.toString();
-		if (default_type.endsWith(".bed")) {
-			default_type = default_type.substring(0, default_type.lastIndexOf(".bed"));
-		}
+//		if (default_type.endsWith(".bed")) {
+//			default_type = default_type.substring(0, default_type.lastIndexOf(".bed"));
+//		}
 			
 		annotate_seq = false;
 		create_container_annot = false;

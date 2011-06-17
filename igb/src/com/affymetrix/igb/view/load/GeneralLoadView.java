@@ -619,7 +619,7 @@ public final class GeneralLoadView extends IGBTabPanel
 
 	private static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType){
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (!loadStrategies.contains(gFeature.loadStrategy)) {
+			if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
 				continue;
 			}
 			if(serverType != null && gFeature.gVersion.gServer.serverType != serverType){
@@ -1027,7 +1027,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 		boolean enabled = false;
 		for (GenericFeature gFeature : features) {
-			if (gFeature.loadStrategy != LoadStrategy.NO_LOAD && gFeature.loadStrategy != LoadStrategy.GENOME) {
+			if (gFeature.getLoadStrategy() != LoadStrategy.NO_LOAD && gFeature.getLoadStrategy() != LoadStrategy.GENOME) {
 				enabled = true;
 				break;
 			}

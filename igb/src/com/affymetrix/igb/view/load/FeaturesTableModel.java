@@ -85,8 +85,8 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	private final static class featureTableComparator implements Comparator<GenericFeature> {
 
 		public int compare(GenericFeature feature1, GenericFeature feature2) {
-			if (feature1.loadStrategy != feature2.loadStrategy) {
-				return (feature1.loadStrategy.compareTo(feature2.loadStrategy));
+			if (feature1.getLoadStrategy() != feature2.getLoadStrategy()) {
+				return (feature1.getLoadStrategy().compareTo(feature2.getLoadStrategy()));
 			}
 			if (feature1.featureName.compareTo(feature2.featureName) != 0) {
 				return feature1.featureName.compareTo(feature2.featureName);
@@ -136,7 +136,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 				return REFRESH_COMMAND;
 			case LOAD_STRATEGY_COLUMN:
 				// return the load strategy
-				return gFeature.loadStrategy.toString();
+				return gFeature.getLoadStrategy().toString();
 			case FEATURE_NAME_COLUMN:
 				// the friendly feature name removes slashes.  Clip it here.
 				if (gFeature.gVersion.gServer.serverType == ServerType.QuickLoad) {
@@ -175,7 +175,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 			return false;
 		}
 		// This cell is only editable if the feature isn't already fully loaded.
-		return (getFeature(row).loadStrategy != LoadStrategy.GENOME);
+		return (getFeature(row).getLoadStrategy() != LoadStrategy.GENOME);
 	}
 
 	@Override
@@ -202,20 +202,20 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 		}
 
 		if (col == REFRESH_FEATURE_COLUMN) {
-			if(gFeature.loadStrategy != LoadStrategy.NO_LOAD && gFeature.loadStrategy != LoadStrategy.GENOME) {
+			if(gFeature.getLoadStrategy() != LoadStrategy.NO_LOAD && gFeature.getLoadStrategy() != LoadStrategy.GENOME) {
 				GeneralLoadView.getLoadView().setShowLoadingConfirm(true);;
 				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 			}
 			return;
 		}
 
-		if (gFeature.loadStrategy == LoadStrategy.GENOME) {
+		if (gFeature.getLoadStrategy() == LoadStrategy.GENOME) {
 			return;	// We can't change strategies once we've loaded the entire genome.
 		}
 		String valueString = value.toString();
-		if (!gFeature.loadStrategy.toString().equals(valueString)) {
+		if (!gFeature.getLoadStrategy().toString().equals(valueString)) {
 			// strategy changed.  Update the feature object.
-			gFeature.loadStrategy = this.reverseLoadStrategyMap.get(valueString);
+			gFeature.setLoadStrategy(reverseLoadStrategyMap.get(valueString));
 			updatedStrategy(row, col, gFeature);
 		}
 	}
@@ -229,7 +229,7 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 	private void updatedStrategy(int row, int col, GenericFeature gFeature) {
 		fireTableCellUpdated(row, col);
 
-		if (gFeature.loadStrategy == LoadStrategy.GENOME || gFeature.loadStrategy == LoadStrategy.AUTOLOAD) {
+		if (gFeature.getLoadStrategy() == LoadStrategy.GENOME || gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD) {
 			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}
 

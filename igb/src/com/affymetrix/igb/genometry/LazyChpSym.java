@@ -280,7 +280,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 			//   so if load multiple chps of same array type, actual feature query to DAS/2 server only happens once (per seq)
 			// optimizer should also figure out (based on Das2Type info) an optimized format to load data with
 			//   (for example "bp2" for
-			LoadStrategy ls = das_type.getFeature().loadStrategy;
+			LoadStrategy ls = das_type.getFeature().getLoadStrategy();
 			if (ls == LoadStrategy.NO_LOAD || ls == LoadStrategy.VISIBLE) {
 				ls = LoadStrategy.CHROMOSOME;
 			}

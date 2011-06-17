@@ -285,7 +285,7 @@ public abstract class BookmarkController {
 	
 		for(GenericVersion version : group.getEnabledVersions()){
 			for( GenericFeature feature : version.getFeatures()){
-				if(feature.loadStrategy != LoadStrategy.NO_LOAD){
+				if(feature.getLoadStrategy() != LoadStrategy.NO_LOAD){
 					bookmark.add(feature, false);
 				}
 			}

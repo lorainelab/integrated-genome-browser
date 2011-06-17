@@ -40,7 +40,7 @@ public final class GenericFeature {
 	public final Map<String, String> featureProps;
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.
 	private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
-	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
+	private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
 	public final Object typeObj;    // Das2Type, ...?
 	public final SymLoader symL;
@@ -82,10 +82,10 @@ public final class GenericFeature {
 
 	public void setAutoload(boolean auto){
 		if (shouldAutoLoad(featureProps) && auto) {
-			this.loadStrategy = LoadStrategy.GENOME;
+			setLoadStrategy(LoadStrategy.GENOME);
 			this.setVisible();
 		} else {
-			this.loadStrategy = LoadStrategy.NO_LOAD;
+			setLoadStrategy(LoadStrategy.NO_LOAD);
 			this.visible = false;
 		}
 	}
@@ -97,16 +97,16 @@ public final class GenericFeature {
 		}
 		if (gVersion != null && gVersion.gServer != null) {
 			if (gVersion.gServer.serverType == ServerType.DAS || gVersion.gServer.serverType == ServerType.DAS2) {
-				this.loadStrategy = LoadStrategy.VISIBLE;
+				setLoadStrategy(LoadStrategy.VISIBLE);
 			} else {
 				// Local File or QuickLoad
 				if (this.symL != null) {
 					if (this.symL.getLoadChoices().contains(LoadStrategy.VISIBLE)) {
-						this.loadStrategy = LoadStrategy.VISIBLE;
+						setLoadStrategy(LoadStrategy.VISIBLE);
 					} else if (this.symL.getLoadChoices().contains(LoadStrategy.CHROMOSOME)) {
-						this.loadStrategy = LoadStrategy.CHROMOSOME;
+						setLoadStrategy(LoadStrategy.CHROMOSOME);
 					} else {
-						this.loadStrategy = LoadStrategy.GENOME;
+						setLoadStrategy(LoadStrategy.GENOME);
 					}
 				}
 			}
@@ -115,14 +115,33 @@ public final class GenericFeature {
 
 	public void setInvisible(){
 		this.visible = false;
-		this.loadStrategy = LoadStrategy.NO_LOAD;
+		setLoadStrategy(LoadStrategy.NO_LOAD);
 	}
 	
 	public boolean isVisible() {
 		return this.visible;
 	}
 
-
+	public LoadStrategy getLoadStrategy(){
+		return loadStrategy;
+	}
+	
+	public void setLoadStrategy(LoadStrategy loadStrategy){
+		this.loadStrategy = loadStrategy;
+	}
+	
+	public boolean setPreferredLoadStrategy(LoadStrategy loadStrategy){
+		if (getLoadChoices().contains(loadStrategy)){
+			setLoadStrategy(loadStrategy);
+			return true;
+		}else{
+			setLoadStrategy(getLoadChoices().get(1));
+			Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING,
+					"Given {0} strategy is not permitted instead using {1} "
+					+ "strategy.", new Object[]{loadStrategy, getLoadStrategy()});
+		}
+		return false;
+	}
 	/**
 	 * @param featureProps feature properties
 	 * @return true if feature should be loaded automatically
@@ -280,19 +299,6 @@ public final class GenericFeature {
 
 		int lastSlash = this.featureName.lastIndexOf("/");
 		return this.featureName.substring(lastSlash + 1,featureName.length());
-	}
-
-	public static boolean setPreferredLoadStrategy(GenericFeature feature, LoadStrategy s){
-		if (feature.getLoadChoices().contains(s)){
-			feature.loadStrategy = s;
-			return true;
-		}else{
-			feature.loadStrategy = feature.getLoadChoices().get(1);
-			Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING,
-					"Given {0} strategy is not permitted instead using {1} "
-					+ "strategy.", new Object[]{s, feature.loadStrategy});
-		}
-		return false;
 	}
 
 	public URI getURI(){

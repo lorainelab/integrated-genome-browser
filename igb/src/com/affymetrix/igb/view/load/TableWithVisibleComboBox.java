@@ -178,7 +178,7 @@ class JTableX extends JTable implements MouseListener {
 	   if(column == FeaturesTableModel.REFRESH_FEATURE_COLUMN){
 		   FeaturesTableModel ftm = (FeaturesTableModel) getModel();
 		   GenericFeature feature = ftm.getFeature(row);
-		   boolean enabled = (feature.loadStrategy != LoadStrategy.NO_LOAD && feature.loadStrategy != LoadStrategy.GENOME);
+		   boolean enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME);
 		   return new LabelTableCellRenderer(TableWithVisibleComboBox.refresh_icon, enabled);
 	   }else if(column == FeaturesTableModel.LOAD_STRATEGY_COLUMN){
 		   return new TableWithVisibleComboBox.ColumnRenderer();
@@ -202,14 +202,14 @@ class JTableX extends JTable implements MouseListener {
 
 	   switch(realColumnIndex){
 		   case FeaturesTableModel.REFRESH_FEATURE_COLUMN:
-			   if(feature.loadStrategy != LoadStrategy.NO_LOAD)
+			   if(feature.getLoadStrategy() != LoadStrategy.NO_LOAD)
 				   tip = "Refresh " + featureName;
 			   else
 				   tip = "Change load strategy to refresh " + featureName;
 			   break;
 			   
 		   case FeaturesTableModel.LOAD_STRATEGY_COLUMN:
-			   if(feature.loadStrategy != LoadStrategy.GENOME)
+			   if(feature.getLoadStrategy() != LoadStrategy.GENOME)
 				   tip = "Change load strategy for " + featureName;
 			   else
 				   tip = "Cannot change load strategy for " + featureName;

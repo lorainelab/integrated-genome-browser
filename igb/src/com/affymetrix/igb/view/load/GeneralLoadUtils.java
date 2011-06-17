@@ -590,7 +590,7 @@ public final class GeneralLoadUtils {
 		SeqSpan rightSpan = new SimpleSeqSpan(max, Math.min(seq.getLength(), max + length), seq);
 
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (gFeature.loadStrategy != LoadStrategy.AUTOLOAD) {
+			if (gFeature.getLoadStrategy() != LoadStrategy.AUTOLOAD) {
 				continue;
 			}
 
@@ -602,7 +602,7 @@ public final class GeneralLoadUtils {
 	}
 
 	private static boolean checkBeforeLoading(GenericFeature gFeature){
-		if (gFeature.loadStrategy == LoadStrategy.NO_LOAD) {
+		if (gFeature.getLoadStrategy() == LoadStrategy.NO_LOAD) {
 			return false;	// should never happen
 		}
 
@@ -643,12 +643,12 @@ public final class GeneralLoadUtils {
 
 		BioSeq selected_seq = gmodel.getSelectedSeq();
 		SeqSpan overlap = null;
-		if(gFeature.loadStrategy == LoadStrategy.AUTOLOAD && !gviewer.getAutoLoad().shouldAutoLoad()){
+		if(gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD && !gviewer.getAutoLoad().shouldAutoLoad()){
 			return;
 		}
-		if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.AUTOLOAD) {
+		if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE || gFeature.getLoadStrategy() == LoadStrategy.AUTOLOAD) {
 			overlap = gviewer.getVisibleSpan();
-		} else if (gFeature.loadStrategy == LoadStrategy.GENOME || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
+		} else if (gFeature.getLoadStrategy() == LoadStrategy.GENOME || gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME) {
 			// TODO: Investigate edge case at max
 			overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax()-1, selected_seq);
 		}
@@ -660,7 +660,7 @@ public final class GeneralLoadUtils {
 		SeqSymmetry optimized_sym = null;
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
 		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) && ((QuickLoad) feature.symL).extension.endsWith(".chp")) {
-			feature.loadStrategy = LoadStrategy.GENOME;	// it should be set to this already.  But just in case...
+			feature.setLoadStrategy(LoadStrategy.GENOME);	// it should be set to this already.  But just in case...
 			optimized_sym = new SimpleMutableSeqSymmetry();
 			((SimpleMutableSeqSymmetry)optimized_sym).addSpan(span);
 			loadFeaturesForSym(optimized_sym, feature);
@@ -669,7 +669,7 @@ public final class GeneralLoadUtils {
 
 		optimized_sym = feature.optimizeRequest(span);
 
-		if (feature.loadStrategy != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
+		if (feature.getLoadStrategy() != LoadStrategy.GENOME || feature.gVersion.gServer.serverType == ServerType.DAS2) {
 			// Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
 			loadFeaturesForSym(optimized_sym, feature);
@@ -722,7 +722,7 @@ public final class GeneralLoadUtils {
 			@Override
 			protected void finished() {
 				if(isCancelled()){
-					feature.loadStrategy = LoadStrategy.NO_LOAD;
+					feature.setLoadStrategy(LoadStrategy.NO_LOAD);
 					GeneralLoadView.feature_model.fireTableDataChanged();
 				}
 				

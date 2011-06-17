@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ExportSlicedViewAction;
-import com.affymetrix.igb.action.RefreshDataAction;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.view.MapRangeBox;
@@ -324,7 +323,7 @@ public class ScriptFileLoader {
 
 		if (feature != null) {
 			feature.setVisible();
-			GenericFeature.setPreferredLoadStrategy(feature, LoadStrategy.VISIBLE);
+			feature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
 		}
 
 		GeneralLoadView.getLoadView().createFeaturesTable();
@@ -372,7 +371,7 @@ public class ScriptFileLoader {
 		}
 
 		if (feature != null) {
-			GenericFeature.setPreferredLoadStrategy(feature, s);
+			feature.setPreferredLoadStrategy(s);
 		} else {
 			Logger.getLogger(ScriptFileLoader.class.getName()).log(
 					Level.SEVERE, "Couldn''t find feature :{0}", featureURIStr);

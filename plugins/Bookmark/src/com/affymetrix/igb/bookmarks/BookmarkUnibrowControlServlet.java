@@ -315,7 +315,7 @@ public final class BookmarkUnibrowControlServlet {
 	private void loadFeature(GenericFeature gFeature, BioSeq seq, int start, int end){
 		gFeature.setVisible();
 		SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-		if (!GenericFeature.setPreferredLoadStrategy(gFeature, LoadStrategy.VISIBLE)) {
+		if (!gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE)) {
 			overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
 		}
 		GeneralLoadUtils.loadAndDisplaySpan(overlap, gFeature);

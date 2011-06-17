@@ -258,7 +258,7 @@ public final class QuickLoad extends SymLoader {
 		List<? extends SeqSymmetry> results = this.getGenome();
 
 		if(Thread.currentThread().isInterrupted()){
-			feature.loadStrategy = LoadStrategy.NO_LOAD; //Change the loadStrategy for this type of files.
+			feature.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
 			GeneralLoadView.feature_model.fireTableDataChanged();
 			results = null;
 			return;

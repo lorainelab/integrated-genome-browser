@@ -1783,7 +1783,7 @@ public class SeqMapView extends JPanel
 				return;
 			}
 
-			if (feature.loadStrategy != LoadStrategy.NO_LOAD && feature.loadStrategy != LoadStrategy.GENOME) {
+			if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME) {
 				popup.add(new JMenuItem(new RefreshAFeature(feature)));
 			}
 		}

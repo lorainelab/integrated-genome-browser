@@ -88,7 +88,9 @@ public final class TransformTierGlyph extends TierGlyph {
     if ( 0.0d != coordbox.height ) {
       yscale = (double)fixedPixHeight / coordbox.height;
     }
-    yscale = yscale / view_transform.getScaleY();
+	if ( 0.0d != view_transform.getScaleY() ) {
+	  yscale = yscale / view_transform.getScaleY();
+	}
     tier_transform.setTransform(tier_transform.getScaleX(),0,0,tier_transform.getScaleY() * yscale,tier_transform.getTranslateX(),tier_transform.getTranslateY());
     coordbox.height = coordbox.height * yscale;
   }

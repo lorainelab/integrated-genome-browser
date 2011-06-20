@@ -594,7 +594,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		loadStrategies.add(LoadStrategy.AUTOLOAD);
 		loadStrategies.add(LoadStrategy.VISIBLE);
 		loadStrategies.add(LoadStrategy.CHROMOSOME);
-		GeneralLoadUtils.loadFeatures(loadStrategies, null);
+		loadFeatures(loadStrategies, null);
 	}
 
 	/**
@@ -603,10 +603,44 @@ public final class GeneralLoadView extends IGBTabPanel
 	public static void loadAutoLoadFeatures() {
 		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
 		loadStrategies.add(LoadStrategy.AUTOLOAD);
-		GeneralLoadUtils.loadFeatures(loadStrategies, null);
+		loadFeatures(loadStrategies, null);
 		GeneralLoadUtils.bufferDataForAutoload();
 	}
 
+	/**
+	 * Load any features that have a whole strategy and haven't already been loaded.
+	 * @param versionName
+	 */
+	static void loadWholeRangeFeatures(ServerType serverType) {
+		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+		loadStrategies.add(LoadStrategy.GENOME);
+		loadFeatures(loadStrategies, serverType);
+	}
+
+	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType){
+		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
+			if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
+				continue;
+			}
+			if(serverType != null && gFeature.gVersion.gServer.serverType != serverType){
+				continue;
+			}
+
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+		}
+	}
+	
+	static void AutoloadQuickloadFeature(){
+		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
+			if (gFeature.getLoadStrategy() != LoadStrategy.GENOME || 
+					gFeature.gVersion.gServer.serverType != ServerType.QuickLoad) {
+				continue;
+			}
+
+			GeneralLoadUtils.iterateSeqList(gFeature);
+		}
+	}
+	
 	/**
 	 * One of the combo boxes changed state.
 	 * @param evt
@@ -794,6 +828,7 @@ public final class GeneralLoadView extends IGBTabPanel
 							// needs to be cleared.
 
 		disableAllButtons();
+		AutoloadQuickloadFeature();
 	}
 
 	/**
@@ -843,7 +878,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 
 		createFeaturesTable();
-		GeneralLoadUtils.loadWholeRangeFeatures(ServerType.DAS2);
+		//GeneralLoadUtils.loadWholeRangeFeatures(ServerType.DAS2);
 	}
 
 

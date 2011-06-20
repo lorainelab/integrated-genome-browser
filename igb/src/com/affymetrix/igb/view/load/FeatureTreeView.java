@@ -629,7 +629,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 					if (nodeData instanceof GenericFeature) {
 						((GenericFeature) nodeData).setVisible();
 						GeneralLoadView.getLoadView().createFeaturesTable();
-						GeneralLoadUtils.loadWholeRangeFeatures(null);
+						GeneralLoadView.loadWholeRangeFeatures(null);
 					}
 					tree.repaint();
 					fireEditingStopped();

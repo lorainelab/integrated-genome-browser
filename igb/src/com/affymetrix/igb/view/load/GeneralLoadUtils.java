@@ -205,9 +205,6 @@ public final class GeneralLoadUtils {
 				}
 			}
 			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized);
-			if(gServer.serverType == ServerType.QuickLoad){
-				loadWholeRangeFeatures(ServerType.QuickLoad);
-			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -604,29 +601,6 @@ public final class GeneralLoadUtils {
 		}
 	}
 
-	/**
-	 * Load any features that have a whole strategy and haven't already been loaded.
-	 * @param versionName
-	 */
-	static void loadWholeRangeFeatures(ServerType serverType) {
-		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
-		loadStrategies.add(LoadStrategy.GENOME);
-		loadFeatures(loadStrategies, serverType);
-	}
-
-	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType){
-		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
-				continue;
-			}
-			if(serverType != null && gFeature.gVersion.gServer.serverType != serverType){
-				continue;
-			}
-
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-		}
-	}
-
 	private static boolean checkBeforeLoading(GenericFeature gFeature){
 		if (gFeature.getLoadStrategy() == LoadStrategy.NO_LOAD) {
 			return false;	// should never happen
@@ -702,10 +676,13 @@ public final class GeneralLoadUtils {
 			return;
 		}
 		
+		//Since Das1 does not have whole genome return if it is not Quickload or LocalFile
+		if(feature.gVersion.gServer.serverType != ServerType.QuickLoad && feature.gVersion.gServer.serverType != ServerType.LocalFiles){
+			return;
+		}
+		
 		//If Loading whole genome for unoptimized file then load everything at once.
-		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles)
-				&& ((QuickLoad) feature.symL).getSymLoader() instanceof SymLoaderInst) {
-
+		if (((QuickLoad) feature.symL).getSymLoader() instanceof SymLoaderInst) {
 			if (optimized_sym != null) {
 				((QuickLoad) feature.symL).loadAllSymmetriesThread(feature);
 			}
@@ -716,7 +693,7 @@ public final class GeneralLoadUtils {
 
 	}
 
-	private static void iterateSeqList(final GenericFeature feature) {
+	static void iterateSeqList(final GenericFeature feature) {
 		final BioSeq current_seq = gmodel.getSelectedSeq();
 		CThreadWorker worker = new CThreadWorker("Loading whole feature " + feature.featureName) {
 
@@ -724,15 +701,12 @@ public final class GeneralLoadUtils {
 			protected Object runInBackground() {
 				Thread thread = Thread.currentThread();
 
-				BioSeq seq = null;
+			
 				if (current_seq != null) {
 					loadOnSequence(current_seq);
 				}
 
-				AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-				for (int i = 0; i < group.getSeqCount(); i++) {
-					seq = group.getSeq(i);
-					
+				for(BioSeq seq : feature.symL.getChromosomeList()){
 					if(seq == current_seq){
 						continue;
 					}
@@ -742,6 +716,7 @@ public final class GeneralLoadUtils {
 					}
 					loadOnSequence(seq);
 				}
+			
 				return null;
 			}
 

@@ -13,9 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -180,7 +182,8 @@ public class BinSearchReader implements QueryReader, LineReader {
 
     private SequenceSpanReader sequenceSpanReader; // supplied reader to get the SequenceDataSpan from a data line
     private SeekableBufferedStream seekableBufferedStream; // input stream for data file
-    private Map<String, FileDataRange> sequenceRanges; // all the chromosomes and their file data ranges, this is the "index"
+    private Map<String, List<FileDataRange>> sequenceRanges; // all the chromosomes and their file data ranges, this is the "index"
+    														 // key is seq/chromosome, value is List with two values, low FileDataRaneg and high FileDataRange
 
     /**
      * The constructor
@@ -297,50 +300,25 @@ public class BinSearchReader implements QueryReader, LineReader {
 
     /**
      * add a FileDataRange to the sequenceRange (sequence index)
-     * @param fileDataRange the sequence and the start file offset
-     * or end file offset or both
+     * @param fileDataRange the sequence and the file offset
+     * @param high true if this is the high end of the sequence, false if the low end
      */
-    private void addSeqRange(FileDataRange fileDataRange) {
+    private void addSeqIndex(FileDataRange fileDataRange, boolean high) {
     	String seq = fileDataRange.getSequenceDataSpan().getSeq();
-		FileDataRange oldFileDataRange = sequenceRanges.get(seq);
-		if (oldFileDataRange == null) {
-			sequenceRanges.put(seq, fileDataRange);
+		List<FileDataRange> fileDataRanges = sequenceRanges.get(seq);
+		if (fileDataRanges == null) {
+			fileDataRanges = new ArrayList<FileDataRange>(2);
+			fileDataRanges.add(null);
+			fileDataRanges.add(null);
+			sequenceRanges.put(seq, fileDataRanges);
 		}
-		else {
-			if (oldFileDataRange.getStartOffset() == -1 && fileDataRange.getStartOffset() == -1) {
-				throw new RuntimeException("error at addSeqRange, old start and new start are both -1");
-			}
-			if (oldFileDataRange.getStartOffset() != -1 && fileDataRange.getStartOffset() != -1) {
-				throw new RuntimeException("error at addSeqRange, old start and new start are both not -1");
-			}
-			long startOffset = (fileDataRange.getStartOffset() == -1) ? oldFileDataRange.getStartOffset() : fileDataRange.getStartOffset();
-			if (oldFileDataRange.getEndOffset() == -1 && fileDataRange.getEndOffset() == -1) {
-				throw new RuntimeException("error at addSeqRange, old end and new end are both -1");
-			}
-			if (oldFileDataRange.getEndOffset() != -1 && fileDataRange.getEndOffset() != -1) {
-				throw new RuntimeException("error at addSeqRange, old end and new end are both not -1");
-			}
-			long endOffset = (fileDataRange.getEndOffset() == -1) ? oldFileDataRange.getEndOffset() : fileDataRange.getEndOffset();
-			SequenceDataSpan oldSequenceDataSpan = oldFileDataRange.getSequenceDataSpan();
-			SequenceDataSpan sequenceDataSpan = fileDataRange.getSequenceDataSpan();
-			if (oldSequenceDataSpan.getStartPos() == -1 && sequenceDataSpan.getStartPos() == -1) {
-				throw new RuntimeException("error at addSeqRange, old startPos and new startPos are both -1");
-			}
-			if (oldSequenceDataSpan.getStartPos() != -1 && sequenceDataSpan.getStartPos() != -1) {
-				throw new RuntimeException("error at addSeqRange, old startPos and new startPos are both not -1");
-			}
-			long startPos = (sequenceDataSpan.getStartPos() == -1) ? oldSequenceDataSpan.getStartPos() : sequenceDataSpan.getStartPos();
-			if (oldSequenceDataSpan.getEndPos() == -1 && sequenceDataSpan.getEndPos() == -1) {
-				throw new RuntimeException("error at addSeqRange, old endPos and new endPos are both -1");
-			}
-			if (oldSequenceDataSpan.getEndPos() != -1 && sequenceDataSpan.getEndPos() != -1) {
-				throw new RuntimeException("error at addSeqRange, old endPos and new endPos are both not -1");
-			}
-			long endPos = (sequenceDataSpan.getEndPos() == -1) ? oldSequenceDataSpan.getEndPos() : sequenceDataSpan.getEndPos();
-			FileDataRange newFileDataRange = 
-				new FileDataRange(startOffset, endOffset, null, new SequenceDataSpan(seq, startPos, endPos));
-			sequenceRanges.put(seq, newFileDataRange);
+		else if (!high && fileDataRanges.get(0) != null) {
+			throw new RuntimeException("error at addSeqIndex, duplicate low range for seq=" + seq);
 		}
+		else if (high && fileDataRanges.get(1) != null) {
+			throw new RuntimeException("error at addSeqIndex, duplicate high range for seq=" + seq);
+		}
+		fileDataRanges.set(high ? 1 : 0, fileDataRange);
     }
 
     /**
@@ -364,8 +342,8 @@ public class BinSearchReader implements QueryReader, LineReader {
     		if (lowSeq.equals(highSeq)) {
     			throw new RuntimeException("internal error"); // should never happen
     		}
-    		addSeqRange(new FileDataRange(-1, lowRange.getEndOffset(), null, new SequenceDataSpan(lowSeq, -1, lowRange.getSequenceDataSpan().getEndPos())));
-    		addSeqRange(new FileDataRange(highRange.getStartOffset(), -1, null, new SequenceDataSpan(highSeq, highRange.getSequenceDataSpan().getStartPos(), -1)));
+    		addSeqIndex(lowRange, true);
+    		addSeqIndex(highRange, false);
       	}
     	else {
     		if (!lowRange.getSequenceDataSpan().getSeq().equals(middleRange.getSequenceDataSpan().getSeq())) {
@@ -382,17 +360,13 @@ public class BinSearchReader implements QueryReader, LineReader {
      * called at the beginning, only once per file
      */
     private void createSequenceRanges() {
-    	sequenceRanges = new HashMap<String, FileDataRange>();
+    	sequenceRanges = new HashMap<String, List<FileDataRange>>();
     	FileDataRange lowRange = readDataLineAt(0);
     	String lowSeq = lowRange.getSequenceDataSpan().getSeq();
-    	SequenceDataSpan lowSequenceSpan = new SequenceDataSpan(lowSeq, lowRange.getSequenceDataSpan().getStartPos(), -1);
-    	FileDataRange lowSequenceRange = new FileDataRange(lowRange.getStartOffset(), -1, null, lowSequenceSpan);
-    	addSeqRange(lowSequenceRange);
+    	addSeqIndex(lowRange, false);
     	FileDataRange highRange = readDataLineAt(seekableBufferedStream.length() - 1);
     	String highSeq = highRange.getSequenceDataSpan().getSeq();
-    	SequenceDataSpan highSequenceSpan = new SequenceDataSpan(highSeq, -1, highRange.getSequenceDataSpan().getEndPos());
-    	FileDataRange highSequenceRange = new FileDataRange(-1, highRange.getStartOffset(), null, highSequenceSpan);
-    	addSeqRange(highSequenceRange);
+    	addSeqIndex(highRange, true);
     	if (!lowSeq.equals(highSeq)) {
     		loadSequenceRanges(lowRange, highRange);
     	}
@@ -475,10 +449,10 @@ public class BinSearchReader implements QueryReader, LineReader {
         int colon, hyphen;
         colon = reg.lastIndexOf(':');
         hyphen = reg.lastIndexOf('-');
-        String chr = colon >= 0 ? reg.substring(0, colon) : reg;
-        long startPos = colon >= 0 ? Long.parseLong(reg.substring(colon + 1, hyphen)) - 1 : 0;
+        String seq = colon >= 0 ? reg.substring(0, colon) : reg;
+        long startPos = colon >= 0 ? Long.parseLong(reg.substring(colon + 1, hyphen)): 0;
         long endPos = hyphen >= 0 ? Long.parseLong(reg.substring(hyphen + 1)) : 0x7fffffff;
-        return new SequenceDataSpan(chr, startPos, endPos);
+        return new SequenceDataSpan(seq, startPos, endPos);
     }
 
     public class BinSearchLineReader implements LineReader {
@@ -502,15 +476,21 @@ public class BinSearchReader implements QueryReader, LineReader {
 
     @Override
     public LineReader query(final String seq, int startPos, int endPos) {
-    	FileDataRange seqFileDataRange = sequenceRanges.get(seq);
-    	long startFileRange = seqFileDataRange.getStartOffset();
-    	long startSeqPos = seqFileDataRange.getSequenceDataSpan().getStartPos();
-    	FileDataRange lowRange = new FileDataRange(startFileRange, startFileRange, null, new SequenceDataSpan(seq, startSeqPos, startSeqPos));
-    	long endFileRange = seqFileDataRange.getEndOffset();
-    	long endSeqPos = seqFileDataRange.getSequenceDataSpan().getEndPos();
-    	FileDataRange highRange = new FileDataRange(endFileRange, endFileRange, null, new SequenceDataSpan(seq, endSeqPos, endSeqPos));
-    	final FileDataRange fileDataRangeLow = getDataRange(seq, startPos, lowRange, highRange, true);
-    	final FileDataRange fileDataRangeHigh = getDataRange(seq, endPos, lowRange, highRange, false);
+    	List<FileDataRange> seqFileDataRanges = sequenceRanges.get(seq);
+    	FileDataRange fileDataRangeLow;
+    	FileDataRange fileDataRangeHigh;
+    	if (startPos <= seqFileDataRanges.get(0).getSequenceDataSpan().getEndPos()) {
+    		fileDataRangeLow = seqFileDataRanges.get(0);
+    	}
+    	else {
+    		fileDataRangeLow = getDataRange(seq, startPos, seqFileDataRanges.get(0), seqFileDataRanges.get(1), true);
+    	}
+    	if (endPos >= seqFileDataRanges.get(1).getSequenceDataSpan().getStartPos()) {
+    		fileDataRangeHigh = seqFileDataRanges.get(1);
+    	}
+    	else {
+    		fileDataRangeHigh = getDataRange(seq, endPos, seqFileDataRanges.get(0), seqFileDataRanges.get(1), false);
+    	}
     	try {
     		seekableBufferedStream.seek(fileDataRangeLow.getStartOffset());
     	}
@@ -528,7 +508,12 @@ public class BinSearchReader implements QueryReader, LineReader {
     		sequenceDataSpan = parseReg(reg);
     	}
     	else {
-    		sequenceDataSpan = sequenceRanges.get(reg).getSequenceDataSpan();
+        	List<FileDataRange> seqFileDataRanges = sequenceRanges.get(reg);
+        	if (seqFileDataRanges == null) {
+        		System.out.println("Error in query(reg)");
+    			return null;
+        	}
+        	sequenceDataSpan = new SequenceDataSpan(reg, seqFileDataRanges.get(0).getSequenceDataSpan().getStartPos(), seqFileDataRanges.get(1).getSequenceDataSpan().getEndPos());
     	}
 		return query(sequenceDataSpan.getSeq(), (int)sequenceDataSpan.getStartPos(), (int)sequenceDataSpan.getEndPos());
     }
@@ -549,24 +534,58 @@ public class BinSearchReader implements QueryReader, LineReader {
             System.exit(1);
         }
         try {
-            BinSearchReader tr = new BinSearchReader(args[0],
-            	new SequenceSpanReader() {
-					@Override
-					public SequenceDataSpan readSequenceSpan(String line) {
-						if (line.startsWith("#")) {
-							return null;
+            BinSearchReader tr = null;
+            if (args[0].endsWith(".vcf")) {
+	            tr = new BinSearchReader(args[0],
+	            	new SequenceSpanReader() {
+						@Override
+						public SequenceDataSpan readSequenceSpan(String line) {
+							if (line.trim().length() == 0 || line.startsWith("#")) {
+								return null;
+							}
+							String[] parts = line.split("\t");
+							String seq = parts[0];
+							long start = Long.parseLong(parts[1]);
+							int length = 0;
+							if (!".".equals(parts[3])) {
+								length = parts[3].length();
+							}
+							long end = start + length;
+							return new SequenceDataSpan(seq, start, end);
 						}
-						String[] parts = line.split("\t");
-						long start = Long.parseLong(parts[1]);
-						int length = 0;
-						if (!".".equals(parts[3])) {
-							length = parts[3].length();
+	             	}
+	            );
+            }
+            if (args[0].endsWith(".sam")) {
+	            tr = new BinSearchReader(args[0],
+	            	new SequenceSpanReader() {
+						@Override
+						public SequenceDataSpan readSequenceSpan(String line) {
+							if (line.trim().length() == 0 || line.startsWith("@")) {
+								return null;
+							}
+							String[] parts = line.split("\t");
+							String seq = parts[2];
+							if (seq.equals("*")) {
+								return null;
+							}
+							long start = Long.parseLong(parts[3]);
+							int length = 0;
+							if (!parts[8].equals("*")) {
+								length = Integer.parseInt(parts[8]);
+							}
+							if (length == 0) {
+								length = 1;
+							}
+							if (length < 0) {
+								return null;
+							}
+							long end = start + length;
+							return new SequenceDataSpan(seq, start, end);
 						}
-						return new SequenceDataSpan(parts[0], start, start + length);
-					}
-             	}
-            );
-
+	             	}
+	            );
+            }
 
             String s;
             if (args.length == 1) { // no region is specified; print the whole file

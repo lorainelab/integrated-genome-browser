@@ -686,11 +686,11 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		iterateSeqList(span, feature);
+		iterateSeqList(feature);
 
 	}
 
-	private static void iterateSeqList(final SeqSpan span, final GenericFeature feature) {
+	private static void iterateSeqList(final GenericFeature feature) {
 		final BioSeq current_seq = gmodel.getSelectedSeq();
 		CThreadWorker worker = new CThreadWorker("Loading whole feature " + feature.featureName) {
 
@@ -703,7 +703,7 @@ public final class GeneralLoadUtils {
 					loadOnSequence(current_seq);
 				}
 
-				AnnotatedSeqGroup group = span.getBioSeq().getSeqGroup();
+				AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 				for (int i = 0; i < group.getSeqCount(); i++) {
 					seq = group.getSeq(i);
 					
@@ -726,8 +726,9 @@ public final class GeneralLoadUtils {
 					GeneralLoadView.feature_model.fireTableDataChanged();
 				}
 				
-				if (current_seq != null) {
-					gviewer.setAnnotatedSeq(current_seq, true, true);
+				BioSeq seq = gmodel.getSelectedSeq();
+				if (seq != null) {
+					gviewer.setAnnotatedSeq(seq, true, true);
 				} else if (gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
 					// This can happen when loading a brand-new genome
 					gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeq(0));

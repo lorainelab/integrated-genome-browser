@@ -270,6 +270,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public final BioSeq getAnnotatedSeq() {
+		return ((SeqMapView)getMapView()).getAnnotatedSeq();
+	}
+
+	@Override
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
 		((SeqMapView)getMapView()).setAnnotatedSeq(seq, preserve_selection, preserve_view);
 	}
@@ -410,4 +415,10 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public void removeServerInitListener(GenericServerInitListener listener) {
 		ServerList.getServerInstance().removeServerInitListener(listener);
 	}
+
+	@Override
+	public GenericServer getServer(String URLorName) {
+		return ServerList.getServerInstance().getServer(URLorName);
+	}
+
 }

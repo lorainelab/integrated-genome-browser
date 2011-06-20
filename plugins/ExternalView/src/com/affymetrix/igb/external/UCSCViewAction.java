@@ -5,10 +5,10 @@
 
 package com.affymetrix.igb.external;
 
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -16,9 +16,9 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.osgi.service.IGBService;
+
 import java.awt.event.ActionEvent;
-import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,16 +33,16 @@ import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
  */
 public class UCSCViewAction extends AbstractAction implements SeqSelectionListener {
 	private static final long serialVersionUID = 1l;
-	private SeqMapView SEQ_MAP;
 	private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/dsn";
 	private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	private static final Set<String> UCSCSources = Collections.<String>synchronizedSet(new HashSet<String>());
-
-	public UCSCViewAction(SeqMapView seqMapView) {
+	private final IGBService igbService;
+	
+	public UCSCViewAction(IGBService igbService) {
 		super(BUNDLE.getString("viewRegionInUCSCBrowser"),
 				MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
-		SEQ_MAP = seqMapView;
+		this.igbService = igbService;
 		GenometryModel model = GenometryModel.getGenometryModel();
 		model.addSeqSelectionListener(this);
 		this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.<BioSeq>singletonList(model.getSelectedSeq())));
@@ -54,7 +54,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 		if (!query.isEmpty()) {
 			GeneralUtils.browse(UCSC_URL + query);
 		} else {
-			ErrorHandler.errorPanel("Unable to map genome '" + SEQ_MAP.getAnnotatedSeq().getVersion() + "' to a UCSC genome.");
+			ErrorHandler.errorPanel("Unable to map genome '" + igbService.getAnnotatedSeq().getVersion() + "' to a UCSC genome.");
 		}
 	}
 
@@ -78,7 +78,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 				// This is done to avoid additional slow DAS queries.
 				DasServerInfo ucsc = null;
 				GenericServer server = null;
-				if ((server = ServerList.getServerInstance().getServer(UCSC_DAS_URL)) != null) {
+				if ((server = igbService.getServer(UCSC_DAS_URL)) != null) {
 					// UCSC server already exists!
 					ucsc = (DasServerInfo)server.serverObj;
 				} else {
@@ -94,7 +94,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	 * @return query URL for current view. "" on error.
 	 */
 	public String getUCSCQuery(){
-		BioSeq aseq = SEQ_MAP.getAnnotatedSeq();
+		BioSeq aseq = igbService.getAnnotatedSeq();
 
 		if (aseq == null) { return ""; }
 
@@ -112,8 +112,7 @@ public class UCSCViewAction extends AbstractAction implements SeqSelectionListen
 	 *  @return a String such as "chr22:15916196-31832390", or null.
 	 */
 	private String getRegionString() {
-		Rectangle2D.Double vbox = SEQ_MAP.getSeqMap().getView().getCoordBox();
-
-		return SEQ_MAP.getAnnotatedSeq().getID() + ":" + (int)vbox.x + "-" + (int)(vbox.x + vbox.width);
+		SeqSpan span = igbService.getVisibleSpan();
+		return span.getBioSeq() + ":" + span.getMin() + "-" + span.getMax();
 	}
 }

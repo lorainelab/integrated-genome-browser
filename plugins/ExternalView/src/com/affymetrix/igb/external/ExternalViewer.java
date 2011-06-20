@@ -11,7 +11,6 @@ import javax.swing.JMenuItem;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.view.SeqMapView;
 
 /**
  * Container panel for the external views
@@ -41,7 +40,7 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 		ucscBox = createBox();
 		ensemblBox = createBox();
 		
-		ucscViewAction = new UCSCViewAction((SeqMapView)igbService.getMapView());
+		ucscViewAction = new UCSCViewAction(igbService);
 		menuItem = new JMenuItem(ucscViewAction);
 		MenuUtil.insertIntoMenu(igbService.getViewMenu(), menuItem, VIEW_MENU_POS);
 

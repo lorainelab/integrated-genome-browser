@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
@@ -161,6 +162,7 @@ public interface IGBService {
 	public String getAppVersion();
 	public SeqSpan getVisibleSpan();
 	public void setRegion(int start, int end, BioSeq seq);
+	public BioSeq getAnnotatedSeq();
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view);
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();
@@ -265,4 +267,5 @@ public interface IGBService {
 	public boolean areAllServersInited();
 	public void addServerInitListener(GenericServerInitListener listener);
 	public void removeServerInitListener(GenericServerInitListener listener);
+	public GenericServer getServer(String URLorName);
 }

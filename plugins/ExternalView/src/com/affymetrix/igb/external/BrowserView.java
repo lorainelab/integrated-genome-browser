@@ -38,7 +38,7 @@ public abstract class BrowserView extends JPanel {
 	private final JButton settingsButton = new JButton("settings");
 	private BrowserImage browserImage = new BrowserImage();
 	private final JScrollPane scroll = new JScrollPane();
-	private final IGBService igbService;
+//	private final IGBService igbService;
 	private final UCSCViewAction ucscViewAction;
 
 	public abstract JDialog getViewHelper(Window window);
@@ -69,7 +69,7 @@ public abstract class BrowserView extends JPanel {
 
 	public BrowserView(JComboBox selector,final IGBService igbService,final UCSCViewAction ucscViewAction) {
 		super();
-		this.igbService = igbService;
+//		this.igbService = igbService;
 		this.ucscViewAction = ucscViewAction;
 		initializeCookies();
 		this.setLayout(new BorderLayout());

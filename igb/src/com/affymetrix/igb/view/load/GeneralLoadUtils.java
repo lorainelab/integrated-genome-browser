@@ -205,6 +205,9 @@ public final class GeneralLoadUtils {
 				}
 			}
 			ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized);
+			if(gServer.serverType == ServerType.QuickLoad){
+				loadWholeRangeFeatures(ServerType.QuickLoad);
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -598,6 +601,29 @@ public final class GeneralLoadUtils {
 				loadAndDisplaySpan(leftSpan, gFeature);
 				loadAndDisplaySpan(rightSpan, gFeature);
 			}
+		}
+	}
+
+	/**
+	 * Load any features that have a whole strategy and haven't already been loaded.
+	 * @param versionName
+	 */
+	static void loadWholeRangeFeatures(ServerType serverType) {
+		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+		loadStrategies.add(LoadStrategy.GENOME);
+		loadFeatures(loadStrategies, serverType);
+	}
+
+	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType){
+		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
+			if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
+				continue;
+			}
+			if(serverType != null && gFeature.gVersion.gServer.serverType != serverType){
+				continue;
+			}
+
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 		}
 	}
 

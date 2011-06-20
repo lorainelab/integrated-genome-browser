@@ -594,7 +594,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		loadStrategies.add(LoadStrategy.AUTOLOAD);
 		loadStrategies.add(LoadStrategy.VISIBLE);
 		loadStrategies.add(LoadStrategy.CHROMOSOME);
-		loadFeatures(loadStrategies, null);
+		GeneralLoadUtils.loadFeatures(loadStrategies, null);
 	}
 
 	/**
@@ -603,34 +603,8 @@ public final class GeneralLoadView extends IGBTabPanel
 	public static void loadAutoLoadFeatures() {
 		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
 		loadStrategies.add(LoadStrategy.AUTOLOAD);
-		loadFeatures(loadStrategies, null);
+		GeneralLoadUtils.loadFeatures(loadStrategies, null);
 		GeneralLoadUtils.bufferDataForAutoload();
-	}
-
-	/**
-	 * Load any features that have a whole strategy and haven't already been loaded.
-	 * @param versionName
-	 */
-	static void loadWholeRangeFeatures() {
-		List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
-		loadStrategies.add(LoadStrategy.GENOME);
-		loadFeatures(loadStrategies, ServerType.DAS2);
-	}
-
-	private static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType){
-		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
-				continue;
-			}
-			if(serverType != null && gFeature.gVersion.gServer.serverType != serverType){
-				continue;
-			}
-			
-			if (DEBUG_EVENTS) {
-				System.out.println("Selected : " + gFeature.featureName);
-			}
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-		}
 	}
 
 	/**
@@ -869,7 +843,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 
 		createFeaturesTable();
-		loadWholeRangeFeatures();
+		GeneralLoadUtils.loadWholeRangeFeatures(ServerType.DAS2);
 	}
 
 

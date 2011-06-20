@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/genometry"/>
+	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/javax.servlet.jar"/>
+	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/sam.jar"/>
+	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/commons-compress-1.0.jar"/>
+	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/cos.jar"/>
+	<classpathentry kind="lib" path="/Integrated Genome Browser/ext/org.mortbay.jetty.jar"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>

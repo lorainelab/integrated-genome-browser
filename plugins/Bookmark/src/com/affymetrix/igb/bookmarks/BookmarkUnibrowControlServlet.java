@@ -31,10 +31,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.util.ScriptFileLoader;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
-//import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -99,7 +96,7 @@ public final class BookmarkUnibrowControlServlet {
 	public void goToBookmark(final IGBService igbService, final Map<String, String[]> parameters) throws NumberFormatException {
 		String batchFileStr = getStringParameter(parameters, IGBService.SCRIPTFILETAG);
 		if (batchFileStr != null && batchFileStr.length() > 0) {
-			ScriptFileLoader.doActions(batchFileStr);
+			igbService.doActions(batchFileStr);
 			return;
 		}
 
@@ -168,7 +165,7 @@ public final class BookmarkUnibrowControlServlet {
 					final GenericFeature feature = gFeatures[i];
 
 					if (feature != null && graph_urls.contains(feature.getURI().toString())) {
-						ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
+						igbService.getPrimaryExecutor(feature).execute(new Runnable() {
 
 							public void run() {
 								BookmarkController.applyProperties(seq, parameters, feature);

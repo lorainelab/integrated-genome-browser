@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,20 +27,20 @@ public class BookMarkCommandLine implements GenericServerInitListener{
 		this.url = url;
 		this.force = force;
 		// If all server are not initintialized then add listener else load bookmark.
-		if(!ServerList.getServerInstance().areAllServersInited()){
-			ServerList.getServerInstance().addServerInitListener(this);
+		if(!igbService.areAllServersInited()){
+			igbService.addServerInitListener(this);
 		}else{
 			gotoBookmark();
 		}
 	}
 
 	public void genericServerInit(GenericServerInitEvent evt) {
-		boolean areAllServersInited = ServerList.getServerInstance().areAllServersInited();	// do this first to avoid race condition
+		boolean areAllServersInited = igbService.areAllServersInited();	// do this first to avoid race condition
 
 		if(!areAllServersInited)
 			return;
 
-		ServerList.getServerInstance().removeServerInitListener(this);
+		igbService.removeServerInitListener(this);
 
 		gotoBookmark();
 	}

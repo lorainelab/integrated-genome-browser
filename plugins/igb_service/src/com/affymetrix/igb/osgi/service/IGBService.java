@@ -3,6 +3,7 @@ package com.affymetrix.igb.osgi.service;
 import java.awt.Color;
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
@@ -14,6 +15,7 @@ import org.osgi.framework.Bundle;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
@@ -162,6 +164,9 @@ public interface IGBService {
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view);
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();
+	public void updateDependentData();
+	public void doActions(final String batchFileStr);
+	public void doSingleAction(String line);
 	/**
 	 * set the state of the given tab to the given state and update
 	 * the view menu to the new value
@@ -251,4 +256,13 @@ public interface IGBService {
 	 * @param panel the IGBTabPanel
 	 */
 	public void selectTab(IGBTabPanel panel);
+
+	// ThreadUtils
+	public Executor getPrimaryExecutor(Object key);
+	public void runOnEventQueue(Runnable r);
+
+	// ServerList
+	public boolean areAllServersInited();
+	public void addServerInitListener(GenericServerInitListener listener);
+	public void removeServerInitListener(GenericServerInitListener listener);
 }

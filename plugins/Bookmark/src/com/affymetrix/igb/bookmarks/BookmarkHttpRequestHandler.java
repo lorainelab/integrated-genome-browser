@@ -15,7 +15,6 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.util.ScriptFileLoader;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -66,7 +65,7 @@ class BookmarkHttpRequestHandler implements Runnable {
 				if (command != null) {
 					parseAndGoToBookmark(command);
 				} else {
-					ScriptFileLoader.doSingleAction(line);
+					igbService.doSingleAction(line);
 				}
 
 				output.write(SimpleBookmarkServer.prompt);

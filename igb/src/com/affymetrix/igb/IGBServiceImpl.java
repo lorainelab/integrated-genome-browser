@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
@@ -31,6 +32,7 @@ import org.osgi.framework.Constants;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -44,7 +46,10 @@ import com.affymetrix.igb.osgi.service.PropertyHandler;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -281,6 +286,21 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public void updateDependentData() {
+		TrackView.updateDependentData();
+	}
+
+	@Override
+	public void doActions(String batchFileStr) {
+		ScriptFileLoader.doActions(batchFileStr);
+	}
+
+	@Override
+	public void doSingleAction(String line) {
+		ScriptFileLoader.doSingleAction(line);
+	}
+
+	@Override
 	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {
 		((IGB)IGB.getSingleton()).setTabStateAndMenu(igbTabPanel, tabState);
 	}
@@ -364,5 +384,30 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public void selectTab(IGBTabPanel panel) {
 		((IGB)IGB.getSingleton()).getWindowService().selectTab(panel);
+	}
+
+	@Override
+	public Executor getPrimaryExecutor(Object key) {
+		return ThreadUtils.getPrimaryExecutor(key);
+	}
+
+	@Override
+	public void runOnEventQueue(Runnable r) {
+		ThreadUtils.runOnEventQueue(r);
+	}
+
+	@Override
+	public boolean areAllServersInited() {
+		return ServerList.getServerInstance().areAllServersInited();
+	}
+
+	@Override
+	public void addServerInitListener(GenericServerInitListener listener) {
+		ServerList.getServerInstance().addServerInitListener(listener);
+	}
+
+	@Override
+	public void removeServerInitListener(GenericServerInitListener listener) {
+		ServerList.getServerInstance().removeServerInitListener(listener);
 	}
 }

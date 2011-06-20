@@ -502,7 +502,7 @@ public class SeqMapView extends JPanel
 					for (int i = 0; i < graphs.size(); i++) {
 						GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
 					}
-					getSeqMap().stretchToFit(false, true);
+					getSeqMap().stretchToFit(false, false);
 					getSeqMap().updateWidget();
 
 				}

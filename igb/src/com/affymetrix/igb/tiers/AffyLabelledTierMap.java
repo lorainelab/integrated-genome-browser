@@ -270,12 +270,4 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   }
 
 
-	@Override
-	public void componentResized(ComponentEvent evt) {
-		if (evt.getSource() == canvas) {
-			this.stretchToFit(false, true);
-			this.updateWidget();
-		}
-	}
-
 }

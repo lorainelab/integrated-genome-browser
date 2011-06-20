@@ -339,7 +339,7 @@ public final class BookmarkUnibrowControlServlet {
 				for (int i = 0; i < data_urls.length; i++) {
 					urls[i] = new URL(data_urls[i]);
 				}
-				final UrlLoaderThread t = new UrlLoaderThread((SeqMapView)uni.getMapView(), urls, extensions, tier_names);
+				final UrlLoaderThread t = new UrlLoaderThread(uni, urls, extensions, tier_names);
 				t.runEventually();
 				t.join();
 			}

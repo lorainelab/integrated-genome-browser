@@ -26,8 +26,8 @@ import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.TrackView;
@@ -49,6 +49,7 @@ public final class UrlLoaderThread extends Thread {
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private final URL[] urls;
 	private final String[] tier_names;
+	private final IGBService igbService;
 	private final SeqMapView gviewer;
 	private final String[] file_extensions;
 
@@ -66,11 +67,12 @@ public final class UrlLoaderThread extends Thread {
 	 *  If a non-null array is provided, the length must match the length of the
 	 *  das_urls array.
 	 */
-	public UrlLoaderThread(SeqMapView smv, URL[] urls, String[] file_extensions, String[] tier_names) {
+	public UrlLoaderThread(IGBService igbService, URL[] urls, String[] file_extensions, String[] tier_names) {
 		if (tier_names != null && urls.length != tier_names.length) {
 			throw new IllegalArgumentException("Array lengths do not match");
 		}
-		this.gviewer = smv;
+		this.igbService = igbService;
+		this.gviewer = (SeqMapView)igbService.getMapView();
 		this.urls = urls;
 		this.tier_names = tier_names;
 		this.file_extensions = file_extensions;
@@ -114,7 +116,7 @@ public final class UrlLoaderThread extends Thread {
 					try {
 						parseDataFromURL(url, file_extension, tier_name);
 					} finally {
-						Application.getSingleton().removeNotLockedUpMsg("Loading feature " + tier_name);
+						igbService.removeNotLockedUpMsg("Loading feature " + tier_name);
 					}
 				} catch (IOException ioe) {
 					handleException(ioe);
@@ -138,23 +140,23 @@ public final class UrlLoaderThread extends Thread {
 		}
 	}
 
-	private static void handleException(final Exception e) {
+	private void handleException(final Exception e) {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
 				if (e instanceof UnknownHostException) {
-					Application.getSingleton().setStatus("Unknown host: " + e.getMessage());
+					igbService.setStatus("Unknown host: " + e.getMessage());
 				} else if (e instanceof FileNotFoundException) {
 					ErrorHandler.errorPanel("File not found", "File missing or not readable:\n " + e.getMessage());
 				} else {
-					Application.getSingleton().setStatus(e.getMessage());
+					igbService.setStatus(e.getMessage());
 					e.printStackTrace();
 				}
 			}
 		});
 	}
 
-	private static void updateViewer(final SeqMapView gviewer, final BioSeq seq) {
+	private void updateViewer(final SeqMapView gviewer, final BioSeq seq) {
 		if (gviewer == null) {
 			return;
 		}

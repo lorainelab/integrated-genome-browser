@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.window.service.WindowActivator;
 
 public class Activator extends WindowActivator implements BundleActivator {
@@ -55,7 +54,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 
 		JMenu bookmark_menu = MenuUtil.getMenu(BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
-		bmark_action = new BookMarkAction(igbService, (SeqMapView)igbService.getMapView(), bookmark_menu);
+		bmark_action = new BookMarkAction(igbService, bookmark_menu);
 		igbService.addStopRoutine(
 			new IStopRoutine() {
 				@Override

@@ -12,7 +12,9 @@ import javax.swing.JMenu;
 
 import org.osgi.framework.Bundle;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
@@ -155,6 +157,11 @@ public interface IGBService {
 	 * @return the constant value for the AppVersion
 	 */
 	public String getAppVersion();
+	public SeqSpan getVisibleSpan();
+	public void setRegion(int start, int end, BioSeq seq);
+	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view);
+	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
+	public void updateGeneralLoadView();
 	/**
 	 * set the state of the given tab to the given state and update
 	 * the view menu to the new value

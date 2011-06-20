@@ -2107,4 +2107,13 @@ public class SeqMapView extends JPanel
 			autoload.mapZoomed();
 		}
     }
+
+	public void setRegion(int start, int end, BioSeq seq) {
+		if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
+			final SeqSpan view_span = new SimpleSeqSpan(start, end, seq);
+			zoomTo(view_span);
+			final double middle = (start + end) / 2.0;
+			setZoomSpotX(middle);
+		}
+	}
 }

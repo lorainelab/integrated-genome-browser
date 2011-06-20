@@ -134,15 +134,6 @@ public final class UnibrowControlServlet {
 		return group;
 	}
 
-	public void setRegion(SeqMapView gviewer, int start, int end, BioSeq book_seq) {
-		if (start >= 0 && end > 0 && end != Integer.MAX_VALUE) {
-			final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
-			gviewer.zoomTo(view_span);
-			final double middle = (start + end) / 2.0;
-			gviewer.setZoomSpotX(middle);
-		}
-	}
-
 	/**
 	 * This handles the "select" API parameter.  The "select" parameter can be followed by one
 	 * or more comma separated IDs in the form: &select=<id_1>,<id_2>,...,<id_n>

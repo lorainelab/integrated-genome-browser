@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.util.UnibrowControlServlet;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -246,6 +245,6 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 			}
 		}
 
-		UnibrowControlServlet.getInstance().setRegion(gview, start, end, newSeq);
+		gview.setRegion(start, end, newSeq);
 	}
 }

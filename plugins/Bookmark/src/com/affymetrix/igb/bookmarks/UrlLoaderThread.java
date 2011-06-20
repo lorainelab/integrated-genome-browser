@@ -28,7 +28,6 @@ import com.affymetrix.genometryImpl.parsers.das.DASFeatureParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.view.TrackView;
 import java.util.HashMap;
@@ -50,7 +49,6 @@ public final class UrlLoaderThread extends Thread {
 	private final URL[] urls;
 	private final String[] tier_names;
 	private final IGBService igbService;
-	private final SeqMapView gviewer;
 	private final String[] file_extensions;
 
 	/**
@@ -72,7 +70,6 @@ public final class UrlLoaderThread extends Thread {
 			throw new IllegalArgumentException("Array lengths do not match");
 		}
 		this.igbService = igbService;
-		this.gviewer = (SeqMapView)igbService.getMapView();
 		this.urls = urls;
 		this.tier_names = tier_names;
 		this.file_extensions = file_extensions;
@@ -125,7 +122,7 @@ public final class UrlLoaderThread extends Thread {
 
 				// update the view, except for the last time where we let the "finally" block do it
 				if (i < urls.length) {
-					updateViewer(gviewer, aseq);
+					updateViewer(aseq);
 				}
 			}
 
@@ -136,7 +133,7 @@ public final class UrlLoaderThread extends Thread {
 		} finally {
 			//if (monitor != null) {monitor.closeDialogEventually();}
 			// update the view again, mainly in case the thread was interrupted
-			updateViewer(gviewer, aseq);
+			updateViewer(aseq);
 		}
 	}
 
@@ -156,16 +153,13 @@ public final class UrlLoaderThread extends Thread {
 		});
 	}
 
-	private void updateViewer(final SeqMapView gviewer, final BioSeq seq) {
-		if (gviewer == null) {
-			return;
-		}
+	private void updateViewer(final BioSeq seq) {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
 				try {
 					TrackView.updateDependentData();
-					gviewer.setAnnotatedSeq(seq, true, true);
+					igbService.setAnnotatedSeq(seq, true, true);
 				} catch (Exception e) {
 					handleException(e);
 				}

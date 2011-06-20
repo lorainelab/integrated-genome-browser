@@ -29,7 +29,9 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -43,6 +45,7 @@ import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 /**
@@ -249,6 +252,32 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public String getAppVersion() {
 		return IGBConstants.APP_VERSION;
+	}
+
+	@Override
+	public SeqSpan getVisibleSpan() {
+		return ((SeqMapView)getMapView()).getVisibleSpan();
+	}
+
+	@Override
+	public void setRegion(int start, int end, BioSeq seq) {
+		((SeqMapView)getMapView()).setRegion(start, end, seq);
+	}
+
+	@Override
+	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
+		((SeqMapView)getMapView()).setAnnotatedSeq(seq, preserve_selection, preserve_view);
+	}
+
+	@Override
+	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
+		GeneralLoadUtils.loadAndDisplaySpan(span, feature);
+	}
+
+	@Override
+	public void updateGeneralLoadView() {
+		GeneralLoadView.getLoadView().refreshTreeView();
+		GeneralLoadView.getLoadView().createFeaturesTable();
 	}
 
 	@Override

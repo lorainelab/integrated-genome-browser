@@ -27,7 +27,6 @@ import javax.swing.*;
 import javax.swing.event.MenuListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -45,7 +44,6 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   private final JMenuItem clearMI;
   private final JMenuItem manage_bookmarksMI;
   private final JMenuItem open_bookmark_tabMI;
-  private final SeqMapView gviewer;
   private final Map<Object,Component> component_hash = new HashMap<Object,Component>();
   private final BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
   private final JMenu main_bm_menu;
@@ -54,9 +52,8 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 
   private static JFileChooser static_chooser = null;
 
-  public BookMarkAction(IGBService _igbService, SeqMapView smv, JMenu bm_menu) {
+  public BookMarkAction(IGBService _igbService, JMenu bm_menu) {
 	igbService = _igbService;
-    gviewer = smv;
     bookmark_menu = bm_menu;
     bookmark_menu.addMenuListener(this);
     add_pos_markMI = new JMenuItem(BUNDLE.getString("addPositionBookmark"), KeyEvent.VK_P);
@@ -372,7 +369,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		}
 		Bookmark bookmark = null;
 		try {
-			bookmark = BookmarkController.getCurrentBookmark(include_sym_and_props, gviewer);
+			bookmark = BookmarkController.getCurrentBookmark(include_sym_and_props, igbService.getVisibleSpan());
 		}
 	    catch (MalformedURLException m) {
 	    	ErrorHandler.errorPanel("Couldn't add bookmark", m);
@@ -383,7 +380,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 			return;
 		}
 		String default_name = bookmark.getName();
-		String bookmark_name = (String) JOptionPane.showInputDialog(gviewer,
+		String bookmark_name = (String) JOptionPane.showInputDialog(bmv,
 				"Enter name for bookmark", "Input",
 				JOptionPane.PLAIN_MESSAGE, null, null, default_name);
 		if (bookmark_name == null) {

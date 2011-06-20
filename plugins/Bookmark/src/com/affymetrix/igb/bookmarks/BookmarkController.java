@@ -39,7 +39,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.view.SeqMapView;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -449,7 +448,7 @@ public abstract class BookmarkController {
 		}
 	}
 
-	public static Bookmark getCurrentBookmark(boolean include_sym_and_props, SeqMapView gviewer)
+	public static Bookmark getCurrentBookmark(boolean include_sym_and_props, SeqSpan span)
 		throws MalformedURLException {
 		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		BioSeq aseq = gmodel.getSelectedSeq();
@@ -457,7 +456,6 @@ public abstract class BookmarkController {
 			return null;
 		}
 
-		SeqSpan span = gviewer.getVisibleSpan();
 		SeqSpan mark_span = new SimpleSeqSpan(span.getStart(),span.getEnd(),aseq);
 
 		SimpleSymWithProps mark_sym = new BookmarkSymmetry();

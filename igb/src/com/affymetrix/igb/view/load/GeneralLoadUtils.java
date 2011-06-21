@@ -694,16 +694,17 @@ public final class GeneralLoadUtils {
 	}
 
 	static void iterateSeqList(final GenericFeature feature) {
-		final BioSeq current_seq = gmodel.getSelectedSeq();
-		CThreadWorker worker = new CThreadWorker("Loading whole feature " + feature.featureName) {
+		
+		CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>("Loading whole feature " + feature.featureName) {
 
 			@Override
-			protected Object runInBackground() {
+			protected Void runInBackground() {
+				final BioSeq current_seq = gmodel.getSelectedSeq();
 				Thread thread = Thread.currentThread();
 
-			
 				if (current_seq != null) {
 					loadOnSequence(current_seq);
+					publish(current_seq);
 				}
 
 				for(BioSeq seq : feature.symL.getChromosomeList()){
@@ -720,6 +721,11 @@ public final class GeneralLoadUtils {
 				return null;
 			}
 
+			@Override
+			protected void process(List<BioSeq> seqs){
+				gviewer.setAnnotatedSeq(seqs.get(0), true, true);
+			}
+			
 			@Override
 			protected void finished() {
 				if(isCancelled()){

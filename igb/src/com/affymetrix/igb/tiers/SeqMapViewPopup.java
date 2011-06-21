@@ -63,7 +63,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private final ActionToggler at1;
   private final ActionToggler at2;
-  private final ActionToggler at3;
+//  private final ActionToggler at3;
 
   private final Action select_all_tiers_action = new AbstractAction("Select All Tracks") {
 	private static final long serialVersionUID = 1L;
@@ -282,7 +282,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		this.gviewer = smv;
 		at1 = new ActionToggler(smv.getSeqMap().show_plus_action);
 		at2 = new ActionToggler(smv.getSeqMap().show_minus_action);
-		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
+//		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
 	}
 
   private void showCustomizer() {
@@ -845,7 +845,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	strandsMenu.removeAll();
 	strandsMenu.add(at1);
 	strandsMenu.add(at2);
-	strandsMenu.add(at3);
+//	strandsMenu.add(at3);
 	popup.add(strandsMenu);
     popup.add(new JSeparator());
     popup.add(select_all_tiers_action);

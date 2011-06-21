@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
-import com.affymetrix.genoviz.util.FileDropHandler;
+import com.affymetrix.genometryImpl.util.FileDropHandler;
 
 import org.freehep.util.export.ExportDialog;
 import java.awt.BorderLayout;

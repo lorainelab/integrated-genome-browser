@@ -15,7 +15,9 @@ import org.osgi.framework.Bundle;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -191,9 +193,19 @@ public interface IGBService {
 	 */
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
+	// for RestrictionSites
 	public void updateWidget();
 	public void removeItem(List<GlyphI> vec);
 	public BioSeq getViewSeq();
+	// for SearchView
+	public void zoomTo(SeqSpan span);
+	public void zoomToCoord(String seqID, int start, int end);
+	public void select(GlyphI g);
+	public void deselect(GlyphI g);
+	public GlyphI getItem(SeqSymmetry sym);
+	public void centerAtHairline();
+	public void addSeqMapRefreshedListener(SeqMapRefreshed seqMapRefreshed);
+	public void mapRefresh(List<GlyphI> glyphs);
 	/**
 	 * get the SeqMapView, the main window for IGB
 	 * @return the SeqMapView

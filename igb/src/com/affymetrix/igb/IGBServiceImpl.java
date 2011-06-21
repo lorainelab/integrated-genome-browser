@@ -32,7 +32,9 @@ import org.osgi.framework.Constants;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -47,8 +49,10 @@ import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -337,6 +341,49 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public BioSeq getViewSeq() {
 		return ((SeqMapView)getMapView()).getViewSeq();
+	}
+
+	@Override
+	public void zoomTo(SeqSpan span) {
+		((SeqMapView)getMapView()).zoomTo(span);
+	}
+
+	@Override
+	public void zoomToCoord(String seqID, int start, int end) {
+		MapRangeBox.zoomToSeqAndSpan(((SeqMapView)getMapView()), seqID, start, end);
+	}
+
+	@Override
+	public void select(GlyphI g) {
+		((SeqMapView)getMapView()).getSeqMap().select(g);
+	}
+
+	@Override
+	public void deselect(GlyphI g) {
+		((SeqMapView)getMapView()).getSeqMap().deselect(g);
+	}
+
+	@Override
+	public GlyphI getItem(SeqSymmetry sym) {
+		return ((SeqMapView)getMapView()).getSeqMap().<GlyphI>getItem(sym);
+	}
+
+	@Override
+	public void centerAtHairline() {
+		 ((SeqMapView)getMapView()).centerAtHairline();
+	}
+
+	@Override
+	public void addSeqMapRefreshedListener(SeqMapRefreshed seqMapRefreshed) {
+		((SeqMapView)getMapView()).addToRefreshList(seqMapRefreshed);
+	}
+
+	@Override
+	public void mapRefresh(List<GlyphI> glyphs) {
+		TransformTierGlyph axis_tier = ((SeqMapView)getMapView()).getAxisTier();
+		for(GlyphI glyph : glyphs){
+			axis_tier.addChild(glyph);
+		}
 	}
 
 	@Override

@@ -26,7 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;

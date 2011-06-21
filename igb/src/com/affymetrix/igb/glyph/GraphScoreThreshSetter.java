@@ -21,12 +21,12 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.igb.swing.JComboBoxWithSingleListener;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -9,6 +9,7 @@ Import-Package: javax.swing,
  javax.swing.event,
  javax.swing.table,
  com.affymetrix.genometryImpl,
+ com.affymetrix.genometryImpl.event,
  com.affymetrix.genoviz.bioviews,
  org.osgi.framework
 Export-Package: com.affymetrix.igb.osgi.service

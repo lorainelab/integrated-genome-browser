@@ -1,6 +1,5 @@
 package com.affymetrix.igb.search;
 
-
 import com.affymetrix.genometryImpl.thread.CThreadEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -26,6 +25,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -42,19 +42,11 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.DNAUtils;
 
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.tiers.TransformTierGlyph;
-import com.affymetrix.igb.util.IGBUtils;
-import com.affymetrix.igb.view.MapRangeBox;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.SeqMapView.SeqMapRefreshed;
-import com.affymetrix.igb.util.JComboBoxWithSingleListener;
-import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.swing.JComboBoxWithSingleListener;
 
 public final class SearchView extends IGBTabPanel implements 
 		ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener {
@@ -100,8 +92,7 @@ public final class SearchView extends IGBTabPanel implements
 	private final JCheckBox selectInMapCheckBox = new JCheckBox(SELECTINMAP_TEXT);
 	private final JButton searchButton = new JButton(MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif"));
 	private final JButton clearButton = new JButton(MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
-	private final CancelButton cancel = new CancelButton(IGBUtils.getIcon("x_icon.gif"));;
-	private final SeqMapView gviewer;
+	private final CancelButton cancel = new CancelButton(igbService.getIcon("x_icon.gif"));;
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private final static Color hitcolor = new Color(150, 150, 255);
 
@@ -115,8 +106,7 @@ public final class SearchView extends IGBTabPanel implements
 
 	public SearchView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), false, TAB_POSITION);
-		gviewer = (SeqMapView)igbService.getMapView();
-		gviewer.addToRefreshList(this);
+		igbService.addSeqMapRefreshedListener(this);
 		
 		group = gmodel.getSelectedSeqGroup();
 
@@ -209,7 +199,7 @@ public final class SearchView extends IGBTabPanel implements
 		searchTF.addActionListener(this);
 		searchButton.addActionListener(this);
 		clearButton.addActionListener(this);
-		ServerList.getServerInstance().addServerInitListener(this);
+		igbService.addServerInitListener(this);
 	}
 
 	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
@@ -222,7 +212,7 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void initSequenceCB() {
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		igbService.runOnEventQueue(new Runnable() {
 			public void run() {
 				// set up the sequence combo_box
 				sequenceCB.removeAllItems();
@@ -327,7 +317,7 @@ public final class SearchView extends IGBTabPanel implements
 							return;
 						}
 
-						if (gviewer.getSeqMap().<GlyphI>getItem(sym) == null) {
+						if (igbService.getItem(sym) == null) {
 							if (group == null) {
 								return;
 							}
@@ -345,14 +335,14 @@ public final class SearchView extends IGBTabPanel implements
 					GlyphSearchResultsTableModel model = (GlyphSearchResultsTableModel)table.getModel();
 					GlyphI glyph = model.get(srow);
 					for(GlyphI g : glyphs){
-						gviewer.getSeqMap().deselect(g);
+						igbService.deselect(g);
 					}
 					if(glyph != null){
 						int start = (int)glyph.getCoordBox().x;
 						int end = (int)(glyph.getCoordBox().x + glyph.getCoordBox().width);
-						gviewer.getSeqMap().select(glyph);
-						zoomToCoord(model.seq, start, end);
-						gviewer.centerAtHairline();
+						igbService.select(glyph);
+						igbService.zoomToCoord(model.seq, start, end);
+						igbService.centerAtHairline();
 					}
 				}
 				
@@ -366,13 +356,9 @@ public final class SearchView extends IGBTabPanel implements
 				SeqSpan span = sym.getSpan(0);
 				if (span != null) {
 					// zoom to its coordinates
-					zoomToCoord(seqID, span.getStart(), span.getEnd());
+					igbService.zoomToCoord(seqID, span.getStart(), span.getEnd());
 				}
 			}
-		}
-
-		private void zoomToCoord(String seqID, int start, int end){
-			MapRangeBox.zoomToSeqAndSpan(gviewer, seqID, start, end);
 		}
 	};
 
@@ -380,7 +366,7 @@ public final class SearchView extends IGBTabPanel implements
 	private void clearResults() {
 		if (!glyphs.isEmpty()) {
 			glyphs.clear();
-			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
+			igbService.setAnnotatedSeq(igbService.getAnnotatedSeq(), true, true, true);
 		}
 		
 		clearTable();
@@ -395,8 +381,7 @@ public final class SearchView extends IGBTabPanel implements
 		Object src = evt.getSource();
 		if (src == this.searchCB) {
 			clearResults();
-			NeoMap map = gviewer.getSeqMap();
-			map.updateWidget();
+			igbService.updateWidget();
 
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			this.initSequenceCB();
@@ -557,7 +542,7 @@ public final class SearchView extends IGBTabPanel implements
 			
 		};
 		worker.addThreadListener(cancel);
-		ThreadUtils.getPrimaryExecutor(this).execute(worker);
+		igbService.getPrimaryExecutor(this).execute(worker);
 	}
 
 	private static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
@@ -606,19 +591,19 @@ public final class SearchView extends IGBTabPanel implements
 			return;
 		}
 
-		if(vseq != gviewer.getAnnotatedSeq()){
+		if(vseq != igbService.getAnnotatedSeq()){
 			boolean confirm = igbService.confirmPanel("Sequence " + vseq.getID() +
-					" is not same as selected sequence " + gviewer.getAnnotatedSeq().getID() +
+					" is not same as selected sequence " + igbService.getAnnotatedSeq().getID() +
 					". \nPlease select the sequence before proceeding." +
 					"\nDo you want to select sequence now ?");
 			if(!confirm)
 				return;
-			SeqSpan viewspan = gviewer.getVisibleSpan();
+			SeqSpan viewspan = igbService.getVisibleSpan();
 			int min = Math.max((viewspan.getMin() > vseq.getMax() ? -1 : viewspan.getMin()), vseq.getMin());
 			int max = Math.min(viewspan.getMax(), vseq.getMax());
 			SeqSpan newspan = new SimpleSeqSpan(min, max, vseq);
 			gmodel.setSelectedSeq(vseq);
-			gviewer.zoomTo(newspan);
+			igbService.zoomTo(newspan);
 		}
 
 		final boolean isComplete = vseq.isComplete();
@@ -633,7 +618,7 @@ public final class SearchView extends IGBTabPanel implements
 			@Override
 			protected Object runInBackground() {
 				if (!isComplete && confirm) {
-					igbService.loadResidues(gviewer.getVisibleSpan(), true);
+					igbService.loadResidues(igbService.getVisibleSpan(), true);
 				}
 				regexTF(vseq);
 				return null;
@@ -642,12 +627,12 @@ public final class SearchView extends IGBTabPanel implements
 			@Override
 			protected void finished() {
 				if (!isComplete && confirm) {
-					gviewer.setAnnotatedSeq(vseq, true, true, true);
+					igbService.setAnnotatedSeq(vseq, true, true, true);
 				}
 			}
 		};
 		worker.addThreadListener(cancel);
-		ThreadUtils.getPrimaryExecutor(this).execute(worker);
+		igbService.getPrimaryExecutor(this).execute(worker);
 	}
 
 	private void regexTF(BioSeq vseq) {
@@ -694,8 +679,7 @@ public final class SearchView extends IGBTabPanel implements
 		}
 
 		setStatus("Found " + ": " + hit_count1 + " forward and " + hit_count2 + " reverse strand hits. Click row to view hit.");
-		NeoMap map = gviewer.getSeqMap();
-		map.updateWidget();
+		igbService.updateWidget();
 
 		Collections.sort(glyphs, new Comparator<GlyphI>() {
 			public int compare(GlyphI g1, GlyphI g2) {
@@ -781,7 +765,7 @@ public final class SearchView extends IGBTabPanel implements
 
 	/** Set the text in the status bar in a thread-safe way. */
 	void setStatus(final String text) {
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		igbService.runOnEventQueue(new Runnable() {
 
 			public void run() {
 				status_bar.setText(text);
@@ -790,12 +774,10 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	public void mapRefresh() {
-		TransformTierGlyph axis_tier = gviewer.getAxisTier();
-		for(GlyphI glyph : glyphs){
-			axis_tier.addChild(glyph);
-		}
+		igbService.mapRefresh(glyphs);
 	}
 
+	@SuppressWarnings("serial")
 	private abstract class SearchResultsTableModel extends AbstractTableModel{
 		public abstract Object get(int i);
 		public abstract void clear();
@@ -1043,6 +1025,7 @@ public final class SearchView extends IGBTabPanel implements
 		return true;
 	}
 	
+	@SuppressWarnings("serial")
 	private class CancelButton extends JButton implements CThreadListener, ActionListener{
 		
 		public CancelButton(ImageIcon icon){

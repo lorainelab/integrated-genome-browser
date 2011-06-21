@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -2031,10 +2032,6 @@ public class SeqMapView extends JPanel
 		seqmap_refresh_list.add(smr);
 	}
 	
-	public static interface SeqMapRefreshed{
-		public void mapRefresh();
-	}
-
 	public SeqSymmetry getSeqSymmetry(){
 		return seq_selected_sym;
 	}

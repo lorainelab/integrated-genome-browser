@@ -368,7 +368,6 @@ public final class GeneralLoadView extends IGBTabPanel
 			gmodel.addSeqSelectionListener(this);
 			gmodel.setSelectedSeq(seq);
 
-			GeneralLoadView.loadWholeRangeFeatures(null);
 			// Try/catch may not be needed.
 			try {
 				Persistence.restoreSeqVisibleSpan(gviewer);
@@ -879,7 +878,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		}
 
 		createFeaturesTable();
-		//GeneralLoadUtils.loadWholeRangeFeatures(ServerType.DAS2);
+		loadWholeRangeFeatures(ServerType.DAS2);
 	}
 
 

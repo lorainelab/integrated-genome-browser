@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -39,14 +40,12 @@ import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
 
-import com.affymetrix.genoviz.util.FileDropHandler;
-import com.affymetrix.genoviz.util.ErrorHandler;
-
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -55,6 +54,7 @@ import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
@@ -75,12 +75,12 @@ public final class LoadFileAction extends AbstractAction {
 
 		@Override
 		public void openFileAction(File f) {
-			LoadFileAction.openFileAction(gviewerFrame,f);
+			LoadFileAction.openFileAction(f);
 		}
 
 		@Override
 		public void openURLAction(String url) {
-			LoadFileAction.openURLAction(gviewerFrame,url);
+			LoadFileAction.openURLAction(url);
 		}
 	};
 	private static MergeOptionChooser chooser = null;
@@ -389,12 +389,11 @@ public final class LoadFileAction extends AbstractAction {
 		}
 		
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
-		final String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		final String message = "Retrieving chromosomes for " + fileName;
+		CThreadWorker worker = new CThreadWorker(message) {
 
 			@Override
-			public Void doInBackground() {
-				Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
+			protected Object runInBackground() {			
 				// Here we are reading the whole file in.  We have no choice, since the chromosomes in this file are unknown.
 				for (BioSeq seq : gFeature.symL.getChromosomeList()) {
 					loadGroup.addSeq(seq.getID(), seq.getLength());
@@ -404,8 +403,7 @@ public final class LoadFileAction extends AbstractAction {
 			}
 
 			@Override
-			public void done() {
-				// force a refresh of this server. This forces creation of 'genome' sequence.
+			protected void finished() {
 				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 				SeqGroupView.getInstance().refreshTable();
@@ -413,31 +411,29 @@ public final class LoadFileAction extends AbstractAction {
 					// select a chromosomes
 					gmodel.setSelectedSeq(loadGroup.getSeq(0));
 				}
-
-				Application.getSingleton().removeNotLockedUpMsg(notLockedUpMsg);
 			}
 		};
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}
 
 
-	private static void openURLAction(JFrame gviewerFrame,String url){
+	private static void openURLAction(String url){
 		try {
 			URI uri = new URI(url.trim());
 			if(!openURI(uri)){
-				ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, null);
+				ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url);
 			}
 		}
 		catch (URISyntaxException ex) {
 			ex.printStackTrace();
-			ErrorHandler.errorPanel(gviewerFrame, "INVALID URL", url + "\n Url provided is not valid: ", null);
+			ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ");
 		}
 	}
 
-	private static void openFileAction(JFrame gviewerFrame, File f){
+	private static void openFileAction(File f){
 		URI uri = f.toURI();
 		if(!openURI(uri)){
-			ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName(), null);
+			ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + f.getName());
 		}
 	}
 

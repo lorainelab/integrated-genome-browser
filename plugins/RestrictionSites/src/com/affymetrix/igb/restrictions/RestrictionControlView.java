@@ -23,12 +23,8 @@ import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.util.ThreadUtils;
-import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,7 +39,6 @@ public final class RestrictionControlView extends IGBTabPanel
 
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
 	private static final int TAB_POSITION = 8;
-	private final SeqMapView gviewer;
 	private final Map<String,String> site_hash = new HashMap<String,String>();
 	private JList siteList;
 	private JPanel labelP;
@@ -68,7 +63,6 @@ public final class RestrictionControlView extends IGBTabPanel
 
 	public RestrictionControlView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), false, TAB_POSITION);
-		this.gviewer = (SeqMapView)igbService.getMapView();
 		boolean load_success = true;
 
 		String rest_file = "/rest_enzymes";
@@ -179,28 +173,27 @@ public final class RestrictionControlView extends IGBTabPanel
 	}
 
 	private void clearGlyphs() {
-		AffyTieredMap map = gviewer.getSeqMap();
-		map.removeItem(glyphs);
+		igbService.removeItem(glyphs);
 		glyphs.clear();
 	}
 
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == clearB) {
 			clearAll();
-			gviewer.getSeqMap().updateWidget();
+			igbService.updateWidget();
 			return;
 		}
 
 		clearGlyphs();
 
-		final BioSeq vseq = gviewer.getViewSeq();
+		final BioSeq vseq = igbService.getViewSeq();
 		if (vseq == null) {
 			ErrorHandler.errorPanel("No Sequence selected. Please select a seqeunce.");
 			return;
 		}
 
-		Executor vexec = ThreadUtils.getPrimaryExecutor(this);
-		if(!vseq.isAvailable(gviewer.getVisibleSpan())){
+		Executor vexec = igbService.getPrimaryExecutor(this);
+		if(!vseq.isAvailable(igbService.getVisibleSpan())){
 			boolean confirm = igbService.confirmPanel("Residues for " + vseq.getID()
 					+ " not loaded.  \nDo you want to load residues?");
 			if (!confirm) {
@@ -208,8 +201,8 @@ public final class RestrictionControlView extends IGBTabPanel
 			}
 			vexec.execute(new Runnable() {
 				public void run() {
-					igbService.loadResidues(gviewer.getVisibleSpan(), true);
-					gviewer.setAnnotatedSeq(vseq, true, true, true);
+					igbService.loadResidues(igbService.getVisibleSpan(), true);
+					igbService.setAnnotatedSeq(vseq, true, true, true);
 				}
 			});
 		}
@@ -224,12 +217,11 @@ public final class RestrictionControlView extends IGBTabPanel
 		{
 			igbService.addNotLockedUpMsg("Finding Restriction Sites... ");
 			try{
-				BioSeq vseq = gviewer.getViewSeq();
-				if (vseq == null || !vseq.isAvailable(gviewer.getVisibleSpan())) {
+				BioSeq vseq = igbService.getViewSeq();
+				if (vseq == null || !vseq.isAvailable(igbService.getVisibleSpan())) {
 					ErrorHandler.errorPanel("Residues for seq not available, search aborted.");
 					return;
 				}
-				NeoMap map = gviewer.getSeqMap();
 				int residue_offset = vseq.getMin();
 				String residues = vseq.getResidues();
 				// Search for reverse complement of query string
@@ -266,7 +258,7 @@ public final class RestrictionControlView extends IGBTabPanel
 							false, regex, rev_searchstring, residue_offset, glyphs, colors[i % colors.length]);
 
 					System.out.println(site_residues + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
-					map.updateWidget();
+					igbService.updateWidget();
 				}
 			}finally{
 				igbService.removeNotLockedUpMsg("Finding Restriction Sites... ");

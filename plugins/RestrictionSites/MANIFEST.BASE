@@ -8,9 +8,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-RestrictionSitesPanel
 IGB-Tier: 1
 Import-Package: com.affymetrix.igb.osgi.service,
- com.affymetrix.igb.tiers,
- com.affymetrix.igb.util,
- com.affymetrix.igb.view,
  com.affymetrix.igb.window.service,
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.util,

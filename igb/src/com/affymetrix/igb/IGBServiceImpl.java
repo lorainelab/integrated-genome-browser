@@ -46,6 +46,7 @@ import com.affymetrix.igb.osgi.service.PropertyHandler;
 import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
@@ -280,6 +281,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
+		((SeqMapView)getMapView()).setAnnotatedSeq(seq, preserve_selection, preserve_view_x, preserve_view_y);
+	}
+
+	@Override
 	public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
 		GeneralLoadUtils.loadAndDisplaySpan(span, feature);
 	}
@@ -315,6 +321,22 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor) {
 		return ((IGB)IGB.getSingleton()).searchForRegexInResidues(
 				forward, regex, residues, residue_offset, Application.getSingleton().getMapView().getAxisTier(), glyphs, hitColor);
+	}
+
+	@Override
+	public void updateWidget() {
+		((SeqMapView)getMapView()).getSeqMap().updateWidget();
+	}
+
+	@Override
+	public void removeItem(List<GlyphI> glyphs) {
+		AffyTieredMap map = ((SeqMapView)getMapView()).getSeqMap();
+		map.removeItem(glyphs);
+	}
+
+	@Override
+	public BioSeq getViewSeq() {
+		return ((SeqMapView)getMapView()).getViewSeq();
 	}
 
 	@Override

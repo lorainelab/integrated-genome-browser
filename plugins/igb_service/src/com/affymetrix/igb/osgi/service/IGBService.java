@@ -164,6 +164,7 @@ public interface IGBService {
 	public void setRegion(int start, int end, BioSeq seq);
 	public BioSeq getAnnotatedSeq();
 	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view);
+	public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y);
 	public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
 	public void updateGeneralLoadView();
 	public void updateDependentData();
@@ -190,6 +191,9 @@ public interface IGBService {
 	 */
 	public int searchForRegexInResidues(
 			boolean forward, Pattern regex, String residues, int residue_offset, List<GlyphI> glyphs, Color hitColor);
+	public void updateWidget();
+	public void removeItem(List<GlyphI> vec);
+	public BioSeq getViewSeq();
 	/**
 	 * get the SeqMapView, the main window for IGB
 	 * @return the SeqMapView

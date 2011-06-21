@@ -32,7 +32,7 @@ public abstract class Application {
 	abstract public SeqMapView getMapView();
 
 	public final void addNotLockedUpMsg(final String s) {
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueueInQueue(new Runnable() {
 
 			public void run() {
 				progressStringList.add(s);
@@ -45,7 +45,7 @@ public abstract class Application {
 
 	public final void removeNotLockedUpMsg(final String s) {
 
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueueInQueue(new Runnable() {
 
 			public void run() {
 				progressStringList.remove(s);

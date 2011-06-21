@@ -1,8 +1,11 @@
 package com.affymetrix.igb.util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 public final class ThreadUtils {
@@ -29,6 +32,18 @@ public final class ThreadUtils {
 		  r.run();
 	  } else {
 		  SwingUtilities.invokeLater(r);
+	  }
+  }
+  
+  public static void runOnEventQueueInQueue(Runnable r) {
+	  if (SwingUtilities.isEventDispatchThread()) {
+		  r.run();
+	  } else {
+			try {
+				SwingUtilities.invokeAndWait(r);
+			} catch (Exception ex) {
+				Logger.getLogger(ThreadUtils.class.getName()).log(Level.SEVERE, null, ex);
+			}
 	  }
   }
 }

@@ -2,7 +2,6 @@ package com.affymetrix.igb.view.load;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
-import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -10,6 +9,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -24,10 +28,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JSplitPane;
+import javax.swing.SwingWorker;
+import javax.swing.table.TableColumn;
 
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.SeqSpan;
-
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -39,13 +44,16 @@ import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-
+import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
+
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
@@ -60,17 +68,8 @@ import com.affymetrix.igb.action.LoadSequence;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.util.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.util.ThreadHandler;
 import com.affymetrix.igb.view.TrackView;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JSplitPane;
-import javax.swing.SwingWorker;
-import javax.swing.table.TableColumn;
 
 public final class GeneralLoadView extends IGBTabPanel
 				implements ItemListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
@@ -325,7 +324,7 @@ public final class GeneralLoadView extends IGBTabPanel
 	private void RestorePersistentGenome() {
 		// Get group and seq info from persistent preferences.
 		// (Recovering as much data as possible before activating listeners.)
-		AnnotatedSeqGroup group = Persistence.restoreGroupSelection();
+		final AnnotatedSeqGroup group = Persistence.restoreGroupSelection();
 		if (group == null) {
 			return;
 		}
@@ -334,7 +333,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		if (gVersions == null || gVersions.isEmpty()) {
 			return;
 		}
-		String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
+		final String versionName = GeneralLoadUtils.getPreferredVersionName(gVersions);
 		if (versionName == null || GeneralLoadUtils.versionName2species.get(versionName) == null || gmodel.getSeqGroup(versionName) != group) {
 			return;
 		}
@@ -343,40 +342,50 @@ public final class GeneralLoadView extends IGBTabPanel
 			return;
 		}
 
-		try {
-			igbService.addNotLockedUpMsg("Loading previous genome " + versionName +" ...");
+		CThreadWorker worker = new CThreadWorker("Loading previous genome " + versionName + " ...") {
 
-			gmodel.addGroupSelectionListener(this);
+			@Override
+			protected Object runInBackground() {
 
-			initVersion(versionName);
+				initVersion(versionName);
 
-			gmodel.setSelectedSeqGroup(group);
+				gmodel.setSelectedSeqGroup(group);
 
-			List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
-			if (features == null || features.isEmpty()) {
-				return;
+				List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
+				if (features == null || features.isEmpty()) {
+					return null;
+				}
+
+				BioSeq seq = Persistence.restoreSeqSelection(group);
+				if (seq == null) {
+					seq = group.getSeq(0);
+					if (seq == null) {
+						return null;
+					}
+				}
+
+			
+				// Try/catch may not be needed.
+				try {
+					Persistence.restoreSeqVisibleSpan(gviewer);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				return seq;
 			}
 
-			BioSeq seq = Persistence.restoreSeqSelection(group);
-			if (seq == null) {
-				seq = group.getSeq(0);
-				if (seq == null) {
-					return;
+			@Override
+			protected void finished() {
+				try {
+					gmodel.setSelectedSeq((BioSeq)get());
+				} catch (Exception ex) {
+					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
+		};
 
-			gmodel.addSeqSelectionListener(this);
-			gmodel.setSelectedSeq(seq);
-
-			// Try/catch may not be needed.
-			try {
-				Persistence.restoreSeqVisibleSpan(gviewer);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} finally {
-			igbService.removeNotLockedUpMsg("Loading previous genome " + versionName +" ...");
-		}
+		ThreadHandler.getThreadHandler().execute(worker, worker);
 	}
 
 	/**

@@ -8,13 +8,14 @@ import javax.swing.SwingWorker;
  *
  * @author hiralv
  */
-public abstract class CThreadWorker extends SwingWorker{
+public abstract class CThreadWorker<T,V> extends SwingWorker<T,V>{
 	
 	private Set<CThreadListener> listeners= new CopyOnWriteArraySet<CThreadListener>();
 	
 	final private String message;
 	
 	public CThreadWorker(String msg){
+		super();
 		if(msg == null || msg.length() == 0){
 			throw new IllegalArgumentException("Invalid Statusbar Message");
 		}
@@ -32,12 +33,12 @@ public abstract class CThreadWorker extends SwingWorker{
 	}
 	
 	@Override
-	protected final Object doInBackground() throws Exception {
+	protected final T doInBackground() throws Exception {
 		fireThreadEvent(this, CThreadEvent.STARTED);
 		return runInBackground();
 	}
 	
-	protected abstract Object runInBackground();
+	protected abstract T runInBackground();
 	
 	protected abstract void finished();
 

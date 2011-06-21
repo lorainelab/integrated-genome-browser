@@ -433,11 +433,11 @@ public final class LoadFileAction extends AbstractAction {
 	private static void addChromosomesForUnknownGroup(final String fileName, final GenericFeature gFeature) {
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String notLockedUpMsg = "Retrieving chromosomes for " + fileName;
+		Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 			@Override
 			public Void doInBackground() {
-				Application.getSingleton().addNotLockedUpMsg(notLockedUpMsg);
 				// Here we are reading the whole file in.  We have no choice, since the chromosomes in this file are unknown.
 				for (BioSeq seq : gFeature.symL.getChromosomeList()) {
 					loadGroup.addSeq(seq.getID(), seq.getLength());

@@ -44,15 +44,15 @@ import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.igb.Application;
 
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.featureloader.QuickLoad;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import com.affymetrix.igb.util.ScriptFileLoader;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -390,20 +390,20 @@ public final class LoadFileAction extends AbstractAction {
 		
 		final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
 		final String message = "Retrieving chromosomes for " + fileName;
-		CThreadWorker worker = new CThreadWorker(message) {
+		SwingWorker worker = new SwingWorker() {
 
 			@Override
-			protected Object runInBackground() {			
-				// Here we are reading the whole file in.  We have no choice, since the chromosomes in this file are unknown.
+			protected Object doInBackground() throws Exception {
+				Application.getSingleton().addNotLockedUpMsg(message);
 				for (BioSeq seq : gFeature.symL.getChromosomeList()) {
 					loadGroup.addSeq(seq.getID(), seq.getLength());
 				}
 
 				return null;
 			}
-
+			
 			@Override
-			protected void finished() {
+			protected void done() {
 				ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true, true);
 
 				SeqGroupView.getInstance().refreshTable();
@@ -411,7 +411,10 @@ public final class LoadFileAction extends AbstractAction {
 					// select a chromosomes
 					gmodel.setSelectedSeq(loadGroup.getSeq(0));
 				}
+				Application.getSingleton().removeNotLockedUpMsg(message);
 			}
+
+			
 		};
 		ThreadUtils.getPrimaryExecutor(gFeature).execute(worker);
 	}

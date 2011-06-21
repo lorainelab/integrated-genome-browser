@@ -1037,7 +1037,7 @@ public final class GeneralLoadUtils {
 
 		//It autoload data is selected then load.
 		if(autoload){
-			gmodel.setSelectedSeq(gmodel.getSelectedSeq());
+			GeneralLoadView.loadWholeRangeFeatures(null);
 		}
 	}
 

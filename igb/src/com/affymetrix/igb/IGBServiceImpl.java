@@ -30,6 +30,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -52,6 +53,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.util.UnibrowControlServlet;
 import com.affymetrix.igb.view.MapRangeBox;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
@@ -313,6 +315,31 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public void doSingleAction(String line) {
 		ScriptFileLoader.doSingleAction(line);
+	}
+
+	@Override
+	public void performSelection(String selectParam) {
+		UnibrowControlServlet.getInstance().performSelection(selectParam);
+	}
+
+	@Override
+	public void loadResidues(int start, int end) {
+		UnibrowControlServlet.getInstance().loadResidues(start, end);
+	}
+
+	@Override
+	public GenericFeature getFeature(GenericServer gServer, String feature_url) {
+		return UnibrowControlServlet.getInstance().getFeature(gServer, feature_url);
+	}
+
+	@Override
+	public GenericServer loadServer(String server_url) {
+		return UnibrowControlServlet.getInstance().loadServer(server_url);
+	}
+
+	@Override
+	public AnnotatedSeqGroup determineAndSetGroup(final String version) {
+		return UnibrowControlServlet.getInstance().determineAndSetGroup(version);
 	}
 
 	@Override

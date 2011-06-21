@@ -31,7 +31,6 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.util.UnibrowControlServlet;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -134,7 +133,7 @@ public final class BookmarkUnibrowControlServlet {
 				|| query_urls.length == 0 || server_urls.length != query_urls.length) {
 			loaddata = false;
 		} else {
-			gServers = loadServers(server_urls);
+			gServers = loadServers(igbService, server_urls);
 		}
 
 		String[] das2_query_urls = parameters.get(Bookmark.DAS2_QUERY_URL);
@@ -146,7 +145,7 @@ public final class BookmarkUnibrowControlServlet {
 				|| das2_query_urls.length == 0 || das2_server_urls.length != das2_query_urls.length) {
 			loaddas2data = false;
 		} else {
-			gServers2 = loadServers(das2_server_urls);
+			gServers2 = loadServers(igbService, das2_server_urls);
 		}
 
 		final BioSeq seq = goToBookmark(igbService, seqid, version, start, end);
@@ -186,11 +185,11 @@ public final class BookmarkUnibrowControlServlet {
 		//loadDataFromURLs(uni, data_urls, url_file_extensions, null);
 		String selectParam = getStringParameter(parameters, "select");
 		if (selectParam != null) {
-			UnibrowControlServlet.getInstance().performSelection(selectParam);
+			igbService.performSelection(selectParam);
 		}
 
 		if(loadResidue){
-			UnibrowControlServlet.getInstance().loadResidues(start, end);
+			igbService.loadResidues(start, end);
 		}
 
 	}
@@ -249,7 +248,7 @@ public final class BookmarkUnibrowControlServlet {
 				continue;
 			}
 
-			GenericFeature feature = getFeature(gServers[i], type_uri);
+			GenericFeature feature = getFeature(igbService, gServers[i], type_uri);
 			if(feature != null){
 				BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 				loadFeature(igbService, feature, seq, start, end);
@@ -269,7 +268,7 @@ public final class BookmarkUnibrowControlServlet {
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature[] gFeatures = new GenericFeature[query_urls.length];
 		for (int i = 0; i < query_urls.length; i++) {
-			gFeatures[i] = getFeature(gServers[i], query_urls[i]);
+			gFeatures[i] = getFeature(igbService, gServers[i], query_urls[i]);
 		}
 
 		for (int i = 0; i < gFeatures.length; i++) {
@@ -283,7 +282,7 @@ public final class BookmarkUnibrowControlServlet {
 		return gFeatures;
 	}
 
-	private GenericFeature getFeature(final GenericServer gServer, final String query_url){
+	private GenericFeature getFeature(IGBService igbService, final GenericServer gServer, final String query_url){
 
 		if (gServer == null) {
 			return null;
@@ -295,7 +294,7 @@ public final class BookmarkUnibrowControlServlet {
 			return null;
 		}
 
-		GenericFeature feature = UnibrowControlServlet.getInstance().getFeature(gServer, query_url);
+		GenericFeature feature = igbService.getFeature(gServer, query_url);
 
 		if (feature == null) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(
@@ -314,25 +313,25 @@ public final class BookmarkUnibrowControlServlet {
 		igbService.loadAndDisplaySpan(overlap, gFeature);
 	}
 
-	private GenericServer[] loadServers(String[] server_urls){
+	private GenericServer[] loadServers(IGBService igbService, String[] server_urls){
 		GenericServer[] gServers = new GenericServer[server_urls.length];
 
 		for (int i = 0; i < server_urls.length; i++) {
 			String server_url = server_urls[i];
-			gServers[i] = UnibrowControlServlet.getInstance().loadServer(server_url);
+			gServers[i] = igbService.loadServer(server_url);
 		}
 
 		return gServers;
 	}
 
-	private void loadDataFromURLs(final IGBService uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
+	private void loadDataFromURLs(final IGBService igbService, final String[] data_urls, final String[] extensions, final String[] tier_names) {
 		try {
 			if (data_urls != null && data_urls.length != 0) {
 				URL[] urls = new URL[data_urls.length];
 				for (int i = 0; i < data_urls.length; i++) {
 					urls[i] = new URL(data_urls[i]);
 				}
-				final UrlLoaderThread t = new UrlLoaderThread(uni, urls, extensions, tier_names);
+				final UrlLoaderThread t = new UrlLoaderThread(igbService, urls, extensions, tier_names);
 				t.runEventually();
 				t.join();
 			}
@@ -380,8 +379,8 @@ public final class BookmarkUnibrowControlServlet {
 	 *  @param graph_files it is ok for this parameter to be null.
 	 *  @return true indicates that the action succeeded
 	 */
-	private BioSeq goToBookmark(final IGBService uni, final String seqid, final String version, int start, int end) {
-		final AnnotatedSeqGroup book_group = UnibrowControlServlet.getInstance().determineAndSetGroup(version);
+	private BioSeq goToBookmark(final IGBService igbService, final String seqid, final String version, int start, int end) {
+		final AnnotatedSeqGroup book_group = igbService.determineAndSetGroup(version);
 		if (book_group == null) {
 			ErrorHandler.errorPanel("Bookmark genome version seq group '" + version + "' not found.\n" +
 							"You may need to choose a different server.");
@@ -399,7 +398,7 @@ public final class BookmarkUnibrowControlServlet {
 				gmodel.setSelectedSeq(book_seq);
 			}
 		}
-		uni.setRegion(start, end, book_seq);
+		igbService.setRegion(start, end, book_seq);
 
 		return book_seq;
 	}

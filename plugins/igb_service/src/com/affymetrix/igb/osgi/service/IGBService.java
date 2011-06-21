@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 
 import org.osgi.framework.Bundle;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -172,6 +173,11 @@ public interface IGBService {
 	public void updateDependentData();
 	public void doActions(final String batchFileStr);
 	public void doSingleAction(String line);
+	public void performSelection(String selectParam);
+	public void loadResidues(int start, int end);
+	public GenericFeature getFeature(GenericServer gServer, String feature_url);
+	public GenericServer loadServer(String server_url);
+	public AnnotatedSeqGroup determineAndSetGroup(final String version);
 	/**
 	 * set the state of the given tab to the given state and update
 	 * the view menu to the new value

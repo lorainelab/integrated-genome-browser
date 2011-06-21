@@ -712,24 +712,47 @@ public final class GeneralLoadUtils {
 
 			@Override
 			protected Void doInBackground() throws Exception {
+				BioSeq current_seq = gmodel.getSelectedSeq();
+
 				BioSeq seq = null;
 				AnnotatedSeqGroup group = span.getBioSeq().getSeqGroup();
-				for (int i = 0; i < group.getSeqCount(); i++) {
-					seq = group.getSeq(i);
-					if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
-						continue; // don't load into Whole Genome
+				if (feature.gVersion.gServer.serverType == ServerType.QuickLoad
+						|| feature.gVersion.gServer.serverType == ServerType.LocalFiles) {
+					List<BioSeq> bioseqs = feature.symL.getChromosomeList();
+					if (current_seq != null) {
+						loadOnSequence(current_seq);
 					}
-					SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
-					if (optimized_sym != null) {
-						loadFeaturesForSym(feature, optimized_sym);
+					for (BioSeq bioseq : bioseqs) {
+						if (bioseq == current_seq) {
+							continue;
+						}
+						loadOnSequence(bioseq);
+					}
+				} else {
+					if (current_seq != null) {
+						loadOnSequence(current_seq);
+					}
+					for (int i = 0; i < group.getSeqCount(); i++) {
+						seq = group.getSeq(i);
+						if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID()) && seq != current_seq) {
+							continue; // don't load into Whole Genome
+						}
+						loadOnSequence(seq);
 					}
 				}
 				return null;
 			}
+
+			public void loadOnSequence(BioSeq seq) {
+				SeqSymmetry optimized_sym = feature.optimizeRequest(new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq));
+				if (optimized_sym != null) {
+					loadFeaturesForSym(feature, optimized_sym);
+				}
+			}
 		};
 		ThreadUtils.getPrimaryExecutor(feature).execute(worker);
 	}
-	
+
 	private static boolean loadFeaturesForSym(GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError {
 		List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();

@@ -317,7 +317,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				if (cspan.getLength() == 0) {
 					cglyph = new DeletionGlyph();
 				} else {
-					if(i==childCount-1){
+					if(i==childCount-1 && cspan.isForward() || i==0 && !cspan.isForward()){
 						cglyph =  (GlyphI) directed_child_glyph_class.newInstance();
 					}else{
 						cglyph = (GlyphI) child_glyph_class.newInstance();

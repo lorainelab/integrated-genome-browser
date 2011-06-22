@@ -125,15 +125,15 @@ public final class GraphSelectionManager
   private GlyphDragger dragger;
   private JFrame frm;
   private IGBService igbService;
-  private List<GraphOperator> operators;
+  private GraphOperatorHolder graphOperatorHolder;
 
-  public GraphSelectionManager(IGBService igbService) {
+  public GraphSelectionManager(IGBService igbService, GraphOperatorHolder graphOperatorHolder) {
     this();
     this.igbService = igbService;
+    this.graphOperatorHolder = graphOperatorHolder;
     this.current_source = igbService.getGraphCurrentSource();
     current_source.addMouseListener(this);
     this.frm = igbService.getFrame();
-    operators = new ArrayList<GraphOperator>();
   }
   
   private GraphSelectionManager() {
@@ -619,7 +619,7 @@ public final class GraphSelectionManager
       combine.add(graph_info_A);
       combine.add(graph_info_B);
       combine.add(new JSeparator());
-      for (final GraphOperator graphOperator : operators) {
+      for (final GraphOperator graphOperator : graphOperatorHolder.getGraphOperators()) {
     	  JMenuItem menuItem = new JMenuItem(graphOperator.getName());
     	  menuItem.addActionListener(
     	      new ActionListener() {
@@ -656,14 +656,6 @@ public final class GraphSelectionManager
 		}
 
       this.popupNotify(popup, graph_syms, primary_sym);
-    }
-
-    public void addGraphOperator(GraphOperator graphOperator) {
-    	operators.add(graphOperator);
-    }
-
-    public void removeGraphOperator(GraphOperator graphOperator) {
-    	operators.remove(graphOperator);
     }
 }
 

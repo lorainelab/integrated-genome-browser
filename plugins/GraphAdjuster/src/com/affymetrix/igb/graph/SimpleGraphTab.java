@@ -56,7 +56,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public final class SimpleGraphTab extends IGBTabPanel
-				implements SeqSelectionListener, SymSelectionListener {
+				implements SeqSelectionListener, SymSelectionListener, GraphOperatorHolder {
 	private static final long serialVersionUID = 1L;
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
 	private static final int TAB_POSITION = 4;
@@ -129,6 +129,22 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final JButton splitB = new JButton(BUNDLE.getString("splitButton"));
 	private JComboBox heat_mapCB;
 	private AdvancedGraphPanel advanced_panel;
+	TreeSet<FloatTransformer> floatTransformers = new TreeSet<FloatTransformer>(
+		new Comparator<FloatTransformer>() {
+			@Override
+			public int compare(FloatTransformer o1, FloatTransformer o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		}
+	);
+	TreeSet<GraphOperator> graphOperators = new TreeSet<GraphOperator>(
+		new Comparator<GraphOperator>() {
+			@Override
+			public int compare(GraphOperator o1, GraphOperator o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		}
+	);
 
 	public SimpleGraphTab(IGBService igbService) {
 		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), false, TAB_POSITION);
@@ -274,6 +290,30 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 	private void setSeqMapView(SeqMapView smv) {
 		this.gviewer = smv;
+	}
+
+	public TreeSet<GraphOperator> getGraphOperators() {
+		return graphOperators;
+	}
+
+	public void addFloatTransformer(FloatTransformer floatTransformer) {
+		floatTransformers.add(floatTransformer);
+		advanced_panel.loadTransforms();
+	}
+
+	public void removeFloatTransformer(FloatTransformer floatTransformer) {
+		floatTransformers.remove(floatTransformer);
+		advanced_panel.loadTransforms();
+	}
+
+	public void addGraphOperator(GraphOperator graphOperator) {
+		graphOperators.add(graphOperator);
+		advanced_panel.loadOperators();
+	}
+
+	public void removeGraphOperator(GraphOperator graphOperator) {
+		graphOperators.remove(graphOperator);
+		advanced_panel.loadOperators();
 	}
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
@@ -837,55 +877,21 @@ public final class SimpleGraphTab extends IGBTabPanel
 			});
 		}
 
-		public void loadTransforms(Set<FloatTransformer> floatTransformers) {
+		public void loadTransforms() {
 			transformationCB.removeAllItems();
 			name2transform.clear();
 			for (FloatTransformer transformer : floatTransformers) {
 				name2transform.put(transformer.getName(), transformer);
-			}
-			ArrayList<FloatTransformer> transformerList = new ArrayList<FloatTransformer>(floatTransformers);
-			Collections.sort(transformerList,
-				new Comparator<FloatTransformer>() {
-					@Override
-					public int compare(FloatTransformer o1, FloatTransformer o2) {
-						int value = o1.getClass().getName().compareTo(o2.getClass().getName());
-						if (value == 0) {
-							value = o1.getName().compareTo(o2.getName());
-						}
-						return value;
-					}
-			}
-			);
-			for (FloatTransformer transformer : transformerList) {
 				transformationCB.addItem(transformer.getName());
 			}
 		}
 
-		public String getCBName(GraphOperator operator) {
-			return (operator.getSymbol() == null) ? operator.getName() : "A" + operator.getSymbol() + "B";
-		}
-
-		public void loadOperators(Set<GraphOperator> graphOperators) {
+		public void loadOperators() {
 			operationCB.removeAllItems();
 			name2operator.clear();
-			for (GraphOperator operator : graphOperators) {
-				name2operator.put(getCBName(operator), operator);
-			}
-			ArrayList<GraphOperator> operatorList = new ArrayList<GraphOperator>(graphOperators);
-			Collections.sort(operatorList,
-				new Comparator<GraphOperator>() {
-					@Override
-					public int compare(GraphOperator o1, GraphOperator o2) {
-						int value = o1.getClass().getName().compareTo(o2.getClass().getName());
-						if (value == 0) {
-							value = o1.getName().compareTo(o2.getName());
-						}
-						return value;
-					}
-			}
-			);
-			for (String name : name2operator.keySet()) {
-				operationCB.addItem(name);
+			for (GraphOperator graphOperator : graphOperators) {
+				name2operator.put(graphOperator.getName(), graphOperator);
+				operationCB.addItem(graphOperator.getName());
 			}
 		}
 

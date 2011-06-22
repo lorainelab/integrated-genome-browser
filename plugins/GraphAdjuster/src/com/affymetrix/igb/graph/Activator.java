@@ -1,8 +1,6 @@
 package com.affymetrix.igb.graph;
 
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,39 +27,46 @@ public class Activator extends WindowActivator implements BundleActivator {
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
 		final SimpleGraphTab simpleGraphTab = new SimpleGraphTab(igbService);
+		graph_manager = new GraphSelectionManager(igbService, simpleGraphTab);
+		igbService.addSeqMapPopupListener(graph_manager);
 		try {
+			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(FloatTransformer.class.getName(), null);
+			if (serviceReferences != null) {
+				for (ServiceReference serviceReference : serviceReferences) {
+					simpleGraphTab.addFloatTransformer((FloatTransformer)bundleContext.getService(serviceReference));
+				}
+			}
 			bundleContext.addServiceListener(
 				new ServiceListener() {
 					@Override
 					public void serviceChanged(ServiceEvent event) {
-						Set<FloatTransformer> floatTransformers = new HashSet<FloatTransformer>();
-						try {
-							ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(FloatTransformer.class.getName(), null);
-							for (ServiceReference serviceReference : serviceReferences) {
-								floatTransformers.add((FloatTransformer)bundleContext.getService(serviceReference));
-							}
-							simpleGraphTab.getAdvancedPanel().loadTransforms(floatTransformers);
+						ServiceReference serviceReference = event.getServiceReference();
+						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
+							simpleGraphTab.removeFloatTransformer((FloatTransformer)bundleContext.getService(serviceReference));
 						}
-						catch (InvalidSyntaxException x) {
-							Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading FloatTransforms 1", x.getMessage());
+						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
+							simpleGraphTab.addFloatTransformer((FloatTransformer)bundleContext.getService(serviceReference));
 						}
 					}
 				}
 			, TRANSFORMER_SERVICE_FILTER);
+			initTransformers();
+			serviceReferences = bundleContext.getAllServiceReferences(GraphOperator.class.getName(), null);
+			if (serviceReferences != null) {
+				for (ServiceReference serviceReference : serviceReferences) {
+					simpleGraphTab.addGraphOperator((GraphOperator)bundleContext.getService(serviceReference));
+				}
+			}
 			bundleContext.addServiceListener(
 				new ServiceListener() {
 					@Override
 					public void serviceChanged(ServiceEvent event) {
-						Set<GraphOperator> graphOperators = new HashSet<GraphOperator>();
-						try {
-							ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(GraphOperator.class.getName(), null);
-							for (ServiceReference serviceReference : serviceReferences) {
-								graphOperators.add((GraphOperator)bundleContext.getService(serviceReference));
-							}
-							simpleGraphTab.getAdvancedPanel().loadOperators(graphOperators);
+						ServiceReference serviceReference = event.getServiceReference();
+						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
+							simpleGraphTab.removeGraphOperator((GraphOperator)bundleContext.getService(serviceReference));
 						}
-						catch (InvalidSyntaxException x) {
-							Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading GraphOperators 1", x.getMessage());
+						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
+							simpleGraphTab.addGraphOperator((GraphOperator)bundleContext.getService(serviceReference));
 						}
 					}
 				}
@@ -70,10 +75,7 @@ public class Activator extends WindowActivator implements BundleActivator {
 		catch (InvalidSyntaxException x) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading 2", x.getMessage());
 		}
-		initTransformers();
 		initOperators();
-		graph_manager = new GraphSelectionManager(igbService);
-		igbService.addSeqMapPopupListener(graph_manager);
 		return simpleGraphTab;
 	}
 
@@ -100,4 +102,3 @@ public class Activator extends WindowActivator implements BundleActivator {
 		bundleContext.registerService(GraphOperator.class.getName(), new MedianOperator(), new Properties());
 	}
 }
-

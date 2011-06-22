@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.graph;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -26,7 +26,8 @@ import java.text.DecimalFormat;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.util.GraphGlyphCheckUtils;
 import java.text.ParseException;
 
 public final class GraphVisibleBoundsSetter extends JPanel
@@ -512,7 +513,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 		if (src == min_valT) {
 			try {
-				float minval = GraphGlyphUtils.numberParser.parse(min_valT.getText()).floatValue();
+				float minval = GraphGlyphCheckUtils.numberParser.parse(min_valT.getText()).floatValue();
 				if (minval > prev_max_val - val_offset) {
 					minval = prev_max_val - val_offset;
 				}
@@ -526,7 +527,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		} else if (src == max_valT) {
 			try {
-				float maxval = GraphGlyphUtils.numberParser.parse(max_valT.getText()).floatValue();
+				float maxval = GraphGlyphCheckUtils.numberParser.parse(max_valT.getText()).floatValue();
 				if (maxval < prev_min_val + val_offset) {
 					maxval = prev_min_val + val_offset;
 				}

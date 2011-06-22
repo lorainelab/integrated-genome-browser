@@ -37,7 +37,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.GraphGlyphCheckUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 
@@ -244,7 +244,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
 			graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-			GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
+			GraphGlyphCheckUtils.checkPixelBounds(graph_glyph, map);
 			smv.getPixelFloaterGlyph().addChild(graph_glyph);
 		} else {
 			if (gstate.getComboStyle() != null) {

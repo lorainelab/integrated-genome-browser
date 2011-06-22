@@ -14,7 +14,6 @@ import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
@@ -25,6 +24,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
@@ -41,7 +41,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.genometryImpl.util.MenuUtil;
@@ -55,7 +54,7 @@ import com.affymetrix.igb.tiers.TierArithmetic;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
-import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.GraphGlyphCheckUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.action.ClampViewAction;
@@ -136,7 +135,6 @@ public class SeqMapView extends JPanel
 	private JToggleButton select_mode_button;
 	private JToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
-	private GraphSelectionManager graph_manager;
 
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	/**
@@ -412,10 +410,6 @@ public class SeqMapView extends JPanel
 		SmartDragScrollMonitor sdsm = new SmartDragScrollMonitor(this);
 		seqmap.setDragScrollMonitor(sdsm);
 
-		graph_manager = new GraphSelectionManager(this);
-		seqmap.addMouseListener(graph_manager);
-		this.addPopupListener(graph_manager);
-
 		setupPopups();
 		this.setLayout(new BorderLayout());
 
@@ -501,7 +495,7 @@ public class SeqMapView extends JPanel
 				public void run() {
 					List<GlyphI> graphs = collectGraphs();
 					for (int i = 0; i < graphs.size(); i++) {
-						GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
+						GraphGlyphCheckUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
 					}
 					getSeqMap().stretchToFit(false, false);
 					getSeqMap().updateWidget();
@@ -1082,7 +1076,7 @@ public class SeqMapView extends JPanel
 
 		// Bring them all into the visual area
 		for (GlyphI gl : glyphlist) {
-			GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, getSeqMap());
+			GraphGlyphCheckUtils.checkPixelBounds((GraphGlyph) gl, getSeqMap());
 		}
 
 		select(glyphsToSyms(glyphlist), false, true, true);
@@ -1807,7 +1801,7 @@ public class SeqMapView extends JPanel
 		label.setText(title);
 	}
 
-	private void addPopupListener(ContextualPopupListener listener) {
+	public void addPopupListener(ContextualPopupListener listener) {
 		popup_listeners.add(listener);
 	}
 
@@ -2073,14 +2067,6 @@ public class SeqMapView extends JPanel
 //			zoom_mode_button.doClick();
 //		}
 	}
-
-    public void addGraphOperator(GraphOperator graphOperator) {
-    	graph_manager.addGraphOperator(graphOperator);
-    }
-
-    public void removeGraphOperator(GraphOperator graphOperator) {
-    	graph_manager.removeGraphOperator(graphOperator);
-    }
 
     public void focusTrack(TierGlyph selectedTier) {
     	// set zoom to height of selected track

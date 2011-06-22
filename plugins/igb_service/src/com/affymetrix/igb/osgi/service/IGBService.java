@@ -17,11 +17,13 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
 /**
@@ -257,6 +259,8 @@ public interface IGBService {
 	 * load the current state of the application
 	 */
 	public void loadState();
+	public File getOutputDirectory();
+	public void setOutputDirectory(File file);
 	/**
 	 * get the load directory, where to find local files to
 	 * be loaded
@@ -280,7 +284,8 @@ public interface IGBService {
 	 * @param panel the IGBTabPanel
 	 */
 	public void selectTab(IGBTabPanel panel);
-
+	public NeoAbstractWidget getGraphCurrentSource();
+	public void addSeqMapPopupListener(ContextualPopupListener listener);
 	// ThreadUtils
 	public Executor getPrimaryExecutor(Object key);
 	public void runOnEventQueue(Runnable r);

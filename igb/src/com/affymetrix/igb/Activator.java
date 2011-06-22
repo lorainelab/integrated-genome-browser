@@ -147,18 +147,6 @@ public class Activator implements BundleActivator {
 			}
 		);
 		addService(
-			new ServiceHandler(GraphOperator.class) {
-				@Override
-				public void addService(Object o) {
-					igb.getMapView().addGraphOperator((GraphOperator)o);
-				}
-				@Override
-				public void removeService(Object o) {
-					igb.getMapView().removeGraphOperator((GraphOperator)o);
-				}
-			}
-		);
-		addService(
 			new ServiceHandler(GlyphProcessor.class) {
 				@Override
 				public void addService(Object o) {

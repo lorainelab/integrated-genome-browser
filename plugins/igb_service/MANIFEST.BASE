@@ -11,6 +11,7 @@ Import-Package: javax.swing,
  com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genoviz.bioviews,
+ com.affymetrix.genoviz.widget,
  org.osgi.framework
 Export-Package: com.affymetrix.igb.osgi.service
 

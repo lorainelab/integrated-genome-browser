@@ -24,6 +24,7 @@ import com.affymetrix.igb.window.service.WindowActivator;
 public class Activator extends WindowActivator implements BundleActivator {
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
 	private static final String OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
+	private GraphSelectionManager graph_manager;
 
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
@@ -71,6 +72,8 @@ public class Activator extends WindowActivator implements BundleActivator {
 		}
 		initTransformers();
 		initOperators();
+		graph_manager = new GraphSelectionManager(igbService);
+		igbService.addSeqMapPopupListener(graph_manager);
 		return simpleGraphTab;
 	}
 

@@ -39,13 +39,10 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.IdentityTransform;
 
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
-import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
@@ -807,7 +804,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					String selection = (String) operationCB.getSelectedItem();
 					GraphOperator operator = name2operator.get(selection);
 					hovereffect.unsetGraphName(operator);
-					if (GraphGlyphUtils.doOperateGraphs(operator, glyphs, gviewer)) {
+					if (GraphGlyphUtils.doOperateGraphs(operator, glyphs, igbService)) {
 						updateViewer();
 					}
 				}

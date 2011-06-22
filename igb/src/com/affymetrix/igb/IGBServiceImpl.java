@@ -34,12 +34,14 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -72,6 +74,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	public static IGBServiceImpl getInstance() {
 		return instance;
 	}
+	private FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 	private FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 	private static final String APACHE_BUNDLE_VENDOR = "The Apache Software Foundation";
 	private List<RepositoryChangeListener> repositoryChangeListeners;
@@ -468,6 +471,16 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public File getOutputDirectory() {
+		return output_file_tracker.getFile();
+	}
+
+	@Override
+	public void setOutputDirectory(File file) {
+		output_file_tracker.setFile(file);
+	}
+
+	@Override
 	public File getLoadDirectory() {
 		return load_dir_tracker.getFile();
 	}
@@ -485,6 +498,16 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public void selectTab(IGBTabPanel panel) {
 		((IGB)IGB.getSingleton()).getWindowService().selectTab(panel);
+	}
+
+	@Override
+	public NeoAbstractWidget getGraphCurrentSource() {
+		return ((SeqMapView)getMapView()).getSeqMap();
+	}
+
+	@Override
+	public void addSeqMapPopupListener(ContextualPopupListener listener) {
+		((SeqMapView)getMapView()).addPopupListener(listener);
 	}
 
 	@Override

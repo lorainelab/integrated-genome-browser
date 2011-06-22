@@ -671,11 +671,11 @@ public final class GraphGlyph extends Glyph {
 	 *  This number is calculated in setPointCoords() directly from ycoords, and cannot
 	 *     be modified (except for resetting the points by calling setPointCoords() again)
 	 */
-	float getGraphMinY() {
+	public float getGraphMinY() {
 		return point_min_ycoord;
 	}
 
-	float getGraphMaxY() {
+	public float getGraphMaxY() {
 		return point_max_ycoord;
 	}
 
@@ -764,7 +764,7 @@ public final class GraphGlyph extends Glyph {
 		state.setShowGraph(show);
 	}
 
-	void setShowBounds(boolean show) {
+	public void setShowBounds(boolean show) {
 		state.setShowBounds(show);
 	}
 
@@ -1093,7 +1093,7 @@ public final class GraphGlyph extends Glyph {
 	 * Current set up so that if regions_parent != null, then instead of drawing to view,
 	 * populate regions_parent with child SeqSymmetries for each region that passes threshold,
 	 */
-	void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, BioSeq aseq) {
+	public void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, BioSeq aseq) {
 		double max_gap_threshold = getMaxGapThreshold();
 		double min_run_threshold = getMinRunThreshold();
 		double span_start_shift = getThreshStartShift();
@@ -1296,7 +1296,7 @@ public final class GraphGlyph extends Glyph {
 	/**
 	 * Retrieve the graph yvalue corresponding to a given ycoord.
 	 */
-	float getGraphValue(ViewI view, double coord_value) {
+	public float getGraphValue(ViewI view, double coord_value) {
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
 		double offset = scratch_trans.getTranslateY();
@@ -1324,11 +1324,11 @@ public final class GraphGlyph extends Glyph {
 		return state.getShowThreshold();
 	}
 
-	double getThreshEndShift() {
+	public double getThreshEndShift() {
 		return state.getThreshEndShift();
 	}
 
-	double getThreshStartShift() {
+	public double getThreshStartShift() {
 		return state.getThreshStartShift();
 	}
 
@@ -1349,38 +1349,38 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	void setMaxGapThreshold(int thresh) {
+	public void setMaxGapThreshold(int thresh) {
 		state.setMaxGapThreshold(thresh);
 	}
 
-	void setMaxScoreThreshold(float thresh) {
+	public void setMaxScoreThreshold(float thresh) {
 		state.setMaxScoreThreshold(thresh);
 		resetThreshLabel();
 	}
 
-	void setMinRunThreshold(int thresh) {
+	public void setMinRunThreshold(int thresh) {
 		state.setMinRunThreshold(thresh);
 	}
 
-	void setMinScoreThreshold(float thresh) {
+	public void setMinScoreThreshold(float thresh) {
 		state.setMinScoreThreshold(thresh);
 		resetThreshLabel();
 	}
 
-	void setShowThreshold(boolean show) {
+	public void setShowThreshold(boolean show) {
 		state.setShowThreshold(show);
 		thresh_glyph.setVisibility(show);
 	}
 
-	void setThreshEndShift(double d) {
+	public void setThreshEndShift(double d) {
 		state.setThreshEndShift(d);
 	}
 
-	void setThreshStartShift(double d) {
+	public void setThreshStartShift(double d) {
 		state.setThreshStartShift(d);
 	}
 
-	void setThresholdDirection(int d) {
+	public void setThresholdDirection(int d) {
 		state.setThresholdDirection(d);
 		resetThreshLabel();
 	}

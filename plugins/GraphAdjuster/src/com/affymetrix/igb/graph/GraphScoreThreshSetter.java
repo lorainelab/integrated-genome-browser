@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.graph;
 
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -22,11 +22,12 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
-import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.GraphGlyphCheckUtils;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -469,7 +470,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		if (src == score_valT) {
 			try {
-				float thresh = GraphGlyphUtils.numberParser.parse(score_valT.getText()).floatValue();
+				float thresh = GraphGlyphCheckUtils.numberParser.parse(score_valT.getText()).floatValue();
 				// Do not limit the threshold to just the total range of this graph.
 				// The user may set the thresholds of a set of graphs (on the same or
 				// different chromosomes) to the same value even if the absolute

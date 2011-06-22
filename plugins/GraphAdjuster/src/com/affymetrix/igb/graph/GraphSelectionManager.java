@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.graph;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -25,14 +25,16 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.ThreshGlyph;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -41,7 +43,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.Application;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -51,8 +52,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.view.ContextualPopupListener;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.util.GraphGlyphCheckUtils;
 import java.awt.geom.Rectangle2D;
 
 
@@ -70,8 +70,6 @@ public final class GraphSelectionManager
   final static boolean DEBUG = false;
 
   private static final int max_label_length = 50;
-
-  private static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
   private GraphGlyph current_graph = null;
   private GraphGlyph graph_to_scale = null;
@@ -125,15 +123,16 @@ public final class GraphSelectionManager
   private JMenuItem save_graph;
 
   private GlyphDragger dragger;
-  private SeqMapView gviewer;
   private JFrame frm;
+  private IGBService igbService;
   private List<GraphOperator> operators;
 
-  public GraphSelectionManager(SeqMapView smv) {
+  public GraphSelectionManager(IGBService igbService) {
     this();
-    gviewer = smv;
-    current_source = gviewer.getSeqMap();
-    frm = Application.getSingleton().getFrame();
+    this.igbService = igbService;
+    this.current_source = igbService.getGraphCurrentSource();
+    current_source.addMouseListener(this);
+    this.frm = igbService.getFrame();
     operators = new ArrayList<GraphOperator>();
   }
   
@@ -396,10 +395,10 @@ public final class GraphSelectionManager
   static JFileChooser graph_file_chooser = null;
 
   /** Returns a file chooser that forces the user to use the 'gr' file extension. */
-  static JFileChooser getFileChooser() {
+  JFileChooser getFileChooser() {
     if (graph_file_chooser == null) {
       graph_file_chooser = UniFileChooser.getFileChooser("Graph File", "gr");
-      graph_file_chooser.setCurrentDirectory(output_file_tracker.getFile());
+      graph_file_chooser.setCurrentDirectory(igbService.getOutputDirectory());
     }
     return graph_file_chooser;
   }
@@ -413,7 +412,7 @@ public final class GraphSelectionManager
         JFileChooser chooser = getFileChooser();
         int option = chooser.showSaveDialog(frm);
         if (option == JFileChooser.APPROVE_OPTION) {
-          output_file_tracker.setFile(chooser.getCurrentDirectory());
+          igbService.setOutputDirectory(chooser.getCurrentDirectory());
           File fil = chooser.getSelectedFile();
           GraphSymUtils.writeGraphFile(gsym, gmodel.getSelectedSeqGroup(), fil.getName());
         }
@@ -446,9 +445,9 @@ public final class GraphSelectionManager
   public void mousePressed(MouseEvent evt) {
     if (evt instanceof NeoMouseEvent) {
       NeoMouseEvent nevt = (NeoMouseEvent)evt;
-      List selected = nevt.getItems();
+      List<GlyphI> selected = nevt.getItems();
       for (int i=selected.size()-1; i >=0; i--) {
-        GlyphI gl = (GlyphI)selected.get(i);
+        GlyphI gl = selected.get(i);
         // only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
         if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
           GraphGlyph gr = (GraphGlyph)gl;
@@ -545,7 +544,7 @@ public final class GraphSelectionManager
   public void heardGlyphDrag(NeoGlyphDragEvent evt) {
     int id = evt.getID();
     Object src = evt.getSource();
-    if (id == evt.DRAG_IN_PROGRESS) {
+    if (id == NeoGlyphDragEvent.DRAG_IN_PROGRESS) {
       GlyphI gl = evt.getGlyph();
       if (gl.getParent() instanceof GraphGlyph && src instanceof NeoWidget) {
         NeoWidget widg = (NeoWidget)src;
@@ -561,12 +560,12 @@ public final class GraphSelectionManager
         }
       }
     }
-    else if (id == evt.DRAG_ENDED) {
+    else if (id == NeoGlyphDragEvent.DRAG_ENDED) {
       dragger.removeGlyphDragListener(this);
 
       GlyphI gl = evt.getGlyph();
       if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
-        GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, (AffyTieredMap) src);
+        GraphGlyphCheckUtils.checkPixelBounds((GraphGlyph) gl, (AffyTieredMap) src);
       }
     }
     // otherwise it must be DRAG_STARTED event, which can be ignored
@@ -626,7 +625,7 @@ public final class GraphSelectionManager
     	      new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					GraphGlyphUtils.doOperateGraphs(graphOperator, selected_graph_glyphs, gviewer);
+					GraphGlyphUtils.doOperateGraphs(graphOperator, selected_graph_glyphs, igbService);
 				}
     	      }
     	  );

@@ -11,9 +11,11 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.graph;
 
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.igb.glyph.GraphGlyph;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;

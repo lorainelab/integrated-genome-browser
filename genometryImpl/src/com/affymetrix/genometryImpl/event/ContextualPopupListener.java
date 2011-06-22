@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.view;
+package com.affymetrix.genometryImpl.event;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import javax.swing.JPopupMenu;

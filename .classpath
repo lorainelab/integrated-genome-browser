@@ -26,8 +26,6 @@
 	<classpathentry kind="src" path="plugins/RestrictionSites/src"/>
 	<classpathentry kind="src" path="plugins/SearchView/resources"/>
 	<classpathentry kind="src" path="plugins/SearchView/src"/>
-	<classpathentry kind="src" path="plugins/SelectionInfo/resources"/>
-	<classpathentry kind="src" path="plugins/SelectionInfo/src"/>
 	<classpathentry kind="src" path="plugins/igb_service/src"/>
 	<classpathentry kind="src" path="plugins/plugins_page/resources"/>
 	<classpathentry kind="src" path="plugins/plugins_page/src"/>

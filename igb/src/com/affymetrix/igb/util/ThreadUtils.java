@@ -35,15 +35,4 @@ public final class ThreadUtils {
 	  }
   }
   
-  public static void runOnEventQueueInQueue(Runnable r) {
-	  if (SwingUtilities.isEventDispatchThread()) {
-		  r.run();
-	  } else {
-			try {
-				SwingUtilities.invokeAndWait(r);
-			} catch (Exception ex) {
-				Logger.getLogger(ThreadUtils.class.getName()).log(Level.SEVERE, null, ex);
-			}
-	  }
-  }
 }

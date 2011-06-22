@@ -1,4 +1,4 @@
-package com.affymetrix.igb.swing;
+package com.affymetrix.genoviz.swing;
 
 import java.awt.event.ItemListener;
 import java.util.logging.Level;

@@ -53,6 +53,7 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genoviz.swing.JComboBoxWithSingleListener;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
@@ -60,7 +61,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.swing.JComboBoxWithSingleListener;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.DataLoadPrefsView;
 import com.affymetrix.igb.view.SeqMapView;

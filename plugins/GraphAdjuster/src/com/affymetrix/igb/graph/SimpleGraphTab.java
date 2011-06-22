@@ -14,6 +14,7 @@ package com.affymetrix.igb.graph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.swing.JComboBoxWithSingleListener;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -42,7 +43,6 @@ import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.swing.JComboBoxWithSingleListener;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;

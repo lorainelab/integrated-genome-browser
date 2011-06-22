@@ -42,11 +42,11 @@ import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.SearchUtils;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.swing.JComboBoxWithSingleListener;
 import com.affymetrix.genoviz.util.DNAUtils;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.swing.JComboBoxWithSingleListener;
 
 public final class SearchView extends IGBTabPanel implements 
 		ActionListener, GroupSelectionListener, SeqSelectionListener, SeqMapRefreshed, GenericServerInitListener {

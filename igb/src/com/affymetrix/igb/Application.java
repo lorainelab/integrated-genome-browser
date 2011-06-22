@@ -32,10 +32,10 @@ public abstract class Application {
 	abstract public SeqMapView getMapView();
 
 	public final void addNotLockedUpMsg(final String s) {
+		progressStringList.add(s);
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				progressStringList.add(s);
 				if (status_bar.getStatus().trim().length() == 0) {
 					setNotLockedUpStatus(s, true);
 				}
@@ -44,19 +44,18 @@ public abstract class Application {
 	}
 
 	public final void removeNotLockedUpMsg(final String s) {
-
+		progressStringList.remove(s);
 		ThreadUtils.runOnEventQueue(new Runnable() {
 
 			public void run() {
-				progressStringList.remove(s);
-				if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
+				//if (status_bar.getStatus().equals(s) || status_bar.getStatus().trim().length() == 0) {
 					// Time to change status message.
 					if (progressStringList.isEmpty()) {
 						setNotLockedUpStatus(null, false);
 					} else {
 						setNotLockedUpStatus(progressStringList.iterator().next(), true);
 					}
-				}
+				//}
 			}
 		});
 	}

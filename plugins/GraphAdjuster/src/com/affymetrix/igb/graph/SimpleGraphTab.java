@@ -41,11 +41,7 @@ import com.affymetrix.genometryImpl.util.IdentityTransform;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.TrackView;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -112,7 +108,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
-			saveGraphs(gviewer, gmodel, grafs);
+			saveGraphs(gmodel, grafs);
 		}
 	};
 	private final Action graph_threshold_action = new AbstractAction(
@@ -198,7 +194,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
 		vis_bounds_setter = new GraphVisibleBoundsSetter(gviewer.getSeqMap());
-		score_thresh_adjuster = new GraphScoreThreshSetter(gviewer, vis_bounds_setter);
+		score_thresh_adjuster = new GraphScoreThreshSetter(igbService, vis_bounds_setter);
 
 		height_slider.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("heightSlider")));
 
@@ -585,22 +581,18 @@ public final class SimpleGraphTab extends IGBTabPanel
 				return; // for testing
 			}
 
-			AffyTieredMap map = gviewer.getSeqMap();
-
 			for (GraphGlyph gl : glyphs) {
 				Rectangle2D.Double cbox = gl.getCoordBox();
 				gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 
 				// If a graph is joined with others in a combo tier, repack that tier.
 				GlyphI parentgl = gl.getParent();
-				if (parentgl instanceof TierGlyph) {
+				if (igbService.isTierGlyph(parentgl)) {
 					//	  System.out.println("Glyph: " + gl.getLabel() + ", packer: " + parentgl.getPacker());
-					parentgl.pack(map.getView());
+					igbService.packGlyph(parentgl);
 				}
 			}
-			map.packTiers(false, true, false);
-			map.stretchToFit(false, true);
-			map.updateWidget();
+			igbService.packMap(false, true);
 		}
 	}
 
@@ -646,7 +638,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					grafs.get(1).setGraphName("B");
 	
 					comp.setToolTipText(null);
-					ThreadUtils.runOnEventQueue(new Runnable() {
+					igbService.runOnEventQueue(new Runnable() {
 	
 						public void run() {
 							gviewer.getSeqMap().updateWidget();
@@ -661,7 +653,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						grafs.get(0).setGraphName(A);
 						grafs.get(1).setGraphName(B);
 	
-						ThreadUtils.runOnEventQueue(new Runnable() {
+						igbService.runOnEventQueue(new Runnable() {
 	
 							public void run() {
 								gviewer.getSeqMap().updateWidget();
@@ -1081,17 +1073,15 @@ public final class SimpleGraphTab extends IGBTabPanel
 			GlyphI parentgl = gl.getParent();
 			parentgl.removeChild(gl);
 			if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
-				if (parentgl instanceof TierGlyph) {
-					TrackView.deleteTrack((TierGlyph) parentgl);
-					AffyTieredMap map = gviewer.getSeqMap();
-					map.packTiers(false, true, false);
-					map.stretchToFit(false, false);
+				if (igbService.isTierGlyph(parentgl)) {
+					igbService.deleteGlyph(parentgl);
+					igbService.packMap(false, false);
 				}
 			}
 		}
 	}
 
-	private void saveGraphs(SeqMapView gviewer, GenometryModel gmodel, List<GraphSym> grafs) {
+	private void saveGraphs(GenometryModel gmodel, List<GraphSym> grafs) {
 		int gcount = grafs.size();
 		if (gcount > 1) {
 			// actually shouldn't get here, since save button is disabled if more than one graph
@@ -1169,7 +1159,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				// if graph is in a tier, change foreground color of tier also
 				//   (which in turn triggers change in color for TierLabelGlyph...)
 				GlyphI glParent = gl.getParent();
-				if (glParent instanceof TierGlyph) {
+				if (igbService.isTierGlyph(glParent)) {
 					glParent.setForegroundColor(col);
 					List<ViewI> views = glParent.getScene().getViews();
 					for (ViewI v : views) {

@@ -27,7 +27,6 @@ import java.text.DecimalFormat;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.util.GraphGlyphCheckUtils;
 import java.text.ParseException;
 
 public final class GraphVisibleBoundsSetter extends JPanel
@@ -513,7 +512,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 		if (src == min_valT) {
 			try {
-				float minval = GraphGlyphCheckUtils.numberParser.parse(min_valT.getText()).floatValue();
+				float minval = GraphGlyphUtils.numberParser.parse(min_valT.getText()).floatValue();
 				if (minval > prev_max_val - val_offset) {
 					minval = prev_max_val - val_offset;
 				}
@@ -527,7 +526,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		} else if (src == max_valT) {
 			try {
-				float maxval = GraphGlyphCheckUtils.numberParser.parse(max_valT.getText()).floatValue();
+				float maxval = GraphGlyphUtils.numberParser.parse(max_valT.getText()).floatValue();
 				if (maxval < prev_min_val + val_offset) {
 					maxval = prev_min_val + val_offset;
 				}

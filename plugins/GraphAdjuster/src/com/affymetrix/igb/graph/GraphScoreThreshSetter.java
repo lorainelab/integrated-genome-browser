@@ -19,15 +19,15 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.swing.JComboBoxWithSingleListener;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
-import com.affymetrix.igb.util.GraphGlyphCheckUtils;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -47,8 +47,6 @@ public final class GraphScoreThreshSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {
 	private static final long serialVersionUID = 1L;
 
-	private SeqMapView gviewer = null;
-	//private static Object placeholder_object = new Object();
 	private final static DecimalFormat val_format;
 	private final static DecimalFormat per_format;
 	private final static DecimalFormat shift_format;
@@ -58,13 +56,8 @@ public final class GraphScoreThreshSetter extends JPanel
 	private static final int THRESH_TYPE_PERCENT = 1;
 	private static final int THRESH_TYPE_VALUE = 2;
 	private static int prev_thresh_type = THRESH_TYPE_VALUE;
-	//private Dimension slider_sizepref = new Dimension(600, 15);
-	//private Dimension textbox_sizepref = new Dimension(400, 15);
-	//private boolean set_slider_sizepref = false;
-	//private boolean set_textbox_sizepref = false;
-//  boolean thresh_is_min = true;
 	private List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
-	//private Map flipped_hash = new HashMap();
+	private IGBService igbService;
 	private final NeoAbstractWidget widg;
 	private final GraphVisibleBoundsSetter per_info_provider;
 	private final MaxGapThresholder max_gap_thresher;
@@ -114,10 +107,9 @@ public final class GraphScoreThreshSetter extends JPanel
 		shift_format = new DecimalFormat();
 	}
 
-	public GraphScoreThreshSetter(SeqMapView gviewer,
-					GraphVisibleBoundsSetter bounds_setter) {
-		this.gviewer = gviewer;
-		widg = gviewer.getSeqMap();
+	public GraphScoreThreshSetter(IGBService igbService, GraphVisibleBoundsSetter bounds_setter) {
+		this.igbService = igbService;
+		this.widg = igbService.getGraphCurrentSource();
 		per_info_provider = bounds_setter;
 
 		score_val_slider = new JSlider(JSlider.HORIZONTAL);
@@ -199,8 +191,8 @@ public final class GraphScoreThreshSetter extends JPanel
 		thresh_shiftP.setMaximumSize(new Dimension(300, tf_max_ypix + 30));
 
 
-		min_run_thresher = new MinRunThresholder(gviewer.getSeqMap());
-		max_gap_thresher = new MaxGapThresholder(gviewer.getSeqMap());
+		min_run_thresher = new MinRunThresholder(widg);
+		max_gap_thresher = new MaxGapThresholder(widg);
 
 		Box center_panel = Box.createVerticalBox();
 		//directionP.setAlignmentX(0.0f);
@@ -470,7 +462,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		if (src == score_valT) {
 			try {
-				float thresh = GraphGlyphCheckUtils.numberParser.parse(score_valT.getText()).floatValue();
+				float thresh = GraphGlyphUtils.numberParser.parse(score_valT.getText()).floatValue();
 				// Do not limit the threshold to just the total range of this graph.
 				// The user may set the thresholds of a set of graphs (on the same or
 				// different chromosomes) to the same value even if the absolute
@@ -737,7 +729,7 @@ public final class GraphScoreThreshSetter extends JPanel
 						", min_run=" + (int) sgg.getMinRunThreshold() +
 						", graph: " + sgg.getLabel();
 		pickle_count++;
-		ViewI view = gviewer.getSeqMap().getView();
+		ViewI view = ((NeoWidget)widg).getView();
 		sgg.drawThresholdedRegions(view, psym, aseq);
 
 		// If there were any overlapping child symmetries, collapse them
@@ -760,7 +752,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		System.out.println("Created threshold tier: " + description);
 
-		gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+		igbService.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
 	}
 
 	/** When a JTextField gains focus, do nothing special. */

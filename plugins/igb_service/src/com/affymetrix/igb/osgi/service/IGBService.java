@@ -245,7 +245,7 @@ public interface IGBService {
 	 * the will process the property display for the SeqMapView selection
 	 */
 	public void setPropertyHandler(PropertyHandler propertyHandler);
-	// for graph adjuster
+	// for Graph Adjuster
 	/**
 	 * get the main JFrame for the application
 	 * @return the main JFrame for the IGB instance
@@ -286,6 +286,10 @@ public interface IGBService {
 	public void selectTab(IGBTabPanel panel);
 	public NeoAbstractWidget getGraphCurrentSource();
 	public void addSeqMapPopupListener(ContextualPopupListener listener);
+	public boolean isTierGlyph(GlyphI glyph);
+	public void packGlyph(GlyphI glyph);
+	public void deleteGlyph(GlyphI glyph);
+	public void packMap(boolean fitx, boolean fity);
 	// ThreadUtils
 	public Executor getPrimaryExecutor(Object key);
 	public void runOnEventQueue(Runnable r);

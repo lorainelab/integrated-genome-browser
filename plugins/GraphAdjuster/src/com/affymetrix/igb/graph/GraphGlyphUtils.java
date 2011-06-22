@@ -51,38 +51,6 @@ public final class GraphGlyphUtils {
 		}
 	}
 
-	/**
-	 *  Checks to make sure that two graphs can be compared with one
-	 *  another for operations like diff, ratio, etc.
-	 *  (Graphs must have exact same x positions, and if one has width coords,
-	 *   the other must also.)
-	 *  @return null if the graphs are comparable, or an explanation string if they are not.
-	 */
-	public static String graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
-		// checking that both graphs are non-null
-		if (graphA == null || graphB == null) {
-			return "Must select exactly two graphs";
-		}
-		int numpoints = graphA.getPointCount();
-		// checking that both graph have same number of points
-		if (numpoints != graphB.getPointCount()) {
-			return "Graphs must have the same X points";
-		}
-		if (graphA.hasWidth() != graphB.hasWidth()) {
-			// one has width coords, the other doesn't.
-			return "Must select two graphs of the same type";
-		}
-
-		// checking that both graphs have same x points
-		for (int i = 0; i < numpoints; i++) {
-			if (graphA.getXCoord(i) != graphB.getXCoord(i)) {
-				return "Graphs must have the same X points";
-			}
-		}
-
-		return null;
-	}
-
 	/** Parse a String floating-point number that may optionally end with a "%" symbol. */
 	public static float parsePercent(String text) throws ParseException {
 		if (text.endsWith("%")) {

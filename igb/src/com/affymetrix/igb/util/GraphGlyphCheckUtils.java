@@ -21,10 +21,6 @@ import java.text.NumberFormat;
 
 public final class GraphGlyphCheckUtils {
 
-	public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
-	public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
-	public static final NumberFormat numberParser = NumberFormat.getNumberInstance();
-
 	/**
 	 *  Checks to make sure the the boundaries of a floating glyph are
 	 *  inside the map view.

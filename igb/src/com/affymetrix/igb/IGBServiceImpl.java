@@ -52,6 +52,7 @@ import com.affymetrix.igb.osgi.service.RepositoryChangeListener;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -508,6 +509,30 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public void addSeqMapPopupListener(ContextualPopupListener listener) {
 		((SeqMapView)getMapView()).addPopupListener(listener);
+	}
+
+	@Override
+	public boolean isTierGlyph(GlyphI glyph) {
+		return glyph instanceof TierGlyph;
+	}
+
+	@Override
+	public void packGlyph(GlyphI glyph) {
+		AffyTieredMap map = ((SeqMapView)getMapView()).getSeqMap();
+		glyph.pack(map.getView());
+	}
+
+	@Override
+	public void deleteGlyph(GlyphI glyph) {
+		
+	}
+
+	@Override
+	public void packMap(boolean fitx, boolean fity) {
+		AffyTieredMap map = ((SeqMapView)getMapView()).getSeqMap();
+		map.packTiers(false, true, false);
+		map.stretchToFit(fitx, fity);
+		map.updateWidget();
 	}
 
 	@Override

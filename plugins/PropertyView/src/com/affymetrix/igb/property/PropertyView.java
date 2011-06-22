@@ -17,7 +17,6 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.PropertyHandler;
 import com.affymetrix.igb.osgi.service.PropertyListener;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.util.JTableCutPasteAdapter;
 import com.affymetrix.igb.view.SeqMapView;
 
 import java.text.NumberFormat;

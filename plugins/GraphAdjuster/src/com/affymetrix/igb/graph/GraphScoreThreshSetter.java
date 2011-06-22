@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.swing.JComboBoxWithSingleListener;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -32,7 +31,6 @@ import com.affymetrix.genometryImpl.util.DisplayUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import javax.swing.*;
@@ -226,9 +224,9 @@ public final class GraphScoreThreshSetter extends JPanel
 			thresh_setter_frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			thresh_setter_frame.pack();
 
-			Image icon = Application.getSingleton().getIcon();
-			if (icon != null) {
-				thresh_setter_frame.setIconImage(icon);
+			ImageIcon imageIcon = igbService.getIcon("igb.gif");
+			if (imageIcon != null) {
+				thresh_setter_frame.setIconImage(imageIcon.getImage());
 			}
 
 			Rectangle pos = PreferenceUtils.retrieveWindowLocation(thresh_setter_frame.getTitle(), thresh_setter_frame.getBounds());

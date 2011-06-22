@@ -54,6 +54,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
+import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.util.UnibrowControlServlet;
@@ -152,12 +153,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 
 	@Override
 	public ImageIcon getIcon(String name) {
-		ImageIcon icon = null;
-		java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource(name + "_icon.gif");
-		if (imgURL != null) {
-			icon = new ImageIcon(imgURL);
-		}
-		return icon;
+		return IGBUtils.getIcon(name);
 	}
 
 	@Override

@@ -11,12 +11,10 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.igb.stylesheet;
+package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.TransientGlyph;
-import com.affymetrix.igb.glyph.EfficientOutlineContGlyph;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 

@@ -32,7 +32,12 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
+import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
+import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
+import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
+import com.affymetrix.genoviz.glyph.EfficientPointedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 
 import com.affymetrix.igb.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.tiers.AffyTieredMap;

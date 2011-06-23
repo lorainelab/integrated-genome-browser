@@ -1,7 +1,6 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.PointedGlyph;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 

@@ -11,11 +11,10 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.glyph;
+package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.SolidGlyph;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 

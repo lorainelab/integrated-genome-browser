@@ -17,9 +17,9 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.operator.GraphOperator;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 import java.text.MessageFormat;

@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.glyph;
+package com.affymetrix.genoviz.glyph;
 
 import java.awt.Color;
 import java.awt.Graphics;

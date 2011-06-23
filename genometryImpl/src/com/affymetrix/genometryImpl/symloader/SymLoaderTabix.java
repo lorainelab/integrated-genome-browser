@@ -36,7 +36,6 @@ public class SymLoaderTabix extends SymLoader {
 		strategyList.add(LoadStrategy.GENOME);
 	}
 	
-	public static final String FILE_PREFIX = "file:";
 	public SymLoaderTabix(URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor){
 		super(uri, featureName, group);
 		this.lineProcessor = lineProcessor;
@@ -86,6 +85,7 @@ public class SymLoaderTabix extends SymLoader {
 			}
 			seqs.put(seq, seqID);
 		}
+		this.isInitialized = true;
 	}
 
 	public LineProcessor getLineProcessor() {

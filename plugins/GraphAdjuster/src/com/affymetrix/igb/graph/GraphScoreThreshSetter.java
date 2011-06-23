@@ -24,7 +24,6 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.DisplayUtils;
 
@@ -742,11 +741,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 		Color col = sgg.getColor();
 		//    Color col = Color.red;
-		TrackStyle annot_style = TrackStyle.getInstance(meth, false);
-		annot_style.setColor(col);
-		annot_style.setGlyphDepth(1);
-		annot_style.setHumanName(description);
-		annot_style.setCollapsed(true);
+		igbService.setTrackStyle(meth, col, description);
 
 		System.out.println("Created threshold tier: " + description);
 

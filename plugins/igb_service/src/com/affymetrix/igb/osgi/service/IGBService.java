@@ -298,6 +298,7 @@ public interface IGBService {
 	public void clearSelectGraphs();
 	public List<GlyphI> getItems(GraphSym graf);
 	public boolean isMainSrc(Object src);
+	public void setTrackStyle(String meth, Color col, String description);
 	// ThreadUtils
 	public Executor getPrimaryExecutor(Object key);
 	public void runOnEventQueue(Runnable r);

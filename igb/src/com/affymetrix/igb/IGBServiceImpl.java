@@ -56,6 +56,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
@@ -562,6 +563,15 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public boolean isMainSrc(Object src) {
 		return src == ((SeqMapView)getMapView()) || src == ((SeqMapView)getMapView()).getSeqMap();
+	}
+
+	@Override
+	public void setTrackStyle(String meth, Color col, String description) {
+		TrackStyle annot_style = TrackStyle.getInstance(meth, false);
+		annot_style.setColor(col);
+		annot_style.setGlyphDepth(1);
+		annot_style.setHumanName(description);
+		annot_style.setCollapsed(true);
 	}
 
 	@Override

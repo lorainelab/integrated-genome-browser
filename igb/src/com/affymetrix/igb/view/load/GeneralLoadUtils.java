@@ -659,7 +659,8 @@ public final class GeneralLoadUtils {
 	public static void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
 		SeqSymmetry optimized_sym = null;
 		// special-case chp files, due to their LazyChpSym DAS/2 loading
-		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) && ((QuickLoad) feature.symL).extension.endsWith(".chp")) {
+		if ((feature.gVersion.gServer.serverType == ServerType.QuickLoad || feature.gVersion.gServer.serverType == ServerType.LocalFiles) 
+				&& ((QuickLoad) feature.symL).extension.endsWith("chp")) {
 			feature.setLoadStrategy(LoadStrategy.GENOME);	// it should be set to this already.  But just in case...
 			optimized_sym = new SimpleMutableSeqSymmetry();
 			((SimpleMutableSeqSymmetry)optimized_sym).addSpan(span);

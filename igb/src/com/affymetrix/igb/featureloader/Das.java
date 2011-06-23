@@ -77,7 +77,7 @@ public final class Das {
 			}
 			SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
 			for (DASSymmetry sym : dassyms) {
-				feature.addMethod(sym.getType(), "das1");
+				feature.addMethod(sym.getType());
 			}
 		}
 		//The span is now considered loaded.

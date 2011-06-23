@@ -151,7 +151,7 @@ public final class QuickLoad extends SymLoader {
 	private void loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
 			throws OutOfMemoryError, IOException {
 
-		if (QuickLoad.this.extension.endsWith(".chp")) {
+		if (QuickLoad.this.extension.endsWith("chp")) {
 			// special-case chp files, due to their LazyChpSym DAS/2 loading
 			QuickLoad.this.getGenome();
 			return;
@@ -266,7 +266,7 @@ public final class QuickLoad extends SymLoader {
 		
 		//For a file format that adds SeqSymmetries from
 		//within the parser handle them here.
-		if (extension.endsWith(".chp")) {
+		if (extension.endsWith("chp")) {
 			// special-case chp files, due to their LazyChpSym DAS/2 loading
 			return;
 		}
@@ -306,7 +306,7 @@ public final class QuickLoad extends SymLoader {
 			SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 			// Some format do not annotate. So it might not have method name. e.g bgn
 			if (entry.getKey() != null) {
-				feature.addMethod(entry.getKey(), extension);
+				feature.addMethod(entry.getKey());
 			}
 		}
 	}
@@ -344,7 +344,7 @@ public final class QuickLoad extends SymLoader {
 	@Override
 	public List<? extends SeqSymmetry> getGenome() {
 		try {
-			if (this.extension.endsWith(".chp")) {
+			if (this.extension.endsWith("chp")) {
 				// special-case CHP files. ChpParser only has
 				//    a parse() method that takes the file name
 				// (ChpParser uses Affymetrix Fusion SDK for actual file parsing)

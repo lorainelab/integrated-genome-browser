@@ -250,11 +250,11 @@ public class Das2 {
 			else {
 				// Create an AnnotStyle so that we can automatically set the
 				// human-readable name to the DAS2 name, rather than the ID, which is a URI
-				ITrackStyleExtended ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(typeURI.toString(), typeName, content_subtype);
+				ITrackStyleExtended ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(typeURI.toString(), typeName, format);
 				ts.setFeature(feature);
 
 				//TODO: Probably not necessary.
-				ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, content_subtype);
+				ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, format);
 				ts.setFeature(feature);
 
 				SymLoader symL = fileTypeHandler.createSymLoader(typeURI, typeName, aseq.getSeqGroup());
@@ -299,7 +299,7 @@ public class Das2 {
 
 				// Some format do not annotate. So it might not have method name. e.g bgn
 				if(entry.getKey() != null)
-					feature.addMethod(entry.getKey(), content_subtype);
+					feature.addMethod(entry.getKey());
 			}
 			
 			feature.addLoadedSpanRequest(span);	// this span is now considered loaded.

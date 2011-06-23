@@ -66,7 +66,7 @@ public abstract class SymLoader {
 		String uriString = uri.toASCIIString().toLowerCase();
 		String unzippedStreamName = GeneralUtils.stripEndings(uriString);
 		extension = ParserController.getExtension(unzippedStreamName);
-
+		extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
     }
 
 	protected void init() {
@@ -346,7 +346,7 @@ public abstract class SymLoader {
 		return newSyms;
 	}
 
-	public static List<BioSeq> getChromosomes(URI uri, String extension, String featureName, String groupID){
+	public static List<BioSeq> getChromosomes(URI uri, String featureName, String groupID){
 		AnnotatedSeqGroup temp_group = new AnnotatedSeqGroup(groupID);
 		SymLoader temp = new SymLoader(uri, featureName, temp_group) {};
 		List<? extends SeqSymmetry> syms = temp.getGenome();

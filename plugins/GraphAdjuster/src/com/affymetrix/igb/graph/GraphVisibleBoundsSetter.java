@@ -23,11 +23,11 @@ import javax.swing.border.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import java.text.ParseException;
 
 public final class GraphVisibleBoundsSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {

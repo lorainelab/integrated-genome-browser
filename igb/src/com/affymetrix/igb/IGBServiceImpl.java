@@ -15,6 +15,7 @@ package com.affymetrix.igb;
 import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
@@ -32,6 +33,7 @@ import org.osgi.framework.Constants;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
@@ -41,6 +43,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.FileTracker;
@@ -396,6 +399,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public void removeItem(GlyphI gl) {
+		((SeqMapView)getMapView()).getSeqMap().removeItem(gl);
+	}
+
+	@Override
 	public void centerAtHairline() {
 		 ((SeqMapView)getMapView()).centerAtHairline();
 	}
@@ -529,6 +537,31 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		map.packTiers(false, true, false);
 		map.stretchToFit(fitx, fity);
 		map.updateWidget();
+	}
+
+	@Override
+	public View getView() {
+		return ((SeqMapView)getMapView()).getSeqMap().getView();
+	}
+
+	@Override
+	public void selectAllGraphs() {
+		((SeqMapView)getMapView()).selectAllGraphs();
+	}
+
+	@Override
+	public void clearSelectGraphs() {
+		((SeqMapView)getMapView()).select(Collections.<SeqSymmetry>emptyList());
+	}
+
+	@Override
+	public List<GlyphI> getItems(GraphSym graf) {
+		return ((SeqMapView)getMapView()).getSeqMap().getItems(graf);
+	}
+
+	@Override
+	public boolean isMainSrc(Object src) {
+		return src == ((SeqMapView)getMapView()) || src == ((SeqMapView)getMapView()).getSeqMap();
 	}
 
 	@Override

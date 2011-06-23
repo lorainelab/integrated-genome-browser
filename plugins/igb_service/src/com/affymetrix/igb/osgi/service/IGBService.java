@@ -15,6 +15,7 @@ import org.osgi.framework.Bundle;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
@@ -23,6 +24,7 @@ import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
@@ -211,6 +213,7 @@ public interface IGBService {
 	public void select(GlyphI g);
 	public void deselect(GlyphI g);
 	public GlyphI getItem(SeqSymmetry sym);
+	public void removeItem(GlyphI gl);
 	public void centerAtHairline();
 	public void addSeqMapRefreshedListener(SeqMapRefreshed seqMapRefreshed);
 	public void mapRefresh(List<GlyphI> glyphs);
@@ -290,6 +293,11 @@ public interface IGBService {
 	public void packGlyph(GlyphI glyph);
 	public void deleteGlyph(GlyphI glyph);
 	public void packMap(boolean fitx, boolean fity);
+	public View getView();
+	public void selectAllGraphs();
+	public void clearSelectGraphs();
+	public List<GlyphI> getItems(GraphSym graf);
+	public boolean isMainSrc(Object src);
 	// ThreadUtils
 	public Executor getPrimaryExecutor(Object key);
 	public void runOnEventQueue(Runnable r);

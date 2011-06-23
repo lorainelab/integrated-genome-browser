@@ -41,7 +41,6 @@ import com.affymetrix.genometryImpl.util.IdentityTransform;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.view.SeqMapView;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -61,7 +60,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("graph");
 	private static final int TAB_POSITION = 4;
 
-	SeqMapView gviewer = null;
 	BioSeq current_seq;
 	GenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
@@ -92,16 +90,14 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
-			if (gviewer != null) {
-				gviewer.selectAllGraphs();
-			}
+			igbService.selectAllGraphs();
 		}
 	};
 	private final Action delete_selected_graphs_action = new AbstractAction(BUNDLE.getString("deleteSelectedGraphs")) {
 		private static final long serialVersionUID = 1L;
 
 		public void actionPerformed(ActionEvent e) {
-			deleteGraphs(gmodel, gviewer, grafs);
+			deleteGraphs(gmodel, grafs);
 		}
 	};
 	private final Action save_selected_graphs_action = new AbstractAction(BUNDLE.getString("saveSelectedGraphs") + "...") {
@@ -149,7 +145,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 	public SimpleGraphTab(IGBService igbService) {
 		super(igbService, BUNDLE.getString("graphAdjusterTab"), BUNDLE.getString("graphAdjusterTab"), false, TAB_POSITION);
 		advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
-		this.gviewer = (SeqMapView)igbService.getMapView();
 
 		heat_mapCB = new JComboBox(HeatMap.getStandardNames());
 		heat_mapCB.addItemListener(new HeatMapItemListener());
@@ -209,7 +204,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 		hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
-		vis_bounds_setter = new GraphVisibleBoundsSetter(gviewer.getSeqMap());
+		vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getGraphCurrentSource());
 		score_thresh_adjuster = new GraphScoreThreshSetter(igbService, vis_bounds_setter);
 
 		height_slider.setBorder(BorderFactory.createTitledBorder(BUNDLE.getString("heightSlider")));
@@ -260,7 +255,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		colorB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				changeColor(grafs, gviewer);
+				changeColor(grafs);
 			}
 		});
 
@@ -277,8 +272,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
 
-		setSeqMapView(this.gviewer); // called for the side-effects
-
 		gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
@@ -286,10 +279,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 	private void showGraphScoreThreshSetter() {
 		score_thresh_adjuster.showFrame();
-	}
-
-	private void setSeqMapView(SeqMapView smv) {
-		this.gviewer = smv;
 	}
 
 	public TreeSet<GraphOperator> getGraphOperators() {
@@ -322,7 +311,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 		// Ignore the splice view as well as events coming from this class itself.
 
 		Object src = evt.getSource();
-		if (src != gviewer && src != gviewer.getSeqMap()) {
+		if (!igbService.isMainSrc(src)) {
 			return;
 		}
 
@@ -463,10 +452,12 @@ public final class SimpleGraphTab extends IGBTabPanel
 				if (grafs != selected_syms) {
 					grafs.add(graf);
 				}
-				List<GraphGlyph> multigl = gviewer.getSeqMap().<GraphGlyph>getItems(graf);
+				List<GlyphI> multigl = igbService.getItems(graf);
 				// add all graph glyphs representing graph sym
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
-				glyphs.addAll(multigl);
+				for (GlyphI g : multigl) {
+					glyphs.add((GraphGlyph)g);
+				}
 			}
 		}
 	}
@@ -528,7 +519,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			if (DEBUG_EVENTS) {
 				System.out.println(this.getClass().getName() + " got an ActionEvent: " + event);
 			}
-			if (gviewer == null || glyphs.isEmpty() || !is_listening) {
+			if (glyphs.isEmpty() || !is_listening) {
 				return;
 			}
 
@@ -559,7 +550,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						heat_mapCB.setEnabled(false);
 					// don't bother to change the displayed heat map name
 					}
-					gviewer.getSeqMap().updateWidget();
+					igbService.updateWidget();
 				}
 			};
 
@@ -568,14 +559,13 @@ public final class SimpleGraphTab extends IGBTabPanel
 	}
 
 	private void updateViewer() {
-		final SeqMapView current_viewer = gviewer;
 		final List<GraphSym> previous_graph_syms = new ArrayList<GraphSym>(grafs);
 		// set selections to empty so that options get turned off
 		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
 		SwingUtilities.invokeLater(new Runnable() {
 
 			public void run() {
-				current_viewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+				igbService.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
 				resetSelectedGraphGlyphs(previous_graph_syms);
 			}
 		});
@@ -584,7 +574,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final class HeatMapItemListener implements ItemListener {
 
 		public void itemStateChanged(ItemEvent e) {
-			if (gviewer == null || glyphs.isEmpty() || !is_listening) {
+			if (glyphs.isEmpty() || !is_listening) {
 				return;
 			}
 
@@ -598,7 +588,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						gl.setGraphStyle(GraphType.HEAT_MAP);
 						gl.setHeatMap(hm);
 					}
-					gviewer.getSeqMap().updateWidget();
+					igbService.updateWidget();
 				}
 			}
 		}
@@ -607,7 +597,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 	private final class GraphHeightSetter implements ChangeListener {
 
 		public void stateChanged(ChangeEvent e) {
-			if (gviewer == null || glyphs.isEmpty() || !is_listening) {
+			if (glyphs.isEmpty() || !is_listening) {
 				return;
 			}
 
@@ -617,10 +607,6 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 
 		private void setTheHeights(double height) {
-			if (gviewer == null) {
-				return; // for testing
-			}
-
 			for (GraphGlyph gl : glyphs) {
 				Rectangle2D.Double cbox = gl.getCoordBox();
 				gl.setCoords(cbox.x, cbox.y, cbox.width, height);
@@ -681,7 +667,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					igbService.runOnEventQueue(new Runnable() {
 	
 						public void run() {
-							gviewer.getSeqMap().updateWidget();
+							igbService.updateWidget();
 						}
 					});
 				}
@@ -696,7 +682,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 						igbService.runOnEventQueue(new Runnable() {
 	
 							public void run() {
-								gviewer.getSeqMap().updateWidget();
+								igbService.updateWidget();
 							}
 						});
 						A = null;
@@ -954,14 +940,14 @@ public final class SimpleGraphTab extends IGBTabPanel
 			for (GraphGlyph gl : glyphs) {
 				gl.setShowAxis(b);
 			}
-			gviewer.getSeqMap().updateWidget();
+			igbService.updateWidget();
 		}
 
 		private void setShowLabels(boolean b) {
 			for (GraphGlyph gl : glyphs) {
 				gl.setShowLabel(b);
 			}
-			gviewer.getSeqMap().updateWidget();
+			igbService.updateWidget();
 		}
 
 		private void doTransformGraphs() {
@@ -993,7 +979,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					// figure out correct height
 					Rectangle2D.Double coordbox = gl.getCoordBox();
 					Rectangle pixbox = new Rectangle();
-					gviewer.getSeqMap().getView().transformToPixels(coordbox, pixbox);
+					igbService.getView().transformToPixels(coordbox, pixbox);
 					gstate.getTierStyle().setY(pixbox.y);
 					gstate.getTierStyle().setHeight(pixbox.height);
 
@@ -1006,7 +992,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					Rectangle2D.Double tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
 					Rectangle pixbox = new Rectangle((int) tempbox.x, (int) tempbox.y, (int) tempbox.width, (int) tempbox.height);
 					Rectangle2D.Double coordbox = new Rectangle2D.Double();
-					gviewer.getSeqMap().getView().transformToCoords(pixbox, coordbox);
+					igbService.getView().transformToCoords(pixbox, coordbox);
 					gstate.getTierStyle().setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
 					gstate.getTierStyle().setHeight(coordbox.height);
 
@@ -1041,14 +1027,14 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 	// from GraphAdjusterView
 
-	private void deleteGraphs(GenometryModel gmodel, SeqMapView gviewer, List<GraphSym> grafs) {
+	private void deleteGraphs(GenometryModel gmodel, List<GraphSym> grafs) {
 		int gcount = grafs.size();
 		for (int i = 0; i < gcount; i++) {
 			GraphSym graf = grafs.get(i);
-			deleteGraph(gmodel, gviewer, graf);
+			deleteGraph(gmodel, graf);
 		}
 		gmodel.clearSelectedSymmetries(SimpleGraphTab.class);
-		gviewer.getSeqMap().updateWidget();
+		igbService.updateWidget();
 	}
 
 	/**
@@ -1058,19 +1044,19 @@ public final class SimpleGraphTab extends IGBTabPanel
 	 *  happens to be a child of a tier in the widget, and the tier has no children
 	 *  left after deleting the graph, then delete the tier as well.
 	 */
-	private void deleteGraph(GenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
+	private void deleteGraph(GenometryModel gmodel, GraphSym gsym) {
 		BioSeq aseq = gsym.getGraphSeq();
 		if (aseq != null) {
 			aseq.unloadAnnotation(gsym);
 		}
 
-		GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);
+		GraphGlyph gl = (GraphGlyph) igbService.getItem(gsym);
 		if (gl == null) {
 			return;
 		}
-		gviewer.getSeqMap().removeItem(gl);
+		igbService.removeItem(gl);
 		// clean-up references to the graph, allowing garbage-collection, etc.
-		gviewer.select(Collections.<SeqSymmetry>emptyList());
+		igbService.clearSelectGraphs();
 
 		// if this is not a floating graph, then it's in a tier,
 		//    so check tier -- if this graph is only child, then get rid of the tier also
@@ -1156,11 +1142,12 @@ public final class SimpleGraphTab extends IGBTabPanel
 		return newgrafs;
 	}
 
-	private void applyColorChange(List<GraphSym> graf_syms, SeqMapView gviewer, Color col) {
+	private void applyColorChange(List<GraphSym> graf_syms, Color col) {
 		for (GraphSym graf : graf_syms) {
 			// using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
-			List<GraphGlyph> glist = gviewer.getSeqMap().getItems(graf);
-			for (GraphGlyph gl : glist) {
+			List<GlyphI> glist = igbService.getItems(graf);
+			for (GlyphI g : glist) {
+				GraphGlyph gl = (GraphGlyph)g;
 				gl.setColor(col); // this automatically sets the GraphState color
 				// if graph is in a tier, change foreground color of tier also
 				//   (which in turn triggers change in color for TierLabelGlyph...)
@@ -1178,27 +1165,27 @@ public final class SimpleGraphTab extends IGBTabPanel
 		}
 	}
 
-	private void changeColor(List<GraphSym> graf_syms, SeqMapView gviewer) {
+	private void changeColor(List<GraphSym> graf_syms) {
 		if (graf_syms.isEmpty()) {
 			return;
 		}
 
 		// Set an initial color so that the "reset" button will work.
 		GraphSym graf_0 = graf_syms.get(0);
-		GraphGlyph gl_0 = (GraphGlyph) gviewer.getSeqMap().getItem(graf_0);
+		GraphGlyph gl_0 = (GraphGlyph) igbService.getItem(graf_0);
 		Color initial_color = Color.GREEN;
 		if (gl_0 != null) {
 			// gl_0 could be null if there is a selected graph that isn't visible in
 			// the current view.
 			initial_color = gl_0.getColor();
 		}
-		Color col = JColorChooser.showDialog((Component) gviewer.getSeqMap(),
+		Color col = JColorChooser.showDialog((Component) this,
 				"Graph Color Chooser", initial_color);
 		// Note: If the user selects "Cancel", col will be null
 		if (col != null) {
-			applyColorChange(graf_syms, gviewer, col);
+			applyColorChange(graf_syms, col);
 		}
-		gviewer.getSeqMap().updateWidget();
+		igbService.updateWidget();
 	}
 	@Override
 	public boolean isEmbedded() {

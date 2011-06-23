@@ -58,14 +58,6 @@ public class Das2 {
 
 
     private static void loadSpan(GenericFeature feature, SeqSpan span, Das2Region region, Das2Type type) {
-		// Create an AnnotStyle so that we can automatically set the
-		// human-readable name to the DAS2 name, rather than the ID, which is a URI
-		ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getURI().toString(), type.getName());
-		ts.setFeature(feature);
-
-		//TODO: Probably not necessary.
-		ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
-		ts.setFeature(feature);
 
         String overlap_filter = Das2FeatureSaxParser.getRangeString(span, false);
 
@@ -246,6 +238,16 @@ public class Das2 {
 
             Logger.getLogger(Das2.class.getName()).log(Level.INFO,
 					"Parsing {0} format for DAS2 feature response", content_subtype.toUpperCase());
+			
+			// Create an AnnotStyle so that we can automatically set the
+			// human-readable name to the DAS2 name, rather than the ID, which is a URI
+			ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(typeURI.toString(), typeName);
+			ts.setFeature(feature);
+
+			//TODO: Probably not necessary.
+			ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
+			ts.setFeature(feature);
+		
 			List<? extends SeqSymmetry> feats = null;
 			FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype);
 			if (fileTypeHandler == null) {

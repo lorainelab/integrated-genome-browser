@@ -17,7 +17,6 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.text.NumberFormat;
 
 public final class GraphGlyphCheckUtils {
 

@@ -1,8 +1,9 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
+import com.affymetrix.igb.view.WebLinkEditorPanel;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -19,7 +20,7 @@ import javax.swing.event.*;
 /**
  *  A panel for viewing and editing weblinks.
  */
-public final class WebLinksManagerView extends JPanel {
+public final class WebLinksAction extends JPanel {
   private static final long serialVersionUID = 1L;
 
   private JList webLinks;
@@ -39,10 +40,10 @@ public final class WebLinksManagerView extends JPanel {
   // initialize the static_panel early, because this will cause the accelerator
   // key-strokes to be configured early through the PreferenceUtils and thus
   // for them to be visible in the KeyStrokesView
-  private static WebLinksManagerView static_panel = new WebLinksManagerView();
+  private static WebLinksAction static_panel = new WebLinksAction();
 
   /** Creates a new instance of Class */
-  private WebLinksManagerView() {
+  private WebLinksAction() {
     super();
 
     webLinks = createJList();
@@ -101,7 +102,7 @@ public final class WebLinksManagerView extends JPanel {
   };
   
   
-  public static Action getShowFrameAction() {
+  public static Action getAction() {
     Action a = new AbstractAction(MessageFormat.format(
 					BUNDLE.getString("menuItemHasDialog"),
 					BUNDLE.getString("configureWebLinks"))) {
@@ -381,9 +382,9 @@ public final class WebLinksManagerView extends JPanel {
   }
 
   
-  private static synchronized WebLinksManagerView getManager() {
+  private static synchronized WebLinksAction getManager() {
     if (static_panel == null) {
-      static_panel = new WebLinksManagerView();
+      static_panel = new WebLinksAction();
     }
     return static_panel;
   }

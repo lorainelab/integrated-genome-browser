@@ -13,7 +13,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.border.*;
 
-final class WebLinkEditorPanel extends JPanel {
+public final class WebLinkEditorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private WebLink selected_link = null;
@@ -24,7 +24,7 @@ final class WebLinkEditorPanel extends JPanel {
 	private final JRadioButton regex_b = new JRadioButton("Match Tier");
 	private final ButtonGroup but_group_1 = new ButtonGroup();
 
-	WebLinkEditorPanel() {
+	public WebLinkEditorPanel() {
 		Box container = Box.createVerticalBox();
 
 		Box row1 = Box.createHorizontalBox();
@@ -111,7 +111,7 @@ final class WebLinkEditorPanel extends JPanel {
 		return (s == null || s.trim().length() == 0);
 	}
 
-	boolean setLinkPropertiesFromGUI() {
+	public boolean setLinkPropertiesFromGUI() {
 		try {
 			setLinkPropertiesFromGUIx();
 			return true;
@@ -137,7 +137,7 @@ final class WebLinkEditorPanel extends JPanel {
 		}
 	}
 
-	boolean showDialog(JFrame frame) {
+	public boolean showDialog(JFrame frame) {
 
 		final JOptionPane opt_pane = new JOptionPane(this,
 				JOptionPane.PLAIN_MESSAGE,

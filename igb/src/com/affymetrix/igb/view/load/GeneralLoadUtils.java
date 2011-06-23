@@ -845,30 +845,6 @@ public final class GeneralLoadUtils {
 		}
 	}
 
-	private static boolean checkBamLoading(GenericFeature feature, SeqSymmetry optimized_sym) {
-		//start max
-		boolean bamCheck = GeneralLoadView.getLoadView().isLoadingConfirm();
-		GeneralLoadView.getLoadView().setShowLoadingConfirm(false);
-		if (optimized_sym!= null && feature.getExtension() != null && feature.getExtension().endsWith("bam") && bamCheck) {
-			String message = "Region in view is big (> 100k), do you want to continue?";
-			int childrenCount = optimized_sym.getChildCount();
-			int spanWidth = 0;
-			for (int childIndex = 0; childIndex < childrenCount; childIndex++) {
-				SeqSymmetry child = optimized_sym.getChild(childIndex);
-				for (int spanIndex = 0; spanIndex < child.getSpanCount(); spanIndex++) {
-					spanWidth = spanWidth + (child.getSpan(spanIndex).getMax() - child.getSpan(spanIndex).getMin());
-				}
-			}
-			if (spanWidth > 100000){
-//				return !(Application.confirmPanel(message, PreferenceUtils.getTopNode(),
-//					PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
-			}
-		
-		}
-		return false;
-		//end max
-	}
-
 	/**
 	 * Walk the SeqSymmetry, converting all of its children into spans.
 	 * @param sym the SeqSymmetry to walk.

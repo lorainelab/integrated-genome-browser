@@ -315,7 +315,7 @@ public final class GenericFeature {
 		return null;
 	}
 
-	public String getExtension(){
+	private String getExtension(){
 		if (typeObj instanceof Das2Type) {
 			String ext = FormatPriorities.getFormat((Das2Type) typeObj);
 			if(ext == null) ext = "";

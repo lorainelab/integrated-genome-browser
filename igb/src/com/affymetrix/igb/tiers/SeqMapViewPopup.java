@@ -878,9 +878,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       ITrackStyle style = glyph.getAnnotStyle();
 	  GenericFeature feature = style.getFeature();
 	  if(feature != null){
-		  if("bam".equalsIgnoreCase(feature.getExtension())){
-			popup.add(mismatch_action);
-		  }
+		  if(style instanceof ITrackStyleExtended){
+			  String file_type = ((ITrackStyleExtended)style).getFileType();
+			if("bam".equalsIgnoreCase(file_type) || "sam".equalsIgnoreCase(file_type)){
+				popup.add(mismatch_action);
+			  }  
+		  }	  
 		  if(feature.friendlyURL != null){
 			popup.add(new JSeparator());
 			popup.add(new FeatureInfoAction(feature.friendlyURL.toString()));

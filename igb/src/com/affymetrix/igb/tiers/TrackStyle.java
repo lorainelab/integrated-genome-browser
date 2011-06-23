@@ -76,6 +76,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	private double height = default_height;
 	private double y = default_y;
 	private String url = null;
+	private String file_type = null;
 	private boolean color_by_score = false;
 	private HeatMap custom_heatmap = null;
 	private String unique_name;
@@ -90,19 +91,19 @@ public class TrackStyle implements ITrackStyleExtended {
 	private boolean customizable = true;
 	private GenericFeature feature = null;
 
-	public static TrackStyle getInstance(String name, String human_name, Map<String, String> props) {
-		return getInstance(name, human_name, true, true, props);
+	public static TrackStyle getInstance(String name, String human_name, String file_type, Map<String, String> props) {
+		return getInstance(name, human_name, file_type, true, true, props);
 	}
 
-	public static TrackStyle getInstance(String name, String human_name) {
-		return getInstance(name, human_name, true, true, null);
+	public static TrackStyle getInstance(String name, String human_name, String file_type) {
+		return getInstance(name, human_name, file_type, true, true, null);
 	}
 
 	public static TrackStyle getInstance(String unique_name, boolean persistent) {
-		return getInstance(unique_name, null, persistent, false, null);
+		return getInstance(unique_name, null, null, persistent, false, null);
 	}
 
-	private static TrackStyle getInstance(String unique_name, String human_name, boolean persistent, boolean force_human_name, Map<String, String> props){
+	private static TrackStyle getInstance(String unique_name, String human_name, String file_type, boolean persistent, boolean force_human_name, Map<String, String> props){
 		TrackStyle style = static_map.get(unique_name.toLowerCase());
 		if (style == null) {
 			if (DEBUG) {
@@ -112,7 +113,7 @@ public class TrackStyle implements ITrackStyleExtended {
 			TrackStyle template = getDefaultInstance();
 			// at this point template should already have all modifications to default applied from stylesheets and preferences nodes (A & B)
 			// apply any stylesheet stuff...
-			style = new TrackStyle(unique_name, persistent, template, props);
+			style = new TrackStyle(unique_name, file_type, persistent, template, props);
 			static_map.put(unique_name.toLowerCase(), style);
 
 			if(force_human_name) {
@@ -157,9 +158,10 @@ public class TrackStyle implements ITrackStyleExtended {
 	 *
 	 *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
 	 */
-	private TrackStyle(String name, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
+	private TrackStyle(String name, String file_type, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
 		this.method_name = name;
 		this.human_name = name; // this is the default human name, and is not lower case
+		this.file_type = file_type;
 		this.unique_name = name.toLowerCase();
 		this.is_persistent = is_persistent;
 		
@@ -345,7 +347,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	public static TrackStyle getDefaultInstance() {
 		if (default_instance == null) {
 			// Use a temporary variable here to avoid possible synchronization problems.
-			TrackStyle instance = new TrackStyle(NAME_OF_DEFAULT_INSTANCE, true, null, null);
+			TrackStyle instance = new TrackStyle(NAME_OF_DEFAULT_INSTANCE, null, true, null, null);
 			instance.setHumanName("");
 			instance.setShow(true);
 			default_instance = instance;
@@ -714,5 +716,9 @@ public class TrackStyle implements ITrackStyleExtended {
 
 	public GenericFeature getFeature() {
 		return this.feature;
+	}
+	
+	public String getFileType() {
+		return file_type;
 	}
 }

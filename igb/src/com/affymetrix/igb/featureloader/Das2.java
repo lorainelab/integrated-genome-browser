@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
+import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
@@ -238,16 +239,7 @@ public class Das2 {
 
             Logger.getLogger(Das2.class.getName()).log(Level.INFO,
 					"Parsing {0} format for DAS2 feature response", content_subtype.toUpperCase());
-			
-			// Create an AnnotStyle so that we can automatically set the
-			// human-readable name to the DAS2 name, rather than the ID, which is a URI
-			ITrackStyle ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(typeURI.toString(), typeName);
-			ts.setFeature(feature);
-
-			//TODO: Probably not necessary.
-			ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
-			ts.setFeature(feature);
-		
+					
 			List<? extends SeqSymmetry> feats = null;
 			FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype);
 			if (fileTypeHandler == null) {
@@ -256,6 +248,15 @@ public class Das2 {
 				return false;
 			}
 			else {
+				// Create an AnnotStyle so that we can automatically set the
+				// human-readable name to the DAS2 name, rather than the ID, which is a URI
+				ITrackStyleExtended ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(typeURI.toString(), typeName, content_subtype);
+				ts.setFeature(feature);
+
+				//TODO: Probably not necessary.
+				ts = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, content_subtype);
+				ts.setFeature(feature);
+
 				SymLoader symL = fileTypeHandler.createSymLoader(typeURI, typeName, aseq.getSeqGroup());
 				symL.setExtension(content_subtype);
 				if (symL instanceof BAM) {
@@ -298,7 +299,7 @@ public class Das2 {
 
 				// Some format do not annotate. So it might not have method name. e.g bgn
 				if(entry.getKey() != null)
-					feature.addMethod(entry.getKey());
+					feature.addMethod(entry.getKey(), content_subtype);
 			}
 			
 			feature.addLoadedSpanRequest(span);	// this span is now considered loaded.

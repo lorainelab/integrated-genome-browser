@@ -35,4 +35,6 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	/** Determines which data field in the symmetries will be used to pick the labels. */
 	void setLabelField(String s);
 	String getLabelField();
+	
+	String getFileType();
 }

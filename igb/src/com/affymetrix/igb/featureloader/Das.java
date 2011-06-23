@@ -60,11 +60,11 @@ public final class Das {
 
 		URI uri = builder.build();
 
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), feature.featureName);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(uri.toString(), feature.featureName, "das1");
 		style.setFeature(feature);
 
 		// TODO - probably not necessary
-		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName);
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, "das1");
 		style.setFeature(feature);
 
 		Collection<DASSymmetry> dassyms = parseData(uri);
@@ -77,7 +77,7 @@ public final class Das {
 			}
 			SymLoader.filterAndAddAnnotations(new ArrayList<SeqSymmetry>(dassyms), span, uri, feature);
 			for (DASSymmetry sym : dassyms) {
-				feature.addMethod(sym.getType());
+				feature.addMethod(sym.getType(), "das1");
 			}
 		}
 		//The span is now considered loaded.

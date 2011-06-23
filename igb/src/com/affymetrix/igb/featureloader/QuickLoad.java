@@ -239,7 +239,7 @@ public final class QuickLoad extends SymLoader {
 		}
 		
 		if (results != null) {
-			addSymmtries(span, results, feature);
+			addSymmtries(span, results, feature, extension);
 		}
 		feature.addLoadedSpanRequest(span); // this span is now considered loaded.
 
@@ -278,7 +278,7 @@ public final class QuickLoad extends SymLoader {
 		for (Entry<BioSeq, List<SeqSymmetry>> seq_sym : seq_syms.entrySet()) {
 			seq = seq_sym.getKey();
 			span = new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq);
-			addSymmtries(span, seq_sym.getValue(), feature);
+			addSymmtries(span, seq_sym.getValue(), feature, extension);
 			feature.addLoadedSpanRequest(span); // this span is now considered loaded.
 		}
 
@@ -287,17 +287,17 @@ public final class QuickLoad extends SymLoader {
 	
 	private void setStyle(GenericFeature feature) {
 		// TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, feature.featureProps);
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, feature.featureProps);
 		style.setFeature(feature);
 
 		// TODO - probably not necessary
-		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName, feature.featureProps);
+		style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName, extension, feature.featureProps);
 		style.setFeature(feature);
 		
 	}
 
 
-	private static void addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
+	private static void addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature, String extension) {
 		results = ServerUtils.filterForOverlappingSymmetries(span, results);
 		for (Map.Entry<String, List<SeqSymmetry>> entry : SymLoader.splitResultsByTracks(results).entrySet()) {
 			if (entry.getValue().isEmpty()) {
@@ -306,7 +306,7 @@ public final class QuickLoad extends SymLoader {
 			SymLoader.filterAndAddAnnotations(entry.getValue(), span, feature.getURI(), feature);
 			// Some format do not annotate. So it might not have method name. e.g bgn
 			if (entry.getKey() != null) {
-				feature.addMethod(entry.getKey());
+				feature.addMethod(entry.getKey(), extension);
 			}
 		}
 	}

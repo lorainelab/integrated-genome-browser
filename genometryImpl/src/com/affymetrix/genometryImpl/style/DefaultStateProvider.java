@@ -67,11 +67,11 @@ public class DefaultStateProvider implements StateProvider {
 		return state;
 	}
 
-	public ITrackStyleExtended getAnnotStyle(String name, String human_name) {
+	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, Map<String, String> props) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public ITrackStyleExtended getAnnotStyle(String name, String human_name, Map<String, String> props) {
+	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

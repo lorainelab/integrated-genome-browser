@@ -4,7 +4,6 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
-import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -28,38 +27,10 @@ import com.affymetrix.igb.stylesheet.PropertyMap;
  *
  *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
  */
-public class TrackStyle implements ITrackStyleExtended {
+public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 
 	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
-	// A pattern that matches two or more slash "/" characters.
-	// A preference node name can't contain two slashes, nor end with a slash.
-	private static final Pattern multiple_slashes = Pattern.compile("/{2,}");
-	private static final String NAME_OF_DEFAULT_INSTANCE = "* DEFAULT *";
-	// The String constants named PREF_* are for use in the persistent preferences
-	// They are not displayed to users, and should never change
-	private static final String PREF_SEPARATE = "Separate Tiers";
-	private static final String PREF_COLLAPSED = "Collapsed";
-	private static final String PREF_MAX_DEPTH = "Max Depth";
-	private static final String PREF_COLOR = "Color";
-	private static final String PREF_BACKGROUND = "Background";
-	private static final String PREF_HUMAN_NAME = "Human Name";
-	private static final String PREF_LABEL_FIELD = "Label Field";
-	private static final String PREF_GLYPH_DEPTH = "Glyph Depth";
-	private static final String PREF_HEIGHT = "Height"; // height per glyph? // linear transform value?
-	private static final String PREF_FONT_SIZE = "Font Size";
-	private static final boolean default_show = true;
-	private static final boolean default_separate = true;
-	private static final boolean default_collapsed = false;
-	private static final boolean default_expandable = true;
-	private static final int default_max_depth = 10;
-	private static final Color default_color = Color.CYAN;
-	private static final Color default_background = Color.BLACK;
-	private static final String default_label_field = "";
-	private static final int default_glyph_depth = 2;
-	private static final double default_height = 20.0;
-	private static final double default_y = 0.0;
-	public static final Object[] supported_sizes = {8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f};
-	public static final float default_font_size = 12;
+
 	public static final boolean DEBUG = false;
 	public static final boolean DEBUG_NODE_PUTS = false;
 	// whether to create and use a java Preferences node object for this instance
@@ -72,6 +43,7 @@ public class TrackStyle implements ITrackStyleExtended {
 	private Color color = default_color;
 	private Color background = default_background;
 	private String label_field = default_label_field;
+	private String direction_type = default_direction_type.name();
 	private int glyph_depth = default_glyph_depth;
 	private double height = default_height;
 	private double y = default_y;
@@ -184,7 +156,14 @@ public class TrackStyle implements ITrackStyleExtended {
 
 		// now need to add use of stylesheet settings via AssociationElements, etc.
 		Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
-		AssociationElement assel = stylesheet.getAssociationForType(name);
+		AssociationElement assel = stylesheet.getAssociationForFileType(file_type);
+		if(assel != null){
+			PropertyMap props = assel.getPropertyMap();
+			if (props != null) {
+				initFromPropertyMap(props);
+			}
+		}
+		assel = stylesheet.getAssociationForType(name);
 		if (assel == null) {
 			assel = stylesheet.getAssociationForMethod(name);
 		}
@@ -306,6 +285,20 @@ public class TrackStyle implements ITrackStyleExtended {
 				collapsed = true;
 			}
 		}
+		String fontstring = (String) props.getProperty("font_size");
+		if (fontstring != null) {
+			float prev_font_size = font_size;
+			try {
+				font_size = Float.parseFloat(fontstring);
+			} catch (Exception ex) {
+				font_size = prev_font_size;
+			}
+		}
+		String directionstring = (String) props.getProperty("direction_type");
+		if (directionstring != null) {
+			direction_type = directionstring;
+		}
+		
 		if (DEBUG) {
 			System.out.println("    +++++++  done initializing from PropertyMap");
 		}
@@ -541,6 +534,46 @@ public class TrackStyle implements ITrackStyleExtended {
 		}
 	}
 
+	public float getFontSize(){
+		return font_size;
+	}
+	
+	public void setFontSize(float font_size){
+		this.font_size = font_size;
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setFontSize(): " + human_name + ", " + font_size);
+			}
+			getNode().putFloat(PREF_FONT_SIZE, font_size);
+		}
+	}
+	
+	public void setFeature(GenericFeature f) {
+		this.feature = f;
+	}
+
+	public GenericFeature getFeature() {
+		return this.feature;
+	}
+	
+	public String getFileType() {
+		return file_type;
+	}
+
+	public void setDirectionType(String direction_type) {
+		this.direction_type = direction_type;
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setDirectionType(): " + human_name + ", " + direction_type);
+			}
+			getNode().put(PREF_DIRECTION_TYPE, direction_type);
+		}
+	}
+
+	public String getDirectionType() {
+		return direction_type;
+	}
+	
 	/** could be used to remember tier positions. */
 	public void setY(double y) {
 		this.y = y;
@@ -696,29 +729,4 @@ public class TrackStyle implements ITrackStyleExtended {
 		return s;
 	}
 
-	public float getFontSize(){
-		return font_size;
-	}
-	
-	public void setFontSize(float font_size){
-		this.font_size = font_size;
-		if (getNode() != null) {
-			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setFontSize(): " + human_name + ", " + font_size);
-			}
-			getNode().putFloat(PREF_FONT_SIZE, font_size);
-		}
-	}
-	
-	public void setFeature(GenericFeature f) {
-		this.feature = f;
-	}
-
-	public GenericFeature getFeature() {
-		return this.feature;
-	}
-	
-	public String getFileType() {
-		return file_type;
-	}
 }

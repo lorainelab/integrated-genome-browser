@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.igb.tiers.TrackConstants;
 
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
@@ -204,7 +205,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
     table.setDefaultEditor(Color.class, cellEditor);
     table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
-	table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackStyle.supported_sizes)));
+	table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
 
     validate();
   }

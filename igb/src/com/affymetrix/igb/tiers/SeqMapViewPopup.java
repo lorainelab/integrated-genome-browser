@@ -333,7 +333,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
 	
 	Object input = JOptionPane.showInputDialog(null, "Select font size","Change Selected Track Font Size", JOptionPane.PLAIN_MESSAGE, null, 
-			TrackStyle.supported_sizes, initial_value);
+			TrackConstants.SUPPORTED_SIZE, initial_value);
 	
 	if(input == null)
 		return;

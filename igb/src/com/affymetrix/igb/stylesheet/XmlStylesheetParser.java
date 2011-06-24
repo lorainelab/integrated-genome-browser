@@ -210,8 +210,15 @@ public final class XmlStylesheetParser {
           }
           associationElement = AssociationElement.getMethodAssocation(method, style);
           stylesheet.meth2association.put(method, associationElement);
+        }else if (name.equalsIgnoreCase(AssociationElement.FILE_TYPE_ASSOCIATION)) {
+          String method = el.getAttribute(AssociationElement.ATT_FILE_TYPE);
+          if (isBlank(method)) {
+            throw new IOException("ERROR in stylesheet: missing method in FILE_TYPE_ASSOCIATION");
+          }
+          associationElement = AssociationElement.getFileTypeAssocation(method);
+          stylesheet.filetype2association.put(method, associationElement);
         }
-        else if (name.equalsIgnoreCase(AssociationElement.METHOD_REGEX_ASSOCIATION)) {
+		else if (name.equalsIgnoreCase(AssociationElement.METHOD_REGEX_ASSOCIATION)) {
           String regex = el.getAttribute(AssociationElement.ATT_REGEX);
           String style = el.getAttribute(AssociationElement.ATT_STYLE);
           if (isBlank(regex) || isBlank(style)) {

@@ -64,7 +64,9 @@ public final class AssociationElement implements DrawableElement {
   static final String ATT_REGEX = "regex";
   static final String TYPE_ASSOCIATION = "TYPE_ASSOCIATION";
   static final String ATT_TYPE = "type";
-
+  static final String FILE_TYPE_ASSOCIATION = "FILE_TYPE_ASSOCIATION";
+  static final String ATT_FILE_TYPE = "file_type";
+  
   static AssociationElement getMethodAssocation(String method, String styleName) {
     return new AssociationElement(METHOD_ASSOCIATION,
       ATT_METHOD, method, styleName);
@@ -77,7 +79,11 @@ public final class AssociationElement implements DrawableElement {
     return new AssociationElement(TYPE_ASSOCIATION,
       ATT_TYPE, method, styleName);
   }
-
+  static AssociationElement getFileTypeAssocation(String method) {
+    return new AssociationElement(FILE_TYPE_ASSOCIATION,
+      ATT_FILE_TYPE, method, "");
+  }
+  
 	@Override
   public Object clone() throws CloneNotSupportedException {
     StyleElement clone = (StyleElement) super.clone();

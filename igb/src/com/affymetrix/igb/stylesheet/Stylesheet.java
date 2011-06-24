@@ -26,6 +26,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
   LinkedHashMap<String, AssociationElement> meth2association = new LinkedHashMap<String, AssociationElement>();
   LinkedHashMap<Pattern, AssociationElement> regex2association = new LinkedHashMap<Pattern, AssociationElement>();
   LinkedHashMap<String, AssociationElement> type2association = new LinkedHashMap<String, AssociationElement>();
+  LinkedHashMap<String, AssociationElement> filetype2association = new LinkedHashMap<String, AssociationElement>();
   LinkedHashMap<String,StyleElement> stylename2styleElement = new LinkedHashMap<String,StyleElement>();
 
   private static final String SYM_TO_STYLE_PROPERTY_KEY = Stylesheet.class.getName();
@@ -39,6 +40,8 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     clone.regex2association.putAll(regex2association);
     clone.type2association = new LinkedHashMap<String, AssociationElement>();
     clone.type2association.putAll(type2association);
+	clone.filetype2association = new LinkedHashMap<String, AssociationElement>();
+    clone.filetype2association.putAll(filetype2association);
     clone.stylename2styleElement = new LinkedHashMap<String,StyleElement>();
     clone.stylename2styleElement.putAll(stylename2styleElement);
     return clone;
@@ -112,6 +115,12 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 		return drawable;
 	}
 
+  public AssociationElement getAssociationForFileType(String file_type){
+    if (file_type == null) {
+      return null;
+    }
+    return filetype2association.get(file_type);
+  }
 
   public AssociationElement getAssociationForMethod(String meth){
     if (meth == null) {

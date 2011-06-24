@@ -36,5 +36,8 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setLabelField(String s);
 	String getLabelField();
 	
+	void setDirectionType(String s);
+	String getDirectionType();
+	
 	String getFileType();
 }

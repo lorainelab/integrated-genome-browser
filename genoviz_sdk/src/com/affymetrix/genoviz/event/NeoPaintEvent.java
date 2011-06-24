@@ -17,7 +17,7 @@ import java.awt.*;
 import java.awt.event.PaintEvent;
 
 public class NeoPaintEvent extends PaintEvent {
-
+	private static final long serialVersionUID = 1L;
 	Graphics2D g;
 
 	/** event id is always PAINT */

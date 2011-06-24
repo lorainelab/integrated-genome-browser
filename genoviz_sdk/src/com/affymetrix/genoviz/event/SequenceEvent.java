@@ -22,7 +22,7 @@ import java.util.EventObject;
  * c.f. Swing's DocumentEvent.
  */
 public class SequenceEvent extends EventObject {
-
+	private static final long serialVersionUID = 1L;
 	private final EditType type;
 	private final int offset;
 	private final int length;

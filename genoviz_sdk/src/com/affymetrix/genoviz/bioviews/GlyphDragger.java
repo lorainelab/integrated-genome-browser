@@ -235,10 +235,10 @@ public class GlyphDragger
 		}
 		Rectangle2D.Double cbox = gl.getCoordBox();
 		newgl.setCoords(cbox.x, cbox.y-5, cbox.width, cbox.height);
-		List children = gl.getChildren();
+		List<GlyphI> children = gl.getChildren();
 		if (children != null) {
 			for (int i=0; i<children.size(); i++) {
-				GlyphI child = (GlyphI)children.get(i);
+				GlyphI child = children.get(i);
 				GlyphI newchild = GlyphDragger.duplicateGlyph(child, col);
 				newgl.addChild(newchild);
 			}

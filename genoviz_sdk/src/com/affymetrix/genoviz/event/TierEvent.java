@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 import java.util.EventObject;
 
 public class TierEvent extends EventObject {
+	private static final long serialVersionUID = 1L;
 
 	/** A valid event type -- recipients are to repack */
 	public static final int REPACK = 1111;

@@ -18,7 +18,7 @@ import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 import java.util.EventObject;
 
 public class TierStateChangeEvent extends EventObject {
-
+	private static final long serialVersionUID = 1L;
 	protected int state;
 	protected MapTierGlyph source;
 

@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.event;
 import java.awt.AWTEvent;
 
 public class NeoWidgetEvent extends AWTEvent {
+	private static final long serialVersionUID = 1L;
 
 	public NeoWidgetEvent( Object source, int id ) {
 		super( source, id );

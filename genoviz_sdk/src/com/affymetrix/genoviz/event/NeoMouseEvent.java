@@ -30,7 +30,7 @@ import java.awt.geom.Point2D;
  * Also for retrieving glyphs under the event's coordinates.
  */
 public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
-
+	private static final long serialVersionUID = 1L;
 	protected static final int UNKNOWN = com.affymetrix.genoviz.util.NeoConstants.UNKNOWN;
 	protected EventObject original_event;
 	protected double xcoord;

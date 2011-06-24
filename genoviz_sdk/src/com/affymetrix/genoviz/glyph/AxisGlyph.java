@@ -484,7 +484,6 @@ public class AxisGlyph extends Glyph {
 	public void draw(ViewI view) {
 		int axis_loc;
 		LinearTransform cumulative;
-		int axis_length;
 
 		FontMetrics fm=null;
 		if (orient == VERTICAL && LEFT == this.labelPlacement) {

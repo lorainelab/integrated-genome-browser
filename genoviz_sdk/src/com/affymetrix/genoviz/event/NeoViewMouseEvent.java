@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.bioviews.View;
  * a NeoMouseEvent whose source is a {@link View} rather than a Component.
  */
 public class NeoViewMouseEvent extends NeoMouseEvent {
-
+	private static final long serialVersionUID = 1L;
 	protected View view;
 
 	public NeoViewMouseEvent(MouseEvent ome, View view,

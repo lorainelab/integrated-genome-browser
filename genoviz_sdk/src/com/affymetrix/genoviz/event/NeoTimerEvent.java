@@ -22,7 +22,7 @@ import java.util.EventObject;
  *  event handling (pseudo-1.1 event handling).
  */
 public class NeoTimerEvent extends EventObject {
-
+	private static final long serialVersionUID = 1L;
 	protected int tick_count;
 	protected Object arg;
 

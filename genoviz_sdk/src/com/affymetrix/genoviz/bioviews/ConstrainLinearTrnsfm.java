@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
  *  A transform used internally by NeoSeq, should not be used directly.
  */
 public final class ConstrainLinearTrnsfm extends LinearTransform {
-
+	private static final long serialVersionUID = 1L;
 	private double constrain_value;
 
 	public ConstrainLinearTrnsfm() {

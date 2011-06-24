@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import java.util.EventObject;
 
 public class NeoDragEvent extends EventObject {
-
+	private static final long serialVersionUID = 1L;
 	protected int direction;
 
 	/**

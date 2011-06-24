@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
  * when a view is redrawn and the visible bounds have changed since the last draw.
  */
 public class NeoViewBoxChangeEvent extends EventObject  {
+	private static final long serialVersionUID = 1L;
 
 	public final static int ADJUSTMENT = 30000;
 

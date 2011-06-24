@@ -5,6 +5,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 public class LinearTransform extends AffineTransform  {
+	private static final long serialVersionUID = 1L;
+
 	public LinearTransform() {
 		super();
 	}

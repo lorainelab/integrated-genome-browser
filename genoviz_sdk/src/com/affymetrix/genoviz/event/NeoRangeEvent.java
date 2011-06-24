@@ -25,7 +25,7 @@ import java.util.EventObject;
  *  Not currently implemented for NeoAssembler.
  */
 public class NeoRangeEvent extends EventObject  {
-
+	private static final long serialVersionUID = 1L;
 	protected double span_start;
 	protected double span_end;
 

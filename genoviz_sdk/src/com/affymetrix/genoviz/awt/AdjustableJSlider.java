@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * This is so that we can use sliders for NeoMap zoomers.
  */
 public class AdjustableJSlider extends JSlider implements Adjustable {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * constructs a horizontal slider.

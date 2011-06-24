@@ -33,6 +33,7 @@ import java.util.EventObject;
  *     take out id field, else will shadow AWTEvent id field...
  */
 public class NeoGlyphDragEvent extends EventObject {
+	private static final long serialVersionUID = 1L;
 	GlyphI dragged_glyph;
 	public final static int DRAG_STARTED = 0;
 	public final static int DRAG_IN_PROGRESS = 1;

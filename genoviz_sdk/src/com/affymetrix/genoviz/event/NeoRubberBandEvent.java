@@ -26,6 +26,7 @@ import com.affymetrix.genoviz.bioviews.RubberBand;
  *  event handling (pseudo-1.1 event handling)
  */
 public class NeoRubberBandEvent extends MouseEvent  {
+	private static final long serialVersionUID = 1L;
 	/** The "glyph selected" event id */
 	public static final int BAND_START = AWTEvent.RESERVED_ID_MAX;
 	public static final int BAND_STRETCH = BAND_START + 1;

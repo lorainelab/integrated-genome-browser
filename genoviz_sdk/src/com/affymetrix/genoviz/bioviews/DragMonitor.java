@@ -23,7 +23,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Dimension;
 import javax.swing.Timer;
 
-@SuppressWarnings(value="deprecation")
 public class DragMonitor
 	implements NeoConstants, MouseListener, MouseMotionListener, ActionListener {
 

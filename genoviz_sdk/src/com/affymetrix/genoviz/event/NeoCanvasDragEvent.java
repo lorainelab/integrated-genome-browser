@@ -7,7 +7,7 @@ import java.util.EventObject;
  * @author hiralv
  */
 public class NeoCanvasDragEvent extends EventObject {
-
+	private static final long serialVersionUID = 1L;
 	protected final int xdirection, ydirection, width, height;
 
 	public NeoCanvasDragEvent(Object source, int xdirection, int ydirection, int width, int height) {

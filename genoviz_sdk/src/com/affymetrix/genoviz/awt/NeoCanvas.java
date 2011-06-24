@@ -16,7 +16,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.List;
 import java.util.Set;
 import javax.swing.JComponent;
 
@@ -26,6 +25,7 @@ import javax.swing.JComponent;
  * that can be listened for (by a {@link NeoPaintListener}).
  */
 public class NeoCanvas extends JComponent  {
+  private static final long serialVersionUID = 1L;
   private final Set<NeoPaintListener> paintListeners = new CopyOnWriteArraySet<NeoPaintListener>();
 
   /**

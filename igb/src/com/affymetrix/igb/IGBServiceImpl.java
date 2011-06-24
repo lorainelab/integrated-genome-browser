@@ -453,6 +453,11 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public Object getSeqMapViewListener() {
+		return ((SeqMapView)getMapView()).getMouseListener();
+	}
+
+	@Override
 	public JFrame getFrame() {
 		return Application.getSingleton().getFrame();
 	}

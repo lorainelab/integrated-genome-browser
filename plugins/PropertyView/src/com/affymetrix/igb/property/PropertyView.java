@@ -63,7 +63,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		this.setMinimumSize(new java.awt.Dimension(100, 250));
 		GenometryModel.getGenometryModel().addSymSelectionListener(this);
 		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
-		propertyListeners.add(((SeqMapView)igbService.getMapView()).getMouseListener());
+		propertyListeners.add((PropertyListener)igbService.getSeqMapViewListener());
 	}
 
 	private static List<String> graphToolTipOrder(){

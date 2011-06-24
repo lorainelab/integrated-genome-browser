@@ -248,6 +248,7 @@ public interface IGBService {
 	 * the will process the property display for the SeqMapView selection
 	 */
 	public void setPropertyHandler(PropertyHandler propertyHandler);
+	public Object getSeqMapViewListener();
 	// for Graph Adjuster
 	/**
 	 * get the main JFrame for the application

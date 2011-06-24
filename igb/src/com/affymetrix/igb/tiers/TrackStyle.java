@@ -43,7 +43,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 	private Color color = default_color;
 	private Color background = default_background;
 	private String label_field = default_label_field;
-	private String direction_type = default_direction_type.name();
+	private DIRECTION_TYPE direction_type = default_direction_type;
 	private int glyph_depth = default_glyph_depth;
 	private double height = default_height;
 	private double y = default_y;
@@ -296,7 +296,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 		}
 		String directionstring = (String) props.getProperty("direction_type");
 		if (directionstring != null) {
-			direction_type = directionstring;
+			DIRECTION_TYPE prev_direction_type = direction_type;
+			try {
+				direction_type = DIRECTION_TYPE.valueFor(directionstring);
+			} catch (Exception ex) {
+				direction_type = prev_direction_type;
+			}
 		}
 		
 		if (DEBUG) {
@@ -560,18 +565,18 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 		return file_type;
 	}
 
-	public void setDirectionType(String direction_type) {
-		this.direction_type = direction_type;
+	public void setDirectionType(int direction_type) {
+		this.direction_type = DIRECTION_TYPE.valueFor(direction_type);
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setDirectionType(): " + human_name + ", " + direction_type);
 			}
-			getNode().put(PREF_DIRECTION_TYPE, direction_type);
+			getNode().putInt(PREF_DIRECTION_TYPE, direction_type);
 		}
 	}
 
-	public String getDirectionType() {
-		return direction_type;
+	public int getDirectionType() {
+		return direction_type.ordinal();
 	}
 	
 	/** could be used to remember tier positions. */

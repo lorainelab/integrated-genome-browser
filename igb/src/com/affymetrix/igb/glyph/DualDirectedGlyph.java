@@ -21,7 +21,7 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 	private Color endColor = Color.GREEN;
 	private DIRECTION_TYPE type;
 	
-	public DualDirectedGlyph(boolean isFirst, boolean isLast, String direction_type){
+	public DualDirectedGlyph(boolean isFirst, boolean isLast, int direction_type){
 		super();
 		setPosition(isFirst, isLast);
 		setDirectionType(DIRECTION_TYPE.valueFor(direction_type));

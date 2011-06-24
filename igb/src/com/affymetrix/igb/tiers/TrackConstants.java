@@ -53,6 +53,13 @@ public interface TrackConstants {
 			}
 			return default_direction_type;
 		}
+		
+		public static DIRECTION_TYPE valueFor(int i){
+			if(i < DIRECTION_TYPE.values().length){
+				return DIRECTION_TYPE.values()[i];
+			}
+			return default_direction_type;
+		}
 	}
 	
 }

@@ -42,19 +42,18 @@ import javax.swing.table.TableRowSorter;
 
 public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 	private static final long serialVersionUID = 1L;
-	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
 	private static final int TAB_POSITION = 1;
 
 	// the table showing name-value pairs
 	private static final JTable table = new JTable();
 	private final JScrollPane scroll_pane = new JScrollPane();
 	private TableRowSorter<TableModel> sorter;
-	public static final String PROPERTY = "property";
-	public static final String DEFAULT_TITLE = "Property Sheet";
+	private static final String PROPERTY = "property";
 	private static final List<String> prop_order = determineOrder();
-	Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
+	private Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
 
-	public PropertyView(IGBService igbService) {
+	PropertyView(IGBService igbService) {
 		super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), false, TAB_POSITION);
 		determineOrder();
 		JViewport jvp = new JViewport();
@@ -126,6 +125,8 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		return orderList;
 	}
 
+	@Override
+	// implement SymSelectionListener
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		Object src = evt.getSource();
 		// if selection event originally came from here, then ignore it...
@@ -145,6 +146,8 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		showSyms(evt.getSelectedSyms(), mapView, tlm);
 	}
 
+	@Override
+	// implement GroupSelectionListener
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		if(evt.getSelectedGroup() == null){
 			table.setModel(new DefaultTableModel());
@@ -174,7 +177,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		this.showProperties(prop_array, prop_order, "");
 	}
 
-	public static void addTierInfo(List<Map<String, Object>> propList, TierLabelManager handler){
+	private static void addTierInfo(List<Map<String, Object>> propList, TierLabelManager handler){
 		List<Map<String, Object>> tierProp = handler.getTierProperties();
 
 		if(!tierProp.isEmpty()){
@@ -384,6 +387,8 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
+	// implement PropertyHandler
 	public String[][] getPropertiesRow(SeqSymmetry sym, JComponent seqMap){
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> props = determineProps(sym, (SeqMapView)seqMap);
@@ -393,6 +398,8 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
+	// implement PropertyHandler
 	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, JComponent seqMap){
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> props = determineProps(sym, (SeqMapView)seqMap);
@@ -498,11 +505,13 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	}
 
 	@Override
+	// override IGBTabPanel
 	public boolean isEmbedded() {
 		return true;
 	}
 
 	@Override
+	// override IGBTabPanel
 	public boolean isCheckMinimumWindowSize() {
 		return true;
 	}

@@ -88,25 +88,32 @@ public final class XmlStylesheetParser {
  public static synchronized Stylesheet getUserStylesheet() {
 	 if (user_stylesheet == null) {
 		 InputStream istr = null;
+		 XmlStylesheetParser parser = new XmlStylesheetParser();
 		 try {
-			 XmlStylesheetParser parser = new XmlStylesheetParser();
-			 // If using class.getResource... use name beginning with "/"
-			 istr = XmlStylesheetParser.class.getResourceAsStream(default_user_stylesheet_resource_name);
-
+			 File f = getUserStylesheetFile();
 			 // Initialize the user stylesheet with the contents of the system stylesheet
 			 parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
 			 
-			 // then load the user stylesheet on top of that
-			 Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
-					"Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
+			 if(f.exists()){
+				 istr = new FileInputStream(f);
+				 Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
+					"Loading user stylesheet from resource: " + user_stylesheet_resource_name);
+				 user_stylesheet = parser.parse(istr);
+			 }else{
+				user_stylesheet = parser.stylesheet;
+			 }
 				 		 
-			 user_stylesheet = parser.parse(istr);
-
-		 } catch (Exception e) {
+		 }catch (FileNotFoundException e) {
+			 //If error happens due to reading/loading user stylesheet then use system's default stylesheet.
+			 user_stylesheet = parser.stylesheet;
+		 }catch (IOException e) {
+			 //If error happens due to reading/loading user stylesheet then use system's default stylesheet.
+			 user_stylesheet = parser.stylesheet;
+		 }catch (Exception e) {
 			 System.out.println("ERROR: Couldn't initialize user stylesheet.");
 			 e.printStackTrace();
 			 user_stylesheet = null;
-		 } finally {
+		 }finally {
 			 GeneralUtils.safeClose(istr);
 		 }
 		 if (user_stylesheet == null) {

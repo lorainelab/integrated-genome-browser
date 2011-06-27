@@ -281,10 +281,12 @@ public final class QuickLoadServerModel {
 	private boolean loadSeqInfo(String genome_name) {
 		String liftAll = Constants.liftAllLft;
 		String modChromInfo = Constants.modChromInfoTxt;
+		String genomeTxt = Constants.genomeTxt;
 		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		boolean success = false;
 		InputStream lift_stream = null;
 		InputStream cinfo_stream = null;
+		InputStream ginfo_stream = null;
 		try {
 			String lift_path = getPath(genome_name, liftAll);
 			try {
@@ -296,12 +298,24 @@ public final class QuickLoadServerModel {
 						Level.FINE, "couldn''t find {0}, looking instead for {1}", new Object[]{liftAll, modChromInfo});
 				lift_stream = null;
 			}
+			
+			String ginfo_path = getPath(genome_name, genomeTxt);
 			if (lift_stream == null) {
+				try {
+					ginfo_stream = getInputStream(ginfo_path, getCacheAnnots(), false);
+				} catch (Exception ex) {
+					Logger.getLogger(QuickLoadServerModel.class.getName()).log(
+						Level.FINE, "couldn''t find {0}, looking instead for {1}", new Object[]{liftAll, genomeTxt});
+					ginfo_stream = null;
+				}
+			}
+			
+			if (ginfo_stream == null) {
 				String cinfo_path = getPath(genome_name, modChromInfo);
 				try {
 					cinfo_stream = getInputStream(cinfo_path, getCacheAnnots(), false);
 				} catch (Exception ex) {
-					System.err.println("ERROR: could find neither " + lift_path + " nor " + cinfo_path);
+					System.err.println("ERROR: could find " + lift_path + " or " + ginfo_path +" or "+ cinfo_path);
 					ex.printStackTrace();
 					cinfo_stream = null;
 				}
@@ -311,10 +325,13 @@ public final class QuickLoadServerModel {
 			if (lift_stream != null) {
 				LiftParser.parse(lift_stream, GenometryModel.getGenometryModel(), genome_name, annot_contigs);
 				success = true;
-			} else if (cinfo_stream != null) {
+			} else if (ginfo_stream != null ){
+				ChromInfoParser.parse(ginfo_stream, GenometryModel.getGenometryModel(), genome_name);
+				success = true;
+			}else if (cinfo_stream != null) {
 				ChromInfoParser.parse(cinfo_stream, GenometryModel.getGenometryModel(), genome_name);
 				success = true;
-			}
+			} 
 		} catch (Exception ex) {
 			ErrorHandler.errorPanel("ERROR", "Error loading data for genome '" + genome_name + "'", ex);
 		} finally {

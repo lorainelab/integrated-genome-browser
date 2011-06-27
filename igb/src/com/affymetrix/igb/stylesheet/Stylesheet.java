@@ -174,7 +174,10 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     sb.append("<!DOCTYPE STYLESHEET SYSTEM \"igb_stylesheet_1.dtd\">\n");
 
     sb.append("\n");
-    sb.append(indent).append("<STYLESHEET>\n");
+    sb.append(indent).append("<IGB_STYLESHEET\n"
+			+ indent+"version='0.1\'\n"
+			+ indent+"dtd='http://genoviz.sourceforge.net/formats/stylesheets/igb_stylesheet_0_1.dtd' "
+			+ ">\n");
 
     sb.append("\n");
     sb.append(indent).append("<STYLES>");
@@ -203,7 +206,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     sb.append(indent).append("</ASSOCIATIONS>\n");
     sb.append("\n");
 
-    sb.append(indent).append("</STYLESHEET>\n");
+    sb.append(indent).append("</IGB_STYLESHEET>\n");
     sb.append("\n");
     return sb;
   }
@@ -242,7 +245,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     public StringBuffer appendXML(String indent, StringBuffer sb) {
       sb.append(indent).append('<').append(NAME);
       XmlStylesheetParser.appendAttribute(sb, ATT_NAME, name);
-      sb.append("\"/>\n");
+      sb.append("/>\n");
       return sb;
     }
   }

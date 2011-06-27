@@ -12,9 +12,12 @@
  */
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.BAMSym;
-import com.affymetrix.genoviz.bioviews.GlyphI;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import com.affymetrix.genometryImpl.BAMSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
@@ -31,21 +34,20 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
-import com.affymetrix.genoviz.glyph.EfficientPointedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 
 import com.affymetrix.igb.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.view.SeqMapView;
-
-import java.awt.Color;
-import java.util.*;
 
 /**
  *
@@ -59,14 +61,12 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 */
 	private static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
 	private static Class default_echild_class = (new FillRectGlyph()).getClass();
-	private static Class default_edirected_child_class = (new EfficientPointedGlyph()).getClass();
 	private static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 	private static final int DEFAULT_THICK_HEIGHT = 25;
 	private static final int DEFAULT_THIN_HEIGHT = 15;
 	private SeqMapView gviewer;
 	private Class parent_glyph_class;
 	private Class child_glyph_class;
-	private Class directed_child_glyph_class;
 	private final Class parent_labelled_glyph_class;
 
 	public GenericAnnotGlyphFactory() {
@@ -103,19 +103,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 		
-		String directed_child_glyph_name = (String) options.get("directed_child_glyph");
-		if (directed_child_glyph_name != null) {
-			try {
-				directed_child_glyph_class = Class.forName(child_glyph_name);
-			} catch (Exception ex) {
-				System.err.println();
-				System.err.println("WARNING: Class for child glyph not found: " + child_glyph_name);
-				System.err.println();
-				directed_child_glyph_class = default_edirected_child_class;
-			}
-		}else{
-			directed_child_glyph_class = default_edirected_child_class;
-		}
 	}
 
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
@@ -144,7 +131,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 	}
-
+	
 	private static int getDepth(SeqSymmetry sym) {
 		int depth = 1;
 		SeqSymmetry current = sym;
@@ -311,6 +298,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
+		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
 		for (int i = 0; i < childCount; i++) {
 			SeqSymmetry child = sym.getChild(i);
 			SeqSpan cspan = gviewer.getViewSeqSpan(child);
@@ -318,17 +306,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				// if no span for view, then child is either to left or right of view
 				outside_children.add(child); // collecting children outside of view to handle later
 			} else {
-				GlyphI cglyph;
-				if (cspan.getLength() == 0) {
-					cglyph = new DeletionGlyph();
-				} else {
-					if(i==childCount-1 && cspan.isForward() || i==0 && !cspan.isForward()){
-						cglyph =  (GlyphI) directed_child_glyph_class.newInstance();
-					}else{
-						cglyph = (GlyphI) child_glyph_class.newInstance();
-					}
-				}
-
+				GlyphI cglyph = getChild(cspan,i==0,i==childCount-1,direction_type);
 				Color child_color = getSymColor(child, the_style);
 				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, map);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
@@ -351,19 +329,27 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				}
 			}
 		}
-		
-		double cheight = DEFAULT_THIN_HEIGHT;
-		if (cdsSpan == null) {
-			cheight = DEFAULT_THICK_HEIGHT;
+				
+		if(the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal()){
+			ArrowHeadGlyph.addDirectionGlyphs(map, sym, pglyph, coordseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
 		}
-			
-		ArrowHeadGlyph.addDirectionGlyphs(map, sym, pglyph, coordseq, coordseq, 0.0, cheight);
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
 	}
 
+	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type) 
+			throws InstantiationException, IllegalAccessException{
+		
+		if (cspan.getLength() == 0) 
+			return new DeletionGlyph();
+		else if(isFirst || isLast)
+			return new DualDirectedGlyph(isFirst,isLast,direction_type);
+			
+		return (GlyphI) child_glyph_class.newInstance();
+	}
+		
 	private static Color getSymColor(SeqSymmetry insym, ITrackStyleExtended style) {
 		boolean use_score_colors = style.getColorByScore();
 		boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));

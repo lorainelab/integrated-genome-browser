@@ -213,6 +213,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		glyph_depth = node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth());
 		font_size = node.getFloat(PREF_FONT_SIZE, this.getFontSize());
+		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
 	}
 
 	// Copies selected properties from a PropertyMap into this object, but does NOT persist
@@ -330,6 +331,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 		label_field = template.getLabelField();
 		glyph_depth = template.getGlyphDepth();  // depth of visible glyph tree
 		font_size = template.getFontSize();
+		direction_type = template.direction_type;
 	}
 
 	// Returns the preferences node, or null if this is a non-persistent instance.

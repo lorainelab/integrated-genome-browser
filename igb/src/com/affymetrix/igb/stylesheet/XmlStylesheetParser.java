@@ -14,6 +14,7 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.XMLUtils;
 import java.io.*;
 import java.util.logging.Level;
@@ -36,7 +37,8 @@ public final class XmlStylesheetParser {
   // This resource should in the top-level igb source directory, or top level of jar file
   private static final String system_stylesheet_resource_name = "/igb_system_stylesheet.xml";
   private static final String default_user_stylesheet_resource_name = "/default_user_stylesheet.xml";
-
+  private static final String user_stylesheet_resource_name = "user_stylesheet.xml";
+  
   /** Set the system stylesheet to null, so that the next call to getSystemStylesheet()
    *  will re-load it from storage.
    */
@@ -77,6 +79,12 @@ public final class XmlStylesheetParser {
     user_stylesheet = null;
   }
 
+ public static synchronized File getUserStylesheetFile(){
+	String app_dir = PreferenceUtils.getAppDataDirectory();
+	File f = new File(app_dir, user_stylesheet_resource_name);
+	return f;
+ }
+
  public static synchronized Stylesheet getUserStylesheet() {
 	 if (user_stylesheet == null) {
 		 InputStream istr = null;
@@ -87,11 +95,11 @@ public final class XmlStylesheetParser {
 
 			 // Initialize the user stylesheet with the contents of the system stylesheet
 			 parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
-
+			 
 			 // then load the user stylesheet on top of that
 			 Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
-				"Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
-
+					"Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
+				 		 
 			 user_stylesheet = parser.parse(istr);
 
 		 } catch (Exception e) {

@@ -7,11 +7,15 @@ import java.util.prefs.*;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.PropertyMap;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -736,4 +740,40 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 		return s;
 	}
 
+	 public static synchronized boolean autoSaveUserStylesheet() {
+		Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
+		if (stylesheet == null) {
+			Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "No user stylesheet present.");
+			return false;
+		}
+		
+		java.io.File f = XmlStylesheetParser.getUserStylesheetFile();
+		String filename = f.getAbsolutePath();
+		java.io.FileWriter fw = null;
+		java.io.BufferedWriter bw = null;
+		try {
+			Logger.getLogger(TrackStyle.class.getName()).log(Level.INFO, "Saving user stylesheet to file {0}", filename);
+			File parent_dir = f.getParentFile();
+			if (parent_dir != null) {
+				parent_dir.mkdirs();
+			}
+			StringBuffer sb = new StringBuffer(1000);
+			sb = stylesheet.appendXML("\t", sb);
+			fw = new java.io.FileWriter(f);
+			bw = new java.io.BufferedWriter(fw);
+			bw.write(sb.toString());
+			bw.flush();
+			
+			return true;
+		} catch (java.io.FileNotFoundException fnfe) {
+			Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Could not auto-save user stylesheet to {0}", filename);
+		} catch (java.io.IOException ioe) {
+			Logger.getLogger(TrackStyle.class.getName()).log(Level.SEVERE, "Error while saving user stylesheet to {0}", filename);
+		} finally{
+			GeneralUtils.safeClose(bw);
+			GeneralUtils.safeClose(fw);
+		}
+		
+		return false;
+	}
 }

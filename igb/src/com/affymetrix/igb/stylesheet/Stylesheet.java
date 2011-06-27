@@ -194,9 +194,10 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 
     List<AssociationElement> associations = new ArrayList<AssociationElement>();
     associations.addAll(meth2association.values());
+	associations.addAll(filetype2association.values());
     associations.addAll(regex2association.values());
     associations.addAll(type2association.values());
-
+	
     Iterator<AssociationElement> a_iter = associations.iterator();
     while (a_iter.hasNext()) {
       AssociationElement ae = a_iter.next();

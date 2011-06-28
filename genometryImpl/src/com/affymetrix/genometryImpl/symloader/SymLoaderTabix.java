@@ -1,7 +1,9 @@
 package com.affymetrix.genometryImpl.symloader;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -16,7 +18,9 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.broad.tribble.readers.TabixReader;
+import org.broad.tribble.readers.LineReader;
+import org.broad.tribble.source.tabix.TabixLineReader;
+import org.broad.tribble.util.BlockCompressedInputStream;
 
 /**
  * This SymLoader is intended to be used for data sources that
@@ -26,7 +30,7 @@ import org.broad.tribble.readers.TabixReader;
 public class SymLoaderTabix extends SymLoader {
 
 	protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
-	private TabixReader tabixReader;
+	private TabixLineReader tabixLineReader;
 	private final LineProcessor lineProcessor;
 	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
 	static {
@@ -44,10 +48,10 @@ public class SymLoaderTabix extends SymLoader {
 			if (uriString.startsWith(FILE_PREFIX)) {
 				uriString = uri.getPath();
 			}
-			this.tabixReader = new TabixReader(uriString);
+			this.tabixLineReader = new TabixLineReader(uriString);
 		}
 		catch (Exception x) {
-			this.tabixReader = null;
+			this.tabixLineReader = null;
 		}
 	}
 
@@ -61,7 +65,7 @@ public class SymLoaderTabix extends SymLoader {
 	 * tabix file for the data source
 	 */
 	public boolean isValid() {
-		return tabixReader != null;
+		return tabixLineReader != null;
 	}
 
 	@Override
@@ -74,7 +78,7 @@ public class SymLoaderTabix extends SymLoader {
 		}
 		super.init();
 		lineProcessor.init(uri);
-		for (String seqID : tabixReader.getSequenceNames()) {
+		for (String seqID : tabixLineReader.getSequenceNames()) {
 			BioSeq seq = group.getSeq(seqID);
 			if (seq == null) {
 				int length = 1000000000;
@@ -118,21 +122,57 @@ public class SymLoaderTabix extends SymLoader {
 	public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
 		init();
 		String seqID = seqs.get(seq);
-		return lineProcessor.processLines(seq, tabixReader.query(seqID));
+		return lineProcessor.processLines(seq, tabixLineReader.query(seqID, 0, Integer.MAX_VALUE));
 	}
 
 	@Override
 	public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) {
 		init();
 		String seqID = seqs.get(overlapSpan.getBioSeq());
-		TabixReader.TabixLineReader tabixLineReader = tabixReader.query(seqID + ":" + (overlapSpan.getStart() + 1) + "-" + overlapSpan.getEnd());
-		if (tabixLineReader == null) {
+		LineReader lineReader = tabixLineReader.query(seqID, (overlapSpan.getStart() + 1), + overlapSpan.getEnd());
+		if (lineReader == null) {
 			return new ArrayList<SeqSymmetry>();
 		}
-		return lineProcessor.processLines(overlapSpan.getBioSeq(), tabixLineReader);
+		return lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
     }
 	
-	public static SymLoader getSymLoader(SymLoader sym){
+    /**
+     * copied from the igv 1.5.64 source
+     * @param path path of data source
+     * @return if the data source has a valid tabix index
+     */
+    public static boolean isTabix(String path) {
+        if (!path.endsWith("gz")) {
+            return false;
+        }
+
+        BlockCompressedInputStream is = null;
+        try {
+            if (path.startsWith("http:") || path.startsWith("https:") || path.startsWith("ftp:")) {
+                is = new BlockCompressedInputStream(new URL(path + ".tbi"));
+            } else {
+                is = new BlockCompressedInputStream(new File(path + ".tbi"));
+            }
+
+            byte[] bytes = new byte[4];
+            is.read(bytes);
+            return (char) bytes[0] == 'T' && (char) bytes[1] == 'B';
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return false;
+        }
+        finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        }
+    }
+
+    public static SymLoader getSymLoader(SymLoader sym){
 		try {
 			URI uri = new URI(sym.uri.toString() + ".tbi");
 			if(LocalUrlCacher.isValidURI(uri)){
@@ -140,7 +180,7 @@ public class SymLoaderTabix extends SymLoader {
 				if (uriString.startsWith(FILE_PREFIX)) {
 					uriString = sym.uri.getPath();
 				}
-				if (TabixReader.isTabix(uriString)) {
+				if (isTabix(uriString)) {
 					return new SymLoaderTabix(sym.uri, sym.featureName, sym.group, (LineProcessor)sym);
 				}
 			}

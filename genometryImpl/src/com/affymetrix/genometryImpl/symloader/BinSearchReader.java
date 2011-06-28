@@ -2,12 +2,12 @@ package com.affymetrix.genometryImpl.symloader;
 
 import net.sf.samtools.util.SeekableFileStream;
 import net.sf.samtools.util.SeekableHTTPStream;
-//import net.sf.samtools.util.SeekableBufferedStream;
+//import org.broad.tribble.util.SeekableBufferedStream;
 import com.affymetrix.genometryImpl.util.SeekableBufferedStream;
-// note - samtools SeekableBufferedStream version does not support SeekableBufferedStream.position()
 
-import org.broad.tribble.readers.QueryReader;
-import org.broad.tribble.util.LineReader;
+import org.broad.tribble.TribbleException;
+import org.broad.tribble.readers.LineReader;
+import org.broad.tribble.source.query.QuerySource;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// !!! NOTE !!! - this class only supports one query at a time
 /**
  * Implementation of the QueryReader that uses binary search as
  * a fast way to find regions in a genome data file. The data
@@ -28,7 +29,7 @@ import java.util.Set;
  * end position) and be sorted by sequence, then position.
  * This can be used for large unindexed data files.
  */
-public class BinSearchReader implements QueryReader, LineReader {
+public class BinSearchReader implements LineReader, QuerySource {
 	private static final int BUFF_SIZE = 256;
 	/**
 	 * supplied interface to convert a data line into a SequenceDataSpan
@@ -184,7 +185,8 @@ public class BinSearchReader implements QueryReader, LineReader {
     private SeekableBufferedStream seekableBufferedStream; // input stream for data file
     private Map<String, List<FileDataRange>> sequenceRanges; // all the chromosomes and their file data ranges, this is the "index"
     														 // key is seq/chromosome, value is List with two values, low FileDataRaneg and high FileDataRange
-
+    private String source;
+    
     /**
      * The constructor
      *
@@ -193,6 +195,7 @@ public class BinSearchReader implements QueryReader, LineReader {
      * @throws IOException
      */
     public BinSearchReader(final String fn, final SequenceSpanReader sequenceSpanReader) throws IOException {
+    	this.source = fn;
         this.sequenceSpanReader = sequenceSpanReader;
         if (fn.startsWith("http:") || fn.startsWith("https:")) {
         	seekableBufferedStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(fn)));
@@ -213,7 +216,7 @@ public class BinSearchReader implements QueryReader, LineReader {
     	long currentOffset = fileOffset;
     	FileDataRange dataSpan = readLineAt(currentOffset);
     	while (dataSpan.isNoData() && currentOffset > 0) {
-        	currentOffset--;
+        	currentOffset = dataSpan.getStartOffset() - 1;
         	dataSpan = readLineAt(currentOffset);
     	}
     	if (currentOffset == 0 && dataSpan.isNoData()) {
@@ -242,9 +245,9 @@ public class BinSearchReader implements QueryReader, LineReader {
     		EOF = count < BUFF_SIZE;
     		byte [] subArray = Arrays.copyOfRange(byteArray, 0, count);
     		String s = new String(subArray);
-    		int centerLineLocation = (int)(fileOffset - startFileOffset);
+    		int centerLineLocation = count / 2;//(int)(fileOffset - startFileOffset);
     		// find the previous CR/LF for the beginning of the line
-    		while (startFileOffset > 0 && s.lastIndexOf('\r', centerLineLocation) == -1 && s.lastIndexOf('\n', centerLineLocation) == -1) {
+    		while (startFileOffset > 0 && s.lastIndexOf('\r', centerLineLocation - 1) == -1 && s.lastIndexOf('\n', centerLineLocation - 1) == -1) {
     			long saveStartFileOffset = startFileOffset;
     			startFileOffset = Math.max(saveStartFileOffset - BUFF_SIZE, 0);
         		seekableBufferedStream.seek(startFileOffset);
@@ -254,7 +257,7 @@ public class BinSearchReader implements QueryReader, LineReader {
         		centerLineLocation = (int)(fileOffset - startFileOffset);
     		}
     		int beginLineLocation;
-    		int prevLineLocation = Math.max(s.lastIndexOf('\n', centerLineLocation), s.lastIndexOf('\r', centerLineLocation));
+    		int prevLineLocation = Math.max(s.lastIndexOf('\n', centerLineLocation - 1), s.lastIndexOf('\r', centerLineLocation - 1));
     		if (prevLineLocation > -1) {
     			beginLineLocation = prevLineLocation + 1;
     		}
@@ -290,7 +293,7 @@ public class BinSearchReader implements QueryReader, LineReader {
     		}
     		String line = s.substring(beginLineLocation, endLineLocation);
     		SequenceDataSpan sequenceDataSpan = sequenceSpanReader.readSequenceSpan(line);
-    		return new FileDataRange(fileOffset + (beginLineLocation - centerLineLocation), fileOffset + (endLineLocation - centerLineLocation), line, sequenceDataSpan);
+    		return new FileDataRange(startFileOffset + beginLineLocation, startFileOffset + endLineLocation, line, sequenceDataSpan);
      	}
     	catch (Exception x) {
     		x.printStackTrace(System.out);
@@ -373,8 +376,8 @@ public class BinSearchReader implements QueryReader, LineReader {
     }
 
     @Override
-    public Set<String> getSequenceNames() {
-    	return new HashSet<String>(sequenceRanges.keySet());
+    public List<String> getSequenceNames() {
+    	return new ArrayList<String>(sequenceRanges.keySet());
     }
 
     /**
@@ -457,9 +460,18 @@ public class BinSearchReader implements QueryReader, LineReader {
 
     public class BinSearchLineReader implements LineReader {
     	private final long endOffset;
-		private BinSearchLineReader(long endOffset) {
+		private BinSearchLineReader(long startOffset, long endOffset) {
 			super();
- 			this.endOffset = endOffset;
+			long useEndOffset = endOffset;
+			try  {
+				seekableBufferedStream.seek(startOffset);
+			}
+			catch (IOException x) {
+	    		System.out.println("Error in BinSearchLineReader() constructor");
+	    		x.printStackTrace(System.out);
+	    		useEndOffset = -1;
+			}
+ 			this.endOffset = useEndOffset;
 		}
 		@Override
 		public String readLine() throws IOException {
@@ -469,22 +481,19 @@ public class BinSearchReader implements QueryReader, LineReader {
 			return readNextLine(seekableBufferedStream);
 		}
 		@Override
-		public void close() throws IOException {
-			seekableBufferedStream.close();
+		public void close() {
+	        try {
+				seekableBufferedStream.close();
+	        } catch (IOException e) {
+	            System.out.println("Unable to close file source " + source);
+	        }
 		}
     }
 
     @Override
     public LineReader query(final String seq, int startPos, int endPos) {
     	List<FileDataRange> seqFileDataRanges = sequenceRanges.get(seq);
-    	FileDataRange fileDataRangeLow;
     	FileDataRange fileDataRangeHigh;
-    	if (startPos <= seqFileDataRanges.get(0).getSequenceDataSpan().getEndPos()) {
-    		fileDataRangeLow = seqFileDataRanges.get(0);
-    	}
-    	else {
-    		fileDataRangeLow = getDataRange(seq, startPos, seqFileDataRanges.get(0), seqFileDataRanges.get(1), true);
-    	}
     	if (endPos >= seqFileDataRanges.get(1).getSequenceDataSpan().getStartPos()) {
     		fileDataRangeHigh = seqFileDataRanges.get(1);
     	}
@@ -492,14 +501,27 @@ public class BinSearchReader implements QueryReader, LineReader {
     		fileDataRangeHigh = getDataRange(seq, endPos, seqFileDataRanges.get(0), seqFileDataRanges.get(1), false);
     	}
     	try {
-    		seekableBufferedStream.seek(fileDataRangeLow.getStartOffset());
+    		seekableBufferedStream.seek(seqFileDataRanges.get(0).getStartOffset());
+    		// must read through file start at seq start until we get a span that extends past the requested startPos
+    		long endOfSeq = fileDataRangeHigh.getEndOffset();
+    		long saveStartPosition;
+    		SequenceDataSpan sds;
+    		do {
+        		saveStartPosition = seekableBufferedStream.position();
+    			String line = readNextLine(seekableBufferedStream);
+    			sds = sequenceSpanReader.readSequenceSpan(line);
+    		}
+    		while (seekableBufferedStream.position() < endOfSeq && (sds == null || sds.getEndPos() <= startPos));
+    		if (seekableBufferedStream.position() >= endOfSeq) { // no data
+    			return null;
+    		}
+            return new BinSearchLineReader(saveStartPosition, fileDataRangeHigh.getEndOffset());
     	}
     	catch (IOException x) {
     		System.out.println("Error in query(seq, startPos, endPos)");
     		x.printStackTrace(System.out);
     		return null;
     	}
-        return new BinSearchLineReader(fileDataRangeHigh.getEndOffset());
     }
 
     public LineReader query(final String reg) {
@@ -519,8 +541,12 @@ public class BinSearchReader implements QueryReader, LineReader {
     }
 
     @Override
-    public void close() throws IOException {
-    	seekableBufferedStream.close();
+    public void close() {
+        try {
+			seekableBufferedStream.close();
+        } catch (IOException e) {
+            System.out.println("Unable to close file source " + source);
+        }
     }
 
     /**
@@ -599,4 +625,22 @@ public class BinSearchReader implements QueryReader, LineReader {
         } catch (IOException e) {
         }
     }
+
+	@Override
+	public void mark() throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean markSupported() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void reset() throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -136,7 +136,7 @@
     			<param name="jar_name" value="sam"/>
 		</antcall>
 		<antcall target="copy-bundle">
-    		<param name="jar_name" value="tabix"/>
+    		<param name="jar_name" value="tribble-0.1"/>
 		</antcall>
 		<antcall target="copy-bundle">
     		<param name="jar_name" value="commons-net-2.0"/>

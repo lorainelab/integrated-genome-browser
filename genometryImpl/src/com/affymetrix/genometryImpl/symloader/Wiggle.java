@@ -45,7 +45,7 @@ import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
-import org.broad.tribble.util.LineReader;
+import org.broad.tribble.readers.LineReader;
 
 /**
  *

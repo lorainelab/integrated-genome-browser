@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import net.sf.samtools.SAMTextReader;
 import net.sf.samtools.util.AsciiLineReader;
 
-import org.broad.tribble.util.LineReader;
+import org.broad.tribble.readers.LineReader;
 
 /**
  *
@@ -185,11 +185,7 @@ public class SAM extends XAM implements LineProcessor{
 
 		@Override
 		public void close() {
-			try {
-				readerImpl.close();
-			} catch (IOException ex) {
-				Logger.getLogger(SAM.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			readerImpl.close();
 		}
 		
 		@Override

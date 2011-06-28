@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.broad.tribble.util.LineReader;
+import org.broad.tribble.readers.LineReader;
 
 /**
  * This SymLoader is intended to be used for data sources that

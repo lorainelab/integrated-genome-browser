@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.net.URI;
 import java.util.Map.Entry;
 
-import org.broad.tribble.util.LineReader;
+import org.broad.tribble.readers.LineReader;
 
 /**
  *

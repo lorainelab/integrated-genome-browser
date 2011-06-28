@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.stylesheet.AssociationElement;
+import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.stylesheet.Stylesheet;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import java.io.File;
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
  *
  *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
  */
-public class TrackStyle implements ITrackStyleExtended, TrackConstants {
+public class TrackStyle implements ITrackStyleExtended, TrackConstants, PropertyConstants {
 
 	private static Preferences tiers_root_node = PreferenceUtils.getTopNode().node("tiers");
 
@@ -122,7 +123,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 	protected TrackStyle() {
 		method_name = null;
 	}
-
+	
 	/** Creates an instance associated with a case-insensitive form of the unique name.
 	 *
 	 *   When setting up an AnnotStyle, want to prioritize:

@@ -14,22 +14,6 @@ public interface TrackConstants {
 	static final Pattern multiple_slashes = Pattern.compile("/{2,}");
 	static final String NAME_OF_DEFAULT_INSTANCE = "* DEFAULT *";
 	// The String constants named PREF_* are for use in the persistent preferences
-	
-	static final String PROP_COLOR = "color";
-	static final String PROP_FOREGROUND = "foreground";
-	static final String PROP_BACKGROUND = "background";
-	static final String PROP_GLYPH_DEPTH = "glyph_depth";
-	static final String PROP_LABEL_FIELD = "label_field";
-	static final String PROP_MAX_DEPTH = "max_depth";
-	static final String PROP_SEPARATE = "separate";
-	static final String PROP_SHOW = "show";
-	static final String PROP_COLLAPSED = "collapsed";
-	static final String PROP_FONT_SIZE = "font_size";
-	static final String PROP_DIRECTION_TYPE = "direction_type";
-	
-	static final String TRUE = "true";
-	static final String FALSE = "false";
-	
 	// They are not displayed to users, and should never change
 	static final String PREF_SEPARATE = "Separate Tiers";
 	static final String PREF_COLLAPSED = "Collapsed";

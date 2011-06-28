@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.TierPrefsView;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.tiers.FileTypeView;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -25,6 +25,8 @@ import java.io.File;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 import javax.swing.*;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 public final class PreferencesPanel extends JPanel {
   private static final long serialVersionUID = 1L;
@@ -84,6 +86,7 @@ public final class PreferencesPanel extends JPanel {
 		singleton.getFrame().addWindowListener(singleton.tpv);
 
 		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
+		singleton.addPrefEditorComponent(new FileTypeView());
 		singleton.addPrefEditorComponent(new KeyStrokesView());
 		singleton.addPrefEditorComponent(new GraphsView());
 		singleton.addPrefEditorComponent(new OptionsView());

@@ -66,6 +66,7 @@ import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.action.*;
+import com.affymetrix.igb.tiers.TrackStyle;
 
 import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -283,6 +284,7 @@ public final class IGB extends Application
 				String message = "Do you really want to exit?";
 
 				if (confirmPanel(message, PreferenceUtils.getTopNode(), PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
+					TrackStyle.autoSaveUserStylesheet();
 					WebLink.autoSave();
 					Persistence.saveCurrentView(map_view);
 					if (windowService != null) {

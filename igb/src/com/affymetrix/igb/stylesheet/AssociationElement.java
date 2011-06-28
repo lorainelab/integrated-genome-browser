@@ -79,7 +79,7 @@ public final class AssociationElement implements DrawableElement {
     return new AssociationElement(TYPE_ASSOCIATION,
       ATT_TYPE, method, styleName);
   }
-  static AssociationElement getFileTypeAssocation(String method) {
+  public static AssociationElement getFileTypeAssocation(String method) {
     return new AssociationElement(FILE_TYPE_ASSOCIATION,
       ATT_FILE_TYPE, method, "");
   }

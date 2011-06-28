@@ -123,6 +123,10 @@ public final class XmlStylesheetParser {
 	 return user_stylesheet;
  }
 
+  public static java.util.Map<String, AssociationElement> getUserFileTypeAssociation(){
+	 return getUserStylesheet().filetype2association;
+  }
+ 
   private Stylesheet parse(InputStream istr) throws IOException {
     InputSource insrc = new InputSource(istr);
     parse(insrc);

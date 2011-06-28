@@ -124,6 +124,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		method_name = null;
 	}
 	
+	public TrackStyle(AssociationElement element){
+		this();
+		initFromTemplate(getDefaultInstance());
+		initFromPropertyMap(element.getPropertyMap());
+	}
+	
 	/** Creates an instance associated with a case-insensitive form of the unique name.
 	 *
 	 *   When setting up an AnnotStyle, want to prioritize:

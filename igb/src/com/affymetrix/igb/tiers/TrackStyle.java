@@ -579,17 +579,25 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	}
 
 	public void setDirectionType(int direction_type) {
-		this.direction_type = DIRECTION_TYPE.valueFor(direction_type);
+		setDirectionType(DIRECTION_TYPE.valueFor(direction_type));
+	}
+
+	public void setDirectionType(DIRECTION_TYPE type) {
+		this.direction_type = type;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setDirectionType(): " + human_name + ", " + direction_type);
 			}
-			getNode().putInt(PREF_DIRECTION_TYPE, direction_type);
+			getNode().putInt(PREF_DIRECTION_TYPE, direction_type.ordinal());
 		}
 	}
-
+	
 	public int getDirectionType() {
 		return direction_type.ordinal();
+	}
+	
+	public DIRECTION_TYPE getDirectionName(){
+		return direction_type;
 	}
 	
 	/** could be used to remember tier positions. */

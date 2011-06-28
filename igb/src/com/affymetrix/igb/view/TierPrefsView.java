@@ -45,7 +45,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 
   private final JTable table = new JTable();
 
-  private static final String TIER_NAME = "Track ID";
+  private static final String HUMAN_NAME = "Display Name";
   private static final String COLOR = "Color";
   private static final String SEPARATE = "2 Track";
   private static final String COLLAPSED = "Collapsed";
@@ -54,13 +54,13 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
   private static final String GLYPH_DEPTH = "Connected";
   private static final String LABEL_FIELD = "Label Field";
   private static final String FONT_SIZE = "Font Size";
-  private static final String HUMAN_NAME = "Display Name";
-
+  private static final String DIRECTION_TYPE = "Direction Type";
+  
   private final static String[] col_headings = {
     HUMAN_NAME,
     COLOR, BACKGROUND,
     SEPARATE, COLLAPSED,
-    MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD, FONT_SIZE, TIER_NAME,
+    MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD, FONT_SIZE, DIRECTION_TYPE,
     //    GRAPH_TIER,
   };
 
@@ -73,7 +73,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
   private static final int COL_GLYPH_DEPTH = 6;
   private static final int COL_LABEL_FIELD = 7;
   private static final int COL_FONT_SIZE = 8;
-  private static final int COL_TIER_NAME = 9;
+  private static final int COL_DIRECTION_TYPE = 9;
 
   private final TierPrefsTableModel model;
   private final ListSelectionModel lsm;
@@ -183,7 +183,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
 	table.setAutoCreateRowSorter(true);
 	table.setFillsViewportHeight(true);
 
-    table.getColumnModel().getColumn(COL_TIER_NAME).setPreferredWidth(150);
+//    table.getColumnModel().getColumn(COL_TIER_NAME).setPreferredWidth(150);
     table.getColumnModel().getColumn(COL_HUMAN_NAME).setPreferredWidth(150);
 
     table.setRowSelectionAllowed(true);
@@ -206,6 +206,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     table.setDefaultEditor(Color.class, cellEditor);
     table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 	table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
+	table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
 
     validate();
   }
@@ -345,15 +346,13 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
     public boolean isCellEditable(int row, int column) {
 	  TrackStyle style = tier_styles.get(row);
       if (style == default_annot_style) {
-        if (column == COL_HUMAN_NAME || column == COL_TIER_NAME ) {
+        if (column == COL_HUMAN_NAME) {
           return false;
         }
         else {
           return true;
         }
       } else {
-		  if(column == COL_TIER_NAME)
-			  return false;
 		  if(style.isGraphTier()){
 			  if(column == COL_HUMAN_NAME || column == COL_FONT_SIZE ||
 					  column == COL_BACKGROUND || column == COL_COLOR)
@@ -397,11 +396,8 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
           return Boolean.valueOf(style.getSeparate());
         case COL_COLLAPSED:
           return Boolean.valueOf(style.getCollapsed());
-        case COL_TIER_NAME:
-          String name = style.getUniqueName();
-	  if (name == null) { name = ""; }
-          if (! style.getPersistent()) { name = "<html><i>" + name + "</i></html>"; }
-          return name;
+        case COL_DIRECTION_TYPE:
+          return style.getDirectionName();
         case COL_MAX_DEPTH:
           int md = style.getMaxDepth();
           if (md == 0) { return ""; }
@@ -440,8 +436,8 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
         case COL_COLLAPSED:
           style.setCollapsed(((Boolean) value).booleanValue());
           break;
-        case COL_TIER_NAME:
-          System.out.println("Track name is not changeable!");
+        case COL_DIRECTION_TYPE:
+          style.setDirectionType((TrackConstants.DIRECTION_TYPE)value);
           break;
         case COL_MAX_DEPTH:
           {

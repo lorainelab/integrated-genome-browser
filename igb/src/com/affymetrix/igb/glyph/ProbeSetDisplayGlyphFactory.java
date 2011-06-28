@@ -32,6 +32,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
@@ -234,7 +235,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 		
-		ArrowHeadGlyph.addDirectionGlyphs(map, transformed_consensus_sym, pglyph, coordseq, coordseq,  child_y + child_height / 4, child_height/2);
+		ArrowHeadGlyph.addDirectionGlyphs(map, transformed_consensus_sym, pglyph, coordseq, coordseq, child_y + child_height / 4, child_height/2, true);
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view

@@ -154,7 +154,7 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 //		return false;
 //	}
 	
-	public static void addDirectionGlyphs(AffyTieredMap map, SeqSymmetry sym, GlyphI pglyph, BioSeq annotSeq, BioSeq coordSeq, double cy, double cheight){
+	public static void addDirectionGlyphs(AffyTieredMap map, SeqSymmetry sym, GlyphI pglyph, BioSeq annotSeq, BioSeq coordSeq, double cy, double cheight, boolean useArrow){
 		
 		SeqSymmetry intronSym = SeqUtils.getIntronSym(sym, annotSeq);
 		if (intronSym != null) {
@@ -165,7 +165,12 @@ public class ArrowHeadGlyph extends DirectedGlyph  {
 				if (cspan == null || cspan.getLength() == 0) {
 					continue;
 				} else {
-					DirectedGlyph cglyph = new ArrowHeadGlyph();
+					DirectedGlyph cglyph;
+					if(useArrow){
+						cglyph = new ArrowHeadGlyph();
+					}else{
+						cglyph = new DirectedGlyph(){};
+					}
 					cglyph.setCoords(cspan.getMin(), cy, cspan.getLength(), cheight);
 					cglyph.setForward(cspan.isForward());
 					cglyph.setColor(pglyph.getColor());

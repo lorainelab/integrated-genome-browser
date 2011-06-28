@@ -330,9 +330,9 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 				
-		if(the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal()){
-			ArrowHeadGlyph.addDirectionGlyphs(map, sym, pglyph, coordseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
-		}
+		
+		ArrowHeadGlyph.addDirectionGlyphs(map, sym, pglyph, coordseq, coordseq, 0.0, 
+			DEFAULT_THIN_HEIGHT, the_style.getDirectionType() == DIRECTION_TYPE.ARROW.ordinal());
 		
 		// call out to handle rendering to indicate if any of the children of the
 		//    orginal annotation are completely outside the view

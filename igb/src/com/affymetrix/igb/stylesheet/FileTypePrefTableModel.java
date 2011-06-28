@@ -19,11 +19,13 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 	private static final String GLYPH_DEPTH = "Connected";
 	private static final String LABEL_FIELD = "Label Field";
 	private static final String FONT_SIZE = "Font Size";
+	private static final String DIRECTION_TYPE = "Direction Type";
+	
 	private final static String[] col_headings = {
 		FILE_TYPE,
 		COLOR, BACKGROUND,
 		SEPARATE, COLLAPSED,
-		MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD, FONT_SIZE
+		MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD, FONT_SIZE, DIRECTION_TYPE
 	};
 	private static final int COL_FILE_TYPE = 0;
 	private static final int COL_COLOR = 1;
@@ -34,6 +36,8 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 	private static final int COL_GLYPH_DEPTH = 6;
 	private static final int COL_LABEL_FIELD = 7;
 	private static final int COL_FONT_SIZE = 8;
+	private static final int COL_DIRECTION_TYPE = 9;
+	
 	Entry[] file2types = null;
 
 	public void setElements(java.util.Map<String, AssociationElement> elements){
@@ -101,6 +105,8 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 			case COL_FONT_SIZE:
 				return style.getFontSize();
 
+			case COL_DIRECTION_TYPE:
+				return style.getDirectionName();
 
 			default:
 				return null;
@@ -152,7 +158,9 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 				case COL_FONT_SIZE:
 					element.propertyMap.put(PROP_FONT_SIZE, value.toString());
 					break;
-
+				case COL_DIRECTION_TYPE:
+					element.propertyMap.put(PROP_DIRECTION_TYPE, value.toString());
+					break;
 				default:
 					System.out.println("Unknown column selected: " + col);
 

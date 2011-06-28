@@ -90,7 +90,8 @@ public class FileTypeView extends IPrefEditorComponent {
 		table.setDefaultEditor(Color.class, cellEditor);
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
-			
+		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
+		
 		validate();
 	}
 

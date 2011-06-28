@@ -230,19 +230,19 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 			System.out.println("    +++++ initializing AnnotStyle from PropertyMap: " + unique_name);
 			System.out.println("             props: " + props);
 		}
-		Color col = props.getColor("color");
+		Color col = props.getColor(PROP_COLOR);
 		if (col == null) {
-			col = props.getColor("foreground");
+			col = props.getColor(PROP_FOREGROUND);
 		}
 		if (col != null) {
 			color = col;
 		}
-		Color bgcol = props.getColor("background");
+		Color bgcol = props.getColor(PROP_BACKGROUND);
 		if (bgcol != null) {
 			background = bgcol;
 		}
 
-		String gdepth_string = (String) props.getProperty("glyph_depth");
+		String gdepth_string = (String) props.getProperty(PROP_GLYPH_DEPTH);
 		if (gdepth_string != null) {
 			int prev_glyph_depth = glyph_depth;
 			try {
@@ -251,12 +251,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 				glyph_depth = prev_glyph_depth;
 			}
 		}
-		String labfield = (String) props.getProperty("label_field");
+		String labfield = (String) props.getProperty(PROP_LABEL_FIELD);
 		if (labfield != null) {
 			label_field = labfield;
 		}
 
-		String mdepth_string = (String) props.getProperty("max_depth");
+		String mdepth_string = (String) props.getProperty(PROP_MAX_DEPTH);
 		if (mdepth_string != null) {
 			int prev_max_depth = max_depth;
 			try {
@@ -266,31 +266,31 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 			}
 		}
 
-		String sepstring = (String) props.getProperty("separate");
+		String sepstring = (String) props.getProperty(PROP_SEPARATE);
 		if (sepstring != null) {
-			if (sepstring.equalsIgnoreCase("false")) {
+			if (sepstring.equalsIgnoreCase(FALSE)) {
 				separate = false;
-			} else if (sepstring.equalsIgnoreCase("true")) {
+			} else if (sepstring.equalsIgnoreCase(TRUE)) {
 				separate = true;
 			}
 		}
-		String showstring = (String) props.getProperty("show");
+		String showstring = (String) props.getProperty(PROP_SHOW);
 		if (showstring != null) {
-			if (showstring.equalsIgnoreCase("false")) {
+			if (showstring.equalsIgnoreCase(FALSE)) {
 				show = false;
-			} else if (showstring.equalsIgnoreCase("true")) {
+			} else if (showstring.equalsIgnoreCase(TRUE)) {
 				show = true;
 			}
 		}
-		String collapstring = (String) props.getProperty("collapsed");
+		String collapstring = (String) props.getProperty(PROP_COLLAPSED);
 		if (collapstring != null) {
-			if (collapstring.equalsIgnoreCase("false")) {
+			if (collapstring.equalsIgnoreCase(FALSE)) {
 				collapsed = false;
-			} else if (collapstring.equalsIgnoreCase("true")) {
+			} else if (collapstring.equalsIgnoreCase(TRUE)) {
 				collapsed = true;
 			}
 		}
-		String fontstring = (String) props.getProperty("font_size");
+		String fontstring = (String) props.getProperty(PROP_FONT_SIZE);
 		if (fontstring != null) {
 			float prev_font_size = font_size;
 			try {
@@ -299,7 +299,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants {
 				font_size = prev_font_size;
 			}
 		}
-		String directionstring = (String) props.getProperty("direction_type");
+		String directionstring = (String) props.getProperty(PROP_DIRECTION_TYPE);
 		if (directionstring != null) {
 			DIRECTION_TYPE prev_direction_type = direction_type;
 			try {

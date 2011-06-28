@@ -3,18 +3,24 @@ package com.affymetrix.igb.tiers;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.util.ErrorHandler;
 
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.FileTypePrefTableModel;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 
@@ -37,7 +43,26 @@ public class FileTypeView extends IPrefEditorComponent {
 
 		JScrollPane table_scroll_pane = new JScrollPane(table);
 
+		JButton addButton = new JButton("Add");
+		addButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent ae) {
+				String inputValue = JOptionPane.showInputDialog("Enter file type");
+				if(inputValue == null)
+					return;
+				
+				if(XmlStylesheetParser.getUserFileTypeAssociation().get(inputValue) != null){
+					ErrorHandler.errorPanel("Duplicate Entry", "File type " +inputValue+" exists");
+					return;
+				}
+				XmlStylesheetParser.getUserFileTypeAssociation().put(inputValue, AssociationElement.getFileTypeAssocation(inputValue));
+				model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+			}
+		});
+		
+		add(addButton, BorderLayout.SOUTH);
 		add(table_scroll_pane, BorderLayout.CENTER);
+		
 		model = new FileTypePrefTableModel();
 		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 		
@@ -65,7 +90,7 @@ public class FileTypeView extends IPrefEditorComponent {
 		table.setDefaultEditor(Color.class, cellEditor);
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
-		
+			
 		validate();
 	}
 

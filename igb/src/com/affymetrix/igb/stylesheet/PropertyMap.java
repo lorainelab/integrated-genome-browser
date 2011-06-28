@@ -174,10 +174,21 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
      Object value = this.getProperty(key);
      sb.append(indent).append('<').append(PROP_ELEMENT_NAME);
      XmlStylesheetParser.appendAttribute(sb, PROP_ATT_KEY, key);
-     XmlStylesheetParser.appendAttribute(sb, PROP_ATT_VALUE, "" + value);
+     XmlStylesheetParser.appendAttribute(sb, PROP_ATT_VALUE, getString(value));
      sb.append("/>\n");
     }
     return sb;
   }
 
+  private static String getString(Object value) {
+		if (value instanceof Color) {
+			int i = ((Color) value).getRGB() & 0xFFFFFF;
+			String s = Integer.toHexString(i).toUpperCase();
+			while (s.length() < 6) {
+				s = "0" + s;
+			}
+			return s;
+		}
+		return "" + value;
+	}
 }

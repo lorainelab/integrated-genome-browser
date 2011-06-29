@@ -2,6 +2,8 @@ package com.affymetrix.igb.action;
 
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+
+import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -30,5 +32,6 @@ public class RefreshDataAction extends AbstractAction {
 	public void actionPerformed(ActionEvent ae) {
 		GeneralLoadView.getLoadView().setShowLoadingConfirm(true);
 		GeneralLoadView.getLoadView().loadVisibleFeatures();
+		TierMaintenanceListenerHolder.getInstance().fireDataRefreshed();
 	}
 }

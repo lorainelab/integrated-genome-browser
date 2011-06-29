@@ -27,13 +27,19 @@ public class TierMaintenanceListenerHolder {
 
 	public void fireTierAdded() {
 		for (TierMaintenanceListener tierMaintenanceListener : tierMaintenanceListeners) {
-			tierMaintenanceListener.TierAdded();
+			tierMaintenanceListener.tierAdded();
 		}
 	}
 
 	public void fireTierRemoved() {
 		for (TierMaintenanceListener tierMaintenanceListener : tierMaintenanceListeners) {
-			tierMaintenanceListener.TierRemoved();
+			tierMaintenanceListener.tierRemoved();
+		}
+	}
+
+	public void fireDataRefreshed() {
+		for (TierMaintenanceListener tierMaintenanceListener : tierMaintenanceListeners) {
+			tierMaintenanceListener.dataRefreshed();
 		}
 	}
 }

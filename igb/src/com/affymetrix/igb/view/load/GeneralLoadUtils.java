@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.das.DasSource;
 import com.affymetrix.genometryImpl.das2.Das2ServerInfo;
 import com.affymetrix.genometryImpl.das2.Das2Source;
 import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
+import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ResidueLoading;
@@ -798,6 +799,7 @@ public final class GeneralLoadUtils {
 				if (gmodel.getSelectedSeqGroup().getSeqCount() > seq_count) {
 					SeqGroupView.getInstance().refreshTable();
 				}
+				TierMaintenanceListenerHolder.getInstance().fireTierAdded();
 			}
 		};
 

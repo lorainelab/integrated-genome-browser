@@ -1,6 +1,8 @@
 package com.affymetrix.igb.osgi.service;
 
 import java.awt.Color;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -23,6 +25,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -300,6 +303,10 @@ public interface IGBService {
 	public List<GlyphI> getItems(GraphSym graf);
 	public boolean isMainSrc(Object src);
 	public void setTrackStyle(String meth, Color col, String description);
+	// for plugins
+	public List<Glyph> getAllTierGlyphs();
+	public void addSeqMapMouseListener(MouseListener mouseListener);
+	public void addSeqMapMouseMotionListener(MouseMotionListener mouseMotionListener);
 	// ThreadUtils
 	public Executor getPrimaryExecutor(Object key);
 	public void runOnEventQueue(Runnable r);

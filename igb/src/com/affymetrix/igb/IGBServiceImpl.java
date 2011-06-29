@@ -13,6 +13,8 @@
 package com.affymetrix.igb;
 
 import java.awt.Color;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +44,7 @@ import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -56,6 +59,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.IGBUtils;
@@ -577,6 +581,27 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		annot_style.setGlyphDepth(1);
 		annot_style.setHumanName(description);
 		annot_style.setCollapsed(true);
+	}
+
+	@Override
+	public List<Glyph> getAllTierGlyphs() {
+		List<Glyph> allTierGlyphs = new ArrayList<Glyph>();
+		for (TierLabelGlyph labelGlyph : ((SeqMapView)getMapView()).getTierManager().getAllTierLabels()) {
+			allTierGlyphs.add(labelGlyph.getReferenceTier());
+		}
+		return allTierGlyphs;
+	}
+
+	@Override
+	public void addSeqMapMouseListener(MouseListener mouseListener) {
+		AffyTieredMap seqMap = ((SeqMapView)getMapView()).getSeqMap();
+		seqMap.addMouseListener(mouseListener);
+	}
+
+	@Override
+	public void addSeqMapMouseMotionListener(MouseMotionListener mouseMotionListener) {
+		AffyTieredMap seqMap = ((SeqMapView)getMapView()).getSeqMap();
+		seqMap.addMouseMotionListener(mouseMotionListener);
 	}
 
 	@Override

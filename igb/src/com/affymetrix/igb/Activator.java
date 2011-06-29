@@ -13,7 +13,8 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import com.affymetrix.genometryImpl.operator.GraphOperator;
+import com.affymetrix.genometryImpl.event.TierMaintenanceListener;
+import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.igb.glyph.GlyphProcessorHolder;
 import com.affymetrix.igb.glyph.GlyphProcessorHolder.GlyphProcessor;
@@ -155,6 +156,18 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(Object o) {
 					GlyphProcessorHolder.getInstance().removeGlyphProcessor((GlyphProcessor)o);
+				}
+			}
+		);
+		addService(
+			new ServiceHandler(TierMaintenanceListener.class) {
+				@Override
+				public void addService(Object o) {
+					TierMaintenanceListenerHolder.getInstance().addTierMaintenanceListener((TierMaintenanceListener)o);
+				}
+				@Override
+				public void removeService(Object o) {
+					TierMaintenanceListenerHolder.getInstance().removeTierMaintenanceListener((TierMaintenanceListener)o);
 				}
 			}
 		);

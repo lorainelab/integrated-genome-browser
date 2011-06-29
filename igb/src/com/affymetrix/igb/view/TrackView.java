@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
@@ -311,6 +312,7 @@ public class TrackView {
 				seq.unloadAnnotation(sym);
 			}
 		}
+		TierMaintenanceListenerHolder.getInstance().fireTierRemoved();
 	}
 
 	private static void deleteDependentData(String method, BioSeq seq) {

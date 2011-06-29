@@ -50,4 +50,57 @@ E)   This product includes portions of the Picard software library
      http://sourceforge.net/projects/picard/
 
      The files from this project are bundled together in sam*.jar.
- 
+
+F)   This product includes portions of the JIDE software library
+     developed by JIDE software, which is covered by a commercial
+     license. This is NOT open source.
+
+     http://www.jidesoft.com/
+
+     The files from the JIDE software library included with this product include: 
+     jide-grids.jar, jide-commons.jar, jide-components.jar
+
+G)   This product includes portions of the Apache Felix software library
+     developed by the Apache Felix project, which is covered by the
+     Apache License, version 2.0.
+
+     http://felix.apache.org/site/index.html
+
+     The files from this project are bundled together in felix.jar,
+     org.apache.felix.gogo.command*.jar, org.apache.felix.gogo.runtime*.jar,
+     org.apache.felix.gogo.shell*.jar, org.apache.felix.log*.jar,
+     org.apache.felix.obr*.jar, org.apache.felix.bundlerepository*.jar,
+     bindex.jar.
+
+H)   This product includes portions of the Apache commons software libraries
+     developed by the Apache commons projects, which are covered by the
+     Apache License, version 2.0.
+
+     http://commons.apache.org/
+
+     The files from this project are bundled together in various commons-*.jar.
+
+I)   This product includes portions of the O'Reilly servlet libraries
+     developed by the Jason Hunter.
+
+     http://www.servlets.com/index.tea
+
+     The files from this project are bundled together in cos.jar.
+     The license file is included in the "ext" directory.
+
+J)   This product includes portions of the EMMA software library
+     developed by the EMMA SourceForge project, which is covered by the
+     Common Public License v1.0.
+
+     http://emma.sourceforge.net/index.html
+
+     The files from this project are bundled together in emma.jar, emma_ant.jar
+
+K)   This product includes portions of the antlr software library
+     developed by Terence Parr, which is covered by the BSD License.
+
+     http://www.antlr.org/
+
+     The files from this project are bundled together in antlr.jar
+
+

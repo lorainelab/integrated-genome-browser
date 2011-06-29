@@ -190,52 +190,47 @@ public final class OptionsView extends IPrefEditorComponent implements ActionLis
 		
 		//GuiBuilder Layout Code
 		layout.setHorizontalGroup(
-				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(layout.createSequentialGroup().add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(layout.createSequentialGroup().addContainerGap().add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(confirmBeforeLoadingCheckBox).add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false).add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup().add(askBeforeExitCheckBox).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).add(confirmBeforeDeleteCheckBox)).add(org.jdesktop.layout.GroupLayout.LEADING, keepZoomStripeCheckBox)).add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false).add(org.jdesktop.layout.GroupLayout.LEADING, orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))).add(layout.createSequentialGroup().add(82, 82, 82).add(clear_prefsB))).addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		layout.setVerticalGroup(
-				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(layout.createSequentialGroup().addContainerGap().add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(10, 10, 10).add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(13, 13, 13).add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED).add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(askBeforeExitCheckBox).add(confirmBeforeDeleteCheckBox)).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(2, 2, 2).add(confirmBeforeLoadingCheckBox).addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED).add(clear_prefsB).addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-
-//		 layout.setHorizontalGroup(
-//            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-//            .add(layout.createSequentialGroup()
-//                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-//                    .add(layout.createSequentialGroup()
-//                        .addContainerGap()
-//                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-//                            .add(confirmBeforeLoadingCheckBox)
-//                            .add(layout.createSequentialGroup()
-//                                .add(askBeforeExitCheckBox)
-//                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-//                                .add(confirmBeforeDeleteCheckBox))
-//                            .add(keepZoomStripeCheckBox)
-//                            .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-//                            .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-//                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-//                    .add(layout.createSequentialGroup()
-//                        .add(82, 82, 82)
-//                        .add(clear_prefsB)))
-//                .addContainerGap(21, Short.MAX_VALUE))
-//        );
-//        layout.setVerticalGroup(
-//            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-//            .add(layout.createSequentialGroup()
-//                .addContainerGap()
-//                .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-//                .add(10, 10, 10)
-//                .add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-//                .add(13, 13, 13)
-//                .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-//                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-//                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-//                    .add(askBeforeExitCheckBox)
-//                    .add(confirmBeforeDeleteCheckBox))
-//                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-//                .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-//                .add(2, 2, 2)
-//                .add(confirmBeforeLoadingCheckBox)
-//                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-//                .add(clear_prefsB)
-//                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-//        );
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(confirmBeforeLoadingCheckBox)
+                            .add(layout.createSequentialGroup()
+                                .add(askBeforeExitCheckBox)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(confirmBeforeDeleteCheckBox))
+                            .add(keepZoomStripeCheckBox)
+                            .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .add(layout.createSequentialGroup()
+                        .add(82, 82, 82)
+                        .add(clear_prefsB)))
+                .addContainerGap(21, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(10, 10, 10)
+                .add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(13, 13, 13)
+                .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(askBeforeExitCheckBox)
+                    .add(confirmBeforeDeleteCheckBox))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(2, 2, 2)
+                .add(confirmBeforeLoadingCheckBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(clear_prefsB)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 		
 		
 		

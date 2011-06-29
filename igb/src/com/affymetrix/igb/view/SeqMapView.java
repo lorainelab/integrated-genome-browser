@@ -68,7 +68,7 @@ import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.action.ViewGenomicSequenceInSeqViewerAction;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.view.load.AutoLoad;
-import com.affymetrix.igb.tiers.AxisStyle;
+import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.MouseShortCut;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.awt.Adjustable;
@@ -166,15 +166,15 @@ public class SeqMapView extends JPanel
 	// mapping of annotated seq to virtual "view" seq
 	protected MutableSeqSymmetry seq2viewSym;
 	protected SeqSymmetry[] transform_path;
-	private static final String PREF_AXIS_LABEL_FORMAT = "Axis label format";
-	/** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
-	public static final String VALUE_AXIS_LABEL_FORMAT_COMMA = "COMMA";
-	/** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
-	public static final String VALUE_AXIS_LABEL_FORMAT_FULL = "FULL";
-	/** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
-	public static final String VALUE_AXIS_LABEL_FORMAT_ABBREV = "ABBREV";
-	/** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
-	public static final String VALUE_AXIS_LABEL_FORMAT_NO_LABELS = "NO_LABELS";
+	private static final String PREF_COORDINATE_LABEL_FORMAT = "Coordinate label format";
+	/** One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}. */
+	public static final String VALUE_COORDINATE_LABEL_FORMAT_COMMA = "COMMA";
+	/** One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}. */
+	public static final String VALUE_COORDINATE_LABEL_FORMAT_FULL = "FULL";
+	/** One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}. */
+	public static final String VALUE_COORDINATE_LABEL_FORMAT_ABBREV = "ABBREV";
+	/** One of the acceptable values of {@link #PREF_COORDINATE_LABEL_FORMATPREF_COORDINATE_LABEL_FORMAT}. */
+	public static final String VALUE_COORDINATE_LABEL_FORMAT_NO_LABELS = "NO_LABELS";
 	public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
 	public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
 	/** Name of a boolean preference for whether the hairline lable should be on. */
@@ -250,7 +250,7 @@ public class SeqMapView extends JPanel
 				return;
 			}
 
-			if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
+			if (pce.getKey().equals(PREF_COORDINATE_LABEL_FORMAT)) {
 				AxisGlyph ag = getAxisGlyph();
 				if (ag != null) {
 					setAxisFormatFromPrefs(ag);
@@ -549,12 +549,12 @@ public class SeqMapView extends JPanel
 	/** Sets the axis label format from the value in the persistent preferences. */
 	public static void setAxisFormatFromPrefs(AxisGlyph axis) {
 		// It might be good to move this to AffyTieredMap
-		String axis_format = PreferenceUtils.getTopNode().get(PREF_AXIS_LABEL_FORMAT, VALUE_AXIS_LABEL_FORMAT_COMMA);
-		if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
+		String axis_format = PreferenceUtils.getTopNode().get(PREF_COORDINATE_LABEL_FORMAT, VALUE_COORDINATE_LABEL_FORMAT_COMMA);
+		if (VALUE_COORDINATE_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
 			axis.setLabelFormat(AxisGlyph.COMMA);
-		} else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
+		} else if (VALUE_COORDINATE_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
 			axis.setLabelFormat(AxisGlyph.FULL);
-		} else if (VALUE_AXIS_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format)) {
+		} else if (VALUE_COORDINATE_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format)) {
 			axis.setLabelFormat(AxisGlyph.NO_LABELS);
 		} else {
 			axis.setLabelFormat(AxisGlyph.ABBREV);
@@ -845,15 +845,15 @@ public class SeqMapView extends JPanel
 
 	/** Set up a tier with fixed pixel height and place axis in it. */
 	private TransformTierGlyph addAxisTier(int tier_index) {
-		TransformTierGlyph resultAxisTier = new TransformTierGlyph(AxisStyle.axis_annot_style);
+		TransformTierGlyph resultAxisTier = new TransformTierGlyph(CoordinateStyle.coordinate_annot_style);
 		resultAxisTier.setFixedPixHeight(45);
 		resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
 		AxisGlyph axis = seqmap.addAxis(0);
 		axis.setHitable(true);
 		axis.setFont(axisFont);
 
-		Color axis_bg = AxisStyle.axis_annot_style.getBackground();
-		Color axis_fg = AxisStyle.axis_annot_style.getColor();
+		Color axis_bg = CoordinateStyle.coordinate_annot_style.getBackground();
+		Color axis_fg = CoordinateStyle.coordinate_annot_style.getColor();
 
 		axis.setBackgroundColor(axis_bg);
 		resultAxisTier.setBackgroundColor(axis_bg);

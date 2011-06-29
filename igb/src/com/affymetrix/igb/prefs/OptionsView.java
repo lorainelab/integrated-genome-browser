@@ -1,217 +1,280 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
+ *   Copyright (c) 2001-2006 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 package com.affymetrix.igb.prefs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-import javax.swing.JLabel;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.ResidueColorHelper;
-import com.affymetrix.igb.tiers.AxisStyle;
+import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 import com.affymetrix.igb.util.ColorUtils;
-import com.affymetrix.igb.view.load.AutoLoad;
+import com.jidesoft.combobox.ColorComboBox;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
  */
-public final class OptionsView extends IPrefEditorComponent implements ActionListener, PreferenceChangeListener  {
-  private static final long serialVersionUID = 1L;
-  private final SeqMapView smv;
-  //final LocationEditPanel edit_panel1 = new LocationEditPanel();
-  JButton clear_prefsB = new JButton("Reset all preferences to defaults");
+public final class OptionsView extends IPrefEditorComponent implements ActionListener, PreferenceChangeListener {
 
-  public OptionsView() {
-    super();
-    this.setName("Other Options");
-	this.setToolTipText("Edit Miscellaneous Options");
-    this.setLayout(new BorderLayout());
+	private ColorComboBox aColorComboBox;
+	private JLabel aLabel;
+	private ColorComboBox cColorComboBox;
+	private JLabel cLabel;
+	private JPanel coordinatePanel;
+	private ColorComboBox dynamicORFColorComboBox;
+	private JLabel dynamicORFLabel;
+	private ColorComboBox gColorComboBox;
+	private JLabel gLabel;
+	private ColorComboBox otherColorComboBox;
+	private JLabel otherLabel;
+	private ColorComboBox stopCodonColorComboBox;
+	private JLabel stopCodonLabel;
+	private ColorComboBox tColorComboBox;
+	private JLabel tLabel;
+	private JCheckBox askBeforeExitCheckBox;
+	private JLabel backgroundLabel;
+	private ColorComboBox bgColorComboBox;
+	private JCheckBox confirmBeforeDeleteCheckBox;
+	private JCheckBox confirmBeforeLoadingCheckBox;
+	private ColorComboBox fgColorComboBox;
+	private JLabel foregroundLabel;
+	private JCheckBox keepZoomStripeCheckBox;
+	private JLabel numFormatLabel;
+	private JPanel orfAnalyzerPanel;
+	private JPanel residueColorPanel;
+	private static final long serialVersionUID = 1L;
+	private final SeqMapView smv;
+	JButton clear_prefsB = new JButton("Reset all preferences to defaults");
+	String default_label_format = SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
+	String[] label_format_options = new String[]{SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_FULL,
+		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_COMMA,
+		SeqMapView.VALUE_COORDINATE_LABEL_FORMAT_ABBREV};
+	JComboBox coordinates_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),
+			"Coordinates label format",
+			label_format_options,
+			default_label_format);
 
-	Application igb = Application.getSingleton();
-    if (igb != null) {
-      smv = igb.getMapView();
-	}else{
-	  smv = null;
+	public OptionsView() {
+		super();
+		this.setName("Other Options");
+		this.setToolTipText("Edit Miscellaneous Options");
+		this.setLayout(new BorderLayout());
+
+		Application igb = Application.getSingleton();
+		if (igb != null) {
+			smv = igb.getMapView();
+		} else {
+			smv = null;
+		}
+
+		JPanel main_box = new JPanel();
+
+		JScrollPane scroll_pane = new JScrollPane(main_box);
+		this.add(scroll_pane, BorderLayout.CENTER); //This line adds the components to the class panel
+		clear_prefsB.addActionListener(this);
+
+		coordinatePanel = new javax.swing.JPanel();
+		backgroundLabel = new javax.swing.JLabel();
+		foregroundLabel = new javax.swing.JLabel();
+		numFormatLabel = new javax.swing.JLabel();
+		coordinates_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),
+				"Coordinates label format",
+				label_format_options,
+				default_label_format);
+		;
+		bgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_BACKGROUND, Color.WHITE, this);
+		fgColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_COLOR, Color.BLACK, this);
+		orfAnalyzerPanel = new javax.swing.JPanel();
+		stopCodonLabel = new javax.swing.JLabel();
+		dynamicORFLabel = new javax.swing.JLabel();
+		stopCodonColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, this);
+		dynamicORFColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this);
+		residueColorPanel = new javax.swing.JPanel();
+		aLabel = new javax.swing.JLabel();
+		tLabel = new javax.swing.JLabel();
+		gLabel = new javax.swing.JLabel();
+		cLabel = new javax.swing.JLabel();
+		otherLabel = new javax.swing.JLabel();
+		aColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, this);
+		tColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, this);
+		gColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, this);
+		cColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, this);
+		otherColorComboBox = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, this);
+		askBeforeExitCheckBox = PreferenceUtils.createCheckBox("Ask before exit", PreferenceUtils.getTopNode(),
+				PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting);
+		confirmBeforeDeleteCheckBox = PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
+				PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete);
+		keepZoomStripeCheckBox = PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
+				UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view);
+		confirmBeforeLoadingCheckBox = PreferenceUtils.createCheckBox("Confirm before loading large data set", PreferenceUtils.getTopNode(),
+				PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load);
+		
+
+		coordinatePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Coordinates"));
+
+		backgroundLabel.setText("Background:");
+
+		foregroundLabel.setText("Foreground:");
+
+		numFormatLabel.setText("Number format:");
+
+		org.jdesktop.layout.GroupLayout CoordinatePanelLayout = new org.jdesktop.layout.GroupLayout(coordinatePanel);
+		coordinatePanel.setLayout(CoordinatePanelLayout);
+		CoordinatePanelLayout.setHorizontalGroup(
+				CoordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(CoordinatePanelLayout.createSequentialGroup().addContainerGap().add(CoordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(CoordinatePanelLayout.createSequentialGroup().add(backgroundLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(17, 17, 17).add(foregroundLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).add(CoordinatePanelLayout.createSequentialGroup().add(numFormatLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))).addContainerGap(63, Short.MAX_VALUE)));
+		CoordinatePanelLayout.setVerticalGroup(
+				CoordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(CoordinatePanelLayout.createSequentialGroup().add(CoordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(backgroundLabel).add(foregroundLabel).add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(CoordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE).add(numFormatLabel).add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+
+		orfAnalyzerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("ORF Analyzer (Sliced View tab)"));
+
+		stopCodonLabel.setText("Stop Codon:");
+
+		dynamicORFLabel.setText("Dynamic ORF:");
+
+		org.jdesktop.layout.GroupLayout orfAnalyzerPanelLayout = new org.jdesktop.layout.GroupLayout(orfAnalyzerPanel);
+		orfAnalyzerPanel.setLayout(orfAnalyzerPanelLayout);
+		orfAnalyzerPanelLayout.setHorizontalGroup(
+				orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(orfAnalyzerPanelLayout.createSequentialGroup().addContainerGap().add(stopCodonLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(stopCodonColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(17, 17, 17).add(dynamicORFLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(dynamicORFColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addContainerGap(52, Short.MAX_VALUE)));
+		orfAnalyzerPanelLayout.setVerticalGroup(
+				orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(orfAnalyzerPanelLayout.createSequentialGroup().add(orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER).add(stopCodonLabel).add(dynamicORFLabel).add(stopCodonColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(dynamicORFColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+
+		residueColorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Residue Colors"));
+
+		aLabel.setText("A:");
+
+		tLabel.setText("T:");
+
+		gLabel.setText("G:");
+
+		cLabel.setText("C:");
+
+		otherLabel.setText("Other:");
+
+		org.jdesktop.layout.GroupLayout residueColorPanelLayout = new org.jdesktop.layout.GroupLayout(residueColorPanel);
+		residueColorPanel.setLayout(residueColorPanelLayout);
+		residueColorPanelLayout.setHorizontalGroup(
+				residueColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(residueColorPanelLayout.createSequentialGroup().addContainerGap().add(aLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(aColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED).add(tLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(tColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(13, 13, 13).add(gLabel).add(13, 13, 13).add(gColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(cLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(cColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(13, 13, 13).add(otherLabel).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(otherColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addContainerGap(7, Short.MAX_VALUE)));
+		residueColorPanelLayout.setVerticalGroup(
+				residueColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(residueColorPanelLayout.createSequentialGroup().add(residueColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER).add(aLabel).add(aColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(gLabel).add(cLabel).add(otherLabel).add(tLabel).add(tColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(gColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(cColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(otherColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)).addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+
+		//clear_prefsB.setText("Reset preference to defaults");
+
+		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(main_box);
+		main_box.setLayout(layout);
+		
+		//GuiBuilder Layout Code
+		layout.setHorizontalGroup(
+				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(layout.createSequentialGroup().add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(layout.createSequentialGroup().addContainerGap().add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(confirmBeforeLoadingCheckBox).add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false).add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup().add(askBeforeExitCheckBox).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).add(confirmBeforeDeleteCheckBox)).add(org.jdesktop.layout.GroupLayout.LEADING, keepZoomStripeCheckBox)).add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false).add(org.jdesktop.layout.GroupLayout.LEADING, orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).add(org.jdesktop.layout.GroupLayout.LEADING, residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))).add(layout.createSequentialGroup().add(82, 82, 82).add(clear_prefsB))).addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		layout.setVerticalGroup(
+				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(layout.createSequentialGroup().addContainerGap().add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(10, 10, 10).add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(13, 13, 13).add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED).add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(askBeforeExitCheckBox).add(confirmBeforeDeleteCheckBox)).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(2, 2, 2).add(confirmBeforeLoadingCheckBox).addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED).add(clear_prefsB).addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+
+//		 layout.setHorizontalGroup(
+//            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+//            .add(layout.createSequentialGroup()
+//                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+//                    .add(layout.createSequentialGroup()
+//                        .addContainerGap()
+//                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+//                            .add(confirmBeforeLoadingCheckBox)
+//                            .add(layout.createSequentialGroup()
+//                                .add(askBeforeExitCheckBox)
+//                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//                                .add(confirmBeforeDeleteCheckBox))
+//                            .add(keepZoomStripeCheckBox)
+//                            .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//                            .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+//                    .add(layout.createSequentialGroup()
+//                        .add(82, 82, 82)
+//                        .add(clear_prefsB)))
+//                .addContainerGap(21, Short.MAX_VALUE))
+//        );
+//        layout.setVerticalGroup(
+//            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+//            .add(layout.createSequentialGroup()
+//                .addContainerGap()
+//                .add(coordinatePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//                .add(10, 10, 10)
+//                .add(residueColorPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 56, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//                .add(13, 13, 13)
+//                .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+//                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+//                    .add(askBeforeExitCheckBox)
+//                    .add(confirmBeforeDeleteCheckBox))
+//                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+//                .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+//                .add(2, 2, 2)
+//                .add(confirmBeforeLoadingCheckBox)
+//                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+//                .add(clear_prefsB)
+//                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//        );
+		
+		
+		
+		
+		main_box.add(coordinatePanel);
+		main_box.add(residueColorPanel);
+		main_box.add(orfAnalyzerPanel);
+		main_box.add(clear_prefsB);
+
+		validate();
 	}
-	
-    JPanel main_box = new JPanel();
-    main_box.setLayout(new BoxLayout(main_box,BoxLayout.Y_AXIS));
-    main_box.setBorder(new javax.swing.border.EmptyBorder(5,5,5,5));
 
-  
-    JScrollPane scroll_pane = new JScrollPane(main_box);
-    this.add(scroll_pane, BorderLayout.CENTER);
-	clear_prefsB.addActionListener(this);
-    
-    Box misc_box = Box.createVerticalBox();
-	
-	Box misc_box_cols = Box.createHorizontalBox();
-	Box misc_box_col1 = Box.createVerticalBox();
-	Box misc_box_col2 = Box.createVerticalBox();
+	public void actionPerformed(ActionEvent evt) {
+		Object src = evt.getSource();
+		if (src == clear_prefsB) {
+			// The option pane used differs from the confirmDialog only in
+			// that "No" is the default choice.
+			String[] options = {"Yes", "No"};
+			if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+					this, "Really reset all preferences to defaults?\n(this will also exit the application)", "Clear preferences?",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+					options, options[1])) {
 
-	misc_box_col1.setAlignmentY(Component.TOP_ALIGNMENT);
-    misc_box_col1.add(PreferenceUtils.createCheckBox("Ask before exiting", PreferenceUtils.getTopNode(),
-      PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting));
-    misc_box_col1.add(PreferenceUtils.createCheckBox("Keep zoom stripe in view", PreferenceUtils.getTopNode(),
-      UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
-
-	misc_box_col2.setAlignmentY(Component.TOP_ALIGNMENT);
-    misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before delete", PreferenceUtils.getTopNode(),
-      PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete));
-	misc_box_col2.add(PreferenceUtils.createCheckBox("Enable auto load (Beta)", PreferenceUtils.getTopNode(),
-      AutoLoad.PREFS_AUTOLOAD, AutoLoad.default_autoload));
-//    misc_box_col2.add(PreferenceUtils.createCheckBox("Confirm before load", PreferenceUtils.getTopNode(),
-//      PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
-
-	misc_box_cols.setAlignmentY(Component.TOP_ALIGNMENT);
-    misc_box_cols.add(misc_box_col1);
-	misc_box_cols.add(Box.createHorizontalGlue());
-	misc_box_cols.add(misc_box_col2);
-	misc_box_cols.add(Box.createRigidArea(new Dimension(100,0)));
-
-	misc_box.add(misc_box_cols);
-    misc_box.add(Box.createRigidArea(new Dimension(0,5))); 
-    
-	
-    Box orf_box = Box.createVerticalBox();
-    orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
-
-	orf_box.add(addColorChooser("Stop Codon",OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color));
-	orf_box.add(Box.createRigidArea(new Dimension(0,5)));
-	orf_box.add(addColorChooser("Dynamic ORF",OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color));
-	orf_box.add(Box.createRigidArea(new Dimension(0,5)));
-	
-	Box base_box = Box.createVerticalBox();
-    base_box.setBorder(new javax.swing.border.TitledBorder("Change Residue Colors"));
-
-	base_box.add(addColorChooser("A", ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color));
-	base_box.add(Box.createRigidArea(new Dimension(0,5)));
-	base_box.add(addColorChooser("T", ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color));
-	base_box.add(Box.createRigidArea(new Dimension(0,5)));
-	base_box.add(addColorChooser("G", ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color));
-	base_box.add(Box.createRigidArea(new Dimension(0,5)));
-	base_box.add(addColorChooser("C", ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color));
-	base_box.add(Box.createRigidArea(new Dimension(0,5)));
-	base_box.add(addColorChooser("Other", ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color));
-	base_box.add(Box.createRigidArea(new Dimension(0,5)));
-
-	String default_label_format = SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA;
-    String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL,
-                                                  SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA,
-                                                  SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
-    JComboBox axis_label_format_CB = PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(), "Axis label format", label_format_options, default_label_format);
-
-    Box axis_box = Box.createVerticalBox();
-    axis_box.setBorder(new javax.swing.border.TitledBorder("Axis"));
-
-	axis_box.add(addColorChooser("Foreground", AxisStyle.PREF_AXIS_COLOR, Color.BLACK));
-	axis_box.add(Box.createRigidArea(new Dimension(0,5)));
-	axis_box.add(addColorChooser("Background", AxisStyle.PREF_AXIS_BACKGROUND, Color.WHITE));
-	axis_box.add(Box.createRigidArea(new Dimension(0,5))); 
-	axis_box.add(addToPanel("Number format", axis_label_format_CB));
-    axis_box.add(Box.createRigidArea(new Dimension(0,5)));
-
-    axis_box.setAlignmentX(0.0f);
-    orf_box.setAlignmentX(0.0f);
-    misc_box.setAlignmentX(0.0f);
-	base_box.setAlignmentX(0.0f);
-
-   
-    main_box.add(axis_box);
-    main_box.add(orf_box);
-	main_box.add(base_box);
-    main_box.add(Box.createRigidArea(new Dimension(0,5)));
-    main_box.add(misc_box);
-	main_box.add(clear_prefsB);
-
-    validate();
-  }
-
-  public void actionPerformed(ActionEvent evt) {
-    Object src = evt.getSource();
-    if (src == clear_prefsB) {
-      // The option pane used differs from the confirmDialog only in
-		 // that "No" is the default choice.
-		 String[] options = {"Yes", "No"};
-		 if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
-						 this, "Really reset all preferences to defaults?\n(this will also exit the application)", "Clear preferences?",
-						 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-						 options, options[1])) {
-
-			 try {
-				 PreferenceUtils.clearPreferences();
-				 System.exit(0);
-			 } catch (Exception e) {
-				 ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);
-			 }
-		 }
-    }
-  }
-
-  private JPanel addColorChooser(String label_str, String pref_name, Color default_color) {
-		JComponent component = ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), pref_name, default_color, this);
-		return addToPanel(label_str, component);
+				try {
+					PreferenceUtils.clearPreferences();
+					System.exit(0);
+				} catch (Exception e) {
+					ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);
+				}
+			}
+		}
 	}
 
-  public void refresh() {
-  }
-
-  public void preferenceChange(PreferenceChangeEvent pce) {
-	if(smv != null){
-		smv.getSeqMap().updateWidget();
+	public void refresh() {
 	}
-  }
 
-  private static JPanel addToPanel(String label_str, JComponent component) {
-	Dimension size = new Dimension(100, 22);
-	component.setMaximumSize(size);
-	component.setPreferredSize(size);
-	component.setMinimumSize(size);
-	component.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-	JPanel inner_panel = new JPanel();
-	inner_panel.setLayout(new BoxLayout(inner_panel,BoxLayout.PAGE_AXIS));
-	inner_panel.add(Box.createRigidArea(new Dimension(20,0)));
-	inner_panel.add(component);
-
-	JPanel panel = new JPanel();
-	panel.setLayout(new GridLayout(1, 2));
-	panel.add(new JLabel(label_str + ": "));
-	panel.add(inner_panel);
-
-	return panel;
-  }
-  
+	public void preferenceChange(PreferenceChangeEvent pce) {
+		if (smv != null) {
+			smv.getSeqMap().updateWidget();
+		}
+	}
 }

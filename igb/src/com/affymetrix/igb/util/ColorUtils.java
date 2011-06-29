@@ -17,7 +17,7 @@ import java.util.prefs.PreferenceChangeListener;
  * @version $Id$
  */
 public class ColorUtils {
-
+	
 	/**
 	 *  Creates a Color chooser combo box associated with a Color preference.
 	 *  Will initialize itself with the value of the given
@@ -28,12 +28,14 @@ public class ColorUtils {
 	 * @param pref_name 
 	 * @param default_val 
 	 * @return
-	 */
+	 */	
+
 	public static ColorComboBox createColorComboBox(final Preferences node,
-			final String pref_name, final Color default_val, final PreferenceChangeListener listener){
+		final String pref_name, final Color default_val, final PreferenceChangeListener listener){
 		Color initial_color = PreferenceUtils.getColor(node, pref_name, default_val);
 		final ColorComboBox combobox = new ColorComboBox();
 		combobox.setSelectedColor(initial_color);
+		combobox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
 		combobox.setColorValueVisible(false);
 		combobox.setCrossBackGroundStyle(false);
 		combobox.setButtonVisible(false);

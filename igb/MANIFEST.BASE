@@ -95,5 +95,6 @@ Import-Package: affymetrix.calvin.data,
  org.osgi.util.tracker,
  org.w3c.dom,
  org.xml.sax,
- sun.reflect;resolution:=optional
+ sun.reflect;resolution:=optional,
+ org.jdesktop.layout
 

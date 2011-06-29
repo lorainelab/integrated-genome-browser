@@ -141,6 +141,9 @@
 		<antcall target="copy-bundle">
     		<param name="jar_name" value="commons-net-2.0"/>
 		</antcall>
+		<antcall target="copy-bundle">
+    		<param name="jar_name" value="swing-layout"/>
+		</antcall>
 	</target>
 
 	<target name="jar" depends="common-init,copy-bundles" description="Create jar files for all genoviz subprojects">
@@ -191,6 +194,7 @@
 				<include name="org.mortbay.jetty.jar"/>
 				<include name="sam.jar" />
 				<include name="picard.jar" />
+				<include name="swing-layout.jar" />
 			</fileset>
 			<fileset dir="${dist.dir}">
 				<include name="das2server.jar" />

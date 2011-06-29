@@ -224,6 +224,19 @@
                         </arity>
                     </context>
                 </action>
+                <action name="compile.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>compile-selected-files-in-src</target>
+                    <context>
+                        <property>files</property>
+                        <folder>igb/src</folder>
+                        <pattern>\.java$</pattern>
+                        <format>relative-path</format>
+                        <arity>
+                            <separated-files>,</separated-files>
+                        </arity>
+                    </context>
+                </action>
             </ide-actions>
             <export>
                 <type>folder</type>
@@ -522,5 +535,33 @@
             <module name="org-netbeans-modules-projectimport-eclipse-core"/>
             <module name="org-netbeans-modules-html-editor-lib"/>
         </preferences>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>Fasta</word>
+            <word>IGB</word>
+            <word>关于</word>
+            <word>反向互补</word>
+            <word>取消</word>
+            <word>基因版本</word>
+            <word>密码</word>
+            <word>局部核苷酸序列</word>
+            <word>工具</word>
+            <word>帮助</word>
+            <word>当前可视序列</word>
+            <word>总是用匿名登录</word>
+            <word>所有序列</word>
+            <word>文件</word>
+            <word>服务器</word>
+            <word>服务器验证</word>
+            <word>核苷酸序列</word>
+            <word>物种</word>
+            <word>用户名</word>
+            <word>登录</word>
+            <word>编辑</word>
+            <word>自动滚屏</word>
+            <word>视图</word>
+            <word>解锁</word>
+            <word>设置</word>
+            <word>锁定视图</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

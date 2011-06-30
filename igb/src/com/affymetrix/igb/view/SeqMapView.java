@@ -1118,7 +1118,7 @@ public class SeqMapView extends JPanel
 	 *  Figures out which symmetries are currently selected and then calls
 	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
 	 */
-	final void postSelections() {
+	public final void postSelections() {
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
 		gmodel.setSelectedSymmetries(getSelectedSyms(), this);
 		if( seqviewer != null && !getSelectedSyms().isEmpty() && !(getSelectedSyms().get(0) instanceof GraphSym)){

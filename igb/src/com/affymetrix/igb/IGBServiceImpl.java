@@ -389,26 +389,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public void select(GlyphI g) {
-		((SeqMapView)getMapView()).getSeqMap().select(g);
-	}
-
-	@Override
-	public void deselect(GlyphI g) {
-		((SeqMapView)getMapView()).getSeqMap().deselect(g);
-	}
-
-	@Override
-	public GlyphI getItem(SeqSymmetry sym) {
-		return ((SeqMapView)getMapView()).getSeqMap().<GlyphI>getItem(sym);
-	}
-
-	@Override
-	public void removeItem(GlyphI gl) {
-		((SeqMapView)getMapView()).getSeqMap().removeItem(gl);
-	}
-
-	@Override
 	public void centerAtHairline() {
 		 ((SeqMapView)getMapView()).centerAtHairline();
 	}
@@ -424,6 +404,36 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		for(GlyphI glyph : glyphs){
 			axis_tier.addChild(glyph);
 		}
+	}
+
+	@Override
+	public GlyphI getItem(SeqSymmetry sym) {
+		return ((SeqMapView)getMapView()).getSeqMap().<GlyphI>getItem(sym);
+	}
+
+	@Override
+	public void removeItem(GlyphI gl) {
+		((SeqMapView)getMapView()).getSeqMap().removeItem(gl);
+	}
+
+	@Override
+	public void select(GlyphI g) {
+		((SeqMapView)getMapView()).getSeqMap().select(g);
+	}
+
+	@Override
+	public void deselect(GlyphI g) {
+		((SeqMapView)getMapView()).getSeqMap().deselect(g);
+	}
+
+	@Override
+	public void clearSelected() {
+		((SeqMapView)getMapView()).getSeqMap().clearSelected();
+	}
+
+	@Override
+	public void postSelections() {
+		((SeqMapView)getMapView()).postSelections();
 	}
 
 	@Override

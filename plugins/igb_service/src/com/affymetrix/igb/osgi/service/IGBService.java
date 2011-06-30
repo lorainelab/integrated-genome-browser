@@ -213,13 +213,15 @@ public interface IGBService {
 	// for SearchView
 	public void zoomTo(SeqSpan span);
 	public void zoomToCoord(String seqID, int start, int end);
-	public void select(GlyphI g);
-	public void deselect(GlyphI g);
-	public GlyphI getItem(SeqSymmetry sym);
-	public void removeItem(GlyphI gl);
 	public void centerAtHairline();
 	public void addSeqMapRefreshedListener(SeqMapRefreshed seqMapRefreshed);
 	public void mapRefresh(List<GlyphI> glyphs);
+	public GlyphI getItem(SeqSymmetry sym);
+	public void removeItem(GlyphI gl);
+	public void select(GlyphI g);
+	public void deselect(GlyphI g);
+	public void clearSelected();
+	public void postSelections();
 	/**
 	 * get the SeqMapView, the main window for IGB
 	 * @return the SeqMapView

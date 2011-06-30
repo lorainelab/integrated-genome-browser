@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
@@ -292,16 +293,36 @@ public class TrackView {
 	}
 
 	public static void deleteTrack(TierGlyph tg) {
+		ITrackStyle style = tg.getAnnotStyle();
+		String method = style.getMethodName();
+		
+		if(method == null){
+			if(style.isGraphTier()){
+				for(int i=0; i<tg.getChildCount(); i++){
+					GlyphI glyph = tg.getChild(i);
+					if(glyph instanceof GraphGlyph){
+						GraphGlyph graphGlyph = (GraphGlyph)glyph;
+						style = graphGlyph.getGraphState().getTierStyle();
+						method = style.getMethodName();
+						delete(method, style);
+					}
+				}
+			}
+			return;
+		}
+		
+		delete(method, style);
+	}
+
+	private static void delete(String method, ITrackStyle style){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		GenericFeature feature = tg.getAnnotStyle().getFeature();
+		GenericFeature feature = style.getFeature();
 		
 		// If genome is selected then delete all syms on the all seqs.
 		if(IGBConstants.GENOME_SEQ_ID.equals(seq.getID())){
 			GeneralLoadView.getLoadView().removeFeature(feature);
 			return;
 		}
-
-		String method = tg.getAnnotStyle().getMethodName();
 
 		deleteDependentData(method, seq);
 		if(feature != null){
@@ -314,7 +335,7 @@ public class TrackView {
 		}
 		TierMaintenanceListenerHolder.getInstance().fireTierRemoved();
 	}
-
+	
 	private static void deleteDependentData(String method, BioSeq seq) {
 		DependentData dd = null;
 		for (int i = 0; i < dependent_list.size(); i++) {

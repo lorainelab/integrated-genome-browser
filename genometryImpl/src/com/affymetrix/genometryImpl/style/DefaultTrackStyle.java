@@ -119,6 +119,6 @@ public class DefaultTrackStyle implements ITrackStyle {
 	}
 
 	public String getMethodName() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return null;
 	}
 }

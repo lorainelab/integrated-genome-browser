@@ -1,0 +1,366 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.JProgressBar" name="jProgressBar1">
+    </Component>
+    <Component class="com.jidesoft.combobox.ColorChooserPanel" name="colorChooserPanel1">
+    </Component>
+  </NonVisualComponents>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="confirmBeforeLoadingCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="1">
+                              <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="confirmBeforeDeleteCheckBox" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="keepZoomStripeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="coordinatePanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="residueColorPanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="orfAnalyzerPanel" alignment="0" max="32767" attributes="1"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
+                      <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace pref="21" max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="coordinatePanel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+              <Component id="residueColorPanel" min="-2" pref="56" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+              <Component id="orfAnalyzerPanel" min="-2" pref="59" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
+                  <Component id="confirmBeforeDeleteCheckBox" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="keepZoomStripeCheckBox" min="-2" pref="23" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+              <Component id="confirmBeforeLoadingCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="coordinatePanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Coordinates"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="backgroundLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="bgColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                          <Component id="foregroundLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="fgColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="numFormatLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="coordinates_label_format_CB" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace pref="56" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="backgroundLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="foregroundLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="bgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="fgColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="numFormatLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="coordinates_label_format_CB" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="backgroundLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Background:"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel()"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="foregroundLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Foreground:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="numFormatLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Number format:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="coordinates_label_format_CB">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createComboBox(PreferenceUtils.getTopNode(),&#xa;&quot;Coordinates label format&quot;,&#xa;label_format_options,&#xa;default_label_format);&#xa;"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="bgColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_BACKGROUND, Color.WHITE, this)"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="fgColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), CoordinateStyle.PREF_COORDINATE_COLOR, Color.BLACK, this)"/>
+          </AuxValues>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="orfAnalyzerPanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="ORF Analyzer (Sliced View tab)"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="stopCodonLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="StopCodonColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                  <Component id="dynamicORFLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="DynamicORFColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace pref="45" max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="stopCodonLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="dynamicORFLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="StopCodonColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="DynamicORFColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="stopCodonLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Stop Codon:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="dynamicORFLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Dynamic ORF:"/>
+          </Properties>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="StopCodonColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, this)"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="DynamicORFColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, this)"/>
+          </AuxValues>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="residueColorPanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Residue Colors"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="aLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="AColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="tLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="TColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                  <Component id="gLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                  <Component id="GColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="cLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="CColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                  <Component id="otherLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="OtherColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="aLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="AColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="gLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="cLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="otherLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="tLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="TColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="GColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="CColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="OtherColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="aLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="A:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="tLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="T:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="gLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="G:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="cLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="C:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="otherLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Other:"/>
+          </Properties>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="AColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, this)"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="TColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, this)"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="GColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, this)"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="CColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, this)"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="OtherColorComboBox">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PreferenceUtils.getTopNode(), ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, this)"/>
+          </AuxValues>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JCheckBox" name="askBeforeExitCheckBox">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Ask before exit&quot;, PreferenceUtils.getTopNode(),&#xa;      PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="confirmBeforeDeleteCheckBox">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm before delete&quot;, PreferenceUtils.getTopNode(),&#xa;      PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="keepZoomStripeCheckBox">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Keep zoom stripe in view&quot;, PreferenceUtils.getTopNode(),&#xa;      UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view)"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="confirmBeforeLoadingCheckBox">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Confirm before loading large data set&quot;, PreferenceUtils.getTopNode(),&#xa;      PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load)"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="clear_prefsB">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Reset preference to defaults"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="clear_prefsB.addActionListener(this);"/>
+      </AuxValues>
+    </Component>
+  </SubComponents>
+</Form>

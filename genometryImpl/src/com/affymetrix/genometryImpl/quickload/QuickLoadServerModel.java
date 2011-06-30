@@ -369,7 +369,7 @@ public final class QuickLoadServerModel {
 			br = new BufferedReader(ireader);
 			String line;
 			while ((line = br.readLine()) != null) {
-				if ((line.length() == 0) || line.startsWith("#")) {
+				if ((line.length() == 0) || line.startsWith("#") || (line.startsWith("<") && line.endsWith(">"))) {
 					continue;
 				}
 				AnnotatedSeqGroup group = null;

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.genoviz.glyph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,5 +28,11 @@ public class GlyphProcessorHolder {
 
 	public List<GlyphProcessor> getGlyphProcessors() {
 		return glyphProcessors;
+	}
+
+	public void fireProcessGlyph(GlyphI glyph) {
+		for (GlyphProcessor glyphProcessor : GlyphProcessorHolder.getInstance().getGlyphProcessors()) {
+			glyphProcessor.processGlyph(glyph);
+		}
 	}
 }

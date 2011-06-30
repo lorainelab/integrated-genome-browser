@@ -27,7 +27,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.event.TierMaintenanceListener;
 import com.affymetrix.genometryImpl.operator.GraphOperator;
-import com.affymetrix.igb.glyph.GlyphProcessorHolder.GlyphProcessor;
+import com.affymetrix.genoviz.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;

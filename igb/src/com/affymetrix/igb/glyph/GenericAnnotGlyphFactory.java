@@ -41,9 +41,9 @@ import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.GlyphProcessorHolder;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 
-import com.affymetrix.igb.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -324,9 +324,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				if(cglyph instanceof DirectedGlyph){
 					((DirectedGlyph)cglyph).setForward(cspan.isForward());
 				}
-				for (GlyphProcessor glyphProcessor : GlyphProcessorHolder.getInstance().getGlyphProcessors()) {
-					glyphProcessor.processGlyph(cglyph);
-				}
+				GlyphProcessorHolder.getInstance().fireProcessGlyph(cglyph);
 			}
 		}
 				
@@ -404,9 +402,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				cds_glyph.setColor(child_color); // CDS same color as exon
 				pglyph.addChild(cds_glyph);
 				map.setDataModelFromOriginalSym(cds_glyph, cds_sym_2);
-				for (GlyphProcessor glyphProcessor : GlyphProcessorHolder.getInstance().getGlyphProcessors()) {
-					glyphProcessor.processGlyph(cds_glyph);
-				}
+				GlyphProcessorHolder.getInstance().fireProcessGlyph(cds_glyph);
 			}
 		}
 		return DEFAULT_THIN_HEIGHT;

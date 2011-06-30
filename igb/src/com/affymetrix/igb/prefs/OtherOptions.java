@@ -12,18 +12,11 @@ package com.affymetrix.igb.prefs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-
-import javax.swing.JLabel;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
@@ -60,7 +53,6 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
 		} else {
 			smv = null;
 		}
-		
 		
 		initComponents();
     }
@@ -332,19 +324,6 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
 		}
 	}
 
-	private static JPanel addToPanel(String label_str, JComponent component, Dimension size) {
-		component.setMaximumSize(size);
-		component.setPreferredSize(size);
-		component.setMinimumSize(size);
-		component.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-		JPanel panel = new JPanel();
-		panel.add(new JLabel(label_str + ": "));
-		panel.add(component);
-
-		return panel;
-	}
-	
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
 		if (src == clear_prefsB) {

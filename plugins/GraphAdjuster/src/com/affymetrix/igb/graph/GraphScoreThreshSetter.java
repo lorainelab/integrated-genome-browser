@@ -87,7 +87,7 @@ public final class GraphScoreThreshSetter extends JPanel
 	private static final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
 	private static final int tf_min_ypix = 10;
 	private static final int tf_max_ypix = 25;
-
+	final boolean force_change = false;
 
 	static {
 		val_format = new DecimalFormat();
@@ -541,6 +541,10 @@ public final class GraphScoreThreshSetter extends JPanel
 		tier_threshB.removeActionListener(this);
 		shift_startTF.removeActionListener(this);
 		shift_endTF.removeActionListener(this);
+		score_perT.removeFocusListener(this);
+		score_valT.removeFocusListener(this);
+		shift_startTF.removeFocusListener(this);
+		shift_endTF.removeFocusListener(this);
 	}
 
 	private void turnOnListening() {
@@ -570,7 +574,6 @@ public final class GraphScoreThreshSetter extends JPanel
 
 	private void setScoreThreshold(float val, int direction) {
 		int gcount = graphs.size();
-		boolean force_change = true;
 		if (force_change || (gcount > 0 && (val != prev_thresh_val))) {
 			turnOffListening();
 			float min_per = Float.POSITIVE_INFINITY;
@@ -628,7 +631,6 @@ public final class GraphScoreThreshSetter extends JPanel
 
 	private void setScoreThresholdByPercent(float percent, int direction) {
 		int gcount = graphs.size();
-		boolean force_change = true;
 		if (force_change || (gcount > 0 && (percent != prev_thresh_per))) {
 			turnOffListening();
 			float min_val = Float.POSITIVE_INFINITY;

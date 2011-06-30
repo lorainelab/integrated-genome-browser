@@ -31,7 +31,7 @@ public class GlyphProcessorHolder {
 	}
 
 	public void fireProcessGlyph(GlyphI glyph) {
-		for (GlyphProcessor glyphProcessor : GlyphProcessorHolder.getInstance().getGlyphProcessors()) {
+		for (GlyphProcessor glyphProcessor : glyphProcessors) {
 			glyphProcessor.processGlyph(glyph);
 		}
 	}

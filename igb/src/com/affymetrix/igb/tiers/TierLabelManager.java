@@ -256,7 +256,7 @@ public final class TierLabelManager {
 	}
 
 	/** Returns a list of TierGlyph items representing the selected tiers. */
-	List<TierGlyph> getSelectedTiers() {
+	public List<TierGlyph> getSelectedTiers() {
 		List<TierGlyph> selected_tiers = new ArrayList<TierGlyph>();
 
 		for (TierLabelGlyph tlg : getSelectedTierLabels()) {

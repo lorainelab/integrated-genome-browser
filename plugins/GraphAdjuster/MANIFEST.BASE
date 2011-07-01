@@ -11,6 +11,7 @@ IGB-Tier: 1
 Import-Package: com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genometryImpl.operator.graph,
+ com.affymetrix.genometryImpl.operator.transform,
  com.affymetrix.genometryImpl.style,
  com.affymetrix.genometryImpl.util,
  com.affymetrix.genoviz.util,

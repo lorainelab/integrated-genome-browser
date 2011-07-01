@@ -11,7 +11,7 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.genometryImpl.operator.transform;
 
 /**
  *

@@ -13,6 +13,7 @@ import org.osgi.framework.ServiceReference;
 
 import com.affymetrix.genometryImpl.operator.annotation.*;
 import com.affymetrix.genometryImpl.operator.graph.*;
+import com.affymetrix.genometryImpl.operator.transform.*;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 
@@ -53,6 +54,7 @@ public class Activator implements BundleActivator {
 		catch (InvalidSyntaxException x) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading Parsers", x.getMessage());
 		}
+		initTransforms();
 		initGraphOperators();
 		initAnnotationOperators();
 	}
@@ -60,6 +62,17 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext _bundleContext) throws Exception {}
 
+	private void initTransforms() {
+		bundleContext.registerService(FloatTransformer.class.getName(), new IdentityTransform(), new Properties());
+		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(2.0), new Properties());
+		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(10.0), new Properties());
+		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(Math.E), new Properties());
+		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(), new Properties());
+		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(2.0), new Properties());
+		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(10.0), new Properties());
+		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(Math.E), new Properties());
+		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(), new Properties());
+	}
 
 	private void initGraphOperators() {
 		bundleContext.registerService(GraphOperator.class.getName(), new DiffOperator(), new Properties());

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.graph;
 
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,11 +9,8 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import com.affymetrix.genometryImpl.operator.graph.*;
-import com.affymetrix.genometryImpl.util.FloatTransformer;
-import com.affymetrix.genometryImpl.util.IdentityTransform;
-import com.affymetrix.genometryImpl.util.InverseLogTransform;
-import com.affymetrix.genometryImpl.util.LogTransform;
+import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.window.service.WindowActivator;
@@ -50,7 +46,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 					}
 				}
 			, TRANSFORMER_SERVICE_FILTER);
-			initTransformers();
 			serviceReferences = bundleContext.getAllServiceReferences(GraphOperator.class.getName(), null);
 			if (serviceReferences != null) {
 				for (ServiceReference serviceReference : serviceReferences) {
@@ -76,17 +71,5 @@ public class Activator extends WindowActivator implements BundleActivator {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading 2", x.getMessage());
 		}
 		return simpleGraphTab;
-	}
-
-	private void initTransformers() {
-		bundleContext.registerService(FloatTransformer.class.getName(), new IdentityTransform(), new Properties());
-		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(2.0), new Properties());
-		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(10.0), new Properties());
-		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(Math.E), new Properties());
-		bundleContext.registerService(FloatTransformer.class.getName(), new LogTransform(), new Properties());
-		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(2.0), new Properties());
-		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(10.0), new Properties());
-		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(Math.E), new Properties());
-		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(), new Properties());
 	}
 }

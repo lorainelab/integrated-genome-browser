@@ -28,16 +28,16 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
+import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
+import com.affymetrix.genometryImpl.operator.transform.IdentityTransform;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.DefaultTrackStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
-import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genometryImpl.util.IdentityTransform;
 
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;

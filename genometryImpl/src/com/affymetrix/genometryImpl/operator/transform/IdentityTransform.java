@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.genometryImpl.operator.transform;
 
 public final class IdentityTransform implements FloatTransformer {
 	public IdentityTransform() {}

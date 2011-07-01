@@ -1,24 +1,25 @@
-package com.affymetrix.genometryImpl.operator;
+package com.affymetrix.genometryImpl.operator.graph;
 
 import java.util.List;
 
-public class RatioOperator implements GraphOperator {
+public class MinOperator implements GraphOperator {
 	@Override
 	public String getName() {
-		return "Ratio";
+		return "Min";
 	}
 
 	@Override
 	public String getSymbol() {
-		return "/";
+		return null;
 	}
 
 	@Override
 	public float operate(List<Float> operands) {
-		if (operands.get(1).floatValue() == 0.0) {
-			return 0.0f;
+		float min = Float.MAX_VALUE;
+		for (Float f : operands) {
+			min = Math.min(min, f);
 		}
-		return operands.get(0).floatValue() / operands.get(1).floatValue();
+		return min;
 	}
 
 	@Override
@@ -28,6 +29,7 @@ public class RatioOperator implements GraphOperator {
 
 	@Override
 	public int getOperandCountMax() {
-		return 2;
+		return Integer.MAX_VALUE;
 	}
+
 }

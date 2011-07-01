@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.operator;
+package com.affymetrix.genometryImpl.operator.graph;
 
 import java.util.List;
 

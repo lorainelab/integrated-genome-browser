@@ -26,7 +26,7 @@ import java.util.*;
 import javax.swing.*;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.operator.GraphOperator;
+import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.GraphType;

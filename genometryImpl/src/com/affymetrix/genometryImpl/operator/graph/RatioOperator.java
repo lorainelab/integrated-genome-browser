@@ -1,21 +1,24 @@
-package com.affymetrix.genometryImpl.operator;
+package com.affymetrix.genometryImpl.operator.graph;
 
 import java.util.List;
 
-public class DiffOperator implements GraphOperator {
+public class RatioOperator implements GraphOperator {
 	@Override
 	public String getName() {
-		return "Diff";
+		return "Ratio";
 	}
 
 	@Override
 	public String getSymbol() {
-		return "-";
+		return "/";
 	}
 
 	@Override
 	public float operate(List<Float> operands) {
-		return operands.get(0).floatValue() - operands.get(1).floatValue();
+		if (operands.get(1).floatValue() == 0.0) {
+			return 0.0f;
+		}
+		return operands.get(0).floatValue() / operands.get(1).floatValue();
 	}
 
 	@Override

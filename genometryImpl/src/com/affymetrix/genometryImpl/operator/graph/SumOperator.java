@@ -1,11 +1,11 @@
-package com.affymetrix.genometryImpl.operator;
+package com.affymetrix.genometryImpl.operator.graph;
 
 import java.util.List;
 
-public class ProductOperator implements GraphOperator {
+public class SumOperator implements GraphOperator {
 	@Override
 	public String getName() {
-		return "Product";
+		return "Sum";
 	}
 
 	@Override
@@ -15,9 +15,9 @@ public class ProductOperator implements GraphOperator {
 
 	@Override
 	public float operate(List<Float> operands) {
-		float total = 1;
+		float total = 0;
 		for (Float f : operands) {
-			total *= f.floatValue();
+			total += f.floatValue();
 		}
 		return total;
 	}

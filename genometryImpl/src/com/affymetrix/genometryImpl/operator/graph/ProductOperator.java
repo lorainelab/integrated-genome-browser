@@ -1,11 +1,11 @@
-package com.affymetrix.genometryImpl.operator;
+package com.affymetrix.genometryImpl.operator.graph;
 
 import java.util.List;
 
-public class MeanOperator implements GraphOperator {
+public class ProductOperator implements GraphOperator {
 	@Override
 	public String getName() {
-		return "Mean";
+		return "Product";
 	}
 
 	@Override
@@ -15,11 +15,11 @@ public class MeanOperator implements GraphOperator {
 
 	@Override
 	public float operate(List<Float> operands) {
-		float total = 0;
+		float total = 1;
 		for (Float f : operands) {
-			total += f.floatValue();
+			total *= f.floatValue();
 		}
-		return total / (float)operands.size();
+		return total;
 	}
 
 	@Override

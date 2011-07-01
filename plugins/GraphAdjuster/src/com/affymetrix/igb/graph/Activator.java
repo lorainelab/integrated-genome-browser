@@ -10,7 +10,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import com.affymetrix.genometryImpl.operator.*;
+import com.affymetrix.genometryImpl.operator.graph.*;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.IdentityTransform;
 import com.affymetrix.genometryImpl.util.InverseLogTransform;
@@ -75,7 +75,6 @@ public class Activator extends WindowActivator implements BundleActivator {
 		catch (InvalidSyntaxException x) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading 2", x.getMessage());
 		}
-		initOperators();
 		return simpleGraphTab;
 	}
 
@@ -89,16 +88,5 @@ public class Activator extends WindowActivator implements BundleActivator {
 		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(10.0), new Properties());
 		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(Math.E), new Properties());
 		bundleContext.registerService(FloatTransformer.class.getName(), new InverseLogTransform(), new Properties());
-	}
-
-	private void initOperators() {
-		bundleContext.registerService(GraphOperator.class.getName(), new DiffOperator(), new Properties());
-		bundleContext.registerService(GraphOperator.class.getName(), new ProductOperator(), new Properties());
-		bundleContext.registerService(GraphOperator.class.getName(), new RatioOperator(), new Properties());
-		bundleContext.registerService(GraphOperator.class.getName(), new SumOperator(), new Properties());
-		bundleContext.registerService(GraphOperator.class.getName(), new MinOperator(), new Properties());
-		bundleContext.registerService(GraphOperator.class.getName(), new MaxOperator(), new Properties());
-		bundleContext.registerService(GraphOperator.class.getName(), new MeanOperator(), new Properties());
-		bundleContext.registerService(GraphOperator.class.getName(), new MedianOperator(), new Properties());
 	}
 }

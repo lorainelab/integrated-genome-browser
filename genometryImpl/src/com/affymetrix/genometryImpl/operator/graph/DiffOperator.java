@@ -1,25 +1,21 @@
-package com.affymetrix.genometryImpl.operator;
+package com.affymetrix.genometryImpl.operator.graph;
 
 import java.util.List;
 
-public class MaxOperator implements GraphOperator {
+public class DiffOperator implements GraphOperator {
 	@Override
 	public String getName() {
-		return "Max";
+		return "Diff";
 	}
 
 	@Override
 	public String getSymbol() {
-		return null;
+		return "-";
 	}
 
 	@Override
 	public float operate(List<Float> operands) {
-		float max = Float.MIN_VALUE;
-		for (Float f : operands) {
-			max = Math.max(max, f);
-		}
-		return max;
+		return operands.get(0).floatValue() - operands.get(1).floatValue();
 	}
 
 	@Override
@@ -29,6 +25,6 @@ public class MaxOperator implements GraphOperator {
 
 	@Override
 	public int getOperandCountMax() {
-		return Integer.MAX_VALUE;
+		return 2;
 	}
 }

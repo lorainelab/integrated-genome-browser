@@ -1,11 +1,11 @@
-package com.affymetrix.genometryImpl.operator;
+package com.affymetrix.genometryImpl.operator.graph;
 
 import java.util.List;
 
-public class SumOperator implements GraphOperator {
+public class MaxOperator implements GraphOperator {
 	@Override
 	public String getName() {
-		return "Sum";
+		return "Max";
 	}
 
 	@Override
@@ -15,11 +15,11 @@ public class SumOperator implements GraphOperator {
 
 	@Override
 	public float operate(List<Float> operands) {
-		float total = 0;
+		float max = Float.MIN_VALUE;
 		for (Float f : operands) {
-			total += f.floatValue();
+			max = Math.max(max, f);
 		}
-		return total;
+		return max;
 	}
 
 	@Override
@@ -31,5 +31,4 @@ public class SumOperator implements GraphOperator {
 	public int getOperandCountMax() {
 		return Integer.MAX_VALUE;
 	}
-
 }

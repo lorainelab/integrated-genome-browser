@@ -112,8 +112,8 @@ public abstract class Application {
 	public static boolean confirmPanel(final String message, final Preferences node,
 			final String check, final boolean def_val) {
 		Application app = getSingleton();
-		JFrame frame = (app == null) ? null : app.getFrame();
-		return confirmPanel(frame.getRootPane(), message, node, check, def_val);
+		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
+		return confirmPanel(comp, message, node, check, def_val);
 	}
 	
 	public static boolean confirmPanel(final JComponent comp, final String message, final Preferences node,

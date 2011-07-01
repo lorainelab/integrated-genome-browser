@@ -435,6 +435,7 @@ public final class ResidueLoading {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
+			GeneralUtils.safeClose(buff);
 			GeneralUtils.safeClose(istr);
 		}
 

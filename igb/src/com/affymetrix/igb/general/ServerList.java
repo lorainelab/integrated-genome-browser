@@ -145,9 +145,9 @@ public final class ServerList {
 
 				if (server != null) {
 					url2server.put(url, server);
+					addServerToPrefs(server);
 				}
 			}
-			addServerToPrefs(server);
 		}
 		
 		return server;

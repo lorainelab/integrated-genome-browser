@@ -83,7 +83,7 @@ public final class IGB extends Application
 				implements GroupSelectionListener, SeqSelectionListener {
 
 	public static final String NODE_PLUGINS = "plugins";
-	public static int TAB_PLUGIN_PREFS = -1;
+	protected static int TAB_PLUGIN_PREFS = -1;
 	private JFrame frm;
 	private JMenuBar mbar;
 	private JMenu file_menu;
@@ -96,7 +96,7 @@ public final class IGB extends Application
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
 	private BioSeq prev_selected_seq = null;
-	public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
+	protected static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
 	private IWindowService windowService;
 	private HashSet<IStopRoutine> stopRoutines;
 

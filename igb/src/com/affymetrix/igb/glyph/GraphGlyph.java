@@ -103,7 +103,7 @@ public final class GraphGlyph extends Glyph {
 	private final Rectangle thresh_pix_box = new Rectangle();
 	private static final double transition_scale = 500;
 	private static final double mismatch_transition_scale = 30;
-	byte residues[] = null;
+//	byte residues[] = null;
 //	ResidueColorHelper helper = null;
 
 	private Color lighter;
@@ -170,10 +170,10 @@ public final class GraphGlyph extends Glyph {
 			setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
 		}
 
-		if(graf instanceof MisMatchGraphSym){
+//		if(graf instanceof MisMatchGraphSym){
 //			helper = ResidueColorHelper.getColorHelper();
-			residues = graf.getGraphSeq().getResidues(graf.getMinXCoord(), graf.getMaxXCoord()).getBytes();
-		}
+//			residues = graf.getGraphSeq().getResidues(graf.getMinXCoord(), graf.getMaxXCoord()).getBytes();
+//		}
 		
 		resetThreshLabel();
 	}

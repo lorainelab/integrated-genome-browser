@@ -114,7 +114,7 @@ public final class WebLinksAction extends JPanel {
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Manage Web Links");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_W));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_W));
     setAccelerator(a);
     return a;
   }
@@ -223,7 +223,7 @@ public final class WebLinksAction extends JPanel {
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Import Web Links");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_I));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_I));
     setAccelerator(a);
     return a;
   }
@@ -237,7 +237,7 @@ public final class WebLinksAction extends JPanel {
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Export Web Links");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_E));
     setAccelerator(a);
     return a;
   }
@@ -254,7 +254,7 @@ public final class WebLinksAction extends JPanel {
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Delete Selected Link(s)");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_D));
     setAccelerator(a);
     return a;
   }
@@ -284,7 +284,7 @@ public final class WebLinksAction extends JPanel {
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponentAdd16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Add New Web Link");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_A));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_A));
     setAccelerator(a);
     return a;
   }
@@ -315,7 +315,7 @@ public final class WebLinksAction extends JPanel {
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Edit Selected Web Link");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_E));
     setAccelerator(a);
     return a;
   }

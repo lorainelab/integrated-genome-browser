@@ -378,7 +378,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
 
       a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Properties16.gif"));
       a.putValue(Action.SHORT_DESCRIPTION, "Properties");
-      a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_P));
+      a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_P));
       setAccelerator(a);
       return a;
     }
@@ -402,7 +402,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
       };
       a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/media/Play16.gif"));
       a.putValue(Action.SHORT_DESCRIPTION, "Go To Bookmark");
-      a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_G));
+      a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_G));
       setAccelerator(a);
       return a;
     }
@@ -530,7 +530,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Refresh");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_R));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_R));
     setAccelerator(a);
     return a;
   }
@@ -546,7 +546,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Import Bookmarks");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_I));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_I));
     setAccelerator(a);
     return a;
   }
@@ -561,7 +561,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Export Bookmarks");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_E));
     setAccelerator(a);
     return a;
   }
@@ -592,7 +592,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Delete Selected Bookmark(s)");
-    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(KeyEvent.VK_D));
     setAccelerator(a);
     return a;
   }
@@ -696,7 +696,7 @@ public final class BookmarkManagerView extends IGBTabPanel implements TreeSelect
     };
     a.putValue(Action.SMALL_ICON, icon);
     a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
-    a.putValue(Action.MNEMONIC_KEY, new Integer(mnemonic));
+    a.putValue(Action.MNEMONIC_KEY, Integer.valueOf(mnemonic));
     setAccelerator(a);
     return a;
   }

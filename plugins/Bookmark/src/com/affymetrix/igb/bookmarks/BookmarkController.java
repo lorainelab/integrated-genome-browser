@@ -358,7 +358,7 @@ public abstract class BookmarkController {
 		  if (combo_style != null) {
 			  Integer combo_style_num = combo_styles.get(combo_style);
 			  if (combo_style_num == null) {
-				  combo_style_num = new Integer(combo_styles.size() + 1);
+				  combo_style_num = Integer.valueOf(combo_styles.size() + 1);
 				  combo_styles.put(combo_style, combo_style_num);
 			  }
 			  mark_sym.setProperty(GRAPH.COMBO.toString() + i, combo_style_num.toString());
@@ -469,8 +469,8 @@ public abstract class BookmarkController {
 				", " + mark_span.getMax();
 		mark_sym.setProperty(Bookmark.VERSION, version);
 		mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
-		mark_sym.setProperty(Bookmark.START, new Integer(mark_span.getMin()));
-		mark_sym.setProperty(Bookmark.END, new Integer(mark_span.getMax()));
+		mark_sym.setProperty(Bookmark.START, Integer.valueOf(mark_span.getMin()));
+		mark_sym.setProperty(Bookmark.END, Integer.valueOf(mark_span.getMax()));
 		mark_sym.setProperty(Bookmark.LOADRESIDUES, new String[] {Boolean.toString(aseq.isComplete())});
 
 		Bookmarks bookmarks = new Bookmarks();

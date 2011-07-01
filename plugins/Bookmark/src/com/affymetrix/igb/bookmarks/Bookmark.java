@@ -237,16 +237,14 @@ public final class Bookmark implements Serializable {
     StringBuffer sb = new StringBuffer();
     sb.append(url_base);
     
-    Iterator<String> iter = props.keySet().iterator();
-    
     // The first key in props is usually the first tag in the URL query string,
     // but *not* if the url_base already contains a '?' character.
     boolean first_tag = (url_base.indexOf('?') < 0);
 
-    while (iter.hasNext()) {
+    for(java.util.Map.Entry<String, String[]> entry : props.entrySet()) {
       // for all properties, add as tag-val parameter pair in URL
-      String tag = iter.next();
-      Object val = props.get(tag);
+      String tag = entry.getKey();
+      Object val = entry.getValue();
       if (first_tag) {sb.append('?');}
       else {sb.append('&');}
       appendTag(sb, tag, val);

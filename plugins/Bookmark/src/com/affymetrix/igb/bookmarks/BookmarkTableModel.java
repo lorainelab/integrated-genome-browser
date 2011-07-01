@@ -52,10 +52,9 @@ public final class BookmarkTableModel extends AbstractTableModel {
       throw new IllegalArgumentException("Map was null");
     }
     duples = new ArrayList<Duple>();
-    Iterator<String> keys = map.keySet().iterator();
-    while (keys.hasNext()) {
-      String key = keys.next();
-      String[] value = map.get(key);
+    for(java.util.Map.Entry<String,String[]> entry : map.entrySet()) {
+      String key = entry.getKey();
+      String[] value = entry.getValue();
       if (value.length == 0) {
        duples.add(new Duple(key, ""));
       } else {

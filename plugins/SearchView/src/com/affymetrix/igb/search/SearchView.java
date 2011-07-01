@@ -59,8 +59,6 @@ public final class SearchView extends IGBTabPanel implements
 	// This helps protect against out-of-memory errors.
 	private final static int MAX_HITS = 100000;
 	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static AnnotatedSeqGroup group;
-	private static int seqCount = 0;
 	private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
 
 	private static final String SEARCHLABELTEXT = "Search ";
@@ -84,7 +82,7 @@ public final class SearchView extends IGBTabPanel implements
 	private static final String SELECTINMAP_TEXT = BUNDLE.getString("searchSelectInMapText");
 	private static final String SELECTINMAP_TIP = BUNDLE.getString("searchSelectInMapTip");
 
-	private JTextField searchTF;
+	private final JTextField searchTF = new JTextField(10);;
 	private final JPanel pan1 = new JPanel();
 	private final JComboBox sequenceCB = new JComboBoxWithSingleListener();
 	private final JComboBox searchCB = new JComboBoxWithSingleListener();
@@ -96,11 +94,12 @@ public final class SearchView extends IGBTabPanel implements
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private final static Color hitcolor = new Color(150, 150, 255);
 
-	private  JTable table = new JTable();
-	private  JLabel status_bar = new JLabel("0 results");
+	private JTable table = new JTable();
+	private JLabel status_bar = new JLabel("0 results");
 	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;
-	
+	private AnnotatedSeqGroup group;
+	private int seqCount = 0;
 	private CThreadWorker worker;
 	private List<SeqSymmetry> remoteSymList;
 
@@ -247,7 +246,6 @@ public final class SearchView extends IGBTabPanel implements
 	}
 
 	private void initComponents() {
-		searchTF = new JTextField(10);
 		searchTF.setVisible(true);
 		searchTF.setEnabled(true);
 		searchTF.setMinimumSize(new Dimension(125,50));

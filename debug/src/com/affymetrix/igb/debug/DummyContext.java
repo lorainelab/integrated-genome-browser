@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.event.TierMaintenanceListener;
 import com.affymetrix.genometryImpl.operator.GraphOperator;
+import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -40,7 +41,8 @@ public class DummyContext implements BundleContext {
 	private static final String IGB_SERVICE_FILTER = "(objectClass=" + IGBService.class.getName() + ")";
 	private static final String TAB_SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
-	private static final String OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
+	private static final String GRAPH_OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
+	private static final String ANNOTATION_OPERATOR_SERVICE_FILTER = "(objectClass=" + AnnotationOperator.class.getName() + ")";
 	private static final String FILETYPEHANDLER_FACTORY_SERVICE_FILTER = "(objectClass=" + FileTypeHandler.class.getName() + ")";
 	private static final String POPUP_LISTENER_FILTER = "(objectClass=" + TierLabelManager.PopupListener.class.getName() + ")";
 	private static final String TRACK_CLICK_LISTENER_FILTER = "(objectClass=" + TierLabelManager.TrackClickListener.class.getName() + ")";
@@ -140,8 +142,11 @@ public class DummyContext implements BundleContext {
 		if (TRANSFORMER_SERVICE_FILTER.equals(filter)) {
 			return service instanceof FloatTransformer;
 		}
-		if (OPERATOR_SERVICE_FILTER.equals(filter)) {
+		if (GRAPH_OPERATOR_SERVICE_FILTER.equals(filter)) {
 			return service instanceof GraphOperator;
+		}
+		if (ANNOTATION_OPERATOR_SERVICE_FILTER.equals(filter)) {
+			return service instanceof AnnotationOperator;
 		}
 		if (FILETYPEHANDLER_FACTORY_SERVICE_FILTER.equals(filter)) {
 			return service instanceof FileTypeHandler;

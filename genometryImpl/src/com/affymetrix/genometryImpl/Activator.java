@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl;
 
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,6 +11,14 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
+import com.affymetrix.genometryImpl.operator.*;
+import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
+import com.affymetrix.genometryImpl.operator.annotation.ExclusiveAAnnotationOperator;
+import com.affymetrix.genometryImpl.operator.annotation.ExclusiveBAnnotationOperator;
+import com.affymetrix.genometryImpl.operator.annotation.IntersectionAnnotationOperator;
+import com.affymetrix.genometryImpl.operator.annotation.NotAnnotationOperator;
+import com.affymetrix.genometryImpl.operator.annotation.UnionAnnotationOperator;
+import com.affymetrix.genometryImpl.operator.annotation.XorAnnotationOperator;
 import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 
@@ -50,8 +59,19 @@ public class Activator implements BundleActivator {
 		catch (InvalidSyntaxException x) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading Parsers", x.getMessage());
 		}
+		initAnnotationOperators();
 	}
 
 	@Override
 	public void stop(BundleContext _bundleContext) throws Exception {}
+
+
+	private void initAnnotationOperators() {
+		bundleContext.registerService(AnnotationOperator.class.getName(), new ExclusiveAAnnotationOperator(), new Properties());
+		bundleContext.registerService(AnnotationOperator.class.getName(), new ExclusiveBAnnotationOperator(), new Properties());
+		bundleContext.registerService(AnnotationOperator.class.getName(), new IntersectionAnnotationOperator(), new Properties());
+		bundleContext.registerService(AnnotationOperator.class.getName(), new NotAnnotationOperator(), new Properties());
+		bundleContext.registerService(AnnotationOperator.class.getName(), new UnionAnnotationOperator(), new Properties());
+		bundleContext.registerService(AnnotationOperator.class.getName(), new XorAnnotationOperator(), new Properties());
+	}
 }

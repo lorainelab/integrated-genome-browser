@@ -15,6 +15,8 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import com.affymetrix.genometryImpl.event.TierMaintenanceListener;
 import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
+import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
+import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder.GlyphProcessor;
@@ -168,6 +170,18 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(Object o) {
 					TierMaintenanceListenerHolder.getInstance().removeTierMaintenanceListener((TierMaintenanceListener)o);
+				}
+			}
+		);
+		addService(
+			new ServiceHandler(AnnotationOperator.class) {
+				@Override
+				public void addService(Object o) {
+					AnnotationOperatorHolder.getInstance().addAnnotationOperator((AnnotationOperator)o);
+				}
+				@Override
+				public void removeService(Object o) {
+					AnnotationOperatorHolder.getInstance().removeAnnotationOperator((AnnotationOperator)o);
 				}
 			}
 		);

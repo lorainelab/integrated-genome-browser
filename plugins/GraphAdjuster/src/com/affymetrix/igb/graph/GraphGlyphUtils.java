@@ -15,6 +15,7 @@ package com.affymetrix.igb.graph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.operator.GraphOperator;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
@@ -22,7 +23,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.osgi.service.IGBService;
 
-import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -33,10 +33,6 @@ public final class GraphGlyphUtils {
 	public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
 	public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
 	public static final NumberFormat numberParser = NumberFormat.getNumberInstance();
-
-	private static final String selectExactGraphsMessage = "Select exactly {0} graphs";
-	private static final String selectMinGraphsMessage = "Select at least {0} graphs";
-	private static final String selectRangeGraphsMessage = "Select between {0} and {1} graphs";
 
 	public static boolean hasFloatingAncestor(GlyphI gl) {
 		if (gl == null) {
@@ -61,23 +57,6 @@ public final class GraphGlyphUtils {
 	}
 
 	/**
-	 * get the error message text for an attempted graph operation
-	 * @param graphCount the number of graph glyphs
-	 * @param minCount the minimum graphs for the operator
-	 * @param maxCount the maximum graphs for the operator
-	 * @return the error message text
-	 */
-	public static String getOperandMessage(int graphCount, int minCount, int maxCount) {
-		if (minCount == maxCount) {
-			return MessageFormat.format(selectExactGraphsMessage, minCount);
-		}
-		if (maxCount == Integer.MAX_VALUE) {
-			return MessageFormat.format(selectMinGraphsMessage, minCount);
-		}
-		return MessageFormat.format(selectRangeGraphsMessage, minCount, maxCount);
-	}
-
-	/**
 	 * potentially performs a given graph operation on a given set of graphs
 	 * @param operator the GraphOperator
 	 * @param graph_glyphs the Graph Glyph operands
@@ -97,7 +76,7 @@ public final class GraphGlyphUtils {
 			}
 		}
 		else {
-			ErrorHandler.errorPanel("ERROR", getOperandMessage(graph_glyphs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
+			ErrorHandler.errorPanel("ERROR", GeneralUtils.getOperandMessage(graph_glyphs.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "graph"));
 		}
 		return false;
 	}

@@ -35,6 +35,7 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.IdentityTransform;
 
@@ -645,7 +646,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					setGraphName(comp, operator);
 				}
 				else {
-					comp.setToolTipText(GraphGlyphUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
+					comp.setToolTipText(GeneralUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "graph"));
 				}
 			}
 
@@ -1020,7 +1021,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 				operationGoB.setToolTipText(null);
 			}
 			else {
-				operationGoB.setToolTipText(GraphGlyphUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
+				operationGoB.setToolTipText(GeneralUtils.getOperandMessage(grafs.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "graph"));
 			}
 		}
 	}

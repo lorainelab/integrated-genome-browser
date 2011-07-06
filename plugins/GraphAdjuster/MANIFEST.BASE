@@ -8,7 +8,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-DocURL: http://wiki.transvar.org/confluence/display/igbman/IGB+Tabbed+Panels#IGBTabbedPanels-GraphAdjusterPanel
 IGB-Tier: 1
-Import-Package: com.affymetrix.genometryImpl,
+Import-Package: com.affymetrix.common,
+ com.affymetrix.genometryImpl,
  com.affymetrix.genometryImpl.event,
  com.affymetrix.genometryImpl.operator.graph,
  com.affymetrix.genometryImpl.operator.transform,

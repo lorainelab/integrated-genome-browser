@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.operator.annotation.*;
@@ -23,12 +22,6 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext _bundleContext) throws Exception {
 		bundleContext = _bundleContext;
 		// add all FileTypeHandler implementations to FileTypeHolder
-		ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(FileTypeHandler.class.getName(), null);
-		if (serviceReferences != null) {
-			for (ServiceReference serviceReference : serviceReferences) {
-				FileTypeHolder.getInstance().addFileTypeHandler((FileTypeHandler)bundleContext.getService(serviceReference));
-			}
-		}
 		ExtensionPointHandler.addExtensionPoint(bundleContext,
 			new ExtensionPointHandler(FileTypeHandler.class) {
 				@Override

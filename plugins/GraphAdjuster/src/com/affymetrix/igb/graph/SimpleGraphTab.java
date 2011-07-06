@@ -823,7 +823,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 					String selection = (String) operationCB.getSelectedItem();
 					GraphOperator operator = name2operator.get(selection);
 					hovereffect.unsetGraphName(operator);
-					if (GraphGlyphUtils.doOperateGraphs(operator, glyphs, igbService)) {
+					if (igbService.doOperateGraphs(operator, glyphs)) {
 						updateViewer();
 					}
 				}

@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
@@ -305,6 +306,7 @@ public interface IGBService {
 	public List<GlyphI> getItems(GraphSym graf);
 	public boolean isMainSrc(Object src);
 	public void setTrackStyle(String meth, Color col, String description);
+	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs);
 	// for plugins
 	public List<Glyph> getAllTierGlyphs();
 	public void addSeqMapMouseListener(MouseListener mouseListener);

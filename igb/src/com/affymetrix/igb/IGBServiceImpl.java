@@ -43,12 +43,14 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -62,6 +64,7 @@ import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.IGBUtils;
 import com.affymetrix.igb.util.ScriptFileLoader;
 import com.affymetrix.igb.util.ThreadUtils;
@@ -150,8 +153,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public void setStatus(String message) {
-		Application.getSingleton().setStatus(message);
+	public void setStatus(final String message) {
+		runOnEventQueue(new Runnable() {
+			public void run() {
+				Application.getSingleton().setStatus(message);
+			}
+		});
 	}
 
 	@Override
@@ -591,6 +598,12 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 		annot_style.setGlyphDepth(1);
 		annot_style.setHumanName(description);
 		annot_style.setCollapsed(true);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean doOperateGraphs(GraphOperator operator, List<? extends GlyphI> graph_glyphs) {
+		return GraphGlyphUtils.doOperateGraphs(operator, (List<GraphGlyph>)graph_glyphs, (SeqMapView)getMapView());
 	}
 
 	@Override

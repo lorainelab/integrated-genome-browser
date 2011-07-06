@@ -10,19 +10,22 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.graph;
+package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genoviz.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.view.SeqMapView;
 
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -33,6 +36,29 @@ public final class GraphGlyphUtils {
 	public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
 	public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
 	public static final NumberFormat numberParser = NumberFormat.getNumberInstance();
+
+	private static final String selectExactGraphsMessage = "Select exactly {0} graphs";
+	private static final String selectMinGraphsMessage = "Select at least {0} graphs";
+	private static final String selectRangeGraphsMessage = "Select between {0} and {1} graphs";
+
+	/**
+	 *  Checks to make sure the the boundaries of a floating glyph are
+	 *  inside the map view.
+	 *  If the glyph is not a floating glyph, this will have no effect on it.
+	 *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
+	 *   the glyph's coord box is also its pixel box.
+	 */
+	public static void checkPixelBounds(GraphGlyph gl, AffyTieredMap map) {
+		if (gl.getGraphState().getFloatGraph()) {
+			Rectangle mapbox = map.getView().getPixelBox();
+			Rectangle2D.Double gbox = gl.getCoordBox();
+			if (gbox.y < mapbox.y) {
+				gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
+			} else if (gbox.y > (mapbox.y + mapbox.height - 10)) {
+				gl.setCoords(gbox.x, mapbox.y + mapbox.height - 10, gbox.width, gbox.height);
+			}
+		}
+	}
 
 	public static boolean hasFloatingAncestor(GlyphI gl) {
 		if (gl == null) {
@@ -47,6 +73,38 @@ public final class GraphGlyphUtils {
 		}
 	}
 
+	/**
+	 *  Checks to make sure that two graphs can be compared with one
+	 *  another for operations like diff, ratio, etc.
+	 *  (Graphs must have exact same x positions, and if one has width coords,
+	 *   the other must also.)
+	 *  @return null if the graphs are comparable, or an explanation string if they are not.
+	 */
+	public static String graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
+		// checking that both graphs are non-null
+		if (graphA == null || graphB == null) {
+			return "Must select exactly two graphs";
+		}
+		int numpoints = graphA.getPointCount();
+		// checking that both graph have same number of points
+		if (numpoints != graphB.getPointCount()) {
+			return "Graphs must have the same X points";
+		}
+		if (graphA.hasWidth() != graphB.hasWidth()) {
+			// one has width coords, the other doesn't.
+			return "Must select two graphs of the same type";
+		}
+
+		// checking that both graphs have same x points
+		for (int i = 0; i < numpoints; i++) {
+			if (graphA.getXCoord(i) != graphB.getXCoord(i)) {
+				return "Graphs must have the same X points";
+			}
+		}
+
+		return null;
+	}
+
 	/** Parse a String floating-point number that may optionally end with a "%" symbol. */
 	public static float parsePercent(String text) throws ParseException {
 		if (text.endsWith("%")) {
@@ -57,26 +115,43 @@ public final class GraphGlyphUtils {
 	}
 
 	/**
+	 * get the error message text for an attempted graph operation
+	 * @param graphCount the number of graph glyphs
+	 * @param minCount the minimum graphs for the operator
+	 * @param maxCount the maximum graphs for the operator
+	 * @return the error message text
+	 */
+	private static String getOperandMessage(int graphCount, int minCount, int maxCount) {
+		if (minCount == maxCount) {
+			return MessageFormat.format(selectExactGraphsMessage, minCount);
+		}
+		if (maxCount == Integer.MAX_VALUE) {
+			return MessageFormat.format(selectMinGraphsMessage, minCount);
+		}
+		return MessageFormat.format(selectRangeGraphsMessage, minCount, maxCount);
+	}
+
+	/**
 	 * potentially performs a given graph operation on a given set of graphs
 	 * @param operator the GraphOperator
 	 * @param graph_glyphs the Graph Glyph operands
 	 * @param gviewer the SeqMapView
 	 * @return if the operation was performed
 	 */
-	public static boolean doOperateGraphs(GraphOperator operator, List<GraphGlyph> graph_glyphs, IGBService igbService) {
+	public static boolean doOperateGraphs(GraphOperator operator, List<GraphGlyph> graph_glyphs, SeqMapView gviewer) {
 		if (graph_glyphs.size() >= operator.getOperandCountMin() && graph_glyphs.size() <= operator.getOperandCountMax()) {
 			GraphSym newsym = performOperation(graph_glyphs, operator);
 
 			if (newsym != null) {
 				BioSeq aseq = newsym.getGraphSeq();
 				aseq.addAnnotation(newsym);
-				igbService.setAnnotatedSeq(aseq, true, true);
+				gviewer.setAnnotatedSeq(aseq, true, true);
 				//GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
 				return true;
 			}
 		}
 		else {
-			ErrorHandler.errorPanel("ERROR", GeneralUtils.getOperandMessage(graph_glyphs.size(), operator.getOperandCountMin(), operator.getOperandCountMax(), "graph"));
+			ErrorHandler.errorPanel("ERROR", getOperandMessage(graph_glyphs.size(), operator.getOperandCountMin(), operator.getOperandCountMax()));
 		}
 		return false;
 	}

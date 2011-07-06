@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.event.TierMaintenanceListener;
 import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
+import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder.GlyphProcessor;
@@ -136,6 +137,18 @@ public class Activator implements BundleActivator {
 				@Override
 				public void removeService(Object o) {
 					AnnotationOperatorHolder.getInstance().removeAnnotationOperator((AnnotationOperator)o);
+				}
+			}
+		);
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler(GraphOperator.class) {
+				@Override
+				public void addService(Object o) {
+					igb.getMapView().addGraphOperator((GraphOperator)o);
+				}
+				@Override
+				public void removeService(Object o) {
+					igb.getMapView().removeGraphOperator((GraphOperator)o);
 				}
 			}
 		);

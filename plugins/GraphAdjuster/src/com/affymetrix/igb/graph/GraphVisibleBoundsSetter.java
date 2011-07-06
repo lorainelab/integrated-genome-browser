@@ -23,6 +23,7 @@ import javax.swing.border.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -510,9 +511,10 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			return;
 		}
 
+		NumberFormat numberParser = NumberFormat.getNumberInstance();
 		if (src == min_valT) {
 			try {
-				float minval = GraphGlyphUtils.numberParser.parse(min_valT.getText()).floatValue();
+				float minval = numberParser.parse(min_valT.getText()).floatValue();
 				if (minval > prev_max_val - val_offset) {
 					minval = prev_max_val - val_offset;
 				}
@@ -526,7 +528,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		} else if (src == max_valT) {
 			try {
-				float maxval = GraphGlyphUtils.numberParser.parse(max_valT.getText()).floatValue();
+				float maxval = numberParser.parse(max_valT.getText()).floatValue();
 				if (maxval < prev_min_val + val_offset) {
 					maxval = prev_min_val + val_offset;
 				}
@@ -539,7 +541,11 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		} else if (src == min_perT) {
 			try {
-				float min_per = GraphGlyphUtils.parsePercent(min_perT.getText());
+				String text = min_perT.getText();
+				if (text.endsWith("%")) {
+					text = text.substring(0, text.length() - 1);
+				}
+				float min_per = numberParser.parse(text).floatValue();
 				if (min_per < 0) {
 					min_per = 0;
 				} else if (min_per > prev_max_per - per_offset) {
@@ -551,7 +557,11 @@ public final class GraphVisibleBoundsSetter extends JPanel
 			}
 		} else if (src == max_perT) {
 			try {
-				float max_per = GraphGlyphUtils.parsePercent(max_perT.getText());
+				String text = max_perT.getText();
+				if (text.endsWith("%")) {
+					text = text.substring(0, text.length() - 1);
+				}
+				float max_per = numberParser.parse(text).floatValue();
 				if (max_per < prev_min_per + per_offset) {
 					max_per = prev_min_per + per_offset;
 				} else if (max_per > 100) {

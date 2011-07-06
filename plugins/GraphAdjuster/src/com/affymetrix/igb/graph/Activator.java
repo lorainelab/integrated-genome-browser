@@ -18,13 +18,10 @@ import com.affymetrix.igb.window.service.WindowActivator;
 public class Activator extends WindowActivator implements BundleActivator {
 	private static final String TRANSFORMER_SERVICE_FILTER = "(objectClass=" + FloatTransformer.class.getName() + ")";
 	private static final String OPERATOR_SERVICE_FILTER = "(objectClass=" + GraphOperator.class.getName() + ")";
-	private GraphSelectionManager graph_manager;
 
 	@Override
 	protected IGBTabPanel getPage(IGBService igbService) {
 		final SimpleGraphTab simpleGraphTab = new SimpleGraphTab(igbService);
-		graph_manager = new GraphSelectionManager(igbService, simpleGraphTab);
-		igbService.addSeqMapPopupListener(graph_manager);
 		try {
 			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(FloatTransformer.class.getName(), null);
 			if (serviceReferences != null) {

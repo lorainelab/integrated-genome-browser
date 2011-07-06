@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.CollapsePacker;
 import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.util.GraphGlyphCheckUtils;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 
@@ -135,7 +135,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
-			GraphGlyphCheckUtils.checkPixelBounds(graph_glyph, map);
+			GraphGlyphUtils.checkPixelBounds(graph_glyph, map);
 			smv.getPixelFloaterGlyph().addChild(graph_glyph);
 		} else {
 			if (gstate.getComboStyle() != null) {

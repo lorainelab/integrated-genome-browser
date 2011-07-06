@@ -36,6 +36,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 
@@ -457,9 +458,10 @@ public final class GraphScoreThreshSetter extends JPanel
 			return;
 		}
 
+		NumberFormat numberParser = NumberFormat.getNumberInstance();
 		if (src == score_valT) {
 			try {
-				float thresh = GraphGlyphUtils.numberParser.parse(score_valT.getText()).floatValue();
+				float thresh = numberParser.parse(score_valT.getText()).floatValue();
 				// Do not limit the threshold to just the total range of this graph.
 				// The user may set the thresholds of a set of graphs (on the same or
 				// different chromosomes) to the same value even if the absolute
@@ -473,7 +475,11 @@ public final class GraphScoreThreshSetter extends JPanel
 			}
 		} else if (src == score_perT) {
 			try {
-				float thresh_per = GraphGlyphUtils.parsePercent(score_perT.getText());
+				String text = score_perT.getText();
+				if (text.endsWith("%")) {
+					text = text.substring(0, text.length() - 1);
+				}
+				float thresh_per = numberParser.parse(text).floatValue();
 				if (thresh_per < abs_min_per) {
 					thresh_per = abs_min_per;
 				} else if (thresh_per > abs_max_per) {

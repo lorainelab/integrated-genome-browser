@@ -2,14 +2,9 @@ package com.affymetrix.igb;
 
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -22,6 +17,7 @@ import com.affymetrix.genoviz.glyph.GlyphProcessorHolder;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.osgi.service.ExtensionPointHandler;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.window.service.IWindowService;
 
@@ -68,48 +64,6 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext _bundleContext) throws Exception {}
 
-	private void addService(final ServiceHandler serviceHandler) {
-		// register service - an extension point
-		try {
-			ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences(serviceHandler.getClassName(), null);
-			if (serviceReferences != null) {
-				for (ServiceReference serviceReference : serviceReferences) {
-					serviceHandler.addService(bundleContext.getService(serviceReference));
-				}
-			}
-			bundleContext.addServiceListener(
-				new ServiceListener() {
-					@Override
-					public void serviceChanged(ServiceEvent event) {
-						ServiceReference serviceReference = event.getServiceReference();
-						if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
-							serviceHandler.removeService(bundleContext.getService(serviceReference));
-						}
-						if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
-							serviceHandler.addService(bundleContext.getService(serviceReference));
-						}
-					}
-				}
-			, "(objectClass=" + serviceHandler.getClassName() + ")");
-		}
-		catch (InvalidSyntaxException x) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "error loading/unloading " + serviceHandler.getClassName(), x.getMessage());
-		}
-	}
-
-	private abstract class ServiceHandler {
-		private Class<?> clazz;
-		private ServiceHandler(Class<?> clazz) {
-			super();
-			this.clazz = clazz;
-		}
-		public String getClassName() {
-			return clazz.getName();
-		}
-		public abstract void addService(Object o);
-		public abstract void removeService(Object o);
-	}
-
 	/**
 	 * method to start IGB, called when the window service is available,
 	 * creates and initializes IGB and registers the IGBService
@@ -127,8 +81,8 @@ public class Activator implements BundleActivator {
 		for (IGBTabPanel tab : tabs) {
 			bundleContext.registerService(IGBTabPanel.class.getName(), tab, new Properties());
 		}
-		addService(
-			new ServiceHandler(TierLabelManager.PopupListener.class) {
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler(TierLabelManager.PopupListener.class) {
 				@Override
 				public void addService(Object o) {
 					igb.getMapView().getTierManager().addPopupListener((TierLabelManager.PopupListener)o);
@@ -139,8 +93,8 @@ public class Activator implements BundleActivator {
 				}
 			}
 		);
-		addService(
-			new ServiceHandler(TierLabelManager.TrackClickListener.class) {
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler(TierLabelManager.TrackClickListener.class) {
 				@Override
 				public void addService(Object o) {
 					igb.getMapView().getTierManager().addTrackClickListener((TierLabelManager.TrackClickListener)o);
@@ -149,8 +103,8 @@ public class Activator implements BundleActivator {
 				public void removeService(Object o) {}
 			}
 		);
-		addService(
-			new ServiceHandler(GlyphProcessor.class) {
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler(GlyphProcessor.class) {
 				@Override
 				public void addService(Object o) {
 					GlyphProcessorHolder.getInstance().addGlyphProcessor((GlyphProcessor)o);
@@ -161,8 +115,8 @@ public class Activator implements BundleActivator {
 				}
 			}
 		);
-		addService(
-			new ServiceHandler(TierMaintenanceListener.class) {
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler(TierMaintenanceListener.class) {
 				@Override
 				public void addService(Object o) {
 					TierMaintenanceListenerHolder.getInstance().addTierMaintenanceListener((TierMaintenanceListener)o);
@@ -173,8 +127,8 @@ public class Activator implements BundleActivator {
 				}
 			}
 		);
-		addService(
-			new ServiceHandler(AnnotationOperator.class) {
+		ExtensionPointHandler.addExtensionPoint(bundleContext,
+			new ExtensionPointHandler(AnnotationOperator.class) {
 				@Override
 				public void addService(Object o) {
 					AnnotationOperatorHolder.getInstance().addAnnotationOperator((AnnotationOperator)o);

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.osgi.service;
+package com.affymetrix.common;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

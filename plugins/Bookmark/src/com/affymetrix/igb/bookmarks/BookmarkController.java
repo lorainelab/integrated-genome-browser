@@ -217,7 +217,7 @@ public abstract class BookmarkController {
 					if (!gFeature.equals(feature)) {
 						continue;
 					}
-					style.setHumanName(sym_name);
+					style.setTrackName(sym_name);
 				}
 
 				applyStyleProperties(style, col, bg_col, ypos, yheight);
@@ -232,7 +232,7 @@ public abstract class BookmarkController {
 	}
 
  private static void applyStyleProperties(ITrackStyle tier_style, Color col, Color bg_col, double ypos, double yheight){
-	tier_style.setColor(col);
+	tier_style.setForeground(col);
 	tier_style.setBackground(bg_col);
 	tier_style.setY(ypos);
 	tier_style.setHeight(yheight);
@@ -267,7 +267,7 @@ public abstract class BookmarkController {
 			ITrackStyle combo_style = combos.get(combo_name);
 			if (combo_style == null) {
 				combo_style = new DefaultTrackStyle("Joined Graphs", true);
-				combo_style.setHumanName("Joined Graphs");
+				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 				combo_style.setCollapsed(true);
 				combos.put(combo_name, combo_style);
@@ -323,7 +323,7 @@ public abstract class BookmarkController {
 				   continue;
 			   }
 
-			   addStyleProps(style, mark_sym, feature.getURI().toString(), style.getHumanName(), tca.getType(), i);
+			   addStyleProps(style, mark_sym, feature.getURI().toString(), style.getTrackName(), tca.getType(), i);
 			   continue;
 	      }
 		  
@@ -383,7 +383,7 @@ public abstract class BookmarkController {
 		mark_sym.setProperty(SYM.METHOD.toString() + i, method);
 		mark_sym.setProperty(SYM.YPOS.toString() + i, Integer.toString((int) style.getY()));
 		mark_sym.setProperty(SYM.YHEIGHT.toString() + i, Integer.toString((int) style.getHeight()));
-		mark_sym.setProperty(SYM.COL.toString() + i, sixDigitHex(style.getColor()));
+		mark_sym.setProperty(SYM.COL.toString() + i, sixDigitHex(style.getForeground()));
 		mark_sym.setProperty(SYM.BG.toString() + i, sixDigitHex(style.getBackground()));
 		mark_sym.setProperty(SYM.NAME.toString() + i, name);
 	}

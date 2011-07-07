@@ -86,7 +86,7 @@ public class TierGlyph extends SolidGlyph {
 
 		// most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
 		// the fg color to the TierLabel glyph, which does pay attention to that color.
-		setForegroundColor(style.getColor());
+		setForegroundColor(style.getForeground());
 		setFillColor(style.getBackground());
 
 		if (style.getCollapsed()) {
@@ -96,7 +96,7 @@ public class TierGlyph extends SolidGlyph {
 		}
 		setVisibility(!style.getShow());
 		setMaxExpandDepth(style.getMaxDepth());
-		setLabel(style.getHumanName());
+		setLabel(style.getTrackName());
 	}
 
 	public ITrackStyle getAnnotStyle() {
@@ -374,7 +374,7 @@ public class TierGlyph extends SolidGlyph {
 		Rectangle hpix = calcHandlePix(view);
 		if (hpix != null) {
 			Graphics g = view.getGraphics();
-			Color c = new Color(style.getColor().getRed(), style.getColor().getGreen(), style.getColor().getBlue(), 64);
+			Color c = new Color(style.getForeground().getRed(), style.getForeground().getGreen(), style.getForeground().getBlue(), 64);
 			g.setColor(c);
 			g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
 			g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
@@ -478,14 +478,14 @@ public class TierGlyph extends SolidGlyph {
 
 	@Override
 	public void setForegroundColor(Color color) {
-		if (style.getColor() != color) {
-			style.setColor(color);
+		if (style.getForeground() != color) {
+			style.setForeground(color);
 		}
 	}
 
 	@Override
 	public Color getForegroundColor() {
-		return style.getColor();
+		return style.getForeground();
 	}
 
 	@Override

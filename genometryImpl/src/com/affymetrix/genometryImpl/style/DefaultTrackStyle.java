@@ -54,16 +54,16 @@ public class DefaultTrackStyle implements ITrackStyle {
 	public boolean isGraphTier() { return is_graph; }
 	public void setGraphTier(boolean b) { this.is_graph = b; }
 
-	public Color getColor() { return fg; }
-	public void setColor(Color c) { fg = c; }
+	public Color getForeground() { return fg; }
+	public void setForeground(Color c) { fg = c; }
 
 	public boolean getShow() { return show; }
 	public void setShow(boolean b) { show = b; }
 
 	public String getUniqueName() { return unique_name; }
 
-	public String getHumanName() { return human_name; }
-	public void setHumanName(String s) { human_name = s; }
+	public String getTrackName() { return human_name; }
+	public void setTrackName(String s) { human_name = s; }
 
 	public Color getBackground() { return bg; }
 	public void setBackground(Color c) { bg = c; }
@@ -97,10 +97,10 @@ public class DefaultTrackStyle implements ITrackStyle {
 	 */
 	public void copyPropertiesFrom(ITrackStyle g) {
 		setGraphTier(g.isGraphTier());
-		setColor(g.getColor());
+		setForeground(g.getForeground());
 		setShow(g.getShow());
 		// don't copy unique name
-		setHumanName(g.getHumanName());
+		setTrackName(g.getTrackName());
 		setBackground(g.getBackground());
 		setCollapsed(g.getCollapsed());
 		setMaxDepth(g.getMaxDepth());

@@ -73,10 +73,10 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 			Color background_color;
 			Color glyph_color;
 			if (annot_style == null) {
-				glyph_color = TrackStyle.getDefaultInstance().getColor();
+				glyph_color = TrackStyle.getDefaultInstance().getForeground();
 				background_color = TrackStyle.getDefaultInstance().getBackground();
 			} else {
-				glyph_color = annot_style.getColor();
+				glyph_color = annot_style.getForeground();
 				background_color = annot_style.getBackground();
 			}
 

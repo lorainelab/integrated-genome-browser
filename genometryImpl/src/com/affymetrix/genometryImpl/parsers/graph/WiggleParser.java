@@ -329,10 +329,10 @@ public final class WiggleParser implements GraphParser {
 	public static void writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {
 		BioSeq seq = graf.getGraphSeq();
 		String seq_id = (seq == null ? "." : seq.getID());
-		String human_name = graf.getGraphState().getTierStyle().getHumanName();
+		String human_name = graf.getGraphState().getTierStyle().getTrackName();
 		String gname = graf.getGraphName();
 		GraphState state = graf.getGraphState();
-		Color color = state.getTierStyle().getColor();
+		Color color = state.getTierStyle().getForeground();
 
 		BufferedWriter bw = null;
 		try {

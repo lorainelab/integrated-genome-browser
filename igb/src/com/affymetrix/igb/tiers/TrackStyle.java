@@ -41,15 +41,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// whether to create and use a java Preferences node object for this instance
 	private boolean is_persistent = true;
 	private boolean show = default_show;
-	private boolean separate = default_separate;
+	private boolean connected = default_connected;
 	private boolean collapsed = default_collapsed;
 	private boolean expandable = default_expandable;
 	private int max_depth = default_max_depth;
-	private Color color = default_color;
+	private Color foreground = default_foreground;
 	private Color background = default_background;
 	private String label_field = default_label_field;
 	private DIRECTION_TYPE direction_type = default_direction_type;
-	private int glyph_depth = default_glyph_depth;
+	private int show2tracks = default_show2tracks;
 	private double height = default_height;
 	private double y = default_y;
 	private String url = null;
@@ -57,13 +57,13 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private boolean color_by_score = false;
 	private HeatMap custom_heatmap = null;
 	private String unique_name;
-	private String human_name;
+	private String track_name;
 	final private String method_name;
 	private Preferences node;
 	private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
 	private static TrackStyle default_instance = null;
 	private boolean is_graph = false;
-	private float font_size = default_font_size;
+	private float track_name_size = default_track_name_size;
 	private Map<String, Object> transient_properties;
 	private boolean customizable = true;
 	private GenericFeature feature = null;
@@ -94,7 +94,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			static_map.put(unique_name.toLowerCase(), style);
 
 			if(force_human_name) {
-				style.human_name = human_name;
+				style.track_name = human_name;
 			}
 		}else if(props != null){
 			style.initFromPropertyMap(props);
@@ -143,7 +143,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 */
 	private TrackStyle(String name, String file_type, boolean is_persistent, TrackStyle template, Map<String, String> properties) {
 		this.method_name = name;
-		this.human_name = name; // this is the default human name, and is not lower case
+		this.track_name = name; // this is the default human name, and is not lower case
 		this.file_type = file_type;
 		this.unique_name = name.toLowerCase();
 		this.is_persistent = is_persistent;
@@ -213,17 +213,17 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (DEBUG) {
 			System.out.println("    ----------- called AnnotStyle.initFromNode() for: " + unique_name);
 		}
-		human_name = node.get(PREF_HUMAN_NAME, this.human_name);
+		track_name = node.get(PREF_TRACK_NAME, this.track_name);
 
-		separate = node.getBoolean(PREF_SEPARATE, this.getSeparate());
+		connected = node.getBoolean(PREF_CONNECTED, this.getSeparate());
 		collapsed = node.getBoolean(PREF_COLLAPSED, this.getCollapsed());
 		max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
-		color = PreferenceUtils.getColor(node, PREF_COLOR, this.getColor());
+		foreground = PreferenceUtils.getColor(node, PREF_FOREGROUND, this.getForeground());
 		background = PreferenceUtils.getColor(node, PREF_BACKGROUND, this.getBackground());
 
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
-		glyph_depth = node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth());
-		font_size = node.getFloat(PREF_FONT_SIZE, this.getFontSize());
+		show2tracks = node.getInt(PREF_SHOW2TRACKS, this.getShow2Tracks());
+		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
 		direction_type = DIRECTION_TYPE.valueFor(node.getInt(PREF_DIRECTION_TYPE, this.getDirectionType()));
 	}
 
@@ -242,7 +242,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 			col = props.getColor(PROP_FOREGROUND);
 		}
 		if (col != null) {
-			color = col;
+			foreground = col;
 		}
 		Color bgcol = props.getColor(PROP_BACKGROUND);
 		if (bgcol != null) {
@@ -251,11 +251,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 		String gdepth_string = (String) props.getProperty(PROP_GLYPH_DEPTH);
 		if (gdepth_string != null) {
-			int prev_glyph_depth = glyph_depth;
+			int prev_glyph_depth = show2tracks;
 			try {
-				glyph_depth = Integer.parseInt(gdepth_string);
+				show2tracks = Integer.parseInt(gdepth_string);
 			} catch (Exception ex) {
-				glyph_depth = prev_glyph_depth;
+				show2tracks = prev_glyph_depth;
 			}
 		}
 		String labfield = (String) props.getProperty(PROP_LABEL_FIELD);
@@ -276,9 +276,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		String sepstring = (String) props.getProperty(PROP_SEPARATE);
 		if (sepstring != null) {
 			if (sepstring.equalsIgnoreCase(FALSE)) {
-				separate = false;
+				connected = false;
 			} else if (sepstring.equalsIgnoreCase(TRUE)) {
-				separate = true;
+				connected = true;
 			}
 		}
 		String showstring = (String) props.getProperty(PROP_SHOW);
@@ -299,11 +299,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 		String fontstring = (String) props.getProperty(PROP_FONT_SIZE);
 		if (fontstring != null) {
-			float prev_font_size = font_size;
+			float prev_font_size = track_name_size;
 			try {
-				font_size = Float.parseFloat(fontstring);
+				track_name_size = Float.parseFloat(fontstring);
 			} catch (Exception ex) {
-				font_size = prev_font_size;
+				track_name_size = prev_font_size;
 			}
 		}
 		String directionstring = (String) props.getProperty(PROP_DIRECTION_TYPE);
@@ -333,15 +333,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	// these copied values.
 	// human_name and factory_instance are not modified
 	private void initFromTemplate(TrackStyle template) {
-		separate = template.getSeparate();
+		connected = template.getSeparate();
 		show = template.getShow();
 		collapsed = template.getCollapsed();
 		max_depth = template.getMaxDepth();  // max stacking of annotations
-		color = template.getColor();
+		foreground = template.getForeground();
 		background = template.getBackground();
 		label_field = template.getLabelField();
-		glyph_depth = template.getGlyphDepth();  // depth of visible glyph tree
-		font_size = template.getFontSize();
+		show2tracks = template.getShow2Tracks();  // depth of visible glyph tree
+		track_name_size = template.getTrackNameSize();
 		direction_type = template.direction_type;
 	}
 
@@ -359,7 +359,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (default_instance == null) {
 			// Use a temporary variable here to avoid possible synchronization problems.
 			TrackStyle instance = new TrackStyle(NAME_OF_DEFAULT_INSTANCE, null, true, null, null);
-			instance.setHumanName("");
+			instance.setTrackName("");
 			instance.setShow(true);
 			default_instance = instance;
 			// Note that name will become lower-case
@@ -380,20 +380,20 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	 *  The human-readable name may contain upper- and lower-case characters.
 	 *  The default is equivalent to the unique name.
 	 */
-	public String getHumanName() {
-		if (human_name == null || human_name.trim().length() == 0) {
-			human_name = unique_name;
+	public String getTrackName() {
+		if (track_name == null || track_name.trim().length() == 0) {
+			track_name = unique_name;
 		}
-		return this.human_name;
+		return this.track_name;
 	}
 
-	public void setHumanName(String human_name) {
-		this.human_name = human_name;
+	public void setTrackName(String human_name) {
+		this.track_name = human_name;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
 				System.out.println("   %%%%% node.put() in AnnotStyle.setHumanName(): " + human_name);
 			}
-			getNode().put(PREF_HUMAN_NAME, human_name);
+			getNode().put(PREF_TRACK_NAME, human_name);
 		}
 	}
 
@@ -409,16 +409,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
 	/** Whether PLUS and MINUS strand should be in separate tiers. */
 	public boolean getSeparate() {
-		return separate;
+		return connected;
 	}
 
 	public void setSeparate(boolean b) {
-		this.separate = b;
+		this.connected = b;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setSeparate(): " + human_name + ", " + b);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setSeparate(): " + track_name + ", " + b);
 			}
-			getNode().putBoolean(PREF_SEPARATE, b);
+			getNode().putBoolean(PREF_CONNECTED, b);
 		}
 	}
 
@@ -435,7 +435,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.collapsed = b;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setCollapsed(): " + human_name + ", " + b);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setCollapsed(): " + track_name + ", " + b);
 			}
 			getNode().putBoolean(PREF_COLLAPSED, b);
 		}
@@ -458,28 +458,28 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.max_depth = max;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setMaxDepth(): " + human_name + ", " + max);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setMaxDepth(): " + track_name + ", " + max);
 			}
 			getNode().putInt(PREF_MAX_DEPTH, max);
 		}
 	}
 
 	/** The color of annotations in the tier. */
-	public Color getColor() {
-		return color;
+	public Color getForeground() {
+		return foreground;
 	}
 
-	public void setColor(Color c) {
-		if (c != this.color) {
+	public void setForeground(Color c) {
+		if (c != this.foreground) {
 			custom_heatmap = null;
 			// get rid of old heatmap, force it to be re-created when needed
 		}
-		this.color = c;
+		this.foreground = c;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setColor(): " + human_name + ", " + c);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setColor(): " + track_name + ", " + c);
 			}
-			PreferenceUtils.putColor(getNode(), PREF_COLOR, c);
+			PreferenceUtils.putColor(getNode(), PREF_FOREGROUND, c);
 		}
 	}
 
@@ -496,7 +496,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.background = c;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + human_name + ", " + c);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + track_name + ", " + c);
 			}
 			PreferenceUtils.putColor(getNode(), PREF_BACKGROUND, c);
 		}
@@ -516,24 +516,24 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		label_field = l;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setLabelField(): " + human_name + ", " + l);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setLabelField(): " + track_name + ", " + l);
 			}
 			getNode().put(PREF_LABEL_FIELD, l);
 		}
 	}
 
-	public int getGlyphDepth() {
-		return glyph_depth;
+	public int getShow2Tracks() {
+		return show2tracks;
 	}
 
-	public void setGlyphDepth(int i) {
-		if (glyph_depth != i) {
-			glyph_depth = i;
+	public void setShow2Tracks(int i) {
+		if (show2tracks != i) {
+			show2tracks = i;
 			if (getNode() != null) {
 				if (DEBUG_NODE_PUTS) {
-					System.out.println("   %%%%% node.put() in AnnotStyle.setGlyphDepth(): " + human_name + ", " + i);
+					System.out.println("   %%%%% node.put() in AnnotStyle.setGlyphDepth(): " + track_name + ", " + i);
 				}
-				getNode().putInt(PREF_GLYPH_DEPTH, i);
+				getNode().putInt(PREF_SHOW2TRACKS, i);
 			}
 		}
 	}
@@ -546,23 +546,23 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		height = h;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setHeight(): " + human_name + ", " + h);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setHeight(): " + track_name + ", " + h);
 			}
 			getNode().putDouble(PREF_HEIGHT, h);
 		}
 	}
 
-	public float getFontSize(){
-		return font_size;
+	public float getTrackNameSize(){
+		return track_name_size;
 	}
 	
-	public void setFontSize(float font_size){
-		this.font_size = font_size;
+	public void setTrackNameSize(float font_size){
+		this.track_name_size = font_size;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setFontSize(): " + human_name + ", " + font_size);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setFontSize(): " + track_name + ", " + font_size);
 			}
-			getNode().putFloat(PREF_FONT_SIZE, font_size);
+			getNode().putFloat(PREF_TRACK_SIZE, font_size);
 		}
 	}
 	
@@ -586,7 +586,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		this.direction_type = type;
 		if (getNode() != null) {
 			if (DEBUG_NODE_PUTS) {
-				System.out.println("   %%%%% node.put() in AnnotStyle.setDirectionType(): " + human_name + ", " + direction_type);
+				System.out.println("   %%%%% node.put() in AnnotStyle.setDirectionType(): " + track_name + ", " + direction_type);
 			}
 			getNode().putInt(PREF_DIRECTION_TYPE, direction_type.ordinal());
 		}
@@ -700,16 +700,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private HeatMap getCustomHeatMap() {
 		if (custom_heatmap == null) {
 			// Bottom color is not quite same as background, so it remains visible
-			Color bottom_color = HeatMap.interpolateColor(getBackground(), getColor(), 0.20f);
-			custom_heatmap = HeatMap.makeLinearHeatmap("Custom", bottom_color, getColor());
+			Color bottom_color = HeatMap.interpolateColor(getBackground(), getForeground(), 0.20f);
+			custom_heatmap = HeatMap.makeLinearHeatmap("Custom", bottom_color, getForeground());
 		}
 		return custom_heatmap;
 	}
 
 	public void copyPropertiesFrom(ITrackStyle g) {
-		setColor(g.getColor());
+		setForeground(g.getForeground());
 		setShow(g.getShow());
-		setHumanName(g.getHumanName());
+		setTrackName(g.getTrackName());
 		setBackground(g.getBackground());
 		setCollapsed(g.getCollapsed());
 		setMaxDepth(g.getMaxDepth());
@@ -721,7 +721,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		if (g instanceof ITrackStyleExtended) {
 			ITrackStyleExtended as = (ITrackStyleExtended) g;
 			setColorByScore(as.getColorByScore());
-			setGlyphDepth(as.getGlyphDepth());
+			setShow2Tracks(as.getShow2Tracks());
 			setLabelField(as.getLabelField());
 			setSeparate(as.getSeparate());
 		}
@@ -748,9 +748,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	@Override
 	public String toString() {
 		String s = "AnnotStyle: (" + Integer.toHexString(this.hashCode()) + ")"
-				+ " '" + unique_name + "' ('" + human_name + "') "
+				+ " '" + unique_name + "' ('" + track_name + "') "
 				+ " persistent: " + is_persistent
-				+ " color: " + getColor()
+				+ " color: " + getForeground()
 				+ " bg: " + getBackground();
 		return s;
 	}

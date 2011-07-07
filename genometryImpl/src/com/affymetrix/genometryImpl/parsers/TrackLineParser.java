@@ -178,14 +178,14 @@ public final class TrackLineParser {
 	private static void applyTrackProperties(Map<String,String> track_hash, ITrackStyle style) {
 		String description = track_hash.get(DESCRIPTION);
 		if (description != null) {
-			style.setHumanName(description);
+			style.setTrackName(description);
 		} else {
 			// Unless we explicitly set the human name, it will be the lower-case
 			// version of the name used in AnnotStyle.getInstance().
 			// Explicitly setting the name keeps the case intact.
 			String name = track_hash.get(NAME);
-			if (name != null && (style.getHumanName() == null || style.getHumanName().isEmpty())) {
-				style.setHumanName(name);
+			if (name != null && (style.getTrackName() == null || style.getTrackName().isEmpty())) {
+				style.setTrackName(name);
 			}
 		}
 		String visibility = track_hash.get(VISIBILITY);
@@ -194,7 +194,7 @@ public final class TrackLineParser {
 		if (color_string != null) {
 			Color color = reformatColor(color_string);
 			if (color != null) {
-				style.setColor(color);
+				style.setForeground(color);
 			}
 		}
 

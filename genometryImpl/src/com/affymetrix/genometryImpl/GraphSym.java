@@ -116,12 +116,12 @@ public class GraphSym extends SimpleSymWithProps {
 	}
 
 	public final void setGraphName(String name) {
-		getGraphState().getTierStyle().setHumanName(name);
+		getGraphState().getTierStyle().setTrackName(name);
 		setProperty("name", name);
 	}
 
 	public final String getGraphName() {
-		String gname = getGraphState().getTierStyle().getHumanName();
+		String gname = getGraphState().getTierStyle().getTrackName();
 		if (gname == null) {
 			gname = this.getID();
 		}

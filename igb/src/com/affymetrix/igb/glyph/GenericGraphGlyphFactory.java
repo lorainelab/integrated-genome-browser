@@ -125,7 +125,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		GraphState gstate = graf.getGraphState();
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, gstate);
 		ITrackStyle tier_style = gstate.getTierStyle();
-		tier_style.setHumanName(newgraf.getGraphName());
+		tier_style.setTrackName(newgraf.getGraphName());
 		tier_style.setCollapsed(isGenome);
 
 		AffyTieredMap map = smv.getSeqMap();

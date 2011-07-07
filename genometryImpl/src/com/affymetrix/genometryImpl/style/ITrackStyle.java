@@ -22,16 +22,16 @@ import java.util.Map;
  * whether the tier contains annotation data or graph data.
  */
 public interface ITrackStyle {
-	public Color getColor();
-	public void setColor(Color c);
+	public Color getForeground();
+	public void setForeground(Color c);
 
 	public boolean getShow();
 	public void setShow(boolean b);
 
 	public String getUniqueName();
 
-	public String getHumanName();
-	public void setHumanName(String s);
+	public String getTrackName();
+	public void setTrackName(String s);
 
 	public String getMethodName();
 	

@@ -77,7 +77,7 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 			case COL_FILE_TYPE:
 				return entry.getKey();
 			case COL_COLOR:
-				return style.getColor();
+				return style.getForeground();
 
 			case COL_SEPARATE:
 				return Boolean.valueOf(style.getSeparate());
@@ -97,13 +97,13 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 				return style.getBackground();
 
 			case COL_GLYPH_DEPTH:
-				return (style.getGlyphDepth() == 2 ? Boolean.TRUE : Boolean.FALSE);
+				return (style.getShow2Tracks() == 2 ? Boolean.TRUE : Boolean.FALSE);
 
 			case COL_LABEL_FIELD:
 				return style.getLabelField();
 
 			case COL_FONT_SIZE:
-				return style.getFontSize();
+				return style.getTrackNameSize();
 
 			case COL_DIRECTION_TYPE:
 				return style.getDirectionName();

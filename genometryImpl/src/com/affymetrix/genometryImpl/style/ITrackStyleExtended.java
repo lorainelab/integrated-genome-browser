@@ -24,9 +24,9 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	Color getScoreColor(float f);
 
 	/** Controls a parameter of the GenericAnnotGlyphFactory. */
-	void setGlyphDepth(int i);
+	void setShow2Tracks(int i);
 	/** Returns a parameter useb by the GenericAnnotGlyphFactory. */
-	int getGlyphDepth();
+	int getShow2Tracks();
 
 	/** Controls whether plus and minus strands will be drawn separately. */
 	void setSeparate(boolean b);

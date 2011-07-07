@@ -16,7 +16,7 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.view.TierPrefsView;
+import com.affymetrix.igb.view.TierPrefsViewNew;  //temp edit -dcn
 import com.affymetrix.igb.tiers.FileTypeView;
 
 import java.awt.*;
@@ -54,7 +54,7 @@ public final class PreferencesPanel extends JPanel {
   public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / " + HELP;
   public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / " + BUNDLE.getString("HelpForCurrentTab");
 
-  private TierPrefsView tpv = null;
+  private TierPrefsViewNew tpv = null;
 
   private PreferencesPanel() {
     this.setLayout(new BorderLayout());
@@ -76,7 +76,8 @@ public final class PreferencesPanel extends JPanel {
 			return singleton;
 		}
 		singleton = new PreferencesPanel();
-		singleton.tpv = new TierPrefsView(false, true);
+		//singleton.tpv = new TierPrefsView(false, true);// temp edit
+		singleton.tpv = new TierPrefsViewNew();		//delete after test
 		singleton.tpv.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentHidden(ComponentEvent e) {
@@ -89,7 +90,7 @@ public final class PreferencesPanel extends JPanel {
 		singleton.addPrefEditorComponent(new FileTypeView());
 		singleton.addPrefEditorComponent(new KeyStrokesView());
 		singleton.addPrefEditorComponent(new GraphsView());
-		singleton.addPrefEditorComponent(new OptionsView());
+		singleton.addPrefEditorComponent(new OtherOptions());
 	
 		return singleton;
 	}

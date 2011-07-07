@@ -112,8 +112,8 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		}
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			if(style.getHumanName() != null || style.getHumanName().length() == 0 || style.getHumanName().contains(NETAFFX_CONSENSUS)){
-				style.setHumanName(human_name);
+			if(style.getTrackName() != null || style.getTrackName().length() == 0 || style.getTrackName().contains(NETAFFX_CONSENSUS)){
+				style.setTrackName(human_name);
 			}
 			label_field = style.getLabelField();
 
@@ -184,7 +184,7 @@ public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI {
 		int child_y = 100; // relevant relative to parent_y
 
 		ITrackStyle the_style = the_tier.getAnnotStyle();
-		Color consensus_color = the_style.getColor();
+		Color consensus_color = the_style.getForeground();
 
 		boolean use_label = (label_field != null && (label_field.trim().length() > 0)
 				&& (consensus_sym instanceof SymWithProps));

@@ -860,7 +860,7 @@ public class SeqMapView extends JPanel
 		axis.setFont(axisFont);
 
 		Color axis_bg = CoordinateStyle.coordinate_annot_style.getBackground();
-		Color axis_fg = CoordinateStyle.coordinate_annot_style.getColor();
+		Color axis_fg = CoordinateStyle.coordinate_annot_style.getForeground();
 
 		axis.setBackgroundColor(axis_bg);
 		resultAxisTier.setBackgroundColor(axis_bg);

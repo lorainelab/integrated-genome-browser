@@ -345,7 +345,7 @@ public final class ScoredIntervalParser implements GraphParser {
 			container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 			// Force the AnnotStyle for the container to have glyph depth of 1
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(unique_container_name);
-			style.setGlyphDepth(1);
+			style.setShow2Tracks(1);
 			List<SinEntry> entry_list = seq2sinentries.get(aseq);
 			int entry_count = entry_list.size();
 			for (SinEntry entry : entry_list) {
@@ -420,7 +420,7 @@ public final class ScoredIntervalParser implements GraphParser {
 			BioSeq seq = graf.getGraphSeq();
 			String seq_id = (seq == null ? "." : seq.getID());
 
-			String human_name = graf.getGraphState().getTierStyle().getHumanName();
+			String human_name = graf.getGraphState().getTierStyle().getTrackName();
 
 			if (genome_version != null) {
 				dos.writeBytes("# genome_version = " + genome_version + '\n');

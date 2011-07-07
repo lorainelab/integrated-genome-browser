@@ -901,7 +901,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			// otherwise, construct a new combo style
 			if (combo_style == null) {
 				combo_style = new DefaultTrackStyle("Joined Graphs", true);
-				combo_style.setHumanName("Joined Graphs");
+				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 				combo_style.setCollapsed(true);
 			}
@@ -1130,7 +1130,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 
 			GraphState newstate = newgraf.getGraphState();
 			newstate.copyProperties(graf.getGraphState());
-			newstate.getTierStyle().setHumanName(newname); // this is redundant
+			newstate.getTierStyle().setTrackName(newname); // this is redundant
 			if (!(transformer instanceof IdentityTransform)) {
 				// unless this is an identity transform, do not copy the min-max range
 				newstate.setVisibleMinY(Float.NEGATIVE_INFINITY);

@@ -308,7 +308,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     if (color == null || "".equals(color.toString())) {
       ITrackStyleExtended style = (ITrackStyleExtended) pm.get(ITrackStyleExtended.class.getName());
       if (style != null) {
-        color = style.getColor();
+        color = style.getForeground();
       }
     }
     if (color == null) {

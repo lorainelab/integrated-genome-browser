@@ -271,7 +271,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 	private static void loadTypes(BioSeq aseq, Set<Das2Type> matched_types, List<SeqSymmetry> symlist) {
 		for (Das2Type das_type : matched_types) {
 			// Set the human name on the tier to the short type name, not the long URL ID
-			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getURI().toString()).setHumanName(das_type.getName());
+			DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getURI().toString()).setTrackName(das_type.getName());
 			SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
 
 			// if already retrieved chp_array_type coord annotations for this whole sequence (for example

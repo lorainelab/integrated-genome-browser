@@ -101,7 +101,7 @@ public class TrackView {
 		} else {
 			fortier.setDirection(TierGlyph.Direction.BOTH);
 		}
-		fortier.setLabel(style.getHumanName());
+		fortier.setLabel(style.getTrackName());
 
 		if (map.getTierIndex(fortier) == -1) {
 			if (next_to_axis) {
@@ -119,7 +119,7 @@ public class TrackView {
 			setUpTrackPacker(revtier, false, constant_heights);
 			style2reverseTierGlyph.put(style, revtier);
 		}
-		revtier.setLabel(style.getHumanName());
+		revtier.setLabel(style.getTrackName());
 
 		if (map.getTierIndex(revtier) == -1) {
 			if (next_to_axis) {
@@ -160,9 +160,9 @@ public class TrackView {
 		}
 
 		tier.setDirection(tier_direction);
-		tier.setLabel(style.getHumanName());
+		tier.setLabel(style.getTrackName());
 		tier.setFillColor(style.getBackground());
-		tier.setForegroundColor(style.getColor());
+		tier.setForegroundColor(style.getForeground());
 
 		if (seqmap.getTierIndex(tier) == -1) {
 			boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);

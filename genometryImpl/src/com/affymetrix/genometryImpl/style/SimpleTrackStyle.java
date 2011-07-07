@@ -31,11 +31,11 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 	public boolean getColorByScore() { return this.colorByScore;}
 
 	/** Default implementation returns the same as {@link #getColor()}. */
-	public Color getScoreColor(float f) { return getColor(); }
+	public Color getScoreColor(float f) { return getForeground(); }
 
 	int depth=2;
-	public void setGlyphDepth(int i) {this.depth = i;}
-	public int getGlyphDepth() {return this.depth;}
+	public void setShow2Tracks(int i) {this.depth = i;}
+	public int getShow2Tracks() {return this.depth;}
 
 	boolean separate = true;
 	public void setSeparate(boolean b) { this.separate = b; }
@@ -52,7 +52,7 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 				ITrackStyleExtended as = (ITrackStyleExtended) g;
 				setUrl(as.getUrl());
 				setColorByScore(as.getColorByScore());
-				setGlyphDepth(as.getGlyphDepth());
+				setShow2Tracks(as.getShow2Tracks());
 				setSeparate(as.getSeparate());
 				setLabelField(as.getLabelField());
 			}

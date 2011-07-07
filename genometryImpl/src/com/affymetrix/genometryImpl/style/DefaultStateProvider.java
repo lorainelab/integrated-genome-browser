@@ -60,7 +60,7 @@ public class DefaultStateProvider implements StateProvider {
 			state = new GraphState(id);
 
 			if(human_name != null)
-				state.getTierStyle().setHumanName(human_name);
+				state.getTierStyle().setTrackName(human_name);
 			
 			id2graphState.put(id, state);
 		}

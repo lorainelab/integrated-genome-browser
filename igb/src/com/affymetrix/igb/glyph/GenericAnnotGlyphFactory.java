@@ -112,7 +112,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 		if (meth != null) {
 			ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
-			int glyph_depth = style.getGlyphDepth();
+			int glyph_depth = style.getShow2Tracks();
 
 			TierGlyph[] tiers = smv.getTiers(false, style);
 			tiers[0].setInfo(sym);
@@ -353,7 +353,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
 
 		if (!(use_score_colors || use_item_rgb)) {
-			return style.getColor();
+			return style.getForeground();
 		}
 
 		SeqSymmetry sym = insym;
@@ -374,7 +374,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			}
 		}
 
-		return style.getColor();
+		return style.getForeground();
 	}
 
 	private double handleCDSSpan(

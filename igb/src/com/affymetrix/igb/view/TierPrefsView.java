@@ -391,7 +391,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
       TrackStyle style = tier_styles.get(row);
       switch (column) {
         case COL_COLOR:
-          return style.getColor();
+          return style.getForeground();
         case COL_SEPARATE:
           return Boolean.valueOf(style.getSeparate());
         case COL_COLLAPSED:
@@ -405,14 +405,14 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
         case COL_BACKGROUND:
           return style.getBackground();
         case COL_GLYPH_DEPTH:
-          return (style.getGlyphDepth()==2 ? Boolean.TRUE : Boolean.FALSE);
+          return (style.getShow2Tracks()==2 ? Boolean.TRUE : Boolean.FALSE);
         case COL_LABEL_FIELD:
           return style.getLabelField();
 		case COL_FONT_SIZE:
-		  return style.getFontSize();
+		  return style.getTrackNameSize();
         case COL_HUMAN_NAME:
           if (style == default_annot_style) { return "* default *"; }
-          else { return style.getHumanName(); }
+          else { return style.getTrackName(); }
 	//        case COL_GRAPH_TIER:
 	//	  return style.isGraphTier();
         default:
@@ -427,7 +427,7 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
       switch (col) {
         case COL_COLOR:
 		  if(value != null){
-			style.setColor((Color) value);
+			style.setForeground((Color) value);
 		  }
           break;
         case COL_SEPARATE:
@@ -452,20 +452,20 @@ public final class TierPrefsView extends IPrefEditorComponent implements ListSel
           break;
         case COL_GLYPH_DEPTH:
           if (Boolean.TRUE.equals(value)) {
-            style.setGlyphDepth(2);
+            style.setShow2Tracks(2);
           } else {
-            style.setGlyphDepth(1);
+            style.setShow2Tracks(1);
           }
           break;
         case COL_LABEL_FIELD:
           style.setLabelField((String) value);
           break;
 		case COL_FONT_SIZE:
-		  style.setFontSize((Float)value);
+		  style.setTrackNameSize((Float)value);
 		  break;
         case COL_HUMAN_NAME:
 	  if (style != default_annot_style) {
-	    style.setHumanName((String) value);
+	    style.setTrackName((String) value);
 	  }
           break;
         default:

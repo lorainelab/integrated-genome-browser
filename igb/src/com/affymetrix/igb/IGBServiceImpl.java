@@ -594,9 +594,9 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	@Override
 	public void setTrackStyle(String meth, Color col, String description) {
 		TrackStyle annot_style = TrackStyle.getInstance(meth, false);
-		annot_style.setColor(col);
-		annot_style.setGlyphDepth(1);
-		annot_style.setHumanName(description);
+		annot_style.setForeground(col);
+		annot_style.setShow2Tracks(1);
+		annot_style.setTrackName(description);
 		annot_style.setCollapsed(true);
 	}
 

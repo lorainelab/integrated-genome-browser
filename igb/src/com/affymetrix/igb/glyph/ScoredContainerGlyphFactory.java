@@ -234,7 +234,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI {
 		GraphGlyph graph_glyph = new GraphGlyph(graf, graf.getGraphState());
 		GraphState gstate = graph_glyph.getGraphState();
 		ITrackStyle tier_style = gstate.getTierStyle();
-		tier_style.setHumanName(graf.getGraphName());
+		tier_style.setTrackName(graf.getGraphName());
 
 		AffyTieredMap map = smv.getSeqMap();
 		Rectangle2D.Double cbox = map.getCoordBounds();

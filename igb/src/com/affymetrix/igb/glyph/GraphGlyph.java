@@ -184,7 +184,7 @@ public final class GraphGlyph extends Glyph {
 			if (value != null) {
 				setColor(Color.decode(value.toString()));
 			} else {
-				setColor(state.getTierStyle().getColor());
+				setColor(state.getTierStyle().getForeground());
 			}
 			value = map.get(ViewPropertyNames.INITIAL_BACKGROUND);
 			if (value != null) {
@@ -200,10 +200,10 @@ public final class GraphGlyph extends Glyph {
 			}
 		} else {
 			setGraphStyle(state.getGraphStyle());
-			setColor(state.getTierStyle().getColor());
+			setColor(state.getTierStyle().getForeground());
 		}
 		//must call again to get it to properly render
-		setColor(state.getTierStyle().getColor());
+		setColor(state.getTierStyle().getForeground());
 	}
 
 	private boolean isUninitialized(){
@@ -715,15 +715,15 @@ public final class GraphGlyph extends Glyph {
 	public void setColor(Color c) {
 		setBackgroundColor(c);
 		setForegroundColor(c);
-		state.getTierStyle().setColor(c);
+		state.getTierStyle().setForeground(c);
 	}
 
 	public String getLabel() {
-		String lab = state.getTierStyle().getHumanName();
+		String lab = state.getTierStyle().getTrackName();
 		// If it has a combo style and that is collapsed, then only use the label
 		// from the combo style.  Otherwise use the individual tier style.
 		if (state.getComboStyle() != null && state.getComboStyle().getCollapsed()) {
-			lab = state.getComboStyle().getHumanName();
+			lab = state.getComboStyle().getTrackName();
 		}
 		if (lab == null) {
 			// if no label was set, try using ID

@@ -14,7 +14,7 @@ public final class CoordinateStyle {
 	public static final TrackStyle coordinate_annot_style = new TrackStyle() {
 
 		{ // a non-static initializer block
-			setHumanName("Coordinates");
+			setTrackName("Coordinates");
 		}
 
 		@Override
@@ -33,12 +33,12 @@ public final class CoordinateStyle {
 		}
 
 		@Override
-		public void setColor(Color c) {
+		public void setForeground(Color c) {
 			PreferenceUtils.putColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_COLOR, c);
 		}
 
 		@Override
-		public Color getColor() {
+		public Color getForeground() {
 			return PreferenceUtils.getColor(PreferenceUtils.getTopNode(), PREF_COORDINATE_COLOR, default_coordinate_color);
 		}
 

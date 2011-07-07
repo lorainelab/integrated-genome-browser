@@ -39,6 +39,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.tiers.TrackStyle;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -270,6 +271,8 @@ public abstract class BookmarkController {
 				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 				combo_style.setCollapsed(true);
+				combo_style.setBackground(TrackStyle.getDefaultInstance().getBackground());
+				combo_style.setForeground(TrackStyle.getDefaultInstance().getForeground());
 				combos.put(combo_name, combo_style);
 			}
 			gstate.setComboStyle(combo_style);

@@ -1,10 +1,12 @@
-package com.affymetrix.igb.event;
+package com.affymetrix.genometryImpl.event;
 
 import java.awt.Component;
 import java.beans.PropertyChangeListener;
-import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  *  Provides a JDialog that can let the user know about an underlying process
@@ -14,7 +16,7 @@ import java.util.ArrayList;
  */
 public final class ThreadProgressMonitor {
   private JOptionPane opt_pane;
-  private JDialog dialog;
+  private javax.swing.JDialog dialog;
   private final Thread thread;
   private boolean is_closed = false;
   
@@ -41,11 +43,11 @@ public final class ThreadProgressMonitor {
       message,
       JOptionPane.INFORMATION_MESSAGE,
       JOptionPane.DEFAULT_OPTION, 
-      (Icon) null, 
+      (javax.swing.Icon) null, 
       buttons
     );
     this.dialog = opt_pane.createDialog(c, title);
-    this.dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    this.dialog.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
     opt_pane.addPropertyChangeListener(pcl);
   }
 

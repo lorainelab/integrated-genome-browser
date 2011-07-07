@@ -67,6 +67,7 @@
 	<classpathentry kind="lib" path="ext/org.mortbay.jetty.jar"/>
 	<classpathentry kind="lib" path="ext/picard.jar"/>
 	<classpathentry kind="lib" path="ext/sam.jar"/>
+	<classpathentry kind="lib" path="ext/swing-layout.jar"/>
 	<classpathentry kind="lib" path="ext/tribble-0.1.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

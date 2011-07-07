@@ -292,29 +292,7 @@ public class TrackView {
 		}
 	}
 
-	public static void deleteTrack(AffyTieredMap map, TierGlyph tg) {
-		ITrackStyle style = tg.getAnnotStyle();
-		String method = style.getMethodName();
-		
-		if(method == null){
-			if(style.isGraphTier()){
-				for(int i=0; i<tg.getChildCount(); i++){
-					GlyphI glyph = tg.getChild(i);
-					if(glyph instanceof GraphGlyph){
-						GraphGlyph graphGlyph = (GraphGlyph)glyph;
-						style = graphGlyph.getGraphState().getTierStyle();
-						method = style.getMethodName();
-						delete(map, method, style);
-					}
-				}
-			}
-			return;
-		}
-		
-		delete(map, method, style);
-	}
-
-	private static void delete(AffyTieredMap map, String method, ITrackStyle style){
+	public static void delete(AffyTieredMap map, String method, ITrackStyle style){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature feature = style.getFeature();
 		

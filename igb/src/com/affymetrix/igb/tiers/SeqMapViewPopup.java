@@ -757,7 +757,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     boolean any_are_color_off = false; // whether any allow setColorByScore()
     boolean any_are_separate_tiers = false;
     boolean any_are_single_tier = false;
-
+	boolean add_focus = false;
+	
 	for (TierLabelGlyph label : labels) {
       TierGlyph glyph = label.getReferenceTier();
       ITrackStyle style = glyph.getAnnotStyle();
@@ -814,6 +815,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       coverage_action.setEnabled(is_annotation_type);
       save_menu.setEnabled(is_annotation_type);
       save_bed_action.setEnabled(is_annotation_type);
+	  if (glyph.getDirection() != Direction.AXIS) {
+        add_focus = true;
+      }
     } else {
 	  summaryMenu.setEnabled(false);
       //sym_summarize_single_action.setEnabled(false);
@@ -834,12 +838,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     changeMenu.add(new JSeparator());
     changeMenu.add(color_by_score_on_action);
     changeMenu.add(color_by_score_off_action);
-
+	
     popup.add(customize_action);
     popup.add(new JSeparator());
     popup.add(hide_action);
-	popup.add(delete_action);
     popup.add(showMenu);
+	if(add_focus){
+		popup.add(focus_track_action);
+	}
+	popup.add(delete_action);
     popup.add(show_all_action);
 
 	strandsMenu.removeAll();
@@ -872,9 +879,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       // Check whether this selection is a graph or an annotation
       TierLabelGlyph label = labels.get(0);
       final TierGlyph glyph = (TierGlyph) label.getInfo();
-      if (glyph.getDirection() != Direction.AXIS) {
-        popup.add(focus_track_action);
-      }
       ITrackStyle style = glyph.getAnnotStyle();
 	  GenericFeature feature = style.getFeature();
 	  if(feature != null){

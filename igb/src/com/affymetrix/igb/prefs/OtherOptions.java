@@ -243,9 +243,13 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
+                .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .addContainerGap()
+                        .add(29, 29, 29)
+                        .add(clear_prefsB)
+                        .addContainerGap())
+                    .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(confirmBeforeLoadingCheckBox)
                             .add(askBeforeExitCheckBox)
@@ -253,11 +257,8 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                             .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(confirmBeforeDeleteCheckBox)))
-                    .add(layout.createSequentialGroup()
-                        .add(57, 57, 57)
-                        .add(clear_prefsB)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                            .add(confirmBeforeDeleteCheckBox))
+                        .addContainerGap(21, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -276,9 +277,9 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(confirmBeforeLoadingCheckBox)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(confirmBeforeDeleteCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(clear_prefsB)
-                .addContainerGap())
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         clear_prefsB.addActionListener(this);

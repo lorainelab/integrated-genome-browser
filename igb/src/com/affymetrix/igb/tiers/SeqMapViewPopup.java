@@ -907,7 +907,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private void removeTiers(List<TierLabelGlyph> tiers) {
 	  for (TierLabelGlyph tlg: tiers) {
-		  TrackView.deleteTrack(tlg.getReferenceTier());
+		  TrackView.deleteTrack(gviewer.getSeqMap(), tlg.getReferenceTier());
 	  }
 	  gviewer.dataRemoved();	// refresh
   }

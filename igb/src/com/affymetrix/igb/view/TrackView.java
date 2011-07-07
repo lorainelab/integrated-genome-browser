@@ -292,7 +292,7 @@ public class TrackView {
 		}
 	}
 
-	public static void deleteTrack(TierGlyph tg) {
+	public static void deleteTrack(AffyTieredMap map, TierGlyph tg) {
 		ITrackStyle style = tg.getAnnotStyle();
 		String method = style.getMethodName();
 		
@@ -304,17 +304,17 @@ public class TrackView {
 						GraphGlyph graphGlyph = (GraphGlyph)glyph;
 						style = graphGlyph.getGraphState().getTierStyle();
 						method = style.getMethodName();
-						delete(method, style);
+						delete(map, method, style);
 					}
 				}
 			}
 			return;
 		}
 		
-		delete(method, style);
+		delete(map, method, style);
 	}
 
-	private static void delete(String method, ITrackStyle style){
+	private static void delete(AffyTieredMap map, String method, ITrackStyle style){
 		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
 		GenericFeature feature = style.getFeature();
 		
@@ -324,35 +324,53 @@ public class TrackView {
 			return;
 		}
 
-		deleteDependentData(method, seq);
+		deleteDependentData(map, method, seq);
 		if(feature != null){
-			feature.deleteSymsOnSeq(method, seq);
+			deleteSymsOnSeq(map, method, seq);
+			feature.clear(seq);
 		}else{ //This could derived from other sym
 			SeqSymmetry sym = seq.getAnnotation(method);
 			if(sym != null){
+				GlyphI glyph = map.getItem(sym);
+				if(glyph != null){
+					map.removeItem(glyph);
+				}
 				seq.unloadAnnotation(sym);
 			}
 		}
 		TierMaintenanceListenerHolder.getInstance().fireTierRemoved();
 	}
 	
-	private static void deleteDependentData(String method, BioSeq seq) {
+	public static void deleteSymsOnSeq(AffyTieredMap map, String method, BioSeq seq){
+		
+		if (seq != null) {
+			SeqSymmetry sym = seq.getAnnotation(method);
+			if (sym != null) {
+				if(sym instanceof GraphSym){
+					GlyphI glyph = map.getItem(sym);
+					if(glyph != null){
+						map.removeItem(glyph);
+					}
+				}
+				seq.unloadAnnotation(sym);
+			}
+		}
+	}
+	
+	public static void deleteDependentData(AffyTieredMap map, String method, BioSeq seq) {
 		DependentData dd = null;
 		for (int i = 0; i < dependent_list.size(); i++) {
 			dd = dependent_list.get(i);
 			if ((method == null ? dd.getParentMethod() == null : method.equals(dd.getParentMethod()))
 					|| method.equals(dd.getID())) {
 				dependent_list.remove(dd);
+				GlyphI glyph = map.getItem(dd.getSym());
+				if(glyph != null){
+					map.removeItem(glyph);
+				}
 				seq.unloadAnnotation(dd.getSym());
 			}
 		}
 	}
 
-	public static void deleteDependendentDataFor(GenericFeature feature) {
-		for(BioSeq bioseq : feature.gVersion.group.getSeqList()){
-			for(String method : feature.getMethods()){
-				deleteDependentData(method, bioseq);
-			}
-		}
-	}
 }

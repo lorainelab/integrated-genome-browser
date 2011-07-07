@@ -9,7 +9,6 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
 
 import com.affymetrix.igb.tiers.TierGlyph.Direction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -60,7 +59,7 @@ public class DependentData {
 		}
 
 		if(temp != null){
-			aseq.unloadAnnotation(temp);
+			aseq.removeAnnotation(temp);
 		}
 
 		aseq.addAnnotation(sym);

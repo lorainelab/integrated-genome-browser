@@ -589,10 +589,10 @@ public class SeqMapView extends JPanel
 			if (IGBConstants.GENOME_SEQ_ID.equals(aseq.getID())) {
 				// clear graphs for all sequences in the genome
 				for (BioSeq seq : aseq.getSeqGroup().getSeqList()) {
-					removeGraphsFromSeq(seq);
+					removeGraphsFromSeq(seqmap, seq);
 				}
 			}
-			removeGraphsFromSeq(aseq);
+			removeGraphsFromSeq(seqmap, aseq);
 		} else {
 			System.err.println("Please select a chromosome!");
 		}
@@ -602,11 +602,15 @@ public class SeqMapView extends JPanel
 		setAnnotatedSeq(aseq, false, true);
 	}
 
-	private static void removeGraphsFromSeq(BioSeq mseq) {
+	private static void removeGraphsFromSeq(AffyTieredMap map, BioSeq mseq) {
 		int acount = mseq.getAnnotationCount();
 		for (int i = acount - 1; i >= 0; i--) {
 			SeqSymmetry annot = mseq.getAnnotation(i);
 			if (annot instanceof GraphSym) {
+				GlyphI glyph = map.getItem(annot);
+				if(glyph != null){
+					map.removeItem(glyph);
+				}
 				mseq.unloadAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
 			}
 		}

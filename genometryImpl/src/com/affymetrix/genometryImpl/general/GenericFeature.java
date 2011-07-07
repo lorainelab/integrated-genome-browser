@@ -199,15 +199,8 @@ public final class GenericFeature {
 	 * @param method	Method to be deleted.
 	 * @param seq		Bioseq on which method should be deleted;
 	 */
-	public void deleteSymsOnSeq(String method, BioSeq seq){
+	public void clear(BioSeq seq){
 
-		if (seq != null) {
-			SeqSymmetry sym = seq.getAnnotation(method);
-			if (sym != null) {
-				seq.unloadAnnotation(sym);
-			}
-		}
-		
 		for (int i = 0; i < requestSym.getChildCount(); i++) {
 			SeqSymmetry sym = requestSym.getChild(i);
 			if (sym.getSpan(seq) != null) {
@@ -221,17 +214,9 @@ public final class GenericFeature {
 	 * Remove all methods and set feature invisible.
 	 * @param group
 	 */
-	public void removeAllSyms(){
-
+	public void clear(){
 		// Remove all childred from request
 		requestSym.removeChildren();
-
-		for(BioSeq bioseq : gVersion.group.getSeqList()){
-			for(String method : methods){
-				deleteSymsOnSeq(method, bioseq);
-			}
-		}
-
 		this.setInvisible();
 	}
 	

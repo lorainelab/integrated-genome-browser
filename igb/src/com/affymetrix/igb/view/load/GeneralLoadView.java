@@ -1077,9 +1077,14 @@ public final class GeneralLoadView extends IGBTabPanel
 			protected Void doInBackground(){
 				igbService.addNotLockedUpMsg("Removing feature  "+feature.featureName);
 
-				TrackView.deleteDependendentDataFor(feature);
+				for(BioSeq bioseq : feature.gVersion.group.getSeqList()){
+					for(String method : feature.getMethods()){
+						TrackView.deleteDependentData(gviewer.getSeqMap(), method, bioseq);
+						TrackView.deleteSymsOnSeq(gviewer.getSeqMap(), method, bioseq);
+					}
+				}
 				
-				feature.removeAllSyms();
+				feature.clear();
 
 				// If feature is local then remove it from server.
 				GenericVersion version = feature.gVersion;

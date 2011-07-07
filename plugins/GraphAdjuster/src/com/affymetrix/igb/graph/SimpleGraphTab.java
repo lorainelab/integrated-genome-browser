@@ -1046,18 +1046,21 @@ public final class SimpleGraphTab extends IGBTabPanel
 	 *  left after deleting the graph, then delete the tier as well.
 	 */
 	private void deleteGraph(GenometryModel gmodel, GraphSym gsym) {
+		GraphGlyph gl = (GraphGlyph) igbService.getItem(gsym);
+		if (gl != null) {
+			igbService.removeItem(gl);
+			// clean-up references to the graph, allowing garbage-collection, etc.
+			igbService.clearSelectGraphs();
+		}
+		
 		BioSeq aseq = gsym.getGraphSeq();
 		if (aseq != null) {
 			aseq.unloadAnnotation(gsym);
 		}
 
-		GraphGlyph gl = (GraphGlyph) igbService.getItem(gsym);
 		if (gl == null) {
 			return;
 		}
-		igbService.removeItem(gl);
-		// clean-up references to the graph, allowing garbage-collection, etc.
-		igbService.clearSelectGraphs();
 
 		// if this is not a floating graph, then it's in a tier,
 		//    so check tier -- if this graph is only child, then get rid of the tier also

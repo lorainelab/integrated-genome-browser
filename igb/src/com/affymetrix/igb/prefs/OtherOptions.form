@@ -24,23 +24,20 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="confirmBeforeLoadingCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="1">
-                              <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="confirmBeforeDeleteCheckBox" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="askBeforeExitCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="keepZoomStripeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="coordinatePanel" alignment="0" max="32767" attributes="1"/>
                           <Component id="residueColorPanel" alignment="0" max="32767" attributes="1"/>
                           <Component id="orfAnalyzerPanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
                       <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -58,17 +55,16 @@
               <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
               <Component id="orfAnalyzerPanel" min="-2" pref="59" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
-                  <Component id="confirmBeforeDeleteCheckBox" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="askBeforeExitCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="keepZoomStripeCheckBox" min="-2" pref="23" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
               <Component id="confirmBeforeLoadingCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="confirmBeforeDeleteCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="13" max="32767" attributes="0"/>
               <Component id="clear_prefsB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -104,7 +100,7 @@
                           <Component id="coordinates_label_format_CB" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="59" max="32767" attributes="0"/>
+                  <EmptySpace pref="62" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -238,7 +234,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="26" max="32767" attributes="0"/>
                   <Component id="aLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="AColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>

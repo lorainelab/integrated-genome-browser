@@ -66,8 +66,8 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        
-        
+        jProgressBar1 = new javax.swing.JProgressBar();
+        colorChooserPanel1 = new com.jidesoft.combobox.ColorChooserPanel();
         coordinatePanel = new javax.swing.JPanel();
         backgroundLabel = new javax.swing.JLabel();
         foregroundLabel = new javax.swing.JLabel();
@@ -132,7 +132,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                         .add(numFormatLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(coordinates_label_format_CB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         coordinatePanelLayout.setVerticalGroup(
             coordinatePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -168,7 +168,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(dynamicORFLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(DynamicORFColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         orfAnalyzerPanelLayout.setVerticalGroup(
             orfAnalyzerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -198,7 +198,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
         residueColorPanelLayout.setHorizontalGroup(
             residueColorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(residueColorPanelLayout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(26, Short.MAX_VALUE)
                 .add(aLabel)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(AColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -246,18 +246,16 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(confirmBeforeLoadingCheckBox)
-                            .add(layout.createSequentialGroup()
-                                .add(askBeforeExitCheckBox)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(confirmBeforeDeleteCheckBox))
+                            .add(askBeforeExitCheckBox)
                             .add(keepZoomStripeCheckBox)
                             .add(coordinatePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(residueColorPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(confirmBeforeDeleteCheckBox)))
                     .add(layout.createSequentialGroup()
-                        .add(58, 58, 58)
+                        .add(57, 57, 57)
                         .add(clear_prefsB)))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
@@ -271,16 +269,16 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
                 .add(13, 13, 13)
                 .add(orfAnalyzerPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(askBeforeExitCheckBox)
-                    .add(confirmBeforeDeleteCheckBox))
+                .add(askBeforeExitCheckBox)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(keepZoomStripeCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(2, 2, 2)
                 .add(confirmBeforeLoadingCheckBox)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(confirmBeforeDeleteCheckBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 13, Short.MAX_VALUE)
                 .add(clear_prefsB)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         clear_prefsB.addActionListener(this);
@@ -300,6 +298,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private javax.swing.JLabel cLabel;
     private javax.swing.JButton clear_prefsB;
+    private com.jidesoft.combobox.ColorChooserPanel colorChooserPanel1;
     private javax.swing.JCheckBox confirmBeforeDeleteCheckBox;
     private javax.swing.JCheckBox confirmBeforeLoadingCheckBox;
     private javax.swing.JPanel coordinatePanel;
@@ -308,6 +307,7 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel foregroundLabel;
     private javax.swing.JLabel gLabel;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JCheckBox keepZoomStripeCheckBox;
     private javax.swing.JLabel numFormatLabel;
     private javax.swing.JPanel orfAnalyzerPanel;

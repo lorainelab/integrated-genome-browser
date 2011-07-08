@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
@@ -72,7 +71,6 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 	private int selectedRow;
 	private int[] selectedRows;
 	private int rowSelectionCount;
-	private List<TierLabelGlyph> defaultSelectedRows;
 
 	/** Creates new form PrototypeOne */
 	public TierPrefsViewNew() {
@@ -90,30 +88,6 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 		initComponents();
 
 		validate();
-	}
-
-	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
-		defaultSelectedRows = tier_label_glyphs;
-	}
-
-	public void setSelectedRows() {
-		if (defaultSelectedRows != null) {
-			table.removeRowSelectionInterval(0, table.getRowCount() - 1);
-			for (TierLabelGlyph tlg : defaultSelectedRows) {
-				TierGlyph tier = (TierGlyph) tlg.getInfo();
-				ITrackStyle style = tier.getAnnotStyle();
-
-				for (int i = 0; i < table.getRowCount(); i++) {
-					if (model.getValueAt(i, 0).equals(style.getTrackName())) {
-						table.addRowSelectionInterval(i, i);
-					}
-				}
-			}
-			//defaultSelectedRows = null;
-		} else {
-			System.out.println("Null?");
-			table.setRowSelectionInterval(0, 0);
-		}
 	}
 
 	/** This method is called from within the constructor to
@@ -233,8 +207,9 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setPreferredWidth(95);
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMinWidth(95);
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
+
         refreshList();
-        setSelectedRows();
+        table.setRowSelectionInterval(0, 0);
 
         org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
         selectTrackPanel.setLayout(selectTrackPanelLayout);
@@ -280,7 +255,6 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 
         trackNameSizeComboBox.setEditable(true);
         trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "8.0", "10.0", "12.0", "14.0", "16.0", "18.0", "20.0" }));
-        trackNameSizeComboBox.setSelectedIndex(-1);
         trackNameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 trackNameSizeComboBoxActionPerformed(evt);
@@ -305,7 +279,6 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 
         labelFieldComboBox.setEditable(true);
         labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "* none *", "id", "name", "score" }));
-        labelFieldComboBox.setSelectedIndex(-1);
         labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 labelFieldComboBoxActionPerformed(evt);
@@ -314,6 +287,7 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 
         maxDepthLabel.setText("Max Depth:");
 
+        maxDepthTextField.setText("10");
         maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 maxDepthTextFieldActionPerformed(evt);
@@ -744,18 +718,13 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 				}
 			}
 		}
-		
-		model.setStyles(customizables);
-		if (smv.getSeqMap().getTiers().size() != table.getRowCount()) {
-
-			model.fireTableDataChanged();
-			
-			setSelectedRows();			
-		}
+		this.setStyleList(customizables);
 	}
 
+	public void setStyleList(List<TrackStyle> styles) {
+		model.setStyles(styles);
+	}
 
-	//public void getTierSize()
 	public void applyChanges() {
 		refreshSeqMapView();
 	}
@@ -777,28 +746,27 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 		if (rowSelectionCount > 1) {
 			displayNameTextField.setEnabled(false);
 		}
-		if (selectedRow != -1) {
-			if (model.getStyles().get(selectedRow).getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)
-					|| model.getStyles().get(selectedRow).getTrackName().equals("Coordinates")) {
-				displayNameTextField.setEnabled(false);
-				labelFieldComboBox.setEnabled(false);
-				maxDepthTextField.setEnabled(false);
-				show2TracksCheckBox.setEnabled(false);
-				connectedCheckBox.setEnabled(false);
-				collapsedCheckBox.setEnabled(false);
-			}
 
-
-			displayNameTextField.setText(model.getStyles().get(selectedRow).getTrackName());
-			bgColorComboBox.setSelectedColor(model.getStyles().get(selectedRow).getBackground());
-			fgColorComboBox.setSelectedColor(model.getStyles().get(selectedRow).getForeground());
-			trackNameSizeComboBox.setSelectedItem(model.getStyles().get(selectedRow).getTrackNameSize());
-			labelFieldComboBox.setSelectedItem(model.getStyles().get(selectedRow).getLabelField());
-			maxDepthTextField.setText(String.valueOf(model.getStyles().get(selectedRow).getMaxDepth()));
-			show2TracksCheckBox.setSelected(model.getStyles().get(selectedRow).getShow());
-			connectedCheckBox.setSelected(model.getStyles().get(selectedRow).getSeparate());
-			collapsedCheckBox.setSelected(model.getStyles().get(selectedRow).getCollapsed());
+		if (model.getStyles().get(selectedRow).getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE) || 
+			model.getStyles().get(selectedRow).getTrackName().equals("Coordinates")) {
+			displayNameTextField.setEnabled(false);
+			labelFieldComboBox.setEnabled(false);
+			maxDepthTextField.setEnabled(false);
+			show2TracksCheckBox.setEnabled(false);
+			connectedCheckBox.setEnabled(false);
+			collapsedCheckBox.setEnabled(false);
 		}
+		
+		displayNameTextField.setText(model.getStyles().get(selectedRow).getTrackName());
+		bgColorComboBox.setSelectedColor(model.getStyles().get(selectedRow).getBackground());
+		fgColorComboBox.setSelectedColor(model.getStyles().get(selectedRow).getForeground());
+		trackNameSizeComboBox.setSelectedItem(model.getStyles().get(selectedRow).getTrackNameSize());
+		labelFieldComboBox.setSelectedItem(model.getStyles().get(selectedRow).getLabelField());
+		maxDepthTextField.setText(String.valueOf(model.getStyles().get(selectedRow).getMaxDepth()));
+		show2TracksCheckBox.setSelected(model.getStyles().get(selectedRow).getShow());
+		connectedCheckBox.setSelected(model.getStyles().get(selectedRow).getSeparate());
+		collapsedCheckBox.setSelected(model.getStyles().get(selectedRow).getCollapsed());
+			
 		initializationDetector = false;
 		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
 		}

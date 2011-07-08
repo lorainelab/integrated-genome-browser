@@ -32,6 +32,6 @@ public class RefreshDataAction extends AbstractAction {
 	public void actionPerformed(ActionEvent ae) {
 		GeneralLoadView.getLoadView().setShowLoadingConfirm(true);
 		GeneralLoadView.getLoadView().loadVisibleFeatures();
-		TierMaintenanceListenerHolder.getInstance().fireDataRefreshed();	
+		TierMaintenanceListenerHolder.getInstance().fireDataRefreshed();
 	}
 }

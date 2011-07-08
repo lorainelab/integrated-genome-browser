@@ -157,10 +157,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       Logger.getLogger(BookMarkAction.class.getName()).log(Level.INFO, "Saving bookmarks to file {0}", filename);
       File parent_dir = f.getParentFile();
       if (parent_dir != null) {
-        boolean bool = parent_dir.mkdirs();
-		if(!bool){
-			throw new IOException("Unable to create directory");
-		}
+        parent_dir.mkdirs();
       }
       BookmarkList.exportAsHTML(main_bookmark_list, f, igbService.getAppName(), igbService.getAppVersion());
       saved = true;

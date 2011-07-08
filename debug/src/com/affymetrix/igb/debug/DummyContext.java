@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.search.mode.ISearchMode;
 import com.affymetrix.igb.tiers.TierLabelManager;
 
 public class DummyContext implements BundleContext {
@@ -48,6 +49,7 @@ public class DummyContext implements BundleContext {
 	private static final String TRACK_CLICK_LISTENER_FILTER = "(objectClass=" + TierLabelManager.TrackClickListener.class.getName() + ")";
 	private static final String GLYPH_PROCESSOR_FILTER = "(objectClass=" + GlyphProcessor.class.getName() + ")";
 	private static final String TIER_MAINTENANCE_LISTENER_FILTER = "(objectClass=" + TierMaintenanceListener.class.getName() + ")";
+	private static final String SEARCH_MODE_FILTER = "(objectClass=" + ISearchMode.class.getName() + ")";
 
 	private final Properties properties;
 
@@ -162,6 +164,9 @@ public class DummyContext implements BundleContext {
 		}
 		if (TIER_MAINTENANCE_LISTENER_FILTER.equals(filter)) {
 			return service instanceof TierMaintenanceListener;
+		}
+		if (SEARCH_MODE_FILTER.equals(filter)) {
+			return service instanceof ISearchMode;
 		}
 		if (filter == null) {
 			return true;

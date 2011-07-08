@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
@@ -94,6 +95,11 @@ public final class PreferencesPanel extends JPanel {
 	
 		return singleton;
 	}
+  
+  public TierPrefsViewNew getTierPrefsViewNew()
+  {
+	  return singleton.tpv;
+  }
 
   /** Set the tab pane to the given index. */
   public void setTab(int i) {

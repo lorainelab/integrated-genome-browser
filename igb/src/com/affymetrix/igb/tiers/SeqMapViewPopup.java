@@ -87,7 +87,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final Action customize_action = new AbstractAction("Customize") {
 	private static final long serialVersionUID = 1L;
     public void actionPerformed(ActionEvent e) {
-      showCustomizer();
+      showCustomizer(handler.getSelectedTierLabels());
     }
   };
 
@@ -285,8 +285,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
 	}
 
-  private void showCustomizer() {
+  private void showCustomizer(List<TierLabelGlyph> tier_label_glyphs) {
     PreferencesPanel pv = PreferencesPanel.getSingleton();
+	pv.getTierPrefsViewNew().setTier_label_glyphs(tier_label_glyphs);
+	pv.getTierPrefsViewNew().setSelectedRows();
     pv.setTab(PreferencesPanel.TAB_NUM_TIERS);
     JFrame f = pv.getFrame();
     f.setVisible(true);

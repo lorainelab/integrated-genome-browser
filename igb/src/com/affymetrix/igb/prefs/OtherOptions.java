@@ -66,8 +66,8 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jProgressBar1 = new javax.swing.JProgressBar();
-        colorChooserPanel1 = new com.jidesoft.combobox.ColorChooserPanel();
+        
+        
         coordinatePanel = new javax.swing.JPanel();
         backgroundLabel = new javax.swing.JLabel();
         foregroundLabel = new javax.swing.JLabel();
@@ -299,7 +299,6 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private javax.swing.JLabel cLabel;
     private javax.swing.JButton clear_prefsB;
-    private com.jidesoft.combobox.ColorChooserPanel colorChooserPanel1;
     private javax.swing.JCheckBox confirmBeforeDeleteCheckBox;
     private javax.swing.JCheckBox confirmBeforeLoadingCheckBox;
     private javax.swing.JPanel coordinatePanel;
@@ -308,7 +307,6 @@ public class OtherOptions extends IPrefEditorComponent implements ActionListener
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel foregroundLabel;
     private javax.swing.JLabel gLabel;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JCheckBox keepZoomStripeCheckBox;
     private javax.swing.JLabel numFormatLabel;
     private javax.swing.JPanel orfAnalyzerPanel;

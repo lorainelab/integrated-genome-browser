@@ -32,11 +32,11 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 	private IGBService igbService;
 
 	@SuppressWarnings("serial")
-	private class SymSearchResultsTableModel extends SearchResultsTableModel {
+	public class SymSearchResultsTableModel extends SearchResultsTableModel {
 		private final int[] colWidth = {};
 		private final int[] colAlign = {};
 		
-		private final List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
+		protected final List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 		
 		private final String[] column_names = {
 			SearchView.BUNDLE.getString("searchTableID"),
@@ -258,7 +258,7 @@ public abstract class SearchModeIDOrProps implements ISearchMode {
 		return new SymSearchResultsTableModel(tableRows);
 	}
 
-	private static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
+	protected static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
 
 		if (results == null || results.isEmpty()) {
 			return new ArrayList<SeqSymmetry>();

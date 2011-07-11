@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.freehep.util.export.ExportDialog;
 import org.freehep.util.export.ExportFileType;
+import com.affymetrix.igb.menuitem.FileTracker;
 
 /**
  * Prints a component to a file.
@@ -19,7 +20,7 @@ import org.freehep.util.export.ExportFileType;
  *
  */
 public final class ComponentWriter {
-
+	
 	static final List<ExportFileType> fileTypes;
 
 	static {
@@ -39,10 +40,13 @@ public final class ComponentWriter {
 	 *  formats using the FreeHep libraries.
 	 */
 	public static void showExportDialog(Component c) {
-		ExportDialog  export = new ExportDialog(c.getName(),false);
+		ExportDialog  export = new Export(c.getName(),false);
 		for(ExportFileType type : fileTypes){
 			export.addExportFileType(type);
 		}
+		Properties props = new Properties();
+		props.put(Export.SAVE_AS_FILE, FileTracker.EXPORT_DIR_TRACKER.getFile().getPath()+Export.prefix);
+		export.setUserProperties(props);
 		export.showExportDialog(c, "Export view as ...", c, "export");
 	}
 
@@ -100,6 +104,28 @@ public final class ComponentWriter {
 				Logger.getLogger(ComponentWriter.class.getName()).log(Level.SEVERE, null, ex);
 				return false;
 			}
+		}
+	}
+	
+	
+	private static class Export extends ExportDialog{
+		private static final String rootKey = ExportDialog.class.getName();
+		private static final String SAVE_AS_FILE = rootKey +".SaveAsFile";
+		private static final String prefix = "/export";
+		
+		private Export(String name, boolean b) {
+			super(name, b);
+		}
+		
+		@Override
+		protected String selectFile(){
+			String fileName = super.selectFile();
+			if(fileName != null){
+				File file = new File(fileName);
+				FileTracker.EXPORT_DIR_TRACKER.setFile(file.getParentFile());
+			}
+			
+			return fileName;
 		}
 	}
 }

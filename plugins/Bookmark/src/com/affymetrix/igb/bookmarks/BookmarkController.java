@@ -39,7 +39,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.tiers.TrackStyle;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -75,7 +74,7 @@ public abstract class BookmarkController {
     }
   }
 
- public static void applyProperties(final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature) {
+ public static void applyProperties(IGBService igbService, final BioSeq seq, final Map<String, ?> map, final GenericFeature gFeature) {
 		double default_ypos = 30;
 		double default_yheight = 60;
 		Color default_col = Color.lightGray;
@@ -206,7 +205,7 @@ public abstract class BookmarkController {
 
 					((GraphSym) sym).setGraphName(sym_name);
 
-					applyGraphProperties(gstate, graph_style_num, heatmap_name, use_floating_graphs,
+					applyGraphProperties(igbService, gstate, graph_style_num, heatmap_name, use_floating_graphs,
 							show_label, show_axis, minvis, maxvis, score_thresh, minrun_thresh,
 							maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
 
@@ -239,7 +238,7 @@ public abstract class BookmarkController {
 	tier_style.setHeight(yheight);
  }
 
- private static void applyGraphProperties(GraphState gstate, GraphType graph_style_num, String heatmap_name,
+ private static void applyGraphProperties(IGBService igbService, GraphState gstate, GraphType graph_style_num, String heatmap_name,
 			boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis,
 			double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction,
 			String combo_name, Map<String, ITrackStyle> combos) {
@@ -271,8 +270,8 @@ public abstract class BookmarkController {
 				combo_style.setTrackName("Joined Graphs");
 				combo_style.setExpandable(true);
 				combo_style.setCollapsed(true);
-				combo_style.setBackground(TrackStyle.getDefaultInstance().getBackground());
-				combo_style.setForeground(TrackStyle.getDefaultInstance().getForeground());
+				combo_style.setBackground(igbService.getDefaultBackgroundColor());
+				combo_style.setForeground(igbService.getDefaultForegroundColor());
 				combos.put(combo_name, combo_style);
 			}
 			gstate.setComboStyle(combo_style);

@@ -186,6 +186,8 @@ public interface IGBService {
 	public GenericFeature getFeature(GenericServer gServer, String feature_url);
 	public GenericServer loadServer(String server_url);
 	public AnnotatedSeqGroup determineAndSetGroup(final String version);
+	public Color getDefaultBackgroundColor();
+	public Color getDefaultForegroundColor();
 	/**
 	 * set the state of the given tab to the given state and update
 	 * the view menu to the new value

@@ -358,6 +358,16 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
+	public Color getDefaultBackgroundColor() {
+		return TrackStyle.getDefaultInstance().getBackground();
+	}
+
+	@Override
+	public Color getDefaultForegroundColor() {
+		return TrackStyle.getDefaultInstance().getForeground();
+	}
+
+	@Override
 	public void setTabStateAndMenu(IGBTabPanel igbTabPanel, TabState tabState) {
 		((IGB)IGB.getSingleton()).setTabStateAndMenu(igbTabPanel, tabState);
 	}

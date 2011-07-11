@@ -167,7 +167,7 @@ public final class BookmarkUnibrowControlServlet {
 						igbService.getPrimaryExecutor(feature).execute(new Runnable() {
 
 							public void run() {
-								BookmarkController.applyProperties(seq, parameters, feature);
+								BookmarkController.applyProperties(igbService, seq, parameters, feature);
 							}
 						});
 					}

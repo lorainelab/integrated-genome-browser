@@ -1,6 +1,5 @@
 package com.affymetrix.igb.tiers;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -30,10 +29,9 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
  */
 public class FileTypeView extends IPrefEditorComponent {
 
-
 	private final JTable table = new JTable();
 	private final FileTypePrefTableModel model;
-	
+
 	public FileTypeView() {
 		super();
 
@@ -44,28 +42,29 @@ public class FileTypeView extends IPrefEditorComponent {
 		JScrollPane table_scroll_pane = new JScrollPane(table);
 
 		JButton addButton = new JButton("Add");
-		addButton.addActionListener(new ActionListener(){
+		addButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent ae) {
 				String inputValue = JOptionPane.showInputDialog("Enter file type");
-				if(inputValue == null)
+				if (inputValue == null) {
 					return;
-				
-				if(XmlStylesheetParser.getUserFileTypeAssociation().get(inputValue) != null){
-					ErrorHandler.errorPanel("Duplicate Entry", "File type " +inputValue+" exists");
+				}
+
+				if (XmlStylesheetParser.getUserFileTypeAssociation().get(inputValue) != null) {
+					ErrorHandler.errorPanel("Duplicate Entry", "File type " + inputValue + " exists");
 					return;
 				}
 				XmlStylesheetParser.getUserFileTypeAssociation().put(inputValue, AssociationElement.getFileTypeAssocation(inputValue));
 				model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 			}
 		});
-		
+
 		add(addButton, BorderLayout.SOUTH);
 		add(table_scroll_pane, BorderLayout.CENTER);
-		
+
 		model = new FileTypePrefTableModel();
 		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
-		
+
 		table.setModel(model);
 		table.setAutoCreateRowSorter(true);
 		table.setFillsViewportHeight(true);
@@ -91,11 +90,11 @@ public class FileTypeView extends IPrefEditorComponent {
 		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 		table.setDefaultEditor(Float.class, new DefaultCellEditor(new JComboBox(TrackConstants.SUPPORTED_SIZE)));
 		table.setDefaultEditor(TrackConstants.DIRECTION_TYPE.class, new DefaultCellEditor(new JComboBox(TrackConstants.DIRECTION_TYPE.values())));
-		
+
 		validate();
 	}
 
 	@Override
-	public void refresh() { }
-
+	public void refresh() {
+	}
 }

@@ -13,6 +13,7 @@ public interface TrackConstants {
 	// A preference node name can't contain two slashes, nor end with a slash.
 	static final Pattern multiple_slashes = Pattern.compile("/{2,}");
 	static final String NAME_OF_DEFAULT_INSTANCE = "* DEFAULT *";
+	static final String NAME_OF_COORDINATE_INSTANCE = "Coordinates";
 	// The String constants named PREF_* are for use in the persistent preferences
 	// They are not displayed to users, and should never change
 	static final String PREF_CONNECTED = "Connected";

@@ -14,7 +14,7 @@
 package com.affymetrix.igb.graph;
 
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 import java.awt.BorderLayout;
 import java.awt.Container;

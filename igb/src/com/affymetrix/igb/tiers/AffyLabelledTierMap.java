@@ -15,7 +15,6 @@ package com.affymetrix.igb.tiers;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
@@ -23,6 +22,8 @@ import javax.swing.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.igb.shared.TierGlyph;
+
 import java.awt.Component;
 import java.awt.geom.Rectangle2D;
 

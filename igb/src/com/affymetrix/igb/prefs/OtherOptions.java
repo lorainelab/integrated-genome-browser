@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.glyph.ResidueColorHelper;
+import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;

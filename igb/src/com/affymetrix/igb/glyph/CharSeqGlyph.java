@@ -28,6 +28,8 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.ResidueColorHelper;
+
 import java.awt.FontMetrics;
 
 

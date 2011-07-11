@@ -16,6 +16,7 @@ Bundle-ClassPath: .,
  lib/jide-grids.jar
 Export-Package: com.affymetrix.igb.general,
  com.affymetrix.igb.glyph,
+ com.affymetrix.igb.shared,
  com.affymetrix.igb.tiers,
  com.affymetrix.igb.util,
  com.affymetrix.igb.view,

@@ -13,8 +13,8 @@ import com.affymetrix.genoviz.glyph.StringGlyph;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.WrappedStringGlyph;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.glyph.WrappedStringGlyph;
 
 /**
  *

@@ -7,8 +7,9 @@ import java.awt.geom.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.tiers.TierGlyph.Direction;
+import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.TierGlyph.Direction;
 
 /**
  * A glyph used to display a label for a TierGlyph.
@@ -26,16 +27,16 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 *  @param reference_tier the tier in the main part of the AffyLabelledTierMap,
 	 *    must not be null
 	 */
-	TierLabelGlyph(TierGlyph reference_tier, int position) {
+	public TierLabelGlyph(TierGlyph reference_tier, int position) {
 		this.setInfo(reference_tier);
 		setPosition(position);
 	}
 
-	void setPosition(int position){
+	public void setPosition(int position){
 		this.position = position;
 	}
 
-	int getPosition(){
+	public int getPosition(){
 		return position;
 	}
 	

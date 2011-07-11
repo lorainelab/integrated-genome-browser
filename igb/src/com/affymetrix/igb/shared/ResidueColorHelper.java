@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.shared;
 
 import java.awt.Color;
 import java.util.Collections;

@@ -24,7 +24,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 
 public final class MaxGapThresholder extends JPanel

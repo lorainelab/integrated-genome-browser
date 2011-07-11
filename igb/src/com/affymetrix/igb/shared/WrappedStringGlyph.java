@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;

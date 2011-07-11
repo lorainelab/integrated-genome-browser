@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
@@ -14,7 +14,6 @@ import java.awt.Rectangle;
 public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 	
 
-	private static final int ratio = 3;
 	private boolean isFirst = false;
 	private boolean isLast = false;
 	private Color startColor = Color.RED;

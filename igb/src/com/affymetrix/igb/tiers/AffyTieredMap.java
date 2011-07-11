@@ -20,7 +20,9 @@ import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.glyph.AxisGlyphWithSelection;
+import com.affymetrix.igb.shared.AxisGlyphWithSelection;
+import com.affymetrix.igb.shared.TierGlyph;
+
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;

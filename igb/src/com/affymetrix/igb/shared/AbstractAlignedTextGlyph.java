@@ -1,4 +1,4 @@
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.shared;
 
 import java.awt.Font;
 import java.awt.Graphics;

@@ -44,8 +44,11 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 
+import com.affymetrix.igb.shared.AlignedResidueGlyph;
+import com.affymetrix.igb.shared.DeletionGlyph;
+import com.affymetrix.igb.shared.DualDirectedGlyph;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.affymetrix.igb.view.SeqMapView;
 

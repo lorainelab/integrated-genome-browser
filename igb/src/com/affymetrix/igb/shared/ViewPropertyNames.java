@@ -1,5 +1,5 @@
 
-package com.affymetrix.igb.glyph;
+package com.affymetrix.igb.shared;
 
 /**Contributed by Ido Tamir.*/
 interface ViewPropertyNames {

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.tiers;
+package com.affymetrix.igb.shared;
 
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
@@ -7,6 +7,9 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
+import com.affymetrix.igb.tiers.CollapsePacker;
+import com.affymetrix.igb.tiers.FasterExpandPacker;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -29,7 +32,7 @@ public class TierGlyph extends SolidGlyph {
 	private boolean sorted = true;
 	private boolean ready_for_searching = false;
 	private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
-	protected Direction direction = Direction.NONE;
+	public Direction direction = Direction.NONE;
 	/** glyphs to be drawn in the "middleground" --
 	 *    in front of the solid background, but behind the child glyphs
 	 *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts

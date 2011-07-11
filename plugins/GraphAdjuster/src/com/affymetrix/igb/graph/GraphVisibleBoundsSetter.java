@@ -28,7 +28,7 @@ import java.text.ParseException;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
 
 public final class GraphVisibleBoundsSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {

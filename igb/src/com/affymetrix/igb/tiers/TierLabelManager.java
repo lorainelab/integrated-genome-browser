@@ -19,7 +19,8 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.GlyphResizer;
 
 import java.awt.geom.Rectangle2D;

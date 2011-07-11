@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
@@ -35,7 +36,7 @@ import javax.swing.table.AbstractTableModel;
  * @author lorainelab
  */
 public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelectionListener, WindowListener, SeqMapRefreshed {
-
+	
 	public static final long serialVersionUID = 1l;
 	private static final String TRACK_NAME = "Display Name";
 	private static final String FOREGROUND = "Foreground";
@@ -66,28 +67,55 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 	private static final String APPLY_DEFAULT_BG = "Apply Default Background";
 	private SeqMapView smv;
 	private static TrackStyle default_annot_style = TrackStyle.getDefaultInstance(); // make sure at least the default instance exists;
-	private boolean initializationDetector;
+	private boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
+	private boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
 	private float trackNameSize;
 	private int selectedRow;
 	private int[] selectedRows;
 	private int rowSelectionCount;
+	private List<TierLabelGlyph> selectedTiers;
+	private List<TierGlyph> currentTiers;
+	private List<TrackStyle> currentStyles;
 
 	/** Creates new form PrototypeOne */
 	public TierPrefsViewNew() {
-
+		
 		super();
 		this.setName("Tracks");
 		this.setToolTipText("Set Track Properties");
-
+		
 		Application igb = Application.getSingleton();
 		if (igb != null) {
 			smv = igb.getMapView();
 			smv.addToRefreshList(this);
 		}
-
+		
 		initComponents();
-
+		
 		validate();
+	}
+	
+	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
+		selectedTiers = tier_label_glyphs;
+	}
+	
+	public void setSelectedRows() {
+		selectedRows = table.getSelectedRows();
+		if (selectedTiers != null) {
+			table.removeRowSelectionInterval(0, table.getRowCount() - 1);
+			for (TierLabelGlyph tlg : selectedTiers) {
+				TierGlyph tier = (TierGlyph) tlg.getInfo();
+				ITrackStyle style = tier.getAnnotStyle();
+				
+				for (int i = 0; i < table.getRowCount(); i++) {
+					if (model.getValueAt(i, 0).equals(style.getTrackName())) {
+						table.addRowSelectionInterval(i, i);
+					}
+				}
+			}
+		} else {
+			table.setRowSelectionInterval(0, 0);
+		}
 	}
 
 	/** This method is called from within the constructor to
@@ -254,7 +282,7 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
         trackNameSizeLabel.setText("Track Name Size:");
 
         trackNameSizeComboBox.setEditable(true);
-        trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "8.0", "10.0", "12.0", "14.0", "16.0", "18.0", "20.0" }));
+        trackNameSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
         trackNameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 trackNameSizeComboBoxActionPerformed(evt);
@@ -278,7 +306,7 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
         });
 
         labelFieldComboBox.setEditable(true);
-        labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "* none *", "id", "name", "score" }));
+        labelFieldComboBox.setModel(new javax.swing.DefaultComboBoxModel(TrackConstants.LABELFIELD));
         labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 labelFieldComboBoxActionPerformed(evt);
@@ -342,10 +370,11 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
                                     .add(org.jdesktop.layout.GroupLayout.TRAILING, labelFieldLabel))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                    .add(labelFieldComboBox, 0, 82, Short.MAX_VALUE)
+                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                             .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 50, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(displayNameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(displayNameTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(46, 46, 46))
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -482,7 +511,7 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
                     .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(negativeLabel)
                     .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -535,82 +564,105 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
     }// </editor-fold>//GEN-END:initComponents
 
     private void show2TracksCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show2TracksCheckBoxActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], COL_CONNECTED);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(show2TracksCheckBox.isSelected(), selectedRows[i], COL_CONNECTED);
+			}
 		}
 }//GEN-LAST:event_show2TracksCheckBoxActionPerformed
-
+	
     private void connectedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectedCheckBoxActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(connectedCheckBox.isSelected(), selectedRows[i], COL_SHOW2TRACKS);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(connectedCheckBox.isSelected(), selectedRows[i], COL_SHOW2TRACKS);
+			}
 		}
     }//GEN-LAST:event_connectedCheckBoxActionPerformed
-
-    private void trackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxActionPerformed
-		trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(trackNameSize, selectedRows[i], COL_TRACK_NAME_SIZE);
-		}
-    }//GEN-LAST:event_trackNameSizeComboBoxActionPerformed
-
+	
 	private void collapsedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapsedCheckBoxActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[i], COL_COLLAPSED);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[i], COL_COLLAPSED);
+			}
 		}
 	}//GEN-LAST:event_collapsedCheckBoxActionPerformed
-
+	
 	private void colorRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorRadioButtonActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
+			}
 		}
 	}//GEN-LAST:event_colorRadioButtonActionPerformed
-
+	
 	private void noneRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noneRadioButtonActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
+			}
 		}
 	}//GEN-LAST:event_noneRadioButtonActionPerformed
-
+	
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
 }//GEN-LAST:event_negativeColorComboBoxActionPerformed
-
+	
 	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
 }//GEN-LAST:event_possitiveColorComboBoxActionPerformed
-
-	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[i], COL_FOREGROUND);
-		}
-}//GEN-LAST:event_fgColorComboBoxActionPerformed
-
+	
 	private void displayNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayNameTextFieldActionPerformed
-
-		model.setValueAt(displayNameTextField.getText(), selectedRow, COL_TRACK_NAME);
-	}//GEN-LAST:event_displayNameTextFieldActionPerformed
-
-	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[i], COL_BACKGROUND);
+		if (!settingValueFromTable) {
+			model.setValueAt(displayNameTextField.getText(), selectedRow, COL_TRACK_NAME);
 		}
-	}//GEN-LAST:event_bgColorComboBoxActionPerformed
-
+	}//GEN-LAST:event_displayNameTextFieldActionPerformed
+	
 	private void labelFieldComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelFieldComboBoxActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[i], COL_LABEL_FIELD);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(labelFieldComboBox.getSelectedItem(), selectedRows[i], COL_LABEL_FIELD);
+			}
 		}
 	}//GEN-LAST:event_labelFieldComboBoxActionPerformed
-
+	
 	private void maxDepthTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDepthTextFieldActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(maxDepthTextField.getText(), selectedRows[i], COL_MAX_DEPTH);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(maxDepthTextField.getText(), selectedRows[i], COL_MAX_DEPTH);
+			}
 		}
 	}//GEN-LAST:event_maxDepthTextFieldActionPerformed
-
+	
 	private void pointerRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pointerRadioButtonActionPerformed
-		for (int i = 0; i < rowSelectionCount; i++) {
-			model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
+			}
 		}
 	}//GEN-LAST:event_pointerRadioButtonActionPerformed
+	
+	private void trackNameSizeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackNameSizeComboBoxActionPerformed
+		if (!settingValueFromTable) {
+			trackNameSize = Float.parseFloat(trackNameSizeComboBox.getSelectedItem().toString());
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(trackNameSize, selectedRows[i], COL_TRACK_NAME_SIZE);
+			}
+		}
+}//GEN-LAST:event_trackNameSizeComboBoxActionPerformed
+	
+	private void fgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fgColorComboBoxActionPerformed
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(fgColorComboBox.getSelectedColor(), selectedRows[i], COL_FOREGROUND);
+			}
+		}
+}//GEN-LAST:event_fgColorComboBoxActionPerformed
+	
+	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
+		if (!settingValueFromTable) {
+			for (int i = 0; i < rowSelectionCount; i++) {
+				model.setValueAt(bgColorComboBox.getSelectedColor(), selectedRows[i], COL_BACKGROUND);
+			}
+		}
+}//GEN-LAST:event_bgColorComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyDefaultBGButton;
     private javax.swing.JCheckBox autoRefreshCheckBox;
@@ -670,7 +722,7 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 		}
 		return auto_apply_changes;
 	}
-
+	
 	private void refreshSeqMapView() {
 		if (smv != null) {
 			smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
@@ -681,50 +733,43 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 	public void refresh() {
 		refreshList();
 	}
-
+	
 	void refreshList() {
-		boolean only_displayed_tiers = true;
-		boolean include_graph_styles = true;
-		List<TrackStyle> styles;
-		// if only_displayed_tiers, then only put AnnotStyles in trackOptionsTable that are being used in tiers currently displayed in main view
-		if (only_displayed_tiers) {
-			styles = new ArrayList<TrackStyle>();
-			styles.add(default_annot_style);
-			if (smv != null) {
-				List<TierGlyph> tiers = smv.getSeqMap().getTiers();
-				LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
-				Iterator<TierGlyph> titer = tiers.iterator();
-				while (titer.hasNext()) {
-					TierGlyph tier = titer.next();
-					ITrackStyle style = tier.getAnnotStyle();
-					if ((style instanceof TrackStyle)
-							&& (style.getShow())
-							&& (tier.getChildCount() > 0)) {
-						stylemap.put((TrackStyle) style, (TrackStyle) style);
-					}
+		currentStyles = new ArrayList<TrackStyle>();
+		currentStyles.add(default_annot_style);
+		if (smv != null) {
+			currentTiers = smv.getSeqMap().getTiers();
+			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
+			Iterator<TierGlyph> titer = currentTiers.iterator();
+			while (titer.hasNext()) {
+				TierGlyph tier = titer.next();
+				ITrackStyle style = tier.getAnnotStyle();
+				if ((style instanceof TrackStyle)
+						&& (style.getShow())
+						&& (tier.getChildCount() > 0)) {
+					stylemap.put((TrackStyle) style, (TrackStyle) style);
 				}
-				styles.addAll(stylemap.values());
 			}
-		} else {
-			styles = TrackStyle.getAllLoadedInstances();
+			currentStyles.addAll(stylemap.values());
 		}
-		ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(styles.size());
-		for (int i = 0; i < styles.size(); i++) {
-			TrackStyle the_style = styles.get(i);
+		ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(currentStyles.size());
+		for (int i = 0; i < currentStyles.size(); i++) {
+			TrackStyle the_style = currentStyles.get(i);
 			if (the_style.getCustomizable()) {
 				// if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
-				if ((!the_style.isGraphTier()) || include_graph_styles) {
+				if ((!the_style.isGraphTier())) {
 					customizables.add(the_style);
 				}
 			}
 		}
-		this.setStyleList(customizables);
+		
+		if (customizables.size() != table.getRowCount()) {
+			model.setStyles(customizables);
+			model.fireTableDataChanged();
+			setSelectedRows();			
+		}
 	}
-
-	public void setStyleList(List<TrackStyle> styles) {
-		model.setStyles(styles);
-	}
-
+	
 	public void applyChanges() {
 		refreshSeqMapView();
 	}
@@ -746,32 +791,24 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 		if (rowSelectionCount > 1) {
 			displayNameTextField.setEnabled(false);
 		}
-
-		if (model.getStyles().get(selectedRow).getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE) || 
-			model.getStyles().get(selectedRow).getTrackName().equals("Coordinates")) {
-			displayNameTextField.setEnabled(false);
-			labelFieldComboBox.setEnabled(false);
-			maxDepthTextField.setEnabled(false);
-			show2TracksCheckBox.setEnabled(false);
-			connectedCheckBox.setEnabled(false);
-			collapsedCheckBox.setEnabled(false);
+		
+		if (selectedRow != -1) {
+			displayNameTextField.setText(model.getStyles().get(selectedRow).getTrackName());
+			bgColorComboBox.setSelectedColor(model.getStyles().get(selectedRow).getBackground());
+			fgColorComboBox.setSelectedColor(model.getStyles().get(selectedRow).getForeground());
+			trackNameSizeComboBox.setSelectedItem(model.getStyles().get(selectedRow).getTrackNameSize());
+			labelFieldComboBox.setSelectedItem(model.getStyles().get(selectedRow).getLabelField());
+			maxDepthTextField.setText(String.valueOf(model.getStyles().get(selectedRow).getMaxDepth()));
+			show2TracksCheckBox.setSelected(model.getStyles().get(selectedRow).getShow());
+			connectedCheckBox.setSelected(model.getStyles().get(selectedRow).getSeparate());
+			collapsedCheckBox.setSelected(model.getStyles().get(selectedRow).getCollapsed());
 		}
 		
-		displayNameTextField.setText(model.getStyles().get(selectedRow).getTrackName());
-		bgColorComboBox.setSelectedColor(model.getStyles().get(selectedRow).getBackground());
-		fgColorComboBox.setSelectedColor(model.getStyles().get(selectedRow).getForeground());
-		trackNameSizeComboBox.setSelectedItem(model.getStyles().get(selectedRow).getTrackNameSize());
-		labelFieldComboBox.setSelectedItem(model.getStyles().get(selectedRow).getLabelField());
-		maxDepthTextField.setText(String.valueOf(model.getStyles().get(selectedRow).getMaxDepth()));
-		show2TracksCheckBox.setSelected(model.getStyles().get(selectedRow).getShow());
-		connectedCheckBox.setSelected(model.getStyles().get(selectedRow).getSeparate());
-		collapsedCheckBox.setSelected(model.getStyles().get(selectedRow).getCollapsed());
-			
 		initializationDetector = false;
 		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
 		}
 	}
-
+	
 	public void destroy() {
 		removeAll();
 		if (lsm != null) {
@@ -790,26 +827,26 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 		// otherwise apply changes as needed.
 		if (!autoApplyChanges()) {
 			SwingUtilities.invokeLater(new Runnable() {
-
+				
 				public void run() {
 					applyChanges();
 				}
 			});
 		}
 	}
-
+	
 	public void mapRefresh() {
 		if (isVisible()) {
 			refreshList();
 		}
 	}
-
+	
 	private void stopEditing() {
 		if (table != null && table.getCellEditor() != null) {
 			table.getCellEditor().stopCellEditing();
 		}
 	}
-
+	
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
@@ -817,42 +854,42 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 			stopEditing();
 		}
 	}
-
+	
 	public void windowClosed(WindowEvent e) {
 		stopEditing();
 	}
-
+	
 	public void windowOpened(WindowEvent e) {
 	}
-
+	
 	public void windowClosing(WindowEvent e) {
 	}
-
+	
 	public void windowIconified(WindowEvent e) {
 	}
-
+	
 	public void windowDeiconified(WindowEvent e) {
 	}
-
+	
 	public void windowActivated(WindowEvent e) {
 	}
-
+	
 	public void windowDeactivated(WindowEvent e) {
 	}
-
+	
 	class TierPrefsTableModel extends AbstractTableModel {
-
+		
 		public static final long serialVersionUID = 1l;
 		List<TrackStyle> tier_styles;
-
+		
 		TierPrefsTableModel() {
 			this.tier_styles = Collections.<TrackStyle>emptyList();
 		}
-
+		
 		public void setStyles(List<TrackStyle> tier_styles) {
 			this.tier_styles = tier_styles;
 		}
-
+		
 		public List<TrackStyle> getStyles() {
 			return this.tier_styles;
 		}
@@ -874,13 +911,13 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 							|| column == COL_BACKGROUND || column == COL_FOREGROUND) {
 						return true;
 					}
-
+					
 					return false;
 				}
 				return true;
 			}
 		}
-
+		
 		@Override
 		public Class<?> getColumnClass(int c) {
 			Object val = getValueAt(0, c);
@@ -890,20 +927,20 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 				return val.getClass();
 			}
 		}
-
+		
 		public int getColumnCount() {
 			return col_headings.length;
 		}
-
+		
 		@Override
 		public String getColumnName(int columnIndex) {
 			return col_headings[columnIndex];
 		}
-
+		
 		public int getRowCount() {
 			return tier_styles.size();
 		}
-
+		
 		public Object getValueAt(int row, int column) {
 			TrackStyle style = tier_styles.get(row);
 			switch (column) {
@@ -923,13 +960,14 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 					return null;
 			}
 		}
-
+		
 		@Override
 		public void setValueAt(Object value, int row, int col) {
-			if (value != null) {
+			settingValueFromTable = true;
+			if (value != null && !initializationDetector) {
 				try {
 					TrackStyle style = tier_styles.get(row);
-
+					
 					switch (col) {
 						case COL_TRACK_NAME:
 							if (style != default_annot_style) {
@@ -938,16 +976,16 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 							}
 							break;
 						case COL_FOREGROUND:
-
+							
 							style.setForeground((Color) value);
 							fgColorComboBox.setSelectedColor((Color) value);
-
+							
 							break;
 						case COL_BACKGROUND:
-
+							
 							style.setBackground((Color) value);
 							bgColorComboBox.setSelectedColor((Color) value);
-
+							
 							break;
 						case COL_TRACK_NAME_SIZE:
 							style.setTrackNameSize((Float) value);
@@ -986,16 +1024,17 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 					// exceptions should not happen, but must be caught if they do
 					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
 				}
-
-				if (autoApplyChanges() && !initializationDetector) {
+				
+				if (autoApplyChanges()) {
 					SwingUtilities.invokeLater(new Runnable() {
-
+						
 						public void run() {
 							applyChanges();
 						}
 					});
 				}
 			}
+			settingValueFromTable = false;
 		}
 
 		/** Parse an integer, using the given fallback if any exception occurrs.

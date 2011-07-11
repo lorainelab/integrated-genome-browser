@@ -95,6 +95,7 @@ public class TierPrefsViewNew extends IPrefEditorComponent implements ListSelect
 
 	public void setTier_label_glyphs(List<TierLabelGlyph> tier_label_glyphs) {
 		selectedTiers = tier_label_glyphs;
+		setSelectedRows();
 	}
 
 	public void setSelectedRows() {

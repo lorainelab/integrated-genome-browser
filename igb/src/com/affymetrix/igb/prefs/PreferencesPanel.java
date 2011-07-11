@@ -54,7 +54,7 @@ public final class PreferencesPanel extends JPanel {
   public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / " + HELP;
   public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / " + BUNDLE.getString("HelpForCurrentTab");
 
-  private TierPrefsViewNew tpv = null;
+  public TierPrefsViewNew tpv = null;
 
   private PreferencesPanel() {
     this.setLayout(new BorderLayout());

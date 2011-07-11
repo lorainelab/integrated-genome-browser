@@ -26,7 +26,8 @@ Import-Package: com.affymetrix.common,
  javax.swing.event,
  javax.swing.table,
  org.osgi.framework;version="1.5.0"
-Export-Package: com.affymetrix.igb.search.mode
+Export-Package: com.affymetrix.igb.search,
+ com.affymetrix.igb.search.mode
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  resources/

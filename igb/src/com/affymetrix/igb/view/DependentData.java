@@ -48,14 +48,19 @@ public class DependentData {
 
 	public SymWithProps createTier(BioSeq aseq) {
 
+		SeqSymmetry psym = aseq.getAnnotation(parent_method);
+		if(psym == null){
+			return sym;
+		}
+		
 		SymWithProps temp = sym;
 
 		if (type == DependentType.MISMATCH){
-			sym = createMisMatchGraph(aseq);
+			sym = createMisMatchGraph(aseq, psym);
 		}else if (type == DependentType.SUMMARY) { //Check if type is summary.
-			sym = createSummaryGraph(aseq);
+			sym = createSummaryGraph(aseq, psym);
 		} else {	//If type is not summary then it should be coverage.
-			sym = createCoverageTier(aseq);
+			sym = createCoverageTier(aseq, psym);
 		}
 
 		if(temp != null){
@@ -66,9 +71,8 @@ public class DependentData {
 		return sym;
 	}
 
-	private GraphSym createMisMatchGraph(BioSeq aseq){
+	private GraphSym createMisMatchGraph(BioSeq aseq, SeqSymmetry tsym){
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		SeqSymmetry tsym = aseq.getAnnotation(parent_method);
 		syms.add(tsym);
 		
 		int[] startEnd = getStartEnd(tsym, aseq);
@@ -104,9 +108,9 @@ public class DependentData {
 		return new int[]{start, end};
 	}
 	
-	private GraphSym createSummaryGraph(BioSeq aseq){
+	private GraphSym createSummaryGraph(BioSeq aseq, SeqSymmetry sym){
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		syms.add(aseq.getAnnotation(parent_method));
+		syms.add(sym);
 		GraphSym gsym = null;
 		if (direction == Direction.FORWARD || direction == Direction.REVERSE) {
 			Boolean isForward = direction == Direction.FORWARD ? true : false;
@@ -120,9 +124,9 @@ public class DependentData {
 		return gsym;
 	}
 
-	private SymWithProps createCoverageTier(BioSeq aseq) {
+	private SymWithProps createCoverageTier(BioSeq aseq, SeqSymmetry sym) {
 		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
-		syms.add(aseq.getAnnotation(parent_method));
+		syms.add(sym);
 		SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
 		SymWithProps wrapperSym;
 		if (union_sym instanceof SymWithProps) {

@@ -50,7 +50,7 @@ public class DependentData {
 
 		SeqSymmetry psym = aseq.getAnnotation(parent_method);
 		if(psym == null){
-			return sym;
+			return null;
 		}
 		
 		SymWithProps temp = sym;

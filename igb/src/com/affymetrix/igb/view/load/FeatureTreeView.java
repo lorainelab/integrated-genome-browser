@@ -3,6 +3,7 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -627,9 +628,12 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 						nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
 					}
 					if (nodeData instanceof GenericFeature) {
-						((GenericFeature) nodeData).setVisible();
+						GenericFeature feature = (GenericFeature)nodeData;
+						feature.setVisible();
 						GeneralLoadView.getLoadView().createFeaturesTable();
-						GeneralLoadView.loadWholeRangeFeatures(null);
+						List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
+						loadStrategies.add(LoadStrategy.GENOME);
+						GeneralLoadView.loadFeature(loadStrategies, feature, null);
 					}
 					tree.repaint();
 					fireEditingStopped();

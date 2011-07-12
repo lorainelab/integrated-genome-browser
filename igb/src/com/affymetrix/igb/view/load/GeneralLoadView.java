@@ -629,17 +629,22 @@ public final class GeneralLoadView extends IGBTabPanel
 
 	static void loadFeatures(List<LoadStrategy> loadStrategies, ServerType serverType){
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-			if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
-				continue;
-			}
-			if(serverType != null && gFeature.gVersion.gServer.serverType != serverType){
-				continue;
-			}
-
-			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+			loadFeature(loadStrategies, gFeature, serverType);
 		}
 	}
 	
+	static void loadFeature(List<LoadStrategy> loadStrategies, GenericFeature gFeature, ServerType serverType) {
+		if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
+			return;
+		}
+		
+		if (serverType != null && gFeature.gVersion.gServer.serverType != serverType) {
+			return;
+		}
+		
+		GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
+	}
+		
 	static void AutoloadQuickloadFeature(){
 		for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
 			if (gFeature.getLoadStrategy() != LoadStrategy.GENOME || 

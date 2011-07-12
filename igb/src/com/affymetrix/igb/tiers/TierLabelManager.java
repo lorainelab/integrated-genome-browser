@@ -3,9 +3,15 @@ package com.affymetrix.igb.tiers;
 import java.awt.Cursor;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
+
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.MisMatchGraphSym;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
@@ -19,6 +25,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.osgi.service.PropertyHolder;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.GlyphResizer;
@@ -30,7 +37,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  *
  * @version $Id$
  */
-public final class TierLabelManager {
+public final class TierLabelManager implements PropertyHolder {
 
 	private final AffyLabelledTierMap tiermap;
 	private final AffyTieredMap labelmap;
@@ -643,5 +650,42 @@ public final class TierLabelManager {
 	public interface TrackClickListener {
 
 		public void trackClickNotify(TierGlyph topLevelGlyph, TierLabelManager handler);
+	}
+
+	@Override
+	public List<Map<String, Object>> getProperties() {
+		return getTierProperties();
+	}
+
+
+	@Override
+	public Map<String, Object> determineProps(SeqSymmetry sym) {
+		Map<String, Object> props = null;
+		if (sym instanceof SymWithProps) {
+			// using Propertied.cloneProperties() here instead of Propertied.getProperties()
+			//   because adding start, end, id, and length as additional key-val pairs to props Map
+			//   and don't want these to bloat up sym's properties
+			props = ((SymWithProps) sym).cloneProperties();
+		}
+		if (props == null && sym instanceof DerivedSeqSymmetry) {
+			SeqSymmetry original_sym = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
+			if (original_sym instanceof SymWithProps) {
+				props = ((SymWithProps) original_sym).cloneProperties();
+			}
+		}
+		if (props == null) {
+			// make an empty hashtable if sym has no properties...
+			props = new HashMap<String, Object>();
+		}
+		String symid = sym.getID();
+		if (symid != null) {
+			props.put("id", symid);
+		}
+		if (sym instanceof GraphSym && !(sym instanceof MisMatchGraphSym)) {
+			float[] range = ((GraphSym) sym).getVisibleYRange();
+			props.put("min score", range[0]);
+			props.put("max score", range[1]);
+		}
+		return props;
 	}
 }

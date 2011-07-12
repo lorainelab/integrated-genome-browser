@@ -6,6 +6,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 
 public interface PropertyHandler {
-	public String[][] getPropertiesRow(SeqSymmetry sym, JComponent seqMap);
-	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, JComponent seqMap);
+	public String[][] getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder);
+	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder);
 }

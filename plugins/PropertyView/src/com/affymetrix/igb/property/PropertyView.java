@@ -1,28 +1,20 @@
 package com.affymetrix.igb.property;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.MisMatchGraphSym;
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.PropertyHandler;
+import com.affymetrix.igb.osgi.service.PropertyHolder;
 import com.affymetrix.igb.osgi.service.PropertyListener;
-import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.view.SeqMapView;
 
-import java.text.NumberFormat;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +24,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -133,17 +124,25 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 		if (src == this) {
 			return;
 		}
-		SeqMapView mapView = null;
-		TierLabelManager tlm = null;
 
-		if (src instanceof SeqMapView) {
-			mapView = (SeqMapView) src;
-			tlm = mapView.getTierManager();
-		} else if (src instanceof TierLabelManager){
-			tlm = (TierLabelManager)src;
+		List<SeqSymmetry> selected_syms = evt.getSelectedSyms();
+		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+		if (src instanceof PropertyHolder) {
+			PropertyHolder propertyHolder = (PropertyHolder)src;
+			for (SeqSymmetry sym : selected_syms) {
+				Map<String, Object> props = propertyHolder.determineProps(sym);
+				if (props != null) {
+					propList.add(props);
+				}
+
+			}
+			propList.addAll(propertyHolder.getProperties());
 		}
 
-		showSyms(evt.getSelectedSyms(), mapView, tlm);
+		@SuppressWarnings("unchecked")
+		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
+
+		this.showProperties(prop_array, prop_order, "");
 	}
 
 	@Override
@@ -153,126 +152,6 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 			table.setModel(new DefaultTableModel());
 			propertyChanged(0);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void showSyms(List<SeqSymmetry> selected_syms, SeqMapView seqMap, TierLabelManager tlm) {
-		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
-		for (SeqSymmetry sym : selected_syms) {
-			Map<String, Object> props = determineProps(sym, seqMap);
-			if (props != null) {
-				propList.add(props);
-			}
-
-		}
-
-		if(seqMap != null)
-			addGlyphInfo(propList, seqMap.getSeqMap().getSelected(), selected_syms);
-
-		if(tlm != null)
-			addTierInfo(propList, tlm);
-
-		Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
-
-		this.showProperties(prop_array, prop_order, "");
-	}
-
-	private static void addTierInfo(List<Map<String, Object>> propList, TierLabelManager handler){
-		List<Map<String, Object>> tierProp = handler.getTierProperties();
-
-		if(!tierProp.isEmpty()){
-			propList.addAll(tierProp);
-		}
-	}
-
-
-	@SuppressWarnings("unchecked")
-	private static void addGlyphInfo(List<Map<String, Object>> propList, List<GlyphI> glyphs, List<SeqSymmetry> selected_syms){
-		for (GlyphI glyph : glyphs) {
-
-			if (glyph.getInfo() instanceof SeqSymmetry
-					&& selected_syms.contains((SeqSymmetry) glyph.getInfo())) {
-				continue;
-			}
-
-			Map<String, Object> props = null;
-			if(glyph.getInfo() instanceof Map){
-				 props = (Map<String, Object>) glyph.getInfo();
-			} else {
-				props = new HashMap<String, Object>();
-			}
-
-			boolean direction = true;
-			if(props.containsKey("direction")){
-				if(((String)props.get("direction")).equals("reverse"))
-					direction = false;
-			}
-
-			Rectangle2D.Double boundary = glyph.getSelectedRegion();
-			int start = (int) boundary.getX();
-			int length = (int) boundary.getWidth();
-			int end = start + length;
-			if(!direction){
-				int temp = start;
-				start = end;
-				end = temp;
-			}
-			props.put("start", start);
-			props.put("end", end);
-			props.put("length", length);
-
-			propList.add(props);
-		}
-	}
-
-	private static Map<String, Object> determineProps(SeqSymmetry sym, SeqMapView seqMap) {
-		Map<String, Object> props = null;
-		if (sym instanceof SymWithProps) {
-			// using Propertied.cloneProperties() here instead of Propertied.getProperties()
-			//   because adding start, end, id, and length as additional key-val pairs to props Map
-			//   and don't want these to bloat up sym's properties
-			props = ((SymWithProps) sym).cloneProperties();
-		}
-		if (props == null && sym instanceof DerivedSeqSymmetry) {
-			SeqSymmetry original_sym = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
-			if (original_sym instanceof SymWithProps) {
-				props = ((SymWithProps) original_sym).cloneProperties();
-			}
-		}
-		if (props == null) {
-			// make an empty hashtable if sym has no properties...
-			props = new HashMap<String, Object>();
-		}
-		String symid = sym.getID();
-		if (symid != null) {
-			props.put("id", symid);
-		}
-		if (seqMap != null) {
-		SeqSpan span = seqMap.getViewSeqSpan(sym);
-		if (span != null) {
-			String chromID = span.getBioSeq().getID();
-			props.put("chromosome", chromID);
-				props.put("start",
-						NumberFormat.getIntegerInstance().format(span.getStart()));
-				props.put("end",
-						NumberFormat.getIntegerInstance().format(span.getEnd()));
-				props.put("length",
-						NumberFormat.getIntegerInstance().format(span.getLength()));
-				props.put("strand",
-						span.isForward() ? "+" : "-");
-			props.remove("seq id"); // this is redundant if "chromosome" property is set
-			if (props.containsKey("method") && !props.containsKey("type")) {
-				props.put("type", props.get("method"));
-				props.remove("method");
-			}
-		}
-	}
-		if (sym instanceof GraphSym && !(sym instanceof MisMatchGraphSym)) {
-			float[] range = ((GraphSym) sym).getVisibleYRange();
-			props.put("min score", range[0]);
-			props.put("max score", range[1]);
-		}
-		return props;
 	}
 
 	/**
@@ -340,7 +219,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	 */
 	private void showProperties(Map<String, Object>[] props, List<String> preferred_prop_order, String noData) {
 
-		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData);
+		String[][] rows = getPropertiesRow(props,preferred_prop_order, noData, false);
 		String[] col_headings = getColumnHeadings(props);
 
 		//start
@@ -389,9 +268,9 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	@SuppressWarnings("unchecked")
 	@Override
 	// implement PropertyHandler
-	public String[][] getPropertiesRow(SeqSymmetry sym, JComponent seqMap){
+	public String[][] getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder){
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
-		Map<String, Object> props = determineProps(sym, (SeqMapView)seqMap);
+		Map<String, Object> props = propertyHolder.determineProps(sym);
 		propList.add(props);
 
 		return getPropertiesRow(propList.toArray(new Map[propList.size()]),toolTipOrder(),"", true);
@@ -400,16 +279,12 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
 	@SuppressWarnings("unchecked")
 	@Override
 	// implement PropertyHandler
-	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, JComponent seqMap){
+	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder){
 		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
-		Map<String, Object> props = determineProps(sym, (SeqMapView)seqMap);
-		props.putAll(sym.getLocationProperties(x, ((SeqMapView)seqMap).getVisibleSpan()));
+		Map<String, Object> props = propertyHolder.determineProps(sym);
+		props.putAll(sym.getLocationProperties(x, igbService.getVisibleSpan()));
 		propList.add(props);
 		return getPropertiesRow(propList.toArray(new Map[propList.size()]),graphToolTipOrder(),"",true);
-	}
-
-	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData){
-		return getPropertiesRow(props, preferred_prop_order, noData, false);
 	}
 
 	private static String[][] getPropertiesRow(Map<String, Object>[] props, List<String> preferred_prop_order, String noData, boolean limited){

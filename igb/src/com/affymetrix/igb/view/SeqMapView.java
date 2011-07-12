@@ -48,6 +48,7 @@ import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.PropertyHandler;
+import com.affymetrix.igb.osgi.service.PropertyHolder;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -86,6 +87,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -99,7 +101,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
  * @version $Id$
  */
 public class SeqMapView extends JPanel
-				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
+				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener, PropertyHolder {
 	private static final long serialVersionUID = 1L;
 
 	private static final Cursor defaultCursor, openHandCursor, closedHandCursor;
@@ -2117,5 +2119,73 @@ public class SeqMapView extends JPanel
 			final double middle = (start + end) / 2.0;
 			setZoomSpotX(middle);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Map<String, Object>> getProperties() {
+		List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+		List<SeqSymmetry> selected_syms = getSelectedSyms();
+		for (GlyphI glyph : getSeqMap().getSelected()) {
+
+			if (glyph.getInfo() instanceof SeqSymmetry
+					&& selected_syms.contains((SeqSymmetry) glyph.getInfo())) {
+				continue;
+			}
+
+			Map<String, Object> props = null;
+			if(glyph.getInfo() instanceof Map){
+				 props = (Map<String, Object>) glyph.getInfo();
+			} else {
+				props = new HashMap<String, Object>();
+			}
+
+			boolean direction = true;
+			if(props.containsKey("direction")){
+				if(((String)props.get("direction")).equals("reverse"))
+					direction = false;
+			}
+
+			Rectangle2D.Double boundary = glyph.getSelectedRegion();
+			int start = (int) boundary.getX();
+			int length = (int) boundary.getWidth();
+			int end = start + length;
+			if(!direction){
+				int temp = start;
+				start = end;
+				end = temp;
+			}
+			props.put("start", start);
+			props.put("end", end);
+			props.put("length", length);
+
+			propList.add(props);
+		}
+		propList.addAll(getTierManager().getProperties());
+		return propList;
+	}
+
+	@Override
+	public Map<String, Object> determineProps(SeqSymmetry sym) {
+		Map<String, Object> props = getTierManager().determineProps(sym);
+		SeqSpan span = getViewSeqSpan(sym);
+		if (span != null) {
+			String chromID = span.getBioSeq().getID();
+			props.put("chromosome", chromID);
+				props.put("start",
+						NumberFormat.getIntegerInstance().format(span.getStart()));
+				props.put("end",
+						NumberFormat.getIntegerInstance().format(span.getEnd()));
+				props.put("length",
+						NumberFormat.getIntegerInstance().format(span.getLength()));
+				props.put("strand",
+						span.isForward() ? "+" : "-");
+			props.remove("seq id"); // this is redundant if "chromosome" property is set
+			if (props.containsKey("method") && !props.containsKey("type")) {
+				props.put("type", props.get("method"));
+				props.remove("method");
+			}
+		}
+		return props;
 	}
 }

@@ -16,8 +16,8 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.view.TierPrefsViewNew;  //temp edit -dcn
-import com.affymetrix.igb.tiers.FileTypeView;
+import com.affymetrix.igb.view.TierPrefsViewNew;  
+import com.affymetrix.igb.tiers.FileTypeViewNew;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -87,7 +87,7 @@ public final class PreferencesPanel extends JPanel {
 		singleton.getFrame().addWindowListener(singleton.tpv);
 
 		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
-		singleton.addPrefEditorComponent(new FileTypeView());
+		singleton.addPrefEditorComponent(new FileTypeViewNew());
 		singleton.addPrefEditorComponent(new KeyStrokesView());
 		singleton.addPrefEditorComponent(new GraphsView());
 		singleton.addPrefEditorComponent(new OtherOptions());

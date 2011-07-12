@@ -3,6 +3,8 @@ package com.affymetrix.igb.stylesheet;
 import java.util.Map.Entry;
 import javax.swing.table.AbstractTableModel;
 import com.affymetrix.igb.tiers.TrackStyle;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -11,40 +13,43 @@ import com.affymetrix.igb.tiers.TrackStyle;
 public class FileTypePrefTableModel extends AbstractTableModel implements PropertyConstants {
 
 	private static final String FILE_TYPE = "File Type";
-	private static final String COLOR = "Color";
-	private static final String SEPARATE = "2 Track";
-	private static final String COLLAPSED = "Collapsed";
-	private static final String MAX_DEPTH = "Max Depth";
+	private static final String FOREGROUND = "Foreground";
 	private static final String BACKGROUND = "Background";
-	private static final String GLYPH_DEPTH = "Connected";
-	private static final String LABEL_FIELD = "Label Field";
-	private static final String FONT_SIZE = "Font Size";
-	private static final String DIRECTION_TYPE = "Direction Type";
-	
+	private static final String TRACK_NAME_SIZE = "Track Name Size";
 	private final static String[] col_headings = {
 		FILE_TYPE,
-		COLOR, BACKGROUND,
-		SEPARATE, COLLAPSED,
-		MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD, FONT_SIZE, DIRECTION_TYPE
-	};
+		BACKGROUND, FOREGROUND,
+		TRACK_NAME_SIZE,};
 	private static final int COL_FILE_TYPE = 0;
-	private static final int COL_COLOR = 1;
-	private static final int COL_BACKGROUND = 2;
-	private static final int COL_SEPARATE = 3;
+	private static final int COL_BACKGROUND = 1;
+	private static final int COL_FOREGROUND = 2;
+	private static final int COL_TRACK_NAME_SIZE = 3;
 	private static final int COL_COLLAPSED = 4;
 	private static final int COL_MAX_DEPTH = 5;
-	private static final int COL_GLYPH_DEPTH = 6;
+	private static final int COL_CONNECTED = 6;
 	private static final int COL_LABEL_FIELD = 7;
-	private static final int COL_FONT_SIZE = 8;
+	private static final int COL_SHOW2TRACKS = 8;
 	private static final int COL_DIRECTION_TYPE = 9;
-	
-	Entry[] file2types = null;
+	List<TrackStyle> tier_styles;
 
-	public void setElements(java.util.Map<String, AssociationElement> elements){
+	public FileTypePrefTableModel() {
+		this.tier_styles = Collections.<TrackStyle>emptyList();
+	}
+
+	public void setStyles(List<TrackStyle> tier_styles) {
+		this.tier_styles = tier_styles;
+	}
+
+	public List<TrackStyle> getStyles() {
+		return this.tier_styles;
+	}
+	public Entry[] file2types = null;
+
+	public void setElements(java.util.Map<String, AssociationElement> elements) {
 		file2types = elements.entrySet().toArray(new Entry[elements.size()]);
 		fireTableDataChanged();
 	}
-	
+
 	// Allow editing most fields in normal rows, but don't allow editing some
 	// fields in the "default" style row.
 	@Override
@@ -76,38 +81,12 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 		switch (column) {
 			case COL_FILE_TYPE:
 				return entry.getKey();
-			case COL_COLOR:
+			case COL_FOREGROUND:
 				return style.getForeground();
-
-			case COL_SEPARATE:
-				return Boolean.valueOf(style.getSeparate());
-
-			case COL_COLLAPSED:
-				return Boolean.valueOf(style.getCollapsed());
-
-			case COL_MAX_DEPTH:
-				int md = style.getMaxDepth();
-				if (md == 0) {
-					return "";
-				} else {
-					return String.valueOf(md);
-				}
-
 			case COL_BACKGROUND:
 				return style.getBackground();
-
-			case COL_GLYPH_DEPTH:
-				return (style.getShow2Tracks() == 2 ? Boolean.TRUE : Boolean.FALSE);
-
-			case COL_LABEL_FIELD:
-				return style.getLabelField();
-
-			case COL_FONT_SIZE:
+			case COL_TRACK_NAME_SIZE:
 				return style.getTrackNameSize();
-
-			case COL_DIRECTION_TYPE:
-				return style.getDirectionName();
-
 			default:
 				return null;
 		}
@@ -128,24 +107,24 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 		try {
 			Entry entry = file2types[row];
 			AssociationElement element = (AssociationElement) entry.getValue();
-			
+
 			switch (col) {
-				case COL_COLOR:
+				case COL_FOREGROUND:
 					element.propertyMap.put(PROP_COLOR, value);
 					break;
-				case COL_SEPARATE:
+				case COL_SHOW2TRACKS:
 					element.propertyMap.put(PROP_SEPARATE, value.toString());
 					break;
 				case COL_COLLAPSED:
 					element.propertyMap.put(PROP_COLLAPSED, value.toString());
 					break;
-				case COL_MAX_DEPTH: 
+				case COL_MAX_DEPTH:
 					element.propertyMap.put(PROP_MAX_DEPTH, value.toString());
 					break;
 				case COL_BACKGROUND:
 					element.propertyMap.put(PROP_BACKGROUND, value);
 					break;
-				case COL_GLYPH_DEPTH:
+				case COL_CONNECTED:
 					if (Boolean.TRUE.equals(value)) {
 						element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(2));
 					} else {
@@ -155,7 +134,7 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 				case COL_LABEL_FIELD:
 					element.propertyMap.put(PROP_LABEL_FIELD, value);
 					break;
-				case COL_FONT_SIZE:
+				case COL_TRACK_NAME_SIZE:
 					element.propertyMap.put(PROP_FONT_SIZE, value.toString());
 					break;
 				case COL_DIRECTION_TYPE:
@@ -187,5 +166,4 @@ public class FileTypePrefTableModel extends AbstractTableModel implements Proper
 		}
 		return i;
 	}
-	
 }

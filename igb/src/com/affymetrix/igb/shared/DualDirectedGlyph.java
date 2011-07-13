@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
  */
 public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 	
-
+	private final int mix_direction_width = 2;
 	private boolean isFirst = false;
 	private boolean isLast = false;
 	private Color startColor = Color.GREEN;
@@ -161,32 +161,36 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 	
 	private void drawColored(ViewI view){
 		drawNone(view);
+		if (view.getTransform().getScaleX() < 0.1) {
+			return;
+		}
+		
 		Graphics g = view.getGraphics();
 		Rectangle pb = new Rectangle();
 		if (HORIZONTAL == this.getOrientation() && this.isForward()) {
 			if(isFirst){
 				view.transformToPixels(stcb, pb);
 				g.setColor(startColor);
-				g.fillRect(pb.x, pixelbox.y, pb.width, pixelbox.height);
+				g.fillRect(pb.x, pixelbox.y, Math.max(mix_direction_width, pb.width), pixelbox.height);
 			}
 			
 			if(isLast){
 				view.transformToPixels(edcb, pb);
 				g.setColor(endColor);
-				g.fillRect(pb.x, pixelbox.y, pb.width, pixelbox.height);
+				g.fillRect(pb.x, pixelbox.y, Math.max(mix_direction_width, pb.width), pixelbox.height);
 			}
 		}
 		else if (HORIZONTAL == this.getOrientation() && !this.isForward()) {
 			if(isFirst){
 				view.transformToPixels(stcb, pb);
 				g.setColor(endColor);
-				g.fillRect(pb.x, pixelbox.y, pb.width, pixelbox.height);
+				g.fillRect(pb.x, pixelbox.y, Math.max(mix_direction_width, pb.width), pixelbox.height);
 			}
 			
 			if(isLast){
 				view.transformToPixels(edcb, pb);
 				g.setColor(startColor);
-				g.fillRect(pb.x, pixelbox.y, pb.width, pixelbox.height);
+				g.fillRect(pb.x, pixelbox.y, Math.max(mix_direction_width, pb.width), pixelbox.height);
 			}
 		}
 		else if (VERTICAL == this.getOrientation() && this.isForward()) {}

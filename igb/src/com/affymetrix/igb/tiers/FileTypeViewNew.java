@@ -1,6 +1,5 @@
 package com.affymetrix.igb.tiers;
 
-
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.FileTypePrefTableModel;
@@ -12,12 +11,16 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
+import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -41,14 +44,34 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 	private boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
 	private float trackNameSize;
 	private int[] selectedRows;
-	
+	private Object[] temp;
+	private String[] fileTypes;
+	ArrayList<String> list = new ArrayList<String>();
+	private String allowedFileTypes;
 
 	/** Creates new form FileTypeViewNew */
 	public FileTypeViewNew() {
 		setName("File Type Defaults");
 		model = new FileTypePrefTableModel();
 		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+		initializeFileTypes();
 		initComponents();
+	}
+
+	private void initializeFileTypes() {
+		temp = FileTypeHolder.getInstance().getNameToExtensionMap().values().toArray();
+		for (int i = 0; i < temp.length; i++) {
+			StringTokenizer tokens = new StringTokenizer(temp[i].toString(), ",");
+			while (tokens.hasMoreElements()) {
+				allowedFileTypes = tokens.nextToken();
+				allowedFileTypes = allowedFileTypes.replace("[", "");
+				allowedFileTypes = allowedFileTypes.replace("]", "");
+				allowedFileTypes = allowedFileTypes.trim();
+				list.add(allowedFileTypes);
+			}
+		}
+		Collections.sort(list);
+		fileTypes = list.toArray(new String[list.size()]);
 	}
 
 	/** This method is called from within the constructor to
@@ -61,7 +84,6 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
     private void initComponents() {
 
         showStrandButtonGroup = new javax.swing.ButtonGroup();
-        addButton = new javax.swing.JButton();
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
@@ -73,6 +95,7 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
         selectTrackPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        addButton = new javax.swing.JButton();
         propertiesPanel = new javax.swing.JPanel();
         TrackTypeNameLabel = new javax.swing.JLabel();
         TrackTypeTextField = new javax.swing.JTextField();
@@ -89,8 +112,6 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
         show2TracksCheckBox = new javax.swing.JCheckBox();
         connectedCheckBox = new javax.swing.JCheckBox();
         collapsedCheckBox = new javax.swing.JCheckBox();
-
-        addButton.setText("Add File Type");
 
         showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
 
@@ -230,21 +251,44 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
         jScrollPane1.setViewportView(table);
 
+        addButton.setText("Add File Type");
+
         org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
         selectTrackPanel.setLayout(selectTrackPanelLayout);
         selectTrackPanelLayout.setHorizontalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(selectTrackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                    .add(addButton))
                 .addContainerGap())
         );
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-                .addContainerGap())
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(addButton))
         );
+
+        addButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                String Select = "Add File Type";
+                String inputValue = "";
+                inputValue = (String) JOptionPane.showInputDialog(null,
+                    "Please select a file type to add",Select, JOptionPane.INFORMATION_MESSAGE,
+                    null, fileTypes,fileTypes[0]);
+
+                if (XmlStylesheetParser.getUserFileTypeAssociation().get(inputValue) != null) {
+                    ErrorHandler.errorPanel("Duplicate Entry", "File type " + inputValue + " exists");
+                    return;
+                }
+                XmlStylesheetParser.getUserFileTypeAssociation().put(inputValue, AssociationElement.getFileTypeAssocation(inputValue));
+                model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+            }
+        });
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
 
@@ -415,18 +459,13 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
+                .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .add(63, 63, 63)
-                        .add(addButton))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
                         .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 392, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(18, 18, 18)
-                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -438,27 +477,8 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 224, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
-                .add(addButton)
-                .addContainerGap())
+                .add(64, 64, 64))
         );
-
-        addButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ae) {
-                String inputValue = JOptionPane.showInputDialog("Enter file type");
-                if (inputValue == null) {
-                    return;
-                }
-
-                if (XmlStylesheetParser.getUserFileTypeAssociation().get(inputValue) != null) {
-                    ErrorHandler.errorPanel("Duplicate Entry", "File type " + inputValue + " exists");
-                    return;
-                }
-                XmlStylesheetParser.getUserFileTypeAssociation().put(inputValue, AssociationElement.getFileTypeAssocation(inputValue));
-                model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
-            }
-        });
     }// </editor-fold>//GEN-END:initComponents
 
 	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
@@ -561,7 +581,6 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 			}
 		}
 }//GEN-LAST:event_collapsedCheckBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TrackTypeNameLabel;
     private javax.swing.JTextField TrackTypeTextField;
@@ -597,7 +616,7 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 	@Override
 	public void refresh() {
 	}
-	
+
 	/** Called when the user selects a row of the table.
 	 * @param evt
 	 */
@@ -611,7 +630,7 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 
 		initializationDetector = true;
 		TrackTypeTextField.setEnabled(false);
-		
+
 		if (selectedRows.length > 1) {
 			bgColorComboBox.setSelectedColor(null);
 			fgColorComboBox.setSelectedColor(null);
@@ -623,7 +642,7 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 			collapsedCheckBox.setSelected(false);
 			showStrandButtonGroup.clearSelection();
 		}
-	
+
 		if (selectedRows.length == 1) {
 			Entry entry = model.file2types[selectedRows[0]];
 			AssociationElement element = (AssociationElement) entry.getValue();
@@ -640,11 +659,11 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 			if (style.getDirectionName() == DIRECTION_TYPE.NONE) {
 				showStrandButtonGroup.setSelected(noneRadioButton.getModel(), true);
 			}
-			
+
 			if (style.getDirectionName() == DIRECTION_TYPE.ARROW) {
 				showStrandButtonGroup.setSelected(pointerRadioButton.getModel(), true);
 			}
-			
+
 			if (style.getDirectionName() == DIRECTION_TYPE.COLOR) {
 				showStrandButtonGroup.setSelected(colorRadioButton.getModel(), true);
 			}
@@ -655,21 +674,22 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 		if (evt.getSource() == lsm && !evt.getValueIsAdjusting()) {
 		}
 	}
-	
-	public void refreshList(){}
-	
+
+	public void refreshList() {
+	}
+
 	public void mapRefresh() {
 		if (isVisible()) {
 			refreshList();
 		}
 	}
-	
+
 	private void stopEditing() {
 		if (table != null && table.getCellEditor() != null) {
 			table.getCellEditor().stopCellEditing();
 		}
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
@@ -699,5 +719,4 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 
 	public void windowDeactivated(WindowEvent e) {
 	}
-	
 }

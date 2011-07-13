@@ -1,6 +1,4 @@
-package com.affymetrix.igb.osgi.service;
-
-import javax.swing.JComponent;
+package com.affymetrix.genometryImpl.event;
 
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSymmetry;

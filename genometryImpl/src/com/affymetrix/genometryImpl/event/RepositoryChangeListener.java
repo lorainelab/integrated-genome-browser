@@ -1,4 +1,4 @@
-package com.affymetrix.igb.osgi.service;
+package com.affymetrix.genometryImpl.event;
 
 /**
  * Standard Listener interface for being notified when there is a

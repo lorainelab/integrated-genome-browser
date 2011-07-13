@@ -5,13 +5,13 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.event.PropertyHandler;
+import com.affymetrix.genometryImpl.event.PropertyHolder;
+import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.PropertyHandler;
-import com.affymetrix.igb.osgi.service.PropertyHolder;
-import com.affymetrix.igb.osgi.service.PropertyListener;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

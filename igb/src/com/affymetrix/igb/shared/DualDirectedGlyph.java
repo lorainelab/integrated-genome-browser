@@ -6,6 +6,7 @@ import com.affymetrix.igb.tiers.TrackConstants;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 /**
  *
@@ -16,9 +17,13 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 
 	private boolean isFirst = false;
 	private boolean isLast = false;
-	private Color startColor = Color.RED;
-	private Color endColor = Color.GREEN;
+	private Color startColor = Color.GREEN;
+	private Color endColor = Color.RED;
 	private DIRECTION_TYPE type;
+	private Rectangle2D.Double stcb;
+	private Rectangle2D.Double edcb;
+	private int x[] = new int[6];
+	private int y[] = new int[6];
 	
 	public DualDirectedGlyph(boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type){
 		super();
@@ -76,16 +81,15 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 	}
 	
 	private void drawArrow(ViewI view){
-		if((isFirst && !isForward()) || (isLast && isForward()) ){
-			
+		if((isFirst && isForward()) || (isLast && !isForward()) ){
+			drawNone(view);
+			return;
 		}
 		view.transformToPixels(this.coordbox, this.pixelbox);
 		if (this.pixelbox.width == 0) { this.pixelbox.width = 1; }
 		if (this.pixelbox.height == 0) { this.pixelbox.height = 1; }
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());
-		int x[] = new int[6];
-		int y[] = new int[6];
 		int halfThickness = 1;
 		if (HORIZONTAL == this.getOrientation() && this.isForward()) {
 			halfThickness = (pixelbox.height-1)/2;
@@ -142,32 +146,47 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
 		g.fillPolygon(x, y, 5);
 	}
 	
+	public void setCoords(double x, double y, double width, double height) {
+		super.setCoords(x, y, width, height);
+		if (HORIZONTAL == this.getOrientation()) {
+			if(isForward()){
+				stcb = new Rectangle2D.Double(coordbox.x, coordbox.y, 3, coordbox.height);
+				edcb = new Rectangle2D.Double(coordbox.x + coordbox.width - 3, coordbox.y, 3, coordbox.height);
+			}else{
+				stcb = new Rectangle2D.Double(coordbox.x + coordbox.width - 3, coordbox.y, 3, coordbox.height);
+				edcb = new Rectangle2D.Double(coordbox.x, coordbox.y, 3, coordbox.height);
+			}
+		}
+	}
+	
 	private void drawColored(ViewI view){
 		drawNone(view);
 		Graphics g = view.getGraphics();
-		int markWidth = 1;
+		Rectangle pb = new Rectangle();
 		if (HORIZONTAL == this.getOrientation() && this.isForward()) {
-			markWidth = (pixelbox.width-1)/4;
 			if(isFirst){
+				view.transformToPixels(stcb, pb);
 				g.setColor(startColor);
-				g.fillRect(pixelbox.x+pixelbox.width-markWidth, pixelbox.y, markWidth, pixelbox.height);
+				g.fillRect(pb.x, pixelbox.y, pb.width, pixelbox.height);
 			}
 			
 			if(isLast){
+				view.transformToPixels(edcb, pb);
 				g.setColor(endColor);
-				g.fillRect(pixelbox.x, pixelbox.y, markWidth, pixelbox.height);
+				g.fillRect(pb.x, pixelbox.y, pb.width, pixelbox.height);
 			}
 		}
 		else if (HORIZONTAL == this.getOrientation() && !this.isForward()) {
-			markWidth = (pixelbox.height-1)/4;
 			if(isFirst){
+				view.transformToPixels(stcb, pb);
 				g.setColor(endColor);
-				g.fillRect(pixelbox.x+pixelbox.width-markWidth, pixelbox.y, markWidth, pixelbox.height);
+				g.fillRect(pb.x, pixelbox.y, pb.width, pixelbox.height);
 			}
 			
 			if(isLast){
+				view.transformToPixels(edcb, pb);
 				g.setColor(startColor);
-				g.fillRect(pixelbox.x, pixelbox.y, markWidth, pixelbox.height);
+				g.fillRect(pb.x, pixelbox.y, pb.width, pixelbox.height);
 			}
 		}
 		else if (VERTICAL == this.getOrientation() && this.isForward()) {}

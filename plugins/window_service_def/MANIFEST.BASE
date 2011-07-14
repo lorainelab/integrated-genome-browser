@@ -9,6 +9,7 @@ IGB-Tier: 1
 Import-Package: com.affymetrix.igb.window.service,
  com.affymetrix.igb.osgi.service,
  com.affymetrix.genometryImpl.util,
+ com.affymetrix.genoviz.swing.recordplayback,
  com.affymetrix.genoviz.util,
  javax.swing,
  javax.swing.event,

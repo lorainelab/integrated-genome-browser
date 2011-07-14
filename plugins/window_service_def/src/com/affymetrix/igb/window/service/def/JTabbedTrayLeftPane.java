@@ -17,7 +17,7 @@ public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
 	private static final double LEFT_DIVIDER_PROPORTIONAL_LOCATION = 0.20;
 
 	public JTabbedTrayLeftPane(JComponent _baseComponent) {
-		super(TabState.COMPONENT_STATE_LEFT_TAB, _baseComponent, JTabbedPane.LEFT, JSplitPane.HORIZONTAL_SPLIT, LEFT_DIVIDER_PROPORTIONAL_LOCATION);
+		super("Main.leftPane", TabState.COMPONENT_STATE_LEFT_TAB, _baseComponent, JTabbedPane.LEFT, JSplitPane.HORIZONTAL_SPLIT, LEFT_DIVIDER_PROPORTIONAL_LOCATION);
 		setRightComponent(_baseComponent);
 		setDividerLocation(0);
 	}

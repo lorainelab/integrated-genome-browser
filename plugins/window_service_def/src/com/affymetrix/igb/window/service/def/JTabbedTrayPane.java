@@ -25,6 +25,7 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTabbedPane;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
@@ -54,7 +55,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
 	private static final int DIVIDER_SIZE = 8;
 	protected double saveDividerProportionalLocation; // saved as percent, but implemented as pixels, due to problems with Swing
-	protected final JTabbedPane tab_pane;
+	protected final JRPTabbedPane tab_pane;
 	private final TabState tabState;
 	private final List<TrayStateChangeListener> trayStateChangeListeners;
 	protected TrayState trayState;
@@ -116,7 +117,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		saveDividerProportionalLocation = (double)getDividerLocation() / (double)getFullSize();
 	}
 
-	public JTabbedTrayPane(TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
+	public JTabbedTrayPane(String id, TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
 		super(splitOrientation);
 		this.tabState = tabState;
 		retractDividerSet = false;
@@ -127,7 +128,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 		if (saveDividerProportionalLocation < 0) {
 			saveDividerProportionalLocation = _saveDividerProportionalLocation;
 		}
-		tab_pane = createTabbedPane(orientation);
+		tab_pane = createTabbedPane(id, orientation);
 		tab_pane.addAncestorListener(
 			new AncestorListener() {
 				@Override
@@ -404,8 +405,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 	 * the JTabbedPane
 	 * @return the JTabbedPane
 	 */
-	protected JTabbedPane createTabbedPane(int tabPlacement){
-		return new JTabbedPane(tabPlacement);
+	protected JRPTabbedPane createTabbedPane(String id, int tabPlacement){
+		return new JRPTabbedPane(id, tabPlacement);
 	}
 
 	/**

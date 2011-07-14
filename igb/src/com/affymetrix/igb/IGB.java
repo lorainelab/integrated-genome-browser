@@ -409,6 +409,7 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(export_to_file_menu, new JMenuItem(new ExportWholeFrameAction()), export_to_file_menu.getText());
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new PreferencesAction()));
+		MenuUtil.addToMenu(file_menu, new JMenuItem(new SaveScriptAction()));
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, new JMenuItem(new ExitAction()));
 	}

@@ -44,7 +44,9 @@ import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
+import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -117,8 +119,8 @@ public final class LoadFileAction extends AbstractAction {
 				name + " Files"));
 		}
 		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"igb"},
-						"IGB Script File"));
+						new String[]{"igb", "py"},
+						"Script File"));
 
 		Set<String> all_known_endings = new HashSet<String>();
 		for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
@@ -182,7 +184,21 @@ public final class LoadFileAction extends AbstractAction {
 			ScriptFileLoader.doActions(uri.toString());
 			return;
 		}
-
+		if (uri.toString().toLowerCase().endsWith(".py")) { // python script
+			final String scriptFileName = uri.toString().startsWith("file:") ? uri.toString().substring("file:".length()) : uri.toString();
+			(new SwingWorker<Void, Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					try {
+						IGB.getSingleton().addNotLockedUpMsg("Executing script: " + scriptFileName);
+						RecordPlaybackHolder.getInstance().runScript(scriptFileName);
+					} finally {
+						IGB.getSingleton().removeNotLockedUpMsg("Executing script: " + scriptFileName);
+					}
+					return null;
+				}
+			}).execute();
+		}
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.
 		if(!LocalUrlCacher.isValidURI(uri)){

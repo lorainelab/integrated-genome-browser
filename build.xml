@@ -142,6 +142,9 @@
     		<param name="jar_name" value="commons-net-2.0"/>
 		</antcall>
 		<antcall target="copy-bundle">
+    		<param name="jar_name" value="jython"/>
+		</antcall>
+		<antcall target="copy-bundle">
     		<param name="jar_name" value="swing-layout"/>
 		</antcall>
 	</target>

@@ -309,7 +309,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				// if no span for view, then child is either to left or right of view
 				outside_children.add(child); // collecting children outside of view to handle later
 			} else {
-				GlyphI cglyph = getChild(cspan, i==0 || i==childCount-1,direction_type);
+				GlyphI cglyph = getChild(cspan, i==0, i==childCount-1, direction_type);
 				Color child_color = getSymColor(child, the_style);
 				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, map);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
@@ -317,7 +317,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				pglyph.addChild(cglyph);
 				map.setDataModelFromOriginalSym(cglyph, child);
 				
-				if(direction_type == DIRECTION_TYPE.COLOR){
+				if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
 					addColorDirection(cdsSpan, cspan, pglyph);
 				}
 				
@@ -344,12 +344,13 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
 	}
 
-	private GlyphI getChild(SeqSpan cspan, boolean directed, DIRECTION_TYPE direction_type) 
+	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type) 
 			throws InstantiationException, IllegalAccessException{
 		
 		if (cspan.getLength() == 0) 
 			return new DeletionGlyph();
-		else if((directed) && direction_type == DIRECTION_TYPE.ARROW)
+		else if(((isLast && cspan.isForward()) || (isFirst && !cspan.isForward())) && 
+				(direction_type == DIRECTION_TYPE.ARROW || direction_type == DIRECTION_TYPE.BOTH))
 			return new PointedGlyph();
 			
 		return (GlyphI) child_glyph_class.newInstance();

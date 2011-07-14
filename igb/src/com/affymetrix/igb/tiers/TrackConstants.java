@@ -44,9 +44,10 @@ public interface TrackConstants {
 	public static final Object[] LABELFIELD = { "* none *", "id", "name", "score" };
 	
 	public static enum DIRECTION_TYPE{
+		NONE,
 		ARROW,
 		COLOR,
-		NONE;
+		BOTH;
 		
 		public static DIRECTION_TYPE valueFor(String string){
 			for (DIRECTION_TYPE type : DIRECTION_TYPE.values()) {

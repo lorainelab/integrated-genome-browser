@@ -6,6 +6,8 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
@@ -31,7 +33,6 @@ import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -59,7 +60,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
 	private static final String path_separator = "/";
-	private final JButton serverPrefsB;
+	private final JRPButton serverPrefsB;
 	private final TreeCellRenderer tcr;
 	private final TreeCellEditor tce;
 
@@ -71,7 +72,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		featuresLabel.setAlignmentX(LEFT_ALIGNMENT);
 		featuresLabel.setAlignmentY(TOP_ALIGNMENT);
 
-		serverPrefsB = new JButton("Configure...");
+		serverPrefsB = new JRPButton("DataAccess.configure", "Configure...");
 		serverPrefsB.addActionListener(this);
 		serverPrefsB.setToolTipText("Configure Data Sources");
 		serverPrefsB.setMargin(new Insets(0,0,0,0));
@@ -468,7 +469,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	private final static class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = 1L;
 
-		private final JCheckBox leafCheckBox = new JCheckBox();
+		private final JRPCheckBox leafCheckBox = new JRPCheckBox();
 		private final Color selectionBorderColor, selectionForeground;
 		private final Color selectionBackground, textForeground, textBackground;
 
@@ -538,6 +539,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
 			String featureName = gFeature.featureName;
 			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
+			leafCheckBox.setId("FeatureTreeView." + featureText);
 			featureText = "<html>" + featureText;
 			if (gFeature.friendlyURL != null) {
 				java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");

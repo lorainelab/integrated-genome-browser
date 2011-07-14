@@ -22,8 +22,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -54,7 +52,9 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genoviz.swing.JComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
@@ -84,11 +84,11 @@ public final class GeneralLoadView extends IGBTabPanel
 	public static int TAB_DATALOAD_PREFS = -1;
 	private static final String LOAD = IGBConstants.BUNDLE.getString("load");
 	private AnnotatedSeqGroup curGroup = null;
-	private final JComboBox versionCB;
+	private final JRPComboBox versionCB;
 	private final JComboBoxToolTipRenderer versionCBRenderer;
-	private final JButton all_residuesB;
-	private final JButton partial_residuesB;
-	private final JComboBox speciesCB;
+	private final JRPButton all_residuesB;
+	private final JRPButton partial_residuesB;
+	private final JRPComboBox speciesCB;
 	private final JComboBoxToolTipRenderer speciesCBRenderer;
 	private final AbstractAction refreshDataAction;
 	private static SeqMapView gviewer;
@@ -119,7 +119,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		choicePanel.setLayout(new BoxLayout(choicePanel, BoxLayout.X_AXIS));
 		choicePanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
 
-		speciesCB = new JComboBoxWithSingleListener();
+		speciesCB = new JRPComboBoxWithSingleListener("DataAccess.species");
 		speciesCB.addItem(SELECT_SPECIES);
 		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width*4,speciesCB.getPreferredSize().height));
 		speciesCB.setEnabled(false);
@@ -135,7 +135,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		choicePanel.add(speciesCB);
 		choicePanel.add(Box.createHorizontalStrut(50));
 
-		versionCB = new JComboBoxWithSingleListener();
+		versionCB = new JRPComboBoxWithSingleListener("DataAccess.version");
 		versionCB.addItem(SELECT_GENOME);
 		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width*4, versionCB.getPreferredSize().height));
 		versionCB.setEnabled(false);
@@ -152,18 +152,18 @@ public final class GeneralLoadView extends IGBTabPanel
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 3));
 
-		all_residuesB = new JButton(LoadSequence.getWholeAction());
+		all_residuesB = new JRPButton("DataAccess.allSequence", LoadSequence.getWholeAction());
 		all_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("nucleotideSequence")));
 		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
 		all_residuesB.setEnabled(false);
 		buttonPanel.add(all_residuesB);
-		partial_residuesB = new JButton(LoadSequence.getPartialAction());
+		partial_residuesB = new JRPButton("DataAccess.sequenceInView", LoadSequence.getPartialAction());
 		partial_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
 		buttonPanel.add(partial_residuesB);
 		this.refreshDataAction = gviewer.getRefreshDataAction();
-		JButton refresh_dataB = new JButton(refreshDataAction);
+		JRPButton refresh_dataB = new JRPButton("DataAccess.refreshData", refreshDataAction);
 		refresh_dataB.setToolTipText(BUNDLE.getString("refreshDataTip"));
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);

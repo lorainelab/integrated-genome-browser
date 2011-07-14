@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -31,7 +32,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JTextField;
 
 /**
  * A Text Box for displaying and setting the range of a SeqMapView.
@@ -43,7 +43,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 	private static final long serialVersionUID = 1l;
 	private final NeoMap map;
 	private final SeqMapView gview;
-	public final JTextField range_box;
+	public final JRPTextField range_box;
 	// Use the ENGLISH locale here because we want the user to be able to
 	// cut and paste this text into the UCSC browser.
 	// (Also, the Pattern's below were written to work for the English locale.)
@@ -66,7 +66,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		this.gview = gview;
 		this.map = gview.getSeqMap();
 
-		range_box = new JTextField("");
+		range_box = new JRPTextField("SeqMap.range", "");
 		Dimension d = new Dimension(250, range_box.getPreferredSize().height);
 		range_box.setPreferredSize(d);
 		range_box.setMaximumSize(d);

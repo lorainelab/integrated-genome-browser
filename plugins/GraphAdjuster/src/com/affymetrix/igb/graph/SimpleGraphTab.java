@@ -14,7 +14,7 @@ package com.affymetrix.igb.graph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.swing.JComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -638,7 +638,7 @@ public final class SimpleGraphTab extends IGBTabPanel
 			public void mouseReleased(MouseEvent e) {}
 
 			public void mouseEntered(MouseEvent e) {
-				JComboBoxWithSingleListener comp = (JComboBoxWithSingleListener) e.getComponent();
+				JRPComboBoxWithSingleListener comp = (JRPComboBoxWithSingleListener) e.getComponent();
 				String selection = (String) comp.getSelectedItem();
 				GraphOperator operator = name2operator.get(selection);
 
@@ -652,12 +652,12 @@ public final class SimpleGraphTab extends IGBTabPanel
 			}
 
 			public void mouseExited(MouseEvent e) {
-				JComboBoxWithSingleListener comp = (JComboBoxWithSingleListener) e.getComponent();
+				JRPComboBoxWithSingleListener comp = (JRPComboBoxWithSingleListener) e.getComponent();
 				String selection = (String) comp.getSelectedItem();
 				unsetGraphName(name2operator.get(selection));
 			}
 
-			public void setGraphName(JComboBoxWithSingleListener comp, GraphOperator operator) {
+			public void setGraphName(JRPComboBoxWithSingleListener comp, GraphOperator operator) {
 				if (operator.getOperandCountMin() == 2 && operator.getOperandCountMax() == 2) {
 					A = grafs.get(0).getGraphName();
 					B = grafs.get(1).getGraphName();
@@ -700,9 +700,9 @@ public final class SimpleGraphTab extends IGBTabPanel
 		private final Map<String, GraphOperator> name2operator;
 		private final JButton transformationGoB = new JButton(BUNDLE.getString("goButton"));
 		private final JLabel transformation_label = new JLabel(BUNDLE.getString("transformationLabel"));
-		private final JComboBox transformationCB = new JComboBoxWithSingleListener();
+		private final JRPComboBoxWithSingleListener transformationCB = new JRPComboBoxWithSingleListener("transformation");
 		private final JLabel operation_label = new JLabel(BUNDLE.getString("operationLabel"));
-		private final JComboBox operationCB = new JComboBoxWithSingleListener();
+		private final JRPComboBoxWithSingleListener operationCB = new JRPComboBoxWithSingleListener("operation");
 		private final JButton operationGoB = new JButton(BUNDLE.getString("goButton"));
 		private final HoverEffect hovereffect;
 		private final ItemListener operationListener = new ItemListener() {

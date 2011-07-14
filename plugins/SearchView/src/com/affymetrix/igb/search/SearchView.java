@@ -32,7 +32,10 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.swing.JComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBoxWithSingleListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
@@ -63,14 +66,14 @@ public final class SearchView extends IGBTabPanel implements
 	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
 
-	private final JTextField searchTF = new JTextField(10);;
+	private final JRPTextField searchTF = new JRPTextField("SearchView.searchTF", 10);
 	private final JPanel pan1 = new JPanel();
-	private final JComboBox sequenceCB = new JComboBoxWithSingleListener();
-	private final JComboBox searchCB = new JComboBoxWithSingleListener();
-	private final JCheckBox remoteSearchCheckBox = new JCheckBox("");
-	private final JButton searchButton = new JButton(MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif"));
-	private final JButton clearButton = new JButton(MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
-	private final CancelButton cancel = new CancelButton(igbService.getIcon("x_icon.gif"));
+	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView.sequenceCB");
+	private final JRPComboBoxWithSingleListener searchCB = new JRPComboBoxWithSingleListener("SearchView.searchCB");
+	private final JRPCheckBox remoteSearchCheckBox = new JRPCheckBox("SearchView.remoteSearchCheckBox", "");
+	private final JRPButton searchButton = new JRPButton("SearchView.searchButton", MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif"));
+	private final JRPButton clearButton = new JRPButton("SearchView.clearButton", MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
+	private final CancelButton cancel = new CancelButton("SearchView.CancelButton", igbService.getIcon("x_icon.gif"));
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 
 	private JTable table = new JTable();
@@ -413,10 +416,10 @@ public final class SearchView extends IGBTabPanel implements
 	}
 	
 	@SuppressWarnings("serial")
-	private class CancelButton extends JButton implements CThreadListener, ActionListener{
+	private class CancelButton extends JRPButton implements CThreadListener, ActionListener{
 		
-		public CancelButton(ImageIcon icon){
-			super(icon);
+		public CancelButton(String id, ImageIcon icon){
+			super(id, icon);
 			setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
 			addActionListener(this);
 		}

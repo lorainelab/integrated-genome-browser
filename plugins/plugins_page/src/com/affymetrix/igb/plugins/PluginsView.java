@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 
 import org.apache.felix.bundlerepository.impl.RepositoryAdminImpl;
@@ -503,7 +504,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	@Override
 	public void displayError(String errorText) {
 		errors.setText(errorText);
-		Logger.getLogger(PluginsView.class.getName()).log(Level.SEVERE, "displayIsoforms complete, " + errorText);
+		Logger.getLogger(PluginsView.class.getName()).log(Level.SEVERE, errorText);
 	}
 
 	@Override
@@ -611,27 +612,32 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	}
 
 	@Override
-	public boolean repositoryAdded(String url) {
-		boolean addedOK = false;
-		try {
-			repoAdmin.addRepository(new URL(url + "/repository.xml"));
-			addedOK = true;
-		}
-		catch (ConnectException x) {
-			displayError("some plugin repositories have failed");
-		}
-		catch (MalformedURLException x) {
-			ErrorHandler.errorPanel("Invalid plugin repository URL: " + url);
-			x.printStackTrace();
-		}
-		catch (Exception x) {
-			igbService.failRepository(url);
-			displayError("error loading repositories");
-			x.printStackTrace();
-		}
-		setRepositoryBundles();
-		reloadBundleTable();
-		return addedOK;
+	public boolean repositoryAdded(final String url) {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				try {
+					repoAdmin.addRepository(new URL(url + "/repository.xml"));
+				}
+				catch (ConnectException x) {
+					displayError("plugin repository failed: " + url);
+				}
+				catch (MalformedURLException x) {
+					ErrorHandler.errorPanel("Invalid plugin repository URL: " + url);
+					x.printStackTrace();
+				}
+				catch (Exception x) {
+					igbService.failRepository(url);
+					displayError("error loading repositories");
+					x.printStackTrace();
+				}
+				setRepositoryBundles();
+				reloadBundleTable();
+				return null;
+			}
+		};
+		igbService.getPrimaryExecutor(this).execute(worker);
+		return true;
 	}
 
 	@Override

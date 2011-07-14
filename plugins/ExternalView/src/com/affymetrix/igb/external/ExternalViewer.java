@@ -5,10 +5,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
-import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 
 import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -28,8 +28,8 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	private static final int VIEW_MENU_POS = 2;
 
 	private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
-	final JComboBox ucscBox;
-	final JComboBox ensemblBox;
+	final JRPComboBox ucscBox;
+	final JRPComboBox ensemblBox;
 	
 	private final UCSCViewAction ucscViewAction;
 	private final JMenuItem menuItem;
@@ -37,8 +37,8 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	public ExternalViewer(IGBService igbService_) {
 		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, TAB_POSITION);
 		this.setLayout(new CardLayout());
-		ucscBox = createBox();
-		ensemblBox = createBox();
+		ucscBox = createBox("ExternalViewer.ucsc");
+		ensemblBox = createBox("ExternalViewer.ensemble");
 		
 		ucscViewAction = new UCSCViewAction(igbService);
 		menuItem = new JMenuItem(ucscViewAction);
@@ -50,8 +50,8 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 		add(ensembl, ensembl.getViewName());
 	}
 
-	private JComboBox createBox() {
-		JComboBox box = new JComboBox(names);
+	private JRPComboBox createBox(String id) {
+		JRPComboBox box = new JRPComboBox(id, names);
 		box.setPrototypeDisplayValue("ENSEMBL");
 		box.setMaximumSize(box.getPreferredSize());
 		box.setEditable(false);

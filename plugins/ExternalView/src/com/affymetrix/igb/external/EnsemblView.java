@@ -1,6 +1,9 @@
 package com.affymetrix.igb.external;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 import java.awt.BorderLayout;
@@ -14,12 +17,9 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
 /**
@@ -39,7 +39,7 @@ public class EnsemblView extends BrowserView {
 	 *
 	 * @param selector selects foreground
 	 */
-	public EnsemblView(JComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction) {
+	public EnsemblView(JRPComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction) {
 		super(selector, igbService, ucscViewAction);
 	}
 
@@ -78,8 +78,8 @@ public class EnsemblView extends BrowserView {
 	 **/
 	class ENSEMBLHelper extends JDialog {
 		private static final long serialVersionUID = 1L;
-		private final JButton okButton = new JButton("submit");
-		private final JTextField userIdField = new JTextField(getCookie(ENSEMBLSESSION), 50);
+		private final JRPButton okButton = new JRPButton("ExternalView.okButton", "submit");
+		private final JRPTextField userIdField = new JRPTextField("ExternalView.userId", getCookie(ENSEMBLSESSION), 50);
 
 		public ENSEMBLHelper(Window window, String string, String helper) {
 			super(window, string);

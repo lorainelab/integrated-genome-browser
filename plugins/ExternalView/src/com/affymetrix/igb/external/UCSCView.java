@@ -2,6 +2,9 @@ package com.affymetrix.igb.external;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
+import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 
 import java.awt.BorderLayout;
@@ -15,12 +18,9 @@ import java.util.Map;
 import java.util.prefs.Preferences;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import java.awt.Font;
 
@@ -39,7 +39,7 @@ public class UCSCView extends BrowserView {
 	 *
 	 * @param selector for selection foreground
 	 */
-	public UCSCView(JComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction_) {
+	public UCSCView(JRPComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction_) {
 		super(selector, igbService, ucscViewAction_);
 	}
 
@@ -74,9 +74,9 @@ public class UCSCView extends BrowserView {
 	 **/
 	public class UCSCHelper extends JDialog {
 		private static final long serialVersionUID = 1L;
-		private final JButton okButton = new JButton("submit");
-		private final JButton ucscInfo = new JButton("UCSC info");
-		private final JTextField userIdField = new JTextField(getCookie(UCSCUSERID), 15);
+		private final JRPButton okButton = new JRPButton("UCSCView.okButton", "submit");
+		private final JRPButton ucscInfo = new JRPButton("UCSCView.ucscInfo", "UCSC info");
+		private final JRPTextField userIdField = new JRPTextField("UCSCView.userIdField", getCookie(UCSCUSERID), 15);
 		private final Font font = okButton.getFont();
 	
 		public UCSCHelper(Window window, String string) {

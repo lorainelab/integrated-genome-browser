@@ -1,5 +1,6 @@
 package com.affymetrix.igb.external;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPButton;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
@@ -15,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -34,8 +34,8 @@ public abstract class BrowserView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private SwingWorker<Image, Void> worker = null;
 	private final Map<String, String> cookieMap = new HashMap<String, String>();
-	private final JButton update_button = new JButton("update");
-	private final JButton settingsButton = new JButton("settings");
+	private final JRPButton update_button = new JRPButton("BrowserView.update_button", "update");
+	private final JRPButton settingsButton = new JRPButton("BrowserView.settingsButton", "settings");
 	private BrowserImage browserImage = new BrowserImage();
 	private final JScrollPane scroll = new JScrollPane();
 //	private final IGBService igbService;

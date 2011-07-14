@@ -11,19 +11,15 @@ import org.osgi.framework.Version;
  */
 public interface IPluginsHandler {
 	/**
-	 * display an error message on the tab
-	 * @param errorText the text of the error
-	 */
-	public void displayError(String errorText);
-	/**
-	 * clear any error message
-	 */
-	public void clearError();
-	/**
 	 * install a new bundle / plugin
 	 * @param bundle the bundle to install
 	 */
 	public void installBundle(Bundle bundle);
+	/**
+	 * uninstall an installed bundle / plugin
+	 * @param bundle the bundle to uninstall
+	 */
+	public void uninstallBundle(Bundle bundle);
 	/**
 	 * return a bundle in the filtered bundles given the index
 	 * @param index the index into the filtered bundles

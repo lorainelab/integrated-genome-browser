@@ -23,7 +23,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -220,12 +219,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
 				pluginsHandler.installBundle(bundle);
 			}
 			else {
-				try {
-					bundle.uninstall();
-				}
-				catch (BundleException bex) {
-					pluginsHandler.displayError(bex.getMessage());
-				}
+				pluginsHandler.uninstallBundle(bundle);
 			}
 		}
 		@Override

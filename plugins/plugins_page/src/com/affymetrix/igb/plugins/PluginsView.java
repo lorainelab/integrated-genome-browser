@@ -183,7 +183,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		add("South", getButtonPanel());
 		setBundleFilter(getBundleFilter());
 
-		bundleListener = 
+		bundleListener =
 	    	new BundleListener() {
 				public void bundleChanged(BundleEvent arg0) {
 					if (bundleContext != null) {
@@ -258,6 +258,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					updateAllBundles();
+					clearError();
 				}
 			}
 		);
@@ -271,6 +272,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					updateSelectedBundles();
+					clearError();
 				}
 			}
 		);
@@ -496,13 +498,11 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		bundleContext = null;
 	}
 
-	@Override
-	public void clearError() {
+	private void clearError() {
 		errors.setText("");
 	}
 
-	@Override
-	public void displayError(String errorText) {
+	private void displayError(String errorText) {
 		errors.setText(errorText);
 		Logger.getLogger(PluginsView.class.getName()).log(Level.SEVERE, errorText);
 	}
@@ -515,6 +515,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		if (resolver.resolve())
 		{
 		    resolver.deploy(true);
+		    clearError();
 		}
 		else
 		{
@@ -532,11 +533,22 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		}
 	}
 
+	@Override
+	public void uninstallBundle(Bundle bundle) {
+		try {
+			bundle.uninstall();
+		    clearError();
+		}
+		catch (BundleException bex) {
+			displayError(bex.getMessage());
+		}
+	}
+
 	/**
 	 * saves the currently installed bundles
 	 * @param installedBundles the currently installed bundles
 	 */
-	public void setInstalledBundles(List<Bundle> installedBundles) {
+	private void setInstalledBundles(List<Bundle> installedBundles) {
 		this.installedBundles = installedBundles;
 		setUnfilteredBundles();
 	}
@@ -545,7 +557,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	 * saves the current set of bundles in all repositories
 	 * @param repositoryBundles the bundles in all repositories
 	 */
-	public void setRepositoryBundles(List<Bundle> repositoryBundles) {
+	private void setRepositoryBundles(List<Bundle> repositoryBundles) {
 		this.repositoryBundles = repositoryBundles;
 		setUnfilteredBundles();
 	}
@@ -607,7 +619,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 	 * set the bundle filter to use
 	 * @param bundleFilter the bundle filter
 	 */
-	public void setBundleFilter(BundleFilter bundleFilter) {
+	private void setBundleFilter(BundleFilter bundleFilter) {
 		this.bundleFilter = bundleFilter;
 	}
 
@@ -618,6 +630,8 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 			protected Void doInBackground() throws Exception {
 				try {
 					repoAdmin.addRepository(new URL(url + "/repository.xml"));
+					setRepositoryBundles();
+					reloadBundleTable();
 				}
 				catch (ConnectException x) {
 					displayError("plugin repository failed: " + url);
@@ -631,8 +645,6 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 					displayError("error loading repositories");
 					x.printStackTrace();
 				}
-				setRepositoryBundles();
-				reloadBundleTable();
 				return null;
 			}
 		};

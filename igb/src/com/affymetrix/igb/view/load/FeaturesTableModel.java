@@ -203,7 +203,6 @@ public final class FeaturesTableModel extends AbstractTableModel implements Chan
 
 		if (col == REFRESH_FEATURE_COLUMN) {
 			if(gFeature.getLoadStrategy() != LoadStrategy.NO_LOAD && gFeature.getLoadStrategy() != LoadStrategy.GENOME) {
-				GeneralLoadView.getLoadView().setShowLoadingConfirm(true);;
 				GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 			}
 			return;

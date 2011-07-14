@@ -25,14 +25,15 @@ import java.awt.Graphics;
  */
 public class PointedGlyph extends DirectedGlyph {
 
+	int x[] = new int[6];
+	int y[] = new int[6];
+	
 	public void draw(ViewI theView) {
 		theView.transformToPixels(this.coordbox, this.pixelbox);
 		if (this.pixelbox.width == 0) { this.pixelbox.width = 1; }
 		if (this.pixelbox.height == 0) { this.pixelbox.height = 1; }
 		Graphics g = theView.getGraphics();
 		g.setColor(getBackgroundColor());
-		int x[] = new int[6];
-		int y[] = new int[6];
 		int halfThickness = 1;
 		if (HORIZONTAL == this.getOrientation() && this.isForward()) {
 			halfThickness = (pixelbox.height-1)/2;

@@ -43,10 +43,10 @@ import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.GlyphProcessorHolder;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
+import com.affymetrix.genoviz.glyph.PointedGlyph;
 
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
-import com.affymetrix.igb.shared.DualDirectedGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
@@ -309,13 +309,17 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				// if no span for view, then child is either to left or right of view
 				outside_children.add(child); // collecting children outside of view to handle later
 			} else {
-				GlyphI cglyph = getChild(cspan,i==0,i==childCount-1,direction_type);
+				GlyphI cglyph = getChild(cspan, i==0 || i==childCount-1,direction_type);
 				Color child_color = getSymColor(child, the_style);
 				double cheight = handleCDSSpan(cdsSpan, cspan, cds_sym, child, annotseq, same_seq, child_color, pglyph, map);
 				cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
 				cglyph.setColor(child_color);
 				pglyph.addChild(cglyph);
 				map.setDataModelFromOriginalSym(cglyph, child);
+				
+				if(direction_type == DIRECTION_TYPE.COLOR){
+					addColorDirection(cdsSpan, cspan, pglyph);
+				}
 				
 				GlyphI alignResidueGlyph = handleAlignedResidues(child, annotseq);
 				if(alignResidueGlyph != null){
@@ -340,13 +344,13 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, DEFAULT_THIN_HEIGHT);
 	}
 
-	private GlyphI getChild(SeqSpan cspan, boolean isFirst, boolean isLast, DIRECTION_TYPE direction_type) 
+	private GlyphI getChild(SeqSpan cspan, boolean directed, DIRECTION_TYPE direction_type) 
 			throws InstantiationException, IllegalAccessException{
 		
 		if (cspan.getLength() == 0) 
 			return new DeletionGlyph();
-		else if(isFirst || isLast)
-			return new DualDirectedGlyph(isFirst,isLast,direction_type);
+		else if((directed) && direction_type == DIRECTION_TYPE.ARROW)
+			return new PointedGlyph();
 			
 		return (GlyphI) child_glyph_class.newInstance();
 	}
@@ -411,6 +415,48 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return DEFAULT_THIN_HEIGHT;
 	}
 
+	private static void addColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph) {
+		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)
+				|| !SeqUtils.overlap(cdsSpan, cspan) || cdsSpan.getLength() == 0) {
+			return;
+		}
+
+		if (cdsSpan.isForward()) {
+			if (SeqUtils.contains(cspan, cdsSpan)) {
+				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), Color.GREEN);
+				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), Color.RED);
+			} else {
+				//First
+				if (cdsSpan.getEnd() >= cspan.getEnd()) {
+					addColorDirection(pglyph, cdsSpan.getStart(), Math.min(cdsSpan.getLength(), 3), Color.GREEN);
+				} else {
+					addColorDirection(pglyph, Math.max(cdsSpan.getStart(), cdsSpan.getEnd() - 3), Math.min(cdsSpan.getLength(), 3), Color.RED);
+				}
+			}
+		} else {
+			if (SeqUtils.contains(cspan, cdsSpan)) {
+				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), Color.RED);
+				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), Color.GREEN);
+			} else {
+				//First
+				if (cdsSpan.getStart() >= cspan.getStart()) {
+					addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), Color.RED);
+				} else {
+					addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), Color.GREEN);
+				}
+			}
+		}
+		
+	}
+	
+	private static void addColorDirection(GlyphI pglyph, double start, double length, Color color){
+		FillRectGlyph gl = new FillRectGlyph();
+		gl.setHitable(false);
+		gl.setColor(color);
+		gl.setCoords(start, 0, length, DEFAULT_THICK_HEIGHT);
+		pglyph.addChild(gl);
+	}
+	
 	/**
 	 * Determine and set the appropriate residues for this element.
 	 * @param sym

@@ -2,9 +2,11 @@ package com.affymetrix.genoviz.swing.recordplayback;
 
 public class Operation {
 	public static final String PLAYBACK_COMMAND = "rph.execute";
+	private final JRPWidget widget;
 	private final String[] parms;
 	public Operation(JRPWidget widget) {
 		super();
+		this.widget = widget;
 		parms = widget.getParms();
 	}
 	public String toString() {
@@ -22,5 +24,9 @@ public class Operation {
     	}
 		sb.append(")");
 		return sb.toString();
+	}
+
+	public String getId() {
+		return widget.getID();
 	}
 }

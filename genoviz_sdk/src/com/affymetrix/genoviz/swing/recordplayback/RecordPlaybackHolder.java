@@ -39,6 +39,14 @@ public class RecordPlaybackHolder {
 		return sb.toString();
 	}
 	public void recordOperation(Operation operation) {
+		int lastIndex = operations.size() - 1;
+		if (lastIndex >= 0) {
+			Operation lastOperation = operations.get(lastIndex);
+			if (operation.getId().equals(lastOperation.getId())) {
+				operations.set(lastIndex, operation);
+				return;
+			}
+		}
 		operations.add(operation);
 	}
 	public void runScript(String fileName) {

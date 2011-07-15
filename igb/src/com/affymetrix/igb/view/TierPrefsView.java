@@ -26,7 +26,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.style.ITrackStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
-import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.jidesoft.combobox.ColorComboBox;
@@ -64,19 +63,19 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private ListSelectionModel lsm;
 	private static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
 	private static final boolean default_auto_refresh = true;
-	private static final String REFRESH_LIST = "Refresh List";
 	private static final String AUTO_REFRESH = "Auto Refresh";
-	private static final String APPLY_DEFAULT_BG = "Apply Default Background";
 	private SeqMapView smv;
-	private static TrackStyle default_annot_style = TrackStyle.getDefaultInstance(); // make sure at least the default instance exists;
 	private boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	private boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
 	private float trackNameSize;
 	private int[] selectedRows;
 	private List<TierLabelGlyph> selectedTiers;
 	private int selectedRow;
+	private TrackStyle selectedStyle;
 	private List<TierGlyph> currentTiers;
 	private List<TrackStyle> currentStyles;
+	private TierGlyph tempTier;
+	private ITrackStyle tempStyle;
 
 	/** Creates new form PrototypeOne */
 	public TierPrefsView() {
@@ -106,11 +105,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		if (selectedTiers != null) {
 			table.removeRowSelectionInterval(0, table.getRowCount() - 1);
 			for (TierLabelGlyph tlg : selectedTiers) {
-				TierGlyph tier = (TierGlyph) tlg.getInfo();
-				ITrackStyle style = tier.getAnnotStyle();
+				tempTier = (TierGlyph) tlg.getInfo();
+				tempStyle = tempTier.getAnnotStyle();
 
 				for (int i = 0; i < table.getRowCount(); i++) {
-					if (model.getValueAt(i, 0).equals(style.getTrackName())) {
+					if (model.getValueAt(i, 0).equals(tempStyle.getTrackName())) {
 						table.addRowSelectionInterval(i, i);
 					}
 				}
@@ -129,7 +128,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        showStrandButtonGroup = new javax.swing.ButtonGroup();
         refreshButton = new javax.swing.JButton();
         selectTrackPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -251,14 +249,14 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
             .add(selectTrackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                     .add(selectAllButton))
                 .addContainerGap())
         );
         selectTrackPanelLayout.setVerticalGroup(
             selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(selectAllButton))
         );
@@ -465,7 +463,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         possitiveColorComboBox.setButtonVisible(false);
         possitiveColorComboBox.setColorValueVisible(false);
         possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        possitiveColorComboBox.setSelectedColor(new java.awt.Color(255, 0, 0));
         possitiveColorComboBox.setStretchToFit(true);
         possitiveColorComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -478,7 +475,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         negativeColorComboBox.setButtonVisible(false);
         negativeColorComboBox.setColorValueVisible(false);
         negativeColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        negativeColorComboBox.setSelectedColor(new java.awt.Color(0, 255, 0));
         negativeColorComboBox.setStretchToFit(true);
         negativeColorComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -505,33 +501,33 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
         showStrandPanelLayout.setHorizontalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(showStrandPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(colorCheckBox)
                     .add(arrowCheckBox)
                     .add(showStrandPanelLayout.createSequentialGroup()
+                        .add(8, 8, 8)
                         .add(possitiveLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(negativeLabel)
-                        .add(8, 8, 8)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
         showStrandPanelLayout.setVerticalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(showStrandPanelLayout.createSequentialGroup()
-                .add(colorCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(arrowCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(colorCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(possitiveLabel)
                     .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(negativeLabel)
                     .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -544,12 +540,12 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
                     .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 387, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(18, 18, 18)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                 .add(refreshButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 111, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(autoRefreshCheckBox))
-                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                            .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -557,15 +553,15 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(18, 18, 18)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(autoRefreshCheckBox)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(refreshButton)))
+                        .add(refreshButton))
+                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -587,12 +583,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			model.setValueAt(collapsedCheckBox.isSelected(), selectedRows[0], COL_COLLAPSED);
 		}
 	}//GEN-LAST:event_collapsedCheckBoxActionPerformed
-
-	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
-}//GEN-LAST:event_negativeColorComboBoxActionPerformed
-
-	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
-}//GEN-LAST:event_possitiveColorComboBoxActionPerformed
 
 	private void displayNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayNameTextFieldActionPerformed
 		if (!settingValueFromTable) {
@@ -626,10 +616,10 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 }//GEN-LAST:event_bgColorComboBoxActionPerformed
 
 	private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
-		// TODO add your handling code here:
 		table.setRowSelectionInterval(0, table.getRowCount() - 1);
 		for (int i = 0; i < table.getRowCount() - 1; i++) {
-			if (model.getStyles().get(i).getTrackName().equalsIgnoreCase(
+			tempStyle = model.getStyles().get(i);
+			if (tempStyle.getTrackName().equalsIgnoreCase(
 					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				table.removeRowSelectionInterval(i, i);
 			}
@@ -637,25 +627,17 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	}//GEN-LAST:event_selectAllButtonActionPerformed
 
 	private void applyToAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyToAllButtonActionPerformed
-		// TODO add your handling code here:
 		selectedRow = table.getSelectedRow();
 		for (int i = 0; i < table.getRowCount(); i++) {
+			tempStyle = model.getStyles().get(i);
+			if (!tempStyle.getTrackName().equalsIgnoreCase(
+					TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+				model.setValueAt(model.getStyles().get(selectedRow).getBackground(), i, COL_BACKGROUND, true);
+				model.setValueAt(model.getStyles().get(selectedRow).getTrackNameSize(), i, COL_TRACK_NAME_SIZE, true);
+				model.setValueAt(model.getStyles().get(selectedRow).getForeground(), i, COL_FOREGROUND, false);
+			}
 			if (i == table.getRowCount() - 1) {
-				if (!model.getStyles().get(i).getTrackName().equalsIgnoreCase(
-						TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-					model.setValueAt(model.getStyles().get(selectedRow).getBackground(), i, COL_BACKGROUND, true);
-					model.setValueAt(model.getStyles().get(selectedRow).getTrackNameSize(), i, COL_TRACK_NAME_SIZE, true);
-					model.setValueAt(model.getStyles().get(selectedRow).getForeground(), i, COL_FOREGROUND, true);
-				} else {
-					applyChanges();
-				}
-			} else {
-				if (!model.getStyles().get(i).getTrackName().equalsIgnoreCase(
-						TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
-					model.setValueAt(model.getStyles().get(selectedRow).getBackground(), i, COL_BACKGROUND, true);
-					model.setValueAt(model.getStyles().get(selectedRow).getTrackNameSize(), i, COL_TRACK_NAME_SIZE, true);
-					model.setValueAt(model.getStyles().get(selectedRow).getForeground(), i, COL_FOREGROUND, false);
-				}
+				applyChanges();
 			}
 		}
 	}//GEN-LAST:event_applyToAllButtonActionPerformed
@@ -666,8 +648,13 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		}
 }//GEN-LAST:event_labelFieldComboBoxActionPerformed
 
+	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
+}//GEN-LAST:event_possitiveColorComboBoxActionPerformed
+
+	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
+}//GEN-LAST:event_negativeColorComboBoxActionPerformed
+
 	private void colorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckBoxActionPerformed
-		// TODO add your handling code here:
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
@@ -691,10 +678,9 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				}
 			}
 		}
-	}//GEN-LAST:event_colorCheckBoxActionPerformed
+}//GEN-LAST:event_colorCheckBoxActionPerformed
 
 	private void arrowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arrowCheckBoxActionPerformed
-		// TODO add your handling code here:
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
@@ -718,7 +704,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				}
 			}
 		}
-	}//GEN-LAST:event_arrowCheckBoxActionPerformed
+}//GEN-LAST:event_arrowCheckBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyToAllButton;
     private javax.swing.JCheckBox arrowCheckBox;
@@ -748,7 +734,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
     private javax.swing.JButton selectAllButton;
     private javax.swing.JPanel selectTrackPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
-    private javax.swing.ButtonGroup showStrandButtonGroup;
     private javax.swing.JPanel showStrandPanel;
     private javax.swing.JTable table;
     private javax.swing.JComboBox trackNameSizeComboBox;
@@ -759,14 +744,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	 *  applied to the view.
 	 */
 	boolean autoApplyChanges() {
-		boolean auto_apply_changes = true;
-		if (autoRefreshCheckBox == null) {
-			auto_apply_changes = true;
-		} else {
-			auto_apply_changes = PreferenceUtils.getBooleanParam(
-					PREF_AUTO_REFRESH, default_auto_refresh);
-		}
-		return auto_apply_changes;
+		return PreferenceUtils.getBooleanParam(PREF_AUTO_REFRESH,
+				default_auto_refresh);
 	}
 
 	private void refreshSeqMapView() {
@@ -782,7 +761,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	void refreshList() {
 		currentStyles = new ArrayList<TrackStyle>();
-		//currentStyles.add(default_annot_style);
 		if (smv != null) {
 			currentTiers = smv.getSeqMap().getTiers();
 			LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
@@ -846,38 +824,50 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			show2TracksCheckBox.setSelected(false);
 			connectedCheckBox.setSelected(false);
 			collapsedCheckBox.setSelected(false);
+			colorCheckBox.setSelected(false);
+			arrowCheckBox.setSelected(false);
 		}
 
 		if (selectedRows.length == 1) {
-			if (model.getStyles().get(selectedRows[0]).getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)
-					|| model.getStyles().get(selectedRows[0]).getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+			selectedStyle = model.getStyles().get(selectedRows[0]);
+
+			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)
+					|| selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				displayNameTextField.setEnabled(false);
 				colorCheckBox.setEnabled(false);
 				arrowCheckBox.setEnabled(false);
 			}
 
-			displayNameTextField.setText(model.getStyles().get(selectedRows[0]).getTrackName());
-			bgColorComboBox.setSelectedColor(model.getStyles().get(selectedRows[0]).getBackground());
-			fgColorComboBox.setSelectedColor(model.getStyles().get(selectedRows[0]).getForeground());
-			trackNameSizeComboBox.setSelectedItem(model.getStyles().get(selectedRows[0]).getTrackNameSize());
-			labelFieldComboBox.setSelectedItem(model.getStyles().get(selectedRows[0]).getLabelField());
-			maxDepthTextField.setText(String.valueOf(model.getStyles().get(selectedRows[0]).getMaxDepth()));
-			show2TracksCheckBox.setSelected(model.getStyles().get(selectedRows[0]).getShow());
-			connectedCheckBox.setSelected(model.getStyles().get(selectedRows[0]).getSeparate());
-			collapsedCheckBox.setSelected(model.getStyles().get(selectedRows[0]).getCollapsed());
-			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.NONE) {
-				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), false);
-				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), false);
-			}
-
-			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.ARROW) {
-				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), false);
-				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), true);
-			}
-
-			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.COLOR) {
-				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), true);
-				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), false);
+			displayNameTextField.setText(selectedStyle.getTrackName());
+			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
+			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
+			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
+			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
+			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
+			show2TracksCheckBox.setSelected(selectedStyle.getShow());
+			connectedCheckBox.setSelected(selectedStyle.getSeparate());
+			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
+			
+			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
+				case NONE:
+					colorCheckBox.setSelected(false);
+					arrowCheckBox.setSelected(false);
+					break;
+				case ARROW:
+					colorCheckBox.setSelected(false);
+					arrowCheckBox.setSelected(true);
+					break;
+				case COLOR:
+					colorCheckBox.setSelected(true);
+					arrowCheckBox.setSelected(false);
+					break;
+				case BOTH:
+					colorCheckBox.setSelected(true);
+					arrowCheckBox.setSelected(true);
+					break;
+				default:
+					System.out.println("Unknown enum selected");
+					break;
 			}
 		}
 
@@ -954,9 +944,10 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 	class TierPrefsTableModel extends AbstractTableModel {
 
-		public static final long serialVersionUID = 1l;
 		List<TrackStyle> tier_styles;
-		private TrackStyle style;
+		private TrackStyle tempStyle;
+		private Object tempObject;
+		private int tempInt;
 
 		TierPrefsTableModel() {
 			this.tier_styles = Collections.<TrackStyle>emptyList();
@@ -974,9 +965,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		// fields in the "default" style row.
 		@Override
 		public boolean isCellEditable(int row, int column) {
-			TrackStyle style = tier_styles.get(row);
-			if (style == default_annot_style
-					|| style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
+			tempStyle = tier_styles.get(row);
+			if (tempStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE)) {
 				if (column == COL_TRACK_NAME) {
 					return false;
 				}
@@ -987,11 +977,11 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 
 		@Override
 		public Class<?> getColumnClass(int c) {
-			Object val = getValueAt(0, c);
-			if (val == null) {
+			tempObject = getValueAt(0, c);
+			if (tempObject == null) {
 				return Object.class;
 			} else {
-				return val.getClass();
+				return tempObject.getClass();
 			}
 		}
 
@@ -1009,20 +999,16 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		}
 
 		public Object getValueAt(int row, int column) {
-			style = tier_styles.get(row);
+			tempStyle = tier_styles.get(row);
 			switch (column) {
 				case COL_FOREGROUND:
-					return style.getForeground();
+					return tempStyle.getForeground();
 				case COL_BACKGROUND:
-					return style.getBackground();
+					return tempStyle.getBackground();
 				case COL_TRACK_NAME_SIZE:
-					return style.getTrackNameSize();
+					return tempStyle.getTrackNameSize();
 				case COL_TRACK_NAME:
-					if (style == default_annot_style) {
-						return "* default *";
-					} else {
-						return style.getTrackName();
-					}
+					return tempStyle.getTrackName();
 				default:
 					return null;
 			}
@@ -1044,47 +1030,47 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			settingValueFromTable = true;
 			if (value != null && !initializationDetector) {
 				try {
-					style = tier_styles.get(row);
+					tempStyle = tier_styles.get(row);
 					switch (col) {
 						case COL_TRACK_NAME:
-							style.setTrackName((String) value);
+							tempStyle.setTrackName((String) value);
 							displayNameTextField.setText((String) value);
 							break;
 						case COL_FOREGROUND:
-							style.setForeground((Color) value);
+							tempStyle.setForeground((Color) value);
 							fgColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_BACKGROUND:
-							style.setBackground((Color) value);
+							tempStyle.setBackground((Color) value);
 							bgColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_TRACK_NAME_SIZE:
-							style.setTrackNameSize((Float) value);
+							tempStyle.setTrackNameSize((Float) value);
 							trackNameSizeComboBox.setSelectedItem((Float) value);
 							break;
 						case COL_LABEL_FIELD:
-							style.setLabelField((String) value);
+							tempStyle.setLabelField((String) value);
 							break;
 						case COL_MAX_DEPTH: {
-							int i = parseInteger(((String) value), 0, style.getMaxDepth());
-							style.setMaxDepth(i);
+							tempInt = parseInteger(((String) value), 0, tempStyle.getMaxDepth());
+							tempStyle.setMaxDepth(tempInt);
 						}
 						break;
 						case COL_DIRECTION_TYPE:
-							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
+							tempStyle.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
 						case COL_CONNECTED:
-							style.setSeparate(((Boolean) value).booleanValue());
+							tempStyle.setSeparate(((Boolean) value).booleanValue());
 							break;
 						case COL_SHOW2TRACKS:
 							if (Boolean.TRUE.equals(value)) {
-								style.setShow2Tracks(2);
+								tempStyle.setShow2Tracks(2);
 							} else {
-								style.setShow2Tracks(1);
+								tempStyle.setShow2Tracks(1);
 							}
 							break;
 						case COL_COLLAPSED:
-							style.setCollapsed(((Boolean) value).booleanValue());
+							tempStyle.setCollapsed(((Boolean) value).booleanValue());
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

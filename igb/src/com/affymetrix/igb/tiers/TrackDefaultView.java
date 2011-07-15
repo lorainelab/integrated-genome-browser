@@ -61,7 +61,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private String allowedTrackDefaults;
 	private String AddButtonTitle = "Add Track Default";
 	private String selectedTrackDefaultType;
-	private AssociationElement element;
+	private TrackStyle selectedStyle;
 
 	/** Creates new form FileTypeViewNew */
 	public TrackDefaultView() {
@@ -97,7 +97,6 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        showStrandButtonGroup = new javax.swing.ButtonGroup();
         showStrandPanel = new javax.swing.JPanel();
         possitiveLabel = new javax.swing.JLabel();
         negativeLabel = new javax.swing.JLabel();
@@ -138,7 +137,6 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
         possitiveColorComboBox.setButtonVisible(false);
         possitiveColorComboBox.setColorValueVisible(false);
         possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        possitiveColorComboBox.setSelectedColor(new java.awt.Color(255, 0, 0));
         possitiveColorComboBox.setStretchToFit(true);
         possitiveColorComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -151,7 +149,6 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
         negativeColorComboBox.setButtonVisible(false);
         negativeColorComboBox.setColorValueVisible(false);
         negativeColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
-        negativeColorComboBox.setSelectedColor(new java.awt.Color(0, 255, 0));
         negativeColorComboBox.setStretchToFit(true);
         negativeColorComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,34 +175,33 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
         showStrandPanelLayout.setHorizontalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(showStrandPanelLayout.createSequentialGroup()
-                .add(8, 8, 8)
                 .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(colorCheckBox)
+                    .add(arrowCheckBox)
                     .add(showStrandPanelLayout.createSequentialGroup()
+                        .add(8, 8, 8)
                         .add(possitiveLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(negativeLabel)
-                        .add(8, 8, 8)
-                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(colorCheckBox)
-                    .add(arrowCheckBox))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(8, Short.MAX_VALUE))
         );
         showStrandPanelLayout.setVerticalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(showStrandPanelLayout.createSequentialGroup()
-                .add(8, 8, 8)
-                .add(colorCheckBox)
-                .add(7, 7, 7)
                 .add(arrowCheckBox)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(colorCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(possitiveLabel)
                     .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(negativeLabel)
                     .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         selectTrackDefaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Track Default"));
@@ -253,14 +249,14 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
         jScrollPane1.setViewportView(table);
 
-        addTrackDefaultButton.setText("Add Track Default");
+        addTrackDefaultButton.setText("Add");
         addTrackDefaultButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addTrackDefaultButtonActionPerformed(evt);
             }
         });
 
-        removeTrackDefaultButton.setText("Remove Track Default");
+        removeTrackDefaultButton.setText("Remove");
         removeTrackDefaultButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeTrackDefaultButtonActionPerformed(evt);
@@ -477,7 +473,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 224, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 105, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -577,7 +573,6 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	}//GEN-LAST:event_addTrackDefaultButtonActionPerformed
 
 	private void arrowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arrowCheckBoxActionPerformed
-		// TODO add your handling code here:
 		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
@@ -604,8 +599,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	}//GEN-LAST:event_arrowCheckBoxActionPerformed
 
 	private void colorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckBoxActionPerformed
-		// TODO add your handling code here:
-				if (!settingValueFromTable) {
+		if (!settingValueFromTable) {
 			if (colorCheckBox.isSelected()) {
 				if (arrowCheckBox.isSelected()) {
 					for (int i = 0; i < selectedRows.length; i++) {
@@ -631,12 +625,10 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	}//GEN-LAST:event_colorCheckBoxActionPerformed
 
 	private void removeTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTrackDefaultButtonActionPerformed
-		// TODO add your handling code here:
-		model.style = model.tier_styles.get(table.getSelectedRow());
-		XmlStylesheetParser.getUserFileTypeAssociation().remove(model.style.getTrackName());
+		selectedStyle = model.tier_styles.get(table.getSelectedRow());
+		XmlStylesheetParser.getUserFileTypeAssociation().remove(selectedStyle.getTrackName());
 		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 }//GEN-LAST:event_removeTrackDefaultButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TrackTypeNameLabel;
     private javax.swing.JButton addTrackDefaultButton;
@@ -661,7 +653,6 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
     private javax.swing.JButton removeTrackDefaultButton;
     private javax.swing.JPanel selectTrackDefaultPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
-    private javax.swing.ButtonGroup showStrandButtonGroup;
     private javax.swing.JPanel showStrandPanel;
     private javax.swing.JTable table;
     private javax.swing.JTextField trackDefaultTextField;
@@ -696,36 +687,47 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			show2TracksCheckBox.setSelected(false);
 			connectedCheckBox.setSelected(false);
 			collapsedCheckBox.setSelected(false);
-			showStrandButtonGroup.clearSelection();
+			colorCheckBox.setSelected(false);
+			arrowCheckBox.setSelected(false);
 		}
 
 		if (selectedRows.length == 1) {
-			if (model.getStyles().get(selectedRows[0]).getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)){
-			removeTrackDefaultButton.setEnabled(false);
-			}
-			TrackStyle style = model.getStyles().get(selectedRows[0]);
-			trackDefaultTextField.setText(style.getTrackName());
-			bgColorComboBox.setSelectedColor(style.getBackground());
-			fgColorComboBox.setSelectedColor(style.getForeground());
-			trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
-			labelFieldComboBox.setSelectedItem(style.getLabelField());
-			maxDepthTextField.setText(String.valueOf(style.getMaxDepth()));
-			show2TracksCheckBox.setSelected(style.getShow());
-			connectedCheckBox.setSelected(style.getSeparate());
-			collapsedCheckBox.setSelected(style.getCollapsed());
-			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.NONE) {
-				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), false);
-				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), false);
+			selectedStyle = model.getStyles().get(selectedRows[0]);
+			
+			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
+				removeTrackDefaultButton.setEnabled(false);
 			}
 
-			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.ARROW) {
-				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), false);
-				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), true);
-			}
-
-			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.COLOR) {
-				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), true);
-				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), false);
+			trackDefaultTextField.setText(selectedStyle.getTrackName());
+			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
+			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
+			trackNameSizeComboBox.setSelectedItem(selectedStyle.getTrackNameSize());
+			labelFieldComboBox.setSelectedItem(selectedStyle.getLabelField());
+			maxDepthTextField.setText(String.valueOf(selectedStyle.getMaxDepth()));
+			show2TracksCheckBox.setSelected(selectedStyle.getShow());
+			connectedCheckBox.setSelected(selectedStyle.getSeparate());
+			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
+			
+			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
+				case NONE:
+					colorCheckBox.setSelected(false);
+					arrowCheckBox.setSelected(false);
+					break;
+				case ARROW:
+					colorCheckBox.setSelected(false);
+					arrowCheckBox.setSelected(true);
+					break;
+				case COLOR:
+					colorCheckBox.setSelected(true);
+					arrowCheckBox.setSelected(false);
+					break;
+				case BOTH:
+					colorCheckBox.setSelected(true);
+					arrowCheckBox.setSelected(true);
+					break;
+				default:
+					System.out.println("Unknown enum selected");
+					break;
 			}
 		}
 

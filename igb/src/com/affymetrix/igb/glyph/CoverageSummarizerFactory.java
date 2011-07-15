@@ -70,41 +70,47 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI {
 					annot_style);
 			TierGlyph ftier = tiers[0]; // ignore the reverse tier
 
-			Color background_color;
-			Color glyph_color;
-			if (annot_style == null) {
-				glyph_color = TrackStyle.getDefaultInstance().getForeground();
-				background_color = TrackStyle.getDefaultInstance().getBackground();
-			} else {
-				glyph_color = annot_style.getForeground();
-				background_color = annot_style.getBackground();
-			}
-
-			AffyTieredMap map = gviewer.getSeqMap();
-
-			BioSeq annotseq = gviewer.getAnnotatedSeq();
-			BioSeq coordseq = gviewer.getViewSeq();
-			SeqSymmetry tsym = sym;
-			// transform symmetry to coordseq if annotseq != coordseq, like in the slice viewer
-			if (annotseq != coordseq) {
-				tsym = gviewer.transformForViewSeq(sym, gviewer.getAnnotatedSeq());
-			}
-
-			int child_count = tsym.getChildCount();
-			// initializing list internal array length to child count to reduce list expansions...
-			List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(child_count);
-			SeqUtils.collectLeafSpans(tsym, coordseq, leaf_spans);
-
-			CoverageSummarizerGlyph cov = new CoverageSummarizerGlyph();
-			cov.setHitable(false);
-			cov.setBackgroundColor(background_color);
-			cov.setCoveredIntervals(leaf_spans);
-			cov.setColor(glyph_color);
-			cov.setStyle(style);
-			cov.setCoords(0, 0, coordseq.getLength(), glyph_height);
-			ftier.addChild(cov);
-
-			map.setDataModelFromOriginalSym(cov, tsym);
+			createGlyph(sym, ftier, annot_style, style, glyph_height, gviewer);
 		}
+	}
+	
+	public static void createGlyph(SeqSymmetry sym, TierGlyph ftier, ITrackStyleExtended annot_style,
+			int style, int glyph_height, SeqMapView gviewer) {
+
+		Color background_color;
+		Color glyph_color;
+		if (annot_style == null) {
+			glyph_color = TrackStyle.getDefaultInstance().getForeground();
+			background_color = TrackStyle.getDefaultInstance().getBackground();
+		} else {
+			glyph_color = annot_style.getForeground();
+			background_color = annot_style.getBackground();
+		}
+
+		AffyTieredMap map = gviewer.getSeqMap();
+
+		BioSeq annotseq = gviewer.getAnnotatedSeq();
+		BioSeq coordseq = gviewer.getViewSeq();
+		SeqSymmetry tsym = sym;
+		// transform symmetry to coordseq if annotseq != coordseq, like in the slice viewer
+		if (annotseq != coordseq) {
+			tsym = gviewer.transformForViewSeq(sym, gviewer.getAnnotatedSeq());
+		}
+
+		int child_count = tsym.getChildCount();
+		// initializing list internal array length to child count to reduce list expansions...
+		List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(child_count);
+		SeqUtils.collectLeafSpans(tsym, coordseq, leaf_spans);
+
+		CoverageSummarizerGlyph cov = new CoverageSummarizerGlyph();
+		cov.setHitable(false);
+		cov.setBackgroundColor(background_color);
+		cov.setCoveredIntervals(leaf_spans);
+		cov.setColor(glyph_color);
+		cov.setStyle(style);
+		cov.setCoords(0, 0, coordseq.getLength(), glyph_height);
+		ftier.addChild(cov);
+
+		map.setDataModelFromOriginalSym(cov, tsym);
 	}
 }

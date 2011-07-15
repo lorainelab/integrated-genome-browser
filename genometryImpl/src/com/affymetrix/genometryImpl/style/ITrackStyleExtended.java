@@ -39,5 +39,11 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setDirectionType(int i);
 	int getDirectionType();
 	
+	void setStartColor(Color c);
+	Color getStartColor();
+	
+	void setEndColor(Color c);
+	Color getEndColor();
+	
 	String getFileType();
 }

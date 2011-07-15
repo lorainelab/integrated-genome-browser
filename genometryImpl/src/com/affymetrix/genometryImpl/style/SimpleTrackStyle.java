@@ -70,4 +70,20 @@ public final class SimpleTrackStyle extends DefaultTrackStyle implements ITrackS
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+	public void setStartColor(Color c) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Color getStartColor() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public void setEndColor(Color c) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public Color getEndColor() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 }

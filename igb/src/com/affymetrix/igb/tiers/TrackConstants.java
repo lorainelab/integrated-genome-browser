@@ -21,6 +21,8 @@ public interface TrackConstants {
 	static final String PREF_MAX_DEPTH = "Max Depth";
 	static final String PREF_FOREGROUND = "Foreground";
 	static final String PREF_BACKGROUND = "Background";
+	static final String PREF_START_COLOR = "Start Color";
+	static final String PREF_END_COLOR = "End Color";
 	static final String PREF_TRACK_NAME = "Track Name";
 	static final String PREF_LABEL_FIELD = "Label Field";
 	static final String PREF_SHOW2TRACKS = "Show 2 Tracks";
@@ -34,6 +36,8 @@ public interface TrackConstants {
 	static final int default_max_depth = 10;
 	static final Color default_foreground = Color.CYAN;
 	static final Color default_background = Color.BLACK;
+	static final Color default_start = Color.GREEN;
+	static final Color default_end = Color.RED;
 	static final String default_label_field = "";
 	static final int default_show2tracks = 2;
 	static final double default_height = 20.0;

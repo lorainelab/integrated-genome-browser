@@ -302,6 +302,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		int childCount = sym.getChildCount();
 		List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 		DIRECTION_TYPE direction_type = DIRECTION_TYPE.valueFor(the_style.getDirectionType());
+		Color start_color = the_style.getStartColor();
+		Color end_color = the_style.getEndColor();
 		for (int i = 0; i < childCount; i++) {
 			SeqSymmetry child = sym.getChild(i);
 			SeqSpan cspan = gviewer.getViewSeqSpan(child);
@@ -318,7 +320,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 				map.setDataModelFromOriginalSym(cglyph, child);
 				
 				if(direction_type == DIRECTION_TYPE.COLOR || direction_type == DIRECTION_TYPE.BOTH){
-					addColorDirection(cdsSpan, cspan, pglyph);
+					addColorDirection(cdsSpan, cspan, pglyph, start_color, end_color);
 				}
 				
 				GlyphI alignResidueGlyph = handleAlignedResidues(child, annotseq);
@@ -416,7 +418,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		return DEFAULT_THIN_HEIGHT;
 	}
 
-	private static void addColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph) {
+	private static void addColorDirection(SeqSpan cdsSpan, SeqSpan cspan, GlyphI pglyph, Color start_color, Color end_color) {
 		if (cdsSpan == null || SeqUtils.contains(cdsSpan, cspan)
 				|| !SeqUtils.overlap(cdsSpan, cspan) || cdsSpan.getLength() == 0) {
 			return;
@@ -424,26 +426,26 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 
 		if (cdsSpan.isForward()) {
 			if (SeqUtils.contains(cspan, cdsSpan)) {
-				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), Color.GREEN);
-				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), Color.RED);
+				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), start_color);
+				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), end_color);
 			} else {
 				//First
 				if (cdsSpan.getEnd() >= cspan.getEnd()) {
-					addColorDirection(pglyph, cdsSpan.getStart(), Math.min(cdsSpan.getLength(), 3), Color.GREEN);
+					addColorDirection(pglyph, cdsSpan.getStart(), Math.min(cdsSpan.getLength(), 3), start_color);
 				} else {
-					addColorDirection(pglyph, Math.max(cdsSpan.getStart(), cdsSpan.getEnd() - 3), Math.min(cdsSpan.getLength(), 3), Color.RED);
+					addColorDirection(pglyph, Math.max(cdsSpan.getStart(), cdsSpan.getEnd() - 3), Math.min(cdsSpan.getLength(), 3), end_color);
 				}
 			}
 		} else {
 			if (SeqUtils.contains(cspan, cdsSpan)) {
-				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), Color.RED);
-				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), Color.GREEN);
+				addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), end_color);
+				addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), start_color);
 			} else {
 				//First
 				if (cdsSpan.getStart() >= cspan.getStart()) {
-					addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), Color.RED);
+					addColorDirection(pglyph, cdsSpan.getMin(), Math.min(cdsSpan.getLength(), 3), end_color);
 				} else {
-					addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), Color.GREEN);
+					addColorDirection(pglyph, Math.max(cdsSpan.getMin(), cdsSpan.getMax() - 3), Math.min(cdsSpan.getLength(), 3), start_color);
 				}
 			}
 		}

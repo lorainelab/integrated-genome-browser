@@ -52,6 +52,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private int show2tracks = default_show2tracks;
 	private double height = default_height;
 	private double y = default_y;
+	private Color start_color = default_start;
+	private Color end_color = default_end; 
 	private String url = null;
 	private String file_type = null;
 	private boolean color_by_score = false;
@@ -68,6 +70,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 	private boolean customizable = true;
 	private GenericFeature feature = null;
 
+	
 	public static TrackStyle getInstance(String name, String human_name, String file_type, Map<String, String> props) {
 		return getInstance(name, human_name, file_type, true, true, props);
 	}
@@ -220,7 +223,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
 		foreground = PreferenceUtils.getColor(node, PREF_FOREGROUND, this.getForeground());
 		background = PreferenceUtils.getColor(node, PREF_BACKGROUND, this.getBackground());
-
+		start_color = PreferenceUtils.getColor(node, PREF_START_COLOR, this.getStartColor());
+		end_color = PreferenceUtils.getColor(node, PREF_END_COLOR, this.getEndColor());
+		
 		label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
 		show2tracks = node.getInt(PREF_SHOW2TRACKS, this.getShow2Tracks());
 		track_name_size = node.getFloat(PREF_TRACK_SIZE, this.getTrackNameSize());
@@ -247,6 +252,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		Color bgcol = props.getColor(PROP_BACKGROUND);
 		if (bgcol != null) {
 			background = bgcol;
+		}
+		
+		Color stcol = props.getColor(PROP_START_COLOR);
+		if (stcol != null) {
+			start_color = stcol;
+		}
+		
+		Color edcol = props.getColor(PROP_END_COLOR);
+		if (edcol != null) {
+			end_color = edcol;
 		}
 
 		String gdepth_string = (String) props.getProperty(PROP_GLYPH_DEPTH);
@@ -342,6 +357,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		label_field = template.getLabelField();
 		show2tracks = template.getShow2Tracks();  // depth of visible glyph tree
 		track_name_size = template.getTrackNameSize();
+		start_color = template.getStartColor();
+		end_color = template.getEndColor();
 		direction_type = template.direction_type;
 	}
 
@@ -502,6 +519,36 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 		}
 	}
 
+	/** The color of the start direction. */
+	public Color getStartColor() {
+		return start_color;
+	}
+
+	public void setStartColor(Color c) {
+		this.start_color = c;
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + track_name + ", " + c);
+			}
+			PreferenceUtils.putColor(getNode(), PREF_START_COLOR, c);
+		}
+	}
+
+	/** The color of the start direction. */
+	public Color getEndColor() {
+		return end_color;
+	}
+
+	public void setEndColor(Color c) {
+		this.end_color = c;
+		if (getNode() != null) {
+			if (DEBUG_NODE_PUTS) {
+				System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + track_name + ", " + c);
+			}
+			PreferenceUtils.putColor(getNode(), PREF_END_COLOR, c);
+		}
+	}
+	
 	/** Returns the field name from which the glyph labels should be taken.
 	 *  This will never return null, but will return "" instead.
 	 */

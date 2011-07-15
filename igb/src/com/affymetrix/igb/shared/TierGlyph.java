@@ -77,6 +77,7 @@ public class TierGlyph extends SolidGlyph {
 	private List<GlyphI> max_child_sofar = null;
 	private static final int handle_width = 10;  // width of handle in pixels
 	private ITrackStyle style;
+	private GlyphI summary;
 	
 	public TierGlyph(ITrackStyle style) {
 		setHitable(false);
@@ -102,6 +103,11 @@ public class TierGlyph extends SolidGlyph {
 		setLabel(style.getTrackName());
 	}
 
+	public void setSummary(GlyphI summary){
+		this.summary = summary;
+		
+	}
+	
 	public ITrackStyle getAnnotStyle() {
 		return style;
 	}
@@ -273,6 +279,15 @@ public class TierGlyph extends SolidGlyph {
 		return middle_glyphs;
 	}
 
+	public void drawTraversal(ViewI view)  {
+		if(view.getTransform().getScaleX() < 0.002 && summary != null){
+			summary.setCoordBox(this.getCoordBox());
+			summary.draw(view);
+			return;
+		}
+		super.drawTraversal(view);
+	}
+	
 	/**
 	 *  Overridden to allow background shading by a collection of non-child
 	 *    "middleground" glyphs.  These are rendered after the solid background but before
@@ -398,6 +413,7 @@ public class TierGlyph extends SolidGlyph {
 		//     clearing middle_glyphs.  These glyphs never have setScene() called on them,
 		//     so it is not necessary to call setScene(null) on them.
 		middle_glyphs.clear();
+		summary = null;
 	}
 
 	public final TierState getState() {

@@ -6,6 +6,7 @@ Bundle-Version: @appVersion@
 Bundle-Activator: com.affymetrix.igb.plugins.Activator
 IGB-Tier: 1
 Import-Package: com.affymetrix.igb.osgi.service,
+ com.affymetrix.igb.util,
  com.affymetrix.igb.window.service,
  javax.swing,
  javax.swing.border,

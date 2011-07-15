@@ -2,8 +2,10 @@ package com.affymetrix.genoviz.swing.recordplayback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,14 +32,24 @@ public class RecordPlaybackHolder {
 		widgets.put(widget.getID(), widget);
 	}
 	public String getScript() {
+		Set<String> namedIds = new HashSet<String>();
 		StringBuffer sb = new StringBuffer();
 		sb.append(IMPORT);
 		sb.append(ASSIGN);
 		for (Operation operation : operations) {
+			String id = operation.getId();
+			if (!namedIds.contains(id)) {
+				sb.append(id + " = rph.getWidget(\"" + id + "\")\n");
+				namedIds.add(id);
+			}
 			sb.append(operation.toString() + "\n");
 		}
 		return sb.toString();
 	}
+	public JRPWidget getWidget(String id) {
+		return widgets.get(id);
+	}
+
 	public void recordOperation(Operation operation) {
 		int lastIndex = operations.size() - 1;
 		if (lastIndex >= 0) {
@@ -52,29 +64,6 @@ public class RecordPlaybackHolder {
 	public void runScript(String fileName) {
 		PythonInterpreter interp = new PythonInterpreter();
 		interp.execfile(fileName);
-	}
-	public void execute(final String id, final String... parms) {
-		JRPWidget widget = widgets.get(id);
-		if (widget == null) {
-			Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Record/Playback error, id: " + id + " was not found");
-		}
-		else {
-			widget.execute(parms);
-			try {
-				Thread.sleep(1000);	// user actions don't happen instantaneously, so give a short sleep time between batch actions.
-			}
-			catch (InterruptedException x) {}
-		}
-/*
-		(new SwingWorker<Void, Void>() {
-			@Override
-			protected Void doInBackground() throws Exception {
-				widgets.get(id).execute(parms);
-				return null;
-			}
-			
-		}).execute();
-*/
 	}
 	public void pause() {
 		JOptionPane.showMessageDialog(null, "script paused ...");

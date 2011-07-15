@@ -46,7 +46,7 @@ public class JRPMenuItem extends JMenuItem implements JRPWidget {
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPMenuItem.this));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "doClick()"));
 			}
 		});
     }
@@ -54,15 +54,5 @@ public class JRPMenuItem extends JMenuItem implements JRPWidget {
 	@Override
 	public String getID() {
 		return id;
-	}
-
-	@Override
-	public void execute(String... params) {
-		doClick();
-	}
-
-	@Override
-	public String[] getParms() {
-		return new String[]{id};
 	}
 }

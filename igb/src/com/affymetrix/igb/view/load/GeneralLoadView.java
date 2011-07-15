@@ -119,7 +119,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		choicePanel.setLayout(new BoxLayout(choicePanel, BoxLayout.X_AXIS));
 		choicePanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
 
-		speciesCB = new JRPComboBoxWithSingleListener("DataAccess.species");
+		speciesCB = new JRPComboBoxWithSingleListener("DataAccess_species");
 		speciesCB.addItem(SELECT_SPECIES);
 		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width*4,speciesCB.getPreferredSize().height));
 		speciesCB.setEnabled(false);
@@ -135,7 +135,7 @@ public final class GeneralLoadView extends IGBTabPanel
 		choicePanel.add(speciesCB);
 		choicePanel.add(Box.createHorizontalStrut(50));
 
-		versionCB = new JRPComboBoxWithSingleListener("DataAccess.version");
+		versionCB = new JRPComboBoxWithSingleListener("DataAccess_version");
 		versionCB.addItem(SELECT_GENOME);
 		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width*4, versionCB.getPreferredSize().height));
 		versionCB.setEnabled(false);
@@ -152,18 +152,18 @@ public final class GeneralLoadView extends IGBTabPanel
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 3));
 
-		all_residuesB = new JRPButton("DataAccess.allSequence", LoadSequence.getWholeAction());
+		all_residuesB = new JRPButton("DataAccess_allSequence", LoadSequence.getWholeAction());
 		all_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("nucleotideSequence")));
 		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
 		all_residuesB.setEnabled(false);
 		buttonPanel.add(all_residuesB);
-		partial_residuesB = new JRPButton("DataAccess.sequenceInView", LoadSequence.getPartialAction());
+		partial_residuesB = new JRPButton("DataAccess_sequenceInView", LoadSequence.getPartialAction());
 		partial_residuesB.setToolTipText(MessageFormat.format(LOAD,IGBConstants.BUNDLE.getString("partialNucleotideSequence")));
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
 		buttonPanel.add(partial_residuesB);
 		this.refreshDataAction = gviewer.getRefreshDataAction();
-		JRPButton refresh_dataB = new JRPButton("DataAccess.refreshData", refreshDataAction);
+		JRPButton refresh_dataB = new JRPButton("DataAccess_refreshData", refreshDataAction);
 		refresh_dataB.setToolTipText(BUNDLE.getString("refreshDataTip"));
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refreshDataAction.setEnabled(false);

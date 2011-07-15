@@ -66,14 +66,14 @@ public final class SearchView extends IGBTabPanel implements
 	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
 
-	private final JRPTextField searchTF = new JRPTextField("SearchView.searchTF", 10);
+	private final JRPTextField searchTF = new JRPTextField("SearchView_searchTF", 10);
 	private final JPanel pan1 = new JPanel();
-	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView.sequenceCB");
-	private final JRPComboBoxWithSingleListener searchCB = new JRPComboBoxWithSingleListener("SearchView.searchCB");
-	private final JRPCheckBox remoteSearchCheckBox = new JRPCheckBox("SearchView.remoteSearchCheckBox", "");
-	private final JRPButton searchButton = new JRPButton("SearchView.searchButton", MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif"));
-	private final JRPButton clearButton = new JRPButton("SearchView.clearButton", MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
-	private final CancelButton cancel = new CancelButton("SearchView.CancelButton", igbService.getIcon("x_icon.gif"));
+	private final JRPComboBoxWithSingleListener sequenceCB = new JRPComboBoxWithSingleListener("SearchView_sequenceCB");
+	private final JRPComboBoxWithSingleListener searchCB = new JRPComboBoxWithSingleListener("SearchView_searchCB");
+	private final JRPCheckBox remoteSearchCheckBox = new JRPCheckBox("SearchView_remoteSearchCheckBox", "");
+	private final JRPButton searchButton = new JRPButton("SearchView_searchButton", MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif"));
+	private final JRPButton clearButton = new JRPButton("SearchView_clearButton", MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
+	private final CancelButton cancel = new CancelButton("SearchView_CancelButton", igbService.getIcon("x_icon.gif"));
 	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 
 	private JTable table = new JTable();

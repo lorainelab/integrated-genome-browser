@@ -1,32 +1,19 @@
 package com.affymetrix.genoviz.swing.recordplayback;
 
 public class Operation {
-	public static final String PLAYBACK_COMMAND = "rph.execute";
-	private final JRPWidget widget;
-	private final String[] parms;
-	public Operation(JRPWidget widget) {
+	public static final String PLAYBACK_COMMAND = "rph.";
+	private final String id;
+	private final String commandString;
+	public Operation(String id, String commandString) {
 		super();
-		this.widget = widget;
-		parms = widget.getParms();
+		this.id = id;
+		this.commandString = commandString;
 	}
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append(PLAYBACK_COMMAND + "(");
-    	boolean started = false;
-    	for (String s : parms) {
-    		if (started) {
-    			sb.append(", ");
-    		}
-    		else {
-    			started = true;
-    		}
-    		sb.append("\"" + s + "\"");
-    	}
-		sb.append(")");
-		return sb.toString();
+		return id + "." + commandString;
 	}
 
 	public String getId() {
-		return widget.getID();
+		return id;
 	}
 }

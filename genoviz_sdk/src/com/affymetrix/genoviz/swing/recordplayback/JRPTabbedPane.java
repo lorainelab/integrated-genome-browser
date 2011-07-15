@@ -28,22 +28,12 @@ public class JRPTabbedPane extends JTabbedPane implements JRPWidget {
 		addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				RecordPlaybackHolder.getInstance().recordOperation(new Operation(JRPTabbedPane.this));
+				RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setSelectedIndex(" + getSelectedIndex() + ")"));
 			}
 		});
     }
 	@Override
 	public String getID() {
 		return id;
-	}
-
-	@Override
-	public void execute(String... params) {
-		setSelectedIndex(Integer.parseInt(params[0]));
-	}
-
-	@Override
-	public String[] getParms() {
-		return new String[]{id, "" + getSelectedIndex()};
 	}
 }

@@ -2,7 +2,6 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
-import com.affymetrix.igb.stylesheet.FileTypePrefTableModel;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import java.awt.Color;
 import java.awt.event.*;
@@ -14,21 +13,32 @@ import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.igb.stylesheet.PropertyConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DIRECTION_TYPE;
 import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.grid.ColorCellEditor;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author lorainelab
  */
-public class FileTypeViewNew extends IPrefEditorComponent implements ListSelectionListener, WindowListener, SeqMapRefreshed {
+public class TrackDefaultView extends IPrefEditorComponent implements ListSelectionListener, WindowListener, SeqMapRefreshed {
 
-	private static final int COL_FILE_TYPE = 0;
+	private static final String FILE_TYPE = "File Type";
+	private static final String FOREGROUND = "Foreground";
+	private static final String BACKGROUND = "Background";
+	private static final String TRACK_NAME_SIZE = "Track Name Size";
+	private final static String[] col_headings = {
+		FILE_TYPE,
+		BACKGROUND, FOREGROUND,
+		TRACK_NAME_SIZE,};
+	private static final int COL_TRACK_DEFAULT = 0;
 	private static final int COL_BACKGROUND = 1;
 	private static final int COL_FOREGROUND = 2;
 	private static final int COL_TRACK_NAME_SIZE = 3;
@@ -38,21 +48,25 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 	private static final int COL_LABEL_FIELD = 7;
 	private static final int COL_SHOW2TRACKS = 8;
 	private static final int COL_DIRECTION_TYPE = 9;
-	private final FileTypePrefTableModel model;
+	private static TrackStyle default_annot_style = TrackStyle.getDefaultInstance();
+	private final TrackDefaultPrefTableModel model;
 	private ListSelectionModel lsm;
 	private boolean initializationDetector; //Test to detect action events triggered by clicking a row in the table.
 	private boolean settingValueFromTable;  //Test to prevent action events triggered by the setValueAt method from calling the method again.  This improves efficiency.
 	private float trackNameSize;
 	private int[] selectedRows;
 	private Object[] temp;
-	private String[] fileTypes;
+	private String[] trackDefaults;
 	ArrayList<String> list = new ArrayList<String>();
-	private String allowedFileTypes;
+	private String allowedTrackDefaults;
+	private String AddButtonTitle = "Add Track Default";
+	private String selectedTrackDefaultType;
+	private AssociationElement element;
 
 	/** Creates new form FileTypeViewNew */
-	public FileTypeViewNew() {
-		setName("File Type Defaults");
-		model = new FileTypePrefTableModel();
+	public TrackDefaultView() {
+		setName("Track Defaults");
+		model = new TrackDefaultPrefTableModel();
 		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
 		initializeFileTypes();
 		initComponents();
@@ -63,15 +77,15 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 		for (int i = 0; i < temp.length; i++) {
 			StringTokenizer tokens = new StringTokenizer(temp[i].toString(), ",");
 			while (tokens.hasMoreElements()) {
-				allowedFileTypes = tokens.nextToken();
-				allowedFileTypes = allowedFileTypes.replace("[", "");
-				allowedFileTypes = allowedFileTypes.replace("]", "");
-				allowedFileTypes = allowedFileTypes.trim();
-				list.add(allowedFileTypes);
+				allowedTrackDefaults = tokens.nextToken();
+				allowedTrackDefaults = allowedTrackDefaults.replace("[", "");
+				allowedTrackDefaults = allowedTrackDefaults.replace("]", "");
+				allowedTrackDefaults = allowedTrackDefaults.trim();
+				list.add(allowedTrackDefaults);
 			}
 		}
 		Collections.sort(list);
-		fileTypes = list.toArray(new String[list.size()]);
+		trackDefaults = list.toArray(new String[list.size()]);
 	}
 
 	/** This method is called from within the constructor to
@@ -89,16 +103,16 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
         negativeLabel = new javax.swing.JLabel();
         possitiveColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         negativeColorComboBox = new com.jidesoft.combobox.ColorComboBox();
-        pointerRadioButton = new javax.swing.JRadioButton();
-        colorRadioButton = new javax.swing.JRadioButton();
-        noneRadioButton = new javax.swing.JRadioButton();
-        selectTrackPanel = new javax.swing.JPanel();
+        colorCheckBox = new javax.swing.JCheckBox();
+        arrowCheckBox = new javax.swing.JCheckBox();
+        selectTrackDefaultPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        addButton = new javax.swing.JButton();
+        addTrackDefaultButton = new javax.swing.JButton();
+        removeTrackDefaultButton = new javax.swing.JButton();
         propertiesPanel = new javax.swing.JPanel();
         TrackTypeNameLabel = new javax.swing.JLabel();
-        TrackTypeTextField = new javax.swing.JTextField();
+        trackDefaultTextField = new javax.swing.JTextField();
         bgLabel = new javax.swing.JLabel();
         bgColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         trackNameSizeLabel = new javax.swing.JLabel();
@@ -145,27 +159,17 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
             }
         });
 
-        showStrandButtonGroup.add(pointerRadioButton);
-        pointerRadioButton.setText("Pointer");
-        pointerRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        colorCheckBox.setText("Color");
+        colorCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pointerRadioButtonActionPerformed(evt);
+                colorCheckBoxActionPerformed(evt);
             }
         });
 
-        showStrandButtonGroup.add(colorRadioButton);
-        colorRadioButton.setText("Color");
-        colorRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        arrowCheckBox.setText("Arrow");
+        arrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                colorRadioButtonActionPerformed(evt);
-            }
-        });
-
-        showStrandButtonGroup.add(noneRadioButton);
-        noneRadioButton.setText("None");
-        noneRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                noneRadioButtonActionPerformed(evt);
+                arrowCheckBoxActionPerformed(evt);
             }
         });
 
@@ -174,30 +178,28 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
         showStrandPanelLayout.setHorizontalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(showStrandPanelLayout.createSequentialGroup()
+                .add(8, 8, 8)
                 .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(pointerRadioButton)
-                    .add(colorRadioButton)
-                    .add(noneRadioButton)
                     .add(showStrandPanelLayout.createSequentialGroup()
-                        .add(8, 8, 8)
                         .add(possitiveLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(negativeLabel)
                         .add(8, 8, 8)
-                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(negativeColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(colorCheckBox)
+                    .add(arrowCheckBox))
                 .addContainerGap(8, Short.MAX_VALUE))
         );
         showStrandPanelLayout.setVerticalGroup(
             showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(showStrandPanelLayout.createSequentialGroup()
-                .add(noneRadioButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(pointerRadioButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(colorRadioButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(8, 8, 8)
+                .add(colorCheckBox)
+                .add(7, 7, 7)
+                .add(arrowCheckBox)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(showStrandPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(possitiveLabel)
                     .add(possitiveColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -206,7 +208,7 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        selectTrackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Track"));
+        selectTrackDefaultPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Track Default"));
 
         model.addTableModelListener(new javax.swing.event.TableModelListener() {
 
@@ -251,52 +253,51 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
         table.getColumnModel().getColumn(COL_TRACK_NAME_SIZE).setMaxWidth(95);
         jScrollPane1.setViewportView(table);
 
-        addButton.setText("Add File Type");
-
-        org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
-        selectTrackPanel.setLayout(selectTrackPanelLayout);
-        selectTrackPanelLayout.setHorizontalGroup(
-            selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(selectTrackPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
-                    .add(addButton))
-                .addContainerGap())
-        );
-        selectTrackPanelLayout.setVerticalGroup(
-            selectTrackPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackPanelLayout.createSequentialGroup()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(addButton))
-        );
-
-        addButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ae) {
-                String Select = "Add File Type";
-                String inputValue = "";
-                inputValue = (String) JOptionPane.showInputDialog(null,
-                    "Please select a file type to add",Select, JOptionPane.INFORMATION_MESSAGE,
-                    null, fileTypes,fileTypes[0]);
-
-                if (XmlStylesheetParser.getUserFileTypeAssociation().get(inputValue) != null) {
-                    ErrorHandler.errorPanel("Duplicate Entry", "File type " + inputValue + " exists");
-                    return;
-                }
-                XmlStylesheetParser.getUserFileTypeAssociation().put(inputValue, AssociationElement.getFileTypeAssocation(inputValue));
-                model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+        addTrackDefaultButton.setText("Add Track Default");
+        addTrackDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addTrackDefaultButtonActionPerformed(evt);
             }
         });
+
+        removeTrackDefaultButton.setText("Remove Track Default");
+        removeTrackDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeTrackDefaultButtonActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout selectTrackDefaultPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackDefaultPanel);
+        selectTrackDefaultPanel.setLayout(selectTrackDefaultPanelLayout);
+        selectTrackDefaultPanelLayout.setHorizontalGroup(
+            selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(selectTrackDefaultPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                    .add(selectTrackDefaultPanelLayout.createSequentialGroup()
+                        .add(addTrackDefaultButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(removeTrackDefaultButton)))
+                .addContainerGap())
+        );
+        selectTrackDefaultPanelLayout.setVerticalGroup(
+            selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, selectTrackDefaultPanelLayout.createSequentialGroup()
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selectTrackDefaultPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(addTrackDefaultButton)
+                    .add(removeTrackDefaultButton)))
+        );
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
 
         TrackTypeNameLabel.setText("Track Type:");
 
-        TrackTypeTextField.addActionListener(new java.awt.event.ActionListener() {
+        trackDefaultTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TrackTypeTextFieldActionPerformed(evt);
+                trackDefaultTextFieldActionPerformed(evt);
             }
         });
 
@@ -395,10 +396,12 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
                             .add(bgLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(trackDefaultTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(trackNameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 59, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                                    .add(org.jdesktop.layout.GroupLayout.LEADING, maxDepthTextField)
+                                    .add(org.jdesktop.layout.GroupLayout.LEADING, bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(org.jdesktop.layout.GroupLayout.LEADING, trackNameSizeComboBox, 0, 59, Short.MAX_VALUE))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(org.jdesktop.layout.GroupLayout.TRAILING, fgLabel)
@@ -406,9 +409,7 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(labelFieldComboBox, 0, 82, Short.MAX_VALUE)
-                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                            .add(maxDepthTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 50, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(TrackTypeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 230, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                    .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 19, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                         .add(46, 46, 46))
                     .add(propertiesPanelLayout.createSequentialGroup()
                         .addContainerGap()
@@ -424,7 +425,7 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(propertiesPanelLayout.createSequentialGroup()
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(TrackTypeTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(trackDefaultTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(TrackTypeNameLabel))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -461,7 +462,7 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 392, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(18, 18, 18)
@@ -472,12 +473,12 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(selectTrackPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(selectTrackDefaultPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 224, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 126, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(64, 64, 64))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -487,35 +488,11 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
 }//GEN-LAST:event_negativeColorComboBoxActionPerformed
 
-	private void pointerRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pointerRadioButtonActionPerformed
+	private void trackDefaultTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackDefaultTextFieldActionPerformed
 		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
-			}
+			model.setValueAt(trackDefaultTextField.getText(), selectedRows[0], COL_TRACK_DEFAULT);
 		}
-}//GEN-LAST:event_pointerRadioButtonActionPerformed
-
-	private void colorRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorRadioButtonActionPerformed
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
-			}
-		}
-}//GEN-LAST:event_colorRadioButtonActionPerformed
-
-	private void noneRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noneRadioButtonActionPerformed
-		if (!settingValueFromTable) {
-			for (int i = 0; i < selectedRows.length; i++) {
-				model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
-			}
-		}
-}//GEN-LAST:event_noneRadioButtonActionPerformed
-
-	private void TrackTypeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TrackTypeTextFieldActionPerformed
-		if (!settingValueFromTable) {
-			model.setValueAt(TrackTypeTextField.getText(), selectedRows[0], COL_FILE_TYPE);
-		}
-}//GEN-LAST:event_TrackTypeTextFieldActionPerformed
+}//GEN-LAST:event_trackDefaultTextFieldActionPerformed
 
 	private void bgColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgColorComboBoxActionPerformed
 		if (!settingValueFromTable) {
@@ -581,14 +558,93 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 			}
 		}
 }//GEN-LAST:event_collapsedCheckBoxActionPerformed
+
+	private void addTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTrackDefaultButtonActionPerformed
+		selectedTrackDefaultType = (String) JOptionPane.showInputDialog(null, "Enter value:", AddButtonTitle,
+				JOptionPane.PLAIN_MESSAGE, null, trackDefaults, trackDefaults[0]);
+
+		if (selectedTrackDefaultType == null) {
+			return;
+		}
+
+		if (XmlStylesheetParser.getUserFileTypeAssociation().get(selectedTrackDefaultType) != null) {
+			ErrorHandler.errorPanel("Duplicate Entry", "File type " + selectedTrackDefaultType + " exists");
+			return;
+		}
+		XmlStylesheetParser.getUserFileTypeAssociation().put(selectedTrackDefaultType, AssociationElement.getFileTypeAssocation(selectedTrackDefaultType));
+		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+
+	}//GEN-LAST:event_addTrackDefaultButtonActionPerformed
+
+	private void arrowCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arrowCheckBoxActionPerformed
+		// TODO add your handling code here:
+		if (!settingValueFromTable) {
+			if (colorCheckBox.isSelected()) {
+				if (arrowCheckBox.isSelected()) {
+					for (int i = 0; i < selectedRows.length; i++) {
+						model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[i], COL_DIRECTION_TYPE);
+					}
+				} else {
+					for (int i = 0; i < selectedRows.length; i++) {
+						model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
+					}
+				}
+			} else {
+				if (arrowCheckBox.isSelected()) {
+					for (int i = 0; i < selectedRows.length; i++) {
+						model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
+					}
+				} else {
+					for (int i = 0; i < selectedRows.length; i++) {
+						model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
+					}
+				}
+			}
+		}
+	}//GEN-LAST:event_arrowCheckBoxActionPerformed
+
+	private void colorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckBoxActionPerformed
+		// TODO add your handling code here:
+				if (!settingValueFromTable) {
+			if (colorCheckBox.isSelected()) {
+				if (arrowCheckBox.isSelected()) {
+					for (int i = 0; i < selectedRows.length; i++) {
+						model.setValueAt(TrackConstants.DIRECTION_TYPE.BOTH, selectedRows[i], COL_DIRECTION_TYPE);
+					}
+				} else {
+					for (int i = 0; i < selectedRows.length; i++) {
+						model.setValueAt(TrackConstants.DIRECTION_TYPE.COLOR, selectedRows[i], COL_DIRECTION_TYPE);
+					}
+				}
+			} else {
+				if (arrowCheckBox.isSelected()) {
+					for (int i = 0; i < selectedRows.length; i++) {
+						model.setValueAt(TrackConstants.DIRECTION_TYPE.ARROW, selectedRows[i], COL_DIRECTION_TYPE);
+					}
+				} else {
+					for (int i = 0; i < selectedRows.length; i++) {
+						model.setValueAt(TrackConstants.DIRECTION_TYPE.NONE, selectedRows[i], COL_DIRECTION_TYPE);
+					}
+				}
+			}
+		}
+	}//GEN-LAST:event_colorCheckBoxActionPerformed
+
+	private void removeTrackDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTrackDefaultButtonActionPerformed
+		// TODO add your handling code here:
+		model.style = model.tier_styles.get(table.getSelectedRow());
+		XmlStylesheetParser.getUserFileTypeAssociation().remove(model.style.getTrackName());
+		model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+}//GEN-LAST:event_removeTrackDefaultButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TrackTypeNameLabel;
-    private javax.swing.JTextField TrackTypeTextField;
-    private javax.swing.JButton addButton;
+    private javax.swing.JButton addTrackDefaultButton;
+    private javax.swing.JCheckBox arrowCheckBox;
     private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
     private javax.swing.JLabel bgLabel;
     private javax.swing.JCheckBox collapsedCheckBox;
-    private javax.swing.JRadioButton colorRadioButton;
+    private javax.swing.JCheckBox colorCheckBox;
     private javax.swing.JCheckBox connectedCheckBox;
     private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;
@@ -599,16 +655,16 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
     private javax.swing.JTextField maxDepthTextField;
     private com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
     private javax.swing.JLabel negativeLabel;
-    private javax.swing.JRadioButton noneRadioButton;
-    private javax.swing.JRadioButton pointerRadioButton;
     private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
     private javax.swing.JLabel possitiveLabel;
     private javax.swing.JPanel propertiesPanel;
-    private javax.swing.JPanel selectTrackPanel;
+    private javax.swing.JButton removeTrackDefaultButton;
+    private javax.swing.JPanel selectTrackDefaultPanel;
     private javax.swing.JCheckBox show2TracksCheckBox;
     private javax.swing.ButtonGroup showStrandButtonGroup;
     private javax.swing.JPanel showStrandPanel;
     private javax.swing.JTable table;
+    private javax.swing.JTextField trackDefaultTextField;
     private javax.swing.JComboBox trackNameSizeComboBox;
     private javax.swing.JLabel trackNameSizeLabel;
     // End of variables declaration//GEN-END:variables
@@ -627,9 +683,9 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 		connectedCheckBox.setEnabled(true);
 		collapsedCheckBox.setEnabled(true);
 		selectedRows = table.getSelectedRows();
-
+		removeTrackDefaultButton.setEnabled(true);
 		initializationDetector = true;
-		TrackTypeTextField.setEnabled(false);
+		trackDefaultTextField.setEnabled(false);
 
 		if (selectedRows.length > 1) {
 			bgColorComboBox.setSelectedColor(null);
@@ -644,10 +700,11 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 		}
 
 		if (selectedRows.length == 1) {
-			Entry entry = model.file2types[selectedRows[0]];
-			AssociationElement element = (AssociationElement) entry.getValue();
-			TrackStyle style = new TrackStyle(element);
-			TrackTypeTextField.setText(entry.getKey().toString());
+			if (model.getStyles().get(selectedRows[0]).getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)){
+			removeTrackDefaultButton.setEnabled(false);
+			}
+			TrackStyle style = model.getStyles().get(selectedRows[0]);
+			trackDefaultTextField.setText(style.getTrackName());
 			bgColorComboBox.setSelectedColor(style.getBackground());
 			fgColorComboBox.setSelectedColor(style.getForeground());
 			trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
@@ -656,16 +713,19 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 			show2TracksCheckBox.setSelected(style.getShow());
 			connectedCheckBox.setSelected(style.getSeparate());
 			collapsedCheckBox.setSelected(style.getCollapsed());
-			if (style.getDirectionName() == DIRECTION_TYPE.NONE) {
-				showStrandButtonGroup.setSelected(noneRadioButton.getModel(), true);
+			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.NONE) {
+				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), false);
+				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), false);
 			}
 
-			if (style.getDirectionName() == DIRECTION_TYPE.ARROW) {
-				showStrandButtonGroup.setSelected(pointerRadioButton.getModel(), true);
+			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.ARROW) {
+				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), false);
+				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), true);
 			}
 
-			if (style.getDirectionName() == DIRECTION_TYPE.COLOR) {
-				showStrandButtonGroup.setSelected(colorRadioButton.getModel(), true);
+			if (model.getStyles().get(selectedRows[0]).getDirectionName() == DIRECTION_TYPE.COLOR) {
+				showStrandButtonGroup.setSelected(colorCheckBox.getModel(), true);
+				showStrandButtonGroup.setSelected(arrowCheckBox.getModel(), false);
 			}
 		}
 
@@ -718,5 +778,206 @@ public class FileTypeViewNew extends IPrefEditorComponent implements ListSelecti
 	}
 
 	public void windowDeactivated(WindowEvent e) {
+	}
+
+	class TrackDefaultPrefTableModel extends AbstractTableModel implements PropertyConstants {
+
+		private List<TrackStyle> tier_styles;
+		private TrackStyle style;
+		public AssociationElement element;
+		public Entry[] file2types;
+		public Entry entry;
+
+		public TrackDefaultPrefTableModel() {
+			this.tier_styles = new ArrayList<TrackStyle>();
+		}
+
+		public void setStyles(List<TrackStyle> tier_styles) {
+			this.tier_styles = tier_styles;
+		}
+
+		public List<TrackStyle> getStyles() {
+			return this.tier_styles;
+		}
+
+		public void setElements(java.util.Map<String, AssociationElement> elements) {
+			file2types = elements.entrySet().toArray(new Entry[elements.size()]);
+			tier_styles.clear();
+			tier_styles.add(default_annot_style);
+			for (Entry temp : file2types) {
+				element = (AssociationElement) temp.getValue();
+				style = new TrackStyle(element);
+				style.setTrackName(temp.getKey().toString());
+				tier_styles.add(style);
+			}
+			fireTableDataChanged();
+		}
+
+		// Allow editing most fields in normal rows, but don't allow editing some
+		// fields in the "default" style row.
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			if (column == COL_TRACK_DEFAULT) {
+				return false;
+			}
+
+			return true;
+		}
+
+		public int getRowCount() {
+			return tier_styles.size();
+		}
+
+		@Override
+		public String getColumnName(int columnIndex) {
+			return col_headings[columnIndex];
+		}
+
+		public int getColumnCount() {
+			return col_headings.length;
+		}
+
+		public Object getValueAt(int row, int column) {
+			style = tier_styles.get(row);
+			switch (column) {
+				case COL_TRACK_DEFAULT:
+					return style.getTrackName();
+				case COL_FOREGROUND:
+					return style.getForeground();
+				case COL_BACKGROUND:
+					return style.getBackground();
+				case COL_TRACK_NAME_SIZE:
+					return style.getTrackNameSize();
+				default:
+					return null;
+			}
+		}
+
+		@Override
+		public Class<?> getColumnClass(int c) {
+			Object val = getValueAt(0, c);
+			if (val == null) {
+				return Object.class;
+			} else {
+				return val.getClass();
+			}
+		}
+
+		@Override
+		public void setValueAt(Object value, int row, int col) {
+			settingValueFromTable = true;
+			if (value != null && !initializationDetector) {
+				try {
+					style = tier_styles.get(row);
+					if (!style.equals(default_annot_style)) {
+						entry = file2types[row - 1];
+						element = (AssociationElement) entry.getValue();
+					}
+					switch (col) {
+						case COL_FOREGROUND:
+							if (style.equals(default_annot_style)) {
+								style.setForeground((Color) value);
+							} else {
+								element.propertyMap.put(PROP_COLOR, value);
+							}
+							fgColorComboBox.setSelectedColor((Color) value);
+							break;
+						case COL_BACKGROUND:
+							if (style.equals(default_annot_style)) {
+								style.setBackground((Color) value);
+							} else {
+								element.propertyMap.put(PROP_BACKGROUND, value);
+							}
+							bgColorComboBox.setSelectedColor((Color) value);
+							break;
+						case COL_TRACK_NAME_SIZE:
+							if (style.equals(default_annot_style)) {
+								style.setTrackNameSize((Float) value);
+							} else {
+								element.propertyMap.put(PROP_FONT_SIZE, value.toString());
+							}
+							trackNameSizeComboBox.setSelectedItem((Float) value);
+							break;
+						case COL_LABEL_FIELD:
+							if (style.equals(default_annot_style)) {
+								style.setLabelField((String) value);
+							} else {
+								element.propertyMap.put(PROP_LABEL_FIELD, value);
+							}
+							break;
+						case COL_MAX_DEPTH: {
+							int i = parseInteger(((String) value), 0, style.getMaxDepth());
+							if (style.equals(default_annot_style)) {
+								style.setMaxDepth(i);
+							} else {
+								element.propertyMap.put(PROP_MAX_DEPTH, value.toString());
+							}
+						}
+						break;
+						case COL_DIRECTION_TYPE:
+							if (style.equals(default_annot_style)) {
+								style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
+							} else {
+								element.propertyMap.put(PROP_DIRECTION_TYPE, value.toString());
+							}
+							break;
+						case COL_CONNECTED:
+							if (style.equals(default_annot_style)) {
+								style.setSeparate(((Boolean) value).booleanValue());
+							} else {
+								element.propertyMap.put(PROP_SEPARATE, value.toString());
+							}
+							break;
+						case COL_SHOW2TRACKS:
+							if (style.equals(default_annot_style)) {
+								if (Boolean.TRUE.equals(value)) {
+									style.setShow2Tracks(2);
+								} else {
+									style.setShow2Tracks(1);
+								}
+							} else {
+								if (Boolean.TRUE.equals(value)) {
+									element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(2));
+								} else {
+									element.propertyMap.put(PROP_GLYPH_DEPTH, String.valueOf(1));
+								}
+							}
+							break;
+						case COL_COLLAPSED:
+							if (style.equals(default_annot_style)) {
+								style.setCollapsed(((Boolean) value).booleanValue());
+							} else {
+								element.propertyMap.put(PROP_COLLAPSED, value.toString());
+							}
+							break;
+						default:
+							System.out.println("Unknown column selected: " + col);
+					}
+					fireTableCellUpdated(row, col);
+					setElements(XmlStylesheetParser.getUserFileTypeAssociation());
+
+				} catch (Exception e) {
+					// exceptions should not happen, but must be caught if they do
+					System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
+				}
+			}
+			settingValueFromTable = false;
+		}
+
+		int parseInteger(String s, int empty_string, int fallback) {
+			//System.out.println("Parsing string: '" + s + "'");
+			int i = fallback;
+			try {
+				if ("".equals(s.trim())) {
+					i = empty_string;
+				} else {
+					i = Integer.parseInt(s);
+				}
+			} catch (Exception e) {
+				//System.out.println("Exception: " + e);
+				// don't report the error, use the fallback value
+			}
+			return i;
+		}
 	}
 }

@@ -23,7 +23,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="selectTrackPanel" alignment="0" max="32767" attributes="1"/>
+                  <Component id="selectTrackDefaultPanel" alignment="0" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="propertiesPanel" min="-2" pref="392" max="-2" attributes="1"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -38,13 +38,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="selectTrackPanel" max="32767" attributes="1"/>
+              <Component id="selectTrackDefaultPanel" max="32767" attributes="1"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="propertiesPanel" alignment="0" min="-2" pref="224" max="-2" attributes="0"/>
                   <Component id="showStrandPanel" alignment="0" min="-2" pref="126" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -63,12 +63,9 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="pointerRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="colorRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="noneRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           <Component id="possitiveLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="possitiveColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
@@ -77,6 +74,8 @@
                           <EmptySpace min="8" pref="8" max="-2" attributes="0"/>
                           <Component id="negativeColorComboBox" min="-2" pref="19" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="colorCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="arrowCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="8" max="32767" attributes="0"/>
               </Group>
@@ -85,12 +84,11 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="noneRadioButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="pointerRadioButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="colorRadioButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                  <Component id="colorCheckBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                  <Component id="arrowCheckBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="possitiveLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="possitiveColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -165,46 +163,29 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="negativeColorComboBoxActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="pointerRadioButton">
+        <Component class="javax.swing.JCheckBox" name="colorCheckBox">
           <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="showStrandButtonGroup"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Pointer"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pointerRadioButtonActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JRadioButton" name="colorRadioButton">
-          <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="showStrandButtonGroup"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Color"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorRadioButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorCheckBoxActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="noneRadioButton">
+        <Component class="javax.swing.JCheckBox" name="arrowCheckBox">
           <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="showStrandButtonGroup"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="None"/>
+            <Property name="text" type="java.lang.String" value="Arrow"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="noneRadioButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="arrowCheckBoxActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="selectTrackPanel">
+    <Container class="javax.swing.JPanel" name="selectTrackDefaultPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Select Track"/>
+            <TitledBorder title="Select Track Default"/>
           </Border>
         </Property>
       </Properties>
@@ -216,7 +197,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jScrollPane1" alignment="0" pref="466" max="32767" attributes="0"/>
-                      <Component id="addButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="addTrackDefaultButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="removeTrackDefaultButton" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -227,7 +212,10 @@
               <Group type="102" alignment="1" attributes="0">
                   <Component id="jScrollPane1" pref="211" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="addButton" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="addTrackDefaultButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="removeTrackDefaultButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -256,14 +244,24 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="addButton">
+        <Component class="javax.swing.JButton" name="addTrackDefaultButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Add File Type"/>
+            <Property name="text" type="java.lang.String" value="Add Track Default"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addTrackDefaultButtonActionPerformed"/>
+          </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="addButton.addActionListener(new ActionListener() {&#xa;&#xa;&#x9;&#x9;&#x9;public void actionPerformed(ActionEvent ae) {&#xa;                                String Select = &quot;Add File Type&quot;;&#xa;                                String inputValue = &quot;&quot;;&#xa;                                inputValue = (String) JOptionPane.showInputDialog(null,&#xa;                                &quot;Please select a file type to add&quot;,Select, JOptionPane.INFORMATION_MESSAGE, &#xa;                                null, fileTypes,fileTypes[0]);&#xa;                                &#xa;&#x9;&#x9;&#x9;&#x9;&#xa;&#xa;&#x9;&#x9;&#x9;&#x9;if (XmlStylesheetParser.getUserFileTypeAssociation().get(inputValue) != null) {&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;ErrorHandler.errorPanel(&quot;Duplicate Entry&quot;, &quot;File type &quot; + inputValue + &quot; exists&quot;);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;return;&#xa;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;XmlStylesheetParser.getUserFileTypeAssociation().put(inputValue, AssociationElement.getFileTypeAssocation(inputValue));&#xa;&#x9;&#x9;&#x9;&#x9;model.setElements(XmlStylesheetParser.getUserFileTypeAssociation());&#xa;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;});"/>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JButton()"/>
           </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="removeTrackDefaultButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Remove Track Default"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeTrackDefaultButtonActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -291,10 +289,12 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="trackDefaultTextField" alignment="0" min="-2" pref="230" max="-2" attributes="1"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="maxDepthTextField" alignment="0" max="32767" attributes="1"/>
                                       <Component id="bgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
-                                      <Component id="trackNameSizeComboBox" alignment="0" min="-2" pref="59" max="-2" attributes="1"/>
+                                      <Component id="trackNameSizeComboBox" alignment="0" pref="59" max="32767" attributes="1"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -307,8 +307,6 @@
                                       <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="maxDepthTextField" alignment="0" min="-2" pref="50" max="-2" attributes="1"/>
-                              <Component id="TrackTypeTextField" alignment="0" min="-2" pref="230" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                       </Group>
@@ -332,7 +330,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="TrackTypeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="trackDefaultTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="TrackTypeNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -378,9 +376,9 @@
             <Property name="text" type="java.lang.String" value="Track Type:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="TrackTypeTextField">
+        <Component class="javax.swing.JTextField" name="trackDefaultTextField">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TrackTypeTextFieldActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="trackDefaultTextFieldActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="bgLabel">

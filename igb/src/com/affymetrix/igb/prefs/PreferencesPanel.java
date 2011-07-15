@@ -16,8 +16,8 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.view.TierPrefsViewNew;  
-import com.affymetrix.igb.tiers.FileTypeViewNew;
+import com.affymetrix.igb.view.TierPrefsView;  
+import com.affymetrix.igb.tiers.TrackDefaultView;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -54,7 +54,7 @@ public final class PreferencesPanel extends JPanel {
   public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / " + HELP;
   public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / " + BUNDLE.getString("HelpForCurrentTab");
 
-  public TierPrefsViewNew tpv = null;
+  public TierPrefsView tpv = null;
 
   private PreferencesPanel() {
     this.setLayout(new BorderLayout());
@@ -76,8 +76,7 @@ public final class PreferencesPanel extends JPanel {
 			return singleton;
 		}
 		singleton = new PreferencesPanel();
-		//singleton.tpv = new TierPrefsView(false, true);// temp edit
-		singleton.tpv = new TierPrefsViewNew();		//delete after test
+		singleton.tpv = new TierPrefsView();
 		singleton.tpv.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentHidden(ComponentEvent e) {
@@ -87,7 +86,7 @@ public final class PreferencesPanel extends JPanel {
 		singleton.getFrame().addWindowListener(singleton.tpv);
 
 		TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
-		singleton.addPrefEditorComponent(new FileTypeViewNew());
+		singleton.addPrefEditorComponent(new TrackDefaultView());
 		singleton.addPrefEditorComponent(new KeyStrokesView());
 		singleton.addPrefEditorComponent(new GraphsView());
 		singleton.addPrefEditorComponent(new OtherOptions());
@@ -161,7 +160,7 @@ public final class PreferencesPanel extends JPanel {
 
       cont.add(this);
       frame.pack(); // pack() to set frame to its preferred size
-      Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(600, 550));
+      Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(558, 582));
       if (pos != null) {
         PreferenceUtils.setWindowSize(frame, pos);
       }

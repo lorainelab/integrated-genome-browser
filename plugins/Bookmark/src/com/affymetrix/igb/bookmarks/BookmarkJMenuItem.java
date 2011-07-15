@@ -12,13 +12,14 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import javax.swing.JMenuItem;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
+
 import java.awt.Font;
 
 /**
  * A JMenuItem that contains a reference to a Bookmark object.
  */
-public final class BookmarkJMenuItem extends JMenuItem {
+public final class BookmarkJMenuItem extends JRPMenuItem {
 	private static final long serialVersionUID = 1L;
 	private final Bookmark bookmark;
 

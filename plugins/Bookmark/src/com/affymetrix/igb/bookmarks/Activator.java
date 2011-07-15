@@ -4,14 +4,14 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IStopRoutine;
@@ -46,13 +46,13 @@ public class Activator extends WindowActivator implements BundleActivator {
 		}
 
 		// assuming last file menu item is Exit, leave it there
-		JMenu file_menu = igbService.getFileMenu();
+		JRPMenu file_menu = igbService.getFileMenu();
 		int index = file_menu.getItemCount() - 1;
 		file_menu.insertSeparator(index);
-		MenuUtil.insertIntoMenu(file_menu, new JMenuItem(new SaveSessionAction(igbService)), index);
-		MenuUtil.insertIntoMenu(file_menu, new JMenuItem(new LoadSessionAction(igbService)), index);
+		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark.saveSession", new SaveSessionAction(igbService)), index);
+		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark.loadSession", new LoadSessionAction(igbService)), index);
 
-		JMenu bookmark_menu = MenuUtil.getMenu(BUNDLE.getString("bookmarksMenu"));
+		JRPMenu bookmark_menu = MenuUtil.getRPMenu("Bookmark.bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		bmark_action = new BookMarkAction(igbService, bookmark_menu);
 		igbService.addStopRoutine(

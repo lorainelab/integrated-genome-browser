@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 
 import org.osgi.framework.Bundle;
 
@@ -31,6 +30,7 @@ import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 
@@ -56,7 +56,7 @@ public interface IGBService {
 	 * @param menu the JMenu to add to the main IGB menu
 	 * @return true if the menu was added, false otherwise
 	 */
-	public boolean addMenu(JMenu menu);
+	public boolean addMenu(JRPMenu menu);
 	/**
 	 * remove a menu from the main IGB menu
 	 * @param menuName the name of the JMenu to remove from the main IGB menu
@@ -112,12 +112,12 @@ public interface IGBService {
 	 * get the file menu of the application
 	 * @return the file menu of the IGB application
 	 */
-	public JMenu getFileMenu();
+	public JRPMenu getFileMenu();
 	/**
 	 * get the view menu of the application
 	 * @return the view menu of the IGB application
 	 */
-	public JMenu getViewMenu();
+	public JRPMenu getViewMenu();
 	// for plugins page
 	/**
 	 * get the list of all repositories from the 

@@ -50,6 +50,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.FileTracker;
@@ -106,7 +107,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public boolean addMenu(JMenu new_menu) {
+	public boolean addMenu(JRPMenu new_menu) {
 		String menuName = new_menu.getName();
 		JMenuBar main_menu_bar = MenuUtil.getMainMenuBar();
 		int num_menus = main_menu_bar.getMenuCount();
@@ -200,13 +201,13 @@ public class IGBServiceImpl implements IGBService, BundleActivator, RepositoryCh
 	}
 
 	@Override
-	public JMenu getFileMenu() {
+	public JRPMenu getFileMenu() {
 		IGB igb = (IGB)IGB.getSingleton();
 		return igb.getFileMenu();
 	}
 
 	@Override
-	public JMenu getViewMenu() {
+	public JRPMenu getViewMenu() {
 		IGB igb = (IGB)IGB.getSingleton();
 		return igb.getViewMenu();
 	}

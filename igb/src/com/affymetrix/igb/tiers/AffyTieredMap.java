@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.swing.recordplayback.JRPCheckBoxMenuItem;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -519,11 +520,11 @@ public class AffyTieredMap extends NeoMap {
 	 *  version of AffyTieredMap.SELECTED_KEY. In Java 1.6, this won't be necessary, because
 	 *  the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
 	 */
-	public static final class ActionToggler extends JCheckBoxMenuItem implements PropertyChangeListener {
+	public static final class ActionToggler extends JRPCheckBoxMenuItem implements PropertyChangeListener {
 	   	private static final long serialVersionUID = 1L;
 
-		public ActionToggler(Action action) {
-			super(action);
+		public ActionToggler(String id, Action action) {
+			super(id, action);
 			this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY)).booleanValue());
 			action.addPropertyChangeListener(this);
 		}

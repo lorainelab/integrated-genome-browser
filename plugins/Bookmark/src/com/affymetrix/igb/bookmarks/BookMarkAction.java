@@ -30,43 +30,45 @@ import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 
 public final class BookMarkAction implements ActionListener, MenuListener {
    private final static boolean DEBUG = false;
 
-  private final JMenu bookmark_menu;
-  private final JMenuItem add_pos_markMI;
-  private final JMenuItem add_data_markMI;
-  private final JMenuItem exportMI;
-  private final JMenuItem importMI;
-  private final JMenuItem clearMI;
-  private final JMenuItem manage_bookmarksMI;
-  private final JMenuItem open_bookmark_tabMI;
+  private final JRPMenu bookmark_menu;
+  private final JRPMenuItem add_pos_markMI;
+  private final JRPMenuItem add_data_markMI;
+  private final JRPMenuItem exportMI;
+  private final JRPMenuItem importMI;
+  private final JRPMenuItem clearMI;
+  private final JRPMenuItem manage_bookmarksMI;
+  private final JRPMenuItem open_bookmark_tabMI;
   private final Map<Object,Component> component_hash = new HashMap<Object,Component>();
   private final BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
-  private final JMenu main_bm_menu;
+  private final JRPMenu main_bm_menu;
   private BookmarkManagerView bmv = null;
   private IGBService igbService;
 
   private static JFileChooser static_chooser = null;
 
-  public BookMarkAction(IGBService _igbService, JMenu bm_menu) {
+  public BookMarkAction(IGBService _igbService, JRPMenu bm_menu) {
 	igbService = _igbService;
     bookmark_menu = bm_menu;
     bookmark_menu.addMenuListener(this);
-    add_pos_markMI = new JMenuItem(BUNDLE.getString("addPositionBookmark"), KeyEvent.VK_P);
+    add_pos_markMI = new JRPMenuItem("Bookmark.addPositionBookmark", BUNDLE.getString("addPositionBookmark"), KeyEvent.VK_P);
     add_pos_markMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif"));
-    add_data_markMI = new JMenuItem(BUNDLE.getString("addPosition&DataBookmark"), KeyEvent.VK_G);
+    add_data_markMI = new JRPMenuItem("Bookmark.addPositionAndDataBookmark", BUNDLE.getString("addPosition&DataBookmark"), KeyEvent.VK_G);
 	add_data_markMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif"));
-    exportMI = new JMenuItem(BUNDLE.getString("exportBookmarks"), KeyEvent.VK_E);
+    exportMI = new JRPMenuItem("Bookmark.exportBookmarks", BUNDLE.getString("exportBookmarks"), KeyEvent.VK_E);
     exportMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
-    importMI = new JMenuItem(BUNDLE.getString("importBookmarks"), KeyEvent.VK_I);
+    importMI = new JRPMenuItem("Bookmark.importBookmarks", BUNDLE.getString("importBookmarks"), KeyEvent.VK_I);
     importMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
-    clearMI = new JMenuItem(BUNDLE.getString("clearBookmarks"), KeyEvent.VK_C);
-    manage_bookmarksMI = new JMenuItem(BUNDLE.getString("manageBookmarks"), KeyEvent.VK_M);
-    open_bookmark_tabMI = new JMenuItem(BUNDLE.getString("openBookmarkTab"), KeyEvent.VK_O);
+    clearMI = new JRPMenuItem("Bookmark.clearBookmarks", BUNDLE.getString("clearBookmarks"), KeyEvent.VK_C);
+    manage_bookmarksMI = new JRPMenuItem("Bookmark.", BUNDLE.getString("manageBookmarks"), KeyEvent.VK_M);
+    open_bookmark_tabMI = new JRPMenuItem("Bookmark.", BUNDLE.getString("openBookmarkTab"), KeyEvent.VK_O);
 
     add_pos_markMI.addActionListener(this);
     add_data_markMI.addActionListener(this);
@@ -221,16 +223,16 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       Component comp = iter.next();
       if (comp == main_bm_menu) {
         // component_hash contains a mapping of main_bookmark_list to main_bm_menu.
-        // That is the only JMenu we do not want to remove from its parent.
+        // That is the only JRPMenu we do not want to remove from its parent.
         continue;
       }
-      if (comp instanceof JMenuItem) {
-        JMenuItem item = (JMenuItem) comp;
+      if (comp instanceof JRPMenuItem) {
+        JRPMenuItem item = (JRPMenuItem) comp;
         ActionListener[] listeners = item.getActionListeners();
         for (int i=0; i<listeners.length; i++) {
           item.removeActionListener(listeners[i]);
         }
-      } else { // if not a JMenuItem, should be a JSeparator
+      } else { // if not a JRPMenuItem, should be a JSeparator
       }
       Container cont = comp.getParent();
       if (cont != null) {cont.remove(comp);}
@@ -240,8 +242,8 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   }
 
 
-  private void buildMenus(JMenu pp, BookmarkList bl) {
-    JMenu bl_menu = (JMenu) component_hash.get(bl);
+  private void buildMenus(JRPMenu pp, BookmarkList bl) {
+    JRPMenu bl_menu = (JRPMenu) component_hash.get(bl);
     if (bl_menu == null) {
       bl_menu = addBookmarkListMenu(pp, bl);
     }
@@ -260,8 +262,8 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     }
   }
 
-  private JMenuItem addBookmarkMI(JMenu parent_menu, Bookmark bm) {
-    JMenuItem markMI = (JMenuItem) component_hash.get(bm);
+  private JRPMenuItem addBookmarkMI(JRPMenu parent_menu, Bookmark bm) {
+    JRPMenuItem markMI = (JRPMenuItem) component_hash.get(bm);
     if (markMI != null) {
       return markMI;
     }
@@ -272,18 +274,18 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     return markMI;
   }
 
-  private JMenu addBookmarkListMenu(JMenu parent_menu, BookmarkList bm_list) {
-    JMenu sub_menu = (JMenu) component_hash.get(bm_list);
+  private JRPMenu addBookmarkListMenu(JRPMenu parent_menu, BookmarkList bm_list) {
+    JRPMenu sub_menu = (JRPMenu) component_hash.get(bm_list);
     if (sub_menu != null) {
       return sub_menu;
     }
-    sub_menu = new JMenu(bm_list.getName());
+    sub_menu = new JRPMenu(bm_list.getName());
     component_hash.put(bm_list,  sub_menu);
     parent_menu.add(sub_menu);
     return sub_menu;
   }
 
-  private JSeparator addSeparator(JMenu parent_menu, Separator s) {
+  private JSeparator addSeparator(JRPMenu parent_menu, Separator s) {
     JSeparator jsep = (JSeparator) component_hash.get(s);
     if (jsep != null) {
       return null;
@@ -399,9 +401,9 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		}
 	}
 
-  private JMenuItem addBookmark(Bookmark bm) {
-    JMenuItem markMI = null;
-    JMenu parent_menu = (JMenu) component_hash.get(main_bookmark_list);
+  private JRPMenuItem addBookmark(Bookmark bm) {
+    JRPMenuItem markMI = null;
+    JRPMenu parent_menu = (JRPMenu) component_hash.get(main_bookmark_list);
     if (parent_menu == null) {
       ErrorHandler.errorPanel("Couldn't add bookmark. Lost reference to menu");
       return null;

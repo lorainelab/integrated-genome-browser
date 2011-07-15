@@ -12,6 +12,8 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genoviz.swing.MenuUtil;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.SeqUtils;
@@ -42,9 +44,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JToggleButton;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -55,10 +55,8 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	private SeqMapView seqmapview;
 	private NeoSeq seqview;
 	private JFrame mapframe;
-	private String seq;
 	private int pixel_width = 500;
 	private int pixel_height = 400;
-	private SeqSpan[] seqSpans = null;
 	private GenometryModel gm = GenometryModel.getGenometryModel();
 	private String version = "";
 	private SeqSymmetry residues_sym;
@@ -66,8 +64,6 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	boolean isGenomicRequest;
 	SequenceViewer sv;
 	String errorMessage = null;
-	private int seqStart = 0;
-	private int seqEnd = 0;
 	private int cdsMax = -1;
 	private int cdsMin = -1;
 	private String title = null;
@@ -84,7 +80,6 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	Color[] reverseColors = {Color.WHITE, Color.BLUE, Color.BLACK};
 	Color[] okayColors = {Color.black, Color.black};
 	Color[] reverted = {Color.white, Color.white};
-	private boolean cdsFound=false;
 	private String id;
 /* default constructor to get the singleton object of SeqMapView
  * This is required to get the symmetry of the selected glyphs and genomic sequence in IGB
@@ -139,14 +134,12 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 					SeqSymmetry residues_syms1 = SeqMapView.glyphsToSyms(SeqMapView.getParents(seqmapview.getSeqMap().getSelected())).get(0);
 					if ((residues_syms1 instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_syms1).hasCdsSpan()) {
 						SeqSpan cdsSpan = ((SupportsCdsSpan) residues_syms1).getCdsSpan();
-						cdsFound = true;
 						cdsMin = cdsSpan.getStart();
 						cdsMax = cdsSpan.getEnd();
 					}
 				} else {
 					if ((residues_sym instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_sym).hasCdsSpan()) {
 						SeqSpan cdsSpan = ((SupportsCdsSpan) residues_sym).getCdsSpan();
-						cdsFound = true;
 						cdsMin = cdsSpan.getStart();
 						cdsMax = cdsSpan.getEnd();
 					}
@@ -231,9 +224,9 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
  * reverse_complement - i am creating reverse complement of the final working list to use for reverse complement
  */
 	private void createAllLists() {
-		Iterator it = bundle.listIterator();
+		Iterator<CreateValueSet> it = bundle.listIterator();
 		if (it.hasNext()) {
-			CreateValueSet cv = (CreateValueSet) it.next();
+			CreateValueSet cv = it.next();
 			int start = cv.getSpan().getStart();
 			int end = cv.getSpan().getEnd();
 //			if ((start > end) && it.hasNext() && (start < (((CreateValueSet) it.next()).getSpan().getStart()))) { 
@@ -243,7 +236,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 				if (it.hasNext()) {//we need to jump an item in list here because we need to check with the introns only
 					it.next();
 					if (it.hasNext()) {
-						cv = (CreateValueSet) it.next();
+						cv = it.next();
 						if (start < cv.getSpan().getStart()) {
 							reverse_bundle = new ArrayList<CreateValueSet>(bundle);
 							Collections.reverse(reverse_bundle);
@@ -328,7 +321,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		Color[] cols = getColorScheme();
 		int i = 0;
 		int start = 0, end = 0;
-		Iterator it_working = null;
+		Iterator<CreateValueSet> it_working = null;
 		seqview.setResidues("");
 		if (toggle_Reverse_Complement) {
 			it_working = reverse_complement.listIterator();
@@ -336,7 +329,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 			it_working = working_list.listIterator();
 		}
 		while (it_working.hasNext()) {
-			CreateValueSet cv = (CreateValueSet) it_working.next();
+			CreateValueSet cv = it_working.next();
 			String residues = cv.getSi().getResidues();
 			String reverse_residues = cv.getSi().getReverseResidues();
 			int cdsStart = cv.getSi().getCdsStart();
@@ -404,6 +397,7 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 		});
 	}
 
+	@SuppressWarnings("serial")
 	private void getNeoSeqInstance() {
 		seqview = new NeoSeq() {
 
@@ -498,20 +492,20 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(" -3 Translation");
 	JCheckBoxMenuItem colorScheme1 = new JCheckBoxMenuItem("Yellow on black");
 	JCheckBoxMenuItem colorScheme2 = new JCheckBoxMenuItem("Blue on white");
-	JMenuItem exportRComplementFasta = new JMenuItem("Save As Fasta (Reverse Complement)");
-	JMenu showMenu = new JMenu("Show");
-	JMenu fileMenu = new JMenu("File");
-	JMenu editMenu = new JMenu("Edit");
-	JMenu colorMenu = new JMenu("Colors");
+	JRPMenuItem exportRComplementFasta = new JRPMenuItem("sequenceViewer.exportRComplementFasta", "Save As Fasta (Reverse Complement)");
+	JRPMenu showMenu = new JRPMenu("sequenceViewer.show", "Show");
+	JRPMenu fileMenu = new JRPMenu("sequenceViewer.file", "File");
+	JRPMenu editMenu = new JRPMenu("sequenceViewer.edit", "Edit");
+	JRPMenu colorMenu = new JRPMenu("sequenceViewer.colors", "Colors");
 	CopyFromSeqViewerAction copyAction = new CopyFromSeqViewerAction(this);
 
 	public JFrame setupMenus(JFrame dock) {
 
 		copyAction.setEnabled(false);
-		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExportFastaSequenceAction(this)));
+		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer.exportFastaSequence", new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, exportRComplementFasta);
-		MenuUtil.addToMenu(fileMenu, new JMenuItem(new ExitSeqViewerAction(this.mapframe)));
-		MenuUtil.addToMenu(editMenu, new JMenuItem(copyAction));
+		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer.exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
+		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer.copy", copyAction));
 		editMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);

@@ -15,6 +15,9 @@ package com.affymetrix.genoviz.swing;
 
 import java.awt.MediaTracker;
 import javax.swing.*;
+
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenu;
+
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,25 +64,48 @@ public abstract class MenuUtil {
   public static final JMenuBar getMainMenuBar() {
     return main_menu_bar;
   }
-  
-  public static final JMenu getMenu(String name) {
+
+  private static JMenu findMenu(String name) {
     int num_menus = main_menu_bar.getMenuCount();
     for (int i=0; i<num_menus; i++) {
-      JMenu menu_i = main_menu_bar.getMenu(i);
+    	JRPMenu menu_i = (JRPMenu)main_menu_bar.getMenu(i);
       if (name.equals(menu_i.getText())) {
         menu_i.getName();
         return menu_i;
       }
     }
-    JMenu new_menu = new JMenu(name);
-    new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
-    
+    return null;
+  }
+
+  private static void addMenu(JMenu new_menu) {
+	int num_menus = main_menu_bar.getMenuCount();
     // Add the new menu, but keep the "Help" menu in last place
     if (num_menus > 0 && "Help".equals(main_menu_bar.getMenu(num_menus-1).getName())) {
       main_menu_bar.add(new_menu, num_menus-1);
     } else {
       main_menu_bar.add(new_menu);
     }
+  }
+
+  public static final JMenu getMenu(String name) {
+    JMenu new_menu = findMenu(name);
+    if (new_menu != null) {
+    	return new_menu;
+    }
+    new_menu = new JMenu(name);
+    new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
+    addMenu(new_menu);
+    return new_menu;
+  }
+  
+  public static final JRPMenu getRPMenu(String id, String name) {
+    JRPMenu new_menu = (JRPMenu)findMenu(name);
+    if (new_menu != null) {
+    	return new_menu;
+    }
+    new_menu = new JRPMenu(id, name);
+    new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
+    addMenu(new_menu);
     return new_menu;
   }
   

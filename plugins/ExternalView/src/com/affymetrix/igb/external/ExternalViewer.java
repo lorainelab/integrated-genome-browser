@@ -5,10 +5,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
-import javax.swing.JMenuItem;
-
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
+import com.affymetrix.genoviz.swing.recordplayback.JRPMenuItem;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 
@@ -32,7 +31,7 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	final JRPComboBox ensemblBox;
 	
 	private final UCSCViewAction ucscViewAction;
-	private final JMenuItem menuItem;
+	private final JRPMenuItem menuItem;
 
 	public ExternalViewer(IGBService igbService_) {
 		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, TAB_POSITION);
@@ -41,7 +40,7 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 		ensemblBox = createBox("ExternalViewer.ensemble");
 		
 		ucscViewAction = new UCSCViewAction(igbService);
-		menuItem = new JMenuItem(ucscViewAction);
+		menuItem = new JRPMenuItem("ExternalViewer.ucscView", ucscViewAction);
 		MenuUtil.insertIntoMenu(igbService.getViewMenu(), menuItem, VIEW_MENU_POS);
 
 		final UCSCView ucsc = new UCSCView(ucscBox, igbService, ucscViewAction);

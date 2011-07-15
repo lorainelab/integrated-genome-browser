@@ -15,7 +15,6 @@ package com.affymetrix.igb.bookmarks;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import com.affymetrix.genometryImpl.util.MenuUtil;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.*;
@@ -30,6 +29,7 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.MenuUtil;
 
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 

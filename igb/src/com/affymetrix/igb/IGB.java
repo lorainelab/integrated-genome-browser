@@ -40,11 +40,11 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
-import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.swing.MenuUtil;
 
 import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -266,6 +266,18 @@ public final class IGB extends Application
 		gmodel.addGroupSelectionListener(map_view);
 		gmodel.addSymSelectionListener(map_view);
 
+		MenuUtil.setAccelerators(
+			new AbstractMap<String, KeyStroke>() {
+				@Override
+				public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
+					return null;
+				}
+				@Override
+			    public KeyStroke get(Object action_command) {
+					return PreferenceUtils.getAccelerator((String)action_command);
+				}
+			}
+		);
 		loadMenu();
 
 		Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",

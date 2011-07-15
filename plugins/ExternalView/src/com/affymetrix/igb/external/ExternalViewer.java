@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JMenuItem;
 
-import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.JRPComboBox;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;

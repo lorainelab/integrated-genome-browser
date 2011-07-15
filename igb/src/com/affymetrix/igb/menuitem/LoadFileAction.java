@@ -39,11 +39,11 @@ import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
 import com.affymetrix.genometryImpl.symloader.BAM;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.swing.recordplayback.RecordPlaybackHolder;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
@@ -198,6 +198,7 @@ public final class LoadFileAction extends AbstractAction {
 					return null;
 				}
 			}).execute();
+			return;
 		}
 		// If server requires authentication then.
 		// If it cannot be authenticated then don't add the feature.

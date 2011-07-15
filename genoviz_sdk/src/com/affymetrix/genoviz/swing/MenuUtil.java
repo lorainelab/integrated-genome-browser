@@ -11,24 +11,30 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.genoviz.swing;
 
 import java.awt.MediaTracker;
 import javax.swing.*;
 import java.awt.event.ActionListener;
-
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class MenuUtil {
 
   private static JMenuBar main_menu_bar = new JMenuBar();
     
+  private static Map<String, KeyStroke> accelerators = new HashMap<String, KeyStroke>();
+  
+  public static void setAccelerators(Map<String, KeyStroke> _accelerators) {
+	MenuUtil.accelerators = _accelerators;
+  }
+
   /** Sets the accelerator for the given JMenuItem based on
    *  the preference associated with the action command.
    *  The action command Strings should be unique across the whole application.
    */
   private static final void addAccelerator(JMenuItem item, String command) {
-    item.setAccelerator(PreferenceUtils.getAccelerator(command));
+    item.setAccelerator(accelerators.get(command));
   }
   
   /** Sets up an association such that the accelerator given in
@@ -44,7 +50,7 @@ public abstract class MenuUtil {
    */
   public static final KeyStroke addAccelerator(JComponent comp, ActionListener al,
     String action_command) {
-    KeyStroke ks = PreferenceUtils.getAccelerator(action_command);
+    KeyStroke ks = accelerators.get(action_command);
     if (ks != null) {
       comp.registerKeyboardAction(al, action_command, ks,
        JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -129,6 +135,7 @@ public abstract class MenuUtil {
         icon = new ImageIcon(url);
       }
     } catch (Exception e) {
+    	e.printStackTrace(System.out);
       // It isn't a big deal if we can't find the icon, just return null
     }
     if (icon == null || icon.getImageLoadStatus() == MediaTracker.ABORTED ||

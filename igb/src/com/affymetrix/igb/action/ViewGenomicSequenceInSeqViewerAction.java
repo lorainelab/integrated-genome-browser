@@ -5,7 +5,7 @@
 
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SequenceViewer;
 import java.awt.event.ActionEvent;

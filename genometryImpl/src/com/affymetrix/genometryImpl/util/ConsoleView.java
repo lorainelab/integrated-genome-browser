@@ -69,7 +69,7 @@ public final class ConsoleView {
    *  If you want to display the frame, call {@link #showConsole()} instead.
    */
   private static JFrame getFrame(String APP_NAME) {
-	  String TITLE =  TITLE = APP_NAME + " Console";
+	  String TITLE = APP_NAME + " Console";
     if (frame == null) {
       frame = createFrame(TITLE);
       Container cpane = frame.getContentPane();
@@ -122,13 +122,36 @@ public final class ConsoleView {
     return outPane;
   }
  
+
+  /**
+   *  duplicate of IconUtils.getIcon(String)
+   *  @return An ImageIcon or null if the one specified could not be found.
+   */
+  private static ImageIcon getIcon(String resource_name) {
+    ImageIcon icon = null;
+    try {
+      java.net.URL url = ConsoleView.class.getClassLoader().getResource(resource_name);
+      if (url != null) {
+        icon = new ImageIcon(url);
+      }
+    } catch (Exception e) {
+      // It isn't a big deal if we can't find the icon, just return null
+    }
+    if (icon == null || icon.getImageLoadStatus() == MediaTracker.ABORTED ||
+        icon.getIconHeight() <= 0 || icon.getIconWidth() <= 0) {
+      icon = null;
+    }
+    
+    return icon;    
+  }
+
   /**
    *  Creates a JFrame to hold the console.
    */
   private static JFrame createFrame(final String TITLE) {
     final JFrame frame = new JFrame(TITLE);
 
-    ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif");
+    ImageIcon icon = getIcon("toolbarButtonGraphics/development/Host16.gif");
     if (icon != null) { frame.setIconImage(icon.getImage()); }
 
     frame.addWindowListener( new WindowAdapter() {

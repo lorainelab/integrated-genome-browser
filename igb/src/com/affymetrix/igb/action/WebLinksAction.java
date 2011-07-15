@@ -1,9 +1,9 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.view.WebLinkEditorPanel;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;

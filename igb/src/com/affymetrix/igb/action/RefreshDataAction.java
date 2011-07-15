@@ -4,7 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import com.affymetrix.genometryImpl.event.TierMaintenanceListenerHolder;
-import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genoviz.swing.MenuUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;

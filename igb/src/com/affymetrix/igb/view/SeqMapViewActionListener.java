@@ -12,9 +12,9 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 
 import java.awt.Adjustable;

@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;

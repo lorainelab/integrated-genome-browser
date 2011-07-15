@@ -13,8 +13,8 @@
 
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.view.TierPrefsView;  
 import com.affymetrix.igb.tiers.TrackDefaultView;

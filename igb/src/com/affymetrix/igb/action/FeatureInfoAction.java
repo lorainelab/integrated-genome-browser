@@ -1,7 +1,8 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.MenuUtil;
+import com.affymetrix.genoviz.swing.MenuUtil;
+
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 

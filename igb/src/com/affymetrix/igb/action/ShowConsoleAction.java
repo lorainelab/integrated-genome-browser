@@ -1,8 +1,9 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.genometryImpl.util.MenuUtil;
 import com.affymetrix.genometryImpl.util.ConsoleView;
+import com.affymetrix.genoviz.swing.MenuUtil;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;

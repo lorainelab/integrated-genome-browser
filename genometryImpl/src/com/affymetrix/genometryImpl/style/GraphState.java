@@ -98,10 +98,13 @@ public final class GraphState {
 	 *  necessary.
 	 */
 	public GraphState(String id) {
+		this(id, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id));
+	}
+
+	public GraphState(String id, ITrackStyle tierStyle) {
 		super();
 
-		StateProvider provider = DefaultStateProvider.getGlobalStateProvider();
-		tier_style = provider.getAnnotStyle(id);
+		tier_style = tierStyle;
 		tier_style.setGraphTier(true);
 
 		// Graph Tiers with a single graph in them are not collapsible/expandible
@@ -110,7 +113,7 @@ public final class GraphState {
 
 		setFloatGraph(false);
 	}
-
+	
 	/** Copy all the properties, except ID and label, of the given state into this state. */
 	public void copyProperties(GraphState ostate) {
 		setGraphStyle(ostate.getGraphStyle());

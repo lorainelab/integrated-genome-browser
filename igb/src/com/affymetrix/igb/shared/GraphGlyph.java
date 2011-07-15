@@ -108,7 +108,8 @@ public final class GraphGlyph extends Glyph {
 
 	private Color lighter;
 	private Color darker;
-
+	private boolean draw_handle = true;
+	
 	public float getXCoord(int i) {
 		return graf.getGraphXCoord(i);
 	}
@@ -468,6 +469,9 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void drawHandle(ViewI view) {
+		if(!draw_handle)
+			return;
+		
 		Rectangle hpix = calcHandlePix(view);
 		if (hpix != null) {
 			Graphics g = view.getGraphics();
@@ -476,6 +480,10 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
+	public void drawHandle(boolean b){
+		draw_handle = b;
+	}
+	
 	private void drawAxisLabel(ViewI view) {
 		if (GraphState.isHeatMapStyle(getGraphStyle())) {
 			return;

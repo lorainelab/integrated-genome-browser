@@ -221,7 +221,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
-		installedBundlesCheckbox = new JRPCheckBox("PluginsView.installedBundlesCheckbox", BUNDLE.getString("installedBundles"));
+		installedBundlesCheckbox = new JRPCheckBox("PluginsView_installedBundlesCheckbox", BUNDLE.getString("installedBundles"));
 		installedBundlesCheckbox.setToolTipText(BUNDLE.getString("installedBundlesTooltip"));
 		installedBundlesCheckbox.addActionListener(
 			new ActionListener() {
@@ -236,7 +236,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		installedBundlesCheckbox.setSelected(true);
 		buttonPanel.add(installedBundlesCheckbox);
 
-		uninstalledBundlesCheckbox = new JRPCheckBox("PluginsView.uninstalledBundlesCheckbox", BUNDLE.getString("uninstalledBundles"));
+		uninstalledBundlesCheckbox = new JRPCheckBox("PluginsView_uninstalledBundlesCheckbox", BUNDLE.getString("uninstalledBundles"));
 		uninstalledBundlesCheckbox.setToolTipText(BUNDLE.getString("uninstalledBundlesTooltip"));
 		uninstalledBundlesCheckbox.addActionListener(
 			new ActionListener() {
@@ -251,7 +251,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		uninstalledBundlesCheckbox.setSelected(true);
 		buttonPanel.add(uninstalledBundlesCheckbox);
 
-		updateAllBundlesButton = new JRPButton("PluginsView.updateAllBundlesButton", BUNDLE.getString("updateAllBundles"));
+		updateAllBundlesButton = new JRPButton("PluginsView_updateAllBundlesButton", BUNDLE.getString("updateAllBundles"));
 		updateAllBundlesButton.setToolTipText(BUNDLE.getString("updateAllBundlesTooltip"));
 		updateAllBundlesButton.addActionListener(
 			new ActionListener() {
@@ -265,7 +265,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 		updateAllBundlesButton.setEnabled(false);
 		buttonPanel.add(updateAllBundlesButton);
 
-		updateSelectedBundlesButton = new JRPButton("PluginsView.updateSelectedBundlesButton", BUNDLE.getString("updateSelectedBundles"));
+		updateSelectedBundlesButton = new JRPButton("PluginsView_updateSelectedBundlesButton", BUNDLE.getString("updateSelectedBundles"));
 		updateSelectedBundlesButton.setToolTipText(BUNDLE.getString("updateSelectedBundlesTooltip"));
 		updateSelectedBundlesButton.addActionListener(
 			new ActionListener() {
@@ -286,7 +286,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
 		buttonPanel.add(Box.createHorizontalGlue());
 
-		repositoryPrefsButton = new JRPButton("PluginsView.repositoryPrefsButton", BUNDLE.getString("repositoryButton"));
+		repositoryPrefsButton = new JRPButton("PluginsView_repositoryPrefsButton", BUNDLE.getString("repositoryButton"));
 		repositoryPrefsButton.addActionListener(
 			new ActionListener() {
 				@Override

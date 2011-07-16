@@ -34,8 +34,8 @@ public abstract class BrowserView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private SwingWorker<Image, Void> worker = null;
 	private final Map<String, String> cookieMap = new HashMap<String, String>();
-	private final JRPButton update_button = new JRPButton("BrowserView.update_button", "update");
-	private final JRPButton settingsButton = new JRPButton("BrowserView.settingsButton", "settings");
+	private final JRPButton update_button = new JRPButton("BrowserView_updateButton", "update");
+	private final JRPButton settingsButton = new JRPButton("BrowserView_settingsButton", "settings");
 	private BrowserImage browserImage = new BrowserImage();
 	private final JScrollPane scroll = new JScrollPane();
 //	private final IGBService igbService;

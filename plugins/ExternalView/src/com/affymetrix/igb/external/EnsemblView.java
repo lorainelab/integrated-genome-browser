@@ -78,8 +78,8 @@ public class EnsemblView extends BrowserView {
 	 **/
 	class ENSEMBLHelper extends JDialog {
 		private static final long serialVersionUID = 1L;
-		private final JRPButton okButton = new JRPButton("ExternalView.okButton", "submit");
-		private final JRPTextField userIdField = new JRPTextField("ExternalView.userId", getCookie(ENSEMBLSESSION), 50);
+		private final JRPButton okButton = new JRPButton("ExternalView_okButton", "submit");
+		private final JRPTextField userIdField = new JRPTextField("ExternalView_userId", getCookie(ENSEMBLSESSION), 50);
 
 		public ENSEMBLHelper(Window window, String string, String helper) {
 			super(window, string);

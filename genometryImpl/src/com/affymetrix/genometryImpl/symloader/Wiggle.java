@@ -41,7 +41,6 @@ import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleData;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.symloader.LineProcessor;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
@@ -244,7 +243,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 			if (firstChar == 't' && line.startsWith("track")) {
 				if (previous_track_line) {
 					// finish previous graph(s) using previous track properties
-					grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString()));
+					grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString(), extension));
 				}
 
 				track_line_parser.parseTrackLine(line);
@@ -281,7 +280,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 					previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, seq, min, max);
 		}
 		grafs.addAll(createGraphSyms(
-				track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString()));
+				track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString(), extension));
 		
 		return grafs;
 	}
@@ -436,7 +435,8 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 	/**
 	 * Finishes the current data section and creates a list of GraphSym objects.
 	 */
-	private static List<GraphSym> createGraphSyms(Map<String,String> track_hash, AnnotatedSeqGroup seq_group, Map<String, WiggleData> current_datamap, String stream_name) {
+	private static List<GraphSym> createGraphSyms(Map<String,String> track_hash, AnnotatedSeqGroup seq_group, 
+			Map<String, WiggleData> current_datamap, String stream_name, String extension) {
 		if (current_datamap == null) {
 			return Collections.<GraphSym>emptyList();
 		}
@@ -457,7 +457,7 @@ public final class Wiggle extends SymLoader implements AnnotationWriter, LinePro
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
 
-		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, graph_name, "wig");
+		GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, graph_name, extension);
 		TrackLineParser.applyTrackProperties(track_hash, gstate);
 
 		// Need iterator because we're removing data on the fly

@@ -470,7 +470,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 						}
 					} else {
 						track_line_parser.parseTrackLine(line, track_name_prefix);
-						TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), annot_type);
+						TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), annot_type, extension);
 					}
 					// You can later get the track properties with getCurrentTrackHash();
 					continue;

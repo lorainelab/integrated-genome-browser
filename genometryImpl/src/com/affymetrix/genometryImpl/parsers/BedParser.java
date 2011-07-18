@@ -155,7 +155,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			}
 			else if (line.startsWith("track")) {
 				track_line_parser.parseTrackLine(line);
-				TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type);
+				TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, "bed");
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);

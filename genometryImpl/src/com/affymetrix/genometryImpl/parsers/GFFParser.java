@@ -329,7 +329,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 				if (line.startsWith("#")) { continue; }
 				if (line.startsWith("track")) {
 					track_line_parser.parseTrackLine(line);
-					TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_source);
+					TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_source, "gff");
 					track_name = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 					continue;
 				}

@@ -131,7 +131,7 @@ public final class TrackLineParser {
 	 *  A default track name must be provided in case none is specified by the
 	 *  track line itself.
 	 */
-	public static ITrackStyle createTrackStyle(Map<String,String> track_hash, String default_track_name) {
+	public static ITrackStyle createTrackStyle(Map<String,String> track_hash, String default_track_name, String file_type) {
 		String name = track_hash.get(NAME);
 		
 		//this will create the correct track name for IGB to display the track correctly
@@ -165,7 +165,7 @@ public final class TrackLineParser {
 			track_hash.put(NAME, default_track_name);
 			name = default_track_name;
 		}
-		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name);
+		ITrackStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, null, file_type);
 		applyTrackProperties(track_hash, style);
 		return style;
 	}

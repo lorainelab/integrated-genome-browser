@@ -130,16 +130,18 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 			tiers[1].setInfo(sym);
 			if (style.getSeparate()) {
 				addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
-				if (show_coverage && style.getFileType().equalsIgnoreCase("bam")
-					|| style.getFileType().equalsIgnoreCase("sam")) {
+				if (show_coverage && style.getFileType() != null
+					&& (style.getFileType().equalsIgnoreCase("bam")
+					|| style.getFileType().equalsIgnoreCase("sam"))) {
 					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[0]);
 					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[1]);
 				}
 			} else {
 				// use only one tier
 				addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
-				if (show_coverage && style.getFileType().equalsIgnoreCase("bam")
-					|| style.getFileType().equalsIgnoreCase("sam")) {
+				if (show_coverage && style.getFileType() != null
+					&& (style.getFileType().equalsIgnoreCase("bam")
+					|| style.getFileType().equalsIgnoreCase("sam"))) {
 					addCoverage(meth, sym, smv.getAnnotatedSeq(), tiers[0]);
 				}
 			}

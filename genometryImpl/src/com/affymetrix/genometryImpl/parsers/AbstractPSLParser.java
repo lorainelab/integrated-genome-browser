@@ -156,7 +156,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 						}
 					} else {
 						track_line_parser.parseTrackLine(line, track_name_prefix);
-						TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), annot_type);
+						TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), annot_type, is_link_psl? "link.psl" : "psl");
 					}
 					// You can later get the track properties with getCurrentTrackHash();
 					continue;

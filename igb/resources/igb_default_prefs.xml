@@ -22,7 +22,7 @@
 
 <!-- Specify plugin repositories here with name, and url -->
 
-  <repository name="Bioviz" url="http://transvar.org:8080/igbserver" enabled="true" />
+  <repository name="Bioviz" url="http://bioviz.org/igbserver" enabled="true" />
 
   <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
        parameters:

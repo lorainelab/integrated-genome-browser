@@ -24,9 +24,9 @@
 
 <!-- Specify plugin repositories here with name, and url -->
 
-  <repository name="Bioviz" url="http://transvar.org:8080/igbserver" enabled="true" />
+<repository name="Bioviz" url="http://bioviz.org/igbserver" enabled="true" />
 
-  <repository name="Genentech" url="http://research-pub.gene.com/igb_plugins" enabled="true" />
+<repository name="Genentech" url="http://research-pub.gene.com/igb_plugins" enabled="true" />
 
   <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
        parameters:

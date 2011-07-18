@@ -58,7 +58,7 @@ public class JRPTable extends JTable implements JRPWidget {
     }
 
 	@Override
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 }

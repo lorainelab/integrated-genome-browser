@@ -50,7 +50,7 @@ public class JRPTextField extends JTextField implements JRPWidget {
 		});
     }
 	@Override
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 }

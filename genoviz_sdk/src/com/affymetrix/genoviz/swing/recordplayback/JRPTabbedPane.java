@@ -33,7 +33,7 @@ public class JRPTabbedPane extends JTabbedPane implements JRPWidget {
 		});
     }
 	@Override
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 }

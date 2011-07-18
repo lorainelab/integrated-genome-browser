@@ -73,7 +73,7 @@ public class JRPCheckBox extends JCheckBox implements JRPWidget {
 		}
 	}
 	@Override
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 }

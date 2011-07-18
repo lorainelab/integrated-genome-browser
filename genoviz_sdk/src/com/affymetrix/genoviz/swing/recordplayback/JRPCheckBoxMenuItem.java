@@ -58,7 +58,7 @@ public class JRPCheckBoxMenuItem extends JCheckBoxMenuItem implements JRPWidget 
     }
 
 	@Override
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 }

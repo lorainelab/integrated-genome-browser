@@ -52,7 +52,7 @@ public class JRPMenuItem extends JMenuItem implements JRPWidget {
     }
 
 	@Override
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 }

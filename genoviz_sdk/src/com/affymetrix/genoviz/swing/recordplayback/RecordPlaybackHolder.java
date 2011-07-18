@@ -26,10 +26,10 @@ public class RecordPlaybackHolder {
 		super();
 	}
 	public void addWidget(JRPWidget widget) {
-		if (widgets.get(widget.getID()) != null) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getID());
+		if (widgets.get(widget.getId()) != null) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "duplicate id for widget " + widget.getId());
 		}
-		widgets.put(widget.getID(), widget);
+		widgets.put(widget.getId(), widget);
 	}
 	public String getScript() {
 		Set<String> namedIds = new HashSet<String>();

@@ -63,7 +63,7 @@ public class JRPRadioButtonMenuItem extends JRadioButtonMenuItem implements JRPW
     }
 
 	@Override
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 }

@@ -116,7 +116,7 @@ public class TieredMapDemo extends Applet
 		map_pan.add ( map, BorderLayout.CENTER );
 
 		yscroll = new JScrollBar(JScrollBar.VERTICAL);
-		map.setScroller ( NeoMap.Y, yscroll );
+		//map.setScroller ( NeoMap.Y, yscroll );
 		map_pan.add ( yscroll, BorderLayout.EAST );
 
 		frame = new Frame("Genoviz TieredNeoMap Demo");
@@ -137,7 +137,7 @@ public class TieredMapDemo extends Applet
 		labelmap.setPreferredSize ( new Dimension ( 100, 100 ) );
 		labelmap.setMapColor ( new Color ( 110, 110, 110 ) );
 		labelmap.addMouseListener ( this );
-		labelmap.setScroller ( NeoMap.Y, yscroll );
+		//labelmap.setScroller ( NeoMap.Y, yscroll );
 
 		NeoPanel labelpanel = new NeoPanel();
 		labelpanel.setLayout ( new BorderLayout() );

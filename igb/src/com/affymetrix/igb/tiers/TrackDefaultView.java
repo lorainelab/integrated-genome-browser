@@ -48,6 +48,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 	private static final int COL_LABEL_FIELD = 7;
 	private static final int COL_SHOW2TRACKS = 8;
 	private static final int COL_DIRECTION_TYPE = 9;
+	private static final int COL_POS_STRAND_COLOR = 10;
+	private static final int COL_NEG_STRAND_COLOR = 11;
 	private static TrackStyle default_annot_style = TrackStyle.getDefaultInstance();
 	private final TrackDefaultPrefTableModel model;
 	private ListSelectionModel lsm;
@@ -479,9 +481,19 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
     }// </editor-fold>//GEN-END:initComponents
 
 	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
+		if (!settingValueFromTable) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[i], COL_POS_STRAND_COLOR);
+			}
+		}
 }//GEN-LAST:event_possitiveColorComboBoxActionPerformed
 
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
+		if (!settingValueFromTable) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[i], COL_NEG_STRAND_COLOR);
+			}
+		}
 }//GEN-LAST:event_negativeColorComboBoxActionPerformed
 
 	private void trackDefaultTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackDefaultTextFieldActionPerformed
@@ -677,6 +689,8 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 		removeTrackDefaultButton.setEnabled(true);
 		initializationDetector = true;
 		trackDefaultTextField.setEnabled(false);
+		possitiveColorComboBox.setEnabled(true);
+		negativeColorComboBox.setEnabled(true);
 
 		if (selectedRows.length > 1) {
 			bgColorComboBox.setSelectedColor(null);
@@ -689,15 +703,18 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			collapsedCheckBox.setSelected(false);
 			colorCheckBox.setSelected(false);
 			arrowCheckBox.setSelected(false);
+			possitiveColorComboBox.setEnabled(false);
+			negativeColorComboBox.setEnabled(false);
 		}
 
 		if (selectedRows.length == 1) {
 			selectedStyle = model.getStyles().get(selectedRows[0]);
-			
+
 			if (selectedStyle.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_DEFAULT_INSTANCE)) {
 				removeTrackDefaultButton.setEnabled(false);
 			}
-
+			possitiveColorComboBox.setSelectedColor(selectedStyle.getStartColor());
+			negativeColorComboBox.setSelectedColor(selectedStyle.getEndColor());
 			trackDefaultTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
@@ -707,7 +724,7 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 			show2TracksCheckBox.setSelected(selectedStyle.getShow());
 			connectedCheckBox.setSelected(selectedStyle.getSeparate());
 			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
-			
+
 			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
 				case NONE:
 					colorCheckBox.setSelected(false);
@@ -951,6 +968,22 @@ public class TrackDefaultView extends IPrefEditorComponent implements ListSelect
 							} else {
 								element.propertyMap.put(PROP_COLLAPSED, value.toString());
 							}
+							break;
+						case COL_POS_STRAND_COLOR:
+							if (style.equals(default_annot_style)) {
+								style.setStartColor((Color) value);
+							} else {
+								element.propertyMap.put(PROP_START_COLOR, value);
+							}
+							possitiveColorComboBox.setSelectedColor((Color) value);
+							break;
+						case COL_NEG_STRAND_COLOR:
+							if (style.equals(default_annot_style)) {
+								style.setEndColor((Color) value);
+							} else {
+								element.propertyMap.put(PROP_END_COLOR, value);
+							}
+							negativeColorComboBox.setSelectedColor((Color) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

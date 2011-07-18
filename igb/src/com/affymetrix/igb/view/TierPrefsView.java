@@ -59,6 +59,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	private static final int COL_LABEL_FIELD = 7;
 	private static final int COL_SHOW2TRACKS = 8;
 	private static final int COL_DIRECTION_TYPE = 9;
+	private static final int COL_POS_STRAND_COLOR = 10;
+	private static final int COL_NEG_STRAND_COLOR = 11;
 	private TierPrefsTableModel model;
 	private ListSelectionModel lsm;
 	private static final String PREF_AUTO_REFRESH = "Auto-Apply Track Customizer Changes";
@@ -649,9 +651,19 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 }//GEN-LAST:event_labelFieldComboBoxActionPerformed
 
 	private void possitiveColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_possitiveColorComboBoxActionPerformed
+		if (!settingValueFromTable) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				model.setValueAt(possitiveColorComboBox.getSelectedColor(), selectedRows[i], COL_POS_STRAND_COLOR);
+			}
+		}
 }//GEN-LAST:event_possitiveColorComboBoxActionPerformed
 
 	private void negativeColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_negativeColorComboBoxActionPerformed
+		if (!settingValueFromTable) {
+			for (int i = 0; i < selectedRows.length; i++) {
+				model.setValueAt(negativeColorComboBox.getSelectedColor(), selectedRows[i], COL_NEG_STRAND_COLOR);
+			}
+		}
 }//GEN-LAST:event_negativeColorComboBoxActionPerformed
 
 	private void colorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorCheckBoxActionPerformed
@@ -810,6 +822,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		collapsedCheckBox.setEnabled(true);
 		colorCheckBox.setEnabled(true);
 		arrowCheckBox.setEnabled(true);
+		possitiveColorComboBox.setEnabled(true);
+		negativeColorComboBox.setEnabled(true);
 		selectedRows = table.getSelectedRows();
 
 		initializationDetector = true;
@@ -826,6 +840,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			collapsedCheckBox.setSelected(false);
 			colorCheckBox.setSelected(false);
 			arrowCheckBox.setSelected(false);
+			possitiveColorComboBox.setEnabled(false);
+			negativeColorComboBox.setEnabled(false);
 		}
 
 		if (selectedRows.length == 1) {
@@ -837,7 +853,8 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 				colorCheckBox.setEnabled(false);
 				arrowCheckBox.setEnabled(false);
 			}
-
+			possitiveColorComboBox.setSelectedColor(selectedStyle.getStartColor());
+			negativeColorComboBox.setSelectedColor(selectedStyle.getEndColor());
 			displayNameTextField.setText(selectedStyle.getTrackName());
 			bgColorComboBox.setSelectedColor(selectedStyle.getBackground());
 			fgColorComboBox.setSelectedColor(selectedStyle.getForeground());
@@ -847,7 +864,7 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			show2TracksCheckBox.setSelected(selectedStyle.getShow());
 			connectedCheckBox.setSelected(selectedStyle.getSeparate());
 			collapsedCheckBox.setSelected(selectedStyle.getCollapsed());
-			
+
 			switch (DIRECTION_TYPE.valueFor(selectedStyle.getDirectionType())) {
 				case NONE:
 					colorCheckBox.setSelected(false);
@@ -945,7 +962,6 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 	class TierPrefsTableModel extends AbstractTableModel {
 
 		List<TrackStyle> tier_styles;
-		private TrackStyle tempStyle;
 		private Object tempObject;
 		private int tempInt;
 
@@ -999,16 +1015,17 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 		}
 
 		public Object getValueAt(int row, int column) {
-			tempStyle = tier_styles.get(row);
+			TrackStyle style;
+			style = tier_styles.get(row);
 			switch (column) {
 				case COL_FOREGROUND:
-					return tempStyle.getForeground();
+					return style.getForeground();
 				case COL_BACKGROUND:
-					return tempStyle.getBackground();
+					return style.getBackground();
 				case COL_TRACK_NAME_SIZE:
-					return tempStyle.getTrackNameSize();
+					return style.getTrackNameSize();
 				case COL_TRACK_NAME:
-					return tempStyle.getTrackName();
+					return style.getTrackName();
 				default:
 					return null;
 			}
@@ -1030,47 +1047,56 @@ public class TierPrefsView extends IPrefEditorComponent implements ListSelection
 			settingValueFromTable = true;
 			if (value != null && !initializationDetector) {
 				try {
-					tempStyle = tier_styles.get(row);
+					TrackStyle style;
+					style = tier_styles.get(row);
 					switch (col) {
 						case COL_TRACK_NAME:
-							tempStyle.setTrackName((String) value);
+							style.setTrackName((String) value);
 							displayNameTextField.setText((String) value);
 							break;
 						case COL_FOREGROUND:
-							tempStyle.setForeground((Color) value);
+							style.setForeground((Color) value);
 							fgColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_BACKGROUND:
-							tempStyle.setBackground((Color) value);
+							style.setBackground((Color) value);
 							bgColorComboBox.setSelectedColor((Color) value);
 							break;
 						case COL_TRACK_NAME_SIZE:
-							tempStyle.setTrackNameSize((Float) value);
+							style.setTrackNameSize((Float) value);
 							trackNameSizeComboBox.setSelectedItem((Float) value);
 							break;
 						case COL_LABEL_FIELD:
-							tempStyle.setLabelField((String) value);
+							style.setLabelField((String) value);
 							break;
 						case COL_MAX_DEPTH: {
-							tempInt = parseInteger(((String) value), 0, tempStyle.getMaxDepth());
-							tempStyle.setMaxDepth(tempInt);
+							tempInt = parseInteger(((String) value), 0, style.getMaxDepth());
+							style.setMaxDepth(tempInt);
 						}
 						break;
 						case COL_DIRECTION_TYPE:
-							tempStyle.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
+							style.setDirectionType((TrackConstants.DIRECTION_TYPE) value);
 							break;
 						case COL_CONNECTED:
-							tempStyle.setSeparate(((Boolean) value).booleanValue());
+							style.setSeparate(((Boolean) value).booleanValue());
 							break;
 						case COL_SHOW2TRACKS:
 							if (Boolean.TRUE.equals(value)) {
-								tempStyle.setShow2Tracks(2);
+								style.setShow2Tracks(2);
 							} else {
-								tempStyle.setShow2Tracks(1);
+								style.setShow2Tracks(1);
 							}
 							break;
 						case COL_COLLAPSED:
-							tempStyle.setCollapsed(((Boolean) value).booleanValue());
+							style.setCollapsed(((Boolean) value).booleanValue());
+							break;
+						case COL_POS_STRAND_COLOR:
+							style.setStartColor((Color) value);
+							possitiveColorComboBox.setSelectedColor((Color) value);
+							break;
+						case COL_NEG_STRAND_COLOR:
+							style.setEndColor((Color) value);
+							negativeColorComboBox.setSelectedColor((Color) value);
 							break;
 						default:
 							System.out.println("Unknown column selected: " + col);

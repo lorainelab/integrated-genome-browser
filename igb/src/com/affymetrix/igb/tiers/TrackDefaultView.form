@@ -296,7 +296,7 @@
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="labelFieldComboBox" alignment="0" pref="82" max="32767" attributes="1"/>
+                                      <Component id="labelFieldComboBox" alignment="0" pref="77" max="32767" attributes="1"/>
                                       <Component id="fgColorComboBox" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                                   </Group>
                               </Group>

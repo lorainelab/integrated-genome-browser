@@ -13,6 +13,7 @@
 
 package com.affymetrix.genoviz.widget;
 
+import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -351,7 +352,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setScroller
 	 */
 	//  public void setScroller(int axisid, NeoAdjustable adj) {
-	public void setScroller(int axisid, JScrollBar adj) {
+	public void setScroller(int axisid, JRPScrollBar adj) {
 		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
 			throw new IllegalArgumentException(
 					"Can set Scroller for X ("+NeoAbstractWidget.X

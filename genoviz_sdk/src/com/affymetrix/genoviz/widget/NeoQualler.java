@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Selection;
 import com.affymetrix.genoviz.widget.neoqualler.QualityBars;
@@ -113,10 +114,10 @@ public class NeoQualler extends NeoContainerWidget
 	protected NeoMap bar_map;
 	protected NeoMap base_map;
 
-	protected JScrollBar hscroll;
-	protected JScrollBar hzoom;
+	protected JRPScrollBar hscroll;
+	protected JRPScrollBar hzoom;
 
-	protected JScrollBar vzoom;
+	protected JRPScrollBar vzoom;
 
 	// locations for scrollbars, consensus, and labels
 	protected int hscroll_loc = PLACEMENT_BOTTOM;
@@ -148,10 +149,10 @@ public class NeoQualler extends NeoContainerWidget
 		bar_map = new NeoMap(false, false);
 		base_map = new NeoMap(false, false);
 
-		hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
-		hzoom = new JScrollBar(JScrollBar.VERTICAL);
+		hscroll = new JRPScrollBar("NeoQualler_horizontalscroll", JScrollBar.HORIZONTAL);
+		hzoom = new JRPScrollBar("NeoQualler_horizontalzoom", JScrollBar.VERTICAL);
 
-		vzoom = new JScrollBar(JScrollBar.VERTICAL);
+		vzoom = new JRPScrollBar("NeoQualler_verticalzoom", JScrollBar.VERTICAL);
 
 		setBackground(default_panel_background);
 		bar_map.setMapColor(default_bar_background);

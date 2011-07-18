@@ -41,6 +41,7 @@ import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.ResiduesGlyphI;
 import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
+import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -232,7 +233,7 @@ public class NeoAssembler extends NeoContainerWidget
 	protected NeoMap alignmap, labelmap, consmap, conslabelmap;
 	protected Scene align_scene, label_scene, cons_scene;
 	// currently no vertical zooming, so no need for internal vzoom
-	protected JScrollBar hscroll, vscroll;
+	protected JRPScrollBar hscroll, vscroll;
   protected Adjustable hzoom;
 
 	protected StretchContainerGlyph cglyph;
@@ -417,8 +418,8 @@ public class NeoAssembler extends NeoContainerWidget
 		addWidget(consmap);
 		addWidget(conslabelmap);
 
-		hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
-		vscroll = new JScrollBar(JScrollBar.VERTICAL);
+		hscroll = new JRPScrollBar("NeoAssembler_horizontal", JScrollBar.HORIZONTAL);
+		vscroll = new JRPScrollBar("NeoAssembler_vertical", JScrollBar.VERTICAL);
 		if (internal_zoomer)  {
 			hzoom = new AdjustableJSlider(JSlider.HORIZONTAL);
 		}
@@ -2644,7 +2645,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * If the given Adjustable is not an instance of Component,
 	 * the call will be ignored.
 	 */
-	public void setHorizontalScroller(JScrollBar scroller) {
+	public void setHorizontalScroller(JRPScrollBar scroller) {
 
 		if (!(scroller instanceof Component) || (scroller == null))
 			return;
@@ -2667,7 +2668,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * If the given Adjustable is not an instance of Component,
 	 * the call will be ignored.
 	 */
-	public void setVerticalScroller(JScrollBar scroller) {
+	public void setVerticalScroller(JRPScrollBar scroller) {
 
 		if (!(scroller instanceof Component) || (scroller == null))
 			return;

@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.SiblingCoordAvoid;
 import com.affymetrix.genoviz.bioviews.Scene;
+import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
@@ -329,8 +330,8 @@ public class NeoMap extends NeoWidget implements
 		default_factory = new MapGlyphFactory(orient);
 		default_factory.setScene(scene);
 
-		setRangeScroller(new JScrollBar(JScrollBar.HORIZONTAL));
-		setOffsetScroller(new JScrollBar(JScrollBar.VERTICAL));
+		setRangeScroller(new JRPScrollBar(getClass().getSimpleName() + "_range", JScrollBar.HORIZONTAL));
+		setOffsetScroller(new JRPScrollBar(getClass().getSimpleName() + "_offset", JScrollBar.VERTICAL));
 
 		zoomer[X] = null;
 		zoomer[Y] = null;
@@ -996,15 +997,15 @@ public class NeoMap extends NeoWidget implements
 	 * with setZoomer() to have a more general
 	 * setAdjustable(int id, Adjustable adj) method.
 	 */
-	public void setRangeScroller(JScrollBar nscroll) {
+	public void setRangeScroller(JRPScrollBar nscroll) {
 		setScroller(X, nscroll);
 	}
 
-	public void setOffsetScroller(JScrollBar nscroll) {
+	public void setOffsetScroller(JRPScrollBar nscroll) {
 		setScroller(Y, nscroll);
 	}
 
-	public JScrollBar getScroller(int id) {
+	public JRPScrollBar getScroller(int id) {
 		return scroller[id];
 	}
 
@@ -1016,6 +1017,7 @@ public class NeoMap extends NeoWidget implements
 		return zoomer[id];
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void removeItem(GlyphI gl) {
 		scene.removeGlyph(gl);
 		glyph_hash.remove(gl);
@@ -1309,11 +1311,11 @@ public class NeoMap extends NeoWidget implements
 	}
 
 	public void toFront(GlyphI gl) {
-		scene.toFront(gl);
+		Scene.toFront(gl);
 	}
 
 	public void toBack(GlyphI gl) {
-		scene.toBack(gl);
+		Scene.toBack(gl);
 	}
 
 	// This assumes root glyph has been assigned a packer...

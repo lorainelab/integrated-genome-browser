@@ -36,6 +36,7 @@ import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Selection;
 import com.affymetrix.genoviz.widget.neotracer.AsymAxisGlyph;
@@ -91,7 +92,7 @@ import javax.swing.JScrollBar;
  */
 public class NeoTracer extends NeoContainerWidget
 		implements Observer, NeoViewBoxListener {
-
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Orientation (Direction) for a trace.
 	 * If orientation is FORWARD,
@@ -148,7 +149,7 @@ public class NeoTracer extends NeoContainerWidget
 	private int base_map_pixel_height;
 	protected NeoMap trace_map;
 	protected NeoMap base_map;
-	protected JScrollBar hscroll;
+	protected JRPScrollBar hscroll;
 	protected Adjustable hzoom, vzoom;
 	// locations for scrollbars, consensus, and labels
 	protected int hscroll_loc = PLACEMENT_BOTTOM;
@@ -200,7 +201,7 @@ public class NeoTracer extends NeoContainerWidget
 	 * @param vzoom for zooming vertically
 	 * respectively.
 	 */
-	public NeoTracer(JScrollBar scroller, Adjustable hzoom, Adjustable vzoom) {
+	public NeoTracer(JRPScrollBar scroller, Adjustable hzoom, Adjustable vzoom) {
 		this(true, true, true);
 		setScroller(scroller);
 		setHorizontalZoomer(hzoom);
@@ -233,12 +234,12 @@ public class NeoTracer extends NeoContainerWidget
 		this.setLayout(null);
 
 		if (hscroll_show) {
-			hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
+			hscroll = new JRPScrollBar("NeoTracer_horizontalscroll", JScrollBar.HORIZONTAL);
 			add((Component) hscroll);
 			setRangeScroller(hscroll);
 		}
 		if (hzoom_show) {
-			hzoom = new JScrollBar(JScrollBar.VERTICAL);
+			hzoom = new JRPScrollBar("NeoTracer_horizontalzoom", JScrollBar.VERTICAL);
 			add((Component) hzoom);
 			setRangeZoomer(hzoom);
 		}
@@ -1651,7 +1652,7 @@ public class NeoTracer extends NeoContainerWidget
 		range_listeners.remove(l);
 	}
 
-	public void setRangeScroller(JScrollBar scroll) {
+	public void setRangeScroller(JRPScrollBar scroll) {
 		trace_map.setRangeScroller(scroll);
 		base_map.setRangeScroller(scroll);
 	}
@@ -1800,7 +1801,7 @@ public class NeoTracer extends NeoContainerWidget
 	 * @param axisid Either NeoAbstractWidget.X or NeoAbstractWidget.Y
 	 */
 	@Override
-	public void setScroller(int axisid, JScrollBar adj) {
+	public void setScroller(int axisid, JRPScrollBar adj) {
 		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set zoomer for X (" + NeoAbstractWidget.X
@@ -1851,7 +1852,7 @@ public class NeoTracer extends NeoContainerWidget
 	 * the call will be ignored.
 	 * @param scroller
 	 */
-	public void setScroller(JScrollBar scroller) {
+	public void setScroller(JRPScrollBar scroller) {
 
 		if (!(scroller instanceof Component)
 				|| (scroller == null)

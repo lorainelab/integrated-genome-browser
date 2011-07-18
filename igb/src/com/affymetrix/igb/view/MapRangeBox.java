@@ -66,7 +66,7 @@ public final class MapRangeBox implements NeoViewBoxListener, GroupSelectionList
 		this.gview = gview;
 		this.map = gview.getSeqMap();
 
-		range_box = new JRPTextField("SeqMap_range", "");
+		range_box = new JRPTextField(gview.getClass().getSimpleName() + "_SeqMap_range", "");
 		Dimension d = new Dimension(250, range_box.getPreferredSize().height);
 		range_box.setPreferredSize(d);
 		range_box.setMaximumSize(d);

@@ -29,6 +29,7 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoViewMouseEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
@@ -38,6 +39,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArraySet;
+
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
@@ -58,7 +60,7 @@ import javax.swing.JSlider;
  */
 public abstract class NeoWidget extends NeoAbstractWidget
 	implements AdjustmentListener {
-
+	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG_SCROLLER_VALUES = false;
 	private static final boolean DEBUG_SCROLL = false;
 	private static final boolean DEBUG_ZOOM = false;
@@ -113,7 +115,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	protected double coords_per_pixel[] = new double[2];
 
-	protected JScrollBar scroller[] = new JScrollBar[2];
+	protected JRPScrollBar scroller[] = new JRPScrollBar[2];
 	protected Adjustable zoomer[] = new Adjustable[2];
 
 	protected RubberBand rband;
@@ -473,7 +475,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	}
 
 
-	public void setScroller(int id, JScrollBar adj) {
+	public void setScroller(int id, JRPScrollBar adj) {
 		if (adj == null) {
 			throw new IllegalArgumentException("NeoWidget.setScroller() requires " +
 					"an Adjustable argument, was passed a null instead");

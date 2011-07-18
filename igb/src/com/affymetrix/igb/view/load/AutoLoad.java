@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -19,7 +20,7 @@ public class AutoLoad implements MouseListener, MouseMotionListener, PreferenceC
 	public final static String  PREFS_AUTOLOAD = "Enable Auto load";
 	public final static boolean default_autoload = true;
 	private final JSlider zoomer;
-	private final JScrollBar scroller;
+	private final JRPScrollBar scroller;
 	private final NeoMap map;
 	private boolean was_dragging = false;
 	public static final int threshold = 70;

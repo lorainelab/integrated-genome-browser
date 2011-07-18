@@ -34,8 +34,8 @@ public abstract class BrowserView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private SwingWorker<Image, Void> worker = null;
 	private final Map<String, String> cookieMap = new HashMap<String, String>();
-	private final JRPButton update_button = new JRPButton("BrowserView_updateButton", "update");
-	private final JRPButton settingsButton = new JRPButton("BrowserView_settingsButton", "settings");
+	protected final JRPButton update_button;
+	protected final JRPButton settingsButton;
 	private BrowserImage browserImage = new BrowserImage();
 	private final JScrollPane scroll = new JScrollPane();
 //	private final IGBService igbService;
@@ -70,6 +70,8 @@ public abstract class BrowserView extends JPanel {
 	public BrowserView(JComboBox selector,final IGBService igbService,final UCSCViewAction ucscViewAction) {
 		super();
 //		this.igbService = igbService;
+		update_button = new JRPButton(getClass().getSimpleName() + "_updateButton", "update");
+		settingsButton = new JRPButton(getClass().getSimpleName() + "_settingsButton", "settings");
 		this.ucscViewAction = ucscViewAction;
 		initializeCookies();
 		this.setLayout(new BorderLayout());

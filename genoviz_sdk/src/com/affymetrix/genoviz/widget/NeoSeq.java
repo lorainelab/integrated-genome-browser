@@ -38,6 +38,7 @@ import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.event.SequenceEvent;
 import com.affymetrix.genoviz.event.SequenceListener;
+import com.affymetrix.genoviz.swing.recordplayback.JRPScrollBar;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Selection;
@@ -175,7 +176,7 @@ public class NeoSeq extends NeoContainerWidget
 
 	protected Selection sel_range;
 
-	protected JScrollBar offset_scroll;
+	protected JRPScrollBar offset_scroll;
 
 	// locations for scrollbars, consensus, and labels
 	protected int offset_scroll_loc = PLACEMENT_RIGHT;
@@ -292,7 +293,7 @@ public class NeoSeq extends NeoContainerWidget
 
 		this.setLayout(null);
 
-		offset_scroll = new JScrollBar(JScrollBar.VERTICAL);
+		offset_scroll = new JRPScrollBar("NeoSeq_offset", JScrollBar.VERTICAL);
 		this.setScroller (offset_scroll);
 
 		add((Component)offset_scroll);
@@ -2088,7 +2089,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * the given Adjustable isn't an instance of Component, the call
 	 * will be ignored.
 	 */
-	public void setScroller(JScrollBar scroller) {
+	public void setScroller(JRPScrollBar scroller) {
 
 		if (!(scroller instanceof Component) || (scroller == null))
 			return;

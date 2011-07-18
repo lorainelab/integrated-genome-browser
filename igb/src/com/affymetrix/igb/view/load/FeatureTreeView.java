@@ -72,7 +72,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		featuresLabel.setAlignmentX(LEFT_ALIGNMENT);
 		featuresLabel.setAlignmentY(TOP_ALIGNMENT);
 
-		serverPrefsB = new JRPButton("DataAccess.configure", "Configure...");
+		serverPrefsB = new JRPButton("DataAccess_configure", "Configure...");
 		serverPrefsB.addActionListener(this);
 		serverPrefsB.setToolTipText("Configure Data Sources");
 		serverPrefsB.setMargin(new Insets(0,0,0,0));

@@ -74,9 +74,9 @@ public class UCSCView extends BrowserView {
 	 **/
 	public class UCSCHelper extends JDialog {
 		private static final long serialVersionUID = 1L;
-		private final JRPButton okButton = new JRPButton("UCSCView.okButton", "submit");
-		private final JRPButton ucscInfo = new JRPButton("UCSCView.ucscInfo", "UCSC info");
-		private final JRPTextField userIdField = new JRPTextField("UCSCView.userIdField", getCookie(UCSCUSERID), 15);
+		private final JRPButton okButton = new JRPButton("UCSCView_okButton", "submit");
+		private final JRPButton ucscInfo = new JRPButton("UCSCView_ucscInfo", "UCSC info");
+		private final JRPTextField userIdField = new JRPTextField("UCSCView_userIdField", getCookie(UCSCUSERID), 15);
 		private final Font font = okButton.getFont();
 	
 		public UCSCHelper(Window window, String string) {

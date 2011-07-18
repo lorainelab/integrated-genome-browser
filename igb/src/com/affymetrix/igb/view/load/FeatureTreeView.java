@@ -539,7 +539,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 			boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
 			String featureName = gFeature.featureName;
 			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
-			leafCheckBox.setId("FeatureTreeView." + featureText);
+			leafCheckBox.setId("FeatureTreeView_" + featureText.replaceAll(" ", "_"));
 			featureText = "<html>" + featureText;
 			if (gFeature.friendlyURL != null) {
 				java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");

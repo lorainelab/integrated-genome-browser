@@ -97,8 +97,8 @@ public final class GraphState {
 	 *  an initial IAnnotStyle for the tier_style, but you can replace that style if
 	 *  necessary.
 	 */
-	public GraphState(String id) {
-		this(id, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id));
+	public GraphState(String id, String extension) {
+		this(id, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id, null, extension));
 	}
 
 	public GraphState(String id, ITrackStyle tierStyle) {

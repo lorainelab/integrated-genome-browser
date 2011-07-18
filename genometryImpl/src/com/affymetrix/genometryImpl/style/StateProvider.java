@@ -19,5 +19,5 @@ public interface StateProvider {
 	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type);
 	public ITrackStyleExtended getAnnotStyle(String name, String human_name, String file_type, Map<String,String> props);
 	public GraphState getGraphState(String name);
-	public GraphState getGraphState(String name, String human_name);
+	public GraphState getGraphState(String name, String human_name, String file_type);
 }

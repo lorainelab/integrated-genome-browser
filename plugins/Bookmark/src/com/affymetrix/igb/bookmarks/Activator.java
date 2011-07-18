@@ -49,10 +49,10 @@ public class Activator extends WindowActivator implements BundleActivator {
 		JRPMenu file_menu = igbService.getFileMenu();
 		int index = file_menu.getItemCount() - 1;
 		file_menu.insertSeparator(index);
-		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark.saveSession", new SaveSessionAction(igbService)), index);
-		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark.loadSession", new LoadSessionAction(igbService)), index);
+		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_saveSession", new SaveSessionAction(igbService)), index);
+		MenuUtil.insertIntoMenu(file_menu, new JRPMenuItem("Bookmark_loadSession", new LoadSessionAction(igbService)), index);
 
-		JRPMenu bookmark_menu = MenuUtil.getRPMenu("Bookmark.bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
+		JRPMenu bookmark_menu = MenuUtil.getRPMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
 		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 		bmark_action = new BookMarkAction(igbService, bookmark_menu);
 		igbService.addStopRoutine(

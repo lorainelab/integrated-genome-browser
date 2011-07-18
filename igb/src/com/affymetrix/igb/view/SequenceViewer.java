@@ -492,20 +492,20 @@ public class SequenceViewer implements ActionListener, WindowListener, ItemListe
 	JCheckBoxMenuItem transNegThreeCBMenuItem = new JCheckBoxMenuItem(" -3 Translation");
 	JCheckBoxMenuItem colorScheme1 = new JCheckBoxMenuItem("Yellow on black");
 	JCheckBoxMenuItem colorScheme2 = new JCheckBoxMenuItem("Blue on white");
-	JRPMenuItem exportRComplementFasta = new JRPMenuItem("sequenceViewer.exportRComplementFasta", "Save As Fasta (Reverse Complement)");
-	JRPMenu showMenu = new JRPMenu("sequenceViewer.show", "Show");
-	JRPMenu fileMenu = new JRPMenu("sequenceViewer.file", "File");
-	JRPMenu editMenu = new JRPMenu("sequenceViewer.edit", "Edit");
-	JRPMenu colorMenu = new JRPMenu("sequenceViewer.colors", "Colors");
+	JRPMenuItem exportRComplementFasta = new JRPMenuItem("sequenceViewer_exportRComplementFasta", "Save As Fasta (Reverse Complement)");
+	JRPMenu showMenu = new JRPMenu("sequenceViewer_show", "Show");
+	JRPMenu fileMenu = new JRPMenu("sequenceViewer_file", "File");
+	JRPMenu editMenu = new JRPMenu("sequenceViewer_edit", "Edit");
+	JRPMenu colorMenu = new JRPMenu("sequenceViewer_colors", "Colors");
 	CopyFromSeqViewerAction copyAction = new CopyFromSeqViewerAction(this);
 
 	public JFrame setupMenus(JFrame dock) {
 
 		copyAction.setEnabled(false);
-		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer.exportFastaSequence", new ExportFastaSequenceAction(this)));
+		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportFastaSequence", new ExportFastaSequenceAction(this)));
 		MenuUtil.addToMenu(fileMenu, exportRComplementFasta);
-		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer.exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
-		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer.copy", copyAction));
+		MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
+		MenuUtil.addToMenu(editMenu, new JRPMenuItem("sequenceViewer_copy", copyAction));
 		editMenu.addMenuListener(this);
 		showMenu.add(revCompCBMenuItem);
 		showMenu.add(compCBMenuItem);

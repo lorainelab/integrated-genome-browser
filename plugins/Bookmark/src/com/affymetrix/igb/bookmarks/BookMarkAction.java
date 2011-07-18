@@ -58,17 +58,17 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 	igbService = _igbService;
     bookmark_menu = bm_menu;
     bookmark_menu.addMenuListener(this);
-    add_pos_markMI = new JRPMenuItem("Bookmark.addPositionBookmark", BUNDLE.getString("addPositionBookmark"), KeyEvent.VK_P);
+    add_pos_markMI = new JRPMenuItem("Bookmark_addPositionBookmark", BUNDLE.getString("addPositionBookmark"), KeyEvent.VK_P);
     add_pos_markMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif"));
-    add_data_markMI = new JRPMenuItem("Bookmark.addPositionAndDataBookmark", BUNDLE.getString("addPosition&DataBookmark"), KeyEvent.VK_G);
+    add_data_markMI = new JRPMenuItem("Bookmark_addPositionAndDataBookmark", BUNDLE.getString("addPosition&DataBookmark"), KeyEvent.VK_G);
 	add_data_markMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif"));
-    exportMI = new JRPMenuItem("Bookmark.exportBookmarks", BUNDLE.getString("exportBookmarks"), KeyEvent.VK_E);
+    exportMI = new JRPMenuItem("Bookmark_exportBookmarks", BUNDLE.getString("exportBookmarks"), KeyEvent.VK_E);
     exportMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
-    importMI = new JRPMenuItem("Bookmark.importBookmarks", BUNDLE.getString("importBookmarks"), KeyEvent.VK_I);
+    importMI = new JRPMenuItem("Bookmark_importBookmarks", BUNDLE.getString("importBookmarks"), KeyEvent.VK_I);
     importMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
-    clearMI = new JRPMenuItem("Bookmark.clearBookmarks", BUNDLE.getString("clearBookmarks"), KeyEvent.VK_C);
-    manage_bookmarksMI = new JRPMenuItem("Bookmark.", BUNDLE.getString("manageBookmarks"), KeyEvent.VK_M);
-    open_bookmark_tabMI = new JRPMenuItem("Bookmark.", BUNDLE.getString("openBookmarkTab"), KeyEvent.VK_O);
+    clearMI = new JRPMenuItem("Bookmark_clearBookmarks", BUNDLE.getString("clearBookmarks"), KeyEvent.VK_C);
+    manage_bookmarksMI = new JRPMenuItem("Bookmark_manageBookmarks", BUNDLE.getString("manageBookmarks"), KeyEvent.VK_M);
+    open_bookmark_tabMI = new JRPMenuItem("Bookmark_openBookmarkTab", BUNDLE.getString("openBookmarkTab"), KeyEvent.VK_O);
 
     add_pos_markMI.addActionListener(this);
     add_data_markMI.addActionListener(this);

@@ -36,11 +36,11 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
 	public ExternalViewer(IGBService igbService_) {
 		super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), false, TAB_POSITION);
 		this.setLayout(new CardLayout());
-		ucscBox = createBox("ExternalViewer.ucsc");
-		ensemblBox = createBox("ExternalViewer.ensemble");
+		ucscBox = createBox("ExternalViewer_ucsc");
+		ensemblBox = createBox("ExternalViewer_ensemble");
 		
 		ucscViewAction = new UCSCViewAction(igbService);
-		menuItem = new JRPMenuItem("ExternalViewer.ucscView", ucscViewAction);
+		menuItem = new JRPMenuItem("ExternalViewer_ucscView", ucscViewAction);
 		MenuUtil.insertIntoMenu(igbService.getViewMenu(), menuItem, VIEW_MENU_POS);
 
 		final UCSCView ucsc = new UCSCView(ucscBox, igbService, ucscViewAction);

@@ -99,16 +99,16 @@ public final class GraphState {
 	 */
 	public GraphState(String id, String extension) {
 		this(id, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(id, null, extension));
+		tier_style.setGraphTier(true);
+
+		// Graph Tiers with a single graph in them are not collapsible/expandible
+		tier_style.setExpandable(false);
 	}
 
 	public GraphState(String id, ITrackStyle tierStyle) {
 		super();
 
 		tier_style = tierStyle;
-		tier_style.setGraphTier(true);
-
-		// Graph Tiers with a single graph in them are not collapsible/expandible
-		tier_style.setExpandable(false);
 		tier_style.setHeight(default_graph_height);
 
 		setFloatGraph(false);

@@ -15,10 +15,10 @@ import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperatorHolder;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
-import com.affymetrix.genoviz.glyph.GlyphProcessorHolder;
-import com.affymetrix.genoviz.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.shared.GlyphProcessorHolder;
+import com.affymetrix.igb.shared.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.window.service.IWindowService;
 

@@ -1,4 +1,4 @@
-package com.affymetrix.genoviz.glyph;
+package com.affymetrix.igb.shared;
 
 import java.util.ArrayList;
 import java.util.List;

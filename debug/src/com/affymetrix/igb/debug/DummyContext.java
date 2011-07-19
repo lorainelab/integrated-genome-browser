@@ -28,10 +28,10 @@ import com.affymetrix.genometryImpl.event.TierMaintenanceListener;
 import com.affymetrix.genometryImpl.operator.annotation.AnnotationOperator;
 import com.affymetrix.genometryImpl.operator.graph.GraphOperator;
 import com.affymetrix.genometryImpl.operator.transform.FloatTransformer;
-import com.affymetrix.genoviz.glyph.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.search.mode.ISearchMode;
+import com.affymetrix.igb.shared.GlyphProcessorHolder.GlyphProcessor;
 import com.affymetrix.igb.tiers.TierLabelManager;
 
 public class DummyContext implements BundleContext {

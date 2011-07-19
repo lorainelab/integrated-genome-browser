@@ -46,12 +46,12 @@ import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.GlyphProcessorHolder;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
+import com.affymetrix.igb.shared.GlyphProcessorHolder;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TierGlyph.Direction;
